@@ -37,8 +37,8 @@
     "secondaryTokenAttribute": "resources.power",
     "minimumCoreVersion": "0.7.6",
     "compatibleCoreVersion": "0.7.6",
-    "url": "https://your/hosted/system/repo/",
-    "manifest": "https://your/hosted/system/repo/system.json",
-    "download": "https://your/packaged/download/archive.zip"
+    "url": "https://github.com/Plushtoast/dsa5-foundryVTT",
+    "manifest": "https://github.com/Plushtoast/dsa5-foundryVTT/blob/master/system.json",
+    "download": "https://github.com/Plushtoast/dsa5-foundryVTT/archive/master.zip"
     
   }
