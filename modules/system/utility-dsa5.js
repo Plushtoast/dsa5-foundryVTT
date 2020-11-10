@@ -1,4 +1,4 @@
-export default class WFRP_Utility {
+export default class DSA5_Utility {
 
     static async allSkills() {
         let returnSkills = [];

@@ -39,7 +39,7 @@ export default class ItemSheetdsa5 extends ItemSheet{
 
       get template() {
         let type = this.item.type;
-        return `systems/wfrp4e/templates/items/item-${type}-sheet.html`;
+        return `systems/dsa5/templates/items/item-${type}-sheet.html`;
       }
 
       activateListeners(html){
