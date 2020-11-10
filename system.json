@@ -40,4 +40,5 @@
     "url": "https://your/hosted/system/repo/",
     "manifest": "https://your/hosted/system/repo/system.json",
     "download": "https://your/packaged/download/archive.zip"
+    
   }
