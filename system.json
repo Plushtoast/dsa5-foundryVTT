@@ -1,0 +1,43 @@
+{
+    "name": "DSA5",
+    "title": "Das Schwarze Auge (5th Edition)",
+    "description": "Many details here.",
+    "version": "0.0.1",
+    "templateVersion": 2,
+    "author": "Jan Weigmann",
+    "scripts": [
+     
+    ],
+    "esmodules": [
+        "dsa5.js"
+    ],
+    "styles": [
+      "styles/das5.css.css"
+    ],
+    "packs": [
+      
+    ],
+    "languages": [
+      {
+        "lang": "en",
+        "name": "English",
+        "path": "lang/en.json"
+      },
+      {
+        "lang": "de",
+        "name": "Deutsch",
+        "path": "lang/de.json"
+      }
+    ],
+    "socket": true,
+    "initiative": "1d20",
+    "gridDistance": 10,
+    "gridUnits": "ft",
+    "primaryTokenAttribute": "resources.health",
+    "secondaryTokenAttribute": "resources.power",
+    "minimumCoreVersion": "0.7.6",
+    "compatibleCoreVersion": "0.7.6",
+    "url": "https://your/hosted/system/repo/",
+    "manifest": "https://your/hosted/system/repo/system.json",
+    "download": "https://your/packaged/download/archive.zip"
+  }

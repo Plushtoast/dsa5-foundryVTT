@@ -1,0 +1,19 @@
+{
+    "CHAR.MU" : "Mut",
+    "CHAR.KL" : "Klugheit",
+    "CHAR.IN" : "Intuition",
+    "CHAR.CH" : "Charisma",
+    "CHAR.FF" : "Fingerfertigkeit",
+    "CHAR.GE" : "Gewandheit",
+    "CHAR.KO" : "Konstitution",
+    "CHAR.KK" : "Körperkraft",
+
+    "CHARAbbrev.MU" : "MU",
+    "CHARAbbrev.KL" : "KL",
+    "CHARAbbrev.IN" : "IN",
+    "CHARAbbrev.CH" : "CH",
+    "CHARAbbrev.FF" : "FF",
+    "CHARAbbrev.GE" : "GE",
+    "CHARAbbrev.KO" : "KO",
+    "CHARAbbrev.KK" : "KK"
+}
