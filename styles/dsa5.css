@@ -73,7 +73,7 @@
       margin-bottom: 10px;
   }
 
-  .character-sheet .item {
+  .character-sheet .general .item, .character-sheet .sheet-header .item{
     height: 34px;
     display: flex;
     flex-direction: column;
@@ -193,6 +193,10 @@
     display: inline-block;
   }
 
+  .skill-select{
+    display: inline-block;
+  }
+
   .skill-section li div:first-child{
     width: 40%;
   }
@@ -202,4 +206,47 @@
 
   .skill-section .flexcolumn{
     flex: 50%;
+  }
+
+  .header-button{
+    width: 15px;
+  }
+
+  #sidebar{
+    background: url(../icons/backgrounds/hg.jpg);
+  }
+
+  .die-mu{
+    background: url(../icons/dies/d20mu.svg);
+  }
+  .die-kl{
+    background: url(../icons/dies/d20kl.svg);
+  }
+  .die-in{
+    background: url(../icons/dies/d20in.svg);
+  }
+  .die-ch{
+    background: url(../icons/dies/d20ch.svg);
+    color:white;
+  }
+  .die-ff{
+    background: url(../icons/dies/d20ff.svg);
+  }
+  .die-ge{
+    background: url(../icons/dies/d20ge.svg);
+  }
+  .die-ko{
+    background: url(../icons/dies/d20ko.svg);
+  }
+  .die-kk{
+    background: url(../icons/dies/d20kk.svg);
+  }
+
+  .d20{
+    width:35px;
+    height: 35px;
+    display:inline-block;
+    background-size: contain;
+    line-height: 35px;
+    text-align: center;
   }

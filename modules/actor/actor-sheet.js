@@ -82,6 +82,39 @@ export default class ActorSheetDsa5 extends ActorSheet {
                 skill.sheet.render(true);
         })
 
+        html.find('.skill-advances').keydown(async event => {
+            // Wait to update if user tabbed to another skill
+            if (event.keyCode == 9) // Tab
+            {
+                this.skillUpdateFlag = false;
+            }
+            else {
+                this.skillUpdateFlag = true;
+            }
+            if (event.keyCode == 13) // Enter
+            {
+                if (!this.skillsToEdit)
+                    this.skillsToEdit = []
+
+                let itemId = this._getItemId(event);
+                let itemToEdit = duplicate(this.actor.getEmbeddedEntity("OwnedItem", itemId))
+                itemToEdit.data.talentValue.value = Number(event.target.value);
+                this.skillsToEdit.push(itemToEdit);
+
+                await this.actor.updateEmbeddedEntity("OwnedItem", this.skillsToEdit);
+
+                this.skillsToEdit = [];
+            }
+        });
+
+        html.find('.ch-value').click(event => {
+            event.preventDefault();
+            let characteristic = event.currentTarget.attributes["data-char"].value;
+            this.actor.setupCharacteristic(characteristic, event).then(setupData => {
+                this.actor.basicTest(setupData)
+            });
+        });
+
     }
 
     _getItemId(ev) {

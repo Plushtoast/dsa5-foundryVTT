@@ -126,81 +126,237 @@ export default class Actordsa5 extends Actor {
             }
         }
         return {
-            bodySkills: bodySkills,
-            socialSkills: socialSkills,
-            knowledgeSkills: knowledgeSkills,
-            tradeSkills: tradeSkills,
-            natureSkills: natureSkills
+            allSkillsLeft: {
+                "body": bodySkills,
+                "social": socialSkills,
+                "nature": natureSkills
+            },
+            allSkillsRight: {
+                "knowledge": knowledgeSkills,
+                "trade": tradeSkills
+            }
         }
     }
+
+    setupCharacteristic(characteristicId, options = {}) {
+        let char = this.data.data.characteristics[characteristicId];
+        let title = game.i18n.localize(char.label) + " " + game.i18n.localize("Test");
+
+        let testData = {
+            source: char,
+            extra: {
+                characteristicId: characteristicId,
+                actor: this.data,
+                options: options
+            }
+        };
+
+        // Setup dialog data: title, template, buttons, prefilled data
+        let dialogOptions = {
+            title: title,
+            template: "/systems/dsa5/templates/dialog/characteristic-dialog.html",
+            // Prefilled dialog data
+            data: {
+                rollMode: options.rollMode
+            },
+            callback: (html) => {
+                cardOptions.rollMode = html.find('[name="rollMode"]').val();
+                testData.testModifier = Number(html.find('[name="testModifier"]').val());
+                testData.testDifficulty = DSA5.attributeDifficultyModifiers[html.find('[name="testDifficulty"]').val()];
+
+                return { testData, cardOptions };
+            }
+        };
+
+        let cardOptions = this._setupCardOptions("systems/dsa5/templates/chat/roll/characteristic-card.html", title)
+
+        return DiceDSA5.setupDialog({
+            dialogOptions: dialogOptions,
+            testData: testData,
+            cardOptions: cardOptions
+        });
+    }
+
     setupSkill(skill, options = {}) {
         let title = skill.name + " " + game.i18n.localize("Test");
         let testData = {
-          target: this.data.data.characteristics[skill.data.characteristic.value].value + skill.data.advances.value,
-          extra: {
-            actor : this.data,
-            options: options,
-            skill: skill
-          }
-        };
-    
-        
-    
-        // Setup dialog data: title, template, buttons, prefilled data   
-        let dialogOptions = {
-          title: title,
-          template: "/systems/dsa5/templates/dialog/skill-dialog.html",
-          // Prefilled dialog data
-    
-          data: {
-            characteristicList: WFRP4E.characteristics,
-            characteristicToUse: skill.data.characteristic.value,
-            advantage: this.data.data.status.advantage.value || 0,
-            rollMode: options.rollMode
-          },
-          callback: (html) => {
-            // When dialog confirmed, fill testData dialog information
-            // Note that this does not execute until DiceWFRP.setupDialog() has finished and the user confirms the dialog
-            cardOptions.rollMode = html.find('[name="rollMode"]').val();
-            testData.testModifier = Number(html.find('[name="testModifier"]').val());
-            testData.testDifficulty = WFRP4E.difficultyModifiers[html.find('[name="testDifficulty"]').val()];
-            testData.successBonus = Number(html.find('[name="successBonus"]').val());
-            testData.slBonus = Number(html.find('[name="slBonus"]').val());
-            let characteristicToUse = html.find('[name="characteristicToUse"]').val();
-            // Target value is the final value being tested against, after all modifiers and bonuses are added
-            testData.target =
-              this.data.data.characteristics[characteristicToUse].value
-              + testData.testModifier
-              + testData.testDifficulty
-              + skill.data.advances.value
-              + skill.data.modifier.value
-    
-            testData.hitLocation = html.find('[name="hitLocation"]').is(':checked');
-            let talentBonuses = html.find('[name = "talentBonuses"]').val();
-    
-            // Combine all Talent Bonus values (their times taken) into one sum
-            testData.successBonus += talentBonuses.reduce(function (prev, cur) {
-              return prev + Number(cur)
-            }, 0)
-    
-            return { testData, cardOptions };
-          }
+            source: skill,
+            extra: {
+                actor: this.data,
+                options: options,
+            }
         };
 
-    
-        // Call the universal cardOptions helper
-        let cardOptions = this._setupCardOptions("systems/dsa/templates/chat/roll/skill-card.html", title)
-  
-    
-        // Provide these 3 objects to setupDialog() to create the dialog and assign the roll function
+        let dialogOptions = {
+            title: title,
+            template: "/systems/dsa5/templates/dialog/skill-dialog.html",
+
+            data: {
+                rollMode: options.rollMode
+            },
+            callback: (html) => {
+                cardOptions.rollMode = html.find('[name="rollMode"]').val();
+                testData.testModifier = Number(html.find('[name="testModifier"]').val());
+                testData.testDifficulty = DSA5.skillDifficultyModifiers[html.find('[name="testDifficulty"]').val()];
+
+                return { testData, cardOptions };
+            }
+        };
+
+
+        let cardOptions = this._setupCardOptions("systems/dsa5/templates/chat/roll/skill-card.html", title)
+
+
         return DiceDSA5.setupDialog({
-          dialogOptions: dialogOptions,
-          testData: testData,
-          cardOptions: cardOptions
+            dialogOptions: dialogOptions,
+            testData: testData,
+            cardOptions: cardOptions
         });
-      }
+    }
 
     prepareSkill(skill) {
 
+    }
+
+
+    _setupCardOptions(template, title) {
+        let cardOptions = {
+            speaker: {
+                alias: this.data.token.name,
+                actor: this.data._id,
+            },
+            title: title,
+            template: template,
+            flags: { img: this.data.token.randomImg ? this.data.img : this.data.token.img }
+            // img to be displayed next to the name on the test card - if it's a wildcard img, use the actor image
+        }
+
+        // If the test is coming from a token sheet
+        if (this.token) {
+            cardOptions.speaker.alias = this.token.data.name; // Use the token name instead of the actor name
+            cardOptions.speaker.token = this.token.data._id;
+            cardOptions.speaker.scene = canvas.scene._id
+            cardOptions.flags.img = this.token.data.img; // Use the token image instead of the actor image
+        }
+        else // If a linked actor - use the currently selected token's data if the actor id matches
+        {
+            let speaker = ChatMessage.getSpeaker()
+            if (speaker.actor == this.data._id) {
+                cardOptions.speaker.alias = speaker.alias
+                cardOptions.speaker.token = speaker.token
+                cardOptions.speaker.scene = speaker.scene
+                cardOptions.flags.img = speaker.token ? canvas.tokens.get(speaker.token).data.img : cardOptions.flags.img
+            }
+        }
+
+        return cardOptions
+    }
+
+    async basicTest({ testData, cardOptions }, options = {}) {
+        testData = await DiceDSA5.rollDices(testData, cardOptions);
+        let result = DiceDSA5.rollTest(testData);
+
+        result.postFunction = "basicTest";
+        if (testData.extra)
+            mergeObject(result, testData.extra);
+
+
+
+        Hooks.call("dsa5:rollTest", result, cardOptions)
+
+        //if (game.user.targets.size) {
+        //  cardOptions.title += ` - ${game.i18n.localize("Opposed")}`;
+        //  cardOptions.isOpposedTest = true
+        //}
+
+        if (!options.suppressMessage)
+            DiceDSA5.renderRollCard(cardOptions, result, options.rerenderMessage).then(msg => {
+                //OpposedWFRP.handleOpposedTarget(msg) // Send to handleOpposed to determine opposed status, if any.
+            })
+        return { result, cardOptions };
+    }
+
+    static async renderRollCard(chatOptions, testData, rerenderMessage) {
+
+        // Blank if manual chat cards
+        if (game.settings.get("wfrp4e", "manualChatCards") && !rerenderMessage)
+            testData.roll = testData.SL = null;
+
+        if (game.modules.get("dice-so-nice") && game.modules.get("dice-so-nice").active && chatOptions.sound?.includes("dice"))
+            chatOptions.sound = undefined;
+
+        testData.other = testData.other.join("<br>")
+
+        let chatData = {
+            title: chatOptions.title,
+            testData: testData,
+            hideData: game.user.isGM
+        }
+
+        if (["gmroll", "blindroll"].includes(chatOptions.rollMode)) chatOptions["whisper"] = ChatMessage.getWhisperRecipients("GM").map(u => u.id);
+        if (chatOptions.rollMode === "blindroll") chatOptions["blind"] = true;
+        else if (chatOptions.rollMode === "selfroll") chatOptions["whisper"] = [game.user];
+
+        // All the data need to recreate the test when chat card is edited
+        chatOptions["flags.data"] = {
+            preData: chatData.testData.preData,
+            postData: chatData.testData,
+            template: chatOptions.template,
+            rollMode: chatOptions.rollMode,
+            title: chatOptions.title,
+            hideData: chatData.hideData,
+            fortuneUsedReroll: chatOptions.fortuneUsedReroll,
+            fortuneUsedAddSL: chatOptions.fortuneUsedAddSL,
+            isOpposedTest: chatOptions.isOpposedTest,
+            attackerMessage: chatOptions.attackerMessage,
+            defenderMessage: chatOptions.defenderMessage,
+            unopposedStartMessage: chatOptions.unopposedStartMessage,
+            startMessagesList: chatOptions.startMessagesList
+        };
+
+        if (!rerenderMessage) {
+            // Generate HTML from the requested chat template
+            return renderTemplate(chatOptions.template, chatData).then(html => {
+                // Emit the HTML as a chat message
+                if (game.settings.get("wfrp4e", "manualChatCards")) {
+                    let blank = $(html)
+                    let elementsToToggle = blank.find(".display-toggle")
+
+                    for (let elem of elementsToToggle) {
+                        if (elem.style.display == "none")
+                            elem.style.display = ""
+                        else
+                            elem.style.display = "none"
+                    }
+                    html = blank.html();
+                }
+
+                chatOptions["content"] = html;
+                if (chatOptions.sound)
+                    console.log(`wfrp4e | Playing Sound: ${chatOptions.sound}`)
+                return ChatMessage.create(chatOptions, false);
+            });
+        }
+        else // Update message 
+        {
+            // Generate HTML from the requested chat template
+            return renderTemplate(chatOptions.template, chatData).then(html => {
+
+                // Emit the HTML as a chat message
+                chatOptions["content"] = html;
+                if (chatOptions.sound) {
+                    console.log(`wfrp4e | Playing Sound: ${chatOptions.sound}`)
+                    AudioHelper.play({ src: chatOptions.sound }, true)
+                }
+                return rerenderMessage.update(
+                    {
+                        content: html,
+                        ["flags.data"]: chatOptions["flags.data"]
+                    }).then(newMsg => {
+                        ui.chat.updateMessage(newMsg);
+                        return newMsg;
+                    });
+            });
+        }
     }
 }

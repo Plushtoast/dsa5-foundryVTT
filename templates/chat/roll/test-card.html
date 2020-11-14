@@ -1,0 +1,28 @@
+<div class="card-content test-data" data-actor-id="{{actorId}}" data-loc="{{testData.hitloc.roll}}"
+    data-SL="{{testData.SL}}" data-roll="{{testData.roll}}" data-target="{{testData.target}}">
+    <b>{{title}}</b>
+</div>
+
+<div class="card-content hide-option display-toggle roll-result">
+    <b>{{localize "Roll"}}</b>:
+    {{#each testData.characteristics as |item i|}}
+    {{#if item.suc}}
+    <span title="{{localize (concatUp "CHAR." item.char)}}" class="suc die-{{item.char}} d20">
+        {{item.res}}</span>
+    {{else}}
+    <span title="{{localize (concatUp "CHAR." item.char)}}" class="fail die-{{item.char}} d20">
+        {{item.res}}</span>
+    {{/if}}
+    {{/each}}
+</div>
+
+
+<div class="card-content display-toggle">
+    <b>{{localize "FP"}}</b>: {{testData.result}}{{#if testData.qualityStep}}, <b>{{localize "qualityStep"}}</b>:
+    {{testData.qualityStep}}{{/if}}
+</div>
+
+<div class="card-content" roll-description="{{description}}">
+    <b>{{localize "Description"}}</b>: {{testData.description}}
+
+</div>

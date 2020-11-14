@@ -11,7 +11,7 @@
             "label": "CHAR.MU",
             "abrev": "CHARAbbrev.MU",
             "color": "#b3241a",
-            "initial": 20,
+            "initial": 8,
             "modifier": 0,
             "advances": 0
           },
@@ -20,7 +20,7 @@
             "label": "CHAR.KL",
             "abrev": "CHARAbbrev.KL",
             "color": "#8259a3",
-            "initial": 20,
+            "initial": 8,
             "modifier": 0,
             "advances": 0
           },
@@ -29,7 +29,7 @@
             "label": "CHAR.IN",
             "abrev": "CHARAbbrev.IN",
             "color": "#388834",
-            "initial": 20,
+            "initial": 8,
             "modifier": 0,
             "advances": 0
           },
@@ -38,7 +38,7 @@
             "label": "CHAR.CH",
             "abrev": "CHARAbbrev.CH",
             "color": "#0d0d0d",
-            "initial": 20,
+            "initial": 8,
             "modifier": 0,
             "advances": 0
           },
@@ -47,7 +47,7 @@
             "label": "CHAR.FF",
             "abrev": "CHARAbbrev.FF",
             "color": "#d5b467",
-            "initial": 20,
+            "initial": 8,
             "modifier": 0,
             "advances": 0
           },
@@ -56,7 +56,7 @@
             "label": "CHAR.GE",
             "abrev": "CHARAbbrev.GE",
             "color": "#688ec4",
-            "initial": 20,
+            "initial": 8,
             "modifier": 0,
             "advances": 0
           },
@@ -65,7 +65,7 @@
             "label": "CHAR.KO",
             "abrev": "CHARAbbrev.KO",
             "color": "#fbf5ea",
-            "initial": 20,
+            "initial": 8,
             "modifier": 0,
             "advances": 0
           },
@@ -74,7 +74,7 @@
             "label": "CHAR.KK",
             "abrev": "CHARAbbrev.KK",
             "color": "#d6a878",
-            "initial": 20,
+            "initial": 8,
             "modifier": 0,
             "advances": 0
           }
