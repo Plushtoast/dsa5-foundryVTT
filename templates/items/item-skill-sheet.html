@@ -1,5 +1,9 @@
 <form class="dsa5 item-sheet {{cssClass}}" autocomplete="off">
-    {{> systems/dsa5/templates/items/item-header.html}}
+    <header class="item-header">
+      <h1>
+        <input name="name" class="item-header item-name" type="text" value="{{item.name}}" placeholder="{{localize 'Name'}}"/>
+      </h1>
+    </header>
   
       <img src="{{item.img}}" {{#if showBorder}}class="no-image-border"{{/if}} data-edit="img"    />
   
@@ -19,41 +23,71 @@
   
     <section class="content">
   
-    {{> systems/dsa5/templates/items/item-description.html}}
+      {{> systems/dsa5/templates/items/item-description.html}}
   
-    <!-- Ability Details -->
     <div class="tab details" data-tab="details">
   
       <div class="form-group">
-        <label class="label-text">{{localize "Characteristic"}}</label>
-        <select name="data.characteristic.value" data-dtype="{{data.characteristic.type}}">
-          {{#select data.characteristic.value}}
+        <label class="label-text">{{localize "Characteristic"}} 1</label>
+        <select name="data.characteristic1.value" data-dtype="{{data.characteristic1.type}}">
+          {{#select data.characteristic1.value}}
           {{#each characteristics as |ch char|}}
-          <option value="{{char}}">{{ch}}</option>
+          <option value="{{char}}">{{localize ch}}</option>
+          {{/each}}
+          {{/select}}
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label class="label-text">{{localize "Characteristic"}} 2</label>
+        <select name="data.characteristic2.value" data-dtype="{{data.characteristic2.type}}">
+          {{#select data.characteristic2.value}}
+          {{#each characteristics as |ch char|}}
+          <option value="{{char}}">{{localize ch}}</option>
+          {{/each}}
+          {{/select}}
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label class="label-text">{{localize "Characteristic"}} 3</label>
+        <select name="data.characteristic3.value" data-dtype="{{data.characteristic3.type}}">
+          {{#select data.characteristic3.value}}
+          {{#each characteristics as |ch char|}}
+          <option value="{{char}}">{{localize ch}}</option>
           {{/each}}
           {{/select}}
         </select>
       </div>
   
       <div class="form-group">
-        <label class="label-text">{{localize "Skill Type"}}</label>
-        <select name="data.advanced.value" data-dtype="{{data.advanced.type}}">
-          {{#select data.advanced.value}}
-          <option value=""></option>
-          {{#each skillTypes as |type sktype|}}
-          <option value="{{sktype}}">{{type}}</option>
+        <label class="label-text">{{localize "Group"}}</label>
+        <select name="data.group.value" data-dtype="{{data.group.type}}">
+          {{#select data.group.value}}
+          {{#each skillGroups as |type sktype|}}
+          <option value="{{sktype}}">{{localize type}}</option>
           {{/each}}
           {{/select}}
         </select>
       </div>
-  
+
       <div class="form-group">
-        <label class="label-text">{{localize "Specialization"}}</label>
-        <select name="data.grouped.value" data-dtype="{{data.grouped.type}}">
-          {{#select data.grouped.value}}
-          <option value=""></option>
-          {{#each skillGroup as |grouped skgroup|}}
-          <option value="{{skgroup}}">{{grouped}}</option>
+        <label class="label-text">{{localize "Burden"}}</label>
+        <select name="data.burden.value" data-dtype="{{data.burden.type}}">
+          {{#select data.burden.value}}
+          {{#each skillBurdens as |type sktype|}}
+          <option value="{{sktype}}">{{localize type}}</option>
+          {{/each}}
+          {{/select}}
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label class="label-text">{{localize "StF"}}</label>
+        <select name="data.StF.value" data-dtype="{{data.StF.type}}">
+          {{#select data.StF.value}}
+          {{#each StFs as |type sktype|}}
+          <option value="{{sktype}}">{{localize type}}</option>
           {{/each}}
           {{/select}}
         </select>
@@ -78,12 +112,7 @@
       </div>
       {{/if}}
   
-      <div class="form-group" title='{{localize "ITEM.CostModifierTT"}}'>
-        <label class="label-text">{{localize "ITEM.CostModifier"}}</label>
-        <div class="input-box">
-          <input class="input-text" type="text" name="data.advances.costModifier" value="{{data.advances.costModifier}}" data-dtype="Number">
-        </div>
-      </div>
+      
   
     </div>
     </section>

@@ -13,6 +13,12 @@ export default class ItemSheetdsa5 extends ItemSheet{
     static get defaultOptions() {
         const options = super.defaultOptions;
         options.tabs = [{ navSelector: ".tabs", contentSelector: ".content", initial: "description" }]
+        mergeObject(options,
+          {
+            classes: options.classes.concat(["dsa5", "item"]),
+            width: 610,
+            height: 740,
+          });
         return options;
       }
 
@@ -48,6 +54,12 @@ export default class ItemSheetdsa5 extends ItemSheet{
 
       getData() {
         const data = super.getData();
+        if (this.item.type === "skill") {
+          data['characteristics'] = DSA5.characteristics;
+          data['skillGroups'] = DSA5.skillGroups;
+          data['skillBurdens'] = DSA5.skillBurdens;
+          data['StFs'] = DSA5.StFs;
+        }
         return data;
       }
 }

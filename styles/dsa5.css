@@ -1,0 +1,205 @@
+#tinymce {
+    overflow-y: hidden;
+    overflow-x: hidden;
+  }
+  
+  .editor-content ul {
+    margin: 0px 0px;
+  }
+
+
+  body {
+    width: 100vw;
+    height: 100vh;
+    margin: 0;;
+    padding: 0px;
+    overflow: hidden;
+    /*background: url(../ui/background.png) repeat;*/
+    font-size: 14px;
+  }
+
+
+.dsa5 .tab.description.active {
+    display: flex;
+    flex-flow: column;
+    height: calc(100% - 129px);
+    overflow-y: hidden;
+  }    
+  .dsa5 .tab.description.active .editor{
+    height: calc(100% - 129px);
+  }
+.dsa5.item-sheet .content{
+    height: 100%;
+}
+.dsa5.item-sheet img{
+  max-height: 50px;
+  max-width: 50px;
+  
+}
+
+.dsa5.item-sheet .editor {
+    border: 1px solid #736953a6;
+    box-shadow: 0px 0px 1px inset black;
+    overflow: auto;
+    flex-grow: 1;
+    display: flex;
+    padding: 3px;
+    margin-top: 0px;
+    margin-bottom: 7px;
+}
+
+.character-sheet .general{
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+    height: 105px;
+    margin: 0;
+}
+.character-sheet .general .items{
+    margin-left: 5px;
+}
+.character-sheet .general .items .row {
+    display: inline-flex;
+    height: 34px;
+    flex-direction: row;
+    flex-wrap: wrap;
+    /* background: red; */
+    margin: 0px;
+    width: 100%;
+    /* flex: 1; */
+  }
+
+  .sheet-header{
+      margin-bottom: 10px;
+  }
+
+  .character-sheet .item {
+    height: 34px;
+    display: flex;
+    flex-direction: column;
+    margin: 0px 15px 0px 0px;
+    width: 20%;
+  }
+
+  .character-sheet .item input{
+      border: none;
+      border-bottom: 1px solid #bd6500;
+      box-shadow: none;
+      background-color: transparent;
+      font-size: 12px;
+      border-radius: 0px;
+  }
+  .character-sheet .item span{
+    color: rgb(51, 51, 51);
+    margin-left: 4px;
+    margin-bottom: 2px;
+    font-size: 12px;
+    
+}
+
+  .charimg{
+      width: 95px;
+      object-fit: contain;
+  }
+
+  .character-sheet form{
+    border-image: url(../icons/backgrounds/actor.png);
+    border-image-slice: 10 fill;
+    border-image-width: 10px;
+    border-image-outset: 0px;
+    padding-top: 35px;
+    padding-left: 25px;
+    padding-bottom: 25px;
+    padding-right: 25px;
+    margin: 0px;
+  }
+
+  .characteristics-table{
+    flex: 1;
+    display: block;
+    width: 100%;
+  }
+
+  .characteristics-table .table-header .header-block{
+    border-radius: 100%;
+    line-height:25px;
+    text-align: center;
+    border: 2px solid black;
+    width: 25px;
+    height: 25px;
+    margin: 0 auto;
+  }
+
+  .characteristics-table .table-data, .characteristics-table .table-header{
+    width: 10%;
+  }
+
+  .characteristics-table .table-data:first-child, .characteristics-table .table-header:first-child{
+    width: 20%;
+  }
+
+  .character-sheet .window-content{
+      padding: 0;
+  }
+
+  .characteristics{
+    display: flex;
+    width: 100%;
+    flex: 1;
+  }
+  .characteristics-table .table-row{
+    box-shadow: 0 0 10px #00000052 inset;
+      text-align: center;
+      width: 100%;
+      border-bottom: none;
+      border-right: none;
+      display: flex;
+  }
+
+  .skill-section ol{
+    width: 100%;
+    display:inline-block;
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+  }
+  .skill-section li{
+    width: 100%;
+    font-size: 10px;
+    border: 0.5px solid #736953a6;
+    margin:0;
+    padding:  2px;
+  }
+  .skill-sectiont li div{
+    display: inline-block;
+  }
+
+  .skill-section li.li-title{
+    font-weight: bold;
+    box-shadow: 0 0 14px #00000052 inset
+  }
+
+  .skill-section li.li-header{
+    font-weight: bold;
+    box-shadow: 0 0 8px #00000052 inset
+  }
+
+  .skill-section{
+    display: flex;
+  }
+
+  .skill-section li div{
+    width: 8%;
+    display: inline-block;
+  }
+
+  .skill-section li div:first-child{
+    width: 40%;
+  }
+  .skill-section li div:nth-child(2){
+    width: 23%;
+  }
+
+  .skill-section .flexcolumn{
+    flex: 50%;
+  }

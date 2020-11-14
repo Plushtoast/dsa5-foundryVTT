@@ -1,0 +1,156 @@
+<div class="characteristics">
+    <div class="characteristics-table" cellpadding="0">
+        <div class="table-row">
+            <div class="table-header"></div>
+            {{#each actor.data.characteristics as |ch c|}}
+            <div title="{{localize ch.label}}" class="table-header">
+                <div class="header-block" style="border-color: {{ch.color}};">
+                    {{localize ch.abrev}}
+                </div>
+            </div>
+            {{/each}}
+        </div>
+        <div class="table-row">
+            <div class="row-type table-data">
+                <div class="header-block">
+                    {{localize "Initial"}}
+                </div>
+            </div>
+            {{#each actor.data.characteristics as |ch c|}}
+            <div class="table-data">
+                <input name="data.characteristics.{{c}}.initial" type="text" value="{{ch.initial}}" data-dtype="Number">
+            </div>
+            {{/each}}
+        </div>
+        <div class="table-row">
+            <div class="row-type table-data">
+                <div class="header-block">
+                    {{localize "Advances"}}
+                </div>
+            </div>
+            {{#each actor.data.characteristics as |ch c|}}
+            <div class="table-data">
+                <input name="data.characteristics.{{c}}.advances" type="text" value="{{ch.advances}}"
+                    data-dtype="Number">
+            </div>
+            {{/each}}
+        </div>
+        <div class="table-row">
+            <div class="row-type table-data">
+                <div class="header-block">
+                    {{localize "Modifiers"}}
+                </div>
+            </div>
+            {{#each actor.data.characteristics as |ch c|}}
+            <div class="table-data">
+                <input name="data.characteristics.{{c}}.modifier" type="text" value="{{ch.modifier}}"
+                    data-dtype="Number">
+            </div>
+            {{/each}}
+        </div>
+        <div class="table-row bottom">
+            <div class="row-type table-data">
+                <div class="header-block">
+                    {{localize "Current"}}
+                </div>
+            </div>
+            {{#each actor.data.characteristics as |ch c|}}
+            <div class="table-data ch-value" data-char="{{c}}"><a>{{ch.value}}</a></div>
+            {{/each}}
+        </div>
+    </div>
+</div>
+
+<div class="main-row first">
+    <div class="movement row-section">
+        <div class="move-section">
+            <div class="move-value">
+                <input name="data.details.move.value" type="text" value="{{data.details.move.value}}">
+            </div>
+            <div class="move-name">
+                <h4 id="movement-label">{{localize "Movement"}}</h4>
+            </div>
+        </div>
+        <div class="move-section">
+            <div class="move-value">
+                {{#if actor.flags.autoCalcWalk}}
+                <a class="auto-calc-toggle" toggle-type="walk">{{actor.data.details.move.walk}} {{localize "yds"}}</a>
+                {{else}}
+                <input class="auto-calc-toggle" toggle-type="walk" name="data.details.move.walk" type="text"
+                    value="{{data.details.move.walk}}" data-dtype="String">
+                {{/if}}
+            </div>
+            <div class="move-name">
+                <h4 id="walk-label">{{localize "Walk"}}</h4>
+            </div>
+        </div>
+        <div class="move-section">
+            <div class="move-value">
+                {{#if actor.flags.autoCalcRun}}
+                <a class="auto-calc-toggle" toggle-type="run">{{actor.data.details.move.run}} {{localize "yds"}}</a>
+                {{else}}
+                <input class="auto-calc-toggle" toggle-type="run" name="data.details.move.run" type="text"
+                    value="{{data.details.move.run}}" data-dtype="String">
+                {{/if}}
+            </div>
+            <div class="move-name">
+                <h4 id="run-label">{{localize "Run"}}</h4>
+            </div>
+        </div>
+    </div>
+
+
+
+    <div class="wounds row-section">
+        <div class="wounds-section">
+            <span class="top label">{{localize "Wounds"}}<a class="rest-icon" title="{{localize "RestRecover"}}"><i
+                        class="fas fa-bed"></i></a> </span>
+            <div class="wounds-value-box">
+                <div id="value">
+                    <input class="wounds-value" data-dtype="{{data.status.wounds.type}}" type="text"
+                        value="{{data.status.wounds.value}}">
+                </div>
+                <div id="divisor">
+                    /
+                </div>
+                <div id="wounds-max">
+                    {{#if actor.flags.autoCalcWounds}}
+                    <a class="auto-calc-toggle" toggle-type="wounds">{{data.status.wounds.max}}</a>
+                    {{else}}
+                    <input class="auto-calc-toggle" toggle-type="wounds" name="data.status.wounds.max" type="text"
+                        value="{{data.status.wounds.max}}" data-dtype="{{data.status.wounds.type}}">
+                    {{/if}}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="main-row second">
+
+
+
+
+    <div class="experience row-section">
+        <div class="experience-section">
+            <span class="top label">{{localize "Experience"}}</span>
+        </div>
+        <div class="experience-section">
+            <span class="bottom label">{{localize "Current"}}</span>
+            <div id="value">
+                <input name="data.details.experience.current" type="text" value="{{data.details.experience.current}}"
+                    data-dtype="Number" />
+            </div>
+            <span class="bottom label">{{localize "Spent"}}</span>
+            <div id="value">
+                <input name="data.details.experience.spent" type="text" value="{{data.details.experience.spent}}"
+                    data-dtype="Number" />
+            </div>
+            <span class="bottom label">{{localize "Total"}}</span>
+            <div id="value">
+                <input name="data.details.experience.total" type="text" value="{{data.details.experience.total}}"
+                    data-dtype="Number" />
+            </div>
+        </div>
+    </div>
+</div>

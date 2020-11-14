@@ -3,13 +3,14 @@ import ActorSheetdsa5Character from "./modules/actor/character-sheet.js";
 import Actordsa5 from "./modules/actor/actor-dsa5.js";
 import Itemdsa5 from "./modules/item/item-dsa5.js";
 import ItemSheetdsa5 from "./modules/item/item-sheet.js";
+import registerHooks from "./modules/system/hooks.js";
 
 import DSA5 from "./modules/system/config-dsa5.js"
 
 Hooks.once("init", async function () {
 
-    //Actors.unregisterSheet("core", ActorSheet);
-    //Actors.registerSheet("dsa5", ActorSheetdsa5Character, { types: ["character"], makeDefault: true });
+    Actors.unregisterSheet("core", ActorSheet);
+    Actors.registerSheet("dsa5", ActorSheetdsa5Character, { types: ["character"], makeDefault: true });
     Items.unregisterSheet("core", ItemSheet);
     Items.registerSheet("dsa5", ItemSheetdsa5, { makeDefault: true });
 
@@ -30,4 +31,4 @@ Hooks.once("init", async function () {
     CONFIG.Item.entityClass = Itemdsa5;
 });
 
-//registerHooks()
+registerHooks();

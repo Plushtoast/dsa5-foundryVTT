@@ -1,277 +1,343 @@
 {
-    "Actor": {
-      "types": ["character"],
-      "templates": {
-        "characteristics":{
-            "characteristics": {
-              "mu": {
-                "type": "number",
-                "label": "CHAR.MU",
-                "abrev": "CHARAbbrev.MU",
-                "initial": 20,
-                "modifier" : 0,
-                "advances": 0
-              },
-              "kl": {
-                "type": "number",
-                "label": "CHAR.KL",
-                "abrev": "CHARAbbrev.KL",
-                "initial": 20,
-                "modifier" : 0,
-                "advances": 0
-              },
-              "in": {
-                "type": "number",
-                "label": "CHAR.IN",
-                "abrev": "CHARAbbrev.IN",
-                "initial": 20,
-                "modifier" : 0,
-                "advances": 0
-              },
-              "ch": {
-                "type": "number",
-                "label": "CHAR.CH",
-                "abrev": "CHARAbbrev.CH",
-                "initial": 20,
-                "modifier" : 0,
-                "advances": 0
-              },
-              "ff": {
-                "type": "number",
-                "label": "CHAR.FF",
-                "abrev": "CHARAbbrev.FF",
-                "initial": 20,
-                "modifier" : 0,
-                "advances": 0
-              },
-              "ge": {
-                "type": "number",
-                "label": "CHAR.GE",
-                "abrev": "CHARAbbrev.GE",
-                "initial": 20,
-                "modifier" : 0,
-                "advances": 0
-              },
-              "ko": {
-                "type": "number",
-                "label": "CHAR.KO",
-                "abrev": "CHARAbbrev.KO",
-                "initial": 20,
-                "modifier" : 0,
-                "advances": 0
-              },
-              "kk": {
-                "type": "number",
-                "label": "CHAR.KK",
-                "abrev": "CHARAbbrev.KK",
-                "initial": 20,
-                "modifier" : 0,
-                "advances": 0
-              }
-            }
+  "Actor": {
+    "types": [
+      "character"
+    ],
+    "templates": {
+      "characteristics": {
+        "characteristics": {
+          "mu": {
+            "type": "number",
+            "label": "CHAR.MU",
+            "abrev": "CHARAbbrev.MU",
+            "color": "#b3241a",
+            "initial": 20,
+            "modifier": 0,
+            "advances": 0
           },
-          "status": {
-            "status": {
-              "wounds": {
-                "type": "Number",
-                "label": "Wounds",
-                "abrev": "W",
-                "value": 8,
-                "max": 8
-              }
-              
-            }
+          "kl": {
+            "type": "number",
+            "label": "CHAR.KL",
+            "abrev": "CHARAbbrev.KL",
+            "color": "#8259a3",
+            "initial": 20,
+            "modifier": 0,
+            "advances": 0
           },
-          "details": {
-            "details": {
-              "species": {
-                "type": "String",
-                "label": "Species",
-                "value": ""
-              },
-              "gender": {
-                "type": "String",
-                "label": "Gender",
-                "value": ""
-              },
-              "culture": {
-                "type": "String",
-                "label": "Culture",
-                "value": ""
-              },
-              "career": {
-                "type": "String",
-                "label": "Career",
-                "value": ""
-              },
-              "class": {
-                "type": "String",
-                "label": "Class",
-                "value": ""
-              },
-              "home": {
-                "type": "String",
-                "label": "Home",
-                "value": ""
-              },
-              "family": {
-                "type": "String",
-                "label": "Family",
-                "value": ""
-              },
-              "age": {
-                "type": "String",
-                "label": "Age",
-                "value": ""
-              },
-              "haircolour": {
-                "type": "String",
-                "label": "Hair Colour",
-                "value": ""
-              },
-              "eyecolour": {
-                "type": "String",
-                "label": "Eye Colour",
-                "value": ""
-              },
-              "height": {
-                "type": "String",
-                "label": "Height",
-                "value": ""
-              },
-              "weight": {
-                "type": "String",
-                "label": "Weight",
-                "value": ""
-              },
-              "distinguishingmark": {
-                "type": "String",
-                "label": "Distinguishing Mark",
-                "value": ""
-              }
-            }
+          "in": {
+            "type": "number",
+            "label": "CHAR.IN",
+            "abrev": "CHARAbbrev.IN",
+            "color": "#388834",
+            "initial": 20,
+            "modifier": 0,
+            "advances": 0
+          },
+          "ch": {
+            "type": "number",
+            "label": "CHAR.CH",
+            "abrev": "CHARAbbrev.CH",
+            "color": "#0d0d0d",
+            "initial": 20,
+            "modifier": 0,
+            "advances": 0
+          },
+          "ff": {
+            "type": "number",
+            "label": "CHAR.FF",
+            "abrev": "CHARAbbrev.FF",
+            "color": "#d5b467",
+            "initial": 20,
+            "modifier": 0,
+            "advances": 0
+          },
+          "ge": {
+            "type": "number",
+            "label": "CHAR.GE",
+            "abrev": "CHARAbbrev.GE",
+            "color": "#688ec4",
+            "initial": 20,
+            "modifier": 0,
+            "advances": 0
+          },
+          "ko": {
+            "type": "number",
+            "label": "CHAR.KO",
+            "abrev": "CHARAbbrev.KO",
+            "color": "#fbf5ea",
+            "initial": 20,
+            "modifier": 0,
+            "advances": 0
+          },
+          "kk": {
+            "type": "number",
+            "label": "CHAR.KK",
+            "abrev": "CHARAbbrev.KK",
+            "color": "#d6a878",
+            "initial": 20,
+            "modifier": 0,
+            "advances": 0
           }
-        },
-        "character": {
-            "templates": ["characteristics","status","details"],
-            "status": {
-              "fate": {
-                "type": "Number",
-                "label": "Fate",
-                "value": 0
-              }
-              
-            },
-            "details": {
-              "experience": {
-                "type": "Number",
-                "label": "Experience",
-                "total": 0,
-                "spent": 0
-              }
-              
-            }
+        }
+      },
+      "status": {
+        "status": {
+          "wounds": {
+            "type": "Number",
+            "label": "Wounds",
+            "abrev": "W",
+            "value": 8,
+            "max": 8
           }
-    
-
+          
+        }
+      },
+      "details": {
+        "details": {
+          "species": {
+            "type": "String",
+            "label": "Species",
+            "value": ""
+          },
+          "gender": {
+            "type": "String",
+            "label": "Gender",
+            "value": ""
+          },
+          "culture": {
+            "type": "String",
+            "label": "Culture",
+            "value": ""
+          },
+          "career": {
+            "type": "String",
+            "label": "Career",
+            "value": ""
+          },
+          "socialstate": {
+            "type": "String",
+            "label": "Socialstate",
+            "value": ""
+          },
+          "home": {
+            "type": "String",
+            "label": "Home",
+            "value": ""
+          },
+          "family": {
+            "type": "String",
+            "label": "Family",
+            "value": ""
+          },
+          "age": {
+            "type": "String",
+            "label": "Age",
+            "value": ""
+          },
+          "haircolor": {
+            "type": "String",
+            "label": "Hair Color",
+            "value": ""
+          },
+          "eyecolor": {
+            "type": "String",
+            "label": "Eye Color",
+            "value": ""
+          },
+          "height": {
+            "type": "String",
+            "label": "Height",
+            "value": ""
+          },
+          "weight": {
+            "type": "String",
+            "label": "Weight",
+            "value": ""
+          },
+          "distinguishingmark": {
+            "type": "String",
+            "label": "Distinguishing Mark",
+            "value": ""
+          }
+        }
+      }
     },
-    "Item": {
-      "types": ["weapon", "armour", "skill"],
-      "templates": {
+    "character": {
+      "templates": [
+        "characteristics",
+        "status",
+        "details"
+      ],
+      "status": {
+        "fate": {
+          "type": "Number",
+          "label": "Fate",
+          "value": 0
+        }
+      },
+      "details": {
+        "experience": {
+          "type": "Number",
+          "label": "Experience",
+          "total": 0,
+          "spent": 0
+        }
+      }
+    }
+  },
+  "Item": {
+    "types": [
+      "weapon",
+      "armour",
+      "skill",
+      "advantage",
+      "disadvantage"
+    ],
+    "templates": {
+      "quantity": {
         "quantity": {
-          "quantity": {
           "type": "Number",
           "label": "Quantity",
           "value": 1
-          }
-        },
+        }
+      },
+      "encumbrance": {
         "encumbrance": {
-          "encumbrance": {
           "type": "Number",
           "label": "Encumbrance",
           "value": 0
-          }
-        },
+        }
+      },
+      "price": {
         "price": {
-          "price": {
           "type": "String",
           "label": "Price",
           "gc": 0,
           "ss": 0,
           "bp": 0
-          }
-        },
+        }
+      },
+      "availability": {
         "availability": {
-          "availability": {
           "type": "String",
           "label": "Availability",
           "value": ""
-          }
-        },
+        }
+      },
+      "APvalue":{
+        "APValue":{
+          "type": "Number",
+          "label": "APValue",
+          "value": 0
+        }
+      },
+      "max":{
+        "max":{
+          "type": "String",
+          "label" : "Max",
+          "value" : "0"
+        }
+      },
+      "description": {
         "description": {
-          "description": {
           "type": "String",
           "label": "Description",
           "value": ""
-          },
-          "gmdescription": {
-            "type": "String",
-            "label": "Description",
-            "value": ""
-          }
         },
+        "gmdescription": {
+          "type": "String",
+          "label": "Description",
+          "value": ""
+        }
+      },
+      "location": {
         "location": {
-          "location": {
           "type": "Number",
           "label": "Location",
           "value": 0
-          }
         }
+      }
+    },
+    "weapon": {
+      "templates": [
+        "weapon"
+      ],
+      "damage": {
+        "type": "String",
+        "label": "Damage",
+        "value": ""
+      }
+    },
+    "armor": {
+      "templates": [
+        "armor"
+      ],
+      "worn": {
+        "type": "Boolean",
+        "label": "Worn",
+        "value": false
+      }
+    },
+    "advantage":{
+      "templates": [
+        "description", "APvalue", "max"
+      ]
+    },
+    "disadvantage":{
+      "templates": [
+        "description", "APvalue", "max"
+      ]
+    },
+   
+    "skill": {
+      "templates": [
+        "description"
+      ],
+      "group": {
+        "value": "",
+        "type": "String",
+        "label": "Skillgroup"
       },
-      "weapon": {
-        "templates": ["weapon"],
-        "damage": {
-            "type": "String",
-            "label": "Damage",
-            "value" : ""
-          }
+      "Rpr":{
+        "value": "no",
+        "type": "String",
+        "label": "Routinecheck"
       },
-      "armor": {
-        "templates": ["armor"],
-        "worn": {
-            "type": "Boolean",
-            "label": "Worn",
-            "value": false
-          }
+      "characteristic1": {
+        "type": "String",
+        "label": "Characteristic1",
+        "value": "mu"
       },
-      "skill": {
-        "templates": ["description"],
-        
-        "group": {
-          "value": "",
-          "type": "String"
-        },
-        "characteristic1": {
-          "type": "String",
-          "label": "Characteristic1",
-          "value": "ws"
-        },
-        "characteristic2": {
-            "type": "String",
-            "label": "Characteristic2",
-            "value": "ws"
-          },
-          "characteristic3": {
-            "type": "String",
-            "label": "Characteristic3",
-            "value": "ws"
-          },
-        "burden": {
-          "type": "Boolean",
-          "label": "Burden",
-          "value": false
-        }
-      
+      "characteristic2": {
+        "type": "String",
+        "label": "Characteristic2",
+        "value": "mu"
+      },
+      "characteristic3": {
+        "type": "String",
+        "label": "Characteristic3",
+        "value": "mu"
+      },
+      "StF": {
+        "type": "String",
+        "label": "Advancementfactor",
+        "value": "A"
+      },
+      "RPr": {
+        "type": "String",
+        "label": "Routinecheck",
+        "value": "no"
+      },
+      "burden": {
+        "type": "String",
+        "label": "Burden",
+        "value": "no"
+      },
+      "talentValue":{
+        "type": "Number",
+        "label": "Fw",
+        "value": 0
       }
     }
+  }
 }

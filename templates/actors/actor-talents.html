@@ -1,0 +1,133 @@
+<div class="skill-section" ondragstart="return false;" ondrop="return false;">
+  <div id="basic-skills-list" class="flexcolumn">
+    <div class="inventory-list save-scroll">
+
+      <ol>
+        <li class="li-title">
+          <div>
+            {{localize "Skill"}}
+          </div>
+          <div>{{localize "probe"}}</div>
+          <div>{{localize "CHARAbbrev.BE"}}</div>
+          <div>{{localize "CHARAbbrev.STF"}}</div>
+          <div>{{localize "CHARAbbrev.FW"}}</div>
+          <div>{{localize "CHARAbbrev.RPR"}}</div>
+        </li>
+        <li class="li-header">
+          <div>
+            {{localize "SKILL.body"}}
+          </div>
+          <div>{{localize "SKILLAbrev.body"}}</div>
+        </li>
+        {{#each actor.bodySkills as |item i|}}
+        <li class="item" data-item-id="{{item._id}}">
+          <div><a class="skill-select">{{item.name}}</a></div>
+          <div>
+            {{localize (concatUp "CHARAbbrev." item.data.characteristic1.value)}}/{{localize (concatUp "CHARAbbrev." item.data.characteristic2.value)}}/{{localize (concatUp "CHARAbbrev." item.data.characteristic3.value)}}
+          </div>
+          <div>{{localize item.data.burden.value}}</div>
+          <div>{{item.data.StF.value}}</div>
+          <div>{{item.data.talentValue.value}}</div>
+          <div>{{item.data.RPr.value}}</div>
+        </li>
+        {{/each}}
+
+
+        <li class="li-header">
+          <div>
+            {{localize "SKILL.social"}}
+          </div>
+          <div>{{localize "SKILLAbrev.social"}}</div>
+        </li>
+        {{#each actor.socialSkills as |item i|}}
+        <li class="item" data-item-id="{{item._id}}">
+          <div><a class="skill-select">{{item.name}}</a></div>
+          <div>
+            {{localize (concatUp "CHARAbbrev." item.data.characteristic1.value)}}/{{localize (concatUp "CHARAbbrev." item.data.characteristic2.value)}}/{{localize (concatUp "CHARAbbrev." item.data.characteristic3.value)}}
+          </div>
+          <div>{{localize item.data.burden.value}}</div>
+          <div>{{item.data.StF.value}}</div>
+          <div>{{item.data.talentValue.value}}</div>
+          <div>{{item.data.RPr.value}}</div>
+        </li>
+        {{/each}}
+
+
+        <li class="li-header">
+          <div>
+            {{localize "SKILL.nature"}}
+          </div>
+          <div>{{localize "SKILLAbrev.nature"}}</div>
+        </li>
+        {{#each actor.natureSkills as |item i|}}
+        <li class="item" data-item-id="{{item._id}}">
+          <div><a class="skill-select">{{item.name}}</a></div>
+          <div>
+            {{localize (concatUp "CHARAbbrev." item.data.characteristic1.value)}}/{{localize (concatUp "CHARAbbrev." item.data.characteristic2.value)}}/{{localize (concatUp "CHARAbbrev." item.data.characteristic3.value)}}
+          </div>
+          <div>{{localize item.data.burden.value}}</div>
+          <div>{{item.data.StF.value}}</div>
+          <div>{{item.data.talentValue.value}}</div>
+          <div>{{item.data.RPr.value}}</div>
+        </li>
+        {{/each}}
+      </ol>
+    </div>
+  </div>
+  <div id="basic-skills-list-col2" class="flexcolumn">
+
+    <div class="inventory-list save-scroll">
+
+      <ol>
+        <li class="li-title">
+          <div>
+            {{localize "Skill"}}
+          </div>
+          <div> {{localize "probe"}}</div>
+          <div>{{localize "CHARAbbrev.BE"}}</div>
+          <div>{{localize "CHARAbbrev.STF"}}</div>
+          <div>{{localize "CHARAbbrev.FW"}}</div>
+          <div>{{localize "CHARAbbrev.RPR"}}</div>
+        </li>
+        <li class="li-header">
+          <div>
+            {{localize "SKILL.knowledge"}}
+          </div>
+          <div>{{localize "SKILLAbrev.knowledge"}}</div>
+        </li>
+        {{#each actor.knowledgeSkills as |item i|}}
+        <li class="item" data-item-id="{{item._id}}">
+          <div><a class="skill-select">{{item.name}}</a></div>
+          <div>
+            {{localize (concatUp "CHARAbbrev." item.data.characteristic1.value)}}/{{localize (concatUp "CHARAbbrev." item.data.characteristic2.value)}}/{{localize (concatUp "CHARAbbrev." item.data.characteristic3.value)}}
+          </div>
+          <div>{{localize item.data.burden.value}}</div>
+          <div>{{item.data.StF.value}}</div>
+          <div>{{item.data.talentValue.value}}</div>
+          <div>{{item.data.RPr.value}}</div>
+        </li>
+        {{/each}}
+
+        <li class="li-header">
+          <div>
+            {{localize "SKILL.trade"}}
+          </div>
+          <div>{{localize "SKILLAbrev.trade"}}</div>
+        </li>
+        {{#each actor.tradeSkills as |item i|}}
+        <li class="item" data-item-id="{{item._id}}">
+          <div><a class="skill-select">{{item.name}}</a></div>
+          <div>
+            {{localize (concatUp "CHARAbbrev." item.data.characteristic1.value)}}/{{localize (concatUp "CHARAbbrev." item.data.characteristic2.value)}}/{{localize (concatUp "CHARAbbrev." item.data.characteristic3.value)}}
+          </div>
+          <div>{{localize item.data.burden.value}}</div>
+          <div>{{item.data.StF.value}}</div>
+          <div>{{item.data.talentValue.value}}</div>
+          <div>{{item.data.RPr.value}}</div>
+        </li>
+        {{/each}}
+      </ol>
+    </div>
+
+  </div>
+</div>
