@@ -4,7 +4,7 @@
             <div class="table-header"></div>
             {{#each actor.data.characteristics as |ch c|}}
             <div title="{{localize ch.label}}" class="table-header">
-                <div class="header-block" style="border-color: {{ch.color}};">
+                <div class="header-block">
                     {{localize ch.abrev}}
                 </div>
             </div>
@@ -55,7 +55,7 @@
                 </div>
             </div>
             {{#each actor.data.characteristics as |ch c|}}
-            <div class="table-data ch-value" data-char="{{c}}"><a>{{ch.value}}</a></div>
+            <div class="table-data ch-value attr attr-{{c}}" data-char="{{c}}"><a>{{ch.value}}</a></div>
             {{/each}}
         </div>
     </div>

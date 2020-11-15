@@ -7,20 +7,26 @@
     <b>{{localize "Roll"}}</b>:
     {{#each testData.characteristics as |item i|}}
     {{#if item.suc}}
-    <span title="{{localize (concatUp "CHAR." item.char)}}" class="suc die-{{item.char}} d20">
+    <span title="{{localize (concatUp "CHAR." item.char)}} vs {{item.tar}}" class="suc die-{{item.char}} d20">
         {{item.res}}</span>
     {{else}}
-    <span title="{{localize (concatUp "CHAR." item.char)}}" class="fail die-{{item.char}} d20">
+    <span title="{{localize (concatUp "CHAR." item.char)}} vs {{item.tar}}" class="fail die-{{item.char}} d20">
         {{item.res}}</span>
     {{/if}}
     {{/each}}
 </div>
 
-
+{{#when testData.modifiers 'noteq' 0 }}
+<div class="card-content display-toggle">
+    <b>{{localize "Modifiers"}}</b>: {{testData.modifiers}}
+</div>
+{{/when}}
+{{#if testData.result}}
 <div class="card-content display-toggle">
     <b>{{localize "FP"}}</b>: {{testData.result}}{{#if testData.qualityStep}}, <b>{{localize "qualityStep"}}</b>:
     {{testData.qualityStep}}{{/if}}
 </div>
+{{/if}}
 
 <div class="card-content" roll-description="{{description}}">
     <b>{{localize "Description"}}</b>: {{testData.description}}

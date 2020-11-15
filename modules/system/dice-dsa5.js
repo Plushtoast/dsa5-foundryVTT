@@ -67,28 +67,29 @@ export default class DiceDSA5 {
     static rollAttribute(testData) {
         let roll = testData.roll ? testData.roll : new Roll("1d20").roll();
         let description = "";
-        let res = testData.testModifier + testData.testDifficulty + testData.source.value;
+        let modifier =  testData.testModifier + testData.testDifficulty;
+        let res = modifier + testData.source.value;
 
         var chars =[]
         
         
         let res1 = res - roll.terms[0].results[0].result;
 
-        chars.push({char:  testData.extra.characteristicId, res: roll.terms[0].results[0].result, suc: res1 > 0});
+        chars.push({char:  testData.extra.characteristicId, res: roll.terms[0].results[0].result, suc: res1 > 0, tar: res});
         let rollConfirm = new Roll("1d20").roll();
 
         if(roll.terms[0].results.filter(x => x.result == 1).length == 1){
             description = game.i18n.localize("CriticalSuccess");
             let res2 = res - rollConfirm.terms[0].results[0].result;
             if(res2>=0){
-                chars.push({char:  testData.extra.characteristicId, res: rollConfirm.terms[0].results[0].result, suc: true});
+                chars.push({char:  testData.extra.characteristicId, res: rollConfirm.terms[0].results[0].result, suc: true, tar: res});
             }
         }
         else if(roll.terms[0].results.filter(x => x.result == 20).length == 1){
             description = game.i18n.localize("CriticalFailure");
             let res2 = res - rollConfirm.terms[0].results[0].result;
             if(res < 0){
-                chars.push({char:  testData.extra.characteristicId, res: rollConfirm.terms[0].results[0].result, suc: false});
+                chars.push({char:  testData.extra.characteristicId, res: rollConfirm.terms[0].results[0].result, suc: false, tar: res});
             }
             
         }
@@ -98,11 +99,11 @@ export default class DiceDSA5 {
         }
 
         return {
-            result: res,
+            //result: res,
             characteristics: chars,
             description: description,
             preData: testData,
-            modifiers: testData.modifiers,
+            modifiers: modifier,
             extra:
                 {}
         }
@@ -111,19 +112,22 @@ export default class DiceDSA5 {
     static rollTalent(testData) {
         let roll = testData.roll ? testData.roll : new Roll("3d20").roll();
         let description = "";
-        let res = testData.testModifier + testData.testDifficulty + testData.source.data.talentValue.value;
-   
-        let res1 = roll.terms[0].results[0].result - testData.extra.actor.data.characteristics[testData.source.data.characteristic1.value].value;
+        let modifier = testData.testModifier + testData.testDifficulty;
+        let fps =  testData.source.data.talentValue.value;
+        let tar1 = testData.extra.actor.data.characteristics[testData.source.data.characteristic1.value].value +  modifier;
+        let res1 = roll.terms[0].results[0].result - tar1;
         if (res1 > 0) {
-            res = res - res1;
+            fps = fps - res1;
         }
-        let res2 = roll.terms[0].results[1].result - testData.extra.actor.data.characteristics[testData.source.data.characteristic2.value].value;
+        let tar2 = testData.extra.actor.data.characteristics[testData.source.data.characteristic2.value].value + modifier;
+        let res2 = roll.terms[0].results[1].result - tar2;
         if (res2 > 0) {
-            res = res - res2;
+            fps = fps - res2;
         }
-        let res3 = roll.terms[0].results[2].result - testData.extra.actor.data.characteristics[testData.source.data.characteristic3.value].value;
+        let tar3 = testData.extra.actor.data.characteristics[testData.source.data.characteristic3.value].value + modifier
+        let res3 = roll.terms[0].results[2].result - tar3;
         if (res3 > 0) {
-            res = res - res3;
+            fps = fps - res3;
         }
 
         if(roll.terms[0].results.filter(x => x.result == 1).length == 3){
@@ -138,21 +142,21 @@ export default class DiceDSA5 {
         else if(roll.terms[0].results.filter(x => x.result == 20).length == 2){
             description = game.i18n.localize("CriticalFailure");
         }else{
-            description = game.i18n.localize(res >= 0 ? "Success" : "Failure");
+            description = game.i18n.localize(fps >= 0 ? "Success" : "Failure");
         }
         
 
         return {
-            result: res,
+            result: fps,
             characteristics: [
-                {char:  testData.source.data.characteristic1.value, res: roll.terms[0].results[0].result, suc: res1 <= 0},
-                {char:  testData.source.data.characteristic2.value, res: roll.terms[0].results[1].result, suc: res2 <= 0},
-                {char:  testData.source.data.characteristic3.value, res: roll.terms[0].results[2].result, suc: res3 <= 0}
+                {char:  testData.source.data.characteristic1.value, res: roll.terms[0].results[0].result, suc: res1 <= 0, tar: tar1},
+                {char:  testData.source.data.characteristic2.value, res: roll.terms[0].results[1].result, suc: res2 <= 0, tar: tar2}, 
+                {char:  testData.source.data.characteristic3.value, res: roll.terms[0].results[2].result, suc: res3 <= 0, tar: tar3}
             ],
-            qualityStep: res > 0 ? Math.ceil(res / 3) : 0,
+            qualityStep: fps > 0 ? Math.ceil(fps / 3) : 0,
             description: description,
             preData: testData,
-            modifiers: testData.modifiers,
+            modifiers: modifier,
             extra:
                 {}
         }

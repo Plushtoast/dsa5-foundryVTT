@@ -120,16 +120,6 @@
     width: 100%;
   }
 
-  .characteristics-table .table-header .header-block{
-    border-radius: 100%;
-    line-height:25px;
-    text-align: center;
-    border: 2px solid black;
-    width: 25px;
-    height: 25px;
-    margin: 0 auto;
-  }
-
   .characteristics-table .table-data, .characteristics-table .table-header{
     width: 10%;
   }
@@ -249,4 +239,42 @@
     background-size: contain;
     line-height: 35px;
     text-align: center;
+  }
+
+  .attr-mu a{
+    background-color: #b3241a;
+  }
+  .attr-kl a{
+    background-color: #8259a3;
+  }
+  .attr-in a{
+    background-color: #388834;
+  }
+  .attr-ch a{
+    background-color: #0d0d0d;
+    color: white;
+  }
+  .attr-ff a{
+    background-color: #d5b467;
+  }
+  .attr-ge a{
+    background-color: #688ec4;
+  }
+  .attr-ko a{
+    background-color: #fbf5ea;
+  }
+  .attr-kk a{
+    background-color: #d6a878;
+  }
+
+  .attr a{
+    border-radius: 100%;
+    line-height:25px;
+    text-align: center;
+    width: 30px;
+    height: 30px;
+    margin: 0 auto;
+    display: inline-block;
+    padding: 3px;
+    box-shadow: 0 0 8px #00000052 inset
   }

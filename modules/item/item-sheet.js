@@ -59,6 +59,8 @@ export default class ItemSheetdsa5 extends ItemSheet{
           data['skillGroups'] = DSA5.skillGroups;
           data['skillBurdens'] = DSA5.skillBurdens;
           data['StFs'] = DSA5.StFs;
+        }else if(this.item.type == "species"){
+          console.log("species")
         }
         return data;
       }

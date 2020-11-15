@@ -4,7 +4,7 @@
     "description": "Many details here.",
     "version": "0.0.1",
     "templateVersion": 5,
-    "author": "Jan Weigmann",
+    "author": "Plushtoast",
     "scripts": [
      
     ],
@@ -19,7 +19,7 @@
           "name": "Skills",
           "label": "Skills",
           "system": "dsa5",
-          "path": "./packs.skills.db",
+          "path": "packs/skills.db",
           "entity": "Item",
           "tags": [
             "skill"

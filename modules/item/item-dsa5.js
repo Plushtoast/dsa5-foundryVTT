@@ -14,7 +14,12 @@ export default class Itemdsa5 extends Item {
 
         if (this.data.type == "skill")
             this.prepareSkill()
+        if (this.dat.type == "species")
+            this.prepareSpecies()
+    }       
 
+    prepareSpecies(){
+        
     }
 
     prepareSkill() {

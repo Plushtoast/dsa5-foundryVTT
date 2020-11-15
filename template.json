@@ -86,10 +86,50 @@
             "type": "Number",
             "label": "Wounds",
             "abrev": "W",
+            "initial": 0,
             "value": 8,
-            "max": 8
+            "advances": 0,
+            "modifier": 0
+          },
+          "astralenergy": {
+            "type": "Number",
+            "label": "Astral Energy",
+            "abrev": "AE",
+            "initial":0,
+            "value": 0,
+            "advances": 0,
+            "modifier": 0
+          },
+          "karmaenergy": {
+            "type": "Number",
+            "label": "Karma Energy",
+            "abrev": "KE",
+            "initial":0,
+            "value": 0,
+            "advances": 0,
+            "modifier": 0
+          },
+          "soulpower": {
+            "type": "Number",
+            "label": "Soulpower",
+            "abrev": "SP",
+            "value": 0,
+            "modifier": 0
+          },
+          "toughness": {
+            "type": "Number",
+            "label": "Toughness",
+            "abrev": "SP",
+            "value": 0,
+            "modifier": 0
+          },
+          "dodge": {
+            "type": "Number",
+            "label": "Dodge",
+            "abrev": "D",
+            "value": 0,
+            "modifier": 0
           }
-          
         }
       },
       "details": {
@@ -191,7 +231,8 @@
       "armour",
       "skill",
       "advantage",
-      "disadvantage"
+      "disadvantage",
+      "species"
     ],
     "templates": {
       "quantity": {
@@ -288,7 +329,33 @@
         "description", "APvalue", "max"
       ]
     },
-   
+    "species":{
+      "templates": [
+        "description", "APvalue"
+      ],
+      "baseValues": {
+        "wounds": {
+          "value": 0,
+          "type" : "Number",
+          "label": "lifeenergy"
+        },
+        "soulpower": {
+          "value": 0,
+          "type" : "Number",
+          "label": "soulpower"
+        },
+        "toughness": {
+          "value": 0,
+          "type" : "Number",
+          "label": "toughness"
+        },
+        "speed": {
+          "value": 0,
+          "type" : "Number",
+          "label": "lifeenergy"
+        }
+      }
+    },
     "skill": {
       "templates": [
         "description"

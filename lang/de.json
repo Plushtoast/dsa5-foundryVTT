@@ -32,10 +32,12 @@
 
     "DIALOG.RollMode" : "Würfelmodus",
 
+    "APvalue" : "AP-Wert",
     "Advances" : "Steigerungen",
     "AstoundingSuccess": "Spektakulärer Erfolg",
     "AstoundingFailure": "Schreckliches Missgeschick",
     "Age" : "Alter",
+    "baseValue": "Grundwert",
     "BE" : "BE",
     "Burden" : "Belastung",
     "Category" : "Kategorie",
@@ -75,10 +77,14 @@
     "Skills" : "Talente",
     "Species" : "Rasse",
     "Socialstate" : "Sozialstatus",
+    "soulpower" : "Seelenkraft",
     "StF" : "Steigerungsfaktor",
     "Success" : "Erfolg",
+    "speed" : "Geschwindigkeit",
     "Test" : "Test",
+    "toughness": "Zähigkeit",
     "Weight" : "Gewicht",
+    "wounds" : "Lebenskraft",
     "yes" : "Ja",
 
     "SKILL.body" : "Körpertalente",
