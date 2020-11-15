@@ -2,37 +2,35 @@
     "name": "dsa5",
     "title": "Das Schwarze Auge (5th Edition)",
     "description": "Many details here.",
-    "version": "0.0.2",
-    "templateVersion": 6,
+    "version": "0.0.3",
+    "templateVersion": 7,
     "author": "Plushtoast",
     "scripts": [
-     
+
     ],
     "esmodules": [
         "dsa5.js"
     ],
     "styles": [
-      "styles/dsa5.css"
+        "styles/dsa5.css"
     ],
-    "packs": [
-        {
-          "name": "Skills",
-          "label": "Skills",
-          "system": "dsa5",
-          "path": "packs/skills.db",
-          "entity": "Item",
-          "tags": [
+    "packs": [{
+        "name": "Skills",
+        "label": "Skills",
+        "system": "dsa5",
+        "path": "packs/skills.db",
+        "entity": "Item",
+        "tags": [
             "skill"
-          ]
-        }
-    ],
+        ]
+    }],
     "languages": [
-     
-      {
-        "lang": "de",
-        "name": "Deutsch",
-        "path": "lang/de.json"
-      }
+
+        {
+            "lang": "de",
+            "name": "Deutsch",
+            "path": "lang/de.json"
+        }
     ],
     "socket": true,
     "initiative": "1d20",
@@ -40,10 +38,10 @@
     "gridUnits": "ft",
     "primaryTokenAttribute": "resources.health",
     "secondaryTokenAttribute": "resources.power",
-    "minimumCoreVersion": "0.7.6",
-    "compatibleCoreVersion": "0.7.6",
+    "minimumCoreVersion": "0.7.7",
+    "compatibleCoreVersion": "0.7.7",
     "url": "https://github.com/Plushtoast/dsa5-foundryVTT",
     "manifest": "https://raw.githubusercontent.com/Plushtoast/dsa5-foundryVTT/master/system.json",
     "download": "https://github.com/Plushtoast/dsa5-foundryVTT/archive/master.zip"
-    
-  }
+
+}
