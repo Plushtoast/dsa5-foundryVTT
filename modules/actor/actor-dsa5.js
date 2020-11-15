@@ -10,11 +10,9 @@ export default class Actordsa5 extends Actor {
         if (data.items)
             return super.create(data, options);
 
-        // Initialize empty items
         data.items = [];
 
-        data.flags =
-        {
+        data.flags = {
 
         }
 
@@ -24,7 +22,7 @@ export default class Actordsa5 extends Actor {
             data.items = data.items.concat(skills);
 
 
-            super.create(data, options); // Follow through the the rest of the Actor creation process upstream
+            super.create(data, options);
         }
     }
 
@@ -36,19 +34,41 @@ export default class Actordsa5 extends Actor {
         }
     }
 
-    //prepare calculated attributes
     prepareData() {
         try {
             super.prepareData();
             const data = this.data;
 
-            if (this.data.type == "character")
+            if (this.data.type == "character") {
                 this.prepareCharacter();
+                data.data.details.experience.current = data.data.details.experience.total - data.data.details.experience.spent;
+                data.data.details.experience.description = DSA5_Utility.experienceDescription(data.data.details.experience.total)
+
+                data.data.status.wounds.value = data.data.status.wounds.initial + data.data.characteristics["ko"].value * 2;
+                data.data.status.wounds.max = data.data.status.wounds.value + data.data.status.wounds.modifier + data.data.status.wounds.advances;
+
+                data.data.status.astralenergy.value = (data.data.status.astralenergy.initial > 0 ? data.data.status.astralenergy.initial + 20 : 0);
+                data.data.status.astralenergy.max = data.data.status.astralenergy.value + data.data.status.astralenergy.modifier + data.data.status.astralenergy.advances;
+
+                data.data.status.karmaenergy.value = (data.data.status.karmaenergy.initial > 0 ? data.data.status.karmaenergy.initial + 20 : 0);
+                data.data.status.karmaenergy.max = data.data.status.karmaenergy.value + data.data.status.karmaenergy.modifier + data.data.status.karmaenergy.advances;
+
+                data.data.status.soulpower.value = (data.data.status.soulpower.initial ? data.data.status.soulpower.initial : 0) + Math.round((data.data.characteristics["mu"].value + data.data.characteristics["kl"].value + data.data.characteristics["in"].value) / 6);
+                data.data.status.soulpower.max = data.data.status.soulpower.value + data.data.status.soulpower.modifier;
+
+                data.data.status.toughness.value = (data.data.status.soulpower.initial ? data.data.status.soulpower.initial : 0) + Math.round((data.data.characteristics["ko"].value + data.data.characteristics["ko"].value + data.data.characteristics["kk"].value) / 6);
+                data.data.status.toughness.max = data.data.status.toughness.value + data.data.status.toughness.modifier;
+
+                data.data.status.dodge.value = Math.round(data.data.characteristics["ge"].value / 2);
+                data.data.status.dodge.max = data.data.status.dodge.value + data.data.status.dodge.modifier;
+
+                data.data.status.fatePoints.max = data.data.status.fatePoints.value + data.data.status.fatePoints.modifier;
+            }
 
 
 
-        }
-        catch (error) {
+
+        } catch (error) {
             console.error("Something went wrong with preparing actor data: " + error)
             ui.notifications.error(game.i18n.localize("ACTOR.PreparationError") + error)
         }
@@ -66,7 +86,7 @@ export default class Actordsa5 extends Actor {
 
     prepare() {
         let preparedData = duplicate(this.data)
-        // Call prepareItems first to organize and process OwnedItems
+            // Call prepareItems first to organize and process OwnedItems
         mergeObject(preparedData, this.prepareItems())
 
         // Add speciality functions for each Actor type
@@ -90,14 +110,12 @@ export default class Actordsa5 extends Actor {
         let knowledgeSkills = [];
         let tradeSkills = [];
         let natureSkills = [];
-        console.log("preparing items")
         for (let i of actorData.items) {
             try {
                 i.img = i.img || DEFAULT_TOKEN;
 
                 // *********** TALENTS ***********
                 if (i.type === "skill") {
-                    console.log("preparing skill")
                     this.prepareSkill(i);
                     switch (i.data.group.value) {
                         case "body":
@@ -117,12 +135,11 @@ export default class Actordsa5 extends Actor {
                             break;
                     }
                 }
-            }
-            catch (error) {
+            } catch (error) {
                 console.error("Something went wrong with preparing item " + i.name + ": " + error)
                 ui.notifications.error("Something went wrong with preparing item " + i.name + ": " + error)
-                // ui.notifications.error("Deleting " + i.name);
-                // this.deleteEmbeddedEntity("OwnedItem", i._id);
+                    // ui.notifications.error("Deleting " + i.name);
+                    // this.deleteEmbeddedEntity("OwnedItem", i._id);
             }
         }
         return {
@@ -237,8 +254,7 @@ export default class Actordsa5 extends Actor {
             cardOptions.speaker.token = this.token.data._id;
             cardOptions.speaker.scene = canvas.scene._id
             cardOptions.flags.img = this.token.data.img; // Use the token image instead of the actor image
-        }
-        else // If a linked actor - use the currently selected token's data if the actor id matches
+        } else // If a linked actor - use the currently selected token's data if the actor id matches
         {
             let speaker = ChatMessage.getSpeaker()
             if (speaker.actor == this.data._id) {
@@ -282,7 +298,7 @@ export default class Actordsa5 extends Actor {
         if (game.settings.get("wfrp4e", "manualChatCards") && !rerenderMessage)
             testData.roll = testData.SL = null;
 
-        if (game.modules.get("dice-so-nice") && game.modules.get("dice-so-nice").active && chatOptions.sound?.includes("dice"))
+        if (game.modules.get("dice-so-nice") && game.modules.get("dice-so-nice").active && chatOptions.sound.includes("dice"))
             chatOptions.sound = undefined;
 
         testData.other = testData.other.join("<br>")
@@ -336,8 +352,7 @@ export default class Actordsa5 extends Actor {
                     console.log(`wfrp4e | Playing Sound: ${chatOptions.sound}`)
                 return ChatMessage.create(chatOptions, false);
             });
-        }
-        else // Update message 
+        } else // Update message 
         {
             // Generate HTML from the requested chat template
             return renderTemplate(chatOptions.template, chatData).then(html => {
@@ -348,14 +363,13 @@ export default class Actordsa5 extends Actor {
                     console.log(`wfrp4e | Playing Sound: ${chatOptions.sound}`)
                     AudioHelper.play({ src: chatOptions.sound }, true)
                 }
-                return rerenderMessage.update(
-                    {
-                        content: html,
-                        ["flags.data"]: chatOptions["flags.data"]
-                    }).then(newMsg => {
-                        ui.chat.updateMessage(newMsg);
-                        return newMsg;
-                    });
+                return rerenderMessage.update({
+                    content: html,
+                    ["flags.data"]: chatOptions["flags.data"]
+                }).then(newMsg => {
+                    ui.chat.updateMessage(newMsg);
+                    return newMsg;
+                });
             });
         }
     }

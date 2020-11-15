@@ -1,4 +1,3 @@
-
 import DSA5_Utility from "../system/utility-dsa5.js";
 import DSA5 from "../system/config-dsa5.js";
 
@@ -8,7 +7,8 @@ export default class ActorSheetDsa5 extends ActorSheet {
         return this.actor.data.type;
     }
 
-    static get defaultOptions() {
+    static
+    get defaultOptions() {
         const options = super.defaultOptions;
         options.tabs = [{ navSelector: ".tabs", contentSelector: ".content", initial: "main" }]
         options.width = 576;
@@ -18,7 +18,7 @@ export default class ActorSheetDsa5 extends ActorSheet {
     async _render(force = false, options = {}) {
         this._saveScrollPos(); // Save scroll positions
         await super._render(force, options);
-        this._setScrollPos();  // Set scroll positions
+        this._setScrollPos(); // Set scroll positions
 
         // Add Tooltips
         /*$(this._element).find(".close").attr("title", game.i18n.localize("SHEET.Close"));
@@ -51,7 +51,6 @@ export default class ActorSheetDsa5 extends ActorSheet {
 
     getData() {
         const sheetData = super.getData();
-        console.log("preparing")
         mergeObject(sheetData.actor, this.actor.prepare())
 
         if (this.actor.data.type == "character")
@@ -87,8 +86,7 @@ export default class ActorSheetDsa5 extends ActorSheet {
             if (event.keyCode == 9) // Tab
             {
                 this.skillUpdateFlag = false;
-            }
-            else {
+            } else {
                 this.skillUpdateFlag = true;
             }
             if (event.keyCode == 13) // Enter
@@ -121,4 +119,29 @@ export default class ActorSheetDsa5 extends ActorSheet {
         return $(ev.currentTarget).parents(".item").attr("data-item-id")
     }
 
+    async _onDrop(event) {
+        let dragData = JSON.parse(event.dataTransfer.getData("text/plain"));
+
+        let item = DSA5_Utility.findItembyId(dragData.id);
+        console.log(dragData);
+        console.log(item);
+        if (item.data.type == "species") {
+            console.log("updating");
+            await this.actor.update({
+                "data.details.species.value": item.data.name,
+                "data.details.experience.spent": this.actor.data.data.details.experience.spent + item.data.data.APValue.value,
+                "data.status.speed.initial": item.data.data.baseValues.speed.value,
+                "data.status.soulpower.initial": item.data.data.baseValues.soulpower.value,
+                "data.status.toughness.initial": item.data.data.baseValues.toughness.value,
+                "data.status.wounds.initial": item.data.data.baseValues.wounds.value,
+            });
+        }
+        /*if (dragData.type == "species") {
+            await this.actor.update({ 
+                "details": {
+                    "species" : dragData
+                }
+             })
+        }*/
+    }
 }

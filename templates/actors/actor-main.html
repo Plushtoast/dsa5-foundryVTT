@@ -4,7 +4,7 @@
             <div class="table-header"></div>
             {{#each actor.data.characteristics as |ch c|}}
             <div title="{{localize ch.label}}" class="table-header">
-                <div class="header-block">
+                <div class="header-label">
                     {{localize ch.abrev}}
                 </div>
             </div>
@@ -30,8 +30,7 @@
             </div>
             {{#each actor.data.characteristics as |ch c|}}
             <div class="table-data">
-                <input name="data.characteristics.{{c}}.advances" type="text" value="{{ch.advances}}"
-                    data-dtype="Number">
+                <input name="data.characteristics.{{c}}.advances" type="text" value="{{ch.advances}}" data-dtype="Number">
             </div>
             {{/each}}
         </div>
@@ -43,8 +42,7 @@
             </div>
             {{#each actor.data.characteristics as |ch c|}}
             <div class="table-data">
-                <input name="data.characteristics.{{c}}.modifier" type="text" value="{{ch.modifier}}"
-                    data-dtype="Number">
+                <input name="data.characteristics.{{c}}.modifier" type="text" value="{{ch.modifier}}" data-dtype="Number">
             </div>
             {{/each}}
         </div>
@@ -55,102 +53,251 @@
                 </div>
             </div>
             {{#each actor.data.characteristics as |ch c|}}
-            <div class="table-data ch-value attr attr-{{c}}" data-char="{{c}}"><a>{{ch.value}}</a></div>
+            <div class="table-data ch-value" data-char="{{c}}"><a class="d20 die-{{c}}">{{ch.value}}</a></div>
             {{/each}}
         </div>
     </div>
 </div>
 
-<div class="main-row first">
-    <div class="movement row-section">
-        <div class="move-section">
-            <div class="move-value">
-                <input name="data.details.move.value" type="text" value="{{data.details.move.value}}">
-            </div>
-            <div class="move-name">
-                <h4 id="movement-label">{{localize "Movement"}}</h4>
-            </div>
-        </div>
-        <div class="move-section">
-            <div class="move-value">
-                {{#if actor.flags.autoCalcWalk}}
-                <a class="auto-calc-toggle" toggle-type="walk">{{actor.data.details.move.walk}} {{localize "yds"}}</a>
-                {{else}}
-                <input class="auto-calc-toggle" toggle-type="walk" name="data.details.move.walk" type="text"
-                    value="{{data.details.move.walk}}" data-dtype="String">
-                {{/if}}
-            </div>
-            <div class="move-name">
-                <h4 id="walk-label">{{localize "Walk"}}</h4>
-            </div>
-        </div>
-        <div class="move-section">
-            <div class="move-value">
-                {{#if actor.flags.autoCalcRun}}
-                <a class="auto-calc-toggle" toggle-type="run">{{actor.data.details.move.run}} {{localize "yds"}}</a>
-                {{else}}
-                <input class="auto-calc-toggle" toggle-type="run" name="data.details.move.run" type="text"
-                    value="{{data.details.move.run}}" data-dtype="String">
-                {{/if}}
-            </div>
-            <div class="move-name">
-                <h4 id="run-label">{{localize "Run"}}</h4>
-            </div>
-        </div>
-    </div>
-
-
-
-    <div class="wounds row-section">
-        <div class="wounds-section">
-            <span class="top label">{{localize "Wounds"}}<a class="rest-icon" title="{{localize "RestRecover"}}"><i
-                        class="fas fa-bed"></i></a> </span>
-            <div class="wounds-value-box">
-                <div id="value">
-                    <input class="wounds-value" data-dtype="{{data.status.wounds.type}}" type="text"
-                        value="{{data.status.wounds.value}}">
+<div class="main-row">
+    <div class="column1">
+        <div class="groupbox">
+            <div class="advantages row-section">
+                <div class="col header-label">
+                    {{localize "advantages"}}
                 </div>
-                <div id="divisor">
-                    /
+            </div>
+        </div>
+
+        <div class="groupbox">
+            <div class="disadvantages row-section">
+                <div class="col header-label">
+                    {{localize "disadvantages"}}
                 </div>
-                <div id="wounds-max">
-                    {{#if actor.flags.autoCalcWounds}}
-                    <a class="auto-calc-toggle" toggle-type="wounds">{{data.status.wounds.max}}</a>
-                    {{else}}
-                    <input class="auto-calc-toggle" toggle-type="wounds" name="data.status.wounds.max" type="text"
-                        value="{{data.status.wounds.max}}" data-dtype="{{data.status.wounds.type}}">
-                    {{/if}}
+            </div>
+        </div>
+
+        <div class="groupbox">
+            <div class="generalSpecialAbilities row-section">
+                <div class="col header-label">
+                    {{localize "generalSpecialAbilities"}}
                 </div>
             </div>
         </div>
     </div>
-</div>
 
-<div class="main-row second">
+    <div class="column2">
+        <div class="groupbox">
+            <div class="derivedAttrs row-section">
+                <div class="col two">
+                </div>
+                <div class="col eight very-small" title="{{localize 'value'}}">
+                    {{localize "ABBR-value"}}
+                </div>
+                <div class="col eight very-small" title="{{localize 'Modifiers'}}">
+                    {{localize "ABBR-modifiers"}}
+                </div>
+                <div class="col eight very-small" title="{{localize 'Advances'}}">
+                    {{localize "ABBR-advances"}}
+                </div>
+                <div class="col eight very-small" title="{{localize 'max'}}">
+                    {{localize "ABBR-max"}}
+                </div>
+            </div>
+            <div class="derivedAttrs row-section">
+                <div class="col two">
+                    {{localize "wounds"}}
+                </div>
+                <div class="col eight">
+                    <input name="data.status.wounds.value" type="text" value="{{data.status.wounds.value}}" data-dtype="Number" />
+                </div>
+                <div class="col eight">
+                    <input name="data.status.wounds.modifier" type="text" value="{{data.status.wounds.modifier}}" data-dtype="Number" />
 
+                </div>
+                <div class="col eight">
+                    <input name="data.status.wounds.advances" type="text" value="{{data.status.wounds.advances}}" data-dtype="Number" />
 
+                </div>
+                <div class="col eight">
+                    <input name="data.status.wounds.max" type="text" value="{{data.status.wounds.max}}" data-dtype="Number" />
 
+                </div>
+            </div>
+            <div class="derivedAttrs row-section">
+                <div class="col two">
+                    {{localize "astralenergy"}}
+                </div>
+                <div class="col eight">
+                    <input name="data.status.astralenergy.value" type="text" value="{{data.status.astralenergy.value}}" data-dtype="Number" />
+                </div>
+                <div class="col eight">
+                    <input name="data.status.astralenergy.modifier" type="text" value="{{data.status.astralenergy.modifier}}" data-dtype="Number" />
 
-    <div class="experience row-section">
-        <div class="experience-section">
-            <span class="top label">{{localize "Experience"}}</span>
+                </div>
+                <div class="col eight">
+                    <input name="data.status.astralenergy.advances" type="text" value="{{data.status.astralenergy.advances}}" data-dtype="Number" />
+
+                </div>
+                <div class="col eight">
+                    <input name="data.status.astralenergy.max" type="text" value="{{data.status.astralenergy.max}}" data-dtype="Number" />
+
+                </div>
+            </div>
+            <div class="derivedAttrs row-section">
+                <div class="col two">
+                    {{localize "karmaenergy"}}
+                </div>
+                <div class="col eight">
+                    <input name="data.status.karmaenergy.value" type="text" value="{{data.status.karmaenergy.value}}" data-dtype="Number" />
+                </div>
+                <div class="col eight">
+                    <input name="data.status.karmaenergy.modifier" type="text" value="{{data.status.karmaenergy.modifier}}" data-dtype="Number" />
+
+                </div>
+                <div class="col eight">
+                    <input name="data.status.karmaenergy.advances" type="text" value="{{data.status.karmaenergy.advances}}" data-dtype="Number" />
+
+                </div>
+                <div class="col eight">
+                    <input name="data.status.karmaenergy.max" type="text" value="{{data.status.karmaenergy.max}}" data-dtype="Number" />
+
+                </div>
+            </div>
+            <div class="derivedAttrs row-section">
+                <div class="col two">
+                    {{localize "soulpower"}}
+                </div>
+                <div class="col eight">
+                    <input name="data.status.soulpower.value" type="text" value="{{data.status.soulpower.value}}" data-dtype="Number" />
+                </div>
+                <div class="col eight">
+                    <input name="data.status.soulpower.modifier" type="text" value="{{data.status.soulpower.modifier}}" data-dtype="Number" />
+
+                </div>
+                <div class="col eight">
+
+                </div>
+                <div class="col eight">
+                    <input name="data.status.soulpower.max" type="text" value="{{data.status.soulpower.max}}" data-dtype="Number" />
+
+                </div>
+            </div>
+            <div class="derivedAttrs row-section">
+                <div class="col two">
+                    {{localize "toughness"}}
+                </div>
+                <div class="col eight">
+                    <input name="data.status.toughness.value" type="text" value="{{data.status.toughness.value}}" data-dtype="Number" />
+                </div>
+                <div class="col eight">
+                    <input name="data.status.toughness.modifier" type="text" value="{{data.status.toughness.modifier}}" data-dtype="Number" />
+
+                </div>
+                <div class="col eight">
+
+                </div>
+                <div class="col eight">
+                    <input name="data.status.toughness.max" type="text" value="{{data.status.toughness.max}}" data-dtype="Number" />
+
+                </div>
+            </div>
+            <div class="derivedAttrs row-section">
+                <div class="col two">
+                    {{localize "dodge"}}
+                </div>
+                <div class="col eight">
+                    <input name="data.status.dodge.value" type="text" value="{{data.status.dodge.value}}" data-dtype="Number" />
+                </div>
+                <div class="col eight">
+                    <input name="data.status.dodge.modifier" type="text" value="{{data.status.dodge.modifier}}" data-dtype="Number" />
+
+                </div>
+                <div class="col eight">
+
+                </div>
+                <div class="col eight">
+                    <input name="data.status.dodge.max" type="text" value="{{data.status.dodge.max}}" data-dtype="Number" />
+
+                </div>
+            </div>
         </div>
-        <div class="experience-section">
-            <span class="bottom label">{{localize "Current"}}</span>
-            <div id="value">
-                <input name="data.details.experience.current" type="text" value="{{data.details.experience.current}}"
-                    data-dtype="Number" />
+        <div class="groupbox">
+            <div class="derivedAttrs row-section">
+                <div class="col two">
+                </div>
+                <div class="col eight">
+
+                </div>
+                <div class="col eight very-small" title="{{localize " value "}}">
+                    {{localize "ABBR-value"}}
+                </div>
+                <div class="col eight very-small" title="{{localize " Modifiers "}}">
+                    {{localize "ABBR-modifiers"}}
+                </div>
+
+                <div class="col eight very-small" title="{{localize " max "}}">
+                    {{localize "ABBR-max"}}
+                </div>
             </div>
-            <span class="bottom label">{{localize "Spent"}}</span>
-            <div id="value">
-                <input name="data.details.experience.spent" type="text" value="{{data.details.experience.spent}}"
-                    data-dtype="Number" />
-            </div>
-            <span class="bottom label">{{localize "Total"}}</span>
-            <div id="value">
-                <input name="data.details.experience.total" type="text" value="{{data.details.experience.total}}"
-                    data-dtype="Number" />
+            <div class="fate row-section">
+
+                <div class="col two">
+                    {{localize "fatePoints"}}
+                </div>
+                <div class="col eight">
+
+                </div>
+                <div class="col eight">
+                    <input name="data.status.fatePoints.value" type="text" value="{{data.status.fatePoints.value}}" data-dtype="Number" />
+                </div>
+                <div class="col eight">
+                    <input name="data.status.fatePoints.modifier" type="text" value="{{data.status.fatePoints.modifier}}" data-dtype="Number" />
+
+                </div>
+
+                <div class="col eight">
+                    <input name="data.status.fatePoints.max" type="text" value="{{data.status.fatePoints.max}}" data-dtype="Number" />
+
+                </div>
             </div>
         </div>
+        <div class="groupbox">
+            <div class="experience row-section">
+                <div class="col header-label">
+                    <span>{{localize "Experience"}}</span>
+                </div>
+            </div>
+            <div class="experience row-section">
+                <div class="col center">
+                    {{localize data.details.experience.description}}
+                </div>
+            </div>
+            <div class="experience row-section">
+                <div class="col three header-label">
+                    {{localize "Current"}}
+                </div>
+                <div class="col three header-label">
+                    {{localize "Spent"}}
+                </div>
+                <div class="col three header-label">
+                    {{localize "Total"}}
+                </div>
+            </div>
+            <div class="experience row-section">
+                <div class="col three">
+                    <input name="data.details.experience.current" type="text" value="{{data.details.experience.current}}" data-dtype="Number" />
+                </div>
+                <div class="col three">
+                    <input name="data.details.experience.spent" type="text" value="{{data.details.experience.spent}}" data-dtype="Number" />
+                </div>
+                <div class="col three">
+                    <input name="data.details.experience.total" type="text" value="{{data.details.experience.total}}" data-dtype="Number" />
+                </div>
+
+            </div>
+        </div>
+
+
     </div>
 </div>

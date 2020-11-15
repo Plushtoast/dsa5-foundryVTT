@@ -1,410 +1,509 @@
 {
-  "Actor": {
-    "types": [
-      "character"
-    ],
-    "templates": {
-      "characteristics": {
-        "characteristics": {
-          "mu": {
-            "type": "number",
-            "label": "CHAR.MU",
-            "abrev": "CHARAbbrev.MU",
-            "color": "#b3241a",
-            "initial": 8,
-            "modifier": 0,
-            "advances": 0
-          },
-          "kl": {
-            "type": "number",
-            "label": "CHAR.KL",
-            "abrev": "CHARAbbrev.KL",
-            "color": "#8259a3",
-            "initial": 8,
-            "modifier": 0,
-            "advances": 0
-          },
-          "in": {
-            "type": "number",
-            "label": "CHAR.IN",
-            "abrev": "CHARAbbrev.IN",
-            "color": "#388834",
-            "initial": 8,
-            "modifier": 0,
-            "advances": 0
-          },
-          "ch": {
-            "type": "number",
-            "label": "CHAR.CH",
-            "abrev": "CHARAbbrev.CH",
-            "color": "#0d0d0d",
-            "initial": 8,
-            "modifier": 0,
-            "advances": 0
-          },
-          "ff": {
-            "type": "number",
-            "label": "CHAR.FF",
-            "abrev": "CHARAbbrev.FF",
-            "color": "#d5b467",
-            "initial": 8,
-            "modifier": 0,
-            "advances": 0
-          },
-          "ge": {
-            "type": "number",
-            "label": "CHAR.GE",
-            "abrev": "CHARAbbrev.GE",
-            "color": "#688ec4",
-            "initial": 8,
-            "modifier": 0,
-            "advances": 0
-          },
-          "ko": {
-            "type": "number",
-            "label": "CHAR.KO",
-            "abrev": "CHARAbbrev.KO",
-            "color": "#fbf5ea",
-            "initial": 8,
-            "modifier": 0,
-            "advances": 0
-          },
-          "kk": {
-            "type": "number",
-            "label": "CHAR.KK",
-            "abrev": "CHARAbbrev.KK",
-            "color": "#d6a878",
-            "initial": 8,
-            "modifier": 0,
-            "advances": 0
-          }
+    "Actor": {
+        "types": [
+            "character"
+        ],
+        "templates": {
+            "characteristics": {
+                "characteristics": {
+                    "mu": {
+                        "type": "number",
+                        "label": "CHAR.MU",
+                        "abrev": "CHARAbbrev.MU",
+                        "color": "#b3241a",
+                        "initial": 8,
+                        "modifier": 0,
+                        "advances": 0
+                    },
+                    "kl": {
+                        "type": "number",
+                        "label": "CHAR.KL",
+                        "abrev": "CHARAbbrev.KL",
+                        "color": "#8259a3",
+                        "initial": 8,
+                        "modifier": 0,
+                        "advances": 0
+                    },
+                    "in": {
+                        "type": "number",
+                        "label": "CHAR.IN",
+                        "abrev": "CHARAbbrev.IN",
+                        "color": "#388834",
+                        "initial": 8,
+                        "modifier": 0,
+                        "advances": 0
+                    },
+                    "ch": {
+                        "type": "number",
+                        "label": "CHAR.CH",
+                        "abrev": "CHARAbbrev.CH",
+                        "color": "#0d0d0d",
+                        "initial": 8,
+                        "modifier": 0,
+                        "advances": 0
+                    },
+                    "ff": {
+                        "type": "number",
+                        "label": "CHAR.FF",
+                        "abrev": "CHARAbbrev.FF",
+                        "color": "#d5b467",
+                        "initial": 8,
+                        "modifier": 0,
+                        "advances": 0
+                    },
+                    "ge": {
+                        "type": "number",
+                        "label": "CHAR.GE",
+                        "abrev": "CHARAbbrev.GE",
+                        "color": "#688ec4",
+                        "initial": 8,
+                        "modifier": 0,
+                        "advances": 0
+                    },
+                    "ko": {
+                        "type": "number",
+                        "label": "CHAR.KO",
+                        "abrev": "CHARAbbrev.KO",
+                        "color": "#fbf5ea",
+                        "initial": 8,
+                        "modifier": 0,
+                        "advances": 0
+                    },
+                    "kk": {
+                        "type": "number",
+                        "label": "CHAR.KK",
+                        "abrev": "CHARAbbrev.KK",
+                        "color": "#d6a878",
+                        "initial": 8,
+                        "modifier": 0,
+                        "advances": 0
+                    }
+                }
+            },
+            "status": {
+                "status": {
+                    "wounds": {
+                        "type": "Number",
+                        "label": "Wounds",
+                        "abrev": "W",
+                        "initial": 0,
+                        "value": 8,
+                        "advances": 0,
+                        "modifier": 0
+                    },
+                    "astralenergy": {
+                        "type": "Number",
+                        "label": "Astral Energy",
+                        "abrev": "AE",
+                        "initial": 0,
+                        "value": 0,
+                        "advances": 0,
+                        "modifier": 0
+                    },
+                    "karmaenergy": {
+                        "type": "Number",
+                        "label": "Karma Energy",
+                        "abrev": "KE",
+                        "initial": 0,
+                        "value": 0,
+                        "advances": 0,
+                        "modifier": 0
+                    },
+                    "soulpower": {
+                        "type": "Number",
+                        "label": "Soulpower",
+                        "abrev": "SP",
+                        "initial": 0,
+                        "value": 0,
+                        "modifier": 0
+                    },
+                    "toughness": {
+                        "type": "Number",
+                        "label": "Toughness",
+                        "abrev": "SP",
+                        "initial": 0,
+                        "value": 0,
+                        "modifier": 0
+                    },
+                    "dodge": {
+                        "type": "Number",
+                        "label": "Dodge",
+                        "abrev": "D",
+                        "value": 0,
+                        "modifier": 0
+                    },
+                    "fatePoints": {
+                        "type": "Number",
+                        "label": "Fate points",
+                        "abrev": "FP",
+                        "value": 0,
+                        "modifier": 0
+                    },
+                    "speed": {
+                        "type": "Number",
+                        "label": "speed",
+                        "intial": 0
+                    }
+                }
+            },
+            "details": {
+                "details": {
+                    "species": {
+                        "type": "String",
+                        "label": "Species",
+                        "value": ""
+                    },
+                    "gender": {
+                        "type": "String",
+                        "label": "Gender",
+                        "value": ""
+                    },
+                    "culture": {
+                        "type": "String",
+                        "label": "Culture",
+                        "value": ""
+                    },
+                    "career": {
+                        "type": "String",
+                        "label": "Career",
+                        "value": ""
+                    },
+                    "socialstate": {
+                        "type": "String",
+                        "label": "Socialstate",
+                        "value": ""
+                    },
+                    "home": {
+                        "type": "String",
+                        "label": "Home",
+                        "value": ""
+                    },
+                    "family": {
+                        "type": "String",
+                        "label": "Family",
+                        "value": ""
+                    },
+                    "age": {
+                        "type": "String",
+                        "label": "Age",
+                        "value": ""
+                    },
+                    "haircolor": {
+                        "type": "String",
+                        "label": "Hair Color",
+                        "value": ""
+                    },
+                    "eyecolor": {
+                        "type": "String",
+                        "label": "Eye Color",
+                        "value": ""
+                    },
+                    "height": {
+                        "type": "String",
+                        "label": "Height",
+                        "value": ""
+                    },
+                    "weight": {
+                        "type": "String",
+                        "label": "Weight",
+                        "value": ""
+                    },
+                    "distinguishingmark": {
+                        "type": "String",
+                        "label": "Distinguishing Mark",
+                        "value": ""
+                    }
+                }
+            }
+        },
+        "character": {
+            "templates": [
+                "characteristics",
+                "status",
+                "details"
+            ],
+            "details": {
+                "experience": {
+                    "type": "Number",
+                    "label": "Experience",
+                    "total": 0,
+                    "spent": 0
+                }
+            }
         }
-      },
-      "status": {
-        "status": {
-          "wounds": {
-            "type": "Number",
-            "label": "Wounds",
-            "abrev": "W",
-            "initial": 0,
-            "value": 8,
-            "advances": 0,
-            "modifier": 0
-          },
-          "astralenergy": {
-            "type": "Number",
-            "label": "Astral Energy",
-            "abrev": "AE",
-            "initial":0,
-            "value": 0,
-            "advances": 0,
-            "modifier": 0
-          },
-          "karmaenergy": {
-            "type": "Number",
-            "label": "Karma Energy",
-            "abrev": "KE",
-            "initial":0,
-            "value": 0,
-            "advances": 0,
-            "modifier": 0
-          },
-          "soulpower": {
-            "type": "Number",
-            "label": "Soulpower",
-            "abrev": "SP",
-            "value": 0,
-            "modifier": 0
-          },
-          "toughness": {
-            "type": "Number",
-            "label": "Toughness",
-            "abrev": "SP",
-            "value": 0,
-            "modifier": 0
-          },
-          "dodge": {
-            "type": "Number",
-            "label": "Dodge",
-            "abrev": "D",
-            "value": 0,
-            "modifier": 0
-          }
-        }
-      },
-      "details": {
-        "details": {
-          "species": {
-            "type": "String",
-            "label": "Species",
-            "value": ""
-          },
-          "gender": {
-            "type": "String",
-            "label": "Gender",
-            "value": ""
-          },
-          "culture": {
-            "type": "String",
-            "label": "Culture",
-            "value": ""
-          },
-          "career": {
-            "type": "String",
-            "label": "Career",
-            "value": ""
-          },
-          "socialstate": {
-            "type": "String",
-            "label": "Socialstate",
-            "value": ""
-          },
-          "home": {
-            "type": "String",
-            "label": "Home",
-            "value": ""
-          },
-          "family": {
-            "type": "String",
-            "label": "Family",
-            "value": ""
-          },
-          "age": {
-            "type": "String",
-            "label": "Age",
-            "value": ""
-          },
-          "haircolor": {
-            "type": "String",
-            "label": "Hair Color",
-            "value": ""
-          },
-          "eyecolor": {
-            "type": "String",
-            "label": "Eye Color",
-            "value": ""
-          },
-          "height": {
-            "type": "String",
-            "label": "Height",
-            "value": ""
-          },
-          "weight": {
-            "type": "String",
-            "label": "Weight",
-            "value": ""
-          },
-          "distinguishingmark": {
-            "type": "String",
-            "label": "Distinguishing Mark",
-            "value": ""
-          }
-        }
-      }
     },
-    "character": {
-      "templates": [
-        "characteristics",
-        "status",
-        "details"
-      ],
-      "status": {
-        "fate": {
-          "type": "Number",
-          "label": "Fate",
-          "value": 0
+    "Item": {
+        "types": [
+            "ammunition",
+            "meleeweapon",
+            "rangeweapon",
+            "armor",
+            "skill",
+            "advantage",
+            "disadvantage",
+            "species",
+            "equipment"
+        ],
+        "templates": {
+            "equipment": {
+                "price": {
+                    "type": "Number",
+                    "label": "Price",
+                    "value": 0
+                },
+                "quantity": {
+                    "type": "Number",
+                    "label": "Quantity",
+                    "value": 1
+                },
+                "weight": {
+                    "type": "Number",
+                    "label": "weight",
+                    "value": 0
+                },
+                "effect": {
+                    "type": "String",
+                    "label": "Special effect",
+                    "value": ""
+                }
+            },
+            "encumbrance": {
+                "encumbrance": {
+                    "type": "Number",
+                    "label": "Encumbrance",
+                    "value": 0
+                }
+            },
+            "APvalue": {
+                "APValue": {
+                    "type": "Number",
+                    "label": "APValue",
+                    "value": 0
+                }
+            },
+            "max": {
+                "max": {
+                    "type": "String",
+                    "label": "Max",
+                    "value": "0"
+                }
+            },
+            "description": {
+                "description": {
+                    "type": "String",
+                    "label": "Description",
+                    "value": ""
+                },
+                "gmdescription": {
+                    "type": "String",
+                    "label": "Description",
+                    "value": ""
+                }
+            },
+            "location": {
+                "location": {
+                    "type": "Number",
+                    "label": "Location",
+                    "value": 0
+                }
+            }
+        },
+        "ammunition": {
+            "templates": [
+                "description", "equipment"
+            ],
+            "ammunitiongroup": {
+                "type": "String",
+                "label": "Ammunition group",
+                "value": ""
+            }
+        },
+        "rangeweapon": {
+            "templates:": [
+                "equipment",
+                "description"
+            ],
+            "damage": {
+                "type": "String",
+                "label": "Damage",
+                "value": ""
+            },
+            "reloadTime": {
+                "type": "Number",
+                "label": "Reload time",
+                "value": 1
+            },
+            "reach": {
+                "type": "String",
+                "label": "Range",
+                "value": "5/25/40"
+            },
+            "ammunitiongroup": {
+                "type": "String",
+                "label": "Ammunition group",
+                "value": ""
+            },
+            "currentAmmo": {
+                "type": "Number",
+                "value": 0
+            }
+
+        },
+        "meleeweapon": {
+            "templates": [
+                "equipment",
+                "description"
+            ],
+            "damage": {
+                "type": "String",
+                "label": "Damage",
+                "value": ""
+            },
+            "atmod": {
+                "type": "Number",
+                "label": "AT Mod",
+                "value": 0
+            },
+            "pamod": {
+                "type": "Number",
+                "label": "AT Mod",
+                "value": 0
+            },
+            "reach": {
+                "type": "String",
+                "label": "Reach",
+                "value": "medium"
+            },
+            "damageThreshold": {
+                "type": "Number",
+                "label": "Damage threshold",
+                "value": 0
+            },
+            "guidevalue": {
+                "type": "String",
+                "label": "Guide value",
+                "value": "-"
+            },
+            "combatskill": {
+                "type": "String",
+                "label": "Combat skill",
+                "value": "daggers"
+            }
+        },
+        "armor": {
+            "templates": [
+                "equipment",
+                "description",
+                "encumbrance"
+            ],
+            "protection": {
+                "type": "Number",
+                "label": "protection",
+                "value": 0
+            },
+            "worn": {
+                "type": "Boolean",
+                "label": "Worn",
+                "value": false
+            }
+        },
+        "equipment": {
+            "templates": [
+                "equipment",
+                "description"
+            ]
+        },
+        "advantage": {
+            "templates": [
+                "description",
+                "APvalue",
+                "max"
+            ]
+        },
+        "disadvantage": {
+            "templates": [
+                "description",
+                "APvalue",
+                "max"
+            ]
+        },
+        "species": {
+            "templates": [
+                "description",
+                "APvalue"
+            ],
+            "baseValues": {
+                "wounds": {
+                    "value": 0,
+                    "type": "Number",
+                    "label": "lifeenergy"
+                },
+                "soulpower": {
+                    "value": 0,
+                    "type": "Number",
+                    "label": "soulpower"
+                },
+                "toughness": {
+                    "value": 0,
+                    "type": "Number",
+                    "label": "toughness"
+                },
+                "speed": {
+                    "value": 0,
+                    "type": "Number",
+                    "label": "speed"
+                }
+            }
+        },
+        "skill": {
+            "templates": [
+                "description"
+            ],
+            "group": {
+                "value": "",
+                "type": "String",
+                "label": "Skillgroup"
+            },
+            "Rpr": {
+                "value": "no",
+                "type": "String",
+                "label": "Routinecheck"
+            },
+            "characteristic1": {
+                "type": "String",
+                "label": "Characteristic1",
+                "value": "mu"
+            },
+            "characteristic2": {
+                "type": "String",
+                "label": "Characteristic2",
+                "value": "mu"
+            },
+            "characteristic3": {
+                "type": "String",
+                "label": "Characteristic3",
+                "value": "mu"
+            },
+            "StF": {
+                "type": "String",
+                "label": "Advancementfactor",
+                "value": "A"
+            },
+            "RPr": {
+                "type": "String",
+                "label": "Routinecheck",
+                "value": "no"
+            },
+            "burden": {
+                "type": "String",
+                "label": "Burden",
+                "value": "no"
+            },
+            "talentValue": {
+                "type": "Number",
+                "label": "Fw",
+                "value": 0
+            }
         }
-      },
-      "details": {
-        "experience": {
-          "type": "Number",
-          "label": "Experience",
-          "total": 0,
-          "spent": 0
-        }
-      }
     }
-  },
-  "Item": {
-    "types": [
-      "weapon",
-      "armour",
-      "skill",
-      "advantage",
-      "disadvantage",
-      "species"
-    ],
-    "templates": {
-      "quantity": {
-        "quantity": {
-          "type": "Number",
-          "label": "Quantity",
-          "value": 1
-        }
-      },
-      "encumbrance": {
-        "encumbrance": {
-          "type": "Number",
-          "label": "Encumbrance",
-          "value": 0
-        }
-      },
-      "price": {
-        "price": {
-          "type": "String",
-          "label": "Price",
-          "gc": 0,
-          "ss": 0,
-          "bp": 0
-        }
-      },
-      "availability": {
-        "availability": {
-          "type": "String",
-          "label": "Availability",
-          "value": ""
-        }
-      },
-      "APvalue":{
-        "APValue":{
-          "type": "Number",
-          "label": "APValue",
-          "value": 0
-        }
-      },
-      "max":{
-        "max":{
-          "type": "String",
-          "label" : "Max",
-          "value" : "0"
-        }
-      },
-      "description": {
-        "description": {
-          "type": "String",
-          "label": "Description",
-          "value": ""
-        },
-        "gmdescription": {
-          "type": "String",
-          "label": "Description",
-          "value": ""
-        }
-      },
-      "location": {
-        "location": {
-          "type": "Number",
-          "label": "Location",
-          "value": 0
-        }
-      }
-    },
-    "weapon": {
-      "templates": [
-        "weapon"
-      ],
-      "damage": {
-        "type": "String",
-        "label": "Damage",
-        "value": ""
-      }
-    },
-    "armor": {
-      "templates": [
-        "armor"
-      ],
-      "worn": {
-        "type": "Boolean",
-        "label": "Worn",
-        "value": false
-      }
-    },
-    "advantage":{
-      "templates": [
-        "description", "APvalue", "max"
-      ]
-    },
-    "disadvantage":{
-      "templates": [
-        "description", "APvalue", "max"
-      ]
-    },
-    "species":{
-      "templates": [
-        "description", "APvalue"
-      ],
-      "baseValues": {
-        "wounds": {
-          "value": 0,
-          "type" : "Number",
-          "label": "lifeenergy"
-        },
-        "soulpower": {
-          "value": 0,
-          "type" : "Number",
-          "label": "soulpower"
-        },
-        "toughness": {
-          "value": 0,
-          "type" : "Number",
-          "label": "toughness"
-        },
-        "speed": {
-          "value": 0,
-          "type" : "Number",
-          "label": "lifeenergy"
-        }
-      }
-    },
-    "skill": {
-      "templates": [
-        "description"
-      ],
-      "group": {
-        "value": "",
-        "type": "String",
-        "label": "Skillgroup"
-      },
-      "Rpr":{
-        "value": "no",
-        "type": "String",
-        "label": "Routinecheck"
-      },
-      "characteristic1": {
-        "type": "String",
-        "label": "Characteristic1",
-        "value": "mu"
-      },
-      "characteristic2": {
-        "type": "String",
-        "label": "Characteristic2",
-        "value": "mu"
-      },
-      "characteristic3": {
-        "type": "String",
-        "label": "Characteristic3",
-        "value": "mu"
-      },
-      "StF": {
-        "type": "String",
-        "label": "Advancementfactor",
-        "value": "A"
-      },
-      "RPr": {
-        "type": "String",
-        "label": "Routinecheck",
-        "value": "no"
-      },
-      "burden": {
-        "type": "String",
-        "label": "Burden",
-        "value": "no"
-      },
-      "talentValue":{
-        "type": "Number",
-        "label": "Fw",
-        "value": 0
-      }
-    }
-  }
 }
