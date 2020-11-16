@@ -17,9 +17,11 @@ export default class Actordsa5 extends Actor {
         }
 
         let skills = await DSA5_Utility.allSkills() || [];
+        let combatskills = await DSA5_Utility.allCombatSkills() || [];
 
         if (data.type == "character") {
             data.items = data.items.concat(skills);
+            data.items = data.items.concat(combatskills);
 
 
             super.create(data, options);
@@ -63,6 +65,7 @@ export default class Actordsa5 extends Actor {
                 data.data.status.dodge.max = data.data.status.dodge.value + data.data.status.dodge.modifier;
 
                 data.data.status.fatePoints.max = data.data.status.fatePoints.value + data.data.status.fatePoints.modifier;
+                data.data.satus.initiative.value = Math.round((data.data.characteristics["mu"].value + data.data.characteristics["ge"].value) / 2);
             }
 
 
@@ -110,31 +113,108 @@ export default class Actordsa5 extends Actor {
         let knowledgeSkills = [];
         let tradeSkills = [];
         let natureSkills = [];
+
+        let armor = [];
+        let rangeweapons = [];
+        let meleeweapons = [];
+
+        const inventory = {
+            meleeweapons: {
+                label: game.i18n.localize("meleeweapon"),
+                items: [],
+                toggle: true,
+                toggleName: game.i18n.localize("equipped"),
+                show: false,
+                dataType: "meleeweapon"
+            },
+            rangeweapons: {
+                label: game.i18n.localize("rangeweapon"),
+                items: [],
+                toggle: true,
+                toggleName: game.i18n.localize("equipped"),
+                show: false,
+                dataType: "rangeweapon"
+            },
+            ammunition: {
+                label: game.i19n.localize("ammunition"),
+                items: [],
+                show: false,
+                dataType: "ammunition"
+            },
+            misc: {
+                label: game.i19n.localize("miscellanous"),
+                items: [],
+                show: true,
+                dataType: "miscellanous"
+            }
+        };
+
+        actorData.items = actorData.items.sort((a, b) => (a.sort || 0) - (b.sort || 0))
+
+
+        let totalWeight = 0;
+
         for (let i of actorData.items) {
             try {
                 i.img = i.img || DEFAULT_TOKEN;
 
                 // *********** TALENTS ***********
-                if (i.type === "skill") {
-                    this.prepareSkill(i);
-                    switch (i.data.group.value) {
-                        case "body":
-                            bodySkills.push(i);
-                            break;
-                        case "social":
-                            socialSkills.push(i);
-                            break;
-                        case "knowledge":
-                            knowledgeSkills.push(i);
-                            break;
-                        case "trade":
-                            tradeSkills.push(i);
-                            break;
-                        case "nature":
-                            natureSkills.push(i);
-                            break;
-                    }
+                switch (i.type) {
+                    case "skill":
+                        this.prepareSkill(i);
+                        switch (i.data.group.value) {
+                            case "body":
+                                bodySkills.push(i);
+                                break;
+                            case "social":
+                                socialSkills.push(i);
+                                break;
+                            case "knowledge":
+                                knowledgeSkills.push(i);
+                                break;
+                            case "trade":
+                                tradeSkills.push(i);
+                                break;
+                            case "nature":
+                                natureSkills.push(i);
+                                break;
+                        }
+                        break;
+                    case "ammunition":
+                        i.weight = (i.data.weight.value * i.data.quantity.value).toFixed(2);
+                        inventory.ammunition.items.push(i);
+                        inventory.ammunition.show = true;
+                        totalWeight += Number(i.weight);
+                        break;
+                    case "meleeweapon":
+                        i.weight = (i.data.weight.value * i.data.quantity.value).toFixed(2);
+                        i.toggleValue = i.data.worn || false;
+                        inventory.meleeweapon.items.push(i);
+                        inventory.meleeweapon.show = true;
+                        totalWeight += Number(i.weight);
+                        break;
+                    case "rangeweapon":
+                        i.weight = (i.data.weight.value * i.data.quantity.value).toFixed(2);
+                        i.toggleValue = i.data.worn || false;
+                        inventory.rangeweapon.items.push(i);
+                        inventory.rangeweapon.show = true;
+                        totalWeight += Number(i.weight);
+                        break;
+                    case "armor":
+                        i.weight = (i.data.weight.value * i.data.quantity.value).toFixed(2);
+                        i.toggleValue = i.data.worn || false;
+                        inventory.armor.items.push(i);
+                        inventory.armor.show = true;
+                        totalWeight += Number(i.weight);
+                        break;
+                    case "equipment":
+                        i.weight = (i.data.weight.value * i.data.quantity.value).toFixed(2);
+                        inventory[i.data.equipmentType.value].items.push(i);
+                        inventory[i.data.equipmentType.value].show = true;
+                        totalWeight += Number(i.weight);
+                        break;
                 }
+
             } catch (error) {
                 console.error("Something went wrong with preparing item " + i.name + ": " + error)
                 ui.notifications.error("Something went wrong with preparing item " + i.name + ": " + error)
@@ -143,6 +223,8 @@ export default class Actordsa5 extends Actor {
             }
         }
         return {
+            totalweight: totalWeight,
+            inventory,
             allSkillsLeft: {
                 "body": bodySkills,
                 "social": socialSkills,
@@ -293,14 +375,6 @@ export default class Actordsa5 extends Actor {
     }
 
     static async renderRollCard(chatOptions, testData, rerenderMessage) {
-
-        // Blank if manual chat cards
-        if (game.settings.get("wfrp4e", "manualChatCards") && !rerenderMessage)
-            testData.roll = testData.SL = null;
-
-        if (game.modules.get("dice-so-nice") && game.modules.get("dice-so-nice").active && chatOptions.sound.includes("dice"))
-            chatOptions.sound = undefined;
-
         testData.other = testData.other.join("<br>")
 
         let chatData = {
@@ -321,8 +395,6 @@ export default class Actordsa5 extends Actor {
             rollMode: chatOptions.rollMode,
             title: chatOptions.title,
             hideData: chatData.hideData,
-            fortuneUsedReroll: chatOptions.fortuneUsedReroll,
-            fortuneUsedAddSL: chatOptions.fortuneUsedAddSL,
             isOpposedTest: chatOptions.isOpposedTest,
             attackerMessage: chatOptions.attackerMessage,
             defenderMessage: chatOptions.defenderMessage,
@@ -348,8 +420,6 @@ export default class Actordsa5 extends Actor {
                 }
 
                 chatOptions["content"] = html;
-                if (chatOptions.sound)
-                    console.log(`wfrp4e | Playing Sound: ${chatOptions.sound}`)
                 return ChatMessage.create(chatOptions, false);
             });
         } else // Update message 
@@ -359,10 +429,7 @@ export default class Actordsa5 extends Actor {
 
                 // Emit the HTML as a chat message
                 chatOptions["content"] = html;
-                if (chatOptions.sound) {
-                    console.log(`wfrp4e | Playing Sound: ${chatOptions.sound}`)
-                    AudioHelper.play({ src: chatOptions.sound }, true)
-                }
+
                 return rerenderMessage.update({
                     content: html,
                     ["flags.data"]: chatOptions["flags.data"]

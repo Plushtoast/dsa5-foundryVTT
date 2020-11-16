@@ -17,6 +17,23 @@ export default class DSA5_Utility {
         return returnSkills;
     }
 
+    static async allCombatSkills() {
+        let returnSkills = [];
+
+        const packs = game.packs.filter(p => p.metadata.tags && p.metadata.tags.includes("combatskill"))
+        if (!packs.length)
+            return ui.notifications.error("No content found")
+
+        for (let pack of packs) {
+            let items
+            await pack.getContent().then(content => items = content.filter(i => i.data.type == "combatskill"));
+            for (let i of items) {
+                returnSkills.push(i.data)
+            }
+        }
+        return returnSkills;
+    }
+
     static findItembyId(id) {
         let item = game.items.entities.filter(x => x._id == id);
         if (item) {

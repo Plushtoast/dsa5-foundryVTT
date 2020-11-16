@@ -12,6 +12,34 @@ DSA5.characteristics = {
     "kk": "CHAR.KK"
 };
 
+DSA5.equipmentTypes = {
+    "misc": "Miscellanous"
+};
+
+DSA5.meleeRanges = {
+    "short": "Range-short",
+    "medium": "Range-medium",
+    "long": "Range-long"
+};
+
+DSA5.weapontypes = {
+    "melee": "meleeweapon",
+    "range": "rangeweapon"
+}
+
+DSA5.ammunitiongroups = {
+    "arrow": "arrow",
+    "bolt": "bolt",
+    "bullet": "bullet"
+}
+
+DSA5.combatskillsGuidevalues = {
+    "ff": "CHAR.FF",
+    "ge": "CHAR.GE",
+    "kk": "CHAR.KK",
+    "gekk": "CHAR.GEKK"
+}
+
 DSA5.skillDifficultyModifiers = {
     "eeasy": 5,
     "veasy": 3,
@@ -62,15 +90,15 @@ DSA5.skillGroups = {
 };
 
 DSA5.skillBurdens = {
-    "yes" : "yes",
-    "no" : "no",
-    "maybe" : "maybe"
+    "yes": "yes",
+    "no": "no",
+    "maybe": "maybe"
 }
 
 DSA5.StFs = {
-    "A" : "A",
-    "B" : "B",
-    "C" : "C"
+    "A": "A",
+    "B": "B",
+    "C": "C"
 }
 
 

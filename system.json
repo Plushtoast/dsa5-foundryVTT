@@ -2,12 +2,10 @@
     "name": "dsa5",
     "title": "Das Schwarze Auge (5th Edition)",
     "description": "Many details here.",
-    "version": "0.0.3",
-    "templateVersion": 7,
+    "version": "0.0.4",
+    "templateVersion": 8,
     "author": "Plushtoast",
-    "scripts": [
-
-    ],
+    "scripts": [],
     "esmodules": [
         "dsa5.js"
     ],
@@ -15,23 +13,31 @@
         "styles/dsa5.css"
     ],
     "packs": [{
-        "name": "Skills",
-        "label": "Skills",
-        "system": "dsa5",
-        "path": "packs/skills.db",
-        "entity": "Item",
-        "tags": [
-            "skill"
-        ]
-    }],
-    "languages": [
-
+            "name": "Skills",
+            "label": "Skills",
+            "system": "dsa5",
+            "path": "packs/skills.db",
+            "entity": "Item",
+            "tags": [
+                "skill"
+            ]
+        },
         {
-            "lang": "de",
-            "name": "Deutsch",
-            "path": "lang/de.json"
+            "name": "Combatskills",
+            "label": "Combatskills",
+            "system": "dsa5",
+            "path": "packs/combatskills.db",
+            "entity": "Item",
+            "tags": [
+                "combatskill"
+            ]
         }
     ],
+    "languages": [{
+        "lang": "de",
+        "name": "Deutsch",
+        "path": "lang/de.json"
+    }],
     "socket": true,
     "initiative": "1d20",
     "gridDistance": 10,
@@ -43,5 +49,4 @@
     "url": "https://github.com/Plushtoast/dsa5-foundryVTT",
     "manifest": "https://raw.githubusercontent.com/Plushtoast/dsa5-foundryVTT/master/system.json",
     "download": "https://github.com/Plushtoast/dsa5-foundryVTT/archive/master.zip"
-
 }

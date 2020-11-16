@@ -1,0 +1,93 @@
+<form class="dsa5 item-sheet {{cssClass}}" autocomplete="off">
+    <header class="item-header">
+        <h1>
+            <input name="name" class="item-header item-name" type="text" value="{{item.name}}" placeholder="{{localize 'Name'}}" />
+        </h1>
+    </header>
+
+    <img src="{{item.img}}" {{#if showBorder}}class="no-image-border" {{/if}} data-edit="img" />
+
+    <div class="item-details row2">
+        <label class="label-text" style="flex-grow: 0; width: 69px;">{{localize "Category"}}</label>
+        <div class="input-box category" style="margin-right: 0px; flex-grow: 2; padding-top: 0px; text-align: center;">
+            {{localize "meleeweapon"}}
+        </div>
+        {{> systems/dsa5/templates/items/item-equipment.html}}
+    </div>
+
+    <nav class="sheet-tabs tabs" data-tab-container="primary">
+        <a class="item active" data-tab="description">{{localize "Description"}}</a>
+        <a class="item" data-tab="details">{{localize "Details"}}</a>
+    </nav>
+    <div class="sheet-tabs edges left"></div>
+    <div class="sheet-tabs edges right"></div>
+
+    <section class="content">
+
+        {{> systems/dsa5/templates/items/item-description.html}}
+
+        <div class="tab details" data-tab="details">
+
+            <div class="form-group">
+                <label class="label-text">{{localize "damage"}}: </label>
+                <div class="input-box">
+                    <input class="input-text" type="text" name="data.damage.value" value="{{data.damage.value}}" data-dtype="String" />
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="label-text">{{localize "atmod"}}: </label>
+                <div class="input-box">
+                    <input class="input-text" type="text" name="data.atmod.value" value="{{data.atmod.value}}" data-dtype="Number" />
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="label-text">{{localize "pamod"}}: </label>
+                <div class="input-box">
+                    <input class="input-text" type="text" name="data.pamod.value" value="{{data.pamod.value}}" data-dtype="Number" />
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="label-text">{{localize "damageThreshold"}}: </label>
+                <div class="input-box">
+                    <input class="input-text" type="text" name="data.damageThreshold.value" value="{{data.damageThreshold.value}}" data-dtype="Number" />
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="label-text">{{localize "guidevalue"}}</label>
+                <select name="data.guidevalue.value" data-dtype="{{data.guidevalue.type}}">
+                  {{#select data.guidevalue.value}}
+                  {{#each characteristics as |ch char|}}
+                  <option value="{{char}}">{{localize ch}}</option>
+                  {{/each}}
+                  {{/select}}
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label class="label-text">{{localize "combatskill"}}</label>
+                <select name="data.combatskill.value" data-dtype="{{data.combatskill.type}}">
+                  {{#select data.combatskill.value}}
+                  {{#each combatskills as |ch char|}}
+                  <option value="{{char}}">{{localize ch}}</option>
+                  {{/each}}
+                  {{/select}}
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label class="label-text">{{localize "reach"}}</label>
+                <select name="data.reach.value" data-dtype="{{data.reach.type}}">
+                  {{#select data.reach.value}}
+                  {{#each ranges as |ch char|}}
+                  <option value="{{char}}">{{localize ch}}</option>
+                  {{/each}}
+                  {{/select}}
+                </select>
+            </div>
+        </div>
+    </section>
+</form>

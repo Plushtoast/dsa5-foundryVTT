@@ -13,20 +13,16 @@ export default class Itemdsa5 extends Item {
         const data = this.data;
 
         if (this.data.type == "skill")
-            this.prepareSkill()
-        if (this.dat.type == "species")
-            this.prepareSpecies()
-    }       
-
-    prepareSpecies(){
-        
+            this.prepareSkill(data)
+        if (this.data.type == "species")
+            this.prepareSpecies(data)
     }
 
-    prepareSkill() {
+    prepareSpecies(data) {}
+
+    prepareSkill(data) {
         if (this.data.type != "skill")
             return
-
-        const data = this.data;
 
         /*if (!hasProperty(data, "data.modifier.value"))
             setProperty(data, "data.modifier.value", 0)
@@ -38,8 +34,16 @@ export default class Itemdsa5 extends Item {
         }*/
     }
 
+    prepare() {
+        let preparedData = duplicate(this.data)
 
-    
+
+        preparedData.img = preparedData.img || DEFAULT_TOKEN;
+
+
+        return preparedData;
+    }
+
 }
 
 CONFIG.Item.entityClass = Itemdsa5;

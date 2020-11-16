@@ -136,16 +136,27 @@
                         "type": "Number",
                         "label": "Fate points",
                         "abrev": "FP",
-                        "value": 0,
+                        "value": 3,
                         "modifier": 0
                     },
                     "speed": {
                         "type": "Number",
                         "label": "speed",
                         "intial": 0
+                    },
+                    "initiative": {
+                        "type": "Number",
+                        "label": "initiative",
+                        "value": 0
+                    },
+                    "size": {
+                        "type": "String",
+                        "label": "size",
+                        "value": "average"
                     }
                 }
             },
+
             "details": {
                 "details": {
                     "species": {
@@ -245,6 +256,15 @@
             "equipment"
         ],
         "templates": {
+            "skill": {
+
+                "StF": {
+                    "type": "String",
+                    "label": "Advancementfactor",
+                    "value": "A"
+                }
+
+            },
             "equipment": {
                 "price": {
                     "type": "Number",
@@ -346,6 +366,16 @@
             "currentAmmo": {
                 "type": "Number",
                 "value": 0
+            },
+            "combatskill": {
+                "type": "String",
+                "label": "Combat skill",
+                "value": "crossbow"
+            },
+            "worn": {
+                "type": "Boolean",
+                "label": "Worn",
+                "value": false
             }
 
         },
@@ -388,6 +418,11 @@
                 "type": "String",
                 "label": "Combat skill",
                 "value": "daggers"
+            },
+            "worn": {
+                "type": "Boolean",
+                "label": "Worn",
+                "value": false
             }
         },
         "armor": {
@@ -411,7 +446,12 @@
             "templates": [
                 "equipment",
                 "description"
-            ]
+            ],
+            "equipmentType": {
+                "type": "String",
+                "label": "Equipment type",
+                "value": "misc"
+            }
         },
         "advantage": {
             "templates": [
@@ -455,6 +495,35 @@
                 }
             }
         },
+        "combatskill": {
+            "templates": ["skill"],
+            "guidevalue": {
+                "type": "String",
+                "label": "Guide value",
+                "value": "FF"
+            },
+            "parry": {
+                "type": "Number",
+                "label": "parryValue",
+                "value": 0
+            },
+            "attack": {
+                "type": "Number",
+                "label": "attackValue",
+                "value": 0
+            },
+            "talentValue": {
+                "type": "Number",
+                "label": "Fw",
+                "value": 6
+            },
+            "weapontype": {
+                "label": "weapontype",
+                "type": "String",
+                "value": "melee"
+            }
+
+        },
         "skill": {
             "templates": [
                 "description"
@@ -463,6 +532,11 @@
                 "value": "",
                 "type": "String",
                 "label": "Skillgroup"
+            },
+            "talentValue": {
+                "type": "Number",
+                "label": "Fw",
+                "value": 0
             },
             "Rpr": {
                 "value": "no",
@@ -484,11 +558,7 @@
                 "label": "Characteristic3",
                 "value": "mu"
             },
-            "StF": {
-                "type": "String",
-                "label": "Advancementfactor",
-                "value": "A"
-            },
+
             "RPr": {
                 "type": "String",
                 "label": "Routinecheck",
@@ -498,12 +568,8 @@
                 "type": "String",
                 "label": "Burden",
                 "value": "no"
-            },
-            "talentValue": {
-                "type": "Number",
-                "label": "Fw",
-                "value": 0
             }
+
         }
     }
 }

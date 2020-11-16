@@ -126,7 +126,6 @@ export default class ActorSheetDsa5 extends ActorSheet {
         console.log(dragData);
         console.log(item);
         if (item.data.type == "species") {
-            console.log("updating");
             await this.actor.update({
                 "data.details.species.value": item.data.name,
                 "data.details.experience.spent": this.actor.data.data.details.experience.spent + item.data.data.APValue.value,
