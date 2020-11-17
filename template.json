@@ -55,7 +55,7 @@
                         "type": "Number",
                         "label": "confused",
                         "value": 0
-                    },
+                    }
                 }
             },
             "characteristics": {
