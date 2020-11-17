@@ -1,0 +1,12 @@
+<div class="groupbox">
+    <div class="row-section table-header">
+        <div class="col">
+            {{localize "biography"}}
+        </div>
+    </div>
+    <div class="row-section">
+        <div class="col" style="height:200px;">
+            {{editor content=data.details.biography.value target="data.details.biography.value" button=true owner=owner editable=editable}}
+        </div>
+    </div>
+</div>

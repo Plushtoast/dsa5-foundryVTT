@@ -4,6 +4,60 @@
             "character"
         ],
         "templates": {
+            "conditions": {
+                "conditions": {
+                    "encumbered": {
+                        "type": "Number",
+                        "label": "Encumbrance",
+                        "value": 0
+                    },
+                    "drunken": {
+                        "type": "Number",
+                        "label": "drunken",
+                        "value": 0
+                    },
+                    "stunned": {
+                        "type": "Number",
+                        "label": "stunned",
+                        "value": 0
+                    },
+                    "raptured": {
+                        "type": "Number",
+                        "label": "raptured",
+                        "value": 0
+                    },
+                    "feared": {
+                        "type": "Number",
+                        "label": "feared",
+                        "value": 0
+                    },
+                    "paralysed": {
+                        "type": "Number",
+                        "label": "paralysed",
+                        "value": 0
+                    },
+                    "inpain": {
+                        "type": "Number",
+                        "label": "inpain",
+                        "value": 0
+                    },
+                    "tranced": {
+                        "type": "Number",
+                        "label": "tranced",
+                        "value": 0
+                    },
+                    "overexerted": {
+                        "type": "Number",
+                        "label": "overexerted",
+                        "value": 0
+                    },
+                    "confused": {
+                        "type": "Number",
+                        "label": "confused",
+                        "value": 0
+                    },
+                }
+            },
             "characteristics": {
                 "characteristics": {
                     "mu": {
@@ -89,7 +143,8 @@
                         "initial": 0,
                         "value": 8,
                         "advances": 0,
-                        "modifier": 0
+                        "modifier": 0,
+                        "current": 0
                     },
                     "astralenergy": {
                         "type": "Number",
@@ -98,7 +153,8 @@
                         "initial": 0,
                         "value": 0,
                         "advances": 0,
-                        "modifier": 0
+                        "modifier": 0,
+                        "current": 0
                     },
                     "karmaenergy": {
                         "type": "Number",
@@ -107,7 +163,8 @@
                         "initial": 0,
                         "value": 0,
                         "advances": 0,
-                        "modifier": 0
+                        "modifier": 0,
+                        "current": 0
                     },
                     "soulpower": {
                         "type": "Number",
@@ -223,6 +280,11 @@
                         "type": "String",
                         "label": "Distinguishing Mark",
                         "value": ""
+                    },
+                    "biography": {
+                        "type": "String",
+                        "label": "Biography",
+                        "value": ""
                     }
                 }
             }
@@ -231,7 +293,8 @@
             "templates": [
                 "characteristics",
                 "status",
-                "details"
+                "details",
+                "conditions"
             ],
             "details": {
                 "experience": {
@@ -245,15 +308,18 @@
     },
     "Item": {
         "types": [
-            "ammunition",
-            "meleeweapon",
-            "rangeweapon",
-            "armor",
-            "skill",
             "advantage",
+            "ammunition",
+            "armor",
+            "combatskill",
             "disadvantage",
-            "species",
-            "equipment"
+            "equipment",
+            "meleeweapon",
+            "money",
+            "rangeweapon",
+            "skill",
+            "species"
+
         ],
         "templates": {
             "skill": {
@@ -328,6 +394,11 @@
                 }
             }
         },
+        "money": {
+            "templates": [
+                "description", "equipment"
+            ]
+        },
         "ammunition": {
             "templates": [
                 "description", "equipment"
@@ -346,7 +417,7 @@
             "damage": {
                 "type": "String",
                 "label": "Damage",
-                "value": ""
+                "value": "1d6"
             },
             "reloadTime": {
                 "type": "Number",
@@ -387,7 +458,7 @@
             "damage": {
                 "type": "String",
                 "label": "Damage",
-                "value": ""
+                "value": "1d6"
             },
             "atmod": {
                 "type": "Number",
@@ -500,7 +571,7 @@
             "guidevalue": {
                 "type": "String",
                 "label": "Guide value",
-                "value": "FF"
+                "value": "ff"
             },
             "parry": {
                 "type": "Number",

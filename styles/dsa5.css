@@ -38,7 +38,7 @@ body {
     max-width: 50px;
 }
 
-.dsa5.item-sheet .editor {
+.dsa5 .editor {
     border: 1px solid #736953a6;
     box-shadow: 0px 0px 1px inset black;
     overflow: auto;
@@ -47,6 +47,8 @@ body {
     padding: 3px;
     margin-top: 0px;
     margin-bottom: 7px;
+    height: 100%;
+    width: 100%;
 }
 
 .character-sheet .general {
@@ -85,9 +87,10 @@ body {
     width: 20%;
 }
 
-.character-sheet .item input {
+.character-sheet .general .item input,
+.character-sheet .sheet-header .item input {
     border: none;
-    border-bottom: 1px solid #bd6500;
+    border-bottom: 1px solid #736953a6;
     box-shadow: none;
     background-color: transparent;
     font-size: 12px;
@@ -173,12 +176,14 @@ body {
     display: inline-block;
 }
 
-.skill-section li.li-title {
+.skill-section li.li-title,
+.table-title {
     font-weight: bold;
     box-shadow: 0 0 14px #00000052 inset
 }
 
-.skill-section li.li-header {
+.skill-section li.li-header,
+.table-header {
     font-weight: bold;
     box-shadow: 0 0 8px #00000052 inset
 }
@@ -216,52 +221,103 @@ body {
     background: url(../icons/backgrounds/hg.jpg);
 }
 
+.die-attack,
 .die-mu {
-    background: url(../icons/dies/d20mu.svg);
+    background: url(../icons/dice/d20mu.svg);
     color: white;
 }
 
 .die-kl {
-    background: url(../icons/dies/d20kl.svg);
+    background: url(../icons/dice/d20kl.svg);
     color: white;
 }
 
+.die-parry,
 .die-in {
-    background: url(../icons/dies/d20in.svg);
+    background: url(../icons/dice/d20in.svg);
     color: white;
 }
 
 .die-ch {
-    background: url(../icons/dies/d20ch.svg);
+    background: url(../icons/dice/d20ch.svg);
     color: white;
 }
 
 .die-ff {
-    background: url(../icons/dies/d20ff.svg);
+    background: url(../icons/dice/d20ff.svg);
 }
 
 .die-ge {
-    background: url(../icons/dies/d20ge.svg);
+    background: url(../icons/dice/d20ge.svg);
 }
 
 .die-ko {
-    background: url(../icons/dies/d20ko.svg);
+    background: url(../icons/dice/d20ko.svg);
 }
 
 .die-kk {
-    background: url(../icons/dies/d20kk.svg);
+    background: url(../icons/dice/d20kk.svg);
 }
 
-.d20 {
+.d20height {
+    line-height: 35px;
+}
+
+.d6.die-damage {
+    background-image: url(../../../icons/dice/d6black.svg);
+    color: white;
+    background-position: center 2.5px;
+}
+
+.d20,
+.d6 {
     width: 35px;
     height: 35px;
     display: inline-block;
     background-size: contain;
     line-height: 35px;
     text-align: center;
+    background-position: center;
+    background-repeat: no-repeat;
 }
 
-.attr-mu a {
+.chatmoney {
+    width: 15px;
+    height: 15px;
+    display: inline-block;
+}
+
+.money-D {
+    background: url(../icons/money-D.png);
+    background-repeat: no-repeat;
+    background-size: contain;
+}
+
+.money-K {
+    background: url(../icons/money-K.png);
+    background-repeat: no-repeat;
+    background-size: contain;
+}
+
+.money-S {
+    background: url(../icons/money-S.png);
+    background-repeat: no-repeat;
+    background-size: contain;
+}
+
+.money-H {
+    background: url(../icons/money-H.png);
+    background-repeat: no-repeat;
+    background-size: contain;
+}
+
+.chatLineHeight {
+    line-height: 15px;
+    display: inline-block;
+}
+
+
+/*.attr-mu a {
     background-color: #b3241a;
 }
 
@@ -304,7 +360,7 @@ body {
     display: inline-block;
     padding: 3px;
     box-shadow: 0 0 8px #00000052 inset
-}
+}*/
 
 .main-row {
     display: flex;
@@ -324,24 +380,58 @@ body {
     display: flex;
 }
 
+.row-section.wrap {
+    flex-wrap: wrap;
+}
+
 .row-section .col {
     flex: 100%;
+}
+
+.row-section.skills {
+    font-size: 10px;
+    border: 0.5px solid #736953a6;
+    margin: 0;
+    padding: 2px;
+}
+
+.lineheight {
+    line-height: 26px;
 }
 
 .row-section .col.three {
     flex: 30%;
 }
 
+.row-section .col.four {
+    flex: 25%;
+}
+
+.item .image {
+    height: 30px;
+    background-size: contain;
+    background-repeat: no-repeat;
+}
+
+.row-section .col.five {
+    flex: 20%;
+}
+
 .row-section .col.eight {
     flex: 12.5%;
 }
 
+.row-section .col.ten {
+    flex: 10%;
+}
+
 .row-section .col.two {
     flex: 50%;
+    max-width: 50%;
 }
 
 .groupbox {
-    border: 1px solid #606160;
+    border: 1px solid #736953a6;
     padding: 2px;
     border-radius: 3px;
     margin: 2px;
@@ -362,6 +452,14 @@ body {
     font-size: 10px;
 }
 
+.small {
+    font-size: 12px;
+}
+
 .roll-dialog-tag {
     display: none;
+}
+
+.row-section.rowtable>.col:nth-child(even) {
+    background-color: rgba(0, 0, 0, 0.1);
 }

@@ -68,6 +68,22 @@ export default class ActorSheetDsa5 extends ActorSheet {
         super.activateListeners(html);
 
 
+        html.find('.item-toggle').click(ev => {
+            let itemId = this._getItemId(ev);
+            let item = duplicate(this.actor.getEmbeddedEntity("OwnedItem", itemId))
+            let equippedState;
+
+            switch (item.type) {
+                case "armor":
+                case "rangeweapon":
+                case "meleeweapon":
+                    item.data.worn.value = !item.data.worn.value;
+                    equippedState = item.data.worn.value
+                    break;
+
+            }
+            this.actor.updateEmbeddedEntity("OwnedItem", item);
+        });
         html.find('.skill-select').mousedown(ev => {
             let itemId = this._getItemId(ev);
             let skill = this.actor.items.find(i => i.data._id == itemId);
@@ -79,7 +95,37 @@ export default class ActorSheetDsa5 extends ActorSheet {
 
             else if (ev.button == 2)
                 skill.sheet.render(true);
-        })
+        });
+
+        html.find('.quantity-click').mousedown(ev => {
+            let itemId = this._getItemId(ev);
+            let item = duplicate(this.actor.getEmbeddedEntity("OwnedItem", itemId));
+            switch (ev.button) {
+                case 0:
+                    if (ev.ctrlKey)
+                        item.data.quantity.value += 10;
+                    else
+                        item.data.quantity.value++;
+
+                    break;
+                case 2:
+                    if (ev.ctrlKey)
+                        item.data.quantity.value -= 10;
+                    else
+                        item.data.quantity.value--;
+
+                    if (item.data.quantity.value < 0)
+                        item.data.quantity.value = 0;
+                    break;
+            }
+            this.actor.updateEmbeddedEntity("OwnedItem", item);
+        });
+
+        html.find(".item-post").click(ev => {
+            let itemId = this._getItemId(ev);
+            const item = this.actor.items.find(i => i.data._id == itemId)
+            item.postItem();
+        });
 
         html.find('.skill-advances').keydown(async event => {
             // Wait to update if user tabbed to another skill
@@ -105,6 +151,12 @@ export default class ActorSheetDsa5 extends ActorSheet {
             }
         });
 
+        html.find('.item-edit').click(ev => {
+            let itemId = this._getItemId(ev);
+            const item = this.actor.items.find(i => i.data._id == itemId)
+            item.sheet.render(true);
+        });
+
         html.find('.ch-value').click(event => {
             event.preventDefault();
             let characteristic = event.currentTarget.attributes["data-char"].value;
@@ -113,28 +165,125 @@ export default class ActorSheetDsa5 extends ActorSheet {
             });
         });
 
+
+        html.find('.ch-combatskill-attack').click(event => {
+            event.preventDefault();
+            let itemId = this._getItemId(event);
+            const item = this.actor.items.find(i => i.data._id == itemId)
+            this.actor.setupCombatskill(item, "attack", event).then(setupData => {
+                this.actor.basicTest(setupData)
+            });
+        });
+
+        html.find('.ch-combatskill-parry').click(event => {
+            event.preventDefault();
+            let itemId = this._getItemId(event);
+            const item = this.actor.items.find(i => i.data._id == itemId)
+            this.actor.setupCombatskill(item, "parry", event).then(setupData => {
+                this.actor.basicTest(setupData)
+            });
+        });
+
+        html.find('.ch-rollCombat').click(event => {
+            event.preventDefault();
+            let itemId = this._getItemId(event);
+            const item = this.actor.items.find(i => i.data._id == itemId)
+            this.actor.setupWeapon(item, "attack", event).then(setupData => {
+                this.actor.basicTest(setupData)
+            });
+        });
+
+        html.find('.ch-rollCombatParry').click(event => {
+            event.preventDefault();
+            let itemId = this._getItemId(event);
+            const item = this.actor.items.find(i => i.data._id == itemId)
+            this.actor.setupWeapon(item, "parry", event).then(setupData => {
+                this.actor.basicTest(setupData)
+            });
+        });
+
+        html.find('.ch-rollDamage').click(event => {
+            event.preventDefault();
+            let itemId = this._getItemId(event);
+            const item = this.actor.items.find(i => i.data._id == itemId)
+            this.actor.setupWeapon(item, "damage", event).then(setupData => {
+                this.actor.basicTest(setupData)
+            });
+        });
+
+        html.find('.item-delete').click(ev => {
+            let itemId = this._getItemId(ev);
+
+            renderTemplate('systems/dsa5/templates/dialog/delete-item-dialog.html').then(html => {
+                new Dialog({
+                    title: "Delete Confirmation",
+                    content: html,
+                    buttons: {
+                        Yes: {
+                            icon: '<i class="fa fa-check"></i>',
+                            label: "Yes",
+                            callback: dlg => {
+                                this.actor.deleteEmbeddedEntity("OwnedItem", itemId);
+                            }
+                        },
+                        cancel: {
+                            icon: '<i class="fas fa-times"></i>',
+                            label: "Cancel"
+                        },
+                    },
+                    default: 'Yes'
+                }).render(true)
+            });
+        });
     }
 
     _getItemId(ev) {
         return $(ev.currentTarget).parents(".item").attr("data-item-id")
     }
 
+    async _addMoney(item) {
+        let money = duplicate(this.actor.data.items.filter(i => i.type === "money"));
+
+        let moneyItem = money.find(i => item.name)
+
+        if (moneyItem) {
+            moneyItem.data.quantity.value += item.data.quantity.value
+            await this.actor.updateEmbeddedEntity("OwnedItem", money);
+        } else {
+            await this.actor.createEmbeddedEntity("OwnedItem", item);
+        }
+    }
+
     async _onDrop(event) {
         let dragData = JSON.parse(event.dataTransfer.getData("text/plain"));
 
         let item = DSA5_Utility.findItembyId(dragData.id);
-        console.log(dragData);
-        console.log(item);
-        if (item.data.type == "species") {
-            await this.actor.update({
-                "data.details.species.value": item.data.name,
-                "data.details.experience.spent": this.actor.data.data.details.experience.spent + item.data.data.APValue.value,
-                "data.status.speed.initial": item.data.data.baseValues.speed.value,
-                "data.status.soulpower.initial": item.data.data.baseValues.soulpower.value,
-                "data.status.toughness.initial": item.data.data.baseValues.toughness.value,
-                "data.status.wounds.initial": item.data.data.baseValues.wounds.value,
-            });
+
+        switch (item.data.type) {
+            case "species":
+                await this.actor.update({
+                    "data.details.species.value": item.data.name,
+                    "data.details.experience.spent": this.actor.data.data.details.experience.spent + item.data.data.APValue.value,
+                    "data.status.speed.initial": item.data.data.baseValues.speed.value,
+                    "data.status.soulpower.initial": item.data.data.baseValues.soulpower.value,
+                    "data.status.toughness.initial": item.data.data.baseValues.toughness.value,
+                    "data.status.wounds.initial": item.data.data.baseValues.wounds.value,
+                    "data.status.wounds.current": this.actor.data.data.status.wounds.value + this.actor.data.data.status.wounds.modifier + this.actor.data.data.status.wounds.advances
+                });
+                break;
+            case "meleeweapon":
+            case "rangeweapon":
+            case "equipment":
+            case "ammunition":
+            case "armor":
+                await this.actor.createEmbeddedEntity("OwnedItem", item);
+                break;
+            case "money":
+                await this._addMoney(item)
+                break;
+
         }
+
         /*if (dragData.type == "species") {
             await this.actor.update({ 
                 "details": {

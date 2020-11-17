@@ -51,7 +51,7 @@ export default class ItemSheetdsa5 extends ItemSheet {
         super.activateListeners(html);
     }
 
-    getData() {
+    async getData() {
         const data = super.getData();
 
         switch (this.item.type) {
@@ -70,13 +70,12 @@ export default class ItemSheetdsa5 extends ItemSheet {
                 let chars = DSA5.characteristics;
                 chars["-"] = "-";
                 data['characteristics'] = chars;
-                data['combatskills'] = [""];
+                data['combatskills'] = await DSA5_Utility.allCombatSkillsList("melee");
                 data['ranges'] = DSA5.meleeRanges;
                 break;
             case "rangeweapon":
                 data['ammunitiongroups'] = DSA5.ammunitiongroups;
-                data['combatskills'] = [""];
-                data['ranges'] = DSA5.rangeRanges;
+                data['combatskills'] = await DSA5_Utility.allCombatSkillsList("range");
                 break;
             case "ammunition":
                 data['ammunitiongroups'] = DSA5.ammunitiongroups;

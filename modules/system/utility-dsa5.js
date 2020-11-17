@@ -34,6 +34,52 @@ export default class DSA5_Utility {
         return returnSkills;
     }
 
+    static async allMoneyItems() {
+        let moneyItems = []
+        const packs = game.packs.filter(p => p.metadata.tags && p.metadata.tags.includes("money"))
+
+        if (!packs.length)
+            return ui.notifications.error("No content found")
+
+        for (let pack of packs) {
+            let items
+            await pack.getContent().then(content => items = content.filter(i => i.data.type == "money").map(i => i.data));
+
+            let money = items.filter(t => Object.values(DSA5.moneyNames).map(n => n.toLowerCase()).includes(t.name.toLowerCase()))
+
+            moneyItems = moneyItems.concat(money)
+        }
+        return moneyItems
+    }
+
+    static async allCombatSkillsList(weapontype) {
+        let skills = (await this.allCombatSkills()).filter(x => x.data.weapontype.value == weapontype) || [];
+        var res = {};
+        for (let sk of skills) {
+            res[sk.name] = sk.name;
+        }
+        return res;
+    }
+
+    static chatDataSetup(content, modeOverride, forceWhisper) {
+        let chatData = {
+            user: game.user._id,
+            rollMode: modeOverride || game.settings.get("core", "rollMode"),
+            content: content
+        };
+
+        if (["gmroll", "blindroll"].includes(chatData.rollMode)) chatData["whisper"] = ChatMessage.getWhisperRecipients("GM").map(u => u.id);
+        if (chatData.rollMode === "blindroll") chatData["blind"] = true;
+        else if (chatData.rollMode === "selfroll") chatData["whisper"] = [game.user];
+
+        if (forceWhisper) { // Final force !
+            chatData["speaker"] = ChatMessage.getSpeaker();
+            chatData["whisper"] = ChatMessage.getWhisperRecipients(forceWhisper);
+        }
+
+        return chatData;
+    }
+
     static findItembyId(id) {
         let item = game.items.entities.filter(x => x._id == id);
         if (item) {

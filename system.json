@@ -31,6 +31,16 @@
             "tags": [
                 "combatskill"
             ]
+        },
+        {
+            "name": "Money",
+            "label": "Money",
+            "system": "dsa5",
+            "path": "packs/money.db",
+            "entity": "Item",
+            "tags": [
+                "money"
+            ]
         }
     ],
     "languages": [{
@@ -39,11 +49,11 @@
         "path": "lang/de.json"
     }],
     "socket": true,
-    "initiative": "1d20",
+    "initiative": "@status.initiative.value + 1d6",
     "gridDistance": 10,
     "gridUnits": "ft",
-    "primaryTokenAttribute": "resources.health",
-    "secondaryTokenAttribute": "resources.power",
+    "primaryTokenAttribute": "status.wounds.current",
+    "secondaryTokenAttribute": "status.astralenergy.current",
     "minimumCoreVersion": "0.7.7",
     "compatibleCoreVersion": "0.7.7",
     "url": "https://github.com/Plushtoast/dsa5-foundryVTT",

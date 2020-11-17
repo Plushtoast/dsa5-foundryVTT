@@ -27,12 +27,6 @@
 
         <div class="tab details" data-tab="details">
 
-            <div class="form-group">
-                <label class="label-text">{{localize "damageThreshold"}}: </label>
-                <div class="input-box">
-                    <input class="input-text" type="text" name="data.damageThreshold.value" value="{{data.damageThreshold.value}}" data-dtype="Number" />
-                </div>
-            </div>
 
             <div class="form-group">
                 <label class="label-text">{{localize "StF"}}</label>
@@ -47,7 +41,7 @@
 
             <div class="form-group">
                 <label class="label-text">{{localize "guidevalue"}}</label>
-                <select name="data.StF.value" data-dtype="{{data.guidevalue.type}}">
+                <select name="data.guidevalue.value" data-dtype="{{data.guidevalue.type}}">
                     {{#select data.guidevalue.value}}
                     {{#each guidevalues as |type sktype|}}
                     <option value="{{sktype}}">{{localize type}}</option>
@@ -58,10 +52,10 @@
 
             <div class="form-group">
                 <label class="label-text">{{localize "weapontype"}}</label>
-                <select name="data.StF.value" data-dtype="{{data.weapontype.type}}">
+                <select name="data.weapontype.value" data-dtype="{{data.weapontype.type}}">
                     {{#select data.weapontype.value}}
-                    {{#each StFs as |type sktype|}}
-                    <option value="{{weapontypes}}">{{localize type}}</option>
+                    {{#each weapontypes as |type sktype|}}
+                    <option value="{{sktype}}">{{localize type}}</option>
                     {{/each}}
                     {{/select}}
                 </select>

@@ -1,16 +1,16 @@
 <div class="dialog-row">
     <div class="bonus-column">
-      
+
         <div class="form-group">
-        <label>{{localize "Modifier"}}</label>
-        <input type="text" name="testModifier" value="{{testModifier}}" />
-      </div>
-  
-    
+            <label>{{localize "Modifier"}}</label>
+            <input type="text" name="testModifier" value="{{testModifier}}" />
+        </div>
+
+
     </div>
-  </div>
-  
-  <div class="form-group custom-select" >
+</div>
+{{# if difficultyLabels}}
+<div class="form-group custom-select">
     <label>{{localize "Difficulty"}}</label>
     <select name="testDifficulty">
       {{#select testDifficulty}}
@@ -19,9 +19,10 @@
       {{/each}}
       {{/select}}
     </select>
-  </div>
-  
-  <div class="form-group custom-select" >
+</div>
+{{/if}}
+
+<div class="form-group custom-select">
     <label>{{localize "DIALOG.RollMode"}}</label>
     <select name="rollMode">
       {{#select rollMode}}
@@ -30,4 +31,4 @@
       {{/each}}
       {{/select}}
     </select>
-  </div>
+</div>

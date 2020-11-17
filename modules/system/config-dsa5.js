@@ -16,6 +16,13 @@ DSA5.equipmentTypes = {
     "misc": "Miscellanous"
 };
 
+DSA5.moneyNames = {
+    "D": "Money-D",
+    "S": "Money-S",
+    "H": "Money-H",
+    "K": "Money-K"
+}
+
 DSA5.meleeRanges = {
     "short": "Range-short",
     "medium": "Range-medium",
@@ -37,7 +44,7 @@ DSA5.combatskillsGuidevalues = {
     "ff": "CHAR.FF",
     "ge": "CHAR.GE",
     "kk": "CHAR.KK",
-    "gekk": "CHAR.GEKK"
+    "ge/kk": "CHAR.GEKK"
 }
 
 DSA5.skillDifficultyModifiers = {

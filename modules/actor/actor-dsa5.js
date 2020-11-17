@@ -18,11 +18,17 @@ export default class Actordsa5 extends Actor {
 
         let skills = await DSA5_Utility.allSkills() || [];
         let combatskills = await DSA5_Utility.allCombatSkills() || [];
+        let moneyItems = await DSA5_Utility.allMoneyItems() || [];
+
+        moneyItems = moneyItems.sort((a, b) => (a.data.price.value > b.data.price.value) ? -1 : 1);
 
         if (data.type == "character") {
             data.items = data.items.concat(skills);
             data.items = data.items.concat(combatskills);
-
+            data.items = data.items.concat(moneyItems.map(m => {
+                m.data.quantity.value = 0
+                return m
+            }));
 
             super.create(data, options);
         }
@@ -65,7 +71,9 @@ export default class Actordsa5 extends Actor {
                 data.data.status.dodge.max = data.data.status.dodge.value + data.data.status.dodge.modifier;
 
                 data.data.status.fatePoints.max = data.data.status.fatePoints.value + data.data.status.fatePoints.modifier;
-                data.data.satus.initiative.value = Math.round((data.data.characteristics["mu"].value + data.data.characteristics["ge"].value) / 2);
+                data.data.status.initiative.value = Math.round((data.data.characteristics["mu"].value + data.data.characteristics["ge"].value) / 2);
+
+
             }
 
 
@@ -106,6 +114,25 @@ export default class Actordsa5 extends Actor {
         return preparedData;
     }
 
+
+
+    static _calculateCombatSkillValues(i, actorData) {
+        if (i.data.weapontype.value == "melee") {
+            let vals = i.data.guidevalue.value.split('/').map(x =>
+                actorData.data.characteristics[x].value + actorData.data.characteristics[x].modifier + actorData.data.characteristics[x].advances
+            );
+            let parryChar = Math.max(...vals);
+            i.data.parry.value = Math.ceil(i.data.talentValue.value / 2) + Math.floor((parryChar - 8) / 3);
+            let attackChar = actorData.data.characteristics.mu.value + actorData.data.characteristics.mu.modifier + actorData.data.characteristics.mu.advances;
+            i.data.attack.value = i.data.talentValue.value + Math.max(0, Math.floor((attackChar - 8) / 3));
+        } else {
+            i.data.parry.value = 0;
+            let attackChar = actorData.data.characteristics.ff.value + actorData.data.characteristics.ff.modifier + actorData.data.characteristics.ff.advances;
+            i.data.attack.value = i.data.talentValue.value + Math.max(0, Math.floor((attackChar - 8) / 3));
+        }
+        return i;
+    }
+
     prepareItems() {
         let actorData = duplicate(this.data)
         let bodySkills = [];
@@ -113,6 +140,7 @@ export default class Actordsa5 extends Actor {
         let knowledgeSkills = [];
         let tradeSkills = [];
         let natureSkills = [];
+        let combatskills = [];
 
         let armor = [];
         let rangeweapons = [];
@@ -120,7 +148,6 @@ export default class Actordsa5 extends Actor {
 
         const inventory = {
             meleeweapons: {
-                label: game.i18n.localize("meleeweapon"),
                 items: [],
                 toggle: true,
                 toggleName: game.i18n.localize("equipped"),
@@ -128,103 +155,173 @@ export default class Actordsa5 extends Actor {
                 dataType: "meleeweapon"
             },
             rangeweapons: {
-                label: game.i18n.localize("rangeweapon"),
                 items: [],
                 toggle: true,
                 toggleName: game.i18n.localize("equipped"),
                 show: false,
                 dataType: "rangeweapon"
             },
+            armor: {
+                items: [],
+                toggle: true,
+                toggleName: game.i18n.localize("equipped"),
+                show: false,
+                dataType: "armor"
+            },
             ammunition: {
-                label: game.i19n.localize("ammunition"),
                 items: [],
                 show: false,
                 dataType: "ammunition"
             },
             misc: {
-                label: game.i19n.localize("miscellanous"),
                 items: [],
                 show: true,
                 dataType: "miscellanous"
             }
         };
 
+        const money = {
+            coins: [],
+            total: 0,
+            show: true
+        }
+
+
+
         actorData.items = actorData.items.sort((a, b) => (a.sort || 0) - (b.sort || 0))
 
+        let totalArmor = 0;
 
         let totalWeight = 0;
+        let encumbrance = 0;
+        let carrycapacity = (actorData.data.characteristics.mu.value + actorData.data.characteristics.mu.modifier + actorData.data.characteristics.mu.advances) * 2;
+
+
 
         for (let i of actorData.items) {
-            try {
-                i.img = i.img || DEFAULT_TOKEN;
+            //try {
+            i.img = i.img || DEFAULT_TOKEN;
 
-                // *********** TALENTS ***********
-                switch (i.type) {
-                    case "skill":
-                        this.prepareSkill(i);
-                        switch (i.data.group.value) {
-                            case "body":
-                                bodySkills.push(i);
-                                break;
-                            case "social":
-                                socialSkills.push(i);
-                                break;
-                            case "knowledge":
-                                knowledgeSkills.push(i);
-                                break;
-                            case "trade":
-                                tradeSkills.push(i);
-                                break;
-                            case "nature":
-                                natureSkills.push(i);
-                                break;
-                        }
-                        break;
-                    case "ammunition":
-                        i.weight = (i.data.weight.value * i.data.quantity.value).toFixed(2);
-                        inventory.ammunition.items.push(i);
-                        inventory.ammunition.show = true;
-                        totalWeight += Number(i.weight);
-                        break;
-                    case "meleeweapon":
-                        i.weight = (i.data.weight.value * i.data.quantity.value).toFixed(2);
-                        i.toggleValue = i.data.worn || false;
-                        inventory.meleeweapon.items.push(i);
-                        inventory.meleeweapon.show = true;
-                        totalWeight += Number(i.weight);
-                        break;
-                    case "rangeweapon":
-                        i.weight = (i.data.weight.value * i.data.quantity.value).toFixed(2);
-                        i.toggleValue = i.data.worn || false;
-                        inventory.rangeweapon.items.push(i);
-                        inventory.rangeweapon.show = true;
-                        totalWeight += Number(i.weight);
-                        break;
-                    case "armor":
-                        i.weight = (i.data.weight.value * i.data.quantity.value).toFixed(2);
-                        i.toggleValue = i.data.worn || false;
-                        inventory.armor.items.push(i);
-                        inventory.armor.show = true;
-                        totalWeight += Number(i.weight);
-                        break;
-                    case "equipment":
-                        i.weight = (i.data.weight.value * i.data.quantity.value).toFixed(2);
-                        inventory[i.data.equipmentType.value].items.push(i);
-                        inventory[i.data.equipmentType.value].show = true;
-                        totalWeight += Number(i.weight);
-                        break;
-                }
+            // *********** TALENTS ***********
+            switch (i.type) {
+                case "skill":
+                    this.prepareSkill(i);
+                    switch (i.data.group.value) {
+                        case "body":
+                            bodySkills.push(i);
+                            break;
+                        case "social":
+                            socialSkills.push(i);
+                            break;
+                        case "knowledge":
+                            knowledgeSkills.push(i);
+                            break;
+                        case "trade":
+                            tradeSkills.push(i);
+                            break;
+                        case "nature":
+                            natureSkills.push(i);
+                            break;
+                    }
+                    break;
+                case "combatskill":
 
-            } catch (error) {
+
+                    combatskills.push(Actordsa5._calculateCombatSkillValues(i, actorData));
+                    break;
+                case "ammunition":
+                    i.weight = parseFloat((i.data.weight.value * i.data.quantity.value).toFixed(3));
+                    inventory.ammunition.items.push(i);
+                    inventory.ammunition.show = true;
+                    totalWeight += Number(i.weight);
+                    break;
+                case "meleeweapon":
+                    i.weight = parseFloat((i.data.weight.value * i.data.quantity.value).toFixed(3));
+                    i.toggleValue = i.data.worn.value || false;
+                    inventory.meleeweapons.items.push(i);
+                    inventory.meleeweapons.show = true;
+                    totalWeight += Number(i.weight);
+
+                    break;
+                case "rangeweapon":
+                    if (!i.data.quantity)
+                        i.data.quantity = { value: 1 };
+
+                    i.weight = parseFloat((i.data.weight.value * i.data.quantity.value).toFixed(3));
+                    i.toggleValue = i.data.worn.value || false;
+                    inventory.rangeweapons.items.push(i);
+                    inventory.rangeweapons.show = true;
+                    totalWeight += Number(i.weight);
+
+
+                    break;
+                case "armor":
+                    i.weight = parseFloat((i.data.weight.value * i.data.quantity.value).toFixed(3));
+                    i.toggleValue = i.data.worn.value || false;
+                    inventory.armor.items.push(i);
+                    inventory.armor.show = true;
+                    totalWeight += Number(i.weight);
+
+                    if (i.data.worn.value) {
+                        encumbrance += i.data.encumbrance.value;
+                        totalArmor += i.data.protection.value;
+                        armor.push(i);
+                    }
+
+
+                    break;
+                case "equipment":
+                    i.weight = parseFloat((i.data.weight.value * i.data.quantity.value).toFixed(3));
+                    inventory[i.data.equipmentType.value].items.push(i);
+                    inventory[i.data.equipmentType.value].show = true;
+                    totalWeight += Number(i.weight);
+                    break;
+
+                case "money":
+                    i.weight = parseFloat((i.data.weight.value * i.data.quantity.value).toFixed(3));
+
+                    money.coins.push(i);
+                    totalWeight += Number(i.weight);
+
+                    money.total += i.data.quantity.value * i.data.price.value;
+                    break;
+
+            }
+
+
+
+            /*} catch (error) {
                 console.error("Something went wrong with preparing item " + i.name + ": " + error)
                 ui.notifications.error("Something went wrong with preparing item " + i.name + ": " + error)
                     // ui.notifications.error("Deleting " + i.name);
                     // this.deleteEmbeddedEntity("OwnedItem", i._id);
+            }*/
+        }
+
+        for (let wep of inventory.rangeweapons.items) {
+            if (wep.data.worn.value) {
+                rangeweapons.push(Actordsa5._prepareRangeWeapon(wep, inventory.ammunition, combatskills));
             }
         }
+        for (let wep of inventory.meleeweapons.items) {
+            if (wep.data.worn.value) {
+                meleeweapons.push(Actordsa5._prepareMeleeWeapon(wep, combatskills, actorData));
+            }
+        }
+
+        encumbrance += Math.max(0, Math.floor((totalWeight - carrycapacity) / 4));
+
         return {
             totalweight: totalWeight,
+            totalArmor: totalArmor,
+            money,
+            encumbrance: encumbrance,
+            carrycapacity: carrycapacity,
+            wornRangedWeapons: rangeweapons,
+            wornMeleeWeapons: meleeweapons,
+            wornArmor: armor,
             inventory,
+            combatskills: combatskills,
             allSkillsLeft: {
                 "body": bodySkills,
                 "social": socialSkills,
@@ -235,6 +332,78 @@ export default class Actordsa5 extends Actor {
                 "trade": tradeSkills
             }
         }
+    }
+
+    setupWeapon(item, mode, options) {
+        let title = game.i18n.localize(item.name) + " " + game.i18n.localize(mode + "test");
+
+        let testData = {
+            source: item,
+            mode: mode,
+            extra: {
+                actor: this.data,
+                options: options
+            }
+        };
+
+        let dialogOptions = {
+            title: title,
+            template: "/systems/dsa5/templates/dialog/combatskill-dialog.html",
+            // Prefilled dialog data
+            data: {
+                rollMode: options.rollMode
+            },
+            callback: (html) => {
+                cardOptions.rollMode = html.find('[name="rollMode"]').val();
+                testData.testModifier = Number(html.find('[name="testModifier"]').val());
+
+                return { testData, cardOptions };
+            }
+        };
+
+        let cardOptions = this._setupCardOptions("systems/dsa5/templates/chat/roll/combatskill-card.html", title)
+
+        return DiceDSA5.setupDialog({
+            dialogOptions: dialogOptions,
+            testData: testData,
+            cardOptions: cardOptions
+        });
+    }
+
+    setupCombatskill(item, mode, options = {}) {
+        let title = game.i18n.localize(item.name) + " " + game.i18n.localize(mode + "test");
+
+        let testData = {
+            source: item,
+            mode: mode,
+            extra: {
+                actor: this.data,
+                options: options
+            }
+        };
+
+        let dialogOptions = {
+            title: title,
+            template: "/systems/dsa5/templates/dialog/combatskill-dialog.html",
+            // Prefilled dialog data
+            data: {
+                rollMode: options.rollMode
+            },
+            callback: (html) => {
+                cardOptions.rollMode = html.find('[name="rollMode"]').val();
+                testData.testModifier = Number(html.find('[name="testModifier"]').val());
+
+                return { testData, cardOptions };
+            }
+        };
+
+        let cardOptions = this._setupCardOptions("systems/dsa5/templates/chat/roll/combatskill-card.html", title)
+
+        return DiceDSA5.setupDialog({
+            dialogOptions: dialogOptions,
+            testData: testData,
+            cardOptions: cardOptions
+        });
     }
 
     setupCharacteristic(characteristicId, options = {}) {
@@ -317,6 +486,27 @@ export default class Actordsa5 extends Actor {
 
     }
 
+    static _prepareMeleeWeapon(item, combatskills, actorData) {
+        let skill = combatskills.filter(i => i.name == item.data.combatskill.value)[0];
+
+        item.attack = skill.data.attack.value + item.data.atmod.value;
+        if (skill.data.guidevalue.value != "-") {
+            let val = Math.max(...(skill.data.guidevalue.value.split("/").map(x => actorData.data.characteristics[x].value)));
+            let extra = val - item.data.damageThreshold.value;
+            if (extra > 0) {
+                item.extraDamage = "+" + extra;
+            }
+        }
+
+        item.parry = skill.data.parry.value + item.data.pamod.value;
+        return item;
+    }
+
+    static _prepareRangeWeapon(item, ammunition, combatskills) {
+        let skill = combatskills.filter(i => i.name == item.data.combatskill.value)[0];
+        item.attack = skill.data.attack.value
+        return item;
+    }
 
     _setupCardOptions(template, title) {
         let cardOptions = {
