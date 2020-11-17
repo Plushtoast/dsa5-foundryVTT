@@ -56,7 +56,7 @@
                 {{item.data.StF.value}}
             </div>
             <div class="col eight center">
-                <input type="text" data-dtype="{{item.data.talentValue.type}}" value="{{item.data.talentValue.value}}" />
+                <input class="skill-advances" type="text" data-dtype="{{item.data.talentValue.type}}" value="{{item.data.talentValue.value}}" />
             </div>
             <div class="col eight center">
                 <a class="ch-combatskill-attack">{{item.data.attack.value}}</a>
@@ -217,6 +217,14 @@
             {{localize "combatspecialtalents"}}
         </div>
     </div>
+    <div class="row-section wrap">
+        {{#each actor.combatSpecialAbilities as |item i|}}
+        <div class="col item" data-item-id="{{item._id}}">
+            <a class="item-edit">{{item.name}}</a>
+        </div>
+        {{/each}}
+    </div>
+
 </div>
 
 <div class="row-section">

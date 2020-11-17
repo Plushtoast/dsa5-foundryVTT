@@ -211,6 +211,12 @@ export default class ActorSheetDsa5 extends ActorSheet {
             });
         });
 
+        let handler = ev => this._onDragItemStart(ev);
+        html.find('.item').each((i, li) => {
+            li.setAttribute("draggable", true);
+            li.addEventListener("dragstart", handler, false);
+        });
+
         html.find('.item-delete').click(ev => {
             let itemId = this._getItemId(ev);
 
@@ -244,22 +250,45 @@ export default class ActorSheetDsa5 extends ActorSheet {
     async _addMoney(item) {
         let money = duplicate(this.actor.data.items.filter(i => i.type === "money"));
 
-        let moneyItem = money.find(i => item.name)
+        let moneyItem = money.find(i => i.name == item.name)
 
         if (moneyItem) {
+            console.log("adding")
             moneyItem.data.quantity.value += item.data.quantity.value
             await this.actor.updateEmbeddedEntity("OwnedItem", money);
         } else {
+            console.log("more money")
             await this.actor.createEmbeddedEntity("OwnedItem", item);
         }
     }
 
+    _onDragItemStart(event) {
+        let itemId = event.currentTarget.getAttribute("data-item-id");
+        const item = duplicate(this.actor.getEmbeddedEntity("OwnedItem", itemId))
+        event.dataTransfer.setData("text/plain", JSON.stringify({
+            type: "Item",
+            sheetTab: this.actor.data.flags["_sheetTab"],
+            actorId: this.actor._id,
+            data: item,
+            root: event.currentTarget.getAttribute("root")
+        }));
+    }
+
     async _onDrop(event) {
         let dragData = JSON.parse(event.dataTransfer.getData("text/plain"));
+        let item
+        let typeClass
+        if (dragData.id) {
+            item = DSA5_Utility.findItembyId(dragData.id);
+            typeClass = item.data.type
+        } else {
+            item = dragData.data
+            typeClass = item.type
+        }
 
-        let item = DSA5_Utility.findItembyId(dragData.id);
+        console.log(item)
 
-        switch (item.data.type) {
+        switch (typeClass) {
             case "species":
                 await this.actor.update({
                     "data.details.species.value": item.data.name,

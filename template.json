@@ -308,17 +308,23 @@
     },
     "Item": {
         "types": [
-            "advantage",
-            "ammunition",
-            "armor",
-            "combatskill",
-            "disadvantage",
+
             "equipment",
-            "meleeweapon",
-            "money",
+            "armor",
+            "ammunition",
             "rangeweapon",
+            "meleeweapon",
+
             "skill",
-            "species"
+            "combatskill",
+            "specialability",
+
+            "advantage",
+            "disadvantage",
+
+            "money",
+            "species",
+            "career"
 
         ],
         "templates": {
@@ -358,6 +364,13 @@
                     "type": "Number",
                     "label": "Encumbrance",
                     "value": 0
+                }
+            },
+            "requirements": {
+                "requirements": {
+                    "type": "String",
+                    "label": "Requirements",
+                    "value": ""
                 }
             },
             "APvalue": {
@@ -450,6 +463,7 @@
             }
 
         },
+
         "meleeweapon": {
             "templates": [
                 "equipment",
@@ -513,6 +527,55 @@
                 "value": false
             }
         },
+        "career": {
+            "templates": [
+                "description",
+                "APvalue",
+                "requirements"
+            ],
+            "combatskills": {
+                "type": "String",
+                "value": "",
+                "label": "combatskills"
+            },
+            "skills": {
+                "type": "String",
+                "value": "",
+                "label": "skills"
+            },
+            "recommendedAdvantages": {
+                "type": "String",
+                "value": "",
+                "label": "recommendedAdvantages"
+            },
+            "recommendedDisadvantages": {
+                "type": "String",
+                "value": "",
+                "label": "recommendedDisadvantages"
+            },
+            "notsuitableAdvantages": {
+                "type": "String",
+                "value": "",
+                "label": "notsuitableAdvantages"
+            },
+            "notsuitableDisadvantages": {
+                "type": "String",
+                "value": "",
+                "label": "notsuitableDisadvantages"
+            }
+        },
+        "specialability": {
+            "templates": [
+                "description",
+                "APvalue",
+                "requirements"
+            ],
+            "category": {
+                "type": "String",
+                "label": "Category",
+                "value": "general"
+            }
+        },
         "equipment": {
             "templates": [
                 "equipment",
@@ -528,14 +591,16 @@
             "templates": [
                 "description",
                 "APvalue",
-                "max"
+                "max",
+                "requirements"
             ]
         },
         "disadvantage": {
             "templates": [
                 "description",
                 "APvalue",
-                "max"
+                "max",
+                "requirements"
             ]
         },
         "species": {

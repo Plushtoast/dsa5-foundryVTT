@@ -80,6 +80,9 @@ export default class ItemSheetdsa5 extends ItemSheet {
             case "ammunition":
                 data['ammunitiongroups'] = DSA5.ammunitiongroups;
                 break;
+            case "specialability":
+                data['categories'] = DSA5.specialAbilityCategories;
+                break;
             case "armor":
                 break;
             case "equipment":

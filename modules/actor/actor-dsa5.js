@@ -21,7 +21,6 @@ export default class Actordsa5 extends Actor {
         let moneyItems = await DSA5_Utility.allMoneyItems() || [];
 
         moneyItems = moneyItems.sort((a, b) => (a.data.price.value > b.data.price.value) ? -1 : 1);
-
         if (data.type == "character") {
             data.items = data.items.concat(skills);
             data.items = data.items.concat(combatskills);
@@ -141,6 +140,10 @@ export default class Actordsa5 extends Actor {
         let tradeSkills = [];
         let natureSkills = [];
         let combatskills = [];
+        let advantages = [];
+        let disadvantages = []
+        let generalSpecialAbilites = []
+        let combatSpecialAbilities = []
 
         let armor = [];
         let rangeweapons = [];
@@ -285,7 +288,22 @@ export default class Actordsa5 extends Actor {
 
                     money.total += i.data.quantity.value * i.data.price.value;
                     break;
-
+                case "advantage":
+                    advantages.push(i)
+                    break;
+                case "disadvantage":
+                    disadvantages.push(i)
+                    break;
+                case "specialability":
+                    switch (i.data.category.value) {
+                        case "general":
+                            generalSpecialAbilites.push(i)
+                            break;
+                        case "combat":
+                            combatSpecialAbilities.push(i)
+                            break
+                    }
+                    break;
             }
 
 
@@ -309,16 +327,21 @@ export default class Actordsa5 extends Actor {
             }
         }
 
+        money.coins = money.coins.sort((a, b) => (a.data.price.value > b.data.price.value) ? -1 : 1);
         encumbrance += Math.max(0, Math.floor((totalWeight - carrycapacity) / 4));
 
         return {
             totalweight: totalWeight,
             totalArmor: totalArmor,
-            money,
+            money: money,
             encumbrance: encumbrance,
             carrycapacity: carrycapacity,
             wornRangedWeapons: rangeweapons,
             wornMeleeWeapons: meleeweapons,
+            advantages: advantages,
+            disadvantages: disadvantages,
+            generalSpecialAbilites: generalSpecialAbilites,
+            combatSpecialAbilities: combatSpecialAbilities,
             wornArmor: armor,
             inventory,
             combatskills: combatskills,

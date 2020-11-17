@@ -41,6 +41,37 @@
             "tags": [
                 "money"
             ]
+        },
+        {
+            "name": "Advantages",
+            "label": "Advantages/Disadvantages",
+            "system": "dsa5",
+            "path": "packs/advantages.db",
+            "entity": "Item",
+            "tags": [
+                "advantages",
+                "disadvantages"
+            ]
+        },
+        {
+            "name": "Careers",
+            "label": "Careers",
+            "system": "dsa5",
+            "path": "packs/careers.db",
+            "entity": "Item",
+            "tags": [
+                "careers"
+            ]
+        },
+        {
+            "name": "Species",
+            "label": "Species",
+            "system": "dsa5",
+            "path": "packs/species.db",
+            "entity": "Item",
+            "tags": [
+                "species"
+            ]
         }
     ],
     "languages": [{

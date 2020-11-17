@@ -23,6 +23,14 @@ DSA5.moneyNames = {
     "K": "Money-K"
 }
 
+DSA5.specialAbilityCategories = {
+    "general": "general",
+    "Combat": "Combat",
+    "fatePoints": "fatePoints",
+    "magical": "magical",
+    "clerical": "clerical"
+}
+
 DSA5.meleeRanges = {
     "short": "Range-short",
     "medium": "Range-medium",

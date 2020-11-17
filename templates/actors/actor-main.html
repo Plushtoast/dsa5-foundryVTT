@@ -67,6 +67,11 @@
                     {{localize "advantages"}}
                 </div>
             </div>
+            {{#each actor.advantages as |item i|}}
+            <div class="col item" data-item-id="{{item._id}}">
+                <a class="item-edit">{{item.name}}</a>
+            </div>
+            {{/each}}
         </div>
 
         <div class="groupbox">
@@ -75,6 +80,13 @@
                     {{localize "disadvantages"}}
                 </div>
             </div>
+            <div class="row-section wrap">
+                {{#each actor.disadvantages as |item i|}}
+                <div class="col item" data-item-id="{{item._id}}">
+                    <a class="item-edit">{{item.name}}</a>
+                </div>
+                {{/each}}
+            </div>
         </div>
 
         <div class="groupbox">
@@ -82,6 +94,13 @@
                 <div class="col header-label">
                     {{localize "generalSpecialAbilities"}}
                 </div>
+            </div>
+            <div class="row-section wrap">
+                {{#each actor.generalSpecialAbilities as |item i|}}
+                <div class="col item" data-item-id="{{item._id}}">
+                    <a class="item-edit">{{item.name}}</a>
+                </div>
+                {{/each}}
             </div>
         </div>
     </div>
@@ -108,8 +127,8 @@
                 <div class="col two lineheight">
                     {{localize "wounds"}}
                 </div>
-                <div class="col eight">
-                    <input name="data.status.wounds.value" type="text" value="{{data.status.wounds.value}}" data-dtype="Number" />
+                <div class="col eight lineheight center">
+                    {{data.status.wounds.value}}
                 </div>
                 <div class="col eight">
                     <input name="data.status.wounds.modifier" type="text" value="{{data.status.wounds.modifier}}" data-dtype="Number" />
@@ -119,17 +138,16 @@
                     <input name="data.status.wounds.advances" type="text" value="{{data.status.wounds.advances}}" data-dtype="Number" />
 
                 </div>
-                <div class="col eight">
-                    <input name="data.status.wounds.max" type="text" value="{{data.status.wounds.max}}" data-dtype="Number" />
-
+                <div class="col eight lineheight center">
+                    {{data.status.wounds.max}}
                 </div>
             </div>
             <div class="derivedAttrs row-section">
                 <div class="col two lineheight">
                     {{localize "astralenergy"}}
                 </div>
-                <div class="col eight">
-                    <input name="data.status.astralenergy.value" type="text" value="{{data.status.astralenergy.value}}" data-dtype="Number" />
+                <div class="col eight lineheight center">
+                    {{data.status.astralenergy.value}}
                 </div>
                 <div class="col eight">
                     <input name="data.status.astralenergy.modifier" type="text" value="{{data.status.astralenergy.modifier}}" data-dtype="Number" />
@@ -139,8 +157,8 @@
                     <input name="data.status.astralenergy.advances" type="text" value="{{data.status.astralenergy.advances}}" data-dtype="Number" />
 
                 </div>
-                <div class="col eight">
-                    <input name="data.status.astralenergy.max" type="text" value="{{data.status.astralenergy.max}}" data-dtype="Number" />
+                <div class="col eight lineheight center">
+                    {{data.status.astralenergy.max}}
 
                 </div>
             </div>
@@ -148,8 +166,8 @@
                 <div class="col two lineheight">
                     {{localize "karmaenergy"}}
                 </div>
-                <div class="col eight">
-                    <input name="data.status.karmaenergy.value" type="text" value="{{data.status.karmaenergy.value}}" data-dtype="Number" />
+                <div class="col eight lineheight center">
+                    {{data.status.karmaenergy.value}}
                 </div>
                 <div class="col eight">
                     <input name="data.status.karmaenergy.modifier" type="text" value="{{data.status.karmaenergy.modifier}}" data-dtype="Number" />
@@ -159,17 +177,16 @@
                     <input name="data.status.karmaenergy.advances" type="text" value="{{data.status.karmaenergy.advances}}" data-dtype="Number" />
 
                 </div>
-                <div class="col eight">
-                    <input name="data.status.karmaenergy.max" type="text" value="{{data.status.karmaenergy.max}}" data-dtype="Number" />
-
+                <div class="col eight lineheight center">
+                    {{data.status.karmaenergy.max}}
                 </div>
             </div>
             <div class="derivedAttrs row-section">
                 <div class="col two lineheight">
                     {{localize "soulpower"}}
                 </div>
-                <div class="col eight">
-                    <input name="data.status.soulpower.value" type="text" value="{{data.status.soulpower.value}}" data-dtype="Number" />
+                <div class="col eight lineheight center">
+                    {{data.status.soulpower.value}}
                 </div>
                 <div class="col eight">
                     <input name="data.status.soulpower.modifier" type="text" value="{{data.status.soulpower.modifier}}" data-dtype="Number" />
@@ -178,8 +195,8 @@
                 <div class="col eight">
 
                 </div>
-                <div class="col eight">
-                    <input name="data.status.soulpower.max" type="text" value="{{data.status.soulpower.max}}" data-dtype="Number" />
+                <div class="col eight lineheight center">
+                    {{data.status.soulpower.max}}
 
                 </div>
             </div>
@@ -187,8 +204,8 @@
                 <div class="col two lineheight">
                     {{localize "toughness"}}
                 </div>
-                <div class="col eight">
-                    <input name="data.status.toughness.value" type="text" value="{{data.status.toughness.value}}" data-dtype="Number" />
+                <div class="col eight lineheight center">
+                    {{data.status.toughness.value}}
                 </div>
                 <div class="col eight">
                     <input name="data.status.toughness.modifier" type="text" value="{{data.status.toughness.modifier}}" data-dtype="Number" />
@@ -197,8 +214,8 @@
                 <div class="col eight">
 
                 </div>
-                <div class="col eight">
-                    <input name="data.status.toughness.max" type="text" value="{{data.status.toughness.max}}" data-dtype="Number" />
+                <div class="col eight lineheight center">
+                    {{data.status.toughness.max}}
 
                 </div>
             </div>
@@ -206,8 +223,8 @@
                 <div class="col two lineheight">
                     {{localize "dodge"}}
                 </div>
-                <div class="col eight">
-                    <input name="data.status.dodge.value" type="text" value="{{data.status.dodge.value}}" data-dtype="Number" />
+                <div class="col eight lineheight center">
+                    {{data.status.dodge.value}}
                 </div>
                 <div class="col eight">
                     <input name="data.status.dodge.modifier" type="text" value="{{data.status.dodge.modifier}}" data-dtype="Number" />
@@ -216,8 +233,8 @@
                 <div class="col eight">
 
                 </div>
-                <div class="col eight">
-                    <input name="data.status.dodge.max" type="text" value="{{data.status.dodge.max}}" data-dtype="Number" />
+                <div class="col eight lineheight center">
+                    {{data.status.dodge.max}}
 
                 </div>
             </div>
@@ -245,7 +262,7 @@
                 <div class="col two lineheight">
                     {{localize "fatePoints"}}
                 </div>
-                <div class="col eight">
+                <div class="col eight lineheight">
 
                 </div>
                 <div class="col eight">
@@ -256,8 +273,8 @@
 
                 </div>
 
-                <div class="col eight">
-                    <input name="data.status.fatePoints.max" type="text" value="{{data.status.fatePoints.max}}" data-dtype="Number" />
+                <div class="col eight lineheight">
+                    {{data.status.fatePoints.max}}
 
                 </div>
             </div>
@@ -285,8 +302,8 @@
                 </div>
             </div>
             <div class="experience row-section">
-                <div class="col three">
-                    <input name="data.details.experience.current" type="text" value="{{data.details.experience.current}}" data-dtype="Number" />
+                <div class="col three lineheight">
+                    {{data.details.experience.current}}
                 </div>
                 <div class="col three">
                     <input name="data.details.experience.spent" type="text" value="{{data.details.experience.spent}}" data-dtype="Number" />
