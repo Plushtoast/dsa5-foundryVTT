@@ -20,9 +20,7 @@
 <div class="card-content display-toggle">
     <b>{{localize "damage"}}</b>: {{testData.damage}}
 </div>
-{{/if}}
-
+{{/if}} {{#if testData.description}}
 <div class="card-content" roll-description="{{description}}">
-    <b>{{localize "Description"}}</b>: {{testData.description}}
-
+    <b>{{localize "Description"}}</b>: {{testData.description}} {{/if}}
 </div>

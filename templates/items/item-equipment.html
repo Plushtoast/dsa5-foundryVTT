@@ -1,15 +1,38 @@
-<div class="eqipment">
-
-    <div class="form-group">
-        <label class="label-text">{{localize "price"}}: </label>
-        <div class="input-box">
-            <input class="input-text" type="text" name="data.price.value" value="{{data.price.value}}" data-dtype="Number" />
-        </div>
+<div class="row-section ">
+    <div class="col ten">
+        <img src="{{item.img}}" {{#if showBorder}}class="no-image-border" {{/if}} data-edit="img" />
     </div>
-    <div class="form-group">
-        <label class="label-text">{{localize "Weight"}}: </label>
-        <div class="input-box">
-            <input class="input-text" type="text" name="data.weight.value" value="{{data.weight.value}}" data-dtype="Number" />
+    <div class="col ninety item-main">
+        <div class="row-section">
+            <div class="col four">
+                <label class="label-text table-title">{{localize "Category"}}</label>
+            </div>
+            <div class="col fourty">
+                <label>{{localize item.type}}</label>
+            </div>
+            <div class="col four">
+                <label class="label-text table-title">{{localize "quantity"}}</label>
+            </div>
+            <div class="col fifteen">
+                <input class="input-text" type="text" name="data.quantity.value" value="{{data.quantity.value}}" data-dtype="Number" />
+
+            </div>
+
+        </div>
+        <div class="row-section">
+            <div class="col four">
+
+                <label class="label-text table-title">{{localize "price"}}</label>
+            </div>
+            <div class="col fourty">
+                <input class="input-text" type="text" name="data.price.value" value="{{data.price.value}}" data-dtype="Number" />
+            </div>
+            <div class="col four">
+                <label class="label-text table-title">{{localize "Weight"}}</label>
+            </div>
+            <div class="col fifteen">
+                <input class="input-text" type="text" name="data.weight.value" value="{{data.weight.value}}" data-dtype="Number" />
+            </div>
         </div>
     </div>
 </div>

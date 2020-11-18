@@ -72,6 +72,16 @@
             "tags": [
                 "species"
             ]
+        },
+        {
+            "name": "SpecialAbilities",
+            "label": "SpecialAbilities",
+            "system": "dsa5",
+            "path": "packs/specialabilities.db",
+            "entity": "Item",
+            "tags": [
+                "specialabilities"
+            ]
         }
     ],
     "languages": [{

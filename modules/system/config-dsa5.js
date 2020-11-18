@@ -23,12 +23,22 @@ DSA5.moneyNames = {
     "K": "Money-K"
 }
 
+DSA5.mageLevels = {
+    "mundane": "mundane",
+    "clerical": "clerical",
+    "magical": "magical"
+}
+
 DSA5.specialAbilityCategories = {
     "general": "general",
     "Combat": "Combat",
     "fatePoints": "fatePoints",
     "magical": "magical",
     "clerical": "clerical"
+}
+
+DSA5.dieColors = {
+    "dodge": "ge"
 }
 
 DSA5.meleeRanges = {

@@ -3,17 +3,21 @@ import DSA5 from "../system/config-dsa5.js";
 
 
 export default class ActorSheetDsa5 extends ActorSheet {
-    get actorType() {
-        return this.actor.data.type;
-    }
-
     static
     get defaultOptions() {
         const options = super.defaultOptions;
         options.tabs = [{ navSelector: ".tabs", contentSelector: ".content", initial: "main" }]
-        options.width = 576;
+        mergeObject(options, {
+            width: 680,
+            height: 740
+        });
         return options;
     }
+    get actorType() {
+        return this.actor.data.type;
+    }
+
+
 
     async _render(force = false, options = {}) {
         this._saveScrollPos(); // Save scroll positions
@@ -164,7 +168,13 @@ export default class ActorSheetDsa5 extends ActorSheet {
                 this.actor.basicTest(setupData)
             });
         });
-
+        html.find('.ch-status').click(event => {
+            event.preventDefault();
+            let characteristic = event.currentTarget.attributes["data-char"].value;
+            this.actor.setupStatus(characteristic, event).then(setupData => {
+                this.actor.basicTest(setupData)
+            });
+        });
 
         html.find('.ch-combatskill-attack').click(event => {
             event.preventDefault();
@@ -217,38 +227,65 @@ export default class ActorSheetDsa5 extends ActorSheet {
             li.addEventListener("dragstart", handler, false);
         });
 
-        html.find('.item-delete').click(ev => {
-            let itemId = this._getItemId(ev);
+        html.find('.rightclick-delete').mousedown(ev => {
+            if (ev.button == 2) {
+                this._deleteItem(ev);
+            }
+        });
 
-            renderTemplate('systems/dsa5/templates/dialog/delete-item-dialog.html').then(html => {
-                new Dialog({
-                    title: "Delete Confirmation",
-                    content: html,
-                    buttons: {
-                        Yes: {
-                            icon: '<i class="fa fa-check"></i>',
-                            label: "Yes",
-                            callback: dlg => {
-                                this.actor.deleteEmbeddedEntity("OwnedItem", itemId);
-                            }
-                        },
-                        cancel: {
-                            icon: '<i class="fas fa-times"></i>',
-                            label: "Cancel"
-                        },
-                    },
-                    default: 'Yes'
-                }).render(true)
-            });
+        html.find('.item-delete').click(ev => {
+            _deleteItem(ev)
         });
     }
+
+    _deleteItem(ev) {
+        let itemId = this._getItemId(ev);
+
+        renderTemplate('systems/dsa5/templates/dialog/delete-item-dialog.html').then(html => {
+            new Dialog({
+                title: game.i18n.localize("Delete Confirmation"),
+                content: html,
+                buttons: {
+                    Yes: {
+                        icon: '<i class="fa fa-check"></i>',
+                        label: "Yes",
+                        callback: dlg => {
+                            this._cleverDeleteItem(itemId)
+                        }
+                    },
+                    cancel: {
+                        icon: '<i class="fas fa-times"></i>',
+                        label: "Cancel"
+                    },
+                },
+                default: 'Yes'
+            }).render(true)
+        });
+    }
+
+    async _cleverDeleteItem(itemId) {
+        let item = this.actor.data.items.find(x => x._id == itemId)
+        console.log(item)
+        switch (item.type) {
+            case "advantage":
+            case "disadvantage":
+                await this._updateAPs(-1 * item.data.APValue.value * item.data.step.value)
+                break;
+            case "specialability":
+                await this._updateAPs(-1 * item.data.APValue.value)
+                break;
+        }
+
+        this.actor.deleteEmbeddedEntity("OwnedItem", itemId);
+    }
+
 
     _getItemId(ev) {
         return $(ev.currentTarget).parents(".item").attr("data-item-id")
     }
 
     async _addMoney(item) {
-        let money = duplicate(this.actor.data.items.filter(i => i.type === "money"));
+        let money = duplicate(this.actor.data.items.filter(i => i.type == "money"));
 
         let moneyItem = money.find(i => i.name == item.name)
 
@@ -258,6 +295,48 @@ export default class ActorSheetDsa5 extends ActorSheet {
             await this.actor.updateEmbeddedEntity("OwnedItem", money);
         } else {
             console.log("more money")
+            await this.actor.createEmbeddedEntity("OwnedItem", item);
+        }
+    }
+
+    async _updateAPs(apValue) {
+        console.log(apValue)
+        await this.actor.update({
+            "data.details.experience.spent": this.actor.data.data.details.experience.spent + apValue,
+        });
+    }
+
+    async _addVantage(item, typeClass) {
+        let res = this.actor.data.items.find(i => {
+            return i.type == typeClass && i.name == item.name
+        });
+
+        if (res) {
+            let vantage = duplicate(res)
+            if (vantage.data.step.value + 1 <= vantage.data.max.value) {
+                vantage.data.step.value += 1
+                await this._updateAPs(vantage.data.APValue.value)
+                await this.actor.updateEmbeddedEntity("OwnedItem", vantage);
+            }
+
+
+        } else {
+            await this._updateAPs(item.data.data.APValue.value)
+            await this.actor.createEmbeddedEntity("OwnedItem", item);
+        }
+    }
+
+    async _addCareer(item) {
+
+    }
+
+    async _addSpecialAbility(item, typeClass) {
+        let res = this.actor.data.items.find(i => {
+            return i.type == typeClass && i.name == item.name
+        });
+
+        if (!res) {
+            await this._updateAPs(item.data.data.APValue.value)
             await this.actor.createEmbeddedEntity("OwnedItem", item);
         }
     }
@@ -274,11 +353,27 @@ export default class ActorSheetDsa5 extends ActorSheet {
         }));
     }
 
+    async _addSpecies(item) {
+        await this.actor.update({
+            "data.details.species.value": item.data.name,
+            "data.details.experience.spent": this.actor.data.data.details.experience.spent + item.data.data.APValue.value,
+            "data.status.speed.initial": item.data.data.baseValues.speed.value,
+            "data.status.soulpower.initial": item.data.data.baseValues.soulpower.value,
+            "data.status.toughness.initial": item.data.data.baseValues.toughness.value,
+            "data.status.wounds.initial": item.data.data.baseValues.wounds.value,
+            "data.status.wounds.current": this.actor.data.data.status.wounds.value + this.actor.data.data.status.wounds.modifier + this.actor.data.data.status.wounds.advances
+        });
+    }
+
     async _onDrop(event) {
         let dragData = JSON.parse(event.dataTransfer.getData("text/plain"));
+        console.log(dragData)
         let item
         let typeClass
-        if (dragData.id) {
+        if (dragData.id && dragData.pack) {
+            item = await DSA5_Utility.findItembyIdAndPack(dragData.id, dragData.pack);
+            typeClass = item.data.type
+        } else if (dragData.id) {
             item = DSA5_Utility.findItembyId(dragData.id);
             typeClass = item.data.type
         } else {
@@ -290,15 +385,7 @@ export default class ActorSheetDsa5 extends ActorSheet {
 
         switch (typeClass) {
             case "species":
-                await this.actor.update({
-                    "data.details.species.value": item.data.name,
-                    "data.details.experience.spent": this.actor.data.data.details.experience.spent + item.data.data.APValue.value,
-                    "data.status.speed.initial": item.data.data.baseValues.speed.value,
-                    "data.status.soulpower.initial": item.data.data.baseValues.soulpower.value,
-                    "data.status.toughness.initial": item.data.data.baseValues.toughness.value,
-                    "data.status.wounds.initial": item.data.data.baseValues.wounds.value,
-                    "data.status.wounds.current": this.actor.data.data.status.wounds.value + this.actor.data.data.status.wounds.modifier + this.actor.data.data.status.wounds.advances
-                });
+                await this._addSpecies(item)
                 break;
             case "meleeweapon":
             case "rangeweapon":
@@ -306,6 +393,16 @@ export default class ActorSheetDsa5 extends ActorSheet {
             case "ammunition":
             case "armor":
                 await this.actor.createEmbeddedEntity("OwnedItem", item);
+                break;
+            case "disadvantage":
+            case "advantage":
+                await this._addVantage(item, typeClass)
+                break;
+            case "specialability":
+                await this._addSpecialAbility(item, typeClass)
+                break;
+            case "career":
+                await this._addCareer(item)
                 break;
             case "money":
                 await this._addMoney(item)

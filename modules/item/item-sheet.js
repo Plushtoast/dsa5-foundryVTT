@@ -15,8 +15,8 @@ export default class ItemSheetdsa5 extends ItemSheet {
         options.tabs = [{ navSelector: ".tabs", contentSelector: ".content", initial: "description" }]
         mergeObject(options, {
             classes: options.classes.concat(["dsa5", "item"]),
-            width: 610,
-            height: 740,
+            width: 400,
+            height: 500,
         });
         return options;
     }
@@ -49,6 +49,8 @@ export default class ItemSheetdsa5 extends ItemSheet {
 
     activateListeners(html) {
         super.activateListeners(html);
+
+
     }
 
     async getData() {
@@ -92,6 +94,8 @@ export default class ItemSheetdsa5 extends ItemSheet {
 
         return data;
     }
+
+
 }
 
 Items.unregisterSheet("core", ItemSheet);

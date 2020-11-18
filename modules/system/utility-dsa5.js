@@ -83,9 +83,19 @@ export default class DSA5_Utility {
     }
 
     static findItembyId(id) {
-        let item = game.items.entities.filter(x => x._id == id);
+        let item = game.items.entities.find(x => x._id == id);
         if (item) {
-            return item[0];
+            return item;
+        }
+    }
+
+    static async findItembyIdAndPack(id, packMan) {
+        const pack = game.packs.get(packMan)
+
+        let item
+        await pack.getContent().then(content => item = content.find(i => i._id == id));
+        if (item) {
+            return item;
         }
     }
 

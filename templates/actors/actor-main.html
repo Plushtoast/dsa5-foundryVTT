@@ -63,27 +63,29 @@
     <div class="column1">
         <div class="groupbox">
             <div class="advantages row-section">
-                <div class="col header-label">
+                <div class="col header-label lineheight">
                     {{localize "advantages"}}
                 </div>
             </div>
-            {{#each actor.advantages as |item i|}}
-            <div class="col item" data-item-id="{{item._id}}">
-                <a class="item-edit">{{item.name}}</a>
+            <div class="row-section wrap cards">
+                {{#each actor.advantages as |item i|}}
+                <div class="item" data-item-id="{{item._id}}">
+                    <a class="item-edit rightclick-delete">{{item.name}}</a>
+                </div>
+                {{/each}}
             </div>
-            {{/each}}
         </div>
 
         <div class="groupbox">
             <div class="disadvantages row-section">
-                <div class="col header-label">
+                <div class="col header-label lineheight">
                     {{localize "disadvantages"}}
                 </div>
             </div>
-            <div class="row-section wrap">
+            <div class="row-section wrap cards">
                 {{#each actor.disadvantages as |item i|}}
-                <div class="col item" data-item-id="{{item._id}}">
-                    <a class="item-edit">{{item.name}}</a>
+                <div class="item" data-item-id="{{item._id}}">
+                    <a class="item-edit rightclick-delete">{{item.name}}</a>
                 </div>
                 {{/each}}
             </div>
@@ -91,14 +93,29 @@
 
         <div class="groupbox">
             <div class="generalSpecialAbilities row-section">
-                <div class="col header-label">
+                <div class="col header-label lineheight">
                     {{localize "generalSpecialAbilities"}}
                 </div>
             </div>
-            <div class="row-section wrap">
-                {{#each actor.generalSpecialAbilities as |item i|}}
-                <div class="col item" data-item-id="{{item._id}}">
-                    <a class="item-edit">{{item.name}}</a>
+            <div class="row-section wrap cards">
+                {{#each actor.generalSpecialAbilites as |item i|}}
+                <div class="item" data-item-id="{{item._id}}">
+                    <a class="item-edit rightclick-delete">{{item.name}}</a>
+                </div>
+                {{/each}}
+            </div>
+        </div>
+
+        <div class="groupbox">
+            <div class="fatePointsAbilities row-section">
+                <div class="col header-label lineheight">
+                    {{localize "fatePointsAbilities"}}
+                </div>
+            </div>
+            <div class="row-section wrap cards">
+                {{#each actor.fatePointsAbilities as |item i|}}
+                <div class="item" data-item-id="{{item._id}}">
+                    <a class="item-edit rightclick-delete">{{item.name}}</a>
                 </div>
                 {{/each}}
             </div>
@@ -273,7 +290,7 @@
 
                 </div>
 
-                <div class="col eight lineheight">
+                <div class="col eight lineheight center">
                     {{data.status.fatePoints.max}}
 
                 </div>
@@ -281,7 +298,7 @@
         </div>
         <div class="groupbox">
             <div class="experience row-section">
-                <div class="col header-label">
+                <div class="col header-label lineheight">
                     <span>{{localize "Experience"}}</span>
                 </div>
             </div>

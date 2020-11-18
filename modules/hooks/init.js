@@ -1,4 +1,5 @@
 import * as initHandleBars from "./handlebars.js";
+import * as initDiceSoNice from "./dicesonice.js";
 
 export default function() {
     Hooks.once("init", () => {
@@ -12,8 +13,10 @@ export default function() {
             "systems/dsa5/templates/actors/actor-combat.html",
             "systems/dsa5/templates/actors/actor-equipment.html",
             "systems/dsa5/templates/actors/actor-notes.html",
-            "systems/dsa5/templates/chat/post-item.html"
+            "systems/dsa5/templates/chat/post-item.html",
+            "systems/dsa5/templates/items/item-stat.html"
         ]);
     });
     initHandleBars.default();
+    initDiceSoNice.default();
 }

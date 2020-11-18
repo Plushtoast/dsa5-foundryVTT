@@ -66,8 +66,7 @@ export default class Actordsa5 extends Actor {
                 data.data.status.toughness.value = (data.data.status.soulpower.initial ? data.data.status.soulpower.initial : 0) + Math.round((data.data.characteristics["ko"].value + data.data.characteristics["ko"].value + data.data.characteristics["kk"].value) / 6);
                 data.data.status.toughness.max = data.data.status.toughness.value + data.data.status.toughness.modifier;
 
-                data.data.status.dodge.value = Math.round(data.data.characteristics["ge"].value / 2);
-                data.data.status.dodge.max = data.data.status.dodge.value + data.data.status.dodge.modifier;
+                this._calculateStatus(data, "dodge")
 
                 data.data.status.fatePoints.max = data.data.status.fatePoints.value + data.data.status.fatePoints.modifier;
                 data.data.status.initiative.value = Math.round((data.data.characteristics["mu"].value + data.data.characteristics["ge"].value) / 2);
@@ -84,6 +83,15 @@ export default class Actordsa5 extends Actor {
         }
     }
 
+    _calculateStatus(data, attr) {
+        switch (attr) {
+            case "dodge":
+                data.data.status.dodge.value = Math.round(data.data.characteristics["ge"].value / 2);
+                data.data.status.dodge.max = data.data.status.dodge.value + data.data.status.dodge.modifier;
+                return data.data.status.dodge.max
+                break;
+        }
+    }
 
 
     prepareCharacter() {
@@ -144,6 +152,7 @@ export default class Actordsa5 extends Actor {
         let disadvantages = []
         let generalSpecialAbilites = []
         let combatSpecialAbilities = []
+        let fatePointsAbilities = []
 
         let armor = [];
         let rangeweapons = [];
@@ -302,6 +311,9 @@ export default class Actordsa5 extends Actor {
                         case "combat":
                             combatSpecialAbilities.push(i)
                             break
+                        case "fatePoints":
+                            fatePointsAbilities.push(i)
+                            break;
                     }
                     break;
             }
@@ -330,6 +342,16 @@ export default class Actordsa5 extends Actor {
         money.coins = money.coins.sort((a, b) => (a.data.price.value > b.data.price.value) ? -1 : 1);
         encumbrance += Math.max(0, Math.floor((totalWeight - carrycapacity) / 4));
 
+        var pain = actorData.data.status.wounds.max - actorData.data.status.wounds.current;
+        pain = pain <= 5 ? 4 : Math.floor(pain / 4)
+
+        this.update({
+            "data.conditions.encumbered.value": encumbrance,
+            "data.conditions.inpain.value": pain
+        });
+
+        this._updateConditions()
+
         return {
             totalweight: totalWeight,
             totalArmor: totalArmor,
@@ -342,19 +364,28 @@ export default class Actordsa5 extends Actor {
             disadvantages: disadvantages,
             generalSpecialAbilites: generalSpecialAbilites,
             combatSpecialAbilities: combatSpecialAbilities,
+            fatePointsAbilities: fatePointsAbilities,
             wornArmor: armor,
             inventory,
             combatskills: combatskills,
             allSkillsLeft: {
-                "body": bodySkills,
-                "social": socialSkills,
-                "nature": natureSkills
+                body: bodySkills,
+                social: socialSkills,
+                nature: natureSkills
             },
             allSkillsRight: {
-                "knowledge": knowledgeSkills,
-                "trade": tradeSkills
+                knowledge: knowledgeSkills,
+                trade: tradeSkills
             }
         }
+    }
+
+    _updateConditions() {
+        let r = {}
+        for (let [key, val] of Object.entries(this.data.data.conditions)) {
+            r["data.conditions." + key + ".max"] = (val.value || 0) + (val.modifier || 0)
+        }
+        this.update(r)
     }
 
     setupWeapon(item, mode, options) {
@@ -429,8 +460,50 @@ export default class Actordsa5 extends Actor {
         });
     }
 
+    setupStatus(statusId, options = {}) {
+        let char = this.data.data.status[statusId];
+
+        let title = game.i18n.localize(char.label) + " " + game.i18n.localize("Test");
+
+        let testData = {
+            source: char,
+            extra: {
+                statusId: statusId,
+                actor: this.data,
+                options: options
+            }
+        };
+
+        testData.source.type = "status"
+
+        // Setup dialog data: title, template, buttons, prefilled data
+        let dialogOptions = {
+            title: title,
+            template: "/systems/dsa5/templates/dialog/status-dialog.html",
+            // Prefilled dialog data
+            data: {
+                rollMode: options.rollMode
+            },
+            callback: (html) => {
+                cardOptions.rollMode = html.find('[name="rollMode"]').val();
+                testData.testModifier = Number(html.find('[name="testModifier"]').val());
+
+                return { testData, cardOptions };
+            }
+        };
+
+        let cardOptions = this._setupCardOptions("systems/dsa5/templates/chat/roll/status-card.html", title)
+
+        return DiceDSA5.setupDialog({
+            dialogOptions: dialogOptions,
+            testData: testData,
+            cardOptions: cardOptions
+        });
+    }
+
     setupCharacteristic(characteristicId, options = {}) {
         let char = this.data.data.characteristics[characteristicId];
+
         let title = game.i18n.localize(char.label) + " " + game.i18n.localize("Test");
 
         let testData = {

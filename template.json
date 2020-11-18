@@ -8,53 +8,73 @@
                 "conditions": {
                     "encumbered": {
                         "type": "Number",
-                        "label": "Encumbrance",
-                        "value": 0
+                        "label": "encumbered",
+                        "modifier": 0,
+                        "value": 0,
+                        "max": 0
                     },
                     "drunken": {
                         "type": "Number",
                         "label": "drunken",
-                        "value": 0
+                        "modifier": 0,
+                        "value": 0,
+                        "max": 0
                     },
                     "stunned": {
                         "type": "Number",
                         "label": "stunned",
-                        "value": 0
+                        "modifier": 0,
+                        "value": 0,
+                        "max": 0
                     },
                     "raptured": {
                         "type": "Number",
                         "label": "raptured",
-                        "value": 0
+                        "modifier": 0,
+                        "value": 0,
+                        "max": 0
                     },
                     "feared": {
                         "type": "Number",
                         "label": "feared",
-                        "value": 0
+                        "modifier": 0,
+                        "value": 0,
+                        "max": 0
                     },
                     "paralysed": {
                         "type": "Number",
                         "label": "paralysed",
-                        "value": 0
+                        "modifier": 0,
+                        "value": 0,
+                        "max": 0
                     },
                     "inpain": {
                         "type": "Number",
                         "label": "inpain",
-                        "value": 0
+                        "modifier": 0,
+                        "value": 0,
+                        "max": 0
                     },
                     "tranced": {
                         "type": "Number",
                         "label": "tranced",
-                        "value": 0
+                        "modifier": 0,
+                        "value": 0,
+                        "max": 0
                     },
                     "overexerted": {
                         "type": "Number",
                         "label": "overexerted",
-                        "value": 0
+                        "modifier": 0,
+                        "value": 0,
+                        "max": 0
                     },
                     "confused": {
                         "type": "Number",
                         "label": "confused",
-                        "value": 0
+                        "modifier": 0,
+                        "value": 0,
+                        "max": 0
                     }
                 }
             },
@@ -148,7 +168,7 @@
                     },
                     "astralenergy": {
                         "type": "Number",
-                        "label": "Astral Energy",
+                        "label": "astralenergy",
                         "abrev": "AE",
                         "initial": 0,
                         "value": 0,
@@ -158,7 +178,7 @@
                     },
                     "karmaenergy": {
                         "type": "Number",
-                        "label": "Karma Energy",
+                        "label": "karmaenergy",
                         "abrev": "KE",
                         "initial": 0,
                         "value": 0,
@@ -168,7 +188,7 @@
                     },
                     "soulpower": {
                         "type": "Number",
-                        "label": "Soulpower",
+                        "label": "soulpower",
                         "abrev": "SP",
                         "initial": 0,
                         "value": 0,
@@ -176,7 +196,7 @@
                     },
                     "toughness": {
                         "type": "Number",
-                        "label": "Toughness",
+                        "label": "toughness",
                         "abrev": "SP",
                         "initial": 0,
                         "value": 0,
@@ -184,7 +204,7 @@
                     },
                     "dodge": {
                         "type": "Number",
-                        "label": "Dodge",
+                        "label": "dodge",
                         "abrev": "D",
                         "value": 0,
                         "modifier": 0
@@ -382,9 +402,9 @@
             },
             "max": {
                 "max": {
-                    "type": "String",
+                    "type": "Number",
                     "label": "Max",
-                    "value": "0"
+                    "value": 0
                 }
             },
             "description": {
@@ -533,16 +553,7 @@
                 "APvalue",
                 "requirements"
             ],
-            "combatskills": {
-                "type": "String",
-                "value": "",
-                "label": "combatskills"
-            },
-            "skills": {
-                "type": "String",
-                "value": "",
-                "label": "skills"
-            },
+
             "recommendedAdvantages": {
                 "type": "String",
                 "value": "",
@@ -562,6 +573,11 @@
                 "type": "String",
                 "value": "",
                 "label": "notsuitableDisadvantages"
+            },
+            "mageLevel": {
+                "type": "String",
+                "value": "mundane",
+                "label": "mageLevel"
             }
         },
         "specialability": {
@@ -593,7 +609,12 @@
                 "APvalue",
                 "max",
                 "requirements"
-            ]
+            ],
+            "step": {
+                "value": 1,
+                "type": "Number",
+                "label": "step"
+            }
         },
         "disadvantage": {
             "templates": [
@@ -601,7 +622,12 @@
                 "APvalue",
                 "max",
                 "requirements"
-            ]
+            ],
+            "step": {
+                "value": 1,
+                "type": "Number",
+                "label": "step"
+            }
         },
         "species": {
             "templates": [

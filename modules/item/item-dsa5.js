@@ -22,6 +22,17 @@ export default class Itemdsa5 extends Item {
                 case "equipment":
                     data.img = "icons/containers/bags/sack-simple-leather-brown.webp";
                     break;
+                case "career":
+                    data.img = "icons/environment/people/commoner.webp";
+                    break;
+                case "disadvantage":
+                    data.img = "icons/commodities/bones/skull-hollow-white.webp";
+                    break
+                case "advantage":
+                    data.img = "icons/commodities/materials/hair-tuft-brown.webp";
+                    break;
+
+
                 default:
                     data.img = "systems/dsa5/icons/blank.png";
             }

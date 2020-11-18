@@ -1,84 +1,78 @@
-<div class="skill-section" ondragstart="return false;" ondrop="return false;">
-    <div id="basic-skills-list" class="flexcolumn">
-        <div class="inventory-list save-scroll">
-
-            <ol>
-                <li class="li-title">
-                    <div>
-                        {{localize "Skill"}}
-                    </div>
-                    <div>{{localize "probe"}}</div>
-                    <div>{{localize "CHARAbbrev.BE"}}</div>
-                    <div>{{localize "CHARAbbrev.STF"}}</div>
-                    <div>{{localize "CHARAbbrev.FW"}}</div>
-                    <div>{{localize "CHARAbbrev.RPR"}}</div>
-                </li>
-
-                {{#each actor.allSkillsLeft}}
-                <li class="li-header">
-                    <div>
-                        {{localize (concat "SKILL." @key)}}
-                    </div>
-                    <div>{{localize (concat "SKILLAbrev." @key)}}</div>
-                </li>
-                {{#each this as |item i|}}
-                <li class="item" data-item-id="{{item._id}}">
-                    <div><a class="skill-select">{{item.name}}</a></div>
-                    <div>
-                        {{localize (concatUp "CHARAbbrev." item.data.characteristic1.value)}}/{{localize (concatUp "CHARAbbrev." item.data.characteristic2.value)}}/{{localize (concatUp "CHARAbbrev." item.data.characteristic3.value)}}
-                    </div>
-                    <div>{{localize item.data.burden.value}}</div>
-                    <div>{{item.data.StF.value}}</a>
-                    </div>
-                    <div><input class="skill-advances" type="text" data-dtype="{{item.data.talentValue.type}}" value="{{item.data.talentValue.value}}" /></div>
-                    <div>{{item.data.RPr.value}}</div>
-                </li>
-                {{/each}} {{/each}}
-
-
-
-            </ol>
+<div class="row-section">
+    <div class="col two">
+        <div class="row-section skills table-title">
+            <div class="col third">
+                {{localize "Skill"}}
+            </div>
+            <div class="col third">{{localize "probe"}}</div>
+            <div class="col ten">{{localize "CHARAbbrev.BE"}}</div>
+            <div class="col ten">{{localize "CHARAbbrev.STF"}}</div>
+            <div class="col ten">{{localize "CHARAbbrev.FW"}}</div>
+            <div class="col ten">{{localize "CHARAbbrev.RPR"}}</div>
         </div>
+
+        {{#each actor.allSkillsLeft}}
+        <div class="row-section skills table-header lineheight">
+            <div class="col third">
+                {{localize (concat "SKILL." @key)}}
+            </div>
+            <div class="col third">{{{localize (concat "SKILLAbrev." @key)}}}</div>
+
+        </div>
+        {{#each this as |item i|}}
+        <div class="row-section skills lineheight item" data-item-id="{{item._id}}">
+            <div class="col third"><a class="skill-select">{{item.name}}</a></div>
+            <div class="col third">
+                <a class="skill-select">
+                    <span class="d20 diet-{{item.data.characteristic1.value}}">{{localize (concatUp "CHARAbbrev." item.data.characteristic1.value)}}</span>
+                    <span class="d20 diet-{{item.data.characteristic2.value}}">{{localize (concatUp "CHARAbbrev." item.data.characteristic2.value)}}</span>
+                    <span class="d20 diet-{{item.data.characteristic3.value}}">{{localize (concatUp "CHARAbbrev." item.data.characteristic3.value)}}</span>
+                </a>
+            </div>
+            <div class="col ten">{{localize item.data.burden.value}}</div>
+            <div class="col ten">{{item.data.StF.value}}</a>
+            </div>
+            <div class="col ten"><input class="skill-advances" type="text" data-dtype="{{item.data.talentValue.type}}" value="{{item.data.talentValue.value}}" /></div>
+            <div class="col ten">{{localize item.data.RPr.value}}</div>
+        </div>
+        {{/each}} {{/each}}
     </div>
-    <div id="basic-skills-list-col2" class="flexcolumn">
-
-        <div class="inventory-list save-scroll">
-
-            <ol>
-                <li class="li-title">
-                    <div>
-                        {{localize "Skill"}}
-                    </div>
-                    <div> {{localize "probe"}}</div>
-                    <div>{{localize "CHARAbbrev.BE"}}</div>
-                    <div>{{localize "CHARAbbrev.STF"}}</div>
-                    <div>{{localize "CHARAbbrev.FW"}}</div>
-                    <div>{{localize "CHARAbbrev.RPR"}}</div>
-                </li>
-
-                {{#each actor.allSkillsRight}}
-                <li class="li-header">
-                    <div>
-                        {{localize (concat "SKILL." @key)}}
-                    </div>
-                    <div>{{localize (concat "SKILLAbrev." @key)}}</div>
-                </li>
-                {{#each this as |item i|}}
-                <li class="item" data-item-id="{{item._id}}">
-                    <div><a class="skill-select">{{item.name}}</a></div>
-                    <div>
-                        {{localize (concatUp "CHARAbbrev." item.data.characteristic1.value)}}/{{localize (concatUp "CHARAbbrev." item.data.characteristic2.value)}}/{{localize (concatUp "CHARAbbrev." item.data.characteristic3.value)}}
-                    </div>
-                    <div>{{localize item.data.burden.value}}</div>
-                    <div>{{item.data.StF.value}}</a>
-                    </div>
-                    <div><input class="skill-advances" type="text" data-dtype="{{item.data.talentValue.type}}" value="{{item.data.talentValue.value}}" /></div>
-                    <div>{{item.data.RPr.value}}</div>
-                </li>
-                {{/each}} {{/each}}
-            </ol>
-
+    <div class="col two">
+        <div class="row-section skills table-title">
+            <div class="col third">
+                {{localize "Skill"}}
+            </div>
+            <div class="col third">{{localize "probe"}}</div>
+            <div class="col ten">{{localize "CHARAbbrev.BE"}}</div>
+            <div class="col ten">{{localize "CHARAbbrev.STF"}}</div>
+            <div class="col ten">{{localize "CHARAbbrev.FW"}}</div>
+            <div class="col ten">{{localize "CHARAbbrev.RPR"}}</div>
         </div>
 
+        {{#each actor.allSkillsRight}}
+        <div class="row-section skills table-header lineheight">
+            <div class="col third">
+                {{localize (concat "SKILL." @key)}}
+            </div>
+            <div class="col third">{{{localize (concat "SKILLAbrev." @key)}}}</div>
+
+        </div>
+        {{#each this as |item i|}}
+        <div class="row-section skills lineheight item" data-item-id="{{item._id}}">
+            <div class="col third"><a class="skill-select">{{item.name}}</a></div>
+            <div class="col third">
+                <a class="skill-select">
+                    <span class="d20 diet-{{item.data.characteristic1.value}}">{{localize (concatUp "CHARAbbrev." item.data.characteristic1.value)}}</span>
+                    <span class="d20 diet-{{item.data.characteristic2.value}}">{{localize (concatUp "CHARAbbrev." item.data.characteristic2.value)}}</span>
+                    <span class="d20 diet-{{item.data.characteristic3.value}}">{{localize (concatUp "CHARAbbrev." item.data.characteristic3.value)}}</span>
+                </a>
+            </div>
+            <div class="col ten">{{localize item.data.burden.value}}</div>
+            <div class="col ten">{{item.data.StF.value}}</a>
+            </div>
+            <div class="col ten"><input class="skill-advances" type="text" data-dtype="{{item.data.talentValue.type}}" value="{{item.data.talentValue.value}}" /></div>
+            <div class="col ten">{{localize item.data.RPr.value}}</div>
+        </div>
+        {{/each}} {{/each}}
     </div>
 </div>
