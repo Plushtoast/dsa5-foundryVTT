@@ -3,7 +3,6 @@ import DSA from "../system/config-dsa5.js"
 
 export default class Itemdsa5 extends Item {
     static async create(data, options) {
-        console.log(data);
         if (!data.img) {
             switch (data.type) {
 
@@ -34,7 +33,7 @@ export default class Itemdsa5 extends Item {
 
 
                 default:
-                    data.img = "systems/dsa5/icons/blank.png";
+                    data.img = "systems/dsa5/icons/blank.webp";
             }
         }
 
@@ -43,34 +42,28 @@ export default class Itemdsa5 extends Item {
 
     prepareData() {
         super.prepareData();
-        const data = this.data;
 
-        if (this.data.type == "skill")
-            this.prepareSkill(data)
-        if (this.data.type == "species")
-            this.prepareSpecies(data)
+
     }
 
-    prepareSpecies(data) {}
 
-    prepareSkill(data) {
-        if (this.data.type != "skill")
-            return
+    prepareCareer(itemdata) {
+        let skills = itemdata.items.filter(x => x.type == "skill").sort((a, b) => (a.sort || 0) - (b.sort || 0))
 
-        /*if (!hasProperty(data, "data.modifier.value"))
-            setProperty(data, "data.modifier.value", 0)
-
-        if (this.isOwned) {
-            if (!data.data.total)
-                data.data.total = {};
-            data.data.total.value = data.data.modifier.value + data.data.advances.value + this.actor.data.data.characteristics[data.data.characteristic.value].value
-        }*/
+        return {
+            skills: skills
+        }
     }
 
     prepare() {
-        let preparedData = duplicate(this.data)
+        let data = duplicate(this.data)
 
+        switch (this.data.type) {
 
+            case "career":
+                mergeObject(preparedData, this.prepareCareer(preparedData));
+
+        }
         preparedData.img = preparedData.img || DEFAULT_TOKEN;
 
 
@@ -79,16 +72,22 @@ export default class Itemdsa5 extends Item {
 
     _armorChatData() {
         const data = duplicate(this.data.data);
-        let properties = [
+        var properties = [
+            this._chatLineHelper("protection", data.protection.value),
+            this._chatLineHelper("encumbrance", data.encumbrance.value)
 
         ]
+        if (data.effect.value != "") {
+            properties.push(this._chatLineHelper("effect", data.effect.value))
+        }
         return properties;
     }
 
     _rangeweaponChatData() {
         const data = duplicate(this.data.data);
         let properties = [
-
+            this._chatLineHelper("damage", data.damage.value),
+            this._chatLineHelper("combatskill", data.combatskill.value)
         ]
         return properties;
     }
@@ -96,7 +95,10 @@ export default class Itemdsa5 extends Item {
     _meleeweaponChatData() {
         const data = duplicate(this.data.data);
         let properties = [
-
+            this._chatLineHelper("damage", data.damage.value),
+            this._chatLineHelper("atmod", data.atmod.value),
+            this._chatLineHelper("pamod", data.pamod.value),
+            this._chatLineHelper("combatskill", data.combatskill.value)
         ]
         return properties;
     }
@@ -104,7 +106,7 @@ export default class Itemdsa5 extends Item {
     _ammunitionChatData() {
         const data = duplicate(this.data.data);
         let properties = [
-
+            this._chatLineHelper("ammunitiongroup", game.i18n.localize(data.ammunitiongroup.value))
         ]
         return properties;
     }
@@ -112,11 +114,14 @@ export default class Itemdsa5 extends Item {
     _equipmentChatData() {
         const data = duplicate(this.data.data);
         let properties = [
-
+            this._chatLineHelper("equipmentType", game.i18n.localize(data.equipmentType.value))
         ]
         return properties;
     }
 
+    _chatLineHelper(key, val) {
+        return `<b>${game.i18n.localize(key)}</b>: ${val}`
+    }
 
     async postItem() {
         const properties = this[`_${this.data.type}ChatData`]();
@@ -142,7 +147,7 @@ export default class Itemdsa5 extends Item {
 
 
         // Don't post any image for the item (which would leave a large gap) if the default image is used
-        if (chatData.img.includes("/blank.png"))
+        if (chatData.img.includes("/blank.webp"))
             chatData.img = null;
 
         renderTemplate('systems/dsa5/templates/chat/post-item.html', chatData).then(html => {

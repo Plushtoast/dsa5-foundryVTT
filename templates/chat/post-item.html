@@ -6,10 +6,7 @@
     <div class="card-content">{{{data.description.value}}}</div>
 
     {{#each properties as |property p|}}
-    <div class="chatLineHeight">{{{property}}}</div><br> {{/each}} {{#if hasPrice}}
-    <span class="chat-card-button-area">
-        <a class='chat-card-button market-button' data-button='payItem' data-pay="{{data.price.gc}}{{localize 'MARKET.Abbrev.GC'}}{{data.price.ss}}{{localize 'MARKET.Abbrev.SS'}}{{data.price.bp}}{{localize 'MARKET.Abbrev.BP'}}">{{localize "MARKET.PayForItem"}}</a>
-    </span> {{/if}}
+    <div class="chatLineHeight">{{{property}}}</div><br> {{/each}}
 
 
 </div>

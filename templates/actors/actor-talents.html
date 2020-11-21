@@ -1,14 +1,13 @@
 <div class="row-section">
     <div class="col two">
         <div class="row-section skills table-title">
-            <div class="col third">
-                {{localize "Skill"}}
+            <div class="col fourty">
+                {{localize "skill"}}
             </div>
             <div class="col third">{{localize "probe"}}</div>
-            <div class="col ten">{{localize "CHARAbbrev.BE"}}</div>
-            <div class="col ten">{{localize "CHARAbbrev.STF"}}</div>
-            <div class="col ten">{{localize "CHARAbbrev.FW"}}</div>
-            <div class="col ten">{{localize "CHARAbbrev.RPR"}}</div>
+            <div class="col ten" title="{{localize 'BE'}}">{{localize "CHARAbbrev.BE"}}</div>
+            <div class="col ten" title="{{localize 'Fw'}}">{{localize "CHARAbbrev.FW"}}</div>
+            <div class="col ten" title="{{localize 'RPr'}}">{{localize "CHARAbbrev.RPR"}}</div>
         </div>
 
         {{#each actor.allSkillsLeft}}
@@ -21,7 +20,7 @@
         </div>
         {{#each this as |item i|}}
         <div class="row-section skills lineheight item" data-item-id="{{item._id}}">
-            <div class="col third"><a class="skill-select">{{item.name}}</a></div>
+            <div class="col fourty"><a class="skill-select">{{item.name}}</a></div>
             <div class="col third">
                 <a class="skill-select">
                     <span class="d20 diet-{{item.data.characteristic1.value}}">{{localize (concatUp "CHARAbbrev." item.data.characteristic1.value)}}</span>
@@ -30,8 +29,6 @@
                 </a>
             </div>
             <div class="col ten">{{localize item.data.burden.value}}</div>
-            <div class="col ten">{{item.data.StF.value}}</a>
-            </div>
             <div class="col ten"><input class="skill-advances" type="text" data-dtype="{{item.data.talentValue.type}}" value="{{item.data.talentValue.value}}" /></div>
             <div class="col ten">{{localize item.data.RPr.value}}</div>
         </div>
@@ -39,19 +36,18 @@
     </div>
     <div class="col two">
         <div class="row-section skills table-title">
-            <div class="col third">
-                {{localize "Skill"}}
+            <div class="col fourty">
+                {{localize "skill"}}
             </div>
             <div class="col third">{{localize "probe"}}</div>
-            <div class="col ten">{{localize "CHARAbbrev.BE"}}</div>
-            <div class="col ten">{{localize "CHARAbbrev.STF"}}</div>
-            <div class="col ten">{{localize "CHARAbbrev.FW"}}</div>
-            <div class="col ten">{{localize "CHARAbbrev.RPR"}}</div>
+            <div class="col ten" title="{{localize 'BE'}}">{{localize "CHARAbbrev.BE"}}</div>
+            <div class="col ten" title="{{localize 'Fw'}}">{{localize "CHARAbbrev.FW"}}</div>
+            <div class="col ten" title="{{localize 'RPr'}}">{{localize "CHARAbbrev.RPR"}}</div>
         </div>
 
         {{#each actor.allSkillsRight}}
         <div class="row-section skills table-header lineheight">
-            <div class="col third">
+            <div class="col fourty">
                 {{localize (concat "SKILL." @key)}}
             </div>
             <div class="col third">{{{localize (concat "SKILLAbrev." @key)}}}</div>
@@ -59,7 +55,7 @@
         </div>
         {{#each this as |item i|}}
         <div class="row-section skills lineheight item" data-item-id="{{item._id}}">
-            <div class="col third"><a class="skill-select">{{item.name}}</a></div>
+            <div class="col fourty"><a class="skill-select">{{item.name}}</a></div>
             <div class="col third">
                 <a class="skill-select">
                     <span class="d20 diet-{{item.data.characteristic1.value}}">{{localize (concatUp "CHARAbbrev." item.data.characteristic1.value)}}</span>
@@ -68,8 +64,6 @@
                 </a>
             </div>
             <div class="col ten">{{localize item.data.burden.value}}</div>
-            <div class="col ten">{{item.data.StF.value}}</a>
-            </div>
             <div class="col ten"><input class="skill-advances" type="text" data-dtype="{{item.data.talentValue.type}}" value="{{item.data.talentValue.value}}" /></div>
             <div class="col ten">{{localize item.data.RPr.value}}</div>
         </div>

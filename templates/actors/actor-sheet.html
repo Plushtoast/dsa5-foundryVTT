@@ -10,12 +10,12 @@
         </div>
 
         <div class="item">
-            <input class="input species" style="box-shadow: none !important;" name="data.details.species.value" type="text" value="{{data.details.species.value}}" readonly placeholder="{{localize 'Species'}}" />
-            <span class="label species">{{localize "Species"}}</span>
+            <input class="input species" style="box-shadow: none !important;" name="data.details.species.value" type="text" value="{{data.details.species.value}}" readonly placeholder="{{localize 'species'}}" />
+            <span class="label species">{{localize "species"}}</span>
         </div>
         <div id="field-careerlevel" class="item">
-            <input class="input-details" style="box-shadow: none !important;" name="data.details.career.value" type="text" value="{{data.details.career.value}}" placeholder="{{localize 'Career'}}" />
-            <span class="label-details">{{localize "Career"}}</span>
+            <input class="input-details" style="box-shadow: none !important;" name="data.details.career.value" type="text" value="{{data.details.career.value}}" placeholder="{{localize 'career'}}" />
+            <span class="label-details">{{localize "career"}}</span>
         </div>
 
     </header>
@@ -92,11 +92,11 @@
     <section id="tab-sections">
         <nav id="dsa5-primarytabs" class="sheet-tabs tabs" ondragstart="return false;" ondrop="return false;">
             <a class="item active" data-tab="main">{{localize "attributes"}}</a>
-            <a class="item" data-tab="skills">{{localize "Skills"}}</a>
+            <a class="item" data-tab="skills">{{localize "skills"}}</a>
             <a class="item" data-tab="combat">{{localize "Combat"}}</a> {{#if actor.hasSpells}}
             <a class="item" data-tab="magic">{{localize "Magic"}}</a> {{/if}} {{#if actor.hasPrayers}}
             <a class="item" data-tab="religion">{{localize "Religion"}}</a> {{/if}}
-            <a class="item" data-tab="inventory">{{localize "Equipment"}}</a>
+            <a class="item" data-tab="inventory">{{localize "equipment"}}</a>
             <a class="item" data-tab="notes">{{localize "Notes"}}</a>
         </nav>
 

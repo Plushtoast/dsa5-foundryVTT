@@ -1,44 +1,40 @@
 <div class="row-section wrap">
     <div class="col two">
         <div class="row-section skills table-title">
-            <div class="col three">
+            <div class="col fourty">
                 {{localize "combatskill"}}
             </div>
             <div class="col five center">
                 {{localize "guidevalue_small"}}
             </div>
-            <div class="col eight center">
-                {{localize "CHARAbbrev.STF"}}
-            </div>
-            <div class="col eight center">
+
+            <div class="col eight center" title="{{localize 'KTW'}}">
                 {{localize "CHARAbbrev.KTW"}}
             </div>
             <div class="col eight center">
                 {{localize "CHARAbbrev.ATFK"}}
             </div>
-            <div class="col eight center">
+            <div class="col eight center" title="{{localize 'CHAR.PARRY'}}">
                 {{localize "CHARAbbrev.PA"}}
             </div>
         </div>
     </div>
     <div class="col two">
         <div class="row-section skills table-title">
-            <div class="col three">
+            <div class="col fourty">
                 {{localize "combatskill"}}
             </div>
             <div class="col five center">
                 {{localize "guidevalue_small"}}
             </div>
-            <div class="col eight center">
-                {{localize "CHARAbbrev.STF"}}
-            </div>
-            <div class="col eight center">
+
+            <div class="col eight center" title="{{localize 'KTW'}}">
                 {{localize "CHARAbbrev.KTW"}}
             </div>
             <div class="col eight center">
                 {{localize "CHARAbbrev.ATFK"}}
             </div>
-            <div class="col eight center">
+            <div class="col eight center" title="{{localize 'CHAR.PARRY'}}">
                 {{localize "CHARAbbrev.PA"}}
             </div>
         </div>
@@ -46,15 +42,13 @@
     {{#each actor.combatskills as |item i|}}
     <div class="col two">
         <div class="row-section item skills lineheight" data-item-id="{{item._id}}">
-            <div class="col three">
+            <div class="col fourty">
                 <a class="item-edit">{{item.name}}</a>
             </div>
             <div class="col five center">
                 {{localize (concatUp "CHARAbbrev." item.data.guidevalue.value)}}
             </div>
-            <div class="col eight center">
-                {{item.data.StF.value}}
-            </div>
+
             <div class="col eight center">
                 <input class="skill-advances" type="text" data-dtype="{{item.data.talentValue.type}}" value="{{item.data.talentValue.value}}" />
             </div>
@@ -81,10 +75,10 @@
         <div class="col five center small">
             {{localize "Group"}}
         </div>
-        <div class="col ten center small">
+        <div class="col ten center small" title="{{localize 'CHAR.ATTACK'}}">
             {{localize "CHARAbbrev.AT"}}
         </div>
-        <div class="col ten center small">
+        <div class="col ten center small" title="{{localize 'CHAR.PARRY'}}">
             {{localize "CHARAbbrev.PA"}}
         </div>
 
@@ -138,7 +132,7 @@
         <div class="col ten center small" title="{{localize 'reloadTime'}}">
             {{localize "CHARAbbrev.reloadTime"}}
         </div>
-        <div class="col ten center small">
+        <div class="col ten center small" title="{{localize 'CHAR:ATTACK'}}">
             {{localize "CHARAbbrev.AT"}}
         </div>
         <div class="col eight center small">
@@ -243,7 +237,7 @@
                     {{localize "max"}}
                 </div>
                 <div class="col two center small">
-                    {{localize "Current"}}
+                    {{localize "damage"}}
                 </div>
             </div>
             <div class="row-section">

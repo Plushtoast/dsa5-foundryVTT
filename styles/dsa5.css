@@ -2,8 +2,68 @@
     --border-color: #736953a6;
     --bg-color: #e1d3c6;
     --button-color: #532902e7;
-    --sheet-bg: #2e2c2a63;
+    --sheet-bg: #2e2c2a15;
     --sheet-border: #968678;
+}
+
+@font-face {
+    font-family: "GentiumBasic";
+    src: url("../fonts/GenBasR.eot");
+    /* IE9 Compat Modes */
+    src: url("../fonts/GenBasR.eot?#iefix") format("embedded-opentype"), /* IE6-IE8 */
+    url("../fonts/GenBasR.otf") format("opentype"), /* Open Type Font */
+    url("../fonts/GenBasR.svg") format("svg"), /* Legacy iOS */
+    url("../fonts/GenBasR.ttf") format("truetype"), /* Safari, Android, iOS */
+    url("../fonts/GenBasR.woff") format("woff"), /* Modern Browsers */
+    url("../fonts/GenBasR.woff2") format("woff2");
+    /* Modern Browsers */
+    font-weight: normal;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: "GentiumBasic-BoldItalic";
+    src: url("../fonts/GenBasBI.eot");
+    /* IE9 Compat Modes */
+    src: url("../fonts/GenBasBI.eot?#iefix") format("embedded-opentype"), /* IE6-IE8 */
+    url("../fonts/GenBasBI.otf") format("opentype"), /* Open Type Font */
+    url("../fonts/GenBasBI.svg") format("svg"), /* Legacy iOS */
+    url("../fonts/GenBasBI.ttf") format("truetype"), /* Safari, Android, iOS */
+    url("../fonts/GenBasBI.woff") format("woff"), /* Modern Browsers */
+    url("../fonts/GenBasBI.woff2") format("woff2");
+    /* Modern Browsers */
+    font-weight: normal;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: "GentiumBasic-Bold";
+    src: url("../fonts/GenBasB.eot");
+    /* IE9 Compat Modes */
+    src: url("../fonts/GenBasB.eot?#iefix") format("embedded-opentype"), /* IE6-IE8 */
+    url("../fonts/GenBasB.otf") format("opentype"), /* Open Type Font */
+    url("../fonts/GenBasB.svg") format("svg"), /* Legacy iOS */
+    url("../fonts/GenBasB.ttf") format("truetype"), /* Safari, Android, iOS */
+    url("../fonts/GenBasB.woff") format("woff"), /* Modern Browsers */
+    url("../fonts/GenBasB.woff2") format("woff2");
+    /* Modern Browsers */
+    font-weight: normal;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: "Andalus";
+    src: url("../fonts/andlso.eot");
+    /* IE9 Compat Modes */
+    src: url("../fonts/andlso.eot?#iefix") format("embedded-opentype"), /* IE6-IE8 */
+    url("../fonts/andlso.otf") format("opentype"), /* Open Type Font */
+    url("../fonts/andlso.svg") format("svg"), /* Legacy iOS */
+    url("../fonts/andlso.ttf") format("truetype"), /* Safari, Android, iOS */
+    url("../fonts/andlso.woff") format("woff"), /* Modern Browsers */
+    url("../fonts/andlso.woff2") format("woff2");
+    /* Modern Browsers */
+    font-weight: normal;
+    font-style: normal;
 }
 
 #tinymce {
@@ -22,8 +82,23 @@ body {
     ;
     padding: 0px;
     overflow: hidden;
-    /*background: url(../ui/background.png) repeat;*/
+    /*background: url(../ui/background.webp) repeat;*/
     font-size: 14px;
+    font-family: "GentiumBasic";
+}
+
+b {
+    font-family: "GentiumBasic-Bold";
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+h7 {
+    font-family: "Andalus";
 }
 
 .dsa5 .tab.description.active {
@@ -44,8 +119,7 @@ body {
 }
 
 .dsa5 .editor {
-    border: 1px solid var(--border-color);
-    box-shadow: 0px 0px 1px inset black;
+    border: none;
     overflow: auto;
     flex-grow: 1;
     display: flex;
@@ -80,7 +154,7 @@ body {
 }
 
 #field-distinguishingmark {
-    width: calc(40% + 15px);
+    width: calc(50% - 15px);
 }
 
 .sheet-header {
@@ -93,7 +167,7 @@ body {
     display: flex;
     flex-direction: column;
     margin: 0px 15px 0px 0px;
-    width: 20%;
+    width: calc(25% - 15px);
 }
 
 .character-sheet .general .item input,
@@ -123,10 +197,9 @@ body {
     border-color: black;
     border-style: double;
     border-width: 20px;
-    border-image: url(../icons/backgrounds/actor.png) 27 28 28 28;
+    border-image: url(../icons/backgrounds/actor.webp) 27 28 28 28;
     padding: 4px;
     margin: 0px;
-    background-color: var(--bg-color);
 }
 
 .characteristics-table {
@@ -193,16 +266,56 @@ body {
 }
 
 .header-button i {
+    width: 22px;
+}
+
+.header-button i {
     border: 1px solid #111;
     padding: 3px;
     background-color: #444;
     text-align: center;
     border-radius: 100%;
-    width: 22px;
+    color: white;
+}
+
+#combat #combat-round .encounters h4,
+#combat #combat-round .encounters,
+#combat #combat-round .encounters a {
+    color: #444;
+}
+
+#sidebar .sidebar-tab,
+#sidebar .sidebar-tab a i {
+    color: #555;
 }
 
 #sidebar {
-    background-image: url(../icons/backgrounds/hg.jpg);
+    border: none;
+    overflow: visible;
+    top: 0px;
+    height: 100vh;
+}
+
+#sidebar:before {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: -13px;
+    right: 0;
+    content: '';
+    background-image: url(../icons/backgrounds/menu.webp);
+    background-repeat: repeat-y;
+    background-size: 100%;
+    z-index: -1;
+}
+
+#sidebar .chat-message {
+    background: url(../icons/backgrounds/chatpaper.webp) no-repeat;
+    background-size: 100% 100%;
+    border: none;
+    padding: 15px;
+    padding-left: 18px;
+    margin-bottom: 8px;
 }
 
 .die-attack,
@@ -320,25 +433,25 @@ body {
 }
 
 .money-D {
-    background: url(../icons/money-D.png);
+    background: url(../icons/money-D.webp);
     background-repeat: no-repeat;
     background-size: contain;
 }
 
 .money-K {
-    background: url(../icons/money-K.png);
+    background: url(../icons/money-K.webp);
     background-repeat: no-repeat;
     background-size: contain;
 }
 
 .money-S {
-    background: url(../icons/money-S.png);
+    background: url(../icons/money-S.webp);
     background-repeat: no-repeat;
     background-size: contain;
 }
 
 .money-H {
-    background: url(../icons/money-H.png);
+    background: url(../icons/money-H.webp);
     background-repeat: no-repeat;
     background-size: contain;
 }
@@ -436,7 +549,7 @@ body {
 }
 
 .row-section.skills {
-    font-size: 10px;
+    font-size: 12px;
     border: 0.5px solid var(--border-color);
     margin: 0;
     padding: 2px;
@@ -572,12 +685,22 @@ body {
 
 /*DIALOGS*/
 
+.window-app.actor .window-content {
+    box-shadow: 0 0 20px #000;
+}
+
+.app.sidebar-popout .window-content,
 .window-app .window-content {
-    background: none;
     margin-left: 15px;
     margin-right: 15px;
-    box-shadow: 0 0 20px #000;
-    background-color: var(--bg-color);
+    background: url(../icons/backgrounds/chatpaper.webp) no-repeat;
+    background-position: center;
+    background-size: 100% 120%;
+}
+
+form.dsa5.item-sheet {
+    padding-left: 10px;
+    padding-right: 10px;
 }
 
 .window-app.dialog .window-content {
@@ -585,19 +708,14 @@ body {
     padding-bottom: 14px;
 }
 
-.window-app.window-content form,
-.app.sidebar-popout .window-content {
-    background: var(--bg-color);
-}
-
 .window-app .window-header {
-    background-image: url(../icons/backgrounds/sidebar-top.png);
+    background-image: url(../icons/backgrounds/sidebar-top.webp);
     border: none;
     top: 2px;
 }
 
 .window-app:after {
-    background-image: url(../icons/backgrounds/sidebar-bot.png);
+    background-image: url(../icons/backgrounds/sidebar-bot.webp);
     bottom: 2px;
     content: '';
 }
@@ -644,9 +762,18 @@ body {
     margin-right: 25px;
 }
 
+.dsa5.item .item-header {
+    background-image: url(../icons/backgrounds/kapitelstart.webp);
+    background-size: 100% 50px;
+    background-repeat: no-repeat;
+    height: 50px;
+}
+
 .dsa5.item .item-header input {
     text-align: center;
     padding: 8px;
+    background: none;
+    border: none;
 }
 
 .dsa5.item .window-header .window-title {
@@ -720,6 +847,8 @@ body {
     margin: 3px;
     border: 1px solid var(--sheet-border);
     border-radius: 5px;
+    color: black;
+    margin-left: 10px;
 }
 
 #compendium li.compendium-pack {
@@ -727,7 +856,14 @@ body {
 }
 
 #compendium h3 {
-    background: #710e0eb0;
+    background: #740f0fe5;
+    color: white;
+    margin-left: 3px;
+}
+
+#combat li.combatant .token-initiative .initiative,
+#combat li.combatant .token-name {
+    text-shadow: none;
 }
 
 .sidebar-tab ::-webkit-scrollbar-thumb {
@@ -749,4 +885,22 @@ body {
 
 #sidebar button:hover {
     box-shadow: 0 0 5px white;
+}
+
+#combat li.combatant .roll {
+    background-image: url(../icons/dice/d20.svg);
+}
+
+#combat li.combatant .roll:hover {
+    background-image: url(../icons/dice/d20green.svg);
+    color: rgb(4, 75, 1);
+}
+
+.window-content>section,
+.window-content>form {
+    padding: 12px;
+}
+
+.app.sidebar-popout .window-content {
+    color: rgb(51, 51, 51);
 }

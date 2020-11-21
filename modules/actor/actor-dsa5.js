@@ -16,6 +16,16 @@ export default class Actordsa5 extends Actor {
 
         }
 
+        if (!data.img || data.img == "icons/svg/mystery-man.svg") {
+            switch (data.type) {
+                case "character":
+                    data.img = "icons/svg/mystery-man-black.svg";
+                    break;
+                default:
+                    data.img = "icons/svg/mystery-man-black.svg";
+            }
+        }
+
         let skills = await DSA5_Utility.allSkills() || [];
         let combatskills = await DSA5_Utility.allCombatSkills() || [];
         let moneyItems = await DSA5_Utility.allMoneyItems() || [];
@@ -29,8 +39,12 @@ export default class Actordsa5 extends Actor {
                 return m
             }));
 
-            super.create(data, options);
+
         }
+
+        super.create(data, options);
+
+
     }
 
     prepareBaseData() {
@@ -212,7 +226,7 @@ export default class Actordsa5 extends Actor {
 
         for (let i of actorData.items) {
             //try {
-            i.img = i.img || DEFAULT_TOKEN;
+            //i.img = i.img || DEFAULT_TOKEN;
 
             // *********** TALENTS ***********
             switch (i.type) {
@@ -343,7 +357,7 @@ export default class Actordsa5 extends Actor {
         encumbrance += Math.max(0, Math.floor((totalWeight - carrycapacity) / 4));
 
         var pain = actorData.data.status.wounds.max - actorData.data.status.wounds.current;
-        pain = pain <= 5 ? 4 : Math.floor(pain / 4)
+        pain = pain >= (actorData.data.status.wounds.max - 5) ? 4 : Math.floor(pain / 4)
 
         this.update({
             "data.conditions.encumbered.value": encumbrance,

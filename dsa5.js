@@ -1,5 +1,7 @@
 import ActorSheetdsa5 from "./modules/actor/actor-sheet.js"
 import ActorSheetdsa5Character from "./modules/actor/character-sheet.js";
+import ActorSheetdsa5Creature from "./modules/actor/creature-sheet-sheet.js";
+import ActorSheetdsa5NPC from "./modules/actor/npc-sheet-sheet.js";
 import Actordsa5 from "./modules/actor/actor-dsa5.js";
 import Itemdsa5 from "./modules/item/item-dsa5.js";
 import ItemSheetdsa5 from "./modules/item/item-sheet.js";
@@ -7,24 +9,28 @@ import registerHooks from "./modules/system/hooks.js";
 
 import DSA5 from "./modules/system/config-dsa5.js"
 
-Hooks.once("init", async function () {
+Hooks.once("init", async function() {
 
     Actors.unregisterSheet("core", ActorSheet);
     Actors.registerSheet("dsa5", ActorSheetdsa5Character, { types: ["character"], makeDefault: true });
+    Actors.registerSheet("dsa5", ActorSheetdsa5Creature, { types: ["creature"] });
+    Actors.registerSheet("dsa5", ActorSheetdsa5NPC, { types: ["npc"] });
     Items.unregisterSheet("core", ItemSheet);
     Items.registerSheet("dsa5", ItemSheetdsa5, { makeDefault: true });
 
     game.dsa5 = {
-        apps : {
+        apps: {
             ActorSheetdsa5,
             ActorSheetdsa5Character,
+            ActorSheetdsa5Creature,
+            ActorSheetdsa5NPC,
             ItemSheetdsa5
         },
-        entities : {
+        entities: {
             Actordsa5,
             Itemdsa5
         },
-        config : DSA5
+        config: DSA5
     }
 
     CONFIG.Actor.entityClass = Actordsa5;

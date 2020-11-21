@@ -1,7 +1,7 @@
 {
     "Actor": {
         "types": [
-            "character"
+            "character", "creature", "npc"
         ],
         "templates": {
             "conditions": {
@@ -324,6 +324,62 @@
                     "spent": 0
                 }
             }
+        },
+        "npc": {
+            "templates": [
+                "characteristics",
+                "conditions",
+                "status",
+                "details"
+            ]
+        },
+        "creature": {
+            "templates": [
+                "characteristics",
+                "conditions",
+                "status"
+            ],
+            "actionCount": {
+                "type": "Number",
+                "value": 1,
+                "label": "actionCount"
+            },
+            "count": {
+                "type": "String",
+                "value": "1",
+                "label": "count"
+            },
+            "creatureClass": {
+                "type": "String",
+                "value": "",
+                "label": "creatureClass"
+            },
+            "behaviour": {
+                "type": "String",
+                "value": "",
+                "label": "behaviour"
+            },
+            "flight": {
+                "type": "String",
+                "value": "",
+                "label": "flight"
+            },
+            "specialRules": {
+                "type": "String",
+                "value": "",
+                "label": "specialRules"
+            },
+            "conjuringDifficulty": {
+                "type": "Number",
+                "value": 0,
+                "label": "conjuringDifficulty"
+            },
+            "size": {
+                "type": "String",
+                "value": "average",
+                "label": "size"
+            }
+
         }
     },
     "Item": {
@@ -464,7 +520,7 @@
             },
             "ammunitiongroup": {
                 "type": "String",
-                "label": "Ammunition group",
+                "label": "ammunitiongroup",
                 "value": ""
             },
             "currentAmmo": {
@@ -496,12 +552,12 @@
             },
             "atmod": {
                 "type": "Number",
-                "label": "AT Mod",
+                "label": "atmod",
                 "value": 0
             },
             "pamod": {
                 "type": "Number",
-                "label": "AT Mod",
+                "label": "pamod",
                 "value": 0
             },
             "reach": {
@@ -578,6 +634,11 @@
                 "type": "String",
                 "value": "mundane",
                 "label": "mageLevel"
+            },
+            "skills": {
+                "type": "String",
+                "value": "",
+                "label": "skills"
             }
         },
         "specialability": {

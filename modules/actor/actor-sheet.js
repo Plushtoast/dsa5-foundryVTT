@@ -300,7 +300,6 @@ export default class ActorSheetDsa5 extends ActorSheet {
     }
 
     async _updateAPs(apValue) {
-        console.log(apValue)
         await this.actor.update({
             "data.details.experience.spent": this.actor.data.data.details.experience.spent + apValue,
         });
@@ -327,7 +326,21 @@ export default class ActorSheetDsa5 extends ActorSheet {
     }
 
     async _addCareer(item) {
-
+        await this.actor.update({
+            "data.details.career.value": item.data.name,
+            "data.details.experience.spent": this.actor.data.data.details.experience.spent + item.data.data.APValue.value
+        });
+        for (let skill of item.data.data.skills.value.split(",")) {
+            let vars = skill.trim().split(" ")
+            let res = this.actor.data.items.find(i => {
+                return i.type == "skill" && i.name == vars[0]
+            });
+            if (res) {
+                let skillUpdate = duplicate(res)
+                skillUpdate.data.talentValue.value = vars[1]
+                await this.actor.updateEmbeddedEntity("OwnedItem", skillUpdate);
+            }
+        }
     }
 
     async _addSpecialAbility(item, typeClass) {
@@ -367,7 +380,6 @@ export default class ActorSheetDsa5 extends ActorSheet {
 
     async _onDrop(event) {
         let dragData = JSON.parse(event.dataTransfer.getData("text/plain"));
-        console.log(dragData)
         let item
         let typeClass
         if (dragData.id && dragData.pack) {
@@ -380,8 +392,6 @@ export default class ActorSheetDsa5 extends ActorSheet {
             item = dragData.data
             typeClass = item.type
         }
-
-        console.log(item)
 
         switch (typeClass) {
             case "species":
