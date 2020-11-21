@@ -53,16 +53,6 @@ export default class ItemSheetdsa5 extends ItemSheet {
 
     }
 
-    async _addSkillToCareer(item) {
-        let res = this.actor.data.items.find(i => {
-            return i.type == typeClass && i.name == item.name
-        });
-
-        if (!res) {
-            await this.actor.createEmbeddedEntity("OwnedItem", item);
-        }
-    }
-
 
     async getData() {
         const data = super.getData();

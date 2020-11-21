@@ -161,10 +161,10 @@
                         "label": "Wounds",
                         "abrev": "W",
                         "initial": 0,
-                        "value": 8,
+                        "value": 0,
                         "advances": 0,
                         "modifier": 0,
-                        "current": 0
+                        "current": 8
                     },
                     "astralenergy": {
                         "type": "Number",
@@ -378,7 +378,13 @@
                 "type": "String",
                 "value": "average",
                 "label": "size"
+            },
+            "description": {
+                "type": "String",
+                "value": "",
+                "label": "description"
             }
+
 
         }
     },

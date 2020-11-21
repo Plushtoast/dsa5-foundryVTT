@@ -99,6 +99,13 @@ export default class DSA5_Utility {
         }
     }
 
+    static getSpeaker(speaker) {
+        let actor = game.actors.get(speaker.actor);
+        if (speaker.token)
+            actor = canvas.tokens.get(speaker.token).actor
+        return actor
+    }
+
     //TODO calcualte this
     static _calculateAdvCost(currentAdvances, type, modifier = 0) {
         return 1

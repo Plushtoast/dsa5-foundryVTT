@@ -1,0 +1,113 @@
+<form class="{{cssClass}}" autocomplete="off">
+
+
+    <header class="sheet-header" ondragstart="return false;" ondrop="return false;">
+
+
+    </header>
+    <section class="general" ondragstart="return false;" ondrop="return false;">
+
+        <div class="row-section">
+            <div class="col five">
+                <div class="imagebox">
+                    <img class="charimg profile" src="{{actor.img}}" title="{{actor.name}}" height="95" width="95" data-edit="img" />
+                </div>
+            </div>
+            <div class="col eighty">
+                <div class="row-section">
+                    <div class="col two">
+                        <div class="form-group">
+                            <label class="label-text">{{localize "Name"}}: </label>
+                            <input class="input-text" type="text" name="actor.name" value="{{actor.name}}" data-dtype="string" />
+                        </div>
+
+                    </div>
+                    <div class="col two">
+                        <div class="form-group">
+                            <label class="label-text">{{localize "creatureClass"}}: </label>
+                            <input class="input-text" type="text" name="data.creatureClass.value" value="{{data.creatureClass.value}}" data-dtype="string" />
+                        </div>
+
+                    </div>
+                </div>
+                <div class="row-section">
+                    <div class="col two">
+                        <div class="form-group">
+                            <label class="label-text">{{localize "sizeCategory"}}:</label>
+                            <select name="data.size.value" data-dtype="{{data.size.type}}">
+                              {{#select data.size.value}}
+                              {{#each sizeCategories as |ch char|}}
+                              <option value="{{char}}">{{localize ch}}</option>
+                              {{/each}}
+                              {{/select}}
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col two">
+                        <div class="form-group">
+                            <label class="label-text">{{localize "count"}}: </label>
+                            <input class="input-text" type="number" name="data.count.value" value="{{data.count.value}}" data-dtype="number" />
+                        </div>
+
+                    </div>
+                </div>
+                <div class="row-section">
+                    <div class="col two">
+                        <div class="form-group">
+                            <label class="label-text">{{localize "conjuringDifficulty"}}: </label>
+                            <input class="input-text" type="number" name="data.conjuringDifficulty.value" value="{{data.conjuringDifficulty.value}}" data-dtype="number" />
+                        </div>
+
+                    </div>
+                    <div class="col two">
+                        <div class="form-group">
+                            <label class="label-text">{{localize "actionCount"}}: </label>
+                            <input class="input-text" type="number" name="data.actionCount.value" value="{{data.actionCount.value}}" data-dtype="number" />
+                        </div>
+
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+        <div class="row-section">
+
+        </div>
+
+    </section>
+    <section id="tab-sections">
+        <nav id="dsa5-primarytabs" class="sheet-tabs tabs" ondragstart="return false;" ondrop="return false;">
+            <a class="item active" data-tab="main">{{localize "attributes"}}</a>
+            <a class="item" data-tab="skills">{{localize "skills"}}</a>
+            <a class="item" data-tab="combat">{{localize "Combat"}}</a> {{#if actor.hasSpells}}
+            <a class="item" data-tab="magic">{{localize "Magic"}}</a> {{/if}} {{#if actor.hasPrayers}}
+            <a class="item" data-tab="religion">{{localize "Religion"}}</a> {{/if}}
+            <a class="item" data-tab="inventory">{{localize "equipment"}}</a>
+            <a class="item" data-tab="notes">{{localize "Notes"}}</a>
+        </nav>
+
+        <section class="content">
+            <div class="tab main save-scroll" data-tab="main">
+                {{> systems/dsa5/templates/actors/creature/creature-main.html}}
+            </div>
+            <div class="tab skills save-scroll" data-tab="skills">
+                {{> systems/dsa5/templates/actors/actor-talents.html}}
+            </div>
+            <div class="tab combat save-scroll" data-tab="combat">
+                {{> systems/dsa5/templates/actors/creature/creature-combat.html}}
+            </div>
+            <div class="tab magic save-scroll" data-tab="magic">
+
+            </div>
+            <div class="tab religion save-scroll" data-tab="religion">
+            </div>
+            <div class="tab inventory save-scroll" data-tab="inventory">
+                {{> systems/dsa5/templates/actors/creature/creature-loot.html}}
+            </div>
+            <div class="tab notes save-scroll" data-tab="notes">
+                {{> systems/dsa5/templates/actors/creature/creature-notes.html}}
+            </div>
+        </section>
+    </section>
+</form>

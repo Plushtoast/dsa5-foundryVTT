@@ -57,16 +57,10 @@ export default class ActorSheetDsa5 extends ActorSheet {
         const sheetData = super.getData();
         mergeObject(sheetData.actor, this.actor.prepare())
 
-        if (this.actor.data.type == "character")
-            this.addCharacterData(sheetData.actor)
-
         sheetData.isGM = game.user.isGM;
         return sheetData;
     }
 
-    addCharacterData(actorData) {
-
-    }
 
     activateListeners(html) {
         super.activateListeners(html);
@@ -374,7 +368,7 @@ export default class ActorSheetDsa5 extends ActorSheet {
             "data.status.soulpower.initial": item.data.data.baseValues.soulpower.value,
             "data.status.toughness.initial": item.data.data.baseValues.toughness.value,
             "data.status.wounds.initial": item.data.data.baseValues.wounds.value,
-            "data.status.wounds.current": this.actor.data.data.status.wounds.value + this.actor.data.data.status.wounds.modifier + this.actor.data.data.status.wounds.advances
+            "data.status.wounds.value": this.actor.data.data.status.wounds.current + this.actor.data.data.status.wounds.modifier + this.actor.data.data.status.wounds.advances
         });
     }
 

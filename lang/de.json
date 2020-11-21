@@ -57,9 +57,11 @@
     "advantage": "Vorteil",
 
     "Age": "Alter",
+    "actionCount": "Aktionen",
     "atmod": "Angriffsmodifikator",
     "baseValue": "Grundwert",
     "BE": "Belastung",
+    "behaviour": "Kampfverhalten",
     "bolt": "Bolzen",
     "bullet": "Kugel",
     "Burden": "Belastung",
@@ -74,8 +76,11 @@
     "Combat": "Kampf",
     "combatskill": "Kampftechnik",
     "Culture": "Kultur",
+    "count": "Anzahl",
     "Current": "Aktuell",
     "career": "Profession",
+    "creatureClass": "Typus",
+    "conjuringDifficulty": "Anrufungsschw.",
     "carrycapacity": "Tragekraft",
     "Details": "Details",
     "damage": "Schaden",
@@ -99,6 +104,7 @@
     "Experience": "Erfahrungsgrad",
     "Family": "Familie",
     "Failure": "Misserfolg",
+    "flight": "Flucht",
     "Fw": "Fertigkeitswert",
     "FP": "FP",
     "fatePoints": "Schicksalspunkte",
@@ -134,6 +140,7 @@
     "notsuitableDisadvantages": "Ungeeignete Nachteile",
     "no": "Nein",
     "Notes": "Notizen",
+    "Opposed": "Vergleichsprobe",
     "protection": "Rüstungsschutz",
     "parrytest": "Verteidigungsprobe",
     "purse": "Geldbeutel",
@@ -158,12 +165,14 @@
     "Socialstate": "Sozialstatus",
     "soulpower": "Seelenkraft",
     "StF": "Steigerungsfaktor",
+    "sizeCategory": "Größenkategorie",
     "Success": "Erfolg",
     "speed": "Geschwindigkeit",
     "statuseffects": "Statuseffekte",
     "Spent": "Ausgegeben",
     "selfDamage": "Selbstverletzt: ",
     "specialability": "Sonderfertigkeit",
+    "specialRules": "Sonderregeln",
     "Test": "Test",
     "Total": "Gesamt",
     "toughness": "Zähigkeit",
@@ -231,5 +240,17 @@
     "CONDITION.confused": "Verwirrung",
 
     "TT.careerSkills": "Komma separierte Talentliste, z.b. (Betören 2,Etikette 4)",
-    "TT.commaSeparated": "Komma separierte Liste"
+    "TT.commaSeparated": "Komma separierte Liste",
+
+    "SIZE": {
+        "tiny": "Winzig",
+        "small": "Klein",
+        "average": "Mittel",
+        "big": "Groß",
+        "giant": "Riesig"
+    },
+
+    "ROLL": {
+        "Targeting": "gegen"
+    }
 }

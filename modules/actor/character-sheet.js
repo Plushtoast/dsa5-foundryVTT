@@ -24,4 +24,5 @@ export default class ActorSheetdsa5Character extends ActorSheetDsa5 {
         super.activateListeners(html);
 
     }
+
 }

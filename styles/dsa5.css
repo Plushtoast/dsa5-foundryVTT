@@ -130,7 +130,8 @@ h7 {
     width: 100%;
 }
 
-.character-sheet .general {
+.character-sheet .general,
+.npc-sheet .general {
     display: flex;
     flex-direction: row;
     width: 100%;
@@ -138,11 +139,13 @@ h7 {
     margin: 0;
 }
 
-.character-sheet .general .items {
+.character-sheet .general .items,
+.npc-sheet .general .items {
     margin-left: 5px;
 }
 
-.character-sheet .general .items .row {
+.character-sheet .general .items .row,
+.npc-sheet .general .items .row {
     display: inline-flex;
     height: 34px;
     flex-direction: row;
@@ -162,6 +165,8 @@ h7 {
 }
 
 .character-sheet .general .item,
+.npc-sheet .general .item,
+.npc-sheet .general .sheet-header .item,
 .character-sheet .sheet-header .item {
     height: 34px;
     display: flex;
@@ -170,6 +175,8 @@ h7 {
     width: calc(25% - 15px);
 }
 
+.npc-sheet .general .item input,
+.npc-sheet .sheet-header .item input,
 .character-sheet .general .item input,
 .character-sheet .sheet-header .item input {
     border: none;
@@ -180,12 +187,18 @@ h7 {
     border-radius: 0px;
 }
 
+.npc-sheet .general .item span,
+.npc-sheet .sheet-header .item span,
 .character-sheet .general .item span,
 .character-sheet .sheet-header .item span {
     color: rgb(51, 51, 51);
     margin-left: 4px;
     margin-bottom: 2px;
     font-size: 12px;
+}
+
+.window-app.npc-sheet.app .window-content {
+    box-shadow: none;
 }
 
 .charimg {
@@ -708,13 +721,17 @@ form.dsa5.item-sheet {
     padding-bottom: 14px;
 }
 
-.window-app .window-header {
+.window-app.npc-sheet .window-header,
+.window-app.character-sheet .window-header,
+.window-app.item .window-header {
     background-image: url(../icons/backgrounds/sidebar-top.webp);
     border: none;
     top: 2px;
 }
 
-.window-app:after {
+.window-app.npc-sheet:after,
+.window-app.character-sheet:after,
+.window-app.item:after {
     background-image: url(../icons/backgrounds/sidebar-bot.webp);
     bottom: 2px;
     content: '';
@@ -808,7 +825,7 @@ form.dsa5.item-sheet {
 .dsa5.item .item-main input {
     margin: 0;
     border-radius: 0%;
-    height: 29px;
+    height: 27px;
     margin: 0;
     width: 100%;
     text-align: center;
@@ -821,7 +838,8 @@ form.dsa5.item-sheet {
     text-align: center;
 }
 
-.dsa5.item .input-text {
+.dsa5.item .input-text,
+.creature-sheet .input-text {
     border: 1px solid var(--border-color);
     border-radius: 0px;
     height: 28px;
@@ -829,8 +847,13 @@ form.dsa5.item-sheet {
     text-align: center;
 }
 
-.dsa5.item select {
+.dsa5.item select,
+.creature-sheet select {
     font-size: 12px;
+    height: 28px;
+    font-family: "GentiumBasic";
+    border-radius: 0;
+    text-align: center;
 }
 
 .dsa5.item section.content {
@@ -897,10 +920,93 @@ form.dsa5.item-sheet {
 }
 
 .window-content>section,
-.window-content>form {
+.window-content>form,
+.window-content .dialog-content,
+.window-content .dialog-buttons {
     padding: 12px;
 }
 
 .app.sidebar-popout .window-content {
     color: rgb(51, 51, 51);
+}
+
+.window-app.creature-sheet .window-content {
+    box-shadow: none;
+}
+
+.window-app .window-header {
+    background-image: url(../icons/backgrounds/creature-top.webp);
+    top: 7px;
+    border: none;
+}
+
+.window-app:after {
+    background-image: url(../icons/backgrounds/bookBorder.webp);
+    bottom: 10px;
+    content: '';
+}
+
+.window-app.creature-sheet:after {
+    background-image: url(../icons/backgrounds/creature-bot.webp);
+}
+
+.window-app.creature-sheet .window-resizable-handle {
+    bottom: 18px;
+}
+
+.imagebox {
+    position: relative;
+    height: 95px;
+    background-size: cover;
+    display: inline-block;
+}
+
+.charimg {
+    border: none;
+}
+
+.imagebox:after {
+    position: absolute;
+    content: '';
+    background-image: url(../icons/backgrounds/token.webp);
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: 100% 100%;
+    top: -10px;
+    left: -10px;
+    height: 115px;
+    width: 115px;
+    z-index: 1;
+    pointer-events: none;
+}
+
+.attacker img,
+.defender img {
+    margin: 5px 25%;
+}
+
+.unopposed-button {
+    text-align: right;
+}
+
+.sender-image {
+    width: 30px;
+    height: 30px;
+    border: none;
+}
+
+.message-header {
+    padding: 10px 5px;
+    background-image: url(../icons/backgrounds/kapitelstart.webp);
+    background-size: 112% 110%;
+    background-repeat: no-repeat;
+    background-position: -20px -5px;
+}
+
+.message-sender.with-image {
+    line-height: 30px;
+}
+
+#scenes .scene h3 {
+    text-shadow: 1px 1px 3px #FFF;
 }

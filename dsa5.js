@@ -1,7 +1,7 @@
 import ActorSheetdsa5 from "./modules/actor/actor-sheet.js"
 import ActorSheetdsa5Character from "./modules/actor/character-sheet.js";
-import ActorSheetdsa5Creature from "./modules/actor/creature-sheet-sheet.js";
-import ActorSheetdsa5NPC from "./modules/actor/npc-sheet-sheet.js";
+import ActorSheetdsa5Creature from "./modules/actor/creature-sheet.js";
+import ActorSheetdsa5NPC from "./modules/actor/npc-sheet.js";
 import Actordsa5 from "./modules/actor/actor-dsa5.js";
 import Itemdsa5 from "./modules/item/item-dsa5.js";
 import ItemSheetdsa5 from "./modules/item/item-sheet.js";
@@ -35,6 +35,7 @@ Hooks.once("init", async function() {
 
     CONFIG.Actor.entityClass = Actordsa5;
     CONFIG.Item.entityClass = Itemdsa5;
+    CONFIG.ChatMessage.template = "systems/dsa5/templates/chat/chat-message.html"
 });
 
 registerHooks();

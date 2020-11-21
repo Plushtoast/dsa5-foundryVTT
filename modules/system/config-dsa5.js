@@ -75,6 +75,14 @@ DSA5.skillDifficultyModifiers = {
     "vhard": -5
 }
 
+DSA5.sizeCategories = {
+    "tiny": "SIZE.tiny",
+    "small": "SIZE.small",
+    "average": "SIZE.average",
+    "big": "SIZE.big",
+    "giant": "SIZE.giant"
+}
+
 
 DSA5.attributeDifficultyModifiers = {
     "eeasy": 6,

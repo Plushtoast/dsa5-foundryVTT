@@ -66,11 +66,21 @@ export default function() {
             description: 'DSA5.dies',
             category: 'DSA5.dies',
             foreground: '#000000',
+            background: '#a3a3a3',
+            edge: '#a3a3a3',
+            outline: '#FFFFFF',
+            texture: 'none'
+        });
+        /*dice3d.addColorset({
+            name: 'ko',
+            description: 'DSA5.dies',
+            category: 'DSA5.dies',
+            foreground: '#000000',
             background: '#fbf5ea',
             edge: '#fbf5ea',
             outline: '#FFFFFF',
             texture: 'none'
-        });
+        });*/
         dice3d.addColorset({
             name: 'kk',
             description: 'DSA5.dies',

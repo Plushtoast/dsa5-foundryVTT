@@ -1,5 +1,6 @@
 import * as initHandleBars from "./handlebars.js";
 import * as initDiceSoNice from "./dicesonice.js";
+import * as initActorHooks from "./actor.js";
 
 export default function() {
     Hooks.once("init", () => {
@@ -14,9 +15,16 @@ export default function() {
             "systems/dsa5/templates/actors/actor-equipment.html",
             "systems/dsa5/templates/actors/actor-notes.html",
             "systems/dsa5/templates/chat/post-item.html",
-            "systems/dsa5/templates/items/item-stat.html"
+            "systems/dsa5/templates/items/item-stat.html",
+            "systems/dsa5/templates/actors/creature/creature-main.html",
+            "systems/dsa5/templates/actors/creature/creature-loot.html",
+            "systems/dsa5/templates/actors/creature/creature-combat.html",
+            "systems/dsa5/templates/actors/creature/creature-notes.html",
+            "systems/dsa5/templates/actors/parts/characteristics-small.html",
+            "systems/dsa5/templates/actors/npc/npc-main.html"
         ]);
     });
     initHandleBars.default();
     initDiceSoNice.default();
+    initActorHooks.default();
 }

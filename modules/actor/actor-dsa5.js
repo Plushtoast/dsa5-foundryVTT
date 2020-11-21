@@ -1,6 +1,7 @@
 import DSA5_Utility from "../system/utility-dsa5.js";
 import DSA5 from "../system/config-dsa5.js"
 import DiceDSA5 from "../system/dice-dsa5.js"
+import OpposedDsa5 from "../system/opposed-dsa5.js";
 
 export default class Actordsa5 extends Actor {
     static async create(data, options) {
@@ -31,16 +32,15 @@ export default class Actordsa5 extends Actor {
         let moneyItems = await DSA5_Utility.allMoneyItems() || [];
 
         moneyItems = moneyItems.sort((a, b) => (a.data.price.value > b.data.price.value) ? -1 : 1);
-        if (data.type == "character") {
-            data.items = data.items.concat(skills);
-            data.items = data.items.concat(combatskills);
-            data.items = data.items.concat(moneyItems.map(m => {
-                m.data.quantity.value = 0
-                return m
-            }));
+        //if (data.type == "character" || data.type == "npc") {
+        data.items = data.items.concat(skills);
+        data.items = data.items.concat(combatskills);
+        //}
 
-
-        }
+        data.items = data.items.concat(moneyItems.map(m => {
+            m.data.quantity.value = 0
+            return m
+        }));
 
         super.create(data, options);
 
@@ -60,36 +60,28 @@ export default class Actordsa5 extends Actor {
             super.prepareData();
             const data = this.data;
 
-            if (this.data.type == "character") {
-                this.prepareCharacter();
-                data.data.details.experience.current = data.data.details.experience.total - data.data.details.experience.spent;
-                data.data.details.experience.description = DSA5_Utility.experienceDescription(data.data.details.experience.total)
-
-                data.data.status.wounds.value = data.data.status.wounds.initial + data.data.characteristics["ko"].value * 2;
-                data.data.status.wounds.max = data.data.status.wounds.value + data.data.status.wounds.modifier + data.data.status.wounds.advances;
-
-                data.data.status.astralenergy.value = (data.data.status.astralenergy.initial > 0 ? data.data.status.astralenergy.initial + 20 : 0);
-                data.data.status.astralenergy.max = data.data.status.astralenergy.value + data.data.status.astralenergy.modifier + data.data.status.astralenergy.advances;
-
-                data.data.status.karmaenergy.value = (data.data.status.karmaenergy.initial > 0 ? data.data.status.karmaenergy.initial + 20 : 0);
-                data.data.status.karmaenergy.max = data.data.status.karmaenergy.value + data.data.status.karmaenergy.modifier + data.data.status.karmaenergy.advances;
+            if (this.data.type == "character" || this.data.type == "npc") {
+                data.data.status.wounds.current = data.data.status.wounds.initial + data.data.characteristics["ko"].value * 2;
+                data.data.status.astralenergy.current = (data.data.status.astralenergy.initial > 0 ? data.data.status.astralenergy.initial + 20 : 0);
+                data.data.status.karmaenergy.current = (data.data.status.karmaenergy.initial > 0 ? data.data.status.karmaenergy.initial + 20 : 0);
 
                 data.data.status.soulpower.value = (data.data.status.soulpower.initial ? data.data.status.soulpower.initial : 0) + Math.round((data.data.characteristics["mu"].value + data.data.characteristics["kl"].value + data.data.characteristics["in"].value) / 6);
-                data.data.status.soulpower.max = data.data.status.soulpower.value + data.data.status.soulpower.modifier;
-
-                data.data.status.toughness.value = (data.data.status.soulpower.initial ? data.data.status.soulpower.initial : 0) + Math.round((data.data.characteristics["ko"].value + data.data.characteristics["ko"].value + data.data.characteristics["kk"].value) / 6);
-                data.data.status.toughness.max = data.data.status.toughness.value + data.data.status.toughness.modifier;
-
-                this._calculateStatus(data, "dodge")
-
+                data.data.status.toughness.value = (data.data.status.toughness.initial ? data.data.status.toughness.initial : 0) + Math.round((data.data.characteristics["ko"].value + data.data.characteristics["ko"].value + data.data.characteristics["kk"].value) / 6);
                 data.data.status.fatePoints.max = data.data.status.fatePoints.value + data.data.status.fatePoints.modifier;
-                data.data.status.initiative.value = Math.round((data.data.characteristics["mu"].value + data.data.characteristics["ge"].value) / 2);
-
-
             }
 
+            if (this.data.type == "character") {
+                data.data.details.experience.current = data.data.details.experience.total - data.data.details.experience.spent;
+                data.data.details.experience.description = DSA5_Utility.experienceDescription(data.data.details.experience.total)
+            }
 
-
+            data.data.status.wounds.max = data.data.status.wounds.current + data.data.status.wounds.modifier + data.data.status.wounds.advances;
+            data.data.status.astralenergy.max = data.data.status.astralenergy.value + data.data.status.astralenergy.modifier + data.data.status.astralenergy.advances;
+            data.data.status.karmaenergy.max = data.data.status.karmaenergy.value + data.data.status.karmaenergy.modifier + data.data.status.karmaenergy.advances;
+            data.data.status.soulpower.max = data.data.status.soulpower.value + data.data.status.soulpower.modifier;
+            data.data.status.toughness.max = data.data.status.toughness.value + data.data.status.toughness.modifier;
+            this._calculateStatus(data, "dodge")
+            data.data.status.initiative.value = Math.round((data.data.characteristics["mu"].value + data.data.characteristics["ge"].value) / 2);
 
         } catch (error) {
             console.error("Something went wrong with preparing actor data: " + error)
@@ -108,12 +100,7 @@ export default class Actordsa5 extends Actor {
     }
 
 
-    prepareCharacter() {
-        if (this.data.type != "character")
-            return;
 
-        //calculate some attributes
-    }
 
 
     prepare() {
@@ -121,10 +108,7 @@ export default class Actordsa5 extends Actor {
             // Call prepareItems first to organize and process OwnedItems
         mergeObject(preparedData, this.prepareItems())
 
-        // Add speciality functions for each Actor type
-        if (preparedData.type == "character") {
-            this.prepareCharacter(preparedData)
-        }
+
 
         //if (preparedData.type == "npc")
         //this.prepareNPC(preparedData)
@@ -356,8 +340,7 @@ export default class Actordsa5 extends Actor {
         money.coins = money.coins.sort((a, b) => (a.data.price.value > b.data.price.value) ? -1 : 1);
         encumbrance += Math.max(0, Math.floor((totalWeight - carrycapacity) / 4));
 
-        var pain = actorData.data.status.wounds.max - actorData.data.status.wounds.current;
-        pain = pain >= (actorData.data.status.wounds.max - 5) ? 4 : Math.floor(pain / 4)
+        let pain = actorData.data.status.wounds.value <= 5 ? 4 : Math.floor((1 - actorData.data.status.wounds.value / actorData.data.status.wounds.max) * 4)
 
         this.update({
             "data.conditions.encumbered.value": encumbrance,
@@ -557,6 +540,7 @@ export default class Actordsa5 extends Actor {
 
     setupSkill(skill, options = {}) {
         let title = skill.name + " " + game.i18n.localize("Test");
+
         let testData = {
             source: skill,
             extra: {
@@ -658,7 +642,10 @@ export default class Actordsa5 extends Actor {
         if (testData.extra)
             mergeObject(result, testData.extra);
 
-
+        if (game.user.targets.size) {
+            cardOptions.title += ` - ${game.i18n.localize("Opposed")}`;
+            cardOptions.isOpposedTest = true
+        }
 
         Hooks.call("dsa5:rollTest", result, cardOptions)
 
@@ -669,7 +656,7 @@ export default class Actordsa5 extends Actor {
 
         if (!options.suppressMessage)
             DiceDSA5.renderRollCard(cardOptions, result, options.rerenderMessage).then(msg => {
-                //OpposedWFRP.handleOpposedTarget(msg) // Send to handleOpposed to determine opposed status, if any.
+                OpposedDsa5.handleOpposedTarget(msg) // Send to handleOpposed to determine opposed status, if any.
             })
         return { result, cardOptions };
     }

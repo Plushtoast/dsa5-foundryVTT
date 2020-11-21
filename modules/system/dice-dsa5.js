@@ -473,6 +473,7 @@ export default class DiceDSA5 {
             postData: chatData.testData,
             template: chatOptions.template,
             rollMode: chatOptions.rollMode,
+            isOpposedTest: chatOptions.isOpposedTest,
             title: chatOptions.title,
             hideData: chatData.hideData,
         };

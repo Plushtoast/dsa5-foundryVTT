@@ -24,4 +24,13 @@ export default class ActorSheetdsa5Creature extends ActorSheetDsa5 {
         super.activateListeners(html);
 
     }
+
+    async getData() {
+        const data = super.getData();
+
+        data["sizeCategories"] = DSA5.sizeCategories
+
+        return data;
+    }
+
 }

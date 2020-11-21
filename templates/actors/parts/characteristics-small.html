@@ -1,0 +1,49 @@
+<div class="characteristics">
+    <div class="characteristics-table" cellpadding="0">
+        <div class="table-row">
+            <div class="table-header"></div>
+            {{#each actor.data.characteristics as |ch c|}}
+            <div title="{{localize ch.label}}" class="table-header">
+                <div class="header-label">
+                    {{localize ch.abrev}}
+                </div>
+            </div>
+            {{/each}}
+        </div>
+        <div class="table-row">
+            <div class="row-type table-data">
+                <div class="header-block lineheight">
+                    {{localize "Initial"}}
+                </div>
+            </div>
+            {{#each actor.data.characteristics as |ch c|}}
+            <div class="table-data">
+                <input name="data.characteristics.{{c}}.initial" type="text" value="{{ch.initial}}" data-dtype="Number">
+            </div>
+            {{/each}}
+        </div>
+
+        <div class="table-row">
+            <div class="row-type table-data">
+                <div class="header-block lineheight">
+                    {{localize "Modifiers"}}
+                </div>
+            </div>
+            {{#each actor.data.characteristics as |ch c|}}
+            <div class="table-data">
+                <input name="data.characteristics.{{c}}.modifier" type="text" value="{{ch.modifier}}" data-dtype="Number">
+            </div>
+            {{/each}}
+        </div>
+        <div class="table-row bottom">
+            <div class="row-type table-data">
+                <div class="header-block d20height">
+                    {{localize "Current"}}
+                </div>
+            </div>
+            {{#each actor.data.characteristics as |ch c|}}
+            <div class="table-data ch-value" data-char="{{c}}"><a class="d20 die-{{c}}">{{ch.value}}</a></div>
+            {{/each}}
+        </div>
+    </div>
+</div>

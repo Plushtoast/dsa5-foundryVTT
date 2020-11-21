@@ -1,0 +1,173 @@
+{{> systems/dsa5/templates/actors/parts/characteristics-small.html}}
+
+<div class="main-row">
+    <div class="column1">
+        <div class="groupbox">
+            <div class="advantages row-section">
+                <div class="col header-label lineheight">
+                    {{localize "advantages"}}
+                </div>
+            </div>
+            <div class="row-section wrap cards">
+                {{#each actor.advantages as |item i|}}
+                <div class="item" data-item-id="{{item._id}}">
+                    <a class="item-edit rightclick-delete">{{item.name}}</a>
+                </div>
+                {{/each}}
+            </div>
+        </div>
+
+        <div class="groupbox">
+            <div class="disadvantages row-section">
+                <div class="col header-label lineheight">
+                    {{localize "disadvantages"}}
+                </div>
+            </div>
+            <div class="row-section wrap cards">
+                {{#each actor.disadvantages as |item i|}}
+                <div class="item" data-item-id="{{item._id}}">
+                    <a class="item-edit rightclick-delete">{{item.name}}</a>
+                </div>
+                {{/each}}
+            </div>
+        </div>
+
+        <div class="groupbox">
+            <div class="generalSpecialAbilities row-section">
+                <div class="col header-label lineheight">
+                    {{localize "generalSpecialAbilities"}}
+                </div>
+            </div>
+            <div class="row-section wrap cards">
+                {{#each actor.generalSpecialAbilites as |item i|}}
+                <div class="item" data-item-id="{{item._id}}">
+                    <a class="item-edit rightclick-delete">{{item.name}}</a>
+                </div>
+                {{/each}}
+            </div>
+        </div>
+
+
+    </div>
+
+    <div class="column2">
+        <div class="groupbox">
+            <div class="derivedAttrs row-section">
+                <div class="col two">
+                </div>
+                <div class="col eight very-small center" title="{{localize 'value'}}">
+                    {{localize "ABBR-value"}}
+                </div>
+                <div class="col eight very-small center" title="{{localize 'Modifiers'}}">
+                    {{localize "ABBR-modifiers"}}
+                </div>
+
+                <div class="col eight very-small center" title="{{localize 'max'}}">
+                    {{localize "ABBR-max"}}
+                </div>
+            </div>
+            <div class="derivedAttrs row-section">
+                <div class="col two lineheight">
+                    {{localize "wounds"}}
+                </div>
+                <div class="col eight lineheight center">
+                    <input name="data.status.wounds.current" type="text" value="{{data.status.wounds.current}}" data-dtype="Number" />
+                </div>
+                <div class="col eight center">
+                    <input name="data.status.wounds.modifier" type="text" value="{{data.status.wounds.modifier}}" data-dtype="Number" />
+
+                </div>
+
+                <div class="col eight lineheight center">
+                    {{data.status.wounds.max}}
+                </div>
+            </div>
+            <div class="derivedAttrs row-section">
+                <div class="col two lineheight">
+                    {{localize "astralenergy"}}
+                </div>
+                <div class="col eight lineheight center">
+                    <input name="data.status.astralenergy.current" type="text" value="{{data.status.astralenergy.current}}" data-dtype="Number" />
+                </div>
+                <div class="col eight center">
+                    <input name="data.status.astralenergy.modifier" type="text" value="{{data.status.astralenergy.modifier}}" data-dtype="Number" />
+
+                </div>
+
+                <div class="col eight lineheight center">
+                    {{data.status.astralenergy.max}}
+
+                </div>
+            </div>
+            <div class="derivedAttrs row-section">
+                <div class="col two lineheight">
+                    {{localize "karmaenergy"}}
+                </div>
+                <div class="col eight lineheight center">
+                    <input name="data.status.karmaenergy.current" type="text" value="{{data.status.karmaenergy.current}}" data-dtype="Number" /> </div>
+                <div class="col eight center">
+                    <input name="data.status.karmaenergy.modifier" type="text" value="{{data.status.karmaenergy.modifier}}" data-dtype="Number" />
+
+                </div>
+
+                <div class="col eight lineheight center">
+                    {{data.status.karmaenergy.max}}
+                </div>
+            </div>
+            <div class="derivedAttrs row-section">
+                <div class="col two lineheight">
+                    {{localize "soulpower"}}
+                </div>
+                <div class="col eight lineheight center">
+                    <input name="data.status.soulpower.value" type="text" value="{{data.status.soulpower.value}}" data-dtype="Number" />
+                </div>
+                <div class="col eight center">
+                    <input name="data.status.soulpower.modifier" type="text" value="{{data.status.soulpower.modifier}}" data-dtype="Number" />
+
+                </div>
+
+                <div class="col eight lineheight center">
+                    {{data.status.soulpower.max}}
+
+                </div>
+            </div>
+            <div class="derivedAttrs row-section">
+                <div class="col two lineheight">
+                    {{localize "toughness"}}
+                </div>
+                <div class="col eight lineheight center">
+                    <input name="data.status.toughness.value" type="text" value="{{data.status.toughness.value}}" data-dtype="Number" />
+                </div>
+                <div class="col eight center">
+                    <input name="data.status.toughness.modifier" type="text" value="{{data.status.toughness.modifier}}" data-dtype="Number" />
+
+                </div>
+
+                <div class="col eight lineheight center">
+                    {{data.status.toughness.max}}
+
+                </div>
+            </div>
+            <div class="derivedAttrs row-section">
+                <div class="col two lineheight">
+                    {{localize "dodge"}}
+                </div>
+                <div class="col eight lineheight center">
+                    {{data.dodge.value}}
+                </div>
+                <div class="col eight center">
+                    <input name="data.status.dodge.modifier" type="text" value="{{data.status.dodge.modifier}}" data-dtype="Number" />
+
+                </div>
+
+                <div class="col eight lineheight center">
+                    {{data.status.dodge.max}}
+
+                </div>
+            </div>
+        </div>
+
+
+
+    </div>
+</div>
