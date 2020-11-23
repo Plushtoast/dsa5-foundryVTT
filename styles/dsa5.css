@@ -326,7 +326,7 @@ h7 {
     background: url(../icons/backgrounds/chatpaper.webp) no-repeat;
     background-size: 100% 100%;
     border: none;
-    padding: 15px;
+    padding: 8px 15px 15px 15px;
     padding-left: 18px;
     margin-bottom: 8px;
 }

@@ -46,6 +46,7 @@
     "attacktest": "Angriffsprobe",
     "arrow": "Pfeil",
     "armor": "Rüstung",
+    "attackOfOpportunity": "Der Kämpfer kann einen Passierschlag ausführen",
     "Advances": "Steigerungen",
     "attributes": "Eigenschaften",
     "astralenergy": "Astralenergie",
@@ -228,16 +229,19 @@
     "SHEET.Dropdown": "Details",
     "SHEET.DeleteItem": "Löschen",
 
-    "CONDITION.encumbered": "Belastung",
-    "CONDITION.drunken": "Berauscht",
-    "CONDITION.stunned": "Betäubung",
-    "CONDITION.raptured": "Entrückung",
-    "CONDITION.feared": "Furcht",
-    "CONDITION.paralysed": "Paralyse",
-    "CONDITION.inpain": "Schmerz",
-    "CONDITION.tranced": "Trance",
-    "CONDITION.overexerted": "Überanstrengung",
-    "CONDITION.confused": "Verwirrung",
+    "CONDITION": {
+        "encumbered": "Belastung",
+        "drunken": "Berauscht",
+        "stunned": "Betäubung",
+        "raptured": "Entrückung",
+        "feared": "Furcht",
+        "paralysed": "Paralyse",
+        "inpain": "Schmerz",
+        "tranced": "Trance",
+        "overexerted": "Überanstrengung",
+        "confused": "Verwirrung"
+    },
+
 
     "TT.careerSkills": "Komma separierte Talentliste, z.b. (Betören 2,Etikette 4)",
     "TT.commaSeparated": "Komma separierte Liste",
@@ -252,5 +256,15 @@
 
     "ROLL": {
         "Targeting": "gegen"
+    },
+
+    "OPPOSED": {
+        "winsFP": "<b>{defender}</b> gewinnt gegen <b>{attacker}</b> mit {SL} Qualitätsstufe(n)",
+        "wins": "<b>{defender}</b> gewinnt gegen <b>{attacker}</b>"
+    },
+    "CHAT": {
+        "TestModifiers": {
+            "FinalModifiers": "{target} Target, {sl}SL to <b>{name}</b>"
+        }
     }
 }

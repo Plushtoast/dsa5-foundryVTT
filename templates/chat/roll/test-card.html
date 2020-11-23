@@ -14,7 +14,11 @@
 </div>
 {{/when}} {{#if testData.result}}
 <div class="card-content display-toggle">
-    <b>{{localize "FP"}}</b>: {{testData.result}}{{#if testData.qualityStep}}, <b>{{localize "qualityStep"}}</b>: {{testData.qualityStep}}{{/if}}
+    <b>{{localize "FP"}}</b>: {{testData.result}}
+</div>
+{{/if}} {{#if testData.qualityStep}}
+<div class="card-content display-toggle">
+    <b>{{localize "qualityStep"}}</b>: {{testData.qualityStep}}
 </div>
 {{/if}} {{#if testData.damage}}
 <div class="card-content display-toggle">

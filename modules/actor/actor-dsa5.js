@@ -389,6 +389,7 @@ export default class Actordsa5 extends Actor {
         let title = game.i18n.localize(item.name) + " " + game.i18n.localize(mode + "test");
 
         let testData = {
+            opposable: true,
             source: item,
             mode: mode,
             extra: {
@@ -425,6 +426,7 @@ export default class Actordsa5 extends Actor {
         let title = game.i18n.localize(item.name) + " " + game.i18n.localize(mode + "test");
 
         let testData = {
+            opposable: true,
             source: item,
             mode: mode,
             extra: {
@@ -464,6 +466,7 @@ export default class Actordsa5 extends Actor {
 
         let testData = {
             source: char,
+            opposable: false,
             extra: {
                 statusId: statusId,
                 actor: this.data,
@@ -504,6 +507,7 @@ export default class Actordsa5 extends Actor {
         let title = game.i18n.localize(char.label) + " " + game.i18n.localize("Test");
 
         let testData = {
+            opposable: false,
             source: char,
             extra: {
                 characteristicId: characteristicId,
@@ -542,6 +546,7 @@ export default class Actordsa5 extends Actor {
         let title = skill.name + " " + game.i18n.localize("Test");
 
         let testData = {
+            opposable: true,
             source: skill,
             extra: {
                 actor: this.data,
@@ -642,9 +647,16 @@ export default class Actordsa5 extends Actor {
         if (testData.extra)
             mergeObject(result, testData.extra);
 
+        console.log(testData)
+
         if (game.user.targets.size) {
-            cardOptions.title += ` - ${game.i18n.localize("Opposed")}`;
-            cardOptions.isOpposedTest = true
+            cardOptions.isOpposedTest = testData.opposable
+            if (cardOptions.isOpposedTest)
+                cardOptions.title += ` - ${game.i18n.localize("Opposed")}`;
+            else {
+                game.user.updateTokenTargets([]);
+            }
+
         }
 
         Hooks.call("dsa5:rollTest", result, cardOptions)

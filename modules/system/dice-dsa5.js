@@ -127,14 +127,18 @@ export default class DiceDSA5 {
         let roll = testData.roll ? testData.roll : new Roll("1d20").roll();
         let modifier = testData.testModifier;
 
-        return this._rollSingleD20(roll, testData.source.max, testData.extra.statusId, modifier, testData)
+        var result = this._rollSingleD20(roll, testData.source.max, testData.extra.statusId, modifier, testData)
+        result["rollType"] = "status"
+        return result
     }
 
     static rollAttribute(testData) {
         let roll = testData.roll ? testData.roll : new Roll("1d20").roll();
         let modifier = testData.testModifier + testData.testDifficulty;
 
-        return this._rollSingleD20(roll, testData.source.value, testData.extra.characteristicId, modifier, testData)
+        var result = this._rollSingleD20(roll, testData.source.value, testData.extra.characteristicId, modifier, testData)
+        result["rollType"] = "attribute"
+        return result
     }
 
     static rollDamage(testData) {
@@ -167,6 +171,7 @@ export default class DiceDSA5 {
 
 
         return {
+            rollType: "damage",
             damage: damage,
             characteristics: chars,
 
@@ -199,13 +204,17 @@ export default class DiceDSA5 {
 
         switch (result.successLevel) {
             case 3:
-                result.description += ", " + game.i18n.localize("halfDefense") + ", " + game.i18n.localize("doubleDamage")
+                if (testData.mode == "attack")
+                    result.description += ", " + game.i18n.localize("halfDefense") + ", " + game.i18n.localize("doubleDamage")
+                else
+                    result.description += ", " + game.i18n.localize("attackOfOpportunity")
                 break;
             case -3:
                 result.description += ", " + game.i18n.localize("selfDamage") + (new Roll("1d6+2").roll().result)
                 break;
             case 2:
-                result.description += ", " + game.i18n.localize("halfDefense")
+                if (testData.mode == "attack")
+                    result.description += ", " + game.i18n.localize("halfDefense")
                 break;
             case -2:
                 break;
@@ -234,6 +243,7 @@ export default class DiceDSA5 {
 
             result["damage"] = damage
         }
+        result["rollType"] = "weapon"
         return result
     }
 
@@ -295,6 +305,7 @@ export default class DiceDSA5 {
         }
 
         return {
+            rollType: "weapon",
             characteristics: chars,
             description: description,
             preData: testData,
@@ -338,6 +349,7 @@ export default class DiceDSA5 {
 
 
         return {
+            rollType: "talent",
             result: fps,
             characteristics: [
                 { char: testData.source.data.characteristic1.value, res: roll.terms[0].results[0].result, suc: res1 <= 0, tar: tar1 },

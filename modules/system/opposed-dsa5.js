@@ -1,4 +1,5 @@
 import DSA5_Utility from "./utility-dsa5.js";
+import DiceDSA5 from "./dice-dsa5.js";
 
 export default class OpposedDsa5 {
     static async handleOpposedTarget(message) {
@@ -139,14 +140,94 @@ export default class OpposedDsa5 {
         return opposedResult
     }
 
-    static async evaluateOpposedTest(attackerTest, defenderTest, options = {}) {}
+    static async evaluateOpposedTest(attackerTest, defenderTest, options = {}) {
+
+        Hooks.call("dsa5:preOpposedTestResult", attackerTest, defenderTest)
+            //   try {
+        let opposeResult = {};
+
+        opposeResult.other = [];
+        opposeResult.modifiers = this.checkPostModifiers(attackerTest, defenderTest);
+
+        Hooks.call("dsa5:opposedTestResult", opposeResult, attackerTest, defenderTest)
+        opposeResult.winner = "attacker"
+
+        switch (attackerTest.rollType) {
+            case "talent":
+                this._evaluateTalentOpposedRoll(attackerTest, defenderTest, opposeResult, options)
+                break;
+            case "weapon":
+                this._evaluateWeaponOpposedRoll(attackerTest, defenderTest, opposeResult, options)
+                break;
+        }
+
+        return opposeResult
+
+        //        } catch (err) {
+        //           ui.notifications.error(`${game.i18n.localize("Error.Opposed")}: ` + err)
+        //          console.error("Could not complete opposed test: " + err)
+        //         this.clearOpposed()
+        //}
+    }
+    static _evaluateWeaponOpposedRoll(attackerTest, defenderTest, opposeResult, options = {}) {
+        if (attackerTest.successLevel > 0 && attackerTest.successLevel > defenderTest.successLevel) {
+            let damage = this._calculateOpposedDamage(attackerTest, defenderTest)
+            opposeResult.winner = "attacker"
+            opposeResult.damage = {
+                description: `<b>${game.i18n.localize("damage")}</b>: ${damage.damage} - ${damage.armor} (${game.i18n.localize("protection")}) = ${damage.sum}`,
+                value: damage.sum
+            }
+        } else {
+            opposeResult.winner = "defender"
+        }
+    }
+
+    static _calculateOpposedDamage(attackerTest, defenderTest) {
+        let wornArmor = defenderTest.actor.items.filter(x => x.type == "armor" && x.data.worn.value == true)
+        console.log(wornArmor)
+        let armor = wornArmor.reduce((a, b) => a + b.data.protection.value, 0)
+        return {
+            damage: attackerTest.damage,
+            armor: armor,
+            sum: attackerTest.damage - armor
+        }
+    }
+
+    static _evaluateTalentOpposedRoll(attackerTest, defenderTest, opposeResult, options = {}) {
+        if (attackerTest.successLevel > 0 && attackerTest.successLevel > defenderTest.successLevel) {
+            opposeResult.winner = "attacker"
+        } else if (attackerTest.qualityStep > defenderTest.qualityStep || (attackerTest.result >= 0 && defenderTest.result < 0)) {
+            opposeResult.winner = "attacker"
+            opposeResult.differenceSL = attackerTest.qualityStep - defenderTest.qualityStep
+        } else {
+            opposeResult.winner = "defender"
+            opposeResult.differenceSL = defenderTest.qualityStep - attackerTest.qualityStep
+        }
+    }
+
+    static checkPostModifiers(attackerTestResult, defenderTestResult) {
+        let didModifyAttacker = false,
+            didModifyDefender = false;
+
+        let modifiers = {
+            attacker: {
+                target: 0,
+            },
+            defender: {
+                target: 0,
+            },
+            message: []
+        }
+        return mergeObject(modifiers, { didModifyAttacker, didModifyDefender });
+    }
 
     static formatOpposedResult(opposeResult, attacker, defender) {
+        let str = opposeResult.differenceSL ? "winsFP" : "wins"
         if (opposeResult.winner == "attacker") {
-            opposeResult.result = game.i18n.format("OPPOSED.AttackerWins", { attacker: attacker.alias, defender: defender.alias, SL: opposeResult.differenceSL })
+            opposeResult.result = game.i18n.format("OPPOSED." + str, { attacker: attacker.alias, defender: defender.alias, SL: opposeResult.differenceSL })
             opposeResult.img = attacker.img;
         } else if (opposeResult.winner == "defender") {
-            opposeResult.result = game.i18n.format("OPPOSED.DefenderWins", { defender: defender.alias, attacker: attacker.alias, SL: opposeResult.differenceSL })
+            opposeResult.result = game.i18n.format("OPPOSED." + str, { defender: defender.alias, attacker: attacker.alias, SL: opposeResult.differenceSL })
             opposeResult.img = defender.img
         }
 
@@ -160,8 +241,97 @@ export default class OpposedDsa5 {
         return opposeResult;
     }
 
-    static rerenderMessagesWithModifiers(opposeResult, attacker, defender) {}
+    static rerenderMessagesWithModifiers(opposeResult, attacker, defender) {
+        if (opposeResult.modifiers.didModifyAttacker || attacker.testResult.modifiers) {
+            let attackerMessage = game.messages.get(attacker.messageId)
+            opposeResult.modifiers.message.push(`${game.i18n.format(game.i18n.localize('CHAT.TestModifiers.FinalModifiers'), { target: opposeResult.modifiers.attacker.target, sl: opposeResult.modifiers.attacker.SL, name: attacker.alias })}`)
+            let chatOptions = {
+                template: attackerMessage.data.flags.data.template,
+                rollMode: attackerMessage.data.flags.data.rollMode,
+                title: attackerMessage.data.flags.data.title,
+                isOpposedTest: attackerMessage.data.flags.data.isOpposedTest,
+                attackerMessage: attackerMessage.data.flags.data.attackerMessage,
+                defenderMessage: attackerMessage.data.flags.data.defenderMessage,
+                unopposedStartMessage: attackerMessage.data.flags.data.unopposedStartMessage,
+                startMessagesList: attackerMessage.data.flags.data.startMessagesList,
+                hasBeenCalculated: true,
+                calculatedMessage: opposeResult.modifiers.message,
+            }
 
-    static renderOpposedResult(formattedOpposeResult, options = {}) {}
+            attackerMessage.data.flags.data.preData.target = attackerMessage.data.flags.data.preData.target + opposeResult.modifiers.attacker.target;
+            attackerMessage.data.flags.data.preData.roll = attackerMessage.data.flags.data.postData.roll
+            attackerMessage.data.flags.data.hasBeenCalculated = true;
+            attackerMessage.data.flags.data.calculatedMessage = opposeResult.modifiers.message;
+            if (!opposeResult.swapped)
+                DiceDSA5.renderRollCard(chatOptions, opposeResult.attackerTestResult, attackerMessage)
+            else
+                DiceDSA5.renderRollCard(chatOptions, opposeResult.defenderTestResult, attackerMessage)
+
+        }
+        if (opposeResult.modifiers.didModifyDefender || defender.testResult.modifiers) {
+            opposeResult.modifiers.message.push(`${game.i18n.format(game.i18n.localize('CHAT.TestModifiers.FinalModifiers'), { target: opposeResult.modifiers.defender.target, sl: opposeResult.modifiers.defender.SL, name: defender.alias })}`)
+            let defenderMessage = game.messages.get(defender.messageId)
+            let chatOptions = {
+                template: defenderMessage.data.flags.data.template,
+                rollMode: defenderMessage.data.flags.data.rollMode,
+                title: defenderMessage.data.flags.data.title,
+                isOpposedTest: defenderMessage.data.flags.data.isOpposedTest,
+                attackerMessage: defenderMessage.data.flags.data.attackerMessage,
+                defenderMessage: defenderMessage.data.flags.data.defenderMessage,
+                unopposedStartMessage: defenderMessage.data.flags.data.unopposedStartMessage,
+                startMessagesList: defenderMessage.data.flags.data.startMessagesList,
+                hasBeenCalculated: true,
+                calculatedMessage: opposeResult.modifiers.message,
+            }
+
+            defenderMessage.data.flags.data.preData.target = defenderMessage.data.flags.data.preData.target + opposeResult.modifiers.defender.target;
+            defenderMessage.data.flags.data.preData.slBonus = defenderMessage.data.flags.data.preData.slBonus + opposeResult.modifiers.defenderSL;
+            defenderMessage.data.flags.data.preData.roll = defenderMessage.data.flags.data.postData.roll
+            defenderMessage.data.flags.data.hasBeenCalculated = true;
+            defenderMessage.data.flags.data.calculatedMessage = opposeResult.modifiers.message;
+            if (!opposeResult.swapped)
+                DiceDSA5.renderRollCard(chatOptions, opposeResult.defenderTestResult, defenderMessage)
+            else
+                DiceDSA5.renderRollCard(chatOptions, opposeResult.attackerTestResult, defenderMessage)
+        }
+    }
+
+    static renderOpposedResult(formattedOpposeResult, options = {}) {
+        if (options.target) {
+            formattedOpposeResult.hideData = true;
+            renderTemplate("systems/dsa5/templates/chat/roll/opposed-result.html", formattedOpposeResult).then(html => {
+                let chatOptions = {
+                    user: game.user._id,
+                    content: html,
+                    "flags.opposeData": formattedOpposeResult,
+                    "flags.startMessageId": options.startMessageId,
+                    whisper: options.whisper,
+                    blind: options.blind,
+                }
+                ChatMessage.create(chatOptions)
+            })
+        } else // If manual - update start message and clear opposed data
+        {
+            formattedOpposeResult.hideData = true;
+            renderTemplate("systems/dsa5/templates/chat/roll/opposed-result.html", formattedOpposeResult).then(html => {
+                let chatOptions = {
+                    user: game.user._id,
+                    content: html,
+                    blind: options.blind,
+                    whisper: options.whisper,
+                    "flags.opposeData": formattedOpposeResult
+                }
+                try {
+                    this.startMessage.update(chatOptions).then(resultMsg => {
+                        ui.chat.updateMessage(resultMsg)
+                        this.clearOpposed();
+                    })
+                } catch {
+                    ChatMessage.create(chatOptions)
+                    this.clearOpposed();
+                }
+            })
+        }
+    }
 
 }
