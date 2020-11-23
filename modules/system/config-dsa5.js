@@ -131,7 +131,8 @@ DSA5.skillBurdens = {
 DSA5.StFs = {
     "A": "A",
     "B": "B",
-    "C": "C"
+    "C": "C",
+    "D": "D"
 }
 
 
