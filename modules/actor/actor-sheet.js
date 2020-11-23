@@ -228,7 +228,7 @@ export default class ActorSheetDsa5 extends ActorSheet {
         });
 
         html.find('.item-delete').click(ev => {
-            _deleteItem(ev)
+            this._deleteItem(ev)
         });
     }
 

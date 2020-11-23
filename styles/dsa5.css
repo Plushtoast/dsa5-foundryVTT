@@ -766,9 +766,17 @@ form.dsa5.item-sheet {
 .window-app .window-header .window-title {
     text-align: center;
     margin-left: 15%;
+    margin-top: 5px;
+    color: white;
+    text-shadow: 0px 0px 2px rgba(0, 0, 0, 0.75);
+}
+
+.window-app.npc-sheet .window-header .window-title,
+.window-app.character-sheet .window-header .window-title {
     margin-top: 10px;
     /*color: var(--button-color);*/
     color: black;
+    text-shadow: 1px 1px white;
 }
 
 .app.sidebar-popout {
@@ -983,6 +991,7 @@ form.dsa5.item-sheet {
 .attacker img,
 .defender img {
     margin: 5px 25%;
+    border: none;
 }
 
 .unopposed-button {
@@ -990,7 +999,7 @@ form.dsa5.item-sheet {
 }
 
 .sender-image {
-    width: 30px;
+    max-width: 30px;
     height: 30px;
     border: none;
 }
