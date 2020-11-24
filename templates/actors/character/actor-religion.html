@@ -1,0 +1,146 @@
+<div class="row-section wrap">
+    <div class="col">
+        <div class="row-section skills table-title">
+            <div class="col five">
+                {{localize "liturgyAndCeremonies"}}
+            </div>
+            <div class="col five center">{{localize "probe"}}</div>
+            <div class="col ten center" title="{{localize 'Fw'}}">{{localize "CHARAbbrev.FW"}}</div>
+            <div class="col ten center" title="{{localize 'KaPCost'}}">{{localize "cost"}}</div>
+            <div class="col ten center">{{localize "CHARAbbrev.castingTime"}}</div>
+            <div class="col ten center">{{localize "reach"}}</div>
+            <div class="col ten center">{{localize "CHARAbbrev.duration"}}</div>
+            <div class="col ten"></div>
+        </div>
+    </div>
+    {{#each actor.liturgies as |item i|}}
+    <div class="col">
+        <div class="row-section skills item lineheight" data-item-id="{{item._id}}">
+            <div class="col five">
+                <a class="spell-select">{{item.name}}</a>
+            </div>
+            <div class="col five center">
+                <a class="spell-select">
+                    <span class="d20 diet-{{item.data.characteristic1.value}}">{{localize (concatUp "CHARAbbrev." item.data.characteristic1.value)}}</span>
+                    <span class="d20 diet-{{item.data.characteristic2.value}}">{{localize (concatUp "CHARAbbrev." item.data.characteristic2.value)}}</span>
+                    <span class="d20 diet-{{item.data.characteristic3.value}}">{{localize (concatUp "CHARAbbrev." item.data.characteristic3.value)}}</span>
+                </a>
+            </div>
+            <div class="col ten center">
+                <input class="skill-advances" type="text" data-dtype="{{item.data.talentValue.type}}" value="{{item.data.talentValue.value}}" />
+            </div>
+            <div class="col ten center">
+                {{item.data.AsPCost.value}}
+            </div>
+            <div class="col ten center">
+                {{item.data.castingTime.value}}
+            </div>
+            <div class="col ten center">
+                {{item.data.range.value}}
+            </div>
+            <div class="col ten center">
+                {{item.data.duration.value}}
+            </div>
+            <div class="col ten very-small center">
+                <a class="item-post" title="{{localize 'SHEET.PostItem'}}"><i class="fas fa-comment"></i></a>
+                <a class="item-control item-delete" title="{{localize 'SHEET.DeleteItem'}}"><i class="fas fa-trash"></i></a>
+            </div>
+        </div>
+    </div>
+    {{/each}}
+</div>
+
+<div class="groupbox">
+    <div class="row-section">
+        <div class="col header-label lineheight">
+            {{localize "clericspecialtalents"}}
+        </div>
+    </div>
+    <div class="row-section wrap cards">
+        {{#each actor.clericSpecialAbilities as |item i|}}
+        <div class="item" data-item-id="{{item._id}}">
+            <a class="item-edit rightclick-delete">{{item.name}}</a>
+        </div>
+        {{/each}}
+    </div>
+
+</div>
+
+<div class="row-section">
+    <div class="col two">
+        <div class="groupbox">
+            <div class="row-section">
+                <div class="col header-label lineheight">
+                    {{localize "karmaenergy"}}
+                </div>
+            </div>
+            <div class="row-section table-title">
+                <div class="col two center small">
+                    {{localize "max"}}
+                </div>
+                <div class="col two center small">
+                    {{localize "Current"}}
+                </div>
+            </div>
+            <div class="row-section">
+                <div class="col two center small lineheight">
+                    {{actor.data.status.karmaenergy.max}}
+                </div>
+                <div class="col two center small lineheight">
+                    <input type="text" name="data.status.karmaenergy.value" data-dtype="{{actor.data.status.karmaenergy.type}}" value="{{actor.data.status.karmaenergy.value}}" />
+                </div>
+            </div>
+        </div>
+        <div class="groupbox">
+            <div class="row-section lineheight">
+                <div class="col fourty table-title small center">
+                    {{localize "tradition"}}
+                </div>
+                <div class="col sixty">
+
+                </div>
+            </div>
+            <div class="row-section lineheight">
+                <div class="col fourty table-title small center">
+                    {{localize "guidevalue"}}
+                </div>
+                <div class="col sixty">
+
+                </div>
+            </div>
+            <div class="row-section lineheight">
+                <div class="col fourty table-title small center">
+                    {{localize "aspect"}}
+                </div>
+                <div class="col sixty">
+
+                </div>
+            </div>
+            <div class="row-section lineheight">
+                <div class="col fourty table-title small center">
+                    {{localize "happyTalents"}}
+                </div>
+                <div class="col sixty">
+
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col two">
+        <div class="groupbox">
+            <div class="row-section">
+                <div class="col header-label lineheight">
+                    {{localize "blessings"}}
+                </div>
+            </div>
+            <div class="row-section wrap cards">
+                {{#each actor.blessings as |item i|}}
+                <div class="item" data-item-id="{{item._id}}">
+                    <a class="item-edit rightclick-delete">{{item.name}}</a>
+                </div>
+                {{/each}}
+            </div>
+
+        </div>
+    </div>
+</div>

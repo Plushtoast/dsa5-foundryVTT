@@ -119,9 +119,37 @@ export default class Itemdsa5 extends Item {
         return properties;
     }
 
+    _liturgyChatData() {
+        const data = duplicate(this.data.data);
+        let properties = [
+            this._chatLineHelper("castingTime", data.castingTime.value),
+            this._chatLineHelper("KaPCost", data.castingTime.value),
+            this._chatLineHelper("distribution", data.distribution.value),
+            this._chatLineHelper("duration", data.duration.value),
+            this._chatLineHelper("reach", data.range.value),
+            this._chatLineHelper("targetCategory", data.targetCategory.value)
+        ]
+        return properties;
+    }
+
+    _spellChatData() {
+        const data = duplicate(this.data.data);
+        let properties = [
+            this._chatLineHelper("castingTime", data.castingTime.value),
+            this._chatLineHelper("AsPCost", data.castingTime.value),
+            this._chatLineHelper("distribution", data.distribution.value),
+            this._chatLineHelper("duration", data.duration.value),
+            this._chatLineHelper("reach", data.range.value),
+            this._chatLineHelper("targetCategory", data.targetCategory.value)
+        ]
+        return properties;
+    }
+
     _chatLineHelper(key, val) {
         return `<b>${game.i18n.localize(key)}</b>: ${val}`
     }
+
+
 
     async postItem() {
         const properties = this[`_${this.data.type}ChatData`]();

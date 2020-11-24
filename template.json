@@ -233,6 +233,28 @@
                     }
                 }
             },
+            "magic": {
+                "guidevalue": {
+                    "type": "String",
+                    "label": "Guide value",
+                    "value": "-"
+                },
+                "tradition": {
+                    "type": "String",
+                    "label": "tradition",
+                    "value": ""
+                },
+                "feature": {
+                    "type": "String",
+                    "label": "feature",
+                    "value": ""
+                },
+                "happyTalents": {
+                    "type": "String",
+                    "label": "happyTalents",
+                    "value": ""
+                }
+            },
 
             "details": {
                 "details": {
@@ -565,14 +587,24 @@
                 "description",
                 "spell",
                 "basicSpell"
-            ]
+            ],
+            "talentValue": {
+                "type": "Number",
+                "label": "Fw",
+                "value": 0
+            }
         },
         "liturgy": {
             "templates": [
                 "description",
                 "spell",
                 "basicSpell"
-            ]
+            ],
+            "talentValue": {
+                "type": "Number",
+                "label": "Fw",
+                "value": 0
+            }
         },
         "blessing": {
             "templates": [

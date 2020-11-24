@@ -1,5 +1,7 @@
 import DSA5_Utility from "../system/utility-dsa5.js";
 import DSA5 from "../system/config-dsa5.js";
+import AdvantageRulesDSA5 from "../system/advantage-rules-dsa5.js";
+
 
 
 export default class ActorSheetDsa5 extends ActorSheet {
@@ -88,6 +90,19 @@ export default class ActorSheetDsa5 extends ActorSheet {
 
             if (ev.button == 0)
                 this.actor.setupSkill(skill.data).then(setupData => {
+                    this.actor.basicTest(setupData)
+                });
+
+            else if (ev.button == 2)
+                skill.sheet.render(true);
+        });
+
+        html.find('.spell-select').mousedown(ev => {
+            let itemId = this._getItemId(ev);
+            let skill = this.actor.items.find(i => i.data._id == itemId);
+
+            if (ev.button == 0)
+                this.actor.setupSpell(skill.data).then(setupData => {
                     this.actor.basicTest(setupData)
                 });
 
@@ -314,6 +329,7 @@ export default class ActorSheetDsa5 extends ActorSheet {
 
 
         } else {
+            await AdvantageRulesDSA5.addvantageAdded(this.actor, item)
             await this._updateAPs(item.data.data.APValue.value)
             await this.actor.createEmbeddedEntity("OwnedItem", item);
         }
@@ -372,6 +388,10 @@ export default class ActorSheetDsa5 extends ActorSheet {
         });
     }
 
+    async _addSpellOrLiturgy(item) {
+        await this.actor.createEmbeddedEntity("OwnedItem", item);
+    }
+
     async _onDrop(event) {
         let dragData = JSON.parse(event.dataTransfer.getData("text/plain"));
         let item
@@ -410,6 +430,12 @@ export default class ActorSheetDsa5 extends ActorSheet {
                 break;
             case "money":
                 await this._addMoney(item)
+                break;
+            case "blessing":
+            case "magictrick":
+            case "liturgy":
+            case "spell":
+                await this._addSpellOrLiturgy(item)
                 break;
 
         }

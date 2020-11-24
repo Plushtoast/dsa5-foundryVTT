@@ -28,6 +28,8 @@ export default class DiceDSA5 {
             case "meleeweapon":
             case "rangeweapon":
             case "combatskill":
+            case "liturgy":
+            case "spell":
                 break;
             case "status":
                 break;
@@ -314,11 +316,18 @@ export default class DiceDSA5 {
         }
     }
 
-    static rollTalent(testData) {
+    static rollSpell(testData) {
+        let res = this._rollThreeD20(testData)
+        res["rollType"] = "spell"
+        return res
+    }
+
+    static _rollThreeD20(testData) {
         let roll = testData.roll ? testData.roll : new Roll("1d20+1d20+1d20").roll();
         let description = "";
+        let successLevel = 0
         let modifier = testData.testModifier + testData.testDifficulty;
-        let fps = testData.source.data.talentValue.value;
+        let fps = 0 //testData.source.data.talentValue.value;
         let tar1 = testData.extra.actor.data.characteristics[testData.source.data.characteristic1.value].value + modifier;
         let res1 = roll.terms[0].results[0].result - tar1;
         if (res1 > 0) {
@@ -337,19 +346,24 @@ export default class DiceDSA5 {
 
         if (roll.terms[0].results.filter(x => x.result == 1).length == 3) {
             description = game.i18n.localize("AstoundingSuccess");
+            successLevel = 3
         } else if (roll.terms[0].results.filter(x => x.result == 1).length == 2) {
             description = game.i18n.localize("CriticalSuccess");
+            successLevel = 2
         } else if (roll.terms[0].results.filter(x => x.result == 20).length == 3) {
             description = game.i18n.localize("AstoundingFailure");
+            successLevel = -3
         } else if (roll.terms[0].results.filter(x => x.result == 20).length == 2) {
             description = game.i18n.localize("CriticalFailure");
+            successLevel = -2
         } else {
+
             description = game.i18n.localize(fps >= 0 ? "Success" : "Failure");
+            successLevel = fps >= 0 ? 1 : -1
         }
 
 
         return {
-            rollType: "talent",
             result: fps,
             characteristics: [
                 { char: testData.source.data.characteristic1.value, res: roll.terms[0].results[0].result, suc: res1 <= 0, tar: tar1 },
@@ -359,9 +373,16 @@ export default class DiceDSA5 {
             qualityStep: fps > 0 ? Math.ceil(fps / 3) : 0,
             description: description,
             preData: testData,
+            successLevel: successLevel,
             modifiers: modifier,
             extra: {}
         }
+    }
+
+    static rollTalent(testData) {
+        let res = this._rollThreeD20(testData)
+        res["rollType"] = "talent"
+        return res
     }
 
     static rollTest(testData) {
@@ -369,6 +390,10 @@ export default class DiceDSA5 {
 
         let rollResults;
         switch (testData.source.type) {
+            case "liturgy":
+            case "spell":
+                rollResults = this.rollSpell(testData)
+                break
             case "skill":
                 rollResults = this.rollTalent(testData)
                 break;
@@ -403,6 +428,8 @@ export default class DiceDSA5 {
         if (!testData.roll) {
             let roll;
             switch (testData.source.type) {
+                case "liturgy":
+                case "spell":
                 case "skill":
                     roll = new Roll("1d20+1d20+1d20").roll();
                     for (var i = 0; i < roll.dice.length; i++) {

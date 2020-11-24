@@ -62,7 +62,7 @@ export default class Actordsa5 extends Actor {
 
             if (this.data.type == "character" || this.data.type == "npc") {
                 data.data.status.wounds.current = data.data.status.wounds.initial + data.data.characteristics["ko"].value * 2;
-                data.data.status.astralenergy.current = (data.data.status.astralenergy.initial > 0 ? data.data.status.astralenergy.initial + 20 : 0);
+                data.data.status.astralenergy.current = 0 // (data.data.status.astralenergy.initial > 0 ? data.data.status.astralenergy.initial + 20 : 0);
                 data.data.status.karmaenergy.current = (data.data.status.karmaenergy.initial > 0 ? data.data.status.karmaenergy.initial + 20 : 0);
 
                 data.data.status.soulpower.value = (data.data.status.soulpower.initial ? data.data.status.soulpower.initial : 0) + Math.round((data.data.characteristics["mu"].value + data.data.characteristics["kl"].value + data.data.characteristics["in"].value) / 6);
@@ -76,8 +76,8 @@ export default class Actordsa5 extends Actor {
             }
 
             data.data.status.wounds.max = data.data.status.wounds.current + data.data.status.wounds.modifier + data.data.status.wounds.advances;
-            data.data.status.astralenergy.max = data.data.status.astralenergy.value + data.data.status.astralenergy.modifier + data.data.status.astralenergy.advances;
-            data.data.status.karmaenergy.max = data.data.status.karmaenergy.value + data.data.status.karmaenergy.modifier + data.data.status.karmaenergy.advances;
+            data.data.status.astralenergy.max = data.data.status.astralenergy.current + data.data.status.astralenergy.modifier + data.data.status.astralenergy.advances;
+            data.data.status.karmaenergy.max = data.data.status.karmaenergy.current + data.data.status.karmaenergy.modifier + data.data.status.karmaenergy.advances;
             data.data.status.soulpower.max = data.data.status.soulpower.value + data.data.status.soulpower.modifier;
             data.data.status.toughness.max = data.data.status.toughness.value + data.data.status.toughness.modifier;
             this._calculateStatus(data, "dodge")
@@ -151,10 +151,17 @@ export default class Actordsa5 extends Actor {
         let generalSpecialAbilites = []
         let combatSpecialAbilities = []
         let fatePointsAbilities = []
+        let magicSpecialAbilities = []
+        let clericSpecialAbilities = []
+        let magicTricks = []
+        let blessings = []
 
         let armor = [];
         let rangeweapons = [];
         let meleeweapons = [];
+
+        let liturgies = []
+        let spells = []
 
         const inventory = {
             meleeweapons: {
@@ -202,6 +209,9 @@ export default class Actordsa5 extends Actor {
 
         let totalArmor = 0;
 
+        let hasSpells = false
+        let hasPrayers = false
+
         let totalWeight = 0;
         let encumbrance = 0;
         let carrycapacity = (actorData.data.characteristics.mu.value + actorData.data.characteristics.mu.modifier + actorData.data.characteristics.mu.advances) * 2;
@@ -234,6 +244,23 @@ export default class Actordsa5 extends Actor {
                             break;
                     }
                     break;
+                case "spell":
+                    hasSpells = true
+                    spells.push(i)
+                    break;
+                case "liturgy":
+                    hasPrayers = true
+                    liturgies.push(i)
+                    break;
+                case "blessing":
+                    hasPrayers = true
+                    blessings.push(i)
+                    break;
+                case "magictrick":
+                    hasSpells = true
+                    magicTricks.push(i)
+                    break;
+
                 case "combatskill":
 
 
@@ -312,6 +339,12 @@ export default class Actordsa5 extends Actor {
                         case "fatePoints":
                             fatePointsAbilities.push(i)
                             break;
+                        case "magical":
+                            magicSpecialAbilities.push(i)
+                            break;
+                        case "clerical":
+                            clericSpecialAbilities.push(i)
+                            break;
                     }
                     break;
             }
@@ -362,8 +395,16 @@ export default class Actordsa5 extends Actor {
             generalSpecialAbilites: generalSpecialAbilites,
             combatSpecialAbilities: combatSpecialAbilities,
             fatePointsAbilities: fatePointsAbilities,
+            clericSpecialAbilities: clericSpecialAbilities,
             wornArmor: armor,
             inventory,
+            magicSpecialAbilities: magicSpecialAbilities,
+            blessings: blessings,
+            magicTricks: magicTricks,
+            hasPrayers: hasPrayers,
+            hasSpells: hasSpells,
+            spells: spells,
+            liturgies: liturgies,
             combatskills: combatskills,
             allSkillsLeft: {
                 body: bodySkills,
@@ -534,6 +575,44 @@ export default class Actordsa5 extends Actor {
         };
 
         let cardOptions = this._setupCardOptions("systems/dsa5/templates/chat/roll/characteristic-card.html", title)
+
+        return DiceDSA5.setupDialog({
+            dialogOptions: dialogOptions,
+            testData: testData,
+            cardOptions: cardOptions
+        });
+    }
+
+    setupSpell(spell, options = {}) {
+        let title = spell.name + " " + game.i18n.localize("Test");
+
+        let testData = {
+            opposable: true,
+            source: spell,
+            extra: {
+                actor: this.data,
+                options: options,
+            }
+        };
+
+        let dialogOptions = {
+            title: title,
+            template: "/systems/dsa5/templates/dialog/spell-dialog.html",
+
+            data: {
+                rollMode: options.rollMode
+            },
+            callback: (html) => {
+                cardOptions.rollMode = html.find('[name="rollMode"]').val();
+                testData.testModifier = Number(html.find('[name="testModifier"]').val());
+                testData.testDifficulty = 0
+                return { testData, cardOptions };
+            }
+        };
+
+
+        let cardOptions = this._setupCardOptions("systems/dsa5/templates/chat/roll/spell-card.html", title)
+
 
         return DiceDSA5.setupDialog({
             dialogOptions: dialogOptions,

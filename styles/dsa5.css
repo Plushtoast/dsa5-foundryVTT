@@ -622,8 +622,16 @@ h7 {
     flex: 80%;
 }
 
+.row-section .col.seventy {
+    flex: 70%;
+}
+
 .row-section .col.fifteen {
     flex: 15%;
+}
+
+.row-section .col.sixty {
+    flex: 60%;
 }
 
 .row-section .col.seventeen {
@@ -803,6 +811,7 @@ form.dsa5.item-sheet {
 
 .dsa5.item .window-header .window-title {
     color: transparent;
+    text-shadow: none;
 }
 
 .item-main .row-section {
