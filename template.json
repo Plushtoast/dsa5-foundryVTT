@@ -406,7 +406,13 @@
 
             "money",
             "species",
-            "career"
+            "career",
+
+            "spell",
+            "liturgy",
+            "blessing",
+            "magictrick"
+
 
         ],
         "templates": {
@@ -469,6 +475,66 @@
                     "value": 0
                 }
             },
+            "basicSpell": {
+                "range": {
+                    "type": "String",
+                    "label": "Range",
+                    "value": ""
+                },
+                "duration": {
+                    "type": "String",
+                    "label": "duration",
+                    "value": ""
+                },
+                "targetCategory": {
+                    "type": "String",
+                    "label": "targetCategory",
+                    "value": ""
+                }
+            },
+            "spell": {
+                "characteristic1": {
+                    "type": "String",
+                    "label": "Characteristic1",
+                    "value": "mu"
+                },
+                "characteristic2": {
+                    "type": "String",
+                    "label": "Characteristic2",
+                    "value": "mu"
+                },
+                "characteristic3": {
+                    "type": "String",
+                    "label": "Characteristic3",
+                    "value": "mu"
+                },
+                "effect": {
+                    "type": "String",
+                    "label": "effect",
+                    "value": ""
+                },
+                "castingTime": {
+                    "type": "number",
+                    "label": "castingTime",
+                    "value": 1
+                },
+                "AsPCost": {
+                    "type": "number",
+                    "label": "AsPCost",
+                    "value": 0
+                },
+
+                "distribution": {
+                    "type": "String",
+                    "label": "distribution",
+                    "value": ""
+                },
+                "StF": {
+                    "type": "String",
+                    "label": "Advancementfactor",
+                    "value": "A"
+                }
+            },
             "description": {
                 "description": {
                     "type": "String",
@@ -493,6 +559,42 @@
             "templates": [
                 "description", "equipment"
             ]
+        },
+        "spell": {
+            "templates": [
+                "description",
+                "spell",
+                "basicSpell"
+            ]
+        },
+        "liturgy": {
+            "templates": [
+                "description",
+                "spell",
+                "basicSpell"
+            ]
+        },
+        "blessing": {
+            "templates": [
+                "description",
+                "basicSpell"
+            ],
+            "feature": {
+                "type": "String",
+                "label": "feature",
+                "value": ""
+            }
+        },
+        "magictrick": {
+            "templates": [
+                "description",
+                "basicSpell"
+            ],
+            "feature": {
+                "type": "String",
+                "label": "feature",
+                "value": ""
+            }
         },
         "ammunition": {
             "templates": [
