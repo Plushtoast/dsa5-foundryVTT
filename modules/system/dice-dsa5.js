@@ -327,7 +327,7 @@ export default class DiceDSA5 {
         let description = "";
         let successLevel = 0
         let modifier = testData.testModifier + testData.testDifficulty;
-        let fps = 0 //testData.source.data.talentValue.value;
+        let fps = testData.source.data.talentValue.value;
         let tar1 = testData.extra.actor.data.characteristics[testData.source.data.characteristic1.value].value + modifier;
         let res1 = roll.terms[0].results[0].result - tar1;
         if (res1 > 0) {

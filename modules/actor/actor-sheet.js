@@ -377,15 +377,18 @@ export default class ActorSheetDsa5 extends ActorSheet {
     }
 
     async _addSpecies(item) {
-        await this.actor.update({
+        let update = {
             "data.details.species.value": item.data.name,
-            "data.details.experience.spent": this.actor.data.data.details.experience.spent + item.data.data.APValue.value,
             "data.status.speed.initial": item.data.data.baseValues.speed.value,
             "data.status.soulpower.initial": item.data.data.baseValues.soulpower.value,
             "data.status.toughness.initial": item.data.data.baseValues.toughness.value,
             "data.status.wounds.initial": item.data.data.baseValues.wounds.value,
             "data.status.wounds.value": this.actor.data.data.status.wounds.current + this.actor.data.data.status.wounds.modifier + this.actor.data.data.status.wounds.advances
-        });
+        };
+        if (this.actor.type == "character") {
+            update["data.details.experience.spent"] = this.actor.data.data.details.experience.spent + item.data.data.APValue.value
+        }
+        await this.actor.update(update);
     }
 
     async _addSpellOrLiturgy(item) {
