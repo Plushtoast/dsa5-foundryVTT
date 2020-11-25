@@ -53,6 +53,45 @@
                 <label class="label-text">{{localize "skills"}}:</label>
                 <input class="input-text" type="text" name="data.skills.value" value="{{data.skills.value}}" data-dtype="String" />
             </div>
+
+            <div class="form-group">
+                <label class="label-text">{{localize "mageLevel"}}</label>
+                <select name="data.mageLevel.value" data-dtype="{{data.mageLevel.type}}">
+                  {{#select data.mageLevel.value}}
+                  {{#each mageLevels as |ch char|}}
+                  <option value="{{char}}">{{localize ch}}</option>
+                  {{/each}}
+                  {{/select}}
+                </select>
+            </div>
+            {{#when data.mageLevel.value 'noteq' "mundane"}}
+            <div class="form-group">
+                <label class="label-text">{{localize "guidevalue"}}</label>
+                <select name="data.guidevalue.value" data-dtype="{{data.guidevalue.type}}">
+                    {{#select data.guidevalue.value}}
+                    {{#each guidevalues as |type sktype|}}
+                    <option value="{{sktype}}">{{localize type}}</option>
+                    {{/each}}
+                    {{/select}}
+                </select>
+            </div>
+            {{/when}}
+
+            <div class="form-group">
+                <label class="label-text">{{localize "tradition"}}:</label>
+                <input class="input-text" type="text" name="data.tradition.value" value="{{data.tradition.value}}" data-dtype="String" />
+            </div>
+
+            <div class="form-group">
+                <label class="label-text">{{#when data.mageLevel.value 'eq' 'clerical'}}{{localize "aspect"}}{{else}}{{localize "feature"}}{{/when}}:</label>
+                <input class="input-text" type="text" name="data.feature.value" value="{{data.feature.value}}" data-dtype="String" />
+            </div>
+            {{#when data.mageLevel.value 'eq' 'clerical'}}
+            <div class="form-group">
+                <label class="label-text">{{localize "happyTalents"}}:</label>
+                <input class="input-text" type="text" name="data.happyTalents.value" value="{{data.happyTalents.value}}" data-dtype="String" />
+            </div>
+            {{/when}}
         </div>
     </section>
 </form>

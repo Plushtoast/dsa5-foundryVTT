@@ -119,7 +119,6 @@ export default class ActorSheetDsa5 extends ActorSheet {
                         item.data.quantity.value += 10;
                     else
                         item.data.quantity.value++;
-
                     break;
                 case 2:
                     if (ev.ctrlKey)
@@ -162,6 +161,24 @@ export default class ActorSheetDsa5 extends ActorSheet {
 
                 this.skillsToEdit = [];
             }
+        });
+
+        html.find('.skill-advances').focusout(async event => {
+            event.preventDefault()
+            if (!this.skillsToEdit)
+                this.skillsToEdit = []
+            let itemId = this._getItemId(event);
+            let itemToEdit = duplicate(this.actor.getEmbeddedEntity("OwnedItem", itemId))
+            itemToEdit.data.talentValue.value = Number(event.target.value);
+            this.skillsToEdit.push(itemToEdit);
+
+            // Wait for the listener above to set this true before updating - allows for tabbing through skills
+            if (!this.skillUpdateFlag)
+                return;
+
+            await this.actor.updateEmbeddedEntity("OwnedItem", this.skillsToEdit);
+
+            this.skillsToEdit = [];
         });
 
         html.find('.item-edit').click(ev => {
@@ -336,10 +353,19 @@ export default class ActorSheetDsa5 extends ActorSheet {
     }
 
     async _addCareer(item) {
-        await this.actor.update({
+        let update = {
             "data.details.career.value": item.data.name,
-            "data.details.experience.spent": this.actor.data.data.details.experience.spent + item.data.data.APValue.value
-        });
+        }
+        if (this.actor.type == "character") {
+            update["data.details.experience.spent"] = this.actor.data.data.details.experience.spent + item.data.data.APValue.value
+        }
+        if (item.data.mageLevel != "mundane") {
+            update["data.magic.guidevalue.value"] = item.data.data.guidevalue.value
+            update["data.magic.tradition.value"] = item.data.data.tradition.value
+            update["data.magic.feature.value"] = item.data.data.feature.value
+            update["data.magic.happyTalents.value"] = item.data.data.happyTalents.value
+        }
+        await this.actor.update(update);
         for (let skill of item.data.data.skills.value.split(",")) {
             let vars = skill.trim().split(" ")
             let res = this.actor.data.items.find(i => {
@@ -399,7 +425,10 @@ export default class ActorSheetDsa5 extends ActorSheet {
         let dragData = JSON.parse(event.dataTransfer.getData("text/plain"));
         let item
         let typeClass
-        if (dragData.id && dragData.pack) {
+
+        if (dragData.actorId && dragData.actorId == this.actor.data._id) {
+            return
+        } else if (dragData.id && dragData.pack) {
             item = await DSA5_Utility.findItembyIdAndPack(dragData.id, dragData.pack);
             typeClass = item.data.type
         } else if (dragData.id) {
@@ -409,6 +438,7 @@ export default class ActorSheetDsa5 extends ActorSheet {
             item = dragData.data
             typeClass = item.type
         }
+
 
         switch (typeClass) {
             case "species":

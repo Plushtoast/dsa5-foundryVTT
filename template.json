@@ -336,7 +336,8 @@
                 "characteristics",
                 "status",
                 "details",
-                "conditions"
+                "conditions",
+                "magic"
             ],
             "details": {
                 "experience": {
@@ -352,14 +353,16 @@
                 "characteristics",
                 "conditions",
                 "status",
-                "details"
+                "details",
+                "magic"
             ]
         },
         "creature": {
             "templates": [
                 "characteristics",
                 "conditions",
-                "status"
+                "status",
+                "magic"
             ],
             "actionCount": {
                 "type": "Number",
@@ -779,6 +782,26 @@
                 "type": "String",
                 "value": "",
                 "label": "skills"
+            },
+            "guidevalue": {
+                "type": "String",
+                "label": "Guide value",
+                "value": "-"
+            },
+            "tradition": {
+                "type": "String",
+                "label": "tradition",
+                "value": ""
+            },
+            "feature": {
+                "type": "String",
+                "label": "feature",
+                "value": ""
+            },
+            "happyTalents": {
+                "type": "String",
+                "label": "happyTalents",
+                "value": ""
             }
         },
         "specialability": {

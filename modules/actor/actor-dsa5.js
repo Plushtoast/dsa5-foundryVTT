@@ -262,8 +262,6 @@ export default class Actordsa5 extends Actor {
                     break;
 
                 case "combatskill":
-
-
                     combatskills.push(Actordsa5._calculateCombatSkillValues(i, actorData));
                     break;
                 case "ammunition":
@@ -290,7 +288,6 @@ export default class Actordsa5 extends Actor {
                     inventory.rangeweapons.show = true;
                     totalWeight += Number(i.weight);
 
-
                     break;
                 case "armor":
                     i.weight = parseFloat((i.data.weight.value * i.data.quantity.value).toFixed(3));
@@ -304,7 +301,6 @@ export default class Actordsa5 extends Actor {
                         totalArmor += i.data.protection.value;
                         armor.push(i);
                     }
-
 
                     break;
                 case "equipment":
@@ -364,9 +360,11 @@ export default class Actordsa5 extends Actor {
                 rangeweapons.push(Actordsa5._prepareRangeWeapon(wep, inventory.ammunition, combatskills));
             }
         }
+        let shields = inventory.meleeweapons.items.filter(x => (game.i18n.localize("ReverseCombatSkills." + x.data.combatskill.value) == "Shields" && x.data.worn.value))
+        let shieldBonus = shields.length > 0 ? shields[0].data.pamod.value : 0
         for (let wep of inventory.meleeweapons.items) {
             if (wep.data.worn.value) {
-                meleeweapons.push(Actordsa5._prepareMeleeWeapon(wep, combatskills, actorData));
+                meleeweapons.push(Actordsa5._prepareMeleeWeapon(wep, combatskills, actorData, shieldBonus));
             }
         }
 
@@ -664,25 +662,60 @@ export default class Actordsa5 extends Actor {
 
     }
 
-    static _prepareMeleeWeapon(item, combatskills, actorData) {
+    static _prepareMeleeWeapon(item, combatskills, actorData, shieldBonus) {
         let skill = combatskills.filter(i => i.name == item.data.combatskill.value)[0];
-
+        let parseDamage = new Roll(item.data.damage.value)
+        let damageDie = ""
+        let damageTerm = ""
+        for (let k of parseDamage.terms) {
+            if (typeof(k) == 'object') {
+                damageDie = k.number + "d" + k.faces
+            } else {
+                damageTerm += k
+            }
+        }
         item.attack = skill.data.attack.value + item.data.atmod.value;
         if (skill.data.guidevalue.value != "-") {
             let val = Math.max(...(skill.data.guidevalue.value.split("/").map(x => actorData.data.characteristics[x].value)));
             let extra = val - item.data.damageThreshold.value;
-            if (extra > 0) {
-                item.extraDamage = "+" + extra;
-            }
-        }
 
-        item.parry = skill.data.parry.value + item.data.pamod.value;
+
+            if (extra > 0) {
+                item.extraDamage = extra;
+                damageTerm += "+" + extra
+            }
+
+
+        }
+        damageTerm = eval(damageTerm)
+        item.damagedie = damageDie
+        item.damageAdd = damageTerm != undefined ? "+" + damageTerm : ""
+        item.parry = skill.data.parry.value + item.data.pamod.value + shieldBonus;
+        //shield block gains double parry bonus
+        //if (game.i18n.localize("ReverseCombatSkills." + skill.name) == "Shields")
+        //    item.parry += item.data.pamod.value
+        //else
+        //    item.parry += shieldBonus
         return item;
     }
+
 
     static _prepareRangeWeapon(item, ammunition, combatskills) {
         let skill = combatskills.filter(i => i.name == item.data.combatskill.value)[0];
         item.attack = skill.data.attack.value
+        let parseDamage = new Roll(item.data.damage.value)
+        let damageDie = ""
+        let damageTerm = ""
+        for (let k of parseDamage.terms) {
+            if (typeof(k) == 'object') {
+                damageDie = k.number + "d" + k.faces
+            } else {
+                damageTerm += k
+            }
+        }
+        damageTerm = eval(damageTerm)
+        item.damagedie = damageDie
+        item.damageAdd = damageTerm != undefined ? "+" + damageTerm : ""
         return item;
     }
 

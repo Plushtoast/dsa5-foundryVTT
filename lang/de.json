@@ -95,7 +95,7 @@
     "Details": "Details",
     "damage": "Schaden",
     "damageThreshold": "Schadensschwelle",
-    "damageOverThreshold": "Zusatzschaden über Schadensschwelle",
+    "damageOverThreshold": "Inklusive Zusatzschaden über Schadensschwelle",
     "doubleDamage": "doppelter Schaden",
     "duration": "Wirkungsdauer",
     "Description": "Beschreibung",
@@ -150,10 +150,12 @@
     "magictrick": "Zaubertrick",
     "magictricks": "Zaubertricks",
     "Modifier": "Modifikator",
+    "mundane": "weltlich",
     "maxlevel": "Maximale Stufe",
     "Magic": "Magie",
     "money": "Geld",
     "Money": "Geld",
+    "mageLevel": "Magieart",
     "Miscellanous": "Allgemein",
     "misc": "Sonstiges",
     "Name": "Name",
@@ -292,5 +294,9 @@
         "TestModifiers": {
             "FinalModifiers": "{target} Target, {sl}SL to <b>{name}</b>"
         }
+    },
+
+    "ReverseCombatSkills": {
+        "Schilde": "Shields"
     }
 }

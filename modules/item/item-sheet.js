@@ -91,6 +91,10 @@ export default class ItemSheetdsa5 extends ItemSheet {
             case "specialability":
                 data['categories'] = DSA5.specialAbilityCategories;
                 break;
+            case "career":
+                data["mageLevels"] = DSA5.mageLevels
+                data['guidevalues'] = DSA5.characteristics;
+                break;
             case "armor":
                 break;
             case "equipment":

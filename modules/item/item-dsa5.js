@@ -47,21 +47,21 @@ export default class Itemdsa5 extends Item {
     }
 
 
-    prepareCareer(itemdata) {
+    /*prepareCareer(itemdata) {
         let skills = itemdata.items.filter(x => x.type == "skill").sort((a, b) => (a.sort || 0) - (b.sort || 0))
 
         return {
             skills: skills
         }
-    }
+    }*/
 
     prepare() {
         let data = duplicate(this.data)
 
         switch (this.data.type) {
 
-            case "career":
-                mergeObject(preparedData, this.prepareCareer(preparedData));
+            //case "career":
+            //    mergeObject(preparedData, this.prepareCareer(preparedData));
 
         }
         preparedData.img = preparedData.img || DEFAULT_TOKEN;

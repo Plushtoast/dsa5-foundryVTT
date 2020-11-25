@@ -96,7 +96,7 @@
                 <div class="col ten image" style="background-image: url({{item.img}})">
                 </div>
                 <div class="col third">
-                    {{item.name}}
+                    <a class="item-edit">{{item.name}}</a>
                 </div>
                 <div class="col five center small">
                     {{localize item.data.combatskill.value}}
@@ -109,7 +109,7 @@
                 </div>
 
                 <div class="col ten center">
-                    <a class="ch-rollDamage d6 die-damage">{{item.data.damage.value}}</a><span title="{{localize 'damageOverThreshold'}}">{{item.extraDamage}}</span>
+                    <a class="ch-rollDamage d6 die-damage">{{item.damagedie}}</a><span title="{{localize 'damageOverThreshold'}}">{{item.damageAdd}}</span>
                 </div>
                 <div class="col ten center small">
                     {{localize (concat "Range-" item.data.reach.value)}}
@@ -152,7 +152,7 @@
                 <div class="col ten image" style="background-image: url({{item.img}})">
                 </div>
                 <div class="col four">
-                    {{item.name}}
+                    <a class="item-edit">{{item.name}}</a>
                 </div>
                 <div class="col five center small">
                     {{localize item.data.combatskill.value}}
@@ -164,7 +164,7 @@
                     <a class="ch-rollCombat d20 die-attack">{{item.attack}}</a>
                 </div>
                 <div class="col eight center">
-                    <a class="ch-rollDamage d6 die-damage">{{item.data.damage.value}}</a>
+                    <a class="ch-rollDamage d6 die-damage">{{item.damagedie}}</a><span title="{{localize 'damageOverThreshold'}}">{{item.damageAdd}}</span>
                 </div>
                 <div class="col ten center">
                     {{item.data.reach.value}}

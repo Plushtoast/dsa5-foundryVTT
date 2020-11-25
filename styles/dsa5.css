@@ -1028,3 +1028,7 @@ form.dsa5.item-sheet {
 #scenes .scene h3 {
     text-shadow: 1px 1px 3px #FFF;
 }
+
+#combat li.combatant.active {
+    background: rgba(0, 0, 0, 0.1);
+}
