@@ -224,6 +224,7 @@
     "Skill-hard": "Sehr schwierig (-3)",
     "Skill-vhard": "Extrem schwierig (-5)",
 
+
     "SKILLAbrev.body": "<span class=\"d20 diet-mu\">MU</span><span class=\"d20 diet-ge\">GE</span><span class=\"d20 diet-kk\">KK</span>",
     "SKILLAbrev.social": "<span class=\"d20 diet-in\">IN</span><span class=\"d20 diet-ch\">CH</span><span class=\"d20 diet-ch\">CH</span>",
     "SKILLAbrev.knowledge": "<span class=\"d20 diet-kl\">KL</span><span class=\"d20 diet-kl\">KL</span><span class=\"d20 diet-in\">IN</span>",
