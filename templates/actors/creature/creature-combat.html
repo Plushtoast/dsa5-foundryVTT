@@ -52,10 +52,10 @@
             <div class="col eight center">
                 <input class="skill-advances" type="text" data-dtype="{{item.data.talentValue.type}}" value="{{item.data.talentValue.value}}" />
             </div>
-            <div class="col eight center">
+            <div class="col eight center item" data-item-id="{{item._id}}" data-mod="attack">
                 <a class="ch-combatskill-attack d20 diet-mu">{{item.data.attack.value}}</a>
             </div>
-            <div class="col eight center">
+            <div class="col eight center item" data-item-id="{{item._id}}" data-mod="parry">
                 {{#when item.data.weapontype.value 'eq' 'melee'}} <a class="ch-combatskill-parry d20 diet-in">{{item.data.parry.value}}</a> {{else}}- {{/when}}
             </div>
         </div>
@@ -104,11 +104,11 @@
                 <div class="col ten center">
                     <a class="ch-rollCombat d20 die-attack">{{item.attack}}</a>
                 </div>
-                <div class="col ten center">
+                <div class="col ten center item" data-item-id="{{item._id}}" data-mod="attack">
                     <a class="ch-rollCombatParry d20 die-parry">{{item.parry}}</a>
                 </div>
 
-                <div class="col ten center">
+                <div class="col ten center item" data-item-id="{{item._id}}" data-mod="parry">
                     <a class="ch-rollDamage d6 die-damage">{{item.damagedie}}</a><span title="{{localize 'damageOverThreshold'}}">{{item.damageAdd}}</span>
                 </div>
                 <div class="col ten center small">
@@ -160,7 +160,7 @@
                 <div class="col ten center">
                     {{item.data.reloadTime.value}}
                 </div>
-                <div class="col ten center">
+                <div class="col ten center item" data-item-id="{{item._id}}" data-mod="attack">
                     <a class="ch-rollCombat d20 die-attack">{{item.attack}}</a>
                 </div>
                 <div class="col eight center">

@@ -432,12 +432,12 @@
             "money",
             "species",
             "career",
+            "culture",
 
             "spell",
             "liturgy",
             "blessing",
             "magictrick"
-
 
         ],
         "templates": {
@@ -584,6 +584,67 @@
             "templates": [
                 "description", "equipment"
             ]
+        },
+        "culture": {
+            "templates": [
+                "description",
+                "APvalue"
+            ],
+            "language": {
+                "type": "String",
+                "label": "language",
+                "value": ""
+            },
+            "writing": {
+                "type": "String",
+                "label": "writing",
+                "value": ""
+            },
+            "localKnowledge": {
+                "type": "String",
+                "label": "localKnowledge",
+                "value": ""
+            },
+            "recommendedAdvantages": {
+                "type": "String",
+                "value": "",
+                "label": "recommendedAdvantages"
+            },
+            "recommendedDisadvantages": {
+                "type": "String",
+                "value": "",
+                "label": "recommendedDisadvantages"
+            },
+            "recommendedTalents": {
+                "type": "String",
+                "value": "",
+                "label": "recommendedTalents"
+            },
+            "notsuitableAdvantages": {
+                "type": "String",
+                "value": "",
+                "label": "notsuitableAdvantages"
+            },
+            "notsuitableTalents": {
+                "type": "String",
+                "value": "",
+                "label": "notsuitableTalents"
+            },
+            "notsuitableDisadvantages": {
+                "type": "String",
+                "value": "",
+                "label": "notsuitableDisadvantages"
+            },
+            "socialstate": {
+                "type": "String",
+                "value": "",
+                "label": "socialstate"
+            },
+            "skills": {
+                "type": "String",
+                "value": "",
+                "label": "skills"
+            }
         },
         "spell": {
             "templates": [
@@ -838,6 +899,11 @@
                 "value": 1,
                 "type": "Number",
                 "label": "step"
+            },
+            "effect": {
+                "type": "String",
+                "label": "effect",
+                "value": ""
             }
         },
         "disadvantage": {
@@ -851,6 +917,11 @@
                 "value": 1,
                 "type": "Number",
                 "label": "step"
+            },
+            "effect": {
+                "type": "String",
+                "label": "effect",
+                "value": ""
             }
         },
         "species": {

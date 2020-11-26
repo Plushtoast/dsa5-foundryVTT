@@ -8,6 +8,10 @@ export default function() {
     Handlebars.registerHelper('mod', function(a, b) {
         return a % b;
     });
+    Handlebars.registerHelper('roman', function(a) {
+        let roman = ['', ' II', ' III', ' IV', ' V', ' VI', ' VII', ' VIII', ' IX']
+        return roman[a - 1]
+    });
     Handlebars.registerHelper("when", function(operand_1, operator, operand_2, options) {
         var operators = {
             'eq': function(l, r) { return l == r; },

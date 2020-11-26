@@ -1,6 +1,8 @@
 import * as initHandleBars from "./handlebars.js";
 import * as initDiceSoNice from "./dicesonice.js";
 import * as initActorHooks from "./actor.js";
+import * as macroSupport from "./macro_support.js";
+import * as chatlogHooks from './chatlog.js'
 
 export default function() {
     Hooks.once("init", () => {
@@ -29,4 +31,6 @@ export default function() {
     initHandleBars.default();
     initDiceSoNice.default();
     initActorHooks.default();
+    macroSupport.default();
+    chatlogHooks.default()
 }

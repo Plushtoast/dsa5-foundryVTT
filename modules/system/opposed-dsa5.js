@@ -59,10 +59,12 @@ export default class OpposedDsa5 {
             else // If no token data was found in the speaker, use the actor's token data instead
                 attacker = actor.data.token
 
-            let startMessagesList = [];
-            game.user.targets.forEach(async target => {
-                    let content =
-                        `<div class ="opposed-message">
+            if (testResult.successLevel > 0) {
+
+                let startMessagesList = [];
+                game.user.targets.forEach(async target => {
+                        let content =
+                            `<div class ="opposed-message">
                       <b>${attacker.name}</b> ${game.i18n.localize("ROLL.Targeting")} <b>${target.data.name}</b>
                     </div>
                     <div class = "opposed-tokens row-section">
@@ -71,53 +73,72 @@ export default class OpposedDsa5 {
                     </div>
                     <div class="unopposed-button" data-target="true" title="${game.i18n.localize("Unopposed")}"><a><i class="fas fa-arrow-down"></i></a></div>`
 
-                    // Create the Opposed starting message
+                        // Create the Opposed starting message
 
-                    let startMessage = await ChatMessage.create({
-                        user: game.user._id,
-                        content: content,
-                        speaker: message.data.speaker,
-                        ["flags.unopposeData"]: // Optional data to resolve unopposed tests - used for damage values
-                        {
-                            attackMessageId: message.data._id,
-                            targetSpeaker: {
-                                scene: target.scene.data._id,
-                                token: target.data._id,
-                                scene: target.actor.data._id,
-                                alias: target.data.name
+                        let startMessage = await ChatMessage.create({
+                            user: game.user._id,
+                            content: content,
+                            speaker: message.data.speaker,
+                            ["flags.unopposeData"]: // Optional data to resolve unopposed tests - used for damage values
+                            {
+                                attackMessageId: message.data._id,
+                                targetSpeaker: {
+                                    scene: target.scene.data._id,
+                                    token: target.data._id,
+                                    scene: target.actor.data._id,
+                                    alias: target.data.name
+                                }
                             }
-                        }
-                    })
+                        })
 
-                    if (!game.user.isGM) {
-                        game.socket.emit("system.dsa5", {
-                            type: "target",
-                            payload: {
-                                target: target.data._id,
-                                scene: canvas.scene._id,
-                                opposeFlag: {
+                        if (!game.user.isGM) {
+                            game.socket.emit("system.dsa5", {
+                                type: "target",
+                                payload: {
+                                    target: target.data._id,
+                                    scene: canvas.scene._id,
+                                    opposeFlag: {
+                                        speaker: message.data.speaker,
+                                        messageId: message.data._id,
+                                        startMessageId: startMessage.data._id
+                                    }
+                                }
+                            })
+                        } else {
+                            // Add oppose data flag to the target
+                            target.actor.update({
+                                "flags.oppose": {
                                     speaker: message.data.speaker,
                                     messageId: message.data._id,
                                     startMessageId: startMessage.data._id
                                 }
-                            }
-                        })
-                    } else {
-                        // Add oppose data flag to the target
-                        target.actor.update({
-                            "flags.oppose": {
-                                speaker: message.data.speaker,
-                                messageId: message.data._id,
-                                startMessageId: startMessage.data._id
-                            }
-                        })
-                    }
-                    startMessagesList.push(startMessage.data._id);
-                    // Remove current targets
+                            })
+                        }
+                        startMessagesList.push(startMessage.data._id);
+                        // Remove current targets
+                    })
+                    //Give the roll a list of every startMessages linked to this roll
+                message.data.flags.data.startMessagesList = startMessagesList;
+                game.user.updateTokenTargets([]);
+            } else {
+                //Roll failed not test required
+                game.user.targets.forEach(async target => {
+                    let content =
+                        `<div class ="opposed-message">
+                      <b>${attacker.name}</b> ${game.i18n.localize("ROLL.Targeting")} <b>${target.data.name}</b> ${game.i18n.localize("ROLL.failed")}
+                    </div>
+                    <div class = "opposed-tokens row-section">
+                        <div class="col two attacker"><img src="${attacker.img}" width="50" height="50"/></div>
+                        <div class="col two defender"><img src="${target.data.img}" width="50" height="50"/></div>
+                    </div>
+                    `
+                    await ChatMessage.create({
+                        user: game.user._id,
+                        content: content,
+                        speaker: message.data.speaker,
+                    })
                 })
-                //Give the roll a list of every startMessages linked to this roll
-            message.data.flags.data.startMessagesList = startMessagesList;
-            game.user.updateTokenTargets([]);
+            }
         }
         //It's an opposed reroll of an ended test
         else if (message.data.flags.data.defenderMessage || message.data.flags.data.attackerMessage) {
@@ -130,6 +151,15 @@ export default class OpposedDsa5 {
             console.log("woops")
         }
 
+    }
+
+    static async chatListeners(html) {
+        html.on("click", '.unopposed-button', event => {
+            event.preventDefault()
+            let messageId = $(event.currentTarget).parents('.message').attr("data-message-id");
+
+            this.resolveUnopposed(game.messages.get(messageId));
+        })
     }
 
     static async completeOpposedProcess(attacker, defender, options) {
@@ -332,6 +362,39 @@ export default class OpposedDsa5 {
                 }
             })
         }
+    }
+
+    static async resolveUnopposed(startMessage) {
+        let unopposeData = startMessage.data.flags.unopposeData;
+
+        let attackMessage = game.messages.get(unopposeData.attackMessageId) // Retrieve attacker's test result message
+            // Organize attacker data
+        let attacker = {
+                speaker: attackMessage.data.speaker,
+                testResult: attackMessage.data.flags.data.postData,
+                messageId: unopposeData.attackMessageId
+            }
+            // Organize dummy values for defender
+        let target = canvas.tokens.get(unopposeData.targetSpeaker.token)
+        let defender = {
+                speaker: unopposeData.targetSpeaker,
+                testResult: {
+                    actor: target.actor.data,
+                    unopposed: true
+                }
+            }
+            // Remove opposed flag
+        if (!startMessage.data.flags.reroll)
+            await target.actor.update({ "-=flags.oppose": null })
+            // Evaluate
+        this.completeOpposedProcess(attacker, defender, {
+            target: true,
+            startMessageId: startMessage.data._id
+        });
+        attackMessage.update({
+            "flags.data.isOpposedTest": false,
+            "flags.data.unopposedStartMessage": startMessage.data._id
+        });
     }
 
 }

@@ -6,43 +6,52 @@
     "Attribute-difficult": "Schwierig (-2)",
     "Attribute-hard": "Sehr schwierig (-4)",
     "Attribute-vhard": "Extrem schwierig (-6)",
-    "CHAR.MU": "Mut",
-    "CHAR.KL": "Klugheit",
-    "CHAR.IN": "Intuition",
-    "CHAR.CH": "Charisma",
-    "CHAR.FF": "Fingerfertigkeit",
-    "CHAR.GE": "Gewandheit",
-    "CHAR.KO": "Konstitution",
-    "CHAR.KK": "Körperkraft",
-    "CHAR.ATTACK": "Angriff",
-    "CHAR.PARRY": "Parieren",
-    "CHAR.GEKK": "Gewandheit / Körperkraft",
-    "CHAR.DAMAGE": "Schaden",
-    "CHAR.DODGE": "Ausweichen",
-    "CHARAbbrev.MU": "MU",
-    "CHARAbbrev.KL": "KL",
-    "CHARAbbrev.IN": "IN",
-    "CHARAbbrev.CH": "CH",
-    "CHARAbbrev.FF": "FF",
-    "CHARAbbrev.GE": "GE",
-    "CHARAbbrev.KO": "KO",
-    "CHARAbbrev.KK": "KK",
-    "CHARAbbrev.FW": "Fw",
-    "CHARAbbrev.BE": "BE",
-    "CHARAbbrev.STF": "StF",
-    "CHARAbbrev.RPR": "RPr",
-    "CHARAbbrev.KTW": "KTW",
-    "CHARAbbrev.ATFK": "AT/FK",
-    "CHARAbbrev.GEKK": "GE,KK",
-    "CHARAbbrev.GE/KK": "GE/KK",
-    "CHARAbbrev.PA": "PA",
-    "CHARAbbrev.AT": "AT",
-    "CHARAbbrev.reloadTime": "Lad.",
-    "CHARAbbrev.castingTime": "Zauber- dauer",
-    "CHARAbbrev.duration": "Wirkungs- dauer",
+    "CHAR": {
+        "MU": "Mut",
+        "KL": "Klugheit",
+        "IN": "Intuition",
+        "CH": "Charisma",
+        "FF": "Fingerfertigkeit",
+        "GE": "Gewandheit",
+        "KO": "Konstitution",
+        "KK": "Körperkraft",
+        "ATTACK": "Angriff",
+        "PARRY": "Parieren",
+        "GEKK": "Gewandheit / Körperkraft",
+        "DAMAGE": "Schaden",
+        "DODGE": "Ausweichen"
 
-    "DIALOG.RollMode": "Würfelmodus",
-    "DIALOG.DeleteItem": "Gegenstand entfernen?",
+    },
+    "CHARAbbrev": {
+        "MU": "MU",
+        "KL": "KL",
+        "IN": "IN",
+        "CH": "CH",
+        "FF": "FF",
+        "GE": "GE",
+        "KO": "KO",
+        "KK": "KK",
+        "FW": "Fw",
+        "BE": "BE",
+        "STF": "StF",
+        "RPR": "RPr",
+        "KTW": "KTW",
+        "ATFK": "AT/FK",
+        "GEKK": "GE,KK",
+        "GE/KK": "GE/KK",
+        "PA": "PA",
+        "AT": "AT",
+        "FP": "FP",
+        "reloadTime": "Lad.",
+        "castingTime": "Zauber- dauer",
+        "duration": "Wirkungs- dauer"
+    },
+
+    "DIALOG": {
+        "RollMode": "Würfelmodus",
+        "DeleteItem": "Gegenstand entfernen?"
+    },
+
 
     "APvalue": "AP-Wert",
     "attacktest": "Angriffsprobe",
@@ -119,7 +128,7 @@
     "feature": "Merkmal",
     "flight": "Flucht",
     "Fw": "Fertigkeitswert",
-    "FP": "FP",
+    "FP": "Fertigkeitspunkte",
     "fatePoints": "Schicksalspunkte",
     "fatePointsAbilities": "Schicksalspunktesonderfertigkeiten",
     "Gender": "Geschlecht",
@@ -204,6 +213,7 @@
     "Total": "Gesamt",
     "toughness": "Zähigkeit",
     "targetCategory": "Zielkategorie",
+    "Unopposed": "Keine Vergleichsprobe",
     "value": "Wert",
     "Weight": "Gewicht",
     "happyTalents": "Wohlgefällige Talente",
@@ -211,11 +221,15 @@
     "weapontype": "Waffengattung",
     "worn": "Ausgerüstet",
     "yes": "Ja",
-    "SKILL.body": "Körpertalente",
-    "SKILL.social": "Gesellschaftstalente",
-    "SKILL.knowledge": "Wissenstalente",
-    "SKILL.trade": "Handwerkstalente",
-    "SKILL.nature": "Naturtalente",
+
+    "SKILL": {
+        "body": "Körpertalente",
+        "social": "Gesellschaftstalente",
+        "knowledge": "Wissenstalente",
+        "trade": "Handwerkstalente",
+        "nature": "Naturtalente"
+    },
+
     "Skill-eeasy": "Extrem leicht (+5)",
     "Skill-veasy": "Sehr leicht (+3)",
     "Skill-easy": "Leicht (+1)",
@@ -224,12 +238,13 @@
     "Skill-hard": "Sehr schwierig (-3)",
     "Skill-vhard": "Extrem schwierig (-5)",
 
-
-    "SKILLAbrev.body": "<span class=\"d20 diet-mu\">MU</span><span class=\"d20 diet-ge\">GE</span><span class=\"d20 diet-kk\">KK</span>",
-    "SKILLAbrev.social": "<span class=\"d20 diet-in\">IN</span><span class=\"d20 diet-ch\">CH</span><span class=\"d20 diet-ch\">CH</span>",
-    "SKILLAbrev.knowledge": "<span class=\"d20 diet-kl\">KL</span><span class=\"d20 diet-kl\">KL</span><span class=\"d20 diet-in\">IN</span>",
-    "SKILLAbrev.trade": "<span class=\"d20 diet-ff\">FF</span><span class=\"d20 diet-ff\">FF</span><span class=\"d20 diet-ko\">KO</span>",
-    "SKILLAbrev.nature": "<span class=\"d20 diet-mu\">MU</span><span class=\"d20 diet-ge\">GE</span><span class=\"d20 diet-ko\">KO</span>",
+    "SKILLAbrev": {
+        "body": "<span class=\"d20 diet-mu\">MU</span><span class=\"d20 diet-ge\">GE</span><span class=\"d20 diet-kk\">KK</span>",
+        "social": "<span class=\"d20 diet-in\">IN</span><span class=\"d20 diet-ch\">CH</span><span class=\"d20 diet-ch\">CH</span>",
+        "knowledge": "<span class=\"d20 diet-kl\">KL</span><span class=\"d20 diet-kl\">KL</span><span class=\"d20 diet-in\">IN</span>",
+        "trade": "<span class=\"d20 diet-ff\">FF</span><span class=\"d20 diet-ff\">FF</span><span class=\"d20 diet-ko\">KO</span>",
+        "nature": "<span class=\"d20 diet-mu\">MU</span><span class=\"d20 diet-ge\">GE</span><span class=\"d20 diet-ko\">KO</span>"
+    },
 
     "EXP-legendary": "Legendär",
     "EXP-brillant": "Brillant",
@@ -253,10 +268,13 @@
     "Money-H": "Heller",
     "Money-K": "Kreuzer",
 
-    "SHEET.PostItem": "Im Chat posten",
-    "SHEET.EditItem": "Editieren",
-    "SHEET.Dropdown": "Details",
-    "SHEET.DeleteItem": "Löschen",
+    "SHEET": {
+        "PostItem": "Im Chat posten",
+        "EditItem": "Editieren",
+        "Dropdown": "Details",
+        "DeleteItem": "Löschen"
+    },
+
 
     "CONDITION": {
         "encumbered": "Belastung",
@@ -271,9 +289,11 @@
         "confused": "Verwirrung"
     },
 
+    "TT": {
+        "careerSkills": "Komma separierte Talentliste, z.b. (Betören 2,Etikette 4)",
+        "commaSeparated": "Komma separierte Liste"
+    },
 
-    "TT.careerSkills": "Komma separierte Talentliste, z.b. (Betören 2,Etikette 4)",
-    "TT.commaSeparated": "Komma separierte Liste",
 
     "SIZE": {
         "tiny": "Winzig",
@@ -284,7 +304,8 @@
     },
 
     "ROLL": {
-        "Targeting": "gegen"
+        "Targeting": "gegen",
+        "failed": "ist gescheitert"
     },
 
     "OPPOSED": {
@@ -299,5 +320,9 @@
 
     "ReverseCombatSkills": {
         "Schilde": "Shields"
+    },
+
+    "Error": {
+        "MacroItemMissing": "Dein Charakter hat kein Item namens"
     }
 }

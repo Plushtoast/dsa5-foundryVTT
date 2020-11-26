@@ -291,7 +291,6 @@ export default class ActorSheetDsa5 extends ActorSheet {
 
     async _cleverDeleteItem(itemId) {
         let item = this.actor.data.items.find(x => x._id == itemId)
-        console.log(item)
         switch (item.type) {
             case "advantage":
             case "disadvantage":
@@ -316,11 +315,9 @@ export default class ActorSheetDsa5 extends ActorSheet {
         let moneyItem = money.find(i => i.name == item.name)
 
         if (moneyItem) {
-            console.log("adding")
             moneyItem.data.quantity.value += item.data.quantity.value
             await this.actor.updateEmbeddedEntity("OwnedItem", money);
         } else {
-            console.log("more money")
             await this.actor.createEmbeddedEntity("OwnedItem", item);
         }
     }
@@ -355,6 +352,7 @@ export default class ActorSheetDsa5 extends ActorSheet {
     async _addCareer(item) {
         let update = {
             "data.details.career.value": item.data.name,
+            "data.details.culture.value": ""
         }
         if (this.actor.type == "character") {
             update["data.details.experience.spent"] = this.actor.data.data.details.experience.spent + item.data.data.APValue.value
@@ -379,6 +377,27 @@ export default class ActorSheetDsa5 extends ActorSheet {
         }
     }
 
+    async _addCulture(item) {
+        let update = {
+            "data.details.culture.value": item.data.name
+        }
+        if (this.actor.type == "character") {
+            update["data.details.experience.spent"] = this.actor.data.data.details.experience.spent + item.data.data.APValue.value
+        }
+        await this.actor.update(update);
+        for (let skill of item.data.data.skills.value.split(",")) {
+            let vars = skill.trim().split(" ")
+            let res = this.actor.data.items.find(i => {
+                return i.type == "skill" && i.name == vars[0]
+            });
+            if (res) {
+                let skillUpdate = duplicate(res)
+                skillUpdate.data.talentValue.value = skillUpdate.data.talentValue.value + vars[1]
+                await this.actor.updateEmbeddedEntity("OwnedItem", skillUpdate);
+            }
+        }
+    }
+
     async _addSpecialAbility(item, typeClass) {
         let res = this.actor.data.items.find(i => {
             return i.type == typeClass && i.name == item.name
@@ -391,15 +410,21 @@ export default class ActorSheetDsa5 extends ActorSheet {
     }
 
     _onDragItemStart(event) {
-        let itemId = event.currentTarget.getAttribute("data-item-id");
+        let tar = event.currentTarget
+        console.log(tar)
+        let itemId = tar.getAttribute("data-item-id");
+        let mod = tar.getAttribute("data-mod");
+        console.log(mod)
         const item = duplicate(this.actor.getEmbeddedEntity("OwnedItem", itemId))
         event.dataTransfer.setData("text/plain", JSON.stringify({
             type: "Item",
             sheetTab: this.actor.data.flags["_sheetTab"],
             actorId: this.actor._id,
+            mod: mod,
             data: item,
-            root: event.currentTarget.getAttribute("root")
+            root: tar.getAttribute("root")
         }));
+        event.stopPropagation()
     }
 
     async _addSpecies(item) {
@@ -473,12 +498,5 @@ export default class ActorSheetDsa5 extends ActorSheet {
 
         }
 
-        /*if (dragData.type == "species") {
-            await this.actor.update({ 
-                "details": {
-                    "species" : dragData
-                }
-             })
-        }*/
     }
 }

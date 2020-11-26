@@ -189,6 +189,7 @@ export default class DiceDSA5 {
         let modifier = testData.testModifier;
         let weapon;
 
+        console.log(testData)
 
         let skill = Actordsa5._calculateCombatSkillValues(testData.extra.actor.items.find(x => x.type == "combatskill" && x.name == testData.source.data.data.combatskill.value), testData.extra.actor)
 
