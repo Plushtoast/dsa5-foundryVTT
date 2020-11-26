@@ -393,12 +393,14 @@ export default class ActorSheetDsa5 extends ActorSheet {
         await this.actor.update(update);
         for (let skill of item.data.data.skills.value.split(",")) {
             let vars = skill.trim().split(" ")
+            let name = vars.slice(0, -1).join(' ')
+            let step = vars[vars.length - 1]
             let res = this.actor.data.items.find(i => {
-                return i.type == "skill" && i.name == vars[0]
+                return i.type == "skill" && i.name == name
             });
             if (res) {
                 let skillUpdate = duplicate(res)
-                skillUpdate.data.talentValue.value = vars[1]
+                skillUpdate.data.talentValue.value = step
                 await this.actor.updateEmbeddedEntity("OwnedItem", skillUpdate);
             }
         }
@@ -414,12 +416,14 @@ export default class ActorSheetDsa5 extends ActorSheet {
         await this.actor.update(update);
         for (let skill of item.data.data.skills.value.split(",")) {
             let vars = skill.trim().split(" ")
+            let name = vars.slice(0, -1).join(' ')
+            let step = vars[vars.length - 1]
             let res = this.actor.data.items.find(i => {
-                return i.type == "skill" && i.name == vars[0]
+                return i.type == "skill" && i.name == name
             });
             if (res) {
                 let skillUpdate = duplicate(res)
-                skillUpdate.data.talentValue.value = skillUpdate.data.talentValue.value + vars[1]
+                skillUpdate.data.talentValue.value = skillUpdate.data.talentValue.value + step
                 await this.actor.updateEmbeddedEntity("OwnedItem", skillUpdate);
             }
         }
