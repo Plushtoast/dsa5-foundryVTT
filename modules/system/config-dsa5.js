@@ -13,7 +13,17 @@ DSA5.characteristics = {
 };
 
 DSA5.equipmentTypes = {
-    "misc": "Miscellanous"
+    "misc": "Equipment.misc",
+    "clothes": "Equipment.clothes",
+    "tools": "Equipment.tools",
+    "light": "Equipment.light",
+    "healing": "Equipment.healing",
+    "bags": "Equipment.bags",
+    "wealth": "Equipment.wealth",
+    "writing": "Equipment.writing",
+    "alchemy": "Equipment.alchemy",
+    "service": "Equipment.service",
+    "luxus": "Equipment.luxus"
 };
 
 DSA5.moneyNames = {
@@ -22,6 +32,24 @@ DSA5.moneyNames = {
     "H": "Money-H",
     "K": "Money-K"
 }
+
+DSA5.rangeMods = {
+    "short": {
+        "damage": 1,
+        "attack": 2
+    },
+    "medium": {
+        "damage": 0,
+        "attack": 0
+    },
+    "long": {
+        "damage": -1,
+        "attack": -2
+    }
+
+}
+
+
 
 DSA5.mageLevels = {
     "mundane": "mundane",
@@ -40,6 +68,18 @@ DSA5.specialAbilityCategories = {
 DSA5.dieColors = {
     "dodge": "ge"
 }
+
+DSA5.rangeWeaponModifiers = {
+    "short": "RangeMod.short",
+    "medium": "RangeMod.medium",
+    "long": "RangeMod.long"
+}
+
+DSA5.meleeRangesArray = [
+    "short",
+    "medium",
+    "long"
+]
 
 DSA5.meleeRanges = {
     "short": "Range-short",
@@ -81,6 +121,30 @@ DSA5.sizeCategories = {
     "average": "SIZE.average",
     "big": "SIZE.big",
     "giant": "SIZE.giant"
+}
+
+DSA5.rangeSizeCategories = {
+    "tiny": "RANGESIZE.tiny",
+    "small": "RANGESIZE.small",
+    "average": "RANGESIZE.average",
+    "big": "RANGESIZE.big",
+    "giant": "RANGESIZE.giant"
+}
+
+DSA5.rangeSizeModifier = {
+    "tiny": -8,
+    "small": -4,
+    "average": 0,
+    "big": 4,
+    "giant": 8
+}
+
+DSA5.rangeVision = {
+    "0": "VisionDisruption.step0",
+    "-2": "VisionDisruption.step1",
+    "-4": "VisionDisruption.step2",
+    "-6": "VisionDisruption.step3",
+    "-5000": "VisionDisruption.step4"
 }
 
 

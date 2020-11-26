@@ -36,10 +36,15 @@ export default function() {
           updatedData["token.img"] = updatedData.img;
           actor.data.token.img = updatedData.img;
         }*/
-        if (actor.isMage) {
-
-        } else if (actor.isPriest) {
-
+        console.log(actor)
+        if (actor.data.isMage) {
+            mergeObject(updatedData, {
+                "token.bar2": { "attribute": "status.astralenergy" }
+            });
+        } else if (actor.data.isPriest) {
+            mergeObject(updatedData, {
+                "token.bar2": { "attribute": "status.karmaenergy" }
+            });
         } else {
             mergeObject(updatedData, {
                 "token.bar2": {}

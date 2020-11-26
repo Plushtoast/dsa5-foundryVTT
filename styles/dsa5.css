@@ -959,7 +959,7 @@ form.dsa5.item-sheet {
 
 .window-app:after {
     background-image: url(../icons/backgrounds/bookBorder.webp);
-    bottom: 10px;
+    bottom: 12px;
     content: '';
 }
 
@@ -1031,4 +1031,29 @@ form.dsa5.item-sheet {
 
 #combat li.combatant.active {
     background: rgba(0, 0, 0, 0.1);
+}
+
+.sidebar-tab .directory-list .directory-item.collapsed {
+    color: white;
+}
+
+.sidebar-tab .directory-list .directory-item h3 {
+    color: black;
+}
+
+#sidebar .sidebar-tab .folder a i {
+    color: rgb(216, 212, 212);
+}
+
+li.folder {
+    margin-left: 8px;
+}
+
+.chatModifiers ul {
+    display: none;
+}
+
+.chatModifiers .expand-mods {
+    float: right;
+    font-size: 10px;
 }

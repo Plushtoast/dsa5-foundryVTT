@@ -9,8 +9,14 @@
 </div>
 
 {{#when testData.modifiers 'noteq' 0 }}
-<div class="card-content display-toggle">
+<div class="card-content display-toggle chatModifiers">
     <b>{{localize "Modifiers"}}</b>: {{testData.modifiers}}
+    <a class="expand-mods"><i class="fas fa-plus"></i></a>
+    <ul>
+        {{#each testData.preData.situationalModifiers as |item i|}} {{#when item.value 'noteq' 0}}
+        <li>{{item.name}}: {{item.value}}</li>
+        {{/when}} {{/each}}
+    </ul>
 </div>
 {{/when}} {{#if testData.result}}
 <div class="card-content display-toggle">

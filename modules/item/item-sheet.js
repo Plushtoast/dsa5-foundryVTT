@@ -76,6 +76,7 @@ export default class ItemSheetdsa5 extends ItemSheet {
                 break;
             case "meleeweapon":
                 let chars = DSA5.characteristics;
+                chars["ge/kk"] = game.i18n.localize("CHAR.GEKK")
                 chars["-"] = "-";
                 data['characteristics'] = chars;
                 data['combatskills'] = await DSA5_Utility.allCombatSkillsList("melee");

@@ -49,7 +49,25 @@
 
     "DIALOG": {
         "RollMode": "Würfelmodus",
-        "DeleteItem": "Gegenstand entfernen?"
+        "DeleteItem": "Gegenstand entfernen?",
+        "SituationalModifiers": "Bedingte\nModifikatoren"
+    },
+
+    "Equipment": {
+        "misc": "Allgemein",
+        "clothes": "Kleidung",
+        "tools": "Werkzeug",
+        "light": "Lichtquelle",
+        "healing": "Heilmittel",
+        "bags": "Behältniss",
+        "wealth": "Wertsachen",
+        "writing": "Schreibwaren",
+        "alchemy": "Alchemie und Gifte",
+        "service": "Dienstleistungen",
+        "luxus": "Genussmittel und Luxus",
+        "armor": "Rüstung",
+        "meleeweapons": "Nahkampfwaffen",
+        "rangeweapons": "Fernkampfwaffen"
     },
 
 
@@ -92,7 +110,7 @@
     "castingTime": "Zauberdauer",
     "Combat": "Kampf",
     "combatskill": "Kampftechnik",
-    "Culture": "Kultur",
+    "culture": "Kultur",
     "count": "Anzahl",
     "cost": "Kosten",
     "Current": "Aktuell",
@@ -103,6 +121,7 @@
     "carrycapacity": "Tragekraft",
     "Details": "Details",
     "damage": "Schaden",
+    "defenseCount": "# Verteidigung (je -3)",
     "damageThreshold": "Schadensschwelle",
     "damageOverThreshold": "Inklusive Zusatzschaden über Schadensschwelle",
     "doubleDamage": "doppelter Schaden",
@@ -110,6 +129,7 @@
     "Description": "Beschreibung",
     "Difficulty": "Schwierigkeit",
     "distribution": "Verbreitung",
+    "distance": "Entfernung",
     "Delete Confirmation": "Löschen bestätigen",
     "dodge": "Ausweichen",
     "Distinguishing_mark": "Charakteristika",
@@ -146,6 +166,8 @@
     "karmaenergy": "Karmaenergie",
     "KTW": "Kampftalentwert",
     "KaPCost": "Karmapunktekosten",
+    "language": "Sprache",
+    "localKnowledge": "Lokalwissen",
     "liturgy": "Liturgie",
     "liturgyAndCeremonies": "Liturgie/Zeremonie",
     "Main": "Daten",
@@ -164,15 +186,18 @@
     "Magic": "Magie",
     "money": "Geld",
     "Money": "Geld",
+    "manual": "Händisch",
     "mageLevel": "Magieart",
-    "Miscellanous": "Allgemein",
+
     "misc": "Sonstiges",
     "Name": "Name",
     "notsuitableAdvantages": "Ungeeignete Vorteile",
     "notsuitableDisadvantages": "Ungeeignete Nachteile",
+    "notsuitableTalents": "Ungeeignete Talente",
     "no": "Nein",
     "Notes": "Notizen",
     "Opposed": "Vergleichsprobe",
+    "opposingWeaponSize": "Waffengröße Gegner",
     "protection": "Rüstungsschutz",
     "parrytest": "Verteidigungsprobe",
     "purse": "Geldbeutel",
@@ -191,6 +216,7 @@
     "requirements": "Voraussetzungen",
     "recommendedAdvantages": "Geeignete Vorteile",
     "recommendedDisadvantages": "Geeignete Nachteile",
+    "recommendedTalents": "Geeignete Talente",
     "reloadTime": "Ladezeit",
     "skill": "Talent",
     "skills": "Talente",
@@ -215,11 +241,13 @@
     "targetCategory": "Zielkategorie",
     "Unopposed": "Keine Vergleichsprobe",
     "value": "Wert",
+    "sight": "Sichtverhältnisse",
     "Weight": "Gewicht",
     "happyTalents": "Wohlgefällige Talente",
     "wounds": "Lebenskraft",
     "weapontype": "Waffengattung",
     "worn": "Ausgerüstet",
+    "writing": "Schrift",
     "yes": "Ja",
 
     "SKILL": {
@@ -272,9 +300,22 @@
         "PostItem": "Im Chat posten",
         "EditItem": "Editieren",
         "Dropdown": "Details",
-        "DeleteItem": "Löschen"
+        "DeleteItem": "Löschen",
+        "addItem": "Gegenstand erstellen"
     },
 
+    "RangeMod": {
+        "short": "Nah [+2 auf FK, +1 TP]",
+        "medium": "Mittel [+/–0 auf FK]",
+        "long": "Weit [–2 auf FK, –1 TP]"
+    },
+    "VisionDisruption": {
+        "step0": "Klare Sicht",
+        "step1": "Leichte Störung [-2]",
+        "step2": "Silhouette [-4]",
+        "step3": "Schemen [-6]",
+        "step4": "Unsichtbar [Glückstreffer]"
+    },
 
     "CONDITION": {
         "encumbered": "Belastung",
@@ -303,6 +344,13 @@
         "giant": "Riesig"
     },
 
+    "RANGESIZE": {
+        "tiny": "Winzig [-8]",
+        "small": "Klein [-4]",
+        "average": "Mittel",
+        "big": "Groß [+4]",
+        "giant": "Riesig [+8]"
+    },
     "ROLL": {
         "Targeting": "gegen",
         "failed": "ist gescheitert"

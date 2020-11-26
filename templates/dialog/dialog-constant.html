@@ -1,14 +1,8 @@
-<div class="dialog-row">
-    <div class="bonus-column">
-
-        <div class="form-group">
-            <label>{{localize "Modifier"}}</label>
-            <input type="text" name="testModifier" value="{{testModifier}}" />
-        </div>
-
-
-    </div>
+<div class="form-group">
+    <label>{{localize "Modifier"}}</label>
+    <input type="number" name="testModifier" value="{{testModifier}}" />
 </div>
+
 {{# if difficultyLabels}}
 <div class="form-group custom-select">
     <label>{{localize "Difficulty"}}</label>
@@ -32,3 +26,63 @@
       {{/select}}
     </select>
 </div>
+{{#if showDefense}}
+<div class="form-group">
+    <label>{{localize "defenseCount"}}</label>
+    <input type="number" name="defenseCount" value="{{defenseCount}}" />
+</div>
+{{/if}} {{#if weaponSizes}}
+<div class="form-group custom-select">
+    <label>{{localize "opposingWeaponSize"}}</label>
+    <select name="weaponsize">
+    {{#select "medium"}}
+    {{#each weaponSizes as |label val|}}
+    <option value="{{val}}">{{localize label}}</option>
+    {{/each}}
+    {{/select}}
+  </select>
+</div>
+{{/if}} {{# if rangeOptions}}
+<div class="form-group custom-select">
+    <label>{{localize "distance"}}</label>
+    <select name="distance">
+      {{#select "medium"}}
+      {{#each rangeOptions as |label val|}}
+      <option value="{{val}}">{{localize label}}</option>
+      {{/each}}
+      {{/select}}
+    </select>
+</div>
+<div class="form-group custom-select">
+    <label>{{localize "sizeCategory"}}</label>
+    <select name="size">
+    {{#select "average"}}
+    {{#each sizeOptions as |label val|}}
+    <option value="{{val}}">{{localize label}}</option>
+    {{/each}}
+    {{/select}}
+  </select>
+</div>
+<div class="form-group custom-select">
+    <label>{{localize "sight"}}</label>
+    <select name="vision">
+  {{#select "0"}}
+  {{#each visionOptions as |label val|}}
+  <option value="{{val}}">{{localize label}}</option>
+  {{/each}}
+  {{/select}}
+</select>
+</div>
+{{/if}} {{#if hasSituationalModifiers}}
+<div class="modifiers form-group custom-select">
+    <label>{{localize "DIALOG.SituationalModifiers"}}</label>
+    <select name="situationalModifiers" multiple>
+      {{#select selectedModifiers}}
+      {{#each situationalModifiers as |mod t|}}
+      <option title="{{localize mod.name}}" value="{{mod.value}}" {{#if mod.selected}}selected{{/if}}>{{localize mod.name}} [{{mod.value}}]
+      </option>
+      {{/each}}
+      {{/select}}
+    </select>
+</div>
+{{/if}}

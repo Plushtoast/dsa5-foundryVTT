@@ -10,7 +10,10 @@
             <div class="col ten center">{{localize "CHARAbbrev.castingTime"}}</div>
             <div class="col ten center">{{localize "reach"}}</div>
             <div class="col ten center">{{localize "CHARAbbrev.duration"}}</div>
-            <div class="col ten"></div>
+            <div class="col ten center">
+                <a class="item-create very-small" title="{{localize 'SHEET.addItem'}}" item-section="spell" data-type="spell"><i class="fas fa-plus"></i></a>
+
+            </div>
         </div>
     </div>
     {{#each actor.spells as |item i|}}

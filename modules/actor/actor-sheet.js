@@ -63,6 +63,31 @@ export default class ActorSheetDsa5 extends ActorSheet {
         return sheetData;
     }
 
+    _onItemCreate(event) {
+        event.preventDefault();
+        let header = event.currentTarget,
+            data = duplicate(header.dataset);
+
+
+        if (DSA5.equipmentTypes[data.type]) {
+            data.type = "equipment"
+            data = mergeObject(data, {
+                "data.equipmentType.value": event.currentTarget.attributes["item-section"].value
+            })
+        }
+
+        if (data.type == "spell" || data.type == "liturgy") {
+
+        } else {
+            data["data.weight.value"] = 0
+            data["data.quantity.value"] = 0
+        }
+
+
+        //data["img"] = "systems/wfrp4e/icons/blank.png";
+        data["name"] = `New ${data.type.capitalize()}`;
+        this.actor.createEmbeddedEntity("OwnedItem", data);
+    }
 
     activateListeners(html) {
         super.activateListeners(html);
@@ -228,6 +253,8 @@ export default class ActorSheetDsa5 extends ActorSheet {
                 this.actor.basicTest(setupData)
             });
         });
+
+        html.find('.item-create').click(ev => this._onItemCreate(ev));
 
         html.find('.ch-rollCombatParry').click(event => {
             event.preventDefault();
@@ -411,10 +438,8 @@ export default class ActorSheetDsa5 extends ActorSheet {
 
     _onDragItemStart(event) {
         let tar = event.currentTarget
-        console.log(tar)
         let itemId = tar.getAttribute("data-item-id");
         let mod = tar.getAttribute("data-mod");
-        console.log(mod)
         const item = duplicate(this.actor.getEmbeddedEntity("OwnedItem", itemId))
         event.dataTransfer.setData("text/plain", JSON.stringify({
             type: "Item",

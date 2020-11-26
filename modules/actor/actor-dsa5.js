@@ -190,12 +190,18 @@ export default class Actordsa5 extends Actor {
                 show: false,
                 dataType: "ammunition"
             },
-            misc: {
-                items: [],
-                show: true,
-                dataType: "miscellanous"
-            }
+
+
         };
+
+        for (let t in DSA5.equipmentTypes) {
+            inventory[t] = {
+                items: [],
+                show: false,
+                dataType: t
+            }
+        }
+
 
         const money = {
             coins: [],
@@ -279,9 +285,6 @@ export default class Actordsa5 extends Actor {
 
                     break;
                 case "rangeweapon":
-                    if (!i.data.quantity)
-                        i.data.quantity = { value: 1 };
-
                     i.weight = parseFloat((i.data.weight.value * i.data.quantity.value).toFixed(3));
                     i.toggleValue = i.data.worn.value || false;
                     inventory.rangeweapons.items.push(i);
@@ -378,6 +381,9 @@ export default class Actordsa5 extends Actor {
             "data.conditions.inpain.value": pain
         });
 
+        this.data.isMage = hasSpells
+        this.data.isPries = hasPrayers
+
         this._updateConditions()
 
         return {
@@ -424,6 +430,35 @@ export default class Actordsa5 extends Actor {
         this.update(r)
     }
 
+    /*getModifiers() {
+        let r = []
+        for (let [key, val] of Object.entries(this.data.data.conditions)) {
+            if (val.max > 0) {
+                r.push({
+                    name: key,
+                    value: (val.max * -1)
+                })
+            }
+
+        }
+        return r
+    }*/
+
+    static getModifiers(actor) {
+        let r = []
+        for (let [key, val] of Object.entries(actor.data.conditions)) {
+            if (val.max > 0) {
+                r.push({
+                    name: "CONDITION." + key,
+                    value: (val.max * -1),
+                    selected: false
+                })
+            }
+
+        }
+        return r
+    }
+
     setupWeapon(item, mode, options) {
         let title = game.i18n.localize(item.name) + " " + game.i18n.localize(mode + "test");
 
@@ -447,7 +482,12 @@ export default class Actordsa5 extends Actor {
             callback: (html) => {
                 cardOptions.rollMode = html.find('[name="rollMode"]').val();
                 testData.testModifier = Number(html.find('[name="testModifier"]').val());
-
+                testData.situationalModifiers = this._parseModifiers('[name = "situationalModifiers"]')
+                testData.rangeModifier = html.find('[name="distance"]').val()
+                testData.sizeModifier = DSA5.rangeSizeModifier[html.find('[name="size"]').val()]
+                testData.visionModifier = Number(html.find('[name="vision"]').val())
+                testData.opposingWeaponSize = html.find('[name="weaponsize"]').val()
+                testData.defenseCount = Number(html.find('[name="defenseCount"]').val())
                 return { testData, cardOptions };
             }
         };
@@ -484,7 +524,7 @@ export default class Actordsa5 extends Actor {
             callback: (html) => {
                 cardOptions.rollMode = html.find('[name="rollMode"]').val();
                 testData.testModifier = Number(html.find('[name="testModifier"]').val());
-
+                testData.situationalModifiers = this._parseModifiers('[name = "situationalModifiers"]')
                 return { testData, cardOptions };
             }
         };
@@ -526,7 +566,7 @@ export default class Actordsa5 extends Actor {
             callback: (html) => {
                 cardOptions.rollMode = html.find('[name="rollMode"]').val();
                 testData.testModifier = Number(html.find('[name="testModifier"]').val());
-
+                testData.situationalModifiers = this._parseModifiers('[name = "situationalModifiers"]')
                 return { testData, cardOptions };
             }
         };
@@ -567,7 +607,7 @@ export default class Actordsa5 extends Actor {
                 cardOptions.rollMode = html.find('[name="rollMode"]').val();
                 testData.testModifier = Number(html.find('[name="testModifier"]').val());
                 testData.testDifficulty = DSA5.attributeDifficultyModifiers[html.find('[name="testDifficulty"]').val()];
-
+                testData.situationalModifiers = this._parseModifiers('[name = "situationalModifiers"]')
                 return { testData, cardOptions };
             }
         };
@@ -604,6 +644,7 @@ export default class Actordsa5 extends Actor {
                 cardOptions.rollMode = html.find('[name="rollMode"]').val();
                 testData.testModifier = Number(html.find('[name="testModifier"]').val());
                 testData.testDifficulty = 0
+                testData.situationalModifiers = this._parseModifiers('[name = "situationalModifiers"]')
                 return { testData, cardOptions };
             }
         };
@@ -617,6 +658,17 @@ export default class Actordsa5 extends Actor {
             testData: testData,
             cardOptions: cardOptions
         });
+    }
+
+    _parseModifiers(search) {
+        let res = []
+        $(search + " option:selected").each(function() {
+            res.push({
+                name: $(this).text().trim(),
+                value: $(this).val()
+            })
+        })
+        return res
     }
 
     setupSkill(skill, options = {}) {
@@ -642,7 +694,7 @@ export default class Actordsa5 extends Actor {
                 cardOptions.rollMode = html.find('[name="rollMode"]').val();
                 testData.testModifier = Number(html.find('[name="testModifier"]').val());
                 testData.testDifficulty = DSA5.skillDifficultyModifiers[html.find('[name="testDifficulty"]').val()];
-
+                testData.situationalModifiers = this._parseModifiers('[name = "situationalModifiers"]')
                 return { testData, cardOptions };
             }
         };
@@ -675,8 +727,8 @@ export default class Actordsa5 extends Actor {
             }
         }
         item.attack = skill.data.attack.value + item.data.atmod.value;
-        if (skill.data.guidevalue.value != "-") {
-            let val = Math.max(...(skill.data.guidevalue.value.split("/").map(x => actorData.data.characteristics[x].value)));
+        if (item.data.guidevalue.value != "-") {
+            let val = Math.max(...(item.data.guidevalue.value.split("/").map(x => actorData.data.characteristics[x].value)));
             let extra = val - item.data.damageThreshold.value;
 
 
@@ -759,7 +811,6 @@ export default class Actordsa5 extends Actor {
         if (testData.extra)
             mergeObject(result, testData.extra);
 
-        console.log(testData)
 
         if (game.user.targets.size) {
             cardOptions.isOpposedTest = testData.opposable

@@ -14,19 +14,42 @@ export default class DiceDSA5 {
         });
 
 
+
         mergeObject(dialogOptions.data, {
             testDifficulty: sceneStress,
             testModifier: (dialogOptions.data.modifier || 0)
         });
+
+        let situationalModifiers = Actordsa5.getModifiers(testData.extra.actor)
 
         switch (testData.source.type) {
             case "skill":
                 mergeObject(dialogOptions.data, {
                     difficultyLabels: (DSA5.skillDifficultyLabels)
                 });
+
+                break;
+
+            case "rangeweapon":
+                mergeObject(dialogOptions.data, {
+                    rangeOptions: DSA5.rangeWeaponModifiers,
+                    sizeOptions: DSA5.rangeSizeCategories,
+                    visionOptions: DSA5.rangeVision
+                });
                 break;
             case "meleeweapon":
-            case "rangeweapon":
+                if (testData.mode == "attack") {
+                    mergeObject(dialogOptions.data, {
+                        weaponSizes: DSA5.meleeRanges
+                    });
+                } else {
+                    mergeObject(dialogOptions.data, {
+                        defenseCount: 0,
+                        showDefense: true
+                    });
+                }
+
+                break
             case "combatskill":
             case "liturgy":
             case "spell":
@@ -39,10 +62,12 @@ export default class DiceDSA5 {
                     difficultyLabels: (DSA5.attributeDifficultyLabels)
                 });
 
-
         }
 
-
+        mergeObject(dialogOptions.data, {
+            hasSituationalModifiers: situationalModifiers.length > 0,
+            situationalModifiers: situationalModifiers
+        })
 
         mergeObject(cardOptions, {
             user: game.user._id,
@@ -127,8 +152,8 @@ export default class DiceDSA5 {
 
     static rollStatus(testData) {
         let roll = testData.roll ? testData.roll : new Roll("1d20").roll();
-        let modifier = testData.testModifier;
-
+        let modifier = testData.testModifier + this._situationalModifiers(testData);
+        this._appendSituationalModifiers(testData, game.i18n.localize("manual"), testData.testModifier)
         var result = this._rollSingleD20(roll, testData.source.max, testData.extra.statusId, modifier, testData)
         result["rollType"] = "status"
         return result
@@ -136,8 +161,9 @@ export default class DiceDSA5 {
 
     static rollAttribute(testData) {
         let roll = testData.roll ? testData.roll : new Roll("1d20").roll();
-        let modifier = testData.testModifier + testData.testDifficulty;
-
+        let modifier = testData.testModifier + testData.testDifficulty + this._situationalModifiers(testData);
+        this._appendSituationalModifiers(testData, game.i18n.localize("manual"), testData.testModifier)
+        this._appendSituationalModifiers(testData, game.i18n.localize("Difficulty"), testData.testDifficulty)
         var result = this._rollSingleD20(roll, testData.source.value, testData.extra.characteristicId, modifier, testData)
         result["rollType"] = "attribute"
         return result
@@ -145,9 +171,11 @@ export default class DiceDSA5 {
 
     static rollDamage(testData) {
         //let description = "";
-        let modifier = testData.testModifier;
+        let modifier = testData.testModifier + this._situationalModifiers(testData);
         let weapon;
         var chars = []
+
+        this._appendSituationalModifiers(testData, game.i18n.localize("manual"), testData.testModifier)
 
         let skill = Actordsa5._calculateCombatSkillValues(testData.extra.actor.items.find(x => x.type == "combatskill" && x.name == testData.source.data.data.combatskill.value), testData.extra.actor)
 
@@ -184,20 +212,48 @@ export default class DiceDSA5 {
 
     }
 
+    static _situationalModifiers(testData) {
+        return testData.situationalModifiers.reduce(function(_this, val) {
+            return _this + Number(val.value)
+        }, 0);
+    }
+
+    static _appendSituationalModifiers(testData, name, val) {
+        testData.situationalModifiers.push({
+            name: name,
+            value: val
+        })
+    }
+
     static rollWeapon(testData) {
         let roll = testData.roll ? testData.roll : new Roll("1d20").roll();
-        let modifier = testData.testModifier;
+        let modifier = testData.testModifier + this._situationalModifiers(testData);
         let weapon;
 
         console.log(testData)
+        this._appendSituationalModifiers(testData, game.i18n.localize("manual"), testData.testModifier)
 
         let skill = Actordsa5._calculateCombatSkillValues(testData.extra.actor.items.find(x => x.type == "combatskill" && x.name == testData.source.data.data.combatskill.value), testData.extra.actor)
 
         if (testData.source.type == "meleeweapon") {
             weapon = Actordsa5._prepareMeleeWeapon(testData.source.data, [skill], testData.extra.actor)
+                //+ this._compareWeaponReach(weapon, testData)
+            if (testData.mode == "attack") {
+                let weaponmodifier = this._compareWeaponReach(weapon, testData)
+                modifier += weaponmodifier
+                this._appendSituationalModifiers(testData, game.i18n.localize("opposingWeaponSize"), weaponmodifier)
+            } else {
+                modifier += testData.defenseCount * -3
+                this._appendSituationalModifiers(testData, game.i18n.localize("defenseCount"), testData.defenseCount * -3)
+            }
+
         } else {
             weapon = Actordsa5._prepareRangeWeapon(testData.source.data, [], [skill])
 
+            modifier += DSA5.rangeMods[testData.rangeModifier].attack + testData.sizeModifier + testData.visionModifier
+            this._appendSituationalModifiers(testData, game.i18n.localize("distance"), DSA5.rangeMods[testData.rangeModifier].attack)
+            this._appendSituationalModifiers(testData, game.i18n.localize("sizeCategory"), testData.sizeModifier)
+            this._appendSituationalModifiers(testData, game.i18n.localize("sight"), testData.visionModifier)
         }
 
         var result = this._rollSingleD20(roll, weapon[testData.mode], "attack" ? "mu" : "in", modifier, testData)
@@ -239,6 +295,10 @@ export default class DiceDSA5 {
             if (weapon.extraDamage)
                 damage = Number(weapon.extraDamage) + Number(damage)
 
+            if (testData.source.type == "rangeweapon") {
+                damage += DSA5.rangeMods[testData.rangeModifier].damage
+            }
+
             if (doubleDamage) {
                 damage = damage * 2
             }
@@ -262,8 +322,8 @@ export default class DiceDSA5 {
     static rollCombatskill(testData) {
         let roll = testData.roll ? testData.roll : new Roll("1d20").roll();
         let description = "";
-        let modifier = testData.testModifier;
-
+        let modifier = testData.testModifier + this._situationalModifiers(testData);
+        this._appendSituationalModifiers(testData, game.i18n.localize("manual"), testData.testModifier)
         let source = Actordsa5._calculateCombatSkillValues(testData.source.data, testData.extra.actor)
 
 
@@ -327,7 +387,10 @@ export default class DiceDSA5 {
         let roll = testData.roll ? testData.roll : new Roll("1d20+1d20+1d20").roll();
         let description = "";
         let successLevel = 0
-        let modifier = testData.testModifier + testData.testDifficulty;
+        let modifier = testData.testModifier + testData.testDifficulty + this._situationalModifiers(testData);
+        this._appendSituationalModifiers(testData, game.i18n.localize("manual"), testData.testModifier)
+        this._appendSituationalModifiers(testData, game.i18n.localize("Difficulty"), testData.testDifficulty)
+
         let fps = testData.source.data.talentValue.value;
         let tar1 = testData.extra.actor.data.characteristics[testData.source.data.characteristic1.value].value + modifier;
         let res1 = roll.terms[0].results[0].result - tar1;
@@ -423,6 +486,10 @@ export default class DiceDSA5 {
         rollResults.other = [];
 
         return rollResults
+    }
+
+    static _compareWeaponReach(weapon, testData) {
+        return Math.min(0, DSA5.meleeRangesArray.indexOf(weapon.data.reach.value) - DSA5.meleeRangesArray.indexOf(testData.opposingWeaponSize)) * 2
     }
 
     static async rollDices(testData, cardOptions) {
@@ -545,5 +612,14 @@ export default class DiceDSA5 {
                 });
             });
         }
+    }
+
+    static async chatListeners(html) {
+        html.on("click", '.expand-mods', event => {
+            event.preventDefault()
+            let elem = $(event.currentTarget)
+            elem.find('i').toggleClass("fa-minus fa-plus")
+            elem.siblings('ul').fadeToggle()
+        })
     }
 }
