@@ -2,7 +2,7 @@
     "name": "dsa5",
     "title": "Das Schwarze Auge (5th Edition)",
     "description": "Many details here.",
-    "version": "0.1.12",
+    "version": "0.1.13",
     "templateVersion": 14,
     "author": "Plushtoast",
     "scripts": [],
@@ -40,6 +40,26 @@
             "entity": "Item",
             "tags": [
                 "money"
+            ]
+        },
+        {
+            "name": "Items",
+            "label": "Items",
+            "system": "dsa5",
+            "path": "packs/item.db",
+            "entity": "Item",
+            "tags": [
+                "items"
+            ]
+        },
+        {
+            "name": "Bestiary",
+            "label": "Bestiary",
+            "system": "dsa5",
+            "path": "packs/money.db",
+            "entity": "Actor",
+            "tags": [
+                "Bestiary"
             ]
         },
         {
