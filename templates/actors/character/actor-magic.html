@@ -100,7 +100,7 @@
                     {{localize "tradition"}}
                 </div>
                 <div class="col sixty">
-
+                    {{actor.data.tradition.value}}
                 </div>
             </div>
             <div class="row-section lineheight">
@@ -108,7 +108,7 @@
                     {{localize "guidevalue"}}
                 </div>
                 <div class="col sixty">
-
+                    {{localize (concatUp 'CHAR.' actor.data.guidevalue.value)}}
                 </div>
             </div>
             <div class="row-section lineheight">
@@ -116,7 +116,7 @@
                     {{localize "feature"}}
                 </div>
                 <div class="col sixty">
-
+                    {{actor.data.feature.value}}
                 </div>
             </div>
         </div>

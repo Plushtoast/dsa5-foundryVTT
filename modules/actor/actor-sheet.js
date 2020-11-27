@@ -385,10 +385,10 @@ export default class ActorSheetDsa5 extends ActorSheet {
             update["data.details.experience.spent"] = this.actor.data.data.details.experience.spent + item.data.data.APValue.value
         }
         if (item.data.mageLevel != "mundane") {
-            update["data.magic.guidevalue.value"] = item.data.data.guidevalue.value
-            update["data.magic.tradition.value"] = item.data.data.tradition.value
-            update["data.magic.feature.value"] = item.data.data.feature.value
-            update["data.magic.happyTalents.value"] = item.data.data.happyTalents.value
+            update["data.guidevalue.value"] = item.data.data.guidevalue.value
+            update["data.tradition.value"] = item.data.data.tradition.value
+            update["data.feature.value"] = item.data.data.feature.value
+            update["data.happyTalents.value"] = item.data.data.happyTalents.value
         }
         await this.actor.update(update);
         for (let skill of item.data.data.skills.value.split(",")) {

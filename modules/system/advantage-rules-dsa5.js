@@ -10,6 +10,8 @@ export default class AdvantageRulesDSA5 {
                 await actor.update({
                     "data.status.astralenergy.initial": 20
                 });
+                console.log("updating")
+                console.log(actor)
                 break
         }
     }

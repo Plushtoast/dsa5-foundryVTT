@@ -62,15 +62,6 @@ export default class Actordsa5 extends Actor {
 
             if (this.data.type == "character" || this.data.type == "npc") {
                 data.data.status.wounds.current = data.data.status.wounds.initial + data.data.characteristics["ko"].value * 2;
-                let guide = data.data.magic.guidevalue
-                if (guide) {
-                    guide = guide.value
-                    if (guide.value != "-") {
-                        data.data.status.astralenergy.current = data.data.status.karmaenergy.initial + data.data.characteristics[guide].value // (data.data.status.astralenergy.initial > 0 ? data.data.status.astralenergy.initial + 20 : 0);
-                        data.data.status.karmaenergy.current = data.data.status.karmaenergy.initial + data.data.characteristics[guide].value
-                    }
-                }
-
 
                 data.data.status.soulpower.value = (data.data.status.soulpower.initial ? data.data.status.soulpower.initial : 0) + Math.round((data.data.characteristics["mu"].value + data.data.characteristics["kl"].value + data.data.characteristics["in"].value) / 6);
                 data.data.status.toughness.value = (data.data.status.toughness.initial ? data.data.status.toughness.initial : 0) + Math.round((data.data.characteristics["ko"].value + data.data.characteristics["ko"].value + data.data.characteristics["kk"].value) / 6);
@@ -85,6 +76,16 @@ export default class Actordsa5 extends Actor {
             data.data.status.wounds.max = data.data.status.wounds.current + data.data.status.wounds.modifier + data.data.status.wounds.advances;
             data.data.status.astralenergy.max = data.data.status.astralenergy.current + data.data.status.astralenergy.modifier + data.data.status.astralenergy.advances;
             data.data.status.karmaenergy.max = data.data.status.karmaenergy.current + data.data.status.karmaenergy.modifier + data.data.status.karmaenergy.advances;
+
+            var guide = data.data.guidevalue
+
+            if (guide) {
+                if (guide.value != "-") {
+                    data.data.status.astralenergy.max = data.data.status.astralenergy.initial + data.data.characteristics[guide.value].value + data.data.status.astralenergy.modifier + data.data.status.astralenergy.advances
+                    data.data.status.karmaenergy.max = data.data.status.karmaenergy.initial + data.data.characteristics[guide.value].value + data.data.status.karmaenergy.modifier + data.data.status.karmaenergy.advances
+                }
+            }
+
             data.data.status.soulpower.max = data.data.status.soulpower.value + data.data.status.soulpower.modifier;
             data.data.status.toughness.max = data.data.status.toughness.value + data.data.status.toughness.modifier;
             this._calculateStatus(data, "dodge")
@@ -227,7 +228,7 @@ export default class Actordsa5 extends Actor {
 
         let totalWeight = 0;
         let encumbrance = 0;
-        let carrycapacity = (actorData.data.characteristics.mu.value + actorData.data.characteristics.mu.modifier + actorData.data.characteristics.mu.advances) * 2;
+        let carrycapacity = (actorData.data.characteristics.kk.value + actorData.data.characteristics.kk.modifier + actorData.data.characteristics.kk.advances) * 2;
 
 
 
@@ -389,7 +390,7 @@ export default class Actordsa5 extends Actor {
         });
 
         this.data.isMage = hasSpells
-        this.data.isPries = hasPrayers
+        this.data.isPriest = hasPrayers
 
         this._updateConditions()
 
