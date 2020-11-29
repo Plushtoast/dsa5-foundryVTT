@@ -2,7 +2,7 @@
     "name": "dsa5",
     "title": "Das Schwarze Auge (5th Edition)",
     "description": "Many details here.",
-    "version": "0.1.15",
+    "version": "0.1.17",
     "templateVersion": 15,
     "author": "Plushtoast",
     "scripts": [],
@@ -43,13 +43,73 @@
             ]
         },
         {
-            "name": "Items",
-            "label": "Items",
+            "name": "Equipment",
+            "label": "Equipment",
             "system": "dsa5",
-            "path": "packs/item.db",
+            "path": "packs/equipment.db",
             "entity": "Item",
             "tags": [
                 "items"
+            ]
+        },
+        {
+            "name": "Armor",
+            "label": "Armors",
+            "system": "dsa5",
+            "path": "packs/armor.db",
+            "entity": "Item",
+            "tags": [
+                "armors"
+            ]
+        },
+        {
+            "name": "Weapons",
+            "label": "Weapons",
+            "system": "dsa5",
+            "path": "packs/weapons.db",
+            "entity": "Item",
+            "tags": [
+                "weapons"
+            ]
+        },
+        {
+            "name": "Spells",
+            "label": "Spells",
+            "system": "dsa5",
+            "path": "packs/spells.db",
+            "entity": "Item",
+            "tags": [
+                "spells"
+            ]
+        },
+        {
+            "name": "Spelltricks",
+            "label": "Spelltricks",
+            "system": "dsa5",
+            "path": "packs/spelltricks.db",
+            "entity": "Item",
+            "tags": [
+                "spelltricks"
+            ]
+        },
+        {
+            "name": "Blessings",
+            "label": "Blessings",
+            "system": "dsa5",
+            "path": "packs/blessings.db",
+            "entity": "Item",
+            "tags": [
+                "blessings"
+            ]
+        },
+        {
+            "name": "Liturgies",
+            "label": "Liturgies",
+            "system": "dsa5",
+            "path": "packs/liturgies.db",
+            "entity": "Item",
+            "tags": [
+                "liturgies"
             ]
         },
         {

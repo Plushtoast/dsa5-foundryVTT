@@ -2,42 +2,28 @@ import DSA5_Utility from "../system/utility-dsa5.js";
 import DSA from "../system/config-dsa5.js"
 
 export default class Itemdsa5 extends Item {
-    static advantageImg = "icons/commodities/materials/hair-tuft-brown.webp";
-    static disadvantageImg = "icons/commodities/bones/skull-hollow-white.webp"
-
+    static defaultImages = {
+        "advantage": "icons/commodities/materials/hair-tuft-brown.webp",
+        "disadvantage": "icons/commodities/bones/skull-hollow-white.webp",
+        "armor": "icons/equipment/chest/breastplate-layered-leather-brown-silver.webp",
+        "meleeweapon": "icons/weapons/swords/greatsword-blue.webp",
+        "rangeweapon": "icons/weapons/bows/longbow-recurve-leather-brown.webp",
+        "equipment": "icons/containers/bags/sack-simple-leather-brown.webp",
+        "liturgy": "icons/sundries/scrolls/scroll-writing-orange-black.webp",
+        "spell": "icons/sundries/scrolls/scroll-runed-brown-purple.webp",
+        "ammunition": "icons/containers/ammunition/arrows-quiver-simple-brown.webp",
+        "career": "icons/environment/people/commoner.webp",
+        "spelltrick": "icons/sundries/scrolls/scroll-bound-blue-brown.webp",
+        "blessing": "icons/commodities/treasure/token-runed-wyn-grey.webp",
+        "combatskill": "icons/environment/people/charge.webp"
+    }
 
     static async create(data, options) {
         if (!data.img) {
-            switch (data.type) {
-
-                case "ammunition":
-                    data.img = "icons/containers/ammunition/arrows-quiver-simple-brown.webp";
-                    break;
-                case "meleeweapon":
-                    data.img = "icons/weapons/swords/greatsword-blue.webp";
-                    break;
-                case "rangeweapon":
-                    data.img = "icons/weapons/bows/longbow-recurve-leather-brown.webp";
-                    break;
-                case "armor":
-                    data.img = "icons/equipment/chest/breastplate-layered-leather-brown-silver.webp";
-                    break;
-                case "equipment":
-                    data.img = "icons/containers/bags/sack-simple-leather-brown.webp";
-                    break;
-                case "career":
-                    data.img = "icons/environment/people/commoner.webp";
-                    break;
-                case "disadvantage":
-                    data.img = this.disadvantageImg;
-                    break
-                case "advantage":
-                    data.img = this.advantageImg;
-                    break;
-
-
-                default:
-                    data.img = "systems/dsa5/icons/blank.webp";
+            if (data.type in this.defaultImages) {
+                data.img = this.defaultImages[data.type]
+            } else {
+                data.img = "systems/dsa5/icons/blank.webp";
             }
         }
 

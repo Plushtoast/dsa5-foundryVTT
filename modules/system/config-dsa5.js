@@ -129,9 +129,11 @@ DSA5.weapontypes = {
 }
 
 DSA5.ammunitiongroups = {
+    "-": "-",
     "arrow": "arrow",
     "bolt": "bolt",
-    "bullet": "bullet"
+    "bullet": "bullet",
+    "stone": "stone"
 }
 
 DSA5.combatskillsGuidevalues = {
