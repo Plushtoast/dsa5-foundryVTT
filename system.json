@@ -2,8 +2,8 @@
     "name": "dsa5",
     "title": "Das Schwarze Auge (5th Edition)",
     "description": "Many details here.",
-    "version": "0.1.14",
-    "templateVersion": 14,
+    "version": "0.1.15",
+    "templateVersion": 15,
     "author": "Plushtoast",
     "scripts": [],
     "esmodules": [
@@ -69,7 +69,7 @@
             "path": "packs/advantages.db",
             "entity": "Item",
             "tags": [
-                "advantages",
+                "advantages"
             ]
         },
         {
