@@ -26,6 +26,42 @@ DSA5.equipmentTypes = {
     "luxus": "Equipment.luxus"
 };
 
+DSA5.narrowSpaceModifiers = {
+
+    "weaponshort": {
+        "attack": 0,
+        "parry": 0,
+        "label": "NarrowSpaceModifiers.weapon.short"
+    },
+    "weaponmedium": {
+        "attack": -4,
+        "parry": -4,
+        "label": "NarrowSpaceModifiers.weapon.medium"
+    },
+    "weaponlong": {
+        "attack": -8,
+        "parry": -8,
+        "label": "NarrowSpaceModifiers.weapon.long"
+    },
+
+    "shieldshort": {
+        "attack": -2,
+        "parry": -2,
+        "label": "NarrowSpaceModifiers.shield.short"
+    },
+    "shieldmedium": {
+        "attack": -4,
+        "parry": -3,
+        "label": "NarrowSpaceModifiers.shield.medium"
+    },
+    "shieldlong": {
+        "attack": -6,
+        "parry": -4,
+        "label": "NarrowSpaceModifiers.shield.long"
+    }
+
+}
+
 DSA5.moneyNames = {
     "D": "Money-D",
     "S": "Money-S",

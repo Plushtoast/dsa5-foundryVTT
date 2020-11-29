@@ -64,12 +64,21 @@
         },
         {
             "name": "Advantages",
-            "label": "Advantages/Disadvantages",
+            "label": "Advantages",
             "system": "dsa5",
             "path": "packs/advantages.db",
             "entity": "Item",
             "tags": [
                 "advantages",
+            ]
+        },
+        {
+            "name": "Disadvantages",
+            "label": "Disadvantages",
+            "system": "dsa5",
+            "path": "packs/disadvantages.db",
+            "entity": "Item",
+            "tags": [
                 "disadvantages"
             ]
         },

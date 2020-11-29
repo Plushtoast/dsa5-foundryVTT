@@ -496,6 +496,9 @@ export default class Actordsa5 extends Actor {
                 testData.visionModifier = Number(html.find('[name="vision"]').val())
                 testData.opposingWeaponSize = html.find('[name="weaponsize"]').val()
                 testData.defenseCount = Number(html.find('[name="defenseCount"]').val())
+                testData.narrowSpace = html.find('[name="narrowSpace"]').is(":checked")
+                testData.doubleAttack = html.find('[name="doubleAttack"]').is(":checked") ? -2 : 0
+                testData.wrongHand = html.find('[name="wrongHand"]').is(":checked") ? -4 : 0
                 return { testData, cardOptions };
             }
         };

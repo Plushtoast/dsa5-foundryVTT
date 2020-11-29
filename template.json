@@ -1015,7 +1015,6 @@
                 "label": "Characteristic3",
                 "value": "mu"
             },
-
             "RPr": {
                 "type": "String",
                 "label": "Routinecheck",

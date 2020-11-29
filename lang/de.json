@@ -126,6 +126,7 @@
     "damageOverThreshold": "Inklusive Zusatzschaden über Schadensschwelle",
     "doubleDamage": "doppelter Schaden",
     "duration": "Wirkungsdauer",
+    "doubleAttack": "Zwei Angriffe",
     "Description": "Beschreibung",
     "Difficulty": "Schwierigkeit",
     "distribution": "Verbreitung",
@@ -191,6 +192,7 @@
 
     "misc": "Sonstiges",
     "Name": "Name",
+    "narrowSpace": "Beengte Umgebung",
     "notsuitableAdvantages": "Ungeeignete Vorteile",
     "notsuitableDisadvantages": "Ungeeignete Nachteile",
     "notsuitableTalents": "Ungeeignete Talente",
@@ -247,6 +249,7 @@
     "wounds": "Lebenskraft",
     "weapontype": "Waffengattung",
     "worn": "Ausgerüstet",
+    "wrongHand": "Falsche Hand",
     "writing": "Schrift",
     "yes": "Ja",
 
@@ -342,6 +345,19 @@
         "average": "Mittel",
         "big": "Groß",
         "giant": "Riesig"
+    },
+
+    "NarroSpaceModifiers": {
+        "weapon": {
+            "short": "Kurze Waffe, +-0 AT/PA",
+            "medium": "Mittlere Waffe, -4 AT/-4 PA",
+            "long": "Lange Waffe, -8 AT/-8 PA"
+        },
+        "shield": {
+            "short": "Kleiner Schild, -2 AT/-2 PA",
+            "medium": "Mittlerer Schild, -4 AT/-3 PA",
+            "long": "Großer Schild, -6 AT/-4 PA"
+        }
     },
 
     "RANGESIZE": {

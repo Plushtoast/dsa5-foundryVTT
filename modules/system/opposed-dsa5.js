@@ -59,6 +59,8 @@ export default class OpposedDsa5 {
             else // If no token data was found in the speaker, use the actor's token data instead
                 attacker = actor.data.token
 
+            console.log("starting")
+
             if (testResult.successLevel > 0) {
 
                 let startMessagesList = [];
@@ -163,6 +165,7 @@ export default class OpposedDsa5 {
     }
 
     static async completeOpposedProcess(attacker, defender, options) {
+        console.log("completing")
         let opposedResult = await this.evaluateOpposedTest(attacker.testResult, defender.testResult);
         this.formatOpposedResult(opposedResult, attacker.speaker, defender.speaker);
         this.rerenderMessagesWithModifiers(opposedResult, attacker, defender);

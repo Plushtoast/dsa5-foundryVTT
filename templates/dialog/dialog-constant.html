@@ -26,22 +26,37 @@
       {{/select}}
     </select>
 </div>
-{{#if showDefense}}
+{{#if melee}}
+<div class="form-group custom-select">
+    <label>{{localize "narrowSpace"}}</label>
+    <input type="checkbox" id="narrowSpace" name="narrowSpace" value="1">
+</div>
+<div class="form-group custom-select">
+    <label>{{localize "wrongHand"}}</label>
+    <input type="checkbox" id="wrongHand" name="wrongHand" value="1">
+</div>
+{{/if}} {{#if showDefense}}
 <div class="form-group">
     <label>{{localize "defenseCount"}}</label>
     <input type="number" name="defenseCount" value="{{defenseCount}}" />
 </div>
 {{/if}} {{#if weaponSizes}}
 <div class="form-group custom-select">
+    <label>{{localize "doubleAttack"}}</label>
+    <input type="checkbox" id="doubleAttack" name="doubleAttack" value="1">
+</div>
+<div class="form-group custom-select">
     <label>{{localize "opposingWeaponSize"}}</label>
     <select name="weaponsize">
-    {{#select "medium"}}
+    {{#select targetWeaponSize}}
     {{#each weaponSizes as |label val|}}
     <option value="{{val}}">{{localize label}}</option>
     {{/each}}
     {{/select}}
   </select>
 </div>
+
+
 {{/if}} {{# if rangeOptions}}
 <div class="form-group custom-select">
     <label>{{localize "distance"}}</label>

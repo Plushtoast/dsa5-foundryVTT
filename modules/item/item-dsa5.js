@@ -2,6 +2,10 @@ import DSA5_Utility from "../system/utility-dsa5.js";
 import DSA from "../system/config-dsa5.js"
 
 export default class Itemdsa5 extends Item {
+    static advantageImg = "icons/commodities/materials/hair-tuft-brown.webp";
+    static disadvantageImg = "icons/commodities/bones/skull-hollow-white.webp"
+
+
     static async create(data, options) {
         if (!data.img) {
             switch (data.type) {
@@ -25,10 +29,10 @@ export default class Itemdsa5 extends Item {
                     data.img = "icons/environment/people/commoner.webp";
                     break;
                 case "disadvantage":
-                    data.img = "icons/commodities/bones/skull-hollow-white.webp";
+                    data.img = this.disadvantageImg;
                     break
                 case "advantage":
-                    data.img = "icons/commodities/materials/hair-tuft-brown.webp";
+                    data.img = this.advantageImg;
                     break;
 
 

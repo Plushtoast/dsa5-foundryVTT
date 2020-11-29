@@ -40,13 +40,18 @@ export default class DiceDSA5 {
             case "meleeweapon":
                 if (testData.mode == "attack") {
                     mergeObject(dialogOptions.data, {
-                        weaponSizes: DSA5.meleeRanges
+                        weaponSizes: DSA5.meleeRanges,
+                        melee: true,
+                        targetWeaponSize: "short"
                     });
-                } else {
+                } else if (testData.mode == "parry") {
                     mergeObject(dialogOptions.data, {
                         defenseCount: 0,
-                        showDefense: true
+                        showDefense: true,
+                        melee: true
                     });
+                } else {
+
                 }
 
                 break
@@ -225,22 +230,41 @@ export default class DiceDSA5 {
         })
     }
 
+    static _getNarrowSpaceModifier(weapon, testData) {
+        if (!testData.narrowSpace)
+            return 0
+
+        if (game.i18n.localize("ReverseCombatSkills." + weapon.data.combatskill.value) == "Shields") {
+            return DSA5.narrowSpaceModifiers["shield" + weapon.data.reach.value][testData.mode]
+        } else {
+            return DSA5.narrowSpaceModifiers["weapon" + weapon.data.reach.value][testData.mode]
+        }
+    }
+
     static rollWeapon(testData) {
         let roll = testData.roll ? testData.roll : new Roll("1d20").roll();
-        let modifier = testData.testModifier + this._situationalModifiers(testData);
         let weapon;
+        let modifier = testData.testModifier + this._situationalModifiers(testData) + testData.wrongHand
 
         console.log(testData)
         this._appendSituationalModifiers(testData, game.i18n.localize("manual"), testData.testModifier)
+        this._appendSituationalModifiers(testData, game.i18n.localize("wrongHand"), testData.wrongHand)
+
 
         let skill = Actordsa5._calculateCombatSkillValues(testData.extra.actor.items.find(x => x.type == "combatskill" && x.name == testData.source.data.data.combatskill.value), testData.extra.actor)
 
         if (testData.source.type == "meleeweapon") {
             weapon = Actordsa5._prepareMeleeWeapon(testData.source.data, [skill], testData.extra.actor)
+
+            let narrowSpaceModifier = this._getNarrowSpaceModifier(weapon, testData)
+            modifier += narrowSpaceModifier
+            this._appendSituationalModifiers(testData, game.i18n.localize("narrowSpace"), narrowSpaceModifier)
                 //+ this._compareWeaponReach(weapon, testData)
             if (testData.mode == "attack") {
                 let weaponmodifier = this._compareWeaponReach(weapon, testData)
-                modifier += weaponmodifier
+
+                modifier += weaponmodifier + testData.doubleAttack
+                this._appendSituationalModifiers(testData, game.i18n.localize("doubleAttack"), testData.doubleAttack)
                 this._appendSituationalModifiers(testData, game.i18n.localize("opposingWeaponSize"), weaponmodifier)
             } else {
                 modifier += testData.defenseCount * -3
@@ -256,7 +280,7 @@ export default class DiceDSA5 {
             this._appendSituationalModifiers(testData, game.i18n.localize("sight"), testData.visionModifier)
         }
 
-        var result = this._rollSingleD20(roll, weapon[testData.mode], "attack" ? "mu" : "in", modifier, testData)
+        var result = this._rollSingleD20(roll, weapon[testData.mode], testData.mode == "attack" ? "mu" : "in", modifier, testData)
 
         let success = result.successLevel > 0
         let doubleDamage = result.successLevel > 2
@@ -516,7 +540,6 @@ export default class DiceDSA5 {
                     } else {
                         roll = new Roll("1d20[" + (testData.mode == "attack" ? "mu" : "in") + "]").roll()
                     }
-
                     break;
                 case "status":
                     roll = new Roll("1d20[in]").roll();
