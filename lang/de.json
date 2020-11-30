@@ -388,6 +388,7 @@
     },
 
     "Error": {
-        "MacroItemMissing": "Dein Charakter hat kein Item namens"
+        "MacroItemMissing": "Dein Charakter hat kein Item namens",
+        "APUpdateError": "AP Wert konnte nicht angepasst werden. Bitte manuell durchführen."
     }
 }

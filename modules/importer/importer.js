@@ -50,6 +50,17 @@ export default class DSA5Importer {
         }
     }
 
+    static sanitizeAPVal(val) {
+        return val.replace(" AP", "")
+            .replace(" Abenteuerpunkte", "")
+            .replace(" Abenteuerpunkt", "")
+            .replace(" pro Stufe", "")
+            .replace(" pro Schlechter Angewohnheit", "")
+            .replace(" (wird automatisch über das Paktgeschenk Zauberei mit Lebenskraft vergeben)", '')
+            .trim()
+
+    }
+
     static ImportVars = {
         meleeImages: {
             de: {

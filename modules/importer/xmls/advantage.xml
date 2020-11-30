@@ -6,8 +6,8 @@
     <max>3</max>
     <requirements>Kultur muss über einen passenden Adel verfügen.</requirements>
     <rule/>
-    <description>Der Held ist angesehen, genießt die Privilegien des Adels und kann vom Meister Erleichterungen zugesprochen bekommen, wenn er gegenüber Rangniedrigeren agiert.
-
+    <description>Regel: Der Held ist angesehen, genießt die Privilegien des Adels und kann vom Meister Erleichterungen zugesprochen bekommen, wenn er gegenüber Rangniedrigeren agiert.
+ 
 Publikation: Regelwerk Seite 163</description>
     <link>index.php/V_Adel.html</link>
   </advantage>
@@ -17,8 +17,8 @@ Publikation: Regelwerk Seite 163</description>
     <max>0</max>
     <requirements>Vorteil Zauberer, kein Vorteil Affinität zu Elementaren</requirements>
     <rule/>
-    <description>Der Held kann Dämonen leichter zu einem Dienst überreden, wenn er sie selbst beschworen hat. Der Dämon erfüllt ihm einen zusätzlichen Dienst (bis zu einem Maximum von 6 Diensten).
-
+    <description>Regel: Der Held kann Dämonen leichter zu einem Dienst überreden, wenn er sie selbst beschworen hat. Der Dämon erfüllt ihm einen zusätzlichen Dienst (bis zu einem Maximum von 6 Diensten).
+ 
 Publikation: Aventurische Magie Seite 225</description>
     <link>index.php/V_AffinitaetzuDaemonen.html</link>
   </advantage>
@@ -28,10 +28,205 @@ Publikation: Aventurische Magie Seite 225</description>
     <max>0</max>
     <requirements>Vorteil Zauberer, kein Vorteil Affinität zu Dämonen</requirements>
     <rule/>
-    <description>Der Held kann Elementare leichter zu einem Dienst überreden, wenn er sie selbst beschworen hat. Das Elementar erfüllt ihm einen zusätzlichen Dienst (bis zu einem Maximum von 6 Diensten).
-
+    <description>Regel: Der Held kann Elementare leichter zu einem Dienst überreden, wenn er sie selbst beschworen hat. Das Elementar erfüllt ihm einen zusätzlichen Dienst (bis zu einem Maximum von 6 Diensten).
+ 
 Publikation: Aventurische Magie Seite 225</description>
     <link>index.php/V_AffinitaetzuElementaren.html</link>
+  </advantage>
+  <advantage>
+    <name>Ahnenblut  - Feenblut (Blütenfee)</name>
+    <APvalue>15 Abenteuerpunkte</APvalue>
+    <max>0</max>
+    <requirements>kein anderer Ahnenblut-Vorteil</requirements>
+    <rule/>
+    <description>Die Heldin erhält bei Proben auf alle Gesellschaftstalente (außer Einschüchtern und Willenskraft) eine Erleichterung von 1 bei Teilproben auf IN. Sie kann zudem Angriffen besser ausweichen und bekommt einen Bonus von +1 AW, solange sie maximal Kleidung mit einem RS von bis zu 1 trägt. Bei Wissenstalenten erhält sie eine Erschwernis von 1 auf alle Teilproben, die auf KL gehen.
+
+Publikation: -</description>
+    <link>index.php/V_FeenblutBluetenfee.html</link>
+  </advantage>
+  <advantage>
+    <name>Blumenduft</name>
+    <APvalue>8 Abenteuerpunkte</APvalue>
+    <max>0</max>
+    <requirements>Vorteil Feenblut (Blütenfee)</requirements>
+    <rule/>
+    <description>Regel: Die Heldin riecht immer nach einer bestimmten wohlriechenden Blumenart. Sie kann nie unter dem Status Übler Geruch leiden, und sie erhält bei Proben auf Überreden einen Bonus von +1 auf CH, wenn ihr Gegenüber den Blütengeruch mag (ansonsten kann die Probe auch um 1 erschwert sein).
+Publikation: Die Siebenwindküste, Seite 164</description>
+    <link>index.php/blumenduft.html</link>
+  </advantage>
+  <advantage>
+    <name>Einblicke ins Verborgene</name>
+    <APvalue>8 Abenteuerpunkte</APvalue>
+    <max>0</max>
+    <requirements>Vorteil Feenblut (Blütenfee)</requirements>
+    <rule/>
+    <description>Regel: Die Heldin bekommt im Talent Sinnesschärfe eine Erleichterung von 1, wenn sie Zauber mit dem Merkmal Illusion durchschauen will.
+Publikation: Die Siebenwindküste, Seite 165</description>
+    <link>index.php/einblicke-ins-verborgene.html</link>
+  </advantage>
+  <advantage>
+    <name>Leichter Gang</name>
+    <APvalue>10 Abenteuerpunkte</APvalue>
+    <max>0</max>
+    <requirements>Vorteil Feenblut (Blütenfee)</requirements>
+    <rule/>
+    <description>Regel: Die Heldin kann sich schneller bewegen als normale Menschen. Ihre GS erhält einen Bonus von 1. Zudem erhält sie + 1FP bei gelungenen Proben auf Tanzen (bis zu einem Maximum von 18 FP).
+Publikation: Die Siebenwindküste, Seite 165</description>
+    <link>index.php/leichter-gang.html</link>
+  </advantage>
+  <advantage>
+    <name>Ahnenblut  - Feenblut (Dryade)</name>
+    <APvalue>10 Abenteuerpunkte</APvalue>
+    <max>0</max>
+    <requirements>kein anderer Ahnenblut-Vorteil</requirements>
+    <rule/>
+    <description>Die Heldin hat ein gutes Gespür für Bäume und wirkt auf alle humanoiden Spezies verführerisch. Sie erhält bei einer gelungenen Probe auf Pflanzenkunde +1 QS (bis zu einem Maximum von 6 QS), wenn es um Bäume geht, und bei Proben auf Betören einen Bonus von +1 auf beide Teilproben von CH. Dafür erleidet sie eine Erschwernis von 1 bei Proben auf Willenskraft (Betören widerstehen).
+
+Publikation: -</description>
+    <link>index.php/V_FeenblutDryade.html</link>
+  </advantage>
+  <advantage>
+    <name>Harmonie des Waldes</name>
+    <APvalue>10 Abenteuerpunkte</APvalue>
+    <max>0</max>
+    <requirements>Vorteil Feenblut (Dryade)</requirements>
+    <rule/>
+    <description>Regel: Befindet die Heldin sich in einem Wald, so kann sie einmal am Tag eine Probe auf Willenskraft ablegen, um QS/2 Zustandsstufen von Betäubung, Furcht, Paralyse oder Schmerz abzubauen. Wenn mehrere Stufen auf diese Weise aufgehoben werden können, können diese zwischen den Zuständen aufgeteilt werden (z. B. 1 Stufe Furcht und 2 Stufen Betäubung). Die Probe abzulegen dauert 1 Minute.
+Publikation: Die Siebenwindküste, Seite 165</description>
+    <link>index.php/harmonie-des-waldes.html</link>
+  </advantage>
+  <advantage>
+    <name>Kraft der Bäume</name>
+    <APvalue>10 Abenteuerpunkte</APvalue>
+    <max>0</max>
+    <requirements>Vorteil Feenblut (Dryade)</requirements>
+    <rule/>
+    <description>Regel: Schläft die Heldin unter einem Baum, kann sie einmal am Tag einen Teil von dessen Lebenskraft in sich aufnehmen. Sie regeneriert dadurch 1W3 LeP. Hierfür muss sie jedoch mindestens eine halbe Stunde unter dem Baum schlafen.
+Publikation: Die Siebenwindküste, Seite 165</description>
+    <link>index.php/kraft-der-baeume.html</link>
+  </advantage>
+  <advantage>
+    <name>Verführerische Gestalt</name>
+    <APvalue>10 Abenteuerpunkte</APvalue>
+    <max>0</max>
+    <requirements>Vorteil Feenblut (Dryade)</requirements>
+    <rule/>
+    <description>Regel: Dieser Vorteil eröffnet eine Einsatzmöglichkeit des Talents Betören (Anbändeln). Wenn die Heldin sich verführerisch und charmant gibt, kann sie mehrere Personen in ihren Bann ziehen, sodass diese als leicht abgelenkt gelten und sie z. B. bei Proben auf Sinnesschärfe eine Erschwernis von 1 erhalten. Die Spielerin würfelt hierzu eine Probe auf Betören (Anbändeln). Die Reichweite der Wirkung liegt bei QS x 3 Schritt, maximal kann die Abenteurerin QS Personen ihrer Wahl durch die Wirkung beeinflussen. Die Wirkung hält 5 Minuten an und kann nicht in einem Kampf eingesetzt werden.
+Publikation: Die Siebenwindküste, Seite 166</description>
+    <link>index.php/verfuehrerische-gestalt.html</link>
+  </advantage>
+  <advantage>
+    <name>Ahnenblut  - Feenblut (Großer Eberbiestinger)</name>
+    <APvalue>10 Abenteuerpunkte</APvalue>
+    <max>0</max>
+    <requirements>kein anderer Ahnenblut-Vorteil</requirements>
+    <rule/>
+    <description>Der Held erhält bei einer gelungenen Probe auf Tierkunde +1 FP (bis zu einem Maximum von 18 FP). Außerdem friert er kaum, da ihm selbst im Winter aufgrund eines dichten Fells am Körper warm ist. Bei der Bestimmung von Kälteschaden schützt der Vorteil wie Dicke Wollsachen (Kältestufe –1, Regelwerk Seite 346). Bei Proben auf Willenskraft, die zum Widerstehen von Einschüchtern (Provokation) dienen, erleidet der Held eine zusätzliche Erschwernis von 1.
+
+Publikation: -</description>
+    <link>index.php/V_FeenblutGroßerEberbiestinger.html</link>
+  </advantage>
+  <advantage>
+    <name>Animalistische Kraft</name>
+    <APvalue>12 Abenteuerpunkte</APvalue>
+    <max>0</max>
+    <requirements>Vorteil Feenblut (Großer Biestinger)</requirements>
+    <rule/>
+    <description>Regel: Einmal am Tag kann der Held eine Probe auf Selbstbeherrschung ablegen. Er erhält bei Gelingen für 1 Minute QS/2 zu seiner Körperkraft. Dies kann auch den Schadensbonus erhöhen, ändert aber nichts an weiteren abgeleiteten Werten. Diese Fähigkeit zu aktivieren dauert 1 Aktion. Nach dem Ende der Wirkung erhält der Held 1 Stufe Betäubung.
+Publikation: Die Siebenwindküste, Seite 164</description>
+    <link>index.php/animalistische-kraft.html</link>
+  </advantage>
+  <advantage>
+    <name>Dickes Fell</name>
+    <APvalue>15 Abenteuerpunkte</APvalue>
+    <max>0</max>
+    <requirements>Vorteil Feenblut (Großer Biestinger)</requirements>
+    <rule/>
+    <description>Regel: Der Held weist einen natürlichen RS von 1 auf. Dieser kann mit dem RS von Rüstungen kombiniert werden, aber nur bis zu einem Wert von insgesamt RS 4.
+Publikation: Die Siebenwindküste, Seite 165</description>
+    <link>index.php/dickes-fell.html</link>
+  </advantage>
+  <advantage>
+    <name>Tierische Kampfgefährten</name>
+    <APvalue>12 Abenteuerpunkte</APvalue>
+    <max>0</max>
+    <requirements>Vorteil Feenblut (Großer Biestinger)</requirements>
+    <rule/>
+    <description>Regel: Gelingt dem Helden eine Probe auf Tierkunde (Wildtiere), so stürzen sich Säugetiere und/oder Vögel der Größenkategorie winzig auf bis zu 3 vom Helden benannte Feinde, die nicht weiter als 16 Schritt von ihm entfernt sein dürfen. Die Gegner erleiden durch die kleinen Tiere für QS/2 KR eine Erschwernis von 1 auf alle Proben inklusive AT, PA, AW und FK. Nach diesem Zeitraum ziehen sich die Tiere wieder zurück. Diese Fähigkeit kann nur einmal am Tag genutzt werden und setzt zudem die Anwesenheit der Tiere in einer Umgebung von bis zu 64 Schritt Radius um den Helden voraus. Der Meister kann bei einer zu kleinen Zahl an Tieren auch die Anzahl der abgelenkten Feinde begrenzen (auch auf bis zu 0). Der Einsatz kostet 1 freie Aktion.
+Publikation: Die Siebenwindküste, Seite 165f</description>
+    <link>index.php/tierische-kampfgefaehrten.html</link>
+  </advantage>
+  <advantage>
+    <name>Ahnenblut  - Feenblut (Nixer)</name>
+    <APvalue>10 Abenteuerpunkte</APvalue>
+    <max>0</max>
+    <requirements>kein Ahnenblut-Vorteil</requirements>
+    <rule/>
+    <description>Die Haut des Helden fühlt sich feucht an, als würde er gerade aus dem Wasser kommen. Haltegriffe gegen ihn sind daher um 2 erschwert, und Proben auf Fesseln (Fesselungen) gegen ihn sind zusätzlich zu allen weiteren Modifikatoren um 1 Punkt erschwert. Der Held erhält bei einer gelungenen Probe auf Schwimmen
+
+Publikation: -</description>
+    <link>index.php/V_FeenblutNixer.html</link>
+  </advantage>
+  <advantage>
+    <name>Glatte Haut</name>
+    <APvalue>5 Abenteuerpunkte</APvalue>
+    <max>0</max>
+    <requirements>Vorteil Feenblut (Nixer)</requirements>
+    <rule/>
+    <description>Regel: Die Haut des Helden ist elastisch und glatt. Dadurch gleiten alle Nahkampfwaffen im Kampf ab, wenn bei der TP-Bestimmung das minimale Ergebnis erwürfelt wurde. Der Held erleidet dann keinen Schaden. Diese Regel findet jedoch nur Anwendung, wenn der RS des Helden maximal 2 beträgt.
+Publikation: Die Siebenwindküste, Seite 165</description>
+    <link>index.php/glatte-haut.html</link>
+  </advantage>
+  <advantage>
+    <name>Seesprache</name>
+    <APvalue>10 Abenteuerpunkte</APvalue>
+    <max>0</max>
+    <requirements>Vorteil Feenblut (Nixer)</requirements>
+    <rule/>
+    <description>Regel: Der Held kann sich mit allen Süß- und Salzwassertieren unterhalten. Je nach KL des Tiers kann es unterschiedlich gut Auskunft geben, das Gespräch ist dabei jedoch immer durch die tierische Intelligenz begrenzt. Tiefgreifende Diskussionen sind daher nicht zu erwarten.
+Publikation: Die Siebenwindküste, Seite 165</description>
+    <link>index.php/seesprache.html</link>
+  </advantage>
+  <advantage>
+    <name>Wasser des Lebens</name>
+    <APvalue>10 Abenteuerpunkte</APvalue>
+    <max>0</max>
+    <requirements>Vorteil Feenblut (Nixer)</requirements>
+    <rule/>
+    <description>Regel: Gelangt der Held in Kontakt mit einer größeren Menge an Wasser (z. B.: aus Meer, Bach, Fluss oder See), kann er eine Regenerationsphase des angebrochenen Tages sofort nutzen. Die nächste reguläre Regenerationsphase danach entfällt für diesen Helden dann jedoch. Die Regeneration dauert 5 Minuten.
+Publikation: Die Siebenwindküste, Seite 166</description>
+    <link>index.php/wasser-des-lebens.html</link>
+  </advantage>
+  <advantage>
+    <name>Ahnenblut  - Wolfsblut</name>
+    <APvalue>15 Abenteuerpunkte</APvalue>
+    <max>0</max>
+    <requirements>Spezies Mensch (Nivese), Kultur Nivesen</requirements>
+    <rule/>
+    <description>Der Held verfügt über feine Sinne und hat ein Talent darin, Spuren zu folgen. Er erhält bei einer gelungenen Probe auf Fährtensuchen und Sinnesschärfe +1 QS (bis zu einem Maximum von 6 QS). Allerdings lenkt ihn der Vollmond so stark ab, dass alle Proben in der Vollmondnacht und an dem Tag davor und danach um 1 erschwert sind.
+
+Publikation: Aventurische Magie 3, Seite 208</description>
+    <link>index.php/wolfsblut.html</link>
+  </advantage>
+  <advantage>
+    <name>Wolfsgebiss</name>
+    <APvalue>15 Abenteuerpunkte</APvalue>
+    <max>0</max>
+    <requirements>Vorteil Wolfsblut</requirements>
+    <rule/>
+    <description>Regel: Der Held kann sich innerhalb 1 Aktion ein Wolfsgebiss wachsen lassen und damit im Nahkampf mehr Schaden verursachen. Er benutzt dazu eine Raufen-AT und richtet +1 TP im Waffenlosen Kampf an. Zudem kann er die Sonderfertigkeit Verbeißen einsetzen. Die Rückverwandlung zu einem normalen Gebiss dauert ebenfalls 1 Aktion. Außerdem erzielt er, während die Verwandlung andauert, bei Proben auf Einschüchtern +1 FP (bis zu einem Maximum von 18 FP).
+Publikationen:Aventurische Magie 3, Seite 208</description>
+    <link>index.php/ahn_wolfsgebiss.html</link>
+  </advantage>
+  <advantage>
+    <name>Wolfskind</name>
+    <APvalue>20 Abenteuerpunkte</APvalue>
+    <max>0</max>
+    <requirements>Vorteil Wolfsblut</requirements>
+    <rule/>
+    <description>Regel: Die Heldin kann sich in einen Grimwolf verwandeln (siehe Aventurischer Almanach Seite 168). Dazu benötigt sie 4 Aktionen. Während der Wirkungsdauer verwendet die Heldin die körperlichen Werte des Tieres, einschließlich seiner Eigenschaften, Talente und Kampfwerte. Eine niedrige LE wird bei der Verwandlung anteilsmäßig angerechnet, gleiches geschieht bei der Rückverwandlung. Die geistigen Werte der Heldin bleiben ebenso wie ihr Bewusstsein erhalten. Die Verwandlung betrifft nur die Heldin selbst, nicht ihre Kleidung oder Ausrüstung. Die Wirkungsdauer beträgt 1 Stunde. Die Heldin kann sich nicht willentlich zurückverwandeln. Am Ende der Wirkungsdauer erleidet die Heldin 1 Stufe Betäubung.
+Publikationen:Aventurische Magie 3, Seite 208</description>
+    <link>index.php/ahn_wolfskind.html</link>
   </advantage>
   <advantage>
     <name>Akoluth</name>
@@ -39,8 +234,8 @@ Publikation: Aventurische Magie Seite 225</description>
     <max>0</max>
     <requirements>kein Vorteil Geweihter, Nachteil Prinzipientreue (Moralkodex einer Kirche), Verpflichtungen (Kirche)</requirements>
     <rule/>
-    <description>Ein Akoluth verfügt über die Fähigkeit, einen Geweihten einer einzigen ausgewählten Kirche bei Liturgien zu unterstützen. Es muss sich um die Kirche handeln, für die er vorher die Prinzipientreue und die Verpflichtungen erworben hat. Sollte ein Akoluth bei einer Liturgie genauso viele Aktionen aufwenden, wie für die Liturgiedauer notwendig sind, erhält der Geweihte eine Erleichterung von 1 für die Liturgie. Der Akoluth muss sich in einem Radius von 3 Schritt um den Geweihten aufhalten, damit die Unterstützung funktioniert. Dieser Effekt ist nicht kumulativ mit weiteren Akoluthen.
-
+    <description>Regel: Ein Akoluth verfügt über die Fähigkeit, einen Geweihten einer einzigen ausgewählten Kirche bei Liturgien zu unterstützen. Es muss sich um die Kirche handeln, für die er vorher die Prinzipientreue und die Verpflichtungen erworben hat. Sollte ein Akoluth bei einer Liturgie genauso viele Aktionen aufwenden, wie für die Liturgiedauer notwendig sind, erhält der Geweihte eine Erleichterung von 1 für die Liturgie. Der Akoluth muss sich in einem Radius von 3 Schritt um den Geweihten aufhalten, damit die Unterstützung funktioniert. Dieser Effekt ist nicht kumulativ mit weiteren Akoluthen.
+ 
 Publikation: Aventurisches Götterwirken I Seite 227</description>
     <link>index.php/V_Akoluth.html</link>
   </advantage>
@@ -50,8 +245,8 @@ Publikation: Aventurisches Götterwirken I Seite 227</description>
     <max>0</max>
     <requirements>Ein gewöhnlicher Name ohne großen Wiedererkennungswert, kein Vorteil Heldenhafter Name oder Nachteil Lächerlicher Name, Schurkenname oder Unpassender Name. Elfen können diesen  Vorteil nicht wählen, da sie über keine Allerweltsnamen verfügen.</requirements>
     <rule/>
-    <description>Ein Held mit diesem Vorteil ist schwer ausfindig  zu machen, weil sich niemand seinen Namen merken  kann oder ihn mit einem Träger eines ähnlichen Namens verwechselt. Die Teilprobe auf Klugheit bei Proben auf Gassenwissen (Informationsbeschaffung) ist um 1  erschwert, wenn es darum geht, den Helden ausfindig  zu machen oder Informationen über ihn zu sammeln.
-
+    <description>Regel: Ein Held mit diesem Vorteil ist schwer ausfindig  zu machen, weil sich niemand seinen Namen merken  kann oder ihn mit einem Träger eines ähnlichen Namens verwechselt. Die Teilprobe auf Klugheit bei Proben auf Gassenwissen (Informationsbeschaffung) ist um 1  erschwert, wenn es darum geht, den Helden ausfindig  zu machen oder Informationen über ihn zu sammeln.
+ 
 Publikation: Aventurische Namen Seite 89</description>
     <link>index.php/aller.html</link>
   </advantage>
@@ -61,19 +256,20 @@ Publikation: Aventurische Namen Seite 89</description>
     <max>0</max>
     <requirements>Spezies, Kultur oder Profession muss Altersresistenz als automatischen oder empfohlenen Vorteil aufweisen, kein Nachteil Schnelle Alterung</requirements>
     <rule/>
-    <description>Der Held ist immun gegen natürliche wie magische Alterungserscheinungen. Negative Auswirkungen des Alters werden bei ihm nicht berücksichtigt.
-
+    <description>Regel: Der Held ist immun gegen natürliche wie magische Alterungserscheinungen. Negative Auswirkungen des Alters werden bei ihm nicht berücksichtigt.
+ 
 Publikation: Regelwerk Seite 163</description>
     <link>index.php/V_Altersresistenz.html</link>
   </advantage>
   <advantage>
     <name>Angenehmer Geruch</name>
-    <APvalue>keine</APvalue>
+    <APvalue>6 Abenteuerpunkte</APvalue>
     <max>0</max>
-    <requirements>1 Schritt Radius</requirements>
+    <requirements>keine</requirements>
     <rule/>
-    <description>Fertigkeitsproben auf Betören (Anbändeln, Liebeskünste) sind um 1 erleichtert.
-
+    <description>Regel: Fertigkeitsproben auf Betören (Anbändeln, Liebeskünste) sind um 1 erleichtert.
+Reichweite: 1 Schritt Radius
+ 
 Publikation: Regelwerk Seite 163</description>
     <link>index.php/V_AngenehmerGeruch.html</link>
   </advantage>
@@ -83,8 +279,8 @@ Publikation: Regelwerk Seite 163</description>
     <max>0</max>
     <requirements>Der Held muss einen Basilisken getötet haben.</requirements>
     <rule/>
-    <description>Basiliskentöter werden respektvoll behandelt, erhalten regelmäßig Einladungen zu Festen der gehobenen Gesellschaft und oftmals kostenlos Speis und Trank in Tavernen. Der Held wird so behandelt, als hätte er einen um 2 höheren sozialen Rang als üblich (siehe Regelwerk Seite 338). Das Gegenüber muss aber wissen oder zumindest glauben, dass der Held ein Basiliskentöter ist, damit der Bonus zählt.
-
+    <description>Regel: Basiliskentöter werden respektvoll behandelt, erhalten regelmäßig Einladungen zu Festen der gehobenen Gesellschaft und oftmals kostenlos Speis und Trank in Tavernen. Der Held wird so behandelt, als hätte er einen um 2 höheren sozialen Rang als üblich (siehe Regelwerk Seite 338). Das Gegenüber muss aber wissen oder zumindest glauben, dass der Held ein Basiliskentöter ist, damit der Bonus zählt.
+ 
 Publikation: Aventurisches Bestiarium Seite 120</description>
     <link>index.php/V_Basiliskentöter.html</link>
   </advantage>
@@ -94,9 +290,8 @@ Publikation: Aventurisches Bestiarium Seite 120</description>
     <max>0</max>
     <requirements>keine</requirements>
     <rule/>
-    <description>Beim Abschleppen (siehe Seite 36) hat der Held mehr Erfolg als andere Personen. Bei der Probe auf Betören(Liebeskünste) zum Abschleppen bekommt er +1 FP (bis zu einem Maximum von 18 FP). Alternativ kann der Spieler auch beschließen, mehrere Personen gleichzeitig abzuschleppen. Die Probe ist dann jedoch pro Person, die er abschleppen will, um 2 erschwert. Dieser Vorteil kann mit der Sonderfertigkeit Abschleppspezialist/in (siehe Seite 41 Aventurisches Kompendium 2) kombiniert werden. Damit bekommt der Held +2 FP oder die Probe zum Abschleppen von mehreren Personen ist pro Person nur um 1 erschwert.
-
-Publikation: (en):Aventurisches Kompendium 2 Seite 40</description>
+    <description>Regel: Beim Abschleppen (siehe Seite 36) hat der Held mehr Erfolg als andere Personen. Bei der Probe auf Betören(Liebeskünste) zum Abschleppen bekommt er +1 FP (bis zu einem Maximum von 18 FP). Alternativ kann der Spieler auch beschließen, mehrere Personen gleichzeitig abzuschleppen. Die Probe ist dann jedoch pro Person, die er abschleppen will, um 2 erschwert. Dieser Vorteil kann mit der Sonderfertigkeit Abschleppspezialist/in (siehe Seite 41 Aventurisches Kompendium 2) kombiniert werden. Damit bekommt der Held +2 FP oder die Probe zum Abschleppen von mehreren Personen ist pro Person nur um 1 erschwert.
+Publikation(en):Aventurisches Kompendium 2 Seite 40</description>
     <link>index.php/Vorteil_Begabte_Aufreißein.html</link>
   </advantage>
   <advantage>
@@ -105,8 +300,8 @@ Publikation: (en):Aventurisches Kompendium 2 Seite 40</description>
     <max>0</max>
     <requirements>kein Nachteil Unfähig für diese Fertigkeit, nicht mehr als drei Begabungen pro Person</requirements>
     <rule/>
-    <description>Ein begabter Abenteurer kann bei jeder Probe auf eine bestimmte Fertigkeit einen W20 neu würfeln. Der Spieler kann zunächst die 3W20 würfeln und sich eines der drei Ergebnisse aussuchen, dass er neu würfeln kann. Es gilt das bessere Ergebnis beider Würfe. Eine Begabung muss für jede Fertigkeit einzeln gewählt werden, also zum Beispiel auf ein bestimmtes Talent, einen Zauber oder eine Liturgie. Man kann nicht mehrfach in einer Fertigkeit begabt sein und somit zwei oder gar drei W20-Würfe in einer Probe wiederholen. Fällt eine Doppel-20 oder Dreifach-20 kann man diesen Vorteil nicht nutzen. Eine Begabung kann nur für eine Fertigkeit, nicht aber für eine Kampftechnik gewählt werden (dafür gibt es jedoch den Vorteil Waffenbegabung). Ein Einsatz von Schicksalspunkten ist vor oder nach dem Einsatz einer Begabung erlaubt (siehe Seite 29). Dadurch ist es möglich, mehrfach neu zu würfeln oder eine andere Wirkung der Schicksalspunkte mit der Begabung zu kombinieren.
-
+    <description>Regel: Ein begabter Abenteurer kann bei jeder Probe auf eine bestimmte Fertigkeit einen W20 neu würfeln. Der Spieler kann zunächst die 3W20 würfeln und sich eines der drei Ergebnisse aussuchen, dass er neu würfeln kann. Es gilt das bessere Ergebnis beider Würfe. Eine Begabung muss für jede Fertigkeit einzeln gewählt werden, also zum Beispiel auf ein bestimmtes Talent, einen Zauber oder eine Liturgie. Man kann nicht mehrfach in einer Fertigkeit begabt sein und somit zwei oder gar drei W20-Würfe in einer Probe wiederholen. Fällt eine Doppel-20 oder Dreifach-20 kann man diesen Vorteil nicht nutzen. Eine Begabung kann nur für eine Fertigkeit, nicht aber für eine Kampftechnik gewählt werden (dafür gibt es jedoch den Vorteil Waffenbegabung). Ein Einsatz von Schicksalspunkten ist vor oder nach dem Einsatz einer Begabung erlaubt (siehe Seite 29). Dadurch ist es möglich, mehrfach neu zu würfeln oder eine andere Wirkung der Schicksalspunkte mit der Begabung zu kombinieren.
+ 
 Publikation: Regelwerk Seite 163</description>
     <link>index.php/V_Begabung.html</link>
   </advantage>
@@ -116,8 +311,8 @@ Publikation: Regelwerk Seite 163</description>
     <max>0</max>
     <requirements>keine</requirements>
     <rule/>
-    <description>Der Held erleidet keine Erschwernisse bei Fertigkeitsproben, wenn er die falsche Hand benutzt. Im Kampf hebt der Vorteil alle Abzüge auf, die durch das Führen einer Waffe mit der falschen Hand anfallen.
-
+    <description>Regel: Der Held erleidet keine Erschwernisse bei Fertigkeitsproben, wenn er die falsche Hand benutzt. Im Kampf hebt der Vorteil alle Abzüge auf, die durch das Führen einer Waffe mit der falschen Hand anfallen.
+ 
 Publikation: Regelwerk Seite 164</description>
     <link>index.php/V_Beidhändig.html</link>
   </advantage>
@@ -127,9 +322,8 @@ Publikation: Regelwerk Seite 164</description>
     <max>0</max>
     <requirements>Paktgeschenk Zauberei mit Lebenskraft</requirements>
     <rule/>
-    <description>Der Held wird zum Zauberer, obwohl er nicht mit der Gabe der Zauberei geboren wurde. Er verfügt nicht über einen eigenen AsP-Vorrat, sondern zaubert stattdessen mit seiner Lebensenergie. Dabei sind Lebenspunkte doppelt so viel Wert wie AsP, sodass ein Zauber, der 7 AsP kosten würde, den Helden nur 4 LeP kosten. Hat der Held einen eigenen AsP-Vorrat, kann er sich bei jedem Zauber entscheiden, ob er mit AsP oder LeP zaubern möchte.
-
-Publikation: Aventurische Magie 3, Seite 208Aventurische Magie 3 Bonusmaterial und Errata, Seite 7</description>
+    <description>Wirkung: Der Held wird zum Zauberer, obwohl er nicht mit der Gabe der Zauberei geboren wurde. Er verfügt nicht über einen eigenen AsP-Vorrat, sondern zaubert stattdessen mit seiner Lebensenergie. Dabei sind Lebenspunkte doppelt so viel Wert wie AsP, sodass ein Zauber, der 7 AsP kosten würde, den Helden nur 4 LeP kosten. Hat der Held einen eigenen AsP-Vorrat, kann er sich bei jedem Zauber entscheiden, ob er mit AsP oder LeP zaubern möchte.
+Publikationen:Aventurische Magie 3, Seite 208Aventurische Magie 3 Bonusmaterial und Errata, Seite 7</description>
     <link>index.php/V_Blutzauberer.html</link>
   </advantage>
   <advantage>
@@ -138,8 +332,8 @@ Publikation: Aventurische Magie 3, Seite 208Aventurische Magie 3 Bonusmaterial u
     <max>0</max>
     <requirements>Der Held muss einen echten Drachen getötet haben.</requirements>
     <rule/>
-    <description>Drachentöter werden respektvoll behandelt, erhalten regelmäßig Einladungen zu Festen der gehobenen Gesellschaft und oftmals kostenlos Speis und Trank in Tavernen. Der Held wird so behandelt, als hätte er einen um 1 höheren sozialen Rang als üblich (siehe Regelwerk Seite 338). Das Gegenüber muss aber wissen oder zumindest glauben, dass der Held ein Drachentöter ist, damit der Bonus zählt. Der Held erhält zudem einen Bonus von +1 TP gegen alle Drachen, sowohl gegenüber echten als auch niederen Drachen.
-
+    <description>Regel: Drachentöter werden respektvoll behandelt, erhalten regelmäßig Einladungen zu Festen der gehobenen Gesellschaft und oftmals kostenlos Speis und Trank in Tavernen. Der Held wird so behandelt, als hätte er einen um 1 höheren sozialen Rang als üblich (siehe Regelwerk Seite 338). Das Gegenüber muss aber wissen oder zumindest glauben, dass der Held ein Drachentöter ist, damit der Bonus zählt. Der Held erhält zudem einen Bonus von +1 TP gegen alle Drachen, sowohl gegenüber echten als auch niederen Drachen.
+ 
 Publikation: Aventurisches Bestiarium Seite 120</description>
     <link>index.php/V_Drachentöter.html</link>
   </advantage>
@@ -149,20 +343,21 @@ Publikation: Aventurisches Bestiarium Seite 120</description>
     <max>2</max>
     <requirements>Spezies, Kultur oder Profession muss Dunkelsicht als automatischen oder empfohlenen Vorteil aufweisen, kein Nachteil Nachtblind</requirements>
     <rule/>
-    <description>Auf Stufe I werden Erschwernisse durch Dunkelheit um eine Stufe gesenkt, auf Stufe II können alle Erschwernisse durch Dunkelheit ignoriert werden. Bei vollständiger Finsternis ist aber Dunkelsicht (egal ob Stufe I oder II) wirkungslos und es gelten die Abzüge für vollständige Finsternis.
-
+    <description>Regel: Auf Stufe I werden Erschwernisse durch Dunkelheit um eine Stufe gesenkt, auf Stufe II können alle Erschwernisse durch Dunkelheit ignoriert werden. Bei vollständiger Finsternis ist aber Dunkelsicht (egal ob Stufe I oder II) wirkungslos und es gelten die Abzüge für vollständige Finsternis.
+ 
 Publikation: Regelwerk Seite 164</description>
     <link>index.php/V_Dunkelsicht.html</link>
   </advantage>
   <advantage>
     <name>Einkommen</name>
-    <APvalue/>
+    <APvalue> Stufe I: gratis, Stufe II: 2 Abenteuerpunkte, Stufe III: 6 Abenteuerpunkte, Stufe IV: 20 Abenteuerpunkte, Stufe V: 60 Abenteuerpunkte, Stufe VI: 200 Abenteuerpunkte</APvalue>
     <max>6</max>
-    <requirements> Stufe I: gratis, Stufe II: 2 Abenteuerpunkte, Stufe III: 6 Abenteuerpunkte, Stufe IV: 20 Abenteuerpunkte, Stufe V: 60 Abenteuerpunkte, Stufe VI: 200 Abenteuerpunkte</requirements>
+    <requirements>-</requirements>
     <rule/>
-    <description>Für jede Stufe dieses Vorteils bekommt der Held die gleiche Stufe als dauerhaften Lebensstil. Das verdiente Geld des Vorteils fließt ausschließlich in den Erhalt des Lebensstils. Extrakosten wie Waffen, Rüstungen und andere Ausrüstung muss der Held von seinem Startkapital oder seinen Erwerbungen während des Spiels bezahlen. Alles was über den Lebensstil hinausgeht, muss allerdings extra gezahlt werden.
-
-Publikation: (en):Aventurisches Kompendium 2 Seite 48</description>
+    <description>Regel: Für jede Stufe dieses Vorteils bekommt der Held die gleiche Stufe als dauerhaften Lebensstil. Das verdiente Geld des Vorteils fließt ausschließlich in den Erhalt des Lebensstils. Extrakosten wie Waffen, Rüstungen und andere Ausrüstung muss der Held von seinem Startkapital oder seinen Erwerbungen während des Spiels bezahlen. Alles was über den Lebensstil hinausgeht, muss allerdings extra gezahlt werden.
+AP-Wert: Stufe I: gratis, Stufe II: 2 Abenteuerpunkte, Stufe III: 6 Abenteuerpunkte, Stufe IV: 20 Abenteuerpunkte, Stufe V: 60 Abenteuerpunkte, Stufe VI: 200 Abenteuerpunkte
+ 
+Publikation(en):Aventurisches Kompendium 2 Seite 48</description>
     <link>index.php/V_Einkommen.html</link>
   </advantage>
   <advantage>
@@ -171,8 +366,8 @@ Publikation: (en):Aventurisches Kompendium 2 Seite 48</description>
     <max>0</max>
     <requirements>Vorteil Zauberer</requirements>
     <rule/>
-    <description>Wer diesen Vorteil aufweist, erleidet durch den Bann des Eisens lediglich pro vollen 4 Stein Gewicht Erschwernisse, anstatt bereits bei 2 vollen Stein.
-
+    <description>Regel: Wer diesen Vorteil aufweist, erleidet durch den Bann des Eisens lediglich pro vollen 4 Stein Gewicht Erschwernisse, anstatt bereits bei 2 vollen Stein.
+ 
 Publikation: Regelwerk Seite 164</description>
     <link>index.php/V_EisenaffineAura.html</link>
   </advantage>
@@ -182,19 +377,20 @@ Publikation: Regelwerk Seite 164</description>
     <max>0</max>
     <requirements>keine</requirements>
     <rule/>
-    <description>Die Wundschwelle des Helden steigt durch den Vorteil um 1.
-
+    <description>Regel: Die Wundschwelle des Helden steigt durch den Vorteil um 1.
+ 
 Publikation: Aventurisches Kompendium Seite 132</description>
     <link>index.php/Eisern.html</link>
   </advantage>
   <advantage>
     <name>Entfernungssinn</name>
-    <APvalue>kein Nachteil Blind, Eingeschränkter Sinn (Sicht), Farbenblind oder Verstümmelt (Einäugig)</APvalue>
+    <APvalue>10 Abenteuerpunkte</APvalue>
     <max>0</max>
-    <requirements>200 Schritt, darüber hinaus sind Distanzschätzungen ungenauer</requirements>
+    <requirements>kein Nachteil Blind, Eingeschränkter Sinn (Sicht), Farbenblind oder Verstümmelt (Einäugig)</requirements>
     <rule/>
-    <description>Proben auf Fernkampf mit Schusswaffen (und nur mit Schusswaffen) sind bei der Entfernungskategorie Weit nur um 1 anstatt um 2 erschwert.
-
+    <description>Regel: Proben auf Fernkampf mit Schusswaffen (und nur mit Schusswaffen) sind bei der Entfernungskategorie Weit nur um 1 anstatt um 2 erschwert.
+Reichweite: 200 Schritt, darüber hinaus sind Distanzschätzungen ungenauer
+ 
 Publikation: Regelwerk Seite 164</description>
     <link>index.php/V_Entfernungssinn.html</link>
   </advantage>
@@ -204,8 +400,8 @@ Publikation: Regelwerk Seite 164</description>
     <max>0</max>
     <requirements>kein Vorteil Hass auf Feen (und deren Untergruppen), keine Schlechte Eigenschaft Vorurteile gegen Feen</requirements>
     <rule/>
-    <description>Proben auf Überreden (Aufschwatzen, Herausreden, Manipulieren, Schmeicheln), um Feen freundlich zu stimmen, gelten bei Gelingen der Probe als um 1 QS besser. Allerdings kann sich so die QS nie über 6 hinaus erhöhen.
-
+    <description>Regel: Proben auf Überreden (Aufschwatzen, Herausreden, Manipulieren, Schmeicheln), um Feen freundlich zu stimmen, gelten bei Gelingen der Probe als um 1 QS besser. Allerdings kann sich so die QS nie über 6 hinaus erhöhen.
+ 
 Publikation: Aventurisches Bestiarium Seite 120</description>
     <link>index.php/V_Feenfreund.html</link>
   </advantage>
@@ -215,19 +411,20 @@ Publikation: Aventurisches Bestiarium Seite 120</description>
     <max>0</max>
     <requirements>kein Nachteil Behäbig, Fettleibig oder Verstümmelt (Einbeinig)</requirements>
     <rule/>
-    <description>Durch Flink bekommt ein Held 1 Punkt auf seinen Geschwindigkeit-Grundwert hinzu.
-
+    <description>Regel: Durch Flink bekommt ein Held 1 Punkt auf seinen Geschwindigkeit-Grundwert hinzu.
+ 
 Publikation: Regelwerk Seite 165</description>
     <link>index.php/V_Flink.html</link>
   </advantage>
   <advantage>
     <name>Fuchssinn</name>
-    <APvalue>keine</APvalue>
+    <APvalue>15 Abenteuerpunkte</APvalue>
     <max>0</max>
-    <requirements>10 Schritt</requirements>
+    <requirements>keine</requirements>
     <rule/>
-    <description>Der Held kann Fallen erspüren, die mit den herkömmlichen Sinnen nicht entdeckt werden können. Durch den Vorteil wird das Anwendungsgebiet Fuchssinn im Talent Sinnesschärfe erworben.
-
+    <description>Regel: Der Held kann Fallen erspüren, die mit den herkömmlichen Sinnen nicht entdeckt werden können. Durch den Vorteil wird das Anwendungsgebiet Fuchssinn im Talent Sinnesschärfe erworben.
+Reichweite: 10 Schritt
+ 
 Publikation: Regelwerk Seite 165</description>
     <link>index.php/V_Fuchssinn.html</link>
   </advantage>
@@ -237,8 +434,8 @@ Publikation: Regelwerk Seite 165</description>
     <max>0</max>
     <requirements>kein Nachteil Stumm</requirements>
     <rule/>
-    <description>Proben auf das Talent Bekehren &amp; Überzeugen (öffentliche Rede) sind um 1 erleichtert.
-
+    <description>Regel: Proben auf das Talent Bekehren &amp; Überzeugen (öffentliche Rede) sind um 1 erleichtert.
+ 
 Publikation: Regelwerk Seite 165</description>
     <link>index.php/V_GeborenerRedner.html</link>
   </advantage>
@@ -248,8 +445,8 @@ Publikation: Regelwerk Seite 165</description>
     <max>0</max>
     <requirements>keine</requirements>
     <rule/>
-    <description>Der Geweihte erhält als Karmaenergie-Grundwert 20 KaP. Der Vorteil beinhaltet nicht die Sonderfertigkeit Tradition. Diese muss einzeln erworben werden. Jeder Geweihte muss mit einer Tradition starten (eine Tradition ist eine spezielle Sonderfertigkeit). Ein Held kann auch im späteren Verlauf seines Lebens diesen Vorteil erwerben und Geweihter werden. Allerdings kann man nur eine geweihte Tradition besitzen. Ein Erwerb einer weiteren geweihten Tradition ist nicht möglich.
-
+    <description>Regel: Der Geweihte erhält als Karmaenergie-Grundwert 20 KaP. Der Vorteil beinhaltet nicht die Sonderfertigkeit Tradition. Diese muss einzeln erworben werden. Jeder Geweihte muss mit einer Tradition starten (eine Tradition ist eine spezielle Sonderfertigkeit). Ein Held kann auch im späteren Verlauf seines Lebens diesen Vorteil erwerben und Geweihter werden. Allerdings kann man nur eine geweihte Tradition besitzen. Ein Erwerb einer weiteren geweihten Tradition ist nicht möglich.
+ 
 Publikation: Regelwerk Seite 165</description>
     <link>index.php/V_Geweihter.html</link>
   </advantage>
@@ -259,8 +456,8 @@ Publikation: Regelwerk Seite 165</description>
     <max>2</max>
     <requirements>kein Nachteil Giftanfällig</requirements>
     <rule/>
-    <description>Eine Giftresistenz verbessert Zähigkeit und Seelenkraft um 1 pro Stufe, wenn es darum geht, Giften zu widerstehen.
-
+    <description>Regel: Eine Giftresistenz verbessert Zähigkeit und Seelenkraft um 1 pro Stufe, wenn es darum geht, Giften zu widerstehen.
+ 
 Publikation: Regelwerk Seite 165</description>
     <link>index.php/V_Giftresistenz.html</link>
   </advantage>
@@ -270,8 +467,8 @@ Publikation: Regelwerk Seite 165</description>
     <max>3</max>
     <requirements>kein Nachteil Pech</requirements>
     <rule/>
-    <description>Das für den Helden erreichbare Maximum an Schicksalspunkten steigt hierdurch um 1 je Stufe und der Held er erhält diesen Schip gleich zu Spielbeginn zu seinem Vorrat.
-
+    <description>Regel: Das für den Helden erreichbare Maximum an Schicksalspunkten steigt hierdurch um 1 je Stufe und der Held er erhält diesen Schip gleich zu Spielbeginn zu seinem Vorrat.
+ 
 Publikation: Regelwerk Seite 165</description>
     <link>index.php/V_Glück.html</link>
   </advantage>
@@ -281,9 +478,8 @@ Publikation: Regelwerk Seite 165</description>
     <max>2</max>
     <requirements>Sonderfertigkeit Tradition Intuitive Zauberer oder Animisten, kein Nachteil Kleine Zauberauswahl</requirements>
     <rule/>
-    <description>Die Heldin kann pro Stufe des Vorteils einen zusätzlichen Zauber aktivieren und damit die Begrenzung von maximal 3 Zaubern übersteigen. Ob sie diese Zauber zu Spielbeginn oder später aktiviert, ist ihr überlassen.
-
-Publikation:  Aventurische Magie, Seite 225Aventurische Magie 3, Seite 207</description>
+    <description>Regel: Die Heldin kann pro Stufe des Vorteils einen zusätzlichen Zauber aktivieren und damit die Begrenzung von maximal 3 Zaubern übersteigen. Ob sie diese Zauber zu Spielbeginn oder später aktiviert, ist ihr überlassen.
+Publikationen: Aventurische Magie, Seite 225Aventurische Magie 3, Seite 207</description>
     <link>index.php/V_GroßeZauberauswahlI-II.html</link>
   </advantage>
   <advantage>
@@ -292,8 +488,8 @@ Publikation:  Aventurische Magie, Seite 225Aventurische Magie 3, Seite 207</desc
     <max>2</max>
     <requirements>kein Nachteil Hässlich</requirements>
     <rule/>
-    <description>Jede Stufe des Vorteils gibt dem Helden eine Erleichterung von 1 auf Betören (Anbändeln, Liebeskünste), Überreden (Aufschwatzen, Herausreden, Manipulieren, Schmeicheln) und Handel (Feilschen).
-
+    <description>Regel: Jede Stufe des Vorteils gibt dem Helden eine Erleichterung von 1 auf Betören (Anbändeln, Liebeskünste), Überreden (Aufschwatzen, Herausreden, Manipulieren, Schmeicheln) und Handel (Feilschen).
+ 
 Publikation: Regelwerk Seite 165</description>
     <link>index.php/V_Gutaussehend.html</link>
   </advantage>
@@ -303,8 +499,8 @@ Publikation: Regelwerk Seite 165</description>
     <max>0</max>
     <requirements>kein Nachteil Schlechtes Namensgedächtnis</requirements>
     <rule/>
-    <description>Die Abenteurerin kann sich an so gut wie jeden  Namen (samt Titel, Ränge und Ämter) erinnern. Der  Meister sollte voraussetzen, dass die Heldin Personen  immer den korrekten Namen zuordnen kann, auch  wenn der Spieler der Heldin sich nicht immer erinnert. Zudem kann der Meister in passenden Situationen, z. B. auf Festen oder wenn der korrekte Name eine wichtige Rolle spielt, dem Spieler eine Erleichterung  von  1  bei  der  Teilprobe  auf  Klugheit  bei Etikette (Heraldik &amp; Stammbäume oder Klatsch &amp; Tratsch) zugestehen.
-
+    <description>Regel: Die Abenteurerin kann sich an so gut wie jeden  Namen (samt Titel, Ränge und Ämter) erinnern. Der  Meister sollte voraussetzen, dass die Heldin Personen  immer den korrekten Namen zuordnen kann, auch  wenn der Spieler der Heldin sich nicht immer erinnert. Zudem kann der Meister in passenden Situationen, z. B. auf Festen oder wenn der korrekte Name eine wichtige Rolle spielt, dem Spieler eine Erleichterung  von  1  bei  der  Teilprobe  auf  Klugheit  bei Etikette (Heraldik &amp; Stammbäume oder Klatsch &amp; Tratsch) zugestehen.
+ 
 Publikation: Aventurische Namen Seite 89</description>
     <link>index.php/gutesbame.html</link>
   </advantage>
@@ -314,8 +510,8 @@ Publikation: Aventurische Namen Seite 89</description>
     <max>0</max>
     <requirements>keine</requirements>
     <rule/>
-    <description>Muss eine Probe auf Selbstbeherrschung (Handlungsfähigkeit bewahren oder Störungen ignorieren) bei Wundeffekten abgelegt werden, bekommt die Spielerin eine Erleichterung von 1.
-
+    <description>Regel: Muss eine Probe auf Selbstbeherrschung (Handlungsfähigkeit bewahren oder Störungen ignorieren) bei Wundeffekten abgelegt werden, bekommt die Spielerin eine Erleichterung von 1.
+ 
 Publikation: Aventurisches Kompendium Seite 132</description>
     <link>index.php/Hartim.html</link>
   </advantage>
@@ -325,8 +521,8 @@ Publikation: Aventurisches Kompendium Seite 132</description>
     <max>0</max>
     <requirements>keine</requirements>
     <rule/>
-    <description>Der Held richtet gegen eine Art von Wesen, das beim Erwerb dieses Vorteils festgelegt werden muss, +1 TP im Nahkampf an. Der Typus des Wesens muss dabei näher spezifiziert werden. Je häufiger der Typus des Wesens in Aventurien vorkommt, desto teurer der AP-Wert für diesen Vorteil. Ausgeschlossen als wählbare Typen sind die Oberkategorien Lebewesen und Nicht Lebende. Neben dem im Regelwerk aufgeführten Typen und Unterkategorien kann man auch Spezies und Kulturen wählen. Die eigene Spezies/Kultur ist prinzipiell wählbar, jedoch sind Helden mit Hass auf die eigene Spezies/Kultur oft nur schwer spielbar. Der Meister hat das letzte Wort bezüglich der Wählbarkeit eines Hassobjektes. Je kleinteiliger ein Typus gewählt wird und je seltener eine potenzielle Begegnung mit ihm ist, desto niedriger die AP-Kosten für den Vorteil. Mehr zu den Typen und ihren Unterkategorien siehe Regelwerk Seite 355.
-
+    <description>Regel: Der Held richtet gegen eine Art von Wesen, das beim Erwerb dieses Vorteils festgelegt werden muss, +1 TP im Nahkampf an. Der Typus des Wesens muss dabei näher spezifiziert werden. Je häufiger der Typus des Wesens in Aventurien vorkommt, desto teurer der AP-Wert für diesen Vorteil. Ausgeschlossen als wählbare Typen sind die Oberkategorien Lebewesen und Nicht Lebende. Neben dem im Regelwerk aufgeführten Typen und Unterkategorien kann man auch Spezies und Kulturen wählen. Die eigene Spezies/Kultur ist prinzipiell wählbar, jedoch sind Helden mit Hass auf die eigene Spezies/Kultur oft nur schwer spielbar. Der Meister hat das letzte Wort bezüglich der Wählbarkeit eines Hassobjektes. Je kleinteiliger ein Typus gewählt wird und je seltener eine potenzielle Begegnung mit ihm ist, desto niedriger die AP-Kosten für den Vorteil. Mehr zu den Typen und ihren Unterkategorien siehe Regelwerk Seite 355.
+ 
 Publikation: Aventurisches Bestiarium Seite 120</description>
     <link>index.php/V_Hass_auf.html</link>
   </advantage>
@@ -336,8 +532,8 @@ Publikation: Aventurisches Bestiarium Seite 120</description>
     <max>0</max>
     <requirements>ein heldenhafter Name, kein Vorteil Allerweltsname, kein Nachteil Lächerlicher Name, Schurkenname oder Unpassender Name</requirements>
     <rule/>
-    <description>Abenteurer mit einem heldenhaften Namen  werden respektvoller behandelt als andere Menschen  und man glaubt ihnen eher. Teilproben auf Charisma bei Bekehren &amp; Überzeugen und Überreden sind um 1 erleichtert. Voraussetzung dafür ist, dass das Gegenüber des Helden den Namen als den Namen eines  Helden kennt.
-
+    <description>Regel: Abenteurer mit einem heldenhaften Namen  werden respektvoller behandelt als andere Menschen  und man glaubt ihnen eher. Teilproben auf Charisma bei Bekehren &amp; Überzeugen und Überreden sind um 1 erleichtert. Voraussetzung dafür ist, dass das Gegenüber des Helden den Namen als den Namen eines  Helden kennt.
+ 
 Publikation: Aventurische Namen Seite 89</description>
     <link>index.php/heldenname.html</link>
   </advantage>
@@ -347,8 +543,8 @@ Publikation: Aventurische Namen Seite 89</description>
     <max>0</max>
     <requirements>kein Nachteil Unfähig in der Fertigkeit</requirements>
     <rule/>
-    <description>Durch den Vorteil Herausragende Fertigkeit verschiebt sich das Maximum in einer Fertigkeit um 1 nach oben, sowohl beim Maximum der Heldenerschaffung als auch beim endgültigen Maximum (abhängig von der höchsten beteiligten Eigenschaft). Zwar erhält ein Held nicht automatisch einen Fertigkeitspunkt dazu, aber er kann zu Spielbeginn zum Beispiel bei Erfahrungsgrad Erfahren mit einem Wert von 11 starten (anstatt 10) und auch sein absolutes Maximum in der Fertigkeit ist um 1 erhöht. Der Vorteil kann bis zu viermal gewählt werden, wobei keine Fertigkeit mehr als zweimal gewählt werden kann. Bei zweifacher Zuteilung auf eine Fertigkeit erhöht der Vorteil das Maximum um 2.
-
+    <description>Regel: Durch den Vorteil Herausragende Fertigkeit verschiebt sich das Maximum in einer Fertigkeit um 1 nach oben, sowohl beim Maximum der Heldenerschaffung als auch beim endgültigen Maximum (abhängig von der höchsten beteiligten Eigenschaft). Zwar erhält ein Held nicht automatisch einen Fertigkeitspunkt dazu, aber er kann zu Spielbeginn zum Beispiel bei Erfahrungsgrad Erfahren mit einem Wert von 11 starten (anstatt 10) und auch sein absolutes Maximum in der Fertigkeit ist um 1 erhöht. Der Vorteil kann bis zu viermal gewählt werden, wobei keine Fertigkeit mehr als zweimal gewählt werden kann. Bei zweifacher Zuteilung auf eine Fertigkeit erhöht der Vorteil das Maximum um 2.
+ 
 Publikation: Regelwerk Seite 166</description>
     <link>index.php/V_Fertigkeit.html</link>
   </advantage>
@@ -358,20 +554,36 @@ Publikation: Regelwerk Seite 166</description>
     <max>0</max>
     <requirements>keine</requirements>
     <rule/>
-    <description>Durch den Vorteil Herausragende Kampftechnik verschiebt sich das Maximum in einer Kampftechnik um 1 nach oben, sowohl beim Maximum der Heldenerschaffung als auch beim endgültigen Maximum (abhängig von der Leiteigenschaft). Zwar erhält der Held nicht automatisch einen Kampftechnikpunkt dazu, aber er kann zu Spielbeginn zum Beispiel bei Erfahrungsgrad Erfahren mit einem Wert von 13 starten (anstatt 12) und auch das absolute Maximum in der Kampftechnik ist um 1 erhöht. Der Vorteil kann bis zu zweimal gewählt werden, wobei jede Kampftechnik nur einmal gewählt werden kann.
-
+    <description>Regel: Durch den Vorteil Herausragende Kampftechnik verschiebt sich das Maximum in einer Kampftechnik um 1 nach oben, sowohl beim Maximum der Heldenerschaffung als auch beim endgültigen Maximum (abhängig von der Leiteigenschaft). Zwar erhält der Held nicht automatisch einen Kampftechnikpunkt dazu, aber er kann zu Spielbeginn zum Beispiel bei Erfahrungsgrad Erfahren mit einem Wert von 13 starten (anstatt 12) und auch das absolute Maximum in der Kampftechnik ist um 1 erhöht. Der Vorteil kann bis zu zweimal gewählt werden, wobei jede Kampftechnik nur einmal gewählt werden kann.
+ 
 Publikation: Regelwerk Seite 166</description>
     <link>index.php/V_Kampftechnik.html</link>
   </advantage>
   <advantage>
-    <name>Herausragender Sinn</name>
-    <APvalue>Sicht/Gehör: 12 Abenteuerpunkte; Geruch &amp; Geschmack: 6 Abenteuerpunkte; Tastsinn: 2 Abenteuerpunkte</APvalue>
+    <name>Herausragender Sinn (Sicht/Gehör)</name>
+    <APvalue>-12</APvalue>
     <max>0</max>
     <requirements>kein Nachteil Eingeschränkter Sinn für den gleichen Sinn, kein Nachteil Blind (für Sicht), kein Nachteil Taub (für Gehör)</requirements>
     <rule/>
-    <description>Wer über einen Herausragenden Sinn verfügt, dessen Proben auf Sinnesschärfe sind um 1 erleichtert, wenn die Probe den entsprechenden Sinn betrifft. Folgende Sinne können gewählt werden: Sicht, Gehör, Geruch &amp; Geschmack, Tastsinn. Herausragender Sinn ist mehrfach für die verschiedenen Sinne wählbar, nicht aber für einen einzelnen.
-
-Publikation: Regelwerk Seite 166</description>
+    <description>Wer über einen Herausragenden Sinn verfügt, dessen Proben auf Sinnesschärfe sind um 1 erleichtert, wenn die Probe den entsprechenden Sinn betrifft. </description>
+    <link>index.php/V_Sinn.html</link>
+  </advantage>
+  <advantage>
+    <name>Herausragender Sinn ( Geruch &amp; Geschmack)</name>
+    <APvalue>-6</APvalue>
+    <max>0</max>
+    <requirements>kein Nachteil Eingeschränkter Sinn für den gleichen Sinn, kein Nachteil Blind (für Sicht), kein Nachteil Taub (für Gehör)</requirements>
+    <rule/>
+    <description>Wer über einen Herausragenden Sinn verfügt, dessen Proben auf Sinnesschärfe sind um 1 erleichtert, wenn die Probe den entsprechenden Sinn betrifft. </description>
+    <link>index.php/V_Sinn.html</link>
+  </advantage>
+  <advantage>
+    <name>Herausragender Sinn ( Tastsinn)</name>
+    <APvalue>-2</APvalue>
+    <max>0</max>
+    <requirements>kein Nachteil Eingeschränkter Sinn für den gleichen Sinn, kein Nachteil Blind (für Sicht), kein Nachteil Taub (für Gehör)</requirements>
+    <rule/>
+    <description>Wer über einen Herausragenden Sinn verfügt, dessen Proben auf Sinnesschärfe sind um 1 erleichtert, wenn die Probe den entsprechenden Sinn betrifft. </description>
     <link>index.php/V_Sinn.html</link>
   </advantage>
   <advantage>
@@ -380,8 +592,8 @@ Publikation: Regelwerk Seite 166</description>
     <max>0</max>
     <requirements>kein Nachteil Hitzeempfindlich</requirements>
     <rule/>
-    <description>Hitzestufen werden für den Helden um 1 Stufe reduziert, bis zu einem Minimum von Hitzestufe 1.
-
+    <description>Regel: Hitzestufen werden für den Helden um 1 Stufe reduziert, bis zu einem Minimum von Hitzestufe 1.
+ 
 Publikation: Regelwerk Seite 166</description>
     <link>index.php/V_Hitzeresistenz.html</link>
   </advantage>
@@ -391,8 +603,8 @@ Publikation: Regelwerk Seite 166</description>
     <max>7</max>
     <requirements>Vorteil Zauberer, kein Nachteil Niedrige Astralkraft</requirements>
     <rule/>
-    <description>Der AE-Grundwert steigt durch diesen Vorteil um 1 Punkt pro Stufe des Vorteils.
-
+    <description>Regel: Der AE-Grundwert steigt durch diesen Vorteil um 1 Punkt pro Stufe des Vorteils.
+ 
 Publikation: Regelwerk Seite 166</description>
     <link>index.php/V_HoheAstralkraft.html</link>
   </advantage>
@@ -402,8 +614,8 @@ Publikation: Regelwerk Seite 166</description>
     <max>7</max>
     <requirements>Vorteil Geweihter, kein Nachteil Niedrige Karmalkraft</requirements>
     <rule/>
-    <description>Der KE-Grundwert steigt durch diesen Vorteil um 1 Punkt pro Stufe des Vorteils.
-
+    <description>Regel: Der KE-Grundwert steigt durch diesen Vorteil um 1 Punkt pro Stufe des Vorteils. 
+ 
 Publikation: Regelwerk Seite 166</description>
     <link>index.php/V_HoheKarmalkraft.html</link>
   </advantage>
@@ -413,8 +625,8 @@ Publikation: Regelwerk Seite 166</description>
     <max>7</max>
     <requirements>kein Nachteil Niedrige Lebenskraft</requirements>
     <rule/>
-    <description>Der LE-Grundwert steigt durch diesen Vorteil um 1 Punkt pro Stufe des Vorteils.
-
+    <description>Regel: Der LE-Grundwert steigt durch diesen Vorteil um 1 Punkt pro Stufe des Vorteils.
+ 
 Publikation: Regelwerk Seite 166</description>
     <link>index.php/V_HoheLebenskraft.html</link>
   </advantage>
@@ -424,8 +636,8 @@ Publikation: Regelwerk Seite 166</description>
     <max>0</max>
     <requirements>kein Nachteil Niedrige Seelenkraft</requirements>
     <rule/>
-    <description>Der SK-Grundwert des Helden ist um 1 besser.
-
+    <description>Regel: Der SK-Grundwert des Helden ist um 1 besser.
+ 
 Publikation: Regelwerk Seite 166</description>
     <link>index.php/V_HoheSeelenkraft.html</link>
   </advantage>
@@ -435,8 +647,8 @@ Publikation: Regelwerk Seite 166</description>
     <max>0</max>
     <requirements>kein Nachteil Niedrige Zähigkeit</requirements>
     <rule/>
-    <description>Der ZK-Grundwert des Helden ist um 1 besser.
-
+    <description>Regel: Der ZK-Grundwert des Helden ist um 1 besser.
+ 
 Publikation: Regelwerk Seite 167</description>
     <link>index.php/V_HoheZähugkeit.html</link>
   </advantage>
@@ -446,8 +658,8 @@ Publikation: Regelwerk Seite 167</description>
     <max>0</max>
     <requirements>keine</requirements>
     <rule/>
-    <description>Wer immun gegen ein bestimmtes Gift ist, auf den hat dieses Gift keinerlei Wirkung. Eine Immunität muss für jedes Gift einzeln erworben werden.
-
+    <description>Regel: Wer immun gegen ein bestimmtes Gift ist, auf den hat dieses Gift keinerlei Wirkung. Eine Immunität muss für jedes Gift einzeln erworben werden.
+ 
 Publikation: Regelwerk Seite 167</description>
     <link>index.php/V_ImmunitätGift.html</link>
   </advantage>
@@ -457,8 +669,8 @@ Publikation: Regelwerk Seite 167</description>
     <max>0</max>
     <requirements>keine</requirements>
     <rule/>
-    <description>Wer immun gegen eine bestimmte Krankheit ist, kann nicht an ihr erkranken. Eine Immunität muss für jede Krankheit einzeln erworben werden.
-
+    <description>Regel: Wer immun gegen eine bestimmte Krankheit ist, kann nicht an ihr erkranken. Eine Immunität muss für jede Krankheit einzeln erworben werden.
+ 
 Publikation: Regelwerk Seite 167</description>
     <link>index.php/V_ImmunitätKrankheit.html</link>
   </advantage>
@@ -468,8 +680,8 @@ Publikation: Regelwerk Seite 167</description>
     <max>0</max>
     <requirements>Sonderfertigkeit Tradition Meistertalentierte, kein Vorteil Eisenaffine Aura</requirements>
     <rule/>
-    <description>Der Held kann die Erschwernisse durch Bann des Eisens (siehe Regelwerk Seite 256) ignorieren. Er ist weder durch das Tragen von Eisen in Form von Waffen, Rüstungen oder Ausrüstung betroffen, noch erleidet er irgendwelche Nachteile dadurch, dass er mit dem Material arbeitet.
-
+    <description>Regel: Der Held kann die Erschwernisse durch Bann des Eisens (siehe Regelwerk Seite 256) ignorieren. Er ist weder durch das Tragen von Eisen in Form von Waffen, Rüstungen oder Ausrüstung betroffen, noch erleidet er irgendwelche Nachteile dadurch, dass er mit dem Material arbeitet.
+ 
 Publikation: Aventurische Magie Seite 225</description>
     <link>index.php/V_KeinBanndesEisens.html</link>
   </advantage>
@@ -479,8 +691,7 @@ Publikation: Aventurische Magie Seite 225</description>
     <max>0</max>
     <requirements>kein Vorteil Hass auf Kobolde (und deren Untergruppen), keine Schlechte Eigenschaft Vorurteile gegen Kobolde</requirements>
     <rule/>
-    <description>Proben auf Überreden (Aufschwatzen, Herausreden, Manipulieren, Schmeicheln), um einen Kobold/Klabauterfreundlich zu stimmen, gelten bei Gelingen der Probe als um 1 QS besser. Allerdings kann sich die QS so nie über 6 hinaus erhöhen.
-
+    <description>Regel: Proben auf Überreden (Aufschwatzen, Herausreden, Manipulieren, Schmeicheln), um einen Kobold/Klabauterfreundlich zu stimmen, gelten bei Gelingen der Probe als um 1 QS besser. Allerdings kann sich die QS so nie über 6 hinaus erhöhen.
 Publikation: Die Siebenwindküste, Seite 153</description>
     <link>index.php/koboldfreund.html</link>
   </advantage>
@@ -779,8 +990,8 @@ Publikation: Aventurisches Kompendium 2, Seite 62</description>
     <max>2</max>
     <requirements>kein Nachteil Krankheitsanfällig</requirements>
     <rule/>
-    <description>Eine Krankheitsresistenz verbessert Zähigkeit und Seelenkraft um 1 pro Stufe, wenn es darum geht, Krankheiten zu widerstehen.
-
+    <description>Regel: Eine Krankheitsresistenz verbessert Zähigkeit und Seelenkraft um 1 pro Stufe, wenn es darum geht, Krankheiten zu widerstehen.
+ 
 Publikation: Regelwerk Seite 167</description>
     <link>index.php/V_Krankheitsresistenz.html</link>
   </advantage>
@@ -790,8 +1001,8 @@ Publikation: Regelwerk Seite 167</description>
     <max>0</max>
     <requirements>kein Nachteil Kälteempfindlich</requirements>
     <rule/>
-    <description>Kältestufen werden für den Helden um 1 Stufe reduziert, bis zu einem Minimum von 0.
-
+    <description>Regel: Kältestufen werden für den Helden um 1 Stufe reduziert, bis zu einem Minimum von 0.
+ 
 Publikation: Regelwerk Seite 167</description>
     <link>index.php/V_Kälteresistenz.html</link>
   </advantage>
@@ -801,8 +1012,8 @@ Publikation: Regelwerk Seite 167</description>
     <max>0</max>
     <requirements>Sonderfertigkeit Tradition Zauberbarden, kein Nachteil Schwache Zaubermelodien</requirements>
     <rule/>
-    <description>Der Abenteurer kann Personen bis zu SK 3 durch seine Zaubermelodien verzaubern (statt nur bis zu SK 2).
-
+    <description>Regel: Der Abenteurer kann Personen bis zu SK 3 durch seine Zaubermelodien verzaubern (statt nur bis zu SK 2).
+ 
 Publikation: Aventurische Magie Seite 225</description>
     <link>index.php/V_MachtvolleZaubermelodien.html</link>
   </advantage>
@@ -812,8 +1023,8 @@ Publikation: Aventurische Magie Seite 225</description>
     <max>0</max>
     <requirements>Sonderfertigkeit Tradition Zaubertänzer, kein Nachteil Schwache Zaubertänze</requirements>
     <rule/>
-    <description>Die Heldin kann Personen bis zu SK 3 durch ihre Zaubertänze verzaubern (statt nur bis zu SK 2).
-
+    <description>Regel: Die Heldin kann Personen bis zu SK 3 durch ihre Zaubertänze verzaubern (statt nur bis zu SK 2).
+ 
 Publikation: Aventurische Magie Seite 225</description>
     <link>index.php/V_MachtvolleZaubertaenze.html</link>
   </advantage>
@@ -823,8 +1034,8 @@ Publikation: Aventurische Magie Seite 225</description>
     <max>0</max>
     <requirements>Vorteil Zauberer, kein Nachteil Magische Einschränkung auf die gleiche Umgebung</requirements>
     <rule/>
-    <description>Man muss sich für eine Variante des Vorteils entscheiden (Beispiele sind dem nebenstehenden Kasten zu entnehmen). In der betreffenden Umgebung oder Situation, für die der Vorteil gewählt wurde, hat der Zauberer bei magischen Fertigkeitsproben eine Erleichterung von 1.
-
+    <description>Regel: Man muss sich für eine Variante des Vorteils entscheiden (Beispiele sind dem nebenstehenden Kasten zu entnehmen). In der betreffenden Umgebung oder Situation, für die der Vorteil gewählt wurde, hat der Zauberer bei magischen Fertigkeitsproben eine Erleichterung von 1.
+ 
 Publikation: Regelwerk Seite 167</description>
     <link>index.php/V_MagischeEinstimmung.html</link>
   </advantage>
@@ -834,8 +1045,9 @@ Publikation: Regelwerk Seite 167</description>
     <max>0</max>
     <requirements>Vorteil Geweihter, kein Vorteil Pragmatiker</requirements>
     <rule/>
-    <description>Bei einem Mystiker baut sich Entrückung erst nach zwei Stunden statt einer Stunde pro Stufe ab.
-
+    <description>Regel: Bei einem Mystiker baut sich Entrückung erst nach zwei Stunden statt einer Stunde pro Stufe ab.
+Voraussetzung: Vorteil Geweihter, kein Vorteil Pragmatiker
+ 
 Publikation: Regelwerk Seite 167</description>
     <link>index.php/V_Mystiker.html</link>
   </advantage>
@@ -845,8 +1057,7 @@ Publikation: Regelwerk Seite 167</description>
     <max>2</max>
     <requirements>Spezies, Kultur oder Profession muss Natürlicher Rüstungsschutz als automatischen oder empfohlenen Vorteil aufweisen.</requirements>
     <rule/>
-    <description>Das Wesen verfügt pro Stufe des Vorteils über einen natürlichen Rüstungsschutz, der mit anderen Rüstungen kombiniert werden kann.
-
+    <description>Regel: Das Wesen verfügt pro Stufe des Vorteils über einen natürlichen Rüstungsschutz, der mit anderen Rüstungen kombiniert werden kann.
 Publikation: Aventurisches Bestiarium II, Seite 117</description>
     <link>index.php/V_Natürlicher_Rüstungsschutz.html</link>
   </advantage>
@@ -856,8 +1067,8 @@ Publikation: Aventurisches Bestiarium II, Seite 117</description>
     <max>0</max>
     <requirements>Spezies, Kultur oder Profession muss Nichtschläfer als automatischen oder empfohlenen Vorteil besitzen</requirements>
     <rule/>
-    <description>Ein Wesen mit diesem Vorteil muss nicht regelmäßig schlafen, sondern kann bis zu einer Woche wach bleiben, ohne zu ermüden. Der Schlaf muss aber anschließend nachgeholt werden, was bei einigen Spezies durch echten Schlaf, bei anderen durch Meditation oder vergleichbare Techniken erreicht wird. Während der Zeit, in der der Nichtschläfer nicht schläft, kann er auch nicht durch Ausruhen und Schlafen regenerieren (Ausnahme stellt die Verwendung von Heilkräutern und der Einsatz des Talents Heilkunde Wunden dar).
-
+    <description>Regel: Ein Wesen mit diesem Vorteil muss nicht regelmäßig schlafen, sondern kann bis zu einer Woche wach bleiben, ohne zu ermüden. Der Schlaf muss aber anschließend nachgeholt werden, was bei einigen Spezies durch echten Schlaf, bei anderen durch Meditation oder vergleichbare Techniken erreicht wird. Während der Zeit, in der der Nichtschläfer nicht schläft, kann er auch nicht durch Ausruhen und Schlafen regenerieren (Ausnahme stellt die Verwendung von Heilkräutern und der Einsatz des Talents Heilkunde Wunden dar).
+ 
 Publikation: Regelwerk Seite 168</description>
     <link>index.php/V_Nichtschläfer.html</link>
   </advantage>
@@ -867,8 +1078,9 @@ Publikation: Regelwerk Seite 168</description>
     <max>0</max>
     <requirements>Vorteil Geweihter, kein Vorteil Mystiker</requirements>
     <rule/>
-    <description>Bei einem Pragmatiker baut sich Entrückung bereits nach einer halben Stunde statt einer Stunde pro Stufe ab.
-
+    <description>Regel: Bei einem Pragmatiker baut sich Entrückung bereits nach einer halben Stunde statt einer Stunde pro Stufe ab.
+Voraussetzung: Vorteil Geweihter, kein Vorteil Mystiker
+ 
 Publikation: Regelwerk Seite 168</description>
     <link>index.php/V_Pragmatiker.html</link>
   </advantage>
@@ -878,8 +1090,8 @@ Publikation: Regelwerk Seite 168</description>
     <max>0</max>
     <requirements>Nachteil Prinzipientreue I (ausgewählte Gottheit), kein Vorteil Geweihter, kein Vorteil Visionär</requirements>
     <rule/>
-    <description>Der Held bekommt eine neue Einsatzmöglichkeit für Bekehren &amp; Überzeugen (öffentliche Rede). Er kann bis zu drei Predigt-Sonderfertigkeiten erlernen, auch wenn er nicht über den Vorteil Geweihter verfügt. Der Zelot muss eine Gottheit auswählen, wenn er sich für diesen Vorteil entscheidet. Lässt sich ein Prediger im späteren Verlauf seines Lebens der ausgewählten Gottheit weihen, bekommt er die 10 AP dieses Vorteils wieder zurück bzw. kann sie mit Geweihter verrechnen.
-
+    <description>Regel: Der Held bekommt eine neue Einsatzmöglichkeit für Bekehren &amp; Überzeugen (öffentliche Rede). Er kann bis zu drei Predigt-Sonderfertigkeiten erlernen, auch wenn er nicht über den Vorteil Geweihter verfügt. Der Zelot muss eine Gottheit auswählen, wenn er sich für diesen Vorteil entscheidet. Lässt sich ein Prediger im späteren Verlauf seines Lebens der ausgewählten Gottheit weihen, bekommt er die 10 AP dieses Vorteils wieder zurück bzw. kann sie mit Geweihter verrechnen.
+ 
 Publikation: Aventurisches Götterwirken I Seite 227</description>
     <link>index.php/V_Prediger.html</link>
   </advantage>
@@ -889,8 +1101,10 @@ Publikation: Aventurisches Götterwirken I Seite 227</description>
     <max>10</max>
     <requirements>kein Nachteil Arm</requirements>
     <rule/>
-    <description>Durch den Vorteil Reich erhält ein Held bei der Generierung zusätzlich 250 Silbertaler pro Stufe.
-
+    <description>Regel: Durch den Vorteil Reich erhält ein Held bei der Generierung zusätzlich 250 Silbertaler pro Stufe.
+ 
+Reichtum – wichtig oder nicht?
+Je nach Kampagne ist Geld ein wichtiger Faktor oder kaum von Bedeutung. Wenn Geld für euch eine bedeutsame Ressource ist, solltet ihr die Kosten des Vorteils auf 2 bis 5 Punkte pro Stufe erhöhen.
 Publikation: Regelwerk (3. überar. Auflage), Seite 168</description>
     <link>index.php/V_Reich.html</link>
   </advantage>
@@ -900,8 +1114,8 @@ Publikation: Regelwerk (3. überar. Auflage), Seite 168</description>
     <max>0</max>
     <requirements>kein Nachtteil Unfähig in Orientierung</requirements>
     <rule/>
-    <description>Proben auf Orientierung sind immer um 1 erleichtert.
-
+    <description>Regel: Proben auf Orientierung sind immer um 1 erleichtert.
+ 
 Publikation: Regelwerk Seite 168</description>
     <link>index.php/V_Richtungssinn.html</link>
   </advantage>
@@ -911,8 +1125,8 @@ Publikation: Regelwerk Seite 168</description>
     <max>2</max>
     <requirements>keine</requirements>
     <rule/>
-    <description>Mit Saumagen kann der Held zähes Fleisch problemlos essen, so als ob es normales Fleisch wäre. Bei Stufe II kann er sogar ungenießbares Fleisch verzehren. Es wird ihm nicht sonderlich schmecken, aber er kann es verdauen, ohne dass ihm übel wird und er sich erbrechen muss. Gifte und Krankheitskeime können jedoch nicht durch den Vorteil umgangen werden. Ähnliches gilt auch für pflanzliche Nahrungsmittel. Schwerverdauliche Kost ist essbar, ohne dass es weitere Auswirkungen hat.
-
+    <description>Regel: Mit Saumagen kann der Held zähes Fleisch problemlos essen, so als ob es normales Fleisch wäre. Bei Stufe II kann er sogar ungenießbares Fleisch verzehren. Es wird ihm nicht sonderlich schmecken, aber er kann es verdauen, ohne dass ihm übel wird und er sich erbrechen muss. Gifte und Krankheitskeime können jedoch nicht durch den Vorteil umgangen werden. Ähnliches gilt auch für pflanzliche Nahrungsmittel. Schwerverdauliche Kost ist essbar, ohne dass es weitere Auswirkungen hat.
+ 
 Publikation: Aventurisches Bestiarium Seite 121</description>
     <link>index.php/V_Saumagen.html</link>
   </advantage>
@@ -922,30 +1136,32 @@ Publikation: Aventurisches Bestiarium Seite 121</description>
     <max>0</max>
     <requirements>keine</requirements>
     <rule/>
-    <description>Proben auf Körperbeherrschung (Akrobatik, Entwinden) sind um 1 erleichtert.
-
+    <description>Regel: Proben auf Körperbeherrschung (Akrobatik, Entwinden) sind um 1 erleichtert.
+ 
 Publikation: Regelwerk Seite 168</description>
     <link>index.php/V_Schlangenmensch.html</link>
   </advantage>
   <advantage>
-    <name/>
-    <APvalue>keine</APvalue>
+    <name>Schnell wieder auf den Beinen</name>
+    <APvalue>2 Abenteuerpunkte</APvalue>
     <max>0</max>
-    <requirements>Mit diesem Vorteil benötigt man nur noch die Hälfte der Zeit, bis eine Stufe des Zustands Betäubung oder Berauscht, der durch Alkohol verursacht wurde, abgebaut ist.</requirements>
+    <requirements>keine</requirements>
     <rule/>
-    <description>
-
+    <description>Regel: Mit diesem Vorteil benötigt man nur noch die Hälfte der Zeit, bis eine Stufe des Zustands Betäubung oder Berauscht, der durch Alkohol verursacht wurde, abgebaut ist.
+ 
 Publikation: Kneipen und Tavernen, Seite 13</description>
     <link>index.php/SF_SchnellwiederaufdenBeinen.html</link>
   </advantage>
   <advantage>
     <name>Schutzgeist</name>
-    <APvalue/>
+    <APvalue>10 Abenteuerpunkte</APvalue>
     <max>0</max>
-    <requirements/>
+    <requirements>Tradition Intuitive Zauberer oder Meistertalentierte</requirements>
     <rule/>
-    <description>Wer über einen Schutzgeist verfügt, der kann die folgenden Optionen einsetzen. Sie kosten weder eine Aktion noch eine freie Aktion, sondern können jederzeit eingesetzt werden.
-
+    <description>Regel: Wer über einen Schutzgeist verfügt, der kann die folgenden Optionen einsetzen. Sie kosten weder eine Aktion noch eine freie Aktion, sondern können jederzeit eingesetzt werden.
+#Bei einem Patzer kann der Held einen Schip einsetzen. Das Ergebnis gilt einfach als misslungen, ist aber kein Patzer.
+#Wenn der Held nur noch 5 oder weniger LeP besitzt, kann er 1 Schip einsetzen, um 1W6 LeP zurückzubekommen. Der Einsatz dieser Option ist nur einmal am Tag gestattet.
+ 
 Publikation: Aventurische Magie Seite 226</description>
     <link>index.php/V_Schutzgeist.html</link>
   </advantage>
@@ -955,8 +1171,8 @@ Publikation: Aventurische Magie Seite 226</description>
     <max>0</max>
     <requirements>Spezies, Kultur oder Profession muss Schwer zu verzaubern als automatischen oder empfohlenen Vorteil besitzen.</requirements>
     <rule/>
-    <description>Viele Zauber, die auf den Helden gesprochen werden können, die auf ihn wirken, sind um 1 erschwert. Dies gilt für alle Zauber und magischen Effekte mit den Merkmalen Einfluss, Heilung, Hellsicht und Verwandlung sowie für solche, die durch Seelenkraft oder Zähigkeit modifiziert werden. Diese Erschwernis gilt auch dann, wenn der Held sich verzaubern lassen möchte.
-
+    <description>Regel: Viele Zauber, die auf den Helden gesprochen werden können, die auf ihn wirken, sind um 1 erschwert. Dies gilt für alle Zauber und magischen Effekte mit den Merkmalen Einfluss, Heilung, Hellsicht und Verwandlung sowie für solche, die durch Seelenkraft oder Zähigkeit modifiziert werden. Diese Erschwernis gilt auch dann, wenn der Held sich verzaubern lassen möchte.
+ 
 Publikation: Regelwerk Seite 168</description>
     <link>index.php/V_Schwerzuverzaubern.html</link>
   </advantage>
@@ -966,8 +1182,8 @@ Publikation: Regelwerk Seite 168</description>
     <max>0</max>
     <requirements>kein Nachteil Unfähig auf ein Gesellschaftstalent, kein Nachteil Unfrei</requirements>
     <rule/>
-    <description>Personen mit Sozialer Anpassungsfähigkeit können Erschwernisse aufGesellschaftstalente ignorieren, die durch Standesunterschiede entstehen. Die Soziale Anpassungsfähigkeit täuscht aber keine Personen des Hochadels.
-
+    <description>Regel: Personen mit Sozialer Anpassungsfähigkeit können Erschwernisse aufGesellschaftstalente ignorieren, die durch Standesunterschiede entstehen. Die Soziale Anpassungsfähigkeit täuscht aber keine Personen des Hochadels.
+ 
 Publikation: Regelwerk Seite 168</description>
     <link>index.php/V_SozialeAnpassungsfähigkeit.html</link>
   </advantage>
@@ -977,8 +1193,8 @@ Publikation: Regelwerk Seite 168</description>
     <max>0</max>
     <requirements>kein Vorteil Hass auf die Tierart</requirements>
     <rule/>
-    <description>Proben auf Tierkunde (domestizierte Tiere, Wildtiere) gelten bei Gelingen der Probe als um 1 QS besser, allerdings kann sich die QS dabei nie über 6 erhöhen.
-
+    <description>Regel: Proben auf Tierkunde (domestizierte Tiere, Wildtiere) gelten bei Gelingen der Probe als um 1 QS besser, allerdings kann sich die QS dabei nie über 6 erhöhen.
+ 
 Publikation: Aventurisches Bestiarium Seite 121</description>
     <link>index.php/V_Tierfreund.html</link>
   </advantage>
@@ -988,9 +1204,10 @@ Publikation: Aventurisches Bestiarium Seite 121</description>
     <max>0</max>
     <requirements>Tradition (Schelme)</requirements>
     <rule/>
-    <description>Der Schelm kann eine SK und ZK seiner Ziele von bis zu 2 bei seinen Schelmenstreichen ignorieren. Dieser Vorteil ist mit der Sonderfertigkeit Lockeres Zaubern (siehe Seite 72) kombinierbar, sodass SK und ZK von bis zu 3 ignoriert werden können.
-
-Publikation: Aventurische Magie II Seite 219</description>
+    <description>Regel: Der Schelm kann eine SK und ZK seiner Ziele von bis zu 2 bei seinen Schelmenstreichen ignorieren. Dieser Vorteil ist mit der Sonderfertigkeit Lockeres Zaubern (siehe Seite 72) kombinierbar, sodass SK und ZK von bis zu 3 ignoriert werden können.
+ 
+Publikation: Aventurische Magie II Seite 219
+ </description>
     <link>index.php/ththth.html</link>
   </advantage>
   <advantage>
@@ -999,8 +1216,8 @@ Publikation: Aventurische Magie II Seite 219</description>
     <max>0</max>
     <requirements>keine</requirements>
     <rule/>
-    <description>Helden mit diesem Vorteil erhalten eine Erleichterung von 1 auf Gassenwissen (Beschatten).
-
+    <description>Regel: Helden mit diesem Vorteil erhalten eine Erleichterung von 1 auf Gassenwissen (Beschatten).
+ 
 Publikation: Regelwerk Seite 169</description>
     <link>index.php/V_Unscheinbar.html</link>
   </advantage>
@@ -1010,8 +1227,8 @@ Publikation: Regelwerk Seite 169</description>
     <max>3</max>
     <requirements>Vorteil Zauberer, kein Nachteil Schlechte Regeneration (Astralenergie)</requirements>
     <rule/>
-    <description>Für jede Stufe des Vorteils bekommt der Held 1 zusätzlichen Punkt dazu, wenn er regeneriert.
-
+    <description>Regel: Für jede Stufe des Vorteils bekommt der Held 1 zusätzlichen Punkt dazu, wenn er regeneriert.
+ 
 Publikation: Regelwerk Seite 169</description>
     <link>index.php/V_verbRegAsP.html</link>
   </advantage>
@@ -1021,8 +1238,8 @@ Publikation: Regelwerk Seite 169</description>
     <max>3</max>
     <requirements>Vorteil Geweihter, kein Nachteil Schlechte Regeneration (Karmaenergie)</requirements>
     <rule/>
-    <description>Für jede Stufe des Vorteils bekommt der Held 1 zusätzlichen Punkt dazu, wenn er regeneriert.
-
+    <description>Regel: Für jede Stufe des Vorteils bekommt der Held 1 zusätzlichen Punkt dazu, wenn er regeneriert.
+ 
 Publikation: Regelwerk Seite 169</description>
     <link>index.php/V_VerbRegKaP.html</link>
   </advantage>
@@ -1032,8 +1249,8 @@ Publikation: Regelwerk Seite 169</description>
     <max>3</max>
     <requirements>kein Nachteil Schlechte Regeneration (Lebensenergie)</requirements>
     <rule/>
-    <description>Für jede Stufe des Vorteils bekommt der Held 1 zusätzlichen Punkt dazu, wenn er regeneriert,
-
+    <description>Regel: Für jede Stufe des Vorteils bekommt der Held 1 zusätzlichen Punkt dazu, wenn er regeneriert,
+ 
 Publikation: Regelwerk Seite 169</description>
     <link>index.php/V_VerbRegLeP.html</link>
   </advantage>
@@ -1043,8 +1260,8 @@ Publikation: Regelwerk Seite 169</description>
     <max>0</max>
     <requirements>Vorteil Zauberer</requirements>
     <rule/>
-    <description>Bei ungerichteter magischer Wahrnehmung erscheint der Zauberkundige immer als nicht magisch. Wer gezielt versucht, den Zauberkundigen zu entdecken oder zu analysieren, beispielsweise mit dem Zauber ODEM oder der Liturgie Magiesicht, muss eine Erschwernis von 3 hinnehmen.
-
+    <description>Regel: Bei ungerichteter magischer Wahrnehmung erscheint der Zauberkundige immer als nicht magisch. Wer gezielt versucht, den Zauberkundigen zu entdecken oder zu analysieren, beispielsweise mit dem Zauber ODEM oder der Liturgie Magiesicht, muss eine Erschwernis von 3 hinnehmen.
+ 
 Publikation: Regelwerk Seite 169</description>
     <link>index.php/V_VerhüllteAura.html</link>
   </advantage>
@@ -1054,8 +1271,8 @@ Publikation: Regelwerk Seite 169</description>
     <max>0</max>
     <requirements>kein Nachteil Unfähig in einem Gesellschaftstalent</requirements>
     <rule/>
-    <description>Proben auf Bekehren &amp; Überzeugen (öffentliche Rede, Einzelgespräch, Diskussionsführung), Überreden (Betteln, Manipulieren, Schmeicheln) und Handel (Feilschen) sind um 1 erleichtert.
-
+    <description>Regel: Proben auf Bekehren &amp; Überzeugen (öffentliche Rede, Einzelgespräch, Diskussionsführung), Überreden (Betteln, Manipulieren, Schmeicheln) und Handel (Feilschen) sind um 1 erleichtert.
+ 
 Publikation: Regelwerk Seite 169</description>
     <link>index.php/V_Vertrauenerweckend.html</link>
   </advantage>
@@ -1065,8 +1282,8 @@ Publikation: Regelwerk Seite 169</description>
     <max>0</max>
     <requirements>Nachteil Prinzipientreue I (ausgewählte Gottheit), kein Vorteil Geweihter, kein Vorteil Prediger</requirements>
     <rule/>
-    <description>Die Heldin bekommt eine neue Einsatzmöglichkeit für Götter &amp; Kulte (eigene Gottheit). Sie kann bis zu drei Vision-Sonderfertigkeiten erlernen, auch wenn sie nicht über den Vorteil Geweihter verfügt. Die Zelotin muss eine Gottheit auswählen, wenn sie sich für diesen Vorteil entscheidet. Lässt sich eine Visionärin im späteren Verlauf ihres Lebens der ausgewählten Gottheit weihen, bekommt sie die 10 AP dieses Vorteils wieder zurück bzw. kann sie mit Geweihter verrechnen.
-
+    <description>Regel: Die Heldin bekommt eine neue Einsatzmöglichkeit für Götter &amp; Kulte (eigene Gottheit). Sie kann bis zu drei Vision-Sonderfertigkeiten erlernen, auch wenn sie nicht über den Vorteil Geweihter verfügt. Die Zelotin muss eine Gottheit auswählen, wenn sie sich für diesen Vorteil entscheidet. Lässt sich eine Visionärin im späteren Verlauf ihres Lebens der ausgewählten Gottheit weihen, bekommt sie die 10 AP dieses Vorteils wieder zurück bzw. kann sie mit Geweihter verrechnen.
+ 
 Publikation: Aventurisches Götterwirken I Seite 227</description>
     <link>index.php/V_Visionaer.html</link>
   </advantage>
@@ -1076,8 +1293,8 @@ Publikation: Aventurisches Götterwirken I Seite 227</description>
     <max>0</max>
     <requirements>keine</requirements>
     <rule/>
-    <description>Eine Waffenbegabung erlaubt bei Kritischen Erfolgen und Patzern bei einer Probe auf eine Kampftechnik eine Wiederholung des Bestätigungswurfs.
-
+    <description>Regel: Eine Waffenbegabung erlaubt bei Kritischen Erfolgen und Patzern bei einer Probe auf eine Kampftechnik eine Wiederholung des Bestätigungswurfs.
+ 
 Publikation: Regelwerk Seite 169</description>
     <link>index.php/V_Waffenbegabung.html</link>
   </advantage>
@@ -1087,9 +1304,8 @@ Publikation: Regelwerk Seite 169</description>
     <max>0</max>
     <requirements>Spezies, Kultur oder Profession muss Wasserlebewesen als automatischen oder empfohlenen Vorteil aufweisen.</requirements>
     <rule/>
-    <description>Wesen mit diesem Vorteil erhalten automatisch die Sonderfertigkeit Unterwasserkampf (die Kosten der SF sind in diesem Vorteil einberechnet). Wasserlebewesen können unter Wasser atmen. Außerdem können sie sich darin mit Leichtigkeit fortbewegen, da es sich um ihr natürliches Element handelt. Sie müssen keine Proben ablegen, um nicht zu ertrinken.
-
-Publikation:  Aventurisches Bestiarium, Seite 121Aventurisches Bestiarium II, Seite 117Der schwarze Forst, Seite 36Havena Versunkene Geheimnisse, Seite 56</description>
+    <description>Regel: Wesen mit diesem Vorteil erhalten automatisch die Sonderfertigkeit Unterwasserkampf (die Kosten der SF sind in diesem Vorteil einberechnet). Wasserlebewesen können unter Wasser atmen. Außerdem können sie sich darin mit Leichtigkeit fortbewegen, da es sich um ihr natürliches Element handelt. Sie müssen keine Proben ablegen, um nicht zu ertrinken.
+Publikationen: Aventurisches Bestiarium, Seite 121Aventurisches Bestiarium II, Seite 117Der schwarze Forst, Seite 36Havena Versunkene Geheimnisse, Seite 56</description>
     <link>index.php/V_Wasserlebewesen.html</link>
   </advantage>
   <advantage>
@@ -1098,8 +1314,8 @@ Publikation:  Aventurisches Bestiarium, Seite 121Aventurisches Bestiarium II, Se
     <max>3</max>
     <requirements>Sonderfertigkeit Tradition Zauberbarden, kein Nachteil Verminderte Zaubermelodien</requirements>
     <rule/>
-    <description>Die Zaubermelodien des Abenteurers reichen pro Stufe des Vorteils 2 Schritt weiter als üblich.
-
+    <description>Regel: Die Zaubermelodien des Abenteurers reichen pro Stufe des Vorteils 2 Schritt weiter als üblich.
+ 
 Publikation: Aventurische Magie Seite 226</description>
     <link>index.php/V_WeitreichendeZaubermelodienI-III.html</link>
   </advantage>
@@ -1109,9 +1325,10 @@ Publikation: Aventurische Magie Seite 226</description>
     <max>3</max>
     <requirements>Sonderfertigkeit Tradition Zaubertänzer, kein Nachteil Verminderte Zaubertänze</requirements>
     <rule/>
-    <description>Die Zaubertänze der Abenteurerin reichen pro Stufe des Vorteils 2 Schritt weiter als üblich.
-
-Publikation: Aventurische Magie Seite 226</description>
+    <description>Regel: Die Zaubertänze der Abenteurerin reichen pro Stufe des Vorteils 2 Schritt weiter als üblich.
+ 
+Publikation: Aventurische Magie Seite 226
+ </description>
     <link>index.php/V_WeitreichendeZaubertaenze-III.html</link>
   </advantage>
   <advantage>
@@ -1120,8 +1337,8 @@ Publikation: Aventurische Magie Seite 226</description>
     <max>0</max>
     <requirements>kein Nachteil Stumm</requirements>
     <rule/>
-    <description>Fertigkeitsproben auf Singen sind um 1 erleichtert.
-
+    <description>Regel: Fertigkeitsproben auf Singen sind um 1 erleichtert.
+ 
 Publikation: Regelwerk Seite 169</description>
     <link>index.php/V_Wohlklang.html</link>
   </advantage>
@@ -1131,8 +1348,8 @@ Publikation: Regelwerk Seite 169</description>
     <max>2</max>
     <requirements>Vorteil Prediger</requirements>
     <rule/>
-    <description>Bei Stufe I kann der Zelot 4 Predigt-Sonderfertigkeiten beherrschen, bei Stufe II sogar 5.
-
+    <description>Regel: Bei Stufe I kann der Zelot 4 Predigt-Sonderfertigkeiten beherrschen, bei Stufe II sogar 5.
+ 
 Publikation: Aventurisches Götterwirken I Seite 227</description>
     <link>index.php/V_ZahlreichePredigten.html</link>
   </advantage>
@@ -1142,8 +1359,8 @@ Publikation: Aventurisches Götterwirken I Seite 227</description>
     <max>2</max>
     <requirements>Vorteil Visionär</requirements>
     <rule/>
-    <description>Bei Stufe I kann der Zelot 4 Vision-Sonderfertigkeiten beherrschen, bei Stufe II sogar 5.
-
+    <description>Regel: Bei Stufe I kann der Zelot 4 Vision-Sonderfertigkeiten beherrschen, bei Stufe II sogar 5.
+ 
 Publikation: Aventurisches Götterwirken I Seite 227</description>
     <link>index.php/V_ZahlreicheVisionen.html</link>
   </advantage>
@@ -1153,8 +1370,8 @@ Publikation: Aventurisches Götterwirken I Seite 227</description>
     <max>0</max>
     <requirements>keine</requirements>
     <rule/>
-    <description>Der Zauberer erhält als Astralenergie- Grundwert 20 AsP. Der Vorteil beinhaltet nicht die Sonderfertigkeit Tradition (siehe Regelwerk Seite 275). Diese muss einzeln erworben werden. Jeder Zauberer muss mit einer Tradition starten (eine Tradition ist eine spezielle Sonderfertigkeit). Dieser Vorteil lässt sich im späteren Spielverlauf nicht mehr erwerben.
-
+    <description>Regel: Der Zauberer erhält als Astralenergie- Grundwert 20 AsP. Der Vorteil beinhaltet nicht die Sonderfertigkeit Tradition (siehe Regelwerk Seite 275). Diese muss einzeln erworben werden. Jeder Zauberer muss mit einer Tradition starten (eine Tradition ist eine spezielle Sonderfertigkeit). Dieser Vorteil lässt sich im späteren Spielverlauf nicht mehr erwerben.
+ 
 Publikation: Regelwerk Seite 169</description>
     <link>index.php/V_Zauberer.html</link>
   </advantage>
@@ -1164,8 +1381,8 @@ Publikation: Regelwerk Seite 169</description>
     <max>0</max>
     <requirements>keine</requirements>
     <rule/>
-    <description>Der Charakter hat ein ausgezeichnetes Zeitgefühl und kann, ohne den Stand der Sonne zu sehen oder auf andere Hilfsmittel zurückzugreifen, die Tageszeit genau bestimmen.
-
+    <description>Regel: Der Charakter hat ein ausgezeichnetes Zeitgefühl und kann, ohne den Stand der Sonne zu sehen oder auf andere Hilfsmittel zurückzugreifen, die Tageszeit genau bestimmen.
+ 
 Publikation: Regelwerk Seite 170</description>
     <link>index.php/V_Zeitgefühl.html</link>
   </advantage>
@@ -1175,8 +1392,8 @@ Publikation: Regelwerk Seite 170</description>
     <max>0</max>
     <requirements>Spezies, Kultur oder Profession muss Zweistimmiger Gesang als automatischen oder empfohlenen Vorteil besitzen.</requirements>
     <rule/>
-    <description>Ein Held kann den Zweistimmigen Gesang singen und hat somit die Möglichkeit, Elfenlieder zu erlernen. Durch den Vorteil erwirbt der Held das Anwendungsgebiet Zweistimmiger Gesang im Talent Singen.
-
+    <description>Regel: Ein Held kann den Zweistimmigen Gesang singen und hat somit die Möglichkeit, Elfenlieder zu erlernen. Durch den Vorteil erwirbt der Held das Anwendungsgebiet Zweistimmiger Gesang im Talent Singen.
+ 
 Publikation: Regelwerk Seite 170</description>
     <link>index.php/V_ZweistimmigerGesang.html</link>
   </advantage>
@@ -1186,8 +1403,8 @@ Publikation: Regelwerk Seite 170</description>
     <max>0</max>
     <requirements>keine</requirements>
     <rule/>
-    <description>Der Abenteurer erhält bei Proben auf Sinnesschärfe zur Entdeckung von Geheimtüren, Hohlräumen, versteckten Schubladen und Ähnlichem eine Erleichterung von 1.
-
+    <description>Regel: Der Abenteurer erhält bei Proben auf Sinnesschärfe zur Entdeckung von Geheimtüren, Hohlräumen, versteckten Schubladen und Ähnlichem eine Erleichterung von 1.
+ 
 Publikation: Regelwerk Seite 170</description>
     <link>index.php/V_Zwergennase.html</link>
   </advantage>
@@ -1197,8 +1414,8 @@ Publikation: Regelwerk Seite 170</description>
     <max>0</max>
     <requirements>kein Nachteil Zerbrechlich</requirements>
     <rule/>
-    <description>Dieser Vorteil sorgt dafür, dass der Held die Auswirkungen der höchsten Stufe des Zustands Schmerz ignorieren darf. Er erleidet lediglich die Auswirkungen der nächstniedrigeren Stufe. Wenn ein Held also beispielsweise drei Stufen Schmerz erlitten hat, gelten für ihn nur die Auswirkungen von Stufe II. Bei SchmerzStufe IV wird der Held dennoch handlungsunfähig. Schmerz Stufe I wird so behandelt, als hätte der Held keine Stufe Schmerz.
-
+    <description>Regel: Dieser Vorteil sorgt dafür, dass der Held die Auswirkungen der höchsten Stufe des Zustands Schmerz ignorieren darf. Er erleidet lediglich die Auswirkungen der nächstniedrigeren Stufe. Wenn ein Held also beispielsweise drei Stufen Schmerz erlitten hat, gelten für ihn nur die Auswirkungen von Stufe II. Bei SchmerzStufe IV wird der Held dennoch handlungsunfähig. Schmerz Stufe I wird so behandelt, als hätte der Held keine Stufe Schmerz.
+ 
 Publikation: Regelwerk Seite 169</description>
     <link>index.php/V_ZäherHund.html</link>
   </advantage>

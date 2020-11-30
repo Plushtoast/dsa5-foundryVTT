@@ -350,9 +350,15 @@ export default class ActorSheetDsa5 extends ActorSheet {
     }
 
     async _updateAPs(apValue) {
-        await this.actor.update({
-            "data.details.experience.spent": this.actor.data.data.details.experience.spent + apValue,
-        });
+        if (this.actor.data.type == "character") {
+            if (!isNaN(apValue)) {
+                await this.actor.update({
+                    "data.details.experience.spent": Number(this.actor.data.data.details.experience.spent) + Number(apValue),
+                });
+            } else {
+                ui.notifications.warn(game.i18n.localize("Error.APUpdateError"))
+            }
+        }
     }
 
     async _addVantage(item, typeClass) {
@@ -381,9 +387,7 @@ export default class ActorSheetDsa5 extends ActorSheet {
             "data.details.career.value": item.data.name,
             "data.details.culture.value": ""
         }
-        if (this.actor.type == "character") {
-            update["data.details.experience.spent"] = this.actor.data.data.details.experience.spent + item.data.data.APValue.value
-        }
+        await this._updateAPs(item.data.data.APValue.value)
         if (item.data.mageLevel != "mundane") {
             update["data.guidevalue.value"] = item.data.data.guidevalue.value
             update["data.tradition.value"] = item.data.data.tradition.value
@@ -410,9 +414,7 @@ export default class ActorSheetDsa5 extends ActorSheet {
         let update = {
             "data.details.culture.value": item.data.name
         }
-        if (this.actor.type == "character") {
-            update["data.details.experience.spent"] = this.actor.data.data.details.experience.spent + item.data.data.APValue.value
-        }
+        await this._updateAPs(item.data.data.APValue.value)
         await this.actor.update(update);
         for (let skill of item.data.data.skills.value.split(",")) {
             let vars = skill.trim().split(" ")
@@ -465,9 +467,7 @@ export default class ActorSheetDsa5 extends ActorSheet {
             "data.status.wounds.initial": item.data.data.baseValues.wounds.value,
             "data.status.wounds.value": this.actor.data.data.status.wounds.current + this.actor.data.data.status.wounds.modifier + this.actor.data.data.status.wounds.advances
         };
-        if (this.actor.type == "character") {
-            update["data.details.experience.spent"] = this.actor.data.data.details.experience.spent + item.data.data.APValue.value
-        }
+        await this._updateAPs(item.data.data.APValue.value)
         await this.actor.update(update);
     }
 

@@ -13,15 +13,20 @@ export default class ImportAdvantage {
 
                 let pack = await DSA5Importer.getCompendiumPack("Item", `Advantages`);
                 let elems = doc.getElementsByTagName("advantage")
+
                 for (let i = 0; i < elems.length; i++) {
                     let elem = elems[i]
+                    let apVal = DSA5Importer.sanitizeAPVal(elem.getElementsByTagName("APvalue")[0].textContent)
+                    if (apVal.split(" ").length > 1) {
+                        console.warn(elem.getElementsByTagName("name")[0].textContent + " has odd AP <" + apVal + ">")
+                    }
                     const item = {
                         name: elem.getElementsByTagName("name")[0].textContent,
                         type: "advantage",
                         img: Itemdsa5.defaultImages["advantage"],
                         data: {
                             "description.value": DSA5Importer.prettyDescription(elem.getElementsByTagName("description")[0].textContent),
-                            "APValue.value": elem.getElementsByTagName("APvalue")[0].textContent.split(" ")[0],
+                            "APValue.value": apVal,
                             "max.value": elem.getElementsByTagName("max")[0].textContent,
                             "requirements.value": elem.getElementsByTagName("requirements")[0].textContent,
                             "effect.value": elem.getElementsByTagName("rule")[0].textContent,
@@ -38,6 +43,7 @@ export default class ImportAdvantage {
 
 
 
+
     static async importDisadvantages() {
         //var doc = DSA5Importer.fetchFile("systems/dsa5/modules/importer/xmls/advantage.xml")
         var x = new XMLHttpRequest();
@@ -51,13 +57,17 @@ export default class ImportAdvantage {
                 let elems = doc.getElementsByTagName("disadvantage")
                 for (let i = 0; i < elems.length; i++) {
                     let elem = elems[i]
+                    let apVal = DSA5Importer.sanitizeAPVal(elem.getElementsByTagName("APvalue")[0].textContent)
+                    if (apVal.split(" ").length > 1) {
+                        console.warn(elem.getElementsByTagName("name")[0].textContent + " has odd AP <" + apVal + ">")
+                    }
                     const item = {
                         name: elem.getElementsByTagName("name")[0].textContent,
                         img: Itemdsa5.defaultImages["disadvantage"],
                         type: "disadvantage",
                         data: {
                             "description.value": DSA5Importer.prettyDescription(elem.getElementsByTagName("description")[0].textContent),
-                            "APValue.value": elem.getElementsByTagName("APvalue")[0].textContent.split(" ")[0],
+                            "APValue.value": apVal,
                             "max.value": elem.getElementsByTagName("max")[0].textContent,
                             "requirements.value": elem.getElementsByTagName("requirements")[0].textContent,
                             "effect.value": elem.getElementsByTagName("rule")[0].textContent,
@@ -86,7 +96,6 @@ export default class ImportAdvantage {
                 for (let i = 0; i < elems.length; i++) {
 
                     let elem = elems[i]
-                    console.log(elem)
                     const item = {
                         name: elem.getElementsByTagName("name")[0].textContent,
                         img: Itemdsa5.defaultImages["armor"],
@@ -134,7 +143,6 @@ export default class ImportAdvantage {
                         img = DSA5Importer.ImportVars.meleeImages.de[caregory]
                     }
 
-                    console.log(elem)
                     const item = {
                         name: elem.getElementsByTagName("name")[0].textContent,
                         img: img,
@@ -189,7 +197,6 @@ export default class ImportAdvantage {
                         img = DSA5Importer.ImportVars.rangeImages.de[caregory]
                     }
 
-                    console.log(elem)
                     const item = {
                         name: elem.getElementsByTagName("name")[0].textContent,
                         img: img,
@@ -237,7 +244,6 @@ export default class ImportAdvantage {
                         img = DSA5Importer.ImportVars.rangeImages.de[caregory]
                     }*/
 
-                    console.log(elem)
                     const item = {
                         name: elem.getElementsByTagName("name")[0].textContent,
                         img: img,
@@ -278,7 +284,6 @@ export default class ImportAdvantage {
                         img = DSA5Importer.ImportVars.rangeImages.de[caregory]
                     }*/
                     let characteristics = elem.getElementsByTagName("probe")[0].textContent.split(" ")[0].split("/").map(x => x.toLowerCase())
-                    console.log(elem)
                     const item = {
                         name: elem.getElementsByTagName("name")[0].textContent,
                         img: img,
@@ -327,7 +332,7 @@ export default class ImportAdvantage {
                         img = DSA5Importer.ImportVars.rangeImages.de[caregory]
                     }*/
                     let characteristics = elem.getElementsByTagName("probe")[0].textContent.split(" ")[0].split("/").map(x => x.toLowerCase())
-                    console.log(elem)
+
                     const item = {
                         name: elem.getElementsByTagName("name")[0].textContent,
                         img: img,
@@ -375,7 +380,6 @@ export default class ImportAdvantage {
                     if (caregory in DSA5Importer.ImportVars.rangeImages.de) {
                         img = DSA5Importer.ImportVars.rangeImages.de[caregory]
                     }*/
-                    console.log(elem)
                     const item = {
                         name: elem.getElementsByTagName("name")[0].textContent,
                         img: img,
@@ -415,7 +419,6 @@ export default class ImportAdvantage {
                     if (caregory in DSA5Importer.ImportVars.rangeImages.de) {
                         img = DSA5Importer.ImportVars.rangeImages.de[caregory]
                     }*/
-                    console.log(elem)
                     const item = {
                         name: elem.getElementsByTagName("name")[0].textContent,
                         img: img,
