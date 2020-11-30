@@ -79,7 +79,7 @@ Publikation: Aventurische Namen 89</description>
   </disadvantage>
   <disadvantage>
     <name>Eingeschränkter Sinn (Sicht)</name>
-    <APvalue>-15</APvalue>
+    <APvalue>15</APvalue>
     <max>0</max>
     <requirements>kein Vorteil Herausragender Sinn für den gleichen Sinn, kein Nachteil Blind (bei Sicht), kein Nachteil Taub (bei Gehör)</requirements>
     <rule/>
@@ -87,8 +87,8 @@ Publikation: Aventurische Namen 89</description>
     <link>index.php/N_EingeschränkterSinn.html</link>
   </disadvantage>
   <disadvantage>
-    <name>Eingeschränkter Sinn ( Gehör)</name>
-    <APvalue>-10</APvalue>
+    <name>Eingeschränkter Sinn (Gehör)</name>
+    <APvalue>10</APvalue>
     <max>0</max>
     <requirements>kein Vorteil Herausragender Sinn für den gleichen Sinn, kein Nachteil Blind (bei Sicht), kein Nachteil Taub (bei Gehör)</requirements>
     <rule/>
@@ -96,8 +96,8 @@ Publikation: Aventurische Namen 89</description>
     <link>index.php/N_EingeschränkterSinn.html</link>
   </disadvantage>
   <disadvantage>
-    <name>Eingeschränkter Sinn ( Geruch &amp; Geschmack)</name>
-    <APvalue>-6</APvalue>
+    <name>Eingeschränkter Sinn (Geruch &amp; Geschmack)</name>
+    <APvalue>6</APvalue>
     <max>0</max>
     <requirements>kein Vorteil Herausragender Sinn für den gleichen Sinn, kein Nachteil Blind (bei Sicht), kein Nachteil Taub (bei Gehör)</requirements>
     <rule/>
@@ -105,8 +105,8 @@ Publikation: Aventurische Namen 89</description>
     <link>index.php/N_EingeschränkterSinn.html</link>
   </disadvantage>
   <disadvantage>
-    <name>Eingeschränkter Sinn ( Tastsinn)</name>
-    <APvalue>-2</APvalue>
+    <name>Eingeschränkter Sinn (Tastsinn)</name>
+    <APvalue>2</APvalue>
     <max>0</max>
     <requirements>kein Vorteil Herausragender Sinn für den gleichen Sinn, kein Nachteil Blind (bei Sicht), kein Nachteil Taub (bei Gehör)</requirements>
     <rule/>
@@ -176,7 +176,8 @@ Publikation: Aventurisches Kompendium Seite 133</description>
     <rule/>
     <description>Regel: Hitzestufen werden für den Helden um 1 Stufe erhöht, sobald er mindestens unter Hitzestufe 2 leidet.
  
-Publikation: Regelwerk (3. überarb. Aufl.), Seite 172</description>
+Publikation: 
+Regelwerk (3. überarb. Aufl.), Seite 172</description>
     <link>index.php/N_Hitzeempfindlich.html</link>
   </disadvantage>
   <disadvantage>
@@ -252,7 +253,9 @@ Publikation: Regelwerk Seite 172</description>
     <requirements>Sonderfertigkeit Tradition Intuitive Zauberer oder Animisten, kein Vorteil Große Zauberauswahl</requirements>
     <rule/>
     <description>Regel: Der intuitive Zauberer muss pro Stufe einen der drei Zauber streichen, über die er maximal verfügen kann.
-Publikationen: Aventurische Magie, Seite 144Aventurische Magie 3, Seite 208</description>
+Publikationen: 
+Aventurische Magie, Seite 144
+Aventurische Magie 3, Seite 208</description>
     <link>index.php/N_KleineZauberauswahlI-II.html</link>
   </disadvantage>
   <disadvantage>
@@ -446,7 +449,8 @@ Publikation: Regelwerk Seite 174</description>
     <requirements>kein Vorteil Glück</requirements>
     <rule/>
     <description>Regel: Der Held startet pro Stufe des Nachteils mit 1 Schicksalspunkt weniger als üblich. Sein Maximum an Schicksalspunkten sinkt hierdurch um einen Punkt pro Stufe. Die Anzahl der Schicksalspunkte darf hierbei nicht unter 0 fallen.
-Publikation:Regelwerk (3. überarb. Aufl.), Seite 174</description>
+Publikation:
+Regelwerk (3. überarb. Aufl.), Seite 174</description>
     <link>index.php/N_Pech.html</link>
   </disadvantage>
   <disadvantage>
@@ -462,31 +466,64 @@ Publikation: Regelwerk Seite 174</description>
   </disadvantage>
   <disadvantage>
     <name>Persönlichkeitsschwäche</name>
-    <APvalue>je nach Persönlichkeitsschwäche</APvalue>
+    <APvalue>je nach Persönlichkeitsschwäche#Arroganz: Der Held hält sich für etwas Besseres und lässt dies jeden spüren.
+Mögliche Erschwernisse: auf Handeln (Feilschen) und Gesellschaftstalente außer Einschüchtern und Willenskraft
+AP-Wert: –10 Abenteuerpunkte#Eitelkeit: Der Held hasst es, nicht standesgemäß gekleidet und frisiert oder sonst wie in seinem Auftreten beeinträchtigt zu sein.
+Mögliche Erschwernisse: auf alle Gesellschaftstalente
+AP-Wert: –10 Abenteuerpunkte#Neid: Ein Held mit dieser Persönlichkeitsschwäche begehrt den Reichtum, die Frau oder die Waffe anderer.
+Mögliche Erschwernisse: auf Handeln (Feilschen) und Gesellschaftstalente außer Einschüchtern und Willenskraft
+AP-Wert: –5 Abenteuerpunkte#Streitsucht: Jeder streitet sich mal, doch dieser Held macht sich unbeliebt, da er ständig und über den nichtigsten Grund mit anderen in Auseinandersetzungen gerät.
+Mögliche Erschwernisse: auf Handeln (Feilschen) und Gesellschaftstalente außer Einschüchtern und Willenskraft
+AP-Wert: –10 Abenteuerpunkte#Unheimlich: Von dem Helden geht eine unangenehme Aura aus. Dies kann ein stechender Blick, seine mürrische Art oder ein unerklärbares Gefühl für seine Gefährlichkeit sein.
+Mögliche Erschwernisse: alle Gesellschaftstalente außer Einschüchtern und Willenskraft
+AP-Wert: –8 Abenteuerpunkte#Verwöhnt: Verwöhnte Helden lassen sich gerne bedienen, sind faul und vermeiden jegliche Anstrengung. Ohne die nötigen Annehmlichkeiten wird der Held schnell unausstehlich, weinerlich oder aggressiv. Mögliche Erschwernisse: auf alle Gesellschaftstalente
+AP-Wert: –10 Abenteuerpunkte#Vorurteile: Manche Helden haben starke Vorteile gegen Nichtmenschen, Frauen, Männer, Zauberer, bestimmte Kulte oder andere Gruppen. Interaktion mit diesen Personen ist für diesen Helden eine echte Herausforderung. Vorurteile können mehrfach gewählt werden, allerdings erhält man nur einmal den AP-Wert.
+Mögliche Erschwernisse: auf Handeln (Feilschen) und Gesellschaftstalente außer Einschüchtern und Willenskraft
+AP-Wert: –5 Abenteuerpunkte#Weltfremd: Der Held kennt sich mit vielen Aspekten des täglichen Lebens auf Dere kaum aus: Er hat keine Ahnung von Geld oder gesellschaftlichen Verhaltensweisen, die Regeln der Etikette sind ihm völlig unbekannt oder er hat kein Gefühl für die Errungenschaften der Zivilisation. Wie bei Vorurteile muss diese Schlechte Eigenschaft auf bestimmte Bereiche begrenzt werden, z.B. Adel, Besitz, Fortschritt, Geld, Götter, Hierarchien, Religion, Welt außerhalb der
+eigenen Kultur. Weltfremd kann mehrfach gewählt werden, allerdings erhält man nur für zwei Bereiche jeweils den AP-Wert (also insgesamt –20 AP).
+Mögliche Erschwernisse: auf Handeln (Feilschen) und alle Gesellschaftstalente
+AP-Wert: –10 Abenteuerpunkte</APvalue>
     <max>0</max>
     <requirements>keine</requirements>
     <rule/>
     <description>Regel: In passenden Situationen kann der Meister durchaus für die angegebenen Fertigkeiten eine Erschwernis von 1 aussprechen, wenn er dies für angemessen hält. Es dürfen bis zu zwei Persönlichkeitsschwächen pro Held gewählt werden.
+AP-Wert: je nach Persönlichkeitsschwäche
  
 Publikation: Regelwerk Seite 174
  
 Beispiele
-#Arroganz: Der Held hält sich für etwas Besseres und lässt dies jeden spüren.Mögliche Erschwernisse: auf Handeln (Feilschen) und Gesellschaftstalente außer Einschüchtern und WillenskraftAP-Wert: –10 Abenteuerpunkte
-#Eitelkeit: Der Held hasst es, nicht standesgemäß gekleidet und frisiert oder sonst wie in seinem Auftreten beeinträchtigt zu sein.Mögliche Erschwernisse: auf alle GesellschaftstalenteAP-Wert: –10 Abenteuerpunkte
-#Neid: Ein Held mit dieser Persönlichkeitsschwäche begehrt den Reichtum, die Frau oder die Waffe anderer.Mögliche Erschwernisse: auf Handeln (Feilschen) und Gesellschaftstalente außer Einschüchtern und WillenskraftAP-Wert: –5 Abenteuerpunkte
-#Streitsucht: Jeder streitet sich mal, doch dieser Held macht sich unbeliebt, da er ständig und über den nichtigsten Grund mit anderen in Auseinandersetzungen gerät.Mögliche Erschwernisse: auf Handeln (Feilschen) und Gesellschaftstalente außer Einschüchtern und WillenskraftAP-Wert: –10 Abenteuerpunkte
-#Unheimlich: Von dem Helden geht eine unangenehme Aura aus. Dies kann ein stechender Blick, seine mürrische Art oder ein unerklärbares Gefühl für seine Gefährlichkeit sein.Mögliche Erschwernisse: alle Gesellschaftstalente außer Einschüchtern und WillenskraftAP-Wert: –8 Abenteuerpunkte
-#Verwöhnt: Verwöhnte Helden lassen sich gerne bedienen, sind faul und vermeiden jegliche Anstrengung. Ohne die nötigen Annehmlichkeiten wird der Held schnell unausstehlich, weinerlich oder aggressiv. Mögliche Erschwernisse: auf alle GesellschaftstalenteAP-Wert: –10 Abenteuerpunkte
-#Vorurteile: Manche Helden haben starke Vorteile gegen Nichtmenschen, Frauen, Männer, Zauberer, bestimmte Kulte oder andere Gruppen. Interaktion mit diesen Personen ist für diesen Helden eine echte Herausforderung. Vorurteile können mehrfach gewählt werden, allerdings erhält man nur einmal den AP-Wert.Mögliche Erschwernisse: auf Handeln (Feilschen) und Gesellschaftstalente außer Einschüchtern und WillenskraftAP-Wert: –5 Abenteuerpunkte
-#Weltfremd: Der Held kennt sich mit vielen Aspekten des täglichen Lebens auf Dere kaum aus: Er hat keine Ahnung von Geld oder gesellschaftlichen Verhaltensweisen, die Regeln der Etikette sind ihm völlig unbekannt oder er hat kein Gefühl für die Errungenschaften der Zivilisation. Wie bei Vorurteile muss diese Schlechte Eigenschaft auf bestimmte Bereiche begrenzt werden, z.B. Adel, Besitz, Fortschritt, Geld, Götter, Hierarchien, Religion, Welt außerhalb dereigenen Kultur. Weltfremd kann mehrfach gewählt werden, allerdings erhält man nur für zwei Bereiche jeweils den AP-Wert (also insgesamt –20 AP).Mögliche Erschwernisse: auf Handeln (Feilschen) und alle GesellschaftstalenteAP-Wert: –10 Abenteuerpunkte
+#Arroganz: Der Held hält sich für etwas Besseres und lässt dies jeden spüren.
+Mögliche Erschwernisse: auf Handeln (Feilschen) und Gesellschaftstalente außer Einschüchtern und Willenskraft
+AP-Wert: –10 Abenteuerpunkte
+#Eitelkeit: Der Held hasst es, nicht standesgemäß gekleidet und frisiert oder sonst wie in seinem Auftreten beeinträchtigt zu sein.
+Mögliche Erschwernisse: auf alle Gesellschaftstalente
+AP-Wert: –10 Abenteuerpunkte
+#Neid: Ein Held mit dieser Persönlichkeitsschwäche begehrt den Reichtum, die Frau oder die Waffe anderer.
+Mögliche Erschwernisse: auf Handeln (Feilschen) und Gesellschaftstalente außer Einschüchtern und Willenskraft
+AP-Wert: –5 Abenteuerpunkte
+#Streitsucht: Jeder streitet sich mal, doch dieser Held macht sich unbeliebt, da er ständig und über den nichtigsten Grund mit anderen in Auseinandersetzungen gerät.
+Mögliche Erschwernisse: auf Handeln (Feilschen) und Gesellschaftstalente außer Einschüchtern und Willenskraft
+AP-Wert: –10 Abenteuerpunkte
+#Unheimlich: Von dem Helden geht eine unangenehme Aura aus. Dies kann ein stechender Blick, seine mürrische Art oder ein unerklärbares Gefühl für seine Gefährlichkeit sein.
+Mögliche Erschwernisse: alle Gesellschaftstalente außer Einschüchtern und Willenskraft
+AP-Wert: –8 Abenteuerpunkte
+#Verwöhnt: Verwöhnte Helden lassen sich gerne bedienen, sind faul und vermeiden jegliche Anstrengung. Ohne die nötigen Annehmlichkeiten wird der Held schnell unausstehlich, weinerlich oder aggressiv. Mögliche Erschwernisse: auf alle Gesellschaftstalente
+AP-Wert: –10 Abenteuerpunkte
+#Vorurteile: Manche Helden haben starke Vorteile gegen Nichtmenschen, Frauen, Männer, Zauberer, bestimmte Kulte oder andere Gruppen. Interaktion mit diesen Personen ist für diesen Helden eine echte Herausforderung. Vorurteile können mehrfach gewählt werden, allerdings erhält man nur einmal den AP-Wert.
+Mögliche Erschwernisse: auf Handeln (Feilschen) und Gesellschaftstalente außer Einschüchtern und Willenskraft
+AP-Wert: –5 Abenteuerpunkte
+#Weltfremd: Der Held kennt sich mit vielen Aspekten des täglichen Lebens auf Dere kaum aus: Er hat keine Ahnung von Geld oder gesellschaftlichen Verhaltensweisen, die Regeln der Etikette sind ihm völlig unbekannt oder er hat kein Gefühl für die Errungenschaften der Zivilisation. Wie bei Vorurteile muss diese Schlechte Eigenschaft auf bestimmte Bereiche begrenzt werden, z.B. Adel, Besitz, Fortschritt, Geld, Götter, Hierarchien, Religion, Welt außerhalb der
+eigenen Kultur. Weltfremd kann mehrfach gewählt werden, allerdings erhält man nur für zwei Bereiche jeweils den AP-Wert (also insgesamt –20 AP).
+Mögliche Erschwernisse: auf Handeln (Feilschen) und alle Gesellschaftstalente
+AP-Wert: –10 Abenteuerpunkte
  
 Publikation: Regelwerk Seite 174-175</description>
     <link>index.php/N_Persönlichkeitsschwäche.html</link>
   </disadvantage>
   <disadvantage>
-    <name>Prinzipientreue I-IIIMoralkodici</name>
+    <name>Prinzipientreue</name>
     <APvalue>–10 Abenteuerpunkte pro Stufe</APvalue>
-    <max>0</max>
+    <max>3</max>
     <requirements>keine</requirements>
     <rule/>
     <description>Regel: Prinzipientreue gibt es in drei Stufen. Während die erste Stufe den Helden nur leicht einschränkt, ist die zweite Stufe schon fordernd, die letzte Stufe benachteiligt den Helden schwer. Ein Held kann mehreren Prinzipien folgen, er bekommt jedoch nur einmal Abenteuerpunkte für den Nachteil (und zwar für die höchste Prinzipientreuestufe). Wer gegen seine Prinzipien verstößt, erleidet eine Erschwernis von 1 auf alle Fertigkeitsproben. Dieser Zustand dauert mindestens eine Stunde an, über die genaue Länge entscheidet der Meister unter Berücksichtigung der Schwere des Verstoßes.
@@ -577,7 +614,8 @@ Beispiele
 #Erster: Ob bei der Wahl des besten Zimmers in einem Gasthaus oder beim Einkauf – der Held muss immer der Erste sein.
 #Heulsuse: Ob aus Angst, Freude, Trauer oder Ärger, der Held kann leicht zum Weinen gebracht werden.
 #Hypochonder: Ständig glaubt der Held, dass er an einer schrecklichen Krankheit erkranken könnte, selbst wenn er sich bester Gesundheit erfreut oder eine Ansteckung absolut unwahrscheinlich ist. Sollte er tatsächlich einmal krank sein, nimmt er stets das Schlimmste an.
-#Junge: Wenn der Abenteurer mit jemanden ein Gespräch führt, endet der Satz oft auf „Junge“, selbst bei Frauen(„Nicht schlecht, Junge. Hast du gut gemacht, Junge.“).
+#Junge: Wenn der Abenteurer mit jemanden ein Gespräch führt, endet der Satz oft auf „Junge“, selbst bei Frauen
+(„Nicht schlecht, Junge. Hast du gut gemacht, Junge.“).
 #Langschläfer: Der Abenteurer schläft gerne lange – wird er geweckt, hat er extrem schlechte Laune.
 #Links-Rechts-Schwäche: Der Charakter vertauscht ständig links und rechts.
 #Mein Kind: Der Held beginnt oder beendet fast jedes Gespräch mit den Worten „Mein Kind“.
@@ -603,26 +641,51 @@ Publikation: Aventurische Namen Seite 91</description>
   </disadvantage>
   <disadvantage>
     <name>Schlechte Eigenschaft</name>
-    <APvalue>je nach Schlechter Eigenschaft</APvalue>
+    <APvalue>je nach Schlechter Eigenschaft# Aberglaube: Der Held weicht vor schwarzen Katzen, Unglückszahlen und anderen schlechten Omen zurück.
+AP-Wert: –5 Abenteuerpunkte# Autoritätsglaube: Der Held zweifelt nicht an den Worten höhergestellter Personen, selbst wenn sie unlogische Befehle erteilen oder unglaubwürdig sind.
+AP-Wert: –5 Abenteuerpunkte# Geiz: Wenn der Held erst einmal Gold oder andere Wertgegenstände besitzt, gibt er sie nur ungerne wieder her. Lieber schränkt er sich selbst und andere finanziell ein, und er geht sogar unnötige Risiken ein, um Geld zu sparen.
+AP-Wert: –5 Abenteuerpunkte# Goldgier: Goldgierige Helden lassen alle Vorsicht fallen, wenn es darum geht, eine Schatztruhe oder andere wertvolle Gegenstände zu untersuchen und an sich zu nehmen.
+AP-Wert: –5 Abenteuerpunkte# Jähzorn: Der Held ist sehr reizbar und neigt zu Wutausbrüchen, die meist nur kurz anhalten, aber zu gewalttätigem Verhalten führen können.
+AP-Wert: –10 Abenteuerpunkte# Kleptomanie: Manche Abenteurer stehlen um des Stehlens willen, egal ob das Diebesgut einen nennenswerten Wert hat oder nicht, ohne über die Konsequenzen nachzudenken.
+AP-Wert: –10 Abenteuerpunkte# Naiv: Der Held ist gutherzig und naiv, vertraut den falschen Leuten und kann sich kaum vorstellen, dass man manche Leute es nicht gut mit ihm meinen. Er wird auch durch Enttäuschungen nicht vorsichtiger.
+AP-Wert: –10 Abenteuerpunkte# Neugier: Jeder Abenteurer ist neugierig, aber einige Abenteurer werden so von ihrer Neugierde getrieben, dass sie unnötige Risiken eingehen, um sie zu befriedigen.
+AP-Wert: –5 Abenteuerpunkte# Rachsucht: Während jähzornige Helden sofort ihrer Wut freien Lauf lassen, sind rachsüchtige besonnener und planen langfristig, wie sie sich für Kränkungen, egal wie gering, rächen können.
+AP-Wert: –5 Abenteuerpunkte# Spielsucht: Spielsüchtige lassen sich leicht zu riskanten Glücksspielen und Wetten verleiten. Oft führt die Spielsucht zu hohen Spielschulden.
+AP-Wert: –5 Abenteuerpunkte# Verschwendungssucht: Geld bleibt nicht lange im Besitz des Helden. Er gibt es mit vollen Händen (für sinnlose Dinge) aus.
+AP-Wert: –5 Abenteuerpunkte</APvalue>
     <max>0</max>
     <requirements>keine</requirements>
     <rule/>
     <description>Regel: In jeder Situation, in der der Held mit einem potenziellen Auslöser seiner Schlechten Eigenschaft konfrontiert wird, muss er eine Probe auf Willenskraft bestehen, um sich zu beherrschen. Gelingt ihm diese Probe, ist alles in Ordnung, ansonsten muss er entsprechend der Schlechten Eigenschaft agieren. Seine Schlechte Eigenschaft hat ihn so lange im Griff, wie er dem Auslöser ausgesetzt ist. Der Meister kann für die Probe auf Willenskraft entsprechend der Stärke des Auslösers Erschwernisse oder Erleichterungen aussprechen. Es dürfen bis zu zwei Schlechte Eigenschaften pro Held gewählt werden. Kombinationen, die sich ausschließen (z. B. Geiz und Verschwendungssucht), dürfen nicht gewählt werden. Das letzte Wort darüber hat der Spielleiter.
+AP-Wert: je nach Schlechter Eigenschaft
  
 Beispiele
-# Aberglaube: Der Held weicht vor schwarzen Katzen, Unglückszahlen und anderen schlechten Omen zurück.AP-Wert: –5 Abenteuerpunkte
-# Autoritätsglaube: Der Held zweifelt nicht an den Worten höhergestellter Personen, selbst wenn sie unlogische Befehle erteilen oder unglaubwürdig sind.AP-Wert: –5 Abenteuerpunkte
-# Geiz: Wenn der Held erst einmal Gold oder andere Wertgegenstände besitzt, gibt er sie nur ungerne wieder her. Lieber schränkt er sich selbst und andere finanziell ein, und er geht sogar unnötige Risiken ein, um Geld zu sparen.AP-Wert: –5 Abenteuerpunkte
-# Goldgier: Goldgierige Helden lassen alle Vorsicht fallen, wenn es darum geht, eine Schatztruhe oder andere wertvolle Gegenstände zu untersuchen und an sich zu nehmen.AP-Wert: –5 Abenteuerpunkte
-# Jähzorn: Der Held ist sehr reizbar und neigt zu Wutausbrüchen, die meist nur kurz anhalten, aber zu gewalttätigem Verhalten führen können.AP-Wert: –10 Abenteuerpunkte
-# Kleptomanie: Manche Abenteurer stehlen um des Stehlens willen, egal ob das Diebesgut einen nennenswerten Wert hat oder nicht, ohne über die Konsequenzen nachzudenken.AP-Wert: –10 Abenteuerpunkte
-# Naiv: Der Held ist gutherzig und naiv, vertraut den falschen Leuten und kann sich kaum vorstellen, dass man manche Leute es nicht gut mit ihm meinen. Er wird auch durch Enttäuschungen nicht vorsichtiger.AP-Wert: –10 Abenteuerpunkte
-# Neugier: Jeder Abenteurer ist neugierig, aber einige Abenteurer werden so von ihrer Neugierde getrieben, dass sie unnötige Risiken eingehen, um sie zu befriedigen.AP-Wert: –5 Abenteuerpunkte
-# Rachsucht: Während jähzornige Helden sofort ihrer Wut freien Lauf lassen, sind rachsüchtige besonnener und planen langfristig, wie sie sich für Kränkungen, egal wie gering, rächen können.AP-Wert: –5 Abenteuerpunkte
-# Spielsucht: Spielsüchtige lassen sich leicht zu riskanten Glücksspielen und Wetten verleiten. Oft führt die Spielsucht zu hohen Spielschulden.AP-Wert: –5 Abenteuerpunkte
-# Verschwendungssucht: Geld bleibt nicht lange im Besitz des Helden. Er gibt es mit vollen Händen (für sinnlose Dinge) aus.AP-Wert: –5 Abenteuerpunkte
+# Aberglaube: Der Held weicht vor schwarzen Katzen, Unglückszahlen und anderen schlechten Omen zurück.
+AP-Wert: –5 Abenteuerpunkte
+# Autoritätsglaube: Der Held zweifelt nicht an den Worten höhergestellter Personen, selbst wenn sie unlogische Befehle erteilen oder unglaubwürdig sind.
+AP-Wert: –5 Abenteuerpunkte
+# Geiz: Wenn der Held erst einmal Gold oder andere Wertgegenstände besitzt, gibt er sie nur ungerne wieder her. Lieber schränkt er sich selbst und andere finanziell ein, und er geht sogar unnötige Risiken ein, um Geld zu sparen.
+AP-Wert: –5 Abenteuerpunkte
+# Goldgier: Goldgierige Helden lassen alle Vorsicht fallen, wenn es darum geht, eine Schatztruhe oder andere wertvolle Gegenstände zu untersuchen und an sich zu nehmen.
+AP-Wert: –5 Abenteuerpunkte
+# Jähzorn: Der Held ist sehr reizbar und neigt zu Wutausbrüchen, die meist nur kurz anhalten, aber zu gewalttätigem Verhalten führen können.
+AP-Wert: –10 Abenteuerpunkte
+# Kleptomanie: Manche Abenteurer stehlen um des Stehlens willen, egal ob das Diebesgut einen nennenswerten Wert hat oder nicht, ohne über die Konsequenzen nachzudenken.
+AP-Wert: –10 Abenteuerpunkte
+# Naiv: Der Held ist gutherzig und naiv, vertraut den falschen Leuten und kann sich kaum vorstellen, dass man manche Leute es nicht gut mit ihm meinen. Er wird auch durch Enttäuschungen nicht vorsichtiger.
+AP-Wert: –10 Abenteuerpunkte
+# Neugier: Jeder Abenteurer ist neugierig, aber einige Abenteurer werden so von ihrer Neugierde getrieben, dass sie unnötige Risiken eingehen, um sie zu befriedigen.
+AP-Wert: –5 Abenteuerpunkte
+# Rachsucht: Während jähzornige Helden sofort ihrer Wut freien Lauf lassen, sind rachsüchtige besonnener und planen langfristig, wie sie sich für Kränkungen, egal wie gering, rächen können.
+AP-Wert: –5 Abenteuerpunkte
+# Spielsucht: Spielsüchtige lassen sich leicht zu riskanten Glücksspielen und Wetten verleiten. Oft führt die Spielsucht zu hohen Spielschulden.
+AP-Wert: –5 Abenteuerpunkte
+# Verschwendungssucht: Geld bleibt nicht lange im Besitz des Helden. Er gibt es mit vollen Händen (für sinnlose Dinge) aus.
+AP-Wert: –5 Abenteuerpunkte
 # Sikaryan-Durst (nur für Sikaryan-Räuber): Diese Schlechte Eigenschaft sorgt dafür, dass ein Sikaryan-Räuber seinen Hunger stillen will. Je höher sein Sikaryan-Verlust ist, desto eindringlicher will er dem Verlangen nachgehen und ist bereit, seine Tarnung aufzugeben und sich auf den nächsten Kulturschaffenden zu stürzen.
-Publikationen: Regelwerk (3. überar. Auflage), Seite 176ff.Aventurisches Bestiarium 2, Seite 118</description>
+Publikationen: 
+Regelwerk (3. überar. Auflage), Seite 176ff.
+Aventurisches Bestiarium 2, Seite 118</description>
     <link>index.php/N_SchlechteEigenschaft.html</link>
   </disadvantage>
   <disadvantage>
@@ -819,7 +882,8 @@ Publikation: Aventurische Namen Seite 90</description>
     <requirements>keine Sonderfertigkeit Kampftrinker</requirements>
     <rule/>
     <description>Regel: Wer über diesen Nachteil verfügt, für den verdoppeln sich die Auswirkungen nach Giftproben beim Konsum von Alkohol. Würde der Held beispielsweise 1 Stufe Berauscht erleiden, erhält er stattdessen direkt 2 Stufen des Zustands.
-Publikation: Kneipen und Tavernen, Seite 13</description>
+Publikation: 
+Kneipen und Tavernen, Seite 13</description>
     <link>index.php/SF_UnverträglichkeitgegenüberAlkohol.html</link>
   </disadvantage>
   <disadvantage>

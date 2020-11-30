@@ -205,7 +205,7 @@ Publikation: Die Siebenwindküste, Seite 166</description>
     <rule/>
     <description>Der Held verfügt über feine Sinne und hat ein Talent darin, Spuren zu folgen. Er erhält bei einer gelungenen Probe auf Fährtensuchen und Sinnesschärfe +1 QS (bis zu einem Maximum von 6 QS). Allerdings lenkt ihn der Vollmond so stark ab, dass alle Proben in der Vollmondnacht und an dem Tag davor und danach um 1 erschwert sind.
 
-Publikation: Aventurische Magie 3, Seite 208</description>
+Publikation: -</description>
     <link>index.php/wolfsblut.html</link>
   </advantage>
   <advantage>
@@ -215,7 +215,8 @@ Publikation: Aventurische Magie 3, Seite 208</description>
     <requirements>Vorteil Wolfsblut</requirements>
     <rule/>
     <description>Regel: Der Held kann sich innerhalb 1 Aktion ein Wolfsgebiss wachsen lassen und damit im Nahkampf mehr Schaden verursachen. Er benutzt dazu eine Raufen-AT und richtet +1 TP im Waffenlosen Kampf an. Zudem kann er die Sonderfertigkeit Verbeißen einsetzen. Die Rückverwandlung zu einem normalen Gebiss dauert ebenfalls 1 Aktion. Außerdem erzielt er, während die Verwandlung andauert, bei Proben auf Einschüchtern +1 FP (bis zu einem Maximum von 18 FP).
-Publikationen:Aventurische Magie 3, Seite 208</description>
+Publikationen:
+Aventurische Magie 3, Seite 208</description>
     <link>index.php/ahn_wolfsgebiss.html</link>
   </advantage>
   <advantage>
@@ -225,7 +226,8 @@ Publikationen:Aventurische Magie 3, Seite 208</description>
     <requirements>Vorteil Wolfsblut</requirements>
     <rule/>
     <description>Regel: Die Heldin kann sich in einen Grimwolf verwandeln (siehe Aventurischer Almanach Seite 168). Dazu benötigt sie 4 Aktionen. Während der Wirkungsdauer verwendet die Heldin die körperlichen Werte des Tieres, einschließlich seiner Eigenschaften, Talente und Kampfwerte. Eine niedrige LE wird bei der Verwandlung anteilsmäßig angerechnet, gleiches geschieht bei der Rückverwandlung. Die geistigen Werte der Heldin bleiben ebenso wie ihr Bewusstsein erhalten. Die Verwandlung betrifft nur die Heldin selbst, nicht ihre Kleidung oder Ausrüstung. Die Wirkungsdauer beträgt 1 Stunde. Die Heldin kann sich nicht willentlich zurückverwandeln. Am Ende der Wirkungsdauer erleidet die Heldin 1 Stufe Betäubung.
-Publikationen:Aventurische Magie 3, Seite 208</description>
+Publikationen:
+Aventurische Magie 3, Seite 208</description>
     <link>index.php/ahn_wolfskind.html</link>
   </advantage>
   <advantage>
@@ -290,8 +292,10 @@ Publikation: Aventurisches Bestiarium Seite 120</description>
     <max>0</max>
     <requirements>keine</requirements>
     <rule/>
-    <description>Regel: Beim Abschleppen (siehe Seite 36) hat der Held mehr Erfolg als andere Personen. Bei der Probe auf Betören(Liebeskünste) zum Abschleppen bekommt er +1 FP (bis zu einem Maximum von 18 FP). Alternativ kann der Spieler auch beschließen, mehrere Personen gleichzeitig abzuschleppen. Die Probe ist dann jedoch pro Person, die er abschleppen will, um 2 erschwert. Dieser Vorteil kann mit der Sonderfertigkeit Abschleppspezialist/in (siehe Seite 41 Aventurisches Kompendium 2) kombiniert werden. Damit bekommt der Held +2 FP oder die Probe zum Abschleppen von mehreren Personen ist pro Person nur um 1 erschwert.
-Publikation(en):Aventurisches Kompendium 2 Seite 40</description>
+    <description>Regel: Beim Abschleppen (siehe Seite 36) hat der Held mehr Erfolg als andere Personen. Bei der Probe auf Betören
+(Liebeskünste) zum Abschleppen bekommt er +1 FP (bis zu einem Maximum von 18 FP). Alternativ kann der Spieler auch beschließen, mehrere Personen gleichzeitig abzuschleppen. Die Probe ist dann jedoch pro Person, die er abschleppen will, um 2 erschwert. Dieser Vorteil kann mit der Sonderfertigkeit Abschleppspezialist/in (siehe Seite 41 Aventurisches Kompendium 2) kombiniert werden. Damit bekommt der Held +2 FP oder die Probe zum Abschleppen von mehreren Personen ist pro Person nur um 1 erschwert.
+Publikation(en):
+Aventurisches Kompendium 2 Seite 40</description>
     <link>index.php/Vorteil_Begabte_Aufreißein.html</link>
   </advantage>
   <advantage>
@@ -323,7 +327,9 @@ Publikation: Regelwerk Seite 164</description>
     <requirements>Paktgeschenk Zauberei mit Lebenskraft</requirements>
     <rule/>
     <description>Wirkung: Der Held wird zum Zauberer, obwohl er nicht mit der Gabe der Zauberei geboren wurde. Er verfügt nicht über einen eigenen AsP-Vorrat, sondern zaubert stattdessen mit seiner Lebensenergie. Dabei sind Lebenspunkte doppelt so viel Wert wie AsP, sodass ein Zauber, der 7 AsP kosten würde, den Helden nur 4 LeP kosten. Hat der Held einen eigenen AsP-Vorrat, kann er sich bei jedem Zauber entscheiden, ob er mit AsP oder LeP zaubern möchte.
-Publikationen:Aventurische Magie 3, Seite 208Aventurische Magie 3 Bonusmaterial und Errata, Seite 7</description>
+Publikationen:
+Aventurische Magie 3, Seite 208
+Aventurische Magie 3 Bonusmaterial und Errata, Seite 7</description>
     <link>index.php/V_Blutzauberer.html</link>
   </advantage>
   <advantage>
@@ -350,14 +356,17 @@ Publikation: Regelwerk Seite 164</description>
   </advantage>
   <advantage>
     <name>Einkommen</name>
-    <APvalue> Stufe I: gratis, Stufe II: 2 Abenteuerpunkte, Stufe III: 6 Abenteuerpunkte, Stufe IV: 20 Abenteuerpunkte, Stufe V: 60 Abenteuerpunkte, Stufe VI: 200 Abenteuerpunkte</APvalue>
+    <APvalue>Stufe I: gratis, Stufe II: 2 Abenteuerpunkte, Stufe III: 6 Abenteuerpunkte, Stufe IV: 20 Abenteuerpunkte, 
+Stufe V: 60 Abenteuerpunkte, Stufe VI: 200 Abenteuerpunkte</APvalue>
     <max>6</max>
     <requirements>-</requirements>
     <rule/>
     <description>Regel: Für jede Stufe dieses Vorteils bekommt der Held die gleiche Stufe als dauerhaften Lebensstil. Das verdiente Geld des Vorteils fließt ausschließlich in den Erhalt des Lebensstils. Extrakosten wie Waffen, Rüstungen und andere Ausrüstung muss der Held von seinem Startkapital oder seinen Erwerbungen während des Spiels bezahlen. Alles was über den Lebensstil hinausgeht, muss allerdings extra gezahlt werden.
-AP-Wert: Stufe I: gratis, Stufe II: 2 Abenteuerpunkte, Stufe III: 6 Abenteuerpunkte, Stufe IV: 20 Abenteuerpunkte, Stufe V: 60 Abenteuerpunkte, Stufe VI: 200 Abenteuerpunkte
+AP-Wert: Stufe I: gratis, Stufe II: 2 Abenteuerpunkte, Stufe III: 6 Abenteuerpunkte, Stufe IV: 20 Abenteuerpunkte, 
+Stufe V: 60 Abenteuerpunkte, Stufe VI: 200 Abenteuerpunkte
  
-Publikation(en):Aventurisches Kompendium 2 Seite 48</description>
+Publikation(en):
+Aventurisches Kompendium 2 Seite 48</description>
     <link>index.php/V_Einkommen.html</link>
   </advantage>
   <advantage>
@@ -479,7 +488,9 @@ Publikation: Regelwerk Seite 165</description>
     <requirements>Sonderfertigkeit Tradition Intuitive Zauberer oder Animisten, kein Nachteil Kleine Zauberauswahl</requirements>
     <rule/>
     <description>Regel: Die Heldin kann pro Stufe des Vorteils einen zusätzlichen Zauber aktivieren und damit die Begrenzung von maximal 3 Zaubern übersteigen. Ob sie diese Zauber zu Spielbeginn oder später aktiviert, ist ihr überlassen.
-Publikationen: Aventurische Magie, Seite 225Aventurische Magie 3, Seite 207</description>
+Publikationen: 
+Aventurische Magie, Seite 225
+Aventurische Magie 3, Seite 207</description>
     <link>index.php/V_GroßeZauberauswahlI-II.html</link>
   </advantage>
   <advantage>
@@ -561,7 +572,7 @@ Publikation: Regelwerk Seite 166</description>
   </advantage>
   <advantage>
     <name>Herausragender Sinn (Sicht/Gehör)</name>
-    <APvalue>-12</APvalue>
+    <APvalue>12</APvalue>
     <max>0</max>
     <requirements>kein Nachteil Eingeschränkter Sinn für den gleichen Sinn, kein Nachteil Blind (für Sicht), kein Nachteil Taub (für Gehör)</requirements>
     <rule/>
@@ -569,8 +580,8 @@ Publikation: Regelwerk Seite 166</description>
     <link>index.php/V_Sinn.html</link>
   </advantage>
   <advantage>
-    <name>Herausragender Sinn ( Geruch &amp; Geschmack)</name>
-    <APvalue>-6</APvalue>
+    <name>Herausragender Sinn (Geruch &amp; Geschmack)</name>
+    <APvalue>6</APvalue>
     <max>0</max>
     <requirements>kein Nachteil Eingeschränkter Sinn für den gleichen Sinn, kein Nachteil Blind (für Sicht), kein Nachteil Taub (für Gehör)</requirements>
     <rule/>
@@ -578,8 +589,8 @@ Publikation: Regelwerk Seite 166</description>
     <link>index.php/V_Sinn.html</link>
   </advantage>
   <advantage>
-    <name>Herausragender Sinn ( Tastsinn)</name>
-    <APvalue>-2</APvalue>
+    <name>Herausragender Sinn (Tastsinn)</name>
+    <APvalue>2</APvalue>
     <max>0</max>
     <requirements>kein Nachteil Eingeschränkter Sinn für den gleichen Sinn, kein Nachteil Blind (für Sicht), kein Nachteil Taub (für Gehör)</requirements>
     <rule/>
@@ -691,7 +702,8 @@ Publikation: Aventurische Magie Seite 225</description>
     <max>0</max>
     <requirements>kein Vorteil Hass auf Kobolde (und deren Untergruppen), keine Schlechte Eigenschaft Vorurteile gegen Kobolde</requirements>
     <rule/>
-    <description>Regel: Proben auf Überreden (Aufschwatzen, Herausreden, Manipulieren, Schmeicheln), um einen Kobold/Klabauterfreundlich zu stimmen, gelten bei Gelingen der Probe als um 1 QS besser. Allerdings kann sich die QS so nie über 6 hinaus erhöhen.
+    <description>Regel: Proben auf Überreden (Aufschwatzen, Herausreden, Manipulieren, Schmeicheln), um einen Kobold/Klabauter
+freundlich zu stimmen, gelten bei Gelingen der Probe als um 1 QS besser. Allerdings kann sich die QS so nie über 6 hinaus erhöhen.
 Publikation: Die Siebenwindküste, Seite 153</description>
     <link>index.php/koboldfreund.html</link>
   </advantage>
@@ -709,7 +721,7 @@ Einfluss: 1
 
 Zuverlässigkeit: 2
 
-Publikation: Aventurisches Kompendium 2, Seite 60</description>
+Publikation: -</description>
     <link>index.php/Vorteil_Bettler.html</link>
   </advantage>
   <advantage>
@@ -726,7 +738,7 @@ Einfluss: 2
 
 Zuverlässigkeit: 3
 
-Publikation: Aventurisches Kompendium 2, Seite 60</description>
+Publikation: -</description>
     <link>index.php/Vorteil_Botenreiter.html</link>
   </advantage>
   <advantage>
@@ -743,7 +755,7 @@ Einfluss: 2
 
 Zuverlässigkeit: 5
 
-Publikation: Aventurisches Kompendium 2, Seite 60</description>
+Publikation: -</description>
     <link>index.php/Vorteil_Freund_aus_Kindheitstagen.html</link>
   </advantage>
   <advantage>
@@ -760,7 +772,7 @@ Einfluss: 3
 
 Zuverlässigkeit: 3
 
-Publikation: Aventurisches Kompendium 2, Seite 61</description>
+Publikation: -</description>
     <link>index.php/Vorteil_K_Geweihte.html</link>
   </advantage>
   <advantage>
@@ -777,7 +789,7 @@ Einfluss: 2
 
 Zuverlässigkeit: 2
 
-Publikation: Aventurisches Kompendium 2, Seite 61</description>
+Publikation: -</description>
     <link>index.php/Vorteil_Handwerksmeister.html</link>
   </advantage>
   <advantage>
@@ -794,7 +806,7 @@ Einfluss: 3
 
 Zuverlässigkeit: 1
 
-Publikation: Aventurisches Kompendium 2, Seite 61</description>
+Publikation: -</description>
     <link>index.php/Vorteil_Hehler.html</link>
   </advantage>
   <advantage>
@@ -811,7 +823,7 @@ Einfluss: 3
 
 Zuverlässigkeit: 2
 
-Publikation: Aventurisches Kompendium 2, Seite 61</description>
+Publikation: -</description>
     <link>index.php/Vorteil_Junkerin.html</link>
   </advantage>
   <advantage>
@@ -828,7 +840,7 @@ Einfluss: 3
 
 Zuverlässigkeit: 3
 
-Publikation: Aventurisches Kompendium 2, Seite 61</description>
+Publikation: -</description>
     <link>index.php/Vorteil_Magier.html</link>
   </advantage>
   <advantage>
@@ -845,7 +857,7 @@ Einfluss: 3
 
 Zuverlässigkeit: 4
 
-Publikation: Aventurisches Kompendium 2, Seite 61</description>
+Publikation: -</description>
     <link>index.php/Vorteil_Schmuggler.html</link>
   </advantage>
   <advantage>
@@ -854,7 +866,8 @@ Publikation: Aventurisches Kompendium 2, Seite 61</description>
     <max>0</max>
     <requirements/>
     <rule/>
-    <description>Auf eine Sklavin achtet kaum jemand. Dennoch kann gerade sie, die von anderen kaum bemerkt wird, eine ausgezeichneteQuelle für Informationen über ihre Herrin oder deren Gäste sein.
+    <description>Auf eine Sklavin achtet kaum jemand. Dennoch kann gerade sie, die von anderen kaum bemerkt wird, eine ausgezeichnete
+Quelle für Informationen über ihre Herrin oder deren Gäste sein.
 
 Talente: Etikette 7 (11/12/12), Gassenwissen 7 (11/12/12), Handel 5 (11/12/12), Willenskraft 3 (9/12/12)
 
@@ -862,7 +875,7 @@ Einfluss: 1
 
 Zuverlässigkeit: 1
 
-Publikation: Aventurisches Kompendium 2, Seite 61</description>
+Publikation: -</description>
     <link>index.php/Vorteil_Sklavin.html</link>
   </advantage>
   <advantage>
@@ -879,7 +892,7 @@ Einfluss: 1
 
 Zuverlässigkeit: 3
 
-Publikation: Aventurisches Kompendium 2, Seite 61</description>
+Publikation: -</description>
     <link>index.php/Vorteil_Soldat.html</link>
   </advantage>
   <advantage>
@@ -896,7 +909,7 @@ Einfluss: 3
 
 Zuverlässigkeit: 2
 
-Publikation: Aventurisches Kompendium 2, Seite 61</description>
+Publikation: -</description>
     <link>index.php/Vorteil_Stadtmagistrat.html</link>
   </advantage>
   <advantage>
@@ -913,7 +926,7 @@ Einfluss: 2
 
 Zuverlässigkeit: 3
 
-Publikation: Aventurisches Kompendium 2, Seite 62</description>
+Publikation: -</description>
     <link>index.php/Vorteil_Stadtwache.html</link>
   </advantage>
   <advantage>
@@ -930,7 +943,7 @@ Einfluss: 3
 
 Zuverlässigkeit: 2
 
-Publikation: Aventurisches Kompendium 2, Seite 61</description>
+Publikation: -</description>
     <link>index.php/Vorteil_Söldnerhauptmann.html</link>
   </advantage>
   <advantage>
@@ -947,7 +960,7 @@ Einfluss: 4
 
 Zuverlässigkeit: 3
 
-Publikation: Aventurisches Kompendium 2, Seite 62</description>
+Publikation: -</description>
     <link>index.php/Vorteil_Tempelvorsteherin.html</link>
   </advantage>
   <advantage>
@@ -956,7 +969,8 @@ Publikation: Aventurisches Kompendium 2, Seite 62</description>
     <max>0</max>
     <requirements/>
     <rule/>
-    <description>In Städten gibt es Unterweltbanden, die einen mehr oder weniger fähigen Anführer haben. Einer dieser Unterweltkönigekann für einen Helden ein wertvoller Kontakt sein, da er Schläger zum Schutz des Helden bereitstellen, einen Gegenstand von seinen Leuten stehlen lassen oder den Helden mit Gerüchten versorgen kann.
+    <description>In Städten gibt es Unterweltbanden, die einen mehr oder weniger fähigen Anführer haben. Einer dieser Unterweltkönige
+kann für einen Helden ein wertvoller Kontakt sein, da er Schläger zum Schutz des Helden bereitstellen, einen Gegenstand von seinen Leuten stehlen lassen oder den Helden mit Gerüchten versorgen kann.
 
 Talente: Gassenwissen 14 (13/14/14), Handel 9 (13/14/14), Willenskraft 10 (14/14/14)
 
@@ -964,7 +978,7 @@ Einfluss: 2
 
 Zuverlässigkeit: 4
 
-Publikation: Aventurisches Kompendium 2, Seite 62</description>
+Publikation: -</description>
     <link>index.php/Vorteil_Unterweltkönig.html</link>
   </advantage>
   <advantage>
@@ -981,7 +995,7 @@ Einfluss: 2
 
 Zuverlässigkeit: 4
 
-Publikation: Aventurisches Kompendium 2, Seite 62</description>
+Publikation: -</description>
     <link>index.php/Vorteil_Wirt.html</link>
   </advantage>
   <advantage>
@@ -1046,7 +1060,6 @@ Publikation: Regelwerk Seite 167</description>
     <requirements>Vorteil Geweihter, kein Vorteil Pragmatiker</requirements>
     <rule/>
     <description>Regel: Bei einem Mystiker baut sich Entrückung erst nach zwei Stunden statt einer Stunde pro Stufe ab.
-Voraussetzung: Vorteil Geweihter, kein Vorteil Pragmatiker
  
 Publikation: Regelwerk Seite 167</description>
     <link>index.php/V_Mystiker.html</link>
@@ -1058,7 +1071,8 @@ Publikation: Regelwerk Seite 167</description>
     <requirements>Spezies, Kultur oder Profession muss Natürlicher Rüstungsschutz als automatischen oder empfohlenen Vorteil aufweisen.</requirements>
     <rule/>
     <description>Regel: Das Wesen verfügt pro Stufe des Vorteils über einen natürlichen Rüstungsschutz, der mit anderen Rüstungen kombiniert werden kann.
-Publikation: Aventurisches Bestiarium II, Seite 117</description>
+Publikation: 
+Aventurisches Bestiarium II, Seite 117</description>
     <link>index.php/V_Natürlicher_Rüstungsschutz.html</link>
   </advantage>
   <advantage>
@@ -1079,7 +1093,6 @@ Publikation: Regelwerk Seite 168</description>
     <requirements>Vorteil Geweihter, kein Vorteil Mystiker</requirements>
     <rule/>
     <description>Regel: Bei einem Pragmatiker baut sich Entrückung bereits nach einer halben Stunde statt einer Stunde pro Stufe ab.
-Voraussetzung: Vorteil Geweihter, kein Vorteil Mystiker
  
 Publikation: Regelwerk Seite 168</description>
     <link>index.php/V_Pragmatiker.html</link>
@@ -1105,7 +1118,8 @@ Publikation: Aventurisches Götterwirken I Seite 227</description>
  
 Reichtum – wichtig oder nicht?
 Je nach Kampagne ist Geld ein wichtiger Faktor oder kaum von Bedeutung. Wenn Geld für euch eine bedeutsame Ressource ist, solltet ihr die Kosten des Vorteils auf 2 bis 5 Punkte pro Stufe erhöhen.
-Publikation: Regelwerk (3. überar. Auflage), Seite 168</description>
+Publikation: 
+Regelwerk (3. überar. Auflage), Seite 168</description>
     <link>index.php/V_Reich.html</link>
   </advantage>
   <advantage>
@@ -1149,7 +1163,8 @@ Publikation: Regelwerk Seite 168</description>
     <rule/>
     <description>Regel: Mit diesem Vorteil benötigt man nur noch die Hälfte der Zeit, bis eine Stufe des Zustands Betäubung oder Berauscht, der durch Alkohol verursacht wurde, abgebaut ist.
  
-Publikation: Kneipen und Tavernen, Seite 13</description>
+Publikation: 
+Kneipen und Tavernen, Seite 13</description>
     <link>index.php/SF_SchnellwiederaufdenBeinen.html</link>
   </advantage>
   <advantage>
@@ -1182,7 +1197,8 @@ Publikation: Regelwerk Seite 168</description>
     <max>0</max>
     <requirements>kein Nachteil Unfähig auf ein Gesellschaftstalent, kein Nachteil Unfrei</requirements>
     <rule/>
-    <description>Regel: Personen mit Sozialer Anpassungsfähigkeit können Erschwernisse aufGesellschaftstalente ignorieren, die durch Standesunterschiede entstehen. Die Soziale Anpassungsfähigkeit täuscht aber keine Personen des Hochadels.
+    <description>Regel: Personen mit Sozialer Anpassungsfähigkeit können Erschwernisse auf
+Gesellschaftstalente ignorieren, die durch Standesunterschiede entstehen. Die Soziale Anpassungsfähigkeit täuscht aber keine Personen des Hochadels.
  
 Publikation: Regelwerk Seite 168</description>
     <link>index.php/V_SozialeAnpassungsfähigkeit.html</link>
@@ -1305,7 +1321,11 @@ Publikation: Regelwerk Seite 169</description>
     <requirements>Spezies, Kultur oder Profession muss Wasserlebewesen als automatischen oder empfohlenen Vorteil aufweisen.</requirements>
     <rule/>
     <description>Regel: Wesen mit diesem Vorteil erhalten automatisch die Sonderfertigkeit Unterwasserkampf (die Kosten der SF sind in diesem Vorteil einberechnet). Wasserlebewesen können unter Wasser atmen. Außerdem können sie sich darin mit Leichtigkeit fortbewegen, da es sich um ihr natürliches Element handelt. Sie müssen keine Proben ablegen, um nicht zu ertrinken.
-Publikationen: Aventurisches Bestiarium, Seite 121Aventurisches Bestiarium II, Seite 117Der schwarze Forst, Seite 36Havena Versunkene Geheimnisse, Seite 56</description>
+Publikationen: 
+Aventurisches Bestiarium, Seite 121
+Aventurisches Bestiarium II, Seite 117
+Der schwarze Forst, Seite 36
+Havena Versunkene Geheimnisse, Seite 56</description>
     <link>index.php/V_Wasserlebewesen.html</link>
   </advantage>
   <advantage>
@@ -1414,7 +1434,8 @@ Publikation: Regelwerk Seite 170</description>
     <max>0</max>
     <requirements>kein Nachteil Zerbrechlich</requirements>
     <rule/>
-    <description>Regel: Dieser Vorteil sorgt dafür, dass der Held die Auswirkungen der höchsten Stufe des Zustands Schmerz ignorieren darf. Er erleidet lediglich die Auswirkungen der nächstniedrigeren Stufe. Wenn ein Held also beispielsweise drei Stufen Schmerz erlitten hat, gelten für ihn nur die Auswirkungen von Stufe II. Bei SchmerzStufe IV wird der Held dennoch handlungsunfähig. Schmerz Stufe I wird so behandelt, als hätte der Held keine Stufe Schmerz.
+    <description>Regel: Dieser Vorteil sorgt dafür, dass der Held die Auswirkungen der höchsten Stufe des Zustands Schmerz ignorieren darf. Er erleidet lediglich die Auswirkungen der nächstniedrigeren Stufe. Wenn ein Held also beispielsweise drei Stufen Schmerz erlitten hat, gelten für ihn nur die Auswirkungen von Stufe II. Bei Schmerz
+Stufe IV wird der Held dennoch handlungsunfähig. Schmerz Stufe I wird so behandelt, als hätte der Held keine Stufe Schmerz.
  
 Publikation: Regelwerk Seite 169</description>
     <link>index.php/V_ZäherHund.html</link>

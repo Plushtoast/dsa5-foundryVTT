@@ -488,7 +488,7 @@
             },
             "APvalue": {
                 "APValue": {
-                    "type": "Number",
+                    "type": "String",
                     "label": "APValue",
                     "value": 0
                 }

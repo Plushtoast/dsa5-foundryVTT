@@ -345,7 +345,7 @@ export default class ImportAdvantage {
                             "effect.value": elem.getElementsByTagName("effect")[0].textContent,
                             "castingTime.value": elem.getElementsByTagName("castingTime")[0].textContent,
                             "AsPCost.value": elem.getElementsByTagName("KaPCost")[0].textContent,
-                            "distribution.value": elem.getElementsByTagName("feature")[0].textContent,
+                            "distribution.value": elem.getElementsByTagName("distribution")[0].textContent,
                             "StF.value": elem.getElementsByTagName("Stf")[0].textContent,
                             "duration.value": elem.getElementsByTagName("duration")[0].textContent,
                             "targetCategory.value": elem.getElementsByTagName("targetCategory")[0].textContent,

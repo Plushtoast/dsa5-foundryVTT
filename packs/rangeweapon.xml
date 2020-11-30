@@ -1,0 +1,733 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<root>
+  <rangeweapon>
+    <name>Angbarer Mauerwehr</name>
+    <damage>1W6+2</damage>
+    <loadingTime>1/12 Aktionen</loadingTime>
+    <range>10/30/50</range>
+    <ammunition>Bolzen</ammunition>
+    <length>70 HF</length>
+    <weight>3</weight>
+    <price>350</price>
+    <complexity>komp (3 AP)</complexity>
+    <description>Anmerkung: Magazin (für 8 Schuss); 1 Aktion pro Schuss, 12 Aktionen, um das gesamte Magazin
+auszuwechseln.
+Waffenvorteil: Bei Schüssen auf Distanz nah steigen die TP um 1 weiteren Punkte (also insgesamt 1W6+4, wenn der
+TP-Bonus für die Reichweite nah miteingerechnet wird).
+Waffennachteil: Bei Schüssen auf die Distanz mittel/weit sinken die TP um 1/2 Punkt/e (also insgesamt 1W6+1/1W6–1,
+wenn der TP-Malus für die Reichweite weit miteingerechnet wird).</description>
+    <category>Armbrüste</category>
+    <link>index.php/angbarer-mauerwehr.html</link>
+  </rangeweapon>
+  <rangeweapon>
+    <name>Balestra</name>
+    <damage>2W6+2</damage>
+    <loadingTime>4 Aktionen</loadingTime>
+    <range>10/35/60</range>
+    <ammunition>Kugeln</ammunition>
+    <length>80 HF</length>
+    <weight>2.75</weight>
+    <price>200</price>
+    <complexity>komp (4 AP)</complexity>
+    <description>Waffenvorteil: Die Abzüge für Schüsse auf Ziele der Größenkategorie klein und winzig sinken um 1.
+Waffennachteil: Bei einer gewürfelten 20, egal ob der Patzer bestätigt wird oder nicht, kommt es zu einer schweren Ladehemmung. Der Schütze benötigt 2 Aktionen, um die Ladehemmung zu beseitigen. Spielst du mit der Optionalregel der Patzertabellen, addieren sich diese Aktionen auf die Zeit für eine weitere erwürfelte Ladehemmung.</description>
+    <category>Armbrüste</category>
+    <link>index.php/balestra.html</link>
+  </rangeweapon>
+  <rangeweapon>
+    <name>Balestrina</name>
+    <damage>1W6+4</damage>
+    <loadingTime>2 Aktionen</loadingTime>
+    <range>5/25/40</range>
+    <ammunition>Kugeln</ammunition>
+    <length>40 HF</length>
+    <weight>0.75</weight>
+    <price>120</price>
+    <complexity>komp (4 AP)</complexity>
+    <description>Waffenvorteil: Die Abzüge für Schüsse auf Ziele der Größenkategorie klein und winzig sinken um 1.
+Waffennachteil: Bei einer gewürfelten 20, egal ob der Patzer bestätigt wird oder nicht, kommt es zu einer schweren Ladehemmung Der Schütze benötigt 2 Aktionen, um die Ladehemmung zu beseitigen. Spielst du mit der Optionalregel der Patzertabellen, addieren sich diese Aktionen auf die Zeit für eine weitere erwürfelte Ladehemmung.</description>
+    <category>Armbrüste</category>
+    <link>index.php/balestrina.html</link>
+  </rangeweapon>
+  <rangeweapon>
+    <name>Balläster-Armbrust</name>
+    <damage>1W6+3</damage>
+    <loadingTime>2 Aktionen</loadingTime>
+    <range>20/60/100</range>
+    <ammunition>Kugel</ammunition>
+    <length>80 HF</length>
+    <weight>0.75</weight>
+    <price>200</price>
+    <complexity>komp (3 AP)</complexity>
+    <description>Waffenvorteil: Auf einer kurzen Distanz von bis zu 5 Schritt verursacht der Balläster +2 TP. Gegen Vögel verursacht der Balläster +1 TP (gegen Vögel auf einer Distanz von 2 oder weniger Schritt also 1W6+7, wenn der TP-Bonus der Reichweite kurz miteingerechnet wird).
+Waffennachteil: Bei einer gewürfelten 20, egal ob der Patzer bestätigt wird oder nicht, kommt es zu einer schweren Ladehemmung. Der Schütze benötigt 2 Aktionen, um die Ladehemmung zu beseitigen. Spielst du mit der Optionalregel der Patzertabellen, addieren sich diese Aktionen auf die Zeit für eine weitere erwürfelte Ladehemmung.
+Publikation:
+Aventurische Rüstkammer, Seite 95</description>
+    <category>Armbrüste</category>
+    <link>index.php/ballaester-armbrust.html</link>
+  </rangeweapon>
+  <rangeweapon>
+    <name>Eisenwalder</name>
+    <damage>1W6+4</damage>
+    <loadingTime>2/10 Aktionen</loadingTime>
+    <range>10/50/80</range>
+    <ammunition>Bolzen</ammunition>
+    <length>90 HF</length>
+    <weight>3.75</weight>
+    <price>500</price>
+    <complexity>komp (4 AP)</complexity>
+    <description>Anmerkung: Magazin (für 10 Schuss); 2 Aktionen pro Schuss, 10 Aktionen, um das gesamte Magazin auszuwechseln
+Waffenvorteil: Beim Zielen erhält der Schütze einen Bonus von 3 (jedoch wie üblich nur bis zu einem Maximum von 4).
+Waffennachteil: Bei einer gewürfelten 20, egal ob der Patzer bestätigt wird oder nicht, kommt es zu einer schweren Ladehemmung. Der Schütze benötigt 3 Aktionen, um die Ladehemmung zu beseitigen. Spielst du mit der Optionalregel der Patzertabellen, addieren sich diese Aktionen auf die Zeit für eine weitere erwürfelte Ladehemmung.</description>
+    <category>Armbrüste</category>
+    <link>index.php/eisenwalder.html</link>
+  </rangeweapon>
+  <rangeweapon>
+    <name>Handarmbrust</name>
+    <damage>1W6+3</damage>
+    <loadingTime>3 Aktionen</loadingTime>
+    <range>5/25/40</range>
+    <ammunition>Bolzen</ammunition>
+    <length>40 HF</length>
+    <weight>0.75</weight>
+    <price>100</price>
+    <complexity>komp (3 AP)</complexity>
+    <description>Waffenvorteil: Auf einer kurzen Distanz von bis zu 2 Schritt verursacht die Handarmbrust +1 TP (also insgesamt 1W6+5, wenn der TP-Bonus für Reichweite kurz miteingerechnet wird).
+Waffennachteil: Bei Schüssen auf die Distanz weit sinken die TP um 1 weiteren Punkt (also insgesamt 1W6+1, wenn der TP Malus für die Reichweite weit miteingerechnet wird).</description>
+    <category>Armbrüste</category>
+    <link>index.php/handarmbrust.html</link>
+  </rangeweapon>
+  <rangeweapon>
+    <name>Isenhager Armbrust</name>
+    <damage>2W6+2</damage>
+    <loadingTime>10 Aktionen</loadingTime>
+    <range>15/75/120</range>
+    <ammunition>Bolzen</ammunition>
+    <length>100 HF</length>
+    <weight>1.10</weight>
+    <price>100</price>
+    <complexity>einf</complexity>
+    <description>Waffenvorteil: Rüstungen mit RS 4 oder höher erhalten gegenüber der Isenhager Armbrust in der Reichweite nah
+einen Malus von –2 RS.
+Waffennachteil: Bei Schüssen auf die Distanz weit sinken die TP um 2 weitere Punkte (also insgesamt 2W6–1, wenn
+der TP-Malus für die Reichweite weit miteingerechnet wird).</description>
+    <category>Armbrüste</category>
+    <link>index.php/isenhager-armbrust.html</link>
+  </rangeweapon>
+  <rangeweapon>
+    <name>Leichte Armbrust</name>
+    <damage>1W6+6</damage>
+    <loadingTime>8 Aktionen</loadingTime>
+    <range>10/50/80</range>
+    <ammunition>Bolzen</ammunition>
+    <length>110 HF</length>
+    <weight>3.25</weight>
+    <price>180</price>
+    <complexity>einf</complexity>
+    <description>Waffenvorteil: keine
+Waffennachteil: keine</description>
+    <category>Armbrüste</category>
+    <link>index.php/leichte-armbrust.html</link>
+  </rangeweapon>
+  <rangeweapon>
+    <name>Mittelschwere Rotze</name>
+    <damage>3W20+3</damage>
+    <loadingTime>50 Aktionen</loadingTime>
+    <range>50/200/800</range>
+    <ammunition>Felsbrocken</ammunition>
+    <length>-</length>
+    <weight>-</weight>
+    <price>8000</price>
+    <complexity>-</complexity>
+    <description>Waffenvorteil: keine
+Waffennachteil: keine</description>
+    <category>Armbrüste</category>
+    <link>index.php/mittelschwere-rotze.html</link>
+  </rangeweapon>
+  <rangeweapon>
+    <name>Schwere Armbrust</name>
+    <damage>2W6+6</damage>
+    <loadingTime>15 Aktionen</loadingTime>
+    <range>20/100/180</range>
+    <ammunition>Bolzen</ammunition>
+    <length>80 HF</length>
+    <weight>7.25</weight>
+    <price>360</price>
+    <complexity>komp (4 AP)</complexity>
+    <description>Waffenvorteil: Bei Schüssen auf nahe Distanz steigen die TP um 1 weiteren Punkt (also insgesamt 2W6+8, wenn der TP-Bonus für Reichweite kurz miteingerechnet wird).
+Waffennachteil: Bei Schüssen auf die Distanz weit sinken die TP um 1 weiteren Punkt (also insgesamt 2W6+4, wenn der TP Malus für die Reichweite weit miteingerechnet wird).</description>
+    <category>Armbrüste</category>
+    <link>index.php/schwere-armbrust.html</link>
+  </rangeweapon>
+  <rangeweapon>
+    <name>Waldwachter
+
+Armbrust</name>
+    <damage>2W6+6</damage>
+    <loadingTime>14 Aktionen</loadingTime>
+    <range>15/75/120</range>
+    <ammunition>Bolzen</ammunition>
+    <length>65 HF</length>
+    <weight>6.5</weight>
+    <price>400</price>
+    <complexity>komp (4 AP)</complexity>
+    <description>Anmerkung: Um die Waffe bei der Heldenerschaffung zu erwerben, muss der Held der Kultur Ambosszwerge
+angehören.
+Waffenvorteil: Bei Schüssen auf Distanz nah steigen die TP um 1 weiteren Punkt (also insgesamt 2W6+8, wenn der
+TP-Bonus für die Reichweite nah miteingerechnet wird).
+Waffennachteil: Wird eine Waldwachter Armbrust von Nichtzwergen geführt, erhält sie einen Malus von –2 auf FK
+und TP. Bei Schüssen auf die Distanz weit und bei Zielen mit RS 2 oder mehr sinken die TP um 1 weiteren Punkt
+(also insgesamt 2W6+4, wenn der TP-Malus für die Reichweite weit miteingerechnet wird).</description>
+    <category>Armbrüste</category>
+    <link>index.php/waldwachter-armbrust.html</link>
+  </rangeweapon>
+  <rangeweapon>
+    <name>Windenarmbrust</name>
+    <damage>2W6+6</damage>
+    <loadingTime>25 Aktionen</loadingTime>
+    <range>25/100/200</range>
+    <ammunition>Bolzen</ammunition>
+    <length>80 HF</length>
+    <weight>7.25</weight>
+    <price>450</price>
+    <complexity>komp (4 AP)</complexity>
+    <description>Waffenvorteil: Bei Schüssen auf nahe Distanz steigen die TP um 2 weitere Punkte (also insgesamt 2W6+9, wenn der TP-Bonus für die Reichweite kurz mit eingerechnet wird).
+Waffennachteil: Bei Schüssen auf die Distanz weit sinken die TP um 2 weitere Punkte (also insgesamt 2W6+3, wenn der TP-Malus für die Reichweite weit mit eingerechnet wird).</description>
+    <category>Armbrüste</category>
+    <link>index.php/windenarmbrust.html</link>
+  </rangeweapon>
+  <rangeweapon>
+    <name>Blasrohr</name>
+    <damage>1W2</damage>
+    <loadingTime>2 Aktionen</loadingTime>
+    <range>5/20/40</range>
+    <ammunition>Blasrohrpfeile</ammunition>
+    <length>60 HF</length>
+    <weight>0.5</weight>
+    <price>40</price>
+    <complexity>prim</complexity>
+    <description>Anmerkung: Ein vergifteter Blasrohrpfeil sorgt bei 1+ SP für eine Vergiftung beim Opfer.
+Waffenvorteil: keine
+Waffennachteil: keine</description>
+    <category>Blasrohre</category>
+    <link>index.php/blasrohr.html</link>
+  </rangeweapon>
+  <rangeweapon>
+    <name>Albernischer Langbogen</name>
+    <damage>1W6+8</damage>
+    <loadingTime>2 Aktionen</loadingTime>
+    <range>20/100/160</range>
+    <ammunition>Pfeile</ammunition>
+    <length>200 HF</length>
+    <weight>0.75</weight>
+    <price>80</price>
+    <complexity>einf</complexity>
+    <description>Waffenvorteil: Führt der Träger eines Albernischen Langbogens einen Ballistischen Schuss (siehe Aventurisches Kompendium Seite 151) aus, erhöht sich die Reichweite um 20 Schritt. Gegen Rüstungen mit RS 4 oder mehr richtet der Albernische Langbogen +1 TP an.
+Waffennachteil: Es ist nicht möglich, einen Albernischen Langbogen vom Rücken eines Reittiers aus einzusetzen. In Wäldern, die als schwierige oder schlechtere Geländetypen eingestuft werden, erleiden Schützen mit dem Langbogen eine Erschwernis von 2 zusätzlich zu allen weiteren Modifikatoren des Schusses (siehe Regelwerk Seite 349).</description>
+    <category>Bögen</category>
+    <link>index.php/albernischer-langbogen.html</link>
+  </rangeweapon>
+  <rangeweapon>
+    <name>Elfenbogen</name>
+    <damage>1W6+5</damage>
+    <loadingTime>1 Aktionen</loadingTime>
+    <range>50/100/200</range>
+    <ammunition>Pfeile</ammunition>
+    <length>180 HF</length>
+    <weight>0.5</weight>
+    <price>400</price>
+    <complexity>komp (5 AP)</complexity>
+    <description>Anmerkung: Um den Elfenbogen zu erwerben, muss der Held einer elfischen Kultur angehören.
+Waffenvorteil: Bei Benutzung eines Elfenbogens ist das Manöver Präziser Schuss um 1 erleichtert.
+Waffennachteil: Wird der Elfenbogen von Nichtelfen geführt, erhält er einen Malus von –2 auf FK. Es ist nicht möglich, einen Elfenbogen vom Rücken eines Reittiers aus einzusetzen.</description>
+    <category>Bögen</category>
+    <link>index.php/elfenbogen.html</link>
+  </rangeweapon>
+  <rangeweapon>
+    <name>Kompositbogen</name>
+    <damage>1W6+7</damage>
+    <loadingTime>2 Aktionen</loadingTime>
+    <range>20/100/160</range>
+    <ammunition>Pfeile</ammunition>
+    <length>140 HF</length>
+    <weight>0.75</weight>
+    <price>160</price>
+    <complexity>komp (4 AP)</complexity>
+    <description>Waffenvorteil: Die aus der Entfernung zum Ziel resultierende Erschwernis sinkt um 1 (nicht aber unter 0).
+Waffennachteil: In Wäldern, die als schwierige oder schlechtere Geländetypen eingestuft werden (siehe Regelwerk Seite 349), erleiden Schützen mit dem Kompositbogen eine zusätzliche Erschwernis von 2.</description>
+    <category>Bögen</category>
+    <link>index.php/kompositbogen.html</link>
+  </rangeweapon>
+  <rangeweapon>
+    <name>Koscher Kurzbogen</name>
+    <damage>1W6+3</damage>
+    <loadingTime>1 Aktion</loadingTime>
+    <range>10/50/80</range>
+    <ammunition>Pfeile</ammunition>
+    <length>110 HF</length>
+    <weight>0.4</weight>
+    <price>45</price>
+    <complexity>einf</complexity>
+    <description>Waffenvorteil: Beim Zielen (siehe Regelwerk Seite 242) erhöht sich die Erleichterung um insgesamt 1 (gleich wie
+lange man zielt).
+Waffennachteil: Bei Schüssen auf die Distanz weit sinken die TP um 1 weiteren Punkt (also insgesamt 1W6+1, wenn
+der TP-Malus für die Reichweite weit miteingerechnet wird).</description>
+    <category>Bögen</category>
+    <link>index.php/koscher-kurzbogen.html</link>
+  </rangeweapon>
+  <rangeweapon>
+    <name>Kriegsbogen</name>
+    <damage>1W6+8</damage>
+    <loadingTime>2 Aktionen</loadingTime>
+    <range>25/50/100</range>
+    <ammunition>Pfeile</ammunition>
+    <length>140 HF</length>
+    <weight>1</weight>
+    <price>100</price>
+    <complexity>komp (4 AP)</complexity>
+    <description>Waffenvorteil: Auf eine Distanz von bis zu 50 Schritt richtet der Kriegsbogen +2 TP an.
+Waffennachteil: Für jeden Punkt KK unter 16 sind die Proben auf FK um 1 erschwert.</description>
+    <category>Bögen</category>
+    <link>index.php/kriegsbogen.html</link>
+  </rangeweapon>
+  <rangeweapon>
+    <name>Kurzbogen</name>
+    <damage>1W6+4</damage>
+    <loadingTime>1 Aktionen</loadingTime>
+    <range>10/50/80</range>
+    <ammunition>Pfeile</ammunition>
+    <length>130 HF</length>
+    <weight>0.5</weight>
+    <price>45</price>
+    <complexity>einf</complexity>
+    <description>Waffenvorteil: keine
+Waffennachteil: keine</description>
+    <category>Bögen</category>
+    <link>index.php/kurzbogen.html</link>
+  </rangeweapon>
+  <rangeweapon>
+    <name>Langbogen</name>
+    <damage>1W6+8</damage>
+    <loadingTime>2 Aktionen</loadingTime>
+    <range>20/100/160</range>
+    <ammunition>Pfeile</ammunition>
+    <length>200 HF</length>
+    <weight>0.75</weight>
+    <price>80</price>
+    <complexity>einf</complexity>
+    <description>Waffenvorteil: Führt der Träger eines Langbogens einen Ballistischen Schuss (siehe Aventurisches Kompendium Seite 151) aus, entfällt die Erschwernis von –2.
+Waffennachteil: Es ist nicht möglich, einen Langbogen vom Rücken eines Reittiers aus einzusetzen.</description>
+    <category>Bögen</category>
+    <link>index.php/langbogen.html</link>
+  </rangeweapon>
+  <rangeweapon>
+    <name>Nostrischer Langbogen</name>
+    <damage>1W6+8</damage>
+    <loadingTime>2 Aktionen</loadingTime>
+    <range>20/120/180</range>
+    <ammunition>Pfeile</ammunition>
+    <length>200 HF</length>
+    <weight>1</weight>
+    <price>100</price>
+    <complexity>komp (3 AP)</complexity>
+    <description>Anmerkung: Um den Nostrischen Langbogen einsetzen zu können, benötigt der Schütze eine KK von 14.
+Waffenvorteil: Bei einer 1-3 auf 1W6 durchschlägt der Nostrische Langbogen auch bei einer gelungenen Schild-PA den Schild des Verteidigers und verursacht Schaden. Der Verteidiger addiert aber in diesem Fall den einfachen Schildbonus zu seinem RS.
+Waffennachteil: In Wäldern, die als schwierige oder schlechtere Geländetypen eingestuft werden, erleiden Schützen mit dem Nostrischen Langbogen eine Erschwernis von 4 zusätzlich zu allen weiteren Modifikatoren des Schusses (siehe Regelwerk Seite 349).
+Der Nostrische Langbogen kann nicht vom Rücken eines Reittiers aus eingesetzt werden.</description>
+    <category>Bögen</category>
+    <link>index.php/nostrischer-langbogen.html</link>
+  </rangeweapon>
+  <rangeweapon>
+    <name>Diskus</name>
+    <damage>1W6+2</damage>
+    <loadingTime>2 Aktionen</loadingTime>
+    <range>5/25/40</range>
+    <ammunition>keine</ammunition>
+    <length>30 HF</length>
+    <weight>0.75</weight>
+    <price>25</price>
+    <complexity>einf</complexity>
+    <description>Waffenvorteil: keine
+Waffennachteil: keine</description>
+    <category>Diskusse</category>
+    <link>index.php/diskus.html</link>
+  </rangeweapon>
+  <rangeweapon>
+    <name>Fledermaus</name>
+    <damage>speziell</damage>
+    <loadingTime>2 Aktionen</loadingTime>
+    <range>5/10/20</range>
+    <ammunition>-</ammunition>
+    <length>180 HF</length>
+    <weight>0.5</weight>
+    <price>400</price>
+    <complexity>prim</complexity>
+    <description>Anmerkung: Gegen den Angriff mit einer Fledermaus kann man sich nur mit einer Schilde-PA oder mit Ausweichen verteidigen. Misslingt dies, erleidet das Opfer bis zum Ende der nächsten KR den Status Liegend und Fixiert. Um sich von der Fledermaus zu befreien, ist 1 Aktion notwendig.
+Waffenvorteil: Solange das Opfer unter den Status Liegend und Fixiert leidet, sind alle weiteren Aktionen des Opfers um 1 erschwert.
+Waffennachteil: Wird eine Fledermaus von Nichtzwergen geführt, erhält sie einen Malus von –2 FK. Mit einer Fledermaus kann man nicht zielen (siehe Regelwerk Seite 242).</description>
+    <category>Schleudern</category>
+    <link>index.php/fledermaus-6346.html</link>
+  </rangeweapon>
+  <rangeweapon>
+    <name>Schleuder</name>
+    <damage>1W6+2</damage>
+    <loadingTime>2 Aktionen</loadingTime>
+    <range>5/25/60</range>
+    <ammunition>Steine</ammunition>
+    <length>50 HF</length>
+    <weight>0.25</weight>
+    <price>5</price>
+    <complexity>prim</complexity>
+    <description>Waffenvorteil: keine
+Waffennachteil: keine</description>
+    <category>Schleudern</category>
+    <link>index.php/schleuder.html</link>
+  </rangeweapon>
+  <rangeweapon>
+    <name>Stabschleuder</name>
+    <damage>1W6+3</damage>
+    <loadingTime>2 Aktionen</loadingTime>
+    <range>10/20/60</range>
+    <ammunition>-</ammunition>
+    <length>-</length>
+    <weight>1</weight>
+    <price>15</price>
+    <complexity>einf</complexity>
+    <description>Anmerkung: Stabschleudern lassen sich nicht vom Pferderücken aus einsetzen.
+Waffenvorteil: Beim Zielen (siehe Regelwerk Seite 242) erhöht sich die Erleichterung um insgesamt 1 (unabhängig davon, wie lange man zielt).
+Waffennachteil: Bei Schüssen auf die Distanz weit sinken die TP um 2 weitere Punkte (also insgesamt 1W6, wenn der TP-Malus für die Reichweite weit mit eingerechnet wird).</description>
+    <category>Schleudern</category>
+    <link>index.php/stabschleuder.html</link>
+  </rangeweapon>
+  <rangeweapon>
+    <name>Windhager Schleuder</name>
+    <damage>1W6+2</damage>
+    <loadingTime>2 Aktionen</loadingTime>
+    <range>5/25/60</range>
+    <ammunition>Steine</ammunition>
+    <length>50 HF</length>
+    <weight>0.25</weight>
+    <price>5</price>
+    <complexity>prim</complexity>
+    <description>Anmerkung Bei 0-1 Schritt verursachen Feuersteinsplitter +1 TP gegen Ziele mit RS 0, bei 2-3 Schritt verändern sich die TP nicht, bei 4+ Schritt sinken die TP um 1 gegen alle Ziele.
+Waffenvorteil: Wird ein Reiter von der Windhager Schleuder getroffen, und der Schuss richtet mindestens 1 SP an, muss er sofort eine Probe auf Reiten (Kampfmanöver) ablegen, bei deren Misslingen er vom Pferd fällt (für den Sturzschaden siehe Regelwerk Seite 304).
+Waffennachteil: Bereits eine gewürfelte 19 bei FK erfordert einen Bestätigungswurf, ob es zu einem Patzer kommt. </description>
+    <category>Schleudern</category>
+    <link>index.php/windhager-schleuder.html</link>
+  </rangeweapon>
+  <rangeweapon>
+    <name>Apfel/Stein</name>
+    <damage>1W3</damage>
+    <loadingTime>1 Aktion</loadingTime>
+    <range>2/4/8</range>
+    <ammunition>-</ammunition>
+    <length>-</length>
+    <weight>-</weight>
+    <price>-</price>
+    <complexity>-</complexity>
+    <description>Waffenvorteil: keine
+Waffennachteil: keine</description>
+    <category>Wurfwaffen</category>
+    <link>index.php/apfel-stein.html</link>
+  </rangeweapon>
+  <rangeweapon>
+    <name>Bierkrug (i)</name>
+    <damage>1W3+1</damage>
+    <loadingTime>1 Aktion</loadingTime>
+    <range>2/4/8</range>
+    <ammunition>-</ammunition>
+    <length>-</length>
+    <weight>-</weight>
+    <price>-</price>
+    <complexity>-</complexity>
+    <description>Anmerkung: Nur für einen Angriff anwendbar, danach kaputt.
+Waffenvorteil: keine
+Waffennachteil: keine</description>
+    <category>Wurfwaffen</category>
+    <link>index.php/bierkrug-i.html</link>
+  </rangeweapon>
+  <rangeweapon>
+    <name>Borndorn</name>
+    <damage>1W6+2</damage>
+    <loadingTime>1 Aktion</loadingTime>
+    <range>2/10/15</range>
+    <ammunition>-</ammunition>
+    <length>45 HF</length>
+    <weight>0.75</weight>
+    <price>65</price>
+    <complexity>einf</complexity>
+    <description>Waffenvorteil: keine
+Waffennachteil: keine</description>
+    <category>Wurfwaffen</category>
+    <link>index.php/borndorn.html</link>
+  </rangeweapon>
+  <rangeweapon>
+    <name>Efferdbart (2H)</name>
+    <damage>1W6+3</damage>
+    <loadingTime>2 Aktionen</loadingTime>
+    <range>2/10/15</range>
+    <ammunition>-</ammunition>
+    <length>160 HF</length>
+    <weight>2</weight>
+    <price>100</price>
+    <complexity>einf</complexity>
+    <description>Anmerkung: geweiht (Efferd), nur von Efferdgeweihten erwerbbar.
+Waffenvorteil: Gegen Wesen, die über Tentakel oder Fangarme verfügen (z. B. Krakenmolch, Dekapus), richtet der Efferdbart +1 TP an. Die Abzüge für den Kampf im Wasser sinken um 2. Das Manöver Entwaffnen ist um 1 erleichtert.
+Waffennachteil: Gegen Rüstungen mit RS 4 oder mehr richtet der Efferdbart –2 TP an.</description>
+    <category>Wurfwaffen</category>
+    <link>index.php/efferdbart-2h.html</link>
+  </rangeweapon>
+  <rangeweapon>
+    <name>Gaoraith (Albernisches Wurfbeil)</name>
+    <damage>1W6+5</damage>
+    <loadingTime>1 Aktionen</loadingTime>
+    <range>2/10/25</range>
+    <ammunition>-</ammunition>
+    <length>50 HF</length>
+    <weight>1.25</weight>
+    <price>100</price>
+    <complexity>einf</complexity>
+    <description>Anmerkung: Proben auf FK sind um 1 erschwert.
+Waffenvorteil: Bei Würfen auf Distanz weit steigen die TP um 1. Der Malus von –1 TP aufgrund der weiten Distanz
+entfällt (siehe Regelwerk Seite 245).
+Waffennachteil: Der Bonus von +1 TP aufgrund der kurzen Distanz entfällt (siehe Regelwerk Seite 245).
+Publikationen:
+Die Rüstkammer der Siebenwindküste, Seite 17
+Havena - Versunkene Geheimnisse, Seite 88</description>
+    <category>Wurfwaffen</category>
+    <link>index.php/gaoraith-albernisches-wurfbeil.html</link>
+  </rangeweapon>
+  <rangeweapon>
+    <name>Geschirr (i)</name>
+    <damage>1W3+1</damage>
+    <loadingTime>1 Aktion</loadingTime>
+    <range>2/4/8</range>
+    <ammunition>-</ammunition>
+    <length>-</length>
+    <weight>-</weight>
+    <price>-</price>
+    <complexity>-</complexity>
+    <description>Anmerkung: Nur für einen Angriff anwendbar, danach kaputt.
+Waffenvorteil: keine
+Waffennachteil: keine</description>
+    <category>Wurfwaffen</category>
+    <link>index.php/geschirr-i.html</link>
+  </rangeweapon>
+  <rangeweapon>
+    <name>Granatapfel</name>
+    <damage>speziell</damage>
+    <loadingTime>2 Aktionen</loadingTime>
+    <range>2/4/8</range>
+    <ammunition>-</ammunition>
+    <length>-</length>
+    <weight>1</weight>
+    <price>120</price>
+    <complexity>komp (10 AP)</complexity>
+    <description>Waffenvorteil: keine
+Waffennachteil: keine
+Publikation(en):
+Aventurische Rüstkammer II, Seite 68</description>
+    <category>Wurfwaffen</category>
+    <link>index.php/granatapfel.html</link>
+  </rangeweapon>
+  <rangeweapon>
+    <name>Jonglierball (i)</name>
+    <damage>1W3</damage>
+    <loadingTime>1 Aktion</loadingTime>
+    <range>4/8/16</range>
+    <ammunition>-</ammunition>
+    <length>7 HF</length>
+    <weight>0.2</weight>
+    <price>0.5</price>
+    <complexity>einf</complexity>
+    <description>Waffenvorteil: keiner
+Waffennachteil: keiner</description>
+    <category>Wurfwaffen</category>
+    <link>index.php/jonglierball-i.html</link>
+  </rangeweapon>
+  <rangeweapon>
+    <name>Jonglierball mit
+
+Gewichten (i)</name>
+    <damage>1W3+1</damage>
+    <loadingTime>1 Aktion</loadingTime>
+    <range>2/4/6</range>
+    <ammunition>-</ammunition>
+    <length>7 HF</length>
+    <weight>0.3</weight>
+    <price>0.8</price>
+    <complexity>einf</complexity>
+    <description>Waffenvorteil: keiner
+Waffennachteil: keiner</description>
+    <category>Wurfwaffen</category>
+    <link>index.php/jonglierball-mit-gewichten-i.html</link>
+  </rangeweapon>
+  <rangeweapon>
+    <name>Magierkugel</name>
+    <damage>1W6+1</damage>
+    <loadingTime>1 Aktion</loadingTime>
+    <range>3/6/9</range>
+    <ammunition>-</ammunition>
+    <length>10 HF</length>
+    <weight>2</weight>
+    <price>30</price>
+    <complexity>einf</complexity>
+    <description>Anmerkung: Um die Magierkugel bei der Heldenerschaffung zu erwerben, muss der Held der Tradition Gildenmagier angehören.</description>
+    <category>Wurfwaffen</category>
+    <link>index.php/magierkugel-7527.html</link>
+  </rangeweapon>
+  <rangeweapon>
+    <name>Schneidzahn</name>
+    <damage>1W6+4</damage>
+    <loadingTime>1 Aktion</loadingTime>
+    <range>2/10/15</range>
+    <ammunition>-</ammunition>
+    <length>50 HF</length>
+    <weight>1</weight>
+    <price>80</price>
+    <complexity>einf</complexity>
+    <description>Waffenvorteil: Bei Ausführung des Manövers Wuchtiger Wurf (siehe Aventurisches Kompendium Seite 166) sinkt die Schadensschwelle um 1.
+Waffennachteil: Fernkampfangriffe auf weite Distanz sind mit dem Schneidzahn um 1 zusätzlich erschwert.</description>
+    <category>Wurfwaffen</category>
+    <link>index.php/schneidzahn.html</link>
+  </rangeweapon>
+  <rangeweapon>
+    <name>Vase (i)</name>
+    <damage>1W3+1</damage>
+    <loadingTime>1 Aktion</loadingTime>
+    <range>2/4/8</range>
+    <ammunition>-</ammunition>
+    <length>-</length>
+    <weight>-</weight>
+    <price>-</price>
+    <complexity>-</complexity>
+    <description>Anmerkung: Nur für einen Angriff anwendbar, danach kaputt
+Waffenvorteil: keine
+Waffennachteil: keine</description>
+    <category>Wurfwaffen</category>
+    <link>index.php/vase-i.html</link>
+  </rangeweapon>
+  <rangeweapon>
+    <name>Wurfbeil</name>
+    <damage>1W6+3</damage>
+    <loadingTime>1 Aktion</loadingTime>
+    <range>2/10/15</range>
+    <ammunition>-</ammunition>
+    <length>40 HF</length>
+    <weight>0.75</weight>
+    <price>50</price>
+    <complexity>einf</complexity>
+    <description>Waffenvorteil: keine
+Waffennachteil: keine</description>
+    <category>Wurfwaffen</category>
+    <link>index.php/wurfbeil.html</link>
+  </rangeweapon>
+  <rangeweapon>
+    <name>Wurfdolch</name>
+    <damage>1W6+1</damage>
+    <loadingTime>1 Aktion</loadingTime>
+    <range>2/10/15</range>
+    <ammunition>-</ammunition>
+    <length>30 HF</length>
+    <weight>0.5</weight>
+    <price>45</price>
+    <complexity>einf</complexity>
+    <description>Waffenvorteil: keine
+Waffennachteil: keine</description>
+    <category>Wurfwaffen</category>
+    <link>index.php/wurfdolch.html</link>
+  </rangeweapon>
+  <rangeweapon>
+    <name>Wurfkeule</name>
+    <damage>1W6+2</damage>
+    <loadingTime>1 Aktion</loadingTime>
+    <range>2/10/15</range>
+    <ammunition>-</ammunition>
+    <length>50 HF</length>
+    <weight>1</weight>
+    <price>5</price>
+    <complexity>prim</complexity>
+    <description>Waffenvorteil: Wer durch eine Wurfkeule 6+ SP erleidet, muss eine Probe auf Körperbeherrschung (Balance) ablegen, bei Misslingen erhält er den Status Liegend. Die Probe ist für jeden SP über 6 um 1 erschwert.
+Waffennachteil: Gegen Rüstungen mit RS 4 und höher richtet die Wurfkeule –2 TP an.</description>
+    <category>Wurfwaffen</category>
+    <link>index.php/wurfkeule.html</link>
+  </rangeweapon>
+  <rangeweapon>
+    <name>Wurfmesser</name>
+    <damage>1W6+1</damage>
+    <loadingTime>1 Aktion</loadingTime>
+    <range>2/5/10</range>
+    <ammunition>-</ammunition>
+    <length>30 HF</length>
+    <weight>0.5</weight>
+    <price>30</price>
+    <complexity>einf</complexity>
+    <description>Waffenvorteil: Das Manöver Präziser Schuss/Wurf ist um 1 erleichtert.
+Waffennachteil: Bei Zielen in über 5 Schritt Distanz richtet das Wurfmesser –1 TP an (also insgesamt 1W6-1, wenn der TP-Malus für die Reichweite weit mit eingerechnet wird).</description>
+    <category>Wurfwaffen</category>
+    <link>index.php/wurfmesser.html</link>
+  </rangeweapon>
+  <rangeweapon>
+    <name>Wurfnetz</name>
+    <damage>keine</damage>
+    <loadingTime>1 Aktion</loadingTime>
+    <range>1/3/5</range>
+    <ammunition>-</ammunition>
+    <length>350 HF</length>
+    <weight>2</weight>
+    <price>35</price>
+    <complexity>prim</complexity>
+    <description>Anmerkung: Statt TP zu verursachen erleidet das Opfer den Status Fixiert, bis durch eine Sammelprobe auf Körperbeherrschung (Entwinden) das Netz gelöst oder die Strukturpunkte des Seils (10 Strukturpunkte) mit einer scharfen Waffe auf 0 gesenkt wurden. Für jede reguläre Aktion kann der Held eine Probe auf Körperbeherrschung ablegen. Waffen, die über eine längere Reichweite als kurz verfügen, richten beim Zerschneiden nur halbe TP an.
+Waffenvorteil: Einem Wurfnetz kann man nur ausweichen, eine Parade mit dem Schild ist nicht möglich.
+Waffennachteil: Bei einem Patzer fesselt sich der Schleuderer selbst und erleidet alle Auswirkungen des Wurfnetzes.</description>
+    <category>Wurfwaffen</category>
+    <link>index.php/wurfnetz.html</link>
+  </rangeweapon>
+  <rangeweapon>
+    <name>Wurfring, -scheibe, -stern</name>
+    <damage>1W6+1</damage>
+    <loadingTime>1 Aktion</loadingTime>
+    <range>2/10/15</range>
+    <ammunition>-</ammunition>
+    <length>10 HF</length>
+    <weight>0.25</weight>
+    <price>30</price>
+    <complexity>einf</complexity>
+    <description>Waffenvorteil: 
+Wurfstern: Ein Wurfstern bleibt im Körper des Gegners stecken, wenn 6+ SP bei einem Treffer erzielt wurden. Bis zum Ende der nächsten KR erleidet der Getroffene einen Abzug von 1 auf AT, PA, AW und FK.
+Wurfring: Der Wurfring richtet +1 TP gegen Humanoide mit RS 0 an.
+Wurfscheibe: Die Probe auf FK wird um 1 erleichtert.
+Waffennachteil: Bereits eine gewürfelte 19 beim Fernkampf erfordert einen Bestätigungswurf dafür , ob es zu einem Patzer kommt.</description>
+    <category>Wurfwaffen</category>
+    <link>index.php/wurfring-scheibe-stern.html</link>
+  </rangeweapon>
+  <rangeweapon>
+    <name>Wurfspeer</name>
+    <damage>2W6+2</damage>
+    <loadingTime>2 Aktionen</loadingTime>
+    <range>5/25/40</range>
+    <ammunition>-</ammunition>
+    <length>110 HF</length>
+    <weight>0.75</weight>
+    <price>40</price>
+    <complexity>prim</complexity>
+    <description>Waffenvorteil: Wer durch einen Wurfspeer 10+ SP erleidet, muss eine Probe auf Selbstbeherrschung (Handlungsfähigkeit bewahren) ablegen, bei Misslingen erhält er den Status Liegend. Die Probe ist um jeden SP über 10 um 1 erschwert.
+Waffennachteil: Das Manöver Schnellladen kann mit Wurfspeeren nicht ausgeführt werden.</description>
+    <category>Wurfwaffen</category>
+    <link>index.php/wurfspeer.html</link>
+  </rangeweapon>
+  <rangeweapon>
+    <name>Zauberkugel</name>
+    <damage>1W6+1</damage>
+    <loadingTime>1 Aktion</loadingTime>
+    <range>3/6/9</range>
+    <ammunition>-</ammunition>
+    <length>10 HF</length>
+    <weight>2</weight>
+    <price>30</price>
+    <complexity>prim</complexity>
+    <description>Anmerkung: Um die Kugel bei der Heldenerschaffung zu erwerben, muss der Held der Tradition Scharlatane angehören.</description>
+    <category>Wurfwaffen</category>
+    <link>index.php/zauberkugel-6550.html</link>
+  </rangeweapon>
+</root>
