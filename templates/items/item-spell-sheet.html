@@ -76,15 +76,24 @@
                 <input class="input-text" type="text" name="data.AsPCost.value" value="{{data.AsPCost.value}}" data-dtype="Number" />
             </div>
 
-            <div class="form-group">
+            <div class="form-group full-height">
                 <label class="label-text">{{localize "effect"}}: </label>
-                <input class="input-text" type="text" name="data.effect.value" value="{{data.effect.value}}" data-dtype="String" />
+                <textarea class="input-text" type="text" name="data.effect.value" data-dtype="String">{{data.effect.value}}</textarea>
             </div>
             <div class="form-group">
                 <label class="label-text">{{localize "distribution"}}: </label>
-                <input class="input-text" type="text" name="data.distribution.value" value="{{data.distribution.value}}" data-dtype="String" />
+                <input class="input-text" name="data.distribution.value" value="{{data.distribution.value}}" data-dtype="String" />
             </div>
-
+            <div class="form-group">
+                <label class="label-text">{{localize "resistanceModifier"}}</label>
+                <select name="data.resistanceModifier.value" data-dtype="{{data.resistanceModifier.type}}">
+                    {{#select data.resistanceModifier.value}}
+                    {{#each resistances as |type sktype|}}
+                    <option value="{{sktype}}">{{localize type}}</option>
+                    {{/each}}
+                    {{/select}}
+                </select>
+            </div>
             <div class="form-group">
                 <label class="label-text">{{localize "StF"}}</label>
                 <select name="data.StF.value" data-dtype="{{data.StF.type}}">

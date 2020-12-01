@@ -727,7 +727,7 @@ export default class Actordsa5 extends Actor {
 
     static _prepareMeleeWeapon(item, combatskills, actorData, shieldBonus) {
         let skill = combatskills.filter(i => i.name == item.data.combatskill.value)[0];
-        let parseDamage = new Roll(item.data.damage.value)
+        let parseDamage = new Roll(item.data.damage.value.replace(/[Ww]/, "d"))
         let damageDie = ""
         let damageTerm = ""
         for (let k of parseDamage.terms) {
@@ -766,7 +766,7 @@ export default class Actordsa5 extends Actor {
     static _prepareRangeWeapon(item, ammunition, combatskills) {
         let skill = combatskills.filter(i => i.name == item.data.combatskill.value)[0];
         item.attack = skill.data.attack.value
-        let parseDamage = new Roll(item.data.damage.value)
+        let parseDamage = new Roll(item.data.damage.value.replace(/[Ww]/, "d"))
         let damageDie = ""
         let damageTerm = ""
         for (let k of parseDamage.terms) {

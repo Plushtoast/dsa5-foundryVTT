@@ -87,6 +87,10 @@ body {
     font-family: "GentiumBasic";
 }
 
+textarea {
+    font-family: "GentiumBasic";
+}
+
 b {
     font-family: "GentiumBasic-Bold";
 }
@@ -116,6 +120,10 @@ h7 {
     max-height: 50px;
     max-width: 50px;
     margin-top: 5px;
+}
+
+.dsa5.item textarea {
+    padding: 1px 3px;
 }
 
 .dsa5 .editor {
@@ -164,10 +172,10 @@ h7 {
     margin-bottom: 10px;
 }
 
-.character-sheet .general .item,
-.npc-sheet .general .item,
-.npc-sheet .general .sheet-header .item,
-.character-sheet .sheet-header .item {
+.character-sheet .general .headerInput,
+.npc-sheet .general .headerInput,
+.npc-sheet .general .sheet-header .headerInput,
+.character-sheet .sheet-header .headerInput {
     height: 34px;
     display: flex;
     flex-direction: column;
@@ -175,10 +183,10 @@ h7 {
     width: calc(25% - 15px);
 }
 
-.npc-sheet .general .item input,
-.npc-sheet .sheet-header .item input,
-.character-sheet .general .item input,
-.character-sheet .sheet-header .item input {
+.npc-sheet .general .headerInput input,
+.npc-sheet .sheet-header .headerInput input,
+.character-sheet .general .headerInput input,
+.character-sheet .sheet-header .headerInput input {
     border: none;
     border-bottom: 1px solid var(--border-color);
     box-shadow: none;
@@ -187,15 +195,45 @@ h7 {
     border-radius: 0px;
 }
 
-.npc-sheet .general .item span,
-.npc-sheet .sheet-header .item span,
-.character-sheet .general .item span,
-.character-sheet .sheet-header .item span {
+.npc-sheet .general .headerInput span,
+.npc-sheet .sheet-header .headerInput span,
+.character-sheet .general .headerInput span,
+.character-sheet .sheet-header .headerInput span {
     color: rgb(51, 51, 51);
     margin-left: 4px;
     margin-bottom: 2px;
     font-size: 12px;
 }
+
+
+/*label.full-height {
+    font-weight: bold;
+    box-shadow: 0 0 14px #00000052 inset;
+    font-size: 12px;
+    text-align: center;
+    position: relative;
+    border: none;
+    padding: 0;
+}*/
+
+form .form-group.full-height label {
+    align-self: stretch;
+    vertical-align: middle;
+}
+
+form .form-group.full-height textarea {
+    min-height: 140px;
+}
+
+
+/*label.full-height:before {
+    content: "";
+    display: inline-block;
+    height: 100%;
+    vertical-align: middle;
+    border: 1px solid var(--border-color);
+    padding: 0px 6px;
+}*/
 
 .window-app.npc-sheet.app .window-content {
     box-shadow: none;

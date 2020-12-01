@@ -153,6 +153,12 @@ DSA5.skillDifficultyModifiers = {
     "vhard": -5
 }
 
+DSA5.magicResistanceModifiers = {
+    "-": "-",
+    "SK": "soulpower",
+    "ZK": "toughness"
+}
+
 DSA5.sizeCategories = {
     "tiny": "SIZE.tiny",
     "small": "SIZE.small",

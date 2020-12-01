@@ -207,6 +207,7 @@ export default class ActorSheetDsa5 extends ActorSheet {
         });
 
         html.find('.item-edit').click(ev => {
+            ev.preventDefault()
             let itemId = this._getItemId(ev);
             const item = this.actor.items.find(i => i.data._id == itemId)
             item.sheet.render(true);
@@ -275,7 +276,7 @@ export default class ActorSheetDsa5 extends ActorSheet {
         });
 
         let handler = ev => this._onDragItemStart(ev);
-        html.find('.item').each((i, li) => {
+        html.find('.content .item').each((i, li) => {
             li.setAttribute("draggable", true);
             li.addEventListener("dragstart", handler, false);
         });
@@ -443,6 +444,7 @@ export default class ActorSheetDsa5 extends ActorSheet {
     }
 
     _onDragItemStart(event) {
+
         let tar = event.currentTarget
         let itemId = tar.getAttribute("data-item-id");
         let mod = tar.getAttribute("data-mod");

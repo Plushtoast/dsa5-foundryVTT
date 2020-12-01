@@ -490,7 +490,7 @@
                 "APValue": {
                     "type": "String",
                     "label": "APValue",
-                    "value": 0
+                    "value": "0"
                 }
             },
             "max": {
@@ -558,6 +558,11 @@
                     "type": "String",
                     "label": "Advancementfactor",
                     "value": "A"
+                },
+                "resistanceModifier": {
+                    "type": "String",
+                    "label": "resistanceModifier",
+                    "value": "-"
                 }
             },
             "description": {

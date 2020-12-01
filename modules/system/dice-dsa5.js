@@ -191,7 +191,7 @@ export default class DiceDSA5 {
 
         }
 
-        let roll = testData.roll ? testData.roll : new Roll(weapon.data.damage.value).roll()
+        let roll = testData.roll ? testData.roll : new Roll(weapon.data.damage.value.replace(/[Ww]/, "d")).roll()
         let damage = roll._total + modifier;
 
         for (let k of roll.terms) {
@@ -304,7 +304,7 @@ export default class DiceDSA5 {
         }
 
         if (testData.mode == "attack" && success) {
-            let damageRoll = new Roll(weapon.data.damage.value).roll()
+            let damageRoll = new Roll(weapon.data.damage.value.replace(/[Ww]/, "d")).roll()
             this._addRollDiceSoNice(testData, damageRoll, "black")
             let damage = damageRoll._total;
 
@@ -532,7 +532,7 @@ export default class DiceDSA5 {
                 case "rangeweapon":
                 case "combatskill":
                     if (testData.mode == "damage") {
-                        roll = new Roll(testData.source.data.data.damage.value).roll()
+                        roll = new Roll(testData.source.data.data.damage.value.replace(/[Ww]/, "d")).roll()
                         for (var i = 0; i < roll.dice.length; i++) {
                             roll.dice[i].options.colorset = "black"
                         }

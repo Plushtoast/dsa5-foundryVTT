@@ -68,6 +68,7 @@ export default class ItemSheetdsa5 extends ItemSheet {
             case "spell":
                 data['characteristics'] = DSA5.characteristics;
                 data['StFs'] = DSA5.StFs;
+                data['resistances'] = DSA5.magicResistanceModifiers
                 break;
             case "combatskill":
                 data['weapontypes'] = DSA5.weapontypes;
