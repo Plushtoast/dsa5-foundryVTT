@@ -279,6 +279,12 @@ export default class ImportAdvantage {
                 for (let i = 0; i < elems.length; i++) {
                     let elem = elems[i]
                     let img = Itemdsa5.defaultImages["spell"];
+                    let resist = "-"
+                    if (elem.getElementsByTagName("probe")[0].textContent.includes("SK")) {
+                        resist = "SK"
+                    } else if (elem.getElementsByTagName("probe")[0].textContent.includes("ZK")) {
+                        resist = "ZK"
+                    }
                     /*let caregory = elem.getElementsByTagName("category")[0].textContent
                     if (caregory in DSA5Importer.ImportVars.rangeImages.de) {
                         img = DSA5Importer.ImportVars.rangeImages.de[caregory]
@@ -301,7 +307,8 @@ export default class ImportAdvantage {
                             "duration.value": elem.getElementsByTagName("duration")[0].textContent,
                             "targetCategory.value": elem.getElementsByTagName("targetCategory")[0].textContent,
                             "range.value": elem.getElementsByTagName("range")[0].textContent,
-                            "talentValue.value": 0
+                            "talentValue.value": 0,
+                            "resistanceModifier.value": resist
                         },
                     };
 
@@ -331,6 +338,12 @@ export default class ImportAdvantage {
                     if (caregory in DSA5Importer.ImportVars.rangeImages.de) {
                         img = DSA5Importer.ImportVars.rangeImages.de[caregory]
                     }*/
+                    let resist = "-"
+                    if (elem.getElementsByTagName("probe")[0].textContent.includes("SK")) {
+                        resist = "SK"
+                    } else if (elem.getElementsByTagName("probe")[0].textContent.includes("ZK")) {
+                        resist = "ZK"
+                    }
                     let characteristics = elem.getElementsByTagName("probe")[0].textContent.split(" ")[0].split("/").map(x => x.toLowerCase())
 
                     const item = {
@@ -350,7 +363,8 @@ export default class ImportAdvantage {
                             "duration.value": elem.getElementsByTagName("duration")[0].textContent,
                             "targetCategory.value": elem.getElementsByTagName("targetCategory")[0].textContent,
                             "range.value": elem.getElementsByTagName("range")[0].textContent,
-                            "talentValue.value": 0
+                            "talentValue.value": 0,
+                            "resistanceModifier.value": resist
                         },
                     };
 

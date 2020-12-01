@@ -1,4 +1,11 @@
 export default class MacroDSA5 {
+
+    static itemMacroById(actorId, itemName, itemType, bypassData) {
+        let actor = game.actors.get(actorId)
+        let item = actor ? actor.items.find(i => i.name === itemName && i.type == itemType) : null;
+        this.runItem(actor, item, itemName, bypassData)
+    }
+
     static itemMacro(itemName, itemType, bypassData) {
         const speaker = ChatMessage.getSpeaker();
         let actor;
@@ -6,7 +13,32 @@ export default class MacroDSA5 {
         if (!actor) actor = game.actors.get(speaker.actor);
 
         let item = actor ? actor.items.find(i => i.name === itemName && i.type == itemType) : null;
+        this.runItem(actor, item, itemName, bypassData)
+    }
 
+    static charMacroById(char, actorId) {
+        let actor = game.actors.get(actorId)
+        this.runChar(actor, char)
+    }
+
+    static charMacro(char) {
+        const speaker = ChatMessage.getSpeaker();
+        let actor;
+        if (speaker.token) actor = game.actors.tokens[speaker.token];
+        if (!actor) actor = game.actors.get(speaker.actor);
+
+        this.runChar(actor, char)
+    }
+
+    static runChar(actor, char) {
+        if (!actor) return ui.notifications.warn(`${game.i18n.localize("Error.MacroItemMissing")} ${char}`);
+
+        actor.setupStatus(char).then(setupData => {
+            actor.basicTest(setupData)
+        });
+    }
+
+    static runItem(actor, item, itemName, bypassData) {
         if (!item) return ui.notifications.warn(`${game.i18n.localize("Error.MacroItemMissing")} ${itemName}`);
         //item = item.data;
 

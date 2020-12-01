@@ -116,6 +116,7 @@ export default class DiceDSA5 {
 
         var chars = []
 
+
         res += modifier
 
         let res1 = res - roll.terms[0].results[0].result;
@@ -144,7 +145,7 @@ export default class DiceDSA5 {
             description = game.i18n.localize(res1 >= 0 ? "Success" : "Failure");
         }
 
-        return {
+        let h = {
             //result: res,
             successLevel: successLevel,
             characteristics: chars,
@@ -153,6 +154,8 @@ export default class DiceDSA5 {
             modifiers: modifier,
             extra: {}
         }
+        console.log(h)
+        return h
     }
 
     static rollStatus(testData) {
@@ -254,7 +257,10 @@ export default class DiceDSA5 {
         let skill = Actordsa5._calculateCombatSkillValues(testData.extra.actor.items.find(x => x.type == "combatskill" && x.name == testData.source.data.data.combatskill.value), testData.extra.actor)
 
         if (testData.source.type == "meleeweapon") {
-            weapon = Actordsa5._prepareMeleeWeapon(testData.source.data, [skill], testData.extra.actor)
+            let shields = testData.extra.actor.items.filter(x => (x.type == "meleeweapon" && game.i18n.localize("ReverseCombatSkills." + x.data.combatskill.value) == "Shields" && x.data.worn.value))
+            let shieldBonus = shields.length > 0 ? shields[0].data.pamod.value : 0
+
+            weapon = Actordsa5._prepareMeleeWeapon(testData.source.data, [skill], testData.extra.actor, shieldBonus)
 
             let narrowSpaceModifier = this._getNarrowSpaceModifier(weapon, testData)
             modifier += narrowSpaceModifier
@@ -279,8 +285,8 @@ export default class DiceDSA5 {
             this._appendSituationalModifiers(testData, game.i18n.localize("sizeCategory"), testData.sizeModifier)
             this._appendSituationalModifiers(testData, game.i18n.localize("sight"), testData.visionModifier)
         }
-
-        var result = this._rollSingleD20(roll, weapon[testData.mode], testData.mode == "attack" ? "mu" : "in", modifier, testData)
+        console.log(weapon)
+        var result = this._rollSingleD20(roll, weapon[testData.mode], testData.mode, modifier, testData)
 
         let success = result.successLevel > 0
         let doubleDamage = result.successLevel > 2
@@ -368,7 +374,7 @@ export default class DiceDSA5 {
                 doubleDamage = true;
 
             }
-            this._addRollDiceSoNice(testData, rollConfirm, testData.mode == "attack" ? "mu" : "in")
+            this._addRollDiceSoNice(testData, rollConfirm, testData.mode)
             chars.push({ char: testData.mode, res: rollConfirm.terms[0].results[0].result, suc: res2 >= 0, tar: res });
 
         } else if (roll.terms[0].results.filter(x => x.result == 20).length == 1) {
@@ -377,7 +383,7 @@ export default class DiceDSA5 {
             if (res2 < 0) {
                 description += ", " + game.i18n.localize("selfDamage") + (new Roll("1d6+2").roll().result)
             }
-            this._addRollDiceSoNice(testData, rollConfirm, testData.mode == "attack" ? "mu" : "in")
+            this._addRollDiceSoNice(testData, rollConfirm, testData.mode)
             chars.push({
                 char: testData.mode,
                 res: rollConfirm.terms[0].results[0].result,
@@ -538,11 +544,14 @@ export default class DiceDSA5 {
                         }
 
                     } else {
-                        roll = new Roll("1d20[" + (testData.mode == "attack" ? "mu" : "in") + "]").roll()
+                        roll = new Roll("1d20[" + (testData.mode) + "]").roll()
+                        roll.dice[0].options.colorset = testData.mode
+
                     }
                     break;
                 case "status":
-                    roll = new Roll("1d20[in]").roll();
+                    roll = new Roll("1d20").roll();
+                    roll.dice[0].options.colorset = "in"
                     break;
                 default:
                     roll = new Roll("1d20").roll();

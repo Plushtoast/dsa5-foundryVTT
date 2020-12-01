@@ -188,8 +188,11 @@ export default class ActorSheetDsa5 extends ActorSheet {
             }
         });
 
+
+
+
         html.find('.skill-advances').focusout(async event => {
-            event.preventDefault()
+            //event.preventDefault()
             if (!this.skillsToEdit)
                 this.skillsToEdit = []
             let itemId = this._getItemId(event);
@@ -205,6 +208,8 @@ export default class ActorSheetDsa5 extends ActorSheet {
 
             this.skillsToEdit = [];
         });
+
+
 
         html.find('.item-edit').click(ev => {
             ev.preventDefault()

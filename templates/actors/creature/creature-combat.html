@@ -68,7 +68,7 @@
         <div class="col ten"></div>
         <div class="col third">
             {{localize "closeCombatAttacks"}}
-            <span class="buttons">
+            <span class="buttons item" data-item-id="dodge" data-mod="dodge">
                 <a data-char="dodge" class="ch-status" title="{{localize 'dodge'}}"><i class="fas fa-reply"></i></a>
             </span>
         </div>
@@ -101,14 +101,14 @@
                 <div class="col five center small">
                     {{localize item.data.combatskill.value}}
                 </div>
-                <div class="col ten center">
+                <div class="col ten center item" data-item-id="{{item._id}}" data-mod="attack">
                     <a class="ch-rollCombat d20 die-attack">{{item.attack}}</a>
                 </div>
-                <div class="col ten center item" data-item-id="{{item._id}}" data-mod="attack">
+                <div class="col ten center item" data-item-id="{{item._id}}" data-mod="parry">
                     <a class="ch-rollCombatParry d20 die-parry">{{item.parry}}</a>
                 </div>
 
-                <div class="col ten center item" data-item-id="{{item._id}}" data-mod="parry">
+                <div class="col ten center">
                     <a class="ch-rollDamage d6 die-damage">{{item.damagedie}}</a><span title="{{localize 'damageOverThreshold'}}">{{item.damageAdd}}</span>
                 </div>
                 <div class="col ten center small">

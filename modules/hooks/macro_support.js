@@ -1,9 +1,21 @@
 export default function() {
 
     Hooks.on("hotbarDrop", async(bar, data, slot) => {
-        console.log(data)
-        if (data.type == "Item") {
-            let possibleItems = ["meleeweapon", "rangeweapon", "skill", "combatskill", "spell", "liturgy"]
+        if (data.mod == "dodge") {
+            let item = {
+                name: game.i18n.localize(data.mod),
+                img: "icons/environment/people/infantry.webp"
+            }
+            let command
+            if (game.user.isGM || data.actorId == undefined) {
+                command = `game.dsa5.macro.charMacro("${data.mod}")`
+            } else {
+                command = `game.dsa5.macro.charMacroById("${data.mod}", "${data.actorId}")`
+            }
+
+            await createHotBarMacro(command, item.name, item.img, slot)
+        } else if (data.type == "Item") {
+            let possibleItems = ["meleeweapon", "rangeweapon", "skill", "combatskill", "spell", "liturgy", "char"]
             if (!possibleItems.includes(data.data.type))
                 return
 
@@ -14,7 +26,13 @@ export default function() {
             }
             let item = data.data
             let param = `{mod: "${data.mod}"}`
-            let command = `game.dsa5.macro.itemMacro("${item.name}", "${item.type}", ${param});`;
+            let command
+            if (game.user.isGM || data.actorId == undefined) {
+                command = `game.dsa5.macro.itemMacro("${item.name}", "${item.type}", ${param});`;
+            } else {
+                command = `game.dsa5.macro.itemMacroById("${data.actorId}", "${item.name}", "${item.type}", ${param})`;
+            }
+
 
             await createHotBarMacro(command, item.name, item.img, slot)
         } else if (data.type == "Actor") {

@@ -91,6 +91,37 @@ export default function() {
             outline: '#FFFFFF',
             texture: 'none'
         });
+
+        dice3d.addColorset({
+            name: 'attack',
+            description: 'DSA5.dies',
+            category: 'DSA5.dies',
+            foreground: '#FFFFFF',
+            background: '#b3241a',
+            edge: '#b3241a',
+            outline: '#b3241a',
+            texture: 'none'
+        });
+        dice3d.addColorset({
+            name: 'dodge',
+            description: 'DSA5.dies',
+            category: 'DSA5.dies',
+            foreground: '#FFFFFF',
+            background: '#388834',
+            edge: '#388834',
+            outline: '#FFFFFF',
+            texture: 'none'
+        });
+        dice3d.addColorset({
+            name: 'parry',
+            description: 'DSA5.dies',
+            category: 'DSA5.dies',
+            foreground: '#FFFFFF',
+            background: '#388834',
+            edge: '#388834',
+            outline: '#FFFFFF',
+            texture: 'none'
+        });
     });
 
 
