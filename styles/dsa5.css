@@ -750,11 +750,15 @@ form .form-group.full-height textarea {
 
 .app.sidebar-popout .window-content,
 .window-app .window-content {
-    margin-left: 15px;
-    margin-right: 15px;
     background: url(../icons/backgrounds/chatpaper.webp) no-repeat;
     background-position: center;
     background-size: 100% 120%;
+}
+
+.window-app.actor .window-content,
+.window-app.item .window-content {
+    margin-left: 15px;
+    margin-right: 15px;
 }
 
 form.dsa5.item-sheet {

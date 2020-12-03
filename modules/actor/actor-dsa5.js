@@ -81,8 +81,10 @@ export default class Actordsa5 extends Actor {
 
             if (guide) {
                 if (guide.value != "-") {
-                    data.data.status.astralenergy.max = data.data.status.astralenergy.initial + data.data.characteristics[guide.value].value + data.data.status.astralenergy.modifier + data.data.status.astralenergy.advances
-                    data.data.status.karmaenergy.max = data.data.status.karmaenergy.initial + data.data.characteristics[guide.value].value + data.data.status.karmaenergy.modifier + data.data.status.karmaenergy.advances
+                    data.data.status.astralenergy.current = data.data.status.astralenergy.initial + data.data.characteristics[guide.value].value
+                    data.data.status.astralenergy.max = data.data.status.astralenergy.current + data.data.status.astralenergy.modifier + data.data.status.astralenergy.advances
+                    data.data.status.karmaenergy.current = data.data.status.karmaenergy.initial + data.data.characteristics[guide.value].value
+                    data.data.status.karmaenergy.max = data.data.status.karmaenergy.current + data.data.status.karmaenergy.modifier + data.data.status.karmaenergy.advances
                 }
             }
 
@@ -93,7 +95,7 @@ export default class Actordsa5 extends Actor {
 
         } catch (error) {
             console.error("Something went wrong with preparing actor data: " + error)
-            ui.notifications.error(game.i18n.localize("ACTOR.PreparationError") + error)
+            ui.notifications.error(game.i18n.localize("ACTOR.PreparationError") + error + error.backtrace())
         }
     }
 
@@ -414,6 +416,7 @@ export default class Actordsa5 extends Actor {
             blessings: blessings,
             magicTricks: magicTricks,
             hasPrayers: hasPrayers,
+            guidevalues: DSA5.characteristics,
             hasSpells: hasSpells,
             spells: spells,
             liturgies: liturgies,
@@ -737,7 +740,8 @@ export default class Actordsa5 extends Actor {
                 damageTerm += k
             }
         }
-        item.attack = skill.data.attack.value + item.data.atmod.value;
+
+        item.attack = Number(skill.data.attack.value) + Number(item.data.atmod.value);
         if (item.data.guidevalue.value != "-") {
             let val = Math.max(...(item.data.guidevalue.value.split("/").map(x => actorData.data.characteristics[x].value)));
             let extra = val - item.data.damageThreshold.value;
@@ -753,7 +757,7 @@ export default class Actordsa5 extends Actor {
         damageTerm = eval(damageTerm)
         item.damagedie = damageDie
         item.damageAdd = damageTerm != undefined ? "+" + damageTerm : ""
-        item.parry = skill.data.parry.value + item.data.pamod.value + shieldBonus;
+        item.parry = Number(skill.data.parry.value) + Number(item.data.pamod.value) + Number(shieldBonus);
         //shield block gains double parry bonus
         //if (game.i18n.localize("ReverseCombatSkills." + skill.name) == "Shields")
         //    item.parry += item.data.pamod.value
@@ -765,7 +769,7 @@ export default class Actordsa5 extends Actor {
 
     static _prepareRangeWeapon(item, ammunition, combatskills) {
         let skill = combatskills.filter(i => i.name == item.data.combatskill.value)[0];
-        item.attack = skill.data.attack.value
+        item.attack = Number(skill.data.attack.value)
         let parseDamage = new Roll(item.data.damage.value.replace(/[Ww]/, "d"))
         let damageDie = ""
         let damageTerm = ""

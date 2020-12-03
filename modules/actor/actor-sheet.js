@@ -357,7 +357,7 @@ export default class ActorSheetDsa5 extends ActorSheet {
 
     async _updateAPs(apValue) {
         if (this.actor.data.type == "character") {
-            if (!isNaN(apValue)) {
+            if (!isNaN(apValue) && !(apValue == null)) {
                 await this.actor.update({
                     "data.details.experience.spent": Number(this.actor.data.data.details.experience.spent) + Number(apValue),
                 });
@@ -371,7 +371,6 @@ export default class ActorSheetDsa5 extends ActorSheet {
         let res = this.actor.data.items.find(i => {
             return i.type == typeClass && i.name == item.name
         });
-
         if (res) {
             let vantage = duplicate(res)
             if (vantage.data.step.value + 1 <= vantage.data.max.value) {
@@ -395,7 +394,7 @@ export default class ActorSheetDsa5 extends ActorSheet {
         }
         await this._updateAPs(item.data.data.APValue.value)
         if (item.data.mageLevel != "mundane") {
-            update["data.guidevalue.value"] = item.data.data.guidevalue.value
+            update["data.guidevalue.value"] = game.i18n.localize("CHAR." + item.data.data.guidevalue.value)
             update["data.tradition.value"] = item.data.data.tradition.value
             update["data.feature.value"] = item.data.data.feature.value
             update["data.happyTalents.value"] = item.data.data.happyTalents.value

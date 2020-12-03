@@ -19,8 +19,8 @@
         "PARRY": "Parieren",
         "GEKK": "Gewandheit / Körperkraft",
         "DAMAGE": "Schaden",
-        "DODGE": "Ausweichen"
-
+        "DODGE": "Ausweichen",
+        "-": "-"
     },
     "CHARAbbrev": {
         "MU": "MU",

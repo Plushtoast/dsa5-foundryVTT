@@ -100,7 +100,7 @@
                     {{localize "tradition"}}
                 </div>
                 <div class="col sixty">
-                    {{actor.data.tradition.value}}
+                    <input type="text" name="data.tradition.value" data-dtype="{{actor.data.tradition.type}}" value="{{actor.data.tradition.value}}" />
                 </div>
             </div>
             <div class="row-section lineheight">
@@ -108,7 +108,15 @@
                     {{localize "guidevalue"}}
                 </div>
                 <div class="col sixty">
-                    {{localize (concatUp 'CHAR.' actor.data.guidevalue.value)}}
+                    <div class="form-group">
+                        <select name="data.guidevalue.value" data-dtype="{{actor.data.guidevalue.type}}">
+                            {{#select actor.data.guidevalue.value}}
+                            {{#each actor.guidevalues as |type sktype|}}
+                            <option value="{{sktype}}">{{localize type}}</option>
+                            {{/each}}
+                            {{/select}}
+                        </select>
+                    </div>
                 </div>
             </div>
             <div class="row-section lineheight">
@@ -116,7 +124,7 @@
                     {{localize "feature"}}
                 </div>
                 <div class="col sixty">
-                    {{actor.data.feature.value}}
+                    <input type="text" name="data.feature.value" data-dtype="{{actor.data.feature.type}}" value="{{actor.data.feature.value}}" />
                 </div>
             </div>
         </div>
