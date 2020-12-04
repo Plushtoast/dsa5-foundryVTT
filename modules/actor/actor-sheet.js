@@ -233,6 +233,14 @@ export default class ActorSheetDsa5 extends ActorSheet {
             });
         });
 
+        html.find('.ch-weaponless').click(event => {
+            event.preventDefault();
+            let characteristic = event.currentTarget.attributes["data-char"].value;
+            this.actor.setupWeaponless(characteristic, event).then(setupData => {
+                this.actor.basicTest(setupData)
+            });
+        });
+
         html.find('.ch-combatskill-attack').click(event => {
             event.preventDefault();
             let itemId = this._getItemId(event);
@@ -280,16 +288,30 @@ export default class ActorSheetDsa5 extends ActorSheet {
             });
         });
 
+        let hand = ev => this._deleteItem(ev);
+        html.find(".cards .item").mouseenter(ev => {
+            if (ev.currentTarget.getElementsByClassName('delButton').length == 0) {
+                var div = document.createElement('div')
+                div.classList.add("delButton")
+
+                div.innerHTML = "<i class=\"fas fa-times\"></i>"
+                div.addEventListener('click', hand, false)
+                ev.currentTarget.appendChild(div)
+
+            }
+        });
+        html.find(".cards .item").mouseleave(ev => {
+            var e = ev.toElement || ev.relatedTarget;
+            if (e.parentNode == this || e == this) {
+                return;
+            }
+            ev.currentTarget.querySelectorAll('.delButton').forEach(e => e.remove());
+        });
+
         let handler = ev => this._onDragItemStart(ev);
         html.find('.content .item').each((i, li) => {
             li.setAttribute("draggable", true);
             li.addEventListener("dragstart", handler, false);
-        });
-
-        html.find('.rightclick-delete').mousedown(ev => {
-            if (ev.button == 2) {
-                this._deleteItem(ev);
-            }
         });
 
         html.find('.item-delete').click(ev => {

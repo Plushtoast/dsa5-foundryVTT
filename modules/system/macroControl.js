@@ -1,5 +1,20 @@
 export default class MacroDSA5 {
 
+    static weaponLessMacro(char) {
+        const speaker = ChatMessage.getSpeaker();
+        let actor;
+        if (speaker.token) actor = game.actors.tokens[speaker.token];
+        if (!actor) actor = game.actors.get(speaker.actor);
+
+        this.runWeaponless(actor, char)
+    }
+
+    static weaponLessMacroId(char, actorId) {
+        let actor = game.actors.get(actorId)
+        this.runWeaponless(actor, char)
+    }
+
+
     static itemMacroById(actorId, itemName, itemType, bypassData) {
         let actor = game.actors.get(actorId)
         let item = actor ? actor.items.find(i => i.name === itemName && i.type == itemType) : null;
@@ -28,6 +43,14 @@ export default class MacroDSA5 {
         if (!actor) actor = game.actors.get(speaker.actor);
 
         this.runChar(actor, char)
+    }
+
+    static runWeaponless(actor, char) {
+        if (!actor) return ui.notifications.warn(`${game.i18n.localize("Error.MacroItemMissing")} ${char}`);
+        let characteristic = char.split("Weaponless")[0]
+        actor.setupWeaponless(characteristic, event).then(setupData => {
+            actor.basicTest(setupData)
+        });
     }
 
     static runChar(actor, char) {

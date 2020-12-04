@@ -43,7 +43,7 @@
     <div class="col two">
         <div class="row-section item skills lineheight" data-item-id="{{item._id}}">
             <div class="col fourty">
-                <a class="item-edit">{{item.name}}</a>
+                <a class="skill-select">{{item.name}}</a>
             </div>
             <div class="col five center">
                 {{localize (concatUp "CHARAbbrev." item.data.guidevalue.value)}}
@@ -69,7 +69,9 @@
         <div class="col third">
             {{localize "meleeweapons"}}
             <span class="buttons">
-                <a data-char="dodge" class="ch-status" title="{{localize 'dodge'}}"><i class="fas fa-reply"></i></a>
+                <a data-char="dodge" class="ch-status item" data-mod="dodge" title="{{localize 'dodge'}}"><i class="fas fa-reply"></i></a>
+                <a data-char="attack" class="ch-weaponless item" data-mod="attackWeaponless" title="{{localize 'attackWithoutWeapon'}}"><i class="fa attackWeaponless"></i></a>
+                <a data-char="parry" class="ch-weaponless item" data-mod="parryWeaponless" title="{{localize 'parryWithoutWeapon'}}"><i class="fa fa-shield-alt"></i></a>
             </span>
         </div>
         <div class="col five center small">
@@ -217,7 +219,7 @@
     <div class="row-section wrap cards">
         {{#each actor.combatSpecialAbilities as |item i|}}
         <div class="item" data-item-id="{{item._id}}">
-            <a class="item-edit rightclick-delete">{{item.name}}</a>
+            <a class="item-edit">{{item.name}}</a>
         </div>
         {{/each}}
     </div>

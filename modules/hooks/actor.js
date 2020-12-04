@@ -36,7 +36,6 @@ export default function() {
           updatedData["token.img"] = updatedData.img;
           actor.data.token.img = updatedData.img;
         }*/
-        console.log(actor)
         if (actor.data.isMage) {
             mergeObject(updatedData, {
                 "token.bar2": { "attribute": "status.astralenergy" }
@@ -50,6 +49,7 @@ export default function() {
                 "token.bar2": {}
             });
         }
+
     })
 
     /*Hooks.on("updateActor", (actor, updateData) => {

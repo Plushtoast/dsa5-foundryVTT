@@ -327,6 +327,11 @@
                         "type": "String",
                         "label": "Biography",
                         "value": ""
+                    },
+                    "notes": {
+                        "type": "String",
+                        "label": "notes",
+                        "value": ""
                     }
                 }
             }
@@ -539,16 +544,20 @@
                     "value": ""
                 },
                 "castingTime": {
-                    "type": "number",
+                    "type": "String",
                     "label": "castingTime",
-                    "value": 1
+                    "value": "1"
                 },
                 "AsPCost": {
-                    "type": "number",
+                    "type": "Number",
                     "label": "AsPCost",
                     "value": 0
                 },
-
+                "AsPCostDetail": {
+                    "type": "String",
+                    "label": "AsPCost",
+                    "value": "0"
+                },
                 "distribution": {
                     "type": "String",
                     "label": "distribution",
@@ -563,6 +572,16 @@
                     "type": "String",
                     "label": "resistanceModifier",
                     "value": "-"
+                },
+                "canChangeCastingTime": {
+                    "type": "Boolean",
+                    "label": "canChangeCastingTime",
+                    "value": true
+                },
+                "canChangeCost": {
+                    "type": "Boolean",
+                    "label": "canChangeCost",
+                    "value": true
                 }
             },
             "description": {

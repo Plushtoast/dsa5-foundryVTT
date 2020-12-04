@@ -71,6 +71,10 @@
     overflow-x: hidden;
 }
 
+.tox-tinymce {
+    width: 100%;
+}
+
 .editor-content ul {
     margin: 0px 0px;
 }
@@ -120,6 +124,7 @@ h7 {
     max-height: 50px;
     max-width: 50px;
     margin-top: 5px;
+    border-color: transparent;
 }
 
 .dsa5.item textarea {
@@ -136,6 +141,23 @@ h7 {
     margin-bottom: 7px;
     height: 100%;
     width: 100%;
+}
+
+.delButton {
+    display: inline-block;
+    position: absolute;
+    top: 2px;
+    right: 3px;
+    z-index: 1;
+    cursor: pointer;
+}
+
+.delButton:hover {
+    color: rgb(63, 54, 54);
+}
+
+.notes-box {
+    min-height: 165px;
 }
 
 .character-sheet .general,
@@ -216,13 +238,23 @@ h7 {
     padding: 0;
 }*/
 
-form .form-group.full-height label {
+form .form-group.full-height label,
+form .form-group.full-height input {
     align-self: stretch;
     vertical-align: middle;
 }
 
 form .form-group.full-height textarea {
     min-height: 140px;
+}
+
+form .form-group.tripple .input-text {
+    flex: 2;
+}
+
+form .form-group.tripple select {
+    flex: 1;
+    padding: 0;
 }
 
 
@@ -517,14 +549,18 @@ form .form-group.full-height textarea {
 }
 
 .cards>div {
-    margin: 3px;
+    margin: 1px;
+    flex-grow: 1;
+    position: relative;
 }
 
 .cards a {
-    padding: 5px;
-    border-radius: 5px;
-    flex: 10%;
-    box-shadow: 0 0 12px #6e3b01 inset;
+    padding: 4px;
+    border-radius: 2px;
+    width: 100%;
+    display: inline-block;
+    text-align: center;
+    box-shadow: 0 0 12px #6e3b018F inset;
 }
 
 
@@ -719,7 +755,8 @@ form .form-group.full-height textarea {
     background-color: rgba(0, 0, 0, 0.1);
 }
 
-.buttons a .fas {
+.buttons a .fas,
+.buttons a .fa {
     border-radius: 100%;
     border: 1px solid var(--border-color);
     padding: 2px;
@@ -743,6 +780,10 @@ form .form-group.full-height textarea {
 
 
 /*DIALOGS*/
+
+.attackWeaponless:before {
+    content: "\f255";
+}
 
 .window-app.actor .window-content {
     box-shadow: 0 0 20px #000;
@@ -844,6 +885,7 @@ form.dsa5.item-sheet {
     height: 50px;
 }
 
+.dsa5.item div.item-header,
 .dsa5.item .item-header input {
     text-align: center;
     padding: 8px;
@@ -1024,7 +1066,8 @@ form.dsa5.item-sheet {
     border: none;
 }
 
-.imagebox:after {
+
+/*.imagebox:after {
     position: absolute;
     content: '';
     background-image: url(../icons/backgrounds/token.webp);
@@ -1037,7 +1080,7 @@ form.dsa5.item-sheet {
     width: 115px;
     z-index: 1;
     pointer-events: none;
-}
+}*/
 
 .attacker img,
 .defender img {

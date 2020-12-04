@@ -66,15 +66,34 @@
                 <input class="input-text" type="text" name="data.targetCategory.value" value="{{data.targetCategory.value}}" data-dtype="String" />
             </div>
 
-            <div class="form-group">
-                <label class="label-text">{{localize "castingTime"}}: </label>
-                <input class="input-text" type="text" name="data.castingTime.value" value="{{data.castingTime.value}}" data-dtype="String" />
+            <div class="form-group tripple">
+                <label class="label-text" title="{{localize 'castingTime'}} ({{localize 'modifyable'}})">{{localize "castingTime"}} ({{localize "CHAR.modifyable"}}): </label>
+                <input class="input-text" type="text" name="data.castingTime.value" value="{{data.castingTime.value}}" data-dtype="{{data.castingTime.type}}" />
+                <select name="data.canChangeCastingTime.value" data-dtype="{{data.canChangeCastingTime.type}}">
+                    {{#select data.canChangeCastingTime.value}}
+
+                    <option value="true">{{localize "yes"}}</option>
+                    <option value="false">{{localize "no"}}</option>
+                    {{/select}}
+                </select>
             </div>
 
-            <div class="form-group">
-                <label class="label-text">{{localize "AsPCost"}}: </label>
-                <input class="input-text" type="text" name="data.AsPCost.value" value="{{data.AsPCost.value}}" data-dtype="Number" />
+            <div class="form-group tripple">
+                <label class="label-text" title="{{localize 'AsPCost'}} ({{localize 'modifyable'}})">{{localize "CHAR.AsPCost"}} ({{localize "CHAR.modifyable"}}): </label>
+                <input class="input-text" type="number" name="data.AsPCost.value" value="{{data.AsPCost.value}}" data-dtype="{{data.AsPCost.type}}" />
+                <select name="data.canChangeCost.value" data-dtype="{{data.canChangeCost.type}}">
+                    {{#select data.canChangeCost.value}}
+
+                    <option value="true">{{localize "yes"}}</option>
+                    <option value="false">{{localize "no"}}</option>
+                    {{/select}}
+                </select>
             </div>
+            <div class="form-group">
+                <label class="label-text">{{localize "AsPCostDetail"}}: </label>
+                <input class="input-text" type="text" name="data.AsPCostDetail.value" value="{{data.AsPCostDetail.value}}" data-dtype="{{data.AsPCostDetail.type}}" />
+            </div>
+
 
             <div class="form-group full-height">
                 <label class="label-text">{{localize "effect"}}: </label>

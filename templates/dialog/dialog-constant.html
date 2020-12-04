@@ -71,7 +71,7 @@
 <div class="form-group custom-select">
     <label>{{localize "sizeCategory"}}</label>
     <select name="size">
-    {{#select "average"}}
+    {{#select targetSize}}
     {{#each sizeOptions as |label val|}}
     <option value="{{val}}">{{localize label}}</option>
     {{/each}}

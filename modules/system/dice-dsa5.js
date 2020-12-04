@@ -24,6 +24,11 @@ export default class DiceDSA5 {
 
         switch (testData.source.type) {
             case "skill":
+                if (testData.source.data.burden.value == "no") {
+                    this._removeModifiers(situationalModifiers, ["CONDITION.encumbered"])
+                } else {
+                    this._enabledModifiers(situationalModifiers, ["CONDITION.encumbered"], testData.source.data.burden.value == "yes")
+                }
                 mergeObject(dialogOptions.data, {
                     difficultyLabels: (DSA5.skillDifficultyLabels)
                 });
@@ -31,18 +36,39 @@ export default class DiceDSA5 {
                 break;
 
             case "rangeweapon":
+                this._enabledModifiers(situationalModifiers, ["CONDITION.encumbered", "CONDITION.inpain"], true)
+                let targetSize = "average"
+                if (game.user.targets.size) {
+                    game.user.targets.forEach(target => {
+                        console.log(target.actor)
+                        let tar = target.actor.data.data.size
+                        if (tar)
+                            targetSize = tar.value
+                    });
+                }
                 mergeObject(dialogOptions.data, {
                     rangeOptions: DSA5.rangeWeaponModifiers,
                     sizeOptions: DSA5.rangeSizeCategories,
-                    visionOptions: DSA5.rangeVision
+                    visionOptions: DSA5.rangeVision,
+                    targetSize: targetSize
                 });
                 break;
             case "meleeweapon":
+                this._enabledModifiers(situationalModifiers, ["CONDITION.encumbered", "CONDITION.inpain"], true)
                 if (testData.mode == "attack") {
+                    let targetWeaponsize = "short"
+                    if (game.user.targets.size) {
+                        game.user.targets.forEach(target => {
+                            let defWeapon = target.actor.items.filter(x => x.data.type == "meleeweapon" && x.data.data.worn.value)
+                            if (defWeapon.length > 0)
+                                targetWeaponsize = defWeapon[0].data.data.reach.value
+                        });
+                    }
+
                     mergeObject(dialogOptions.data, {
                         weaponSizes: DSA5.meleeRanges,
                         melee: true,
-                        targetWeaponSize: "short"
+                        targetWeaponSize: targetWeaponsize
                     });
                 } else if (testData.mode == "parry") {
                     mergeObject(dialogOptions.data, {
@@ -58,6 +84,7 @@ export default class DiceDSA5 {
             case "combatskill":
             case "liturgy":
             case "spell":
+                this._enabledModifiers(situationalModifiers, ["CONDITION.encumbered", "CONDITION.inpain"], true)
                 break;
             case "status":
                 break;
@@ -111,6 +138,19 @@ export default class DiceDSA5 {
         reject()
     }
 
+    static _enabledModifiers(modifiers, names, enabled) {
+        for (var x in names) {
+            if (modifiers[x])
+                modifiers[x].selected = enabled
+        }
+    }
+    static _removeModifiers(modifiers, names) {
+        for (var x in names) {
+            if (modifiers[x])
+                delete modifiers[x]
+        }
+    }
+
     static _rollSingleD20(roll, res, id, modifier, testData) {
         let description = "";
 
@@ -145,7 +185,7 @@ export default class DiceDSA5 {
             description = game.i18n.localize(res1 >= 0 ? "Success" : "Failure");
         }
 
-        let h = {
+        return {
             //result: res,
             successLevel: successLevel,
             characteristics: chars,
@@ -154,8 +194,6 @@ export default class DiceDSA5 {
             modifiers: modifier,
             extra: {}
         }
-        console.log(h)
-        return h
     }
 
     static rollStatus(testData) {
@@ -244,12 +282,14 @@ export default class DiceDSA5 {
         }
     }
 
+
+
+
     static rollWeapon(testData) {
         let roll = testData.roll ? testData.roll : new Roll("1d20").roll();
         let weapon;
         let modifier = testData.testModifier + this._situationalModifiers(testData) + testData.wrongHand
 
-        console.log(testData)
         this._appendSituationalModifiers(testData, game.i18n.localize("manual"), testData.testModifier)
         this._appendSituationalModifiers(testData, game.i18n.localize("wrongHand"), testData.wrongHand)
 
@@ -285,7 +325,6 @@ export default class DiceDSA5 {
             this._appendSituationalModifiers(testData, game.i18n.localize("sizeCategory"), testData.sizeModifier)
             this._appendSituationalModifiers(testData, game.i18n.localize("sight"), testData.visionModifier)
         }
-        console.log(weapon)
         var result = this._rollSingleD20(roll, weapon[testData.mode], testData.mode, modifier, testData)
 
         let success = result.successLevel > 0
@@ -365,6 +404,7 @@ export default class DiceDSA5 {
 
         chars.push({ char: testData.mode, res: roll.terms[0].results[0].result, suc: res1 >= 0, tar: res });
         let rollConfirm = new Roll("1d20").roll();
+        rollConfirm.dice[0].options.colorset = testData.mode
 
         if (roll.terms[0].results.filter(x => x.result == 1).length == 1) {
             description = game.i18n.localize("CriticalSuccess") + ", " + game.i18n.localize("halfDefense");
@@ -464,7 +504,7 @@ export default class DiceDSA5 {
                 { char: testData.source.data.characteristic2.value, res: roll.terms[2].results[0].result, suc: res2 <= 0, tar: tar2 },
                 { char: testData.source.data.characteristic3.value, res: roll.terms[4].results[0].result, suc: res3 <= 0, tar: tar3 }
             ],
-            qualityStep: fps > 0 ? Math.ceil(fps / 3) : 0,
+            qualityStep: fps == 0 ? 1 : (fps > 0 ? Math.ceil(fps / 3) : 0),
             description: description,
             preData: testData,
             successLevel: successLevel,
@@ -536,6 +576,7 @@ export default class DiceDSA5 {
                     break;
                 case "meleeweapon":
                 case "rangeweapon":
+                case "weaponless":
                 case "combatskill":
                     if (testData.mode == "damage") {
                         roll = new Roll(testData.source.data.data.damage.value.replace(/[Ww]/, "d")).roll()

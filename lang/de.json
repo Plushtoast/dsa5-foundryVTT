@@ -20,6 +20,9 @@
         "GEKK": "Gewandheit / Körperkraft",
         "DAMAGE": "Schaden",
         "DODGE": "Ausweichen",
+        "modifyable": "mod.",
+        "AsPCost": "AsP Kosten",
+        "KaPCost": "KaP Kosten",
         "-": "-"
     },
     "CHARAbbrev": {
@@ -85,10 +88,11 @@
     "AstoundingFailure": "Schreckliches Missgeschick",
     "advantages": "Vorteile",
     "advantage": "Vorteil",
-
+    "attackWeaponless": "Waffenloser Angriff",
     "Age": "Alter",
     "aspect": "Aspekt",
     "AsPCost": "Astralpunktekosten",
+    "AsPCostDetail": "AsP Detail",
     "actionCount": "Aktionen",
     "atmod": "Angriffsmodifikator",
     "baseValue": "Grundwert",
@@ -182,6 +186,7 @@
     "Modifiers": "Modifikatoren",
     "magictrick": "Zaubertrick",
     "magictricks": "Zaubertricks",
+    "modifyable": "modifizierbar",
     "Modifier": "Modifikator",
     "mundane": "weltlich",
     "maxlevel": "Maximale Stufe",
@@ -213,11 +218,13 @@
     "reach": "Reichweite",
     "price": "Preis",
     "pamod": "Parademodifikator",
+    "parryWeaponless": "Waffenlose Verteidigung",
     "rangeweapon": "Fernkampfwaffe",
     "Roll": "Wurf",
     "rangeweapons": "Fernkampfwaffen",
     "requirements": "Voraussetzungen",
     "resistanceModifier": "Widerstand",
+
     "recommendedAdvantages": "Geeignete Vorteile",
     "recommendedDisadvantages": "Geeignete Nachteile",
     "recommendedTalents": "Geeignete Talente",
@@ -228,6 +235,7 @@
     "species": "Rasse",
     "Socialstate": "Sozialstatus",
     "soulpower": "Seelenkraft",
+    "spellTest": "Zauberprobe",
     "StF": "Steigerungsfaktor",
     "sizeCategory": "Größenkategorie",
     "Success": "Erfolg",
@@ -263,6 +271,10 @@
         "knowledge": "Wissenstalente",
         "trade": "Handwerkstalente",
         "nature": "Naturtalente"
+    },
+
+    "Combatskill": {
+        "wrestle": "Raufen"
     },
 
     "Skill-eeasy": "Extrem leicht (+5)",
@@ -334,7 +346,10 @@
         "inpain": "Schmerz",
         "tranced": "Trance",
         "overexerted": "Überanstrengung",
-        "confused": "Verwirrung"
+        "confused": "Verwirrung",
+
+        "prone": "Liegend",
+        "unconscious": "Bewusstlos"
     },
 
     "TT": {

@@ -41,6 +41,122 @@ export default class ImportAdvantage {
         x.send(null);
     }
 
+    static async importTalents() {
+        var x = new XMLHttpRequest();
+        var doc
+        x.open("GET", "systems/dsa5/modules/importer/xmls/talents.xml", true);
+        x.onreadystatechange = await async function() {
+            if (x.readyState == 4 && x.status == 200) {
+                doc = x.responseXML;
+
+                let burdenLookup = {
+                    "ja": "yes",
+                    "nein": "no"
+                }
+
+                const packs = game.packs.filter(p => p.metadata.tags && p.metadata.tags.includes("skill"))
+                if (!packs.length)
+                    return ui.notifications.error("No content found")
+                let pack = packs[0];
+                let elems = doc.getElementsByTagName("talents")
+                for (let i = 0; i < elems.length; i++) {
+                    let elem = elems[i]
+
+                    let burden = "maybe"
+                    if (burdenLookup.hasOwnProperty(elem.getElementsByTagName("encumbrance")[0].textContent)) {
+                        burden = burdenLookup[elem.getElementsByTagName("encumbrance")[0].textContent]
+                    }
+                    let chars = elem.getElementsByTagName("probe")[0].textContent.split("/")
+
+                    const item = {
+                        name: elem.getElementsByTagName("name")[0].textContent,
+                        img: Itemdsa5.defaultImages["skill"],
+                        type: "skill",
+                        data: {
+                            "description.value": DSA5Importer.prettyDescription(elem.getElementsByTagName("description")[0].textContent),
+                            "StF.value": elem.getElementsByTagName("StF")[0].textContent,
+                            "characteristic1.value": chars[0].toLowerCase(),
+                            "characteristic2.value": chars[1].toLowerCase(),
+                            "characteristic3.value": chars[2].toLowerCase(),
+                            "burden.value": burden,
+                        },
+
+                    };
+                    const update = {
+                        name: elem.getElementsByTagName("name")[0].textContent,
+                        img: Itemdsa5.defaultImages["skill"],
+                        type: "skill",
+                        data: {
+                            "description.value": DSA5Importer.prettyDescription(elem.getElementsByTagName("description")[0].textContent),
+                        },
+
+                    };
+                    //console.log(item)
+                    //await DSA5Importer.writeItem(pack, item)
+
+                    await pack.getIndex()
+                    let entry = pack.index.find((e) => e.name == item.name)
+
+                    if (!entry) {
+                        console.log(item)
+                        console.warn(`Talent ${item.name} could not be found`)
+                        continue
+                    }
+                    let skillentry = await pack.getEntity(entry._id)
+                    if (skillentry.data.data.StF.value !=
+                        item.data["StF.value"]) {
+                        console.warn(`StF ${item.name} does not match - ${skillentry.data.data.StF.value} - ${item.data["StF.value"]}`)
+                    } else if (skillentry.data.data.characteristic1.value != item.data["characteristic1.value"]) {
+                        console.warn(`characteristic1 ${item.name} does not match`)
+                    } else if (skillentry.data.data.characteristic2.value != item.data["characteristic2.value"]) {
+                        console.warn(`characteristic2 ${item.name} does not match`)
+                    } else if (skillentry.data.data.characteristic3.value != item.data["characteristic3.value"]) {
+                        console.warn(`characteristic3 ${item.name} does not match`)
+                    } else if (skillentry.data.data.burden.value != item.data["burden.value"]) {
+                        console.warn(`burden ${item.name} does not match - ${skillentry.data.data.burden.value} - ${item.data["burden.value"]}`)
+                    } else {
+                        await DSA5Importer.writeItem(pack, item)
+                    }
+
+                }
+            }
+        };
+        x.send(null);
+    }
+
+    static async updateActors() {
+        const packs = game.packs.filter(p => p.metadata.tags && p.metadata.tags.includes("skill"))
+
+        if (!packs.length)
+            return ui.notifications.error("No content found")
+
+        let pack = packs[0];
+        let items
+        await pack.getContent().then(content => items = content.filter(i => i.data.type == "skill"));
+
+        for (let i of items) {
+            for (let a of game.actors) {
+                let entry = a.items.find(e => {
+                    return e.name === i.name && e.type === i.type
+                })
+                if (!entry) {
+                    console.warn(`Updating of item ${i.name} at ${a.data.name} failed`)
+                    continue
+                }
+                entry = duplicate(entry)
+
+                entry.data.description.value = i.data.data.description.value
+                entry.data.StF.value = i.data.data.StF.value
+                entry.data.burden.value = i.data.data.StF.value
+                entry.data.characteristic1.value = i.data.data.characteristic1.value
+                entry.data.characteristic2.value = i.data.data.characteristic2.value
+                entry.data.characteristic3.value = i.data.data.characteristic3.value
+                entry.img = i.data.img
+                await a.updateEmbeddedEntity("OwnedItem", entry)
+                console.log(`updating of item ${i.name} success`)
+            }
+        }
+    }
 
 
 

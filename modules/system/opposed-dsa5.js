@@ -59,7 +59,6 @@ export default class OpposedDsa5 {
             else // If no token data was found in the speaker, use the actor's token data instead
                 attacker = actor.data.token
 
-            console.log("starting")
 
             if (testResult.successLevel > 0) {
 
@@ -165,7 +164,6 @@ export default class OpposedDsa5 {
     }
 
     static async completeOpposedProcess(attacker, defender, options) {
-        console.log("completing")
         let opposedResult = await this.evaluateOpposedTest(attacker.testResult, defender.testResult);
         this.formatOpposedResult(opposedResult, attacker.speaker, defender.speaker);
         this.rerenderMessagesWithModifiers(opposedResult, attacker, defender);
@@ -217,7 +215,6 @@ export default class OpposedDsa5 {
 
     static _calculateOpposedDamage(attackerTest, defenderTest) {
         let wornArmor = defenderTest.actor.items.filter(x => x.type == "armor" && x.data.worn.value == true)
-        console.log(wornArmor)
         let armor = wornArmor.reduce((a, b) => a + b.data.protection.value, 0)
         return {
             damage: attackerTest.damage,

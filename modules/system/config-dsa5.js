@@ -1,6 +1,47 @@
 const DSA5 = {}
 
 
+CONFIG.statusEffects = [
+    "icons/svg/falling.svg",
+    "icons/svg/unconscious.svg",
+
+    "icons/svg/anchor.svg", //encumbered
+    "icons/svg/tankard.svg", //drunken
+    "icons/svg/daze.svg", //stuned
+    "icons/svg/ice-aura.svg", //entrückt
+    "icons/svg/terror.svg",
+    "icons/svg/paralysis.svg",
+    "icons/svg/blood.svg",
+    "icons/svg/sun.svg", // trance
+    "icons/svg/sleep.svg", //fatigue
+    "icons/svg/stoned.svg" //irritated
+]
+DSA5.statusEffects = [
+    "CONDITION.prone",
+    "CONDITION.unconscious",
+
+    "CONDITION.encumbered",
+    "CONDITION.drunken",
+    "CONDITION.stunned",
+    "CONDITION.raptured",
+    "CONDITION.feared",
+    "CONDITION.paralysed",
+    "CONDITION.inpain",
+    "CONDITION.tranced",
+    "CONDITION.overexerted",
+    "CONDITION.confused"
+]
+
+DSA5.spellRanges = {
+    "self": "SPELLRANGE.self",
+    "touch": "SPELLRANGE.touch",
+    "step4": "SPELLRANGE.step4",
+    "step8": "SPELLRANGE.step8",
+    "step16": "SPELLRANGE.step16",
+    "step32": "SPELLRANGE.step32",
+    "step64": "SPELLRANGE.step64",
+}
+
 DSA5.characteristics = {
     "mu": "CHAR.MU",
     "kl": "CHAR.KL",

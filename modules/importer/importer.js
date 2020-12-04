@@ -50,6 +50,7 @@ export default class DSA5Importer {
         }
     }
 
+
     static sanitizeAPVal(val) {
         return val.replace(" AP", "")
             .replace(" Abenteuerpunkte", "")

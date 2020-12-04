@@ -1,4 +1,7 @@
-<div class="dsa5 chat-card" data-actor-id="{{actorId}}" data-hide={ {hideData}}>
+<div class="dsa5 chat-card" data-actor-id="{{actorId}}" data-hide={{hideData}}>
 
     {{> systems/dsa5/templates/chat/roll/test-card.html}}
+    <div class="card-content">
+        <b>{{localize "effect"}}</b>: {{testData.preData.source.data.effect.value}}
+    </div>
 </div>

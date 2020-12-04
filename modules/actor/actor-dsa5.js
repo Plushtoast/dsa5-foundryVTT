@@ -80,7 +80,8 @@ export default class Actordsa5 extends Actor {
             var guide = data.data.guidevalue
 
             if (guide) {
-                if (guide.value != "-") {
+                //if (guide.value != "-") {
+                if (data.data.characteristics[guide.value]) {
                     data.data.status.astralenergy.current = data.data.status.astralenergy.initial + data.data.characteristics[guide.value].value
                     data.data.status.astralenergy.max = data.data.status.astralenergy.current + data.data.status.astralenergy.modifier + data.data.status.astralenergy.advances
                     data.data.status.karmaenergy.current = data.data.status.karmaenergy.initial + data.data.characteristics[guide.value].value
@@ -552,6 +553,83 @@ export default class Actordsa5 extends Actor {
         });
     }
 
+    setupWeaponless(statusId, options = {}) {
+        let title = game.i18n.localize(statusId + "Weaponless");
+
+        let testData = {
+            opposable: true,
+            mode: statusId,
+            source: {
+                name: statusId,
+                data: {
+                    data: {
+                        combatskill: {
+                            value: game.i18n.localize("Combatskill.wrestle")
+                        },
+                        reach: {
+                            value: "short"
+                        },
+                        damage: {
+                            value: "1d6"
+                        },
+                        atmod: {
+                            value: 0
+                        },
+                        pamod: {
+                            value: 0
+                        },
+                        guidevalue: {
+                            value: "ge/kk"
+                        },
+                        damageThreshold: {
+                            value: "5000"
+                        }
+                    }
+                }
+            },
+            opposable: false,
+            extra: {
+                weaponless: true,
+                statusId: statusId,
+                actor: this.data,
+                options: options
+            }
+        };
+
+        testData.source.type = "meleeweapon"
+
+        // Setup dialog data: title, template, buttons, prefilled data
+        let dialogOptions = {
+            title: title,
+            template: "/systems/dsa5/templates/dialog/status-dialog.html",
+            // Prefilled dialog data
+            data: {
+                rollMode: options.rollMode
+            },
+            callback: (html) => {
+                testData.testModifier = Number(html.find('[name="testModifier"]').val());
+                testData.situationalModifiers = this._parseModifiers('[name = "situationalModifiers"]')
+                testData.rangeModifier = html.find('[name="distance"]').val()
+                testData.sizeModifier = DSA5.rangeSizeModifier[html.find('[name="size"]').val()]
+                testData.visionModifier = Number(html.find('[name="vision"]').val())
+                testData.opposingWeaponSize = html.find('[name="weaponsize"]').val()
+                testData.defenseCount = Number(html.find('[name="defenseCount"]').val())
+                testData.narrowSpace = html.find('[name="narrowSpace"]').is(":checked")
+                testData.doubleAttack = html.find('[name="doubleAttack"]').is(":checked") ? -2 : 0
+                testData.wrongHand = html.find('[name="wrongHand"]').is(":checked") ? -4 : 0
+                return { testData, cardOptions };
+            }
+        };
+
+        let cardOptions = this._setupCardOptions("systems/dsa5/templates/chat/roll/status-card.html", title)
+
+        return DiceDSA5.setupDialog({
+            dialogOptions: dialogOptions,
+            testData: testData,
+            cardOptions: cardOptions
+        });
+    }
+
     setupStatus(statusId, options = {}) {
         let char = this.data.data.status[statusId];
 
@@ -636,7 +714,7 @@ export default class Actordsa5 extends Actor {
     }
 
     setupSpell(spell, options = {}) {
-        let title = spell.name + " " + game.i18n.localize("Test");
+        let title = spell.name + " " + game.i18n.localize("spellTest");
 
         let testData = {
             opposable: true,
@@ -647,6 +725,7 @@ export default class Actordsa5 extends Actor {
             }
         };
 
+        console.log(spell)
         let dialogOptions = {
             title: title,
             template: "/systems/dsa5/templates/dialog/spell-dialog.html",

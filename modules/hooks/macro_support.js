@@ -14,6 +14,20 @@ export default function() {
             }
 
             await createHotBarMacro(command, item.name, item.img, slot)
+        } else if (data.mod == "attackWeaponless" || data.mod == "parryWeaponless") {
+            let item = {
+                name: game.i18n.localize(data.mod),
+                img: "icons/environment/people/infantry.webp"
+            }
+            let command
+            if (game.user.isGM || data.actorId == undefined) {
+                command = `game.dsa5.macro.weaponLessMacro("${data.mod}")`
+            } else {
+                command = `game.dsa5.macro.weaponLessMacroId("${data.mod}", "${data.actorId}")`
+            }
+
+            await createHotBarMacro(command, item.name, item.img, slot)
+
         } else if (data.type == "Item") {
             let possibleItems = ["meleeweapon", "rangeweapon", "skill", "combatskill", "spell", "liturgy", "char"]
             if (!possibleItems.includes(data.data.type))
@@ -35,7 +49,8 @@ export default function() {
 
 
             await createHotBarMacro(command, item.name, item.img, slot)
-        } else if (data.type == "Actor") {
+        } else
+        if (data.type == "Actor") {
             let actor = game.actors.get(data.id);
             let command = `game.actors.get("${data.id}").sheet.render(true)`
 

@@ -15,7 +15,8 @@ export default class Itemdsa5 extends Item {
         "career": "icons/environment/people/commoner.webp",
         "spelltrick": "icons/sundries/scrolls/scroll-bound-blue-brown.webp",
         "blessing": "icons/commodities/treasure/token-runed-wyn-grey.webp",
-        "combatskill": "icons/environment/people/charge.webp"
+        "combatskill": "icons/environment/people/charge.webp",
+        "skill": "icons/tools/hand/spinning-wheel-brown.webp"
     }
 
     static async create(data, options) {
@@ -148,7 +149,6 @@ export default class Itemdsa5 extends Item {
 
         //Check if the posted item should have availability/pay buttons
         chatData.hasPrice = "price" in chatData.data;
-        console.log(chatData.hasPrice);
         if (chatData.hasPrice) {
             let price = chatData.data.price.value;
             chatData.data.price.D = Math.floor(price / 10);
