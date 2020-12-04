@@ -16,6 +16,7 @@ Enter into Manifest URL: xxx
 # Current State
 Our DSA5 0.1 includes relevant mechanisms to play in the wonderous world of Das Schwarze Auge.
 This Version of DSA 5 include many information available from the DSA Wiki (Link)
+As of version 0.1 all attributes, skills, items, etc. are only in german. 
 
 # Notable Features
 Opposed Test and Damage calculation that takes into account Size, weapons, armor 
