@@ -18,7 +18,7 @@ Our DSA5 0.1 includes relevant mechanisms to play in the wonderous world of Das 
 This Version of DSA 5 include many information available from the DSA Wiki (Link)
 As of version 0.1 all attributes, skills, items, etc. are only in german. 
 
-# Notable Features
+## Notable Features
 Opposed Test and Damage calculation that takes into account Size, weapons, armor 
 
 Test result evaluation 
@@ -29,6 +29,6 @@ Management of inventory with drag and drop and information on all items
 
 Manual modification of rolls and test results
 
-# Modules
+## Modules
 Official
 Currently there are no official modules available for DSA5. We are working continously with the team of Ulisses to provide you with some cool modules.
