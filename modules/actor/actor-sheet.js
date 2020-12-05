@@ -188,7 +188,10 @@ export default class ActorSheetDsa5 extends ActorSheet {
             }
         });
 
-
+        html.find('.item-dropdown').click(ev => {
+            ev.preventDefault()
+            $(ev.currentTarget).closest('.item').find('.expandDetails').fadeToggle()
+        })
 
 
         html.find('.skill-advances').focusout(async event => {

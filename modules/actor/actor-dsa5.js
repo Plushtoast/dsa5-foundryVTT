@@ -559,34 +559,7 @@ export default class Actordsa5 extends Actor {
         let testData = {
             opposable: true,
             mode: statusId,
-            source: {
-                name: statusId,
-                data: {
-                    data: {
-                        combatskill: {
-                            value: game.i18n.localize("Combatskill.wrestle")
-                        },
-                        reach: {
-                            value: "short"
-                        },
-                        damage: {
-                            value: "1d6"
-                        },
-                        atmod: {
-                            value: 0
-                        },
-                        pamod: {
-                            value: 0
-                        },
-                        guidevalue: {
-                            value: "ge/kk"
-                        },
-                        damageThreshold: {
-                            value: "5000"
-                        }
-                    }
-                }
-            },
+            source: DSA5.defaultWeapon,
             opposable: false,
             extra: {
                 weaponless: true,
@@ -595,7 +568,10 @@ export default class Actordsa5 extends Actor {
                 options: options
             }
         };
-
+        testData.source.name = statusId
+        testData.source.combatskill = {
+            value: game.i18n.localize("Combatskill.wrestle")
+        }
         testData.source.type = "meleeweapon"
 
         // Setup dialog data: title, template, buttons, prefilled data
@@ -717,7 +693,7 @@ export default class Actordsa5 extends Actor {
         let title = spell.name + " " + game.i18n.localize("spellTest");
 
         let testData = {
-            opposable: true,
+            opposable: false,
             source: spell,
             extra: {
                 actor: this.data,
@@ -725,19 +701,64 @@ export default class Actordsa5 extends Actor {
             }
         };
 
-        console.log(spell)
+
         let dialogOptions = {
             title: title,
             template: "/systems/dsa5/templates/dialog/spell-dialog.html",
 
             data: {
-                rollMode: options.rollMode
+                rollMode: options.rollMode,
+                spellCost: spell.data.AsPCost.value,
+                spellCastingTime: spell.data.castingTime.value,
+                spellReach: spell.data.range.value,
+                canChangeCost: spell.data.canChangeCost.value == "true",
+                canChangeRange: spell.data.canChangeRange.value == "true",
+                canChangeCastingTime: spell.data.canChangeCastingTime.value == "true",
+                hasSKModifier: spell.data.resistanceModifier.value == "SK",
+                hasZKModifier: spell.data.resistanceModifier.value == "ZK",
+                maxMods: Math.floor(Number(spell.data.talentValue.value) / 4)
             },
             callback: (html) => {
                 cardOptions.rollMode = html.find('[name="rollMode"]').val();
                 testData.testModifier = Number(html.find('[name="testModifier"]').val());
                 testData.testDifficulty = 0
                 testData.situationalModifiers = this._parseModifiers('[name = "situationalModifiers"]')
+                testData.calculatedSpellModifiers = {
+                    castingTime: html.find(".castingTime").text(),
+                    cost: html.find(".aspcost").text(),
+                    reach: html.find(".reach").text()
+                }
+                testData.situationalModifiers.push({
+                    name: game.i18n.localize("removeGestureOrFormula"),
+                    value: html.find('[name="removeGestureOrFormula"]').is(":checked") ? -2 : 0
+                })
+                testData.situationalModifiers.push({
+                    name: game.i18n.localize("castingTime"),
+                    value: html.find(".castingTime").data("mod")
+                })
+                testData.situationalModifiers.push({
+                    name: game.i18n.localize("cost"),
+                    value: html.find(".aspcost").data('mod')
+                })
+                testData.situationalModifiers.push({
+                    name: game.i18n.localize("reach"),
+                    value: html.find(".reach").data('mod')
+                })
+
+                testData.situationalModifiers.push({
+                    name: game.i18n.localize("zkModifier"),
+                    value: html.find('[name="zkModifier"]').val() || 0
+                })
+
+                testData.situationalModifiers.push({
+                    name: game.i18n.localize("skModifier"),
+                    value: html.find('[name="skModifier"]').val() || 0
+                })
+                testData.situationalModifiers.push({
+                    name: game.i18n.localize("maintainedSpells"),
+                    value: html.find('[name="maintainedSpells"]').val() * -1
+                })
+
                 return { testData, cardOptions };
             }
         };

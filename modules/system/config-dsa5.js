@@ -32,14 +32,31 @@ DSA5.statusEffects = [
     "CONDITION.confused"
 ]
 
-DSA5.spellRanges = {
-    "self": "SPELLRANGE.self",
-    "touch": "SPELLRANGE.touch",
-    "step4": "SPELLRANGE.step4",
-    "step8": "SPELLRANGE.step8",
-    "step16": "SPELLRANGE.step16",
-    "step32": "SPELLRANGE.step32",
-    "step64": "SPELLRANGE.step64",
+DSA5.defaultWeapon = {
+    name: "default",
+    data: {
+        data: {
+
+            reach: {
+                value: "short"
+            },
+            damage: {
+                value: "1d6"
+            },
+            atmod: {
+                value: 0
+            },
+            pamod: {
+                value: 0
+            },
+            guidevalue: {
+                value: "ge/kk"
+            },
+            damageThreshold: {
+                value: "5000"
+            }
+        }
+    }
 }
 
 DSA5.characteristics = {

@@ -257,6 +257,15 @@ form .form-group.tripple select {
     padding: 0;
 }
 
+.emphasize {
+    color: white;
+    background-color: darkred;
+}
+
+.maxMods {
+    transition: background-color 0.3s linear
+}
+
 
 /*label.full-height:before {
     content: "";
@@ -763,6 +772,7 @@ form .form-group.tripple select {
     color: var(--border-color);
 }
 
+.spells .very-small a .fas,
 .inventory .very-small a .fas {
     padding: 1px;
     border: none;
@@ -1141,4 +1151,19 @@ li.folder {
 .chatModifiers .expand-mods {
     float: right;
     font-size: 10px;
+}
+
+.expandDetails {
+    display: none;
+}
+
+.expandDetails ul {
+    margin: 0 0 0.5em 0;
+    list-style-type: none;
+}
+
+.expandDetails li {
+    display: inline-block;
+    font-size: 12px;
+    margin-right: 5px;
 }

@@ -574,19 +574,19 @@
                     "value": "-"
                 },
                 "canChangeCastingTime": {
-                    "type": "Boolean",
+                    "type": "String",
                     "label": "canChangeCastingTime",
-                    "value": true
+                    "value": "true"
                 },
                 "canChangeCost": {
-                    "type": "Boolean",
+                    "type": "String",
                     "label": "canChangeCost",
-                    "value": true
+                    "value": "true"
                 },
                 "canChangeRange": {
-                    "type": "Boolean",
+                    "type": "String",
                     "label": "canChangeCost",
-                    "value": true
+                    "value": "true"
                 }
             },
             "description": {

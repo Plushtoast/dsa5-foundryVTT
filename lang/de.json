@@ -75,6 +75,7 @@
 
 
     "APvalue": "AP-Wert",
+    "additionalFPs": "zusätzliche FPs",
     "attacktest": "Angriffsprobe",
     "arrow": "Pfeil",
     "armor": "Rüstung",
@@ -127,6 +128,7 @@
     "Details": "Details",
     "damage": "Schaden",
     "defenseCount": "# Verteidigung (je -3)",
+    "decreaseCastingTime": "Zauberzeit senken",
     "damageThreshold": "Schadensschwelle",
     "damageOverThreshold": "Inklusive Zusatzschaden über Schadensschwelle",
     "doubleDamage": "doppelter Schaden",
@@ -153,6 +155,7 @@
     "Failure": "Misserfolg",
     "feature": "Merkmal",
     "flight": "Flucht",
+    "force": "Erzwingen",
     "Fw": "Fertigkeitswert",
     "FP": "Fertigkeitspunkte",
     "fatePoints": "Schicksalspunkte",
@@ -169,6 +172,8 @@
     "Height": "Größe",
     "Home": "Heimatort",
     "Initial": "Startwert",
+    "increaseRange": "Reichweite erhöhen",
+    "increaseCastingTime": "Zauberzeit erhöhen",
     "karmaenergy": "Karmaenergie",
     "KTW": "Kampftalentwert",
     "KaPCost": "Karmapunktekosten",
@@ -193,9 +198,10 @@
     "Magic": "Magie",
     "money": "Geld",
     "Money": "Geld",
+    "maintainedSpells": "Aufrechterhaltene Zauber (je -1)",
     "manual": "Händisch",
     "mageLevel": "Magieart",
-
+    "maxSpellMods": "Maximale Modifikatorenanzahl",
     "misc": "Sonstiges",
     "Name": "Name",
     "narrowSpace": "Beengte Umgebung",
@@ -224,11 +230,12 @@
     "rangeweapons": "Fernkampfwaffen",
     "requirements": "Voraussetzungen",
     "resistanceModifier": "Widerstand",
-
+    "removeGestureOrFormula": "Geste/Formel weglassen",
     "recommendedAdvantages": "Geeignete Vorteile",
     "recommendedDisadvantages": "Geeignete Nachteile",
     "recommendedTalents": "Geeignete Talente",
     "rangeCombatAttacks": "Fernkampfangriffe",
+    "reduceCost": "Kosten reduzieren",
     "reloadTime": "Ladezeit",
     "skill": "Talent",
     "skills": "Talente",
@@ -244,6 +251,8 @@
     "statuseffects": "Statuseffekte",
     "spellsAndRituals": "Zauber/Ritual",
     "Spent": "Ausgegeben",
+    "skModifier": "Seelenkraft (Ziel)",
+    "step": "Schritt",
     "stone": "Stein",
     "selfDamage": "Selbstverletzt: ",
     "specialability": "Sonderfertigkeit",
@@ -264,6 +273,7 @@
     "wrongHand": "Falsche Hand",
     "writing": "Schrift",
     "yes": "Ja",
+    "zkModifier": "Zähigkeit (Ziel)",
 
     "SKILL": {
         "body": "Körpertalente",
@@ -401,6 +411,11 @@
         }
     },
 
+    "ReverseSpellRanges": {
+        "berühren": "touch",
+        "selbst": "self"
+    },
+
     "ReverseCombatSkills": {
         "Schilde": "Shields"
     },
@@ -408,5 +423,32 @@
     "Error": {
         "MacroItemMissing": "Dein Charakter hat kein Item namens",
         "APUpdateError": "AP Wert konnte nicht angepasst werden. Bitte manuell durchführen."
+    },
+
+    "SPELLMISCAST": {
+        "2": "Der Geist des Zauberers tauscht für 1D6 Tage den Körper mit dem nächsten Lebewesen in seiner Nähe, das größer ist als eine Ratte.",
+        "3": "Der Zauberer wird für 1D6 Tage von einem Mindergeist verfolgt.",
+        "4 ": "Das Ziel des Zaubers ändert sich zufällig nach Wahl des Meisters.",
+        "5": "Der Zauberer verwandelt sich für 1D6 Stunden in ein Kleintier nach Wahl des Spielleiters.",
+        "6": "Die gesamte Astralkraft verlässt den Körper des Zauberers und manifestiert sich als Regen aus bunten Funken, illusionären Schmetterlingen und kleinen Regenbögen. Die verlorenen Astralpunkte können regulär regeneriert werden.",
+        "7": "Der Zauberer verliert für 1D6 Tage die Fähigkeit, auf seinen AE-Vorrat zuzugreifen.",
+        "8": "Der Zauberer hat für die nächsten 1D6 Tage pochende Kopfschmerzen. Er leidet während dieser Zeit unter einer Stufe des Zustands Betäubung.",
+        "9": "Die gesamte Astralkraft verlässt den Körper des Zauberers und springt auf das nächste magisch begabte Ziel über. Das Ziel erhält die gesamten Astralpunkte des Zauberers, auch über sein natürliches Maximum an Astralenergie hinaus. Der Zauberer kann die verlorenen Astralpunkte regulär regenerieren.",
+        "10": "Der Zauberer verliert für 1D6 Tage seine Befähigung zu sprechen.",
+        "11": "Haar und Bart des Zauberers färben sich bunt, wachsen später jedoch in der ursprünglichen Farbe nach",
+        "12": "Eine ätherische Stimme erklingt aus dem Nichts und sagt „Tu das nie wieder!“"
+    },
+    "LITURGYMISCAST": {
+        "2": "Im Umkreis von 2D6 Metern gehen brennbare Materialien in Flammen auf (außer Lebewesen und die Kleidung des Geweihten).",
+        "3": "Die gewirkte Liturgie/Zeremonie hat einen gegenteiligen Effekt. Ein Bann des Lichts erzeugt Licht, ein Heilsegen fügt dem Ziel Schaden zu usw.",
+        "4 ": "Das Ziel der Liturgie/Zeremonie ändert sich zufällig nach Wahl des Meisters.",
+        "5": "Der Geweihte hat für 1D6 Tage nachts seltsame Visionen und Alpträume.",
+        "6": "Durch einen Blick in die Sphären ist der Geweihte so eingeschüchtert, dass er einen Tag lang 3 Stufen Furcht erhält.",
+        "7": "Der Geweihte verliert für 1D6 Tage die Fähigkeit, auf seinen KE-Vorrat zuzugreifen.",
+        "8": "Der Geweihte erhält für einen Tag 4 Stufen Entrückung.",
+        "9": "Der Geweihte ist für einen Tag lang verwirrt und redet unverständliches Zeug, an das er sich später nicht mehr erinnert. Er erhält 3 Stufen Verwirrung",
+        "10": "Der Geweihte verliert für 1D6 Tage seine Befähigung zu sprechen.",
+        "11": "Für einen Tag erhält der Geweihte ein Stigma.",
+        "12": "Der Geweihte verwurzelt mit dem Boden und kann seine Füße für 1W6 Minuten nicht bewegen. Er erhält währenddessen den Status Fixiert.“"
     }
 }

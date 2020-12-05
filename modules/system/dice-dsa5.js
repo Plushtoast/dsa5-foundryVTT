@@ -1,6 +1,7 @@
 import Actordsa5 from "../actor/actor-dsa5.js";
 import DSA5 from "./config-dsa5.js";
-
+import DSA5Dialog from "../dialog/dialog-dsa5.js"
+import Miscast from "../tables/spellmiscast.js"
 
 export default class DiceDSA5 {
     static async setupDialog({ dialogOptions, testData, cardOptions, }) {
@@ -82,8 +83,24 @@ export default class DiceDSA5 {
 
                 break
             case "combatskill":
+                this._enabledModifiers(situationalModifiers, ["CONDITION.encumbered", "CONDITION.inpain"], true)
+                break
             case "liturgy":
             case "spell":
+                let skMod = 0
+                let zkMod = 0
+                if (game.user.targets.size) {
+                    game.user.targets.forEach(target => {
+                        console.log(target.actor)
+                        skMod = target.actor.data.data.status.soulpower.max
+                        zkMod = target.actor.data.data.status.toughness.max
+                    });
+                }
+                mergeObject(dialogOptions.data, {
+                    SKModifier: skMod,
+                    ZKModifier: zkMod
+                });
+
                 this._enabledModifiers(situationalModifiers, ["CONDITION.encumbered", "CONDITION.inpain"], true)
                 break;
             case "status":
@@ -116,9 +133,8 @@ export default class DiceDSA5 {
         if (!testData.extra.options.bypass) {
             // Render Test Dialog
             let html = await renderTemplate(dialogOptions.template, dialogOptions.data);
-
             return new Promise((resolve, reject) => {
-                new Dialog({
+                new DSA5Dialog({
                     title: dialogOptions.title,
                     content: html,
                     buttons: {
@@ -450,6 +466,19 @@ export default class DiceDSA5 {
     static rollSpell(testData) {
         let res = this._rollThreeD20(testData)
         res["rollType"] = "spell"
+        if (res.successLevel >= 2) {
+            let extraFps = new Roll("1d6").roll().results[0]
+            res.description = res.description + ", " + game.i18n.localize("additionalFPs") + " " + extraFps
+            res.result = res.result + extraFps
+            res.preData.calculatedSpellModifiers.cost = res.preData.calculatedSpellModifiers.cost / 2
+
+        } else if (res.successLevel <= -2) {
+            res.description = res.description + " - " + (res.preData.source.type == "spell" ? Miscast.getSpellMiscast() : Miscast.getLiturgyMiscast())
+        }
+
+        if (res.successLevel < 0) {
+            res.preData.calculatedSpellModifiers.cost = res.preData.calculatedSpellModifiers.cost / 2
+        }
         return res
     }
 
