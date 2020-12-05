@@ -582,6 +582,11 @@
                     "type": "Boolean",
                     "label": "canChangeCost",
                     "value": true
+                },
+                "canChangeRange": {
+                    "type": "Boolean",
+                    "label": "canChangeCost",
+                    "value": true
                 }
             },
             "description": {

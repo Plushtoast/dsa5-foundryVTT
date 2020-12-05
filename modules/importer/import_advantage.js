@@ -424,7 +424,13 @@ export default class ImportAdvantage {
                             "targetCategory.value": elem.getElementsByTagName("targetCategory")[0].textContent,
                             "range.value": elem.getElementsByTagName("range")[0].textContent,
                             "talentValue.value": 0,
-                            "resistanceModifier.value": resist
+
+                            "resistanceModifier.value": resist,
+                            "canChangeCastingTime.value": elem.getElementsByTagName("canChangeCastingTime")[0].textContent,
+                            "canChangeCost.value": elem.getElementsByTagName("canChangeCost")[0].textContent,
+                            "canChangeRange.value": elem.getElementsByTagName("canChangeRange")[0].textContent,
+                            "AsPCostDetail.value": elem.getElementsByTagName("AspCostDetail")[0].textContent
+
                         },
                     };
 
@@ -480,7 +486,11 @@ export default class ImportAdvantage {
                             "targetCategory.value": elem.getElementsByTagName("targetCategory")[0].textContent,
                             "range.value": elem.getElementsByTagName("range")[0].textContent,
                             "talentValue.value": 0,
-                            "resistanceModifier.value": resist
+                            "resistanceModifier.value": resist,
+                            "canChangeCastingTime.value": elem.getElementsByTagName("canChangeCastingTime")[0].textContent,
+                            "canChangeCost.value": elem.getElementsByTagName("canChangeCost")[0].textContent,
+                            "canChangeRange.value": elem.getElementsByTagName("canChangeRange")[0].textContent,
+                            "AsPCostDetail.value": elem.getElementsByTagName("KaPCostDetail")[0].textContent
                         },
                     };
 
