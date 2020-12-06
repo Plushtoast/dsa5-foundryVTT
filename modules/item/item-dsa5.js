@@ -22,11 +22,11 @@ export default class Itemdsa5 extends Item {
         "Zauberer": "icons/environment/people/cleric-orange.webp",
         "ritual": "icons/sundries/books/book-symbol-triangle-silver-brown.webp",
         "ceremony": "icons/sundries/books/book-symbol-canterbury-cross.webp",
-        "abilityclerical": "",
-        "abilityCombat": "",
-        "abilityfatePoints": "",
-        "abilitygeneral": "",
-        "abilitymagical": ""
+        "abilityclerical": "icons/tools/hand/scale-balances-merchant-brown.webp",
+        "abilityCombat": "icons/weapons/axes/axe-hammer-blackened.webp",
+        "abilityfatePoints": "icons/weapons/wands/wand-skull-forked.webp",
+        "abilitygeneral": "icons/tools/smithing/crucible.webp",
+        "abilitymagical": "icons/tools/scribal/ink-quill-pink.webp"
     }
 
     static async create(data, options) {

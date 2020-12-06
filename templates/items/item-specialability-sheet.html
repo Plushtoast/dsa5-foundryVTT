@@ -39,6 +39,14 @@
                   {{/select}}
                 </select>
             </div>
+            <div class="form-group full-height">
+                <label class="label-text">{{localize "rule"}}: </label>
+                <textarea class="input-text" type="text" name="data.rule.value" data-dtype="String">{{data.rule.value}}</textarea>
+            </div>
+            <div class="form-group">
+                <label class="label-text">{{localize "maxlevel"}}: </label>
+                <input class="input-text" type="Number" name="data.maxRank.value" value="{{data.maxRank.value}}" data-dtype="{{data.maxRank.type}}" />
+            </div>
 
         </div>
     </section>

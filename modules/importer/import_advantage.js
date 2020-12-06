@@ -702,77 +702,83 @@ export default class ImportAdvantage {
         };
         x.send(null);
     }
-
     static async importCareer() {
+        let types = ["Weltliche", "Geweihte", "Zauberer"]
+        for (let k of types) {
+            await this._importCareer(k)
+        }
+    }
+
+
+    static async _importCareer(k) {
 
 
         //somehow interferes with each other
         //let types = ["Geweihte", "Weltliche", "Zauberer"]
-        let types = ["Weltliche"]
         let mageLevels = {
             "Geweihte": "clerical",
             "Zauberer": "magical",
             "Weltliche": "mundane"
         }
         let pack = await DSA5Importer.getCompendiumPack("Item", `Careers`);
-        for (let k of types) {
-            console.log(k)
-            var x = new XMLHttpRequest();
-            x.open("GET", "systems/dsa5/modules/importer/xmls/" + k + ".xml", true);
 
-            x.onreadystatechange = await async function() {
-                if (x.readyState == 4 && x.status == 200) {
-                    var doc = x.responseXML;
+        console.log(k)
+        var x = new XMLHttpRequest();
+        x.open("GET", "systems/dsa5/modules/importer/xmls/" + k + ".xml", true);
+
+        x.onreadystatechange = await async function() {
+            if (x.readyState == 4 && x.status == 200) {
+                var doc = x.responseXML;
 
 
-                    let elems = doc.getElementsByTagName(k)
-                    for (let i = 0; i < elems.length; i++) {
-                        let elem = elems[i]
-                        let img = Itemdsa5.defaultImages[k];
-                        /*let caregory = elem.getElementsByTagName("category")[0].textContent
-                        if (caregory in DSA5Importer.ImportVars.rangeImages.de) {
-                            img = DSA5Importer.ImportVars.rangeImages.de[caregory]
-                        }*/
-                        let apVal = DSA5Importer.sanitizeAPVal(elem.getElementsByTagName("APvalue")[0].textContent)
-                        const item = {
-                            name: elem.getElementsByTagName("name")[0].textContent,
-                            img: img,
-                            type: "career",
-                            data: {
-                                "description.value": DSA5Importer.prettyDescription(elem.getElementsByTagName("description")[0].textContent),
-                                "APValue.value": apVal,
-                                "requirements.value": elem.getElementsByTagName("requirements")[0].textContent,
-                                "recommendedAdvantages.value": elem.getElementsByTagName("recommendedAdvantages")[0].textContent,
-                                "recommendedDisadvantages.value": elem.getElementsByTagName("recommendedDisadvantages")[0].textContent,
-                                "notsuitableAdvantages.value": elem.getElementsByTagName("notsuitableAdvantages")[0].textContent,
-                                "notsuitableDisadvantages.value": elem.getElementsByTagName("notsuitableDisadvantages")[0].textContent,
-                                "mageLevel.value": mageLevels[k],
-                                "skills.value": [
-                                    elem.getElementsByTagName("talentsBody")[0].textContent,
-                                    elem.getElementsByTagName("talentsSocial")[0].textContent,
-                                    elem.getElementsByTagName("talentsNature")[0].textContent,
-                                    elem.getElementsByTagName("talentsKnowledge")[0].textContent,
-                                    elem.getElementsByTagName("talentsTrade")[0].textContent
-                                ].join(", "),
-                                "guidevalue.value": elem.getElementsByTagName("guideValue")[0].textContent,
-                                "tradition.value": elem.getElementsByTagName("tradition")[0].textContent,
-                                "feature.value": elem.getElementsByTagName("feature")[0].textContent,
-                                "happyTalents.value": elem.getElementsByTagName("happyTalents")[0].textContent,
-                                "spells.value": elem.getElementsByTagName("spells")[0].textContent,
-                                "spelltricks.value": elem.getElementsByTagName("spelltricks")[0].textContent,
-                                "liturgies.value": elem.getElementsByTagName("liturgies")[0].textContent,
-                                "blessings.value": elem.getElementsByTagName("blessings")[0].textContent,
-                                "specialAbilities.value": elem.getElementsByTagName("specialAbilities")[0].textContent
-                            },
-                        };
+                let elems = doc.getElementsByTagName(k)
+                for (let i = 0; i < elems.length; i++) {
+                    let elem = elems[i]
+                    let img = Itemdsa5.defaultImages[k];
+                    /*let caregory = elem.getElementsByTagName("category")[0].textContent
+                    if (caregory in DSA5Importer.ImportVars.rangeImages.de) {
+                        img = DSA5Importer.ImportVars.rangeImages.de[caregory]
+                    }*/
+                    let apVal = DSA5Importer.sanitizeAPVal(elem.getElementsByTagName("APvalue")[0].textContent)
+                    const item = {
+                        name: elem.getElementsByTagName("name")[0].textContent,
+                        img: img,
+                        type: "career",
+                        data: {
+                            "description.value": DSA5Importer.prettyDescription(elem.getElementsByTagName("description")[0].textContent),
+                            "APValue.value": apVal,
+                            "requirements.value": elem.getElementsByTagName("requirements")[0].textContent,
+                            "recommendedAdvantages.value": elem.getElementsByTagName("recommendedAdvantages")[0].textContent,
+                            "recommendedDisadvantages.value": elem.getElementsByTagName("recommendedDisadvantages")[0].textContent,
+                            "notsuitableAdvantages.value": elem.getElementsByTagName("notsuitableAdvantages")[0].textContent,
+                            "notsuitableDisadvantages.value": elem.getElementsByTagName("notsuitableDisadvantages")[0].textContent,
+                            "mageLevel.value": mageLevels[k],
+                            "skills.value": [
+                                elem.getElementsByTagName("talentsBody")[0].textContent,
+                                elem.getElementsByTagName("talentsSocial")[0].textContent,
+                                elem.getElementsByTagName("talentsNature")[0].textContent,
+                                elem.getElementsByTagName("talentsKnowledge")[0].textContent,
+                                elem.getElementsByTagName("talentsTrade")[0].textContent
+                            ].join(", "),
+                            "guidevalue.value": elem.getElementsByTagName("guideValue")[0].textContent,
+                            "tradition.value": elem.getElementsByTagName("tradition")[0].textContent,
+                            "feature.value": elem.getElementsByTagName("feature")[0].textContent,
+                            "happyTalents.value": elem.getElementsByTagName("happyTalents")[0].textContent,
+                            "spells.value": elem.getElementsByTagName("spells")[0].textContent,
+                            "spelltricks.value": elem.getElementsByTagName("spelltricks")[0].textContent,
+                            "liturgies.value": elem.getElementsByTagName("liturgies")[0].textContent,
+                            "blessings.value": elem.getElementsByTagName("blessings")[0].textContent,
+                            "specialAbilities.value": elem.getElementsByTagName("specialAbilities")[0].textContent
+                        },
+                    };
 
-                        await DSA5Importer.writeItem(pack, item)
+                    await DSA5Importer.writeItem(pack, item)
 
-                    }
                 }
-            };
-            x.send(null);
-        }
+            }
+        };
+        x.send(null);
+
     }
 
     static async importCombatskill() {
@@ -827,8 +833,6 @@ export default class ImportAdvantage {
     }
 
     static async importSpecialAbilities() {
-        var x = new XMLHttpRequest();
-        var doc
         let cats = [
             "clerical",
             "Combat",
@@ -836,14 +840,22 @@ export default class ImportAdvantage {
             "general",
             "magical"
         ]
+        for (let k of cats) {
+            await this._importSpecialAbilities(k)
+        }
+    }
 
-        x.open("GET", `systems/dsa5/modules/importer/xmls/specialability${cats[0]}.xml`, true);
+    static async _importSpecialAbilities(cat) {
+        var x = new XMLHttpRequest();
+        var doc
+
+        x.open("GET", `systems/dsa5/modules/importer/xmls/specialability${cat}.xml`, true);
 
         x.onreadystatechange = await async function() {
             if (x.readyState == 4 && x.status == 200) {
                 doc = x.responseXML;
 
-                let pack = await DSA5Importer.getCompendiumPack("Item", `SpecialAbilities`);
+                let pack = await DSA5Importer.getCompendiumPack("Item", `SpecialAbilities2`);
                 let elems = doc.getElementsByTagName("specialability")
                 for (let i = 0; i < elems.length; i++) {
                     let elem = elems[i]
@@ -861,7 +873,7 @@ export default class ImportAdvantage {
                         img: img,
                         type: "specialability",
                         data: {
-                            "description.value": DSA5Importer.prettyDescription(descr),
+                            "description.value": DSA5Importer.prettyDescription(elem.getElementsByTagName("description")[0].textContent),
                             "category.value": category,
                             "APValue.value": apVal,
                             "requirements.value": elem.getElementsByTagName("requirements")[0].textContent,
