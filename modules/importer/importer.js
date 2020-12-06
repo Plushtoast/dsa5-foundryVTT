@@ -1,3 +1,4 @@
+import Actordsa5 from '../actor/actor-dsa5.js'
 export default class DSA5Importer {
 
     static async getCompendiumPack(type, name) {
@@ -49,6 +50,27 @@ export default class DSA5Importer {
             pack.updateEntity(updateData);
         }
     }
+
+    static async writeCreature(pack, item) {
+        let compendiumItem;
+        await pack.getIndex();
+        let entry = pack.index.find((e) => e.name === item.name);
+
+        if (!entry) {
+            console.log(`Importing ${item.type} - ${item.name}`);
+            compendiumItem = new Actordsa5(item, { temporary: true });
+
+            pack.importEntity(compendiumItem);
+        } else {
+            console.log(`Update ${item.type} - ${item.name}`);
+            //let updateData = ImportHelpers.buildUpdateData(item);
+            let updateData = item;
+            updateData["_id"] = entry._id;
+
+            pack.updateEntity(updateData);
+        }
+    }
+
 
 
     static sanitizeAPVal(val) {

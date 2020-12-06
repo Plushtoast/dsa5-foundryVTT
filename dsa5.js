@@ -7,9 +7,9 @@ import Itemdsa5 from "./modules/item/item-dsa5.js";
 import ItemSheetdsa5 from "./modules/item/item-sheet.js";
 import registerHooks from "./modules/system/hooks.js";
 import MacroDSA5 from "./modules/system/macroControl.js";
-
+import LazyImporter from "./modules/importer/lazy_importer.js"
 import DSA5 from "./modules/system/config-dsa5.js"
-import ImportAdvantage from "./modules/importer/import_advantage.js"
+
 
 Hooks.once("init", async function() {
 
@@ -34,8 +34,8 @@ Hooks.once("init", async function() {
         },
         macro: MacroDSA5,
         config: DSA5,
-        importers: {
-            advantage: ImportAdvantage
+        lazy: {
+            LazyImporter
         }
     }
 

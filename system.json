@@ -2,8 +2,8 @@
     "name": "dsa5",
     "title": "Das Schwarze Auge (5th Edition)",
     "description": "Many details here.",
-    "version": "0.1.30",
-    "templateVersion": 24,
+    "version": "0.1.32",
+    "templateVersion": 25,
     "author": "Plushtoast",
     "scripts": [],
     "esmodules": [
@@ -136,7 +136,7 @@
             "name": "Bestiary",
             "label": "Bestiary",
             "system": "dsa5",
-            "path": "packs/money.db",
+            "path": "packs/bestiary.db",
             "entity": "Actor",
             "tags": [
                 "Bestiary"

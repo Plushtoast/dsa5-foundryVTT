@@ -124,6 +124,8 @@ export default class ImportAdvantage {
         x.send(null);
     }
 
+
+
     static async updateActors() {
         const packs = game.packs.filter(p => p.metadata.tags && p.metadata.tags.includes("skill"))
 
@@ -702,6 +704,49 @@ export default class ImportAdvantage {
         };
         x.send(null);
     }
+
+    static async importBestiary() {
+        let types = ["Tiere"]
+        for (let k of types) {
+            await this._importBestiary(k)
+        }
+    }
+
+    static async _importBestiary(k) {
+        var x = new XMLHttpRequest();
+        x.open("GET", "systems/dsa5/modules/importer/xmls/" + k + ".xml", true);
+        let pack = await DSA5Importer.getCompendiumPack("Item", `Careers`);
+        x.onreadystatechange = await async function() {
+            if (x.readyState == 4 && x.status == 200) {
+                var doc = x.responseXML;
+                console.log(doc)
+                console.log(k)
+
+                let elems = doc.getElementsByTagName(k)
+                for (let i = 0; i < elems.length; i++) {
+                    let elem = elems[i]
+                    let img = Itemdsa5.defaultImages[k];
+                    /*let caregory = elem.getElementsByTagName("category")[0].textContent
+                    if (caregory in DSA5Importer.ImportVars.rangeImages.de) {
+                        img = DSA5Importer.ImportVars.rangeImages.de[caregory]
+                    }*/
+                    const item = {
+                        name: elem.getElementsByTagName("name")[0].textContent,
+                        img: img,
+                        type: "creature",
+                        data: {
+                            "description.value": DSA5Importer.prettyDescription(elem.getElementsByTagName("description")[0].textContent),
+                        },
+                    };
+
+                    let actor = await DSA5Importer.writeCreature(pack, item)
+
+                }
+            }
+        };
+        x.send(null);
+    }
+
     static async importCareer() {
         let types = ["Weltliche", "Geweihte", "Zauberer"]
         for (let k of types) {
@@ -722,7 +767,6 @@ export default class ImportAdvantage {
         }
         let pack = await DSA5Importer.getCompendiumPack("Item", `Careers`);
 
-        console.log(k)
         var x = new XMLHttpRequest();
         x.open("GET", "systems/dsa5/modules/importer/xmls/" + k + ".xml", true);
 

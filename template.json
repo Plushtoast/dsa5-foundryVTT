@@ -971,6 +971,11 @@
                 "label": "maxRank",
                 "value": 0
             },
+            "step": {
+                "value": 1,
+                "type": "Number",
+                "label": "step"
+            },
             "category": {
                 "type": "String",
                 "label": "Category",

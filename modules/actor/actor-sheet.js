@@ -465,12 +465,19 @@ export default class ActorSheetDsa5 extends ActorSheet {
         let res = this.actor.data.items.find(i => {
             return i.type == typeClass && i.name == item.name
         });
-
-        if (!res) {
+        if (res) {
+            let vantage = duplicate(res)
+            if (vantage.data.step.value + 1 <= vantage.data.max.value) {
+                vantage.data.step.value += 1
+                await this._updateAPs(vantage.data.APValue.value)
+                await this.actor.updateEmbeddedEntity("OwnedItem", vantage);
+            }
+        } else {
             await this._updateAPs(item.data.data.APValue.value)
             await this.actor.createEmbeddedEntity("OwnedItem", item);
         }
     }
+
 
     _onDragItemStart(event) {
 
