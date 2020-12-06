@@ -1,0 +1,140 @@
+<form class="dsa5 item-sheet {{cssClass}}" autocomplete="off">
+    <header class="item-header">
+        <h1>
+            <input name="name" class="item-header item-name" type="text" value="{{item.name}}" placeholder="{{localize 'Name'}}" />
+        </h1>
+    </header>
+
+    {{> systems/dsa5/templates/items/item-stat.html}}
+
+
+    <nav class="sheet-tabs tabs" data-tab-container="primary">
+        <a class="item active" data-tab="description">{{localize "Description"}}</a>
+        <a class="item" data-tab="details">{{localize "Details"}}</a>
+    </nav>
+
+
+    <section class="content">
+
+        {{> systems/dsa5/templates/items/item-description.html}}
+
+        <div class="tab details" data-tab="details">
+
+            <div class="form-group">
+                <label class="label-text">{{localize "Characteristic"}} 1</label>
+                <select name="data.characteristic1.value" data-dtype="{{data.characteristic1.type}}">
+                    {{#select data.characteristic1.value}}
+                    {{#each characteristics as |ch char|}}
+                    <option value="{{char}}">{{localize ch}}</option>
+                    {{/each}}
+                    {{/select}}
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label class="label-text">{{localize "Characteristic"}} 2</label>
+                <select name="data.characteristic2.value" data-dtype="{{data.characteristic2.type}}">
+                    {{#select data.characteristic2.value}}
+                    {{#each characteristics as |ch char|}}
+                    <option value="{{char}}">{{localize ch}}</option>
+                    {{/each}}
+                    {{/select}}
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label class="label-text">{{localize "Characteristic"}} 3</label>
+                <select name="data.characteristic3.value" data-dtype="{{data.characteristic3.type}}">
+                    {{#select data.characteristic3.value}}
+                    {{#each characteristics as |ch char|}}
+                    <option value="{{char}}">{{localize ch}}</option>
+                    {{/each}}
+                    {{/select}}
+                </select>
+            </div>
+
+            <div class="form-group tripple">
+                <label class="label-text" title="{{localize 'reach'}} ({{localize 'modifyable'}})">{{localize "reach"}} ({{localize 'CHAR.modifyable'}}): </label>
+                <input class="input-text" type="text" name="data.range.value" value="{{data.range.value}}" data-dtype="String" />
+                <select name="data.canChangeRange.value" data-dtype="{{data.canChangeRange.type}}">
+                    {{#select data.canChangeRange.value}}
+
+                    <option value="true">{{localize "yes"}}</option>
+                    <option value="false">{{localize "no"}}</option>
+                    {{/select}}
+                </select>
+            </div>
+            <div class="form-group">
+                <label class="label-text">{{localize "duration"}}: </label>
+                <input class="input-text" type="text" name="data.duration.value" value="{{data.duration.value}}" data-dtype="String" />
+            </div>
+            <div class="form-group">
+                <label class="label-text">{{localize "targetCategory"}}: </label>
+                <input class="input-text" type="text" name="data.targetCategory.value" value="{{data.targetCategory.value}}" data-dtype="String" />
+            </div>
+
+            <div class="form-group tripple">
+                <label class="label-text" title="{{localize 'castingTime'}} ({{localize 'modifyable'}})">{{localize "castingTime"}} ({{localize "CHAR.modifyable"}}): </label>
+                <input class="input-text" type="text" name="data.castingTime.value" value="{{data.castingTime.value}}" data-dtype="{{data.castingTime.type}}" />
+                <select name="data.canChangeCastingTime.value" data-dtype="{{data.canChangeCastingTime.type}}">
+                    {{#select data.canChangeCastingTime.value}}
+
+                    <option value="true">{{localize "yes"}}</option>
+                    <option value="false">{{localize "no"}}</option>
+                    {{/select}}
+                </select>
+            </div>
+
+            <div class="form-group tripple">
+                <label class="label-text" title="{{localize 'KaPCost'}} ({{localize 'modifyable'}})">{{localize "CHAR.KaPCost"}} ({{localize "CHAR.modifyable"}}): </label>
+                <input class="input-text" type="number" name="data.AsPCost.value" value="{{data.AsPCost.value}}" data-dtype="{{data.AsPCost.type}}" />
+                <select name="data.canChangeCost.value" data-dtype="{{data.canChangeCost.type}}">
+                    {{#select data.canChangeCost.value}}
+
+                    <option value="true">{{localize "yes"}}</option>
+                    <option value="false">{{localize "no"}}</option>
+                    {{/select}}
+                </select>
+            </div>
+            <div class="form-group">
+                <label class="label-text">{{localize "permanentCost"}}: </label>
+                <input class="input-text" type="text" name="data.permanentCost.value" value="{{data.permanentCost.value}}" data-dtype="{{data.permanentCost.type}}" />
+            </div>
+            <div class="form-group">
+                <label class="label-text">{{localize "AsPCostDetail"}}: </label>
+                <input class="input-text" type="text" name="data.AsPCostDetail.value" value="{{data.AsPCostDetail.value}}" data-dtype="{{data.AsPCostDetail.type}}" />
+            </div>
+
+            <div class="form-group full-height">
+                <label class="label-text">{{localize "effect"}}: </label>
+                <textarea class="input-text" type="text" name="data.effect.value" data-dtype="String">{{data.effect.value}}</textarea>
+            </div>
+            <div class="form-group">
+                <label class="label-text">{{localize "feature"}}: </label>
+                <input class="input-text" type="text" name="data.distribution.value" value="{{data.distribution.value}}" data-dtype="String" />
+            </div>
+            <div class="form-group">
+                <label class="label-text">{{localize "resistanceModifier"}}</label>
+                <select name="data.resistanceModifier.value" data-dtype="{{data.resistanceModifier.type}}">
+                    {{#select data.resistanceModifier.value}}
+                    {{#each resistances as |type sktype|}}
+                    <option value="{{sktype}}">{{localize type}}</option>
+                    {{/each}}
+                    {{/select}}
+                </select>
+            </div>
+            <div class="form-group">
+                <label class="label-text">{{localize "StF"}}</label>
+                <select name="data.StF.value" data-dtype="{{data.StF.type}}">
+                    {{#select data.StF.value}}
+                    {{#each StFs as |type sktype|}}
+                    <option value="{{sktype}}">{{localize type}}</option>
+                    {{/each}}
+                    {{/select}}
+                </select>
+            </div>
+
+
+        </div>
+    </section>
+</form>

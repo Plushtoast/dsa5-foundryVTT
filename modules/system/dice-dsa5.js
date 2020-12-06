@@ -6,7 +6,8 @@ import Miscast from "../tables/spellmiscast.js"
 export default class DiceDSA5 {
     static async setupDialog({ dialogOptions, testData, cardOptions, }) {
         let rollMode = game.settings.get("core", "rollMode");
-
+        let skMod = 0
+        let zkMod = 0
         var sceneStress = "challenging";
 
         mergeObject(testData, {
@@ -41,7 +42,6 @@ export default class DiceDSA5 {
                 let targetSize = "average"
                 if (game.user.targets.size) {
                     game.user.targets.forEach(target => {
-                        console.log(target.actor)
                         let tar = target.actor.data.data.size
                         if (tar)
                             targetSize = tar.value
@@ -87,11 +87,9 @@ export default class DiceDSA5 {
                 break
             case "liturgy":
             case "spell":
-                let skMod = 0
-                let zkMod = 0
+
                 if (game.user.targets.size) {
                     game.user.targets.forEach(target => {
-                        console.log(target.actor)
                         skMod = target.actor.data.data.status.soulpower.max
                         zkMod = target.actor.data.data.status.toughness.max
                     });
@@ -103,6 +101,41 @@ export default class DiceDSA5 {
 
                 this._enabledModifiers(situationalModifiers, ["CONDITION.encumbered", "CONDITION.inpain"], true)
                 break;
+            case "ceremony":
+
+                if (game.user.targets.size) {
+                    game.user.targets.forEach(target => {
+                        skMod = target.actor.data.data.status.soulpower.max
+                        zkMod = target.actor.data.data.status.toughness.max
+                    });
+                }
+
+                mergeObject(dialogOptions.data, {
+                    SKModifier: skMod,
+                    ZKModifier: zkMod,
+                    isCeremony: true,
+                    locationModifiers: DSA5.ceremonyLocationModifiers,
+                    timeModifiers: DSA5.ceremonyTimeModifiers
+                })
+                this._enabledModifiers(situationalModifiers, ["CONDITION.encumbered", "CONDITION.inpain"], true)
+                break
+            case "ritual":
+                if (game.user.targets.size) {
+                    game.user.targets.forEach(target => {
+                        skMod = target.actor.data.data.status.soulpower.max
+                        zkMod = target.actor.data.data.status.toughness.max
+                    });
+                }
+
+                mergeObject(dialogOptions.data, {
+                    SKModifier: skMod,
+                    ZKModifier: zkMod,
+                    isRitual: true,
+                    locationModifiers: DSA5.ritualLocationModifiers,
+                    timeModifiers: DSA5.ritualTimeModifiers
+                })
+                this._enabledModifiers(situationalModifiers, ["CONDITION.encumbered", "CONDITION.inpain"], true)
+                break
             case "status":
                 break;
             default:
@@ -465,7 +498,7 @@ export default class DiceDSA5 {
 
     static rollSpell(testData) {
         let res = this._rollThreeD20(testData)
-        res["rollType"] = "spell"
+        res["rollType"] = testData.source.type
         if (res.successLevel >= 2) {
             let extraFps = new Roll("1d6").roll().results[0]
             res.description = res.description + ", " + game.i18n.localize("additionalFPs") + " " + extraFps
@@ -553,6 +586,8 @@ export default class DiceDSA5 {
 
         let rollResults;
         switch (testData.source.type) {
+            case "ceremony":
+            case "ritual":
             case "liturgy":
             case "spell":
                 rollResults = this.rollSpell(testData)
@@ -597,6 +632,8 @@ export default class DiceDSA5 {
             switch (testData.source.type) {
                 case "liturgy":
                 case "spell":
+                case "ceremony":
+                case "ritual":
                 case "skill":
                     roll = new Roll("1d20+1d20+1d20").roll();
                     for (var i = 0; i < roll.dice.length; i++) {

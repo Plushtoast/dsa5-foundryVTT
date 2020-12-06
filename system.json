@@ -2,8 +2,8 @@
     "name": "dsa5",
     "title": "Das Schwarze Auge (5th Edition)",
     "description": "Many details here.",
-    "version": "0.1.27",
-    "templateVersion": 23,
+    "version": "0.1.29",
+    "templateVersion": 24,
     "author": "Plushtoast",
     "scripts": [],
     "esmodules": [
@@ -83,6 +83,16 @@
             ]
         },
         {
+            "name": "Rituals",
+            "label": "Rituals",
+            "system": "dsa5",
+            "path": "packs/rituals.db",
+            "entity": "Item",
+            "tags": [
+                "rituals"
+            ]
+        },
+        {
             "name": "Spelltricks",
             "label": "Spelltricks",
             "system": "dsa5",
@@ -110,6 +120,16 @@
             "entity": "Item",
             "tags": [
                 "liturgies"
+            ]
+        },
+        {
+            "name": "Ceremonies",
+            "label": "Ceremonies",
+            "system": "dsa5",
+            "path": "packs/ceremonies.db",
+            "entity": "Item",
+            "tags": [
+                "Ceremonies"
             ]
         },
         {

@@ -961,6 +961,16 @@
                 "APvalue",
                 "requirements"
             ],
+            "rule": {
+                "type": "String",
+                "label": "rule",
+                "value": ""
+            },
+            "maxRank": {
+                "tpye": "Number",
+                "label": "maxRank",
+                "value": 0
+            },
             "category": {
                 "type": "String",
                 "label": "Category",

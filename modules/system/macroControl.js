@@ -86,7 +86,8 @@ export default class MacroDSA5 {
                 return actor.setupCombatskill(item, bypassData.mod, bypassData).then(setupData => {
                     actor.basicTest(setupData)
                 });
-
+            case "ceremony":
+            case "ritual":
             case "spell":
             case "liturgy":
                 return actor.setupSpell(item.data, bypassData).then(setupData => {

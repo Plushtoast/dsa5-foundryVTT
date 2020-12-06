@@ -15,8 +15,7 @@
         <label>{{localize "zkModifier"}}</label>
         <input type="number" name="zkModifier" value="{{hasZKModifier}}" />
     </div>
-    {{/if}} {{#if isRitual}}
-
+    {{/if}}{{#if isCeremony}}
     <div class="form-group custom-select ritual">
         <label>{{localize "place"}}</label>
         <select name="placeModifier">
@@ -38,12 +37,8 @@
         </select>
     </div>
     <div class="form-group custom-select">
-        <label>{{localize "RITUALMODIFIER.rightClothes"}}</label>
-        <input type="checkbox" id="rightClothes" name="rightClothes" value="1">
-    </div>
-    <div class="form-group custom-select">
-        <label>{{localize "RITUALMODIFIER.rightEquipment"}}</label>
-        <input type="checkbox" id="rightEquipment" name="rightEquipment" value="1">
+        <label>{{localize "CEREMONYMODIFIER.artefact"}}</label>
+        <input type="checkbox" id="artefactUsage" name="artefactUsage" value="1">
     </div>
     {{/if}} {{#if canChangeCost}}
     <div class="form-group custom-select">
@@ -72,7 +67,7 @@
     {{/if}}
 
     <div class="form-group custom-select">
-        <label>{{localize "removeGestureOrFormula"}} (-2)</label>
+        <label>{{localize "removeGestureOrPrayer"}} (-2)</label>
         <input type="checkbox" id="removeGestureOrFormula" class="spellModifier" name="removeGestureOrFormula" value="-2">
     </div>
 
@@ -113,5 +108,5 @@
             {{maxMods}}
         </div>
     </div>
-    <div class="roll-dialog-tag">spell</div>
+    <div class="roll-dialog-tag">skill</div>
 </form>

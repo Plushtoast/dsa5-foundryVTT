@@ -470,14 +470,14 @@ export default class ImportAdvantage {
                     const item = {
                         name: elem.getElementsByTagName("name")[0].textContent,
                         img: img,
-                        type: "spell",
+                        type: "ritual",
                         data: {
                             "description.value": DSA5Importer.prettyDescription(elem.getElementsByTagName("description")[0].textContent),
                             "characteristic1.value": characteristics[0],
                             "characteristic2.value": characteristics[1],
                             "characteristic3.value": characteristics[2],
                             "effect.value": elem.getElementsByTagName("effect")[0].textContent,
-                            "castingTime.value": elem.getElementsByTagName("castingTime")[0].textContent,
+                            "castingTime.value": elem.getElementsByTagName("ritualTime")[0].textContent,
                             "AsPCost.value": elem.getElementsByTagName("AsPCost")[0].textContent,
                             "distribution.value": elem.getElementsByTagName("distribution")[0].textContent,
                             "StF.value": elem.getElementsByTagName("Stf")[0].textContent,
@@ -592,7 +592,7 @@ export default class ImportAdvantage {
                     const item = {
                         name: elem.getElementsByTagName("name")[0].textContent,
                         img: img,
-                        type: "liturgy",
+                        type: "ceremony",
                         data: {
                             "description.value": DSA5Importer.prettyDescription(elem.getElementsByTagName("description")[0].textContent),
                             "characteristic1.value": characteristics[0],
@@ -704,22 +704,27 @@ export default class ImportAdvantage {
     }
 
     static async importCareer() {
-        var x = new XMLHttpRequest();
-        var doc
-        let types = ["Geweihte", "Weltliche", "Zauberer"]
+
+
+        //somehow interferes with each other
+        //let types = ["Geweihte", "Weltliche", "Zauberer"]
+        let types = ["Weltliche"]
         let mageLevels = {
             "Geweihte": "clerical",
             "Zauberer": "magical",
             "Weltliche": "mundane"
         }
+        let pack = await DSA5Importer.getCompendiumPack("Item", `Careers`);
         for (let k of types) {
+            console.log(k)
+            var x = new XMLHttpRequest();
             x.open("GET", "systems/dsa5/modules/importer/xmls/" + k + ".xml", true);
 
             x.onreadystatechange = await async function() {
                 if (x.readyState == 4 && x.status == 200) {
-                    doc = x.responseXML;
+                    var doc = x.responseXML;
 
-                    let pack = await DSA5Importer.getCompendiumPack("Item", `Careers`);
+
                     let elems = doc.getElementsByTagName(k)
                     for (let i = 0; i < elems.length; i++) {
                         let elem = elems[i]
@@ -810,6 +815,57 @@ export default class ImportAdvantage {
                             "parry.value": 0,
                             "talentValue.value": 6,
                             "weapontype.value": (elem.getElementsByTagName("category")[0].textContent == "Nahkampftechniken" ? "melee" : "range")
+                        },
+                    };
+
+                    await DSA5Importer.writeItem(pack, item)
+
+                }
+            }
+        };
+        x.send(null);
+    }
+
+    static async importSpecialAbilities() {
+        var x = new XMLHttpRequest();
+        var doc
+        let cats = [
+            "clerical",
+            "Combat",
+            "fatePoints",
+            "general",
+            "magical"
+        ]
+
+        x.open("GET", `systems/dsa5/modules/importer/xmls/specialability${cats[0]}.xml`, true);
+
+        x.onreadystatechange = await async function() {
+            if (x.readyState == 4 && x.status == 200) {
+                doc = x.responseXML;
+
+                let pack = await DSA5Importer.getCompendiumPack("Item", `SpecialAbilities`);
+                let elems = doc.getElementsByTagName("specialability")
+                for (let i = 0; i < elems.length; i++) {
+                    let elem = elems[i]
+                    let category = elem.getElementsByTagName("category")[0].textContent
+                    let apVal = DSA5Importer.sanitizeAPVal(elem.getElementsByTagName("APvalue")[0].textContent)
+                    let img = Itemdsa5.defaultImages["ability" + category];
+                    /*let caregory = elem.getElementsByTagName("category")[0].textContent
+                    if (caregory in DSA5Importer.ImportVars.rangeImages.de) {
+                        img = DSA5Importer.ImportVars.rangeImages.de[caregory]
+                    }*/
+
+
+                    const item = {
+                        name: elem.getElementsByTagName("name")[0].textContent,
+                        img: img,
+                        type: "specialability",
+                        data: {
+                            "description.value": DSA5Importer.prettyDescription(descr),
+                            "category.value": category,
+                            "APValue.value": apVal,
+                            "requirements.value": elem.getElementsByTagName("requirements")[0].textContent,
+                            "rule.value": elem.getElementsByTagName("rule")[0].textContent
                         },
                     };
 

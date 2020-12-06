@@ -19,7 +19,14 @@ export default class Itemdsa5 extends Item {
         "skill": "icons/tools/hand/spinning-wheel-brown.webp",
         "Geweihte": "icons/environment/people/cleric-grey.webp",
         "Weltliche": "icons/environment/people/commoner.webp",
-        "Zauberer": "icons/environment/people/cleric-orange.webp"
+        "Zauberer": "icons/environment/people/cleric-orange.webp",
+        "ritual": "icons/sundries/books/book-symbol-triangle-silver-brown.webp",
+        "ceremony": "icons/sundries/books/book-symbol-canterbury-cross.webp",
+        "abilityclerical": "",
+        "abilityCombat": "",
+        "abilityfatePoints": "",
+        "abilitygeneral": "",
+        "abilitymagical": ""
     }
 
     static async create(data, options) {

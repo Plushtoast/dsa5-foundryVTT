@@ -143,6 +143,35 @@ DSA5.rangeMods = {
 
 }
 
+DSA5.ritualLocationModifiers = {
+    "-": 0,
+    "RITUALMODIFIER.holysite": 1,
+    "RITUALMODIFIER.wrongsite": -3
+}
+
+DSA5.ritualTimeModifiers = {
+    "-": 0,
+    "RITUALMODIFIER.matchingConstellation": 1,
+    "RITUALMODIFIER.wrongConstellation": -1
+}
+
+DSA5.ceremonyLocationModifiers = {
+    "-": 0,
+    "CEREMONYMODIFIER.holysite": 2,
+    "CEREMONYMODIFIER.temple": 1,
+    "CEREMONYMODIFIER.otherTemple": -1,
+    "CEREMONYMODIFIER.enemyGod": -2,
+    "CEREMONYMODIFIER.archDemon": -3,
+    "CEREMONYMODIFIER.nameless": -4,
+    "CEREMONYMODIFIER.nemesis": -5
+}
+
+DSA5.ceremonyTimeModifiers = {
+    "-": 0,
+    "CEREMONYMODIFIER.monthGod": 1,
+    "CEREMONYMODIFIER.celebration": 2,
+    "CEREMONYMODIFIER.namelessDays": -5
+}
 
 
 DSA5.mageLevels = {

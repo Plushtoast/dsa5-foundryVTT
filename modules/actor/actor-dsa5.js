@@ -173,6 +173,8 @@ export default class Actordsa5 extends Actor {
 
         let liturgies = []
         let spells = []
+        let rituals = []
+        let ceremonies = []
 
         const inventory = {
             meleeweapons: {
@@ -268,6 +270,14 @@ export default class Actordsa5 extends Actor {
                 case "liturgy":
                     hasPrayers = true
                     liturgies.push(i)
+                    break;
+                case "ceremony":
+                    hasPrayers = true
+                    ceremonies.push(i)
+                    break;
+                case "ritual":
+                    hasSpells = true
+                    rituals.push(i)
                     break;
                 case "blessing":
                     hasPrayers = true
@@ -392,6 +402,8 @@ export default class Actordsa5 extends Actor {
             "data.conditions.inpain.value": pain
         });
 
+        //CHAR cannot be clerical and magical at the same time
+        hasPrayers = hasPrayers && !hasSpells
         this.data.isMage = hasSpells
         this.data.isPriest = hasPrayers
 
@@ -420,6 +432,8 @@ export default class Actordsa5 extends Actor {
             guidevalues: DSA5.characteristics,
             hasSpells: hasSpells,
             spells: spells,
+            rituals: rituals,
+            ceremonies: ceremonies,
             liturgies: liturgies,
             combatskills: combatskills,
             allSkillsLeft: {
@@ -690,7 +704,13 @@ export default class Actordsa5 extends Actor {
     }
 
     setupSpell(spell, options = {}) {
-        let title = spell.name + " " + game.i18n.localize("spellTest");
+        let sheet = "spell"
+        if (spell.type == "ceremony" || spell.type == "liturgy") {
+            sheet = "liturgy"
+            console.log(spell.type)
+        }
+
+        let title = spell.name + " " + game.i18n.localize(`${spell.type}Test`);
 
         let testData = {
             opposable: false,
@@ -701,23 +721,24 @@ export default class Actordsa5 extends Actor {
             }
         };
 
+        let data = {
+            rollMode: options.rollMode,
+            spellCost: spell.data.AsPCost.value,
+            spellCastingTime: spell.data.castingTime.value,
+            spellReach: spell.data.range.value,
+            canChangeCost: spell.data.canChangeCost.value == "true",
+            canChangeRange: spell.data.canChangeRange.value == "true",
+            canChangeCastingTime: spell.data.canChangeCastingTime.value == "true",
+            hasSKModifier: spell.data.resistanceModifier.value == "SK",
+            hasZKModifier: spell.data.resistanceModifier.value == "ZK",
+            maxMods: Math.floor(Number(spell.data.talentValue.value) / 4)
+        }
 
         let dialogOptions = {
             title: title,
-            template: "/systems/dsa5/templates/dialog/spell-dialog.html",
+            template: `/systems/dsa5/templates/dialog/${sheet}-dialog.html`,
 
-            data: {
-                rollMode: options.rollMode,
-                spellCost: spell.data.AsPCost.value,
-                spellCastingTime: spell.data.castingTime.value,
-                spellReach: spell.data.range.value,
-                canChangeCost: spell.data.canChangeCost.value == "true",
-                canChangeRange: spell.data.canChangeRange.value == "true",
-                canChangeCastingTime: spell.data.canChangeCastingTime.value == "true",
-                hasSKModifier: spell.data.resistanceModifier.value == "SK",
-                hasZKModifier: spell.data.resistanceModifier.value == "ZK",
-                maxMods: Math.floor(Number(spell.data.talentValue.value) / 4)
-            },
+            data: data,
             callback: (html) => {
                 cardOptions.rollMode = html.find('[name="rollMode"]').val();
                 testData.testModifier = Number(html.find('[name="testModifier"]').val());
@@ -756,9 +777,43 @@ export default class Actordsa5 extends Actor {
                 })
                 testData.situationalModifiers.push({
                     name: game.i18n.localize("maintainedSpells"),
-                    value: html.find('[name="maintainedSpells"]').val() * -1
+                    value: Number(html.find('[name="maintainedSpells"]').val()) * -1
                 })
+                if (spell.type == "ceremony") {
+                    testData.situationalModifiers.push({
+                        name: game.i18n.localize("CEREMONYMODIFIER.artefact"),
+                        value: html.find('[name="artefactUsage"]').is(":checked") ? 1 : 0
+                    })
 
+                    testData.situationalModifiers.push({
+                        name: game.i18n.localize("place"),
+                        value: html.find('[name="placeModifier"]').val()
+                    })
+
+                    testData.situationalModifiers.push({
+                        name: game.i18n.localize("time"),
+                        value: html.find('[name="timeModifier"]').val()
+                    })
+                } else if (spell.type == "ritual") {
+                    testData.situationalModifiers.push({
+                        name: game.i18n.localize("RITUALMODIFIER.rightClothes"),
+                        value: html.find('[name="rightClothes"]').is(":checked") ? 1 : 0
+                    })
+                    testData.situationalModifiers.push({
+                        name: game.i18n.localize("RITUALMODIFIER.rightEquipment"),
+                        value: html.find('[name="rightEquipment"]').is(":checked") ? 1 : 0
+                    })
+                    testData.situationalModifiers.push({
+                        name: game.i18n.localize("place"),
+                        value: html.find('[name="placeModifier"]').val()
+                    })
+
+                    testData.situationalModifiers.push({
+                        name: game.i18n.localize("time"),
+                        value: html.find('[name="timeModifier"]').val()
+                    })
+                }
+                console.log(testData)
                 return { testData, cardOptions };
             }
         };

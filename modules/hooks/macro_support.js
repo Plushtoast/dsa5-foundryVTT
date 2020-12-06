@@ -29,7 +29,7 @@ export default function() {
             await createHotBarMacro(command, item.name, item.img, slot)
 
         } else if (data.type == "Item") {
-            let possibleItems = ["meleeweapon", "rangeweapon", "skill", "combatskill", "spell", "liturgy", "char"]
+            let possibleItems = ["ritual", "ceremony", "meleeweapon", "rangeweapon", "skill", "combatskill", "spell", "liturgy", "char"]
             if (!possibleItems.includes(data.data.type))
                 return
 

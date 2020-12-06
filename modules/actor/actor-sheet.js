@@ -549,6 +549,8 @@ export default class ActorSheetDsa5 extends ActorSheet {
             case "money":
                 await this._addMoney(item)
                 break;
+            case "ritual":
+            case "ceremony":
             case "blessing":
             case "magictrick":
             case "liturgy":

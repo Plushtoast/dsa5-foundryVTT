@@ -64,6 +64,8 @@ export default class ItemSheetdsa5 extends ItemSheet {
                 data['skillBurdens'] = DSA5.skillBurdens;
                 data['StFs'] = DSA5.StFs;
                 break;
+            case "ritual":
+            case "ceremony":
             case "liturgy":
             case "spell":
                 data['characteristics'] = DSA5.characteristics;
