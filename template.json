@@ -442,7 +442,9 @@
             "spell",
             "liturgy",
             "blessing",
-            "magictrick"
+            "magictrick",
+            "ceremony",
+            "ritual"
 
         ],
         "templates": {
@@ -687,6 +689,23 @@
                 "value": 0
             }
         },
+        "ritual": {
+            "templates": [
+                "description",
+                "spell",
+                "basicSpell"
+            ],
+            "talentValue": {
+                "type": "Number",
+                "label": "Fw",
+                "value": 0
+            },
+            "permanentCost": {
+                "type": "Number",
+                "label": "permanentCost",
+                "value": 0
+            }
+        },
         "liturgy": {
             "templates": [
                 "description",
@@ -696,6 +715,23 @@
             "talentValue": {
                 "type": "Number",
                 "label": "Fw",
+                "value": 0
+            }
+        },
+        "ceremony": {
+            "templates": [
+                "description",
+                "spell",
+                "basicSpell"
+            ],
+            "talentValue": {
+                "type": "Number",
+                "label": "Fw",
+                "value": 0
+            },
+            "permanentCost": {
+                "type": "Number",
+                "label": "permanentCost",
                 "value": 0
             }
         },
@@ -891,6 +927,31 @@
             "happyTalents": {
                 "type": "String",
                 "label": "happyTalents",
+                "value": ""
+            },
+            "spells": {
+                "type": "String",
+                "label": "spells",
+                "value": ""
+            },
+            "spelltricks": {
+                "type": "String",
+                "label": "spelltricks",
+                "value": ""
+            },
+            "liturgies": {
+                "type": "String",
+                "label": "liturgies",
+                "value": ""
+            },
+            "blessings": {
+                "type": "String",
+                "label": "blessings",
+                "value": ""
+            },
+            "specialAbilities": {
+                "type": "String",
+                "label": "specialAbilities",
                 "value": ""
             }
         },

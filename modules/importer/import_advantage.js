@@ -442,6 +442,67 @@ export default class ImportAdvantage {
         x.send(null);
     }
 
+    static async importRituals() {
+        var x = new XMLHttpRequest();
+        var doc
+        x.open("GET", "systems/dsa5/modules/importer/xmls/rituals.xml", true);
+
+        x.onreadystatechange = await async function() {
+            if (x.readyState == 4 && x.status == 200) {
+                doc = x.responseXML;
+
+                let pack = await DSA5Importer.getCompendiumPack("Item", `Rituals`);
+                let elems = doc.getElementsByTagName("rituals")
+                for (let i = 0; i < elems.length; i++) {
+                    let elem = elems[i]
+                    let img = Itemdsa5.defaultImages["ritual"];
+                    let resist = "-"
+                    if (elem.getElementsByTagName("probe")[0].textContent.includes("SK")) {
+                        resist = "SK"
+                    } else if (elem.getElementsByTagName("probe")[0].textContent.includes("ZK")) {
+                        resist = "ZK"
+                    }
+                    /*let caregory = elem.getElementsByTagName("category")[0].textContent
+                    if (caregory in DSA5Importer.ImportVars.rangeImages.de) {
+                        img = DSA5Importer.ImportVars.rangeImages.de[caregory]
+                    }*/
+                    let characteristics = elem.getElementsByTagName("probe")[0].textContent.split(" ")[0].split("/").map(x => x.toLowerCase())
+                    const item = {
+                        name: elem.getElementsByTagName("name")[0].textContent,
+                        img: img,
+                        type: "spell",
+                        data: {
+                            "description.value": DSA5Importer.prettyDescription(elem.getElementsByTagName("description")[0].textContent),
+                            "characteristic1.value": characteristics[0],
+                            "characteristic2.value": characteristics[1],
+                            "characteristic3.value": characteristics[2],
+                            "effect.value": elem.getElementsByTagName("effect")[0].textContent,
+                            "castingTime.value": elem.getElementsByTagName("castingTime")[0].textContent,
+                            "AsPCost.value": elem.getElementsByTagName("AsPCost")[0].textContent,
+                            "distribution.value": elem.getElementsByTagName("distribution")[0].textContent,
+                            "StF.value": elem.getElementsByTagName("Stf")[0].textContent,
+                            "duration.value": elem.getElementsByTagName("duration")[0].textContent,
+                            "targetCategory.value": elem.getElementsByTagName("targetCategory")[0].textContent,
+                            "range.value": elem.getElementsByTagName("range")[0].textContent,
+                            "talentValue.value": 0,
+                            "permanentCost.value": elem.getElementsByTagName("permanentCost")[0].textContent,
+                            "resistanceModifier.value": resist,
+                            "canChangeCastingTime.value": elem.getElementsByTagName("canChangeCastingTime")[0].textContent,
+                            "canChangeCost.value": elem.getElementsByTagName("canChangeCost")[0].textContent,
+                            "canChangeRange.value": elem.getElementsByTagName("canChangeRange")[0].textContent,
+                            "AsPCostDetail.value": elem.getElementsByTagName("AspCostDetail")[0].textContent
+
+                        },
+                    };
+
+                    await DSA5Importer.writeItem(pack, item)
+
+                }
+            }
+        };
+        x.send(null);
+    }
+
     static async importLiturgies() {
         var x = new XMLHttpRequest();
         var doc
@@ -501,6 +562,68 @@ export default class ImportAdvantage {
         };
         x.send(null);
     }
+
+    static async importCeremonies() {
+        var x = new XMLHttpRequest();
+        var doc
+        x.open("GET", "systems/dsa5/modules/importer/xmls/ceremonies.xml", true);
+
+        x.onreadystatechange = await async function() {
+            if (x.readyState == 4 && x.status == 200) {
+                doc = x.responseXML;
+
+                let pack = await DSA5Importer.getCompendiumPack("Item", `Ceremonies`);
+                let elems = doc.getElementsByTagName("ceremonies")
+                for (let i = 0; i < elems.length; i++) {
+                    let elem = elems[i]
+                    let img = Itemdsa5.defaultImages["ceremony"];
+                    /*let caregory = elem.getElementsByTagName("category")[0].textContent
+                    if (caregory in DSA5Importer.ImportVars.rangeImages.de) {
+                        img = DSA5Importer.ImportVars.rangeImages.de[caregory]
+                    }*/
+                    let resist = "-"
+                    if (elem.getElementsByTagName("probe")[0].textContent.includes("SK")) {
+                        resist = "SK"
+                    } else if (elem.getElementsByTagName("probe")[0].textContent.includes("ZK")) {
+                        resist = "ZK"
+                    }
+                    let characteristics = elem.getElementsByTagName("probe")[0].textContent.split(" ")[0].split("/").map(x => x.toLowerCase())
+
+                    const item = {
+                        name: elem.getElementsByTagName("name")[0].textContent,
+                        img: img,
+                        type: "liturgy",
+                        data: {
+                            "description.value": DSA5Importer.prettyDescription(elem.getElementsByTagName("description")[0].textContent),
+                            "characteristic1.value": characteristics[0],
+                            "characteristic2.value": characteristics[1],
+                            "characteristic3.value": characteristics[2],
+                            "effect.value": elem.getElementsByTagName("effect")[0].textContent,
+                            "castingTime.value": elem.getElementsByTagName("castingTime")[0].textContent,
+                            "AsPCost.value": elem.getElementsByTagName("KaPCost")[0].textContent,
+                            "distribution.value": elem.getElementsByTagName("distribution")[0].textContent,
+                            "StF.value": elem.getElementsByTagName("Stf")[0].textContent,
+                            "duration.value": elem.getElementsByTagName("duration")[0].textContent,
+                            "targetCategory.value": elem.getElementsByTagName("targetCategory")[0].textContent,
+                            "range.value": elem.getElementsByTagName("range")[0].textContent,
+                            "talentValue.value": 0,
+                            "permanentCost.value": elem.getElementsByTagName("permanentCost")[0].textContent,
+                            "resistanceModifier.value": resist,
+                            "canChangeCastingTime.value": elem.getElementsByTagName("canChangeCastingTime")[0].textContent,
+                            "canChangeCost.value": elem.getElementsByTagName("canChangeCost")[0].textContent,
+                            "canChangeRange.value": elem.getElementsByTagName("canChangeRange")[0].textContent,
+                            "AsPCostDetail.value": elem.getElementsByTagName("KaPCostDetail")[0].textContent
+                        },
+                    };
+
+                    await DSA5Importer.writeItem(pack, item)
+
+                }
+            }
+        };
+        x.send(null);
+    }
+
 
     static async importSpellTrick() {
         var x = new XMLHttpRequest();
@@ -578,6 +701,73 @@ export default class ImportAdvantage {
             }
         };
         x.send(null);
+    }
+
+    static async importCareer() {
+        var x = new XMLHttpRequest();
+        var doc
+        let types = ["Geweihte", "Weltliche", "Zauberer"]
+        let mageLevels = {
+            "Geweihte": "clerical",
+            "Zauberer": "magical",
+            "Weltliche": "mundane"
+        }
+        for (let k of types) {
+            x.open("GET", "systems/dsa5/modules/importer/xmls/" + k + ".xml", true);
+
+            x.onreadystatechange = await async function() {
+                if (x.readyState == 4 && x.status == 200) {
+                    doc = x.responseXML;
+
+                    let pack = await DSA5Importer.getCompendiumPack("Item", `Careers`);
+                    let elems = doc.getElementsByTagName(k)
+                    for (let i = 0; i < elems.length; i++) {
+                        let elem = elems[i]
+                        let img = Itemdsa5.defaultImages[k];
+                        /*let caregory = elem.getElementsByTagName("category")[0].textContent
+                        if (caregory in DSA5Importer.ImportVars.rangeImages.de) {
+                            img = DSA5Importer.ImportVars.rangeImages.de[caregory]
+                        }*/
+                        let apVal = DSA5Importer.sanitizeAPVal(elem.getElementsByTagName("APvalue")[0].textContent)
+                        const item = {
+                            name: elem.getElementsByTagName("name")[0].textContent,
+                            img: img,
+                            type: "career",
+                            data: {
+                                "description.value": DSA5Importer.prettyDescription(elem.getElementsByTagName("description")[0].textContent),
+                                "APValue.value": apVal,
+                                "requirements.value": elem.getElementsByTagName("requirements")[0].textContent,
+                                "recommendedAdvantages.value": elem.getElementsByTagName("recommendedAdvantages")[0].textContent,
+                                "recommendedDisadvantages.value": elem.getElementsByTagName("recommendedDisadvantages")[0].textContent,
+                                "notsuitableAdvantages.value": elem.getElementsByTagName("notsuitableAdvantages")[0].textContent,
+                                "notsuitableDisadvantages.value": elem.getElementsByTagName("notsuitableDisadvantages")[0].textContent,
+                                "mageLevel.value": mageLevels[k],
+                                "skills.value": [
+                                    elem.getElementsByTagName("talentsBody")[0].textContent,
+                                    elem.getElementsByTagName("talentsSocial")[0].textContent,
+                                    elem.getElementsByTagName("talentsNature")[0].textContent,
+                                    elem.getElementsByTagName("talentsKnowledge")[0].textContent,
+                                    elem.getElementsByTagName("talentsTrade")[0].textContent
+                                ].join(", "),
+                                "guidevalue.value": elem.getElementsByTagName("guideValue")[0].textContent,
+                                "tradition.value": elem.getElementsByTagName("tradition")[0].textContent,
+                                "feature.value": elem.getElementsByTagName("feature")[0].textContent,
+                                "happyTalents.value": elem.getElementsByTagName("happyTalents")[0].textContent,
+                                "spells.value": elem.getElementsByTagName("spells")[0].textContent,
+                                "spelltricks.value": elem.getElementsByTagName("spelltricks")[0].textContent,
+                                "liturgies.value": elem.getElementsByTagName("liturgies")[0].textContent,
+                                "blessings.value": elem.getElementsByTagName("blessings")[0].textContent,
+                                "specialAbilities.value": elem.getElementsByTagName("specialAbilities")[0].textContent
+                            },
+                        };
+
+                        await DSA5Importer.writeItem(pack, item)
+
+                    }
+                }
+            };
+            x.send(null);
+        }
     }
 
     static async importCombatskill() {

@@ -65,8 +65,7 @@
 
 <div class="groupbox">
     <div class="row-section table-title lineheight">
-        <div class="col ten"></div>
-        <div class="col third">
+        <div class="col fourty">
             {{localize "meleeweapons"}}
             <span class="buttons">
                 <a data-char="dodge" class="ch-status item" data-mod="dodge" title="{{localize 'dodge'}}"><i class="fas fa-reply"></i></a>
@@ -124,27 +123,25 @@
 
 <div class="groupbox">
     <div class="row-section table-title lineheight">
-        <div class="col ten"></div>
-        <div class="col four">
+        <div class="col fourtyfive">
             {{localize "rangeweapons"}}
         </div>
         <div class="col five center small">
             {{localize "Group"}}
         </div>
-        <div class="col ten center small" title="{{localize 'reloadTime'}}">
-            {{localize "CHARAbbrev.reloadTime"}}
-        </div>
+
         <div class="col ten center small" title="{{localize 'CHAR:ATTACK'}}">
             {{localize "CHARAbbrev.AT"}}
         </div>
         <div class="col eight center small">
             {{localize "damage"}}
         </div>
-        <div class="col ten center small">
-            {{localize "reach"}}
-        </div>
+
         <div class="col five center small">
             {{localize "ammunition"}}
+        </div>
+        <div class="col ten center">
+
         </div>
     </div>
     <div class="row-section wrap rowtable inventory">
@@ -153,26 +150,33 @@
             <div class="row-section">
                 <div class="col ten image" style="background-image: url({{item.img}})">
                 </div>
-                <div class="col four">
+                <div class="col thirtyfive">
                     <a class="item-edit">{{item.name}}</a>
                 </div>
                 <div class="col five center small">
                     {{localize item.data.combatskill.value}}
                 </div>
-                <div class="col ten center">
-                    {{item.data.reloadTime.value}}
-                </div>
+
                 <div class="col ten center item" data-item-id="{{item._id}}" data-mod="attack">
                     <a class="ch-rollCombat d20 die-attack">{{item.attack}}</a>
                 </div>
                 <div class="col eight center">
                     <a class="ch-rollDamage d6 die-damage">{{item.damagedie}}</a><span title="{{localize 'damageOverThreshold'}}">{{item.damageAdd}}</span>
                 </div>
-                <div class="col ten center">
-                    {{item.data.reach.value}}
-                </div>
+
                 <div class="col five center">
 
+                </div>
+                <div class="col ten very-small center">
+                    <a class="item-dropdown" title="{{localize 'SHEET.Dropdown'}}"><i class="fas fa-chevron-down"></i></a>
+                </div>
+            </div>
+            <div class="row-section lineheight expandDetails">
+                <div class="col">
+                    <ul>
+                        <li><b>{{localize "reach"}}</b>: {{item.data.reach.value}}</li>
+                        <li><b>{{localize "reloadTime"}}</b>: {{item.data.reloadTime.value}}</li>
+                    </ul>
                 </div>
             </div>
         </div>
@@ -182,8 +186,7 @@
 
 <div class="groupbox">
     <div class="row-section table-title lineheight">
-        <div class="col ten"></div>
-        <div class="col four">
+        <div class="col thirtyfive">
             {{localize "armor"}}
         </div>
         <div class="col four center small">{{localize "protection"}}</div>

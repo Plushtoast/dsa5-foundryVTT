@@ -667,6 +667,14 @@ form .form-group.tripple select {
     flex: 25%;
 }
 
+.row-section .col.thirtyfive {
+    flex: 35%;
+}
+
+.row-section .col.fourtyfive {
+    flex: 45%;
+}
+
 .item .image {
     height: 30px;
     background-size: contain;

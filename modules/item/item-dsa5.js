@@ -16,7 +16,10 @@ export default class Itemdsa5 extends Item {
         "spelltrick": "icons/sundries/scrolls/scroll-bound-blue-brown.webp",
         "blessing": "icons/commodities/treasure/token-runed-wyn-grey.webp",
         "combatskill": "icons/environment/people/charge.webp",
-        "skill": "icons/tools/hand/spinning-wheel-brown.webp"
+        "skill": "icons/tools/hand/spinning-wheel-brown.webp",
+        "Geweihte": "icons/environment/people/cleric-grey.webp",
+        "Weltliche": "icons/environment/people/commoner.webp",
+        "Zauberer": "icons/environment/people/cleric-orange.webp"
     }
 
     static async create(data, options) {
