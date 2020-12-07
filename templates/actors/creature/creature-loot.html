@@ -16,7 +16,9 @@
         <div class="col eight center">
             <i class="fa fa-anchor" title="{{localize 'Weight'}}"></i>
         </div>
-        <div class="col ten center"></div>
+        <div class="col ten center">
+            <a class="item-create very-small" title="{{localize 'SHEET.addItem'}}" item-section="{{sid}}" data-type="{{section.dataType}}"><i class="fas fa-plus"></i></a>
+        </div>
     </div>
     <div class="row-section wrap rowtable inventory">
         {{#each section.items as |item i|}}

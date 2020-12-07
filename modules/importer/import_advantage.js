@@ -822,7 +822,7 @@ export default class ImportAdvantage {
                                         value: stat.split("FK")[1].trim().split("LZ")[0].trim()
                                     },
                                     damage: {
-                                        value: stat.split("TP")[1].trim().split("RW")[0].trim()
+                                        value: stat.split("TP")[1].trim().split("RW")[0].trim().gsub("keine", 0)
                                     },
                                     reloadTime: {
                                         value: stat.split("LZ")[1].split("TP")[0].trim()
@@ -846,7 +846,7 @@ export default class ImportAdvantage {
                                         value: stat.split("AT")[1].trim().split("TP")[0].trim()
                                     },
                                     damage: {
-                                        value: stat.split("TP")[1].trim().split("RW")[0].trim()
+                                        value: stat.split("TP")[1].trim().split("RW")[0].trim().gsub("keine", 0)
                                     },
                                     reach: {
                                         value: traitrange[stat.split("RW")[1].trim()]
@@ -962,21 +962,21 @@ export default class ImportAdvantage {
                             status: {
                                 wounds: {
                                     initial: Number(elem.getElementsByTagName("LeP")[0].textContent),
-                                    value: 0,
+                                    value: Number(elem.getElementsByTagName("LeP")[0].textContent),
                                     advances: 0,
                                     modifier: 0,
                                     current: 0
                                 },
                                 astralenergy: {
                                     initial: Number(elem.getElementsByTagName("AsP")[0].textContent) || 0,
-                                    value: 0,
+                                    value: Number(elem.getElementsByTagName("AsP")[0].textContent) || 0,
                                     advances: 0,
                                     modifier: 0,
                                     current: 0
                                 },
                                 karmaenergy: {
                                     initial: Number(elem.getElementsByTagName("KaP")[0].textContent) || 0,
-                                    value: 0,
+                                    value: Number(elem.getElementsByTagName("KaP")[0].textContent) || 0,
                                     advances: 0,
                                     modifier: 0,
                                     current: 0
@@ -1189,7 +1189,8 @@ export default class ImportAdvantage {
                             "category.value": category,
                             "APValue.value": apVal,
                             "requirements.value": elem.getElementsByTagName("requirements")[0].textContent,
-                            "rule.value": elem.getElementsByTagName("rule")[0].textContent
+                            "rule.value": elem.getElementsByTagName("rule")[0].textContent,
+                            "list.value": elem.getElementsByTagName("combatskills")[0].textContent
                         },
                     };
 

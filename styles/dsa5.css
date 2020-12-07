@@ -1034,12 +1034,22 @@ form.dsa5.item-sheet {
 }
 
 #combat li.combatant .roll {
-    background-image: url(../icons/dice/d20.svg);
+    background-image: url(../icons/dice/d6white.svg);
+    position: relative;
+}
+
+#combat li.combatant .roll:before {
+    position: absolute;
+    content: '6';
+    color: white;
+    left: 0;
+    right: 0;
+    top: -2px;
+    bottom: 0;
 }
 
 #combat li.combatant .roll:hover {
-    background-image: url(../icons/dice/d20green.svg);
-    color: rgb(4, 75, 1);
+    background-image: url(../icons/dice/d6green.svg);
 }
 
 .window-content>section,

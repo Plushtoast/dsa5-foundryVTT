@@ -1013,6 +1013,11 @@
                 "type": "String",
                 "label": "Category",
                 "value": "general"
+            },
+            "list": {
+                "type": "String",
+                "label": "list",
+                "value": ""
             }
         },
         "equipment": {
