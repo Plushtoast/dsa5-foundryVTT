@@ -46,8 +46,28 @@
                 {{/each}}
             </div>
         </div>
-
-
+        <div class="groupbox">
+            <div class="generalSpecialAbilities row-section">
+                <div class="col header-label lineheight">
+                    {{localize "traits"}}
+                </div>
+            </div>
+            <div class="row-section wrap cards">
+                {{#each actor.meleeTraits as |item i|}}
+                <div class="item" data-item-id="{{item._id}}">
+                    <a class="item-edit">{{item.name}}</a>
+                </div>
+                {{/each}} {{#each actor.rangeTraits as |item i|}}
+                <div class="item" data-item-id="{{item._id}}">
+                    <a class="item-edit">{{item.name}}</a>
+                </div>
+                {{/each}} {{#each actor.armorTraits as |item i|}}
+                <div class="item" data-item-id="{{item._id}}">
+                    <a class="item-edit">{{item.name}}</a>
+                </div>
+                {{/each}}
+            </div>
+        </div>
     </div>
 
     <div class="column2">

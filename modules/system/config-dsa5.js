@@ -149,6 +149,12 @@ DSA5.rangeMods = {
 
 }
 
+DSA5.traitCategories = {
+    "meleeAttack": "closeCombatAttacks",
+    "rangeAttack": "rangeCombatAttacks",
+    "armor": "armor"
+}
+
 DSA5.ritualLocationModifiers = {
     "-": 0,
     "RITUALMODIFIER.holysite": 1,

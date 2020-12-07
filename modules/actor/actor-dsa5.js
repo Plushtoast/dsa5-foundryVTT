@@ -230,6 +230,9 @@ export default class Actordsa5 extends Actor {
             show: true
         }
 
+        let meleeTraits = []
+        let rangeTraits = []
+        let armorTraits = []
 
 
         actorData.items = actorData.items.sort((a, b) => (a.sort || 0) - (b.sort || 0))
@@ -295,7 +298,17 @@ export default class Actordsa5 extends Actor {
                     hasSpells = true
                     magicTricks.push(i)
                     break;
+                case "trait":
+                    if (i.data.traitType.value == "rangeAttack") {
+                        rangeTraits.push(Actordsa5._prepareRangeTrait(i))
+                    } else if (i.data.traitType.value == "meleeAttack") {
+                        meleeTraits.push(Actordsa5._prepareMeleetrait(i))
+                    } else if (i.data.traitType.value == "armor") {
+                        armorTraits.push(i)
+                        totalArmor += Number(i.data.at.value);
+                    }
 
+                    break
                 case "combatskill":
                     combatskills.push(Actordsa5._calculateCombatSkillValues(i, actorData));
                     break;
@@ -435,6 +448,9 @@ export default class Actordsa5 extends Actor {
             clericSpecialAbilities: clericSpecialAbilities,
             wornArmor: armor,
             inventory,
+            rangeTraits: rangeTraits,
+            meleeTraits: meleeTraits,
+            armorTraits: armorTraits,
             magicSpecialAbilities: magicSpecialAbilities,
             blessings: blessings,
             magicTricks: magicTricks,
@@ -496,6 +512,51 @@ export default class Actordsa5 extends Actor {
 
         }
         return r
+    }
+
+    setupWeaponTrait(item, mode, options) {
+        let title = game.i18n.localize(item.name) + " " + game.i18n.localize(mode + "test");
+
+        let testData = {
+            opposable: true,
+            source: item,
+            mode: mode,
+            extra: {
+                actor: this.data,
+                options: options
+            }
+        };
+
+        let dialogOptions = {
+            title: title,
+            template: "/systems/dsa5/templates/dialog/combatskill-dialog.html",
+            // Prefilled dialog data
+            data: {
+                rollMode: options.rollMode
+            },
+            callback: (html) => {
+                cardOptions.rollMode = html.find('[name="rollMode"]').val();
+                testData.testModifier = Number(html.find('[name="testModifier"]').val());
+                testData.situationalModifiers = this._parseModifiers('[name = "situationalModifiers"]')
+                testData.rangeModifier = html.find('[name="distance"]').val()
+                testData.sizeModifier = DSA5.rangeSizeModifier[html.find('[name="size"]').val()]
+                testData.visionModifier = Number(html.find('[name="vision"]').val())
+                testData.opposingWeaponSize = html.find('[name="weaponsize"]').val()
+                testData.defenseCount = Number(html.find('[name="defenseCount"]').val())
+                testData.narrowSpace = html.find('[name="narrowSpace"]').is(":checked")
+                testData.doubleAttack = html.find('[name="doubleAttack"]').is(":checked") ? -2 : 0
+                testData.wrongHand = html.find('[name="wrongHand"]').is(":checked") ? -4 : 0
+                return { testData, cardOptions };
+            }
+        };
+
+        let cardOptions = this._setupCardOptions("systems/dsa5/templates/chat/roll/combatskill-card.html", title)
+
+        return DiceDSA5.setupDialog({
+            dialogOptions: dialogOptions,
+            testData: testData,
+            cardOptions: cardOptions
+        });
     }
 
     setupWeapon(item, mode, options) {
@@ -848,7 +909,7 @@ export default class Actordsa5 extends Actor {
         $(search + " option:selected").each(function() {
             res.push({
                 name: $(this).text().trim(),
-                value: $(this).val()
+                value: Number($(this).val())
             })
         })
         return res
@@ -897,6 +958,23 @@ export default class Actordsa5 extends Actor {
 
     }
 
+    static _prepareMeleetrait(item) {
+        item.attack = Number(item.data.at.value)
+        let parseDamage = new Roll(item.data.damage.value.replace(/[Ww]/, "d"))
+        let damageDie = ""
+        let damageTerm = ""
+        for (let k of parseDamage.terms) {
+            if (typeof(k) == 'object') {
+                damageDie = k.number + "d" + k.faces
+            } else {
+                damageTerm += k
+            }
+        }
+        damageTerm = eval(damageTerm)
+        item.damagedie = damageDie
+        item.damageAdd = damageTerm != undefined ? "+" + damageTerm : ""
+        return item
+    }
     static _prepareMeleeWeapon(item, combatskills, actorData, shieldBonus) {
         let skill = combatskills.filter(i => i.name == item.data.combatskill.value)[0];
         let parseDamage = new Roll(item.data.damage.value.replace(/[Ww]/, "d"))
@@ -935,7 +1013,23 @@ export default class Actordsa5 extends Actor {
         return item;
     }
 
-
+    static _prepareRangeTrait(item) {
+        item.attack = Number(item.data.at.value)
+        let parseDamage = new Roll(item.data.damage.value.replace(/[Ww]/, "d"))
+        let damageDie = ""
+        let damageTerm = ""
+        for (let k of parseDamage.terms) {
+            if (typeof(k) == 'object') {
+                damageDie = k.number + "d" + k.faces
+            } else {
+                damageTerm += k
+            }
+        }
+        damageTerm = eval(damageTerm)
+        item.damagedie = damageDie
+        item.damageAdd = damageTerm != undefined ? "+" + damageTerm : ""
+        return item
+    }
     static _prepareRangeWeapon(item, ammunition, combatskills) {
         let skill = combatskills.filter(i => i.name == item.data.combatskill.value)[0];
         item.attack = Number(skill.data.attack.value)

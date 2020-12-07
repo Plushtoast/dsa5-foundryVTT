@@ -101,6 +101,10 @@ export default class ItemSheetdsa5 extends ItemSheet {
                 break;
             case "armor":
                 break;
+            case "trait":
+                data["traitCategories"] = DSA5.traitCategories
+                data['ranges'] = DSA5.meleeRanges;
+                break
             case "equipment":
                 data['equipmentTypes'] = DSA5.equipmentTypes;
                 break;

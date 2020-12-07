@@ -693,14 +693,17 @@
             }
         },
         "trait": {
+            "templates": [
+                "description"
+            ],
             "traitType": {
                 "type": "String",
-                "value": "",
+                "value": "meleeAttack",
                 "label": "traitType"
             },
             "at": {
                 "type": "String",
-                "value": "",
+                "value": "8",
                 "label": "at"
             },
             "reach": {
@@ -710,12 +713,12 @@
             },
             "damage": {
                 "type": "String",
-                "value": "",
+                "value": "1d6",
                 "label": "damage"
             },
             "reloadTime": {
                 "type": "String",
-                "value": "",
+                "value": "1",
                 "label": "reloadTime"
             }
         },

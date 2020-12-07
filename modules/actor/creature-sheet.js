@@ -23,6 +23,23 @@ export default class ActorSheetdsa5Creature extends ActorSheetDsa5 {
     activateListeners(html) {
         super.activateListeners(html);
 
+        html.find('.ch-rollCombatTrait').click(event => {
+            event.preventDefault();
+            let itemId = this._getItemId(event);
+            const item = this.actor.items.find(i => i.data._id == itemId)
+            this.actor.setupWeaponTrait(item, "attack", event).then(setupData => {
+                this.actor.basicTest(setupData)
+            });
+        });
+
+        html.find('.ch-rollDamageTrait').click(event => {
+            event.preventDefault();
+            let itemId = this._getItemId(event);
+            const item = this.actor.items.find(i => i.data._id == itemId)
+            this.actor.setupWeaponTrait(item, "damage", event).then(setupData => {
+                this.actor.basicTest(setupData)
+            });
+        });
     }
 
     async getData() {
@@ -31,6 +48,33 @@ export default class ActorSheetdsa5Creature extends ActorSheetDsa5 {
         data["sizeCategories"] = DSA5.sizeCategories
 
         return data;
+    }
+
+    async _onDrop(event) {
+        let dragData = JSON.parse(event.dataTransfer.getData("text/plain"));
+        let item
+        let typeClass
+
+        if (dragData.actorId && dragData.actorId == this.actor.data._id) {
+            return
+        } else if (dragData.id && dragData.pack) {
+            item = await DSA5_Utility.findItembyIdAndPack(dragData.id, dragData.pack);
+            typeClass = item.data.type
+        } else if (dragData.id) {
+            item = DSA5_Utility.findItembyId(dragData.id);
+            typeClass = item.data.type
+        } else {
+            item = dragData.data
+            typeClass = item.type
+        }
+
+        switch (typeClass) {
+            case "trait":
+                await this.actor.createEmbeddedEntity("OwnedItem", item);
+                break;
+            default:
+                super._onDrop(event)
+        }
     }
 
 }

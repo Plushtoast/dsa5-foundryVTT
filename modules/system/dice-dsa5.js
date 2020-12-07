@@ -54,6 +54,41 @@ export default class DiceDSA5 {
                     targetSize: targetSize
                 });
                 break;
+            case "trait":
+                console.log(testData)
+                this._enabledModifiers(situationalModifiers, ["CONDITION.encumbered", "CONDITION.inpain"], true)
+                if (testData.mode == "attack" && testData.source.data.data.traitType.value == "meleeAttack") {
+                    let targetWeaponsize = "short"
+                    if (game.user.targets.size) {
+                        game.user.targets.forEach(target => {
+                            let defWeapon = target.actor.items.filter(x => x.data.type == "meleeweapon" && x.data.data.worn.value)
+                            if (defWeapon.length > 0)
+                                targetWeaponsize = defWeapon[0].data.data.reach.value
+                        });
+                    }
+
+                    mergeObject(dialogOptions.data, {
+                        weaponSizes: DSA5.meleeRanges,
+                        melee: true,
+                        targetWeaponSize: targetWeaponsize
+                    });
+                } else if (testData.mode == "attack" && testData.source.data.data.traitType.value == "rangeAttack") {
+                    let targetSize = "average"
+                    if (game.user.targets.size) {
+                        game.user.targets.forEach(target => {
+                            let tar = target.actor.data.data.size
+                            if (tar)
+                                targetSize = tar.value
+                        });
+                    }
+                    mergeObject(dialogOptions.data, {
+                        rangeOptions: DSA5.rangeWeaponModifiers,
+                        sizeOptions: DSA5.rangeSizeCategories,
+                        visionOptions: DSA5.rangeVision,
+                        targetSize: targetSize
+                    });
+                }
+                break
             case "meleeweapon":
                 this._enabledModifiers(situationalModifiers, ["CONDITION.encumbered", "CONDITION.inpain"], true)
                 if (testData.mode == "attack") {
@@ -264,6 +299,38 @@ export default class DiceDSA5 {
         return result
     }
 
+    static rollTraitDamage(testData) {
+        //let description = "";
+        let modifier = testData.testModifier + this._situationalModifiers(testData);
+        var chars = []
+
+        this._appendSituationalModifiers(testData, game.i18n.localize("manual"), testData.testModifier)
+
+
+        let roll = testData.roll ? testData.roll : new Roll(testData.source.data.data.damage.value.replace(/[Ww]/, "d")).roll()
+        let damage = roll._total + modifier;
+
+        for (let k of roll.terms) {
+            if (k instanceof Die) {
+                for (let l of k.results) {
+                    chars.push({ char: testData.mode, res: l.result, die: "d" + k.faces })
+                }
+            }
+        }
+
+
+        return {
+            rollType: "damage",
+            damage: damage,
+            characteristics: chars,
+
+            preData: testData,
+            modifiers: modifier,
+            extra: {}
+        }
+
+    }
+
     static rollDamage(testData) {
         //let description = "";
         let modifier = testData.testModifier + this._situationalModifiers(testData);
@@ -331,6 +398,96 @@ export default class DiceDSA5 {
         }
     }
 
+    static rollCombatTrait(testData) {
+        let roll = testData.roll ? testData.roll : new Roll("1d20").roll();
+        let modifier = testData.testModifier + this._situationalModifiers(testData) + testData.wrongHand
+
+        this._appendSituationalModifiers(testData, game.i18n.localize("manual"), testData.testModifier)
+        this._appendSituationalModifiers(testData, game.i18n.localize("wrongHand"), testData.wrongHand)
+
+        if (testData.source.data.data.traitType.value == "meleeAttack") {
+            let weapon = {
+                data: {
+                    combatskill: {
+                        value: "-"
+                    },
+                    reach: {
+                        value: testData.source.data.data.reach.value
+                    }
+                }
+            }
+
+            let narrowSpaceModifier = this._getNarrowSpaceModifier(weapon, testData)
+            modifier += narrowSpaceModifier
+            this._appendSituationalModifiers(testData, game.i18n.localize("narrowSpace"), narrowSpaceModifier)
+                //+ this._compareWeaponReach(weapon, testData)
+            let weaponmodifier = this._compareWeaponReach(weapon, testData)
+
+            modifier += weaponmodifier + testData.doubleAttack
+            this._appendSituationalModifiers(testData, game.i18n.localize("doubleAttack"), testData.doubleAttack)
+            this._appendSituationalModifiers(testData, game.i18n.localize("opposingWeaponSize"), weaponmodifier)
+
+
+        } else {
+
+            modifier += DSA5.rangeMods[testData.rangeModifier].attack + testData.sizeModifier + testData.visionModifier
+            this._appendSituationalModifiers(testData, game.i18n.localize("distance"), DSA5.rangeMods[testData.rangeModifier].attack)
+            this._appendSituationalModifiers(testData, game.i18n.localize("sizeCategory"), testData.sizeModifier)
+            this._appendSituationalModifiers(testData, game.i18n.localize("sight"), testData.visionModifier)
+        }
+        var result = this._rollSingleD20(roll, Number(testData.source.data.data.at.value), testData.mode, modifier, testData)
+
+        let success = result.successLevel > 0
+        let doubleDamage = result.successLevel > 2
+
+        switch (result.successLevel) {
+            case 3:
+                if (testData.mode == "attack")
+                    result.description += ", " + game.i18n.localize("halfDefense") + ", " + game.i18n.localize("doubleDamage")
+                else
+                    result.description += ", " + game.i18n.localize("attackOfOpportunity")
+                break;
+            case -3:
+                result.description += ", " + game.i18n.localize("selfDamage") + (new Roll("1d6+2").roll().result)
+                break;
+            case 2:
+                if (testData.mode == "attack")
+                    result.description += ", " + game.i18n.localize("halfDefense")
+                break;
+            case -2:
+                break;
+        }
+        if (testData.mode == "attack" && success) {
+            let damageRoll = new Roll(testData.source.data.data.damage.value.replace(/[Ww]/, "d")).roll()
+            this._addRollDiceSoNice(testData, damageRoll, "black")
+            let damage = damageRoll._total;
+
+            for (let k of damageRoll.terms) {
+                if (k instanceof Die) {
+                    for (let l of k.results) {
+                        result.characteristics.push({ char: "damage", res: l.result, die: "d" + k.faces })
+                    }
+                }
+            }
+
+
+
+            if (testData.source.data.data.traitType.value == "rangeAttack") {
+                damage += DSA5.rangeMods[testData.rangeModifier].damage
+            }
+
+            if (doubleDamage) {
+                damage = damage * 2
+            }
+
+
+            result["damage"] = damage
+        }
+        result["rollType"] = "weapon"
+        console.log(result)
+
+        return result
+    }
 
 
 
@@ -598,6 +755,14 @@ export default class DiceDSA5 {
             case "combatskill":
                 rollResults = this.rollCombatskill(testData)
                 break;
+            case "trait":
+                if (testData.mode == "damage") {
+                    rollResults = this.rollTraitDamage(testData)
+                } else {
+                    rollResults = this.rollCombatTrait(testData)
+                }
+
+                break
             case "meleeweapon":
             case "rangeweapon":
                 if (testData.mode == "damage") {
@@ -653,9 +818,20 @@ export default class DiceDSA5 {
                     } else {
                         roll = new Roll("1d20[" + (testData.mode) + "]").roll()
                         roll.dice[0].options.colorset = testData.mode
-
                     }
                     break;
+                case "trait":
+                    if (testData.mode == "damage") {
+                        roll = new Roll(testData.source.data.data.damage.value.replace(/[Ww]/, "d")).roll()
+                        for (var i = 0; i < roll.dice.length; i++) {
+                            roll.dice[i].options.colorset = "black"
+                        }
+
+                    } else {
+                        roll = new Roll("1d20[" + (testData.mode) + "]").roll()
+                        roll.dice[0].options.colorset = testData.mode
+                    }
+                    break
                 case "status":
                     roll = new Roll("1d20").roll();
                     roll.dice[0].options.colorset = "in"

@@ -23,5 +23,7 @@ export default class ActorSheetdsa5NPC extends ActorSheetDsa5 {
     activateListeners(html) {
         super.activateListeners(html);
 
+
+
     }
 }

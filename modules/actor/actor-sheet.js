@@ -262,14 +262,7 @@ export default class ActorSheetDsa5 extends ActorSheet {
             });
         });
 
-        html.find('.ch-rollCombat').click(event => {
-            event.preventDefault();
-            let itemId = this._getItemId(event);
-            const item = this.actor.items.find(i => i.data._id == itemId)
-            this.actor.setupWeapon(item, "attack", event).then(setupData => {
-                this.actor.basicTest(setupData)
-            });
-        });
+
 
         html.find('.item-create').click(ev => this._onItemCreate(ev));
 
@@ -278,6 +271,15 @@ export default class ActorSheetDsa5 extends ActorSheet {
             let itemId = this._getItemId(event);
             const item = this.actor.items.find(i => i.data._id == itemId)
             this.actor.setupWeapon(item, "parry", event).then(setupData => {
+                this.actor.basicTest(setupData)
+            });
+        });
+
+        html.find('.ch-rollCombat').click(event => {
+            event.preventDefault();
+            let itemId = this._getItemId(event);
+            const item = this.actor.items.find(i => i.data._id == itemId)
+            this.actor.setupWeapon(item, "attack", event).then(setupData => {
                 this.actor.basicTest(setupData)
             });
         });

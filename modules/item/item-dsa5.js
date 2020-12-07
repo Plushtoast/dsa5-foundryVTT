@@ -26,7 +26,9 @@ export default class Itemdsa5 extends Item {
         "abilityCombat": "icons/weapons/axes/axe-hammer-blackened.webp",
         "abilityfatePoints": "icons/weapons/wands/wand-skull-forked.webp",
         "abilitygeneral": "icons/tools/smithing/crucible.webp",
-        "abilitymagical": "icons/tools/scribal/ink-quill-pink.webp"
+        "abilitymagical": "icons/tools/scribal/ink-quill-pink.webp",
+        "trait": "icons/commodities/biological/organ-brain-pink-purple.webp",
+        "Tiere": "icons/environment/creatures/horse-brown.webp"
     }
 
     static async create(data, options) {

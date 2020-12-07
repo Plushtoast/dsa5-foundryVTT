@@ -117,6 +117,32 @@
                 </div>
             </div>
         </div>
+        {{/each}} {{#each actor.meleeTraits as |item i|}}
+        <div class="col item" data-item-id="{{item._id}}">
+            <div class="row-section">
+                <div class="col ten image" style="background-image: url({{item.img}})">
+                </div>
+                <div class="col third">
+                    <a class="item-edit">{{item.name}}</a>
+                </div>
+                <div class="col five center small">
+                    {{localize "trait"}}
+                </div>
+                <div class="col ten center item" data-item-id="{{item._id}}" data-mod="attack">
+                    <a class="ch-rollCombatTrait d20 die-attack">{{item.attack}}</a>
+                </div>
+                <div class="col ten center item" data-item-id="{{item._id}}" data-mod="parry">
+                    -
+                </div>
+
+                <div class="col ten center">
+                    <a class="ch-rollDamageTrait d6 die-damage">{{item.damagedie}}</a><span title="{{localize 'damageOverThreshold'}}">{{item.damageAdd}}</span>
+                </div>
+                <div class="col ten center small">
+                    {{localize (concat "Range-" item.data.reach.value)}}
+                </div>
+            </div>
+        </div>
         {{/each}}
     </div>
 </div>
@@ -136,9 +162,8 @@
         <div class="col eight center small">
             {{localize "damage"}}
         </div>
+        <div class="col ten">
 
-        <div class="col five center small">
-            {{localize "ammunition"}}
         </div>
     </div>
     <div class="row-section wrap rowtable inventory">
@@ -155,15 +180,45 @@
                 </div>
 
                 <div class="col ten center item" data-item-id="{{item._id}}" data-mod="attack">
+                    <a class="ch-rollCombatTrait d20 die-attack">{{item.attack}}</a>
+                </div>
+                <div class="col eight center">
+                    <a class="ch-rollDamageTrait d6 die-damage">{{item.damagedie}}</a><span title="{{localize 'damageOverThreshold'}}">{{item.damageAdd}}</span>
+                </div>
+
+                <div class="col ten very-small center">
+                    <a class="item-dropdown" title="{{localize 'SHEET.Dropdown'}}"><i class="fas fa-chevron-down"></i></a>
+                </div>
+            </div>
+            <div class="row-section lineheight expandDetails">
+                <div class="col">
+                    <ul>
+                        <li><b>{{localize "reach"}}</b>: {{item.data.reach.value}}</li>
+                        <li><b>{{localize "reloadTime"}}</b>: {{item.data.reloadTime.value}}</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        {{/each}} {{#each actor.rangeTraits as |item i|}}
+        <div class="col item" data-item-id="{{item._id}}">
+            <div class="row-section">
+                <div class="col ten image" style="background-image: url({{item.img}})">
+                </div>
+                <div class="col thirtyfive">
+                    <a class="item-edit">{{item.name}}</a>
+                </div>
+                <div class="col five center small">
+                    {{localize "trait"}}
+                </div>
+
+                <div class="col ten center item" data-item-id="{{item._id}}" data-mod="attack">
                     <a class="ch-rollCombat d20 die-attack">{{item.attack}}</a>
                 </div>
                 <div class="col eight center">
                     <a class="ch-rollDamage d6 die-damage">{{item.damagedie}}</a><span title="{{localize 'damageOverThreshold'}}">{{item.damageAdd}}</span>
                 </div>
 
-                <div class="col five center">
 
-                </div>
                 <div class="col ten very-small center">
                     <a class="item-dropdown" title="{{localize 'SHEET.Dropdown'}}"><i class="fas fa-chevron-down"></i></a>
                 </div>
@@ -203,6 +258,22 @@
                 </div>
                 <div class="col four center">
                     {{item.data.encumbrance.value}}
+                </div>
+            </div>
+        </div>
+        {{/each}} {{#each actor.armorTraits as |item i|}}
+        <div class="col item" data-item-id="{{item._id}}">
+            <div class="row-section">
+                <div class="col ten image" style="background-image: url({{item.img}})">
+                </div>
+                <div class="col four">
+                    <a class="item-edit">{{item.name}}</a>
+                </div>
+                <div class="col four center">
+                    {{item.data.at.value}}
+                </div>
+                <div class="col four center">
+                    -
                 </div>
             </div>
         </div>

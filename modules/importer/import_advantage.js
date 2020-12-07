@@ -812,7 +812,7 @@ export default class ImportAdvantage {
                         if (stat.includes("LZ")) {
                             weapon = {
                                 name: attack.getElementsByTagName("name")[0].textContent,
-                                img: "",
+                                img: Itemdsa5.defaultImages["trait"],
                                 type: "trait",
                                 data: {
                                     traitType: {
@@ -836,7 +836,7 @@ export default class ImportAdvantage {
                         } else {
                             weapon = {
                                 name: attack.getElementsByTagName("name")[0].textContent,
-                                img: "",
+                                img: Itemdsa5.defaultImages["trait"],
                                 type: "trait",
                                 data: {
                                     traitType: {
@@ -856,9 +856,44 @@ export default class ImportAdvantage {
                             }
                         }
 
-                        attackItems.push(weapon)
+                        attackItems.push(new Item(weapon, { temporary: true }))
                     }
 
+                    let rsbe = elem.getElementsByTagName("rsbe")[0].textContent.split("/")
+                    finalItems.push(new Item({
+                        name: "Schutz",
+                        img: Itemdsa5.defaultImages["armor"],
+                        type: "trait",
+                        data: {
+                            traitType: {
+                                value: "armor"
+                            },
+                            at: {
+                                value: rsbe[0]
+                            }
+                        }
+                    }, { temporary: true }))
+
+                    let loot = []
+                    let loots = elem.getElementsByTagName("loot")[0].textContent
+                    if (loots != "") {
+                        loots = loots.split(",")
+                        for (let l of loots) {
+                            let eq = {
+                                name: l,
+                                img: Itemdsa5.defaultImages["equipment"],
+                                type: "equipment",
+                                data: {
+                                    equipmentType: {
+                                        value: "misc"
+                                    }
+                                }
+                            }
+                            loot.push(new Item(eq, { temporary: true }))
+                        }
+                        finalItems = finalItems.concat(loot)
+                    }
+                    finalItems = finalItems.concat(attackItems)
                     const item = {
                         name: elem.getElementsByTagName("name")[0].textContent,
                         img: img,

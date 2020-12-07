@@ -1,0 +1,83 @@
+<form class="dsa5 item-sheet {{cssClass}}" autocomplete="off">
+    <header class="item-header">
+        <h1>
+            <input name="name" class="item-header item-name" type="text" value="{{item.name}}" placeholder="{{localize 'Name'}}" />
+        </h1>
+    </header>
+
+    {{> systems/dsa5/templates/items/item-stat.html}}
+
+
+    <nav class="sheet-tabs tabs" data-tab-container="primary">
+        <a class="item active" data-tab="description">{{localize "Description"}}</a>
+        <a class="item" data-tab="details">{{localize "Details"}}</a>
+    </nav>
+
+
+    <section class="content">
+
+        {{> systems/dsa5/templates/items/item-description.html}}
+
+        <div class="tab details" data-tab="details">
+
+
+            <div class="form-group">
+                <label class="label-text">{{localize "traitType"}}</label>
+                <select name="data.traitType.value" data-dtype="{{data.traitType.type}}">
+                    {{#select data.traitType.value}}
+                    {{#each traitCategories as |type sktype|}}
+                    <option value="{{sktype}}">{{localize type}}</option>
+                    {{/each}}
+                    {{/select}}
+                </select>
+            </div>
+
+            {{#when data.traitType.value 'eq' "rangeAttack"}}
+            <div class="form-group">
+                <label class="label-text">{{localize "CHAR.ATTACK"}}: </label>
+                <input class="input-text" type="text" name="data.at.value" value="{{data.at.value}}" data-dtype="String" />
+            </div>
+
+            <div class="form-group">
+                <label class="label-text">{{localize "damage"}}: </label>
+                <input class="input-text" type="text" name="data.damage.value" value="{{data.damage.value}}" data-dtype="String" />
+            </div>
+            <div class="form-group">
+                <label class="label-text">{{localize "reach"}}: </label>
+                <input class="input-text" type="text" name="data.reach.value" value="{{data.reach.value}}" data-dtype="String" />
+            </div>
+            <div class="form-group">
+                <label class="label-text">{{localize "reloadTime"}}: </label>
+                <input class="input-text" type="text" name="data.reloadTime.value" value="{{data.reloadTime.value}}" data-dtype="String" />
+            </div>
+            {{/when}} {{#when data.traitType.value 'eq' "meleeAttack"}}
+            <div class="form-group">
+                <label class="label-text">{{localize "CHAR.ATTACK"}}: </label>
+                <input class="input-text" type="text" name="data.at.value" value="{{data.at.value}}" data-dtype="String" />
+            </div>
+
+            <div class="form-group">
+                <label class="label-text">{{localize "damage"}}: </label>
+                <input class="input-text" type="text" name="data.damage.value" value="{{data.damage.value}}" data-dtype="String" />
+            </div>
+            <div class="form-group">
+                <label class="label-text">{{localize "reach"}}</label>
+                <select name="data.reach.value" data-dtype="{{data.reach.type}}">
+                  {{#select data.reach.value}}
+                  {{#each ranges as |ch char|}}
+                  <option value="{{char}}">{{localize ch}}</option>
+                  {{/each}}
+                  {{/select}}
+                </select>
+            </div>
+            {{/when}}{{#when data.traitType.value 'eq' "armor"}}
+            <div class="form-group">
+                <label class="label-text">{{localize "protection"}}: </label>
+                <input class="input-text" type="text" name="data.at.value" value="{{data.at.value}}" data-dtype="String" />
+            </div>
+
+            {{/when}}
+
+        </div>
+    </section>
+</form>
