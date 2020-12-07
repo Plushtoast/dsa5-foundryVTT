@@ -474,7 +474,9 @@ form .form-group.tripple select {
     background-repeat: no-repeat;
 }
 
-.d6.die-damage {
+.d6.die-damage,
+.d2.die-damage,
+.d3.die-damage {
     /*background-image: url(../../../icons/dice/d6black.svg);*/
     background-image: url(../icons/dice/d6white.svg);
     background-position: center 2.5px;
@@ -482,7 +484,9 @@ form .form-group.tripple select {
 }
 
 .d20,
-.d6 {
+.d6,
+.d2,
+.d3 {
     width: 35px;
     height: 35px;
     display: inline-block;

@@ -8,6 +8,8 @@ export default class OpposedDsa5 {
 
 
         let actor = DSA5_Utility.getSpeaker(message.data.speaker)
+        if (!actor) return
+
         let testResult = message.data.flags.data.postData
         if (actor.data.flags.oppose) {
             let attackMessage = game.messages.get(actor.data.flags.oppose.messageId) // Retrieve attacker's test result message
