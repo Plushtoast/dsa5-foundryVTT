@@ -1,5 +1,6 @@
 import DSA5Importer from "./importer.js"
 import Itemdsa5 from "./../item/item-dsa5.js"
+import DSA5_Utility from "../system/utility-dsa5.js"
 
 export default class ImportAdvantage {
     static async importAdvantages() {
@@ -715,12 +716,47 @@ export default class ImportAdvantage {
     static async _importBestiary(k) {
         var x = new XMLHttpRequest();
         x.open("GET", "systems/dsa5/modules/importer/xmls/" + k + ".xml", true);
-        let pack = await DSA5Importer.getCompendiumPack("Item", `Careers`);
+        let pack = await DSA5Importer.getCompendiumPack("Actor", `BestiaryTemp`);
+
+        let items = []
+        let skills = await DSA5_Utility.allSkills() || [];
+
+        let combatskills = await DSA5_Utility.allCombatSkills() || [];
+        let moneyItems = await DSA5_Utility.allMoneyItems() || [];
+
+        let sizeClasses = {
+            "winzig": "tiny",
+            "klein": "small",
+            "mittel": "average",
+            "groß": "big",
+            "riesig": "giant"
+        }
+        let traitrange = {
+            "kurz": "short",
+            "mittel": "medium",
+            "lang": "long"
+        }
+
+        moneyItems = moneyItems.sort((a, b) => (a.data.price.value > b.data.price.value) ? -1 : 1);
+        //if (data.type == "character" || data.type == "npc") {
+
+        items = items.concat(combatskills);
+        //}
+
+        items = items.concat(moneyItems.map(m => {
+            m.data.quantity.value = 0
+            return m
+        }));
+        for (let i of skills) {
+            i.data.description.value = ""
+        }
+        for (let i of items) {
+            i.data.description.value = ""
+        }
         x.onreadystatechange = await async function() {
             if (x.readyState == 4 && x.status == 200) {
                 var doc = x.responseXML;
-                console.log(doc)
-                console.log(k)
+
 
                 let elems = doc.getElementsByTagName(k)
                 for (let i = 0; i < elems.length; i++) {
@@ -729,17 +765,214 @@ export default class ImportAdvantage {
                     /*let caregory = elem.getElementsByTagName("category")[0].textContent
                     if (caregory in DSA5Importer.ImportVars.rangeImages.de) {
                         img = DSA5Importer.ImportVars.rangeImages.de[caregory]
+
+
                     }*/
+                    let size = elem.getElementsByTagName("sizeCategory")[0].textContent
+                    if (sizeClasses[size] != undefined) {
+                        size = sizeClasses[size]
+                    } else {
+                        console.warn("can not parse size: " + size)
+                        size = "average"
+                    }
+
+
+                    let talents = {}
+                    let talS = elem.getElementsByTagName("talents")[0].textContent
+                    if (talS != "") {
+                        for (var t of talS.split(",")) {
+                            let v = t.trim().replace("&nbsp;", " ").split(" ")
+                            if (!isNaN(v[1])) {
+                                talents[v[0].trim()] = Number(v[1].trim())
+                            } else {
+                                console.warn("<" + t + ">" + " can not be parsed")
+                            }
+                        }
+                    }
+                    for (let k of skills) {
+                        if (talents[k.name] != undefined) {
+                            k.data.talentValue.value = talents[k.name]
+                            delete talents[k.name]
+                        } else {
+                            k.data.talentValue.value = 0
+                        }
+                    }
+                    Object.keys(talents).forEach(function(key) {
+                        var value = talents[key]
+                        console.warn(key + " could not be found")
+                    })
+                    let finalItems = items.concat(skills)
+
+                    let attackItems = []
+                    let atts = elem.getElementsByTagName("attack")
+                    for (let attack of atts) {
+
+                        let weapon
+                        let stat = attack.getElementsByTagName("stat")[0].textContent.replace("&nbsp;", " ")
+                        if (stat.includes("LZ")) {
+                            weapon = {
+                                name: attack.getElementsByTagName("name")[0].textContent,
+                                img: "",
+                                type: "trait",
+                                data: {
+                                    traitType: {
+                                        value: "rangeAttack"
+                                    },
+                                    at: {
+                                        value: stat.split("FK")[1].trim().split("LZ")[0].trim()
+                                    },
+                                    damage: {
+                                        value: stat.split("TP")[1].trim().split("RW")[0].trim()
+                                    },
+                                    reloadTime: {
+                                        value: stat.split("LZ")[1].split("TP")[0].trim()
+                                    },
+                                    reach: {
+                                        value: stat.split("RW")[1].trim()
+                                    }
+                                }
+
+                            }
+                        } else {
+                            weapon = {
+                                name: attack.getElementsByTagName("name")[0].textContent,
+                                img: "",
+                                type: "trait",
+                                data: {
+                                    traitType: {
+                                        value: "meleeAttack"
+                                    },
+                                    at: {
+                                        value: stat.split("AT")[1].trim().split("TP")[0].trim()
+                                    },
+                                    damage: {
+                                        value: stat.split("TP")[1].trim().split("RW")[0].trim()
+                                    },
+                                    reach: {
+                                        value: traitrange[stat.split("RW")[1].trim()]
+                                    }
+                                }
+
+                            }
+                        }
+
+                        attackItems.push(weapon)
+                    }
+
                     const item = {
                         name: elem.getElementsByTagName("name")[0].textContent,
                         img: img,
+                        items: finalItems,
                         type: "creature",
                         data: {
                             "description.value": DSA5Importer.prettyDescription(elem.getElementsByTagName("description")[0].textContent),
+                            characteristics: {
+                                mu: {
+                                    initial: Number(elem.getElementsByTagName("MU")[0].textContent),
+                                    advances: 0,
+                                    modifier: 0
+                                },
+                                kl: {
+                                    initial: Number(elem.getElementsByTagName("KL")[0].textContent),
+                                    advances: 0,
+                                    modifier: 0
+                                },
+                                in: {
+                                    initial: Number(elem.getElementsByTagName("IN")[0].textContent),
+                                    advances: 0,
+                                    modifier: 0
+                                },
+                                ch: {
+                                    initial: Number(elem.getElementsByTagName("CH")[0].textContent),
+                                    advances: 0,
+                                    modifier: 0
+                                },
+                                ff: {
+                                    initial: Number(elem.getElementsByTagName("FF")[0].textContent),
+                                    advances: 0,
+                                    modifier: 0
+                                },
+                                ge: {
+                                    initial: Number(elem.getElementsByTagName("GE")[0].textContent),
+                                    advances: 0,
+                                    modifier: 0
+                                },
+                                ko: {
+                                    initial: Number(elem.getElementsByTagName("KO")[0].textContent),
+                                    advances: 0,
+                                    modifier: 0
+                                },
+                                kk: {
+                                    initial: Number(elem.getElementsByTagName("KK")[0].textContent),
+                                    advances: 0,
+                                    modifier: 0
+                                },
+                            },
+                            creatureClass: {
+                                value: elem.getElementsByTagName("typus")[0].textContent
+                            },
+                            actionCount: {
+                                value: Number(elem.getElementsByTagName("actions")[0].textContent)
+                            },
+                            count: {
+                                value: elem.getElementsByTagName("count")[0].textContent
+                            },
+                            behaviour: {
+                                value: elem.getElementsByTagName("fight")[0].textContent
+                            },
+                            flight: {
+                                value: elem.getElementsByTagName("flight")[0].textContent
+                            },
+                            flags: {},
+                            status: {
+                                wounds: {
+                                    initial: Number(elem.getElementsByTagName("LeP")[0].textContent),
+                                    value: 0,
+                                    advances: 0,
+                                    modifier: 0,
+                                    current: 0
+                                },
+                                astralenergy: {
+                                    initial: Number(elem.getElementsByTagName("AsP")[0].textContent) || 0,
+                                    value: 0,
+                                    advances: 0,
+                                    modifier: 0,
+                                    current: 0
+                                },
+                                karmaenergy: {
+                                    initial: Number(elem.getElementsByTagName("KaP")[0].textContent) || 0,
+                                    value: 0,
+                                    advances: 0,
+                                    modifier: 0,
+                                    current: 0
+                                },
+                                soulpower: {
+                                    value: 0,
+                                    initial: Number(elem.getElementsByTagName("SK")[0].textContent) || 0,
+                                    modifier: 0
+                                },
+                                toughness: {
+                                    value: 0,
+                                    initial: Number(elem.getElementsByTagName("ZK")[0].textContent) || 0,
+                                    modifier: 0
+                                },
+                                initiative: {
+                                    value: Number(elem.getElementsByTagName("INI")[0].textContent.split("+")[0])
+                                },
+                                dodge: {
+                                    modifier: 0,
+                                    value: Number(elem.getElementsByTagName("VW")[0].textContent) || 0
+                                },
+                                size: {
+                                    value: size
+                                }
+                            }
+
+
                         },
                     };
 
-                    let actor = await DSA5Importer.writeCreature(pack, item)
+                    await DSA5Importer.writeCreature(pack, item)
 
                 }
             }

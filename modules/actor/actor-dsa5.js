@@ -5,6 +5,7 @@ import OpposedDsa5 from "../system/opposed-dsa5.js";
 
 export default class Actordsa5 extends Actor {
     static async create(data, options) {
+        console.log(data)
         if (data instanceof Array)
             return super.create(data, options);
 
@@ -53,6 +54,7 @@ export default class Actordsa5 extends Actor {
             ch.bonus = Math.floor(ch.value / 10)
             ch.cost = DSA5_Utility._calculateAdvCost(ch.advances, "characteristic")
         }
+
     }
 
     prepareData() {
@@ -66,11 +68,17 @@ export default class Actordsa5 extends Actor {
                 data.data.status.soulpower.value = (data.data.status.soulpower.initial ? data.data.status.soulpower.initial : 0) + Math.round((data.data.characteristics["mu"].value + data.data.characteristics["kl"].value + data.data.characteristics["in"].value) / 6);
                 data.data.status.toughness.value = (data.data.status.toughness.initial ? data.data.status.toughness.initial : 0) + Math.round((data.data.characteristics["ko"].value + data.data.characteristics["ko"].value + data.data.characteristics["kk"].value) / 6);
                 data.data.status.fatePoints.max = data.data.status.fatePoints.value + data.data.status.fatePoints.modifier;
+
+                data.data.status.initiative.value = Math.round((data.data.characteristics["mu"].value + data.data.characteristics["ge"].value) / 2);
             }
 
             if (this.data.type == "character") {
                 data.data.details.experience.current = data.data.details.experience.total - data.data.details.experience.spent;
                 data.data.details.experience.description = DSA5_Utility.experienceDescription(data.data.details.experience.total)
+            }
+
+            if (this.data.type == "creature") {
+                data.data.status.wounds.current = data.data.status.wounds.initial
             }
 
             data.data.status.wounds.max = data.data.status.wounds.current + data.data.status.wounds.modifier + data.data.status.wounds.advances;
@@ -92,11 +100,11 @@ export default class Actordsa5 extends Actor {
             data.data.status.soulpower.max = data.data.status.soulpower.value + data.data.status.soulpower.modifier;
             data.data.status.toughness.max = data.data.status.toughness.value + data.data.status.toughness.modifier;
             this._calculateStatus(data, "dodge")
-            data.data.status.initiative.value = Math.round((data.data.characteristics["mu"].value + data.data.characteristics["ge"].value) / 2);
+
 
         } catch (error) {
-            console.error("Something went wrong with preparing actor data: " + error)
-            ui.notifications.error(game.i18n.localize("ACTOR.PreparationError") + error + error.backtrace())
+            console.error("Something went wrong with preparing actor data: " + error + error.stack)
+            ui.notifications.error(game.i18n.localize("ACTOR.PreparationError") + error + error.stack)
         }
     }
 
@@ -397,10 +405,12 @@ export default class Actordsa5 extends Actor {
 
         let pain = actorData.data.status.wounds.value <= 5 ? 4 : Math.floor((1 - actorData.data.status.wounds.value / actorData.data.status.wounds.max) * 4)
 
-        this.update({
+        /*this.update({
             "data.conditions.encumbered.value": encumbrance,
             "data.conditions.inpain.value": pain
-        });
+        });*/
+        this.data.data.conditions.inpain.value = pain
+        this.data.data.conditions.encumbered.value = encumbrance
 
         //CHAR cannot be clerical and magical at the same time
         hasPrayers = hasPrayers && !hasSpells
@@ -449,11 +459,14 @@ export default class Actordsa5 extends Actor {
     }
 
     _updateConditions() {
-        let r = {}
+        /*let r = {}
         for (let [key, val] of Object.entries(this.data.data.conditions)) {
             r["data.conditions." + key + ".max"] = (val.value || 0) + (val.modifier || 0)
         }
-        this.update(r)
+        this.update(r)*/
+        for (let [key, val] of Object.entries(this.data.data.conditions)) {
+            this.data.data.conditions[key].max = (val.value || 0) + (val.modifier || 0)
+        }
     }
 
     /*getModifiers() {
@@ -583,10 +596,11 @@ export default class Actordsa5 extends Actor {
             }
         };
         testData.source.name = statusId
-        testData.source.combatskill = {
+        testData.source.data.data.combatskill = {
             value: game.i18n.localize("Combatskill.wrestle")
         }
         testData.source.type = "meleeweapon"
+        testData.source.data.data.damageThreshold.value = 14
 
         // Setup dialog data: title, template, buttons, prefilled data
         let dialogOptions = {

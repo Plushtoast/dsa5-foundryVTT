@@ -58,17 +58,21 @@ export default class DSA5Importer {
 
         if (!entry) {
             console.log(`Importing ${item.type} - ${item.name}`);
-            compendiumItem = new Actordsa5(item, { temporary: true });
+            compendiumItem = await new Actordsa5(item, { temporary: true });
 
-            pack.importEntity(compendiumItem);
+
+            await pack.importEntity(compendiumItem);
+
         } else {
             console.log(`Update ${item.type} - ${item.name}`);
             //let updateData = ImportHelpers.buildUpdateData(item);
             let updateData = item;
             updateData["_id"] = entry._id;
 
-            pack.updateEntity(updateData);
+            await pack.updateEntity(updateData);
+
         }
+
     }
 
 

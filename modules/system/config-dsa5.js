@@ -1,5 +1,11 @@
 const DSA5 = {}
 
+//This cann also look like:
+//{
+//  id:
+//    label:
+//   icon: 
+//}
 
 CONFIG.statusEffects = [
     "icons/svg/falling.svg",

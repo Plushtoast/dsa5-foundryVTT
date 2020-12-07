@@ -370,7 +370,7 @@
                 "magic"
             ],
             "actionCount": {
-                "type": "Number",
+                "type": "String",
                 "value": 1,
                 "label": "actionCount"
             },
@@ -433,6 +433,8 @@
 
             "advantage",
             "disadvantage",
+
+            "trait",
 
             "money",
             "species",
@@ -677,6 +679,7 @@
                 "label": "skills"
             }
         },
+
         "spell": {
             "templates": [
                 "description",
@@ -687,6 +690,33 @@
                 "type": "Number",
                 "label": "Fw",
                 "value": 0
+            }
+        },
+        "trait": {
+            "traitType": {
+                "type": "String",
+                "value": "",
+                "label": "traitType"
+            },
+            "at": {
+                "type": "String",
+                "value": "",
+                "label": "at"
+            },
+            "reach": {
+                "type": "String",
+                "value": "",
+                "label": "reach"
+            },
+            "damage": {
+                "type": "String",
+                "value": "",
+                "label": "damage"
+            },
+            "reloadTime": {
+                "type": "String",
+                "value": "",
+                "label": "reloadTime"
             }
         },
         "ritual": {
