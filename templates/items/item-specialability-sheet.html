@@ -48,6 +48,13 @@
                 <input class="input-text" type="Number" name="data.maxRank.value" value="{{data.maxRank.value}}" data-dtype="{{data.maxRank.type}}" />
             </div>
 
+            {{#when data.category.value 'eq' 'Combat'}}
+            <div class="form-group">
+                <label class="label-text">{{localize "combatskill"}}: </label>
+                <input class="input-text" type="text" name="data.list.value" value="{{data.list.value}}" data-dtype="{{data.list.type}}" />
+            </div>
+            {{/when}}
+
         </div>
     </section>
 </form>

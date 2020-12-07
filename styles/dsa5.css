@@ -248,6 +248,10 @@ form .form-group.full-height textarea {
     min-height: 140px;
 }
 
+form .career .form-group.full-height textarea {
+    min-height: 80px;
+}
+
 form .form-group.tripple .input-text {
     flex: 2;
 }
