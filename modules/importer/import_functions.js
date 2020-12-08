@@ -1,8 +1,8 @@
 import DSA5Importer from "./importer.js"
-import Itemdsa5 from "./../item/item-dsa5.js"
+import Itemdsa5 from "../item/item-dsa5.js"
 import DSA5_Utility from "../system/utility-dsa5.js"
 
-export default class ImportAdvantage {
+export default class ImportFunctions {
     static async importAdvantages() {
         //var doc = DSA5Importer.fetchFile("systems/dsa5/modules/importer/xmls/advantage.xml")
         var x = new XMLHttpRequest();
@@ -150,7 +150,7 @@ export default class ImportAdvantage {
 
                 entry.data.description.value = i.data.data.description.value
                 entry.data.StF.value = i.data.data.StF.value
-                entry.data.burden.value = i.data.data.StF.value
+                entry.data.burden.value = i.data.data.burden.value
                 entry.data.characteristic1.value = i.data.data.characteristic1.value
                 entry.data.characteristic2.value = i.data.data.characteristic2.value
                 entry.data.characteristic3.value = i.data.data.characteristic3.value
@@ -822,7 +822,7 @@ export default class ImportAdvantage {
                                         value: stat.split("FK")[1].trim().split("LZ")[0].trim()
                                     },
                                     damage: {
-                                        value: stat.split("TP")[1].trim().split("RW")[0].trim().gsub("keine", 0)
+                                        value: stat.split("TP")[1].trim().split("RW")[0].trim().replace("keine", 0)
                                     },
                                     reloadTime: {
                                         value: stat.split("LZ")[1].split("TP")[0].trim()
@@ -846,7 +846,7 @@ export default class ImportAdvantage {
                                         value: stat.split("AT")[1].trim().split("TP")[0].trim()
                                     },
                                     damage: {
-                                        value: stat.split("TP")[1].trim().split("RW")[0].trim().gsub("keine", 0)
+                                        value: stat.split("TP")[1].trim().split("RW")[0].trim().replace("keine", 0)
                                     },
                                     reach: {
                                         value: traitrange[stat.split("RW")[1].trim()]
@@ -894,11 +894,31 @@ export default class ImportAdvantage {
                         finalItems = finalItems.concat(loot)
                     }
                     finalItems = finalItems.concat(attackItems)
+
+                    let bar2 = {}
+                    let isMage = (Number(elem.getElementsByTagName("AsP")[0].textContent) || 0) > 0
+                    let isPriest = ((Number(elem.getElementsByTagName("KaP")[0].textContent) || 0) > 0) && !isMage
+
+                    if (isMage) {
+                        bar2 = { "attribute": "status.astralenergy" }
+                    } else if (isPriest) {
+                        bar2 = { "attribute": "status.karmaenergy" }
+                    }
+
                     const item = {
                         name: elem.getElementsByTagName("name")[0].textContent,
                         img: img,
                         items: finalItems,
                         type: "creature",
+                        token: {
+                            bar1: { "attribute": "status.wounds" },
+                            bar2: bar2,
+                            displayName: CONST.TOKEN_DISPLAY_MODES.OWNER_HOVER,
+                            displayBars: CONST.TOKEN_DISPLAY_MODES.OWNER_HOVER,
+                            disposition: CONST.TOKEN_DISPOSITIONS.NEUTRAL,
+                            name: elem.getElementsByTagName("name")[0].textContent
+                        },
+
                         data: {
                             "description.value": DSA5Importer.prettyDescription(elem.getElementsByTagName("description")[0].textContent),
                             characteristics: {
@@ -1073,6 +1093,7 @@ export default class ImportAdvantage {
                                 elem.getElementsByTagName("talentsTrade")[0].textContent
                             ].join(", "),
                             "guidevalue.value": elem.getElementsByTagName("guideValue")[0].textContent,
+                            "combatSkills.value": elem.getElementsByTagName("combatSkills")[0].textContent,
                             "tradition.value": elem.getElementsByTagName("tradition")[0].textContent,
                             "feature.value": elem.getElementsByTagName("feature")[0].textContent,
                             "happyTalents.value": elem.getElementsByTagName("happyTalents")[0].textContent,

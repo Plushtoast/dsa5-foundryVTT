@@ -1,5 +1,5 @@
 export default class AdvantageRulesDSA5 {
-    static async addvantageAdded(actor, item) {
+    static async vantageAdded(actor, item) {
         switch (item.name) {
             case "Geweihter":
                 await actor.update({

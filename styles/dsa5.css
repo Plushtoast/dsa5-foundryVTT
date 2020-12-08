@@ -1134,12 +1134,13 @@ form.dsa5.item-sheet {
     border: none;
 }
 
-.message-header {
+.chat-message .message-header {
     padding: 10px 5px;
     background-image: url(../icons/backgrounds/kapitelstart.webp);
     background-size: 112% 110%;
     background-repeat: no-repeat;
     background-position: -20px -5px;
+    color: #191815;
 }
 
 .message-sender.with-image {

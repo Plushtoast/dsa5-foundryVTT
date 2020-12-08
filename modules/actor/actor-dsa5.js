@@ -75,10 +75,10 @@ export default class Actordsa5 extends Actor {
             if (this.data.type == "character") {
                 data.data.details.experience.current = data.data.details.experience.total - data.data.details.experience.spent;
                 data.data.details.experience.description = DSA5_Utility.experienceDescription(data.data.details.experience.total)
-            }
-
-            if (this.data.type == "creature") {
+            } else if (this.data.type == "creature") {
                 data.data.status.wounds.current = data.data.status.wounds.initial
+                data.data.status.astralenergy.current = data.data.status.astralenergy.initial
+                data.data.status.karmaenergy.current = data.data.status.karmaenergy.initial
             }
 
             data.data.status.wounds.max = data.data.status.wounds.current + data.data.status.wounds.modifier + data.data.status.wounds.advances;
@@ -118,22 +118,12 @@ export default class Actordsa5 extends Actor {
         }
     }
 
-
-
-
-
     prepare() {
         let preparedData = duplicate(this.data)
             // Call prepareItems first to organize and process OwnedItems
         mergeObject(preparedData, this.prepareItems())
 
 
-
-        //if (preparedData.type == "npc")
-        //this.prepareNPC(preparedData)
-
-        //if (preparedData.type == "creature")
-        //this.prepareCreature(preparedData)
 
         return preparedData;
     }

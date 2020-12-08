@@ -55,7 +55,6 @@ export default class DiceDSA5 {
                 });
                 break;
             case "trait":
-                console.log(testData)
                 this._enabledModifiers(situationalModifiers, ["CONDITION.encumbered", "CONDITION.inpain"], true)
                 if (testData.mode == "attack" && testData.source.data.data.traitType.value == "meleeAttack") {
                     let targetWeaponsize = "short"
@@ -484,7 +483,6 @@ export default class DiceDSA5 {
             result["damage"] = damage
         }
         result["rollType"] = "weapon"
-        console.log(result)
 
         return result
     }
@@ -877,7 +875,9 @@ export default class DiceDSA5 {
     static async renderRollCard(chatOptions, testData, rerenderMessage) {
 
 
-        testData.other = testData.other.join("<br>")
+        if (Array.isArray(testData.other)) {
+            testData.other = testData.other.join("<br>")
+        }
 
         let chatData = {
             title: chatOptions.title,

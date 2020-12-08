@@ -986,6 +986,11 @@
                 "type": "String",
                 "label": "specialAbilities",
                 "value": ""
+            },
+            "combatSkills": {
+                "type": "String",
+                "label": "combatSkills",
+                "value": ""
             }
         },
         "specialability": {

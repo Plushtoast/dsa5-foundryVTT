@@ -326,22 +326,23 @@ export default class ActorSheetDsa5 extends ActorSheet {
 
     _deleteItem(ev) {
         let itemId = this._getItemId(ev);
-
-        renderTemplate('systems/dsa5/templates/dialog/delete-item-dialog.html').then(html => {
+        let item = this.actor.data.items.find(x => x._id == itemId)
+        let message = game.i18n.format("DIALOG.DeleteItemDetail", { item: item.name })
+        renderTemplate('systems/dsa5/templates/dialog/delete-item-dialog.html', { message: message }).then(html => {
             new Dialog({
                 title: game.i18n.localize("Delete Confirmation"),
                 content: html,
                 buttons: {
                     Yes: {
                         icon: '<i class="fa fa-check"></i>',
-                        label: "Yes",
+                        label: game.i18n.localize("yes"),
                         callback: dlg => {
                             this._cleverDeleteItem(itemId)
                         }
                     },
                     cancel: {
                         icon: '<i class="fas fa-times"></i>',
-                        label: "Cancel"
+                        label: game.i18n.localize("cancel")
                     },
                 },
                 default: 'Yes'
@@ -408,7 +409,7 @@ export default class ActorSheetDsa5 extends ActorSheet {
 
 
         } else {
-            await AdvantageRulesDSA5.addvantageAdded(this.actor, item)
+            await AdvantageRulesDSA5.vantageAdded(this.actor, item)
             await this._updateAPs(item.data.data.APValue.value)
             await this.actor.createEmbeddedEntity("OwnedItem", item);
         }

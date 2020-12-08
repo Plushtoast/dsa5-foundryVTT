@@ -52,8 +52,9 @@
 
     "DIALOG": {
         "RollMode": "Würfelmodus",
-        "DeleteItem": "Gegenstand entfernen?",
-        "SituationalModifiers": "Bedingte\nModifikatoren"
+        "DeleteItem": "Eintrag entfernen?",
+        "SituationalModifiers": "Bedingte\nModifikatoren",
+        "DeleteItemDetail": "Möchtest du <b>{item}</b> entfernen?"
     },
 
     "Equipment": {
@@ -121,6 +122,7 @@
     "culture": "Kultur",
     "count": "Anzahl",
     "cost": "Kosten",
+    "cancel": "Abbrechen",
     "closeCombatAttacks": "Nahkampfangriffe",
     "Current": "Aktuell",
     "career": "Profession",
@@ -419,8 +421,8 @@
     },
 
     "OPPOSED": {
-        "winsFP": "<b>{defender}</b> gewinnt gegen <b>{attacker}</b> mit {SL} Qualitätsstufe(n)",
-        "wins": "<b>{defender}</b> gewinnt gegen <b>{attacker}</b>"
+        "winsFP": "<b>{winner}</b> gewinnt gegen <b>{loser}</b> mit {SL} Qualitätsstufe(n)",
+        "wins": "<b>{winner}</b> gewinnt gegen <b>{loser}</b>"
     },
     "CHAT": {
         "TestModifiers": {

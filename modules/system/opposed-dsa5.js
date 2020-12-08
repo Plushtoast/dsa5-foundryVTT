@@ -160,7 +160,7 @@ export default class OpposedDsa5 {
         html.on("click", '.unopposed-button', event => {
             event.preventDefault()
             let messageId = $(event.currentTarget).parents('.message').attr("data-message-id");
-
+            $(event.currentTarget).fadeOut()
             this.resolveUnopposed(game.messages.get(messageId));
         })
     }
@@ -179,21 +179,28 @@ export default class OpposedDsa5 {
             //   try {
         let opposeResult = {};
 
+        opposeResult.attackerTestResult = attackerTest;
+        opposeResult.defenderTestResult = defenderTest;
+
         opposeResult.other = [];
         opposeResult.modifiers = this.checkPostModifiers(attackerTest, defenderTest);
 
         Hooks.call("dsa5:opposedTestResult", opposeResult, attackerTest, defenderTest)
         opposeResult.winner = "attacker"
 
-        switch (attackerTest.rollType) {
-            case "talent":
-                this._evaluateTalentOpposedRoll(attackerTest, defenderTest, opposeResult, options)
-                break;
-            case "weapon":
-                this._evaluateWeaponOpposedRoll(attackerTest, defenderTest, opposeResult, options)
-                break;
-        }
 
+        if (defenderTest.successLevel != undefined) {
+            switch (attackerTest.rollType) {
+                case "talent":
+                    this._evaluateTalentOpposedRoll(attackerTest, defenderTest, opposeResult, options)
+                    break;
+                case "weapon":
+                    this._evaluateWeaponOpposedRoll(attackerTest, defenderTest, opposeResult, options)
+                    break;
+                default:
+                    console.warn("can not oppose " + attackerTest.rollType)
+            }
+        }
         return opposeResult
 
         //        } catch (err) {
@@ -256,10 +263,10 @@ export default class OpposedDsa5 {
     static formatOpposedResult(opposeResult, attacker, defender) {
         let str = opposeResult.differenceSL ? "winsFP" : "wins"
         if (opposeResult.winner == "attacker") {
-            opposeResult.result = game.i18n.format("OPPOSED." + str, { attacker: attacker.alias, defender: defender.alias, SL: opposeResult.differenceSL })
+            opposeResult.result = game.i18n.format("OPPOSED." + str, { winner: attacker.alias, loser: defender.alias, SL: opposeResult.differenceSL })
             opposeResult.img = attacker.img;
         } else if (opposeResult.winner == "defender") {
-            opposeResult.result = game.i18n.format("OPPOSED." + str, { defender: defender.alias, attacker: attacker.alias, SL: opposeResult.differenceSL })
+            opposeResult.result = game.i18n.format("OPPOSED." + str, { winner: defender.alias, loser: attacker.alias, SL: opposeResult.differenceSL })
             opposeResult.img = defender.img
         }
 
