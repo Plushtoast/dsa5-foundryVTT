@@ -20,75 +20,75 @@
 
     </header>
 
-    <section class="general" ondragstart="return false;" ondrop="return false;">
-        <img class="charimg profile" src="{{actor.img}}" title="{{actor.name}}" height="95" width="95" data-edit="img">
+    <div class="general" ondragstart="return false;" ondrop="return false;">
+        <img class="charimg profile" src="{{actor.img}}" title="{{actor.name}}" data-edit="img">
 
-        <div class="items">
-            <div class="row">
-                <div id="field-gender" class="headerInput">
-                    <input class="input gender" style="box-shadow: none !important;" name="data.details.gender.value" type="text" value="{{data.details.gender.value}}" placeholder="{{localize 'Gender'}}" />
-                    <span class="label gender">{{localize "Gender"}}</span>
+        <div class="row-section" style="width: 100%;margin-bottom: 20px">
+            <div class="col">
+                <div class="row-section wrap charBtns">
+                    {{#each actor.data.characteristics as |ch c|}}
+                    <div title="{{localize ch.label}}" class="col eight center">
+                        {{localize ch.abrev}}
+                    </div>
+                    {{/each}}
                 </div>
+                <div class="row-section wrap charBtns">
+                    {{#each actor.data.characteristics as |ch c|}}
+                    <div class="ch-value col eight center" data-char="{{c}}"><a class="d20 die-{{c}}">{{ch.value}}</a></div>
+                    {{/each}}
+                </div>
+                <div class="row-section">
+                    <div class="col four mayorAttributeBox">
+                        <div class="row-section ">
+                            <div class="col lineheight center">
+                                <b>{{localize "wounds"}}</b>
+                            </div>
+                        </div>
+                        <div class="row-section">
+                            <div class="col center lineheight">
+                                <input type="text" title="{{localize 'Current'}}" name="data.status.wounds.value" data-dtype="{{actor.data.status.wounds.type}}" value="{{actor.data.status.wounds.value}}" /> /
+                                <span title="{{localize 'max'}}">{{actor.data.status.wounds.max}}</span>
+                            </div>
+                        </div>
+                    </div>
 
-                <div id="field-culture" class="headerInput">
-                    <input class="input-details" style="box-shadow: none !important;" name="data.details.Culture.value" type="text" value="{{data.details.Culture.value}}" placeholder="{{localize 'Culture'}}" />
-                    <span class="label-details">{{localize "culture"}}</span>
-                </div>
-                <div id="field-status" class="headerInput">
-                    <input id="input-status" class="input-details" style="box-shadow: none !important;" type="text" value="{{actor.data.details.socialstate.value}}" placeholder="{{localize 'Sozialstatus'}}" readonly />
-                    <span id="label-status" class="label-details">{{localize "Socialstate"}}</span>
-                </div>
-                <div id="field-home" class="headerInput">
-                    <input class="input-details" style="box-shadow: none !important;" name="data.details.Home.value" type="text" value="{{data.details.Home.value}}" placeholder="{{localize 'Home'}}" />
-                    <span class="label-details">{{localize "Home"}}</span>
+                    {{#if actor.hasPrayers}}
+                    <div class="col four mayorAttributeBox">
+                        <div class="row-section">
+                            <div class="col lineheight center">
+                                <b>{{localize "karmaenergy"}}</b>
+                            </div>
+                        </div>
+                        <div class="row-section">
+                            <div class="col center lineheight">
+                                <input type="text" title="{{localize 'Current'}}" name="data.status.karmaenergy.value" data-dtype="{{actor.data.status.karmaenergy.type}}" value="{{actor.data.status.karmaenergy.value}}" /> /
+                                <span title="{{localize 'max'}}">{{actor.data.status.karmaenergy.max}}</span>
+                            </div>
+                        </div>
+
+                    </div>
+                    {{else if actor.hasSpells}}
+                    <div class="col four mayorAttributeBox">
+                        <div class="row-section">
+                            <div class="col lineheight center">
+                                <b>{{localize "astralenergy"}}</b>
+                            </div>
+                        </div>
+                        <div class="row-section">
+                            <div class="col center lineheight">
+                                <input type="text" title="{{localize 'Current'}}" name="data.status.astralenergy.value" data-dtype="{{actor.data.status.astralenergy.type}}" value="{{actor.data.status.astralenergy.value}}" /> /
+                                <span title="{{localize 'max'}}">{{actor.data.status.astralenergy.max}}</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    {{/if}}
+
                 </div>
             </div>
+        </div>
 
-            <div class="row">
-
-                <div id="field-family" class="headerInput">
-                    <input class="input-details" style="box-shadow: none !important;" name="data.details.family.value" type="text" value="{{data.details.family.value}}" placeholder="{{localize 'Family'}}" />
-                    <span class="label-details">{{localize "Family"}}</span>
-                </div>
-
-                <div id="field-age" class="headerInput">
-                    <input class="input-details" style="box-shadow: none !important;" name="data.details.age.value" type="text" value="{{data.details.age.value}}" placeholder="{{localize 'Age'}}" />
-                    <span class="label-details">{{localize "Age"}}<span>
-                </div>
-
-                <div id="field-haircolor" class="headerInput">
-                    <input class="input-details" style="box-shadow: none !important;"
-                        name="data.details.haircolor.value" type="text" value="{{data.details.haircolor.value}}"
-                        placeholder="{{localize 'Hair_color'}}" />
-                    <span class="label-details">{{localize "Hair_color"}}</span>
-                </div>
-                <div id="field-eyecolor" class="headerInput">
-                    <input class="input-details" style="box-shadow: none !important;" name="data.details.eyecolor.value" type="text" value="{{data.details.eyecolor.value}}" placeholder="{{localize 'Eye_color'}}" />
-                    <span class="label-details">{{localize "Eye_color"}}</span>
-                </div>
-            </div>
-
-            <div class="row">
-
-                <div id="field-height" class="headerInput">
-                    <input class="input-details" style="box-shadow: none !important;" name="data.details.height.value" type="text" value="{{data.details.height.value}}" placeholder="{{localize 'Height'}}" />
-                    <span class="label-details">{{localize "Height"}}</span>
-                </div>
-
-                <div id="field-weight" class="headerInput">
-                    <input class="input-details" style="box-shadow: none !important;" name="data.details.weight.value" type="text" value="{{data.details.weight.value}}" placeholder="{{localize 'Weight'}}" />
-                    <span class="label-details">{{localize "Weight"}}</span>
-                </div>
-
-                <div id="field-distinguishingmark" class="headerInput">
-                    <input class="input-details" style="box-shadow: none !important;" name="data.details.distinguishingmark.value" type="text" value="{{data.details.distinguishingmark.value}}" placeholder="{{localize 'Distinguishing_mark'}}" />
-                    <span class="label-details">{{localize "Distinguishing_mark"}}</span>
-                </div>
-
-            </div>
-
-
-    </section>
+    </div>
     <!-- TABS -->
     <section id="tab-sections">
         <nav id="dsa5-primarytabs" class="sheet-tabs tabs" ondragstart="return false;" ondrop="return false;">
@@ -123,7 +123,7 @@
             <div class="tab inventory save-scroll" data-tab="inventory">
                 {{> systems/dsa5/templates/actors/actor-equipment.html}}
             </div>
-            <div class="tab notes save-scroll" data-tab="notes">
+            <div class="tab save-scroll" data-tab="notes">
                 {{> systems/dsa5/templates/actors/actor-notes.html}}
             </div>
         </section>

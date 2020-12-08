@@ -214,7 +214,8 @@
                         "label": "Fate points",
                         "abrev": "FP",
                         "value": 3,
-                        "modifier": 0
+                        "modifier": 0,
+                        "current": 3
                     },
                     "speed": {
                         "type": "Number",

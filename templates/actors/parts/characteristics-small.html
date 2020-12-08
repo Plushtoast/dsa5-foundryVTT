@@ -35,15 +35,5 @@
             </div>
             {{/each}}
         </div>
-        <div class="table-row bottom">
-            <div class="row-type table-data">
-                <div class="header-block d20height">
-                    {{localize "Current"}}
-                </div>
-            </div>
-            {{#each actor.data.characteristics as |ch c|}}
-            <div class="table-data ch-value" data-char="{{c}}"><a class="d20 die-{{c}}">{{ch.value}}</a></div>
-            {{/each}}
-        </div>
     </div>
 </div>

@@ -1,24 +1,102 @@
 <div class="groupbox">
-    <div class="row-section table-header">
+    <div class="row-section header-label">
         <div class="col">
-            {{localize "Notes"}}
+            <b>{{localize "personalDetails"}}</b>
         </div>
     </div>
     <div class="row-section">
-        <div class="col notes-box">
-            {{editor content=data.details.notes.value target="data.details.notes.value" button=true owner=owner editable=editable}}
-        </div>
+        <section class="general col" ondragstart="return false;" ondrop="return false;">
+            <div class="row-section wrap">
+                <div class="col row-section">
+                    <div class="headerInput col four">
+                        <input class="input gender" style="box-shadow: none !important;" name="data.details.gender.value" type="text" value="{{data.details.gender.value}}" placeholder="{{localize 'Gender'}}" />
+                        <span class="label gender">{{localize "Gender"}}</span>
+                    </div>
+
+                    <div class="headerInput col four">
+                        <input class="input-details" style="box-shadow: none !important;" name="data.details.Culture.value" type="text" value="{{data.details.Culture.value}}" placeholder="{{localize 'culture'}}" />
+                        <span class="label-details">{{localize "culture"}}</span>
+                    </div>
+                    <div class="headerInput col four">
+                        <input id="input-status" class="input-details" style="box-shadow: none !important;" type="text" value="{{actor.data.details.socialstate.value}}" placeholder="{{localize 'Socialstate'}}" readonly />
+                        <span id="label-status" class="label-details">{{localize "Socialstate"}}</span>
+                    </div>
+                    <div class="headerInput col four">
+                        <input class="input-details" style="box-shadow: none !important;" name="data.details.Home.value" type="text" value="{{data.details.Home.value}}" placeholder="{{localize 'Home'}}" />
+                        <span class="label-details">{{localize "Home"}}</span>
+                    </div>
+                </div>
+
+                <div class="col row-section">
+
+                    <div class="headerInput col four">
+                        <input class="input-details" style="box-shadow: none !important;" name="data.details.family.value" type="text" value="{{data.details.family.value}}" placeholder="{{localize 'Family'}}" />
+                        <span class="label-details">{{localize "Family"}}</span>
+                    </div>
+
+                    <div class="headerInput col four">
+                        <input class="input-details" style="box-shadow: none !important;" name="data.details.age.value" type="text" value="{{data.details.age.value}}" placeholder="{{localize 'Age'}}" />
+                        <span class="label-details">{{localize "Age"}}<span>
+                    </div>
+    
+                    <div class="headerInput col four">
+                        <input class="input-details" style="box-shadow: none !important;"
+                            name="data.details.haircolor.value" type="text" value="{{data.details.haircolor.value}}"
+                            placeholder="{{localize 'Hair_color'}}" />
+                        <span class="label-details">{{localize "Hair_color"}}</span>
+                    </div>
+                    <div class="headerInput col four">
+                        <input class="input-details" style="box-shadow: none !important;" name="data.details.eyecolor.value" type="text" value="{{data.details.eyecolor.value}}" placeholder="{{localize 'Eye_color'}}" />
+                        <span class="label-details">{{localize "Eye_color"}}</span>
+                    </div>
+                </div>
+
+                <div class="col row-section">
+
+                    <div class="headerInput col four">
+                        <input class="input-details" style="box-shadow: none !important;" name="data.details.height.value" type="text" value="{{data.details.height.value}}" placeholder="{{localize 'Height'}}" />
+                        <span class="label-details">{{localize "Height"}}</span>
+                    </div>
+
+                    <div class="headerInput col four">
+                        <input class="input-details" style="box-shadow: none !important;" name="data.details.weight.value" type="text" value="{{data.details.weight.value}}" placeholder="{{localize 'Weight'}}" />
+                        <span class="label-details">{{localize "Weight"}}</span>
+                    </div>
+
+                    <div class="headerInput col two">
+                        <input class="input-details" style="box-shadow: none !important;" name="data.details.distinguishingmark.value" type="text" value="{{data.details.distinguishingmark.value}}" placeholder="{{localize 'Distinguishing_mark'}}" />
+                        <span class="label-details">{{localize "Distinguishing_mark"}}</span>
+                    </div>
+
+                </div>
+            </div>
+
+        </section>
     </div>
+
+
 </div>
 <div class="groupbox">
-    <div class="row-section table-header">
+    <div class="row-section header-label">
         <div class="col">
-            {{localize "biography"}}
+            <b>{{localize "biography"}}</b>
         </div>
     </div>
     <div class="row-section">
         <div class="col notes-box">
             {{editor content=data.details.biography.value target="data.details.biography.value" button=true owner=owner editable=editable}}
+        </div>
+    </div>
+</div>
+<div class="groupbox">
+    <div class="row-section header-label">
+        <div class="col">
+            <b>{{localize "Notes"}}</b>
+        </div>
+    </div>
+    <div class="row-section">
+        <div class="col notes-box">
+            {{editor content=data.details.notes.value target="data.details.notes.value" button=true owner=owner editable=editable}}
         </div>
     </div>
 </div>

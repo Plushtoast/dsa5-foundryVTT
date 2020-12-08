@@ -89,6 +89,10 @@ export default class ActorSheetDsa5 extends ActorSheet {
         this.actor.createEmbeddedEntity("OwnedItem", data);
     }
 
+    static _filterTalents() {
+
+    }
+
     activateListeners(html) {
         super.activateListeners(html);
 
@@ -321,6 +325,27 @@ export default class ActorSheetDsa5 extends ActorSheet {
 
         html.find('.item-delete').click(ev => {
             this._deleteItem(ev)
+        });
+
+        html.find('.filterTalents').click(event => {
+            $(event.currentTarget).closest('.content').find('.allTalents').toggleClass('showAll')
+        })
+
+        html.find('.talentSearch').keydown(async event => {
+            let tar = $(event.currentTarget)
+            let val = tar.val().toLowerCase().trim()
+            let talents = tar.closest('.content').find('.allTalents')
+            if (val.length > 1) {
+                talents.addClass('showAll').find('.item').filter(function() {
+                    return $(this).find('.talentName').text().toLowerCase().trim().indexOf(val) == -1
+                }).addClass('filterHide')
+                talents.find('.table-header, .table-title:not(:eq(0))').addClass("filterHide")
+            } else {
+                talents.find('.item, .table-header, .table-title').removeClass('filterHide')
+            }
+        });
+        html.find('.talentSearch')[0].addEventListener("search", function(event) {
+            $(event.currentTarget).closest('.content').find('.allTalents .item').removeClass('filterHide')
         });
     }
 

@@ -5,7 +5,7 @@
         <div class="groupbox">
             <div class="advantages row-section">
                 <div class="col header-label lineheight">
-                    {{localize "advantages"}}
+                    <b>{{localize "advantages"}}</b>
                 </div>
             </div>
             <div class="row-section wrap cards">
@@ -20,7 +20,7 @@
         <div class="groupbox">
             <div class="disadvantages row-section">
                 <div class="col header-label lineheight">
-                    {{localize "disadvantages"}}
+                    <b>{{localize "disadvantages"}}</b>
                 </div>
             </div>
             <div class="row-section wrap cards">
@@ -35,7 +35,7 @@
         <div class="groupbox">
             <div class="generalSpecialAbilities row-section">
                 <div class="col header-label lineheight">
-                    {{localize "generalSpecialAbilities"}}
+                    <b>{{localize "generalSpecialAbilities"}}</b>
                 </div>
             </div>
             <div class="row-section wrap cards">
@@ -49,7 +49,7 @@
         <div class="groupbox">
             <div class="generalSpecialAbilities row-section">
                 <div class="col header-label lineheight">
-                    {{localize "traits"}}
+                    <b>{{localize "traits"}}</b>
                     <a class="item-create very-small" title="{{localize 'SHEET.addItem'}}" item-section="trait" data-type="trait"><i class="fas fa-plus"></i></a>
                 </div>
             </div>
@@ -187,6 +187,63 @@
                 <div class="col eight lineheight center">
                     {{data.status.dodge.max}}
 
+                </div>
+            </div>
+            <div class="derivedAttrs row-section">
+                <div class="col two lineheight">
+                    {{localize "actionCount"}}
+                </div>
+                <div class="col eight lineheight center">
+
+                </div>
+                <div class="col eight center">
+
+                </div>
+
+                <div class="col eight lineheight center">
+                    <input class="input-text" type="text" name="data.actionCount.value" value="{{data.actionCount.value}}" data-dtype="text" />
+
+                </div>
+            </div>
+            <div class="derivedAttrs row-section">
+                <div class="col two lineheight">
+                    {{localize "conjuringDifficulty"}}
+                </div>
+                <div class="col eight lineheight center">
+
+                </div>
+                <div class="col eight center">
+
+                </div>
+
+                <div class="col eight lineheight center">
+                    <input class="input-text" type="text" name="data.conjuringDifficulty.value" value="{{data.conjuringDifficulty.value}}" data-dtype="text" />
+                </div>
+            </div>
+            <div class="derivedAttrs row-section">
+                <div class="col two lineheight">
+                    {{localize "count"}}
+                </div>
+
+
+                <div class="col two lineheight center">
+                    <input class="input-text" type="text" name="data.count.value" value="{{data.count.value}}" data-dtype="String" />
+                </div>
+            </div>
+            <div class="derivedAttrs row-section">
+                <div class="col two lineheight">
+                    {{localize "sizeCategory"}}
+                </div>
+
+
+                <div class="col two lineheight center">
+                    <select name="data.size.value" data-dtype="{{data.size.type}}" style="width:100%">
+                        {{#select data.size.value}}
+                        {{#each sizeCategories as |ch char|}}
+                        <option value="{{char}}">{{localize ch}}</option>
+                        {{/each}}
+                        {{/select}}
+                      </select>
                 </div>
             </div>
         </div>

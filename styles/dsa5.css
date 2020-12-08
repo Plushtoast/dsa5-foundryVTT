@@ -160,30 +160,18 @@ h7 {
     min-height: 165px;
 }
 
+.character-sheet nav.sheet-tabs,
+.creature-sheet nav.sheet-tabs,
+.npc-sheet nav.sheet-tabs {
+    margin-bottom: 20px;
+}
+
 .character-sheet .general,
 .npc-sheet .general {
     display: flex;
     flex-direction: row;
     width: 100%;
-    height: 105px;
     margin: 0;
-}
-
-.character-sheet .general .items,
-.npc-sheet .general .items {
-    margin-left: 5px;
-}
-
-.character-sheet .general .items .row,
-.npc-sheet .general .items .row {
-    display: inline-flex;
-    height: 34px;
-    flex-direction: row;
-    flex-wrap: wrap;
-    /* background: red; */
-    margin: 0px;
-    width: 100%;
-    /* flex: 1; */
 }
 
 #field-distinguishingmark {
@@ -194,29 +182,32 @@ h7 {
     margin-bottom: 10px;
 }
 
+.creature-sheet .headerInput,
+.creature-sheet .sheet-header .headerInput,
 .character-sheet .general .headerInput,
 .npc-sheet .general .headerInput,
 .npc-sheet .general .sheet-header .headerInput,
 .character-sheet .sheet-header .headerInput {
-    height: 34px;
-    display: flex;
-    flex-direction: column;
-    margin: 0px 15px 0px 0px;
-    width: calc(25% - 15px);
+    box-sizing: border-box;
+    margin: 5px
 }
 
 .npc-sheet .general .headerInput input,
 .npc-sheet .sheet-header .headerInput input,
+.creature-sheet .headerInput input,
+.creature-sheet .sheet-header .headerInput input,
 .character-sheet .general .headerInput input,
 .character-sheet .sheet-header .headerInput input {
     border: none;
     border-bottom: 1px solid var(--border-color);
     box-shadow: none;
     background-color: transparent;
-    font-size: 12px;
     border-radius: 0px;
+    height: auto;
 }
 
+.creature-sheet .headerInput span,
+.creature-sheet .sheet-header .headerInput span,
 .npc-sheet .general .headerInput span,
 .npc-sheet .sheet-header .headerInput span,
 .character-sheet .general .headerInput span,
@@ -285,7 +276,8 @@ form .form-group.tripple select {
 }
 
 .charimg {
-    width: 95px;
+    width: 115px;
+    height: 115px;
     object-fit: contain;
 }
 
@@ -336,11 +328,13 @@ form .form-group.tripple select {
 .table-title,
 .label-text {
     font-weight: bold;
+    font-family: "GentiumBasic-Bold";
     box-shadow: 0 0 14px #00000052 inset;
 }
 
 .table-header {
     font-weight: bold;
+    font-family: "GentiumBasic-Bold";
     box-shadow: 0 0 8px #00000052 inset;
 }
 
@@ -491,6 +485,7 @@ form .form-group.tripple select {
 .d6,
 .d2,
 .d3 {
+    font-family: 'GentiumBasic-Bold';
     width: 35px;
     height: 35px;
     display: inline-block;
@@ -652,8 +647,12 @@ form .form-group.tripple select {
     flex: 100%;
 }
 
+.row-section .col.morph {
+    flex: 50%;
+    min-width: 330px;
+}
+
 .row-section.skills {
-    font-size: 12px;
     border: 0.5px solid var(--border-color);
     margin: 0;
     padding: 2px;
@@ -746,7 +745,7 @@ form .form-group.tripple select {
     border: 1px solid var(--border-color);
     padding: 2px;
     border-radius: 3px;
-    margin: 2px;
+    margin: 10px 2px;
     min-height: 50px;
 }
 
@@ -1193,4 +1192,61 @@ li.folder {
     display: inline-block;
     font-size: 12px;
     margin-right: 5px;
+}
+
+.mayorAttributeBox {
+    margin-top: 10px;
+    max-width: 150px;
+}
+
+
+/*.charBtns.row-section .col.eight {
+    max-width: 50px;
+}*/
+
+.mayorAttributeBox input,
+.mayorAttributeBox span {
+    width: 35px;
+    display: inline-block;
+}
+
+.showAll .notLearned {
+    display: flex;
+}
+
+.notLearned,
+.showAll .filterHide,
+.filterHide {
+    display: none;
+}
+
+.row-section.skills.searchbox input {
+    display: inline-block;
+    width: calc(100% - 20px);
+}
+
+.row-section.skills.searchbox {
+    margin-bottom: 10px;
+    font-weight: normal;
+    color: rgb(14, 12, 12);
+}
+
+input[type="search"] {
+    width: calc(100% - 2px);
+    min-width: 20px;
+    height: 26px;
+    background: rgba(0, 0, 0, 0.05);
+    padding: 1px 3px;
+    margin: 0;
+    color: #191813;
+    font-family: inherit;
+    font-size: inherit;
+    text-align: inherit;
+    line-height: inherit;
+    border: 1px solid #7a7971;
+    border-radius: 3px;
+    -webkit-user-select: text;
+    -moz-user-select: text;
+    -ms-user-select: text;
+    user-select: text;
 }

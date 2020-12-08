@@ -3,81 +3,94 @@
 
     <header class="sheet-header" ondragstart="return false;" ondrop="return false;">
 
+        <div class="headerInput">
+            <input class="input name" style="box-shadow: none !important;" name="name" type="text" value="{{actor.name}}" placeholder="{{localize 'Name'}}" />
+            <span class="label name">{{localize "Name"}}</span>
+        </div>
+        <div class="headerInput">
+            <input class="input creatureClass" style="box-shadow: none !important;" data-dtype="{{actor.creatureClass.type}}" name="data.creatureClass.value" type="text" value="{{data.creatureClass.value}}" placeholder="{{localize 'creatureClass'}}" />
+            <span class="label creatureClass ">{{localize "creatureClass"}}</span>
+        </div>
 
     </header>
-    <section class="general" ondragstart="return false;" ondrop="return false;">
+    <div class="general" ondragstart="return false;" ondrop="return false; ">
 
-        <div class="row-section">
-            <div class="col five">
-                <div class="imagebox">
-                    <img class="charimg profile" src="{{actor.img}}" title="{{actor.name}}" height="95" width="95" data-edit="img" />
+        <div class="row-section ">
+            <div class="col five ">
+                <div class="imagebox ">
+                    <img class="charimg profile" src="{{actor.img}}" title="{{actor.name}}" data-edit="img" />
                 </div>
             </div>
-            <div class="col eighty">
-                <div class="row-section">
-                    <div class="col two">
-                        <div class="form-group">
-                            <label class="label-text">{{localize "Name"}}: </label>
-                            <input class="input-text" type="text" name="name" value="{{actor.name}}" data-dtype="string" />
-                        </div>
-
+            <div class="col eighty ">
+                <div class="row-section wrap charBtns">
+                    {{#each actor.data.characteristics as |ch c|}}
+                    <div title="{{localize ch.label}}" class="col eight center">
+                        {{localize ch.abrev}}
                     </div>
-                    <div class="col two">
-                        <div class="form-group">
-                            <label class="label-text">{{localize "creatureClass"}}: </label>
-                            <input class="input-text" type="text" name="data.creatureClass.value" value="{{data.creatureClass.value}}" data-dtype="string" />
-                        </div>
-
-                    </div>
+                    {{/each}}
                 </div>
-                <div class="row-section">
-                    <div class="col two">
-                        <div class="form-group">
-                            <label class="label-text">{{localize "sizeCategory"}}:</label>
-                            <select name="data.size.value" data-dtype="{{data.size.type}}">
-                              {{#select data.size.value}}
-                              {{#each sizeCategories as |ch char|}}
-                              <option value="{{char}}">{{localize ch}}</option>
-                              {{/each}}
-                              {{/select}}
-                            </select>
-                        </div>
-                    </div>
-                    <div class="col two">
-                        <div class="form-group">
-                            <label class="label-text">{{localize "count"}}: </label>
-                            <input class="input-text" type="text" name="data.count.value" value="{{data.count.value}}" data-dtype="String" />
-                        </div>
-
-                    </div>
+                <div class="row-section wrap charBtns">
+                    {{#each actor.data.characteristics as |ch c|}}
+                    <div class="ch-value col eight center" data-char="{{c}}"><a class="d20 die-{{c}}">{{ch.value}}</a></div>
+                    {{/each}}
                 </div>
-                <div class="row-section">
-                    <div class="col two">
-                        <div class="form-group">
-                            <label class="label-text">{{localize "conjuringDifficulty"}}: </label>
-                            <input class="input-text" type="number" name="data.conjuringDifficulty.value" value="{{data.conjuringDifficulty.value}}" data-dtype="number" />
+                <div class="row-section ">
+                    <div class="col four mayorAttributeBox ">
+                        <div class="row-section ">
+                            <div class="col lineheight center ">
+                                <b>{{localize "wounds"}}</b>
+                            </div>
+                        </div>
+                        <div class="row-section ">
+                            <div class="col center lineheight ">
+                                <input type="text" title="{{localize 'Current'}}" name="data.status.wounds.value" data-dtype="{{actor.data.status.wounds.type}}" value="{{actor.data.status.wounds.value}}" /> /
+                                <span title="{{localize 'max'}} ">{{actor.data.status.wounds.max}}</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    {{#if actor.hasPrayers}}
+                    <div class="col four mayorAttributeBox ">
+                        <div class="row-section ">
+                            <div class="col lineheight center ">
+                                <b>{{localize "karmaenergy"}}</b>
+                            </div>
+                        </div>
+                        <div class="row-section ">
+                            <div class="col center lineheight ">
+                                <input type="text" title="{{localize 'Current'}}" name="data.status.karmaenergy.value" data-dtype="{{actor.data.status.karmaenergy.type}}" value="{{actor.data.status.karmaenergy.value}}" /> /
+                                <span title="{{localize 'max'}} ">{{actor.data.status.karmaenergy.max}}</span>
+                            </div>
                         </div>
 
                     </div>
-                    <div class="col two">
-                        <div class="form-group">
-                            <label class="label-text">{{localize "actionCount"}}: </label>
-                            <input class="input-text" type="text" name="data.actionCount.value" value="{{data.actionCount.value}}" data-dtype="text" />
+                    {{else if actor.hasSpells}}
+                    <div class="col four mayorAttributeBox ">
+                        <div class="row-section ">
+                            <div class="col lineheight center ">
+                                <b>{{localize "astralenergy"}}</b>
+                            </div>
                         </div>
-
+                        <div class="row-section ">
+                            <div class="col center lineheight ">
+                                <input type="text" title="{{localize 'Current'}}" name="data.status.astralenergy.value" data-dtype="{{actor.data.status.astralenergy.type}}" value="{{actor.data.status.astralenergy.value}}" /> /
+                                <span title="{{localize 'max'}} ">{{actor.data.status.astralenergy.max}}</span>
+                            </div>
+                        </div>
                     </div>
+
+                    {{/if}}
+
+
                 </div>
-
             </div>
 
         </div>
-        <div class="row-section">
 
-        </div>
 
-    </section>
-    <section id="tab-sections">
-        <nav id="dsa5-primarytabs" class="sheet-tabs tabs" ondragstart="return false;" ondrop="return false;">
+    </div>
+    <section id="tab-sections ">
+        <nav id="dsa5-primarytabs" class="sheet-tabs tabs" ondragstart="return false;" ondrop="return false; ">
             <a class="item active" data-tab="main">{{localize "attributes"}}</a>
             <a class="item" data-tab="skills">{{localize "skills"}}</a>
             <a class="item" data-tab="combat">{{localize "Combat"}}</a> {{#if actor.hasSpells}}
@@ -87,7 +100,7 @@
             <a class="item" data-tab="notes">{{localize "Notes"}}</a>
         </nav>
 
-        <section class="content">
+        <section class="content ">
             <div class="tab main save-scroll" data-tab="main">
                 {{> systems/dsa5/templates/actors/creature/creature-main.html}}
             </div>
@@ -109,7 +122,7 @@
             <div class="tab inventory save-scroll" data-tab="inventory">
                 {{> systems/dsa5/templates/actors/creature/creature-loot.html}}
             </div>
-            <div class="tab notes save-scroll" data-tab="notes">
+            <div class="tab save-scroll" data-tab="notes">
                 {{> systems/dsa5/templates/actors/creature/creature-notes.html}}
             </div>
         </section>

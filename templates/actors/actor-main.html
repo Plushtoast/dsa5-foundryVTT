@@ -5,7 +5,7 @@
             {{#each actor.data.characteristics as |ch c|}}
             <div title="{{localize ch.label}}" class="table-header">
                 <div class="header-label">
-                    {{localize ch.abrev}}
+                    <b>{{localize ch.abrev}}</b>
                 </div>
             </div>
             {{/each}}
@@ -46,16 +46,7 @@
             </div>
             {{/each}}
         </div>
-        <div class="table-row bottom">
-            <div class="row-type table-data">
-                <div class="header-block d20height">
-                    {{localize "Current"}}
-                </div>
-            </div>
-            {{#each actor.data.characteristics as |ch c|}}
-            <div class="table-data ch-value" data-char="{{c}}"><a class="d20 die-{{c}}">{{ch.value}}</a></div>
-            {{/each}}
-        </div>
+
     </div>
 </div>
 
@@ -64,7 +55,7 @@
         <div class="groupbox">
             <div class="advantages row-section">
                 <div class="col header-label lineheight">
-                    {{localize "advantages"}}
+                    <b>{{localize "advantages"}}</b>
                 </div>
             </div>
             <div class="row-section wrap cards">
@@ -79,7 +70,7 @@
         <div class="groupbox">
             <div class="disadvantages row-section">
                 <div class="col header-label lineheight">
-                    {{localize "disadvantages"}}
+                    <b>{{localize "disadvantages"}}</b>
                 </div>
             </div>
             <div class="row-section wrap cards">
@@ -94,7 +85,7 @@
         <div class="groupbox">
             <div class="generalSpecialAbilities row-section">
                 <div class="col header-label lineheight">
-                    {{localize "generalSpecialAbilities"}}
+                    <b>{{localize "generalSpecialAbilities"}}</b>
                 </div>
             </div>
             <div class="row-section wrap cards">
@@ -109,7 +100,7 @@
         <div class="groupbox">
             <div class="fatePointsAbilities row-section">
                 <div class="col header-label lineheight">
-                    {{localize "fatePointsAbilities"}}
+                    <b>{{localize "fatePointsAbilities"}}</b>
                 </div>
             </div>
             <div class="row-section wrap cards">
@@ -258,51 +249,31 @@
 
                 </div>
             </div>
-        </div>
-        <div class="groupbox">
             <div class="derivedAttrs row-section">
-                <div class="col two">
-                </div>
-                <div class="col eight">
-
-                </div>
-                <div class="col eight very-small center" title="{{localize 'value'}}">
-                    {{localize "ABBR-value"}}
-                </div>
-                <div class="col eight very-small center" title="{{localize 'Modifiers'}}">
-                    {{localize "ABBR-modifiers"}}
-                </div>
-
-                <div class="col eight very-small center" title="{{localize 'max'}}">
-                    {{localize "ABBR-max"}}
-                </div>
-            </div>
-            <div class="fate row-section">
-
                 <div class="col two lineheight">
                     {{localize "fatePoints"}}
                 </div>
-                <div class="col eight lineheight">
-
-                </div>
-                <div class="col eight center">
-                    <input name="data.status.fatePoints.value" type="text" value="{{data.status.fatePoints.value}}" data-dtype="Number" />
+                <div class="col eight lineheight center">
+                    <input name="data.status.fatePoints.current" type="text" value="{{data.status.fatePoints.current}}" data-dtype="Number" />
                 </div>
                 <div class="col eight center">
                     <input name="data.status.fatePoints.modifier" type="text" value="{{data.status.fatePoints.modifier}}" data-dtype="Number" />
 
                 </div>
+                <div class="col eight">
 
+                </div>
                 <div class="col eight lineheight center">
                     {{data.status.fatePoints.max}}
 
                 </div>
             </div>
         </div>
+
         <div class="groupbox">
             <div class="experience row-section">
                 <div class="col header-label lineheight">
-                    <span>{{localize "Experience"}}</span>
+                    <b>{{localize "Experience"}}</b>
                 </div>
             </div>
             <div class="experience row-section">

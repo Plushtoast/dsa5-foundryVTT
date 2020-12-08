@@ -65,28 +65,28 @@
         <div class="groupbox">
             <div class="row-section">
                 <div class="col header-label">
-                    {{localize "carrycapacity"}}
+                    <b>{{localize "carrycapacity"}}</b>
                 </div>
             </div>
             <div class="row-section table-title">
-                <div class="col three center small">
+                <div class="col three center">
                     {{localize "carrycapacity"}}
                 </div>
-                <div class="col three center small">
+                <div class="col three center">
                     {{localize "Current"}}
                 </div>
-                <div class="col three center small">
+                <div class="col three center">
                     {{localize "encumbrance"}}
                 </div>
             </div>
             <div class="row-section">
-                <div class="col three center small">
+                <div class="col three center">
                     {{actor.carrycapacity}}
                 </div>
-                <div class="col three center small">
+                <div class="col three center">
                     {{actor.totalweight}}
                 </div>
-                <div class="col three center small">
+                <div class="col three center">
                     {{actor.encumbrance}}
                 </div>
             </div>
@@ -96,19 +96,19 @@
         <div class="groupbox">
             <div class="row-section">
                 <div class="col header-label">
-                    {{localize "purse"}}
+                    <b>{{localize "purse"}}</b>
                 </div>
             </div>
             <div class="row-section table-title">
                 {{#each actor.money.coins as |item i|}}
-                <div class="col four center item small" data-item-id="{{item._id}}">
+                <div class="col four center item" data-item-id="{{item._id}}">
                     <a class="item-edit">{{localize item.name}}</a>
                 </div>
                 {{/each}}
             </div>
             <div class="row-section">
                 {{#each actor.money.coins as |item i|}}
-                <div class="col four center item small" data-item-id="{{item._id}}">
+                <div class="col four center item" data-item-id="{{item._id}}">
                     <a class="col-{{item.name}} quantity-click">{{item.data.quantity.value}}</a>
                 </div>
                 {{/each}}
