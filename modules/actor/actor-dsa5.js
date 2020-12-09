@@ -67,7 +67,7 @@ export default class Actordsa5 extends Actor {
 
                 data.data.status.soulpower.value = (data.data.status.soulpower.initial ? data.data.status.soulpower.initial : 0) + Math.round((data.data.characteristics["mu"].value + data.data.characteristics["kl"].value + data.data.characteristics["in"].value) / 6);
                 data.data.status.toughness.value = (data.data.status.toughness.initial ? data.data.status.toughness.initial : 0) + Math.round((data.data.characteristics["ko"].value + data.data.characteristics["ko"].value + data.data.characteristics["kk"].value) / 6);
-                data.data.status.fatePoints.max = data.data.status.fatePoints.value + data.data.status.fatePoints.modifier;
+                data.data.status.fatePoints.max = Number(data.data.status.fatePoints.current) + Number(data.data.status.fatePoints.modifier);
 
                 data.data.status.initiative.value = Math.round((data.data.characteristics["mu"].value + data.data.characteristics["ge"].value) / 2);
             }
@@ -173,6 +173,14 @@ export default class Actordsa5 extends Actor {
         let spells = []
         let rituals = []
         let ceremonies = []
+        let schips = []
+
+        for (let i = 1; i <= Number(actorData.data.status.fatePoints.max); i++) {
+            schips.push({
+                value: i,
+                cssClass: i <= Number(actorData.data.status.fatePoints.value) ? "fullSchip" : "emptySchip"
+            })
+        }
 
         const inventory = {
             meleeweapons: {
@@ -445,6 +453,7 @@ export default class Actordsa5 extends Actor {
             blessings: blessings,
             magicTricks: magicTricks,
             hasPrayers: hasPrayers,
+            schips: schips,
             guidevalues: DSA5.characteristics,
             hasSpells: hasSpells,
             spells: spells,

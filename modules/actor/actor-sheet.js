@@ -23,14 +23,41 @@ export default class ActorSheetDsa5 extends ActorSheet {
 
     async _render(force = false, options = {}) {
         this._saveScrollPos(); // Save scroll positions
+        this._saveSearchFields()
         await super._render(force, options);
         this._setScrollPos(); // Set scroll positions
+        this._restoreSeachFields()
 
         // Add Tooltips
         /*$(this._element).find(".close").attr("title", game.i18n.localize("SHEET.Close"));
         $(this._element).find(".configure-sheet").attr("title", game.i18n.localize("SHEET.Configure"));
         $(this._element).find(".configure-token").attr("title", game.i18n.localize("SHEET.Token"));
         $(this._element).find(".import").attr("title", game.i18n.localize("SHEET.Import"));*/
+    }
+
+    _saveSearchFields() {
+        if (this.form === null)
+            return;
+        const html = $(this.form).parent()
+        this.searchFields = {
+            talentFiltered: $(html.find(".filterTalents")).hasClass("filtered"),
+            searchText: $(html.find(".talentSearch")).val()
+        }
+    }
+
+    _restoreSeachFields() {
+        if (this.searchFields != undefined) {
+            const html = $(this.form).parent();
+            if (this.searchFields.talentFiltered) {
+                $(html.find(".filterTalents")).addClass("filtered")
+                $(html.find(".allTalents")).removeClass("showAll")
+            }
+            let talentSearchInput = $(html.find(".talentSearch"))
+            talentSearchInput.val(this.searchFields.searchText)
+            if (this.searchFields.searchText != "") {
+                this._filterTalents(talentSearchInput)
+            }
+        }
     }
 
     _saveScrollPos() {
@@ -87,10 +114,6 @@ export default class ActorSheetDsa5 extends ActorSheet {
         //data["img"] = "systems/wfrp4e/icons/blank.png";
         data["name"] = `New ${data.type.capitalize()}`;
         this.actor.createEmbeddedEntity("OwnedItem", data);
-    }
-
-    static _filterTalents() {
-
     }
 
     activateListeners(html) {
@@ -329,24 +352,26 @@ export default class ActorSheetDsa5 extends ActorSheet {
 
         html.find('.filterTalents').click(event => {
             $(event.currentTarget).closest('.content').find('.allTalents').toggleClass('showAll')
+            $(event.currentTarget).toggleClass("filtered")
         })
 
-        html.find('.talentSearch').keydown(async event => {
-            let tar = $(event.currentTarget)
-            let val = tar.val().toLowerCase().trim()
-            let talents = tar.closest('.content').find('.allTalents')
-            if (val.length > 1) {
-                talents.addClass('showAll').find('.item').filter(function() {
-                    return $(this).find('.talentName').text().toLowerCase().trim().indexOf(val) == -1
-                }).addClass('filterHide')
-                talents.find('.table-header, .table-title:not(:eq(0))').addClass("filterHide")
-            } else {
-                talents.find('.item, .table-header, .table-title').removeClass('filterHide')
-            }
+        html.find('.talentSearch').keydown(event => {
+            this._filterTalents($(event.currentTarget))
         });
-        html.find('.talentSearch')[0].addEventListener("search", function(event) {
-            $(event.currentTarget).closest('.content').find('.allTalents .item').removeClass('filterHide')
-        });
+        let filterTalents = ev => this._filterTalents($(ev.currentTarget))
+        html.find('.talentSearch')[0].addEventListener("search", filterTalents, false);
+    }
+
+    _filterTalents(tar) {
+        let val = tar.val().toLowerCase().trim()
+        let talents = $(this.form).parent().find('.allTalents')
+        talents.find('.item, .table-header, .table-title').removeClass('filterHide')
+        if (val.length > 1) {
+            talents.addClass('showAll').find('.item').filter(function() {
+                return $(this).find('.talentName').text().toLowerCase().trim().indexOf(val) == -1
+            }).addClass('filterHide')
+            talents.find('.table-header, .table-title:not(:eq(0))').addClass("filterHide")
+        }
     }
 
     _deleteItem(ev) {
