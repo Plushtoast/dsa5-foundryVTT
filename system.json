@@ -2,8 +2,8 @@
     "name": "dsa5",
     "title": "Das Schwarze Auge (5th Edition)",
     "description": "Many details here.",
-    "version": "0.1.42",
-    "templateVersion": 32,
+    "version": "0.1.43",
+    "templateVersion": 33,
     "author": "Plushtoast",
     "scripts": [],
     "esmodules": [
@@ -170,6 +170,16 @@
             "entity": "Item",
             "tags": [
                 "careers"
+            ]
+        },
+        {
+            "name": "Cultures",
+            "label": "Cultures",
+            "system": "dsa5",
+            "path": "packs/cultures.db",
+            "entity": "Item",
+            "tags": [
+                "cultures"
             ]
         },
         {

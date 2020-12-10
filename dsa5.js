@@ -5,6 +5,9 @@ import ActorSheetdsa5NPC from "./modules/actor/npc-sheet.js";
 import Actordsa5 from "./modules/actor/actor-dsa5.js";
 import Itemdsa5 from "./modules/item/item-dsa5.js";
 import ItemSheetdsa5 from "./modules/item/item-sheet.js";
+import ItemSpeciesDsa5 from "./modules/item/item-species-dsa5.js";
+import ItemCareerDsa5 from "./modules/item/item-career-dsa5.js";
+import ItemCultureDsa5 from "./modules/item/item-culture-dsa5.js"
 import registerHooks from "./modules/system/hooks.js";
 import MacroDSA5 from "./modules/system/macroControl.js";
 import LazyImporter from "./modules/importer/lazy_importer.js"
@@ -19,6 +22,9 @@ Hooks.once("init", async function() {
     Actors.registerSheet("dsa5", ActorSheetdsa5NPC, { types: ["npc"] });
     Items.unregisterSheet("core", ItemSheet);
     Items.registerSheet("dsa5", ItemSheetdsa5, { makeDefault: true });
+    Items.registerSheet("dsa5", ItemSpeciesDsa5, { types: ["species"] });
+    Items.registerSheet("dsa5", ItemCareerDsa5, { types: ["career"] });
+    Items.registerSheet("dsa5", ItemCultureDsa5, { types: ["culture"] });
 
     game.dsa5 = {
         apps: {

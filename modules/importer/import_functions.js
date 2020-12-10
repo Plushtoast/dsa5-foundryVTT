@@ -24,7 +24,7 @@ export default class ImportFunctions {
                     const item = {
                         name: elem.getElementsByTagName("name")[0].textContent,
                         type: "advantage",
-                        img: Itemdsa5.defaultImages["advantage"],
+                        img: getImg(elem, "advantage"),
                         data: {
                             "description.value": DSA5Importer.prettyDescription(elem.getElementsByTagName("description")[0].textContent),
                             "APValue.value": apVal,
@@ -71,7 +71,7 @@ export default class ImportFunctions {
 
                     const item = {
                         name: elem.getElementsByTagName("name")[0].textContent,
-                        img: Itemdsa5.defaultImages["skill"],
+                        img: getImg(elem, "skill"),
                         type: "skill",
                         data: {
                             "description.value": DSA5Importer.prettyDescription(elem.getElementsByTagName("description")[0].textContent),
@@ -182,7 +182,7 @@ export default class ImportFunctions {
                     }
                     const item = {
                         name: elem.getElementsByTagName("name")[0].textContent,
-                        img: Itemdsa5.defaultImages["disadvantage"],
+                        img: getImg(elem, "disadvantage"),
                         type: "disadvantage",
                         data: {
                             "description.value": DSA5Importer.prettyDescription(elem.getElementsByTagName("description")[0].textContent),
@@ -202,6 +202,10 @@ export default class ImportFunctions {
         x.send(null);
     }
 
+    static getImg(elem, std) {
+        return elem.getElementsByTagName("img")[0].textContent == "" ? Itemdsa5.defaultImages[std] : elem.getElementsByTagName("img")[0].textContent
+    }
+
     static async importArmor() {
         var x = new XMLHttpRequest();
         var doc
@@ -217,7 +221,7 @@ export default class ImportFunctions {
                     let elem = elems[i]
                     const item = {
                         name: elem.getElementsByTagName("name")[0].textContent,
-                        img: elem.getElementsByTagName("img")[0].textContent == "" ? Itemdsa5.defaultImages["armor"] : elem.getElementsByTagName("img")[0].textContent,
+                        img: getImg(elem, "armor"),
                         type: "armor",
                         data: {
                             "description.value": DSA5Importer.prettyDescription(elem.getElementsByTagName("description")[0].textContent),
@@ -261,6 +265,9 @@ export default class ImportFunctions {
                     if (caregory in DSA5Importer.ImportVars.meleeImages.de) {
                         img = DSA5Importer.ImportVars.meleeImages.de[caregory]
                     }
+
+                    if (elem.getElementsByTagName("img")[0].textContent != "")
+                        img = getImg(elem, "meleeweapon")
 
                     const item = {
                         name: elem.getElementsByTagName("name")[0].textContent,
@@ -315,7 +322,8 @@ export default class ImportFunctions {
                     if (caregory in DSA5Importer.ImportVars.rangeImages.de) {
                         img = DSA5Importer.ImportVars.rangeImages.de[caregory]
                     }
-
+                    if (elem.getElementsByTagName("img")[0].textContent != "")
+                        img = getImg(elem, "rangeweapon")
                     const item = {
                         name: elem.getElementsByTagName("name")[0].textContent,
                         img: img,
@@ -344,6 +352,57 @@ export default class ImportFunctions {
         x.send(null);
     }
 
+
+    static async importCulture() {
+        var x = new XMLHttpRequest();
+        var doc
+        x.open("GET", "systems/dsa5/modules/importer/xmls/culture.xml", true);
+
+        x.onreadystatechange = await async function() {
+            if (x.readyState == 4 && x.status == 200) {
+                doc = x.responseXML;
+
+                let pack = await DSA5Importer.getCompendiumPack("Item", `Cultures`);
+                let elems = doc.getElementsByTagName("culture")
+                for (let i = 0; i < elems.length; i++) {
+                    let elem = elems[i]
+                    let img = getImg(elem, "culture");
+                    /*let caregory = elem.getElementsByTagName("category")[0].textContent
+                    if (caregory in DSA5Importer.ImportVars.rangeImages.de) {
+                        img = DSA5Importer.ImportVars.rangeImages.de[caregory]
+                    }*/
+
+                    const item = {
+                        name: elem.getElementsByTagName("name")[0].textContent,
+                        img: img,
+                        type: "culture",
+                        data: {
+                            "description.value": DSA5Importer.prettyDescription(elem.getElementsByTagName("description")[0].textContent),
+                            "APValue.value": elem.getElementsByTagName("APvalue")[0].textContent,
+                            "language.value": elem.getElementsByTagName("language")[0].textContent,
+                            "writing.value": elem.getElementsByTagName("writing")[0].textContent,
+                            "localKnowledge.value": elem.getElementsByTagName("localKnowledge")[0].textContent,
+                            "suitableProfessions.value": elem.getElementsByTagName("suitableProfessions")[0].textContent,
+                            "recommendedAdvantages.value": elem.getElementsByTagName("recommendedAdvantages")[0].textContent,
+                            "recommendedDisadvantages.value": elem.getElementsByTagName("recommendedDisadvantages")[0].textContent,
+                            "recommendedTalents.value": elem.getElementsByTagName("recommendedTalents")[0].textContent,
+                            "notsuitableAdvantages.value": elem.getElementsByTagName("notsuitableAdvantages")[0].textContent,
+                            "notsuitableTalents.value": elem.getElementsByTagName("notsuitableTalents")[0].textContent,
+                            "notsuitableDisadvantages.value": elem.getElementsByTagName("notsuitableDisadvantages")[0].textContent,
+                            "socialstate.value": elem.getElementsByTagName("socialstate")[0].textContent,
+                            "skills.value": elem.getElementsByTagName("skills")[0].textContent
+                        },
+                    };
+
+                    await DSA5Importer.writeItem(pack, item)
+
+                }
+            }
+        };
+        x.send(null);
+    }
+
+
     static async importEquipment() {
         var x = new XMLHttpRequest();
         var doc
@@ -357,7 +416,7 @@ export default class ImportFunctions {
                 let elems = doc.getElementsByTagName("equipment")
                 for (let i = 0; i < elems.length; i++) {
                     let elem = elems[i]
-                    let img = Itemdsa5.defaultImages["equipment"];
+                    let img = getImg(elem, "equipment");
                     /*let caregory = elem.getElementsByTagName("category")[0].textContent
                     if (caregory in DSA5Importer.ImportVars.rangeImages.de) {
                         img = DSA5Importer.ImportVars.rangeImages.de[caregory]
@@ -397,7 +456,7 @@ export default class ImportFunctions {
                 let elems = doc.getElementsByTagName("spells")
                 for (let i = 0; i < elems.length; i++) {
                     let elem = elems[i]
-                    let img = Itemdsa5.defaultImages["spell"];
+                    let img = getImg(elem, "spell");
                     let resist = "-"
                     if (elem.getElementsByTagName("probe")[0].textContent.includes("SK")) {
                         resist = "SK"
@@ -458,7 +517,7 @@ export default class ImportFunctions {
                 let elems = doc.getElementsByTagName("rituals")
                 for (let i = 0; i < elems.length; i++) {
                     let elem = elems[i]
-                    let img = Itemdsa5.defaultImages["ritual"];
+                    let img = getImg(elem, "ritual");
                     let resist = "-"
                     if (elem.getElementsByTagName("probe")[0].textContent.includes("SK")) {
                         resist = "SK"
@@ -519,7 +578,7 @@ export default class ImportFunctions {
                 let elems = doc.getElementsByTagName("liturgies")
                 for (let i = 0; i < elems.length; i++) {
                     let elem = elems[i]
-                    let img = Itemdsa5.defaultImages["liturgy"];
+                    let img = getImg(elem, "liturgy");
                     /*let caregory = elem.getElementsByTagName("category")[0].textContent
                     if (caregory in DSA5Importer.ImportVars.rangeImages.de) {
                         img = DSA5Importer.ImportVars.rangeImages.de[caregory]
@@ -579,7 +638,7 @@ export default class ImportFunctions {
                 let elems = doc.getElementsByTagName("ceremonies")
                 for (let i = 0; i < elems.length; i++) {
                     let elem = elems[i]
-                    let img = Itemdsa5.defaultImages["ceremony"];
+                    let img = getImg(elem, "ceremony");
                     /*let caregory = elem.getElementsByTagName("category")[0].textContent
                     if (caregory in DSA5Importer.ImportVars.rangeImages.de) {
                         img = DSA5Importer.ImportVars.rangeImages.de[caregory]
@@ -641,7 +700,7 @@ export default class ImportFunctions {
                 let elems = doc.getElementsByTagName("spelltrick")
                 for (let i = 0; i < elems.length; i++) {
                     let elem = elems[i]
-                    let img = Itemdsa5.defaultImages["spelltrick"];
+                    let img = getImg(elem, "spelltrick");
                     /*let caregory = elem.getElementsByTagName("category")[0].textContent
                     if (caregory in DSA5Importer.ImportVars.rangeImages.de) {
                         img = DSA5Importer.ImportVars.rangeImages.de[caregory]
@@ -680,7 +739,7 @@ export default class ImportFunctions {
                 let elems = doc.getElementsByTagName("blessing")
                 for (let i = 0; i < elems.length; i++) {
                     let elem = elems[i]
-                    let img = Itemdsa5.defaultImages["blessing"];
+                    let img = getImg(elem, "blessing");
                     /*let caregory = elem.getElementsByTagName("category")[0].textContent
                     if (caregory in DSA5Importer.ImportVars.rangeImages.de) {
                         img = DSA5Importer.ImportVars.rangeImages.de[caregory]
@@ -762,6 +821,9 @@ export default class ImportFunctions {
                 for (let i = 0; i < elems.length; i++) {
                     let elem = elems[i]
                     let img = Itemdsa5.defaultImages[k];
+
+                    if (elem.getElementsByTagName("img")[0].textContent != "")
+                        img = getImg(elem, "biest");
                     /*let caregory = elem.getElementsByTagName("category")[0].textContent
                     if (caregory in DSA5Importer.ImportVars.rangeImages.de) {
                         img = DSA5Importer.ImportVars.rangeImages.de[caregory]
@@ -1070,6 +1132,9 @@ export default class ImportFunctions {
                 for (let i = 0; i < elems.length; i++) {
                     let elem = elems[i]
                     let img = Itemdsa5.defaultImages[k];
+
+                    if (elem.getElementsByTagName("img")[0].textContent != "")
+                        img = getImg(elem, "career");
                     /*let caregory = elem.getElementsByTagName("category")[0].textContent
                     if (caregory in DSA5Importer.ImportVars.rangeImages.de) {
                         img = DSA5Importer.ImportVars.rangeImages.de[caregory]

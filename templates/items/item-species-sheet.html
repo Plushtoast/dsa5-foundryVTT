@@ -5,20 +5,31 @@
         </h1>
     </header>
 
-    {{> systems/dsa5/templates/items/item-stat.html}}
+    <div class="row-section ">
 
-    <nav class="sheet-tabs tabs" data-tab-container="primary">
-        <a class="item active" data-tab="description">{{localize "Description"}}</a>
-        <a class="item" data-tab="details">{{localize "Details"}}</a>
-    </nav>
+        <div class="col item-main noequipment">
+            <div class="row-section">
+                <div class="col fourty">
+                    <label class="label-text table-title">{{localize "Category"}}</label>
+                </div>
+                <div class="col sixty">
+                    <label>{{localize item.type}}</label>
+                </div>
+            </div>
 
+        </div>
+    </div>
 
-    <section class="content">
-
-        {{> systems/dsa5/templates/items/item-description.html}}
-
-        <div class="tab details" data-tab="details">
-
+    <div class="row-section">
+        <div class="col fourty">
+            <img src="{{item.img}}" style="max-width:100%; max-height: 100%;" data-edit="img" />
+        </div>
+        <div class="col sixty">
+            {{editor content=data.description.value target="data.description.value" button=true owner=owner editable=editable}}
+        </div>
+    </div>
+    <div class="row-section">
+        <div class="col">
             <div class="form-group">
                 <label class="label-text">{{localize "APvalue"}}:</label>
                 <input class="input-text" type="text" name="data.APValue.value" value="{{data.APValue.value}}" data-dtype="Number" />
@@ -43,8 +54,10 @@
                 <label class="label-text">{{localize "speed"}}: </label>
                 <input class="input-text" type="text" name="data.baseValues.speed.value" value="{{data.baseValues.speed.value}}" data-dtype="Number" />
             </div>
-
-
         </div>
-    </section>
+    </div>
+
+
+
+
 </form>

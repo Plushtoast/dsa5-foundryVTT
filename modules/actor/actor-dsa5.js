@@ -441,7 +441,6 @@ export default class Actordsa5 extends Actor {
 
         let eqModifierString = []
         for (var i in equipmentModifiers) {
-            console.log(i)
             eqModifierString.push(i + " " + equipmentModifiers[i].value + " (" + equipmentModifiers[i].sources.join(", ") + ")")
         }
 

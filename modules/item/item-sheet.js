@@ -6,12 +6,6 @@ import DSA5 from "../system/config-dsa5.js"
 
 export default class ItemSheetdsa5 extends ItemSheet {
     constructor(item, options) {
-        switch (item.type) {
-            case "career":
-                options.width = 700
-                options.height = 700
-                break
-        }
 
         super(item, options);
         this.mce = null;
@@ -104,10 +98,6 @@ export default class ItemSheetdsa5 extends ItemSheet {
             case "specialability":
                 data['categories'] = DSA5.specialAbilityCategories;
                 break;
-            case "career":
-                data["mageLevels"] = DSA5.mageLevels
-                data['guidevalues'] = DSA5.characteristics;
-                break;
             case "armor":
                 break;
             case "trait":
@@ -124,8 +114,3 @@ export default class ItemSheetdsa5 extends ItemSheet {
 
 
 }
-
-Items.unregisterSheet("core", ItemSheet);
-Items.registerSheet("dsa5", ItemSheetdsa5, {
-    makeDefault: true
-});

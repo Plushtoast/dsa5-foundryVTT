@@ -643,6 +643,11 @@
                 "label": "localKnowledge",
                 "value": ""
             },
+            "suitableProfessions": {
+                "type": "String",
+                "value": "",
+                "label": "suitableProfessions"
+            },
             "recommendedAdvantages": {
                 "type": "String",
                 "value": "",
