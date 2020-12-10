@@ -4,6 +4,7 @@ export default class ItemSpeciesdsa5 extends ItemSheetdsa5 {
     constructor(item, options) {
         options.width = 530
         options.height = 570
+        console.log("muh")
         super(item, options);
         this.mce = null;
     }

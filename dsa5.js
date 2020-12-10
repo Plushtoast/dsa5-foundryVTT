@@ -22,9 +22,9 @@ Hooks.once("init", async function() {
     Actors.registerSheet("dsa5", ActorSheetdsa5NPC, { types: ["npc"] });
     Items.unregisterSheet("core", ItemSheet);
     Items.registerSheet("dsa5", ItemSheetdsa5, { makeDefault: true });
-    Items.registerSheet("dsa5", ItemSpeciesDsa5, { types: ["species"] });
-    Items.registerSheet("dsa5", ItemCareerDsa5, { types: ["career"] });
-    Items.registerSheet("dsa5", ItemCultureDsa5, { types: ["culture"] });
+    Items.registerSheet("dsa5", ItemSpeciesDsa5, { makeDefault: true, types: ["species"] });
+    Items.registerSheet("dsa5", ItemCareerDsa5, { makeDefault: true, types: ["career"] });
+    Items.registerSheet("dsa5", ItemCultureDsa5, { makeDefault: true, types: ["culture"] });
 
     game.dsa5 = {
         apps: {
