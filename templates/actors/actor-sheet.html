@@ -39,8 +39,11 @@
                 </div>
 
                 <div class="row-section" style="margin-top:10px;">
-                    <div class="col two">
-                        <div class="healthbar barLeft" title="{{localize 'wounds'}}">
+                    <div class="col ten center lineheight" title="{{localize 'wounds'}}">
+                        {{localize 'CHARAbbrev.LeP'}}
+                    </div>
+                    <div class="col fourty">
+                        <div class="healthbar barLeft{{#if actor.hasPrayers}}{{else if actor.hasSpells}}{{else}} soloBar{{/if}}" title="{{localize 'wounds'}}">
 
                             <div class="bar LeP" style="--a: {{actor.data.status.wounds.value}}; --b: {{actor.data.status.wounds.max}}">
                             </div>
@@ -51,7 +54,7 @@
                         </div>
                     </div>
                     {{#if actor.hasPrayers}}
-                    <div class="col two">
+                    <div class="col fourty">
                         <div class="healthbar barRight" title="{{localize 'karmaenergy'}}">
                             <div class="barLabel">
                                 <input type="text" title="{{localize 'Current'}}" name="data.status.karmaenergy.value" data-dtype="{{actor.data.status.karmaenergy.type}}" value="{{actor.data.status.karmaenergy.value}}" /> /
@@ -62,8 +65,11 @@
                             </div>
                         </div>
                     </div>
+                    <div class="col ten center  lineheight" title="{{localize 'karmaenergy'}}">
+                        {{localize 'CHARAbbrev.KaP'}}
+                    </div>
                     {{else if actor.hasSpells}}
-                    <div class="col two">
+                    <div class="col fourty">
                         <div class="healthbar barRight" title="{{localize 'astralenergy'}}">
                             <div class="barLabel">
                                 <input type="text" title="{{localize 'Current'}}" name="data.status.astralenergy.value" data-dtype="{{actor.data.status.astralenergy.type}}" value="{{actor.data.status.astralenergy.value}}" /> /
@@ -74,21 +80,25 @@
                             </div>
                         </div>
                     </div>
+                    <div class="col ten center lineheight" title="{{localize 'astralenergy'}}">
+                        {{localize 'CHARAbbrev.AsP'}}
+                    </div>
                     {{else}}
                     <div class="col two">
-                        <div class="healthbar barRight">
-                            <div class="barLabel">
-                            </div>
-                            <div class="bar">
-                            </div>
-                        </div>
+
                     </div>
                     {{/if}}
                 </div>
                 <div class="row-section">
-                    <div class="col center" title="{{localize 'fatePoints'}}">
+                    <div class="col ten lineheight center" title="{{localize 'fatePoints'}}">
+                        {{localize 'CHARAbbrev.fatePoints'}}
+                    </div>
+                    <div class="col eighty center" title="{{localize 'fatePoints'}}">
                         <input class="hidden" type="text" name="data.status.fatePoints.value" data-dtype="{{actor.data.status.fatePoints.type}}" value="{{actor.data.status.fatePoints.value}}" /> {{#each actor.schips as |item i|}}
                         <a class="schip {{item.cssClass}}" data-val="{{item.value}}"></a> {{/each}}
+                    </div>
+                    <div class="col ten center">
+
                     </div>
                 </div>
                 <!--div class="row-section">
@@ -159,11 +169,11 @@
     <!-- TABS -->
     <section id="tab-sections">
         <nav id="dsa5-primarytabs" class="sheet-tabs tabs" ondragstart="return false;" ondrop="return false;">
-            <a class="item active" data-tab="main">{{localize "attributes"}}</a>
-            <a class="item" data-tab="skills">{{localize "skills"}}</a>
+            <a class="item active" data-tab="skills">{{localize "skills"}}</a>
             <a class="item" data-tab="combat">{{localize "Combat"}}</a> {{#if actor.hasSpells}}
             <a class="item" data-tab="magic">{{localize "Magic"}}</a> {{/if}} {{#if actor.hasPrayers}}
             <a class="item" data-tab="religion">{{localize "Religion"}}</a> {{/if}}
+            <a class="item" data-tab="main">{{localize "attributes"}}</a>
             <a class="item" data-tab="inventory">{{localize "equipment"}}</a>
             <a class="item" data-tab="notes">{{localize "Notes"}}</a>
         </nav>

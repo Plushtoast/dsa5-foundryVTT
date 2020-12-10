@@ -175,6 +175,8 @@ export default class Actordsa5 extends Actor {
         let ceremonies = []
         let schips = []
 
+        let equipmentModifiers = {}
+
         for (let i = 1; i <= Number(actorData.data.status.fatePoints.max); i++) {
             schips.push({
                 value: i,
@@ -342,6 +344,7 @@ export default class Actordsa5 extends Actor {
                     if (i.data.worn.value) {
                         encumbrance += i.data.encumbrance.value;
                         totalArmor += i.data.protection.value;
+                        this._addModifiers(equipmentModifiers, i)
                         armor.push(i);
                     }
 
@@ -411,6 +414,9 @@ export default class Actordsa5 extends Actor {
             }
         }
 
+        if (equipmentModifiers.ini != undefined)
+            this.data.data.status.initiative.value += equipmentModifiers.ini.value
+
         money.coins = money.coins.sort((a, b) => (a.data.price.value > b.data.price.value) ? -1 : 1);
         encumbrance += Math.max(0, Math.floor((totalWeight - carrycapacity) / 4));
 
@@ -430,6 +436,12 @@ export default class Actordsa5 extends Actor {
 
         this._updateConditions()
 
+        let eqModifierString = []
+        for (var i in equipmentModifiers) {
+            console.log(i)
+            eqModifierString.push(i + " " + equipmentModifiers[i].value + " (" + equipmentModifiers[i].sources.join(", ") + ")")
+        }
+
         return {
             totalweight: totalWeight,
             totalArmor: totalArmor,
@@ -446,6 +458,7 @@ export default class Actordsa5 extends Actor {
             clericSpecialAbilities: clericSpecialAbilities,
             wornArmor: armor,
             inventory,
+            equipmentModifiers: eqModifierString.join(", "),
             rangeTraits: rangeTraits,
             meleeTraits: meleeTraits,
             armorTraits: armorTraits,
@@ -469,6 +482,25 @@ export default class Actordsa5 extends Actor {
             allSkillsRight: {
                 knowledge: knowledgeSkills,
                 trade: tradeSkills
+            }
+        }
+    }
+
+    _addModifiers(equipmentModifiers, i) {
+        for (let mod of i.data.effect.value.toLowerCase().split(",").map(Function.prototype.call, String.prototype.trim)) {
+            let vals = mod.split(" ")
+            if (vals.length == 2) {
+                if (Number(vals[0]) != undefined) {
+                    if (equipmentModifiers[vals[1]] == undefined) {
+                        equipmentModifiers[vals[1]] = {
+                            value: Number(vals[0]),
+                            sources: [i.name]
+                        }
+                    } else {
+                        equipmentModifiers[vals[1]].value += Number(vals[0])
+                        equipmentModifiers[vals[1]].sources.push(i.name)
+                    }
+                }
             }
         }
     }

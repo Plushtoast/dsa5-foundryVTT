@@ -40,6 +40,8 @@
         "RPR": "RPr",
         "KTW": "KTW",
         "LeP": "LeP",
+        "AsP": "AsP",
+        "KaP": "KaP",
         "ATFK": "AT/FK",
         "GEKK": "GE,KK",
         "GE/KK": "GE/KK",
@@ -48,7 +50,8 @@
         "FP": "FP",
         "reloadTime": "Lad.",
         "castingTime": "Zauber- dauer",
-        "duration": "Wirkungs- dauer"
+        "duration": "Wirkungs- dauer",
+        "fatePoints": "Schips"
     },
 
     "DIALOG": {
