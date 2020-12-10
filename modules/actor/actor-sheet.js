@@ -112,7 +112,7 @@ export default class ActorSheetDsa5 extends ActorSheet {
 
 
         //data["img"] = "systems/wfrp4e/icons/blank.png";
-        data["name"] = `New ${data.type.capitalize()}`;
+        data["name"] = game.i18n.localize(data.type);
         this.actor.createEmbeddedEntity("OwnedItem", data);
     }
 

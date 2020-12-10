@@ -357,7 +357,9 @@ form .form-group.tripple select {
 .label-text {
     font-weight: bold;
     font-family: "GentiumBasic-Bold";
-    box-shadow: 0 0 14px #00000052 inset;
+    /*box-shadow: 0 0 14px #00000052 inset;*/
+    background: rgb(188, 136, 111);
+    background: linear-gradient(90deg, rgba(188, 136, 111, 0.8) 0%, rgba(255, 255, 255, 0) 100%);
 }
 
 .table-title {
@@ -782,7 +784,6 @@ form .form-group.tripple select {
 }
 
 .header-label {
-    box-shadow: 0 0 10px #00000052 inset;
     text-align: center;
     height: 100%;
 }
@@ -807,6 +808,8 @@ form .form-group.tripple select {
     display: none;
 }
 
+.col.morph .tableOdd:nth-child(even),
+.row-section.inverseRowtable>.col:nth-child(odd),
 .row-section.rowtable>.col:nth-child(even) {
     background-color: rgba(0, 0, 0, 0.1);
 }
@@ -816,7 +819,7 @@ form .form-group.tripple select {
     border-radius: 100%;
     border: 1px solid var(--border-color);
     padding: 2px;
-    color: var(--border-color);
+    color: #333029a6;
 }
 
 .spells .very-small a .fas,
@@ -1393,4 +1396,8 @@ input[type="search"] {
 
 .fullSchip {
     background-image: url(../icons/schip.webp);
+}
+
+.tabs .item.active {
+    text-shadow: 0 0 10px rgb(188, 136, 111), 0 0 10px rgb(188, 136, 111);
 }

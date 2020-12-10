@@ -246,6 +246,43 @@
                       </select>
                 </div>
             </div>
+            <div class="derivedAttrs row-section">
+                <div class="col two lineheight">
+                    {{localize "speed"}}
+                </div>
+                <div class="col eight lineheight center">
+                    <input name="data.status.speed.initial" type="text" value="{{data.status.speed.initial}}" data-dtype="Number" />
+                </div>
+                <div class="col eight center">
+                    <input name="data.status.speed.modifier" type="text" value="{{data.status.speed.modifier}}" data-dtype="Number" />
+
+                </div>
+                <div class="col eight">
+
+                </div>
+                <div class="col eight lineheight center">
+                    {{data.status.speed.max}}
+
+                </div>
+            </div>
+            <div class="derivedAttrs row-section">
+                <div class="col two lineheight">
+                    {{localize "initiative"}}
+                </div>
+                <div class="col eight lineheight center">
+                    <input name="data.status.initiative.current" type="text" value="{{data.status.initiative.current}}" data-dtype="Number" />
+                </div>
+                <div class="col eight center">
+                    <input name="data.status.initiative.modifier" type="text" value="{{data.status.initiative.modifier}}" data-dtype="Number" />
+                </div>
+                <div class="col eight">
+
+                </div>
+                <div class="col eight lineheight center">
+                    {{data.status.initiative.value}}
+
+                </div>
+            </div>
         </div>
 
         <div class="groupbox">

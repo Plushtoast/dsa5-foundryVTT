@@ -1,127 +1,132 @@
-<div class="row-section wrap">
-    <div class="col">
-        <div class="row-section skills table-title">
-            <div class="col five">
-                {{localize "liturgies"}}
-            </div>
-            <div class="col five center">{{localize "probe"}}</div>
-            <div class="col ten center" title="{{localize 'Fw'}}">{{localize "CHARAbbrev.FW"}}</div>
-            <div class="col ten center" title="{{localize 'KaPCost'}}">{{localize "cost"}}</div>
-            <div class="col ten center">{{localize "CHARAbbrev.castingTime"}}</div>
-            <div class="col ten center">{{localize "reach"}}</div>
-            <div class="col ten center">{{localize "CHARAbbrev.duration"}}</div>
-            <div class="col ten center">
-                <a class="item-create very-small" title="{{localize 'SHEET.addItem'}}" item-section="liturgy" data-type="liturgy"><i class="fas fa-plus"></i></a>
+<div class="groupbox">
+    <div class="row-section wrap inverseRowtable">
+        <div class="col">
+            <div class="row-section skills table-title">
+                <div class="col five">
+                    {{localize "liturgies"}}
+                </div>
+                <div class="col five center">{{localize "probe"}}</div>
+                <div class="col ten center" title="{{localize 'Fw'}}">{{localize "CHARAbbrev.FW"}}</div>
+                <div class="col ten center" title="{{localize 'KaPCost'}}">{{localize "cost"}}</div>
+                <div class="col ten center">{{localize "CHARAbbrev.castingTime"}}</div>
+                <div class="col ten center">{{localize "reach"}}</div>
+                <div class="col ten center">{{localize "CHARAbbrev.duration"}}</div>
+                <div class="col ten center">
+                    <a class="item-create very-small" title="{{localize 'SHEET.addItem'}}" item-section="liturgy" data-type="liturgy"><i class="fas fa-plus"></i></a>
+                </div>
             </div>
         </div>
+        {{#each actor.liturgies as |item i|}}
+        <div class="col spells item" data-item-id="{{item._id}}">
+            <div class="row-section skills lineheight">
+                <div class="col five">
+                    <a class="spell-select">{{item.name}}</a>
+                </div>
+                <div class="col five center">
+                    <a class="spell-select">
+                        <span class="d20 diet-{{item.data.characteristic1.value}}">{{localize (concatUp "CHARAbbrev." item.data.characteristic1.value)}}</span>
+                        <span class="d20 diet-{{item.data.characteristic2.value}}">{{localize (concatUp "CHARAbbrev." item.data.characteristic2.value)}}</span>
+                        <span class="d20 diet-{{item.data.characteristic3.value}}">{{localize (concatUp "CHARAbbrev." item.data.characteristic3.value)}}</span>
+                    </a>
+                </div>
+                <div class="col ten center">
+                    <input class="skill-advances" type="text" data-dtype="{{item.data.talentValue.type}}" value="{{item.data.talentValue.value}}" />
+                </div>
+                <div class="col ten center">
+                    {{item.data.AsPCost.value}}
+                </div>
+                <div class="col ten center">
+                    {{item.data.castingTime.value}}
+                </div>
+                <div class="col ten center">
+                    {{item.data.range.value}}
+                </div>
+                <div class="col ten center">
+                    {{item.data.duration.value}}
+                </div>
+                <div class="col ten very-small center">
+                    <a class="item-post" title="{{localize 'SHEET.PostItem'}}"><i class="fas fa-comment"></i></a>
+                    <a class="item-dropdown" title="{{localize 'SHEET.Dropdown'}}"><i class="fas fa-chevron-down"></i></a>
+                    <a class="item-control item-delete" title="{{localize 'SHEET.DeleteItem'}}"><i class="fas fa-trash"></i></a>
+                </div>
+            </div>
+            <div class="row-section lineheight expandDetails">
+                <div class="col">
+                    <ul>
+                        <li><b>{{localize "duration"}}</b>: {{item.data.duration.value}}</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        {{/each}}
     </div>
-    {{#each actor.liturgies as |item i|}}
-    <div class="col spells item" data-item-id="{{item._id}}">
-        <div class="row-section skills lineheight">
-            <div class="col five">
-                <a class="spell-select">{{item.name}}</a>
-            </div>
-            <div class="col five center">
-                <a class="spell-select">
-                    <span class="d20 diet-{{item.data.characteristic1.value}}">{{localize (concatUp "CHARAbbrev." item.data.characteristic1.value)}}</span>
-                    <span class="d20 diet-{{item.data.characteristic2.value}}">{{localize (concatUp "CHARAbbrev." item.data.characteristic2.value)}}</span>
-                    <span class="d20 diet-{{item.data.characteristic3.value}}">{{localize (concatUp "CHARAbbrev." item.data.characteristic3.value)}}</span>
-                </a>
-            </div>
-            <div class="col ten center">
-                <input class="skill-advances" type="text" data-dtype="{{item.data.talentValue.type}}" value="{{item.data.talentValue.value}}" />
-            </div>
-            <div class="col ten center">
-                {{item.data.AsPCost.value}}
-            </div>
-            <div class="col ten center">
-                {{item.data.castingTime.value}}
-            </div>
-            <div class="col ten center">
-                {{item.data.range.value}}
-            </div>
-            <div class="col ten center">
-                {{item.data.duration.value}}
-            </div>
-            <div class="col ten very-small center">
-                <a class="item-post" title="{{localize 'SHEET.PostItem'}}"><i class="fas fa-comment"></i></a>
-                <a class="item-dropdown" title="{{localize 'SHEET.Dropdown'}}"><i class="fas fa-chevron-down"></i></a>
-                <a class="item-control item-delete" title="{{localize 'SHEET.DeleteItem'}}"><i class="fas fa-trash"></i></a>
-            </div>
-        </div>
-        <div class="row-section lineheight expandDetails">
-            <div class="col">
-                <ul>
-                    <li><b>{{localize "duration"}}</b>: {{item.data.duration.value}}</li>
-                </ul>
-            </div>
-        </div>
-    </div>
-    {{/each}}
 </div>
-<div class="row-section wrap">
-    <div class="col">
-        <div class="row-section skills table-title">
-            <div class="col five">
-                {{localize "ceremonies"}}
-            </div>
-            <div class="col five center">{{localize "probe"}}</div>
-            <div class="col ten center" title="{{localize 'Fw'}}">{{localize "CHARAbbrev.FW"}}</div>
-            <div class="col ten center" title="{{localize 'KaPCost'}}">{{localize "cost"}}</div>
-            <div class="col ten center">{{localize "CHARAbbrev.castingTime"}}</div>
-            <div class="col ten center">{{localize "reach"}}</div>
-            <div class="col ten center">{{localize "CHARAbbrev.duration"}}</div>
-            <div class="col ten center">
-                <a class="item-create very-small" title="{{localize 'SHEET.addItem'}}" item-section="ceremony" data-type="ceremony"><i class="fas fa-plus"></i></a>
-            </div>
-        </div>
-    </div>
-    {{#each actor.ceremonies as |item i|}}
-    <div class="col spells item" data-item-id="{{item._id}}">
-        <div class="row-section skills lineheight">
-            <div class="col five">
-                <a class="spell-select">{{item.name}}</a>
-            </div>
-            <div class="col five center">
-                <a class="spell-select">
-                    <span class="d20 diet-{{item.data.characteristic1.value}}">{{localize (concatUp "CHARAbbrev." item.data.characteristic1.value)}}</span>
-                    <span class="d20 diet-{{item.data.characteristic2.value}}">{{localize (concatUp "CHARAbbrev." item.data.characteristic2.value)}}</span>
-                    <span class="d20 diet-{{item.data.characteristic3.value}}">{{localize (concatUp "CHARAbbrev." item.data.characteristic3.value)}}</span>
-                </a>
-            </div>
-            <div class="col ten center">
-                <input class="skill-advances" type="text" data-dtype="{{item.data.talentValue.type}}" value="{{item.data.talentValue.value}}" />
-            </div>
-            <div class="col ten center">
-                {{item.data.AsPCost.value}}
-            </div>
-            <div class="col ten center">
-                {{item.data.castingTime.value}}
-            </div>
-            <div class="col ten center">
-                {{item.data.range.value}}
-            </div>
-            <div class="col ten center">
-                {{item.data.duration.value}}
-            </div>
-            <div class="col ten very-small center">
-                <a class="item-post" title="{{localize 'SHEET.PostItem'}}"><i class="fas fa-comment"></i></a>
-                <a class="item-dropdown" title="{{localize 'SHEET.Dropdown'}}"><i class="fas fa-chevron-down"></i></a>
-                <a class="item-control item-delete" title="{{localize 'SHEET.DeleteItem'}}"><i class="fas fa-trash"></i></a>
-            </div>
-        </div>
-        <div class="row-section lineheight expandDetails">
-            <div class="col">
-                <ul>
-                    <li><b>{{localize "duration"}}</b>: {{item.data.duration.value}}</li>
-                    <li><b>{{localize "cost"}}</b>: {{item.data.AsPCostDetail.value}}</li>
-                </ul>
-            </div>
-        </div>
-    </div>
-    {{/each}}
-</div>
+<div class="groupbox">
 
+
+    <div class="row-section wrap inverseRowtable">
+        <div class="col">
+            <div class="row-section skills table-title">
+                <div class="col five">
+                    {{localize "ceremonies"}}
+                </div>
+                <div class="col five center">{{localize "probe"}}</div>
+                <div class="col ten center" title="{{localize 'Fw'}}">{{localize "CHARAbbrev.FW"}}</div>
+                <div class="col ten center" title="{{localize 'KaPCost'}}">{{localize "cost"}}</div>
+                <div class="col ten center">{{localize "CHARAbbrev.castingTime"}}</div>
+                <div class="col ten center">{{localize "reach"}}</div>
+                <div class="col ten center">{{localize "CHARAbbrev.duration"}}</div>
+                <div class="col ten center">
+                    <a class="item-create very-small" title="{{localize 'SHEET.addItem'}}" item-section="ceremony" data-type="ceremony"><i class="fas fa-plus"></i></a>
+                </div>
+            </div>
+        </div>
+        {{#each actor.ceremonies as |item i|}}
+        <div class="col spells item" data-item-id="{{item._id}}">
+            <div class="row-section skills lineheight">
+                <div class="col five">
+                    <a class="spell-select">{{item.name}}</a>
+                </div>
+                <div class="col five center">
+                    <a class="spell-select">
+                        <span class="d20 diet-{{item.data.characteristic1.value}}">{{localize (concatUp "CHARAbbrev." item.data.characteristic1.value)}}</span>
+                        <span class="d20 diet-{{item.data.characteristic2.value}}">{{localize (concatUp "CHARAbbrev." item.data.characteristic2.value)}}</span>
+                        <span class="d20 diet-{{item.data.characteristic3.value}}">{{localize (concatUp "CHARAbbrev." item.data.characteristic3.value)}}</span>
+                    </a>
+                </div>
+                <div class="col ten center">
+                    <input class="skill-advances" type="text" data-dtype="{{item.data.talentValue.type}}" value="{{item.data.talentValue.value}}" />
+                </div>
+                <div class="col ten center">
+                    {{item.data.AsPCost.value}}
+                </div>
+                <div class="col ten center">
+                    {{item.data.castingTime.value}}
+                </div>
+                <div class="col ten center">
+                    {{item.data.range.value}}
+                </div>
+                <div class="col ten center">
+                    {{item.data.duration.value}}
+                </div>
+                <div class="col ten very-small center">
+                    <a class="item-post" title="{{localize 'SHEET.PostItem'}}"><i class="fas fa-comment"></i></a>
+                    <a class="item-dropdown" title="{{localize 'SHEET.Dropdown'}}"><i class="fas fa-chevron-down"></i></a>
+                    <a class="item-control item-delete" title="{{localize 'SHEET.DeleteItem'}}"><i class="fas fa-trash"></i></a>
+                </div>
+            </div>
+            <div class="row-section lineheight expandDetails">
+                <div class="col">
+                    <ul>
+                        <li><b>{{localize "duration"}}</b>: {{item.data.duration.value}}</li>
+                        <li><b>{{localize "cost"}}</b>: {{item.data.AsPCostDetail.value}}</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        {{/each}}
+    </div>
+</div>
 <div class="groupbox">
     <div class="row-section">
         <div class="col header-label lineheight">
@@ -143,7 +148,7 @@
 
         <div class="groupbox">
             <div class="row-section lineheight">
-                <div class="col fourty table-title center">
+                <div class="col fourty center">
                     {{localize "tradition"}}
                 </div>
                 <div class="col sixty">
@@ -151,7 +156,7 @@
                 </div>
             </div>
             <div class="row-section lineheight">
-                <div class="col fourty table-title center">
+                <div class="col fourty center">
                     {{localize "guidevalue"}}
                 </div>
                 <div class="col sixty">
@@ -167,7 +172,7 @@
                 </div>
             </div>
             <div class="row-section lineheight">
-                <div class="col fourty table-title center">
+                <div class="col fourty center">
                     {{localize "aspect"}}
                 </div>
                 <div class="col sixty">
@@ -175,7 +180,7 @@
                 </div>
             </div>
             <div class="row-section lineheight">
-                <div class="col fourty table-title center">
+                <div class="col fourty center">
                     {{localize "happyTalents"}}
                 </div>
                 <div class="col sixty">

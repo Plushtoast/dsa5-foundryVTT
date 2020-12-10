@@ -220,12 +220,16 @@
                     "speed": {
                         "type": "Number",
                         "label": "speed",
-                        "intial": 0
+                        "intial": 0,
+                        "modifer": 0,
+                        "value": 0
                     },
                     "initiative": {
                         "type": "Number",
                         "label": "initiative",
-                        "value": 0
+                        "value": 0,
+                        "modifier": 0,
+                        "current": 0
                     },
                     "size": {
                         "type": "String",

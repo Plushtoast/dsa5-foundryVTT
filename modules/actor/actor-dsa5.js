@@ -69,7 +69,7 @@ export default class Actordsa5 extends Actor {
                 data.data.status.toughness.value = (data.data.status.toughness.initial ? data.data.status.toughness.initial : 0) + Math.round((data.data.characteristics["ko"].value + data.data.characteristics["ko"].value + data.data.characteristics["kk"].value) / 6);
                 data.data.status.fatePoints.max = Number(data.data.status.fatePoints.current) + Number(data.data.status.fatePoints.modifier);
 
-                data.data.status.initiative.value = Math.round((data.data.characteristics["mu"].value + data.data.characteristics["ge"].value) / 2);
+                data.data.status.initiative.value = Math.round((data.data.characteristics["mu"].value + data.data.characteristics["ge"].value) / 2) + (data.data.status.initiative.modifier || 0);
             }
 
             if (this.data.type == "character") {
@@ -79,6 +79,7 @@ export default class Actordsa5 extends Actor {
                 data.data.status.wounds.current = data.data.status.wounds.initial
                 data.data.status.astralenergy.current = data.data.status.astralenergy.initial
                 data.data.status.karmaenergy.current = data.data.status.karmaenergy.initial
+                data.data.status.initiative.value = data.data.status.initiative.current + +(data.data.status.initiative.modifier || 0);
             }
 
             data.data.status.wounds.max = data.data.status.wounds.current + data.data.status.wounds.modifier + data.data.status.wounds.advances;
@@ -96,6 +97,8 @@ export default class Actordsa5 extends Actor {
                     data.data.status.karmaenergy.max = data.data.status.karmaenergy.current + data.data.status.karmaenergy.modifier + data.data.status.karmaenergy.advances
                 }
             }
+
+            data.data.status.speed.max = data.data.status.speed.initial + (data.data.status.speed.modifier || 0)
 
             data.data.status.soulpower.max = data.data.status.soulpower.value + data.data.status.soulpower.modifier;
             data.data.status.toughness.max = data.data.status.toughness.value + data.data.status.toughness.modifier;

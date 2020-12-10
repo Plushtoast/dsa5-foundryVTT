@@ -217,7 +217,7 @@ export default class ImportFunctions {
                     let elem = elems[i]
                     const item = {
                         name: elem.getElementsByTagName("name")[0].textContent,
-                        img: Itemdsa5.defaultImages["armor"],
+                        img: elem.getElementsByTagName("img")[0].textContent == "" ? Itemdsa5.defaultImages["armor"] : elem.getElementsByTagName("img")[0].textContent,
                         type: "armor",
                         data: {
                             "description.value": DSA5Importer.prettyDescription(elem.getElementsByTagName("description")[0].textContent),
@@ -1012,7 +1012,7 @@ export default class ImportFunctions {
                                     modifier: 0
                                 },
                                 initiative: {
-                                    value: Number(elem.getElementsByTagName("INI")[0].textContent.split("+")[0])
+                                    current: Number(elem.getElementsByTagName("INI")[0].textContent.split("+")[0])
                                 },
                                 dodge: {
                                     modifier: 0,
@@ -1020,6 +1020,9 @@ export default class ImportFunctions {
                                 },
                                 size: {
                                     value: size
+                                },
+                                speed: {
+                                    initial: Number(elem.getElementsByTagName("GS")[0].textContent.split("/")[0]) || 0
                                 }
                             }
 
@@ -1209,6 +1212,7 @@ export default class ImportFunctions {
                             "description.value": DSA5Importer.prettyDescription(elem.getElementsByTagName("description")[0].textContent),
                             "category.value": category,
                             "APValue.value": apVal,
+                            "maxRank.value": elem.getElementsByTagName("maxRank")[0].textContent,
                             "requirements.value": elem.getElementsByTagName("requirements")[0].textContent,
                             "rule.value": elem.getElementsByTagName("rule")[0].textContent,
                             "list.value": elem.getElementsByTagName("combatskills")[0].textContent
