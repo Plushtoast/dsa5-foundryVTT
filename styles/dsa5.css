@@ -321,12 +321,36 @@ form .form-group.tripple select {
 }
 
 .characteristics-table .table-row {
-    box-shadow: 0 0 10px #00000052 inset;
     text-align: center;
     width: 100%;
     border-bottom: none;
     border-right: none;
     display: flex;
+}
+
+.skills.body {
+    background: rgb(79, 109, 101);
+    background: linear-gradient(90deg, rgba(79, 109, 101, 1) 0%, rgba(255, 255, 255, 0) 100%);
+}
+
+.skills.social {
+    background: rgb(133, 48, 46);
+    background: linear-gradient(90deg, rgba(133, 48, 46, 1) 0%, rgba(255, 255, 255, 0) 100%);
+}
+
+.skills.knowledge {
+    background: rgb(75, 101, 133);
+    background: linear-gradient(90deg, rgba(75, 101, 133, 1) 0%, rgba(255, 255, 255, 0) 100%);
+}
+
+.skills.trade {
+    background: rgb(205, 162, 94);
+    background: linear-gradient(90deg, rgba(205, 162, 94, 1) 0%, rgba(255, 255, 255, 0) 100%);
+}
+
+.skills.nature {
+    background: rgb(83, 88, 41);
+    background: linear-gradient(90deg, rgba(83, 88, 41, 1) 0%, rgba(255, 255, 255, 0) 100%);
 }
 
 .table-title,
@@ -336,10 +360,15 @@ form .form-group.tripple select {
     box-shadow: 0 0 14px #00000052 inset;
 }
 
+.table-title {
+    background: rgb(188, 136, 111);
+    background: linear-gradient(90deg, rgba(188, 136, 111, 1) 0%, rgba(255, 255, 255, 0) 100%);
+    box-shadow: none;
+}
+
 .table-header {
     font-weight: bold;
     font-family: "GentiumBasic-Bold";
-    box-shadow: 0 0 8px #00000052 inset;
 }
 
 .skill-section {
@@ -747,7 +776,6 @@ form .form-group.tripple select {
 
 .groupbox {
     border: 1px solid var(--border-color);
-    padding: 2px;
     border-radius: 3px;
     margin: 10px 2px;
     min-height: 50px;

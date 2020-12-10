@@ -1,6 +1,6 @@
 <div class="row-section skills table-header searchbox">
     <div class="col two lineheight">
-        <b>{{localize "Talents"}}</b>
+        <b>{{localize "skills"}}</b>
     </div>
     <div class="col fourty lineheight">
         <i class="fas fa-search"></i>
@@ -15,11 +15,12 @@
 <div class="row-section wrap allTalents showAll">
     <div class="col morph">
         {{#each actor.allSkillsLeft}}
-        <div class="row-section skills table-header lineheight" style="margin-top:10px;">
-            <div class="col third">
+        <div class="row-section skills table-header lineheight {{@key}}" style="margin-top:10px;">
+            <div class="col fourty">
                 {{localize (concat "SKILL." @key)}}
             </div>
             <div class="col third">{{{localize (concat "SKILLAbrev." @key)}}}</div>
+            <div class="col third"></div>
         </div>
         <div class="row-section skills table-title">
             <div class="col fourty">
@@ -48,12 +49,12 @@
     </div>
     <div class="col morph">
         {{#each actor.allSkillsRight}}
-        <div class="row-section skills table-header lineheight" style="margin-top:10px;">
+        <div class="row-section skills table-header lineheight {{@key}}" style="margin-top:10px;">
             <div class="col fourty">
                 {{localize (concat "SKILL." @key)}}
             </div>
             <div class="col third">{{{localize (concat "SKILLAbrev." @key)}}}</div>
-
+            <div class="col third"></div>
         </div>
         <div class="row-section skills table-title">
             <div class="col fourty">
