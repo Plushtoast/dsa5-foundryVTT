@@ -266,6 +266,14 @@ DSA5.sizeCategories = {
     "giant": "SIZE.giant"
 }
 
+DSA5.tokenSizeCategories = {
+    "tiny": 0.5,
+    "small": 0.8,
+    "average": 1,
+    "big": 2,
+    "giant": 4
+}
+
 DSA5.rangeSizeCategories = {
     "tiny": "RANGESIZE.tiny",
     "small": "RANGESIZE.small",

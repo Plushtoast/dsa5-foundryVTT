@@ -25,6 +25,7 @@ Hooks.once("init", async function() {
     Items.registerSheet("dsa5", ItemSpeciesDsa5, { makeDefault: true, types: ["species"] });
     Items.registerSheet("dsa5", ItemCareerDsa5, { makeDefault: true, types: ["career"] });
     Items.registerSheet("dsa5", ItemCultureDsa5, { makeDefault: true, types: ["culture"] });
+    Items.unregisterSheet("dsa5", ItemSheetdsa5, { types: ["species", "career", "culture"] });
 
     game.dsa5 = {
         apps: {

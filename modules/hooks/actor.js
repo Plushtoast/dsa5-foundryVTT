@@ -1,3 +1,5 @@
+import DSA5 from "../system/config-dsa5.js"
+
 export default function() {
     /**
      * Set default values for new actors' tokens
@@ -22,6 +24,8 @@ export default function() {
         // Default characters to HasVision = true and Link Data = true
         if (createData.type == "character") {
             createData.token.vision = true;
+            createData.token.brightSight = 10;
+            createData.token.dimSight = 20;
             createData.token.actorLink = true;
         }
 
@@ -49,7 +53,32 @@ export default function() {
                 "token.bar2": {}
             });
         }
+    })
 
+    Hooks.on('preCreateToken', (scene, data, options, userId) => {
+        const actor = game.actors.get(data.actorId);
+        if (!actor || data.actorLink)
+            return;
+
+        if (actor.data.type == "creature") {
+            let tokenSize = DSA5.tokenSizeCategories[actor.data.data.size.value]
+            if (tokenSize) {
+
+                if (/(ft)|eet/.exec(scene.data.gridUnits) !== null)
+                    tokenSize *= 10 / scene.data.gridDistance;
+
+                if (tokenSize < 1) {
+                    data.scale = tokenSize;
+                    data.width = data.height = 1;
+                } else {
+                    const int = Math.floor(tokenSize);
+                    data.width = data.height = int;
+                    data.scale = tokenSize / int;
+                    data.scale = Math.max(data.scale, 0.25);
+                }
+
+            }
+        }
     })
 
     /*Hooks.on("updateActor", (actor, updateData) => {
