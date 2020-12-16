@@ -88,6 +88,43 @@
   {{/select}}
 </select>
 </div>
+<div class="form-group custom-select">
+    <label>{{localize "target"}}</label>
+    <select name="targetMovement">
+    {{#select "0"}}
+    {{#each targetMovementOptions as |label val|}}
+    <option value="{{val}}">{{localize label}}</option>
+    {{/each}}
+    {{/select}}
+    </select>
+</div>
+<div class="form-group custom-select">
+    <label>{{localize "shooter"}}</label>
+    <select name="shooterMovement">
+  {{#select "0"}}
+  {{#each shooterMovementOptions as |label val|}}
+  <option value="{{val}}">{{localize label}}</option>
+  {{/each}}
+  {{/select}}
+  </select>
+</div>
+
+<div class="form-group custom-select">
+    <label>{{localize "mount"}}</label>
+    <select name="mountedOptions">
+  {{#select "0"}}
+  {{#each mountedOptions as |label val|}}
+  <option value="{{val}}">{{localize label}}</option>
+  {{/each}}
+  {{/select}}
+  </select>
+</div>
+
+<div class="form-group custom-select">
+    <label>{{localize "rangeMovementOptions.QUICKCHANGE"}}</label>
+    <input type="checkbox" id="quickChange" name="quickChange" value="1">
+</div>
+
 {{/if}} {{#if hasSituationalModifiers}}
 <div class="modifiers form-group custom-select">
     <label>{{localize "DIALOG.SituationalModifiers"}}</label>

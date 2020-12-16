@@ -18,6 +18,7 @@ export default class DSA5Dialog extends Dialog {
             let castingTime = parent.find('.castingTime')
             let aspcost = parent.find('.aspcost')
             let reach = parent.find('.reach')
+            let maintainCost = parent.find('.maintainCost')
 
             let bigCasts = parent.find('.ritual').length > 0
 
@@ -36,15 +37,22 @@ export default class DSA5Dialog extends Dialog {
             let baseCastingTime = castingTime.data('base')
 
             let newPosition = baseAsp
+            let newMaintainCost = maintainCost.data('base')
             let mod = 0
             parent.find('.spellModifier[data-cost]:checked').each(function(index, element) {
                 newPosition = newPosition * (element.value < 0 ? 2 : 0.5)
+                if (newMaintainCost != "0") {
+                    let maintains = maintainCost.split(" ")
+                    maintains[0] = Number(maintains[0]) * (element.value < 0 ? 2 : 0.5)
+                    newMaintainCost = maintains.join(" ")
+                }
                 mod += Number(element.value)
             });
             if (newPosition < 1) {
                 event.currentTarget.checked = false
             } else {
                 aspcost.text(newPosition)
+                maintainCost.text(newMaintainCost)
                 aspcost.data('mod', mod)
             }
 

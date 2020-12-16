@@ -23,7 +23,10 @@
         "modifyable": "mod.",
         "AsPCost": "AsP Kosten",
         "KaPCost": "KaP Kosten",
-        "-": "-"
+        "-": "-",
+        "LEP": "Lebenspunkte",
+        "KAP": "Karmapunkte",
+        "ASP": "Astralpunkte"
     },
     "CHARAbbrev": {
         "MU": "MU",
@@ -84,6 +87,7 @@
     "attacktest": "Angriffsprobe",
     "arrow": "Pfeil",
     "armor": "Rüstung",
+    "animal": "Tier",
     "attackOfOpportunity": "Der Kämpfer kann einen Passierschlag ausführen",
     "Advances": "Steigerungen",
     "attributes": "Eigenschaften",
@@ -133,7 +137,7 @@
     "creatureClass": "Typus",
     "conjuringDifficulty": "Anrufungsschw.",
     "clericspecialtalents": "Klerikale Sonderfertigkeiten",
-
+    "camplocation": "Lagerplatz",
     "carrycapacity": "Tragekraft",
     "Details": "Details",
     "damage": "Schaden",
@@ -183,6 +187,7 @@
     "Home": "Heimatort",
     "Initial": "Startwert",
     "initiative": "Initiative",
+    "interruption": "Unterbrechung",
     "increaseRange": "Reichweite erhöhen",
     "increaseCastingTime": "Zauber-/Liturgiedauer erhöhen",
     "karmaenergy": "Karmaenergie",
@@ -207,8 +212,10 @@
     "Modifier": "Modifikator",
     "mundane": "weltlich",
     "maxlevel": "Maximale Stufe",
+    "mount": "Reittier",
     "Magic": "Magie",
     "money": "Geld",
+    "maintainCost": "Aufrechterhalten",
     "Money": "Geld",
     "maintainedSpells": "Aufrechterhaltene Zauber/Liturgien (je -1)",
     "manual": "Händisch",
@@ -255,6 +262,8 @@
     "recommendedTalents": "Geeignete Talente",
     "recommendedProfessions": "Geeignete Professionen",
     "rangeCombatAttacks": "Fernkampfangriffe",
+    "regenerate": "Regeneration",
+    "regenerationTest": "Erholungsprobe",
     "reduceCost": "Kosten reduzieren",
     "reloadTime": "Ladezeit",
     "skill": "Talent",
@@ -268,6 +277,7 @@
     "Success": "Erfolg",
     "spell": "Zauberspruch",
     "spells": "Zaubersprüche",
+    "shooter": "Schütze",
     "speed": "Geschwindigkeit",
     "statuseffects": "Statuseffekte",
     "specialAbilities": "Sonderfertigkeiten",
@@ -288,6 +298,7 @@
     "time": "Zeit",
     "toughness": "Zähigkeit",
     "targetCategory": "Zielkategorie",
+    "target": "Ziel",
     "Unopposed": "Keine Vergleichsprobe",
     "value": "Wert",
     "sight": "Sichtverhältnisse",
@@ -475,6 +486,34 @@
         "wrongConstellation": "Unpassende Konstellation (-1)",
         "rightClothes": "Passende Kleidung (+1)",
         "rightEquipment": "Passende Gerätschaften (+1)"
+    },
+
+    "rangeMovementOptions": {
+        "SLOW": "steht still (+2)",
+        "FAST": "bewegt sich leicht (+-0)",
+        "STATIONARY": "bewegt sich schnell (-2)",
+        "QUICKCHANGE": "Ziel schlägt Haken (-4)",
+        "SHOOTERMOVING": "geht (-2)",
+        "SHOOTERRUNNING": "rennt (-4)",
+        "SHOOTERSTATIONARY": "ist stationär (+-0)"
+    },
+
+    "mountedRangeOptions": {
+        "STATIONARY": "steht (+-0)",
+        "SCHRITT": "im Schritt (-4)",
+        "GALOPP": "im Galopp (-8)"
+    },
+
+    "regnerationCampLocations": {
+        "normal": "Normal",
+        "bad": "Schlechter Lagerplatz (-1)",
+        "good": "Gute Unterkunft (+1)"
+    },
+
+    "regenerationInterruptOptions": {
+        "small": "Klein - Wache/Ruhestörung (-1)",
+        "big": "Groß - Überfall/Hundswache (-2)",
+        "none": "Keine (+-0)"
     },
 
     "SPELLMISCAST": {

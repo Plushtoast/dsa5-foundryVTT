@@ -5,7 +5,6 @@ import OpposedDsa5 from "../system/opposed-dsa5.js";
 
 export default class Actordsa5 extends Actor {
     static async create(data, options) {
-        console.log(data)
         if (data instanceof Array)
             return super.create(data, options);
 
@@ -103,6 +102,7 @@ export default class Actordsa5 extends Actor {
             data.data.status.soulpower.max = data.data.status.soulpower.value + data.data.status.soulpower.modifier;
             data.data.status.toughness.max = data.data.status.toughness.value + data.data.status.toughness.modifier;
             this._calculateStatus(data, "dodge")
+
 
 
         } catch (error) {
@@ -624,6 +624,24 @@ export default class Actordsa5 extends Actor {
                 testData.narrowSpace = html.find('[name="narrowSpace"]').is(":checked")
                 testData.doubleAttack = html.find('[name="doubleAttack"]').is(":checked") ? -2 : 0
                 testData.wrongHand = html.find('[name="wrongHand"]').is(":checked") ? -4 : 0
+                if (item.type == "rangeweapon") {
+                    testData.situationalModifiers.push({
+                        name: game.i18n.localize("target") + " " + html.find('[name="targetMovement"] option:selected').text(),
+                        value: Number(html.find('[name="targetMovement"]').val())
+                    })
+                    testData.situationalModifiers.push({
+                        name: game.i18n.localize("shooter") + " " + html.find('[name="shooterMovement"] option:selected').text(),
+                        value: Number(html.find('[name="shooterMovement"]').val())
+                    })
+                    testData.situationalModifiers.push({
+                        name: game.i18n.localize("mount") + " " + html.find('[name="mountedOptions"] option:selected').text(),
+                        value: Number(html.find('[name="mountedOptions"]').val())
+                    })
+                    testData.situationalModifiers.push({
+                        name: game.i18n.localize("rangeMovementOptions.QUICKCHANGE"),
+                        value: html.find('[name="quickChange"]').is(":checked") ? -4 : 0
+                    })
+                }
                 return { testData, cardOptions };
             }
         };
@@ -728,6 +746,53 @@ export default class Actordsa5 extends Actor {
         });
     }
 
+    setupRegeneration(statusId, options = {}) {
+        let title = game.i18n.localize("regenerationTest");
+
+        let testData = {
+            source: {
+                type: "regeneration"
+            },
+            opposable: false,
+            extra: {
+                statusId: statusId,
+                actor: this.data,
+                options: options
+            }
+        };
+
+        let dialogOptions = {
+            title: title,
+            template: "/systems/dsa5/templates/dialog/regeneration-dialog.html",
+            // Prefilled dialog data
+            data: {
+                rollMode: options.rollMode
+            },
+            callback: (html) => {
+                testData.situationalModifiers = []
+                cardOptions.rollMode = html.find('[name="rollMode"]').val();
+                testData.testModifier = Number(html.find('[name="testModifier"]').val());
+                testData.situationalModifiers.push({
+                    name: game.i18n.localize("camplocation") + " - " + html.find('[name="regnerationCampLocations"] option:selected').text(),
+                    value: html.find('[name="regnerationCampLocations"]').val()
+                })
+                testData.situationalModifiers.push({
+                    name: game.i18n.localize("interruption") + " - " + html.find('[name="regenerationInterruptOptions"] option:selected').text(),
+                    value: html.find('[name="regenerationInterruptOptions"]').val()
+                })
+                return { testData, cardOptions };
+            }
+        };
+
+        let cardOptions = this._setupCardOptions("systems/dsa5/templates/chat/roll/regeneration-card.html", title)
+
+        return DiceDSA5.setupDialog({
+            dialogOptions: dialogOptions,
+            testData: testData,
+            cardOptions: cardOptions
+        });
+    }
+
     setupStatus(statusId, options = {}) {
         let char = this.data.data.status[statusId];
 
@@ -815,7 +880,6 @@ export default class Actordsa5 extends Actor {
         let sheet = "spell"
         if (spell.type == "ceremony" || spell.type == "liturgy") {
             sheet = "liturgy"
-            console.log(spell.type)
         }
 
         let title = spell.name + " " + game.i18n.localize(`${spell.type}Test`);
@@ -832,6 +896,7 @@ export default class Actordsa5 extends Actor {
         let data = {
             rollMode: options.rollMode,
             spellCost: spell.data.AsPCost.value,
+            maintainCost: spell.data.maintainCost.value,
             spellCastingTime: spell.data.castingTime.value,
             spellReach: spell.data.range.value,
             canChangeCost: spell.data.canChangeCost.value == "true",
@@ -855,7 +920,8 @@ export default class Actordsa5 extends Actor {
                 testData.calculatedSpellModifiers = {
                     castingTime: html.find(".castingTime").text(),
                     cost: html.find(".aspcost").text(),
-                    reach: html.find(".reach").text()
+                    reach: html.find(".reach").text(),
+                    maintainCost: html.find(".maintainCost").text()
                 }
                 testData.situationalModifiers.push({
                     name: game.i18n.localize("removeGestureOrFormula"),
@@ -921,7 +987,6 @@ export default class Actordsa5 extends Actor {
                         value: html.find('[name="timeModifier"]').val()
                     })
                 }
-                console.log(testData)
                 return { testData, cardOptions };
             }
         };

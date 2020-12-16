@@ -238,7 +238,7 @@
 
                 <div class="col two lineheight center">
                     <select name="data.size.value" data-dtype="{{data.size.type}}" style="width:100%">
-                        {{#select data.size.value}}
+                        {{#select data.status.size.value}}
                         {{#each sizeCategories as |ch char|}}
                         <option value="{{char}}">{{localize ch}}</option>
                         {{/each}}

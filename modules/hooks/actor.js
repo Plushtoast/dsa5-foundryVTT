@@ -53,6 +53,11 @@ export default function() {
                 "token.bar2": {}
             });
         }
+        console.log(actor)
+        if (updatedData) {
+
+        }
+
     })
 
     Hooks.on('preCreateToken', (scene, data, options, userId) => {
@@ -61,16 +66,17 @@ export default function() {
             return;
 
         if (actor.data.type == "creature") {
-            let tokenSize = DSA5.tokenSizeCategories[actor.data.data.size.value]
+            let tokenSize = DSA5.tokenSizeCategories[actor.data.data.status.size.value]
             if (tokenSize) {
 
-                if (/(ft)|eet/.exec(scene.data.gridUnits) !== null)
-                    tokenSize *= 10 / scene.data.gridDistance;
+                //if (/(ft)|eet/.exec(scene.data.gridUnits) !== null)
+                //    tokenSize *= 10 / scene.data.gridDistance;
 
                 if (tokenSize < 1) {
                     data.scale = tokenSize;
                     data.width = data.height = 1;
                 } else {
+                    console.log(tokenSize)
                     const int = Math.floor(tokenSize);
                     data.width = data.height = int;
                     data.scale = tokenSize / int;

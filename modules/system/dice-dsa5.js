@@ -51,9 +51,18 @@ export default class DiceDSA5 {
                     rangeOptions: DSA5.rangeWeaponModifiers,
                     sizeOptions: DSA5.rangeSizeCategories,
                     visionOptions: DSA5.rangeVision,
+                    mountedOptions: DSA5.mountedRangeOptions,
+                    shooterMovementOptions: DSA5.shooterMovementOptions,
+                    targetMovementOptions: DSA5.targetMomevementOptions,
                     targetSize: targetSize
                 });
                 break;
+            case "regeneration":
+                mergeObject(dialogOptions.data, {
+                    regenerationInterruptOptions: DSA5.regenerationInterruptOptions,
+                    regnerationCampLocations: DSA5.regnerationCampLocations
+                });
+                break
             case "trait":
                 this._enabledModifiers(situationalModifiers, ["CONDITION.encumbered", "CONDITION.inpain"], true)
                 if (testData.mode == "attack" && testData.source.data.data.traitType.value == "meleeAttack") {
@@ -277,6 +286,36 @@ export default class DiceDSA5 {
             modifiers: modifier,
             extra: {}
         }
+    }
+
+
+    static rollRegeneration(testData) {
+        let modifier = testData.testModifier + this._situationalModifiers(testData);
+        let roll = testData.roll
+        var chars = []
+
+
+        chars.push({ char: "LeP", res: roll.terms[0].results[0].result, die: "d6" })
+
+        let result = {
+            rollType: "regeneration",
+            LeP: Math.max(0, Number(roll.terms[0].results[0].result) - Number(modifier)),
+            preData: testData,
+            modifiers: modifier,
+            extra: {}
+        }
+
+        if (testData.extra.actor.isMage) {
+            chars.push({ char: "AsP", res: roll.terms[2].results[0].result, die: "d6" })
+            result["AsP"] = Math.max(0, Number(roll.terms[2].results[0].result) + Number(modifier))
+        } else if (testData.extra.actor.isPriest) {
+            chars.push({ char: "KaP", res: roll.terms[2].results[0].result, die: "d6" })
+            result["KaP"] = Math.max(0, Number(roll.terms[2].results[0].result) + Number(modifier))
+        }
+
+        result["characteristics"] = chars
+
+        return result
     }
 
     static rollStatus(testData) {
@@ -761,6 +800,9 @@ export default class DiceDSA5 {
                 }
 
                 break
+            case "regeneration":
+                rollResults = this.rollRegeneration(testData)
+                break
             case "meleeweapon":
             case "rangeweapon":
                 if (testData.mode == "damage") {
@@ -802,6 +844,19 @@ export default class DiceDSA5 {
                     for (var i = 0; i < roll.dice.length; i++) {
                         roll.dice[i].options.colorset = testData.source.data["characteristic" + (i + 1)].value
                     }
+                    break;
+                case "regeneration":
+                    if (testData.extra.actor.isMage) {
+                        roll = new Roll("1d6+1d6").roll()
+                        roll.dice[1].options.colorset = "ge"
+                    } else if (testData.extra.actor.isPriest) {
+                        roll = new Roll("1d6+1d6").roll()
+                        roll.dice[1].options.colorset = "in"
+                    } else {
+                        roll = new Roll("1d6").roll()
+                    }
+                    roll.dice[0].options.colorset = "mu"
+
                     break;
                 case "meleeweapon":
                 case "rangeweapon":

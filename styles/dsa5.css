@@ -507,6 +507,23 @@ form .form-group.tripple select {
     background-repeat: no-repeat;
 }
 
+.d6.die-AsP {
+    background-position: center 2.5px;
+    background-image: url(../icons/dice/d6blue.svg);
+}
+
+.d6.die-LeP {
+    color: white;
+    background-position: center 2.5px;
+    background-image: url(../icons/dice/d6red.svg);
+}
+
+.d6.die-KaP {
+    color: white;
+    background-position: center 2.5px;
+    background-image: url(../icons/dice/d6green.svg);
+}
+
 .d6.die-damage,
 .d2.die-damage,
 .d3.die-damage {
@@ -812,6 +829,10 @@ form .form-group.tripple select {
 .row-section.inverseRowtable>.col:nth-child(odd),
 .row-section.rowtable>.col:nth-child(even) {
     background-color: rgba(0, 0, 0, 0.1);
+}
+
+.fa-moon-o:before {
+    content: "\f186"
 }
 
 .buttons a .fas,
@@ -1374,12 +1395,12 @@ input[type="search"] {
 
 .AsP {
     background: rgb(14, 144, 207);
-    background: linear-gradient(90deg, rgba(14, 144, 207, 1) 0%, rgba(11, 11, 217, 1) 100%);
+    background: linear-gradient(90deg, rgba(11, 11, 217, 1) 0%, rgba(14, 144, 207, 1) 100%);
 }
 
 .KaP {
     background: rgb(147, 207, 14);
-    background: linear-gradient(90deg, rgba(147, 207, 14, 1) 0%, rgba(4, 162, 54, 1) 100%);
+    background: linear-gradient(90deg, rgba(4, 162, 54, 1) 0%, rgba(147, 207, 14, 1) 100%);
 }
 
 .schip {
@@ -1388,6 +1409,12 @@ input[type="search"] {
     background-size: contain;
     background-repeat: no-repeat;
     display: inline-block;
+}
+
+.schip:active,
+.schip:focus {
+    box-shadow: none;
+    border: none;
 }
 
 .emptySchip {

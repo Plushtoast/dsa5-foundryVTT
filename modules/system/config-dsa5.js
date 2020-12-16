@@ -7,20 +7,68 @@ const DSA5 = {}
 //   icon: 
 //}
 
-CONFIG.statusEffects = [
-    "icons/svg/falling.svg",
-    "icons/svg/unconscious.svg",
+CONFIG.statusEffects = [{
+        id: "prone",
+        label: "CONDITION.prone",
+        icon: "icons/svg/falling.svg"
+    },
+    {
+        id: "unconscious",
+        label: "CONDITION.unconscious",
+        icon: "icons/svg/unconscious.svg"
+    },
 
-    "icons/svg/anchor.svg", //encumbered
-    "icons/svg/tankard.svg", //drunken
-    "icons/svg/daze.svg", //stuned
-    "icons/svg/ice-aura.svg", //entrückt
-    "icons/svg/terror.svg",
-    "icons/svg/paralysis.svg",
-    "icons/svg/blood.svg",
-    "icons/svg/sun.svg", // trance
-    "icons/svg/sleep.svg", //fatigue
-    "icons/svg/stoned.svg" //irritated
+    {
+        id: "encumbered",
+        label: "CONDITION.encumbered",
+        icon: "icons/svg/anchor.svg"
+    },
+    {
+        id: "drunken",
+        label: "CONDITION.drunken",
+        icon: "icons/svg/tankard.svg"
+    },
+    {
+        id: "stunned",
+        label: "CONDITION.stunned",
+        icon: "icons/svg/daze.svg"
+    },
+    {
+        id: "raptured",
+        label: "CONDITION.raptured",
+        icon: "icons/svg/ice-aura.svg"
+    },
+    {
+        id: "feared",
+        label: "CONDITION.feared",
+        icon: "icons/svg/terror.svg"
+    },
+    {
+        id: "paralysed",
+        label: "CONDITION.paralysed",
+        icon: "icons/svg/paralysis.svg"
+    },
+    {
+        id: "inpain",
+        label: "CONDITION.inpain",
+        icon: "icons/svg/blood.svg"
+    },
+    {
+        id: "tranced",
+        label: "CONDITION.tranced",
+        icon: "icons/svg/sun.svg"
+    },
+    {
+        id: "overexerted",
+        label: "CONDITION.overexerted",
+        icon: "icons/svg/sleep.svg"
+    },
+    {
+        id: "confused",
+        label: "CONDITION.confused",
+        icon: "icons/svg/stoned.svg"
+    }
+
 ]
 DSA5.statusEffects = [
     "CONDITION.prone",
@@ -149,10 +197,41 @@ DSA5.rangeMods = {
 
 }
 
+DSA5.regnerationCampLocations = {
+    "0": "regnerationCampLocations.normal",
+    "-1": "regnerationCampLocations.bad",
+    "good": "regnerationCampLocations.good"
+}
+
+DSA5.regenerationInterruptOptions = {
+    "0": "regenerationInterruptOptions.none",
+    "-1": "regenerationInterruptOptions.small",
+    "-2": "regenerationInterruptOptions.big"
+}
+
+DSA5.targetMomevementOptions = {
+    "0": "rangeMovementOptions.SLOW",
+    "-2": "rangeMovementOptions.FAST",
+    "2": "rangeMovementOptions.STATIONARY",
+}
+
+DSA5.shooterMovementOptions = {
+    "0": "rangeMovementOptions.SHOOTERSTATIONARY",
+    "-2": "rangeMovementOptions.SHOOTERMOVING",
+    "-4": "rangeMovementOptions.SHOOTERRUNNING"
+}
+
+DSA5.mountedRangeOptions = {
+    "0": "mountedRangeOptions.STATIONARY",
+    "-4": "mountedRangeOptions.SCHRITT",
+    "-8": "mountedRangeOptions.GALOPP",
+}
+
 DSA5.traitCategories = {
     "meleeAttack": "closeCombatAttacks",
     "rangeAttack": "rangeCombatAttacks",
-    "armor": "armor"
+    "armor": "armor",
+    "general": "general"
 }
 
 DSA5.ritualLocationModifiers = {

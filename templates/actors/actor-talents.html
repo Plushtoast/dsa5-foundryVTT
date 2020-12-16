@@ -33,7 +33,7 @@
         </div>
         {{#each this as |item i|}}
         <div class="row-section skills lineheight tableOdd item{{#when item.data.talentValue.value 'eq' 0}} notLearned{{/when}}" data-item-id="{{item._id}}">
-            <div class="col fourty"><a class="skill-select talentName">{{item.name}}</a></div>
+            <div class="col fourty"><a class="item-edit talentName">{{item.name}}</a></div>
             <div class="col third">
                 <a class="skill-select">
                     <span class="d20 diet-{{item.data.characteristic1.value}}">{{localize (concatUp "CHARAbbrev." item.data.characteristic1.value)}}</span>
@@ -67,7 +67,7 @@
         </div>
         {{#each this as |item i|}}
         <div class="row-section skills lineheight tableOdd item{{#when item.data.talentValue.value 'eq' 0}} notLearned{{/when}}" data-item-id="{{item._id}}">
-            <div class="col fourty"><a class="skill-select talentName">{{item.name}}</a></div>
+            <div class="col fourty"><a class="item-edit talentName">{{item.name}}</a></div>
             <div class="col third">
                 <a class="skill-select">
                     <span class="d20 diet-{{item.data.characteristic1.value}}">{{localize (concatUp "CHARAbbrev." item.data.characteristic1.value)}}</span>

@@ -262,6 +262,12 @@ export default class ActorSheetDsa5 extends ActorSheet {
                 this.actor.basicTest(setupData)
             });
         });
+        html.find('.ch-regenerate').click(event => {
+            event.preventDefault();
+            this.actor.setupRegeneration("regenerate", event).then(setupData => {
+                this.actor.basicTest(setupData)
+            });
+        });
 
         html.find('.ch-weaponless').click(event => {
             event.preventDefault();

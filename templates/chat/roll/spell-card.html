@@ -13,4 +13,10 @@
     <div class="card-content">
         <b>{{localize "cost"}}</b>: {{testData.preData.calculatedSpellModifiers.cost}}
     </div>
+    {{#when testData.preData.calculatedSpellModifiers.maintainCost 'noteq' '0'}}
+    <div class="card-content">
+        <b>{{localize "maintainCost"}}</b>: {{testData.preData.calculatedSpellModifiers.maintainCost}}
+    </div>
+    {{/when}}
+
 </div>

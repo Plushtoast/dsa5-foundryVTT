@@ -92,7 +92,6 @@ export default class ImportFunctions {
                         },
 
                     };
-                    //console.log(item)
                     //await DSA5Importer.writeItem(pack, item)
 
                     await pack.getIndex()
@@ -480,6 +479,7 @@ export default class ImportFunctions {
                             "effect.value": elem.getElementsByTagName("effect")[0].textContent,
                             "castingTime.value": elem.getElementsByTagName("castingTime")[0].textContent,
                             "AsPCost.value": elem.getElementsByTagName("AsPCost")[0].textContent,
+                            "maintainCost.value": elem.getElementsByTagName("maintainCost")[0].textContent,
                             "distribution.value": elem.getElementsByTagName("distribution")[0].textContent,
                             "StF.value": elem.getElementsByTagName("Stf")[0].textContent,
                             "duration.value": elem.getElementsByTagName("duration")[0].textContent,
@@ -541,6 +541,7 @@ export default class ImportFunctions {
                             "effect.value": elem.getElementsByTagName("effect")[0].textContent,
                             "castingTime.value": elem.getElementsByTagName("ritualTime")[0].textContent,
                             "AsPCost.value": elem.getElementsByTagName("AsPCost")[0].textContent,
+                            "maintainCost.value": elem.getElementsByTagName("maintainCost")[0].textContent,
                             "distribution.value": elem.getElementsByTagName("distribution")[0].textContent,
                             "StF.value": elem.getElementsByTagName("Stf")[0].textContent,
                             "duration.value": elem.getElementsByTagName("duration")[0].textContent,
@@ -603,6 +604,7 @@ export default class ImportFunctions {
                             "effect.value": elem.getElementsByTagName("effect")[0].textContent,
                             "castingTime.value": elem.getElementsByTagName("castingTime")[0].textContent,
                             "AsPCost.value": elem.getElementsByTagName("KaPCost")[0].textContent,
+                            "maintainCost.value": elem.getElementsByTagName("maintainCost")[0].textContent,
                             "distribution.value": elem.getElementsByTagName("distribution")[0].textContent,
                             "StF.value": elem.getElementsByTagName("Stf")[0].textContent,
                             "duration.value": elem.getElementsByTagName("duration")[0].textContent,
@@ -663,6 +665,7 @@ export default class ImportFunctions {
                             "effect.value": elem.getElementsByTagName("effect")[0].textContent,
                             "castingTime.value": elem.getElementsByTagName("castingTime")[0].textContent,
                             "AsPCost.value": elem.getElementsByTagName("KaPCost")[0].textContent,
+                            "maintainCost.value": elem.getElementsByTagName("maintainCost")[0].textContent,
                             "distribution.value": elem.getElementsByTagName("distribution")[0].textContent,
                             "StF.value": elem.getElementsByTagName("Stf")[0].textContent,
                             "duration.value": elem.getElementsByTagName("duration")[0].textContent,
@@ -766,7 +769,7 @@ export default class ImportFunctions {
     }
 
     static async importBestiary() {
-        let types = ["Tiere"]
+        let types = ["AventurischesBestiarium"]
         for (let k of types) {
             await this._importBestiary(k)
         }
@@ -775,7 +778,7 @@ export default class ImportFunctions {
     static async _importBestiary(k) {
         var x = new XMLHttpRequest();
         x.open("GET", "systems/dsa5/modules/importer/xmls/" + k + ".xml", true);
-        let pack = await DSA5Importer.getCompendiumPack("Actor", `BestiaryTemp`);
+        let pack = await DSA5Importer.getCompendiumPack("Actor", "AventurischesBestiariumI");
 
         let items = []
         let skills = await DSA5_Utility.allSkills() || [];
@@ -817,19 +820,23 @@ export default class ImportFunctions {
                 var doc = x.responseXML;
 
 
-                let elems = doc.getElementsByTagName(k)
+                let elems = doc.getElementsByTagName("Biest")
                 for (let i = 0; i < elems.length; i++) {
                     let elem = elems[i]
                     let img = Itemdsa5.defaultImages[k];
+                    let tokenIimg = Itemdsa5.defaultImages[k];
 
                     if (elem.getElementsByTagName("img")[0].textContent != "")
                         img = ImportFunctions.getImg(elem, "biest");
-                    /*let caregory = elem.getElementsByTagName("category")[0].textContent
-                    if (caregory in DSA5Importer.ImportVars.rangeImages.de) {
-                        img = DSA5Importer.ImportVars.rangeImages.de[caregory]
+
+                    if (elem.getElementsByTagName("token")[0].textContent != "")
+                        tokenIimg = elem.getElementsByTagName("token")[0].textContent
+                        /*let caregory = elem.getElementsByTagName("category")[0].textContent
+                        if (caregory in DSA5Importer.ImportVars.rangeImages.de) {
+                            img = DSA5Importer.ImportVars.rangeImages.de[caregory]
 
 
-                    }*/
+                        }*/
                     let size = elem.getElementsByTagName("sizeCategory")[0].textContent
                     if (sizeClasses[size] != undefined) {
                         size = sizeClasses[size]
@@ -866,6 +873,26 @@ export default class ImportFunctions {
                     let finalItems = items.concat(skills)
 
                     let attackItems = []
+
+                    let traits = []
+
+                    for (let trait of elem.getElementsByTagName("general")) {
+                        let tr = {
+                            name: trait.getElementsByTagName("name")[0].textContent,
+                            img: Itemdsa5.defaultImages["trait"],
+                            type: "trait",
+                            data: {
+                                traitType: {
+                                    value: "general"
+                                },
+
+                            }
+
+                        }
+
+                        traits.push(new Item(tr, { temporary: true }))
+                    }
+
                     let atts = elem.getElementsByTagName("attack")
                     for (let attack of atts) {
 
@@ -956,6 +983,7 @@ export default class ImportFunctions {
                         finalItems = finalItems.concat(loot)
                     }
                     finalItems = finalItems.concat(attackItems)
+                    finalItems = finalItems.concat(traits)
 
                     let bar2 = {}
                     let isMage = (Number(elem.getElementsByTagName("AsP")[0].textContent) || 0) > 0
@@ -978,7 +1006,8 @@ export default class ImportFunctions {
                             displayName: CONST.TOKEN_DISPLAY_MODES.OWNER_HOVER,
                             displayBars: CONST.TOKEN_DISPLAY_MODES.OWNER_HOVER,
                             disposition: CONST.TOKEN_DISPOSITIONS.NEUTRAL,
-                            name: elem.getElementsByTagName("name")[0].textContent
+                            name: elem.getElementsByTagName("name")[0].textContent,
+                            img: tokenIimg
                         },
 
                         data: {

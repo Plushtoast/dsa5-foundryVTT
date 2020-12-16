@@ -409,11 +409,7 @@
                 "value": 0,
                 "label": "conjuringDifficulty"
             },
-            "size": {
-                "type": "String",
-                "value": "average",
-                "label": "size"
-            },
+
             "description": {
                 "type": "String",
                 "value": "",
@@ -567,6 +563,11 @@
                     "label": "AsPCost",
                     "value": "0"
                 },
+                "maintainCost": {
+                    "type": "String",
+                    "label": "maintainCost",
+                    "value": "0"
+                },
                 "distribution": {
                     "type": "String",
                     "label": "distribution",
@@ -596,6 +597,11 @@
                     "type": "String",
                     "label": "canChangeCost",
                     "value": "true"
+                },
+                "effectFormula": {
+                    "type": "String",
+                    "label": "effectFormula",
+                    "value": ""
                 }
             },
             "description": {

@@ -1,0 +1,15 @@
+<div class="dsa5 chat-card" data-actor-id="{{actorId}}" data-hide={ {hideData}}>
+    {{> systems/dsa5/templates/chat/roll/test-card.html}}
+    <div class="card-content display-toggle">
+        <b>{{localize "wounds"}}</b>: {{testData.LeP}}
+    </div>
+    {{#if testData.AsP}}
+    <div class="card-content display-toggle">
+        <b>{{localize "astralenergy"}}</b>: {{testData.AsP}}
+    </div>
+    {{/if}} {{#if testData.KaP}}
+    <div class="card-content display-toggle">
+        <b>{{localize "karmaenergy"}}</b>: {{testData.KaP}}
+    </div>
+    {{/if}}
+</div>

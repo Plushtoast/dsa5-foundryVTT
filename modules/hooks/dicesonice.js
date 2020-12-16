@@ -102,6 +102,7 @@ export default function() {
             outline: '#b3241a',
             texture: 'none'
         });
+
         dice3d.addColorset({
             name: 'dodge',
             description: 'DSA5.dies',
