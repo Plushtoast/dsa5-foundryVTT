@@ -698,13 +698,27 @@ export default class DiceDSA5 {
             res.description = res.description + ", " + game.i18n.localize("additionalFPs") + " " + extraFps
             res.result = res.result + extraFps
             res.preData.calculatedSpellModifiers.cost = res.preData.calculatedSpellModifiers.cost / 2
-
         } else if (res.successLevel <= -2) {
             res.description = res.description + " - " + (res.preData.source.type == "spell" ? Miscast.getSpellMiscast() : Miscast.getLiturgyMiscast())
         }
 
         if (res.successLevel < 0) {
             res.preData.calculatedSpellModifiers.cost = res.preData.calculatedSpellModifiers.cost / 2
+        } else {
+            if (testData.source.data.effectFormula.value != "") {
+                let formula = testData.source.data.effectFormula.value.replace("QS", res.qualityStep).replace("W", "d").replace("w", "d")
+                let rollEffect = new Roll(formula).roll()
+                this._addRollDiceSoNice(testData, rollEffect, "black")
+                res["effectResult"] = rollEffect._total
+                res["calculatedEffectFormula"] = formula
+                for (let k of rollEffect.terms) {
+                    if (k instanceof Die) {
+                        for (let l of k.results) {
+                            res["characteristics"].push({ char: "effect", res: l.result, die: "d" + k.faces })
+                        }
+                    }
+                }
+            }
         }
         return res
     }
@@ -713,6 +727,7 @@ export default class DiceDSA5 {
         let roll = testData.roll ? testData.roll : new Roll("1d20+1d20+1d20").roll();
         let description = "";
         let successLevel = 0
+
         let modifier = testData.testModifier + testData.testDifficulty + this._situationalModifiers(testData);
         this._appendSituationalModifiers(testData, game.i18n.localize("manual"), testData.testModifier)
         this._appendSituationalModifiers(testData, game.i18n.localize("Difficulty"), testData.testDifficulty)
@@ -760,7 +775,7 @@ export default class DiceDSA5 {
                 { char: testData.source.data.characteristic2.value, res: roll.terms[2].results[0].result, suc: res2 <= 0, tar: tar2 },
                 { char: testData.source.data.characteristic3.value, res: roll.terms[4].results[0].result, suc: res3 <= 0, tar: tar3 }
             ],
-            qualityStep: fps == 0 ? 1 : (fps > 0 ? Math.ceil(fps / 3) : 0),
+            qualityStep: (fps == 0 ? 1 : (fps > 0 ? Math.ceil(fps / 3) : 0)) + (testData.qualityStep != undefined ? Number(testData.qualityStep) : 0),
             description: description,
             preData: testData,
             successLevel: successLevel,
@@ -897,7 +912,6 @@ export default class DiceDSA5 {
             this.showDiceSoNice(roll, cardOptions.rollMode);
             testData.roll = roll;
             testData.rollMode = cardOptions.rollMode
-                //testData.cardOptions = cardOptions
         }
         return testData;
     }
@@ -908,15 +922,15 @@ export default class DiceDSA5 {
             let whisper = null;
             let blind = false;
             switch (rollMode) {
-                case "blindroll": //GM only
+                case "blindroll":
                     blind = true;
-                case "gmroll": //GM + rolling player
+                case "gmroll":
                     let gmList = game.users.filter(user => user.isGM);
                     let gmIDList = [];
                     gmList.forEach(gm => gmIDList.push(gm.data._id));
                     whisper = gmIDList;
                     break;
-                case "roll": //everybody
+                case "roll":
                     let userList = game.users.filter(user => user.active);
                     let userIDList = [];
                     userList.forEach(user => userIDList.push(user.data._id));
@@ -944,7 +958,6 @@ export default class DiceDSA5 {
         if (chatOptions.rollMode === "blindroll") chatOptions["blind"] = true;
         else if (chatOptions.rollMode === "selfroll") chatOptions["whisper"] = [game.user];
 
-        // All the data need to recreate the test when chat card is edited
         chatOptions["flags.data"] = {
             preData: chatData.testData.preData,
             postData: chatData.testData,
@@ -954,23 +967,13 @@ export default class DiceDSA5 {
             title: chatOptions.title,
             hideData: chatData.hideData,
         };
-
         if (!rerenderMessage) {
-            // Generate HTML from the requested chat template
             return renderTemplate(chatOptions.template, chatData).then(html => {
-                // Emit the HTML as a chat message
-
-
                 chatOptions["content"] = html;
-
                 return ChatMessage.create(chatOptions, false);
             });
-        } else // Update message 
-        {
-            // Generate HTML from the requested chat template
+        } else {
             return renderTemplate(chatOptions.template, chatData).then(html => {
-
-                // Emit the HTML as a chat message
                 chatOptions["content"] = html;
 
                 return rerenderMessage.update({
@@ -989,7 +992,7 @@ export default class DiceDSA5 {
             event.preventDefault()
             let elem = $(event.currentTarget)
             elem.find('i').toggleClass("fa-minus fa-plus")
-            elem.siblings('ul').fadeToggle()
+            elem.siblings('ul,div').fadeToggle()
         })
     }
 }

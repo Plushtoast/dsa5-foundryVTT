@@ -566,7 +566,7 @@
                 "maintainCost": {
                     "type": "String",
                     "label": "maintainCost",
-                    "value": "0"
+                    "value": ""
                 },
                 "distribution": {
                     "type": "String",

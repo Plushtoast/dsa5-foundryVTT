@@ -2,7 +2,7 @@
 
     {{> systems/dsa5/templates/dialog/dialog-constant.html}}
     <div class="form-group">
-        <label>{{localize "maintainedSpells"}}</label>
+        <label style="line-height: normal;">{{localize "maintainedSpells"}}</label>
         <input type="number" name="maintainedSpells" value="0" />
     </div>
     {{#if hasSKModifier}}
@@ -89,9 +89,11 @@
                 <div class="col four center">
                     {{localize "reach"}}
                 </div>
-                <div class="col four center">
-                    {{localize "maintainCost"}}
+                {{#when maintainCost 'noteq' '0'}}
+                <div class="col four center" title="{{localize 'maintainCost'}}">
+                    {{localize "CHARAbbrev.maintainCost"}}
                 </div>
+                {{/when}}
             </div>
         </div>
         <div class="col">
@@ -105,9 +107,11 @@
                 <div class="col four center">
                     <span class="reach" data-mod="0" data-base="{{spellReach}}">{{spellReach}}</span>
                 </div>
+                {{#when maintainCost 'noteq' '0'}}
                 <div class="col four center">
                     <span class="maintainCost" data-mod="0" data-base="{{maintainCost}}">{{maintainCost}}</span>
                 </div>
+                {{/when}}
             </div>
         </div>
     </div>

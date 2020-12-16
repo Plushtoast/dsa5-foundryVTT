@@ -5,6 +5,7 @@ import * as macroSupport from "./macro_support.js";
 import * as chatlogHooks from './chatlog.js'
 import * as ready from './ready.js'
 import * as token from './token.js'
+import * as chatContext from './chat_context.js'
 
 export default function() {
     Hooks.once("init", () => {
@@ -37,4 +38,5 @@ export default function() {
     chatlogHooks.default()
     ready.default()
     token.default()
+    chatContext.default()
 }

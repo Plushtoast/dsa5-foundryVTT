@@ -524,6 +524,7 @@ form .form-group.tripple select {
     background-image: url(../icons/dice/d6green.svg);
 }
 
+.d6.die-effect,
 .d6.die-damage,
 .d2.die-damage,
 .d3.die-damage {
@@ -1226,7 +1227,8 @@ li.folder {
     margin-left: 8px;
 }
 
-.chatModifiers ul {
+.chatModifiers ul,
+.chatModifiers div {
     display: none;
 }
 
@@ -1427,4 +1429,12 @@ input[type="search"] {
 
 .tabs .item.active {
     text-shadow: 0 0 10px rgb(188, 136, 111), 0 0 10px rgb(188, 136, 111);
+}
+
+.dieButton span {
+    border: 1px solid transparent;
+}
+
+.dieButton.dieSelected span {
+    border: 1px solid black;
 }

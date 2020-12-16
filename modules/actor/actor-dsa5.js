@@ -2,6 +2,7 @@ import DSA5_Utility from "../system/utility-dsa5.js";
 import DSA5 from "../system/config-dsa5.js"
 import DiceDSA5 from "../system/dice-dsa5.js"
 import OpposedDsa5 from "../system/opposed-dsa5.js";
+import DSA5Dialog from "../dialog/dialog-dsa5.js"
 
 export default class Actordsa5 extends Actor {
     static async create(data, options) {
@@ -692,6 +693,12 @@ export default class Actordsa5 extends Actor {
         });
     }
 
+    applyDamage(amount) {
+        this.update(
+            this.update({ "data.status.wounds.value": Math.max(0, this.data.data.status.wounds.value - amount) })
+        )
+    }
+
     setupWeaponless(statusId, options = {}) {
         let title = game.i18n.localize(statusId + "Weaponless");
 
@@ -699,7 +706,6 @@ export default class Actordsa5 extends Actor {
             opposable: true,
             mode: statusId,
             source: DSA5.defaultWeapon,
-            opposable: false,
             extra: {
                 weaponless: true,
                 statusId: statusId,
@@ -746,6 +752,118 @@ export default class Actordsa5 extends Actor {
         });
     }
 
+    preparePostRollAction(message) {
+        //recreate the initial (virgin) cardOptions object
+        //add a flag for reroll limit
+        let data = message.data.flags.data;
+        let cardOptions = {
+            flags: { img: message.data.flags.img },
+            rollMode: data.rollMode,
+            speaker: message.data.speaker,
+            template: data.template,
+            title: data.title,
+            user: message.data.user
+        };
+        if (data.attackerMessage)
+            cardOptions.attackerMessage = data.attackerMessage;
+        if (data.defenderMessage)
+            cardOptions.defenderMessage = data.defenderMessage;
+        if (data.unopposedStartMessage)
+            cardOptions.unopposedStartMessage = data.unopposedStartMessage;
+        return cardOptions;
+    }
+
+    useFateOnRoll(message, type) {
+        if (this.data.data.status.fatePoints.value > 0) {
+            let data = message.data.flags.data
+            let cardOptions = this.preparePostRollAction(message);
+
+            let infoMsg = `<h3 class="center"><b>${game.i18n.localize("CHATFATE.faitepointUsed")}</b></h3>
+                ${game.i18n.format("CHATFATE." + type , { character: '<b>' + this.name + '</b>' })}<br>
+                <b>${game.i18n.localize("CHATFATE.PointsRemaining")}</b>: ${this.data.data.status.fatePoints.value - 1}
+            `;
+
+
+            let newTestData = data.preData
+            switch (type) {
+                case "reroll":
+                    cardOptions.fatePointRerollUsed = true;
+                    if (data.originalTargets && data.originalTargets.size > 0) {
+                        game.user.targets = data.originalTargets;
+                        game.user.targets.user = game.user;
+                    }
+                    if (!data.defenderMessage && data.startMessagesList) {
+                        cardOptions.startMessagesList = data.startMessagesList;
+                    }
+                    renderTemplate('systems/dsa5/templates/dialog/fateReroll-dialog.html', { testData: newTestData, postData: data.postData }).then(html => {
+
+                        new DSA5Dialog({
+                            title: game.i18n.localize("CHATFATE.selectDice"),
+                            content: html,
+                            buttons: {
+                                Yes: {
+                                    icon: '<i class="fa fa-check"></i>',
+                                    label: game.i18n.localize("Ok"),
+                                    callback: dlg => {
+
+                                        let diesToReroll = dlg.find('.dieSelected').map(function() { return Number($(this).attr('data-index')) }).get()
+                                        if (diesToReroll.length > 0) {
+
+                                            let newRoll = []
+                                            for (let k of diesToReroll) {
+                                                let term = newTestData.roll.terms[k * 2]
+                                                newRoll.push(term.number + "d" + term.faces + "[" + term.options.colorset + "]")
+                                            }
+                                            newRoll = new Roll(newRoll.join("+")).roll()
+                                            DiceDSA5.showDiceSoNice(newRoll, newTestData.rollMode)
+
+                                            ChatMessage.create(DSA5_Utility.chatDataSetup(infoMsg));
+                                            let ind = 0
+                                            for (let k of diesToReroll) {
+                                                newTestData.roll.results[k * 2] = newRoll.results[ind * 2]
+                                                newTestData.roll.terms[k * 2].results[0].result = newRoll.results[ind * 2]
+                                                ind += 1
+                                            }
+                                            this[`${data.postData.postFunction}`]({ testData: newTestData, cardOptions }, { rerenderMessage: message });
+                                            message.update({
+                                                "flags.data.fatePointRerollUsed": true
+                                            });
+                                            this.update({ "data.status.fatePoints.value": this.data.data.status.fatePoints.value - 1 })
+                                        }
+
+                                    }
+                                },
+                                cancel: {
+                                    icon: '<i class="fas fa-times"></i>',
+                                    label: game.i18n.localize("cancel")
+                                },
+                            },
+                            default: 'Yes'
+                        }).render(true)
+                    });
+
+
+                    break
+                case "addQS":
+                    ChatMessage.create(DSA5_Utility.chatDataSetup(infoMsg));
+                    game.user.targets.forEach(t => t.setTarget(false, { user: game.user, releaseOthers: false, groupSelection: true }));
+
+                    cardOptions.fatePointAddQSUsed = true;
+
+                    newTestData.qualityStep = 1
+
+                    this[`${data.postData.postFunction}`]({ testData: newTestData, cardOptions }, { rerenderMessage: message });
+                    message.update({
+                        "flags.data.fatePointAddQSUsed": true
+                    });
+                    this.update({ "data.status.fatePoints.value": this.data.data.status.fatePoints.value - 1 })
+                    break
+            }
+
+
+        }
+
+    }
     setupRegeneration(statusId, options = {}) {
         let title = game.i18n.localize("regenerationTest");
 
@@ -1187,7 +1305,6 @@ export default class Actordsa5 extends Actor {
         if (testData.extra)
             mergeObject(result, testData.extra);
 
-
         if (game.user.targets.size) {
             cardOptions.isOpposedTest = testData.opposable
             if (cardOptions.isOpposedTest)
@@ -1198,12 +1315,8 @@ export default class Actordsa5 extends Actor {
 
         }
 
-        Hooks.call("dsa5:rollTest", result, cardOptions)
+        //Hooks.call("dsa5:rollTest", result, cardOptions)
 
-        //if (game.user.targets.size) {
-        //  cardOptions.title += ` - ${game.i18n.localize("Opposed")}`;
-        //  cardOptions.isOpposedTest = true
-        //}
 
         if (!options.suppressMessage)
             DiceDSA5.renderRollCard(cardOptions, result, options.rerenderMessage).then(msg => {
@@ -1212,70 +1325,5 @@ export default class Actordsa5 extends Actor {
         return { result, cardOptions };
     }
 
-    static async renderRollCard(chatOptions, testData, rerenderMessage) {
-        testData.other = testData.other.join("<br>")
 
-        let chatData = {
-            title: chatOptions.title,
-            testData: testData,
-            hideData: game.user.isGM
-        }
-
-        if (["gmroll", "blindroll"].includes(chatOptions.rollMode)) chatOptions["whisper"] = ChatMessage.getWhisperRecipients("GM").map(u => u.id);
-        if (chatOptions.rollMode === "blindroll") chatOptions["blind"] = true;
-        else if (chatOptions.rollMode === "selfroll") chatOptions["whisper"] = [game.user];
-
-        // All the data need to recreate the test when chat card is edited
-        chatOptions["flags.data"] = {
-            preData: chatData.testData.preData,
-            postData: chatData.testData,
-            template: chatOptions.template,
-            rollMode: chatOptions.rollMode,
-            title: chatOptions.title,
-            hideData: chatData.hideData,
-            isOpposedTest: chatOptions.isOpposedTest,
-            attackerMessage: chatOptions.attackerMessage,
-            defenderMessage: chatOptions.defenderMessage,
-            unopposedStartMessage: chatOptions.unopposedStartMessage,
-            startMessagesList: chatOptions.startMessagesList
-        };
-
-        if (!rerenderMessage) {
-            // Generate HTML from the requested chat template
-            return renderTemplate(chatOptions.template, chatData).then(html => {
-                // Emit the HTML as a chat message
-                if (game.settings.get("wfrp4e", "manualChatCards")) {
-                    let blank = $(html)
-                    let elementsToToggle = blank.find(".display-toggle")
-
-                    for (let elem of elementsToToggle) {
-                        if (elem.style.display == "none")
-                            elem.style.display = ""
-                        else
-                            elem.style.display = "none"
-                    }
-                    html = blank.html();
-                }
-
-                chatOptions["content"] = html;
-                return ChatMessage.create(chatOptions, false);
-            });
-        } else // Update message 
-        {
-            // Generate HTML from the requested chat template
-            return renderTemplate(chatOptions.template, chatData).then(html => {
-
-                // Emit the HTML as a chat message
-                chatOptions["content"] = html;
-
-                return rerenderMessage.update({
-                    content: html,
-                    ["flags.data"]: chatOptions["flags.data"]
-                }).then(newMsg => {
-                    ui.chat.updateMessage(newMsg);
-                    return newMsg;
-                });
-            });
-        }
-    }
 }

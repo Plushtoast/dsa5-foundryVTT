@@ -13,6 +13,9 @@ export default class DSA5Dialog extends Dialog {
 
     activateListeners(html) {
         super.activateListeners(html)
+        html.find(".dieButton").click(ev => {
+            $(ev.currentTarget).toggleClass('dieSelected')
+        })
         html.find('.spellModifier').change(event => {
             let parent = $(event.currentTarget).parents(".skill-test")
             let castingTime = parent.find('.castingTime')
@@ -41,8 +44,8 @@ export default class DSA5Dialog extends Dialog {
             let mod = 0
             parent.find('.spellModifier[data-cost]:checked').each(function(index, element) {
                 newPosition = newPosition * (element.value < 0 ? 2 : 0.5)
-                if (newMaintainCost != "0") {
-                    let maintains = maintainCost.split(" ")
+                if (newMaintainCost != "" && newMaintainCost != undefined) {
+                    let maintains = String(newMaintainCost).split(" ")
                     maintains[0] = Number(maintains[0]) * (element.value < 0 ? 2 : 0.5)
                     newMaintainCost = maintains.join(" ")
                 }

@@ -23,6 +23,7 @@
         "modifyable": "mod.",
         "AsPCost": "AsP Kosten",
         "KaPCost": "KaP Kosten",
+        "EFFECT": "Effektwurf",
         "-": "-",
         "LEP": "Lebenspunkte",
         "KAP": "Karmapunkte",
@@ -54,7 +55,8 @@
         "reloadTime": "Lad.",
         "castingTime": "Zauber- dauer",
         "duration": "Wirkungs- dauer",
-        "fatePoints": "Schips"
+        "fatePoints": "Schips",
+        "maintainCost": "Aufr."
     },
 
     "DIALOG": {
@@ -160,6 +162,8 @@
     "disadvantage": "Nachteil",
     "encumbrance": "Belastung",
     "equipment": "Ausrüstung",
+    "effectResult": "Effektergebnis",
+    "effectFormula": "Effektformel",
     "equipmentType": "Ausrüstungskategorie",
     "Eye_color": "Augenfarbe",
     "equipped": "Ausgerüstet",
@@ -462,8 +466,8 @@
         "APUpdateError": "AP Wert konnte nicht angepasst werden. Bitte manuell durchführen.",
         "RangeCannotBeParsed": "Die Reichweite kan nicht automatisch angepasst werden. Format nicht erkannt.",
         "CastingTimeLimit": "Die Zauberdauer ist bereits am Limit.",
-        "TimeCannotBeParsed": "Die Zauberdauer kan nicht automatisch angepasst werden. Format nicht erkannt."
-
+        "TimeCannotBeParsed": "Die Zauberdauer kan nicht automatisch angepasst werden. Format nicht erkannt.",
+        "DamagePermission": "Du darfst den Schaden nicht übertragen."
     },
 
     "CEREMONYMODIFIER": {
@@ -514,6 +518,21 @@
         "small": "Klein - Wache/Ruhestörung (-1)",
         "big": "Groß - Überfall/Hundswache (-2)",
         "none": "Keine (+-0)"
+    },
+
+    "CHATCONTEXT": {
+        "Reroll": "Wurf wiederholen (1 Schip)",
+        "AddQS": "QS um eins erhöhen (1 Schip)",
+        "ApplyDamage": "Schaden anwenden"
+    },
+
+    "CHATFATE": {
+        "faitepointUsed": "Das Schicksal ändert sich",
+        "reroll": "{character} würfelt erneut.",
+        "addQS": "{character} erhöht die Qualitätsstufe.",
+        "PointsRemaining": "Verbleibende Schicksalspunkte",
+        "selectDice": "Wurf wiederholen",
+        "selectDieToReroll": "Wähle die zu wiederholenden Würfel"
     },
 
     "SPELLMISCAST": {

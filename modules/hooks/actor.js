@@ -53,7 +53,6 @@ export default function() {
                 "token.bar2": {}
             });
         }
-        console.log(actor)
         if (updatedData) {
 
         }
