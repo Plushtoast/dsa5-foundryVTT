@@ -4,80 +4,7 @@
             "character", "creature", "npc"
         ],
         "templates": {
-            "conditions": {
-                "conditions": {
-                    "encumbered": {
-                        "type": "Number",
-                        "label": "encumbered",
-                        "modifier": 0,
-                        "value": 0,
-                        "max": 0
-                    },
-                    "drunken": {
-                        "type": "Number",
-                        "label": "drunken",
-                        "modifier": 0,
-                        "value": 0,
-                        "max": 0
-                    },
-                    "stunned": {
-                        "type": "Number",
-                        "label": "stunned",
-                        "modifier": 0,
-                        "value": 0,
-                        "max": 0
-                    },
-                    "raptured": {
-                        "type": "Number",
-                        "label": "raptured",
-                        "modifier": 0,
-                        "value": 0,
-                        "max": 0
-                    },
-                    "feared": {
-                        "type": "Number",
-                        "label": "feared",
-                        "modifier": 0,
-                        "value": 0,
-                        "max": 0
-                    },
-                    "paralysed": {
-                        "type": "Number",
-                        "label": "paralysed",
-                        "modifier": 0,
-                        "value": 0,
-                        "max": 0
-                    },
-                    "inpain": {
-                        "type": "Number",
-                        "label": "inpain",
-                        "modifier": 0,
-                        "value": 0,
-                        "max": 0
-                    },
-                    "tranced": {
-                        "type": "Number",
-                        "label": "tranced",
-                        "modifier": 0,
-                        "value": 0,
-                        "max": 0
-                    },
-                    "overexerted": {
-                        "type": "Number",
-                        "label": "overexerted",
-                        "modifier": 0,
-                        "value": 0,
-                        "max": 0
-                    },
-                    "confused": {
-                        "type": "Number",
-                        "label": "confused",
-                        "modifier": 0,
-                        "value": 0,
-                        "max": 0
-                    }
-                }
-            },
+
             "characteristics": {
                 "characteristics": {
                     "mu": {
@@ -346,7 +273,6 @@
                 "characteristics",
                 "status",
                 "details",
-                "conditions",
                 "magic"
             ],
             "details": {
@@ -361,7 +287,6 @@
         "npc": {
             "templates": [
                 "characteristics",
-                "conditions",
                 "status",
                 "details",
                 "magic"
@@ -370,7 +295,6 @@
         "creature": {
             "templates": [
                 "characteristics",
-                "conditions",
                 "status",
                 "magic"
             ],

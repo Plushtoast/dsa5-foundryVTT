@@ -6,6 +6,7 @@ import * as chatlogHooks from './chatlog.js'
 import * as ready from './ready.js'
 import * as token from './token.js'
 import * as chatContext from './chat_context.js'
+import * as statusEffects from './statuseffect.js'
 
 export default function() {
     Hooks.once("init", () => {
@@ -39,4 +40,5 @@ export default function() {
     ready.default()
     token.default()
     chatContext.default()
+    statusEffects.default()
 }

@@ -170,51 +170,55 @@
             <b>{{localize "statuseffects"}}</b>
         </div>
     </div>
+    <div class="row-section">
+        <div class="col effectDescription">
+
+        </div>
+    </div>
     <div class="row-section  wrap">
 
         <div class="col two row-section skills table-title">
-            <div class="col two">
+            <div class="col five">
+
+            </div>
+            <div class="col sixty">
                 {{localize "condition"}}
             </div>
-            <div class="col eight center" title="{{localize 'value'}}">
+            <div class="col five center" title="{{localize 'value'}}">
                 {{localize "ABBR-value"}}
-            </div>
-            <div class="col eight  center" title="{{localize 'Modifiers'}}">
-                {{localize "ABBR-modifiers"}}
-            </div>
-            <div class="col eight center" title="{{localize 'max'}}">
-                {{localize "Current"}}
             </div>
         </div>
         <div class="col two row-section skills table-title">
-            <div class="col two ">
+            <div class="col five">
+
+            </div>
+            <div class="col sixty">
                 {{localize "condition"}}
             </div>
-            <div class="col eight  center" title="{{localize 'value'}}">
+            <div class="col five center" title="{{localize 'value'}}">
                 {{localize "ABBR-value"}}
             </div>
-            <div class="col eight  center" title="{{localize 'Modifiers'}}">
-                {{localize "ABBR-modifiers"}}
-            </div>
-            <div class="col eight center" title="{{localize 'max'}}">
-                {{localize "Current"}}
-            </div>
+
         </div>
-        {{#each data.conditions as |item i|}}
-        <div class="row-section col skills two lineheight">
-            <div class="col two">
-                {{localize (concat "CONDITION." item.label)}}
+        {{#each conditions as |item i|}}
+        <div class="row-section col skills two statusEffect" data-id="{{item.id}}">
+            <div class="col five">
+                {{#if item.existing}}
+                <img src="{{item.icon}}" /> {{else}}
+                <img style="opacity:0.5;" src="{{item.icon}}" /> {{/if}}
             </div>
-            <div class="col eight center" title="{{localize 'value'}}">
-                {{item.value}}
+            <div class="col sixty">
+                <a class="condition-show" data-id="{{item.id}}">{{localize item.label}}</a>
             </div>
-            <div class="col eight center" title="{{localize 'Modifiers'}}">
-                <input name="data.conditions.{{item.label}}.modifier" type="number" value="{{item.modifier}}" data-dtype="Number" />
+            <div class="col five center" title="{{localize 'value'}}">
+                {{#if item.boolean}} {{#if item.existing}}
+                <a class="condition-toggle"><i class="far fa-check-circle"></i></a> {{else}}
+                <a class="condition-toggle"><i class="far fa-circle"></i></a> {{/if}} {{else}}
+                <a class="condition-value">{{item.value}}</a> {{/if}}
             </div>
-            <div class="col eight center" title="{{localize 'max'}}">
-                {{item.max}}
-            </div>
+
         </div>
+
         {{/each}}
 
     </div>
@@ -288,6 +292,7 @@
                     {{#when item.data.weapontype.value 'eq' 'melee'}} <a class="ch-combatskill-parry d20 diet-in">{{item.data.parry.value}}</a> {{else}}- {{/when}}
                 </div>
             </div>
+
         </div>
         {{/each}}
     </div>

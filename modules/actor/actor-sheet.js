@@ -8,7 +8,7 @@ export default class ActorSheetDsa5 extends ActorSheet {
     static
     get defaultOptions() {
         const options = super.defaultOptions;
-        options.tabs = [{ navSelector: ".tabs", contentSelector: ".content", initial: "main" }]
+        options.tabs = [{ navSelector: ".tabs", contentSelector: ".content", initial: "skills" }]
         mergeObject(options, {
             width: 680,
             height: 740
@@ -87,8 +87,30 @@ export default class ActorSheetDsa5 extends ActorSheet {
         mergeObject(sheetData.actor, this.actor.prepare())
 
         sheetData.isGM = game.user.isGM;
+
+        this._addDefaultActiveEffects(sheetData)
         return sheetData;
     }
+
+    _addDefaultActiveEffects(data) {
+        data.conditions = duplicate(CONFIG.statusEffects) //.filter(x => x.flags.dsa5.editable)
+        for (let condition of data.conditions) {
+            let existing = this.actor.data.effects.find(e => e.flags.core != undefined && e.flags.core.statusId == condition.id)
+            condition.editable = condition.flags.dsa5.editable
+            if (existing) {
+                condition.value = existing.flags.dsa5.value
+                condition.existing = true
+            } else {
+                condition.value = 0;
+                condition.existing = false
+            }
+
+            if (condition.flags.dsa5.value == null)
+                condition.boolean = true;
+
+        }
+    }
+
 
     _onItemCreate(event) {
         event.preventDefault();
@@ -111,7 +133,6 @@ export default class ActorSheetDsa5 extends ActorSheet {
         }
 
 
-        //data["img"] = "systems/wfrp4e/icons/blank.png";
         data["name"] = game.i18n.localize(data.type);
         this.actor.createEmbeddedEntity("OwnedItem", data);
     }
@@ -220,6 +241,21 @@ export default class ActorSheetDsa5 extends ActorSheet {
             $(ev.currentTarget).closest('.item').find('.expandDetails').fadeToggle()
         })
 
+        html.find('.condition-show').click(ev => {
+            ev.preventDefault()
+            let id = ev.currentTarget.getAttribute("data-id")
+            let effect = CONFIG.statusEffects.find(x => x.id == id)
+            if (effect) {
+                let text = `<div style="padding:5px;"><b>${game.i18n.localize(effect.label)}</b>: ${game.i18n.localize(effect.description)}</div>`
+                let elem = $(ev.currentTarget).closest('.groupbox').find('.effectDescription')
+                elem.fadeOut('fast', function() {
+                    elem.html(text).fadeIn('fast')
+                })
+            } else {
+                //search temporary effects
+            }
+
+        })
 
         html.find('.skill-advances').focusout(async event => {
             //event.preventDefault()
@@ -361,6 +397,31 @@ export default class ActorSheetDsa5 extends ActorSheet {
             $(event.currentTarget).toggleClass("filtered")
         })
 
+        html.find(".condition-value").mousedown(ev => {
+            let condKey = $(ev.currentTarget).parents(".statusEffect").attr("data-id")
+            if (ev.button == 0)
+                this.actor.addCondition(condKey)
+            else if (ev.button == 2)
+                this.actor.removeCondition(condKey)
+        })
+
+        html.find(".condition-toggle").mousedown(ev => {
+            let condKey = $(ev.currentTarget).parents(".statusEffect").attr("data-id")
+
+            if (CONFIG.statusEffects.find(e => e.id == condKey).flags.dsa5.value == null) {
+                if (this.actor.hasCondition(condKey))
+                    this.actor.removeCondition(condKey)
+                else
+                    this.actor.addCondition(condKey)
+                return
+            }
+
+            if (ev.button == 0)
+                this.actor.addCondition(condKey)
+            else if (ev.button == 2)
+                this.actor.removeCondition(condKey)
+        })
+
         html.find('.talentSearch').keydown(event => {
             this._filterTalents($(event.currentTarget))
         });
@@ -369,14 +430,16 @@ export default class ActorSheetDsa5 extends ActorSheet {
     }
 
     _filterTalents(tar) {
-        let val = tar.val().toLowerCase().trim()
-        let talents = $(this.form).parent().find('.allTalents')
-        talents.find('.item, .table-header, .table-title').removeClass('filterHide')
-        if (val.length > 1) {
-            talents.addClass('showAll').find('.item').filter(function() {
-                return $(this).find('.talentName').text().toLowerCase().trim().indexOf(val) == -1
-            }).addClass('filterHide')
-            talents.find('.table-header, .table-title:not(:eq(0))').addClass("filterHide")
+        if (tar.val() != undefined) {
+            let val = tar.val().toLowerCase().trim()
+            let talents = $(this.form).parent().find('.allTalents')
+            talents.find('.item, .table-header, .table-title').removeClass('filterHide')
+            if (val.length > 1) {
+                talents.addClass('showAll').find('.item').filter(function() {
+                    return $(this).find('.talentName').text().toLowerCase().trim().indexOf(val) == -1
+                }).addClass('filterHide')
+                talents.find('.table-header, .table-title:not(:eq(0))').addClass("filterHide")
+            }
         }
     }
 

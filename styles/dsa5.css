@@ -1438,3 +1438,15 @@ input[type="search"] {
 .dieButton.dieSelected span {
     border: 1px solid black;
 }
+
+.statusEffect img {
+    border: none;
+    background: rgba(0, 0, 0, 0.3);
+    height: 28px;
+    width: 28px;
+}
+
+.statusEffect {
+    height: 34px;
+    line-height: 34px;
+}

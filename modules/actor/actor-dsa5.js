@@ -62,6 +62,8 @@ export default class Actordsa5 extends Actor {
             super.prepareData();
             const data = this.data;
 
+
+
             if (this.data.type == "character" || this.data.type == "npc") {
                 data.data.status.wounds.current = data.data.status.wounds.initial + data.data.characteristics["ko"].value * 2;
 
@@ -346,8 +348,8 @@ export default class Actordsa5 extends Actor {
                     totalWeight += Number(i.weight);
 
                     if (i.data.worn.value) {
-                        encumbrance += i.data.encumbrance.value;
-                        totalArmor += i.data.protection.value;
+                        encumbrance += Number(i.data.encumbrance.value);
+                        totalArmor += Number(i.data.protection.value);
                         this._addModifiers(equipmentModifiers, i)
                         armor.push(i);
                     }
@@ -423,22 +425,20 @@ export default class Actordsa5 extends Actor {
 
         money.coins = money.coins.sort((a, b) => (a.data.price.value > b.data.price.value) ? -1 : 1);
         encumbrance += Math.max(0, Math.floor((totalWeight - carrycapacity) / 4));
-
         let pain = actorData.data.status.wounds.value <= 5 ? 4 : Math.floor((1 - actorData.data.status.wounds.value / actorData.data.status.wounds.max) * 4)
 
-        /*this.update({
-            "data.conditions.encumbered.value": encumbrance,
-            "data.conditions.inpain.value": pain
-        });*/
-        this.data.data.conditions.inpain.value = pain
-        this.data.data.conditions.encumbered.value = encumbrance
+
+
+
+        this.addCondition("inpain", pain, true)
+        this.addCondition("encumbered", encumbrance, true)
+        this.applyActiveEffects()
 
         //CHAR cannot be clerical and magical at the same time
         hasPrayers = hasPrayers && !hasSpells
         this.data.isMage = hasSpells
         this.data.isPriest = hasPrayers
 
-        this._updateConditions()
 
         let eqModifierString = []
         for (var i in equipmentModifiers) {
@@ -508,42 +508,14 @@ export default class Actordsa5 extends Actor {
         }
     }
 
-    _updateConditions() {
-        /*let r = {}
-        for (let [key, val] of Object.entries(this.data.data.conditions)) {
-            r["data.conditions." + key + ".max"] = (val.value || 0) + (val.modifier || 0)
-        }
-        this.update(r)*/
-        for (let [key, val] of Object.entries(this.data.data.conditions)) {
-            this.data.data.conditions[key].max = (val.value || 0) + (val.modifier || 0)
-        }
-    }
-
-    /*getModifiers() {
-        let r = []
-        for (let [key, val] of Object.entries(this.data.data.conditions)) {
-            if (val.max > 0) {
-                r.push({
-                    name: key,
-                    value: (val.max * -1)
-                })
-            }
-
-        }
-        return r
-    }*/
-
     static getModifiers(actor) {
         let r = []
-        for (let [key, val] of Object.entries(actor.data.conditions)) {
-            if (val.max > 0) {
-                r.push({
-                    name: "CONDITION." + key,
-                    value: (val.max * -1),
-                    selected: false
-                })
-            }
-
+        for (let effect of actor.effects.filter(i => getProperty(i, "flags.dsa5.value") > 0)) {
+            r.push({
+                name: effect.label,
+                value: (effect.flags.dsa5.value * Number(effect.flags.dsa5.impact)),
+                selected: false
+            })
         }
         return r
     }
@@ -1326,4 +1298,90 @@ export default class Actordsa5 extends Actor {
     }
 
 
+    async addCondition(effect, value = 1, absolute = false) {
+        if (absolute && value <= 0) {
+            return this.removeCondition(effect, 10)
+        }
+
+        if (typeof(effect) === "string")
+            effect = duplicate(CONFIG.statusEffects.find(e => e.id == effect))
+        if (!effect)
+            return "No Effect Found"
+
+        if (!effect.id)
+            return "Conditions require an id field"
+
+
+        let existing = this.hasCondition(effect.id)
+
+        if (existing && existing.flags.dsa5.value == null)
+            return existing
+        else if (existing) {
+            existing = duplicate(existing)
+            existing.flags.dsa5.value = Math.min(existing.flags.dsa5.max, absolute ? value : existing.flags.dsa5.value + value);
+            this._dependentEffects(existing.flags.core.statusId, existing)
+            return this.updateEmbeddedEntity("ActiveEffect", existing)
+        } else if (!existing) {
+
+            //if (game.combat && (effect.id == "blinded" || effect.id == "deafened"))
+            //    effect.flags.dsa5.roundReceived = game.combat.round
+            effect.label = game.i18n.localize(effect.label);
+            if (Number.isNumeric(effect.flags.dsa5.value))
+                effect.flags.dsa5.value = Math.min(effect.flags.dsa5.max, value);
+            effect["flags.core.statusId"] = effect.id;
+            if (effect.id == "dead")
+                effect["flags.core.overlay"] = true;
+            if (effect.id == "unconscious")
+                await this.addCondition("prone")
+
+            this._dependentEffects(effect.id, effect)
+            delete effect.id
+            return this.createEmbeddedEntity("ActiveEffect", effect)
+        }
+
+
+    }
+
+    _dependentEffects(statusId, effect) {
+        if (effect.flags.dsa5.value == 4 && (statusId == "encumbered" || statusId == "stunned" || statusId == "feared" || statusId == "inpain" || statusId == "confused")) {
+            this.addCondition("incapacitated")
+        }
+        if (effect.flags.dsa5.value == 4 && (statusId == "paralysed")) {
+            this.addCondition("rooted")
+        }
+    }
+
+    async removeCondition(effect, value = 1) {
+        if (typeof(effect) === "string")
+            effect = duplicate(CONFIG.statusEffects.find(e => e.id == effect))
+        if (!effect)
+            return "No Effect Found"
+
+        if (!effect.id)
+            return "Conditions require an id field"
+
+        let existing = this.hasCondition(effect.id)
+
+        if (existing && existing.flags.dsa5.value == null) {
+            //if (effect.id == "unconscious")
+            //    await this.addCondition("fatigued")
+            return this.deleteEmbeddedEntity("ActiveEffect", existing._id)
+        } else if (existing) {
+            existing.flags.dsa5.value -= value;
+
+            //if (existing.flags.dsa5.value == 0 && (effect.id == "bleeding" || effect.id == "poisoned" || effect.id == "broken" || effect.id == "stunned"))
+            //    await this.addCondition("fatigued")
+
+            if (existing.flags.dsa5.value <= 0)
+                return this.deleteEmbeddedEntity("ActiveEffect", existing._id)
+            else
+                return this.updateEmbeddedEntity("ActiveEffect", existing)
+        }
+    }
+
+
+    hasCondition(conditionKey) {
+        let existing = this.data.effects.find(i => getProperty(i, "flags.core.statusId") == conditionKey)
+        return existing
+    }
 }

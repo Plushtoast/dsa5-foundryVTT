@@ -3,16 +3,36 @@ import Itemdsa5 from "../item/item-dsa5.js"
 import DSA5_Utility from "../system/utility-dsa5.js"
 
 export default class ImportFunctions {
-    static async importAdvantages() {
+
+    static async importCore() {
+        await this.importAdvantages("core/core_advantages.xml", "core_advantages")
+        await this.importDisadvantages("core/core_disadvantages.xml", "core_disadvantages")
+        await this.importBlessings("core/core_blessings.xml", "core_blessings")
+        await this._importCareer("core/core_careers.xml", "core_careers")
+        await this.importCulture("core/core_cultures.xml", "core_cultures")
+        await this.importCeremonies("core/core_ceremonies.xml", "core_ceremonies")
+        await this.importEquipment("core/core_equipment.xml", "core_equipment")
+        await this.importLiturgies("core/core_liturgies.xml", "core_liturgies")
+        await this.importMelee("core/core_meleeweapon.xml", "core_meleeweapons")
+        await this.importRange("core/core_rangeweapon.xml", "core_rangeweapons")
+        await this.importRituals("core/core_rituals.xml", "core_rituals")
+        await this._importSpecialAbilities("core/core_specialabilities.xml", "core_specialabilities")
+        await this.importSpells("core/core_spells.xml", "core_spells")
+        await this.importSpellTrick("core/core_spelltricks.xml", "core_spelltricks")
+    }
+
+
+    static async importAdvantages(path, packname) {
         //var doc = DSA5Importer.fetchFile("systems/dsa5/modules/importer/xmls/advantage.xml")
         var x = new XMLHttpRequest();
         var doc
-        x.open("GET", "systems/dsa5/modules/importer/xmls/advantage.xml", true);
+        x.open("GET", `systems/dsa5/modules/importer/${path}`, true);
+
         x.onreadystatechange = await async function() {
             if (x.readyState == 4 && x.status == 200) {
                 doc = x.responseXML;
 
-                let pack = await DSA5Importer.getCompendiumPack("Item", `Advantages`);
+                let pack = await DSA5Importer.getCompendiumPack("Item", packname);
                 let elems = doc.getElementsByTagName("advantage")
 
                 for (let i = 0; i < elems.length; i++) {
@@ -162,16 +182,17 @@ export default class ImportFunctions {
 
 
 
-    static async importDisadvantages() {
+    static async importDisadvantages(path, packname) {
         //var doc = DSA5Importer.fetchFile("systems/dsa5/modules/importer/xmls/advantage.xml")
         var x = new XMLHttpRequest();
         var doc
-        x.open("GET", "systems/dsa5/modules/importer/xmls/disadvantage.xml", true);
+        x.open("GET", `systems/dsa5/modules/importer/${path}`, true);
+
         x.onreadystatechange = await async function() {
             if (x.readyState == 4 && x.status == 200) {
                 doc = x.responseXML;
 
-                let pack = await DSA5Importer.getCompendiumPack("Item", `Disadvantages`);
+                let pack = await DSA5Importer.getCompendiumPack("Item", packname);
                 let elems = doc.getElementsByTagName("disadvantage")
                 for (let i = 0; i < elems.length; i++) {
                     let elem = elems[i]
@@ -202,18 +223,22 @@ export default class ImportFunctions {
     }
 
     static getImg(elem, std) {
-        return elem.getElementsByTagName("img")[0].textContent == "" ? Itemdsa5.defaultImages[std] : elem.getElementsByTagName("img")[0].textContent
+        if (elem.getElementsByTagName("img").length > 0)
+            return elem.getElementsByTagName("img")[0].textContent == "" ? Itemdsa5.defaultImages[std] : elem.getElementsByTagName("img")[0].textContent
+        else
+            return Itemdsa5.defaultImages[std]
     }
 
-    static async importArmor() {
+    static async importArmor(path, packname) {
         var x = new XMLHttpRequest();
         var doc
-        x.open("GET", "systems/dsa5/modules/importer/xmls/armor.xml", true);
+        x.open("GET", `systems/dsa5/modules/importer/${path}`, true);
+
         x.onreadystatechange = await async function() {
             if (x.readyState == 4 && x.status == 200) {
                 doc = x.responseXML;
 
-                let pack = await DSA5Importer.getCompendiumPack("Item", `Armor`);
+                let pack = await DSA5Importer.getCompendiumPack("Item", packname);
                 let elems = doc.getElementsByTagName("armor")
                 for (let i = 0; i < elems.length; i++) {
 
@@ -242,10 +267,11 @@ export default class ImportFunctions {
         x.send(null);
     }
 
-    static async importMelee() {
+    static async importMelee(path, packname) {
         var x = new XMLHttpRequest();
         var doc
-        x.open("GET", "systems/dsa5/modules/importer/xmls/meleeweapon.xml", true);
+        x.open("GET", `systems/dsa5/modules/importer/${path}`, true);
+
         let rangeTranslation = {
             "kurz": "short",
             "mittel": "medium",
@@ -255,7 +281,7 @@ export default class ImportFunctions {
             if (x.readyState == 4 && x.status == 200) {
                 doc = x.responseXML;
 
-                let pack = await DSA5Importer.getCompendiumPack("Item", `Weapons`);
+                let pack = await DSA5Importer.getCompendiumPack("Item", packname);
                 let elems = doc.getElementsByTagName("meleeweapon")
                 for (let i = 0; i < elems.length; i++) {
                     let elem = elems[i]
@@ -297,10 +323,11 @@ export default class ImportFunctions {
         x.send(null);
     }
 
-    static async importRange() {
+    static async importRange(path, packname) {
         var x = new XMLHttpRequest();
         var doc
-        x.open("GET", "systems/dsa5/modules/importer/xmls/rangeweapon.xml", true);
+        x.open("GET", `systems/dsa5/modules/importer/${path}`, true);
+
         let ammunitionTranslation = {
             "Kugeln": "bullet",
             "Bolzen": "bolt",
@@ -312,7 +339,7 @@ export default class ImportFunctions {
             if (x.readyState == 4 && x.status == 200) {
                 doc = x.responseXML;
 
-                let pack = await DSA5Importer.getCompendiumPack("Item", `Weapons`);
+                let pack = await DSA5Importer.getCompendiumPack("Item", packname);
                 let elems = doc.getElementsByTagName("rangeweapon")
                 for (let i = 0; i < elems.length; i++) {
                     let elem = elems[i]
@@ -352,16 +379,17 @@ export default class ImportFunctions {
     }
 
 
-    static async importCulture() {
+    static async importCulture(path, packname) {
         var x = new XMLHttpRequest();
         var doc
-        x.open("GET", "systems/dsa5/modules/importer/xmls/culture.xml", true);
+        x.open("GET", `systems/dsa5/modules/importer/${path}`, true);
+
 
         x.onreadystatechange = await async function() {
             if (x.readyState == 4 && x.status == 200) {
                 doc = x.responseXML;
 
-                let pack = await DSA5Importer.getCompendiumPack("Item", `Cultures`);
+                let pack = await DSA5Importer.getCompendiumPack("Item", packname);
                 let elems = doc.getElementsByTagName("culture")
                 for (let i = 0; i < elems.length; i++) {
                     let elem = elems[i]
@@ -376,7 +404,8 @@ export default class ImportFunctions {
                         img: img,
                         type: "culture",
                         data: {
-                            "description.value": DSA5Importer.prettyDescription(elem.getElementsByTagName("description")[0].textContent),
+                            //"description.value": DSA5Importer.prettyDescription(elem.getElementsByTagName("description")[0].textContent),
+                            "description.value": DSA5Importer.prettyDescription(elem.getElementsByTagName("bookdescription")[0].textContent),
                             "APValue.value": elem.getElementsByTagName("APvalue")[0].textContent,
                             "language.value": elem.getElementsByTagName("language")[0].textContent,
                             "writing.value": elem.getElementsByTagName("writing")[0].textContent,
@@ -402,16 +431,16 @@ export default class ImportFunctions {
     }
 
 
-    static async importEquipment() {
+    static async importEquipment(path, packname) {
         var x = new XMLHttpRequest();
         var doc
-        x.open("GET", "systems/dsa5/modules/importer/xmls/equipment.xml", true);
+        x.open("GET", `systems/dsa5/modules/importer/${path}`, true);
 
         x.onreadystatechange = await async function() {
             if (x.readyState == 4 && x.status == 200) {
                 doc = x.responseXML;
 
-                let pack = await DSA5Importer.getCompendiumPack("Item", `Equipment`);
+                let pack = await DSA5Importer.getCompendiumPack("Item", packname);
                 let elems = doc.getElementsByTagName("equipment")
                 for (let i = 0; i < elems.length; i++) {
                     let elem = elems[i]
@@ -442,16 +471,16 @@ export default class ImportFunctions {
         x.send(null);
     }
 
-    static async importSpells() {
+    static async importSpells(path, packname) {
         var x = new XMLHttpRequest();
         var doc
-        x.open("GET", "systems/dsa5/modules/importer/xmls/spells.xml", true);
+        x.open("GET", `systems/dsa5/modules/importer/${path}`, true);
 
         x.onreadystatechange = await async function() {
             if (x.readyState == 4 && x.status == 200) {
                 doc = x.responseXML;
 
-                let pack = await DSA5Importer.getCompendiumPack("Item", `Spells`);
+                let pack = await DSA5Importer.getCompendiumPack("Item", packname);
                 let elems = doc.getElementsByTagName("spells")
                 for (let i = 0; i < elems.length; i++) {
                     let elem = elems[i]
@@ -504,16 +533,16 @@ export default class ImportFunctions {
         x.send(null);
     }
 
-    static async importRituals() {
+    static async importRituals(path, packname) {
         var x = new XMLHttpRequest();
         var doc
-        x.open("GET", "systems/dsa5/modules/importer/xmls/rituals.xml", true);
+        x.open("GET", `systems/dsa5/modules/importer/${path}`, true);
 
         x.onreadystatechange = await async function() {
             if (x.readyState == 4 && x.status == 200) {
                 doc = x.responseXML;
 
-                let pack = await DSA5Importer.getCompendiumPack("Item", `Rituals`);
+                let pack = await DSA5Importer.getCompendiumPack("Item", packname);
                 let elems = doc.getElementsByTagName("rituals")
                 for (let i = 0; i < elems.length; i++) {
                     let elem = elems[i]
@@ -566,16 +595,16 @@ export default class ImportFunctions {
         x.send(null);
     }
 
-    static async importLiturgies() {
+    static async importLiturgies(path, packname) {
         var x = new XMLHttpRequest();
         var doc
-        x.open("GET", "systems/dsa5/modules/importer/xmls/liturgies.xml", true);
+        x.open("GET", `systems/dsa5/modules/importer/${path}`, true);
 
         x.onreadystatechange = await async function() {
             if (x.readyState == 4 && x.status == 200) {
                 doc = x.responseXML;
 
-                let pack = await DSA5Importer.getCompendiumPack("Item", `Liturgies`);
+                let pack = await DSA5Importer.getCompendiumPack("Item", packname);
                 let elems = doc.getElementsByTagName("liturgies")
                 for (let i = 0; i < elems.length; i++) {
                     let elem = elems[i]
@@ -627,16 +656,16 @@ export default class ImportFunctions {
         x.send(null);
     }
 
-    static async importCeremonies() {
+    static async importCeremonies(path, packname) {
         var x = new XMLHttpRequest();
         var doc
-        x.open("GET", "systems/dsa5/modules/importer/xmls/ceremonies.xml", true);
+        x.open("GET", `systems/dsa5/modules/importer/${path}`, true);
 
         x.onreadystatechange = await async function() {
             if (x.readyState == 4 && x.status == 200) {
                 doc = x.responseXML;
 
-                let pack = await DSA5Importer.getCompendiumPack("Item", `Ceremonies`);
+                let pack = await DSA5Importer.getCompendiumPack("Item", packname);
                 let elems = doc.getElementsByTagName("ceremonies")
                 for (let i = 0; i < elems.length; i++) {
                     let elem = elems[i]
@@ -690,17 +719,17 @@ export default class ImportFunctions {
     }
 
 
-    static async importSpellTrick() {
+    static async importSpellTrick(path, packname) {
         var x = new XMLHttpRequest();
         var doc
-        x.open("GET", "systems/dsa5/modules/importer/xmls/spelltrick.xml", true);
+        x.open("GET", `systems/dsa5/modules/importer/${path}`, true);
 
         x.onreadystatechange = await async function() {
             if (x.readyState == 4 && x.status == 200) {
                 doc = x.responseXML;
 
-                let pack = await DSA5Importer.getCompendiumPack("Item", `Spelltricks`);
-                let elems = doc.getElementsByTagName("spelltrick")
+                let pack = await DSA5Importer.getCompendiumPack("Item", packname);
+                let elems = doc.getElementsByTagName("spelltricks")
                 for (let i = 0; i < elems.length; i++) {
                     let elem = elems[i]
                     let img = ImportFunctions.getImg(elem, "spelltrick");
@@ -729,17 +758,17 @@ export default class ImportFunctions {
         x.send(null);
     }
 
-    static async importBlessings() {
+    static async importBlessings(path, packname) {
         var x = new XMLHttpRequest();
         var doc
-        x.open("GET", "systems/dsa5/modules/importer/xmls/blessing.xml", true);
+        x.open("GET", `systems/dsa5/modules/importer/${path}`, true);
 
         x.onreadystatechange = await async function() {
             if (x.readyState == 4 && x.status == 200) {
                 doc = x.responseXML;
 
-                let pack = await DSA5Importer.getCompendiumPack("Item", `Blessings`);
-                let elems = doc.getElementsByTagName("blessing")
+                let pack = await DSA5Importer.getCompendiumPack("Item", packname);
+                let elems = doc.getElementsByTagName("blessings")
                 for (let i = 0; i < elems.length; i++) {
                     let elem = elems[i]
                     let img = ImportFunctions.getImg(elem, "blessing");
@@ -1137,7 +1166,7 @@ export default class ImportFunctions {
     }
 
 
-    static async _importCareer(k) {
+    static async _importCareer(path, packname) {
 
 
         //somehow interferes with each other
@@ -1147,20 +1176,20 @@ export default class ImportFunctions {
             "Zauberer": "magical",
             "Weltliche": "mundane"
         }
-        let pack = await DSA5Importer.getCompendiumPack("Item", `Careers`);
+        let pack = await DSA5Importer.getCompendiumPack("Item", packname);
 
         var x = new XMLHttpRequest();
-        x.open("GET", "systems/dsa5/modules/importer/xmls/" + k + ".xml", true);
+        x.open("GET", `systems/dsa5/modules/importer/${path}`, true);
 
         x.onreadystatechange = await async function() {
             if (x.readyState == 4 && x.status == 200) {
                 var doc = x.responseXML;
 
 
-                let elems = doc.getElementsByTagName(k)
+                let elems = doc.getElementsByTagName("career")
                 for (let i = 0; i < elems.length; i++) {
                     let elem = elems[i]
-                    let img = Itemdsa5.defaultImages[k];
+                    let img = Itemdsa5.defaultImages[elem.getElementsByTagName("category")[0].textContent];
 
                     if (elem.getElementsByTagName("img")[0].textContent != "")
                         img = ImportFunctions.getImg(elem, "career");
@@ -1174,14 +1203,15 @@ export default class ImportFunctions {
                         img: img,
                         type: "career",
                         data: {
-                            "description.value": DSA5Importer.prettyDescription(elem.getElementsByTagName("description")[0].textContent),
+                            //"description.value": DSA5Importer.prettyDescription(elem.getElementsByTagName("description")[0].textContent),
+                            "description.value": DSA5Importer.prettyDescription(elem.getElementsByTagName("bookdescription")[0].textContent),
                             "APValue.value": apVal,
                             "requirements.value": elem.getElementsByTagName("requirements")[0].textContent,
                             "recommendedAdvantages.value": elem.getElementsByTagName("recommendedAdvantages")[0].textContent,
                             "recommendedDisadvantages.value": elem.getElementsByTagName("recommendedDisadvantages")[0].textContent,
                             "notsuitableAdvantages.value": elem.getElementsByTagName("notsuitableAdvantages")[0].textContent,
                             "notsuitableDisadvantages.value": elem.getElementsByTagName("notsuitableDisadvantages")[0].textContent,
-                            "mageLevel.value": mageLevels[k],
+                            "mageLevel.value": mageLevels[elem.getElementsByTagName("category")[0].textContent],
                             "skills.value": [
                                 elem.getElementsByTagName("talentsBody")[0].textContent,
                                 elem.getElementsByTagName("talentsSocial")[0].textContent,
@@ -1275,17 +1305,17 @@ export default class ImportFunctions {
         }
     }
 
-    static async _importSpecialAbilities(cat) {
+    static async _importSpecialAbilities(path, packname) {
         var x = new XMLHttpRequest();
         var doc
 
-        x.open("GET", `systems/dsa5/modules/importer/xmls/specialability${cat}.xml`, true);
+        x.open("GET", `systems/dsa5/modules/importer/${path}`, true);
 
         x.onreadystatechange = await async function() {
             if (x.readyState == 4 && x.status == 200) {
                 doc = x.responseXML;
 
-                let pack = await DSA5Importer.getCompendiumPack("Item", `SpecialAbilities2`);
+                let pack = await DSA5Importer.getCompendiumPack("Item", packname);
                 let elems = doc.getElementsByTagName("specialability")
                 for (let i = 0; i < elems.length; i++) {
                     let elem = elems[i]

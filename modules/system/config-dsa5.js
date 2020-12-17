@@ -10,67 +10,173 @@ const DSA5 = {}
 CONFIG.statusEffects = [{
         id: "prone",
         label: "CONDITION.prone",
-        icon: "icons/svg/falling.svg"
+        icon: "icons/svg/falling.svg",
+        description: "CONDITIONDESCRIPTION.prone",
+        flags: {
+            dsa5: {
+                "trigger": "endRound",
+                "value": null,
+                "editable": true,
+                "impact": null
+            }
+        }
     },
     {
         id: "unconscious",
         label: "CONDITION.unconscious",
-        icon: "icons/svg/unconscious.svg"
+        icon: "icons/svg/unconscious.svg",
+        description: "CONDITIONDESCRIPTION.unconscious",
+        flags: {
+            dsa5: {
+                "trigger": "endRound",
+                "value": null,
+                "editable": true,
+                "impact": null
+            }
+        }
     },
+    {
+        id: "rooted",
+        label: "CONDITION.rooted",
+        icon: "icons/svg/net.svg",
+        description: "CONDITIONDESCRIPTION.rooted",
+        flags: {
+            dsa5: {
+                "trigger": "endRound",
+                "value": null,
+                "editable": true,
+                "impact": null
+            }
+        }
+    },
+    {
+        id: "incapacitated",
+        label: "CONDITION.incapacitated",
+        icon: "icons/svg/sleep.svg",
+        description: "CONDITIONDESCRIPTION.incapacitated",
+        flags: {
+            dsa5: {
+                "trigger": "endRound",
+                "value": null,
+                "editable": true,
+                "impact": null
+            }
+        }
+    },
+
+
 
     {
         id: "encumbered",
         label: "CONDITION.encumbered",
-        icon: "icons/svg/anchor.svg"
+        icon: "icons/svg/anchor.svg",
+        description: "CONDITIONDESCRIPTION.encumbered",
+        flags: {
+            dsa5: {
+                "trigger": "endRound",
+                "value": 1,
+                "editable": false,
+                "impact": "-1",
+                "max": 4
+            }
+        }
     },
-    {
-        id: "drunken",
-        label: "CONDITION.drunken",
-        icon: "icons/svg/tankard.svg"
-    },
+
     {
         id: "stunned",
         label: "CONDITION.stunned",
-        icon: "icons/svg/daze.svg"
+        icon: "icons/svg/daze.svg",
+        description: "CONDITIONDESCRIPTION.stunned",
+        flags: {
+            dsa5: {
+                "trigger": "endRound",
+                "value": 1,
+                "editable": true,
+                "impact": "-1",
+                "max": 4
+            }
+        }
     },
     {
         id: "raptured",
         label: "CONDITION.raptured",
-        icon: "icons/svg/ice-aura.svg"
+        icon: "icons/svg/ice-aura.svg",
+        description: "CONDITIONDESCRIPTION.raptured",
+        flags: {
+            dsa5: {
+                "trigger": "endRound",
+                "value": 1,
+                "editable": true,
+                "impact": "-1",
+                "max": 4
+            }
+        }
     },
     {
         id: "feared",
         label: "CONDITION.feared",
-        icon: "icons/svg/terror.svg"
+        icon: "icons/svg/terror.svg",
+        description: "CONDITIONDESCRIPTION.feared",
+        flags: {
+            dsa5: {
+                "trigger": "endRound",
+                "value": 1,
+                "editable": true,
+                "impact": "-1",
+                "max": 4
+            }
+        }
     },
     {
         id: "paralysed",
         label: "CONDITION.paralysed",
-        icon: "icons/svg/paralysis.svg"
+        icon: "icons/svg/paralysis.svg",
+        description: "CONDITIONDESCRIPTION.paralysed",
+        flags: {
+            dsa5: {
+                "trigger": "endRound",
+                "value": 1,
+                "editable": true,
+                "impact": "-1",
+                "max": 4
+            }
+        }
     },
     {
         id: "inpain",
         label: "CONDITION.inpain",
-        icon: "icons/svg/blood.svg"
+        icon: "icons/svg/blood.svg",
+        description: "CONDITIONDESCRIPTION.inpain",
+        flags: {
+            dsa5: {
+                "trigger": "endRound",
+                "value": 1,
+                "editable": false,
+                "impact": "-1",
+                "max": 4
+            }
+        }
     },
-    {
-        id: "tranced",
-        label: "CONDITION.tranced",
-        icon: "icons/svg/sun.svg"
-    },
-    {
-        id: "overexerted",
-        label: "CONDITION.overexerted",
-        icon: "icons/svg/sleep.svg"
-    },
+
     {
         id: "confused",
         label: "CONDITION.confused",
-        icon: "icons/svg/stoned.svg"
+        icon: "icons/svg/stoned.svg",
+        description: "CONDITIONDESCRIPTION.confused",
+        flags: {
+            dsa5: {
+                "trigger": "endRound",
+                "value": 1,
+                "editable": true,
+                "impact": "-1",
+                "max": 4
+            }
+        }
     }
 
 ]
-DSA5.statusEffects = [
+
+/*DSA5.statusEffects = [
     "CONDITION.prone",
     "CONDITION.unconscious",
 
@@ -84,7 +190,11 @@ DSA5.statusEffects = [
     "CONDITION.tranced",
     "CONDITION.overexerted",
     "CONDITION.confused"
-]
+]*/
+
+DSA5.effectTextStyle = CONFIG.canvasTextStyle.clone();
+DSA5.effectTextStyle.fontSize = "30";
+DSA5.effectTextStyle.fontFamily = "GentiumBasic"
 
 DSA5.defaultWeapon = {
     name: "default",
