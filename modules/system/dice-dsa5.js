@@ -15,8 +15,6 @@ export default class DiceDSA5 {
             testModifier: 0,
         });
 
-
-
         mergeObject(dialogOptions.data, {
             testDifficulty: sceneStress,
             testModifier: (dialogOptions.data.modifier || 0)
@@ -34,9 +32,7 @@ export default class DiceDSA5 {
                 mergeObject(dialogOptions.data, {
                     difficultyLabels: (DSA5.skillDifficultyLabels)
                 });
-
                 break;
-
             case "rangeweapon":
                 this._enabledModifiers(situationalModifiers, ["CONDITION.encumbered", "CONDITION.inpain"], true)
                 let targetSize = "average"
@@ -74,7 +70,6 @@ export default class DiceDSA5 {
                                 targetWeaponsize = defWeapon[0].data.data.reach.value
                         });
                     }
-
                     mergeObject(dialogOptions.data, {
                         weaponSizes: DSA5.meleeRanges,
                         melee: true,
@@ -108,7 +103,6 @@ export default class DiceDSA5 {
                                 targetWeaponsize = defWeapon[0].data.data.reach.value
                         });
                     }
-
                     mergeObject(dialogOptions.data, {
                         weaponSizes: DSA5.meleeRanges,
                         melee: true,
@@ -120,17 +114,13 @@ export default class DiceDSA5 {
                         showDefense: true,
                         melee: true
                     });
-                } else {
-
-                }
-
+                } else {}
                 break
             case "combatskill":
                 this._enabledModifiers(situationalModifiers, ["CONDITION.encumbered", "CONDITION.inpain"], true)
                 break
             case "liturgy":
             case "spell":
-
                 if (game.user.targets.size) {
                     game.user.targets.forEach(target => {
                         skMod = target.actor.data.data.status.soulpower.max
@@ -145,14 +135,12 @@ export default class DiceDSA5 {
                 this._enabledModifiers(situationalModifiers, ["CONDITION.encumbered", "CONDITION.inpain"], true)
                 break;
             case "ceremony":
-
                 if (game.user.targets.size) {
                     game.user.targets.forEach(target => {
                         skMod = target.actor.data.data.status.soulpower.max
                         zkMod = target.actor.data.data.status.toughness.max
                     });
                 }
-
                 mergeObject(dialogOptions.data, {
                     SKModifier: skMod,
                     ZKModifier: zkMod,
@@ -169,7 +157,6 @@ export default class DiceDSA5 {
                         zkMod = target.actor.data.data.status.toughness.max
                     });
                 }
-
                 mergeObject(dialogOptions.data, {
                     SKModifier: skMod,
                     ZKModifier: zkMod,
@@ -182,22 +169,18 @@ export default class DiceDSA5 {
             case "status":
                 break;
             default:
-
                 mergeObject(dialogOptions.data, {
                     difficultyLabels: (DSA5.attributeDifficultyLabels)
                 });
-
         }
 
         mergeObject(dialogOptions.data, {
             hasSituationalModifiers: situationalModifiers.length > 0,
             situationalModifiers: situationalModifiers
         })
-
         mergeObject(cardOptions, {
             user: game.user._id,
         })
-
 
         dialogOptions.data.rollMode = dialogOptions.data.rollMode || rollMode;
         if (CONFIG.Dice.rollModes)
@@ -299,18 +282,19 @@ export default class DiceDSA5 {
 
         let result = {
             rollType: "regeneration",
-            LeP: Math.max(0, Number(roll.terms[0].results[0].result) - Number(modifier)),
+            LeP: Math.round(Math.max(0, Number(roll.terms[0].results[0].result) - Number(modifier)) * Number(testData.regenerationFactor)),
             preData: testData,
             modifiers: modifier,
             extra: {}
         }
 
+
         if (testData.extra.actor.isMage) {
             chars.push({ char: "AsP", res: roll.terms[2].results[0].result, die: "d6" })
-            result["AsP"] = Math.max(0, Number(roll.terms[2].results[0].result) + Number(modifier))
+            result["AsP"] = Math.round(Math.max(0, Number(roll.terms[2].results[0].result) + Number(modifier)) * Number(testData.regenerationFactor))
         } else if (testData.extra.actor.isPriest) {
             chars.push({ char: "KaP", res: roll.terms[2].results[0].result, die: "d6" })
-            result["KaP"] = Math.max(0, Number(roll.terms[2].results[0].result) + Number(modifier))
+            result["KaP"] = Math.round(Math.max(0, Number(roll.terms[2].results[0].result) + Number(modifier)) * Number(testData.regenerationFactor))
         }
 
         result["characteristics"] = chars
@@ -942,8 +926,6 @@ export default class DiceDSA5 {
     }
 
     static async renderRollCard(chatOptions, testData, rerenderMessage) {
-
-
         if (Array.isArray(testData.other)) {
             testData.other = testData.other.join("<br>")
         }

@@ -108,6 +108,7 @@
     "actionCount": "Aktionen",
     "atmod": "Angriffsmodifikator",
     "baseValue": "Grundwert",
+    "badEnvironment": "Schlechte Umgebung",
     "BE": "Belastung",
     "behaviour": "Kampfverhalten",
     "bolt": "Bolzen",
@@ -150,6 +151,7 @@
     "doubleDamage": "doppelter Schaden",
     "duration": "Wirkungsdauer",
     "doubleAttack": "Zwei Angriffe",
+    "DSA5Error": "DSA5 - Fehler melden",
     "Description": "Beschreibung",
     "Difficulty": "Schwierigkeit",
     "distribution": "Verbreitung",
@@ -558,6 +560,10 @@
         "10": "Der Geweihte verliert für 1D6 Tage seine Befähigung zu sprechen.",
         "11": "Für einen Tag erhält der Geweihte ein Stigma.",
         "12": "Der Geweihte verwurzelt mit dem Boden und kann seine Füße für 1W6 Minuten nicht bewegen. Er erhält währenddessen den Status Fixiert.“"
+    },
+
+    "CONDITIONS": {
+        "add": "Zustand hinzufügen"
     },
 
     "CONDITIONDESCRIPTION": {

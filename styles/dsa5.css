@@ -1450,3 +1450,36 @@ input[type="search"] {
     height: 34px;
     line-height: 34px;
 }
+
+.statusEffectMenu {
+    position: relative;
+}
+
+.statusEffectMenu ul {
+    display: none;
+    position: absolute;
+    right: 0;
+    top: 0;
+    width: 124px;
+    border: 1px solid black;
+    background: rgba(0, 0, 0, 0.7);
+    padding: 2px;
+    margin: 0;
+}
+
+.statusEffectMenu li {
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+    border: 1px solid transparent;
+}
+
+.statusEffectMenu li:hover {
+    border: 1px solid black;
+}
+
+.statusEffectMenu img {
+    width: 20px;
+    height: 20px;
+    border: none;
+}

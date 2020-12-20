@@ -14,7 +14,6 @@ export default class MacroDSA5 {
         this.runWeaponless(actor, char)
     }
 
-
     static itemMacroById(actorId, itemName, itemType, bypassData) {
         let actor = game.actors.get(actorId)
         let item = actor ? actor.items.find(i => i.name === itemName && i.type == itemType) : null;
@@ -67,11 +66,9 @@ export default class MacroDSA5 {
 
         switch (item.type) {
             case "meleeweapon":
-
                 actor.setupWeapon(item, bypassData.mod, bypassData).then(setupData => {
                     actor.basicTest(setupData)
                 });
-
                 return
             case "rangeweapon":
                 actor.setupWeapon(item, "attack", bypassData).then(setupData => {

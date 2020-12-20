@@ -261,7 +261,6 @@ export default class Actordsa5 extends Actor {
             // *********** TALENTS ***********
             switch (i.type) {
                 case "skill":
-                    this.prepareSkill(i);
                     switch (i.data.group.value) {
                         case "body":
                             bodySkills.push(i);
@@ -671,6 +670,13 @@ export default class Actordsa5 extends Actor {
         )
     }
 
+    applyMana(amount, type) {
+        let val = type == "AsP" ? "data.status.astralenergy.value" : "data.karmaenergy.value"
+        this.update(
+            this.update({ val: Math.max(0, this.data[val] - amount) })
+        )
+    }
+
     setupWeaponless(statusId, options = {}) {
         let title = game.i18n.localize(statusId + "Weaponless");
 
@@ -870,6 +876,7 @@ export default class Actordsa5 extends Actor {
                     name: game.i18n.localize("interruption") + " - " + html.find('[name="regenerationInterruptOptions"] option:selected').text(),
                     value: html.find('[name="regenerationInterruptOptions"]').val()
                 })
+                testData.regenerationFactor = html.find('[name="badEnvironment"]').is(":checked") ? 0.5 : 1
                 return { testData, cardOptions };
             }
         };
@@ -1142,9 +1149,6 @@ export default class Actordsa5 extends Actor {
         });
     }
 
-    prepareSkill(skill) {
-
-    }
 
     static _prepareMeleetrait(item) {
         item.attack = Number(item.data.at.value)
@@ -1319,7 +1323,7 @@ export default class Actordsa5 extends Actor {
         else if (existing) {
             existing = duplicate(existing)
             existing.flags.dsa5.value = Math.min(existing.flags.dsa5.max, absolute ? value : existing.flags.dsa5.value + value);
-            this._dependentEffects(existing.flags.core.statusId, existing)
+            await this._dependentEffects(existing.flags.core.statusId, existing)
             return this.updateEmbeddedEntity("ActiveEffect", existing)
         } else if (!existing) {
 
@@ -1334,7 +1338,7 @@ export default class Actordsa5 extends Actor {
             if (effect.id == "unconscious")
                 await this.addCondition("prone")
 
-            this._dependentEffects(effect.id, effect)
+            await this._dependentEffects(effect.id, effect)
             delete effect.id
             return this.createEmbeddedEntity("ActiveEffect", effect)
         }
@@ -1342,12 +1346,12 @@ export default class Actordsa5 extends Actor {
 
     }
 
-    _dependentEffects(statusId, effect) {
+    async _dependentEffects(statusId, effect) {
         if (effect.flags.dsa5.value == 4 && (statusId == "encumbered" || statusId == "stunned" || statusId == "feared" || statusId == "inpain" || statusId == "confused")) {
-            this.addCondition("incapacitated")
+            await this.addCondition("incapacitated")
         }
         if (effect.flags.dsa5.value == 4 && (statusId == "paralysed")) {
-            this.addCondition("rooted")
+            await this.addCondition("rooted")
         }
     }
 
@@ -1363,15 +1367,9 @@ export default class Actordsa5 extends Actor {
         let existing = this.hasCondition(effect.id)
 
         if (existing && existing.flags.dsa5.value == null) {
-            //if (effect.id == "unconscious")
-            //    await this.addCondition("fatigued")
             return this.deleteEmbeddedEntity("ActiveEffect", existing._id)
         } else if (existing) {
             existing.flags.dsa5.value -= value;
-
-            //if (existing.flags.dsa5.value == 0 && (effect.id == "bleeding" || effect.id == "poisoned" || effect.id == "broken" || effect.id == "stunned"))
-            //    await this.addCondition("fatigued")
-
             if (existing.flags.dsa5.value <= 0)
                 return this.deleteEmbeddedEntity("ActiveEffect", existing._id)
             else

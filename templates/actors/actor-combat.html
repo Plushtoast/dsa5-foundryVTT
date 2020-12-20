@@ -166,8 +166,23 @@
 
 <div class="groupbox">
     <div class="row-section">
-        <div class="col header-label lineheight">
+        <div class="col ten">
+
+        </div>
+        <div class="col eighty header-label lineheight">
             <b>{{localize "statuseffects"}}</b>
+        </div>
+        <div class="col ten center">
+            <div class="statusEffectMenu">
+                <a class="status-create lineheight very-small" title="{{localize 'CONDITIONS.add'}}"><i class="fas fa-plus"></i></a>
+                <ul>
+                    {{#each manualConditions as |item i|}}
+                    <li>
+                        <a class="status-add" data-id="{{item.id}}" title="{{localize item.label}}"><img src="{{item.icon}}" /></a>
+                    </li>
+                    {{/each}}
+                </ul>
+            </div>
         </div>
     </div>
     <div class="row-section">

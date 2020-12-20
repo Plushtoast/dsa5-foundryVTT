@@ -2,7 +2,7 @@
     "name": "dsa5",
     "title": "Das Schwarze Auge (5th Edition)",
     "description": "Many details here.",
-    "version": "0.1.47",
+    "version": "0.1.48",
     "templateVersion": 35,
     "author": "Plushtoast",
     "scripts": [],
@@ -215,7 +215,7 @@
     "primaryTokenAttribute": "status.wounds.value",
     "secondaryTokenAttribute": "status.astralenergy.value",
     "minimumCoreVersion": "0.7.7",
-    "compatibleCoreVersion": "0.7.8",
+    "compatibleCoreVersion": "0.7.9",
     "url": "https://github.com/Plushtoast/dsa5-foundryVTT",
     "manifest": "https://raw.githubusercontent.com/Plushtoast/dsa5-foundryVTT/master/system.json",
     "download": "https://github.com/Plushtoast/dsa5-foundryVTT/archive/master.zip"

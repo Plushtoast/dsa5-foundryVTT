@@ -16,6 +16,24 @@ export default class DSA5Dialog extends Dialog {
         html.find(".dieButton").click(ev => {
             $(ev.currentTarget).toggleClass('dieSelected')
         })
+        html.find('.quantity-click').mousedown(ev => {
+            let val = $(ev.currentTarget).val()
+            switch (ev.button) {
+                case 0:
+                    if (ev.ctrlKey)
+                        val += 10;
+                    else
+                        val++;
+                    break;
+                case 2:
+                    if (ev.ctrlKey)
+                        val -= 10;
+                    else
+                        val--;
+                    break;
+            }
+            $(ev.currentTarget).val(val)
+        });
         html.find('.spellModifier').change(event => {
             let parent = $(event.currentTarget).parents(".skill-test")
             let castingTime = parent.find('.castingTime')

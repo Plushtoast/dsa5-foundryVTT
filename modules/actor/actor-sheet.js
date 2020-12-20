@@ -93,8 +93,8 @@ export default class ActorSheetDsa5 extends ActorSheet {
     }
 
     _addDefaultActiveEffects(data) {
-        data.conditions = duplicate(CONFIG.statusEffects) //.filter(x => x.flags.dsa5.editable)
-        for (let condition of data.conditions) {
+        let conditions = duplicate(CONFIG.statusEffects) //.filter(x => x.flags.dsa5.editable)
+        for (let condition of conditions) {
             let existing = this.actor.data.effects.find(e => e.flags.core != undefined && e.flags.core.statusId == condition.id)
             condition.editable = condition.flags.dsa5.editable
             if (existing) {
@@ -109,6 +109,8 @@ export default class ActorSheetDsa5 extends ActorSheet {
                 condition.boolean = true;
 
         }
+        data.conditions = conditions.filter(x => x.existing)
+        data.manualConditions = conditions.filter(x => !x.existing)
     }
 
 
@@ -157,6 +159,17 @@ export default class ActorSheetDsa5 extends ActorSheet {
             }
             this.actor.updateEmbeddedEntity("OwnedItem", item);
         });
+
+        html.find(".status-create").click(ev => {
+            $(ev.currentTarget).closest(".statusEffectMenu").find('ul').fadeIn()
+        })
+        html.find(".statusEffectMenu ul").mouseleave(ev => {
+            $(ev.currentTarget).fadeOut()
+        })
+        html.find(".status-add").click(ev => {
+            this.actor.addCondition($(ev.currentTarget).attr("data-id"))
+        })
+
         html.find('.skill-select').mousedown(ev => {
             let itemId = this._getItemId(ev);
             let skill = this.actor.items.find(i => i.data._id == itemId);
