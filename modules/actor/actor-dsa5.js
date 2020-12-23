@@ -62,8 +62,6 @@ export default class Actordsa5 extends Actor {
             super.prepareData();
             const data = this.data;
 
-
-
             if (this.data.type == "character" || this.data.type == "npc") {
                 data.data.status.wounds.current = data.data.status.wounds.initial + data.data.characteristics["ko"].value * 2;
 
@@ -107,7 +105,6 @@ export default class Actordsa5 extends Actor {
             this._calculateStatus(data, "dodge")
 
 
-
         } catch (error) {
             console.error("Something went wrong with preparing actor data: " + error + error.stack)
             ui.notifications.error(game.i18n.localize("ACTOR.PreparationError") + error + error.stack)
@@ -126,10 +123,8 @@ export default class Actordsa5 extends Actor {
 
     prepare() {
         let preparedData = duplicate(this.data)
-            // Call prepareItems first to organize and process OwnedItems
+        // Call prepareItems first to organize and process OwnedItems
         mergeObject(preparedData, this.prepareItems())
-
-
 
         return preparedData;
     }
@@ -255,10 +250,6 @@ export default class Actordsa5 extends Actor {
 
 
         for (let i of actorData.items) {
-            //try {
-            //i.img = i.img || DEFAULT_TOKEN;
-
-            // *********** TALENTS ***********
             switch (i.type) {
                 case "skill":
                     switch (i.data.group.value) {
@@ -312,7 +303,6 @@ export default class Actordsa5 extends Actor {
                         armorTraits.push(i)
                         totalArmor += Number(i.data.at.value);
                     }
-
                     break
                 case "combatskill":
                     combatskills.push(Actordsa5._calculateCombatSkillValues(i, actorData));
@@ -345,7 +335,6 @@ export default class Actordsa5 extends Actor {
                     inventory.armor.items.push(i);
                     inventory.armor.show = true;
                     totalWeight += Number(i.weight);
-
                     if (i.data.worn.value) {
                         encumbrance += Number(i.data.encumbrance.value);
                         totalArmor += Number(i.data.protection.value);
@@ -643,7 +632,6 @@ export default class Actordsa5 extends Actor {
         let dialogOptions = {
             title: title,
             template: "/systems/dsa5/templates/dialog/combatskill-dialog.html",
-            // Prefilled dialog data
             data: {
                 rollMode: options.rollMode
             },
@@ -757,9 +745,8 @@ export default class Actordsa5 extends Actor {
             let cardOptions = this.preparePostRollAction(message);
 
             let infoMsg = `<h3 class="center"><b>${game.i18n.localize("CHATFATE.faitepointUsed")}</b></h3>
-                ${game.i18n.format("CHATFATE." + type , { character: '<b>' + this.name + '</b>' })}<br>
-                <b>${game.i18n.localize("CHATFATE.PointsRemaining")}</b>: ${this.data.data.status.fatePoints.value - 1}
-            `;
+                ${game.i18n.format("CHATFATE." + type, { character: '<b>' + this.name + '</b>' })}<br>
+                <b>${game.i18n.localize("CHATFATE.PointsRemaining")}</b>: ${this.data.data.status.fatePoints.value - 1}`;
 
 
             let newTestData = data.preData
@@ -784,7 +771,7 @@ export default class Actordsa5 extends Actor {
                                     label: game.i18n.localize("Ok"),
                                     callback: dlg => {
 
-                                        let diesToReroll = dlg.find('.dieSelected').map(function() { return Number($(this).attr('data-index')) }).get()
+                                        let diesToReroll = dlg.find('.dieSelected').map(function () { return Number($(this).attr('data-index')) }).get()
                                         if (diesToReroll.length > 0) {
 
                                             let newRoll = []
@@ -1101,7 +1088,7 @@ export default class Actordsa5 extends Actor {
 
     _parseModifiers(search) {
         let res = []
-        $(search + " option:selected").each(function() {
+        $(search + " option:selected").each(function () {
             res.push({
                 name: $(this).text().trim(),
                 value: Number($(this).val())
@@ -1156,7 +1143,7 @@ export default class Actordsa5 extends Actor {
         let damageDie = ""
         let damageTerm = ""
         for (let k of parseDamage.terms) {
-            if (typeof(k) == 'object') {
+            if (typeof (k) == 'object') {
                 damageDie = k.number + "d" + k.faces
             } else {
                 damageTerm += k
@@ -1173,7 +1160,7 @@ export default class Actordsa5 extends Actor {
         let damageDie = ""
         let damageTerm = ""
         for (let k of parseDamage.terms) {
-            if (typeof(k) == 'object') {
+            if (typeof (k) == 'object') {
                 damageDie = k.number + "d" + k.faces
             } else {
                 damageTerm += k
@@ -1211,7 +1198,7 @@ export default class Actordsa5 extends Actor {
         let damageDie = ""
         let damageTerm = ""
         for (let k of parseDamage.terms) {
-            if (typeof(k) == 'object') {
+            if (typeof (k) == 'object') {
                 damageDie = k.number + "d" + k.faces
             } else {
                 damageTerm += k
@@ -1229,7 +1216,7 @@ export default class Actordsa5 extends Actor {
         let damageDie = ""
         let damageTerm = ""
         for (let k of parseDamage.terms) {
-            if (typeof(k) == 'object') {
+            if (typeof (k) == 'object') {
                 damageDie = k.number + "d" + k.faces
             } else {
                 damageTerm += k
@@ -1307,7 +1294,7 @@ export default class Actordsa5 extends Actor {
             return this.removeCondition(effect, 10)
         }
 
-        if (typeof(effect) === "string")
+        if (typeof (effect) === "string")
             effect = duplicate(CONFIG.statusEffects.find(e => e.id == effect))
         if (!effect)
             return "No Effect Found"
@@ -1356,7 +1343,7 @@ export default class Actordsa5 extends Actor {
     }
 
     async removeCondition(effect, value = 1) {
-        if (typeof(effect) === "string")
+        if (typeof (effect) === "string")
             effect = duplicate(CONFIG.statusEffects.find(e => e.id == effect))
         if (!effect)
             return "No Effect Found"

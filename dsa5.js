@@ -12,7 +12,7 @@ import registerHooks from "./modules/system/hooks.js";
 import MacroDSA5 from "./modules/system/macroControl.js";
 import LazyImporter from "./modules/importer/lazy_importer.js"
 import DSA5 from "./modules/system/config-dsa5.js"
-
+import DSA5ItemLibrary from "./modules/system/itemlibrary.js"
 
 Hooks.once("init", async function() {
 
@@ -41,6 +41,7 @@ Hooks.once("init", async function() {
         },
         macro: MacroDSA5,
         config: DSA5,
+        itemLibrary: new DSA5ItemLibrary(),
         lazy: {
             LazyImporter
         }

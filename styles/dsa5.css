@@ -79,6 +79,10 @@
     margin: 0px 0px;
 }
 
+em {
+    font-family: 'GentiumBasic-BoldItalic';
+}
+
 body {
     width: 100vw;
     height: 100vh;
@@ -288,7 +292,7 @@ form .form-group.tripple select {
 .character-sheet form {
     border-color: black;
     border-style: double;
-    border-width: 20px;
+    border-width: 10px;
     border-image: url(../icons/backgrounds/actor.webp) 27 28 28 28;
     padding: 4px;
     margin: 0px;
@@ -387,6 +391,7 @@ form .form-group.tripple select {
 
 .window-app .window-header .header-button {
     width: 15px;
+    height: 15px;
     margin-top: 10px;
 }
 
@@ -873,7 +878,7 @@ form .form-group.tripple select {
 
 .app.sidebar-popout .window-content,
 .window-app .window-content {
-    background: url(../icons/backgrounds/chatpaper.webp) no-repeat;
+    background: url(../icons/backgrounds/sheet2.webp) no-repeat;
     background-position: center;
     background-size: 100% 120%;
 }
@@ -942,6 +947,7 @@ form.dsa5.item-sheet {
     margin-top: 5px;
     color: white;
     text-shadow: 0px 0px 2px rgba(0, 0, 0, 0.75);
+    background-image: url(../icons/backgrounds/DSA5_logo_empty.webp);
 }
 
 .window-app.npc-sheet .window-header .window-title,
@@ -1482,4 +1488,40 @@ input[type="search"] {
     width: 20px;
     height: 20px;
     border: none;
+}
+
+.itemLibrary {
+    padding: 10px;
+}
+
+.itemLibrary ul {
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.itemLibrary ul li {
+    list-style-type: none;
+    width: 24%;
+    display: inline-block;
+    display: flex;
+}
+
+.itemLibrary .item-list li {
+    width: 49%;
+    border: 1px solid #DDD;
+}
+
+.itemLibrary .item-list li a {
+    display: inline-block;
+    padding: 2px;
+    width: calc(100% - 44px);
+    height: 40px;
+    line-height: 36px;
+}
+
+.itemLibrary .item-list li .image {
+    height: 40px;
+    width: 40px;
+    display: inline-block;
+    background-size: contain;
 }
