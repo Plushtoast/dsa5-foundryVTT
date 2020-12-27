@@ -16,10 +16,11 @@
 
     <section class="content">
 
-        {{> systems/dsa5/templates/items/item-description.html}}
+        <div class="tab description active" data-tab="description">
+            {{{localize (concat "Combatskilldescr." item.name)}}}
+        </div>
 
         <div class="tab details" data-tab="details">
-
 
             <div class="form-group">
                 <label class="label-text">{{localize "StF"}}</label>

@@ -79,10 +79,6 @@
     margin: 0px 0px;
 }
 
-em {
-    font-family: 'GentiumBasic-BoldItalic';
-}
-
 body {
     width: 100vw;
     height: 100vh;
@@ -880,7 +876,8 @@ form .form-group.tripple select {
 .window-app .window-content {
     background: url(../icons/backgrounds/sheet2.webp) no-repeat;
     background-position: center;
-    background-size: 100% 120%;
+    background-repeat: repeat-y;
+    background-size: 101% 1400px;
 }
 
 .window-app.actor .window-content,
@@ -903,6 +900,7 @@ form.dsa5.item-sheet {
 .window-app.character-sheet .window-header,
 .window-app.item .window-header {
     background-image: url(../icons/backgrounds/sidebar-top.webp);
+
     border: none;
     top: 2px;
 }
@@ -1134,19 +1132,22 @@ form.dsa5.item-sheet {
 }
 
 .window-app .window-header {
-    background-image: url(../icons/backgrounds/creature-top.webp);
+    /*background-image: url(../icons/backgrounds/creature-top.webp);*/
+    background-image: url(../icons/backgrounds/blackhat.webp);
     top: 7px;
     border: none;
 }
 
 .window-app:after {
-    background-image: url(../icons/backgrounds/bookBorder.webp);
+    /*background-image: url(../icons/backgrounds/bookBorder.webp);*/
+    background-image: url(../icons/backgrounds/blackbook.webp);
     bottom: 12px;
     content: '';
 }
 
 .window-app.creature-sheet:after {
-    background-image: url(../icons/backgrounds/creature-bot.webp);
+    /*background-image: url(../icons/backgrounds/creature-bot.webp);*/
+    background-image: url(../icons/backgrounds/blackcreaturebot.webp);
 }
 
 .window-app.creature-sheet .window-resizable-handle {
@@ -1504,6 +1505,7 @@ input[type="search"] {
     width: 24%;
     display: inline-block;
     display: flex;
+    line-height: 26px;
 }
 
 .itemLibrary .item-list li {
@@ -1524,4 +1526,89 @@ input[type="search"] {
     width: 40px;
     display: inline-block;
     background-size: contain;
+}
+
+.lineheight2{
+    line-height: 26px;
+}
+.lineheight2 span, .itemLibrary .item-list li a span{
+    display: inline-block;
+    vertical-align: middle;
+    line-height: 12px;
+}
+
+#hotbar:before{
+    background-image:   url(../icons/backgrounds/hotbarpart.webp), url(../icons/backgrounds/hotbarpart.webp), url(../icons/backgrounds/hotbar3.webp);
+    background-size:30px 48px, 35px 48px,100% 100%;
+    background-repeat:no-repeat;
+    content:'';
+    position: absolute;
+    left: 0px;
+    right: 0px;
+    bottom: -10px;
+    top: -10px;
+    z-index: -1;
+    background-position: 8px 11px, calc(100% - 8px) 11px, center;
+
+}
+#hotbar .macro{
+    background: none;
+    border: 1px solid rgba(0,0,0,0.5);
+}
+#hotbar #macro-list{
+    border: none;
+    margin:0;
+}
+
+#hotbar .bar-controls{
+    margin:0;
+    background: none;
+    color:silver;
+    border:none;
+    text-shadow:0px 0px 8px black,0px 0px 8px black;
+    box-shadow: none;
+}
+#hotbar .bar-controls:first-child{
+    margin-left: 5px;
+}
+.dsalist{
+    list-style-type: none;
+}
+.dsalist li{
+    position: relative;
+}
+.dsalist li::before{
+   content: '';
+   display: inline-block;
+   height: 10px;
+   width: 20px;
+   position: absolute;
+   left: -20px;
+   top: 2px;
+
+   background-image: url(../icons/dsalist.webp);
+   background-size: contain;
+   background-repeat: no-repeat;
+}
+#players{
+    background: none;
+    border: none;
+    box-shadow:none;
+}
+#players:before{
+    background-image: url(../icons/backgrounds/dsahead.webp), url(../icons/backgrounds/dsamid.webp), url(../icons/backgrounds/dsabot.webp);
+    background-size:100% 30px, 100% calc(100% - 45px), 100% 20px;
+    background-repeat:no-repeat;
+    content:'';
+    position: absolute;
+    left: -2px;
+    right: -2px;
+    bottom: -5px;
+    top: -20px;
+    z-index: -1;
+    background-position: center 0px, center 30px, center calc(100% + 5px);
+}
+
+#players h3{
+    border:none;
 }

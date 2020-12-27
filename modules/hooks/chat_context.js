@@ -17,7 +17,18 @@ export default function() {
             }
             return result;
         };
-
+        let canRerollDamage = function(li){
+            let result = false
+            let message = game.messages.get(li.attr("data-message-id"));
+            if (message.data.speaker.actor) {
+                console.log(message)
+                let actor = game.actors.get(message.data.speaker.actor);
+                if (actor.permission == ENTITY_PERMISSIONS.OWNER && actor.data.type == "character" && actor.data.data.status.fatePoints.value > 0) {
+                    result =  message.data.flags.data.postData.damageRoll != undefined && !message.data.flags.data.fatePointDamageRerollUsed;
+                }
+            }
+            return result
+        };
         let canReroll = function(li) {
             let result = false;
             let message = game.messages.get(li.attr("data-message-id"));
@@ -61,6 +72,14 @@ export default function() {
                 callback: li => {
                     let message = game.messages.get(li.attr("data-message-id"));
                     game.actors.get(message.data.speaker.actor).useFateOnRoll(message, "addQS");
+                }
+            },{
+                name: game.i18n.localize("CHATCONTEXT.rerollDamage"),
+                icon: '<i class="fas fa-dice"></i>',
+                condition: canRerollDamage,
+                callback: li => {
+                    let message = game.messages.get(li.attr("data-message-id"));
+                    game.actors.get(message.data.speaker.actor).useFateOnRoll(message, "rerollDamage");
                 }
             })
     })

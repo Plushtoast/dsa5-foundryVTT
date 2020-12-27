@@ -10,12 +10,9 @@ export default class ItemCareerdsa5 extends ItemSheetdsa5 {
     }
 
     async getData() {
-        const data = super.getData();
+        const data = await super.getData();
         data["mageLevels"] = DSA5.mageLevels
         data['guidevalues'] = DSA5.characteristics;
-
         return data
     }
-
-
 }

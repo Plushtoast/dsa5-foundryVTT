@@ -21,7 +21,6 @@ export default class DiceDSA5 {
         });
 
         let situationalModifiers = Actordsa5.getModifiers(testData.extra.actor)
-
         switch (testData.source.type) {
             case "skill":
                 if (testData.source.data.burden.value == "no") {
@@ -230,12 +229,8 @@ export default class DiceDSA5 {
         let description = "";
 
         var chars = []
-
-
         res += modifier
-
         let res1 = res - roll.terms[0].results[0].result;
-
         let color = DSA5.dieColors[id] || id;
 
         chars.push({ char: id, res: roll.terms[0].results[0].result, suc: res1 >= 0, tar: res });
@@ -520,14 +515,16 @@ export default class DiceDSA5 {
         this._appendSituationalModifiers(testData, game.i18n.localize("manual"), testData.testModifier)
         this._appendSituationalModifiers(testData, game.i18n.localize("wrongHand"), testData.wrongHand)
 
+        let source = testData.source.data.data == undefined ? testData.source : testData.source.data
+        let combatskill = source.data.combatskill.value
 
-        let skill = Actordsa5._calculateCombatSkillValues(testData.extra.actor.items.find(x => x.type == "combatskill" && x.name == testData.source.data.data.combatskill.value), testData.extra.actor)
+        let skill = Actordsa5._calculateCombatSkillValues(testData.extra.actor.items.find(x => x.type == "combatskill" && x.name == combatskill), testData.extra.actor)
 
-        if (testData.source.type == "meleeweapon") {
+        if (source.type == "meleeweapon") {
             let shields = testData.extra.actor.items.filter(x => (x.type == "meleeweapon" && game.i18n.localize("ReverseCombatSkills." + x.data.combatskill.value) == "Shields" && x.data.worn.value))
             let shieldBonus = shields.length > 0 ? shields[0].data.pamod.value : 0
 
-            weapon = Actordsa5._prepareMeleeWeapon(testData.source.data, [skill], testData.extra.actor, shieldBonus)
+            weapon = Actordsa5._prepareMeleeWeapon(source, [skill], testData.extra.actor, shieldBonus)
 
             let narrowSpaceModifier = this._getNarrowSpaceModifier(weapon, testData)
             modifier += narrowSpaceModifier
@@ -545,7 +542,7 @@ export default class DiceDSA5 {
             }
 
         } else {
-            weapon = Actordsa5._prepareRangeWeapon(testData.source.data, [], [skill])
+            weapon = Actordsa5._prepareRangeWeapon(source, [], [skill])
 
             modifier += DSA5.rangeMods[testData.rangeModifier].attack + testData.sizeModifier + testData.visionModifier
             this._appendSituationalModifiers(testData, game.i18n.localize("distance"), DSA5.rangeMods[testData.rangeModifier].attack)
@@ -576,22 +573,21 @@ export default class DiceDSA5 {
         }
 
         if (testData.mode == "attack" && success) {
-            let damageRoll = new Roll(weapon.data.damage.value.replace(/[Ww]/, "d")).roll()
+            let damageRoll = testData.damageRoll ? testData.damageRoll : new Roll(weapon.data.damage.value.replace(/[Ww]/, "d")).roll()
             this._addRollDiceSoNice(testData, damageRoll, "black")
-            let damage = damageRoll._total;
+            let damage = Number(damageRoll.total);
 
             for (let k of damageRoll.terms) {
-                if (k instanceof Die) {
+                if (k instanceof Die || k.class == "Die") {
                     for (let l of k.results) {
                         result.characteristics.push({ char: "damage", res: l.result, die: "d" + k.faces })
                     }
                 }
             }
-
             if (weapon.extraDamage)
                 damage = Number(weapon.extraDamage) + Number(damage)
 
-            if (testData.source.type == "rangeweapon") {
+            if (source.type == "rangeweapon") {
                 damage += DSA5.rangeMods[testData.rangeModifier].damage
             }
 
@@ -599,8 +595,8 @@ export default class DiceDSA5 {
                 damage = damage * 2
             }
 
-
             result["damage"] = damage
+            result["damageRoll"] = damageRoll
         }
         result["rollType"] = "weapon"
         return result

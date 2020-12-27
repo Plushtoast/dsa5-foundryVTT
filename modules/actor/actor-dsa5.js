@@ -748,11 +748,52 @@ export default class Actordsa5 extends Actor {
                 ${game.i18n.format("CHATFATE." + type, { character: '<b>' + this.name + '</b>' })}<br>
                 <b>${game.i18n.localize("CHATFATE.PointsRemaining")}</b>: ${this.data.data.status.fatePoints.value - 1}`;
 
-
             let newTestData = data.preData
             switch (type) {
-                case "reroll":
+                case "rerollDamage":
                     cardOptions.fatePointRerollUsed = true;
+                    if (data.originalTargets && data.originalTargets.size > 0) {
+                        game.user.targets = data.originalTargets;
+                        game.user.targets.user = game.user;
+                    }
+                    if (!data.defenderMessage && data.startMessagesList) {
+                        cardOptions.startMessagesList = data.startMessagesList;
+                    }
+                    let newRoll = []
+                    let smallestIndex = 0
+                    var smallest = 500
+                    let index = 0
+                    for (let k of data.postData.damageRoll.terms) {
+                       if(k.class == 'Die'){
+                           if(Number(k.results[0].result) < smallest)
+                            {
+                               smallest = k.results[0].result
+                               smallestIndex = index
+                            }
+                       }
+                       index += 1
+                    }
+                    let oldDamageRoll = duplicate(data.postData.damageRoll)
+                    let term = oldDamageRoll.terms[smallestIndex]
+                    newRoll.push(term.number + "d" + term.faces + "[" + term.options.colorset + "]")
+                    newRoll = new Roll(newRoll.join("+")).roll()
+                    DiceDSA5.showDiceSoNice(newRoll, newTestData.rollMode)
+                    ChatMessage.create(DSA5_Utility.chatDataSetup(infoMsg));
+                    oldDamageRoll.total = oldDamageRoll.total - oldDamageRoll.results[smallestIndex] + newRoll.results[0]
+                    oldDamageRoll.results[smallestIndex] = newRoll.results[0]
+                    oldDamageRoll.terms[smallestIndex].results[0].result = newRoll.result[0]
+
+                    newTestData.damageRoll = oldDamageRoll
+
+                    this[`${data.postData.postFunction}`]({ testData: newTestData, cardOptions }, { rerenderMessage: message });
+                    message.update({
+                        "flags.data.fatePointRerollUsed": true
+                    });
+                    this.update({ "data.status.fatePoints.value": this.data.data.status.fatePoints.value - 1 })
+
+                    break
+                case "reroll":
+                    cardOptions.fatePointDamageRerollUsed = true;
                     if (data.originalTargets && data.originalTargets.size > 0) {
                         game.user.targets = data.originalTargets;
                         game.user.targets.user = game.user;
@@ -814,7 +855,6 @@ export default class Actordsa5 extends Actor {
                     game.user.targets.forEach(t => t.setTarget(false, { user: game.user, releaseOthers: false, groupSelection: true }));
 
                     cardOptions.fatePointAddQSUsed = true;
-
                     newTestData.qualityStep = 1
 
                     this[`${data.postData.postFunction}`]({ testData: newTestData, cardOptions }, { rerenderMessage: message });

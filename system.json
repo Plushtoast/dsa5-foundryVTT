@@ -2,8 +2,8 @@
     "name": "dsa5",
     "title": "Das Schwarze Auge (5th Edition)",
     "description": "Many details here.",
-    "version": "0.1.49",
-    "templateVersion": 35,
+    "version": "0.1.50",
+    "templateVersion": 37,
     "author": "Plushtoast",
     "scripts": [],
     "esmodules": [
@@ -14,7 +14,7 @@
     ],
     "packs": [{
             "name": "Skills",
-            "label": "Skills",
+            "label": "Talente",
             "system": "dsa5",
             "path": "packs/skills.db",
             "entity": "Item",
@@ -24,7 +24,7 @@
         },
         {
             "name": "Combatskills",
-            "label": "Combatskills",
+            "label": "Kampftalente",
             "system": "dsa5",
             "path": "packs/combatskills.db",
             "entity": "Item",
@@ -34,7 +34,7 @@
         },
         {
             "name": "Money",
-            "label": "Money",
+            "label": "Geld",
             "system": "dsa5",
             "path": "packs/money.db",
             "entity": "Item",
@@ -43,163 +43,13 @@
             ]
         },
         {
-            "name": "Equipment",
-            "label": "Equipment",
-            "system": "dsa5",
-            "path": "packs/equipment.db",
-            "entity": "Item",
-            "tags": [
-                "items"
-            ]
-        },
-        {
-            "name": "Armor",
-            "label": "Armors",
-            "system": "dsa5",
-            "path": "packs/armor.db",
-            "entity": "Item",
-            "tags": [
-                "armors"
-            ]
-        },
-        {
-            "name": "Weapons",
-            "label": "Weapons",
-            "system": "dsa5",
-            "path": "packs/weapons.db",
-            "entity": "Item",
-            "tags": [
-                "weapons"
-            ]
-        },
-        {
-            "name": "Spells",
-            "label": "Spells",
-            "system": "dsa5",
-            "path": "packs/spells.db",
-            "entity": "Item",
-            "tags": [
-                "spells"
-            ]
-        },
-        {
-            "name": "Rituals",
-            "label": "Rituals",
-            "system": "dsa5",
-            "path": "packs/rituals.db",
-            "entity": "Item",
-            "tags": [
-                "rituals"
-            ]
-        },
-        {
-            "name": "Spelltricks",
-            "label": "Spelltricks",
-            "system": "dsa5",
-            "path": "packs/spelltricks.db",
-            "entity": "Item",
-            "tags": [
-                "spelltricks"
-            ]
-        },
-        {
-            "name": "Blessings",
-            "label": "Blessings",
-            "system": "dsa5",
-            "path": "packs/blessings.db",
-            "entity": "Item",
-            "tags": [
-                "blessings"
-            ]
-        },
-        {
-            "name": "Liturgies",
-            "label": "Liturgies",
-            "system": "dsa5",
-            "path": "packs/liturgies.db",
-            "entity": "Item",
-            "tags": [
-                "liturgies"
-            ]
-        },
-        {
-            "name": "Ceremonies",
-            "label": "Ceremonies",
-            "system": "dsa5",
-            "path": "packs/ceremonies.db",
-            "entity": "Item",
-            "tags": [
-                "Ceremonies"
-            ]
-        },
-        {
-            "name": "Bestiary",
-            "label": "Bestiary",
-            "system": "dsa5",
-            "path": "packs/bestiary.db",
-            "entity": "Actor",
-            "tags": [
-                "Bestiary"
-            ]
-        },
-        {
-            "name": "Advantages",
-            "label": "Advantages",
-            "system": "dsa5",
-            "path": "packs/advantages.db",
-            "entity": "Item",
-            "tags": [
-                "advantages"
-            ]
-        },
-        {
-            "name": "Disadvantages",
-            "label": "Disadvantages",
-            "system": "dsa5",
-            "path": "packs/disadvantages.db",
-            "entity": "Item",
-            "tags": [
-                "disadvantages"
-            ]
-        },
-        {
-            "name": "Careers",
-            "label": "Careers",
-            "system": "dsa5",
-            "path": "packs/careers.db",
-            "entity": "Item",
-            "tags": [
-                "careers"
-            ]
-        },
-        {
-            "name": "Cultures",
-            "label": "Cultures",
-            "system": "dsa5",
-            "path": "packs/cultures.db",
-            "entity": "Item",
-            "tags": [
-                "cultures"
-            ]
-        },
-        {
             "name": "Species",
-            "label": "Species",
+            "label": "Rassen",
             "system": "dsa5",
             "path": "packs/species.db",
             "entity": "Item",
             "tags": [
                 "species"
-            ]
-        },
-        {
-            "name": "SpecialAbilities",
-            "label": "SpecialAbilities",
-            "system": "dsa5",
-            "path": "packs/specialabilities.db",
-            "entity": "Item",
-            "tags": [
-                "specialabilities"
             ]
         }
     ],

@@ -44,7 +44,7 @@ export default class DSA5ItemLibrary extends Application {
         options.height = 800
         options.width = 600
         options.resizable = true
-        options.title = "DSA5 " + game.i18n.localize("ItemLibrary")
+        options.title = game.i18n.localize("ItemLibrary")
         options.template = "systems/dsa5/templates/system/itemlibrary.html"
         return options
     }
