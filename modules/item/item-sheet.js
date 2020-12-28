@@ -18,7 +18,7 @@ export default class ItemSheetdsa5 extends ItemSheet {
 
         mergeObject(options, {
             classes: options.classes.concat(["dsa5", "item"]),
-            width: 400,
+            width: 450,
             height: 500,
         });
         return options;

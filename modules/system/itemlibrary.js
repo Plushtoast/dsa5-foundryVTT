@@ -64,7 +64,9 @@ export default class DSA5ItemLibrary extends Application {
                     (
                         search == "" ||
                         i.name.toLowerCase().includes(search) ||
-                        (i.data.data.description.value == undefined ? false : i.data.data.description.value.toLowerCase().includes(search))
+                        (i.data.data.description == undefined ? false :
+                        (i.data.data.description.value == undefined ? false :
+                            i.data.data.description.value.toLowerCase().includes(search)))
                     )
             }))
         }

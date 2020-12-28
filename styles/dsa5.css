@@ -107,6 +107,7 @@ h5,
 h6,
 h7 {
     font-family: "Andalus";
+    overflow: hidden;
 }
 
 .dsa5 .tab.description.active {
@@ -1538,7 +1539,7 @@ input[type="search"] {
 }
 
 #hotbar:before{
-    background-image:   url(../icons/backgrounds/hotbarpart.webp), url(../icons/backgrounds/hotbarpart.webp), url(../icons/backgrounds/hotbar3.webp);
+    background-image:   url(../icons/backgrounds/hotbarpart.webp), url(../icons/backgrounds/hotbarpart.webp), url(../icons/backgrounds/hotbar4.webp);
     background-size:30px 48px, 35px 48px,100% 100%;
     background-repeat:no-repeat;
     content:'';
@@ -1563,9 +1564,10 @@ input[type="search"] {
 #hotbar .bar-controls{
     margin:0;
     background: none;
-    color:silver;
+    /*color:silver;*/
+    color: #000000;
     border:none;
-    text-shadow:0px 0px 8px black,0px 0px 8px black;
+    /*text-shadow:0px 0px 8px black,0px 0px 8px black;*/
     box-shadow: none;
 }
 #hotbar .bar-controls:first-child{
@@ -1594,10 +1596,11 @@ input[type="search"] {
     background: none;
     border: none;
     box-shadow:none;
+
 }
 #players:before{
-    background-image: url(../icons/backgrounds/dsahead.webp), url(../icons/backgrounds/dsamid.webp), url(../icons/backgrounds/dsabot.webp);
-    background-size:100% 30px, 100% calc(100% - 45px), 100% 20px;
+    background-image: url(../icons/backgrounds/dsabot.webp);
+    background-size:100% 15px;
     background-repeat:no-repeat;
     content:'';
     position: absolute;
@@ -1606,9 +1609,36 @@ input[type="search"] {
     bottom: -5px;
     top: -20px;
     z-index: -1;
-    background-position: center 0px, center 30px, center calc(100% + 5px);
+    background-position: center calc(100%);
 }
-
-#players h3{
+#players h3:before{
+    background-image: url(../icons/backgrounds/dsahead.webp), url(../icons/backgrounds/dsamid.webp);
+    background-size:100% 30px, 100% calc(100% - 30px);
+    background-repeat:no-repeat;
+    content:'';
+    position: absolute;
+    left: -5px;
+    right: -5px;
+    bottom: 0px;
+    top: -20px;
+    z-index: -1;
+    background-position: center 0px, center 30px;
+}
+#players h3, #players #player-list{
     border:none;
+    position: relative;
+    overflow:visible;
+}
+#players #player-list:before{
+    background-image: url(../icons/backgrounds/dsamid.webp);
+    background-size:  100% 50px;
+    background-repeat:repeat-y;
+    content:'';
+    position: absolute;
+    left: -2px;
+    right: -2px;
+    bottom: 5px;
+    top: -3px;
+    z-index: -1;
+    background-position: center 0px;
 }
