@@ -126,8 +126,10 @@ export default class ActorSheetDsa5 extends ActorSheet {
                 "data.equipmentType.value": event.currentTarget.attributes["item-section"].value
             })
         }
+        if(data.type == "aggregatedTest"){
 
-        if (data.type == "spell" || data.type == "liturgy") {
+        }
+        else if (data.type == "spell" || data.type == "liturgy") {
 
         } else {
             data["data.weight.value"] = 0

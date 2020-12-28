@@ -362,7 +362,8 @@
             "blessing",
             "magictrick",
             "ceremony",
-            "ritual"
+            "ritual",
+            "aggregatedTest"
         ],
         "templates": {
             "skill": {
@@ -1088,6 +1089,36 @@
                 "label": "weapontype",
                 "type": "String",
                 "value": "melee"
+            }
+        },
+        "aggregatedTest": {
+            "templates": [
+                "description"
+            ],
+            "interval": {
+                "label": "interval",
+                "value": "",
+                "type": "String"
+            },
+            "allowedTestCount": {
+                "label": "allowedTestCount",
+                "value": 7,
+                "type": "Number"
+            },
+            "previousFailedTests": {
+                "label": "previousFailedTests",
+                "value": 0,
+                "type": "Number"
+            },
+            "talent": {
+                "label": "talent",
+                "value": "",
+                "type": "String"
+            },
+            "cummulatedQS": {
+                "label": "cummulatedQS",
+                "value": 0,
+                "type": "Number"
             }
         },
         "skill": {

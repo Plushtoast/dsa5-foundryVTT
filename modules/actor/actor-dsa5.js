@@ -165,6 +165,7 @@ export default class Actordsa5 extends Actor {
         let clericSpecialAbilities = []
         let magicTricks = []
         let blessings = []
+        let aggregatedtests = []
 
         let armor = [];
         let rangeweapons = [];
@@ -270,6 +271,9 @@ export default class Actordsa5 extends Actor {
                             break;
                     }
                     break;
+                case "aggregatedTest":
+                    aggregatedtests.push(i)
+                    break
                 case "spell":
                     hasSpells = true
                     spells.push(i)
@@ -447,6 +451,7 @@ export default class Actordsa5 extends Actor {
             combatSpecialAbilities: combatSpecialAbilities,
             fatePointsAbilities: fatePointsAbilities,
             clericSpecialAbilities: clericSpecialAbilities,
+            aggregatedtests: aggregatedtests,
             wornArmor: armor,
             inventory,
             equipmentModifiers: eqModifierString.join(", "),
