@@ -1,5 +1,5 @@
 import DSA5_Utility from "../system/utility-dsa5.js";
-import DSA from "../system/config-dsa5.js"
+import DSA5 from "../system/config-dsa5.js"
 
 export default class Itemdsa5 extends Item {
     static defaultImages = {
@@ -27,11 +27,12 @@ export default class Itemdsa5 extends Item {
         "abilityfatePoints": "icons/weapons/wands/wand-skull-forked.webp",
         "abilitygeneral": "icons/tools/smithing/crucible.webp",
         "abilitymagical": "icons/tools/scribal/ink-quill-pink.webp",
+        "abilitylanguage": "icons/sundries/documents/document-official-capital.webp",
         "trait": "icons/commodities/biological/organ-brain-pink-purple.webp",
-        "Tiere": "icons/environment/creatures/horse-brown.webp"
+        "Tiere": "icons/environment/creatures/horse-brown.webp",
+        "aggregatedTest": "icons/sundries/gaming/dice-runed-brown.webp"
     }
-
-    static async create(data, options) {
+    static defaultIcon(data){
         if (!data.img) {
             if (data.type in this.defaultImages) {
                 data.img = this.defaultImages[data.type]
@@ -39,36 +40,20 @@ export default class Itemdsa5 extends Item {
                 data.img = "systems/dsa5/icons/blank.webp";
             }
         }
+    }
 
+    static async create(data, options) {
+        this.defaultIcon(data)
         super.create(data, options);
     }
 
     prepareData() {
         super.prepareData();
-
-
     }
-
-
-    /*prepareCareer(itemdata) {
-        let skills = itemdata.items.filter(x => x.type == "skill").sort((a, b) => (a.sort || 0) - (b.sort || 0))
-
-        return {
-            skills: skills
-        }
-    }*/
 
     prepare() {
         let data = duplicate(this.data)
-
-        switch (this.data.type) {
-
-            //case "career":
-            //    mergeObject(preparedData, this.prepareCareer(preparedData));
-
-        }
         preparedData.img = preparedData.img || DEFAULT_TOKEN;
-
 
         return preparedData;
     }
@@ -131,6 +116,27 @@ export default class Itemdsa5 extends Item {
             this._chatLineHelper("duration", data.duration.value),
             this._chatLineHelper("reach", data.range.value),
             this._chatLineHelper("targetCategory", data.targetCategory.value)
+        ]
+        return properties;
+    }
+
+    _aggregatedTestChatData(){
+        const data = duplicate(this.data.data);
+        let result = game.i18n.localize("Ongoing")
+        if(data.cummulatedQS.value >= 10){
+            result = game.i18n.localize("Success")
+        }
+        if (data.cummulatedQS.value >= 6) {
+            result = game.i18n.localize("PartSuccess")
+        }
+        else if (data.allowedTestCount.value - data.usedTestCount.value <= 0){
+            result = game.i18n.localize("Failure")
+        }
+        let properties = [
+            this._chatLineHelper("cummulatedQS", `${data.cummulatedQS.value} / 10`),
+            this._chatLineHelper("interval", data.interval.value),
+            this._chatLineHelper("probes", `${data.usedTestCount.value} / ${data.allowedTestCount.value}`),
+            this._chatLineHelper("result",result),
         ]
         return properties;
     }

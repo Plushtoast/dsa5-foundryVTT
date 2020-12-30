@@ -623,7 +623,8 @@
         },
         "trait": {
             "templates": [
-                "description"
+                "description",
+                "APvalue"
             ],
             "traitType": {
                 "type": "String",
@@ -649,7 +650,23 @@
                 "type": "String",
                 "value": "1",
                 "label": "reloadTime"
+            },
+            "AsPCost": {
+                "type": "Number",
+                "label": "AsPCost",
+                "value": 0
+            },
+            "duration": {
+                "type": "String",
+                "label": "duration",
+                "value": ""
+            },
+            "aspect": {
+                "type": "String",
+                "label": "duration",
+                "value": ""
             }
+
         },
         "ritual": {
             "templates": [
@@ -1103,6 +1120,11 @@
             "allowedTestCount": {
                 "label": "allowedTestCount",
                 "value": 7,
+                "type": "Number"
+            },
+            "usedTestCount": {
+                "label": "usedTestCount",
+                "value": 0,
                 "type": "Number"
             },
             "previousFailedTests": {

@@ -1,12 +1,23 @@
 import DSA5_Utility from "../system/utility-dsa5.js";
 import DSA5 from "../system/config-dsa5.js";
 import AdvantageRulesDSA5 from "../system/advantage-rules-dsa5.js";
-
-
+import Itemdsa5 from "../item/item-dsa5.js";
 
 export default class ActorSheetDsa5 extends ActorSheet {
-    static
-    get defaultOptions() {
+
+    get actorType() {
+        return this.actor.data.type;
+    }
+
+    async _render(force = false, options = {}) {
+        this._saveScrollPos();
+        this._saveSearchFields()
+        await super._render(force, options);
+        this._setScrollPos();
+        this._restoreSeachFields()
+    }
+
+    static get defaultOptions() {
         const options = super.defaultOptions;
         options.tabs = [{ navSelector: ".tabs", contentSelector: ".content", initial: "skills" }]
         mergeObject(options, {
@@ -14,25 +25,6 @@ export default class ActorSheetDsa5 extends ActorSheet {
             height: 740
         });
         return options;
-    }
-    get actorType() {
-        return this.actor.data.type;
-    }
-
-
-
-    async _render(force = false, options = {}) {
-        this._saveScrollPos(); // Save scroll positions
-        this._saveSearchFields()
-        await super._render(force, options);
-        this._setScrollPos(); // Set scroll positions
-        this._restoreSeachFields()
-
-        // Add Tooltips
-        /*$(this._element).find(".close").attr("title", game.i18n.localize("SHEET.Close"));
-        $(this._element).find(".configure-sheet").attr("title", game.i18n.localize("SHEET.Configure"));
-        $(this._element).find(".configure-token").attr("title", game.i18n.localize("SHEET.Token"));
-        $(this._element).find(".import").attr("title", game.i18n.localize("SHEET.Import"));*/
     }
 
     _saveSearchFields() {
@@ -126,7 +118,7 @@ export default class ActorSheetDsa5 extends ActorSheet {
                 "data.equipmentType.value": event.currentTarget.attributes["item-section"].value
             })
         }
-        if(data.type == "aggregatedTest"){
+        if (data.type == "aggregatedTest") {
 
         }
         else if (data.type == "spell" || data.type == "liturgy") {
@@ -136,14 +128,39 @@ export default class ActorSheetDsa5 extends ActorSheet {
             data["data.quantity.value"] = 0
         }
 
-
+        Itemdsa5.defaultIcon(data)
         data["name"] = game.i18n.localize(data.type);
         this.actor.createEmbeddedEntity("OwnedItem", data);
     }
 
+    _handleAggregatedProbe(ev) {
+        let itemId = this._getItemId(ev);
+        let aggregated = duplicate(this.actor.items.find(i => i.data._id == itemId));
+        let skill = this.actor.items.find(i => i.data.name == aggregated.data.talent.value && i.type == "skill")
+        let infoMsg = `<h3 class="center"><b>${game.i18n.localize("aggregatedTest")}</b></h3>`
+        if (aggregated.data.usedTestCount.value >= aggregated.data.allowedTestCount.value) {
+            infoMsg += `${game.i18n.localize("Aggregated.noMoreAllowed")}`;
+            ChatMessage.create(DSA5_Utility.chatDataSetup(infoMsg));
+        } else {
+            this.actor.setupSkill(skill.data, { moreModifiers: [{ name: game.i18n.localize("failedTests"), value: -1 * aggregated.data.previousFailedTests.value, selected: true }] }).then(setupData => {
+                this.actor.basicTest(setupData).then(res => {
+                    if (res.result.successLevel > 0) {
+                        aggregated.data.cummulatedQS.value = res.result.qualityStep + aggregated.data.cummulatedQS.value
+                        aggregated.data.cummulatedQS.value = Math.min(10, aggregated.data.cummulatedQS.value)
+
+                    } else {
+                        aggregated.data.previousFailedTests.value += 1
+                    }
+                    aggregated.data.usedTestCount.value += 1
+                    this.actor.updateEmbeddedEntity("OwnedItem", aggregated);
+                    this.actor.items.find(i => i.data._id == itemId).postItem()
+                })
+            });
+        }
+    }
+
     activateListeners(html) {
         super.activateListeners(html);
-
 
         html.find('.item-toggle').click(ev => {
             let itemId = this._getItemId(ev);
@@ -170,6 +187,10 @@ export default class ActorSheetDsa5 extends ActorSheet {
         })
         html.find(".status-add").click(ev => {
             this.actor.addCondition($(ev.currentTarget).attr("data-id"))
+        })
+
+        html.find('.roll-aggregated').mousedown(ev => {
+            this._handleAggregatedProbe(ev)
         })
 
         html.find('.skill-select').mousedown(ev => {
@@ -228,13 +249,8 @@ export default class ActorSheetDsa5 extends ActorSheet {
         });
 
         html.find('.skill-advances').keydown(async event => {
-            // Wait to update if user tabbed to another skill
-            if (event.keyCode == 9) // Tab
-            {
-                this.skillUpdateFlag = false;
-            } else {
-                this.skillUpdateFlag = true;
-            }
+            this.skillUpdateFlag = event.keyCode == 9
+
             if (event.keyCode == 13) // Enter
             {
                 if (!this.skillsToEdit)
@@ -263,13 +279,12 @@ export default class ActorSheetDsa5 extends ActorSheet {
             if (effect) {
                 let text = `<div style="padding:5px;"><b>${game.i18n.localize(effect.label)}</b>: ${game.i18n.localize(effect.description)}</div>`
                 let elem = $(ev.currentTarget).closest('.groupbox').find('.effectDescription')
-                elem.fadeOut('fast', function() {
+                elem.fadeOut('fast', function () {
                     elem.html(text).fadeIn('fast')
                 })
             } else {
                 //search temporary effects
             }
-
         })
 
         html.find('.skill-advances').focusout(async event => {
@@ -281,16 +296,12 @@ export default class ActorSheetDsa5 extends ActorSheet {
             itemToEdit.data.talentValue.value = Number(event.target.value);
             this.skillsToEdit.push(itemToEdit);
 
-            // Wait for the listener above to set this true before updating - allows for tabbing through skills
             if (!this.skillUpdateFlag)
                 return;
 
             await this.actor.updateEmbeddedEntity("OwnedItem", this.skillsToEdit);
-
             this.skillsToEdit = [];
         });
-
-
 
         html.find('.item-edit').click(ev => {
             ev.preventDefault()
@@ -346,8 +357,6 @@ export default class ActorSheetDsa5 extends ActorSheet {
             });
         });
 
-
-
         html.find('.item-create').click(ev => this._onItemCreate(ev));
 
         html.find('.ch-rollCombatParry').click(event => {
@@ -386,7 +395,6 @@ export default class ActorSheetDsa5 extends ActorSheet {
                 div.innerHTML = "<i class=\"fas fa-times\"></i>"
                 div.addEventListener('click', hand, false)
                 ev.currentTarget.appendChild(div)
-
             }
         });
         html.find(".cards .item").mouseleave(ev => {
@@ -450,7 +458,7 @@ export default class ActorSheetDsa5 extends ActorSheet {
             let talents = $(this.form).parent().find('.allTalents')
             talents.find('.item, .table-header, .table-title').removeClass('filterHide')
             if (val.length > 1) {
-                talents.addClass('showAll').find('.item').filter(function() {
+                talents.addClass('showAll').find('.item').filter(function () {
                     return $(this).find('.talentName').text().toLowerCase().trim().indexOf(val) == -1
                 }).addClass('filterHide')
                 talents.find('.table-header, .table-title:not(:eq(0))').addClass("filterHide")
@@ -673,6 +681,7 @@ export default class ActorSheetDsa5 extends ActorSheet {
             case "species":
                 await this._addSpecies(item)
                 break;
+            case "aggregatedTest":
             case "meleeweapon":
             case "rangeweapon":
             case "equipment":

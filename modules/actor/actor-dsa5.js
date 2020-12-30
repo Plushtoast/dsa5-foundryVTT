@@ -163,6 +163,7 @@ export default class Actordsa5 extends Actor {
         let fatePointsAbilities = []
         let magicSpecialAbilities = []
         let clericSpecialAbilities = []
+        let languageSpecialAbilities = []
         let magicTricks = []
         let blessings = []
         let aggregatedtests = []
@@ -385,6 +386,9 @@ export default class Actordsa5 extends Actor {
                         case "clerical":
                             clericSpecialAbilities.push(i)
                             break;
+                        case "language":
+                            languageSpecialAbilities.push(i)
+                            break
                     }
                     break;
             }
@@ -451,6 +455,7 @@ export default class Actordsa5 extends Actor {
             combatSpecialAbilities: combatSpecialAbilities,
             fatePointsAbilities: fatePointsAbilities,
             clericSpecialAbilities: clericSpecialAbilities,
+            languageSpecialAbilities: languageSpecialAbilities,
             aggregatedtests: aggregatedtests,
             wornArmor: armor,
             inventory,

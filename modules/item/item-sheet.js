@@ -107,6 +107,9 @@ export default class ItemSheetdsa5 extends ItemSheet {
             case "equipment":
                 data['equipmentTypes'] = DSA5.equipmentTypes;
                 break;
+            case "aggregatedTest":
+                data["allSkills"] = await DSA5_Utility.allSkillsList()
+                break
         }
 
         return data;

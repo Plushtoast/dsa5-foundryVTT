@@ -4,7 +4,7 @@ const DSA5 = {}
 //{
 //  id:
 //    label:
-//   icon: 
+//   icon:
 //}
 
 CONFIG.statusEffects = [{
@@ -341,7 +341,8 @@ DSA5.traitCategories = {
     "meleeAttack": "closeCombatAttacks",
     "rangeAttack": "rangeCombatAttacks",
     "armor": "armor",
-    "general": "general"
+    "general": "general",
+    "familiar": "familiar"
 }
 
 DSA5.ritualLocationModifiers = {
@@ -386,7 +387,9 @@ DSA5.specialAbilityCategories = {
     "Combat": "Combat",
     "fatePoints": "fatePoints",
     "magical": "magical",
-    "clerical": "clerical"
+    "clerical": "clerical",
+    "language": "language",
+    "animal": "animal"
 }
 
 DSA5.dieColors = {

@@ -21,6 +21,9 @@ export default class DiceDSA5 {
         });
 
         let situationalModifiers = Actordsa5.getModifiers(testData.extra.actor)
+        if(testData.extra.options.moreModifiers != undefined){
+            situationalModifiers.push(...testData.extra.options.moreModifiers)
+        }
         switch (testData.source.type) {
             case "skill":
                 if (testData.source.data.burden.value == "no") {

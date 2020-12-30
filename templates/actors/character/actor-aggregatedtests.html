@@ -4,29 +4,33 @@
     <div class="col third">
       {{localize "aggregatedTests"}}
     </div>
-    <div class="col five center">{{localize "probe"}}</div>
-    <div class="col five center">{{localize "interval"}}</div>
-    <div class="col five center">{{localize "status"}}</div>
+    <div class="col fifteen center">{{localize "probe"}}</div>
+    <div class="col fifteen center"></div>
+    <div class="col fifteen center">{{localize "interval"}}</div>
+    <div class="col fifteen center">{{localize "status"}}</div>
     <div class="col ten center">
       <a class="item-create very-small" title="{{localize 'SHEET.addItem'}}" item-section="aggregatedTest"
         data-type="aggregatedTest"><i class="fas fa-plus"></i></a>
     </div>
   </div>
-  <div class="row-section wrap">
+  <div class="row-section wrap inventory">
     {{#each actor.aggregatedtests as |item i|}}
     <div class="col item" data-item-id="{{item._id}}">
       <div class="row-section skills lineheight">
         <div class="col third">
-          {{item.name}}
+          <a class="item-edit">{{item.name}}</a>
         </div>
-        <div class="col five center">
-          {{item.talent.value}}
+        <div class="col fifteen center">
+          <a class="roll-aggregated">{{item.data.talent.value}}</a>
         </div>
-        <div class="col five center">
-          {{item.interval.value}}
+        <div class="col fifteen center">
+          <a class="roll-aggregated"><div class="d20 die-attack"></div></a>
         </div>
-        <div class="col five center">
-          {{item.cummulatedQS.value}} / 10
+        <div class="col fifteen center">
+          {{item.data.interval.value}}
+        </div>
+        <div class="col fifteen center">
+          {{item.data.cummulatedQS.value}} / 10
         </div>
         <div class="col ten very-small center">
           <a class="item-post" title="{{localize 'SHEET.PostItem'}}"><i class="fas fa-comment"></i></a>

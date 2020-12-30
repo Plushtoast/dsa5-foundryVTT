@@ -54,6 +54,15 @@ export default class DSA5_Utility {
         return moneyItems
     }
 
+    static async allSkillsList() {
+        let skills = (await this.allSkills()) || [];
+        var res = {};
+        for (let sk of skills) {
+            res[sk.name] = sk.name;
+        }
+        return res;
+    }
+
     static async allCombatSkillsList(weapontype) {
         let skills = (await this.allCombatSkills()).filter(x => x.data.weapontype.value == weapontype) || [];
         var res = {};
