@@ -548,8 +548,6 @@ export default class ActorSheetDsa5 extends ActorSheet {
                 await this._updateAPs(vantage.data.APValue.value)
                 await this.actor.updateEmbeddedEntity("OwnedItem", vantage);
             }
-
-
         } else {
             await AdvantageRulesDSA5.vantageAdded(this.actor, item)
             await this._updateAPs(item.data.data.APValue.value)
@@ -612,7 +610,8 @@ export default class ActorSheetDsa5 extends ActorSheet {
         });
         if (res) {
             let vantage = duplicate(res)
-            if (vantage.data.step.value + 1 <= vantage.data.max.value) {
+            console.log(vantage)
+            if (vantage.data.step.value + 1 <= vantage.data.maxRank.value) {
                 vantage.data.step.value += 1
                 await this._updateAPs(vantage.data.APValue.value)
                 await this.actor.updateEmbeddedEntity("OwnedItem", vantage);
@@ -625,7 +624,6 @@ export default class ActorSheetDsa5 extends ActorSheet {
 
 
     _onDragItemStart(event) {
-
         let tar = event.currentTarget
         let itemId = tar.getAttribute("data-item-id");
         let mod = tar.getAttribute("data-mod");
@@ -657,9 +655,16 @@ export default class ActorSheetDsa5 extends ActorSheet {
     async _addSpellOrLiturgy(item) {
         await this.actor.createEmbeddedEntity("OwnedItem", item);
     }
+    async _addTrait(item){
+        if(this.actor.type == "creature"){
+            await this.actor.createEmbeddedEntity("OwnedItem", item);
+        }
+    }
 
     async _onDrop(event) {
-        let dragData = JSON.parse(event.dataTransfer.getData("text/plain"));
+        this._handleDragData(JSON.parse(event.dataTransfer.getData("text/plain")))
+    }
+    async _handleDragData(dragData){
         let item
         let typeClass
 
@@ -676,7 +681,6 @@ export default class ActorSheetDsa5 extends ActorSheet {
             typeClass = item.type
         }
 
-
         switch (typeClass) {
             case "species":
                 await this._addSpecies(item)
@@ -689,6 +693,9 @@ export default class ActorSheetDsa5 extends ActorSheet {
             case "armor":
                 await this.actor.createEmbeddedEntity("OwnedItem", item);
                 break;
+            case "trait":
+                await this._addTrait(item)
+                break
             case "disadvantage":
             case "advantage":
                 await this._addVantage(item, typeClass)

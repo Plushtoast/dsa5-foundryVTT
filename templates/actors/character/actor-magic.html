@@ -12,7 +12,6 @@
                 <div class="col ten center">{{localize "reach"}}</div>
                 <div class="col ten center">
                     <a class="item-create very-small" title="{{localize 'SHEET.addItem'}}" item-section="spell" data-type="spell"><i class="fas fa-plus"></i></a>
-
                 </div>
             </div>
         </div>
@@ -131,7 +130,7 @@
     <div class="row-section wrap cards">
         {{#each actor.magicSpecialAbilities as |item i|}}
         <div class="item" data-item-id="{{item._id}}">
-            <a class="item-edit">{{item.name}}</a>
+            <a class="item-edit">{{item.name}}{{roman item.data.step.value}}</a>
         </div>
         {{/each}}
     </div>

@@ -88,7 +88,7 @@ export default class Actordsa5 extends Actor {
 
             var guide = data.data.guidevalue
 
-            if (guide) {
+            if (guide && this.data.type != "creature") {
                 //if (guide.value != "-") {
                 if (data.data.characteristics[guide.value]) {
                     data.data.status.astralenergy.current = data.data.status.astralenergy.initial + data.data.characteristics[guide.value].value
@@ -164,6 +164,7 @@ export default class Actordsa5 extends Actor {
         let magicSpecialAbilities = []
         let clericSpecialAbilities = []
         let languageSpecialAbilities = []
+        let animalSpecialAbilities = []
         let magicTricks = []
         let blessings = []
         let aggregatedtests = []
@@ -236,6 +237,8 @@ export default class Actordsa5 extends Actor {
         let meleeTraits = []
         let rangeTraits = []
         let armorTraits = []
+        let animalTraits = []
+        let generalTraits = []
 
 
         actorData.items = actorData.items.sort((a, b) => (a.sort || 0) - (b.sort || 0))
@@ -300,14 +303,25 @@ export default class Actordsa5 extends Actor {
                     magicTricks.push(i)
                     break;
                 case "trait":
-                    if (i.data.traitType.value == "rangeAttack") {
-                        rangeTraits.push(Actordsa5._prepareRangeTrait(i))
-                    } else if (i.data.traitType.value == "meleeAttack") {
-                        meleeTraits.push(Actordsa5._prepareMeleetrait(i))
-                    } else if (i.data.traitType.value == "armor") {
-                        armorTraits.push(i)
-                        totalArmor += Number(i.data.at.value);
+                    switch (i.data.traitType.value) {
+                        case "rangeAttack":
+                            rangeTraits.push(Actordsa5._prepareRangeTrait(i))
+                            break
+                        case "meleeAttack":
+                            meleeTraits.push(Actordsa5._prepareMeleetrait(i))
+                            break
+                        case "general":
+                            generalTraits.push(i)
+                            break
+                        case "animal":
+                            animalTraits.push(i)
+                            break
+                        case "armor":
+                            armorTraits.push(i)
+                            totalArmor += Number(i.data.at.value);
+                            break
                     }
+
                     break
                 case "combatskill":
                     combatskills.push(Actordsa5._calculateCombatSkillValues(i, actorData));
@@ -374,7 +388,7 @@ export default class Actordsa5 extends Actor {
                         case "general":
                             generalSpecialAbilites.push(i)
                             break;
-                        case "combat":
+                        case "Combat":
                             combatSpecialAbilities.push(i)
                             break
                         case "fatePoints":
@@ -388,6 +402,9 @@ export default class Actordsa5 extends Actor {
                             break;
                         case "language":
                             languageSpecialAbilities.push(i)
+                            break
+                        case "animal":
+                            animalSpecialAbilities.push(i)
                             break
                     }
                     break;
@@ -456,6 +473,7 @@ export default class Actordsa5 extends Actor {
             fatePointsAbilities: fatePointsAbilities,
             clericSpecialAbilities: clericSpecialAbilities,
             languageSpecialAbilities: languageSpecialAbilities,
+            animalSpecialAbilities: animalSpecialAbilities,
             aggregatedtests: aggregatedtests,
             wornArmor: armor,
             inventory,
@@ -463,6 +481,8 @@ export default class Actordsa5 extends Actor {
             rangeTraits: rangeTraits,
             meleeTraits: meleeTraits,
             armorTraits: armorTraits,
+            generalTraits: generalTraits,
+            animalTraits: animalTraits,
             magicSpecialAbilities: magicSpecialAbilities,
             blessings: blessings,
             magicTricks: magicTricks,
@@ -774,14 +794,13 @@ export default class Actordsa5 extends Actor {
                     var smallest = 500
                     let index = 0
                     for (let k of data.postData.damageRoll.terms) {
-                       if(k.class == 'Die'){
-                           if(Number(k.results[0].result) < smallest)
-                            {
-                               smallest = k.results[0].result
-                               smallestIndex = index
+                        if (k.class == 'Die') {
+                            if (Number(k.results[0].result) < smallest) {
+                                smallest = k.results[0].result
+                                smallestIndex = index
                             }
-                       }
-                       index += 1
+                        }
+                        index += 1
                     }
                     let oldDamageRoll = duplicate(data.postData.damageRoll)
                     let term = oldDamageRoll.terms[smallestIndex]

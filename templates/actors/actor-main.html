@@ -106,7 +106,7 @@
             <div class="row-section wrap cards">
                 {{#each actor.languageSpecialAbilities as |item i|}}
                 <div class="item" data-item-id="{{item._id}}">
-                    <a class="item-edit">{{item.name}}</a>
+                    <a class="item-edit">{{item.name}}{{roman item.data.step.value}}</a>
                 </div>
                 {{/each}}
             </div>
@@ -121,7 +121,7 @@
             <div class="row-section wrap cards">
                 {{#each actor.fatePointsAbilities as |item i|}}
                 <div class="item" data-item-id="{{item._id}}">
-                    <a class="item-edit">{{item.name}}</a>
+                    <a class="item-edit">{{item.name}}{{roman item.data.step.value}}</a>
                 </div>
                 {{/each}}
             </div>

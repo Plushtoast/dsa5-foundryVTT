@@ -26,6 +26,8 @@ export default function() {
             "systems/dsa5/templates/actors/creature/creature-loot.html",
             "systems/dsa5/templates/actors/creature/creature-combat.html",
             "systems/dsa5/templates/actors/creature/creature-notes.html",
+            "systems/dsa5/templates/actors/creature/creature-magic.html",
+            "systems/dsa5/templates/actors/creature/creature-religion.html",
             "systems/dsa5/templates/actors/parts/characteristics-small.html",
             "systems/dsa5/templates/actors/npc/npc-main.html",
             "systems/dsa5/templates/actors/character/actor-magic.html",

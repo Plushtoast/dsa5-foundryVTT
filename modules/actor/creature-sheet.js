@@ -73,7 +73,7 @@ export default class ActorSheetdsa5Creature extends ActorSheetDsa5 {
                 await this.actor.createEmbeddedEntity("OwnedItem", item);
                 break;
             default:
-                super._onDrop(event)
+                super._handleDragData(dragData)
         }
     }
 
