@@ -20,6 +20,7 @@
             <div class="row-section skills lineheight">
                 <div class="col four">
                     <a class="item-edit">{{item.name}}</a>
+                    {{#if item.canAdvance}}<a class="advance advance-item"><i title="{{item.cost}}" class="fas fa-plus"></i></a>{{/if}}
                 </div>
                 <div class="col four center">
                     <a class="spell-select">
@@ -83,6 +84,7 @@
             <div class="row-section skills lineheight">
                 <div class="col four">
                     <a class="item-edit">{{item.name}}</a>
+                    {{#if item.canAdvance}}<a class="advance advance-item"><i title="{{item.cost}}" class="fas fa-plus"></i></a>{{/if}}
                 </div>
                 <div class="col four center">
                     <a class="spell-select">

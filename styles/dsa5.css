@@ -83,7 +83,7 @@ body {
     width: 100vw;
     height: 100vh;
     margin: 0;
-    ;
+    text-rendering: geometricprecision;
     padding: 0px;
     overflow: hidden;
     /*background: url(../ui/background.webp) repeat;*/
@@ -443,6 +443,11 @@ form .form-group.tripple select {
     padding: 8px 15px 15px 15px;
     padding-left: 18px;
     margin-bottom: 8px;
+}
+
+.chat-buttons{
+
+    float:right;
 }
 
 .die-attack,
@@ -836,6 +841,13 @@ form .form-group.tripple select {
 
 .fa-moon-o:before {
     content: "\f186"
+}
+
+.advance{
+    color: #333029a6;
+    margin-left: 4px;
+    font-size: 8px;
+    line-height: 8px;
 }
 
 .buttons a .fas,
@@ -1556,6 +1568,11 @@ input[type="search"] {
     background: none;
     border: 1px solid rgba(0,0,0,0.5);
 }
+
+#hotbar .macro.active{
+    box-shadow: inset 0px 0px 50px black;
+}
+
 #hotbar #macro-list{
     border: none;
     margin:0;
@@ -1641,4 +1658,9 @@ input[type="search"] {
     top: -3px;
     z-index: -1;
     background-position: center 0px;
+}
+
+.card-content input{
+    width: 30px;
+    display: inline-block;
 }

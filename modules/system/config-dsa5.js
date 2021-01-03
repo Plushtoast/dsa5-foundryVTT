@@ -7,7 +7,8 @@ const DSA5 = {}
 //   icon:
 //}
 
-CONFIG.statusEffects = [{
+CONFIG.statusEffects = [
+    {
         id: "prone",
         label: "CONDITION.prone",
         icon: "icons/svg/falling.svg",
@@ -50,6 +51,62 @@ CONFIG.statusEffects = [{
         }
     },
     {
+        id: "blind",
+        label: "CONDITION.blind",
+        icon: "icons/svg/blind.svg",
+        description: "CONDITIONDESCRIPTION.blind",
+        flags: {
+            dsa5: {
+                "trigger": "endRound",
+                "value": null,
+                "editable": true,
+                "impact": null
+            }
+        }
+    },
+    {
+        id: "deaf",
+        label: "CONDITION.deaf",
+        icon: "icons/svg/deaf.svg",
+        description: "CONDITIONDESCRIPTION.deaf",
+        flags: {
+            dsa5: {
+                "trigger": "endRound",
+                "value": null,
+                "editable": true,
+                "impact": null
+            }
+        }
+    },
+    {
+        id: "bloodrush",
+        label: "CONDITION.bloodrush",
+        icon: "icons/svg/bones.svg",
+        description: "CONDITIONDESCRIPTION.bloodrush",
+        flags: {
+            dsa5: {
+                "trigger": "endRound",
+                "value": null,
+                "editable": true,
+                "impact": null
+            }
+        }
+    },
+    {
+        id: "mute",
+        label: "CONDITION.mute",
+        icon: "icons/svg/silenced.svg",
+        description: "CONDITIONDESCRIPTION.mute",
+        flags: {
+            dsa5: {
+                "trigger": "endRound",
+                "value": null,
+                "editable": true,
+                "impact": null
+            }
+        }
+    },
+    {
         id: "incapacitated",
         label: "CONDITION.incapacitated",
         icon: "icons/svg/sleep.svg",
@@ -63,9 +120,6 @@ CONFIG.statusEffects = [{
             }
         }
     },
-
-
-
     {
         id: "encumbered",
         label: "CONDITION.encumbered",
@@ -81,7 +135,6 @@ CONFIG.statusEffects = [{
             }
         }
     },
-
     {
         id: "stunned",
         label: "CONDITION.stunned",
@@ -142,6 +195,7 @@ CONFIG.statusEffects = [{
             }
         }
     },
+
     {
         id: "inpain",
         label: "CONDITION.inpain",
@@ -157,7 +211,6 @@ CONFIG.statusEffects = [{
             }
         }
     },
-
     {
         id: "confused",
         label: "CONDITION.confused",
@@ -173,24 +226,8 @@ CONFIG.statusEffects = [{
             }
         }
     }
-
 ]
 
-/*DSA5.statusEffects = [
-    "CONDITION.prone",
-    "CONDITION.unconscious",
-
-    "CONDITION.encumbered",
-    "CONDITION.drunken",
-    "CONDITION.stunned",
-    "CONDITION.raptured",
-    "CONDITION.feared",
-    "CONDITION.paralysed",
-    "CONDITION.inpain",
-    "CONDITION.tranced",
-    "CONDITION.overexerted",
-    "CONDITION.confused"
-]*/
 
 DSA5.effectTextStyle = CONFIG.canvasTextStyle.clone();
 DSA5.effectTextStyle.fontSize = "30";
@@ -303,8 +340,11 @@ DSA5.rangeMods = {
     "long": {
         "damage": -1,
         "attack": -2
+    },
+    "rangesense": {
+        "damage": -1,
+        "attack": -1
     }
-
 }
 
 DSA5.regnerationCampLocations = {
@@ -368,6 +408,14 @@ DSA5.ceremonyLocationModifiers = {
     "CEREMONYMODIFIER.nemesis": -5
 }
 
+DSA5.advancementCosts = {
+    "A": [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14],
+    "B": [2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 4, 6, 8, 10, 12, 14, 16, 18, 20, 22, 24, 26, 28],
+    "C": [3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 6, 9, 12, 15, 18, 21, 24, 27, 30, 33, 36, 39, 42],
+    "D": [4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 8, 12, 16, 20, 24, 28, 32, 36, 40, 44, 48, 52, 56],
+    "E": [15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 30, 45, 60, 75, 90, 105, 120, 135, 150, 165, 180],
+}
+
 DSA5.ceremonyTimeModifiers = {
     "-": 0,
     "CEREMONYMODIFIER.monthGod": 1,
@@ -396,10 +444,15 @@ DSA5.dieColors = {
     "dodge": "ge"
 }
 
+DSA5.addvantageRules = {}
+DSA5.removevantageRules = {}
+DSA5.vantagesNeedingAdaption = {}
+
 DSA5.rangeWeaponModifiers = {
     "short": "RangeMod.short",
     "medium": "RangeMod.medium",
-    "long": "RangeMod.long"
+    "long": "RangeMod.long",
+    "rangesense": "RangeMod.rangesense"
 }
 
 DSA5.meleeRangesArray = [
@@ -541,6 +594,5 @@ DSA5.StFs = {
     "C": "C",
     "D": "D"
 }
-
 
 export default DSA5

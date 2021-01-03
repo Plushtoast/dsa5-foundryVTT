@@ -1,4 +1,3 @@
-import Itemdsa5 from "./item-dsa5.js";
 import DSA5_Utility from "../system/utility-dsa5.js";
 import DSA5 from "../system/config-dsa5.js"
 
@@ -6,7 +5,6 @@ import DSA5 from "../system/config-dsa5.js"
 
 export default class ItemSheetdsa5 extends ItemSheet {
     constructor(item, options) {
-
         super(item, options);
         this.mce = null;
     }
@@ -24,19 +22,6 @@ export default class ItemSheetdsa5 extends ItemSheet {
         return options;
     }
 
-    _getHeaderButtons() {
-        let buttons = super._getHeaderButtons();
-        // Add "Post to chat" button
-        // We previously restricted this to GM and editable items only. If you ever find this comment because it broke something: eh, sorry!
-        /*buttons.push(
-          {
-            class: "post",
-            icon: "fas fa-comment",
-            onclick: ev => new ItemWfrp4e(this.item.data).postItem()
-          })*/
-        return buttons
-    }
-
     async _render(force = false, options = {}) {
         await super._render(force, options);
         /*$(this._element).find(".close").attr("title", game.i18n.localize("SHEET.Close"));
@@ -52,10 +37,7 @@ export default class ItemSheetdsa5 extends ItemSheet {
 
     activateListeners(html) {
         super.activateListeners(html);
-
-
     }
-
 
     async getData() {
         const data = super.getData();

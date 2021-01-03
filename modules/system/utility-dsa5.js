@@ -117,7 +117,7 @@ export default class DSA5_Utility {
 
     //TODO calcualte this
     static _calculateAdvCost(currentAdvances, type, modifier = 0) {
-        return 1
+        return DSA5.advancementCosts[type][Number(currentAdvances) + 1]
     }
 
     static experienceDescription(experience) {

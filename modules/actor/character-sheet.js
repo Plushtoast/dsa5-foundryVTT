@@ -8,7 +8,7 @@ export default class ActorSheetdsa5Character extends ActorSheetDsa5 {
         const options = super.defaultOptions;
         mergeObject(options, {
             classes: options.classes.concat(["dsa5", "actor", "character-sheet"]),
-            width: 680,
+            width: 770,
             height: 740,
         });
         return options;

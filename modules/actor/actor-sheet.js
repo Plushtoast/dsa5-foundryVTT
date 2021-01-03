@@ -1,6 +1,7 @@
 import DSA5_Utility from "../system/utility-dsa5.js";
 import DSA5 from "../system/config-dsa5.js";
 import AdvantageRulesDSA5 from "../system/advantage-rules-dsa5.js";
+
 import Itemdsa5 from "../item/item-dsa5.js";
 
 export default class ActorSheetDsa5 extends ActorSheet {
@@ -21,7 +22,7 @@ export default class ActorSheetDsa5 extends ActorSheet {
         const options = super.defaultOptions;
         options.tabs = [{ navSelector: ".tabs", contentSelector: ".content", initial: "skills" }]
         mergeObject(options, {
-            width: 680,
+            width: 770,
             height: 740
         });
         return options;
@@ -159,6 +160,91 @@ export default class ActorSheetDsa5 extends ActorSheet {
         }
     }
 
+    async _advanceAttribute(attr) {
+        let advances = Number(this.actor.data.data.characteristics[attr].advances) + Number(this.actor.data.data.characteristics[attr].initial)
+        let cost = DSA5_Utility._calculateAdvCost(advances, "E")
+        if (this._checkEnoughXP(cost)) {
+            let attrJs = `data.characteristics.${attr}.advances`
+            await this.actor.update({
+                [attrJs]: Number(this.actor.data.data.characteristics[attr].advances) + 1,
+                "data.details.experience.spent": Number(this.actor.data.data.details.experience.spent) + cost
+            })
+        }
+    }
+
+    async _advancePoints(attr) {
+        let advances = Number(this.actor.data.data.status[attr].advances)
+        let cost = DSA5_Utility._calculateAdvCost(advances, "D")
+        if (this._checkEnoughXP(cost) && this._checkMaximumPointAdvancement(attr, advances + 1)) {
+            let attrJs = `data.status.${attr}.advances`
+            await this.actor.update({
+                [attrJs]: Number(this.actor.data.data.status[attr].advances) + 1,
+                "data.details.experience.spent": Number(this.actor.data.data.details.experience.spent) + cost
+            })
+        }
+    }
+
+    _checkMaximumPointAdvancement(attr, newValue) {
+        let result = false
+        switch (attr) {
+            case "wounds":
+                result = newValue <= this.actor.data.data.characteristics["ko"].value
+                break
+            case "astralenergy":
+            case "karmaenergy":
+                result = newValue <= this.actor.data.data.characteristics[this.actor.data.data.guidevalue.value].value
+                break
+        }
+        if (!result)
+            ui.notifications.warn(game.i18n.localize("Error.AdvanceMaximumReached"))
+
+        return result
+    }
+
+    _checkMaximumItemAdvancement(item, newValue) {
+        let result = false
+        switch (item.type) {
+            case "combatskill":
+                result = newValue <= Math.max(...(item.data.guidevalue.value.split("/").map(x => this.actor.data.data.characteristics[x].value))) + 2 + AdvantageRulesDSA5.vantageStep(this.actor, `Herausragende Kampftechnik (${item.name})`)
+                break
+            case "spell":
+            case "ritual":
+            case "liturgy":
+            case "ceremnoy":
+                result = newValue <= 14 + AdvantageRulesDSA5.vantageStep(this.actor, `Herausragende Fertigkeit (${item.name})`)
+                break
+            case "skill":
+                result = newValue <= Math.max(...[this.actor.data.data.characteristics[item.data.characteristic1.value].value, this.actor.data.data.characteristics[item.data.characteristic2.value].value, this.actor.data.data.characteristics[item.data.characteristic3.value].value]) + 2 + AdvantageRulesDSA5.vantageStep(this.actor, `Herausragende Fertigkeit (${item.name})`)
+                break
+        }
+        if (!result)
+            ui.notifications.warn(game.i18n.localize("Error.AdvanceMaximumReached"))
+
+        return result
+    }
+
+    async _advanceItem(itemId) {
+        let item = duplicate(this.actor.items.find(i => i.data._id == itemId))
+        let cost = DSA5_Utility._calculateAdvCost(Number(item.data.talentValue.value), item.data.StF.value)
+
+        if (this._checkEnoughXP(cost) && this._checkMaximumItemAdvancement(item, Number(item.data.talentValue.value) + 1)) {
+            item.data.talentValue.value += 1
+            this.actor.updateEmbeddedEntity("OwnedItem", item)
+            await this.actor.update({
+                "data.details.experience.spent": Number(this.actor.data.data.details.experience.spent) + cost
+            })
+        }
+    }
+
+    _checkEnoughXP(cost) {
+        if (Number(this.actor.data.data.details.experience.total) - Number(this.actor.data.data.details.experience.spent) > cost) {
+            return true
+        } else {
+            ui.notifications.warn(game.i18n.localize("Error.NotEnoughXP"))
+            return false
+        }
+    }
+
     activateListeners(html) {
         super.activateListeners(html);
 
@@ -205,6 +291,16 @@ export default class ActorSheetDsa5 extends ActorSheet {
             else if (ev.button == 2)
                 skill.sheet.render(true);
         });
+
+        html.find(".advance-attribute").mousedown(ev => {
+            this._advanceAttribute($(ev.currentTarget).attr("data-attr"))
+        })
+        html.find(".advance-item").mousedown(ev => {
+            this._advanceItem(this._getItemId(ev))
+        })
+        html.find(".advance-points").mousedown(ev => {
+            this._advancePoints($(ev.currentTarget).attr("data-attr"))
+        })
 
         html.find('.spell-select').mousedown(ev => {
             let itemId = this._getItemId(ev);
@@ -497,13 +593,13 @@ export default class ActorSheetDsa5 extends ActorSheet {
         switch (item.type) {
             case "advantage":
             case "disadvantage":
+                await AdvantageRulesDSA5.vantageRemoved(this.actor, item)
                 await this._updateAPs(-1 * item.data.APValue.value * item.data.step.value)
                 break;
             case "specialability":
                 await this._updateAPs(-1 * item.data.APValue.value)
                 break;
         }
-
         this.actor.deleteEmbeddedEntity("OwnedItem", itemId);
     }
 
@@ -526,33 +622,11 @@ export default class ActorSheetDsa5 extends ActorSheet {
     }
 
     async _updateAPs(apValue) {
-        if (this.actor.data.type == "character") {
-            if (!isNaN(apValue) && !(apValue == null)) {
-                await this.actor.update({
-                    "data.details.experience.spent": Number(this.actor.data.data.details.experience.spent) + Number(apValue),
-                });
-            } else {
-                ui.notifications.warn(game.i18n.localize("Error.APUpdateError"))
-            }
-        }
+        await this.actor._updateAPs(apValue)
     }
 
     async _addVantage(item, typeClass) {
-        let res = this.actor.data.items.find(i => {
-            return i.type == typeClass && i.name == item.name
-        });
-        if (res) {
-            let vantage = duplicate(res)
-            if (vantage.data.step.value + 1 <= vantage.data.max.value) {
-                vantage.data.step.value += 1
-                await this._updateAPs(vantage.data.APValue.value)
-                await this.actor.updateEmbeddedEntity("OwnedItem", vantage);
-            }
-        } else {
-            await AdvantageRulesDSA5.vantageAdded(this.actor, item)
-            await this._updateAPs(item.data.data.APValue.value)
-            await this.actor.createEmbeddedEntity("OwnedItem", item);
-        }
+        AdvantageRulesDSA5.needsAdoption(this.actor, item, typeClass)
     }
 
     async _addCareer(item) {
@@ -653,18 +727,26 @@ export default class ActorSheetDsa5 extends ActorSheet {
     }
 
     async _addSpellOrLiturgy(item) {
-        await this.actor.createEmbeddedEntity("OwnedItem", item);
-    }
-    async _addTrait(item){
-        if(this.actor.type == "creature"){
-            await this.actor.createEmbeddedEntity("OwnedItem", item);
+        let res = this.actor.data.items.find(i => {
+            return i.type == item.type && i.name == item.name
+        });
+        if (!res) {
+            switch (item.type) {
+                case "blessing":
+                case "magictrick":
+                    await this._updateAPs(1)
+                    break
+
+            }
+            await this.actor.createEmbeddedEntity("OwnedItem", item)
         }
     }
+
 
     async _onDrop(event) {
         this._handleDragData(JSON.parse(event.dataTransfer.getData("text/plain")))
     }
-    async _handleDragData(dragData){
+    async _handleDragData(dragData) {
         let item
         let typeClass
 
@@ -693,9 +775,6 @@ export default class ActorSheetDsa5 extends ActorSheet {
             case "armor":
                 await this.actor.createEmbeddedEntity("OwnedItem", item);
                 break;
-            case "trait":
-                await this._addTrait(item)
-                break
             case "disadvantage":
             case "advantage":
                 await this._addVantage(item, typeClass)

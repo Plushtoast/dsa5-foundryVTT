@@ -5,7 +5,7 @@
             {{#each actor.data.characteristics as |ch c|}}
             <div title="{{localize ch.label}}" class="table-header">
                 <div class="header-label">
-                    <b>{{localize ch.abrev}}</b>
+                    <b>{{localize ch.abrev}}</b><a data-attr="{{c}}" class="advance advance-attribute"><i title="{{ch.cost}}" class="fas fa-plus"></i></a>
                 </div>
             </div>
             {{/each}}
@@ -149,6 +149,7 @@
             <div class="derivedAttrs row-section">
                 <div class="col two lineheight">
                     {{localize "wounds"}}
+                    <a data-attr="wounds" class="advance advance-points"><i title="{{data.status.wounds.cost}}" class="fas fa-plus"></i></a>
                     <span class="buttons">
                         <a data-char="regenerate" class="ch-regenerate item" data-mod="regenerate" title="{{localize 'regenerate'}}">&nbsp;<i class="fas fa-moon-o"></i></a>
                     </span>
@@ -172,6 +173,7 @@
             <div class="derivedAttrs row-section">
                 <div class="col two lineheight">
                     {{localize "astralenergy"}}
+                    <a data-attr="astralenergy" class="advance advance-points"><i title="{{data.status.astralenergy.cost}}" class="fas fa-plus"></i></a>
                 </div>
                 <div class="col eight lineheight center">
                     {{data.status.astralenergy.current}}
@@ -193,6 +195,8 @@
             <div class="derivedAttrs row-section">
                 <div class="col two lineheight">
                     {{localize "karmaenergy"}}
+                    <a data-attr="karmaenergy" class="advance advance-points"><i title="{{data.status.karmaenergy.cost}}"
+                            class="fas fa-plus"></i></a>
                 </div>
                 <div class="col eight lineheight center">
                     {{data.status.karmaenergy.current}}
@@ -283,7 +287,6 @@
                 </div>
                 <div class="col eight lineheight center">
                     {{data.status.speed.max}}
-
                 </div>
             </div>
             <div class="derivedAttrs row-section">

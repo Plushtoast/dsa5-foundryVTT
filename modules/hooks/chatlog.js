@@ -6,4 +6,11 @@ export default function() {
         OpposedDsa5.chatListeners(html)
         DiceDSA5.chatListeners(html)
     });
+
+    Hooks.on("renderChatMessage", async (app, html, msg) => {
+        if (!game.user.isGM) {
+            html.find(".chat-button-gm").remove();
+         }
+
+    });
 }

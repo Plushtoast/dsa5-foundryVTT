@@ -63,7 +63,9 @@
         "RollMode": "Würfelmodus",
         "DeleteItem": "Eintrag entfernen?",
         "SituationalModifiers": "Bedingte\nModifikatoren",
-        "DeleteItemDetail": "Möchtest du <b>{item}</b> entfernen?"
+        "DeleteItemDetail": "Möchtest du <b>{item}</b> entfernen?",
+        "ItemRequiresAdoption": "Eintrag anpassen",
+        "ItemRequiresAdoptionDescription": "Das Hinzufügen benötigt zuerst eine Anpassung. Wähle den passenden Eintrag für "
     },
 
     "Equipment": {
@@ -89,6 +91,7 @@
     "attacktest": "Angriffsprobe",
     "arrow": "Pfeil",
     "armor": "Rüstung",
+    "advancementCost": "Steigern für {cost} Abenteuerpunkte",
     "animal": "Tier",
     "attributeChange": "Eigenschaftsänderung",
     "attackOfOpportunity": "Der Kämpfer kann einen Passierschlag ausführen",
@@ -148,6 +151,7 @@
     "clericspecialtalents": "Klerikale Sonderfertigkeiten",
     "camplocation": "Lagerplatz",
     "carrycapacity": "Tragekraft",
+    "chatEdit": "Manuelle Korrektur",
     "Details": "Details",
     "damage": "Schaden",
     "defenseCount": "# Verteidigung (je -3)",
@@ -237,6 +241,7 @@
     "maintainedSpells": "Aufrechterhaltene Zauber/Liturgien (je -1)",
     "manual": "Händisch",
     "mageLevel": "Magieart",
+    "minorghostsappear": "Lästige Mindergeister werden durch den Zauber angelockt",
     "maxSpellMods": "Maximale Modifikatorenanzahl",
     "misc": "Sonstiges",
     "Name": "Name",
@@ -324,6 +329,7 @@
     "toughness": "Zähigkeit",
     "targetCategory": "Zielkategorie",
     "target": "Ziel",
+    "usedWeaponExpertise": "Waffenbegabung eingesetzt ({a}/{b})",
     "Unopposed": "Keine Vergleichsprobe",
     "usedTestCount": "Gewürfelte Proben",
     "value": "Wert",
@@ -494,7 +500,8 @@
     "RangeMod": {
         "short": "Nah [+2 auf FK, +1 TP]",
         "medium": "Mittel [+/–0 auf FK]",
-        "long": "Weit [–2 auf FK, –1 TP]"
+        "long": "Weit [–2 auf FK, –1 TP]",
+        "rangesense": "Weit [–1 auf FK, –1 TP]"
     },
     "VisionDisruption": {
         "step0": "Klare Sicht",
@@ -515,7 +522,16 @@
         "prone": "Liegend",
         "unconscious": "Bewusstlos",
         "incapacitated": "Handlungsunfähig",
-        "rooted": "Bewegungsunfähig"
+        "rooted": "Bewegungsunfähig",
+        "blind": "Blind",
+        "deaf": "Taub",
+        "mute": "Stumm",
+        "bloodrush": "Blutrausch"
+    },
+
+    "CHATNOTIFICATION": {
+        "gainsBloodrush": "Der Zorn überwältigt {character} und er/sie verfällt in Blutrausch.",
+        "unableReroll": "Würfel {die} wegen Unfähigkeit erneut geworfen ({oldVal}/{newVal})"
     },
 
     "TT": {
@@ -532,7 +548,7 @@
         "giant": "Riesig"
     },
 
-    "NarroSpaceModifiers": {
+    "NarrowSpaceModifiers": {
         "weapon": {
             "short": "Kurze Waffe, +-0 AT/PA",
             "medium": "Mittlere Waffe, -4 AT/-4 PA",
@@ -564,7 +580,8 @@
     "CHAT": {
         "TestModifiers": {
             "FinalModifiers": "{target} Target, {sl}SL to <b>{name}</b>"
-        }
+        },
+        "editRoll": "Wurf editieren"
     },
 
     "ReverseSpellRanges": {
@@ -582,7 +599,9 @@
         "RangeCannotBeParsed": "Die Reichweite kan nicht automatisch angepasst werden. Format nicht erkannt.",
         "CastingTimeLimit": "Die Zauberdauer ist bereits am Limit.",
         "TimeCannotBeParsed": "Die Zauberdauer kan nicht automatisch angepasst werden. Format nicht erkannt.",
-        "DamagePermission": "Du darfst den Schaden nicht übertragen."
+        "DamagePermission": "Du darfst den Schaden nicht übertragen.",
+        "NotEnoughXP": "Nicht genug Abenteuerpunkte",
+        "AdvanceMaximumReached": "Maximale Steigerung bereits erreicht"
     },
 
     "CEREMONYMODIFIER": {
@@ -639,7 +658,8 @@
         "Reroll": "Wurf wiederholen (1 Schip)",
         "AddQS": "QS um eins erhöhen (1 Schip)",
         "rerollDamage": "Schadenswurf wiederholen (1 Schip)",
-        "ApplyDamage": "Schaden anwenden"
+        "ApplyDamage": "Schaden anwenden",
+        "talentedReroll": "Begabung verwenden"
     },
 
     "CHATFATE": {
@@ -648,6 +668,7 @@
         "rerollDamage": "{character} würfelt erneut.",
         "addQS": "{character} erhöht die Qualitätsstufe.",
         "PointsRemaining": "Verbleibende Schicksalspunkte",
+        "isTalented": "{character} benutzt seine Begabung",
         "selectDice": "Wurf wiederholen",
         "selectDieToReroll": "Wähle die zu wiederholenden Würfel"
     },
@@ -699,6 +720,8 @@
         "prone": "Ob gerade geweckt oder zu Boden geworfen, die Person befindet sich in liegender Position. Dies führt besonders im Kampf zu einigen Modifikationen. So lange die Person liegt, kann sie sich nur sehr langsam fortbewegen (GS 1). Ihre Verteidigung ist um 2 erschwert, ihre Angriffe um 4. Wer aufstehen möchte, braucht dazu 1 Aktion. Ist ein Gegner in Angriffsdistanz, kann er dabei einen Passierschlag ausführen. Um keinen Passierschlag abzubekommen, kann der Held eine Probe auf Körperbeherrschung (Kampfmanöver) ablegen. Bei Gelingen bekommt er keinen Passierschlag ab.",
         "invisible": "Die Person ist mit dem Sichtsinn nicht mehr wahrnehmbar. Sie ist natürlich trotzdem weiterhin hör-, riech- und ertastbar. Im Kampf kann eine unsichtbare Person nur angegriffen werden, wenn der Angreifer sich über ihre Existenz und grobe Position bewusst ist. Hierzu sind vergleichende Proben auf Sinnesschärfe (Suchen) und Verbergen (Schleichen) nötig. Ist der Angreifer erfolgreich, darf er Angriffe und Verteidigungen gegen den Unsichtbaren ausführen. Sämtliche Attackewerte werden hierbei halbiert, Fernkampfattacken sind reine Glückstreffer (gewürfelte 1 auf 1W20). Verteidigungen gegen Angriffe eines Unsichtbaren sind auch Glücksache (gewürfelte 1 auf 1W20). Verteidigungen gegen Fernkampfattacken eines Unsichtbaren sind unmöglich. Zauber und Liturgien können nur auf einen Unsichtbaren gewirkt werden, wenn der Wirkende den Unsichtbaren berührt.",
         "incapacitated": "Die Person ist durch Zustände oder andere Modifikatoren so angeschlagen, dass sie nicht mehr handeln kann. Ihre GS fällt auf 0 und sie kann keine Aktionen oder Verteidigungen ausführen. In den meisten Situationen gilt sie zudem als Liegend. Je nach Situation kann der Spielleiter erlauben, freie Aktionen auszuführen, um zu sprechen.",
-        "rooted": "Unter anderem Paralyse, Treibsand oder stabile Fesseln können dazu führen, dass sich eine Person nicht mehr bewegen kann. Sie kann jedoch noch normal wahrnehmen und Handlungen ausführen, für die sie keine körperlichen Bewegungen benötigt. Beispiele hierfür wären die meisten Anwendungen von Wissenstalenten oder das Wirken von Zaubern und Liturgien, ohne Gesten und Formeln zu verwenden."
+        "rooted": "Unter anderem Paralyse, Treibsand oder stabile Fesseln können dazu führen, dass sich eine Person nicht mehr bewegen kann. Sie kann jedoch noch normal wahrnehmen und Handlungen ausführen, für die sie keine körperlichen Bewegungen benötigt. Beispiele hierfür wären die meisten Anwendungen von Wissenstalenten oder das Wirken von Zaubern und Liturgien, ohne Gesten und Formeln zu verwenden.",
+        "mute": "Die Person kann nicht sprechen, was die Kommunikation mit ihr deutlich einschränkt. Personen mit diesem Status können Probleme bei Zaubern haben.",
+        "deaf": "Die Person kann nichts hören, was die Kommunikation mit ihr deutlich einschränkt. Personen mit diesem Status können keine Proben auf Sinnesschärfe ablegen, die sich nur auf den Hörsinn beziehen. Proben auf Sinnesschärfe (Hinterhalte entdecken) sind um 3 erschwert."
     }
 }

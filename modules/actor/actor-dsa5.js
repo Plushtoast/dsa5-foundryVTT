@@ -3,6 +3,7 @@ import DSA5 from "../system/config-dsa5.js"
 import DiceDSA5 from "../system/dice-dsa5.js"
 import OpposedDsa5 from "../system/opposed-dsa5.js";
 import DSA5Dialog from "../dialog/dialog-dsa5.js"
+import AdvantageRulesDSA5 from "../system/advantage-rules-dsa5.js";
 
 export default class Actordsa5 extends Actor {
     static async create(data, options) {
@@ -13,10 +14,7 @@ export default class Actordsa5 extends Actor {
             return super.create(data, options);
 
         data.items = [];
-
-        data.flags = {
-
-        }
+        data.flags = {}
 
         if (!data.img || data.img == "icons/svg/mystery-man.svg") {
             switch (data.type) {
@@ -33,10 +31,8 @@ export default class Actordsa5 extends Actor {
         let moneyItems = await DSA5_Utility.allMoneyItems() || [];
 
         moneyItems = moneyItems.sort((a, b) => (a.data.price.value > b.data.price.value) ? -1 : 1);
-        //if (data.type == "character" || data.type == "npc") {
         data.items = data.items.concat(skills);
         data.items = data.items.concat(combatskills);
-        //}
 
         data.items = data.items.concat(moneyItems.map(m => {
             m.data.quantity.value = 0
@@ -44,17 +40,14 @@ export default class Actordsa5 extends Actor {
         }));
 
         super.create(data, options);
-
-
     }
 
     prepareBaseData() {
         for (let ch of Object.values(this.data.data.characteristics)) {
             ch.value = ch.initial + ch.advances + (ch.modifier || 0);
             ch.bonus = Math.floor(ch.value / 10)
-            ch.cost = DSA5_Utility._calculateAdvCost(ch.advances, "characteristic")
+            ch.cost = game.i18n.format("advancementCost", { cost: DSA5_Utility._calculateAdvCost(ch.initial + ch.advances, "E") })
         }
-
     }
 
     prepareData() {
@@ -89,7 +82,6 @@ export default class Actordsa5 extends Actor {
             var guide = data.data.guidevalue
 
             if (guide && this.data.type != "creature") {
-                //if (guide.value != "-") {
                 if (data.data.characteristics[guide.value]) {
                     data.data.status.astralenergy.current = data.data.status.astralenergy.initial + data.data.characteristics[guide.value].value
                     data.data.status.astralenergy.max = data.data.status.astralenergy.current + data.data.status.astralenergy.modifier + data.data.status.astralenergy.advances
@@ -123,13 +115,9 @@ export default class Actordsa5 extends Actor {
 
     prepare() {
         let preparedData = duplicate(this.data)
-        // Call prepareItems first to organize and process OwnedItems
         mergeObject(preparedData, this.prepareItems())
-
         return preparedData;
     }
-
-
 
     static _calculateCombatSkillValues(i, actorData) {
         if (i.data.weapontype.value == "melee") {
@@ -145,7 +133,15 @@ export default class Actordsa5 extends Actor {
             let attackChar = actorData.data.characteristics.ff.value + actorData.data.characteristics.ff.modifier + actorData.data.characteristics.ff.advances;
             i.data.attack.value = i.data.talentValue.value + Math.max(0, Math.floor((attackChar - 8) / 3));
         }
+        i.cost = game.i18n.format("advancementCost", { cost: DSA5_Utility._calculateAdvCost(i.data.talentValue.value, i.data.StF.value) })
+        i.canAdvance = actorData.type == "character"
         return i;
+    }
+
+    _perpareItemAdvancementCost(item) {
+        item.cost = game.i18n.format("advancementCost", { cost: DSA5_Utility._calculateAdvCost(item.data.talentValue.value, item.data.StF.value) })
+        item.canAdvance = this.data.type == "character"
+        return item
     }
 
     prepareItems() {
@@ -215,8 +211,6 @@ export default class Actordsa5 extends Actor {
                 show: false,
                 dataType: "ammunition"
             },
-
-
         };
 
         for (let t in DSA5.equipmentTypes) {
@@ -239,6 +233,7 @@ export default class Actordsa5 extends Actor {
         let armorTraits = []
         let animalTraits = []
         let generalTraits = []
+        let familiarTraits = []
 
 
         actorData.items = actorData.items.sort((a, b) => (a.sort || 0) - (b.sort || 0))
@@ -252,26 +247,24 @@ export default class Actordsa5 extends Actor {
         let encumbrance = 0;
         let carrycapacity = (actorData.data.characteristics.kk.value + actorData.data.characteristics.kk.modifier + actorData.data.characteristics.kk.advances) * 2;
 
-
-
         for (let i of actorData.items) {
             switch (i.type) {
                 case "skill":
                     switch (i.data.group.value) {
                         case "body":
-                            bodySkills.push(i);
+                            bodySkills.push(this._perpareItemAdvancementCost(i));
                             break;
                         case "social":
-                            socialSkills.push(i);
+                            socialSkills.push(this._perpareItemAdvancementCost(i));
                             break;
                         case "knowledge":
-                            knowledgeSkills.push(i);
+                            knowledgeSkills.push(this._perpareItemAdvancementCost(i));
                             break;
                         case "trade":
-                            tradeSkills.push(i);
+                            tradeSkills.push(this._perpareItemAdvancementCost(i));
                             break;
                         case "nature":
-                            natureSkills.push(i);
+                            natureSkills.push(this._perpareItemAdvancementCost(i));
                             break;
                     }
                     break;
@@ -280,19 +273,19 @@ export default class Actordsa5 extends Actor {
                     break
                 case "spell":
                     hasSpells = true
-                    spells.push(i)
+                    spells.push(this._perpareItemAdvancementCost(i))
                     break;
                 case "liturgy":
                     hasPrayers = true
-                    liturgies.push(i)
+                    liturgies.push(this._perpareItemAdvancementCost(i))
                     break;
                 case "ceremony":
                     hasPrayers = true
-                    ceremonies.push(i)
+                    ceremonies.push(this._perpareItemAdvancementCost(i))
                     break;
                 case "ritual":
                     hasSpells = true
-                    rituals.push(i)
+                    rituals.push(this._perpareItemAdvancementCost(i))
                     break;
                 case "blessing":
                     hasPrayers = true
@@ -315,6 +308,9 @@ export default class Actordsa5 extends Actor {
                             break
                         case "animal":
                             animalTraits.push(i)
+                            break
+                        case "familiar":
+                            familiarTraits.push(i)
                             break
                         case "armor":
                             armorTraits.push(i)
@@ -438,9 +434,18 @@ export default class Actordsa5 extends Actor {
 
         money.coins = money.coins.sort((a, b) => (a.data.price.value > b.data.price.value) ? -1 : 1);
         encumbrance += Math.max(0, Math.floor((totalWeight - carrycapacity) / 4));
-        let pain = actorData.data.status.wounds.value <= 5 ? 4 : Math.floor((1 - actorData.data.status.wounds.value / actorData.data.status.wounds.max) * 4)
+        let pain = actorData.data.status.wounds.value <= 5 ? 4 : Math.floor((1 - actorData.data.status.wounds.value / actorData.data.status.wounds.max) * 4) - AdvantageRulesDSA5.vantageStep(this, "Zäher Hund")
 
+        if (pain >= 1) {
+            pain = Math.min(4, pain + AdvantageRulesDSA5.vantageStep(this, "Zerbrechlich"))
+        }
 
+        if (AdvantageRulesDSA5.hasVantage(this, "Blind"))
+            this.addCondition("blind")
+        if (AdvantageRulesDSA5.hasVantage(this, "Stumm"))
+            this.addCondition("mute")
+        if (AdvantageRulesDSA5.hasVantage(this, "Taub"))
+            this.addCondition("deaf")
 
 
         this.addCondition("inpain", pain, true)
@@ -451,7 +456,6 @@ export default class Actordsa5 extends Actor {
         hasPrayers = hasPrayers && !hasSpells
         this.data.isMage = hasSpells
         this.data.isPriest = hasPrayers
-
 
         let eqModifierString = []
         for (var i in equipmentModifiers) {
@@ -483,6 +487,7 @@ export default class Actordsa5 extends Actor {
             armorTraits: armorTraits,
             generalTraits: generalTraits,
             animalTraits: animalTraits,
+            familiarTraits: familiarTraits,
             magicSpecialAbilities: magicSpecialAbilities,
             blessings: blessings,
             magicTricks: magicTricks,
@@ -536,6 +541,18 @@ export default class Actordsa5 extends Actor {
             })
         }
         return r
+    }
+
+    async _updateAPs(apValue){
+        if (this.data.type == "character") {
+            if (!isNaN(apValue) && !(apValue == null)) {
+                await this.update({
+                    "data.details.experience.spent": Number(this.data.data.details.experience.spent) + Number(apValue),
+                });
+            } else {
+                ui.notifications.warn(game.i18n.localize("Error.APUpdateError"))
+            }
+        }
     }
 
     setupWeaponTrait(item, mode, options) {
@@ -599,7 +616,6 @@ export default class Actordsa5 extends Actor {
         let dialogOptions = {
             title: title,
             template: "/systems/dsa5/templates/dialog/combatskill-dialog.html",
-            // Prefilled dialog data
             data: {
                 rollMode: options.rollMode
             },
@@ -683,16 +699,12 @@ export default class Actordsa5 extends Actor {
     }
 
     applyDamage(amount) {
-        this.update(
-            this.update({ "data.status.wounds.value": Math.max(0, this.data.data.status.wounds.value - amount) })
-        )
+        this.update({ "data.status.wounds.value": Math.max(0, this.data.data.status.wounds.value - amount) })
     }
 
     applyMana(amount, type) {
         let val = type == "AsP" ? "data.status.astralenergy.value" : "data.karmaenergy.value"
-        this.update(
-            this.update({ val: Math.max(0, this.data[val] - amount) })
-        )
+        this.update({ val: Math.max(0, this.data[val] - amount) })
     }
 
     setupWeaponless(statusId, options = {}) {
@@ -716,11 +728,9 @@ export default class Actordsa5 extends Actor {
         testData.source.type = "meleeweapon"
         testData.source.data.data.damageThreshold.value = 14
 
-        // Setup dialog data: title, template, buttons, prefilled data
         let dialogOptions = {
             title: title,
             template: "/systems/dsa5/templates/dialog/status-dialog.html",
-            // Prefilled dialog data
             data: {
                 rollMode: options.rollMode
             },
@@ -749,8 +759,6 @@ export default class Actordsa5 extends Actor {
     }
 
     preparePostRollAction(message) {
-        //recreate the initial (virgin) cardOptions object
-        //add a flag for reroll limit
         let data = message.data.flags.data;
         let cardOptions = {
             flags: { img: message.data.flags.img },
@@ -768,6 +776,7 @@ export default class Actordsa5 extends Actor {
             cardOptions.unopposedStartMessage = data.unopposedStartMessage;
         return cardOptions;
     }
+
 
     useFateOnRoll(message, type) {
         if (this.data.data.status.fatePoints.value > 0) {
@@ -820,6 +829,62 @@ export default class Actordsa5 extends Actor {
                     });
                     this.update({ "data.status.fatePoints.value": this.data.data.status.fatePoints.value - 1 })
 
+                    break
+                case "isTalented":
+                    cardOptions.talentedRerollUsed = true;
+                    if (data.originalTargets && data.originalTargets.size > 0) {
+                        game.user.targets = data.originalTargets;
+                        game.user.targets.user = game.user;
+                    }
+                    if (!data.defenderMessage && data.startMessagesList) {
+                        cardOptions.startMessagesList = data.startMessagesList;
+                    }
+                    infoMsg = `<h3 class="center"><b>${game.i18n.localize("CHATFATE.faitepointUsed")}</b></h3>
+                        ${game.i18n.format("CHATFATE." + type, { character: '<b>' + this.name + '</b>' })}<br>`;
+                    renderTemplate('systems/dsa5/templates/dialog/isTalentedReroll-dialog.html', { testData: newTestData, postData: data.postData }).then(html => {
+                        new DSA5Dialog({
+                            title: game.i18n.localize("CHATFATE.selectDice"),
+                            content: html,
+                            buttons: {
+                                Yes: {
+                                    icon: '<i class="fa fa-check"></i>',
+                                    label: game.i18n.localize("Ok"),
+                                    callback: dlg => {
+
+                                        let diesToReroll = dlg.find('.dieSelected').map(function () { return Number($(this).attr('data-index')) }).get()
+                                        if (diesToReroll.length > 0) {
+
+                                            let newRoll = []
+                                            for (let k of diesToReroll) {
+                                                let term = newTestData.roll.terms[k * 2]
+                                                newRoll.push(term.number + "d" + term.faces + "[" + term.options.colorset + "]")
+                                            }
+                                            newRoll = new Roll(newRoll.join("+")).roll()
+                                            DiceDSA5.showDiceSoNice(newRoll, newTestData.rollMode)
+
+                                            ChatMessage.create(DSA5_Utility.chatDataSetup(infoMsg));
+                                            let ind = 0
+                                            for (let k of diesToReroll) {
+                                                newTestData.roll.results[k * 2] = newRoll.results[ind * 2]
+                                                newTestData.roll.terms[k * 2].results[0].result = newRoll.results[ind * 2]
+                                                ind += 1
+                                            }
+                                            this[`${data.postData.postFunction}`]({ testData: newTestData, cardOptions }, { rerenderMessage: message });
+                                            message.update({
+                                                "flags.data.talentedRerollUsed": true
+                                            });
+                                        }
+
+                                    }
+                                },
+                                cancel: {
+                                    icon: '<i class="fas fa-times"></i>',
+                                    label: game.i18n.localize("cancel")
+                                },
+                            },
+                            default: 'Yes'
+                        }).render(true)
+                    });
                     break
                 case "reroll":
                     cardOptions.fatePointDamageRerollUsed = true;
@@ -916,7 +981,6 @@ export default class Actordsa5 extends Actor {
         let dialogOptions = {
             title: title,
             template: "/systems/dsa5/templates/dialog/regeneration-dialog.html",
-            // Prefilled dialog data
             data: {
                 rollMode: options.rollMode
             },
@@ -1194,9 +1258,7 @@ export default class Actordsa5 extends Actor {
             }
         };
 
-
         let cardOptions = this._setupCardOptions("systems/dsa5/templates/chat/roll/skill-card.html", title)
-
 
         return DiceDSA5.setupDialog({
             dialogOptions: dialogOptions,
@@ -1378,23 +1440,28 @@ export default class Actordsa5 extends Actor {
             return existing
         else if (existing) {
             existing = duplicate(existing)
-            existing.flags.dsa5.value = Math.min(existing.flags.dsa5.max, absolute ? value : existing.flags.dsa5.value + value);
-            await this._dependentEffects(existing.flags.core.statusId, existing)
+            let newValue = Math.min(existing.flags.dsa5.max, absolute ? value : existing.flags.dsa5.value + value)
+            let delta = newValue - existing.flags.dsa5.value
+            existing.flags.dsa5.value = newValue;
+            await this._dependentEffects(existing.flags.core.statusId, existing, delta)
             return this.updateEmbeddedEntity("ActiveEffect", existing)
         } else if (!existing) {
 
             //if (game.combat && (effect.id == "blinded" || effect.id == "deafened"))
             //    effect.flags.dsa5.roundReceived = game.combat.round
             effect.label = game.i18n.localize(effect.label);
-            if (Number.isNumeric(effect.flags.dsa5.value))
+
+            if (Number.isNumeric(effect.flags.dsa5.value)) {
                 effect.flags.dsa5.value = Math.min(effect.flags.dsa5.max, value);
+            }
+
             effect["flags.core.statusId"] = effect.id;
             if (effect.id == "dead")
                 effect["flags.core.overlay"] = true;
             if (effect.id == "unconscious")
                 await this.addCondition("prone")
 
-            await this._dependentEffects(effect.id, effect)
+            await this._dependentEffects(effect.id, effect, 1)
             delete effect.id
             return this.createEmbeddedEntity("ActiveEffect", effect)
         }
@@ -1402,12 +1469,20 @@ export default class Actordsa5 extends Actor {
 
     }
 
-    async _dependentEffects(statusId, effect) {
+    async _dependentEffects(statusId, effect, delta) {
         if (effect.flags.dsa5.value == 4 && (statusId == "encumbered" || statusId == "stunned" || statusId == "feared" || statusId == "inpain" || statusId == "confused")) {
             await this.addCondition("incapacitated")
         }
         if (effect.flags.dsa5.value == 4 && (statusId == "paralysed")) {
             await this.addCondition("rooted")
+        }
+
+        if (delta > 0 && statusId == "inpain" && !this.hasCondition("bloodrush") && AdvantageRulesDSA5.hasVantage(this, "Blutrausch")) {
+            await this.addCondition("bloodrush")
+            let msg = `${game.i18n.format("CHATNOTIFICATION.gainsBloodrush", {
+                character: "<b>" + this.name + "</b>"
+            })}`;
+            ChatMessage.create(DSA5_Utility.chatDataSetup(msg));
         }
     }
 

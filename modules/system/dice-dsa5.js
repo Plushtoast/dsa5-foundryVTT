@@ -2,12 +2,15 @@ import Actordsa5 from "../actor/actor-dsa5.js";
 import DSA5 from "./config-dsa5.js";
 import DSA5Dialog from "../dialog/dialog-dsa5.js"
 import Miscast from "../tables/spellmiscast.js"
+import DSA5_Utility from "./utility-dsa5.js";
+import AdvantageRulesDSA5 from "./advantage-rules-dsa5.js";
 
 export default class DiceDSA5 {
     static async setupDialog({ dialogOptions, testData, cardOptions, }) {
         let rollMode = game.settings.get("core", "rollMode");
         let skMod = 0
         let zkMod = 0
+        let rangeOptions
         var sceneStress = "challenging";
 
         mergeObject(testData, {
@@ -21,11 +24,13 @@ export default class DiceDSA5 {
         });
 
         let situationalModifiers = Actordsa5.getModifiers(testData.extra.actor)
-        if(testData.extra.options.moreModifiers != undefined){
+        if (testData.extra.options.moreModifiers != undefined) {
             situationalModifiers.push(...testData.extra.options.moreModifiers)
         }
         switch (testData.source.type) {
             case "skill":
+                situationalModifiers.push(...AdvantageRulesDSA5.getTalentBonus(testData.extra.actor,testData.source.name))
+                situationalModifiers.push(...AdvantageRulesDSA5.getVantageAsModifier(testData.extra.actor, /Lästige Mindergeister/, -1))
                 if (testData.source.data.burden.value == "no") {
                     this._removeModifiers(situationalModifiers, ["CONDITION.encumbered"])
                 } else {
@@ -37,6 +42,7 @@ export default class DiceDSA5 {
                 break;
             case "rangeweapon":
                 this._enabledModifiers(situationalModifiers, ["CONDITION.encumbered", "CONDITION.inpain"], true)
+                situationalModifiers.push(...AdvantageRulesDSA5.getVantageAsModifier(testData.extra.actor, /Eingeschränkter Sinn \(Sicht\)/, -2))
                 let targetSize = "average"
                 if (game.user.targets.size) {
                     game.user.targets.forEach(target => {
@@ -45,8 +51,10 @@ export default class DiceDSA5 {
                             targetSize = tar.value
                     });
                 }
+                rangeOptions = {...DSA5.rangeWeaponModifiers}
+                delete rangeOptions[AdvantageRulesDSA5.hasVantage(testData.extra.actor, "Entfernungssinn") ? "long" : "rangesense"]
                 mergeObject(dialogOptions.data, {
-                    rangeOptions: DSA5.rangeWeaponModifiers,
+                    rangeOptions: rangeOptions,
                     sizeOptions: DSA5.rangeSizeCategories,
                     visionOptions: DSA5.rangeVision,
                     mountedOptions: DSA5.mountedRangeOptions,
@@ -86,8 +94,10 @@ export default class DiceDSA5 {
                                 targetSize = tar.value
                         });
                     }
+                    rangeOptions = { ...DSA5.rangeWeaponModifiers }
+                    delete rangeOptions["rangesense"]
                     mergeObject(dialogOptions.data, {
-                        rangeOptions: DSA5.rangeWeaponModifiers,
+                        rangeOptions: rangeOptions,
                         sizeOptions: DSA5.rangeSizeCategories,
                         visionOptions: DSA5.rangeVision,
                         targetSize: targetSize
@@ -108,21 +118,27 @@ export default class DiceDSA5 {
                     mergeObject(dialogOptions.data, {
                         weaponSizes: DSA5.meleeRanges,
                         melee: true,
+                        wrongHandDisabled: AdvantageRulesDSA5.hasVantage(testData.extra.actor, "Beidhändig"),
                         targetWeaponSize: targetWeaponsize
                     });
                 } else if (testData.mode == "parry") {
                     mergeObject(dialogOptions.data, {
                         defenseCount: 0,
                         showDefense: true,
+                        wrongHandDisabled: AdvantageRulesDSA5.hasVantage(testData.extra.actor, "Beidhändig"),
                         melee: true
                     });
-                } else {}
+                } else { }
                 break
             case "combatskill":
                 this._enabledModifiers(situationalModifiers, ["CONDITION.encumbered", "CONDITION.inpain"], true)
                 break
             case "liturgy":
             case "spell":
+                situationalModifiers.push(...AdvantageRulesDSA5.getVantageAsModifier(testData.extra.actor, /Lästige Mindergeister/, -1))
+                situationalModifiers.push(...AdvantageRulesDSA5.getVantageAsModifier(testData.extra.actor, /Magische Einstimmung.*/))
+                situationalModifiers.push(...AdvantageRulesDSA5.getVantageAsModifier(testData.extra.actor, /Magische Einschränkung.*/, -1))
+                situationalModifiers.push(...AdvantageRulesDSA5.getVantageAsModifier(testData.extra.actor, /Artefaktgebunden/, -1))
                 if (game.user.targets.size) {
                     game.user.targets.forEach(target => {
                         skMod = target.actor.data.data.status.soulpower.max
@@ -153,6 +169,10 @@ export default class DiceDSA5 {
                 this._enabledModifiers(situationalModifiers, ["CONDITION.encumbered", "CONDITION.inpain"], true)
                 break
             case "ritual":
+                situationalModifiers.push(...AdvantageRulesDSA5.getVantageAsModifier(testData.extra.actor, /Lästige Mindergeister/, -1))
+                situationalModifiers.push(...AdvantageRulesDSA5.getVantageAsModifier(testData.extra.actor, /Magische Einstimmung.*/))
+                situationalModifiers.push(...AdvantageRulesDSA5.getVantageAsModifier(testData.extra.actor, /Magische Einschränkung.*/, -1))
+                situationalModifiers.push(...AdvantageRulesDSA5.getVantageAsModifier(testData.extra.actor, /Artefaktgebunden/, -1))
                 if (game.user.targets.size) {
                     game.user.targets.forEach(target => {
                         skMod = target.actor.data.data.status.soulpower.max
@@ -190,7 +210,6 @@ export default class DiceDSA5 {
         else
             dialogOptions.data.rollModes = CONFIG.rollModes;
 
-
         if (!testData.extra.options.bypass) {
             // Render Test Dialog
             let html = await renderTemplate(dialogOptions.template, dialogOptions.data);
@@ -222,13 +241,15 @@ export default class DiceDSA5 {
         }
     }
     static _removeModifiers(modifiers, names) {
-        for (var x in names) {
+        for (var x of names) {
             if (modifiers[x])
                 delete modifiers[x]
         }
     }
 
-    static _rollSingleD20(roll, res, id, modifier, testData) {
+
+
+    static _rollSingleD20(roll, res, id, modifier, testData, combatskill = "") {
         let description = "";
 
         var chars = []
@@ -243,12 +264,24 @@ export default class DiceDSA5 {
         if (roll.terms[0].results.filter(x => x.result == 1).length == 1) {
             description = game.i18n.localize("CriticalSuccess");
             let res2 = res - rollConfirm.terms[0].results[0].result;
+            if(AdvantageRulesDSA5.hasVantage(testData.extra.actor, `Waffenbegabung (${combatskill})`) && !(res2 >= 0)){
+                let a = rollConfirm.terms[0].results[0].result
+                rollConfirm = new Roll("1d20").roll();
+                res2 = res - rollConfirm.terms[0].results[0].result;
+                description += ", " + game.i18n.format("usedWeaponExpertise", { a: a, b: rollConfirm.terms[0].results[0].result})
+            }
             this._addRollDiceSoNice(testData, rollConfirm, color)
             chars.push({ char: id, res: rollConfirm.terms[0].results[0].result, suc: res2 >= 0, tar: res });
             successLevel = res2 >= 0 ? 3 : 2
         } else if (roll.terms[0].results.filter(x => x.result == 20).length == 1) {
             description = game.i18n.localize("CriticalFailure");
             let res2 = res - rollConfirm.terms[0].results[0].result;
+            if (AdvantageRulesDSA5.hasVantage(testData.extra.actor, `Waffenbegabung (${combatskill})`) && !(res2 >= 0)) {
+                let a = rollConfirm.terms[0].results[0].result
+                rollConfirm = new Roll("1d20").roll();
+                res2 = res - rollConfirm.terms[0].results[0].result;
+                description += ", " + game.i18n.format("usedWeaponExpertise", { a: a, b: rollConfirm.terms[0].results[0].result })
+            }
             this._addRollDiceSoNice(testData, rollConfirm, color)
             chars.push({ char: id, res: rollConfirm.terms[0].results[0].result, suc: res2 >= 0, tar: res });
             successLevel = res2 >= 0 ? -2 : -3
@@ -271,16 +304,18 @@ export default class DiceDSA5 {
 
 
     static rollRegeneration(testData) {
+
         let modifier = testData.testModifier + this._situationalModifiers(testData);
         let roll = testData.roll
         var chars = []
 
+        let lepBonus = AdvantageRulesDSA5.vantageStep(testData.extra.actor, "Verbesserte Regeneration (Lebensenergie)") - AdvantageRulesDSA5.vantageStep(testData.extra.actor, "Schlechte Regeneration (Lebensenergie)")
 
         chars.push({ char: "LeP", res: roll.terms[0].results[0].result, die: "d6" })
 
         let result = {
             rollType: "regeneration",
-            LeP: Math.round(Math.max(0, Number(roll.terms[0].results[0].result) - Number(modifier)) * Number(testData.regenerationFactor)),
+            LeP: Math.round(Math.max(0, Number(roll.terms[0].results[0].result) + Number(modifier) + lepBonus) * Number(testData.regenerationFactor)),
             preData: testData,
             modifiers: modifier,
             extra: {}
@@ -288,11 +323,13 @@ export default class DiceDSA5 {
 
 
         if (testData.extra.actor.isMage) {
+            let aspBonus = AdvantageRulesDSA5.vantageStep(testData.extra.actor, "Verbesserte Regeneration (Astralenergie)") - AdvantageRulesDSA5.vantageStep(testData.extra.actor, "Schlechte Regeneration (Astralenergie)")
             chars.push({ char: "AsP", res: roll.terms[2].results[0].result, die: "d6" })
-            result["AsP"] = Math.round(Math.max(0, Number(roll.terms[2].results[0].result) + Number(modifier)) * Number(testData.regenerationFactor))
+            result["AsP"] = Math.round(Math.max(0, Number(roll.terms[2].results[0].result) + Number(modifier) + aspBonus) * Number(testData.regenerationFactor))
         } else if (testData.extra.actor.isPriest) {
+            let aspBonus = AdvantageRulesDSA5.vantageStep(testData.extra.actor, "Verbesserte Regeneration (Karmaenergie)") - AdvantageRulesDSA5.vantageStep(testData.extra.actor, "Schlechte Regeneration (Karmaenergie)")
             chars.push({ char: "KaP", res: roll.terms[2].results[0].result, die: "d6" })
-            result["KaP"] = Math.round(Math.max(0, Number(roll.terms[2].results[0].result) + Number(modifier)) * Number(testData.regenerationFactor))
+            result["KaP"] = Math.round(Math.max(0, Number(roll.terms[2].results[0].result) + Number(modifier) + aspBonus) * Number(testData.regenerationFactor))
         }
 
         result["characteristics"] = chars
@@ -395,16 +432,23 @@ export default class DiceDSA5 {
     }
 
     static _situationalModifiers(testData) {
-        return testData.situationalModifiers.reduce(function(_this, val) {
+        return testData.situationalModifiers.reduce(function (_this, val) {
             return _this + Number(val.value)
         }, 0);
     }
 
     static _appendSituationalModifiers(testData, name, val) {
-        testData.situationalModifiers.push({
-            name: name,
-            value: val
-        })
+        let existing = testData.situationalModifiers.find(x => x.name == name)
+
+        if (existing) {
+            existing.value = val
+        } else {
+            testData.situationalModifiers.push({
+                name: name,
+                value: val
+            })
+        }
+
     }
 
     static _getNarrowSpaceModifier(weapon, testData) {
@@ -440,7 +484,7 @@ export default class DiceDSA5 {
             let narrowSpaceModifier = this._getNarrowSpaceModifier(weapon, testData)
             modifier += narrowSpaceModifier
             this._appendSituationalModifiers(testData, game.i18n.localize("narrowSpace"), narrowSpaceModifier)
-                //+ this._compareWeaponReach(weapon, testData)
+            //+ this._compareWeaponReach(weapon, testData)
             let weaponmodifier = this._compareWeaponReach(weapon, testData)
 
             modifier += weaponmodifier + testData.doubleAttack
@@ -449,7 +493,6 @@ export default class DiceDSA5 {
 
 
         } else {
-
             modifier += DSA5.rangeMods[testData.rangeModifier].attack + testData.sizeModifier + testData.visionModifier
             this._appendSituationalModifiers(testData, game.i18n.localize("distance"), DSA5.rangeMods[testData.rangeModifier].attack)
             this._appendSituationalModifiers(testData, game.i18n.localize("sizeCategory"), testData.sizeModifier)
@@ -490,21 +533,15 @@ export default class DiceDSA5 {
                 }
             }
 
-
-
             if (testData.source.data.data.traitType.value == "rangeAttack") {
                 damage += DSA5.rangeMods[testData.rangeModifier].damage
             }
-
             if (doubleDamage) {
                 damage = damage * 2
             }
-
-
             result["damage"] = damage
         }
         result["rollType"] = "weapon"
-
         return result
     }
 
@@ -532,7 +569,7 @@ export default class DiceDSA5 {
             let narrowSpaceModifier = this._getNarrowSpaceModifier(weapon, testData)
             modifier += narrowSpaceModifier
             this._appendSituationalModifiers(testData, game.i18n.localize("narrowSpace"), narrowSpaceModifier)
-                //+ this._compareWeaponReach(weapon, testData)
+            //+ this._compareWeaponReach(weapon, testData)
             if (testData.mode == "attack") {
                 let weaponmodifier = this._compareWeaponReach(weapon, testData)
 
@@ -552,7 +589,7 @@ export default class DiceDSA5 {
             this._appendSituationalModifiers(testData, game.i18n.localize("sizeCategory"), testData.sizeModifier)
             this._appendSituationalModifiers(testData, game.i18n.localize("sight"), testData.visionModifier)
         }
-        var result = this._rollSingleD20(roll, weapon[testData.mode], testData.mode, modifier, testData)
+        var result = this._rollSingleD20(roll, weapon[testData.mode], testData.mode, modifier, testData, combatskill)
 
         let success = result.successLevel > 0
         let doubleDamage = result.successLevel > 2
@@ -620,14 +657,9 @@ export default class DiceDSA5 {
         let modifier = testData.testModifier + this._situationalModifiers(testData);
         this._appendSituationalModifiers(testData, game.i18n.localize("manual"), testData.testModifier)
         let source = Actordsa5._calculateCombatSkillValues(testData.source.data, testData.extra.actor)
-
-
         var res = modifier + source.data[testData.mode].value;
-
         var chars = []
-
         let res1 = res - roll.terms[0].results[0].result;
-
         chars.push({ char: testData.mode, res: roll.terms[0].results[0].result, suc: res1 >= 0, tar: res });
         let rollConfirm = new Roll("1d20").roll();
         rollConfirm.dice[0].options.colorset = testData.mode
@@ -676,17 +708,18 @@ export default class DiceDSA5 {
     static rollSpell(testData) {
         let res = this._rollThreeD20(testData)
         res["rollType"] = testData.source.type
+        res.preData.calculatedSpellModifiers.finalcost = res.preData.calculatedSpellModifiers.cost
         if (res.successLevel >= 2) {
             let extraFps = new Roll("1d6").roll().results[0]
             res.description = res.description + ", " + game.i18n.localize("additionalFPs") + " " + extraFps
             res.result = res.result + extraFps
-            res.preData.calculatedSpellModifiers.cost = res.preData.calculatedSpellModifiers.cost / 2
+            res.preData.calculatedSpellModifiers.finalcost = res.preData.calculatedSpellModifiers.cost / 2
         } else if (res.successLevel <= -2) {
             res.description = res.description + " - " + (res.preData.source.type == "spell" ? Miscast.getSpellMiscast() : Miscast.getLiturgyMiscast())
         }
 
         if (res.successLevel < 0) {
-            res.preData.calculatedSpellModifiers.cost = res.preData.calculatedSpellModifiers.cost / 2
+            res.preData.calculatedSpellModifiers.finalcost = res.preData.calculatedSpellModifiers.cost / 2
         } else {
             if (testData.source.data.effectFormula.value != "") {
                 let formula = testData.source.data.effectFormula.value.replace("QS", res.qualityStep).replace("W", "d").replace("w", "d")
@@ -703,12 +736,19 @@ export default class DiceDSA5 {
                 }
             }
         }
+        res.preData.calculatedSpellModifiers.finalcost = Number(res.preData.calculatedSpellModifiers.finalcost) + AdvantageRulesDSA5.vantageStep(testData.extra.actor, "Schwacher Karmalkörper") + AdvantageRulesDSA5.vantageStep(testData.extra.actor, "Schwacher Astralkörper")
+        if (AdvantageRulesDSA5.hasVantage(testData.extra.actor, "Lästige Mindergeister")  ){
+            let ghostroll = new Roll("1d20").roll()
+            if (ghostroll.total <= res.preData.calculatedSpellModifiers.finalcost)
+                res.description += ", " + game.i18n.localize("minorghostsappear")
+
+        }
         return res
     }
 
     static _rollThreeD20(testData) {
         let roll = testData.roll ? testData.roll : new Roll("1d20+1d20+1d20").roll();
-        let description = "";
+        let description = [];
         let successLevel = 0
 
         let modifier = testData.testModifier + testData.testDifficulty + this._situationalModifiers(testData);
@@ -716,47 +756,54 @@ export default class DiceDSA5 {
         this._appendSituationalModifiers(testData, game.i18n.localize("Difficulty"), testData.testDifficulty)
 
         let fps = testData.source.data.talentValue.value;
-        let tar1 = testData.extra.actor.data.characteristics[testData.source.data.characteristic1.value].value + modifier;
-        let res1 = roll.terms[0].results[0].result - tar1;
-        if (res1 > 0) {
-            fps = fps - res1;
-        }
-        let tar2 = testData.extra.actor.data.characteristics[testData.source.data.characteristic2.value].value + modifier;
-        let res2 = roll.terms[2].results[0].result - tar2;
-        if (res2 > 0) {
-            fps = fps - res2;
-        }
-        let tar3 = testData.extra.actor.data.characteristics[testData.source.data.characteristic3.value].value + modifier
-        let res3 = roll.terms[4].results[0].result - tar3;
-        if (res3 > 0) {
-            fps = fps - res3;
+        let tar = [1, 2, 3].map(x => testData.extra.actor.data.characteristics[testData.source.data[`characteristic${x}`].value].value + modifier)
+        let res = [0, 1, 2].map(x => roll.terms[x * 2].results[0].result - tar[x])
+        for(let k of res){
+            if(k > 0)
+                fps -= k
         }
 
-        if (roll.terms[0].results.filter(x => x.result == 1).length == 3) {
-            description = game.i18n.localize("AstoundingSuccess");
+        let failValue = 20
+        if((testData.source.type == "spell" || testData.source.type == "ritual") && AdvantageRulesDSA5.hasVantage(testData.extra.actor, "Wilde Magie"))
+            failValue = 19
+
+        if (testData.source.type == "skill" &&  AdvantageRulesDSA5.hasVantage(testData.extra.actor, `Unfähig (${testData.source.name})`)){
+            let reroll = new Roll("1d20").roll()
+            var indexOfMinValue = res.reduce((iMin, x, i, arr) => x < arr[iMin] ? i : iMin, 0)
+            let oldValue = roll.results[indexOfMinValue * 2]
+            fps += Math.max(res[indexOfMinValue], 0)
+            fps -= Math.max(0, reroll.total - tar[indexOfMinValue])
+            roll.results[indexOfMinValue * 2] = reroll.total
+            roll.terms[indexOfMinValue * 2].results[0].result = reroll.total
+            this._addRollDiceSoNice(testData, reroll, roll.terms[indexOfMinValue * 2].options.colorset)
+            description.push(game.i18n.format("CHATNOTIFICATION.unableReroll", { die: (indexOfMinValue + 1), oldVal: oldValue, newVal: reroll.total }))
+        }
+
+        if (roll.results.filter(x => x == 1).length == 3) {
+            description.push(game.i18n.localize("AstoundingSuccess"));
             successLevel = 3
-        } else if (roll.terms[0].results.filter(x => x.result == 1).length == 2) {
-            description = game.i18n.localize("CriticalSuccess");
+        } else if (roll.results.filter(x => x == 1).length == 2) {
+            description.push(game.i18n.localize("CriticalSuccess"));
             successLevel = 2
-        } else if (roll.terms[0].results.filter(x => x.result == 20).length == 3) {
-            description = game.i18n.localize("AstoundingFailure");
+        } else if (roll.results.filter(x => x >= failValue).length == 3) {
+            description.push(game.i18n.localize("AstoundingFailure"));
             successLevel = -3
-        } else if (roll.terms[0].results.filter(x => x.result == 20).length == 2) {
-            description = game.i18n.localize("CriticalFailure");
+        } else if (roll.results.filter(x => x >= failValue).length == 2) {
+            description.push(game.i18n.localize("CriticalFailure"));
             successLevel = -2
         } else {
-
-            description = game.i18n.localize(fps >= 0 ? "Success" : "Failure");
+            description.push(game.i18n.localize(fps >= 0 ? "Success" : "Failure"));
             successLevel = fps >= 0 ? 1 : -1
         }
 
+        description = description.join(", ")
 
         return {
             result: fps,
             characteristics: [
-                { char: testData.source.data.characteristic1.value, res: roll.terms[0].results[0].result, suc: res1 <= 0, tar: tar1 },
-                { char: testData.source.data.characteristic2.value, res: roll.terms[2].results[0].result, suc: res2 <= 0, tar: tar2 },
-                { char: testData.source.data.characteristic3.value, res: roll.terms[4].results[0].result, suc: res3 <= 0, tar: tar3 }
+                { char: testData.source.data.characteristic1.value, res: roll.terms[0].results[0].result, suc: res[0] <= 0, tar: tar[0] },
+                { char: testData.source.data.characteristic2.value, res: roll.terms[2].results[0].result, suc: res[1] <= 0, tar: tar[1] },
+                { char: testData.source.data.characteristic3.value, res: roll.terms[4].results[0].result, suc: res[2] <= 0, tar: tar[2] }
             ],
             qualityStep: (fps == 0 ? 1 : (fps > 0 ? Math.ceil(fps / 3) : 0)) + (testData.qualityStep != undefined ? Number(testData.qualityStep) : 0),
             description: description,
@@ -975,5 +1022,63 @@ export default class DiceDSA5 {
             elem.find('i').toggleClass("fa-minus fa-plus")
             elem.siblings('ul,div').fadeToggle()
         })
+        html.on('click', '.edit-toggle', ev => {
+            ev.preventDefault();
+            $(ev.currentTarget).parents(".chat-card").find(".display-toggle").toggle()
+        });
+
+        html.on('change', '.roll-edit', ev => {
+            let input = $(ev.currentTarget),
+                messageId = input.parents('.message').attr("data-message-id"),
+                message = game.messages.get(messageId);
+            let data = message.data.flags.data
+            let newTestData = data.preData;
+            let index
+            switch (input.attr("data-edit-type")) {
+                case "roll":
+                    index = input.attr("data-edit-id")
+                    if (newTestData.roll.results.length > index * 2) {
+                        newTestData.roll.results[index * 2] = Number(input.val())
+                        newTestData.roll.terms[index * 2].results[0].result = Number(input.val())
+                    } else {
+                        let oldDamageRoll = duplicate(data.postData.damageRoll)
+                        index = index - newTestData.roll.results.length
+
+                        oldDamageRoll.total = oldDamageRoll.total - oldDamageRoll.results[index * 2] + Number(input.val())
+                        oldDamageRoll.results[index * 2] = Number(input.val())
+                        oldDamageRoll.terms[index * 2].results[0].result = Number(input.val())
+                        newTestData.damageRoll = oldDamageRoll
+                    }
+                    break
+                case "mod":
+                    let modifier = this._situationalModifiers(newTestData)
+                    let newVal = {
+                        name: game.i18n.localize("chatEdit"),
+                        value: Number(input.val()) - modifier
+                    }
+                    if (newTestData.situationalModifiers.findIndex(x => x.name == game.i18n.localize("chatEdit")) >= 0){
+                        newTestData.situationalModifiers[index] = newVal
+                    }else{
+                        newTestData.situationalModifiers.push(newVal)
+                    }
+                    console.log(newTestData)
+                    break
+            }
+
+            let chatOptions = {
+                template: data.template,
+                rollMode: data.rollMode,
+                title: data.title,
+                speaker: message.data.speaker,
+                user: message.user.data._id
+            }
+
+            if (["gmroll", "blindroll"].includes(chatOptions.rollMode)) chatOptions["whisper"] = ChatMessage.getWhisperRecipients("GM").map(u => u.id);
+            if (chatOptions.rollMode === "blindroll") chatOptions["blind"] = true;
+
+            DSA5_Utility.getSpeaker(message.data.speaker)[`${data.postData.postFunction}`]({ testData: newTestData, cardOptions: chatOptions }, { rerenderMessage: message });
+        })
     }
+
+
 }

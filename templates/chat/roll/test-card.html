@@ -1,16 +1,22 @@
 <div class="card-content test-data" data-actor-id="{{actorId}}">
     <b>{{title}}</b>
+    <div class="chat-buttons">
+        <a class="edit-toggle chat-button-gm" title='{{localize "CHAT.editRoll"}}'><i class="fas fa-edit"></i></a>
+    </div>
 </div>
 
-<div class="card-content hide-option display-toggle roll-result">
+<div class="card-content hide-option roll-result">
     <b>{{localize "Roll"}}</b>: {{#each testData.characteristics as |item i|}}
-    <span title="{{localize (concatUp 'CHAR.' item.char)}}{{#if item.tar}} vs {{item.tar}}{{/if}}" class="{{#if item.suc}}suc{{else}}fail{{/if}} die-{{item.char}} {{#if item.die}}{{item.die}}{{else}}d20{{/if}}">
-        {{item.res}}</span> {{/each}}
+    <span title="{{localize (concatUp 'CHAR.' item.char)}}{{#if item.tar}} vs {{item.tar}}{{/if}}" class="display-toggle {{#if item.suc}}suc{{else}}fail{{/if}} die-{{item.char}} {{#if item.die}}{{item.die}}{{else}}d20{{/if}}">
+        {{item.res}}</span>
+
+    <input type="text" data-edit-type="roll" data-edit-id="{{i}}" title="{{localize (concatUp 'CHAR.' item.char)}}{{#if item.tar}} vs {{item.tar}}{{/if}}" value="{{item.res}}" style="display: none;" class="roll-edit display-toggle"/>
+         {{/each}}
 </div>
 
-{{#when testData.modifiers 'noteq' 0 }}
-<div class="card-content display-toggle chatModifiers">
-    <b>{{localize "Modifiers"}}</b>: {{testData.modifiers}}
+<div class="card-content chatModifiers">
+    <b>{{localize "Modifiers"}}</b>: <span class="display-toggle">{{testData.modifiers}}</span>
+    <input type="text" data-edit-type="mod" value="{{testData.modifiers}}" style="display:none;" class="display-toggle roll-edit"/>
     <a class="expand-mods"><i class="fas fa-plus"></i></a>
     <ul>
         {{#each testData.preData.situationalModifiers as |item i|}} {{#when item.value 'noteq' 0}}
@@ -18,16 +24,16 @@
         {{/when}} {{/each}}
     </ul>
 </div>
-{{/when}} {{#if testData.result}}
-<div class="card-content display-toggle">
+{{#if testData.result}}
+<div class="card-content">
     <b>{{localize "FP"}}</b>: {{testData.result}}
 </div>
 {{/if}} {{#if testData.qualityStep}}
-<div class="card-content display-toggle">
+<div class="card-content">
     <b>{{localize "qualityStep"}}</b>: {{testData.qualityStep}}
 </div>
 {{/if}} {{#if testData.damage}}
-<div class="card-content display-toggle">
+<div class="card-content">
     <b>{{localize "damage"}}</b>: {{testData.damage}}
 </div>
 {{/if}} {{#if testData.description}}

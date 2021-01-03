@@ -1,0 +1,13 @@
+<div class="selection">
+  <p>{{localize 'DIALOG.ItemRequiresAdoptionDescription'}} <b>{{original.name}}</b>.</p>
+  <div class="form-group custom-select">
+    <label>{{localize "entry"}}</label>
+    <select name="entryselection">
+      {{#select "-"}}
+      {{#each items as |itm i|}}
+      <option value="{{itm.name}}">{{itm.name}}</option>
+      {{/each}}
+      {{/select}}
+    </select>
+  </div>
+</div>

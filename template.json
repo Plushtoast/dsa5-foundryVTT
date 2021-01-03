@@ -148,8 +148,8 @@
                     "speed": {
                         "type": "Number",
                         "label": "speed",
-                        "intial": 0,
-                        "modifer": 0,
+                        "initial": 0,
+                        "modifier": 0,
                         "value": 0
                     },
                     "initiative": {

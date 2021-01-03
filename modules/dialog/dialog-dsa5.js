@@ -14,7 +14,11 @@ export default class DSA5Dialog extends Dialog {
     activateListeners(html) {
         super.activateListeners(html)
         html.find(".dieButton").click(ev => {
-            $(ev.currentTarget).toggleClass('dieSelected')
+            let elem = $(ev.currentTarget)
+            if (elem.attr("data-single") == "true"){
+                elem.closest(".dialog-content").find(".dieButton").removeClass("dieSelected")
+            }
+            elem.toggleClass('dieSelected')
         })
         html.find('.quantity-click').mousedown(ev => {
             let val = $(ev.currentTarget).val()

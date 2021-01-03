@@ -8,11 +8,8 @@ export default function() {
     })
 
     Hooks.on("renderCompendiumDirectory", (app, html, data) => {
-
         const button = $(`<button><i class="fas fa-university"></i>${game.i18n.localize("ItemLibrary")}</button>`);
         html.find(".header-actions").append(button);
-
         button.click(ev => { game.dsa5.itemLibrary.render(true) })
-
     })
 }

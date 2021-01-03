@@ -1,14 +1,14 @@
 import DSA5_Utility from "../system/utility-dsa5.js";
 import DSA5 from "../system/config-dsa5.js"
 import ActorSheetDsa5 from "./actor-sheet.js";
-
+import TraitRulesDSA5 from "../system/trait-rules-dsa5.js"
 
 export default class ActorSheetdsa5Creature extends ActorSheetDsa5 {
     static get defaultOptions() {
         const options = super.defaultOptions;
         mergeObject(options, {
             classes: options.classes.concat(["dsa5", "actor", "creature-sheet"]),
-            width: 680,
+            width: 770,
             height: 740,
         });
         return options;
@@ -50,6 +50,28 @@ export default class ActorSheetdsa5Creature extends ActorSheetDsa5 {
         return data;
     }
 
+    async _cleverDeleteItem(itemId) {
+        let item = this.actor.data.items.find(x => x._id == itemId)
+        switch (item.type) {
+            case "trait":
+                TraitRulesDSA5.traitRemoved(this.actor, item)
+                break;
+        }
+        super._cleverDeleteItem(itemId)
+    }
+
+    async _addTrait(item) {
+
+        let res = this.actor.data.items.find(i => {
+            return i.type == "trait" && i.name == item.name
+        });
+        if (!res) {
+            await this.actor.createEmbeddedEntity("OwnedItem", item);
+            await TraitRulesDSA5.traitAdded(this.actor, item)
+        }
+
+    }
+
     async _onDrop(event) {
         let dragData = JSON.parse(event.dataTransfer.getData("text/plain"));
         let item
@@ -70,7 +92,7 @@ export default class ActorSheetdsa5Creature extends ActorSheetDsa5 {
 
         switch (typeClass) {
             case "trait":
-                await this.actor.createEmbeddedEntity("OwnedItem", item);
+                await this._addTrait(item)
                 break;
             default:
                 super._handleDragData(dragData)

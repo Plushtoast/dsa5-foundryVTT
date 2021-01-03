@@ -1,9 +1,9 @@
 import DSA5_Utility from "../system/utility-dsa5.js";
 
-export default function() {
+export default function () {
     Hooks.on("getChatLogEntryContext", (html, options) => {
         let canHurt = li => li.find(".opposed-card").length || li.find(".dice-roll").length
-        let canIncreaseQS = function(li) {
+        let canIncreaseQS = function (li) {
             let result = false;
             let message = game.messages.get(li.attr("data-message-id"));
 
@@ -17,19 +17,30 @@ export default function() {
             }
             return result;
         };
-        let canRerollDamage = function(li){
+        let isTalented = function (li) {
+            let result = false
+            let message = game.messages.get(li.attr("data-message-id"));
+            console.log(message)
+            if (message.data.speaker.actor) {
+                let actor = game.actors.get(message.data.speaker.actor);
+                if (actor.permission == ENTITY_PERMISSIONS.OWNER) {
+                    result = actor.items.find(x => x.name == `Begabung (${message.data.flags.data.preData.source.name})`) != undefined && !message.data.flags.data.talentedRerollUsed;
+                }
+            }
+            return result
+        }
+        let canRerollDamage = function (li) {
             let result = false
             let message = game.messages.get(li.attr("data-message-id"));
             if (message.data.speaker.actor) {
-                console.log(message)
                 let actor = game.actors.get(message.data.speaker.actor);
                 if (actor.permission == ENTITY_PERMISSIONS.OWNER && actor.data.type == "character" && actor.data.data.status.fatePoints.value > 0) {
-                    result =  message.data.flags.data.postData.damageRoll != undefined && !message.data.flags.data.fatePointDamageRerollUsed;
+                    result = message.data.flags.data.postData.damageRoll != undefined && !message.data.flags.data.fatePointDamageRerollUsed;
                 }
             }
             return result
         };
-        let canReroll = function(li) {
+        let canReroll = function (li) {
             let result = false;
             let message = game.messages.get(li.attr("data-message-id"));
 
@@ -57,7 +68,8 @@ export default function() {
 
                     actor.applyDamage(cardData.damage.value)
                 }
-            }, {
+            },
+            {
                 name: game.i18n.localize("CHATCONTEXT.Reroll"),
                 icon: '<i class="fas fa-dice"></i>',
                 condition: canReroll,
@@ -65,7 +77,17 @@ export default function() {
                     let message = game.messages.get(li.attr("data-message-id"));
                     game.actors.get(message.data.speaker.actor).useFateOnRoll(message, "reroll");
                 }
-            }, {
+            },
+            {
+                name: game.i18n.localize("CHATCONTEXT.talentedReroll"),
+                icon: '<i class="fas fa-dice"></i>',
+                condition: isTalented,
+                callback: li => {
+                    let message = game.messages.get(li.attr("data-message-id"));
+                    game.actors.get(message.data.speaker.actor).useFateOnRoll(message, "isTalented");
+                }
+            },
+            {
                 name: game.i18n.localize("CHATCONTEXT.AddQS"),
                 icon: '<i class="fas fa-plus-square"></i>',
                 condition: canIncreaseQS,
@@ -73,7 +95,8 @@ export default function() {
                     let message = game.messages.get(li.attr("data-message-id"));
                     game.actors.get(message.data.speaker.actor).useFateOnRoll(message, "addQS");
                 }
-            },{
+            },
+            {
                 name: game.i18n.localize("CHATCONTEXT.rerollDamage"),
                 icon: '<i class="fas fa-dice"></i>',
                 condition: canRerollDamage,
