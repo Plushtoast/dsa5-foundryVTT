@@ -874,9 +874,6 @@ form .form-group.tripple select {
     border: 1px solid var(--border-color);
 }
 
-
-/*DIALOGS*/
-
 .attackWeaponless:before {
     content: "\f255";
 }
@@ -891,6 +888,14 @@ form .form-group.tripple select {
     background-position: center;
     background-repeat: repeat-y;
     background-size: 101% 1400px;
+}
+
+.window-app.journal-sheet .window-content{
+    background-image: url(../icons/backgrounds/journalentry.webp);
+    background-size: 97% 1000px;
+    background-position: center;
+    background-repeat: repeat-y;
+    padding: 0 50px;
 }
 
 .window-app.actor .window-content,
@@ -1178,22 +1183,6 @@ form.dsa5.item-sheet {
     border: none;
 }
 
-
-/*.imagebox:after {
-    position: absolute;
-    content: '';
-    background-image: url(../icons/backgrounds/token.webp);
-    background-repeat: no-repeat;
-    background-position: center;
-    background-size: 100% 100%;
-    top: -10px;
-    left: -10px;
-    height: 115px;
-    width: 115px;
-    z-index: 1;
-    pointer-events: none;
-}*/
-
 .attacker img,
 .defender img {
     margin: 5px 25%;
@@ -1276,11 +1265,6 @@ li.folder {
     margin-top: 10px;
     max-width: 150px;
 }
-
-
-/*.charBtns.row-section .col.eight {
-    max-width: 50px;
-}*/
 
 .mayorAttributeBox input,
 .mayorAttributeBox span {

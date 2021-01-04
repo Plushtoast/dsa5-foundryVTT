@@ -1,12 +1,5 @@
 const DSA5 = {}
 
-//This cann also look like:
-//{
-//  id:
-//    label:
-//   icon:
-//}
-
 CONFIG.statusEffects = [
     {
         id: "prone",
@@ -228,7 +221,6 @@ CONFIG.statusEffects = [
     }
 ]
 
-
 DSA5.effectTextStyle = CONFIG.canvasTextStyle.clone();
 DSA5.effectTextStyle.fontSize = "30";
 DSA5.effectTextStyle.fontFamily = "GentiumBasic"
@@ -237,7 +229,6 @@ DSA5.defaultWeapon = {
     name: "default",
     data: {
         data: {
-
             reach: {
                 value: "short"
             },
@@ -286,7 +277,6 @@ DSA5.equipmentTypes = {
 };
 
 DSA5.narrowSpaceModifiers = {
-
     "weaponshort": {
         "attack": 0,
         "parry": 0,
@@ -302,7 +292,6 @@ DSA5.narrowSpaceModifiers = {
         "parry": -8,
         "label": "NarrowSpaceModifiers.weapon.long"
     },
-
     "shieldshort": {
         "attack": -2,
         "parry": -2,
@@ -318,7 +307,6 @@ DSA5.narrowSpaceModifiers = {
         "parry": -4,
         "label": "NarrowSpaceModifiers.shield.long"
     }
-
 }
 
 DSA5.moneyNames = {
@@ -422,7 +410,6 @@ DSA5.ceremonyTimeModifiers = {
     "CEREMONYMODIFIER.celebration": 2,
     "CEREMONYMODIFIER.namelessDays": -5
 }
-
 
 DSA5.mageLevels = {
     "mundane": "mundane",

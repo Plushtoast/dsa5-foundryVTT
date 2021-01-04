@@ -78,9 +78,7 @@ export default class ActorSheetDsa5 extends ActorSheet {
     getData() {
         const sheetData = super.getData();
         mergeObject(sheetData.actor, this.actor.prepare())
-
         sheetData.isGM = game.user.isGM;
-
         this._addDefaultActiveEffects(sheetData)
         return sheetData;
     }
@@ -112,7 +110,6 @@ export default class ActorSheetDsa5 extends ActorSheet {
         let header = event.currentTarget,
             data = duplicate(header.dataset);
 
-
         if (DSA5.equipmentTypes[data.type]) {
             data.type = "equipment"
             data = mergeObject(data, {
@@ -120,10 +117,8 @@ export default class ActorSheetDsa5 extends ActorSheet {
             })
         }
         if (data.type == "aggregatedTest") {
-
         }
         else if (data.type == "spell" || data.type == "liturgy") {
-
         } else {
             data["data.weight.value"] = 0
             data["data.quantity.value"] = 0

@@ -109,7 +109,6 @@ export default class Actordsa5 extends Actor {
                 data.data.status.dodge.value = Math.round(data.data.characteristics["ge"].value / 2);
                 data.data.status.dodge.max = data.data.status.dodge.value + data.data.status.dodge.modifier;
                 return data.data.status.dodge.max
-                break;
         }
     }
 
@@ -220,7 +219,6 @@ export default class Actordsa5 extends Actor {
                 dataType: t
             }
         }
-
 
         const money = {
             coins: [],
@@ -930,7 +928,6 @@ export default class Actordsa5 extends Actor {
                                             });
                                             this.update({ "data.status.fatePoints.value": this.data.data.status.fatePoints.value - 1 })
                                         }
-
                                     }
                                 },
                                 cancel: {
@@ -941,7 +938,6 @@ export default class Actordsa5 extends Actor {
                             default: 'Yes'
                         }).render(true)
                     });
-
 
                     break
                 case "addQS":
@@ -958,10 +954,7 @@ export default class Actordsa5 extends Actor {
                     this.update({ "data.status.fatePoints.value": this.data.data.status.fatePoints.value - 1 })
                     break
             }
-
-
         }
-
     }
     setupRegeneration(statusId, options = {}) {
         let title = game.i18n.localize("regenerationTest");
@@ -1012,7 +1005,6 @@ export default class Actordsa5 extends Actor {
 
     setupStatus(statusId, options = {}) {
         let char = this.data.data.status[statusId];
-
         let title = game.i18n.localize(char.label) + " " + game.i18n.localize("Test");
 
         let testData = {
@@ -1027,11 +1019,9 @@ export default class Actordsa5 extends Actor {
 
         testData.source.type = "status"
 
-        // Setup dialog data: title, template, buttons, prefilled data
         let dialogOptions = {
             title: title,
             template: "/systems/dsa5/templates/dialog/status-dialog.html",
-            // Prefilled dialog data
             data: {
                 rollMode: options.rollMode
             },
@@ -1054,7 +1044,6 @@ export default class Actordsa5 extends Actor {
 
     setupCharacteristic(characteristicId, options = {}) {
         let char = this.data.data.characteristics[characteristicId];
-
         let title = game.i18n.localize(char.label) + " " + game.i18n.localize("Test");
 
         let testData = {
@@ -1067,11 +1056,9 @@ export default class Actordsa5 extends Actor {
             }
         };
 
-        // Setup dialog data: title, template, buttons, prefilled data
         let dialogOptions = {
             title: title,
             template: "/systems/dsa5/templates/dialog/characteristic-dialog.html",
-            // Prefilled dialog data
             data: {
                 rollMode: options.rollMode
             },
@@ -1095,9 +1082,8 @@ export default class Actordsa5 extends Actor {
 
     setupSpell(spell, options = {}) {
         let sheet = "spell"
-        if (spell.type == "ceremony" || spell.type == "liturgy") {
+        if (spell.type == "ceremony" || spell.type == "liturgy")
             sheet = "liturgy"
-        }
 
         let title = spell.name + " " + game.i18n.localize(`${spell.type}Test`);
 
@@ -1156,12 +1142,10 @@ export default class Actordsa5 extends Actor {
                     name: game.i18n.localize("reach"),
                     value: html.find(".reach").data('mod')
                 })
-
                 testData.situationalModifiers.push({
                     name: game.i18n.localize("zkModifier"),
                     value: html.find('[name="zkModifier"]').val() || 0
                 })
-
                 testData.situationalModifiers.push({
                     name: game.i18n.localize("skModifier"),
                     value: html.find('[name="skModifier"]').val() || 0
@@ -1175,12 +1159,10 @@ export default class Actordsa5 extends Actor {
                         name: game.i18n.localize("CEREMONYMODIFIER.artefact"),
                         value: html.find('[name="artefactUsage"]').is(":checked") ? 1 : 0
                     })
-
                     testData.situationalModifiers.push({
                         name: game.i18n.localize("place"),
                         value: html.find('[name="placeModifier"]').val()
                     })
-
                     testData.situationalModifiers.push({
                         name: game.i18n.localize("time"),
                         value: html.find('[name="timeModifier"]').val()
@@ -1198,7 +1180,6 @@ export default class Actordsa5 extends Actor {
                         name: game.i18n.localize("place"),
                         value: html.find('[name="placeModifier"]').val()
                     })
-
                     testData.situationalModifiers.push({
                         name: game.i18n.localize("time"),
                         value: html.find('[name="timeModifier"]').val()
@@ -1208,9 +1189,7 @@ export default class Actordsa5 extends Actor {
             }
         };
 
-
         let cardOptions = this._setupCardOptions("systems/dsa5/templates/chat/roll/spell-card.html", title)
-
 
         return DiceDSA5.setupDialog({
             dialogOptions: dialogOptions,
@@ -1245,7 +1224,6 @@ export default class Actordsa5 extends Actor {
         let dialogOptions = {
             title: title,
             template: "/systems/dsa5/templates/dialog/skill-dialog.html",
-
             data: {
                 rollMode: options.rollMode
             },
@@ -1270,64 +1248,34 @@ export default class Actordsa5 extends Actor {
 
     static _prepareMeleetrait(item) {
         item.attack = Number(item.data.at.value)
-        let parseDamage = new Roll(item.data.damage.value.replace(/[Ww]/, "d"))
-        let damageDie = ""
-        let damageTerm = ""
-        for (let k of parseDamage.terms) {
-            if (typeof (k) == 'object') {
-                damageDie = k.number + "d" + k.faces
-            } else {
-                damageTerm += k
-            }
-        }
-        damageTerm = eval(damageTerm)
-        item.damagedie = damageDie
-        item.damageAdd = damageTerm != undefined ? "+" + damageTerm : ""
-        return item
+        return this._parseDmg(item)
     }
     static _prepareMeleeWeapon(item, combatskills, actorData, shieldBonus) {
         let skill = combatskills.filter(i => i.name == item.data.combatskill.value)[0];
-        let parseDamage = new Roll(item.data.damage.value.replace(/[Ww]/, "d"))
-        let damageDie = ""
-        let damageTerm = ""
-        for (let k of parseDamage.terms) {
-            if (typeof (k) == 'object') {
-                damageDie = k.number + "d" + k.faces
-            } else {
-                damageTerm += k
-            }
-        }
-
         item.attack = Number(skill.data.attack.value) + Number(item.data.atmod.value);
+        item.parry = Number(skill.data.parry.value) + Number(item.data.pamod.value) + Number(shieldBonus);
+
+        item = this._parseDmg(item)
         if (item.data.guidevalue.value != "-") {
             let val = Math.max(...(item.data.guidevalue.value.split("/").map(x => actorData.data.characteristics[x].value)));
             let extra = val - item.data.damageThreshold.value;
 
-
             if (extra > 0) {
                 item.extraDamage = extra;
-                damageTerm += "+" + extra
+                item.damageAdd = eval(item.damageAdd + "+" + extra)
             }
-
-
         }
-        damageTerm = eval(damageTerm)
-        item.damagedie = damageDie
-        item.damageAdd = damageTerm != undefined ? "+" + damageTerm : ""
-        item.parry = Number(skill.data.parry.value) + Number(item.data.pamod.value) + Number(shieldBonus);
-        //shield block gains double parry bonus
-        //if (game.i18n.localize("ReverseCombatSkills." + skill.name) == "Shields")
-        //    item.parry += item.data.pamod.value
-        //else
-        //    item.parry += shieldBonus
         return item;
     }
 
     static _prepareRangeTrait(item) {
         item.attack = Number(item.data.at.value)
+        return this._parseDmg(item)
+    }
+
+    static _parseDmg(item){
         let parseDamage = new Roll(item.data.damage.value.replace(/[Ww]/, "d"))
-        let damageDie = ""
-        let damageTerm = ""
+        let damageDie = "", damageTerm = ""
         for (let k of parseDamage.terms) {
             if (typeof (k) == 'object') {
                 damageDie = k.number + "d" + k.faces
@@ -1340,23 +1288,13 @@ export default class Actordsa5 extends Actor {
         item.damageAdd = damageTerm != undefined ? "+" + damageTerm : ""
         return item
     }
+
+
     static _prepareRangeWeapon(item, ammunition, combatskills) {
         let skill = combatskills.filter(i => i.name == item.data.combatskill.value)[0];
         item.attack = Number(skill.data.attack.value)
-        let parseDamage = new Roll(item.data.damage.value.replace(/[Ww]/, "d"))
-        let damageDie = ""
-        let damageTerm = ""
-        for (let k of parseDamage.terms) {
-            if (typeof (k) == 'object') {
-                damageDie = k.number + "d" + k.faces
-            } else {
-                damageTerm += k
-            }
-        }
-        damageTerm = eval(damageTerm)
-        item.damagedie = damageDie
-        item.damageAdd = damageTerm != undefined ? "+" + damageTerm : ""
-        return item;
+
+        return this._parseDmg(item)
     }
 
     _setupCardOptions(template, title) {
@@ -1368,16 +1306,13 @@ export default class Actordsa5 extends Actor {
             title: title,
             template: template,
             flags: { img: this.data.token.randomImg ? this.data.img : this.data.token.img }
-            // img to be displayed next to the name on the test card - if it's a wildcard img, use the actor image
         }
-
-        // If the test is coming from a token sheet
         if (this.token) {
-            cardOptions.speaker.alias = this.token.data.name; // Use the token name instead of the actor name
+            cardOptions.speaker.alias = this.token.data.name;
             cardOptions.speaker.token = this.token.data._id;
             cardOptions.speaker.scene = canvas.scene._id
-            cardOptions.flags.img = this.token.data.img; // Use the token image instead of the actor image
-        } else // If a linked actor - use the currently selected token's data if the actor id matches
+            cardOptions.flags.img = this.token.data.img;
+        } else
         {
             let speaker = ChatMessage.getSpeaker()
             if (speaker.actor == this.data._id) {
@@ -1387,7 +1322,6 @@ export default class Actordsa5 extends Actor {
                 cardOptions.flags.img = speaker.token ? canvas.tokens.get(speaker.token).data.img : cardOptions.flags.img
             }
         }
-
         return cardOptions
     }
 
@@ -1406,12 +1340,9 @@ export default class Actordsa5 extends Actor {
             else {
                 game.user.updateTokenTargets([]);
             }
-
         }
 
         //Hooks.call("dsa5:rollTest", result, cardOptions)
-
-
         if (!options.suppressMessage)
             DiceDSA5.renderRollCard(cardOptions, result, options.rerenderMessage).then(msg => {
                 OpposedDsa5.handleOpposedTarget(msg) // Send to handleOpposed to determine opposed status, if any.
@@ -1433,7 +1364,6 @@ export default class Actordsa5 extends Actor {
         if (!effect.id)
             return "Conditions require an id field"
 
-
         let existing = this.hasCondition(effect.id)
 
         if (existing && existing.flags.dsa5.value == null)
@@ -1446,9 +1376,6 @@ export default class Actordsa5 extends Actor {
             await this._dependentEffects(existing.flags.core.statusId, existing, delta)
             return this.updateEmbeddedEntity("ActiveEffect", existing)
         } else if (!existing) {
-
-            //if (game.combat && (effect.id == "blinded" || effect.id == "deafened"))
-            //    effect.flags.dsa5.roundReceived = game.combat.round
             effect.label = game.i18n.localize(effect.label);
 
             if (Number.isNumeric(effect.flags.dsa5.value)) {
@@ -1458,8 +1385,6 @@ export default class Actordsa5 extends Actor {
             effect["flags.core.statusId"] = effect.id;
             if (effect.id == "dead")
                 effect["flags.core.overlay"] = true;
-            if (effect.id == "unconscious")
-                await this.addCondition("prone")
 
             await this._dependentEffects(effect.id, effect, 1)
             delete effect.id
@@ -1470,18 +1395,21 @@ export default class Actordsa5 extends Actor {
     }
 
     async _dependentEffects(statusId, effect, delta) {
-        if (effect.flags.dsa5.value == 4 && (statusId == "encumbered" || statusId == "stunned" || statusId == "feared" || statusId == "inpain" || statusId == "confused")) {
+        if (effect.flags.dsa5.value == 4 && ["encumbered", "stunned", "feared", "inpain", "confused"].includes(statusId))
             await this.addCondition("incapacitated")
-        }
-        if (effect.flags.dsa5.value == 4 && (statusId == "paralysed")) {
+
+        if (effect.flags.dsa5.value == 4 && (statusId == "paralysed"))
             await this.addCondition("rooted")
-        }
+
+        if (statusId == "unconscious")
+            await this.addCondition("prone")
+
+        //if (game.combat && (effect.id == "blinded" || effect.id == "deafened"))
+            //    effect.flags.dsa5.roundReceived = game.combat.round
 
         if (delta > 0 && statusId == "inpain" && !this.hasCondition("bloodrush") && AdvantageRulesDSA5.hasVantage(this, "Blutrausch")) {
             await this.addCondition("bloodrush")
-            let msg = `${game.i18n.format("CHATNOTIFICATION.gainsBloodrush", {
-                character: "<b>" + this.name + "</b>"
-            })}`;
+            let msg = `${game.i18n.format("CHATNOTIFICATION.gainsBloodrush", {character: "<b>" + this.name + "</b>"})}`;
             ChatMessage.create(DSA5_Utility.chatDataSetup(msg));
         }
     }
@@ -1510,7 +1438,6 @@ export default class Actordsa5 extends Actor {
 
 
     hasCondition(conditionKey) {
-        let existing = this.data.effects.find(i => getProperty(i, "flags.core.statusId") == conditionKey)
-        return existing
+        return this.data.effects.find(i => getProperty(i, "flags.core.statusId") == conditionKey)
     }
 }
