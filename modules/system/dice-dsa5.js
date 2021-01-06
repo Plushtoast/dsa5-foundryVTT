@@ -572,7 +572,6 @@ export default class DiceDSA5 {
             //+ this._compareWeaponReach(weapon, testData)
             if (testData.mode == "attack") {
                 let weaponmodifier = this._compareWeaponReach(weapon, testData)
-
                 modifier += weaponmodifier + testData.doubleAttack
                 this._appendSituationalModifiers(testData, game.i18n.localize("doubleAttack"), testData.doubleAttack)
                 this._appendSituationalModifiers(testData, game.i18n.localize("opposingWeaponSize"), weaponmodifier)
@@ -1061,7 +1060,6 @@ export default class DiceDSA5 {
                     }else{
                         newTestData.situationalModifiers.push(newVal)
                     }
-                    console.log(newTestData)
                     break
             }
 

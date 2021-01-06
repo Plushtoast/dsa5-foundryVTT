@@ -856,6 +856,16 @@
                 "APvalue",
                 "requirements"
             ],
+            "languagePoints": {
+                "type": "Number",
+                "value": 0,
+                "label": "languagePoints"
+            },
+            "spelltrickCount": {
+                "type": "Number",
+                "value": 0,
+                "label": "spelltrickCount"
+            },
             "recommendedAdvantages": {
                 "type": "String",
                 "value": "",

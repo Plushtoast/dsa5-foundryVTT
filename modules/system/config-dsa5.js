@@ -227,6 +227,7 @@ DSA5.effectTextStyle.fontFamily = "GentiumBasic"
 
 DSA5.defaultWeapon = {
     name: "default",
+    type: "meleeweapon",
     data: {
         data: {
             reach: {

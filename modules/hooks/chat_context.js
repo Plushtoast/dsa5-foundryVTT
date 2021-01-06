@@ -20,7 +20,6 @@ export default function () {
         let isTalented = function (li) {
             let result = false
             let message = game.messages.get(li.attr("data-message-id"));
-            console.log(message)
             if (message.data.speaker.actor) {
                 let actor = game.actors.get(message.data.speaker.actor);
                 if (actor.permission == ENTITY_PERMISSIONS.OWNER) {

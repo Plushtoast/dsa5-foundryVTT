@@ -204,11 +204,10 @@
                     {{localize "dodge"}}
                 </div>
                 <div class="col eight lineheight center">
-                    {{data.dodge.value}}
+                    {{data.status.dodge.value}}
                 </div>
                 <div class="col eight center">
-                    <input name="data.status.dodge.modifier" type="text" value="{{data.status.dodge.modifier}}" data-dtype="Number" />
-
+                    <input name="data.status.dodge.modifier" type="text" value="{{data.status.dodge.modifier}}" data-dtype="{{data.status.dodge.type}}" />
                 </div>
 
                 <div class="col eight lineheight center">
@@ -228,7 +227,7 @@
                 </div>
 
                 <div class="col eight lineheight center">
-                    <input class="input-text" type="text" name="data.actionCount.value" value="{{data.actionCount.value}}" data-dtype="text" />
+                    <input class="input-text" type="text" name="data.actionCount.value" value="{{data.actionCount.value}}" data-dtype="{{data.actionCount.type}}" />
 
                 </div>
             </div>
@@ -244,7 +243,7 @@
                 </div>
 
                 <div class="col eight lineheight center">
-                    <input class="input-text" type="text" name="data.conjuringDifficulty.value" value="{{data.conjuringDifficulty.value}}" data-dtype="text" />
+                    <input class="input-text" type="text" name="data.conjuringDifficulty.value" value="{{data.conjuringDifficulty.value}}" data-dtype="{{data.conjuringDifficulty.type}}" />
                 </div>
             </div>
             <div class="derivedAttrs row-section">
@@ -282,14 +281,11 @@
                 </div>
                 <div class="col eight center">
                     <input name="data.status.speed.modifier" type="text" value="{{data.status.speed.modifier}}" data-dtype="Number" />
-
                 </div>
                 <div class="col eight">
-
                 </div>
                 <div class="col eight lineheight center">
                     {{data.status.speed.max}}
-
                 </div>
             </div>
             <div class="derivedAttrs row-section">

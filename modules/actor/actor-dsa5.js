@@ -555,7 +555,6 @@ export default class Actordsa5 extends Actor {
 
     setupWeaponTrait(item, mode, options) {
         let title = game.i18n.localize(item.name) + " " + game.i18n.localize(mode + "test");
-
         let testData = {
             opposable: true,
             source: item,
@@ -719,11 +718,11 @@ export default class Actordsa5 extends Actor {
                 options: options
             }
         };
-        testData.source.name = statusId
+        testData.source.data.name = statusId
         testData.source.data.data.combatskill = {
             value: game.i18n.localize("Combatskill.wrestle")
         }
-        testData.source.type = "meleeweapon"
+        testData.source.data.type = "meleeweapon"
         testData.source.data.data.damageThreshold.value = 14
 
         let dialogOptions = {
@@ -1438,6 +1437,9 @@ export default class Actordsa5 extends Actor {
 
 
     hasCondition(conditionKey) {
-        return this.data.effects.find(i => getProperty(i, "flags.core.statusId") == conditionKey)
+        if (this.data != undefined)
+            return this.data.effects.find(i => getProperty(i, "flags.core.statusId") == conditionKey)
+
+        return false
     }
 }

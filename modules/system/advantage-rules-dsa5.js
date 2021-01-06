@@ -62,12 +62,12 @@ export default class AdvantageRulesDSA5 {
             Pech: async function (actor, item) { await actor.update({ "data.status.fatePoints.current": 3 }); },
         })
         mergeObject(DSA5.vantagesNeedingAdaption, {
-            "Unfähig": { items: ["skill"] },
-            "Begabung": { items: ["skill"] },
-            "Herausragende Fertigkeit": { items: ["skill","liturgy","spell","ritual","ceremony"]},
-            "Herausragende Kampftechnik": {items: ["combatskill"]},
-            "Waffenbegabung": {items: ["combatskill"]},
-            "Begabung": { items: ["skill"] }
+            "Unfähig ()": { items: ["skill"] },
+            "Begabung ()": { items: ["skill"] },
+            "Herausragende Fertigkeit ()": { items: ["skill","liturgy","spell","ritual","ceremony"]},
+            "Herausragende Kampftechnik ()": {items: ["combatskill"]},
+            "Waffenbegabung ()": {items: ["combatskill"]},
+            "Begabung ()": { items: ["skill"] }
         })
     }
     static async vantageAdded(actor, item) {
@@ -86,7 +86,7 @@ export default class AdvantageRulesDSA5 {
             return
         item = duplicate(item)
         if (adoption != null) {
-            item.name = `${item.name} (${adoption.name})`
+            item.name = `${item.name.replace(' ()','')} (${adoption.name})`
             item.data.APValue.value = item.data.APValue.value.split("/")[adoption.data.data.StF.value.charCodeAt(0) - 65]
         }
         let res = actor.data.items.find(i => {

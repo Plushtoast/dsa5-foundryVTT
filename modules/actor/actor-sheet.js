@@ -679,7 +679,6 @@ export default class ActorSheetDsa5 extends ActorSheet {
         });
         if (res) {
             let vantage = duplicate(res)
-            console.log(vantage)
             if (vantage.data.step.value + 1 <= vantage.data.maxRank.value) {
                 vantage.data.step.value += 1
                 await this._updateAPs(vantage.data.APValue.value)

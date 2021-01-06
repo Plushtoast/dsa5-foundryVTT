@@ -47,6 +47,12 @@
                 <input class="input-text" type="text" name="data.APValue.value" value="{{data.APValue.value}}" data-dtype="Number" />
             </div>
 
+            <div class="form-group">
+                <label class="label-text">{{localize "languagePoints"}}:</label>
+                <input class="input-text" type="text" name="data.languagePoints.value" value="{{data.languagePoints.value}}"
+                    data-dtype="Number" />
+            </div>
+
             <div class="form-group full-height" title="{{localize 'TT.commaSeparated'}}">
                 <label class="label-text">{{localize "requirements"}}:</label>
                 <textarea class="input-text" type="text" name="data.requirements.value" data-dtype="String">{{data.requirements.value}}</textarea>
@@ -139,6 +145,11 @@
             <div class="form-group full-height">
                 <label class="label-text">{{localize "magictricks"}}:</label>
                 <textarea class="input-text" type="text" name="data.spelltricks.value" data-dtype="String">{{data.spelltricks.value}}</textarea>
+            </div>
+            <div class="form-group">
+                <label class="label-text">{{localize "spelltrickCount"}}:</label>
+                <input class="input-text" type="text" name="data.spelltrickCount.value" value="{{data.spelltrickCount.value}}"
+                    data-dtype="Number" />
             </div>
             {{/when}} {{/when}}
 

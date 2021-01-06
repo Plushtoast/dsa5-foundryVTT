@@ -59,7 +59,6 @@ export default function() {
                     data.scale = tokenSize;
                     data.width = data.height = 1;
                 } else {
-                    console.log(tokenSize)
                     const int = Math.floor(tokenSize);
                     data.width = data.height = int;
                     data.scale = tokenSize / int;
