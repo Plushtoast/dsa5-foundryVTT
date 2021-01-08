@@ -65,10 +65,13 @@ export default class Actordsa5 extends Actor {
                 data.data.status.initiative.value = Math.round((data.data.characteristics["mu"].value + data.data.characteristics["ge"].value) / 2) + (data.data.status.initiative.modifier || 0);
             }
 
-            if (this.data.type == "character") {
+            this.data.canAdvance = data.type == "character" || data.items.find(x => x.name == "Vertrauter" && x.type == "trait") != undefined
+
+            if (this.data.canAdvance) {
                 data.data.details.experience.current = data.data.details.experience.total - data.data.details.experience.spent;
                 data.data.details.experience.description = DSA5_Utility.experienceDescription(data.data.details.experience.total)
-            } else if (this.data.type == "creature") {
+            }
+            if (this.data.type == "creature") {
                 data.data.status.wounds.current = data.data.status.wounds.initial
                 data.data.status.astralenergy.current = data.data.status.astralenergy.initial
                 data.data.status.karmaenergy.current = data.data.status.karmaenergy.initial
@@ -96,7 +99,11 @@ export default class Actordsa5 extends Actor {
             data.data.status.toughness.max = data.data.status.toughness.value + data.data.status.toughness.modifier;
             this._calculateStatus(data, "dodge")
 
-            data.data.canAdvance = Actordsa5.canAdvance(data.data)
+            if (this.data.canAdvance) {
+                data.data.status.wounds.cost = game.i18n.format("advancementCost", { cost: DSA5_Utility._calculateAdvCost(data.data.status.wounds.advances, "D") })
+                data.data.status.astralenergy.cost = game.i18n.format("advancementCost", { cost: DSA5_Utility._calculateAdvCost(data.data.status.astralenergy.advances, "D") })
+                data.data.status.karmaenergy.cost = game.i18n.format("advancementCost", { cost: DSA5_Utility._calculateAdvCost(data.data.status.karmaenergy.advances, "D") })
+            }
 
         } catch (error) {
             console.error("Something went wrong with preparing actor data: " + error + error.stack)
@@ -120,7 +127,7 @@ export default class Actordsa5 extends Actor {
     }
 
     static canAdvance(actorData) {
-        return actorData.canAdvance || actorData.type == "character" || actorData.items.find(x => x.name == "Vertrauter" && x.type == "trait")
+        return actorData.canAdvance
     }
 
     static _calculateCombatSkillValues(i, actorData) {
@@ -314,13 +321,13 @@ export default class Actordsa5 extends Actor {
                             break
                         case "familiar":
                             familiarTraits.push(i)
+                            hasSpells = hasSpells || (i.name == "Vertrauter")
                             break
                         case "armor":
                             armorTraits.push(i)
                             totalArmor += Number(i.data.at.value);
                             break
                     }
-
                     break
                 case "combatskill":
                     combatskills.push(Actordsa5._calculateCombatSkillValues(i, actorData));
@@ -337,7 +344,6 @@ export default class Actordsa5 extends Actor {
                     inventory.meleeweapons.items.push(i);
                     inventory.meleeweapons.show = true;
                     totalWeight += Number(i.weight);
-
                     break;
                 case "rangeweapon":
                     i.weight = parseFloat((i.data.weight.value * i.data.quantity.value).toFixed(3));
@@ -345,7 +351,6 @@ export default class Actordsa5 extends Actor {
                     inventory.rangeweapons.items.push(i);
                     inventory.rangeweapons.show = true;
                     totalWeight += Number(i.weight);
-
                     break;
                 case "armor":
                     i.weight = parseFloat((i.data.weight.value * i.data.quantity.value).toFixed(3));
@@ -359,7 +364,6 @@ export default class Actordsa5 extends Actor {
                         this._addModifiers(equipmentModifiers, i)
                         armor.push(i);
                     }
-
                     break;
                 case "equipment":
                     i.weight = parseFloat((i.data.weight.value * i.data.quantity.value).toFixed(3));
@@ -367,13 +371,10 @@ export default class Actordsa5 extends Actor {
                     inventory[i.data.equipmentType.value].show = true;
                     totalWeight += Number(i.weight);
                     break;
-
                 case "money":
                     i.weight = parseFloat((i.data.weight.value * i.data.quantity.value).toFixed(3));
-
                     money.coins.push(i);
                     totalWeight += Number(i.weight);
-
                     money.total += i.data.quantity.value * i.data.price.value;
                     break;
                 case "advantage":
@@ -411,8 +412,6 @@ export default class Actordsa5 extends Actor {
                     break;
             }
 
-
-
             /*} catch (error) {
                 console.error("Something went wrong with preparing item " + i.name + ": " + error)
                 ui.notifications.error("Something went wrong with preparing item " + i.name + ": " + error)
@@ -441,9 +440,9 @@ export default class Actordsa5 extends Actor {
         encumbrance += Math.max(0, Math.floor((totalWeight - carrycapacity) / 4));
         let pain = actorData.data.status.wounds.value <= 5 ? 4 : Math.floor((1 - actorData.data.status.wounds.value / actorData.data.status.wounds.max) * 4) - AdvantageRulesDSA5.vantageStep(this, "Zäher Hund")
 
-        if (pain >= 1) {
+        if (pain >= 1)
             pain = Math.min(4, pain + AdvantageRulesDSA5.vantageStep(this, "Zerbrechlich"))
-        }
+
 
         if (AdvantageRulesDSA5.hasVantage(this, "Blind"))
             this.addCondition("blind")
@@ -505,6 +504,7 @@ export default class Actordsa5 extends Actor {
             ceremonies: ceremonies,
             liturgies: liturgies,
             combatskills: combatskills,
+            canAdvance: this.data.canAdvance,
             allSkillsLeft: {
                 body: bodySkills,
                 social: socialSkills,

@@ -76,6 +76,23 @@
                 <input class="input-text" type="text" name="data.at.value" value="{{data.at.value}}" data-dtype="String" />
             </div>
 
+            {{/when}} {{#when data.traitType.value 'eq' "familiar"}}
+            <div class="form-group">
+                <label class="label-text">{{localize "APvalue"}}: </label>
+                <input class="input-text" type="text" name="data.APValue.value" value="{{data.APValue.value}}" data-dtype="{{data.APValue.type}}" />
+            </div>
+            <div class="form-group">
+                <label class="label-text">{{localize "AsPCost"}}: </label>
+                <input class="input-text" type="text" name="data.AsPCost.value" value="{{data.AsPCost.value}}" data-dtype="{{data.AsPCost.type}}" />
+            </div>
+            <div class="form-group">
+                <label class="label-text">{{localize "duration"}}: </label>
+                <input class="input-text" type="text" name="data.duration.value" value="{{data.duration.value}}" data-dtype="{{data.duration.type}}" />
+            </div>
+            <div class="form-group">
+                <label class="label-text">{{localize "aspect"}}: </label>
+                <input class="input-text" type="text" name="data.aspect.value" value="{{data.aspect.value}}" data-dtype="{{data.aspect.type}}" />
+            </div>
             {{/when}}
 
         </div>

@@ -44,9 +44,7 @@ export default class ActorSheetdsa5Creature extends ActorSheetDsa5 {
 
     async getData() {
         const data = super.getData();
-
         data["sizeCategories"] = DSA5.sizeCategories
-
         return data;
     }
 
@@ -54,6 +52,7 @@ export default class ActorSheetdsa5Creature extends ActorSheetDsa5 {
         let item = this.actor.data.items.find(x => x._id == itemId)
         switch (item.type) {
             case "trait":
+                await this._updateAPs(item.data.APValue.value * -1)
                 TraitRulesDSA5.traitRemoved(this.actor, item)
                 break;
         }
@@ -61,15 +60,14 @@ export default class ActorSheetdsa5Creature extends ActorSheetDsa5 {
     }
 
     async _addTrait(item) {
-
         let res = this.actor.data.items.find(i => {
             return i.type == "trait" && i.name == item.name
         });
         if (!res) {
+            await this._updateAPs(item.data.data.APValue.value)
             await this.actor.createEmbeddedEntity("OwnedItem", item);
             await TraitRulesDSA5.traitAdded(this.actor, item)
         }
-
     }
 
     async _onDrop(event) {

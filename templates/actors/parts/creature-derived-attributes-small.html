@@ -1,0 +1,208 @@
+<div class="groupbox">
+    <div class="derivedAttrs row-section">
+        <div class="col two">
+        </div>
+        <div class="col eight very-small center" title="{{localize 'value'}}">
+            {{localize "ABBR-value"}}
+        </div>
+        <div class="col eight very-small center" title="{{localize 'Modifiers'}}">
+            {{localize "ABBR-modifiers"}}
+        </div>
+
+        <div class="col eight very-small center" title="{{localize 'max'}}">
+            {{localize "ABBR-max"}}
+        </div>
+    </div>
+    <div class="derivedAttrs row-section">
+        <div class="col two lineheight">
+            {{localize "wounds"}}
+        </div>
+        <div class="col eight lineheight center">
+            <input name="data.status.wounds.initial" type="text" value="{{data.status.wounds.initial}}" data-dtype="Number" />
+        </div>
+        <div class="col eight center">
+            <input name="data.status.wounds.modifier" type="text" value="{{data.status.wounds.modifier}}" data-dtype="Number" />
+
+        </div>
+
+        <div class="col eight lineheight center">
+            {{data.status.wounds.max}}
+        </div>
+    </div>
+    {{#if actor.hasSpells}}
+    <div class="derivedAttrs row-section">
+        <div class="col two lineheight">
+            {{localize "astralenergy"}}
+        </div>
+        <div class="col eight lineheight center">
+            <input name="data.status.astralenergy.initial" type="text" value="{{data.status.astralenergy.initial}}" data-dtype="Number" />
+        </div>
+        <div class="col eight center">
+            <input name="data.status.astralenergy.modifier" type="text" value="{{data.status.astralenergy.modifier}}" data-dtype="Number" />
+
+        </div>
+
+        <div class="col eight lineheight center">
+            {{data.status.astralenergy.max}}
+
+        </div>
+    </div>
+    {{/if}} {{#if actor.hasPrayers}}
+    <div class="derivedAttrs row-section">
+        <div class="col two lineheight">
+            {{localize "karmaenergy"}}
+        </div>
+        <div class="col eight lineheight center">
+            <input name="data.status.karmaenergy.initial" type="text" value="{{data.status.karmaenergy.initial}}" data-dtype="Number" /> </div>
+        <div class="col eight center">
+            <input name="data.status.karmaenergy.modifier" type="text" value="{{data.status.karmaenergy.modifier}}" data-dtype="Number" />
+
+        </div>
+
+        <div class="col eight lineheight center">
+            {{data.status.karmaenergy.max}}
+        </div>
+    </div>
+    {{/if}}
+    <div class="derivedAttrs row-section">
+        <div class="col two lineheight">
+            {{localize "soulpower"}}
+        </div>
+        <div class="col eight lineheight center">
+            <input name="data.status.soulpower.value" type="text" value="{{data.status.soulpower.value}}" data-dtype="Number" />
+        </div>
+        <div class="col eight center">
+            <input name="data.status.soulpower.modifier" type="text" value="{{data.status.soulpower.modifier}}" data-dtype="Number" />
+
+        </div>
+
+        <div class="col eight lineheight center">
+            {{data.status.soulpower.max}}
+
+        </div>
+    </div>
+    <div class="derivedAttrs row-section">
+        <div class="col two lineheight">
+            {{localize "toughness"}}
+        </div>
+        <div class="col eight lineheight center">
+            <input name="data.status.toughness.value" type="text" value="{{data.status.toughness.value}}" data-dtype="Number" />
+        </div>
+        <div class="col eight center">
+            <input name="data.status.toughness.modifier" type="text" value="{{data.status.toughness.modifier}}" data-dtype="Number" />
+
+        </div>
+
+        <div class="col eight lineheight center">
+            {{data.status.toughness.max}}
+
+        </div>
+    </div>
+    <div class="derivedAttrs row-section">
+        <div class="col two lineheight">
+            {{localize "dodge"}}
+        </div>
+        <div class="col eight lineheight center">
+            {{data.status.dodge.value}}
+        </div>
+        <div class="col eight center">
+            <input name="data.status.dodge.modifier" type="text" value="{{data.status.dodge.modifier}}" data-dtype="{{data.status.dodge.type}}" />
+        </div>
+
+        <div class="col eight lineheight center">
+            {{data.status.dodge.max}}
+
+        </div>
+    </div>
+    <div class="derivedAttrs row-section">
+        <div class="col two lineheight">
+            {{localize "actionCount"}}
+        </div>
+        <div class="col eight lineheight center">
+
+        </div>
+        <div class="col eight center">
+
+        </div>
+
+        <div class="col eight lineheight center">
+            <input class="input-text" type="text" name="data.actionCount.value" value="{{data.actionCount.value}}" data-dtype="{{data.actionCount.type}}" />
+
+        </div>
+    </div>
+    <div class="derivedAttrs row-section">
+        <div class="col two lineheight">
+            {{localize "conjuringDifficulty"}}
+        </div>
+        <div class="col eight lineheight center">
+
+        </div>
+        <div class="col eight center">
+
+        </div>
+
+        <div class="col eight lineheight center">
+            <input class="input-text" type="text" name="data.conjuringDifficulty.value" value="{{data.conjuringDifficulty.value}}" data-dtype="{{data.conjuringDifficulty.type}}" />
+        </div>
+    </div>
+    <div class="derivedAttrs row-section">
+        <div class="col two lineheight">
+            {{localize "count"}}
+        </div>
+
+
+        <div class="col two lineheight center">
+            <input class="input-text" type="text" name="data.count.value" value="{{data.count.value}}" data-dtype="String" />
+        </div>
+    </div>
+    <div class="derivedAttrs row-section">
+        <div class="col two lineheight">
+            {{localize "sizeCategory"}}
+        </div>
+
+
+        <div class="col two lineheight center">
+            <select name="data.size.value" data-dtype="{{data.size.type}}" style="width:100%">
+                {{#select data.status.size.value}}
+                {{#each sizeCategories as |ch char|}}
+                <option value="{{char}}">{{localize ch}}</option>
+                {{/each}}
+                {{/select}}
+              </select>
+        </div>
+    </div>
+    <div class="derivedAttrs row-section">
+        <div class="col two lineheight">
+            {{localize "speed"}}
+        </div>
+        <div class="col eight lineheight center">
+            <input name="data.status.speed.initial" type="text" value="{{data.status.speed.initial}}" data-dtype="Number" />
+        </div>
+        <div class="col eight center">
+            <input name="data.status.speed.modifier" type="text" value="{{data.status.speed.modifier}}" data-dtype="Number" />
+        </div>
+        <div class="col eight">
+        </div>
+        <div class="col eight lineheight center">
+            {{data.status.speed.max}}
+        </div>
+    </div>
+    <div class="derivedAttrs row-section">
+        <div class="col two lineheight">
+            {{localize "initiative"}}
+        </div>
+        <div class="col eight lineheight center">
+            <input name="data.status.initiative.current" type="text" value="{{data.status.initiative.current}}" data-dtype="Number" />
+        </div>
+        <div class="col eight center">
+            <input name="data.status.initiative.modifier" type="text" value="{{data.status.initiative.modifier}}" data-dtype="Number" />
+        </div>
+        <div class="col eight">
+
+        </div>
+        <div class="col eight lineheight center">
+            {{data.status.initiative.value}}
+
+        </div>
+    </div>
+</div>

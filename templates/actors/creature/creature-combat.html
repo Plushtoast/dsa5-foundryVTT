@@ -360,7 +360,7 @@
         <div class="col two">
             <div class="row-section item skills lineheight" data-item-id="{{item._id}}">
                 <div class="col fourty">
-                    <a class="skill-select">{{item.name}}</a>
+                    <a class="skill-select">{{item.name}}</a> {{#if item.canAdvance}}<a class="advance advance-item"><i title="{{item.cost}}" class="fas fa-plus"></i></a>{{/if}}
                 </div>
                 <div class="col five center">
                     {{localize (concatUp "CHARAbbrev." item.data.guidevalue.value)}}
@@ -376,6 +376,7 @@
                     {{#when item.data.weapontype.value 'eq' 'melee'}} <a class="ch-combatskill-parry d20 diet-in">{{item.data.parry.value}}</a> {{else}}- {{/when}}
                 </div>
             </div>
+
         </div>
         {{/each}}
     </div>

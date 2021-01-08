@@ -1,0 +1,51 @@
+<div class="characteristics">
+    <div class="characteristics-table" cellpadding="0">
+        <div class="table-row">
+            <div class="table-header"></div>
+            {{#each actor.data.characteristics as |ch c|}}
+            <div title="{{localize ch.label}}" class="table-header">
+                <div class="header-label">
+                    <b>{{localize ch.abrev}}</b><a data-attr="{{c}}" class="advance advance-attribute"><i title="{{ch.cost}}" class="fas fa-plus"></i></a>
+                </div>
+            </div>
+            {{/each}}
+        </div>
+        <div class="table-row">
+            <div class="row-type table-data">
+                <div class="header-block lineheight">
+                    {{localize "Initial"}}
+                </div>
+            </div>
+            {{#each actor.data.characteristics as |ch c|}}
+            <div class="table-data">
+                <input name="data.characteristics.{{c}}.initial" type="text" value="{{ch.initial}}" data-dtype="Number">
+            </div>
+            {{/each}}
+        </div>
+        <div class="table-row">
+            <div class="row-type table-data">
+                <div class="header-block lineheight">
+                    {{localize "Advances"}}
+                </div>
+            </div>
+            {{#each actor.data.characteristics as |ch c|}}
+            <div class="table-data">
+                <input name="data.characteristics.{{c}}.advances" type="text" value="{{ch.advances}}" data-dtype="Number">
+            </div>
+            {{/each}}
+        </div>
+        <div class="table-row">
+            <div class="row-type table-data">
+                <div class="header-block lineheight">
+                    {{localize "Modifiers"}}
+                </div>
+            </div>
+            {{#each actor.data.characteristics as |ch c|}}
+            <div class="table-data">
+                <input name="data.characteristics.{{c}}.modifier" type="text" value="{{ch.modifier}}" data-dtype="Number">
+            </div>
+            {{/each}}
+        </div>
+
+    </div>
+</div>
