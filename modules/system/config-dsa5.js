@@ -1,7 +1,6 @@
 const DSA5 = {}
 
-CONFIG.statusEffects = [
-    {
+CONFIG.statusEffects = [{
         id: "prone",
         label: "CONDITION.prone",
         icon: "icons/svg/falling.svg",
@@ -425,7 +424,8 @@ DSA5.specialAbilityCategories = {
     "magical": "magical",
     "clerical": "clerical",
     "language": "language",
-    "animal": "animal"
+    "animal": "animal",
+    "staff": "staff"
 }
 
 DSA5.dieColors = {
@@ -435,6 +435,10 @@ DSA5.dieColors = {
 DSA5.addvantageRules = {}
 DSA5.removevantageRules = {}
 DSA5.vantagesNeedingAdaption = {}
+
+DSA5.addAbilityRules = {}
+DSA5.removeAbilityRules = {}
+DSA5.AbilitiesNeedingAdaption = {}
 
 DSA5.rangeWeaponModifiers = {
     "short": "RangeMod.short",

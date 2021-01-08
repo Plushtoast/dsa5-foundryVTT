@@ -97,7 +97,6 @@ export default class DSA5ItemLibrary extends Application {
         this._saveScrollPos()
         await super._render(force, options)
         this._setScrollPos()
-
     }
 
     async _loadCompendiae() {
@@ -116,12 +115,11 @@ export default class DSA5ItemLibrary extends Application {
     }
 
     _understandItems(itemList) {
-
         this.items = this.items.concat(itemList)
     }
 
     activateListeners(html) {
-
+        super.activateListeners(html)
 
         html.on("click", ".filter", ev => {
             this.filters.categories[$(ev.currentTarget).attr("data-category")] = $(ev.currentTarget).is(":checked");

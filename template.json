@@ -282,6 +282,11 @@
                     "total": 0,
                     "spent": 0
                 }
+            },
+            "freeLanguagePoints": {
+                "type": "Number",
+                "label": "freeLanguagePoints",
+                "value": 0
             }
         },
         "npc": {
@@ -298,6 +303,14 @@
                 "status",
                 "magic"
             ],
+            "details": {
+                "experience": {
+                    "type": "Number",
+                    "label": "Experience",
+                    "total": 0,
+                    "spent": 0
+                }
+            },
             "actionCount": {
                 "type": "String",
                 "value": 1,

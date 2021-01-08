@@ -3,6 +3,9 @@ import DSA5 from "../system/config-dsa5.js";
 import AdvantageRulesDSA5 from "../system/advantage-rules-dsa5.js";
 
 import Itemdsa5 from "../item/item-dsa5.js";
+import CultureWizard from "../wizards/culture_wizard.js";
+import CareerWizard from "../wizards/career_wizard.js"
+import SpecialabilityRulesDSA5 from "../system/specialability-rules-dsa5.js";
 
 export default class ActorSheetDsa5 extends ActorSheet {
 
@@ -18,7 +21,8 @@ export default class ActorSheetDsa5 extends ActorSheet {
         this._restoreSeachFields()
     }
 
-    static get defaultOptions() {
+    static
+    get defaultOptions() {
         const options = super.defaultOptions;
         options.tabs = [{ navSelector: ".tabs", contentSelector: ".content", initial: "skills" }]
         mergeObject(options, {
@@ -116,10 +120,7 @@ export default class ActorSheetDsa5 extends ActorSheet {
                 "data.equipmentType.value": event.currentTarget.attributes["item-section"].value
             })
         }
-        if (data.type == "aggregatedTest") {
-        }
-        else if (data.type == "spell" || data.type == "liturgy") {
-        } else {
+        if (data.type == "aggregatedTest") {} else if (data.type == "spell" || data.type == "liturgy") {} else {
             data["data.weight.value"] = 0
             data["data.quantity.value"] = 0
         }
@@ -232,12 +233,7 @@ export default class ActorSheetDsa5 extends ActorSheet {
     }
 
     _checkEnoughXP(cost) {
-        if (Number(this.actor.data.data.details.experience.total) - Number(this.actor.data.data.details.experience.spent) > cost) {
-            return true
-        } else {
-            ui.notifications.warn(game.i18n.localize("Error.NotEnoughXP"))
-            return false
-        }
+        return this.actor.checkEnoughXP(cost)
     }
 
     activateListeners(html) {
@@ -370,7 +366,7 @@ export default class ActorSheetDsa5 extends ActorSheet {
             if (effect) {
                 let text = `<div style="padding:5px;"><b>${game.i18n.localize(effect.label)}</b>: ${game.i18n.localize(effect.description)}</div>`
                 let elem = $(ev.currentTarget).closest('.groupbox').find('.effectDescription')
-                elem.fadeOut('fast', function () {
+                elem.fadeOut('fast', function() {
                     elem.html(text).fadeIn('fast')
                 })
             } else {
@@ -549,7 +545,7 @@ export default class ActorSheetDsa5 extends ActorSheet {
             let talents = $(this.form).parent().find('.allTalents')
             talents.find('.item, .table-header, .table-title').removeClass('filterHide')
             if (val.length > 1) {
-                talents.addClass('showAll').find('.item').filter(function () {
+                talents.addClass('showAll').find('.item').filter(function() {
                     return $(this).find('.talentName').text().toLowerCase().trim().indexOf(val) == -1
                 }).addClass('filterHide')
                 talents.find('.table-header, .table-title:not(:eq(0))').addClass("filterHide")
@@ -592,6 +588,7 @@ export default class ActorSheetDsa5 extends ActorSheet {
                 await this._updateAPs(-1 * item.data.APValue.value * item.data.step.value)
                 break;
             case "specialability":
+                await SpecialabilityRulesDSA5.abilityRemoved(this.actor, item)
                 await this._updateAPs(-1 * item.data.APValue.value)
                 break;
         }
@@ -624,70 +621,8 @@ export default class ActorSheetDsa5 extends ActorSheet {
         AdvantageRulesDSA5.needsAdoption(this.actor, item, typeClass)
     }
 
-    async _addCareer(item) {
-        let update = {
-            "data.details.career.value": item.data.name,
-            "data.details.culture.value": ""
-        }
-        await this._updateAPs(item.data.data.APValue.value)
-        if (item.data.mageLevel != "mundane") {
-            update["data.guidevalue.value"] = game.i18n.localize("CHAR." + item.data.data.guidevalue.value)
-            update["data.tradition.value"] = item.data.data.tradition.value
-            update["data.feature.value"] = item.data.data.feature.value
-            update["data.happyTalents.value"] = item.data.data.happyTalents.value
-        }
-        await this.actor.update(update);
-        for (let skill of item.data.data.skills.value.split(",")) {
-            let vars = skill.trim().split(" ")
-            let name = vars.slice(0, -1).join(' ')
-            let step = vars[vars.length - 1]
-            let res = this.actor.data.items.find(i => {
-                return i.type == "skill" && i.name == name
-            });
-            if (res) {
-                let skillUpdate = duplicate(res)
-                skillUpdate.data.talentValue.value = step
-                await this.actor.updateEmbeddedEntity("OwnedItem", skillUpdate);
-            }
-        }
-    }
-
-    async _addCulture(item) {
-        let update = {
-            "data.details.culture.value": item.data.name
-        }
-        await this._updateAPs(item.data.data.APValue.value)
-        await this.actor.update(update);
-        for (let skill of item.data.data.skills.value.split(",")) {
-            let vars = skill.trim().split(" ")
-            let name = vars.slice(0, -1).join(' ')
-            let step = vars[vars.length - 1]
-            let res = this.actor.data.items.find(i => {
-                return i.type == "skill" && i.name == name
-            });
-            if (res) {
-                let skillUpdate = duplicate(res)
-                skillUpdate.data.talentValue.value = skillUpdate.data.talentValue.value + step
-                await this.actor.updateEmbeddedEntity("OwnedItem", skillUpdate);
-            }
-        }
-    }
-
     async _addSpecialAbility(item, typeClass) {
-        let res = this.actor.data.items.find(i => {
-            return i.type == typeClass && i.name == item.name
-        });
-        if (res) {
-            let vantage = duplicate(res)
-            if (vantage.data.step.value + 1 <= vantage.data.maxRank.value) {
-                vantage.data.step.value += 1
-                await this._updateAPs(vantage.data.APValue.value)
-                await this.actor.updateEmbeddedEntity("OwnedItem", vantage);
-            }
-        } else {
-            await this._updateAPs(item.data.data.APValue.value)
-            await this.actor.createEmbeddedEntity("OwnedItem", item);
-        }
+        SpecialabilityRulesDSA5.needsAdoption(this.actor, item, typeClass)
     }
 
 
@@ -726,6 +661,12 @@ export default class ActorSheetDsa5 extends ActorSheet {
         });
         if (!res) {
             switch (item.type) {
+                case "spell":
+                case "liturgy":
+                case "ceremony":
+                case "ritual":
+                    await this._updateAPs(DSA5_Utility._calculateAdvCost(-1, item.data.data.StF.value))
+                    break
                 case "blessing":
                 case "magictrick":
                     await this._updateAPs(1)
@@ -735,7 +676,6 @@ export default class ActorSheetDsa5 extends ActorSheet {
             await this.actor.createEmbeddedEntity("OwnedItem", item)
         }
     }
-
 
     async _onDrop(event) {
         this._handleDragData(JSON.parse(event.dataTransfer.getData("text/plain")))
@@ -776,8 +716,15 @@ export default class ActorSheetDsa5 extends ActorSheet {
             case "specialability":
                 await this._addSpecialAbility(item, typeClass)
                 break;
+            case "culture":
+                let cuwizard = new CultureWizard()
+                await cuwizard.addCulture(this.actor, item)
+                cuwizard.render(true)
+                break
             case "career":
-                await this._addCareer(item)
+                let cwizard = new CareerWizard()
+                await cwizard.addCareer(this.actor, item)
+                cwizard.render(true)
                 break;
             case "money":
                 await this._addMoney(item)

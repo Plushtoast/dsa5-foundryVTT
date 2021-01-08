@@ -10,7 +10,6 @@ export default class DSA5Dialog extends Dialog {
         1920
     ]
 
-
     activateListeners(html) {
         super.activateListeners(html)
         html.find(".dieButton").click(ev => {

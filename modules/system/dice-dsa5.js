@@ -29,7 +29,7 @@ export default class DiceDSA5 {
         }
         switch (testData.source.type) {
             case "skill":
-                situationalModifiers.push(...AdvantageRulesDSA5.getTalentBonus(testData.extra.actor,testData.source.name))
+                situationalModifiers.push(...AdvantageRulesDSA5.getTalentBonus(testData.extra.actor, testData.source.name))
                 situationalModifiers.push(...AdvantageRulesDSA5.getVantageAsModifier(testData.extra.actor, /Lästige Mindergeister/, -1))
                 if (testData.source.data.burden.value == "no") {
                     this._removeModifiers(situationalModifiers, ["CONDITION.encumbered"])
@@ -51,7 +51,7 @@ export default class DiceDSA5 {
                             targetSize = tar.value
                     });
                 }
-                rangeOptions = {...DSA5.rangeWeaponModifiers}
+                rangeOptions = {...DSA5.rangeWeaponModifiers }
                 delete rangeOptions[AdvantageRulesDSA5.hasVantage(testData.extra.actor, "Entfernungssinn") ? "long" : "rangesense"]
                 mergeObject(dialogOptions.data, {
                     rangeOptions: rangeOptions,
@@ -94,7 +94,7 @@ export default class DiceDSA5 {
                                 targetSize = tar.value
                         });
                     }
-                    rangeOptions = { ...DSA5.rangeWeaponModifiers }
+                    rangeOptions = {...DSA5.rangeWeaponModifiers }
                     delete rangeOptions["rangesense"]
                     mergeObject(dialogOptions.data, {
                         rangeOptions: rangeOptions,
@@ -128,7 +128,7 @@ export default class DiceDSA5 {
                         wrongHandDisabled: AdvantageRulesDSA5.hasVantage(testData.extra.actor, "Beidhändig"),
                         melee: true
                     });
-                } else { }
+                } else {}
                 break
             case "combatskill":
                 this._enabledModifiers(situationalModifiers, ["CONDITION.encumbered", "CONDITION.inpain"], true)
@@ -138,7 +138,7 @@ export default class DiceDSA5 {
                 situationalModifiers.push(...AdvantageRulesDSA5.getVantageAsModifier(testData.extra.actor, /Lästige Mindergeister/, -1))
                 situationalModifiers.push(...AdvantageRulesDSA5.getVantageAsModifier(testData.extra.actor, /Magische Einstimmung.*/))
                 situationalModifiers.push(...AdvantageRulesDSA5.getVantageAsModifier(testData.extra.actor, /Magische Einschränkung.*/, -1))
-                situationalModifiers.push(...AdvantageRulesDSA5.getVantageAsModifier(testData.extra.actor, /Artefaktgebunden/, -1))
+                situationalModifiers.push(...AdvantageRulesDSA5.getVantageAsModifier(testData.extra.actor, /Artefaktgebunden.*/, -1))
                 if (game.user.targets.size) {
                     game.user.targets.forEach(target => {
                         skMod = target.actor.data.data.status.soulpower.max
@@ -172,7 +172,7 @@ export default class DiceDSA5 {
                 situationalModifiers.push(...AdvantageRulesDSA5.getVantageAsModifier(testData.extra.actor, /Lästige Mindergeister/, -1))
                 situationalModifiers.push(...AdvantageRulesDSA5.getVantageAsModifier(testData.extra.actor, /Magische Einstimmung.*/))
                 situationalModifiers.push(...AdvantageRulesDSA5.getVantageAsModifier(testData.extra.actor, /Magische Einschränkung.*/, -1))
-                situationalModifiers.push(...AdvantageRulesDSA5.getVantageAsModifier(testData.extra.actor, /Artefaktgebunden/, -1))
+                situationalModifiers.push(...AdvantageRulesDSA5.getVantageAsModifier(testData.extra.actor, /Artefaktgebunden.*/, -1))
                 if (game.user.targets.size) {
                     game.user.targets.forEach(target => {
                         skMod = target.actor.data.data.status.soulpower.max
@@ -264,11 +264,11 @@ export default class DiceDSA5 {
         if (roll.terms[0].results.filter(x => x.result == 1).length == 1) {
             description = game.i18n.localize("CriticalSuccess");
             let res2 = res - rollConfirm.terms[0].results[0].result;
-            if(AdvantageRulesDSA5.hasVantage(testData.extra.actor, `Waffenbegabung (${combatskill})`) && !(res2 >= 0)){
+            if (AdvantageRulesDSA5.hasVantage(testData.extra.actor, `Waffenbegabung (${combatskill})`) && !(res2 >= 0)) {
                 let a = rollConfirm.terms[0].results[0].result
                 rollConfirm = new Roll("1d20").roll();
                 res2 = res - rollConfirm.terms[0].results[0].result;
-                description += ", " + game.i18n.format("usedWeaponExpertise", { a: a, b: rollConfirm.terms[0].results[0].result})
+                description += ", " + game.i18n.format("usedWeaponExpertise", { a: a, b: rollConfirm.terms[0].results[0].result })
             }
             this._addRollDiceSoNice(testData, rollConfirm, color)
             chars.push({ char: id, res: rollConfirm.terms[0].results[0].result, suc: res2 >= 0, tar: res });
@@ -432,7 +432,7 @@ export default class DiceDSA5 {
     }
 
     static _situationalModifiers(testData) {
-        return testData.situationalModifiers.reduce(function (_this, val) {
+        return testData.situationalModifiers.reduce(function(_this, val) {
             return _this + Number(val.value)
         }, 0);
     }
@@ -484,7 +484,7 @@ export default class DiceDSA5 {
             let narrowSpaceModifier = this._getNarrowSpaceModifier(weapon, testData)
             modifier += narrowSpaceModifier
             this._appendSituationalModifiers(testData, game.i18n.localize("narrowSpace"), narrowSpaceModifier)
-            //+ this._compareWeaponReach(weapon, testData)
+                //+ this._compareWeaponReach(weapon, testData)
             let weaponmodifier = this._compareWeaponReach(weapon, testData)
 
             modifier += weaponmodifier + testData.doubleAttack
@@ -569,7 +569,7 @@ export default class DiceDSA5 {
             let narrowSpaceModifier = this._getNarrowSpaceModifier(weapon, testData)
             modifier += narrowSpaceModifier
             this._appendSituationalModifiers(testData, game.i18n.localize("narrowSpace"), narrowSpaceModifier)
-            //+ this._compareWeaponReach(weapon, testData)
+                //+ this._compareWeaponReach(weapon, testData)
             if (testData.mode == "attack") {
                 let weaponmodifier = this._compareWeaponReach(weapon, testData)
                 modifier += weaponmodifier + testData.doubleAttack
@@ -736,7 +736,7 @@ export default class DiceDSA5 {
             }
         }
         res.preData.calculatedSpellModifiers.finalcost = Number(res.preData.calculatedSpellModifiers.finalcost) + AdvantageRulesDSA5.vantageStep(testData.extra.actor, "Schwacher Karmalkörper") + AdvantageRulesDSA5.vantageStep(testData.extra.actor, "Schwacher Astralkörper")
-        if (AdvantageRulesDSA5.hasVantage(testData.extra.actor, "Lästige Mindergeister")  ){
+        if (AdvantageRulesDSA5.hasVantage(testData.extra.actor, "Lästige Mindergeister")) {
             let ghostroll = new Roll("1d20").roll()
             if (ghostroll.total <= res.preData.calculatedSpellModifiers.finalcost)
                 res.description += ", " + game.i18n.localize("minorghostsappear")
@@ -757,16 +757,16 @@ export default class DiceDSA5 {
         let fps = testData.source.data.talentValue.value;
         let tar = [1, 2, 3].map(x => testData.extra.actor.data.characteristics[testData.source.data[`characteristic${x}`].value].value + modifier)
         let res = [0, 1, 2].map(x => roll.terms[x * 2].results[0].result - tar[x])
-        for(let k of res){
-            if(k > 0)
+        for (let k of res) {
+            if (k > 0)
                 fps -= k
         }
 
         let failValue = 20
-        if((testData.source.type == "spell" || testData.source.type == "ritual") && AdvantageRulesDSA5.hasVantage(testData.extra.actor, "Wilde Magie"))
+        if ((testData.source.type == "spell" || testData.source.type == "ritual") && AdvantageRulesDSA5.hasVantage(testData.extra.actor, "Wilde Magie"))
             failValue = 19
 
-        if (testData.source.type == "skill" &&  AdvantageRulesDSA5.hasVantage(testData.extra.actor, `Unfähig (${testData.source.name})`)){
+        if (testData.source.type == "skill" && AdvantageRulesDSA5.hasVantage(testData.extra.actor, `Unfähig (${testData.source.name})`)) {
             let reroll = new Roll("1d20").roll()
             var indexOfMinValue = res.reduce((iMin, x, i, arr) => x < arr[iMin] ? i : iMin, 0)
             let oldValue = roll.results[indexOfMinValue * 2]
@@ -1055,9 +1055,9 @@ export default class DiceDSA5 {
                         name: game.i18n.localize("chatEdit"),
                         value: Number(input.val()) - modifier
                     }
-                    if (newTestData.situationalModifiers.findIndex(x => x.name == game.i18n.localize("chatEdit")) >= 0){
+                    if (newTestData.situationalModifiers.findIndex(x => x.name == game.i18n.localize("chatEdit")) >= 0) {
                         newTestData.situationalModifiers[index] = newVal
-                    }else{
+                    } else {
                         newTestData.situationalModifiers.push(newVal)
                     }
                     break

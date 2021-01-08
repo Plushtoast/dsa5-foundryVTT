@@ -28,11 +28,14 @@ export default class Itemdsa5 extends Item {
         "abilitygeneral": "icons/tools/smithing/crucible.webp",
         "abilitymagical": "icons/tools/scribal/ink-quill-pink.webp",
         "abilitylanguage": "icons/sundries/documents/document-official-capital.webp",
+        "abilitystaff": "icons/weapons/staves/staff-ornate-red.webp",
+        "abilityanimal": "icons/environment/creatures/frog-spotted-green.webp",
         "trait": "icons/commodities/biological/organ-brain-pink-purple.webp",
         "Tiere": "icons/environment/creatures/horse-brown.webp",
-        "aggregatedTest": "icons/sundries/gaming/dice-runed-brown.webp"
+        "aggregatedTest": "icons/sundries/gaming/dice-runed-brown.webp",
+
     }
-    static defaultIcon(data){
+    static defaultIcon(data) {
         if (!data.img) {
             if (data.type in this.defaultImages) {
                 data.img = this.defaultImages[data.type]
@@ -120,23 +123,22 @@ export default class Itemdsa5 extends Item {
         return properties;
     }
 
-    _aggregatedTestChatData(){
+    _aggregatedTestChatData() {
         const data = duplicate(this.data.data);
         let result = game.i18n.localize("Ongoing")
-        if(data.cummulatedQS.value >= 10){
+        if (data.cummulatedQS.value >= 10) {
             result = game.i18n.localize("Success")
         }
         if (data.cummulatedQS.value >= 6) {
             result = game.i18n.localize("PartSuccess")
-        }
-        else if (data.allowedTestCount.value - data.usedTestCount.value <= 0){
+        } else if (data.allowedTestCount.value - data.usedTestCount.value <= 0) {
             result = game.i18n.localize("Failure")
         }
         let properties = [
             this._chatLineHelper("cummulatedQS", `${data.cummulatedQS.value} / 10`),
             this._chatLineHelper("interval", data.interval.value),
             this._chatLineHelper("probes", `${data.usedTestCount.value} / ${data.allowedTestCount.value}`),
-            this._chatLineHelper("result",result),
+            this._chatLineHelper("result", result),
         ]
         return properties;
     }

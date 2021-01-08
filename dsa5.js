@@ -13,6 +13,7 @@ import MacroDSA5 from "./modules/system/macroControl.js";
 import LazyImporter from "./modules/importer/lazy_importer.js"
 import DSA5 from "./modules/system/config-dsa5.js"
 import DSA5ItemLibrary from "./modules/system/itemlibrary.js"
+import DSA5_Utility from "./modules/system/utility-dsa5.js"
 
 Hooks.once("init", async function() {
 
@@ -33,7 +34,8 @@ Hooks.once("init", async function() {
             ActorSheetdsa5Character,
             ActorSheetdsa5Creature,
             ActorSheetdsa5NPC,
-            ItemSheetdsa5
+            ItemSheetdsa5,
+            DSA5_Utility
         },
         entities: {
             Actordsa5,

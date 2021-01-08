@@ -445,9 +445,8 @@ form .form-group.tripple select {
     margin-bottom: 8px;
 }
 
-.chat-buttons{
-
-    float:right;
+.chat-buttons {
+    float: right;
 }
 
 .die-attack,
@@ -843,7 +842,7 @@ form .form-group.tripple select {
     content: "\f186"
 }
 
-.advance{
+.advance {
     color: #333029a6;
     margin-left: 4px;
     font-size: 8px;
@@ -890,7 +889,7 @@ form .form-group.tripple select {
     background-size: 101% 1400px;
 }
 
-.window-app.journal-sheet .window-content{
+.window-app.journal-sheet .window-content {
     background-image: url(../icons/backgrounds/journalentry.webp);
     background-size: 97% 1000px;
     background-position: center;
@@ -918,7 +917,6 @@ form.dsa5.item-sheet {
 .window-app.character-sheet .window-header,
 .window-app.item .window-header {
     background-image: url(../icons/backgrounds/sidebar-top.webp);
-
     border: none;
     top: 2px;
 }
@@ -1495,6 +1493,7 @@ input[type="search"] {
 .itemLibrary ul {
     display: flex;
     flex-wrap: wrap;
+    width: 100%;
 }
 
 .itemLibrary ul li {
@@ -1525,20 +1524,22 @@ input[type="search"] {
     background-size: contain;
 }
 
-.lineheight2{
+.lineheight2 {
     line-height: 26px;
 }
-.lineheight2 span, .itemLibrary .item-list li a span{
+
+.lineheight2 span,
+.itemLibrary .item-list li a span {
     display: inline-block;
     vertical-align: middle;
     line-height: 12px;
 }
 
-#hotbar:before{
-    background-image:   url(../icons/backgrounds/hotbarpart.webp), url(../icons/backgrounds/hotbarpart.webp), url(../icons/backgrounds/hotbar4.webp);
-    background-size:30px 48px, 35px 48px,100% 100%;
-    background-repeat:no-repeat;
-    content:'';
+#hotbar:before {
+    background-image: url(../icons/backgrounds/hotbarpart.webp), url(../icons/backgrounds/hotbarpart.webp), url(../icons/backgrounds/hotbar4.webp);
+    background-size: 30px 48px, 35px 48px, 100% 100%;
+    background-repeat: no-repeat;
+    content: '';
     position: absolute;
     left: 0px;
     right: 0px;
@@ -1546,64 +1547,68 @@ input[type="search"] {
     top: -10px;
     z-index: -1;
     background-position: 8px 11px, calc(100% - 8px) 11px, center;
-
 }
-#hotbar .macro{
+
+#hotbar .macro {
     background: none;
-    border: 1px solid rgba(0,0,0,0.5);
+    border: 1px solid rgba(0, 0, 0, 0.5);
 }
 
-#hotbar .macro.active{
+#hotbar .macro.active {
     box-shadow: inset 0px 0px 50px black;
 }
 
-#hotbar #macro-list{
+#hotbar #macro-list {
     border: none;
-    margin:0;
+    margin: 0;
 }
 
-#hotbar .bar-controls{
-    margin:0;
+#hotbar .bar-controls {
+    margin: 0;
     background: none;
     /*color:silver;*/
     color: #000000;
-    border:none;
+    border: none;
     /*text-shadow:0px 0px 8px black,0px 0px 8px black;*/
     box-shadow: none;
 }
-#hotbar .bar-controls:first-child{
+
+#hotbar .bar-controls:first-child {
     margin-left: 5px;
 }
-.dsalist{
+
+.dsalist {
     list-style-type: none;
 }
-.dsalist li{
+
+.dsalist li {
     position: relative;
 }
-.dsalist li::before{
-   content: '';
-   display: inline-block;
-   height: 10px;
-   width: 20px;
-   position: absolute;
-   left: -20px;
-   top: 2px;
 
-   background-image: url(../icons/dsalist.webp);
-   background-size: contain;
-   background-repeat: no-repeat;
+.dsalist li::before {
+    content: '';
+    display: inline-block;
+    height: 10px;
+    width: 20px;
+    position: absolute;
+    left: -20px;
+    top: 2px;
+    background-image: url(../icons/dsalist.webp);
+    background-size: contain;
+    background-repeat: no-repeat;
 }
-#players{
+
+#players {
     background: none;
     border: none;
-    box-shadow:none;
-
+    box-shadow: none;
 }
-#players:before{
+
+#players:before {
     background-image: url(../icons/backgrounds/dsabot.webp);
-    background-size:100% 15px;
-    background-repeat:no-repeat;
-    content:'';
+    background-size: 100% 15px;
+    background-repeat: no-repeat;
+    content: '';
     position: absolute;
     left: -2px;
     right: -2px;
@@ -1612,11 +1617,12 @@ input[type="search"] {
     z-index: -1;
     background-position: center calc(100%);
 }
-#players h3:before{
+
+#players h3:before {
     background-image: url(../icons/backgrounds/dsahead.webp), url(../icons/backgrounds/dsamid.webp);
-    background-size:100% 30px, 100% calc(100% - 30px);
-    background-repeat:no-repeat;
-    content:'';
+    background-size: 100% 30px, 100% calc(100% - 30px);
+    background-repeat: no-repeat;
+    content: '';
     position: absolute;
     left: -5px;
     right: -5px;
@@ -1625,16 +1631,19 @@ input[type="search"] {
     z-index: -1;
     background-position: center 0px, center 30px;
 }
-#players h3, #players #player-list{
-    border:none;
+
+#players h3,
+#players #player-list {
+    border: none;
     position: relative;
-    overflow:visible;
+    overflow: visible;
 }
-#players #player-list:before{
+
+#players #player-list:before {
     background-image: url(../icons/backgrounds/dsamid.webp);
-    background-size:  100% 50px;
-    background-repeat:repeat-y;
-    content:'';
+    background-size: 100% 50px;
+    background-repeat: repeat-y;
+    content: '';
     position: absolute;
     left: -2px;
     right: -2px;
@@ -1644,7 +1653,60 @@ input[type="search"] {
     background-position: center 0px;
 }
 
-.card-content input{
+.card-content input {
     width: 30px;
     display: inline-block;
+}
+
+.window-app.largeDialog .window-content .dialog-buttons {
+    flex-grow: 0;
+    display: flex;
+}
+
+.largeDialog button.default {
+    background: rgba(0, 0, 0, 0.05);
+    border: 2px groove #c9c7b8;
+}
+
+.largeDialog .row-section label {
+    flex: 1;
+}
+
+.largeDialog h2 {
+    margin-top: 20px;
+}
+
+.largeDialog .sheet-tabs {
+    height: 32px;
+    flex: 0 0 32px;
+    margin: 4px 0;
+    line-height: 32px;
+    border-top: 1px solid #b5b3a4;
+    border-bottom: 1px solid #b5b3a4
+}
+
+.largeDialog .show-item {
+    display: inline-block;
+    font-size: 10px;
+    border: 1px solid rgb(160, 148, 148);
+    border-radius: 100%;
+    width: 20px;
+    height: 20px;
+    line-height: 18px;
+    color: rgb(90, 90, 90);
+    text-align: center;
+}
+
+.largeDialog img {
+    border: none;
+    margin-bottom: 10px;
+}
+
+.largeDialog .error {
+    width: 100%;
+}
+
+.largeDialog .error p {
+    background: rgb(151, 8, 8);
+    color: white;
 }

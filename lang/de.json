@@ -107,6 +107,7 @@
     "AstoundingFailure": "Schreckliches Missgeschick",
     "advantages": "Vorteile",
     "advantage": "Vorteil",
+
     "attackWeaponless": "Waffenloser Angriff",
     "animalSpecialAbilities": "Tierische Sonderfertigkeiten",
     "Age": "Alter",
@@ -142,6 +143,7 @@
     "count": "Anzahl",
     "cost": "Kosten",
     "cancel": "Abbrechen",
+    "combatskillcountdivider": "aus",
     "closeCombatAttacks": "Nahkampfangriffe",
     "Current": "Aktuell",
     "career": "Profession",
@@ -177,6 +179,7 @@
     "effectResult": "Effektergebnis",
     "effectFormula": "Effektformel",
     "equipmentType": "Ausrüstungskategorie",
+    "entry": "Eintrag",
     "Eye_color": "Augenfarbe",
     "equipped": "Ausgerüstet",
     "effect": "Effekt",
@@ -304,6 +307,7 @@
     "sizeCategory": "Größenkategorie",
     "Success": "Erfolg",
     "spell": "Zauberspruch",
+    "staff": "Stab",
     "spells": "Zaubersprüche",
     "search": "Suche",
     "searchPlaceholder": "Durchsuche die Bibliothek",
@@ -335,6 +339,7 @@
     "Unopposed": "Keine Vergleichsprobe",
     "usedTestCount": "Gewürfelte Proben",
     "value": "Wert",
+    "vantages": "Vor-/Nachteile",
     "sight": "Sichtverhältnisse",
     "Weight": "Gewicht",
     "happyTalents": "Wohlgefällige Talente",
@@ -344,10 +349,23 @@
     "wrongHand": "Falsche Hand",
     "writing": "Schrift",
     "yes": "Ja",
+    "YouAlreadyHaveit": "Hast du bereits",
     "zkModifier": "Zähigkeit (Ziel)",
 
     "Aggregated": {
         "noMoreAllowed": "Keine Proben mehr erlaubt."
+    },
+
+    "WIZARD": {
+        "addItem": "{item} hinzufügen",
+        "careerdescr": "Bitte wähle die passenden Optionen der Karriere <b>{career}</b> und bestätige, um sie für <b class=\"apCost\">{cost}</b> Abenteuerpunkte zu deinem Charakter hinzuzufügen.",
+        "culturedescr": "Bitte wähle die passenden Optionen der Kultur <b>{culture}</b> und bestätige, um sie für <b class=\"apCost\">{cost}</b> Abenteuerpunkte zu deinem Charakter hinzuzufügen.",
+        "vantageDescription": "Wähle passende Vor- und Nachteile um deine Profession abzurunden.",
+        "vantageDescriptionCulture": "Wähle passende Vor- und Nachteile um deine Kultur abzurunden.",
+        "chose": "Wähle ",
+        "missingVantages": "Fehlende vorausgesetzte Vor-/Nachteile",
+        "missingSpecialAbilities": "Fehlende vorausgesetzte Sonderfertigkeiten",
+        "attributeRequirements": "Eigenschaftsvoraussetzungen"
     },
 
     "SKILL": {
@@ -371,7 +389,7 @@
         "Dolche": "<p><b>Spezialität</b>: Mit Dolchen können Kettenwaffen, Stangenwaffen, Zweihandhiebwaffen und Zweihandschwerter nicht pariert werden.</p>",
         "Fächer": "<p><b>Spezialität</b>:  Fächer ein- oder ausklappen dauert jeweils 1 Aktion.Mit dem ausgeklappten Fächer kann man versuchen, Geschosse (Bolzen, Pfeile, Kugeln, Wurfdolche – und Scheiben u. Ä., nicht aber Wurfspeere und -äxte) wie mit einem Schild zu parieren, allerdings erleidet man bei der Parade zusätzlich zu den üblichen Modifikatoren (siehe Regelwerk Seite 244) noch eine Erschwernis von 1.Mit einem offenen Fächer können nur Nahkampfangriffe der Kampftechniken Raufen, Dolche und Fechtwaffen pariert werden sowie Fernkampftechniken (siehe oben). Nur ein offener Fächer kann als kleiner Schild dienen.Mit geschlossenem Fächer können Waffen aller Kampftechniken außer Kettenwaffen, Zweihandhiebwaffen, Zweihandschwerter und Fernkampftechniken pariert werden. Nur ein geschlossener Fächer kann als Parierwaffe dienen.</p>",
         "Fechtwaffen": "<p><b>Spezialität</b>: Mit Fechtwaffen können Kettenwaffen, Stangenwaffen, Zweihandhiebwaffen und Zweihandschwerter nicht pariert werden. Proben auf  Verteidigung gegen Fechtwaffen-Attacken sind um 1 erschwert.</p>",
-        "Feuerspeien":  "<p><b>Spezialität</b>: -</p>",
+        "Feuerspeien": "<p><b>Spezialität</b>: -</p>",
         "Hiebwaffen": "<p><b>Spezialität</b>: -</p>",
         "Kettenwaffen": "<p><b>Spezialität</b>: Da sie wegen der nur schwer kontrollierbaren Kugeln kaum abzuwehren sind, ist die Parade gegen Kettenwaffen um 2 erschwert. Schilde können darüber hinaus gegen Kettenwaffen nur ihren einfachen Bonus auf die Verteidigung nutzen. Angriffe mit Kettenwaffe gelten bereits ab einem Ergebnis von 19 als Patzer. Mit Kettenwaffen ist keine Parade möglich.</p>",
         "Lanzen": "<p><b>Spezialität</b>: -</p>",
@@ -382,7 +400,7 @@
         "Schwerter": "<p><b>Spezialität</b>: -</p>",
         "Spießwaffen": "<p><b>Spezialität</b>: Mit überlangen Spießen können keine normalen Paraden ausgeführt werde, außer eventuell Formationsparaden.</p>",
         "Stangenwaffen": "<p><b>Spezialität</b>: -</p>",
-        "Wurfwaffen":"<p><b>Spezialität</b>: -</p>",
+        "Wurfwaffen": "<p><b>Spezialität</b>: -</p>",
         "Zweihandhiebwaffen": "<p><b>Spezialität</b>: -</p>",
         "Zweihandschwerter": "<p><b>Spezialität</b>: -</p>"
     },
@@ -434,11 +452,11 @@
         "Singen": "<p><b>Anwendungsgebiete</b>: Bardenballade, Choral, Chorgesang, Sprechgesang</p><p><b>Qualität</b>: Der Gesang ist so gut, dass der Held mehr Applaus durch die Zuhörer erhält.</p><p><b>Misslungene Probe</b>: Der Held vergisst den Text oder sein Auftritt gerät eher schlecht als recht.</p><p><b>Kritischer Erfolg</b>: Der Gesang des Helden ist noch in vielen Wochen Thema seiner Zuhörer. Hat der Held sich um Geld bemüht, dann nimmt er mindestens das Doppelte ein als üblich. Für Qualitätsstufen, Vergleichs- und Sammelproben gilt: FP = doppelter FW.</p><p><b>Patzer</b>: Der Held liegt mehrere Halbtöne daneben oder vergeigt den Rhythmus. Das Lied ist eine Qual für jeden Zuhörer, der Held wird ausgebuht.</p>",
         "Sinnesschärfe": "<p><b>Anwendungsgebiete</b>: Hinterhalt entdecken, Suchen, Wahrnehmen</p><p><b>Qualität</b>: Der Held bemerkt weitere Details.</p><p><b>Misslungene Probe</b>: Der Held bemerkt nichts.</p><p><b>Kritischer Erfolg</b>: Der Held nimmt sogar kaum bemerkbare Details wahr. Für Qualitätsstufen, Vergleichs- und Sammelproben gilt: FP = doppelter FW.</p><p><b>Patzer</b>: Der Held nimmt etwas anderes wahr, als das, was wirklich wichtig wäre. Er könnte zum Beispiel die in der Nähe befindlichen Blumen riechen, dafür aber nicht den auffällig stinkenden Oger, der an ihn heranschleicht.</p>",
         "Sphärenkunde": "<p><b>Anwendungsgebiete</b>: Hinterhalt entdecken, Suchen, Wahrnehmen</p><p><b>Qualität</b>: Der Held bemerkt weitere Details.</p><p><b>Misslungene Probe</b>: Der Held bemerkt nichts.</p><p><b>Kritischer Erfolg</b>: Der Held nimmt sogar kaum bemerkbare Details wahr. Für Qualitätsstufen, Vergleichs- und Sammelproben gilt: FP = doppelter FW.</p><p><b>Patzer</b>: Der Held nimmt etwas anderes wahr, als das, was wirklich wichtig wäre. Er könnte zum Beispiel die in der Nähe befindlichen Blumen riechen, dafür aber nicht den auffällig stinkenden Oger, der an ihn heranschleicht.</p>",
-        "Steinbearbeitung":"<p><b>Anwendungsgebiete</b>: Maurerarbeiten, Steine brechen, Steinmetzarbeiten</p><p><b>Werkzeuge</b>: entsprechendes Rohmaterial (Stein, Ton), Hammer, Meißel</p><p><b>Qualität</b>: Das Werkstück ist schneller fertig oder es wird eine bessere Qualität erzielt.</p><p><b>Misslungene Probe</b>: Der Held kommt mit der Arbeit an dem Werkstück nicht voran.</p><p><b>Kritischer Erfolg</b>: Die Zahl der FP bei dieser Probe verdoppelt sich, der Held erhält aber mindestens 5 FP. Erschwernisse, die durch misslungene Sammelproben aufgebaut wurden, werden komplett abgebaut.</p><p><b>Patzer</b>: Ein Patzer sorgt dafür, dass die angesammelten QS auf 0 sinken und keine weitere Probe für dieses Vorhaben angewandt werden kann.</p>",
+        "Steinbearbeitung": "<p><b>Anwendungsgebiete</b>: Maurerarbeiten, Steine brechen, Steinmetzarbeiten</p><p><b>Werkzeuge</b>: entsprechendes Rohmaterial (Stein, Ton), Hammer, Meißel</p><p><b>Qualität</b>: Das Werkstück ist schneller fertig oder es wird eine bessere Qualität erzielt.</p><p><b>Misslungene Probe</b>: Der Held kommt mit der Arbeit an dem Werkstück nicht voran.</p><p><b>Kritischer Erfolg</b>: Die Zahl der FP bei dieser Probe verdoppelt sich, der Held erhält aber mindestens 5 FP. Erschwernisse, die durch misslungene Sammelproben aufgebaut wurden, werden komplett abgebaut.</p><p><b>Patzer</b>: Ein Patzer sorgt dafür, dass die angesammelten QS auf 0 sinken und keine weitere Probe für dieses Vorhaben angewandt werden kann.</p>",
         "Sternkunde": "<p><b>Anwendungsgebiete</b>: Astrologie, Himmelskartographie, Kalendarium</p><p><b>Qualität</b>: schnellere Horoskoperstellung</p><p><b>Misslungene Probe</b>: Der Held hat keine Ahnung.</p><p><b>Kritischer Erfolg</b>: Der Held kann sehr genau die Bewegungen der Himmelskörper berechnen.</p><p><b>Patzer</b>: Eine Fehleinschätzung bei einem Horoskop, einer Mondfinsternis etc.</p>",
         "Stoffbearbeitung": "<p><b>Anwendungsgebiete</b>: Färben, Filzen, Schneidern, Spinnen, Weben</p><p><b>Werkzeuge</b>: Messer, Nähzeug, Schere, Webstuhl</p><p><b>Qualität</b>: Das Werkstück ist schneller fertig oder es wird eine bessere Qualität erzielt.</p><p><b>Misslungene Probe</b>: Der Held kommt mit der Arbeit an dem Werkstück nicht voran.</p><p><b>Kritischer Erfolg</b>: Die Zahl der FP bei dieser Probe verdoppelt sich, der Held erhält aber mindestens 5 FP. Erschwernisse, die durch misslungene Sammelproben aufgebaut wurden, werden komplett abgebaut.</p><p><b>Patzer</b>: Ein Patzer sorgt dafür, dass die angesammelten QS auf 0 sinken und keine weitere Probe für dieses Vorhaben angewandt werden kann.</p>",
         "Tanzen": "<p><b>Anwendungsgebiete</b>: Dorftanz, exotischer Tanz, Hoftanz, Kulttanz</p><p><b>Qualität</b>: Der Tanz ist so gut, dass der Held mehr Applaus erhält.</p><p><b>Misslungene Probe</b>: Der Held bringt die Tanzschritte durcheinander.</p><p><b>Kritischer Erfolg</b>: Die Aufmerksamkeit der Zuschauer fällt wegen des perfekten Tanzes auf den Helden. Für Qualitätsstufen, Vergleichs- und Sammelproben gilt: FP = doppelter FW.</p><p><b>Patzer</b>: Der Held tritt seiner Tanzpartnerin auf die Füße und verletzt sie dabei oder er stürzt und blamiert sich.</p>",
-        "Taschendiebstahl":"<p><b>Anwendungsgebiete</b>: Ablenkungen, Person bestehlen, Gegenstand entwenden, Zustecken</p><p><b>Werkzeuge</b>: eventuell Messer oder Dolch</p><p><b>Qualität</b>: Der Taschendiebstahl wird später bemerkt.</p><p><b>Misslungene Probe</b>: Der Versuch misslingt oder das Opfer bemerkt den Diebstahl.</p><p><b>Kritischer Erfolg</b>: Das Opfer hat den Diebstahlversuch nicht bemerkt und der Held hat besonders wertvolle Beute gemacht oder gleich mehrere Ziele bestohlen. Für Qualitätsstufen, Vergleichs- und Sammelproben gilt: FP = doppelter FW.</p><p><b>Patzer</b>: Der Held wird von umstehenden Personen oder dem Opfer beobachtet, ohne es zu bemerken, und der Diebstahlversuch misslingt. Außerdem ist er Überrascht.</p>",
+        "Taschendiebstahl": "<p><b>Anwendungsgebiete</b>: Ablenkungen, Person bestehlen, Gegenstand entwenden, Zustecken</p><p><b>Werkzeuge</b>: eventuell Messer oder Dolch</p><p><b>Qualität</b>: Der Taschendiebstahl wird später bemerkt.</p><p><b>Misslungene Probe</b>: Der Versuch misslingt oder das Opfer bemerkt den Diebstahl.</p><p><b>Kritischer Erfolg</b>: Das Opfer hat den Diebstahlversuch nicht bemerkt und der Held hat besonders wertvolle Beute gemacht oder gleich mehrere Ziele bestohlen. Für Qualitätsstufen, Vergleichs- und Sammelproben gilt: FP = doppelter FW.</p><p><b>Patzer</b>: Der Held wird von umstehenden Personen oder dem Opfer beobachtet, ohne es zu bemerken, und der Diebstahlversuch misslingt. Außerdem ist er Überrascht.</p>",
         "Tierkunde": "<p><b>Anwendungsgebiete</b>: domestizierte Tiere, Ungeheuer, Wildtiere</p><p><b>Qualität</b>: genauere Informationen zu einem Tier</p><p><b>Misslungene Probe</b>: Der Held hat keine Ahnung.</p><p><b>Kritischer Erfolg</b>: Der Held weiß alles über das Tier.</p><p><b>Patzer</b>: Der Held glaubt, etwas über das Tier zu wissen, liegt aber gefährlich falsch (schätzt es ungiftig ein, obwohl es sehr giftig ist, oder als Pflanzenfresser, obwohl es Fleischfresser ist).</p>",
         "Überreden": "<p><b>Einsatzmöglichkeit</b>: Anführer (siehe Seite 215)</p><p><b>Anwendungsgebiete</b>: Aufschwatzen, Betteln, Herausreden, Manipulieren, Schmeicheln</p><p><b>Qualität</b>: Das Gegenüber ist bereit, mehr für den Helden zu tun.</p><p><b>Misslungene Probe</b>: Dem Held gelingt es nicht, sein Gegenüber zu überreden.</p><p><b>Kritischer Erfolg</b>: Die Person, die der Held überreden wollte, tut weit mehr als sie muss.</p><p><b>Patzer</b>: Die Person, die der Held überreden wollte, ist wütend auf den Helden und lässt sich in nächster Zeit nicht mehr überreden.</p>",
         "Verbergen": "<p><b>Anwendungsgebiete</b>: Gegenstände verbergen, Schleichen, sich Verstecken</p><p><b>Qualität</b>: Der Held kann schwieriger entdeckt werden oder findet schneller ein Versteck.</p><p><b>Misslungene Probe</b>: Der Held hat sich nur dürftig versteckt oder Geräusche beim Schleichen verursacht.</p><p><b>Kritischer Erfolg</b>: Der Held hat ein perfektes Versteck gefunden oder ist lautlos wie eine Katze. Für Qualitätsstufen, Vergleichs- und Sammelproben gilt: FP = doppelter FW.</p><p><b>Patzer</b>: Irgendetwas (Teller, ein Möbelstück) ist umgefallen.</p>",
@@ -603,7 +621,12 @@
         "TimeCannotBeParsed": "Die Zauberdauer kan nicht automatisch angepasst werden. Format nicht erkannt.",
         "DamagePermission": "Du darfst den Schaden nicht übertragen.",
         "NotEnoughXP": "Nicht genug Abenteuerpunkte",
-        "AdvanceMaximumReached": "Maximale Steigerung bereits erreicht"
+        "AdvanceMaximumReached": "Maximale Steigerung bereits erreicht",
+        "notFound": "{category} {name} nicht gefunden",
+        "itemNotFound": "Dieser Eintrag wurde nicht in der Datenbank gefunden, bitte manuell anlegen",
+        "notUnderstoodCareer": "Folgende Einträge der Profession konnten nicht umgesetzt werden. Bitte manuell anpassen.",
+        "notUnderstoodCulture": "Folgende Einträge der Kultur konnten nicht umgesetzt werden. Bitte manuell anpassen."
+
     },
 
     "CEREMONYMODIFIER": {

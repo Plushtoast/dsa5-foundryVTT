@@ -12,8 +12,6 @@ export default class ItemSheetdsa5 extends ItemSheet {
     static get defaultOptions() {
         const options = super.defaultOptions;
         options.tabs = [{ navSelector: ".tabs", contentSelector: ".content", initial: "description" }]
-
-
         mergeObject(options, {
             classes: options.classes.concat(["dsa5", "item"]),
             width: 450,

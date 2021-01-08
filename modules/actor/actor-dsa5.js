@@ -96,6 +96,7 @@ export default class Actordsa5 extends Actor {
             data.data.status.toughness.max = data.data.status.toughness.value + data.data.status.toughness.modifier;
             this._calculateStatus(data, "dodge")
 
+            data.data.canAdvance = Actordsa5.canAdvance(data.data)
 
         } catch (error) {
             console.error("Something went wrong with preparing actor data: " + error + error.stack)
@@ -118,6 +119,10 @@ export default class Actordsa5 extends Actor {
         return preparedData;
     }
 
+    static canAdvance(actorData) {
+        return actorData.canAdvance || actorData.type == "character" || actorData.items.find(x => x.name == "Vertrauter" && x.type == "trait")
+    }
+
     static _calculateCombatSkillValues(i, actorData) {
         if (i.data.weapontype.value == "melee") {
             let vals = i.data.guidevalue.value.split('/').map(x =>
@@ -133,13 +138,13 @@ export default class Actordsa5 extends Actor {
             i.data.attack.value = i.data.talentValue.value + Math.max(0, Math.floor((attackChar - 8) / 3));
         }
         i.cost = game.i18n.format("advancementCost", { cost: DSA5_Utility._calculateAdvCost(i.data.talentValue.value, i.data.StF.value) })
-        i.canAdvance = actorData.type == "character"
+        i.canAdvance = Actordsa5.canAdvance(actorData)
         return i;
     }
 
     _perpareItemAdvancementCost(item) {
         item.cost = game.i18n.format("advancementCost", { cost: DSA5_Utility._calculateAdvCost(item.data.talentValue.value, item.data.StF.value) })
-        item.canAdvance = this.data.type == "character"
+        item.canAdvance = Actordsa5.canAdvance(this.data)
         return item
     }
 
@@ -389,6 +394,7 @@ export default class Actordsa5 extends Actor {
                             fatePointsAbilities.push(i)
                             break;
                         case "magical":
+                        case "staff":
                             magicSpecialAbilities.push(i)
                             break;
                         case "clerical":
@@ -400,6 +406,7 @@ export default class Actordsa5 extends Actor {
                         case "animal":
                             animalSpecialAbilities.push(i)
                             break
+
                     }
                     break;
             }
@@ -541,8 +548,8 @@ export default class Actordsa5 extends Actor {
         return r
     }
 
-    async _updateAPs(apValue){
-        if (this.data.type == "character") {
+    async _updateAPs(apValue) {
+        if (Actordsa5.canAdvance(this.data)) {
             if (!isNaN(apValue) && !(apValue == null)) {
                 await this.update({
                     "data.details.experience.spent": Number(this.data.data.details.experience.spent) + Number(apValue),
@@ -550,6 +557,18 @@ export default class Actordsa5 extends Actor {
             } else {
                 ui.notifications.warn(game.i18n.localize("Error.APUpdateError"))
             }
+        }
+    }
+
+    checkEnoughXP(cost) {
+        if (!Actordsa5.canAdvance(this.data))
+            return true
+
+        if (Number(this.data.data.details.experience.total) - Number(this.data.data.details.experience.spent) > cost) {
+            return true
+        } else {
+            ui.notifications.warn(game.i18n.localize("Error.NotEnoughXP"))
+            return false
         }
     }
 
@@ -848,7 +867,7 @@ export default class Actordsa5 extends Actor {
                                     label: game.i18n.localize("Ok"),
                                     callback: dlg => {
 
-                                        let diesToReroll = dlg.find('.dieSelected').map(function () { return Number($(this).attr('data-index')) }).get()
+                                        let diesToReroll = dlg.find('.dieSelected').map(function() { return Number($(this).attr('data-index')) }).get()
                                         if (diesToReroll.length > 0) {
 
                                             let newRoll = []
@@ -903,7 +922,7 @@ export default class Actordsa5 extends Actor {
                                     label: game.i18n.localize("Ok"),
                                     callback: dlg => {
 
-                                        let diesToReroll = dlg.find('.dieSelected').map(function () { return Number($(this).attr('data-index')) }).get()
+                                        let diesToReroll = dlg.find('.dieSelected').map(function() { return Number($(this).attr('data-index')) }).get()
                                         if (diesToReroll.length > 0) {
 
                                             let newRoll = []
@@ -1199,7 +1218,7 @@ export default class Actordsa5 extends Actor {
 
     _parseModifiers(search) {
         let res = []
-        $(search + " option:selected").each(function () {
+        $(search + " option:selected").each(function() {
             res.push({
                 name: $(this).text().trim(),
                 value: Number($(this).val())
@@ -1272,11 +1291,12 @@ export default class Actordsa5 extends Actor {
         return this._parseDmg(item)
     }
 
-    static _parseDmg(item){
+    static _parseDmg(item) {
         let parseDamage = new Roll(item.data.damage.value.replace(/[Ww]/, "d"))
-        let damageDie = "", damageTerm = ""
+        let damageDie = "",
+            damageTerm = ""
         for (let k of parseDamage.terms) {
-            if (typeof (k) == 'object') {
+            if (typeof(k) == 'object') {
                 damageDie = k.number + "d" + k.faces
             } else {
                 damageTerm += k
@@ -1311,8 +1331,7 @@ export default class Actordsa5 extends Actor {
             cardOptions.speaker.token = this.token.data._id;
             cardOptions.speaker.scene = canvas.scene._id
             cardOptions.flags.img = this.token.data.img;
-        } else
-        {
+        } else {
             let speaker = ChatMessage.getSpeaker()
             if (speaker.actor == this.data._id) {
                 cardOptions.speaker.alias = speaker.alias
@@ -1355,7 +1374,7 @@ export default class Actordsa5 extends Actor {
             return this.removeCondition(effect, 10)
         }
 
-        if (typeof (effect) === "string")
+        if (typeof(effect) === "string")
             effect = duplicate(CONFIG.statusEffects.find(e => e.id == effect))
         if (!effect)
             return "No Effect Found"
@@ -1404,7 +1423,7 @@ export default class Actordsa5 extends Actor {
             await this.addCondition("prone")
 
         //if (game.combat && (effect.id == "blinded" || effect.id == "deafened"))
-            //    effect.flags.dsa5.roundReceived = game.combat.round
+        //    effect.flags.dsa5.roundReceived = game.combat.round
 
         if (delta > 0 && statusId == "inpain" && !this.hasCondition("bloodrush") && AdvantageRulesDSA5.hasVantage(this, "Blutrausch")) {
             await this.addCondition("bloodrush")
@@ -1414,7 +1433,7 @@ export default class Actordsa5 extends Actor {
     }
 
     async removeCondition(effect, value = 1) {
-        if (typeof (effect) === "string")
+        if (typeof(effect) === "string")
             effect = duplicate(CONFIG.statusEffects.find(e => e.id == effect))
         if (!effect)
             return "No Effect Found"

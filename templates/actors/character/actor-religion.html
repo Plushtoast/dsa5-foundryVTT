@@ -19,8 +19,7 @@
         <div class="col spells item" data-item-id="{{item._id}}">
             <div class="row-section skills lineheight">
                 <div class="col four">
-                    <a class="item-edit">{{item.name}}</a>
-                    {{#if item.canAdvance}}<a class="advance advance-item"><i title="{{item.cost}}" class="fas fa-plus"></i></a>{{/if}}
+                    <a class="item-edit">{{item.name}}</a> {{#if item.canAdvance}}<a class="advance advance-item"><i title="{{item.cost}}" class="fas fa-plus"></i></a>{{/if}}
                 </div>
                 <div class="col four center">
                     <a class="spell-select">
@@ -83,8 +82,7 @@
         <div class="col spells item" data-item-id="{{item._id}}">
             <div class="row-section skills lineheight">
                 <div class="col four">
-                    <a class="item-edit">{{item.name}}</a>
-                    {{#if item.canAdvance}}<a class="advance advance-item"><i title="{{item.cost}}" class="fas fa-plus"></i></a>{{/if}}
+                    <a class="item-edit">{{item.name}}</a> {{#if item.canAdvance}}<a class="advance advance-item"><i title="{{item.cost}}" class="fas fa-plus"></i></a>{{/if}}
                 </div>
                 <div class="col four center">
                     <a class="spell-select">
@@ -160,13 +158,14 @@
                     <div class="form-group">
                         <select name="data.guidevalue.value" data-dtype="{{actor.data.guidevalue.type}}">
                             {{#select actor.data.guidevalue.value}}
-                            {{#each guidevalues as |type sktype|}}
+                            {{#each actor.guidevalues as |type sktype|}}
                             <option value="{{sktype}}">{{localize type}}</option>
                             {{/each}}
                             {{/select}}
                         </select>
                     </div>
                 </div>
+
             </div>
             <div class="row-section lineheight">
                 <div class="col fourty center">
@@ -181,7 +180,7 @@
                     {{localize "happyTalents"}}
                 </div>
                 <div class="col sixty">
-                    <input type="text" name="data.happyTalents.value" data-dtype="{{actor.data.happyTalents.type}}" value="{{actor.data.happyTalents.value}}" />
+                    <textarea type="text" name="data.happyTalents.value" rows="8" data-dtype="{{actor.data.happyTalents.type}}" value="">{{actor.data.happyTalents.value}}</textarea>
                 </div>
             </div>
         </div>
