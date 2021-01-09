@@ -148,7 +148,7 @@ h7 {
     width: 100%;
 }
 
-.delButton {
+.hovermenu {
     display: inline-block;
     position: absolute;
     top: 2px;
@@ -157,7 +157,12 @@ h7 {
     cursor: pointer;
 }
 
-.delButton:hover {
+.hovermenu i {
+    color: var(--border-color);
+    padding: 2px;
+}
+
+.hovermenu i:hover {
     color: rgb(63, 54, 54);
 }
 

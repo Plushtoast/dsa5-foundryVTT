@@ -995,6 +995,11 @@
                 "type": "String",
                 "label": "list",
                 "value": ""
+            },
+            "effect": {
+                "type": "String",
+                "label": "effect",
+                "value": ""
             }
         },
         "equipment": {

@@ -47,6 +47,10 @@
                 <label class="label-text">{{localize "maxlevel"}}: </label>
                 <input class="input-text" type="Number" name="data.maxRank.value" value="{{data.maxRank.value}}" data-dtype="{{data.maxRank.type}}" />
             </div>
+            <div class="form-group">
+                <label class="label-text">{{localize "effect"}}: </label>
+                <input class="input-text" type="text" name="data.effect.value" value="{{data.effect.value}}" data-dtype="{{data.effect.type}}" />
+            </div>
 
             {{#when data.category.value 'eq' 'Combat'}}
             <div class="form-group">

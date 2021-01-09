@@ -2,8 +2,8 @@
     "name": "dsa5",
     "title": "Das Schwarze Auge (5th Edition)",
     "description": "Many details here.",
-    "version": "0.1.62",
-    "templateVersion": 43,
+    "version": "0.1.64",
+    "templateVersion": 44,
     "author": "Plushtoast",
     "scripts": [],
     "esmodules": [
@@ -13,7 +13,7 @@
         "styles/dsa5.css"
     ],
     "packs": [{
-            "name": "Skills",
+            "name": "skills",
             "label": "Talente",
             "system": "dsa5",
             "path": "packs/skills.db",
@@ -23,7 +23,7 @@
             ]
         },
         {
-            "name": "Combatskills",
+            "name": "combatskills",
             "label": "Kampftalente",
             "system": "dsa5",
             "path": "packs/combatskills.db",
@@ -33,7 +33,7 @@
             ]
         },
         {
-            "name": "Money",
+            "name": "money",
             "label": "Geld",
             "system": "dsa5",
             "path": "packs/money.db",
@@ -43,7 +43,7 @@
             ]
         },
         {
-            "name": "Species",
+            "name": "species",
             "label": "Rassen",
             "system": "dsa5",
             "path": "packs/species.db",

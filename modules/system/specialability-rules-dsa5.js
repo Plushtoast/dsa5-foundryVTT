@@ -1,16 +1,14 @@
 import DSA5 from "./config-dsa5.js";
+import ItemRulesDSA5 from "./item-rules-dsa5.js";
 
-export default class SpecialabilityRulesDSA5 {
+export default class SpecialabilityRulesDSA5 extends ItemRulesDSA5 {
 
     static async setupFunctions() {
-        mergeObject(DSA5.addAbilityRules, {
-
-        })
-        mergeObject(DSA5.removeAbilityRules, {
-
-        })
+        mergeObject(DSA5.addAbilityRules, {})
+        mergeObject(DSA5.removeAbilityRules, {})
         mergeObject(DSA5.AbilitiesNeedingAdaption, {
-            "Fertigkeitsspezialisierung ()": { items: ["skill"] },
+            "Fertigkeitsspezialisierung ()": { items: ["text"] },
+            "Geländekunde ()": { items: ["text"] },
         })
     }
 
@@ -24,6 +22,7 @@ export default class SpecialabilityRulesDSA5 {
             DSA5.removeAbilityRules[item.name](actor, item)
         }
     }
+
 
     static async _specialabilityReturnFunction(actor, item, typeClass, adoption) {
         if (item == null)

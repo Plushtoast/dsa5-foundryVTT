@@ -144,7 +144,6 @@ export default class ActorSheetDsa5 extends ActorSheet {
                     if (res.result.successLevel > 0) {
                         aggregated.data.cummulatedQS.value = res.result.qualityStep + aggregated.data.cummulatedQS.value
                         aggregated.data.cummulatedQS.value = Math.min(10, aggregated.data.cummulatedQS.value)
-
                     } else {
                         aggregated.data.previousFailedTests.value += 1
                     }
@@ -239,6 +238,10 @@ export default class ActorSheetDsa5 extends ActorSheet {
     activateListeners(html) {
         super.activateListeners(html);
 
+        let posthand = ev => {
+            this.actor.items.find(i => i.data._id == this._getItemId(ev)).postItem()
+        }
+
         html.find('.item-toggle').click(ev => {
             let itemId = this._getItemId(ev);
             let item = duplicate(this.actor.getEmbeddedEntity("OwnedItem", itemId))
@@ -330,9 +333,7 @@ export default class ActorSheetDsa5 extends ActorSheet {
         });
 
         html.find(".item-post").click(ev => {
-            let itemId = this._getItemId(ev);
-            const item = this.actor.items.find(i => i.data._id == itemId)
-            item.postItem();
+            posthand(ev)
         });
 
         html.find('.skill-advances').keydown(async event => {
@@ -473,14 +474,22 @@ export default class ActorSheetDsa5 extends ActorSheet {
             });
         });
 
-        let hand = ev => this._deleteItem(ev);
-        html.find(".cards .item").mouseenter(ev => {
-            if (ev.currentTarget.getElementsByClassName('delButton').length == 0) {
-                var div = document.createElement('div')
-                div.classList.add("delButton")
+        let deletehand = ev => this._deleteItem(ev);
 
-                div.innerHTML = "<i class=\"fas fa-times\"></i>"
-                div.addEventListener('click', hand, false)
+        html.find(".cards .item").mouseenter(ev => {
+            if (ev.currentTarget.getElementsByClassName('hovermenu').length == 0) {
+                var div = document.createElement('div')
+                div.classList.add("hovermenu")
+                var del = document.createElement('i')
+                del.classList.add("fas", "fa-times")
+                del.title = game.i18n.localize('SHEET.DeleteItem')
+                del.addEventListener('click', deletehand, false)
+                var post = document.createElement('i')
+                post.classList.add("fas", "fa-comment")
+                post.title = game.i18n.localize('SHEET.PostItem')
+                post.addEventListener('click', posthand, false)
+                div.appendChild(post)
+                div.appendChild(del)
                 ev.currentTarget.appendChild(div)
             }
         });
@@ -489,7 +498,7 @@ export default class ActorSheetDsa5 extends ActorSheet {
             if (e.parentNode == this || e == this) {
                 return;
             }
-            ev.currentTarget.querySelectorAll('.delButton').forEach(e => e.remove());
+            ev.currentTarget.querySelectorAll('.hovermenu').forEach(e => e.remove());
         });
 
         let handler = ev => this._onDragItemStart(ev);

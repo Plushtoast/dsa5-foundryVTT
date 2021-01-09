@@ -4,6 +4,7 @@ import DSA5Dialog from "../dialog/dialog-dsa5.js"
 import Miscast from "../tables/spellmiscast.js"
 import DSA5_Utility from "./utility-dsa5.js";
 import AdvantageRulesDSA5 from "./advantage-rules-dsa5.js";
+import SpecialabilityRulesDSA5 from "./specialability-rules-dsa5.js";
 
 export default class DiceDSA5 {
     static async setupDialog({ dialogOptions, testData, cardOptions, }) {
@@ -30,6 +31,7 @@ export default class DiceDSA5 {
         switch (testData.source.type) {
             case "skill":
                 situationalModifiers.push(...AdvantageRulesDSA5.getTalentBonus(testData.extra.actor, testData.source.name))
+                situationalModifiers.push(...SpecialabilityRulesDSA5.getTalentBonus(testData.extra.actor, testData.source))
                 situationalModifiers.push(...AdvantageRulesDSA5.getVantageAsModifier(testData.extra.actor, /Lästige Mindergeister/, -1))
                 if (testData.source.data.burden.value == "no") {
                     this._removeModifiers(situationalModifiers, ["CONDITION.encumbered"])

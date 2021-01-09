@@ -35,6 +35,7 @@ export default class Itemdsa5 extends Item {
         "aggregatedTest": "icons/sundries/gaming/dice-runed-brown.webp",
 
     }
+
     static defaultIcon(data) {
         if (!data.img) {
             if (data.type in this.defaultImages) {
@@ -57,62 +58,104 @@ export default class Itemdsa5 extends Item {
     prepare() {
         let data = duplicate(this.data)
         preparedData.img = preparedData.img || DEFAULT_TOKEN;
-
         return preparedData;
     }
 
     _armorChatData() {
         const data = duplicate(this.data.data);
-        var properties = [
+        let properties = [
             this._chatLineHelper("protection", data.protection.value),
             this._chatLineHelper("encumbrance", data.encumbrance.value)
-
         ]
         if (data.effect.value != "") {
             properties.push(this._chatLineHelper("effect", data.effect.value))
         }
-        return properties;
+        return properties
     }
 
     _rangeweaponChatData() {
         const data = duplicate(this.data.data);
-        let properties = [
+        return [
             this._chatLineHelper("damage", data.damage.value),
             this._chatLineHelper("combatskill", data.combatskill.value)
         ]
-        return properties;
     }
 
     _meleeweaponChatData() {
         const data = duplicate(this.data.data);
-        let properties = [
+        return [
             this._chatLineHelper("damage", data.damage.value),
             this._chatLineHelper("atmod", data.atmod.value),
             this._chatLineHelper("pamod", data.pamod.value),
             this._chatLineHelper("combatskill", data.combatskill.value)
         ]
-        return properties;
     }
 
     _ammunitionChatData() {
         const data = duplicate(this.data.data);
-        let properties = [
+        return [
             this._chatLineHelper("ammunitiongroup", game.i18n.localize(data.ammunitiongroup.value))
         ]
-        return properties;
     }
 
     _equipmentChatData() {
         const data = duplicate(this.data.data);
-        let properties = [
+        return [
             this._chatLineHelper("equipmentType", game.i18n.localize(data.equipmentType.value))
         ]
-        return properties;
+    }
+
+    _advantageChatData() {
+        const data = duplicate(this.data.data);
+        return [
+            this._chatLineHelper("effect", data.effect.value),
+        ]
+    }
+
+    _disadvantageChatData() {
+        const data = duplicate(this.data.data);
+        return [
+            this._chatLineHelper("effect", data.effect.value),
+        ]
+    }
+
+    _specialabilityChatData() {
+        const data = duplicate(this.data.data);
+        return [
+            this._chatLineHelper("rule", data.rule.value),
+        ]
+    }
+
+    _blessingChatData() {
+        const data = duplicate(this.data.data);
+        return [
+            this._chatLineHelper("duration", data.duration.value),
+            this._chatLineHelper("targetCategory", data.targetCategory.value),
+            this._chatLineHelper("feature", data.feature.value),
+        ]
+    }
+
+    _magictrickChatData() {
+        const data = duplicate(this.data.data);
+        return [
+            this._chatLineHelper("duration", data.duration.value),
+            this._chatLineHelper("targetCategory", data.targetCategory.value),
+            this._chatLineHelper("feature", data.feature.value),
+        ]
+    }
+
+    _traitChatData() {
+        const data = duplicate(this.data.data);
+        return [
+            this._chatLineHelper("duration", data.duration.value),
+            this._chatLineHelper("targetCategory", data.targetCategory.value),
+            this._chatLineHelper("feature", data.feature.value),
+        ]
     }
 
     _liturgyChatData() {
         const data = duplicate(this.data.data);
-        let properties = [
+        return [
             this._chatLineHelper("castingTime", data.castingTime.value),
             this._chatLineHelper("KaPCost", data.castingTime.value),
             this._chatLineHelper("distribution", data.distribution.value),
@@ -120,7 +163,17 @@ export default class Itemdsa5 extends Item {
             this._chatLineHelper("reach", data.range.value),
             this._chatLineHelper("targetCategory", data.targetCategory.value)
         ]
-        return properties;
+    }
+    _ceremonyChatData() {
+        const data = duplicate(this.data.data);
+        return [
+            this._chatLineHelper("castingTime", data.castingTime.value),
+            this._chatLineHelper("KaPCost", data.castingTime.value),
+            this._chatLineHelper("distribution", data.distribution.value),
+            this._chatLineHelper("duration", data.duration.value),
+            this._chatLineHelper("reach", data.range.value),
+            this._chatLineHelper("targetCategory", data.targetCategory.value)
+        ]
     }
 
     _aggregatedTestChatData() {
@@ -134,18 +187,17 @@ export default class Itemdsa5 extends Item {
         } else if (data.allowedTestCount.value - data.usedTestCount.value <= 0) {
             result = game.i18n.localize("Failure")
         }
-        let properties = [
+        return [
             this._chatLineHelper("cummulatedQS", `${data.cummulatedQS.value} / 10`),
             this._chatLineHelper("interval", data.interval.value),
             this._chatLineHelper("probes", `${data.usedTestCount.value} / ${data.allowedTestCount.value}`),
             this._chatLineHelper("result", result),
         ]
-        return properties;
     }
 
     _spellChatData() {
         const data = duplicate(this.data.data);
-        let properties = [
+        return [
             this._chatLineHelper("castingTime", data.castingTime.value),
             this._chatLineHelper("AsPCost", data.castingTime.value),
             this._chatLineHelper("distribution", data.distribution.value),
@@ -153,21 +205,29 @@ export default class Itemdsa5 extends Item {
             this._chatLineHelper("reach", data.range.value),
             this._chatLineHelper("targetCategory", data.targetCategory.value)
         ]
-        return properties;
+    }
+
+    _ritualChatData() {
+        const data = duplicate(this.data.data);
+        return [
+            this._chatLineHelper("castingTime", data.castingTime.value),
+            this._chatLineHelper("AsPCost", data.castingTime.value),
+            this._chatLineHelper("distribution", data.distribution.value),
+            this._chatLineHelper("duration", data.duration.value),
+            this._chatLineHelper("reach", data.range.value),
+            this._chatLineHelper("targetCategory", data.targetCategory.value)
+        ]
     }
 
     _chatLineHelper(key, val) {
-        return `<b>${game.i18n.localize(key)}</b>: ${val}`
+        return `<b>${game.i18n.localize(key)}</b>: ${val ? val : "-"}`
     }
-
-
 
     async postItem() {
         const properties = this[`_${this.data.type}ChatData`]();
         let chatData = duplicate(this.data);
         chatData["properties"] = properties
 
-        //Check if the posted item should have availability/pay buttons
         chatData.hasPrice = "price" in chatData.data;
         if (chatData.hasPrice) {
             let price = chatData.data.price.value;
@@ -182,16 +242,12 @@ export default class Itemdsa5 extends Item {
             properties.push(`<b>${game.i18n.localize("price")}</b>: ${chatData.data.price.D} <div title="${game.i18n.localize("Money-D")}" class="chatmoney money-D"></div>, ${chatData.data.price.S} <div title="${game.i18n.localize("Money-S")}" class="chatmoney money-S"></div>, ${chatData.data.price.H} <div title="${game.i18n.localize("Money-H")}" class="chatmoney money-H"></div>, ${chatData.data.price.K} <div title="${game.i18n.localize("Money-K")}" class="chatmoney money-K"></div>`);
         }
 
-
-
-        // Don't post any image for the item (which would leave a large gap) if the default image is used
         if (chatData.img.includes("/blank.webp"))
             chatData.img = null;
 
         renderTemplate('systems/dsa5/templates/chat/post-item.html', chatData).then(html => {
             let chatOptions = DSA5_Utility.chatDataSetup(html)
 
-            // Setup drag and drop data
             chatOptions["flags.transfer"] = JSON.stringify({
                 type: "postedItem",
                 payload: this.data,
