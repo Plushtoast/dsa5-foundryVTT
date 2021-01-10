@@ -1,0 +1,68 @@
+<section class="content" data-cost="{{species.data.APValue.value}}">
+    <h1>{{title}}</h1>
+    <p style="margin-bottom:10px;">{{{description}}}</p>
+
+    <nav class="sheet-tabs tabs" data-tab-container="primary">
+        <a class="item active" data-tab="description">{{localize "Description"}}</a> {{#if generalToChose}} <a class="item" data-tab="general">{{localize "general"}}</a> {{/if}} {{#if vantagesToChose}} <a class="item" data-tab="vantages">{{localize "vantages"}}</a>        {{/if}}
+    </nav>
+
+    <div class="tab description active" data-tab="description">
+        <div class="row-section">
+            <div class="col two">
+                {{{culture.data.description.value}}}
+            </div>
+            <div class="col two">
+                <img src="{{career.img}}" style="max-width:100%; max-height: 100%;float: left;" data-edit="img" />
+            </div>
+        </div>
+    </div>
+
+    {{#if vantagesToChose}}
+    <div class="tab vantages" data-tab="vantages">
+        <p>{{localize 'WIZARD.vantageDescriptionSpecies'}}</p>
+        {{#if advantagesToChose}}
+        <h2>{{localize 'recommendedAdvantages'}}</h2>
+        {{#each advantagegroups as |group j|}}
+        <h3>{{group.name}}</h3>
+        <div class="row-section wrap">
+            {{#each group.res as |item i|}}
+            <div class="col two row-section lineheight">
+                <input type="checkbox" id="advantage_{{i}}_{{j}}" class="optional" data-cost="{{item.apCost}}" name="{{item.replaceName}}" data-step="{{item.step}}" value="{{item._id}}" {{#if item.disabled}}disabled{{/if}}>
+                <label for="advantage_{{i}}_{{j}}">{{item.replaceName}} {{roman item.step}}  ({{item.apCost}} AP)</label>
+                <a class="show-item" data-id="{{item._id}}" title="{{item.tooltip}}"><i class="fas fa-info"></i></a>
+            </div>
+            {{/each}}
+        </div>
+        {{/each }} {{/if}} {{#if disadvantagesToChose}}
+        <h2>{{localize 'recommendedDisadvantages'}}</h2>
+        {{#each disadvantagegroups as |group j|}}
+        <h3>{{group.name}}</h3>
+        <div class="row-section wrap">
+            {{#each group.res as |item i|}}
+            <div class="col two row-section lineheight">
+                <input type="checkbox" id="disadvantage_{{i}}_{{j}}" class="optional" data-cost="{{item.apCost}}" name="{{item.replaceName}}" data-step="{{item.step}}" value="{{item._id}}" {{#if item.disabled}}disabled{{/if}}>
+                <label for="disadvantage_{{i}}_{{j}}">{{item.replaceName}} {{roman item.step}}  ({{item.apCost}} AP)</label>
+                <a class="show-item" data-id="{{item._id}}" title="{{item.tooltip}}"><i class="fas fa-info"></i></a>
+            </div>
+            {{/each}}
+        </div>
+        {{/each}} {{/if}}
+    </div>
+    {{/if}} {{#if generalToChose}}
+    <div class="tab general" data-tab="general">
+
+
+    </div>
+    {{/if}}
+
+</section>
+<div class="dialog-buttons">
+    <button class="dialog-button ok default" data-button="ok">
+    <i class="fas fa-check"></i>
+    {{localize 'Ok'}}
+  </button>
+    <button class="dialog-button cancel default" data-button="cancel">
+    <i class="fas fa-close"></i>
+    {{localize 'Cancel'}}
+  </button>
+</div>

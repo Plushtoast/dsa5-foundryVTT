@@ -1,7 +1,7 @@
-import DSA5_Utility from "../system/utility-dsa5.js";
-import DSA5 from "../system/config-dsa5.js"
 import ActorSheetDsa5 from "./actor-sheet.js";
-
+import CultureWizard from "../wizards/culture_wizard.js";
+import CareerWizard from "../wizards/career_wizard.js"
+import SpeciesWizard from "../wizards/species_wizard.js";
 
 export default class ActorSheetdsa5Character extends ActorSheetDsa5 {
     static get defaultOptions() {
@@ -45,5 +45,31 @@ export default class ActorSheetdsa5Character extends ActorSheetDsa5 {
                 form.find('.lastPoint').removeClass('lastPoint')
             }
         })
+    }
+
+    async _manageDragItems(item, typeClass) {
+        switch (typeClass) {
+            case "aggregatedTest":
+                await this.actor.createEmbeddedEntity("OwnedItem", item);
+                break;
+            case "species":
+                let spwizard = new SpeciesWizard()
+                await spwizard.addSpecies(this.actor, item)
+                spwizard.render(true)
+                break;
+            case "culture":
+                let cuwizard = new CultureWizard()
+                await cuwizard.addCulture(this.actor, item)
+                cuwizard.render(true)
+                break
+            case "career":
+                let cwizard = new CareerWizard()
+                await cwizard.addCareer(this.actor, item)
+                cwizard.render(true)
+                break;
+            default:
+                super._manageDragItems(item, typeClass)
+                break
+        }
     }
 }

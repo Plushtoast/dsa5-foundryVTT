@@ -31,7 +31,7 @@ export default class DiceDSA5 {
         switch (testData.source.type) {
             case "skill":
                 situationalModifiers.push(...AdvantageRulesDSA5.getTalentBonus(testData.extra.actor, testData.source.name))
-                situationalModifiers.push(...SpecialabilityRulesDSA5.getTalentBonus(testData.extra.actor, testData.source))
+                situationalModifiers.push(...SpecialabilityRulesDSA5.getTalentBonus(testData.extra.actor, testData.source.name))
                 situationalModifiers.push(...AdvantageRulesDSA5.getVantageAsModifier(testData.extra.actor, /Lästige Mindergeister/, -1))
                 if (testData.source.data.burden.value == "no") {
                     this._removeModifiers(situationalModifiers, ["CONDITION.encumbered"])
@@ -714,16 +714,16 @@ export default class DiceDSA5 {
             let extraFps = new Roll("1d6").roll().results[0]
             res.description = res.description + ", " + game.i18n.localize("additionalFPs") + " " + extraFps
             res.result = res.result + extraFps
-            res.preData.calculatedSpellModifiers.finalcost = res.preData.calculatedSpellModifiers.cost / 2
+            res.preData.calculatedSpellModifiers.finalcost = Math.round(res.preData.calculatedSpellModifiers.cost / 2)
         } else if (res.successLevel <= -2) {
             res.description = res.description + " - " + (res.preData.source.type == "spell" ? Miscast.getSpellMiscast() : Miscast.getLiturgyMiscast())
         }
 
         if (res.successLevel < 0) {
-            res.preData.calculatedSpellModifiers.finalcost = res.preData.calculatedSpellModifiers.cost / 2
+            res.preData.calculatedSpellModifiers.finalcost = Math.round(res.preData.calculatedSpellModifiers.cost / (SpecialabilityRulesDSA5.hasAbility(testData.extra.actor, "Tradition (Hexen)") ? 3 : 2))
         } else {
             if (testData.source.data.effectFormula.value != "") {
-                let formula = testData.source.data.effectFormula.value.replace("QS", res.qualityStep).replace("W", "d").replace("w", "d")
+                let formula = testData.source.data.effectFormula.value.replace("QS", res.qualityStep).replace(/[Ww]/, "d")
                 let rollEffect = new Roll(formula).roll()
                 this._addRollDiceSoNice(testData, rollEffect, "black")
                 res["effectResult"] = rollEffect._total
@@ -742,7 +742,6 @@ export default class DiceDSA5 {
             let ghostroll = new Roll("1d20").roll()
             if (ghostroll.total <= res.preData.calculatedSpellModifiers.finalcost)
                 res.description += ", " + game.i18n.localize("minorghostsappear")
-
         }
         return res
     }
@@ -844,7 +843,6 @@ export default class DiceDSA5 {
                 } else {
                     rollResults = this.rollCombatTrait(testData)
                 }
-
                 break
             case "regeneration":
                 rollResults = this.rollRegeneration(testData)
@@ -856,7 +854,6 @@ export default class DiceDSA5 {
                 } else {
                     rollResults = this.rollWeapon(testData)
                 }
-
                 break;
             case "status":
                 rollResults = this.rollStatus(testData)
@@ -865,11 +862,9 @@ export default class DiceDSA5 {
                 rollResults = this.rollAttribute(testData)
         }
 
-
         mergeObject(rollResults, testData.extra)
 
         rollResults.other = [];
-
         return rollResults
     }
 
@@ -902,7 +897,6 @@ export default class DiceDSA5 {
                         roll = new Roll("1d6").roll()
                     }
                     roll.dice[0].options.colorset = "mu"
-
                     break;
                 case "meleeweapon":
                 case "rangeweapon":

@@ -149,4 +149,11 @@ export default class WizardDSA5 extends Application {
         })
     }
 
+    finalizeUpdate() {
+        if (this.errors.length == 0) {
+            this.close()
+        } else {
+            parent.find('.dialog-buttons').html(`<div class="error"><p>${game.i18n.localize('Error.notUnderstoodCulture')}</p><ul><li>${this.errors.join("</li><li>")}</li></ul></div>`)
+        }
+    }
 }

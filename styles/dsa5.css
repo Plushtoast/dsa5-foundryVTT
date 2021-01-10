@@ -1681,6 +1681,10 @@ input[type="search"] {
     margin-top: 20px;
 }
 
+.largeDialog h3 {
+    margin-top: 10px;
+}
+
 .largeDialog .sheet-tabs {
     height: 32px;
     flex: 0 0 32px;

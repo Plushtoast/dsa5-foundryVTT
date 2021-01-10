@@ -360,8 +360,10 @@
         "addItem": "{item} hinzufügen",
         "careerdescr": "Bitte wähle die passenden Optionen der Karriere <b>{career}</b> und bestätige, um sie für <b class=\"apCost\">{cost}</b> Abenteuerpunkte zu deinem Charakter hinzuzufügen.",
         "culturedescr": "Bitte wähle die passenden Optionen der Kultur <b>{culture}</b> und bestätige, um sie für <b class=\"apCost\">{cost}</b> Abenteuerpunkte zu deinem Charakter hinzuzufügen.",
+        "speciesdescr": "Bitte wähle die passenden Optionen der Spezies <b>{species}</b> und bestätige, um sie für <b class=\"apCost\">{cost}</b> Abenteuerpunkte zu deinem Charakter hinzuzufügen.",
         "vantageDescription": "Wähle passende Vor- und Nachteile um deine Profession abzurunden.",
         "vantageDescriptionCulture": "Wähle passende Vor- und Nachteile um deine Kultur abzurunden.",
+        "vantageDescriptionSpecies": "Wähle passende Vor- und Nachteile um deine Spezies abzurunden.",
         "chose": "Wähle ",
         "missingVantages": "Fehlende vorausgesetzte Vor-/Nachteile",
         "missingSpecialAbilities": "Fehlende vorausgesetzte Sonderfertigkeiten",
@@ -625,7 +627,8 @@
         "notFound": "{category} {name} nicht gefunden",
         "itemNotFound": "Dieser Eintrag wurde nicht in der Datenbank gefunden, bitte manuell anlegen",
         "notUnderstoodCareer": "Folgende Einträge der Profession konnten nicht umgesetzt werden. Bitte manuell anpassen.",
-        "notUnderstoodCulture": "Folgende Einträge der Kultur konnten nicht umgesetzt werden. Bitte manuell anpassen."
+        "notUnderstoodCulture": "Folgende Einträge der Kultur konnten nicht umgesetzt werden. Bitte manuell anpassen.",
+        "canNotBeAdded": "{item} der Kategory {category} kann nicht hinzugefügt werden."
 
     },
 

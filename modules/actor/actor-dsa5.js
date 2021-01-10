@@ -4,6 +4,7 @@ import DiceDSA5 from "../system/dice-dsa5.js"
 import OpposedDsa5 from "../system/opposed-dsa5.js";
 import DSA5Dialog from "../dialog/dialog-dsa5.js"
 import AdvantageRulesDSA5 from "../system/advantage-rules-dsa5.js";
+import SpecialabilityRulesDSA5 from "../system/specialability-rules-dsa5.js";
 
 export default class Actordsa5 extends Actor {
     static async create(data, options) {
@@ -77,6 +78,10 @@ export default class Actordsa5 extends Actor {
                 data.data.status.karmaenergy.current = data.data.status.karmaenergy.initial
                 data.data.status.initiative.value = data.data.status.initiative.current + +(data.data.status.initiative.modifier || 0);
             }
+
+            let encumbrance = this.hasCondition('encumbered')
+            encumbrance = encumbrance ? Number(encumbrance.flags.dsa5.value) : 0
+            this.data.data.status.initiative.value -= (Math.min(4, encumbrance)) + SpecialabilityRulesDSA5.abilityStep(this.data, "Kampfreflexe")
 
             data.data.status.wounds.max = data.data.status.wounds.current + data.data.status.wounds.modifier + data.data.status.wounds.advances;
             data.data.status.astralenergy.max = data.data.status.astralenergy.current + data.data.status.astralenergy.modifier + data.data.status.astralenergy.advances;
@@ -433,12 +438,17 @@ export default class Actordsa5 extends Actor {
             }
         }
 
-        if (equipmentModifiers.ini != undefined)
-            this.data.data.status.initiative.value += equipmentModifiers.ini.value
-
         money.coins = money.coins.sort((a, b) => (a.data.price.value > b.data.price.value) ? -1 : 1);
-        encumbrance += Math.max(0, Math.floor((totalWeight - carrycapacity) / 4));
-        let pain = actorData.data.status.wounds.value <= 5 ? 4 : Math.floor((1 - actorData.data.status.wounds.value / actorData.data.status.wounds.max) * 4) - AdvantageRulesDSA5.vantageStep(this, "Zäher Hund")
+        encumbrance = Math.max(0, encumbrance - SpecialabilityRulesDSA5.abilityStep(this.data, "Belastungsgewöhnung"))
+        encumbrance += Math.max(0, Math.ceil((totalWeight - carrycapacity) / 4))
+        let pain = Math.floor((1 - actorData.data.status.wounds.value / actorData.data.status.wounds.max) * 4) - AdvantageRulesDSA5.vantageStep(this, "Zäher Hund")
+        if (this.data.type != "creature" && actorData.data.status.wounds.value <= 5)
+            pain = 4
+
+
+        //if (equipmentModifiers.ini != undefined)
+        //    this.data.data.status.initiative.value += equipmentModifiers.ini.value
+
 
         if (pain >= 1)
             pain = Math.min(4, pain + AdvantageRulesDSA5.vantageStep(this, "Zerbrechlich"))

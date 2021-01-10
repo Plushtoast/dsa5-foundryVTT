@@ -1,8 +1,7 @@
 <form class="dsa5 item-sheet {{cssClass}}" autocomplete="off">
     <header class="item-header">
         <h1>
-            <input name="name" class="item-header item-name" type="text" value="{{item.name}}"
-                placeholder="{{localize 'Name'}}" />
+            <input name="name" class="item-header item-name" type="text" value="{{item.name}}" placeholder="{{localize 'Name'}}" />
         </h1>
     </header>
 
@@ -29,8 +28,7 @@
     <section class="content career">
         <div class="tab details" data-tab="description">
             <div>
-                <img src="{{item.img}}" style="max-width:50%; max-height: 100%;float:right;" data-edit="img" />
-                {{{localize (concat "Racedescr." item.name)}}}
+                <img src="{{item.img}}" style="max-width:50%; max-height: 100%;float:right;" data-edit="img" /> {{{localize (concat "Racedescr." item.name)}}}
             </div>
         </div>
 
@@ -39,66 +37,61 @@
                 <div class="col">
                     <div class="form-group">
                         <label class="label-text">{{localize "APvalue"}}:</label>
-                        <input class="input-text" type="text" name="data.APValue.value" value="{{data.APValue.value}}"
-                            data-dtype="Number" />
+                        <input class="input-text" type="text" name="data.APValue.value" value="{{data.APValue.value}}" data-dtype="Number" />
                     </div>
 
                     <div class="form-group">
                         <label class="label-text">{{localize "wounds"}}- {{localize "baseValue"}}: </label>
-                        <input class="input-text" type="text" name="data.baseValues.wounds.value"
-                            value="{{data.baseValues.wounds.value}}" data-dtype="Number" />
+                        <input class="input-text" type="text" name="data.baseValues.wounds.value" value="{{data.baseValues.wounds.value}}" data-dtype="Number" />
                     </div>
 
                     <div class="form-group">
                         <label class="label-text">{{localize "soulpower"}}- {{localize "baseValue"}}: </label>
-                        <input class="input-text" type="text" name="data.baseValues.soulpower.value"
-                            value="{{data.baseValues.soulpower.value}}" data-dtype="Number" />
+                        <input class="input-text" type="text" name="data.baseValues.soulpower.value" value="{{data.baseValues.soulpower.value}}" data-dtype="Number" />
                     </div>
 
                     <div class="form-group">
                         <label class="label-text">{{localize "toughness"}}- {{localize "baseValue"}}: </label>
-                        <input class="input-text" type="text" name="data.baseValues.toughness.value"
-                            value="{{data.baseValues.toughness.value}}" data-dtype="Number" />
+                        <input class="input-text" type="text" name="data.baseValues.toughness.value" value="{{data.baseValues.toughness.value}}" data-dtype="Number" />
                     </div>
 
                     <div class="form-group full-height">
                         <label class="label-text">{{localize "speed"}}: </label>
-                        <input class="input-text" type="text" name="data.baseValues.speed.value"
-                            value="{{data.baseValues.speed.value}}" data-dtype="Number" />
+                        <input class="input-text" type="text" name="data.baseValues.speed.value" value="{{data.baseValues.speed.value}}" data-dtype="Number" />
                     </div>
 
                     <div class="form-group">
                         <label class="label-text">{{localize "attributeChange"}}: </label>
-                        <input class="input-text" type="text" name="data.attributeChange.value"
-                            value="{{data.attributeChange.value}}" data-dtype="String" />
+                        <input class="input-text" type="text" name="data.attributeChange.value" value="{{data.attributeChange.value}}" data-dtype="String" />
                     </div>
                     <div class="form-group full-height" title="{{localize 'TT.commaSeparated'}}">
                         <label class="label-text">{{localize "notsuitableAdvantages"}}:</label>
-                        <textarea class="input-text" type="text" name="data.notsuitableAdvantages.value"
-                            data-dtype="String">{{data.notsuitableAdvantages.value}}</textarea>
+                        <textarea class="input-text" type="text" name="data.notsuitableAdvantages.value" data-dtype="String">{{data.notsuitableAdvantages.value}}</textarea>
                     </div>
                     <div class="form-group full-height" title="{{localize 'TT.commaSeparated'}}">
                         <label class="label-text">{{localize "notsuitableDisadvantages"}}:</label>
-                        <textarea class="input-text" type="text" name="data.notsuitableDisadvantages.value"
-                            data-dtype="String">{{data.notsuitableDisadvantages.value}}</textarea>
+                        <textarea class="input-text" type="text" name="data.notsuitableDisadvantages.value" data-dtype="String">{{data.notsuitableDisadvantages.value}}</textarea>
                     </div>
                     <div class="form-group full-height" title="{{localize 'TT.commaSeparated'}}">
                         <label class="label-text">{{localize "recommendedAdvantages"}}:</label>
-                        <textarea class="input-text" type="text" name="data.recommendedAdvantages.value"
-                            data-dtype="String">{{data.recommendedAdvantages.value}}</textarea>
+                        <textarea class="input-text" type="text" name="data.recommendedAdvantages.value" data-dtype="String">{{data.recommendedAdvantages.value}}</textarea>
                     </div>
                     <div class="form-group full-height" title="{{localize 'TT.commaSeparated'}}">
                         <label class="label-text">{{localize "recommendedDisadvantages"}}:</label>
-                        <textarea class="input-text" type="text" name="data.recommendedDisadvantages.value"
-                            data-dtype="String">{{data.recommendedDisadvantages.value}}</textarea>
+                        <textarea class="input-text" type="text" name="data.recommendedDisadvantages.value" data-dtype="String">{{data.recommendedDisadvantages.value}}</textarea>
+                    </div>
+                    <div class="form-group full-height" title="{{localize 'TT.commaSeparated'}}">
+                        <label class="label-text">{{localize "requirements"}}:</label>
+                        <textarea class="input-text" type="text" name="data.requirements.value" data-dtype="String">{{data.requirements.value}}</textarea>
+                    </div>
+                    <div class="form-group full-height" title="{{localize 'TT.commaSeparated'}}">
+                        <label class="label-text">{{localize "recommendedCultures"}}:</label>
+                        <textarea class="input-text" type="text" name="data.recommendedCultures.value" data-dtype="String">{{data.recommendedCultures.value}}</textarea>
                     </div>
 
                 </div>
             </div>
         </div>
-
-
-
 
 
     </section>

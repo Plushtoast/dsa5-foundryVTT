@@ -83,8 +83,6 @@ export default class AdvantageRulesDSA5 extends ItemRulesDSA5 {
         }
     }
 
-
-
     static async _vantageReturnFunction(actor, item, typeClass, adoption) {
         if (item == null)
             return

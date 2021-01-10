@@ -3,9 +3,9 @@ import DSA5 from "../system/config-dsa5.js";
 import AdvantageRulesDSA5 from "../system/advantage-rules-dsa5.js";
 
 import Itemdsa5 from "../item/item-dsa5.js";
-import CultureWizard from "../wizards/culture_wizard.js";
-import CareerWizard from "../wizards/career_wizard.js"
+
 import SpecialabilityRulesDSA5 from "../system/specialability-rules-dsa5.js";
+
 
 export default class ActorSheetDsa5 extends ActorSheet {
 
@@ -651,19 +651,6 @@ export default class ActorSheetDsa5 extends ActorSheet {
         event.stopPropagation()
     }
 
-    async _addSpecies(item) {
-        let update = {
-            "data.details.species.value": item.data.name,
-            "data.status.speed.initial": item.data.data.baseValues.speed.value,
-            "data.status.soulpower.initial": item.data.data.baseValues.soulpower.value,
-            "data.status.toughness.initial": item.data.data.baseValues.toughness.value,
-            "data.status.wounds.initial": item.data.data.baseValues.wounds.value,
-            "data.status.wounds.value": this.actor.data.data.status.wounds.current + this.actor.data.data.status.wounds.modifier + this.actor.data.data.status.wounds.advances
-        };
-        await this._updateAPs(item.data.data.APValue.value)
-        await this.actor.update(update);
-    }
-
     async _addSpellOrLiturgy(item) {
         let res = this.actor.data.items.find(i => {
             return i.type == item.type && i.name == item.name
@@ -686,9 +673,43 @@ export default class ActorSheetDsa5 extends ActorSheet {
         }
     }
 
+
     async _onDrop(event) {
         this._handleDragData(JSON.parse(event.dataTransfer.getData("text/plain")))
     }
+
+    async _manageDragItems(item, typeClass) {
+        switch (typeClass) {
+            case "meleeweapon":
+            case "rangeweapon":
+            case "equipment":
+            case "ammunition":
+            case "armor":
+                await this.actor.createEmbeddedEntity("OwnedItem", item);
+                break;
+            case "disadvantage":
+            case "advantage":
+                await this._addVantage(item, typeClass)
+                break;
+            case "specialability":
+                await this._addSpecialAbility(item, typeClass)
+                break;
+            case "money":
+                await this._addMoney(item)
+                break;
+            case "ritual":
+            case "ceremony":
+            case "blessing":
+            case "magictrick":
+            case "liturgy":
+            case "spell":
+                await this._addSpellOrLiturgy(item)
+                break;
+            default:
+                ui.warn(game.i18n.format("Error.canNotBeAdded", { item: item.name, category: game.i18n.localize(item.type) }))
+        }
+    }
+
     async _handleDragData(dragData) {
         let item
         let typeClass
@@ -706,48 +727,6 @@ export default class ActorSheetDsa5 extends ActorSheet {
             typeClass = item.type
         }
 
-        switch (typeClass) {
-            case "species":
-                await this._addSpecies(item)
-                break;
-            case "aggregatedTest":
-            case "meleeweapon":
-            case "rangeweapon":
-            case "equipment":
-            case "ammunition":
-            case "armor":
-                await this.actor.createEmbeddedEntity("OwnedItem", item);
-                break;
-            case "disadvantage":
-            case "advantage":
-                await this._addVantage(item, typeClass)
-                break;
-            case "specialability":
-                await this._addSpecialAbility(item, typeClass)
-                break;
-            case "culture":
-                let cuwizard = new CultureWizard()
-                await cuwizard.addCulture(this.actor, item)
-                cuwizard.render(true)
-                break
-            case "career":
-                let cwizard = new CareerWizard()
-                await cwizard.addCareer(this.actor, item)
-                cwizard.render(true)
-                break;
-            case "money":
-                await this._addMoney(item)
-                break;
-            case "ritual":
-            case "ceremony":
-            case "blessing":
-            case "magictrick":
-            case "liturgy":
-            case "spell":
-                await this._addSpellOrLiturgy(item)
-                break;
-
-        }
-
+        await this._manageDragItems(item, typeClass)
     }
 }

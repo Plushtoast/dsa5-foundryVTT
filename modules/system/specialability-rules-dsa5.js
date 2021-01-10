@@ -9,6 +9,7 @@ export default class SpecialabilityRulesDSA5 extends ItemRulesDSA5 {
         mergeObject(DSA5.AbilitiesNeedingAdaption, {
             "Fertigkeitsspezialisierung ()": { items: ["text"] },
             "Geländekunde ()": { items: ["text"] },
+            "Ortskenntnis ()": { items: ["text"] }
         })
     }
 

@@ -1,6 +1,6 @@
-import ActorSheetDsa5 from "./actor-sheet.js";
+import ActorSheetdsa5Character from './character-sheet.js'
 
-export default class ActorSheetdsa5NPC extends ActorSheetDsa5 {
+export default class ActorSheetdsa5NPC extends ActorSheetdsa5Character {
     static get defaultOptions() {
         const options = super.defaultOptions;
         mergeObject(options, {
@@ -20,4 +20,6 @@ export default class ActorSheetdsa5NPC extends ActorSheetDsa5 {
     activateListeners(html) {
         super.activateListeners(html);
     }
+
+
 }

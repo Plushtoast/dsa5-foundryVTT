@@ -1053,6 +1053,16 @@
             "templates": [
                 "APvalue"
             ],
+            "automaticVantages": {
+                "value": "",
+                "label": "automaticVantages",
+                "type": "String"
+            },
+            "requirements": {
+                "value": "",
+                "label": "requirements",
+                "type": "String"
+            },
             "recommendedAdvantages": {
                 "value": "",
                 "label": "recommendedAdvantages",

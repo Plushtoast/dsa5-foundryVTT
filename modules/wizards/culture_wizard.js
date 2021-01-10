@@ -7,7 +7,6 @@ export default class CultureWizard extends WizardDSA5 {
         this.actor = null
         this.culture = null
         this.dataTypes = ["advantage", "disadvantage", "specialability", "combatskill"]
-
     }
 
     static get defaultOptions() {
@@ -22,7 +21,6 @@ export default class CultureWizard extends WizardDSA5 {
 
         html.find('.optional').change(ev => {
             let parent = $(ev.currentTarget).closest('.content')
-
             let apCost = Number(parent.attr("data-cost"))
             parent.find('.optional:checked').each(function() {
                 apCost += Number($(this).attr("data-cost"))
@@ -50,7 +48,7 @@ export default class CultureWizard extends WizardDSA5 {
             disadvantagesToChose: disadvantages.length > 0,
             writingsToChose: writings.length > 0,
             languagesToChose: languages.length > 0,
-            vantagesToChose: advantages.length > 0 || disadvantages.length > 0 || missingVantages.length > 0,
+            vantagesToChose: advantages.length > 0 || disadvantages.length > 0,
             generalToChose: writings.length > 0 || languages.length > 0
         })
         return data
@@ -84,10 +82,6 @@ export default class CultureWizard extends WizardDSA5 {
             await this.updateSkill(skill, "skill")
         }
 
-        if (this.errors.length == 0) {
-            this.close()
-        } else {
-            parent.find('.dialog-buttons').html(`<div class="error"><p>${game.i18n.localize('Error.notUnderstoodCulture')}</p><ul><li>${this.errors.join("</li><li>")}</li></ul></div>`)
-        }
+        this.finalizeUpdate()
     }
 }
