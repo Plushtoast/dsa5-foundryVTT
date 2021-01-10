@@ -147,13 +147,29 @@ export default class WizardDSA5 extends Application {
             const item = this.items.find(i => i.data._id == itemId)
             item.sheet.render(true)
         })
+
+        html.find('.exclusive').change(ev => {
+            let parent = $(ev.currentTarget).closest('.content')
+            let sel = $(ev.currentTarget).attr('data-sel')
+            let maxDomElem = parent.find(`.allowedCount_${sel}`)
+            let maxSelections = Number(maxDomElem.attr("data-count"))
+            if (parent.find(`.exclusive_${sel}:checked`).length > maxSelections) {
+                ev.currentTarget.checked = false
+                maxDomElem.addClass("emphasize")
+                setTimeout(function() {
+                    maxDomElem.removeClass("emphasize")
+                }, 600)
+                return
+            }
+        })
+
     }
 
     finalizeUpdate() {
         if (this.errors.length == 0) {
             this.close()
         } else {
-            parent.find('.dialog-buttons').html(`<div class="error"><p>${game.i18n.localize('Error.notUnderstoodCulture')}</p><ul><li>${this.errors.join("</li><li>")}</li></ul></div>`)
+            $(this._element).find('.dialog-buttons').html(`<div class="error"><p>${game.i18n.localize('Error.notUnderstoodCulture')}</p><ul><li>${this.errors.join("</li><li>")}</li></ul></div>`)
         }
     }
 }

@@ -2,8 +2,8 @@
     "name": "dsa5",
     "title": "Das Schwarze Auge (5th Edition)",
     "description": "Many details here.",
-    "version": "0.1.65",
-    "templateVersion": 45,
+    "version": "0.1.66",
+    "templateVersion": 46,
     "author": "Plushtoast",
     "scripts": [],
     "esmodules": [

@@ -359,6 +359,7 @@ form .form-group.tripple select {
     background: linear-gradient(90deg, rgba(83, 88, 41, 1) 0%, rgba(255, 255, 255, 0) 100%);
 }
 
+.journal-sheet .window-content table tr:first-child,
 .table-title,
 .label-text {
     font-weight: bold;

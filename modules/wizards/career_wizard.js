@@ -41,20 +41,6 @@ export default class CareerWizard extends WizardDSA5 {
             parent.find('.apCost').text(apCost)
         })
 
-        html.find('.exclusive').change(ev => {
-            let parent = $(ev.currentTarget).closest('.content')
-            let sel = $(ev.currentTarget).attr('data-sel')
-            let maxDomElem = parent.find(`.allowedCount_${sel}`)
-            let maxSelections = Number(maxDomElem.attr("data-count"))
-            if (parent.find(`.exclusive_${sel}:checked`).length > maxSelections) {
-                ev.currentTarget.checked = false
-                maxDomElem.addClass("emphasize")
-                setTimeout(function() {
-                    maxDomElem.removeClass("emphasize")
-                }, 600)
-                return
-            }
-        })
 
     }
 

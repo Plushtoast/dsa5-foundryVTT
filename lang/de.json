@@ -82,7 +82,8 @@
         "luxus": "Genussmittel und Luxus",
         "armor": "Rüstung",
         "meleeweapons": "Nahkampfwaffen",
-        "rangeweapons": "Fernkampfwaffen"
+        "rangeweapons": "Fernkampfwaffen",
+        "ammunition": "Munition"
     },
 
 
@@ -292,6 +293,7 @@
     "recommendedDisadvantages": "Geeignete Nachteile",
     "recommendedTalents": "Geeignete Talente",
     "recommendedProfessions": "Geeignete Professionen",
+    "recommendedCultures": "Übliche Kulturen",
     "rangeCombatAttacks": "Fernkampfangriffe",
     "regenerate": "Regeneration",
     "regenerationTest": "Erholungsprobe",
@@ -367,7 +369,9 @@
         "chose": "Wähle ",
         "missingVantages": "Fehlende vorausgesetzte Vor-/Nachteile",
         "missingSpecialAbilities": "Fehlende vorausgesetzte Sonderfertigkeiten",
-        "attributeRequirements": "Eigenschaftsvoraussetzungen"
+        "attributeRequirements": "Eigenschaftsvoraussetzungen",
+        "attributesToChose": "Eigenschaftsänderungen",
+        "generalTab": "Allgemein"
     },
 
     "SKILL": {
@@ -628,8 +632,8 @@
         "itemNotFound": "Dieser Eintrag wurde nicht in der Datenbank gefunden, bitte manuell anlegen",
         "notUnderstoodCareer": "Folgende Einträge der Profession konnten nicht umgesetzt werden. Bitte manuell anpassen.",
         "notUnderstoodCulture": "Folgende Einträge der Kultur konnten nicht umgesetzt werden. Bitte manuell anpassen.",
-        "canNotBeAdded": "{item} der Kategory {category} kann nicht hinzugefügt werden."
-
+        "canNotBeAdded": "{item} der Kategory {category} kann nicht hinzugefügt werden.",
+        "NoAmmo": "Nicht genug Munition."
     },
 
     "CEREMONYMODIFIER": {

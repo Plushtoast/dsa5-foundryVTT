@@ -100,7 +100,22 @@
                 </div>
 
                 <div class="col five center">
-
+                    {{#when item.data.ammunitiongroup.value 'noteq' "-"}}
+                    <div>
+                        <select name="currentAmmo-{{item._id}}" class="ammo-selector" data-item-id="{{item._id}}" data-dtype="{{item.data.currentAmmo.type}}">
+                        {{#select item.data.currentAmmo.value}}
+                        <option class="ammo-option" value="">None</option>
+                        {{#each item.ammo as |ammo a|}}
+                        <option class="ammo-option" value="{{ammo._id}}"> ({{ammo.data.quantity.value}}) {{ammo.name}}</option>
+                        {{/each}}
+                        {{/select}}
+                      </select>
+                    </div>
+                    {{else}}
+                    <div class="no-ammo">
+                        -
+                    </div>
+                    {{/when}}
                 </div>
                 <div class="col ten very-small center">
                     <a class="item-dropdown" title="{{localize 'SHEET.Dropdown'}}"><i class="fas fa-chevron-down"></i></a>
@@ -110,7 +125,7 @@
                 <div class="col">
                     <ul>
                         <li><b>{{localize "reach"}}</b>: {{item.data.reach.value}}</li>
-                        <li><b>{{localize "reloadTime"}}</b>: {{item.data.reloadTime.value}}</li>
+                        <li><b>{{localize "reloadTime"}}</b>: {{item.LZ}}</li>
                     </ul>
                 </div>
             </div>
@@ -291,8 +306,7 @@
         <div class="col two">
             <div class="row-section item skills lineheight" data-item-id="{{item._id}}">
                 <div class="col fourty">
-                    <a class="skill-select">{{item.name}}</a>
-                    {{#if item.canAdvance}}<a class="advance advance-item"><i title="{{item.cost}}" class="fas fa-plus"></i></a>{{/if}}
+                    <a class="skill-select">{{item.name}}</a> {{#if item.canAdvance}}<a class="advance advance-item"><i title="{{item.cost}}" class="fas fa-plus"></i></a>{{/if}}
                 </div>
                 <div class="col five center">
                     {{localize (concatUp "CHARAbbrev." item.data.guidevalue.value)}}

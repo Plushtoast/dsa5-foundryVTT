@@ -6,7 +6,7 @@ export default class SpeciesWizard extends WizardDSA5 {
         this.actor = null
         this.culture = null
         this.dataTypes = ["advantage", "disadvantage"]
-        this.attributes = ["MU", "KL", "IN", "CH", "FF", "GE", "KO", "KK"]
+        this.attributes = []
     }
 
     static get defaultOptions() {
@@ -27,6 +27,7 @@ export default class SpeciesWizard extends WizardDSA5 {
             });
             parent.find('.apCost').text(apCost)
         })
+
     }
 
     _toGroups(input, categories) {
@@ -47,21 +48,42 @@ export default class SpeciesWizard extends WizardDSA5 {
         })
     }
 
+    _parseAttributes(attr) {
+        let result = []
+        for (let k of attr.split(",")) {
+            if (k.includes(game.i18n.localize("combatskillcountdivider") + ":")) {
+                let vals = k.split(":")
+                result.push({
+                    choices: vals[1].split("/").map(x => x.trim()),
+                    allowedCount: Number(vals[0].match(/\d/g))
+                })
+            }
+        }
+        return result
+    }
+
     getData() {
         let data = super.getData()
         let advantagegroups = this._toGroups(this.species.data.recommendedAdvantages.value, ["advantage"])
         let disadvantagegroups = this._toGroups(this.species.data.recommendedDisadvantages.value, ["disadvantage"])
+        let requirements = this.parseToItem(this.species.data.requirements.value, ["disadvantage", "advantage"])
+        let missingVantages = requirements.filter(x => ["advantage", "disadvantage"].includes(x.type) && !x.disabled)
+        let attributeRequirements = this._parseAttributes(this.species.data.attributeChange.value)
         let baseCost = Number(this.species.data.APValue.value)
         mergeObject(data, {
             title: game.i18n.format("WIZARD.addItem", { item: `${game.i18n.localize("species")} ${this.species.name}` }),
-            culture: this.culture,
+            species: this.species,
             description: game.i18n.format("WIZARD.speciesdescr", { species: this.species.name, cost: baseCost }),
             advantagegroups: advantagegroups,
             disadvantagegroups: disadvantagegroups,
+            missingVantages: missingVantages,
+            attributeRequirements: attributeRequirements,
+            anyAttributeRequirements: attributeRequirements.length > 0,
             advantagesToChose: advantagegroups.length > 0,
+            missingVantagesToChose: missingVantages.length > 0,
             disadvantagesToChose: disadvantagegroups.length > 0,
-            vantagesToChose: advantagegroups.length > 0 || disadvantagegroups.length > 0,
-            generalToChose: false
+            vantagesToChose: advantagegroups.length > 0 || disadvantagegroups.length > 0 || missingVantages.length > 0,
+            generalToChose: attributeRequirements.length > 0
         })
         return data
     }
@@ -90,8 +112,24 @@ export default class SpeciesWizard extends WizardDSA5 {
             "data.status.wounds.value": this.actor.data.data.status.wounds.current + this.actor.data.data.status.wounds.modifier + this.actor.data.data.status.wounds.advances
         };
 
+
+        let attributeChoices = []
+        for (let k of parent.find('.exclusive:checked')) {
+            attributeChoices.push($(k).val())
+        }
+
+        for (let attr of this.species.data.attributeChange.value.split(",").concat(attributeChoices)) {
+            if (attr.includes(game.i18n.localize("combatskillcountdivider") + ":") || attr == "")
+                continue
+
+            let attrs = attr.trim().split(" ")
+            update[`data.characteristics.${attrs[0].toLowerCase()}.initial`] = this.actor.data.data.characteristics[attrs[0].toLowerCase()].initial + Number(attrs[1])
+        }
+
         await this.actor.update(update);
         await this.actor._updateAPs(apCost)
+
+        await this.addSelections(parent.find('.optional:checked'))
 
         this.finalizeUpdate()
     }

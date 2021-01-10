@@ -8,7 +8,6 @@ export default class ItemRulesDSA5 {
             for (let m of k.data.effect.value.split(";")) {
                 if (m.includes(talent)) {
                     let parsed = DSA5_Utility.parseAbilityString(m.trim())
-                    console.log(parsed)
                     if (parsed.name == talent) {
                         modifier.push({
                             name: k.name,

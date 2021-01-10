@@ -783,16 +783,17 @@
             "ammunitiongroup": {
                 "type": "String",
                 "label": "ammunitiongroup",
-                "value": ""
+                "value": "-"
             },
             "currentAmmo": {
-                "type": "Number",
-                "value": 0
+                "type": "String",
+                "value": "",
+                "label": "currentAmmo"
             },
             "combatskill": {
                 "type": "String",
                 "label": "Combat skill",
-                "value": "crossbow"
+                "value": "crossbows"
             },
             "worn": {
                 "type": "Boolean",
@@ -1053,11 +1054,6 @@
             "templates": [
                 "APvalue"
             ],
-            "automaticVantages": {
-                "value": "",
-                "label": "automaticVantages",
-                "type": "String"
-            },
             "requirements": {
                 "value": "",
                 "label": "requirements",

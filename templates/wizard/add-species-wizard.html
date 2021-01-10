@@ -3,24 +3,36 @@
     <p style="margin-bottom:10px;">{{{description}}}</p>
 
     <nav class="sheet-tabs tabs" data-tab-container="primary">
-        <a class="item active" data-tab="description">{{localize "Description"}}</a> {{#if generalToChose}} <a class="item" data-tab="general">{{localize "general"}}</a> {{/if}} {{#if vantagesToChose}} <a class="item" data-tab="vantages">{{localize "vantages"}}</a>        {{/if}}
+        <a class="item active" data-tab="description">{{localize "Description"}}</a> {{#if generalToChose}} <a class="item" data-tab="general">{{localize "WIZARD.generalTab"}}</a> {{/if}} {{#if vantagesToChose}} <a class="item" data-tab="vantages">{{localize "vantages"}}</a>        {{/if}}
     </nav>
 
     <div class="tab description active" data-tab="description">
         <div class="row-section">
             <div class="col two">
-                {{{culture.data.description.value}}}
+                {{{localize (concat "Racedescr." species.name)}}}
             </div>
             <div class="col two">
-                <img src="{{career.img}}" style="max-width:100%; max-height: 100%;float: left;" data-edit="img" />
+                <img src="{{species.img}}" style="max-width:100%; max-height: 100%;float: left;" data-edit="img" />
             </div>
         </div>
     </div>
 
     {{#if vantagesToChose}}
     <div class="tab vantages" data-tab="vantages">
+
         <p>{{localize 'WIZARD.vantageDescriptionSpecies'}}</p>
-        {{#if advantagesToChose}}
+        {{#if missingVantagesToChose}}
+        <h2>{{localize 'WIZARD.missingVantages'}}</h2>
+        <div class="row-section wrap">
+            {{#each missingVantages as |item i|}}
+            <div class="col two row-section lineheight">
+                <input type="checkbox" id="missingvantage_{{i}}" class="optional" data-cost="{{item.apCost}}" name="{{item.replaceName}}" data-step="{{item.step}}" value="{{item._id}}" disabled checked>
+                <label for="missingvantage_{{i}}">{{item.replaceName}} {{roman item.step}} ({{item.apCost}} AP)</label>
+                <a class="show-item" data-id="{{item._id}}" title="{{item.tooltip}}"><i class="fas fa-info"></i></a>
+            </div>
+            {{/each}}
+        </div>
+        {{/if}} {{#if advantagesToChose}}
         <h2>{{localize 'recommendedAdvantages'}}</h2>
         {{#each advantagegroups as |group j|}}
         <h3>{{group.name}}</h3>
@@ -50,8 +62,20 @@
     </div>
     {{/if}} {{#if generalToChose}}
     <div class="tab general" data-tab="general">
-
-
+        {{#if anyAttributeRequirements}}
+        <h2>{{localize 'WIZARD.attributesToChose'}}</h2>
+        {{#each attributeRequirements as |item i|}}
+        <p class="allowedCount_{{i}}" data-count="{{item.allowedCount}}">{{localize 'WIZARD.chose'}} {{item.allowedCount}}.
+        </p>
+        <div class="row-section wrap">
+            {{#each item.choices as |choice j|}}
+            <div class="col two row-section lineheight">
+                <input type="checkbox" id="exclusive_{{i}}_{{j}}" class="exclusive exclusive_{{i}}" data-sel="{{i}}" name="{{choice}}" value="{{choice}}">
+                <label for="exclusive_{{i}}_{{j}}">{{choice}}</label>
+            </div>
+            {{/each}}
+        </div>
+        <hr /> {{/each}} {{/if}}
     </div>
     {{/if}}
 

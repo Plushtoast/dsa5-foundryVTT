@@ -427,7 +427,7 @@ export default class Actordsa5 extends Actor {
 
         for (let wep of inventory.rangeweapons.items) {
             if (wep.data.worn.value) {
-                rangeweapons.push(Actordsa5._prepareRangeWeapon(wep, inventory.ammunition, combatskills));
+                rangeweapons.push(Actordsa5._prepareRangeWeapon(wep, inventory.ammunition.items, combatskills, this));
             }
         }
         let shields = inventory.meleeweapons.items.filter(x => (game.i18n.localize("ReverseCombatSkills." + x.data.combatskill.value) == "Shields" && x.data.worn.value))
@@ -638,6 +638,23 @@ export default class Actordsa5 extends Actor {
                 options: options
             }
         };
+
+        if (item.type == "rangeweapon") {
+            if (item.data.data.ammunitiongroup.value == "-") {
+                testData.extra.ammo = duplicate(item)
+                if ((testData.extra.ammo.data.quantity.value <= 0)) {
+                    ui.notifications.error(game.i18n.localize("Error.NoAmmo"))
+                    return
+
+                }
+            } else {
+                testData.extra.ammo = duplicate(this.getEmbeddedEntity("OwnedItem", item.data.data.currentAmmo.value))
+                if (!testData.extra.ammo || item.data.data.currentAmmo.value == "" || testData.extra.ammo.data.quantity.value <= 0) {
+                    ui.notifications.error(game.i18n.localize("Error.NoAmmo"))
+                    return
+                }
+            }
+        }
 
         let dialogOptions = {
             title: title,
@@ -1319,9 +1336,18 @@ export default class Actordsa5 extends Actor {
     }
 
 
-    static _prepareRangeWeapon(item, ammunition, combatskills) {
+    static _prepareRangeWeapon(item, ammunitions, combatskills, actor) {
         let skill = combatskills.filter(i => i.name == item.data.combatskill.value)[0];
         item.attack = Number(skill.data.attack.value)
+
+        if (item.data.ammunitiongroup.value != "-") {
+            if (ammunitions)
+                item.ammo = ammunitions.filter(x => x.data.ammunitiongroup.value == item.data.ammunitiongroup.value)
+            else
+                item.ammo = actorData.inventory.ammunition.items.filter(x => x.data.ammunitiongroup.value == item.data.ammunitiongroup.value)
+
+        }
+        item.LZ = Math.max(0, Number(item.data.reloadTime.value) - SpecialabilityRulesDSA5.abilityStep(actor, `Schnellladen (${game.i18n.localize(item.data.combatskill.value)})`))
 
         return this._parseDmg(item)
     }
@@ -1369,6 +1395,13 @@ export default class Actordsa5 extends Actor {
                 game.user.updateTokenTargets([]);
             }
         }
+
+        if (testData.extra.ammo && !testData.extra.ammoDecreased) {
+            testData.extra.ammoDecreased = true
+            testData.extra.ammo.data.quantity.value--;
+            this.updateEmbeddedEntity("OwnedItem", { _id: testData.extra.ammo._id, "data.quantity.value": testData.extra.ammo.data.quantity.value });
+        }
+
 
         //Hooks.call("dsa5:rollTest", result, cardOptions)
         if (!options.suppressMessage)

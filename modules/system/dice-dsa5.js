@@ -403,7 +403,7 @@ export default class DiceDSA5 {
         if (testData.source.type == "meleeweapon") {
             weapon = Actordsa5._prepareMeleeWeapon(testData.source.data, [skill], testData.extra.actor)
         } else {
-            weapon = Actordsa5._prepareRangeWeapon(testData.source.data, [], [skill])
+            weapon = Actordsa5._prepareRangeWeapon(testData.source.data, [], [skill], testData.extra.actor)
 
         }
 
@@ -583,12 +583,13 @@ export default class DiceDSA5 {
             }
 
         } else {
-            weapon = Actordsa5._prepareRangeWeapon(source, [], [skill])
+            weapon = Actordsa5._prepareRangeWeapon(source, [], [skill], testData.extra.actor)
 
             modifier += DSA5.rangeMods[testData.rangeModifier].attack + testData.sizeModifier + testData.visionModifier
             this._appendSituationalModifiers(testData, game.i18n.localize("distance"), DSA5.rangeMods[testData.rangeModifier].attack)
             this._appendSituationalModifiers(testData, game.i18n.localize("sizeCategory"), testData.sizeModifier)
             this._appendSituationalModifiers(testData, game.i18n.localize("sight"), testData.visionModifier)
+
         }
         var result = this._rollSingleD20(roll, weapon[testData.mode], testData.mode, modifier, testData, combatskill)
 

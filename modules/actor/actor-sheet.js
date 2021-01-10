@@ -242,6 +242,14 @@ export default class ActorSheetDsa5 extends ActorSheet {
             this.actor.items.find(i => i.data._id == this._getItemId(ev)).postItem()
         }
 
+        html.find('.ammo-selector').change(ev => {
+            ev.preventDefault()
+            let itemId = this._getItemId(ev);
+            let item = duplicate(this.actor.getEmbeddedEntity("OwnedItem", itemId))
+            item.data.currentAmmo.value = $(ev.currentTarget).val()
+            this.actor.updateEmbeddedEntity("OwnedItem", item);
+        })
+
         html.find('.item-toggle').click(ev => {
             let itemId = this._getItemId(ev);
             let item = duplicate(this.actor.getEmbeddedEntity("OwnedItem", itemId))
@@ -495,9 +503,9 @@ export default class ActorSheetDsa5 extends ActorSheet {
         });
         html.find(".cards .item").mouseleave(ev => {
             var e = ev.toElement || ev.relatedTarget;
-            if (e.parentNode == this || e == this) {
+            if (e.parentNode == this || e == this)
                 return;
-            }
+
             ev.currentTarget.querySelectorAll('.hovermenu').forEach(e => e.remove());
         });
 
@@ -652,9 +660,7 @@ export default class ActorSheetDsa5 extends ActorSheet {
     }
 
     async _addSpellOrLiturgy(item) {
-        let res = this.actor.data.items.find(i => {
-            return i.type == item.type && i.name == item.name
-        });
+        let res = this.actor.data.items.find(i => i.type == item.type && i.name == item.name);
         if (!res) {
             switch (item.type) {
                 case "spell":
@@ -673,6 +679,17 @@ export default class ActorSheetDsa5 extends ActorSheet {
         }
     }
 
+    async _addLoot(item) {
+        let res = this.actor.data.items.find(i => i.type == item.type && i.name == item.name && i.data.description.value == item.data.data.description.value);
+        if (!res) {
+            await this.actor.createEmbeddedEntity("OwnedItem", item);
+        } else {
+            res = duplicate(res)
+            res.data.quantity.value += item.data.data.quantity.value
+            await this.actor.updateEmbeddedEntity("OwnedItem", res)
+        }
+
+    }
 
     async _onDrop(event) {
         this._handleDragData(JSON.parse(event.dataTransfer.getData("text/plain")))
@@ -685,7 +702,7 @@ export default class ActorSheetDsa5 extends ActorSheet {
             case "equipment":
             case "ammunition":
             case "armor":
-                await this.actor.createEmbeddedEntity("OwnedItem", item);
+                await this._addLoot(item)
                 break;
             case "disadvantage":
             case "advantage":
