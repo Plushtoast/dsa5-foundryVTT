@@ -1499,9 +1499,12 @@ export default class Actordsa5 extends Actor {
 
 
     hasCondition(conditionKey) {
-        if (this.data != undefined)
-            return this.data.effects.find(i => getProperty(i, "flags.core.statusId") == conditionKey)
+        if (this.data != undefined) {
+            if (this.data.effects == undefined)
+                return false
 
+            return this.data.effects.find(i => getProperty(i, "flags.core.statusId") == conditionKey)
+        }
         return false
     }
 }

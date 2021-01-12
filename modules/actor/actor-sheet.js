@@ -624,7 +624,7 @@ export default class ActorSheetDsa5 extends ActorSheet {
 
         if (moneyItem) {
             moneyItem.data.quantity.value += item.data.quantity.value
-            await this.actor.updateEmbeddedEntity("OwnedItem", money);
+            await this.actor.updateEmbeddedEntity("OwnedItem", moneyItem);
         } else {
             await this.actor.createEmbeddedEntity("OwnedItem", item);
         }
@@ -661,21 +661,26 @@ export default class ActorSheetDsa5 extends ActorSheet {
 
     async _addSpellOrLiturgy(item) {
         let res = this.actor.data.items.find(i => i.type == item.type && i.name == item.name);
+        let apCost
         if (!res) {
             switch (item.type) {
                 case "spell":
                 case "liturgy":
                 case "ceremony":
                 case "ritual":
-                    await this._updateAPs(DSA5_Utility._calculateAdvCost(-1, item.data.data.StF.value))
+                    apCost = DSA5_Utility._calculateAdvCost(-1, item.data.data.StF.value)
                     break
                 case "blessing":
                 case "magictrick":
-                    await this._updateAPs(1)
+                    apCost = 1
                     break
-
+                default:
+                    return
             }
-            await this.actor.createEmbeddedEntity("OwnedItem", item)
+            if (this.actor.checkEnoughXP(apCost)) {
+                this._updateAPs(apCost)
+                await this.actor.createEmbeddedEntity("OwnedItem", item)
+            }
         }
     }
 

@@ -5,6 +5,7 @@ import Miscast from "../tables/spellmiscast.js"
 import DSA5_Utility from "./utility-dsa5.js";
 import AdvantageRulesDSA5 from "./advantage-rules-dsa5.js";
 import SpecialabilityRulesDSA5 from "./specialability-rules-dsa5.js";
+import TraitRulesDSA5 from "./trait-rules-dsa5.js";
 
 export default class DiceDSA5 {
     static async setupDialog({ dialogOptions, testData, cardOptions, }) {
@@ -779,8 +780,13 @@ export default class DiceDSA5 {
             this._addRollDiceSoNice(testData, reroll, roll.terms[indexOfMinValue * 2].options.colorset)
             description.push(game.i18n.format("CHATNOTIFICATION.unableReroll", { die: (indexOfMinValue + 1), oldVal: oldValue, newVal: reroll.total }))
         }
-
-        if (roll.results.filter(x => x == 1).length == 3) {
+        if (testData.source.type == "skill" && TraitRulesDSA5.hasTrait(testData.extra.actor, `Automatischer Erfolg (${testData.source.name})`)) {
+            description.push(game.i18n.localize("TraitMsg.AutomaticSuccess"));
+            successLevel = 1
+        } else if (testData.source.type == "skill" && TraitRulesDSA5.hasTrait(testData.extra.actor, `Automatischer Misserfolg (${testData.source.name})`)) {
+            description.push(game.i18n.localize("TraitMsg.AutomaticFailure"));
+            successLevel = -1
+        } else if (roll.results.filter(x => x == 1).length == 3) {
             description.push(game.i18n.localize("AstoundingSuccess"));
             successLevel = 3
         } else if (roll.results.filter(x => x == 1).length == 2) {

@@ -1,4 +1,6 @@
-export default class TraitRulesDSA5 {
+import ItemRulesDSA5 from "./item-rules-dsa5.js";
+
+export default class TraitRulesDSA5 extends ItemRulesDSA5 {
     static async traitAdded(actor, item) {
         switch (item.name) {
             case "Vertrauter":
@@ -22,7 +24,6 @@ export default class TraitRulesDSA5 {
         }
     }
 
-
     static async traitRemoved(actor, item) {
         switch (item.name) {
             case "Vertrauter":
@@ -42,5 +43,9 @@ export default class TraitRulesDSA5 {
                 }
                 break
         }
+    }
+
+    static hasTrait(actor, talent) {
+        return super.hasItem(actor, talent, ["trait"])
     }
 }

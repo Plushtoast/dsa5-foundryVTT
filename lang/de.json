@@ -555,6 +555,11 @@
         "bloodrush": "Blutrausch"
     },
 
+    "TraitMsg": {
+        "AutomaticSuccess": "Automatischer Erfolg",
+        "AutomaticFailure": "Automatischer Misserfolg"
+    },
+
     "CHATNOTIFICATION": {
         "gainsBloodrush": "Der Zorn überwältigt {character} und er/sie verfällt in Blutrausch.",
         "unableReroll": "Würfel {die} wegen Unfähigkeit erneut geworfen ({oldVal}/{newVal})"
@@ -656,6 +661,23 @@
         "wrongConstellation": "Unpassende Konstellation (-1)",
         "rightClothes": "Passende Kleidung (+1)",
         "rightEquipment": "Passende Gerätschaften (+1)"
+    },
+
+    "PAYMENT": {
+        "pay": "<b>{actor}</b> bezahlt seine Schulden von {amount}.",
+        "getPaid": "<b>{actor}</b> erhält seine Bezahlung von {amount}.",
+        "payexample": "Gib /pay und die Anzahl der Silbermünzen die zu bezahlen sind ein. Z.B.: /pay 13,45",
+        "getPaidexample": "Gib /getPaid und die Anzahl der Silbermünzen die zu erhalten sind ein. Z.B.: /getPaid 13,45",
+        "error": "Falsche Eingabe",
+        "bill": "Offene Rechnung",
+        "paySum": "{amount} sind zu bezahlen.",
+        "getPaidSum": "{amount} wird ausbezahlt.",
+        "wage": "Bezahlung erhalten",
+        "payButton": "Bezahlen",
+        "getPaidButton": "Auszahlen",
+        "noActor": "Dein Charakter wurde nicht gefunden",
+        "onlyActors": "Nur Spieler können bezahlen/bezahlt werden",
+        "cannotpay": "<b>{actor}</b> kann seine Schulden von {amount} nicht bezahlen."
     },
 
     "rangeMovementOptions": {

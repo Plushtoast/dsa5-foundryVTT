@@ -44,7 +44,6 @@ export default class SpeciesWizard extends WizardDSA5 {
                     res: this.parseToItem(x, categories)
                 }
             }
-
         })
     }
 
@@ -69,7 +68,9 @@ export default class SpeciesWizard extends WizardDSA5 {
         let requirements = this.parseToItem(this.species.data.requirements.value, ["disadvantage", "advantage"])
         let missingVantages = requirements.filter(x => ["advantage", "disadvantage"].includes(x.type) && !x.disabled)
         let attributeRequirements = this._parseAttributes(this.species.data.attributeChange.value)
-        let baseCost = Number(this.species.data.APValue.value)
+        let baseCost = Number(this.species.data.APValue.value) + requirements.reduce(function(_this, val) {
+            return _this + (val.disabled ? 0 : Number(val.data.APValue.value) || 0)
+        }, 0)
         mergeObject(data, {
             title: game.i18n.format("WIZARD.addItem", { item: `${game.i18n.localize("species")} ${this.species.name}` }),
             species: this.species,
