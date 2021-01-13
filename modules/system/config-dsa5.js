@@ -57,10 +57,80 @@ CONFIG.statusEffects = [{
         }
     },
     {
+        id: "poisoned",
+        label: "CONDITION.poisoned",
+        icon: "icons/svg/poison.svg",
+        description: "CONDITIONDESCRIPTION.poisoned",
+        flags: {
+            dsa5: {
+                "trigger": "endRound",
+                "value": null,
+                "editable": true,
+                "impact": null
+            }
+        }
+    },
+    {
+        id: "sick",
+        label: "CONDITION.sick",
+        icon: "icons/svg/biohazard.svg",
+        description: "CONDITIONDESCRIPTION.sick",
+        flags: {
+            dsa5: {
+                "trigger": "endRound",
+                "value": null,
+                "editable": true,
+                "impact": null
+            }
+        }
+    },
+    {
         id: "deaf",
         label: "CONDITION.deaf",
         icon: "icons/svg/deaf.svg",
         description: "CONDITIONDESCRIPTION.deaf",
+        flags: {
+            dsa5: {
+                "trigger": "endRound",
+                "value": null,
+                "editable": true,
+                "impact": null
+            }
+        }
+    },
+    {
+        id: "burning",
+        label: "CONDITION.burning",
+        icon: "icons/svg/fire.svg",
+        description: "CONDITIONDESCRIPTION.burning",
+        flags: {
+            dsa5: {
+                "trigger": "endRound",
+                "value": null,
+                "editable": true,
+                "impact": null
+            }
+        }
+    },
+    {
+        id: "invisible",
+        label: "CONDITION.invisible",
+        icon: "icons/svg/circle.svg",
+        description: "CONDITIONDESCRIPTION.invisible",
+        flags: {
+            dsa5: {
+                "trigger": "endRound",
+                "value": null,
+                "editable": true,
+                "impact": null
+            }
+        }
+    },
+    {
+        id: "constricted",
+        label: "CONDITION.constricted",
+        icon: "icons/svg/cave.svg",
+        description: "CONDITIONDESCRIPTION.constricted",
         flags: {
             dsa5: {
                 "trigger": "endRound",
@@ -218,6 +288,7 @@ CONFIG.statusEffects = [{
             }
         }
     }
+
 ]
 
 DSA5.effectTextStyle = CONFIG.canvasTextStyle.clone();

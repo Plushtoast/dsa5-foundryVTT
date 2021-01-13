@@ -23,7 +23,7 @@
                     <div class="col">
                         <ul class="wrap">
                             {{#each filters.categories as |val fil|}}
-                            <li><input class="filter" type="checkbox" data-category="{{fil}}" {{checked val}}/>{{localize fil}}</li>
+                            <li><input class="filter" type="checkbox" id="filter_{{fil}}" data-category="{{fil}}" {{checked val}}/><label for="filter_{{fil}}">{{localize fil}}</label></li>
                             {{/each}}
                         </ul>
                     </div>

@@ -196,6 +196,7 @@
     "FP": "Fertigkeitspunkte",
     "fatePoints": "Schicksalspunkte",
     "fatePointsAbilities": "Schicksalspunktesonderfertigkeiten",
+    "freeLanguagePoint": "Freie Abenteuerpunkt für Sprachen und Schriften",
     "Gender": "Geschlecht",
     "Group": "Gruppe",
     "guidevalue": "Leiteigenschaft",
@@ -537,23 +538,7 @@
         "step4": "Unsichtbar [Glückstreffer]"
     },
 
-    "CONDITION": {
-        "encumbered": "Belastung",
-        "stunned": "Betäubung",
-        "raptured": "Entrückung",
-        "feared": "Furcht",
-        "paralysed": "Paralyse",
-        "inpain": "Schmerz",
-        "confused": "Verwirrung",
-        "prone": "Liegend",
-        "unconscious": "Bewusstlos",
-        "incapacitated": "Handlungsunfähig",
-        "rooted": "Bewegungsunfähig",
-        "blind": "Blind",
-        "deaf": "Taub",
-        "mute": "Stumm",
-        "bloodrush": "Blutrausch"
-    },
+
 
     "TraitMsg": {
         "AutomaticSuccess": "Automatischer Erfolg",
@@ -758,6 +743,30 @@
         "add": "Zustand hinzufügen"
     },
 
+    "CONDITION": {
+        "encumbered": "Belastung",
+        "stunned": "Betäubung",
+        "raptured": "Entrückung",
+        "feared": "Furcht",
+        "paralysed": "Paralyse",
+        "inpain": "Schmerz",
+        "confused": "Verwirrung",
+        "prone": "Liegend",
+        "unconscious": "Bewusstlos",
+        "incapacitated": "Handlungsunfähig",
+        "rooted": "Bewegungsunfähig",
+        "blind": "Blind",
+        "deaf": "Taub",
+        "mute": "Stumm",
+        "constricted": "Eingeengt",
+        "bloodrush": "Blutrausch",
+        "sick": "Krank",
+        "surprised": "Überrascht",
+        "invisible": "Unsichtbar",
+        "poisoned": "Vergiftet",
+        "burning": "Brennend"
+    },
+
     "CONDITIONDESCRIPTION": {
         "encumbered": "Schweres Gepäck und Rüstungen können den Träger sehr belasten und seine Bewegungsfreiheit einschränken. So lange diese Lasten getragen werden, erleidet die Person entsprechende Stufen an Belastung. Werden die Lasten abgelegt, verschwinden auch die Belastungsstufen. Das Gewicht von Rüstungen wird bei der Berechnung von Belastung durch Traglast ignoriert.",
         "stunned": "Durch zu viel Wein, Erschöpfung oder eine zünftige Schlägerei kann ein Held Stufen von Betäubung erleiden. Eine Stufe Betäubung verschwindet nach einer Ruhephase von 3 Stunden, so nichts anderes angegeben ist.",
@@ -776,6 +785,9 @@
         "incapacitated": "Die Person ist durch Zustände oder andere Modifikatoren so angeschlagen, dass sie nicht mehr handeln kann. Ihre GS fällt auf 0 und sie kann keine Aktionen oder Verteidigungen ausführen. In den meisten Situationen gilt sie zudem als Liegend. Je nach Situation kann der Spielleiter erlauben, freie Aktionen auszuführen, um zu sprechen.",
         "rooted": "Unter anderem Paralyse, Treibsand oder stabile Fesseln können dazu führen, dass sich eine Person nicht mehr bewegen kann. Sie kann jedoch noch normal wahrnehmen und Handlungen ausführen, für die sie keine körperlichen Bewegungen benötigt. Beispiele hierfür wären die meisten Anwendungen von Wissenstalenten oder das Wirken von Zaubern und Liturgien, ohne Gesten und Formeln zu verwenden.",
         "mute": "Die Person kann nicht sprechen, was die Kommunikation mit ihr deutlich einschränkt. Personen mit diesem Status können Probleme bei Zaubern haben.",
-        "deaf": "Die Person kann nichts hören, was die Kommunikation mit ihr deutlich einschränkt. Personen mit diesem Status können keine Proben auf Sinnesschärfe ablegen, die sich nur auf den Hörsinn beziehen. Proben auf Sinnesschärfe (Hinterhalte entdecken) sind um 3 erschwert."
+        "deaf": "Die Person kann nichts hören, was die Kommunikation mit ihr deutlich einschränkt. Personen mit diesem Status können keine Proben auf Sinnesschärfe ablegen, die sich nur auf den Hörsinn beziehen. Proben auf Sinnesschärfe (Hinterhalte entdecken) sind um 3 erschwert.",
+        "sick": "Der Held ist an einer Krankheit erkrankt. So lange die Krankheit nicht abklingt oder der Held geheilt wird, kann er nicht mehr durch eine normale Regenerationsphase regenerieren. Nutzt er nicht jeden Tag mindestens eine Regenerationsphase zur Erholung (z.B. durch Schlaf oder Bettruhe), verliert er 1W3 Lebenspunkte.",
+        "surprised": "Die üblichen Kampfhandlungen gehen davon aus, dass alle Parteien ihre Gegner sehen oder wahrnehmen. Allerdings gibt es Situationen wie beispielsweise Hinterhalte, in denen man überrascht ist. Gegen überraschte Personen darf eine Aktion ausgeführt werden, gegen die keine Verteidigung genutzt werden darf. Erst danach beginnt die reguläre Kampfrunde.",
+        "poisoned": "Der Held ist vergiftet worden. So lange das Gift wirkt, kann der Held nicht mehr durch eine normale Regenerationsphase regenerieren."
     }
 }

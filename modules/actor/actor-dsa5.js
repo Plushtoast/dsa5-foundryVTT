@@ -502,6 +502,10 @@ export default class Actordsa5 extends Actor {
             generalTraits: generalTraits,
             animalTraits: animalTraits,
             familiarTraits: familiarTraits,
+            languagePoints: {
+                used: actorData.data.freeLanguagePoints ? actorData.data.freeLanguagePoints.used : 0,
+                available: actorData.data.freeLanguagePoints ? actorData.data.freeLanguagePoints.value : 0
+            },
             magicSpecialAbilities: magicSpecialAbilities,
             blessings: blessings,
             magicTricks: magicTricks,
