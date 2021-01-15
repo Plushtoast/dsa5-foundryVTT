@@ -623,7 +623,8 @@
         "notUnderstoodCareer": "Folgende Einträge der Profession konnten nicht umgesetzt werden. Bitte manuell anpassen.",
         "notUnderstoodCulture": "Folgende Einträge der Kultur konnten nicht umgesetzt werden. Bitte manuell anpassen.",
         "canNotBeAdded": "{item} der Kategory {category} kann nicht hinzugefügt werden.",
-        "NoAmmo": "Nicht genug Munition."
+        "NoAmmo": "Nicht genug Munition.",
+        "MissingChoices": "Noch nicht alle Optionen ausgefüllt."
     },
 
     "CEREMONYMODIFIER": {
@@ -707,7 +708,7 @@
         "rerollDamage": "{character} würfelt erneut.",
         "addQS": "{character} erhöht die Qualitätsstufe.",
         "PointsRemaining": "Verbleibende Schicksalspunkte",
-        "isTalented": "{character} benutzt seine Begabung",
+        "isTalented": "{character} benutzt Begabung.",
         "selectDice": "Wurf wiederholen",
         "selectDieToReroll": "Wähle die zu wiederholenden Würfel"
     },

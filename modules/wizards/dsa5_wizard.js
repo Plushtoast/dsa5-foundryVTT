@@ -134,6 +134,25 @@ export default class WizardDSA5 extends Application {
         this.items.concat(game.items.entities.filter(i => i.permission > 1 && this.dataTypes.includes(i.type)));
     }
 
+    _validateInput(parent) {
+        let exclusives = new Set()
+        for (let k of parent.find('.exclusive')) {
+            exclusives.add(k.className.split(/\s+/).filter(x => /^exclusive_/.test(x))[0])
+        }
+        for (let k of exclusives) {
+            let choice = parent.find('.allowedCount_' + k.split("_")[1])
+            let allowed = Number(choice.attr('data-count'))
+            if (parent.find(`.${k}:checked`).length != allowed) {
+                ui.notifications.warn(game.i18n.localize("Error.MissingChoices"))
+                WizardDSA5.flashElem(choice)
+                let tabElem = choice.closest('.tab').attr("data-tab")
+                WizardDSA5.flashElem(parent.find(`.tabs a[data-tab='${tabElem}']`))
+                return false
+            }
+        }
+        return true
+    }
+
     activateListeners(html) {
         super.activateListeners(html)
         html.find('button.ok').click(ev => {
@@ -155,15 +174,19 @@ export default class WizardDSA5 extends Application {
             let maxSelections = Number(maxDomElem.attr("data-count"))
             if (parent.find(`.exclusive_${sel}:checked`).length > maxSelections) {
                 ev.currentTarget.checked = false
-                maxDomElem.addClass("emphasize")
-                setTimeout(function() {
-                    maxDomElem.removeClass("emphasize")
-                }, 600)
+                WizardDSA5.flashElem(maxDomElem)
                 return
             }
         })
-
     }
+
+    static flashElem(elem) {
+        elem.addClass("emphasize")
+        setTimeout(function() {
+            elem.removeClass("emphasize")
+        }, 600)
+    }
+
 
     finalizeUpdate() {
         if (this.errors.length == 0) {

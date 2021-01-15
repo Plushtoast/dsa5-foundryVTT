@@ -577,6 +577,8 @@ export default class Actordsa5 extends Actor {
     checkEnoughXP(cost) {
         if (!Actordsa5.canAdvance(this.data))
             return true
+        if (isNaN(cost) || cost == null)
+            return true
 
         if (Number(this.data.data.details.experience.total) - Number(this.data.data.details.experience.spent) > cost) {
             return true

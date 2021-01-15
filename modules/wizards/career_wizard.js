@@ -40,9 +40,22 @@ export default class CareerWizard extends WizardDSA5 {
             });
             parent.find('.apCost').text(apCost)
         })
-
-
     }
+
+
+    _validateInput(parent) {
+        let choice = parent.find('.maxTricks')
+        let allowed = Number(choice.attr("data-spelltricklimit"))
+        if (parent.find('.exclusiveTricks:checked').length != allowed) {
+            ui.notifications.warn(game.i18n.localize("Error.MissingChoices"))
+            WizardDSA5.flashElem(choice)
+            let tabElem = choice.closest('.tab').attr("data-tab")
+            WizardDSA5.flashElem(parent.find(`.tabs a[data-tab='${tabElem}']`))
+            return false
+        }
+        return super._validateInput(parent)
+    }
+
 
     getData() {
         let data = super.getData()
@@ -155,8 +168,9 @@ export default class CareerWizard extends WizardDSA5 {
     async updateCharacter() {
         let parent = $(this._element)
         parent.find("button.ok i").toggleClass("fa-check fa-spinner fa-spin")
+
         let apCost = Number(parent.find('.apCost').text())
-        if (!this.actor.checkEnoughXP(apCost)) {
+        if (!this._validateInput($(this._element)) || !this.actor.checkEnoughXP(apCost)) {
             parent.find("button.ok i").toggleClass("fa-check fa-spinner fa-spin")
             return
         }

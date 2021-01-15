@@ -69,7 +69,8 @@ export default class AdvantageRulesDSA5 extends ItemRulesDSA5 {
             "Verpflichtungen ()": { items: "text" },
             "Angst vor ()": { items: "text" },
             "Artefaktgebunden ()": { items: "text" },
-            "Magische Einstimmung ()": { items: "text" }
+            "Magische Einstimmung ()": { items: "text" },
+            "Prinzipientreue ()": { items: "text" }
         })
     }
     static async vantageAdded(actor, item) {

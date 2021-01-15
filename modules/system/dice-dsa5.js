@@ -1033,6 +1033,7 @@ export default class DiceDSA5 {
             let input = $(ev.currentTarget),
                 messageId = input.parents('.message').attr("data-message-id"),
                 message = game.messages.get(messageId);
+
             let data = message.data.flags.data
             let newTestData = data.preData;
             let index

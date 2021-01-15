@@ -93,7 +93,7 @@ export default class DSA5_Utility {
         if (chatData.rollMode === "blindroll") chatData["blind"] = true;
         else if (chatData.rollMode === "selfroll") chatData["whisper"] = [game.user];
 
-        if (forceWhisper) { // Final force !
+        if (forceWhisper) {
             chatData["speaker"] = ChatMessage.getSpeaker();
             chatData["whisper"] = ChatMessage.getWhisperRecipients(forceWhisper);
         }
@@ -125,7 +125,6 @@ export default class DSA5_Utility {
         return actor
     }
 
-    //TODO calcualte this
     static _calculateAdvCost(currentAdvances, type, modifier = 0) {
         return DSA5.advancementCosts[type][Number(currentAdvances) + 1]
     }

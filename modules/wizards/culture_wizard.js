@@ -63,8 +63,9 @@ export default class CultureWizard extends WizardDSA5 {
     async updateCharacter() {
         let parent = $(this._element)
         parent.find("button.ok i").toggleClass("fa-check fa-spinner fa-spin")
+
         let apCost = Number(parent.find('.apCost').text())
-        if (!this.actor.checkEnoughXP(apCost)) {
+        if (!this._validateInput($(this._element)) || !this.actor.checkEnoughXP(apCost)) {
             parent.find("button.ok i").toggleClass("fa-check fa-spinner fa-spin")
             return
         }

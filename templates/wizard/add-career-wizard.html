@@ -86,8 +86,7 @@
     <div class="tab combat" data-tab="combat">
         <h2>{{localize 'combatskill'}}</h2>
         {{#each combatskillchoices as |item i|}}
-        <p class="allowedCount_{{i}}" data-count="{{item.allowedCount}}">{{localize 'WIZARD.chose'}} {{item.allowedCount}}.
-        </p>
+        <p class="allowedCount_{{i}}" data-count="{{item.allowedCount}}">{{localize 'WIZARD.chose'}} {{item.allowedCount}}. </p>
         <div class="row-section wrap">
             {{#each item.choices as |choice j|}}
             <div class="col two row-section lineheight">
