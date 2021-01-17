@@ -7,7 +7,7 @@ export default class CareerWizard extends WizardDSA5 {
         this.items = []
         this.actor = null
         this.career = null
-        this.dataTypes = ["magictrick", "blessing", "spell", "ritual", "liturgy", "ceremony", "advantage", "disadvantage", "specialability", "career"]
+        this.dataTypes = ["magictrick", "blessing", "spell", "ritual", "liturgy", "ceremony", "advantage", "disadvantage", "specialability"]
         this.attributes = ["MU", "KL", "IN", "CH", "FF", "GE", "KO", "KK"]
     }
 
@@ -161,7 +161,7 @@ export default class CareerWizard extends WizardDSA5 {
         }
     }
 
-    async deleteOldCareer() {
+    /*async deleteOldCareer() {
         if (this.actor.data.data.details.career.value != "") {
             let oldCareer = this.items.find(x => x.name == this.actor.data.data.details.career.value && x.type == "career")
             if (oldCareer) {
@@ -170,19 +170,19 @@ export default class CareerWizard extends WizardDSA5 {
                 }
             }
         }
-    }
+    }*/
 
     async updateCharacter() {
         let parent = $(this._element)
         parent.find("button.ok i").toggleClass("fa-check fa-spinner fa-spin")
 
         let apCost = Number(parent.find('.apCost').text())
-        if (!this._validateInput($(this._element)) || !this.actor.checkEnoughXP(apCost)) {
+        if (!this._validateInput($(this._element)) || !this.actor.checkEnoughXP(apCost) || await this.alreadyAdded(this.actor.data.data.details.career.value, "career")) {
             parent.find("button.ok i").toggleClass("fa-check fa-spinner fa-spin")
             return
         }
 
-        await this.deleteOldCareer()
+        //await this.deleteOldCareer()
 
         let update = {
             "data.details.career.value": this.career.name,
@@ -231,7 +231,7 @@ export default class CareerWizard extends WizardDSA5 {
             if (skill.includes(game.i18n.localize("combatskillcountdivider") + ":") || skill == "")
                 continue
 
-            await this.updateSkill(skill, "combatskill")
+            await this.updateSkill(skill, "combatskill", 1, false)
         }
 
         this.finalizeUpdate()

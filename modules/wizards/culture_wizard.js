@@ -6,7 +6,7 @@ export default class CultureWizard extends WizardDSA5 {
         super(app)
         this.actor = null
         this.culture = null
-        this.dataTypes = ["advantage", "disadvantage", "specialability", "combatskill", "culture"]
+        this.dataTypes = ["advantage", "disadvantage", "specialability", "combatskill"]
     }
 
     static get defaultOptions() {
@@ -75,7 +75,7 @@ export default class CultureWizard extends WizardDSA5 {
         return super._validateInput(parent)
     }
 
-    async deleteOldCulture() {
+    /*async deleteOldCulture() {
         if (this.actor.data.data.details.culture.value != "") {
             let oldCulture = this.items.find(x => x.name == this.actor.data.data.details.culture.value && x.type == "culture")
             if (oldCulture) {
@@ -84,17 +84,19 @@ export default class CultureWizard extends WizardDSA5 {
                 }
             }
         }
-    }
+    }*/
 
     async updateCharacter() {
         let parent = $(this._element)
         parent.find("button.ok i").toggleClass("fa-check fa-spinner fa-spin")
 
         let apCost = Number(parent.find('.apCost').text())
-        if (!this._validateInput($(this._element)) || !this.actor.checkEnoughXP(apCost)) {
+        if (!this._validateInput($(this._element)) || !this.actor.checkEnoughXP(apCost) || await this.alreadyAdded(this.actor.data.data.details.culture.value, "culture")) {
             parent.find("button.ok i").toggleClass("fa-check fa-spinner fa-spin")
             return
         }
+
+        //await this.deleteOldCulture()
 
         let update = {
             "data.details.culture.value": this.culture.name

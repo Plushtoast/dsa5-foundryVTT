@@ -65,7 +65,9 @@
         "SituationalModifiers": "Bedingte\nModifikatoren",
         "DeleteItemDetail": "Möchtest du <b>{item}</b> entfernen?",
         "ItemRequiresAdoption": "Eintrag anpassen",
-        "ItemRequiresAdoptionDescription": "Das Hinzufügen benötigt zuerst eine Anpassung. Wähle den passenden Eintrag für "
+        "ItemRequiresAdoptionDescription": "Das Hinzufügen benötigt zuerst eine Anpassung. Wähle den passenden Eintrag für ",
+        "alreadyAddedCharacterpart": "Du hast bereits eine {category}. Möchtest du diese Überschreiben? Bereits hinzugefügte Modifikation der vorherigen {category} können nicht automatisch rückgängig gemacht werden.",
+        "warning": "Vorsicht"
     },
 
     "Equipment": {

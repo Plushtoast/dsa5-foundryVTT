@@ -108,7 +108,42 @@ export default class WizardDSA5 extends Application {
         }
     }
 
-    async updateSkill(skill, itemType, factor = 1) {
+    async alreadyAdded(string, category) {
+        if (string == "") {
+            return false
+        }
+
+        let result = false
+
+        result = await new Promise((resolve, reject) => {
+            new Dialog({
+                title: game.i18n.localize("DIALOG.warning"),
+                content: game.i18n.format('DIALOG.alreadyAddedCharacterpart', { category: game.i18n.localize(category) }),
+                default: 'ok',
+                buttons: {
+                    ok: {
+                        icon: '<i class="fas fa-check"></i>',
+                        label: 'ok',
+                        default: true,
+                        callback: html => {
+                            resolve(false);
+                        },
+                    },
+                    cancel: {
+                        icon: '<i class="fas fa-close"></i>',
+                        label: 'cancel',
+                        default: true,
+                        callback: html => {
+                            resolve(true);
+                        },
+                    }
+                }
+            }).render(true);
+        });
+        return result
+    }
+
+    async updateSkill(skill, itemType, factor = 1, bonus = true) {
         let parsed = DSA5_Utility.parseAbilityString(skill.trim())
         let res = this.actor.data.items.find(i => {
             return i.type == itemType && i.name == parsed.name
@@ -116,7 +151,7 @@ export default class WizardDSA5 extends Application {
         if (res) {
             let skillUpdate = duplicate(res)
                 //skillUpdate.data.talentValue.value = parsed.step + (parsed.bonus ? Number(skillUpdate.data.talentValue.value) : 0)
-            skillUpdate.data.talentValue.value = Math.max(0, factor * parsed.step + Number(skillUpdate.data.talentValue.value))
+            skillUpdate.data.talentValue.value = Math.max(0, factor * parsed.step + (bonus ? Number(skillUpdate.data.talentValue.value) : 0))
             await this.actor.updateEmbeddedEntity("OwnedItem", skillUpdate);
         } else {
             console.warn(`Could not find ${itemType} ${skill}`)
