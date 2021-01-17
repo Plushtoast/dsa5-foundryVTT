@@ -525,6 +525,7 @@ export default class Actordsa5 extends Actor {
             liturgies: liturgies,
             combatskills: combatskills,
             canAdvance: this.data.canAdvance,
+            sheetLocked: actorData.data.sheetLocked.value,
             allSkillsLeft: {
                 body: bodySkills,
                 social: socialSkills,
@@ -845,7 +846,7 @@ export default class Actordsa5 extends Actor {
             let newTestData = data.preData
             switch (type) {
                 case "rerollDamage":
-                    cardOptions.fatePointRerollUsed = true;
+                    cardOptions.fatePointDamageRerollUsed = true;
                     if (data.originalTargets && data.originalTargets.size > 0) {
                         game.user.targets = data.originalTargets;
                         game.user.targets.user = game.user;
@@ -880,7 +881,7 @@ export default class Actordsa5 extends Actor {
 
                     this[`${data.postData.postFunction}`]({ testData: newTestData, cardOptions }, { rerenderMessage: message });
                     message.update({
-                        "flags.data.fatePointRerollUsed": true
+                        "flags.data.fatePointDamageRerollUsed": true
                     });
                     this.update({ "data.status.fatePoints.value": this.data.data.status.fatePoints.value - 1 })
 

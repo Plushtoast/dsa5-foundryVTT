@@ -346,6 +346,12 @@ export default class DiceDSA5 {
         this._appendSituationalModifiers(testData, game.i18n.localize("manual"), testData.testModifier)
         var result = this._rollSingleD20(roll, testData.source.max, testData.extra.statusId, modifier, testData)
         result["rollType"] = "status"
+        if (testData.extra.statusId == "dodge" && result.successLevel == 3) {
+            result["description"] += ", " + game.i18n.localize("attackOfOpportunity")
+        } else if (testData.extra.statusId == "dodge" && result.successLevel == -3) {
+            result["description"] += ", " + game.i18n.localize("selfDamage") + (new Roll("1d6+2").roll().total)
+        }
+
         return result
     }
 
@@ -368,10 +374,10 @@ export default class DiceDSA5 {
 
 
         let roll = testData.roll ? testData.roll : new Roll(testData.source.data.data.damage.value.replace(/[Ww]/, "d")).roll()
-        let damage = roll._total + modifier;
+        let damage = roll.total + modifier;
 
         for (let k of roll.terms) {
-            if (k instanceof Die) {
+            if (k instanceof Die || k.class == "Die") {
                 for (let l of k.results) {
                     chars.push({ char: testData.mode, res: l.result, die: "d" + k.faces })
                 }
@@ -409,10 +415,10 @@ export default class DiceDSA5 {
         }
 
         let roll = testData.roll ? testData.roll : new Roll(weapon.data.damage.value.replace(/[Ww]/, "d")).roll()
-        let damage = roll._total + modifier;
+        let damage = roll.total + modifier;
 
         for (let k of roll.terms) {
-            if (k instanceof Die) {
+            if (k instanceof Die || k.class == "Die") {
                 for (let l of k.results) {
                     chars.push({ char: testData.mode, res: l.result, die: "d" + k.faces })
                 }
@@ -514,7 +520,7 @@ export default class DiceDSA5 {
                     result.description += ", " + game.i18n.localize("attackOfOpportunity")
                 break;
             case -3:
-                result.description += ", " + game.i18n.localize("selfDamage") + (new Roll("1d6+2").roll().result)
+                result.description += ", " + game.i18n.localize("selfDamage") + (new Roll("1d6+2").roll().total)
                 break;
             case 2:
                 if (testData.mode == "attack")
@@ -524,12 +530,12 @@ export default class DiceDSA5 {
                 break;
         }
         if (testData.mode == "attack" && success) {
-            let damageRoll = new Roll(testData.source.data.data.damage.value.replace(/[Ww]/, "d")).roll()
+            let damageRoll = testData.damageRoll ? testData.damageRoll : new Roll(testData.source.data.data.damage.value.replace(/[Ww]/, "d")).roll()
             this._addRollDiceSoNice(testData, damageRoll, "black")
-            let damage = damageRoll._total;
+            let damage = damageRoll.total;
 
             for (let k of damageRoll.terms) {
-                if (k instanceof Die) {
+                if (k instanceof Die || k.class == "Die") {
                     for (let l of k.results) {
                         result.characteristics.push({ char: "damage", res: l.result, die: "d" + k.faces })
                     }
@@ -543,6 +549,7 @@ export default class DiceDSA5 {
                 damage = damage * 2
             }
             result["damage"] = damage
+            result["damageRoll"] = damageRoll
         }
         result["rollType"] = "weapon"
         return result
@@ -605,7 +612,7 @@ export default class DiceDSA5 {
                     result.description += ", " + game.i18n.localize("attackOfOpportunity")
                 break;
             case -3:
-                result.description += ", " + game.i18n.localize("selfDamage") + (new Roll("1d6+2").roll().result)
+                result.description += ", " + game.i18n.localize("selfDamage") + (new Roll("1d6+2").roll().total)
                 break;
             case 2:
                 if (testData.mode == "attack")
@@ -682,7 +689,7 @@ export default class DiceDSA5 {
             description = game.i18n.localize("CriticalFailure");
             let res2 = res - rollConfirm.terms[0].results[0].result;
             if (res2 < 0) {
-                description += ", " + game.i18n.localize("selfDamage") + (new Roll("1d6+2").roll().result)
+                description += ", " + game.i18n.localize("selfDamage") + (new Roll("1d6+2").roll().total)
             }
             this._addRollDiceSoNice(testData, rollConfirm, testData.mode)
             chars.push({
@@ -726,17 +733,18 @@ export default class DiceDSA5 {
         } else {
             if (testData.source.data.effectFormula.value != "") {
                 let formula = testData.source.data.effectFormula.value.replace("QS", res.qualityStep).replace(/[Ww]/, "d")
-                let rollEffect = new Roll(formula).roll()
+                let rollEffect = testData.damageRoll ? testData.damageRoll : new Roll(formula).roll()
                 this._addRollDiceSoNice(testData, rollEffect, "black")
-                res["effectResult"] = rollEffect._total
+                res["effectResult"] = rollEffect.total
                 res["calculatedEffectFormula"] = formula
                 for (let k of rollEffect.terms) {
-                    if (k instanceof Die) {
+                    if (k instanceof Die || k.class == "Die") {
                         for (let l of k.results) {
                             res["characteristics"].push({ char: "effect", res: l.result, die: "d" + k.faces })
                         }
                     }
                 }
+                res["damageRoll"] = rollEffect
             }
         }
         res.preData.calculatedSpellModifiers.finalcost = Number(res.preData.calculatedSpellModifiers.finalcost) + AdvantageRulesDSA5.vantageStep(testData.extra.actor, "Schwacher Karmalkörper") + AdvantageRulesDSA5.vantageStep(testData.extra.actor, "Schwacher Astralkörper")
@@ -956,17 +964,12 @@ export default class DiceDSA5 {
             switch (rollMode) {
                 case "blindroll":
                     blind = true;
+                    whisper = game.users.filter(user => user.isGM).map(x => x.data._id);
                 case "gmroll":
-                    let gmList = game.users.filter(user => user.isGM);
-                    let gmIDList = [];
-                    gmList.forEach(gm => gmIDList.push(gm.data._id));
-                    whisper = gmIDList;
+                    whisper = game.users.filter(user => user.isGM).map(x => x.data._id);
                     break;
                 case "roll":
-                    let userList = game.users.filter(user => user.active);
-                    let userIDList = [];
-                    userList.forEach(user => userIDList.push(user.data._id));
-                    whisper = userIDList;
+                    whisper = game.users.filter(user => user.active).map(x => x.data._id);
                     break;
             }
             await game.dice3d.showForRoll(roll, game.user, true, whisper, blind);
@@ -1045,7 +1048,7 @@ export default class DiceDSA5 {
                         newTestData.roll.terms[index * 2].results[0].result = Number(input.val())
                     } else {
                         let oldDamageRoll = duplicate(data.postData.damageRoll)
-                        index = index - newTestData.roll.results.length
+                        index = index - newTestData.roll.results.filter(x => !isNaN(x)).length
 
                         oldDamageRoll.total = oldDamageRoll.total - oldDamageRoll.results[index * 2] + Number(input.val())
                         oldDamageRoll.results[index * 2] = Number(input.val())

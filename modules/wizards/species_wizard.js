@@ -112,8 +112,7 @@ export default class SpeciesWizard extends WizardDSA5 {
             "data.status.speed.initial": this.species.data.baseValues.speed.value,
             "data.status.soulpower.initial": this.species.data.baseValues.soulpower.value,
             "data.status.toughness.initial": this.species.data.baseValues.toughness.value,
-            "data.status.wounds.initial": this.species.data.baseValues.wounds.value,
-            "data.status.wounds.value": this.actor.data.data.status.wounds.current + this.actor.data.data.status.wounds.modifier + this.actor.data.data.status.wounds.advances
+            "data.status.wounds.initial": this.species.data.baseValues.wounds.value
         };
 
 
@@ -122,12 +121,16 @@ export default class SpeciesWizard extends WizardDSA5 {
             attributeChoices.push($(k).val())
         }
 
+        ["MU", "KL", "IN", "CH", "FF", "GE", "KO", "KK"].forEach(k => {
+            update[`data.characteristics.${k.toLowerCase()}.species`] = 0
+        })
+
         for (let attr of this.species.data.attributeChange.value.split(",").concat(attributeChoices)) {
             if (attr.includes(game.i18n.localize("combatskillcountdivider") + ":") || attr == "")
                 continue
 
             let attrs = attr.trim().split(" ")
-            update[`data.characteristics.${attrs[0].toLowerCase()}.initial`] = this.actor.data.data.characteristics[attrs[0].toLowerCase()].initial + Number(attrs[1])
+            update[`data.characteristics.${attrs[0].toLowerCase()}.species`] = Number(attrs[1])
         }
 
         await this.actor.update(update);

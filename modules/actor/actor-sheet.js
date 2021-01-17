@@ -25,7 +25,6 @@ export default class ActorSheetDsa5 extends ActorSheet {
         $(this._element).find(".configure-token").attr("title", game.i18n.localize("SHEET.Token"));
         $(this._element).find(".import").attr("title", game.i18n.localize("SHEET.Import"));
         $(this._element).find(".locksheet").attr("title", game.i18n.localize("SHEET.Lock"));
-
     }
 
     static
@@ -208,7 +207,6 @@ export default class ActorSheetDsa5 extends ActorSheet {
                 "data.details.experience.spent": Number(this.actor.data.data.details.experience.spent) - cost
             })
         }
-
     }
 
     async _advanceItem(itemId) {
@@ -279,8 +277,8 @@ export default class ActorSheetDsa5 extends ActorSheet {
         if (this.actor.data.canAdvance) {
             buttons.unshift({
                 class: "locksheet",
-                icon: "fas fa-unlock",
-                onclick: async ev => this.changeAdvanceLock()
+                icon: `fas fa-${this.actor.data.data.sheetLocked.value ? "" : "un"}lock`,
+                onclick: async ev => this.changeAdvanceLock(ev)
             })
         }
         return buttons
@@ -288,6 +286,7 @@ export default class ActorSheetDsa5 extends ActorSheet {
 
     async changeAdvanceLock(ev) {
         this.actor.update({ "data.sheetLocked.value": !this.actor.data.data.sheetLocked.value })
+        $(ev.currentTarget).find("i").toggleClass("fa-unlock fa-lock")
     }
 
     _checkEnoughXP(cost) {
@@ -296,8 +295,6 @@ export default class ActorSheetDsa5 extends ActorSheet {
 
     activateListeners(html) {
         super.activateListeners(html);
-
-
 
         let posthand = ev => {
             this.actor.items.find(i => i.data._id == this._getItemId(ev)).postItem()

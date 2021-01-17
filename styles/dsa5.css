@@ -267,6 +267,10 @@ form .form-group.tripple select {
     background-color: darkred;
 }
 
+input[type=text].emphasize {
+    border-color: darkred;
+}
+
 .emphasize2 {
     color: white;
     background-color: rgb(10, 89, 194);
@@ -1728,4 +1732,8 @@ input[type="search"] {
 .largeDialog .error p {
     background: rgb(151, 8, 8);
     color: white;
+}
+
+.locktrue .advance {
+    display: none;
 }

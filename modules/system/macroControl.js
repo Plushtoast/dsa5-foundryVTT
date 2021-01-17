@@ -65,6 +65,11 @@ export default class MacroDSA5 {
         //item = item.data;
 
         switch (item.type) {
+            case "trait":
+                actor.setupWeaponTrait(item, bypassData.mod, bypassData).then(setupData => {
+                    actor.basicTest(setupData)
+                });
+                return
             case "meleeweapon":
                 actor.setupWeapon(item, bypassData.mod, bypassData).then(setupData => {
                     actor.basicTest(setupData)

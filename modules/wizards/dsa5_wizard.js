@@ -12,6 +12,7 @@ export default class WizardDSA5 extends Application {
         this.errors = []
         this.dataTypes = []
         this.attributes = []
+        this.updating = false
     }
 
     static get defaultOptions() {
@@ -107,14 +108,15 @@ export default class WizardDSA5 extends Application {
         }
     }
 
-    async updateSkill(skill, itemType) {
+    async updateSkill(skill, itemType, factor = 1) {
         let parsed = DSA5_Utility.parseAbilityString(skill.trim())
         let res = this.actor.data.items.find(i => {
             return i.type == itemType && i.name == parsed.name
         });
         if (res) {
             let skillUpdate = duplicate(res)
-            skillUpdate.data.talentValue.value = parsed.step + (parsed.bonus ? Number(skillUpdate.data.talentValue.value) : 0)
+                //skillUpdate.data.talentValue.value = parsed.step + (parsed.bonus ? Number(skillUpdate.data.talentValue.value) : 0)
+            skillUpdate.data.talentValue.value = Math.max(0, factor * parsed.step + Number(skillUpdate.data.talentValue.value))
             await this.actor.updateEmbeddedEntity("OwnedItem", skillUpdate);
         } else {
             console.warn(`Could not find ${itemType} ${skill}`)
@@ -156,7 +158,13 @@ export default class WizardDSA5 extends Application {
     activateListeners(html) {
         super.activateListeners(html)
         html.find('button.ok').click(ev => {
-            this.updateCharacter()
+            if (!this.updating) {
+                this.updating = true
+                this.updateCharacter().then(
+                    x => this.updating = false
+                )
+            }
+
         })
         html.find('button.cancel').click(ev => {
             this.close()

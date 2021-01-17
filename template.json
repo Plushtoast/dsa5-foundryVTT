@@ -14,6 +14,7 @@
                         "abrev": "CHARAbbrev.MU",
                         "color": "#b3241a",
                         "initial": 8,
+                        "species": 0,
                         "modifier": 0,
                         "advances": 0
                     },
@@ -22,6 +23,7 @@
                         "label": "CHAR.KL",
                         "abrev": "CHARAbbrev.KL",
                         "color": "#8259a3",
+                        "species": 0,
                         "initial": 8,
                         "modifier": 0,
                         "advances": 0
@@ -31,6 +33,7 @@
                         "label": "CHAR.IN",
                         "abrev": "CHARAbbrev.IN",
                         "color": "#388834",
+                        "species": 0,
                         "initial": 8,
                         "modifier": 0,
                         "advances": 0
@@ -40,6 +43,7 @@
                         "label": "CHAR.CH",
                         "abrev": "CHARAbbrev.CH",
                         "color": "#0d0d0d",
+                        "species": 0,
                         "initial": 8,
                         "modifier": 0,
                         "advances": 0
@@ -49,6 +53,7 @@
                         "label": "CHAR.FF",
                         "abrev": "CHARAbbrev.FF",
                         "color": "#d5b467",
+                        "species": 0,
                         "initial": 8,
                         "modifier": 0,
                         "advances": 0
@@ -58,6 +63,7 @@
                         "label": "CHAR.GE",
                         "abrev": "CHARAbbrev.GE",
                         "color": "#688ec4",
+                        "species": 0,
                         "initial": 8,
                         "modifier": 0,
                         "advances": 0
@@ -67,6 +73,7 @@
                         "label": "CHAR.KO",
                         "abrev": "CHARAbbrev.KO",
                         "color": "#fbf5ea",
+                        "species": 0,
                         "initial": 8,
                         "modifier": 0,
                         "advances": 0
@@ -76,6 +83,7 @@
                         "label": "CHAR.KK",
                         "abrev": "CHARAbbrev.KK",
                         "color": "#d6a878",
+                        "species": 0,
                         "initial": 8,
                         "modifier": 0,
                         "advances": 0

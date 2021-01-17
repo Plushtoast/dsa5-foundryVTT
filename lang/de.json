@@ -315,6 +315,7 @@
     "spells": "Zaubersprüche",
     "search": "Suche",
     "searchPlaceholder": "Durchsuche die Bibliothek",
+    "searchCategoryDescription": "Bitte Filterkategorie(n) auswählen",
     "shooter": "Schütze",
     "speed": "Geschwindigkeit",
     "statuseffects": "Statuseffekte",
@@ -368,6 +369,7 @@
         "vantageDescription": "Wähle passende Vor- und Nachteile um deine Profession abzurunden.",
         "vantageDescriptionCulture": "Wähle passende Vor- und Nachteile um deine Kultur abzurunden.",
         "vantageDescriptionSpecies": "Wähle passende Vor- und Nachteile um deine Spezies abzurunden.",
+        "localKnowledgeDescr": "Gib den Ort deines Lokalwissens an.",
         "chose": "Wähle ",
         "missingVantages": "Fehlende vorausgesetzte Vor-/Nachteile",
         "missingSpecialAbilities": "Fehlende vorausgesetzte Sonderfertigkeiten",
@@ -668,7 +670,7 @@
         "payButton": "Bezahlen",
         "getPaidButton": "Auszahlen",
         "noActor": "Dein Charakter wurde nicht gefunden",
-        "onlyActors": "Nur Spieler können bezahlen/bezahlt werden",
+        "onlyActors": "Nur Spieler können bezahlen/bezahlt werden oder dir wurde kein Charakter zugeordnet.",
         "cannotpay": "<b>{actor}</b> kann seine Schulden von {amount} nicht bezahlen."
     },
 

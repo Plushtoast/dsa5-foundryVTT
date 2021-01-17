@@ -7,7 +7,7 @@ export default class CareerWizard extends WizardDSA5 {
         this.items = []
         this.actor = null
         this.career = null
-        this.dataTypes = ["magictrick", "blessing", "spell", "ritual", "liturgy", "ceremony", "advantage", "disadvantage", "specialability"]
+        this.dataTypes = ["magictrick", "blessing", "spell", "ritual", "liturgy", "ceremony", "advantage", "disadvantage", "specialability", "career"]
         this.attributes = ["MU", "KL", "IN", "CH", "FF", "GE", "KO", "KK"]
     }
 
@@ -40,10 +40,9 @@ export default class CareerWizard extends WizardDSA5 {
         })
     }
 
-
     _validateInput(parent) {
         let choice = parent.find('.maxTricks')
-        let allowed = Number(choice.attr("data-spelltricklimit"))
+        let allowed = Number(choice.attr("data-spelltricklimit")) || 0
         if (parent.find('.exclusiveTricks:checked').length != allowed) {
             ui.notifications.error(game.i18n.localize("Error.MissingChoices"))
             WizardDSA5.flashElem(choice)
@@ -53,7 +52,6 @@ export default class CareerWizard extends WizardDSA5 {
         }
         return super._validateInput(parent)
     }
-
 
     getData() {
         let data = super.getData()
@@ -163,6 +161,17 @@ export default class CareerWizard extends WizardDSA5 {
         }
     }
 
+    async deleteOldCareer() {
+        if (this.actor.data.data.details.career.value != "") {
+            let oldCareer = this.items.find(x => x.name == this.actor.data.data.details.career.value && x.type == "career")
+            if (oldCareer) {
+                for (let skill of oldCareer.data.data.skills.value.split(",")) {
+                    await this.updateSkill(skill, "skill", -1)
+                }
+            }
+        }
+    }
+
     async updateCharacter() {
         let parent = $(this._element)
         parent.find("button.ok i").toggleClass("fa-check fa-spinner fa-spin")
@@ -172,6 +181,8 @@ export default class CareerWizard extends WizardDSA5 {
             parent.find("button.ok i").toggleClass("fa-check fa-spinner fa-spin")
             return
         }
+
+        await this.deleteOldCareer()
 
         let update = {
             "data.details.career.value": this.career.name,

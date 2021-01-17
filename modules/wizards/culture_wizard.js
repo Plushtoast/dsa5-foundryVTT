@@ -6,7 +6,7 @@ export default class CultureWizard extends WizardDSA5 {
         super(app)
         this.actor = null
         this.culture = null
-        this.dataTypes = ["advantage", "disadvantage", "specialability", "combatskill"]
+        this.dataTypes = ["advantage", "disadvantage", "specialability", "combatskill", "culture"]
     }
 
     static get defaultOptions() {
@@ -36,7 +36,8 @@ export default class CultureWizard extends WizardDSA5 {
         let advantages = this.parseToItem(this.culture.data.recommendedAdvantages.value, ["advantage"])
         let disadvantages = this.parseToItem(this.culture.data.recommendedDisadvantages.value, ["disadvantage"])
         let writings = this.culture.data.writing.value == "" ? [] : this.parseToItem(this.culture.data.writing.value.split(",").map(x => `Schrift (${x.trim()})`).join(", "), ["specialability"])
-        let languages = this.culture.data.language.value == "" ? [] : this.parseToItem(this.culture.data.language.value.split(",").map(x => `Sprache (${x.trim()})`).join(", "), ["specialability"])
+        let languages = this.culture.data.language.value == "" ? [] : this.parseToItem(this.culture.data.language.value.split(",").map(x => `Sprache (${x.trim()}) 3`).join(", "), ["specialability"])
+
         let baseCost = Number(this.culture.data.APValue.value)
         mergeObject(data, {
             title: game.i18n.format("WIZARD.addItem", { item: `${game.i18n.localize("culture")} ${this.culture.name}` }),
@@ -62,6 +63,29 @@ export default class CultureWizard extends WizardDSA5 {
         await this._loadCompendiae()
     }
 
+    _validateInput(parent) {
+        let choice = parent.find('.localKnowledge')
+        if (choice.val() == "") {
+            ui.notifications.error(game.i18n.localize("Error.MissingChoices"))
+            WizardDSA5.flashElem(choice)
+            let tabElem = choice.closest('.tab').attr("data-tab")
+            WizardDSA5.flashElem(parent.find(`.tabs a[data-tab='${tabElem}']`))
+            return false
+        }
+        return super._validateInput(parent)
+    }
+
+    async deleteOldCulture() {
+        if (this.actor.data.data.details.culture.value != "") {
+            let oldCulture = this.items.find(x => x.name == this.actor.data.data.details.culture.value && x.type == "culture")
+            if (oldCulture) {
+                for (let skill of oldCulture.data.data.skills.value.split(",")) {
+                    await this.updateSkill(skill, "skill", -1)
+                }
+            }
+        }
+    }
+
     async updateCharacter() {
         let parent = $(this._element)
         parent.find("button.ok i").toggleClass("fa-check fa-spinner fa-spin")
@@ -74,6 +98,14 @@ export default class CultureWizard extends WizardDSA5 {
 
         let update = {
             "data.details.culture.value": this.culture.name
+        }
+
+        let localKnowledge = this.items.find(x => x.name == "Ortskenntnis ()" && x.type == "specialability")
+        if (localKnowledge) {
+            localKnowledge = duplicate(localKnowledge)
+            localKnowledge.name = `Ortskenntnis (${parent.find(".localKnowledge").val()})`
+            localKnowledge.data.APValue.value = 0
+            this.actor.createEmbeddedEntity("OwnedItem", localKnowledge)
         }
 
         await this.addSelections(parent.find('.optional:checked'))
