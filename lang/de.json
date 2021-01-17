@@ -282,6 +282,7 @@
     "pamod": "Parademodifikator",
     "parryWeaponless": "Waffenlose Verteidigung",
     "rangeweapon": "Fernkampfwaffe",
+    "refundCost": "{cost} Abenteuerpunkte zurückerstatten",
     "Roll": "Wurf",
     "result": "Ergebnis",
     "rule": "Regel",
@@ -521,7 +522,12 @@
         "EditItem": "Editieren",
         "Dropdown": "Details",
         "DeleteItem": "Löschen",
-        "addItem": "Gegenstand erstellen"
+        "addItem": "Gegenstand erstellen",
+        "Close": "Schließen",
+        "Configure": "Blatt konfigurieren",
+        "Token": "Token konfigurieren",
+        "Import": "Element importieren",
+        "Lock": "Steigerung sperren/entsperren"
     },
 
     "RangeMod": {

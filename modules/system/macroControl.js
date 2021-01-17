@@ -45,7 +45,7 @@ export default class MacroDSA5 {
     }
 
     static runWeaponless(actor, char) {
-        if (!actor) return ui.notifications.warn(`${game.i18n.localize("Error.MacroItemMissing")} ${char}`);
+        if (!actor) return ui.notifications.error(`${game.i18n.localize("Error.MacroItemMissing")} ${char}`);
         let characteristic = char.split("Weaponless")[0]
         actor.setupWeaponless(characteristic, event).then(setupData => {
             actor.basicTest(setupData)
@@ -53,7 +53,7 @@ export default class MacroDSA5 {
     }
 
     static runChar(actor, char) {
-        if (!actor) return ui.notifications.warn(`${game.i18n.localize("Error.MacroItemMissing")} ${char}`);
+        if (!actor) return ui.notifications.error(`${game.i18n.localize("Error.MacroItemMissing")} ${char}`);
 
         actor.setupStatus(char).then(setupData => {
             actor.basicTest(setupData)
@@ -61,7 +61,7 @@ export default class MacroDSA5 {
     }
 
     static runItem(actor, item, itemName, bypassData) {
-        if (!item) return ui.notifications.warn(`${game.i18n.localize("Error.MacroItemMissing")} ${itemName}`);
+        if (!item) return ui.notifications.error(`${game.i18n.localize("Error.MacroItemMissing")} ${itemName}`);
         //item = item.data;
 
         switch (item.type) {

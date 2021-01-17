@@ -143,7 +143,7 @@ export default class WizardDSA5 extends Application {
             let choice = parent.find('.allowedCount_' + k.split("_")[1])
             let allowed = Number(choice.attr('data-count'))
             if (parent.find(`.${k}:checked`).length != allowed) {
-                ui.notifications.warn(game.i18n.localize("Error.MissingChoices"))
+                ui.notifications.error(game.i18n.localize("Error.MissingChoices"))
                 WizardDSA5.flashElem(choice)
                 let tabElem = choice.closest('.tab').attr("data-tab")
                 WizardDSA5.flashElem(parent.find(`.tabs a[data-tab='${tabElem}']`))
@@ -180,13 +180,12 @@ export default class WizardDSA5 extends Application {
         })
     }
 
-    static flashElem(elem) {
-        elem.addClass("emphasize")
+    static flashElem(elem, cssClass = "emphasize") {
+        elem.addClass(cssClass)
         setTimeout(function() {
-            elem.removeClass("emphasize")
+            elem.removeClass(cssClass)
         }, 600)
     }
-
 
     finalizeUpdate() {
         if (this.errors.length == 0) {

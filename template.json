@@ -257,6 +257,10 @@
                 "type": "Number",
                 "value": 0,
                 "used": 0
+            },
+            "sheetLocked": {
+                "type": "Boolean",
+                "value": false
             }
         },
         "npc": {
@@ -265,7 +269,11 @@
                 "status",
                 "details",
                 "magic"
-            ]
+            ],
+            "sheetLocked": {
+                "type": "Boolean",
+                "value": false
+            }
         },
         "creature": {
             "templates": [
@@ -312,6 +320,10 @@
             "description": {
                 "type": "String",
                 "value": ""
+            },
+            "sheetLocked": {
+                "type": "Boolean",
+                "value": false
             }
         }
     },

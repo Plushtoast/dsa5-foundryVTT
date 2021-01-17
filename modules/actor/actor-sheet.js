@@ -19,6 +19,13 @@ export default class ActorSheetDsa5 extends ActorSheet {
         await super._render(force, options);
         this._setScrollPos();
         this._restoreSeachFields()
+
+        $(this._element).find(".close").attr("title", game.i18n.localize("SHEET.Close"));
+        $(this._element).find(".configure-sheet").attr("title", game.i18n.localize("SHEET.Configure"));
+        $(this._element).find(".configure-token").attr("title", game.i18n.localize("SHEET.Token"));
+        $(this._element).find(".import").attr("title", game.i18n.localize("SHEET.Import"));
+        $(this._element).find(".locksheet").attr("title", game.i18n.localize("SHEET.Lock"));
+
     }
 
     static
@@ -167,6 +174,18 @@ export default class ActorSheetDsa5 extends ActorSheet {
         }
     }
 
+    async _refundAttributeAdvance(attr) {
+        let advances = Number(this.actor.data.data.characteristics[attr].advances) + Number(this.actor.data.data.characteristics[attr].initial)
+        if (Number(this.actor.data.data.characteristics[attr].advances) > 0) {
+            let cost = DSA5_Utility._calculateAdvCost(advances, "E", 0)
+            let attrJs = `data.characteristics.${attr}.advances`
+            await this.actor.update({
+                [attrJs]: Number(this.actor.data.data.characteristics[attr].advances) - 1,
+                "data.details.experience.spent": Number(this.actor.data.data.details.experience.spent) - cost
+            })
+        }
+    }
+
     async _advancePoints(attr) {
         let advances = Number(this.actor.data.data.status[attr].advances)
         let cost = DSA5_Utility._calculateAdvCost(advances, "D")
@@ -175,6 +194,43 @@ export default class ActorSheetDsa5 extends ActorSheet {
             await this.actor.update({
                 [attrJs]: Number(this.actor.data.data.status[attr].advances) + 1,
                 "data.details.experience.spent": Number(this.actor.data.data.details.experience.spent) + cost
+            })
+        }
+    }
+
+    async _refundPointsAdvance(attr) {
+        let advances = Number(this.actor.data.data.status[attr].advances)
+        if (advances > 0) {
+            let cost = DSA5_Utility._calculateAdvCost(advances, "D", 0)
+            let attrJs = `data.status.${attr}.advances`
+            await this.actor.update({
+                [attrJs]: Number(this.actor.data.data.status[attr].advances) - 1,
+                "data.details.experience.spent": Number(this.actor.data.data.details.experience.spent) - cost
+            })
+        }
+
+    }
+
+    async _advanceItem(itemId) {
+        let item = duplicate(this.actor.items.find(i => i.data._id == itemId))
+        let cost = DSA5_Utility._calculateAdvCost(Number(item.data.talentValue.value), item.data.StF.value)
+        if (this._checkEnoughXP(cost) && this._checkMaximumItemAdvancement(item, Number(item.data.talentValue.value) + 1)) {
+            item.data.talentValue.value += 1
+            this.actor.updateEmbeddedEntity("OwnedItem", item)
+            await this.actor.update({
+                "data.details.experience.spent": Number(this.actor.data.data.details.experience.spent) + cost
+            })
+        }
+    }
+
+    async _refundItemAdvance(itemId) {
+        let item = duplicate(this.actor.items.find(i => i.data._id == itemId))
+        if (item.data.talentValue.value > 0) {
+            let cost = DSA5_Utility._calculateAdvCost(Number(item.data.talentValue.value), item.data.StF.value, 0)
+            item.data.talentValue.value -= 1
+            this.actor.updateEmbeddedEntity("OwnedItem", item)
+            await this.actor.update({
+                "data.details.experience.spent": Number(this.actor.data.data.details.experience.spent) - cost
             })
         }
     }
@@ -191,7 +247,7 @@ export default class ActorSheetDsa5 extends ActorSheet {
                 break
         }
         if (!result)
-            ui.notifications.warn(game.i18n.localize("Error.AdvanceMaximumReached"))
+            ui.notifications.error(game.i18n.localize("Error.AdvanceMaximumReached"))
 
         return result
     }
@@ -213,22 +269,25 @@ export default class ActorSheetDsa5 extends ActorSheet {
                 break
         }
         if (!result)
-            ui.notifications.warn(game.i18n.localize("Error.AdvanceMaximumReached"))
+            ui.notifications.error(game.i18n.localize("Error.AdvanceMaximumReached"))
 
         return result
     }
 
-    async _advanceItem(itemId) {
-        let item = duplicate(this.actor.items.find(i => i.data._id == itemId))
-        let cost = DSA5_Utility._calculateAdvCost(Number(item.data.talentValue.value), item.data.StF.value)
-
-        if (this._checkEnoughXP(cost) && this._checkMaximumItemAdvancement(item, Number(item.data.talentValue.value) + 1)) {
-            item.data.talentValue.value += 1
-            this.actor.updateEmbeddedEntity("OwnedItem", item)
-            await this.actor.update({
-                "data.details.experience.spent": Number(this.actor.data.data.details.experience.spent) + cost
+    _getHeaderButtons() {
+        let buttons = super._getHeaderButtons();
+        if (this.actor.data.canAdvance) {
+            buttons.unshift({
+                class: "locksheet",
+                icon: "fas fa-unlock",
+                onclick: async ev => this.changeAdvanceLock()
             })
         }
+        return buttons
+    }
+
+    async changeAdvanceLock(ev) {
+        this.actor.update({ "data.sheetLocked.value": !this.actor.data.data.sheetLocked.value })
     }
 
     _checkEnoughXP(cost) {
@@ -237,6 +296,8 @@ export default class ActorSheetDsa5 extends ActorSheet {
 
     activateListeners(html) {
         super.activateListeners(html);
+
+
 
         let posthand = ev => {
             this.actor.items.find(i => i.data._id == this._getItemId(ev)).postItem()
@@ -297,13 +358,21 @@ export default class ActorSheetDsa5 extends ActorSheet {
         html.find(".advance-attribute").mousedown(ev => {
             this._advanceAttribute($(ev.currentTarget).attr("data-attr"))
         })
+        html.find(".refund-attribute").mousedown(ev => {
+            this._refundAttributeAdvance($(ev.currentTarget).attr("data-attr"))
+        })
         html.find(".advance-item").mousedown(ev => {
             this._advanceItem(this._getItemId(ev))
+        })
+        html.find(".refund-item").mousedown(ev => {
+            this._refundItemAdvance(this._getItemId(ev))
         })
         html.find(".advance-points").mousedown(ev => {
             this._advancePoints($(ev.currentTarget).attr("data-attr"))
         })
-
+        html.find(".refund-points").mousedown(ev => {
+            this._refundPointsAdvance($(ev.currentTarget).attr("data-attr"))
+        })
         html.find('.spell-select').mousedown(ev => {
             let itemId = this._getItemId(ev);
             let skill = this.actor.items.find(i => i.data._id == itemId);
@@ -668,7 +737,7 @@ export default class ActorSheetDsa5 extends ActorSheet {
                 case "liturgy":
                 case "ceremony":
                 case "ritual":
-                    apCost = DSA5_Utility._calculateAdvCost(-1, item.data.data.StF.value)
+                    apCost = DSA5_Utility._calculateAdvCost(0, item.data.data.StF.value, 0)
                     break
                 case "blessing":
                 case "magictrick":
@@ -728,7 +797,7 @@ export default class ActorSheetDsa5 extends ActorSheet {
                 await this._addSpellOrLiturgy(item)
                 break;
             default:
-                ui.warn(game.i18n.format("Error.canNotBeAdded", { item: item.name, category: game.i18n.localize(item.type) }))
+                ui.notifications.error(game.i18n.format("Error.canNotBeAdded", { item: item.name, category: game.i18n.localize(item.type) }))
         }
     }
 

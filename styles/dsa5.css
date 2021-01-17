@@ -267,6 +267,11 @@ form .form-group.tripple select {
     background-color: darkred;
 }
 
+.emphasize2 {
+    color: white;
+    background-color: rgb(10, 89, 194);
+}
+
 .maxMods {
     transition: background-color 0.3s linear
 }

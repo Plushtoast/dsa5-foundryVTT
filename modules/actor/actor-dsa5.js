@@ -48,6 +48,7 @@ export default class Actordsa5 extends Actor {
             ch.value = ch.initial + ch.advances + (ch.modifier || 0);
             ch.bonus = Math.floor(ch.value / 10)
             ch.cost = game.i18n.format("advancementCost", { cost: DSA5_Utility._calculateAdvCost(ch.initial + ch.advances, "E") })
+            ch.refund = game.i18n.format("refundCost", { cost: DSA5_Utility._calculateAdvCost(ch.initial + ch.advances, "E", 0) })
         }
     }
 
@@ -104,12 +105,6 @@ export default class Actordsa5 extends Actor {
             data.data.status.toughness.max = data.data.status.toughness.value + data.data.status.toughness.modifier;
             this._calculateStatus(data, "dodge")
 
-            if (this.data.canAdvance) {
-                data.data.status.wounds.cost = game.i18n.format("advancementCost", { cost: DSA5_Utility._calculateAdvCost(data.data.status.wounds.advances, "D") })
-                data.data.status.astralenergy.cost = game.i18n.format("advancementCost", { cost: DSA5_Utility._calculateAdvCost(data.data.status.astralenergy.advances, "D") })
-                data.data.status.karmaenergy.cost = game.i18n.format("advancementCost", { cost: DSA5_Utility._calculateAdvCost(data.data.status.karmaenergy.advances, "D") })
-            }
-
         } catch (error) {
             console.error("Something went wrong with preparing actor data: " + error + error.stack)
             ui.notifications.error(game.i18n.localize("ACTOR.PreparationError") + error + error.stack)
@@ -127,6 +122,17 @@ export default class Actordsa5 extends Actor {
 
     prepare() {
         let preparedData = duplicate(this.data)
+
+        if (preparedData.canAdvance) {
+            preparedData.data.status.wounds.cost = game.i18n.format("advancementCost", { cost: DSA5_Utility._calculateAdvCost(preparedData.data.status.wounds.advances, "D") })
+            preparedData.data.status.astralenergy.cost = game.i18n.format("advancementCost", { cost: DSA5_Utility._calculateAdvCost(preparedData.data.status.astralenergy.advances, "D") })
+            preparedData.data.status.karmaenergy.cost = game.i18n.format("advancementCost", { cost: DSA5_Utility._calculateAdvCost(preparedData.data.status.karmaenergy.advances, "D") })
+
+            preparedData.data.status.wounds.refund = game.i18n.format("refundCost", { cost: DSA5_Utility._calculateAdvCost(preparedData.data.status.wounds.advances, "D", 0) })
+            preparedData.data.status.astralenergy.refund = game.i18n.format("refundCost", { cost: DSA5_Utility._calculateAdvCost(preparedData.data.status.astralenergy.advances, "D", 0) })
+            preparedData.data.status.karmaenergy.refund = game.i18n.format("refundCost", { cost: DSA5_Utility._calculateAdvCost(preparedData.data.status.karmaenergy.advances, "D", 0) })
+        }
+
         mergeObject(preparedData, this.prepareItems())
         return preparedData;
     }
@@ -156,6 +162,7 @@ export default class Actordsa5 extends Actor {
 
     _perpareItemAdvancementCost(item) {
         item.cost = game.i18n.format("advancementCost", { cost: DSA5_Utility._calculateAdvCost(item.data.talentValue.value, item.data.StF.value) })
+        item.refund = game.i18n.format("refundCost", { cost: DSA5_Utility._calculateAdvCost(item.data.talentValue.value, item.data.StF.value, 0) })
         item.canAdvance = Actordsa5.canAdvance(this.data)
         return item
     }
@@ -464,7 +471,6 @@ export default class Actordsa5 extends Actor {
 
         this.addCondition("inpain", pain, true)
         this.addCondition("encumbered", encumbrance, true)
-        this.applyActiveEffects()
 
         //CHAR cannot be clerical and magical at the same time
         hasPrayers = hasPrayers && !hasSpells
@@ -569,7 +575,7 @@ export default class Actordsa5 extends Actor {
                     "data.details.experience.spent": Number(this.data.data.details.experience.spent) + Number(apValue),
                 });
             } else {
-                ui.notifications.warn(game.i18n.localize("Error.APUpdateError"))
+                ui.notifications.error(game.i18n.localize("Error.APUpdateError"))
             }
         }
     }
@@ -583,7 +589,7 @@ export default class Actordsa5 extends Actor {
         if (Number(this.data.data.details.experience.total) - Number(this.data.data.details.experience.spent) > cost) {
             return true
         } else {
-            ui.notifications.warn(game.i18n.localize("Error.NotEnoughXP"))
+            ui.notifications.error(game.i18n.localize("Error.NotEnoughXP"))
             return false
         }
     }

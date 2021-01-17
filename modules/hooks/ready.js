@@ -15,6 +15,6 @@ export default function() {
                             game.messages.get(data.payload.id).delete()
                         }*/
         })
-
+        game.i18n.setLanguage("de")
     });
 }

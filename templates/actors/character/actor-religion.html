@@ -19,7 +19,9 @@
         <div class="col spells item" data-item-id="{{item._id}}">
             <div class="row-section skills lineheight">
                 <div class="col four">
-                    <a class="item-edit">{{item.name}}</a> {{#if item.canAdvance}}<a class="advance advance-item"><i title="{{item.cost}}" class="fas fa-plus"></i></a>{{/if}}
+                    <a class="item-edit">{{item.name}}</a> {{#if item.canAdvance}}
+                    <a class="advance refund-item"><i title="{{item.refund}}" class="fas fa-minus"></i></a>
+                    <a class="advance advance-item"><i title="{{item.cost}}" class="fas fa-plus"></i></a>{{/if}}
                 </div>
                 <div class="col four center">
                     <a class="spell-select">
@@ -82,7 +84,9 @@
         <div class="col spells item" data-item-id="{{item._id}}">
             <div class="row-section skills lineheight">
                 <div class="col four">
-                    <a class="item-edit">{{item.name}}</a> {{#if item.canAdvance}}<a class="advance advance-item"><i title="{{item.cost}}" class="fas fa-plus"></i></a>{{/if}}
+                    <a class="item-edit">{{item.name}}</a> {{#if item.canAdvance}}
+                    <a class="advance refund-item"><i title="{{item.refund}}" class="fas fa-minus"></i></a>
+                    <a class="advance advance-item"><i title="{{item.cost}}" class="fas fa-plus"></i></a>{{/if}}
                 </div>
                 <div class="col four center">
                     <a class="spell-select">

@@ -99,6 +99,7 @@
             <div class="derivedAttrs row-section">
                 <div class="col two lineheight">
                     {{localize "wounds"}}
+                    <a data-attr="wounds" class="advance refund-points"><i title="{{data.status.wounds.refund}}" class="fas fa-minus"></i></a>
                     <a data-attr="wounds" class="advance advance-points"><i title="{{data.status.wounds.cost}}" class="fas fa-plus"></i></a>
                     <span class="buttons">
                         <a data-char="regenerate" class="ch-regenerate item" data-mod="regenerate" title="{{localize 'regenerate'}}">&nbsp;<i class="fas fa-moon-o"></i></a>
@@ -121,6 +122,7 @@
             <div class="derivedAttrs row-section">
                 <div class="col two lineheight">
                     {{localize "astralenergy"}}
+                    <a data-attr="astralenergy" class="advance refund-points"><i title="{{data.status.astralenergy.refund}}" class="fas fa-minus"></i></a>
                     <a data-attr="astralenergy" class="advance advance-points"><i title="{{data.status.astralenergy.cost}}" class="fas fa-plus"></i></a>
                 </div>
                 <div class="col eight lineheight center">
@@ -141,6 +143,8 @@
             <div class="derivedAttrs row-section">
                 <div class="col two lineheight">
                     {{localize "karmaenergy"}}
+                    <a data-attr="karmaenergy" class="advance refund-points"><i title="{{data.status.karmaenergy.refund}}"
+                        class="fas fa-minus"></i></a>
                     <a data-attr="karmaenergy" class="advance advance-points"><i title="{{data.status.karmaenergy.cost}}"
                             class="fas fa-plus"></i></a>
                 </div>

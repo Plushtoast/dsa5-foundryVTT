@@ -25,9 +25,10 @@ export default class SpeciesWizard extends WizardDSA5 {
             parent.find('.optional:checked').each(function() {
                 apCost += Number($(this).attr("data-cost"))
             });
-            parent.find('.apCost').text(apCost)
+            let elem = parent.find('.apCost')
+            elem.text(apCost)
+            WizardDSA5.flashElem(elem, "emphasize2")
         })
-
     }
 
     _toGroups(input, categories) {

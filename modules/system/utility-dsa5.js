@@ -121,12 +121,13 @@ export default class DSA5_Utility {
     static getSpeaker(speaker) {
         let actor = game.actors.get(speaker.actor);
         if (speaker.token)
-            actor = canvas.tokens.get(speaker.token).actor
+            actor = new Token(game.scenes.get(speaker.scene).getEmbeddedEntity("Token", speaker.token)).actor
+            //actor = canvas.tokens.get(speaker.token).actor
         return actor
     }
 
-    static _calculateAdvCost(currentAdvances, type, modifier = 0) {
-        return DSA5.advancementCosts[type][Number(currentAdvances) + 1]
+    static _calculateAdvCost(currentAdvances, type, modifier = 1) {
+        return DSA5.advancementCosts[type][Number(currentAdvances) + modifier]
     }
 
     static experienceDescription(experience) {
