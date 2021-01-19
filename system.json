@@ -3,7 +3,7 @@
     "title": "Das Schwarze Auge (5th Edition)",
     "description": "Many details here.",
     "version": "0.1.72",
-    "templateVersion": 49,
+    "templateVersion": 50,
     "author": "Plushtoast",
     "scripts": [],
     "esmodules": [
@@ -54,10 +54,16 @@
         }
     ],
     "languages": [{
-        "lang": "de",
-        "name": "Deutsch",
-        "path": "lang/de.json"
-    }],
+            "lang": "de",
+            "name": "Deutsch",
+            "path": "lang/de.json"
+        },
+        {
+            "lang": "en",
+            "name": "English",
+            "path": "lang/en.json"
+        }
+    ],
     "socket": true,
     "initiative": "@status.initiative.value + 1d6",
     "gridDistance": 10,

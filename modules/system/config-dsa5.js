@@ -582,6 +582,11 @@ DSA5.tokenSizeCategories = {
     "giant": 4
 }
 
+DSA5.resistanceMods = {
+    "zk": "toughness",
+    "sk": "soulpower"
+}
+
 DSA5.rangeSizeCategories = {
     "tiny": "RANGESIZE.tiny",
     "small": "RANGESIZE.small",

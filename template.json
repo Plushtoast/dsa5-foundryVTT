@@ -358,7 +358,9 @@
             "magictrick",
             "ceremony",
             "ritual",
-            "aggregatedTest"
+            "aggregatedTest",
+            "poison",
+            "disease"
         ],
         "templates": {
             "skill": {
@@ -1063,6 +1065,73 @@
             "burden": {
                 "type": "String",
                 "value": "no"
+            }
+        },
+        "poison": {
+            "templates": [
+                "description",
+                "equipment"
+            ],
+            "step": {
+                "type": "Number",
+                "value": 1
+            },
+            "poisonType": {
+                "type": "String",
+                "value": ""
+            },
+            "resistance": {
+                "type": "String",
+                "value": "zk"
+            },
+            "effect": {
+                "type": "String",
+                "value": ""
+            },
+            "start": {
+                "type": "String",
+                "value": ""
+            },
+            "duration": {
+                "type": "String",
+                "value": ""
+            }
+        },
+        "disease": {
+            "templates": [
+                "description"
+            ],
+            "step": {
+                "type": "Number",
+                "value": 1
+            },
+            "resistance": {
+                "type": "String",
+                "value": "zk"
+            },
+            "incubation": {
+                "type": "String",
+                "value": ""
+            },
+            "damage": {
+                "type": "String",
+                "value": ""
+            },
+            "duration": {
+                "type": "String",
+                "value": ""
+            },
+            "source": {
+                "type": "String",
+                "value": ""
+            },
+            "treatment": {
+                "type": "String",
+                "value": ""
+            },
+            "antidot": {
+                "type": "String",
+                "value": ""
             }
         }
     }

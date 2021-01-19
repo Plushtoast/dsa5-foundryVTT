@@ -115,7 +115,7 @@ export default class Actordsa5 extends Actor {
         switch (attr) {
             case "dodge":
                 data.data.status.dodge.value = Math.round(data.data.characteristics["ge"].value / 2);
-                data.data.status.dodge.max = data.data.status.dodge.value + data.data.status.dodge.modifier;
+                data.data.status.dodge.max = data.data.status.dodge.value + data.data.status.dodge.modifier + SpecialabilityRulesDSA5.abilityStep(this.data, "Verbessertes Ausweichen");
                 return data.data.status.dodge.max
         }
     }
@@ -447,7 +447,10 @@ export default class Actordsa5 extends Actor {
 
         money.coins = money.coins.sort((a, b) => (a.data.price.value > b.data.price.value) ? -1 : 1);
         encumbrance = Math.max(0, encumbrance - SpecialabilityRulesDSA5.abilityStep(this.data, "Belastungsgewöhnung"))
-        encumbrance += Math.max(0, Math.ceil((totalWeight - carrycapacity) / 4))
+        if (this.data.type != "creature" || this.data.canAdvance) {
+            encumbrance += Math.max(0, Math.ceil((totalWeight - carrycapacity) / 4))
+        }
+
         let pain = Math.floor((1 - actorData.data.status.wounds.value / actorData.data.status.wounds.max) * 4) - AdvantageRulesDSA5.vantageStep(this, "Zäher Hund")
         if (this.data.type != "creature" && actorData.data.status.wounds.value <= 5)
             pain = 4
@@ -1063,7 +1066,7 @@ export default class Actordsa5 extends Actor {
 
     setupStatus(statusId, options = {}) {
         let char = this.data.data.status[statusId];
-        let title = game.i18n.localize(char.label) + " " + game.i18n.localize("Test");
+        let title = game.i18n.localize(statusId) + " " + game.i18n.localize("Test");
 
         let testData = {
             source: char,

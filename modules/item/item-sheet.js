@@ -90,6 +90,10 @@ export default class ItemSheetdsa5 extends ItemSheet {
             case "aggregatedTest":
                 data["allSkills"] = await DSA5_Utility.allSkillsList()
                 break
+            case "disease":
+            case "poison":
+                data["resistances"] = DSA5.resistanceMods
+                break
         }
 
         return data;
