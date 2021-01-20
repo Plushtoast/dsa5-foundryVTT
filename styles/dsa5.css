@@ -480,6 +480,8 @@ input[type=text].emphasize {
 .die-dodge,
 .die-parry,
 .die-in,
+.die-poison,
+.die-disease,
 .diet-in:after {
     background-image: url(../icons/dice/d20in.svg);
     color: white;

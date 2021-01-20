@@ -22,10 +22,30 @@ export default class ItemSheetdsa5 extends ItemSheet {
 
     async _render(force = false, options = {}) {
         await super._render(force, options);
-        /*$(this._element).find(".close").attr("title", game.i18n.localize("SHEET.Close"));
+
+        $(this._element).find(".close").attr("title", game.i18n.localize("SHEET.Close"));
         $(this._element).find(".configure-sheet").attr("title", game.i18n.localize("SHEET.Configure"));
-        $(this._element).find(".post").attr("title", game.i18n.localize("SHEET.Post"));
-        $(this._element).find(".import").attr("title", game.i18n.localize("SHEET.Import"));*/
+        $(this._element).find(".import").attr("title", game.i18n.localize("SHEET.Import"));
+        $(this._element).find(".rolleffect").attr("title", game.i18n.localize("SHEET.RollEffect"));
+
+    }
+
+    setupEffect(ev) {
+        this.item.setupEffect().then(setupData => {
+            this.item.itemTest(setupData)
+        });
+    }
+
+    _getHeaderButtons() {
+        let buttons = super._getHeaderButtons();
+        if (["poison", "disease"].includes(this.item.type)) {
+            buttons.unshift({
+                class: "rolleffect",
+                icon: `fas fa-dice-d20`,
+                onclick: async ev => this.setupEffect(ev)
+            })
+        }
+        return buttons
     }
 
     get template() {
@@ -33,8 +53,11 @@ export default class ItemSheetdsa5 extends ItemSheet {
         return `systems/dsa5/templates/items/item-${type}-sheet.html`;
     }
 
+
+
     activateListeners(html) {
         super.activateListeners(html);
+
     }
 
     async getData() {

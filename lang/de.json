@@ -27,7 +27,9 @@
         "-": "-",
         "LEP": "Lebenspunkte",
         "KAP": "Karmapunkte",
-        "ASP": "Astralpunkte"
+        "ASP": "Astralpunkte",
+        "POISON": "Gift",
+        "DISEASE": "Krankheit"
     },
     "CHARAbbrev": {
         "MU": "MU",
@@ -92,6 +94,7 @@
     "APvalue": "AP-Wert",
     "additionalFPs": "zusätzliche FPs",
     "attacktest": "Angriffsprobe",
+    "antidot": "Gegenmittel",
     "arrow": "Pfeil",
     "armor": "Rüstung",
     "advancementCost": "Steigern für {cost} Abenteuerpunkte",
@@ -215,6 +218,7 @@
     "initiative": "Initiative",
     "interruption": "Unterbrechung",
     "increaseRange": "Reichweite erhöhen",
+    "incubation": "Inkubationszeit",
     "interval": "Intervall",
     "increaseCastingTime": "Zauber-/Liturgiedauer erhöhen",
     "karmaenergy": "Karmaenergie",
@@ -266,6 +270,7 @@
     "parrytest": "Verteidigungsprobe",
     "purse": "Geldbeutel",
     "Players": "Spieler",
+    "poisonType": "Art",
     "PartSuccess": "Teilerfolg",
     "place": "Ort",
     "permanentCost": "Permanente Kosten",
@@ -310,12 +315,15 @@
     "Socialstate": "Sozialstatus",
     "soulpower": "Seelenkraft",
     "spellTest": "Zauberprobe",
+    "start": "Beginn",
     "StF": "Steigerungsfaktor",
     "sizeCategory": "Größenkategorie",
     "Success": "Erfolg",
     "spell": "Zauberspruch",
     "staff": "Stab",
     "spells": "Zaubersprüche",
+    "source": "Quelle",
+    "stepValue": "Stufe",
     "search": "Suche",
     "searchPlaceholder": "Durchsuche die Bibliothek",
     "searchCategoryDescription": "Bitte Filterkategorie(n) auswählen",
@@ -337,6 +345,7 @@
     "Test": "Test",
     "trait": "Eigenschaft",
     "traits": "Fähigkeiten",
+    "treatment": "Behandlung",
     "traitType": "Eigenschaftskategorie",
     "Total": "Gesamt",
     "time": "Zeit",
@@ -532,7 +541,8 @@
         "Configure": "Blatt konfigurieren",
         "Token": "Token konfigurieren",
         "Import": "Element importieren",
-        "Lock": "Steigerung sperren/entsperren"
+        "Lock": "Steigerung sperren/entsperren",
+        "RollEffect": "Effekt auswürfeln"
     },
 
     "RangeMod": {
@@ -713,6 +723,15 @@
         "talentedReroll": "Begabung verwenden"
     },
 
+    "SETTINGS": {
+        "meleeBotchTableEnabled": "Nahkampf-Patzertabelle",
+        "meleeBotchTableEnabledHint": "Anstatt 1W6+2 SP bei einem Patzer, kann auch diese Tabelle benutzt werden (optionale Regel).",
+        "defenseBotchTableEnabled": "Verteidigungs-Patzertabelle",
+        "defenseBotchTableEnabledHint": "Anstatt 1W6+2 SP bei einem Patzer, kann auch diese Tabelle benutzt werden (optionale Regel).",
+        "rangeBotchTableEnabled": "Fernkampf-Patzertabelle",
+        "rangeBotchTableEnabledHint": "Anstatt 1W6+2 SP bei einem Patzer, kann auch diese Tabelle benutzt werden (optionale Regel)."
+    },
+
     "CHATFATE": {
         "faitepointUsed": "Das Schicksal ändert sich",
         "reroll": "{character} würfelt erneut.",
@@ -740,7 +759,7 @@
     "LITURGYMISCAST": {
         "2": "Im Umkreis von 2D6 Metern gehen brennbare Materialien in Flammen auf (außer Lebewesen und die Kleidung des Geweihten).",
         "3": "Die gewirkte Liturgie/Zeremonie hat einen gegenteiligen Effekt. Ein Bann des Lichts erzeugt Licht, ein Heilsegen fügt dem Ziel Schaden zu usw.",
-        "4 ": "Das Ziel der Liturgie/Zeremonie ändert sich zufällig nach Wahl des Meisters.",
+        "4": "Das Ziel der Liturgie/Zeremonie ändert sich zufällig nach Wahl des Meisters.",
         "5": "Der Geweihte hat für 1D6 Tage nachts seltsame Visionen und Alpträume.",
         "6": "Durch einen Blick in die Sphären ist der Geweihte so eingeschüchtert, dass er einen Tag lang 3 Stufen Furcht erhält.",
         "7": "Der Geweihte verliert für 1D6 Tage die Fähigkeit, auf seinen KE-Vorrat zuzugreifen.",
@@ -749,6 +768,45 @@
         "10": "Der Geweihte verliert für 1D6 Tage seine Befähigung zu sprechen.",
         "11": "Für einen Tag erhält der Geweihte ein Stigma.",
         "12": "Der Geweihte verwurzelt mit dem Boden und kann seine Füße für 1W6 Minuten nicht bewegen. Er erhält währenddessen den Status Fixiert.“"
+    },
+    "MELEEBOTCH": {
+        "2": "Die Waffe ist unwiederbringlich zerstört. Unzerstörbare Waffen fallen zu Boden.",
+        "3": "Die Waffe ist nicht mehr einsetzbar, bis sie repariert wird. Unzerstörbare Waffen fallen zu Boden.",
+        "4": "Die Waffe ist beschädigt worden. Alle Proben auf Attacke und Parade sind um 2 erschwert, bis sie repariert wird. Unzerstörbare Waffen fallen zu Boden.",
+        "5": "Die Waffe ist zu Boden gefallen.",
+        "6": "Die Waffe des Helden ist in einem Baum, einer Holzwand, dem Boden oder Ähnlichem stecken geblieben. Um sie zu befreien, ist 1 Aktion und eine um 1 erschwerte Probe auf Kraftakt (Ziehen & Zerren) notwendig.",
+        "7": "Der Held stolpert und stürzt, wenn seinem Spieler nicht eine um 2 erschwerte Probe auf Körperbeherrschung (Balance) gelingt. Sollte er das nicht schaffen, erhält der Held den Status Liegend.",
+        "8": "Der Held stolpert, seine nächste Handlung ist um 2 erschwert.",
+        "9": "Der Held erhält für 3 Kampfrunden eine Stufe Schmerz.",
+        "10": "Der Held hat sich im Eifer des Gefechts den Kopf gestoßen. Er erhält für eine Stunde eine Stufe Betäubung",
+        "11": "Der Held hat sich selbst verletzt und erleidet Schaden. Der Schaden seiner Waffe wird unter Einbeziehung des Schadensbonus ausgewürfelt. Bei unbewaffneten Kämpfern wird 1W6 TP angenommen.",
+        "12": "Ein schwerer Eigentreffer des Helden. Der Schaden seiner Waffe wird unter Einbeziehung des Schadensbonus ausgewürfelt und dann verdoppelt. Bei unbewaffneten Kämpfern wird 1W6 TP angenommen."
+    },
+    "RANGEBOTCH": {
+        "2": "Die Waffe ist unwiederbringlich zerstört. Unzerstörbare Waffen fallen zu Boden.",
+        "3": "Die Waffe ist nicht mehr einsetzbar, bis sie repariert wird. Unzerstörbare Waffen fallen zu Boden.",
+        "4": "Die Waffe ist beschädigt worden. Alle Proben auf Fernkampf sind um 4 erschwert, bis sie repariert wird. Unzerstörbare Waffen fallen zu Boden.",
+        "5": "Die Waffe ist zu Boden gefallen.",
+        "6": "Das Geschoss trifft aus Versehen einen Freund oder einen am Kampf Unbeteiligten. Ist kein solches Ziel in der Nähe, trifft der Held sich selbst. Der Schaden der Waffe wird unter Einbeziehung des Schadensbonus ausgewürfelt.",
+        "7": "Der spektakuläre Fehlschuss trifft ein Objekt (Ladenschild heruntergeschossen, Glasfenster zu Bruch gegangen etc.).",
+        "8": "Der Held hat Rückenschmerzen und erleidet für die nächsten 3 Kampfrunden eine Stufe Schmerz.",
+        "9": "Der Held benötigt 2 komplette Kampfrunden, um die Waffe wieder einsatzbereit zu machen.",
+        "10": "Der Held ist mit Zielen oder mit seiner Waffe beschäftigt. Bis zu seiner nächsten Aktion kann er keine Verteidigungen ausführen",
+        "11": "Der Held hat sich selbst verletzt und erleidet Schaden. Der Schaden der Waffe wird unter Einbeziehung des Schadensbonus ausgewürfelt.",
+        "12": "Ein schwerer Eigentreffer. Der Schaden der Waffe wird unter Einbeziehung des Schadensbonus ausgewürfelt und dann verdoppelt."
+    },
+    "DEFENSEBOTCH": {
+        "2": "Die Waffe ist unwiederbringlich zerstört. Unzerstörbare Waffen fallen zu Boden.",
+        "3": "Die Waffe ist nicht mehr einsetzbar, bis sie repariert wird. Unzerstörbare Waffen fallen zu Boden.",
+        "4": "Die Waffe ist beschädigt worden. Alle Proben auf Attacke und Parade sind um 2 erschwert, bis sie repariert wird. Unzerstörbare Waffen fallen zu Boden.",
+        "5": "Die Waffe ist zu Boden gefallen.",
+        "6": "Die Waffe des Helden ist in einem Baum, einer Holzwand, dem Boden oder Ähnlichem stecken geblieben. Um sie zu befreien, ist 1 Aktion und eine um 1 erschwerte Probe auf Kraftakt (Ziehen & Zerren) notwendig.",
+        "7": "Der Held stolpert und stürzt, wenn seinem Spieler nicht eine um 2 erschwerte Probe auf Körperbeherrschung (Balance) gelingt. Sollte er das nicht schaffen, erhält der Held den Status Liegend.",
+        "8": "Der Held stolpert, seine nächste Handlung ist um 2 erschwert.",
+        "9": "Der Held erhält für 3 Kampfrunden eine Stufe Schmerz.",
+        "10": "Der Held hat sich im Eifer des Gefechts den Kopf gestoßen. Er erhält für eine Stunde eine Stufe Betäubung.",
+        "11": "Der Held hat sich selbst verletzt und erleidet Schaden. Der Schaden seiner Waffe wird unter Einbeziehung des Schadensbonus ausgewürfelt. Bei unbewaffneten Kämpfern wird 1W6 TP angenommen.",
+        "12": "Ein schwerer Eigentreffer des Helden. Der Schaden seiner Waffe wird unter Einbeziehung des Schadensbonus ausgewürfelt und dann verdoppelt. Bei unbewaffneten Kämpfern wird 1W6 TP angenommen."
     },
 
     "CONDITIONS": {

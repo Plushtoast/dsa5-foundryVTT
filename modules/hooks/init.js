@@ -7,6 +7,7 @@ import * as ready from './ready.js'
 import * as chatContext from './chat_context.js'
 import * as statusEffects from './statuseffect.js'
 import * as sideBar from './sidebar.js'
+import * as configuration from './configuration.js'
 
 export default function() {
     Hooks.once("init", () => {
@@ -37,6 +38,8 @@ export default function() {
             "systems/dsa5/templates/actors/parts/creature-derived-attributes-small.html",
             "systems/dsa5/templates/actors/parts/creature-derived-attributes-large.html"
         ]);
+
+        configuration.default()
     });
     initHandleBars.default();
     initDiceSoNice.default();

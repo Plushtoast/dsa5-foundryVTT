@@ -1,5 +1,5 @@
 import DSA5_Utility from "../system/utility-dsa5.js";
-import DSA5 from "../system/config-dsa5.js"
+import DiceDSA5 from "../system/dice-dsa5.js"
 
 export default class Itemdsa5 extends Item {
     static defaultImages = {
@@ -33,7 +33,8 @@ export default class Itemdsa5 extends Item {
         "trait": "icons/commodities/biological/organ-brain-pink-purple.webp",
         "Tiere": "icons/environment/creatures/horse-brown.webp",
         "aggregatedTest": "icons/sundries/gaming/dice-runed-brown.webp",
-
+        "poison": "icons/commodities/materials/bowl-liquid-red.webp",
+        "disease": "icons/commodities/biological/pustules-brown.webp"
     }
 
     static defaultIcon(data) {
@@ -221,6 +222,90 @@ export default class Itemdsa5 extends Item {
 
     _chatLineHelper(key, val) {
         return `<b>${game.i18n.localize(key)}</b>: ${val ? val : "-"}`
+    }
+
+    setupEffect(ev, options = {}) {
+        let title = this.name + " " + game.i18n.localize(this.type) + " " + game.i18n.localize("Test");
+
+        let testData = {
+            opposable: false,
+            source: this.data,
+            extra: {
+                options: options
+            }
+        };
+
+        let dialogOptions = {
+            title: title,
+            template: "/systems/dsa5/templates/dialog/poison-dialog.html",
+            data: {
+                rollMode: options.rollMode
+            },
+            callback: (html) => {
+                cardOptions.rollMode = html.find('[name="rollMode"]').val();
+                testData.testModifier = Number(html.find('[name="testModifier"]').val());
+                testData.situationalModifiers = []
+                return { testData, cardOptions };
+            }
+        };
+
+        let cardOptions = this._setupCardOptions(`systems/dsa5/templates/chat/roll/${this.type}-card.html`, title)
+
+        return DiceDSA5.setupDialog({
+            dialogOptions: dialogOptions,
+            testData: testData,
+            cardOptions: cardOptions
+        });
+    }
+
+    _setupCardOptions(template, title) {
+
+        let speaker = ChatMessage.getSpeaker()
+            //if (speaker.actor == this.data._id) {
+        return {
+            speaker: {
+                alias: speaker.alias,
+                scene: speaker.scene
+            },
+            flags: {
+                img: speaker.token ? canvas.tokens.get(speaker.token).data.img : this.img
+            },
+            title: title,
+            template: template,
+        }
+        //}
+
+    }
+
+    async itemTest({ testData, cardOptions }, options = {}) {
+        testData = await DiceDSA5.rollDices(testData, cardOptions);
+        let result = DiceDSA5.rollTest(testData);
+
+        result.postFunction = "itemTest";
+        if (testData.extra)
+            mergeObject(result, testData.extra);
+
+        if (game.user.targets.size) {
+            cardOptions.isOpposedTest = testData.opposable
+            if (cardOptions.isOpposedTest)
+                cardOptions.title += ` - ${game.i18n.localize("Opposed")}`;
+            else {
+                game.user.updateTokenTargets([]);
+            }
+        }
+
+        if (testData.extra.ammo && !testData.extra.ammoDecreased) {
+            testData.extra.ammoDecreased = true
+            testData.extra.ammo.data.quantity.value--;
+            this.updateEmbeddedEntity("OwnedItem", { _id: testData.extra.ammo._id, "data.quantity.value": testData.extra.ammo.data.quantity.value });
+        }
+        //Hooks.call("dsa5:rollTest", result, cardOptions)
+        if (!options.suppressMessage)
+            DiceDSA5.renderRollCard(cardOptions, result, options.rerenderMessage).then(msg => {
+                //OpposedDsa5.handleOpposedTarget(msg) // Send to handleOpposed to determine opposed status, if any.
+            })
+
+        return { result, cardOptions };
     }
 
     async postItem() {

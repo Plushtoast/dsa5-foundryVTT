@@ -22,7 +22,9 @@ export default class DSA5ItemLibrary extends Application {
                 "trait": false,
                 "skill": false,
                 "spell": false,
-                "specialability": false
+                "specialability": false,
+                "poison": false,
+                "disease": false
             },
             filterBy: {
                 search: ""
@@ -65,8 +67,8 @@ export default class DSA5ItemLibrary extends Application {
                         search == "" ||
                         i.name.toLowerCase().includes(search) ||
                         (i.data.data.description == undefined ? false :
-                        (i.data.data.description.value == undefined ? false :
-                            i.data.data.description.value.toLowerCase().includes(search)))
+                            (i.data.data.description.value == undefined ? false :
+                                i.data.data.description.value.toLowerCase().includes(search)))
                     )
             }))
         }

@@ -6,6 +6,8 @@ import DSA5_Utility from "./utility-dsa5.js";
 import AdvantageRulesDSA5 from "./advantage-rules-dsa5.js";
 import SpecialabilityRulesDSA5 from "./specialability-rules-dsa5.js";
 import TraitRulesDSA5 from "./trait-rules-dsa5.js";
+import Itemdsa5 from "../item/item-dsa5.js"
+import CombatTables from "../tables/combattables.js";
 
 export default class DiceDSA5 {
     static async setupDialog({ dialogOptions, testData, cardOptions, }) {
@@ -25,7 +27,7 @@ export default class DiceDSA5 {
             testModifier: (dialogOptions.data.modifier || 0)
         });
 
-        let situationalModifiers = Actordsa5.getModifiers(testData.extra.actor)
+        let situationalModifiers = testData.extra.actor ? Actordsa5.getModifiers(testData.extra.actor) : []
         if (testData.extra.options.moreModifiers != undefined) {
             situationalModifiers.push(...testData.extra.options.moreModifiers)
         }
@@ -98,13 +100,17 @@ export default class DiceDSA5 {
                         });
                     }
                     rangeOptions = {...DSA5.rangeWeaponModifiers }
-                    delete rangeOptions["rangesense"]
+                    delete rangeOptions[AdvantageRulesDSA5.hasVantage(testData.extra.actor, "Entfernungssinn") ? "long" : "rangesense"]
                     mergeObject(dialogOptions.data, {
                         rangeOptions: rangeOptions,
                         sizeOptions: DSA5.rangeSizeCategories,
                         visionOptions: DSA5.rangeVision,
+                        mountedOptions: DSA5.mountedRangeOptions,
+                        shooterMovementOptions: DSA5.shooterMovementOptions,
+                        targetMovementOptions: DSA5.targetMomevementOptions,
                         targetSize: targetSize
                     });
+                    break;
                 }
                 break
             case "meleeweapon":
@@ -191,6 +197,8 @@ export default class DiceDSA5 {
                 })
                 this._enabledModifiers(situationalModifiers, ["CONDITION.encumbered", "CONDITION.inpain"], true)
                 break
+            case "poison":
+            case "disease":
             case "status":
                 break;
             default:
@@ -349,7 +357,11 @@ export default class DiceDSA5 {
         if (testData.extra.statusId == "dodge" && result.successLevel == 3) {
             result["description"] += ", " + game.i18n.localize("attackOfOpportunity")
         } else if (testData.extra.statusId == "dodge" && result.successLevel == -3) {
-            result["description"] += ", " + game.i18n.localize("selfDamage") + (new Roll("1d6+2").roll().total)
+            if (game.settings.get("dsa5", "defenseBotchTableEnabled")) {
+                result["description"] += ", " + CombatTables.getDefenseBotch(true)
+            } else {
+                result["description"] += ", " + game.i18n.localize("selfDamage") + (new Roll("1d6+2").roll().total)
+            }
         }
 
         return result
@@ -520,7 +532,13 @@ export default class DiceDSA5 {
                     result.description += ", " + game.i18n.localize("attackOfOpportunity")
                 break;
             case -3:
-                result.description += ", " + game.i18n.localize("selfDamage") + (new Roll("1d6+2").roll().total)
+                if (testData.mode == "attack" && testData.source.data.data.traitType.value == "meleeAttack" && game.settings.get("dsa5", "meleeBotchTableEnabled")) {
+                    result.description += ", " + CombatTables.getMeleeBotch(true)
+                } else if (testData.mode == "attack" && game.settings.get("dsa5", "rangeBotchTableEnabled")) {
+                    result.description += ", " + CombatTables.getRangeBotch()
+                } else {
+                    result.description += ", " + game.i18n.localize("selfDamage") + (new Roll("1d6+2").roll().total)
+                }
                 break;
             case 2:
                 if (testData.mode == "attack")
@@ -612,7 +630,15 @@ export default class DiceDSA5 {
                     result.description += ", " + game.i18n.localize("attackOfOpportunity")
                 break;
             case -3:
-                result.description += ", " + game.i18n.localize("selfDamage") + (new Roll("1d6+2").roll().total)
+                if (testData.mode == "attack" && source.type == "meleeweapon" && game.settings.get("dsa5", "meleeBotchTableEnabled")) {
+                    result.description += ", " + CombatTables.getMeleeBotch()
+                } else if (testData.mode == "attack" && game.settings.get("dsa5", "rangeBotchTableEnabled")) {
+                    result.description += ", " + CombatTables.getRangeBotch()
+                } else if (testData.mode != "attack" && game.settings.get("dsa5", "defenseBotchTableEnabled")) {
+                    result.description += ", " + CombatTables.getDefenseBotch()
+                } else {
+                    result.description += ", " + game.i18n.localize("selfDamage") + (new Roll("1d6+2").roll().total)
+                }
                 break;
             case 2:
                 if (testData.mode == "attack")
@@ -689,7 +715,15 @@ export default class DiceDSA5 {
             description = game.i18n.localize("CriticalFailure");
             let res2 = res - rollConfirm.terms[0].results[0].result;
             if (res2 < 0) {
-                description += ", " + game.i18n.localize("selfDamage") + (new Roll("1d6+2").roll().total)
+                if (testData.mode == "attack" && source.data.weapontype.value == "melee" && game.settings.get("dsa5", "meleeBotchTableEnabled")) {
+                    description += ", " + CombatTables.getMeleeBotch()
+                } else if (testData.mode == "attack" && game.settings.get("dsa5", "rangeBotchTableEnabled")) {
+                    description += ", " + CombatTables.getRangeBotch()
+                } else if (testData.mode != "attack" && game.settings.get("dsa5", "defenseBotchTableEnabled")) {
+                    description += ", " + CombatTables.getDefenseBotch()
+                } else {
+                    description += ", " + game.i18n.localize("selfDamage") + (new Roll("1d6+2").roll().total)
+                }
             }
             this._addRollDiceSoNice(testData, rollConfirm, testData.mode)
             chars.push({
@@ -835,9 +869,78 @@ export default class DiceDSA5 {
         return res
     }
 
+    static rollItem(testData) {
+        let roll = testData.roll ? testData.roll : new Roll("1d20+1d20+1d20").roll();
+        let description = [];
+        let successLevel = 0
+
+        let modifier = testData.testModifier + this._situationalModifiers(testData);
+        this._appendSituationalModifiers(testData, game.i18n.localize("manual"), testData.testModifier)
+            //this._appendSituationalModifiers(testData, game.i18n.localize("Difficulty"), testData.testDifficulty)
+
+        let fps = Number(testData.source.data.step.value)
+        let tar = [1, 2, 3].map(x => 10 + Number(testData.source.data.step.value) + modifier)
+        let res = [0, 1, 2].map(x => roll.terms[x * 2].results[0].result - tar[x])
+        for (let k of res) {
+            if (k > 0)
+                fps -= k
+        }
+
+        let failValue = 20
+
+
+        if (roll.results.filter(x => x == 1).length == 3) {
+            description.push(game.i18n.localize("AstoundingSuccess"));
+            successLevel = 3
+        } else if (roll.results.filter(x => x == 1).length == 2) {
+            description.push(game.i18n.localize("CriticalSuccess"));
+            successLevel = 2
+        } else if (roll.results.filter(x => x >= failValue).length == 3) {
+            description.push(game.i18n.localize("AstoundingFailure"));
+            successLevel = -3
+        } else if (roll.results.filter(x => x >= failValue).length == 2) {
+            description.push(game.i18n.localize("CriticalFailure"));
+            successLevel = -2
+        } else {
+            description.push(game.i18n.localize(fps >= 0 ? "Success" : "Failure"));
+            successLevel = fps >= 0 ? 1 : -1
+        }
+
+        description = description.join(", ")
+
+        let result = {
+            result: fps,
+            characteristics: [
+                { char: testData.source.type, res: roll.terms[0].results[0].result, suc: res[0] <= 0, tar: tar[0] },
+                { char: testData.source.type, res: roll.terms[2].results[0].result, suc: res[1] <= 0, tar: tar[1] },
+                { char: testData.source.type, res: roll.terms[4].results[0].result, suc: res[2] <= 0, tar: tar[2] }
+            ],
+            qualityStep: (fps == 0 ? 1 : (fps > 0 ? Math.ceil(fps / 3) : 0)) + (testData.qualityStep != undefined ? Number(testData.qualityStep) : 0),
+            description: description,
+            preData: testData,
+            successLevel: successLevel,
+            modifiers: modifier,
+            extra: {}
+        }
+        switch (testData.source.type) {
+            case "poison":
+                let dur = testData.source.data.duration.value.split("/").map(x => x.trim())
+                let effect = testData.source.data.effect.value.split("/").map(x => x.trim())
+                result.duration = dur.length > 1 ? (result.successLevel > 0 ? dur[0] : dur[1]) : dur[0]
+                result.effect = effect.length > 1 ? (result.successLevel > 0 ? effect[0] : effect[1]) : effect[0]
+                break
+            case "disease":
+                let dmg = testData.source.data.damage.value.split("/").map(x => x.trim())
+                let duration = testData.source.data.duration.value.split("/").map(x => x.trim())
+                result.damageeffect = dmg.length > 1 ? (result.successLevel > 0 ? dmg[0] : dmg[1]) : dmg[0]
+                result.duration = duration.length > 1 ? (result.successLevel > 0 ? duration[0] : duration[1]) : duration[0]
+                break
+        }
+        return result
+    }
+
     static rollTest(testData) {
         testData.function = "rollTest"
-
         let rollResults;
         switch (testData.source.type) {
             case "ceremony":
@@ -873,6 +976,10 @@ export default class DiceDSA5 {
             case "status":
                 rollResults = this.rollStatus(testData)
                 break;
+            case "poison":
+            case "disease":
+                rollResults = this.rollItem(testData)
+                break
             default:
                 rollResults = this.rollAttribute(testData)
         }
@@ -944,6 +1051,13 @@ export default class DiceDSA5 {
                     roll = new Roll("1d20").roll();
                     roll.dice[0].options.colorset = "in"
                     break;
+                case "poison":
+                case "disease":
+                    roll = new Roll("1d20+1d20+1d20").roll();
+                    for (var i = 0; i < roll.dice.length; i++) {
+                        roll.dice[i].options.colorset = "in"
+                    }
+                    break
                 default:
                     roll = new Roll("1d20").roll();
                     roll.dice[0].options.colorset = testData.source.label.split('.')[1].toLowerCase()
@@ -1081,7 +1195,14 @@ export default class DiceDSA5 {
             if (["gmroll", "blindroll"].includes(chatOptions.rollMode)) chatOptions["whisper"] = ChatMessage.getWhisperRecipients("GM").map(u => u.id);
             if (chatOptions.rollMode === "blindroll") chatOptions["blind"] = true;
 
-            DSA5_Utility.getSpeaker(message.data.speaker)[`${data.postData.postFunction}`]({ testData: newTestData, cardOptions: chatOptions }, { rerenderMessage: message });
+            if (["poison", "disease"].includes(newTestData.source.type)) {
+                new Itemdsa5(newTestData.source, { temporary: true })[`${data.postData.postFunction}`]({ testData: newTestData, cardOptions: chatOptions }, { rerenderMessage: message });
+            } else {
+                let speaker = DSA5_Utility.getSpeaker(message.data.speaker)
+                if (!speaker)
+                    speaker = new Actordsa5(newTestData.extra.actor, { temporary: true })
+                speaker[`${data.postData.postFunction}`]({ testData: newTestData, cardOptions: chatOptions }, { rerenderMessage: message });
+            }
         })
     }
 
