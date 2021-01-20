@@ -68,28 +68,36 @@ export default class Itemdsa5 extends Item {
             this._chatLineHelper("protection", data.protection.value),
             this._chatLineHelper("encumbrance", data.encumbrance.value)
         ]
-        if (data.effect.value != "") {
+        if (data.effect.value != "")
             properties.push(this._chatLineHelper("effect", data.effect.value))
-        }
+
         return properties
     }
 
     _rangeweaponChatData() {
         const data = duplicate(this.data.data);
-        return [
+        res = [
             this._chatLineHelper("damage", data.damage.value),
             this._chatLineHelper("combatskill", data.combatskill.value)
         ]
+        if (data.effect.value != "")
+            res.push(this._chatLineHelper("effect", data.effect.value))
+
+        return res
     }
 
     _meleeweaponChatData() {
         const data = duplicate(this.data.data);
-        return [
+        let res = [
             this._chatLineHelper("damage", data.damage.value),
             this._chatLineHelper("atmod", data.atmod.value),
             this._chatLineHelper("pamod", data.pamod.value),
             this._chatLineHelper("combatskill", data.combatskill.value)
         ]
+        if (data.effect.value != "")
+            res.push(this._chatLineHelper("effect", data.effect.value))
+
+        return res
     }
 
     _ammunitionChatData() {
@@ -120,6 +128,32 @@ export default class Itemdsa5 extends Item {
         ]
     }
 
+    _poisonChatData() {
+        const data = duplicate(this.data.data);
+        return [
+            this._chatLineHelper("stepValue", data.step.value),
+            this._chatLineHelper("poisonType", data.poisonType.value),
+            this._chatLineHelper("start", data.start.value),
+            this._chatLineHelper("duration", data.duration.value),
+            this._chatLineHelper("resistanceModifier", data.resistance.value),
+            this._chatLineHelper("effect", data.effect.value),
+        ]
+    }
+
+    _diseaseChatData() {
+        const data = duplicate(this.data.data);
+        return [
+            this._chatLineHelper("stepValue", data.step.value),
+            this._chatLineHelper("incubation", data.incubation.value),
+            this._chatLineHelper("damage", data.damage.value),
+            this._chatLineHelper("duration", data.duration.value),
+            this._chatLineHelper("source", data.source.value),
+            this._chatLineHelper("treatment", data.treatment.value),
+            this._chatLineHelper("antidot", data.antidot.value),
+            this._chatLineHelper("resistanceModifier", data.resistance.value)
+        ]
+    }
+
     _specialabilityChatData() {
         const data = duplicate(this.data.data);
         return [
@@ -147,10 +181,9 @@ export default class Itemdsa5 extends Item {
 
     _traitChatData() {
         const data = duplicate(this.data.data);
+        console.log(data)
         return [
-            this._chatLineHelper("duration", data.duration.value),
-            this._chatLineHelper("targetCategory", data.targetCategory.value),
-            this._chatLineHelper("feature", data.feature.value),
+            this._chatLineHelper("effect", data.effect.value),
         ]
     }
 

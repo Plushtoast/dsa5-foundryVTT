@@ -115,7 +115,7 @@ export default class Actordsa5 extends Actor {
         switch (attr) {
             case "dodge":
                 data.data.status.dodge.value = Math.round(data.data.characteristics["ge"].value / 2);
-                data.data.status.dodge.max = data.data.status.dodge.value + data.data.status.dodge.modifier + SpecialabilityRulesDSA5.abilityStep(this.data, "Verbessertes Ausweichen");
+                data.data.status.dodge.max = Number(data.data.status.dodge.value) + Number(data.data.status.dodge.modifier) + SpecialabilityRulesDSA5.abilityStep(this.data, "Verbessertes Ausweichen") + (Number(game.settings.get("dsa5", "higherDefense")) / 2)
                 return data.data.status.dodge.max
         }
     }
@@ -144,15 +144,15 @@ export default class Actordsa5 extends Actor {
     static _calculateCombatSkillValues(i, actorData) {
         if (i.data.weapontype.value == "melee") {
             let vals = i.data.guidevalue.value.split('/').map(x =>
-                actorData.data.characteristics[x].value + actorData.data.characteristics[x].modifier + actorData.data.characteristics[x].advances
+                Number(actorData.data.characteristics[x].initial) + Number(actorData.data.characteristics[x].modifier) + Number(actorData.data.characteristics[x].advances)
             );
             let parryChar = Math.max(...vals);
-            i.data.parry.value = Math.ceil(i.data.talentValue.value / 2) + Math.floor((parryChar - 8) / 3);
-            let attackChar = actorData.data.characteristics.mu.value + actorData.data.characteristics.mu.modifier + actorData.data.characteristics.mu.advances;
+            i.data.parry.value = Math.ceil(i.data.talentValue.value / 2) + Math.max(0, Math.floor((parryChar - 8) / 3)) + Number(game.settings.get("dsa5", "higherDefense"))
+            let attackChar = actorData.data.characteristics.mu.initial + actorData.data.characteristics.mu.modifier + actorData.data.characteristics.mu.advances;
             i.data.attack.value = i.data.talentValue.value + Math.max(0, Math.floor((attackChar - 8) / 3));
         } else {
             i.data.parry.value = 0;
-            let attackChar = actorData.data.characteristics.ff.value + actorData.data.characteristics.ff.modifier + actorData.data.characteristics.ff.advances;
+            let attackChar = actorData.data.characteristics.ff.initial + actorData.data.characteristics.ff.modifier + actorData.data.characteristics.ff.advances;
             i.data.attack.value = i.data.talentValue.value + Math.max(0, Math.floor((attackChar - 8) / 3));
         }
         i.cost = game.i18n.format("advancementCost", { cost: DSA5_Utility._calculateAdvCost(i.data.talentValue.value, i.data.StF.value) })
@@ -377,6 +377,12 @@ export default class Actordsa5 extends Actor {
                         armor.push(i);
                     }
                     break;
+                case "poison":
+                    i.weight = parseFloat((i.data.weight.value * i.data.quantity.value).toFixed(3));
+                    inventory["poison"].items.push(i);
+                    inventory["poison"].show = true;
+                    totalWeight += Number(i.weight);
+                    break
                 case "equipment":
                     i.weight = parseFloat((i.data.weight.value * i.data.quantity.value).toFixed(3));
                     inventory[i.data.equipmentType.value].items.push(i);
@@ -1346,7 +1352,7 @@ export default class Actordsa5 extends Actor {
             }
         }
         damageTerm = eval(damageTerm)
-        item.damagedie = damageDie
+        item.damagedie = damageDie ? damageDie : "0d6"
         item.damageAdd = damageTerm != undefined ? "+" + damageTerm : ""
         return item
     }

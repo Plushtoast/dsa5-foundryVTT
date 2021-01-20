@@ -773,6 +773,7 @@ export default class ActorSheetDsa5 extends ActorSheet {
             case "equipment":
             case "ammunition":
             case "armor":
+            case "poison":
                 await this._addLoot(item)
                 break;
             case "disadvantage":

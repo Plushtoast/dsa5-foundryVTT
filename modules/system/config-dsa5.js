@@ -344,7 +344,8 @@ DSA5.equipmentTypes = {
     "writing": "Equipment.writing",
     "alchemy": "Equipment.alchemy",
     "service": "Equipment.service",
-    "luxus": "Equipment.luxus"
+    "luxus": "Equipment.luxus",
+    "poison": "Poison"
 };
 
 DSA5.narrowSpaceModifiers = {

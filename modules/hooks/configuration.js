@@ -23,4 +23,17 @@ export default function() {
         default: false,
         type: Boolean
     });
+    game.settings.register("dsa5", "higherDefense", {
+        name: "SETTINGS.higherDefense",
+        hint: "SETTINGS.higherDefenseHint",
+        scope: "world",
+        config: true,
+        default: "0",
+        type: String,
+        choices: {
+            "0": "0",
+            "2": "+2",
+            "4": "+4",
+        }
+    });
 }

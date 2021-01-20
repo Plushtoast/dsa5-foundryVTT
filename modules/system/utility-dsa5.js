@@ -130,6 +130,23 @@ export default class DSA5_Utility {
         return DSA5.advancementCosts[type][Number(currentAdvances) + modifier]
     }
 
+    static async findAnyItem(category, name) {
+        let item = game.items.entities.find(i => i.permission > 1 && i.type == category && i.name == name)
+        if (!item) {
+            for (let p of game.packs) {
+                if (p.metadata.entity == "Item" && (game.user.isGM || !p.private)) {
+                    await p.getContent().then(content => {
+                        item = content.find(x => x.type == category && x.name == name)
+                    })
+                    if (item)
+                        break
+                }
+            }
+        }
+        return item
+    }
+
+
     static experienceDescription(experience) {
         if (experience >= 2100) {
             return "EXP-legendary";

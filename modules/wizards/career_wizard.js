@@ -23,7 +23,7 @@ export default class CareerWizard extends WizardDSA5 {
         html.find('.optional').change(ev => {
             let parent = $(ev.currentTarget).closest('.content')
             if ($(ev.currentTarget).hasClass("exclusiveTricks")) {
-                let maxSelections = Number(parent.attr("data-spelltricklimit"))
+                let maxSelections = Number(parent.find('.maxTricks').attr("data-spelltricklimit"))
                 if (parent.find('.exclusiveTricks:checked').length > maxSelections) {
                     ev.currentTarget.checked = false
                     WizardDSA5.flashElem(parent.find('.maxTricks'))

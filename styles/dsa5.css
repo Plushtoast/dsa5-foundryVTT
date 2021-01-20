@@ -1739,3 +1739,23 @@ input[type="search"] {
 .locktrue .advance {
     display: none;
 }
+
+.roll-button {
+    border: 1px solid var(--border-color);
+    padding: 2px;
+    border-radius: 3px;
+    box-shadow: 0 0 12px #6e3b018F inset;
+    display: inline-block;
+}
+
+.roll-button i {
+    margin-right: 1px;
+}
+
+.liturgy-botch,
+.spell-botch,
+.range-botch,
+.melee-botch,
+.defense-botch {
+    color: darkred;
+}

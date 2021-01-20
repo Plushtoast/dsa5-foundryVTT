@@ -87,7 +87,8 @@
         "armor": "Rüstung",
         "meleeweapons": "Nahkampfwaffen",
         "rangeweapons": "Fernkampfwaffen",
-        "ammunition": "Munition"
+        "ammunition": "Munition",
+        "poison": "Gift"
     },
 
 
@@ -130,6 +131,7 @@
     "bullet": "Kugel",
     "blessing": "Segnung",
     "blessings": "Segnungen",
+
     "Burden": "Belastung",
     "biography": "Hintergrundgeschichte",
     "Category": "Kategorie",
@@ -344,6 +346,7 @@
     "searchTalents": "Talente durchsuchen",
     "Test": "Test",
     "trait": "Eigenschaft",
+    "table": "Tabelle",
     "traits": "Fähigkeiten",
     "treatment": "Behandlung",
     "traitType": "Eigenschaftskategorie",
@@ -729,7 +732,9 @@
         "defenseBotchTableEnabled": "Verteidigungs-Patzertabelle",
         "defenseBotchTableEnabledHint": "Anstatt 1W6+2 SP bei einem Patzer, kann auch diese Tabelle benutzt werden (optionale Regel).",
         "rangeBotchTableEnabled": "Fernkampf-Patzertabelle",
-        "rangeBotchTableEnabledHint": "Anstatt 1W6+2 SP bei einem Patzer, kann auch diese Tabelle benutzt werden (optionale Regel)."
+        "rangeBotchTableEnabledHint": "Anstatt 1W6+2 SP bei einem Patzer, kann auch diese Tabelle benutzt werden (optionale Regel).",
+        "higherDefense": "Höhere Verteidigungswerte",
+        "higherDefenseHint": "Wenn die Chance einen Treffer einzustecken kleiner sein soll, könnt ihr auch beschließen, dass die Parade generell um 2 oder 4 Punkte höher liegt (und der Ausweichenwert um die Hälfte des Bonus der Parade angehoben wird). Die Verteidigungswerte erhöhen sich sowohl für Helden, als auch für Gegner.Dies bedeutet aber, dass Kämpfe länger dauern werden.Durch die Verwendung dieser Optionalregel bleiben die Regeln gleich komplex. "
     },
 
     "CHATFATE": {
@@ -807,6 +812,14 @@
         "10": "Der Held hat sich im Eifer des Gefechts den Kopf gestoßen. Er erhält für eine Stunde eine Stufe Betäubung.",
         "11": "Der Held hat sich selbst verletzt und erleidet Schaden. Der Schaden seiner Waffe wird unter Einbeziehung des Schadensbonus ausgewürfelt. Bei unbewaffneten Kämpfern wird 1W6 TP angenommen.",
         "12": "Ein schwerer Eigentreffer des Helden. Der Schaden seiner Waffe wird unter Einbeziehung des Schadensbonus ausgewürfelt und dann verdoppelt. Bei unbewaffneten Kämpfern wird 1W6 TP angenommen."
+    },
+
+    "TABLENAMES": {
+        "Defense": "Verteidigung-Patzertabelle",
+        "Melee": "Nahkampf-Patzertabelle",
+        "Range": "Fernkampf-Patzertabelle",
+        "Liturgy": "Patzertabelle für Liturgien/Zeremonien",
+        "Spell": "Patzertabelle für Zauber/Rituale"
     },
 
     "CONDITIONS": {

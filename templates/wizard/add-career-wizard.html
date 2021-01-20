@@ -1,4 +1,4 @@
-<section class="content" data-cost="{{career.data.APValue.value}}" data-spelltricklimit="{{career.data.spelltrickCount.value}}">
+<section class="content" data-cost="{{career.data.APValue.value}}">
     <h1>{{title}}</h1>
     <p style="margin-bottom:10px;">{{{description}}}</p>
 
@@ -100,7 +100,7 @@
     {{/if}} {{#if magicToChose}}
     <div class="tab magic" data-tab="magic">
         <h2>{{localize 'magictricks'}}</h2>
-        <p class="maxTricks">{{localize 'WIZARD.chose'}} {{career.data.spelltrickCount.value}}.</p>
+        <p class="maxTricks" data-spelltricklimit="{{career.data.spelltrickCount.value}}">{{localize 'WIZARD.chose'}} {{career.data.spelltrickCount.value}}.</p>
         <div class="row-section wrap">
             {{#each spelltricks as |item i|}}
             <div class="col two row-section lineheight">
