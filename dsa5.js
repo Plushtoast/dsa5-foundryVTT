@@ -14,8 +14,12 @@ import LazyImporter from "./modules/importer/lazy_importer.js"
 import DSA5 from "./modules/system/config-dsa5.js"
 import DSA5ItemLibrary from "./modules/system/itemlibrary.js"
 import DSA5_Utility from "./modules/system/utility-dsa5.js"
+import DSA5Initializer from "./modules/system/initializer.js"
 
 Hooks.once("init", async function() {
+    console.log("Initializing DSA5 system")
+
+    CONFIG.statusEffects = DSA5.statusEffects
 
     Actors.unregisterSheet("core", ActorSheet);
     Actors.registerSheet("dsa5", ActorSheetdsa5Character, { types: ["character"], makeDefault: true });
@@ -35,7 +39,8 @@ Hooks.once("init", async function() {
             ActorSheetdsa5Creature,
             ActorSheetdsa5NPC,
             ItemSheetdsa5,
-            DSA5_Utility
+            DSA5_Utility,
+            DSA5Initializer
         },
         entities: {
             Actordsa5,

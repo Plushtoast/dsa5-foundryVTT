@@ -678,7 +678,7 @@ export default class DiceDSA5 {
             result["damageRoll"] = damageRoll
         }
         result["rollType"] = "weapon"
-        let effect = DiceDSA5.parseEffect(weapon.data.effect.value)
+        let effect = DiceDSA5.parseEffect(weapon.data.effect ? weapon.data.effect.value : "")
         if (effect)
             result["parsedEffect"] = effect
         return result

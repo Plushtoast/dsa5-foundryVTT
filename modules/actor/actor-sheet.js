@@ -794,8 +794,25 @@ export default class ActorSheetDsa5 extends ActorSheet {
             case "spell":
                 await this._addSpellOrLiturgy(item)
                 break;
+            case "lookup":
+                await this._handleLookup(item)
+                break
             default:
                 ui.notifications.error(game.i18n.format("Error.canNotBeAdded", { item: item.name, category: game.i18n.localize(item.type) }))
+        }
+    }
+
+    async _handleLookup(item) {
+        for (let thing of item.items) {
+            let lookup = await DSA5_Utility.findAnyItem(thing.type, thing.name)
+
+            if (lookup) {
+                if (thing.count)
+                    lookup.data.data.quantity.value = thing.count
+                this._manageDragItems(lookup, lookup.type)
+            } else {
+                ui.notifications.error(game.i18n.format("Error.notFound", { category: thing.type, name: thing.name }))
+            }
         }
     }
 

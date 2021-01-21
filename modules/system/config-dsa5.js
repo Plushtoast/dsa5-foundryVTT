@@ -1,6 +1,6 @@
 const DSA5 = {}
 
-CONFIG.statusEffects = [{
+DSA5.statusEffects = [{
         id: "prone",
         label: "CONDITION.prone",
         icon: "icons/svg/falling.svg",

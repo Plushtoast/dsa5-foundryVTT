@@ -4,13 +4,7 @@ import ItemRulesDSA5 from "./item-rules-dsa5.js";
 export default class SpecialabilityRulesDSA5 extends ItemRulesDSA5 {
 
     static async setupFunctions() {
-        mergeObject(DSA5.addAbilityRules, {})
-        mergeObject(DSA5.removeAbilityRules, {})
-        mergeObject(DSA5.AbilitiesNeedingAdaption, {
-            "Fertigkeitsspezialisierung ()": { items: ["text"] },
-            "Geländekunde ()": { items: ["text"] },
-            "Ortskenntnis ()": { items: ["text"] }
-        })
+
     }
 
     static async abilityAdded(actor, item) {

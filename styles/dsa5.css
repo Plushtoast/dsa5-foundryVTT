@@ -1740,6 +1740,7 @@ input[type="search"] {
     display: none;
 }
 
+.chatButton,
 .roll-button {
     border: 1px solid var(--border-color);
     padding: 2px;
@@ -1748,6 +1749,7 @@ input[type="search"] {
     display: inline-block;
 }
 
+.chatButton i,
 .roll-button i {
     margin-right: 1px;
 }
@@ -1758,4 +1760,9 @@ input[type="search"] {
 .melee-botch,
 .defense-botch {
     color: darkred;
+}
+
+.detailbox {
+    border: 1px solid var(--border-color);
+    padding: 5px;
 }

@@ -3,75 +3,7 @@ import ItemRulesDSA5 from "./item-rules-dsa5.js";
 
 export default class AdvantageRulesDSA5 extends ItemRulesDSA5 {
     static async setupFunctions() {
-        mergeObject(DSA5.addvantageRules, {
-            Geweihter: async function(actor, item) { await actor.update({ "data.status.karmaenergy.initial": actor.data.data.status.karmaenergy.initial + 20 }); },
-            Flink: async function(actor, item) { await actor.update({ "data.status.speed.initial": actor.data.data.status.speed.initial + 1 }); },
-            Zauberer: async function(actor, item) { await actor.update({ "data.status.astralenergy.initial": actor.data.data.status.astralenergy.initial + 20 }); },
-            Glück: async function(actor, item) { await actor.update({ "data.status.fatePoints.current": 3 + item.data.step.value }); },
-            "Hohe Astralkraft": async function(actor, item) { await actor.update({ "data.status.astralenergy.initial": actor.data.data.status.astralenergy.initial + 1 }); },
-            "Hohe Karmalkraft": async function(actor, item) { await actor.update({ "data.status.karmaenergy.initial": actor.data.data.status.karmaenergy.initial + 1 }); },
-            "Hohe Lebenskraft": async function(actor, item) { await actor.update({ "data.status.wounds.initial": actor.data.data.status.wounds.initial + 1 }); },
-            "Hohe Seelenkraft": async function(actor, item) { await actor.update({ "data.status.soulpower.initial": actor.data.data.status.soulpower.initial + 1 }); },
-            "Hohe Zähigkeit": async function(actor, item) { await actor.update({ "data.status.toughness.initial": actor.data.data.status.toughness.initial + 1 }); },
-            "Hohe Reich": async function(actor, item) {
-                let money = duplicate(actor.items.find(x => x.type == "money" && x.name == "Money-S"))
-                money.data.quantity.value += 250
-                await actor.updateEmbeddedEntity("OwnedItem", money)
-            },
-            "Arm": async function(actor, item) {
-                let money = duplicate(actor.items.find(x => x.type == "money" && x.name == "Money-S"))
-                money.data.quantity.value -= 250
-                await actor.updateEmbeddedEntity("OwnedItem", money)
-            },
-            "Behäbig": async function(actor, item) { await actor.update({ "data.status.speed.initial": actor.data.data.status.speed.initial - 1 }); },
-            "Niedrige Astralkraft": async function(actor, item) { await actor.update({ "data.status.astralenergy.initial": actor.data.data.status.astralenergy.initial - 1 }); },
-            "Niedrige Karmalkraft": async function(actor, item) { await actor.update({ "data.status.karmaenergy.initial": actor.data.data.status.karmaenergy.initial - 1 }); },
-            "Niedrige Lebenskraft": async function(actor, item) { await actor.update({ "data.status.wounds.initial": actor.data.data.status.wounds.initial - 1 }); },
-            "Niedrige Seelenkraft": async function(actor, item) { await actor.update({ "data.status.soulpower.initial": actor.data.data.status.soulpower.initial - 1 }); },
-            "Niedrige Zähigkeit": async function(actor, item) { await actor.update({ "data.status.toughness.initial": actor.data.data.status.toughness.initial - 1 }); },
-            Pech: async function(actor, item) { await actor.update({ "data.status.fatePoints.current": 3 - item.data.step.value }); },
-        })
-        mergeObject(DSA5.removevantageRules, {
-            Geweihter: async function(actor, item) { await actor.update({ "data.status.karmaenergy.initial": actor.data.data.status.karmaenergy.initial - 20 }); },
-            Flink: async function(actor, item) { await actor.update({ "data.status.speed.initial": actor.data.data.status.speed.initial - 1 }); },
-            Zauberer: async function(actor, item) { await actor.update({ "data.status.astralenergy.initial": actor.data.data.status.astralenergy.initial - 20 }); },
-            Glück: async function(actor, item) { await actor.update({ "data.status.fatePoints.current": 3 }); },
-            "Hohe Astralkraft": async function(actor, item) { await actor.update({ "data.status.astralenergy.initial": actor.data.data.status.astralenergy.initial - item.data.step.value }); },
-            "Hohe Karmalkraft": async function(actor, item) { await actor.update({ "data.status.karmaenergy.initial": actor.data.data.status.karmaenergy.initial - item.data.step.value }); },
-            "Hohe Lebenskraft": async function(actor, item) { await actor.update({ "data.status.wounds.initial": actor.data.data.status.wounds.initial - item.data.step.value }); },
-            "Hohe Seelenkraft": async function(actor, item) { await actor.update({ "data.status.soulpower.initial": actor.data.data.status.soulpower.initial - item.data.step.value }); },
-            "Hohe Zähigkeit": async function(actor, item) { await actor.update({ "data.status.toughness.initial": actor.data.data.status.toughness.initial - item.data.step.value }); },
-            "Hohe Reich": async function(actor, item) {
-                let money = duplicate(actor.items.find(x => x.type == "money" && x.name == "Money-S"))
-                money.data.quantity.value -= item.data.step.value * 250
-                await actor.updateEmbeddedEntity("OwnedItem", money)
-            },
-            "Arm": async function(actor, item) {
-                let money = duplicate(actor.items.find(x => x.type == "money" && x.name == "Money-S"))
-                money.data.quantity.value += item.data.step.value * 250
-                await actor.updateEmbeddedEntity("OwnedItem", money)
-            },
-            "Behäbig": async function(actor, item) { await actor.update({ "data.status.speed.initial": actor.data.data.status.speed.initial + 1 }); },
-            "Niedrige Astralkraft": async function(actor, item) { await actor.update({ "data.status.astralenergy.initial": actor.data.data.status.astralenergy.initial + item.data.step.value }); },
-            "Niedrige Karmalkraft": async function(actor, item) { await actor.update({ "data.status.karmaenergy.initial": actor.data.data.status.karmaenergy.initial + item.data.step.value }); },
-            "Niedrige Lebenskraft": async function(actor, item) { await actor.update({ "data.status.wounds.initial": actor.data.data.status.wounds.initial + item.data.step.value }); },
-            "Niedrige Seelenkraft": async function(actor, item) { await actor.update({ "data.status.soulpower.initial": actor.data.data.status.soulpower.initial + item.data.step.value }); },
-            "Niedrige Zähigkeit": async function(actor, item) { await actor.update({ "data.status.toughness.initial": actor.data.data.status.toughness.initial + item.data.step.value }); },
-            Pech: async function(actor, item) { await actor.update({ "data.status.fatePoints.current": 3 }); },
-        })
-        mergeObject(DSA5.vantagesNeedingAdaption, {
-            "Unfähig ()": { items: ["skill"] },
-            "Begabung ()": { items: ["skill"] },
-            "Herausragende Fertigkeit ()": { items: ["skill", "liturgy", "spell", "ritual", "ceremony"] },
-            "Herausragende Kampftechnik ()": { items: ["combatskill"] },
-            "Waffenbegabung ()": { items: ["combatskill"] },
-            "Begabung ()": { items: ["skill"] },
-            "Verpflichtungen ()": { items: "text" },
-            "Angst vor ()": { items: "text" },
-            "Artefaktgebunden ()": { items: "text" },
-            "Magische Einstimmung ()": { items: "text" },
-            "Prinzipientreue ()": { items: "text" }
-        })
+
     }
     static async vantageAdded(actor, item) {
         if (DSA5.addvantageRules[item.name]) {

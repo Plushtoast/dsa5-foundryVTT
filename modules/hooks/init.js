@@ -50,5 +50,4 @@ export default function() {
     chatContext.default()
     statusEffects.default()
     sideBar.default()
-
 }
