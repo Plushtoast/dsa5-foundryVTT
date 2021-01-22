@@ -803,16 +803,19 @@ export default class ActorSheetDsa5 extends ActorSheet {
     }
 
     async _handleLookup(item) {
-        for (let thing of item.items) {
-            let lookup = await DSA5_Utility.findAnyItem(thing.type, thing.name)
-
-            if (lookup) {
-                if (thing.count)
-                    lookup.data.data.quantity.value = thing.count
-                this._manageDragItems(lookup, lookup.type)
-            } else {
-                ui.notifications.error(game.i18n.format("Error.notFound", { category: thing.type, name: thing.name }))
+        let lookup = await DSA5_Utility.findAnyItem(item.items)
+        if (lookup) {
+            for (let thing of item.items) {
+                if (thing.count) {
+                    let elem = lookup.find(x => x.name == thing.name && x.type == thing.type)
+                    elem.data.data.quantity.value = thing.count
+                }
             }
+            for (let thing of lookup) {
+                this._manageDragItems(thing, thing.type)
+            }
+        } else {
+            ui.notifications.error(game.i18n.format("Error.notFound", { category: thing.type, name: thing.name }))
         }
     }
 

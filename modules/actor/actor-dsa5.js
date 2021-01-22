@@ -456,6 +456,7 @@ export default class Actordsa5 extends Actor {
         if (this.data.type != "creature" || this.data.canAdvance) {
             encumbrance += Math.max(0, Math.ceil((totalWeight - carrycapacity) / 4))
         }
+        totalWeight = totalWeight.toFixed(3)
 
         let pain = Math.floor((1 - actorData.data.status.wounds.value / actorData.data.status.wounds.max) * 4) - AdvantageRulesDSA5.vantageStep(this, "Zäher Hund")
         if (this.data.type != "creature" && actorData.data.status.wounds.value <= 5)

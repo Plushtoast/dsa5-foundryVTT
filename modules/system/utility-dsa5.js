@@ -130,20 +130,38 @@ export default class DSA5_Utility {
         return DSA5.advancementCosts[type][Number(currentAdvances) + modifier]
     }
 
-    static async findAnyItem(category, name) {
-        let item = game.items.entities.find(i => i.permission > 1 && i.type == category && i.name == name)
-        if (!item) {
+    static async findAnyItem(lookup) {
+        let results = []
+        let names = lookup.map(x => x.name)
+        let types = lookup.map(x => x.type)
+        for (let k of game.items.entities) {
+            let index = names.indexOf(k.name)
+            if (index >= 0 && types[index] == k.type) {
+                names.splice(index, 1)
+                types.splice(index, 1)
+                results.push(k)
+            }
+        }
+        //let item = game.items.entities.find(i => i.permission > 1 && i.type == category && i.name == name)
+        if (names.length > 0) {
             for (let p of game.packs) {
                 if (p.metadata.entity == "Item" && (game.user.isGM || !p.private)) {
                     await p.getContent().then(content => {
-                        item = content.find(x => x.type == category && x.name == name)
+                        for (let k of content) {
+                            let index = names.indexOf(k.name)
+                            if (index >= 0 && types[index] == k.type) {
+                                names.splice(index, 1)
+                                types.splice(index, 1)
+                                results.push(k)
+                            }
+                        }
                     })
-                    if (item)
+                    if (names.length <= 0)
                         break
                 }
             }
         }
-        return item
+        return results
     }
 
 
