@@ -29,6 +29,12 @@ export default class DSA5Initializer extends Dialog {
         game.settings.set(this.module, "initialized", true)
 
         await fetch(`modules/${this.module}/initialization.json`).then(async r => r.json()).then(async json => {
+            let head = game.folders.entities.find(x => x.name == json[0].name)
+            if (head) {
+                this.folders[head.data.name] = head
+                json.shift()
+            }
+
             let createdFolders = await Folder.create(json)
             for (let folder of createdFolders)
                 this.folders[folder.data.name] = folder;
@@ -68,8 +74,13 @@ export default class DSA5Initializer extends Dialog {
         let result = [];
         await DSA5Initializer.setFolderFlags()
 
-        let parent = game.folders.entities.find(x => x.name == head && !x.data.parent)
+        let parent = game.folders.entities.find(x => x.name == head)
         if (parent) {
+            if (parent.data.parent) {
+                let head = game.folders.get(parent.data.parent)
+                await parent.setFlag("dsa5", "parent", head.data.name)
+                result.push(head)
+            }
             result.push(parent)
             result = await DSA5Initializer.recursiveFolders(parent, result)
 
@@ -96,8 +107,11 @@ export default class DSA5Initializer extends Dialog {
     }
 
     static async setFolderFlags() {
-        for (let journal of game.journal.entities)
-            await journal.setFlag("dsa5", "parent", game.folders.get(journal.data.folder).data.name)
+        for (let journal of game.journal.entities) {
+            if (journal.data.folder)
+                await journal.setFlag("dsa5", "parent", game.folders.get(journal.data.folder).data.name)
+        }
+
     }
 
 }

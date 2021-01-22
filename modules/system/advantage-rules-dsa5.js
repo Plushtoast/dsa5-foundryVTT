@@ -2,18 +2,23 @@ import DSA5 from "./config-dsa5.js";
 import ItemRulesDSA5 from "./item-rules-dsa5.js";
 
 export default class AdvantageRulesDSA5 extends ItemRulesDSA5 {
-    static async setupFunctions() {
-
+    static setupFunctions() {
+        mergeObject(game.dsa5.config.addvantageRules, {
+            Geweihter: async function(actor, item) { await actor.update({ "data.status.karmaenergy.initial": actor.data.data.status.karmaenergy.initial + 20 }); },
+            Zauberer: async function(actor, item) { await actor.update({ "data.status.astralenergy.initial": actor.data.data.status.astralenergy.initial + 20 }); }
+        })
+        mergeObject(game.dsa5.config.removevantageRules, {
+            Geweihter: async function(actor, item) { await actor.update({ "data.status.karmaenergy.initial": actor.data.data.status.karmaenergy.initial - 20 }); },
+            Zauberer: async function(actor, item) { await actor.update({ "data.status.astralenergy.initial": actor.data.data.status.astralenergy.initial - 20 }); }
+        })
     }
     static async vantageAdded(actor, item) {
-        if (DSA5.addvantageRules[item.name]) {
-            DSA5.addvantageRules[item.name](actor, item)
-        }
+        if (game.dsa5.config.addvantageRules[item.name])
+            game.dsa5.config.addvantageRules[item.name](actor, item)
     }
     static async vantageRemoved(actor, item) {
-        if (DSA5.removevantageRules[item.name]) {
-            DSA5.removevantageRules[item.name](actor, item)
-        }
+        if (game.dsa5.config.removevantageRules[item.name])
+            game.dsa5.config.removevantageRules[item.name](actor, item)
     }
 
     static async _vantageReturnFunction(actor, item, typeClass, adoption) {

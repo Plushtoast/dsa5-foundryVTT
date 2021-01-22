@@ -15,6 +15,8 @@ import DSA5 from "./modules/system/config-dsa5.js"
 import DSA5ItemLibrary from "./modules/system/itemlibrary.js"
 import DSA5_Utility from "./modules/system/utility-dsa5.js"
 import DSA5Initializer from "./modules/system/initializer.js"
+import AdvantageRulesDSA5 from "./modules/system/advantage-rules-dsa5.js";
+import SpecialabilityRulesDSA5 from "./modules/system/specialability-rules-dsa5.js"
 
 Hooks.once("init", async function() {
     console.log("Initializing DSA5 system")
@@ -54,6 +56,8 @@ Hooks.once("init", async function() {
         }
     }
 
+    AdvantageRulesDSA5.setupFunctions()
+    SpecialabilityRulesDSA5.setupFunctions()
     CONFIG.Actor.entityClass = Actordsa5;
     CONFIG.Item.entityClass = Itemdsa5;
     CONFIG.ChatMessage.template = "systems/dsa5/templates/chat/chat-message.html"

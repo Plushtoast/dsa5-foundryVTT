@@ -3,7 +3,7 @@ import ItemRulesDSA5 from "./item-rules-dsa5.js";
 
 export default class SpecialabilityRulesDSA5 extends ItemRulesDSA5 {
 
-    static async setupFunctions() {
+    static setupFunctions() {
 
     }
 
