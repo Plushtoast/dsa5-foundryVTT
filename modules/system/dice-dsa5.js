@@ -494,7 +494,7 @@ export default class DiceDSA5 {
                 }
             }
 
-            this._appendSituationalModifiers(testData, game.i18n.localize("narrowSpace"), narrowSpaceModifier = this._getNarrowSpaceModifier(weapon, testData))
+            this._appendSituationalModifiers(testData, game.i18n.localize("narrowSpace"), this._getNarrowSpaceModifier(weapon, testData))
             this._appendSituationalModifiers(testData, game.i18n.localize("doubleAttack"), testData.doubleAttack)
             this._appendSituationalModifiers(testData, game.i18n.localize("opposingWeaponSize"), this._compareWeaponReach(weapon, testData))
 
