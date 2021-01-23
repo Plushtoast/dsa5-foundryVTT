@@ -315,8 +315,8 @@ export default class DiceDSA5 {
 
 
     static rollRegeneration(testData) {
-
-        let modifier = testData.testModifier + this._situationalModifiers(testData);
+        this._appendSituationalModifiers(testData, game.i18n.localize("manual"), testData.testModifier)
+        let modifier = this._situationalModifiers(testData);
         let roll = testData.roll
         var chars = []
 
@@ -350,9 +350,8 @@ export default class DiceDSA5 {
 
     static rollStatus(testData) {
         let roll = testData.roll ? testData.roll : new Roll("1d20").roll();
-        let modifier = testData.testModifier + this._situationalModifiers(testData);
         this._appendSituationalModifiers(testData, game.i18n.localize("manual"), testData.testModifier)
-        var result = this._rollSingleD20(roll, testData.source.max, testData.extra.statusId, modifier, testData)
+        var result = this._rollSingleD20(roll, testData.source.max, testData.extra.statusId, this._situationalModifiers(testData), testData)
         result["rollType"] = "status"
         if (testData.extra.statusId == "dodge" && result.successLevel == 3) {
             result["description"] += ", " + game.i18n.localize("attackOfOpportunity")
@@ -369,21 +368,18 @@ export default class DiceDSA5 {
 
     static rollAttribute(testData) {
         let roll = testData.roll ? testData.roll : new Roll("1d20").roll();
-        let modifier = testData.testModifier + testData.testDifficulty + this._situationalModifiers(testData);
         this._appendSituationalModifiers(testData, game.i18n.localize("manual"), testData.testModifier)
         this._appendSituationalModifiers(testData, game.i18n.localize("Difficulty"), testData.testDifficulty)
-        var result = this._rollSingleD20(roll, testData.source.value, testData.extra.characteristicId, modifier, testData)
+        var result = this._rollSingleD20(roll, testData.source.value, testData.extra.characteristicId, this._situationalModifiers(testData), testData)
         result["rollType"] = "attribute"
         return result
     }
 
     static rollTraitDamage(testData) {
         //let description = "";
-        let modifier = testData.testModifier + this._situationalModifiers(testData);
-        var chars = []
-
         this._appendSituationalModifiers(testData, game.i18n.localize("manual"), testData.testModifier)
-
+        let modifier = this._situationalModifiers(testData);
+        var chars = []
 
         let roll = testData.roll ? testData.roll : new Roll(testData.source.data.data.damage.value.replace(/[Ww]/, "d")).roll()
         let damage = roll.total + modifier;
@@ -395,7 +391,6 @@ export default class DiceDSA5 {
                 }
             }
         }
-
 
         return {
             rollType: "damage",
@@ -411,11 +406,10 @@ export default class DiceDSA5 {
 
     static rollDamage(testData) {
         //let description = "";
-        let modifier = testData.testModifier + this._situationalModifiers(testData);
+        this._appendSituationalModifiers(testData, game.i18n.localize("manual"), testData.testModifier)
+        let modifier = this._situationalModifiers(testData);
         let weapon;
         var chars = []
-
-        this._appendSituationalModifiers(testData, game.i18n.localize("manual"), testData.testModifier)
 
         let skill = Actordsa5._calculateCombatSkillValues(testData.extra.actor.items.find(x => x.type == "combatskill" && x.name == testData.source.data.data.combatskill.value), testData.extra.actor)
 
@@ -485,8 +479,6 @@ export default class DiceDSA5 {
 
     static rollCombatTrait(testData) {
         let roll = testData.roll ? testData.roll : new Roll("1d20").roll();
-        let modifier = testData.testModifier + this._situationalModifiers(testData) + testData.wrongHand
-
         this._appendSituationalModifiers(testData, game.i18n.localize("manual"), testData.testModifier)
         this._appendSituationalModifiers(testData, game.i18n.localize("wrongHand"), testData.wrongHand)
         let source = testData.source.data.data == undefined ? testData.source : testData.source.data
@@ -502,24 +494,17 @@ export default class DiceDSA5 {
                 }
             }
 
-            let narrowSpaceModifier = this._getNarrowSpaceModifier(weapon, testData)
-            modifier += narrowSpaceModifier
-            this._appendSituationalModifiers(testData, game.i18n.localize("narrowSpace"), narrowSpaceModifier)
-                //+ this._compareWeaponReach(weapon, testData)
-            let weaponmodifier = this._compareWeaponReach(weapon, testData)
-
-            modifier += weaponmodifier + testData.doubleAttack
+            this._appendSituationalModifiers(testData, game.i18n.localize("narrowSpace"), narrowSpaceModifier = this._getNarrowSpaceModifier(weapon, testData))
             this._appendSituationalModifiers(testData, game.i18n.localize("doubleAttack"), testData.doubleAttack)
-            this._appendSituationalModifiers(testData, game.i18n.localize("opposingWeaponSize"), weaponmodifier)
+            this._appendSituationalModifiers(testData, game.i18n.localize("opposingWeaponSize"), this._compareWeaponReach(weapon, testData))
 
 
         } else {
-            modifier += DSA5.rangeMods[testData.rangeModifier].attack + testData.sizeModifier + testData.visionModifier
             this._appendSituationalModifiers(testData, game.i18n.localize("distance"), DSA5.rangeMods[testData.rangeModifier].attack)
             this._appendSituationalModifiers(testData, game.i18n.localize("sizeCategory"), testData.sizeModifier)
             this._appendSituationalModifiers(testData, game.i18n.localize("sight"), testData.visionModifier)
         }
-        var result = this._rollSingleD20(roll, Number(source.data.at.value), testData.mode, modifier, testData)
+        var result = this._rollSingleD20(roll, Number(source.data.at.value), testData.mode, this._situationalModifiers(testData), testData)
 
         let success = result.successLevel > 0
         let doubleDamage = result.successLevel > 2
@@ -581,10 +566,9 @@ export default class DiceDSA5 {
     static rollWeapon(testData) {
         let roll = testData.roll ? testData.roll : new Roll("1d20").roll();
         let weapon;
-        let modifier = testData.testModifier + this._situationalModifiers(testData) + testData.wrongHand
-
         this._appendSituationalModifiers(testData, game.i18n.localize("manual"), testData.testModifier)
         this._appendSituationalModifiers(testData, game.i18n.localize("wrongHand"), testData.wrongHand)
+
 
         let source = testData.source.data.data == undefined ? testData.source : testData.source.data
         let combatskill = source.data.combatskill.value
@@ -597,30 +581,23 @@ export default class DiceDSA5 {
 
             weapon = Actordsa5._prepareMeleeWeapon(source, [skill], testData.extra.actor, shieldBonus)
 
-            let narrowSpaceModifier = this._getNarrowSpaceModifier(weapon, testData)
-            modifier += narrowSpaceModifier
-            this._appendSituationalModifiers(testData, game.i18n.localize("narrowSpace"), narrowSpaceModifier)
+            this._appendSituationalModifiers(testData, game.i18n.localize("narrowSpace"), this._getNarrowSpaceModifier(weapon, testData))
                 //+ this._compareWeaponReach(weapon, testData)
             if (testData.mode == "attack") {
-                let weaponmodifier = this._compareWeaponReach(weapon, testData)
-                modifier += weaponmodifier + testData.doubleAttack
                 this._appendSituationalModifiers(testData, game.i18n.localize("doubleAttack"), testData.doubleAttack)
-                this._appendSituationalModifiers(testData, game.i18n.localize("opposingWeaponSize"), weaponmodifier)
+                this._appendSituationalModifiers(testData, game.i18n.localize("opposingWeaponSize"), this._compareWeaponReach(weapon, testData))
             } else {
-                modifier += testData.defenseCount * -3
                 this._appendSituationalModifiers(testData, game.i18n.localize("defenseCount"), testData.defenseCount * -3)
             }
 
         } else {
             weapon = Actordsa5._prepareRangeWeapon(source, [], [skill], testData.extra.actor)
-
-            modifier += DSA5.rangeMods[testData.rangeModifier].attack + testData.sizeModifier + testData.visionModifier
             this._appendSituationalModifiers(testData, game.i18n.localize("distance"), DSA5.rangeMods[testData.rangeModifier].attack)
             this._appendSituationalModifiers(testData, game.i18n.localize("sizeCategory"), testData.sizeModifier)
             this._appendSituationalModifiers(testData, game.i18n.localize("sight"), testData.visionModifier)
 
         }
-        var result = this._rollSingleD20(roll, weapon[testData.mode], testData.mode, modifier, testData, combatskill)
+        let result = this._rollSingleD20(roll, weapon[testData.mode], testData.mode, this._situationalModifiers(testData), testData, combatskill)
 
         let success = result.successLevel > 0
         let doubleDamage = result.successLevel > 2
@@ -696,8 +673,9 @@ export default class DiceDSA5 {
     static rollCombatskill(testData) {
         let roll = testData.roll ? testData.roll : new Roll("1d20").roll();
         let description = "";
-        let modifier = testData.testModifier + this._situationalModifiers(testData);
         this._appendSituationalModifiers(testData, game.i18n.localize("manual"), testData.testModifier)
+        let modifier = this._situationalModifiers(testData);
+
         let weaponSource = testData.source.data.data == undefined ? testData.source : testData.source.data
         let source = Actordsa5._calculateCombatSkillValues(weaponSource, testData.extra.actor)
         var res = modifier + source.data[testData.mode].value;
@@ -818,9 +796,9 @@ export default class DiceDSA5 {
         let description = [];
         let successLevel = 0
 
-        let modifier = testData.testModifier + testData.testDifficulty + this._situationalModifiers(testData);
         this._appendSituationalModifiers(testData, game.i18n.localize("manual"), testData.testModifier)
         this._appendSituationalModifiers(testData, game.i18n.localize("Difficulty"), testData.testDifficulty)
+        let modifier = this._situationalModifiers(testData);
 
         let fps = testData.source.data.talentValue.value;
         let tar = [1, 2, 3].map(x => testData.extra.actor.data.characteristics[testData.source.data[`characteristic${x}`].value].value + modifier)
@@ -897,9 +875,8 @@ export default class DiceDSA5 {
         let description = [];
         let successLevel = 0
 
-        let modifier = testData.testModifier + this._situationalModifiers(testData);
         this._appendSituationalModifiers(testData, game.i18n.localize("manual"), testData.testModifier)
-            //this._appendSituationalModifiers(testData, game.i18n.localize("Difficulty"), testData.testDifficulty)
+        let modifier = this._situationalModifiers(testData);
 
         let fps = Number(testData.source.data.step.value)
         let tar = [1, 2, 3].map(x => 10 + Number(testData.source.data.step.value) + modifier)
@@ -910,7 +887,6 @@ export default class DiceDSA5 {
         }
 
         let failValue = 20
-
 
         if (roll.results.filter(x => x == 1).length == 3) {
             description.push(game.i18n.localize("AstoundingSuccess"));

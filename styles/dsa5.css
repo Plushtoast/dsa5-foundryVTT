@@ -83,12 +83,12 @@ body {
     width: 100vw;
     height: 100vh;
     margin: 0;
-    text-rendering: geometricprecision;
+    /*text-rendering: geometricprecision;*/
     padding: 0px;
     overflow: hidden;
     /*background: url(../ui/background.webp) repeat;*/
     font-size: 14px;
-    font-family: "GentiumBasic";
+    /*font-family: "GentiumBasic";*/
 }
 
 textarea {

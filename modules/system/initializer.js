@@ -57,7 +57,6 @@ export default class DSA5Initializer extends Dialog {
                 entry.data.folder = this.folders[folder].data._id
         }
         let createdEntries = await JournalEntry.create(entries)
-        console.log(createdEntries)
         for (let entry of createdEntries) {
             this.journals[entry.data.name] = entry;
         }

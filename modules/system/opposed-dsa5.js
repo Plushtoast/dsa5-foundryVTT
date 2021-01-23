@@ -210,7 +210,7 @@ export default class OpposedDsa5 {
 
     static _calculateOpposedDamage(attackerTest, defenderTest) {
         let wornArmor = defenderTest.actor.items.filter(x => x.type == "armor" && x.data.worn.value == true)
-        let armor = wornArmor.reduce((a, b) => a + b.data.protection.value, 0)
+        let armor = wornArmor.reduce((a, b) => a + Number(b.data.protection.value), 0)
         return {
             damage: attackerTest.damage,
             armor: armor,
@@ -335,8 +335,7 @@ export default class OpposedDsa5 {
                 }
                 ChatMessage.create(chatOptions)
             })
-        } else // If manual - update start message and clear opposed data
-        {
+        } else {
             formattedOpposeResult.hideData = true;
             renderTemplate("systems/dsa5/templates/chat/roll/opposed-result.html", formattedOpposeResult).then(html => {
                 let chatOptions = {
