@@ -36,4 +36,12 @@ export default function() {
             "4": "+4",
         }
     });
+    game.settings.register("dsa5", "statusEffectCounterColor", {
+        name: "SETTINGS.statusEffectCounterColor",
+        hint: "SETTINGS.statusEffectCounterColorHint",
+        scope: "client",
+        config: true,
+        default: "#000000",
+        type: String
+    });
 }

@@ -46,7 +46,7 @@
 
             <div class="form-group">
                 <label class="label-text">{{localize "weapontype"}}</label>
-                <select name="data.weapontype.value" data-dtype="{{data.weapontype.type}}">
+                <select name="data.weapontype.value" data-dtype="String">
                     {{#select data.weapontype.value}}
                     {{#each weapontypes as |type sktype|}}
                     <option value="{{sktype}}">{{localize type}}</option>

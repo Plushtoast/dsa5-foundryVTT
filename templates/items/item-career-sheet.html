@@ -93,7 +93,7 @@
 
             <div class="form-group">
                 <label class="label-text">{{localize "mageLevel"}}</label>
-                <select name="data.mageLevel.value" data-dtype="{{data.mageLevel.type}}">
+                <select name="data.mageLevel.value" data-dtype="String">
                   {{#select data.mageLevel.value}}
                   {{#each mageLevels as |ch char|}}
                   <option value="{{char}}">{{localize ch}}</option>

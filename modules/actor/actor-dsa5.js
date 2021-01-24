@@ -1355,9 +1355,9 @@ export default class Actordsa5 extends Actor {
                 damageTerm += k
             }
         }
-        damageTerm = Number(eval(damageTerm))
+        damageTerm = eval(damageTerm)
         item.damagedie = damageDie ? damageDie : "0d6"
-        item.damageAdd = damageTerm != undefined ? (damageTerm > 0 ? "+" : "") + damageTerm : ""
+        item.damageAdd = damageTerm != undefined ? (Number(damageTerm) > 0 ? "+" : "") + damageTerm : ""
         return item
     }
 

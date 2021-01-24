@@ -20,10 +20,9 @@
 
         <div class="tab details" data-tab="details">
 
-
             <div class="form-group">
                 <label class="label-text">{{localize "traitType"}}</label>
-                <select name="data.traitType.value" data-dtype="{{data.traitType.type}}">
+                <select name="data.traitType.value" data-dtype="String">
                     {{#select data.traitType.value}}
                     {{#each traitCategories as |type sktype|}}
                     <option value="{{sktype}}">{{localize type}}</option>
@@ -66,7 +65,7 @@
             </div>
             <div class="form-group">
                 <label class="label-text">{{localize "reach"}}</label>
-                <select name="data.reach.value" data-dtype="{{data.reach.type}}">
+                <select name="data.reach.value" data-dtype="String">
                   {{#select data.reach.value}}
                   {{#each ranges as |ch char|}}
                   <option value="{{char}}">{{localize ch}}</option>
@@ -87,19 +86,19 @@
             {{/when}} {{#when data.traitType.value 'eq' "familiar"}}
             <div class="form-group">
                 <label class="label-text">{{localize "APValue"}}: </label>
-                <input class="input-text" type="text" name="data.APValue.value" value="{{data.APValue.value}}" data-dtype="{{data.APValue.type}}" />
+                <input class="input-text" type="text" name="data.APValue.value" value="{{data.APValue.value}}" data-dtype="String" />
             </div>
             <div class="form-group">
                 <label class="label-text">{{localize "AsPCost"}}: </label>
-                <input class="input-text" type="text" name="data.AsPCost.value" value="{{data.AsPCost.value}}" data-dtype="{{data.AsPCost.type}}" />
+                <input class="input-text" type="text" name="data.AsPCost.value" value="{{data.AsPCost.value}}" data-dtype="Number" />
             </div>
             <div class="form-group">
                 <label class="label-text">{{localize "duration"}}: </label>
-                <input class="input-text" type="text" name="data.duration.value" value="{{data.duration.value}}" data-dtype="{{data.duration.type}}" />
+                <input class="input-text" type="text" name="data.duration.value" value="{{data.duration.value}}" data-dtype="String" />
             </div>
             <div class="form-group">
                 <label class="label-text">{{localize "aspect"}}: </label>
-                <input class="input-text" type="text" name="data.aspect.value" value="{{data.aspect.value}}" data-dtype="{{data.aspect.type}}" />
+                <input class="input-text" type="text" name="data.aspect.value" value="{{data.aspect.value}}" data-dtype="String" />
             </div>
             {{/when}}
 

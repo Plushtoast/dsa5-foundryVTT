@@ -754,7 +754,9 @@
         "rangeBotchTableEnabled": "Fernkampf-Patzertabelle",
         "rangeBotchTableEnabledHint": "Anstatt 1W6+2 SP bei einem Patzer, kann auch diese Tabelle benutzt werden (optionale Regel).",
         "higherDefense": "Höhere Verteidigungswerte",
-        "higherDefenseHint": "Wenn die Chance einen Treffer einzustecken kleiner sein soll, könnt ihr auch beschließen, dass die Parade generell um 2 oder 4 Punkte höher liegt (und der Ausweichenwert um die Hälfte des Bonus der Parade angehoben wird). Die Verteidigungswerte erhöhen sich sowohl für Helden, als auch für Gegner.Dies bedeutet aber, dass Kämpfe länger dauern werden.Durch die Verwendung dieser Optionalregel bleiben die Regeln gleich komplex. "
+        "higherDefenseHint": "Wenn die Chance einen Treffer einzustecken kleiner sein soll, könnt ihr auch beschließen, dass die Parade generell um 2 oder 4 Punkte höher liegt (und der Ausweichenwert um die Hälfte des Bonus der Parade angehoben wird). Die Verteidigungswerte erhöhen sich sowohl für Helden, als auch für Gegner.Dies bedeutet aber, dass Kämpfe länger dauern werden.Durch die Verwendung dieser Optionalregel bleiben die Regeln gleich komplex.",
+        "statusEffectCounterColor": "Farbe des Statuseffektzählers",
+        "statusEffectCounterColorHint": "Hex Code für die Token Farbe von zählbaren Status Effekten. Format: #000000"
     },
 
     "CHATFATE": {

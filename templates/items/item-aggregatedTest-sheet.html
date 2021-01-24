@@ -1,62 +1,56 @@
 <form class="dsa5 item-sheet {{cssClass}}" autocomplete="off">
-  <header class="item-header">
-    <h1>
-      <input name="name" class="item-header item-name" type="text" value="{{item.name}}"
-        placeholder="{{localize 'Name'}}" />
-    </h1>
-  </header>
+    <header class="item-header">
+        <h1>
+            <input name="name" class="item-header item-name" type="text" value="{{item.name}}" placeholder="{{localize 'Name'}}" />
+        </h1>
+    </header>
 
-  {{> systems/dsa5/templates/items/item-stat.html}}
+    {{> systems/dsa5/templates/items/item-stat.html}}
 
-  <nav class="sheet-tabs tabs" data-tab-container="primary">
-    <a class="item active" data-tab="description">{{localize "Description"}}</a>
-    <a class="item" data-tab="details">{{localize "Details"}}</a>
-  </nav>
+    <nav class="sheet-tabs tabs" data-tab-container="primary">
+        <a class="item active" data-tab="description">{{localize "Description"}}</a>
+        <a class="item" data-tab="details">{{localize "Details"}}</a>
+    </nav>
 
 
-  <section class="content">
+    <section class="content">
 
-    {{> systems/dsa5/templates/items/item-description.html}}
+        {{> systems/dsa5/templates/items/item-description.html}}
 
-    <div class="tab details" data-tab="details">
-      <div class="form-group">
-        <label class="label-text">{{localize "allowedTestCount"}}: </label>
-        <input class="input-text" type="text" name="data.allowedTestCount.value" value="{{data.allowedTestCount.value}}"
-          data-dtype="{{data.allowedTestCount.type}}" />
-      </div>
-      <div class="form-group">
-        <label class="label-text">{{localize "usedTestCount"}}: </label>
-        <input class="input-text" type="text" name="data.usedTestCount.value" value="{{data.usedTestCount.value}}"
-          data-dtype="{{data.usedTestCount.type}}" />
-      </div>
-      <div class="form-group">
-        <label class="label-text">{{localize "interval"}}: </label>
-        <input class="input-text" type="text" name="data.interval.value" value="{{data.interval.value}}"
-          data-dtype="{{data.interval.type}}" />
-      </div>
-      <div class="form-group">
-        <label class="label-text">{{localize "cummulatedQS"}}: </label>
-        <input class="input-text" type="text" name="data.cummulatedQS.value" value="{{data.cummulatedQS.value}}"
-          data-dtype="{{data.cummulatedQS.type}}" />
-      </div>
-      <div class="form-group">
-        <label class="label-text">{{localize "previousFailedTests"}}: </label>
-        <input class="input-text" type="text" name="data.previousFailedTests.value"
-          value="{{data.previousFailedTests.value}}" data-dtype="{{data.previousFailedTests.type}}" />
-      </div>
+        <div class="tab details" data-tab="details">
+            <div class="form-group">
+                <label class="label-text">{{localize "allowedTestCount"}}: </label>
+                <input class="input-text" type="text" name="data.allowedTestCount.value" value="{{data.allowedTestCount.value}}" data-dtype="Number" />
+            </div>
+            <div class="form-group">
+                <label class="label-text">{{localize "usedTestCount"}}: </label>
+                <input class="input-text" type="text" name="data.usedTestCount.value" value="{{data.usedTestCount.value}}" data-dtype="Number" />
+            </div>
+            <div class="form-group">
+                <label class="label-text">{{localize "interval"}}: </label>
+                <input class="input-text" type="text" name="data.interval.value" value="{{data.interval.value}}" data-dtype="String" />
+            </div>
+            <div class="form-group">
+                <label class="label-text">{{localize "cummulatedQS"}}: </label>
+                <input class="input-text" type="text" name="data.cummulatedQS.value" value="{{data.cummulatedQS.value}}" data-dtype="Number" />
+            </div>
+            <div class="form-group">
+                <label class="label-text">{{localize "previousFailedTests"}}: </label>
+                <input class="input-text" type="text" name="data.previousFailedTests.value" value="{{data.previousFailedTests.value}}" data-dtype="Number" />
+            </div>
 
-      <div class="form-group">
-        <label class="label-text">{{localize "skill"}}</label>
-        <select name="data.talent.value" data-dtype="{{data.talent.type}}">
+            <div class="form-group">
+                <label class="label-text">{{localize "skill"}}</label>
+                <select name="data.talent.value" data-dtype="String">
           {{#select data.talent.value}}
           {{#each allSkills as |ch char|}}
           <option value="{{char}}">{{localize ch}}</option>
           {{/each}}
           {{/select}}
         </select>
-      </div>
+            </div>
 
 
-    </div>
-  </section>
+        </div>
+    </section>
 </form>

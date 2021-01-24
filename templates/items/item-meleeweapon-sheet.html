@@ -52,7 +52,7 @@
 
             <div class="form-group">
                 <label class="label-text">{{localize "combatskill"}}</label>
-                <select name="data.combatskill.value" data-dtype="{{data.combatskill.type}}">
+                <select name="data.combatskill.value" data-dtype="String">
                   {{#select data.combatskill.value}}
                   {{#each combatskills as |ch char|}}
                   <option value="{{char}}">{{localize ch}}</option>
@@ -63,7 +63,7 @@
 
             <div class="form-group">
                 <label class="label-text">{{localize "reach"}}</label>
-                <select name="data.reach.value" data-dtype="{{data.reach.type}}">
+                <select name="data.reach.value" data-dtype="String">
                   {{#select data.reach.value}}
                   {{#each ranges as |ch char|}}
                   <option value="{{char}}">{{localize ch}}</option>

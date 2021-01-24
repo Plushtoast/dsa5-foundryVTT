@@ -738,9 +738,10 @@ export default class DiceDSA5 {
         if (!effectString)
             return ""
 
+        let regex = /^[a-z]+\|[öäüÖÄÜa-zA-z ]+$/
         let result = []
         for (let k of effectString.split(";")) {
-            if (/^[a-z]+\|[öäüÖÄÜa-zA-z ]+$/.test(k.trim())) {
+            if (regex.test(k.trim())) {
                 let split = k.split("|")
                 result.push(`<a class="roll-button roll-item" data-name="${split[1].trim()}" data-type="${split[0].trim()}"><i class="fas fa-dice"></i>${game.i18n.localize(split[0].trim())}: ${split[1].trim()}</a>`)
             } else {

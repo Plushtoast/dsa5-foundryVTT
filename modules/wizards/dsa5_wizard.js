@@ -173,8 +173,9 @@ export default class WizardDSA5 extends Application {
 
     _validateInput(parent) {
         let exclusives = new Set()
+        let regex = /^exclusive_/
         for (let k of parent.find('.exclusive')) {
-            exclusives.add(k.className.split(/\s+/).filter(x => /^exclusive_/.test(x))[0])
+            exclusives.add(k.className.split(/\s+/).filter(x => regex.test(x))[0])
         }
         for (let k of exclusives) {
             let choice = parent.find('.allowedCount_' + k.split("_")[1])

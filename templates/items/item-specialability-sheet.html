@@ -21,17 +21,17 @@
 
             <div class="form-group">
                 <label class="label-text">{{localize "APValue"}}: </label>
-                <input class="input-text" type="text" name="data.APValue.value" value="{{data.APValue.value}}" data-dtype="{{data.APValue.type}}" />
+                <input class="input-text" type="text" name="data.APValue.value" value="{{data.APValue.value}}" data-dtype="String" />
             </div>
 
             <div class="form-group">
                 <label class="label-text">{{localize "requirements"}}: </label>
-                <input class="input-text" type="text" name="data.requirements.value" value="{{data.requirements.value}}" data-dtype="{{data.requirements.type}}" />
+                <input class="input-text" type="text" name="data.requirements.value" value="{{data.requirements.value}}" data-dtype="String" />
             </div>
 
             <div class="form-group">
                 <label class="label-text">{{localize "Category"}}</label>
-                <select name="data.category.value" data-dtype="{{data.category.type}}">
+                <select name="data.category.value" data-dtype="String">
                   {{#select data.category.value}}
                   {{#each categories as |ch char|}}
                   <option value="{{char}}">{{localize ch}}</option>
@@ -45,7 +45,7 @@
             </div>
             <div class="form-group">
                 <label class="label-text">{{localize "maxlevel"}}: </label>
-                <input class="input-text" type="Number" name="data.maxRank.value" value="{{data.maxRank.value}}" data-dtype="{{data.maxRank.type}}" />
+                <input class="input-text" type="Number" name="data.maxRank.value" value="{{data.maxRank.value}}" data-dtype="Number" />
             </div>
             <div class="form-group">
                 <label class="label-text">{{localize "effect"}}: </label>
@@ -55,7 +55,7 @@
             {{#when data.category.value 'eq' 'Combat'}}
             <div class="form-group">
                 <label class="label-text">{{localize "combatskill"}}: </label>
-                <input class="input-text" type="text" name="data.list.value" value="{{data.list.value}}" data-dtype="{{data.list.type}}" />
+                <input class="input-text" type="text" name="data.list.value" value="{{data.list.value}}" data-dtype="String" />
             </div>
             {{/when}}
 

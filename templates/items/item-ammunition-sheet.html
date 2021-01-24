@@ -22,7 +22,7 @@
 
             <div class="form-group">
                 <label class="label-text">{{localize "ammunitiongroup"}}</label>
-                <select name="data.ammunitiongroup.value" data-dtype="{{data.ammunitiongroup.type}}">
+                <select name="data.ammunitiongroup.value" data-dtype="String">
                   {{#select data.ammunitiongroup.value}}
                   {{#each ammunitiongroups as |ch char|}}
                   <option value="{{char}}">{{localize ch}}</option>

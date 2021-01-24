@@ -22,7 +22,7 @@
 
             <div class="form-group">
                 <label class="label-text">{{localize "Characteristic"}} 1</label>
-                <select name="data.characteristic1.value" data-dtype="{{data.characteristic1.type}}">
+                <select name="data.characteristic1.value" data-dtype="String">
                     {{#select data.characteristic1.value}}
                     {{#each characteristics as |ch char|}}
                     <option value="{{char}}">{{localize ch}}</option>
@@ -33,7 +33,7 @@
 
             <div class="form-group">
                 <label class="label-text">{{localize "Characteristic"}} 2</label>
-                <select name="data.characteristic2.value" data-dtype="{{data.characteristic2.type}}">
+                <select name="data.characteristic2.value" data-dtype="String">
                     {{#select data.characteristic2.value}}
                     {{#each characteristics as |ch char|}}
                     <option value="{{char}}">{{localize ch}}</option>
@@ -44,7 +44,7 @@
 
             <div class="form-group">
                 <label class="label-text">{{localize "Characteristic"}} 3</label>
-                <select name="data.characteristic3.value" data-dtype="{{data.characteristic3.type}}">
+                <select name="data.characteristic3.value" data-dtype="String">
                     {{#select data.characteristic3.value}}
                     {{#each characteristics as |ch char|}}
                     <option value="{{char}}">{{localize ch}}</option>
@@ -55,7 +55,7 @@
 
             <div class="form-group">
                 <label class="label-text">{{localize "Group"}}</label>
-                <select name="data.group.value" data-dtype="{{data.group.type}}">
+                <select name="data.group.value" data-dtype="String">
                     {{#select data.group.value}}
                     {{#each skillGroups as |type sktype|}}
                     <option value="{{sktype}}">{{localize type}}</option>
@@ -66,7 +66,7 @@
 
             <div class="form-group">
                 <label class="label-text">{{localize "Burden"}}</label>
-                <select name="data.burden.value" data-dtype="{{data.burden.type}}">
+                <select name="data.burden.value" data-dtype="String">
                     {{#select data.burden.value}}
                     {{#each skillBurdens as |type sktype|}}
                     <option value="{{sktype}}">{{localize type}}</option>

@@ -45,8 +45,11 @@ export default function() {
         if (tint) icon.tint = tint;
         bg.drawRoundedRect(icon.x + 1, icon.y + 1, w - 2, w - 2, 2);
         this.effects.addChild(icon);
+        let textEffect = game.dsa5.config.effectTextStyle
+        let color = game.settings.get("dsa5", "statusEffectCounterColor")
+        textEffect._fill = /^#[0-9A-F]+$/.test(color) ? color : "#000000"
         if (value) {
-            let text = this.effects.addChild(new PreciseText(value, game.dsa5.config.effectTextStyle))
+            let text = this.effects.addChild(new PreciseText(value, textEffect))
             text.x = icon.x;
             text.y = icon.y;
             this.effects.addChild(text);

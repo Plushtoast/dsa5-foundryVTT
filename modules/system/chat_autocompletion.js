@@ -6,6 +6,7 @@ export default class DSA5ChatAutoCompletion {
         DSA5_Utility.allSkills().then(res => {
             this.skills = res.map(x => x.name)
         })
+        this.regex = /^\/sk /
     }
     async chatListeners(html) {
         let target = this
@@ -19,7 +20,7 @@ export default class DSA5ChatAutoCompletion {
 
     _filterSkills(ev) {
         let val = ev.target.value
-        if (/^\/sk /.test(val)) {
+        if (regex.test(val)) {
             let search = val.substring(3).toLowerCase().trim()
             let result = this.skills.filter(x => { return x.toLowerCase().trim().indexOf(search) != -1 }).slice(0, 5)
             let html = `<div class="quickfind dsalist"><ul><li><a class="quick-skill">${result.join("</li><li>")}</a></li></ul></div>`

@@ -22,7 +22,7 @@
 
             <div class="form-group">
                 <label class="label-text">{{localize "Characteristic"}} 1</label>
-                <select name="data.characteristic1.value" data-dtype="{{data.characteristic1.type}}">
+                <select name="data.characteristic1.value" data-dtype="String">
                     {{#select data.characteristic1.value}}
                     {{#each characteristics as |ch char|}}
                     <option value="{{char}}">{{localize ch}}</option>
@@ -33,7 +33,7 @@
 
             <div class="form-group">
                 <label class="label-text">{{localize "Characteristic"}} 2</label>
-                <select name="data.characteristic2.value" data-dtype="{{data.characteristic2.type}}">
+                <select name="data.characteristic2.value" data-dtype="String">
                     {{#select data.characteristic2.value}}
                     {{#each characteristics as |ch char|}}
                     <option value="{{char}}">{{localize ch}}</option>
@@ -44,7 +44,7 @@
 
             <div class="form-group">
                 <label class="label-text">{{localize "Characteristic"}} 3</label>
-                <select name="data.characteristic3.value" data-dtype="{{data.characteristic3.type}}">
+                <select name="data.characteristic3.value" data-dtype="String">
                     {{#select data.characteristic3.value}}
                     {{#each characteristics as |ch char|}}
                     <option value="{{char}}">{{localize ch}}</option>
@@ -56,7 +56,7 @@
             <div class="form-group tripple">
                 <label class="label-text" title="{{localize 'reach'}} ({{localize 'modifyable'}})">{{localize "reach"}} ({{localize 'CHAR.modifyable'}}): </label>
                 <input class="input-text" type="text" name="data.range.value" value="{{data.range.value}}" data-dtype="String" />
-                <select name="data.canChangeRange.value" data-dtype="{{data.canChangeRange.type}}">
+                <select name="data.canChangeRange.value" data-dtype="String">
                     {{#select data.canChangeRange.value}}
 
                     <option value="true">{{localize "yes"}}</option>
@@ -75,8 +75,8 @@
 
             <div class="form-group tripple">
                 <label class="label-text" title="{{localize 'castingTime'}} ({{localize 'modifyable'}})">{{localize "castingTime"}} ({{localize "CHAR.modifyable"}}): </label>
-                <input class="input-text" type="text" name="data.castingTime.value" value="{{data.castingTime.value}}" data-dtype="{{data.castingTime.type}}" />
-                <select name="data.canChangeCastingTime.value" data-dtype="{{data.canChangeCastingTime.type}}">
+                <input class="input-text" type="text" name="data.castingTime.value" value="{{data.castingTime.value}}" data-dtype="String" />
+                <select name="data.canChangeCastingTime.value" data-dtype="String">
                     {{#select data.canChangeCastingTime.value}}
 
                     <option value="true">{{localize "yes"}}</option>
@@ -87,8 +87,8 @@
 
             <div class="form-group tripple">
                 <label class="label-text" title="{{localize 'AsPCost'}} ({{localize 'modifyable'}})">{{localize "CHAR.AsPCost"}} ({{localize "CHAR.modifyable"}}): </label>
-                <input class="input-text" type="number" name="data.AsPCost.value" value="{{data.AsPCost.value}}" data-dtype="{{data.AsPCost.type}}" />
-                <select name="data.canChangeCost.value" data-dtype="{{data.canChangeCost.type}}">
+                <input class="input-text" type="number" name="data.AsPCost.value" value="{{data.AsPCost.value}}" data-dtype="Number" />
+                <select name="data.canChangeCost.value" data-dtype="String">
                     {{#select data.canChangeCost.value}}
 
                     <option value="true">{{localize "yes"}}</option>
@@ -98,15 +98,15 @@
             </div>
             <div class="form-group">
                 <label class="label-text">{{localize "permanentCost"}}: </label>
-                <input class="input-text" type="text" name="data.permanentCost.value" value="{{data.permanentCost.value}}" data-dtype="{{data.permanentCost.type}}" />
+                <input class="input-text" type="text" name="data.permanentCost.value" value="{{data.permanentCost.value}}" data-dtype="Number" />
             </div>
             <div class="form-group">
                 <label class="label-text">{{localize "AsPCostDetail"}}: </label>
-                <input class="input-text" type="text" name="data.AsPCostDetail.value" value="{{data.AsPCostDetail.value}}" data-dtype="{{data.AsPCostDetail.type}}" />
+                <input class="input-text" type="text" name="data.AsPCostDetail.value" value="{{data.AsPCostDetail.value}}" data-dtype="String" />
             </div>
             <div class="form-group">
                 <label class="label-text">{{localize "maintainCost"}}: </label>
-                <input class="input-text" type="text" name="data.maintainCost.value" value="{{data.maintainCost.value}}" data-dtype="{{data.maintainCost.type}}" />
+                <input class="input-text" type="text" name="data.maintainCost.value" value="{{data.maintainCost.value}}" data-dtype="String" />
             </div>
 
             <div class="form-group full-height">
@@ -115,7 +115,7 @@
             </div>
             <div class="form-group">
                 <label class="label-text">{{localize "effectFormula"}}: </label>
-                <input class="input-text" type="text" name="data.effectFormula.value" value="{{data.effectFormula.value}}" data-dtype="{{data.effectFormula.type}}" />
+                <input class="input-text" type="text" name="data.effectFormula.value" value="{{data.effectFormula.value}}" data-dtype="String" />
             </div>
             <div class="form-group">
                 <label class="label-text">{{localize "distribution"}}: </label>
@@ -123,7 +123,7 @@
             </div>
             <div class="form-group">
                 <label class="label-text">{{localize "resistanceModifier"}}</label>
-                <select name="data.resistanceModifier.value" data-dtype="{{data.resistanceModifier.type}}">
+                <select name="data.resistanceModifier.value" data-dtype="String">
                     {{#select data.resistanceModifier.value}}
                     {{#each resistances as |type sktype|}}
                     <option value="{{sktype}}">{{localize type}}</option>

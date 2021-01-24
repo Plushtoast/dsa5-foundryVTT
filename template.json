@@ -351,104 +351,82 @@
             },
             "APValue": {
                 "APValue": {
-                    "type": "String",
                     "value": "0"
                 }
             },
             "max": {
                 "max": {
-                    "type": "Number",
                     "value": 0
                 }
             },
             "basicSpell": {
                 "range": {
-                    "type": "String",
                     "value": ""
                 },
                 "duration": {
-                    "type": "String",
                     "value": ""
                 },
                 "targetCategory": {
-                    "type": "String",
                     "value": ""
                 }
             },
             "spell": {
                 "characteristic1": {
-                    "type": "String",
                     "value": "mu"
                 },
                 "characteristic2": {
-                    "type": "String",
                     "value": "mu"
                 },
                 "characteristic3": {
-                    "type": "String",
                     "value": "mu"
                 },
                 "effect": {
-                    "type": "String",
                     "value": ""
                 },
                 "castingTime": {
-                    "type": "String",
                     "value": "1"
                 },
                 "AsPCost": {
-                    "type": "Number",
                     "value": 0
                 },
                 "AsPCostDetail": {
-                    "type": "String",
                     "value": "0"
                 },
                 "maintainCost": {
-                    "type": "String",
                     "value": ""
                 },
                 "distribution": {
-                    "type": "String",
                     "value": ""
                 },
                 "StF": {
                     "value": "A"
                 },
                 "resistanceModifier": {
-                    "type": "String",
                     "value": "-"
                 },
                 "canChangeCastingTime": {
-                    "type": "String",
                     "value": "true"
                 },
                 "canChangeCost": {
-                    "type": "String",
                     "value": "true"
                 },
                 "canChangeRange": {
-                    "type": "String",
                     "value": "true"
                 },
                 "effectFormula": {
-                    "type": "String",
                     "value": ""
                 }
             },
             "description": {
                 "description": {
-                    "type": "String",
                     "value": ""
                 },
                 "gmdescription": {
-                    "type": "String",
                     "value": ""
                 }
             },
             "location": {
                 "location": {
-                    "type": "Number",
                     "value": 0
                 }
             }
@@ -465,51 +443,39 @@
                 "APValue"
             ],
             "language": {
-                "type": "String",
                 "value": ""
             },
             "writing": {
-                "type": "String",
                 "value": ""
             },
             "localKnowledge": {
-                "type": "String",
                 "value": ""
             },
             "suitableProfessions": {
-                "type": "String",
                 "value": ""
             },
             "recommendedAdvantages": {
-                "type": "String",
                 "value": ""
             },
             "recommendedDisadvantages": {
-                "type": "String",
                 "value": ""
             },
             "recommendedTalents": {
-                "type": "String",
                 "value": ""
             },
             "notsuitableAdvantages": {
-                "type": "String",
                 "value": ""
             },
             "notsuitableTalents": {
-                "type": "String",
                 "value": ""
             },
             "notsuitableDisadvantages": {
-                "type": "String",
                 "value": ""
             },
             "socialstate": {
-                "type": "String",
                 "value": ""
             },
             "skills": {
-                "type": "String",
                 "value": ""
             }
         },
@@ -520,7 +486,6 @@
                 "basicSpell"
             ],
             "talentValue": {
-                "type": "Number",
                 "value": 0
             }
         },
@@ -530,39 +495,30 @@
                 "APValue"
             ],
             "traitType": {
-                "type": "String",
                 "value": "meleeAttack"
             },
             "at": {
-                "type": "String",
                 "value": ""
             },
             "reach": {
-                "type": "String",
                 "value": ""
             },
             "damage": {
-                "type": "String",
                 "value": "1d6"
             },
             "reloadTime": {
-                "type": "String",
                 "value": "1"
             },
             "AsPCost": {
-                "type": "Number",
                 "value": 0
             },
             "duration": {
-                "type": "String",
                 "value": ""
             },
             "aspect": {
-                "type": "String",
                 "value": ""
             },
             "effect": {
-                "type": "String",
                 "value": ""
             }
         },
@@ -573,11 +529,9 @@
                 "basicSpell"
             ],
             "talentValue": {
-                "type": "Number",
                 "value": 0
             },
             "permanentCost": {
-                "type": "Number",
                 "value": 0
             }
         },
@@ -588,7 +542,6 @@
                 "basicSpell"
             ],
             "talentValue": {
-                "type": "Number",
                 "value": 0
             }
         },
@@ -599,11 +552,9 @@
                 "basicSpell"
             ],
             "talentValue": {
-                "type": "Number",
                 "value": 0
             },
             "permanentCost": {
-                "type": "Number",
                 "value": 0
             }
         },
@@ -613,7 +564,6 @@
                 "basicSpell"
             ],
             "feature": {
-                "type": "String",
                 "value": ""
             }
         },
@@ -623,7 +573,6 @@
                 "basicSpell"
             ],
             "feature": {
-                "type": "String",
                 "value": ""
             }
         },
@@ -633,7 +582,6 @@
                 "equipment"
             ],
             "ammunitiongroup": {
-                "type": "String",
                 "value": ""
             }
         },
@@ -643,31 +591,24 @@
                 "description"
             ],
             "damage": {
-                "type": "String",
                 "value": "1d6"
             },
             "reloadTime": {
-                "type": "Number",
                 "value": 1
             },
             "reach": {
-                "type": "String",
                 "value": "5/25/40"
             },
             "ammunitiongroup": {
-                "type": "String",
                 "value": "-"
             },
             "currentAmmo": {
-                "type": "String",
                 "value": ""
             },
             "combatskill": {
-                "type": "String",
                 "value": "crossbows"
             },
             "worn": {
-                "type": "Boolean",
                 "value": false
             }
         },
@@ -677,34 +618,27 @@
                 "description"
             ],
             "damage": {
-                "type": "String",
                 "value": "1d6"
             },
             "atmod": {
-                "type": "Number",
                 "value": 0
             },
             "pamod": {
-                "type": "Number",
                 "value": 0
             },
             "reach": {
-                "type": "String",
                 "value": "medium"
             },
             "damageThreshold": {
-                "type": "Number",
                 "value": 0
             },
             "guidevalue": {
                 "value": "-"
             },
             "combatskill": {
-                "type": "String",
                 "value": "daggers"
             },
             "worn": {
-                "type": "Boolean",
                 "value": false
             }
         },
@@ -715,11 +649,9 @@
                 "encumbrance"
             ],
             "protection": {
-                "type": "Number",
                 "value": 0
             },
             "worn": {
-                "type": "Boolean",
                 "value": false
             }
         },
@@ -730,78 +662,60 @@
                 "requirements"
             ],
             "languagePoints": {
-                "type": "Number",
                 "value": 0
             },
             "spelltrickCount": {
-                "type": "Number",
                 "value": 0
             },
             "recommendedAdvantages": {
-                "type": "String",
                 "value": ""
             },
             "recommendedDisadvantages": {
-                "type": "String",
                 "value": ""
             },
             "notsuitableAdvantages": {
-                "type": "String",
                 "value": ""
             },
             "notsuitableDisadvantages": {
-                "type": "String",
                 "value": ""
             },
             "mageLevel": {
-                "type": "String",
                 "value": "mundane"
             },
             "skills": {
-                "type": "String",
                 "value": ""
             },
             "guidevalue": {
                 "value": "-"
             },
             "tradition": {
-                "type": "String",
                 "value": ""
             },
             "feature": {
-                "type": "String",
                 "value": ""
             },
             "happyTalents": {
-                "type": "String",
                 "value": ""
             },
             "spells": {
-                "type": "String",
                 "value": ""
             },
             "spelltricks": {
-                "type": "String",
                 "value": ""
             },
             "liturgies": {
-                "type": "String",
                 "value": ""
             },
             "blessings": {
-                "type": "String",
                 "value": ""
             },
             "specialAbilities": {
-                "type": "String",
                 "value": ""
             },
             "combatSkills": {
-                "type": "String",
                 "value": ""
             },
             "clothing": {
-                "type": "String",
                 "value": ""
             }
         },
@@ -812,27 +726,21 @@
                 "requirements"
             ],
             "rule": {
-                "type": "String",
                 "value": ""
             },
             "maxRank": {
-                "tpye": "Number",
                 "value": 0
             },
             "step": {
-                "value": 1,
-                "type": "Number"
+                "value": 1
             },
             "category": {
-                "type": "String",
                 "value": "general"
             },
             "list": {
-                "type": "String",
                 "value": ""
             },
             "effect": {
-                "type": "String",
                 "value": ""
             }
         },
@@ -842,7 +750,6 @@
                 "description"
             ],
             "equipmentType": {
-                "type": "String",
                 "value": "misc"
             }
         },
@@ -854,11 +761,9 @@
                 "requirements"
             ],
             "step": {
-                "value": 1,
-                "type": "Number"
+                "value": 1
             },
             "effect": {
-                "type": "String",
                 "value": ""
             }
         },
@@ -870,11 +775,9 @@
                 "requirements"
             ],
             "step": {
-                "value": 1,
-                "type": "Number"
+                "value": 1
             },
             "effect": {
-                "type": "String",
                 "value": ""
             }
         },
@@ -883,49 +786,38 @@
                 "APValue"
             ],
             "requirements": {
-                "value": "",
-                "type": "String"
+                "value": ""
             },
             "recommendedAdvantages": {
-                "value": "",
-                "type": "String"
+                "value": ""
             },
             "recommendedDisadvantages": {
-                "value": "",
-                "type": "String"
+                "value": ""
             },
             "notsuitableAdvantages": {
-                "value": "",
-                "type": "String"
+                "value": ""
             },
             "notsuitableDisadvantages": {
-                "value": "",
-                "type": "String"
+                "value": ""
             },
             "recommendedCultures": {
-                "value": "",
-                "type": "String"
+                "value": ""
             },
             "attributeChange": {
-                "value": "",
-                "type": "String"
+                "value": ""
             },
             "baseValues": {
                 "wounds": {
-                    "value": 0,
-                    "type": "Number"
+                    "value": 0
                 },
                 "soulpower": {
-                    "value": 0,
-                    "type": "Number"
+                    "value": 0
                 },
                 "toughness": {
-                    "value": 0,
-                    "type": "Number"
+                    "value": 0
                 },
                 "speed": {
-                    "value": 0,
-                    "type": "Number"
+                    "value": 0
                 }
             }
         },
@@ -937,19 +829,15 @@
                 "value": "ff"
             },
             "parry": {
-                "type": "Number",
                 "value": 0
             },
             "attack": {
-                "type": "Number",
                 "value": 0
             },
             "talentValue": {
-                "type": "Number",
                 "value": 6
             },
             "weapontype": {
-                "type": "String",
                 "value": "melee"
             }
         },
@@ -958,61 +846,44 @@
                 "description"
             ],
             "interval": {
-                "value": "",
-                "type": "String"
+                "value": ""
             },
             "allowedTestCount": {
-                "value": 7,
-                "type": "Number"
+                "value": 7
             },
             "usedTestCount": {
-                "value": 0,
-                "type": "Number"
+                "value": 0
             },
             "previousFailedTests": {
-                "value": 0,
-                "type": "Number"
+                "value": 0
             },
             "talent": {
-                "value": "",
-                "type": "String"
+                "value": ""
             },
             "cummulatedQS": {
-                "value": 0,
-                "type": "Number"
+                "value": 0
             }
         },
         "skill": {
             "group": {
-                "value": "",
-                "type": "String"
+                "value": ""
             },
             "talentValue": {
-                "type": "Number",
                 "value": 0
             },
-            "Rpr": {
-                "value": "no",
-                "type": "String"
-            },
             "characteristic1": {
-                "type": "String",
                 "value": "mu"
             },
             "characteristic2": {
-                "type": "String",
                 "value": "mu"
             },
             "characteristic3": {
-                "type": "String",
                 "value": "mu"
             },
             "RPr": {
-                "type": "String",
                 "value": "no"
             },
             "burden": {
-                "type": "String",
                 "value": "no"
             }
         },
@@ -1022,27 +893,21 @@
                 "equipment"
             ],
             "step": {
-                "type": "Number",
                 "value": 1
             },
             "poisonType": {
-                "type": "String",
                 "value": ""
             },
             "resistance": {
-                "type": "String",
                 "value": "zk"
             },
             "effect": {
-                "type": "String",
                 "value": ""
             },
             "start": {
-                "type": "String",
                 "value": ""
             },
             "duration": {
-                "type": "String",
                 "value": ""
             }
         },
@@ -1051,35 +916,27 @@
                 "description"
             ],
             "step": {
-                "type": "Number",
                 "value": 1
             },
             "resistance": {
-                "type": "String",
                 "value": "zk"
             },
             "incubation": {
-                "type": "String",
                 "value": ""
             },
             "damage": {
-                "type": "String",
                 "value": ""
             },
             "duration": {
-                "type": "String",
                 "value": ""
             },
             "source": {
-                "type": "String",
                 "value": ""
             },
             "treatment": {
-                "type": "String",
                 "value": ""
             },
             "antidot": {
-                "type": "String",
                 "value": ""
             }
         }

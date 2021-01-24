@@ -17,8 +17,8 @@ export default function() {
 
         if (createData.type == "character") {
             createData.token.vision = true;
-            createData.token.brightSight = 10;
-            createData.token.dimSight = 20;
+            createData.token.brightSight = 20;
+            createData.token.dimSight = 30;
             createData.token.actorLink = true;
         }
 
@@ -51,10 +51,6 @@ export default function() {
         if (actor.data.type == "creature") {
             let tokenSize = DSA5.tokenSizeCategories[actor.data.data.status.size.value]
             if (tokenSize) {
-
-                //if (/(ft)|eet/.exec(scene.data.gridUnits) !== null)
-                //    tokenSize *= 10 / scene.data.gridDistance;
-
                 if (tokenSize < 1) {
                     data.scale = tokenSize;
                     data.width = data.height = 1;
@@ -64,7 +60,6 @@ export default function() {
                     data.scale = tokenSize / int;
                     data.scale = Math.max(data.scale, 0.25);
                 }
-
             }
         }
     })
