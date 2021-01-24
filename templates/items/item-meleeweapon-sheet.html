@@ -41,7 +41,7 @@
 
             <div class="form-group">
                 <label class="label-text">{{localize "guidevalue"}}</label>
-                <select name="data.guidevalue.value" data-dtype="{{data.guidevalue.type}}">
+                <select name="data.guidevalue.value" data-dtype="String">
                   {{#select data.guidevalue.value}}
                   {{#each characteristics as |ch char|}}
                   <option value="{{char}}">{{localize ch}}</option>

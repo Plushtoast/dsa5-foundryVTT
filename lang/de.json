@@ -92,7 +92,7 @@
     },
 
 
-    "APvalue": "AP-Wert",
+    "APValue": "AP-Wert",
     "additionalFPs": "zusätzliche FPs",
     "attacktest": "Angriffsprobe",
     "antidot": "Gegenmittel",
@@ -493,7 +493,6 @@
         "Wildnisleben": "<p><b>Anwendungsgebiete</b>: Feuermachen, Lageraufbau, Lagersuche</p><p><b>Werkzeuge</b>: eventuell Zelt, Wildnisausrüstung</p><p><b>Qualität</b>: Der Held benötigt nicht so lange, um ein Lager zu finden oder aufzubauen.</p><p><b>Misslungene Probe</b>: Der Lagerplatz ist schlecht gewählt. Die Regeneration ist um 1 gesenkt.</p><p><b>Kritischer Erfolg</b>: Ein phantastischer Schlafplatz! Die Regeneration ist um 1 Punkt erhöht.</p><p><b>Patzer</b>: Das Lager wird überschwemmt oder von Ungeziefer heimgesucht.</p>",
         "Willenskraft": "<p><b>Anwendungsgebiete</b>: Bekehren & Überzeugen widerstehen, Bedrohungen standhalten, Betören widerstehen, Einschüchtern widerstehen, Überreden widerstehen</p><p><b>Qualität</b>: Die Auswirkungen von Verführungs- oder Überredungsversuchen sind deutlich abgeschwächt oder es wird ihnen ganz widerstanden.</p><p><b>Misslungene Probe</b>: Der Held kann nicht widerstehen.</p><p><b>Kritischer Erfolg</b>: Der Held widersteht und kann von dieser Person oder Sache in nächster Zeit nicht mehr beeinflusst werden.</p><p><b>Patzer</b>: Der Held ist der Person, die ihn beeinflussen will, vollkommen verfallen oder fällt bei Anblick eines scheußlichen Dämons in Ohnmacht.</p>",
         "Zechen": "<p><b>Anwendungsgebiete</b>: Vermeidung von Betäubung durch Rauschmittel, Vermeidung von Schmerz durch Rauschmittel, Vermeidung von Verwirrung durch Rauschmittel</p><p><b>Qualität</b>: Der Held verträgt viel mehr als üblich.</p><p><b>Misslungene Probe</b>: Der Held erhält eine Stufe des Zustands Betäubung und erwacht am nächsten Tag mit Kopfschmerzen oder anderen unliebsamen Auswirkungen seines Gelages.</p><p><b>Kritischer Erfolg</b>: Dem Helden gelingt es, bis zum bitteren Ende durchzuhalten, und trotzdem geht es ihm am nächsten Morgen blendend.</p><p><b>Patzer</b>: Der Held begeht in seinem Zustand jedwede Peinlichkeit. Er zerlegt die halbe Taverne, wacht morgens nackt auf dem Markt oder in einem fremden Bett auf, plaudert Geheimnisse an den Feind aus und kann sich danach an nichts mehr erinnern.</p>"
-
     },
 
     "Combatskill": {

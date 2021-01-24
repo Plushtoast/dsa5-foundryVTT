@@ -106,7 +106,7 @@
             {{data.status.dodge.value}}
         </div>
         <div class="col eight center">
-            <input name="data.status.dodge.modifier" type="text" value="{{data.status.dodge.modifier}}" data-dtype="{{data.status.dodge.type}}" />
+            <input name="data.status.dodge.modifier" type="text" value="{{data.status.dodge.modifier}}" data-dtype="Number" />
         </div>
 
         <div class="col eight lineheight center">
@@ -126,7 +126,7 @@
         </div>
 
         <div class="col eight lineheight center">
-            <input class="input-text" type="text" name="data.actionCount.value" value="{{data.actionCount.value}}" data-dtype="{{data.actionCount.type}}" />
+            <input class="input-text" type="text" name="data.actionCount.value" value="{{data.actionCount.value}}" data-dtype="String" />
 
         </div>
     </div>
@@ -142,7 +142,7 @@
         </div>
 
         <div class="col eight lineheight center">
-            <input class="input-text" type="text" name="data.conjuringDifficulty.value" value="{{data.conjuringDifficulty.value}}" data-dtype="{{data.conjuringDifficulty.type}}" />
+            <input class="input-text" type="text" name="data.conjuringDifficulty.value" value="{{data.conjuringDifficulty.value}}" data-dtype="Number" />
         </div>
     </div>
     <div class="derivedAttrs row-section">
@@ -162,7 +162,7 @@
 
 
         <div class="col two lineheight center">
-            <select name="data.size.value" data-dtype="{{data.size.type}}" style="width:100%">
+            <select name="data.status.size.value" data-dtype="String" style="width:100%">
                 {{#select data.status.size.value}}
                 {{#each sizeCategories as |ch char|}}
                 <option value="{{char}}">{{localize ch}}</option>

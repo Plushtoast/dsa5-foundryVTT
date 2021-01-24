@@ -34,8 +34,7 @@
                     {{editor content=data.description.value target="data.description.value" button=true owner=owner editable=editable}}
                 </div>
                 <div class="col two">
-                    <img src="{{item.img}}" style="max-width:100%; max-height: 100%;float: left;" data-edit="img" />
-                    {{editor content=data.clothing.value target="data.clothing.value" button=true owner=owner editable=editable}}
+                    <img src="{{item.img}}" style="max-width:100%; max-height: 100%;float: left;" data-edit="img" /> {{editor content=data.clothing.value target="data.clothing.value" button=true owner=owner editable=editable}}
                 </div>
             </div>
         </div>
@@ -43,14 +42,13 @@
         <div class="tab details" data-tab="details">
 
             <div class="form-group">
-                <label class="label-text">{{localize "APvalue"}}:</label>
+                <label class="label-text">{{localize "APValue"}}:</label>
                 <input class="input-text" type="text" name="data.APValue.value" value="{{data.APValue.value}}" data-dtype="Number" />
             </div>
 
             <div class="form-group">
                 <label class="label-text">{{localize "languagePoints"}}:</label>
-                <input class="input-text" type="text" name="data.languagePoints.value" value="{{data.languagePoints.value}}"
-                    data-dtype="Number" />
+                <input class="input-text" type="text" name="data.languagePoints.value" value="{{data.languagePoints.value}}" data-dtype="Number" />
             </div>
 
             <div class="form-group full-height" title="{{localize 'TT.commaSeparated'}}">
@@ -106,7 +104,7 @@
             {{#when data.mageLevel.value 'noteq' "mundane"}}
             <div class="form-group">
                 <label class="label-text">{{localize "guidevalue"}}</label>
-                <select name="data.guidevalue.value" data-dtype="{{data.guidevalue.type}}">
+                <select name="data.guidevalue.value" data-dtype="String">
                     {{#select data.guidevalue.value}}
                     {{#each guidevalues as |type sktype|}}
                     <option value="{{sktype}}">{{localize type}}</option>
@@ -148,8 +146,7 @@
             </div>
             <div class="form-group">
                 <label class="label-text">{{localize "spelltrickCount"}}:</label>
-                <input class="input-text" type="text" name="data.spelltrickCount.value" value="{{data.spelltrickCount.value}}"
-                    data-dtype="Number" />
+                <input class="input-text" type="text" name="data.spelltrickCount.value" value="{{data.spelltrickCount.value}}" data-dtype="Number" />
             </div>
             {{/when}} {{/when}}
 

@@ -150,7 +150,7 @@
                     {{localize "tradition"}}
                 </div>
                 <div class="col sixty">
-                    <input type="text" name="data.tradition.value" data-dtype="{{actor.data.tradition.type}}" value="{{actor.data.tradition.value}}">
+                    <input type="text" name="data.tradition.value" data-dtype="String" value="{{actor.data.tradition.value}}">
                 </div>
             </div>
             <div class="row-section lineheight">
@@ -159,7 +159,7 @@
                 </div>
                 <div class="col sixty">
                     <div class="form-group">
-                        <select name="data.guidevalue.value" data-dtype="{{actor.data.guidevalue.type}}">
+                        <select name="data.guidevalue.value" data-dtype="String">
                             {{#select actor.data.guidevalue.value}}
                             {{#each actor.guidevalues as |type sktype|}}
                             <option value="{{sktype}}">{{localize type}}</option>
@@ -174,7 +174,7 @@
                     {{localize "feature"}}
                 </div>
                 <div class="col sixty">
-                    <input type="text" name="data.feature.value" data-dtype="{{actor.data.feature.type}}" value="{{actor.data.feature.value}}">
+                    <input type="text" name="data.feature.value" data-dtype="String" value="{{actor.data.feature.value}}">
                 </div>
             </div>
         </div>

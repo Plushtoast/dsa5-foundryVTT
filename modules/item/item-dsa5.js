@@ -205,7 +205,7 @@ export default class Itemdsa5 extends Item {
                 res = []
             case "familiar":
                 res = [
-                    this._chatLineHelper("APvalue", data.APValue.value),
+                    this._chatLineHelper("APValue", data.APValue.value),
                     this._chatLineHelper("AsPCost", data.AsPCost.value),
                     this._chatLineHelper("duration", data.duration.value),
                     this._chatLineHelper("aspect", data.aspect.value)

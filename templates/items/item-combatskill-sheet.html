@@ -24,7 +24,7 @@
 
             <div class="form-group">
                 <label class="label-text">{{localize "StF"}}</label>
-                <select name="data.StF.value" data-dtype="{{data.StF.type}}">
+                <select name="data.StF.value" data-dtype="Strings">
                     {{#select data.StF.value}}
                     {{#each StFs as |type sktype|}}
                     <option value="{{sktype}}">{{localize type}}</option>
@@ -35,7 +35,7 @@
 
             <div class="form-group">
                 <label class="label-text">{{localize "guidevalue"}}</label>
-                <select name="data.guidevalue.value" data-dtype="{{data.guidevalue.type}}">
+                <select name="data.guidevalue.value" data-dtype="String">
                     {{#select data.guidevalue.value}}
                     {{#each guidevalues as |type sktype|}}
                     <option value="{{sktype}}">{{localize type}}</option>

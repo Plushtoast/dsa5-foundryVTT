@@ -93,7 +93,6 @@
             "status": {
                 "status": {
                     "wounds": {
-                        "type": "Number",
                         "abrev": "W",
                         "initial": 0,
                         "value": 0,
@@ -102,7 +101,6 @@
                         "current": 8
                     },
                     "astralenergy": {
-                        "type": "Number",
                         "abrev": "AE",
                         "initial": 0,
                         "value": 0,
@@ -111,7 +109,6 @@
                         "current": 0
                     },
                     "karmaenergy": {
-                        "type": "Number",
                         "abrev": "KE",
                         "initial": 0,
                         "value": 0,
@@ -120,128 +117,102 @@
                         "current": 0
                     },
                     "soulpower": {
-                        "type": "Number",
                         "abrev": "SP",
                         "initial": 0,
                         "value": 0,
                         "modifier": 0
                     },
                     "toughness": {
-                        "type": "Number",
                         "abrev": "SP",
                         "initial": 0,
                         "value": 0,
                         "modifier": 0
                     },
                     "dodge": {
-                        "type": "Number",
                         "abrev": "D",
                         "value": 0,
                         "modifier": 0
                     },
                     "fatePoints": {
-                        "type": "Number",
                         "abrev": "FP",
                         "value": 3,
                         "modifier": 0,
                         "current": 3
                     },
                     "speed": {
-                        "type": "Number",
                         "initial": 0,
                         "modifier": 0,
                         "value": 0
                     },
                     "initiative": {
-                        "type": "Number",
                         "value": 0,
                         "modifier": 0,
                         "current": 0
                     },
                     "size": {
-                        "type": "String",
                         "value": "average"
                     }
                 }
             },
             "magic": {
                 "guidevalue": {
-                    "type": "String",
                     "value": "-"
                 },
                 "tradition": {
-                    "type": "String",
                     "value": ""
                 },
                 "feature": {
-                    "type": "String",
                     "value": ""
                 },
                 "happyTalents": {
-                    "type": "String",
                     "value": ""
                 }
             },
             "details": {
                 "details": {
                     "species": {
-                        "type": "String",
                         "value": ""
                     },
                     "gender": {
-                        "type": "String",
                         "value": ""
                     },
                     "culture": {
-                        "type": "String",
                         "value": ""
                     },
                     "career": {
-                        "type": "String",
                         "value": ""
                     },
                     "socialstate": {
-                        "type": "String",
                         "value": ""
                     },
                     "home": {
-                        "type": "String",
                         "value": ""
                     },
                     "family": {
-                        "type": "String",
                         "value": ""
                     },
                     "age": {
-                        "type": "String",
                         "value": ""
                     },
                     "haircolor": {
-                        "type": "String",
                         "value": ""
                     },
                     "eyecolor": {
-                        "type": "String",
                         "value": ""
                     },
                     "height": {
-                        "type": "String",
                         "value": ""
                     },
                     "weight": {
-                        "type": "String",
                         "value": ""
                     },
                     "distinguishingmark": {
-                        "type": "String",
                         "value": ""
                     },
                     "biography": {
-                        "type": "String",
                         "value": ""
                     },
                     "notes": {
-                        "type": "String",
                         "value": ""
                     }
                 }
@@ -256,18 +227,15 @@
             ],
             "details": {
                 "experience": {
-                    "type": "Number",
                     "total": 0,
                     "spent": 0
                 }
             },
             "freeLanguagePoints": {
-                "type": "Number",
                 "value": 0,
                 "used": 0
             },
             "sheetLocked": {
-                "type": "Boolean",
                 "value": false
             }
         },
@@ -279,7 +247,6 @@
                 "magic"
             ],
             "sheetLocked": {
-                "type": "Boolean",
                 "value": false
             }
         },
@@ -291,46 +258,36 @@
             ],
             "details": {
                 "experience": {
-                    "type": "Number",
                     "total": 0,
                     "spent": 0
                 }
             },
             "actionCount": {
-                "type": "String",
                 "value": 1
             },
             "count": {
-                "type": "String",
                 "value": "1",
                 "label": "count"
             },
             "creatureClass": {
-                "type": "String",
                 "value": ""
             },
             "behaviour": {
-                "type": "String",
                 "value": ""
             },
             "flight": {
-                "type": "String",
                 "value": ""
             },
             "specialRules": {
-                "type": "String",
                 "value": ""
             },
             "conjuringDifficulty": {
-                "type": "Number",
                 "value": 0
             },
             "description": {
-                "type": "String",
                 "value": ""
             },
             "sheetLocked": {
-                "type": "Boolean",
                 "value": false
             }
         }
@@ -365,41 +322,34 @@
         "templates": {
             "skill": {
                 "StF": {
-                    "type": "String",
                     "value": "A"
                 }
             },
             "equipment": {
                 "price": {
-                    "type": "Number",
                     "value": 0
                 },
                 "quantity": {
-                    "type": "Number",
                     "value": 1
                 },
                 "weight": {
-                    "type": "Number",
                     "value": 0
                 },
                 "effect": {
-                    "type": "String",
                     "value": ""
                 }
             },
             "encumbrance": {
                 "encumbrance": {
-                    "type": "Number",
                     "value": 0
                 }
             },
             "requirements": {
                 "requirements": {
-                    "type": "String",
                     "value": ""
                 }
             },
-            "APvalue": {
+            "APValue": {
                 "APValue": {
                     "type": "String",
                     "value": "0"
@@ -463,7 +413,6 @@
                     "value": ""
                 },
                 "StF": {
-                    "type": "String",
                     "value": "A"
                 },
                 "resistanceModifier": {
@@ -513,7 +462,7 @@
         "culture": {
             "templates": [
                 "description",
-                "APvalue"
+                "APValue"
             ],
             "language": {
                 "type": "String",
@@ -578,7 +527,7 @@
         "trait": {
             "templates": [
                 "description",
-                "APvalue"
+                "APValue"
             ],
             "traitType": {
                 "type": "String",
@@ -616,7 +565,6 @@
                 "type": "String",
                 "value": ""
             }
-
         },
         "ritual": {
             "templates": [
@@ -749,7 +697,6 @@
                 "value": 0
             },
             "guidevalue": {
-                "type": "String",
                 "value": "-"
             },
             "combatskill": {
@@ -779,7 +726,7 @@
         "career": {
             "templates": [
                 "description",
-                "APvalue",
+                "APValue",
                 "requirements"
             ],
             "languagePoints": {
@@ -815,7 +762,6 @@
                 "value": ""
             },
             "guidevalue": {
-                "type": "String",
                 "value": "-"
             },
             "tradition": {
@@ -862,7 +808,7 @@
         "specialability": {
             "templates": [
                 "description",
-                "APvalue",
+                "APValue",
                 "requirements"
             ],
             "rule": {
@@ -903,7 +849,7 @@
         "advantage": {
             "templates": [
                 "description",
-                "APvalue",
+                "APValue",
                 "max",
                 "requirements"
             ],
@@ -919,7 +865,7 @@
         "disadvantage": {
             "templates": [
                 "description",
-                "APvalue",
+                "APValue",
                 "max",
                 "requirements"
             ],
@@ -934,7 +880,7 @@
         },
         "species": {
             "templates": [
-                "APvalue"
+                "APValue"
             ],
             "requirements": {
                 "value": "",
@@ -988,7 +934,6 @@
                 "skill"
             ],
             "guidevalue": {
-                "type": "String",
                 "value": "ff"
             },
             "parry": {

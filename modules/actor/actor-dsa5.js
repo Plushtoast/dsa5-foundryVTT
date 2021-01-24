@@ -583,11 +583,11 @@ export default class Actordsa5 extends Actor {
         return r
     }
 
-    async _updateAPs(apValue) {
+    async _updateAPs(APValue) {
         if (Actordsa5.canAdvance(this.data)) {
-            if (!isNaN(apValue) && !(apValue == null)) {
+            if (!isNaN(APValue) && !(APValue == null)) {
                 await this.update({
-                    "data.details.experience.spent": Number(this.data.data.details.experience.spent) + Number(apValue),
+                    "data.details.experience.spent": Number(this.data.data.details.experience.spent) + Number(APValue),
                 });
             } else {
                 ui.notifications.error(game.i18n.localize("Error.APUpdateError"))

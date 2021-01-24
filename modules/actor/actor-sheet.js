@@ -700,8 +700,8 @@ export default class ActorSheetDsa5 extends ActorSheet {
         }
     }
 
-    async _updateAPs(apValue) {
-        await this.actor._updateAPs(apValue)
+    async _updateAPs(APValue) {
+        await this.actor._updateAPs(APValue)
     }
 
     async _addVantage(item, typeClass) {

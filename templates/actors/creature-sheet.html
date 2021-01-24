@@ -8,7 +8,7 @@
             <span class="label name">{{localize "Name"}}</span>
         </div>
         <div class="headerInput">
-            <input class="input creatureClass" style="box-shadow: none !important;" data-dtype="{{actor.creatureClass.type}}" name="data.creatureClass.value" type="text" value="{{data.creatureClass.value}}" placeholder="{{localize 'creatureClass'}}" />
+            <input class="input creatureClass" style="box-shadow: none !important;" data-dtype="String" name="data.creatureClass.value" type="text" value="{{data.creatureClass.value}}" placeholder="{{localize 'creatureClass'}}" />
             <span class="label creatureClass ">{{localize "creatureClass"}}</span>
         </div>
 
@@ -44,7 +44,7 @@
                             <div class="bar LeP" style="--a: {{actor.data.status.wounds.value}}; --b: {{actor.data.status.wounds.max}}">
                             </div>
                             <div class="barLabel">
-                                <input type="text" title="{{localize 'Current'}}" name="data.status.wounds.value" data-dtype="{{actor.data.status.wounds.type}}" value="{{actor.data.status.wounds.value}}" /> /
+                                <input type="text" title="{{localize 'Current'}}" name="data.status.wounds.value" data-dtype="Number" value="{{actor.data.status.wounds.value}}" /> /
                                 <span title="{{localize 'max'}}">{{actor.data.status.wounds.max}}</span>
                             </div>
                         </div>
@@ -53,7 +53,7 @@
                     <div class="col fourty">
                         <div class="healthbar barRight" title="{{localize 'karmaenergy'}}">
                             <div class="barLabel">
-                                <input type="text" title="{{localize 'Current'}}" name="data.status.karmaenergy.value" data-dtype="{{actor.data.status.karmaenergy.type}}" value="{{actor.data.status.karmaenergy.value}}" /> /
+                                <input type="text" title="{{localize 'Current'}}" name="data.status.karmaenergy.value" data-dtype="Number" value="{{actor.data.status.karmaenergy.value}}" /> /
                                 <span title="{{localize 'max'}}">{{actor.data.status.karmaenergy.max}}</span>
                             </div>
                             <div class="bar KaP" style="--a: {{actor.data.status.karmaenergy.value}}; --b: {{actor.data.status.karmaenergy.max}}">
@@ -68,7 +68,7 @@
                     <div class="col fourty">
                         <div class="healthbar barRight" title="{{localize 'astralenergy'}}">
                             <div class="barLabel">
-                                <input type="text" title="{{localize 'Current'}}" name="data.status.astralenergy.value" data-dtype="{{actor.data.status.astralenergy.type}}" value="{{actor.data.status.astralenergy.value}}" /> /
+                                <input type="text" title="{{localize 'Current'}}" name="data.status.astralenergy.value" data-dtype="Number" value="{{actor.data.status.astralenergy.value}}" /> /
                                 <span title="{{localize 'max'}}">{{actor.data.status.astralenergy.max}}</span>
                             </div>
                             <div class="bar AsP" style="--a: {{actor.data.status.astralenergy.value}}; --b: {{actor.data.status.astralenergy.max}}">

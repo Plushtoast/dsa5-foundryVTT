@@ -45,7 +45,7 @@
                             <div class="bar LeP" style="--a: {{actor.data.status.wounds.value}}; --b: {{actor.data.status.wounds.max}}">
                             </div>
                             <div class="barLabel">
-                                <input type="text" title="{{localize 'Current'}}" name="data.status.wounds.value" data-dtype="{{actor.data.status.wounds.type}}" value="{{actor.data.status.wounds.value}}" /> /
+                                <input type="text" title="{{localize 'Current'}}" name="data.status.wounds.value" data-dtype="Number" value="{{actor.data.status.wounds.value}}" /> /
                                 <span title="{{localize 'max'}}">{{actor.data.status.wounds.max}}</span>
                             </div>
                         </div>
@@ -54,7 +54,7 @@
                     <div class="col fourty">
                         <div class="healthbar barRight" title="{{localize 'karmaenergy'}}">
                             <div class="barLabel">
-                                <input type="text" title="{{localize 'Current'}}" name="data.status.karmaenergy.value" data-dtype="{{actor.data.status.karmaenergy.type}}" value="{{actor.data.status.karmaenergy.value}}" /> /
+                                <input type="text" title="{{localize 'Current'}}" name="data.status.karmaenergy.value" data-dtype="Number" value="{{actor.data.status.karmaenergy.value}}" /> /
                                 <span title="{{localize 'max'}}">{{actor.data.status.karmaenergy.max}}</span>
                             </div>
                             <div class="bar KaP" style="--a: {{actor.data.status.karmaenergy.value}}; --b: {{actor.data.status.karmaenergy.max}}">
@@ -69,7 +69,7 @@
                     <div class="col fourty">
                         <div class="healthbar barRight" title="{{localize 'astralenergy'}}">
                             <div class="barLabel">
-                                <input type="text" title="{{localize 'Current'}}" name="data.status.astralenergy.value" data-dtype="{{actor.data.status.astralenergy.type}}" value="{{actor.data.status.astralenergy.value}}" /> /
+                                <input type="text" title="{{localize 'Current'}}" name="data.status.astralenergy.value" data-dtype="Number" value="{{actor.data.status.astralenergy.value}}" /> /
                                 <span title="{{localize 'max'}}">{{actor.data.status.astralenergy.max}}</span>
                             </div>
                             <div class="bar AsP" style="--a: {{actor.data.status.astralenergy.value}}; --b: {{actor.data.status.astralenergy.max}}">
@@ -91,7 +91,7 @@
                         {{localize 'CHARAbbrev.fatePoints'}}
                     </div>
                     <div class="col eighty center" title="{{localize 'fatePoints'}}">
-                        <input class="hidden" type="text" name="data.status.fatePoints.value" data-dtype="{{actor.data.status.fatePoints.type}}" value="{{actor.data.status.fatePoints.value}}" /> {{#each actor.schips as |item i|}}
+                        <input class="hidden" type="text" name="data.status.fatePoints.value" data-dtype="Number" value="{{actor.data.status.fatePoints.value}}" /> {{#each actor.schips as |item i|}}
                         <a class="schip {{item.cssClass}}" data-val="{{item.value}}"></a> {{/each}}
                     </div>
                     <div class="col ten center">

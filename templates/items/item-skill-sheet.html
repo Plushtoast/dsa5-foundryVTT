@@ -1,8 +1,7 @@
 <form class="dsa5 item-sheet {{cssClass}}" autocomplete="off">
     <header class="item-header">
         <h1>
-            <input name="name" class="item-header item-name" type="text" value="{{item.name}}"
-                placeholder="{{localize 'Name'}}" />
+            <input name="name" class="item-header item-name" type="text" value="{{item.name}}" placeholder="{{localize 'Name'}}" />
         </h1>
     </header>
 
@@ -78,7 +77,7 @@
 
             <div class="form-group">
                 <label class="label-text">{{localize "StF"}}</label>
-                <select name="data.StF.value" data-dtype="{{data.StF.type}}">
+                <select name="data.StF.value" data-dtype="String">
                     {{#select data.StF.value}}
                     {{#each StFs as |type sktype|}}
                     <option value="{{sktype}}">{{localize type}}</option>
