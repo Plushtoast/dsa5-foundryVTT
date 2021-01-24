@@ -728,6 +728,10 @@ input[type=text].emphasize {
     min-width: 330px;
 }
 
+.row-section.filterfull .col.morph {
+    flex: 100%;
+}
+
 .row-section.skills {
     border: 0.5px solid var(--border-color);
     margin: 0;
@@ -1765,4 +1769,37 @@ input[type="search"] {
 .detailbox {
     border: 1px solid var(--border-color);
     padding: 5px;
+}
+
+#chat-form {
+    position: relative;
+}
+
+.quickfind {
+    position: absolute;
+    background-image: url(../icons/backgrounds/kapitelstart.webp);
+    background-size: 105% 120%;
+    background-repeat: no-repeat;
+    background-position: center;
+    padding: 15px;
+    bottom: 100%;
+    width: 100%;
+    color: black;
+}
+
+.quickfind ul {
+    list-style-type: none;
+    margin-left: 5px;
+}
+
+.quickfind li:hover {
+    background-color: rgba(0, 0, 0, 0.2);
+}
+
+.quickfind ul li {
+    padding: 4px;
+}
+
+.quickfind li a:hover {
+    text-shadow: none
 }

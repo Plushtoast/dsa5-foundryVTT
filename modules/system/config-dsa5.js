@@ -476,6 +476,22 @@ DSA5.advancementCosts = {
     "E": [15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 30, 45, 60, 75, 90, 105, 120, 135, 150, 165, 180],
 }
 
+DSA5.helpContent = [{
+        name: "pay",
+        command: "/pay [0-9]+",
+        example: "/pay 5.03",
+    }, {
+        name: "getPaid",
+        command: "/getPaid [0-9]+",
+        example: "/getPaid 5.03",
+    },
+    {
+        name: "quickSkill",
+        command: "/sk [a-z]*",
+        example: "/sk betören",
+    }
+]
+
 DSA5.ceremonyTimeModifiers = {
     "-": 0,
     "CEREMONYMODIFIER.monthGod": 1,

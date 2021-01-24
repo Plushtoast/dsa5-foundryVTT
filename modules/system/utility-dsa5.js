@@ -118,6 +118,11 @@ export default class DSA5_Utility {
         }
     }
 
+    static getHelp() {
+            let msg = DSA5.helpContent.map(x => `<h1>${game.i18n.localize(`HELP.${x.name}`)}</h1><p><b>${game.i18n.localize("HELP.command")}</b>: ${x.command}</p><p><b>${game.i18n.localize("HELP.example")}</b>: ${x.example}</p><p><b>${game.i18n.localize("Description")}</b>: ${game.i18n.localize(`HELP.descr${x.name}`)}`).join("") + `<br><p>${game.i18n.localize("HELP.default")}</p>`
+            ChatMessage.create(DSA5_Utility.chatDataSetup(msg, "roll"))
+    }
+
     static getSpeaker(speaker) {
         let actor = game.actors.get(speaker.actor);
         if (speaker.token)

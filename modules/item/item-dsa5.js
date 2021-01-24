@@ -26,6 +26,7 @@ export default class Itemdsa5 extends Item {
         "abilityCombat": "icons/weapons/axes/axe-hammer-blackened.webp",
         "abilityfatePoints": "icons/weapons/wands/wand-skull-forked.webp",
         "abilitygeneral": "icons/tools/smithing/crucible.webp",
+        "specialability": "icons/tools/smithing/crucible.webp",
         "abilitymagical": "icons/tools/scribal/ink-quill-pink.webp",
         "abilitylanguage": "icons/sundries/documents/document-official-capital.webp",
         "abilitystaff": "icons/weapons/staves/staff-ornate-red.webp",
@@ -180,11 +181,39 @@ export default class Itemdsa5 extends Item {
     }
 
     _traitChatData() {
-        const data = duplicate(this.data.data);
-        console.log(data)
-        return [
-            this._chatLineHelper("effect", data.effect.value),
-        ]
+        const data = duplicate(this.data.data)
+        let res = []
+        switch (data.traitType.value) {
+            case "meleeAttack":
+                res = [
+                    this._chatLineHelper("attack", data.at.value),
+                    this._chatLineHelper("damage", data.damage.value),
+                    this._chatLineHelper("reach", data.reach.value)
+                ]
+            case "rangeAttack":
+                res = [
+                    this._chatLineHelper("attack", data.at.value),
+                    this._chatLineHelper("damage", data.damage.value),
+                    this._chatLineHelper("reach", data.reach.value),
+                    this._chatLineHelper("reloadTime", data.reloadTime.value)
+                ]
+            case "armor":
+                res = [
+                    this._chatLineHelper("protection", data.damage.value),
+                ]
+            case "general":
+                res = []
+            case "familiar":
+                res = [
+                    this._chatLineHelper("APvalue", data.APValue.value),
+                    this._chatLineHelper("AsPCost", data.AsPCost.value),
+                    this._chatLineHelper("duration", data.duration.value),
+                    this._chatLineHelper("aspect", data.aspect.value)
+                ]
+        }
+        if (data.effect.value != "")
+            res.push(this._chatLineHelper("effect", data.effect.value))
+        return res
     }
 
     _liturgyChatData() {
@@ -335,7 +364,7 @@ export default class Itemdsa5 extends Item {
         //Hooks.call("dsa5:rollTest", result, cardOptions)
         if (!options.suppressMessage)
             DiceDSA5.renderRollCard(cardOptions, result, options.rerenderMessage).then(msg => {
-                //OpposedDsa5.handleOpposedTarget(msg) // Send to handleOpposed to determine opposed status, if any.
+                //OpposedDsa5.handleOpposedTarget(msg)
             })
 
         return { result, cardOptions };

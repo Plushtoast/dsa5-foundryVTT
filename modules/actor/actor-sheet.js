@@ -154,8 +154,10 @@ export default class ActorSheetDsa5 extends ActorSheet {
                         aggregated.data.previousFailedTests.value += 1
                     }
                     aggregated.data.usedTestCount.value += 1
-                    this.actor.updateEmbeddedEntity("OwnedItem", aggregated);
-                    this.actor.items.find(i => i.data._id == itemId).postItem()
+                    this.actor.updateEmbeddedEntity("OwnedItem", aggregated).then(x =>
+                        this.actor.items.find(i => i.data._id == itemId).postItem()
+                    )
+
                 })
             });
         }
@@ -427,7 +429,7 @@ export default class ActorSheetDsa5 extends ActorSheet {
 
                 this.skillsToEdit = [];
             }
-        });
+        })
 
         html.find('.item-dropdown').click(ev => {
             ev.preventDefault()
@@ -615,7 +617,7 @@ export default class ActorSheetDsa5 extends ActorSheet {
                 this.actor.removeCondition(condKey)
         })
 
-        html.find('.talentSearch').keydown(event => {
+        html.find('.talentSearch').keyup(event => {
             this._filterTalents($(event.currentTarget))
         });
         let filterTalents = ev => this._filterTalents($(ev.currentTarget))
@@ -627,12 +629,14 @@ export default class ActorSheetDsa5 extends ActorSheet {
             let val = tar.val().toLowerCase().trim()
             let talents = $(this.form).parent().find('.allTalents')
             talents.find('.item, .table-header, .table-title').removeClass('filterHide')
-            if (val.length > 1) {
-                talents.addClass('showAll').find('.item').filter(function() {
-                    return $(this).find('.talentName').text().toLowerCase().trim().indexOf(val) == -1
-                }).addClass('filterHide')
+            talents.addClass('showAll').find('.item').filter(function() {
+                return $(this).find('.talentName').text().toLowerCase().trim().indexOf(val) == -1
+            }).addClass('filterHide')
+            if (val.length > 0) {
                 talents.find('.table-header, .table-title:not(:eq(0))').addClass("filterHide")
-            }
+                talents.addClass("filterfull")
+            } else
+                talents.removeClass("filterfull")
         }
     }
 
@@ -759,11 +763,24 @@ export default class ActorSheetDsa5 extends ActorSheet {
             res.data.quantity.value += item.data.data.quantity.value
             await this.actor.updateEmbeddedEntity("OwnedItem", res)
         }
+    }
 
+    async _addSkill(item) {
+        let res = this.actor.data.items.find(i => i.type == item.type && i.name == item.name && i.data.description.value == item.data.data.description.value);
+        if (!res) {
+            await this.actor.createEmbeddedEntity("OwnedItem", item);
+        }
     }
 
     async _onDrop(event) {
-        this._handleDragData(JSON.parse(event.dataTransfer.getData("text/plain")))
+        this._handleDragData(JSON.parse(event.dataTransfer.getData("text/plain")), event)
+    }
+
+    handleItemCopy(item, typeClass) {
+        if (["meleeweapon", "rangeweapon", "equipment", "ammunition", "armor", "poison"].includes(typeClass)) {
+            item.name += " (Copy)"
+            this._addLoot(item)
+        }
     }
 
     async _manageDragItems(item, typeClass) {
@@ -786,6 +803,9 @@ export default class ActorSheetDsa5 extends ActorSheet {
             case "money":
                 await this._addMoney(item)
                 break;
+            case "skill":
+                await this._addSkill(item)
+                break
             case "ritual":
             case "ceremony":
             case "blessing":
@@ -819,11 +839,11 @@ export default class ActorSheetDsa5 extends ActorSheet {
         }
     }
 
-    async _handleDragData(dragData) {
+    async _handleDragData(dragData, originalEvent) {
         let item
         let typeClass
-
-        if (dragData.actorId && dragData.actorId == this.actor.data._id) {
+        let selfTarget = dragData.actorId && dragData.actorId == this.actor.data._id
+        if (selfTarget && !originalEvent.ctrlKey) {
             return
         } else if (dragData.id && dragData.pack) {
             item = await DSA5_Utility.findItembyIdAndPack(dragData.id, dragData.pack);
@@ -835,7 +855,10 @@ export default class ActorSheetDsa5 extends ActorSheet {
             item = dragData.data
             typeClass = item.type
         }
-
-        await this._manageDragItems(item, typeClass)
+        if (originalEvent.ctrlKey && selfTarget) {
+            this.handleItemCopy(item, typeClass)
+        } else {
+            await this._manageDragItems(item, typeClass)
+        }
     }
 }

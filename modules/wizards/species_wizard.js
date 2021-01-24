@@ -112,7 +112,8 @@ export default class SpeciesWizard extends WizardDSA5 {
             "data.status.speed.initial": this.species.data.baseValues.speed.value,
             "data.status.soulpower.initial": this.species.data.baseValues.soulpower.value,
             "data.status.toughness.initial": this.species.data.baseValues.toughness.value,
-            "data.status.wounds.initial": this.species.data.baseValues.wounds.value
+            "data.status.wounds.initial": this.species.data.baseValues.wounds.value,
+            "data.status.wounds.value": this.species.data.baseValues.wounds.value + this.actor.data.data.characteristics["ko"].value * 2
         };
 
 
@@ -137,6 +138,8 @@ export default class SpeciesWizard extends WizardDSA5 {
         await this.actor._updateAPs(apCost)
 
         await this.addSelections(parent.find('.optional:checked'))
+
+        await this.actor.removeCondition("incapacitated")
 
         this.finalizeUpdate()
     }

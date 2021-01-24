@@ -583,6 +583,22 @@
         "commaSeparated": "Komma separierte Liste"
     },
 
+    "HELP": {
+        "default": "Außerdem kannst du detaillierte Anleitungen und FAQs im <a href=\"https://github.com/Plushtoast/dsa5-foundryVTT/wiki\" target=\"_blank\">Wiki</a> finden.",
+        "command": "Befehl",
+        "example": "Beispiel",
+        "pay": "Bezahlen",
+        "descrpay": "Der Spielleiter kann einen Geldbetrag von den Spielern verlangen. Die Spieler können einen Geldbetrag bezahlen.",
+        "getPaid": "Auszahlen",
+        "descrgetPaid": "Der Spielleiter kann den Spielern get auszahlen. Die Spieler können sich selbst Geld zuweisen.",
+        "quickSkill": "Talent-Schnellzugriff",
+        "descrquickSkill": "Lass einen Token oder deinen Charakter über ein Chatkommando Talente würfeln."
+    },
+
+    "UNITS": {
+        "weight": "Gewicht in Stein",
+        "money": "Wert in Silberstücken"
+    },
 
     "SIZE": {
         "tiny": "Winzig",
@@ -638,7 +654,7 @@
     },
 
     "Error": {
-        "MacroItemMissing": "Dein Charakter hat kein Item namens",
+        "MacroItemMissing": "Dein Charakter hat kein Item namens. Stelle sicher, dass dir entweder ein Charakter zugeordnet ist oder du einen Token für den Wurf markierst.",
         "APUpdateError": "AP Wert konnte nicht angepasst werden. Bitte manuell durchführen.",
         "RangeCannotBeParsed": "Die Reichweite kan nicht automatisch angepasst werden. Format nicht erkannt.",
         "CastingTimeLimit": "Die Zauberdauer ist bereits am Limit.",
@@ -650,9 +666,10 @@
         "itemNotFound": "Dieser Eintrag wurde nicht in der Datenbank gefunden, bitte manuell anlegen",
         "notUnderstoodCareer": "Folgende Einträge der Profession konnten nicht umgesetzt werden. Bitte manuell anpassen.",
         "notUnderstoodCulture": "Folgende Einträge der Kultur konnten nicht umgesetzt werden. Bitte manuell anpassen.",
-        "canNotBeAdded": "{item} der Kategory {category} kann nicht hinzugefügt werden.",
+        "canNotBeAdded": "{item} der Kategory {category} kann nicht hinzugefügt werden. Dies ist keine unterstützte Kategorie.",
         "NoAmmo": "Nicht genug Munition.",
-        "MissingChoices": "Noch nicht alle Optionen ausgefüllt."
+        "MissingChoices": "Noch nicht alle Optionen ausgefüllt.",
+        "noProperActor": "Dir wurde noch kein Charakter zugewiesen oder du hast keinen Token markiert."
     },
 
     "CEREMONYMODIFIER": {

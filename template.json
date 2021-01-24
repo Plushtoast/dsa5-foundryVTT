@@ -611,6 +611,10 @@
             "aspect": {
                 "type": "String",
                 "value": ""
+            },
+            "effect": {
+                "type": "String",
+                "value": ""
             }
 
         },

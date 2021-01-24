@@ -15,13 +15,14 @@
 
 <div class="card-content chatModifiers">
     <b>{{localize "Modifiers"}}</b>: <span class="display-toggle">{{testData.modifiers}}</span>
-    <input type="text" data-edit-type="mod" value="{{testData.modifiers}}" style="display:none;" class="display-toggle roll-edit" />
+    <input type="text" data-edit-type="mod" value="{{testData.modifiers}}" style="display:none;" class="display-toggle roll-edit" /> {{#if modifierList}}
     <a class="expand-mods"><i class="fas fa-plus"></i></a>
     <ul>
-        {{#each testData.preData.situationalModifiers as |item i|}} {{#when item.value 'noteq' 0}}
+        {{#each modifierList as |item i|}}
         <li>{{item.name}}: {{item.value}}</li>
-        {{/when}} {{/each}}
+        {{/each}}
     </ul>
+    {{/if}}
 </div>
 {{#if testData.result}}
 <div class="card-content">

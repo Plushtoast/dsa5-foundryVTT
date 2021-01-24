@@ -244,6 +244,8 @@ export default class Actordsa5 extends Actor {
             }
         }
 
+        inventory["misc"].show = true
+
         const money = {
             coins: [],
             total: 0,
@@ -365,11 +367,13 @@ export default class Actordsa5 extends Actor {
                     totalWeight += Number(i.weight);
                     break;
                 case "armor":
-                    i.weight = parseFloat((i.data.weight.value * i.data.quantity.value).toFixed(3));
                     i.toggleValue = i.data.worn.value || false;
                     inventory.armor.items.push(i);
                     inventory.armor.show = true;
-                    totalWeight += Number(i.weight);
+                    if (!i.toggleValue) {
+                        i.weight = parseFloat((i.data.weight.value * i.data.quantity.value).toFixed(3));
+                        totalWeight += Number(i.weight);
+                    }
                     if (i.data.worn.value) {
                         encumbrance += Number(i.data.encumbrance.value);
                         totalArmor += Number(i.data.protection.value);
@@ -454,7 +458,7 @@ export default class Actordsa5 extends Actor {
         money.coins = money.coins.sort((a, b) => (a.data.price.value > b.data.price.value) ? -1 : 1);
         encumbrance = Math.max(0, encumbrance - SpecialabilityRulesDSA5.abilityStep(this.data, "Belastungsgewöhnung"))
         if (this.data.type != "creature" || this.data.canAdvance) {
-            encumbrance += Math.max(0, Math.ceil((totalWeight - carrycapacity) / 4))
+            encumbrance += Math.max(0, Math.ceil((totalWeight - carrycapacity - 4) / 4))
         }
         totalWeight = parseFloat(totalWeight.toFixed(3))
 
@@ -597,7 +601,7 @@ export default class Actordsa5 extends Actor {
         if (isNaN(cost) || cost == null)
             return true
 
-        if (Number(this.data.data.details.experience.total) - Number(this.data.data.details.experience.spent) > cost) {
+        if (Number(this.data.data.details.experience.total) - Number(this.data.data.details.experience.spent) >= cost) {
             return true
         } else {
             ui.notifications.error(game.i18n.localize("Error.NotEnoughXP"))
@@ -668,7 +672,6 @@ export default class Actordsa5 extends Actor {
                 if ((testData.extra.ammo.data.quantity.value <= 0)) {
                     ui.notifications.error(game.i18n.localize("Error.NoAmmo"))
                     return
-
                 }
             } else {
                 testData.extra.ammo = duplicate(this.getEmbeddedEntity("OwnedItem", item.data.data.currentAmmo.value))
@@ -842,7 +845,6 @@ export default class Actordsa5 extends Actor {
             cardOptions.unopposedStartMessage = data.unopposedStartMessage;
         return cardOptions;
     }
-
 
     useFateOnRoll(message, type) {
         if (this.data.data.status.fatePoints.value > 0) {
@@ -1325,12 +1327,13 @@ export default class Actordsa5 extends Actor {
 
         item = this._parseDmg(item)
         if (item.data.guidevalue.value != "-") {
-            let val = Math.max(...(item.data.guidevalue.value.split("/").map(x => actorData.data.characteristics[x].value)));
-            let extra = val - item.data.damageThreshold.value;
+            let val = Math.max(...(item.data.guidevalue.value.split("/").map(x => Number(actorData.data.characteristics[x].value))));
+            let extra = val - Number(item.data.damageThreshold.value)
 
             if (extra > 0) {
                 item.extraDamage = extra;
-                item.damageAdd = eval(item.damageAdd + "+" + extra)
+                item.damageAdd = eval(item.damageAdd + " + " + Number(extra))
+                item.damageAdd = (item.damageAdd > 0 ? "+" : "") + item.damageAdd
             }
         }
         return item;
@@ -1352,9 +1355,9 @@ export default class Actordsa5 extends Actor {
                 damageTerm += k
             }
         }
-        damageTerm = eval(damageTerm)
+        damageTerm = Number(eval(damageTerm))
         item.damagedie = damageDie ? damageDie : "0d6"
-        item.damageAdd = damageTerm != undefined ? "+" + damageTerm : ""
+        item.damageAdd = damageTerm != undefined ? (damageTerm > 0 ? "+" : "") + damageTerm : ""
         return item
     }
 
@@ -1429,7 +1432,7 @@ export default class Actordsa5 extends Actor {
         //Hooks.call("dsa5:rollTest", result, cardOptions)
         if (!options.suppressMessage)
             DiceDSA5.renderRollCard(cardOptions, result, options.rerenderMessage).then(msg => {
-                OpposedDsa5.handleOpposedTarget(msg) // Send to handleOpposed to determine opposed status, if any.
+                OpposedDsa5.handleOpposedTarget(msg)
             })
         return { result, cardOptions };
     }

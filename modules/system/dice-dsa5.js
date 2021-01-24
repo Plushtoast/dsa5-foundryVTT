@@ -855,7 +855,7 @@ export default class DiceDSA5 {
                 { char: testData.source.data.characteristic2.value, res: roll.terms[2].results[0].result, suc: res[1] <= 0, tar: tar[1] },
                 { char: testData.source.data.characteristic3.value, res: roll.terms[4].results[0].result, suc: res[2] <= 0, tar: tar[2] }
             ],
-            qualityStep: (fps == 0 ? 1 : (fps > 0 ? Math.ceil(fps / 3) : 0)) + (testData.qualityStep != undefined ? Number(testData.qualityStep) : 0),
+            qualityStep: Math.min(6, (fps == 0 ? 1 : (fps > 0 ? Math.ceil(fps / 3) : 0)) + (testData.qualityStep != undefined ? Number(testData.qualityStep) : 0)),
             description: description,
             preData: testData,
             successLevel: successLevel,
@@ -914,7 +914,7 @@ export default class DiceDSA5 {
                 { char: testData.source.type, res: roll.terms[2].results[0].result, suc: res[1] <= 0, tar: tar[1] },
                 { char: testData.source.type, res: roll.terms[4].results[0].result, suc: res[2] <= 0, tar: tar[2] }
             ],
-            qualityStep: (fps == 0 ? 1 : (fps > 0 ? Math.ceil(fps / 3) : 0)) + (testData.qualityStep != undefined ? Number(testData.qualityStep) : 0),
+            qualityStep: Math.min(6, (fps == 0 ? 1 : (fps > 0 ? Math.ceil(fps / 3) : 0)) + (testData.qualityStep != undefined ? Number(testData.qualityStep) : 0)),
             description: description,
             preData: testData,
             successLevel: successLevel,
@@ -1097,7 +1097,8 @@ export default class DiceDSA5 {
         let chatData = {
             title: chatOptions.title,
             testData: testData,
-            hideData: game.user.isGM
+            hideData: game.user.isGM,
+            modifierList: testData.preData.situationalModifiers.filter(x => x.value != 0)
         }
 
         if (["gmroll", "blindroll"].includes(chatOptions.rollMode)) chatOptions["whisper"] = ChatMessage.getWhisperRecipients("GM").map(u => u.id);
@@ -1115,7 +1116,7 @@ export default class DiceDSA5 {
         };
         if (!rerenderMessage) {
             return renderTemplate(chatOptions.template, chatData).then(html => {
-                chatOptions["content"] = html;
+                chatOptions["content"] = html
                 return ChatMessage.create(chatOptions, false);
             });
         } else {

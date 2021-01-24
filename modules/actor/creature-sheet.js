@@ -74,8 +74,9 @@ export default class ActorSheetdsa5Creature extends ActorSheetDsa5 {
         let dragData = JSON.parse(event.dataTransfer.getData("text/plain"));
         let item
         let typeClass
+        let selfTarget = dragData.actorId && dragData.actorId == this.actor.data._id
 
-        if (dragData.actorId && dragData.actorId == this.actor.data._id) {
+        if (selfTarget && !event.ctrlKey) {
             return
         } else if (dragData.id && dragData.pack) {
             item = await DSA5_Utility.findItembyIdAndPack(dragData.id, dragData.pack);
@@ -88,13 +89,19 @@ export default class ActorSheetdsa5Creature extends ActorSheetDsa5 {
             typeClass = item.type
         }
 
-        switch (typeClass) {
-            case "trait":
-                await this._addTrait(item)
-                break;
-            default:
-                super._handleDragData(dragData)
+        if (selfTarget && event.ctrlKey) {
+            super.handleItemCopy(item, typeClass)
+        } else {
+            switch (typeClass) {
+                case "trait":
+                    await this._addTrait(item)
+                    break;
+                default:
+                    super._handleDragData(dragData, event)
+            }
         }
+
+
     }
 
 }

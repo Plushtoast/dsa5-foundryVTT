@@ -11,5 +11,7 @@ export default function() {
         const button = $(`<button><i class="fas fa-university"></i>${game.i18n.localize("ItemLibrary")}</button>`);
         html.find(".header-actions").append(button);
         button.click(ev => { game.dsa5.itemLibrary.render(true) })
+
+        html.find('li[data-pack="dsa5.money"]').hide()
     })
 }
