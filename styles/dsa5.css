@@ -1777,29 +1777,44 @@ input[type="search"] {
 
 .quickfind {
     position: absolute;
-    background-image: url(../icons/backgrounds/kapitelstart.webp);
-    background-size: 105% 120%;
+    background-image: url(../icons/backgrounds/quickfind.webp);
+    background-size: 100%;
     background-repeat: no-repeat;
-    background-position: center;
+    background-position: top;
     padding: 15px;
+    padding-top: 74px;
     bottom: 100%;
     width: 100%;
     color: black;
+    line-height: 26px;
 }
 
 .quickfind ul {
     list-style-type: none;
-    margin-left: 5px;
+    margin: 0;
 }
 
 .quickfind li:hover {
     background-color: rgba(0, 0, 0, 0.2);
 }
 
-.quickfind ul li {
-    padding: 4px;
+.quickfind li {
+    padding: 0px 4px;
+    display: inline-block;
+    border: 2px solid transparent;
+    width: 100%;
 }
 
-.quickfind li a:hover {
+.quickfind li:hover {
     text-shadow: none
+}
+
+.quickfind li:before {
+    height: 22px;
+    background-position: center;
+}
+
+.quickfind li.focus {
+    border: 2px solid rgb(148, 102, 3);
+    border-radius: 2px;
 }

@@ -93,7 +93,6 @@
             "status": {
                 "status": {
                     "wounds": {
-                        "abrev": "W",
                         "initial": 0,
                         "value": 0,
                         "advances": 0,
@@ -101,7 +100,6 @@
                         "current": 8
                     },
                     "astralenergy": {
-                        "abrev": "AE",
                         "initial": 0,
                         "value": 0,
                         "advances": 0,
@@ -109,7 +107,6 @@
                         "current": 0
                     },
                     "karmaenergy": {
-                        "abrev": "KE",
                         "initial": 0,
                         "value": 0,
                         "advances": 0,
@@ -117,24 +114,20 @@
                         "current": 0
                     },
                     "soulpower": {
-                        "abrev": "SP",
                         "initial": 0,
                         "value": 0,
                         "modifier": 0
                     },
                     "toughness": {
-                        "abrev": "SP",
                         "initial": 0,
                         "value": 0,
                         "modifier": 0
                     },
                     "dodge": {
-                        "abrev": "D",
                         "value": 0,
                         "modifier": 0
                     },
                     "fatePoints": {
-                        "abrev": "FP",
                         "value": 3,
                         "modifier": 0,
                         "current": 3
@@ -610,6 +603,10 @@
             },
             "worn": {
                 "value": false
+            },
+            "structure": {
+                "max": 0,
+                "value": 0
             }
         },
         "meleeweapon": {
@@ -640,6 +637,10 @@
             },
             "worn": {
                 "value": false
+            },
+            "structure": {
+                "max": 0,
+                "value": 0
             }
         },
         "armor": {
@@ -653,6 +654,10 @@
             },
             "worn": {
                 "value": false
+            },
+            "structure": {
+                "max": 0,
+                "value": 0
             }
         },
         "career": {

@@ -668,7 +668,8 @@
         "canNotBeAdded": "{item} der Kategory {category} kann nicht hinzugefügt werden. Dies ist keine unterstützte Kategorie.",
         "NoAmmo": "Nicht genug Munition.",
         "MissingChoices": "Noch nicht alle Optionen ausgefüllt.",
-        "noProperActor": "Dir wurde noch kein Charakter zugewiesen oder du hast keinen Token markiert."
+        "noProperActor": "Dir wurde noch kein Charakter zugewiesen oder du hast keinen Token markiert.",
+        "noMatch": "Keine Übereinstimmung"
     },
 
     "CEREMONYMODIFIER": {
