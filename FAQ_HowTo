@@ -44,15 +44,77 @@ To create any assets g to the items Directory and create item. Selecet the categ
 Depending on the type of assets you have to enter the necessary details to the asset.
 
 What do I have to enter for advantages / disadvantages?
-
+- Name
+- Description
+- AP-value
+- maximum level
+NOTE: if only one level is available leave 0
+- requirements
+- effect
 
 What do I have to enter for special abilities?
+- Name
+- Description
+- AP-value
+- requirements
+- category*
+- rule text
+- maximum level
+NOTE: if only one level is available leave 0
+- effect
+*combat special abilities can be linked to a combat skill
 
 
 What do I have to enter for cultures
+- Name
+- description
+- ap value
+- language*
+- writing*
+- local town knowledge**
+- suitable professions***
+- social status
+- suitable advantages***
+- suitable disadvantages***
+- unsuitable advantages***
+- unsuitable disadvantages***
+- suitable talents***
+- unsuitable talents***
+- selected talents***
+* language / writing must be set up as special abilities earlier
+** leave empty if player can enter text manually
+*** separate by ,
 
+What do I have to enter for professions/careers?
+- name
+- description
+- optional picture
+- ap value
+- language points included
+- suitable advantages***
+- suitable disadvantages***
+- unsuitable advantages***
+- unsuitable disadvantages***
+- talents***
+- combat skills***
+- special abilities**/***
+- Magical abilities: magic/mundane/clerical
 
-What do I have to enter for professions?
+Additional attributes for clerical professions:
+- Leiteigenschaft
+- Tradition
+- Aspekt
+- wohlgefällige Talente
+- Liturgies
+- Blessings
+
+Additional attributes for magical professions
+- Leiteigenschaft
+- Tradition
+- Merkmal
+- Spells
+- Spelltricks
+- Number of Spelltricks
 
 
 What do I have to enter for spells, spelltricks or rituals?
@@ -62,9 +124,54 @@ What do I have to enter for liturgies, ceremonies and blessings?
 
 
 What do I have to enter for items?
+- Name
+- Price
+- amount
+- weight
+- description
+On the details tab select the category of your item.
 
+Special attributes melee weapons:
+- Damage
+- Attack modifier
+- parade modifier
+- Schadensschwelle
+- Leiteigenschaft - select from the the list
+- combat skill
+- Range
+- Efect
+
+Special attributes range weapons:
+- damage
+- reload actions
+- range short/mid/long
+- type of ammunition 
+- combat skill
+- effect
+
+Special attributes armors
+- Rüstungsschutz
+- Belastung
+- Effect
+NOTE: Effects are currently only applicable for GE and INI
 
 What do I have to enter for creatures?
+Creatures are created on the Actors Directory.
+- Name
+- Type of creature
+- hitpoints
+- Advantages / Disadvantages
+- Special abilities
+- Traits
+
+Traits
+- name
+- description
+- category
+- attack value
+- damage
+- range
+- effect
 
 
 How do I create characters in Das Schwarze Auge?
