@@ -1,0 +1,85 @@
+What is Das Schwarze Auge (DSA) and what's Das Schwarze Auge in Foundry?
+
+Das Schwarze Auge is a roleplaying game invented in the 80’s currently in the 5th edition and is published by Ulisses Spiele.
+Das Schwarze Auge in Foundry is an implementation of the roleplaying game in the virtual tabletop system of foundry vtt. The Das Schwarze Auge implementation in foundry has been developed in ABSTIMMUNG with Ulisses Spiele.
+
+How can I play DSA in foundry VTT?
+To play DSA in foundry VTT you need to install the game pack and create a new world featuring DSA.
+The game manifest can be found within the game library of foundry vtt or under the following link: LINKDSA
+
+Are any additional modules required to play DSA?
+To play DSA in foundry vtt no additional modules are required. To have a great experience we would recommend the following free modules to be installed in your system:
+Tokenizer
+Dicer
+
+Are there specific DSA modules available in foundry?
+To increase your gaming experience for DSA in foundry vtt Ulisses offers some additional modules. These modules include content, rules, items, NPCs, maps and more.
+
+For a fast and easy start we would recommend to install the Grundregelwerk module to your system you can start right away.
+
+How do I start my gaming session of DSA in foundry with my friends?
+To invite your friends to your gaming session you need to create an account in foundry for each of them. To do so, go to the game settings or press Esc.
+
+What do we need to play DSA in foundry?
+To play with your friends you need at least characters, some enemies (npcs) and a story.
+To really enjoy all features of the game you require:
+-	Advantages
+-	Disadvantages
+-	Special abilities
+-	cultures
+-	Professions
+-	Spells, spelltricks and rituals
+-	Liturgies, ceremonies and blessings
+-	Items
+-	Creatuers, natural weapons and traits
+
+How do I get all the required elements to play DSA?
+Easiest way to start playing DSA with the required assets is to purchase the Grundregelwerk module from Ulisses (link).
+This module includes everything required to enjoy a good game of DSA in foundry vtt.
+
+Alternatively, you can create all these assets manually.
+
+How do I create necessary assets for DSA in foundry:
+To create any assets g to the items Directory and create item. Selecet the category you want to create and enter a name and press ok.
+Depending on the type of assets you have to enter the necessary details to the asset.
+
+What do I have to enter for advantages / disadvantages?
+
+
+What do I have to enter for special abilities?
+
+
+What do I have to enter for cultures
+
+
+What do I have to enter for professions?
+
+
+What do I have to enter for spells, spelltricks or rituals?
+
+
+What do I have to enter for liturgies, ceremonies and blessings?
+
+
+What do I have to enter for items?
+
+
+What do I have to enter for creatures?
+
+
+How do I create characters in Das Schwarze Auge?
+
+If you have purchased the DSA Grundregelwerk modules, the character creation is based on the character creation explained in the core rulebook: 
+-	First you enter APs for your character, e.g. 1100
+-	Then you select your race from the compendium
+-	Next select your Culture from the compendium, if you want to use the culture package or enter culture name manually 
+o	NOTE: Culture packs will include modification to your skills
+-	Select your profession, if you want to use a predefined profession form DSA
+o	NOTE: professions include skills, advantages, disadvantages special abilities, spells / liturgies, etc.
+-	Modify your attributes, skill, special abilities, spells, etc.
+-	Drag your desired equipment to your character
+o	NOTE: at this point in time DSA in foundry does not automatically deduct money from you character when dropping an item to the character sheet. So you have to keep track of your spendings
+-	Enter your background story, if you want to
+-	Start playing
+
+If you have not purchased the DSA Grundregelwerk or any other module, you have to create all your assets as mentioned in the previous section and then follow the same steps as mentioned above.
