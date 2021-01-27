@@ -15,7 +15,7 @@ export default class DiceDSA5 {
         let skMod = 0
         let zkMod = 0
         let rangeOptions
-        var sceneStress = "challenging";
+        let sceneStress = "challenging";
 
         mergeObject(testData, {
             testDifficulty: sceneStress,
@@ -246,13 +246,13 @@ export default class DiceDSA5 {
     }
 
     static _enabledModifiers(modifiers, names, enabled) {
-        for (var x in names) {
+        for (let x in names) {
             if (modifiers[x])
                 modifiers[x].selected = enabled
         }
     }
     static _removeModifiers(modifiers, names) {
-        for (var x of names) {
+        for (let x of names) {
             if (modifiers[x])
                 delete modifiers[x]
         }
@@ -263,7 +263,7 @@ export default class DiceDSA5 {
     static _rollSingleD20(roll, res, id, modifier, testData, combatskill = "") {
         let description = "";
 
-        var chars = []
+        let chars = []
         res += modifier
         let res1 = res - roll.terms[0].results[0].result;
         let color = DSA5.dieColors[id] || id;
@@ -318,7 +318,7 @@ export default class DiceDSA5 {
         this._appendSituationalModifiers(testData, game.i18n.localize("manual"), testData.testModifier)
         let modifier = this._situationalModifiers(testData);
         let roll = testData.roll
-        var chars = []
+        let chars = []
 
         let lepBonus = AdvantageRulesDSA5.vantageStep(testData.extra.actor, "Verbesserte Regeneration (Lebensenergie)") - AdvantageRulesDSA5.vantageStep(testData.extra.actor, "Schlechte Regeneration (Lebensenergie)")
 
@@ -351,7 +351,7 @@ export default class DiceDSA5 {
     static rollStatus(testData) {
         let roll = testData.roll ? testData.roll : new Roll("1d20").roll();
         this._appendSituationalModifiers(testData, game.i18n.localize("manual"), testData.testModifier)
-        var result = this._rollSingleD20(roll, testData.source.max, testData.extra.statusId, this._situationalModifiers(testData), testData)
+        let result = this._rollSingleD20(roll, testData.source.max, testData.extra.statusId, this._situationalModifiers(testData), testData)
         result["rollType"] = "status"
         if (testData.extra.statusId == "dodge" && result.successLevel == 3) {
             result["description"] += ", " + game.i18n.localize("attackOfOpportunity")
@@ -370,7 +370,7 @@ export default class DiceDSA5 {
         let roll = testData.roll ? testData.roll : new Roll("1d20").roll();
         this._appendSituationalModifiers(testData, game.i18n.localize("manual"), testData.testModifier)
         this._appendSituationalModifiers(testData, game.i18n.localize("Difficulty"), testData.testDifficulty)
-        var result = this._rollSingleD20(roll, testData.source.value, testData.extra.characteristicId, this._situationalModifiers(testData), testData)
+        let result = this._rollSingleD20(roll, testData.source.value, testData.extra.characteristicId, this._situationalModifiers(testData), testData)
         result["rollType"] = "attribute"
         return result
     }
@@ -379,7 +379,7 @@ export default class DiceDSA5 {
         //let description = "";
         this._appendSituationalModifiers(testData, game.i18n.localize("manual"), testData.testModifier)
         let modifier = this._situationalModifiers(testData);
-        var chars = []
+        let chars = []
 
         let roll = testData.roll ? testData.roll : new Roll(testData.source.data.data.damage.value.replace(/[Ww]/, "d")).roll()
         let damage = roll.total + modifier;
@@ -409,7 +409,7 @@ export default class DiceDSA5 {
         this._appendSituationalModifiers(testData, game.i18n.localize("manual"), testData.testModifier)
         let modifier = this._situationalModifiers(testData);
         let weapon;
-        var chars = []
+        let chars = []
 
         let skill = Actordsa5._calculateCombatSkillValues(testData.extra.actor.items.find(x => x.type == "combatskill" && x.name == testData.source.data.data.combatskill.value), testData.extra.actor)
 
@@ -504,7 +504,7 @@ export default class DiceDSA5 {
             this._appendSituationalModifiers(testData, game.i18n.localize("sizeCategory"), testData.sizeModifier)
             this._appendSituationalModifiers(testData, game.i18n.localize("sight"), testData.visionModifier)
         }
-        var result = this._rollSingleD20(roll, Number(source.data.at.value), testData.mode, this._situationalModifiers(testData), testData)
+        let result = this._rollSingleD20(roll, Number(source.data.at.value), testData.mode, this._situationalModifiers(testData), testData)
 
         let success = result.successLevel > 0
         let doubleDamage = result.successLevel > 2
@@ -663,7 +663,7 @@ export default class DiceDSA5 {
 
     static async _addRollDiceSoNice(testData, roll, color) {
         if (testData.rollMode) {
-            for (var i = 0; i < roll.dice.length; i++) {
+            for (let i = 0; i < roll.dice.length; i++) {
                 roll.dice[i].options.colorset = color
             }
             this.showDiceSoNice(roll, testData.rollMode);
@@ -678,8 +678,8 @@ export default class DiceDSA5 {
 
         let weaponSource = testData.source.data.data == undefined ? testData.source : testData.source.data
         let source = Actordsa5._calculateCombatSkillValues(weaponSource, testData.extra.actor)
-        var res = modifier + source.data[testData.mode].value;
-        var chars = []
+        let res = modifier + source.data[testData.mode].value;
+        let chars = []
         let res1 = res - roll.terms[0].results[0].result;
         chars.push({ char: testData.mode, res: roll.terms[0].results[0].result, suc: res1 >= 0, tar: res });
         let rollConfirm = new Roll("1d20").roll();
@@ -815,7 +815,7 @@ export default class DiceDSA5 {
 
         if (testData.source.type == "skill" && AdvantageRulesDSA5.hasVantage(testData.extra.actor, `Unfähig (${testData.source.name})`)) {
             let reroll = new Roll("1d20").roll()
-            var indexOfMinValue = res.reduce((iMin, x, i, arr) => x < arr[iMin] ? i : iMin, 0)
+            let indexOfMinValue = res.reduce((iMin, x, i, arr) => x < arr[iMin] ? i : iMin, 0)
             let oldValue = roll.results[indexOfMinValue * 2]
             fps += Math.max(res[indexOfMinValue], 0)
             fps -= Math.max(0, reroll.total - tar[indexOfMinValue])
@@ -1004,7 +1004,7 @@ export default class DiceDSA5 {
                 case "ritual":
                 case "skill":
                     roll = new Roll("1d20+1d20+1d20").roll();
-                    for (var i = 0; i < roll.dice.length; i++) {
+                    for (let i = 0; i < roll.dice.length; i++) {
                         roll.dice[i].options.colorset = testData.source.data["characteristic" + (i + 1)].value
                     }
                     break;
@@ -1026,7 +1026,7 @@ export default class DiceDSA5 {
                 case "combatskill":
                     if (testData.mode == "damage") {
                         roll = new Roll(testData.source.data.data.damage.value.replace(/[Ww]/, "d")).roll()
-                        for (var i = 0; i < roll.dice.length; i++) {
+                        for (let i = 0; i < roll.dice.length; i++) {
                             roll.dice[i].options.colorset = "black"
                         }
 
@@ -1038,7 +1038,7 @@ export default class DiceDSA5 {
                 case "trait":
                     if (testData.mode == "damage") {
                         roll = new Roll(testData.source.data.data.damage.value.replace(/[Ww]/, "d")).roll()
-                        for (var i = 0; i < roll.dice.length; i++) {
+                        for (let i = 0; i < roll.dice.length; i++) {
                             roll.dice[i].options.colorset = "black"
                         }
 
@@ -1054,7 +1054,7 @@ export default class DiceDSA5 {
                 case "poison":
                 case "disease":
                     roll = new Roll("1d20+1d20+1d20").roll();
-                    for (var i = 0; i < roll.dice.length; i++) {
+                    for (let i = 0; i < roll.dice.length; i++) {
                         roll.dice[i].options.colorset = "in"
                     }
                     break

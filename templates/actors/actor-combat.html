@@ -19,7 +19,7 @@
         </div>
 
         <div class="col ten center small">
-            {{localize "damage"}}
+            {{localize "CHARAbbrev.damage"}}
         </div>
         <div class="col ten center small">
             {{localize "reach"}}
@@ -69,7 +69,7 @@
             {{localize "CHARAbbrev.AT"}}
         </div>
         <div class="col eight center small">
-            {{localize "damage"}}
+            {{localize "CHARAbbrev.damage"}}
         </div>
 
         <div class="col five center small">
@@ -175,82 +175,6 @@
             <a class="item-edit">{{item.name}}{{roman item.data.step.value}}</a>
         </div>
         {{/each}}
-    </div>
-
-</div>
-
-<div class="groupbox">
-    <div class="row-section">
-        <div class="col ten">
-
-        </div>
-        <div class="col eighty header-label lineheight">
-            <b>{{localize "statuseffects"}}</b>
-        </div>
-        <div class="col ten center">
-            <div class="statusEffectMenu">
-                <a class="status-create lineheight very-small" title="{{localize 'CONDITIONS.add'}}"><i class="fas fa-plus"></i></a>
-                <ul>
-                    {{#each manualConditions as |item i|}}
-                    <li>
-                        <a class="status-add" data-id="{{item.id}}" title="{{localize item.label}}"><img src="{{item.icon}}" /></a>
-                    </li>
-                    {{/each}}
-                </ul>
-            </div>
-        </div>
-    </div>
-    <div class="row-section">
-        <div class="col effectDescription">
-
-        </div>
-    </div>
-    <div class="row-section  wrap">
-
-        <div class="col two row-section skills table-title">
-            <div class="col five">
-
-            </div>
-            <div class="col sixty">
-                {{localize "condition"}}
-            </div>
-            <div class="col five center" title="{{localize 'value'}}">
-                {{localize "ABBR-value"}}
-            </div>
-        </div>
-        <div class="col two row-section skills table-title">
-            <div class="col five">
-
-            </div>
-            <div class="col sixty">
-                {{localize "condition"}}
-            </div>
-            <div class="col five center" title="{{localize 'value'}}">
-                {{localize "ABBR-value"}}
-            </div>
-
-        </div>
-        {{#each conditions as |item i|}}
-        <div class="row-section col skills two statusEffect" data-id="{{item.id}}">
-            <div class="col five">
-                {{#if item.existing}}
-                <img src="{{item.icon}}" /> {{else}}
-                <img style="opacity:0.5;" src="{{item.icon}}" /> {{/if}}
-            </div>
-            <div class="col sixty">
-                <a class="condition-show" data-id="{{item.id}}">{{localize item.label}}</a>
-            </div>
-            <div class="col five center" title="{{localize 'value'}}">
-                {{#if item.boolean}} {{#if item.existing}}
-                <a class="condition-toggle"><i class="far fa-check-circle"></i></a> {{else}}
-                <a class="condition-toggle"><i class="far fa-circle"></i></a> {{/if}} {{else}}
-                <a class="condition-value">{{item.value}}</a> {{/if}}
-            </div>
-
-        </div>
-
-        {{/each}}
-
     </div>
 
 </div>

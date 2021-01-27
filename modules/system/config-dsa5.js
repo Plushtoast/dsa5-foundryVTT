@@ -476,6 +476,17 @@ DSA5.advancementCosts = {
     "E": [15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 30, 45, 60, 75, 90, 105, 120, 135, 150, 165, 180],
 }
 
+
+DSA5.startXP = {
+    "900": "EXP-inexperienced",
+    "1000": "EXP-average",
+    "1100": "EXP-experienced",
+    "1200": "EXP-competent",
+    "1400": "EXP-masterful",
+    "1700": "EXP-brillant",
+    "2100": "EXP-legendary"
+}
+
 DSA5.helpContent = [{
         name: "pay",
         command: "/pay [0-9]+",
@@ -486,9 +497,14 @@ DSA5.helpContent = [{
         example: "/getPaid 5.03",
     },
     {
-        name: "quickSkill",
-        command: "/sk [a-z]*",
+        name: "quickAbility",
+        command: "/sk [a-z]*, /sp [a-z]*, /li [a-z]*, /at [a-z]*, /pa [a-z]*",
         example: "/sk betören",
+    },
+    {
+        name: "conditions",
+        command: "/conditions",
+        example: "/conditions"
     }
 ]
 

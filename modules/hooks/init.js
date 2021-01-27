@@ -36,7 +36,8 @@ export default function() {
             "systems/dsa5/templates/actors/character/actor-religion.html",
             "systems/dsa5/templates/actors/character/actor-aggregatedtests.html",
             "systems/dsa5/templates/actors/parts/creature-derived-attributes-small.html",
-            "systems/dsa5/templates/actors/parts/creature-derived-attributes-large.html"
+            "systems/dsa5/templates/actors/parts/creature-derived-attributes-large.html",
+            "systems/dsa5/templates/actors/parts/status_effects.html",
         ]);
 
         configuration.default()

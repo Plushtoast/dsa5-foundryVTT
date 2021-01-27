@@ -88,7 +88,7 @@ export default class Actordsa5 extends Actor {
             data.data.status.astralenergy.max = data.data.status.astralenergy.current + data.data.status.astralenergy.modifier + data.data.status.astralenergy.advances;
             data.data.status.karmaenergy.max = data.data.status.karmaenergy.current + data.data.status.karmaenergy.modifier + data.data.status.karmaenergy.advances;
 
-            var guide = data.data.guidevalue
+            let guide = data.data.guidevalue
 
             if (guide && this.data.type != "creature") {
                 if (data.data.characteristics[guide.value]) {
@@ -104,6 +104,7 @@ export default class Actordsa5 extends Actor {
             data.data.status.soulpower.max = data.data.status.soulpower.value + data.data.status.soulpower.modifier;
             data.data.status.toughness.max = data.data.status.toughness.value + data.data.status.toughness.modifier;
             this._calculateStatus(data, "dodge")
+
 
         } catch (error) {
             console.error("Something went wrong with preparing actor data: " + error + error.stack)
@@ -492,9 +493,10 @@ export default class Actordsa5 extends Actor {
         this.data.isPriest = hasPrayers
 
         let eqModifierString = []
-        for (var i in equipmentModifiers) {
+        for (let i in equipmentModifiers) {
             eqModifierString.push(i + " " + equipmentModifiers[i].value + " (" + equipmentModifiers[i].sources.join(", ") + ")")
         }
+
 
         return {
             totalweight: totalWeight,
@@ -595,7 +597,8 @@ export default class Actordsa5 extends Actor {
         }
     }
 
-    checkEnoughXP(cost) {
+    async checkEnoughXP(cost) {
+
         if (!Actordsa5.canAdvance(this.data))
             return true
         if (isNaN(cost) || cost == null)
@@ -603,10 +606,48 @@ export default class Actordsa5 extends Actor {
 
         if (Number(this.data.data.details.experience.total) - Number(this.data.data.details.experience.spent) >= cost) {
             return true
-        } else {
-            ui.notifications.error(game.i18n.localize("Error.NotEnoughXP"))
-            return false
+        } else if (Number(this.data.data.details.experience.total == 0)) {
+            console.log(DSA5.startXP)
+            let selOptions = Object.entries(DSA5.startXP).map(([key, val]) => `<option value="${key}">${game.i18n.localize(val)} (${key})</option>`).join("")
+            let template = `<p>${game.i18n.localize("Error.zeroXP")}</p><label>${game.i18n.localize('APValue')}: </label><select name ="APsel">${selOptions}</select>`
+
+            let newXp = 0;
+            let result = false;
+
+            [result, newXp] = await new Promise((resolve, reject) => {
+                new Dialog({
+                    title: game.i18n.localize("Error.NotEnoughXP"),
+                    content: template,
+                    default: 'yes',
+                    buttons: {
+                        Yes: {
+                            icon: '<i class="fa fa-check"></i>',
+                            label: game.i18n.localize("yes"),
+                            callback: dlg => {
+                                resolve([true, dlg.find('[name="APsel"]')[0].value])
+                            }
+                        },
+                        cancel: {
+                            icon: '<i class="fas fa-times"></i>',
+                            label: game.i18n.localize("cancel"),
+                            callback: html => {
+                                resolve([false, 0])
+                            }
+                        }
+                    }
+
+                }).render(true)
+            })
+            if (result) {
+                await this.update({
+                    "data.details.experience.total": Number(newXp)
+                });
+                return true
+            }
         }
+
+        ui.notifications.error(game.i18n.localize("Error.NotEnoughXP"))
+        return false
     }
 
     setupWeaponTrait(item, mode, options) {
@@ -868,7 +909,7 @@ export default class Actordsa5 extends Actor {
                     }
                     let newRoll = []
                     let smallestIndex = 0
-                    var smallest = 500
+                    let smallest = 500
                     let index = 0
                     for (let k of data.postData.damageRoll.terms) {
                         if (k.class == 'Die') {

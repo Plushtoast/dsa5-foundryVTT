@@ -123,9 +123,9 @@
                 <input class="input-text" type="text" name="data.feature.value" value="{{data.feature.value}}" data-dtype="String" />
             </div>
             {{#when data.mageLevel.value 'eq' 'clerical'}}
-            <div class="form-group">
+            <div class="form-group full-height">
                 <label class="label-text">{{localize "happyTalents"}}:</label>
-                <input class="input-text" type="text" name="data.happyTalents.value" value="{{data.happyTalents.value}}" data-dtype="String" />
+                <textarea class="input-text" type="text" name="data.happyTalents.value" data-dtype="String">{{data.happyTalents.value}}</textarea>
             </div>
             <div class="form-group full-height">
                 <label class="label-text">{{localize "liturgies"}}:</label>

@@ -34,13 +34,13 @@ export default class SpecialabilityRulesDSA5 extends ItemRulesDSA5 {
 
         if (res) {
             let vantage = duplicate(res)
-            if (vantage.data.step.value + 1 <= vantage.data.maxRank.value && actor.checkEnoughXP(vantage.data.APValue.value)) {
+            if (vantage.data.step.value + 1 <= vantage.data.maxRank.value && await actor.checkEnoughXP(vantage.data.APValue.value)) {
                 vantage.data.step.value += 1
                 await actor._updateAPs(vantage.data.APValue.value)
                 await actor.updateEmbeddedEntity("OwnedItem", vantage);
                 await SpecialabilityRulesDSA5.abilityAdded(actor, vantage)
             }
-        } else if (actor.checkEnoughXP(item.data.APValue.value)) {
+        } else if (await actor.checkEnoughXP(item.data.APValue.value)) {
             await SpecialabilityRulesDSA5.abilityAdded(actor, item)
             await actor._updateAPs(item.data.APValue.value)
             await actor.createEmbeddedEntity("OwnedItem", item);

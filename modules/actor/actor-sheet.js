@@ -5,6 +5,7 @@ import AdvantageRulesDSA5 from "../system/advantage-rules-dsa5.js";
 import Itemdsa5 from "../item/item-dsa5.js";
 
 import SpecialabilityRulesDSA5 from "../system/specialability-rules-dsa5.js";
+import DSA5ChatListeners from "../system/chat_listeners.js";
 
 
 export default class ActorSheetDsa5 extends ActorSheet {
@@ -16,7 +17,9 @@ export default class ActorSheetDsa5 extends ActorSheet {
     async _render(force = false, options = {}) {
         this._saveScrollPos();
         this._saveSearchFields()
+        this._saveCollapsed()
         await super._render(force, options);
+        this._setCollapsed()
         this._setScrollPos();
         this._restoreSeachFields()
 
@@ -59,6 +62,30 @@ export default class ActorSheetDsa5 extends ActorSheet {
             talentSearchInput.val(this.searchFields.searchText)
             if (this.searchFields.searchText != "") {
                 this._filterTalents(talentSearchInput)
+            }
+        }
+    }
+
+    _saveCollapsed() {
+        if (this.form === null)
+            return;
+
+        const html = $(this.form).parent();
+        this.collapsedBoxes = [];
+        let boxes = $(html.find(".ch-collapse i"));
+        for (let box of boxes) {
+            this.collapsedBoxes.push($(box).attr("class"));
+        }
+    }
+
+    _setCollapsed() {
+        if (this.collapsedBoxes) {
+            const html = $(this.form).parent();
+            let boxes = $(html.find(".ch-collapse i"));
+            for (let i = 0; i < boxes.length; i++) {
+                $(boxes[i]).attr("class", this.collapsedBoxes[i]);
+                if (this.collapsedBoxes[i].indexOf("fa-angle-down") != -1)
+                    $(boxes[i]).closest('.groupbox').find('.row-section:nth-child(2)').hide()
             }
         }
     }
@@ -166,7 +193,7 @@ export default class ActorSheetDsa5 extends ActorSheet {
     async _advanceAttribute(attr) {
         let advances = Number(this.actor.data.data.characteristics[attr].advances) + Number(this.actor.data.data.characteristics[attr].initial)
         let cost = DSA5_Utility._calculateAdvCost(advances, "E")
-        if (this._checkEnoughXP(cost)) {
+        if (await this._checkEnoughXP(cost)) {
             let attrJs = `data.characteristics.${attr}.advances`
             await this.actor.update({
                 [attrJs]: Number(this.actor.data.data.characteristics[attr].advances) + 1,
@@ -190,7 +217,7 @@ export default class ActorSheetDsa5 extends ActorSheet {
     async _advancePoints(attr) {
         let advances = Number(this.actor.data.data.status[attr].advances)
         let cost = DSA5_Utility._calculateAdvCost(advances, "D")
-        if (this._checkEnoughXP(cost) && this._checkMaximumPointAdvancement(attr, advances + 1)) {
+        if (await this._checkEnoughXP(cost) && this._checkMaximumPointAdvancement(attr, advances + 1)) {
             let attrJs = `data.status.${attr}.advances`
             await this.actor.update({
                 [attrJs]: Number(this.actor.data.data.status[attr].advances) + 1,
@@ -214,7 +241,7 @@ export default class ActorSheetDsa5 extends ActorSheet {
     async _advanceItem(itemId) {
         let item = duplicate(this.actor.items.find(i => i.data._id == itemId))
         let cost = DSA5_Utility._calculateAdvCost(Number(item.data.talentValue.value), item.data.StF.value)
-        if (this._checkEnoughXP(cost) && this._checkMaximumItemAdvancement(item, Number(item.data.talentValue.value) + 1)) {
+        if (await this._checkEnoughXP(cost) && this._checkMaximumItemAdvancement(item, Number(item.data.talentValue.value) + 1)) {
             item.data.talentValue.value += 1
             this.actor.updateEmbeddedEntity("OwnedItem", item)
             await this.actor.update({
@@ -291,8 +318,8 @@ export default class ActorSheetDsa5 extends ActorSheet {
         $(ev.currentTarget).find("i").toggleClass("fa-unlock fa-lock")
     }
 
-    _checkEnoughXP(cost) {
-        return this.actor.checkEnoughXP(cost)
+    async _checkEnoughXP(cost) {
+        return await this.actor.checkEnoughXP(cost)
     }
 
     activateListeners(html) {
@@ -308,6 +335,11 @@ export default class ActorSheetDsa5 extends ActorSheet {
             let item = duplicate(this.actor.getEmbeddedEntity("OwnedItem", itemId))
             item.data.currentAmmo.value = $(ev.currentTarget).val()
             this.actor.updateEmbeddedEntity("OwnedItem", item);
+        })
+
+        html.find('.ch-collapse').click(ev => {
+            $(ev.currentTarget).find('i').toggleClass("fa-angle-up fa-angle-down")
+            $(ev.currentTarget).closest(".groupbox").find('.row-section:nth-child(2)').fadeToggle()
         })
 
         html.find('.item-toggle').click(ev => {
@@ -441,15 +473,22 @@ export default class ActorSheetDsa5 extends ActorSheet {
             let id = ev.currentTarget.getAttribute("data-id")
             let effect = CONFIG.statusEffects.find(x => x.id == id)
             if (effect) {
-                let text = `<div style="padding:5px;"><b>${game.i18n.localize(effect.label)}</b>: ${game.i18n.localize(effect.description)}</div>`
+                let text = $(`<div style="padding:5px;"><b><a class="chat-condition chatButton" data-id="${effect.id}"><img src="${effect.icon}"/>${game.i18n.localize(effect.label)}</a></b>: ${game.i18n.localize(effect.description)}</div>`)
+                text.find('.chat-condition').on('click', ev => {
+                    DSA5ChatListeners.postStatus($(ev.currentTarget).attr('data-id'))
+                })
                 let elem = $(ev.currentTarget).closest('.groupbox').find('.effectDescription')
                 elem.fadeOut('fast', function() {
                     elem.html(text).fadeIn('fast')
+
                 })
+
             } else {
                 //search temporary effects
             }
         })
+
+
 
         html.find('.skill-advances').focusout(async event => {
             //event.preventDefault()
@@ -554,13 +593,13 @@ export default class ActorSheetDsa5 extends ActorSheet {
 
         html.find(".cards .item").mouseenter(ev => {
             if (ev.currentTarget.getElementsByClassName('hovermenu').length == 0) {
-                var div = document.createElement('div')
+                let div = document.createElement('div')
                 div.classList.add("hovermenu")
-                var del = document.createElement('i')
+                let del = document.createElement('i')
                 del.classList.add("fas", "fa-times")
                 del.title = game.i18n.localize('SHEET.DeleteItem')
                 del.addEventListener('click', deletehand, false)
-                var post = document.createElement('i')
+                let post = document.createElement('i')
                 post.classList.add("fas", "fa-comment")
                 post.title = game.i18n.localize('SHEET.PostItem')
                 post.addEventListener('click', posthand, false)
@@ -570,7 +609,7 @@ export default class ActorSheetDsa5 extends ActorSheet {
             }
         });
         html.find(".cards .item").mouseleave(ev => {
-            var e = ev.toElement || ev.relatedTarget;
+            let e = ev.toElement || ev.relatedTarget;
             if (e.parentNode == this || e == this)
                 return;
 
@@ -659,7 +698,7 @@ export default class ActorSheetDsa5 extends ActorSheet {
                     cancel: {
                         icon: '<i class="fas fa-times"></i>',
                         label: game.i18n.localize("cancel")
-                    },
+                    }
                 },
                 default: 'Yes'
             }).render(true)
@@ -747,7 +786,7 @@ export default class ActorSheetDsa5 extends ActorSheet {
                 default:
                     return
             }
-            if (this.actor.checkEnoughXP(apCost)) {
+            if (await this.actor.checkEnoughXP(apCost)) {
                 this._updateAPs(apCost)
                 await this.actor.createEmbeddedEntity("OwnedItem", item)
             }

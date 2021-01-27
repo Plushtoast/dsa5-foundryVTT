@@ -4,6 +4,8 @@
     --button-color: #532902e7;
     --sheet-bg: #2e2c2a15;
     --sheet-border: #968678;
+    --boldFont: "Signika";
+    --normalFont: "Signika"
 }
 
 @font-face {
@@ -88,15 +90,15 @@ body {
     overflow: hidden;
     /*background: url(../ui/background.webp) repeat;*/
     font-size: 14px;
-    /*font-family: "GentiumBasic";*/
+    font-family: var(--normalFont)
 }
 
 textarea {
-    font-family: "GentiumBasic";
+    font-family: var(--normalFont);
 }
 
 b {
-    font-family: "GentiumBasic-Bold";
+    font-family: var(--boldFont);
 }
 
 h1,
@@ -228,17 +230,6 @@ h7 {
     font-size: 12px;
 }
 
-
-/*label.full-height {
-    font-weight: bold;
-    box-shadow: 0 0 14px #00000052 inset;
-    font-size: 12px;
-    text-align: center;
-    position: relative;
-    border: none;
-    padding: 0;
-}*/
-
 form .form-group.full-height label,
 form .form-group.full-height input {
     align-self: stretch;
@@ -247,6 +238,7 @@ form .form-group.full-height input {
 
 form .form-group.full-height textarea {
     min-height: 140px;
+    font-size: 14px;
 }
 
 form .career .form-group.full-height textarea {
@@ -279,16 +271,6 @@ input[type=text].emphasize {
 .maxMods {
     transition: background-color 0.3s linear
 }
-
-
-/*label.full-height:before {
-    content: "";
-    display: inline-block;
-    height: 100%;
-    vertical-align: middle;
-    border: 1px solid var(--border-color);
-    padding: 0px 6px;
-}*/
 
 .window-app.npc-sheet.app .window-content {
     box-shadow: none;
@@ -372,7 +354,7 @@ input[type=text].emphasize {
 .table-title,
 .label-text {
     font-weight: bold;
-    font-family: "GentiumBasic-Bold";
+    font-family: var(--boldFont);
     /*box-shadow: 0 0 14px #00000052 inset;*/
     background: rgb(188, 136, 111);
     background: linear-gradient(90deg, rgba(188, 136, 111, 0.8) 0%, rgba(255, 255, 255, 0) 100%);
@@ -386,7 +368,7 @@ input[type=text].emphasize {
 
 .table-header {
     font-weight: bold;
-    font-family: "GentiumBasic-Bold";
+    font-family: var(--boldFont);
 }
 
 .skill-section {
@@ -526,7 +508,7 @@ input[type=text].emphasize {
     bottom: 0;
     opacity: 0.35;
     background-size: contain;
-    background-position: center;
+    background-position: calc(50% + 1px);
     background-repeat: no-repeat;
 }
 
@@ -885,13 +867,26 @@ input[type=text].emphasize {
     color: var(--border-color);
 }
 
+::-webkit-scrollbar {
+    width: 14px;
+}
+
 ::-webkit-scrollbar-track {
-    background: rgba(0, 0, 0, 0.1);
+    background: #111;
 }
 
 ::-webkit-scrollbar-thumb {
-    background: rgba(179, 87, 1, 0.5);
-    border: 1px solid var(--border-color);
+    background: #782e22;
+    border: 1px solid #111;
+}
+
+.sidebar-tab ::-webkit-scrollbar-thumb {
+    background: #782e22;
+    border: 1px solid #111;
+}
+
+.sidebar-tab ::-webkit-scrollbar {
+    width: 8px;
 }
 
 .attackWeaponless:before {
@@ -1075,7 +1070,7 @@ form.dsa5.item-sheet {
 .creature-sheet select {
     /*font-size: 12px;*/
     height: 28px;
-    font-family: "GentiumBasic";
+    font-family: var(--normalFont);
     border-radius: 0;
     text-align: center;
 }
@@ -1111,11 +1106,6 @@ form.dsa5.item-sheet {
 #combat li.combatant .token-initiative .initiative,
 #combat li.combatant .token-name {
     text-shadow: none;
-}
-
-.sidebar-tab ::-webkit-scrollbar-thumb {
-    background: rgba(34, 17, 1, 0.5);
-    border: 1px solid var(--border-color);
 }
 
 #sidebar-tabs {
@@ -1366,6 +1356,11 @@ input[type="search"] {
     width: calc(100% * var(--a) / var(--b));
 }
 
+.barLeft.soloBar .bar {
+    left: 0;
+    width: calc(100% * var(--a) / var(--b));
+}
+
 .bar {
     height: 24px;
     width: 100%;
@@ -1415,6 +1410,10 @@ input[type="search"] {
 .barLabel span {
     width: 30px;
     display: inline-block;
+}
+
+.soloBar .LeP {
+    background: linear-gradient(90deg, rgba(101, 7, 7, 1) 0%, 100% rgba(207, 14, 14, 1));
 }
 
 .LeP {
@@ -1751,6 +1750,17 @@ input[type="search"] {
     border-radius: 3px;
     box-shadow: 0 0 12px #6e3b018F inset;
     display: inline-block;
+}
+
+.chatButton img {
+    display: inline-block;
+    margin-top: 0;
+    margin-right: 4px;
+    width: 15px;
+    height: 15px;
+    background: black;
+    position: relative;
+    top: 2px;
 }
 
 .chatButton i,

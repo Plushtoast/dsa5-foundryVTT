@@ -56,7 +56,7 @@ export default class DSA5_Utility {
 
     static async allSkillsList() {
         let skills = (await this.allSkills()) || [];
-        var res = {};
+        let res = {};
         for (let sk of skills) {
             res[sk.name] = sk.name;
         }
@@ -65,7 +65,7 @@ export default class DSA5_Utility {
 
     static async allCombatSkillsList(weapontype) {
         let skills = (await this.allCombatSkills()).filter(x => x.data.weapontype.value == weapontype) || [];
-        var res = {};
+        let res = {};
         for (let sk of skills) {
             res[sk.name] = sk.name;
         }
@@ -116,11 +116,6 @@ export default class DSA5_Utility {
         if (item) {
             return item;
         }
-    }
-
-    static getHelp() {
-            let msg = DSA5.helpContent.map(x => `<h1>${game.i18n.localize(`HELP.${x.name}`)}</h1><p><b>${game.i18n.localize("HELP.command")}</b>: ${x.command}</p><p><b>${game.i18n.localize("HELP.example")}</b>: ${x.example}</p><p><b>${game.i18n.localize("Description")}</b>: ${game.i18n.localize(`HELP.descr${x.name}`)}`).join("") + `<br><p>${game.i18n.localize("HELP.default")}</p>`
-            ChatMessage.create(DSA5_Utility.chatDataSetup(msg, "roll"))
     }
 
     static getSpeaker(speaker) {

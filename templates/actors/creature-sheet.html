@@ -93,13 +93,13 @@
     </div>
     <section id="tab-sections ">
         <nav id="dsa5-primarytabs" class="sheet-tabs tabs" ondragstart="return false;" ondrop="return false; ">
-
             <a class="item active" data-tab="skills">{{localize "skills"}}</a>
             <a class="item" data-tab="combat">{{localize "Combat"}}</a> {{#if actor.hasSpells}}
             <a class="item" data-tab="magic">{{localize "Magic"}}</a> {{/if}} {{#if actor.hasPrayers}}
             <a class="item" data-tab="religion">{{localize "Religion"}}</a> {{/if}}
             <a class="item" data-tab="main">{{localize "attributes"}}</a>
             <a class="item" data-tab="inventory">{{localize "equipment"}}</a>
+            <a class="item" data-tab="status">{{localize "status"}}</a>
             <a class="item" data-tab="notes">{{localize "Notes"}}</a>
         </nav>
 
@@ -124,6 +124,9 @@
             {{/if}}
             <div class="tab inventory save-scroll" data-tab="inventory">
                 {{> systems/dsa5/templates/actors/creature/creature-loot.html}}
+            </div>
+            <div class="tab status save-scroll" data-tab="status">
+                {{> systems/dsa5/templates/actors/parts/status_effects.html}}
             </div>
             <div class="tab save-scroll" data-tab="notes">
                 {{> systems/dsa5/templates/actors/creature/creature-notes.html}}

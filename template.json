@@ -9,7 +9,6 @@
             "characteristics": {
                 "characteristics": {
                     "mu": {
-                        "type": "number",
                         "label": "CHAR.MU",
                         "abrev": "CHARAbbrev.MU",
                         "color": "#b3241a",
@@ -19,7 +18,6 @@
                         "advances": 0
                     },
                     "kl": {
-                        "type": "number",
                         "label": "CHAR.KL",
                         "abrev": "CHARAbbrev.KL",
                         "color": "#8259a3",
@@ -29,7 +27,6 @@
                         "advances": 0
                     },
                     "in": {
-                        "type": "number",
                         "label": "CHAR.IN",
                         "abrev": "CHARAbbrev.IN",
                         "color": "#388834",
@@ -39,7 +36,6 @@
                         "advances": 0
                     },
                     "ch": {
-                        "type": "number",
                         "label": "CHAR.CH",
                         "abrev": "CHARAbbrev.CH",
                         "color": "#0d0d0d",
@@ -49,7 +45,6 @@
                         "advances": 0
                     },
                     "ff": {
-                        "type": "number",
                         "label": "CHAR.FF",
                         "abrev": "CHARAbbrev.FF",
                         "color": "#d5b467",
@@ -59,7 +54,6 @@
                         "advances": 0
                     },
                     "ge": {
-                        "type": "number",
                         "label": "CHAR.GE",
                         "abrev": "CHARAbbrev.GE",
                         "color": "#688ec4",
@@ -69,7 +63,6 @@
                         "advances": 0
                     },
                     "ko": {
-                        "type": "number",
                         "label": "CHAR.KO",
                         "abrev": "CHARAbbrev.KO",
                         "color": "#fbf5ea",
@@ -79,7 +72,6 @@
                         "advances": 0
                     },
                     "kk": {
-                        "type": "number",
                         "label": "CHAR.KK",
                         "abrev": "CHARAbbrev.KK",
                         "color": "#d6a878",
@@ -603,10 +595,6 @@
             },
             "worn": {
                 "value": false
-            },
-            "structure": {
-                "max": 0,
-                "value": 0
             }
         },
         "meleeweapon": {
@@ -654,10 +642,6 @@
             },
             "worn": {
                 "value": false
-            },
-            "structure": {
-                "max": 0,
-                "value": 0
             }
         },
         "career": {

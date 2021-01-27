@@ -18,7 +18,7 @@
         "ATTACK": "Angriff",
         "PARRY": "Parieren",
         "GEKK": "Gewandheit / Körperkraft",
-        "DAMAGE": "Schaden",
+        "DAMAGE": "Trefferpunkte",
         "DODGE": "Ausweichen",
         "modifyable": "mod.",
         "AsPCost": "AsP Kosten",
@@ -54,6 +54,7 @@
         "PA": "PA",
         "AT": "AT",
         "FP": "FP",
+        "damage": "TP",
         "reloadTime": "Lad.",
         "castingTime": "Zauber- dauer",
         "duration": "Wirkungs- dauer",
@@ -163,7 +164,7 @@
     "carrycapacity": "Tragekraft",
     "chatEdit": "Manuelle Korrektur",
     "Details": "Details",
-    "damage": "Schaden",
+    "damage": "Trefferpunkte",
     "defenseCount": "# Verteidigung (je -3)",
     "decreaseCastingTime": "Zauber-/Liturgiedauer senken",
     "damageThreshold": "Schadensschwelle",
@@ -326,6 +327,7 @@
     "sizeCategory": "Größenkategorie",
     "Success": "Erfolg",
     "spell": "Zauberspruch",
+    "structure": "Strukturpunkte",
     "staff": "Stab",
     "spells": "Zaubersprüche",
     "source": "Quelle",
@@ -548,7 +550,8 @@
         "Token": "Token konfigurieren",
         "Import": "Element importieren",
         "Lock": "Steigerung sperren/entsperren",
-        "RollEffect": "Effekt auswürfeln"
+        "RollEffect": "Effekt auswürfeln",
+        "collapse": "Sektion ein-/ausklappen"
     },
 
     "RangeMod": {
@@ -589,9 +592,11 @@
         "pay": "Bezahlen",
         "descrpay": "Der Spielleiter kann einen Geldbetrag von den Spielern verlangen. Die Spieler können einen Geldbetrag bezahlen.",
         "getPaid": "Auszahlen",
-        "descrgetPaid": "Der Spielleiter kann den Spielern get auszahlen. Die Spieler können sich selbst Geld zuweisen.",
-        "quickSkill": "Talent-Schnellzugriff",
-        "descrquickSkill": "Lass einen Token oder deinen Charakter über ein Chatkommando Talente würfeln."
+        "descrgetPaid": "Der Spielleiter kann den Spielern Geld auszahlen. Die Spieler können sich selbst Geld zuweisen.",
+        "quickAbility": "Fähigkeits-Schnellzugriff",
+        "descrquickAbility": "Lass einen Token oder deinen Charakter über ein Chatkommando Talente (/sk), Zauber/Rituale (/sp), Liturgien/Zeremonien (/li), Attacke (/at) und Parade (/pa) würfeln.",
+        "conditions": "Zustände",
+        "descrconditions": "Zeigt alle Zustände und Status."
     },
 
     "UNITS": {
@@ -669,7 +674,8 @@
         "NoAmmo": "Nicht genug Munition.",
         "MissingChoices": "Noch nicht alle Optionen ausgefüllt.",
         "noProperActor": "Dir wurde noch kein Charakter zugewiesen oder du hast keinen Token markiert.",
-        "noMatch": "Keine Übereinstimmung"
+        "noMatch": "Keine Übereinstimmung",
+        "zeroXP": "Der Charakter hat noch keine Abenteuerpunkte. Möchtest du welche hinzufügen?"
     },
 
     "CEREMONYMODIFIER": {

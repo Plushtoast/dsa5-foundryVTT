@@ -3,6 +3,7 @@ import DiceDSA5 from '../system/dice-dsa5.js'
 import DSA5Payment from '../system/payment.js'
 import DSA5_Utility from '../system/utility-dsa5.js';
 import DSA5ChatAutoCompletion from '../system/chat_autocompletion.js';
+import DSA5ChatListeners from '../system/chat_listeners.js';
 
 export default function() {
     Hooks.on('renderChatLog', (log, html, data) => {
@@ -11,6 +12,7 @@ export default function() {
         DSA5Payment.chatListeners(html)
         let autoComplete = new DSA5ChatAutoCompletion()
         autoComplete.chatListeners(html)
+        DSA5ChatListeners.chatListeners(html)
     });
 
     Hooks.on("renderChatMessage", async(app, html, msg) => {
@@ -35,7 +37,10 @@ export default function() {
             }
             return false
         } else if (/^\/help$/.test(content)) {
-            DSA5_Utility.getHelp()
+            DSA5ChatListeners.getHelp()
+            return false
+        } else if (/^\/conditions/.test(content)) {
+            DSA5ChatListeners.showConditions()
             return false
         }
     })
