@@ -24,23 +24,6 @@ Alternatively, you can create all these assets manually.
 
 
 
-
-
-
-
-How can I roll attribute, skills, spells etc. in DSA for foundry?
-DSA in foundry offers you automated rolls for all relevant tests. To roll anything you have several options:
-1. click on the dice symbol next to the desired element and let the system roll for you.
-2. use one of our unique chat commands and select the desired element - see also chat commands
-The result of your roll will be displayed in the chat window to see.
-If you have any special ability / advantage / disadvantage that will impact your roll, these modifications are taken into consideration automatically.
-
-
-How can I re-roll tests using Schips/Fate Points?
-If you want to re-roll any test, you can use Schips / Fate Points to do so.
-To re-roll any test, right click on the roll result in the chat window and select "Wurf wiederholen". Next you can select the dice or dices to re-roll.
-
-
 <h1>Quick Start</h1>
 How can I play DSA in foundry VTT?
 To play DSA in foundry VTT you need to install the game pack and create a new world featuring DSA.
@@ -410,4 +393,26 @@ Alternativly you can enter the following commands into the chat box:
 - attack:
 - defend/parry:
 - evade:
+
+Can special combat abilities be used in DSA for foundry?
+Yes, special abilities, if configured correctly, can be used and selected when attacking an opponent.
+
+
+
+<h1>Game mechanics</h1>
+DSA in foundry follows the same game mechanics as any ohter game in foundry.
+For more details on general game machanics please check out the following link: LINK foundry
+
+
+How can I roll attribute, skills, spells etc. in DSA for foundry?
+DSA in foundry offers you automated rolls for all relevant tests. To roll anything you have several options:
+1. click on the dice symbol next to the desired element and let the system roll for you.
+2. use one of our unique chat commands and select the desired element - see also chat commands
+The result of your roll will be displayed in the chat window to see.
+If you have any special ability / advantage / disadvantage that will impact your roll, these modifications are taken into consideration automatically.
+
+
+How can I re-roll tests using Schips/Fate Points?
+If you want to re-roll any test, you can use Schips / Fate Points to do so.
+To re-roll any test, right click on the roll result in the chat window and select "Wurf wiederholen". Next you can select the dice or dices to re-roll.
 
