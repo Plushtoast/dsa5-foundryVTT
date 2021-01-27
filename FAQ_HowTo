@@ -3,27 +3,6 @@ What is Das Schwarze Auge (DSA) and what's Das Schwarze Auge in Foundry?
 Das Schwarze Auge is a roleplaying game invented in the 80’s currently in the 5th edition and is published by Ulisses Spiele.
 Das Schwarze Auge in Foundry is an implementation of the roleplaying game in the virtual tabletop system of foundry vtt. The Das Schwarze Auge implementation in foundry has been developed in ABSTIMMUNG with Ulisses Spiele.
 
-How can I play DSA in foundry VTT?
-To play DSA in foundry VTT you need to install the game pack and create a new world featuring DSA.
-The game manifest can be found within the game library of foundry vtt or under the following link: LINKDSA
-
-Are any additional modules required to play DSA?
-To play DSA in foundry vtt no additional modules are required. To have a great experience we would recommend the following free modules to be installed in your system:
-Tokenizer
-Dicer
-
-Are there specific DSA modules available in foundry?
-To increase your gaming experience for DSA in foundry vtt Ulisses offers some additional modules. These modules include content, rules, items, NPCs, maps and more.
-
-For a fast and easy start we would recommend to install the Grundregelwerk module to your system you can start right away.
-
-How do I start my gaming session of DSA in foundry with my friends?
-To invite your friends to your gaming session you need to create an account in foundry for each of them. To do so, go to the game settings or press Esc.
-In the following dialog you can create accounts for your friends to join your session. - As of personal experience we recommend you assign your players the role trusted.
-For an easy start we recommend you assign each player a character so they start with the character from the beginning.
-Alternatively each player can create a character in the game to fit their needs.
-
-
 What do we need to play DSA in foundry?
 To play with your friends you need at least characters, some enemies (npcs) and a story.
 To really enjoy all features of the game you require:
@@ -43,269 +22,11 @@ This module includes everything required to enjoy a good game of DSA in foundry 
 
 Alternatively, you can create all these assets manually.
 
-How do I create necessary assets for DSA in foundry:
-To create any assets g to the items Directory and create item. Selecet the category you want to create and enter a name and press ok.
-Depending on the type of assets you have to enter the necessary details to the asset.
-
-What do I have to enter for advantages / disadvantages?
-- Name
-- Description
-- AP-value
-- maximum level
-NOTE: if only one level is available leave 0
-- requirements
-- effect
-
-What do I have to enter for special abilities?
-- Name
-- Description
-- AP-value
-- requirements
-- category*
-- rule text
-- maximum level
-NOTE: if only one level is available leave 0
-- effect
-*combat special abilities can be linked to a combat skill
 
 
-What do I have to enter for cultures
-- Name
-- description
-- ap value
-- language*
-- writing*
-- local town knowledge**
-- suitable professions***
-- social status
-- suitable advantages***
-- suitable disadvantages***
-- unsuitable advantages***
-- unsuitable disadvantages***
-- suitable talents***
-- unsuitable talents***
-- selected talents***
-* language / writing must be set up as special abilities earlier
-** leave empty if player can enter text manually
-*** separate by ,
-
-What do I have to enter for professions/careers?
-- name
-- description
-- optional picture
-- ap value
-- language points included
-- suitable advantages***
-- suitable disadvantages***
-- unsuitable advantages***
-- unsuitable disadvantages***
-- talents***
-- combat skills***
-- special abilities**/***
-- Magical abilities: magic/mundane/clerical
-
-Additional attributes for clerical professions:
-- Leiteigenschaft
-- Tradition
-- Aspekt
-- wohlgefällige Talente
-- Liturgies
-- Blessings
-
-Additional attributes for magical professions
-- Leiteigenschaft
-- Tradition
-- Merkmal
-- Spells
-- Spelltricks
-- Number of Spelltricks
 
 
-What do I have to enter for spells, spelltricks or rituals?
-Spells
-- Name
-- Description
-- Attribute 1
-- Attribute 2
-- Attribute 3
-- Range
-  - Modification (Yes or No)
-- Spell effect duration
-- Target category (Self, touch, sight)
-- Time to cast
-  - Modification (Yes or No)
-- AsP cost
-  - Modification (Yes or No)
-- AsP Detail
-- Aufrechterhalten
-- Effect description (display in Chat for all to see)
-- Effect
-- Verbreitung
-- Widerstand (SK or toughness)
-- Steigerungsfaktor
 
-Spelltricks
-- Name
-- Description
-- Range
-- Spell effect duration
-- Target category (Self, touch, sight)
-- Merkmal
-
-Ritual
-- Name
-- Description
-- Attribute 1
-- Attribute 2
-- Attribute 3
-- Range
-  - Modification (Yes or No)
-- Spell effect duration
-- Target category (Self, touch, sight)
-- Time to cast
-  - Modification (Yes or No)
-- AsP cost
-  - Modification (Yes or No)
-- Permanent AsP cost
-- AsP Detail
-- Aufrechterhalten
-- Effect description (display in Chat for all to see)
-- Effect
-- Verbreitung
-- Widerstand (SK or toughness)
-- Steigerungsfaktor
-
-What do I have to enter for liturgies, ceremonies and blessings?
-Blessings
-- Name
-- Description
-- Range
-- Duration
-- Target category
-- Merkmal
-
-Liturgies
-- Name
-- Description
-- Attribute 1
-- Attribute 2
-- Attribute 3
-- Range
-  - Modification (Yes or No)
-- Spell effect duration
-- Target category (Self, touch, sight, Zone)
-- Time to cast
-  - Modification (Yes or No)
-- KaP cost
-  - Modification (Yes or No)
-- AsP Detail
-- Aufrechterhalten
-- Effect description (display in Chat for all to see)
-- Effect
-- Verbreitung
-- Widerstand (SK or toughness)
-- Steigerungsfaktor
-
-Ceremonies
-- Name
-- Description
-- Attribute 1
-- Attribute 2
-- Attribute 3
-- Range
-  - Modification (Yes or No)
-- Spell effect duration
-- Target category (Self, touch, sight)
-- Time to cast
-  - Modification (Yes or No)
-- KaP cost
-  - Modification (Yes or No)
-- Permanent KaP cost
-- KaP Detail
-- Aufrechterhalten
-- Effect description (display in Chat for all to see)
-- Effect
-- Verbreitung
-- Widerstand (SK or toughness)
-- Steigerungsfaktor
-
-What do I have to enter for items?
-- Name
-- Price
-- amount
-- weight
-- description
-On the details tab select the category of your item.
-
-Special attributes melee weapons:
-- Damage
-- Attack modifier
-- parade modifier
-- Schadensschwelle
-- Leiteigenschaft - select from the the list
-- combat skill
-- Range
-- Efect
-
-Special attributes range weapons:
-- damage
-- reload actions
-- range short/mid/long
-- type of ammunition 
-- combat skill
-- effect
-
-Special attributes armors
-- Rüstungsschutz
-- Belastung
-- Effect
-NOTE: Effects are currently only applicable for GE and INI
-
-What do I have to enter for creatures?
-Creatures are created on the Actors Directory.
-- Name
-- Type of creature
-- hitpoints
-- Advantages / Disadvantages
-- Special abilities
-- Traits
-
-Traits
-- name
-- description
-- category
-- attack value
-- damage
-- range
-- effect
-
-
-How do I create characters in Das Schwarze Auge?
-
-If you have purchased the DSA Grundregelwerk modules, the character creation is based on the character creation explained in the core rulebook: 
--	First you enter APs for your character, e.g. 1100
--	Then you select your race from the compendium
--	Next select your Culture from the compendium, if you want to use the culture package or enter culture name manually 
-o	NOTE: Culture packs will include modification to your skills
--	Select your profession, if you want to use a predefined profession form DSA
-o	NOTE: professions include skills, advantages, disadvantages special abilities, spells / liturgies, etc.
--	Modify your attributes, skill, special abilities, spells, etc.
--	Drag your desired equipment to your character
-o	NOTE: at this point in time DSA in foundry does not automatically deduct money from you character when dropping an item to the character sheet. So you have to keep track of your spendings
--	Enter your background story, if you want to
--	Start playing
-
-If you have not purchased the DSA Grundregelwerk or any other module, you have to create all your assets as mentioned in the previous section and then follow the same steps as mentioned above.
-
-
-How can any assets be attached to my character?
-DSA in foundry allows you to drag and drop any asset (from any paid module or self created) from the Compendium packs or Item directory.
-Left click and hold the button and drag the asset to your character sheet or the map.
-
-How do I find the any asset easiest in DSA for foundry?
-The easiest way to find any asset in DSA for foundry is to use the item browser in the libary of the compendium packs. 
-There you can select what kind of asset you want to find, enter a name and all potentional assets will appear.
-From there you can drag and drop the asset to your character sheet.
 
 How can I roll attribute, skills, spells etc. in DSA for foundry?
 DSA in foundry offers you automated rolls for all relevant tests. To roll anything you have several options:
@@ -320,4 +41,373 @@ If you want to re-roll any test, you can use Schips / Fate Points to do so.
 To re-roll any test, right click on the roll result in the chat window and select "Wurf wiederholen". Next you can select the dice or dices to re-roll.
 
 
+<h1>Quick Start</h1>
+How can I play DSA in foundry VTT?
+To play DSA in foundry VTT you need to install the game pack and create a new world featuring DSA.
+The game manifest can be found within the game library of foundry vtt or under the following link: LINKDSA
+
+Are any additional modules required to play DSA?
+To play DSA in foundry vtt no additional modules are required. 
+If you want to know more about recommended modules please check out the recommended module section.
+
+
+How do I start my gaming session of DSA in foundry with my friends?
+To invite your friends to your gaming session you need to create an account in foundry for each of them. To do so, go to the game settings or press Esc.
+In the following dialog you can create accounts for your friends to join your session. - As of personal experience we recommend you assign your players the role trusted.
+Once the players have logged in the game you can assign them a character so they can directly enjoy the game.
+Alternatively each player can create a character in the game to fit their needs.
+
+
+<h1>Game configuration</h1>
+To be able to play DSA in foundry you require a list of assets including advantages, special abilities, professions, cultures or items.
+There are two options to obtain all neccesary assets:
+1. You can purchase prepared modules from Ulisses such as the Das Schwarze Auge Grundregelwerk and import the assets
+2. You can create all assets manually for your system
+
+How do I create necessary assets for DSA in foundry:
+To create any assets g to the items Directory and create item. Selecet the category you want to create and enter a name and press ok.
+Depending on the type of assets you have to enter the necessary details to the asset.
+
+What type of assets can be created?
+DSA offers a varaity of different assets for your game:
+<ul>
+<li>advantages / disadvantages</li>
+<li>cultures</li>
+<li>professions / careers</li>
+<li>special abilities</li>
+<li>spells, spelltricks or rituals</li>
+<li>liturgies, ceremonies and blessings</li>
+<li>items, weapons, armors, poisons</li>
+<li>creatures, traits for creatures (attacks, armors, special abilities)</li>
+</ul>
+
+What information do I need to create assets for DSA in foundry?
+Assets in DSA for foundry require different information to be created.
+All assets require at least
+<ul>
+<li>Name</li>
+<li>Description</li>
+</ul>
+Depending on the kind of asset you want to create different information are required as well.
+
+What do I have to enter for advantages / disadvantages?
+<ul>
+<li>AP-value</li>
+<li>maximum level</li>
+NOTE: if only one level is available leave 0
+<li>requirements</li>
+<li>effect</li>
+</ul>
+
+What do I have to enter for special abilities?
+<ul>
+<li>AP-value</li>
+<li>requirements</li>
+<li>category*</li>
+<li>rule text</li>
+<li>maximum level</li>
+NOTE: if only one level is available leave 0
+<li>effect</li>
+</ul>
+*combat special abilities can be linked to a combat skill
+
+
+What do I have to enter for cultures
+<ul>
+<li>ap value</li>
+<li>language*</li>
+<li>writing*</li>
+<li>local town knowledge**</li>
+<li>suitable professions***</li>
+<li>social status</li>
+<li>suitable advantages***</li>
+<li>suitable disadvantages***</li>
+<li>unsuitable advantages***</li>
+<li>unsuitable disadvantages***</li>
+<li>suitable talents***</li>
+<li>unsuitable talents***</li>
+<li>selected talents***</li>
+</ul>
+* language / writing must be set up as special abilities earlier
+** leave empty if player can enter text manually
+*** separate by ,
+
+What do I have to enter for professions/careers?
+<ul>
+<li>optional picture</li>
+<li>ap value</li>
+<li>language points included</li>
+<li>suitable advantages***</li>
+<li>suitable disadvantages***</li>
+<li>unsuitable advantages***</li>
+<li>unsuitable disadvantages***</li>
+<li>talents***</li>
+<li>combat skills***</li>
+<li>special abilities**/***</li>
+<li>Magical abilities: magic/mundane/clerical</li>
+</ul>
+
+Additional attributes for clerical professions:
+<ul>
+<li>Leiteigenschaft</li>
+<li>Tradition</li>
+<li>Aspekt</li>
+<li>wohlgefällige Talente</li>
+<li>Liturgies</li>
+<li>Blessings</li>
+</ul>
+
+Additional attributes for magical professions
+<ul>
+<li>Leiteigenschaft</li>
+<li>Tradition</li>
+<li>Merkmal</li>
+<li>Spells</li>
+<li>Spelltricks</li>
+<li>Number of Spelltricks</li>
+</ul>
+
+What do I have to enter for spells, spelltricks or rituals?
+Spells
+<ul>
+<li>Attribute 1</li>
+<li>Attribute 2</li>
+<li>Attribute 3</li>
+<li>Range
+  - Modification (Yes or No)</li>
+<li>Spell effect duration</li>
+<li>Target category (Self, touch, sight)</li>
+<li>Time to cast
+  - Modification (Yes or No)</li>
+<li>AsP cost
+  - Modification (Yes or No)</li>
+<li>AsP Detail</li>
+<li>Aufrechterhalten</li>
+<li>Effect description (display in Chat for all to see)</li>
+<li>Effect</li>
+<li>Verbreitung</li>
+<li>Widerstand (SK or toughness)</li>
+<li>Steigerungsfaktor</li>
+</ul>
+
+Spelltricks
+<ul>
+<li>Range</li>
+<li>Spell effect duration</li>
+<li>Target category (Self, touch, sight)</li>
+<li>Merkmal</li>
+</ul>
+
+Ritual
+<ul>
+<li>Attribute 1</li>
+<li>Attribute 2</li>
+<li>Attribute 3</li>
+<li>Range
+  - Modification (Yes or No)</li>
+<li>Spell effect duration</li>
+<li>Target category (Self, touch, sight)</li>
+<li>Time to cast
+  - Modification (Yes or No)</li>
+<li>AsP cost
+  - Modification (Yes or No)</li>
+<li>Permanent AsP cost</li>
+<li>AsP Detail</li>
+<li>Aufrechterhalten</li>
+<li>Effect description (display in Chat for all to see)</li>
+<li>Effect</li>
+<li>Verbreitung</li>
+<li>Widerstand (SK or toughness)</li>
+<li>Steigerungsfaktor</li>
+</ul>
+
+What do I have to enter for liturgies, ceremonies and blessings?
+Blessings
+<ul>
+<li>Range</li>
+<li>Duration</li>
+<li>Target category</li>
+<li>Merkmal</li>
+</ul>
+
+Liturgies
+<ul>
+<li>Attribute 1</li>
+<li>Attribute 2</li>
+<li>Attribute 3</li>
+<li>Range
+  - Modification (Yes or No)</li>
+<li>Spell effect duration</li>
+<li>Target category (Self, touch, sight, Zone)</li>
+<li>Time to cast
+  - Modification (Yes or No)</li>
+<li>KaP cost
+  - Modification (Yes or No)</li>
+<li>AsP Detail</li>
+<li>Aufrechterhalten</li>
+<li>Effect description (display in Chat for all to see)</li>
+<li>Effect</li>
+<li>Verbreitung</li>
+<li>Widerstand (SK or toughness)</li>
+<li>Steigerungsfaktor</li>
+</ul>
+
+Ceremonies
+<ul>
+<li>Attribute 1</li>
+<li>Attribute 2</li>
+<li>Attribute 3</li>
+<li>Range
+  - Modification (Yes or No)</li>
+<li>Spell effect duration</li>
+<li>Target category (Self, touch, sight)</li>
+<li>Time to cast
+  - Modification (Yes or No)</li>
+<li>KaP cost
+  - Modification (Yes or No)</li>
+<li>Permanent KaP cost</li>
+<li>KaP Detail</li>
+<li>Aufrechterhalten</li>
+<li>Effect description (display in Chat for all to see)</li>
+<li>Effect</li>
+<li>Verbreitung</li>
+<li>Widerstand (SK or toughness)</li>
+<li>Steigerungsfaktor</li>
+</ul>
+
+What do I have to enter for items?
+<ul>
+<li>Price</li>
+<li>amount</li>
+<li>weight</li>
+<li>description</li>
+</ul>
+On the details tab select the category of your item.
+
+Special attributes melee weapons:
+<ul>
+<li>Damage</li>
+<li>Attack modifier</li>
+<li>parade modifier</li>
+<li>Schadensschwelle</li>
+<li>Leiteigenschaft - select from the the list</li>
+<li>combat skill</li>
+<li>Range</li>
+<li>Efect</li>
+</ul>
+
+Special attributes range weapons:
+<ul>
+<li>damage</li>
+<li>reload actions</li>
+<li>range short/mid/long</li>
+<li>type of ammunition </li>
+<li>combat skill</li>
+<li>effect</li>
+</ul>
+
+Special attributes armors
+<ul>
+<li>Rüstungsschutz</li>
+<li>Belastung</li>
+<li>Effect</li>
+</ul>
+NOTE: Effects are currently only applicable for GE and INI
+
+What do I have to enter for creatures?
+Creatures are created on the Actors Directory.
+<ul>
+<li>Type of creature</li>
+<li>hitpoints</li>
+<li>Advantages / Disadvantages</li>
+<li>Special abilities</li>
+<li>Traits</li>
+</ul>
+
+Traits
+<ul>
+<li>category</li>
+<li>attack value</li>
+<li>damage</li>
+<li>range</li>
+<li>effect</li>
+</ul>
+
+
+<h1>Recommended Modules</h1>
+
+To have a great experience we would recommend the following free modules to be installed in your system:
+<ul>
+<li>Tokenizer</li>
+<li>Dicer</li>
+</ul>
+For an optimal gameplay DSA specific premium modules are also avaialbe.
+
+Are there specific DSA modules available in foundry?
+To increase your gaming experience for DSA in foundry vtt Ulisses offers some additional modules. These modules include content, rules, items, NPCs, maps and more.
+
+For a fast and easy start we would recommend to install the Grundregelwerk module to your system you can start right away.
+
+<h1>Character creation</h1>
+To play DSA with your friends all players require a character in foundry.
+If you already have existing characters you can transfer them manually to foundry. 
+Just create a character, enter your experience level and copy all data to your character sheet.
+
+If you do not yet have characters you can either use the prepared characters from the DSA Grundregelwerk module or create new ones with DSA in foundry.
+
+
+How do I create characters in Das Schwarze Auge?
+If you have purchased the DSA Grundregelwerk modules, the character creation is based on the character creation explained in the core rulebook: 
+<ul>
+<li>First you enter APs for your character, e.g. 1100</li>
+<li>Then you select your race from the compendium</li>
+<li>Next select your Culture from the compendium, if you want to use the culture package or enter culture name manually 
+- NOTE: Culture packs will include modification to your skills</li>
+<li>Select your profession, if you want to use a predefined profession form DSA
+- NOTE: professions include skills, advantages, disadvantages special abilities, spells / liturgies, etc.</li>
+<li>Modify your attributes, skill, special abilities, spells, etc.</li>
+<li>Drag your desired equipment to your character
+- NOTE: at this point in time DSA in foundry does not automatically deduct money from you character when dropping an item to the character sheet. So you have to keep track of your spendings</li>
+<li>Enter your background story, if you want to</li>
+<li>Start playing</li>
+</ul>
+
+If you have not purchased the DSA Grundregelwerk or any other module, you have to create all your assets as mentioned in the previous section and then follow the same steps as mentioned above.
+
+
+How can any assets be attached to my character?
+DSA in foundry allows you to drag and drop any asset (from any paid module or self created) from the Compendium packs or Item directory.
+Left click and hold the button and drag the asset to your character sheet or the map.
+
+How do I find the any asset easiest in DSA for foundry?
+The easiest way to find any asset in DSA for foundry is to use the item browser in the libary of the compendium packs. 
+There you can select what kind of asset you want to find, enter a name and all potentional assets will appear.
+From there you can drag and drop the asset to your character sheet.
+
+
+<h1>Combat</h1>
+DSA in foundry includes a module for combat encounters. To start a combat encounter, player characters and npc's need to toggle the foundry combat mode.
+The combat mode can be activated at the characters token on the map.
+
+On the combat encounter menu element each player can roll his/her iniative by clicking on the dice symbol next to their characters name.
+DSA for foundry will calculate your characters initiative for you and rank your character according to your initiative roll.
+Now each player can act according to their turn.
+If you want to know more about the foundry combat system please check out the following link: LINK
+
+Are the DSA specific combat rules included in DSA for foundry.
+YES. DSA for foundry include all combat rules specified in the DSA Grundregelwerk.
+
+Does DSA calculate the Belastung in the combat.
+Yes, Belastung due to armor, heavy weight or any other reasons are calculated.
+The calculated modification ia displayed in your attack / defense rolls.
+
+Can I modify any test / rolls?
+Yes, all test rolls, in combat or anywhere else can be modified according to the specified rules from the Grundregelwerk.
+
+How can I attack, defend or evade during combat?
+To attack, defend or evade during combat you can simply click on the button on your character sheet on the combat tab.
+Alternativly you can enter the following commands into the chat box:
+- attack:
+- defend/parry:
+- evade:
 
