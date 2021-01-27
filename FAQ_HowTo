@@ -19,6 +19,10 @@ For a fast and easy start we would recommend to install the Grundregelwerk modul
 
 How do I start my gaming session of DSA in foundry with my friends?
 To invite your friends to your gaming session you need to create an account in foundry for each of them. To do so, go to the game settings or press Esc.
+In the following dialog you can create accounts for your friends to join your session. - As of personal experience we recommend you assign your players the role trusted.
+For an easy start we recommend you assign each player a character so they start with the character from the beginning.
+Alternatively each player can create a character in the game to fit their needs.
+
 
 What do we need to play DSA in foundry?
 To play with your friends you need at least characters, some enemies (npcs) and a story.
@@ -118,10 +122,112 @@ Additional attributes for magical professions
 
 
 What do I have to enter for spells, spelltricks or rituals?
+Spells
+- Name
+- Description
+- Attribute 1
+- Attribute 2
+- Attribute 3
+- Range
+  - Modification (Yes or No)
+- Spell effect duration
+- Target category (Self, touch, sight)
+- Time to cast
+  - Modification (Yes or No)
+- AsP cost
+  - Modification (Yes or No)
+- AsP Detail
+- Aufrechterhalten
+- Effect description (display in Chat for all to see)
+- Effect
+- Verbreitung
+- Widerstand (SK or toughness)
+- Steigerungsfaktor
 
+Spelltricks
+- Name
+- Description
+- Range
+- Spell effect duration
+- Target category (Self, touch, sight)
+- Merkmal
+
+Ritual
+- Name
+- Description
+- Attribute 1
+- Attribute 2
+- Attribute 3
+- Range
+  - Modification (Yes or No)
+- Spell effect duration
+- Target category (Self, touch, sight)
+- Time to cast
+  - Modification (Yes or No)
+- AsP cost
+  - Modification (Yes or No)
+- Permanent AsP cost
+- AsP Detail
+- Aufrechterhalten
+- Effect description (display in Chat for all to see)
+- Effect
+- Verbreitung
+- Widerstand (SK or toughness)
+- Steigerungsfaktor
 
 What do I have to enter for liturgies, ceremonies and blessings?
+Blessings
+- Name
+- Description
+- Range
+- Duration
+- Target category
+- Merkmal
 
+Liturgies
+- Name
+- Description
+- Attribute 1
+- Attribute 2
+- Attribute 3
+- Range
+  - Modification (Yes or No)
+- Spell effect duration
+- Target category (Self, touch, sight, Zone)
+- Time to cast
+  - Modification (Yes or No)
+- KaP cost
+  - Modification (Yes or No)
+- AsP Detail
+- Aufrechterhalten
+- Effect description (display in Chat for all to see)
+- Effect
+- Verbreitung
+- Widerstand (SK or toughness)
+- Steigerungsfaktor
+
+Ceremonies
+- Name
+- Description
+- Attribute 1
+- Attribute 2
+- Attribute 3
+- Range
+  - Modification (Yes or No)
+- Spell effect duration
+- Target category (Self, touch, sight)
+- Time to cast
+  - Modification (Yes or No)
+- KaP cost
+  - Modification (Yes or No)
+- Permanent KaP cost
+- KaP Detail
+- Aufrechterhalten
+- Effect description (display in Chat for all to see)
+- Effect
+- Verbreitung
+- Widerstand (SK or toughness)
+- Steigerungsfaktor
 
 What do I have to enter for items?
 - Name
@@ -190,3 +296,24 @@ o	NOTE: at this point in time DSA in foundry does not automatically deduct money
 -	Start playing
 
 If you have not purchased the DSA Grundregelwerk or any other module, you have to create all your assets as mentioned in the previous section and then follow the same steps as mentioned above.
+
+
+How can any assets be attached to my character?
+DSA in foundry allows you to drag and drop any asset (from any paid module or self created) from the Compendium packs or Item directory.
+Left click and hold the button and drag the asset to your character sheet or the map.
+
+
+How can I roll attribute, skills, spells etc. in DSA for foundry?
+DSA in foundry offers you automated rolls for all relevant tests. To roll anything you have several options:
+1. click on the dice symbol next to the desired element and let the system roll for you.
+2. use one of our unique chat commands and select the desired element - see also chat commands
+The result of your roll will be displayed in the chat window to see.
+If you have any special ability / advantage / disadvantage that will impact your roll, these modifications are taken into consideration automatically.
+
+
+How can I re-roll tests using Schips/Fate Points?
+If you want to re-roll any test, you can use Schips / Fate Points to do so.
+To re-roll any test, right click on the roll result in the chat window and select "Wurf wiederholen". Next you can select the dice or dices to re-roll.
+
+
+
