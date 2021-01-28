@@ -10,11 +10,15 @@
             <div class="statusEffectMenu">
                 <a class="status-create lineheight very-small" title="{{localize 'CONDITIONS.add'}}"><i class="fas fa-plus"></i></a>
                 <ul>
+                    <li class="search">
+                        <input type="search" data-dtype="String" class="conditionSearch" placeholder="{{localize 'search'}}" />
+                    </li>
                     {{#each manualConditions as |item i|}}
                     <li>
                         <a class="status-add" data-id="{{item.id}}" title="{{localize item.label}}"><img src="{{item.icon}}" /></a>
                     </li>
                     {{/each}}
+
                 </ul>
             </div>
         </div>

@@ -180,7 +180,7 @@ export default class DSA5ChatAutoCompletion {
         }
         else {
             let types = ["meleeweapon"]
-            let result = actor.data.items.find(x => { return types.includes(x.type) && x.name == target.text })
+            let result = actor.data.items.find(x => { return types.includes(x.type) && x.name == target.text() })
             if (result) {
                 actor.setupWeapon(result, "parry", {}).then(setupData => {
                     actor.basicTest(setupData)

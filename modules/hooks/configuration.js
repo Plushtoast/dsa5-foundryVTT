@@ -44,4 +44,20 @@ export default function() {
         default: "#000000",
         type: String
     });
+    game.settings.register("dsa5", "defaultDimVision", {
+        name: "SETTINGS.defaultDimVision",
+        hint: "SETTINGS.defaultDimVisionHint",
+        scope: "world",
+        config: true,
+        default: 30,
+        type: Number
+    });
+    game.settings.register("dsa5", "defaultBrightVision", {
+        name: "SETTINGS.defaultBrightVision",
+        hint: "SETTINGS.defaultBrightVisionHint",
+        scope: "world",
+        config: true,
+        default: 20,
+        type: Number
+    });
 }

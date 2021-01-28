@@ -69,48 +69,6 @@ export default class DSA5Initializer extends Dialog {
         ui.notifications.notify(game.i18n.localize("initSkipped"))
     }
 
-    static async getBookJson(head) {
-        let result = [];
-        await DSA5Initializer.setFolderFlags()
 
-        let parent = game.folders.entities.find(x => x.name == head)
-        if (parent) {
-            if (parent.data.parent) {
-                let head = game.folders.get(parent.data.parent)
-                await parent.setFlag("dsa5", "parent", head.data.name)
-                result.push(head)
-            }
-            result.push(parent)
-            result = await DSA5Initializer.recursiveFolders(parent, result)
-
-        } else [
-            console.warn(`Folder ${head} not found`)
-        ]
-
-
-        game.folders.entities.forEach(async x => {
-            if (x.data.parent)
-                await x.setFlag("dsa5", "parent", game.folders.get(x.data.parent).data.name)
-        })
-
-        console.log(JSON.stringify(result))
-    }
-
-    static async recursiveFolders(folder, result) {
-        for (let fol of game.folders.entities.filter(x => x.data.parent == folder._id)) {
-            await fol.setFlag("dsa5", "parent", game.folders.get(fol.data.parent).data.name)
-            result.push(fol)
-            result = await DSA5Initializer.recursiveFolders(fol, result)
-        }
-        return result
-    }
-
-    static async setFolderFlags() {
-        for (let journal of game.journal.entities) {
-            if (journal.data.folder)
-                await journal.setFlag("dsa5", "parent", game.folders.get(journal.data.folder).data.name)
-        }
-
-    }
 
 }

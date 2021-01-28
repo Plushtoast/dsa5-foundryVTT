@@ -17,8 +17,8 @@ export default function() {
 
         if (createData.type == "character") {
             createData.token.vision = true;
-            createData.token.brightSight = 20;
-            createData.token.dimSight = 30;
+            createData.token.brightSight = game.settings.get('dsa5', 'defaultBrightVision');
+            createData.token.dimSight = game.settings.get('dsa5', 'defaultDimVision');
             createData.token.actorLink = true;
         }
 

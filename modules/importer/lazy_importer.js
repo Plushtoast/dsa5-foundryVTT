@@ -4,4 +4,9 @@ export default class LazyImporter {
             game.dsa5.importers = module
         })
     }
+    static async bindInitCreator() {
+        import ("./init_creator.js").then(module => {
+            game.dsa5.initCreator = module
+        })
+    }
 }

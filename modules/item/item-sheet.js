@@ -53,11 +53,49 @@ export default class ItemSheetdsa5 extends ItemSheet {
         return `systems/dsa5/templates/items/item-${type}-sheet.html`;
     }
 
+    _advanceStep() {
+        switch (this.item.type) {
+            case "advantage":
+            case "disadvantage":
+                if (this.item.data.data.step.value < this.item.data.data.max.value) {
+                    this.item.options.actor._updateAPs(this.item.data.data.APValue.value)
+                    this.item.update({ "data.step.value": this.item.data.data.step.value + 1 })
+                }
+                break
+            case "specialability":
+                if (this.item.data.data.step.value < this.item.data.data.maxRank.value) {
+                    this.item.options.actor._updateAPs(this.item.data.data.APValue.value)
+                    this.item.update({ "data.step.value": this.item.data.data.step.value + 1 })
+                }
+                break
+        }
 
+    }
+
+    _refundStep() {
+        switch (this.item.type) {
+            case "advantage":
+            case "disadvantage":
+            case "specialability":
+                if (this.item.data.data.step.value > 1) {
+                    if (this.item.options.actor.checkEnoughXP(this.item.data.data.APValue.value)) {
+                        this.item.options.actor._updateAPs(this.item.data.data.APValue.value * -1)
+                        this.item.update({ "data.step.value": this.item.data.data.step.value - 1 })
+                    }
+                }
+                break
+        }
+    }
 
     activateListeners(html) {
         super.activateListeners(html);
 
+        html.find(".advance-step").mousedown(ev => {
+            this._advanceStep()
+        })
+        html.find(".refund-step").mousedown(ev => {
+            this._refundStep()
+        })
     }
 
     async getData() {
@@ -118,8 +156,24 @@ export default class ItemSheetdsa5 extends ItemSheet {
                 data["resistances"] = DSA5.resistanceMods
                 break
         }
-
+        data.isOwned = this.item.isOwned
+        console.log(this.item)
+        if (data.isOwned) {
+            data.canAdvance = this.item.options.actor.data.canAdvance && this._advancable()
+        }
         return data;
+    }
+
+    _advancable() {
+        switch (this.item.type) {
+            case "advantage":
+            case "disadvantage":
+                return this.item.data.data.max.value > 0
+            case "specialability":
+                return this.item.data.data.maxRank.value > 0
+            default:
+                return false
+        }
     }
 
 

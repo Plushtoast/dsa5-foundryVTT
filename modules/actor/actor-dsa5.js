@@ -356,7 +356,7 @@ export default class Actordsa5 extends Actor {
                 case "meleeweapon":
                     i.weight = parseFloat((i.data.weight.value * i.data.quantity.value).toFixed(3));
                     i.toggleValue = i.data.worn.value || false;
-                    inventory.meleeweapons.items.push(i);
+                    inventory.meleeweapons.items.push(Actordsa5._prepareitemStructure(i));
                     inventory.meleeweapons.show = true;
                     totalWeight += Number(i.weight);
                     break;
@@ -607,7 +607,6 @@ export default class Actordsa5 extends Actor {
         if (Number(this.data.data.details.experience.total) - Number(this.data.data.details.experience.spent) >= cost) {
             return true
         } else if (Number(this.data.data.details.experience.total == 0)) {
-            console.log(DSA5.startXP)
             let selOptions = Object.entries(DSA5.startXP).map(([key, val]) => `<option value="${key}">${game.i18n.localize(val)} (${key})</option>`).join("")
             let template = `<p>${game.i18n.localize("Error.zeroXP")}</p><label>${game.i18n.localize('APValue')}: </label><select name ="APsel">${selOptions}</select>`
 
@@ -706,17 +705,18 @@ export default class Actordsa5 extends Actor {
                 options: options
             }
         };
-
         if (item.type == "rangeweapon") {
-            if (item.data.data.ammunitiongroup.value == "-") {
+            let itemData = item.data.data ? item.data.data : item.data
+
+            if (itemData.ammunitiongroup.value == "-") {
                 testData.extra.ammo = duplicate(item)
                 if ((testData.extra.ammo.data.quantity.value <= 0)) {
                     ui.notifications.error(game.i18n.localize("Error.NoAmmo"))
                     return
                 }
             } else {
-                testData.extra.ammo = duplicate(this.getEmbeddedEntity("OwnedItem", item.data.data.currentAmmo.value))
-                if (!testData.extra.ammo || item.data.data.currentAmmo.value == "" || testData.extra.ammo.data.quantity.value <= 0) {
+                testData.extra.ammo = duplicate(this.getEmbeddedEntity("OwnedItem", itemData.currentAmmo.value))
+                if (!testData.extra.ammo || itemData.currentAmmo.value == "" || testData.extra.ammo.data.quantity.value <= 0) {
                     ui.notifications.error(game.i18n.localize("Error.NoAmmo"))
                     return
                 }
@@ -1356,6 +1356,13 @@ export default class Actordsa5 extends Actor {
         });
     }
 
+    static _prepareitemStructure(item) {
+        if (item.data.structure.max != 0) {
+            item.structureMax = item.data.structure.max
+            item.structureCurrent = item.data.structure.value
+        }
+        return item
+    }
 
     static _prepareMeleetrait(item) {
         item.attack = Number(item.data.at.value)
@@ -1377,6 +1384,7 @@ export default class Actordsa5 extends Actor {
                 item.damageAdd = (item.damageAdd > 0 ? "+" : "") + item.damageAdd
             }
         }
+
         return item;
     }
 

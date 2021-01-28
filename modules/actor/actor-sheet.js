@@ -28,6 +28,7 @@ export default class ActorSheetDsa5 extends ActorSheet {
         $(this._element).find(".configure-token").attr("title", game.i18n.localize("SHEET.Token"));
         $(this._element).find(".import").attr("title", game.i18n.localize("SHEET.Import"));
         $(this._element).find(".locksheet").attr("title", game.i18n.localize("SHEET.Lock"));
+        $(this._element).find(".library").attr("title", game.i18n.localize("SHEET.Library"));
     }
 
     static
@@ -301,19 +302,29 @@ export default class ActorSheetDsa5 extends ActorSheet {
         return result
     }
 
+    async _openLibrary() {
+        game.dsa5.itemLibrary.render(true)
+    }
+
     _getHeaderButtons() {
         let buttons = super._getHeaderButtons();
         if (this.actor.data.canAdvance) {
             buttons.unshift({
+                class: "library",
+                icon: `fas fa-university`,
+                onclick: async ev => this._openLibrary(ev)
+            })
+            buttons.unshift({
                 class: "locksheet",
                 icon: `fas fa-${this.actor.data.data.sheetLocked.value ? "" : "un"}lock`,
-                onclick: async ev => this.changeAdvanceLock(ev)
+                onclick: async ev => this._changeAdvanceLock(ev)
             })
+
         }
         return buttons
     }
 
-    async changeAdvanceLock(ev) {
+    async _changeAdvanceLock(ev) {
         this.actor.update({ "data.sheetLocked.value": !this.actor.data.data.sheetLocked.value })
         $(ev.currentTarget).find("i").toggleClass("fa-unlock fa-lock")
     }
@@ -360,7 +371,10 @@ export default class ActorSheetDsa5 extends ActorSheet {
         });
 
         html.find(".status-create").click(ev => {
-            $(ev.currentTarget).closest(".statusEffectMenu").find('ul').fadeIn()
+            let menu = $(ev.currentTarget).closest(".statusEffectMenu").find('ul')
+            menu.fadeIn('fast', function() {
+                menu.find('input').focus()
+            })
         })
         html.find(".statusEffectMenu ul").mouseleave(ev => {
             $(ev.currentTarget).fadeOut()
@@ -661,6 +675,12 @@ export default class ActorSheetDsa5 extends ActorSheet {
         });
         let filterTalents = ev => this._filterTalents($(ev.currentTarget))
         html.find('.talentSearch')[0].addEventListener("search", filterTalents, false);
+
+        html.find('.conditionSearch').keyup(event => {
+            this._filterConditions($(event.currentTarget))
+        });
+        let filterConditions = ev => this._filterConditions($(ev.currentTarget))
+        html.find('.conditionSearch')[0].addEventListener("search", filterConditions, false);
     }
 
     _filterTalents(tar) {
@@ -676,6 +696,19 @@ export default class ActorSheetDsa5 extends ActorSheet {
                 talents.addClass("filterfull")
             } else
                 talents.removeClass("filterfull")
+        }
+    }
+
+    _filterConditions(tar) {
+        console.log(tar)
+        if (tar.val() != undefined) {
+            let val = tar.val().toLowerCase().trim()
+            let conditions = $(this.form).find('.statusEffectMenu li:not(.search)')
+            console.log(conditions)
+            conditions.removeClass('filterHide')
+            conditions.filter(function() {
+                return $(this).find('a').attr('title').toLowerCase().trim().indexOf(val) == -1
+            }).addClass('filterHide')
         }
     }
 
