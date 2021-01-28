@@ -1,337 +1,354 @@
-What is Das Schwarze Auge (DSA) and what's Das Schwarze Auge in Foundry?
+
+WIKI FORMATIERUNG
+# What is Das Schwarze Auge (DSA) and what's Das Schwarze Auge in Foundry?  
 
 Das Schwarze Auge is a roleplaying game invented in the 80’s currently in the 5th edition and is published by Ulisses Spiele.
-Das Schwarze Auge in Foundry is an implementation of the roleplaying game in the virtual tabletop system of foundry vtt. The Das Schwarze Auge implementation in foundry has been developed in ABSTIMMUNG with Ulisses Spiele.
+Das Schwarze Auge in Foundry is an implementation of the roleplaying game in the virtual tabletop system of foundry vtt. The Das Schwarze Auge implementation in foundry has been developed in coordination with Ulisses Spiele.   
 
-What do we need to play DSA in foundry?
+## What do we need to play DSA in foundry?  
 To play with your friends you need at least characters, some enemies (npcs) and a story.
+
+To learn more about how to start a game check out our QUICK START section.
+
 To really enjoy all features of the game you require:
--	Advantages
--	Disadvantages
--	Special abilities
--	cultures
--	Professions
--	Spells, spelltricks and rituals
--	Liturgies, ceremonies and blessings
--	Items
--	Creatuers, natural weapons and traits
-
-How do I get all the required elements to play DSA?
-Easiest way to start playing DSA with the required assets is to purchase the Grundregelwerk module from Ulisses (link).
-This module includes everything required to enjoy a good game of DSA in foundry vtt.
-
-Alternatively, you can create all these assets manually.
+* Advantages
+* Disadvantages
+* Special abilities
+* cultures
+* Professions
+* Spells, spelltricks and rituals
+* Liturgies, ceremonies and blessings
+* Items
+* Creatures, natural weapons and traits
 
 
 
-<h1>Quick Start</h1>
-How can I play DSA in foundry VTT?
+# Quick Start  
+
+## How can I play DSA in foundry VTT?
 To play DSA in foundry VTT you need to install the game pack and create a new world featuring DSA.
 The game manifest can be found within the game library of foundry vtt or under the following link: LINKDSA
+  
 
-Are any additional modules required to play DSA?
+## Are any additional modules required to play DSA? 
 To play DSA in foundry vtt no additional modules are required. 
 If you want to know more about recommended modules please check out the recommended module section.
 
 
-How do I start my gaming session of DSA in foundry with my friends?
-To invite your friends to your gaming session you need to create an account in foundry for each of them. To do so, go to the game settings or press Esc.
-In the following dialog you can create accounts for your friends to join your session. - As of personal experience we recommend you assign your players the role trusted.
-Once the players have logged in the game you can assign them a character so they can directly enjoy the game.
-Alternatively each player can create a character in the game to fit their needs.
+## How do I start my gaming session of DSA in foundry with my friends?  
+| What to do  | |
+| ------------- | ------------- |
+| To invite your friends to your gaming session you need to create an account in foundry for each of them. To do so, go to the game settings or press Esc.  | IMAGE 1  |
+|In the following dialog you can create accounts for your friends to join your session. - As of personal experience we recommend you assign your players the role trusted.| IMAGE 2|
+|Once the players have logged in the game you can assign them a character so they can directly enjoy the game.| IMAGE 3|
+|Alternatively each player can create a character in the game to fit their needs.| Please refer to section character creation |
 
 
-<h1>Game configuration</h1>
+
+# Game configuration
 To be able to play DSA in foundry you require a list of assets including advantages, special abilities, professions, cultures or items.
-There are two options to obtain all neccesary assets:
+There are two options to obtain all necessary assets:
 1. You can purchase prepared modules from Ulisses such as the Das Schwarze Auge Grundregelwerk and import the assets
-2. You can create all assets manually for your system
+1. You can create all assets manually for your system
 
-How do I create necessary assets for DSA in foundry:
-To create any assets g to the items Directory and create item. Selecet the category you want to create and enter a name and press ok.
+## How do I create necessary assets for DSA in foundry?  
+
+To create any assets in DSA for foundry go to the items Directory and create item. Select the category you want to create and enter a name and press ok.  
+
+IMAGE ITEMS DIRECTORY
+
 Depending on the type of assets you have to enter the necessary details to the asset.
 
-What type of assets can be created?
-DSA offers a varaity of different assets for your game:
-<ul>
-<li>advantages / disadvantages</li>
-<li>cultures</li>
-<li>professions / careers</li>
-<li>special abilities</li>
-<li>spells, spelltricks or rituals</li>
-<li>liturgies, ceremonies and blessings</li>
-<li>items, weapons, armors, poisons</li>
-<li>creatures, traits for creatures (attacks, armors, special abilities)</li>
-</ul>
+## What type of assets can be created?
+DSA offers a variety of different assets for your game:
+| Element  | Description | 
+| ------------- | ------------- | 
+| advantages / disadvantages | Advantages and disadvantages give your character an edge or a hindrance |
+| cultures | Where your character is from in Aventurien. Each region |
+| professions | The profession of your character describes, what he does for a living besides being an adventurer and what he/she learned in the past |
+| special abilities | Special abilities enhance your character, e.g. give them a powerful attack. Special abilities are also all languages and reading skills of your character |
+| spells, spelltricks or rituals | Magicians can cast spells, spelltricks or rituals |
+| liturgies, ceremonies and blessings | Priests of the 12 gods can cast liturgies, ceremonies or bless people |
+| items, weapons, armors, poisons | Everything you need as an adventurer |
+| creatures, traits for creatures (attacks, armors, special abilities) | Animals, demons, other creatures and dragons |
+ 
 
-What information do I need to create assets for DSA in foundry?
+## What information do I need to create assets for DSA in foundry?  
 Assets in DSA for foundry require different information to be created.
 All assets require at least
-<ul>
-<li>Name</li>
-<li>Description</li>
-</ul>
+
+| Element  | Description | 
+| ------------- | ------------- | 
+| Name | Name of the asset, will be entered in the item browser  |
+| Description  | Description of the esset  | 
+
 Depending on the kind of asset you want to create different information are required as well.
 
-What do I have to enter for advantages / disadvantages?
-<ul>
-<li>AP-value</li>
-<li>maximum level</li>
-NOTE: if only one level is available leave 0
-<li>requirements</li>
-<li>effect</li>
-</ul>
+### What do I have to enter for advantages / disadvantages?
+Advantages and disadvantages impact your character in many ways.
+Choose them carefully. :)
+To create advantages or disadvantages you need to enter the following details as well:
+| Element  | Description | 
+| ------------- | ------------- | 
+| AP-value | AP cost or bonus when choosing this asset  | 
+| maximum level  | Some advantages / disadvantages can have several levels, enter the amount of levels here. NOTE: if only one level is available leave 0  | 
+| requirements* | Some advantages / disadvantages can only be selected when certain requirements are met, enter them here.  | 
+| effect | If your advantage / disadvantage has an in-game modifcation you can enter them here.*  |
+*For details on how to enter effects / requirements, check out our effect how to: LINK
 
-What do I have to enter for special abilities?
-<ul>
-<li>AP-value</li>
-<li>requirements</li>
-<li>category*</li>
-<li>rule text</li>
-<li>maximum level</li>
-NOTE: if only one level is available leave 0
-<li>effect</li>
-</ul>
-*combat special abilities can be linked to a combat skill
+### What do I have to enter for special abilities?  
+In DSA for foundry special abilities of all categories are created as special abilities.  
+IMAGE SPECIAL ABILITY
+
+| Element  | Description | 
+| ------------- | ------------- | 
+| AP-value | AP cost or bonus when choosing this asset  | 
+| requirements* | Some special abilities can only be selected when certain requirements are met, enter them here.  | 
+| category | @JAN: WELCHE GIBT ES ALLES  | 
+| rule text | The rule text can be displayed in the chat window for all players / gm to be seen.  | 
+| maximum level  | Some special abilities can have several levels, enter the amount of levels here. NOTE: if only one level is available leave 0  | 
+| effect | If your special ability has an in-game modifcation you can enter them here.*  | 
+| Combat skill | Combat special abilities can be linked to a combat skill   | 
+
+*For details on how to enter effects / requirements, check out our effect how to: LINK
 
 
-What do I have to enter for cultures
-<ul>
-<li>ap value</li>
-<li>language*</li>
-<li>writing*</li>
-<li>local town knowledge**</li>
-<li>suitable professions***</li>
-<li>social status</li>
-<li>suitable advantages***</li>
-<li>suitable disadvantages***</li>
-<li>unsuitable advantages***</li>
-<li>unsuitable disadvantages***</li>
-<li>suitable talents***</li>
-<li>unsuitable talents***</li>
-<li>selected talents***</li>
-</ul>
-* language / writing must be set up as special abilities earlier
-** leave empty if player can enter text manually
-*** separate by ,
+### What do I have to enter for cultures  
+IMAGE CULTURES
 
-What do I have to enter for professions/careers?
-<ul>
-<li>optional picture</li>
-<li>ap value</li>
-<li>language points included</li>
-<li>suitable advantages***</li>
-<li>suitable disadvantages***</li>
-<li>unsuitable advantages***</li>
-<li>unsuitable disadvantages***</li>
-<li>talents***</li>
-<li>combat skills***</li>
-<li>special abilities**/***</li>
-<li>Magical abilities: magic/mundane/clerical</li>
-</ul>
+| Element  | Description | 
+| ------------- | ------------- | 
+| AP-value | AP cost or bonus when choosing this asset  |
+| language* | The language / languages spoken in this culture. If the character can choose between languages XXX@JAN |
+| writing* | The script available in the culture |
+| local town knowledge** | @JAN |
+| suitable professions*** | List all possible professions this culture knows |
+| social status | Some cultures have slaves or noblemen |
+| suitable advantages*** | Advantages usually recognized with this culture, e.g. Thorwals are tough |
+| suitable disadvantages*** | Disadvantages usually recognized with this culture, e.g. Thorwals superstitious |
+| unsuitable advantages*** | Advantages not recognized with this culture |
+| unsuitable disadvantages*** | Disadvantages not recognized with this culture |
+| suitable talents*** | Talents members of this culture usually possess |
+| unsuitable talents*** | Talents members in this culture do not know |
+| selected talents*** | Talents players will receive when selecting this culture |
+ 
+*language / writing must be set up as special abilities earlier
+**leave empty if player can enter text manually
+***separate by ,
 
-Additional attributes for clerical professions:
-<ul>
-<li>Leiteigenschaft</li>
-<li>Tradition</li>
-<li>Aspekt</li>
-<li>wohlgefällige Talente</li>
-<li>Liturgies</li>
-<li>Blessings</li>
-</ul>
+### What do I have to enter for professions/careers?
+| Element  | Description | 
+| ------------- | ------------- | 
+| optional picture | To make your profession more recognizable you can upload a picture. If you purchase the Grundregelwerk, all professions will come with a picture |
+| AP-value | AP cost or bonus when choosing this asset |
+| language points included | @JAN |
+| suitable advantages*** | Advantages usually recognized with this profession |
+| suitable disadvantages*** | Disadvantages usually recognized with this profession |
+| unsuitable advantages*** | Advantages not recognized with this profession|
+| unsuitable disadvantages*** | Disadvantages not recognized with this profession|
+| talents*** | Talents a character receives when choosing this profession |
+| combat skills*** | Combat skills a character receives when choosing this profession |
+| special abilities**/*** | Special abilities  character receives when choosing this profession |
+| Magical abilities | Select if this profession is magical/mundane/clerical |
+ 
+Additional attributes for clerical professions:  
+IMG CLERICAL PROFESSION  
+
+| Element  | Description | 
+| ------------- | ------------- | 
+| Leiteigenschaft | Main attribute of the religion, e.g. strength  |
+| Tradition | Tradition of the god, e.g. Rondrakirche |
+| Aspekt | Aspects of the god. Each god is assigned with several aspects |
+| wohlgefällige Talente | Talents the god approves of  |
+| Liturgies | Liturgies the character will receive when choosing this profession |
+| Blessings | List of all blessings the character receives when choosing this profession |
+ 
 
 Additional attributes for magical professions
-<ul>
-<li>Leiteigenschaft</li>
-<li>Tradition</li>
-<li>Merkmal</li>
-<li>Spells</li>
-<li>Spelltricks</li>
-<li>Number of Spelltricks</li>
-</ul>
+| Element  | Description | 
+| ------------- | ------------- | 
+| Leiteigenschaft | Main attribute of the religion, e.g. strength |
+| Tradition | Tradition of the magician, e.g. Elf |
+| Merkmal | @JAN |
+| Spells | Spells the character receives when choosing this profession |
+| Spelltricks | Spelltricks the character receives / can choose from when choosing this profession |
+| Number of Spelltricks | Usually characters only receive limited amount of spelltricks, enter the amount here. |
+ 
 
-What do I have to enter for spells, spelltricks or rituals?
-Spells
-<ul>
-<li>Attribute 1</li>
-<li>Attribute 2</li>
-<li>Attribute 3</li>
-<li>Range
-  - Modification (Yes or No)</li>
-<li>Spell effect duration</li>
-<li>Target category (Self, touch, sight)</li>
-<li>Time to cast
-  - Modification (Yes or No)</li>
-<li>AsP cost
-  - Modification (Yes or No)</li>
-<li>AsP Detail</li>
-<li>Aufrechterhalten</li>
-<li>Effect description (display in Chat for all to see)</li>
-<li>Effect</li>
-<li>Verbreitung</li>
-<li>Widerstand (SK or toughness)</li>
-<li>Steigerungsfaktor</li>
-</ul>
+### What do I have to enter for spells, spelltricks or rituals?  
 
-Spelltricks
-<ul>
-<li>Range</li>
-<li>Spell effect duration</li>
-<li>Target category (Self, touch, sight)</li>
-<li>Merkmal</li>
-</ul>
+ Spells
+| Element  | Description | 
+| ------------- | ------------- | 
+| Attribute 1 | Attribute to cast the spell |
+| Attribute 2 | Attribute to cast the spell |
+| Attribute 3 | Attribute to cast the spell |
+| Range | Range in yard of the spell; with some spells the range can be modified: Modification (Yes or No) |
+| Spell effect duration | @JAN |
+| Target category | Some spells can be cast on only the character, some via touch, some to a distance: Self, touch, sight @JAN |
+| Time to cast | KR to cast the spell, some spell cast durations can be modified: Modification (Yes or No) |
+| AsP cost | AsP cost of the spell, some spells require an initial amount of AsPs and some to keep the spell running, the cost of spells can be modified: Modification (Yes or No) |
+| AsP Detail | @JAN |
+| Aufrechterhalten | If the spell can be kept active for a time, enter additional AsP costs here |
+| Effect description | Spell effect description to display in Chat for all to see |
+| Effect | enter the effect details here, e.g. 2d6 damage |
+| Verbreitung | Who knows the spell: @JAN |
+| Widerstand  | How to resist the spell: SK or toughness |
+| Steigerungsfaktor | Cost of AP to increase the level of the spell: A, B, C, D |
+ 
 
-Ritual
-<ul>
-<li>Attribute 1</li>
-<li>Attribute 2</li>
-<li>Attribute 3</li>
-<li>Range
-  - Modification (Yes or No)</li>
-<li>Spell effect duration</li>
-<li>Target category (Self, touch, sight)</li>
-<li>Time to cast
-  - Modification (Yes or No)</li>
-<li>AsP cost
-  - Modification (Yes or No)</li>
-<li>Permanent AsP cost</li>
-<li>AsP Detail</li>
-<li>Aufrechterhalten</li>
-<li>Effect description (display in Chat for all to see)</li>
-<li>Effect</li>
-<li>Verbreitung</li>
-<li>Widerstand (SK or toughness)</li>
-<li>Steigerungsfaktor</li>
-</ul>
+ Spelltricks
+| Element  | Description | 
+| ------------- | ------------- | 
+| Range | Range in yard of the spelltrick |
+| Spell effect duration | @JAN |
+| Target category | Some spellstricks can be cast on only the character, some via touch, some to a distance: Self, touch, sight @JAN |
+| Merkmal | @MALTE: Liste rein kopieren |
+ 
 
-What do I have to enter for liturgies, ceremonies and blessings?
-Blessings
-<ul>
-<li>Range</li>
-<li>Duration</li>
-<li>Target category</li>
-<li>Merkmal</li>
-</ul>
+ Ritual
+| Element  | Description | 
+| ------------- | ------------- | 
+| Attribute 1 | Attribute to cast the ritual |
+| Attribute 2 | Attribute to cast the ritual |
+| Attribute 3 | Attribute to cast the ritual |
+| Range | Range in yard of the ritual; with some spells the range can be modified: Modification (Yes or No)  |
+| Spell effect duration | @JAN |
+| Target category | Some rituals can be cast on only the character, some via touch, some to a distance: Self, touch, sight @JAN |
+| Time to cast | @JAN   to cast the spell, some spell cast durations can be modified: Modification (Yes or No)  |
+| AsP cost | sP cost of the spell, some spells require an initial amount of AsPs and some to keep the spell running, the cost of spells can be modified: Modification (Yes or No) |
+| Permanent AsP cost | Some rituals require permanent sacrifice of AsP. Enter them here |
+| AsP Detail | @JAN |
+| Aufrechterhalten | If the ritual can be kept active for a time, enter additional AsP costs here |
+| Effect description | Ritual effect description to display in Chat for all to see  |
+| Effect | enter the effect details here, e.g. 2d6 damage |
+| Verbreitung | Who knows the spell: @JAN |
+| Widerstand  | How to resist the spell: SK or toughness |
+| Steigerungsfaktor | Cost of AP to increase the level of the ritual: A, B, C, D |
+ 
 
-Liturgies
-<ul>
-<li>Attribute 1</li>
-<li>Attribute 2</li>
-<li>Attribute 3</li>
-<li>Range
-  - Modification (Yes or No)</li>
-<li>Spell effect duration</li>
-<li>Target category (Self, touch, sight, Zone)</li>
-<li>Time to cast
-  - Modification (Yes or No)</li>
-<li>KaP cost
-  - Modification (Yes or No)</li>
-<li>AsP Detail</li>
-<li>Aufrechterhalten</li>
-<li>Effect description (display in Chat for all to see)</li>
-<li>Effect</li>
-<li>Verbreitung</li>
-<li>Widerstand (SK or toughness)</li>
-<li>Steigerungsfaktor</li>
-</ul>
+###What do I have to enter for liturgies, ceremonies and blessings?  
 
-Ceremonies
-<ul>
-<li>Attribute 1</li>
-<li>Attribute 2</li>
-<li>Attribute 3</li>
-<li>Range
-  - Modification (Yes or No)</li>
-<li>Spell effect duration</li>
-<li>Target category (Self, touch, sight)</li>
-<li>Time to cast
-  - Modification (Yes or No)</li>
-<li>KaP cost
-  - Modification (Yes or No)</li>
-<li>Permanent KaP cost</li>
-<li>KaP Detail</li>
-<li>Aufrechterhalten</li>
-<li>Effect description (display in Chat for all to see)</li>
-<li>Effect</li>
-<li>Verbreitung</li>
-<li>Widerstand (SK or toughness)</li>
-<li>Steigerungsfaktor</li>
-</ul>
+ Blessings
+| Element  | Description | 
+| ------------- | ------------- | 
+| Range | text |
+| Duration | text |
+| Target category | text |
+| Merkmal | text |
+ 
 
-What do I have to enter for items?
-<ul>
-<li>Price</li>
-<li>amount</li>
-<li>weight</li>
-<li>description</li>
-</ul>
+ Liturgies
+| Element  | Description | 
+| ------------- | ------------- | 
+| Attribute 1 | text |
+| Attribute 2 | text |
+| Attribute 3 | text |
+| Range | Modification (Yes or No) |
+| Spell effect duration | text |
+| Target category (Self, touch, sight, Zone) | text |
+| Time to cast | Modification (Yes or No) |
+| KaP cost | Modification (Yes or No) |
+| AsP Detail | text |
+| Aufrechterhalten | text |
+| Effect description (display in Chat for all to see) | text |
+| Effect | text |
+| Verbreitung | text |
+| Widerstand (SK or toughness) | text |
+| Steigerungsfaktor | text |
+ 
+
+ Ceremonies
+| Element  | Description | 
+| ------------- | ------------- | 
+| Attribute 1 | text |
+| Attribute 2 | text |
+| Attribute 3 | text |
+| Range | Modification (Yes or No) |
+| Spell effect duration | text |
+| Target category (Self, touch, sight) | text |
+| Time to cast | Modification (Yes or No) |
+| KaP cost | Modification (Yes or No) |
+| Permanent KaP cost | text |
+| KaP Detail | text |
+| Aufrechterhalten | text |
+| Effect description (display in Chat for all to see) | text |
+| Effect | text |
+| Verbreitung | text |
+| Widerstand (SK or toughness) | text |
+| Steigerungsfaktor | text |
+ 
+
+###What do I have to enter for items?
+| Element  | Description | 
+| ------------- | ------------- | 
+| Price | Price in silver of the item |
+| amount | How many do you purchase, e.g. 1 for a sword or 20 for arrows |
+| weight | Weight of the item in stone, e.g. 0.05 |
+| description | Description of the item |
+ 
 On the details tab select the category of your item.
 
-Special attributes melee weapons:
-<ul>
-<li>Damage</li>
-<li>Attack modifier</li>
-<li>parade modifier</li>
-<li>Schadensschwelle</li>
-<li>Leiteigenschaft - select from the the list</li>
-<li>combat skill</li>
-<li>Range</li>
-<li>Efect</li>
-</ul>
+ Special attributes melee weapons: @JAN
+| Element  | Description | 
+| ------------- | ------------- | 
+| Damage | Damage value of the weapon, e.g. 1d6+4 |
+| Attack modifier | text |
+| parade modifier | text |
+| Schadensschwelle | text |
+| Leiteigenschaft | select from the the list |
+| combat skill | text |
+| Range | text |
+| Efect | text |
+ 
 
-Special attributes range weapons:
-<ul>
-<li>damage</li>
-<li>reload actions</li>
-<li>range short/mid/long</li>
-<li>type of ammunition </li>
-<li>combat skill</li>
-<li>effect</li>
-</ul>
+ Special attributes range weapons: @JAN
+| Element  | Description | 
+| ------------- | ------------- | 
+| damage | text |
+| reload actions | text |
+| range short/mid/long | text |
+| type of ammunition  | text |
+| combat skill | text |
+| effect | text |
+ 
 
-Special attributes armors
-<ul>
-<li>Rüstungsschutz</li>
-<li>Belastung</li>
-<li>Effect</li>
-</ul>
+ Special attributes armors @JAN
+| Element  | Description | 
+| ------------- | ------------- | 
+| Rüstungsschutz | text |
+| Belastung | text |
+| Effect | text |
+ 
 NOTE: Effects are currently only applicable for GE and INI
 
-What do I have to enter for creatures?
-Creatures are created on the Actors Directory.
-<ul>
-<li>Type of creature</li>
-<li>hitpoints</li>
-<li>Advantages / Disadvantages</li>
-<li>Special abilities</li>
-<li>Traits</li>
-</ul>
+### What do I have to enter for creatures?  
 
-Traits
-<ul>
-<li>category</li>
-<li>attack value</li>
-<li>damage</li>
-<li>range</li>
-<li>effect</li>
-</ul>
+Creatures are created on the Actors Directory.  
 
+IMAGE Actors Directory
+@JAN
+| Element  | Description | 
+| ------------- | ------------- | 
+| Type of creature | text |
+| hitpoints | text |
+| Advantages / Disadvantages | text |
+| Special abilities | text |
+| Traits | text |
+ 
 
-<h1>Recommended Modules</h1>
+ Traits @ JAN
+| Element  | Description | 
+| ------------- | ------------- | 
+| category | text |
+| attack value | text |
+| damage | text |
+| range | text |
+| effect | text |
+ 
 
-To have a great experience we would recommend the following free modules to be installed in your system:
-<ul>
-<li>Tokenizer</li>
-<li>Dicer</li>
-</ul>
-For an optimal gameplay DSA specific premium modules are also avaialbe.
+# Character creation  
 
-Are there specific DSA modules available in foundry?
-To increase your gaming experience for DSA in foundry vtt Ulisses offers some additional modules. These modules include content, rules, items, NPCs, maps and more.
-
-For a fast and easy start we would recommend to install the Grundregelwerk module to your system you can start right away.
-
-<h1>Character creation</h1>
 To play DSA with your friends all players require a character in foundry.
 If you already have existing characters you can transfer them manually to foundry. 
 Just create a character, enter your experience level and copy all data to your character sheet.
@@ -339,80 +356,108 @@ Just create a character, enter your experience level and copy all data to your c
 If you do not yet have characters you can either use the prepared characters from the DSA Grundregelwerk module or create new ones with DSA in foundry.
 
 
-How do I create characters in Das Schwarze Auge?
+## How do I create characters in Das Schwarze Auge?  
+
 If you have purchased the DSA Grundregelwerk modules, the character creation is based on the character creation explained in the core rulebook: 
-<ul>
-<li>First you enter APs for your character, e.g. 1100</li>
-<li>Then you select your race from the compendium</li>
-<li>Next select your Culture from the compendium, if you want to use the culture package or enter culture name manually 
-- NOTE: Culture packs will include modification to your skills</li>
-<li>Select your profession, if you want to use a predefined profession form DSA
-- NOTE: professions include skills, advantages, disadvantages special abilities, spells / liturgies, etc.</li>
-<li>Modify your attributes, skill, special abilities, spells, etc.</li>
-<li>Drag your desired equipment to your character
-- NOTE: at this point in time DSA in foundry does not automatically deduct money from you character when dropping an item to the character sheet. So you have to keep track of your spendings</li>
-<li>Enter your background story, if you want to</li>
-<li>Start playing</li>
-</ul>
+1. First you enter APs for your character, e.g. 1100  
+IMAGE NEW CHAR
+
+1. Then you select your race from the compendium by dragging it from the compendium to your character sheet  
+IMAGE DRAG RACE  
+Note: The races require you to select a trait, follow the race description screen
+
+1. Next select your Culture by dragging it from the compendium, if you want to use the culture package or enter culture name manually  
+IMAGE DRAG CULTURE  
+NOTE: Culture packs will include modification to your skills
+
+1. Select your profession by dragging it from the compendium, if you want to use a predefined profession form DSA  
+IMAGE PROFESSION  
+NOTE: professions include skills, advantages, disadvantages special abilities, spells / liturgies, etc.
+
+1. Modify your attributes, skill
+1. Choose advantages / disadvantages, special abilities, spells, liturgies and drag them from the compendium to your character sheet 
+1. Drag your desired equipment to your character  
+NOTE: at this point in time DSA in foundry does not automatically deduct money from you character when dropping an item to the character sheet. So you have to keep track of your spendings
+1. Enter your background story, if you want to
+1. Start playing
+ 
 
 If you have not purchased the DSA Grundregelwerk or any other module, you have to create all your assets as mentioned in the previous section and then follow the same steps as mentioned above.
 
 
-How can any assets be attached to my character?
+## How can any assets be attached to my character?
 DSA in foundry allows you to drag and drop any asset (from any paid module or self created) from the Compendium packs or Item directory.
-Left click and hold the button and drag the asset to your character sheet or the map.
+Left click and hold the button and drag the asset to your character sheet or the map.  
+IMAGE DRAG AND DROP
 
-How do I find the any asset easiest in DSA for foundry?
-The easiest way to find any asset in DSA for foundry is to use the item browser in the libary of the compendium packs. 
-There you can select what kind of asset you want to find, enter a name and all potentional assets will appear.
+## How do I find the any asset easiest in DSA for foundry?
+The easiest way to find any asset in DSA for foundry is to use the item browser in the library of the compendium packs. 
+There you can select what kind of asset you want to find, enter a name and all potential assets will appear.  
+IMAGE LIBRARY  
 From there you can drag and drop the asset to your character sheet.
 
 
-<h1>Combat</h1>
-DSA in foundry includes a module for combat encounters. To start a combat encounter, player characters and npc's need to toggle the foundry combat mode.
-The combat mode can be activated at the characters token on the map.
 
-On the combat encounter menu element each player can roll his/her iniative by clicking on the dice symbol next to their characters name.
-DSA for foundry will calculate your characters initiative for you and rank your character according to your initiative roll.
-Now each player can act according to their turn.
-If you want to know more about the foundry combat system please check out the following link: LINK
+# Combat  
+DSA in foundry includes a module for combat encounters. To start a combat encounter, player characters and npc's need to toggle the foundry combat mode.  
+The combat mode can be activated at the characters token on the map.  
+IMG TOGGLE COMBAT MODE
+  
+On the combat encounter menu element each player can roll his/her iniative by clicking on the dice symbol next to their characters name.  
+IMG COMBAT ENCOUNTER  
+ 
+DSA for foundry will calculate your characters initiative for you and rank your character according to your initiative roll.  
+Now each player can act according to their turn.  
+If you want to know more about the foundry combat system please check out the following link: LINK  
 
-Are the DSA specific combat rules included in DSA for foundry.
+## Are the DSA specific combat rules included in DSA for foundry.  
 YES. DSA for foundry include all combat rules specified in the DSA Grundregelwerk.
 
-Does DSA calculate the Belastung in the combat.
-Yes, Belastung due to armor, heavy weight or any other reasons are calculated.
-The calculated modification ia displayed in your attack / defense rolls.
+## Does DSA calculate the Belastung in the combat.
+Yes, Belastung due to armor, heavy weight or any other reasons are calculated.  
+The calculated modification ia displayed in your attack / defense rolls.  
+IMG ATTACK ROLL WITH BELASTUNG
 
-Can I modify any test / rolls?
-Yes, all test rolls, in combat or anywhere else can be modified according to the specified rules from the Grundregelwerk.
+## Can I modify any test / rolls?
+Yes, all test rolls, in combat or anywhere else can be modified according to the specified rules from the Grundregelwerk.  
+IMG ATTACK ROLL  
 
-How can I attack, defend or evade during combat?
-To attack, defend or evade during combat you can simply click on the button on your character sheet on the combat tab.
+## How can I attack, defend or evade during combat?
+To attack, defend or evade during combat you can simply click on the button on your character sheet on the combat tab.  
+IMG ATTACK/DEFEND EVADE  
+
 Alternativly you can enter the following commands into the chat box:
-- attack:
-- defend/parry:
-- evade:
+* attack:
+* defend/parry:
+* evade:
 
-Can special combat abilities be used in DSA for foundry?
-Yes, special abilities, if configured correctly, can be used and selected when attacking an opponent.
+## Can special combat abilities be used in DSA for foundry?
+Yes, special abilities, if configured correctly, can be used and selected when attacking an opponent.  
+IMG ATTACK SCREEN
 
 
-
-<h1>Game mechanics</h1>
-DSA in foundry follows the same game mechanics as any ohter game in foundry.
+# Game mechanics  
+DSA in foundry follows the same game mechanics as any ohter game in foundry.  
 For more details on general game machanics please check out the following link: LINK foundry
 
 
-How can I roll attribute, skills, spells etc. in DSA for foundry?
+## How can I roll attribute, skills, spells etc. in DSA for foundry?  
 DSA in foundry offers you automated rolls for all relevant tests. To roll anything you have several options:
-1. click on the dice symbol next to the desired element and let the system roll for you.
-2. use one of our unique chat commands and select the desired element - see also chat commands
-The result of your roll will be displayed in the chat window to see.
-If you have any special ability / advantage / disadvantage that will impact your roll, these modifications are taken into consideration automatically.
+1. click on the dice symbol next to the desired element and let the system roll for you.  
+IMG CHAR SHEET  
+
+1. use one of our unique chat commands and select the desired element - see also chat commands  
+IMG CHAT COMMANDS  
+
+The result of your roll will be displayed in the chat window to see.  
+
+If you have any special ability / advantage / disadvantage that will impact your roll, these modifications are taken into consideration automatically.  
+IMG AUTO REROLL WITH DESCRIPTION
 
 
-How can I re-roll tests using Schips/Fate Points?
-If you want to re-roll any test, you can use Schips / Fate Points to do so.
-To re-roll any test, right click on the roll result in the chat window and select "Wurf wiederholen". Next you can select the dice or dices to re-roll.
+## How can I re-roll tests using Schips/Fate Points?  
 
+If you want to re-roll any test, you can use Schips / Fate Points to do so.  
+
+To re-roll any test, right click on the roll result in the chat window and select "Wurf wiederholen". Next you can select the dice or dices to re-roll.  
+IMG RE-ROLL
