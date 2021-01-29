@@ -37,9 +37,9 @@ If you want to know more about recommended modules please check out the recommen
 ## How do I start my gaming session of DSA in foundry with my friends?  
 | What to do  | |
 | ------------- | ------------- |
-| To invite your friends to your gaming session you need to create an account in foundry for each of them. To do so, go to the game settings or press Esc.  | IMAGE 1  |
+| To invite your friends to your gaming session you need to create an account in foundry for each of them. To do so, go to the game settings or press Esc.  | ![How to access player manual](https://github.com/PMFlint/Test/blob/main/Player_Esc.jpg) ![Foundry Menu](https://github.com/PMFlint/Test/blob/main/Foundry%20Menu.jpg)  |
 |In the following dialog you can create accounts for your friends to join your session. - As of personal experience we recommend you assign your players the role trusted.| IMAGE 2|
-|Once the players have logged in the game you can assign them a character so they can directly enjoy the game.| IMAGE 3|
+|Once the players have logged in the game you can assign them a character so they can directly enjoy the game.| ![Active Player overview](https://github.com/PMFlint/Test/blob/main/Player%20Overview.jpg) ![Player Modification](https://github.com/PMFlint/Test/blob/main/Player%20Character%20configuration.jpg)|
 |Alternatively each player can create a character in the game to fit their needs.| Please refer to section character creation |
 
 
@@ -54,7 +54,7 @@ There are two options to obtain all necessary assets:
 
 To create any assets in DSA for foundry go to the items Directory and create item. Select the category you want to create and enter a name and press ok.  
 
-IMAGE ITEMS DIRECTORY
+![Item Directory](https://github.com/PMFlint/Test/blob/main/Item%20directory.jpg)
 
 Depending on the type of assets you have to enter the necessary details to the asset.
 
@@ -71,6 +71,7 @@ DSA offers a variety of different assets for your game:
 | items, weapons, armors, poisons | Everything you need as an adventurer |
 | creatures, traits for creatures (attacks, armors, special abilities) | Animals, demons, other creatures and dragons |
  
+![Item creation](https://github.com/PMFlint/Test/blob/main/New%20Item.jpg)
 
 ## What information do I need to create assets for DSA in foundry?  
 Assets in DSA for foundry require different information to be created.
@@ -79,7 +80,10 @@ All assets require at least
 | Element  | Description | 
 | ------------- | ------------- | 
 | Name | Name of the asset, will be entered in the item browser  |
+| Category | Category of the item, e.g. advantages |
 | Description  | Description of the esset  | 
+
+![Item creation](https://github.com/PMFlint/Test/blob/main/New%20Item.jpg)
 
 Depending on the kind of asset you want to create different information are required as well.
 
@@ -92,7 +96,8 @@ To create advantages or disadvantages you need to enter the following details as
 | AP-value | AP cost or bonus when choosing this asset  | 
 | maximum level  | Some advantages / disadvantages can have several levels, enter the amount of levels here. NOTE: if only one level is available leave 0  | 
 | requirements* | Some advantages / disadvantages can only be selected when certain requirements are met, enter them here.  | 
-| effect | If your advantage / disadvantage has an in-game modifcation you can enter them here.*  |
+| effect | If your advantage / disadvantage has an in-game modifcation you can enter them here.*  |  
+
 *For details on how to enter effects / requirements, check out our effect how to: LINK
 
 ### What do I have to enter for special abilities?  
