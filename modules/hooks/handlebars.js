@@ -14,6 +14,9 @@ export default function() {
         let roman = ['', ' II', ' III', ' IV', ' V', ' VI', ' VII', ' VIII', ' IX']
         return roman[a - 1]
     });
+    Handlebars.registerHelper('join', function(a, b) {
+        return b.join(a)
+    })
     Handlebars.registerHelper("when", function(operand_1, operator, operand_2, options) {
         let operators = {
             'eq': function(l, r) { return l == r; },

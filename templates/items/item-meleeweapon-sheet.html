@@ -24,6 +24,7 @@
                 <input class="input-text" type="text" name="data.damage.value" value="{{data.damage.value}}" data-dtype="String" />
             </div>
 
+            {{#if twoHanded}}
             <div class="form-group">
                 <label class="label-text">{{localize "atmod"}}: </label>
                 <input class="input-text" type="text" name="data.atmod.value" value="{{data.atmod.value}}" data-dtype="Number" />
@@ -33,6 +34,19 @@
                 <label class="label-text">{{localize "pamod"}}: </label>
                 <input class="input-text" type="text" name="data.pamod.value" value="{{data.pamod.value}}" data-dtype="Number" />
             </div>
+            {{else}}
+            <div class="form-group doubleInput">
+                <label class="label-text">{{localize "atmod"}}: </label>
+                <input class="input-text" type="text" name="data.atmod.value" value="{{data.atmod.value}}" data-dtype="Number" />
+                <input class="input-text" type="text" name="data.atmod.offhandMod" value="{{data.atmod.offhandMod}}" data-dtype="Number" title="{{localize 'ITEMSHEET.offHandMod'}}" />
+            </div>
+
+            <div class="form-group doubleInput">
+                <label class="label-text">{{localize "pamod"}}: </label>
+                <input class="input-text" type="text" name="data.pamod.value" value="{{data.pamod.value}}" data-dtype="Number" />
+                <input class="input-text" type="text" name="data.pamod.offhandMod" value="{{data.pamod.offhandMod}}" data-dtype="Number" title="{{localize 'ITEMSHEET.offHandMod'}}" />
+            </div>
+            {{/if}}
 
             <div class="form-group">
                 <label class="label-text">{{localize "damageThreshold"}}: </label>

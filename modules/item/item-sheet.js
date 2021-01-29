@@ -125,10 +125,17 @@ export default class ItemSheetdsa5 extends ItemSheet {
                 let chars = DSA5.characteristics;
                 chars["ge/kk"] = game.i18n.localize("CHAR.GEKK")
                 chars["-"] = "-";
+                let cbskills = await DSA5_Utility.allCombatSkills()
+                cbskills = cbskills.filter(x => x.data.weapontype.value == "melee")
+                let res = {};
+                for (let sk of cbskills) {
+                    res[sk.name] = sk.name;
+                }
+                data['twoHanded'] = cbskills.find(x => x.name == this.item.data.data.combatskill.value).data.weapontype.twoHanded
                 data['characteristics'] = chars;
-                data['combatskills'] = await DSA5_Utility.allCombatSkillsList("melee");
+                data['combatskills'] = res
                 data['ranges'] = DSA5.meleeRanges;
-                data['canBeOffHand'] = !(this.item.options.actor.data.items.find(x => x.type == "combatskill" && x.name == this.item.data.data.combatskill.value).data.weapontype.twoHanded) && this.item.data.data.worn.value
+                data['canBeOffHand'] = this.item.options.actor ? !(this.item.options.actor.data.items.find(x => x.type == "combatskill" && x.name == this.item.data.data.combatskill.value).data.weapontype.twoHanded) && this.item.data.data.worn.value : false
                 break;
             case "rangeweapon":
                 data['ammunitiongroups'] = DSA5.ammunitiongroups;

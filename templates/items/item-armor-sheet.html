@@ -33,7 +33,7 @@
                 <label class="label-text">{{localize "effect"}}: </label>
                 <input class="input-text" type="text" name="data.effect.value" value="{{data.effect.value}}" data-dtype="String" />
             </div>
-            {#if isOwned}}
+            {{#if isOwned}}
             <div class="form-group double">
                 <label class="label-text">{{localize "structure"}}: </label>
                 <input class="input-text" type="text" name="data.structure.value" value="{{data.structure.value}}" data-dtype="Number" /><span> / </span>

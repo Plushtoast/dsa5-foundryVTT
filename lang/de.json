@@ -558,6 +558,10 @@
         "Library": "Bibliothek öffnen"
     },
 
+    "ITEMSHEET": {
+        "offHandMod": "Bonus/Malus als Nebenhand (z.b. Parierwaffe)"
+    },
+
     "RangeMod": {
         "short": "Nah [+2 auf FK, +1 TP]",
         "medium": "Mittel [+/–0 auf FK]",
