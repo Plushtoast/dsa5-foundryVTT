@@ -1,4 +1,3 @@
-
 WIKI FORMATIERUNG
 # What is Das Schwarze Auge (DSA) and what's Das Schwarze Auge in Foundry?  
 
@@ -192,7 +191,7 @@ Additional attributes for magical professions
 | Aufrechterhalten | If the spell can be kept active for a time, enter additional AsP costs here |
 | Effect description | Spell effect description to display in Chat for all to see |
 | Effect | enter the effect details here, e.g. 2d6 damage |
-| Verbreitung | Who knows the spell: @JAN |
+| Verbreitung | Who knows the spell: (allgemein, Elfen, Gildenmagier, Hexen) @JAN |
 | Widerstand  | How to resist the spell: SK or toughness |
 | Steigerungsfaktor | Cost of AP to increase the level of the spell: A, B, C, D |
  
@@ -203,7 +202,7 @@ Additional attributes for magical professions
 | Range | Range in yard of the spelltrick |
 | Spell effect duration | @JAN |
 | Target category | Some spellstricks can be cast on only the character, some via touch, some to a distance: Self, touch, sight @JAN |
-| Merkmal | @MALTE: Liste rein kopieren |
+| Merkmal | Enter the merkmal of the spell, e.g. Einfluss, Verwandlung |
  
 
  Ritual
@@ -216,13 +215,13 @@ Additional attributes for magical professions
 | Spell effect duration | @JAN |
 | Target category | Some rituals can be cast on only the character, some via touch, some to a distance: Self, touch, sight @JAN |
 | Time to cast | @JAN   to cast the spell, some spell cast durations can be modified: Modification (Yes or No)  |
-| AsP cost | sP cost of the spell, some spells require an initial amount of AsPs and some to keep the spell running, the cost of spells can be modified: Modification (Yes or No) |
+| AsP cost | AsP cost of the spell, some spells require an initial amount of AsPs and some to keep the spell running, the cost of spells can be modified: Modification (Yes or No) |
 | Permanent AsP cost | Some rituals require permanent sacrifice of AsP. Enter them here |
 | AsP Detail | @JAN |
 | Aufrechterhalten | If the ritual can be kept active for a time, enter additional AsP costs here |
 | Effect description | Ritual effect description to display in Chat for all to see  |
 | Effect | enter the effect details here, e.g. 2d6 damage |
-| Verbreitung | Who knows the spell: @JAN |
+| Verbreitung | Who knows the Ritual: (allgemein, Elfen, Gildenmagier, Hexen) @JAN |
 | Widerstand  | How to resist the spell: SK or toughness |
 | Steigerungsfaktor | Cost of AP to increase the level of the ritual: A, B, C, D |
  
@@ -232,51 +231,51 @@ Additional attributes for magical professions
  Blessings
 | Element  | Description | 
 | ------------- | ------------- | 
-| Range | text |
-| Duration | text |
-| Target category | text |
-| Merkmal | text |
+| Range | Range in yard of the blessing |
+| Duration | @JAN |
+| Target category | Some blessings can be cast on only the character, some via touch, some to a distance: Self, touch, sight @JAN |
+| Merkmal | Aspect of the blessing: e.g. allgemein |
  
 
  Liturgies
 | Element  | Description | 
 | ------------- | ------------- | 
-| Attribute 1 | text |
-| Attribute 2 | text |
-| Attribute 3 | text |
-| Range | Modification (Yes or No) |
-| Spell effect duration | text |
-| Target category (Self, touch, sight, Zone) | text |
-| Time to cast | Modification (Yes or No) |
-| KaP cost | Modification (Yes or No) |
-| AsP Detail | text |
-| Aufrechterhalten | text |
-| Effect description (display in Chat for all to see) | text |
-| Effect | text |
-| Verbreitung | text |
-| Widerstand (SK or toughness) | text |
-| Steigerungsfaktor | text |
+| Attribute 1 | Attribute to cast the liturgy |
+| Attribute 2 | Attribute to cast the liturgy |
+| Attribute 3 | Attribute to cast the liturgy |
+| Range | Range in yard of the liturgy; with some liturgies the range can be modified: Modification (Yes or No) |
+| Spell effect duration | @JAN |
+| Target category | Some liturgies can be cast on only the character, some via touch, some to a distance: Self, touch, sight @JAN |
+| Time to cast | KR to cast the spell, some spell cast durations can be modified: Modification (Yes or No) |
+| KaP cost | KaP cost of the spell, some liturgies require an initial amount of KaPs and some to keep the liturgy running, the cost of liturgy can be modified: Modification (Yes or No) |
+| AsP Detail | @JAN |
+| Aufrechterhalten | If the liturgy can be kept active for a time, enter additional KaP costs here |
+| Effect description | Liturgy effect description to display in Chat for all to see |
+| Effect | enter the effect details here, e.g. 2d6 damage |
+| Verbreitung | Which church does know this liturgy, e.g. Boron (Tod und Traum), Phex (Schatten) - @JAN wie eintragen |
+| Widerstand | How to resist the spell: SK or toughness |
+| Steigerungsfaktor | Cost of AP to increase the level of the Liturgy: A, B, C, D |
  
 
  Ceremonies
 | Element  | Description | 
 | ------------- | ------------- | 
-| Attribute 1 | text |
-| Attribute 2 | text |
-| Attribute 3 | text |
-| Range | Modification (Yes or No) |
-| Spell effect duration | text |
-| Target category (Self, touch, sight) | text |
-| Time to cast | Modification (Yes or No) |
-| KaP cost | Modification (Yes or No) |
-| Permanent KaP cost | text |
-| KaP Detail | text |
-| Aufrechterhalten | text |
-| Effect description (display in Chat for all to see) | text |
-| Effect | text |
-| Verbreitung | text |
-| Widerstand (SK or toughness) | text |
-| Steigerungsfaktor | text |
+| Attribute 1 | Attribute to cast the ceemony |
+| Attribute 2 | Attribute to cast the ceemony |
+| Attribute 3 | Attribute to cast the ceemony |
+| Range | Range in yard of the ceremony; with some ceremonies the range can be modified: Modification (Yes or No) |
+| Spell effect duration | @JAN |
+| Target category  | Some ceremonies can be cast on only the character, some via touch, some to a distance: Self, touch, sight @JAN |
+| Time to cast | @JAN ??? to cast the ceremony, some ceremony cast durations can be modified: Modification (Yes or No) |
+| KaP cost |  KaP cost of the ceremony, some ceremonies require an initial amount of KaPs and some to keep the ceremony running, the cost of ceremony can be modified: Modification (Yes or No) |
+| Permanent KaP cost | Some ceremonies require permanent sacrifice of AsP. Enter them here  |
+| KaP Detail | @JAN |
+| Aufrechterhalten | If the ceremony can be kept active for a time, enter additional KaP costs here |
+| Effect description | ceremony effect description to display in Chat for all to see |
+| Effect |  enter the effect details here, e.g. 2d6 damage  |
+| Verbreitung | Which church does know this ceremony, e.g. Phex (Schatten) - @JAN wie eintragen |
+| Widerstand | How to resist the spell: SK or toughness |
+| Steigerungsfaktor | Cost of AP to increase the level of the ceremony: A, B, C, D |
  
 
 ###What do I have to enter for items?
@@ -412,6 +411,7 @@ If you want to know more about the foundry combat system please check out the fo
 
 ## Are the DSA specific combat rules included in DSA for foundry.  
 YES. DSA for foundry include all combat rules specified in the DSA Grundregelwerk.
+Furthermore the status system from DSA is included in foundry. For more details on the status system check out the game mechanics section: LINK
 
 ## Does DSA calculate the Belastung in the combat.
 Yes, Belastung due to armor, heavy weight or any other reasons are calculated.  
@@ -461,3 +461,13 @@ If you want to re-roll any test, you can use Schips / Fate Points to do so.
 
 To re-roll any test, right click on the roll result in the chat window and select "Wurf wiederholen". Next you can select the dice or dices to re-roll.  
 IMG RE-ROLL
+
+
+## Where do I find the status system in DSA for foundry?  
+In DSA for foundry on your character sheet you find a specific section "Status". There you can find all currently status impacting your character.
+When clicking on a status, the status description will be shown.  
+IMG STATUS DESCRIPTION  
+
+By clicking on + you can add an additional status. Just select the desired status from the status list.  
+IMG STATUS List
+Note: when hovering over the status symbol, the name of the status will be displayed.  
