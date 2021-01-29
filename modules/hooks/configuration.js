@@ -60,4 +60,11 @@ export default function() {
         default: 20,
         type: Number
     });
+    game.settings.register("dsa5", "migrationVersion", {
+        name: "migrationVersion",
+        hint: "migrationVersion",
+        config: false,
+        default: 1,
+        type: Number
+    })
 }

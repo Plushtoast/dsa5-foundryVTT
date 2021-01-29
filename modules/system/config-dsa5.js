@@ -505,6 +505,11 @@ DSA5.helpContent = [{
         name: "conditions",
         command: "/conditions",
         example: "/conditions"
+    },
+    {
+        name: "tables",
+        command: "/tables",
+        example: "/tables"
     }
 ]
 

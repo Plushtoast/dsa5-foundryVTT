@@ -21,6 +21,12 @@ export default class AdvantageRulesDSA5 extends ItemRulesDSA5 {
             game.dsa5.config.removevantageRules[item.name](actor, item)
     }
 
+
+    /** APValue formatting: / for Stf steps starting with A         */
+    /** APValue formatting: ; for first, second .. variant of element  */
+    /** APValue formatting: , for first second .. step */
+    /**  */
+
     static async _vantageReturnFunction(actor, item, typeClass, adoption) {
         if (item == null)
             return

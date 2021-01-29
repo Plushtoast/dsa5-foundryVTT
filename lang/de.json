@@ -272,6 +272,7 @@
     "Notes": "Notizen",
     "Opposed": "Vergleichsprobe",
     "opposingWeaponSize": "Waffengröße Gegner",
+    "offHand": "Nebenhand",
     "Ongoing": "Laufend",
     "protection": "Rüstungsschutz",
     "parrytest": "Verteidigungsprobe",
@@ -361,6 +362,7 @@
     "time": "Zeit",
     "toughness": "Zähigkeit",
     "targetCategory": "Zielkategorie",
+    "twoHanded": "Zweihändig",
     "target": "Ziel",
     "usedWeaponExpertise": "Waffenbegabung eingesetzt ({a}/{b})",
     "Unopposed": "Keine Vergleichsprobe",
@@ -598,7 +600,9 @@
         "quickAbility": "Fähigkeits-Schnellzugriff",
         "descrquickAbility": "Lass einen Token oder deinen Charakter über ein Chatkommando Talente (/sk), Zauber/Rituale (/sp), Liturgien/Zeremonien (/li), Attacke (/at) und Parade (/pa) würfeln.",
         "conditions": "Zustände",
-        "descrconditions": "Zeigt alle Zustände und Status."
+        "descrconditions": "Zeigt alle Zustände und Status.",
+        "tables": "Tabellen",
+        "descrtables": "Zeige alle würfelbaren Tabellen."
     },
 
     "UNITS": {

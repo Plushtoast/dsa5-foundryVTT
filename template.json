@@ -606,10 +606,12 @@
                 "value": "1d6"
             },
             "atmod": {
-                "value": 0
+                "value": 0,
+                "offhandMod": 0
             },
             "pamod": {
-                "value": 0
+                "value": 0,
+                "offhandMod": 0
             },
             "reach": {
                 "value": "medium"
@@ -624,7 +626,8 @@
                 "value": "daggers"
             },
             "worn": {
-                "value": false
+                "value": false,
+                "offhand": false
             },
             "structure": {
                 "max": 0,
@@ -642,6 +645,10 @@
             },
             "worn": {
                 "value": false
+            },
+            "structure": {
+                "max": 0,
+                "value": 0
             }
         },
         "career": {
@@ -827,7 +834,8 @@
                 "value": 6
             },
             "weapontype": {
-                "value": "melee"
+                "value": "melee",
+                "twoHanded": false
             }
         },
         "aggregatedTest": {

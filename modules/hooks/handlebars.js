@@ -1,3 +1,5 @@
+import DSA5_Utility from "../system/utility-dsa5.js";
+
 export default function() {
     Handlebars.registerHelper('concat', function(a, b) {
         return a + b;
@@ -26,4 +28,7 @@ export default function() {
         if (result) return options.fn(this);
         else return options.inverse(this);
     });
+    Handlebars.registerHelper("diceThingsUp", function(a) {
+        return DSA5_Utility.replaceDies(a)
+    })
 }

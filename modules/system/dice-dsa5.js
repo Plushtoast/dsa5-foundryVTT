@@ -115,6 +115,7 @@ export default class DiceDSA5 {
                 break
             case "meleeweapon":
                 this._enabledModifiers(situationalModifiers, ["CONDITION.encumbered", "CONDITION.inpain"], true)
+                let wrongHandDisabled = AdvantageRulesDSA5.hasVantage(testData.extra.actor, "Beidhändig")
                 if (testData.mode == "attack") {
                     let targetWeaponsize = "short"
                     if (game.user.targets.size) {
@@ -127,14 +128,15 @@ export default class DiceDSA5 {
                     mergeObject(dialogOptions.data, {
                         weaponSizes: DSA5.meleeRanges,
                         melee: true,
-                        wrongHandDisabled: AdvantageRulesDSA5.hasVantage(testData.extra.actor, "Beidhändig"),
+                        wrongHandDisabled: wrongHandDisabled,
+                        offHand: !wrongHandDisabled && testData.source.data.data.worn.offHand,
                         targetWeaponSize: targetWeaponsize
                     });
                 } else if (testData.mode == "parry") {
                     mergeObject(dialogOptions.data, {
                         defenseCount: 0,
                         showDefense: true,
-                        wrongHandDisabled: AdvantageRulesDSA5.hasVantage(testData.extra.actor, "Beidhändig"),
+                        wrongHandDisabled: wrongHandDisabled && testData.source.data.data.worn.offHand,
                         melee: true
                     });
                 } else {}
@@ -924,14 +926,14 @@ export default class DiceDSA5 {
         }
         switch (testData.source.type) {
             case "poison":
-                let dur = testData.source.data.duration.value.split("/").map(x => x.trim())
-                let effect = testData.source.data.effect.value.split("/").map(x => x.trim())
+                let dur = testData.source.data.duration.value.split(" / ").map(x => x.trim())
+                let effect = testData.source.data.effect.value.split(" / ").map(x => x.trim())
                 result.duration = dur.length > 1 ? (result.successLevel > 0 ? dur[0] : dur[1]) : dur[0]
                 result.effect = effect.length > 1 ? (result.successLevel > 0 ? effect[0] : effect[1]) : effect[0]
                 break
             case "disease":
-                let dmg = testData.source.data.damage.value.split("/").map(x => x.trim())
-                let duration = testData.source.data.duration.value.split("/").map(x => x.trim())
+                let dmg = testData.source.data.damage.value.split(" / ").map(x => x.trim())
+                let duration = testData.source.data.duration.value.split(" / ").map(x => x.trim())
                 result.damageeffect = dmg.length > 1 ? (result.successLevel > 0 ? dmg[0] : dmg[1]) : dmg[0]
                 result.duration = duration.length > 1 ? (result.successLevel > 0 ? duration[0] : duration[1]) : duration[0]
                 break
@@ -1237,7 +1239,7 @@ export default class DiceDSA5 {
             CombatTables.showBotchCard("Melee", $(ev.currentTarget).attr("data-weaponless"))
         })
         html.on('click', '.range-botch', ev => {
-            CombatTables.showBotchCard("Defense", $(ev.currentTarget).attr("data-weaponless"))
+            CombatTables.showBotchCard("Range", $(ev.currentTarget).attr("data-weaponless"))
         })
         html.on('click', '.liturgy-botch', ev => {
             Miscast.showBotchCard("Liturgy")

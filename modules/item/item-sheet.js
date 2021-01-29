@@ -128,6 +128,7 @@ export default class ItemSheetdsa5 extends ItemSheet {
                 data['characteristics'] = chars;
                 data['combatskills'] = await DSA5_Utility.allCombatSkillsList("melee");
                 data['ranges'] = DSA5.meleeRanges;
+                data['canBeOffHand'] = !(this.item.options.actor.data.items.find(x => x.type == "combatskill" && x.name == this.item.data.data.combatskill.value).data.weapontype.twoHanded) && this.item.data.data.worn.value
                 break;
             case "rangeweapon":
                 data['ammunitiongroups'] = DSA5.ammunitiongroups;
@@ -157,7 +158,6 @@ export default class ItemSheetdsa5 extends ItemSheet {
                 break
         }
         data.isOwned = this.item.isOwned
-        console.log(this.item)
         if (data.isOwned) {
             data.canAdvance = this.item.options.actor.data.canAdvance && this._advancable()
         }

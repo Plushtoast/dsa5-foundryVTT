@@ -61,6 +61,20 @@
                 <label class="label-text">{{localize "effect"}}: </label>
                 <input class="input-text" type="text" name="data.effect.value" value="{{data.effect.value}}" data-dtype="String" />
             </div>
+
+            {#if isOwned}}
+            <div class="form-group double">
+                <label class="label-text">{{localize "structure"}}: </label>
+                <input class="input-text" type="text" name="data.structure.value" value="{{data.structure.value}}" data-dtype="Number" /><span> / </span>
+                <input class="input-text" type="text" name="data.structure.max" value="{{data.structure.max}}" data-dtype="Number" />
+            </div>
+
+            {{else}}
+            <div class="form-group">
+                <label class="label-text">{{localize "structure"}}: </label>
+                <input class="input-text" type="text" name="data.structure.max" value="{{data.structure.max}}" data-dtype="Number" />
+            </div>
+            {{/if}}
         </div>
     </section>
 </form>

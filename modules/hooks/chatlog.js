@@ -39,8 +39,11 @@ export default function() {
         } else if (/^\/help$/.test(content)) {
             DSA5ChatListeners.getHelp()
             return false
-        } else if (/^\/conditions/.test(content)) {
+        } else if (/^\/conditions$/.test(content)) {
             DSA5ChatListeners.showConditions()
+            return false
+        } else if (/^\/tables$/.test(content)) {
+            DSA5ChatListeners.showTables()
             return false
         }
     })

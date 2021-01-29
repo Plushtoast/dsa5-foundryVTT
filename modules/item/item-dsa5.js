@@ -137,7 +137,7 @@ export default class Itemdsa5 extends Item {
             this._chatLineHelper("start", data.start.value),
             this._chatLineHelper("duration", data.duration.value),
             this._chatLineHelper("resistanceModifier", data.resistance.value),
-            this._chatLineHelper("effect", data.effect.value),
+            this._chatLineHelper("effect", DSA5_Utility.replaceDies(data.effect.value))
         ]
     }
 
@@ -146,9 +146,9 @@ export default class Itemdsa5 extends Item {
         return [
             this._chatLineHelper("stepValue", data.step.value),
             this._chatLineHelper("incubation", data.incubation.value),
-            this._chatLineHelper("damage", data.damage.value),
+            this._chatLineHelper("damage", DSA5_Utility.replaceDies(data.damage.value)),
             this._chatLineHelper("duration", data.duration.value),
-            this._chatLineHelper("source", data.source.value),
+            this._chatLineHelper("source", DSA5_Utility.replaceDies(data.source.value)),
             this._chatLineHelper("treatment", data.treatment.value),
             this._chatLineHelper("antidot", data.antidot.value),
             this._chatLineHelper("resistanceModifier", data.resistance.value)
@@ -224,7 +224,8 @@ export default class Itemdsa5 extends Item {
             this._chatLineHelper("distribution", data.distribution.value),
             this._chatLineHelper("duration", data.duration.value),
             this._chatLineHelper("reach", data.range.value),
-            this._chatLineHelper("targetCategory", data.targetCategory.value)
+            this._chatLineHelper("targetCategory", data.targetCategory.value),
+            this._chatLineHelper("effect", DSA5_Utility.replaceDies(data.effect.value))
         ]
     }
     _ceremonyChatData() {
@@ -235,7 +236,8 @@ export default class Itemdsa5 extends Item {
             this._chatLineHelper("distribution", data.distribution.value),
             this._chatLineHelper("duration", data.duration.value),
             this._chatLineHelper("reach", data.range.value),
-            this._chatLineHelper("targetCategory", data.targetCategory.value)
+            this._chatLineHelper("targetCategory", data.targetCategory.value),
+            this._chatLineHelper("effect", DSA5_Utility.replaceDies(data.effect.value))
         ]
     }
 
@@ -266,7 +268,8 @@ export default class Itemdsa5 extends Item {
             this._chatLineHelper("distribution", data.distribution.value),
             this._chatLineHelper("duration", data.duration.value),
             this._chatLineHelper("reach", data.range.value),
-            this._chatLineHelper("targetCategory", data.targetCategory.value)
+            this._chatLineHelper("targetCategory", data.targetCategory.value),
+            this._chatLineHelper("effect", DSA5_Utility.replaceDies(data.effect.value))
         ]
     }
 
@@ -278,7 +281,8 @@ export default class Itemdsa5 extends Item {
             this._chatLineHelper("distribution", data.distribution.value),
             this._chatLineHelper("duration", data.duration.value),
             this._chatLineHelper("reach", data.range.value),
-            this._chatLineHelper("targetCategory", data.targetCategory.value)
+            this._chatLineHelper("targetCategory", data.targetCategory.value),
+            this._chatLineHelper("effect", DSA5_Utility.replaceDies(data.effect.value))
         ]
     }
 

@@ -164,6 +164,13 @@ export default class DSA5_Utility {
         return results
     }
 
+    static replaceDies(content) {
+        let regex = /( |^)(\d{1,2})?[wWdD][0-9]+((\+|-)[0-9]+)?/g
+        return content.replace(regex, function(str) {
+            return ` [[/roll ${str.replace(/[DwW]/,"d")}]]`
+        })
+    }
+
 
     static experienceDescription(experience) {
         if (experience >= 2100) {

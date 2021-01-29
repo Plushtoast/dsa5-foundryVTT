@@ -231,6 +231,10 @@ h7 {
     font-size: 12px;
 }
 
+.item form .form-group input[type="checkbox"] {
+    flex: 3;
+}
+
 form .form-group.full-height label,
 form .form-group.full-height input {
     align-self: stretch;
@@ -244,6 +248,18 @@ form .form-group.full-height textarea {
 
 form .career .form-group.full-height textarea {
     min-height: 80px;
+}
+
+form .form-group.double span {
+    flex: 0.9;
+    display: inline;
+    text-align: center;
+}
+
+form .form-group.double .input-text {
+    flex: 1;
+    display: inline;
+    text-align: center;
 }
 
 form .form-group.tripple .input-text {
@@ -407,6 +423,10 @@ input[type=text].emphasize {
 #combat #combat-round .encounters,
 #combat #combat-round .encounters a {
     color: #444;
+}
+
+#combat-tracker .token-effect {
+    box-shadow: 0px 0px 10px black inset;
 }
 
 #sidebar .sidebar-tab,
@@ -1517,6 +1537,10 @@ input[type="search"] {
     color: white;
 }
 
+.statusEffectMenu li.search input::placeholder {
+    color: rgb(173, 170, 170);
+}
+
 .statusEffectMenu li.search:hover {
     border-color: transparent
 }
@@ -1858,7 +1882,7 @@ input[type="search"] {
 }
 
 .item-structure {
-    border: 0.5px solid var(--border-color);
+    border: 0.5px solid var(--bg-color);
     height: 100%;
     width: 4px;
     position: relative
@@ -1871,4 +1895,9 @@ input[type="search"] {
     bottom: 0;
     height: calc(100% * var(--b) / var(--a));
     background-color: rgb(32, 202, 2);
+}
+
+a.entity-link,
+a.inline-roll {
+    background: var(--bg-color);
 }

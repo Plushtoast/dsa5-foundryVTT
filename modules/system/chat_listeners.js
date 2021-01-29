@@ -25,4 +25,12 @@ export default class DSA5ChatListeners {
         ChatMessage.create(DSA5_Utility.chatDataSetup(msg, "roll"))
     }
 
+    static showTables(){
+        let msg = `<a class="roll-button defense-botch" data-weaponless="false"><i class="fas fa-dice"></i>${game.i18n.localize('TABLENAMES.Defense')}</a>
+        <a class="roll-button melee-botch" data-weaponless="false"><i class="fas fa-dice"></i>${game.i18n.localize('TABLENAMES.Melee')}</a>
+        <a class="roll-button range-botch" data-weaponless="false"><i class="fas fa-dice"></i>${game.i18n.localize('TABLENAMES.Range')}</a>
+        <a class="roll-button liturgy-botch"><i class="fas fa-dice"></i>${game.i18n.localize('TABLENAMES.Liturgy')}</a>
+        <a class="roll-button spell-botch"><i class="fas fa-dice"></i>${game.i18n.localize('TABLENAMES.Spell')}</a>`
+        ChatMessage.create(DSA5_Utility.chatDataSetup(msg, "roll"))
+    }
 }
