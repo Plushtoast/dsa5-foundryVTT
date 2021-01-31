@@ -41,7 +41,7 @@ export default function() {
         hint: "SETTINGS.statusEffectCounterColorHint",
         scope: "client",
         config: true,
-        default: "#000000",
+        default: "#FFFFFF",
         type: String
     });
     game.settings.register("dsa5", "defaultDimVision", {

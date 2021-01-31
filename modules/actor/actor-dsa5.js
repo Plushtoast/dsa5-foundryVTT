@@ -497,6 +497,9 @@ export default class Actordsa5 extends Actor {
     }
 
     _addGearAndAbilityModifiers(equipmentModifiers, i) {
+        if (!i.data.effect)
+            return
+
         for (let mod of i.data.effect.value.split(",").map(x => x)) {
             let vals = mod.replace(/(\s+|^\s+|\s+$)/g, ' ').split(" ")
             if (vals.length == 2) {
