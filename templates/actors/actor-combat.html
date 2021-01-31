@@ -18,7 +18,7 @@
             {{localize "CHARAbbrev.PA"}}
         </div>
 
-        <div class="col ten center small">
+        <div class="col ten center small" title="{{localize 'damage'}}">
             {{localize "CHARAbbrev.damage"}}
         </div>
         <div class="col ten center small">
@@ -70,10 +70,10 @@
             {{localize "Group"}}
         </div>
 
-        <div class="col ten center small" title="{{localize 'CHAR:ATTACK'}}">
+        <div class="col ten center small" title="{{localize 'CHAR.ATTACK'}}">
             {{localize "CHARAbbrev.AT"}}
         </div>
-        <div class="col eight center small">
+        <div class="col eight center small" title="{{localize 'damage'}}">
             {{localize "CHARAbbrev.damage"}}
         </div>
 
@@ -175,7 +175,7 @@
         </div>
     </div>
     <div class="row-section wrap cards">
-        {{#each actor.combatSpecialAbilities as |item i|}}
+        {{#each actor.specAbs.Combat as |item i|}}
         <div class="item" data-item-id="{{item._id}}">
             <a class="item-edit">{{item.name}}{{roman item.data.step.value}}</a>
         </div>

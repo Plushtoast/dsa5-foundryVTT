@@ -51,6 +51,11 @@
         "ATFK": "AT/FK",
         "GEKK": "GE,KK",
         "GE/KK": "GE/KK",
+        "INI": "INI",
+        "GS": "GS",
+        "AW": "AW",
+        "SK": "SK",
+        "ZK": "ZK",
         "PA": "PA",
         "AT": "AT",
         "FP": "FP",
@@ -70,7 +75,8 @@
         "ItemRequiresAdoption": "Eintrag anpassen",
         "ItemRequiresAdoptionDescription": "Das Hinzufügen benötigt zuerst eine Anpassung. Wähle den passenden Eintrag für ",
         "alreadyAddedCharacterpart": "Du hast bereits eine {category}. Möchtest du diese Überschreiben? Bereits hinzugefügte Modifikation der vorherigen {category} können nicht automatisch rückgängig gemacht werden.",
-        "warning": "Vorsicht"
+        "warning": "Vorsicht",
+        "deselectWithStrg": "Strg + Click zum Deselektieren"
     },
 
     "Equipment": {
@@ -665,6 +671,45 @@
 
     "ReverseCombatSkills": {
         "Schilde": "Shields"
+    },
+
+    "LocalizedIDs": {
+        "deaf": "Taub",
+        "blind": "Blind",
+        "mute": "Stumm",
+        "ruggedFighter": "Zäher Hund",
+        "sensitiveToPain": "Zerbrechlich",
+        "frenzy": "Blutrausch",
+        "senseOfRange": "Entfernungssinn",
+        "ambidextrous": "Beidhändig",
+        "weaponAptitude": "Waffenbegabung",
+        "minorSpirits": "Lästige Mindergeister",
+        "wildMagic": "Wilde Magie",
+        "incompetent": "Unfähig",
+        "exceptionalSkill": "Herausragende Fertigkeit",
+        "exceptionalCombatTechnique": "Herausragende Kampftechnik",
+        "regenerationLP": "Verbesserte Regeneration (Lebensenergie)",
+        "regenerationAE": "Verbesserte Regeneration (Astralenergie)",
+        "regenerationKP": "Verbesserte Regeneration (Karmaenergie)",
+        "weakRegenerationLP": "Schlechte Regeneration (Lebensenergie)",
+        "weakRegenerationAE": "Schlechte Regeneration (Astralenergie)",
+        "weakRegenerationKP": "Schlechte Regeneration (Karmaenergie)",
+        "weakAstralBody": "Schwacher Astralkörper",
+        "weakKarmicBody": "Schwacher Karmalkörper",
+        "restrictedSenseSight": "Eingeschränkter Sinn (Sicht)",
+        "boundToArtifact": "Artefaktgebunden",
+        "magicalRestriction": "Magische Einschränkung",
+        "magicalAttunement": "Magische Einstimmung",
+        "traditionWitch": "Tradition (Hexen)",
+        "combatReflexes": "Kampfreflexe",
+        "improvedDodge": "Verbessertes Auswichen",
+        "inuredToEncumbrance": "Belastungsgewöhnung",
+        "quickload": "Schnellladen",
+        "automaticSuccess": "Automatischer Erfolg",
+        "automaticFail": "Automatischer Misserfolg",
+        "blessed": "Geweihter",
+        "spellcaster": "Zauberer",
+        "familiar": "Vertrauter"
     },
 
     "Error": {

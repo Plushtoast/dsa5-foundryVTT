@@ -1,4 +1,15 @@
 <form class="skill-test">
-    {{> systems/dsa5/templates/dialog/dialog-constant.html}}
+    {{> systems/dsa5/templates/dialog/dialog-constant.html}} {{#if hasSKModifier}}
+    <div class="form-group">
+        <label>{{localize "skModifier"}}</label>
+        <input type="number" name="skModifier" value="{{SKModifier}}" />
+    </div>
+    {{/if}} {{#if hasZKModifier}}
+    <div class="form-group">
+        <label>{{localize "zkModifier"}}</label>
+        <input type="number" name="zkModifier" value="{{ZKModifier}}" />
+    </div>
+    {{/if}}
+
     <div class="roll-dialog-tag">poison</div>
 </form>

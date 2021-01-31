@@ -161,7 +161,7 @@ export default class ItemSheetdsa5 extends ItemSheet {
                 break
             case "disease":
             case "poison":
-                data["resistances"] = DSA5.resistanceMods
+                data["resistances"] = DSA5.magicResistanceModifiers
                 break
         }
         data.isOwned = this.item.isOwned

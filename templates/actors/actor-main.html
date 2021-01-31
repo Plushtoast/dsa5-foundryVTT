@@ -39,7 +39,7 @@
                 </div>
             </div>
             <div class="row-section wrap cards">
-                {{#each actor.generalSpecialAbilites as |item i|}}
+                {{#each actor.specAbs.general as |item i|}}
                 <div class="item" data-item-id="{{item._id}}">
                     <a class="item-edit">{{item.name}}</a>
                 </div>
@@ -54,7 +54,7 @@
                 </div>
             </div>
             <div class="row-section wrap cards">
-                {{#each actor.languageSpecialAbilities as |item i|}}
+                {{#each actor.specAbs.language as |item i|}}
                 <div class="item" data-item-id="{{item._id}}">
                     <a class="item-edit">{{item.name}}{{roman item.data.step.value}}</a>
                 </div>
@@ -69,7 +69,7 @@
                 </div>
             </div>
             <div class="row-section wrap cards">
-                {{#each actor.fatePointsAbilities as |item i|}}
+                {{#each actor.specAbs.fatePoints as |item i|}}
                 <div class="item" data-item-id="{{item._id}}">
                     <a class="item-edit">{{item.name}}{{roman item.data.step.value}}</a>
                 </div>
@@ -118,7 +118,7 @@
                     {{data.status.wounds.max}}
                 </div>
             </div>
-            {{#if actor.hasSpells}}
+            {{#if actor.magic.hasSpells}}
             <div class="derivedAttrs row-section">
                 <div class="col two lineheight">
                     {{localize "astralenergy"}}
@@ -139,7 +139,7 @@
 
                 </div>
             </div>
-            {{/if}} {{#if actor.hasPrayers}}
+            {{/if}} {{#if actor.magic.hasPrayers}}
             <div class="derivedAttrs row-section">
                 <div class="col two lineheight">
                     {{localize "karmaenergy"}}

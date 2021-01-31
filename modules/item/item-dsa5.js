@@ -57,12 +57,6 @@ export default class Itemdsa5 extends Item {
         super.prepareData();
     }
 
-    prepare() {
-        let data = duplicate(this.data)
-        preparedData.img = preparedData.img || DEFAULT_TOKEN;
-        return preparedData;
-    }
-
     _armorChatData() {
         const data = duplicate(this.data.data);
         let properties = [
@@ -220,7 +214,7 @@ export default class Itemdsa5 extends Item {
         const data = duplicate(this.data.data);
         return [
             this._chatLineHelper("castingTime", data.castingTime.value),
-            this._chatLineHelper("KaPCost", data.castingTime.value),
+            this._chatLineHelper("KaPCost", data.AsPCost.value),
             this._chatLineHelper("distribution", data.distribution.value),
             this._chatLineHelper("duration", data.duration.value),
             this._chatLineHelper("reach", data.range.value),
@@ -232,7 +226,7 @@ export default class Itemdsa5 extends Item {
         const data = duplicate(this.data.data);
         return [
             this._chatLineHelper("castingTime", data.castingTime.value),
-            this._chatLineHelper("KaPCost", data.castingTime.value),
+            this._chatLineHelper("KaPCost", data.AsPCost.value),
             this._chatLineHelper("distribution", data.distribution.value),
             this._chatLineHelper("duration", data.duration.value),
             this._chatLineHelper("reach", data.range.value),
@@ -264,7 +258,7 @@ export default class Itemdsa5 extends Item {
         const data = duplicate(this.data.data);
         return [
             this._chatLineHelper("castingTime", data.castingTime.value),
-            this._chatLineHelper("AsPCost", data.castingTime.value),
+            this._chatLineHelper("AsPCost", data.AsPCost.value),
             this._chatLineHelper("distribution", data.distribution.value),
             this._chatLineHelper("duration", data.duration.value),
             this._chatLineHelper("reach", data.range.value),
@@ -277,7 +271,7 @@ export default class Itemdsa5 extends Item {
         const data = duplicate(this.data.data);
         return [
             this._chatLineHelper("castingTime", data.castingTime.value),
-            this._chatLineHelper("AsPCost", data.castingTime.value),
+            this._chatLineHelper("AsPCost", data.AsPCost.value),
             this._chatLineHelper("distribution", data.distribution.value),
             this._chatLineHelper("duration", data.duration.value),
             this._chatLineHelper("reach", data.range.value),
@@ -311,6 +305,16 @@ export default class Itemdsa5 extends Item {
                 cardOptions.rollMode = html.find('[name="rollMode"]').val();
                 testData.testModifier = Number(html.find('[name="testModifier"]').val());
                 testData.situationalModifiers = []
+
+                testData.situationalModifiers.push({
+                    name: game.i18n.localize("zkModifier"),
+                    value: html.find('[name="zkModifier"]').val() || 0
+                })
+                testData.situationalModifiers.push({
+                    name: game.i18n.localize("skModifier"),
+                    value: html.find('[name="skModifier"]').val() || 0
+                })
+
                 return { testData, cardOptions };
             }
         };
@@ -365,7 +369,7 @@ export default class Itemdsa5 extends Item {
             testData.extra.ammo.data.quantity.value--;
             this.updateEmbeddedEntity("OwnedItem", { _id: testData.extra.ammo._id, "data.quantity.value": testData.extra.ammo.data.quantity.value });
         }
-        //Hooks.call("dsa5:rollTest", result, cardOptions)
+
         if (!options.suppressMessage)
             DiceDSA5.renderRollCard(cardOptions, result, options.rerenderMessage).then(msg => {
                 //OpposedDsa5.handleOpposedTarget(msg)

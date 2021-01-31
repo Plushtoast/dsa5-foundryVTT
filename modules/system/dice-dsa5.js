@@ -35,7 +35,7 @@ export default class DiceDSA5 {
             case "skill":
                 situationalModifiers.push(...AdvantageRulesDSA5.getTalentBonus(testData.extra.actor, testData.source.name))
                 situationalModifiers.push(...SpecialabilityRulesDSA5.getTalentBonus(testData.extra.actor, testData.source.name))
-                situationalModifiers.push(...AdvantageRulesDSA5.getVantageAsModifier(testData.extra.actor, /Lästige Mindergeister/, -1))
+                situationalModifiers.push(...AdvantageRulesDSA5.getVantageAsModifier(testData.extra.actor, game.i18n.localize('LocalizedIDs.minorSpirits'), -1))
                 if (testData.source.data.burden.value == "no") {
                     this._removeModifiers(situationalModifiers, ["CONDITION.encumbered"])
                 } else {
@@ -47,7 +47,7 @@ export default class DiceDSA5 {
                 break;
             case "rangeweapon":
                 this._enabledModifiers(situationalModifiers, ["CONDITION.encumbered", "CONDITION.inpain"], true)
-                situationalModifiers.push(...AdvantageRulesDSA5.getVantageAsModifier(testData.extra.actor, /Eingeschränkter Sinn \(Sicht\)/, -2))
+                situationalModifiers.push(...AdvantageRulesDSA5.getVantageAsModifier(testData.extra.actor, game.i18n.localize('LocalizedIDs.restrictedSenseSight'), -2))
                 let targetSize = "average"
                 if (game.user.targets.size) {
                     game.user.targets.forEach(target => {
@@ -57,7 +57,7 @@ export default class DiceDSA5 {
                     });
                 }
                 rangeOptions = {...DSA5.rangeWeaponModifiers }
-                delete rangeOptions[AdvantageRulesDSA5.hasVantage(testData.extra.actor, "Entfernungssinn") ? "long" : "rangesense"]
+                delete rangeOptions[AdvantageRulesDSA5.hasVantage(testData.extra.actor, game.i18n.localize('LocalizedIDs.senseOfRange')) ? "long" : "rangesense"]
                 mergeObject(dialogOptions.data, {
                     rangeOptions: rangeOptions,
                     sizeOptions: DSA5.rangeSizeCategories,
@@ -76,7 +76,8 @@ export default class DiceDSA5 {
                 break
             case "trait":
                 this._enabledModifiers(situationalModifiers, ["CONDITION.encumbered", "CONDITION.inpain"], true)
-                if (testData.mode == "attack" && testData.source.data.data.traitType.value == "meleeAttack") {
+                let traitType = testData.source.data.data ? testData.source.data.data.traitType.value : testData.source.data.traitType.value
+                if (testData.mode == "attack" && traitType == "meleeAttack") {
                     let targetWeaponsize = "short"
                     if (game.user.targets.size) {
                         game.user.targets.forEach(target => {
@@ -90,7 +91,7 @@ export default class DiceDSA5 {
                         melee: true,
                         targetWeaponSize: targetWeaponsize
                     });
-                } else if (testData.mode == "attack" && testData.source.data.data.traitType.value == "rangeAttack") {
+                } else if (testData.mode == "attack" && traitType == "rangeAttack") {
                     let targetSize = "average"
                     if (game.user.targets.size) {
                         game.user.targets.forEach(target => {
@@ -100,7 +101,7 @@ export default class DiceDSA5 {
                         });
                     }
                     rangeOptions = {...DSA5.rangeWeaponModifiers }
-                    delete rangeOptions[AdvantageRulesDSA5.hasVantage(testData.extra.actor, "Entfernungssinn") ? "long" : "rangesense"]
+                    delete rangeOptions[AdvantageRulesDSA5.hasVantage(testData.extra.actor, game.i18n.localize('LocalizedIDs.senseOfRange')) ? "long" : "rangesense"]
                     mergeObject(dialogOptions.data, {
                         rangeOptions: rangeOptions,
                         sizeOptions: DSA5.rangeSizeCategories,
@@ -115,7 +116,7 @@ export default class DiceDSA5 {
                 break
             case "meleeweapon":
                 this._enabledModifiers(situationalModifiers, ["CONDITION.encumbered", "CONDITION.inpain"], true)
-                let wrongHandDisabled = AdvantageRulesDSA5.hasVantage(testData.extra.actor, "Beidhändig")
+                let wrongHandDisabled = AdvantageRulesDSA5.hasVantage(testData.extra.actor, game.i18n.localize('LocalizedIDs.ambidextrous'))
                 if (testData.mode == "attack") {
                     let targetWeaponsize = "short"
                     if (game.user.targets.size) {
@@ -146,14 +147,14 @@ export default class DiceDSA5 {
                 break
             case "liturgy":
             case "spell":
-                situationalModifiers.push(...AdvantageRulesDSA5.getVantageAsModifier(testData.extra.actor, /Lästige Mindergeister/, -1))
-                situationalModifiers.push(...AdvantageRulesDSA5.getVantageAsModifier(testData.extra.actor, /Magische Einstimmung.*/))
-                situationalModifiers.push(...AdvantageRulesDSA5.getVantageAsModifier(testData.extra.actor, /Magische Einschränkung.*/, -1))
-                situationalModifiers.push(...AdvantageRulesDSA5.getVantageAsModifier(testData.extra.actor, /Artefaktgebunden.*/, -1))
+                situationalModifiers.push(...AdvantageRulesDSA5.getVantageAsModifier(testData.extra.actor, game.i18n.localize('LocalizedIDs.minorSpirits'), -1))
+                situationalModifiers.push(...AdvantageRulesDSA5.getVantageAsModifier(testData.extra.actor, game.i18n.localize('LocalizedIDs.magicalAttunement')))
+                situationalModifiers.push(...AdvantageRulesDSA5.getVantageAsModifier(testData.extra.actor, game.i18n.localize('LocalizedIDs.magicalRestriction'), -1))
+                situationalModifiers.push(...AdvantageRulesDSA5.getVantageAsModifier(testData.extra.actor, game.i18n.localize('LocalizedIDs.boundToArtifact'), -1))
                 if (game.user.targets.size) {
                     game.user.targets.forEach(target => {
-                        skMod = target.actor.data.data.status.soulpower.max
-                        zkMod = target.actor.data.data.status.toughness.max
+                        skMod = target.actor.data.data.status.soulpower.max * -1
+                        zkMod = target.actor.data.data.status.toughness.max * -1
                     });
                 }
                 mergeObject(dialogOptions.data, {
@@ -166,8 +167,8 @@ export default class DiceDSA5 {
             case "ceremony":
                 if (game.user.targets.size) {
                     game.user.targets.forEach(target => {
-                        skMod = target.actor.data.data.status.soulpower.max
-                        zkMod = target.actor.data.data.status.toughness.max
+                        skMod = target.actor.data.data.status.soulpower.max * -1
+                        zkMod = target.actor.data.data.status.toughness.max * -1
                     });
                 }
                 mergeObject(dialogOptions.data, {
@@ -180,14 +181,14 @@ export default class DiceDSA5 {
                 this._enabledModifiers(situationalModifiers, ["CONDITION.encumbered", "CONDITION.inpain"], true)
                 break
             case "ritual":
-                situationalModifiers.push(...AdvantageRulesDSA5.getVantageAsModifier(testData.extra.actor, /Lästige Mindergeister/, -1))
-                situationalModifiers.push(...AdvantageRulesDSA5.getVantageAsModifier(testData.extra.actor, /Magische Einstimmung.*/))
-                situationalModifiers.push(...AdvantageRulesDSA5.getVantageAsModifier(testData.extra.actor, /Magische Einschränkung.*/, -1))
-                situationalModifiers.push(...AdvantageRulesDSA5.getVantageAsModifier(testData.extra.actor, /Artefaktgebunden.*/, -1))
+                situationalModifiers.push(...AdvantageRulesDSA5.getVantageAsModifier(testData.extra.actor, game.i18n.localize('LocalizedIDs.minorSpirits'), -1))
+                situationalModifiers.push(...AdvantageRulesDSA5.getVantageAsModifier(testData.extra.actor, game.i18n.localize('LocalizedIDs.magicalAttunement')))
+                situationalModifiers.push(...AdvantageRulesDSA5.getVantageAsModifier(testData.extra.actor, game.i18n.localize('LocalizedIDs.magicalRestriction'), -1))
+                situationalModifiers.push(...AdvantageRulesDSA5.getVantageAsModifier(testData.extra.actor, game.i18n.localize('LocalizedIDs.boundToArtifact'), -1))
                 if (game.user.targets.size) {
                     game.user.targets.forEach(target => {
-                        skMod = target.actor.data.data.status.soulpower.max
-                        zkMod = target.actor.data.data.status.toughness.max
+                        skMod = target.actor.data.data.status.soulpower.max * -1
+                        zkMod = target.actor.data.data.status.toughness.max * -1
                     });
                 }
                 mergeObject(dialogOptions.data, {
@@ -201,6 +202,18 @@ export default class DiceDSA5 {
                 break
             case "poison":
             case "disease":
+                if (game.user.targets.size) {
+                    game.user.targets.forEach(target => {
+                        skMod = target.actor.data.data.status.soulpower.max * -1
+                        zkMod = target.actor.data.data.status.toughness.max * -1
+                    });
+                }
+                mergeObject(dialogOptions.data, {
+                    SKModifier: skMod,
+                    ZKModifier: zkMod,
+                    hasSKModifier: testData.source.data.resistance.value == "SK",
+                    hasZKModifier: testData.source.data.resistance.value == "ZK"
+                })
             case "status":
                 break;
             default:
@@ -277,7 +290,7 @@ export default class DiceDSA5 {
         if (roll.terms[0].results.filter(x => x.result == 1).length == 1) {
             description = game.i18n.localize("CriticalSuccess");
             let res2 = res - rollConfirm.terms[0].results[0].result;
-            if (AdvantageRulesDSA5.hasVantage(testData.extra.actor, `Waffenbegabung (${combatskill})`) && !(res2 >= 0)) {
+            if (AdvantageRulesDSA5.hasVantage(testData.extra.actor, `${game.i18n.localize('LocalizedIDs.weaponAptitude')} (${combatskill})`) && !(res2 >= 0)) {
                 let a = rollConfirm.terms[0].results[0].result
                 rollConfirm = new Roll("1d20").roll();
                 res2 = res - rollConfirm.terms[0].results[0].result;
@@ -289,7 +302,7 @@ export default class DiceDSA5 {
         } else if (roll.terms[0].results.filter(x => x.result == 20).length == 1) {
             description = game.i18n.localize("CriticalFailure");
             let res2 = res - rollConfirm.terms[0].results[0].result;
-            if (AdvantageRulesDSA5.hasVantage(testData.extra.actor, `Waffenbegabung (${combatskill})`) && !(res2 >= 0)) {
+            if (AdvantageRulesDSA5.hasVantage(testData.extra.actor, `${game.i18n.localize('LocalizedIDs.weaponAptitude')} (${combatskill})`) && !(res2 >= 0)) {
                 let a = rollConfirm.terms[0].results[0].result
                 rollConfirm = new Roll("1d20").roll();
                 res2 = res - rollConfirm.terms[0].results[0].result;
@@ -322,7 +335,7 @@ export default class DiceDSA5 {
         let roll = testData.roll
         let chars = []
 
-        let lepBonus = AdvantageRulesDSA5.vantageStep(testData.extra.actor, "Verbesserte Regeneration (Lebensenergie)") - AdvantageRulesDSA5.vantageStep(testData.extra.actor, "Schlechte Regeneration (Lebensenergie)")
+        let lepBonus = AdvantageRulesDSA5.vantageStep(testData.extra.actor, game.i18n.localize('LocalizedIDs.regenerationLP')) - AdvantageRulesDSA5.vantageStep(testData.extra.actor, game.i18n.localize('LocalizedIDs.weakRegenerationLP'))
 
         chars.push({ char: "LeP", res: roll.terms[0].results[0].result, die: "d6" })
 
@@ -336,11 +349,11 @@ export default class DiceDSA5 {
 
 
         if (testData.extra.actor.isMage) {
-            let aspBonus = AdvantageRulesDSA5.vantageStep(testData.extra.actor, "Verbesserte Regeneration (Astralenergie)") - AdvantageRulesDSA5.vantageStep(testData.extra.actor, "Schlechte Regeneration (Astralenergie)")
+            let aspBonus = AdvantageRulesDSA5.vantageStep(testData.extra.actor, game.i18n.localize('LocalizedIDs.regenerationAE')) - AdvantageRulesDSA5.vantageStep(testData.extra.actor, game.i18n.localize('LocalizedIDs.weakRegenerationAE'))
             chars.push({ char: "AsP", res: roll.terms[2].results[0].result, die: "d6" })
             result["AsP"] = Math.round(Math.max(0, Number(roll.terms[2].results[0].result) + Number(modifier) + aspBonus) * Number(testData.regenerationFactor))
         } else if (testData.extra.actor.isPriest) {
-            let aspBonus = AdvantageRulesDSA5.vantageStep(testData.extra.actor, "Verbesserte Regeneration (Karmaenergie)") - AdvantageRulesDSA5.vantageStep(testData.extra.actor, "Schlechte Regeneration (Karmaenergie)")
+            let aspBonus = AdvantageRulesDSA5.vantageStep(testData.extra.actor, game.i18n.localize('LocalizedIDs.regenerationKP')) - AdvantageRulesDSA5.vantageStep(testData.extra.actor, game.i18n.localize('LocalizedIDs.weakRegenerationKP'))
             chars.push({ char: "KaP", res: roll.terms[2].results[0].result, die: "d6" })
             result["KaP"] = Math.round(Math.max(0, Number(roll.terms[2].results[0].result) + Number(modifier) + aspBonus) * Number(testData.regenerationFactor))
         }
@@ -767,7 +780,7 @@ export default class DiceDSA5 {
         }
 
         if (res.successLevel < 0) {
-            res.preData.calculatedSpellModifiers.finalcost = Math.round(res.preData.calculatedSpellModifiers.cost / (SpecialabilityRulesDSA5.hasAbility(testData.extra.actor, "Tradition (Hexen)") ? 3 : 2))
+            res.preData.calculatedSpellModifiers.finalcost = Math.round(res.preData.calculatedSpellModifiers.cost / (SpecialabilityRulesDSA5.hasAbility(testData.extra.actor, game.i18n.localize('LocalizedIDs.traditionWitch')) ? 3 : 2))
         } else {
             if (testData.source.data.effectFormula.value != "") {
                 let formula = testData.source.data.effectFormula.value.replace("QS", res.qualityStep).replace(/[Ww]/, "d")
@@ -785,8 +798,8 @@ export default class DiceDSA5 {
                 res["damageRoll"] = rollEffect
             }
         }
-        res.preData.calculatedSpellModifiers.finalcost = Number(res.preData.calculatedSpellModifiers.finalcost) + AdvantageRulesDSA5.vantageStep(testData.extra.actor, "Schwacher Karmalkörper") + AdvantageRulesDSA5.vantageStep(testData.extra.actor, "Schwacher Astralkörper")
-        if (AdvantageRulesDSA5.hasVantage(testData.extra.actor, "Lästige Mindergeister")) {
+        res.preData.calculatedSpellModifiers.finalcost = Number(res.preData.calculatedSpellModifiers.finalcost) + AdvantageRulesDSA5.vantageStep(testData.extra.actor, game.i18n.localize('LocalizedIDs.weakKarmicBody')) + AdvantageRulesDSA5.vantageStep(testData.extra.actor, game.i18n.localize('LocalizedIDs.weakAstralBody'))
+        if (AdvantageRulesDSA5.hasVantage(testData.extra.actor, game.i18n.localize('LocalizedIDs.minorSpirits'))) {
             let ghostroll = new Roll("1d20").roll()
             if (ghostroll.total <= res.preData.calculatedSpellModifiers.finalcost)
                 res.description += ", " + game.i18n.localize("minorghostsappear")
@@ -812,10 +825,10 @@ export default class DiceDSA5 {
         }
 
         let failValue = 20
-        if ((testData.source.type == "spell" || testData.source.type == "ritual") && AdvantageRulesDSA5.hasVantage(testData.extra.actor, "Wilde Magie"))
+        if ((testData.source.type == "spell" || testData.source.type == "ritual") && AdvantageRulesDSA5.hasVantage(testData.extra.actor, game.i18n.localize('LocalizedIDs.wildMagic')))
             failValue = 19
 
-        if (testData.source.type == "skill" && AdvantageRulesDSA5.hasVantage(testData.extra.actor, `Unfähig (${testData.source.name})`)) {
+        if (testData.source.type == "skill" && AdvantageRulesDSA5.hasVantage(testData.extra.actor, `${game.i18n.localize('LocalizedIDs.incompetent')} (${testData.source.name})`)) {
             let reroll = new Roll("1d20").roll()
             let indexOfMinValue = res.reduce((iMin, x, i, arr) => x < arr[iMin] ? i : iMin, 0)
             let oldValue = roll.results[indexOfMinValue * 2]
@@ -826,10 +839,10 @@ export default class DiceDSA5 {
             this._addRollDiceSoNice(testData, reroll, roll.terms[indexOfMinValue * 2].options.colorset)
             description.push(game.i18n.format("CHATNOTIFICATION.unableReroll", { die: (indexOfMinValue + 1), oldVal: oldValue, newVal: reroll.total }))
         }
-        if (testData.source.type == "skill" && TraitRulesDSA5.hasTrait(testData.extra.actor, `Automatischer Erfolg (${testData.source.name})`)) {
+        if (testData.source.type == "skill" && TraitRulesDSA5.hasTrait(testData.extra.actor, `${game.i18n.localize('LocalizedIDs.automaticSuccess')} (${testData.source.name})`)) {
             description.push(game.i18n.localize("TraitMsg.AutomaticSuccess"));
             successLevel = 1
-        } else if (testData.source.type == "skill" && TraitRulesDSA5.hasTrait(testData.extra.actor, `Automatischer Misserfolg (${testData.source.name})`)) {
+        } else if (testData.source.type == "skill" && TraitRulesDSA5.hasTrait(testData.extra.actor, `${game.i18n.localize('LocalizedIDs.automaticFail')} (${testData.source.name})`)) {
             description.push(game.i18n.localize("TraitMsg.AutomaticFailure"));
             successLevel = -1
         } else if (roll.results.filter(x => x == 1).length == 3) {
@@ -987,8 +1000,6 @@ export default class DiceDSA5 {
         }
 
         mergeObject(rollResults, testData.extra)
-
-        rollResults.other = [];
         return rollResults
     }
 
@@ -1093,10 +1104,6 @@ export default class DiceDSA5 {
     }
 
     static async renderRollCard(chatOptions, testData, rerenderMessage) {
-        if (Array.isArray(testData.other)) {
-            testData.other = testData.other.join("<br>")
-        }
-
         let chatData = {
             title: chatOptions.title,
             testData: testData,
@@ -1186,16 +1193,15 @@ export default class DiceDSA5 {
                 }
                 break
             case "mod":
-                let modifier = this._situationalModifiers(newTestData)
+                index = newTestData.situationalModifiers.findIndex(x => x.name == game.i18n.localize("chatEdit"))
+                if (index > 0)
+                    newTestData.situationalModifiers.splice(index, 1)
+
                 let newVal = {
                     name: game.i18n.localize("chatEdit"),
-                    value: Number(input.val()) - modifier
+                    value: Number(input.val()) - this._situationalModifiers(newTestData)
                 }
-                if (newTestData.situationalModifiers.findIndex(x => x.name == game.i18n.localize("chatEdit")) >= 0) {
-                    newTestData.situationalModifiers[index] = newVal
-                } else {
-                    newTestData.situationalModifiers.push(newVal)
-                }
+                newTestData.situationalModifiers.push(newVal)
                 break
         }
 
@@ -1252,6 +1258,18 @@ export default class DiceDSA5 {
         })
         html.on('change', '.roll-edit', ev => {
             DiceDSA5._rollEdit(ev)
+        })
+
+        html.on("click", ".message-delete", ev => {
+            let message = game.messages.get($(ev.currentTarget).parents(".message").attr("data-message-id"))
+            let targeted = message.data.flags.unopposeData // targeted opposed test
+            if (!targeted)
+                return;
+
+            let target = canvas.tokens.get(message.data.flags.unopposeData.targetSpeaker.token)
+            target.actor.update({
+                "-=flags.oppose": null
+            })
         })
     }
 

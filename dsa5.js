@@ -8,7 +8,7 @@ import ItemSheetdsa5 from "./modules/item/item-sheet.js";
 import ItemSpeciesDsa5 from "./modules/item/item-species-dsa5.js";
 import ItemCareerDsa5 from "./modules/item/item-career-dsa5.js";
 import ItemCultureDsa5 from "./modules/item/item-culture-dsa5.js"
-import registerHooks from "./modules/system/hooks.js";
+import initHooks from "./modules/hooks/init.js";
 import MacroDSA5 from "./modules/system/macroControl.js";
 import LazyImporter from "./modules/importer/lazy_importer.js"
 import DSA5 from "./modules/system/config-dsa5.js"
@@ -63,4 +63,4 @@ Hooks.once("init", async function() {
     CONFIG.ChatMessage.template = "systems/dsa5/templates/chat/chat-message.html"
 });
 
-registerHooks();
+initHooks();

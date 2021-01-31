@@ -37,21 +37,34 @@ export default class DSA5ChatAutoCompletion {
         if (this.regex.test(val)) {
             if ([38, 40, 13].includes(ev.which))
                 return false
+            else if (ev.which == 27) {
+                this._closeQuickfind()
+                return false
+            }
+
             let cmd = val.substring(1, 3).toUpperCase()
             let search = val.substring(3).toLowerCase().trim()
             this[`_filter${cmd}`](search)
             this.filtering = true
         } else {
-            this.filtering = false
-            this.anchor.find(".quickfind").remove()
+            this._closeQuickfind()
         }
+    }
+
+    _closeQuickfind() {
+        this.filtering = false
+        this.anchor.find(".quickfind").remove()
     }
 
     _filterAT(search) {
         let actor = this._getActor()
         if (actor) {
             let types = ["meleeweapon", "rangeweapon"]
-            let result = actor.data.items.filter(x => { return types.includes(x.type) && x.name.toLowerCase().trim().indexOf(search) != -1 }).slice(0, 5).map(x => x.name)
+            let traitTypes = ["meleeAttack", "rangeAttack"]
+            let result = actor.data.items.filter(x => {
+                    return (types.includes(x.type) || (x.type == "trait" && traitTypes.includes(x.data.traitType.value))) &&
+                        x.name.toLowerCase().trim().indexOf(search) != -1
+                }).slice(0, 5).map(x => x.name)
                 .concat([this.constants.attackWeaponless].filter(x => x.toLowerCase().trim().indexOf(search) != -1))
             if (!result.length)
                 result.push(game.i18n.localize("Error.noMatch"))
@@ -197,11 +210,20 @@ export default class DSA5ChatAutoCompletion {
         }
         else {
             let types = ["meleeweapon", "rangeweapon"]
+            let traitTypes = ["meleeAttack", "rangeAttack"]
             let result = actor.data.items.find(x => { return types.includes(x.type) && x.name == target.text() })
             if (result) {
                 actor.setupWeapon(result, "attack", {}).then(setupData => {
                     actor.basicTest(setupData)
                 });
+            }else{
+                result = actor.data.items.find(x => { return x.type == "trait" && x.name == target.text() && traitTypes.includes(x.data.traitType.value) })
+                if(result){
+                    actor.setupWeaponTrait(result, "attack", {}).then(setupData => {
+                        actor.basicTest(setupData)
+                    });
+                }
+                
             }
         }
     }

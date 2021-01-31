@@ -15,7 +15,7 @@
                 </div>
             </div>
         </div>
-        {{#each actor.spells as |item i|}}
+        {{#each actor.magic.spell as |item i|}}
         <div class="col spells item" data-item-id="{{item._id}}">
             <div class="row-section skills lineheight">
                 <div class="col four">
@@ -79,7 +79,7 @@
                 </div>
             </div>
         </div>
-        {{#each actor.rituals as |item i|}}
+        {{#each actor.magic.ritual as |item i|}}
         <div class="col spells item" data-item-id="{{item._id}}">
             <div class="row-section skills lineheight">
                 <div class="col four">
@@ -132,7 +132,7 @@
         </div>
     </div>
     <div class="row-section wrap cards">
-        {{#each actor.magicSpecialAbilities as |item i|}}
+        {{#each actor.specAbs.magical as |item i|}}
         <div class="item" data-item-id="{{item._id}}">
             <a class="item-edit">{{item.name}}{{roman item.data.step.value}}</a>
         </div>
@@ -187,7 +187,7 @@
                 </div>
             </div>
             <div class="row-section wrap cards">
-                {{#each actor.magicTricks as |item i|}}
+                {{#each actor.magic.magictrick as |item i|}}
                 <div class="item" data-item-id="{{item._id}}">
                     <a class="item-edit">{{item.name}}</a>
                 </div>

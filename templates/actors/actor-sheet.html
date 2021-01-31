@@ -40,7 +40,7 @@
                         {{localize 'CHARAbbrev.LeP'}}
                     </div>
                     <div class="col fourty">
-                        <div class="healthbar barLeft{{#if actor.hasPrayers}}{{else if actor.hasSpells}}{{else}} soloBar{{/if}}" title="{{localize 'wounds'}}">
+                        <div class="healthbar barLeft{{#if actor.magic.hasPrayers}}{{else if actor.magic.hasSpells}}{{else}} soloBar{{/if}}" title="{{localize 'wounds'}}">
 
                             <div class="bar LeP" style="--a: {{actor.data.status.wounds.value}}; --b: {{actor.data.status.wounds.max}}">
                             </div>
@@ -50,7 +50,7 @@
                             </div>
                         </div>
                     </div>
-                    {{#if actor.hasPrayers}}
+                    {{#if actor.magic.hasPrayers}}
                     <div class="col fourty">
                         <div class="healthbar barRight" title="{{localize 'karmaenergy'}}">
                             <div class="barLabel">
@@ -65,7 +65,7 @@
                     <div class="col ten center  lineheight" title="{{localize 'karmaenergy'}}">
                         {{localize 'CHARAbbrev.KaP'}}
                     </div>
-                    {{else if actor.hasSpells}}
+                    {{else if actor.magic.hasSpells}}
                     <div class="col fourty">
                         <div class="healthbar barRight" title="{{localize 'astralenergy'}}">
                             <div class="barLabel">
@@ -107,8 +107,8 @@
     <section id="tab-sections">
         <nav id="dsa5-primarytabs" class="sheet-tabs tabs" ondragstart="return false;" ondrop="return false;">
             <a class="item active" data-tab="skills">{{localize "skills"}}</a>
-            <a class="item" data-tab="combat">{{localize "Combat"}}</a> {{#if actor.hasSpells}}
-            <a class="item" data-tab="magic">{{localize "Magic"}}</a> {{/if}} {{#if actor.hasPrayers}}
+            <a class="item" data-tab="combat">{{localize "Combat"}}</a> {{#if actor.magic.hasSpells}}
+            <a class="item" data-tab="magic">{{localize "Magic"}}</a> {{/if}} {{#if actor.magic.hasPrayers}}
             <a class="item" data-tab="religion">{{localize "Religion"}}</a> {{/if}}
             <a class="item" data-tab="main">{{localize "attributes"}}</a>
             <a class="item" data-tab="inventory">{{localize "equipment"}}</a>
@@ -126,11 +126,11 @@
             <div class="tab combat save-scroll" data-tab="combat">
                 {{> systems/dsa5/templates/actors/actor-combat.html}}
             </div>
-            {{#if actor.hasSpells}}
+            {{#if actor.magic.hasSpells}}
             <div class="tab magic save-scroll" data-tab="magic">
                 {{> systems/dsa5/templates/actors/character/actor-magic.html}}
             </div>
-            {{/if}} {{#if actor.hasPrayers}}
+            {{/if}} {{#if actor.magic.hasPrayers}}
             <div class="tab religion save-scroll" data-tab="religion">
                 {{> systems/dsa5/templates/actors/character/actor-religion.html}}
             </div>

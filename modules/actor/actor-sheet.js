@@ -284,16 +284,16 @@ export default class ActorSheetDsa5 extends ActorSheet {
         let result = false
         switch (item.type) {
             case "combatskill":
-                result = newValue <= Math.max(...(item.data.guidevalue.value.split("/").map(x => this.actor.data.data.characteristics[x].value))) + 2 + AdvantageRulesDSA5.vantageStep(this.actor, `Herausragende Kampftechnik (${item.name})`)
+                result = newValue <= Math.max(...(item.data.guidevalue.value.split("/").map(x => this.actor.data.data.characteristics[x].value))) + 2 + AdvantageRulesDSA5.vantageStep(this.actor, `${game.i18n.localize('LocalizedIDs.exceptionalCombatTechnique')} (${item.name})`)
                 break
             case "spell":
             case "ritual":
             case "liturgy":
             case "ceremnoy":
-                result = newValue <= 14 + AdvantageRulesDSA5.vantageStep(this.actor, `Herausragende Fertigkeit (${item.name})`)
+                result = newValue <= 14 + AdvantageRulesDSA5.vantageStep(this.actor, `${game.i18n.localize('LocalizedIDs.exceptionalSkill')} (${item.name})`)
                 break
             case "skill":
-                result = newValue <= Math.max(...[this.actor.data.data.characteristics[item.data.characteristic1.value].value, this.actor.data.data.characteristics[item.data.characteristic2.value].value, this.actor.data.data.characteristics[item.data.characteristic3.value].value]) + 2 + AdvantageRulesDSA5.vantageStep(this.actor, `Herausragende Fertigkeit (${item.name})`)
+                result = newValue <= Math.max(...[this.actor.data.data.characteristics[item.data.characteristic1.value].value, this.actor.data.data.characteristics[item.data.characteristic2.value].value, this.actor.data.data.characteristics[item.data.characteristic3.value].value]) + 2 + AdvantageRulesDSA5.vantageStep(this.actor, `${game.i18n.localize('LocalizedIDs.exceptionalSkill')} (${item.name})`)
                 break
         }
         if (!result)
@@ -700,11 +700,9 @@ export default class ActorSheetDsa5 extends ActorSheet {
     }
 
     _filterConditions(tar) {
-        console.log(tar)
         if (tar.val() != undefined) {
             let val = tar.val().toLowerCase().trim()
             let conditions = $(this.form).find('.statusEffectMenu li:not(.search)')
-            console.log(conditions)
             conditions.removeClass('filterHide')
             conditions.filter(function() {
                 return $(this).find('a').attr('title').toLowerCase().trim().indexOf(val) == -1

@@ -47,9 +47,8 @@ export default class OpposedDsa5 {
                 blind: message.data.blind,
             })
             await actor.update({
-                    "-=flags.oppose": null
-                }) // After opposing, remove oppose
-
+                "-=flags.oppose": null
+            })
         } else if (game.user.targets.size && !message.data.flags.data.defenderMessage && !message.data.flags.data.attackerMessage) {
             let attacker;
 
@@ -70,7 +69,7 @@ export default class OpposedDsa5 {
                         <div class="col two attacker"><img src="${attacker.img}" width="50" height="50"/></div>
                         <div class="col two defender"><img src="${target.data.img}" width="50" height="50"/></div>
                     </div>
-                    <div class="unopposed-button" data-target="true" title="${game.i18n.localize("Unopposed")}"><a><i class="fas fa-arrow-down"></i></a></div>`
+                    <div class="unopposed-button" data-target="true" title="${game.i18n.localize("Unopposed")}"><a><i class="fas fa-times"></i></a></div>`
 
                     let startMessage = await ChatMessage.create({
                         user: game.user._id,
@@ -165,9 +164,6 @@ export default class OpposedDsa5 {
     }
 
     static async evaluateOpposedTest(attackerTest, defenderTest, options = {}) {
-
-        Hooks.call("dsa5:preOpposedTestResult", attackerTest, defenderTest)
-            //   try {
         let opposeResult = {};
 
         opposeResult.attackerTestResult = attackerTest;
@@ -176,9 +172,11 @@ export default class OpposedDsa5 {
         opposeResult.other = [];
         opposeResult.modifiers = this.checkPostModifiers(attackerTest, defenderTest);
 
-        Hooks.call("dsa5:opposedTestResult", opposeResult, attackerTest, defenderTest)
         opposeResult.winner = "attacker"
 
+        if (attackerTest.rollType == "weapon" && defenderTest.successLevel == undefined) {
+            defenderTest.successLevel = -5
+        }
 
         if (defenderTest.successLevel != undefined) {
             switch (attackerTest.rollType) {
@@ -210,7 +208,8 @@ export default class OpposedDsa5 {
 
     static _calculateOpposedDamage(attackerTest, defenderTest) {
         let wornArmor = defenderTest.actor.items.filter(x => x.type == "armor" && x.data.worn.value == true)
-        let armor = wornArmor.reduce((a, b) => a + Number(b.data.protection.value), 0)
+        let animalArmor = defenderTest.actor.items.filter(x => x.type == "trait" && x.data.traitType.value == "armor")
+        let armor = wornArmor.reduce((a, b) => a + Number(b.data.protection.value), 0) + animalArmor.reduce((a, b) => a + Number(b.data.at.value), 0)
         return {
             damage: attackerTest.damage,
             armor: armor,
@@ -361,26 +360,24 @@ export default class OpposedDsa5 {
     static async resolveUnopposed(startMessage) {
         let unopposeData = startMessage.data.flags.unopposeData;
 
-        let attackMessage = game.messages.get(unopposeData.attackMessageId) // Retrieve attacker's test result message
-            // Organize attacker data
+        let attackMessage = game.messages.get(unopposeData.attackMessageId)
         let attacker = {
-                speaker: attackMessage.data.speaker,
-                testResult: attackMessage.data.flags.data.postData,
-                messageId: unopposeData.attackMessageId
-            }
-            // Organize dummy values for defender
+            speaker: attackMessage.data.speaker,
+            testResult: attackMessage.data.flags.data.postData,
+            messageId: unopposeData.attackMessageId
+        }
+
         let target = canvas.tokens.get(unopposeData.targetSpeaker.token)
         let defender = {
-                speaker: unopposeData.targetSpeaker,
-                testResult: {
-                    actor: target.actor.data,
-                    unopposed: true
-                }
+            speaker: unopposeData.targetSpeaker,
+            testResult: {
+                actor: target.actor.data,
+                unopposed: true
             }
-            // Remove opposed flag
+        }
         if (!startMessage.data.flags.reroll)
             await target.actor.update({ "-=flags.oppose": null })
-            // Evaluate
+
         this.completeOpposedProcess(attacker, defender, {
             target: true,
             startMessageId: startMessage.data._id

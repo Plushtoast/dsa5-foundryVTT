@@ -43,36 +43,31 @@ export default class Actordsa5 extends Actor {
         super.create(data, options);
     }
 
-    prepareBaseData() {
-        for (let ch of Object.values(this.data.data.characteristics)) {
-            ch.value = ch.initial + ch.advances + (ch.modifier || 0);
-            ch.bonus = Math.floor(ch.value / 10)
-            ch.cost = game.i18n.format("advancementCost", { cost: DSA5_Utility._calculateAdvCost(ch.initial + ch.advances, "E") })
-            ch.refund = game.i18n.format("refundCost", { cost: DSA5_Utility._calculateAdvCost(ch.initial + ch.advances, "E", 0) })
-        }
-    }
-
-    prepareData() {
+    prepareDerivedData() {
+        const data = this.data
         try {
-            super.prepareData();
-            const data = this.data;
-
-            if (data.type == "character" || data.type == "npc") {
-                data.data.status.wounds.current = data.data.status.wounds.initial + data.data.characteristics["ko"].value * 2;
-
-                data.data.status.soulpower.value = (data.data.status.soulpower.initial ? data.data.status.soulpower.initial : 0) + Math.round((data.data.characteristics["mu"].value + data.data.characteristics["kl"].value + data.data.characteristics["in"].value) / 6);
-                data.data.status.toughness.value = (data.data.status.toughness.initial ? data.data.status.toughness.initial : 0) + Math.round((data.data.characteristics["ko"].value + data.data.characteristics["ko"].value + data.data.characteristics["kk"].value) / 6);
-                data.data.status.fatePoints.max = Number(data.data.status.fatePoints.current) + Number(data.data.status.fatePoints.modifier);
-
-                data.data.status.initiative.value = Math.round((data.data.characteristics["mu"].value + data.data.characteristics["ge"].value) / 2) + (data.data.status.initiative.modifier || 0);
+            let equipmentModifiers = {}
+            for (let i of data.items.filter(x => ["meleeweapon", "rangeweapon", "armor"].includes(x.type) && x.data.worn.value)) {
+                this._addGearAndAbilityModifiers(equipmentModifiers, i)
             }
+            data.data.equipmentModifiers = equipmentModifiers
+            this._applyModiferTransformations(equipmentModifiers)
 
+            //This gets called by every user and creates multiple instances
             data.canAdvance = data.type == "character" || data.items.find(x => x.name == "Vertrauter" && x.type == "trait") != undefined
-
             if (data.canAdvance) {
                 data.data.details.experience.current = data.data.details.experience.total - data.data.details.experience.spent;
                 data.data.details.experience.description = DSA5_Utility.experienceDescription(data.data.details.experience.total)
             }
+
+            if (data.type == "character" || data.type == "npc") {
+                data.data.status.wounds.current = data.data.status.wounds.initial + data.data.characteristics["ko"].value * 2;
+                data.data.status.soulpower.value = (data.data.status.soulpower.initial ? data.data.status.soulpower.initial : 0) + Math.round((data.data.characteristics["mu"].value + data.data.characteristics["kl"].value + data.data.characteristics["in"].value) / 6);
+                data.data.status.toughness.value = (data.data.status.toughness.initial ? data.data.status.toughness.initial : 0) + Math.round((data.data.characteristics["ko"].value + data.data.characteristics["ko"].value + data.data.characteristics["kk"].value) / 6);
+                data.data.status.fatePoints.max = Number(data.data.status.fatePoints.current) + Number(data.data.status.fatePoints.modifier);
+                data.data.status.initiative.value = Math.round((data.data.characteristics["mu"].value + data.data.characteristics["ge"].value) / 2) + (data.data.status.initiative.modifier || 0);
+            }
+
             if (data.type == "creature") {
                 data.data.status.wounds.current = data.data.status.wounds.initial
                 data.data.status.astralenergy.current = data.data.status.astralenergy.initial
@@ -80,13 +75,11 @@ export default class Actordsa5 extends Actor {
                 data.data.status.initiative.value = data.data.status.initiative.current + (data.data.status.initiative.modifier || 0);
             }
 
-            let encumbrance = this.hasCondition('encumbered')
-            encumbrance = encumbrance ? Number(encumbrance.flags.dsa5.value) : 0
-            this.data.data.status.initiative.value -= (Math.min(4, encumbrance)) + SpecialabilityRulesDSA5.abilityStep(data, "Kampfreflexe")
+            data.data.status.initiative.value + data.data.status.initiative.gearmodifier
 
-            data.data.status.wounds.max = data.data.status.wounds.current + data.data.status.wounds.modifier + data.data.status.wounds.advances;
-            data.data.status.astralenergy.max = data.data.status.astralenergy.current + data.data.status.astralenergy.modifier + data.data.status.astralenergy.advances;
-            data.data.status.karmaenergy.max = data.data.status.karmaenergy.current + data.data.status.karmaenergy.modifier + data.data.status.karmaenergy.advances;
+            data.data.status.wounds.max = data.data.status.wounds.current + data.data.status.wounds.modifier + data.data.status.wounds.advances + data.data.status.wounds.gearmodifier
+            data.data.status.astralenergy.max = data.data.status.astralenergy.current + data.data.status.astralenergy.modifier + data.data.status.astralenergy.advances + data.data.status.astralenergy.gearmodifier
+            data.data.status.karmaenergy.max = data.data.status.karmaenergy.current + data.data.status.karmaenergy.modifier + data.data.status.karmaenergy.advances + data.data.status.karmaenergy.gearmodifier
 
             let guide = data.data.guidevalue
 
@@ -99,60 +92,70 @@ export default class Actordsa5 extends Actor {
                 }
             }
 
-            data.data.status.speed.max = data.data.status.speed.initial + (data.data.status.speed.modifier || 0)
+            data.data.status.speed.max = data.data.status.speed.initial + (data.data.status.speed.modifier || 0) + data.data.status.speed.gearmodifier
+            data.data.status.soulpower.max = data.data.status.soulpower.value + data.data.status.soulpower.modifier + data.data.status.soulpower.gearmodifier
+            data.data.status.toughness.max = data.data.status.toughness.value + data.data.status.toughness.modifier + data.data.status.toughness.gearmodifier
+            data.data.status.dodge.value = Math.round(data.data.characteristics["ge"].value / 2) + data.data.status.dodge.gearmodifier
 
-            data.data.status.soulpower.max = data.data.status.soulpower.value + data.data.status.soulpower.modifier;
-            data.data.status.toughness.max = data.data.status.toughness.value + data.data.status.toughness.modifier;
+            let encumbrance = this.hasCondition('encumbered')
+            encumbrance = encumbrance ? Number(encumbrance.flags.dsa5.value) : 0
+            data.data.status.initiative.value -= (Math.min(4, encumbrance)) + SpecialabilityRulesDSA5.abilityStep(data, game.i18n.localize('LocalizedIDs.combatReflexes'))
+            data.data.status.dodge.max = Number(data.data.status.dodge.value) + Number(data.data.status.dodge.modifier) + SpecialabilityRulesDSA5.abilityStep(data, game.i18n.localize('LocalizedIDs.improvedDodge')) + (Number(game.settings.get("dsa5", "higherDefense")) / 2)
 
-            data.data.status.dodge.value = Math.round(data.data.characteristics["ge"].value / 2);
-            data.data.status.dodge.max = Number(data.data.status.dodge.value) + Number(data.data.status.dodge.modifier) + SpecialabilityRulesDSA5.abilityStep(this.data, "Verbessertes Ausweichen") + (Number(game.settings.get("dsa5", "higherDefense")) / 2)
 
-            let equipmentModifiers = {}
-            for (let i of data.items.filter(x => ["meleeweapon", "rangeweapon", "armor"].includes(x.type) && x.data.worn.value)) {
-                this._addGearAndAbilityModifiers(equipmentModifiers, i)
+            if (game.user.isGM) {
+                let pain = Math.floor((1 - data.data.status.wounds.value / data.data.status.wounds.max) * 4)
+                pain -= AdvantageRulesDSA5.vantageStep(this, game.i18n.localize('LocalizedIDs.ruggedFighter'))
+
+                if (pain > 0)
+                    pain += AdvantageRulesDSA5.vantageStep(this, game.i18n.localize('LocalizedIDs.sensitiveToPain'))
+
+                if (data.type != "creature" && data.data.status.wounds.value <= 5)
+                    pain = 4
+
+                pain = Math.max(Math.min(4, pain), 0)
+
+                if (AdvantageRulesDSA5.hasVantage(this, game.i18n.localize('LocalizedIDs.blind')))
+                    this.addCondition("blind")
+                if (AdvantageRulesDSA5.hasVantage(this, game.i18n.localize('LocalizedIDs.mute')))
+                    this.addCondition("mute")
+                if (AdvantageRulesDSA5.hasVantage(this, game.i18n.localize('LocalizedIDs.deaf')))
+                    this.addCondition("deaf")
+
+                this.addCondition("inpain", pain, true)
             }
-            data.data.equipmentModifiers = equipmentModifiers
-            this._applyModiferTransformations(equipmentModifiers)
-
-
-            let pain = Math.floor((1 - data.data.status.wounds.value / data.data.status.wounds.max) * 4) - AdvantageRulesDSA5.vantageStep(this, "Zäher Hund")
-            if (data.type != "creature" && data.data.status.wounds.value <= 5)
-                pain = 4
-
-
-            if (pain >= 1)
-                pain = Math.min(4, pain + AdvantageRulesDSA5.vantageStep(this, "Zerbrechlich"))
-
-
-            if (AdvantageRulesDSA5.hasVantage(this, "Blind"))
-                this.addCondition("blind")
-            if (AdvantageRulesDSA5.hasVantage(this, "Stumm"))
-                this.addCondition("mute")
-            if (AdvantageRulesDSA5.hasVantage(this, "Taub"))
-                this.addCondition("deaf")
-
-            this.addCondition("inpain", pain, true)
-
         } catch (error) {
             console.error("Something went wrong with preparing actor data: " + error + error.stack)
             ui.notifications.error(game.i18n.localize("ACTOR.PreparationError") + error + error.stack)
         }
+
     }
 
-    /** Gest called on sheet render */
-    prepare() {
-        let preparedData = duplicate(this.data)
-
-        if (preparedData.canAdvance) {
-            preparedData.data.status.wounds.cost = game.i18n.format("advancementCost", { cost: DSA5_Utility._calculateAdvCost(preparedData.data.status.wounds.advances, "D") })
-            preparedData.data.status.astralenergy.cost = game.i18n.format("advancementCost", { cost: DSA5_Utility._calculateAdvCost(preparedData.data.status.astralenergy.advances, "D") })
-            preparedData.data.status.karmaenergy.cost = game.i18n.format("advancementCost", { cost: DSA5_Utility._calculateAdvCost(preparedData.data.status.karmaenergy.advances, "D") })
-
-            preparedData.data.status.wounds.refund = game.i18n.format("refundCost", { cost: DSA5_Utility._calculateAdvCost(preparedData.data.status.wounds.advances, "D", 0) })
-            preparedData.data.status.astralenergy.refund = game.i18n.format("refundCost", { cost: DSA5_Utility._calculateAdvCost(preparedData.data.status.astralenergy.advances, "D", 0) })
-            preparedData.data.status.karmaenergy.refund = game.i18n.format("refundCost", { cost: DSA5_Utility._calculateAdvCost(preparedData.data.status.karmaenergy.advances, "D", 0) })
+    prepareBaseData() {
+        const data = this.data;
+        for (let ch of Object.values(data.data.characteristics)) {
+            ch.value = ch.initial + ch.advances + (ch.modifier || 0);
+            ch.bonus = Math.floor(ch.value / 10)
+            ch.cost = game.i18n.format("advancementCost", { cost: DSA5_Utility._calculateAdvCost(ch.initial + ch.advances, "E") })
+            ch.refund = game.i18n.format("refundCost", { cost: DSA5_Utility._calculateAdvCost(ch.initial + ch.advances, "E", 0) })
         }
 
+        let gearModifyableCalculatedAttributes = ["initiative", "speed", "astralenergy", "karmaenergy", "wounds", "dodge", "soulpower", "toughness"]
+        for (let k of gearModifyableCalculatedAttributes) {
+            data.data.status[k].gearmodifier = 0
+        }
+    }
+
+    /** Gets called on sheet render */
+    prepare() {
+        let preparedData = duplicate(this.data)
+        if (preparedData.canAdvance) {
+            const attrs = ["wounds", "astralenergy", "karmaenergy"]
+            for (const k of attrs) {
+                preparedData.data.status[k].cost = game.i18n.format("advancementCost", { cost: DSA5_Utility._calculateAdvCost(preparedData.data.status[k].advances, "D") })
+                preparedData.data.status[k].refund = game.i18n.format("refundCost", { cost: DSA5_Utility._calculateAdvCost(preparedData.data.status[k].advances, "D", 0) })
+            }
+        }
         mergeObject(preparedData, this.prepareItems())
         return preparedData;
     }
@@ -189,36 +192,47 @@ export default class Actordsa5 extends Actor {
 
     prepareItems() {
         let actorData = duplicate(this.data)
-        let bodySkills = [];
-        let socialSkills = [];
-        let knowledgeSkills = [];
-        let tradeSkills = [];
-        let natureSkills = [];
         let combatskills = [];
         let advantages = [];
         let disadvantages = []
-        let generalSpecialAbilites = []
-        let combatSpecialAbilities = []
-        let fatePointsAbilities = []
-        let magicSpecialAbilities = []
-        let clericSpecialAbilities = []
-        let languageSpecialAbilities = []
-        let animalSpecialAbilities = []
-        let magicTricks = []
-        let blessings = []
         let aggregatedtests = []
+
+        let specAbs = {
+            general: [],
+            Combat: [],
+            fatePoints: [],
+            magical: [],
+            staff: [],
+            clerical: [],
+            language: [],
+            animal: []
+        }
 
         let armor = [];
         let rangeweapons = [];
         let meleeweapons = [];
 
-        let liturgies = []
-        let spells = []
-        let rituals = []
-        let ceremonies = []
+        let magic = {
+            hasSpells: false,
+            hasPrayers: false,
+            liturgy: [],
+            spell: [],
+            ritual: [],
+            ceremony: [],
+            blessing: [],
+            magictrick: []
+        }
+
+        let traits = {
+            rangeAttack: [],
+            meleeAttack: [],
+            general: [],
+            animal: [],
+            familiar: [],
+            armor: []
+        }
+
         let schips = []
-
-
         for (let i = 1; i <= Number(actorData.data.status.fatePoints.max); i++) {
             schips.push({
                 value: i,
@@ -262,7 +276,6 @@ export default class Actordsa5 extends Actor {
                 dataType: t
             }
         }
-
         inventory["misc"].show = true
 
         const money = {
@@ -271,95 +284,61 @@ export default class Actordsa5 extends Actor {
             show: true
         }
 
-        let meleeTraits = []
-        let rangeTraits = []
-        let armorTraits = []
-        let animalTraits = []
-        let generalTraits = []
-        let familiarTraits = []
-
         actorData.items = actorData.items.sort((a, b) => (a.sort || 0) - (b.sort || 0))
 
         let totalArmor = 0;
-
-        let hasSpells = false
-        let hasPrayers = false
-
         let totalWeight = 0;
         let encumbrance = 0;
-
+        let skills = {
+            body: [],
+            social: [],
+            knowledge: [],
+            trade: [],
+            nature: []
+        }
 
         for (let i of actorData.items) {
             switch (i.type) {
                 case "skill":
-                    switch (i.data.group.value) {
-                        case "body":
-                            bodySkills.push(this._perpareItemAdvancementCost(i));
-                            break;
-                        case "social":
-                            socialSkills.push(this._perpareItemAdvancementCost(i));
-                            break;
-                        case "knowledge":
-                            knowledgeSkills.push(this._perpareItemAdvancementCost(i));
-                            break;
-                        case "trade":
-                            tradeSkills.push(this._perpareItemAdvancementCost(i));
-                            break;
-                        case "nature":
-                            natureSkills.push(this._perpareItemAdvancementCost(i));
-                            break;
-                    }
+                    skills[i.data.group.value].push(this._perpareItemAdvancementCost(i))
                     break;
                 case "aggregatedTest":
                     aggregatedtests.push(i)
                     break
+                case "ritual":
                 case "spell":
-                    hasSpells = true
-                    spells.push(this._perpareItemAdvancementCost(i))
+                    magic.hasSpells = true
+                    magic[i.type].push(this._perpareItemAdvancementCost(i))
                     break;
                 case "liturgy":
-                    hasPrayers = true
-                    liturgies.push(this._perpareItemAdvancementCost(i))
-                    break;
                 case "ceremony":
-                    hasPrayers = true
-                    ceremonies.push(this._perpareItemAdvancementCost(i))
-                    break;
-                case "ritual":
-                    hasSpells = true
-                    rituals.push(this._perpareItemAdvancementCost(i))
+                    magic.hasPrayers = true
+                    magic[i.type].push(this._perpareItemAdvancementCost(i))
                     break;
                 case "blessing":
-                    hasPrayers = true
-                    blessings.push(i)
+                    magic.hasPrayers = true
+                    magic.blessing.push(i)
                     break;
                 case "magictrick":
-                    hasSpells = true
-                    magicTricks.push(i)
+                    magic.hasSpells = true
+                    magic.magictrick.push(i)
                     break;
                 case "trait":
                     switch (i.data.traitType.value) {
                         case "rangeAttack":
-                            rangeTraits.push(Actordsa5._prepareRangeTrait(i))
+                            i = Actordsa5._prepareRangeTrait(i)
                             break
                         case "meleeAttack":
-                            meleeTraits.push(Actordsa5._prepareMeleetrait(i))
-                            break
-                        case "general":
-                            generalTraits.push(i)
-                            break
-                        case "animal":
-                            animalTraits.push(i)
+                            i = Actordsa5._prepareMeleetrait(i)
                             break
                         case "familiar":
-                            familiarTraits.push(i)
-                            hasSpells = hasSpells || (i.name == "Vertrauter")
+                            magic.hasSpells = magic.hasSpells || (i.name == game.i18n.localize('LocalizedIDs.familiar'))
                             break
                         case "armor":
-                            armorTraits.push(i)
                             totalArmor += Number(i.data.at.value);
                             break
                     }
+                    traits[i.data.traitType.value].push(i)
                     break
                 case "combatskill":
                     combatskills.push(Actordsa5._calculateCombatSkillValues(i, actorData));
@@ -376,24 +355,21 @@ export default class Actordsa5 extends Actor {
                     inventory.meleeweapons.items.push(Actordsa5._prepareitemStructure(i));
                     inventory.meleeweapons.show = true;
                     totalWeight += Number(i.weight);
-
                     break;
                 case "rangeweapon":
                     i.weight = parseFloat((i.data.weight.value * i.data.quantity.value).toFixed(3));
                     i.toggleValue = i.data.worn.value || false;
-                    inventory.rangeweapons.items.push(i);
+                    inventory.rangeweapons.items.push(Actordsa5._prepareitemStructure(i));
                     inventory.rangeweapons.show = true;
                     totalWeight += Number(i.weight);
-
                     break;
                 case "armor":
                     i.toggleValue = i.data.worn.value || false;
-                    inventory.armor.items.push(i);
+                    inventory.armor.items.push(Actordsa5._prepareitemStructure(i));
                     inventory.armor.show = true;
-                    if (!i.toggleValue) {
-                        i.weight = parseFloat((i.data.weight.value * i.data.quantity.value).toFixed(3));
-                        totalWeight += Number(i.weight);
-                    }
+                    i.weight = parseFloat((i.data.weight.value * i.data.quantity.value).toFixed(3));
+                    totalWeight += parseFloat((i.data.weight.value * (i.toggleValue ? Math.max(0, i.data.quantity.value - 1) : i.data.quantity.value)).toFixed(3))
+
                     if (i.data.worn.value) {
                         encumbrance += Number(i.data.encumbrance.value);
                         totalArmor += Number(i.data.protection.value);
@@ -408,7 +384,7 @@ export default class Actordsa5 extends Actor {
                     break
                 case "equipment":
                     i.weight = parseFloat((i.data.weight.value * i.data.quantity.value).toFixed(3));
-                    inventory[i.data.equipmentType.value].items.push(i);
+                    inventory[i.data.equipmentType.value].items.push(Actordsa5._prepareitemStructure(i));
                     inventory[i.data.equipmentType.value].show = true;
                     totalWeight += Number(i.weight);
                     break;
@@ -425,30 +401,7 @@ export default class Actordsa5 extends Actor {
                     disadvantages.push(i)
                     break;
                 case "specialability":
-                    switch (i.data.category.value) {
-                        case "general":
-                            generalSpecialAbilites.push(i)
-                            break;
-                        case "Combat":
-                            combatSpecialAbilities.push(i)
-                            break
-                        case "fatePoints":
-                            fatePointsAbilities.push(i)
-                            break;
-                        case "magical":
-                        case "staff":
-                            magicSpecialAbilities.push(i)
-                            break;
-                        case "clerical":
-                            clericSpecialAbilities.push(i)
-                            break;
-                        case "language":
-                            languageSpecialAbilities.push(i)
-                            break
-                        case "animal":
-                            animalSpecialAbilities.push(i)
-                            break
-                    }
+                    specAbs[i.data.category.value].push(i)
                     break;
             }
 
@@ -476,7 +429,7 @@ export default class Actordsa5 extends Actor {
         money.coins = money.coins.sort((a, b) => (a.data.price.value > b.data.price.value) ? -1 : 1);
 
         //Should move the encumbrance calculation to getData
-        encumbrance = Math.max(0, encumbrance - SpecialabilityRulesDSA5.abilityStep(this.data, "Belastungsgewöhnung"))
+        encumbrance = Math.max(0, encumbrance - SpecialabilityRulesDSA5.abilityStep(this.data, game.i18n.localize('LocalizedIDs.inuredToEncumbrance')))
 
         let carrycapacity = (actorData.data.characteristics.kk.value + actorData.data.characteristics.kk.modifier + actorData.data.characteristics.kk.advances) * 2;
         if (actorData.type != "creature" || actorData.canAdvance) {
@@ -489,9 +442,11 @@ export default class Actordsa5 extends Actor {
         this.addCondition("encumbered", encumbrance, true)
 
         //CHAR cannot be clerical and magical at the same time
-        hasPrayers = hasPrayers && !hasSpells
-        this.data.isMage = hasSpells
-        this.data.isPriest = hasPrayers
+        magic.hasPrayers = magic.hasPrayers && !magic.hasSpells
+        this.data.isMage = magic.hasSpells
+        this.data.isPriest = magic.hasPrayers
+
+        specAbs.magical = specAbs.magical.concat(specAbs.staff)
 
         return {
             totalweight: totalWeight,
@@ -503,82 +458,47 @@ export default class Actordsa5 extends Actor {
             wornMeleeWeapons: meleeweapons,
             advantages: advantages,
             disadvantages: disadvantages,
-            generalSpecialAbilites: generalSpecialAbilites,
-            combatSpecialAbilities: combatSpecialAbilities,
-            fatePointsAbilities: fatePointsAbilities,
-            clericSpecialAbilities: clericSpecialAbilities,
-            languageSpecialAbilities: languageSpecialAbilities,
-            animalSpecialAbilities: animalSpecialAbilities,
+            specAbs: specAbs,
             aggregatedtests: aggregatedtests,
             wornArmor: armor,
             inventory,
             equipmentModifiers: actorData.data.equipmentModifiers,
-            rangeTraits: rangeTraits,
-            meleeTraits: meleeTraits,
-            armorTraits: armorTraits,
-            generalTraits: generalTraits,
-            animalTraits: animalTraits,
-            familiarTraits: familiarTraits,
             languagePoints: {
                 used: actorData.data.freeLanguagePoints ? actorData.data.freeLanguagePoints.used : 0,
                 available: actorData.data.freeLanguagePoints ? actorData.data.freeLanguagePoints.value : 0
             },
-            magicSpecialAbilities: magicSpecialAbilities,
-            blessings: blessings,
-            magicTricks: magicTricks,
-            hasPrayers: hasPrayers,
             schips: schips,
             guidevalues: DSA5.characteristics,
-            hasSpells: hasSpells,
-            spells: spells,
-            rituals: rituals,
-            ceremonies: ceremonies,
-            liturgies: liturgies,
+            magic: magic,
+            traits: traits,
             combatskills: combatskills,
             canAdvance: this.data.canAdvance,
             sheetLocked: actorData.data.sheetLocked.value,
             allSkillsLeft: {
-                body: bodySkills,
-                social: socialSkills,
-                nature: natureSkills
+                body: skills.body,
+                social: skills.social,
+                nature: skills.nature
             },
             allSkillsRight: {
-                knowledge: knowledgeSkills,
-                trade: tradeSkills
+                knowledge: skills.knowledge,
+                trade: skills.trade
             }
         }
     }
 
     _applyModiferTransformations(equipmentModifiers) {
-        const knownShortcuts = {
-            "ini": ["status", "initiative", "value"],
-            "gs": ["status", "speed", "value"],
-            "mu": ["characteristics", "mu", "value"],
-            "kl": ["characteristics", "kl", "value"],
-            "in": ["characteristics", "in", "value"],
-            "ch": ["characteristics", "ch", "value"],
-            "ff": ["characteristics", "ff", "value"],
-            "ge": ["characteristics", "ge", "value"],
-            "ko": ["characteristics", "ko", "value"],
-            "kk": ["characteristics", "kk", "value"],
-            "asp": ["status", "astralenergy", "max"],
-            "lep": ["status", "wounds", "max"],
-            "kap": ["status", "karmaenergy", "max"],
-            "aw": ["status", "dodge", "max"],
-            "sk": ["status", "soulpower", "max"],
-            "zk": ["status", "toughness", "max"],
-        }
         for (const [key, value] of Object.entries(equipmentModifiers)) {
-            let shortCut = knownShortcuts[key.toLowerCase()]
-            if (shortCut) {
+            let shortCut = game.dsa5.config.knownShortcuts[key.toLowerCase()]
+            if (shortCut)
                 this.data.data[shortCut[0]][shortCut[1]][shortCut[2]] += value.value
-            }
+            else
+                console.warn(`Item Modifier ${key} from ${value.sources.join(",")} for ${this.data.name} can not be applied.`)
         }
     }
 
     _addGearAndAbilityModifiers(equipmentModifiers, i) {
-        for (let mod of i.data.effect.value.split(",").map(x => x.trim())) {
-            let vals = mod.split(" ")
+        for (let mod of i.data.effect.value.split(",").map(x => x)) {
+            let vals = mod.replace(/(\s+|^\s+|\s+$)/g, ' ').split(" ")
             if (vals.length == 2) {
                 if (Number(vals[0]) != undefined) {
                     if (equipmentModifiers[vals[1]] == undefined) {
@@ -620,7 +540,6 @@ export default class Actordsa5 extends Actor {
     }
 
     async checkEnoughXP(cost) {
-
         if (!Actordsa5.canAdvance(this.data))
             return true
         if (isNaN(cost) || cost == null)
@@ -727,7 +646,8 @@ export default class Actordsa5 extends Actor {
                 options: options
             }
         };
-        if (item.type == "rangeweapon") {
+
+        if (item.type == "rangeweapon" && this.data.type != "creature") {
             let itemData = item.data.data ? item.data.data : item.data
 
             if (itemData.ammunitiongroup.value == "-") {
@@ -835,7 +755,7 @@ export default class Actordsa5 extends Actor {
     }
 
     applyMana(amount, type) {
-        let val = type == "AsP" ? "data.status.astralenergy.value" : "data.karmaenergy.value"
+        let val = type == "AsP" ? "data.status.astralenergy.value" : "data.status.karmaenergy.value"
         this.update({ val: Math.max(0, this.data[val] - amount) })
     }
 
@@ -1262,28 +1182,22 @@ export default class Actordsa5 extends Actor {
                 testData.situationalModifiers.push({
                     name: game.i18n.localize("removeGestureOrFormula"),
                     value: html.find('[name="removeGestureOrFormula"]').is(":checked") ? -2 : 0
-                })
-                testData.situationalModifiers.push({
+                }, {
                     name: game.i18n.localize("castingTime"),
                     value: html.find(".castingTime").data("mod")
-                })
-                testData.situationalModifiers.push({
+                }, {
                     name: game.i18n.localize("cost"),
                     value: html.find(".aspcost").data('mod')
-                })
-                testData.situationalModifiers.push({
+                }, {
                     name: game.i18n.localize("reach"),
                     value: html.find(".reach").data('mod')
-                })
-                testData.situationalModifiers.push({
+                }, {
                     name: game.i18n.localize("zkModifier"),
                     value: html.find('[name="zkModifier"]').val() || 0
-                })
-                testData.situationalModifiers.push({
+                }, {
                     name: game.i18n.localize("skModifier"),
                     value: html.find('[name="skModifier"]').val() || 0
-                })
-                testData.situationalModifiers.push({
+                }, {
                     name: game.i18n.localize("maintainedSpells"),
                     value: Number(html.find('[name="maintainedSpells"]').val()) * -1
                 })
@@ -1291,12 +1205,10 @@ export default class Actordsa5 extends Actor {
                     testData.situationalModifiers.push({
                         name: game.i18n.localize("CEREMONYMODIFIER.artefact"),
                         value: html.find('[name="artefactUsage"]').is(":checked") ? 1 : 0
-                    })
-                    testData.situationalModifiers.push({
+                    }, {
                         name: game.i18n.localize("place"),
                         value: html.find('[name="placeModifier"]').val()
-                    })
-                    testData.situationalModifiers.push({
+                    }, {
                         name: game.i18n.localize("time"),
                         value: html.find('[name="timeModifier"]').val()
                     })
@@ -1304,16 +1216,13 @@ export default class Actordsa5 extends Actor {
                     testData.situationalModifiers.push({
                         name: game.i18n.localize("RITUALMODIFIER.rightClothes"),
                         value: html.find('[name="rightClothes"]').is(":checked") ? 1 : 0
-                    })
-                    testData.situationalModifiers.push({
+                    }, {
                         name: game.i18n.localize("RITUALMODIFIER.rightEquipment"),
                         value: html.find('[name="rightEquipment"]').is(":checked") ? 1 : 0
-                    })
-                    testData.situationalModifiers.push({
+                    }, {
                         name: game.i18n.localize("place"),
                         value: html.find('[name="placeModifier"]').val()
-                    })
-                    testData.situationalModifiers.push({
+                    }, {
                         name: game.i18n.localize("time"),
                         value: html.find('[name="timeModifier"]').val()
                     })
@@ -1379,7 +1288,7 @@ export default class Actordsa5 extends Actor {
     }
 
     static _prepareitemStructure(item) {
-        if (item.data.structure.max != 0) {
+        if (item.data.structure && item.data.structure.max != 0) {
             item.structureMax = item.data.structure.max
             item.structureCurrent = item.data.structure.value
         }
@@ -1444,7 +1353,7 @@ export default class Actordsa5 extends Actor {
                 item.ammo = actorData.inventory.ammunition.items.filter(x => x.data.ammunitiongroup.value == item.data.ammunitiongroup.value)
 
         }
-        item.LZ = Math.max(0, Number(item.data.reloadTime.value) - SpecialabilityRulesDSA5.abilityStep(actor, `Schnellladen (${game.i18n.localize(item.data.combatskill.value)})`))
+        item.LZ = Math.max(0, Number(item.data.reloadTime.value) - SpecialabilityRulesDSA5.abilityStep(actor, `${game.i18n.localize('LocalizedIDs.quickload')} (${game.i18n.localize(item.data.combatskill.value)})`))
 
         return this._parseDmg(item)
     }
@@ -1499,8 +1408,6 @@ export default class Actordsa5 extends Actor {
             this.updateEmbeddedEntity("OwnedItem", { _id: testData.extra.ammo._id, "data.quantity.value": testData.extra.ammo.data.quantity.value });
         }
 
-
-        //Hooks.call("dsa5:rollTest", result, cardOptions)
         if (!options.suppressMessage)
             DiceDSA5.renderRollCard(cardOptions, result, options.rerenderMessage).then(msg => {
                 OpposedDsa5.handleOpposedTarget(msg)
@@ -1530,6 +1437,10 @@ export default class Actordsa5 extends Actor {
             existing = duplicate(existing)
             let newValue = Math.min(existing.flags.dsa5.max, absolute ? value : existing.flags.dsa5.value + value)
             let delta = newValue - existing.flags.dsa5.value
+            if (delta == 0)
+                return existing
+
+            existing = duplicate(existing)
             existing.flags.dsa5.value = newValue;
             await this._dependentEffects(existing.flags.core.statusId, existing, delta)
             return this.updateEmbeddedEntity("ActiveEffect", existing)
@@ -1544,12 +1455,11 @@ export default class Actordsa5 extends Actor {
             if (effect.id == "dead")
                 effect["flags.core.overlay"] = true;
 
+            let result = await this.createEmbeddedEntity("ActiveEffect", effect)
             await this._dependentEffects(effect.id, effect, 1)
             delete effect.id
-            return this.createEmbeddedEntity("ActiveEffect", effect)
+            return result
         }
-
-
     }
 
     async _dependentEffects(statusId, effect, delta) {
@@ -1565,7 +1475,7 @@ export default class Actordsa5 extends Actor {
         //if (game.combat && (effect.id == "blinded" || effect.id == "deafened"))
         //    effect.flags.dsa5.roundReceived = game.combat.round
 
-        if (delta > 0 && statusId == "inpain" && !this.hasCondition("bloodrush") && AdvantageRulesDSA5.hasVantage(this, "Blutrausch")) {
+        if (delta > 0 && statusId == "inpain" && !this.hasCondition("bloodrush") && AdvantageRulesDSA5.hasVantage(this, game.i18n.localize('LocalizedIDs.frenzy'))) {
             await this.addCondition("bloodrush")
             let msg = `${game.i18n.format("CHATNOTIFICATION.gainsBloodrush", {character: "<b>" + this.name + "</b>"})}`;
             ChatMessage.create(DSA5_Utility.chatDataSetup(msg));
@@ -1593,7 +1503,6 @@ export default class Actordsa5 extends Actor {
                 return this.updateEmbeddedEntity("ActiveEffect", existing)
         }
     }
-
 
     hasCondition(conditionKey) {
         if (this.data != undefined) {

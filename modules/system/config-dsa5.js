@@ -295,6 +295,8 @@ DSA5.effectTextStyle = CONFIG.canvasTextStyle.clone();
 DSA5.effectTextStyle.fontSize = "30";
 DSA5.effectTextStyle.fontFamily = "GentiumBasic"
 
+DSA5.knownShortcuts = {}
+
 DSA5.defaultWeapon = {
     name: "default",
     type: "meleeweapon",
@@ -618,11 +620,6 @@ DSA5.tokenSizeCategories = {
     "average": 1,
     "big": 2,
     "giant": 4
-}
-
-DSA5.resistanceMods = {
-    "zk": "toughness",
-    "sk": "soulpower"
 }
 
 DSA5.rangeSizeCategories = {

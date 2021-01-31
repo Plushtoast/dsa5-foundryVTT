@@ -3,14 +3,13 @@ import ItemRulesDSA5 from "./item-rules-dsa5.js";
 
 export default class AdvantageRulesDSA5 extends ItemRulesDSA5 {
     static setupFunctions() {
-        mergeObject(game.dsa5.config.addvantageRules, {
-            Geweihter: async function(actor, item) { await actor.update({ "data.status.karmaenergy.initial": actor.data.data.status.karmaenergy.initial + 20 }); },
-            Zauberer: async function(actor, item) { await actor.update({ "data.status.astralenergy.initial": actor.data.data.status.astralenergy.initial + 20 }); }
-        })
-        mergeObject(game.dsa5.config.removevantageRules, {
-            Geweihter: async function(actor, item) { await actor.update({ "data.status.karmaenergy.initial": actor.data.data.status.karmaenergy.initial - 20 }); },
-            Zauberer: async function(actor, item) { await actor.update({ "data.status.astralenergy.initial": actor.data.data.status.astralenergy.initial - 20 }); }
-        })
+        game.dsa5.config.removevantageRules[game.i18n.localize('LocalizedIDs.blessed')] = async function(actor, item) { await actor.update({ "data.status.karmaenergy.initial": actor.data.data.status.karmaenergy.initial + 20 }); }
+        game.dsa5.config.removevantageRules[game.i18n.localize('LocalizedIDs.spellcaster')] = async function(actor, item) { await actor.update({ "data.status.astralenergy.initial": actor.data.data.status.astralenergy.initial + 20 }); }
+
+
+        game.dsa5.config.removevantageRules[game.i18n.localize('LocalizedIDs.blessed')] = async function(actor, item) { await actor.update({ "data.status.karmaenergy.initial": actor.data.data.status.karmaenergy.initial - 20 }); }
+        game.dsa5.config.removevantageRules[game.i18n.localize('LocalizedIDs.spellcaster')] = async function(actor, item) { await actor.update({ "data.status.astralenergy.initial": actor.data.data.status.astralenergy.initial - 20 }); }
+
     }
     static async vantageAdded(actor, item) {
         if (game.dsa5.config.addvantageRules[item.name])

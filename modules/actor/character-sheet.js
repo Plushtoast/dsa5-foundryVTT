@@ -15,7 +15,7 @@ export default class ActorSheetdsa5Character extends ActorSheetDsa5 {
     }
 
     get template() {
-        if (!game.user.isGM && this.actor.limited) return "systems/dsa5/templates/actors/actor-limited.html";
+        //if (!game.user.isGM && this.actor.limited) return "systems/dsa5/templates/actors/actor-limited.html";
         return "systems/dsa5/templates/actors/actor-sheet.html";
 
     }

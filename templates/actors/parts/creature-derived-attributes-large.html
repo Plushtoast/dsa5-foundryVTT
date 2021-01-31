@@ -37,7 +37,7 @@
             {{data.status.wounds.max}}
         </div>
     </div>
-    {{#if actor.hasSpells}}
+    {{#if actor.magic.hasSpells}}
     <div class="derivedAttrs row-section">
         <div class="col two lineheight">
             {{localize "astralenergy"}}
@@ -58,7 +58,7 @@
 
         </div>
     </div>
-    {{/if}} {{#if actor.hasPrayers}}
+    {{/if}} {{#if actor.magic.hasPrayers}}
     <div class="derivedAttrs row-section">
         <div class="col two lineheight">
             {{localize "karmaenergy"}}
