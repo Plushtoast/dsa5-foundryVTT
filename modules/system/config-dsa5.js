@@ -7,7 +7,6 @@ DSA5.statusEffects = [{
         description: "CONDITIONDESCRIPTION.prone",
         flags: {
             dsa5: {
-                "trigger": "endRound",
                 "value": null,
                 "editable": true,
                 "impact": null
@@ -21,7 +20,6 @@ DSA5.statusEffects = [{
         description: "CONDITIONDESCRIPTION.unconscious",
         flags: {
             dsa5: {
-                "trigger": "endRound",
                 "value": null,
                 "editable": true,
                 "impact": null
@@ -35,7 +33,6 @@ DSA5.statusEffects = [{
         description: "CONDITIONDESCRIPTION.rooted",
         flags: {
             dsa5: {
-                "trigger": "endRound",
                 "value": null,
                 "editable": true,
                 "impact": null
@@ -49,7 +46,6 @@ DSA5.statusEffects = [{
         description: "CONDITIONDESCRIPTION.blind",
         flags: {
             dsa5: {
-                "trigger": "endRound",
                 "value": null,
                 "editable": true,
                 "impact": null
@@ -63,7 +59,6 @@ DSA5.statusEffects = [{
         description: "CONDITIONDESCRIPTION.poisoned",
         flags: {
             dsa5: {
-                "trigger": "endRound",
                 "value": null,
                 "editable": true,
                 "impact": null
@@ -77,7 +72,6 @@ DSA5.statusEffects = [{
         description: "CONDITIONDESCRIPTION.sick",
         flags: {
             dsa5: {
-                "trigger": "endRound",
                 "value": null,
                 "editable": true,
                 "impact": null
@@ -91,7 +85,6 @@ DSA5.statusEffects = [{
         description: "CONDITIONDESCRIPTION.deaf",
         flags: {
             dsa5: {
-                "trigger": "endRound",
                 "value": null,
                 "editable": true,
                 "impact": null
@@ -105,7 +98,6 @@ DSA5.statusEffects = [{
         description: "CONDITIONDESCRIPTION.burning",
         flags: {
             dsa5: {
-                "trigger": "endRound",
                 "value": null,
                 "editable": true,
                 "impact": null
@@ -119,7 +111,6 @@ DSA5.statusEffects = [{
         description: "CONDITIONDESCRIPTION.invisible",
         flags: {
             dsa5: {
-                "trigger": "endRound",
                 "value": null,
                 "editable": true,
                 "impact": null
@@ -133,7 +124,6 @@ DSA5.statusEffects = [{
         description: "CONDITIONDESCRIPTION.constricted",
         flags: {
             dsa5: {
-                "trigger": "endRound",
                 "value": null,
                 "editable": true,
                 "impact": null
@@ -147,7 +137,6 @@ DSA5.statusEffects = [{
         description: "CONDITIONDESCRIPTION.bloodrush",
         flags: {
             dsa5: {
-                "trigger": "endRound",
                 "value": null,
                 "editable": true,
                 "impact": null
@@ -161,7 +150,6 @@ DSA5.statusEffects = [{
         description: "CONDITIONDESCRIPTION.mute",
         flags: {
             dsa5: {
-                "trigger": "endRound",
                 "value": null,
                 "editable": true,
                 "impact": null
@@ -175,7 +163,6 @@ DSA5.statusEffects = [{
         description: "CONDITIONDESCRIPTION.incapacitated",
         flags: {
             dsa5: {
-                "trigger": "endRound",
                 "value": null,
                 "editable": true,
                 "impact": null
@@ -189,7 +176,6 @@ DSA5.statusEffects = [{
         description: "CONDITIONDESCRIPTION.encumbered",
         flags: {
             dsa5: {
-                "trigger": "endRound",
                 "value": 1,
                 "editable": false,
                 "impact": "-1",
@@ -204,7 +190,6 @@ DSA5.statusEffects = [{
         description: "CONDITIONDESCRIPTION.stunned",
         flags: {
             dsa5: {
-                "trigger": "endRound",
                 "value": 1,
                 "editable": true,
                 "impact": "-1",
@@ -219,7 +204,6 @@ DSA5.statusEffects = [{
         description: "CONDITIONDESCRIPTION.raptured",
         flags: {
             dsa5: {
-                "trigger": "endRound",
                 "value": 1,
                 "editable": true,
                 "impact": "-1",
@@ -234,7 +218,6 @@ DSA5.statusEffects = [{
         description: "CONDITIONDESCRIPTION.feared",
         flags: {
             dsa5: {
-                "trigger": "endRound",
                 "value": 1,
                 "editable": true,
                 "impact": "-1",
@@ -249,7 +232,6 @@ DSA5.statusEffects = [{
         description: "CONDITIONDESCRIPTION.paralysed",
         flags: {
             dsa5: {
-                "trigger": "endRound",
                 "value": 1,
                 "editable": true,
                 "impact": "-1",
@@ -257,7 +239,6 @@ DSA5.statusEffects = [{
             }
         }
     },
-
     {
         id: "inpain",
         label: "CONDITION.inpain",
@@ -265,9 +246,8 @@ DSA5.statusEffects = [{
         description: "CONDITIONDESCRIPTION.inpain",
         flags: {
             dsa5: {
-                "trigger": "endRound",
                 "value": 1,
-                "editable": false,
+                "editable": true,
                 "impact": "-1",
                 "max": 4
             }
@@ -280,7 +260,6 @@ DSA5.statusEffects = [{
         description: "CONDITIONDESCRIPTION.confused",
         flags: {
             dsa5: {
-                "trigger": "endRound",
                 "value": 1,
                 "editable": true,
                 "impact": "-1",
@@ -480,13 +459,13 @@ DSA5.advancementCosts = {
 
 
 DSA5.startXP = {
-    "900": "EXP-inexperienced",
-    "1000": "EXP-average",
-    "1100": "EXP-experienced",
-    "1200": "EXP-competent",
-    "1400": "EXP-masterful",
-    "1700": "EXP-brillant",
-    "2100": "EXP-legendary"
+    "900": "EXP.inexperienced",
+    "1000": "EXP.average",
+    "1100": "EXP.experienced",
+    "1200": "EXP.competent",
+    "1400": "EXP.masterful",
+    "1700": "EXP.brillant",
+    "2100": "EXP.legendary"
 }
 
 DSA5.helpContent = [{
@@ -512,6 +491,11 @@ DSA5.helpContent = [{
         name: "tables",
         command: "/tables",
         example: "/tables"
+    },
+    {
+        name: "request",
+        command: "/rq",
+        example: "/rq betören"
     }
 ]
 

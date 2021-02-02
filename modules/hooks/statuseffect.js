@@ -2,7 +2,7 @@ export default function() {
     Token.prototype.drawEffects = async function() {
         this.effects.removeChildren().forEach(c => c.destroy());
         const tokenEffects = this.data.effects;
-        const actorEffects = this.actor ? this.actor.temporaryEffects : [];
+        const actorEffects = this.actor ? this.actor.temporaryEffects.filter(x => x.data.flags.dsa5.value > 0 || x.data.flags.dsa5.value == null) : [];
         let overlay = {
             src: this.data.overlayEffect,
             tint: null
@@ -74,16 +74,16 @@ export default function() {
     Token.prototype.incrementCondition = async function(effect, { active, overlay = false } = {}) {
         const existing = this.actor.effects.find(e => e.getFlag("core", "statusId") === effect.id);
         if (!existing || Number.isNumeric(getProperty(existing, "data.flags.dsa5.value")))
-            this.actor.addCondition(effect.id)
+            this.actor.addCondition(effect.id, 1, false, false)
         else if (existing)
-            this.actor.removeCondition(effect.id)
+            this.actor.removeCondition(effect.id, 1, false)
 
         if (this.hasActiveHUD) canvas.tokens.hud.refreshStatusIcons();
         return active;
     }
 
     Token.prototype.decrementCondition = async function(effect, { active, overlay = false } = {}) {
-        this.actor.removeCondition(effect.id)
+        this.actor.removeCondition(effect.id, 1, false)
         if (this.hasActiveHUD) canvas.tokens.hud.refreshStatusIcons();
         return active;
     }

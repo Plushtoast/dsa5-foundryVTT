@@ -23,10 +23,17 @@ export default class SpecialabilityRulesDSA5 extends ItemRulesDSA5 {
         if (item == null)
             return
         item = duplicate(item)
+
+        //Different Apval for multiple same vantages
+        if (/,/.test(item.data.APValue.value)) {
+            let name = item.name.replace(' ()', '')
+            item.data.APValue.value = item.data.APValue.value.split(",")[actor.items.filter(x => x.type == item.type && x.name.includes(name)).length].trim()
+        }
+
         if (adoption != null) {
             item.name = `${item.name.replace(' ()', '')} (${adoption.name})`
             if (adoption.data)
-                item.data.APValue.value = item.data.APValue.value.split("/")[adoption.data.data.StF.value.charCodeAt(0) - 65]
+                item.data.APValue.value = item.data.APValue.value.split("/")[adoption.data.data.StF.value.charCodeAt(0) - 65].trim()
         }
         let res = actor.data.items.find(i => {
             return i.type == typeClass && i.name == item.name
@@ -34,15 +41,16 @@ export default class SpecialabilityRulesDSA5 extends ItemRulesDSA5 {
 
         if (res) {
             let vantage = duplicate(res)
-            if (vantage.data.step.value + 1 <= vantage.data.maxRank.value && await actor.checkEnoughXP(vantage.data.APValue.value)) {
+            let xpCost = /;/.test(vantage.data.APValue.value) ? vantage.data.APValue.value.split(';').map(x => Number(x.trim()))[vantage.data.step.value] : vantage.data.APValue.value
+            if (vantage.data.step.value + 1 <= vantage.data.maxRank.value && await actor.checkEnoughXP(xpCost)) {
                 vantage.data.step.value += 1
-                await actor._updateAPs(vantage.data.APValue.value)
+                await actor._updateAPs(xpCost)
                 await actor.updateEmbeddedEntity("OwnedItem", vantage);
                 await SpecialabilityRulesDSA5.abilityAdded(actor, vantage)
             }
-        } else if (await actor.checkEnoughXP(item.data.APValue.value)) {
+        } else if (await actor.checkEnoughXP(item.data.APValue.value.split(';').map(x => x.trim())[0])) {
             await SpecialabilityRulesDSA5.abilityAdded(actor, item)
-            await actor._updateAPs(item.data.APValue.value)
+            await actor._updateAPs(item.data.APValue.value.split(';').map(x => x.trim())[0])
             await actor.createEmbeddedEntity("OwnedItem", item);
         }
     }
@@ -66,7 +74,7 @@ export default class SpecialabilityRulesDSA5 extends ItemRulesDSA5 {
                 }
             }
             await new Dialog({
-                title: game.i18n.localize("ItemRequiresAdoption"),
+                title: game.i18n.localize("DIALOG.ItemRequiresAdoption"),
                 content: template,
                 buttons: {
                     Yes: {

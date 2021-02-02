@@ -5,6 +5,7 @@ import OpposedDsa5 from "../system/opposed-dsa5.js";
 import DSA5Dialog from "../dialog/dialog-dsa5.js"
 import AdvantageRulesDSA5 from "../system/advantage-rules-dsa5.js";
 import SpecialabilityRulesDSA5 from "../system/specialability-rules-dsa5.js";
+import DSA5StatusEffects from "../status/status_effects.js"
 
 export default class Actordsa5 extends Actor {
     static async create(data, options) {
@@ -17,25 +18,18 @@ export default class Actordsa5 extends Actor {
         data.items = [];
         data.flags = {}
 
-        if (!data.img || data.img == "icons/svg/mystery-man.svg") {
-            switch (data.type) {
-                case "character":
-                    data.img = "icons/svg/mystery-man-black.svg";
-                    break;
-                default:
-                    data.img = "icons/svg/mystery-man-black.svg";
-            }
-        }
+        if (!data.img || data.img == "icons/svg/mystery-man.svg")
+            data.img = "icons/svg/mystery-man-black.svg"
 
         let skills = await DSA5_Utility.allSkills() || [];
         let combatskills = await DSA5_Utility.allCombatSkills() || [];
         let moneyItems = await DSA5_Utility.allMoneyItems() || [];
 
         moneyItems = moneyItems.sort((a, b) => (a.data.price.value > b.data.price.value) ? -1 : 1);
-        data.items = data.items.concat(skills);
-        data.items = data.items.concat(combatskills);
+        data.items.push(...skills);
+        data.items.push(...combatskills);
 
-        data.items = data.items.concat(moneyItems.map(m => {
+        data.items.push(...moneyItems.map(m => {
             m.data.quantity.value = 0
             return m
         }));
@@ -82,7 +76,6 @@ export default class Actordsa5 extends Actor {
             data.data.status.karmaenergy.max = data.data.status.karmaenergy.current + data.data.status.karmaenergy.modifier + data.data.status.karmaenergy.advances + data.data.status.karmaenergy.gearmodifier
 
             let guide = data.data.guidevalue
-
             if (guide && data.type != "creature") {
                 if (data.data.characteristics[guide.value]) {
                     data.data.status.astralenergy.current = data.data.status.astralenergy.initial + data.data.characteristics[guide.value].value
@@ -414,26 +407,22 @@ export default class Actordsa5 extends Actor {
         }
 
         for (let wep of inventory.rangeweapons.items) {
-            if (wep.data.worn.value) {
+            if (wep.data.worn.value)
                 rangeweapons.push(Actordsa5._prepareRangeWeapon(wep, inventory.ammunition.items, combatskills, this));
-            }
         }
-        let shields = inventory.meleeweapons.items.filter(x => (game.i18n.localize("ReverseCombatSkills." + x.data.combatskill.value) == "Shields" && x.data.worn.value))
-        let shieldBonus = shields.length > 0 ? shields[0].data.pamod.value : 0
+
         for (let wep of inventory.meleeweapons.items) {
-            if (wep.data.worn.value) {
-                meleeweapons.push(Actordsa5._prepareMeleeWeapon(wep, combatskills, actorData, shieldBonus));
-            }
+            if (wep.data.worn.value)
+                meleeweapons.push(Actordsa5._prepareMeleeWeapon(wep, combatskills, actorData, inventory.meleeweapons.items.filter(x => x._id != wep._id)))
         }
 
         money.coins = money.coins.sort((a, b) => (a.data.price.value > b.data.price.value) ? -1 : 1);
 
-        //Should move the encumbrance calculation to getData
+        //TODO move the encumbrance calculation to a beeter location
         encumbrance = Math.max(0, encumbrance - SpecialabilityRulesDSA5.abilityStep(this.data, game.i18n.localize('LocalizedIDs.inuredToEncumbrance')))
 
         let carrycapacity = (actorData.data.characteristics.kk.value + actorData.data.characteristics.kk.modifier + actorData.data.characteristics.kk.advances) * 2;
         if (actorData.type != "creature" || actorData.canAdvance) {
-
             encumbrance += Math.max(0, Math.ceil((totalWeight - carrycapacity - 4) / 4))
         }
         totalWeight = parseFloat(totalWeight.toFixed(3))
@@ -497,7 +486,7 @@ export default class Actordsa5 extends Actor {
     }
 
     _addGearAndAbilityModifiers(equipmentModifiers, i) {
-        if (!i.data.effect)
+        if (!i.data.effect || i.data.effect.value == undefined)
             return
 
         for (let mod of i.data.effect.value.split(",").map(x => x)) {
@@ -516,18 +505,6 @@ export default class Actordsa5 extends Actor {
                 }
             }
         }
-    }
-
-    static getModifiers(actor) {
-        let r = []
-        for (let effect of actor.effects.filter(i => getProperty(i, "flags.dsa5.value") > 0)) {
-            r.push({
-                name: effect.label,
-                value: (effect.flags.dsa5.value * Number(effect.flags.dsa5.impact)),
-                selected: false
-            })
-        }
-        return r
     }
 
     async _updateAPs(APValue) {
@@ -690,16 +667,13 @@ export default class Actordsa5 extends Actor {
                     testData.situationalModifiers.push({
                         name: game.i18n.localize("target") + " " + html.find('[name="targetMovement"] option:selected').text(),
                         value: Number(html.find('[name="targetMovement"]').val())
-                    })
-                    testData.situationalModifiers.push({
+                    }, {
                         name: game.i18n.localize("shooter") + " " + html.find('[name="shooterMovement"] option:selected').text(),
                         value: Number(html.find('[name="shooterMovement"]').val())
-                    })
-                    testData.situationalModifiers.push({
+                    }, {
                         name: game.i18n.localize("mount") + " " + html.find('[name="mountedOptions"] option:selected').text(),
                         value: Number(html.find('[name="mountedOptions"]').val())
-                    })
-                    testData.situationalModifiers.push({
+                    }, {
                         name: game.i18n.localize("rangeMovementOptions.QUICKCHANGE"),
                         value: html.find('[name="quickChange"]').is(":checked") ? -4 : 0
                     })
@@ -1040,8 +1014,7 @@ export default class Actordsa5 extends Actor {
                 testData.situationalModifiers.push({
                     name: game.i18n.localize("camplocation") + " - " + html.find('[name="regnerationCampLocations"] option:selected').text(),
                     value: html.find('[name="regnerationCampLocations"]').val()
-                })
-                testData.situationalModifiers.push({
+                }, {
                     name: game.i18n.localize("interruption") + " - " + html.find('[name="regenerationInterruptOptions"] option:selected').text(),
                     value: html.find('[name="regenerationInterruptOptions"]').val()
                 })
@@ -1302,10 +1275,17 @@ export default class Actordsa5 extends Actor {
         item.attack = Number(item.data.at.value)
         return this._parseDmg(item)
     }
-    static _prepareMeleeWeapon(item, combatskills, actorData, shieldBonus) {
-        let skill = combatskills.filter(i => i.name == item.data.combatskill.value)[0];
-        item.attack = Number(skill.data.attack.value) + Number(item.data.atmod.value);
-        item.parry = Number(skill.data.parry.value) + Number(item.data.pamod.value) + Number(shieldBonus);
+    static _prepareMeleeWeapon(item, combatskills, actorData, wornWeapons = null) {
+        let skill = combatskills.filter(i => i.name == item.data.combatskill.value)[0]
+        item.attack = Number(skill.data.attack.value) + Number(item.data.atmod.value)
+        item.parry = Number(skill.data.parry.value) + Number(item.data.pamod.value) + (item.data.combatskill.value == game.i18n.localize('LocalizedIDs.shields') ? Number(item.data.pamod.value) : 0)
+
+        if (!/\(2H\)/.test(item.name)) {
+            if (!wornWeapons)
+                wornWeapons = actorData.items.filter(x => (x.type == "meleeweapon" && x.data.worn.value && x._id != item._id))
+            item.parry += Math.max(0, ...wornWeapons.map(x => x.data.pamod.offhandMod))
+            item.attack += Math.max(0, ...wornWeapons.map(x => x.data.atmod.offhandMod))
+        }
 
         item = this._parseDmg(item)
         if (item.data.guidevalue.value != "-") {
@@ -1354,7 +1334,6 @@ export default class Actordsa5 extends Actor {
                 item.ammo = ammunitions.filter(x => x.data.ammunitiongroup.value == item.data.ammunitiongroup.value)
             else
                 item.ammo = actorData.inventory.ammunition.items.filter(x => x.data.ammunitiongroup.value == item.data.ammunitiongroup.value)
-
         }
         item.LZ = Math.max(0, Number(item.data.reloadTime.value) - SpecialabilityRulesDSA5.abilityStep(actor, `${game.i18n.localize('LocalizedIDs.quickload')} (${game.i18n.localize(item.data.combatskill.value)})`))
 
@@ -1419,9 +1398,9 @@ export default class Actordsa5 extends Actor {
     }
 
 
-    async addCondition(effect, value = 1, absolute = false) {
+    async addCondition(effect, value = 1, absolute = false, auto = true) {
         if (absolute && value <= 0) {
-            return this.removeCondition(effect, 10)
+            return this.removeCondition(effect, value, auto)
         }
 
         if (typeof(effect) === "string")
@@ -1437,31 +1416,9 @@ export default class Actordsa5 extends Actor {
         if (existing && existing.flags.dsa5.value == null)
             return existing
         else if (existing) {
-            existing = duplicate(existing)
-            let newValue = Math.min(existing.flags.dsa5.max, absolute ? value : existing.flags.dsa5.value + value)
-            let delta = newValue - existing.flags.dsa5.value
-            if (delta == 0)
-                return existing
-
-            existing = duplicate(existing)
-            existing.flags.dsa5.value = newValue;
-            await this._dependentEffects(existing.flags.core.statusId, existing, delta)
-            return this.updateEmbeddedEntity("ActiveEffect", existing)
+            return await DSA5StatusEffects.updateEffect(this, existing, value, absolute, auto)
         } else if (!existing) {
-            effect.label = game.i18n.localize(effect.label);
-
-            if (Number.isNumeric(effect.flags.dsa5.value)) {
-                effect.flags.dsa5.value = Math.min(effect.flags.dsa5.max, value);
-            }
-
-            effect["flags.core.statusId"] = effect.id;
-            if (effect.id == "dead")
-                effect["flags.core.overlay"] = true;
-
-            let result = await this.createEmbeddedEntity("ActiveEffect", effect)
-            await this._dependentEffects(effect.id, effect, 1)
-            delete effect.id
-            return result
+            return await DSA5StatusEffects.createEffect(this, effect, value, auto)
         }
     }
 
@@ -1485,7 +1442,7 @@ export default class Actordsa5 extends Actor {
         }
     }
 
-    async removeCondition(effect, value = 1) {
+    async removeCondition(effect, value = 1, auto = true) {
         if (typeof(effect) === "string")
             effect = duplicate(CONFIG.statusEffects.find(e => e.id == effect))
         if (!effect)
@@ -1499,11 +1456,7 @@ export default class Actordsa5 extends Actor {
         if (existing && existing.flags.dsa5.value == null) {
             return this.deleteEmbeddedEntity("ActiveEffect", existing._id)
         } else if (existing) {
-            existing.flags.dsa5.value -= value;
-            if (existing.flags.dsa5.value <= 0)
-                return this.deleteEmbeddedEntity("ActiveEffect", existing._id)
-            else
-                return this.updateEmbeddedEntity("ActiveEffect", existing)
+            return await DSA5StatusEffects.removeEffect(this, existing, value, auto)
         }
     }
 

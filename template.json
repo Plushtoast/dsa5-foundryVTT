@@ -842,8 +842,7 @@
                 "value": 6
             },
             "weapontype": {
-                "value": "melee",
-                "twoHanded": false
+                "value": "melee"
             }
         },
         "aggregatedTest": {

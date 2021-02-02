@@ -126,17 +126,18 @@ export default class ActorSheetDsa5 extends ActorSheet {
         for (let condition of conditions) {
             let existing = this.actor.data.effects.find(e => e.flags.core != undefined && e.flags.core.statusId == condition.id)
             condition.editable = condition.flags.dsa5.editable
-            if (existing) {
-                condition.value = existing.flags.dsa5.value
-                condition.existing = true
-            } else {
-                condition.value = 0;
-                condition.existing = false
-            }
 
             if (condition.flags.dsa5.value == null)
                 condition.boolean = true;
 
+            if (existing) {
+                condition.value = existing.flags.dsa5.value
+                condition.existing = true
+                condition.manual = existing.flags.dsa5.manual
+            } else {
+                condition.value = 0;
+                condition.existing = false
+            }
         }
         data.conditions = conditions.filter(x => x.existing)
         data.manualConditions = conditions.filter(x => !x.existing)
@@ -356,14 +357,12 @@ export default class ActorSheetDsa5 extends ActorSheet {
         html.find('.item-toggle').click(ev => {
             let itemId = this._getItemId(ev);
             let item = duplicate(this.actor.getEmbeddedEntity("OwnedItem", itemId))
-            let equippedState;
 
             switch (item.type) {
                 case "armor":
                 case "rangeweapon":
                 case "meleeweapon":
                     item.data.worn.value = !item.data.worn.value;
-                    equippedState = item.data.worn.value
                     break;
 
             }
@@ -648,9 +647,9 @@ export default class ActorSheetDsa5 extends ActorSheet {
         html.find(".condition-value").mousedown(ev => {
             let condKey = $(ev.currentTarget).parents(".statusEffect").attr("data-id")
             if (ev.button == 0)
-                this.actor.addCondition(condKey)
+                this.actor.addCondition(condKey, 1, false, false)
             else if (ev.button == 2)
-                this.actor.removeCondition(condKey)
+                this.actor.removeCondition(condKey, 1, false)
         })
 
         html.find(".condition-toggle").mousedown(ev => {
@@ -665,9 +664,9 @@ export default class ActorSheetDsa5 extends ActorSheet {
             }
 
             if (ev.button == 0)
-                this.actor.addCondition(condKey)
+                this.actor.addCondition(condKey, 1, false, false)
             else if (ev.button == 2)
-                this.actor.removeCondition(condKey)
+                this.actor.removeCondition(condKey, 1, false)
         })
 
         html.find('.talentSearch').keyup(event => {
@@ -738,15 +737,30 @@ export default class ActorSheetDsa5 extends ActorSheet {
 
     async _cleverDeleteItem(itemId) {
         let item = this.actor.data.items.find(x => x._id == itemId)
+        let steps, xpCost
         switch (item.type) {
             case "advantage":
             case "disadvantage":
                 await AdvantageRulesDSA5.vantageRemoved(this.actor, item)
-                await this._updateAPs(-1 * item.data.APValue.value * item.data.step.value)
+                xpCost = item.data.APValue.value * item.data.step.value
+                if (/;/.test(item.data.APValue.value)) {
+                    steps = item.data.APValue.value.split(";").map(x => Number(x.trim()))
+                    xpCost = 0
+                    for (let i = 0; i < item.data.step.value; i++)
+                        xpCost += steps[i]
+                }
+                await this._updateAPs(-1 * xpCost)
                 break;
             case "specialability":
                 await SpecialabilityRulesDSA5.abilityRemoved(this.actor, item)
-                await this._updateAPs(-1 * item.data.APValue.value)
+                xpCost = item.data.APValue.value * item.data.step.value
+                if (/;/.test(item.data.APValue.value)) {
+                    steps = item.data.APValue.value.split(";").map(x => Number(x.trim()))
+                    xpCost = 0
+                    for (let i = 0; i < item.data.step.value; i++)
+                        xpCost += steps[i]
+                }
+                await this._updateAPs(-1 * xpCost)
                 break;
         }
         this.actor.deleteEmbeddedEntity("OwnedItem", itemId);

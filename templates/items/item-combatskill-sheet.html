@@ -55,12 +55,7 @@
                 </select>
             </div>
 
-            {{#when data.weapontype.value 'eq' 'melee'}}
-            <div class="form-group">
-                <label class="label-text">{{localize "twoHanded"}}</label>
-                <input type="checkbox" name="data.weapontype.twoHanded" data-dtype="Boolean" {{#if data.weapontype.twoHanded}}checked{{/if}} />
-            </div>
-            {{/when}}
+
         </div>
     </section>
 </form>

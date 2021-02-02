@@ -8,6 +8,7 @@ import * as chatContext from './chat_context.js'
 import * as statusEffects from './statuseffect.js'
 import * as sideBar from './sidebar.js'
 import * as configuration from './configuration.js'
+import * as journals from './journal.js'
 
 export default function() {
 
@@ -20,7 +21,7 @@ export default function() {
     chatContext.default()
     statusEffects.default()
     sideBar.default()
-
+    journals.default()
 }
 
 Hooks.once("init", () => {

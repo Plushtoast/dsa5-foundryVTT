@@ -1,5 +1,6 @@
 import DSA5_Utility from "./utility-dsa5.js"
 
+
 export default class DSA5ChatAutoCompletion {
     //Special thanks to BlueBirdBlackSky and DJ Addi
 
@@ -8,7 +9,7 @@ export default class DSA5ChatAutoCompletion {
         DSA5_Utility.allSkills().then(res => {
             this.skills = res.map(x => x.name)
         })
-        this.regex = /^\/(sk|at|pa|sp|li) /
+        this.regex = /^\/(sk|at|pa|sp|li|rq) /
         this.filtering = false
         this.constants = {
             dodge: game.i18n.localize("dodge"),
@@ -57,7 +58,7 @@ export default class DSA5ChatAutoCompletion {
     }
 
     _filterAT(search) {
-        let actor = this._getActor()
+        let actor = DSA5ChatAutoCompletion._getActor()
         if (actor) {
             let types = ["meleeweapon", "rangeweapon"]
             let traitTypes = ["meleeAttack", "rangeAttack"]
@@ -72,8 +73,10 @@ export default class DSA5ChatAutoCompletion {
         }
     }
 
+
+
     _filterPA(search) {
-        let actor = this._getActor()
+        let actor = DSA5ChatAutoCompletion._getActor()
         if (actor) {
             let types = ["meleeweapon"]
             let result = actor.data.items.filter(x => { return types.includes(x.type) && x.name.toLowerCase().trim().indexOf(search) != -1 && x.data.worn.value == true }).slice(0, 5).map(x => x.name)
@@ -86,7 +89,7 @@ export default class DSA5ChatAutoCompletion {
     }
 
     _filterSP(search) {
-        let actor = this._getActor()
+        let actor = DSA5ChatAutoCompletion._getActor()
         if (actor) {
             let types = ["spell", "ritual"]
             let result = actor.data.items.filter(x => { return types.includes(x.type) && x.name.toLowerCase().trim().indexOf(search) != -1 }).slice(0, 5).map(x => x.name)
@@ -97,7 +100,7 @@ export default class DSA5ChatAutoCompletion {
     }
 
     _filterLI(search) {
-        let actor = this._getActor()
+        let actor = DSA5ChatAutoCompletion._getActor()
         if (actor) {
             let types = ["liturgy", "ceremony"]
             let result = actor.data.items.filter(x => { return types.includes(x.type) && x.name.toLowerCase().trim().indexOf(search) != -1 }).slice(0, 5).map(x => x.name)
@@ -112,6 +115,13 @@ export default class DSA5ChatAutoCompletion {
         if (!result.length)
             result.push(game.i18n.localize("Error.noMatch"))
         this._setList(result, "SK")
+    }
+
+    _filterRQ(search) {
+        let result = this.skills.filter(x => { return x.toLowerCase().trim().indexOf(search) != -1 }).slice(0, 5)
+        if (!result.length)
+            result.push(game.i18n.localize("Error.noMatch"))
+        this._setList(result, "RQ")
     }
 
     _setList(result, cmd) {
@@ -147,7 +157,7 @@ export default class DSA5ChatAutoCompletion {
         ui.chat._onChatKeyDown(ev);
     }
 
-    _getActor() {
+    static _getActor() {
         const speaker = ChatMessage.getSpeaker();
         let actor;
         if (speaker.token) actor = game.actors.tokens[speaker.token];
@@ -161,11 +171,17 @@ export default class DSA5ChatAutoCompletion {
     }
 
     _quickSelect(target) {
-        let actor = this._getActor()
-        if (actor) {
-            $('#chat-message').val("")
-            this.anchor.find(".quickfind").remove()
-            this[`_quick${target.attr("data-category")}`](target, actor)
+        let cmd = target.attr("data-category")
+        if(cmd == "RQ"){
+            this[`_quick${cmd}`](target)
+        }
+        else{
+            let actor = DSA5ChatAutoCompletion._getActor()
+            if (actor) {
+                $('#chat-message').val("")
+                this.anchor.find(".quickfind").remove()
+                this[`_quick${cmd}`](target, actor)
+            }
         }
     }
 
@@ -176,6 +192,17 @@ export default class DSA5ChatAutoCompletion {
                 actor.basicTest(setupData)
             });
         }
+    }
+
+    _quickRQ(target){
+        $('#chat-message').val("")
+        this.anchor.find(".quickfind").remove()
+        DSA5ChatAutoCompletion.showRQMessage(target.text())       
+    }
+
+    static showRQMessage(target){
+        let msg = game.i18n.format("CHATNOTIFICATION.requestRoll", {user: game.user.name, item: `<a class="roll-button request-roll" data-type="skill" data-name="${target}"><i class="fas fa-dice"></i> ${target}</a>`})
+        ChatMessage.create(DSA5_Utility.chatDataSetup(msg));
     }
 
     _quickPA(target, actor) {

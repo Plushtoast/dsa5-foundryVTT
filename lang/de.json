@@ -73,7 +73,7 @@
         "SituationalModifiers": "Bedingte\nModifikatoren",
         "DeleteItemDetail": "Möchtest du <b>{item}</b> entfernen?",
         "ItemRequiresAdoption": "Eintrag anpassen",
-        "ItemRequiresAdoptionDescription": "Das Hinzufügen benötigt zuerst eine Anpassung. Wähle den passenden Eintrag für ",
+        "ItemRequiresAdoptionDescription": "Das Hinzufügen benötigt zuerst eine Anpassung. Wähle den passenden Eintrag.",
         "alreadyAddedCharacterpart": "Du hast bereits eine {category}. Möchtest du diese Überschreiben? Bereits hinzugefügte Modifikation der vorherigen {category} können nicht automatisch rückgängig gemacht werden.",
         "warning": "Vorsicht",
         "deselectWithStrg": "Strg + Click zum Deselektieren"
@@ -368,7 +368,6 @@
     "time": "Zeit",
     "toughness": "Zähigkeit",
     "targetCategory": "Zielkategorie",
-    "twoHanded": "Zweihändig",
     "target": "Ziel",
     "usedWeaponExpertise": "Waffenbegabung eingesetzt ({a}/{b})",
     "Unopposed": "Keine Vergleichsprobe",
@@ -526,18 +525,23 @@
         "nature": "<span class=\"d20 diet-mu\">MU</span><span class=\"d20 diet-ge\">GE</span><span class=\"d20 diet-ko\">KO</span>"
     },
 
-    "EXP-legendary": "Legendär",
-    "EXP-brillant": "Brillant",
-    "EXP-masterful": "Meisterlich",
-    "EXP-competent": "Kompetent",
-    "EXP-experienced": "Erfahren",
-    "EXP-average": "Durchschnittlich",
-    "EXP-inexperienced": "Unerfahren",
+    "EXP": {
+        "legendary": "Legendär",
+        "brillant": "Brillant",
+        "masterful": "Meisterlich",
+        "competent": "Kompetent",
+        "experienced": "Erfahren",
+        "average": "Durchschnittlich",
+        "inexperienced": "Unerfahren"
+    },
 
-    "ABBR-value": "Wert",
-    "ABBR-modifiers": "Mod.",
-    "ABBR-advances": "Zukauf",
-    "ABBR-max": "Max",
+    "ABBR": {
+        "value": "Wert",
+        "modifiers": "Mod.",
+        "advances": "Zukauf",
+        "max": "Max"
+    },
+
 
     "Range-short": "Kurz",
     "Range-medium": "Mittel",
@@ -561,7 +565,10 @@
         "Lock": "Steigerung sperren/entsperren",
         "RollEffect": "Effekt auswürfeln",
         "collapse": "Sektion ein-/ausklappen",
-        "Library": "Bibliothek öffnen"
+        "Library": "Bibliothek öffnen",
+        "showToPlayers": "Allen zeigen",
+        "imageView": "Bildeintrag",
+        "textView": "Texteintrag"
     },
 
     "ITEMSHEET": {
@@ -591,7 +598,8 @@
 
     "CHATNOTIFICATION": {
         "gainsBloodrush": "Der Zorn überwältigt {character} und er/sie verfällt in Blutrausch.",
-        "unableReroll": "Würfel {die} wegen Unfähigkeit erneut geworfen ({oldVal}/{newVal})"
+        "unableReroll": "Würfel {die} wegen Unfähigkeit erneut geworfen ({oldVal}/{newVal})",
+        "requestRoll": "{user} fordert einen Wurf in {item}"
     },
 
     "TT": {
@@ -612,7 +620,9 @@
         "conditions": "Zustände",
         "descrconditions": "Zeigt alle Zustände und Status.",
         "tables": "Tabellen",
-        "descrtables": "Zeige alle würfelbaren Tabellen."
+        "descrtables": "Zeige alle würfelbaren Tabellen.",
+        "request": "Wurf anfordern",
+        "descrrequest": "Fordere einen Talentwurf an."
     },
 
     "UNITS": {
@@ -669,10 +679,6 @@
         "selbst": "self"
     },
 
-    "ReverseCombatSkills": {
-        "Schilde": "Shields"
-    },
-
     "LocalizedIDs": {
         "deaf": "Taub",
         "blind": "Blind",
@@ -709,7 +715,8 @@
         "automaticFail": "Automatischer Misserfolg",
         "blessed": "Geweihter",
         "spellcaster": "Zauberer",
-        "familiar": "Vertrauter"
+        "familiar": "Vertrauter",
+        "shields": "Schilde"
     },
 
     "Error": {

@@ -34,22 +34,28 @@
             <div class="col five">
 
             </div>
-            <div class="col sixty">
+            <div class="col two">
                 {{localize "condition"}}
             </div>
-            <div class="col five center" title="{{localize 'value'}}">
-                {{localize "ABBR-value"}}
+            <div class="col fifteen center">
+                {{localize "ABBR.modifiers"}}
+            </div>
+            <div class="col fifteen center" title="{{localize 'value'}}">
+                {{localize "ABBR.value"}}
             </div>
         </div>
         <div class="col two row-section skills table-title">
             <div class="col five">
 
             </div>
-            <div class="col sixty">
+            <div class="col two">
                 {{localize "condition"}}
             </div>
-            <div class="col five center" title="{{localize 'value'}}">
-                {{localize "ABBR-value"}}
+            <div class="col fifteen center">
+                {{localize "ABBR.modifiers"}}
+            </div>
+            <div class="col fifteen center" title="{{localize 'value'}}">
+                {{localize "ABBR.value"}}
             </div>
 
         </div>
@@ -60,14 +66,17 @@
                 <img src="{{item.icon}}" /> {{else}}
                 <img style="opacity:0.5;" src="{{item.icon}}" /> {{/if}}
             </div>
-            <div class="col sixty">
+            <div class="col two">
                 <a class="condition-show" data-id="{{item.id}}">{{localize item.label}}</a>
             </div>
-            <div class="col five center" title="{{localize 'value'}}">
+            <div class="col fifteen center">
+                {{#if item.editable}}{{#unless item.boolean}}<a class="condition-value">{{item.manual}}</a>{{/unless}}{{/if}}
+            </div>
+            <div class="col fifteen center" title="{{localize 'value'}}">
                 {{#if item.boolean}} {{#if item.existing}}
                 <a class="condition-toggle"><i class="far fa-check-circle"></i></a> {{else}}
                 <a class="condition-toggle"><i class="far fa-circle"></i></a> {{/if}} {{else}}
-                <a class="condition-value">{{item.value}}</a> {{/if}}
+                <span>{{item.value}}</span>{{/if}}
             </div>
 
         </div>
@@ -90,7 +99,7 @@
                 {{localize 'target'}}
             </div>
             <div class="col five">
-                {{localize "ABBR-value"}}
+                {{localize "ABBR.value"}}
             </div>
             <div class="col sixty seventy">
                 {{localize "source"}}
@@ -101,7 +110,7 @@
                 {{localize 'target'}}
             </div>
             <div class="col five">
-                {{localize "ABBR-value"}}
+                {{localize "ABBR.value"}}
             </div>
             <div class="col sixty seventy">
                 {{localize "source"}}

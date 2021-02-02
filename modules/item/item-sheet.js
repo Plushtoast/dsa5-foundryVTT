@@ -54,18 +54,33 @@ export default class ItemSheetdsa5 extends ItemSheet {
     }
 
     _advanceStep() {
+        let xpCost, steps
         switch (this.item.type) {
             case "advantage":
             case "disadvantage":
                 if (this.item.data.data.step.value < this.item.data.data.max.value) {
-                    this.item.options.actor._updateAPs(this.item.data.data.APValue.value)
-                    this.item.update({ "data.step.value": this.item.data.data.step.value + 1 })
+                    xpCost = this.item.data.data.APValue.value
+                    if (/;/.test(xpCost)) {
+                        steps = xpCost.split(";").map(x => Number(x.trim()))
+                        xpCost = steps[this.item.data.data.step.value]
+                    }
+                    if (this.item.options.actor.checkEnoughXP(xpCost)) {
+                        this.item.options.actor._updateAPs(xpCost)
+                        this.item.update({ "data.step.value": this.item.data.data.step.value + 1 })
+                    }
                 }
                 break
             case "specialability":
                 if (this.item.data.data.step.value < this.item.data.data.maxRank.value) {
-                    this.item.options.actor._updateAPs(this.item.data.data.APValue.value)
-                    this.item.update({ "data.step.value": this.item.data.data.step.value + 1 })
+                    xpCost = this.item.data.data.APValue.value
+                    if (/;/.test(xpCost)) {
+                        steps = xpCost.split(";").map(x => Number(x.trim()))
+                        xpCost = steps[this.item.data.data.step.value]
+                    }
+                    if (this.item.options.actor.checkEnoughXP(xpCost)) {
+                        this.item.options.actor._updateAPs(xpCost)
+                        this.item.update({ "data.step.value": this.item.data.data.step.value + 1 })
+                    }
                 }
                 break
         }
@@ -73,19 +88,25 @@ export default class ItemSheetdsa5 extends ItemSheet {
     }
 
     _refundStep() {
+        let xpCost, steps
         switch (this.item.type) {
             case "advantage":
             case "disadvantage":
             case "specialability":
                 if (this.item.data.data.step.value > 1) {
-                    if (this.item.options.actor.checkEnoughXP(this.item.data.data.APValue.value)) {
-                        this.item.options.actor._updateAPs(this.item.data.data.APValue.value * -1)
-                        this.item.update({ "data.step.value": this.item.data.data.step.value - 1 })
+                    xpCost = this.item.data.data.APValue.value
+                    if (/;/.test(xpCost)) {
+                        steps = xpCost.split(";").map(x => Number(x.trim()))
+                        xpCost = steps[this.item.data.data.step.value - 1]
                     }
+                    this.item.options.actor._updateAPs(xpCost * -1)
+                    this.item.update({ "data.step.value": this.item.data.data.step.value - 1 })
                 }
                 break
         }
+
     }
+
 
     activateListeners(html) {
         super.activateListeners(html);
@@ -125,15 +146,9 @@ export default class ItemSheetdsa5 extends ItemSheet {
                 let chars = DSA5.characteristics;
                 chars["ge/kk"] = game.i18n.localize("CHAR.GEKK")
                 chars["-"] = "-";
-                let cbskills = await DSA5_Utility.allCombatSkills()
-                cbskills = cbskills.filter(x => x.data.weapontype.value == "melee")
-                let res = {};
-                for (let sk of cbskills) {
-                    res[sk.name] = sk.name;
-                }
-                data['twoHanded'] = cbskills.find(x => x.name == this.item.data.data.combatskill.value).data.weapontype.twoHanded
                 data['characteristics'] = chars;
-                data['combatskills'] = res
+                data['twoHanded'] = /\(2H\)/.test(this.item.name)
+                data['combatskills'] = await DSA5_Utility.allCombatSkillsList("melee")
                 data['ranges'] = DSA5.meleeRanges;
                 data['canBeOffHand'] = this.item.options.actor ? !(this.item.options.actor.data.items.find(x => x.type == "combatskill" && x.name == this.item.data.data.combatskill.value).data.weapontype.twoHanded) && this.item.data.data.worn.value : false
                 break;

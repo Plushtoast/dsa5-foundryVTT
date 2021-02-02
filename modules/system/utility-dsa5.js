@@ -174,19 +174,19 @@ export default class DSA5_Utility {
 
     static experienceDescription(experience) {
         if (experience >= 2100) {
-            return "EXP-legendary";
+            return "EXP.legendary";
         } else if (experience >= 1700) {
-            return "EXP-brillant";
+            return "EXP.brillant";
         } else if (experience >= 1400) {
-            return "EXP-masterful";
+            return "EXP.masterful";
         } else if (experience >= 1200) {
-            return "EXP-competent";
+            return "EXP.competent";
         } else if (experience >= 1100) {
-            return "EXP-experienced";
+            return "EXP.experienced";
         } else if (experience >= 1000) {
-            return "EXP-average";
+            return "EXP.average";
         } else {
-            return "EXP-inexperienced";
+            return "EXP.inexperienced";
         }
     }
 

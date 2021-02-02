@@ -8,6 +8,8 @@ import SpecialabilityRulesDSA5 from "./specialability-rules-dsa5.js";
 import TraitRulesDSA5 from "./trait-rules-dsa5.js";
 import Itemdsa5 from "../item/item-dsa5.js"
 import CombatTables from "../tables/combattables.js";
+import DSA5StatusEffects from "../status/status_effects.js";
+import DSA5ChatAutoCompletion from "./chat_autocompletion.js";
 
 export default class DiceDSA5 {
     static async setupDialog({ dialogOptions, testData, cardOptions, }) {
@@ -27,7 +29,7 @@ export default class DiceDSA5 {
             testModifier: (dialogOptions.data.modifier || 0)
         });
 
-        let situationalModifiers = testData.extra.actor ? Actordsa5.getModifiers(testData.extra.actor) : []
+        let situationalModifiers = testData.extra.actor ? DSA5StatusEffects.getRollModifiers(testData.extra.actor, testData.source) : []
         if (testData.extra.options.moreModifiers != undefined) {
             situationalModifiers.push(...testData.extra.options.moreModifiers)
         }
@@ -36,17 +38,11 @@ export default class DiceDSA5 {
                 situationalModifiers.push(...AdvantageRulesDSA5.getTalentBonus(testData.extra.actor, testData.source.name))
                 situationalModifiers.push(...SpecialabilityRulesDSA5.getTalentBonus(testData.extra.actor, testData.source.name))
                 situationalModifiers.push(...AdvantageRulesDSA5.getVantageAsModifier(testData.extra.actor, game.i18n.localize('LocalizedIDs.minorSpirits'), -1))
-                if (testData.source.data.burden.value == "no") {
-                    this._removeModifiers(situationalModifiers, ["CONDITION.encumbered"])
-                } else {
-                    this._enabledModifiers(situationalModifiers, ["CONDITION.encumbered"], testData.source.data.burden.value == "yes")
-                }
                 mergeObject(dialogOptions.data, {
                     difficultyLabels: (DSA5.skillDifficultyLabels)
                 });
                 break;
             case "rangeweapon":
-                this._enabledModifiers(situationalModifiers, ["CONDITION.encumbered", "CONDITION.inpain"], true)
                 situationalModifiers.push(...AdvantageRulesDSA5.getVantageAsModifier(testData.extra.actor, game.i18n.localize('LocalizedIDs.restrictedSenseSight'), -2))
                 let targetSize = "average"
                 if (game.user.targets.size) {
@@ -75,7 +71,6 @@ export default class DiceDSA5 {
                 });
                 break
             case "trait":
-                this._enabledModifiers(situationalModifiers, ["CONDITION.encumbered", "CONDITION.inpain"], true)
                 let traitType = testData.source.data.data ? testData.source.data.data.traitType.value : testData.source.data.traitType.value
                 if (testData.mode == "attack" && traitType == "meleeAttack") {
                     let targetWeaponsize = "short"
@@ -115,7 +110,6 @@ export default class DiceDSA5 {
                 }
                 break
             case "meleeweapon":
-                this._enabledModifiers(situationalModifiers, ["CONDITION.encumbered", "CONDITION.inpain"], true)
                 let wrongHandDisabled = AdvantageRulesDSA5.hasVantage(testData.extra.actor, game.i18n.localize('LocalizedIDs.ambidextrous'))
                 if (testData.mode == "attack") {
                     let targetWeaponsize = "short"
@@ -143,7 +137,6 @@ export default class DiceDSA5 {
                 } else {}
                 break
             case "combatskill":
-                this._enabledModifiers(situationalModifiers, ["CONDITION.encumbered", "CONDITION.inpain"], true)
                 break
             case "liturgy":
             case "spell":
@@ -162,7 +155,6 @@ export default class DiceDSA5 {
                     ZKModifier: zkMod
                 });
 
-                this._enabledModifiers(situationalModifiers, ["CONDITION.encumbered", "CONDITION.inpain"], true)
                 break;
             case "ceremony":
                 if (game.user.targets.size) {
@@ -178,7 +170,6 @@ export default class DiceDSA5 {
                     locationModifiers: DSA5.ceremonyLocationModifiers,
                     timeModifiers: DSA5.ceremonyTimeModifiers
                 })
-                this._enabledModifiers(situationalModifiers, ["CONDITION.encumbered", "CONDITION.inpain"], true)
                 break
             case "ritual":
                 situationalModifiers.push(...AdvantageRulesDSA5.getVantageAsModifier(testData.extra.actor, game.i18n.localize('LocalizedIDs.minorSpirits'), -1))
@@ -198,7 +189,6 @@ export default class DiceDSA5 {
                     locationModifiers: DSA5.ritualLocationModifiers,
                     timeModifiers: DSA5.ritualTimeModifiers
                 })
-                this._enabledModifiers(situationalModifiers, ["CONDITION.encumbered", "CONDITION.inpain"], true)
                 break
             case "poison":
             case "disease":
@@ -259,21 +249,6 @@ export default class DiceDSA5 {
         }
         reject()
     }
-
-    static _enabledModifiers(modifiers, names, enabled) {
-        for (let x in names) {
-            if (modifiers[x])
-                modifiers[x].selected = enabled
-        }
-    }
-    static _removeModifiers(modifiers, names) {
-        for (let x of names) {
-            if (modifiers[x])
-                delete modifiers[x]
-        }
-    }
-
-
 
     static _rollSingleD20(roll, res, id, modifier, testData, combatskill = "") {
         let description = "";
@@ -498,22 +473,11 @@ export default class DiceDSA5 {
         this._appendSituationalModifiers(testData, game.i18n.localize("wrongHand"), testData.wrongHand)
         let source = testData.source.data.data == undefined ? testData.source : testData.source.data
         if (source.data.traitType.value == "meleeAttack") {
-            let weapon = {
-                data: {
-                    combatskill: {
-                        value: "-"
-                    },
-                    reach: {
-                        value: source.data.reach.value
-                    }
-                }
-            }
+            let weapon = { data: { combatskill: { value: "-" }, reach: { value: source.data.reach.value } } }
 
             this._appendSituationalModifiers(testData, game.i18n.localize("narrowSpace"), this._getNarrowSpaceModifier(weapon, testData))
             this._appendSituationalModifiers(testData, game.i18n.localize("doubleAttack"), testData.doubleAttack)
             this._appendSituationalModifiers(testData, game.i18n.localize("opposingWeaponSize"), this._compareWeaponReach(weapon, testData))
-
-
         } else {
             this._appendSituationalModifiers(testData, game.i18n.localize("distance"), DSA5.rangeMods[testData.rangeModifier].attack)
             this._appendSituationalModifiers(testData, game.i18n.localize("sizeCategory"), testData.sizeModifier)
@@ -591,13 +555,10 @@ export default class DiceDSA5 {
         let skill = Actordsa5._calculateCombatSkillValues(testData.extra.actor.items.find(x => x.type == "combatskill" && x.name == combatskill), testData.extra.actor)
 
         if (source.type == "meleeweapon") {
-            let shields = testData.extra.actor.items.filter(x => (x.type == "meleeweapon" && game.i18n.localize("ReverseCombatSkills." + x.data.combatskill.value) == "Shields" && x.data.worn.value))
-            let shieldBonus = shields.length > 0 ? shields[0].data.pamod.value : 0
-
-            weapon = Actordsa5._prepareMeleeWeapon(source, [skill], testData.extra.actor, shieldBonus)
+            weapon = Actordsa5._prepareMeleeWeapon(source, [skill], testData.extra.actor)
 
             this._appendSituationalModifiers(testData, game.i18n.localize("narrowSpace"), this._getNarrowSpaceModifier(weapon, testData))
-                //+ this._compareWeaponReach(weapon, testData)
+
             if (testData.mode == "attack") {
                 this._appendSituationalModifiers(testData, game.i18n.localize("doubleAttack"), testData.doubleAttack)
                 this._appendSituationalModifiers(testData, game.i18n.localize("opposingWeaponSize"), this._compareWeaponReach(weapon, testData))
@@ -759,9 +720,10 @@ export default class DiceDSA5 {
             if (regex.test(k.trim())) {
                 let split = k.split("|")
                 result.push(`<a class="roll-button roll-item" data-name="${split[1].trim()}" data-type="${split[0].trim()}"><i class="fas fa-dice"></i>${game.i18n.localize(split[0].trim())}: ${split[1].trim()}</a>`)
-            } else {
-                result.push(k)
             }
+            /*else {
+                           result.push(k)
+                       }*/
         }
         return result.join(", ")
     }
@@ -1144,6 +1106,20 @@ export default class DiceDSA5 {
         }
     }
 
+    static async _requestRoll(category, name) {
+        let actor = DSA5ChatAutoCompletion._getActor()
+
+        if (actor) {
+            let skill = actor.items.find(i => i.name == name && i.type == category);
+
+            actor.setupSkill(skill.data).then(setupData => {
+                actor.basicTest(setupData)
+            });
+
+        }
+    }
+
+
     static async _itemRoll(ev) {
         let input = $(ev.currentTarget),
             messageId = input.parents('.message').attr("data-message-id"),
@@ -1153,19 +1129,20 @@ export default class DiceDSA5 {
             name = input.attr("data-name")
 
         let actor = DSA5_Utility.getSpeaker(speaker)
-        if (!actor)
+        if (!actor && message.data.flags.data)
             actor = new Actordsa5(message.data.flags.data.preData.extra.actor, { temporary: true })
 
-        let item = actor.data.items.find(x => x.name == name && x.type == category)
-        if (item) {
-            item = new Itemdsa5(item, { temporary: true })
-            item.setupEffect().then(setupData => {
-                item.itemTest(setupData)
-            });
-        } else {
-            ui.notifications.error(game.i18n.format("Error.notFound", { category: category, name: name }))
+        if (actor) {
+            let item = actor.data.items.find(x => x.name == name && x.type == category)
+            if (item) {
+                item = new Itemdsa5(item, { temporary: true })
+                item.setupEffect().then(setupData => {
+                    item.itemTest(setupData)
+                });
+            } else {
+                ui.notifications.error(game.i18n.format("Error.notFound", { category: category, name: name }))
+            }
         }
-
     }
 
     static async _rollEdit(ev) {
@@ -1258,6 +1235,9 @@ export default class DiceDSA5 {
         })
         html.on('change', '.roll-edit', ev => {
             DiceDSA5._rollEdit(ev)
+        })
+        html.on('click', '.request-roll', ev => {
+            DiceDSA5._requestRoll($(ev.currentTarget).attr("data-type"), $(ev.currentTarget).attr("data-name"))
         })
 
         html.on("click", ".message-delete", ev => {
