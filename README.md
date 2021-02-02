@@ -8,7 +8,7 @@ We are proud to announce we finally finished our initial work on Das Schwarze Au
 This system is intended for use with Foundry Virtual Tabletop to play "Das Schwarze Auge" 5th edition.
 
 ## Installation - Auto Installer
-In the FVTT Game Systems Menu, click Install System and enter into the Manifest URL: `https://raw.githubusercontent.com/Plushtoast/dsa5-foundryVTT/master/system.json`
+In the FVTT Game Systems Menu, click Install System and enter the Manifest URL: `https://raw.githubusercontent.com/Plushtoast/dsa5-foundryVTT/master/system.json`
 
 ## Current State
 DSA 1.0 is now ready to be played by everybody. 
