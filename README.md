@@ -34,14 +34,13 @@ Management of inventory with drag and drop and information on all items.
 
 Manual modification of rolls and test results.
 
-## Modules
-Official
+## Official Modules
 - [DSA5-Introduction](https://github.com/Plushtoast/dsa5_introduction) - A small adventure with included characters and maps to start playing. Might be of use for experienced players too.
 
 As of this moment several modules are in the making. Most notable the Das Schwarze Auge Grundregelwerk.
 We will inform you as soon as they will be available.
 
-## Recommended Modules
+## Other Recommended Modules
 The following modules are recommended for the best gaming experience:
 - [Dice So Nice!](https://gitlab.com/riccisi/foundryvtt-dice-so-nice) - Shows beautiful 3d dice on every roll. A must have! DSA5 fully integrates this module.
 - [Pings](https://gitlab.com/foundry-azzurite/pings/) - Mark points of interest on the map with a long mouseclick.
