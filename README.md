@@ -1,11 +1,11 @@
 # dsa5-foundryVTT
 ![](https://repository-images.githubusercontent.com/311655339/4d523800-55a9-11eb-9e2e-6bbc2b71d8a4)
 
-# Current Version: 
+### Current Version: 
 1.0.0
 We are proud to announce we finally finished our initial work on Das Schwarze Auge 5th edition in German in foundry. I hope you enjoy the system as much as we do.
 
-# Compatibility: 
+## Compatibility: 
 FoundryVTT 0.7.0+
 
 This system is intended for use with Foundry Virtual Tabletop to play "Das Schwarze Auge" 5th edition.
