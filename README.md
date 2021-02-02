@@ -7,10 +7,10 @@ We are proud to announce we finally finished our initial work on Das Schwarze Au
 
 This system is intended for use with Foundry Virtual Tabletop to play "Das Schwarze Auge" 5th edition.
 
-# Installation - Auto Installer (Recommended)
+## Installation - Auto Installer
 In the FVTT Game Systems Menu, click Install System and enter into the Manifest URL: `https://raw.githubusercontent.com/Plushtoast/dsa5-foundryVTT/master/system.json`
 
-# Current State
+## Current State
 DSA 1.0 is now ready to be played by everybody. 
 DSA 1.0 includes all relevant mechanisms to play in the wonderous world of Aventurien and Das Schwarze Auge.
 The core system include a character sheet to play your favorite characters.
@@ -38,6 +38,12 @@ Manual modification of rolls and test results.
 Official
 - [DSA5-Introduction](https://github.com/Plushtoast/dsa5_introduction) - A small adventure with included characters and maps to start playing. Might be of use for experienced players too.
 
-
 As of this moment several modules are in the making. Most notable the Das Schwarze Auge Grundregelwerk.
 We will inform you as soon as they will be available.
+
+## Recommended Modules
+The following modules are recommended for the best gaming experience:
+- [Dice So Nice!](https://gitlab.com/riccisi/foundryvtt-dice-so-nice) - Shows beautiful 3d dice on every roll. A must have! DSA5 fully integrates this module.
+- [Pings](https://gitlab.com/foundry-azzurite/pings/) - Mark points of interest on the map with a long mouseclick.
+
+
