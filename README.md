@@ -44,5 +44,6 @@ We will inform you as soon as they will be available.
 The following modules are recommended for the best gaming experience:
 - [Dice So Nice!](https://gitlab.com/riccisi/foundryvtt-dice-so-nice) - Shows beautiful 3d dice on every roll. A must have! DSA5 fully integrates this module.
 - [Pings](https://gitlab.com/foundry-azzurite/pings/) - Mark points of interest on the map with a long mouseclick.
+- [VTTA Tokenizer](https://github.com/VTTAssets/vtta-tokenizer) - Lets you create beautiful Tokens. DSA5 sets up token frames for the Tokenizer on the first time the module gets activated.
 
 
