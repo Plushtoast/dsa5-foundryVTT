@@ -3,7 +3,7 @@
 
 ### Current Version and Compatibility: 
 1.0.0 - FoundryVTT 0.7.0+
-We are proud to announce we finally finished our initial work on Das Schwarze Auge 5th edition in German in foundry. I hope you enjoy the system as much as we do.
+We are proud to announce we finally finished our initial work on Das Schwarze Auge 5th edition in German (English soon) in foundry. I hope you enjoy the system as much as we do.
 
 This system is intended for use with Foundry Virtual Tabletop to play "Das Schwarze Auge" 5th edition.
 
@@ -13,7 +13,7 @@ In the FVTT Game Systems Menu, click Install System and enter the Manifest URL: 
 ## Current State
 DSA 1.0 is now ready to be played by everybody. 
 DSA 1.0 includes all relevant mechanisms to play in the wonderous world of Aventurien and Das Schwarze Auge.
-The core system include a character sheet to play your favorite characters.
+The core system includes a character sheet to play your favorite characters.
 DSA 1.0 allows you to create your advantages, disadvantages, cultures, professions, special skill, spells, lithurgies, rituals, equipment as you see fit.
 The version 1.0 and it's content will at this point only be available in GERMAN, an english version / translations will follow in due time.
 
