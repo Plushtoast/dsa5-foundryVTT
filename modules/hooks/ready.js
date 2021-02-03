@@ -1,3 +1,5 @@
+import DSA5Tutorial from "../system/tutorial.js";
+
 export default function() {
     Hooks.on("ready", async() => {
         game.socket.on("system.dsa5", data => {
@@ -15,5 +17,13 @@ export default function() {
                 console.warn(`Unhandled socket data type ${data.type}`)
             }
         })
+
+        DSA5Tutorial.firstTimeMessage()
+
+        if (game.modules.get("vtta-tokenizer") && game.modules.get("vtta-tokenizer").active && !game.settings.get("dsa5", "tokenizerSetup")) {
+            game.settings.set("vtta-tokenizer", "default-frame-pc", "systems/dsa5/icons/backgrounds/token_green.webp")
+            game.settings.set("vtta-tokenizer", "default-frame-npc", "systems/dsa5/icons/backgrounds/token_black.webp")
+            game.settings.set("dsa5", "tokenizerSetup", true)
+        }
     });
 }

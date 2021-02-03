@@ -22,11 +22,11 @@ export default class DSA5StatusEffects {
         delete effect.id
         return result
     }
-    static async removeEffect(actor, existing, value, auto) {
+    static async removeEffect(actor, existing, value, absolute, auto) {
         if (auto) {
-            existing.flags.dsa5.auto = Math.max(0, existing.flags.dsa5.auto - value)
+            existing.flags.dsa5.auto = absolute ? value : Math.max(0, existing.flags.dsa5.auto - value)
         } else {
-            existing.flags.dsa5.manual = existing.flags.dsa5.manual - value
+            existing.flags.dsa5.manual = absolute ? value : existing.flags.dsa5.manual - value
         }
         existing.flags.dsa5.value = Math.max(0, Math.min(4, existing.flags.dsa5.manual + existing.flags.dsa5.auto))
 

@@ -552,6 +552,8 @@
     "Money-H": "Heller",
     "Money-K": "Kreuzer",
 
+    "WELCOME": "<p><h2>Willkommen zu DSA5<br> für Foundry VTT</h2></p><p>Wir wünschen dir viel Spaß beim Spielen von DSA5.</p><h3>Erste Schritte</h3><p>Für einen einfachen und schnellen Start empfehlen wir das Grundregelmodul in deinem System zu installieren. So kannst du unverzüglich Aventurien erkunden. Wenn du das Grundregelmodul nicht hast, musst du alle Gegenstände, Zauber, Sonderfertigkeiten, Charaktere, etc. selbst anlegen.</p><p>Das Modul kannst du unter <a href=\"https://ulisses-spiele.de/zum-f-shop/\" target=\"_blank\"></a> erwerben.<p>Für die Charaktererstellung stelle sicher, dass du per Drag and Drop die Spezies auf dein Charakterblatt ziehst (zur Berechnung der Attribute).</p><p>Du kannst auch das kostenlose <a href=\"https://github.com/Plushtoast/dsa5_introduction\" target=\"_blank\">Einsteigermodul</a> installieren, das Karten, vorgefertigte Charaktere und ein kleines Abenteuer beinhaltet.</p><h3>Hilfe</h3><p>Bei Problemen benutze die Hilfe (/help im Chat) oder schau in unserem Wiki vorbei: <a href=\"https://github.com/Plushtoast/dsa5-foundryVTT/wiki\" target=\"_blank\">Wiki</a>.</p><p>Diese Nachricht wird nur einmal angezeigt.</p>",
+
     "SHEET": {
         "PostItem": "Im Chat posten",
         "EditItem": "Editieren",
@@ -588,8 +590,6 @@
         "step3": "Schemen [-6]",
         "step4": "Unsichtbar [Glückstreffer]"
     },
-
-
 
     "TraitMsg": {
         "AutomaticSuccess": "Automatischer Erfolg",

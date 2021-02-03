@@ -490,7 +490,7 @@ export default class Actordsa5 extends Actor {
             return
 
         for (let mod of i.data.effect.value.split(",").map(x => x)) {
-            let vals = mod.replace(/(\s+|^\s+|\s+$)/g, ' ').split(" ")
+            let vals = mod.replace(/(\s+)/g, ' ').trim().split(" ")
             if (vals.length == 2) {
                 if (Number(vals[0]) != undefined) {
                     if (equipmentModifiers[vals[1]] == undefined) {
@@ -1400,7 +1400,7 @@ export default class Actordsa5 extends Actor {
 
     async addCondition(effect, value = 1, absolute = false, auto = true) {
         if (absolute && value <= 0) {
-            return this.removeCondition(effect, value, auto)
+            return this.removeCondition(effect, value, auto, absolute)
         }
 
         if (typeof(effect) === "string")
@@ -1442,7 +1442,7 @@ export default class Actordsa5 extends Actor {
         }
     }
 
-    async removeCondition(effect, value = 1, auto = true) {
+    async removeCondition(effect, value = 1, auto = true, absolute = false) {
         if (typeof(effect) === "string")
             effect = duplicate(CONFIG.statusEffects.find(e => e.id == effect))
         if (!effect)
@@ -1456,7 +1456,7 @@ export default class Actordsa5 extends Actor {
         if (existing && existing.flags.dsa5.value == null) {
             return this.deleteEmbeddedEntity("ActiveEffect", existing._id)
         } else if (existing) {
-            return await DSA5StatusEffects.removeEffect(this, existing, value, auto)
+            return await DSA5StatusEffects.removeEffect(this, existing, value, absolute, auto)
         }
     }
 

@@ -379,7 +379,7 @@ export default class ActorSheetDsa5 extends ActorSheet {
             $(ev.currentTarget).fadeOut()
         })
         html.find(".status-add").click(ev => {
-            this.actor.addCondition($(ev.currentTarget).attr("data-id"))
+            this.actor.addCondition($(ev.currentTarget).attr("data-id"), 1, false, false)
         })
 
         html.find('.roll-aggregated').mousedown(ev => {
@@ -481,23 +481,27 @@ export default class ActorSheetDsa5 extends ActorSheet {
             $(ev.currentTarget).closest('.item').find('.expandDetails').fadeToggle()
         })
 
-        html.find('.condition-show').click(ev => {
+        html.find('.condition-show').mousedown(ev => {
             ev.preventDefault()
             let id = ev.currentTarget.getAttribute("data-id")
-            let effect = CONFIG.statusEffects.find(x => x.id == id)
-            if (effect) {
-                let text = $(`<div style="padding:5px;"><b><a class="chat-condition chatButton" data-id="${effect.id}"><img src="${effect.icon}"/>${game.i18n.localize(effect.label)}</a></b>: ${game.i18n.localize(effect.description)}</div>`)
-                text.find('.chat-condition').on('click', ev => {
-                    DSA5ChatListeners.postStatus($(ev.currentTarget).attr('data-id'))
-                })
-                let elem = $(ev.currentTarget).closest('.groupbox').find('.effectDescription')
-                elem.fadeOut('fast', function() {
-                    elem.html(text).fadeIn('fast')
+            if (ev.button == 0) {
+                let effect = CONFIG.statusEffects.find(x => x.id == id)
+                if (effect) {
+                    let text = $(`<div style="padding:5px;"><b><a class="chat-condition chatButton" data-id="${effect.id}"><img src="${effect.icon}"/>${game.i18n.localize(effect.label)}</a></b>: ${game.i18n.localize(effect.description)}</div>`)
+                    text.find('.chat-condition').on('click', ev => {
+                        DSA5ChatListeners.postStatus($(ev.currentTarget).attr('data-id'))
+                    })
+                    let elem = $(ev.currentTarget).closest('.groupbox').find('.effectDescription')
+                    elem.fadeOut('fast', function() {
+                        elem.html(text).fadeIn('fast')
 
-                })
+                    })
 
-            } else {
-                //search temporary effects
+                } else {
+                    //search temporary effects
+                }
+            } else if (ev.button == 2) {
+                this._deleteActiveEffect(id)
             }
         })
 
@@ -707,6 +711,12 @@ export default class ActorSheetDsa5 extends ActorSheet {
                 return $(this).find('a').attr('title').toLowerCase().trim().indexOf(val) == -1
             }).addClass('filterHide')
         }
+    }
+
+    _deleteActiveEffect(id) {
+        let item = this.actor.data.effects.find(x => x.flags.core.statusId == id)
+        if (item)
+            this.actor.deleteEmbeddedEntity("ActiveEffect", item._id)
     }
 
     _deleteItem(ev) {

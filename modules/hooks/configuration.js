@@ -49,7 +49,7 @@ export default function() {
         hint: "SETTINGS.defaultDimVisionHint",
         scope: "world",
         config: true,
-        default: 30,
+        default: 20,
         type: Number
     });
     game.settings.register("dsa5", "defaultBrightVision", {
@@ -57,7 +57,7 @@ export default function() {
         hint: "SETTINGS.defaultBrightVisionHint",
         scope: "world",
         config: true,
-        default: 20,
+        default: 10,
         type: Number
     });
     game.settings.register("dsa5", "migrationVersion", {
@@ -66,5 +66,19 @@ export default function() {
         config: false,
         default: 1,
         type: Number
+    })
+    game.settings.register("dsa5", "firstTimeStart", {
+        name: "firstTimeStart",
+        hint: "firstTimeStart",
+        config: false,
+        default: false,
+        type: Boolean
+    })
+    game.settings.register("dsa5", "tokenizerSetup", {
+        name: "tokenizerSetup",
+        hint: "tokenizerSetup",
+        config: false,
+        default: false,
+        type: Boolean
     })
 }
