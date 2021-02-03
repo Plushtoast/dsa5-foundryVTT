@@ -3,7 +3,7 @@
 
 ### Current Version and Compatibility: 
 1.0.0 - FoundryVTT 0.7.0+
-We are proud to announce we finally finished our initial work on Das Schwarze Auge 5th edition in German in foundry. I hope you enjoy the system as much as we do.
+We are proud to announce we finally finished our initial work on Das Schwarze Auge 5th edition in German (English soon) in foundry. I hope you enjoy the system as much as we do.
 
 This system is intended for use with Foundry Virtual Tabletop to play "Das Schwarze Auge" 5th edition.
 
