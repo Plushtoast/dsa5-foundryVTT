@@ -1,4 +1,3 @@
-import Actordsa5 from "../actor/actor-dsa5.js"
 import Itemdsa5 from "../item/item-dsa5.js"
 
 export default class DSA5Initializer extends Dialog {
@@ -38,7 +37,7 @@ export default class DSA5Initializer extends Dialog {
                 let head = game.folders.entities.find(x => x.name == foldersToCreate[0].name && x.type == "JournalEntry")
                 if (head) {
                     this.folders[head.data.name] = head
-                    json.shift()
+                    json.folders.shift()
                 }
 
                 let createdFolders = await Folder.create(foldersToCreate)
@@ -58,8 +57,12 @@ export default class DSA5Initializer extends Dialog {
                 let entries = await journal.getContent()
                 for (let entry of entries) {
                     let folder = entry.getFlag("dsa5", "parent")
-                    if (folder)
+                    let sort = entry.getFlag("dsa5", "sort")
+                    if (folder) {
                         entry.data.folder = this.folders[folder].data._id
+                        entry.data.sort = sort
+                    }
+
                 }
                 let createdEntries = await JournalEntry.create(entries)
                 for (let entry of createdEntries) {

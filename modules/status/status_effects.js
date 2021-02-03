@@ -82,7 +82,7 @@ export default class DSA5StatusEffects {
 
 class EncumberedEffect extends DSA5StatusEffects {
     static ModifierIsSelected(item) {
-        return item.type == "skill" && item.data.burden.value == "yes"
+        return (item.type == "skill" && item.data.burden.value == "yes") || item.type != "skill"
     }
 
     static caluclateRollModifier(effect, actor, item) {

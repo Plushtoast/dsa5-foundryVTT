@@ -1280,7 +1280,7 @@ export default class Actordsa5 extends Actor {
         item.attack = Number(skill.data.attack.value) + Number(item.data.atmod.value)
         item.parry = Number(skill.data.parry.value) + Number(item.data.pamod.value) + (item.data.combatskill.value == game.i18n.localize('LocalizedIDs.shields') ? Number(item.data.pamod.value) : 0)
 
-        if (!/\(2H\)/.test(item.name)) {
+        if (!/\(2H/.test(item.name)) {
             if (!wornWeapons)
                 wornWeapons = actorData.items.filter(x => (x.type == "meleeweapon" && x.data.worn.value && x._id != item._id))
             item.parry += Math.max(0, ...wornWeapons.map(x => x.data.pamod.offhandMod))
