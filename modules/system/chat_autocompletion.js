@@ -68,12 +68,10 @@ export default class DSA5ChatAutoCompletion {
                 }).slice(0, 5).map(x => x.name)
                 .concat([this.constants.attackWeaponless].filter(x => x.toLowerCase().trim().indexOf(search) != -1))
             if (!result.length)
-                result.push(game.i18n.localize("Error.noMatch"))
+                result.push(game.i18n.localize("DSAError.noMatch"))
             this._setList(result, "AT")
         }
     }
-
-
 
     _filterPA(search) {
         let actor = DSA5ChatAutoCompletion._getActor()
@@ -83,7 +81,7 @@ export default class DSA5ChatAutoCompletion {
                 .concat([this.constants.dodge, this.constants.parryWeaponless].filter(x => x.toLowerCase().trim().indexOf(search) != -1))
 
             if (!result.length)
-                result.push(game.i18n.localize("Error.noMatch"))
+                result.push(game.i18n.localize("DSAError.noMatch"))
             this._setList(result, "PA")
         }
     }
@@ -94,7 +92,7 @@ export default class DSA5ChatAutoCompletion {
             let types = ["spell", "ritual"]
             let result = actor.data.items.filter(x => { return types.includes(x.type) && x.name.toLowerCase().trim().indexOf(search) != -1 }).slice(0, 5).map(x => x.name)
             if (!result.length)
-                result.push(game.i18n.localize("Error.noMatch"))
+                result.push(game.i18n.localize("DSAError.noMatch"))
             this._setList(result, "SP")
         }
     }
@@ -105,7 +103,7 @@ export default class DSA5ChatAutoCompletion {
             let types = ["liturgy", "ceremony"]
             let result = actor.data.items.filter(x => { return types.includes(x.type) && x.name.toLowerCase().trim().indexOf(search) != -1 }).slice(0, 5).map(x => x.name)
             if (!result.length)
-                result.push(game.i18n.localize("Error.noMatch"))
+                result.push(game.i18n.localize("DSAError.noMatch"))
             this._setList(result, "LI")
         }
     }
@@ -113,14 +111,14 @@ export default class DSA5ChatAutoCompletion {
     _filterSK(search) {
         let result = this.skills.filter(x => { return x.toLowerCase().trim().indexOf(search) != -1 }).slice(0, 5)
         if (!result.length)
-            result.push(game.i18n.localize("Error.noMatch"))
+            result.push(game.i18n.localize("ErDSAErrorror.noMatch"))
         this._setList(result, "SK")
     }
 
     _filterRQ(search) {
         let result = this.skills.filter(x => { return x.toLowerCase().trim().indexOf(search) != -1 }).slice(0, 5)
         if (!result.length)
-            result.push(game.i18n.localize("Error.noMatch"))
+            result.push(game.i18n.localize("DSAError.noMatch"))
         this._setList(result, "RQ")
     }
 
@@ -164,7 +162,7 @@ export default class DSA5ChatAutoCompletion {
         if (!actor) actor = game.actors.get(speaker.actor);
 
         if (!actor) {
-            ui.notifications.error(game.i18n.localize("Error.noProperActor"))
+            ui.notifications.error(game.i18n.localize("DSAError.noProperActor"))
             return
         }
         return actor

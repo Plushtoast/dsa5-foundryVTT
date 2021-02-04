@@ -288,16 +288,21 @@ DSA5.defaultWeapon = {
                 value: "1d6"
             },
             atmod: {
-                value: 0
+                value: 0,
+                offHandMod: 0
             },
             pamod: {
-                value: 0
+                value: 0,
+                offHandMod: 0
             },
             guidevalue: {
                 value: "ge/kk"
             },
             damageThreshold: {
                 value: "5000"
+            },
+            worn: {
+                offhand: false
             }
         }
     }
@@ -325,8 +330,7 @@ DSA5.equipmentTypes = {
     "writing": "Equipment.writing",
     "alchemy": "Equipment.alchemy",
     "service": "Equipment.service",
-    "luxus": "Equipment.luxus",
-    "poison": "Poison"
+    "luxus": "Equipment.luxus"
 };
 
 DSA5.narrowSpaceModifiers = {

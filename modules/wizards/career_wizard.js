@@ -44,7 +44,7 @@ export default class CareerWizard extends WizardDSA5 {
         let choice = parent.find('.maxTricks')
         let allowed = Number(choice.attr("data-spelltricklimit")) || 0
         if (parent.find('.exclusiveTricks:checked').length != allowed) {
-            ui.notifications.error(game.i18n.localize("Error.MissingChoices"))
+            ui.notifications.error(game.i18n.localize("DSAError.MissingChoices"))
             WizardDSA5.flashElem(choice)
             let tabElem = choice.closest('.tab').attr("data-tab")
             WizardDSA5.flashElem(parent.find(`.tabs a[data-tab='${tabElem}']`))
@@ -139,7 +139,7 @@ export default class CareerWizard extends WizardDSA5 {
                     await this.actor.createEmbeddedEntity("OwnedItem", item)
                 } else {
                     this.errors.push(`${types.map(x => game.i18n.localize(x)).join("/")}: ${k}`)
-                    ui.notifications.error(game.i18n.format("Error.notFound", { category: game.i18n.localize(types[0]), name: k }))
+                    ui.notifications.error(game.i18n.format("DSAError.notFound", { category: game.i18n.localize(types[0]), name: k }))
                 }
             }
         }
@@ -156,7 +156,7 @@ export default class CareerWizard extends WizardDSA5 {
                 await this.actor.createEmbeddedEntity("OwnedItem", item)
             } else {
                 this.errors.push(`${game.i18n.localize(type)}: ${k}`)
-                ui.notifications.error(game.i18n.format("Error.notFound", { category: game.i18n.localize(type), name: name }))
+                ui.notifications.error(game.i18n.format("DSAError.notFound", { category: game.i18n.localize(type), name: name }))
             }
         }
     }

@@ -59,7 +59,7 @@ export default class WizardDSA5 extends Application {
                     item = {
                         name: x.trim(),
                         notFound: true,
-                        tooltip: game.i18n.localize('Error.itemNotFound'),
+                        tooltip: game.i18n.localize('DSAError.itemNotFound'),
                         apCost: "?"
                     }
                 }
@@ -181,7 +181,7 @@ export default class WizardDSA5 extends Application {
             let choice = parent.find('.allowedCount_' + k.split("_")[1])
             let allowed = Number(choice.attr('data-count'))
             if (parent.find(`.${k}:checked`).length != allowed) {
-                ui.notifications.error(game.i18n.localize("Error.MissingChoices"))
+                ui.notifications.error(game.i18n.localize("DSAError.MissingChoices"))
                 WizardDSA5.flashElem(choice)
                 let tabElem = choice.closest('.tab').attr("data-tab")
                 WizardDSA5.flashElem(parent.find(`.tabs a[data-tab='${tabElem}']`))
@@ -235,7 +235,7 @@ export default class WizardDSA5 extends Application {
         if (this.errors.length == 0) {
             this.close()
         } else {
-            $(this._element).find('.dialog-buttons').html(`<div class="error"><p>${game.i18n.localize('Error.notUnderstoodCulture')}</p><ul><li>${this.errors.join("</li><li>")}</li></ul></div>`)
+            $(this._element).find('.dialog-buttons').html(`<div class="error"><p>${game.i18n.localize('DSAError.notUnderstoodCulture')}</p><ul><li>${this.errors.join("</li><li>")}</li></ul></div>`)
         }
     }
 }

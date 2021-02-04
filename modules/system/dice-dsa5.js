@@ -33,10 +33,13 @@ export default class DiceDSA5 {
         if (testData.extra.options.moreModifiers != undefined) {
             situationalModifiers.push(...testData.extra.options.moreModifiers)
         }
-        switch (testData.source.type) {
+
+        //TODO duplicate everything in advance
+        let source = testData.source.data ? (testData.source.data.data == undefined ? testData.source : testData.source.data) : testData.source
+        switch (source.type) {
             case "skill":
-                situationalModifiers.push(...AdvantageRulesDSA5.getTalentBonus(testData.extra.actor, testData.source.name))
-                situationalModifiers.push(...SpecialabilityRulesDSA5.getTalentBonus(testData.extra.actor, testData.source.name))
+                situationalModifiers.push(...AdvantageRulesDSA5.getTalentBonus(testData.extra.actor, source.name))
+                situationalModifiers.push(...SpecialabilityRulesDSA5.getTalentBonus(testData.extra.actor, source.name))
                 situationalModifiers.push(...AdvantageRulesDSA5.getVantageAsModifier(testData.extra.actor, game.i18n.localize('LocalizedIDs.minorSpirits'), -1))
                 mergeObject(dialogOptions.data, {
                     difficultyLabels: (DSA5.skillDifficultyLabels)
@@ -71,7 +74,7 @@ export default class DiceDSA5 {
                 });
                 break
             case "trait":
-                let traitType = testData.source.data.data ? testData.source.data.data.traitType.value : testData.source.data.traitType.value
+                let traitType = source.data.traitType.value
                 if (testData.mode == "attack" && traitType == "meleeAttack") {
                     let targetWeaponsize = "short"
                     if (game.user.targets.size) {
@@ -124,14 +127,14 @@ export default class DiceDSA5 {
                         weaponSizes: DSA5.meleeRanges,
                         melee: true,
                         wrongHandDisabled: wrongHandDisabled,
-                        offHand: !wrongHandDisabled && testData.source.data.data.worn.offHand,
+                        offHand: !wrongHandDisabled && source.data.worn.offHand,
                         targetWeaponSize: targetWeaponsize
                     });
                 } else if (testData.mode == "parry") {
                     mergeObject(dialogOptions.data, {
                         defenseCount: 0,
                         showDefense: true,
-                        wrongHandDisabled: wrongHandDisabled && testData.source.data.data.worn.offHand,
+                        wrongHandDisabled: wrongHandDisabled && source.data.worn.offHand,
                         melee: true
                     });
                 } else {}
@@ -201,8 +204,8 @@ export default class DiceDSA5 {
                 mergeObject(dialogOptions.data, {
                     SKModifier: skMod,
                     ZKModifier: zkMod,
-                    hasSKModifier: testData.source.data.resistance.value == "SK",
-                    hasZKModifier: testData.source.data.resistance.value == "ZK"
+                    hasSKModifier: source.data.resistance.value == "SK",
+                    hasZKModifier: source.data.resistance.value == "ZK"
                 })
             case "status":
                 break;
@@ -745,7 +748,7 @@ export default class DiceDSA5 {
             res.preData.calculatedSpellModifiers.finalcost = Math.round(res.preData.calculatedSpellModifiers.cost / (SpecialabilityRulesDSA5.hasAbility(testData.extra.actor, game.i18n.localize('LocalizedIDs.traditionWitch')) ? 3 : 2))
         } else {
             if (testData.source.data.effectFormula.value != "") {
-                let formula = testData.source.data.effectFormula.value.replace("QS", res.qualityStep).replace(/[Ww]/, "d")
+                let formula = testData.source.data.effectFormula.value.replace(game.i18n.localize('CHARAbbrev.QS'), res.qualityStep).replace(/[Ww]/, "d")
                 let rollEffect = testData.damageRoll ? testData.damageRoll : new Roll(formula).roll()
                 this._addRollDiceSoNice(testData, rollEffect, "black")
                 res["effectResult"] = rollEffect.total
@@ -1140,7 +1143,7 @@ export default class DiceDSA5 {
                     item.itemTest(setupData)
                 });
             } else {
-                ui.notifications.error(game.i18n.format("Error.notFound", { category: category, name: name }))
+                ui.notifications.error(game.i18n.format("DSAError.notFound", { category: category, name: name }))
             }
         }
     }

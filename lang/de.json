@@ -59,6 +59,7 @@
         "PA": "PA",
         "AT": "AT",
         "FP": "FP",
+        "QS": "QS",
         "damage": "TP",
         "reloadTime": "Lad.",
         "castingTime": "Zauber- dauer",
@@ -352,7 +353,7 @@
     "step": "Schritt",
     "status": "Status",
     "stone": "Stein",
-    "selfDamage": "Selbstverletzt, Schaden: ",
+    "selfDamage": "Selbstverletzt, Schadenspunkte: ",
     "specialability": "Sonderfertigkeit",
     "spelltrickCount": "Anzahl Zaubertricks",
     "specialRules": "Sonderregeln",
@@ -599,7 +600,11 @@
     "CHATNOTIFICATION": {
         "gainsBloodrush": "Der Zorn überwältigt {character} und er/sie verfällt in Blutrausch.",
         "unableReroll": "Würfel {die} wegen Unfähigkeit erneut geworfen ({oldVal}/{newVal})",
-        "requestRoll": "{user} fordert einen Wurf in {item}"
+        "requestRoll": "{user} fordert einen Wurf in {item}",
+        "TestModifiers": {
+            "FinalModifiers": "{target} Target, {sl}SL to <b>{name}</b>"
+        },
+        "editRoll": "Wurf editieren"
     },
 
     "TT": {
@@ -667,12 +672,6 @@
         "winsFP": "<b>{winner}</b> gewinnt gegen <b>{loser}</b> mit {SL} Qualitätsstufe(n)",
         "wins": "<b>{winner}</b> gewinnt gegen <b>{loser}</b>"
     },
-    "CHAT": {
-        "TestModifiers": {
-            "FinalModifiers": "{target} Target, {sl}SL to <b>{name}</b>"
-        },
-        "editRoll": "Wurf editieren"
-    },
 
     "ReverseSpellRanges": {
         "berühren": "touch",
@@ -719,7 +718,7 @@
         "shields": "Schilde"
     },
 
-    "Error": {
+    "DSAError": {
         "MacroItemMissing": "Dein Charakter hat kein Item namens. Stelle sicher, dass dir entweder ein Charakter zugeordnet ist oder du einen Token für den Wurf markierst.",
         "APUpdateError": "AP Wert konnte nicht angepasst werden. Bitte manuell durchführen.",
         "RangeCannotBeParsed": "Die Reichweite kan nicht automatisch angepasst werden. Format nicht erkannt.",
@@ -815,7 +814,7 @@
         "talentedReroll": "Begabung verwenden"
     },
 
-    "SETTINGS": {
+    "DSASETTINGS": {
         "meleeBotchTableEnabled": "Nahkampf-Patzertabelle",
         "meleeBotchTableEnabledHint": "Anstatt 1W6+2 SP bei einem Patzer, kann auch diese Tabelle benutzt werden (optionale Regel).",
         "defenseBotchTableEnabled": "Verteidigungs-Patzertabelle",
@@ -823,7 +822,7 @@
         "rangeBotchTableEnabled": "Fernkampf-Patzertabelle",
         "rangeBotchTableEnabledHint": "Anstatt 1W6+2 SP bei einem Patzer, kann auch diese Tabelle benutzt werden (optionale Regel).",
         "higherDefense": "Höhere Verteidigungswerte",
-        "higherDefenseHint": "Wenn die Chance einen Treffer einzustecken kleiner sein soll, könnt ihr auch beschließen, dass die Parade generell um 2 oder 4 Punkte höher liegt (und der Ausweichenwert um die Hälfte des Bonus der Parade angehoben wird). Die Verteidigungswerte erhöhen sich sowohl für Helden, als auch für Gegner.Dies bedeutet aber, dass Kämpfe länger dauern werden.Durch die Verwendung dieser Optionalregel bleiben die Regeln gleich komplex.",
+        "higherDefenseHint": "Wenn die Chance einen Treffer einzustecken kleiner sein soll, könnt ihr auch beschließen, dass die Parade generell um 2 oder 4 Punkte höher liegt (und der Ausweichenwert um die Hälfte des Bonus der Parade angehoben wird). Die Verteidigungswerte erhöhen sich sowohl für Helden, als auch für Gegner. Dies bedeutet aber, dass Kämpfe länger dauern werden. Durch die Verwendung dieser Optionalregel bleiben die Regeln gleich komplex.",
         "statusEffectCounterColor": "Farbe des Statuseffektzählers",
         "statusEffectCounterColorHint": "Hex Code für die Token Farbe von zählbaren Status Effekten. Format: #000000",
         "defaultDimVision": "Standard Sichtweite (vage)",

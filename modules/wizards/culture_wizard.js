@@ -66,7 +66,7 @@ export default class CultureWizard extends WizardDSA5 {
     _validateInput(parent) {
         let choice = parent.find('.localKnowledge')
         if (choice.val() == "") {
-            ui.notifications.error(game.i18n.localize("Error.MissingChoices"))
+            ui.notifications.error(game.i18n.localize("DSAError.MissingChoices"))
             WizardDSA5.flashElem(choice)
             let tabElem = choice.closest('.tab').attr("data-tab")
             WizardDSA5.flashElem(parent.find(`.tabs a[data-tab='${tabElem}']`))

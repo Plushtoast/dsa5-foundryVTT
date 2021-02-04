@@ -269,6 +269,13 @@ export default class Actordsa5 extends Actor {
                 dataType: t
             }
         }
+
+        inventory["poison"] = {
+            items: [],
+            show: false,
+            dataType: "poison"
+        }
+
         inventory["misc"].show = true
 
         const money = {
@@ -514,7 +521,7 @@ export default class Actordsa5 extends Actor {
                     "data.details.experience.spent": Number(this.data.data.details.experience.spent) + Number(APValue),
                 });
             } else {
-                ui.notifications.error(game.i18n.localize("Error.APUpdateError"))
+                ui.notifications.error(game.i18n.localize("DSAError.APUpdateError"))
             }
         }
     }
@@ -529,14 +536,14 @@ export default class Actordsa5 extends Actor {
             return true
         } else if (Number(this.data.data.details.experience.total == 0)) {
             let selOptions = Object.entries(DSA5.startXP).map(([key, val]) => `<option value="${key}">${game.i18n.localize(val)} (${key})</option>`).join("")
-            let template = `<p>${game.i18n.localize("Error.zeroXP")}</p><label>${game.i18n.localize('APValue')}: </label><select name ="APsel">${selOptions}</select>`
+            let template = `<p>${game.i18n.localize("DSAError.zeroXP")}</p><label>${game.i18n.localize('APValue')}: </label><select name ="APsel">${selOptions}</select>`
 
             let newXp = 0;
             let result = false;
 
             [result, newXp] = await new Promise((resolve, reject) => {
                 new Dialog({
-                    title: game.i18n.localize("Error.NotEnoughXP"),
+                    title: game.i18n.localize("DSAError.NotEnoughXP"),
                     content: template,
                     default: 'yes',
                     buttons: {
@@ -566,7 +573,7 @@ export default class Actordsa5 extends Actor {
             }
         }
 
-        ui.notifications.error(game.i18n.localize("Error.NotEnoughXP"))
+        ui.notifications.error(game.i18n.localize("DSAError.NotEnoughXP"))
         return false
     }
 
@@ -633,13 +640,13 @@ export default class Actordsa5 extends Actor {
             if (itemData.ammunitiongroup.value == "-") {
                 testData.extra.ammo = duplicate(item)
                 if ((testData.extra.ammo.data.quantity.value <= 0)) {
-                    ui.notifications.error(game.i18n.localize("Error.NoAmmo"))
+                    ui.notifications.error(game.i18n.localize("DSAError.NoAmmo"))
                     return
                 }
             } else {
                 testData.extra.ammo = duplicate(this.getEmbeddedEntity("OwnedItem", itemData.currentAmmo.value))
                 if (!testData.extra.ammo || itemData.currentAmmo.value == "" || testData.extra.ammo.data.quantity.value <= 0) {
-                    ui.notifications.error(game.i18n.localize("Error.NoAmmo"))
+                    ui.notifications.error(game.i18n.localize("DSAError.NoAmmo"))
                     return
                 }
             }

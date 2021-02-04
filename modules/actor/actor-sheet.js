@@ -276,7 +276,7 @@ export default class ActorSheetDsa5 extends ActorSheet {
                 break
         }
         if (!result)
-            ui.notifications.error(game.i18n.localize("Error.AdvanceMaximumReached"))
+            ui.notifications.error(game.i18n.localize("DSAError.AdvanceMaximumReached"))
 
         return result
     }
@@ -298,7 +298,7 @@ export default class ActorSheetDsa5 extends ActorSheet {
                 break
         }
         if (!result)
-            ui.notifications.error(game.i18n.localize("Error.AdvanceMaximumReached"))
+            ui.notifications.error(game.i18n.localize("DSAError.AdvanceMaximumReached"))
 
         return result
     }
@@ -826,13 +826,14 @@ export default class ActorSheetDsa5 extends ActorSheet {
     async _addSpellOrLiturgy(item) {
         let res = this.actor.data.items.find(i => i.type == item.type && i.name == item.name);
         let apCost
+        item = duplicate(item)
         if (!res) {
             switch (item.type) {
                 case "spell":
                 case "liturgy":
                 case "ceremony":
                 case "ritual":
-                    apCost = DSA5_Utility._calculateAdvCost(0, item.data.data.StF.value, 0)
+                    apCost = DSA5_Utility._calculateAdvCost(0, item.data.StF.value, 0)
                     break
                 case "blessing":
                 case "magictrick":
@@ -849,18 +850,20 @@ export default class ActorSheetDsa5 extends ActorSheet {
     }
 
     async _addLoot(item) {
-        let res = this.actor.data.items.find(i => i.type == item.type && i.name == item.name && i.data.description.value == item.data.data.description.value);
+        item = duplicate(item)
+        let res = this.actor.data.items.find(i => i.type == item.type && i.name == item.name && i.data.description.value == item.data.description.value);
         if (!res) {
             await this.actor.createEmbeddedEntity("OwnedItem", item);
         } else {
             res = duplicate(res)
-            res.data.quantity.value += item.data.data.quantity.value
+            res.data.quantity.value += item.data.quantity.value
             await this.actor.updateEmbeddedEntity("OwnedItem", res)
         }
     }
 
     async _addSkill(item) {
-        let res = this.actor.data.items.find(i => i.type == item.type && i.name == item.name && i.data.description.value == item.data.data.description.value);
+        item = duplicate(item)
+        let res = this.actor.data.items.find(i => i.type == item.type && i.name == item.name && i.data.description.value == item.data.description.value);
         if (!res) {
             await this.actor.createEmbeddedEntity("OwnedItem", item);
         }
@@ -912,7 +915,7 @@ export default class ActorSheetDsa5 extends ActorSheet {
                 await this._handleLookup(item)
                 break
             default:
-                ui.notifications.error(game.i18n.format("Error.canNotBeAdded", { item: item.name, category: game.i18n.localize(item.type) }))
+                ui.notifications.error(game.i18n.format("DSAError.canNotBeAdded", { item: item.name, category: game.i18n.localize(item.type) }))
         }
     }
 
@@ -929,7 +932,7 @@ export default class ActorSheetDsa5 extends ActorSheet {
                 this._manageDragItems(thing, thing.type)
             }
         } else {
-            ui.notifications.error(game.i18n.format("Error.notFound", { category: thing.type, name: thing.name }))
+            ui.notifications.error(game.i18n.format("DSAError.notFound", { category: thing.type, name: thing.name }))
         }
     }
 

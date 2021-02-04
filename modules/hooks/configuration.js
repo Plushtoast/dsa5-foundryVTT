@@ -1,31 +1,31 @@
 export default function() {
     game.settings.register("dsa5", "meleeBotchTableEnabled", {
-        name: "SETTINGS.meleeBotchTableEnabled",
-        hint: "SETTINGS.meleeBotchTableEnabledHint",
+        name: "DSASETTINGS.meleeBotchTableEnabled",
+        hint: "DSASETTINGS.meleeBotchTableEnabledHint",
         scope: "world",
         config: true,
         default: false,
         type: Boolean
     });
     game.settings.register("dsa5", "rangeBotchTableEnabled", {
-        name: "SETTINGS.rangeBotchTableEnabled",
-        hint: "SETTINGS.rangeBotchTableEnabledHint",
+        name: "DSASETTINGS.rangeBotchTableEnabled",
+        hint: "DSASETTINGS.rangeBotchTableEnabledHint",
         scope: "world",
         config: true,
         default: false,
         type: Boolean
     });
     game.settings.register("dsa5", "defenseBotchTableEnabled", {
-        name: "SETTINGS.defenseBotchTableEnabled",
-        hint: "SETTINGS.defenseBotchTableEnabledHint",
+        name: "DSASETTINGS.defenseBotchTableEnabled",
+        hint: "DSASETTINGS.defenseBotchTableEnabledHint",
         scope: "world",
         config: true,
         default: false,
         type: Boolean
     });
     game.settings.register("dsa5", "higherDefense", {
-        name: "SETTINGS.higherDefense",
-        hint: "SETTINGS.higherDefenseHint",
+        name: "DSASETTINGS.higherDefense",
+        hint: "DSASETTINGS.higherDefenseHint",
         scope: "world",
         config: true,
         default: "0",
@@ -37,24 +37,24 @@ export default function() {
         }
     });
     game.settings.register("dsa5", "statusEffectCounterColor", {
-        name: "SETTINGS.statusEffectCounterColor",
-        hint: "SETTINGS.statusEffectCounterColorHint",
+        name: "DSASETTINGS.statusEffectCounterColor",
+        hint: "DSASETTINGS.statusEffectCounterColorHint",
         scope: "client",
         config: true,
         default: "#FFFFFF",
         type: String
     });
     game.settings.register("dsa5", "defaultDimVision", {
-        name: "SETTINGS.defaultDimVision",
-        hint: "SETTINGS.defaultDimVisionHint",
+        name: "DSASETTINGS.defaultDimVision",
+        hint: "DSASETTINGS.defaultDimVisionHint",
         scope: "world",
         config: true,
         default: 20,
         type: Number
     });
     game.settings.register("dsa5", "defaultBrightVision", {
-        name: "SETTINGS.defaultBrightVision",
-        hint: "SETTINGS.defaultBrightVisionHint",
+        name: "DSASETTINGS.defaultBrightVision",
+        hint: "DSASETTINGS.defaultBrightVisionHint",
         scope: "world",
         config: true,
         default: 10,
@@ -85,8 +85,8 @@ export default function() {
         type: Boolean
     })
     game.settings.register("dsa5", "capQSat", {
-        name: "SETTINGS.capQSat",
-        hint: "SETTINGS.capQSatHint",
+        name: "DSASETTINGS.capQSat",
+        hint: "DSASETTINGS.capQSatHint",
         scope: "world",
         config: true,
         default: 6,

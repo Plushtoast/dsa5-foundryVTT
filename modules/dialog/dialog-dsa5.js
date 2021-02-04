@@ -90,10 +90,10 @@ export default class DSA5Dialog extends Dialog {
                         if (newIndex < DSA5Dialog.bigTimes.length && newIndex >= 0) {
                             newPosition = DSA5Dialog.bigTimes[newIndex]
                         } else {
-                            ui.notifications.error(game.i18n.localize("Error.CastingTimeLimit"))
+                            ui.notifications.error(game.i18n.localize("DSAError.CastingTimeLimit"))
                         }
                     } else {
-                        ui.notifications.error(game.i18n.localize("Error.TimeCannotBeParsed"))
+                        ui.notifications.error(game.i18n.localize("DSAError.TimeCannotBeParsed"))
                     }
                 } else {
                     newPosition = newPosition * (element.value > 0 ? 2 : 0.5)
@@ -122,7 +122,7 @@ export default class DSA5Dialog extends Dialog {
                     let newReach = Number(val[0])
                     if (isNaN(newReach)) {
                         event.currentTarget.checked = false
-                        ui.notifications.error(game.i18n.localize("Error.RangeCannotBeParsed"))
+                        ui.notifications.error(game.i18n.localize("DSAError.RangeCannotBeParsed"))
                     } else {
 
                         reach.text((newReach * 2) + " " + game.i18n.localize("step"))

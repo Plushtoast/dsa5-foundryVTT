@@ -1,9 +1,9 @@
 import DSA5_Utility from "../system/utility-dsa5.js";
 
-export default function () {
+export default function() {
     Hooks.on("getChatLogEntryContext", (html, options) => {
         let canHurt = li => li.find(".opposed-card").length || li.find(".dice-roll").length
-        let canIncreaseQS = function (li) {
+        let canIncreaseQS = function(li) {
             let result = false;
             let message = game.messages.get(li.attr("data-message-id"));
 
@@ -17,7 +17,7 @@ export default function () {
             }
             return result;
         };
-        let isTalented = function (li) {
+        let isTalented = function(li) {
             let result = false
             let message = game.messages.get(li.attr("data-message-id"));
             if (message.data.speaker.actor) {
@@ -28,7 +28,7 @@ export default function () {
             }
             return result
         }
-        let canRerollDamage = function (li) {
+        let canRerollDamage = function(li) {
             let result = false
             let message = game.messages.get(li.attr("data-message-id"));
             if (message.data.speaker.actor) {
@@ -39,7 +39,7 @@ export default function () {
             }
             return result
         };
-        let canReroll = function (li) {
+        let canReroll = function(li) {
             let result = false;
             let message = game.messages.get(li.attr("data-message-id"));
 
@@ -63,12 +63,11 @@ export default function () {
                     let defenderSpeaker = cardData.speakerDefend;
                     let actor = DSA5_Utility.getSpeaker(defenderSpeaker)
                     if (!actor.owner)
-                        return ui.notifications.error(game.i18n.localize("ERROR.DamagePermission"))
+                        return ui.notifications.error(game.i18n.localize("DSAError.DamagePermission"))
 
                     actor.applyDamage(cardData.damage.value)
                 }
-            },
-            {
+            }, {
                 name: game.i18n.localize("CHATCONTEXT.Reroll"),
                 icon: '<i class="fas fa-dice"></i>',
                 condition: canReroll,
@@ -76,8 +75,7 @@ export default function () {
                     let message = game.messages.get(li.attr("data-message-id"));
                     game.actors.get(message.data.speaker.actor).useFateOnRoll(message, "reroll");
                 }
-            },
-            {
+            }, {
                 name: game.i18n.localize("CHATCONTEXT.talentedReroll"),
                 icon: '<i class="fas fa-dice"></i>',
                 condition: isTalented,
@@ -85,8 +83,7 @@ export default function () {
                     let message = game.messages.get(li.attr("data-message-id"));
                     game.actors.get(message.data.speaker.actor).useFateOnRoll(message, "isTalented");
                 }
-            },
-            {
+            }, {
                 name: game.i18n.localize("CHATCONTEXT.AddQS"),
                 icon: '<i class="fas fa-plus-square"></i>',
                 condition: canIncreaseQS,
@@ -94,8 +91,7 @@ export default function () {
                     let message = game.messages.get(li.attr("data-message-id"));
                     game.actors.get(message.data.speaker.actor).useFateOnRoll(message, "addQS");
                 }
-            },
-            {
+            }, {
                 name: game.i18n.localize("CHATCONTEXT.rerollDamage"),
                 icon: '<i class="fas fa-dice"></i>',
                 condition: canRerollDamage,
