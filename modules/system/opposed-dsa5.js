@@ -268,7 +268,7 @@ export default class OpposedDsa5 {
     static rerenderMessagesWithModifiers(opposeResult, attacker, defender) {
         if (opposeResult.modifiers.didModifyAttacker || attacker.testResult.modifiers) {
             let attackerMessage = game.messages.get(attacker.messageId)
-            opposeResult.modifiers.message.push(`${game.i18n.format(game.i18n.localize('CHATNOTIFICATION.TestModifiers.FinalModifiers'), { target: opposeResult.modifiers.attacker.target, sl: opposeResult.modifiers.attacker.SL, name: attacker.alias })}`)
+
             let chatOptions = {
                 template: attackerMessage.data.flags.data.template,
                 rollMode: attackerMessage.data.flags.data.rollMode,
@@ -293,7 +293,6 @@ export default class OpposedDsa5 {
 
         }
         if (opposeResult.modifiers.didModifyDefender || defender.testResult.modifiers) {
-            opposeResult.modifiers.message.push(`${game.i18n.format(game.i18n.localize('CHATNOTIFICATION.TestModifiers.FinalModifiers'), { target: opposeResult.modifiers.defender.target, sl: opposeResult.modifiers.defender.SL, name: defender.alias })}`)
             let defenderMessage = game.messages.get(defender.messageId)
             let chatOptions = {
                 template: defenderMessage.data.flags.data.template,

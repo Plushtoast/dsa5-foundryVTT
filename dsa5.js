@@ -56,11 +56,12 @@ Hooks.once("init", async function() {
         }
     }
 
-    AdvantageRulesDSA5.setupFunctions()
-    SpecialabilityRulesDSA5.setupFunctions()
     CONFIG.Actor.entityClass = Actordsa5;
     CONFIG.Item.entityClass = Itemdsa5;
     CONFIG.ChatMessage.template = "systems/dsa5/templates/chat/chat-message.html"
 });
-
+Hooks.once("setup", async function() {
+    AdvantageRulesDSA5.setupFunctions()
+    SpecialabilityRulesDSA5.setupFunctions()
+})
 initHooks();

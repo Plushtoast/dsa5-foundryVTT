@@ -18,7 +18,7 @@ export default function() {
             }
         })
 
-        DSA5Tutorial.firstTimeMessage()
+
 
         if (game.modules.get("vtta-tokenizer") && game.modules.get("vtta-tokenizer").active && !game.settings.get("dsa5", "tokenizerSetup")) {
             game.settings.set("vtta-tokenizer", "default-frame-pc", "systems/dsa5/icons/backgrounds/token_green.webp")

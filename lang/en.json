@@ -355,5 +355,353 @@
     "writing": "Writing",
     "yes": "Yes",
     "YouAlreadyHaveit": "Already owned",
-    "zkModifier": "Toughness (Target)"
+    "zkModifier": "Toughness (Target)",
+
+    "Aggregated": {
+        "noMoreAllowed": "No more rolls allowed."
+    },
+
+    "WIZARD": {
+        "addItem": "Add {item}",
+        "careerdescr": "Please select the adequate options of the career <b>{career}</b> and confirm to add it for <b class=\"apCost\">{cost}</b> adventure points to your character.",
+        "culturedescr": "Please select the adequate options of the culture <b>{culture}</b> and confirm to add it for <b class=\"apCost\">{cost}</b> adventure points to your character.",
+        "speciesdescr": "Please select the adequate options of the species <b>{species}</b> and confirm to add it for <b class=\"apCost\">{cost}</b> adventure points to your character.",
+        "vantageDescription": "Chose suitable advantages and disadvantages to adjust your Profession.",
+        "vantageDescriptionCulture": "Chose suitable advantages and disadvantages to adjust your Culture.",
+        "vantageDescriptionSpecies": "Chose suitable advantages and disadvantages to adjust your Species.",
+        "localKnowledgeDescr": "Note the location of your area knowledge.",
+        "chose": "Chose ",
+        "missingVantages": "Missing required Dis-/Advantages",
+        "missingSpecialAbilities": "Missing required Special Abilities",
+        "attributeRequirements": "Attribute Requirements",
+        "attributesToChose": "Attribute Adjustments",
+        "generalTab": "General"
+    },
+
+    "SKILL": {
+        "body": "Physical Skills",
+        "social": "Social Skills",
+        "knowledge": "Knowledge Skills",
+        "trade": "Craft Skills",
+        "nature": "Nature Skills"
+    },
+    "Racedescr": {
+        "Human": "<p><b>Attribute Adjustments</b>: One attribute of your choice +1</p>",
+        "Dwarf": "<p><b>Attribute Adjustments</b>: CON and STR +1; CHA or AGI –2</p><p><b>Strongly recommended Dis-/Advantages</b>: The following advantages and disadvantages distinguish Aventurian dwarves. You should choose these advantages and disadvantages; if you don’t want to take them, talk to your GM. Darksight I, Immunity to  Tulmadron (a poison), Incompetence (Swimming)</p>",
+        "Elf": "<p><b>Attribute Adjustments</b>: INT and AGI +1; SGC or STR –2</p><p><b>Automatic Advantage</b>: Spellcaster, Two-Voiced Singing (AP spent for advantages/ disadvantages: Advantages 30 AP, Disadvantages 0 AP)</p>",
+        "Half Elf": "<p><b>Attribute Adjustments</b>: One attribute of your choice +1</p>"
+    },
+    "Combatskilldescr": {
+        "Crossbows": "<p><b>Special</b>: -</p>",
+        "Blowpipes": "<p><b>Special</b>: -</p>",
+        "Bows": "<p><b>Special</b>: -</p>",
+        "Discuses": "<p><b>Special</b>: -</p>",
+        "Daggers": "<p><b>Special</b>: You cannot use daggers to parry chain weapons, polearms, two-handed impact weapons, or two-handed swords.</p>",
+        "Fans": "<p><b>Special</b>: -</p>",
+        "Fencing Weapons": "<p><b>Special</b>: You cannot use fencing weapons to parry chain weapons, polearms, two-handed impact weapons, or two-handed swords. Defense checks against attacks by fencing weapons suffer a penalty of 1.</p>",
+        "Spit Fire": "<p><b>Special</b>: -</p>",
+        "Impact Weapons": "<p><b>Special</b>: -</p>",
+        "Chain Weapons": "<p><b>Special</b>: It’s harder to defend against chain weapons. Parries against them suffer a penalty of 2. Shields use only their normal bonus against chain weapons (their PA is not doubled). Attacks with chain weapons botch on a 19 or 20. You cannot parry with chain weapons. </p>",
+        "Lances": "<p><b>Special</b>: -</p>",
+        "Whips": "<p><b>Special</b>: -</p>",
+        "Brawling": "<p><b>Special</b>: Unarmed combatants who parry a weapon still suffer full damage even if the parry is successful (so they probably should try to dodge instead). On the other hand, if you use a weapon to parry a brawling attack, the attacker suffers half the weapon’s damage. Combatants deal 1D6 DP when brawling, as modified by the primary attribute (see above).</p>",
+        "Shields": "<p><b>Special</b>: Parrying with a shield grants double the shield’s parry bonus and doesn’t impose a penalty for using the off hand. Ranged combat attacks and attacks from large enemies can also be parried using a shield. Using a second shield doesn’t increase the bonus. To defend against a ranged combat attack, you must parry actively with the shield. When parrying with a shield, you cannot also parry with your main weapon. You can use a shield to attack.</p>",
+        "Slingshots": "<p><b>Special</b>: -</p>",
+        "Swords": "<p><b>Special</b>: -</p>",
+        "Pikes": "<p><b>Special</b>: -</p>",
+        "Polearms": "<p><b>Special</b>: -</p>",
+        "Throwing Weapons": "<p><b>Special</b>: -</p>",
+        "Two-Handed Impact Weapons": "<p><b>Special</b>: -</p>",
+        "Tow-Handed Swords": "<p><b>Special</b>: -</p>"
+    },
+    "SKILLdescr": {
+        "Alchimie": "<p><b>Applications</b>: Alchemical Poisons, Elixirs, Mundane Alchemy</p><p><b>Tools</b>: alchemical laboratory</p><p><b>Quality</b>: the potion is of better quality</p><p><b>Failed Check</b>: the elixir is ruined, or an analysis fails to yield a useful result.</p><p><b>Critical Success</b>: identify an elixir precisely, including its Level and how long it will remain stable.</p><p><b>Botch</b>: the elixir has an unpleasant side effect.</p>",
+        "Bekehren & Überzeugen": "",
+        "Betören": "",
+        "Boote & Schiffe": "",
+        "Brett- & Glücksspiel": "",
+        "Einschüchtern": "",
+        "Etikette": "",
+        "Fährtensuchen": "",
+        "Fahrzeuge": "",
+        "Fesseln": "",
+        "Fischen & Angeln": "",
+        "Fliegen": "",
+        "Gassenwissen": "",
+        "Gaukeleien": "",
+        "Geographie": "",
+        "Geschichtswissen": "",
+        "Götter & Kulte": "",
+        "Handel": "",
+        "Heilkunde Gift": "",
+        "Heilkunde Krankheiten": "",
+        "Heilkunde Seele": "",
+        "Heilkunde Wunden": "",
+        "Holzbearbeitung": "",
+        "Klettern": "",
+        "Körperbeherrschung": "",
+        "Kraftakt": "",
+        "Kriegskunst": "",
+        "Lebensmittelbearbeitung": "",
+        "Lederbearbeitung": "",
+        "Magiekunde": "",
+        "Malen & Zeichnen": "",
+        "Mechanik": "",
+        "Menschenkenntnis": "",
+        "Metallbearbeitung": "",
+        "Musizieren": "",
+        "Orientierung": "",
+        "Pflanzenkunde": "",
+        "Rechnen": "",
+        "Rechtskunde": "",
+        "Reiten": "",
+        "Sagen & Legenden": "",
+        "Schlösserknacken": "",
+        "Schwimmen": "",
+        "Selbstbeherrschung": "",
+        "Singen": "",
+        "Sinnesschärfe": "",
+        "Sphärenkunde": "",
+        "Steinbearbeitung": "",
+        "Sternkunde": "",
+        "Stoffbearbeitung": "",
+        "Tanzen": "",
+        "Taschendiebstahl": "",
+        "Tierkunde": "",
+        "Überreden": "",
+        "Verbergen": "",
+        "Verkleiden": "",
+        "Wildnisleben": "",
+        "Willenskraft": "",
+        "Zechen": ""
+    },
+
+    "Combatskill": {
+        "wrestle": "Brawling"
+    },
+
+    "Skill-eeasy": "Extremely easy (+5)",
+    "Skill-veasy": "Very easy (+3)",
+    "Skill-easy": "Easy (+1)",
+    "Skill-challenging": "Challenging (+0)",
+    "Skill-difficult": "Difficult (-1)",
+    "Skill-hard": "Very difficult (-3)",
+    "Skill-vhard": "Extremely difficult (-5)",
+
+    "SKILLAbrev": {
+        "body": "<span class=\"d20 diet-mu\">COU</span><span class=\"d20 diet-ge\">AGI</span><span class=\"d20 diet-kk\">STR</span>",
+        "social": "<span class=\"d20 diet-in\">INT</span><span class=\"d20 diet-ch\">CHA</span><span class=\"d20 diet-ch\">CHA</span>",
+        "knowledge": "<span class=\"d20 diet-kl\">SGC</span><span class=\"d20 diet-kl\">SGC</span><span class=\"d20 diet-in\">INT</span>",
+        "trade": "<span class=\"d20 diet-ff\">DEX</span><span class=\"d20 diet-ff\">DEX</span><span class=\"d20 diet-ko\">CON</span>",
+        "nature": "<span class=\"d20 diet-mu\">COU</span><span class=\"d20 diet-ge\">AGI</span><span class=\"d20 diet-ko\">CON</span>"
+    },
+
+    "EXP": {
+        "legendary": "Legendary",
+        "brillant": "Brillant",
+        "masterful": "Masterly",
+        "competent": "Competent",
+        "experienced": "Experienced",
+        "average": "Ordinary",
+        "inexperienced": "Inexperienced"
+    },
+
+    "ABBR": {
+        "value": "Value",
+        "modifiers": "Mod.",
+        "advances": "Advance",
+        "max": "Max"
+    },
+
+    "Range-short": "Short",
+    "Range-medium": "Medium",
+    "Range-long": "Long",
+
+    "Money-D": "Ducat",
+    "Money-S": "Silverthaler",
+    "Money-H": "Haler",
+    "Money-K": "Kreutzer",
+
+    "SHEET": {
+        "PostItem": "Post to chat",
+        "EditItem": "Edit",
+        "Dropdown": "Details",
+        "DeleteItem": "Delete",
+        "addItem": "Create Item",
+        "Close": "Close",
+        "Configure": "Configure Sheet",
+        "Token": "Configure Token",
+        "Import": "Import element",
+        "Lock": "Lock/unlock advancement",
+        "RollEffect": "Roll effect",
+        "collapse": "Collapse/Expand",
+        "Library": "Open library",
+        "showToPlayers": "Show to everyone",
+        "imageView": "Image entry",
+        "textView": "Text entry"
+    },
+
+    "ITEMSHEET": {
+        "offHandMod": "Bonus/handicap offhand (f.e. parry weapon)"
+    },
+
+    "RangeMod": {
+        "short": "Close [+2 to RC, +1 DP]",
+        "medium": "Medium [+/–0 to RC]",
+        "long": "Far [–2 to RC, –1 DP]",
+        "rangesense": "Far [–1 to RC, –1 DP]"
+    },
+
+    "VisionDisruption": {
+        "step0": "Clear sight",
+        "step1": "Slight impairement [-2]",
+        "step2": "Shape [-4]",
+        "step3": "Barely shape [-6]",
+        "step4": "Invisible [Lucky hit]"
+    },
+
+    "TraitMsg": {
+        "AutomaticSuccess": "Automatic Success",
+        "AutomaticFailure": "Automatic Failure"
+    },
+
+    "CHATNOTIFICATION": {
+        "gainsBloodrush": "The rage consumes {character} and he/she gains bloodrush.",
+        "unableReroll": "Die {die} rolled again because of Incompetence ({oldVal}/{newVal})",
+        "requestRoll": "{user} requests a roll in {item}",
+        "editRoll": "Edit roll"
+    },
+
+    "TT": {
+        "careerSkills": "Comma separated talent list, f.e. (Alchemy 2,Carousing 4)",
+        "commaSeparated": "Comma separated list"
+    },
+
+    "HELP": {
+        "default": "Moreover you can find detailed FAQs in the <a href=\"https://github.com/Plushtoast/dsa5-foundryVTT/wiki\" target=\"_blank\">Wiki</a>.",
+        "command": "Command",
+        "example": "Example",
+        "pay": "Pay",
+        "descrpay": "The gamemaster can demand an amount of money from the players. The players can pay.",
+        "getPaid": "Get paid",
+        "descrgetPaid": "The gamemaster can give money to the players. Players can receive money.",
+        "quickAbility": "Skill quick access",
+        "descrquickAbility": "Let a token or your character roll skills (/sk), spells/rituals (/sp), liturgies/ceremonies (/li), attack (/at) and parry (/pa).",
+        "conditions": "Conditions",
+        "descrconditions": "Shows all conditions and states.",
+        "tables": "Tables",
+        "descrtables": "Show all rollable tables.",
+        "request": "Request roll",
+        "descrrequest": "Request a skill roll."
+    },
+
+    "UNITS": {
+        "weight": "Weight in pounds",
+        "money": "Value in Silverthaler"
+    },
+
+    "SIZE": {
+        "tiny": "Tiny",
+        "small": "Small",
+        "average": "Medium",
+        "big": "Large",
+        "giant": "Huge"
+    },
+
+    "NarrowSpaceModifiers": {
+        "weapon": {
+            "short": "Short-reach Waffe, +-0 AT/PA",
+            "medium": "Medium-reach, -4 AT/-4 PA",
+            "long": "Long-reach, -8 AT/-8 PA"
+        },
+        "shield": {
+            "short": "Small shields, -2 AT/-2 PA",
+            "medium": "Medium shields, -4 AT/-3 PA",
+            "long": "Large shields, -6 AT/-4 PA"
+        }
+    },
+
+    "RANGESIZE": {
+        "tiny": "Tiny [-8]",
+        "small": "Small [-4]",
+        "average": "Medium",
+        "big": "Large [+4]",
+        "giant": "Huge [+8]"
+    },
+
+    "ROLL": {
+        "Targeting": "versus",
+        "failed": "failed"
+    },
+
+    "OPPOSED": {
+        "winsFP": "<b>{winner}</b> wins versus <b>{loser}</b> with {SL} quality step(s)",
+        "wins": "<b>{winner}</b> wins versus <b>{loser}</b>"
+    },
+
+    "ReverseSpellRanges": {
+        "touch": "touch",
+        "self": "self"
+    },
+
+    "LocalizedIDs": {
+        "deaf": "Deaf",
+        "blind": "Blind",
+        "mute": "Mute",
+        "ruggedFighter": "Rugged Fighter",
+        "sensitiveToPain": "Sensitive to Pain",
+        "frenzy": "Bloodlust",
+        "senseOfRange": "Sense of Range",
+        "ambidextrous": "Ambidextrous",
+        "weaponAptitude": "Weapon Aptitude",
+        "minorSpirits": "Annoyed by Minor Spirits",
+        "wildMagic": "Wild Magic",
+        "incompetent": "Incompetent",
+        "exceptionalSkill": "Exceptional Skill",
+        "exceptionalCombatTechnique": "Exceptional Combat Technique",
+        "regenerationLP": "Improved Regeneration (Life Points)",
+        "regenerationAE": "Improved Regeneration (Arcane Energy)",
+        "regenerationKP": "Improved Regeneration (Karma Points)",
+        "weakRegenerationLP": "Weak Regeneration (Life Points)",
+        "weakRegenerationAE": "Weak Regeneration (Arcane Energy)",
+        "weakRegenerationKP": "Weak Regeneration (Karma Points)",
+        "weakAstralBody": "Weak Astral Body",
+        "weakKarmicBody": "Weak Karmic Body",
+        "restrictedSenseSight": "Restricted Sense (Sight)",
+        "boundToArtifact": "Bound to Artifact",
+        "magicalRestriction": "Magical Restriction",
+        "magicalAttunement": "Magical Attunement",
+        "traditionWitch": "Tradition (Witch)",
+        "combatReflexes": "Combat Reflexes",
+        "improvedDodge": "Improved Dodge",
+        "inuredToEncumbrance": "Inured to Encumbrance",
+        "quickload": "Quickload",
+        "automaticSuccess": "Automatic Succes",
+        "automaticFail": "Automatic Failure",
+        "blessed": "Blessed",
+        "spellcaster": "Spellcaster",
+        "familiar": "Familiar",
+        "shields": "Shields"
+    },
+
+    "DSAError": {
+        "MacroItemMissing": "Your character has no item named {item}. Make sure to select a token or assign a character to yourself.",
+        "APUpdateError": "Unable to adapt AP value. Please configure manually.",
+        "RangeCannotBeParsed": "Range can not be assigned automatically. Format not recognized",
+        "CastingTimeLimit": "The duration is already at its limit.",
+        "TimeCannotBeParsed": "The duration can not be assigned automatically. Format not recognized.",
+        "DamagePermission": "You are not allowed to transfer the damage.",
+        "NotEnoughXP": "Not enough adventure points",
+        "AdvanceMaximumReached": "Max advancements already reached",
+        "notFound": "{category} {name} not found",
+        "itemNotFound": "This entry was not found in the database. Please create it manually.",
+        "notUnderstoodCareer": "Following entries of the profession could not be adopted. Please configure manually.",
+        "notUnderstoodCulture": "Following entries of the culture could not be adopted. Please configure manually.",
+        "canNotBeAdded": "{item} of the category {category} can not be added. This is not a supported category.",
+        "NoAmmo": "Not enough ammunition.",
+        "MissingChoices": "There are missing choices.",
+        "noProperActor": "No actor has been assigned to you or you did not select a token.",
+        "noMatch": "No match",
+        "zeroXP": "The character has no adventure points yet. Do you want to add some?"
+    }
 }

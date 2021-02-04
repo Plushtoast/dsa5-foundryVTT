@@ -2,7 +2,7 @@
     "name": "dsa5",
     "title": "Das Schwarze Auge/The Dark Eye (5th Edition)",
     "description": "The \"Das Schwarze Auge\" system for Foundry VTT. Includes all relevant mechanisms to play in the wonderous world of Aventurien and Das Schwarze Auge/The Dark Eye (currently German only).",
-    "version": "1.0.1",
+    "version": "1.0.2",
     "templateVersion": 56,
     "author": "Plushtoast",
     "scripts": [],
@@ -19,7 +19,8 @@
             "path": "packs/skills.db",
             "entity": "Item",
             "tags": [
-                "skill"
+                "skill",
+                "de"
             ]
         },
         {
@@ -29,7 +30,8 @@
             "path": "packs/combatskills.db",
             "entity": "Item",
             "tags": [
-                "combatskill"
+                "combatskill",
+                "de"
             ]
         },
         {
@@ -49,7 +51,8 @@
             "path": "packs/species.db",
             "entity": "Item",
             "tags": [
-                "species"
+                "species",
+                "de"
             ]
         }
     ],
@@ -74,5 +77,5 @@
     "compatibleCoreVersion": "0.7.9",
     "url": "https://github.com/Plushtoast/dsa5-foundryVTT",
     "manifest": "https://raw.githubusercontent.com/Plushtoast/dsa5-foundryVTT/master/system.json",
-    "download": "https://github.com/Plushtoast/dsa5-foundryVTT/archive/1.0.1.zip"
+    "download": "https://github.com/Plushtoast/dsa5-foundryVTT/archive/1.0.2.zip"
 }

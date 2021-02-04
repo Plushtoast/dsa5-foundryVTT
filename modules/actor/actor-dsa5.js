@@ -298,119 +298,120 @@ export default class Actordsa5 extends Actor {
         }
 
         for (let i of actorData.items) {
-            switch (i.type) {
-                case "skill":
-                    skills[i.data.group.value].push(this._perpareItemAdvancementCost(i))
-                    break;
-                case "aggregatedTest":
-                    aggregatedtests.push(i)
-                    break
-                case "ritual":
-                case "spell":
-                    magic.hasSpells = true
-                    magic[i.type].push(this._perpareItemAdvancementCost(i))
-                    break;
-                case "liturgy":
-                case "ceremony":
-                    magic.hasPrayers = true
-                    magic[i.type].push(this._perpareItemAdvancementCost(i))
-                    break;
-                case "blessing":
-                    magic.hasPrayers = true
-                    magic.blessing.push(i)
-                    break;
-                case "magictrick":
-                    magic.hasSpells = true
-                    magic.magictrick.push(i)
-                    break;
-                case "trait":
-                    switch (i.data.traitType.value) {
-                        case "rangeAttack":
-                            i = Actordsa5._prepareRangeTrait(i)
-                            break
-                        case "meleeAttack":
-                            i = Actordsa5._prepareMeleetrait(i)
-                            break
-                        case "familiar":
-                            magic.hasSpells = magic.hasSpells || (i.name == game.i18n.localize('LocalizedIDs.familiar'))
-                            break
-                        case "armor":
-                            totalArmor += Number(i.data.at.value);
-                            break
-                    }
-                    traits[i.data.traitType.value].push(i)
-                    break
-                case "combatskill":
-                    combatskills.push(Actordsa5._calculateCombatSkillValues(i, actorData));
-                    break;
-                case "ammunition":
-                    i.weight = parseFloat((i.data.weight.value * i.data.quantity.value).toFixed(3));
-                    inventory.ammunition.items.push(i);
-                    inventory.ammunition.show = true;
-                    totalWeight += Number(i.weight);
-                    break;
-                case "meleeweapon":
-                    i.weight = parseFloat((i.data.weight.value * i.data.quantity.value).toFixed(3));
-                    i.toggleValue = i.data.worn.value || false;
-                    inventory.meleeweapons.items.push(Actordsa5._prepareitemStructure(i));
-                    inventory.meleeweapons.show = true;
-                    totalWeight += Number(i.weight);
-                    break;
-                case "rangeweapon":
-                    i.weight = parseFloat((i.data.weight.value * i.data.quantity.value).toFixed(3));
-                    i.toggleValue = i.data.worn.value || false;
-                    inventory.rangeweapons.items.push(Actordsa5._prepareitemStructure(i));
-                    inventory.rangeweapons.show = true;
-                    totalWeight += Number(i.weight);
-                    break;
-                case "armor":
-                    i.toggleValue = i.data.worn.value || false;
-                    inventory.armor.items.push(Actordsa5._prepareitemStructure(i));
-                    inventory.armor.show = true;
-                    i.weight = parseFloat((i.data.weight.value * i.data.quantity.value).toFixed(3));
-                    totalWeight += parseFloat((i.data.weight.value * (i.toggleValue ? Math.max(0, i.data.quantity.value - 1) : i.data.quantity.value)).toFixed(3))
+            try {
+                switch (i.type) {
+                    case "skill":
+                        skills[i.data.group.value].push(this._perpareItemAdvancementCost(i))
+                        break;
+                    case "aggregatedTest":
+                        aggregatedtests.push(i)
+                        break
+                    case "ritual":
+                    case "spell":
+                        magic.hasSpells = true
+                        magic[i.type].push(this._perpareItemAdvancementCost(i))
+                        break;
+                    case "liturgy":
+                    case "ceremony":
+                        magic.hasPrayers = true
+                        magic[i.type].push(this._perpareItemAdvancementCost(i))
+                        break;
+                    case "blessing":
+                        magic.hasPrayers = true
+                        magic.blessing.push(i)
+                        break;
+                    case "magictrick":
+                        magic.hasSpells = true
+                        magic.magictrick.push(i)
+                        break;
+                    case "trait":
+                        switch (i.data.traitType.value) {
+                            case "rangeAttack":
+                                i = Actordsa5._prepareRangeTrait(i)
+                                break
+                            case "meleeAttack":
+                                i = Actordsa5._prepareMeleetrait(i)
+                                break
+                            case "familiar":
+                                magic.hasSpells = magic.hasSpells || (i.name == game.i18n.localize('LocalizedIDs.familiar'))
+                                break
+                            case "armor":
+                                totalArmor += Number(i.data.at.value);
+                                break
+                        }
+                        traits[i.data.traitType.value].push(i)
+                        break
+                    case "combatskill":
+                        combatskills.push(Actordsa5._calculateCombatSkillValues(i, actorData));
+                        break;
+                    case "ammunition":
+                        i.weight = parseFloat((i.data.weight.value * i.data.quantity.value).toFixed(3));
+                        inventory.ammunition.items.push(i);
+                        inventory.ammunition.show = true;
+                        totalWeight += Number(i.weight);
+                        break;
+                    case "meleeweapon":
+                        i.weight = parseFloat((i.data.weight.value * i.data.quantity.value).toFixed(3));
+                        i.toggleValue = i.data.worn.value || false;
+                        inventory.meleeweapons.items.push(Actordsa5._prepareitemStructure(i));
+                        inventory.meleeweapons.show = true;
+                        totalWeight += Number(i.weight);
+                        break;
+                    case "rangeweapon":
+                        i.weight = parseFloat((i.data.weight.value * i.data.quantity.value).toFixed(3));
+                        i.toggleValue = i.data.worn.value || false;
+                        inventory.rangeweapons.items.push(Actordsa5._prepareitemStructure(i));
+                        inventory.rangeweapons.show = true;
+                        totalWeight += Number(i.weight);
+                        break;
+                    case "armor":
+                        i.toggleValue = i.data.worn.value || false;
+                        inventory.armor.items.push(Actordsa5._prepareitemStructure(i));
+                        inventory.armor.show = true;
+                        i.weight = parseFloat((i.data.weight.value * i.data.quantity.value).toFixed(3));
+                        totalWeight += parseFloat((i.data.weight.value * (i.toggleValue ? Math.max(0, i.data.quantity.value - 1) : i.data.quantity.value)).toFixed(3))
 
-                    if (i.data.worn.value) {
-                        encumbrance += Number(i.data.encumbrance.value);
-                        totalArmor += Number(i.data.protection.value);
-                        armor.push(i);
-                    }
-                    break;
-                case "poison":
-                    i.weight = parseFloat((i.data.weight.value * i.data.quantity.value).toFixed(3));
-                    inventory["poison"].items.push(i);
-                    inventory["poison"].show = true;
-                    totalWeight += Number(i.weight);
-                    break
-                case "equipment":
-                    i.weight = parseFloat((i.data.weight.value * i.data.quantity.value).toFixed(3));
-                    inventory[i.data.equipmentType.value].items.push(Actordsa5._prepareitemStructure(i));
-                    inventory[i.data.equipmentType.value].show = true;
-                    totalWeight += Number(i.weight);
-                    break;
-                case "money":
-                    i.weight = parseFloat((i.data.weight.value * i.data.quantity.value).toFixed(3));
-                    money.coins.push(i);
-                    totalWeight += Number(i.weight);
-                    money.total += i.data.quantity.value * i.data.price.value;
-                    break;
-                case "advantage":
-                    advantages.push(i)
-                    break;
-                case "disadvantage":
-                    disadvantages.push(i)
-                    break;
-                case "specialability":
-                    specAbs[i.data.category.value].push(i)
-                    break;
-            }
+                        if (i.data.worn.value) {
+                            encumbrance += Number(i.data.encumbrance.value);
+                            totalArmor += Number(i.data.protection.value);
+                            armor.push(i);
+                        }
+                        break;
+                    case "poison":
+                        i.weight = parseFloat((i.data.weight.value * i.data.quantity.value).toFixed(3));
+                        inventory["poison"].items.push(i);
+                        inventory["poison"].show = true;
+                        totalWeight += Number(i.weight);
+                        break
+                    case "equipment":
+                        i.weight = parseFloat((i.data.weight.value * i.data.quantity.value).toFixed(3));
+                        inventory[i.data.equipmentType.value].items.push(Actordsa5._prepareitemStructure(i));
+                        inventory[i.data.equipmentType.value].show = true;
+                        totalWeight += Number(i.weight);
+                        break;
+                    case "money":
+                        i.weight = parseFloat((i.data.weight.value * i.data.quantity.value).toFixed(3));
+                        money.coins.push(i);
+                        totalWeight += Number(i.weight);
+                        money.total += i.data.quantity.value * i.data.price.value;
+                        break;
+                    case "advantage":
+                        advantages.push(i)
+                        break;
+                    case "disadvantage":
+                        disadvantages.push(i)
+                        break;
+                    case "specialability":
+                        specAbs[i.data.category.value].push(i)
+                        break;
+                }
 
-            /*} catch (error) {
+            } catch (error) {
                 console.error("Something went wrong with preparing item " + i.name + ": " + error)
                 ui.notifications.error("Something went wrong with preparing item " + i.name + ": " + error)
                     // ui.notifications.error("Deleting " + i.name);
                     // this.deleteEmbeddedEntity("OwnedItem", i._id);
-            }*/
+            }
         }
 
         for (let wep of inventory.rangeweapons.items) {

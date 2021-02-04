@@ -494,7 +494,6 @@ export default class ActorSheetDsa5 extends ActorSheet {
                     let elem = $(ev.currentTarget).closest('.groupbox').find('.effectDescription')
                     elem.fadeOut('fast', function() {
                         elem.html(text).fadeIn('fast')
-
                     })
 
                 } else {

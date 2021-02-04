@@ -427,7 +427,7 @@
         "Bögen": "<p><b>Spezialität</b>: -</p>",
         "Diskusse": "<p><b>Spezialität</b>: -</p>",
         "Dolche": "<p><b>Spezialität</b>: Mit Dolchen können Kettenwaffen, Stangenwaffen, Zweihandhiebwaffen und Zweihandschwerter nicht pariert werden.</p>",
-        "Fächer": "<p><b>Spezialität</b>:  Fächer ein- oder ausklappen dauert jeweils 1 Aktion.Mit dem ausgeklappten Fächer kann man versuchen, Geschosse (Bolzen, Pfeile, Kugeln, Wurfdolche – und Scheiben u. Ä., nicht aber Wurfspeere und -äxte) wie mit einem Schild zu parieren, allerdings erleidet man bei der Parade zusätzlich zu den üblichen Modifikatoren (siehe Regelwerk Seite 244) noch eine Erschwernis von 1.Mit einem offenen Fächer können nur Nahkampfangriffe der Kampftechniken Raufen, Dolche und Fechtwaffen pariert werden sowie Fernkampftechniken (siehe oben). Nur ein offener Fächer kann als kleiner Schild dienen.Mit geschlossenem Fächer können Waffen aller Kampftechniken außer Kettenwaffen, Zweihandhiebwaffen, Zweihandschwerter und Fernkampftechniken pariert werden. Nur ein geschlossener Fächer kann als Parierwaffe dienen.</p>",
+        "Fächer": "<p><b>Spezialität</b>:  Fächer ein- oder ausklappen dauert jeweils 1 Aktion. Mit dem ausgeklappten Fächer kann man versuchen, Geschosse (Bolzen, Pfeile, Kugeln, Wurfdolche – und Scheiben u. Ä., nicht aber Wurfspeere und -äxte) wie mit einem Schild zu parieren, allerdings erleidet man bei der Parade zusätzlich zu den üblichen Modifikatoren (siehe Regelwerk Seite 244) noch eine Erschwernis von 1.Mit einem offenen Fächer können nur Nahkampfangriffe der Kampftechniken Raufen, Dolche und Fechtwaffen pariert werden sowie Fernkampftechniken (siehe oben). Nur ein offener Fächer kann als kleiner Schild dienen.Mit geschlossenem Fächer können Waffen aller Kampftechniken außer Kettenwaffen, Zweihandhiebwaffen, Zweihandschwerter und Fernkampftechniken pariert werden. Nur ein geschlossener Fächer kann als Parierwaffe dienen.</p>",
         "Fechtwaffen": "<p><b>Spezialität</b>: Mit Fechtwaffen können Kettenwaffen, Stangenwaffen, Zweihandhiebwaffen und Zweihandschwerter nicht pariert werden. Proben auf  Verteidigung gegen Fechtwaffen-Attacken sind um 1 erschwert.</p>",
         "Feuerspeien": "<p><b>Spezialität</b>: -</p>",
         "Hiebwaffen": "<p><b>Spezialität</b>: -</p>",
@@ -601,9 +601,6 @@
         "gainsBloodrush": "Der Zorn überwältigt {character} und er/sie verfällt in Blutrausch.",
         "unableReroll": "Würfel {die} wegen Unfähigkeit erneut geworfen ({oldVal}/{newVal})",
         "requestRoll": "{user} fordert einen Wurf in {item}",
-        "TestModifiers": {
-            "FinalModifiers": "{target} Target, {sl}SL to <b>{name}</b>"
-        },
         "editRoll": "Wurf editieren"
     },
 
@@ -707,7 +704,7 @@
         "magicalAttunement": "Magische Einstimmung",
         "traditionWitch": "Tradition (Hexen)",
         "combatReflexes": "Kampfreflexe",
-        "improvedDodge": "Verbessertes Auswichen",
+        "improvedDodge": "Verbessertes Ausweichen",
         "inuredToEncumbrance": "Belastungsgewöhnung",
         "quickload": "Schnellladen",
         "automaticSuccess": "Automatischer Erfolg",
@@ -719,7 +716,7 @@
     },
 
     "DSAError": {
-        "MacroItemMissing": "Dein Charakter hat kein Item namens. Stelle sicher, dass dir entweder ein Charakter zugeordnet ist oder du einen Token für den Wurf markierst.",
+        "MacroItemMissing": "Dein Charakter hat kein Item namens {item}. Stelle sicher, dass dir entweder ein Charakter zugeordnet ist oder du einen Token für den Wurf markierst.",
         "APUpdateError": "AP Wert konnte nicht angepasst werden. Bitte manuell durchführen.",
         "RangeCannotBeParsed": "Die Reichweite kan nicht automatisch angepasst werden. Format nicht erkannt.",
         "CastingTimeLimit": "Die Zauberdauer ist bereits am Limit.",
