@@ -5,7 +5,7 @@
 1.0.0 - FoundryVTT 0.7.0+
 We are proud to announce we finally finished our initial work on Das Schwarze Auge 5th edition in German (English soon) in foundry. I hope you enjoy the system as much as we do.
 
-This system is intended for use with Foundry Virtual Tabletop to play "Das Schwarze Auge" 5th edition.
+This system is intended for usage with Foundry Virtual Tabletop to play "Das Schwarze Auge" 5th edition.
 
 ## Installation - Auto Installer
 In the FVTT Game Systems Menu, click Install System and enter the Manifest URL: `https://raw.githubusercontent.com/Plushtoast/dsa5-foundryVTT/master/system.json`
@@ -44,7 +44,7 @@ We will inform you as soon as they will be available.
 The following modules are recommended for the best gaming experience:
 - [Dice So Nice!](https://gitlab.com/riccisi/foundryvtt-dice-so-nice) - Shows beautiful 3d dice on every roll. A must have! DSA5 fully integrates this module.
 - [Pings](https://gitlab.com/foundry-azzurite/pings/) - Mark points of interest on the map with a long mouseclick.
-- [VTTA Tokenizer](https://github.com/VTTAssets/vtta-tokenizer) - Lets you create beautiful Tokens. DSA5 sets up token frames for the Tokenizer on the first time the module gets activated.
+- [VTTA Tokenizer](https://github.com/mrprimate/vtta-tokenizer) - Lets you create beautiful Tokens. DSA5 sets up token frames for the Tokenizer on the first time the module gets activated.
 - [Dice Tray](https://gitlab.com/asacolips-projects/foundry-mods/foundry-vtt-dice-calculator) - If you want to do quick die rolls without knowing foundry's chat syntax. Not needed for advanced users.
 
 
