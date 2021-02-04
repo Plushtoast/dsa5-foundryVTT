@@ -63,6 +63,7 @@ export default function() {
     game.settings.register("dsa5", "migrationVersion", {
         name: "migrationVersion",
         hint: "migrationVersion",
+        scope: "world",
         config: false,
         default: 1,
         type: Number
@@ -70,6 +71,7 @@ export default function() {
     game.settings.register("dsa5", "firstTimeStart", {
         name: "firstTimeStart",
         hint: "firstTimeStart",
+        scope: "world",
         config: false,
         default: false,
         type: Boolean
@@ -77,8 +79,17 @@ export default function() {
     game.settings.register("dsa5", "tokenizerSetup", {
         name: "tokenizerSetup",
         hint: "tokenizerSetup",
+        scope: "world",
         config: false,
         default: false,
         type: Boolean
     })
+    game.settings.register("dsa5", "capQSat", {
+        name: "SETTINGS.capQSat",
+        hint: "SETTINGS.capQSatHint",
+        scope: "world",
+        config: true,
+        default: 6,
+        type: Number
+    });
 }

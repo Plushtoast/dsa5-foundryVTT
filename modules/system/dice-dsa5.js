@@ -833,7 +833,7 @@ export default class DiceDSA5 {
                 { char: testData.source.data.characteristic2.value, res: roll.terms[2].results[0].result, suc: res[1] <= 0, tar: tar[1] },
                 { char: testData.source.data.characteristic3.value, res: roll.terms[4].results[0].result, suc: res[2] <= 0, tar: tar[2] }
             ],
-            qualityStep: Math.min(6, (fps == 0 ? 1 : (fps > 0 ? Math.ceil(fps / 3) : 0)) + (testData.qualityStep != undefined ? Number(testData.qualityStep) : 0)),
+            qualityStep: Math.min(game.settings.get("dsa5", "capQSat"), (fps == 0 ? 1 : (fps > 0 ? Math.ceil(fps / 3) : 0)) + (testData.qualityStep != undefined ? Number(testData.qualityStep) : 0)),
             description: description,
             preData: testData,
             successLevel: successLevel,
@@ -892,7 +892,7 @@ export default class DiceDSA5 {
                 { char: testData.source.type, res: roll.terms[2].results[0].result, suc: res[1] <= 0, tar: tar[1] },
                 { char: testData.source.type, res: roll.terms[4].results[0].result, suc: res[2] <= 0, tar: tar[2] }
             ],
-            qualityStep: Math.min(6, (fps == 0 ? 1 : (fps > 0 ? Math.ceil(fps / 3) : 0)) + (testData.qualityStep != undefined ? Number(testData.qualityStep) : 0)),
+            qualityStep: Math.min(game.settings.get("dsa5", "capQSat"), (fps == 0 ? 1 : (fps > 0 ? Math.ceil(fps / 3) : 0)) + (testData.qualityStep != undefined ? Number(testData.qualityStep) : 0)),
             description: description,
             preData: testData,
             successLevel: successLevel,

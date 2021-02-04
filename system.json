@@ -44,7 +44,7 @@
         },
         {
             "name": "species",
-            "label": "Rassen",
+            "label": "Spezies",
             "system": "dsa5",
             "path": "packs/species.db",
             "entity": "Item",
