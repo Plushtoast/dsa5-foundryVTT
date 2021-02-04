@@ -5,7 +5,7 @@
 1.0.0 - FoundryVTT 0.7.0+
 We are proud to announce we finally finished our initial work on Das Schwarze Auge 5th edition in German (English soon) in foundry. I hope you enjoy the system as much as we do.
 
-This system is intended for use with Foundry Virtual Tabletop to play "Das Schwarze Auge" 5th edition.
+This system is intended for usage with Foundry Virtual Tabletop to play "Das Schwarze Auge" 5th edition.
 
 ## Installation - Auto Installer
 In the FVTT Game Systems Menu, click Install System and enter the Manifest URL: `https://raw.githubusercontent.com/Plushtoast/dsa5-foundryVTT/master/system.json`
