@@ -10,6 +10,7 @@ import Itemdsa5 from "../item/item-dsa5.js"
 import CombatTables from "../tables/combattables.js";
 import DSA5StatusEffects from "../status/status_effects.js";
 import DSA5ChatAutoCompletion from "./chat_autocompletion.js";
+import ChatMessageDSA5Roll from "../chat/ChatMessageDSA5.js";
 
 export default class DiceDSA5 {
     static async setupDialog({ dialogOptions, testData, cardOptions, }) {
@@ -374,7 +375,7 @@ export default class DiceDSA5 {
         let modifier = this._situationalModifiers(testData);
         let chars = []
 
-        let roll = testData.roll ? testData.roll : new Roll(testData.source.data.data.damage.value.replace(/[Ww]/, "d")).roll()
+        let roll = testData.roll ? testData.roll : new Roll(testData.source.data.data.damage.value.replace(/[Ww]/g, "d")).roll()
         let damage = roll.total + modifier;
 
         for (let k of roll.terms) {
@@ -413,7 +414,7 @@ export default class DiceDSA5 {
 
         }
 
-        let roll = testData.roll ? testData.roll : new Roll(weapon.data.damage.value.replace(/[Ww]/, "d")).roll()
+        let roll = testData.roll ? testData.roll : new Roll(weapon.data.damage.value.replace(/[Ww]/g, "d")).roll()
         let damage = roll.total + modifier;
 
         for (let k of roll.terms) {
@@ -515,7 +516,7 @@ export default class DiceDSA5 {
                 break;
         }
         if (testData.mode == "attack" && success) {
-            let damageRoll = testData.damageRoll ? testData.damageRoll : new Roll(source.data.damage.value.replace(/[Ww]/, "d")).roll()
+            let damageRoll = testData.damageRoll ? testData.damageRoll : new Roll(source.data.damage.value.replace(/[Ww]/g, "d")).roll()
             this._addRollDiceSoNice(testData, damageRoll, "black")
             let damage = damageRoll.total;
 
@@ -608,7 +609,7 @@ export default class DiceDSA5 {
         }
 
         if (testData.mode == "attack" && success) {
-            let damageRoll = testData.damageRoll ? testData.damageRoll : new Roll(weapon.data.damage.value.replace(/[Ww]/, "d")).roll()
+            let damageRoll = testData.damageRoll ? testData.damageRoll : new Roll(weapon.data.damage.value.replace(/[Ww]/g, "d")).roll()
             this._addRollDiceSoNice(testData, damageRoll, "black")
             let damage = Number(damageRoll.total);
 
@@ -748,7 +749,7 @@ export default class DiceDSA5 {
             res.preData.calculatedSpellModifiers.finalcost = Math.round(res.preData.calculatedSpellModifiers.cost / (SpecialabilityRulesDSA5.hasAbility(testData.extra.actor, game.i18n.localize('LocalizedIDs.traditionWitch')) ? 3 : 2))
         } else {
             if (testData.source.data.effectFormula.value != "") {
-                let formula = testData.source.data.effectFormula.value.replace(game.i18n.localize('CHARAbbrev.QS'), res.qualityStep).replace(/[Ww]/, "d")
+                let formula = testData.source.data.effectFormula.value.replace(game.i18n.localize('CHARAbbrev.QS'), res.qualityStep).replace(/[Ww]/g, "d")
                 let rollEffect = testData.damageRoll ? testData.damageRoll : new Roll(formula).roll()
                 this._addRollDiceSoNice(testData, rollEffect, "black")
                 res["effectResult"] = rollEffect.total
@@ -1003,7 +1004,7 @@ export default class DiceDSA5 {
                 case "weaponless":
                 case "combatskill":
                     if (testData.mode == "damage") {
-                        roll = new Roll(testData.source.data.data.damage.value.replace(/[Ww]/, "d")).roll()
+                        roll = new Roll(testData.source.data.data.damage.value.replace(/[Ww]/g, "d")).roll()
                         for (let i = 0; i < roll.dice.length; i++) {
                             roll.dice[i].options.colorset = "black"
                         }
@@ -1015,7 +1016,7 @@ export default class DiceDSA5 {
                     break;
                 case "trait":
                     if (testData.mode == "damage") {
-                        roll = new Roll(testData.source.data.data.damage.value.replace(/[Ww]/, "d")).roll()
+                        roll = new Roll(testData.source.data.data.damage.value.replace(/[Ww]/g, "d")).roll()
                         for (let i = 0; i < roll.dice.length; i++) {
                             roll.dice[i].options.colorset = "black"
                         }
@@ -1088,7 +1089,10 @@ export default class DiceDSA5 {
             isOpposedTest: chatOptions.isOpposedTest,
             title: chatOptions.title,
             hideData: chatData.hideData,
+            isDSARoll: true
         };
+        chatOptions.type = CONST.CHAT_MESSAGE_TYPES.ROLL
+
         if (!rerenderMessage) {
             return renderTemplate(chatOptions.template, chatData).then(html => {
                 chatOptions["content"] = html
@@ -1096,12 +1100,15 @@ export default class DiceDSA5 {
             });
         } else {
             return renderTemplate(chatOptions.template, chatData).then(html => {
-                chatOptions["content"] = html;
-
+                //Seems to be a foundry bug, after edit inline rolls are not converted anymore
+                const actor = ChatMessage.getSpeakerActor(rerenderMessage.data.speaker) || game.users.get(rerenderMessage.data.user).character;
+                const rollData = actor ? actor.getRollData() : {}
+                chatOptions["content"] = TextEditor.enrichHTML(html, rollData);
                 return rerenderMessage.update({
-                    content: html,
+                    content: chatOptions["content"],
                     ["flags.data"]: chatOptions["flags.data"]
                 }).then(newMsg => {
+
                     ui.chat.updateMessage(newMsg);
                     return newMsg;
                 });

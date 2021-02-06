@@ -102,10 +102,10 @@ export default class CultureWizard extends WizardDSA5 {
             "data.details.culture.value": this.culture.name
         }
 
-        let localKnowledge = this.items.find(x => x.name == "Ortskenntnis ()" && x.type == "specialability")
+        let localKnowledge = this.items.find(x => x.name == `${game.i18n.localize('LocalizedIDs.localKnowledge')} ()` && x.type == "specialability")
         if (localKnowledge) {
             localKnowledge = duplicate(localKnowledge)
-            localKnowledge.name = `Ortskenntnis (${parent.find(".localKnowledge").val()})`
+            localKnowledge.name = `${game.i18n.localize('LocalizedIDs.localKnowledge')} (${parent.find(".localKnowledge").val()})`
             localKnowledge.data.APValue.value = 0
             this.actor.createEmbeddedEntity("OwnedItem", localKnowledge)
         }

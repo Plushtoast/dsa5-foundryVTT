@@ -93,6 +93,7 @@ export default class DSA5_Utility {
         if (chatData.rollMode === "blindroll") chatData["blind"] = true;
         else if (chatData.rollMode === "selfroll") chatData["whisper"] = [game.user];
 
+
         if (forceWhisper) {
             chatData["speaker"] = ChatMessage.getSpeaker();
             chatData["whisper"] = ChatMessage.getWhisperRecipients(forceWhisper);

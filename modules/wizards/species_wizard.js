@@ -131,7 +131,9 @@ export default class SpeciesWizard extends WizardDSA5 {
                 continue
 
             let attrs = attr.trim().split(" ")
-            update[`data.characteristics.${attrs[0].toLowerCase()}.species`] = Number(attrs[1])
+            let dataAttr = game.dsa5.config.knownShortcuts[attrs[0].toLowerCase().trim()].slice(0)
+            dataAttr[dataAttr.length - 1] = "species"
+            update[`data.${dataAttr.join(".")}`] = Number(attrs[1])
         }
 
         await this.actor.update(update);

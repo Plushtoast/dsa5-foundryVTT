@@ -25,5 +25,8 @@ export default function() {
             game.settings.set("vtta-tokenizer", "default-frame-npc", "systems/dsa5/icons/backgrounds/token_black.webp")
             game.settings.set("dsa5", "tokenizerSetup", true)
         }
+
+        DSA5Tutorial.firstTimeMessage()
+
     });
 }

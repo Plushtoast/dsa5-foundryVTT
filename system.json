@@ -19,9 +19,20 @@
             "path": "packs/skills.db",
             "entity": "Item",
             "tags": [
-                "skill",
-                "de"
-            ]
+                "skill"
+            ],
+            "langs": ["de"]
+        },
+        {
+            "name": "skillsen",
+            "label": "Skills",
+            "system": "dsa5",
+            "path": "packs/skillsen.db",
+            "entity": "Item",
+            "tags": [
+                "skill"
+            ],
+            "langs": ["en"]
         },
         {
             "name": "combatskills",
@@ -30,9 +41,20 @@
             "path": "packs/combatskills.db",
             "entity": "Item",
             "tags": [
-                "combatskill",
-                "de"
-            ]
+                "combatskill"
+            ],
+            "langs": ["de"]
+        },
+        {
+            "name": "combatskillsen",
+            "label": "Combat Techniques",
+            "system": "dsa5",
+            "path": "packs/combatskillsen.db",
+            "entity": "Item",
+            "tags": [
+                "combatskill"
+            ],
+            "langs": ["en"]
         },
         {
             "name": "money",
@@ -45,15 +67,26 @@
             ]
         },
         {
+            "name": "speciesen",
+            "label": "Species",
+            "system": "dsa5",
+            "path": "packs/speciesen.db",
+            "entity": "Item",
+            "tags": [
+                "species"
+            ],
+            "langs": ["en"]
+        },
+        {
             "name": "species",
             "label": "Spezies",
             "system": "dsa5",
             "path": "packs/species.db",
             "entity": "Item",
             "tags": [
-                "species",
-                "de"
-            ]
+                "species"
+            ],
+            "langs": ["de"]
         }
     ],
     "languages": [{

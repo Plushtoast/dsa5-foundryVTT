@@ -1,5 +1,3 @@
-import DSA5Tutorial from '../system/tutorial.js'
-
 export default function() {
     game.settings.register("dsa5", "meleeBotchTableEnabled", {
         name: "DSASETTINGS.meleeBotchTableEnabled",
@@ -96,5 +94,5 @@ export default function() {
     });
 
 
-    DSA5Tutorial.firstTimeMessage()
+
 }

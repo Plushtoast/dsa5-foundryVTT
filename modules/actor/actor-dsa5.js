@@ -40,12 +40,11 @@ export default class Actordsa5 extends Actor {
     prepareDerivedData() {
         const data = this.data
         try {
-            let equipmentModifiers = {}
-            for (let i of data.items.filter(x => ["meleeweapon", "rangeweapon", "armor"].includes(x.type) && x.data.worn.value)) {
-                this._addGearAndAbilityModifiers(equipmentModifiers, i)
+            let itemModifiers = {}
+            for (let i of data.items.filter(x => (["meleeweapon", "rangeweapon", "armor"].includes(x.type) && x.data.worn.value) || ["advantage", "specialability", "disadvantage"].includes(x.type))) {
+                this._addGearAndAbilityModifiers(itemModifiers, i)
             }
-            data.data.equipmentModifiers = equipmentModifiers
-            this._applyModiferTransformations(equipmentModifiers)
+            data.data.itemModifiers = this._applyModiferTransformations(itemModifiers)
 
             //This gets called by every user and creates multiple instances
             data.canAdvance = data.type == "character" || data.items.find(x => x.name == "Vertrauter" && x.type == "trait") != undefined
@@ -58,7 +57,7 @@ export default class Actordsa5 extends Actor {
                 data.data.status.wounds.current = data.data.status.wounds.initial + data.data.characteristics["ko"].value * 2;
                 data.data.status.soulpower.value = (data.data.status.soulpower.initial ? data.data.status.soulpower.initial : 0) + Math.round((data.data.characteristics["mu"].value + data.data.characteristics["kl"].value + data.data.characteristics["in"].value) / 6);
                 data.data.status.toughness.value = (data.data.status.toughness.initial ? data.data.status.toughness.initial : 0) + Math.round((data.data.characteristics["ko"].value + data.data.characteristics["ko"].value + data.data.characteristics["kk"].value) / 6);
-                data.data.status.fatePoints.max = Number(data.data.status.fatePoints.current) + Number(data.data.status.fatePoints.modifier);
+                data.data.status.fatePoints.max = Number(data.data.status.fatePoints.current) + Number(data.data.status.fatePoints.modifier) + data.data.status.fatePoints.gearmodifier
                 data.data.status.initiative.value = Math.round((data.data.characteristics["mu"].value + data.data.characteristics["ge"].value) / 2) + (data.data.status.initiative.modifier || 0);
             }
 
@@ -79,9 +78,9 @@ export default class Actordsa5 extends Actor {
             if (guide && data.type != "creature") {
                 if (data.data.characteristics[guide.value]) {
                     data.data.status.astralenergy.current = data.data.status.astralenergy.initial + data.data.characteristics[guide.value].value
-                    data.data.status.astralenergy.max = data.data.status.astralenergy.current + data.data.status.astralenergy.modifier + data.data.status.astralenergy.advances
+                    data.data.status.astralenergy.max = data.data.status.astralenergy.current + data.data.status.astralenergy.modifier + data.data.status.astralenergy.advances + data.data.status.astralenergy.gearmodifier
                     data.data.status.karmaenergy.current = data.data.status.karmaenergy.initial + data.data.characteristics[guide.value].value
-                    data.data.status.karmaenergy.max = data.data.status.karmaenergy.current + data.data.status.karmaenergy.modifier + data.data.status.karmaenergy.advances
+                    data.data.status.karmaenergy.max = data.data.status.karmaenergy.current + data.data.status.karmaenergy.modifier + data.data.status.karmaenergy.advances + data.data.status.karmaenergy.gearmodifier
                 }
             }
 
@@ -133,7 +132,7 @@ export default class Actordsa5 extends Actor {
             ch.refund = game.i18n.format("refundCost", { cost: DSA5_Utility._calculateAdvCost(ch.initial + ch.advances, "E", 0) })
         }
 
-        let gearModifyableCalculatedAttributes = ["initiative", "speed", "astralenergy", "karmaenergy", "wounds", "dodge", "soulpower", "toughness"]
+        let gearModifyableCalculatedAttributes = ["fatePoints", "initiative", "speed", "astralenergy", "karmaenergy", "wounds", "dodge", "soulpower", "toughness"]
         for (let k of gearModifyableCalculatedAttributes) {
             data.data.status[k].gearmodifier = 0
         }
@@ -459,7 +458,7 @@ export default class Actordsa5 extends Actor {
             aggregatedtests: aggregatedtests,
             wornArmor: armor,
             inventory,
-            equipmentModifiers: actorData.data.equipmentModifiers,
+            itemModifiers: actorData.data.itemModifiers,
             languagePoints: {
                 used: actorData.data.freeLanguagePoints ? actorData.data.freeLanguagePoints.used : 0,
                 available: actorData.data.freeLanguagePoints ? actorData.data.freeLanguagePoints.value : 0
@@ -483,17 +482,20 @@ export default class Actordsa5 extends Actor {
         }
     }
 
-    _applyModiferTransformations(equipmentModifiers) {
-        for (const [key, value] of Object.entries(equipmentModifiers)) {
+    _applyModiferTransformations(itemModifiers) {
+        for (const [key, value] of Object.entries(itemModifiers)) {
             let shortCut = game.dsa5.config.knownShortcuts[key.toLowerCase()]
             if (shortCut)
                 this.data.data[shortCut[0]][shortCut[1]][shortCut[2]] += value.value
-            else
-                console.warn(`Item Modifier ${key} from ${value.sources.join(",")} for ${this.data.name} can not be applied.`)
+            else {
+                delete itemModifiers[key]
+                    //console.warn(`Item Modifier ${key} from ${value.sources.join(",")} for ${this.data.name} can not be applied.`)
+            }
         }
+        return itemModifiers
     }
 
-    _addGearAndAbilityModifiers(equipmentModifiers, i) {
+    _addGearAndAbilityModifiers(itemModifiers, i) {
         if (!i.data.effect || i.data.effect.value == undefined)
             return
 
@@ -501,14 +503,14 @@ export default class Actordsa5 extends Actor {
             let vals = mod.replace(/(\s+)/g, ' ').trim().split(" ")
             if (vals.length == 2) {
                 if (Number(vals[0]) != undefined) {
-                    if (equipmentModifiers[vals[1]] == undefined) {
-                        equipmentModifiers[vals[1]] = {
-                            value: Number(vals[0]),
+                    if (itemModifiers[vals[1]] == undefined) {
+                        itemModifiers[vals[1]] = {
+                            value: Number(vals[0]) * (i.data.step ? Number(i.data.step.value) : 1),
                             sources: [i.name]
                         }
                     } else {
-                        equipmentModifiers[vals[1]].value += Number(vals[0])
-                        equipmentModifiers[vals[1]].sources.push(i.name)
+                        itemModifiers[vals[1]].value += Number(vals[0]) * (i.data.step ? Number(i.data.step.value) : 1)
+                        itemModifiers[vals[1]].sources.push(i.name)
                     }
                 }
             }
@@ -1316,7 +1318,7 @@ export default class Actordsa5 extends Actor {
     }
 
     static _parseDmg(item) {
-        let parseDamage = new Roll(item.data.damage.value.replace(/[Ww]/, "d"))
+        let parseDamage = new Roll(item.data.damage.value.replace(/[Ww]/g, "d"))
         let damageDie = "",
             damageTerm = ""
         for (let k of parseDamage.terms) {

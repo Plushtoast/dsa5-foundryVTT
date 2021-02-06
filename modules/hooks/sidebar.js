@@ -8,10 +8,18 @@ export default function() {
     })
 
     Hooks.on("renderCompendiumDirectory", (app, html, data) => {
+
         const button = $(`<button><i class="fas fa-university"></i>${game.i18n.localize("ItemLibrary")}</button>`);
         html.find(".header-actions").append(button);
         button.click(ev => { game.dsa5.itemLibrary.render(true) })
 
         html.find('li[data-pack="dsa5.money"]').hide()
+        const packs = game.packs.filter(p => p.metadata.langs && !(p.metadata.langs.includes(game.i18n.lang)))
+        for (let pack of packs) {
+            let name = `${pack.metadata.system}.${pack.metadata.name}`
+            game.packs.delete(name)
+            html.find(`li[data-pack="${name}"]`).hide()
+        }
+
     })
 }

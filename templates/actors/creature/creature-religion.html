@@ -15,7 +15,7 @@
                 </div>
             </div>
         </div>
-        {{#each actor.liturgies as |item i|}}
+        {{#each actor.magic.liturgy as |item i|}}
         <div class="col spells item" data-item-id="{{item._id}}">
             <div class="row-section skills lineheight">
                 <div class="col four">
@@ -83,7 +83,7 @@
                 </div>
             </div>
         </div>
-        {{#each actor.ceremonies as |item i|}}
+        {{#each actor.magic.ceremony as |item i|}}
         <div class="col spells item" data-item-id="{{item._id}}">
             <div class="row-section skills lineheight">
                 <div class="col four">
@@ -158,7 +158,7 @@
                 </div>
             </div>
             <div class="row-section wrap cards">
-                {{#each actor.blessings as |item i|}}
+                {{#each actor.magic.blessing as |item i|}}
                 <div class="item" data-item-id="{{item._id}}">
                     <a class="item-edit">{{item.name}}</a>
                 </div>

@@ -9,6 +9,7 @@ import * as statusEffects from './statuseffect.js'
 import * as sideBar from './sidebar.js'
 import * as configuration from './configuration.js'
 import * as journals from './journal.js'
+import ChatMessageDSA5Roll from "../chat/ChatMessageDSA5.js";
 
 export default function() {
 
@@ -55,6 +56,7 @@ Hooks.once("init", () => {
     ]);
 
     configuration.default()
+    CONFIG.ChatMessage.entityClass = ChatMessageDSA5Roll
 });
 
 Hooks.once('setup', function() {
@@ -67,7 +69,9 @@ Hooks.once('setup', function() {
     } else {
         setupKnownEquipmentModifiers()
     }
+
 })
+
 
 function setupKnownEquipmentModifiers() {
     game.dsa5.config.knownShortcuts[game.i18n.localize('CHARAbbrev.INI').toLowerCase()] = ["status", "initiative", "gearmodifier"]
@@ -78,6 +82,7 @@ function setupKnownEquipmentModifiers() {
     game.dsa5.config.knownShortcuts[game.i18n.localize('CHARAbbrev.AW').toLowerCase()] = ["status", "dodge", "gearmodifier"]
     game.dsa5.config.knownShortcuts[game.i18n.localize('CHARAbbrev.SK').toLowerCase()] = ["status", "soulpower", "gearmodifier"]
     game.dsa5.config.knownShortcuts[game.i18n.localize('CHARAbbrev.ZK').toLowerCase()] = ["status", "toughness", "gearmodifier"]
+    game.dsa5.config.knownShortcuts[game.i18n.localize('CHARAbbrev.FtP').toLowerCase()] = ["status", "fatePoints", "gearmodifier"]
     let attrs = ["MU", "KL", "IN", "CH", "FF", "GE", "KO", "KK"]
     for (let k of attrs) {
         game.dsa5.config.knownShortcuts[game.i18n.localize(`CHARAbbrev.${k}`).toLowerCase()] = ["characteristics", k.toLowerCase(), "value"]
