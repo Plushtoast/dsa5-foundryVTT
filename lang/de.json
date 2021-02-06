@@ -842,7 +842,8 @@
         "AddQS": "QS um eins erhöhen (1 Schip)",
         "rerollDamage": "Schadenswurf wiederholen (1 Schip)",
         "ApplyDamage": "Schaden anwenden",
-        "talentedReroll": "Begabung verwenden"
+        "talentedReroll": "Begabung verwenden",
+        "ApplyMana": "KaP/AsP Kosten bezahlen"
     },
 
     "DSASETTINGS": {

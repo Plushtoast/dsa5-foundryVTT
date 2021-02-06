@@ -742,10 +742,11 @@ export default class Actordsa5 extends Actor {
     }
 
     applyMana(amount, type) {
-        let val = type == "AsP" ? "data.status.astralenergy.value" : "data.status.karmaenergy.value"
-        let res = {}
-        res[val] = this.data[val] - amount
-        this.update(res)
+        if (type == "AsP") {
+            this.update({ "data.status.astralenergy.value": Math.max(0, this.data.data.status.astralenergy.value - amount) })
+        } else {
+            this.update({ "data.status.karmaenergy.value": Math.max(0, this.data.data.status.karmaenergy.value - amount) })
+        }
     }
 
     setupWeaponless(statusId, options = {}) {

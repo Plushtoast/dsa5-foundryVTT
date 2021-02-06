@@ -842,7 +842,8 @@
         "AddQS": "Increase QS by one (1 FtP)",
         "rerollDamage": "Repeat damage roll (1 FtP)",
         "ApplyDamage": "Apply damage",
-        "talentedReroll": "Use Aptitude "
+        "talentedReroll": "Use Aptitude ",
+        "ApplyMana": "Pay AE/KP"
     },
 
     "DSASETTINGS": {
