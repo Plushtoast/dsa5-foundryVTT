@@ -1905,3 +1905,12 @@ a.entity-link,
 a.inline-roll {
     background: var(--bg-color);
 }
+
+.chatIndicator .fas {
+    display: none;
+    color: #555;
+}
+
+.blind .chatIndicator .fa-eye-slash {
+    display: inline-block;
+}

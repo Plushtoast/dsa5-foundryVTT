@@ -13,6 +13,6 @@ export default class ChatMessageDSA5Roll extends ChatMessage {
 
 class EmptyRoll {
     render() {
-        return game.i18n.localize("CHATNOTIFICATION.YouRolledBlindly")
+        return ""
     }
 }

@@ -603,7 +603,7 @@
         "unableReroll": "Würfel {die} wegen Unfähigkeit erneut geworfen ({oldVal}/{newVal})",
         "requestRoll": "{user} fordert einen Wurf in {item}",
         "editRoll": "Wurf editieren",
-        "YouRolledBlindly": "Du hast verdeckt gewürfelt."
+        "BlindRoll": "Blinder Wurf."
     },
 
     "TT": {

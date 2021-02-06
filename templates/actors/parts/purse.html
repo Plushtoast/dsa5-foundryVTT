@@ -1,0 +1,23 @@
+<div class="groupbox">
+    <div class="row-section">
+        <div class="col header-label">
+            <b>{{localize "purse"}}</b>
+        </div>
+    </div>
+    {{#grouped_each 4 actor.money.coins}}
+    <div class="row-section table-title">
+        {{#each this}}
+        <div class="col four center item" data-item-id="{{_id}}">
+            <a class="item-edit">{{localize name}}</a>
+        </div>
+        {{/each}}
+    </div>
+    <div class="row-section">
+        {{#each this}}
+        <div class="col four center item" data-item-id="{{_id}}">
+            <a class="col-{{name}} quantity-click">{{data.quantity.value}}</a>
+        </div>
+        {{/each}}
+    </div>
+    {{/grouped_each}}
+</div>

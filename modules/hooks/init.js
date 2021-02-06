@@ -52,7 +52,8 @@ Hooks.once("init", () => {
         "systems/dsa5/templates/actors/character/actor-aggregatedtests.html",
         "systems/dsa5/templates/actors/parts/creature-derived-attributes-small.html",
         "systems/dsa5/templates/actors/parts/creature-derived-attributes-large.html",
-        "systems/dsa5/templates/actors/parts/status_effects.html"
+        "systems/dsa5/templates/actors/parts/status_effects.html",
+        "systems/dsa5/templates/actors/parts/purse.html"
     ]);
 
     configuration.default()

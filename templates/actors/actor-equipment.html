@@ -98,26 +98,6 @@
         </div>
     </div>
     <div class="col two">
-        <div class="groupbox">
-            <div class="row-section">
-                <div class="col header-label">
-                    <b>{{localize "purse"}}</b>
-                </div>
-            </div>
-            <div class="row-section table-title">
-                {{#each actor.money.coins as |item i|}}
-                <div class="col four center item" data-item-id="{{item._id}}">
-                    <a class="item-edit">{{localize item.name}}</a>
-                </div>
-                {{/each}}
-            </div>
-            <div class="row-section">
-                {{#each actor.money.coins as |item i|}}
-                <div class="col four center item" data-item-id="{{item._id}}">
-                    <a class="col-{{item.name}} quantity-click">{{item.data.quantity.value}}</a>
-                </div>
-                {{/each}}
-            </div>
-        </div>
+        {{> systems/dsa5/templates/actors/parts/purse.html}}
     </div>
 </div>

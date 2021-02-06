@@ -8,12 +8,12 @@
         {{/if}}
         <span class="message-metadata">
             <time class="message-timestamp">{{timeSince message.timestamp}}</time>
-            {{#if user.isGM}}
-            <a class="button message-delete"><i class="fas fa-trash"></i></a>
-            {{/if}}
+            <span class="chatIndicator"><i title="{{localize 'CHATNOTIFICATION.BlindRoll'}}" class="fas fa-eye-slash"></i></span> {{#if user.isGM}}
+        <a class="button message-delete"><i class="fas fa-trash"></i></a> {{/if}}
         </span> {{#if isWhisper}}
         <span class="whisper-to">{{localize 'CHAT.To'}}: {{whisperTo}}</span> {{/if}} {{#if message.flavor}}
         <span class="flavor-text">{{{message.flavor}}}</span> {{/if}}
+
     </header>
     <div class="message-content">
         {{{message.content}}}

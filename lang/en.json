@@ -601,7 +601,7 @@
         "unableReroll": "Die {die} rolled again because of Incompetence ({oldVal}/{newVal})",
         "requestRoll": "{user} requests a roll in {item}",
         "editRoll": "Edit roll",
-        "YouRolledBlindly": "You rolled blindly."
+        "BlindRoll": "Blinder Wurf."
     },
 
     "TT": {

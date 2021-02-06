@@ -1078,8 +1078,9 @@ export default class DiceDSA5 {
         }
 
         if (["gmroll", "blindroll"].includes(chatOptions.rollMode)) chatOptions["whisper"] = ChatMessage.getWhisperRecipients("GM").map(u => u.id);
-        if (chatOptions.rollMode === "blindroll") chatOptions["blind"] = true;
-        else if (chatOptions.rollMode === "selfroll") chatOptions["whisper"] = [game.user];
+        if (chatOptions.rollMode === "blindroll") {
+            chatOptions["blind"] = true;
+        } else if (chatOptions.rollMode === "selfroll") chatOptions["whisper"] = [game.user];
 
         chatOptions["flags.data"] = {
             preData: chatData.testData.preData,
@@ -1092,6 +1093,7 @@ export default class DiceDSA5 {
             isDSARoll: true
         };
         chatOptions.type = CONST.CHAT_MESSAGE_TYPES.ROLL
+
 
         if (!rerenderMessage) {
             return renderTemplate(chatOptions.template, chatData).then(html => {
