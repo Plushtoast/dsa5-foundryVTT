@@ -49,45 +49,6 @@ export default class DiceDSA5 {
                     regnerationCampLocations: DSA5.regnerationCampLocations
                 });
                 break
-            case "trait":
-                let traitType = source.data.traitType.value
-                if (testData.mode == "attack" && traitType == "meleeAttack") {
-                    let targetWeaponsize = "short"
-                    if (game.user.targets.size) {
-                        game.user.targets.forEach(target => {
-                            let defWeapon = target.actor.items.filter(x => x.data.type == "meleeweapon" && x.data.data.worn.value)
-                            if (defWeapon.length > 0)
-                                targetWeaponsize = defWeapon[0].data.data.reach.value
-                        });
-                    }
-                    mergeObject(dialogOptions.data, {
-                        weaponSizes: DSA5.meleeRanges,
-                        melee: true,
-                        targetWeaponSize: targetWeaponsize
-                    });
-                } else if (testData.mode == "attack" && traitType == "rangeAttack") {
-                    let targetSize = "average"
-                    if (game.user.targets.size) {
-                        game.user.targets.forEach(target => {
-                            let tar = target.actor.data.data.size
-                            if (tar)
-                                targetSize = tar.value
-                        });
-                    }
-                    rangeOptions = {...DSA5.rangeWeaponModifiers }
-                    delete rangeOptions[AdvantageRulesDSA5.hasVantage(testData.extra.actor, game.i18n.localize('LocalizedIDs.senseOfRange')) ? "long" : "rangesense"]
-                    mergeObject(dialogOptions.data, {
-                        rangeOptions: rangeOptions,
-                        sizeOptions: DSA5.rangeSizeCategories,
-                        visionOptions: DSA5.rangeVision,
-                        mountedOptions: DSA5.mountedRangeOptions,
-                        shooterMovementOptions: DSA5.shooterMovementOptions,
-                        targetMovementOptions: DSA5.targetMomevementOptions,
-                        targetSize: targetSize
-                    });
-                    break;
-                }
-                break
             case "number":
                 mergeObject(dialogOptions.data, {
                     difficultyLabels: (DSA5.attributeDifficultyLabels)
@@ -275,7 +236,6 @@ export default class DiceDSA5 {
     }
 
     static rollDamage(testData) {
-        //let description = "";
         this._appendSituationalModifiers(testData, game.i18n.localize("manual"), testData.testModifier)
         let modifier = this._situationalModifiers(testData);
         let weapon;
@@ -313,7 +273,6 @@ export default class DiceDSA5 {
             modifiers: modifier,
             extra: {}
         }
-
     }
 
     static _situationalModifiers(testData) {

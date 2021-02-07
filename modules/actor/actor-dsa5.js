@@ -638,7 +638,6 @@ export default class Actordsa5 extends Actor {
         }
     }
 
-
     preparePostRollAction(message) {
         let data = message.data.flags.data;
         let cardOptions = {
@@ -838,6 +837,7 @@ export default class Actordsa5 extends Actor {
             }
         }
     }
+
     setupRegeneration(statusId, options = {}) {
         let title = game.i18n.localize("regenerationTest");
 
@@ -961,7 +961,6 @@ export default class Actordsa5 extends Actor {
         });
     }
 
-
     _parseModifiers(search) {
         let res = []
         $(search + " option:selected").each(function() {
@@ -972,8 +971,6 @@ export default class Actordsa5 extends Actor {
         })
         return res
     }
-
-
 
     static _prepareitemStructure(item) {
         if (item.data.structure && item.data.structure.max != 0) {
@@ -987,6 +984,7 @@ export default class Actordsa5 extends Actor {
         item.attack = Number(item.data.at.value)
         return this._parseDmg(item)
     }
+
     static _prepareMeleeWeapon(item, combatskills, actorData, wornWeapons = null) {
         let skill = combatskills.filter(i => i.name == item.data.combatskill.value)[0]
         item.attack = Number(skill.data.attack.value) + Number(item.data.atmod.value)
@@ -1142,9 +1140,6 @@ export default class Actordsa5 extends Actor {
 
         if (statusId == "unconscious")
             await this.addCondition("prone")
-
-        //if (game.combat && (effect.id == "blinded" || effect.id == "deafened"))
-        //    effect.flags.dsa5.roundReceived = game.combat.round
 
         if (delta > 0 && statusId == "inpain" && !this.hasCondition("bloodrush") && AdvantageRulesDSA5.hasVantage(this, game.i18n.localize('LocalizedIDs.frenzy'))) {
             await this.addCondition("bloodrush")

@@ -110,5 +110,5 @@
     "compatibleCoreVersion": "0.7.9",
     "url": "https://github.com/Plushtoast/dsa5-foundryVTT",
     "manifest": "https://raw.githubusercontent.com/Plushtoast/dsa5-foundryVTT/master/system.json",
-    "download": "https://github.com/Plushtoast/dsa5-foundryVTT/archive/1.0.4.zip"
+    "download": "https://github.com/Plushtoast/dsa5-foundryVTT/releases/download/1.0.4/dsa5-foundryVTT-1.0.4.zip"
 }

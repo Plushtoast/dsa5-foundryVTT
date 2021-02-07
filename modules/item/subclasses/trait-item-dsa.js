@@ -1,8 +1,12 @@
+import DSA5StatusEffects from "../../status/status_effects.js"
+import AdvantageRulesDSA5 from "../../system/advantage-rules-dsa5.js"
 import DSA5 from "../../system/config-dsa5.js"
 import DiceDSA5 from "../../system/dice-dsa5.js"
+import DSA5_Utility from "../../system/utility-dsa5.js"
 import Itemdsa5 from "../item-dsa5.js"
 
 export default class TraitItemDSA5 extends Itemdsa5 {
+
     static chatData(data) {
         let res = []
         switch (data.traitType.value) {
@@ -37,7 +41,45 @@ export default class TraitItemDSA5 extends Itemdsa5 {
             res.push(this._chatLineHelper("effect", data.effect.value))
         return res
     }
-
+    static getSituationalModifiers(situationalModifiers, actor, data, source) {
+        source = source.data ? (source.data.data == undefined ? source : source.data) : source
+        let traitType = source.data.traitType.value
+        if (data.mode == "attack" && traitType == "meleeAttack") {
+            let targetWeaponsize = "short"
+            if (game.user.targets.size) {
+                game.user.targets.forEach(target => {
+                    let defWeapon = target.actor.items.filter(x => x.data.type == "meleeweapon" && x.data.data.worn.value)
+                    if (defWeapon.length > 0)
+                        targetWeaponsize = defWeapon[0].data.data.reach.value
+                });
+            }
+            mergeObject(data, {
+                weaponSizes: DSA5.meleeRanges,
+                melee: true,
+                targetWeaponSize: targetWeaponsize
+            });
+        } else if (data.mode == "attack" && traitType == "rangeAttack") {
+            let targetSize = "average"
+            if (game.user.targets.size) {
+                game.user.targets.forEach(target => {
+                    let tar = target.actor.data.data.size
+                    if (tar)
+                        targetSize = tar.value
+                });
+            }
+            let rangeOptions = {...DSA5.rangeWeaponModifiers }
+            delete rangeOptions[AdvantageRulesDSA5.hasVantage(actor, game.i18n.localize('LocalizedIDs.senseOfRange')) ? "long" : "rangesense"]
+            mergeObject(data, {
+                rangeOptions: rangeOptions,
+                sizeOptions: DSA5.rangeSizeCategories,
+                visionOptions: DSA5.rangeVision,
+                mountedOptions: DSA5.mountedRangeOptions,
+                shooterMovementOptions: DSA5.shooterMovementOptions,
+                targetMovementOptions: DSA5.targetMomevementOptions,
+                targetSize: targetSize
+            });
+        }
+    }
     static setupDialog(ev, options, item, actor) {
         let mode = options["mode"]
         let title = game.i18n.localize(item.name) + " " + game.i18n.localize(mode + "test");
@@ -50,14 +92,19 @@ export default class TraitItemDSA5 extends Itemdsa5 {
                 options: options
             }
         };
+        let data = {
+            rollMode: options.rollMode,
+            mode: mode
+        }
+
+        let situationalModifiers = actor ? DSA5StatusEffects.getRollModifiers(actor, item) : []
+        this.getSituationalModifiers(situationalModifiers, actor, data, item)
+        data["situationalModifiers"] = situationalModifiers
 
         let dialogOptions = {
             title: title,
             template: "/systems/dsa5/templates/dialog/combatskill-dialog.html",
-            // Prefilled dialog data
-            data: {
-                rollMode: options.rollMode
-            },
+            data: data,
             callback: (html) => {
                 cardOptions.rollMode = html.find('[name="rollMode"]').val();
                 testData.testModifier = Number(html.find('[name="testModifier"]').val());
