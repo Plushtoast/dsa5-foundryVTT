@@ -1,4 +1,23 @@
+import RitualItemDSA5 from "../item/subclasses/ritual-item-dsa.js";
+import SpellItemDSA5 from "../item/subclasses/spell-item-dsa.js";
+import DiseaseItemDSA5 from "../item/subclasses/disease-item-dsa.js";
 import DSA5Tutorial from "../system/tutorial.js";
+import LiturgyItemDSA5 from "../item/subclasses/liturgy-item-dsa.js";
+import CeremonyItemDSA5 from "../item/subclasses/ceremony-item-dsa.js";
+import VantageItemDSA5 from "../item/subclasses/vantage-item-dsa.js";
+import aggregatedTestItemDSA5 from "../item/subclasses/aggregatedTest-item-dsa.js";
+import TraitItemDSA5 from "../item/subclasses/trait-item-dsa.js";
+import BlessingItemDSA5 from "../item/subclasses/blessing-item-dsa.js";
+import CantripItemDSA5 from "../item/subclasses/cantrip-item-dsa.js";
+import SpecialabilityRulesDSA5 from "../system/specialability-rules-dsa5.js";
+import PoisonItemDSA5 from "../item/subclasses/poison-item-dsa.js";
+import ArmorItemDSA5 from "../item/subclasses/armor-item-dsa.js";
+import RangeweaponItemDSA5 from "../item/subclasses/rangeweapon-item.dsa.js";
+import MeleeweaponDSA5 from "../item/subclasses/meleeweapon-item-dsa.js";
+import AmmunitionItemDSA5 from "../item/subclasses/ammunition-item-dsa.js";
+import EquipmentItemDSA5 from "../item/subclasses/equipment-item-dsa.js";
+import CombatskillDSA5 from "../item/subclasses/combatskill-item-dsa.js";
+import SkillItemDSA5 from "../item/subclasses/skill-item-dsa.js";
 
 export default function() {
     Hooks.on("ready", async() => {
@@ -32,5 +51,27 @@ export default function() {
 
         DSA5Tutorial.firstTimeMessage()
 
+        game.dsa5.config.ItemSubclasses = {
+            ritual: RitualItemDSA5,
+            spell: SpellItemDSA5,
+            liturgy: LiturgyItemDSA5,
+            ceremony: CeremonyItemDSA5,
+            advantage: VantageItemDSA5,
+            disadvantage: VantageItemDSA5,
+            aggregatedTest: aggregatedTestItemDSA5,
+            trait: TraitItemDSA5,
+            blessing: BlessingItemDSA5,
+            magictrick: CantripItemDSA5,
+            specialability: SpecialabilityRulesDSA5,
+            disease: DiseaseItemDSA5,
+            poison: PoisonItemDSA5,
+            armor: ArmorItemDSA5,
+            rangeweapon: RangeweaponItemDSA5,
+            meleeweapon: MeleeweaponDSA5,
+            ammunition: AmmunitionItemDSA5,
+            equipment: EquipmentItemDSA5,
+            combatskill: CombatskillDSA5,
+            skill: SkillItemDSA5
+        }
     });
 }

@@ -29,7 +29,13 @@ export default class DiceDSA5 {
             testModifier: (dialogOptions.data.modifier || 0)
         });
 
-        let situationalModifiers = testData.extra.actor ? DSA5StatusEffects.getRollModifiers(testData.extra.actor, testData.source) : []
+        let situationalModifiers
+        if (dialogOptions.data.situationalModifiers) {
+            situationalModifiers = dialogOptions.data.situationalModifiers
+        } else {
+            situationalModifiers = testData.extra.actor ? DSA5StatusEffects.getRollModifiers(testData.extra.actor, testData.source) : []
+        }
+
         if (testData.extra.options.moreModifiers != undefined) {
             situationalModifiers.push(...testData.extra.options.moreModifiers)
         }
@@ -37,36 +43,6 @@ export default class DiceDSA5 {
         //TODO duplicate everything in advance
         let source = testData.source.data ? (testData.source.data.data == undefined ? testData.source : testData.source.data) : testData.source
         switch (source.type) {
-            case "skill":
-                situationalModifiers.push(...AdvantageRulesDSA5.getTalentBonus(testData.extra.actor, source.name))
-                situationalModifiers.push(...SpecialabilityRulesDSA5.getTalentBonus(testData.extra.actor, source.name))
-                situationalModifiers.push(...AdvantageRulesDSA5.getVantageAsModifier(testData.extra.actor, game.i18n.localize('LocalizedIDs.minorSpirits'), -1))
-                mergeObject(dialogOptions.data, {
-                    difficultyLabels: (DSA5.skillDifficultyLabels)
-                });
-                break;
-            case "rangeweapon":
-                situationalModifiers.push(...AdvantageRulesDSA5.getVantageAsModifier(testData.extra.actor, game.i18n.localize('LocalizedIDs.restrictedSenseSight'), -2))
-                let targetSize = "average"
-                if (game.user.targets.size) {
-                    game.user.targets.forEach(target => {
-                        let tar = target.actor.data.data.size
-                        if (tar)
-                            targetSize = tar.value
-                    });
-                }
-                rangeOptions = {...DSA5.rangeWeaponModifiers }
-                delete rangeOptions[AdvantageRulesDSA5.hasVantage(testData.extra.actor, game.i18n.localize('LocalizedIDs.senseOfRange')) ? "long" : "rangesense"]
-                mergeObject(dialogOptions.data, {
-                    rangeOptions: rangeOptions,
-                    sizeOptions: DSA5.rangeSizeCategories,
-                    visionOptions: DSA5.rangeVision,
-                    mountedOptions: DSA5.mountedRangeOptions,
-                    shooterMovementOptions: DSA5.shooterMovementOptions,
-                    targetMovementOptions: DSA5.targetMomevementOptions,
-                    targetSize: targetSize
-                });
-                break;
             case "regeneration":
                 mergeObject(dialogOptions.data, {
                     regenerationInterruptOptions: DSA5.regenerationInterruptOptions,
@@ -112,104 +88,7 @@ export default class DiceDSA5 {
                     break;
                 }
                 break
-            case "meleeweapon":
-                let wrongHandDisabled = AdvantageRulesDSA5.hasVantage(testData.extra.actor, game.i18n.localize('LocalizedIDs.ambidextrous'))
-                if (testData.mode == "attack") {
-                    let targetWeaponsize = "short"
-                    if (game.user.targets.size) {
-                        game.user.targets.forEach(target => {
-                            let defWeapon = target.actor.items.filter(x => x.data.type == "meleeweapon" && x.data.data.worn.value)
-                            if (defWeapon.length > 0)
-                                targetWeaponsize = defWeapon[0].data.data.reach.value
-                        });
-                    }
-                    mergeObject(dialogOptions.data, {
-                        weaponSizes: DSA5.meleeRanges,
-                        melee: true,
-                        wrongHandDisabled: wrongHandDisabled,
-                        offHand: !wrongHandDisabled && source.data.worn.offHand,
-                        targetWeaponSize: targetWeaponsize
-                    });
-                } else if (testData.mode == "parry") {
-                    mergeObject(dialogOptions.data, {
-                        defenseCount: 0,
-                        showDefense: true,
-                        wrongHandDisabled: wrongHandDisabled && source.data.worn.offHand,
-                        melee: true
-                    });
-                } else {}
-                break
-            case "combatskill":
-                break
-            case "liturgy":
-            case "spell":
-                situationalModifiers.push(...AdvantageRulesDSA5.getVantageAsModifier(testData.extra.actor, game.i18n.localize('LocalizedIDs.minorSpirits'), -1))
-                situationalModifiers.push(...AdvantageRulesDSA5.getVantageAsModifier(testData.extra.actor, game.i18n.localize('LocalizedIDs.magicalAttunement')))
-                situationalModifiers.push(...AdvantageRulesDSA5.getVantageAsModifier(testData.extra.actor, game.i18n.localize('LocalizedIDs.magicalRestriction'), -1))
-                situationalModifiers.push(...AdvantageRulesDSA5.getVantageAsModifier(testData.extra.actor, game.i18n.localize('LocalizedIDs.boundToArtifact'), -1))
-                if (game.user.targets.size) {
-                    game.user.targets.forEach(target => {
-                        skMod = target.actor.data.data.status.soulpower.max * -1
-                        zkMod = target.actor.data.data.status.toughness.max * -1
-                    });
-                }
-                mergeObject(dialogOptions.data, {
-                    SKModifier: skMod,
-                    ZKModifier: zkMod
-                });
-
-                break;
-            case "ceremony":
-                if (game.user.targets.size) {
-                    game.user.targets.forEach(target => {
-                        skMod = target.actor.data.data.status.soulpower.max * -1
-                        zkMod = target.actor.data.data.status.toughness.max * -1
-                    });
-                }
-                mergeObject(dialogOptions.data, {
-                    SKModifier: skMod,
-                    ZKModifier: zkMod,
-                    isCeremony: true,
-                    locationModifiers: DSA5.ceremonyLocationModifiers,
-                    timeModifiers: DSA5.ceremonyTimeModifiers
-                })
-                break
-            case "ritual":
-                situationalModifiers.push(...AdvantageRulesDSA5.getVantageAsModifier(testData.extra.actor, game.i18n.localize('LocalizedIDs.minorSpirits'), -1))
-                situationalModifiers.push(...AdvantageRulesDSA5.getVantageAsModifier(testData.extra.actor, game.i18n.localize('LocalizedIDs.magicalAttunement')))
-                situationalModifiers.push(...AdvantageRulesDSA5.getVantageAsModifier(testData.extra.actor, game.i18n.localize('LocalizedIDs.magicalRestriction'), -1))
-                situationalModifiers.push(...AdvantageRulesDSA5.getVantageAsModifier(testData.extra.actor, game.i18n.localize('LocalizedIDs.boundToArtifact'), -1))
-                if (game.user.targets.size) {
-                    game.user.targets.forEach(target => {
-                        skMod = target.actor.data.data.status.soulpower.max * -1
-                        zkMod = target.actor.data.data.status.toughness.max * -1
-                    });
-                }
-                mergeObject(dialogOptions.data, {
-                    SKModifier: skMod,
-                    ZKModifier: zkMod,
-                    isRitual: true,
-                    locationModifiers: DSA5.ritualLocationModifiers,
-                    timeModifiers: DSA5.ritualTimeModifiers
-                })
-                break
-            case "poison":
-            case "disease":
-                if (game.user.targets.size) {
-                    game.user.targets.forEach(target => {
-                        skMod = target.actor.data.data.status.soulpower.max * -1
-                        zkMod = target.actor.data.data.status.toughness.max * -1
-                    });
-                }
-                mergeObject(dialogOptions.data, {
-                    SKModifier: skMod,
-                    ZKModifier: zkMod,
-                    hasSKModifier: source.data.resistance.value == "SK",
-                    hasZKModifier: source.data.resistance.value == "ZK"
-                })
-            case "status":
-                break;
-            default:
+            case "number":
                 mergeObject(dialogOptions.data, {
                     difficultyLabels: (DSA5.attributeDifficultyLabels)
                 });
@@ -222,7 +101,6 @@ export default class DiceDSA5 {
         mergeObject(cardOptions, {
             user: game.user._id,
         })
-
         dialogOptions.data.rollMode = dialogOptions.data.rollMode || rollMode;
         if (CONFIG.Dice.rollModes)
             dialogOptions.data.rollModes = CONFIG.Dice.rollModes;
@@ -230,7 +108,6 @@ export default class DiceDSA5 {
             dialogOptions.data.rollModes = CONFIG.rollModes;
 
         if (!testData.extra.options.bypass) {
-            // Render Test Dialog
             let html = await renderTemplate(dialogOptions.template, dialogOptions.data);
             return new Promise((resolve, reject) => {
                 new DSA5Dialog({

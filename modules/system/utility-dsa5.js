@@ -74,11 +74,11 @@ export default class DSA5_Utility {
 
     static parseAbilityString(ability) {
         return {
-            original: ability.replace(/ [+]?\d{1,2}$/, '').trim(),
-            name: ability.replace(/\((.+?)\)/g, "()").replace(/ [+]?\d{1,2}$/, '').trim(),
-            step: Number((ability.match(/\d{1,2}$/) || [1])[0]),
+            original: ability.replace(/ [+-]?\d{1,2}$/, '').trim(),
+            name: ability.replace(/\((.+?)\)/g, "()").replace(/ [+-]?\d{1,2}$/, '').trim(),
+            step: Number((ability.match(/[+-]?\d{1,2}$/) || [1])[0]),
             special: (ability.match(/\(([^()]+)\)/) || ["", ""])[1],
-            bonus: ability.match(/[+]\d{1,2}$/) != undefined
+            bonus: ability.match(/[-+]\d{1,2}$/) != undefined
         }
     }
 
@@ -120,13 +120,10 @@ export default class DSA5_Utility {
     }
 
     static getSpeaker(speaker) {
-        //let actor = game.actors.get(speaker.actor);
-        //if (speaker.token) {
-        //actor = new Token(game.scenes.get(speaker.scene).getEmbeddedEntity("Token", speaker.token)).actor
-        //    actor = canvas.tokens.get(speaker.token).actor
-        // }
-        //return actor
-        return ChatMessage.getSpeakerActor(speaker)
+        let actor = ChatMessage.getSpeakerActor(speaker)
+        if (!actor) actor = canvas.tokens.get(speaker.token).actor
+        if (!actor) actor = actor = new Token(game.scenes.get(speaker.scene).getEmbeddedEntity("Token", speaker.token)).actor
+        return actor
     }
 
     static _calculateAdvCost(currentAdvances, type, modifier = 1) {

@@ -1,7 +1,5 @@
 import DSA5_Utility from "../system/utility-dsa5.js";
 import DiceDSA5 from "../system/dice-dsa5.js"
-import DSA5 from "../system/config-dsa5.js";
-import MeleeweaponSheetDSA5 from "./sheets/item-meleeweapon-dsa5.js";
 
 export default class Itemdsa5 extends Item {
     static defaultImages = {
@@ -64,12 +62,12 @@ export default class Itemdsa5 extends Item {
         return `<b>${game.i18n.localize(key)}</b>: ${val ? val : "-"}`
     }
 
-    static setupDialog(ev, options, item) {
+    static setupDialog(ev, options, item, actor) {
         return null
     }
 
     setupEffect(ev, options = {}) {
-        return this.getSubClass().setupDialog(ev, options, this)
+        return Itemdsa5.getSubClass(this.data.type).setupDialog(ev, options, this)
     }
 
     _setupCardOptions(template, title) {
@@ -125,16 +123,16 @@ export default class Itemdsa5 extends Item {
         return []
     }
 
-    getSubClass() {
-        if (game.dsa5.config.ItemSubclasses[this.data.type])
-            return game.dsa5.config.ItemSubclasses[this.data.type]
+    static getSubClass(type) {
+        if (game.dsa5.config.ItemSubclasses[type])
+            return game.dsa5.config.ItemSubclasses[type]
         else
             return Itemdsa5
     }
 
     async postItem() {
         let chatData = duplicate(this.data);
-        const properties = this.getSubClass().chatData(duplicate(chatData.data))
+        const properties = Itemdsa5.getSubClass(this.data.type).chatData(duplicate(chatData.data))
 
         chatData["properties"] = properties
 
@@ -167,309 +165,4 @@ export default class Itemdsa5 extends Item {
         });
     }
 
-}
-
-class SpellItemDSA5 extends Itemdsa5 {
-    static chatData(data) {
-        return [
-            this._chatLineHelper("castingTime", data.castingTime.value),
-            this._chatLineHelper("AsPCost", data.AsPCost.value),
-            this._chatLineHelper("distribution", data.distribution.value),
-            this._chatLineHelper("duration", data.duration.value),
-            this._chatLineHelper("reach", data.range.value),
-            this._chatLineHelper("targetCategory", data.targetCategory.value),
-            this._chatLineHelper("effect", DSA5_Utility.replaceDies(data.effect.value))
-        ]
-    }
-}
-
-class LiturgyItemDSA5 extends Itemdsa5 {
-    static chatData(data) {
-        return [
-            this._chatLineHelper("castingTime", data.castingTime.value),
-            this._chatLineHelper("KaPCost", data.AsPCost.value),
-            this._chatLineHelper("distribution", data.distribution.value),
-            this._chatLineHelper("duration", data.duration.value),
-            this._chatLineHelper("reach", data.range.value),
-            this._chatLineHelper("targetCategory", data.targetCategory.value),
-            this._chatLineHelper("effect", DSA5_Utility.replaceDies(data.effect.value))
-        ]
-    }
-}
-
-class VantageItemDSA5 extends Itemdsa5 {
-    static chatData(data) {
-        return [
-            this._chatLineHelper("effect", data.effect.value),
-        ]
-    }
-}
-
-class aggregatedTestItemDSA5 extends Itemdsa5 {
-    static chatData(data) {
-        let result = game.i18n.localize("Ongoing")
-        if (data.cummulatedQS.value >= 10) {
-            result = game.i18n.localize("Success")
-        }
-        if (data.cummulatedQS.value >= 6) {
-            result = game.i18n.localize("PartSuccess")
-        } else if (data.allowedTestCount.value - data.usedTestCount.value <= 0) {
-            result = game.i18n.localize("Failure")
-        }
-        return [
-            this._chatLineHelper("cummulatedQS", `${data.cummulatedQS.value} / 10`),
-            this._chatLineHelper("interval", data.interval.value),
-            this._chatLineHelper("probes", `${data.usedTestCount.value} / ${data.allowedTestCount.value}`),
-            this._chatLineHelper("result", result),
-        ]
-    }
-}
-
-class TraitItemDSA5 extends Itemdsa5 {
-    static chatData(data) {
-        let res = []
-        switch (data.traitType.value) {
-            case "meleeAttack":
-                res = [
-                    this._chatLineHelper("attack", data.at.value),
-                    this._chatLineHelper("damage", data.damage.value),
-                    this._chatLineHelper("reach", data.reach.value)
-                ]
-            case "rangeAttack":
-                res = [
-                    this._chatLineHelper("attack", data.at.value),
-                    this._chatLineHelper("damage", data.damage.value),
-                    this._chatLineHelper("reach", data.reach.value),
-                    this._chatLineHelper("reloadTime", data.reloadTime.value)
-                ]
-            case "armor":
-                res = [
-                    this._chatLineHelper("protection", data.damage.value),
-                ]
-            case "general":
-                res = []
-            case "familiar":
-                res = [
-                    this._chatLineHelper("APValue", data.APValue.value),
-                    this._chatLineHelper("AsPCost", data.AsPCost.value),
-                    this._chatLineHelper("duration", data.duration.value),
-                    this._chatLineHelper("aspect", data.aspect.value)
-                ]
-        }
-        if (data.effect.value != "")
-            res.push(this._chatLineHelper("effect", data.effect.value))
-        return res
-    }
-}
-
-class CantripBlessingItemDSA5 extends Itemdsa5 {
-    static chatData(data) {
-        return [
-            this._chatLineHelper("duration", data.duration.value),
-            this._chatLineHelper("targetCategory", data.targetCategory.value),
-            this._chatLineHelper("feature", data.feature.value),
-        ]
-    }
-}
-
-class SpecialAbilityItemDSA5 extends Itemdsa5 {
-    static chatData(data) {
-        return [
-            this._chatLineHelper("rule", data.rule.value),
-        ]
-    }
-}
-
-class DiseaseItemDSA5 extends Itemdsa5 {
-    static chatData(data) {
-        return [
-            this._chatLineHelper("stepValue", data.step.value),
-            this._chatLineHelper("incubation", data.incubation.value),
-            this._chatLineHelper("damage", DSA5_Utility.replaceDies(data.damage.value)),
-            this._chatLineHelper("duration", data.duration.value),
-            this._chatLineHelper("source", DSA5_Utility.replaceDies(data.source.value)),
-            this._chatLineHelper("treatment", data.treatment.value),
-            this._chatLineHelper("antidot", data.antidot.value),
-            this._chatLineHelper("resistanceModifier", data.resistance.value)
-        ]
-    }
-    static setupDialog(ev, options, item) {
-        let title = item.name + " " + game.i18n.localize(item.type) + " " + game.i18n.localize("Test");
-
-        let testData = {
-            opposable: false,
-            source: item.data,
-            extra: {
-                options: options
-            }
-        };
-
-        let dialogOptions = {
-            title: title,
-            template: "/systems/dsa5/templates/dialog/poison-dialog.html",
-            data: {
-                rollMode: options.rollMode
-            },
-            callback: (html) => {
-                cardOptions.rollMode = html.find('[name="rollMode"]').val();
-                testData.testModifier = Number(html.find('[name="testModifier"]').val());
-                testData.situationalModifiers = []
-
-                testData.situationalModifiers.push({
-                    name: game.i18n.localize("zkModifier"),
-                    value: html.find('[name="zkModifier"]').val() || 0
-                })
-                testData.situationalModifiers.push({
-                    name: game.i18n.localize("skModifier"),
-                    value: html.find('[name="skModifier"]').val() || 0
-                })
-
-                return { testData, cardOptions };
-            }
-        };
-
-        let cardOptions = item._setupCardOptions(`systems/dsa5/templates/chat/roll/${item.type}-card.html`, title)
-
-        return DiceDSA5.setupDialog({
-            dialogOptions: dialogOptions,
-            testData: testData,
-            cardOptions: cardOptions
-        });
-    }
-}
-
-class PoisonItemDSA5 extends Itemdsa5 {
-    static chatData(data) {
-        return [
-            this._chatLineHelper("stepValue", data.step.value),
-            this._chatLineHelper("poisonType", data.poisonType.value),
-            this._chatLineHelper("start", data.start.value),
-            this._chatLineHelper("duration", data.duration.value),
-            this._chatLineHelper("resistanceModifier", data.resistance.value),
-            this._chatLineHelper("effect", DSA5_Utility.replaceDies(data.effect.value))
-        ]
-    }
-    static setupDialog(ev, options, item) {
-        let title = item.name + " " + game.i18n.localize(item.type) + " " + game.i18n.localize("Test");
-
-        let testData = {
-            opposable: false,
-            source: item.data,
-            extra: {
-                options: options
-            }
-        };
-
-        let dialogOptions = {
-            title: title,
-            template: "/systems/dsa5/templates/dialog/poison-dialog.html",
-            data: {
-                rollMode: options.rollMode
-            },
-            callback: (html) => {
-                cardOptions.rollMode = html.find('[name="rollMode"]').val();
-                testData.testModifier = Number(html.find('[name="testModifier"]').val());
-                testData.situationalModifiers = []
-
-                testData.situationalModifiers.push({
-                    name: game.i18n.localize("zkModifier"),
-                    value: html.find('[name="zkModifier"]').val() || 0
-                })
-                testData.situationalModifiers.push({
-                    name: game.i18n.localize("skModifier"),
-                    value: html.find('[name="skModifier"]').val() || 0
-                })
-
-                return { testData, cardOptions };
-            }
-        };
-
-        let cardOptions = item._setupCardOptions(`systems/dsa5/templates/chat/roll/${item.type}-card.html`, title)
-
-        return DiceDSA5.setupDialog({
-            dialogOptions: dialogOptions,
-            testData: testData,
-            cardOptions: cardOptions
-        });
-    }
-
-}
-
-class ArmorItemDSA5 extends Itemdsa5 {
-    static chatData(data) {
-        let properties = [
-            this._chatLineHelper("protection", data.protection.value),
-            this._chatLineHelper("encumbrance", data.encumbrance.value)
-        ]
-        if (data.effect.value != "")
-            properties.push(this._chatLineHelper("effect", data.effect.value))
-
-        return properties
-    }
-}
-
-class RangeweaponItemDSA5 extends Itemdsa5 {
-    static chatData(data) {
-        let res = [
-            this._chatLineHelper("damage", data.damage.value),
-            this._chatLineHelper("combatskill", data.combatskill.value),
-            this._chatLineHelper("reach", data.reach.value)
-        ]
-        if (data.effect.value != "")
-            res.push(this._chatLineHelper("effect", data.effect.value))
-
-        return res
-    }
-}
-
-class MeleeweaponDSA5 extends Itemdsa5 {
-    static chatData(data) {
-        let res = [
-            this._chatLineHelper("damage", data.damage.value),
-            this._chatLineHelper("atmod", data.atmod.value),
-            this._chatLineHelper("pamod", data.pamod.value),
-            this._chatLineHelper("combatskill", data.combatskill.value)
-        ]
-        if (data.effect.value != "")
-            res.push(this._chatLineHelper("effect", data.effect.value))
-
-        return res
-    }
-}
-
-class AmmunitionItemDSA5 extends Itemdsa5 {
-    static chatData(data) {
-        return [
-            this._chatLineHelper("ammunitiongroup", game.i18n.localize(data.ammunitiongroup.value))
-        ]
-    }
-}
-
-class EquipmentItemDSA5 extends Itemdsa5 {
-    static chatData(data) {
-        return [
-            this._chatLineHelper("equipmentType", game.i18n.localize(data.equipmentType.value))
-        ]
-    }
-}
-
-DSA5.ItemSubclasses = {
-    ritual: SpellItemDSA5,
-    spell: SpellItemDSA5,
-    liturgy: LiturgyItemDSA5,
-    ceremony: LiturgyItemDSA5,
-    advantage: VantageItemDSA5,
-    disadvantage: VantageItemDSA5,
-    aggregatedTest: aggregatedTestItemDSA5,
-    trait: TraitItemDSA5,
-    blessing: CantripBlessingItemDSA5,
-    magictrick: CantripBlessingItemDSA5,
-    specialability: SpecialAbilityItemDSA5,
-    disease: DiseaseItemDSA5,
-    poison: PoisonItemDSA5,
-    armor: ArmorItemDSA5,
-    rangeweapon: RangeweaponItemDSA5,
-    meleeweapon: MeleeweaponDSA5,
-    ammunition: AmmunitionItemDSA5,
-    equipment: EquipmentItemDSA5
 }

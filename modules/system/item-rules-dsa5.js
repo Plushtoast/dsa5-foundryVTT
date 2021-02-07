@@ -48,7 +48,7 @@ export default class ItemRulesDSA5 {
 
     static itemAsModifier(actor, name, factor, types) {
         let res = []
-        let item = actor.items.find(x => types.includes(x.type) && x.name.match(name))
+        let item = actor.items.find(x => types.includes(x.type) && x.name == name)
         if (item) {
             res.push({
                 name: item.name,

@@ -6,6 +6,7 @@ import DSA5Dialog from "../dialog/dialog-dsa5.js"
 import AdvantageRulesDSA5 from "../system/advantage-rules-dsa5.js";
 import SpecialabilityRulesDSA5 from "../system/specialability-rules-dsa5.js";
 import DSA5StatusEffects from "../status/status_effects.js"
+import Itemdsa5 from "../item/item-dsa5.js";
 
 export default class Actordsa5 extends Actor {
     static async create(data, options) {
@@ -581,160 +582,38 @@ export default class Actordsa5 extends Actor {
     }
 
     setupWeaponTrait(item, mode, options) {
-        let title = game.i18n.localize(item.name) + " " + game.i18n.localize(mode + "test");
-        let testData = {
-            opposable: true,
-            source: item,
-            mode: mode,
-            extra: {
-                actor: this.data,
-                options: options
-            }
-        };
-
-        let dialogOptions = {
-            title: title,
-            template: "/systems/dsa5/templates/dialog/combatskill-dialog.html",
-            // Prefilled dialog data
-            data: {
-                rollMode: options.rollMode
-            },
-            callback: (html) => {
-                cardOptions.rollMode = html.find('[name="rollMode"]').val();
-                testData.testModifier = Number(html.find('[name="testModifier"]').val());
-                testData.situationalModifiers = this._parseModifiers('[name = "situationalModifiers"]')
-                testData.rangeModifier = html.find('[name="distance"]').val()
-                testData.sizeModifier = DSA5.rangeSizeModifier[html.find('[name="size"]').val()]
-                testData.visionModifier = Number(html.find('[name="vision"]').val())
-                testData.opposingWeaponSize = html.find('[name="weaponsize"]').val()
-                testData.defenseCount = Number(html.find('[name="defenseCount"]').val())
-                testData.narrowSpace = html.find('[name="narrowSpace"]').is(":checked")
-                testData.doubleAttack = html.find('[name="doubleAttack"]').is(":checked") ? -2 : 0
-                testData.wrongHand = html.find('[name="wrongHand"]').is(":checked") ? -4 : 0
-                return { testData, cardOptions };
-            }
-        };
-
-        let cardOptions = this._setupCardOptions("systems/dsa5/templates/chat/roll/combatskill-card.html", title)
-
-        return DiceDSA5.setupDialog({
-            dialogOptions: dialogOptions,
-            testData: testData,
-            cardOptions: cardOptions
-        });
+        options["mode"] = mode
+        return Itemdsa5.getSubClass(item.type).setupDialog(null, options, item, this)
     }
 
     setupWeapon(item, mode, options) {
-        let title = game.i18n.localize(item.name) + " " + game.i18n.localize(mode + "test");
-
-        let testData = {
-            opposable: true,
-            source: item,
-            mode: mode,
-            extra: {
-                actor: this.data,
-                options: options
-            }
-        };
-
-        if (item.type == "rangeweapon" && this.data.type != "creature") {
-            let itemData = item.data.data ? item.data.data : item.data
-
-            if (itemData.ammunitiongroup.value == "-") {
-                testData.extra.ammo = duplicate(item)
-                if ((testData.extra.ammo.data.quantity.value <= 0)) {
-                    ui.notifications.error(game.i18n.localize("DSAError.NoAmmo"))
-                    return
-                }
-            } else {
-                testData.extra.ammo = duplicate(this.getEmbeddedEntity("OwnedItem", itemData.currentAmmo.value))
-                if (!testData.extra.ammo || itemData.currentAmmo.value == "" || testData.extra.ammo.data.quantity.value <= 0) {
-                    ui.notifications.error(game.i18n.localize("DSAError.NoAmmo"))
-                    return
-                }
-            }
-        }
-
-        let dialogOptions = {
-            title: title,
-            template: "/systems/dsa5/templates/dialog/combatskill-dialog.html",
-            data: {
-                rollMode: options.rollMode
-            },
-            callback: (html) => {
-                cardOptions.rollMode = html.find('[name="rollMode"]').val();
-                testData.testModifier = Number(html.find('[name="testModifier"]').val());
-                testData.situationalModifiers = this._parseModifiers('[name = "situationalModifiers"]')
-                testData.rangeModifier = html.find('[name="distance"]').val()
-                testData.sizeModifier = DSA5.rangeSizeModifier[html.find('[name="size"]').val()]
-                testData.visionModifier = Number(html.find('[name="vision"]').val())
-                testData.opposingWeaponSize = html.find('[name="weaponsize"]').val()
-                testData.defenseCount = Number(html.find('[name="defenseCount"]').val())
-                testData.narrowSpace = html.find('[name="narrowSpace"]').is(":checked")
-                testData.doubleAttack = html.find('[name="doubleAttack"]').is(":checked") ? -2 : 0
-                testData.wrongHand = html.find('[name="wrongHand"]').is(":checked") ? -4 : 0
-                if (item.type == "rangeweapon") {
-                    testData.situationalModifiers.push({
-                        name: game.i18n.localize("target") + " " + html.find('[name="targetMovement"] option:selected').text(),
-                        value: Number(html.find('[name="targetMovement"]').val())
-                    }, {
-                        name: game.i18n.localize("shooter") + " " + html.find('[name="shooterMovement"] option:selected').text(),
-                        value: Number(html.find('[name="shooterMovement"]').val())
-                    }, {
-                        name: game.i18n.localize("mount") + " " + html.find('[name="mountedOptions"] option:selected').text(),
-                        value: Number(html.find('[name="mountedOptions"]').val())
-                    }, {
-                        name: game.i18n.localize("rangeMovementOptions.QUICKCHANGE"),
-                        value: html.find('[name="quickChange"]').is(":checked") ? -4 : 0
-                    })
-                }
-                return { testData, cardOptions };
-            }
-        };
-
-        let cardOptions = this._setupCardOptions("systems/dsa5/templates/chat/roll/combatskill-card.html", title)
-
-        return DiceDSA5.setupDialog({
-            dialogOptions: dialogOptions,
-            testData: testData,
-            cardOptions: cardOptions
-        });
+        options["mode"] = mode
+        return Itemdsa5.getSubClass(item.type).setupDialog(null, options, item, this)
     }
 
     setupCombatskill(item, mode, options = {}) {
-        let title = game.i18n.localize(item.name) + " " + game.i18n.localize(mode + "test");
+        options["mode"] = mode
+        return Itemdsa5.getSubClass(item.type).setupDialog(null, options, item, this)
+    }
 
-        let testData = {
-            opposable: true,
-            source: item,
-            mode: mode,
-            extra: {
-                actor: this.data,
-                options: options
-            }
-        };
+    setupWeaponless(statusId, options = {}) {
+        let item = duplicate(DSA5.defaultWeapon)
+        item.name = game.i18n.localize(`${statusId}Weaponless`)
+        item.data.data.combatskill = {
+            value: game.i18n.localize("Combatskill.wrestle")
+        }
+        item.data.type = "meleeweapon"
+        item.data.data.damageThreshold.value = 14
+        options["mode"] = statusId
+        return Itemdsa5.getSubClass(item.type).setupDialog(null, options, item, this)
+    }
 
-        let dialogOptions = {
-            title: title,
-            template: "/systems/dsa5/templates/dialog/combatskill-dialog.html",
-            data: {
-                rollMode: options.rollMode
-            },
-            callback: (html) => {
-                cardOptions.rollMode = html.find('[name="rollMode"]').val();
-                testData.testModifier = Number(html.find('[name="testModifier"]').val());
-                testData.situationalModifiers = this._parseModifiers('[name = "situationalModifiers"]')
-                return { testData, cardOptions };
-            }
-        };
+    setupSpell(spell, options = {}) {
+        return Itemdsa5.getSubClass(spell.type).setupDialog(null, options, spell, this)
+    }
 
-        let cardOptions = this._setupCardOptions("systems/dsa5/templates/chat/roll/combatskill-card.html", title)
-
-        return DiceDSA5.setupDialog({
-            dialogOptions: dialogOptions,
-            testData: testData,
-            cardOptions: cardOptions
-        });
+    setupSkill(skill, options = {}) {
+        return Itemdsa5.getSubClass(skill.type).setupDialog(null, options, skill, this)
     }
 
     applyDamage(amount) {
@@ -759,56 +638,6 @@ export default class Actordsa5 extends Actor {
         }
     }
 
-    setupWeaponless(statusId, options = {}) {
-        let title = game.i18n.localize(statusId + "Weaponless");
-
-        let testData = {
-            opposable: true,
-            mode: statusId,
-            source: DSA5.defaultWeapon,
-            extra: {
-                weaponless: true,
-                statusId: statusId,
-                actor: this.data,
-                options: options
-            }
-        };
-        testData.source.data.name = statusId
-        testData.source.data.data.combatskill = {
-            value: game.i18n.localize("Combatskill.wrestle")
-        }
-        testData.source.data.type = "meleeweapon"
-        testData.source.data.data.damageThreshold.value = 14
-
-        let dialogOptions = {
-            title: title,
-            template: "/systems/dsa5/templates/dialog/status-dialog.html",
-            data: {
-                rollMode: options.rollMode
-            },
-            callback: (html) => {
-                testData.testModifier = Number(html.find('[name="testModifier"]').val());
-                testData.situationalModifiers = this._parseModifiers('[name = "situationalModifiers"]')
-                testData.rangeModifier = html.find('[name="distance"]').val()
-                testData.sizeModifier = DSA5.rangeSizeModifier[html.find('[name="size"]').val()]
-                testData.visionModifier = Number(html.find('[name="vision"]').val())
-                testData.opposingWeaponSize = html.find('[name="weaponsize"]').val()
-                testData.defenseCount = Number(html.find('[name="defenseCount"]').val())
-                testData.narrowSpace = html.find('[name="narrowSpace"]').is(":checked")
-                testData.doubleAttack = html.find('[name="doubleAttack"]').is(":checked") ? -2 : 0
-                testData.wrongHand = html.find('[name="wrongHand"]').is(":checked") ? -4 : 0
-                return { testData, cardOptions };
-            }
-        };
-
-        let cardOptions = this._setupCardOptions("systems/dsa5/templates/chat/roll/status-card.html", title)
-
-        return DiceDSA5.setupDialog({
-            dialogOptions: dialogOptions,
-            testData: testData,
-            cardOptions: cardOptions
-        });
-    }
 
     preparePostRollAction(message) {
         let data = message.data.flags.data;
@@ -1132,112 +961,6 @@ export default class Actordsa5 extends Actor {
         });
     }
 
-    setupSpell(spell, options = {}) {
-        let sheet = "spell"
-        if (spell.type == "ceremony" || spell.type == "liturgy")
-            sheet = "liturgy"
-
-        let title = spell.name + " " + game.i18n.localize(`${spell.type}Test`);
-
-        let testData = {
-            opposable: false,
-            source: spell,
-            extra: {
-                actor: this.data,
-                options: options,
-            }
-        };
-
-        let data = {
-            rollMode: options.rollMode,
-            spellCost: spell.data.AsPCost.value,
-            maintainCost: spell.data.maintainCost.value,
-            spellCastingTime: spell.data.castingTime.value,
-            spellReach: spell.data.range.value,
-            canChangeCost: spell.data.canChangeCost.value == "true",
-            canChangeRange: spell.data.canChangeRange.value == "true",
-            canChangeCastingTime: spell.data.canChangeCastingTime.value == "true",
-            hasSKModifier: spell.data.resistanceModifier.value == "SK",
-            hasZKModifier: spell.data.resistanceModifier.value == "ZK",
-            maxMods: Math.floor(Number(spell.data.talentValue.value) / 4)
-        }
-
-        let dialogOptions = {
-            title: title,
-            template: `/systems/dsa5/templates/dialog/${sheet}-dialog.html`,
-
-            data: data,
-            callback: (html) => {
-                cardOptions.rollMode = html.find('[name="rollMode"]').val();
-                testData.testModifier = Number(html.find('[name="testModifier"]').val());
-                testData.testDifficulty = 0
-                testData.situationalModifiers = this._parseModifiers('[name = "situationalModifiers"]')
-                testData.calculatedSpellModifiers = {
-                    castingTime: html.find(".castingTime").text(),
-                    cost: html.find(".aspcost").text(),
-                    reach: html.find(".reach").text(),
-                    maintainCost: html.find(".maintainCost").text()
-                }
-                testData.situationalModifiers.push({
-                    name: game.i18n.localize("removeGestureOrFormula"),
-                    value: html.find('[name="removeGestureOrFormula"]').is(":checked") ? -2 : 0
-                }, {
-                    name: game.i18n.localize("castingTime"),
-                    value: html.find(".castingTime").data("mod")
-                }, {
-                    name: game.i18n.localize("cost"),
-                    value: html.find(".aspcost").data('mod')
-                }, {
-                    name: game.i18n.localize("reach"),
-                    value: html.find(".reach").data('mod')
-                }, {
-                    name: game.i18n.localize("zkModifier"),
-                    value: html.find('[name="zkModifier"]').val() || 0
-                }, {
-                    name: game.i18n.localize("skModifier"),
-                    value: html.find('[name="skModifier"]').val() || 0
-                }, {
-                    name: game.i18n.localize("maintainedSpells"),
-                    value: Number(html.find('[name="maintainedSpells"]').val()) * -1
-                })
-                if (spell.type == "ceremony") {
-                    testData.situationalModifiers.push({
-                        name: game.i18n.localize("CEREMONYMODIFIER.artefact"),
-                        value: html.find('[name="artefactUsage"]').is(":checked") ? 1 : 0
-                    }, {
-                        name: game.i18n.localize("place"),
-                        value: html.find('[name="placeModifier"]').val()
-                    }, {
-                        name: game.i18n.localize("time"),
-                        value: html.find('[name="timeModifier"]').val()
-                    })
-                } else if (spell.type == "ritual") {
-                    testData.situationalModifiers.push({
-                        name: game.i18n.localize("RITUALMODIFIER.rightClothes"),
-                        value: html.find('[name="rightClothes"]').is(":checked") ? 1 : 0
-                    }, {
-                        name: game.i18n.localize("RITUALMODIFIER.rightEquipment"),
-                        value: html.find('[name="rightEquipment"]').is(":checked") ? 1 : 0
-                    }, {
-                        name: game.i18n.localize("place"),
-                        value: html.find('[name="placeModifier"]').val()
-                    }, {
-                        name: game.i18n.localize("time"),
-                        value: html.find('[name="timeModifier"]').val()
-                    })
-                }
-                return { testData, cardOptions };
-            }
-        };
-
-        let cardOptions = this._setupCardOptions("systems/dsa5/templates/chat/roll/spell-card.html", title)
-
-        return DiceDSA5.setupDialog({
-            dialogOptions: dialogOptions,
-            testData: testData,
-            cardOptions: cardOptions
-        });
-    }
 
     _parseModifiers(search) {
         let res = []
@@ -1250,41 +973,7 @@ export default class Actordsa5 extends Actor {
         return res
     }
 
-    setupSkill(skill, options = {}) {
-        let title = skill.name + " " + game.i18n.localize("Test");
 
-        let testData = {
-            opposable: true,
-            source: skill,
-            extra: {
-                actor: this.data,
-                options: options,
-            }
-        };
-
-        let dialogOptions = {
-            title: title,
-            template: "/systems/dsa5/templates/dialog/skill-dialog.html",
-            data: {
-                rollMode: options.rollMode
-            },
-            callback: (html) => {
-                cardOptions.rollMode = html.find('[name="rollMode"]').val();
-                testData.testModifier = Number(html.find('[name="testModifier"]').val());
-                testData.testDifficulty = DSA5.skillDifficultyModifiers[html.find('[name="testDifficulty"]').val()];
-                testData.situationalModifiers = this._parseModifiers('[name = "situationalModifiers"]')
-                return { testData, cardOptions };
-            }
-        };
-
-        let cardOptions = this._setupCardOptions("systems/dsa5/templates/chat/roll/skill-card.html", title)
-
-        return DiceDSA5.setupDialog({
-            dialogOptions: dialogOptions,
-            testData: testData,
-            cardOptions: cardOptions
-        });
-    }
 
     static _prepareitemStructure(item) {
         if (item.data.structure && item.data.structure.max != 0) {
