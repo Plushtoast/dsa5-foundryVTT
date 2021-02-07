@@ -1,5 +1,5 @@
-import ItemSheetdsa5 from "./item-sheet.js"
-import DSA5 from "../system/config-dsa5.js"
+import ItemSheetdsa5 from "../item-sheet.js"
+import DSA5 from "../../system/config-dsa5.js"
 
 export default class ItemCareerdsa5 extends ItemSheetdsa5 {
     constructor(item, options) {

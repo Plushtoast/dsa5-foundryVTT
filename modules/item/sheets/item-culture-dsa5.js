@@ -1,5 +1,4 @@
-import ItemSheetdsa5 from "./item-sheet.js"
-import DSA5 from "../system/config-dsa5.js"
+import ItemSheetdsa5 from "../item-sheet.js"
 
 export default class ItemCulturedsa5 extends ItemSheetdsa5 {
     constructor(item, options) {

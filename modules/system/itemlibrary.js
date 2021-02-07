@@ -117,7 +117,7 @@ export default class DSA5ItemLibrary extends Application {
     }
 
     _understandItems(itemList) {
-        this.items = this.items.concat(itemList)
+        this.items.push(...itemList)
     }
 
     activateListeners(html) {

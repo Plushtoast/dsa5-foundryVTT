@@ -64,10 +64,10 @@ export default class DSA5Dialog extends Dialog {
             let newMaintainCost = maintainCost.data('base')
             let mod = 0
             parent.find('.spellModifier[data-cost]:checked').each(function(index, element) {
-                newPosition = newPosition * (element.value < 0 ? 2 : 0.5)
+                newPosition = newPosition * (element.value < 0 ? 0.5 : 2)
                 if (newMaintainCost != "" && newMaintainCost != undefined) {
                     let maintains = String(newMaintainCost).split(" ")
-                    maintains[0] = Number(maintains[0]) * (element.value < 0 ? 2 : 0.5)
+                    maintains[0] = Number(maintains[0]) * (element.value < 0 ? 0.5 : 2)
                     newMaintainCost = maintains.join(" ")
                 }
                 mod += Number(element.value)

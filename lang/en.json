@@ -754,6 +754,8 @@
         "TimeCannotBeParsed": "The duration can not be assigned automatically. Format not recognized.",
         "DamagePermission": "You are not allowed to transfer the damage.",
         "NotEnoughXP": "Not enough adventure points",
+        "NotEnoughAsP": "Not enough Astral Energy",
+        "NotEnoughKaP": "Not enough Karma Points",
         "AdvanceMaximumReached": "Max advancements already reached",
         "notFound": "{category} {name} not found",
         "itemNotFound": "This entry was not found in the database. Please create it manually.",

@@ -757,6 +757,8 @@
         "TimeCannotBeParsed": "Die Zauberdauer kan nicht automatisch angepasst werden. Format nicht erkannt.",
         "DamagePermission": "Du darfst den Schaden nicht übertragen.",
         "NotEnoughXP": "Nicht genug Abenteuerpunkte",
+        "NotEnoughAsP": "Nicht genug Astralpunkte",
+        "NotEnoughKaP": "Nicht genug Astralpunkte",
         "AdvanceMaximumReached": "Maximale Steigerung bereits erreicht",
         "notFound": "{category} {name} nicht gefunden",
         "itemNotFound": "Dieser Eintrag wurde nicht in der Datenbank gefunden, bitte manuell anlegen",

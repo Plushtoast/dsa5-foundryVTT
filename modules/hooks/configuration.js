@@ -84,6 +84,14 @@ export default function() {
         default: false,
         type: Boolean
     })
+    game.settings.register("dsa5", "diceSetup", {
+        name: "diceSetup",
+        hint: "diceSetup",
+        scope: "world",
+        config: false,
+        default: false,
+        type: Boolean
+    })
     game.settings.register("dsa5", "capQSat", {
         name: "DSASETTINGS.capQSat",
         hint: "DSASETTINGS.capQSatHint",

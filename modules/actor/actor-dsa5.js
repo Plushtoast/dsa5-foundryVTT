@@ -743,9 +743,19 @@ export default class Actordsa5 extends Actor {
 
     applyMana(amount, type) {
         if (type == "AsP") {
-            this.update({ "data.status.astralenergy.value": Math.max(0, this.data.data.status.astralenergy.value - amount) })
+            let newVal = this.data.data.status.astralenergy.value - amount
+            if (newVal >= 0) {
+                this.update({ "data.status.astralenergy.value": newVal })
+            } else {
+                ui.notifications.error(game.i18n.localize('DSAError.NotEnoughAsP'))
+            }
         } else {
-            this.update({ "data.status.karmaenergy.value": Math.max(0, this.data.data.status.karmaenergy.value - amount) })
+            let newVal = this.data.data.status.karmaenergy.value - amount
+            if (newVal >= 0) {
+                this.update({ "data.status.karmaenergy.value": newVal })
+            } else {
+                ui.notifications.error(game.i18n.localize('DSAError.NotEnoughKaP'))
+            }
         }
     }
 
@@ -1336,7 +1346,6 @@ export default class Actordsa5 extends Actor {
         item.damageAdd = damageTerm != undefined ? (Number(damageTerm) > 0 ? "+" : "") + damageTerm : ""
         return item
     }
-
 
     static _prepareRangeWeapon(item, ammunitions, combatskills, actor) {
         let skill = combatskills.filter(i => i.name == item.data.combatskill.value)[0];

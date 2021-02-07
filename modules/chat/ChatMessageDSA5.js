@@ -2,8 +2,11 @@ export default class ChatMessageDSA5Roll extends ChatMessage {
     get isRoll() {
         return this.isDSARoll || super.isRoll
     }
+
     get roll() {
-        return this.isDSARoll ? new EmptyRoll() : super.roll
+        if (this.isDSARoll)
+            return new EmptyRoll("")
+        return super.roll
     }
 
     get isDSARoll() {
@@ -11,7 +14,7 @@ export default class ChatMessageDSA5Roll extends ChatMessage {
     }
 }
 
-class EmptyRoll {
+class EmptyRoll extends Roll {
     render() {
         return ""
     }

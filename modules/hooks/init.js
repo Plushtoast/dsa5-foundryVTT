@@ -9,7 +9,7 @@ import * as statusEffects from './statuseffect.js'
 import * as sideBar from './sidebar.js'
 import * as configuration from './configuration.js'
 import * as journals from './journal.js'
-import ChatMessageDSA5Roll from "../chat/ChatMessageDSA5.js";
+
 
 export default function() {
 
@@ -57,7 +57,7 @@ Hooks.once("init", () => {
     ]);
 
     configuration.default()
-    CONFIG.ChatMessage.entityClass = ChatMessageDSA5Roll
+
 });
 
 Hooks.once('setup', function() {

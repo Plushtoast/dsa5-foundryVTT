@@ -71,7 +71,6 @@ export default function() {
                     actor = new Actordsa5(newTestData.extra.actor, { temporary: true })
                 if (!actor.owner)
                     return ui.notifications.error(game.i18n.localize("DSAError.DamagePermission"))
-                console.log(cardData.preData.calculatedSpellModifiers.finalcost)
                 actor.applyMana(cardData.preData.calculatedSpellModifiers.finalcost, ["ritual", "spell"].includes(cardData.preData.source.type) ? "AsP" : "KaP")
             }
         }, {

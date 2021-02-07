@@ -10,7 +10,6 @@ import Itemdsa5 from "../item/item-dsa5.js"
 import CombatTables from "../tables/combattables.js";
 import DSA5StatusEffects from "../status/status_effects.js";
 import DSA5ChatAutoCompletion from "./chat_autocompletion.js";
-import ChatMessageDSA5Roll from "../chat/ChatMessageDSA5.js";
 
 export default class DiceDSA5 {
     static async setupDialog({ dialogOptions, testData, cardOptions, }) {
@@ -1065,7 +1064,7 @@ export default class DiceDSA5 {
                     whisper = game.users.filter(user => user.active).map(x => x.data._id);
                     break;
             }
-            await game.dice3d.showForRoll(roll, game.user, true, whisper, blind);
+            game.dice3d.showForRoll(roll, game.user, true, whisper, blind);
         }
     }
 
@@ -1082,6 +1081,7 @@ export default class DiceDSA5 {
             chatOptions["blind"] = true;
         } else if (chatOptions.rollMode === "selfroll") chatOptions["whisper"] = [game.user];
 
+
         chatOptions["flags.data"] = {
             preData: chatData.testData.preData,
             postData: chatData.testData,
@@ -1092,8 +1092,6 @@ export default class DiceDSA5 {
             hideData: chatData.hideData,
             isDSARoll: true
         };
-        chatOptions.type = CONST.CHAT_MESSAGE_TYPES.ROLL
-
 
         if (!rerenderMessage) {
             return renderTemplate(chatOptions.template, chatData).then(html => {

@@ -1,4 +1,4 @@
-import ItemSheetdsa5 from "./item-sheet.js"
+import ItemSheetdsa5 from "../item-sheet.js"
 
 export default class ItemSpeciesdsa5 extends ItemSheetdsa5 {
     constructor(item, options) {

@@ -164,11 +164,11 @@ export default class WizardDSA5 extends Application {
         for (let p of game.packs) {
             if (p.metadata.entity == "Item" && (game.user.isGM || !p.private)) {
                 await p.getContent().then(content => {
-                    this.items = this.items.concat(content.filter(x => this.dataTypes.includes(x.type)))
+                    this.items.push(...content.filter(x => this.dataTypes.includes(x.type)))
                 })
             }
         }
-        this.items.concat(game.items.entities.filter(i => i.permission > 1 && this.dataTypes.includes(i.type)));
+        this.items.push(...game.items.entities.filter(i => i.permission > 1 && this.dataTypes.includes(i.type)));
     }
 
     _validateInput(parent) {

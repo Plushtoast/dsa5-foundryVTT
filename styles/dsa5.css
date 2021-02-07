@@ -1914,3 +1914,7 @@ a.inline-roll {
 .blind .chatIndicator .fa-eye-slash {
     display: inline-block;
 }
+
+.dsa5.post-item img {
+    border: none;
+}
