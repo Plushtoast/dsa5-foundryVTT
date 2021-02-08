@@ -97,14 +97,23 @@ export default class Actordsa5 extends Actor {
 
 
             if (game.user.isGM) {
-                let pain = Math.floor((1 - data.data.status.wounds.value / data.data.status.wounds.max) * 4)
-                pain -= AdvantageRulesDSA5.vantageStep(this, game.i18n.localize('LocalizedIDs.ruggedFighter'))
+                let hasDefaultPain = data.type != "creature" || data.data.status.wounds.max >= 20
+                let pain = 0
+                if (hasDefaultPain) {
+                    pain = Math.floor((1 - data.data.status.wounds.value / data.data.status.wounds.max) * 4)
+
+                    if (data.data.status.wounds.value <= 5)
+                        pain = 4
+
+                } else {
+                    pain = Math.floor(5 - 5 * data.data.status.wounds.value / data.data.status.wounds.max)
+                }
+
+                if (pain < 4)
+                    pain -= AdvantageRulesDSA5.vantageStep(this, game.i18n.localize('LocalizedIDs.ruggedFighter'))
 
                 if (pain > 0)
                     pain += AdvantageRulesDSA5.vantageStep(this, game.i18n.localize('LocalizedIDs.sensitiveToPain'))
-
-                if (data.type != "creature" && data.data.status.wounds.value <= 5)
-                    pain = 4
 
                 pain = Math.max(Math.min(4, pain), 0)
 
@@ -135,7 +144,8 @@ export default class Actordsa5 extends Actor {
 
         let gearModifyableCalculatedAttributes = ["fatePoints", "initiative", "speed", "astralenergy", "karmaenergy", "wounds", "dodge", "soulpower", "toughness"]
         for (let k of gearModifyableCalculatedAttributes) {
-            data.data.status[k].gearmodifier = 0
+            if (data.data.status[k])
+                data.data.status[k].gearmodifier = 0
         }
     }
 
@@ -403,6 +413,8 @@ export default class Actordsa5 extends Actor {
                         break;
                     case "specialability":
                         specAbs[i.data.category.value].push(i)
+                        magic.hasSpells = magic.hasSpells || i.data.category.value == "magical"
+                        magic.hasPrayers = magic.hasPrayers || i.data.category.value == "clerical"
                         break;
                 }
 

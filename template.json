@@ -274,9 +274,6 @@
             },
             "sheetLocked": {
                 "value": false
-            },
-            "woundThresholds": {
-                "value": ""
             }
         }
     },

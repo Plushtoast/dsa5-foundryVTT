@@ -186,7 +186,6 @@ export default class CareerWizard extends WizardDSA5 {
 
         let update = {
             "data.details.career.value": this.career.name,
-            "data.details.culture.value": "",
             "data.freeLanguagePoints.value": this.career.data.languagePoints.value
         }
 

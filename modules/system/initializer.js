@@ -41,6 +41,8 @@ export default class DSA5Initializer extends Dialog {
                 }
 
                 let createdFolders = await Folder.create(foldersToCreate)
+                if (!Array.isArray(createdFolders))
+                    createdFolders = [createdFolders]
                 for (let folder of createdFolders)
                     this.folders[folder.data.name] = folder;
 
@@ -51,7 +53,6 @@ export default class DSA5Initializer extends Dialog {
                         this.folders[folder].update({ parent: parentId })
                     }
                 }
-
 
                 let journal = game.packs.get(json.journal)
                 let entries = await journal.getContent()
