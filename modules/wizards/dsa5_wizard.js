@@ -235,7 +235,7 @@ export default class WizardDSA5 extends Application {
         if (this.errors.length == 0) {
             this.close()
         } else {
-            $(this._element).find('.dialog-buttons').html(`<div class="error"><p>${game.i18n.localize('DSAError.notUnderstoodCulture')}</p><ul><li>${this.errors.join("</li><li>")}</li></ul></div>`)
+            $(this._element).find('.dialog-buttons').html(`<div class="error"><p>${game.i18n.localize('DSAError.notUnderstood')}</p><ul><li>${this.errors.join("</li><li>")}</li></ul></div>`)
         }
     }
 }

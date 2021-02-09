@@ -1,0 +1,21 @@
+<form class="skill-test">
+    <div class="row-section">
+        <div class="col sixty">
+            {{> systems/dsa5/templates/dialog/dialog-constant.html}}
+        </div>
+        <div class="col fourty">
+            <div class="specAbsContainer">
+                {{#unless combatSpecAbs}} {{localize 'DIALOG.noCombatskills'}} {{else}} {{#each combatSpecAbs as |item i|}}
+                <div class="row-section specAbs" data-step="0" data-maxStep="{{item.steps}}" data-atbonus="{{item.atbonus}}" data-tpbonus="{{item.tpbonus}}" data-pabonus="{{item.pabonus}}" title="{{item.label}}">
+                    <div class="specImg col ten">
+                    </div>
+                    <div class="col ninety">
+                        <a>{{item.name}}</a><span class="step"></span>
+                    </div>
+                </div>
+                {{/each}} {{/unless}}
+            </div>
+        </div>
+    </div>
+    <div class="roll-dialog-tag">combatskill</div>
+</form>

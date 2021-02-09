@@ -197,12 +197,12 @@ export default class CareerWizard extends WizardDSA5 {
         }
 
         if (this.career.data.mageLevel.value != "mundane") {
-            update["data.guidevalue.value"] = game.i18n.localize("CHAR." + this.career.data.guidevalue.value)
-            update["data.tradition.value"] = this.career.data.tradition.value
-            update["data.feature.value"] = this.career.data.feature.value
-            update["data.happyTalents.value"] = this.career.data.happyTalents.value
+            update[`data.guidevalue.${this.career.data.mageLevel.value}`] = this.career.data.guidevalue.value
+            update[`data.tradition.${this.career.data.mageLevel.value}`] = this.career.data.tradition.value
+            update[`data.feature.${this.career.data.mageLevel.value}`] = this.career.data.feature.value
         }
         if (this.career.data.mageLevel.value == "clerical") {
+            update["data.happyTalents.value"] = this.career.data.happyTalents.value
             this.setAbility(this.career.data.liturgies.value, ["liturgy", "ceremony"])
             this.addBlessing(this.career.data.blessings.value.split(","), "blessing")
         }

@@ -9,7 +9,7 @@ import aggregatedTestItemDSA5 from "../item/subclasses/aggregatedTest-item-dsa.j
 import TraitItemDSA5 from "../item/subclasses/trait-item-dsa.js";
 import BlessingItemDSA5 from "../item/subclasses/blessing-item-dsa.js";
 import CantripItemDSA5 from "../item/subclasses/cantrip-item-dsa.js";
-import SpecialabilityRulesDSA5 from "../system/specialability-rules-dsa5.js";
+import SpecialAbilityItemDSA5 from "../item/subclasses/specialability-item-dsa.js";
 import PoisonItemDSA5 from "../item/subclasses/poison-item-dsa.js";
 import ArmorItemDSA5 from "../item/subclasses/armor-item-dsa.js";
 import RangeweaponItemDSA5 from "../item/subclasses/rangeweapon-item.dsa.js";
@@ -18,6 +18,7 @@ import AmmunitionItemDSA5 from "../item/subclasses/ammunition-item-dsa.js";
 import EquipmentItemDSA5 from "../item/subclasses/equipment-item-dsa.js";
 import CombatskillDSA5 from "../item/subclasses/combatskill-item-dsa.js";
 import SkillItemDSA5 from "../item/subclasses/skill-item-dsa.js";
+import ConsumableItemDSA from "../item/subclasses/consumable-item-dsa.js";
 
 export default function() {
     Hooks.on("ready", async() => {
@@ -62,7 +63,7 @@ export default function() {
             trait: TraitItemDSA5,
             blessing: BlessingItemDSA5,
             magictrick: CantripItemDSA5,
-            specialability: SpecialabilityRulesDSA5,
+            specialability: SpecialAbilityItemDSA5,
             disease: DiseaseItemDSA5,
             poison: PoisonItemDSA5,
             armor: ArmorItemDSA5,
@@ -71,7 +72,8 @@ export default function() {
             ammunition: AmmunitionItemDSA5,
             equipment: EquipmentItemDSA5,
             combatskill: CombatskillDSA5,
-            skill: SkillItemDSA5
+            skill: SkillItemDSA5,
+            consumable: ConsumableItemDSA
         }
     });
 }

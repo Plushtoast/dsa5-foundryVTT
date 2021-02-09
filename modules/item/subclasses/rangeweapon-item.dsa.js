@@ -17,6 +17,10 @@ export default class RangeweaponItemDSA5 extends Itemdsa5 {
         return res
     }
     static getSituationalModifiers(situationalModifiers, actor, data, source) {
+        source = source.data ? (source.data.data == undefined ? source : source.data) : source
+        let toSeach = [source.data.combatskill.value.toLowerCase(), game.i18n.localize("LocalizedIDs.all")]
+        let combatSpecAbs = actor.items.filter(x => x.type == "specialability" && x.data.data.category.value == "Combat" && x.data.data.effect.value != "" && x.data.data.list.value.split(",").map(x => x.trim().toLowerCase()).filter(y => toSeach.includes(y)).length > 0)
+        let combatskills = []
         situationalModifiers.push(...AdvantageRulesDSA5.getVantageAsModifier(actor.data, game.i18n.localize('LocalizedIDs.restrictedSenseSight'), -2))
         let targetSize = "average"
         if (game.user.targets.size) {
@@ -28,6 +32,20 @@ export default class RangeweaponItemDSA5 extends Itemdsa5 {
         }
         let rangeOptions = {...DSA5.rangeWeaponModifiers }
         delete rangeOptions[AdvantageRulesDSA5.hasVantage(actor, game.i18n.localize('LocalizedIDs.senseOfRange')) ? "long" : "rangesense"]
+        for (let com of combatSpecAbs) {
+            let effects = Itemdsa5.parseEffect(com.data.data.effect.value, actor)
+
+            let bonus = effects[game.i18n.localize("LocalizedAbilityModifiers.at")] || 0
+            let tpbonus = effects[game.i18n.localize("LocalizedAbilityModifiers.tp")] || 0
+            if (bonus != 0 || tpbonus != 0)
+                combatskills.push({
+                    name: com.name,
+                    atbonus: bonus,
+                    tpbonus: tpbonus,
+                    label: `${game.i18n.localize("LocalizedAbilityModifiers.at")}: ${bonus}, ${game.i18n.localize("LocalizedAbilityModifiers.tp")}: ${tpbonus}`,
+                    steps: com.data.data.step.value
+                })
+        }
         mergeObject(data, {
             rangeOptions: rangeOptions,
             sizeOptions: DSA5.rangeSizeCategories,
@@ -35,7 +53,8 @@ export default class RangeweaponItemDSA5 extends Itemdsa5 {
             mountedOptions: DSA5.mountedRangeOptions,
             shooterMovementOptions: DSA5.shooterMovementOptions,
             targetMovementOptions: DSA5.targetMomevementOptions,
-            targetSize: targetSize
+            targetSize: targetSize,
+            combatSpecAbs: combatskills
         });
     }
 
@@ -80,7 +99,7 @@ export default class RangeweaponItemDSA5 extends Itemdsa5 {
 
         let dialogOptions = {
             title: title,
-            template: "/systems/dsa5/templates/dialog/combatskill-dialog.html",
+            template: "/systems/dsa5/templates/dialog/combatskill-enhanced-dialog.html",
             data: data,
             callback: (html) => {
                 cardOptions.rollMode = html.find('[name="rollMode"]').val();
@@ -107,6 +126,7 @@ export default class RangeweaponItemDSA5 extends Itemdsa5 {
                     name: game.i18n.localize("rangeMovementOptions.QUICKCHANGE"),
                     value: html.find('[name="quickChange"]').is(":checked") ? -4 : 0
                 })
+                testData.situationalModifiers.push(...Itemdsa5.getSpecAbModifiers(html, "attack"))
                 return { testData, cardOptions };
             }
         };

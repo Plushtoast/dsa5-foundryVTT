@@ -78,7 +78,8 @@
         "ItemRequiresAdoptionDescription": "Das Hinzufügen benötigt zuerst eine Anpassung. Wähle den passenden Eintrag.",
         "alreadyAddedCharacterpart": "Du hast bereits eine {category}. Möchtest du diese Überschreiben? Bereits hinzugefügte Modifikation der vorherigen {category} können nicht automatisch rückgängig gemacht werden.",
         "warning": "Vorsicht",
-        "deselectWithStrg": "Strg + Click zum Deselektieren"
+        "deselectWithStrg": "Strg + Click zum Deselektieren",
+        "noCombatskills": "Keine passenden Kampfsonderfertigkeiten"
     },
 
     "Equipment": {
@@ -90,7 +91,7 @@
         "bags": "Behältniss",
         "wealth": "Wertsachen",
         "writing": "Schreibwaren",
-        "alchemy": "Alchemie und Gifte",
+        "alchemy": "Alchemie",
         "service": "Dienstleistungen",
         "luxus": "Genussmittel und Luxus",
         "armor": "Rüstung",
@@ -159,6 +160,7 @@
     "culture": "Kultur",
     "count": "Anzahl",
     "cost": "Kosten",
+    "charges": "Ladungen",
     "cancel": "Abbrechen",
     "combatskillcountdivider": "aus",
     "closeCombatAttacks": "Nahkampfangriffe",
@@ -166,6 +168,7 @@
     "career": "Profession",
     "cummulatedQS": "Gesammelte QS",
     "creatureClass": "Typus",
+    "consumable": "Verbrauchsgegenstand",
     "conjuringDifficulty": "Anrufungsschw.",
     "clericspecialtalents": "Klerikale Sonderfertigkeiten",
     "camplocation": "Lagerplatz",
@@ -294,6 +297,7 @@
     "previousFailedTests": "Gescheiterte Proben",
     "probe": "Probe",
     "qualityStep": "Qualitätsstufe",
+    "qualitySteps": "Qualitätsstufen",
     "quantity": "Anzahl",
     "RPr": "Routineprobe",
     "reach": "Reichweite",
@@ -301,6 +305,7 @@
     "ritualTest": "Ritualprobe",
     "rituals": "Rituale",
     "price": "Preis",
+    "priceEachQL": "Preis pro QS",
     "probes": "Proben",
     "poison": "Gift",
     "pamod": "Parademodifikator",
@@ -572,7 +577,8 @@
         "Library": "Bibliothek öffnen",
         "showToPlayers": "Allen zeigen",
         "imageView": "Bildeintrag",
-        "textView": "Texteintrag"
+        "textView": "Texteintrag",
+        "ConsumeItem": "Gegenstand verbrauchen"
     },
 
     "ITEMSHEET": {
@@ -603,12 +609,14 @@
         "unableReroll": "Würfel {die} wegen Unfähigkeit erneut geworfen ({oldVal}/{newVal})",
         "requestRoll": "{user} fordert einen Wurf in {item}",
         "editRoll": "Wurf editieren",
-        "BlindRoll": "Blinder Wurf."
+        "BlindRoll": "Blinder Wurf.",
+        "usesItem": "{actor} benutzt {item}."
     },
 
     "TT": {
         "careerSkills": "Komma separierte Talentliste, z.b. (Betören 2,Etikette 4)",
-        "commaSeparated": "Komma separierte Liste"
+        "commaSeparated": "Komma separierte Liste",
+        "oneQualityPerLine": "Beschreibe eine Qualitätsstufe pro Zeile"
     },
 
     "HELP": {
@@ -653,6 +661,7 @@
     "ITEM.TypeSpecies": "Spezies",
     "ITEM.TypeSpell": "Zauber",
     "ITEM.TypeTrait": "Eigenschaft (Tier)",
+    "ITEM.TypeConsumable": "Verbrauchsgegenstand",
 
     "ACTOR.TypeCharacter": "Charakter",
     "ACTOR.TypeNpc": "Nichtspielercharakter",
@@ -708,6 +717,12 @@
         "selbst": "self"
     },
 
+    "LocalizedAbilityModifiers": {
+        "at": "at",
+        "pa": "pa",
+        "tp": "tp"
+    },
+
     "LocalizedIDs": {
         "deaf": "Taub",
         "blind": "Blind",
@@ -736,17 +751,15 @@
         "magicalRestriction": "Magische Einschränkung",
         "magicalAttunement": "Magische Einstimmung",
         "traditionWitch": "Tradition (Hexen)",
-        "combatReflexes": "Kampfreflexe",
-        "improvedDodge": "Verbessertes Ausweichen",
         "inuredToEncumbrance": "Belastungsgewöhnung",
         "quickload": "Schnellladen",
         "automaticSuccess": "Automatischer Erfolg",
         "automaticFail": "Automatischer Misserfolg",
-        "blessed": "Geweihter",
-        "spellcaster": "Zauberer",
         "familiar": "Vertrauter",
         "shields": "Schilde",
-        "localKnowledge": "Ortskenntnis"
+        "localKnowledge": "Ortskenntnis",
+        "naturalArmor": "Natürliche Rüstung",
+        "all": "alle"
     },
 
     "DSAError": {
@@ -759,11 +772,11 @@
         "NotEnoughXP": "Nicht genug Abenteuerpunkte",
         "NotEnoughAsP": "Nicht genug Astralpunkte",
         "NotEnoughKaP": "Nicht genug Astralpunkte",
+        "NotEnoughCharges": "Nicht genug Ladungen",
         "AdvanceMaximumReached": "Maximale Steigerung bereits erreicht",
         "notFound": "{category} {name} nicht gefunden",
         "itemNotFound": "Dieser Eintrag wurde nicht in der Datenbank gefunden, bitte manuell anlegen",
-        "notUnderstoodCareer": "Folgende Einträge der Profession konnten nicht umgesetzt werden. Bitte manuell anpassen.",
-        "notUnderstoodCulture": "Folgende Einträge der Kultur konnten nicht umgesetzt werden. Bitte manuell anpassen.",
+        "notUnderstood": "Folgende Einträge  konnten nicht umgesetzt bzw. in der Datenbank gefunden werden. Bitte manuell anpassen/hinzufügen.",
         "canNotBeAdded": "{item} der Kategory {category} kann nicht hinzugefügt werden. Dies ist keine unterstützte Kategorie.",
         "NoAmmo": "Nicht genug Munition.",
         "MissingChoices": "Noch nicht alle Optionen ausgefüllt.",

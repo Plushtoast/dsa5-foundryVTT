@@ -192,6 +192,29 @@ export default class ActorSheetDsa5 extends ActorSheet {
         }
     }
 
+    async consumeItem(item) {
+
+        new Dialog({
+            title: game.i18n.localize("SHEET.ConsumeItem") + ": " + item.name,
+            content: game.i18n.localize("SHEET.ConsumeItem") + ": " + item.name,
+            default: 'yes',
+            buttons: {
+                Yes: {
+                    icon: '<i class="fa fa-check"></i>',
+                    label: game.i18n.localize("yes"),
+                    callback: dlg => {
+                        item.setupEffect(null, {})
+                    }
+                },
+                cancel: {
+                    icon: '<i class="fas fa-times"></i>',
+                    label: game.i18n.localize("cancel"),
+                }
+            }
+
+        }).render(true)
+    }
+
     async _advanceAttribute(attr) {
         let advances = Number(this.actor.data.data.characteristics[attr].advances) + Number(this.actor.data.data.characteristics[attr].initial)
         let cost = DSA5_Utility._calculateAdvCost(advances, "E")
@@ -529,6 +552,14 @@ export default class ActorSheetDsa5 extends ActorSheet {
             item.sheet.render(true);
         });
 
+        html.find(".consume-item").mousedown(ev => {
+            if (ev.button == 2) {
+                let itemId = this._getItemId(ev);
+                const item = this.actor.items.find(i => i.data._id == itemId)
+                this.consumeItem(item)
+            }
+        })
+
         html.find('.ch-value').click(event => {
             event.preventDefault();
             let characteristic = event.currentTarget.attributes["data-char"].value;
@@ -762,14 +793,6 @@ export default class ActorSheetDsa5 extends ActorSheet {
                 break;
             case "specialability":
                 await SpecialabilityRulesDSA5.abilityRemoved(this.actor, item)
-                xpCost = item.data.APValue.value * item.data.step.value
-                if (/;/.test(item.data.APValue.value)) {
-                    steps = item.data.APValue.value.split(";").map(x => Number(x.trim()))
-                    xpCost = 0
-                    for (let i = 0; i < item.data.step.value; i++)
-                        xpCost += steps[i]
-                }
-                await this._updateAPs(-1 * xpCost)
                 break;
         }
         this.actor.deleteEmbeddedEntity("OwnedItem", itemId);
@@ -850,13 +873,11 @@ export default class ActorSheetDsa5 extends ActorSheet {
 
     async _addLoot(item) {
         item = duplicate(item)
-        let res = this.actor.data.items.find(i => i.type == item.type && i.name == item.name && i.data.description.value == item.data.description.value);
+        let res = this.actor.data.items.find(i => Itemdsa5.areEquals(item, i));
         if (!res) {
             await this.actor.createEmbeddedEntity("OwnedItem", item);
         } else {
-            res = duplicate(res)
-            res.data.quantity.value += item.data.quantity.value
-            await this.actor.updateEmbeddedEntity("OwnedItem", res)
+            Itemdsa5.stackItems(res, item, this.actor)
         }
     }
 
@@ -887,6 +908,7 @@ export default class ActorSheetDsa5 extends ActorSheet {
             case "ammunition":
             case "armor":
             case "poison":
+            case "consumable":
                 await this._addLoot(item)
                 break;
             case "disadvantage":

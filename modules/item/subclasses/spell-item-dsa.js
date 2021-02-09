@@ -117,7 +117,6 @@ export default class SpellItemDSA5 extends Itemdsa5 {
             }
         };
 
-
         let cardOptions = actor._setupCardOptions("systems/dsa5/templates/chat/roll/spell-card.html", title)
 
         return DiceDSA5.setupDialog({

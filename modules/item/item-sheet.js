@@ -27,6 +27,7 @@ export default class ItemSheetdsa5 extends ItemSheet {
         $(this._element).find(".import").attr("title", game.i18n.localize("SHEET.Import"));
         $(this._element).find(".rolleffect").attr("title", game.i18n.localize("SHEET.RollEffect"));
         $(this._element).find(".showItemHead").attr("title", game.i18n.localize("SHEET.PostItem"));
+        $(this._element).find(".consumeItem").attr("title", game.i18n.localize("SHEET.ConsumeItem"));
     }
 
     _getHeaderButtons() {

@@ -14,9 +14,6 @@ import DSA5ChatAutoCompletion from "./chat_autocompletion.js";
 export default class DiceDSA5 {
     static async setupDialog({ dialogOptions, testData, cardOptions, }) {
         let rollMode = game.settings.get("core", "rollMode");
-        let skMod = 0
-        let zkMod = 0
-        let rangeOptions
         let sceneStress = "challenging";
 
         mergeObject(testData, {
@@ -71,7 +68,8 @@ export default class DiceDSA5 {
         if (!testData.extra.options.bypass) {
             let html = await renderTemplate(dialogOptions.template, dialogOptions.data);
             return new Promise((resolve, reject) => {
-                new DSA5Dialog({
+                let dialog = DSA5Dialog.getDialogForItem(testData.source.type)
+                new dialog({
                     title: dialogOptions.title,
                     content: html,
                     buttons: {
@@ -168,7 +166,8 @@ export default class DiceDSA5 {
             let aspBonus = AdvantageRulesDSA5.vantageStep(testData.extra.actor, game.i18n.localize('LocalizedIDs.regenerationAE')) - AdvantageRulesDSA5.vantageStep(testData.extra.actor, game.i18n.localize('LocalizedIDs.weakRegenerationAE'))
             chars.push({ char: "AsP", res: roll.terms[2].results[0].result, die: "d6" })
             result["AsP"] = Math.round(Math.max(0, Number(roll.terms[2].results[0].result) + Number(modifier) + aspBonus) * Number(testData.regenerationFactor))
-        } else if (testData.extra.actor.isPriest) {
+        }
+        if (testData.extra.actor.isPriest) {
             let aspBonus = AdvantageRulesDSA5.vantageStep(testData.extra.actor, game.i18n.localize('LocalizedIDs.regenerationKP')) - AdvantageRulesDSA5.vantageStep(testData.extra.actor, game.i18n.localize('LocalizedIDs.weakRegenerationKP'))
             chars.push({ char: "KaP", res: roll.terms[2].results[0].result, die: "d6" })
             result["KaP"] = Math.round(Math.max(0, Number(roll.terms[2].results[0].result) + Number(modifier) + aspBonus) * Number(testData.regenerationFactor))
@@ -193,7 +192,6 @@ export default class DiceDSA5 {
                 result["description"] += ", " + game.i18n.localize("selfDamage") + (new Roll("1d6+2").roll().total)
             }
         }
-
         return result
     }
 
@@ -353,7 +351,10 @@ export default class DiceDSA5 {
         if (testData.mode == "attack" && success) {
             let damageRoll = testData.damageRoll ? testData.damageRoll : new Roll(source.data.damage.value.replace(/[Ww]/g, "d")).roll()
             this._addRollDiceSoNice(testData, damageRoll, "black")
-            let damage = damageRoll.total;
+            let bonusDmg = testData.situationalModifiers.reduce(function(_this, val) {
+                return _this + (Number(val.damageBonus) || 0)
+            }, 0);
+            let damage = damageRoll.total + bonusDmg;
 
             for (let k of damageRoll.terms) {
                 if (k instanceof Die || k.class == "Die") {
@@ -445,8 +446,11 @@ export default class DiceDSA5 {
 
         if (testData.mode == "attack" && success) {
             let damageRoll = testData.damageRoll ? testData.damageRoll : new Roll(weapon.data.damage.value.replace(/[Ww]/g, "d")).roll()
+            let bonusDmg = testData.situationalModifiers.reduce(function(_this, val) {
+                return _this + (Number(val.damageBonus) || 0)
+            }, 0);
             this._addRollDiceSoNice(testData, damageRoll, "black")
-            let damage = Number(damageRoll.total);
+            let damage = Number(damageRoll.total) + bonusDmg;
 
             for (let k of damageRoll.terms) {
                 if (k instanceof Die || k.class == "Die") {

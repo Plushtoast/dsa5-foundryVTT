@@ -25,6 +25,7 @@ export default function() {
     })
 
     Hooks.on("preUpdateActor", (actor, updatedData) => {
+
         if (actor.data.isMage) {
             mergeObject(updatedData, {
                 "token.bar2": { "attribute": "status.astralenergy" }
@@ -37,9 +38,6 @@ export default function() {
             mergeObject(updatedData, {
                 "token.bar2": {}
             });
-        }
-        if (updatedData) {
-
         }
     })
 

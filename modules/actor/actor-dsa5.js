@@ -47,8 +47,12 @@ export default class Actordsa5 extends Actor {
             }
             data.data.itemModifiers = this._applyModiferTransformations(itemModifiers)
 
-            //This gets called by every user and creates multiple instances
-            data.canAdvance = data.type == "character" || data.items.find(x => x.name == "Vertrauter" && x.type == "trait") != undefined
+            //We should iterate at some point over the items to prevent multiple loops
+
+            let isFamiliar = data.items.find(x => x.name == game.i18n.localize('LocalizedIDs.familiar') && x.type == "trait") != undefined
+            data.canAdvance = data.type == "character" || isFamiliar
+            data.isMage = data.items.some(x => ["ritual", "spell", "magictrick"].includes(x.type) || (x.type == "specialability" && x.data.category.value == "magical"))
+            data.isPriest = data.items.some(x => ["ceremony", "liturgy", "blessing"].includes(x.type) || (x.type == "specialability" && x.data.category.value == "clerical"))
             if (data.canAdvance) {
                 data.data.details.experience.current = data.data.details.experience.total - data.data.details.experience.spent;
                 data.data.details.experience.description = DSA5_Utility.experienceDescription(data.data.details.experience.total)
@@ -69,7 +73,7 @@ export default class Actordsa5 extends Actor {
                 data.data.status.initiative.value = data.data.status.initiative.current + (data.data.status.initiative.modifier || 0);
             }
 
-            data.data.status.initiative.value + data.data.status.initiative.gearmodifier
+            data.data.status.initiative.value += data.data.status.initiative.gearmodifier
 
             data.data.status.wounds.max = data.data.status.wounds.current + data.data.status.wounds.modifier + data.data.status.wounds.advances + data.data.status.wounds.gearmodifier
             data.data.status.astralenergy.max = data.data.status.astralenergy.current + data.data.status.astralenergy.modifier + data.data.status.astralenergy.advances + data.data.status.astralenergy.gearmodifier
@@ -77,10 +81,12 @@ export default class Actordsa5 extends Actor {
 
             let guide = data.data.guidevalue
             if (guide && data.type != "creature") {
-                if (data.data.characteristics[guide.value]) {
-                    data.data.status.astralenergy.current = data.data.status.astralenergy.initial + data.data.characteristics[guide.value].value
+                if (data.data.characteristics[guide.magical]) {
+                    data.data.status.astralenergy.current = data.data.status.astralenergy.initial + data.data.characteristics[guide.magical].value
                     data.data.status.astralenergy.max = data.data.status.astralenergy.current + data.data.status.astralenergy.modifier + data.data.status.astralenergy.advances + data.data.status.astralenergy.gearmodifier
-                    data.data.status.karmaenergy.current = data.data.status.karmaenergy.initial + data.data.characteristics[guide.value].value
+                }
+                if (data.data.characteristics[guide.clerical]) {
+                    data.data.status.karmaenergy.current = data.data.status.karmaenergy.initial + data.data.characteristics[guide.clerical].value
                     data.data.status.karmaenergy.max = data.data.status.karmaenergy.current + data.data.status.karmaenergy.modifier + data.data.status.karmaenergy.advances + data.data.status.karmaenergy.gearmodifier
                 }
             }
@@ -92,11 +98,11 @@ export default class Actordsa5 extends Actor {
 
             let encumbrance = this.hasCondition('encumbered')
             encumbrance = encumbrance ? Number(encumbrance.flags.dsa5.value) : 0
-            data.data.status.initiative.value -= (Math.min(4, encumbrance)) + SpecialabilityRulesDSA5.abilityStep(data, game.i18n.localize('LocalizedIDs.combatReflexes'))
-            data.data.status.dodge.max = Number(data.data.status.dodge.value) + Number(data.data.status.dodge.modifier) + SpecialabilityRulesDSA5.abilityStep(data, game.i18n.localize('LocalizedIDs.improvedDodge')) + (Number(game.settings.get("dsa5", "higherDefense")) / 2)
+            data.data.status.initiative.value -= (Math.min(4, encumbrance))
+            data.data.status.dodge.max = Number(data.data.status.dodge.value) + Number(data.data.status.dodge.modifier) + (Number(game.settings.get("dsa5", "higherDefense")) / 2)
 
-
-            if (game.user.isGM) {
+            //Prevent double update with multiple GMs, still unsafe
+            if (game.user.id == game.users.find(u => u.active && u.isGM).id) {
                 let hasDefaultPain = data.type != "creature" || data.data.status.wounds.max >= 20
                 let pain = 0
                 if (hasDefaultPain) {
@@ -216,8 +222,8 @@ export default class Actordsa5 extends Actor {
         let meleeweapons = [];
 
         let magic = {
-            hasSpells: false,
-            hasPrayers: false,
+            hasSpells: this.data.isMage,
+            hasPrayers: this.data.isPriest,
             liturgy: [],
             spell: [],
             ritual: [],
@@ -294,11 +300,15 @@ export default class Actordsa5 extends Actor {
             show: true
         }
 
-        actorData.items = actorData.items.sort((a, b) => (a.sort || 0) - (b.sort || 0))
+        actorData.items = actorData.items.sort((a, b) => (a.name > b.name) ? 1 : ((b.name > a.name) ? -1 : 0))
+
+        //we can later make equipment sortable
+        //actorData.items = actorData.items.sort((a, b) => (a.sort || 0) - (b.sort || 0))
 
         let totalArmor = 0;
         let totalWeight = 0;
         let encumbrance = 0;
+
         let skills = {
             body: [],
             social: [],
@@ -318,21 +328,13 @@ export default class Actordsa5 extends Actor {
                         break
                     case "ritual":
                     case "spell":
-                        magic.hasSpells = true
-                        magic[i.type].push(this._perpareItemAdvancementCost(i))
-                        break;
                     case "liturgy":
                     case "ceremony":
-                        magic.hasPrayers = true
                         magic[i.type].push(this._perpareItemAdvancementCost(i))
                         break;
-                    case "blessing":
-                        magic.hasPrayers = true
-                        magic.blessing.push(i)
-                        break;
                     case "magictrick":
-                        magic.hasSpells = true
-                        magic.magictrick.push(i)
+                    case "blessing":
+                        magic[i.type].push(i)
                         break;
                     case "trait":
                         switch (i.data.traitType.value) {
@@ -341,9 +343,6 @@ export default class Actordsa5 extends Actor {
                                 break
                             case "meleeAttack":
                                 i = Actordsa5._prepareMeleetrait(i)
-                                break
-                            case "familiar":
-                                magic.hasSpells = magic.hasSpells || (i.name == game.i18n.localize('LocalizedIDs.familiar'))
                                 break
                             case "armor":
                                 totalArmor += Number(i.data.at.value);
@@ -393,6 +392,13 @@ export default class Actordsa5 extends Actor {
                         inventory["poison"].show = true;
                         totalWeight += Number(i.weight);
                         break
+                    case "consumable":
+                        i.weight = parseFloat((i.data.weight.value * i.data.quantity.value).toFixed(3));
+                        inventory[i.data.equipmentType.value].items.push(Actordsa5._prepareConsumable(i));
+                        inventory[i.data.equipmentType.value].show = true;
+                        totalWeight += Number(i.weight);
+                        break
+                    case "consumable":
                     case "equipment":
                         i.weight = parseFloat((i.data.weight.value * i.data.quantity.value).toFixed(3));
                         inventory[i.data.equipmentType.value].items.push(Actordsa5._prepareitemStructure(i));
@@ -413,8 +419,6 @@ export default class Actordsa5 extends Actor {
                         break;
                     case "specialability":
                         specAbs[i.data.category.value].push(i)
-                        magic.hasSpells = magic.hasSpells || i.data.category.value == "magical"
-                        magic.hasPrayers = magic.hasPrayers || i.data.category.value == "clerical"
                         break;
                 }
 
@@ -449,11 +453,6 @@ export default class Actordsa5 extends Actor {
 
 
         this.addCondition("encumbered", encumbrance, true)
-
-        //CHAR cannot be clerical and magical at the same time
-        magic.hasPrayers = magic.hasPrayers && !magic.hasSpells
-        this.data.isMage = magic.hasSpells
-        this.data.isPriest = magic.hasPrayers
 
         specAbs.magical = specAbs.magical.concat(specAbs.staff)
 
@@ -512,7 +511,7 @@ export default class Actordsa5 extends Actor {
         if (!i.data.effect || i.data.effect.value == undefined)
             return
 
-        for (let mod of i.data.effect.value.split(",").map(x => x)) {
+        for (let mod of i.data.effect.value.split(",").map(x => x.trim())) {
             let vals = mod.replace(/(\s+)/g, ' ').trim().split(" ")
             if (vals.length == 2) {
                 if (Number(vals[0]) != undefined) {
@@ -982,6 +981,13 @@ export default class Actordsa5 extends Actor {
             })
         })
         return res
+    }
+
+    static _prepareConsumable(item) {
+        item.consumable = true
+        item.structureMax = item.data.maxCharges
+        item.structureCurrent = item.data.charges
+        return item
     }
 
     static _prepareitemStructure(item) {

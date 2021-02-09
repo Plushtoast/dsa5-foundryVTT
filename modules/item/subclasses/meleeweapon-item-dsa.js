@@ -17,9 +17,15 @@ export default class MeleeweaponDSA5 extends Itemdsa5 {
 
         return res
     }
+
+
     static getSituationalModifiers(situationalModifiers, actor, data, source) {
         let wrongHandDisabled = AdvantageRulesDSA5.hasVantage(actor, game.i18n.localize('LocalizedIDs.ambidextrous'))
         source = source.data ? (source.data.data == undefined ? source : source.data) : source
+
+        let toSeach = [source.data.combatskill.value.toLowerCase(), game.i18n.localize("LocalizedIDs.all")]
+        let combatSpecAbs = actor.items.filter(x => x.type == "specialability" && x.data.data.category.value == "Combat" && x.data.data.effect.value != "" && x.data.data.list.value.split(",").map(x => x.trim().toLowerCase()).filter(y => toSeach.includes(y)).length > 0)
+        let combatskills = []
         if (data.mode == "attack") {
             let targetWeaponsize = "short"
             if (game.user.targets.size) {
@@ -29,22 +35,55 @@ export default class MeleeweaponDSA5 extends Itemdsa5 {
                         targetWeaponsize = defWeapon[0].data.data.reach.value
                 });
             }
+            for (let com of combatSpecAbs) {
+                let effects = Itemdsa5.parseEffect(com.data.data.effect.value, actor)
+
+                let bonus = effects[game.i18n.localize("LocalizedAbilityModifiers.at")] || 0
+                let tpbonus = effects[game.i18n.localize("LocalizedAbilityModifiers.tp")] || 0
+                if (bonus != 0 || tpbonus != 0)
+                    combatskills.push({
+                        name: com.name,
+                        atbonus: bonus,
+                        tpbonus: tpbonus,
+                        label: `${game.i18n.localize("LocalizedAbilityModifiers.at")}: ${bonus}, ${game.i18n.localize("LocalizedAbilityModifiers.tp")}: ${tpbonus}`,
+                        steps: com.data.data.step.value
+                    })
+            }
             mergeObject(data, {
                 weaponSizes: DSA5.meleeRanges,
                 melee: true,
                 wrongHandDisabled: wrongHandDisabled,
                 offHand: !wrongHandDisabled && source.data.worn.offHand,
-                targetWeaponSize: targetWeaponsize
+                targetWeaponSize: targetWeaponsize,
+                combatSpecAbs: combatskills
             });
         } else if (data.mode == "parry") {
+            for (let com of combatSpecAbs) {
+                let effects = Itemdsa5.parseEffect(com.data.data.effect.value, actor)
+
+                let bonus = effects[game.i18n.localize("LocalizedAbilityModifiers.pa")] || 0
+                if (bonus != 0)
+                    combatskills.push({
+                        name: com.name,
+                        pabonus: bonus,
+                        tpbonus: 0,
+                        label: `${game.i18n.localize("LocalizedAbilityModifiers.pa")}: ${bonus}`,
+                        steps: com.data.data.step.value
+                    })
+            }
             mergeObject(data, {
                 defenseCount: 0,
                 showDefense: true,
                 wrongHandDisabled: wrongHandDisabled && source.data.worn.offHand,
-                melee: true
+                melee: true,
+                combatSpecAbs: combatskills
             });
+
         }
     }
+
+
+
     static setupDialog(ev, options, item, actor) {
         let mode = options.mode
         let title = game.i18n.localize(item.name) + " " + game.i18n.localize(mode + "test");
@@ -68,7 +107,7 @@ export default class MeleeweaponDSA5 extends Itemdsa5 {
 
         let dialogOptions = {
             title: title,
-            template: "/systems/dsa5/templates/dialog/combatskill-dialog.html",
+            template: "/systems/dsa5/templates/dialog/combatskill-enhanced-dialog.html",
             data: data,
             callback: (html) => {
                 cardOptions.rollMode = html.find('[name="rollMode"]').val();
@@ -82,6 +121,9 @@ export default class MeleeweaponDSA5 extends Itemdsa5 {
                 testData.narrowSpace = html.find('[name="narrowSpace"]').is(":checked")
                 testData.doubleAttack = html.find('[name="doubleAttack"]').is(":checked") ? -2 : 0
                 testData.wrongHand = html.find('[name="wrongHand"]').is(":checked") ? -4 : 0
+
+                testData.situationalModifiers.push(...Itemdsa5.getSpecAbModifiers(html, mode))
+
                 return { testData, cardOptions };
             }
         };

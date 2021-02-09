@@ -141,13 +141,16 @@
             },
             "magic": {
                 "guidevalue": {
-                    "value": "-"
+                    "magical": "-",
+                    "clerical": "-"
                 },
                 "tradition": {
-                    "value": ""
+                    "magical": "",
+                    "clerical": ""
                 },
                 "feature": {
-                    "value": ""
+                    "magical": "",
+                    "clerical": ""
                 },
                 "happyTalents": {
                     "value": ""
@@ -302,7 +305,8 @@
             "ritual",
             "aggregatedTest",
             "poison",
-            "disease"
+            "disease",
+            "consumable"
         ],
         "templates": {
             "skill": {
@@ -569,6 +573,19 @@
             "ammunitiongroup": {
                 "value": ""
             }
+        },
+        "consumable": {
+            "templates": [
+                "description",
+                "equipment"
+            ],
+            "equipmentType": {
+                "value": "misc"
+            },
+            "QLList": "",
+            "QL": 1,
+            "charges": 1,
+            "maxCharges": 1
         },
         "rangeweapon": {
             "templates:": [

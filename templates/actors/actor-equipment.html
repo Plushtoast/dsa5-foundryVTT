@@ -31,7 +31,7 @@
                     {{/if}}
                 </div>
                 <div class="col">
-                    <a class="item-edit">{{item.name}}</a>
+                    <a class="item-edit {{#if item.consumable}}consume-item{{/if}}">{{item.name}}</a>
                 </div>
                 <div class="col eight center">
                     {{#if section.toggle}} {{#if item.toggleValue}}

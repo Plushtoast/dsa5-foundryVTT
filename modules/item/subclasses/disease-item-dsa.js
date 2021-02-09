@@ -32,7 +32,7 @@ export default class DiseaseItemDSA5 extends Itemdsa5 {
             hasZKModifier: source.data.resistance.value == "ZK"
         })
     }
-    static setupDialog(ev, options, item) {
+    static setupDialog(ev, options, item, actor) {
         let title = item.name + " " + game.i18n.localize(item.type) + " " + game.i18n.localize("Test");
 
         let testData = {

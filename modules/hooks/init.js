@@ -9,10 +9,23 @@ import * as statusEffects from './statuseffect.js'
 import * as sideBar from './sidebar.js'
 import * as configuration from './configuration.js'
 import * as journals from './journal.js'
-
+import * as tokenHUD from './tokenHUD.js'
+import VantageSheetDSA5 from "./../item/sheets/item-vantage-dsa5.js"
+import SpellSheetDSA5 from "./../item/sheets/item-spell-dsa5.js";
+import SpecialAbilitySheetDSA5 from "./../item/sheets/item-specialability-dsa5.js";
+import MeleeweaponSheetDSA5 from "./../item/sheets/item-meleeweapon-dsa5.js";
+import DiseaseSheetDSA5 from "./../item/sheets/item-disease-sheet.js";
+import PoisonSheetDSA5 from "./../item/sheets/item-poison-dsa5.js";
+import ConsumableSheetDSA from "./../item/sheets/item-consumable-dsa5.js";
+import ItemSpeciesDsa5 from "./../item/sheets/item-species-dsa5.js";
+import ItemCareerDsa5 from "./../item/sheets/item-career-dsa5.js";
+import ItemCultureDsa5 from "./../item/sheets/item-culture-dsa5.js"
+import ActorSheetdsa5Character from "./../actor/character-sheet.js";
+import ActorSheetdsa5Creature from "./../actor/creature-sheet.js";
+import ActorSheetdsa5NPC from "./../actor/npc-sheet.js";
+import ItemSheetdsa5 from "./../item/item-sheet.js";
 
 export default function() {
-
     initHandleBars.default();
     initDiceSoNice.default();
     initActorHooks.default();
@@ -23,6 +36,7 @@ export default function() {
     statusEffects.default()
     sideBar.default()
     journals.default()
+    tokenHUD.default()
 }
 
 Hooks.once("init", () => {
@@ -53,8 +67,27 @@ Hooks.once("init", () => {
         "systems/dsa5/templates/actors/parts/creature-derived-attributes-small.html",
         "systems/dsa5/templates/actors/parts/creature-derived-attributes-large.html",
         "systems/dsa5/templates/actors/parts/status_effects.html",
-        "systems/dsa5/templates/actors/parts/purse.html"
+        "systems/dsa5/templates/actors/parts/purse.html",
+        "systems/dsa5/templates/actors/parts/healthbar.html"
     ]);
+
+    Actors.unregisterSheet("core", ActorSheet);
+    Actors.registerSheet("dsa5", ActorSheetdsa5Character, { types: ["character"], makeDefault: true });
+    Actors.registerSheet("dsa5", ActorSheetdsa5Creature, { types: ["creature"] });
+    Actors.registerSheet("dsa5", ActorSheetdsa5NPC, { types: ["npc"] });
+    Items.unregisterSheet("core", ItemSheet);
+    Items.registerSheet("dsa5", ItemSheetdsa5, { makeDefault: true });
+    Items.registerSheet("dsa5", ItemSpeciesDsa5, { makeDefault: true, types: ["species"] });
+    Items.registerSheet("dsa5", ItemCareerDsa5, { makeDefault: true, types: ["career"] });
+    Items.registerSheet("dsa5", ItemCultureDsa5, { makeDefault: true, types: ["culture"] });
+    Items.registerSheet("dsa5", VantageSheetDSA5, { makeDefault: true, types: ["advantage", "disadvantage"] });
+    Items.registerSheet("dsa5", SpellSheetDSA5, { makeDefault: true, types: ["ritual", "ceremony", "liturgy", "spell"] });
+    Items.registerSheet("dsa5", SpecialAbilitySheetDSA5, { makeDefault: true, types: ["specialability"] });
+    Items.registerSheet("dsa5", MeleeweaponSheetDSA5, { makeDefault: true, types: ["meleeweapon"] });
+    Items.registerSheet("dsa5", PoisonSheetDSA5, { makeDefault: true, types: ["poison"] });
+    Items.registerSheet("dsa5", DiseaseSheetDSA5, { makeDefault: true, types: ["disease"] });
+    Items.registerSheet("dsa5", ConsumableSheetDSA, { makeDefault: true, types: ["consumable"] });
+    Items.unregisterSheet("dsa5", ItemSheetdsa5, { types: ["consumable", "species", "career", "culture", "advantage", "specialability", "disadvantage", "ritual", "ceremony", "liturgy", "spell", "disease", "poison", "meleeweapon"] });
 
     configuration.default()
 

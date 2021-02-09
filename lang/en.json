@@ -78,7 +78,8 @@
         "ItemRequiresAdoptionDescription": "The addition requires an Adaptation first. Select the matching entry for ",
         "alreadyAddedCharacterpart": "You already have a {category}. Do you want to override it? Already added modifications of the former {category} can not be removed automatically.",
         "warning": "Attention",
-        "deselectWithStrg": "CTRL + click to deselect"
+        "deselectWithStrg": "CTRL + click to deselect",
+        "noCombatskills": "No matching Combat Special Abilities"
     },
 
     "Equipment": {
@@ -90,7 +91,7 @@
         "bags": "Bags",
         "wealth": "Valuables",
         "writing": "Stationery",
-        "alchemy": "Alchemy and Poison",
+        "alchemy": "Alchemy",
         "service": "Services",
         "luxus": "Luxury",
         "armor": "Armor",
@@ -143,6 +144,7 @@
     "biography": "Biography",
     "Category": "Category",
     "clerical": "clerical",
+    "charges": "Charges",
     "condition": "Condition",
     "combatspecialtalents": "Combat Special Abilities",
     "CriticalSuccess": "Critical success",
@@ -152,6 +154,7 @@
     "ceremonies": "Ceremonies",
     "ceremonyTest": "Ceremony test",
     "castingTime": "Casting time",
+    "consumable": "Consumable",
     "Combat": "Combat",
     "combatskill": "Combat Technique",
     "culture": "Culture",
@@ -293,6 +296,7 @@
     "previousFailedTests": "Failed checks",
     "probe": "Check",
     "qualityStep": "Quality level",
+    "qualitySteps": "Quality levels",
     "quantity": "Amount",
     "RPr": "Routine check",
     "reach": "Range",
@@ -301,6 +305,7 @@
     "rituals": "Rituals",
     "remainingStructure": "Rem. structure",
     "price": "Price",
+    "priceEachQL": "Price each QL",
     "probes": "Checks",
     "pamod": "Parry modifier",
     "parryWeaponless": "Unarmed defense",
@@ -569,7 +574,8 @@
         "Library": "Open library",
         "showToPlayers": "Show to everyone",
         "imageView": "Image entry",
-        "textView": "Text entry"
+        "textView": "Text entry",
+        "ConsumeItem": "Consume item"
     },
 
     "ITEMSHEET": {
@@ -601,12 +607,14 @@
         "unableReroll": "Die {die} rolled again because of Incompetence ({oldVal}/{newVal})",
         "requestRoll": "{user} requests a roll in {item}",
         "editRoll": "Edit roll",
-        "BlindRoll": "Blinder Wurf."
+        "BlindRoll": "Blinder Wurf.",
+        "usesItem": "{actor} uses {item}."
     },
 
     "TT": {
         "careerSkills": "Comma separated talent list, f.e. (Alchemy 2,Carousing 4)",
-        "commaSeparated": "Comma separated list"
+        "commaSeparated": "Comma separated list",
+        "oneQualityPerLine": "Describe one quality level each line"
     },
 
     "HELP": {
@@ -651,6 +659,7 @@
     "ITEM.TypeSpecies": "Species",
     "ITEM.TypeSpell": "Spell",
     "ITEM.TypeTrait": "Trait (Animal)",
+    "ITEM.TypeConsumable": "Consumable",
 
     "ACTOR.TypeCharacter": "Character",
     "ACTOR.TypeNpc": "Non Player Character",
@@ -705,6 +714,12 @@
         "self": "self"
     },
 
+    "LocalizedAbilityModifiers": {
+        "at": "at",
+        "pa": "pa",
+        "tp": "dp"
+    },
+
     "LocalizedIDs": {
         "deaf": "Deaf",
         "blind": "Blind",
@@ -733,17 +748,15 @@
         "magicalRestriction": "Magical Restriction",
         "magicalAttunement": "Magical Attunement",
         "traditionWitch": "Tradition (Witch)",
-        "combatReflexes": "Combat Reflexes",
-        "improvedDodge": "Improved Dodge",
         "inuredToEncumbrance": "Inured to Encumbrance",
         "quickload": "Quickload",
         "automaticSuccess": "Automatic Succes",
         "automaticFail": "Automatic Failure",
-        "blessed": "Blessed",
-        "spellcaster": "Spellcaster",
         "familiar": "Familiar",
         "shields": "Shields",
-        "localKnowledge": "Area Knowledge"
+        "localKnowledge": "Area Knowledge",
+        "naturalArmor": "Natural Armor",
+        "all": "all"
     },
 
     "DSAError": {
@@ -756,11 +769,11 @@
         "NotEnoughXP": "Not enough adventure points",
         "NotEnoughAsP": "Not enough Astral Energy",
         "NotEnoughKaP": "Not enough Karma Points",
+        "NotEnoughCharges": "Not enough charges",
         "AdvanceMaximumReached": "Max advancements already reached",
         "notFound": "{category} {name} not found",
         "itemNotFound": "This entry was not found in the database. Please create it manually.",
-        "notUnderstoodCareer": "Following entries of the profession could not be adopted. Please configure manually.",
-        "notUnderstoodCulture": "Following entries of the culture could not be adopted. Please configure manually.",
+        "notUnderstood": "Following entries could not be adopted or found in the database. Please add/configure manually.",
         "canNotBeAdded": "{item} of the category {category} can not be added. This is not a supported category.",
         "NoAmmo": "Not enough ammunition.",
         "MissingChoices": "There are missing choices.",

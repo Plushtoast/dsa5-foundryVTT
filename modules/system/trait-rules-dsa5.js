@@ -10,15 +10,15 @@ export default class TraitRulesDSA5 extends ItemRulesDSA5 {
                     "data.status.soulpower.value": Number(actor.data.data.status.soulpower.value) + 1,
                     "data.status.toughness.value": Number(actor.data.data.status.toughness.value) + 1,
                     "data.status.astralenergy.initial": Number(actor.data.data.status.astralenergy.initial) + 15,
-                    "data.guidevalue.value": "ch"
+                    "data.guidevalue.magical": "ch"
                 });
-                let armor = actor.items.find(x => x.type == "trait" && x.name == "Natürliche Rüstung")
+                let armor = actor.items.find(x => x.type == "trait" && x.name == game.i18n.localize("LocalizedIDs.naturalArmor"))
                 if (armor) {
                     armor = duplicate(armor)
                     armor.data.at.value = Number(armor.data.at.value) + 1
                     actor.updateEmbeddedEntity("OwnedItem", armor)
                 } else {
-                    //generate armor
+                    //TODO generate armor
                 }
                 break
         }
@@ -33,9 +33,9 @@ export default class TraitRulesDSA5 extends ItemRulesDSA5 {
                     "data.status.soulpower.value": Number(actor.data.data.status.soulpower.value) - 1,
                     "data.status.toughness.value": Number(actor.data.data.status.toughness.value) - 1,
                     "data.status.astralenergy.initial": Number(actor.data.data.status.astralenergy.initial) - 15,
-                    "data.guidevalue.value": "-"
+                    "data.guidevalue.magical": "-"
                 });
-                let armor = actor.items.find(x => x.type == "trait" && x.name == "Natürliche Rüstung")
+                let armor = actor.items.find(x => x.type == "trait" && x.name == game.i18n.localize("LocalizedIDs.naturalArmor"))
                 if (armor) {
                     armor = duplicate(armor)
                     armor.data.at.value = Number(armor.data.at.value) - 1

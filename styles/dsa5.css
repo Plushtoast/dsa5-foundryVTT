@@ -1384,6 +1384,11 @@ input[type="search"] {
     border-bottom-right-radius: 10px;
 }
 
+.barRight.middle {
+    border-radius: 0px;
+    border-right: none;
+}
+
 .barRight .bar {
     width: calc(100% * var(--a) / var(--b));
 }
@@ -1635,7 +1640,7 @@ input[type="search"] {
 }
 
 #hotbar .macro.active {
-    box-shadow: inset 0px 0px 50px black;
+    box-shadow: inset 0px 0px 25px black;
 }
 
 #hotbar #macro-list {
@@ -1917,4 +1922,48 @@ a.inline-roll {
 
 .dsa5.post-item img {
     border: none;
+}
+
+#token-hud .attribute.bar1 input {
+    border: 1px solid rgb(230, 12, 12);
+}
+
+#token-hud .attribute.bar2 input {
+    border: 1px solid #659db5
+}
+
+#token-hud .attribute.bar3 input {
+    border: 1px solid #7cd000;
+}
+
+#token-hud .attribute.bar3 {
+    position: absolute;
+    top: -45px;
+}
+
+.specAbsContainer {
+    margin-left: 20px;
+    padding: 10px;
+}
+
+.specAbs {
+    padding: 3px;
+    border: 1px solid var(--border-color);
+    box-shadow: 0 0 12px #6e3b018F inset;
+    border-radius: 2px;
+    line-height: 20px;
+    overflow: hidden;
+}
+
+.specAbs .specImg {
+    background-image: url(../icons/categories/ability_combat.webp);
+    background-size: contain;
+}
+
+.specAbs:hover {
+    cursor: pointer;
+}
+
+.specAbs.active {
+    border-color: rgb(207, 30, 30);
 }

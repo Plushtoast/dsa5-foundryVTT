@@ -1,0 +1,74 @@
+<div class="row-section" style="margin-top:10px;">
+    <div class="col ten center lineheight" title="{{localize 'wounds'}}">
+        {{localize 'CHARAbbrev.LeP'}}
+    </div>
+    <div class="col {{#if actor.magic.hasPrayers}}{{#if actor.magic.hasSpells}}third{{else}}fourty{{/if}}{{else}}fourty{{/if}}">
+        <div class="healthbar barLeft{{#if actor.magic.hasPrayers}}{{else if actor.magic.hasSpells}}{{else}} soloBar{{/if}}" title="{{localize 'wounds'}}">
+
+            <div class="bar LeP" style="--a: {{actor.data.status.wounds.value}}; --b: {{actor.data.status.wounds.max}}">
+            </div>
+            <div class="barLabel">
+                <input type="text" title="{{localize 'Current'}}" name="data.status.wounds.value" data-dtype="Number" value="{{actor.data.status.wounds.value}}" /> /
+                <span title="{{localize 'max'}}">{{actor.data.status.wounds.max}}</span>
+            </div>
+        </div>
+    </div>
+    {{#if actor.magic.hasPrayers}} {{#if actor.magic.hasSpells}}
+    <div class="col third">
+        <div class="healthbar barRight middle" title="{{localize 'karmaenergy'}}">
+            <div class="barLabel">
+                <input type="text" title="{{localize 'Current'}}" name="data.status.karmaenergy.value" data-dtype="Number" value="{{actor.data.status.karmaenergy.value}}" /> /
+                <span title="{{localize 'max'}}">{{actor.data.status.karmaenergy.max}}</span>
+            </div>
+            <div class="bar KaP" style="--a: {{actor.data.status.karmaenergy.value}}; --b: {{actor.data.status.karmaenergy.max}}">
+
+            </div>
+        </div>
+    </div>
+    <div class="col third">
+        <div class="healthbar barRight" title="{{localize 'astralenergy'}}">
+            <div class="barLabel">
+                <input type="text" title="{{localize 'Current'}}" name="data.status.astralenergy.value" data-dtype="Number" value="{{actor.data.status.astralenergy.value}}" /> /
+                <span title="{{localize 'max'}}">{{actor.data.status.astralenergy.max}}</span>
+            </div>
+            <div class="bar AsP" style="--a: {{actor.data.status.astralenergy.value}}; --b: {{actor.data.status.astralenergy.max}}">
+
+            </div>
+        </div>
+    </div>
+    {{else}}
+    <div class="col fourty">
+        <div class="healthbar barRight" title="{{localize 'karmaenergy'}}">
+            <div class="barLabel">
+                <input type="text" title="{{localize 'Current'}}" name="data.status.karmaenergy.value" data-dtype="Number" value="{{actor.data.status.karmaenergy.value}}" /> /
+                <span title="{{localize 'max'}}">{{actor.data.status.karmaenergy.max}}</span>
+            </div>
+            <div class="bar KaP" style="--a: {{actor.data.status.karmaenergy.value}}; --b: {{actor.data.status.karmaenergy.max}}">
+
+            </div>
+        </div>
+    </div>
+    <div class="col ten center  lineheight" title="{{localize 'karmaenergy'}}">
+        {{localize 'CHARAbbrev.KaP'}}
+    </div>
+    {{/if}} {{else if actor.magic.hasSpells}}
+    <div class="col fourty">
+        <div class="healthbar barRight" title="{{localize 'astralenergy'}}">
+            <div class="barLabel">
+                <input type="text" title="{{localize 'Current'}}" name="data.status.astralenergy.value" data-dtype="Number" value="{{actor.data.status.astralenergy.value}}" /> /
+                <span title="{{localize 'max'}}">{{actor.data.status.astralenergy.max}}</span>
+            </div>
+            <div class="bar AsP" style="--a: {{actor.data.status.astralenergy.value}}; --b: {{actor.data.status.astralenergy.max}}">
+
+            </div>
+        </div>
+    </div>
+    <div class="col ten center lineheight" title="{{localize 'astralenergy'}}">
+        {{localize 'CHARAbbrev.AsP'}}
+    </div>
+    {{else}}
+    <div class="col two">
+
+    </div>
+    {{/if}}
+</div>

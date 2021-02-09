@@ -1,0 +1,91 @@
+<form class="dsa5 item-sheet {{cssClass}}" autocomplete="off">
+    <header class="item-header">
+        <h1>
+            <input name="name" class="item-header item-name" type="text" value="{{item.name}}" placeholder="{{localize 'Name'}}" />
+        </h1>
+    </header>
+
+    <div class="row-section ">
+        <div class="col ten">
+            <img src="{{item.img}}" {{#if showBorder}}class="no-image-border" {{/if}} data-edit="img" />
+        </div>
+        <div class="col ninety item-main">
+            <div class="row-section">
+                <div class="col four">
+                    <label class="label-text table-title">{{localize "Category"}}</label>
+                </div>
+                <div class="col fourty">
+                    <label>{{localize item.type}}</label>
+                </div>
+                <div class="col four">
+                    <label class="label-text table-title">{{localize "quantity"}}</label>
+                </div>
+                <div class="col fifteen">
+                    <input class="input-text" type="text" name="data.quantity.value" value="{{data.quantity.value}}" data-dtype="Number" />
+
+                </div>
+            </div>
+            <div class="row-section">
+                <div class="col four">
+                    <label title="{{localize 'UNITS.money'}}" class="label-text table-title">{{localize "price"}}</label>
+                </div>
+                <div class="col fourty">
+                    <label title="{{localize 'UNITS.money'}}" class="input-text" type="text">{{calculatedPrice}}</label>
+                </div>
+                <div class="col four">
+                    <label title="{{localize 'UNITS.weight'}}" class="label-text table-title">{{localize "Weight"}}</label>
+                </div>
+                <div class="col fifteen">
+                    <input title="{{localize 'UNITS.weight'}}" class="input-text" type="text" name="data.weight.value" value="{{data.weight.value}}" data-dtype="Number" />
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <nav class="sheet-tabs tabs" data-tab-container="primary">
+        <a class="item active" data-tab="description">{{localize "Description"}}</a>
+        <a class="item" data-tab="details">{{localize "Details"}}</a>
+    </nav>
+
+    <section class="content">
+        {{> systems/dsa5/templates/items/item-description.html}}
+        <div class="tab details" data-tab="details">
+            <div class="form-group">
+                <label class="label-text">{{localize "equipmentType"}}</label>
+                <select name="data.equipmentType.value" data-dtype="String">
+                  {{#select data.equipmentType.value}}
+                  {{#each equipmentTypes as |ch char|}}
+                  <option value="{{char}}">{{localize ch}}</option>
+                  {{/each}}
+                  {{/select}}
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label class="label-text">{{localize "qualityStep"}}</label>
+                <select name="data.QL" data-dtype="Number">
+                  {{#select data.QL}}
+                  {{#each availableSteps as |ch|}}
+                  <option value="{{ch}}">{{ch}}</option>
+                  {{/each}}
+                  {{/select}}
+                </select>
+            </div>
+
+            <div class="form-group double">
+                <label class="label-text">{{localize 'max'}} {{localize "charges"}}: </label>
+                <input class="input-text" type="text" name="data.charges" value="{{data.charges}}" data-dtype="Number" /><span> / </span>
+                <input class="input-text" type="text" name="data.maxCharges" value="{{data.maxCharges}}" data-dtype="Number" />
+            </div>
+
+            <div class="form-group">
+                <label class="label-text">{{localize "priceEachQL"}}: </label>
+                <input class="input-text" type="text" name="data.price.value" value="{{data.price.value}}" data-dtype="Number" />
+            </div>
+            <div class="form-group full-height" title="{{localize 'TT.oneQualityPerLine'}}">
+                <label class="label-text">{{localize "qualitySteps"}}: </label>
+                <textarea class="input-text" type="text" name="data.QLList" data-dtype="String">{{data.QLList}}</textarea>
+            </div>
+        </div>
+    </section>
+</form>

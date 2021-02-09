@@ -16,6 +16,15 @@ export default class SpecialabilityRulesDSA5 extends ItemRulesDSA5 {
         if (DSA5.removeAbilityRules[item.name]) {
             DSA5.removeAbilityRules[item.name](actor, item)
         }
+        let xpCost = item.data.APValue.value * item.data.step.value
+        if (/;/.test(item.data.APValue.value)) {
+            steps = item.data.APValue.value.split(";").map(x => Number(x.trim()))
+            xpCost = 0
+            for (let i = 0; i < item.data.step.value; i++)
+                xpCost += steps[i]
+        }
+        xpCost = await SpecialabilityRulesDSA5.refundFreelanguage(item, actor, xpCost)
+        await actor._updateAPs(-1 * xpCost)
     }
 
 
@@ -41,18 +50,45 @@ export default class SpecialabilityRulesDSA5 extends ItemRulesDSA5 {
 
         if (res) {
             let vantage = duplicate(res)
-            let xpCost = /;/.test(vantage.data.APValue.value) ? vantage.data.APValue.value.split(';').map(x => Number(x.trim()))[vantage.data.step.value] : vantage.data.APValue.value
+            let xpCost = await SpecialabilityRulesDSA5.isFreeLanguage(item, actor, /;/.test(vantage.data.APValue.value) ? vantage.data.APValue.value.split(';').map(x => Number(x.trim()))[vantage.data.step.value] : vantage.data.APValue.value)
             if (vantage.data.step.value + 1 <= vantage.data.maxRank.value && await actor.checkEnoughXP(xpCost)) {
                 vantage.data.step.value += 1
                 await actor._updateAPs(xpCost)
                 await actor.updateEmbeddedEntity("OwnedItem", vantage);
                 await SpecialabilityRulesDSA5.abilityAdded(actor, vantage)
             }
-        } else if (await actor.checkEnoughXP(item.data.APValue.value.split(';').map(x => x.trim())[0])) {
-            await SpecialabilityRulesDSA5.abilityAdded(actor, item)
-            await actor._updateAPs(item.data.APValue.value.split(';').map(x => x.trim())[0])
-            await actor.createEmbeddedEntity("OwnedItem", item);
+        } else {
+            let xpCost = await SpecialabilityRulesDSA5.isFreeLanguage(item, actor, item.data.APValue.value.split(';').map(x => x.trim())[0])
+            if (await actor.checkEnoughXP(xpCost)) {
+                await SpecialabilityRulesDSA5.abilityAdded(actor, item)
+                await actor._updateAPs(xpCost)
+                await actor.createEmbeddedEntity("OwnedItem", item);
+            }
         }
+    }
+
+    static async refundFreelanguage(item, actor, xpCost) {
+        if (item.data.category.value == "language" && actor.data.data.freeLanguagePoints) {
+            let freePoints = Number(actor.data.data.freeLanguagePoints.value)
+            let languageCost = actor.data.items.filter(x => x.type == "specialability" && x.data.category.value == "language").reduce((a, b) => { return a + Number(b.data.step.value) * Number(b.data.APValue.value) }, 0)
+            let usedPoints = Math.min(freePoints, languageCost - Number(xpCost))
+            let remainingFreepoints = Math.max(0, freePoints - usedPoints)
+            await actor.update({ "data.freeLanguagePoints.used": Math.min(freePoints, Number(usedPoints)) })
+            xpCost = Math.max(0, xpCost - remainingFreepoints)
+        }
+        return xpCost
+    }
+
+    static async isFreeLanguage(item, actor, xpCost) {
+        if (item.data.category.value == "language" && actor.data.data.freeLanguagePoints) {
+            let freePoints = Number(actor.data.data.freeLanguagePoints.value)
+            let languageCost = actor.data.items.filter(x => x.type == "specialability" && x.data.category.value == "language").reduce((a, b) => { return a + Number(b.data.step.value) * Number(b.data.APValue.value) }, 0)
+            let usedPoints = Math.min(freePoints, languageCost)
+            let remainingFreepoints = Math.max(0, freePoints - usedPoints)
+            await actor.update({ "data.freeLanguagePoints.used": Math.min(freePoints, Number(usedPoints) + Number(xpCost)) })
+            xpCost = Math.max(0, xpCost - remainingFreepoints)
+        }
+        return xpCost
     }
 
     static async needsAdoption(actor, item, typeClass) {

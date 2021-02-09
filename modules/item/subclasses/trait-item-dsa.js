@@ -2,7 +2,6 @@ import DSA5StatusEffects from "../../status/status_effects.js"
 import AdvantageRulesDSA5 from "../../system/advantage-rules-dsa5.js"
 import DSA5 from "../../system/config-dsa5.js"
 import DiceDSA5 from "../../system/dice-dsa5.js"
-import DSA5_Utility from "../../system/utility-dsa5.js"
 import Itemdsa5 from "../item-dsa5.js"
 
 export default class TraitItemDSA5 extends Itemdsa5 {
@@ -44,6 +43,22 @@ export default class TraitItemDSA5 extends Itemdsa5 {
     static getSituationalModifiers(situationalModifiers, actor, data, source) {
         source = source.data ? (source.data.data == undefined ? source : source.data) : source
         let traitType = source.data.traitType.value
+        let combatSpecAbs = actor.items.filter(x => x.type == "specialability" && x.data.data.category.value == "Combat" && x.data.data.effect.value != "")
+        let combatskills = []
+        for (let com of combatSpecAbs) {
+            let effects = Itemdsa5.parseEffect(com.data.data.effect.value, actor)
+
+            let bonus = effects[game.i18n.localize("LocalizedAbilityModifiers.at")] || 0
+            let tpbonus = effects[game.i18n.localize("LocalizedAbilityModifiers.tp")] || 0
+            if (bonus != 0 || tpbonus != 0)
+                combatskills.push({
+                    name: com.name,
+                    atbonus: bonus,
+                    tpbonus: tpbonus,
+                    label: `${game.i18n.localize("LocalizedAbilityModifiers.at")}: ${bonus}, ${game.i18n.localize("LocalizedAbilityModifiers.tp")}: ${tpbonus}`,
+                    steps: com.data.data.step.value
+                })
+        }
         if (data.mode == "attack" && traitType == "meleeAttack") {
             let targetWeaponsize = "short"
             if (game.user.targets.size) {
@@ -56,7 +71,8 @@ export default class TraitItemDSA5 extends Itemdsa5 {
             mergeObject(data, {
                 weaponSizes: DSA5.meleeRanges,
                 melee: true,
-                targetWeaponSize: targetWeaponsize
+                targetWeaponSize: targetWeaponsize,
+                combatSpecAbs: combatskills
             });
         } else if (data.mode == "attack" && traitType == "rangeAttack") {
             let targetSize = "average"
@@ -76,7 +92,8 @@ export default class TraitItemDSA5 extends Itemdsa5 {
                 mountedOptions: DSA5.mountedRangeOptions,
                 shooterMovementOptions: DSA5.shooterMovementOptions,
                 targetMovementOptions: DSA5.targetMomevementOptions,
-                targetSize: targetSize
+                targetSize: targetSize,
+                combatSpecAbs: combatskills
             });
         }
     }
@@ -103,7 +120,7 @@ export default class TraitItemDSA5 extends Itemdsa5 {
 
         let dialogOptions = {
             title: title,
-            template: "/systems/dsa5/templates/dialog/combatskill-dialog.html",
+            template: "/systems/dsa5/templates/dialog/combatskill-enhanced-dialog.html",
             data: data,
             callback: (html) => {
                 cardOptions.rollMode = html.find('[name="rollMode"]').val();
@@ -117,6 +134,8 @@ export default class TraitItemDSA5 extends Itemdsa5 {
                 testData.narrowSpace = html.find('[name="narrowSpace"]').is(":checked")
                 testData.doubleAttack = html.find('[name="doubleAttack"]').is(":checked") ? -2 : 0
                 testData.wrongHand = html.find('[name="wrongHand"]').is(":checked") ? -4 : 0
+
+                testData.situationalModifiers.push(...Itemdsa5.getSpecAbModifiers(html, mode))
                 return { testData, cardOptions };
             }
         };

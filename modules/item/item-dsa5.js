@@ -3,39 +3,40 @@ import DiceDSA5 from "../system/dice-dsa5.js"
 
 export default class Itemdsa5 extends Item {
     static defaultImages = {
-        "advantage": "icons/commodities/materials/hair-tuft-brown.webp",
-        "disadvantage": "icons/commodities/bones/skull-hollow-white.webp",
+        "advantage": "systems/dsa5/icons/categories/Vorteil.webp",
+        "disadvantage": "systems/dsa5/icons/categories/Nachteil.webp",
         "armor": "systems/dsa5/icons/categories/Armor.webp",
         "meleeweapon": "systems/dsa5/icons/categories/Meleeweapon.webp",
         "rangeweapon": "systems/dsa5/icons/categories/Rangeweapon.webp",
         "equipment": "systems/dsa5/icons/categories/Equipment.webp",
-        "liturgy": "systems/dsa5/icons/categories/Liturgy.webp.webp",
-        "spell": "icons/sundries/scrolls/scroll-runed-brown-purple.webp",
-        "ammunition": "icons/containers/ammunition/arrows-quiver-simple-brown.webp",
-        "career": "icons/environment/people/commoner.webp",
-        "spelltrick": "icons/sundries/scrolls/scroll-bound-blue-brown.webp",
-        "blessing": "icons/commodities/treasure/token-runed-wyn-grey.webp",
-        "combatskill": "icons/environment/people/charge.webp",
-        "skill": "icons/tools/hand/spinning-wheel-brown.webp",
-        "Geweihte": "icons/environment/people/cleric-grey.webp",
-        "Weltliche": "icons/environment/people/commoner.webp",
-        "Zauberer": "icons/environment/people/cleric-orange.webp",
-        "ritual": "icons/sundries/books/book-symbol-triangle-silver-brown.webp",
-        "ceremony": "icons/sundries/books/book-symbol-canterbury-cross.webp",
-        "abilityclerical": "icons/tools/hand/scale-balances-merchant-brown.webp",
-        "abilityCombat": "icons/weapons/axes/axe-hammer-blackened.webp",
-        "abilityfatePoints": "icons/weapons/wands/wand-skull-forked.webp",
-        "abilitygeneral": "icons/tools/smithing/crucible.webp",
-        "specialability": "icons/tools/smithing/crucible.webp",
-        "abilitymagical": "icons/tools/scribal/ink-quill-pink.webp",
-        "abilitylanguage": "icons/sundries/documents/document-official-capital.webp",
-        "abilitystaff": "icons/weapons/staves/staff-ornate-red.webp",
-        "abilityanimal": "icons/environment/creatures/frog-spotted-green.webp",
-        "trait": "icons/commodities/biological/organ-brain-pink-purple.webp",
-        "Tiere": "icons/environment/creatures/horse-brown.webp",
-        "aggregatedTest": "icons/sundries/gaming/dice-runed-brown.webp",
-        "poison": "icons/commodities/materials/bowl-liquid-red.webp",
-        "disease": "icons/commodities/biological/pustules-brown.webp"
+        "consumable": "systems/dsa5/icons/categories/Equipment.webp",
+        "liturgy": "systems/dsa5/icons/categories/Liturgy.webp",
+        "spell": "systems/dsa5/icons/categories/Spell.webp",
+        "ammunition": "systems/dsa5/icons/categories/Munition.webp",
+        "career": "systems/dsa5/icons/categories/Career.webp",
+        "magictrick": "systems/dsa5/icons/categories/Spelltrick.webp",
+        "blessing": "systems/dsa5/icons/categories/Blessing.webp",
+        "combatskill": "systems/dsa5/icons/categories/Combat_Skill.webp",
+        "skill": "systems/dsa5/icons/categories/Skill.webp",
+        "Geweihte": "systems/dsa5/icons/categories/Geweihte.webp",
+        "Weltliche": "systems/dsa5/icons/categories/Weltliche.webp",
+        "Zauberer": "systems/dsa5/icons/categories/Zauberer.webp",
+        "ritual": "systems/dsa5/icons/categories/ritual.webp",
+        "ceremony": "systems/dsa5/icons/categories/ceremony.webp",
+        "abilityclerical": "systems/dsa5/icons/categories/ability_clerical.webp",
+        "abilityCombat": "systems/dsa5/icons/categories/ability_combat.webp",
+        "abilityfatePoints": "systems/dsa5/icons/categories/ability_fate_points.webp",
+        "abilitygeneral": "systems/dsa5/icons/categories/ability_general.webp",
+        "specialability": "systems/dsa5/icons/categories/ability_general.webp",
+        "abilitymagical": "systems/dsa5/icons/categories/ability_magical.webp",
+        "abilitylanguage": "systems/dsa5/icons/categories/Ability_Language.webp",
+        "abilitystaff": "systems/dsa5/icons/categories/ability_staff.webp",
+        "abilityanimal": "systems/dsa5/icons/categories/ability_animal.webp",
+        "trait": "systems/dsa5/icons/categories/trait.webp",
+        "Tiere": "systems/dsa5/icons/categories/Tiere.webp",
+        "aggregatedTest": "systems/dsa5/icons/categories/aggregated_test.webp",
+        "poison": "systems/dsa5/icons/categories/poison.webp",
+        "disease": "systems/dsa5/icons/categories/disease.webp"
     }
 
     static defaultIcon(data) {
@@ -53,6 +54,40 @@ export default class Itemdsa5 extends Item {
         super.create(data, options);
     }
 
+    static getSpecAbModifiers(html, mode) {
+        let res = []
+        for (let k of html.find('.specAbs')) {
+            let step = Number($(k).attr("data-step"))
+            if (step > 0) {
+                let val = mode == "attack" ? $(k).attr("data-atbonus") : $(k).attr("data-pabonus")
+                res.push({
+                    name: $(k).find('a').text(),
+                    value: Number(val) * step,
+                    damageBonus: Number($(k).attr("data-tpbonus")) * step
+                })
+            }
+        }
+        return res
+    }
+
+    static parseEffect(effect, actor) {
+        let itemModifiers = {}
+        for (let mod of effect.split(",").map(x => x.trim())) {
+            let vals = mod.replace(/(\s+)/g, ' ').trim().split(" ")
+            if (vals.length == 2) {
+                if (Number(vals[0]) != undefined) {
+                    let number = Number(eval(vals[0].replace(/(gs|GS|Gs)/, actor.data.data.status.speed.max)))
+                    if (itemModifiers[vals[1].toLowerCase()] == undefined) {
+                        itemModifiers[vals[1].toLowerCase()] = number
+                    } else {
+                        itemModifiers[vals[1].toLowerCase()] += number
+                    }
+                }
+            }
+        }
+        return itemModifiers
+    }
+
     prepareData() {
         super.prepareData();
     }
@@ -68,6 +103,27 @@ export default class Itemdsa5 extends Item {
 
     setupEffect(ev, options = {}) {
         return Itemdsa5.getSubClass(this.data.type).setupDialog(ev, options, this)
+    }
+
+
+    static checkEquality(item, item2) {
+        return item2.type == item.type && item.name == item2.name && item.data.description.value == item2.data.description.value
+    }
+
+    static async combineItem(item1, item2, actor) {
+        item1 = duplicate(item1)
+        item1.data.quantity.value += item2.data.quantity.value
+        await actor.updateEmbeddedEntity("OwnedItem", item1)
+    }
+
+    static areEquals(item, item2) {
+        if (item.type != item2.type)
+            return false
+        return Itemdsa5.getSubClass(item.type).checkEquality(item, item2)
+    }
+
+    static async stackItems(stackOn, newItem, actor) {
+        return Itemdsa5.getSubClass(stackOn.type).combineItem(stackOn, newItem, actor)
     }
 
     _setupCardOptions(template, title) {
@@ -139,6 +195,9 @@ export default class Itemdsa5 extends Item {
         chatData.hasPrice = "price" in chatData.data;
         if (chatData.hasPrice) {
             let price = chatData.data.price.value;
+            if (chatData.data.QL)
+                price *= chatData.data.QL
+
             chatData.data.price.D = Math.floor(price / 10);
             price -= chatData.data.price.D * 10;
             chatData.data.price.S = Math.floor(price);

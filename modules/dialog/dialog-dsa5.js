@@ -1,6 +1,21 @@
-import DSA5 from '../system/config-dsa5.js'
+import DSA5CombatDialog from './dialog-combat-dsa5.js'
 
 export default class DSA5Dialog extends Dialog {
+
+
+
+
+    static getDialogForItem(type) {
+        switch (type) {
+            case "rangeweapon":
+            case "meleeweapon":
+            case "trait":
+                return DSA5CombatDialog
+
+        }
+        return DSA5Dialog
+    }
+
     static bigTimes = [
         5,
         30,
