@@ -419,6 +419,11 @@ export default class Actordsa5 extends Actor {
                         break;
                     case "specialability":
                         specAbs[i.data.category.value].push(i)
+                        if (i.data.category.value === "magical") {
+                            magic.hasSpells = true;
+                        } else if (i.data.category.value === "clerical") {
+                            magic.hasPrayers = true;
+                        }
                         break;
                 }
 
