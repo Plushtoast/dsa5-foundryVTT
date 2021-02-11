@@ -40,8 +40,7 @@ Manual modification of rolls and test results.
 - [DSA5-Core](https://ulisses-spiele.de/virtual-tabletop-dsa-vtt/) - All items and rules from the core rule book
 - [DSA5-Introduction](https://github.com/Plushtoast/dsa5_introduction) - A small adventure with included characters and maps to start playing. Might be of use for experienced players too.
 
-As of this moment several modules are in the making. Most notable the Das Schwarze Auge Grundregelwerk.
-We will inform you as soon as they will be available.
+As of this moment several modules are in the making. We will inform you as soon as they will be available.
 
 ## Other Recommended Modules
 The following modules are recommended for the best gaming experience:
