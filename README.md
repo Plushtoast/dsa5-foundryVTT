@@ -37,7 +37,7 @@ Manual modification of rolls and test results.
 ## Official Modules
 - DSA5 Bestiary - Coming soon
 - DSA5 Armory - Coming soon
-- [DSA5-Core](https://ulisses-spiele.de/virtual-tabletop-dsa-vtt/) - All items and rules from the core rule book
+- [DSA5-Core](https://www.f-shop.de/virtual-tabletops/das-schwarze-auge-vtt/) - All items and rules from the core rule book
 - [DSA5-Introduction](https://github.com/Plushtoast/dsa5_introduction) - A small adventure with included characters and maps to start playing. Might be of use for experienced players too.
 
 As of this moment several modules are in the making. We will inform you as soon as they will be available.
