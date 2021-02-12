@@ -29,6 +29,11 @@ export default class ActorSheetDsa5 extends ActorSheet {
         $(this._element).find(".import").attr("title", game.i18n.localize("SHEET.Import"));
         $(this._element).find(".locksheet").attr("title", game.i18n.localize("SHEET.Lock"));
         $(this._element).find(".library").attr("title", game.i18n.localize("SHEET.Library"));
+
+        if (this.currentFocus) {
+            $(this._element).find('[data-item-id="' + this.currentFocus + '"] .skill-advances').focus().select();
+            this.currentFocus = null;
+        }
     }
 
     static
@@ -480,25 +485,6 @@ export default class ActorSheetDsa5 extends ActorSheet {
             posthand(ev)
         });
 
-        html.find('.skill-advances').keydown(async event => {
-            this.skillUpdateFlag = event.keyCode == 9
-
-            if (event.keyCode == 13) // Enter
-            {
-                if (!this.skillsToEdit)
-                    this.skillsToEdit = []
-
-                let itemId = this._getItemId(event);
-                let itemToEdit = duplicate(this.actor.getEmbeddedEntity("OwnedItem", itemId))
-                itemToEdit.data.talentValue.value = Number(event.target.value);
-                this.skillsToEdit.push(itemToEdit);
-
-                await this.actor.updateEmbeddedEntity("OwnedItem", this.skillsToEdit);
-
-                this.skillsToEdit = [];
-            }
-        })
-
         html.find('.item-dropdown').click(ev => {
             ev.preventDefault()
             $(ev.currentTarget).closest('.item').find('.expandDetails').fadeToggle()
@@ -529,20 +515,12 @@ export default class ActorSheetDsa5 extends ActorSheet {
 
 
 
-        html.find('.skill-advances').focusout(async event => {
-            //event.preventDefault()
-            if (!this.skillsToEdit)
-                this.skillsToEdit = []
-            let itemId = this._getItemId(event);
+        html.find('.skill-advances').change(async ev => {
+            let itemId = this._getItemId(ev);
             let itemToEdit = duplicate(this.actor.getEmbeddedEntity("OwnedItem", itemId))
-            itemToEdit.data.talentValue.value = Number(event.target.value);
-            this.skillsToEdit.push(itemToEdit);
-
-            if (!this.skillUpdateFlag)
-                return;
-
-            await this.actor.updateEmbeddedEntity("OwnedItem", this.skillsToEdit);
-            this.skillsToEdit = [];
+            itemToEdit.data.talentValue.value = Number(ev.target.value);
+            await this.actor.updateEmbeddedEntity("OwnedItem", itemToEdit);
+            this.currentFocus = $(document.activeElement).closest('.row-section').attr('data-item-id');;
         });
 
         html.find('.item-edit').click(ev => {
@@ -949,9 +927,11 @@ export default class ActorSheetDsa5 extends ActorSheet {
                     elem.data.data.quantity.value = thing.count
                 }
             }
-            for (let thing of lookup) {
-                this._manageDragItems(thing, thing.type)
-            }
+            //we should improve that so it stacks items
+            await this.actor.createEmbeddedEntity("OwnedItem", lookup)
+                //for (let thing of lookup) {
+                //    await this._manageDragItems(thing, thing.type)
+                //}
         } else {
             ui.notifications.error(game.i18n.format("DSAError.notFound", { category: thing.type, name: thing.name }))
         }

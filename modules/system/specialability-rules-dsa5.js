@@ -18,7 +18,7 @@ export default class SpecialabilityRulesDSA5 extends ItemRulesDSA5 {
         }
         let xpCost = item.data.APValue.value * item.data.step.value
         if (/;/.test(item.data.APValue.value)) {
-            steps = item.data.APValue.value.split(";").map(x => Number(x.trim()))
+            let steps = item.data.APValue.value.split(";").map(x => Number(x.trim()))
             xpCost = 0
             for (let i = 0; i < item.data.step.value; i++)
                 xpCost += steps[i]

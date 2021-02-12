@@ -2,6 +2,12 @@ import DiceDSA5 from "../../system/dice-dsa5.js";
 import Itemdsa5 from "../item-dsa5.js";
 
 export default class CombatskillDSA5 extends Itemdsa5 {
+    static chatData(data, name) {
+        return [
+            this._chatLineHelper("Description", game.i18n.localize(`Combatskilldescr.${name}`)),
+        ]
+    }
+
     static setupDialog(ev, options, item, actor) {
         let mode = options.mode
         let title = game.i18n.localize(item.name) + " " + game.i18n.localize(mode + "test");

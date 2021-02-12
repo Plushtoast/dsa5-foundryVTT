@@ -1609,6 +1609,11 @@ input[type="search"] {
     background-size: contain;
 }
 
+.itemLibrary .categories li label {
+    text-overflow: ellipsis;
+    overflow: hidden;
+}
+
 .lineheight2 {
     line-height: 26px;
 }
@@ -1955,9 +1960,11 @@ a.inline-roll {
     overflow: hidden;
 }
 
-.specAbs .specImg {
+.specImg {
     background-image: url(../icons/categories/ability_combat.webp);
     background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
 }
 
 .specAbs:hover {

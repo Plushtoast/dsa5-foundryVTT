@@ -37,33 +37,15 @@ export default class DiceDSA5 {
             situationalModifiers.push(...testData.extra.options.moreModifiers)
         }
 
-        //TODO duplicate everything in advance
-        let source = testData.source.data ? (testData.source.data.data == undefined ? testData.source : testData.source.data) : testData.source
-        switch (source.type) {
-            case "regeneration":
-                mergeObject(dialogOptions.data, {
-                    regenerationInterruptOptions: DSA5.regenerationInterruptOptions,
-                    regnerationCampLocations: DSA5.regnerationCampLocations
-                });
-                break
-            case "number":
-                mergeObject(dialogOptions.data, {
-                    difficultyLabels: (DSA5.attributeDifficultyLabels)
-                });
-        }
-
         mergeObject(dialogOptions.data, {
             hasSituationalModifiers: situationalModifiers.length > 0,
-            situationalModifiers: situationalModifiers
+            situationalModifiers: situationalModifiers,
+            rollMode: dialogOptions.data.rollMode || rollMode,
+            rollModes: CONFIG.Dice.rollModes ? CONFIG.Dice.rollModes : CONFIG.rollModes
         })
         mergeObject(cardOptions, {
             user: game.user._id,
         })
-        dialogOptions.data.rollMode = dialogOptions.data.rollMode || rollMode;
-        if (CONFIG.Dice.rollModes)
-            dialogOptions.data.rollModes = CONFIG.Dice.rollModes;
-        else
-            dialogOptions.data.rollModes = CONFIG.rollModes;
 
         if (!testData.extra.options.bypass) {
             let html = await renderTemplate(dialogOptions.template, dialogOptions.data);
@@ -205,7 +187,6 @@ export default class DiceDSA5 {
     }
 
     static rollTraitDamage(testData) {
-        //let description = "";
         this._appendSituationalModifiers(testData, game.i18n.localize("manual"), testData.testModifier)
         let modifier = this._situationalModifiers(testData);
         let chars = []
@@ -245,7 +226,6 @@ export default class DiceDSA5 {
             weapon = Actordsa5._prepareMeleeWeapon(testData.source.data, [skill], testData.extra.actor)
         } else {
             weapon = Actordsa5._prepareRangeWeapon(testData.source.data, [], [skill], testData.extra.actor)
-
         }
 
         let roll = testData.roll ? testData.roll : new Roll(weapon.data.damage.value.replace(/[Ww]/g, "d")).roll()
@@ -290,7 +270,6 @@ export default class DiceDSA5 {
                 value: val
             })
         }
-
     }
 
     static _getNarrowSpaceModifier(weapon, testData) {
@@ -349,29 +328,7 @@ export default class DiceDSA5 {
                 break;
         }
         if (testData.mode == "attack" && success) {
-            let damageRoll = testData.damageRoll ? testData.damageRoll : new Roll(source.data.damage.value.replace(/[Ww]/g, "d")).roll()
-            this._addRollDiceSoNice(testData, damageRoll, "black")
-            let bonusDmg = testData.situationalModifiers.reduce(function(_this, val) {
-                return _this + (Number(val.damageBonus) || 0)
-            }, 0);
-            let damage = damageRoll.total + bonusDmg;
-
-            for (let k of damageRoll.terms) {
-                if (k instanceof Die || k.class == "Die") {
-                    for (let l of k.results) {
-                        result.characteristics.push({ char: "damage", res: l.result, die: "d" + k.faces })
-                    }
-                }
-            }
-
-            if (source.data.traitType.value == "rangeAttack") {
-                damage += DSA5.rangeMods[testData.rangeModifier].damage
-            }
-            if (doubleDamage) {
-                damage = damage * 2
-            }
-            result["damage"] = damage
-            result["damageRoll"] = damageRoll
+            DiceDSA5.evaluateDamage(testData, result, source, source.data.traitType.value == "rangeAttack", doubleDamage)
         }
         result["rollType"] = "weapon"
         let effect = DiceDSA5.parseEffect(source.data.effect.value)
@@ -380,6 +337,55 @@ export default class DiceDSA5 {
         return result
     }
 
+    static evaluateDamage(testData, result, weapon, isRangeWeapon, doubleDamage) {
+        let damageRoll = testData.damageRoll ? testData.damageRoll : new Roll(weapon.data.damage.value.replace(/[Ww]/g, "d")).roll()
+        let bonusDmg = testData.situationalModifiers.reduce(function(_this, val) {
+            return _this + (Number(val.damageBonus) || 0)
+        }, 0);
+        this._addRollDiceSoNice(testData, damageRoll, "black")
+        let damage = Number(damageRoll.total) + bonusDmg;
+        let weaponBonus = 0
+        let weaponroll = 0
+        for (let k of damageRoll.terms) {
+            if (k instanceof Die || k.class == "Die") {
+                for (let l of k.results) {
+                    weaponroll += Number(l.result)
+                    result.characteristics.push({ char: "damage", res: l.result, die: "d" + k.faces })
+                }
+            } else if (!isNaN(k)) {
+                weaponBonus += Number(k)
+            }
+        }
+
+        let damageBonusDescription = [game.i18n.localize("Roll") + " " + weaponroll]
+        if (weaponBonus != 0)
+            damageBonusDescription.push(game.i18n.localize("weaponModifier") + " " + weaponBonus)
+
+        damageBonusDescription.push(...testData.situationalModifiers.map(x => { return x.damageBonus ? `${x.name} ${x.damageBonus}` : "" }).filter(x => x != ""))
+
+
+        if (weapon.extraDamage) {
+            damage = Number(weapon.extraDamage) + Number(damage)
+            damageBonusDescription.push(game.i18n.localize("damageThreshold") + " " + weapon.extraDamage)
+        }
+
+
+        if (isRangeWeapon) {
+            let rangeDamageMod = DSA5.rangeMods[testData.rangeModifier].damage
+            damage += rangeDamageMod
+            if (rangeDamageMod != 0)
+                damageBonusDescription.push(game.i18n.localize("distance") + " " + rangeDamageMod)
+        }
+
+        if (doubleDamage) {
+            damage = damage * 2
+            damageBonusDescription.push(game.i18n.localize("doubleDamage"))
+        }
+
+        result["damagedescription"] = damageBonusDescription.join(", ")
+        result["damage"] = damage
+        result["damageRoll"] = damageRoll
+    }
 
 
     static rollWeapon(testData) {
@@ -445,33 +451,7 @@ export default class DiceDSA5 {
         }
 
         if (testData.mode == "attack" && success) {
-            let damageRoll = testData.damageRoll ? testData.damageRoll : new Roll(weapon.data.damage.value.replace(/[Ww]/g, "d")).roll()
-            let bonusDmg = testData.situationalModifiers.reduce(function(_this, val) {
-                return _this + (Number(val.damageBonus) || 0)
-            }, 0);
-            this._addRollDiceSoNice(testData, damageRoll, "black")
-            let damage = Number(damageRoll.total) + bonusDmg;
-
-            for (let k of damageRoll.terms) {
-                if (k instanceof Die || k.class == "Die") {
-                    for (let l of k.results) {
-                        result.characteristics.push({ char: "damage", res: l.result, die: "d" + k.faces })
-                    }
-                }
-            }
-            if (weapon.extraDamage)
-                damage = Number(weapon.extraDamage) + Number(damage)
-
-            if (source.type == "rangeweapon") {
-                damage += DSA5.rangeMods[testData.rangeModifier].damage
-            }
-
-            if (doubleDamage) {
-                damage = damage * 2
-            }
-
-            result["damage"] = damage
-            result["damageRoll"] = damageRoll
+            DiceDSA5.evaluateDamage(testData, result, weapon, source.type == "rangeweapon", doubleDamage)
         }
         result["rollType"] = "weapon"
         let effect = DiceDSA5.parseEffect(weapon.data.effect ? weapon.data.effect.value : "")

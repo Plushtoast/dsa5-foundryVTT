@@ -2,7 +2,7 @@ import DSA5_Utility from "../../system/utility-dsa5.js";
 import Itemdsa5 from "../item-dsa5.js";
 
 export default class ConsumableItemDSA extends Itemdsa5 {
-    static chatData(data) {
+    static chatData(dat, name) {
         return [
             this._chatLineHelper("qualityStep", data.QL),
             this._chatLineHelper("effect", DSA5_Utility.replaceDies(data.QLList.split("\n")[data.QL - 1])),

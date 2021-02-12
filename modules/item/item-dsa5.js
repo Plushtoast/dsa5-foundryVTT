@@ -72,11 +72,16 @@ export default class Itemdsa5 extends Item {
 
     static parseEffect(effect, actor) {
         let itemModifiers = {}
+        let regex = new RegExp(game.i18n.localize("CHARAbbrev.GS"), "gi")
         for (let mod of effect.split(",").map(x => x.trim())) {
             let vals = mod.replace(/(\s+)/g, ' ').trim().split(" ")
             if (vals.length == 2) {
                 if (Number(vals[0]) != undefined) {
-                    let number = Number(eval(vals[0].replace(/(gs|GS|Gs)/, actor.data.data.status.speed.max)))
+                    let number = vals[0].replace(regex, actor.data.data.status.speed.max)
+                    number = number.replace(/\d{1}[dDwW]\d/, function(match) {
+                        return new Roll(match).roll().total
+                    })
+                    number = Math.round(Number(eval(number)))
                     if (itemModifiers[vals[1].toLowerCase()] == undefined) {
                         itemModifiers[vals[1].toLowerCase()] = number
                     } else {
@@ -175,7 +180,7 @@ export default class Itemdsa5 extends Item {
 
 
 
-    static chatData(data) {
+    static chatData(data, name) {
         return []
     }
 
@@ -188,7 +193,7 @@ export default class Itemdsa5 extends Item {
 
     async postItem() {
         let chatData = duplicate(this.data);
-        const properties = Itemdsa5.getSubClass(this.data.type).chatData(duplicate(chatData.data))
+        const properties = Itemdsa5.getSubClass(this.data.type).chatData(duplicate(chatData.data), this.name)
 
         chatData["properties"] = properties
 

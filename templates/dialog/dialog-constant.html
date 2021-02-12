@@ -32,17 +32,27 @@
     <input type="checkbox" id="narrowSpace" name="narrowSpace" value="1">
 </div>
 <div class="form-group custom-select">
-    <label>{{localize "wrongHand"}}</label>
+    <label>{{localize "wrongHand"}} (-4)</label>
     <input type="checkbox" id="wrongHand" name="wrongHand" value="1" {{#if wrongHandDisabled}}disabled{{/if}} {{#if offHand}}checked{{/if}}>
 </div>
+
 {{/if}} {{#if showDefense}}
 <div class="form-group">
     <label>{{localize "defenseCount"}}</label>
     <input class="quantity-click" type="number" name="defenseCount" value="{{defenseCount}}" />
 </div>
+<div class="form-group">
+    <label>{{localize "attackFromBehind"}} (-4)</label>
+    <input type="checkbox" id="attackFromBehind" name="attackFromBehind" value="-4">
+</div>
+{{/if}} {{#if showAttack}}
+<div class="form-group custom-select">
+    <label>{{localize "opportunityAttack"}} (-4)</label>
+    <input type="checkbox" class="opportunityAttack" name="opportunityAttack" value="-4">
+</div>
 {{/if}} {{#if weaponSizes}}
 <div class="form-group custom-select">
-    <label>{{localize "doubleAttack"}}</label>
+    <label>{{localize "doubleAttack"}} (-2)</label>
     <input type="checkbox" id="doubleAttack" name="doubleAttack" value="1">
 </div>
 <div class="form-group custom-select">

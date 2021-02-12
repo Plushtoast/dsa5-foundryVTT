@@ -21,8 +21,8 @@
         "DAMAGE": "Damage",
         "DODGE": "Dodge",
         "modifyable": "mod.",
-        "AsPCost": "AE Kosten",
-        "KaPCost": "KP Kosten",
+        "AsPCost": "AE Cost",
+        "KaPCost": "KP Cost",
         "EFFECT": "Effect test",
         "-": "-",
         "LEP": "Life Points",
@@ -110,6 +110,8 @@
     "animal": "Animal",
     "attributeChange": "Attribute change",
     "attackOfOpportunity": "The defender can make an immediate attack of opportunity against the opponent",
+    "opportunityAttack": "Attack of Opportunity",
+    "attackFromBehind": "Attack from behind",
     "Advances": "Advances",
     "attributes": "Attributes",
     "astralenergy": "Arcane energy",
@@ -221,7 +223,7 @@
     "guidevalue_small": "Primary attribute",
     "GM notes": "GM notes",
     "general": "general",
-    "halfDefense": "Halve the target’s defense stat against the attack",
+    "halfDefense": "Halve the target’s defense stat against this attack",
     "generalSpecialAbilities": "General Special Abilities",
     "Hair_color": "Hair color",
     "Height": "Height",
@@ -384,6 +386,7 @@
     "happyTalents": "Favored skills",
     "wounds": "Life points",
     "weapontype": "Weapon type",
+    "weaponModifier": "Weapon Modifier",
     "worn": "Worn",
     "wrongHand": "Wrong hand",
     "writing": "Writing",
@@ -706,7 +709,8 @@
 
     "OPPOSED": {
         "winsFP": "<b>{winner}</b> wins versus <b>{loser}</b> with {SL} quality level(s)",
-        "wins": "<b>{winner}</b> wins versus <b>{loser}</b>"
+        "wins": "<b>{winner}</b> wins versus <b>{loser}</b>",
+        "attackOfOpportunity": "<b>Description</b>: Attack of Opportunity, no defense allowed"
     },
 
     "ReverseSpellRanges": {
@@ -779,7 +783,8 @@
         "MissingChoices": "There are missing choices.",
         "noProperActor": "No actor has been assigned to you or you did not select a token.",
         "noMatch": "No match",
-        "zeroXP": "The character has no adventure points yet. Do you want to add some?"
+        "zeroXP": "The character has no adventure points yet. Do you want to add some?",
+        "opposedAttackNoSpecAbs": "Attacks of Opportunity can not be combined with Special Abilites"
     },
 
     "CEREMONYMODIFIER": {

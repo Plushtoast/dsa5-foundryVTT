@@ -5,7 +5,7 @@ import DiceDSA5 from "../../system/dice-dsa5.js";
 import Itemdsa5 from "../item-dsa5.js";
 
 export default class MeleeweaponDSA5 extends Itemdsa5 {
-    static chatData(data) {
+    static chatData(data, name) {
         let res = [
             this._chatLineHelper("damage", data.damage.value),
             this._chatLineHelper("atmod", data.atmod.value),
@@ -55,7 +55,8 @@ export default class MeleeweaponDSA5 extends Itemdsa5 {
                 wrongHandDisabled: wrongHandDisabled,
                 offHand: !wrongHandDisabled && source.data.worn.offHand,
                 targetWeaponSize: targetWeaponsize,
-                combatSpecAbs: combatskills
+                combatSpecAbs: combatskills,
+                showAttack: true
             });
         } else if (data.mode == "parry") {
             for (let com of combatSpecAbs) {
@@ -81,8 +82,6 @@ export default class MeleeweaponDSA5 extends Itemdsa5 {
 
         }
     }
-
-
 
     static setupDialog(ev, options, item, actor) {
         let mode = options.mode
@@ -121,7 +120,16 @@ export default class MeleeweaponDSA5 extends Itemdsa5 {
                 testData.narrowSpace = html.find('[name="narrowSpace"]').is(":checked")
                 testData.doubleAttack = html.find('[name="doubleAttack"]').is(":checked") ? -2 : 0
                 testData.wrongHand = html.find('[name="wrongHand"]').is(":checked") ? -4 : 0
-
+                let attackOfOpportunity = html.find('[name="opportunityAttack"]').is(":checked") ? -4 : 0
+                testData.attackOfOpportunity = attackOfOpportunity != 0
+                testData.situationalModifiers.push({
+                    name: game.i18n.localize("opportunityAttack"),
+                    value: attackOfOpportunity
+                })
+                testData.situationalModifiers.push({
+                    name: game.i18n.localize("attackFromBehind"),
+                    value: html.find('[name="attackFromBehind"]').is(":checked") ? -4 : 0
+                })
                 testData.situationalModifiers.push(...Itemdsa5.getSpecAbModifiers(html, mode))
 
                 return { testData, cardOptions };

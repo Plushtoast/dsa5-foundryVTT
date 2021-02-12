@@ -5,7 +5,7 @@ import AdvantageRulesDSA5 from "../../system/advantage-rules-dsa5.js";
 import Itemdsa5 from "../item-dsa5.js";
 
 export default class SpellItemDSA5 extends Itemdsa5 {
-    static chatData(data) {
+    static chatData(data, name) {
         return [
             this._chatLineHelper("castingTime", data.castingTime.value),
             this._chatLineHelper("AsPCost", data.AsPCost.value),

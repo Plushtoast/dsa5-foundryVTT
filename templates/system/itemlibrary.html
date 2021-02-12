@@ -21,9 +21,9 @@
                 </div>
                 <div class="row-section">
                     <div class="col">
-                        <ul class="wrap">
-                            {{#each filters.categories as |val fil|}}
-                            <li><input class="filter" type="checkbox" id="filter_{{fil}}" data-category="{{fil}}" {{checked val}}/><label for="filter_{{fil}}">{{localize fil}}</label></li>
+                        <ul class="wrap categories">
+                            {{#each categories as |val fil|}}
+                            <li title="{{val.label}}"><input class="filter" type="checkbox" id="filter_{{val.key}}" data-category="{{val.key}}" {{checked val.selected}}/><label for="filter_{{val.key}}">{{val.label}}</label></li>
                             {{/each}}
                         </ul>
                     </div>

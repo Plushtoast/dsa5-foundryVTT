@@ -15,6 +15,7 @@ export default function() {
 
         html.find('li[data-pack="dsa5.money"]').hide()
         const packs = game.packs.filter(p => p.metadata.langs && !(p.metadata.langs.includes(game.i18n.lang)))
+
         for (let pack of packs) {
             let name = `${pack.metadata.system}.${pack.metadata.name}`
             game.packs.delete(name)

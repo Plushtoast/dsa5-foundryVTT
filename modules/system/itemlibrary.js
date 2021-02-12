@@ -24,7 +24,8 @@ export default class DSA5ItemLibrary extends Application {
                 "spell": false,
                 "specialability": false,
                 "poison": false,
-                "disease": false
+                "disease": false,
+                "consumable": false
             },
             filterBy: {
                 search: ""
@@ -34,9 +35,21 @@ export default class DSA5ItemLibrary extends Application {
 
     getData() {
         let data = super.getData()
-        data.filters = this.filters
+        data.categories = this.translateFilters()
         data.items = this.items
         return data
+    }
+
+    translateFilters() {
+        let res = []
+        const filters = this.filters
+        Object.keys(filters.categories).forEach(function(key) {
+            res.push({ label: game.i18n.localize(key), selected: filters.categories[key], key: key })
+        })
+        res = res.sort(function(a, b) {
+            return a.label.localeCompare(b.label);
+        });
+        return res
     }
 
     static get defaultOptions() {
@@ -83,8 +96,8 @@ export default class DSA5ItemLibrary extends Application {
                 li.setAttribute("draggable", true);
                 li.addEventListener("dragstart", event => {
                     event.dataTransfer.setData("text/plain", JSON.stringify({
-                        type: item.options.compendium.metadata.entity,
-                        pack: `${item.options.compendium.metadata.package}.${item.options.compendium.metadata.name}`,
+                        type: "Item",
+                        pack: item.options.compendium ? `${item.options.compendium.metadata.package}.${item.options.compendium.metadata.name}` : "",
                         id: item._id
                     }))
 

@@ -46,5 +46,6 @@ export default function() {
             DSA5ChatListeners.showTables()
             return false
         }
+
     })
 }

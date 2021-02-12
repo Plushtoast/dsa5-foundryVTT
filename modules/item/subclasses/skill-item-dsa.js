@@ -6,6 +6,13 @@ import SpecialabilityRulesDSA5 from "../../system/specialability-rules-dsa5.js";
 import Itemdsa5 from "../item-dsa5.js";
 
 export default class SkillItemDSA5 extends Itemdsa5 {
+
+    static chatData(data, name) {
+        return [
+            this._chatLineHelper("Description", game.i18n.localize(`SKILLdescr.${name}`)),
+        ]
+    }
+
     static getSituationalModifiers(situationalModifiers, actor, data, source) {
         situationalModifiers.push(...AdvantageRulesDSA5.getTalentBonus(actor.data, source.name))
         situationalModifiers.push(...SpecialabilityRulesDSA5.getTalentBonus(actor.data, source.name))

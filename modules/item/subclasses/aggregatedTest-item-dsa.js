@@ -1,6 +1,6 @@
 import Itemdsa5 from "../item-dsa5.js";
 export default class aggregatedTestItemDSA5 extends Itemdsa5 {
-    static chatData(data) {
+    static chatData(data, name) {
         let result = game.i18n.localize("Ongoing")
         if (data.cummulatedQS.value >= 10) {
             result = game.i18n.localize("Success")

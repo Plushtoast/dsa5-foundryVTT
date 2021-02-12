@@ -20,14 +20,17 @@ export default class DSA5ChatAutoCompletion {
 
     async chatListeners(html) {
         let target = this
+
         this.anchor = $('#chat-message').parent()
         $('#chat-message').off('keydown')
         html.on('keyup', '#chat-message', async function(ev) {
             target._parseInput(ev)
         })
+
         html.on('click', '.quick-item', async function(ev) {
             target._quickSelect($(ev.currentTarget))
         })
+
         html.on('keydown', '#chat-message', function(ev) {
             target._navigateQuickFind(ev)
         })

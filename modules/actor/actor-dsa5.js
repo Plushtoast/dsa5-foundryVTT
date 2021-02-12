@@ -868,7 +868,9 @@ export default class Actordsa5 extends Actor {
             title: title,
             template: "/systems/dsa5/templates/dialog/regeneration-dialog.html",
             data: {
-                rollMode: options.rollMode
+                rollMode: options.rollMode,
+                regenerationInterruptOptions: DSA5.regenerationInterruptOptions,
+                regnerationCampLocations: DSA5.regnerationCampLocations
             },
             callback: (html) => {
                 testData.situationalModifiers = []
@@ -920,7 +922,7 @@ export default class Actordsa5 extends Actor {
             callback: (html) => {
                 cardOptions.rollMode = html.find('[name="rollMode"]').val();
                 testData.testModifier = Number(html.find('[name="testModifier"]').val());
-                testData.situationalModifiers = this._parseModifiers('[name = "situationalModifiers"]')
+                testData.situationalModifiers = this._parseModifiers('[name="situationalModifiers"]')
                 return { testData, cardOptions };
             }
         };
@@ -952,18 +954,21 @@ export default class Actordsa5 extends Actor {
             title: title,
             template: "/systems/dsa5/templates/dialog/characteristic-dialog.html",
             data: {
-                rollMode: options.rollMode
+                rollMode: options.rollMode,
+                difficultyLabels: (DSA5.attributeDifficultyLabels)
             },
             callback: (html) => {
                 cardOptions.rollMode = html.find('[name="rollMode"]').val();
                 testData.testModifier = Number(html.find('[name="testModifier"]').val());
                 testData.testDifficulty = DSA5.attributeDifficultyModifiers[html.find('[name="testDifficulty"]').val()];
-                testData.situationalModifiers = this._parseModifiers('[name = "situationalModifiers"]')
+                testData.situationalModifiers = this._parseModifiers('[name="situationalModifiers"]')
                 return { testData, cardOptions };
             }
         };
 
         let cardOptions = this._setupCardOptions("systems/dsa5/templates/chat/roll/characteristic-card.html", title)
+
+        console.log(testData)
 
         return DiceDSA5.setupDialog({
             dialogOptions: dialogOptions,

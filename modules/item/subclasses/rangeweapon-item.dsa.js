@@ -5,7 +5,7 @@ import DiceDSA5 from "../../system/dice-dsa5.js";
 import Itemdsa5 from "../item-dsa5.js";
 
 export default class RangeweaponItemDSA5 extends Itemdsa5 {
-    static chatData(data) {
+    static chatData(data, name) {
         let res = [
             this._chatLineHelper("damage", data.damage.value),
             this._chatLineHelper("combatskill", data.combatskill.value),
