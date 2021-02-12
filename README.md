@@ -5,7 +5,7 @@
 1.0.0 - FoundryVTT 0.7.0+
 We are proud to announce we finally finished our initial work on Das Schwarze Auge 5th edition in German (English soon) in foundry. I hope you enjoy the system as much as we do.
 
-This system is intended for usage with Foundry Virtual Tabletop to play "Das Schwarze Auge" 5th edition.
+This system is intended for usage with [Foundry Virtual Tabletop](https://foundryvtt.com/) to play "Das Schwarze Auge" 5th edition.
 
 ## Installation - Auto Installer
 In the FVTT Game Systems Menu, click Install System and enter the Manifest URL: `https://raw.githubusercontent.com/Plushtoast/dsa5-foundryVTT/master/system.json`
@@ -35,10 +35,12 @@ Management of inventory with drag and drop and information on all items.
 Manual modification of rolls and test results.
 
 ## Official Modules
+- DSA5 Bestiary - Coming soon
+- DSA5 Armory - Coming soon
+- [DSA5-Core](https://www.f-shop.de/virtual-tabletops/das-schwarze-auge-vtt/) - All items and rules from the core rule book
 - [DSA5-Introduction](https://github.com/Plushtoast/dsa5_introduction) - A small adventure with included characters and maps to start playing. Might be of use for experienced players too.
 
-As of this moment several modules are in the making. Most notable the Das Schwarze Auge Grundregelwerk.
-We will inform you as soon as they will be available.
+As of this moment several modules are in the making. We will inform you as soon as they will be available.
 
 ## Other Recommended Modules
 The following modules are recommended for the best gaming experience:
