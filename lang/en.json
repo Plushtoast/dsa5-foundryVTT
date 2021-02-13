@@ -101,6 +101,7 @@
         "poison": "Poison"
     },
 
+    "traditionArtifact": "Tradition Artifact",
     "APValue": "AP-Value",
     "additionalFPs": "additional SPs",
     "attacktest": "Attack test",

@@ -76,7 +76,7 @@ export default class Itemdsa5 extends Item {
         for (let mod of effect.split(",").map(x => x.trim())) {
             let vals = mod.replace(/(\s+)/g, ' ').trim().split(" ")
             if (vals.length == 2) {
-                if (Number(vals[0]) != undefined) {
+                if (!isNaN(vals[0])) {
                     let number = vals[0].replace(regex, actor.data.data.status.speed.max)
                     number = number.replace(/\d{1}[dDwW]\d/, function(match) {
                         return new Roll(match).roll().total
@@ -92,11 +92,6 @@ export default class Itemdsa5 extends Item {
         }
         return itemModifiers
     }
-
-    prepareData() {
-        super.prepareData();
-    }
-
 
     static _chatLineHelper(key, val) {
         return `<b>${game.i18n.localize(key)}</b>: ${val ? val : "-"}`

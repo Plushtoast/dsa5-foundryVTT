@@ -525,7 +525,7 @@ DSA5.specialAbilityCategories = {
     "clerical": "clerical",
     "language": "language",
     "animal": "animal",
-    "staff": "staff"
+    "staff": "traditionArtifact"
 }
 
 DSA5.dieColors = {

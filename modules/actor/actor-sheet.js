@@ -198,7 +198,6 @@ export default class ActorSheetDsa5 extends ActorSheet {
     }
 
     async consumeItem(item) {
-
         new Dialog({
             title: game.i18n.localize("SHEET.ConsumeItem") + ": " + item.name,
             content: game.i18n.localize("SHEET.ConsumeItem") + ": " + item.name,
@@ -299,8 +298,10 @@ export default class ActorSheetDsa5 extends ActorSheet {
                 result = newValue <= this.actor.data.data.characteristics["ko"].value
                 break
             case "astralenergy":
+                result = newValue <= (this.actor.data.data.characteristics[this.actor.data.data.guidevalue.magical] == undefined ? 0 : this.actor.data.data.characteristics[this.actor.data.data.guidevalue.magical].value)
+                break
             case "karmaenergy":
-                result = newValue <= this.actor.data.data.characteristics[this.actor.data.data.guidevalue.value].value
+                result = newValue <= (this.actor.data.data.characteristics[this.actor.data.data.guidevalue.clerical] == undefined ? 0 : this.actor.data.data.characteristics[this.actor.data.data.guidevalue.clerical].value)
                 break
         }
         if (!result)

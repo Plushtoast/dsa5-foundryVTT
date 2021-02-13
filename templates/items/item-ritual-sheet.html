@@ -122,6 +122,10 @@
                 <input class="input-text" type="text" name="data.distribution.value" value="{{data.distribution.value}}" data-dtype="String" />
             </div>
             <div class="form-group">
+                <label class="label-text">{{localize "feature"}}: </label>
+                <input class="input-text" type="text" name="data.feature" value="{{data.feature}}" data-dtype="String" />
+            </div>
+            <div class="form-group">
                 <label class="label-text">{{localize "resistanceModifier"}}</label>
                 <select name="data.resistanceModifier.value" data-dtype="String">
                     {{#select data.resistanceModifier.value}}

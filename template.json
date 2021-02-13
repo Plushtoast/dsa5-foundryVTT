@@ -476,7 +476,8 @@
             ],
             "talentValue": {
                 "value": 0
-            }
+            },
+            "feature": ""
         },
         "trait": {
             "templates": [
@@ -522,7 +523,8 @@
             },
             "permanentCost": {
                 "value": 0
-            }
+            },
+            "feature": ""
         },
         "liturgy": {
             "templates": [

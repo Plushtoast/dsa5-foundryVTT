@@ -5,7 +5,7 @@ export default class DSA5_Utility {
     static async allSkills() {
         let returnSkills = [];
 
-        const packs = game.packs.filter(p => p.metadata.tags && p.metadata.tags.includes("skill"))
+        const packs = game.packs.filter(p => p.metadata.tags && p.metadata.tags.includes("skill") && p.metadata.langs.includes(game.i18n.lang))
         if (!packs.length)
             return ui.notifications.error("No content found")
 

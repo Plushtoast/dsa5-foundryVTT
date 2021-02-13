@@ -40,6 +40,9 @@ export default class SpecialabilityRulesDSA5 extends ItemRulesDSA5 {
         }
 
         if (adoption != null) {
+            if (DSA5.AbilitiesNeedingAdaption[item.name].effect) {
+                item.data.effect.value = `${adoption.name} ${DSA5.AbilitiesNeedingAdaption[item.name].effect}`
+            }
             item.name = `${item.name.replace(' ()', '')} (${adoption.name})`
             if (adoption.data)
                 item.data.APValue.value = item.data.APValue.value.split("/")[adoption.data.data.StF.value.charCodeAt(0) - 65].trim()

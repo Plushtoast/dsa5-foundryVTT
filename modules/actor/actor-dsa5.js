@@ -81,14 +81,17 @@ export default class Actordsa5 extends Actor {
 
             let guide = data.data.guidevalue
             if (guide && data.type != "creature") {
-                if (data.data.characteristics[guide.magical]) {
-                    data.data.status.astralenergy.current = data.data.status.astralenergy.initial + data.data.characteristics[guide.magical].value
-                    data.data.status.astralenergy.max = data.data.status.astralenergy.current + data.data.status.astralenergy.modifier + data.data.status.astralenergy.advances + data.data.status.astralenergy.gearmodifier
-                }
-                if (data.data.characteristics[guide.clerical]) {
-                    data.data.status.karmaenergy.current = data.data.status.karmaenergy.initial + data.data.characteristics[guide.clerical].value
-                    data.data.status.karmaenergy.max = data.data.status.karmaenergy.current + data.data.status.karmaenergy.modifier + data.data.status.karmaenergy.advances + data.data.status.karmaenergy.gearmodifier
-                }
+                data.data.status.astralenergy.current = data.data.status.astralenergy.initial
+                data.data.status.karmaenergy.current = data.data.status.karmaenergy.initial
+
+                if (data.data.characteristics[guide.magical])
+                    data.data.status.astralenergy.current += data.data.characteristics[guide.magical].value
+
+                if (data.data.characteristics[guide.clerical])
+                    data.data.status.karmaenergy.current += data.data.characteristics[guide.clerical].value
+
+                data.data.status.astralenergy.max = data.data.status.astralenergy.current + data.data.status.astralenergy.modifier + data.data.status.astralenergy.advances + data.data.status.astralenergy.gearmodifier
+                data.data.status.karmaenergy.max = data.data.status.karmaenergy.current + data.data.status.karmaenergy.modifier + data.data.status.karmaenergy.advances + data.data.status.karmaenergy.gearmodifier
             }
 
             data.data.status.speed.max = data.data.status.speed.initial + (data.data.status.speed.modifier || 0) + data.data.status.speed.gearmodifier
@@ -445,7 +448,7 @@ export default class Actordsa5 extends Actor {
         //TODO move the encumbrance calculation to a beeter location
         encumbrance = Math.max(0, encumbrance - SpecialabilityRulesDSA5.abilityStep(this.data, game.i18n.localize('LocalizedIDs.inuredToEncumbrance')))
 
-        let carrycapacity = (actorData.data.characteristics.kk.value + actorData.data.characteristics.kk.modifier + actorData.data.characteristics.kk.advances) * 2;
+        let carrycapacity = actorData.data.characteristics.kk.value * 2;
         if (actorData.type != "creature" || actorData.canAdvance) {
             encumbrance += Math.max(0, Math.ceil((totalWeight - carrycapacity - 4) / 4))
         }
@@ -455,6 +458,9 @@ export default class Actordsa5 extends Actor {
         this.addCondition("encumbered", encumbrance, true)
 
         specAbs.magical = specAbs.magical.concat(specAbs.staff)
+
+        let characteristics = duplicate(DSA5.characteristics)
+        characteristics["-"] = "-"
 
         return {
             totalweight: totalWeight,
@@ -476,7 +482,7 @@ export default class Actordsa5 extends Actor {
                 available: actorData.data.freeLanguagePoints ? actorData.data.freeLanguagePoints.value : 0
             },
             schips: schips,
-            guidevalues: DSA5.characteristics,
+            guidevalues: characteristics,
             magic: magic,
             traits: traits,
             combatskills: combatskills,

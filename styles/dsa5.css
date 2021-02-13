@@ -923,6 +923,7 @@ input[type=text].emphasize {
     box-shadow: 0 0 20px #000;
 }
 
+.window-app.image-popout .window-content,
 .app.sidebar-popout .window-content,
 .window-app .window-content {
     background: url(../icons/backgrounds/sheet2.webp) no-repeat;

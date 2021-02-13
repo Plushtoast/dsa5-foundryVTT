@@ -59,7 +59,7 @@ export default class OpposedDsa5 {
 
             if (testResult.successLevel > 0) {
                 let attackOfOpportunity = message.data.flags.data.preData.attackOfOpportunity
-                let unopposedButton = attackOfOpportunity ? "" : `<div class="unopposed-button" data-target="true" title="${game.i18n.localize("Unopposed")}"><a><i class="fas fa-times"></i></a></div>`
+                let unopposedButton = attackOfOpportunity ? "" : `<div class="unopposed-button" data-target="true" title="${game.i18n.localize("Unopposed")}"><a>${game.i18n.localize('Unopposed')} <i class="fas fa-times"></i></a></div>`
                 let startMessagesList = [];
                 game.user.targets.forEach(async target => {
                     let content =

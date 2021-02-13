@@ -101,7 +101,7 @@
         "poison": "Gift"
     },
 
-
+    "traditionArtifact": "Traditionsartefakt",
     "APValue": "AP-Wert",
     "additionalFPs": "zusätzliche FPs",
     "attacktest": "Angriffsprobe",
@@ -222,7 +222,7 @@
     "Gender": "Geschlecht",
     "Group": "Gruppe",
     "guidevalue": "Leiteigenschaft",
-    "guidevalue_small": "Leit- eigenschaft",
+    "guidevalue_small": "Leit&shy;eigenschaft",
     "GM notes": "SL Notizen",
     "general": "allgemein",
     "halfDefense": "der Verteidigungswert des Gegners muss für diesen Angriff halbiert werden",
