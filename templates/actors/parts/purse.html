@@ -15,7 +15,7 @@
     <div class="row-section">
         {{#each this}}
         <div class="col four center item" data-item-id="{{_id}}">
-            <a class="col-{{name}} quantity-click">{{data.quantity.value}}</a>
+            <input class="col-{{name}} money-change" type="text" data-dtype="Number" value="{{data.quantity.value}}" />
         </div>
         {{/each}}
     </div>

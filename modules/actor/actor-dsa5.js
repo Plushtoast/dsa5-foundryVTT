@@ -51,7 +51,7 @@ export default class Actordsa5 extends Actor {
 
             let isFamiliar = data.items.find(x => x.name == game.i18n.localize('LocalizedIDs.familiar') && x.type == "trait") != undefined
             data.canAdvance = data.type == "character" || isFamiliar
-            data.isMage = data.items.some(x => ["ritual", "spell", "magictrick"].includes(x.type) || (x.type == "specialability" && x.data.category.value == "magical"))
+            data.isMage = data.items.some(x => ["ritual", "spell", "magictrick"].includes(x.type) || (x.type == "specialability" && ["magical", "staff"].includes(x.data.category.value)))
             data.isPriest = data.items.some(x => ["ceremony", "liturgy", "blessing"].includes(x.type) || (x.type == "specialability" && x.data.category.value == "clerical"))
             if (data.canAdvance) {
                 data.data.details.experience.current = data.data.details.experience.total - data.data.details.experience.spent;
@@ -105,7 +105,8 @@ export default class Actordsa5 extends Actor {
             data.data.status.dodge.max = Number(data.data.status.dodge.value) + Number(data.data.status.dodge.modifier) + (Number(game.settings.get("dsa5", "higherDefense")) / 2)
 
             //Prevent double update with multiple GMs, still unsafe
-            if (game.user.id == game.users.find(u => u.active && u.isGM).id) {
+            let activeGM = game.users.find(u => u.active && u.isGM)
+            if (activeGM && game.user.id == activeGM.id) {
                 let hasDefaultPain = data.type != "creature" || data.data.status.wounds.max >= 20
                 let pain = 0
                 if (hasDefaultPain) {
@@ -139,7 +140,6 @@ export default class Actordsa5 extends Actor {
             console.error("Something went wrong with preparing actor data: " + error + error.stack)
             ui.notifications.error(game.i18n.localize("ACTOR.PreparationError") + error + error.stack)
         }
-
     }
 
     prepareBaseData() {
@@ -1201,6 +1201,10 @@ export default class Actordsa5 extends Actor {
                 return false
 
             return this.data.effects.find(i => getProperty(i, "flags.core.statusId") == conditionKey)
+                //return this.data.effects.find(i => {
+                //    return i.flags && i.flags.core && i.flags.core.statusId == conditionKey
+                //})
+
         }
         return false
     }

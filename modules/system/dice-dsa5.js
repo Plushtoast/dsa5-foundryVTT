@@ -18,7 +18,7 @@ export default class DiceDSA5 {
 
         mergeObject(testData, {
             testDifficulty: sceneStress,
-            testModifier: 0,
+            testModifier: (dialogOptions.data.modifier || 0)
         });
 
         mergeObject(dialogOptions.data, {
@@ -936,13 +936,13 @@ export default class DiceDSA5 {
         }
     }
 
-    static async _requestRoll(category, name) {
+    static async _requestRoll(category, name, modifier = 0) {
         let actor = DSA5ChatAutoCompletion._getActor()
 
         if (actor) {
             let skill = actor.items.find(i => i.name == name && i.type == category);
-
-            actor.setupSkill(skill.data).then(setupData => {
+            let options = { modifier: modifier }
+            actor.setupSkill(skill.data, options).then(setupData => {
                 actor.basicTest(setupData)
             });
 
@@ -1067,7 +1067,7 @@ export default class DiceDSA5 {
             DiceDSA5._rollEdit(ev)
         })
         html.on('click', '.request-roll', ev => {
-            DiceDSA5._requestRoll($(ev.currentTarget).attr("data-type"), $(ev.currentTarget).attr("data-name"))
+            DiceDSA5._requestRoll($(ev.currentTarget).attr("data-type"), $(ev.currentTarget).attr("data-name"), Number($(ev.currentTarget).attr("data-modifier")) || 0)
         })
 
         html.on("click", ".message-delete", ev => {

@@ -636,7 +636,7 @@
         "tables": "Tables",
         "descrtables": "Show all rollable tables.",
         "request": "Request roll",
-        "descrrequest": "Request a skill roll."
+        "descrrequest": "Request a skill roll. (tab + number = with modifier)"
     },
 
     "ITEM.TypeAdvantage": "Advantage",
@@ -761,7 +761,8 @@
         "shields": "Shields",
         "localKnowledge": "Area Knowledge",
         "naturalArmor": "Natural Armor",
-        "all": "all"
+        "all": "all",
+        "twoWeaponCombat": "Two-Weapon Combat"
     },
 
     "DSAError": {

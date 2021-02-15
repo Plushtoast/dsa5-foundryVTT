@@ -31,7 +31,7 @@ export default class ActorSheetDsa5 extends ActorSheet {
         $(this._element).find(".library").attr("title", game.i18n.localize("SHEET.Library"));
 
         if (this.currentFocus) {
-            $(this._element).find('[data-item-id="' + this.currentFocus + '"] .skill-advances').focus().select();
+            $(this._element).find('[data-item-id="' + this.currentFocus + '"] input').focus().select();
             this.currentFocus = null;
         }
     }
@@ -514,7 +514,13 @@ export default class ActorSheetDsa5 extends ActorSheet {
             }
         })
 
-
+        html.find('.money-change').change(async ev => {
+            let itemId = this._getItemId(ev);
+            let itemToEdit = duplicate(this.actor.getEmbeddedEntity("OwnedItem", itemId))
+            itemToEdit.data.quantity.value = Number(ev.target.value);
+            await this.actor.updateEmbeddedEntity("OwnedItem", itemToEdit);
+            this.currentFocus = $(document.activeElement).closest('.item').attr('data-item-id');;
+        })
 
         html.find('.skill-advances').change(async ev => {
             let itemId = this._getItemId(ev);

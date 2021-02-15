@@ -39,7 +39,7 @@ export default class DSA5ChatAutoCompletion {
     _parseInput(ev) {
         let val = ev.target.value
         if (this.regex.test(val)) {
-            if ([38, 40, 13].includes(ev.which))
+            if ([38, 40, 13, 9].includes(ev.which))
                 return false
             else if (ev.which == 27) {
                 this._closeQuickfind()
@@ -53,6 +53,10 @@ export default class DSA5ChatAutoCompletion {
         } else {
             this._closeQuickfind()
         }
+    }
+
+    _completeCurrentEntry(target) {
+        $('#chat-message').val($('#chat-message').val().split(" ")[0] + " " + target.text()) + " "
     }
 
     _closeQuickfind() {
@@ -114,11 +118,12 @@ export default class DSA5ChatAutoCompletion {
     _filterSK(search) {
         let result = this.skills.filter(x => { return x.toLowerCase().trim().indexOf(search) != -1 }).slice(0, 5)
         if (!result.length)
-            result.push(game.i18n.localize("ErDSAErrorror.noMatch"))
+            result.push(game.i18n.localize("DSAErrorror.noMatch"))
         this._setList(result, "SK")
     }
 
     _filterRQ(search) {
+        search = search.replace(/(-)?\d+/g, '').trim()
         let result = this.skills.filter(x => { return x.toLowerCase().trim().indexOf(search) != -1 }).slice(0, 5)
         if (!result.length)
             result.push(game.i18n.localize("DSAError.noMatch"))
@@ -127,6 +132,7 @@ export default class DSA5ChatAutoCompletion {
 
     _setList(result, cmd) {
             let html = $(`<div class="quickfind dsalist"><ul><li class="quick-item" data-category="${cmd}">${result.join(`</li><li data-category="${cmd}" class="quick-item">`)}</li></ul></div>`)
+
         html.find(`.quick-item:first`).addClass("focus")
         let quick = this.anchor.find(".quickfind")
         if (quick.length) {
@@ -153,6 +159,11 @@ export default class DSA5ChatAutoCompletion {
                     ev.preventDefault()
                     this._quickSelect(target);
                     return false;
+                case 9:
+                    ev.stopPropagation()
+                    ev.preventDefault()
+                    this._completeCurrentEntry(target)
+                    return false
             }
         }
         ui.chat._onChatKeyDown(ev);
@@ -196,18 +207,19 @@ export default class DSA5ChatAutoCompletion {
     }
 
     _quickRQ(target){
+        let modifier = Number($('#chat-message').val().match(/(-)?\d+/g)) || 0
         $('#chat-message').val("")
         this.anchor.find(".quickfind").remove()
-        DSA5ChatAutoCompletion.showRQMessage(target.text())       
+        DSA5ChatAutoCompletion.showRQMessage(target.text(), modifier)       
     }
 
-    static showRQMessage(target){
-        let msg = game.i18n.format("CHATNOTIFICATION.requestRoll", {user: game.user.name, item: `<a class="roll-button request-roll" data-type="skill" data-name="${target}"><i class="fas fa-dice"></i> ${target}</a>`})
+    static showRQMessage(target, modifier = 0){
+        let mod = modifier < 0 ? ` ${modifier}` : (modifier > 0 ? ` +${modifier}` : "")
+        let msg = game.i18n.format("CHATNOTIFICATION.requestRoll", {user: game.user.name, item: `<a class="roll-button request-roll" data-type="skill" data-modifier="${modifier}" data-name="${target}"><i class="fas fa-dice"></i> ${target}${mod}</a>`})
         ChatMessage.create(DSA5_Utility.chatDataSetup(msg));
     }
 
     _quickPA(target, actor) {
-
         let text = target.text()
 
         if (this.constants.dodge == text) {
@@ -229,6 +241,7 @@ export default class DSA5ChatAutoCompletion {
             }
         }
     }
+    
     _quickAT(target, actor) {
         let text = target.text()
         if (this.constants.attackWeaponless == text) {

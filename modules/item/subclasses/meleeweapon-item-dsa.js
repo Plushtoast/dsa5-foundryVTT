@@ -2,6 +2,7 @@ import DSA5StatusEffects from "../../status/status_effects.js";
 import AdvantageRulesDSA5 from "../../system/advantage-rules-dsa5.js";
 import DSA5 from "../../system/config-dsa5.js";
 import DiceDSA5 from "../../system/dice-dsa5.js";
+import SpecialabilityRulesDSA5 from "../../system/specialability-rules-dsa5.js";
 import Itemdsa5 from "../item-dsa5.js";
 
 export default class MeleeweaponDSA5 extends Itemdsa5 {
@@ -118,7 +119,7 @@ export default class MeleeweaponDSA5 extends Itemdsa5 {
                 testData.opposingWeaponSize = html.find('[name="weaponsize"]').val()
                 testData.defenseCount = Number(html.find('[name="defenseCount"]').val())
                 testData.narrowSpace = html.find('[name="narrowSpace"]').is(":checked")
-                testData.doubleAttack = html.find('[name="doubleAttack"]').is(":checked") ? -2 : 0
+                testData.doubleAttack = html.find('[name="doubleAttack"]').is(":checked") ? (-2 + SpecialabilityRulesDSA5.abilityStep(actor, game.i18n.localize('LocalizedIDs.twoWeaponCombat'))) : 0
                 testData.wrongHand = html.find('[name="wrongHand"]').is(":checked") ? -4 : 0
                 let attackOfOpportunity = html.find('[name="opportunityAttack"]').is(":checked") ? -4 : 0
                 testData.attackOfOpportunity = attackOfOpportunity != 0

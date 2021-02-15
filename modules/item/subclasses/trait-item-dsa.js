@@ -43,7 +43,7 @@ export default class TraitItemDSA5 extends Itemdsa5 {
     static getSituationalModifiers(situationalModifiers, actor, data, source) {
         source = source.data ? (source.data.data == undefined ? source : source.data) : source
         let traitType = source.data.traitType.value
-        let combatSpecAbs = actor.items.filter(x => x.type == "specialability" && x.data.data.category.value == "Combat" && x.data.data.effect.value != "")
+        let combatSpecAbs = actor.items.filter(x => x.type == "specialability" && ["Combat", "animal"].includes(x.data.data.category.value) && x.data.data.effect.value != "")
         let combatskills = []
         for (let com of combatSpecAbs) {
             let effects = Itemdsa5.parseEffect(com.data.data.effect.value, actor)

@@ -21,7 +21,6 @@ export default class SkillItemDSA5 extends Itemdsa5 {
 
     static setupDialog(ev, options, skill, actor) {
         let title = skill.name + " " + game.i18n.localize("Test");
-
         let testData = {
             opposable: true,
             source: skill,
@@ -33,7 +32,8 @@ export default class SkillItemDSA5 extends Itemdsa5 {
 
         let data = {
             rollMode: options.rollMode,
-            difficultyLabels: (DSA5.skillDifficultyLabels)
+            difficultyLabels: (DSA5.skillDifficultyLabels),
+            modifier: options.modifier || 0,
         }
 
         let situationalModifiers = actor ? DSA5StatusEffects.getRollModifiers(actor, skill) : []
@@ -44,6 +44,7 @@ export default class SkillItemDSA5 extends Itemdsa5 {
             title: title,
             template: "/systems/dsa5/templates/dialog/skill-dialog.html",
             data: data,
+
             callback: (html) => {
                 cardOptions.rollMode = html.find('[name="rollMode"]').val();
                 testData.testModifier = Number(html.find('[name="testModifier"]').val());

@@ -594,19 +594,19 @@ input[type=text].emphasize {
     display: inline-block;
 }
 
-.col-Money-D {
+input[type="text"].col-Money-D {
     color: #927c01;
 }
 
-.col-Money-S {
+input[type="text"].col-Money-S {
     color: #474444;
 }
 
-.col-Money-K {
+input[type="text"].col-Money-K {
     color: #9c5e5e;
 }
 
-.col-Money-H {
+input[type="text"].col-Money-H {
     color: #944b32;
 }
 
@@ -1646,7 +1646,8 @@ input[type="search"] {
 }
 
 #hotbar .macro.active {
-    box-shadow: inset 0px 0px 25px black;
+    box-shadow: inset 0px 0px 25px #403014;
+    background: url(../icons/backgrounds/macrobg.png);
 }
 
 #hotbar #macro-list {

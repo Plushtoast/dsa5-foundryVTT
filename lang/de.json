@@ -637,7 +637,7 @@
         "tables": "Tabellen",
         "descrtables": "Zeige alle würfelbaren Tabellen.",
         "request": "Wurf anfordern",
-        "descrrequest": "Fordere einen Talentwurf an."
+        "descrrequest": "Fordere einen Talentwurf an. (Tab + Zahl = mit Modifikator)"
     },
 
     "ITEM.TypeAdvantage": "Vorteil",
@@ -763,7 +763,8 @@
         "shields": "Schilde",
         "localKnowledge": "Ortskenntnis",
         "naturalArmor": "Natürliche Rüstung",
-        "all": "alle"
+        "all": "alle",
+        "twoWeaponCombat": "Beidhändiger Kampf"
     },
 
     "DSAError": {
