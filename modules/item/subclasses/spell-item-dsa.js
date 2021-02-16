@@ -135,7 +135,7 @@ export default class SpellItemDSA5 extends Itemdsa5 {
         });
     }
 
-    prepareExtensions(actor, spell) {
+    static prepareExtensions(actor, spell) {
         return actor.data.items.filter(x => x.type == "spellextension" && x.data.source == spell.name && x.data.category == spell.type).map(x => {
             x.shortName = x.name.split(" - ")[1] ? x.name.split(" - ")[1] : x.name
             return x
