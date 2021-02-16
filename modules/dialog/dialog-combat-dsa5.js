@@ -1,7 +1,4 @@
 export default class DSA5CombatDialog extends Dialog {
-    constructor(data, options) {
-        super(data, options);
-    }
 
     static get defaultOptions() {
         const options = super.defaultOptions;
@@ -45,5 +42,12 @@ export default class DSA5CombatDialog extends Dialog {
                 }
             }
         })
+        html.find('option').mousedown(ev => {
+            ev.preventDefault();
+            console.log("muh")
+            $(ev.currentTarget).prop('selected', !$(ev.currentTarget).prop('selected'));
+            return false;
+        });
+
     }
 }

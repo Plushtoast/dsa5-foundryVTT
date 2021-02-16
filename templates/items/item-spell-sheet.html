@@ -11,12 +11,38 @@
     <nav class="sheet-tabs tabs" data-tab-container="primary">
         <a class="item active" data-tab="description">{{localize "Description"}}</a>
         <a class="item" data-tab="details">{{localize "Details"}}</a>
+        <a class="item" data-tab="extensions">{{localize "extensions"}}</a>
     </nav>
 
 
     <section class="content">
 
         {{> systems/dsa5/templates/items/item-description.html}}
+        <div class="tab extensions" data-tab="extensions">
+            {{#if extensions}} {{#each extensions as |item i|}}
+            <div class="groupbox item inventory" data-item-id="{{item._id}}">
+                <div class="row-section table-title">
+                    <div class="col center">
+                        <b>{{item.name}}</b>
+                    </div>
+                </div>
+                <div class="row-section">
+                    <div class="col ten image extension">
+                    </div>
+                    <div class="col eighty">
+                        {{{item.data.description.value}}}
+                    </div>
+                    <div class="col ten very-small">
+                        <a class="item-control item-edit" title="{{localize 'SHEET.EditItem'}}"><i class="fas fa-edit"></i></a>
+                        <a class="item-control item-delete" title="{{localize 'SHEET.DeleteItem'}}"><i class="fas fa-trash"></i></a>
+                    </div>
+                </div>
+            </div>
+            {{/each}} {{else}}
+            <p>{{localize "DSAError.NotUnlocked"}}</p>
+            {{/if}}
+        </div>
+
 
         <div class="tab details" data-tab="details">
 

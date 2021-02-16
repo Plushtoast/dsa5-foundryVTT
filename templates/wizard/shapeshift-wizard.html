@@ -1,0 +1,119 @@
+<section class="content" data-cost="{{career.data.APValue.value}}">
+    <h1>{{title}}</h1>
+    <p style="margin-bottom:10px;">{{{description}}}</p>
+
+    <nav class="sheet-tabs tabs" data-tab-container="primary">
+        <a class="item active" data-tab="description">{{localize "Description"}}</a>
+    </nav>
+
+    <div class="tab description active" data-tab="description">
+        <div class="row-section">
+            <div class="col fourty center">
+                {{source.name}}
+            </div>
+            <div class="col five center">
+            </div>
+            <div class="col fourty center">
+                {{target.name}}
+            </div>
+
+
+        </div>
+        <div class="row-section">
+            <div class="col fourty center">
+                <img height="100" src="{{source.img}}" title="{{source.name}}" />
+            </div>
+            <div class="col five center">
+                <i class="fas fa-4x fa-people-arrows" style="line-height:100px;"></i>
+            </div>
+            <div class="col fourty center">
+                <img height="100" src="{{target.img}}" title="{{target.name}}" />
+            </div>
+
+
+        </div>
+        <div class="row-section">
+            <div class="col fourty center">
+                {{#each characteristics_mental as |item i|}}
+                <div>
+                    <input type="radio" class="characteristic" id="characteristics_source_{{item}}" name="data.characteristics.{{item}}" value="source" checked>
+                    <label for="characteristics_source_{{item}}">{{localize (concatUp 'CHAR.' item)}}</label>
+                </div> {{/each}} {{#each characteristics_physical as |item i|}}
+                <div>
+                    <input type="radio" class="characteristic" id="characteristics_source_{{item}}" name="data.characteristics.{{item}}" value="source">
+                    <label for="characteristics_source_{{item}}">{{localize (concatUp 'CHAR.' item)}}</label>
+                </div> {{/each}}
+                <div>
+
+                </div>
+            </div>
+            <div class="col five">
+
+            </div>
+            <div class="col fourty center">
+                {{#each characteristics_mental as |item i|}}
+                <div>
+                    <input type="radio" id="characteristics_target_{{item}}" name="data.characteristics.{{item}}" value="target">
+                    <label for="characteristics_target_{{item}}">{{localize (concatUp 'CHAR.' item)}}</label>
+                </div>{{/each}} {{#each characteristics_physical as |item i|}}
+                <div><input type="radio" id="characteristics_target_{{item}}" name="data.characteristics.{{item}}" value="target" checked>
+                    <label for="characteristics_target_{{item}}">{{localize (concatUp 'CHAR.' item)}}</label>
+                </div>{{/each}}
+            </div>
+        </div>
+        <div class="row-section">
+            <div class="col fourty center">
+                {{#each status as |item i|}}
+                <div>
+                    <input type="radio" class="status" id="status_source_{{item.label}}" name="data.status.{{item.label}}" value="source" {{#if item.selected}}checked{{/if}}>
+                    <label for="status_source_{{item.label}}">{{localize item.label}}</label>
+                </div>{{/each}}
+            </div>
+            <div class="col five">
+
+            </div>
+            <div class="col fourty center">
+                {{#each status as |item i|}}
+                <div>
+                    <input type="radio" id="status_target_{{item.label}}" name="data.status.{{item.label}}" value="target" {{#unless item.selected}}checked{{/unless}}>
+                    <label for="status_target_{{item.label}}">{{localize item.label}}</label>
+                </div>{{/each}}
+            </div>
+        </div>
+        <div class="row-section">
+            <div class="col fourty center">
+                {{#each secondaryAttributes as |item i|}}
+                <div>
+                    <input type="radio" class="secondary" id="status_source_{{item.label}}" name="data.status.{{item.label}}" value="source" {{#if item.selected}}checked{{/if}}>
+                    <label for="status_source_{{item.label}}">{{localize item.label}}</label>
+                </div>{{/each}}
+            </div>
+            <div class="col five">
+
+            </div>
+            <div class="col fourty center">
+                {{#each secondaryAttributes as |item i|}}
+                <div>
+                    <input type="radio" id="status_target_{{item.label}}" name="data.status.{{item.label}}" value="target" {{#unless item.selected}}checked{{/unless}}>
+                    <label for="status_target_{{item.label}}">{{localize item.label}}</label>
+                </div>{{/each}}
+            </div>
+        </div>
+        <div class="row-section">
+            <div class="col center">
+                <label>{{localize "Shapeshift.takeVantages"}}</label>
+                <input type="checkbox" id="takeAdvantages" name="takeAdvantages" value="x" checked>
+            </div>
+        </div>
+    </div>
+
+</section>
+<div class="dialog-buttons">
+    <button class="dialog-button ok default" data-button="ok">
+        <i class="fas fa-check"></i> {{localize 'Ok'}}
+                </button>
+    <button class="dialog-button cancel default" data-button="cancel">
+        <i class="fas fa-close"></i>
+        {{localize 'Cancel'}}
+    </button>
+</div>

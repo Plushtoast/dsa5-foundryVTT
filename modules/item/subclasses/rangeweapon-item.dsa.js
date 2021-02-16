@@ -93,7 +93,7 @@ export default class RangeweaponItemDSA5 extends Itemdsa5 {
         let data = {
             rollMode: options.rollMode
         }
-        let situationalModifiers = actor ? DSA5StatusEffects.getRollModifiers(actor, item) : []
+        let situationalModifiers = actor ? DSA5StatusEffects.getRollModifiers(actor, item, { mode: mode }) : []
         this.getSituationalModifiers(situationalModifiers, actor, data, item)
         data["situationalModifiers"] = situationalModifiers
 

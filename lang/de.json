@@ -79,7 +79,8 @@
         "alreadyAddedCharacterpart": "Du hast bereits eine {category}. Möchtest du diese Überschreiben? Bereits hinzugefügte Modifikation der vorherigen {category} können nicht automatisch rückgängig gemacht werden.",
         "warning": "Vorsicht",
         "deselectWithStrg": "Strg + Click zum Deselektieren",
-        "noCombatskills": "Keine passenden Kampfsonderfertigkeiten"
+        "noCombatskills": "Keine passenden Kampfsonderfertigkeiten",
+        "noExtensions": "Keine passend Zauber/Liturgieerweiterungen"
     },
 
     "Equipment": {
@@ -101,6 +102,7 @@
         "poison": "Gift"
     },
 
+    "requiredFW": "Benötigter FW",
     "traditionArtifact": "Traditionsartefakt",
     "APValue": "AP-Wert",
     "additionalFPs": "zusätzliche FPs",
@@ -202,6 +204,7 @@
     "effectResult": "Effektergebnis",
     "effectFormula": "Effektformel",
     "equipmentType": "Ausrüstungskategorie",
+    "extensions": "Erweiterungen",
     "entry": "Eintrag",
     "Eye_color": "Augenfarbe",
     "equipped": "Ausgerüstet",
@@ -367,7 +370,8 @@
     "specialRules": "Sonderregeln",
     "tradition": "Tradition",
     "searchTalents": "Talente durchsuchen",
-    "Test": "Test",
+    "spellextension": "Zauber/Liturgieerweiterung",
+    "Test": "Probe",
     "trait": "Eigenschaft",
     "table": "Tabelle",
     "traits": "Fähigkeiten",
@@ -619,10 +623,12 @@
     "TT": {
         "careerSkills": "Komma separierte Talentliste, z.b. (Betören 2,Etikette 4)",
         "commaSeparated": "Komma separierte Liste",
-        "oneQualityPerLine": "Beschreibe eine Qualitätsstufe pro Zeile"
+        "oneQualityPerLine": "Beschreibe eine Qualitätsstufe pro Zeile",
+        "zkModifer": "Die Zähigkeit/Seelenkraft des Ziels muss als Malus eingerechnet werden (Vorzeichen beachten)"
     },
 
     "HELP": {
+        "showHelp": "Hilfe anzeigen",
         "default": "Außerdem kannst du detaillierte Anleitungen und FAQs im <a href=\"https://github.com/Plushtoast/dsa5-foundryVTT/wiki\" target=\"_blank\">Wiki</a> finden und Unterstützung im ulisses-dsa Channel im <a href=\"https://discord.gg/foundryvtt\" target=\"_blank\">Foundry Discord</a> erhalten.",
         "command": "Befehl",
         "example": "Beispiel",
@@ -665,6 +671,7 @@
     "ITEM.TypeSpell": "Zauber",
     "ITEM.TypeTrait": "Eigenschaft (Tier)",
     "ITEM.TypeConsumable": "Verbrauchsgegenstand",
+    "ITEM.TypeSpellextension": "Zauber/Liturgieerweiterung",
 
     "ACTOR.TypeCharacter": "Charakter",
     "ACTOR.TypeNpc": "Nichtspielercharakter",
@@ -725,6 +732,13 @@
         "at": "at",
         "pa": "pa",
         "tp": "tp"
+    },
+
+    "Shapeshift": {
+        "title": "Gestaltwandlung",
+        "description": "Bestätige bitte, sofern du {source} in {target} gestaltwandeln möchtest. Dabei wird ein neuer Charakter angelegt, welcher die neuen kombinierten Attribute beinhaltet. Stelle sicher, dass du diesen Vorgang erneut wiederholst und die alte Gestaltwandlung löscht, wenn sich die Attribute der Quelle verändern.<br>Entscheide wo die Attribute und Fähigkeiten ihren Ursprung nehmen:",
+        "takeVantages": "Vor-/Nachteile übernehmen",
+        "done": "Die Gestaltwandlung wurde abgeschlossen."
     },
 
     "LocalizedIDs": {
@@ -788,7 +802,10 @@
         "noProperActor": "Dir wurde noch kein Charakter zugewiesen oder du hast keinen Token markiert.",
         "noMatch": "Keine Übereinstimmung",
         "zeroXP": "Der Charakter hat noch keine Abenteuerpunkte. Möchtest du welche hinzufügen?",
-        "opposedAttackNoSpecAbs": "Passierschläge können nicht mit Sonderfertigkeiten kombiniert werden"
+        "opposedAttackNoSpecAbs": "Passierschläge können nicht mit Sonderfertigkeiten kombiniert werden",
+        "noSpellForExtension": "Du hast den/die passenden Zauber/Liturgie nicht für diese Erweiterung",
+        "talentValueTooLow": "Dein Talentwert ist zu niedrig",
+        "NotUnlocked": "Noch nichts freigeschalten"
     },
 
     "CEREMONYMODIFIER": {

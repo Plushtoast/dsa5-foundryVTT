@@ -49,6 +49,15 @@ export default class SpellItemDSA5 extends Itemdsa5 {
             name: game.i18n.localize("maintainedSpells"),
             value: Number(html.find('[name="maintainedSpells"]').val()) * -1
         })
+        testData.extensions = SpellItemDSA5.getSpecAbModifiers(html).join(", ")
+    }
+
+    static getSpecAbModifiers(html) {
+        let res = []
+        for (let k of html.find('.specAbs.active')) {
+            res.push(`<span>${$(k).attr("data-name")}</span>`)
+        }
+        return res
     }
 
     static getSituationalModifiers(situationalModifiers, actor, data) {
@@ -87,7 +96,6 @@ export default class SpellItemDSA5 extends Itemdsa5 {
                 options: options,
             }
         };
-
         let data = {
             rollMode: options.rollMode,
             spellCost: spell.data.AsPCost.value,
@@ -100,6 +108,7 @@ export default class SpellItemDSA5 extends Itemdsa5 {
             hasSKModifier: spell.data.resistanceModifier.value == "SK",
             hasZKModifier: spell.data.resistanceModifier.value == "ZK",
             maxMods: Math.floor(Number(spell.data.talentValue.value) / 4),
+            extensions: this.prepareExtensions(actor, spell)
         }
 
         let situationalModifiers = actor ? DSA5StatusEffects.getRollModifiers(actor, spell) : []
@@ -108,7 +117,7 @@ export default class SpellItemDSA5 extends Itemdsa5 {
 
         let dialogOptions = {
             title: title,
-            template: `/systems/dsa5/templates/dialog/${sheet}-dialog.html`,
+            template: `/systems/dsa5/templates/dialog/${sheet}-enhanced-dialog.html`,
             data: data,
             callback: (html) => {
                 cardOptions.rollMode = html.find('[name="rollMode"]').val();
@@ -124,5 +133,12 @@ export default class SpellItemDSA5 extends Itemdsa5 {
             testData: testData,
             cardOptions: cardOptions
         });
+    }
+
+    prepareExtensions(actor, spell) {
+        return actor.data.items.filter(x => x.type == "spellextension" && x.data.source == spell.name && x.data.category == spell.type).map(x => {
+            x.shortName = x.name.split(" - ")[1] ? x.name.split(" - ")[1] : x.name
+            return x
+        })
     }
 }

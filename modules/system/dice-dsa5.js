@@ -432,15 +432,15 @@ export default class DiceDSA5 {
                     result.description += ", " + game.i18n.localize("attackOfOpportunity")
                 break;
             case -3:
-                if (testData.mode == "attack" && source.type == "meleeweapon" && game.settings.get("dsa5", "meleeBotchTableEnabled")) {
+                if (testData.mode == "attack" && source.type == "meleeweapon" && game.settings.get("dsa5", "meleeBotchTableEnabled"))
                     result.description += `, <a class="roll-button melee-botch" data-weaponless="${source.data.combatskill.value == "Raufen"}"><i class="fas fa-dice"></i>${game.i18n.localize('CriticalFailure')} ${game.i18n.localize("table")}</a>`
-                } else if (testData.mode == "attack" && game.settings.get("dsa5", "rangeBotchTableEnabled")) {
+                else if (testData.mode == "attack" && game.settings.get("dsa5", "rangeBotchTableEnabled"))
                     result.description += `, <a class="roll-button range-botch" data-weaponless="false"><i class="fas fa-dice"></i>${game.i18n.localize('CriticalFailure')} ${game.i18n.localize("table")}</a>`
-                } else if (testData.mode != "attack" && game.settings.get("dsa5", "defenseBotchTableEnabled")) {
+                else if (testData.mode != "attack" && game.settings.get("dsa5", "defenseBotchTableEnabled"))
                     result.description += `, <a class="roll-button defense-botch" data-weaponless="${source.data.combatskill.value == "Raufen"}"><i class="fas fa-dice"></i>${game.i18n.localize('CriticalFailure')} ${game.i18n.localize("table")}</a>`
-                } else {
+                else
                     result.description += ", " + game.i18n.localize("selfDamage") + (new Roll("1d6+2").roll().total)
-                }
+
                 break;
             case 2:
                 if (testData.mode == "attack")

@@ -135,7 +135,7 @@ h7 {
     padding: 1px 3px;
 }
 
-.hidden {
+.dsahidden {
     display: none;
 }
 
@@ -1647,7 +1647,7 @@ input[type="search"] {
 
 #hotbar .macro.active {
     box-shadow: inset 0px 0px 25px #403014;
-    background: url(../icons/backgrounds/macrobg.png);
+    background: url(../icons/backgrounds/macrobg.webp);
 }
 
 #hotbar #macro-list {
@@ -1688,6 +1688,16 @@ input[type="search"] {
     background-image: url(../icons/dsalist.webp);
     background-size: contain;
     background-repeat: no-repeat;
+}
+
+.item .image.extension {
+    height: auto;
+    background-position: center;
+    margin: 4px;
+}
+
+.extension {
+    background-image: url(../icons/categories/Spellextension.webp);
 }
 
 #players {
@@ -1962,11 +1972,16 @@ a.inline-roll {
     overflow: hidden;
 }
 
+.extImg,
 .specImg {
     background-image: url(../icons/categories/ability_combat.webp);
     background-size: contain;
     background-repeat: no-repeat;
     background-position: center;
+}
+
+.extImg {
+    background-image: url(../icons/categories/Spellextension.webp);
 }
 
 .specAbs:hover {
@@ -1975,4 +1990,8 @@ a.inline-roll {
 
 .specAbs.active {
     border-color: rgb(207, 30, 30);
+}
+
+#chat-controls .control-buttons {
+    flex: 0 0 72px;
 }

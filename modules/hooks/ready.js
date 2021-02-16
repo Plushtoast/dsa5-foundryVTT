@@ -19,6 +19,7 @@ import EquipmentItemDSA5 from "../item/subclasses/equipment-item-dsa.js";
 import CombatskillDSA5 from "../item/subclasses/combatskill-item-dsa.js";
 import SkillItemDSA5 from "../item/subclasses/skill-item-dsa.js";
 import ConsumableItemDSA from "../item/subclasses/consumable-item-dsa.js";
+import SpellextensionItemDSA5 from "../item/subclasses/spellextension-item-dsa.js";
 
 export default function() {
     Hooks.on("ready", async() => {
@@ -73,7 +74,10 @@ export default function() {
             equipment: EquipmentItemDSA5,
             combatskill: CombatskillDSA5,
             skill: SkillItemDSA5,
-            consumable: ConsumableItemDSA
+            consumable: ConsumableItemDSA,
+            spellextension: SpellextensionItemDSA5
         }
+
+
     });
 }

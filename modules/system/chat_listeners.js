@@ -6,6 +6,11 @@ export default class DSA5ChatListeners {
         html.on('click', '.chat-condition', ev => {
             DSA5ChatListeners.postStatus($(ev.currentTarget).attr("data-id"))
         })
+        let helpButton = $(`<a class="button showHelp" title="${game.i18n.localize('HELP.showHelp')}"><i class="fas fa-question"></i></a>`)
+        helpButton.click(ev => {
+            DSA5ChatListeners.getHelp()
+        })
+        $(html.find('.control-buttons')).prepend(helpButton)
     }
 
     static postStatus(id) {

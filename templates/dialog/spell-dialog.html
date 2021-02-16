@@ -6,12 +6,12 @@
         <input class="quantity-click" type="number" name="maintainedSpells" value="0" />
     </div>
     {{#if hasSKModifier}}
-    <div class="form-group">
+    <div class="form-group" title="{{localize 'TT.zkModifer'}}">
         <label>{{localize "skModifier"}}</label>
         <input type="number" name="skModifier" value="{{SKModifier}}" />
     </div>
     {{/if}} {{#if hasZKModifier}}
-    <div class="form-group">
+    <div class="form-group" title="{{localize 'TT.zkModifer'}}">
         <label>{{localize "zkModifier"}}</label>
         <input type="number" name="zkModifier" value="{{ZKModifier}}" />
     </div>

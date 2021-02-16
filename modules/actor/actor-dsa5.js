@@ -38,6 +38,8 @@ export default class Actordsa5 extends Actor {
         super.create(data, options);
     }
 
+
+
     prepareDerivedData() {
         const data = this.data
         try {
@@ -303,7 +305,7 @@ export default class Actordsa5 extends Actor {
             show: true
         }
 
-        actorData.items = actorData.items.sort((a, b) => (a.name > b.name) ? 1 : ((b.name > a.name) ? -1 : 0))
+        actorData.items = actorData.items.sort((a, b) => { return a.name.localeCompare(b.name) })
 
         //we can later make equipment sortable
         //actorData.items = actorData.items.sort((a, b) => (a.sort || 0) - (b.sort || 0))
@@ -438,9 +440,11 @@ export default class Actordsa5 extends Actor {
                 rangeweapons.push(Actordsa5._prepareRangeWeapon(wep, inventory.ammunition.items, combatskills, this));
         }
 
-        for (let wep of inventory.meleeweapons.items) {
-            if (wep.data.worn.value)
-                meleeweapons.push(Actordsa5._prepareMeleeWeapon(wep, combatskills, actorData, inventory.meleeweapons.items.filter(x => x._id != wep._id)))
+        let wornweapons = inventory.meleeweapons.items.filter(x => x.data.worn.value)
+        let regex2h = /\(2H/
+
+        for (let wep of wornweapons) {
+            meleeweapons.push(Actordsa5._prepareMeleeWeapon(wep, combatskills, actorData, wornweapons.filter(x => x._id != wep._id && !regex2h.test(x.name))))
         }
 
         money.coins = money.coins.sort((a, b) => (a.data.price.value > b.data.price.value) ? -1 : 1);
@@ -1019,9 +1023,11 @@ export default class Actordsa5 extends Actor {
         item.attack = Number(skill.data.attack.value) + Number(item.data.atmod.value)
         item.parry = Number(skill.data.parry.value) + Number(item.data.pamod.value) + (item.data.combatskill.value == game.i18n.localize('LocalizedIDs.shields') ? Number(item.data.pamod.value) : 0)
 
-        if (!/\(2H/.test(item.name)) {
+        let regex2h = /\(2H/
+        if (!regex2h.test(item.name)) {
             if (!wornWeapons)
-                wornWeapons = actorData.items.filter(x => (x.type == "meleeweapon" && x.data.worn.value && x._id != item._id))
+                wornWeapons = actorData.items.filter(x => (x.type == "meleeweapon" && x.data.worn.value && x._id != item._id && !regex2h.test(x.name)))
+
             item.parry += Math.max(0, ...wornWeapons.map(x => x.data.pamod.offhandMod))
             item.attack += Math.max(0, ...wornWeapons.map(x => x.data.atmod.offhandMod))
         }

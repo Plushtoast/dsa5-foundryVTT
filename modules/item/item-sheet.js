@@ -52,6 +52,10 @@ export default class ItemSheetdsa5 extends ItemSheet {
         return `systems/dsa5/templates/items/item-${type}-sheet.html`;
     }
 
+    _getItemId(ev) {
+        return $(ev.currentTarget).parents(".item").attr("data-item-id")
+    }
+
     _advanceStep() {}
 
     _refundStep() {}

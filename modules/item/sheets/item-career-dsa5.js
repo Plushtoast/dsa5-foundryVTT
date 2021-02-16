@@ -11,8 +11,10 @@ export default class ItemCareerdsa5 extends ItemSheetdsa5 {
 
     async getData() {
         const data = await super.getData();
+        let chars = duplicate(DSA5.characteristics)
+        chars["-"] = "-"
         data["mageLevels"] = DSA5.mageLevels
-        data['guidevalues'] = DSA5.characteristics;
+        data['guidevalues'] = chars;
         return data
     }
 }

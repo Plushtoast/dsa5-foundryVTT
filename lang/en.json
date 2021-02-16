@@ -79,7 +79,8 @@
         "alreadyAddedCharacterpart": "You already have a {category}. Do you want to override it? Already added modifications of the former {category} can not be removed automatically.",
         "warning": "Attention",
         "deselectWithStrg": "CTRL + click to deselect",
-        "noCombatskills": "No matching Combat Special Abilities"
+        "noCombatskills": "No matching Combat Special Abilities",
+        "noExtensions": "No matching liturgy/spell extensions"
     },
 
     "Equipment": {
@@ -101,6 +102,7 @@
         "poison": "Poison"
     },
 
+    "requiredFW": "Required SR",
     "traditionArtifact": "Tradition Artifact",
     "APValue": "AP-Value",
     "additionalFPs": "additional SPs",
@@ -201,6 +203,7 @@
     "effectResult": "Effect result",
     "effectFormula": "Effect formula",
     "equipmentType": "Equipment category",
+    "extensions": "Extensions",
     "entry": "Entry",
     "Eye_color": "Eye color",
     "equipped": "Worn",
@@ -363,6 +366,7 @@
     "selfDamage": "injured self, Damage: ",
     "specialability": "Special ability",
     "spelltrickCount": "Count cantrips",
+    "spellextension": "Spell/Liturgieextension",
     "specialRules": "Special rules",
     "tradition": "Tradition",
     "searchTalents": "Search skills",
@@ -618,10 +622,20 @@
     "TT": {
         "careerSkills": "Comma separated talent list, f.e. (Alchemy 2,Carousing 4)",
         "commaSeparated": "Comma separated list",
-        "oneQualityPerLine": "Describe one quality level each line"
+        "oneQualityPerLine": "Describe one quality level each line",
+        "zkModifer": "The target's soulpower/toughness has to be included as handicap (mind the sign)"
+    },
+
+
+    "Shapeshift": {
+        "title": "Shapeshift",
+        "description": "Please confirm if you want to shapeshift {source} into {target}. This will create a new Actor, which includes the new combined abilities. Make sure to repeate this action once the source of the shapeshift changes.<br>Chose the attributes' origins:",
+        "takeVantages": "Keep Dis-/Advantages",
+        "done": "The shapeshift has been finished."
     },
 
     "HELP": {
+        "showHelp": "Show help",
         "default": "Moreover you can find detailed FAQs in the <a href=\"https://github.com/Plushtoast/dsa5-foundryVTT/wiki\" target=\"_blank\">Wiki</a>.",
         "command": "Command",
         "example": "Example",
@@ -664,6 +678,7 @@
     "ITEM.TypeSpell": "Spell",
     "ITEM.TypeTrait": "Trait (Animal)",
     "ITEM.TypeConsumable": "Consumable",
+    "ITEM.TypeSpellextension": "Spell/Liturgyextension",
 
     "ACTOR.TypeCharacter": "Character",
     "ACTOR.TypeNpc": "Non Player Character",
@@ -786,7 +801,11 @@
         "noProperActor": "No actor has been assigned to you or you did not select a token.",
         "noMatch": "No match",
         "zeroXP": "The character has no adventure points yet. Do you want to add some?",
-        "opposedAttackNoSpecAbs": "Attacks of Opportunity can not be combined with Special Abilites"
+        "opposedAttackNoSpecAbs": "Attacks of Opportunity can not be combined with Special Abilites",
+        "noSpellForExtension": "You don't have a matching spell/liturgy for this extension",
+        "talentValueTooLow": "Your Skill value is too low",
+
+        "NotUnlocked": "Not yet unlocked"
     },
 
     "CEREMONYMODIFIER": {

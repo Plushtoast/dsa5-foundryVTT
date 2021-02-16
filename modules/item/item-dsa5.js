@@ -36,7 +36,8 @@ export default class Itemdsa5 extends Item {
         "Tiere": "systems/dsa5/icons/categories/Tiere.webp",
         "aggregatedTest": "systems/dsa5/icons/categories/aggregated_test.webp",
         "poison": "systems/dsa5/icons/categories/poison.webp",
-        "disease": "systems/dsa5/icons/categories/disease.webp"
+        "disease": "systems/dsa5/icons/categories/disease.webp",
+        "spellextension": "systems/dsa5/icons/categories/Spellextension.webp"
     }
 
     static defaultIcon(data) {

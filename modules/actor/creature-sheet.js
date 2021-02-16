@@ -2,7 +2,7 @@ import DSA5_Utility from "../system/utility-dsa5.js";
 import DSA5 from "../system/config-dsa5.js"
 import ActorSheetDsa5 from "./actor-sheet.js";
 import TraitRulesDSA5 from "../system/trait-rules-dsa5.js"
-
+import ShapeshiftWizard from "../wizards/shapeshift_wizard.js";
 export default class ActorSheetdsa5Creature extends ActorSheetDsa5 {
     static get defaultOptions() {
         const options = super.defaultOptions;
@@ -81,6 +81,9 @@ export default class ActorSheetdsa5Creature extends ActorSheetDsa5 {
         } else if (dragData.id && dragData.pack) {
             item = await DSA5_Utility.findItembyIdAndPack(dragData.id, dragData.pack);
             typeClass = item.data.type
+        } else if (dragData.id && dragData.type == "Actor") {
+            item = DSA5_Utility.findActorbyId(dragData.id);
+            typeClass = item.data.type
         } else if (dragData.id) {
             item = DSA5_Utility.findItembyId(dragData.id);
             typeClass = item.data.type
@@ -96,6 +99,13 @@ export default class ActorSheetdsa5Creature extends ActorSheetDsa5 {
                 case "trait":
                     await this._addTrait(item)
                     break;
+                case "npc":
+                case "creature":
+                case "character":
+                    let shapeshift = new ShapeshiftWizard()
+                    await shapeshift.setShapeshift(item, this.actor)
+                    shapeshift.render(true)
+                    break
                 default:
                     super._handleDragData(dragData, event)
             }

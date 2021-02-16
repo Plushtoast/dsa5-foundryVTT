@@ -80,7 +80,6 @@ export default class MeleeweaponDSA5 extends Itemdsa5 {
                 melee: true,
                 combatSpecAbs: combatskills
             });
-
         }
     }
 
@@ -101,7 +100,7 @@ export default class MeleeweaponDSA5 extends Itemdsa5 {
             rollMode: options.rollMode,
             mode: mode
         }
-        let situationalModifiers = actor ? DSA5StatusEffects.getRollModifiers(actor, item) : []
+        let situationalModifiers = actor ? DSA5StatusEffects.getRollModifiers(actor, item, { mode: mode }) : []
         this.getSituationalModifiers(situationalModifiers, actor, data, item)
         data["situationalModifiers"] = situationalModifiers
 

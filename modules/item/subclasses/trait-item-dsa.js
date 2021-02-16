@@ -115,7 +115,7 @@ export default class TraitItemDSA5 extends Itemdsa5 {
             mode: mode
         }
 
-        let situationalModifiers = actor ? DSA5StatusEffects.getRollModifiers(actor, item) : []
+        let situationalModifiers = actor ? DSA5StatusEffects.getRollModifiers(actor, item, { mode: mode }) : []
         this.getSituationalModifiers(situationalModifiers, actor, data, item)
         data["situationalModifiers"] = situationalModifiers
 

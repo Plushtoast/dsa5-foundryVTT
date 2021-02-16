@@ -306,7 +306,8 @@
             "aggregatedTest",
             "poison",
             "disease",
-            "consumable"
+            "consumable",
+            "spellextension"
         ],
         "templates": {
             "skill": {
@@ -425,6 +426,16 @@
                 "description",
                 "equipment"
             ]
+        },
+        "spellextension": {
+            "templates": [
+                "description",
+                "APValue"
+            ],
+            "talentValue": 0,
+            "effect": "",
+            "source": "",
+            "category": "spell"
         },
         "culture": {
             "templates": [

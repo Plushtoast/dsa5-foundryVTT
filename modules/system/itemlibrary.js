@@ -25,11 +25,15 @@ export default class DSA5ItemLibrary extends Application {
                 "specialability": false,
                 "poison": false,
                 "disease": false,
-                "consumable": false
+                "consumable": false,
+                "spellextension": false
             },
             filterBy: {
                 search: ""
             }
+        }
+        this.subfilters = {
+            "spellextension": ["source"]
         }
     }
 
@@ -64,6 +68,19 @@ export default class DSA5ItemLibrary extends Application {
         return options
     }
 
+    /*filterBySubcategory(i, search) {
+        let subfilter = this.subfilters[i.type]
+        if (subfilter) {
+            console.log(i)
+            console.log(subfilter)
+            for (let k of subfilter) {
+                if (i.data.data[k] && i.data.data[k].toLowerCase().indexOf(search) != -1)
+                    return true
+            }
+        }
+        return false
+    }*/
+
     async filterItems(html) {
         let items = this.items
         let filteredItems = [];
@@ -75,13 +92,14 @@ export default class DSA5ItemLibrary extends Application {
         let search = this.filters.filterBy.search.toLowerCase()
         if (filterCategories.length > 0) {
             filteredItems = filteredItems.concat(items.filter(i => {
-                return filterCategories.includes(i.type) &&
+                return filterCategories.indexOf(i.type) != -1 &&
                     (
                         search == "" ||
-                        i.name.toLowerCase().includes(search) ||
+                        i.name.toLowerCase().indexOf(search) != -1 ||
+                        //this.filterBySubcategory(i, search) ||
                         (i.data.data.description == undefined ? false :
                             (i.data.data.description.value == undefined ? false :
-                                i.data.data.description.value.toLowerCase().includes(search)))
+                                i.data.data.description.value.toLowerCase().indexOf(search) != -1))
                     )
             }))
         }

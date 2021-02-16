@@ -109,6 +109,13 @@ export default class DSA5_Utility {
         }
     }
 
+    static findActorbyId(id) {
+        let item = game.actors.entities.find(x => x._id == id);
+        if (item) {
+            return item;
+        }
+    }
+
     static async findItembyIdAndPack(id, packMan) {
         const pack = game.packs.get(packMan)
 

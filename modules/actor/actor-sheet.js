@@ -830,6 +830,27 @@ export default class ActorSheetDsa5 extends ActorSheet {
         event.stopPropagation()
     }
 
+    async _handleSpellExtension(item) {
+        let res = this.actor.data.items.find(i => i.type == item.type && i.name == item.name);
+        item = duplicate(item)
+        if (!res) {
+            let spell = this.actor.data.items.find(i => i.type == item.data.category && i.name == item.data.source)
+            if (!spell) {
+                ui.notifications.error(game.i18n.localize("DSAError.noSpellForExtension"))
+            } else {
+                if (spell.data.talentValue.value < item.data.talentValue) {
+                    ui.notifications.error(game.i18n.localize("DSAError.talentValueTooLow"))
+                    return
+                }
+                let apCost = item.data.APValue.value
+                if (await this.actor.checkEnoughXP(apCost)) {
+                    this._updateAPs(apCost)
+                    await this.actor.createEmbeddedEntity("OwnedItem", item)
+                }
+            }
+        }
+    }
+
     async _addSpellOrLiturgy(item) {
         let res = this.actor.data.items.find(i => i.type == item.type && i.name == item.name);
         let apCost
@@ -920,6 +941,10 @@ export default class ActorSheetDsa5 extends ActorSheet {
             case "lookup":
                 await this._handleLookup(item)
                 break
+            case "spellextension":
+                await this._handleSpellExtension(item)
+                break
+
             default:
                 ui.notifications.error(game.i18n.format("DSAError.canNotBeAdded", { item: item.name, category: game.i18n.localize(item.type) }))
         }
@@ -952,6 +977,10 @@ export default class ActorSheetDsa5 extends ActorSheet {
             return
         } else if (dragData.id && dragData.pack) {
             item = await DSA5_Utility.findItembyIdAndPack(dragData.id, dragData.pack);
+            typeClass = item.data.type
+
+        } else if (dragData.id && dragData.type == "Actor") {
+            item = DSA5_Utility.findActorbyId(dragData.id);
             typeClass = item.data.type
         } else if (dragData.id) {
             item = DSA5_Utility.findItembyId(dragData.id);

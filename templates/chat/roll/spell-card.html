@@ -29,5 +29,9 @@
     <div class="card-content" title="{{testData.calculatedEffectFormula}}">
         <b>{{localize "effectResult"}}</b>: {{testData.effectResult}}
     </div>
+    {{/if}} {{#if testData.preData.extensions }}
+    <div class="card-content">
+        <b>{{localize 'extensions'}}</b>: {{{testData.preData.extensions}}}
+    </div>
     {{/if}}
 </div>

@@ -58,41 +58,41 @@ export default class DSA5StatusEffects {
     }
 
 
-    static calculateRollModifier(effect, actor, item) {
+    static calculateRollModifier(effect, actor, item, options = {}) {
         if (effect.flags.dsa5.value == null)
             return 0
         return effect.flags.dsa5.value * -1
     }
 
-    static ModifierIsSelected(item) {
-        return true
+    static ModifierIsSelected(item, options = {}) {
+        return options.mode != "damage"
     }
 
-    static getRollModifiers(actor, item) {
+    static getRollModifiers(actor, item, options = {}) {
         actor = actor.data.data ? actor.data : actor
         return actor.effects.map(effect => {
             let effectClass = game.dsa5.config.statusEffectClasses[effect.flags.core.statusId] || DSA5StatusEffects
             return {
                 name: effect.label,
-                value: effectClass.calculateRollModifier(effect, actor, item),
-                selected: effectClass.ModifierIsSelected(item)
+                value: effectClass.calculateRollModifier(effect, actor, item, options),
+                selected: effectClass.ModifierIsSelected(item, options)
             }
         }).filter(x => x.value != 0)
     }
 }
 
 class EncumberedEffect extends DSA5StatusEffects {
-    static ModifierIsSelected(item) {
-        return (item.type == "skill" && item.data.burden.value == "yes") || item.type != "skill"
+    static ModifierIsSelected(item, options = {}) {
+        return (item.type == "skill" && item.data.burden.value == "yes") || (item.type != "skill" && options.mode != "damage")
     }
 
-    static calculateRollModifier(effect, actor, item) {
-        return (item.type == "skill" && item.data.burden.value == "no") ? 0 : super.calculateRollModifier(effect, actor, item)
+    static calculateRollModifier(effect, actor, item, options = {}) {
+        return (item.type == "skill" && item.data.burden.value == "no") ? 0 : super.calculateRollModifier(effect, actor, item, options)
     }
 }
 
 class RaptureEffect extends DSA5StatusEffects {
-    static calculateRollModifier(effect, actor, item) {
+    static calculateRollModifier(effect, actor, item, options = {}) {
         let happyTalents = actor.data.happyTalents.value.split(",").map(x => x.trim())
         if ((happyTalents.includes(item.name) && item.type == "skill") || ["ceremony", "ritual"].includes(item.type))
             return effect.flags.dsa5.value - 1

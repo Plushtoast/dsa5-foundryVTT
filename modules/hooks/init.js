@@ -10,6 +10,7 @@ import * as sideBar from './sidebar.js'
 import * as configuration from './configuration.js'
 import * as journals from './journal.js'
 import * as tokenHUD from './tokenHUD.js'
+import * as migrateWorld from '../system/migrator.js'
 import VantageSheetDSA5 from "./../item/sheets/item-vantage-dsa5.js"
 import SpellSheetDSA5 from "./../item/sheets/item-spell-dsa5.js";
 import SpecialAbilitySheetDSA5 from "./../item/sheets/item-specialability-dsa5.js";
@@ -24,6 +25,7 @@ import ActorSheetdsa5Character from "./../actor/character-sheet.js";
 import ActorSheetdsa5Creature from "./../actor/creature-sheet.js";
 import ActorSheetdsa5NPC from "./../actor/npc-sheet.js";
 import ItemSheetdsa5 from "./../item/item-sheet.js";
+import SpellExtensionSheetDSA5 from "./../item/sheets/item-spellextension-dsa5.js"
 
 export default function() {
     initHandleBars.default();
@@ -37,6 +39,7 @@ export default function() {
     sideBar.default()
     journals.default()
     tokenHUD.default()
+    migrateWorld.default()
 }
 
 Hooks.once("init", () => {
@@ -87,23 +90,18 @@ Hooks.once("init", () => {
     Items.registerSheet("dsa5", PoisonSheetDSA5, { makeDefault: true, types: ["poison"] });
     Items.registerSheet("dsa5", DiseaseSheetDSA5, { makeDefault: true, types: ["disease"] });
     Items.registerSheet("dsa5", ConsumableSheetDSA, { makeDefault: true, types: ["consumable"] });
-    Items.unregisterSheet("dsa5", ItemSheetdsa5, { types: ["consumable", "species", "career", "culture", "advantage", "specialability", "disadvantage", "ritual", "ceremony", "liturgy", "spell", "disease", "poison", "meleeweapon"] });
+    Items.registerSheet("dsa5", SpellExtensionSheetDSA5, { makeDefault: true, types: ["spellextension"] });
+    Items.unregisterSheet("dsa5", ItemSheetdsa5, { types: ["spellextension", "consumable", "species", "career", "culture", "advantage", "specialability", "disadvantage", "ritual", "ceremony", "liturgy", "spell", "disease", "poison", "meleeweapon"] });
 
     configuration.default()
-
 });
 
 Hooks.once('setup', function() {
     if (!["de"].includes(game.i18n.lang)) {
         console.warn(`DSA5 - ${game.i18n.lang} is not a supported language. Falling back to default language.`)
-        game.i18n.setLanguage("de").then(() => {
-            //This is unfortunately a litte to late for items to be initialized properly
-            setupKnownEquipmentModifiers()
-        })
-    } else {
-        setupKnownEquipmentModifiers()
+        game.settings.set("core", "language", "de")
     }
-
+    setupKnownEquipmentModifiers()
 })
 
 

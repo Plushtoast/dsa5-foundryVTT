@@ -114,7 +114,6 @@ export default class WizardDSA5 extends Application {
         }
 
         let result = false
-
         result = await new Promise((resolve, reject) => {
             new Dialog({
                 title: game.i18n.localize("DIALOG.warning"),
