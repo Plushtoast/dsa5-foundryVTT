@@ -1,0 +1,67 @@
+<div class="row-section">
+    <div class="col fourty"></div>
+    <div class="row-section col sixty">
+        <div class="col five">
+        </div>
+        {{#each characteristics as |item i|}}
+        <div class="col five center" title="{{localize (concatUp 'CHAR.' item)}}">
+            {{localize (concatUp 'CHARAbbrev.' item)}}
+        </div>
+        {{/each}}
+        <div class="col five center" title="{{localize 'FP'}}">
+            {{localize 'CHARAbbrev.FP'}}
+        </div>
+    </div>
+</div>
+<div class="form-group">
+    <label>{{localize "Modifier"}}</label>
+    <div class="row-section">
+        <div class="col five">
+            <input class="quantity-click" type="number" name="testModifier" value="{{testModifier}}" />
+        </div>
+        {{#each characteristics as |item i|}}
+        <div class="col five" title="{{localize 'MODS.partChecks'}}">
+            <input class="quantity-click" type="number" name="ch{{i}}" value="0" />
+        </div>
+        {{/each}}
+        <div class="col five" title="{{localize 'MODS.FP'}}">
+            <input class="quantity-click" type="number" name="fp" value="0" />
+        </div>
+    </div>
+</div>
+{{# if difficultyLabels}}
+<div class="form-group custom-select">
+    <label>{{localize "Difficulty"}}</label>
+    <select name="testDifficulty">
+    {{#select testDifficulty}}
+    {{#each difficultyLabels as |difficultyLabel difficultyKey|}}
+    <option value="{{difficultyKey}}">{{localize difficultyLabel}}</option>
+    {{/each}}
+    {{/select}}
+  </select>
+</div>
+{{/if}}
+<div class="form-group custom-select">
+    <label>{{localize "DIALOG.RollMode"}}</label>
+    <select name="rollMode">
+    {{#select rollMode}}
+    {{#each rollModes as |label mode|}}
+    <option value="{{mode}}">{{localize label}}</option>
+    {{/each}}
+    {{/select}}
+  </select>
+</div>
+{{#if hasSituationalModifiers}}
+<div class="modifiers form-group custom-select">
+    <label>{{localize "DIALOG.SituationalModifiers"}}</label>
+    <select name="situationalModifiers" multiple title="{{localize 'DIALOG.deselectWithStrg'}}">
+    {{#select selectedModifiers}}
+    {{#each situationalModifiers as |mod t|}}
+    <option title="{{localize mod.name}}" data-type="{{mod.type}}" value="{{mod.value}}" {{#if mod.selected}}selected{{/if}}>
+      {{localize mod.name}} [{{mod.value}}{{mod.type}}]
+    </option>
+    {{/each}}
+    {{/select}}
+  </select>
+</div>
+{{/if}}

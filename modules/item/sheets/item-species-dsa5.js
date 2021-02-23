@@ -7,4 +7,10 @@ export default class ItemSpeciesdsa5 extends ItemSheetdsa5 {
         super(item, options);
         this.mce = null;
     }
+
+    async getData() {
+        const data = await super.getData();
+        data['hasLocalization'] = game.i18n.has(`Racedescr.${this.item.name}`)
+        return data
+    }
 }

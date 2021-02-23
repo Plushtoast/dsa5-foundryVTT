@@ -1,0 +1,31 @@
+<form class="{{cssClass}} lock{{actor.sheetLocked}}" autocomplete="off">
+    <fieldset disabled>
+        <header class="sheet-header row-section" ondragstart="return false;" ondrop="return false;">
+            <div class="charname headerInput col fourty">
+                <input class="input name" name="name" type="text" value="{{actor.name}}" placeholder="{{localize 'Name'}}" />
+                <span class="label name">{{localize "Name"}}</span>
+            </div>
+
+            <div class="headerInput col fourty">
+                <input class="input creatureClass" data-dtype="String" name="data.creatureClass.value" type="text" value="{{data.creatureClass.value}}" placeholder="{{localize 'creatureClass'}}" />
+                <span class="label creatureClass ">{{localize "creatureClass"}}</span>
+            </div>
+
+        </header>
+        <section id="tab-sections">
+            <nav id="dsa5-primarytabs" class="sheet-tabs tabs" ondragstart="return false;" ondrop="return false;">
+                <a class="item active" data-tab="main">{{localize "WIZARD.generalTab"}}</a>
+            </nav>
+
+            <section class="content">
+                <div class="tab main save-scroll" data-tab="main">
+                    <div class="row-section">
+                        <div class="col center">
+                            <img src="{{actor.img}}" style="min-height: 200px;max-width:50%;border:none;" />
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </section>
+    </fieldset>
+</form>

@@ -129,14 +129,15 @@ export default class DSA5Payment {
     }
 
     static _moneyToCoins(money) {
-        let D = Math.floor(money / 10)
-        let S = Math.floor((money - (D * 10)))
-        let H = Math.floor((money - (D * 10) - S) / 0.1)
+        let m = Math.round(money * 100)
+        let D = Math.floor(m / 1000)
+        let S = Math.floor((m - (D * 1000)) / 100)
+        let H = Math.floor((m - (D * 1000) - S * 100) / 10)
         return {
             D: D,
             S: S,
             H: H,
-            K: Math.floor((money - (D * 10) - S - (H * 0.1)) / 0.01)
+            K: Math.round(((m - (D * 1000) - S * 100 - H * 10)))
         }
     }
 

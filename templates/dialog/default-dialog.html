@@ -1,0 +1,41 @@
+<div class="form-group">
+  <label>{{localize "Modifier"}}</label>
+  <input class="quantity-click" type="number" name="testModifier" value="{{testModifier}}" />
+</div>
+{{# if difficultyLabels}}
+<div class="form-group custom-select">
+  <label>{{localize "Difficulty"}}</label>
+  <select name="testDifficulty">
+    {{#select testDifficulty}}
+    {{#each difficultyLabels as |difficultyLabel difficultyKey|}}
+    <option value="{{difficultyKey}}">{{localize difficultyLabel}}</option>
+    {{/each}}
+    {{/select}}
+  </select>
+</div>
+{{/if}}
+<div class="form-group custom-select">
+  <label>{{localize "DIALOG.RollMode"}}</label>
+  <select name="rollMode">
+    {{#select rollMode}}
+    {{#each rollModes as |label mode|}}
+    <option value="{{mode}}">{{localize label}}</option>
+    {{/each}}
+    {{/select}}
+  </select>
+</div>
+{{#if hasSituationalModifiers}}
+<div class="modifiers form-group custom-select">
+  <label>{{localize "DIALOG.SituationalModifiers"}}</label>
+  <select name="situationalModifiers" multiple title="{{localize 'DIALOG.deselectWithStrg'}}">
+    {{#select selectedModifiers}}
+    {{#each situationalModifiers as |mod t|}}
+    <option title="{{localize mod.name}}" value="{{mod.value}}" {{#if mod.selected}}selected{{/if}}>
+      {{localize
+      mod.name}} [{{mod.value}}]
+    </option>
+    {{/each}}
+    {{/select}}
+  </select>
+</div>
+{{/if}}

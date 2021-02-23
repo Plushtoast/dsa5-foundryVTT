@@ -37,7 +37,8 @@ export default class Itemdsa5 extends Item {
         "aggregatedTest": "systems/dsa5/icons/categories/aggregated_test.webp",
         "poison": "systems/dsa5/icons/categories/poison.webp",
         "disease": "systems/dsa5/icons/categories/disease.webp",
-        "spellextension": "systems/dsa5/icons/categories/Spellextension.webp"
+        "spellextension": "systems/dsa5/icons/categories/Spellextension.webp",
+        "species": "icons/environment/people/group.webp"
     }
 
     static defaultIcon(data) {
@@ -64,7 +65,8 @@ export default class Itemdsa5 extends Item {
                 res.push({
                     name: $(k).find('a').text(),
                     value: Number(val) * step,
-                    damageBonus: Number($(k).attr("data-tpbonus")) * step
+                    damageBonus: $(k).attr("data-tpbonus"),
+                    step: step
                 })
             }
         }
@@ -77,16 +79,13 @@ export default class Itemdsa5 extends Item {
         for (let mod of effect.split(",").map(x => x.trim())) {
             let vals = mod.replace(/(\s+)/g, ' ').trim().split(" ")
             if (vals.length == 2) {
-                if (!isNaN(vals[0])) {
+                if (!isNaN(vals[0]) || /\d[dDwW]\d/.test(vals[0])) {
                     let number = vals[0].replace(regex, actor.data.data.status.speed.max)
-                    number = number.replace(/\d{1}[dDwW]\d/, function(match) {
-                        return new Roll(match).roll().total
-                    })
-                    number = Math.round(Number(eval(number)))
+
                     if (itemModifiers[vals[1].toLowerCase()] == undefined) {
-                        itemModifiers[vals[1].toLowerCase()] = number
+                        itemModifiers[vals[1].toLowerCase()] = [number]
                     } else {
-                        itemModifiers[vals[1].toLowerCase()] += number
+                        itemModifiers[vals[1].toLowerCase()].push(number)
                     }
                 }
             }
@@ -105,7 +104,6 @@ export default class Itemdsa5 extends Item {
     setupEffect(ev, options = {}) {
         return Itemdsa5.getSubClass(this.data.type).setupDialog(ev, options, this)
     }
-
 
     static checkEquality(item, item2) {
         return item2.type == item.type && item.name == item2.name && item.data.description.value == item2.data.description.value
@@ -148,8 +146,6 @@ export default class Itemdsa5 extends Item {
         let result = DiceDSA5.rollTest(testData);
 
         result.postFunction = "itemTest";
-        if (testData.extra)
-            mergeObject(result, testData.extra);
 
         if (game.user.targets.size) {
             cardOptions.isOpposedTest = testData.opposable

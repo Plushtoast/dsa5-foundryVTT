@@ -38,7 +38,6 @@ export default class MeleeweaponDSA5 extends Itemdsa5 {
             }
             for (let com of combatSpecAbs) {
                 let effects = Itemdsa5.parseEffect(com.data.data.effect.value, actor)
-
                 let bonus = effects[game.i18n.localize("LocalizedAbilityModifiers.at")] || 0
                 let tpbonus = effects[game.i18n.localize("LocalizedAbilityModifiers.tp")] || 0
                 if (bonus != 0 || tpbonus != 0)
@@ -103,6 +102,7 @@ export default class MeleeweaponDSA5 extends Itemdsa5 {
         let situationalModifiers = actor ? DSA5StatusEffects.getRollModifiers(actor, item, { mode: mode }) : []
         this.getSituationalModifiers(situationalModifiers, actor, data, item)
         data["situationalModifiers"] = situationalModifiers
+
 
         let dialogOptions = {
             title: title,

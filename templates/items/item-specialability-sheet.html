@@ -57,9 +57,9 @@
                 <label class="label-text">{{localize "combatskill"}}: </label>
                 <input class="input-text" type="text" name="data.list.value" value="{{data.list.value}}" data-dtype="String" />
             </div>
-            {{/when}} {{#if canAdvance}}
+            {{/when}} {{#if isOwned}}
             <div class="form-group">
-                <label class="label-text"><a class="refund-step"><i class="fas fa-minus"></i></a> {{localize "stepValue"}} <a class="advance-step"><i class="fas fa-plus"></i></a></label>
+                <label class="label-text">{{#if canAdvance}}<a class="refund-step"><i class="fas fa-minus"></i></a> {{/if}}{{localize "stepValue"}}{{#if canAdvance}} <a class="advance-step"><i class="fas fa-plus"></i></a>{{/if}}</label>
                 <input class="input-text" type="number" name="data.step.value" value="{{data.step.value}}" data-dtype="Number" />
             </div>
             {{/if}}

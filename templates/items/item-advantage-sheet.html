@@ -39,9 +39,9 @@
                 <input class="input-text" type="text" name="data.effect.value" value="{{data.effect.value}}" data-dtype="String" />
             </div>
 
-            {{#if canAdvance}}
+            {{#if isOwned}}
             <div class="form-group">
-                <label class="label-text"><a class="refund-step"><i class="fas fa-minus"></i></a> {{localize "stepValue"}} <a class="advance-step"><i class="fas fa-plus"></i></a></label>
+                <label class="label-text">{{#if canAdvance}}<a class="refund-step"><i class="fas fa-minus"></i></a> {{/if}}{{localize "stepValue"}}{{#if canAdvance}} <a class="advance-step"><i class="fas fa-plus"></i></a>{{/if}}</label>
                 <input class="input-text" type="number" name="data.step.value" value="{{data.step.value}}" data-dtype="Number" disabled/>
             </div>
             {{/if}}

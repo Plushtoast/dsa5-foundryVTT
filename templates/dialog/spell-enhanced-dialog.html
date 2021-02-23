@@ -1,7 +1,9 @@
 <form class="skill-test">
     <div class="row-section">
         <div class="col sixty">
-            {{> systems/dsa5/templates/dialog/dialog-constant.html}}
+
+            {{> systems/dsa5/templates/dialog/enhanced-default-dialog.html}}
+
             <div class="form-group">
                 <label style="line-height: normal;">{{localize "maintainedSpells"}}</label>
                 <input class="quantity-click" type="number" name="maintainedSpells" value="0" />
@@ -21,22 +23,22 @@
             <div class="form-group custom-select ritual">
                 <label>{{localize "place"}}</label>
                 <select name="placeModifier">
-          {{#select 0}}
-          {{#each locationModifiers as |label val|}}
-          <option value="{{label}}">{{localize val}}</option>
-          {{/each}}
-          {{/select}}
-        </select>
+                    {{#select 0}}
+                    {{#each locationModifiers as |label val|}}
+                    <option value="{{label}}">{{localize val}}</option>
+                    {{/each}}
+                    {{/select}}
+                </select>
             </div>
             <div class="form-group custom-select">
                 <label>{{localize "time"}}</label>
                 <select name="timeModifier">
-          {{#select 0}}
-          {{#each timeModifiers as |label val|}}
-          <option value="{{label}}">{{localize val}}</option>
-          {{/each}}
-          {{/select}}
-        </select>
+                    {{#select 0}}
+                    {{#each timeModifiers as |label val|}}
+                    <option value="{{label}}">{{localize val}}</option>
+                    {{/each}}
+                    {{/select}}
+                </select>
             </div>
             <div class="form-group custom-select">
                 <label>{{localize "RITUALMODIFIER.rightClothes"}}</label>
@@ -73,8 +75,13 @@
             {{/if}}
 
             <div class="form-group custom-select">
-                <label>{{localize "removeGestureOrFormula"}} (-2)</label>
-                <input type="checkbox" id="removeGestureOrFormula" class="spellModifier" name="removeGestureOrFormula" value="-2">
+                <label>{{localize "removeGesture"}} (-2)</label>
+                <input type="checkbox" id="removeGesture" class="spellModifier" name="removeGesture" value="-2">
+            </div>
+
+            <div class="form-group custom-select">
+                <label>{{localize "removeFormula"}} (-2)</label>
+                <input type="checkbox" id="removeFormula" class="spellModifier" name="removeFormula" value="-2">
             </div>
 
             <hr>
@@ -134,11 +141,11 @@
                 </div>
 
                 {{else}} {{#each extensions as |item i|}}
-                <div class="row-section specAbs" data-name="{{item.shortName}}">
+                <div class="row-section specAbs" data-name="{{item.shortName}}" title="{{item.descr}}">
                     <div class="extImg col ten">
                     </div>
                     <div class="col ninety">
-                        <a> {{item.shortName}}</a>
+                        <a>&nbsp;{{item.shortName}}</a>
                     </div>
                 </div>
                 {{/each}} {{/unless}}

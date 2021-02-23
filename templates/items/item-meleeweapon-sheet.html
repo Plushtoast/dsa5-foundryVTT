@@ -86,6 +86,19 @@
                 </select>
             </div>
 
+            {{#if isShield}}
+            <div class="form-group">
+                <label class="label-text">{{localize "shieldSize"}}</label>
+                <select name="data.reach.shieldSize" data-dtype="String">
+                  {{#select data.reach.shieldSize}}
+                  {{#each shieldSizes as |ch char|}}
+                  <option value="{{char}}">{{localize ch}}</option>
+                  {{/each}}
+                  {{/select}}
+                </select>
+            </div>
+            {{/if}}
+
             <div class="form-group">
                 <label class="label-text">{{localize "effect"}}: </label>
                 <input class="input-text" type="text" name="data.effect.value" value="{{data.effect.value}}" data-dtype="String" />

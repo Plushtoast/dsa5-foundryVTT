@@ -10,14 +10,13 @@
 
     <nav class="sheet-tabs tabs" data-tab-container="primary">
         <a class="item active" data-tab="description">{{localize "Description"}}</a>
-        <a class="item" data-tab="details">{{localize "Details"}}</a>
-        <a class="item" data-tab="extensions">{{localize "extensions"}}</a>
+        <a class="item" data-tab="details">{{localize "Details"}}</a> {{#if isOwned}}<a class="item" data-tab="extensions">{{localize "extensions"}}</a>{{/if}}
     </nav>
 
 
     <section class="content">
 
-        {{> systems/dsa5/templates/items/item-description.html}}
+        {{> systems/dsa5/templates/items/item-description.html}} {{#if isOwned}}
         <div class="tab extensions" data-tab="extensions">
             {{#if extensions}} {{#each extensions as |item i|}}
             <div class="groupbox item inventory" data-item-id="{{item._id}}">
@@ -42,6 +41,8 @@
             <p>{{localize "DSAError.NotUnlocked"}}</p>
             {{/if}}
         </div>
+        {{/if}}
+
         <div class="tab details" data-tab="details">
 
             <div class="form-group">
@@ -141,7 +142,7 @@
                 <input class="input-text" type="text" name="data.effectFormula.value" value="{{data.effectFormula.value}}" data-dtype="String" />
             </div>
             <div class="form-group">
-                <label class="label-text">{{localize "feature"}}: </label>
+                <label class="label-text">{{localize "distribution"}}: </label>
                 <input class="input-text" type="text" name="data.distribution.value" value="{{data.distribution.value}}" data-dtype="String" />
             </div>
             <div class="form-group">

@@ -107,8 +107,4 @@ export default class AdvantageRulesDSA5 extends ItemRulesDSA5 {
     static getVantageAsModifier(actor, talent, factor = 1) {
         return super.itemAsModifier(actor, talent, factor, ["advantage", "disadvantage"])
     }
-
-    static getTalentBonus(actor, talent) {
-        return super.getTalentBonus(actor, talent, ["advantage", "disadvantage"])
-    }
 }

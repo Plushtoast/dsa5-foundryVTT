@@ -323,8 +323,8 @@
     "rangeweapons": "Rangeweapons",
     "requirements": "Requirements",
     "resistanceModifier": "Resistance",
-    "removeGestureOrFormula": "Remove gesture/formula",
-    "removeGestureOrPrayer": "Remove gesture/prayer",
+    "removeGesture": "Remove gesture",
+    "removeFormula": "Remove formula/prayer",
     "recommendedAdvantages": "Suitable advantages",
     "recommendedDisadvantages": "Suitable disadvantages",
     "recommendedTalents": "Suitable skills",
@@ -849,9 +849,9 @@
     },
 
     "rangeMovementOptions": {
-        "SLOW": "motionless (+2)",
-        "FAST": "moving slowly (+-0)",
-        "STATIONARY": "moving quickly (-2)",
+        "STATIONARY": "motionless (+2)",
+        "SLOW": "moving slowly (+-0)",
+        "FAST": "moving quickly (-2)",
         "QUICKCHANGE": "zigzagging (-4)",
         "SHOOTERMOVING": "walking (-2)",
         "SHOOTERRUNNING": "running (-4)",

@@ -201,7 +201,8 @@
                         "value": ""
                     },
                     "notes": {
-                        "value": ""
+                        "value": "",
+                        "gmdescription": ""
                     }
                 }
             }
@@ -648,7 +649,8 @@
                 "offhandMod": 0
             },
             "reach": {
-                "value": "medium"
+                "value": "medium",
+                "shieldSize": "average"
             },
             "damageThreshold": {
                 "value": 0
@@ -817,7 +819,8 @@
         },
         "species": {
             "templates": [
-                "APValue"
+                "APValue",
+                "description"
             ],
             "requirements": {
                 "value": ""

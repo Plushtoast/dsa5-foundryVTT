@@ -3,7 +3,8 @@ import DSA5_Utility from "../system/utility-dsa5.js";
 export default function() {
     Hooks.on("getChatLogEntryContext", (html, options) => {
         let canHurt = function(li) {
-            return game.user.isGM && li.find(".opposed-card").length || li.find(".dice-roll").length
+            let cardData = game.messages.get(li.attr("data-message-id")).data.flags.opposeData
+            return (game.user.isGM && li.find(".opposed-card").length || li.find(".dice-roll").length) && cardData && cardData.damage.value > 0
         }
         let canCostMana = function(li) {
             let message = game.messages.get(li.attr("data-message-id"));
@@ -19,7 +20,7 @@ export default function() {
             let message = game.messages.get(li.attr("data-message-id"));
             if (message.data.speaker.actor && message.data.flags.data) {
                 let actor = game.actors.get(message.data.speaker.actor);
-                if (actor.permission == ENTITY_PERMISSIONS.OWNER && actor.data.type == "character" && actor.data.data.status.fatePoints.value > 0) {
+                if (actor.permission == ENTITY_PERMISSIONS.OWNER && actor.data.type == "character" && actor.data.data.status.fatePoints.value  > 0) {
                     if (!message.data.flags.data.fatePointAddQSUsed) {
                         return message.data.flags.data.postData.successLevel > 0 && message.data.flags.data.postData.qualityStep != undefined
                     }
@@ -41,7 +42,7 @@ export default function() {
             let message = game.messages.get(li.attr("data-message-id"));
             if (message.data.speaker.actor && message.data.flags.data) {
                 let actor = game.actors.get(message.data.speaker.actor);
-                if (actor.permission == ENTITY_PERMISSIONS.OWNER && actor.data.type == "character" && actor.data.data.status.fatePoints.value > 0) {
+                if (actor.permission == ENTITY_PERMISSIONS.OWNER && actor.data.type == "character" && actor.data.data.status.fatePoints.value  > 0) {
                     return message.data.flags.data.postData.damageRoll != undefined && !message.data.flags.data.fatePointDamageRerollUsed;
                 }
             }
@@ -52,7 +53,7 @@ export default function() {
 
             if (message.data.speaker.actor && message.data.flags.data) {
                 let actor = game.actors.get(message.data.speaker.actor);
-                if (actor.permission == ENTITY_PERMISSIONS.OWNER && actor.data.type == "character" && actor.data.data.status.fatePoints.value > 0) {
+                if (actor.permission == ENTITY_PERMISSIONS.OWNER && actor.data.type == "character" && actor.data.data.status.fatePoints.value   > 0) {
                     return !message.data.flags.data.fatePointRerollUsed;
                 }
             }

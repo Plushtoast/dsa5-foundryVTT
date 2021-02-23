@@ -44,12 +44,19 @@ export default class DSA5Dialog extends Dialog {
             }
             $(ev.currentTarget).val(val)
         });
-        html.find('option').mousedown(ev => {
+        html.find('.modifiers option').mousedown(ev => {
             ev.preventDefault();
-            console.log("muh")
             $(ev.currentTarget).prop('selected', !$(ev.currentTarget).prop('selected'));
             return false;
         });
 
+    }
+
+    static get defaultOptions() {
+        const options = super.defaultOptions;
+        mergeObject(options, {
+            resizable: true
+        });
+        return options;
     }
 }

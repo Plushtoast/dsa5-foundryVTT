@@ -28,8 +28,11 @@ export default class SpellItemDSA5 extends Itemdsa5 {
             maintainCost: html.find(".maintainCost").text()
         }
         testData.situationalModifiers.push({
-            name: game.i18n.localize("removeGestureOrFormula"),
-            value: html.find('[name="removeGestureOrFormula"]').is(":checked") ? -2 : 0
+            name: game.i18n.localize("removeGesture"),
+            value: html.find('[name="removeGesture"]').is(":checked") ? -2 : 0
+        }, {
+            name: game.i18n.localize("removeFormula"),
+            value: html.find('[name="removeFormula"]').is(":checked") ? -2 : 0
         }, {
             name: game.i18n.localize("castingTime"),
             value: html.find(".castingTime").data("mod")
@@ -50,12 +53,16 @@ export default class SpellItemDSA5 extends Itemdsa5 {
             value: Number(html.find('[name="maintainedSpells"]').val()) * -1
         })
         testData.extensions = SpellItemDSA5.getSpecAbModifiers(html).join(", ")
+        testData.advancedModifiers = {
+            chars: [0, 1, 2].map(x => Number(html.find(`[name="ch${x}"]`).val())),
+            fps: Number(html.find(`[name="fp"]`).val())
+        }
     }
 
     static getSpecAbModifiers(html) {
         let res = []
         for (let k of html.find('.specAbs.active')) {
-            res.push(`<span>${$(k).attr("data-name")}</span>`)
+            res.push(`<span title="${$(k).attr("title")}">${$(k).attr("data-name")}</span>`)
         }
         return res
     }
@@ -108,7 +115,8 @@ export default class SpellItemDSA5 extends Itemdsa5 {
             hasSKModifier: spell.data.resistanceModifier.value == "SK",
             hasZKModifier: spell.data.resistanceModifier.value == "ZK",
             maxMods: Math.floor(Number(spell.data.talentValue.value) / 4),
-            extensions: this.prepareExtensions(actor, spell)
+            extensions: this.prepareExtensions(actor, spell),
+            characteristics: [1, 2, 3].map(x => spell.data[`characteristic${x}`].value)
         }
 
         let situationalModifiers = actor ? DSA5StatusEffects.getRollModifiers(actor, spell) : []
@@ -137,7 +145,8 @@ export default class SpellItemDSA5 extends Itemdsa5 {
 
     static prepareExtensions(actor, spell) {
         return actor.data.items.filter(x => x.type == "spellextension" && x.data.source == spell.name && x.data.category == spell.type).map(x => {
-            x.shortName = x.name.split(" - ")[1] ? x.name.split(" - ")[1] : x.name
+            x.shortName = (x.name.split(" - ").length > 1 ? x.name.split(" - ")[1] : x.name)
+            x.descr = $(x.data.description.value).text()
             return x
         })
     }

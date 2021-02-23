@@ -101,6 +101,13 @@ export default function() {
         type: Number
     });
 
-
+    game.settings.register("dsa5", "talentModifierEnabled", {
+        name: "DSASETTINGS.talentModifierEnabled",
+        hint: "DSASETTINGS.talentModifierEnabledHint",
+        scope: "client",
+        config: true,
+        default: false,
+        type: Boolean
+    });
 
 }

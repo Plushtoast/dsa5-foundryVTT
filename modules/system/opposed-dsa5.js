@@ -59,7 +59,7 @@ export default class OpposedDsa5 {
 
             if (testResult.successLevel > 0) {
                 let attackOfOpportunity = message.data.flags.data.preData.attackOfOpportunity
-                let unopposedButton = attackOfOpportunity ? "" : `<div class="unopposed-button" data-target="true" title="${game.i18n.localize("Unopposed")}"><a>${game.i18n.localize('Unopposed')} <i class="fas fa-times"></i></a></div>`
+                let unopposedButton = attackOfOpportunity ? "" : `<div class="unopposed-button chat-button-gm" data-target="true" title="${game.i18n.localize("Unopposed")}"><a>${game.i18n.localize('Unopposed')} <i class="fas fa-times"></i></a></div>`
                 let startMessagesList = [];
                 game.user.targets.forEach(async target => {
                     let content =
@@ -151,9 +151,15 @@ export default class OpposedDsa5 {
     static async chatListeners(html) {
         html.on("click", '.unopposed-button', event => {
             event.preventDefault()
-            let messageId = $(event.currentTarget).parents('.message').attr("data-message-id");
-            $(event.currentTarget).fadeOut()
-            this.resolveUnopposed(game.messages.get(messageId));
+
+            if (game.user.isGM) {
+                let messageId = $(event.currentTarget).parents('.message').attr("data-message-id");
+                let message = game.messages.get(messageId)
+                $(event.currentTarget).fadeOut()
+                this.resolveUnopposed(message);
+            } else {
+                ui.notifications.error(game.i18n.localize("DSAError.onlyGMAllowedToCancel"))
+            }
         })
     }
 
@@ -362,6 +368,7 @@ export default class OpposedDsa5 {
     }
 
     static async resolveUnopposed(startMessage, additionalInfo = "") {
+
         let unopposeData = startMessage.data.flags.unopposeData;
 
         let attackMessage = game.messages.get(unopposeData.attackMessageId)

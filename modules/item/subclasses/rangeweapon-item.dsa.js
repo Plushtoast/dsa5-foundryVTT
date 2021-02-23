@@ -17,45 +17,47 @@ export default class RangeweaponItemDSA5 extends Itemdsa5 {
         return res
     }
     static getSituationalModifiers(situationalModifiers, actor, data, source) {
-        source = source.data ? (source.data.data == undefined ? source : source.data) : source
-        let toSeach = [source.data.combatskill.value.toLowerCase(), game.i18n.localize("LocalizedIDs.all")]
-        let combatSpecAbs = actor.items.filter(x => x.type == "specialability" && x.data.data.category.value == "Combat" && x.data.data.effect.value != "" && x.data.data.list.value.split(",").map(x => x.trim().toLowerCase()).filter(y => toSeach.includes(y)).length > 0)
-        let combatskills = []
-        situationalModifiers.push(...AdvantageRulesDSA5.getVantageAsModifier(actor.data, game.i18n.localize('LocalizedIDs.restrictedSenseSight'), -2))
-        let targetSize = "average"
-        if (game.user.targets.size) {
-            game.user.targets.forEach(target => {
-                let tar = target.actor.data.data.size
-                if (tar)
-                    targetSize = tar.value
+        if (data.mode == "attack") {
+            source = source.data ? (source.data.data == undefined ? source : source.data) : source
+            let toSearch = [source.data.combatskill.value.toLowerCase(), game.i18n.localize("LocalizedIDs.all")]
+            let combatSpecAbs = actor.items.filter(x => x.type == "specialability" && x.data.data.category.value == "Combat" && x.data.data.effect.value != "" && x.data.data.list.value.split(",").map(x => x.trim().toLowerCase()).filter(y => toSearch.includes(y)).length > 0)
+            let combatskills = []
+            situationalModifiers.push(...AdvantageRulesDSA5.getVantageAsModifier(actor.data, game.i18n.localize('LocalizedIDs.restrictedSenseSight'), -2))
+            let targetSize = "average"
+            if (game.user.targets.size) {
+                game.user.targets.forEach(target => {
+                    let tar = target.actor.data.data.size
+                    if (tar)
+                        targetSize = tar.value
+                });
+            }
+            let rangeOptions = {...DSA5.rangeWeaponModifiers }
+            delete rangeOptions[AdvantageRulesDSA5.hasVantage(actor, game.i18n.localize('LocalizedIDs.senseOfRange')) ? "long" : "rangesense"]
+            for (let com of combatSpecAbs) {
+                let effects = Itemdsa5.parseEffect(com.data.data.effect.value, actor)
+
+                let bonus = effects[game.i18n.localize("LocalizedAbilityModifiers.at")] || 0
+                let tpbonus = effects[game.i18n.localize("LocalizedAbilityModifiers.tp")] || 0
+                if (bonus != 0 || tpbonus != 0)
+                    combatskills.push({
+                        name: com.name,
+                        atbonus: bonus,
+                        tpbonus: tpbonus,
+                        label: `${game.i18n.localize("LocalizedAbilityModifiers.at")}: ${bonus}, ${game.i18n.localize("LocalizedAbilityModifiers.tp")}: ${tpbonus}`,
+                        steps: com.data.data.step.value
+                    })
+            }
+            mergeObject(data, {
+                rangeOptions: rangeOptions,
+                sizeOptions: DSA5.rangeSizeCategories,
+                visionOptions: DSA5.rangeVision,
+                mountedOptions: DSA5.mountedRangeOptions,
+                shooterMovementOptions: DSA5.shooterMovementOptions,
+                targetMovementOptions: DSA5.targetMomevementOptions,
+                targetSize: targetSize,
+                combatSpecAbs: combatskills
             });
         }
-        let rangeOptions = {...DSA5.rangeWeaponModifiers }
-        delete rangeOptions[AdvantageRulesDSA5.hasVantage(actor, game.i18n.localize('LocalizedIDs.senseOfRange')) ? "long" : "rangesense"]
-        for (let com of combatSpecAbs) {
-            let effects = Itemdsa5.parseEffect(com.data.data.effect.value, actor)
-
-            let bonus = effects[game.i18n.localize("LocalizedAbilityModifiers.at")] || 0
-            let tpbonus = effects[game.i18n.localize("LocalizedAbilityModifiers.tp")] || 0
-            if (bonus != 0 || tpbonus != 0)
-                combatskills.push({
-                    name: com.name,
-                    atbonus: bonus,
-                    tpbonus: tpbonus,
-                    label: `${game.i18n.localize("LocalizedAbilityModifiers.at")}: ${bonus}, ${game.i18n.localize("LocalizedAbilityModifiers.tp")}: ${tpbonus}`,
-                    steps: com.data.data.step.value
-                })
-        }
-        mergeObject(data, {
-            rangeOptions: rangeOptions,
-            sizeOptions: DSA5.rangeSizeCategories,
-            visionOptions: DSA5.rangeVision,
-            mountedOptions: DSA5.mountedRangeOptions,
-            shooterMovementOptions: DSA5.shooterMovementOptions,
-            targetMovementOptions: DSA5.targetMomevementOptions,
-            targetSize: targetSize,
-            combatSpecAbs: combatskills
-        });
     }
 
     static setupDialog(ev, options, item, actor) {
@@ -72,7 +74,7 @@ export default class RangeweaponItemDSA5 extends Itemdsa5 {
             }
         };
 
-        if (actor.data.type != "creature") {
+        if (actor.data.type != "creature" && mode != "damage") {
             let itemData = item.data.data ? item.data.data : item.data
 
             if (itemData.ammunitiongroup.value == "-") {
@@ -91,7 +93,8 @@ export default class RangeweaponItemDSA5 extends Itemdsa5 {
         }
 
         let data = {
-            rollMode: options.rollMode
+            rollMode: options.rollMode,
+            mode: mode
         }
         let situationalModifiers = actor ? DSA5StatusEffects.getRollModifiers(actor, item, { mode: mode }) : []
         this.getSituationalModifiers(situationalModifiers, actor, data, item)
@@ -115,16 +118,19 @@ export default class RangeweaponItemDSA5 extends Itemdsa5 {
                 testData.wrongHand = html.find('[name="wrongHand"]').is(":checked") ? -4 : 0
                 testData.situationalModifiers.push({
                     name: game.i18n.localize("target") + " " + html.find('[name="targetMovement"] option:selected').text(),
-                    value: Number(html.find('[name="targetMovement"]').val())
+                    value: Number(html.find('[name="targetMovement"]').val()) || 0
                 }, {
                     name: game.i18n.localize("shooter") + " " + html.find('[name="shooterMovement"] option:selected').text(),
-                    value: Number(html.find('[name="shooterMovement"]').val())
+                    value: Number(html.find('[name="shooterMovement"]').val()) || 0
                 }, {
                     name: game.i18n.localize("mount") + " " + html.find('[name="mountedOptions"] option:selected').text(),
-                    value: Number(html.find('[name="mountedOptions"]').val())
+                    value: Number(html.find('[name="mountedOptions"]').val()) || 0
                 }, {
                     name: game.i18n.localize("rangeMovementOptions.QUICKCHANGE"),
                     value: html.find('[name="quickChange"]').is(":checked") ? -4 : 0
+                }, {
+                    name: game.i18n.localize("MODS.combatTurmoil"),
+                    value: html.find('[name="combatTurmoil"]').is(":checked") ? -2 : 0
                 })
                 testData.situationalModifiers.push(...Itemdsa5.getSpecAbModifiers(html, "attack"))
                 return { testData, cardOptions };

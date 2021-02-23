@@ -40,6 +40,32 @@ DSA5.statusEffects = [{
         }
     },
     {
+        id: "fixated",
+        label: "CONDITION.fixated",
+        icon: "icons/svg/padlock.svg",
+        description: "CONDITIONDESCRIPTION.fixated",
+        flags: {
+            dsa5: {
+                "value": null,
+                "editable": true,
+                "impact": null
+            }
+        }
+    },
+    {
+        id: "surprised",
+        label: "CONDITION.surprised",
+        icon: "icons/svg/hazard.svg",
+        description: "CONDITIONDESCRIPTION.surprised",
+        flags: {
+            dsa5: {
+                "value": null,
+                "editable": true,
+                "impact": null
+            }
+        }
+    },
+    {
         id: "blind",
         label: "CONDITION.blind",
         icon: "icons/svg/blind.svg",
@@ -396,7 +422,7 @@ DSA5.rangeMods = {
 DSA5.regnerationCampLocations = {
     "0": "regnerationCampLocations.normal",
     "-1": "regnerationCampLocations.bad",
-    "good": "regnerationCampLocations.good"
+    "1": "regnerationCampLocations.good"
 }
 
 DSA5.regenerationInterruptOptions = {
@@ -617,6 +643,12 @@ DSA5.rangeSizeCategories = {
     "average": "RANGESIZE.average",
     "big": "RANGESIZE.big",
     "giant": "RANGESIZE.giant"
+}
+
+DSA5.shieldSizes = {
+    "short": "SIZE.small",
+    "medium": "SIZE.average",
+    "long": "SIZE.big"
 }
 
 DSA5.rangeSizeModifier = {

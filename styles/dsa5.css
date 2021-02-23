@@ -68,6 +68,10 @@
     font-style: normal;
 }
 
+fieldset {
+    border: none;
+}
+
 #tinymce {
     overflow-y: hidden;
     overflow-x: hidden;
@@ -404,17 +408,16 @@ input[type=text].emphasize {
     flex: 50%;
 }
 
+.window-app .window-header [id^="popout_"],
 .window-app .window-header .header-button {
     width: 15px;
     height: 15px;
     margin-top: 10px;
 }
 
+.window-app .window-header [id^="popout_"] i,
 .header-button i {
     width: 22px;
-}
-
-.header-button i {
     border: 1px solid #111;
     padding: 3px;
     background-color: #444;
@@ -436,6 +439,10 @@ input[type=text].emphasize {
 #sidebar .sidebar-tab,
 #sidebar .sidebar-tab a i {
     color: #555;
+}
+
+#sidebar .sidebar-tab a.inactive i {
+    color: rgb(172, 172, 172);
 }
 
 #sidebar {
@@ -1970,6 +1977,11 @@ a.inline-roll {
     border-radius: 2px;
     line-height: 20px;
     overflow: hidden;
+    color: #888;
+}
+
+.specAbs.active {
+    color: inherit;
 }
 
 .extImg,

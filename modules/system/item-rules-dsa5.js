@@ -4,6 +4,7 @@ import DSA5_Utility from "./utility-dsa5.js"
 export default class ItemRulesDSA5 {
     static getTalentBonus(actor, talent, types) {
         let modifier = []
+        let selected = game.settings.get("dsa5", "talentModifierEnabled")
         for (let k of actor.items.filter(x => { return types.includes(x.type) && x.data.effect.value.includes(talent) })) {
             for (let m of k.data.effect.value.split(";")) {
                 if (m.includes(talent)) {
@@ -11,7 +12,9 @@ export default class ItemRulesDSA5 {
                     if (parsed.name == talent) {
                         modifier.push({
                             name: k.name,
-                            value: parsed.step * k.data.step.value
+                            value: parsed.step * (k.data.step ? k.data.step.value : 1),
+                            type: parsed.type,
+                            selected: selected
                         })
                     }
                 }

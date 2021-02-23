@@ -638,7 +638,7 @@ export default class Actordsa5 extends Actor {
     }
 
     applyDamage(amount) {
-        this.update({ "data.status.wounds.value": Math.max(0, this.data.data.status.wounds.value - amount) })
+        this.update({ "data.status.wounds.value": this.data.data.status.wounds.value - amount })
     }
 
     applyMana(amount, type) {
@@ -978,8 +978,6 @@ export default class Actordsa5 extends Actor {
 
         let cardOptions = this._setupCardOptions("systems/dsa5/templates/chat/roll/characteristic-card.html", title)
 
-        console.log(testData)
-
         return DiceDSA5.setupDialog({
             dialogOptions: dialogOptions,
             testData: testData,
@@ -992,7 +990,8 @@ export default class Actordsa5 extends Actor {
         $(search + " option:selected").each(function() {
             res.push({
                 name: $(this).text().trim(),
-                value: Number($(this).val())
+                value: Number($(this).val()),
+                type: $(this).attr("data-type")
             })
         })
         return res
@@ -1019,7 +1018,7 @@ export default class Actordsa5 extends Actor {
     }
 
     static _prepareMeleeWeapon(item, combatskills, actorData, wornWeapons = null) {
-        let skill = combatskills.filter(i => i.name == item.data.combatskill.value)[0]
+        let skill = combatskills.find(i => i.name == item.data.combatskill.value)
         item.attack = Number(skill.data.attack.value) + Number(item.data.atmod.value)
         item.parry = Number(skill.data.parry.value) + Number(item.data.pamod.value) + (item.data.combatskill.value == game.i18n.localize('LocalizedIDs.shields') ? Number(item.data.pamod.value) : 0)
 
@@ -1070,7 +1069,7 @@ export default class Actordsa5 extends Actor {
     }
 
     static _prepareRangeWeapon(item, ammunitions, combatskills, actor) {
-        let skill = combatskills.filter(i => i.name == item.data.combatskill.value)[0];
+        let skill = combatskills.find(i => i.name == item.data.combatskill.value)
         item.attack = Number(skill.data.attack.value)
 
         if (item.data.ammunitiongroup.value != "-") {
@@ -1116,8 +1115,6 @@ export default class Actordsa5 extends Actor {
         let result = DiceDSA5.rollTest(testData);
 
         result.postFunction = "basicTest";
-        if (testData.extra)
-            mergeObject(result, testData.extra);
 
         if (game.user.targets.size) {
             cardOptions.isOpposedTest = testData.opposable

@@ -319,7 +319,7 @@ export default class ActorSheetDsa5 extends ActorSheet {
             case "spell":
             case "ritual":
             case "liturgy":
-            case "ceremnoy":
+            case "ceremony":
                 result = newValue <= 14 + AdvantageRulesDSA5.vantageStep(this.actor, `${game.i18n.localize('LocalizedIDs.exceptionalSkill')} (${item.name})`)
                 break
             case "skill":
@@ -692,13 +692,15 @@ export default class ActorSheetDsa5 extends ActorSheet {
             this._filterTalents($(event.currentTarget))
         });
         let filterTalents = ev => this._filterTalents($(ev.currentTarget))
-        html.find('.talentSearch')[0].addEventListener("search", filterTalents, false);
+        let talSearch = html.find('.talentSearch')
+        talSearch[0] && talSearch[0].addEventListener("search", filterTalents, false);
 
         html.find('.conditionSearch').keyup(event => {
             this._filterConditions($(event.currentTarget))
         });
         let filterConditions = ev => this._filterConditions($(ev.currentTarget))
-        html.find('.conditionSearch')[0].addEventListener("search", filterConditions, false);
+        let condSearch = html.find('.conditionSearch')
+        condSearch[0] && condSearch[0].addEventListener("search", filterConditions, false);
     }
 
     _filterTalents(tar) {

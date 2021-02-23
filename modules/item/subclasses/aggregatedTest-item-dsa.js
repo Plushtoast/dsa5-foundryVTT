@@ -4,8 +4,7 @@ export default class aggregatedTestItemDSA5 extends Itemdsa5 {
         let result = game.i18n.localize("Ongoing")
         if (data.cummulatedQS.value >= 10) {
             result = game.i18n.localize("Success")
-        }
-        if (data.cummulatedQS.value >= 6) {
+        } else if (data.cummulatedQS.value >= 6) {
             result = game.i18n.localize("PartSuccess")
         } else if (data.allowedTestCount.value - data.usedTestCount.value <= 0) {
             result = game.i18n.localize("Failure")

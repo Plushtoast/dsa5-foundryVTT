@@ -33,17 +33,20 @@ export default class SpecialabilityRulesDSA5 extends ItemRulesDSA5 {
             return
         item = duplicate(item)
 
-        //Different Apval for multiple same vantages
-        if (/,/.test(item.data.APValue.value)) {
-            let name = item.name.replace(' ()', '')
-            item.data.APValue.value = item.data.APValue.value.split(",")[actor.items.filter(x => x.type == item.type && x.name.includes(name)).length].trim()
-        }
+
 
         if (adoption != null) {
+
+            //Different Apval for multiple same vantages
+            if (/,/.test(item.data.APValue.value)) {
+                let name = `${item.name.replace(' ()', '')} (${adoption.name}`
+                item.data.APValue.value = item.data.APValue.value.split(",")[actor.items.filter(x => x.type == item.type && x.name.includes(name)).length].trim()
+            }
+
             if (DSA5.AbilitiesNeedingAdaption[item.name].effect) {
                 item.data.effect.value = `${adoption.name} ${DSA5.AbilitiesNeedingAdaption[item.name].effect}`
             }
-            item.name = `${item.name.replace(' ()', '')} (${adoption.name})`
+            item.name = `${item.name.replace(' ()', '')} (${adoption.name}${adoption.customEntry ? ", " + adoption.customEntry : ''})`
             if (adoption.data)
                 item.data.APValue.value = item.data.APValue.value.split("/")[adoption.data.data.StF.value.charCodeAt(0) - 65].trim()
         }
@@ -95,20 +98,22 @@ export default class SpecialabilityRulesDSA5 extends ItemRulesDSA5 {
     }
 
     static async needsAdoption(actor, item, typeClass) {
-        if (DSA5.AbilitiesNeedingAdaption[item.name]) {
+        let rule = DSA5.AbilitiesNeedingAdaption[item.name]
+        if (rule) {
             let template
             let callback
-            if (DSA5.AbilitiesNeedingAdaption[item.name].items == "text") {
+            if (rule.items == "text") {
                 template = await renderTemplate('systems/dsa5/templates/dialog/requires-adoption-string-dialog.html', { original: item })
                 callback = function(dlg) {
                     let adoption = { name: dlg.find('[name="entryselection"]').val() }
                     SpecialabilityRulesDSA5._specialabilityReturnFunction(actor, item, typeClass, adoption)
                 }
             } else {
-                let items = actor.items.filter(x => DSA5.AbilitiesNeedingAdaption[item.name].items.includes(x.type))
-                template = await renderTemplate('systems/dsa5/templates/dialog/requires-adoption-dialog.html', { items: items, original: item })
+                let items = actor.items.filter(x => rule.items.includes(x.type))
+                template = await renderTemplate('systems/dsa5/templates/dialog/requires-adoption-dialog.html', { items: items, original: item, area: rule.area })
                 callback = function(dlg) {
                     let adoption = items.find(x => x.name == dlg.find('[name="entryselection"]').val())
+                    adoption.customEntry = dlg.find('[name="custom"]').val()
                     SpecialabilityRulesDSA5._specialabilityReturnFunction(actor, item, typeClass, adoption)
                 }
             }
@@ -145,7 +150,4 @@ export default class SpecialabilityRulesDSA5 extends ItemRulesDSA5 {
         return super.itemAsModifier(actor, talent, factor, ["specialability"])
     }
 
-    static getTalentBonus(actor, talent) {
-        return super.getTalentBonus(actor, talent, ["specialability"])
-    }
 }

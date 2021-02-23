@@ -20,6 +20,7 @@ import CombatskillDSA5 from "../item/subclasses/combatskill-item-dsa.js";
 import SkillItemDSA5 from "../item/subclasses/skill-item-dsa.js";
 import ConsumableItemDSA from "../item/subclasses/consumable-item-dsa.js";
 import SpellextensionItemDSA5 from "../item/subclasses/spellextension-item-dsa.js";
+import SpeciesItemDSA5 from "../item/subclasses/species-item-dsa.js"
 
 export default function() {
     Hooks.on("ready", async() => {
@@ -75,7 +76,8 @@ export default function() {
             combatskill: CombatskillDSA5,
             skill: SkillItemDSA5,
             consumable: ConsumableItemDSA,
-            spellextension: SpellextensionItemDSA5
+            spellextension: SpellextensionItemDSA5,
+            species: SpeciesItemDSA5
         }
 
 

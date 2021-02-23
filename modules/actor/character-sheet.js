@@ -15,7 +15,7 @@ export default class ActorSheetdsa5Character extends ActorSheetDsa5 {
     }
 
     get template() {
-        //if (!game.user.isGM && this.actor.limited) return "systems/dsa5/templates/actors/actor-limited.html";
+        if (!game.user.isGM && this.actor.limited) return "systems/dsa5/templates/actors/npc-limited.html";
         return "systems/dsa5/templates/actors/actor-sheet.html";
 
     }
@@ -26,6 +26,8 @@ export default class ActorSheetdsa5Character extends ActorSheetDsa5 {
             ev.preventDefault()
             let val = Number(ev.currentTarget.getAttribute("data-val"))
             let elem = $(this.form).parent().find('[name="data.status.fatePoints.value"]')
+            if ($(this.form).find(".fullSchip").length == 1)
+                val = 0
             elem.val(val)
             elem.trigger("change")
         })

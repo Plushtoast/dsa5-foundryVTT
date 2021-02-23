@@ -1,7 +1,118 @@
 <form class="skill-test">
     <div class="row-section">
         <div class="col sixty">
-            {{> systems/dsa5/templates/dialog/dialog-constant.html}}
+            {{> systems/dsa5/templates/dialog/default-dialog.html}} {{#if melee}}
+            <div class="form-group custom-select">
+                <label>{{localize "narrowSpace"}}</label>
+                <input type="checkbox" id="narrowSpace" name="narrowSpace" value="1">
+            </div>
+            <div class="form-group custom-select">
+                <label>{{localize "wrongHand"}} (-4)</label>
+                <input type="checkbox" id="wrongHand" name="wrongHand" value="1" {{#if wrongHandDisabled}}disabled{{/if}} {{#if offHand}}checked{{/if}}>
+            </div>
+
+            {{/if}} {{#if showDefense}}
+            <div class="form-group">
+                <label>{{localize "defenseCount"}}</label>
+                <input class="quantity-click" type="number" name="defenseCount" value="{{defenseCount}}" />
+            </div>
+            <div class="form-group">
+                <label>{{localize "attackFromBehind"}} (-4)</label>
+                <input type="checkbox" id="attackFromBehind" name="attackFromBehind" value="-4">
+            </div>
+            {{/if}} {{#if showAttack}}
+            <div class="form-group custom-select">
+                <label>{{localize "opportunityAttack"}} (-4)</label>
+                <input type="checkbox" class="opportunityAttack" name="opportunityAttack" value="-4">
+            </div>
+            {{/if}} {{#if weaponSizes}}
+            <div class="form-group custom-select">
+                <label>{{localize "doubleAttack"}} (-2)</label>
+                <input type="checkbox" id="doubleAttack" name="doubleAttack" value="1">
+            </div>
+            <div class="form-group custom-select">
+                <label>{{localize "opposingWeaponSize"}}</label>
+                <select name="weaponsize">
+                    {{#select targetWeaponSize}}
+                    {{#each weaponSizes as |label val|}}
+                    <option value="{{val}}">{{localize label}}</option>
+                    {{/each}}
+                    {{/select}}
+                </select>
+            </div>
+
+            {{/if}} {{# if rangeOptions}}
+            <div class="form-group custom-select">
+                <label>{{localize "distance"}}</label>
+                <select name="distance">
+                    {{#select "medium"}}
+                    {{#each rangeOptions as |label val|}}
+                    <option value="{{val}}">{{localize label}}</option>
+                    {{/each}}
+                    {{/select}}
+                </select>
+            </div>
+            <div class="form-group custom-select">
+                <label>{{localize "sizeCategory"}}</label>
+                <select name="size">
+                    {{#select targetSize}}
+                    {{#each sizeOptions as |label val|}}
+                    <option value="{{val}}">{{localize label}}</option>
+                    {{/each}}
+                    {{/select}}
+                </select>
+            </div>
+            <div class="form-group custom-select">
+                <label>{{localize "sight"}}</label>
+                <select name="vision">
+                    {{#select "0"}}
+                    {{#each visionOptions as |label val|}}
+                    <option value="{{val}}">{{localize label}}</option>
+                    {{/each}}
+                    {{/select}}
+                </select>
+            </div>
+            <div class="form-group custom-select">
+                <label>{{localize "target"}}</label>
+                <select name="targetMovement">
+                    {{#select "0"}}
+                    {{#each targetMovementOptions as |label val|}}
+                    <option value="{{val}}">{{localize label}}</option>
+                    {{/each}}
+                    {{/select}}
+                </select>
+            </div>
+            <div class="form-group custom-select">
+                <label>{{localize "shooter"}}</label>
+                <select name="shooterMovement">
+                    {{#select "0"}}
+                    {{#each shooterMovementOptions as |label val|}}
+                    <option value="{{val}}">{{localize label}}</option>
+                    {{/each}}
+                    {{/select}}
+                </select>
+            </div>
+
+            <div class="form-group custom-select">
+                <label>{{localize "mount"}}</label>
+                <select name="mountedOptions">
+                    {{#select "0"}}
+                    {{#each mountedOptions as |label val|}}
+                    <option value="{{val}}">{{localize label}}</option>
+                    {{/each}}
+                    {{/select}}
+                </select>
+            </div>
+
+            <div class="form-group custom-select">
+                <label>{{localize "MODS.combatTurmoil"}}</label>
+                <input type="checkbox" id="combatTurmoil" name="combatTurmoil" value="1">
+            </div>
+            <div class="form-group custom-select">
+                <label>{{localize "rangeMovementOptions.QUICKCHANGE"}}</label>
+                <input type="checkbox" id="quickChange" name="quickChange" value="1">
+            </div>
+            {{/if}}
         </div>
         <div class="col fourty">
             <div class="specAbsContainer">
