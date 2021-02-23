@@ -19,7 +19,7 @@
     <a class="expand-mods"><i class="fas fa-plus"></i></a>
     <ul>
         {{#each modifierList as |item i|}}
-        <li>{{item.name}}: {{item.value}}</li>
+        <li>{{item.name}}: {{item.value}}{{#if item.type}} {{localize (concat 'CHARAbbrev.' item.type)}}{{/if}}</li>
         {{/each}}
 
     </ul>
