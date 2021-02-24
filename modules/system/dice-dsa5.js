@@ -1013,7 +1013,7 @@ export default class DiceDSA5 {
 
                     oldDamageRoll.total = oldDamageRoll.total - oldDamageRoll.results[index * 2] + Number(input.val())
                     oldDamageRoll.results[index * 2] = Number(input.val())
-                    oldDamageRoll.terms[index * 2].results[0].result = Number(input.val())
+                    oldDamageRoll.terms[0].results[index].result = Number(input.val())
                     newTestData.damageRoll = oldDamageRoll
                 }
                 break
