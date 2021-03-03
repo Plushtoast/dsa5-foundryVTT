@@ -3,7 +3,7 @@ import DiceDSA5 from "../../system/dice-dsa5.js"
 import DSA5StatusEffects from "../../status/status_effects.js";
 import AdvantageRulesDSA5 from "../../system/advantage-rules-dsa5.js";
 import Itemdsa5 from "../item-dsa5.js";
-
+import Actordsa5 from "../../actor/actor-dsa5.js";
 export default class SpellItemDSA5 extends Itemdsa5 {
     static chatData(data, name) {
         return [
@@ -13,14 +13,14 @@ export default class SpellItemDSA5 extends Itemdsa5 {
             this._chatLineHelper("duration", data.duration.value),
             this._chatLineHelper("reach", data.range.value),
             this._chatLineHelper("targetCategory", data.targetCategory.value),
-            this._chatLineHelper("effect", DSA5_Utility.replaceDies(data.effect.value))
+            this._chatLineHelper("effect", DSA5_Utility.replaceConditions(DSA5_Utility.replaceDies(data.effect.value)))
         ]
     }
 
     static getCallbackData(testData, html, actor) {
         testData.testModifier = Number(html.find('[name="testModifier"]').val());
         testData.testDifficulty = 0
-        testData.situationalModifiers = actor._parseModifiers('[name = "situationalModifiers"]')
+        testData.situationalModifiers = Actordsa5._parseModifiers('[name="situationalModifiers"]')
         testData.calculatedSpellModifiers = {
             castingTime: html.find(".castingTime").text(),
             cost: html.find(".aspcost").text(),
@@ -103,6 +103,7 @@ export default class SpellItemDSA5 extends Itemdsa5 {
                 options: options,
             }
         };
+        console.log(spell.data)
         let data = {
             rollMode: options.rollMode,
             spellCost: spell.data.AsPCost.value,
@@ -116,6 +117,7 @@ export default class SpellItemDSA5 extends Itemdsa5 {
             hasZKModifier: spell.data.resistanceModifier.value == "ZK",
             maxMods: Math.floor(Number(spell.data.talentValue.value) / 4),
             extensions: this.prepareExtensions(actor, spell),
+            variableBaseCost: spell.data.variableBaseCost == "true",
             characteristics: [1, 2, 3].map(x => spell.data[`characteristic${x}`].value)
         }
 

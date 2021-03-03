@@ -3,9 +3,8 @@ import AdvantageRulesDSA5 from "../../system/advantage-rules-dsa5.js";
 import DSA5 from "../../system/config-dsa5.js";
 import DiceDSA5 from "../../system/dice-dsa5.js";
 import ItemRulesDSA5 from "../../system/item-rules-dsa5.js";
-import SpecialabilityRulesDSA5 from "../../system/specialability-rules-dsa5.js";
 import Itemdsa5 from "../item-dsa5.js";
-
+import Actordsa5 from "../../actor/actor-dsa5.js";
 export default class SkillItemDSA5 extends Itemdsa5 {
 
     static chatData(data, name) {
@@ -50,7 +49,7 @@ export default class SkillItemDSA5 extends Itemdsa5 {
                 cardOptions.rollMode = html.find('[name="rollMode"]').val();
                 testData.testModifier = Number(html.find('[name="testModifier"]').val());
                 testData.testDifficulty = DSA5.skillDifficultyModifiers[html.find('[name="testDifficulty"]').val()];
-                testData.situationalModifiers = actor._parseModifiers('[name = "situationalModifiers"]')
+                testData.situationalModifiers = Actordsa5._parseModifiers('[name="situationalModifiers"]')
                 testData.advancedModifiers = {
                     chars: [0, 1, 2].map(x => Number(html.find(`[name="ch${x}"]`).val())),
                     fps: Number(html.find(`[name="fp"]`).val())

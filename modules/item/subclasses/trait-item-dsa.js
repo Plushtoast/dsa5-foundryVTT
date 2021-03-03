@@ -3,7 +3,7 @@ import AdvantageRulesDSA5 from "../../system/advantage-rules-dsa5.js"
 import DSA5 from "../../system/config-dsa5.js"
 import DiceDSA5 from "../../system/dice-dsa5.js"
 import Itemdsa5 from "../item-dsa5.js"
-
+import Actordsa5 from "../../actor/actor-dsa5.js";
 export default class TraitItemDSA5 extends Itemdsa5 {
 
     static chatData(data, name) {
@@ -94,7 +94,8 @@ export default class TraitItemDSA5 extends Itemdsa5 {
                 shooterMovementOptions: DSA5.shooterMovementOptions,
                 targetMovementOptions: DSA5.targetMomevementOptions,
                 targetSize: targetSize,
-                combatSpecAbs: combatskills
+                combatSpecAbs: combatskills,
+                aimOptions: DSA5.aimOptions
             });
         }
     }
@@ -126,7 +127,7 @@ export default class TraitItemDSA5 extends Itemdsa5 {
             callback: (html) => {
                 cardOptions.rollMode = html.find('[name="rollMode"]').val();
                 testData.testModifier = Number(html.find('[name="testModifier"]').val());
-                testData.situationalModifiers = actor._parseModifiers('[name = "situationalModifiers"]')
+                testData.situationalModifiers = Actordsa5._parseModifiers('[name="situationalModifiers"]')
                 testData.rangeModifier = html.find('[name="distance"]').val()
                 testData.sizeModifier = DSA5.rangeSizeModifier[html.find('[name="size"]').val()]
                 testData.visionModifier = Number(html.find('[name="vision"]').val())
@@ -140,10 +141,27 @@ export default class TraitItemDSA5 extends Itemdsa5 {
                 testData.situationalModifiers.push({
                     name: game.i18n.localize("opportunityAttack"),
                     value: attackOfOpportunity
-                })
-                testData.situationalModifiers.push({
+                }, {
                     name: game.i18n.localize("attackFromBehind"),
                     value: html.find('[name="attackFromBehind"]').is(":checked") ? -4 : 0
+                }, {
+                    name: game.i18n.localize("target") + " " + html.find('[name="targetMovement"] option:selected').text(),
+                    value: Number(html.find('[name="targetMovement"]').val()) || 0
+                }, {
+                    name: game.i18n.localize("shooter") + " " + html.find('[name="shooterMovement"] option:selected').text(),
+                    value: Number(html.find('[name="shooterMovement"]').val()) || 0
+                }, {
+                    name: game.i18n.localize("mount") + " " + html.find('[name="mountedOptions"] option:selected').text(),
+                    value: Number(html.find('[name="mountedOptions"]').val()) || 0
+                }, {
+                    name: game.i18n.localize("rangeMovementOptions.QUICKCHANGE"),
+                    value: html.find('[name="quickChange"]').is(":checked") ? -4 : 0
+                }, {
+                    name: game.i18n.localize("MODS.combatTurmoil"),
+                    value: html.find('[name="combatTurmoil"]').is(":checked") ? -2 : 0
+                }, {
+                    name: game.i18n.localize("aim"),
+                    value: Number(html.find('[name="aim"]').val()) || 0
                 })
                 testData.situationalModifiers.push(...Itemdsa5.getSpecAbModifiers(html, mode))
                 return { testData, cardOptions };

@@ -180,6 +180,31 @@ export default class DSA5_Utility {
         })
     }
 
+    static customEntityLinks(content) {
+        let regex = /@Rq\[[a-zA-zöüäÖÜÄ& -]+ (-)?\d+\]/
+        return content.replace(regex, function(str) {
+            let mod = str.match(/(-)?\d+/)[0]
+            let skill = str.replace(mod, "").match(/\[[a-zA-zöüäÖÜÄ& \-]+/)[0].replace(/[\[\]]/g, "").trim()
+            return `<a class="roll-button request-roll" data-type="skill" data-modifier="${mod}" data-name="${skill}"><em class="fas fa-dice"></em>${skill} ${mod}</a>`
+        })
+    }
+
+    static replaceConditions(content) {
+        if (!DSA5.statusRegex) {
+            let effects = DSA5.statusEffects.map(x => game.i18n.localize(x.label).toLowerCase())
+            let keywords = ["status", "condition", "level", "levels"].map(x => game.i18n.localize(x)).join("|")
+            DSA5.statusRegex = {
+                effects: effects,
+                regex: new RegExp(`(${keywords}) (${effects.join('|')})`, 'gi')
+            }
+        }
+
+        return content.replace(DSA5.statusRegex.regex, function(str) {
+            let parts = str.split(" ")
+            let cond = DSA5.statusEffects[DSA5.statusRegex.effects.indexOf(parts[1].toLowerCase())]
+            return `${parts[0]} <a class="chatButton chat-condition" data-id="${cond.id}"><img src="${cond.icon}"/>${parts[1]}</a>`
+        })
+    }
 
     static experienceDescription(experience) {
         if (experience >= 2100) {

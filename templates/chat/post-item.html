@@ -4,7 +4,7 @@
     <div class="center">
         <img src="{{img}}" title="{{name}}" /> </div>{{/if}}
 
-    <div class="card-content">{{{data.description.value}}}</div>
+    <div class="card-content">{{{replaceConditions data.description.value}}}</div>
 
     {{#each properties as |property p|}}
     <div class="chatLineHeight">{{{property}}}</div><br> {{/each}}

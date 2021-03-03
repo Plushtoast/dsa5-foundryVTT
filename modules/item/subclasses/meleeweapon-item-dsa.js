@@ -4,6 +4,8 @@ import DSA5 from "../../system/config-dsa5.js";
 import DiceDSA5 from "../../system/dice-dsa5.js";
 import SpecialabilityRulesDSA5 from "../../system/specialability-rules-dsa5.js";
 import Itemdsa5 from "../item-dsa5.js";
+import Actordsa5 from "../../actor/actor-dsa5.js";
+import DSA5_Utility from "../../system/utility-dsa5.js";
 
 export default class MeleeweaponDSA5 extends Itemdsa5 {
     static chatData(data, name) {
@@ -14,7 +16,7 @@ export default class MeleeweaponDSA5 extends Itemdsa5 {
             this._chatLineHelper("combatskill", data.combatskill.value)
         ]
         if (data.effect.value != "")
-            res.push(this._chatLineHelper("effect", data.effect.value))
+            res.push(this._chatLineHelper(DSA5_Utility.replaceConditions("effect", data.effect.value)))
 
         return res
     }
@@ -56,7 +58,8 @@ export default class MeleeweaponDSA5 extends Itemdsa5 {
                 offHand: !wrongHandDisabled && source.data.worn.offHand,
                 targetWeaponSize: targetWeaponsize,
                 combatSpecAbs: combatskills,
-                showAttack: true
+                showAttack: true,
+                constricted: actor.hasCondition("constricted")
             });
         } else if (data.mode == "parry") {
             for (let com of combatSpecAbs) {
@@ -77,7 +80,8 @@ export default class MeleeweaponDSA5 extends Itemdsa5 {
                 showDefense: true,
                 wrongHandDisabled: wrongHandDisabled && source.data.worn.offHand,
                 melee: true,
-                combatSpecAbs: combatskills
+                combatSpecAbs: combatskills,
+                constricted: actor.hasCondition("constricted")
             });
         }
     }
@@ -111,7 +115,7 @@ export default class MeleeweaponDSA5 extends Itemdsa5 {
             callback: (html) => {
                 cardOptions.rollMode = html.find('[name="rollMode"]').val();
                 testData.testModifier = Number(html.find('[name="testModifier"]').val());
-                testData.situationalModifiers = actor._parseModifiers('[name = "situationalModifiers"]')
+                testData.situationalModifiers = Actordsa5._parseModifiers('[name="situationalModifiers"]')
                 testData.rangeModifier = html.find('[name="distance"]').val()
                 testData.sizeModifier = DSA5.rangeSizeModifier[html.find('[name="size"]').val()]
                 testData.visionModifier = Number(html.find('[name="vision"]').val())

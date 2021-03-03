@@ -98,7 +98,7 @@ Hooks.once("init", () => {
 });
 
 Hooks.once('setup', function() {
-    if (!["de"].includes(game.i18n.lang)) {
+    if (!["de", "en"].includes(game.i18n.lang)) {
         console.warn(`DSA5 - ${game.i18n.lang} is not a supported language. Falling back to default language.`)
         game.settings.set("core", "language", "de")
     }

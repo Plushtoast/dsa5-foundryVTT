@@ -1,6 +1,8 @@
+import AdvantageRulesDSA5 from "../../system/advantage-rules-dsa5.js";
 import DiceDSA5 from "../../system/dice-dsa5.js";
 import DSA5_Utility from "../../system/utility-dsa5.js";
-import Itemdsa5 from "../item-dsa5.js";;
+import Itemdsa5 from "../item-dsa5.js";
+import Actordsa5 from "../../actor/actor-dsa5.js";
 export default class PoisonItemDSA5 extends Itemdsa5 {
     static chatData(data, name) {
         return [
@@ -21,7 +23,9 @@ export default class PoisonItemDSA5 extends Itemdsa5 {
             game.user.targets.forEach(target => {
                 skMod = target.actor.data.data.status.soulpower.max * -1
                 zkMod = target.actor.data.data.status.toughness.max * -1
+                situationalModifiers.push(...AdvantageRulesDSA5.getVantageAsModifier(target.actor.data, game.i18n.localize("LocalizedIDs.poisonResistance"), -1))
             });
+
         }
         mergeObject(data, {
             SKModifier: skMod,
@@ -57,7 +61,7 @@ export default class PoisonItemDSA5 extends Itemdsa5 {
             callback: (html) => {
                 cardOptions.rollMode = html.find('[name="rollMode"]').val();
                 testData.testModifier = Number(html.find('[name="testModifier"]').val());
-                testData.situationalModifiers = []
+                testData.situationalModifiers = Actordsa5._parseModifiers('[name="situationalModifiers"]')
 
                 testData.situationalModifiers.push({
                     name: game.i18n.localize("zkModifier"),

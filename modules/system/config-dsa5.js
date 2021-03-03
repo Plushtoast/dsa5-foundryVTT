@@ -357,7 +357,8 @@ DSA5.equipmentTypes = {
     "writing": "Equipment.writing",
     "alchemy": "Equipment.alchemy",
     "service": "Equipment.service",
-    "luxus": "Equipment.luxus"
+    "luxus": "Equipment.luxus",
+    "blessed": "Equipment.blessed"
 };
 
 DSA5.narrowSpaceModifiers = {
@@ -448,6 +449,11 @@ DSA5.mountedRangeOptions = {
     "-4": "mountedRangeOptions.SCHRITT",
     "-8": "mountedRangeOptions.GALOPP",
 }
+DSA5.aimOptions = {
+    "0": "aimOptions.0",
+    "2": "aimOptions.1",
+    "4": "aimOptions.2"
+}
 
 DSA5.traitCategories = {
     "meleeAttack": "closeCombatAttacks",
@@ -488,6 +494,7 @@ DSA5.advancementCosts = {
     "E": [15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 30, 45, 60, 75, 90, 105, 120, 135, 150, 165, 180],
 }
 
+DSA5.hooks = {}
 
 DSA5.startXP = {
     "900": "EXP.inexperienced",
@@ -595,7 +602,8 @@ DSA5.ammunitiongroups = {
     "arrow": "arrow",
     "bolt": "bolt",
     "bullet": "bullet",
-    "stone": "stone"
+    "stone": "stone",
+    "dart": "dart"
 }
 
 DSA5.combatskillsGuidevalues = {

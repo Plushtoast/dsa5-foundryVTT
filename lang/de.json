@@ -99,7 +99,8 @@
         "meleeweapons": "Nahkampfwaffen",
         "rangeweapons": "Fernkampfwaffen",
         "ammunition": "Munition",
-        "poison": "Gift"
+        "poison": "Gift",
+        "blessed": "Geweiht"
     },
 
     "requiredFW": "Benötigter FW",
@@ -110,6 +111,7 @@
     "antidot": "Gegenmittel",
     "arrow": "Pfeil",
     "armor": "Rüstung",
+    "aim": "Zielen",
     "advancementCost": "Steigern für {cost} Abenteuerpunkte",
     "animal": "Tier",
     "attributeChange": "Eigenschaftsänderung",
@@ -145,7 +147,7 @@
     "bullet": "Kugel",
     "blessing": "Segnung",
     "blessings": "Segnungen",
-
+    "buildingIndex": "Index wird erzeugt",
     "Burden": "Belastung",
     "biography": "Hintergrundgeschichte",
     "Category": "Kategorie",
@@ -190,6 +192,7 @@
     "DSA5Error": "DSA5 - Fehler melden",
     "Description": "Beschreibung",
     "Difficulty": "Schwierigkeit",
+    "dart": "Blasrohrpfeil",
     "distribution": "Verbreitung",
     "distance": "Entfernung",
     "Delete Confirmation": "Löschen bestätigen",
@@ -223,7 +226,6 @@
     "fatePointsAbilities": "Schicksalspunktesonderfertigkeiten",
     "freeLanguagePoint": "Freie Abenteuerpunkte für Sprachen und Schriften",
     "Gender": "Geschlecht",
-    "gmdescription": "SL Notizen",
     "Group": "Gruppe",
     "guidevalue": "Leiteigenschaft",
     "guidevalue_small": "Leit&shy;eigenschaft",
@@ -254,6 +256,8 @@
     "liturgy": "Liturgie",
     "liturgyTest": "Liturgieprobe",
     "languagePoints": "Sprachpunkte",
+    "level": "Stufe",
+    "levels": "Stufen",
     "liturgies": "Liturgien",
     "Main": "Daten",
     "maybe": "Evtl",
@@ -390,6 +394,7 @@
     "usedTestCount": "Gewürfelte Proben",
     "value": "Wert",
     "vantages": "Vor-/Nachteile",
+    "variableCost": "Variable Kosten",
     "sight": "Sichtverhältnisse",
     "Weight": "Gewicht",
     "happyTalents": "Wohlgefällige Talente",
@@ -402,6 +407,7 @@
     "yes": "Ja",
     "YouAlreadyHaveit": "Hast du bereits",
     "zkModifier": "Zähigkeit (Ziel)",
+    "zoo": "Zoo",
 
     "Aggregated": {
         "noMoreAllowed": "Keine Proben mehr erlaubt."
@@ -787,7 +793,11 @@
         "localKnowledge": "Ortskenntnis",
         "naturalArmor": "Natürliche Rüstung",
         "all": "alle",
-        "twoWeaponCombat": "Beidhändiger Kampf"
+        "twoWeaponCombat": "Beidhändiger Kampf",
+        "poisonResistance": "Giftresistenz",
+        "ResistanttoDisease": "Krankheitsresistenz",
+        "perception": "Sinnesschärfe",
+        "featOfStrength": "Kraftakt"
     },
 
     "DSAError": {
@@ -815,7 +825,8 @@
         "noSpellForExtension": "Du hast den/die passenden Zauber/Liturgie nicht für diese Erweiterung",
         "talentValueTooLow": "Dein Talentwert ist zu niedrig",
         "NotUnlocked": "Noch nichts freigeschalten",
-        "onlyGMAllowedToCancel": "Nur der Spielleiter darf Vergleichsproben abbrechen."
+        "onlyGMAllowedToCancel": "Nur der Spielleiter darf Vergleichsproben abbrechen.",
+        "unknownCombatSkill": "Das Kampftalent {skill} der Waffe {item} ist unbekannt. Bitte die Waffe anpassen."
     },
 
     "CEREMONYMODIFIER": {
@@ -890,8 +901,15 @@
         "AddQS": "QS um eins erhöhen (1 Schip)",
         "rerollDamage": "Schadenswurf wiederholen (1 Schip)",
         "ApplyDamage": "Schaden anwenden",
+        "ApplyDamageSP": "Schaden anwenden als SP",
         "talentedReroll": "Begabung verwenden",
         "ApplyMana": "KaP/AsP Kosten bezahlen"
+    },
+
+    "aimOptions": {
+        "0": "Ungezielt",
+        "1": "1 Aktion zielen",
+        "2": "2 Aktionen zielen"
     },
 
     "DSASETTINGS": {
@@ -909,7 +927,7 @@
         "defaultDimVisionHint": "Stell die Standard Sichtweite (vage) für neue Charakter Token ein.",
         "defaultBrightVision": "Standard Sichtweite (klar)",
         "defaultBrightVisionHint": "Stell die Standard Sichtweite (klar) für neue Charakter Token ein.",
-        "talentModifierEnabled": "Talentmodifiers aktiviert",
+        "talentModifierEnabled": "Talentmodifikatoren aktiviert",
         "talentModifierEnabledHint": "Talentmodifikatoren im Würfelfenster automatisch selektiert.",
         "capQSat": "Maximale erwürfelbare QS",
         "capQSatHint": "Beschränke die erzielbare QS."

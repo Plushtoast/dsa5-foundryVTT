@@ -22,15 +22,7 @@ export default class ActorSheetdsa5Character extends ActorSheetDsa5 {
 
     activateListeners(html) {
         super.activateListeners(html);
-        html.find('.schip').click(ev => {
-            ev.preventDefault()
-            let val = Number(ev.currentTarget.getAttribute("data-val"))
-            let elem = $(this.form).parent().find('[name="data.status.fatePoints.value"]')
-            if ($(this.form).find(".fullSchip").length == 1)
-                val = 0
-            elem.val(val)
-            elem.trigger("change")
-        })
+
     }
 
     async _manageDragItems(item, typeClass) {

@@ -2,7 +2,7 @@ import DSA5_Utility from "../system/utility-dsa5.js";
 import DSA5 from "../system/config-dsa5.js"
 import ActorSheetDsa5 from "./actor-sheet.js";
 import TraitRulesDSA5 from "../system/trait-rules-dsa5.js"
-import ShapeshiftWizard from "../wizards/shapeshift_wizard.js";
+
 export default class ActorSheetdsa5Creature extends ActorSheetDsa5 {
     static get defaultOptions() {
         const options = super.defaultOptions;
@@ -101,10 +101,10 @@ export default class ActorSheetdsa5Creature extends ActorSheetDsa5 {
                 case "npc":
                 case "creature":
                 case "character":
-                    let shapeshift = new ShapeshiftWizard()
-                    await shapeshift.setShapeshift(item, this.actor)
-                    shapeshift.render(true)
-                    break
+                    if (DSA5.hooks.shapeshift) {
+                        DSA5.hooks.shapeshift(item, this.actor)
+                        break
+                    }
                 default:
                     super._handleDragData(dragData, event)
             }

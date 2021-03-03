@@ -4,6 +4,7 @@ import DSA5Payment from '../system/payment.js'
 import DSA5_Utility from '../system/utility-dsa5.js';
 import DSA5ChatAutoCompletion from '../system/chat_autocompletion.js';
 import DSA5ChatListeners from '../system/chat_listeners.js';
+import DSA5StatusEffects from '../status/status_effects.js';
 
 export default function() {
     Hooks.on('renderChatLog', (log, html, data) => {
@@ -19,6 +20,7 @@ export default function() {
         if (!game.user.isGM) {
             html.find(".chat-button-gm").remove();
         }
+        DSA5StatusEffects.bindButtons(html)
     });
 
     Hooks.on("chatMessage", (html, content, msg) => {

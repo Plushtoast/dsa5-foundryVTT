@@ -1,5 +1,7 @@
 import DSA5_Utility from "../system/utility-dsa5.js";
 import DSA5 from "../system/config-dsa5.js"
+import DSA5StatusEffects from "../status/status_effects.js";
+import DSA5ChatListeners from "../system/chat_listeners.js";
 
 
 export default class ItemSheetdsa5 extends ItemSheet {
@@ -60,15 +62,30 @@ export default class ItemSheetdsa5 extends ItemSheet {
 
     _refundStep() {}
 
+    async advanceWrapper(ev, funct) {
+        let elem = $(ev.currentTarget)
+        let i = elem.find('i')
+        if (!i.hasClass("fa-spin")) {
+            i.addClass("fa-spin fa-spinner")
+            await this[funct]()
+            i.removeClass("fa-spin fa-spinner")
+        }
+    }
+
 
     activateListeners(html) {
         super.activateListeners(html);
 
-        html.find(".advance-step").mousedown(() => {
-            this._advanceStep()
+        html.find(".advance-step").mousedown(ev => {
+            this.advanceWrapper(ev, "_advanceStep")
         })
-        html.find(".refund-step").mousedown(() => {
-            this._refundStep()
+        html.find(".refund-step").mousedown(ev => {
+            this.advanceWrapper(ev, "_refundStep")
+        })
+
+        DSA5StatusEffects.bindButtons(html)
+        html.on('click', '.chat-condition', ev => {
+            DSA5ChatListeners.postStatus($(ev.currentTarget).attr("data-id"))
         })
     }
 

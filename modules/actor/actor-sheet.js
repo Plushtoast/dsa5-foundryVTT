@@ -1,9 +1,7 @@
 import DSA5_Utility from "../system/utility-dsa5.js";
 import DSA5 from "../system/config-dsa5.js";
 import AdvantageRulesDSA5 from "../system/advantage-rules-dsa5.js";
-
 import Itemdsa5 from "../item/item-dsa5.js";
-
 import SpecialabilityRulesDSA5 from "../system/specialability-rules-dsa5.js";
 import DSA5ChatListeners from "../system/chat_listeners.js";
 
@@ -272,10 +270,10 @@ export default class ActorSheetDsa5 extends ActorSheet {
         let cost = DSA5_Utility._calculateAdvCost(Number(item.data.talentValue.value), item.data.StF.value)
         if (await this._checkEnoughXP(cost) && this._checkMaximumItemAdvancement(item, Number(item.data.talentValue.value) + 1)) {
             item.data.talentValue.value += 1
-            this.actor.updateEmbeddedEntity("OwnedItem", item)
             await this.actor.update({
                 "data.details.experience.spent": Number(this.actor.data.data.details.experience.spent) + cost
             })
+            await this.actor.updateEmbeddedEntity("OwnedItem", item)
         }
     }
 
@@ -284,10 +282,10 @@ export default class ActorSheetDsa5 extends ActorSheet {
         if (item.data.talentValue.value > 0) {
             let cost = DSA5_Utility._calculateAdvCost(Number(item.data.talentValue.value), item.data.StF.value, 0)
             item.data.talentValue.value -= 1
-            this.actor.updateEmbeddedEntity("OwnedItem", item)
             await this.actor.update({
                 "data.details.experience.spent": Number(this.actor.data.data.details.experience.spent) - cost
             })
+            await this.actor.updateEmbeddedEntity("OwnedItem", item)
         }
     }
 
@@ -363,12 +361,31 @@ export default class ActorSheetDsa5 extends ActorSheet {
         return await this.actor.checkEnoughXP(cost)
     }
 
+    async advanceWrapper(ev, funct, param) {
+        let elem = $(ev.currentTarget)
+        let i = elem.find('i')
+        if (!i.hasClass("fa-spin")) {
+            i.addClass("fa-spin fa-spinner")
+            await this[funct](param)
+            i.removeClass("fa-spin fa-spinner")
+        }
+    }
+
     activateListeners(html) {
         super.activateListeners(html);
 
-        let posthand = ev => {
-            this.actor.items.find(i => i.data._id == this._getItemId(ev)).postItem()
-        }
+        let posthand = ev => { this.actor.items.find(i => i.data._id == this._getItemId(ev)).postItem() }
+
+        html.find('.schip').click(ev => {
+            ev.preventDefault()
+            let val = Number(ev.currentTarget.getAttribute("data-val"))
+            let elem = $(this.form).parent().find('[name="data.status.fatePoints.value"]')
+
+            if (val == 1 && $(this.form).find(".fullSchip").length == 1) val = 0
+
+            elem.val(val)
+            elem.trigger("change")
+        })
 
         html.find('.ammo-selector').change(ev => {
             ev.preventDefault()
@@ -393,7 +410,6 @@ export default class ActorSheetDsa5 extends ActorSheet {
                 case "meleeweapon":
                     item.data.worn.value = !item.data.worn.value;
                     break;
-
             }
             this.actor.updateEmbeddedEntity("OwnedItem", item);
         });
@@ -429,22 +445,22 @@ export default class ActorSheetDsa5 extends ActorSheet {
         });
 
         html.find(".advance-attribute").mousedown(ev => {
-            this._advanceAttribute($(ev.currentTarget).attr("data-attr"))
+            this.advanceWrapper(ev, "_advanceAttribute", $(ev.currentTarget).attr("data-attr"))
         })
         html.find(".refund-attribute").mousedown(ev => {
-            this._refundAttributeAdvance($(ev.currentTarget).attr("data-attr"))
+            this.advanceWrapper(ev, "_refundAttributeAdvance", $(ev.currentTarget).attr("data-attr"))
         })
         html.find(".advance-item").mousedown(ev => {
-            this._advanceItem(this._getItemId(ev))
+            this.advanceWrapper(ev, "_advanceItem", this._getItemId(ev))
         })
         html.find(".refund-item").mousedown(ev => {
-            this._refundItemAdvance(this._getItemId(ev))
+            this.advanceWrapper(ev, "_refundItemAdvance", this._getItemId(ev))
         })
         html.find(".advance-points").mousedown(ev => {
-            this._advancePoints($(ev.currentTarget).attr("data-attr"))
+            this.advanceWrapper(ev, "_advancePoints", $(ev.currentTarget).attr("data-attr"))
         })
         html.find(".refund-points").mousedown(ev => {
-            this._refundPointsAdvance($(ev.currentTarget).attr("data-attr"))
+            this.advanceWrapper(ev, "_refundPointsAdvance", $(ev.currentTarget).attr("data-attr"))
         })
         html.find('.spell-select').mousedown(ev => {
             let itemId = this._getItemId(ev);
@@ -781,6 +797,22 @@ export default class ActorSheetDsa5 extends ActorSheet {
             case "specialability":
                 await SpecialabilityRulesDSA5.abilityRemoved(this.actor, item)
                 break;
+            case "blessing":
+            case "magictrick":
+                this._updateAPs(-1)
+                break
+            case "ritual":
+            case "ceremony":
+            case "liturgy":
+            case "spell":
+                let apVal = DSA5_Utility._calculateAdvCost(0, item.data.StF.value, 0)
+                let extensions = this.actor.data.items.filter(i => i.type == "spellextension" && item.type == i.data.category && item.name == i.data.source)
+                if (extensions) {
+                    apVal += extensions.reduce((a, b) => { return a + b.data.APValue.value }, 0)
+                    await this.actor.deleteEmbeddedEntity("OwnedItem", extensions.map(x => x._id))
+                }
+                this._updateAPs(apVal * -1)
+                break
         }
         this.actor.deleteEmbeddedEntity("OwnedItem", itemId);
     }
@@ -792,7 +824,6 @@ export default class ActorSheetDsa5 extends ActorSheet {
 
     async _addMoney(item) {
         let money = duplicate(this.actor.data.items.filter(i => i.type == "money"));
-
         let moneyItem = money.find(i => i.name == item.name)
 
         if (moneyItem) {
@@ -825,6 +856,7 @@ export default class ActorSheetDsa5 extends ActorSheet {
             type: "Item",
             sheetTab: this.actor.data.flags["_sheetTab"],
             actorId: this.actor._id,
+            tokenId: this.token ? this.token.data._id : null,
             mod: mod,
             data: item,
             root: tar.getAttribute("root")
@@ -946,7 +978,9 @@ export default class ActorSheetDsa5 extends ActorSheet {
             case "spellextension":
                 await this._handleSpellExtension(item)
                 break
-
+            case "condition":
+                this.actor.addCondition(item.payload.id)
+                break
             default:
                 ui.notifications.error(game.i18n.format("DSAError.canNotBeAdded", { item: item.name, category: game.i18n.localize(item.type) }))
         }
@@ -971,10 +1005,20 @@ export default class ActorSheetDsa5 extends ActorSheet {
         }
     }
 
+    async _handleRemoveSourceOnDrop(dragData, item) {
+        let sourceActor
+        if (dragData.tokenId) sourceActor = game.actors.tokens[dragData.tokenId];
+        if (!sourceActor) sourceActor = game.actors.get(dragData.actorId)
+
+        if (sourceActor && sourceActor.permission == ENTITY_PERMISSIONS.OWNER) sourceActor.deleteEmbeddedEntity("OwnedItem", item._id)
+    }
+
     async _handleDragData(dragData, originalEvent) {
         let item
         let typeClass
         let selfTarget = dragData.actorId && dragData.actorId == this.actor.data._id
+
+
         if (selfTarget && !originalEvent.ctrlKey) {
             return
         } else if (dragData.id && dragData.pack) {
@@ -996,5 +1040,8 @@ export default class ActorSheetDsa5 extends ActorSheet {
         } else {
             await this._manageDragItems(item, typeClass)
         }
+        if (originalEvent.altKey && !selfTarget && ["meleeweapon", "rangeweapon", "equipment", "ammunition", "armor", "poison", "consumable"].includes(typeClass))
+            await this._handleRemoveSourceOnDrop(dragData, item)
+
     }
 }

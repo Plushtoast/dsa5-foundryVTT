@@ -103,8 +103,9 @@
                         <div class="col four center">
                             <span class="castingTime" data-mod="0" data-base="{{spellCastingTime}}">{{spellCastingTime}}</span>
                         </div>
-                        <div class="col four center">
-                            <span class="aspcost" data-mod="0" data-base="{{spellCost}}">{{spellCost}}</span>
+                        <div class="col four center row-section">
+                            <input title="{{localize 'variableCost'}}" class="{{#unless variableBaseCost}}dsahidden{{/unless}} col two variableBaseCost" type="number" data-mod="0" data-base="{{spellCost}}" name="variableBaseCost" value="{{spellCost}}" />
+                            <span class="col {{#if variableBaseCost}}two {{/if}}aspcost" data-mod="0" data-base="{{spellCost}}">{{spellCost}}</span>
                         </div>
                         <div class="col four center">
                             <span class="reach" data-mod="0" data-base="{{spellReach}}">{{spellReach}}</span>

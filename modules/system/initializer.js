@@ -1,7 +1,7 @@
 import Itemdsa5 from "../item/item-dsa5.js"
 
 export default class DSA5Initializer extends Dialog {
-    constructor(title, content, module) {
+    constructor(title, content, module, lang = "") {
         let data = {
             title: title,
             content: content,
@@ -22,6 +22,7 @@ export default class DSA5Initializer extends Dialog {
         }
         super(data)
         this.module = module
+        this.lang = lang
         this.folders = {}
         this.journals = {}
         this.scenes = {}
@@ -31,7 +32,7 @@ export default class DSA5Initializer extends Dialog {
     async initialize() {
         game.settings.set(this.module, "initialized", true)
 
-        await fetch(`modules/${this.module}/initialization.json`).then(async r => r.json()).then(async json => {
+        await fetch(`modules/${this.module}/initialization${this.lang}.json`).then(async r => r.json()).then(async json => {
             let foldersToCreate = json.folders
             if (foldersToCreate.length > 0) {
                 let head = game.folders.entities.find(x => x.name == foldersToCreate[0].name && x.type == "JournalEntry")

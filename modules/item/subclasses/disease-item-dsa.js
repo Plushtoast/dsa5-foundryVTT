@@ -23,6 +23,7 @@ export default class DiseaseItemDSA5 extends Itemdsa5 {
             game.user.targets.forEach(target => {
                 skMod = target.actor.data.data.status.soulpower.max * -1
                 zkMod = target.actor.data.data.status.toughness.max * -1
+                situationalModifiers.push(...AdvantageRulesDSA5.getVantageAsModifier(target.actor.data, game.i18n.localize("LocalizedIDs.ResistanttoDisease"), -1))
             });
         }
         mergeObject(data, {
@@ -56,7 +57,7 @@ export default class DiseaseItemDSA5 extends Itemdsa5 {
             callback: (html) => {
                 cardOptions.rollMode = html.find('[name="rollMode"]').val();
                 testData.testModifier = Number(html.find('[name="testModifier"]').val());
-                testData.situationalModifiers = []
+                testData.situationalModifiers = Actordsa5._parseModifiers('[name="situationalModifiers"]')
                 testData.situationalModifiers.push({
                     name: game.i18n.localize("zkModifier"),
                     value: html.find('[name="zkModifier"]').val() || 0

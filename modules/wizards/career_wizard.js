@@ -69,6 +69,7 @@ export default class CareerWizard extends WizardDSA5 {
             title: game.i18n.format("WIZARD.addItem", { item: `${game.i18n.localize("career")} ${this.career.name}` }),
             career: this.career,
             description: game.i18n.format("WIZARD.careerdescr", { career: this.career.name, cost: baseCost }),
+            baseCost: baseCost,
             advantages: advantages,
             disadvantages: disadvantages,
             missingVantages: missingVantages,

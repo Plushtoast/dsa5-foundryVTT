@@ -17,10 +17,9 @@ export default function() {
         const packs = game.packs.filter(p => p.metadata.langs && !(p.metadata.langs.includes(game.i18n.lang)))
 
         for (let pack of packs) {
-            let name = `${pack.metadata.system}.${pack.metadata.name}`
+            let name = `${pack.metadata.package}.${pack.metadata.name}`
             game.packs.delete(name)
             html.find(`li[data-pack="${name}"]`).hide()
         }
-
     })
 }

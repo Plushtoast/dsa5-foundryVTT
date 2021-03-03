@@ -118,7 +118,7 @@ export default class DSA5ChatAutoCompletion {
     _filterSK(search) {
         let result = this.skills.filter(x => { return x.toLowerCase().trim().indexOf(search) != -1 }).slice(0, 5)
         if (!result.length)
-            result.push(game.i18n.localize("DSAErrorror.noMatch"))
+            result.push(game.i18n.localize("DSAError.noMatch"))
         this._setList(result, "SK")
     }
 

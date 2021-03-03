@@ -15,7 +15,7 @@ export default class DSA5ChatListeners {
 
     static postStatus(id) {
         let effect = CONFIG.statusEffects.find(x => x.id == id)
-        let msg = `<h2><img class="sender-image" style="background-color:black;margin-right: 8px;" src="${effect.icon}"/>${game.i18n.localize(effect.label)}</h2><p>${game.i18n.localize(effect.description)}</p>`
+        let msg = `<h2><a class="chat-condition chatButton" data-id="${id}"><img class="sender-image" style="background-color:black;margin-right: 8px;" src="${effect.icon}"/>${game.i18n.localize(effect.label)}</h2></a><p>${game.i18n.localize(effect.description)}</p>`
         ChatMessage.create(DSA5_Utility.chatDataSetup(msg, "roll"))
     }
 
@@ -25,7 +25,11 @@ export default class DSA5ChatListeners {
     }
 
     static showConditions(){
-        let msg = CONFIG.statusEffects.map(x => `<a class="chat-condition chatButton" data-id="${x.id}"><img src="${x.icon}"/>${game.i18n.localize(x.label)}</a>`).join(" ")
+        let effects = duplicate(CONFIG.statusEffects).map(x => {
+            x.label = game.i18n.localize(x.label)
+            return x
+        }).sort((a, b) => { return a.label.localeCompare(b.label) })
+        let msg = effects.map(x => `<a class="chat-condition chatButton" data-id="${x.id}"><img src="${x.icon}"/>${x.label}</a>`).join(" ")
         ChatMessage.create(DSA5_Utility.chatDataSetup(msg, "roll"))
     }
 

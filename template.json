@@ -404,6 +404,7 @@
                 "canChangeRange": {
                     "value": "true"
                 },
+                "variableBaseCost": "false",
                 "effectFormula": {
                     "value": ""
                 }

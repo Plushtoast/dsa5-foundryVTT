@@ -1,40 +1,55 @@
 <div class="itemLibrary">
-    <div class="row-section">
-        <div class="col">
-            <div>
-                <div class="form-group">
-                    <label class="label-text">{{ localize "search"}}:</label>
-                    <input class="input-text filterBy-search" name="librarySearch" type="text" placeholder="{{localize 'searchPlaceholder'}}" />
-                </div>
-            </div>
+    <nav class="sheet-tabs tabs" data-tab-container="primary">
+        <a class="item active" data-tab="equipment"><img src="systems/dsa5/icons/categories/Equipment.webp" height="20" /><span>{{localize "equipment"}}</span></a>
+        <a class="item" data-tab="character"><img src="systems/dsa5/icons/categories/Zauberer.webp" height="20" /><span>{{localize "ACTOR.TypeCharacter"}}</span></a>
+        <a class="item" data-tab="journal"><img src="systems/dsa5/icons/categories/DSA-Auge.webp" height="20" /><span>{{localize "Journal"}}</span></a>
+        <a class="item" data-tab="spell"><img src="systems/dsa5/icons/categories/Spellextension.webp" height="20" /><span>{{localize "Magic"}}/{{localize "Religion"}}</span</a>
+        {{#if isGM}}<a class="item" data-tab="zoo"><img src="systems/dsa5/icons/categories/Tiere.webp" height="20" /><span>{{localize "zoo"}}</span></a>{{/if}}
+    </nav>
 
-        </div>
-
-    </div>
-    <div class="row-section">
-        <div class="col">
-            <div class="groupbox">
-                <div class="row-section">
-                    <div class="col">
-                        <p>{{localize "searchCategoryDescription"}}</p>
-                    </div>
-                </div>
-                <div class="row-section">
-                    <div class="col">
-                        <ul class="wrap categories">
-                            {{#each categories as |val fil|}}
-                            <li title="{{val.label}}"><input class="filter" type="checkbox" id="filter_{{val.key}}" data-category="{{val.key}}" {{checked val.selected}}/><label for="filter_{{val.key}}">{{val.label}}</label></li>
-                            {{/each}}
-                        </ul>
+    <section class="content">
+        {{#each categories as |cat i|}}
+        <div class="tab {{@key}}" data-tab="{{@key}}">
+            <div class="row-section">
+                <div class="col">
+                    <div>
+                        <div class="form-group">
+                            <label class="label-text">{{ localize "search"}}:</label>
+                            <input class="input-text filterBy-search" name="librarySearch" type="text" placeholder="{{localize 'searchPlaceholder'}}" />
+                        </div>
                     </div>
                 </div>
             </div>
-
+            {{#if cat}}
+            <div class="row-section">
+                <div class="col">
+                    <div class="groupbox">
+                        <div class="row-section">
+                            <div class="col">
+                                <p>{{localize "searchCategoryDescription"}}</p>
+                            </div>
+                        </div>
+                        <div class="row-section">
+                            <div class="col">
+                                <ul class="wrap categories">
+                                    {{#each cat as |val fil|}}
+                                    <li title="{{val.label}}"><input class="filter" type="checkbox" id="filter_{{val.key}}" data-category="{{val.key}}" {{checked val.selected}} /><label for="filter_{{val.key}}">{{val.label}}</label></li>
+                                    {{/each}}
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {{/if}}
+            <div class="row-section wrap searchResult">
+                <ul class="item-list save-scroll">
+                </ul>
+            </div>
         </div>
-    </div>
-    <div class="row-section wrap searchResult">
-        <ul class="item-list save-scroll">
 
-        </ul>
-    </div>
+        {{/each}}
+
+
+    </section>
 </div>

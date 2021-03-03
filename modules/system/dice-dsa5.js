@@ -257,7 +257,7 @@ export default class DiceDSA5 {
 
     static _situationalModifiers(testData, filter = "") {
         return testData.situationalModifiers.reduce(function(_this, val) {
-            return _this + ((val.type == filter || val.type == undefined) ? Number(val.value) : 0)
+            return _this + ((val.type == filter || (filter == "" && val.type == undefined)) ? Number(val.value) : 0)
         }, 0);
     }
 

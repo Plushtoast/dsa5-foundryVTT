@@ -207,8 +207,25 @@
                 </div>
 
                 <div class="col eight lineheight center">
-                    {{data.status.initiative.value}}
+                    {{floor data.status.initiative.value}}
 
+                </div>
+            </div>
+            <div class="derivedAttrs row-section">
+                <div class="col two lineheight">
+                    {{localize "fatePoints"}}
+                </div>
+                <div class="col eight lineheight center">
+                    <input name="data.status.fatePoints.current" type="text" value="{{data.status.fatePoints.current}}" data-dtype="Number" />
+                </div>
+                <div class="col eight center">
+                    <input name="data.status.fatePoints.modifier" type="text" value="{{data.status.fatePoints.modifier}}" data-dtype="Number" />
+                </div>
+                <div class="col eight">
+
+                </div>
+                <div class="col eight lineheight center">
+                    {{data.status.fatePoints.max}}
                 </div>
             </div>
         </div>

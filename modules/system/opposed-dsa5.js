@@ -210,7 +210,8 @@ export default class OpposedDsa5 {
             opposeResult.winner = "attacker"
             opposeResult.damage = {
                 description: `<b>${game.i18n.localize("damage")}</b>: ${damage.damage} - ${damage.armor} (${game.i18n.localize("protection")}) = ${damage.sum}`,
-                value: damage.sum
+                value: damage.sum,
+                sp: damage.damage
             }
         } else {
             opposeResult.winner = "defender"

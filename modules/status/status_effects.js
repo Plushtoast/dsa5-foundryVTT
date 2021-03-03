@@ -1,6 +1,23 @@
 import DSA5 from '../system/config-dsa5.js'
 
 export default class DSA5StatusEffects {
+    static bindButtons(html) {
+        html.find('.chat-condition').each(function(i, cond) {
+            cond.setAttribute("draggable", true);
+            cond.addEventListener("dragstart", ev => {
+                let dataTransfer = {
+                    data: {
+                        type: "condition",
+                        payload: {
+                            id: $(ev.currentTarget).attr("data-id")
+                        }
+                    }
+                }
+                ev.dataTransfer.setData("text/plain", JSON.stringify(dataTransfer));
+            });
+        })
+    }
+
     static async createEffect(actor, effect, value, auto) {
         effect.label = game.i18n.localize(effect.label);
         if (auto) {
@@ -91,6 +108,12 @@ class EncumberedEffect extends DSA5StatusEffects {
     }
 }
 
+class ProneEffect extends DSA5StatusEffects {
+    static calculateRollModifier(effect, actor, item, options = {}) {
+        return options.mode ? (options.mode == "attack" ? -4 : -2) : 0
+    }
+}
+
 class RaptureEffect extends DSA5StatusEffects {
     static calculateRollModifier(effect, actor, item, options = {}) {
         let happyTalents = actor.data.happyTalents.value.split(",").map(x => x.trim())
@@ -102,6 +125,22 @@ class RaptureEffect extends DSA5StatusEffects {
     }
 }
 
+class DeafEffect extends DSA5StatusEffects {
+    static calculateRollModifier(effect, actor, item, options = {}) {
+        return (item.type == "skill" && item.name == game.i18n.localize("LocalizedIDs.perception")) ? -3 : 0
+    }
+}
+
+class BloodrushEffect extends DSA5StatusEffects {
+    static calculateRollModifier(effect, actor, item, options = {}) {
+        if (item.type == "skill")
+            return item.name == game.i18n.localize("LocalizedIDs.featOfStrength") ? 2 : 0
+
+        return options.mode == "attack" ? 4 : 0
+    }
+}
+
+
 DSA5.statusEffectClasses = {
     inpain: DSA5StatusEffects,
     encumbered: EncumberedEffect,
@@ -109,5 +148,8 @@ DSA5.statusEffectClasses = {
     raptured: RaptureEffect,
     feared: DSA5StatusEffects,
     paralysed: DSA5StatusEffects,
-    confused: DSA5StatusEffects
+    confused: DSA5StatusEffects,
+    prone: ProneEffect,
+    deaf: DeafEffect,
+    bloodrush: BloodrushEffect
 }

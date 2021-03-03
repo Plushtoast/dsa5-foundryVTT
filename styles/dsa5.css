@@ -1236,6 +1236,8 @@ form.dsa5.item-sheet {
     display: inline-block;
 }
 
+.journal-sheet img,
+.itemLibrary img,
 .charimg {
     border: none;
 }
@@ -1583,6 +1585,17 @@ input[type="search"] {
     padding: 10px;
 }
 
+.itemLibrary nav {
+    line-height: 20px;
+    margin-bottom: 10px;
+}
+
+.itemLibrary nav img {
+    position: relative;
+    top: 3px;
+    margin-right: 3px;
+}
+
 .itemLibrary ul {
     display: flex;
     flex-wrap: wrap;
@@ -1848,6 +1861,20 @@ input[type="search"] {
     top: 2px;
 }
 
+h2 .chatButton img {
+    width: 30px;
+    height: 30px;
+    top: 5px
+}
+
+h2 .chat-condition,
+h2 .chatButton {
+    width: 100%;
+    border: none;
+    box-shadow: none;
+    background: none;
+}
+
 .chatButton i,
 .roll-button i {
     margin-right: 1px;
@@ -2006,4 +2033,53 @@ a.inline-roll {
 
 #chat-controls .control-buttons {
     flex: 0 0 72px;
+}
+
+.loader {
+    margin: 0 auto;
+}
+
+.browser-item {
+    position: relative;
+}
+
+.browser-item .compendium {
+    position: absolute;
+    bottom: 2px;
+    right: 2px;
+    font-size: 10px;
+    color: #696767;
+    line-height: 10px;
+}
+
+.chat-condition,
+.item-sheet .chatButton,
+.journal-sheet .chatButton {
+    padding: 0px 4px;
+    border: 1px solid #4b4a44;
+    border-radius: 2px;
+    white-space: nowrap;
+    word-break: break-all;
+    box-shadow: none;
+    background: var(--bg-color);
+    display: inline;
+}
+
+.chat-condition img,
+.item-sheet .chatButton img,
+.journal-sheet .chatButton img {
+    top: 3px;
+}
+
+.maskfield {
+    background: url(../icons/backgrounds/mask.webp), url(../icons/backgrounds/maskfield.webp);
+    background-repeat: no-repeat, no-repeat;
+    background-size: 150px 50px, 100% calc(100% - 25px);
+    background-position: bottom center, center top;
+    padding: 10px 20px 60px 20px;
+    color: white;
+}
+
+.journal-sheet .window-content .maskfield tr:first-child {
+    background: none;
 }

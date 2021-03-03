@@ -35,9 +35,11 @@ export default class Actordsa5 extends Actor {
             return m
         }));
 
+        if (data.type != "character") {
+            data.data = { status: { fatePoints: { current: 0, value: 0 } } }
+        }
         super.create(data, options);
     }
-
 
 
     prepareDerivedData() {
@@ -64,9 +66,10 @@ export default class Actordsa5 extends Actor {
                 data.data.status.wounds.current = data.data.status.wounds.initial + data.data.characteristics["ko"].value * 2;
                 data.data.status.soulpower.value = (data.data.status.soulpower.initial ? data.data.status.soulpower.initial : 0) + Math.round((data.data.characteristics["mu"].value + data.data.characteristics["kl"].value + data.data.characteristics["in"].value) / 6);
                 data.data.status.toughness.value = (data.data.status.toughness.initial ? data.data.status.toughness.initial : 0) + Math.round((data.data.characteristics["ko"].value + data.data.characteristics["ko"].value + data.data.characteristics["kk"].value) / 6);
-                data.data.status.fatePoints.max = Number(data.data.status.fatePoints.current) + Number(data.data.status.fatePoints.modifier) + data.data.status.fatePoints.gearmodifier
                 data.data.status.initiative.value = Math.round((data.data.characteristics["mu"].value + data.data.characteristics["ge"].value) / 2) + (data.data.status.initiative.modifier || 0);
             }
+
+            data.data.status.fatePoints.max = Number(data.data.status.fatePoints.current) + Number(data.data.status.fatePoints.modifier) + data.data.status.fatePoints.gearmodifier
 
             if (data.type == "creature") {
                 data.data.status.wounds.current = data.data.status.wounds.initial
@@ -75,7 +78,7 @@ export default class Actordsa5 extends Actor {
                 data.data.status.initiative.value = data.data.status.initiative.current + (data.data.status.initiative.modifier || 0);
             }
 
-            data.data.status.initiative.value += data.data.status.initiative.gearmodifier
+            data.data.status.initiative.value += data.data.status.initiative.gearmodifier + data.data.status.initiative.value * 0.01
 
             data.data.status.wounds.max = data.data.status.wounds.current + data.data.status.wounds.modifier + data.data.status.wounds.advances + data.data.status.wounds.gearmodifier
             data.data.status.astralenergy.max = data.data.status.astralenergy.current + data.data.status.astralenergy.modifier + data.data.status.astralenergy.advances + data.data.status.astralenergy.gearmodifier
@@ -104,6 +107,9 @@ export default class Actordsa5 extends Actor {
             let encumbrance = this.hasCondition('encumbered')
             encumbrance = encumbrance ? Number(encumbrance.flags.dsa5.value) : 0
             data.data.status.initiative.value -= (Math.min(4, encumbrance))
+            data.data.status.speed.max = Math.max(0, data.data.status.speed.max - (Math.min(4, encumbrance)))
+
+
             data.data.status.dodge.max = Number(data.data.status.dodge.value) + Number(data.data.status.dodge.modifier) + (Number(game.settings.get("dsa5", "higherDefense")) / 2)
 
             //Prevent double update with multiple GMs, still unsafe
@@ -137,12 +143,27 @@ export default class Actordsa5 extends Actor {
                     this.addCondition("deaf")
 
                 this.addCondition("inpain", pain, true)
+                data.data.status.speed.max = Math.max(0, data.data.status.speed.max - pain)
             }
+
+            let paralysis = this.hasCondition("paralysed")
+            if (paralysis)
+                data.data.status.speed.max = Math.round(data.data.status.speed.max * (1 - paralysis.flags.dsa5.value * 0.25))
+            if (this.hasCondition("fixated")) {
+                data.data.status.speed.max = 0
+                data.data.status.dodge.max = Math.max(0, data.data.status.dodge.max - 4)
+            } else if (this.hasCondition("rooted") || this.hasCondition("incapacitated"))
+                data.data.status.speed.max = 0
+            else if (this.hasCondition("prone"))
+                data.data.status.speed.max = Math.min(1, data.data.status.speed.max)
+
         } catch (error) {
             console.error("Something went wrong with preparing actor data: " + error + error.stack)
             ui.notifications.error(game.i18n.localize("ACTOR.PreparationError") + error + error.stack)
         }
     }
+
+
 
     prepareBaseData() {
         const data = this.data;
@@ -638,24 +659,20 @@ export default class Actordsa5 extends Actor {
     }
 
     applyDamage(amount) {
-        this.update({ "data.status.wounds.value": this.data.data.status.wounds.value - amount })
+        let newVal = Math.min(this.data.data.status.wounds.max, this.data.data.status.wounds.value - amount)
+        this.update({ "data.status.wounds.value": newVal })
     }
 
     applyMana(amount, type) {
-        if (type == "AsP") {
-            let newVal = this.data.data.status.astralenergy.value - amount
-            if (newVal >= 0) {
-                this.update({ "data.status.astralenergy.value": newVal })
-            } else {
-                ui.notifications.error(game.i18n.localize('DSAError.NotEnoughAsP'))
-            }
+        let state = type == "AsP" ? "astralenergy" : "karmaenergy"
+
+        let newVal = Math.min(this.data.data.status[state].max, this.data.data.status[state].value - amount)
+        if (newVal >= 0) {
+            this.update({
+                [`data.status.${state}.value`]: newVal
+            })
         } else {
-            let newVal = this.data.data.status.karmaenergy.value - amount
-            if (newVal >= 0) {
-                this.update({ "data.status.karmaenergy.value": newVal })
-            } else {
-                ui.notifications.error(game.i18n.localize('DSAError.NotEnoughKaP'))
-            }
+            ui.notifications.error(game.i18n.localize(`DSAError.NotEnough${type}`))
         }
     }
 
@@ -932,7 +949,7 @@ export default class Actordsa5 extends Actor {
             callback: (html) => {
                 cardOptions.rollMode = html.find('[name="rollMode"]').val();
                 testData.testModifier = Number(html.find('[name="testModifier"]').val());
-                testData.situationalModifiers = this._parseModifiers('[name="situationalModifiers"]')
+                testData.situationalModifiers = Actordsa5._parseModifiers('[name="situationalModifiers"]')
                 return { testData, cardOptions };
             }
         };
@@ -971,7 +988,7 @@ export default class Actordsa5 extends Actor {
                 cardOptions.rollMode = html.find('[name="rollMode"]').val();
                 testData.testModifier = Number(html.find('[name="testModifier"]').val());
                 testData.testDifficulty = DSA5.attributeDifficultyModifiers[html.find('[name="testDifficulty"]').val()];
-                testData.situationalModifiers = this._parseModifiers('[name="situationalModifiers"]')
+                testData.situationalModifiers = Actordsa5._parseModifiers('[name="situationalModifiers"]')
                 return { testData, cardOptions };
             }
         };
@@ -985,7 +1002,7 @@ export default class Actordsa5 extends Actor {
         });
     }
 
-    _parseModifiers(search) {
+    static _parseModifiers(search) {
         let res = []
         $(search + " option:selected").each(function() {
             res.push({
@@ -1019,30 +1036,33 @@ export default class Actordsa5 extends Actor {
 
     static _prepareMeleeWeapon(item, combatskills, actorData, wornWeapons = null) {
         let skill = combatskills.find(i => i.name == item.data.combatskill.value)
-        item.attack = Number(skill.data.attack.value) + Number(item.data.atmod.value)
-        item.parry = Number(skill.data.parry.value) + Number(item.data.pamod.value) + (item.data.combatskill.value == game.i18n.localize('LocalizedIDs.shields') ? Number(item.data.pamod.value) : 0)
+        if (skill) {
+            item.attack = Number(skill.data.attack.value) + Number(item.data.atmod.value)
+            item.parry = Number(skill.data.parry.value) + Number(item.data.pamod.value) + (item.data.combatskill.value == game.i18n.localize('LocalizedIDs.shields') ? Number(item.data.pamod.value) : 0)
 
-        let regex2h = /\(2H/
-        if (!regex2h.test(item.name)) {
-            if (!wornWeapons)
-                wornWeapons = actorData.items.filter(x => (x.type == "meleeweapon" && x.data.worn.value && x._id != item._id && !regex2h.test(x.name)))
+            let regex2h = /\(2H/
+            if (!regex2h.test(item.name)) {
+                if (!wornWeapons)
+                    wornWeapons = actorData.items.filter(x => (x.type == "meleeweapon" && x.data.worn.value && x._id != item._id && !regex2h.test(x.name)))
 
-            item.parry += Math.max(0, ...wornWeapons.map(x => x.data.pamod.offhandMod))
-            item.attack += Math.max(0, ...wornWeapons.map(x => x.data.atmod.offhandMod))
-        }
-
-        item = this._parseDmg(item)
-        if (item.data.guidevalue.value != "-") {
-            let val = Math.max(...(item.data.guidevalue.value.split("/").map(x => Number(actorData.data.characteristics[x].value))));
-            let extra = val - Number(item.data.damageThreshold.value)
-
-            if (extra > 0) {
-                item.extraDamage = extra;
-                item.damageAdd = eval(item.damageAdd + " + " + Number(extra))
-                item.damageAdd = (item.damageAdd > 0 ? "+" : "") + item.damageAdd
+                item.parry += Math.max(0, ...wornWeapons.map(x => x.data.pamod.offhandMod))
+                item.attack += Math.max(0, ...wornWeapons.map(x => x.data.atmod.offhandMod))
             }
-        }
 
+            item = this._parseDmg(item)
+            if (item.data.guidevalue.value != "-") {
+                let val = Math.max(...(item.data.guidevalue.value.split("/").map(x => Number(actorData.data.characteristics[x].value))));
+                let extra = val - Number(item.data.damageThreshold.value)
+
+                if (extra > 0) {
+                    item.extraDamage = extra;
+                    item.damageAdd = eval(item.damageAdd + " + " + Number(extra))
+                    item.damageAdd = (item.damageAdd > 0 ? "+" : "") + item.damageAdd
+                }
+            }
+        } else {
+            ui.notifications.error(game.i18n.format("DSAError.unknownCombatSkill", { skill: item.data.combatskill.value, item: item.name }))
+        }
         return item;
     }
 
@@ -1070,16 +1090,19 @@ export default class Actordsa5 extends Actor {
 
     static _prepareRangeWeapon(item, ammunitions, combatskills, actor) {
         let skill = combatskills.find(i => i.name == item.data.combatskill.value)
-        item.attack = Number(skill.data.attack.value)
+        if (skill) {
+            item.attack = Number(skill.data.attack.value)
 
-        if (item.data.ammunitiongroup.value != "-") {
-            if (ammunitions)
-                item.ammo = ammunitions.filter(x => x.data.ammunitiongroup.value == item.data.ammunitiongroup.value)
-            else
-                item.ammo = actorData.inventory.ammunition.items.filter(x => x.data.ammunitiongroup.value == item.data.ammunitiongroup.value)
+            if (item.data.ammunitiongroup.value != "-") {
+                if (ammunitions)
+                    item.ammo = ammunitions.filter(x => x.data.ammunitiongroup.value == item.data.ammunitiongroup.value)
+                else
+                    item.ammo = actorData.inventory.ammunition.items.filter(x => x.data.ammunitiongroup.value == item.data.ammunitiongroup.value)
+            }
+            item.LZ = Math.max(0, Number(item.data.reloadTime.value) - SpecialabilityRulesDSA5.abilityStep(actor, `${game.i18n.localize('LocalizedIDs.quickload')} (${game.i18n.localize(item.data.combatskill.value)})`))
+        } else {
+            ui.notifications.error(game.i18n.format("DSAError.unknownCombatSkill", { skill: item.data.combatskill.value, item: item.name }))
         }
-        item.LZ = Math.max(0, Number(item.data.reloadTime.value) - SpecialabilityRulesDSA5.abilityStep(actor, `${game.i18n.localize('LocalizedIDs.quickload')} (${game.i18n.localize(item.data.combatskill.value)})`))
-
         return this._parseDmg(item)
     }
 

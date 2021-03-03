@@ -3,7 +3,8 @@ import AdvantageRulesDSA5 from "../../system/advantage-rules-dsa5.js";
 import DSA5 from "../../system/config-dsa5.js";
 import DiceDSA5 from "../../system/dice-dsa5.js";
 import Itemdsa5 from "../item-dsa5.js";
-
+import Actordsa5 from "../../actor/actor-dsa5.js";
+import DSA5_Utility from "../../system/utility-dsa5.js";
 export default class RangeweaponItemDSA5 extends Itemdsa5 {
     static chatData(data, name) {
         let res = [
@@ -12,7 +13,7 @@ export default class RangeweaponItemDSA5 extends Itemdsa5 {
             this._chatLineHelper("reach", data.reach.value)
         ]
         if (data.effect.value != "")
-            res.push(this._chatLineHelper("effect", data.effect.value))
+            res.push(this._chatLineHelper(DSA5_Utility.replaceConditions("effect", data.effect.value)))
 
         return res
     }
@@ -55,7 +56,8 @@ export default class RangeweaponItemDSA5 extends Itemdsa5 {
                 shooterMovementOptions: DSA5.shooterMovementOptions,
                 targetMovementOptions: DSA5.targetMomevementOptions,
                 targetSize: targetSize,
-                combatSpecAbs: combatskills
+                combatSpecAbs: combatskills,
+                aimOptions: DSA5.aimOptions
             });
         }
     }
@@ -107,7 +109,7 @@ export default class RangeweaponItemDSA5 extends Itemdsa5 {
             callback: (html) => {
                 cardOptions.rollMode = html.find('[name="rollMode"]').val();
                 testData.testModifier = Number(html.find('[name="testModifier"]').val());
-                testData.situationalModifiers = actor._parseModifiers('[name = "situationalModifiers"]')
+                testData.situationalModifiers = Actordsa5._parseModifiers('[name="situationalModifiers"]')
                 testData.rangeModifier = html.find('[name="distance"]').val()
                 testData.sizeModifier = DSA5.rangeSizeModifier[html.find('[name="size"]').val()]
                 testData.visionModifier = Number(html.find('[name="vision"]').val())
@@ -131,6 +133,9 @@ export default class RangeweaponItemDSA5 extends Itemdsa5 {
                 }, {
                     name: game.i18n.localize("MODS.combatTurmoil"),
                     value: html.find('[name="combatTurmoil"]').is(":checked") ? -2 : 0
+                }, {
+                    name: game.i18n.localize("aim"),
+                    value: Number(html.find('[name="aim"]').val()) || 0
                 })
                 testData.situationalModifiers.push(...Itemdsa5.getSpecAbModifiers(html, "attack"))
                 return { testData, cardOptions };

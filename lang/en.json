@@ -99,7 +99,8 @@
         "meleeweapons": "Meleeweapons",
         "rangeweapons": "Rangeweapons",
         "ammunition": "Ammunition",
-        "poison": "Poison"
+        "poison": "Poison",
+        "blessed": "Blessed"
     },
 
     "requiredFW": "Required SR",
@@ -107,6 +108,7 @@
     "APValue": "AP-Value",
     "additionalFPs": "additional SPs",
     "attacktest": "Attack test",
+    "aim": "Aim",
     "arrow": "Arrow",
     "armor": "Armor",
     "advancementCost": "Advance for {cost} adventure points",
@@ -127,7 +129,7 @@
     "AstoundingFailure": "Astounding failure",
     "advantages": "Advantages",
     "advantage": "Advantage",
-
+    "buildingIndex": "Building Index",
     "attackWeaponless": "Unarmed attack",
     "animalSpecialAbilities": "Animal Special Abilities",
     "Age": "Age",
@@ -178,7 +180,10 @@
     "carrycapacity": "Carrying Capacity",
     "chatEdit": "Manual correction",
     "Details": "Details",
+    "dart": "Dart",
     "damage": "Damage",
+    "level": "level",
+    "levels": "levels",
     "defenseCount": "# Defenses (each -3)",
     "decreaseCastingTime": "Decrease Spell/Chant duration",
     "damageThreshold": "Damage threshold",
@@ -254,7 +259,7 @@
     "initSkipped": "Initialization canceled",
     "initialize": "initialization",
     "Main": "Data",
-    "maybe": "Mybe",
+    "maybe": "Maybe",
     "max": "Max",
     "magical": "magical",
     "meleeweapon": "Meleeweapon",
@@ -370,6 +375,8 @@
     "specialRules": "Special rules",
     "tradition": "Tradition",
     "searchTalents": "Search skills",
+    "shieldSize": "Shield size",
+    "specialisation": "Specialization",
     "Test": "Test",
     "trait": "Ability",
     "traits": "Abilities",
@@ -386,6 +393,7 @@
     "usedTestCount": "Rolled checks",
     "value": "Value",
     "vantages": "Dis-/Advantages",
+    "variableCost": "Variable cost",
     "sight": "Visibility",
     "Weight": "Weight",
     "happyTalents": "Favored skills",
@@ -398,6 +406,7 @@
     "yes": "Yes",
     "YouAlreadyHaveit": "Already owned",
     "zkModifier": "Toughness (Target)",
+    "zoo": "Zoo",
 
     "Aggregated": {
         "noMoreAllowed": "No more rolls allowed."
@@ -418,6 +427,12 @@
         "attributeRequirements": "Attribute Requirements",
         "attributesToChose": "Attribute Adjustments",
         "generalTab": "General"
+    },
+
+    "MODS": {
+        "partChecks": "Part of skill check modifier",
+        "FP": "Skill points modifier",
+        "combatTurmoil": "Shooting into Melee"
     },
 
     "SKILL": {
@@ -564,7 +579,7 @@
     "Money-H": "Haler",
     "Money-K": "Kreutzer",
 
-    "WELCOME": "<p><h2>Welcome to TDE5<br> for Foundry VTT</h2></p><p>We wish you a lot of fun playing TDE5</p><h3>Quick start</h3>For a fast and easy start we recommend to install the core module i nyour system. This way you can start immediately to explore Aventuria. If you don't have the core module, you have to create all items, spells, special abilities etc. yourself.</p><p>The english module will be finished in the near future (German version on 16.2). </p><p>To create your character make sure to drag and drop the species onto your character sheet (to calculate dependent character stats).</p><p>You can also try out the free introduction adventure at <a href=\"https://github.com/Plushtoast/dsa5_introduction\" target=\"_blank\">Introduction Module</a>. It includes maps, characters and a tiny adventure.</p><h3>Help</h3>In case of issues use the Help (/help in chat) or visit our <a href=\"https://github.com/Plushtoast/dsa5-foundryVTT/wiki\" target=\"_blank\">Wiki</a>.</p><p>This message will only be shown once.</p>",
+    "WELCOME": "<p><h2>Welcome to TDE5<br> for Foundry VTT</h2></p><p>We wish you a lot of fun playing TDE5</p><h3>Quick start</h3>For a fast and easy start we recommend to install the core module i nyour system. This way you can start immediately to explore Aventuria. If you don't have the core module, you have to create all items, spells, special abilities etc. yourself.</p><p>You can get the core module in the <a href=\"https://www.ulissesf-shop.com/\" target=\"_blank\">F-Shop/</a>.</p><p>To create your character make sure to drag and drop the species onto your character sheet (to calculate dependent character stats).</p><p>You can also try out the free introduction adventure at <a href=\"https://github.com/Plushtoast/dsa5_introduction\" target=\"_blank\">Introduction Module</a>. It includes maps, characters and a tiny adventure.</p><h3>Help</h3>In case of issues use the Help (/help in chat) or visit our <a href=\"https://github.com/Plushtoast/dsa5-foundryVTT/wiki\" target=\"_blank\">Wiki</a>.</p><p><b>If you are a german user, make sure to set the language right, to avoid compatibility problems.</b><p>This message will only be shown once.</p>",
 
     "SHEET": {
         "PostItem": "Post to chat",
@@ -777,7 +792,11 @@
         "localKnowledge": "Area Knowledge",
         "naturalArmor": "Natural Armor",
         "all": "all",
-        "twoWeaponCombat": "Two-Weapon Combat"
+        "twoWeaponCombat": "Two-Weapon Combat",
+        "poisonResistance": "Poison Resitance",
+        "ResistanttoDisease": "Resistant to Disease",
+        "perception": "Perception",
+        "featOfStrength": "Feat of Strength"
     },
 
     "DSAError": {
@@ -804,8 +823,9 @@
         "opposedAttackNoSpecAbs": "Attacks of Opportunity can not be combined with Special Abilites",
         "noSpellForExtension": "You don't have a matching spell/liturgy for this extension",
         "talentValueTooLow": "Your Skill value is too low",
-
-        "NotUnlocked": "Not yet unlocked"
+        "NotUnlocked": "Not yet unlocked",
+        "onlyGMAllowedToCancel": "Only the game master is allowed to abort opposing tests",
+        "unknownCombatSkill": "The combat technique {skill} of the weapon {item} is unknown. Please fix the weapon."
     },
 
     "CEREMONYMODIFIER": {
@@ -852,7 +872,7 @@
         "STATIONARY": "motionless (+2)",
         "SLOW": "moving slowly (+-0)",
         "FAST": "moving quickly (-2)",
-        "QUICKCHANGE": "zigzagging (-4)",
+        "QUICKCHANGE": "Zigzagging (-4)",
         "SHOOTERMOVING": "walking (-2)",
         "SHOOTERRUNNING": "running (-4)",
         "SHOOTERSTATIONARY": "stationary (+-0)"
@@ -883,8 +903,15 @@
         "AddQS": "Increase QS by one (1 FtP)",
         "rerollDamage": "Repeat damage roll (1 FtP)",
         "ApplyDamage": "Apply damage",
+        "ApplyDamageSP": "Apply damage as LP",
         "talentedReroll": "Use Aptitude ",
         "ApplyMana": "Pay AE/KP"
+    },
+
+    "aimOptions": {
+        "0": "Unaimed",
+        "1": "Aim 1 action",
+        "2": "Aim 2 actions"
     },
 
     "DSASETTINGS": {
@@ -903,7 +930,9 @@
         "defaultBrightVision": "Default bright vision",
         "defaultBrightVisionHint": "Adjust the default bright vision range for new characters and tokens.",
         "capQSat": "Max achievable quality level",
-        "capQSatHint": "Restrict the max achievable quality level."
+        "capQSatHint": "Restrict the max achievable quality level.",
+        "talentModifierEnabled": "Skill modifiers activated",
+        "talentModifierEnabledHint": "Skill modifiers are selected by default in the roll window"
     },
 
     "CHATFATE": {
@@ -1016,7 +1045,8 @@
         "surprised": "Surprised",
         "invisible": "Invisible",
         "poisoned": "Poisoned",
-        "burning": "Burning"
+        "burning": "Burning",
+        "fixated": "Bound"
     },
 
     "CONDITIONDESCRIPTION": {
@@ -1040,6 +1070,7 @@
         "deaf": "Deaf heroes cannot hear, hindering communication. Furthermore, they are not allowed to roll skill checks on Perception that depend upon hearing. Checks on Perception (Detect Ambush) suffer a –3 penalty",
         "sick": "A hero suffering from a disease or serius illness cannot regenerate LP or benefit from regular Regeneration Phases until healed or recovered. Heroes suffering from a state of diseased must devote at least one Regeneration Phase per day to rest (sleeping or staying in bed) or lose 1D3 LP (ignoring Protection) until recovered.",
         "surprised": "People are usually considered to be aware of their surroundings, especially in combat situations. Sometimes, however, a situation arises where a character remains unaware of enemies lurking nearby. Surprise means a hero is startled by an ambush or the sudden appearance of enemies. Surprised characters cannot defend against the first action taken against them. Once this surprise action (most likely an attack) is resolved, regular combat rounds begin.",
-        "poisoned": "The hero is poisoned. As long as the poison remains in effect, the character cannot benefit from Regeneration Phases."
+        "poisoned": "The hero is poisoned. As long as the poison remains in effect, the character cannot benefit from Regeneration Phases.",
+        "fixated": "Bound characters are glued to the ground or otherwise held down by ropes, vines or traps. While bound characters have a MOV of 0 and suffer a -4 penalty to Dodge."
     }
 }

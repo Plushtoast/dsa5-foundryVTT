@@ -18,6 +18,10 @@ export default class DSA5SpellDialog extends Dialog {
         1920
     ]
 
+    calculateSpellCost() {
+
+    }
+
     activateListeners(html) {
         super.activateListeners(html)
         html.find('.specAbs').mousedown(ev => {
@@ -46,6 +50,14 @@ export default class DSA5SpellDialog extends Dialog {
             }
             $(ev.currentTarget).val(val)
         });
+        html.find('.variableBaseCost').change(ev => {
+            let parent = $(ev.currentTarget).parents(".skill-test")
+            let oldVal = parent.find('.aspcost').attr("data-base")
+            let newVal = $(ev.currentTarget).val()
+            parent.find('.aspcost').attr("data-base", newVal)
+            parent.find('.aspcost').text(Number(parent.find('.aspcost').text()) * newVal / oldVal)
+        })
+
         html.find('.spellModifier').change(event => {
             let parent = $(event.currentTarget).parents(".skill-test")
             let castingTime = parent.find('.castingTime')

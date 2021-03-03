@@ -1,8 +1,9 @@
 {{#each items as |item i|}}
-<li class="browser-item" data-item-id="{{item._id}}">
+<li class="browser-item" data-item-id="{{item.id}}">
     <div class="image" style="background-image: url({{item.img}})"></div>
     <a class="name-icon">
         <div class="item-name"><span>{{item.name}}</span></div>
     </a>
+    <div class="compendium">{{item.compendium}}</div>
 </li>
 {{/each}}

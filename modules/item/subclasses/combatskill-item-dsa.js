@@ -1,3 +1,4 @@
+import Actordsa5 from "../../actor/actor-dsa5.js";
 import DiceDSA5 from "../../system/dice-dsa5.js";
 import Itemdsa5 from "../item-dsa5.js";
 
@@ -31,7 +32,7 @@ export default class CombatskillDSA5 extends Itemdsa5 {
             callback: (html) => {
                 cardOptions.rollMode = html.find('[name="rollMode"]').val();
                 testData.testModifier = Number(html.find('[name="testModifier"]').val());
-                testData.situationalModifiers = actor._parseModifiers('[name = "situationalModifiers"]')
+                testData.situationalModifiers = Actordsa5._parseModifiers('[name="situationalModifiers"]')
                 return { testData, cardOptions };
             }
         };

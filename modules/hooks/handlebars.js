@@ -34,6 +34,12 @@ export default function() {
     Handlebars.registerHelper("diceThingsUp", function(a) {
         return DSA5_Utility.replaceDies(a)
     })
+    Handlebars.registerHelper("replaceConditions", function(a) {
+        return DSA5_Utility.replaceConditions(a)
+    })
+    Handlebars.registerHelper("floor", function(a) {
+        return Math.floor(Number(a))
+    })
     Handlebars.registerHelper('grouped_each', function(every, context, options) {
         var out = "",
             subcontext = [],

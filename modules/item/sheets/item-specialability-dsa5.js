@@ -12,8 +12,8 @@ export default class SpecialAbilitySheetDSA5 extends ItemSheetdsa5 {
                 xpCost = steps[this.item.data.data.step.value - 1]
             }
             xpCost = await SpecialabilityRulesDSA5.refundFreelanguage(this.item.data, this.item.options.actor, xpCost)
-            this.item.options.actor._updateAPs(xpCost * -1)
-            this.item.update({ "data.step.value": this.item.data.data.step.value - 1 })
+            await this.item.options.actor._updateAPs(xpCost * -1)
+            await this.item.update({ "data.step.value": this.item.data.data.step.value - 1 })
         }
     }
 
@@ -26,9 +26,9 @@ export default class SpecialAbilitySheetDSA5 extends ItemSheetdsa5 {
                 xpCost = steps[this.item.data.data.step.value]
             }
             xpCost = await SpecialabilityRulesDSA5.isFreeLanguage(this.item.data, this.item.options.actor, xpCost)
-            if (this.item.options.actor.checkEnoughXP(xpCost)) {
-                this.item.options.actor._updateAPs(xpCost)
-                this.item.update({ "data.step.value": this.item.data.data.step.value + 1 })
+            if (await this.item.options.actor.checkEnoughXP(xpCost)) {
+                await this.item.options.actor._updateAPs(xpCost)
+                await this.item.update({ "data.step.value": this.item.data.data.step.value + 1 })
             }
         }
     }
