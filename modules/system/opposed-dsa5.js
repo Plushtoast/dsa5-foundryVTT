@@ -205,7 +205,7 @@ export default class OpposedDsa5 {
         return opposeResult
     }
     static _evaluateWeaponOpposedRoll(attackerTest, defenderTest, opposeResult, options = {}) {
-        if (attackerTest.successLevel > 0 && attackerTest.successLevel > defenderTest.successLevel) {
+        if (attackerTest.successLevel > 0 && defenderTest.successLevel < 0) {
             let damage = this._calculateOpposedDamage(attackerTest, defenderTest)
             opposeResult.winner = "attacker"
             opposeResult.damage = {
