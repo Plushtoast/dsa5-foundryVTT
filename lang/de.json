@@ -80,7 +80,9 @@
         "warning": "Vorsicht",
         "deselectWithStrg": "Strg + Click zum Deselektieren",
         "noCombatskills": "Keine passenden Kampfsonderfertigkeiten",
-        "noExtensions": "Keine passend Zauber/Liturgieerweiterungen"
+        "noExtensions": "Keine passend Zauber/Liturgieerweiterungen",
+        "firstTime": "Spracheinstellungen",
+        "firstTimeWarning": "Bitte wähle die passende Sprache. Kompendien verschiedener Sprachen sind derzeit nicht miteinander kompatibel und bestehende Charaktere können nicht migriert werden."
     },
 
     "Equipment": {
@@ -797,7 +799,10 @@
         "poisonResistance": "Giftresistenz",
         "ResistanttoDisease": "Krankheitsresistenz",
         "perception": "Sinnesschärfe",
-        "featOfStrength": "Kraftakt"
+        "featOfStrength": "Kraftakt",
+        "literacy": "Schrift",
+        "language": "Sprache",
+        "aptitude": "Begabung"
     },
 
     "DSAError": {

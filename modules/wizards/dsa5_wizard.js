@@ -40,7 +40,8 @@ export default class WizardDSA5 extends Application {
             if (!item) {
                 if (this.attributes.includes(parsed.name)) {
                     let cost = 0
-                    for (let i = this.actor.data.data.characteristics[parsed.name.toLowerCase()].value + 1; i < parsed.step + 1; i++) {
+
+                    for (let i = this.actor.data.data.characteristics[game.dsa5.config.knownShortcuts[parsed.name.toLowerCase()][1]].value + 1; i < parsed.step + 1; i++) {
                         cost += DSA5.advancementCosts.E[i]
                     }
                     item = {

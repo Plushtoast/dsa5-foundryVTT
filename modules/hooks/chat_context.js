@@ -37,7 +37,7 @@ export default function() {
             if (message.data.speaker.actor && message.data.flags.data) {
                 let actor = game.actors.get(message.data.speaker.actor);
                 if (actor.permission == ENTITY_PERMISSIONS.OWNER) {
-                    return actor.items.find(x => x.name == `Begabung (${message.data.flags.data.preData.source.name})`) != undefined && !message.data.flags.data.talentedRerollUsed;
+                    return actor.items.find(x => x.name == `${game.i18n.localize('LocalizedIDs.aptitude')} (${message.data.flags.data.preData.source.name})`) != undefined && !message.data.flags.data.talentedRerollUsed;
                 }
             }
             return false

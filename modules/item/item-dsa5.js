@@ -78,14 +78,13 @@ export default class Itemdsa5 extends Item {
         let regex = new RegExp(game.i18n.localize("CHARAbbrev.GS"), "gi")
         for (let mod of effect.split(",").map(x => x.trim())) {
             let vals = mod.replace(/(\s+)/g, ' ').trim().split(" ")
+            vals[0] = vals[0].replace(regex, actor.data.data.status.speed.max)
             if (vals.length == 2) {
-                if (!isNaN(vals[0]) || /\d[dDwW]\d/.test(vals[0])) {
-                    let number = vals[0].replace(regex, actor.data.data.status.speed.max)
-
+                if (!isNaN(vals[0]) || /[+-]\d[+-]\d/.test(vals[0]) || /\d[dDwW]\d/.test(vals[0])) {
                     if (itemModifiers[vals[1].toLowerCase()] == undefined) {
-                        itemModifiers[vals[1].toLowerCase()] = [number]
+                        itemModifiers[vals[1].toLowerCase()] = [vals[0]]
                     } else {
-                        itemModifiers[vals[1].toLowerCase()].push(number)
+                        itemModifiers[vals[1].toLowerCase()].push(vals[0])
                     }
                 }
             }

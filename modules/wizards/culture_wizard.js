@@ -35,8 +35,8 @@ export default class CultureWizard extends WizardDSA5 {
         let data = super.getData()
         let advantages = this.parseToItem(this.culture.data.recommendedAdvantages.value, ["advantage"])
         let disadvantages = this.parseToItem(this.culture.data.recommendedDisadvantages.value, ["disadvantage"])
-        let writings = this.culture.data.writing.value == "" ? [] : this.parseToItem(this.culture.data.writing.value.split(",").map(x => `Schrift (${x.trim()})`).join(", "), ["specialability"])
-        let languages = this.culture.data.language.value == "" ? [] : this.parseToItem(this.culture.data.language.value.split(",").map(x => `Sprache (${x.trim()}) 3`).join(", "), ["specialability"])
+        let writings = this.culture.data.writing.value == "" ? [] : this.parseToItem(this.culture.data.writing.value.split(",").map(x => `${game.i18n.localize("LocalizedIDs.literacy")} (${x.trim()})`).join(", "), ["specialability"])
+        let languages = this.culture.data.language.value == "" ? [] : this.parseToItem(this.culture.data.language.value.split(",").map(x => `${game.i18n.localize("LocalizedIDs.language")} (${x.trim()}) 3`).join(", "), ["specialability"])
 
         let baseCost = Number(this.culture.data.APValue.value)
         mergeObject(data, {

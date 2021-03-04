@@ -8,7 +8,12 @@ export default class CareerWizard extends WizardDSA5 {
         this.actor = null
         this.career = null
         this.dataTypes = ["magictrick", "blessing", "spell", "ritual", "liturgy", "ceremony", "advantage", "disadvantage", "specialability"]
-        this.attributes = ["MU", "KL", "IN", "CH", "FF", "GE", "KO", "KK"]
+        const attrs = {
+            "de": ["MU", "KL", "IN", "CH", "FF", "GE", "KO", "KK"],
+            "en": ["COU", "SGC", "INT", "CHA", "DEX", "AGI", "CON", "STR"]
+        }
+        this.attributes = attrs[game.i18n.lang]
+
     }
 
     static get defaultOptions() {
@@ -192,6 +197,8 @@ export default class CareerWizard extends WizardDSA5 {
 
         for (let k of parent.find('.attributes')) {
             let attr = $(k).attr("data-attribute").toLowerCase()
+            attr = game.dsa5.config.knownShortcuts[attr.toLowerCase()][1]
+            console.log(attr)
             if (Number(this.actor.data.data.characteristics[attr].initial) + Number(this.actor.data.data.characteristics[attr].advances) < Number($(k).val())) {
                 update[`data.characteristics.${attr}.advances`] = Number($(k).val()) - Number(this.actor.data.data.characteristics[attr].initial)
             }

@@ -80,7 +80,9 @@
         "warning": "Attention",
         "deselectWithStrg": "CTRL + click to deselect",
         "noCombatskills": "No matching Combat Special Abilities",
-        "noExtensions": "No matching liturgy/spell extensions"
+        "noExtensions": "No matching liturgy/spell extensions",
+        "firstTime": "Language settings",
+        "firstTimeWarning": "Please chose your language. Compendiae of different languages are currently not compatible to each other. Existing characters can not be migrated to the other language."
     },
 
     "Equipment": {
@@ -700,7 +702,7 @@
     "ACTOR.TypeCreature": "Creature",
 
     "UNITS": {
-        "weight": "Weight in pounds",
+        "weight": "Weight in stone",
         "money": "Value in Silverthaler"
     },
 
@@ -796,7 +798,10 @@
         "poisonResistance": "Poison Resitance",
         "ResistanttoDisease": "Resistant to Disease",
         "perception": "Perception",
-        "featOfStrength": "Feat of Strength"
+        "featOfStrength": "Feat of Strength",
+        "literacy": "Literacy",
+        "language": "Language",
+        "aptitude": "Aptitude"
     },
 
     "DSAError": {
