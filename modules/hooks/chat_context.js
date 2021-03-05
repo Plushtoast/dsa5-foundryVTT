@@ -88,9 +88,9 @@ export default function() {
                     return ui.notifications.error(game.i18n.localize("DSAError.DamagePermission"))
 
                 actor.update({
-                    "data.status.wounds.value": Math.min(actor.data.data.status.wounds.max, actor.data.data.status.wounds.value + (message.data.flags.data.postData.KaP || 0)),
+                    "data.status.wounds.value": Math.min(actor.data.data.status.wounds.max, actor.data.data.status.wounds.value + (message.data.flags.data.postData.LeP || 0)),
                     "data.status.karmaenergy.value": Math.min(actor.data.data.status.karmaenergy.max, actor.data.data.status.karmaenergy.value + (message.data.flags.data.postData.KaP || 0)),
-                    "data.status.astralenergy.value": Math.min(actor.data.data.status.astralenergy.max, actor.data.data.status.astralenergy.value + (message.data.flags.data.postData.KaP || 0))
+                    "data.status.astralenergy.value": Math.min(actor.data.data.status.astralenergy.max, actor.data.data.status.astralenergy.value + (message.data.flags.data.postData.AsP || 0))
                 })
             }
         }, {
