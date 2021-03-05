@@ -4,6 +4,10 @@ export default function() {
             let button = $(`<button><i class="fas fa-bug"></i> ${game.i18n.localize("DSA5Error")}</button>`)
             button.click(ev => { window.open("https://github.com/Plushtoast/dsa5-foundryVTT/issues", "_blank") })
             html.find("#settings-documentation").append(button)
+
+            button = $(`<button><i class="fas fa-shopping-cart"></i> F-Shop</button>`)
+            button.click(ev => { window.open(game.i18n.localize("fshopLink"), "_blank") })
+            html.find("#settings-documentation").append(button)
         }
     })
 
