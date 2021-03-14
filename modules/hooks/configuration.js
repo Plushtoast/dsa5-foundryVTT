@@ -110,4 +110,13 @@ export default function() {
         type: Boolean
     });
 
+    game.settings.register("dsa5", "noConfirmationRoll", {
+        name: "DSASETTINGS.noConfirmationRoll",
+        hint: "DSASETTINGS.noConfirmationRollHint",
+        scope: "world",
+        config: true,
+        default: false,
+        type: Boolean
+    });
+
 }

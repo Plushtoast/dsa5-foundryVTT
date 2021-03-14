@@ -98,13 +98,7 @@ export default class ActorSheetdsa5Creature extends ActorSheetDsa5 {
                 case "trait":
                     await this._addTrait(item)
                     break;
-                case "npc":
-                case "creature":
-                case "character":
-                    if (DSA5.hooks.shapeshift) {
-                        DSA5.hooks.shapeshift(item, this.actor)
-                        break
-                    }
+
                 default:
                     super._handleDragData(dragData, event)
             }

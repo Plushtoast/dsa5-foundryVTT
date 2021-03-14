@@ -1,4 +1,5 @@
 import DSA5 from "../system/config-dsa5.js"
+import DSA5_Utility from "../system/utility-dsa5.js";
 
 export default function() {
     Hooks.on("preCreateActor", (createData) => {
@@ -47,18 +48,7 @@ export default function() {
             return;
 
         if (actor.data.type == "creature") {
-            let tokenSize = DSA5.tokenSizeCategories[actor.data.data.status.size.value]
-            if (tokenSize) {
-                if (tokenSize < 1) {
-                    data.scale = tokenSize;
-                    data.width = data.height = 1;
-                } else {
-                    const int = Math.floor(tokenSize);
-                    data.width = data.height = int;
-                    data.scale = tokenSize / int;
-                    data.scale = Math.max(data.scale, 0.25);
-                }
-            }
+            DSA5_Utility.calcTokenSize(duplicate(actor), data)
         }
     })
 }

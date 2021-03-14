@@ -36,6 +36,21 @@ export default class DSA5_Utility {
         return returnSkills;
     }
 
+    static calcTokenSize(actor, data) {
+        let tokenSize = DSA5.tokenSizeCategories[actor.data.status.size.value]
+        if (tokenSize) {
+            if (tokenSize < 1) {
+                data.scale = tokenSize;
+                data.width = data.height = 1;
+            } else {
+                const int = Math.floor(tokenSize);
+                data.width = data.height = int;
+                data.scale = tokenSize / int;
+                data.scale = Math.max(data.scale, 0.25);
+            }
+        }
+    }
+
     static async allMoneyItems() {
         let moneyItems = []
         const packs = game.packs.filter(p => p.metadata.tags && p.metadata.tags.includes("money"))
@@ -181,10 +196,10 @@ export default class DSA5_Utility {
     }
 
     static customEntityLinks(content) {
-        let regex = /@Rq\[[a-zA-zöüäÖÜÄ& -]+ (-)?\d+\]/
+        let regex = /@Rq\[[a-zA-zöüäÖÜÄ&; -]+ (-)?\d+\]/g
         return content.replace(regex, function(str) {
             let mod = str.match(/(-)?\d+/)[0]
-            let skill = str.replace(mod, "").match(/\[[a-zA-zöüäÖÜÄ& \-]+/)[0].replace(/[\[\]]/g, "").trim()
+            let skill = str.replace(mod, "").match(/\[[a-zA-zöüäÖÜÄ&; -]+/)[0].replace(/[\[\]]/g, "").trim()
             return `<a class="roll-button request-roll" data-type="skill" data-modifier="${mod}" data-name="${skill}"><em class="fas fa-dice"></em>${skill} ${mod}</a>`
         })
     }

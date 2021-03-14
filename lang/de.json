@@ -155,6 +155,7 @@
     "Category": "Kategorie",
     "clerical": "klerikal",
     "condition": "Zustand",
+    "ceremonialItem": "Zeremonialgegenstand",
     "combatspecialtalents": "Kampfsonderfertigkeiten",
     "CriticalSuccess": "Kritischer Erfolg",
     "CriticalFailure": "Patzer",
@@ -239,6 +240,8 @@
     "Height": "Größe",
     "Home": "Heimatort",
     "Initial": "Startwert",
+    "initDie": "Initiativewürfel",
+    "initDieMod": "Initiative Mod.",
     "initiative": "Initiative",
     "initComplete": "Initialisierung abgeschlossen",
     "initSkipped": "Initialisierung abgebrochen",
@@ -751,13 +754,6 @@
         "tp": "tp"
     },
 
-    "Shapeshift": {
-        "title": "Gestaltwandlung",
-        "description": "Bestätige bitte, sofern du {source} in {target} gestaltwandeln möchtest. Dabei wird ein neuer Charakter angelegt, welcher die neuen kombinierten Attribute beinhaltet. Stelle sicher, dass du diesen Vorgang erneut wiederholst und die alte Gestaltwandlung löscht, wenn sich die Attribute der Quelle verändern.<br>Entscheide wo die Attribute und Fähigkeiten ihren Ursprung nehmen:",
-        "takeVantages": "Vor-/Nachteile übernehmen",
-        "done": "Die Gestaltwandlung wurde abgeschlossen."
-    },
-
     "LocalizedIDs": {
         "deaf": "Taub",
         "blind": "Blind",
@@ -773,12 +769,12 @@
         "incompetent": "Unfähig",
         "exceptionalSkill": "Herausragende Fertigkeit",
         "exceptionalCombatTechnique": "Herausragende Kampftechnik",
-        "regenerationLP": "Verbesserte Regeneration (Lebensenergie)",
-        "regenerationAE": "Verbesserte Regeneration (Astralenergie)",
-        "regenerationKP": "Verbesserte Regeneration (Karmaenergie)",
-        "weakRegenerationLP": "Schlechte Regeneration (Lebensenergie)",
-        "weakRegenerationAE": "Schlechte Regeneration (Astralenergie)",
-        "weakRegenerationKP": "Schlechte Regeneration (Karmaenergie)",
+        "regenerationLeP": "Verbesserte Regeneration (Lebensenergie)",
+        "regenerationAsP": "Verbesserte Regeneration (Astralenergie)",
+        "regenerationKaP": "Verbesserte Regeneration (Karmaenergie)",
+        "weakRegenerationLeP": "Schlechte Regeneration (Lebensenergie)",
+        "weakRegenerationAsP": "Schlechte Regeneration (Astralenergie)",
+        "weakRegenerationKaP": "Schlechte Regeneration (Karmaenergie)",
         "weakAstralBody": "Schwacher Astralkörper",
         "weakKarmicBody": "Schwacher Karmalkörper",
         "restrictedSenseSight": "Eingeschränkter Sinn (Sicht)",
@@ -814,7 +810,7 @@
         "DamagePermission": "Du darfst den Schaden nicht übertragen.",
         "NotEnoughXP": "Nicht genug Abenteuerpunkte",
         "NotEnoughAsP": "Nicht genug Astralpunkte",
-        "NotEnoughKaP": "Nicht genug Astralpunkte",
+        "NotEnoughKaP": "Nicht genug Karmapunkte",
         "NotEnoughCharges": "Nicht genug Ladungen",
         "AdvanceMaximumReached": "Maximale Steigerung bereits erreicht",
         "notFound": "{category} {name} nicht gefunden",
@@ -831,7 +827,20 @@
         "talentValueTooLow": "Dein Talentwert ist zu niedrig",
         "NotUnlocked": "Noch nichts freigeschalten",
         "onlyGMAllowedToCancel": "Nur der Spielleiter darf Vergleichsproben abbrechen.",
-        "unknownCombatSkill": "Das Kampftalent {skill} der Waffe {item} ist unbekannt. Bitte die Waffe anpassen."
+        "unknownCombatSkill": "Das Kampftalent {skill} der Waffe {item} ist unbekannt. Bitte die Waffe anpassen.",
+        "onlyGMcanShapeshift": "Du hast nicht die richtigen Berechtigungen zum Formwandeln."
+    },
+
+    "Shapeshift": {
+        "title": "Gestaltwandlung",
+        "description": "Bestätige bitte, sofern du {source} in {target} gestaltwandeln möchtest. Dabei wird ein neuer Charakter angelegt, welcher die neuen kombinierten Attribute beinhaltet. Stelle sicher, dass du diesen Vorgang erneut wiederholst und die alte Gestaltwandlung löscht, wenn sich die Attribute der Quelle verändern.<br>Entscheide wo die Attribute und Fähigkeiten ihren Ursprung nehmen:",
+        "takeVantages": "Vor-/Nachteile übernehmen",
+        "done": "Die Gestaltwandlung wurde abgeschlossen.",
+        "takeSpecAbs": "Sonderfertigkeiten übernehmen",
+        "takeSpells": "Zauber/Rituale übernehmen",
+        "takeLiturgies": "Liturgien/Zeremonien übernehmen",
+        "keepVision": "Sichteinstellung übernehmen",
+        "takeSkills": "Talente übernehmen"
     },
 
     "CEREMONYMODIFIER": {
@@ -935,7 +944,9 @@
         "talentModifierEnabled": "Talentmodifikatoren aktiviert",
         "talentModifierEnabledHint": "Talentmodifikatoren im Würfelfenster automatisch selektiert.",
         "capQSat": "Maximale erwürfelbare QS",
-        "capQSatHint": "Beschränke die erzielbare QS."
+        "capQSatHint": "Beschränke die erzielbare QS.",
+        "noConfirmationRoll": "Kein Bestätigungswurf",
+        "noConfirmationRollHint": "Bei Angriffen und Eigenschaftswürfen keinen Bestätigungswurf durchführen."
     },
 
     "CHATFATE": {
@@ -1028,6 +1039,7 @@
     },
 
     "CONDITION": {
+        "shapeshift": "Gestaltwandlung",
         "encumbered": "Belastung",
         "stunned": "Betäubung",
         "raptured": "Entrückung",
@@ -1053,6 +1065,7 @@
     },
 
     "CONDITIONDESCRIPTION": {
+        "shapeshift": "Diese Kreatur hat ihre Gestalt gewandelt",
         "encumbered": "Schweres Gepäck und Rüstungen können den Träger sehr belasten und seine Bewegungsfreiheit einschränken. So lange diese Lasten getragen werden, erleidet die Person entsprechende Stufen an Belastung. Werden die Lasten abgelegt, verschwinden auch die Belastungsstufen. Das Gewicht von Rüstungen wird bei der Berechnung von Belastung durch Traglast ignoriert.",
         "stunned": "Durch zu viel Wein, Erschöpfung oder eine zünftige Schlägerei kann ein Held Stufen von Betäubung erleiden. Eine Stufe Betäubung verschwindet nach einer Ruhephase von 3 Stunden, so nichts anderes angegeben ist.",
         "raptured": "Dieser Zustand kommt bei Geweihten zustande, wenn sie in kurzer Zeit eine bestimmte Menge an Karmapunkten ausgeben. Für jeweils 10 Karmapunkte, die bei Mirakeln, Liturgien oder Zeremonien frei werden, erhält er eine Stufe des Zustands Entrückung. Die Entrückung baut sich jede Stunde um 1 ab.",

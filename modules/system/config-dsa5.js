@@ -8,8 +8,7 @@ DSA5.statusEffects = [{
         flags: {
             dsa5: {
                 "value": null,
-                "editable": true,
-                "impact": null
+                "editable": true
             }
         }
     },
@@ -21,8 +20,7 @@ DSA5.statusEffects = [{
         flags: {
             dsa5: {
                 "value": null,
-                "editable": true,
-                "impact": null
+                "editable": true
             }
         }
     },
@@ -34,8 +32,7 @@ DSA5.statusEffects = [{
         flags: {
             dsa5: {
                 "value": null,
-                "editable": true,
-                "impact": null
+                "editable": true
             }
         }
     },
@@ -47,8 +44,7 @@ DSA5.statusEffects = [{
         flags: {
             dsa5: {
                 "value": null,
-                "editable": true,
-                "impact": null
+                "editable": true
             }
         }
     },
@@ -60,8 +56,7 @@ DSA5.statusEffects = [{
         flags: {
             dsa5: {
                 "value": null,
-                "editable": true,
-                "impact": null
+                "editable": true
             }
         }
     },
@@ -73,8 +68,7 @@ DSA5.statusEffects = [{
         flags: {
             dsa5: {
                 "value": null,
-                "editable": true,
-                "impact": null
+                "editable": true
             }
         }
     },
@@ -86,8 +80,7 @@ DSA5.statusEffects = [{
         flags: {
             dsa5: {
                 "value": null,
-                "editable": true,
-                "impact": null
+                "editable": true
             }
         }
     },
@@ -99,8 +92,7 @@ DSA5.statusEffects = [{
         flags: {
             dsa5: {
                 "value": null,
-                "editable": true,
-                "impact": null
+                "editable": true
             }
         }
     },
@@ -112,8 +104,7 @@ DSA5.statusEffects = [{
         flags: {
             dsa5: {
                 "value": null,
-                "editable": true,
-                "impact": null
+                "editable": true
             }
         }
     },
@@ -125,8 +116,7 @@ DSA5.statusEffects = [{
         flags: {
             dsa5: {
                 "value": null,
-                "editable": true,
-                "impact": null
+                "editable": true
             }
         }
     },
@@ -138,8 +128,7 @@ DSA5.statusEffects = [{
         flags: {
             dsa5: {
                 "value": null,
-                "editable": true,
-                "impact": null
+                "editable": true
             }
         }
     },
@@ -151,8 +140,7 @@ DSA5.statusEffects = [{
         flags: {
             dsa5: {
                 "value": null,
-                "editable": true,
-                "impact": null
+                "editable": true
             }
         }
     },
@@ -164,8 +152,7 @@ DSA5.statusEffects = [{
         flags: {
             dsa5: {
                 "value": null,
-                "editable": true,
-                "impact": null
+                "editable": true
             }
         }
     },
@@ -177,8 +164,7 @@ DSA5.statusEffects = [{
         flags: {
             dsa5: {
                 "value": null,
-                "editable": true,
-                "impact": null
+                "editable": true
             }
         }
     },
@@ -190,8 +176,7 @@ DSA5.statusEffects = [{
         flags: {
             dsa5: {
                 "value": null,
-                "editable": true,
-                "impact": null
+                "editable": true
             }
         }
     },
@@ -204,7 +189,6 @@ DSA5.statusEffects = [{
             dsa5: {
                 "value": 1,
                 "editable": false,
-                "impact": "-1",
                 "max": 4
             }
         }
@@ -218,7 +202,6 @@ DSA5.statusEffects = [{
             dsa5: {
                 "value": 1,
                 "editable": true,
-                "impact": "-1",
                 "max": 4
             }
         }
@@ -232,7 +215,6 @@ DSA5.statusEffects = [{
             dsa5: {
                 "value": 1,
                 "editable": true,
-                "impact": "-1",
                 "max": 4
             }
         }
@@ -246,7 +228,6 @@ DSA5.statusEffects = [{
             dsa5: {
                 "value": 1,
                 "editable": true,
-                "impact": "-1",
                 "max": 4
             }
         }
@@ -260,7 +241,6 @@ DSA5.statusEffects = [{
             dsa5: {
                 "value": 1,
                 "editable": true,
-                "impact": "-1",
                 "max": 4
             }
         }
@@ -274,7 +254,6 @@ DSA5.statusEffects = [{
             dsa5: {
                 "value": 1,
                 "editable": true,
-                "impact": "-1",
                 "max": 4
             }
         }
@@ -288,7 +267,6 @@ DSA5.statusEffects = [{
             dsa5: {
                 "value": 1,
                 "editable": true,
-                "impact": "-1",
                 "max": 4
             }
         }
@@ -558,7 +536,8 @@ DSA5.specialAbilityCategories = {
     "clerical": "clerical",
     "language": "language",
     "animal": "animal",
-    "staff": "traditionArtifact"
+    "staff": "traditionArtifact",
+    "ceremonial": "ceremonialItem"
 }
 
 DSA5.dieColors = {

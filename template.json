@@ -132,7 +132,9 @@
                     "initiative": {
                         "value": 0,
                         "modifier": 0,
-                        "current": 0
+                        "current": 0,
+                        "die": "1d6",
+                        "diemodifier": ""
                     },
                     "size": {
                         "value": "average"

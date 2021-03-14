@@ -35,13 +35,16 @@ export default class DSA5Initializer extends Dialog {
         await fetch(`modules/${this.module}/initialization${this.lang}.json`).then(async r => r.json()).then(async json => {
             let foldersToCreate = json.folders
             if (foldersToCreate.length > 0) {
+                console.log("muh1")
+                console.log(foldersToCreate)
                 let head = game.folders.entities.find(x => x.name == foldersToCreate[0].name && x.type == "JournalEntry")
                 if (head) {
                     this.folders[head.data.name] = head
                     json.folders.shift()
                 }
-
+                console.log("muh2")
                 let createdFolders = await Folder.create(foldersToCreate)
+                console.log("muh3")
                 if (!Array.isArray(createdFolders))
                     createdFolders = [createdFolders]
                 for (let folder of createdFolders)

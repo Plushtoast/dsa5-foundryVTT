@@ -18,6 +18,7 @@ export default class DSA5StatusEffects {
         })
     }
 
+
     static async createEffect(actor, effect, value, auto) {
         effect.label = game.i18n.localize(effect.label);
         if (auto) {
@@ -39,6 +40,7 @@ export default class DSA5StatusEffects {
         delete effect.id
         return result
     }
+
     static async removeEffect(actor, existing, value, absolute, auto) {
         if (auto) {
             existing.flags.dsa5.auto = absolute ? value : Math.max(0, existing.flags.dsa5.auto - value)
@@ -117,9 +119,9 @@ class ProneEffect extends DSA5StatusEffects {
 class RaptureEffect extends DSA5StatusEffects {
     static calculateRollModifier(effect, actor, item, options = {}) {
         let happyTalents = actor.data.happyTalents.value.split(",").map(x => x.trim())
-        if ((happyTalents.includes(item.name) && item.type == "skill") || ["ceremony", "ritual"].includes(item.type))
+        if ((happyTalents.includes(item.name) && ["skill", "combatskill"].includes(item.type)) || ["ceremony", "ritual"].includes(item.type))
             return effect.flags.dsa5.value - 1
-        if (["ritual", "spell", "skill"].includes(item.type))
+        if (["ritual", "spell", "skill", "combatskill"].includes(item.type))
             return effect.flags.dsa5.value * -1
         return 0
     }

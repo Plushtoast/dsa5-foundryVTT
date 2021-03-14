@@ -156,6 +156,7 @@
     "clerical": "clerical",
     "charges": "Charges",
     "condition": "Condition",
+    "ceremonialItem": "Ceremonial Item",
     "combatspecialtalents": "Combat Special Abilities",
     "CriticalSuccess": "Critical success",
     "CriticalFailure": "Botch",
@@ -242,6 +243,8 @@
     "Home": "Home",
     "Initial": "Initial value",
     "initiative": "Initiative",
+    "initDieMod": "Initiative die mod.",
+    "initDie": "Initiative die",
     "interruption": "Interruption",
     "increaseRange": "Increase range",
     "importDefault": "<div class=\"detailbox\"><p>Copyright © 2020 by Ulisses Spiele GmbH, Waldems. THE DARK EYE, AVENTURIA, DERE, MYRANOR, RIESLAND,  THARUN, and UTHURIA are trademarks of Ulisses Spiele. All rights reserved.<br>This publication is protected under the copyright laws of the United States of America. No part of this publication may be reproduced, stored in a retrieval system, or transmitted, in any form or by any means, whether electronic,mechanical, photocopy, recording, or otherwise, without prior written consent by Ulisses Spiele GmbH, Waldems.</p></div>",
@@ -645,12 +648,7 @@
     },
 
 
-    "Shapeshift": {
-        "title": "Shapeshift",
-        "description": "Please confirm if you want to shapeshift {source} into {target}. This will create a new Actor, which includes the new combined abilities. Make sure to repeate this action once the source of the shapeshift changes.<br>Chose the attributes' origins:",
-        "takeVantages": "Keep Dis-/Advantages",
-        "done": "The shapeshift has been finished."
-    },
+
 
     "HELP": {
         "showHelp": "Show help",
@@ -773,12 +771,12 @@
         "incompetent": "Incompetent",
         "exceptionalSkill": "Exceptional Skill",
         "exceptionalCombatTechnique": "Exceptional Combat Technique",
-        "regenerationLP": "Improved Regeneration (Life Points)",
-        "regenerationAE": "Improved Regeneration (Arcane Energy)",
-        "regenerationKP": "Improved Regeneration (Karma Points)",
-        "weakRegenerationLP": "Weak Regeneration (Life Points)",
-        "weakRegenerationAE": "Weak Regeneration (Arcane Energy)",
-        "weakRegenerationKP": "Weak Regeneration (Karma Points)",
+        "regenerationLeP": "Improved Regeneration (Life Points)",
+        "regenerationAsP": "Improved Regeneration (Arcane Energy)",
+        "regenerationKaP": "Improved Regeneration (Karma Points)",
+        "weakRegenerationLeP": "Weak Regeneration (Life Points)",
+        "weakRegenerationAsP": "Weak Regeneration (Arcane Energy)",
+        "weakRegenerationKaP": "Weak Regeneration (Karma Points)",
         "weakAstralBody": "Weak Astral Body",
         "weakKarmicBody": "Weak Karmic Body",
         "restrictedSenseSight": "Restricted Sense (Sight)",
@@ -803,6 +801,18 @@
         "literacy": "Literacy",
         "language": "Language",
         "aptitude": "Aptitude"
+    },
+
+    "Shapeshift": {
+        "title": "Shapeshift",
+        "description": "Please confirm if you want to shapeshift {source} into {target}. This will create a new Actor, which includes the new combined abilities. Make sure to repeate this action once the source of the shapeshift changes.<br>Chose the attributes' origins:",
+        "takeVantages": "Keep Dis-/Advantages",
+        "takeSpecAbs": "Keep Special Abilities",
+        "takeSpells": "Keep Spells/Rituals",
+        "takeLiturgies": "Keep Liturgies/Ceremonies",
+        "done": "The shapeshift has been finished.",
+        "keepVision": "Keep vision",
+        "takeSkills": "Keep skills"
     },
 
     "DSAError": {
@@ -831,7 +841,8 @@
         "talentValueTooLow": "Your Skill value is too low",
         "NotUnlocked": "Not yet unlocked",
         "onlyGMAllowedToCancel": "Only the game master is allowed to abort opposing tests",
-        "unknownCombatSkill": "The combat technique {skill} of the weapon {item} is unknown. Please fix the weapon."
+        "unknownCombatSkill": "The combat technique {skill} of the weapon {item} is unknown. Please fix the weapon.",
+        "onlyGMcanShapeshift": "You don't have the right permissions to shapeshift."
     },
 
     "CEREMONYMODIFIER": {
@@ -938,7 +949,9 @@
         "capQSat": "Max achievable quality level",
         "capQSatHint": "Restrict the max achievable quality level.",
         "talentModifierEnabled": "Skill modifiers activated",
-        "talentModifierEnabledHint": "Skill modifiers are selected by default in the roll window"
+        "talentModifierEnabledHint": "Skill modifiers are selected by default in the roll window",
+        "noConfirmationRoll": "No confirmation roll",
+        "noConfirmationRollHint": "No confirmation roll for attacks and attribute checks."
     },
 
     "CHATFATE": {
@@ -1031,6 +1044,7 @@
     },
 
     "CONDITION": {
+        "shapeshift": "Shapeshift",
         "encumbered": "Encumbrance",
         "stunned": "Stupor",
         "raptured": "Rapture",
@@ -1056,6 +1070,7 @@
     },
 
     "CONDITIONDESCRIPTION": {
+        "shapeshift": "This creature shifted its shape.",
         "encumbered": "Heavy gear and armor can weigh heroes down, restricting their mobility. Encumbered characters suffer penalties to applicable skill checks, based on their current level of Encumbrance. Applicable skills are indicated as such in their descriptions. When heroes discard weight, their levels of Encumbrance go away. When calculating encumbrance due to load, remember to ignore the weight of the hero’s armor, which is already factored into its Encumbrance value.",
         "stunned": "Whether from wine, drugs, exhaustion, or a good brawl, a hero might gain levels of Stupor and suffer disorientation and lethargy. However, the effects of Stupor do not last very long. Remove 1 level of Stupor for every 3 full hours of rest, unless directed otherwise.",
         "raptured": "When Blessed Ones use large numbers of karma points (KP) within a short period of time, they acquire a condition called Rapture. Every passing hour reduces Rapture levels by 1.",

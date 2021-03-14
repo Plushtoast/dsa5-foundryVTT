@@ -210,6 +210,35 @@
     </div>
     <div class="derivedAttrs row-section">
         <div class="col two lineheight">
+            {{localize "initDie"}}
+        </div>
+        <div class="col two lineheight center">
+            <select name="data.status.initiative.die" data-dtype="String" style="width:100%">
+                {{#select data.status.initiative.die}}
+                {{#each initDies as |ch char|}}
+                <option value="{{ch}}">{{char}}</option>
+                {{/each}}
+                {{/select}}
+              </select>
+        </div>
+    </div>
+    <div class="derivedAttrs row-section">
+        <div class="col two lineheight">
+            {{localize "initDieMod"}}
+        </div>
+
+        <div class="col two lineheight center">
+            <select name="data.status.initiative.diemodifier" data-dtype="String" style="width:100%">
+                {{#select data.status.initiative.diemodifier}}
+                {{#each initDies as |ch char|}}
+                <option value="{{ch}}">{{char}}</option>
+                {{/each}}
+                {{/select}}
+              </select>
+        </div>
+    </div>
+    <div class="derivedAttrs row-section">
+        <div class="col two lineheight">
             {{localize "fatePoints"}}
         </div>
         <div class="col eight lineheight center">

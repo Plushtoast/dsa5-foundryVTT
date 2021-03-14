@@ -87,28 +87,36 @@ export default class DiceDSA5 {
 
         if (roll.terms[0].results.filter(x => x.result == 1).length == 1) {
             description = game.i18n.localize("CriticalSuccess");
-            let res2 = res - rollConfirm.terms[0].results[0].result;
-            if (AdvantageRulesDSA5.hasVantage(testData.extra.actor, `${game.i18n.localize('LocalizedIDs.weaponAptitude')} (${combatskill})`) && !(res2 >= 0)) {
-                let a = rollConfirm.terms[0].results[0].result
-                rollConfirm = new Roll("1d20").roll();
-                res2 = res - rollConfirm.terms[0].results[0].result;
-                description += ", " + game.i18n.format("usedWeaponExpertise", { a: a, b: rollConfirm.terms[0].results[0].result })
+            if (game.settings.get("dsa5", "noConfirmationRoll")) {
+                successLevel = 3
+            } else {
+                let res2 = res - rollConfirm.terms[0].results[0].result;
+                if (AdvantageRulesDSA5.hasVantage(testData.extra.actor, `${game.i18n.localize('LocalizedIDs.weaponAptitude')} (${combatskill})`) && !(res2 >= 0)) {
+                    let a = rollConfirm.terms[0].results[0].result
+                    rollConfirm = new Roll("1d20").roll();
+                    res2 = res - rollConfirm.terms[0].results[0].result;
+                    description += ", " + game.i18n.format("usedWeaponExpertise", { a: a, b: rollConfirm.terms[0].results[0].result })
+                }
+                this._addRollDiceSoNice(testData, rollConfirm, color)
+                chars.push({ char: id, res: rollConfirm.terms[0].results[0].result, suc: res2 >= 0, tar: res });
+                successLevel = res2 >= 0 ? 3 : 2
             }
-            this._addRollDiceSoNice(testData, rollConfirm, color)
-            chars.push({ char: id, res: rollConfirm.terms[0].results[0].result, suc: res2 >= 0, tar: res });
-            successLevel = res2 >= 0 ? 3 : 2
         } else if (roll.terms[0].results.filter(x => x.result >= botch).length == 1) {
             description = game.i18n.localize("CriticalFailure");
-            let res2 = res - rollConfirm.terms[0].results[0].result;
-            if (AdvantageRulesDSA5.hasVantage(testData.extra.actor, `${game.i18n.localize('LocalizedIDs.weaponAptitude')} (${combatskill})`) && !(res2 >= 0)) {
-                let a = rollConfirm.terms[0].results[0].result
-                rollConfirm = new Roll("1d20").roll();
-                res2 = res - rollConfirm.terms[0].results[0].result;
-                description += ", " + game.i18n.format("usedWeaponExpertise", { a: a, b: rollConfirm.terms[0].results[0].result })
+            if (game.settings.get("dsa5", "noConfirmationRoll")) {
+                successLevel = -3
+            } else {
+                let res2 = res - rollConfirm.terms[0].results[0].result;
+                if (AdvantageRulesDSA5.hasVantage(testData.extra.actor, `${game.i18n.localize('LocalizedIDs.weaponAptitude')} (${combatskill})`) && !(res2 >= 0)) {
+                    let a = rollConfirm.terms[0].results[0].result
+                    rollConfirm = new Roll("1d20").roll();
+                    res2 = res - rollConfirm.terms[0].results[0].result;
+                    description += ", " + game.i18n.format("usedWeaponExpertise", { a: a, b: rollConfirm.terms[0].results[0].result })
+                }
+                this._addRollDiceSoNice(testData, rollConfirm, color)
+                chars.push({ char: id, res: rollConfirm.terms[0].results[0].result, suc: res2 >= 0, tar: res });
+                successLevel = res2 >= 0 ? -2 : -3
             }
-            this._addRollDiceSoNice(testData, rollConfirm, color)
-            chars.push({ char: id, res: rollConfirm.terms[0].results[0].result, suc: res2 >= 0, tar: res });
-            successLevel = res2 >= 0 ? -2 : -3
         }
 
         if (description == "") {
@@ -133,32 +141,28 @@ export default class DiceDSA5 {
         let roll = testData.roll
         let chars = []
 
-        let lepBonus = AdvantageRulesDSA5.vantageStep(testData.extra.actor, game.i18n.localize('LocalizedIDs.regenerationLP')) - AdvantageRulesDSA5.vantageStep(testData.extra.actor, game.i18n.localize('LocalizedIDs.weakRegenerationLP'))
-
-        chars.push({ char: "LeP", res: roll.terms[0].results[0].result, die: "d6" })
-
         let result = {
             rollType: "regeneration",
-            LeP: Math.round(Math.max(0, Number(roll.terms[0].results[0].result) + Number(modifier) + lepBonus) * Number(testData.regenerationFactor)),
             preData: testData,
             modifiers: modifier,
             extra: {}
         }
 
+        let attrs = ["LeP"]
+        if (testData.extra.actor.isMage) attrs.push("AsP")
+        if (testData.extra.actor.isPriest) attrs.push("KaP")
+        let index = 0
 
-        if (testData.extra.actor.isMage) {
-            let aspBonus = AdvantageRulesDSA5.vantageStep(testData.extra.actor, game.i18n.localize('LocalizedIDs.regenerationAE')) - AdvantageRulesDSA5.vantageStep(testData.extra.actor, game.i18n.localize('LocalizedIDs.weakRegenerationAE'))
-            chars.push({ char: "AsP", res: roll.terms[2].results[0].result, die: "d6" })
-            result["AsP"] = Math.round(Math.max(0, Number(roll.terms[2].results[0].result) + Number(modifier) + aspBonus) * Number(testData.regenerationFactor))
-        }
-        if (testData.extra.actor.isPriest) {
-            let aspBonus = AdvantageRulesDSA5.vantageStep(testData.extra.actor, game.i18n.localize('LocalizedIDs.regenerationKP')) - AdvantageRulesDSA5.vantageStep(testData.extra.actor, game.i18n.localize('LocalizedIDs.weakRegenerationKP'))
-            chars.push({ char: "KaP", res: roll.terms[2].results[0].result, die: "d6" })
-            result["KaP"] = Math.round(Math.max(0, Number(roll.terms[2].results[0].result) + Number(modifier) + aspBonus) * Number(testData.regenerationFactor))
+        for (let k of attrs) {
+            this._appendSituationalModifiers(testData, game.i18n.localize(`LocalizedIDs.regeneration${k}`), AdvantageRulesDSA5.vantageStep(testData.extra.actor, game.i18n.localize(`LocalizedIDs.regeneration${k}`)), k)
+            this._appendSituationalModifiers(testData, game.i18n.localize(`LocalizedIDs.weakRegeneration${k}`), AdvantageRulesDSA5.vantageStep(testData.extra.actor, game.i18n.localize(`LocalizedIDs.weakRegeneration${k}`)) * -1, k)
+
+            chars.push({ char: k, res: roll.terms[index].results[0].result, die: "d6" })
+            result[k] = Math.round(Math.max(0, Number(roll.terms[index].results[0].result) + Number(modifier) + this._situationalModifiers(testData, k)) * Number(testData.regenerationFactor))
+            index += 2
         }
 
         result["characteristics"] = chars
-
         return result
     }
 
@@ -261,7 +265,7 @@ export default class DiceDSA5 {
         }, 0);
     }
 
-    static _appendSituationalModifiers(testData, name, val) {
+    static _appendSituationalModifiers(testData, name, val, type = "") {
         let existing = testData.situationalModifiers.find(x => x.name == name)
 
         if (existing) {
@@ -269,7 +273,8 @@ export default class DiceDSA5 {
         } else {
             testData.situationalModifiers.push({
                 name: name,
-                value: val
+                value: val,
+                type: type
             })
         }
     }
@@ -818,7 +823,11 @@ export default class DiceDSA5 {
                     }
                     break;
                 case "regeneration":
-                    if (testData.extra.actor.isMage) {
+                    if (testData.extra.actor.isPriest && testData.extra.actor.isMage) {
+                        roll = new Roll("1d6+1d6+1d6").roll()
+                        roll.dice[1].options.colorset = "ge"
+                        roll.dice[2].options.colorset = "in"
+                    } else if (testData.extra.actor.isMage) {
                         roll = new Roll("1d6+1d6").roll()
                         roll.dice[1].options.colorset = "ge"
                     } else if (testData.extra.actor.isPriest) {

@@ -4,6 +4,7 @@ import AdvantageRulesDSA5 from "../system/advantage-rules-dsa5.js";
 import Itemdsa5 from "../item/item-dsa5.js";
 import SpecialabilityRulesDSA5 from "../system/specialability-rules-dsa5.js";
 import DSA5ChatListeners from "../system/chat_listeners.js";
+import ShapeshiftWizard from "../wizards/shapeshift_wizard.js";
 
 
 export default class ActorSheetDsa5 extends ActorSheet {
@@ -120,6 +121,7 @@ export default class ActorSheetDsa5 extends ActorSheet {
         const sheetData = super.getData();
         mergeObject(sheetData.actor, this.actor.prepare())
         sheetData.isGM = game.user.isGM;
+        sheetData["initDies"] = { "-": "", "1d6": "1d6", "2d6": "2d6", "3d6": "3d6", "4d6": "d6" }
         this._addDefaultActiveEffects(sheetData)
         return sheetData;
     }
@@ -142,8 +144,13 @@ export default class ActorSheetDsa5 extends ActorSheet {
                 condition.existing = false
             }
         }
+        let customConditions = this.actor.data.effects.filter(e => e.flags.dsa5 && e.flags.dsa5.custom).map(x => {
+            x.id = x._id
+            return x
+        })
         data.conditions = conditions.filter(x => x.existing)
         data.manualConditions = conditions.filter(x => !x.existing)
+        data.conditions.push(...customConditions)
     }
 
 
@@ -512,19 +519,23 @@ export default class ActorSheetDsa5 extends ActorSheet {
             let id = ev.currentTarget.getAttribute("data-id")
             if (ev.button == 0) {
                 let effect = CONFIG.statusEffects.find(x => x.id == id)
+                let text
                 if (effect) {
-                    let text = $(`<div style="padding:5px;"><b><a class="chat-condition chatButton" data-id="${effect.id}"><img src="${effect.icon}"/>${game.i18n.localize(effect.label)}</a></b>: ${game.i18n.localize(effect.description)}</div>`)
+                    text = $(`<div style="padding:5px;"><b><a class="chat-condition chatButton" data-id="${effect.id}"><img src="${effect.icon}"/>${game.i18n.localize(effect.label)}</a></b>: ${game.i18n.localize(effect.description)}</div>`)
                     text.find('.chat-condition').on('click', ev => {
                         DSA5ChatListeners.postStatus($(ev.currentTarget).attr('data-id'))
                     })
-                    let elem = $(ev.currentTarget).closest('.groupbox').find('.effectDescription')
-                    elem.fadeOut('fast', function() {
-                        elem.html(text).fadeIn('fast')
-                    })
-
                 } else {
                     //search temporary effects
+                    effect = this.actor.data.effects.find(x => x._id == id)
+                    if (effect) {
+                        text = $(`<div style="padding:5px;"><b><a class="chat-condition chatButton" data-id="${effect.id}"><img src="${effect.icon}"/>${game.i18n.localize(effect.label)}</a></b>: ${game.i18n.localize(effect.flags.dsa5.description)}</div>`)
+                    }
                 }
+                let elem = $(ev.currentTarget).closest('.groupbox').find('.effectDescription')
+                elem.fadeOut('fast', function() {
+                    elem.html(text).fadeIn('fast')
+                })
             } else if (ev.button == 2) {
                 this._deleteActiveEffect(id)
             }
@@ -748,8 +759,15 @@ export default class ActorSheetDsa5 extends ActorSheet {
 
     _deleteActiveEffect(id) {
         let item = this.actor.data.effects.find(x => x.flags.core.statusId == id)
-        if (item)
-            this.actor.deleteEmbeddedEntity("ActiveEffect", item._id)
+        if (!item)
+            item = this.actor.data.effects.find(x => x._id == id)
+
+        if (item) {
+            Hooks.call("deleteActorActiveEffect", this.actor, item)
+
+            if (this.actor)
+                this.actor.deleteEmbeddedEntity("ActiveEffect", item._id)
+        }
     }
 
     _deleteItem(ev) {
@@ -981,6 +999,12 @@ export default class ActorSheetDsa5 extends ActorSheet {
             case "condition":
                 this.actor.addCondition(item.payload.id)
                 break
+            case "creature":
+                let shapeshift = new ShapeshiftWizard()
+                shapeshift.setShapeshift(this.actor, item)
+                shapeshift.render(true)
+                break
+
             default:
                 ui.notifications.error(game.i18n.format("DSAError.canNotBeAdded", { item: item.name, category: game.i18n.localize(item.type) }))
         }

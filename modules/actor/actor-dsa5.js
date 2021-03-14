@@ -56,7 +56,7 @@ export default class Actordsa5 extends Actor {
             let isFamiliar = data.items.find(x => x.name == game.i18n.localize('LocalizedIDs.familiar') && x.type == "trait") != undefined
             data.canAdvance = data.type == "character" || isFamiliar
             data.isMage = data.items.some(x => ["ritual", "spell", "magictrick"].includes(x.type) || (x.type == "specialability" && ["magical", "staff"].includes(x.data.category.value)))
-            data.isPriest = data.items.some(x => ["ceremony", "liturgy", "blessing"].includes(x.type) || (x.type == "specialability" && x.data.category.value == "clerical"))
+            data.isPriest = data.items.some(x => ["ceremony", "liturgy", "blessing"].includes(x.type) || (x.type == "specialability" && ["ceremonial", "clerical"].includes(x.data.category.value)))
             if (data.canAdvance) {
                 data.data.details.experience.current = data.data.details.experience.total - data.data.details.experience.spent;
                 data.data.details.experience.description = DSA5_Utility.experienceDescription(data.data.details.experience.total)
@@ -78,7 +78,8 @@ export default class Actordsa5 extends Actor {
                 data.data.status.initiative.value = data.data.status.initiative.current + (data.data.status.initiative.modifier || 0);
             }
 
-            data.data.status.initiative.value += data.data.status.initiative.gearmodifier + data.data.status.initiative.value * 0.01
+            data.data.status.initiative.value += data.data.status.initiative.gearmodifier
+            data.data.status.initiative.value *= 1.01
 
             data.data.status.wounds.max = data.data.status.wounds.current + data.data.status.wounds.modifier + data.data.status.wounds.advances + data.data.status.wounds.gearmodifier
             data.data.status.astralenergy.max = data.data.status.astralenergy.current + data.data.status.astralenergy.modifier + data.data.status.astralenergy.advances + data.data.status.astralenergy.gearmodifier
@@ -119,28 +120,19 @@ export default class Actordsa5 extends Actor {
                 let pain = 0
                 if (hasDefaultPain) {
                     pain = Math.floor((1 - data.data.status.wounds.value / data.data.status.wounds.max) * 4)
-
-                    if (data.data.status.wounds.value <= 5)
-                        pain = 4
-
+                    if (data.data.status.wounds.value <= 5) pain = 4
                 } else {
                     pain = Math.floor(5 - 5 * data.data.status.wounds.value / data.data.status.wounds.max)
                 }
 
-                if (pain < 4)
-                    pain -= AdvantageRulesDSA5.vantageStep(this, game.i18n.localize('LocalizedIDs.ruggedFighter'))
-
-                if (pain > 0)
-                    pain += AdvantageRulesDSA5.vantageStep(this, game.i18n.localize('LocalizedIDs.sensitiveToPain'))
+                if (pain < 4) pain -= AdvantageRulesDSA5.vantageStep(this, game.i18n.localize('LocalizedIDs.ruggedFighter'))
+                if (pain > 0) pain += AdvantageRulesDSA5.vantageStep(this, game.i18n.localize('LocalizedIDs.sensitiveToPain'))
 
                 pain = Math.max(Math.min(4, pain), 0)
 
-                if (AdvantageRulesDSA5.hasVantage(this, game.i18n.localize('LocalizedIDs.blind')))
-                    this.addCondition("blind")
-                if (AdvantageRulesDSA5.hasVantage(this, game.i18n.localize('LocalizedIDs.mute')))
-                    this.addCondition("mute")
-                if (AdvantageRulesDSA5.hasVantage(this, game.i18n.localize('LocalizedIDs.deaf')))
-                    this.addCondition("deaf")
+                if (AdvantageRulesDSA5.hasVantage(this, game.i18n.localize('LocalizedIDs.blind'))) this.addCondition("blind")
+                if (AdvantageRulesDSA5.hasVantage(this, game.i18n.localize('LocalizedIDs.mute'))) this.addCondition("mute")
+                if (AdvantageRulesDSA5.hasVantage(this, game.i18n.localize('LocalizedIDs.deaf'))) this.addCondition("deaf")
 
                 this.addCondition("inpain", pain, true)
                 data.data.status.speed.max = Math.max(0, data.data.status.speed.max - pain)
@@ -240,7 +232,8 @@ export default class Actordsa5 extends Actor {
             staff: [],
             clerical: [],
             language: [],
-            animal: []
+            animal: [],
+            ceremonial: []
         }
 
         let armor = [];
@@ -451,8 +444,6 @@ export default class Actordsa5 extends Actor {
             } catch (error) {
                 console.error("Something went wrong with preparing item " + i.name + ": " + error)
                 ui.notifications.error("Something went wrong with preparing item " + i.name + ": " + error)
-                    // ui.notifications.error("Deleting " + i.name);
-                    // this.deleteEmbeddedEntity("OwnedItem", i._id);
             }
         }
 
@@ -470,7 +461,7 @@ export default class Actordsa5 extends Actor {
 
         money.coins = money.coins.sort((a, b) => (a.data.price.value > b.data.price.value) ? -1 : 1);
 
-        //TODO move the encumbrance calculation to a beeter location
+        //TODO move the encumbrance calculation to a better location
         encumbrance = Math.max(0, encumbrance - SpecialabilityRulesDSA5.abilityStep(this.data, game.i18n.localize('LocalizedIDs.inuredToEncumbrance')))
 
         let carrycapacity = actorData.data.characteristics.kk.value * 2;
@@ -479,10 +470,10 @@ export default class Actordsa5 extends Actor {
         }
         totalWeight = parseFloat(totalWeight.toFixed(3))
 
-
         this.addCondition("encumbered", encumbrance, true)
 
         specAbs.magical = specAbs.magical.concat(specAbs.staff)
+        specAbs.ceremonial = specAbs.ceremonial.concat(specAbs.ceremonial)
 
         let characteristics = duplicate(DSA5.characteristics)
         characteristics["-"] = "-"
@@ -530,10 +521,9 @@ export default class Actordsa5 extends Actor {
             let shortCut = game.dsa5.config.knownShortcuts[key.toLowerCase()]
             if (shortCut)
                 this.data.data[shortCut[0]][shortCut[1]][shortCut[2]] += value.value
-            else {
+            else
                 delete itemModifiers[key]
-                    //console.warn(`Item Modifier ${key} from ${value.sources.join(",")} for ${this.data.name} can not be applied.`)
-            }
+
         }
         return itemModifiers
     }
@@ -573,10 +563,8 @@ export default class Actordsa5 extends Actor {
     }
 
     async checkEnoughXP(cost) {
-        if (!Actordsa5.canAdvance(this.data))
-            return true
-        if (isNaN(cost) || cost == null)
-            return true
+        if (!Actordsa5.canAdvance(this.data)) return true
+        if (isNaN(cost) || cost == null) return true
 
         if (Number(this.data.data.details.experience.total) - Number(this.data.data.details.experience.spent) >= cost) {
             return true
@@ -741,11 +729,8 @@ export default class Actordsa5 extends Actor {
                     newTestData.damageRoll = oldDamageRoll
 
                     this[`${data.postData.postFunction}`]({ testData: newTestData, cardOptions }, { rerenderMessage: message });
-                    message.update({
-                        "flags.data.fatePointDamageRerollUsed": true
-                    });
+                    message.update({ "flags.data.fatePointDamageRerollUsed": true });
                     this.update({ "data.status.fatePoints.value": this.data.data.status.fatePoints.value - 1 })
-
                     break
                 case "isTalented":
                     cardOptions.talentedRerollUsed = true;
@@ -842,9 +827,7 @@ export default class Actordsa5 extends Actor {
                                                 ind += 1
                                             }
                                             this[`${data.postData.postFunction}`]({ testData: newTestData, cardOptions }, { rerenderMessage: message });
-                                            message.update({
-                                                "flags.data.fatePointRerollUsed": true
-                                            });
+                                            message.update({ "flags.data.fatePointRerollUsed": true });
                                             this.update({ "data.status.fatePoints.value": this.data.data.status.fatePoints.value - 1 })
                                         }
                                     }
@@ -867,9 +850,7 @@ export default class Actordsa5 extends Actor {
                     newTestData.qualityStep = 1
 
                     this[`${data.postData.postFunction}`]({ testData: newTestData, cardOptions }, { rerenderMessage: message });
-                    message.update({
-                        "flags.data.fatePointAddQSUsed": true
-                    });
+                    message.update({ "flags.data.fatePointAddQSUsed": true });
                     this.update({ "data.status.fatePoints.value": this.data.data.status.fatePoints.value - 1 })
                     break
             }
@@ -900,7 +881,7 @@ export default class Actordsa5 extends Actor {
                 regnerationCampLocations: DSA5.regnerationCampLocations
             },
             callback: (html) => {
-                testData.situationalModifiers = []
+                testData.situationalModifiers = Actordsa5._parseModifiers('[name="situationalModifiers"]')
                 cardOptions.rollMode = html.find('[name="rollMode"]').val();
                 testData.testModifier = Number(html.find('[name="testModifier"]').val());
                 testData.situationalModifiers.push({
@@ -1076,11 +1057,8 @@ export default class Actordsa5 extends Actor {
         let damageDie = "",
             damageTerm = ""
         for (let k of parseDamage.terms) {
-            if (typeof(k) == 'object') {
-                damageDie = k.number + "d" + k.faces
-            } else {
-                damageTerm += k
-            }
+            if (typeof(k) == 'object') damageDie = k.number + "d" + k.faces
+            else damageTerm += k
         }
         damageTerm = eval(damageTerm)
         item.damagedie = damageDie ? damageDie : "0d6"
@@ -1094,10 +1072,8 @@ export default class Actordsa5 extends Actor {
             item.attack = Number(skill.data.attack.value)
 
             if (item.data.ammunitiongroup.value != "-") {
-                if (ammunitions)
-                    item.ammo = ammunitions.filter(x => x.data.ammunitiongroup.value == item.data.ammunitiongroup.value)
-                else
-                    item.ammo = actorData.inventory.ammunition.items.filter(x => x.data.ammunitiongroup.value == item.data.ammunitiongroup.value)
+                if (ammunitions) item.ammo = ammunitions.filter(x => x.data.ammunitiongroup.value == item.data.ammunitiongroup.value)
+                else item.ammo = actorData.inventory.ammunition.items.filter(x => x.data.ammunitiongroup.value == item.data.ammunitiongroup.value)
             }
             item.LZ = Math.max(0, Number(item.data.reloadTime.value) - SpecialabilityRulesDSA5.abilityStep(actor, `${game.i18n.localize('LocalizedIDs.quickload')} (${game.i18n.localize(item.data.combatskill.value)})`))
         } else {
@@ -1141,11 +1117,8 @@ export default class Actordsa5 extends Actor {
 
         if (game.user.targets.size) {
             cardOptions.isOpposedTest = testData.opposable
-            if (cardOptions.isOpposedTest)
-                cardOptions.title += ` - ${game.i18n.localize("Opposed")}`;
-            else {
-                game.user.updateTokenTargets([]);
-            }
+            if (cardOptions.isOpposedTest) cardOptions.title += ` - ${game.i18n.localize("Opposed")}`;
+            else game.user.updateTokenTargets([]);
         }
 
         if (testData.extra.ammo && !testData.extra.ammoDecreased) {
@@ -1163,38 +1136,30 @@ export default class Actordsa5 extends Actor {
 
 
     async addCondition(effect, value = 1, absolute = false, auto = true) {
-        if (absolute && value <= 0) {
-            return this.removeCondition(effect, value, auto, absolute)
-        }
+        if (absolute && value <= 0) return this.removeCondition(effect, value, auto, absolute)
 
-        if (typeof(effect) === "string")
-            effect = duplicate(CONFIG.statusEffects.find(e => e.id == effect))
-        if (!effect)
-            return "No Effect Found"
+        if (typeof(effect) === "string") effect = duplicate(CONFIG.statusEffects.find(e => e.id == effect))
 
-        if (!effect.id)
-            return "Conditions require an id field"
+        if (!effect) return "No Effect Found"
+
+        if (!effect.id) return "Conditions require an id field"
 
         let existing = this.hasCondition(effect.id)
 
         if (existing && existing.flags.dsa5.value == null)
             return existing
-        else if (existing) {
+        else if (existing)
             return await DSA5StatusEffects.updateEffect(this, existing, value, absolute, auto)
-        } else if (!existing) {
+        else if (!existing)
             return await DSA5StatusEffects.createEffect(this, effect, value, auto)
-        }
     }
 
     async _dependentEffects(statusId, effect, delta) {
-        if (effect.flags.dsa5.value == 4 && ["encumbered", "stunned", "feared", "inpain", "confused"].includes(statusId))
-            await this.addCondition("incapacitated")
+        if (effect.flags.dsa5.value == 4 && ["encumbered", "stunned", "feared", "inpain", "confused"].includes(statusId)) await this.addCondition("incapacitated")
 
-        if (effect.flags.dsa5.value == 4 && (statusId == "paralysed"))
-            await this.addCondition("rooted")
+        if (effect.flags.dsa5.value == 4 && (statusId == "paralysed")) await this.addCondition("rooted")
 
-        if (statusId == "unconscious")
-            await this.addCondition("prone")
+        if (statusId == "unconscious") await this.addCondition("prone")
 
         if (delta > 0 && statusId == "inpain" && !this.hasCondition("bloodrush") && AdvantageRulesDSA5.hasVantage(this, game.i18n.localize('LocalizedIDs.frenzy'))) {
             await this.addCondition("bloodrush")
@@ -1204,33 +1169,26 @@ export default class Actordsa5 extends Actor {
     }
 
     async removeCondition(effect, value = 1, auto = true, absolute = false) {
-        if (typeof(effect) === "string")
-            effect = duplicate(CONFIG.statusEffects.find(e => e.id == effect))
-        if (!effect)
-            return "No Effect Found"
+        if (typeof(effect) === "string") effect = duplicate(CONFIG.statusEffects.find(e => e.id == effect))
 
-        if (!effect.id)
-            return "Conditions require an id field"
+        if (!effect) return "No Effect Found"
+
+        if (!effect.id) return "Conditions require an id field"
 
         let existing = this.hasCondition(effect.id)
 
-        if (existing && existing.flags.dsa5.value == null) {
+        if (existing && existing.flags.dsa5.value == null)
             return this.deleteEmbeddedEntity("ActiveEffect", existing._id)
-        } else if (existing) {
+        else if (existing)
             return await DSA5StatusEffects.removeEffect(this, existing, value, absolute, auto)
-        }
+
     }
 
     hasCondition(conditionKey) {
         if (this.data != undefined) {
-            if (this.data.effects == undefined)
-                return false
+            if (this.data.effects == undefined) return false
 
             return this.data.effects.find(i => getProperty(i, "flags.core.statusId") == conditionKey)
-                //return this.data.effects.find(i => {
-                //    return i.flags && i.flags.core && i.flags.core.statusId == conditionKey
-                //})
-
         }
         return false
     }

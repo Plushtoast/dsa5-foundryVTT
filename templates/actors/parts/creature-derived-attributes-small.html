@@ -159,8 +159,6 @@
         <div class="col two lineheight">
             {{localize "sizeCategory"}}
         </div>
-
-
         <div class="col two lineheight center">
             <select name="data.status.size.value" data-dtype="String" style="width:100%">
                 {{#select data.status.size.value}}
@@ -181,8 +179,7 @@
         <div class="col eight center">
             <input name="data.status.speed.modifier" type="text" value="{{data.status.speed.modifier}}" data-dtype="Number" />
         </div>
-        <div class="col eight">
-        </div>
+
         <div class="col eight lineheight center">
             {{data.status.speed.max}}
         </div>
@@ -197,11 +194,38 @@
         <div class="col eight center">
             <input name="data.status.initiative.modifier" type="text" value="{{data.status.initiative.modifier}}" data-dtype="Number" />
         </div>
-        <div class="col eight">
 
-        </div>
         <div class="col eight lineheight center">
             {{floor data.status.initiative.value}}
+        </div>
+    </div>
+    <div class="derivedAttrs row-section">
+        <div class="col two lineheight">
+            {{localize "initDie"}}
+        </div>
+        <div class="col two lineheight center">
+            <select name="data.status.initiative.die" data-dtype="String" style="width:100%">
+                {{#select data.status.initiative.die}}
+                {{#each initDies as |ch char|}}
+                <option value="{{ch}}">{{char}}</option>
+                {{/each}}
+                {{/select}}
+              </select>
+        </div>
+    </div>
+    <div class="derivedAttrs row-section">
+        <div class="col two lineheight">
+            {{localize "initDieMod"}}
+        </div>
+
+        <div class="col two lineheight center">
+            <select name="data.status.initiative.diemodifier" data-dtype="String" style="width:100%">
+                {{#select data.status.initiative.diemodifier}}
+                {{#each initDies as |ch char|}}
+                <option value="{{ch}}">{{char}}</option>
+                {{/each}}
+                {{/select}}
+              </select>
         </div>
     </div>
     <div class="derivedAttrs row-section">
@@ -214,9 +238,7 @@
         <div class="col eight center">
             <input name="data.status.fatePoints.modifier" type="text" value="{{data.status.fatePoints.modifier}}" data-dtype="Number" />
         </div>
-        <div class="col eight">
 
-        </div>
         <div class="col eight lineheight center">
             {{data.status.fatePoints.max}}
         </div>

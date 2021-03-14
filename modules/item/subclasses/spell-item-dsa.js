@@ -103,7 +103,6 @@ export default class SpellItemDSA5 extends Itemdsa5 {
                 options: options,
             }
         };
-        console.log(spell.data)
         let data = {
             rollMode: options.rollMode,
             spellCost: spell.data.AsPCost.value,

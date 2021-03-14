@@ -16,11 +16,14 @@ export default function() {
 
         html.on('click', '.request-roll', ev => {
             DSA5ChatAutoCompletion.showRQMessage($(ev.currentTarget).attr("data-name"), Number($(ev.currentTarget).attr("data-modifier")) || 0)
+            ev.stopPropagation()
+            return false
         })
 
         DSA5StatusEffects.bindButtons(html)
         html.on('click', '.chat-condition', ev => {
             DSA5ChatListeners.postStatus($(ev.currentTarget).attr("data-id"))
+
         })
     })
 

@@ -42,8 +42,14 @@ export default function() {
         icon.x = Math.floor(i / 5) * w;
         icon.y = (i % 5) * w;
 
+
         if (tint) icon.tint = tint;
-        bg.drawRoundedRect(icon.x + 1, icon.y + 1, w - 2, w - 2, 2);
+
+        try {
+            bg.drawRoundedRect(icon.x + 1, icon.y + 1, w - 2, w - 2, 2);
+        } catch {}
+
+
         this.effects.addChild(icon);
         let textEffect = game.dsa5.config.effectTextStyle
         let color = game.settings.get("dsa5", "statusEffectCounterColor")

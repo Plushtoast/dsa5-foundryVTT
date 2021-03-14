@@ -31,6 +31,7 @@ export default class Itemdsa5 extends Item {
         "abilitymagical": "systems/dsa5/icons/categories/ability_magical.webp",
         "abilitylanguage": "systems/dsa5/icons/categories/Ability_Language.webp",
         "abilitystaff": "systems/dsa5/icons/categories/ability_staff.webp",
+        "abilityceremonial": "systems/dsa5/icons/categories/ability_ceremonial.webp",
         "abilityanimal": "systems/dsa5/icons/categories/ability_animal.webp",
         "trait": "systems/dsa5/icons/categories/trait.webp",
         "Tiere": "systems/dsa5/icons/categories/Tiere.webp",
