@@ -136,6 +136,11 @@ export default class RangeweaponItemDSA5 extends Itemdsa5 {
                 }, {
                     name: game.i18n.localize("aim"),
                     value: Number(html.find('[name="aim"]').val()) || 0
+                }, {
+                    name: game.i18n.localize("MODS.damage"),
+                    damageBonus: html.find('[name="damageModifier"]').val(),
+                    value: 0,
+                    step: 1
                 })
                 testData.situationalModifiers.push(...Itemdsa5.getSpecAbModifiers(html, "attack"))
                 return { testData, cardOptions };

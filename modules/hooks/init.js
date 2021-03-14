@@ -54,6 +54,7 @@ Hooks.once("init", () => {
         "systems/dsa5/templates/items/item-description.html",
         "systems/dsa5/templates/dialog/default-dialog.html",
         "systems/dsa5/templates/dialog/enhanced-default-dialog.html",
+        "systems/dsa5/templates/dialog/default-combat-dialog.html",
         "systems/dsa5/templates/chat/roll/test-card.html",
         "systems/dsa5/templates/items/item-equipment.html",
         "systems/dsa5/templates/actors/actor-combat.html",

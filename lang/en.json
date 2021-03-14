@@ -438,7 +438,9 @@
     "MODS": {
         "partChecks": "Part of skill check modifier",
         "FP": "Skill points modifier",
-        "combatTurmoil": "Shooting into Melee"
+        "combatTurmoil": "Shooting into Melee",
+        "QS": "Quality level modifier",
+        "damage": "Damage modifier (f.e. 1d6)"
     },
 
     "SKILL": {

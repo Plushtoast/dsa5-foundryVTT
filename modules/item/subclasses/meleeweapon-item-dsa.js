@@ -129,11 +129,16 @@ export default class MeleeweaponDSA5 extends Itemdsa5 {
                 testData.situationalModifiers.push({
                     name: game.i18n.localize("opportunityAttack"),
                     value: attackOfOpportunity
-                })
-                testData.situationalModifiers.push({
+                }, {
                     name: game.i18n.localize("attackFromBehind"),
                     value: html.find('[name="attackFromBehind"]').is(":checked") ? -4 : 0
+                }, {
+                    name: game.i18n.localize("MODS.damage"),
+                    damageBonus: html.find('[name="damageModifier"]').val(),
+                    value: 0,
+                    step: 1
                 })
+
                 testData.situationalModifiers.push(...Itemdsa5.getSpecAbModifiers(html, mode))
 
                 return { testData, cardOptions };

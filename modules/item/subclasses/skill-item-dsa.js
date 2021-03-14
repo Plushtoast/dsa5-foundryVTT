@@ -52,8 +52,10 @@ export default class SkillItemDSA5 extends Itemdsa5 {
                 testData.situationalModifiers = Actordsa5._parseModifiers('[name="situationalModifiers"]')
                 testData.advancedModifiers = {
                     chars: [0, 1, 2].map(x => Number(html.find(`[name="ch${x}"]`).val())),
-                    fps: Number(html.find(`[name="fp"]`).val())
+                    fps: Number(html.find(`[name="fp"]`).val()),
+                    qls: Number(html.find(`[name="qs"]`).val())
                 }
+
                 return { testData, cardOptions };
             }
         };

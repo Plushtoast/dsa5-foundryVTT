@@ -1,7 +1,7 @@
 <form class="skill-test">
     <div class="row-section">
         <div class="col sixty">
-            {{> systems/dsa5/templates/dialog/default-dialog.html}} {{#if melee}}
+            {{> systems/dsa5/templates/dialog/default-combat-dialog.html}} {{#if melee}}
             <div class="form-group custom-select">
                 <label>{{localize "narrowSpace"}}</label>
                 <input type="checkbox" id="narrowSpace" name="narrowSpace" value="1" {{#if constricted}}checked{{/if}}>

@@ -1,4 +1,5 @@
 import DSA5 from "../../system/config-dsa5.js";
+import ItemRulesDSA5 from "../../system/item-rules-dsa5.js";
 import LiturgyItemDSA5 from "./liturgy-item-dsa.js";
 
 export default class CeremonyItemDSA5 extends LiturgyItemDSA5 {
@@ -16,9 +17,10 @@ export default class CeremonyItemDSA5 extends LiturgyItemDSA5 {
         })
     }
 
-    static getSituationalModifiers(situationalModifiers, actor, data) {
+    static getSituationalModifiers(situationalModifiers, actor, data, source) {
         let skMod = 0
         let zkMod = 0
+        situationalModifiers.push(...ItemRulesDSA5.getTalentBonus(actor.data, source.name, ["advantage", "disadvantage", "specialability", "equipment"]))
         if (game.user.targets.size) {
             game.user.targets.forEach(target => {
                 skMod = target.actor.data.data.status.soulpower.max * -1

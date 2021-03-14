@@ -421,7 +421,9 @@
     "MODS": {
         "partChecks": "Teilprobenmodifikator",
         "FP": "Fertigkeitspunktemodifikator",
-        "combatTurmoil": "Schuss ins Kampfgetümmel"
+        "combatTurmoil": "Schuss ins Kampfgetümmel",
+        "QS": "Qualitätsstufenmodifikator",
+        "damage": "Schadensmodifikator (z.B. 1d6)"
     },
 
     "WIZARD": {

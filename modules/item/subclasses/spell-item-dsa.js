@@ -4,6 +4,7 @@ import DSA5StatusEffects from "../../status/status_effects.js";
 import AdvantageRulesDSA5 from "../../system/advantage-rules-dsa5.js";
 import Itemdsa5 from "../item-dsa5.js";
 import Actordsa5 from "../../actor/actor-dsa5.js";
+import ItemRulesDSA5 from "../../system/item-rules-dsa5.js";
 export default class SpellItemDSA5 extends Itemdsa5 {
     static chatData(data, name) {
         return [
@@ -55,7 +56,8 @@ export default class SpellItemDSA5 extends Itemdsa5 {
         testData.extensions = SpellItemDSA5.getSpecAbModifiers(html).join(", ")
         testData.advancedModifiers = {
             chars: [0, 1, 2].map(x => Number(html.find(`[name="ch${x}"]`).val())),
-            fps: Number(html.find(`[name="fp"]`).val())
+            fps: Number(html.find(`[name="fp"]`).val()),
+            qls: Number(html.find(`[name="qs"]`).val())
         }
     }
 
@@ -67,10 +69,10 @@ export default class SpellItemDSA5 extends Itemdsa5 {
         return res
     }
 
-    static getSituationalModifiers(situationalModifiers, actor, data) {
+    static getSituationalModifiers(situationalModifiers, actor, data, source) {
         let skMod = 0
         let zkMod = 0
-
+        situationalModifiers.push(...ItemRulesDSA5.getTalentBonus(actor.data, source.name, ["advantage", "disadvantage", "specialability", "equipment"]))
         situationalModifiers.push(...AdvantageRulesDSA5.getVantageAsModifier(actor.data, game.i18n.localize('LocalizedIDs.minorSpirits'), -1))
         situationalModifiers.push(...AdvantageRulesDSA5.getVantageAsModifier(actor.data, game.i18n.localize('LocalizedIDs.magicalAttunement')))
         situationalModifiers.push(...AdvantageRulesDSA5.getVantageAsModifier(actor.data, game.i18n.localize('LocalizedIDs.magicalRestriction'), -1))
@@ -121,7 +123,7 @@ export default class SpellItemDSA5 extends Itemdsa5 {
         }
 
         let situationalModifiers = actor ? DSA5StatusEffects.getRollModifiers(actor, spell) : []
-        this.getSituationalModifiers(situationalModifiers, actor, data)
+        this.getSituationalModifiers(situationalModifiers, actor, data, spell)
         data["situationalModifiers"] = situationalModifiers
 
         let dialogOptions = {
