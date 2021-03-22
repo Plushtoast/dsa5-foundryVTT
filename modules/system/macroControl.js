@@ -1,3 +1,5 @@
+import DSA5ChatAutoCompletion from "./chat_autocompletion.js";
+
 export default class MacroDSA5 {
 
     static weaponLessMacro(char) {
@@ -12,6 +14,10 @@ export default class MacroDSA5 {
     static weaponLessMacroId(char, actorId) {
         let actor = game.actors.get(actorId)
         this.runWeaponless(actor, char)
+    }
+
+    static requestRoll(skill, modifier = 0) {
+        DSA5ChatAutoCompletion.showRQMessage(skill, modifier)
     }
 
     static itemMacroById(actorId, itemName, itemType, bypassData) {
@@ -55,31 +61,27 @@ export default class MacroDSA5 {
     static runChar(actor, char) {
         if (!actor) return ui.notifications.error(game.i18n.format("DSAError.MacroItemMissing", { item: char }));
 
-        actor.setupStatus(char).then(setupData => {
+        actor.setupDodge({}).then(setupData => {
             actor.basicTest(setupData)
         });
     }
 
     static runItem(actor, item, itemName, bypassData) {
         if (!actor) return ui.notifications.error(game.i18n.format("DSAError.MacroItemMissing", { item: itemName }));
-        //item = item.data;
 
         switch (item.type) {
             case "trait":
-                actor.setupWeaponTrait(item, bypassData.mod, bypassData).then(setupData => {
+                return actor.setupWeaponTrait(item, bypassData.mod, bypassData).then(setupData => {
                     actor.basicTest(setupData)
                 });
-                return
             case "meleeweapon":
-                actor.setupWeapon(item, bypassData.mod, bypassData).then(setupData => {
+                return actor.setupWeapon(item, bypassData.mod, bypassData).then(setupData => {
                     actor.basicTest(setupData)
                 });
-                return
             case "rangeweapon":
-                actor.setupWeapon(item, "attack", bypassData).then(setupData => {
+                return actor.setupWeapon(item, "attack", bypassData).then(setupData => {
                     actor.basicTest(setupData)
                 });
-                return
             case "skill":
                 return actor.setupSkill(item.data, bypassData).then(setupData => {
                     actor.basicTest(setupData)

@@ -101,6 +101,15 @@ export default function() {
         type: Number
     });
 
+    game.settings.register("dsa5", "clearTargets", {
+        name: "DSASETTINGS.clearTargets",
+        hint: "DSASETTINGS.clearTargetsHint",
+        scope: "client",
+        config: true,
+        default: true,
+        type: Boolean
+    });
+
     game.settings.register("dsa5", "talentModifierEnabled", {
         name: "DSASETTINGS.talentModifierEnabled",
         hint: "DSASETTINGS.talentModifierEnabledHint",

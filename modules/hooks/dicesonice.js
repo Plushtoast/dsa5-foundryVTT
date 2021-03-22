@@ -3,17 +3,17 @@ export default function() {
     Hooks.once('diceSoNiceReady', (dice3d) => {
         dice3d.addColorset({
             name: 'mu',
-            description: 'DSA5.dies',
+            description: 'DSA5.mu',
             category: 'DSA5.dies',
             foreground: '#FFFFFF',
             background: '#b3241a',
             edge: '#b3241a',
-            outline: '#b3241a',
+            outline: '#FFFFFF',
             texture: 'none'
         });
         dice3d.addColorset({
             name: 'kl',
-            description: 'DSA5.dies',
+            description: 'DSA5.kl',
             category: 'DSA5.dies',
             foreground: '#FFFFFF',
             background: '#8259a3',
@@ -23,7 +23,7 @@ export default function() {
         });
         dice3d.addColorset({
             name: 'in',
-            description: 'DSA5.dies',
+            description: 'DSA5.in',
             category: 'DSA5.dies',
             foreground: '#FFFFFF',
             background: '#388834',
@@ -33,7 +33,7 @@ export default function() {
         });
         dice3d.addColorset({
             name: 'ch',
-            description: 'DSA5.dies',
+            description: 'DSA5.ch',
             category: 'DSA5.dies',
             foreground: '#FFFFFF',
             background: '#0d0d0d',
@@ -43,7 +43,7 @@ export default function() {
         });
         dice3d.addColorset({
             name: 'ff',
-            description: 'DSA5.dies',
+            description: 'DSA5.ff',
             category: 'DSA5.dies',
             foreground: '#000000',
             background: '#d5b467',
@@ -53,7 +53,7 @@ export default function() {
         });
         dice3d.addColorset({
             name: 'ge',
-            description: 'DSA5.dies',
+            description: 'DSA5.ge',
             category: 'DSA5.dies',
             foreground: '#000000',
             background: '#688ec4',
@@ -63,7 +63,7 @@ export default function() {
         });
         dice3d.addColorset({
             name: 'ko',
-            description: 'DSA5.dies',
+            description: 'DSA5.ko',
             category: 'DSA5.dies',
             foreground: '#000000',
             background: '#a3a3a3',
@@ -71,19 +71,9 @@ export default function() {
             outline: '#FFFFFF',
             texture: 'none'
         });
-        /*dice3d.addColorset({
-            name: 'ko',
-            description: 'DSA5.dies',
-            category: 'DSA5.dies',
-            foreground: '#000000',
-            background: '#fbf5ea',
-            edge: '#fbf5ea',
-            outline: '#FFFFFF',
-            texture: 'none'
-        });*/
         dice3d.addColorset({
             name: 'kk',
-            description: 'DSA5.dies',
+            description: 'DSA5.kk',
             category: 'DSA5.dies',
             foreground: '#000000',
             background: '#d6a878',
@@ -91,10 +81,9 @@ export default function() {
             outline: '#FFFFFF',
             texture: 'none'
         });
-
         dice3d.addColorset({
             name: 'attack',
-            description: 'DSA5.dies',
+            description: 'DSA5.attack',
             category: 'DSA5.dies',
             foreground: '#FFFFFF',
             background: '#b3241a',
@@ -102,10 +91,9 @@ export default function() {
             outline: '#b3241a',
             texture: 'none'
         });
-
         dice3d.addColorset({
             name: 'dodge',
-            description: 'DSA5.dies',
+            description: 'DSA5.dodge',
             category: 'DSA5.dies',
             foreground: '#FFFFFF',
             background: '#388834',
@@ -115,7 +103,7 @@ export default function() {
         });
         dice3d.addColorset({
             name: 'parry',
-            description: 'DSA5.dies',
+            description: 'DSA5.parry',
             category: 'DSA5.dies',
             foreground: '#FFFFFF',
             background: '#388834',
@@ -124,7 +112,4 @@ export default function() {
             texture: 'none'
         });
     });
-
-
-
 }

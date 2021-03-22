@@ -15,7 +15,7 @@ export default class ActorSheetdsa5Creature extends ActorSheetDsa5 {
     }
 
     get template() {
-        if (!game.user.isGM && this.actor.limited) return "systems/dsa5/templates/actors/creature-limited.html";
+        if (this.showLimited()) return "systems/dsa5/templates/actors/creature-limited.html";
         return "systems/dsa5/templates/actors/creature-sheet.html";
     }
 
@@ -103,8 +103,5 @@ export default class ActorSheetdsa5Creature extends ActorSheetDsa5 {
                     super._handleDragData(dragData, event)
             }
         }
-
-
     }
-
 }

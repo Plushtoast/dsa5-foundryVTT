@@ -1,31 +1,40 @@
 import DSA5_Utility from "./utility-dsa5.js";
 
 export default class DSA5Payment {
-    static payMoney(actor, moneyString) {
+    static payMoney(actor, moneyString, silent = false) {
         let money = this._getPaymoney(moneyString)
-
+        let result = false
         if (money) {
             let actorsMoney = this._actorsMoney(actor)
             let msg = ""
             if (actorsMoney.sum >= money) {
                 DSA5Payment._updateMoney(actor, actorsMoney.money, actorsMoney.sum - money)
                 msg = `<p>${game.i18n.format("PAYMENT.pay", {actor: actor.name, amount: DSA5Payment._moneyToString(money)})}</p>`
+                result = true
             } else {
                 msg = `<p>${game.i18n.format("PAYMENT.cannotpay", {actor: actor.name, amount: DSA5Payment._moneyToString(money)})}</p>`
+                if (silent) {
+                    ui.notifications.notify(msg)
+                }
             }
-            ChatMessage.create(DSA5_Utility.chatDataSetup(msg, "roll"))
-        }
+            if (!silent) {
+                ChatMessage.create(DSA5_Utility.chatDataSetup(msg, "roll"))
+            }
 
+        }
+        return result
     }
 
-    static getMoney(actor, moneyString) {
+    static getMoney(actor, moneyString, silent = false) {
         let money = this._getPaidmoney(moneyString)
 
         if (money) {
             let actorsMoney = this._actorsMoney(actor)
             DSA5Payment._updateMoney(actor, actorsMoney.money, actorsMoney.sum + money)
             let msg = `<p>${game.i18n.format("PAYMENT.getPaid", {actor: actor.name, amount: DSA5Payment._moneyToString(money)})}</p>`
-            ChatMessage.create(DSA5_Utility.chatDataSetup(msg, "roll"))
+            if (!silent) {
+                ChatMessage.create(DSA5_Utility.chatDataSetup(msg, "roll"))
+            }
         }
     }
 
@@ -144,13 +153,12 @@ export default class DSA5Payment {
     static _moneyToString(money) {
             let coins = DSA5Payment._moneyToCoins(money)
             let res = []
+
             for (const [key, value] of Object.entries(coins)) {
-                if (value > 0) {
-                    res.push(`${value} <span title="${game.i18n.localize(`Money-${key}`)}" class="chatmoney money-${key}"></span>`)
-            }
+                if (value > 0)
+                    res.push(`<span class="nobr">${value} <span title="${game.i18n.localize(`Money-${key}`)}" class="chatmoney money-${key}"></span></span>`)        
         }
         return res.join(", ")
-
     }
 
     static async chatListeners(html) {

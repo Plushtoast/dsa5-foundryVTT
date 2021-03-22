@@ -5,6 +5,7 @@ import DSA5_Utility from '../system/utility-dsa5.js';
 import DSA5ChatAutoCompletion from '../system/chat_autocompletion.js';
 import DSA5ChatListeners from '../system/chat_listeners.js';
 import DSA5StatusEffects from '../status/status_effects.js';
+import DialogReactDSA5 from '../dialog/dialog-react.js';
 
 export default function() {
     Hooks.on('renderChatLog', (log, html, data) => {
@@ -19,35 +20,44 @@ export default function() {
     Hooks.on("renderChatMessage", async(app, html, msg) => {
         if (!game.user.isGM) {
             html.find(".chat-button-gm").remove();
+
+            let reaction = html.find(".chat-button-target")
+            if (reaction.length) {
+                let actor = DialogReactDSA5.getTargetActor({ data: msg.message })
+                if (!actor.owner) {
+                    reaction.remove()
+                }
+            }
         }
         DSA5StatusEffects.bindButtons(html)
     });
 
     Hooks.on("chatMessage", (html, content, msg) => {
-        if (/^\/pay/.test(content)) {
-            if (game.user.isGM) {
-                DSA5Payment.createPayChatMessage(content)
-            } else {
-                DSA5Payment.payMoney(DSA5_Utility.getSpeaker(msg.speaker), content)
-            }
-            return false
-        } else if (/^\/getPaid/.test(content)) {
-            if (game.user.isGM) {
-                DSA5Payment.createGetPaidChatMessage(content)
-            } else {
-                DSA5Payment.getMoney(DSA5_Utility.getSpeaker(msg.speaker), content)
-            }
-            return false
-        } else if (/^\/help$/.test(content)) {
-            DSA5ChatListeners.getHelp()
-            return false
-        } else if (/^\/conditions$/.test(content)) {
-            DSA5ChatListeners.showConditions()
-            return false
-        } else if (/^\/tables$/.test(content)) {
-            DSA5ChatListeners.showTables()
-            return false
-        }
+        let cmd = content.match(/^\/(pay|getPaid|help$|conditions$|tables$)/)
+        cmd = cmd ? cmd[0] : ""
+        switch (cmd) {
+            case "/pay":
+                if (game.user.isGM)
+                    DSA5Payment.createPayChatMessage(content)
+                else
+                    DSA5Payment.payMoney(DSA5_Utility.getSpeaker(msg.speaker), content)
+                return false
+            case "/getPaid":
+                if (game.user.isGM)
+                    DSA5Payment.createGetPaidChatMessage(content)
+                else
+                    DSA5Payment.getMoney(DSA5_Utility.getSpeaker(msg.speaker), content)
+                return false
+            case "/help":
+                DSA5ChatListeners.getHelp()
+                return false
+            case "/conditions":
+                DSA5ChatListeners.showConditions()
+                return false
+            case "/tables":
+                DSA5ChatListeners.showTables()
+                return false
 
+        }
     })
 }

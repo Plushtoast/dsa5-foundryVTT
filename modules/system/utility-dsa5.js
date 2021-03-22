@@ -153,6 +153,32 @@ export default class DSA5_Utility {
         return DSA5.advancementCosts[type][Number(currentAdvances) + modifier]
     }
 
+    static editRollAtIndex(roll, index, newValue) {
+        let curindex = 0
+        let resIndex = 0
+        for (let term of roll.terms) {
+            if (term.class == "Die") {
+                if (term.results[index - curindex]) {
+                    let oldVal = term.results[index - curindex].result
+                    term.results[index - curindex].result = newValue
+                    roll.results[resIndex] = term.results.reduce((x, y) => { return x + y.result }, 0)
+                    return oldVal
+                }
+                curindex += term.results.length
+            }
+            resIndex++
+        }
+        return 0
+    }
+
+    static async showArtwork({ img, name, uuid }) {
+        new ImagePopout(img, {
+            title: name,
+            shareable: true,
+            uuid: uuid
+        }).render(true)
+    }
+
     static async findAnyItem(lookup) {
         let results = []
         let names = lookup.map(x => x.name)

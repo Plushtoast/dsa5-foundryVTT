@@ -443,6 +443,8 @@ export default class Actordsa5 extends Actor {
 
             } catch (error) {
                 console.error("Something went wrong with preparing item " + i.name + ": " + error)
+                console.log(error)
+                console.log(i)
                 ui.notifications.error("Something went wrong with preparing item " + i.name + ": " + error)
             }
         }
@@ -764,13 +766,20 @@ export default class Actordsa5 extends Actor {
                                             newRoll = new Roll(newRoll.join("+")).roll()
                                             DiceDSA5.showDiceSoNice(newRoll, newTestData.rollMode)
 
-                                            ChatMessage.create(DSA5_Utility.chatDataSetup(infoMsg));
+
                                             let ind = 0
+                                            let ro = []
+                                            let before = []
                                             for (let k of diesToReroll) {
-                                                newTestData.roll.results[k * 2] = newRoll.results[ind * 2]
-                                                newTestData.roll.terms[k * 2].results[0].result = newRoll.results[ind * 2]
+                                                ro.push(newRoll.results[ind * 2])
+                                                before.push(newTestData.roll.results[k * 2])
+                                                newTestData.roll.results[k * 2] = Math.min(newRoll.results[ind * 2], newTestData.roll.results[k * 2])
+                                                newTestData.roll.terms[k * 2].results[0].result = Math.min(newRoll.results[ind * 2], newTestData.roll.terms[k * 2].results[0].result)
                                                 ind += 1
                                             }
+                                            infoMsg += `<b>${game.i18n.localize('Roll')}</b>: ${before.join(" ")}/${ro.join(", ")}`
+                                            ChatMessage.create(DSA5_Utility.chatDataSetup(infoMsg));
+
                                             this[`${data.postData.postFunction}`]({ testData: newTestData, cardOptions }, { rerenderMessage: message });
                                             message.update({
                                                 "flags.data.talentedRerollUsed": true
@@ -905,7 +914,8 @@ export default class Actordsa5 extends Actor {
         });
     }
 
-    setupStatus(statusId, options = {}) {
+    setupDodge(options = {}) {
+        const statusId = "dodge"
         let char = this.data.data.status[statusId];
         let title = game.i18n.localize(statusId) + " " + game.i18n.localize("Test");
 
@@ -919,18 +929,32 @@ export default class Actordsa5 extends Actor {
             }
         };
 
-        testData.source.type = "status"
+        let toSearch = [game.i18n.localize("dodge")]
+        let combatskills = Itemdsa5.buildCombatSpecAbs(this, ["Combat"], toSearch, "parry")
+
+        testData.source.type = "dodge"
 
         let dialogOptions = {
             title: title,
-            template: "/systems/dsa5/templates/dialog/status-dialog.html",
+            template: "/systems/dsa5/templates/dialog/combatskill-enhanced-dialog.html",
             data: {
-                rollMode: options.rollMode
+                rollMode: options.rollMode,
+                combatSpecAbs: combatskills,
+                showDefense: true,
+                defenseCount: 0
             },
             callback: (html) => {
                 cardOptions.rollMode = html.find('[name="rollMode"]').val();
                 testData.testModifier = Number(html.find('[name="testModifier"]').val());
                 testData.situationalModifiers = Actordsa5._parseModifiers('[name="situationalModifiers"]')
+                testData.situationalModifiers.push(...Itemdsa5.getSpecAbModifiers(html, "parry"))
+                testData.situationalModifiers.push({
+                    name: game.i18n.localize("attackFromBehind"),
+                    value: html.find('[name="attackFromBehind"]').is(":checked") ? -4 : 0
+                }, {
+                    name: game.i18n.localize("defenseCount"),
+                    value: (Number(html.find('[name="defenseCount"]').val()) || 0) * -3
+                })
                 return { testData, cardOptions };
             }
         };
@@ -957,6 +981,8 @@ export default class Actordsa5 extends Actor {
                 options: options
             }
         };
+
+        testData.source.type = "char"
 
         let dialogOptions = {
             title: title,
@@ -1037,7 +1063,7 @@ export default class Actordsa5 extends Actor {
 
                 if (extra > 0) {
                     item.extraDamage = extra;
-                    item.damageAdd = eval(item.damageAdd + " + " + Number(extra))
+                    item.damageAdd = Roll.MATH_PROXY.safeEval(item.damageAdd + " + " + Number(extra))
                     item.damageAdd = (item.damageAdd > 0 ? "+" : "") + item.damageAdd
                 }
             }
@@ -1060,7 +1086,7 @@ export default class Actordsa5 extends Actor {
             if (typeof(k) == 'object') damageDie = k.number + "d" + k.faces
             else damageTerm += k
         }
-        damageTerm = eval(damageTerm)
+        damageTerm = Roll.MATH_PROXY.safeEval(damageTerm)
         item.damagedie = damageDie ? damageDie : "0d6"
         item.damageAdd = damageTerm != undefined ? (Number(damageTerm) > 0 ? "+" : "") + damageTerm : ""
         return item
@@ -1118,7 +1144,7 @@ export default class Actordsa5 extends Actor {
         if (game.user.targets.size) {
             cardOptions.isOpposedTest = testData.opposable
             if (cardOptions.isOpposedTest) cardOptions.title += ` - ${game.i18n.localize("Opposed")}`;
-            else game.user.updateTokenTargets([]);
+            else if (game.settings.get("dsa5", "clearTargets")) game.user.updateTokenTargets([]);
         }
 
         if (testData.extra.ammo && !testData.extra.ammoDecreased) {
@@ -1136,6 +1162,8 @@ export default class Actordsa5 extends Actor {
 
 
     async addCondition(effect, value = 1, absolute = false, auto = true) {
+        if (!this.owner) return "Not owned"
+
         if (absolute && value <= 0) return this.removeCondition(effect, value, auto, absolute)
 
         if (typeof(effect) === "string") effect = duplicate(CONFIG.statusEffects.find(e => e.id == effect))
@@ -1169,6 +1197,8 @@ export default class Actordsa5 extends Actor {
     }
 
     async removeCondition(effect, value = 1, auto = true, absolute = false) {
+        if (!this.owner) return "Not owned"
+
         if (typeof(effect) === "string") effect = duplicate(CONFIG.statusEffects.find(e => e.id == effect))
 
         if (!effect) return "No Effect Found"

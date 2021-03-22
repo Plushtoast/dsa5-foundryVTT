@@ -170,7 +170,7 @@ export default class DiceDSA5 {
         let roll = testData.roll ? testData.roll : new Roll("1d20").roll();
         this._appendSituationalModifiers(testData, game.i18n.localize("manual"), testData.testModifier)
         let result = this._rollSingleD20(roll, testData.source.max, testData.extra.statusId, this._situationalModifiers(testData), testData)
-        result["rollType"] = "status"
+        result["rollType"] = "dodge"
         if (testData.extra.statusId == "dodge" && result.successLevel == 3) {
             result["description"] += ", " + game.i18n.localize("attackOfOpportunity")
         } else if (testData.extra.statusId == "dodge" && result.successLevel == -3) {
@@ -349,7 +349,7 @@ export default class DiceDSA5 {
         let bonusDmg = testData.situationalModifiers.reduce(function(_this, val) {
             let number = 0
             if (val.damageBonus) {
-                number = Number(eval(`${val.damageBonus}`.replace(/\d{1}[dDwW]\d/g, function(match) {
+                number = Number(Roll.MATH_PROXY.safeEval(`${val.damageBonus}`.replace(/\d{1}[dDwW]\d/g, function(match) {
                     let roll = new Roll(match).roll()
                     DiceDSA5._addRollDiceSoNice(testData, roll, "ch")
                     return roll.total
@@ -358,8 +358,8 @@ export default class DiceDSA5 {
             }
             return _this + number
         }, 0);
-        this._addRollDiceSoNice(testData, damageRoll, "black")
-        let damage = Number(damageRoll.total) + bonusDmg;
+        //this._addRollDiceSoNice(testData, damageRoll, "black")
+        let damage = Number(damageRoll.total) + bonusDmg
         let weaponBonus = 0
         let weaponroll = 0
         for (let k of damageRoll.terms) {
@@ -379,12 +379,15 @@ export default class DiceDSA5 {
 
         damageBonusDescription.push(...testData.situationalModifiers.map(x => { return x.damageBonus ? `${x.name} ${x.damageBonus}` : "" }).filter(x => x != ""))
 
+        if (testData.situationalModifiers.find(x => x.name.indexOf(game.i18n.localize("CONDITION.bloodrush")) > -1)) {
+            damage += 2
+            damageBonusDescription.push(game.i18n.localize("CONDITION.bloodrush") + " " + 2)
+        }
 
         if (weapon.extraDamage) {
             damage = Number(weapon.extraDamage) + Number(damage)
             damageBonusDescription.push(game.i18n.localize("damageThreshold") + " " + weapon.extraDamage)
         }
-
 
         if (isRangeWeapon) {
             let rangeDamageMod = DSA5.rangeMods[testData.rangeModifier].damage
@@ -400,9 +403,8 @@ export default class DiceDSA5 {
 
         result["damagedescription"] = damageBonusDescription.join(", ")
         result["damage"] = damage
-        result["damageRoll"] = damageRoll
+        result["damageRoll"] = duplicate(damageRoll)
     }
-
 
     static rollWeapon(testData) {
         let roll = testData.roll ? testData.roll : new Roll("1d20").roll();
@@ -424,10 +426,7 @@ export default class DiceDSA5 {
             if (testData.mode == "attack") {
                 this._appendSituationalModifiers(testData, game.i18n.localize("doubleAttack"), testData.doubleAttack)
                 this._appendSituationalModifiers(testData, game.i18n.localize("opposingWeaponSize"), this._compareWeaponReach(weapon, testData))
-            } else {
-                this._appendSituationalModifiers(testData, game.i18n.localize("defenseCount"), testData.defenseCount * -3)
             }
-
         } else {
             weapon = Actordsa5._prepareRangeWeapon(source, [], [skill], testData.extra.actor)
             this._appendSituationalModifiers(testData, game.i18n.localize("distance"), DSA5.rangeMods[testData.rangeModifier].attack)
@@ -794,7 +793,7 @@ export default class DiceDSA5 {
                     rollResults = this.rollWeapon(testData)
                 }
                 break;
-            case "status":
+            case "dodge":
                 rollResults = this.rollStatus(testData)
                 break;
             case "poison":
@@ -871,7 +870,7 @@ export default class DiceDSA5 {
                         roll.dice[0].options.colorset = testData.mode
                     }
                     break
-                case "status":
+                case "dodge":
                     roll = new Roll("1d20").roll();
                     roll.dice[0].options.colorset = "in"
                     break;
@@ -919,6 +918,7 @@ export default class DiceDSA5 {
             title: chatOptions.title,
             testData: testData,
             hideData: game.user.isGM,
+            hideDamage: rerenderMessage ? rerenderMessage.data.flags.data.hideDamage : testData.preData.mode == "attack",
             modifierList: testData.preData.situationalModifiers.filter(x => x.value != 0)
         }
 
@@ -963,7 +963,6 @@ export default class DiceDSA5 {
                     content: chatOptions["content"],
                     ["flags.data"]: chatOptions["flags.data"]
                 }).then(newMsg => {
-
                     ui.chat.updateMessage(newMsg);
                     return newMsg;
                 });
@@ -1018,19 +1017,18 @@ export default class DiceDSA5 {
         let data = message.data.flags.data
         let newTestData = data.preData;
         let index
+        game.user.updateTokenTargets([]);
         switch (input.attr("data-edit-type")) {
             case "roll":
                 index = input.attr("data-edit-id")
+                let newValue = Number(input.val())
+
                 if (newTestData.roll.results.length > index * 2) {
-                    newTestData.roll.results[index * 2] = Number(input.val())
-                    newTestData.roll.terms[index * 2].results[0].result = Number(input.val())
+                    DSA5_Utility.editRollAtIndex(newTestData.roll, index, newValue)
                 } else {
                     let oldDamageRoll = duplicate(data.postData.damageRoll)
                     index = index - newTestData.roll.results.filter(x => !isNaN(x)).length
-
-                    oldDamageRoll.total = oldDamageRoll.total - oldDamageRoll.results[index * 2] + Number(input.val())
-                    oldDamageRoll.results[index * 2] = Number(input.val())
-                    oldDamageRoll.terms[0].results[index].result = Number(input.val())
+                    oldDamageRoll.total = oldDamageRoll.total - DSA5_Utility.editRollAtIndex(oldDamageRoll, index, newValue) + newValue
                     newTestData.damageRoll = oldDamageRoll
                 }
                 break

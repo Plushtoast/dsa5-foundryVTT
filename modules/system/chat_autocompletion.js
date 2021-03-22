@@ -223,7 +223,7 @@ export default class DSA5ChatAutoCompletion {
         let text = target.text()
 
         if (this.constants.dodge == text) {
-            actor.setupStatus("dodge", {}).then(setupData => {
+            actor.setupDodge({}).then(setupData => {
                 actor.basicTest(setupData)
             });
         } else if (this.constants.parryWeaponless == text) {
@@ -264,7 +264,6 @@ export default class DSA5ChatAutoCompletion {
                         actor.basicTest(setupData)
                     });
                 }
-                
             }
         }
     }

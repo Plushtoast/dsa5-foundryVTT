@@ -1,3 +1,5 @@
+import DSA5_Utility from "./utility-dsa5.js"
+
 class SearchDocument {
     constructor(item) {
         this.document = item
@@ -10,7 +12,7 @@ class SearchDocument {
         switch (this.itemType) {
             case 'JournalEntry':
                 data = getProperty(this.document, "data.content")
-
+                break
             default:
                 data = getProperty(this.document, "data.data.description.value")
         }
@@ -204,6 +206,29 @@ export default class DSA5ItemLibrary extends Application {
         return options
     }
 
+    async getRandomItems(category, limit) {
+        let filteredItems = []
+        let index = this.equipmentIndex
+        filteredItems.push(...index.search(category, { field: ["itemType"] }))
+        return this.shuffle(filteredItems.filter(x => x.hasPermission)).slice(0, limit)
+    }
+
+    shuffle(array) {
+        var currentIndex = array.length,
+            temporaryValue, randomIndex;
+
+        while (0 !== currentIndex) {
+            randomIndex = Math.floor(Math.random() * currentIndex);
+            currentIndex -= 1;
+
+            temporaryValue = array[currentIndex];
+            array[currentIndex] = array[randomIndex];
+            array[randomIndex] = temporaryValue;
+        }
+
+        return array;
+    }
+
     async filterStuff(category, index) {
         let search = this.filters[category].filterBy.search
 
@@ -268,7 +293,11 @@ export default class DSA5ItemLibrary extends Application {
 
     async _render(force = false, options = {}) {
         await super._render(force, options)
-        this._createIndex("equipment", "Item", game.items)
+        this.buildEquipmentIndex()
+    }
+
+    async buildEquipmentIndex() {
+        await this._createIndex("equipment", "Item", game.items)
     }
 
     async _createIndex(category, entity, worldStuff) {
@@ -278,7 +307,7 @@ export default class DSA5ItemLibrary extends Application {
         const target = $(this._element).find(`*[data-tab="${category}"]`)
         this.showLoading(target)
         const packs = game.packs.filter(p => p.entity == entity && (game.user.isGM || !p.private))
-        Promise.all(packs.map(p => p.getContent())).then(indexes => {
+        return Promise.all(packs.map(p => p.getContent())).then(indexes => {
             let items = worldStuff.map(x => new SearchDocument(x))
             indexes.forEach((index, idx) => {
                 items.push(...index.map(x => new SearchDocument(x)))
@@ -301,19 +330,11 @@ export default class DSA5ItemLibrary extends Application {
         })
 
         html.on("click", ".item-name", ev => {
-            let itemId = $(ev.currentTarget).parents(".browser-item").attr("data-item-id")
-            let type = $(ev.currentTarget).closest('.tab').attr("data-tab")
-            switch (type) {
-                case "zoo":
-                    this.zooIndex.find(itemId).render()
-                    break
-                case "journal":
-                    this.journalIndex.find(itemId).render()
-                    break
-                default:
-                    this.equipmentIndex.find(itemId).render()
-            }
+            this.getItemFromHTML(ev).render()
+        })
 
+        html.on("mousedown", ".item-name", ev => {
+            if (ev.button == 2) DSA5_Utility.showArtwork(this.getItemFromHTML(ev))
         })
 
         html.on("keyup", ".filterBy-search", ev => {
@@ -330,6 +351,18 @@ export default class DSA5ItemLibrary extends Application {
         })
     }
 
+    getItemFromHTML(ev) {
+        let itemId = $(ev.currentTarget).parents(".browser-item").attr("data-item-id")
+        let type = $(ev.currentTarget).closest('.tab').attr("data-tab")
+        switch (type) {
+            case "zoo":
+                return this.zooIndex.find(itemId)
+            case "journal":
+                return this.journalIndex.find(itemId)
+            default:
+                return this.equipmentIndex.find(itemId)
+        }
+    }
 
     showLoading(html) {
         const loading = $(`<div class="loader"><i class="fa fa-4x fa-spinner fa-spin"></i>${game.i18n.localize('buildingIndex')}</div>`)

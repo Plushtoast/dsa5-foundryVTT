@@ -36,6 +36,7 @@
     /* Modern Browsers */
     font-weight: normal;
     font-style: normal;
+    color: #530000;
 }
 
 @font-face {
@@ -139,6 +140,8 @@ h7 {
     padding: 1px 3px;
 }
 
+[data-hide-damage="true"] .damageSecret,
+[data-hide-damage="true"] .die-damage,
 .dsahidden {
     display: none;
 }
@@ -1158,6 +1161,7 @@ form.dsa5.item-sheet {
     background-color: #100d087a;
 }
 
+.sheetButton,
 #sidebar button {
     background-image: linear-gradient(to right top, #be2020, #af1622, #9f0d22, #8f0522, #7f0021);
     color: white;
@@ -1246,10 +1250,6 @@ form.dsa5.item-sheet {
 .defender img {
     margin: 5px 25%;
     border: none;
-}
-
-.unopposed-button {
-    text-align: right;
 }
 
 .sender-image {
@@ -2082,4 +2082,8 @@ a.inline-roll {
 
 .journal-sheet .window-content .maskfield tr:first-child {
     background: none;
+}
+
+.nobr {
+    white-space: nowrap
 }

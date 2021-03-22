@@ -10,12 +10,12 @@
     <span title="{{localize (concatUp 'CHAR.' item.char)}}{{#if item.tar}} vs {{item.tar}}{{/if}}" class="display-toggle {{#if item.suc}}suc{{else}}fail{{/if}} die-{{item.char}} {{#if item.die}}{{item.die}}{{else}}d20{{/if}}">
         {{item.res}}</span>
 
-    <input type="text" data-edit-type="roll" data-edit-id="{{i}}" title="{{localize (concatUp 'CHAR.' item.char)}}{{#if item.tar}} vs {{item.tar}}{{/if}}" value="{{item.res}}" style="display: none;" class="roll-edit display-toggle" /> {{/each}}
+    <input type="number" data-edit-type="roll" data-edit-id="{{i}}" title="{{localize (concatUp 'CHAR.' item.char)}}{{#if item.tar}} vs {{item.tar}}{{/if}}" value="{{item.res}}" style="display: none;" class="roll-edit display-toggle" /> {{/each}}
 </div>
 
 <div class="card-content chatModifiers">
     <b>{{localize "Modifiers"}}</b>: <span class="display-toggle">{{testData.modifiers}}</span>
-    <input type="text" data-edit-type="mod" value="{{testData.modifiers}}" style="display:none;" class="display-toggle roll-edit" /> {{#if modifierList}}
+    <input type="number" data-edit-type="mod" value="{{testData.modifiers}}" style="display:none;" class="display-toggle roll-edit" /> {{#if modifierList}}
     <a class="expand-mods"><i class="fas fa-plus"></i></a>
     <ul>
         {{#each modifierList as |item i|}}
@@ -34,7 +34,7 @@
     <b>{{localize "qualityStep"}}</b>: {{testData.qualityStep}}
 </div>
 {{/if}} {{#if testData.damage}}
-<div class="card-content" title="{{testData.damagedescription}}">
+<div class="card-content damageSecret" title="{{testData.damagedescription}}">
     <b>{{localize "damage"}}</b>: {{testData.damage}}
 </div>
 {{/if}} {{#if testData.description}}

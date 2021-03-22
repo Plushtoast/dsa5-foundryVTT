@@ -82,7 +82,8 @@
         "noCombatskills": "Keine passenden Kampfsonderfertigkeiten",
         "noExtensions": "Keine passend Zauber/Liturgieerweiterungen",
         "firstTime": "Spracheinstellungen",
-        "firstTimeWarning": "Bitte wähle die passende Sprache. Kompendien verschiedener Sprachen sind derzeit nicht miteinander kompatibel und bestehende Charaktere können nicht migriert werden."
+        "firstTimeWarning": "Bitte wähle die passende Sprache. Kompendien verschiedener Sprachen sind derzeit nicht miteinander kompatibel und bestehende Charaktere können nicht migriert werden.",
+        "selectReaction": "Bitte wähle die passende Reaktion."
     },
 
     "Equipment": {
@@ -102,7 +103,8 @@
         "rangeweapons": "Fernkampfwaffen",
         "ammunition": "Munition",
         "poison": "Gift",
-        "blessed": "Geweiht"
+        "blessed": "Geweiht",
+        "money": "Geld"
     },
 
     "requiredFW": "Benötigter FW",
@@ -395,7 +397,7 @@
     "targetCategory": "Zielkategorie",
     "target": "Ziel",
     "usedWeaponExpertise": "Waffenbegabung eingesetzt ({a}/{b})",
-    "Unopposed": "Keine Vergleichsprobe",
+    "Unopposed": "Reaktion",
     "usedTestCount": "Gewürfelte Proben",
     "value": "Wert",
     "vantages": "Vor-/Nachteile",
@@ -409,6 +411,7 @@
     "worn": "Ausgerüstet",
     "wrongHand": "Falsche Hand",
     "writing": "Schrift",
+    "doNothing": "Kein Reaktion",
     "yes": "Ja",
     "YouAlreadyHaveit": "Hast du bereits",
     "zkModifier": "Zähigkeit (Ziel)",
@@ -948,7 +951,9 @@
         "capQSat": "Maximale erwürfelbare QS",
         "capQSatHint": "Beschränke die erzielbare QS.",
         "noConfirmationRoll": "Kein Bestätigungswurf",
-        "noConfirmationRollHint": "Bei Angriffen und Eigenschaftswürfen keinen Bestätigungswurf durchführen."
+        "noConfirmationRollHint": "Bei Angriffen und Eigenschaftswürfen keinen Bestätigungswurf durchführen.",
+        "clearTargets": "Ziel löschen nach Angriff",
+        "clearTargetsHint": "Entfernt die Zielmarkierung nach einer Probe."
     },
 
     "CHATFATE": {
@@ -1064,6 +1069,23 @@
         "poisoned": "Vergiftet",
         "burning": "Brennend",
         "fixated": "Fixiert"
+    },
+
+    "MERCHANT": {
+        "buy": "Kaufen",
+        "sell": "Verkaufen",
+        "exchange": "Tauschen",
+        "commerce": "Handel",
+        "buyingFactor": "Kauffaktor",
+        "sellingFactor": "Verkaufsfaktor",
+        "typeMerchant": "Händler",
+        "typeLoot": "Schatz",
+        "typeNone": "Normale Person",
+        "randomGoods": "Zufällige Auswahl",
+        "clearInventory": "Zurücksetzen",
+        "deleteAllGoods": "Alle Waren entfernen?",
+        "select": "Auswahl",
+        "selectRandomGoods": "Wähle Kategorien und Anzahl an zusätzlichen zufälligen Waren. Das Hinzufügen dauert einen Moment, wenn der Index der Bibliothek noch nicht erstellt wurde."
     },
 
     "CONDITIONDESCRIPTION": {

@@ -83,8 +83,12 @@ export default class DSA5StatusEffects {
         return effect.flags.dsa5.value * -1
     }
 
-    static ModifierIsSelected(item, options = {}) {
+    static ModifierIsSelected(item, options = {}, actor) {
         return options.mode != "damage"
+    }
+
+    static getDamageBonus() {
+        return 0
     }
 
     static getRollModifiers(actor, item, options = {}) {
@@ -94,15 +98,15 @@ export default class DSA5StatusEffects {
             return {
                 name: effect.label,
                 value: effectClass.calculateRollModifier(effect, actor, item, options),
-                selected: effectClass.ModifierIsSelected(item, options)
+                selected: effectClass.ModifierIsSelected(item, options, actor)
             }
         }).filter(x => x.value != 0)
     }
 }
 
 class EncumberedEffect extends DSA5StatusEffects {
-    static ModifierIsSelected(item, options = {}) {
-        return (item.type == "skill" && item.data.burden.value == "yes") || (item.type != "skill" && options.mode != "damage")
+    static ModifierIsSelected(item, options = {}, actor) {
+        return (item.type == "skill" && item.data.burden.value == "yes") || (!["skill", "spell", "ritual", "ceremony", "liturgy"].includes(item.type) && options.mode != "damage")
     }
 
     static calculateRollModifier(effect, actor, item, options = {}) {
@@ -142,9 +146,15 @@ class BloodrushEffect extends DSA5StatusEffects {
     }
 }
 
+class PainEffect extends DSA5StatusEffects {
+    static ModifierIsSelected(item, options = {}, actor) {
+        return actor.effects.find(x => x.flags.core.statusId == "bloodrush") == undefined
+    }
+}
+
 
 DSA5.statusEffectClasses = {
-    inpain: DSA5StatusEffects,
+    inpain: PainEffect,
     encumbered: EncumberedEffect,
     stunned: DSA5StatusEffects,
     raptured: RaptureEffect,

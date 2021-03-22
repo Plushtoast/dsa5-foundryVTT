@@ -4,8 +4,6 @@ import AdvantageRulesDSA5 from "../system/advantage-rules-dsa5.js";
 import Itemdsa5 from "../item/item-dsa5.js";
 import SpecialabilityRulesDSA5 from "../system/specialability-rules-dsa5.js";
 import DSA5ChatListeners from "../system/chat_listeners.js";
-import ShapeshiftWizard from "../wizards/shapeshift_wizard.js";
-
 
 export default class ActorSheetDsa5 extends ActorSheet {
 
@@ -89,7 +87,7 @@ export default class ActorSheetDsa5 extends ActorSheet {
             let boxes = $(html.find(".ch-collapse i"));
             for (let i = 0; i < boxes.length; i++) {
                 $(boxes[i]).attr("class", this.collapsedBoxes[i]);
-                if (this.collapsedBoxes[i].indexOf("fa-angle-down") != -1)
+                if (this.collapsedBoxes[i] && this.collapsedBoxes[i].indexOf("fa-angle-down") != -1)
                     $(boxes[i]).closest('.groupbox').find('.row-section:nth-child(2)').hide()
             }
         }
@@ -378,6 +376,10 @@ export default class ActorSheetDsa5 extends ActorSheet {
         }
     }
 
+    showLimited() {
+        return !game.user.isGM && this.actor.limited
+    }
+
     activateListeners(html) {
         super.activateListeners(html);
 
@@ -485,18 +487,13 @@ export default class ActorSheetDsa5 extends ActorSheet {
         html.find('.quantity-click').mousedown(ev => {
             let itemId = this._getItemId(ev);
             let item = duplicate(this.actor.getEmbeddedEntity("OwnedItem", itemId));
+            let factor = ev.ctrlKey ? 10 : 1
             switch (ev.button) {
                 case 0:
-                    if (ev.ctrlKey)
-                        item.data.quantity.value += 10;
-                    else
-                        item.data.quantity.value++;
+                    item.data.quantity.value += factor;
                     break;
                 case 2:
-                    if (ev.ctrlKey)
-                        item.data.quantity.value -= 10;
-                    else
-                        item.data.quantity.value--;
+                    item.data.quantity.value -= factor
 
                     if (item.data.quantity.value < 0)
                         item.data.quantity.value = 0;
@@ -581,8 +578,7 @@ export default class ActorSheetDsa5 extends ActorSheet {
         });
         html.find('.ch-status').click(event => {
             event.preventDefault();
-            let characteristic = event.currentTarget.attributes["data-char"].value;
-            this.actor.setupStatus(characteristic, event).then(setupData => {
+            this.actor.setupDodge(event).then(setupData => {
                 this.actor.basicTest(setupData)
             });
         });
@@ -718,6 +714,11 @@ export default class ActorSheetDsa5 extends ActorSheet {
         html.find('.talentSearch').keyup(event => {
             this._filterTalents($(event.currentTarget))
         });
+
+        html.find('.charimg').mousedown(ev => {
+            if (ev.button == 2) DSA5_Utility.showArtwork(this.actor)
+        })
+
         let filterTalents = ev => this._filterTalents($(ev.currentTarget))
         let talSearch = html.find('.talentSearch')
         talSearch[0] && talSearch[0].addEventListener("search", filterTalents, false);
@@ -1000,11 +1001,12 @@ export default class ActorSheetDsa5 extends ActorSheet {
                 this.actor.addCondition(item.payload.id)
                 break
             case "creature":
-                let shapeshift = new ShapeshiftWizard()
-                shapeshift.setShapeshift(this.actor, item)
-                shapeshift.render(true)
-                break
-
+                const shapeshift = game.dsa5.config.hooks.shapeshift
+                if (shapeshift) {
+                    shapeshift.setShapeshift(this.actor, item)
+                    shapeshift.render(true)
+                    break
+                }
             default:
                 ui.notifications.error(game.i18n.format("DSAError.canNotBeAdded", { item: item.name, category: game.i18n.localize(item.type) }))
         }

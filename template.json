@@ -241,6 +241,7 @@
                 "value": false
             }
         },
+
         "creature": {
             "templates": [
                 "characteristics",

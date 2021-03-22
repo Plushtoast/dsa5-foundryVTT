@@ -82,7 +82,8 @@
         "noCombatskills": "No matching Combat Special Abilities",
         "noExtensions": "No matching liturgy/spell extensions",
         "firstTime": "Language settings",
-        "firstTimeWarning": "Please chose your language. Compendiae of different languages are currently not compatible to each other. Existing characters can not be migrated to the other language."
+        "firstTimeWarning": "Please chose your language. Compendiae of different languages are currently not compatible to each other. Existing characters can not be migrated to the other language.",
+        "selectReaction": "Chose your reaction."
     },
 
     "Equipment": {
@@ -102,7 +103,25 @@
         "rangeweapons": "Rangeweapons",
         "ammunition": "Ammunition",
         "poison": "Poison",
-        "blessed": "Blessed"
+        "blessed": "Blessed",
+        "money": "Money"
+    },
+
+    "MERCHANT": {
+        "buy": "Buy",
+        "sell": "Sell",
+        "exchange": "Exchange",
+        "commerce": "Trade",
+        "buyingFactor": "Buy factor",
+        "sellingFactor": "Sell factor",
+        "typeMerchant": "Merchant",
+        "typeLoot": "Treasure",
+        "typeNone": "Normal person",
+        "randomGoods": "Random choic",
+        "clearInventory": "Reset",
+        "deleteAllGoods": "Remove all commodities?",
+        "select": "Choice",
+        "selectRandomGoods": "Select categories and an amount of additional random commodities. The addition might take a moment, if the index of the library has not been created yet."
     },
 
     "requiredFW": "Required SR",
@@ -395,12 +414,13 @@
     "targetCategory": "Target category",
     "target": "Target",
     "usedWeaponExpertise": "used weapon aptitude ({a}/{b})",
-    "Unopposed": "No opposed check",
+    "Unopposed": "Reaction",
     "usedTestCount": "Rolled checks",
     "value": "Value",
     "vantages": "Dis-/Advantages",
     "variableCost": "Variable cost",
     "sight": "Visibility",
+    "doNothing": "No Reaction",
     "Weight": "Weight",
     "happyTalents": "Favored skills",
     "wounds": "Life points",
@@ -648,9 +668,6 @@
         "oneQualityPerLine": "Describe one quality level each line",
         "zkModifer": "The target's soulpower/toughness has to be included as handicap (mind the sign)"
     },
-
-
-
 
     "HELP": {
         "showHelp": "Show help",
@@ -953,7 +970,9 @@
         "talentModifierEnabled": "Skill modifiers activated",
         "talentModifierEnabledHint": "Skill modifiers are selected by default in the roll window",
         "noConfirmationRoll": "No confirmation roll",
-        "noConfirmationRollHint": "No confirmation roll for attacks and attribute checks."
+        "noConfirmationRollHint": "No confirmation roll for attacks and attribute checks.",
+        "clearTargets": "Clear Target after attack",
+        "clearTargetsHint": "Removes targets after a check."
     },
 
     "CHATFATE": {

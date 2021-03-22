@@ -25,5 +25,12 @@ export default function() {
         if (actor) {
             addThirdBarToHUD(html, actor, app)
         }
+        html.find('.control-icon.target').mousedown(ev => {
+            if (ev.button == 2) {
+                game.user.updateTokenTargets([]);
+                $(ev.currentTarget).click()
+                ev.preventDefault()
+            }
+        })
     })
 }

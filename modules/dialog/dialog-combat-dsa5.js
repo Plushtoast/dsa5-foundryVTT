@@ -49,19 +49,14 @@ export default class DSA5CombatDialog extends Dialog {
             return false;
         });
         html.find('.quantity-click').mousedown(ev => {
-            let val = $(ev.currentTarget).val()
+            let val = Number($(ev.currentTarget).val())
+            let factor = ev.ctrlKey ? 10 : 1
             switch (ev.button) {
                 case 0:
-                    if (ev.ctrlKey)
-                        val += 10;
-                    else
-                        val++;
+                    val += factor
                     break;
                 case 2:
-                    if (ev.ctrlKey)
-                        val -= 10;
-                    else
-                        val--;
+                    val -= factor
                     break;
             }
             $(ev.currentTarget).val(val)

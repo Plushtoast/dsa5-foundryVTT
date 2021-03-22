@@ -12,12 +12,8 @@ export default class ActorSheetdsa5NPC extends ActorSheetdsa5Character {
     }
 
     get template() {
-        if (!game.user.isGM && this.actor.limited) return "systems/dsa5/templates/actors/npc-limited.html";
+        if (this.showLimited()) return "systems/dsa5/templates/actors/npc-limited.html";
         return "systems/dsa5/templates/actors/npc-sheet.html";
 
-    }
-
-    activateListeners(html) {
-        super.activateListeners(html);
     }
 }

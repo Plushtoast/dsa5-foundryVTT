@@ -1,11 +1,10 @@
 import DSA5_Utility from "./utility-dsa5.js";
 import DiceDSA5 from "./dice-dsa5.js";
+import { ReactToAttackDialog, ReactToSkillDialog } from "../dialog/dialog-react.js"
 
 export default class OpposedDsa5 {
     static async handleOpposedTarget(message) {
-
         if (!message) return;
-
 
         let actor = DSA5_Utility.getSpeaker(message.data.speaker)
         if (!actor) return
@@ -49,7 +48,7 @@ export default class OpposedDsa5 {
             await actor.update({
                 "-=flags.oppose": null
             })
-        } else if (game.user.targets.size && !message.data.flags.data.defenderMessage && !message.data.flags.data.attackerMessage) {
+        } else if (game.user.targets.size && message.data.flags.data.isOpposedTest && !message.data.flags.data.defenderMessage && !message.data.flags.data.attackerMessage) {
             let attacker;
 
             if (message.data.speaker.token)
@@ -59,8 +58,9 @@ export default class OpposedDsa5 {
 
             if (testResult.successLevel > 0) {
                 let attackOfOpportunity = message.data.flags.data.preData.attackOfOpportunity
-                let unopposedButton = attackOfOpportunity ? "" : `<div class="unopposed-button chat-button-gm" data-target="true" title="${game.i18n.localize("Unopposed")}"><a>${game.i18n.localize('Unopposed')} <i class="fas fa-times"></i></a></div>`
+                let unopposedButton = attackOfOpportunity ? "" : `<div><button class="unopposed-button small-button chat-button-target" data-target="true">${game.i18n.localize('Unopposed')}</button></div>`
                 let startMessagesList = [];
+
                 game.user.targets.forEach(async target => {
                     let content =
                         `<div class ="opposed-message">
@@ -81,7 +81,6 @@ export default class OpposedDsa5 {
                             targetSpeaker: {
                                 scene: target.scene.data._id,
                                 token: target.data._id,
-                                scene: target.actor.data._id,
                                 alias: target.data.name
                             }
                         }
@@ -115,7 +114,9 @@ export default class OpposedDsa5 {
                     }
                 })
                 message.data.flags.data.startMessagesList = startMessagesList;
-                game.user.updateTokenTargets([]);
+
+                if (game.settings.get("dsa5", "clearTargets")) game.user.updateTokenTargets([]);
+
             } else {
                 game.user.targets.forEach(async target => {
                     let content =
@@ -134,33 +135,78 @@ export default class OpposedDsa5 {
                     })
                 })
             }
-        }
-        //It's an opposed reroll of an ended test
-        else if (message.data.flags.data.defenderMessage || message.data.flags.data.attackerMessage) {
+        } else if (message.data.flags.data.defenderMessage || message.data.flags.data.attackerMessage) {
             console.log("woops")
         } else if (message.data.flags.data.unopposedStartMessage) {
             console.log("woops")
-        }
-        //It's a reroll of an ongoing opposed test
-        else if (message.data.flags.data.startMessagesList) {
+        } else if (message.data.flags.data.startMessagesList) {
             console.log("woops")
+        } else {
+            this.showDamage(message)
         }
+    }
 
+    static async showDamage(message, hide = false) {
+        if (game.user.isGM) {
+            if (!message.data.flags.data.hideDamage && message.data.flags.data.postData.damageRoll) {
+                message.update({
+                    "content": message.data.content.replace(`data-hide-damage="${!hide}"`, `data-hide-damage="${hide}"`),
+                    "flags.data.hideDamage": hide
+                });
+                if (!hide)
+                    DiceDSA5._addRollDiceSoNice(message.data.flags.data.preData, Roll.fromData(message.data.flags.data.postData.damageRoll), "black")
+
+            }
+        } else {
+            game.socket.emit("system.dsa5", {
+                type: "showDamage",
+                payload: {
+                    id: message._id,
+                    hide: hide
+                }
+            })
+        }
+    }
+
+    static async _handleReaction(ev) {
+        let messageId = $(ev.currentTarget).parents('.message').attr("data-message-id");
+        let message = game.messages.get(messageId)
+        let attackMessage = game.messages.get(message.data.flags.unopposeData.attackMessageId)
+        let source = attackMessage.data.flags.data.postData.preData.source
+        switch (source.type) {
+            case "skill":
+                ReactToSkillDialog.showDialog(message)
+                break
+            default:
+                ReactToAttackDialog.showDialog(message)
+        }
     }
 
     static async chatListeners(html) {
         html.on("click", '.unopposed-button', event => {
             event.preventDefault()
-
-            if (game.user.isGM) {
-                let messageId = $(event.currentTarget).parents('.message').attr("data-message-id");
-                let message = game.messages.get(messageId)
-                $(event.currentTarget).fadeOut()
-                this.resolveUnopposed(message);
-            } else {
-                ui.notifications.error(game.i18n.localize("DSAError.onlyGMAllowedToCancel"))
-            }
+            this._handleReaction(event)
         })
+    }
+
+    static async hideReactionButton(startMessageId) {
+        if (game.user.isGM) {
+            let startMessage = game.messages.get(startMessageId)
+            let query = $(startMessage.data.content)
+            query.find('button.unopposed-button').remove()
+            query = $('<div></div>').append(query)
+
+            startMessage.update({
+                content: query.html()
+            })
+        } else {
+            game.socket.emit("system.dsa5", {
+                type: "hideQueryButton",
+                payload: {
+                    id: startMessageId,
+                }
+            })
+        }
     }
 
     static async completeOpposedProcess(attacker, defender, options) {
@@ -168,6 +214,7 @@ export default class OpposedDsa5 {
         this.formatOpposedResult(opposedResult, attacker.speaker, defender.speaker);
         this.rerenderMessagesWithModifiers(opposedResult, attacker, defender);
         this.renderOpposedResult(opposedResult, options)
+        this.hideReactionButton(options.startMessageId)
         return opposedResult
     }
 
@@ -181,7 +228,6 @@ export default class OpposedDsa5 {
         if (options.additionalInfo) {
             opposeResult.other.push(options.additionalInfo)
         }
-        opposeResult.modifiers = this.checkPostModifiers(attackerTest, defenderTest);
 
         opposeResult.winner = "attacker"
 
@@ -241,22 +287,6 @@ export default class OpposedDsa5 {
         }
     }
 
-    static checkPostModifiers(attackerTestResult, defenderTestResult) {
-        let didModifyAttacker = false,
-            didModifyDefender = false;
-
-        let modifiers = {
-            attacker: {
-                target: 0,
-            },
-            defender: {
-                target: 0,
-            },
-            message: []
-        }
-        return mergeObject(modifiers, { didModifyAttacker, didModifyDefender });
-    }
-
     static formatOpposedResult(opposeResult, attacker, defender) {
         let str = opposeResult.differenceSL ? "winsFP" : "wins"
         if (opposeResult.winner == "attacker") {
@@ -278,57 +308,8 @@ export default class OpposedDsa5 {
     }
 
     static rerenderMessagesWithModifiers(opposeResult, attacker, defender) {
-        if (opposeResult.modifiers.didModifyAttacker || attacker.testResult.modifiers) {
-            let attackerMessage = game.messages.get(attacker.messageId)
-
-            let chatOptions = {
-                template: attackerMessage.data.flags.data.template,
-                rollMode: attackerMessage.data.flags.data.rollMode,
-                title: attackerMessage.data.flags.data.title,
-                isOpposedTest: attackerMessage.data.flags.data.isOpposedTest,
-                attackerMessage: attackerMessage.data.flags.data.attackerMessage,
-                defenderMessage: attackerMessage.data.flags.data.defenderMessage,
-                unopposedStartMessage: attackerMessage.data.flags.data.unopposedStartMessage,
-                startMessagesList: attackerMessage.data.flags.data.startMessagesList,
-                hasBeenCalculated: true,
-                calculatedMessage: opposeResult.modifiers.message,
-            }
-
-            attackerMessage.data.flags.data.preData.target = attackerMessage.data.flags.data.preData.target + opposeResult.modifiers.attacker.target;
-            attackerMessage.data.flags.data.preData.roll = attackerMessage.data.flags.data.postData.roll
-            attackerMessage.data.flags.data.hasBeenCalculated = true;
-            attackerMessage.data.flags.data.calculatedMessage = opposeResult.modifiers.message;
-            if (!opposeResult.swapped)
-                DiceDSA5.renderRollCard(chatOptions, opposeResult.attackerTestResult, attackerMessage)
-            else
-                DiceDSA5.renderRollCard(chatOptions, opposeResult.defenderTestResult, attackerMessage)
-
-        }
-        if (opposeResult.modifiers.didModifyDefender || defender.testResult.modifiers) {
-            let defenderMessage = game.messages.get(defender.messageId)
-            let chatOptions = {
-                template: defenderMessage.data.flags.data.template,
-                rollMode: defenderMessage.data.flags.data.rollMode,
-                title: defenderMessage.data.flags.data.title,
-                isOpposedTest: defenderMessage.data.flags.data.isOpposedTest,
-                attackerMessage: defenderMessage.data.flags.data.attackerMessage,
-                defenderMessage: defenderMessage.data.flags.data.defenderMessage,
-                unopposedStartMessage: defenderMessage.data.flags.data.unopposedStartMessage,
-                startMessagesList: defenderMessage.data.flags.data.startMessagesList,
-                hasBeenCalculated: true,
-                calculatedMessage: opposeResult.modifiers.message,
-            }
-
-            defenderMessage.data.flags.data.preData.target = defenderMessage.data.flags.data.preData.target + opposeResult.modifiers.defender.target;
-            defenderMessage.data.flags.data.preData.slBonus = defenderMessage.data.flags.data.preData.slBonus + opposeResult.modifiers.defenderSL;
-            defenderMessage.data.flags.data.preData.roll = defenderMessage.data.flags.data.postData.roll
-            defenderMessage.data.flags.data.hasBeenCalculated = true;
-            defenderMessage.data.flags.data.calculatedMessage = opposeResult.modifiers.message;
-            if (!opposeResult.swapped)
-                DiceDSA5.renderRollCard(chatOptions, opposeResult.defenderTestResult, defenderMessage)
-            else
-                DiceDSA5.renderRollCard(chatOptions, opposeResult.attackerTestResult, defenderMessage)
-        }
+        let attackerMessage = game.messages.get(attacker.messageId)
+        this.showDamage(attackerMessage, opposeResult.winner != "attacker")
     }
 
     static renderOpposedResult(formattedOpposeResult, options = {}) {
@@ -371,6 +352,7 @@ export default class OpposedDsa5 {
     static async resolveUnopposed(startMessage, additionalInfo = "") {
 
         let unopposeData = startMessage.data.flags.unopposeData;
+
 
         let attackMessage = game.messages.get(unopposeData.attackMessageId)
         let attacker = {
