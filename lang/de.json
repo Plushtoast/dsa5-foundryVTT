@@ -919,10 +919,12 @@
         "Reroll": "Wurf wiederholen (1 Schip)",
         "AddQS": "QS um eins erhöhen (1 Schip)",
         "rerollDamage": "Schadenswurf wiederholen (1 Schip)",
-        "ApplyDamage": "Schaden anwenden",
+        "ApplyDamage": "Schaden anwenden als TP",
         "ApplyDamageSP": "Schaden anwenden als SP",
         "talentedReroll": "Begabung verwenden",
-        "ApplyMana": "KaP/AsP Kosten bezahlen"
+        "ApplyMana": "KaP/AsP Kosten bezahlen",
+        "hideData": "Details für Spieler verstecken",
+        "showData": "Details für Spieler aufdecken"
     },
 
     "aimOptions": {
@@ -953,7 +955,11 @@
         "noConfirmationRoll": "Kein Bestätigungswurf",
         "noConfirmationRollHint": "Bei Angriffen und Eigenschaftswürfen keinen Bestätigungswurf durchführen.",
         "clearTargets": "Ziel löschen nach Angriff",
-        "clearTargetsHint": "Entfernt die Zielmarkierung nach einer Probe."
+        "clearTargetsHint": "Entfernt die Zielmarkierung nach einer Probe.",
+        "allowPhysicalDice": "Wurf mit echten Würfeln",
+        "allowPhysicalDiceHint": "Erlaube die Eingabe des Ergebnis von selbst gewürfelten Würfeln",
+        "hideOpposedDamage": "Ergebnis bei Vergleichsprobe verstecken",
+        "hideOpposedDamageHint": "Versteckt z.B. den berechneten Schadenswert bei einer Vergleichsprobe."
     },
 
     "CHATFATE": {

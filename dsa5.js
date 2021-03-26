@@ -15,6 +15,8 @@ import DSA5Initializer from "./modules/system/initializer.js"
 import AdvantageRulesDSA5 from "./modules/system/advantage-rules-dsa5.js";
 import SpecialabilityRulesDSA5 from "./modules/system/specialability-rules-dsa5.js"
 import ChatMessageDSA5Roll from "./modules/chat/ChatMessageDSA5.js";
+import DSA5ChatListeners from "./modules/system/chat_listeners.js";
+import DSA5Payment from "./modules/system/payment.js"
 
 
 Hooks.once("init", async function() {
@@ -29,7 +31,9 @@ Hooks.once("init", async function() {
             ActorSheetdsa5NPC,
             ItemSheetdsa5,
             DSA5_Utility,
-            DSA5Initializer
+            DSA5Initializer,
+            DSA5ChatListeners,
+            DSA5Payment
         },
         entities: {
             Actordsa5,

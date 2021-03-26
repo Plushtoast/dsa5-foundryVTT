@@ -144,8 +144,16 @@ export default class DSA5_Utility {
 
     static getSpeaker(speaker) {
         let actor = ChatMessage.getSpeakerActor(speaker)
-        if (!actor) actor = canvas.tokens.get(speaker.token).actor
-        if (!actor) actor = actor = new Token(game.scenes.get(speaker.scene).getEmbeddedEntity("Token", speaker.token)).actor
+        if (!actor) {
+            let token = canvas.tokens.get(speaker.token)
+            if (token) actor = token.actor
+        }
+        if (!actor) {
+            let scene = game.scenes.get(speaker.scene)
+            try {
+                if (scene) actor = new Token(scene.getEmbeddedEntity("Token", speaker.token)).actor
+            } catch (error) {}
+        }
         return actor
     }
 
@@ -157,7 +165,7 @@ export default class DSA5_Utility {
         let curindex = 0
         let resIndex = 0
         for (let term of roll.terms) {
-            if (term.class == "Die") {
+            if (term instanceof Die || term.class == "Die") {
                 if (term.results[index - curindex]) {
                     let oldVal = term.results[index - curindex].result
                     term.results[index - curindex].result = newValue

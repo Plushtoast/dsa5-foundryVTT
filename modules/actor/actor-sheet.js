@@ -274,11 +274,8 @@ export default class ActorSheetDsa5 extends ActorSheet {
         let item = duplicate(this.actor.items.find(i => i.data._id == itemId))
         let cost = DSA5_Utility._calculateAdvCost(Number(item.data.talentValue.value), item.data.StF.value)
         if (await this._checkEnoughXP(cost) && this._checkMaximumItemAdvancement(item, Number(item.data.talentValue.value) + 1)) {
-            item.data.talentValue.value += 1
-            await this.actor.update({
-                "data.details.experience.spent": Number(this.actor.data.data.details.experience.spent) + cost
-            })
-            await this.actor.updateEmbeddedEntity("OwnedItem", item)
+            await this.actor.updateEmbeddedEntity("OwnedItem", { _id: itemId, "data.talentValue.value": item.data.talentValue.value + 1 })
+            await this.actor.update({ "data.details.experience.spent": Number(this.actor.data.data.details.experience.spent) + cost })
         }
     }
 
@@ -286,11 +283,8 @@ export default class ActorSheetDsa5 extends ActorSheet {
         let item = duplicate(this.actor.items.find(i => i.data._id == itemId))
         if (item.data.talentValue.value > 0) {
             let cost = DSA5_Utility._calculateAdvCost(Number(item.data.talentValue.value), item.data.StF.value, 0)
-            item.data.talentValue.value -= 1
-            await this.actor.update({
-                "data.details.experience.spent": Number(this.actor.data.data.details.experience.spent) - cost
-            })
-            await this.actor.updateEmbeddedEntity("OwnedItem", item)
+            await this.actor.updateEmbeddedEntity("OwnedItem", { _id: itemId, "data.talentValue.value": item.data.talentValue.value - 1 })
+            await this.actor.update({ "data.details.experience.spent": Number(this.actor.data.data.details.experience.spent) - cost })
         }
     }
 
@@ -448,7 +442,6 @@ export default class ActorSheetDsa5 extends ActorSheet {
                 this.actor.setupSkill(skill.data).then(setupData => {
                     this.actor.basicTest(setupData)
                 });
-
             else if (ev.button == 2)
                 skill.sheet.render(true);
         });

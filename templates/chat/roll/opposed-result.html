@@ -3,10 +3,9 @@
         <div>
             {{{result}}}
         </div>
-        <div>
+        <div class="{{#if hideData}}hideData{{/if}} hideAnchor">
             {{{damage.description}}}
         </div>
-
         {{#each other as |string index|}}
         <div>
             {{{string}}}

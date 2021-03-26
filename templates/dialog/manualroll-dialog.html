@@ -1,0 +1,19 @@
+<div>
+    <div class="row-section">
+        {{localize description}} {{localize 'probe'}}
+    </div>
+    <div class="row-section">
+        {{#each dice as |item i|}}
+        <div class="col ten center">
+            1d{{item.faces}}
+        </div>
+        {{/each}}
+    </div>
+    <div class="row-section">
+        {{#each dice as |item i|}}
+        <div class="col ten center">
+            <input type="number" class="dieInput" name="die_{{i}}" data-dtype="Number" value="{{item.val}}">
+        </div>
+        {{/each}}
+    </div>
+</div>

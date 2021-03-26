@@ -111,6 +111,7 @@ export default class ItemSheetdsa5 extends ItemSheet {
         html.on('click', '.chat-condition', ev => {
             DSA5ChatListeners.postStatus($(ev.currentTarget).attr("data-id"))
         })
+
     }
 
     async getData() {

@@ -59,6 +59,13 @@ export default class DSA5ItemLibrary extends Application {
         this.journalBuild = false
         this.equipmentBuild = false
         this.zooBuild = false
+        this.currentDetailFilter = {
+            equipment: [],
+            character: [],
+            spell: [],
+            jounral: [],
+            zoo: []
+        }
         this.journalIndex = new FlexSearch({
             encode: "simple",
             tokenize: "reverse",
@@ -97,6 +104,15 @@ export default class DSA5ItemLibrary extends Application {
                 ],
             }
         });
+
+        this.subfilters = {
+            "equipment": {
+                enabled: false,
+                attrs: [
+                    { name: "equipmentType.value", label: "equipmentType", value: "" }
+                ]
+            }
+        }
 
 
         this.filters = {
@@ -159,9 +175,7 @@ export default class DSA5ItemLibrary extends Application {
             },
 
         }
-        this.subfilters = {
-            "spellextension": ["source"]
-        }
+
     }
 
     getData() {
@@ -238,6 +252,7 @@ export default class DSA5ItemLibrary extends Application {
         }
         let filteredItems = []
 
+        let oneFilerSelected = false
         for (let filter in this.filters[category].categories) {
             if (this.filters[category].categories[filter]) {
                 let query = duplicate(fields)
@@ -248,12 +263,24 @@ export default class DSA5ItemLibrary extends Application {
                     filteredItems.push(...index.search(search, query))
                 }
             }
+            oneFilerSelected = this.filters[category].categories[filter] || oneFilerSelected
         }
 
-        if (Object.keys(this.filters[category].categories).length == 0)
+        if (!oneFilerSelected)
             filteredItems = index.search(search, fields)
 
-        return filteredItems.filter(x => x.hasPermission).sort((a, b) => (a.name.toLowerCase() > b.name.toLowerCase()) ? 1 : -1)
+
+        let filterdItems = filteredItems.filter(x => x.hasPermission).sort((a, b) => (a.name.toLowerCase() > b.name.toLowerCase()) ? 1 : -1)
+        this.setBGImage(filterdItems, category)
+
+        return filterdItems
+    }
+
+    setBGImage(filterdItems, category) {
+        if (filterdItems.length > 0)
+            $(this._element).find(`.${category} .libcontainer`).removeClass("libraryImg")
+        else
+            $(this._element).find(`.${category} .libcontainer`).addClass("libraryImg")
     }
 
     async filterItems(html, category) {
@@ -305,7 +332,7 @@ export default class DSA5ItemLibrary extends Application {
 
         //await this[`${category}Index`].clear()
         const target = $(this._element).find(`*[data-tab="${category}"]`)
-        this.showLoading(target)
+        this.showLoading(target, category)
         const packs = game.packs.filter(p => p.entity == entity && (game.user.isGM || !p.private))
         return Promise.all(packs.map(p => p.getContent())).then(indexes => {
             let items = worldStuff.map(x => new SearchDocument(x))
@@ -314,8 +341,23 @@ export default class DSA5ItemLibrary extends Application {
             })
             this[`${category}Index`].add(items)
             this[`${category}Build`] = true
-            this.hideLoading(target)
+            this.hideLoading(target, category)
         })
+    }
+
+    buildDetailFilter(html, category, subcategory, isChecked) {
+        //TODO uff
+        if (this.subfilters[subcategory]) {
+            this.subfilters[subcategory].enabled = isChecked
+            if (isChecked) {
+                let filters = this.subfilters[subcategory].attrs.map(x => { return `<input type=\"text\" class=\"subfilterItem\" name=\"${x.name}\" title=\"${game.i18n.localize(x.label)}\" placeholder=\"${game.i18n.localize(x.label)}\"/>` })
+                let newElem = $(`<div class=\"groupbox detail${subcategory}\" data-subcategory=\"${subcategory}\"><span>${game.i18n.localize(subcategory)}</span>${filters.join('')}</div>`)
+                console.log(newElem)
+                html.find(`.${category} .detailBox`).append(newElem)
+            } else {
+                html.find(`.detail${subcategory}`).remove()
+            }
+        }
     }
 
 
@@ -325,8 +367,11 @@ export default class DSA5ItemLibrary extends Application {
         html.on("click", ".filter", ev => {
             let tab = $(ev.currentTarget).closest('.tab')
             let category = tab.attr("data-tab")
-            this.filters[category].categories[$(ev.currentTarget).attr("data-category")] = $(ev.currentTarget).is(":checked");
+            let subcategory = $(ev.currentTarget).attr("data-category")
+            const isChecked = $(ev.currentTarget).is(":checked")
+            this.filters[category].categories[subcategory] = isChecked
             this.filterItems(tab, category);
+            this.buildDetailFilter(html, category, subcategory, isChecked)
         })
 
         html.on("click", ".item-name", ev => {
@@ -343,11 +388,29 @@ export default class DSA5ItemLibrary extends Application {
             this.filters[category].filterBy.search = $(ev.currentTarget).val();
             this.filterItems(tab, category);
         })
+        html.on("keyup", ".subfilterItem", ev => {
+            let tab = $(ev.currentTarget).closest('.tab')
+            let category = tab.attr("data-tab")
+            let subcategory = $(ev.currentTarget).closest('.groupbox').attr("data-subcategory")
+            this.subfilters[subcategory].attrs.find(x => x.name == $(ev.currentTarget).attr("name"))["value"] = $(ev.currentTarget).val()
+            this.filterItems(tab, category);
+        })
         html.find(`*[data-tab="journal"]`).click(x => {
             this._createIndex("journal", "JournalEntry", game.journal)
         })
         html.find(`*[data-tab="zoo"]`).click(x => {
             this._createIndex("zoo", "Actor", game.actors)
+        })
+        html.find('nav .item').click(ev => {
+            let tab = $(ev.currentTarget).attr("data-tab")
+            html.find(`.subfilters .tab`).hide()
+            html.find(`.subfilters [data-tab="${tab}"]`).show()
+        })
+
+        html.find('.showDetails').click(ev => {
+            let tab = $(ev.currentTarget).attr("data-btn")
+            $(ev.currentTarget).find('i').toggleClass("fa-caret-left fa-caret-right")
+            html.find(`.${tab} .detailBox`).toggleClass("dsahidden")
         })
     }
 
@@ -364,12 +427,14 @@ export default class DSA5ItemLibrary extends Application {
         }
     }
 
-    showLoading(html) {
+    showLoading(html, category) {
+        this.setBGImage([1], category)
         const loading = $(`<div class="loader"><i class="fa fa-4x fa-spinner fa-spin"></i>${game.i18n.localize('buildingIndex')}</div>`)
         loading.appendTo(html.find('.searchResult'))
     }
 
-    hideLoading(html) {
+    hideLoading(html, category) {
+        this.setBGImage([], category)
         html.find('.loader').remove()
     }
 }

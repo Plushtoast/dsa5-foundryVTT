@@ -7,9 +7,7 @@ export default class DSA5ChatListeners {
             DSA5ChatListeners.postStatus($(ev.currentTarget).attr("data-id"))
         })
         let helpButton = $(`<a class="button showHelp" title="${game.i18n.localize('HELP.showHelp')}"><i class="fas fa-question"></i></a>`)
-        helpButton.click(ev => {
-            DSA5ChatListeners.getHelp()
-        })
+        helpButton.click(() => { DSA5ChatListeners.getHelp() })
         $(html.find('.control-buttons')).prepend(helpButton)
     }
 
@@ -20,7 +18,11 @@ export default class DSA5ChatListeners {
     }
 
     static getHelp() {
-            let msg = DSA5.helpContent.map(x => `<h2>${game.i18n.localize(`HELP.${x.name}`)}</h2><p><b>${game.i18n.localize("HELP.command")}</b>: ${x.command}</p><p><b>${game.i18n.localize("HELP.example")}</b>: ${x.example}</p><p><b>${game.i18n.localize("Description")}</b>: ${game.i18n.localize(`HELP.descr${x.name}`)}`).join("") + `<br><p>${game.i18n.localize("HELP.default")}</p>`
+            let msg = DSA5.helpContent.map(x => `<h2>${game.i18n.localize(`HELP.${x.name}`)}</h2>
+            <p><b>${game.i18n.localize("HELP.command")}</b>: ${x.command}</p>
+            <p><b>${game.i18n.localize("HELP.example")}</b>: ${x.example}</p>
+            <p><b>${game.i18n.localize("Description")}</b>: ${game.i18n.localize(`HELP.descr${x.name}`)}`).join("") + `<br>
+            <p>${game.i18n.localize("HELP.default")}</p>`
         ChatMessage.create(DSA5_Utility.chatDataSetup(msg, "roll"))
     }
 
@@ -31,6 +33,35 @@ export default class DSA5ChatListeners {
         }).sort((a, b) => { return a.label.localeCompare(b.label) })
         let msg = effects.map(x => `<a class="chat-condition chatButton" data-id="${x.id}"><img src="${x.icon}"/>${x.label}</a>`).join(" ")
         ChatMessage.create(DSA5_Utility.chatDataSetup(msg, "roll"))
+    }
+
+    static async check3D20(){
+        let skill = {
+            name: "3d20",
+            type: "skill",
+            data: {
+                "talentValue": { "value": 0 },
+                "characteristic1": { "value": "mu" },
+                "characteristic2": { "value": "kl" },
+                "characteristic3": { "value": "in" },
+                "RPr": { "value": "no" },
+                "burden": { "value": "no" }
+            }
+        }
+       
+        let actor = await Actor.create({
+            name: "Alrik",
+            type: "npc",
+            items:[],
+            data: {
+                status:{wounds: {value:16}},
+                characteristics: {mu: {initial: 12},kl: {initial: 12},in: {initial: 12}}
+            }
+        },{temporary: true, noHook: true})
+
+        actor.setupSkill(skill).then(setupData => {
+            actor.basicTest(setupData)
+        })      
     }
 
     static showTables(){

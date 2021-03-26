@@ -128,4 +128,21 @@ export default function() {
         type: Boolean
     });
 
+    game.settings.register("dsa5", "allowPhysicalDice", {
+        name: "DSASETTINGS.allowPhysicalDice",
+        hint: "DSASETTINGS.allowPhysicalDiceHint",
+        scope: "world",
+        config: true,
+        default: false,
+        type: Boolean
+    });
+
+    game.settings.register("dsa5", "hideOpposedDamage", {
+        name: "DSASETTINGS.hideOpposedDamage",
+        hint: "DSASETTINGS.hideOpposedDamageHint",
+        scope: "world",
+        config: true,
+        default: false,
+        type: Boolean
+    });
 }

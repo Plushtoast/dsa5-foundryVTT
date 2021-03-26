@@ -20,20 +20,21 @@ export default function() {
     Hooks.on("renderChatMessage", async(app, html, msg) => {
         if (!game.user.isGM) {
             html.find(".chat-button-gm").remove();
-
+            let actor
             let reaction = html.find(".chat-button-target")
             if (reaction.length) {
-                let actor = DialogReactDSA5.getTargetActor({ data: msg.message })
+                actor = DialogReactDSA5.getTargetActor({ data: msg.message })
                 if (!actor.owner) {
                     reaction.remove()
                 }
             }
+            html.find(".hideData").remove()
         }
         DSA5StatusEffects.bindButtons(html)
     });
 
     Hooks.on("chatMessage", (html, content, msg) => {
-        let cmd = content.match(/^\/(pay|getPaid|help$|conditions$|tables$)/)
+        let cmd = content.match(/^\/(pay|getPaid|help$|conditions$|tables$|ch$)/)
         cmd = cmd ? cmd[0] : ""
         switch (cmd) {
             case "/pay":
@@ -56,6 +57,9 @@ export default function() {
                 return false
             case "/tables":
                 DSA5ChatListeners.showTables()
+                return false
+            case "/ch":
+                DSA5ChatListeners.check3D20()
                 return false
 
         }

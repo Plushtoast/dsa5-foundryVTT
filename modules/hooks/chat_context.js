@@ -1,6 +1,7 @@
 import DSA5_Utility from "../system/utility-dsa5.js";
 
 export default function() {
+
     Hooks.on("getChatLogEntryContext", (html, options) => {
         let canHurt = function(li) {
             let cardData = game.messages.get(li.attr("data-message-id")).data.flags.opposeData
@@ -17,6 +18,20 @@ export default function() {
                 if (actor.permission == ENTITY_PERMISSIONS.OWNER || game.user.isGM) {
                     return ["liturgy", "ceremony", "spell", "ritual"].includes(message.data.flags.data.preData.source.type)
                 }
+            }
+            return false
+        }
+        let canUnhideData = function(li) {
+            if (game.user.isGM) {
+                let message = game.messages.get(li.attr("data-message-id"));
+                return "hideData" in message.data.flags && message.data.flags.hideData
+            }
+            return false
+        }
+        let canHideData = function(li) {
+            if (game.user.isGM) {
+                let message = game.messages.get(li.attr("data-message-id"));
+                return "hideData" in message.data.flags && !message.data.flags.hideData
             }
             return false
         }
@@ -74,8 +89,37 @@ export default function() {
             }
             return false
         }
+        let showHideData = function(li) {
+            if (game.user.isGM) {
+                let message = game.messages.get(li.attr("data-message-id"))
+                if ("hideData" in message.data.flags) {
+                    let newHide = !message.data.flags.hideData
+                    let query = $(message.data.content)
+                    query.find('.hideAnchor')[newHide ? "addClass" : "removeClass"]("hideData")
+                    query = $('<div></div>').append(query)
+                    message.update({
+                        "content": query.html(),
+                        "flags.hideData": newHide
+                    });
+                }
+            }
+        }
 
         options.push({
+            name: game.i18n.localize("CHATCONTEXT.hideData"),
+            icon: '<i class="fas fa-eye"></i>',
+            condition: canHideData,
+            callback: (li) => {
+                showHideData(li)
+            }
+        }, {
+            name: game.i18n.localize("CHATCONTEXT.showData"),
+            icon: '<i class="fas fa-eye"></i>',
+            condition: canUnhideData,
+            callback: (li) => {
+                showHideData(li)
+            }
+        }, {
             name: game.i18n.localize("regenerate"),
             icon: '<i class="fas fa-user-plus"></i>',
             condition: canHeal,

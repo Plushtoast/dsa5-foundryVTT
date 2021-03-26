@@ -142,7 +142,7 @@ export default class DiceDSA5 {
         let chars = []
 
         let result = {
-            rollType: "regeneration",
+            rollType: "regenerate",
             preData: testData,
             modifiers: modifier,
             extra: {}
@@ -290,7 +290,7 @@ export default class DiceDSA5 {
         }
     }
 
-    static rollCombatTrait(testData) {
+    static async rollCombatTrait(testData) {
         let roll = testData.roll ? testData.roll : new Roll("1d20").roll();
         this._appendSituationalModifiers(testData, game.i18n.localize("manual"), testData.testModifier)
         this._appendSituationalModifiers(testData, game.i18n.localize("wrongHand"), testData.wrongHand)
@@ -335,7 +335,7 @@ export default class DiceDSA5 {
                 break;
         }
         if (testData.mode == "attack" && success) {
-            DiceDSA5.evaluateDamage(testData, result, source, source.data.traitType.value == "rangeAttack", doubleDamage)
+            await DiceDSA5.evaluateDamage(testData, result, source, source.data.traitType.value == "rangeAttack", doubleDamage)
         }
         result["rollType"] = "weapon"
         let effect = DiceDSA5.parseEffect(source.data.effect.value)
@@ -344,8 +344,9 @@ export default class DiceDSA5 {
         return result
     }
 
-    static evaluateDamage(testData, result, weapon, isRangeWeapon, doubleDamage) {
-        let damageRoll = testData.damageRoll ? testData.damageRoll : new Roll(weapon.data.damage.value.replace(/[Ww]/g, "d")).roll()
+
+    static async evaluateDamage(testData, result, weapon, isRangeWeapon, doubleDamage) {
+        let damageRoll = testData.damageRoll ? testData.damageRoll : await DiceDSA5.manualRolls(new Roll(weapon.data.damage.value.replace(/[Ww]/g, "d")).roll(), "CHAR.DAMAGE")
         let bonusDmg = testData.situationalModifiers.reduce(function(_this, val) {
             let number = 0
             if (val.damageBonus) {
@@ -403,10 +404,11 @@ export default class DiceDSA5 {
 
         result["damagedescription"] = damageBonusDescription.join(", ")
         result["damage"] = damage
+
         result["damageRoll"] = duplicate(damageRoll)
     }
 
-    static rollWeapon(testData) {
+    static async rollWeapon(testData) {
         let roll = testData.roll ? testData.roll : new Roll("1d20").roll();
         let weapon;
         this._appendSituationalModifiers(testData, game.i18n.localize("manual"), testData.testModifier)
@@ -465,7 +467,7 @@ export default class DiceDSA5 {
         }
 
         if (testData.mode == "attack" && success) {
-            DiceDSA5.evaluateDamage(testData, result, weapon, source.type == "rangeweapon", doubleDamage)
+            await DiceDSA5.evaluateDamage(testData, result, weapon, source.type == "rangeweapon", doubleDamage)
         }
         result["rollType"] = "weapon"
         let effect = DiceDSA5.parseEffect(weapon.data.effect ? weapon.data.effect.value : "")
@@ -545,6 +547,57 @@ export default class DiceDSA5 {
             modifiers: modifier,
             extra: {}
         }
+    }
+
+    static async manualRolls(roll, description = "") {
+        if (game.settings.get("dsa5", "allowPhysicalDice")) {
+            let result = false;
+            let form;
+            let dice = []
+            for (let term of roll.terms) {
+                if (term instanceof Die || term.class == "Die") {
+                    for (let res of term.results) {
+                        dice.push({ faces: term.faces, val: res.result })
+                    }
+                }
+            }
+
+            let template = await renderTemplate('systems/dsa5/templates/dialog/manualroll-dialog.html', { dice: dice, description: description });
+            [result, form] = await new Promise((resolve, reject) => {
+                new Dialog({
+                    title: game.i18n.localize("DSASETTINGS.allowPhysicalDice"),
+                    content: template,
+                    default: 'ok',
+                    buttons: {
+                        ok: {
+                            icon: '<i class="fa fa-check"></i>',
+                            label: game.i18n.localize("yes"),
+                            callback: dlg => {
+                                resolve([true, dlg])
+                            }
+                        },
+                        cancel: {
+                            icon: '<i class="fas fa-times"></i>',
+                            label: game.i18n.localize("cancel"),
+                            callback: () => {
+                                resolve([false, 0])
+                            }
+                        }
+                    }
+
+                }).render(true)
+            })
+
+            if (result) {
+                form.find('.dieInput').each(function(index) {
+                    let val = Number($(this).val())
+                    if (val > 0)
+                        DSA5_Utility.editRollAtIndex(roll, index, val)
+                    index++
+                });
+            }
+        }
+        return roll
     }
 
     static parseEffect(effectString) {
@@ -759,7 +812,7 @@ export default class DiceDSA5 {
         return result
     }
 
-    static rollTest(testData) {
+    static async rollTest(testData) {
         testData.function = "rollTest"
         let rollResults;
         switch (testData.source.type) {
@@ -779,10 +832,10 @@ export default class DiceDSA5 {
                 if (testData.mode == "damage") {
                     rollResults = this.rollTraitDamage(testData)
                 } else {
-                    rollResults = this.rollCombatTrait(testData)
+                    rollResults = await this.rollCombatTrait(testData)
                 }
                 break
-            case "regeneration":
+            case "regenerate":
                 rollResults = this.rollRegeneration(testData)
                 break
             case "meleeweapon":
@@ -790,7 +843,7 @@ export default class DiceDSA5 {
                 if (testData.mode == "damage") {
                     rollResults = this.rollDamage(testData)
                 } else {
-                    rollResults = this.rollWeapon(testData)
+                    rollResults = await this.rollWeapon(testData)
                 }
                 break;
             case "dodge":
@@ -827,7 +880,7 @@ export default class DiceDSA5 {
                         roll.dice[i].options.colorset = testData.source.data["characteristic" + (i + 1)].value
                     }
                     break;
-                case "regeneration":
+                case "regenerate":
                     if (testData.extra.actor.isPriest && testData.extra.actor.isMage) {
                         roll = new Roll("1d6+1d6+1d6").roll()
                         roll.dice[1].options.colorset = "ge"
@@ -885,7 +938,7 @@ export default class DiceDSA5 {
                     roll = new Roll("1d20").roll();
                     roll.dice[0].options.colorset = testData.source.label.split('.')[1].toLowerCase()
             }
-
+            roll = await DiceDSA5.manualRolls(roll, testData.source.type)
             this.showDiceSoNice(roll, cardOptions.rollMode);
             testData.roll = roll;
             testData.rollMode = cardOptions.rollMode
@@ -902,6 +955,7 @@ export default class DiceDSA5 {
                 case "blindroll":
                     blind = true;
                     whisper = game.users.filter(user => user.isGM).map(x => x.data._id);
+                    break
                 case "gmroll":
                     whisper = game.users.filter(user => user.isGM).map(x => x.data._id);
                     break;
@@ -1022,15 +1076,14 @@ export default class DiceDSA5 {
             case "roll":
                 index = input.attr("data-edit-id")
                 let newValue = Number(input.val())
-
+                let oldDamageRoll = data.postData.damageRoll ? duplicate(data.postData.damageRoll) : undefined
                 if (newTestData.roll.results.length > index * 2) {
                     DSA5_Utility.editRollAtIndex(newTestData.roll, index, newValue)
                 } else {
-                    let oldDamageRoll = duplicate(data.postData.damageRoll)
                     index = index - newTestData.roll.results.filter(x => !isNaN(x)).length
                     oldDamageRoll.total = oldDamageRoll.total - DSA5_Utility.editRollAtIndex(oldDamageRoll, index, newValue) + newValue
-                    newTestData.damageRoll = oldDamageRoll
                 }
+                newTestData.damageRoll = oldDamageRoll
                 break
             case "mod":
                 index = newTestData.situationalModifiers.findIndex(x => x.name == game.i18n.localize("chatEdit"))

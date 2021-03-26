@@ -1240,6 +1240,12 @@ form.dsa5.item-sheet {
     display: inline-block;
 }
 
+.itemLibrary .detailBox span,
+.itemLibrary .detailBox input {
+    margin: 1px 2px;
+    width: calc(100% - 4px);
+}
+
 .journal-sheet img,
 .itemLibrary img,
 .charimg {
@@ -2011,12 +2017,19 @@ a.inline-roll {
     color: inherit;
 }
 
+.libraryImg,
 .extImg,
 .specImg {
     background-image: url(../icons/categories/ability_combat.webp);
     background-size: contain;
     background-repeat: no-repeat;
     background-position: center;
+}
+
+.libraryImg {
+    background-image: url(../icons/backgrounds/library.webp);
+    margin-top: 50px;
+    height: 300px;
 }
 
 .extImg {

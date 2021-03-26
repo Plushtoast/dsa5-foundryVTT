@@ -225,7 +225,7 @@ export default class Itemdsa5 extends Item {
 
     async itemTest({ testData, cardOptions }, options = {}) {
         testData = await DiceDSA5.rollDices(testData, cardOptions);
-        let result = DiceDSA5.rollTest(testData);
+        let result = await DiceDSA5.rollTest(testData);
 
         result.postFunction = "itemTest";
 

@@ -482,6 +482,9 @@
             },
             "skills": {
                 "value": ""
+            },
+            "clothing": {
+                "value": ""
             }
         },
         "spell": {

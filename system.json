@@ -1,9 +1,9 @@
 {
     "name": "dsa5",
     "title": "Das Schwarze Auge/The Dark Eye (5th Edition)",
-    "description": "The \"Das Schwarze Auge\" system for Foundry VTT. Includes all relevant mechanisms to play in the wonderous world of Aventurien and Das Schwarze Auge/The Dark Eye (english now available).",
+    "description": "The \"Das Schwarze Auge\" system for Foundry VTT. Includes all relevant mechanisms to play in the wonderous world of Aventuria and Das Schwarze Auge/The Dark Eye (english now available).",
     "version": "1.2.1",
-    "templateVersion": 63,
+    "templateVersion": 64,
     "author": "Plushtoast",
     "scripts": [
         "./libs/flexsearch.min.js"

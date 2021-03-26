@@ -38,7 +38,7 @@ export default class Actordsa5 extends Actor {
         if (data.type != "character") {
             data.data = { status: { fatePoints: { current: 0, value: 0 } } }
         }
-        super.create(data, options);
+        return super.create(data, options);
     }
 
 
@@ -189,6 +189,12 @@ export default class Actordsa5 extends Actor {
 
     static canAdvance(actorData) {
         return actorData.canAdvance
+    }
+
+    static armorValue(actor) {
+        let wornArmor = actor.items.filter(x => x.type == "armor" && x.data.worn.value == true).reduce((a, b) => a + Number(b.data.protection.value), 0)
+        let animalArmor = actor.items.filter(x => x.type == "trait" && x.data.traitType.value == "armor").reduce((a, b) => a + Number(b.data.at.value), 0)
+        return wornArmor + animalArmor
     }
 
     static _calculateCombatSkillValues(i, actorData) {
@@ -475,23 +481,23 @@ export default class Actordsa5 extends Actor {
         this.addCondition("encumbered", encumbrance, true)
 
         specAbs.magical = specAbs.magical.concat(specAbs.staff)
-        specAbs.ceremonial = specAbs.ceremonial.concat(specAbs.ceremonial)
+        specAbs.clerical = specAbs.clerical.concat(specAbs.ceremonial)
 
         let characteristics = duplicate(DSA5.characteristics)
         characteristics["-"] = "-"
 
         return {
             totalweight: totalWeight,
-            totalArmor: totalArmor,
-            money: money,
-            encumbrance: encumbrance,
-            carrycapacity: carrycapacity,
+            totalArmor,
+            money,
+            encumbrance,
+            carrycapacity,
             wornRangedWeapons: rangeweapons,
             wornMeleeWeapons: meleeweapons,
-            advantages: advantages,
-            disadvantages: disadvantages,
-            specAbs: specAbs,
-            aggregatedtests: aggregatedtests,
+            advantages,
+            disadvantages,
+            specAbs,
+            aggregatedtests,
             wornArmor: armor,
             inventory,
             itemModifiers: actorData.data.itemModifiers,
@@ -499,11 +505,11 @@ export default class Actordsa5 extends Actor {
                 used: actorData.data.freeLanguagePoints ? actorData.data.freeLanguagePoints.used : 0,
                 available: actorData.data.freeLanguagePoints ? actorData.data.freeLanguagePoints.value : 0
             },
-            schips: schips,
+            schips,
             guidevalues: characteristics,
-            magic: magic,
-            traits: traits,
-            combatskills: combatskills,
+            magic,
+            traits,
+            combatskills,
             canAdvance: this.data.canAdvance,
             sheetLocked: actorData.data.sheetLocked.value,
             allSkillsLeft: {
@@ -685,7 +691,7 @@ export default class Actordsa5 extends Actor {
         return cardOptions;
     }
 
-    useFateOnRoll(message, type) {
+    async useFateOnRoll(message, type) {
         if (this.data.data.status.fatePoints.value > 0) {
             let data = message.data.flags.data
             let cardOptions = this.preparePostRollAction(message);
@@ -705,30 +711,18 @@ export default class Actordsa5 extends Actor {
                     if (!data.defenderMessage && data.startMessagesList) {
                         cardOptions.startMessagesList = data.startMessagesList;
                     }
-                    let newRoll = []
-                    let smallestIndex = 0
-                    let smallest = 500
-                    let index = 0
-                    for (let k of data.postData.damageRoll.terms) {
-                        if (k.class == 'Die') {
-                            if (Number(k.results[0].result) < smallest) {
-                                smallest = k.results[0].result
-                                smallestIndex = index
-                            }
-                        }
-                        index += 1
-                    }
-                    let oldDamageRoll = duplicate(data.postData.damageRoll)
-                    let term = oldDamageRoll.terms[smallestIndex]
-                    newRoll.push(term.number + "d" + term.faces + "[" + term.options.colorset + "]")
-                    newRoll = new Roll(newRoll.join("+")).roll()
-                    DiceDSA5.showDiceSoNice(newRoll, newTestData.rollMode)
-                    ChatMessage.create(DSA5_Utility.chatDataSetup(infoMsg));
-                    oldDamageRoll.total = oldDamageRoll.total - oldDamageRoll.results[smallestIndex] + newRoll.results[0]
-                    oldDamageRoll.results[smallestIndex] = newRoll.results[0]
-                    oldDamageRoll.terms[smallestIndex].results[0].result = newRoll.result[0]
 
-                    newTestData.damageRoll = oldDamageRoll
+                    let oldDamageRoll = duplicate(data.postData.damageRoll)
+
+                    let newRoll = await DiceDSA5.manualRolls(Roll.fromData(oldDamageRoll).reroll(), "CHATCONTEXT.rerollDamage")
+
+                    for (let i = 0; i < newRoll.dice.length; i++) {
+                        newRoll.dice[i].options.colorset = "black"
+                    }
+                    //DiceDSA5.showDiceSoNice(newRoll, newTestData.rollMode)
+                    ChatMessage.create(DSA5_Utility.chatDataSetup(infoMsg));
+
+                    newTestData.damageRoll = duplicate(newRoll)
 
                     this[`${data.postData.postFunction}`]({ testData: newTestData, cardOptions }, { rerenderMessage: message });
                     message.update({ "flags.data.fatePointDamageRerollUsed": true });
@@ -753,7 +747,7 @@ export default class Actordsa5 extends Actor {
                                 Yes: {
                                     icon: '<i class="fa fa-check"></i>',
                                     label: game.i18n.localize("Ok"),
-                                    callback: dlg => {
+                                    callback: async dlg => {
 
                                         let diesToReroll = dlg.find('.dieSelected').map(function() { return Number($(this).attr('data-index')) }).get()
                                         if (diesToReroll.length > 0) {
@@ -763,9 +757,8 @@ export default class Actordsa5 extends Actor {
                                                 let term = newTestData.roll.terms[k * 2]
                                                 newRoll.push(term.number + "d" + term.faces + "[" + term.options.colorset + "]")
                                             }
-                                            newRoll = new Roll(newRoll.join("+")).roll()
+                                            newRoll = await DiceDSA5.manualRolls(new Roll(newRoll.join("+")).roll(), "CHATCONTEXT.talentedReroll")
                                             DiceDSA5.showDiceSoNice(newRoll, newTestData.rollMode)
-
 
                                             let ind = 0
                                             let ro = []
@@ -815,7 +808,7 @@ export default class Actordsa5 extends Actor {
                                 Yes: {
                                     icon: '<i class="fa fa-check"></i>',
                                     label: game.i18n.localize("Ok"),
-                                    callback: dlg => {
+                                    callback: async dlg => {
 
                                         let diesToReroll = dlg.find('.dieSelected').map(function() { return Number($(this).attr('data-index')) }).get()
                                         if (diesToReroll.length > 0) {
@@ -825,7 +818,7 @@ export default class Actordsa5 extends Actor {
                                                 let term = newTestData.roll.terms[k * 2]
                                                 newRoll.push(term.number + "d" + term.faces + "[" + term.options.colorset + "]")
                                             }
-                                            newRoll = new Roll(newRoll.join("+")).roll()
+                                            newRoll = await DiceDSA5.manualRolls(new Roll(newRoll.join("+")).roll(), "CHATCONTEXT.Reroll")
                                             DiceDSA5.showDiceSoNice(newRoll, newTestData.rollMode)
 
                                             ChatMessage.create(DSA5_Utility.chatDataSetup(infoMsg));
@@ -871,7 +864,7 @@ export default class Actordsa5 extends Actor {
 
         let testData = {
             source: {
-                type: "regeneration"
+                type: "regenerate"
             },
             opposable: false,
             extra: {
@@ -1137,7 +1130,7 @@ export default class Actordsa5 extends Actor {
 
     async basicTest({ testData, cardOptions }, options = {}) {
         testData = await DiceDSA5.rollDices(testData, cardOptions);
-        let result = DiceDSA5.rollTest(testData);
+        let result = await DiceDSA5.rollTest(testData);
 
         result.postFunction = "basicTest";
 

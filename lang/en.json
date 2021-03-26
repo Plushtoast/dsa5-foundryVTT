@@ -83,7 +83,9 @@
         "noExtensions": "No matching liturgy/spell extensions",
         "firstTime": "Language settings",
         "firstTimeWarning": "Please chose your language. Compendiae of different languages are currently not compatible to each other. Existing characters can not be migrated to the other language.",
-        "selectReaction": "Chose your reaction."
+        "selectReaction": "Chose your reaction.",
+        "allowPhysicalDice": "Check with real dice",
+        "allowPhysicalDiceHint": "Allow the input of the result of real dice"
     },
 
     "Equipment": {
@@ -938,10 +940,12 @@
         "Reroll": "Repeat roll (1 FtP)",
         "AddQS": "Increase QS by one (1 FtP)",
         "rerollDamage": "Repeat damage roll (1 FtP)",
-        "ApplyDamage": "Apply damage",
-        "ApplyDamageSP": "Apply damage as LP",
+        "ApplyDamage": "Apply damage as DP",
+        "ApplyDamageSP": "Apply damage as SDP",
         "talentedReroll": "Use Aptitude ",
-        "ApplyMana": "Pay AE/KP"
+        "ApplyMana": "Pay AE/KP",
+        "hideData": "Hide details to players",
+        "showData": "Show details to players"
     },
 
     "aimOptions": {
@@ -972,7 +976,9 @@
         "noConfirmationRoll": "No confirmation roll",
         "noConfirmationRollHint": "No confirmation roll for attacks and attribute checks.",
         "clearTargets": "Clear Target after attack",
-        "clearTargetsHint": "Removes targets after a check."
+        "clearTargetsHint": "Removes targets after a check.",
+        "hideOpposedDamage": "Hide opposed test detail result",
+        "hideOpposedDamageHint": "Hides calculated damage on opposed tests."
     },
 
     "CHATFATE": {
