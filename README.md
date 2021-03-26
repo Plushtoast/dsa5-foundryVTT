@@ -10,6 +10,9 @@ This system is intended for usage with [Foundry Virtual Tabletop](https://foundr
 ## Installation - Auto Installer
 In the FVTT Game Systems Menu, click Install System and enter the Manifest URL: `https://raw.githubusercontent.com/Plushtoast/dsa5-foundryVTT/master/system.json`
 
+## Roadmap
+See [Milestones](https://github.com/Plushtoast/dsa5-foundryVTT/milestones) for our short term goals. Those might be subject to change.
+
 ## Current State
 DSA 1.0 is now ready to be played by everybody. 
 DSA 1.0 includes all relevant mechanisms to play in the wonderous world of Aventurien and Das Schwarze Auge.
