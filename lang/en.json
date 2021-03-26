@@ -736,7 +736,7 @@
 
     "NarrowSpaceModifiers": {
         "weapon": {
-            "short": "Short-reach Waffe, +-0 AT/PA",
+            "short": "Short-reach, +-0 AT/PA",
             "medium": "Medium-reach, -4 AT/-4 PA",
             "long": "Long-reach, -8 AT/-8 PA"
         },
@@ -941,7 +941,7 @@
         "AddQS": "Increase QS by one (1 FtP)",
         "rerollDamage": "Repeat damage roll (1 FtP)",
         "ApplyDamage": "Apply damage as DP",
-        "ApplyDamageSP": "Apply damage as SDP",
+        "ApplyDamageSP": "Apply damage as sDP",
         "talentedReroll": "Use Aptitude ",
         "ApplyMana": "Pay AE/KP",
         "hideData": "Hide details to players",
