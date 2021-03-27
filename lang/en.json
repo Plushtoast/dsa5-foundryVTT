@@ -83,9 +83,8 @@
         "noExtensions": "No matching liturgy/spell extensions",
         "firstTime": "Language settings",
         "firstTimeWarning": "Please chose your language. Compendiae of different languages are currently not compatible to each other. Existing characters can not be migrated to the other language.",
-        "selectReaction": "Chose your reaction.",
-        "allowPhysicalDice": "Check with real dice",
-        "allowPhysicalDiceHint": "Allow the input of the result of real dice"
+        "selectReaction": "Chose your reaction."
+
     },
 
     "Equipment": {
@@ -197,7 +196,7 @@
     "closeCombatAttacks": "Melee attacks",
     "Current": "Current",
     "career": "Profession",
-    "cummulatedQS": "Collected QS",
+    "cummulatedQS": "Collected QL",
     "creatureClass": "Type",
     "conjuringDifficulty": "Summoning dif.",
     "clericspecialtalents": "Karma Special Abilities",
@@ -461,7 +460,7 @@
         "partChecks": "Part of skill check modifier",
         "FP": "Skill points modifier",
         "combatTurmoil": "Shooting into Melee",
-        "QS": "Quality level modifier",
+        "QS": "Quality Level modifier",
         "damage": "Damage modifier (f.e. 1d6)"
     },
 
@@ -656,7 +655,7 @@
     },
 
     "CHATNOTIFICATION": {
-        "gainsBloodrush": "The rage consumes {character} and he/she gains bloodrush.",
+        "gainsBloodrush": "The rage consumes {character} and he/she gains the condition bloodrush.",
         "unableReroll": "Die {die} rolled again because of Incompetence ({oldVal}/{newVal})",
         "requestRoll": "{user} requests a roll in {item}",
         "editRoll": "Edit roll",
@@ -687,7 +686,9 @@
         "tables": "Tables",
         "descrtables": "Show all rollable tables.",
         "request": "Request roll",
-        "descrrequest": "Request a skill roll. (tab + number = with modifier)"
+        "descrrequest": "Request a skill roll. (tab + number = with modifier)",
+        "threeD20Check": "3D20 Check",
+        "descrthreeD20Check": "Roll a 3d20 check without actor (attributes 12)"
     },
 
     "ITEM.TypeAdvantage": "Advantage",
@@ -938,7 +939,7 @@
 
     "CHATCONTEXT": {
         "Reroll": "Repeat roll (1 FtP)",
-        "AddQS": "Increase QS by one (1 FtP)",
+        "AddQS": "Increase QL by one (1 FtP)",
         "rerollDamage": "Repeat damage roll (1 FtP)",
         "ApplyDamage": "Apply damage as DP",
         "ApplyDamageSP": "Apply damage as sDP",
@@ -962,7 +963,7 @@
         "rangeBotchTableEnabled": "Ranged Combat-Botch Table",
         "rangeBotchTableEnabledHint": "Optionally, instead of always suffering 1D6+2 DP for a botch, you can roll on this table.",
         "higherDefense": "Higher Defense Stats",
-        "higherDefenseHint": "If you want to decrease the chances that your character will get hit, you can choose to raise the character’s Parry in general by 2 or 4 points (and raise character’s Dodge stat by half this amount, as well). Note that both player characters and NPCs can increase defense  stats, which means that combats will take longer to resolve. This optional rule does not change the game’s level of complexity",
+        "higherDefenseHint": "If you want to decrease the chances that your character will get hit, you can choose to raise the character’s Parry in general by 2 or 4 points (and raise character’s Dodge stat by half this amount, as well). Note that both player characters and NPCs can increase defense stats, which means that combats will take longer to resolve. This optional rule does not change the game’s level of complexity",
         "statusEffectCounterColor": "Color of the status effect counter",
         "statusEffectCounterColorHint": "Hex code for the color of countable status effects on the tokens. Format: #000000",
         "defaultDimVision": "Default dim vision",
@@ -978,7 +979,9 @@
         "clearTargets": "Clear Target after attack",
         "clearTargetsHint": "Removes targets after a check.",
         "hideOpposedDamage": "Hide opposed test detail result",
-        "hideOpposedDamageHint": "Hides calculated damage on opposed tests."
+        "hideOpposedDamageHint": "Hides calculated damage on opposed tests.",
+        "allowPhysicalDice": "Check with real dice",
+        "allowPhysicalDiceHint": "Allow the input of the result of real dice"
     },
 
     "CHATFATE": {

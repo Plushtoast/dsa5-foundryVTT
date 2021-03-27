@@ -22,14 +22,14 @@ export default function() {
             return false
         }
         let canUnhideData = function(li) {
-            if (game.user.isGM) {
+            if (game.user.isGM && game.settings.get("dsa5", "hideOpposedDamage")) {
                 let message = game.messages.get(li.attr("data-message-id"));
                 return "hideData" in message.data.flags && message.data.flags.hideData
             }
             return false
         }
         let canHideData = function(li) {
-            if (game.user.isGM) {
+            if (game.user.isGM && game.settings.get("dsa5", "hideOpposedDamage")) {
                 let message = game.messages.get(li.attr("data-message-id"));
                 return "hideData" in message.data.flags && !message.data.flags.hideData
             }

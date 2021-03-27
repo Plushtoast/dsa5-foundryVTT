@@ -1184,7 +1184,7 @@ export default class Actordsa5 extends Actor {
 
         if (delta > 0 && statusId == "inpain" && !this.hasCondition("bloodrush") && AdvantageRulesDSA5.hasVantage(this, game.i18n.localize('LocalizedIDs.frenzy'))) {
             await this.addCondition("bloodrush")
-            let msg = `${game.i18n.format("CHATNOTIFICATION.gainsBloodrush", {character: "<b>" + this.name + "</b>"})}`;
+            let msg = DSA5_Utility.replaceConditions(`${game.i18n.format("CHATNOTIFICATION.gainsBloodrush", {character: "<b>" + this.name + "</b>"})}`);
             ChatMessage.create(DSA5_Utility.chatDataSetup(msg));
         }
     }

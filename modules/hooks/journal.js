@@ -5,8 +5,6 @@ import DSA5_Utility from "../system/utility-dsa5.js";
 
 
 export default function() {
-
-
     Hooks.on("renderJournalSheet", (obj, html, data) => {
 
         $(html).find(".close").attr("title", game.i18n.localize("SHEET.Close"));

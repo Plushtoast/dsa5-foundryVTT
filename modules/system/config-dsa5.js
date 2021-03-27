@@ -512,6 +512,11 @@ DSA5.helpContent = [{
         name: "request",
         command: "/rq",
         example: "/rq betören"
+    },
+    {
+        name: "threeD20Check",
+        command: "/ch",
+        example: "/ch"
     }
 ]
 

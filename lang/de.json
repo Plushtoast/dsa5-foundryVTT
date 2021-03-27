@@ -411,7 +411,7 @@
     "worn": "Ausgerüstet",
     "wrongHand": "Falsche Hand",
     "writing": "Schrift",
-    "doNothing": "Kein Reaktion",
+    "doNothing": "Keine Reaktion",
     "yes": "Ja",
     "YouAlreadyHaveit": "Hast du bereits",
     "zkModifier": "Zähigkeit (Ziel)",
@@ -637,7 +637,7 @@
     },
 
     "CHATNOTIFICATION": {
-        "gainsBloodrush": "Der Zorn überwältigt {character} und er/sie verfällt in Blutrausch.",
+        "gainsBloodrush": "Der Zorn überwältigt {character} und er/sie verfällt in den Zustand Blutrausch.",
         "unableReroll": "Würfel {die} wegen Unfähigkeit erneut geworfen ({oldVal}/{newVal})",
         "requestRoll": "{user} fordert einen Wurf in {item}",
         "editRoll": "Wurf editieren",
@@ -668,7 +668,9 @@
         "tables": "Tabellen",
         "descrtables": "Zeige alle würfelbaren Tabellen.",
         "request": "Wurf anfordern",
-        "descrrequest": "Fordere einen Talentwurf an. (Tab + Zahl = mit Modifikator)"
+        "descrrequest": "Fordere einen Talentwurf an. (Tab + Zahl = mit Modifikator)",
+        "threeD20Check": "3W20 Probe",
+        "descrthreeD20Check": "Würfle eine 3W20 Probe ohne Charakter (Attribute 12)"
     },
 
     "ITEM.TypeAdvantage": "Vorteil",
