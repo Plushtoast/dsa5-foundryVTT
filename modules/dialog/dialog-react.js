@@ -108,7 +108,7 @@ export class ReactToAttackDialog extends DialogReactDSA5 {
         let actor = DialogReactDSA5.getTargetActor(startMessage)
         if (actor) {
             let types = ["meleeweapon"]
-            let result = actor.data.items.filter(x => { return types.includes(x.type) && x.data.worn.value == true })
+            let result = actor.data.items.filter(x => { return (types.includes(x.type) && x.data.worn.value == true) || (x.type == "trait" && Number(x.data.pa) > 0) })
             for (let res of result) {
                 items.push({
                     name: res.name,
@@ -133,10 +133,11 @@ export class ReactToAttackDialog extends DialogReactDSA5 {
                 actor.basicTest(setupData)
             });
         } else {
-            let types = ["meleeweapon"]
+            let types = ["meleeweapon", "trait"]
             let result = actor.data.items.find(x => { return types.includes(x.type) && x.name == text })
             if (result) {
-                actor.setupWeapon(result, "parry", {}).then(setupData => {
+                let fun = result.type == "meleeweapon" ? "setupWeapon" : "setupWeaponTrait"
+                actor[fun](result, "parry", {}).then(setupData => {
                     actor.basicTest(setupData)
                 });
             }

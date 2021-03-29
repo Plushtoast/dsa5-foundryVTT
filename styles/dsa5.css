@@ -877,10 +877,6 @@ input[type="text"].col-Money-H {
     background-color: rgba(0, 0, 0, 0.1);
 }
 
-.fa-moon-o:before {
-    content: "\f186"
-}
-
 .advance {
     color: #333029a6;
     margin-left: 4px;
@@ -896,6 +892,8 @@ input[type="text"].col-Money-H {
     color: #333029a6;
 }
 
+.condition-toggle,
+.condition-edit,
 .spells .very-small a .fas,
 .inventory .very-small a .fas {
     padding: 1px;
@@ -1560,6 +1558,14 @@ input[type="search"] {
 
 .statusEffectMenu li.search input {
     color: white;
+    width: 80%;
+}
+
+.statusEffectMenu li.search a {
+    color: white;
+    border: 1px solid white;
+    padding: 3px;
+    border-radius: 2px;
 }
 
 .statusEffectMenu li.search input::placeholder {

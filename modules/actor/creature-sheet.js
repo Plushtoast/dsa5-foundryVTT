@@ -26,7 +26,8 @@ export default class ActorSheetdsa5Creature extends ActorSheetDsa5 {
             event.preventDefault();
             let itemId = this._getItemId(event);
             const item = this.actor.items.find(i => i.data._id == itemId)
-            this.actor.setupWeaponTrait(item, "attack", event).then(setupData => {
+            const mode = $(event.currentTarget).closest('.item').attr("data-mod")
+            this.actor.setupWeaponTrait(item, mode, event).then(setupData => {
                 this.actor.basicTest(setupData)
             });
         });

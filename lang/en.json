@@ -231,6 +231,7 @@
     "equipment": "Equipment",
     "effectResult": "Effect result",
     "effectFormula": "Effect formula",
+    "energyfactor": "Primary Attr. Factor",
     "equipmentType": "Equipment category",
     "extensions": "Extensions",
     "entry": "Entry",
@@ -627,7 +628,10 @@
         "showToPlayers": "Show to everyone",
         "imageView": "Image entry",
         "textView": "Text entry",
-        "ConsumeItem": "Consume item"
+        "ConsumeItem": "Consume item",
+        "deactivate": "Deactivate",
+        "activate": "Activate",
+        "switchLimited": "Limited view (player view)"
     },
 
     "ITEMSHEET": {
@@ -1069,10 +1073,6 @@
         "Spell": "Botch Table for Spells"
     },
 
-    "CONDITIONS": {
-        "add": "Add condition"
-    },
-
     "CONDITION": {
         "shapeshift": "Shapeshift",
         "encumbered": "Encumbrance",
@@ -1096,7 +1096,9 @@
         "invisible": "Invisible",
         "poisoned": "Poisoned",
         "burning": "Burning",
-        "fixated": "Bound"
+        "fixated": "Bound",
+        "custom": "Custom effect",
+        "add": "Add condition"
     },
 
     "CONDITIONDESCRIPTION": {

@@ -1285,6 +1285,15 @@ class TraitItemDSA5 extends Itemdsa5 {
                 combatSpecAbs: combatskills,
                 aimOptions: DSA5.aimOptions
             });
+        } else if (data.mode == "parry") {
+            mergeObject(data, {
+                defenseCount: 0,
+                showDefense: true,
+                wrongHandDisabled: false,
+                melee: true,
+                combatSpecAbs: combatskills,
+                constricted: actor.hasCondition("constricted")
+            });
         }
     }
 
@@ -1324,7 +1333,7 @@ class TraitItemDSA5 extends Itemdsa5 {
                 testData.visionModifier = Number(html.find('[name="vision"]').val())
                 testData.opposingWeaponSize = html.find('[name="weaponsize"]').val()
                 testData.narrowSpace = html.find('[name="narrowSpace"]').is(":checked")
-                testData.doubleAttack = html.find('[name="doubleAttack"]').is(":checked") ? -2 : 0
+                testData.doubleAttack = html.find('[name="doubleAttack"]').is(":checked") ? (-2 + SpecialabilityRulesDSA5.abilityStep(actor, game.i18n.localize('LocalizedIDs.twoWeaponCombat'))) : 0
                 testData.wrongHand = html.find('[name="wrongHand"]').is(":checked") ? -4 : 0
                 let attackOfOpportunity = html.find('[name="opportunityAttack"]').is(":checked") ? -4 : 0
                 testData.attackOfOpportunity = attackOfOpportunity != 0
@@ -1357,6 +1366,9 @@ class TraitItemDSA5 extends Itemdsa5 {
                     damageBonus: html.find('[name="damageModifier"]').val(),
                     value: 0,
                     step: 1
+                }, {
+                    name: game.i18n.localize("defenseCount"),
+                    value: (Number(html.find('[name="defenseCount"]').val()) || 0) * -3
                 })
                 testData.situationalModifiers.push(...Itemdsa5.getSpecAbModifiers(html, mode))
                 return { testData, cardOptions };

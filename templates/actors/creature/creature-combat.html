@@ -73,9 +73,8 @@
                     <a class="ch-rollCombatTrait d20 die-attack">{{item.attack}}</a>
                 </div>
                 <div class="col ten center item" data-item-id="{{item._id}}" data-mod="parry">
-                    -
+                    {{#if item.parry}} <a class="ch-rollCombatTrait d20 die-parry">{{item.parry}}</a> {{else}} - {{/if}}
                 </div>
-
                 <div class="col ten center">
                     <a class="ch-rollDamageTrait d6 die-damage">{{item.damagedie}}</a><span title="{{localize 'damageOverThreshold'}}">{{item.damageAdd}}</span>
                 </div>
@@ -184,7 +183,7 @@
         <div class="col two">
             {{localize "Equipment.armor"}}
         </div>
-        <div class="col four center small">{{localize "protection"}}</div>
+        <div class="col four center small">{{localize "protection"}} ({{actor.totalArmor}})</div>
         <div class="col four center small">{{localize "encumbrance"}}</div>
     </div>
     <div class="row-section wrap rowtable inventory">

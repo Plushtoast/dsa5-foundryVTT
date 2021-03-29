@@ -51,11 +51,17 @@ export default class Actordsa5 extends Actor {
             }
             data.data.itemModifiers = this._applyModiferTransformations(itemModifiers)
 
+            for (let ch of Object.values(data.data.characteristics)) {
+                ch.value = ch.initial + ch.advances + (ch.modifier || 0) + ch.gearmodifier;
+                ch.cost = game.i18n.format("advancementCost", { cost: DSA5_Utility._calculateAdvCost(ch.initial + ch.advances, "E") })
+                ch.refund = game.i18n.format("refundCost", { cost: DSA5_Utility._calculateAdvCost(ch.initial + ch.advances, "E", 0) })
+            }
+
             //We should iterate at some point over the items to prevent multiple loops
 
             let isFamiliar = data.items.find(x => x.name == game.i18n.localize('LocalizedIDs.familiar') && x.type == "trait") != undefined
-            data.canAdvance = data.type == "character" || isFamiliar
-            data.isMage = data.items.some(x => ["ritual", "spell", "magictrick"].includes(x.type) || (x.type == "specialability" && ["magical", "staff"].includes(x.data.category.value)))
+            data.canAdvance = (data.type == "character" || isFamiliar) && this.owner
+            data.isMage = isFamiliar || data.items.some(x => ["ritual", "spell", "magictrick"].includes(x.type) || (x.type == "specialability" && ["magical", "staff"].includes(x.data.category.value)))
             data.isPriest = data.items.some(x => ["ceremony", "liturgy", "blessing"].includes(x.type) || (x.type == "specialability" && ["ceremonial", "clerical"].includes(x.data.category.value)))
             if (data.canAdvance) {
                 data.data.details.experience.current = data.data.details.experience.total - data.data.details.experience.spent;
@@ -79,7 +85,7 @@ export default class Actordsa5 extends Actor {
             }
 
             data.data.status.initiative.value += data.data.status.initiative.gearmodifier
-            data.data.status.initiative.value *= 1.01
+            data.data.status.initiative.value = (1.01 * data.data.status.initiative.value).toFixed(2)
 
             data.data.status.wounds.max = data.data.status.wounds.current + data.data.status.wounds.modifier + data.data.status.wounds.advances + data.data.status.wounds.gearmodifier
             data.data.status.astralenergy.max = data.data.status.astralenergy.current + data.data.status.astralenergy.modifier + data.data.status.astralenergy.advances + data.data.status.astralenergy.gearmodifier
@@ -91,10 +97,10 @@ export default class Actordsa5 extends Actor {
                 data.data.status.karmaenergy.current = data.data.status.karmaenergy.initial
 
                 if (data.data.characteristics[guide.magical])
-                    data.data.status.astralenergy.current += data.data.characteristics[guide.magical].value
+                    data.data.status.astralenergy.current += Math.round(data.data.characteristics[guide.magical].value * data.data.energyfactor.magical)
 
                 if (data.data.characteristics[guide.clerical])
-                    data.data.status.karmaenergy.current += data.data.characteristics[guide.clerical].value
+                    data.data.status.karmaenergy.current += Math.round(data.data.characteristics[guide.clerical].value * data.data.energyfactor.clerical)
 
                 data.data.status.astralenergy.max = data.data.status.astralenergy.current + data.data.status.astralenergy.modifier + data.data.status.astralenergy.advances + data.data.status.astralenergy.gearmodifier
                 data.data.status.karmaenergy.max = data.data.status.karmaenergy.current + data.data.status.karmaenergy.modifier + data.data.status.karmaenergy.advances + data.data.status.karmaenergy.gearmodifier
@@ -155,25 +161,21 @@ export default class Actordsa5 extends Actor {
         }
     }
 
-
-
     prepareBaseData() {
         const data = this.data;
-        for (let ch of Object.values(data.data.characteristics)) {
-            ch.value = ch.initial + ch.advances + (ch.modifier || 0);
-            ch.bonus = Math.floor(ch.value / 10)
-            ch.cost = game.i18n.format("advancementCost", { cost: DSA5_Utility._calculateAdvCost(ch.initial + ch.advances, "E") })
-            ch.refund = game.i18n.format("refundCost", { cost: DSA5_Utility._calculateAdvCost(ch.initial + ch.advances, "E", 0) })
-        }
 
+        data.data.totalArmor = 0
+        data.data.carryModifier = 0
         let gearModifyableCalculatedAttributes = ["fatePoints", "initiative", "speed", "astralenergy", "karmaenergy", "wounds", "dodge", "soulpower", "toughness"]
         for (let k of gearModifyableCalculatedAttributes) {
             if (data.data.status[k])
                 data.data.status[k].gearmodifier = 0
         }
+        for (let ch of Object.values(data.data.characteristics)) {
+            ch.gearmodifier = 0
+        }
     }
 
-    /** Gets called on sheet render */
     prepare() {
         let preparedData = duplicate(this.data)
         if (preparedData.canAdvance) {
@@ -192,9 +194,10 @@ export default class Actordsa5 extends Actor {
     }
 
     static armorValue(actor) {
+        console.log(actor)
         let wornArmor = actor.items.filter(x => x.type == "armor" && x.data.worn.value == true).reduce((a, b) => a + Number(b.data.protection.value), 0)
         let animalArmor = actor.items.filter(x => x.type == "trait" && x.data.traitType.value == "armor").reduce((a, b) => a + Number(b.data.at.value), 0)
-        return wornArmor + animalArmor
+        return wornArmor + animalArmor + (actor.data.totalArmor || 0)
     }
 
     static _calculateCombatSkillValues(i, actorData) {
@@ -330,7 +333,7 @@ export default class Actordsa5 extends Actor {
         //we can later make equipment sortable
         //actorData.items = actorData.items.sort((a, b) => (a.sort || 0) - (b.sort || 0))
 
-        let totalArmor = 0;
+        let totalArmor = actorData.data.totalArmor || 0;
         let totalWeight = 0;
         let encumbrance = 0;
 
@@ -472,7 +475,7 @@ export default class Actordsa5 extends Actor {
         //TODO move the encumbrance calculation to a better location
         encumbrance = Math.max(0, encumbrance - SpecialabilityRulesDSA5.abilityStep(this.data, game.i18n.localize('LocalizedIDs.inuredToEncumbrance')))
 
-        let carrycapacity = actorData.data.characteristics.kk.value * 2;
+        let carrycapacity = actorData.data.characteristics.kk.value * 2 + actorData.data.carryModifier;
         if (actorData.type != "creature" || actorData.canAdvance) {
             encumbrance += Math.max(0, Math.ceil((totalWeight - carrycapacity - 4) / 4))
         }
@@ -487,7 +490,7 @@ export default class Actordsa5 extends Actor {
         characteristics["-"] = "-"
 
         return {
-            totalweight: totalWeight,
+            totalWeight,
             totalArmor,
             money,
             encumbrance,
@@ -922,10 +925,10 @@ export default class Actordsa5 extends Actor {
             }
         };
 
-        let toSearch = [game.i18n.localize("dodge")]
+        let toSearch = [game.i18n.localize(statusId)]
         let combatskills = Itemdsa5.buildCombatSpecAbs(this, ["Combat"], toSearch, "parry")
 
-        testData.source.type = "dodge"
+        testData.source.type = statusId
 
         let dialogOptions = {
             title: title,
@@ -1031,6 +1034,8 @@ export default class Actordsa5 extends Actor {
 
     static _prepareMeleetrait(item) {
         item.attack = Number(item.data.at.value)
+        if (item.data.pa != 0) item.parry = item.data.pa
+
         return this._parseDmg(item)
     }
 

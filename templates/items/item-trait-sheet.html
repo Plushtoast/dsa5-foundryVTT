@@ -56,7 +56,11 @@
             {{/when}} {{#when data.traitType.value 'eq' "meleeAttack"}}
             <div class="form-group">
                 <label class="label-text">{{localize "CHAR.ATTACK"}}: </label>
-                <input class="input-text" type="text" name="data.at.value" value="{{data.at.value}}" data-dtype="String" />
+                <input class="input-text" type="number" name="data.at.value" value="{{data.at.value}}" data-dtype="Number" />
+            </div>
+            <div class="form-group">
+                <label class="label-text">{{localize "CHAR.PARRY"}}: </label>
+                <input class="input-text" type="number" name="data.pa" value="{{data.pa}}" data-dtype="Number" />
             </div>
 
             <div class="form-group">

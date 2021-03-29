@@ -2,25 +2,31 @@ import DSA5_Utility from "./utility-dsa5.js";
 
 export default class DSA5Payment {
     static payMoney(actor, moneyString, silent = false) {
+        let canPay = DSA5Payment.canPay(actor, moneyString, silent)
+        if (canPay.success)
+            DSA5Payment._updateMoney(actor, canPay.actorsMoney.money, canPay.actorsMoney.sum - canPay.money)
+
+        if (!silent && canPay.msg != "")
+            ChatMessage.create(DSA5_Utility.chatDataSetup(`<p>${canPay.msg}</p>`, "roll"))
+
+        return canPay.success
+    }
+
+    static canPay(actor, moneyString, silent) {
         let money = this._getPaymoney(moneyString)
-        let result = false
+        let result = { success: false, msg: "", money: money }
+
         if (money) {
-            let actorsMoney = this._actorsMoney(actor)
-            let msg = ""
-            if (actorsMoney.sum >= money) {
-                DSA5Payment._updateMoney(actor, actorsMoney.money, actorsMoney.sum - money)
-                msg = `<p>${game.i18n.format("PAYMENT.pay", {actor: actor.name, amount: DSA5Payment._moneyToString(money)})}</p>`
-                result = true
+            result.actorsMoney = this._actorsMoney(actor)
+            if (result.actorsMoney.sum >= money) {
+                result.msg = game.i18n.format("PAYMENT.pay", { actor: actor.name, amount: DSA5Payment._moneyToString(money) })
+                result.success = true
             } else {
-                msg = `<p>${game.i18n.format("PAYMENT.cannotpay", {actor: actor.name, amount: DSA5Payment._moneyToString(money)})}</p>`
+                result.msg = game.i18n.format("PAYMENT.cannotpay", { actor: actor.name, amount: DSA5Payment._moneyToString(money) })
                 if (silent) {
-                    ui.notifications.notify(msg)
+                    ui.notifications.notify(result.msg)
                 }
             }
-            if (!silent) {
-                ChatMessage.create(DSA5_Utility.chatDataSetup(msg, "roll"))
-            }
-
         }
         return result
     }

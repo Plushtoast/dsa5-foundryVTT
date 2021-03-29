@@ -114,6 +114,13 @@ export default class DSA5ItemLibrary extends Application {
             }
         }
 
+        this.pages = {
+            equipment: {},
+            character: {},
+            spell: {},
+            journal: {},
+            zoo: {}
+        }
 
         this.filters = {
             equipment: {
@@ -248,32 +255,35 @@ export default class DSA5ItemLibrary extends Application {
 
         let fields = {
             field: ["name", "data"],
-            limit: 60
+            limit: 60,
+            page: true
         }
         let filteredItems = []
 
-        let oneFilerSelected = false
+        let oneFilterSelected = false
         for (let filter in this.filters[category].categories) {
             if (this.filters[category].categories[filter]) {
-                let query = duplicate(fields)
                 if (search == "") {
-                    filteredItems.push(...index.search(filter, { field: ["itemType"], limit: 60 }))
+                    filteredItems.push(...index.search(filter, { field: ["itemType"], limit: 60, page: false }))
                 } else {
-                    mergeObject(query, { where: { itemType: filter } })
+                    let query = duplicate(fields)
+                    mergeObject(query, { where: { itemType: filter }, page: false })
                     filteredItems.push(...index.search(search, query))
                 }
             }
-            oneFilerSelected = this.filters[category].categories[filter] || oneFilerSelected
+            oneFilterSelected = this.filters[category].categories[filter] || oneFilterSelected
         }
 
-        if (!oneFilerSelected)
+        if (!oneFilterSelected) {
             filteredItems = index.search(search, fields)
+            this.pages[category].next = filteredItems.next
+        }
 
+        filteredItems = filteredItems.result ? filteredItems.result : filteredItems
+        filteredItems = filteredItems.filter(x => x.hasPermission).sort((a, b) => (a.name.toLowerCase() > b.name.toLowerCase()) ? 1 : -1)
+        this.setBGImage(filteredItems, category)
 
-        let filterdItems = filteredItems.filter(x => x.hasPermission).sort((a, b) => (a.name.toLowerCase() > b.name.toLowerCase()) ? 1 : -1)
-        this.setBGImage(filterdItems, category)
-
-        return filterdItems
+        return filteredItems
     }
 
     setBGImage(filterdItems, category) {

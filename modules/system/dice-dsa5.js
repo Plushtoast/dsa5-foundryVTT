@@ -306,7 +306,7 @@ export default class DiceDSA5 {
             this._appendSituationalModifiers(testData, game.i18n.localize("sizeCategory"), testData.sizeModifier)
             this._appendSituationalModifiers(testData, game.i18n.localize("sight"), testData.visionModifier)
         }
-        let result = this._rollSingleD20(roll, Number(source.data.at.value), testData.mode, this._situationalModifiers(testData), testData)
+        let result = this._rollSingleD20(roll, testData.mode == "attack" ? Number(source.data.at.value) : Number(source.data.pa), testData.mode, this._situationalModifiers(testData), testData)
 
         let success = result.successLevel > 0
         let doubleDamage = result.successLevel > 2

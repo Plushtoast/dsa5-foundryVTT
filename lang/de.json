@@ -209,6 +209,7 @@
     "disadvantage": "Nachteil",
     "encumbrance": "Belastung",
     "equipment": "Ausrüstung",
+    "energyfactor": "Leiteig. Multiplikator",
     "effectResult": "Effektergebnis",
     "effectFormula": "Effektformel",
     "equipmentType": "Ausrüstungskategorie",
@@ -610,7 +611,10 @@
         "showToPlayers": "Allen zeigen",
         "imageView": "Bildeintrag",
         "textView": "Texteintrag",
-        "ConsumeItem": "Gegenstand verbrauchen"
+        "ConsumeItem": "Gegenstand verbrauchen",
+        "deactivate": "Deaktivieren",
+        "activate": "Aktivieren",
+        "switchLimited": "Begrenzte Ansicht umschalten (Spieleransicht)"
     },
 
     "ITEMSHEET": {
@@ -1049,10 +1053,6 @@
         "Spell": "Patzertabelle für Zauber/Rituale"
     },
 
-    "CONDITIONS": {
-        "add": "Zustand hinzufügen"
-    },
-
     "CONDITION": {
         "shapeshift": "Gestaltwandlung",
         "encumbered": "Belastung",
@@ -1076,7 +1076,9 @@
         "invisible": "Unsichtbar",
         "poisoned": "Vergiftet",
         "burning": "Brennend",
-        "fixated": "Fixiert"
+        "fixated": "Fixiert",
+        "custom": "Manueller Effekt",
+        "add": "Zustand hinzufügen"
     },
 
     "MERCHANT": {

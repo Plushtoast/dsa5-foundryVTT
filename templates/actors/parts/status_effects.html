@@ -8,10 +8,11 @@
         </div>
         <div class="col ten center">
             <div class="statusEffectMenu">
-                <a class="status-create lineheight very-small" title="{{localize 'CONDITIONS.add'}}"><i class="fas fa-plus"></i></a>
+                <a class="status-create lineheight very-small" title="{{localize 'CONDITION.add'}}"><i class="fas fa-plus"></i></a>
                 <ul>
                     <li class="search">
                         <input type="search" data-dtype="String" class="conditionSearch" placeholder="{{localize 'search'}}" />
+                        <a class="status-add" data-id="custom" title="{{localize 'CONDITION.custom'}}"><i class="fas fa-plus"></i></a>
                     </li>
                     {{#each manualConditions as |item i|}}
                     <li>
@@ -37,6 +38,7 @@
             <div class="col two">
                 {{localize "condition"}}
             </div>
+
             <div class="col fifteen center">
                 {{localize "ABBR.modifiers"}}
             </div>
@@ -51,6 +53,7 @@
             <div class="col two">
                 {{localize "condition"}}
             </div>
+
             <div class="col fifteen center">
                 {{localize "ABBR.modifiers"}}
             </div>
@@ -69,22 +72,20 @@
             <div class="col two">
                 <a class="condition-show" data-id="{{item.id}}">{{localize item.label}}</a>
             </div>
+
             <div class="col fifteen center">
                 {{#if item.editable}}{{#unless item.boolean}}<a class="condition-value">{{item.manual}}</a>{{/unless}}{{/if}}
             </div>
             <div class="col fifteen center" title="{{localize 'value'}}">
-                {{#if item.boolean}} {{#if item.existing}}
-                <a class="condition-toggle"><i class="far fa-check-circle"></i></a> {{else}}
-                <a class="condition-toggle"><i class="far fa-circle"></i></a> {{/if}} {{else}}
+                {{#if item.customizable}}
+                <a class="condition-edit" data-id="{{item.id}}"><i class="fa fa-edit"></i></a> {{/if}} {{#if item.boolean}} {{#if item.existing}}
+                <a class="condition-toggle" title="{{localize 'SHEET.deactivate'}}"><i class="far fa-check-circle"></i></a> {{else}}
+                <a class="condition-toggle" title="{{localize 'SHEET.activate'}}"><i class="far fa-circle"></i></a> {{/if}} {{else}}
                 <span>{{item.value}}</span>{{/if}}
             </div>
-
         </div>
-
         {{/each}}
-
     </div>
-
 
 </div>
 <div class="groupbox">

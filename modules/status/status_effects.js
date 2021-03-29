@@ -18,6 +18,25 @@ export default class DSA5StatusEffects {
         })
     }
 
+    static createCustomEffect(owner, description = "") {
+        const label = game.i18n.localize("CONDITION.custom")
+        if (description == "") description = label
+        owner.addCondition({
+            label: label,
+            icon: "icons/svg/aura.svg",
+            origin: owner.uuid,
+            flags: {
+                dsa5: {
+                    value: null,
+                    editable: true,
+                    customizable: true,
+                    description: description,
+                    custom: true
+                }
+            },
+            id: `${Math.random()}`
+        })
+    }
 
     static async createEffect(actor, effect, value, auto) {
         effect.label = game.i18n.localize(effect.label);

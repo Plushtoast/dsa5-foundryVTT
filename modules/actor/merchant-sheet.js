@@ -14,7 +14,7 @@ export default class MerchantSheetDSA5 extends ActorSheetdsa5NPC {
     }
 
     get template() {
-        if (this.showLimited()) {
+        if (this.showLimited() || (this.playerViewEnabled() && ["merchant", "loot"].includes(getProperty(this.actor.data.data, "merchant.merchantType")))) {
             switch (getProperty(this.actor.data.data, "merchant.merchantType")) {
                 case "merchant":
                     return "systems/dsa5/templates/actors/merchant/merchant-limited.html";
@@ -58,6 +58,10 @@ export default class MerchantSheetDSA5 extends ActorSheetdsa5NPC {
         }
     }
 
+    playerViewEnabled() {
+        return getProperty(this.actor.data.data, "merchant.playerView")
+    }
+
 
     async buyItem(ev) {
         await this.transferItem(this.actor, this.getTradeFriend(), ev, true)
@@ -71,9 +75,9 @@ export default class MerchantSheetDSA5 extends ActorSheetdsa5NPC {
         let price = $(ev.currentTarget).attr("data-price")
         let amount = ev.ctrlKey ? 10 : 1
 
-        if (game.user.isGm) {
+        if (game.user.isGM) {
             MerchantSheetDSA5.finishTransaction(source, target, price, itemId, buy, amount)
-        } else {
+        } else if (MerchantSheetDSA5.noNeedToPay(target, source) || DSA5Payment.canPay(target, price, true)) {
             let targetId = { actor: target.data._id }
             if (target.token) {
                 targetId["token"] = target.token.data._id
@@ -101,7 +105,7 @@ export default class MerchantSheetDSA5 extends ActorSheetdsa5NPC {
         let item = duplicate(await source.getEmbeddedEntity("OwnedItem", itemId))
         amount = Math.min(Number(item.data.quantity.value), amount)
         if (Number(item.data.quantity.value) > 0) {
-            let hasPaid = this.noNeedToPay(target, source) || DSA5Payment.payMoney(target, price, true)
+            let hasPaid = MerchantSheetDSA5.noNeedToPay(target, source) || DSA5Payment.payMoney(target, price, true)
             if (hasPaid) {
                 if (buy) {
                     await this.updateTargetTransaction(target, item, amount)
@@ -142,6 +146,22 @@ export default class MerchantSheetDSA5 extends ActorSheetdsa5NPC {
 
     getTradeFriend() {
         return game.user.character
+    }
+
+    _getHeaderButtons() {
+        let buttons = super._getHeaderButtons();
+        if (game.user.isGM) {
+            buttons.unshift({
+                class: "playerview",
+                icon: `fas fa-toggle-on`,
+                onclick: async ev => this._togglePlayerview(ev)
+            })
+        }
+        return buttons
+    }
+
+    _togglePlayerview(ev) {
+        this.actor.update({ "data.merchant.playerView": !getProperty(this.actor.data.data, "merchant.playerView") })
     }
 
     async randomGoods(ev) {
@@ -224,8 +244,6 @@ export default class MerchantSheetDSA5 extends ActorSheetdsa5NPC {
         $(ev.currentTarget).text(text)
     }
 
-
-
     async removeAllGoods(actor, ev) {
         let text = $(ev.currentTarget).text()
         $(ev.currentTarget).html(' <i class="fa fa-spin fa-spinner"></i>')
@@ -277,7 +295,7 @@ export default class MerchantSheetDSA5 extends ActorSheetdsa5NPC {
         let friend = this.getTradeFriend()
         if (friend) {
             let tradeData = friend.prepareItems()
-            let factor = getProperty(this.actor.data.data, "merchant.merchantType") == "loot" ? 1 : (getProperty(this.actor.data.data, "merchant.merchant.buyingFactor") || 1)
+            let factor = getProperty(this.actor.data.data, "merchant.merchantType") == "loot" ? 1 : (getProperty(this.actor.data.data, "merchant.buyingFactor") || 1)
             let inventory = this.prepareSellPrices(tradeData.inventory, factor)
             if (inventory["misc"].items.length == 0) inventory["misc"].show = false
 

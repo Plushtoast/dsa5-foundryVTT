@@ -146,6 +146,10 @@
                     "magical": "-",
                     "clerical": "-"
                 },
+                "energyfactor": {
+                    "magical": 1,
+                    "clerical": 1
+                },
                 "tradition": {
                     "magical": "",
                     "clerical": ""
@@ -509,6 +513,7 @@
             "at": {
                 "value": ""
             },
+            "pa": 0,
             "reach": {
                 "value": ""
             },

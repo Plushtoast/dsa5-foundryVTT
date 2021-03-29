@@ -4,6 +4,7 @@ import AdvantageRulesDSA5 from "../system/advantage-rules-dsa5.js";
 import Itemdsa5 from "../item/item-dsa5.js";
 import SpecialabilityRulesDSA5 from "../system/specialability-rules-dsa5.js";
 import DSA5ChatListeners from "../system/chat_listeners.js";
+import DSA5StatusEffects from "../status/status_effects.js";
 
 export default class ActorSheetDsa5 extends ActorSheet {
 
@@ -26,6 +27,7 @@ export default class ActorSheetDsa5 extends ActorSheet {
         $(this._element).find(".import").attr("title", game.i18n.localize("SHEET.Import"));
         $(this._element).find(".locksheet").attr("title", game.i18n.localize("SHEET.Lock"));
         $(this._element).find(".library").attr("title", game.i18n.localize("SHEET.Library"));
+        $(this._element).find(".playerview").attr("title", game.i18n.localize("SHEET.switchLimited"));
 
         if (this.currentFocus) {
             $(this._element).find('[data-item-id="' + this.currentFocus + '"] input').focus().select();
@@ -144,6 +146,9 @@ export default class ActorSheetDsa5 extends ActorSheet {
         }
         let customConditions = this.actor.data.effects.filter(e => e.flags.dsa5 && e.flags.dsa5.custom).map(x => {
             x.id = x._id
+            x.customizable = x.flags.dsa5.customizable
+            x.existing = !x.disabled
+            x.boolean = true
             return x
         })
         data.conditions = conditions.filter(x => x.existing)
@@ -295,10 +300,10 @@ export default class ActorSheetDsa5 extends ActorSheet {
                 result = newValue <= this.actor.data.data.characteristics["ko"].value
                 break
             case "astralenergy":
-                result = newValue <= (this.actor.data.data.characteristics[this.actor.data.data.guidevalue.magical] == undefined ? 0 : this.actor.data.data.characteristics[this.actor.data.data.guidevalue.magical].value)
+                result = newValue <= (this.actor.data.data.characteristics[this.actor.data.data.guidevalue.magical] == undefined ? 0 : this.actor.data.data.characteristics[this.actor.data.data.guidevalue.magical].value * this.actor.data.data.energyfactor.magical)
                 break
             case "karmaenergy":
-                result = newValue <= (this.actor.data.data.characteristics[this.actor.data.data.guidevalue.clerical] == undefined ? 0 : this.actor.data.data.characteristics[this.actor.data.data.guidevalue.clerical].value)
+                result = newValue <= (this.actor.data.data.characteristics[this.actor.data.data.guidevalue.clerical] == undefined ? 0 : this.actor.data.data.characteristics[this.actor.data.data.guidevalue.clerical].value * this.actor.data.data.energyfactor.clerical)
                 break
         }
         if (!result)
@@ -346,7 +351,6 @@ export default class ActorSheetDsa5 extends ActorSheet {
                 icon: `fas fa-${this.actor.data.data.sheetLocked.value ? "" : "un"}lock`,
                 onclick: async ev => this._changeAdvanceLock(ev)
             })
-
         }
         return buttons
     }
@@ -398,6 +402,11 @@ export default class ActorSheetDsa5 extends ActorSheet {
             this.actor.updateEmbeddedEntity("OwnedItem", item);
         })
 
+        html.find('.condition-edit').click(ev => {
+            const effect = this.actor.effects.get($(ev.currentTarget).attr("data-id"))
+            effect.sheet.render(true)
+        })
+
         html.find('.ch-collapse').click(ev => {
             $(ev.currentTarget).find('i').toggleClass("fa-angle-up fa-angle-down")
             $(ev.currentTarget).closest(".groupbox").find('.row-section:nth-child(2)').fadeToggle()
@@ -427,7 +436,11 @@ export default class ActorSheetDsa5 extends ActorSheet {
             $(ev.currentTarget).fadeOut()
         })
         html.find(".status-add").click(ev => {
-            this.actor.addCondition($(ev.currentTarget).attr("data-id"), 1, false, false)
+            let status = $(ev.currentTarget).attr("data-id")
+            if (status == "custom") {
+                DSA5StatusEffects.createCustomEffect(this.actor)
+            } else
+                this.actor.addCondition(status, 1, false, false)
         })
 
         html.find('.roll-aggregated').mousedown(ev => {
@@ -689,19 +702,19 @@ export default class ActorSheetDsa5 extends ActorSheet {
 
         html.find(".condition-toggle").mousedown(ev => {
             let condKey = $(ev.currentTarget).parents(".statusEffect").attr("data-id")
-
-            if (CONFIG.statusEffects.find(e => e.id == condKey).flags.dsa5.value == null) {
-                if (this.actor.hasCondition(condKey))
-                    this.actor.removeCondition(condKey)
-                else
-                    this.actor.addCondition(condKey)
-                return
+            const defaultEffect = CONFIG.statusEffects.find(e => e.id == condKey)
+            if (defaultEffect) {
+                if (CONFIG.statusEffects.find(e => e.id == condKey).flags.dsa5.value == null) {
+                    if (this.actor.hasCondition(condKey))
+                        this.actor.removeCondition(condKey)
+                    else
+                        this.actor.addCondition(condKey)
+                    return
+                }
             }
 
-            if (ev.button == 0)
-                this.actor.addCondition(condKey, 1, false, false)
-            else if (ev.button == 2)
-                this.actor.removeCondition(condKey, 1, false)
+            let ef = this.actor.effects.get(condKey)
+            ef.update({ disabled: !ef.data.disabled })
         })
 
         html.find('.talentSearch').keyup(event => {
