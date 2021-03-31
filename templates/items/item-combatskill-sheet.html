@@ -17,7 +17,7 @@
     <section class="content">
 
         <div class="tab description active" data-tab="description">
-            {{{localize (concat "Combatskilldescr." item.name)}}}
+            {{#if hasLocalization}} {{{localize (concat "Combatskilldescr." item.name)}}} {{else}} {{editor content=data.description.value target="data.description.value" button=true owner=owner editable=editable}} {{/if}}
         </div>
 
         <div class="tab details" data-tab="details">

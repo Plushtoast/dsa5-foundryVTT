@@ -122,11 +122,13 @@ export default class ItemSheetdsa5 extends ItemSheet {
                 data['characteristics'] = DSA5.characteristics;
                 data['skillGroups'] = DSA5.skillGroups;
                 data['skillBurdens'] = DSA5.skillBurdens;
+                data['hasLocalization'] = game.i18n.has(`SKILLdescr.${this.item.name}`)
                 data['StFs'] = DSA5.StFs;
                 break;
             case "combatskill":
                 data['weapontypes'] = DSA5.weapontypes;
                 data['guidevalues'] = DSA5.combatskillsGuidevalues;
+                data['hasLocalization'] = game.i18n.has(`Combatskilldescr.${this.item.name}`)
                 data['StFs'] = DSA5.StFs;
                 break;
             case "rangeweapon":
