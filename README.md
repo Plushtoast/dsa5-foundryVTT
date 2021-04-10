@@ -1,10 +1,8 @@
-# dsa5-foundryVTT
+# Official Das Schwarze Auge/The Dark Eye system for Foundry
 ![](https://repository-images.githubusercontent.com/311655339/4d523800-55a9-11eb-9e2e-6bbc2b71d8a4)
 
 ### Current Version and Compatibility: 
-1.0.0 - FoundryVTT 0.7.0+
-We are proud to announce we finally finished our initial work on Das Schwarze Auge 5th edition in German (English soon) in foundry. I hope you enjoy the system as much as we do.
-
+1.3.0 - FoundryVTT 0.7.0+
 This system is intended for usage with [Foundry Virtual Tabletop](https://foundryvtt.com/) to play "Das Schwarze Auge" 5th edition.
 
 ## Installation - Auto Installer
@@ -14,34 +12,28 @@ In the FVTT Game Systems Menu, click Install System and enter the Manifest URL: 
 See [Milestones](https://github.com/Plushtoast/dsa5-foundryVTT/milestones) for our short term goals. Those might be subject to change.
 
 ## Current State
-DSA 1.0 is now ready to be played by everybody. 
-DSA 1.0 includes all relevant mechanisms to play in the wonderous world of Aventurien and Das Schwarze Auge.
-The core system includes a character sheet to play your favorite characters.
-DSA 1.0 allows you to create your advantages, disadvantages, cultures, professions, special skill, spells, lithurgies, rituals, equipment as you see fit.
-The version 1.0 and it's content will at this point only be available in GERMAN, an english version / translations will follow in due time.
+Aventuria awaits, as TDE 5 is now fully integrated with Foundry VTT.
+The system includes all relevant mechanisms to play in the wonderous world of Aventuria and The Dark Eye and create your own adventures, characters and stories.
+
+The core system includes a character sheet and allows you to create your advantages, disadvantages, cultures, professions, special skill, spells, liturgies, rituals and equipment as you see fit.
 
 ## Notable Features
-Skills, attributes, liturgies, ceremonies, spells, rituals, weapon tests, prolonged tests and many more can be rolled.
+* Skills, attributes, liturgies, ceremonies, spells, rituals, weapon tests, prolonged tests and many more can be rolled.
+* Many special abilities, advantages and disadvantages are automatically calculated for relevant rolls.
+* Status system has been implemented.
+* Opposed Test and Damage calculation that takes into account Size, weapons, armor
+* Poisons and illnesses are implemented and can be rolled for.
+* Character generation based on the entered species, culture and profession is available or you can manually enter all the details of your character in the system.
+* Management of inventory with drag and drop and in-depth information on all items.
+* Manual modification of rolls and test results.
 
-If entered special abilities, advantages and disadvantages are automatically put into condsideration of relevant rolls.
-
-Status system has been implemented. 
-
-Opposed Test and Damage calculation that takes into account Size, weapons, armor 
-
-Poisons and sicknesses are implemented and can be rolled upon.
-
-Character generation based on the entered species, cultures and professions is available or you can manually just enter all details of your character in the system.
-
-Management of inventory with drag and drop and information on all items.
-
-Manual modification of rolls and test results.
 
 ## Official Modules
-- DSA5 Godsofaventuria soon
-- [DSA5 Bestiary](https://www.f-shop.de/virtual-tabletops/das-schwarze-auge-vtt/) - New
-- [DSA5 Armory](https://www.f-shop.de/virtual-tabletops/das-schwarze-auge-vtt/) - New
-- [DSA5-Core](https://www.f-shop.de/virtual-tabletops/das-schwarze-auge-vtt/) - All items and rules from the core rule book
+- [Aventurian Magic I (GERMAN ONLY)](https://www.f-shop.de/virtual-tabletops/das-schwarze-auge-vtt/) - with many new spells, rituals and magical traditions
+- [Gods of Aventuria (GERMAN ONLY)](https://www.f-shop.de/virtual-tabletops/das-schwarze-auge-vtt/) - including dozens of new liturgical, chants and abilities
+- [Aventurian Bestiary (GERMAN ONLY)](https://www.f-shop.de/virtual-tabletops/das-schwarze-auge-vtt/) - featuring 70+ creatures complete with tokens and stats
+- [Aventurian Armory (GERMAN ONLY)](https://www.f-shop.de/virtual-tabletops/das-schwarze-auge-vtt/) - with dozens of items, weapons and armour and new special rules
+- [Core Rules](https://www.f-shop.de/virtual-tabletops/das-schwarze-auge-vtt/) - including ALL the content from the TDE core rulebook including everything you need to play lavishly illustrated and ready to use
 - [DSA5-Introduction](https://github.com/Plushtoast/dsa5_introduction) - A small adventure with included characters and maps to start playing. Might be of use for experienced players too.
 
 As of this moment several modules are in the making. We will inform you as soon as they will be available.
@@ -52,5 +44,6 @@ The following modules are recommended for the best gaming experience:
 - [Pings](https://gitlab.com/foundry-azzurite/pings/) - Mark points of interest on the map with a long mouseclick.
 - [VTTA Tokenizer](https://github.com/mrprimate/vtta-tokenizer) - Lets you create beautiful Tokens. DSA5 sets up token frames for the Tokenizer on the first time the module gets activated.
 - [Dice Tray](https://gitlab.com/asacolips-projects/foundry-mods/foundry-vtt-dice-calculator) - If you want to do quick die rolls without knowing foundry's chat syntax. Not needed for advanced users.
+- [T is for Target](https://github.com/basicer/foundryvtt-t-is-for-target) - Select your target by pressing t. Speeds up the combat.
 
 
