@@ -109,6 +109,7 @@
 
     "requiredFW": "Benötigter FW",
     "traditionArtifact": "Traditionsartefakt",
+    "advantageousPosition": "Vorteilhafte Position",
     "APValue": "AP-Wert",
     "additionalFPs": "zusätzliche FPs",
     "attacktest": "Angriffsprobe",
@@ -237,6 +238,7 @@
     "guidevalue_small": "Leit&shy;eigenschaft",
     "GM notes": "SL Notizen",
     "general": "allgemein",
+    "gridUnits": "Schritt",
     "halfDefense": "der Verteidigungswert des Gegners muss für diesen Angriff halbiert werden",
     "generalSpecialAbilities": "Allgemeine Sonderfertigkeiten",
     "Hair_color": "Haarfarbe",
@@ -410,6 +412,7 @@
     "weaponModifier": "Waffenmodifikator",
     "weapontype": "Waffengattung",
     "worn": "Ausgerüstet",
+    "wearable": "Ausrüstbar",
     "wrongHand": "Falsche Hand",
     "writing": "Schrift",
     "doNothing": "Keine Reaktion",
@@ -633,6 +636,14 @@
         "step2": "Silhouette [-4]",
         "step3": "Schemen [-6]",
         "step4": "Unsichtbar [Glückstreffer]"
+    },
+
+    "meleeVisionDisruption": {
+        "0": "Klare Sicht",
+        "1": "Leichte Störung [-1]",
+        "2": "Silhoutette [-2]",
+        "3": "Schemen [-3]",
+        "4": "Unsichtbar [Glückstreffer]"
     },
 
     "TraitMsg": {

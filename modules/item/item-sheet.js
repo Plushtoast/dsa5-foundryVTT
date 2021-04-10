@@ -1,8 +1,9 @@
-import DSA5_Utility from "../system/utility-dsa5.js";
+import DSA5_Utility from "../system/utility-dsa5.js"
 import DSA5 from "../system/config-dsa5.js"
-import DSA5StatusEffects from "../status/status_effects.js";
-import DSA5ChatListeners from "../system/chat_listeners.js";
-import SpecialabilityRulesDSA5 from "../system/specialability-rules-dsa5.js";
+import DSA5StatusEffects from "../status/status_effects.js"
+import DSA5ChatListeners from "../system/chat_listeners.js"
+import SpecialabilityRulesDSA5 from "../system/specialability-rules-dsa5.js"
+import { svgAutoFit } from "../system/view_helper.js"
 
 
 export default class ItemSheetdsa5 extends ItemSheet {
@@ -112,6 +113,29 @@ export default class ItemSheetdsa5 extends ItemSheet {
             DSA5ChatListeners.postStatus($(ev.currentTarget).attr("data-id"))
         })
 
+        let toObserve = html.find(".item-header")
+        if (toObserve.length) {
+            let svg = toObserve.find('svg')
+            if (svg) {
+                let observer = new ResizeObserver(function(entries) {
+                    let entry = entries[0]
+                    svgAutoFit(svg, entry.contentRect.width)
+                });
+                observer.observe(toObserve.get(0));
+                let input = toObserve.find('input')
+                if (!input.get(0).disabled) {
+                    svg.click(() => {
+                        svg.hide()
+                        input.show()
+                        input.focus()
+                    })
+                    input.blur(function() {
+                        svg.show()
+                        input.hide()
+                    })
+                }
+            }
+        }
     }
 
     async getData() {

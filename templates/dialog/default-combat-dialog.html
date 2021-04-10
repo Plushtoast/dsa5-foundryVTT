@@ -59,4 +59,15 @@
       {{/select}}
     </select>
 </div>
+{{/if}} {{#if visionOptions}}
+<div class="form-group custom-select">
+    <label>{{localize "sight"}}</label>
+    <select name="vision">
+        {{#select "0"}}
+        {{#each visionOptions as |label val|}}
+        <option value="{{val}}">{{localize label}}</option>
+        {{/each}}
+        {{/select}}
+    </select>
+</div>
 {{/if}}

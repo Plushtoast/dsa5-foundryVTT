@@ -62,7 +62,6 @@ export default class MerchantSheetDSA5 extends ActorSheetdsa5NPC {
         return getProperty(this.actor.data.data, "merchant.playerView")
     }
 
-
     async buyItem(ev) {
         await this.transferItem(this.actor, this.getTradeFriend(), ev, true)
     }
@@ -248,7 +247,7 @@ export default class MerchantSheetDSA5 extends ActorSheetdsa5NPC {
         let text = $(ev.currentTarget).text()
         $(ev.currentTarget).html(' <i class="fa fa-spin fa-spinner"></i>')
         let ids = actor.data.items.filter(x => ["equipment", "poison", "consumable"].includes(x.type)).map(x => x._id)
-        ids.push(...actor.data.items.filter(x => ["armor", "meleeweapon", "rangeweapon"].includes(x.type) && !x.data.worn.value).map(x => x._id))
+        ids.push(...actor.data.items.filter(x => ["armor", "meleeweapon", "rangeweapon", "equipment"].includes(x.type) && !x.data.worn.value).map(x => x._id))
         await actor.deleteEmbeddedEntity("OwnedItem", ids);
         $(ev.currentTarget).text(text)
     }
@@ -270,14 +269,15 @@ export default class MerchantSheetDSA5 extends ActorSheetdsa5NPC {
         if (data["merchantType"] == "merchant") {
             for (const [key, value] of Object.entries(data.actor.inventory)) {
                 for (const item of value.items) {
-                    item.calculatedPrice = Number(parseFloat(`${item.data.price.value * (getProperty(this.actor.data.data, "merchant.sellingFactor") || 1)}`).toFixed(2))
+                    item.defaultPrice = this.getItemPrice(item)
+                    item.calculatedPrice = Number(parseFloat(`${item.defaultPrice * (getProperty(this.actor.data.data, "merchant.sellingFactor") || 1)}`).toFixed(2))
                     item.priceTag = ` / ${item.calculatedPrice}`
                 }
             }
         } else if (data["merchantType"] == "loot") {
             for (const [key, value] of Object.entries(data.actor.inventory)) {
                 for (const item of value.items) {
-                    item.calculatedPrice = item.data.price.value
+                    item.calculatedPrice = this.getItemPrice(item)
                 }
             }
             data.actor.inventory["money"] = {
@@ -289,6 +289,10 @@ export default class MerchantSheetDSA5 extends ActorSheetdsa5NPC {
                 dataType: "money"
             }
         }
+    }
+
+    getItemPrice(item) {
+        return Number(item.data.price.value) * (item.type == "consumable" ? (Number(item.data.QL) || 0) : 1)
     }
 
     prepareTradeFriend(data) {
@@ -331,7 +335,7 @@ export default class MerchantSheetDSA5 extends ActorSheetdsa5NPC {
     prepareSellPrices(inventory, factor) {
         for (const [key, value] of Object.entries(inventory)) {
             for (const item of value.items) {
-                item.calculatedPrice = Number(parseFloat(`${item.data.price.value * factor}`).toFixed(2))
+                item.calculatedPrice = Number(parseFloat(`${this.getItemPrice(item) * factor}`).toFixed(2))
             }
         }
 

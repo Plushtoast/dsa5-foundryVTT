@@ -74,8 +74,9 @@ export default class DSA5ChatAutoCompletion {
                         x.name.toLowerCase().trim().indexOf(search) != -1
                 }).slice(0, 5).map(x => x.name)
                 .concat([this.constants.attackWeaponless].filter(x => x.toLowerCase().trim().indexOf(search) != -1))
-            if (!result.length)
-                result.push(game.i18n.localize("DSAError.noMatch"))
+
+            if (!result.length) result.push(game.i18n.localize("DSAError.noMatch"))
+
             this._setList(result, "AT")
         }
     }
@@ -87,8 +88,8 @@ export default class DSA5ChatAutoCompletion {
             let result = actor.data.items.filter(x => { return types.includes(x.type) && x.name.toLowerCase().trim().indexOf(search) != -1 && x.data.worn.value == true }).slice(0, 5).map(x => x.name)
                 .concat([this.constants.dodge, this.constants.parryWeaponless].filter(x => x.toLowerCase().trim().indexOf(search) != -1))
 
-            if (!result.length)
-                result.push(game.i18n.localize("DSAError.noMatch"))
+            if (!result.length) result.push(game.i18n.localize("DSAError.noMatch"))
+
             this._setList(result, "PA")
         }
     }
@@ -98,8 +99,9 @@ export default class DSA5ChatAutoCompletion {
         if (actor) {
             let types = ["spell", "ritual"]
             let result = actor.data.items.filter(x => { return types.includes(x.type) && x.name.toLowerCase().trim().indexOf(search) != -1 }).slice(0, 5).map(x => x.name)
-            if (!result.length)
-                result.push(game.i18n.localize("DSAError.noMatch"))
+
+            if (!result.length) result.push(game.i18n.localize("DSAError.noMatch"))
+
             this._setList(result, "SP")
         }
     }
@@ -117,16 +119,18 @@ export default class DSA5ChatAutoCompletion {
 
     _filterSK(search) {
         let result = this.skills.filter(x => { return x.toLowerCase().trim().indexOf(search) != -1 }).slice(0, 5)
-        if (!result.length)
-            result.push(game.i18n.localize("DSAError.noMatch"))
+
+        if (!result.length) result.push(game.i18n.localize("DSAError.noMatch"))
+
         this._setList(result, "SK")
     }
 
     _filterRQ(search) {
         search = search.replace(/(-)?\d+/g, '').trim()
         let result = this.skills.filter(x => { return x.toLowerCase().trim().indexOf(search) != -1 }).slice(0, 5)
-        if (!result.length)
-            result.push(game.i18n.localize("DSAError.noMatch"))
+
+        if (!result.length) result.push(game.i18n.localize("DSAError.noMatch"))
+
         this._setList(result, "RQ")
     }
 

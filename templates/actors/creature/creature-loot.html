@@ -6,8 +6,7 @@
             {{localize (concat "Equipment." @key)}}
         </div>
         <div class="col eight center">
-            {{#if section.toggle}}
-            <i class="fa fa-shield-alt" title="{{localize section.toggleName}}"></i> {{/if}}
+            <i class="fa fa-shield-alt" title="{{localize 'equipped'}}"></i>
         </div>
         <div class="col eight center">
             <span title="{{localize 'quantity'}}">#</span>
@@ -34,7 +33,7 @@
                     <a class="item-edit {{#if item.consumable}}consume-item{{/if}}">{{item.name}}</a>
                 </div>
                 <div class="col eight center">
-                    {{#if section.toggle}} {{#if item.toggleValue}}
+                    {{#if item.toggle}} {{#if item.toggleValue}}
                     <a class="item-toggle"><i class="far fa-check-circle"></i></a> {{else}}
                     <a class="item-toggle"><i class="far fa-circle"></i></a> {{/if}} {{/if}}
                 </div>

@@ -799,6 +799,10 @@
             "structure": {
                 "max": 0,
                 "value": 0
+            },
+            "worn": {
+                "value": false,
+                "wearable": false
             }
         },
         "advantage": {

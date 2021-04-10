@@ -127,6 +127,7 @@
 
     "requiredFW": "Required SR",
     "traditionArtifact": "Tradition Artifact",
+    "advantageousPosition": "Advantageous Position",
     "APValue": "AP-Value",
     "additionalFPs": "additional SPs",
     "attacktest": "Attack test",
@@ -257,6 +258,7 @@
     "guidevalue_small": "Primary attribute",
     "GM notes": "GM notes",
     "general": "general",
+    "gridUnits": "Feet",
     "halfDefense": "Halve the target’s defense stat against this attack",
     "generalSpecialAbilities": "General Special Abilities",
     "Hair_color": "Hair color",
@@ -429,6 +431,7 @@
     "weapontype": "Weapon type",
     "weaponModifier": "Weapon Modifier",
     "worn": "Worn",
+    "wearable": "Wearable",
     "wrongHand": "Wrong hand",
     "writing": "Writing",
     "yes": "Yes",
@@ -651,6 +654,14 @@
         "step2": "Shape [-4]",
         "step3": "Barely shape [-6]",
         "step4": "Invisible [Lucky hit]"
+    },
+
+    "meleeVisionDisruption": {
+        "0": "Clear Sight",
+        "1": "Slight impairement [-1]",
+        "2": "Shape [-2]",
+        "3": "Barely shape [-3]",
+        "4": "Invisible [Lucky hit]"
     },
 
     "TraitMsg": {

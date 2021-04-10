@@ -111,7 +111,7 @@ export default class OpposedDsa5 {
                     }
                     startMessagesList.push(startMessage.data._id);
                     if (attackOfOpportunity) {
-                        OpposedDsa5.resolveUnopposed(startMessage, game.i18n.localize("OPPOSED.attackOfOpportunity"))
+                        OpposedDsa5.resolveUndefended(startMessage, game.i18n.localize("OPPOSED.attackOfOpportunity"))
                     }
                 })
                 message.data.flags.data.startMessagesList = startMessagesList;
@@ -137,20 +137,7 @@ export default class OpposedDsa5 {
                 })
             }
         } else if (message.data.flags.data.defenderMessage || message.data.flags.data.attackerMessage) {
-            let attacker, defender;
-            if (message.data.flags.data.defenderMessage) {
-                for (let msg of message.data.flags.data.defenderMessage) {
-                    attacker = OpposedDsa5.getMessageDude(message)
-                    let defenderMessage = game.messages.get(msg);
-                    defender = OpposedDsa5.getMessageDude(defenderMessage)
-                    this.completeOpposedProcess(attacker, defender, { blind: message.data.blind, whisper: message.data.whisper });
-                }
-            } else {
-                defender = OpposedDsa5.getMessageDude(message)
-                let attackerMessage = game.messages.get(message.data.flags.data.attackerMessage);
-                attacker = OpposedDsa5.getMessageDude(attackerMessage)
-                this.completeOpposedProcess(attacker, defender, { blind: message.data.blind, whisper: message.data.whisper });
-            }
+            OpposedDsa5.resolveFinalMessage(message)
         } else if (message.data.flags.data.unopposedStartMessage) {
             console.log("woops")
         } else if (message.data.flags.data.startMessagesList) {
@@ -179,6 +166,23 @@ export default class OpposedDsa5 {
         }
     }
 
+    static resolveFinalMessage(message) {
+        let attacker, defender;
+        if (message.data.flags.data.defenderMessage) {
+            for (let msg of message.data.flags.data.defenderMessage) {
+                attacker = OpposedDsa5.getMessageDude(message)
+                let defenderMessage = game.messages.get(msg);
+                defender = OpposedDsa5.getMessageDude(defenderMessage)
+                this.completeOpposedProcess(attacker, defender, { blind: message.data.blind, whisper: message.data.whisper });
+            }
+        } else {
+            defender = OpposedDsa5.getMessageDude(message)
+            let attackerMessage = game.messages.get(message.data.flags.data.attackerMessage);
+            attacker = OpposedDsa5.getMessageDude(attackerMessage)
+            this.completeOpposedProcess(attacker, defender, { blind: message.data.blind, whisper: message.data.whisper });
+        }
+    }
+
     static getMessageDude(message) {
         return {
             speaker: message.data.speaker,
@@ -195,9 +199,7 @@ export default class OpposedDsa5 {
                     "content": message.data.content.replace(`data-hide-damage="${!hide}"`, `data-hide-damage="${hide}"`),
                     "flags.data.hideDamage": hide
                 });
-                if (!hide)
-                    DiceDSA5._addRollDiceSoNice(message.data.flags.data.preData, Roll.fromData(message.data.flags.data.postData.damageRoll), "black")
-
+                if (!hide) DiceDSA5._addRollDiceSoNice(message.data.flags.data.preData, Roll.fromData(message.data.flags.data.postData.damageRoll), "black")
             }
         } else {
             game.socket.emit("system.dsa5", {
@@ -209,8 +211,6 @@ export default class OpposedDsa5 {
             })
         }
     }
-
-
 
     static clearOpposed() {
 
@@ -387,7 +387,7 @@ export default class OpposedDsa5 {
         }
     }
 
-    static async resolveUnopposed(startMessage, additionalInfo = "") {
+    static async resolveUndefended(startMessage, additionalInfo = "") {
         let unopposeData = startMessage.data.flags.unopposeData;
 
         let attackMessage = game.messages.get(unopposeData.attackMessageId)
@@ -401,12 +401,9 @@ export default class OpposedDsa5 {
         let defender = {
             speaker: unopposeData.targetSpeaker,
             testResult: {
-                actor: target.actor.data,
-                unopposed: true
+                actor: target.actor.data
             }
         }
-        if (!startMessage.data.flags.reroll)
-            await target.actor.update({ "-=flags.oppose": null })
 
         this.completeOpposedProcess(attacker, defender, {
             target: true,
@@ -414,7 +411,6 @@ export default class OpposedDsa5 {
             additionalInfo: additionalInfo
         });
         attackMessage.update({
-            "flags.data.isOpposedTest": false,
             "flags.data.unopposedStartMessage": startMessage.data._id
         });
     }

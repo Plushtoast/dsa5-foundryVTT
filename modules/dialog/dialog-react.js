@@ -77,7 +77,7 @@ export class ReactToSkillDialog extends DialogReactDSA5 {
     static callbackResult(text, message) {
         let actor = DialogReactDSA5.getTargetActor(message)
         if ("doNothing" == text) {
-            OpposedDsa5.resolveUnopposed(message)
+            OpposedDsa5.resolveUndefended(message)
         } else {
             let skill = actor.items.find(i => i.name == text && i.type == "skill")
             if (skill) {
@@ -123,7 +123,7 @@ export class ReactToAttackDialog extends DialogReactDSA5 {
     static callbackResult(text, message) {
         let actor = DialogReactDSA5.getTargetActor(message)
         if ("doNothing" == text) {
-            OpposedDsa5.resolveUnopposed(message)
+            OpposedDsa5.resolveUndefended(message)
         } else if ("dodge" == text) {
             actor.setupDodge({}).then(setupData => {
                 actor.basicTest(setupData)

@@ -1039,6 +1039,11 @@ form.dsa5.item-sheet {
     height: 50px;
 }
 
+.dsa5.item .item-header h1 {
+    margin: 0 10%;
+    cursor: pointer;
+}
+
 .dsa5.item div.item-header,
 .dsa5.item .item-header input {
     text-align: center;
@@ -2105,4 +2110,11 @@ a.inline-roll {
 
 .nobr {
     white-space: nowrap
+}
+
+select.noAppearance {
+    -webkit-appearance: none;
+    appearance: none;
+    height: auto;
+    text-align: center;
 }

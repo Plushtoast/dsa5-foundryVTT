@@ -11,6 +11,7 @@ import * as configuration from './configuration.js'
 import * as journals from './journal.js'
 import * as tokenHUD from './tokenHUD.js'
 import * as migrateWorld from '../system/migrator.js'
+import * as initScene from './scene.js'
 
 import ActorSheetdsa5Character from "./../actor/character-sheet.js";
 import ActorSheetdsa5Creature from "./../actor/creature-sheet.js";
@@ -31,9 +32,12 @@ export default function() {
     journals.default()
     tokenHUD.default()
     migrateWorld.default()
+    initScene.default()
 }
 
 Hooks.once("init", () => {
+    game.system.data.gridUnit = "Lego"
+
     loadTemplates([
         "systems/dsa5/templates/actors/actor-main.html",
         "systems/dsa5/templates/actors/actor-talents.html",
@@ -65,7 +69,8 @@ Hooks.once("init", () => {
         "systems/dsa5/templates/actors/parts/status_effects.html",
         "systems/dsa5/templates/actors/parts/purse.html",
         "systems/dsa5/templates/actors/parts/healthbar.html",
-        "systems/dsa5/templates/actors/merchant/merchant-commerce.html"
+        "systems/dsa5/templates/actors/merchant/merchant-commerce.html",
+        "systems/dsa5/templates/items/item-header.html"
     ]);
 
     Actors.unregisterSheet("core", ActorSheet);
@@ -86,19 +91,20 @@ Hooks.once('setup', function() {
     setupKnownEquipmentModifiers()
 })
 
-
 function setupKnownEquipmentModifiers() {
-    game.dsa5.config.knownShortcuts[game.i18n.localize('CHARAbbrev.INI').toLowerCase()] = ["status", "initiative", "gearmodifier"]
-    game.dsa5.config.knownShortcuts[game.i18n.localize('CHARAbbrev.GS').toLowerCase()] = ["status", "speed", "gearmodifier"]
-    game.dsa5.config.knownShortcuts[game.i18n.localize('CHARAbbrev.AsP').toLowerCase()] = ["status", "astralenergy", "gearmodifier"]
-    game.dsa5.config.knownShortcuts[game.i18n.localize('CHARAbbrev.LeP').toLowerCase()] = ["status", "wounds", "gearmodifier"]
-    game.dsa5.config.knownShortcuts[game.i18n.localize('CHARAbbrev.KaP').toLowerCase()] = ["status", "karmaenergy", "gearmodifier"]
-    game.dsa5.config.knownShortcuts[game.i18n.localize('CHARAbbrev.AW').toLowerCase()] = ["status", "dodge", "gearmodifier"]
-    game.dsa5.config.knownShortcuts[game.i18n.localize('CHARAbbrev.SK').toLowerCase()] = ["status", "soulpower", "gearmodifier"]
-    game.dsa5.config.knownShortcuts[game.i18n.localize('CHARAbbrev.ZK').toLowerCase()] = ["status", "toughness", "gearmodifier"]
-    game.dsa5.config.knownShortcuts[game.i18n.localize('CHARAbbrev.FtP').toLowerCase()] = ["status", "fatePoints", "gearmodifier"]
+    game.dsa5.config.knownShortcuts = {
+        [game.i18n.localize('CHARAbbrev.INI').toLowerCase()]: ["status", "initiative", "gearmodifier"],
+        [game.i18n.localize('CHARAbbrev.GS').toLowerCase()]: ["status", "speed", "gearmodifier"],
+        [game.i18n.localize('CHARAbbrev.AsP').toLowerCase()]: ["status", "astralenergy", "gearmodifier"],
+        [game.i18n.localize('CHARAbbrev.LeP').toLowerCase()]: ["status", "wounds", "gearmodifier"],
+        [game.i18n.localize('CHARAbbrev.KaP').toLowerCase()]: ["status", "karmaenergy", "gearmodifier"],
+        [game.i18n.localize('CHARAbbrev.AW').toLowerCase()]: ["status", "dodge", "gearmodifier"],
+        [game.i18n.localize('CHARAbbrev.SK').toLowerCase()]: ["status", "soulpower", "gearmodifier"],
+        [game.i18n.localize('CHARAbbrev.ZK').toLowerCase()]: ["status", "toughness", "gearmodifier"],
+        [game.i18n.localize('CHARAbbrev.FtP').toLowerCase()]: ["status", "fatePoints", "gearmodifier"]
+    }
     let attrs = ["MU", "KL", "IN", "CH", "FF", "GE", "KO", "KK"]
     for (let k of attrs) {
-        game.dsa5.config.knownShortcuts[game.i18n.localize(`CHARAbbrev.${k}`).toLowerCase()] = ["characteristics", k.toLowerCase(), "value"]
+        game.dsa5.config.knownShortcuts[game.i18n.localize(`CHARAbbrev.${k}`).toLowerCase()] = ["characteristics", k.toLowerCase(), "gearmodifier"]
     }
 }

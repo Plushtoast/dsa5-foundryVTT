@@ -304,7 +304,6 @@ export default class DiceDSA5 {
         } else {
             this._appendSituationalModifiers(testData, game.i18n.localize("distance"), DSA5.rangeMods[testData.rangeModifier].attack)
             this._appendSituationalModifiers(testData, game.i18n.localize("sizeCategory"), testData.sizeModifier)
-            this._appendSituationalModifiers(testData, game.i18n.localize("sight"), testData.visionModifier)
         }
         let result = this._rollSingleD20(roll, testData.mode == "attack" ? Number(source.data.at.value) : Number(source.data.pa), testData.mode, this._situationalModifiers(testData), testData)
 
@@ -414,7 +413,6 @@ export default class DiceDSA5 {
         this._appendSituationalModifiers(testData, game.i18n.localize("manual"), testData.testModifier)
         this._appendSituationalModifiers(testData, game.i18n.localize("wrongHand"), testData.wrongHand)
 
-
         let source = testData.source.data.data == undefined ? testData.source : testData.source.data
         let combatskill = source.data.combatskill.value
 
@@ -433,8 +431,6 @@ export default class DiceDSA5 {
             weapon = Actordsa5._prepareRangeWeapon(source, [], [skill], testData.extra.actor)
             this._appendSituationalModifiers(testData, game.i18n.localize("distance"), DSA5.rangeMods[testData.rangeModifier].attack)
             this._appendSituationalModifiers(testData, game.i18n.localize("sizeCategory"), testData.sizeModifier)
-            this._appendSituationalModifiers(testData, game.i18n.localize("sight"), testData.visionModifier)
-
         }
         let result = this._rollSingleD20(roll, weapon[testData.mode], testData.mode, this._situationalModifiers(testData), testData, combatskill)
 
@@ -876,9 +872,9 @@ export default class DiceDSA5 {
                 case "ritual":
                 case "skill":
                     roll = new Roll("1d20+1d20+1d20").roll();
-                    for (let i = 0; i < roll.dice.length; i++) {
+                    for (let i = 0; i < roll.dice.length; i++)
                         roll.dice[i].options.colorset = testData.source.data["characteristic" + (i + 1)].value
-                    }
+
                     break;
                 case "regenerate":
                     if (testData.extra.actor.isPriest && testData.extra.actor.isMage) {
@@ -900,17 +896,6 @@ export default class DiceDSA5 {
                 case "rangeweapon":
                 case "weaponless":
                 case "combatskill":
-                    if (testData.mode == "damage") {
-                        roll = new Roll(testData.source.data.data.damage.value.replace(/[Ww]/g, "d")).roll()
-                        for (let i = 0; i < roll.dice.length; i++) {
-                            roll.dice[i].options.colorset = "black"
-                        }
-
-                    } else {
-                        roll = new Roll("1d20[" + (testData.mode) + "]").roll()
-                        roll.dice[0].options.colorset = testData.mode
-                    }
-                    break;
                 case "trait":
                     if (testData.mode == "damage") {
                         roll = new Roll(testData.source.data.data.damage.value.replace(/[Ww]/g, "d")).roll()
@@ -922,7 +907,7 @@ export default class DiceDSA5 {
                         roll = new Roll("1d20[" + (testData.mode) + "]").roll()
                         roll.dice[0].options.colorset = testData.mode
                     }
-                    break
+                    break;
                 case "dodge":
                     roll = new Roll("1d20").roll();
                     roll.dice[0].options.colorset = "in"

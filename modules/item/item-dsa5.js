@@ -127,6 +127,12 @@ export default class Itemdsa5 extends Item {
         return itemModifiers
     }
 
+    static changeChars(source, ch1, ch2, ch3) {
+        source.data.characteristic1.value = ch1
+        source.data.characteristic2.value = ch2
+        source.data.characteristic3.value = ch3
+    }
+
     static buildCombatSpecAbs(actor, categories, toSearch, mode) {
         let searchFilter
         if (toSearch) {
@@ -411,6 +417,7 @@ class SpellItemDSA5 extends Itemdsa5 {
             fps: Number(html.find(`[name="fp"]`).val()),
             qls: Number(html.find(`[name="qs"]`).val())
         }
+        Itemdsa5.changeChars(testData.source, ...[0, 1, 2].map(x => html.find(`[name="characteristics${x}"]`).val()))
     }
 
     static getSpecAbModifiers(html) {
@@ -766,6 +773,7 @@ class MeleeweaponDSA5 extends Itemdsa5 {
             }
 
             mergeObject(data, {
+                visionOptions: DSA5.meleeRangeVision,
                 weaponSizes: DSA5.meleeRanges,
                 melee: true,
                 wrongHandDisabled: wrongHandDisabled,
@@ -778,6 +786,7 @@ class MeleeweaponDSA5 extends Itemdsa5 {
         } else if (data.mode == "parry") {
 
             mergeObject(data, {
+                visionOptions: DSA5.meleeRangeVision,
                 defenseCount: 0,
                 showDefense: true,
                 wrongHandDisabled: wrongHandDisabled && source.data.worn.offHand,
@@ -820,7 +829,6 @@ class MeleeweaponDSA5 extends Itemdsa5 {
                 testData.situationalModifiers = Actordsa5._parseModifiers('[name="situationalModifiers"]')
                 testData.rangeModifier = html.find('[name="distance"]').val()
                 testData.sizeModifier = DSA5.rangeSizeModifier[html.find('[name="size"]').val()]
-                testData.visionModifier = Number(html.find('[name="vision"]').val())
                 testData.opposingWeaponSize = html.find('[name="weaponsize"]').val()
                 testData.narrowSpace = html.find('[name="narrowSpace"]').is(":checked")
                 testData.doubleAttack = html.find('[name="doubleAttack"]').is(":checked") ? (-2 + SpecialabilityRulesDSA5.abilityStep(actor, game.i18n.localize('LocalizedIDs.twoWeaponCombat'))) : 0
@@ -828,6 +836,9 @@ class MeleeweaponDSA5 extends Itemdsa5 {
                 let attackOfOpportunity = html.find('[name="opportunityAttack"]').is(":checked") ? -4 : 0
                 testData.attackOfOpportunity = attackOfOpportunity != 0
                 testData.situationalModifiers.push({
+                    name: game.i18n.localize("sight"),
+                    value: Number(html.find('[name="vision"]').val())
+                }, {
                     name: game.i18n.localize("opportunityAttack"),
                     value: attackOfOpportunity
                 }, {
@@ -841,6 +852,9 @@ class MeleeweaponDSA5 extends Itemdsa5 {
                 }, {
                     name: game.i18n.localize("defenseCount"),
                     value: (Number(html.find('[name="defenseCount"]').val()) || 0) * -3
+                }, {
+                    name: game.i18n.localize("advantageousPosition"),
+                    value: html.find('[name="advantageousPosition"]').is(":checked") ? 2 : 0
                 })
 
                 testData.situationalModifiers.push(...Itemdsa5.getSpecAbModifiers(html, mode))
@@ -1035,7 +1049,6 @@ class RangeweaponItemDSA5 extends Itemdsa5 {
                 testData.situationalModifiers = Actordsa5._parseModifiers('[name="situationalModifiers"]')
                 testData.rangeModifier = html.find('[name="distance"]').val()
                 testData.sizeModifier = DSA5.rangeSizeModifier[html.find('[name="size"]').val()]
-                testData.visionModifier = Number(html.find('[name="vision"]').val())
                 testData.narrowSpace = html.find('[name="narrowSpace"]').is(":checked")
                 testData.wrongHand = html.find('[name="wrongHand"]').is(":checked") ? -4 : 0
                 testData.situationalModifiers.push({
@@ -1061,6 +1074,9 @@ class RangeweaponItemDSA5 extends Itemdsa5 {
                     damageBonus: html.find('[name="damageModifier"]').val(),
                     value: 0,
                     step: 1
+                }, {
+                    name: game.i18n.localize("sight"),
+                    value: Number(html.find('[name="vision"]').val())
                 })
                 testData.situationalModifiers.push(...Itemdsa5.getSpecAbModifiers(html, "attack"))
                 return { testData, cardOptions };
@@ -1167,7 +1183,7 @@ class SkillItemDSA5 extends Itemdsa5 {
                     fps: Number(html.find(`[name="fp"]`).val()),
                     qls: Number(html.find(`[name="qs"]`).val())
                 }
-
+                Itemdsa5.changeChars(testData.source, ...[0, 1, 2].map(x => html.find(`[name="characteristics${x}"]`).val()))
                 return { testData, cardOptions };
             }
         };
@@ -1257,6 +1273,7 @@ class TraitItemDSA5 extends Itemdsa5 {
                 });
             }
             mergeObject(data, {
+                visionOptions: DSA5.meleeRangeVision,
                 weaponSizes: DSA5.meleeRanges,
                 melee: true,
                 showAttack: true,
@@ -1287,6 +1304,7 @@ class TraitItemDSA5 extends Itemdsa5 {
             });
         } else if (data.mode == "parry") {
             mergeObject(data, {
+                visionOptions: DSA5.meleeRangeVision,
                 defenseCount: 0,
                 showDefense: true,
                 wrongHandDisabled: false,
@@ -1330,7 +1348,6 @@ class TraitItemDSA5 extends Itemdsa5 {
                 testData.situationalModifiers = Actordsa5._parseModifiers('[name="situationalModifiers"]')
                 testData.rangeModifier = html.find('[name="distance"]').val()
                 testData.sizeModifier = DSA5.rangeSizeModifier[html.find('[name="size"]').val()]
-                testData.visionModifier = Number(html.find('[name="vision"]').val())
                 testData.opposingWeaponSize = html.find('[name="weaponsize"]').val()
                 testData.narrowSpace = html.find('[name="narrowSpace"]').is(":checked")
                 testData.doubleAttack = html.find('[name="doubleAttack"]').is(":checked") ? (-2 + SpecialabilityRulesDSA5.abilityStep(actor, game.i18n.localize('LocalizedIDs.twoWeaponCombat'))) : 0
@@ -1369,6 +1386,12 @@ class TraitItemDSA5 extends Itemdsa5 {
                 }, {
                     name: game.i18n.localize("defenseCount"),
                     value: (Number(html.find('[name="defenseCount"]').val()) || 0) * -3
+                }, {
+                    name: game.i18n.localize("advantageousPosition"),
+                    value: html.find('[name="advantageousPosition"]').is(":checked") ? 2 : 0
+                }, {
+                    name: game.i18n.localize("sight"),
+                    value: Number(html.find('[name="vision"]').val())
                 })
                 testData.situationalModifiers.push(...Itemdsa5.getSpecAbModifiers(html, mode))
                 return { testData, cardOptions };

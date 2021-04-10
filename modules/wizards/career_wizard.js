@@ -69,7 +69,7 @@ export default class CareerWizard extends WizardDSA5 {
         let baseCost = Number(this.career.data.APValue.value) + requirements.reduce(function(_this, val) {
             return _this + (val.disabled ? 0 : Number(val.data.APValue.value) || 0)
         }, 0)
-        let missingSpecialabilities = requirements.filter(x => x.type == "specialabilities" && !item.disabled)
+        let missingSpecialabilities = requirements.filter(x => x.type == "specialability" && !x.disabled)
         mergeObject(data, {
             title: game.i18n.format("WIZARD.addItem", { item: `${game.i18n.localize("career")} ${this.career.name}` }),
             career: this.career,

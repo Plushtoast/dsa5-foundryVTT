@@ -5,9 +5,9 @@
             {{#each actor.data.characteristics as |ch c|}}
             <div title="{{localize ch.label}}" class="table-header">
                 <div class="header-label">
-                    <a data-attr="{{c}}" class="advance refund-attribute"><i title="{{ch.refund}}" class="fas fa-minus"></i></a>
+                    {{#if actor.canAdvance}}<a data-attr="{{c}}" class="advance refund-attribute"><i title="{{ch.refund}}" class="fas fa-minus"></i></a>{{/if}}
                     <b>{{localize ch.abrev}}</b>
-                    <a data-attr="{{c}}" class="advance advance-attribute"><i title="{{ch.cost}}" class="fas fa-plus"></i></a>
+                    {{#if actor.canAdvance}}<a data-attr="{{c}}" class="advance advance-attribute"><i title="{{ch.cost}}" class="fas fa-plus"></i></a>{{/if}}
                 </div>
             </div>
             {{/each}}

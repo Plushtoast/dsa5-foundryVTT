@@ -250,26 +250,29 @@ export default class DSA5ItemLibrary extends Application {
         return array;
     }
 
-    async filterStuff(category, index) {
+    async filterStuff(category, index, page) {
         let search = this.filters[category].filterBy.search
 
         let fields = {
             field: ["name", "data"],
             limit: 60,
-            page: true
+            page: page || true
         }
         let filteredItems = []
 
         let oneFilterSelected = false
         for (let filter in this.filters[category].categories) {
             if (this.filters[category].categories[filter]) {
+                let result
                 if (search == "") {
-                    filteredItems.push(...index.search(filter, { field: ["itemType"], limit: 60, page: false }))
+                    result = index.search(filter, { field: ["itemType"], limit: 60, page: page || true })
                 } else {
                     let query = duplicate(fields)
-                    mergeObject(query, { where: { itemType: filter }, page: false })
-                    filteredItems.push(...index.search(search, query))
+                    mergeObject(query, { where: { itemType: filter } })
+                    result = index.search(search, query)
                 }
+                this.pages[category].next = result.next
+                filteredItems.push(...result.result)
             }
             oneFilterSelected = this.filters[category].categories[filter] || oneFilterSelected
         }
@@ -287,15 +290,39 @@ export default class DSA5ItemLibrary extends Application {
     }
 
     setBGImage(filterdItems, category) {
-        if (filterdItems.length > 0)
-            $(this._element).find(`.${category} .libcontainer`).removeClass("libraryImg")
-        else
-            $(this._element).find(`.${category} .libcontainer`).addClass("libraryImg")
+        $(this._element).find(`.${category} .libcontainer`)[`${filterdItems.length > 0 ? "remove" : "add"}Class`]("libraryImg")
     }
 
-    async filterItems(html, category) {
+    renderResult(html, filteredItems, { index, itemType }, isPaged) {
+        let resultField = html.find('.searchResult .item-list')
+        renderTemplate('systems/dsa5/templates/system/libraryItem.html', { items: filteredItems }).then(innerhtml => {
+            if (!isPaged) resultField.empty()
+
+            innerhtml = $(innerhtml)
+            innerhtml.each(function() {
+                const li = $(this)
+                li.attr("draggable", true).on("dragstart", event => {
+                    let item = index.find($(li).attr("data-item-id"))
+                    event.originalEvent.dataTransfer.setData("text/plain", JSON.stringify({
+                        type: itemType,
+                        pack: item.options.compendium ? `${item.options.compendium.metadata.package}.${item.options.compendium.metadata.name}` : "",
+                        id: item.id
+                    }))
+                })
+            })
+            resultField.append(innerhtml)
+        });
+    }
+
+    async filterItems(html, category, page) {
+        const index = this.selectIndex(category)
+        const filteredItems = await this.filterStuff(category, index.index, page)
+        this.renderResult(html, filteredItems, index, page)
+        return filteredItems;
+    }
+
+    selectIndex(category) {
         let itemType = "Item"
-        let filteredItems = []
         let index = this.equipmentIndex
         switch (category) {
             case "zoo":
@@ -307,25 +334,7 @@ export default class DSA5ItemLibrary extends Application {
                 index = this.journalIndex
                 break
         }
-        filteredItems = await this.filterStuff(category, index)
-        let resultField = html.find('.searchResult .item-list')
-        renderTemplate('systems/dsa5/templates/system/libraryItem.html', { items: filteredItems }).then(innerhtml => {
-
-            resultField.empty().append(innerhtml)
-            resultField.find(".browser-item").each((i, li) => {
-                let item = index.find($(li).attr("data-item-id"))
-                li.setAttribute("draggable", true);
-                li.addEventListener("dragstart", event => {
-                    event.dataTransfer.setData("text/plain", JSON.stringify({
-                        type: itemType,
-                        pack: item.options.compendium ? `${item.options.compendium.metadata.package}.${item.options.compendium.metadata.name}` : "",
-                        id: item.id
-                    }))
-
-                })
-            })
-        });
-        return filteredItems;
+        return { index, itemType }
     }
 
     async _render(force = false, options = {}) {
@@ -375,9 +384,9 @@ export default class DSA5ItemLibrary extends Application {
         super.activateListeners(html)
 
         html.on("click", ".filter", ev => {
-            let tab = $(ev.currentTarget).closest('.tab')
-            let category = tab.attr("data-tab")
-            let subcategory = $(ev.currentTarget).attr("data-category")
+            const tab = $(ev.currentTarget).closest('.tab')
+            const category = tab.attr("data-tab")
+            const subcategory = $(ev.currentTarget).attr("data-category")
             const isChecked = $(ev.currentTarget).is(":checked")
             this.filters[category].categories[subcategory] = isChecked
             this.filterItems(tab, category);
@@ -393,15 +402,15 @@ export default class DSA5ItemLibrary extends Application {
         })
 
         html.on("keyup", ".filterBy-search", ev => {
-            let tab = $(ev.currentTarget).closest('.tab')
-            let category = tab.attr("data-tab")
+            const tab = $(ev.currentTarget).closest('.tab')
+            const category = tab.attr("data-tab")
             this.filters[category].filterBy.search = $(ev.currentTarget).val();
             this.filterItems(tab, category);
         })
         html.on("keyup", ".subfilterItem", ev => {
-            let tab = $(ev.currentTarget).closest('.tab')
-            let category = tab.attr("data-tab")
-            let subcategory = $(ev.currentTarget).closest('.groupbox').attr("data-subcategory")
+            const tab = $(ev.currentTarget).closest('.tab')
+            const category = tab.attr("data-tab")
+            const subcategory = $(ev.currentTarget).closest('.groupbox').attr("data-subcategory")
             this.subfilters[subcategory].attrs.find(x => x.name == $(ev.currentTarget).attr("name"))["value"] = $(ev.currentTarget).val()
             this.filterItems(tab, category);
         })
@@ -412,21 +421,33 @@ export default class DSA5ItemLibrary extends Application {
             this._createIndex("zoo", "Actor", game.actors)
         })
         html.find('nav .item').click(ev => {
-            let tab = $(ev.currentTarget).attr("data-tab")
+            const tab = $(ev.currentTarget).attr("data-tab")
             html.find(`.subfilters .tab`).hide()
             html.find(`.subfilters [data-tab="${tab}"]`).show()
         })
 
         html.find('.showDetails').click(ev => {
-            let tab = $(ev.currentTarget).attr("data-btn")
+            const tab = $(ev.currentTarget).attr("data-btn")
             $(ev.currentTarget).find('i').toggleClass("fa-caret-left fa-caret-right")
             html.find(`.${tab} .detailBox`).toggleClass("dsahidden")
         })
+
+        const source = this
+        $(this._element).find('.window-content').on('scroll.infinit', debounce(function(ev) {
+                const log = $(ev.target);
+                const pct = (log.scrollTop() + log.innerHeight()) >= log[0].scrollHeight - 100;
+                const category = html.find('.tabs .item.active').attr("data-tab")
+                if (pct && source.pages[category].next) {
+                    const tab = html.find('.tab.active')
+                    source.filterItems.call(source, tab, category, source.pages[category].next)
+                }
+            },
+            100));
     }
 
     getItemFromHTML(ev) {
-        let itemId = $(ev.currentTarget).parents(".browser-item").attr("data-item-id")
-        let type = $(ev.currentTarget).closest('.tab').attr("data-tab")
+        const itemId = $(ev.currentTarget).parents(".browser-item").attr("data-item-id")
+        const type = $(ev.currentTarget).closest('.tab').attr("data-tab")
         switch (type) {
             case "zoo":
                 return this.zooIndex.find(itemId)

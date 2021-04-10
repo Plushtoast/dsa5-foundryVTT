@@ -54,8 +54,11 @@ export default class DSA5ChatListeners {
             type: "npc",
             items:[],
             data: {
-                status:{wounds: {value:16}},
-                characteristics: {mu: {initial: 12},kl: {initial: 12},in: {initial: 12}}
+                status:{wounds: {value:50}},
+                characteristics: {
+                    mu: {initial: 12},kl: {initial: 12},in: {initial: 12}, ch: {initial: 12},
+                     ff: {initial: 12},ge: {initial: 12},ko: {initial: 12},kk: {initial: 12}
+                }
             }
         },{temporary: true, noHook: true})
 

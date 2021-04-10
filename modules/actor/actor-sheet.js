@@ -129,26 +129,27 @@ export default class ActorSheetDsa5 extends ActorSheet {
     _addDefaultActiveEffects(data) {
         let conditions = duplicate(CONFIG.statusEffects) //.filter(x => x.flags.dsa5.editable)
         for (let condition of conditions) {
-            let existing = this.actor.data.effects.find(e => e.flags.core != undefined && e.flags.core.statusId == condition.id)
+            let existing = this.actor.effects.find(e => e.data.flags.core != undefined && e.data.flags.core.statusId == condition.id)
             condition.editable = condition.flags.dsa5.editable
 
             if (condition.flags.dsa5.value == null)
                 condition.boolean = true;
 
             if (existing) {
-                condition.value = existing.flags.dsa5.value
+                condition.value = existing.data.flags.dsa5.value
                 condition.existing = true
-                condition.manual = existing.flags.dsa5.manual
+                condition.manual = existing.data.flags.dsa5.manual
             } else {
                 condition.value = 0;
                 condition.existing = false
             }
         }
-        let customConditions = this.actor.data.effects.filter(e => e.flags.dsa5 && e.flags.dsa5.custom).map(x => {
-            x.id = x._id
-            x.customizable = x.flags.dsa5.customizable
-            x.existing = !x.disabled
+        let customConditions = this.actor.effects.filter(e => e.data.flags.dsa5 && e.data.flags.dsa5.custom).map(x => {
+            x.customizable = x.data.flags.dsa5.customizable
+            x.existing = !x.data.disabled
             x.boolean = true
+            x.label = x.data.label
+            x.icon = x.data.icon
             return x
         })
         data.conditions = conditions.filter(x => x.existing)
@@ -340,12 +341,12 @@ export default class ActorSheetDsa5 extends ActorSheet {
 
     _getHeaderButtons() {
         let buttons = super._getHeaderButtons();
+        buttons.unshift({
+            class: "library",
+            icon: `fas fa-university`,
+            onclick: async ev => this._openLibrary(ev)
+        })
         if (this.actor.data.canAdvance) {
-            buttons.unshift({
-                class: "library",
-                icon: `fas fa-university`,
-                onclick: async ev => this._openLibrary(ev)
-            })
             buttons.unshift({
                 class: "locksheet",
                 icon: `fas fa-${this.actor.data.data.sheetLocked.value ? "" : "un"}lock`,
@@ -420,10 +421,11 @@ export default class ActorSheetDsa5 extends ActorSheet {
                 case "armor":
                 case "rangeweapon":
                 case "meleeweapon":
-                    item.data.worn.value = !item.data.worn.value;
+                case "equipment":
+                    this.actor.updateEmbeddedEntity("OwnedItem", { _id: item._id, "data.worn.value": !item.data.worn.value });
                     break;
             }
-            this.actor.updateEmbeddedEntity("OwnedItem", item);
+
         });
 
         html.find(".status-create").click(ev => {
@@ -712,7 +714,6 @@ export default class ActorSheetDsa5 extends ActorSheet {
                     return
                 }
             }
-
             let ef = this.actor.effects.get(condKey)
             ef.update({ disabled: !ef.data.disabled })
         })

@@ -46,7 +46,7 @@ export default class Actordsa5 extends Actor {
         const data = this.data
         try {
             let itemModifiers = {}
-            for (let i of data.items.filter(x => (["meleeweapon", "rangeweapon", "armor"].includes(x.type) && x.data.worn.value) || ["advantage", "specialability", "disadvantage"].includes(x.type))) {
+            for (let i of data.items.filter(x => (["meleeweapon", "rangeweapon", "armor", "equipment"].includes(x.type) && getProperty(x, "data.worn.value")) || ["advantage", "specialability", "disadvantage"].includes(x.type))) {
                 this._addGearAndAbilityModifiers(itemModifiers, i)
             }
             data.data.itemModifiers = this._applyModiferTransformations(itemModifiers)
@@ -69,10 +69,10 @@ export default class Actordsa5 extends Actor {
             }
 
             if (data.type == "character" || data.type == "npc") {
-                data.data.status.wounds.current = data.data.status.wounds.initial + data.data.characteristics["ko"].value * 2;
-                data.data.status.soulpower.value = (data.data.status.soulpower.initial ? data.data.status.soulpower.initial : 0) + Math.round((data.data.characteristics["mu"].value + data.data.characteristics["kl"].value + data.data.characteristics["in"].value) / 6);
-                data.data.status.toughness.value = (data.data.status.toughness.initial ? data.data.status.toughness.initial : 0) + Math.round((data.data.characteristics["ko"].value + data.data.characteristics["ko"].value + data.data.characteristics["kk"].value) / 6);
-                data.data.status.initiative.value = Math.round((data.data.characteristics["mu"].value + data.data.characteristics["ge"].value) / 2) + (data.data.status.initiative.modifier || 0);
+                data.data.status.wounds.current = data.data.status.wounds.initial + data.data.characteristics.ko.value * 2
+                data.data.status.soulpower.value = (data.data.status.soulpower.initial ? data.data.status.soulpower.initial : 0) + Math.round((data.data.characteristics.mu.value + data.data.characteristics.kl.value + data.data.characteristics.in.value) / 6)
+                data.data.status.toughness.value = (data.data.status.toughness.initial ? data.data.status.toughness.initial : 0) + Math.round((data.data.characteristics.ko.value + data.data.characteristics.ko.value + data.data.characteristics.kk.value) / 6)
+                data.data.status.initiative.value = Math.round((data.data.characteristics.mu.value + data.data.characteristics.ge.value) / 2) + (data.data.status.initiative.modifier || 0)
             }
 
             data.data.status.fatePoints.max = Number(data.data.status.fatePoints.current) + Number(data.data.status.fatePoints.modifier) + data.data.status.fatePoints.gearmodifier
@@ -81,7 +81,7 @@ export default class Actordsa5 extends Actor {
                 data.data.status.wounds.current = data.data.status.wounds.initial
                 data.data.status.astralenergy.current = data.data.status.astralenergy.initial
                 data.data.status.karmaenergy.current = data.data.status.karmaenergy.initial
-                data.data.status.initiative.value = data.data.status.initiative.current + (data.data.status.initiative.modifier || 0);
+                data.data.status.initiative.value = data.data.status.initiative.current + (data.data.status.initiative.modifier || 0)
             }
 
             data.data.status.initiative.value += data.data.status.initiative.gearmodifier
@@ -109,7 +109,7 @@ export default class Actordsa5 extends Actor {
             data.data.status.speed.max = data.data.status.speed.initial + (data.data.status.speed.modifier || 0) + data.data.status.speed.gearmodifier
             data.data.status.soulpower.max = data.data.status.soulpower.value + data.data.status.soulpower.modifier + data.data.status.soulpower.gearmodifier
             data.data.status.toughness.max = data.data.status.toughness.value + data.data.status.toughness.modifier + data.data.status.toughness.gearmodifier
-            data.data.status.dodge.value = Math.round(data.data.characteristics["ge"].value / 2) + data.data.status.dodge.gearmodifier
+            data.data.status.dodge.value = Math.round(data.data.characteristics.ge.value / 2) + data.data.status.dodge.gearmodifier
 
             let encumbrance = this.hasCondition('encumbered')
             encumbrance = encumbrance ? Number(encumbrance.flags.dsa5.value) : 0
@@ -194,7 +194,6 @@ export default class Actordsa5 extends Actor {
     }
 
     static armorValue(actor) {
-        console.log(actor)
         let wornArmor = actor.items.filter(x => x.type == "armor" && x.data.worn.value == true).reduce((a, b) => a + Number(b.data.protection.value), 0)
         let animalArmor = actor.items.filter(x => x.type == "trait" && x.data.traitType.value == "armor").reduce((a, b) => a + Number(b.data.at.value), 0)
         return wornArmor + animalArmor + (actor.data.totalArmor || 0)
@@ -280,22 +279,16 @@ export default class Actordsa5 extends Actor {
         const inventory = {
             meleeweapons: {
                 items: [],
-                toggle: true,
-                toggleName: game.i18n.localize("equipped"),
                 show: false,
                 dataType: "meleeweapon"
             },
             rangeweapons: {
                 items: [],
-                toggle: true,
-                toggleName: game.i18n.localize("equipped"),
                 show: false,
                 dataType: "rangeweapon"
             },
             armor: {
                 items: [],
-                toggle: true,
-                toggleName: game.i18n.localize("equipped"),
                 show: false,
                 dataType: "armor"
             },
@@ -390,6 +383,7 @@ export default class Actordsa5 extends Actor {
                     case "meleeweapon":
                         i.weight = parseFloat((i.data.weight.value * i.data.quantity.value).toFixed(3));
                         i.toggleValue = i.data.worn.value || false;
+                        i.toggle = true
                         inventory.meleeweapons.items.push(Actordsa5._prepareitemStructure(i));
                         inventory.meleeweapons.show = true;
                         totalWeight += Number(i.weight);
@@ -397,6 +391,7 @@ export default class Actordsa5 extends Actor {
                     case "rangeweapon":
                         i.weight = parseFloat((i.data.weight.value * i.data.quantity.value).toFixed(3));
                         i.toggleValue = i.data.worn.value || false;
+                        i.toggle = true
                         inventory.rangeweapons.items.push(Actordsa5._prepareitemStructure(i));
                         inventory.rangeweapons.show = true;
                         totalWeight += Number(i.weight);
@@ -405,6 +400,7 @@ export default class Actordsa5 extends Actor {
                         i.toggleValue = i.data.worn.value || false;
                         inventory.armor.items.push(Actordsa5._prepareitemStructure(i));
                         inventory.armor.show = true;
+                        i.toggle = true
                         i.weight = parseFloat((i.data.weight.value * i.data.quantity.value).toFixed(3));
                         totalWeight += parseFloat((i.data.weight.value * (i.toggleValue ? Math.max(0, i.data.quantity.value - 1) : i.data.quantity.value)).toFixed(3))
 
@@ -429,6 +425,10 @@ export default class Actordsa5 extends Actor {
                     case "consumable":
                     case "equipment":
                         i.weight = parseFloat((i.data.weight.value * i.data.quantity.value).toFixed(3));
+
+                        i.toggle = getProperty(i, "data.worn.wearable") || false
+                        if (i.toggle) i.toggleValue = i.data.worn.value || false
+
                         inventory[i.data.equipmentType.value].items.push(Actordsa5._prepareitemStructure(i));
                         inventory[i.data.equipmentType.value].show = true;
                         totalWeight += Number(i.weight);
@@ -694,6 +694,156 @@ export default class Actordsa5 extends Actor {
         return cardOptions;
     }
 
+    resetTargetAndMessage(data, cardOptions) {
+        if (data.originalTargets && data.originalTargets.size > 0) {
+            game.user.targets = data.originalTargets;
+            game.user.targets.user = game.user;
+        }
+        if (!data.defenderMessage && data.startMessagesList) {
+            cardOptions.startMessagesList = data.startMessagesList;
+        }
+    }
+
+    async fatererollDamage(infoMsg, cardOptions, newTestData, message, data) {
+        cardOptions.fatePointDamageRerollUsed = true;
+
+        this.resetTargetAndMessage(data, cardOptions)
+
+        let oldDamageRoll = duplicate(data.postData.damageRoll)
+        let newRoll = await DiceDSA5.manualRolls(Roll.fromData(oldDamageRoll).reroll(), "CHATCONTEXT.rerollDamage")
+
+        for (let i = 0; i < newRoll.dice.length; i++)
+            newRoll.dice[i].options.colorset = "black"
+
+        DiceDSA5.showDiceSoNice(newRoll, newTestData.rollMode)
+
+        ChatMessage.create(DSA5_Utility.chatDataSetup(infoMsg));
+        newTestData.damageRoll = duplicate(newRoll)
+
+        this[`${data.postData.postFunction}`]({ testData: newTestData, cardOptions }, { rerenderMessage: message });
+        await message.update({ "flags.data.fatePointDamageRerollUsed": true });
+        this.update({ "data.status.fatePoints.value": this.data.data.status.fatePoints.value - 1 })
+    }
+
+    async fateisTalented(infoMsg, cardOptions, newTestData, message, data) {
+        cardOptions.talentedRerollUsed = true;
+
+        this.resetTargetAndMessage(data, cardOptions)
+
+        infoMsg = `<h3 class="center"><b>${game.i18n.localize("CHATFATE.faitepointUsed")}</b></h3>
+            ${game.i18n.format("CHATFATE." + type, { character: '<b>' + this.name + '</b>' })}<br>`;
+        renderTemplate('systems/dsa5/templates/dialog/isTalentedReroll-dialog.html', { testData: newTestData, postData: data.postData }).then(html => {
+            new DSA5Dialog({
+                title: game.i18n.localize("CHATFATE.selectDice"),
+                content: html,
+                buttons: {
+                    Yes: {
+                        icon: '<i class="fa fa-check"></i>',
+                        label: game.i18n.localize("Ok"),
+                        callback: async dlg => {
+
+                            let diesToReroll = dlg.find('.dieSelected').map(function() { return Number($(this).attr('data-index')) }).get()
+                            if (diesToReroll.length > 0) {
+
+                                let newRoll = []
+                                for (let k of diesToReroll) {
+                                    let term = newTestData.roll.terms[k * 2]
+                                    newRoll.push(term.number + "d" + term.faces + "[" + term.options.colorset + "]")
+                                }
+                                newRoll = await DiceDSA5.manualRolls(new Roll(newRoll.join("+")).roll(), "CHATCONTEXT.talentedReroll")
+                                DiceDSA5.showDiceSoNice(newRoll, newTestData.rollMode)
+
+                                let ind = 0
+                                let ro = []
+                                let before = []
+                                for (let k of diesToReroll) {
+                                    ro.push(newRoll.results[ind * 2])
+                                    before.push(newTestData.roll.results[k * 2])
+                                    newTestData.roll.results[k * 2] = Math.min(newRoll.results[ind * 2], newTestData.roll.results[k * 2])
+                                    newTestData.roll.terms[k * 2].results[0].result = Math.min(newRoll.results[ind * 2], newTestData.roll.terms[k * 2].results[0].result)
+                                    ind += 1
+                                }
+                                infoMsg += `<b>${game.i18n.localize('Roll')}</b>: ${before.join(" ")}/${ro.join(", ")}`
+                                ChatMessage.create(DSA5_Utility.chatDataSetup(infoMsg));
+
+                                this[`${data.postData.postFunction}`]({ testData: newTestData, cardOptions }, { rerenderMessage: message });
+                                message.update({
+                                    "flags.data.talentedRerollUsed": true
+                                });
+                            }
+
+                        }
+                    },
+                    cancel: {
+                        icon: '<i class="fas fa-times"></i>',
+                        label: game.i18n.localize("cancel")
+                    },
+                },
+                default: 'Yes'
+            }).render(true)
+        });
+    }
+
+    async fatereroll(infoMsg, cardOptions, newTestData, message, data) {
+        cardOptions.fatePointDamageRerollUsed = true;
+        this.resetTargetAndMessage(data, cardOptions)
+
+        renderTemplate('systems/dsa5/templates/dialog/fateReroll-dialog.html', { testData: newTestData, postData: data.postData }).then(html => {
+            new DSA5Dialog({
+                title: game.i18n.localize("CHATFATE.selectDice"),
+                content: html,
+                buttons: {
+                    Yes: {
+                        icon: '<i class="fa fa-check"></i>',
+                        label: game.i18n.localize("Ok"),
+                        callback: async dlg => {
+
+                            let diesToReroll = dlg.find('.dieSelected').map(function() { return Number($(this).attr('data-index')) }).get()
+                            if (diesToReroll.length > 0) {
+
+                                let newRoll = []
+                                for (let k of diesToReroll) {
+                                    let term = newTestData.roll.terms[k * 2]
+                                    newRoll.push(term.number + "d" + term.faces + "[" + term.options.colorset + "]")
+                                }
+                                newRoll = await DiceDSA5.manualRolls(new Roll(newRoll.join("+")).roll(), "CHATCONTEXT.Reroll")
+                                DiceDSA5.showDiceSoNice(newRoll, newTestData.rollMode)
+
+                                ChatMessage.create(DSA5_Utility.chatDataSetup(infoMsg));
+                                let ind = 0
+                                for (let k of diesToReroll) {
+                                    newTestData.roll.results[k * 2] = newRoll.results[ind * 2]
+                                    newTestData.roll.terms[k * 2].results[0].result = newRoll.results[ind * 2]
+                                    ind += 1
+                                }
+                                this[`${data.postData.postFunction}`]({ testData: newTestData, cardOptions }, { rerenderMessage: message });
+                                message.update({ "flags.data.fatePointRerollUsed": true });
+                                this.update({ "data.status.fatePoints.value": this.data.data.status.fatePoints.value - 1 })
+                            }
+                        }
+                    },
+                    cancel: {
+                        icon: '<i class="fas fa-times"></i>',
+                        label: game.i18n.localize("cancel")
+                    },
+                },
+                default: 'Yes'
+            }).render(true)
+        });
+    }
+
+    async fateaddQS(infoMsg, cardOptions, newTestData, message, data) {
+        ChatMessage.create(DSA5_Utility.chatDataSetup(infoMsg));
+        game.user.targets.forEach(t => t.setTarget(false, { user: game.user, releaseOthers: false, groupSelection: true }));
+
+        cardOptions.fatePointAddQSUsed = true;
+        newTestData.qualityStep = 1
+
+        this[`${data.postData.postFunction}`]({ testData: newTestData, cardOptions }, { rerenderMessage: message });
+        message.update({ "flags.data.fatePointAddQSUsed": true });
+        this.update({ "data.status.fatePoints.value": this.data.data.status.fatePoints.value - 1 })
+    }
+
     async useFateOnRoll(message, type) {
         if (this.data.data.status.fatePoints.value > 0) {
             let data = message.data.flags.data
@@ -704,161 +854,8 @@ export default class Actordsa5 extends Actor {
                 <b>${game.i18n.localize("CHATFATE.PointsRemaining")}</b>: ${this.data.data.status.fatePoints.value - 1}`;
 
             let newTestData = data.preData
-            switch (type) {
-                case "rerollDamage":
-                    cardOptions.fatePointDamageRerollUsed = true;
-                    if (data.originalTargets && data.originalTargets.size > 0) {
-                        game.user.targets = data.originalTargets;
-                        game.user.targets.user = game.user;
-                    }
-                    if (!data.defenderMessage && data.startMessagesList) {
-                        cardOptions.startMessagesList = data.startMessagesList;
-                    }
 
-                    let oldDamageRoll = duplicate(data.postData.damageRoll)
-
-                    let newRoll = await DiceDSA5.manualRolls(Roll.fromData(oldDamageRoll).reroll(), "CHATCONTEXT.rerollDamage")
-
-                    for (let i = 0; i < newRoll.dice.length; i++) {
-                        newRoll.dice[i].options.colorset = "black"
-                    }
-                    //DiceDSA5.showDiceSoNice(newRoll, newTestData.rollMode)
-                    ChatMessage.create(DSA5_Utility.chatDataSetup(infoMsg));
-
-                    newTestData.damageRoll = duplicate(newRoll)
-
-                    this[`${data.postData.postFunction}`]({ testData: newTestData, cardOptions }, { rerenderMessage: message });
-                    message.update({ "flags.data.fatePointDamageRerollUsed": true });
-                    this.update({ "data.status.fatePoints.value": this.data.data.status.fatePoints.value - 1 })
-                    break
-                case "isTalented":
-                    cardOptions.talentedRerollUsed = true;
-                    if (data.originalTargets && data.originalTargets.size > 0) {
-                        game.user.targets = data.originalTargets;
-                        game.user.targets.user = game.user;
-                    }
-                    if (!data.defenderMessage && data.startMessagesList) {
-                        cardOptions.startMessagesList = data.startMessagesList;
-                    }
-                    infoMsg = `<h3 class="center"><b>${game.i18n.localize("CHATFATE.faitepointUsed")}</b></h3>
-                        ${game.i18n.format("CHATFATE." + type, { character: '<b>' + this.name + '</b>' })}<br>`;
-                    renderTemplate('systems/dsa5/templates/dialog/isTalentedReroll-dialog.html', { testData: newTestData, postData: data.postData }).then(html => {
-                        new DSA5Dialog({
-                            title: game.i18n.localize("CHATFATE.selectDice"),
-                            content: html,
-                            buttons: {
-                                Yes: {
-                                    icon: '<i class="fa fa-check"></i>',
-                                    label: game.i18n.localize("Ok"),
-                                    callback: async dlg => {
-
-                                        let diesToReroll = dlg.find('.dieSelected').map(function() { return Number($(this).attr('data-index')) }).get()
-                                        if (diesToReroll.length > 0) {
-
-                                            let newRoll = []
-                                            for (let k of diesToReroll) {
-                                                let term = newTestData.roll.terms[k * 2]
-                                                newRoll.push(term.number + "d" + term.faces + "[" + term.options.colorset + "]")
-                                            }
-                                            newRoll = await DiceDSA5.manualRolls(new Roll(newRoll.join("+")).roll(), "CHATCONTEXT.talentedReroll")
-                                            DiceDSA5.showDiceSoNice(newRoll, newTestData.rollMode)
-
-                                            let ind = 0
-                                            let ro = []
-                                            let before = []
-                                            for (let k of diesToReroll) {
-                                                ro.push(newRoll.results[ind * 2])
-                                                before.push(newTestData.roll.results[k * 2])
-                                                newTestData.roll.results[k * 2] = Math.min(newRoll.results[ind * 2], newTestData.roll.results[k * 2])
-                                                newTestData.roll.terms[k * 2].results[0].result = Math.min(newRoll.results[ind * 2], newTestData.roll.terms[k * 2].results[0].result)
-                                                ind += 1
-                                            }
-                                            infoMsg += `<b>${game.i18n.localize('Roll')}</b>: ${before.join(" ")}/${ro.join(", ")}`
-                                            ChatMessage.create(DSA5_Utility.chatDataSetup(infoMsg));
-
-                                            this[`${data.postData.postFunction}`]({ testData: newTestData, cardOptions }, { rerenderMessage: message });
-                                            message.update({
-                                                "flags.data.talentedRerollUsed": true
-                                            });
-                                        }
-
-                                    }
-                                },
-                                cancel: {
-                                    icon: '<i class="fas fa-times"></i>',
-                                    label: game.i18n.localize("cancel")
-                                },
-                            },
-                            default: 'Yes'
-                        }).render(true)
-                    });
-                    break
-                case "reroll":
-                    cardOptions.fatePointDamageRerollUsed = true;
-                    if (data.originalTargets && data.originalTargets.size > 0) {
-                        game.user.targets = data.originalTargets;
-                        game.user.targets.user = game.user;
-                    }
-                    if (!data.defenderMessage && data.startMessagesList) {
-                        cardOptions.startMessagesList = data.startMessagesList;
-                    }
-                    renderTemplate('systems/dsa5/templates/dialog/fateReroll-dialog.html', { testData: newTestData, postData: data.postData }).then(html => {
-
-                        new DSA5Dialog({
-                            title: game.i18n.localize("CHATFATE.selectDice"),
-                            content: html,
-                            buttons: {
-                                Yes: {
-                                    icon: '<i class="fa fa-check"></i>',
-                                    label: game.i18n.localize("Ok"),
-                                    callback: async dlg => {
-
-                                        let diesToReroll = dlg.find('.dieSelected').map(function() { return Number($(this).attr('data-index')) }).get()
-                                        if (diesToReroll.length > 0) {
-
-                                            let newRoll = []
-                                            for (let k of diesToReroll) {
-                                                let term = newTestData.roll.terms[k * 2]
-                                                newRoll.push(term.number + "d" + term.faces + "[" + term.options.colorset + "]")
-                                            }
-                                            newRoll = await DiceDSA5.manualRolls(new Roll(newRoll.join("+")).roll(), "CHATCONTEXT.Reroll")
-                                            DiceDSA5.showDiceSoNice(newRoll, newTestData.rollMode)
-
-                                            ChatMessage.create(DSA5_Utility.chatDataSetup(infoMsg));
-                                            let ind = 0
-                                            for (let k of diesToReroll) {
-                                                newTestData.roll.results[k * 2] = newRoll.results[ind * 2]
-                                                newTestData.roll.terms[k * 2].results[0].result = newRoll.results[ind * 2]
-                                                ind += 1
-                                            }
-                                            this[`${data.postData.postFunction}`]({ testData: newTestData, cardOptions }, { rerenderMessage: message });
-                                            message.update({ "flags.data.fatePointRerollUsed": true });
-                                            this.update({ "data.status.fatePoints.value": this.data.data.status.fatePoints.value - 1 })
-                                        }
-                                    }
-                                },
-                                cancel: {
-                                    icon: '<i class="fas fa-times"></i>',
-                                    label: game.i18n.localize("cancel")
-                                },
-                            },
-                            default: 'Yes'
-                        }).render(true)
-                    });
-
-                    break
-                case "addQS":
-                    ChatMessage.create(DSA5_Utility.chatDataSetup(infoMsg));
-                    game.user.targets.forEach(t => t.setTarget(false, { user: game.user, releaseOthers: false, groupSelection: true }));
-
-                    cardOptions.fatePointAddQSUsed = true;
-                    newTestData.qualityStep = 1
-
-                    this[`${data.postData.postFunction}`]({ testData: newTestData, cardOptions }, { rerenderMessage: message });
-                    message.update({ "flags.data.fatePointAddQSUsed": true });
-                    this.update({ "data.status.fatePoints.value": this.data.data.status.fatePoints.value - 1 })
-                    break
-            }
+            this[`fate${type}`](infoMsg, cardOptions, newTestData, message, data)
         }
     }
 
@@ -1161,6 +1158,7 @@ export default class Actordsa5 extends Actor {
 
     async addCondition(effect, value = 1, absolute = false, auto = true) {
         if (!this.owner) return "Not owned"
+        console.log(this)
 
         if (absolute && value <= 0) return this.removeCondition(effect, value, auto, absolute)
 
@@ -1194,6 +1192,11 @@ export default class Actordsa5 extends Actor {
         }
     }
 
+    async _removeDependentEffects(statusId) {
+        if (statusId == "bloodrush")
+            await this.addCondition("stunned", 2, false, false)
+    }
+
     async removeCondition(effect, value = 1, auto = true, absolute = false) {
         if (!this.owner) return "Not owned"
 
@@ -1205,9 +1208,10 @@ export default class Actordsa5 extends Actor {
 
         let existing = this.hasCondition(effect.id)
 
-        if (existing && existing.flags.dsa5.value == null)
-            return this.deleteEmbeddedEntity("ActiveEffect", existing._id)
-        else if (existing)
+        if (existing && existing.flags.dsa5.value == null) {
+            await this._removeDependentEffects(effect.id)
+            return await this.deleteEmbeddedEntity("ActiveEffect", existing._id)
+        } else if (existing)
             return await DSA5StatusEffects.removeEffect(this, existing, value, absolute, auto)
 
     }
