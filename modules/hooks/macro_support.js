@@ -58,7 +58,7 @@ export default function() {
             let journal = game.journal.get(data.id);
             let command = `game.journal.get("${data.id}").sheet.render(true)`
 
-            await createHotBarMacro(command, journal.name, item.img, slot)
+            await createHotBarMacro(command, journal.name, journal.img, slot)
         }
         return false;
     });
