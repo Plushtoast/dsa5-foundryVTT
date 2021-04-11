@@ -2118,3 +2118,30 @@ select.noAppearance {
     height: auto;
     text-align: center;
 }
+
+.aggroButton {
+    border-radius: 100%;
+    padding: 3px;
+    display: block;
+    width: 24px;
+    position: absolute;
+    left: -20px;
+    height: 24px;
+    margin-top: 12px;
+    border: 1px solid darkred;
+    background-color: white;
+    cursor: pointer;
+    box-shadow: 2px 2px 6px black;
+}
+
+.aggroButton:hover {
+    background-color: #d1d1ca;
+}
+
+.combatant:not(.active) .aggroButton {
+    display: none;
+}
+
+#combat-popout .aggroButton {
+    left: -1px;
+}

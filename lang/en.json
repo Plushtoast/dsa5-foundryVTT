@@ -83,8 +83,8 @@
         "noExtensions": "No matching liturgy/spell extensions",
         "firstTime": "Language settings",
         "firstTimeWarning": "Please chose your language. Compendiae of different languages are currently not compatible to each other. Existing characters can not be migrated to the other language.",
-        "selectReaction": "Chose your reaction."
-
+        "selectReaction": "Chose your reaction.",
+        "selectAction": "Chose your action"
     },
 
     "Equipment": {
@@ -465,7 +465,8 @@
         "FP": "Skill points modifier",
         "combatTurmoil": "Shooting into Melee",
         "QS": "Quality Level modifier",
-        "damage": "Damage modifier (f.e. 1d6)"
+        "damage": "Damage modifier (f.e. 1d6)",
+        "defenseMalus": "Defense malus"
     },
 
     "SKILL": {
@@ -675,7 +676,8 @@
         "requestRoll": "{user} requests a roll in {item}",
         "editRoll": "Edit roll",
         "BlindRoll": "Blinder Wurf.",
-        "usesItem": "{actor} uses {item}."
+        "usesItem": "{actor} uses {item}.",
+        "requestGroupCheck": "{user} requests a group check in {item}"
     },
 
     "TT": {
@@ -703,7 +705,9 @@
         "request": "Request roll",
         "descrrequest": "Request a skill roll. (tab + number = with modifier)",
         "threeD20Check": "3D20 Check",
-        "descrthreeD20Check": "Roll a 3d20 check without actor (attributes 12)"
+        "descrthreeD20Check": "Roll a 3d20 check without actor (attributes 12)",
+        "groupcheck": "Group Check",
+        "descrgroupcheck": "Request a Group Check. (tab + number = with modifier)"
     },
 
     "ITEM.TypeAdvantage": "Advantage",

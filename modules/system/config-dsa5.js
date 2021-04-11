@@ -517,6 +517,11 @@ DSA5.helpContent = [{
         name: "threeD20Check",
         command: "/ch",
         example: "/ch"
+    },
+    {
+        name: "groupcheck",
+        command: "/gc",
+        example: "/gc"
     }
 ]
 

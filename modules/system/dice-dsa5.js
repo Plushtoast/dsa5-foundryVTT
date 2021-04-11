@@ -192,46 +192,20 @@ export default class DiceDSA5 {
         return result
     }
 
-    static rollTraitDamage(testData) {
-        this._appendSituationalModifiers(testData, game.i18n.localize("manual"), testData.testModifier)
-        let modifier = this._situationalModifiers(testData);
-        let chars = []
-
-        let roll = testData.roll ? testData.roll : new Roll(testData.source.data.data.damage.value.replace(/[Ww]/g, "d")).roll()
-        let damage = roll.total + modifier;
-
-        for (let k of roll.terms) {
-            if (k instanceof Die || k.class == "Die") {
-                for (let l of k.results) {
-                    chars.push({ char: testData.mode, res: l.result, die: "d" + k.faces })
-                }
-            }
-        }
-
-        return {
-            rollType: "damage",
-            damage: damage,
-            characteristics: chars,
-
-            preData: testData,
-            modifiers: modifier,
-            extra: {}
-        }
-
-    }
-
     static rollDamage(testData) {
         this._appendSituationalModifiers(testData, game.i18n.localize("manual"), testData.testModifier)
         let modifier = this._situationalModifiers(testData);
         let weapon;
         let chars = []
 
-        let skill = Actordsa5._calculateCombatSkillValues(testData.extra.actor.items.find(x => x.type == "combatskill" && x.name == testData.source.data.data.combatskill.value), testData.extra.actor)
-
         if (testData.source.type == "meleeweapon") {
+            const skill = Actordsa5._calculateCombatSkillValues(testData.extra.actor.items.find(x => x.type == "combatskill" && x.name == testData.source.data.data.combatskill.value), testData.extra.actor)
             weapon = Actordsa5._prepareMeleeWeapon(testData.source.data, [skill], testData.extra.actor)
-        } else {
+        } else if (testData.source.type == "rangeweapon") {
+            const skill = Actordsa5._calculateCombatSkillValues(testData.extra.actor.items.find(x => x.type == "combatskill" && x.name == testData.source.data.data.combatskill.value), testData.extra.actor)
             weapon = Actordsa5._prepareRangeWeapon(testData.source.data, [], [skill], testData.extra.actor)
+        } else {
+            weapon = testData.source.data
         }
 
         let roll = testData.roll ? testData.roll : new Roll(weapon.data.damage.value.replace(/[Ww]/g, "d")).roll()
@@ -301,9 +275,11 @@ export default class DiceDSA5 {
             this._appendSituationalModifiers(testData, game.i18n.localize("narrowSpace"), this._getNarrowSpaceModifier(weapon, testData))
             this._appendSituationalModifiers(testData, game.i18n.localize("doubleAttack"), testData.doubleAttack)
             this._appendSituationalModifiers(testData, game.i18n.localize("opposingWeaponSize"), this._compareWeaponReach(weapon, testData))
+            this._appendSituationalModifiers(testData, game.i18n.localize("statuseffects"), testData.extra.actor.data.meleeStats[testData.mode])
         } else {
             this._appendSituationalModifiers(testData, game.i18n.localize("distance"), DSA5.rangeMods[testData.rangeModifier].attack)
             this._appendSituationalModifiers(testData, game.i18n.localize("sizeCategory"), testData.sizeModifier)
+            this._appendSituationalModifiers(testData, game.i18n.localize("statuseffects"), testData.extra.actor.data.rangeStats[testData.mode])
         }
         let result = this._rollSingleD20(roll, testData.mode == "attack" ? Number(source.data.at.value) : Number(source.data.pa), testData.mode, this._situationalModifiers(testData), testData)
 
@@ -312,9 +288,10 @@ export default class DiceDSA5 {
 
         switch (result.successLevel) {
             case 3:
-                if (testData.mode == "attack")
+                if (testData.mode == "attack") {
                     result.description += ", " + game.i18n.localize("halfDefense") + ", " + game.i18n.localize("doubleDamage")
-                else
+                        //result.defenseMalus = -4
+                } else
                     result.description += ", " + game.i18n.localize("attackOfOpportunity")
                 break;
             case -3:
@@ -327,8 +304,10 @@ export default class DiceDSA5 {
                 }
                 break;
             case 2:
-                if (testData.mode == "attack")
+                if (testData.mode == "attack") {
                     result.description += ", " + game.i18n.localize("halfDefense")
+                        //result.defenseMalus = -4
+                }
                 break;
             case -2:
                 break;
@@ -343,17 +322,20 @@ export default class DiceDSA5 {
         return result
     }
 
+    static _stringToRoll(text, testData) {
+        return Number(Roll.MATH_PROXY.safeEval(text.replace(/\d{1}[dDwW]\d/g, function(match) {
+            let roll = new Roll(match).roll()
+            DiceDSA5._addRollDiceSoNice(testData, roll, "ch")
+            return roll.total
+        })))
+    }
 
     static async evaluateDamage(testData, result, weapon, isRangeWeapon, doubleDamage) {
         let damageRoll = testData.damageRoll ? testData.damageRoll : await DiceDSA5.manualRolls(new Roll(weapon.data.damage.value.replace(/[Ww]/g, "d")).roll(), "CHAR.DAMAGE")
         let bonusDmg = testData.situationalModifiers.reduce(function(_this, val) {
             let number = 0
             if (val.damageBonus) {
-                number = Number(Roll.MATH_PROXY.safeEval(`${val.damageBonus}`.replace(/\d{1}[dDwW]\d/g, function(match) {
-                    let roll = new Roll(match).roll()
-                    DiceDSA5._addRollDiceSoNice(testData, roll, "ch")
-                    return roll.total
-                }))) * val.step
+                number = DiceDSA5._stringToRoll(val.damageBonus, testData) * val.step
                 val.damageBonus = number
             }
             return _this + number
@@ -389,11 +371,22 @@ export default class DiceDSA5 {
             damageBonusDescription.push(game.i18n.localize("damageThreshold") + " " + weapon.extraDamage)
         }
 
+        let status
         if (isRangeWeapon) {
             let rangeDamageMod = DSA5.rangeMods[testData.rangeModifier].damage
             damage += rangeDamageMod
             if (rangeDamageMod != 0)
                 damageBonusDescription.push(game.i18n.localize("distance") + " " + rangeDamageMod)
+
+            status = testData.extra.actor.data.rangeStats.damage
+        } else {
+            status = testData.extra.actor.data.meleeStats.damage
+        }
+
+        const statusDmg = DiceDSA5._stringToRoll(status, testData)
+        if (statusDmg != 0) {
+            damage += statusDmg
+            damageBonusDescription.push(game.i18n.localize("statuseffects") + " " + statusDmg)
         }
 
         if (doubleDamage) {
@@ -403,7 +396,6 @@ export default class DiceDSA5 {
 
         result["damagedescription"] = damageBonusDescription.join(", ")
         result["damage"] = damage
-
         result["damageRoll"] = duplicate(damageRoll)
     }
 
@@ -422,6 +414,7 @@ export default class DiceDSA5 {
             weapon = Actordsa5._prepareMeleeWeapon(source, [skill], testData.extra.actor)
 
             this._appendSituationalModifiers(testData, game.i18n.localize("narrowSpace"), this._getNarrowSpaceModifier(weapon, testData))
+            this._appendSituationalModifiers(testData, game.i18n.localize("statuseffects"), testData.extra.actor.data.meleeStats[testData.mode])
 
             if (testData.mode == "attack") {
                 this._appendSituationalModifiers(testData, game.i18n.localize("doubleAttack"), testData.doubleAttack)
@@ -431,6 +424,7 @@ export default class DiceDSA5 {
             weapon = Actordsa5._prepareRangeWeapon(source, [], [skill], testData.extra.actor)
             this._appendSituationalModifiers(testData, game.i18n.localize("distance"), DSA5.rangeMods[testData.rangeModifier].attack)
             this._appendSituationalModifiers(testData, game.i18n.localize("sizeCategory"), testData.sizeModifier)
+            this._appendSituationalModifiers(testData, game.i18n.localize("statuseffects"), testData.extra.actor.data.rangeStats[testData.mode])
         }
         let result = this._rollSingleD20(roll, weapon[testData.mode], testData.mode, this._situationalModifiers(testData), testData, combatskill)
 
@@ -439,9 +433,10 @@ export default class DiceDSA5 {
 
         switch (result.successLevel) {
             case 3:
-                if (testData.mode == "attack")
+                if (testData.mode == "attack") {
                     result.description += ", " + game.i18n.localize("halfDefense") + ", " + game.i18n.localize("doubleDamage")
-                else
+                        //result.defenseMalus = -4
+                } else
                     result.description += ", " + game.i18n.localize("attackOfOpportunity")
                 break;
             case -3:
@@ -455,28 +450,31 @@ export default class DiceDSA5 {
                     result.description += ", " + game.i18n.localize("selfDamage") + (new Roll("1d6+2").roll().total)
                 break;
             case 2:
-                if (testData.mode == "attack")
+                if (testData.mode == "attack") {
                     result.description += ", " + game.i18n.localize("halfDefense")
+                        //result.defenseMalus = -4
+                }
                 break;
             case -2:
                 break;
         }
 
-        if (testData.mode == "attack" && success) {
+        if (testData.mode == "attack" && success)
             await DiceDSA5.evaluateDamage(testData, result, weapon, source.type == "rangeweapon", doubleDamage)
-        }
+
         result["rollType"] = "weapon"
         let effect = DiceDSA5.parseEffect(weapon.data.effect ? weapon.data.effect.value : "")
-        if (effect)
-            result["parsedEffect"] = effect
+
+        if (effect) result["parsedEffect"] = effect
+
         return result
     }
 
     static async _addRollDiceSoNice(testData, roll, color) {
         if (testData.rollMode) {
-            for (let i = 0; i < roll.dice.length; i++) {
+            for (let i = 0; i < roll.dice.length; i++)
                 roll.dice[i].options.colorset = color
-            }
+
             this.showDiceSoNice(roll, testData.rollMode);
         }
     }
@@ -490,9 +488,9 @@ export default class DiceDSA5 {
         let weaponSource = testData.source.data.data == undefined ? testData.source : testData.source.data
         let source = Actordsa5._calculateCombatSkillValues(weaponSource, testData.extra.actor)
         let res = modifier + source.data[testData.mode].value;
-        let chars = []
+
         let res1 = res - roll.terms[0].results[0].result;
-        chars.push({ char: testData.mode, res: roll.terms[0].results[0].result, suc: res1 >= 0, tar: res });
+        let chars = [{ char: testData.mode, res: roll.terms[0].results[0].result, suc: res1 >= 0, tar: res }]
         let rollConfirm = new Roll("1d20").roll();
         rollConfirm.dice[0].options.colorset = testData.mode
 
@@ -826,7 +824,7 @@ export default class DiceDSA5 {
                 break;
             case "trait":
                 if (testData.mode == "damage") {
-                    rollResults = this.rollTraitDamage(testData)
+                    rollResults = this.rollDamage(testData)
                 } else {
                     rollResults = await this.rollCombatTrait(testData)
                 }
@@ -1015,13 +1013,61 @@ export default class DiceDSA5 {
         if (actor) {
             let skill = actor.items.find(i => i.name == name && i.type == category);
             let options = { modifier: modifier }
+            game.user.updateTokenTargets([]);
             actor.setupSkill(skill.data, options).then(setupData => {
                 actor.basicTest(setupData)
             });
-
         }
     }
 
+    static async _requestGC(category, name, messageId, modifier = 0) {
+        let actor = DSA5ChatAutoCompletion._getActor()
+
+        if (actor) {
+            let skill = actor.items.find(i => i.name == name && i.type == category);
+            let options = { modifier: modifier }
+            game.user.updateTokenTargets([]);
+            actor.setupSkill(skill.data, options).then(async(setupData) => {
+                let result = await actor.basicTest(setupData)
+                let message = await game.messages.get(messageId)
+                const data = {
+                    msg: message.data.flags.msg,
+                    results: message.data.flags.results.concat({ actor: actor.name, qs: (result.result.qualityStep || 0) })
+                }
+                DiceDSA5._rerenderGC(message, data)
+            });
+        }
+    }
+
+    static async _rerenderGC(message, data) {
+        data.qs = data.results.reduce((a, b) => { return a + b.qs }, 0)
+        const content = await renderTemplate("systems/dsa5/templates/chat/roll/groupcheck.html", data)
+        message.update({
+            content,
+            flags: data
+        }).then(newMsg => {
+            ui.chat.updateMessage(newMsg);
+            return newMsg;
+        });
+    }
+
+    static async _removeGCEntry(ev) {
+        const elem = $(ev.currentTarget)
+        const index = Number(elem.attr('data-index'))
+        const message = game.messages.get(elem.parents('.message').attr("data-message-id"))
+        const data = message.data.flags
+        data.results.splice(index, 1)
+        DiceDSA5._rerenderGC(message, data)
+    }
+
+    static async _editGC(ev) {
+        const elem = $(ev.currentTarget)
+        const index = Number(elem.attr('data-index'))
+        const message = game.messages.get(elem.parents('.message').attr("data-message-id"))
+        const data = message.data.flags
+        data.results[index].qs = Number(elem.val())
+        DiceDSA5._rerenderGC(message, data)
+    }
 
     static async _itemRoll(ev) {
         let input = $(ev.currentTarget),
@@ -1125,10 +1171,10 @@ export default class DiceDSA5 {
         html.on('click', '.range-botch', ev => {
             CombatTables.showBotchCard("Range", $(ev.currentTarget).attr("data-weaponless"))
         })
-        html.on('click', '.liturgy-botch', ev => {
+        html.on('click', '.liturgy-botch', () => {
             Miscast.showBotchCard("Liturgy")
         })
-        html.on('click', '.spell-botch', ev => {
+        html.on('click', '.spell-botch', () => {
             Miscast.showBotchCard("Spell")
         })
         html.on('click', '.roll-item', ev => {
@@ -1137,15 +1183,26 @@ export default class DiceDSA5 {
         html.on('change', '.roll-edit', ev => {
             DiceDSA5._rollEdit(ev)
         })
+        html.on('change', '.editGC', ev => {
+            DiceDSA5._editGC(ev)
+        })
         html.on('click', '.request-roll', ev => {
-            DiceDSA5._requestRoll($(ev.currentTarget).attr("data-type"), $(ev.currentTarget).attr("data-name"), Number($(ev.currentTarget).attr("data-modifier")) || 0)
+            const elem = $(ev.currentTarget)
+            DiceDSA5._requestRoll(elem.attr("data-type"), elem.attr("data-name"), Number(elem.attr("data-modifier")) || 0)
+        })
+        html.on('click', '.request-gc', ev => {
+            const elem = $(ev.currentTarget)
+            DiceDSA5._requestGC(elem.attr("data-type"), elem.attr("data-name"), elem.parents('.message').attr("data-message-id"), Number(elem.attr("data-modifier")) || 0)
+        })
+        html.on('click', '.removeGC', ev => {
+            DiceDSA5._removeGCEntry(ev)
         })
 
         html.on("click", ".message-delete", ev => {
             let message = game.messages.get($(ev.currentTarget).parents(".message").attr("data-message-id"))
-            let targeted = message.data.flags.unopposeData // targeted opposed test
-            if (!targeted)
-                return;
+            let targeted = message.data.flags.unopposeData
+
+            if (!targeted) return;
 
             let target = canvas.tokens.get(message.data.flags.unopposeData.targetSpeaker.token)
             target.actor.update({
@@ -1153,6 +1210,5 @@ export default class DiceDSA5 {
             })
         })
     }
-
 
 }

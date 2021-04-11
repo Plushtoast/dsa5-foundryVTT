@@ -89,6 +89,69 @@ export class ReactToSkillDialog extends DialogReactDSA5 {
     }
 }
 
+export class ActAttackDialog extends Dialog {
+    static async showDialog(actor) {
+        let fun = this.callbackResult
+        new DialogReactDSA5({
+            title: game.i18n.localize("attacktest"),
+            content: await this.getTemplate(actor),
+            default: 'ok',
+            buttons: {
+                ok: {
+                    icon: '<i class="fa fa-check"></i>',
+                    label: game.i18n.localize("ok"),
+                    callback: dlg => {
+                        fun(dlg.find('[name="entryselection"]').val(), actor)
+                    }
+                },
+                cancel: {
+                    icon: '<i class="fas fa-times"></i>',
+                    label: game.i18n.localize("cancel"),
+
+                }
+            }
+
+        }).render(true)
+    }
+
+    static async getTemplate(actor) {
+        let item = ""
+        let items = [{
+            name: game.i18n.localize("attackWeaponless"),
+            id: "parryWeaponless"
+        }]
+
+        let types = ["meleeweapon", "rangeweapon"]
+        let traitTypes = ["meleeAttack", "rangeAttack"]
+        let result = actor.data.items.filter(x => {
+            return (types.includes(x.type) && x.data.worn.value == true) || (x.type == "trait" && traitTypes.includes(x.data.traitType.value))
+        })
+        for (let res of result) {
+            items.push({
+                name: res.name,
+                id: res.name
+            })
+        }
+
+        return await renderTemplate('systems/dsa5/templates/dialog/dialog-act.html', { items: items, original: item })
+    }
+    static callbackResult(text, actor) {
+        if ("attackWeaponless" == text) {
+            actor.setupWeaponless("attack", {}).then(setupData => {
+                actor.basicTest(setupData)
+            });
+        } else {
+            let types = ["meleeweapon", "trait", "rangeweapon"]
+            let result = actor.data.items.find(x => { return types.includes(x.type) && x.name == text })
+            if (result) {
+                let fun = result.type == "trait" ? "setupWeaponTrait" : "setupWeapon"
+                actor[fun](result, "attack", {}).then(setupData => {
+                    actor.basicTest(setupData)
+                });
+            }
+        }
+    }
+}
 
 export class ReactToAttackDialog extends DialogReactDSA5 {
 

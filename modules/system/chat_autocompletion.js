@@ -9,7 +9,7 @@ export default class DSA5ChatAutoCompletion {
         DSA5_Utility.allSkills().then(res => {
             this.skills = res.map(x => x.name)
         })
-        this.regex = /^\/(sk|at|pa|sp|li|rq) /
+        this.regex = /^\/(sk|at|pa|sp|li|rq|gc) /
         this.filtering = false
         this.constants = {
             dodge: game.i18n.localize("dodge"),
@@ -70,7 +70,7 @@ export default class DSA5ChatAutoCompletion {
             let types = ["meleeweapon", "rangeweapon"]
             let traitTypes = ["meleeAttack", "rangeAttack"]
             let result = actor.data.items.filter(x => {
-                    return (types.includes(x.type) || (x.type == "trait" && traitTypes.includes(x.data.traitType.value))) &&
+                    return ((types.includes(x.type) && x.data.worn.value == true) || (x.type == "trait" && traitTypes.includes(x.data.traitType.value))) &&
                         x.name.toLowerCase().trim().indexOf(search) != -1
                 }).slice(0, 5).map(x => x.name)
                 .concat([this.constants.attackWeaponless].filter(x => x.toLowerCase().trim().indexOf(search) != -1))
@@ -111,27 +111,30 @@ export default class DSA5ChatAutoCompletion {
         if (actor) {
             let types = ["liturgy", "ceremony"]
             let result = actor.data.items.filter(x => { return types.includes(x.type) && x.name.toLowerCase().trim().indexOf(search) != -1 }).slice(0, 5).map(x => x.name)
-            if (!result.length)
-                result.push(game.i18n.localize("DSAError.noMatch"))
+
+            if (!result.length) result.push(game.i18n.localize("DSAError.noMatch"))
+
             this._setList(result, "LI")
         }
     }
 
-    _filterSK(search) {
+    _getSkills(search) {
+        search = search.replace(/(-)?\d+/g, '').trim()
         let result = this.skills.filter(x => { return x.toLowerCase().trim().indexOf(search) != -1 }).slice(0, 5)
-
         if (!result.length) result.push(game.i18n.localize("DSAError.noMatch"))
+        return result
+    }
 
-        this._setList(result, "SK")
+    _filterSK(search) {
+        this._setList(this._getSkills(search), "SK")
     }
 
     _filterRQ(search) {
-        search = search.replace(/(-)?\d+/g, '').trim()
-        let result = this.skills.filter(x => { return x.toLowerCase().trim().indexOf(search) != -1 }).slice(0, 5)
+        this._setList(this._getSkills(search), "RQ")
+    }
 
-        if (!result.length) result.push(game.i18n.localize("DSAError.noMatch"))
-
-        this._setList(result, "RQ")
+    _filterGC(search) {
+        this._setList(this._getSkills(search), "GC")
     }
 
     _setList(result, cmd) {
@@ -188,14 +191,13 @@ export default class DSA5ChatAutoCompletion {
 
     _quickSelect(target) {
         let cmd = target.attr("data-category")
-        if(cmd == "RQ"){
+        if(["RQ","GC"].includes(cmd)){
             this[`_quick${cmd}`](target)
         }
         else{
             let actor = DSA5ChatAutoCompletion._getActor()
             if (actor) {
-                $('#chat-message').val("")
-                this.anchor.find(".quickfind").remove()
+                this._resetChatAutoCompletion()
                 this[`_quick${cmd}`](target, actor)
             }
         }
@@ -210,17 +212,40 @@ export default class DSA5ChatAutoCompletion {
         }
     }
 
-    _quickRQ(target){
-        let modifier = Number($('#chat-message').val().match(/(-)?\d+/g)) || 0
+    _resetChatAutoCompletion(){
         $('#chat-message').val("")
         this.anchor.find(".quickfind").remove()
+    }
+
+    _quickGC(target){
+        const modifier = Number($('#chat-message').val().match(/(-)?\d+/g)) || 0
+        this._resetChatAutoCompletion()
+        DSA5ChatAutoCompletion.showGCMessage(target.text(), modifier)       
+    }
+
+    _quickRQ(target){
+        const modifier = Number($('#chat-message').val().match(/(-)?\d+/g)) || 0
+        this._resetChatAutoCompletion()
         DSA5ChatAutoCompletion.showRQMessage(target.text(), modifier)       
     }
 
     static showRQMessage(target, modifier = 0){
-        let mod = modifier < 0 ? ` ${modifier}` : (modifier > 0 ? ` +${modifier}` : "")
-        let msg = game.i18n.format("CHATNOTIFICATION.requestRoll", {user: game.user.name, item: `<a class="roll-button request-roll" data-type="skill" data-modifier="${modifier}" data-name="${target}"><i class="fas fa-dice"></i> ${target}${mod}</a>`})
+        const mod = modifier < 0 ? ` ${modifier}` : (modifier > 0 ? ` +${modifier}` : "")
+        const msg = game.i18n.format("CHATNOTIFICATION.requestRoll", {user: game.user.name, item: `<a class="roll-button request-roll" data-type="skill" data-modifier="${modifier}" data-name="${target}"><i class="fas fa-dice"></i> ${target}${mod}</a>`})
         ChatMessage.create(DSA5_Utility.chatDataSetup(msg));
+    }
+
+    static async showGCMessage(target, modifier = 0){
+        const mod = modifier < 0 ? ` ${modifier}` : (modifier > 0 ? ` +${modifier}` : "")
+        const data = {
+            msg:  game.i18n.format("CHATNOTIFICATION.requestGroupCheck", {user: game.user.name, item: `<a class="roll-button request-gc" data-type="skill" data-modifier="${modifier}" data-name="${target}"><i class="fas fa-dice"></i> ${target}${mod}</a>`}),
+            results: [],
+            qs: 0
+        }
+        const content = await renderTemplate("systems/dsa5/templates/chat/roll/groupcheck.html", data)
+        let chatData = DSA5_Utility.chatDataSetup(content)
+        chatData.flags = data
+        ChatMessage.create(chatData);
     }
 
     _quickPA(target, actor) {

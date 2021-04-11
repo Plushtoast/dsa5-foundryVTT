@@ -83,7 +83,8 @@
         "noExtensions": "Keine passend Zauber/Liturgieerweiterungen",
         "firstTime": "Spracheinstellungen",
         "firstTimeWarning": "Bitte wähle die passende Sprache. Kompendien verschiedener Sprachen sind derzeit nicht miteinander kompatibel und bestehende Charaktere können nicht migriert werden.",
-        "selectReaction": "Bitte wähle die passende Reaktion."
+        "selectReaction": "Bitte wähle die passende Reaktion.",
+        "selectAction": "Bitte wähle deine Handlung"
     },
 
     "Equipment": {
@@ -430,7 +431,8 @@
         "FP": "Fertigkeitspunktemodifikator",
         "combatTurmoil": "Schuss ins Kampfgetümmel",
         "QS": "Qualitätsstufenmodifikator",
-        "damage": "Schadensmodifikator (z.B. 1d6)"
+        "damage": "Schadensmodifikator (z.B. 1d6)",
+        "defenseMalus": "Verteidigungsmalus"
     },
 
     "WIZARD": {
@@ -657,7 +659,8 @@
         "requestRoll": "{user} fordert einen Wurf in {item}",
         "editRoll": "Wurf editieren",
         "BlindRoll": "Blinder Wurf.",
-        "usesItem": "{actor} benutzt {item}."
+        "usesItem": "{actor} benutzt {item}.",
+        "requestGroupCheck": "{user} fordert eine Gruppenprobe in {item}"
     },
 
     "TT": {
@@ -685,7 +688,9 @@
         "request": "Wurf anfordern",
         "descrrequest": "Fordere einen Talentwurf an. (Tab + Zahl = mit Modifikator)",
         "threeD20Check": "3W20 Probe",
-        "descrthreeD20Check": "Würfle eine 3W20 Probe ohne Charakter (Attribute 12)"
+        "descrthreeD20Check": "Würfle eine 3W20 Probe ohne Charakter (Attribute 12)",
+        "groupcheck": "Gruppenprobe",
+        "descrgroupcheck": "Fordere eine Gruppenprobe an. (Tab + Zahl = mit Modifikator)"
     },
 
     "ITEM.TypeAdvantage": "Vorteil",

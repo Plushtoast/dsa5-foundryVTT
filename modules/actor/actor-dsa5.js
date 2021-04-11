@@ -166,6 +166,15 @@ export default class Actordsa5 extends Actor {
 
         data.data.totalArmor = 0
         data.data.carryModifier = 0
+        data.data.meleeStats = {
+            parry: 0,
+            attack: 0,
+            damage: "0"
+        }
+        data.data.rangeStats = {
+            attack: 0,
+            damage: "0"
+        }
         let gearModifyableCalculatedAttributes = ["fatePoints", "initiative", "speed", "astralenergy", "karmaenergy", "wounds", "dodge", "soulpower", "toughness"]
         for (let k of gearModifyableCalculatedAttributes) {
             if (data.data.status[k])
@@ -582,7 +591,6 @@ export default class Actordsa5 extends Actor {
         } else if (Number(this.data.data.details.experience.total == 0)) {
             let selOptions = Object.entries(DSA5.startXP).map(([key, val]) => `<option value="${key}">${game.i18n.localize(val)} (${key})</option>`).join("")
             let template = `<p>${game.i18n.localize("DSAError.zeroXP")}</p><label>${game.i18n.localize('APValue')}: </label><select name ="APsel">${selOptions}</select>`
-
             let newXp = 0;
             let result = false;
 
@@ -607,7 +615,6 @@ export default class Actordsa5 extends Actor {
                             }
                         }
                     }
-
                 }).render(true)
             })
             if (result) {
@@ -617,7 +624,6 @@ export default class Actordsa5 extends Actor {
                 return true
             }
         }
-
         ui.notifications.error(game.i18n.localize("DSAError.NotEnoughXP"))
         return false
     }
@@ -924,6 +930,8 @@ export default class Actordsa5 extends Actor {
 
         let toSearch = [game.i18n.localize(statusId)]
         let combatskills = Itemdsa5.buildCombatSpecAbs(this, ["Combat"], toSearch, "parry")
+        let situationalModifiers = DSA5StatusEffects.getRollModifiers(testData.extra.actor, testData.source)
+        Itemdsa5.getDefenseMalus(situationalModifiers, this)
 
         testData.source.type = statusId
 
@@ -934,7 +942,8 @@ export default class Actordsa5 extends Actor {
                 rollMode: options.rollMode,
                 combatSpecAbs: combatskills,
                 showDefense: true,
-                defenseCount: 0
+                defenseCount: 0,
+                situationalModifiers
             },
             callback: (html) => {
                 cardOptions.rollMode = html.find('[name="rollMode"]').val();
@@ -951,6 +960,8 @@ export default class Actordsa5 extends Actor {
                 return { testData, cardOptions };
             }
         };
+
+
 
         let cardOptions = this._setupCardOptions("systems/dsa5/templates/chat/roll/status-card.html", title)
 
@@ -1158,7 +1169,6 @@ export default class Actordsa5 extends Actor {
 
     async addCondition(effect, value = 1, absolute = false, auto = true) {
         if (!this.owner) return "Not owned"
-        console.log(this)
 
         if (absolute && value <= 0) return this.removeCondition(effect, value, auto, absolute)
 

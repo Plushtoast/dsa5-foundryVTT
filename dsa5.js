@@ -17,6 +17,7 @@ import SpecialabilityRulesDSA5 from "./modules/system/specialability-rules-dsa5.
 import ChatMessageDSA5Roll from "./modules/chat/ChatMessageDSA5.js";
 import DSA5ChatListeners from "./modules/system/chat_listeners.js";
 import DSA5Payment from "./modules/system/payment.js"
+import { DSA5CombatTracker, DSA5Combat } from "./modules/hooks/combat_tracker.js";
 
 
 Hooks.once("init", async function() {
@@ -51,6 +52,8 @@ Hooks.once("init", async function() {
     CONFIG.Item.entityClass = Itemdsa5;
     CONFIG.ChatMessage.template = "systems/dsa5/templates/chat/chat-message.html"
     CONFIG.ChatMessage.entityClass = ChatMessageDSA5Roll
+    CONFIG.ui.combat = DSA5CombatTracker
+    CONFIG.combat = DSA5Combat
 });
 Hooks.once("setup", async function() {
     AdvantageRulesDSA5.setupFunctions()

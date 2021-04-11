@@ -1,0 +1,18 @@
+<div class="chat-card">
+    <div>
+        <b>{{localize 'HELP.groupcheck'}}</b>
+        <div class="chat-buttons">
+            <a class="edit-toggle chat-button-gm" title='{{localize "CHATNOTIFICATION.editRoll"}}'><i class="fas fa-edit"></i></a>
+        </div>
+    </div>
+    {{{msg}}}
+    <ul>
+        {{#each results as |item i|}}
+        <li><b>{{item.actor}}</b>:
+            <span class="display-toggle">{{item.qs}}</span>
+            <input type="number" value="{{item.qs}}" data-index={{i}} style="display:none; width:10%" class="display-toggle editGC" /> &nbsp;<a><i data-index="{{i}}" class="removeGC fas fa-trash"></i></a></li> {{/each}}
+    </ul>
+    <div>
+        <b>{{localize 'cummulatedQS'}}</b>: {{qs}}
+    </div>
+</div>

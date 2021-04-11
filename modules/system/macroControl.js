@@ -20,6 +20,10 @@ export default class MacroDSA5 {
         DSA5ChatAutoCompletion.showRQMessage(skill, modifier)
     }
 
+    static requestGC(skill, modifier = 0) {
+        DSA5ChatAutoCompletion.showGCMessage(skill, modifier)
+    }
+
     static itemMacroById(actorId, itemName, itemType, bypassData) {
         let actor = game.actors.get(actorId)
         let item = actor ? actor.items.find(i => i.name === itemName && i.type == itemType) : null;

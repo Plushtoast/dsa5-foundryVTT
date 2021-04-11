@@ -17,11 +17,15 @@ export default function() {
             ev.stopPropagation()
             return false
         })
+        html.on('click', '.request-GC', ev => {
+            DSA5ChatAutoCompletion.showGCMessage($(ev.currentTarget).attr("data-name"), Number($(ev.currentTarget).attr("data-modifier")) || 0)
+            ev.stopPropagation()
+            return false
+        })
 
         DSA5StatusEffects.bindButtons(html)
         html.on('click', '.chat-condition', ev => {
             DSA5ChatListeners.postStatus($(ev.currentTarget).attr("data-id"))
-
         })
     })
 

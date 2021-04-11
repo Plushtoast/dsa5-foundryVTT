@@ -127,6 +127,23 @@ export default class Itemdsa5 extends Item {
         return itemModifiers
     }
 
+    static getDefenseMalus(situationalModifiers, actor) {
+        if (actor.data.flags.oppose) {
+            let message = game.messages.get(actor.data.flags.oppose.messageId)
+            if (message.data.flags.data.postData.defenseMalus) {
+                for (let mal of message.data.flags.data.postData.defenseMalus) {
+                    situationalModifiers.push({
+                        name: mal.name,
+                        value: mal.value,
+                        selected: true
+                    })
+                }
+
+            }
+
+        }
+    }
+
     static changeChars(source, ch1, ch2, ch3) {
         source.data.characteristic1.value = ch1
         source.data.characteristic2.value = ch2
@@ -784,7 +801,7 @@ class MeleeweaponDSA5 extends Itemdsa5 {
                 constricted: actor.hasCondition("constricted")
             });
         } else if (data.mode == "parry") {
-
+            Itemdsa5.getDefenseMalus(situationalModifiers, actor)
             mergeObject(data, {
                 visionOptions: DSA5.meleeRangeVision,
                 defenseCount: 0,
@@ -837,7 +854,7 @@ class MeleeweaponDSA5 extends Itemdsa5 {
                 testData.attackOfOpportunity = attackOfOpportunity != 0
                 testData.situationalModifiers.push({
                     name: game.i18n.localize("sight"),
-                    value: Number(html.find('[name="vision"]').val())
+                    value: Number(html.find('[name="vision"]').val() || 0)
                 }, {
                     name: game.i18n.localize("opportunityAttack"),
                     value: attackOfOpportunity
@@ -1076,7 +1093,7 @@ class RangeweaponItemDSA5 extends Itemdsa5 {
                     step: 1
                 }, {
                     name: game.i18n.localize("sight"),
-                    value: Number(html.find('[name="vision"]').val())
+                    value: Number(html.find('[name="vision"]').val() || 0)
                 })
                 testData.situationalModifiers.push(...Itemdsa5.getSpecAbModifiers(html, "attack"))
                 return { testData, cardOptions };
@@ -1303,6 +1320,7 @@ class TraitItemDSA5 extends Itemdsa5 {
                 aimOptions: DSA5.aimOptions
             });
         } else if (data.mode == "parry") {
+            Itemdsa5.getDefenseMalus(situationalModifiers, actor)
             mergeObject(data, {
                 visionOptions: DSA5.meleeRangeVision,
                 defenseCount: 0,
@@ -1391,7 +1409,7 @@ class TraitItemDSA5 extends Itemdsa5 {
                     value: html.find('[name="advantageousPosition"]').is(":checked") ? 2 : 0
                 }, {
                     name: game.i18n.localize("sight"),
-                    value: Number(html.find('[name="vision"]').val())
+                    value: Number(html.find('[name="vision"]').val() || 0)
                 })
                 testData.situationalModifiers.push(...Itemdsa5.getSpecAbModifiers(html, mode))
                 return { testData, cardOptions };
