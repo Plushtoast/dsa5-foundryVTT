@@ -5,7 +5,10 @@ export class DSA5CombatTracker extends CombatTracker {
         super.activateListeners(html)
 
         const combatants = html.find('.combatant.actor')
-        combatants.prepend(`<div class="aggroButton specImg" title="${game.i18n.localize('attacktest')}"></div>`).click(ev => {
+        combatants.prepend(`<div class="aggroButton specImg" title="${game.i18n.localize('attacktest')}"></div>`)
+        combatants.find('.aggroButton').click(ev => {
+            ev.preventDefault()
+            ev.stopPropagation()
             const combatant = this.combat.combatant
             if (game.user.isGM || combatant.permission == ENTITY_PERMISSIONS.OWNER)
                 ActAttackDialog.showDialog(combatant.actor)

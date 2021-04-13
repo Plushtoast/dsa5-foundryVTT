@@ -1,6 +1,8 @@
 {
     "default": "VERSION <a href=\"https://github.com/Plushtoast/dsa5-foundryVTT/releases/tag/VERSION\" target=\"_blank\">Changelog</a>",
     "notes": [
-        { "version": "1.3.0", "text": "<ul><li><a href=\"https://www.f-shop.de/virtual-tabletops/\" target=\"_blank\">Gods of Aventuria I and Aventurian Magic I</a> (german only) available. Special thanks to Gunthgard for his tremendous help!</li><li><a href=\"https://www.ulissesf-shop.com/\" target=\"_blank\">English core rules module</a></li><li>Merchants can now be created</li><li>Rolls without an actor</li><li>Input manual rolls (rolled on your table).</li>" }
+        { "version": "1.3.0", "text": "<ul><li><a href=\"https://www.f-shop.de/virtual-tabletops/\" target=\"_blank\">Gods of Aventuria I and Aventurian Magic I</a> (german only) available. Special thanks to Gunthgard for his tremendous help!</li><li><a href=\"https://www.ulissesf-shop.com/\" target=\"_blank\">English core rules module</a></li><li>Merchants can now be created</li><li>Rolls without an actor</li><li>Input manual rolls (rolled on your table).</li>" },
+        { "version": "1.3.1", "text": "<ul><li>Minor fixes and enhancements</li><li>Groupcheck with /gc</li></ul>" }
+
     ]
 }

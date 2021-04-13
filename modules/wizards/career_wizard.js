@@ -154,6 +154,7 @@ export default class CareerWizard extends WizardDSA5 {
     async addBlessing(blessings, type) {
         for (let k of blessings) {
             let name = k.trim()
+            if (name == "") continue
             let item = this.actor.data.items.find(x => type == x.type && x.name == name)
             if (!item)
                 item = this.items.find(x => type == x.type && x.name == name)

@@ -12,7 +12,7 @@ export default function() {
         OpposedDsa5.chatListeners(html)
         DiceDSA5.chatListeners(html)
         DSA5Payment.chatListeners(html)
-        let autoComplete = new DSA5ChatAutoCompletion()
+        const autoComplete = new DSA5ChatAutoCompletion()
         autoComplete.chatListeners(html)
         DSA5ChatListeners.chatListeners(html)
     });

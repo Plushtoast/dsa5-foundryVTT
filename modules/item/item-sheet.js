@@ -174,9 +174,9 @@ export default class ItemSheetdsa5 extends ItemSheet {
                 break
         }
         data.isOwned = this.item.isOwned
-        if (data.isOwned) {
+        if (data.isOwned)
             data.canAdvance = this.item.options.actor.data.canAdvance && this._advancable()
-        }
+
         return data;
     }
 
@@ -200,9 +200,9 @@ class BlessingSheetDSA5 extends ItemSheetdsa5 {
     }
 
     setupEffect(ev) {
-        if (this.item.options.actor.data.data.status.karmaenergy.value < 1) {
+        if (this.item.options.actor.data.data.status.karmaenergy.value < 1)
             return ui.notifications.error(game.i18n.localize("DSAError.NotEnoughKaP"))
-        }
+
         const cantrip = game.dsa5.config.ItemSubclasses.magictrick
         this.item.options.actor.update({ "data.status.karmaenergy.value": this.item.options.actor.data.data.status.karmaenergy.value -= 1 })
         let chatMessage = `<p><b>${this.item.name} - ${game.i18n.localize('blessing')} ${game.i18n.localize('probe')}</b></p><p>${this.item.data.data.description.value}</p><p>${cantrip.chatData(this.item.data.data, "").join("</br>")}</p>`
@@ -266,7 +266,6 @@ class ItemCultureDSA5 extends ItemSheetdsa5 {
         super(item, options);
         this.mce = null;
     }
-
 }
 
 class DiseaseSheetDSA5 extends ItemSheetdsa5 {
@@ -300,14 +299,13 @@ class MagictrickSheetDSA5 extends ItemSheetdsa5 {
     }
 
     setupEffect(ev) {
-        if (this.item.options.actor.data.data.status.astralenergy.value < 1) {
+        if (this.item.options.actor.data.data.status.astralenergy.value < 1)
             return ui.notifications.error(game.i18n.localize("DSAError.NotEnoughAsP"))
-        }
+
         const cantrip = game.dsa5.config.ItemSubclasses.magictrick
         this.item.options.actor.update({ "data.status.astralenergy.value": this.item.options.actor.data.data.status.astralenergy.value -= 1 })
         let chatMessage = `<p><b>${this.item.name} - ${game.i18n.localize('magictrick')} ${game.i18n.localize('probe')}</b></p><p>${this.item.data.data.description.value}</p><p>${cantrip.chatData(this.item.data.data, "").join("</br>")}</p>`
         ChatMessage.create(DSA5_Utility.chatDataSetup(chatMessage));
-
     }
 }
 
@@ -347,8 +345,6 @@ class PoisonSheetDSA5 extends ItemSheetdsa5 {
         return data
     }
 }
-
-
 
 class SpecialAbilitySheetDSA5 extends ItemSheetdsa5 {
     async _refundStep() {

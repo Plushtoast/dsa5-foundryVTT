@@ -281,6 +281,8 @@ DSA5.effectTextStyle.fontFamily = "GentiumBasic"
 
 DSA5.knownShortcuts = {}
 
+DSA5.gearModifyableCalculatedAttributes = ["fatePoints", "initiative", "speed", "astralenergy", "karmaenergy", "wounds", "dodge", "soulpower", "toughness"]
+
 DSA5.defaultWeapon = {
     name: "default",
     type: "meleeweapon",

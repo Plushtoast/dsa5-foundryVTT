@@ -2145,3 +2145,22 @@ select.noAppearance {
 #combat-popout .aggroButton {
     left: -1px;
 }
+
+.effect-change .key {
+    position: relative;
+}
+
+.effect-change .key input {
+    width: 90%;
+}
+
+.effect-change .selMenu {
+    width: 8%;
+    position: absolute;
+    background: #efe4e4;
+}
+
+.effect-change .selMenu:focus {
+    width: 100%;
+    left: 0;
+}

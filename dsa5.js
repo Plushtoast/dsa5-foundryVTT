@@ -18,6 +18,8 @@ import ChatMessageDSA5Roll from "./modules/chat/ChatMessageDSA5.js";
 import DSA5ChatListeners from "./modules/system/chat_listeners.js";
 import DSA5Payment from "./modules/system/payment.js"
 import { DSA5CombatTracker, DSA5Combat } from "./modules/hooks/combat_tracker.js";
+import DSAActiveEffectConfig from "./modules/status/active_effects.js";
+
 
 
 Hooks.once("init", async function() {
@@ -54,6 +56,7 @@ Hooks.once("init", async function() {
     CONFIG.ChatMessage.entityClass = ChatMessageDSA5Roll
     CONFIG.ui.combat = DSA5CombatTracker
     CONFIG.combat = DSA5Combat
+    CONFIG.ActiveEffect.sheetClass = DSAActiveEffectConfig
 });
 Hooks.once("setup", async function() {
     AdvantageRulesDSA5.setupFunctions()

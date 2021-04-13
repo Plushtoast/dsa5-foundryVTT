@@ -546,6 +546,10 @@ export default class ActorSheetDsa5 extends ActorSheet {
             }
         })
 
+        html.on('click', '.chat-condition', ev => {
+            DSA5ChatListeners.postStatus($(ev.currentTarget).attr("data-id"))
+        })
+
         html.find('.money-change').change(async ev => {
             let itemId = this._getItemId(ev);
             let itemToEdit = duplicate(this.actor.getEmbeddedEntity("OwnedItem", itemId))

@@ -66,7 +66,8 @@
         "duration": "Wirkungs- dauer",
         "fatePoints": "Schips",
         "FtP": "Schip",
-        "maintainCost": "Aufr."
+        "maintainCost": "Aufr.",
+        "*": "*"
     },
 
     "DIALOG": {
@@ -241,6 +242,7 @@
     "general": "allgemein",
     "gridUnits": "Schritt",
     "halfDefense": "der Verteidigungswert des Gegners muss für diesen Angriff halbiert werden",
+    "halfDefenseShort": "Halbe Verteidigung",
     "generalSpecialAbilities": "Allgemeine Sonderfertigkeiten",
     "Hair_color": "Haarfarbe",
     "Height": "Größe",
@@ -778,7 +780,8 @@
     "LocalizedAbilityModifiers": {
         "at": "at",
         "pa": "pa",
-        "tp": "tp"
+        "tp": "tp",
+        "dm": "vm"
     },
 
     "LocalizedIDs": {

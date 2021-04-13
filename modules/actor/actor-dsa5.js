@@ -164,25 +164,30 @@ export default class Actordsa5 extends Actor {
     prepareBaseData() {
         const data = this.data;
 
-        data.data.totalArmor = 0
-        data.data.carryModifier = 0
-        data.data.meleeStats = {
-            parry: 0,
-            attack: 0,
-            damage: "0"
-        }
-        data.data.rangeStats = {
-            attack: 0,
-            damage: "0"
-        }
-        let gearModifyableCalculatedAttributes = ["fatePoints", "initiative", "speed", "astralenergy", "karmaenergy", "wounds", "dodge", "soulpower", "toughness"]
-        for (let k of gearModifyableCalculatedAttributes) {
-            if (data.data.status[k])
-                data.data.status[k].gearmodifier = 0
-        }
-        for (let ch of Object.values(data.data.characteristics)) {
+        mergeObject(data, {
+            data: {
+                totalArmor: 0,
+                carryModifier: 0,
+                aspModifier: 0,
+                kapModifier: 0,
+                meleeStats: {
+                    parry: 0,
+                    attack: 0,
+                    damage: "0"
+                },
+                rangeStats: {
+                    attack: 0,
+                    damage: "0"
+                }
+            }
+        })
+
+        for (const k of DSA5.gearModifyableCalculatedAttributes)
+            if (data.data.status[k]) data.data.status[k].gearmodifier = 0
+
+        for (let ch of Object.values(data.data.characteristics))
             ch.gearmodifier = 0
-        }
+
     }
 
     prepare() {
@@ -434,8 +439,8 @@ export default class Actordsa5 extends Actor {
                     case "consumable":
                     case "equipment":
                         i.weight = parseFloat((i.data.weight.value * i.data.quantity.value).toFixed(3));
-
                         i.toggle = getProperty(i, "data.worn.wearable") || false
+
                         if (i.toggle) i.toggleValue = i.data.worn.value || false
 
                         inventory[i.data.equipmentType.value].items.push(Actordsa5._prepareitemStructure(i));
@@ -485,9 +490,12 @@ export default class Actordsa5 extends Actor {
         encumbrance = Math.max(0, encumbrance - SpecialabilityRulesDSA5.abilityStep(this.data, game.i18n.localize('LocalizedIDs.inuredToEncumbrance')))
 
         let carrycapacity = actorData.data.characteristics.kk.value * 2 + actorData.data.carryModifier;
-        if (actorData.type != "creature" || actorData.canAdvance) {
+
+        const isMerchant = ["merchant", "loot"].includes(getProperty(actorData, "data.merchant.merchantType"))
+
+        if ((actorData.type != "creature" || actorData.canAdvance) && !isMerchant)
             encumbrance += Math.max(0, Math.ceil((totalWeight - carrycapacity - 4) / 4))
-        }
+
         totalWeight = parseFloat(totalWeight.toFixed(3))
 
         this.addCondition("encumbered", encumbrance, true)
@@ -543,7 +551,6 @@ export default class Actordsa5 extends Actor {
                 this.data.data[shortCut[0]][shortCut[1]][shortCut[2]] += value.value
             else
                 delete itemModifiers[key]
-
         }
         return itemModifiers
     }
@@ -737,7 +744,7 @@ export default class Actordsa5 extends Actor {
         this.resetTargetAndMessage(data, cardOptions)
 
         infoMsg = `<h3 class="center"><b>${game.i18n.localize("CHATFATE.faitepointUsed")}</b></h3>
-            ${game.i18n.format("CHATFATE." + type, { character: '<b>' + this.name + '</b>' })}<br>`;
+            ${game.i18n.format("CHATFATE.isTalented", { character: '<b>' + this.name + '</b>' })}<br>`;
         renderTemplate('systems/dsa5/templates/dialog/isTalentedReroll-dialog.html', { testData: newTestData, postData: data.postData }).then(html => {
             new DSA5Dialog({
                 title: game.i18n.localize("CHATFATE.selectDice"),
@@ -962,7 +969,6 @@ export default class Actordsa5 extends Actor {
         };
 
 
-
         let cardOptions = this._setupCardOptions("systems/dsa5/templates/chat/roll/status-card.html", title)
 
         return DiceDSA5.setupDialog({
@@ -1169,6 +1175,7 @@ export default class Actordsa5 extends Actor {
 
     async addCondition(effect, value = 1, absolute = false, auto = true) {
         if (!this.owner) return "Not owned"
+        if (this.compendium) return "Can not add in compendium"
 
         if (absolute && value <= 0) return this.removeCondition(effect, value, auto, absolute)
 

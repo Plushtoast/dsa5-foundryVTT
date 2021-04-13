@@ -66,7 +66,8 @@
         "ZK": "TOU",
         "QS": "QL",
         "FtP": "FtP",
-        "damage": "DP"
+        "damage": "DP",
+        "*": "*"
     },
 
     "DIALOG": {
@@ -260,6 +261,7 @@
     "general": "general",
     "gridUnits": "Feet",
     "halfDefense": "Halve the target’s defense stat against this attack",
+    "halfDefenseShort": "Half defense",
     "generalSpecialAbilities": "General Special Abilities",
     "Hair_color": "Hair color",
     "Height": "Height",
@@ -794,7 +796,8 @@
     "LocalizedAbilityModifiers": {
         "at": "at",
         "pa": "pa",
-        "tp": "dp"
+        "tp": "dp",
+        "dm": "dm"
     },
 
     "LocalizedIDs": {
