@@ -24,7 +24,7 @@ export default class DSAActiveEffectConfig extends ActiveEffectConfig {
                 optns.push({ name: game.i18n.localize(`CHAR.${k.toUpperCase()}`), val: `data.characteristics.${k}.gearmodifier` })
 
             for (const k of DSA5.gearModifyableCalculatedAttributes)
-                optns.push({ name: game.i18n.localize(k), val: `data.characteristics.${k}.gearmodifier` })
+                optns.push({ name: game.i18n.localize(k), val: `data.status.${k}.gearmodifier` })
 
             optns = optns.sort((a, b) => { return a.name.localeCompare(b.name) })
 

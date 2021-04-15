@@ -4,9 +4,11 @@ export default function() {
     })
 
     Hooks.on('preCreateActiveEffect', function(actor, data, options) {
-        data.duration = {
-            startTime: game.time.worldTime
-        }
+        mergeObject(data, {
+            duration: {
+                startTime: game.time.worldTime
+            }
+        })
 
         if (!game.combat) return
 

@@ -186,3 +186,30 @@ DSA5.statusEffectClasses = {
     deaf: DeafEffect,
     bloodrush: BloodrushEffect
 }
+
+
+/*Macro Example
+
+const actor = game.actors.getName("Delgado Rochas");
+console.log(actor);
+actor.addCondition({
+    label: "Zustandsname",
+    icon: "icons/svg/aura.svg",
+    origin: actor.uuid,
+    changes: [
+        { key: "data.characteristics.ge.gearmodifier", mode: 2, value: 1 },
+        { key: "data.status.speed.gearmodifier", mode: 2, value: -1 }
+    ],
+
+    flags: {
+        dsa5: {
+            value: null,
+            editable: true,
+            customizable: true,
+            description: "Beschreibung des Effekts",
+            custom: true
+        }
+    },
+    id: `${Math.random()}`
+});
+*/
