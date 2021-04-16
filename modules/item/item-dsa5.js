@@ -177,7 +177,7 @@ export default class Itemdsa5 extends Item {
                 const atbonus = effects[at] || 0
                 const tpbonus = effects[tp] || 0
                 const dmmalus = effects[dm] || 0
-                if (atbonus != 0 || tpbonus != 0)
+                if (atbonus != 0 || tpbonus != 0 || dmmalus != 0)
                     combatskills.push({
                         name: com.name,
                         atbonus,
@@ -197,7 +197,7 @@ export default class Itemdsa5 extends Item {
                         pabonus,
                         tpbonus: 0,
                         dmmalus: 0,
-                        label: `${pa}: ${bonus}`,
+                        label: `${pa}: ${pabonus}`,
                         steps: com.data.data.step.value
                     })
             }
