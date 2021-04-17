@@ -48,7 +48,6 @@ export default class SpeciesWizard extends WizardDSA5 {
         })
     }
 
-
     _parseAttributes(attr) {
         let result = []
         for (let k of attr.split(",")) {

@@ -29,11 +29,9 @@ export default class SpecialabilityRulesDSA5 extends ItemRulesDSA5 {
 
 
     static async _specialabilityReturnFunction(actor, item, typeClass, adoption) {
-        if (item == null)
-            return
+        if (item == null) return
+
         item = duplicate(item)
-
-
 
         if (adoption != null) {
 

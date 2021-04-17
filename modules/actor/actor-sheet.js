@@ -188,7 +188,12 @@ export default class ActorSheetDsa5 extends ActorSheet {
             infoMsg += `${game.i18n.localize("Aggregated.noMoreAllowed")}`;
             ChatMessage.create(DSA5_Utility.chatDataSetup(infoMsg));
         } else {
-            this.actor.setupSkill(skill.data, { moreModifiers: [{ name: game.i18n.localize("failedTests"), value: -1 * aggregated.data.previousFailedTests.value, selected: true }] }).then(setupData => {
+            this.actor.setupSkill(skill.data, {
+                moreModifiers: [
+                    { name: game.i18n.localize("failedTests"), value: -1 * aggregated.data.previousFailedTests.value, selected: true },
+                    { name: game.i18n.localize("Modifier"), value: aggregated.data.baseModifier, selected: true }
+                ]
+            }).then(setupData => {
                 this.actor.basicTest(setupData).then(res => {
                     if (res.result.successLevel > 0) {
                         aggregated.data.cummulatedQS.value = res.result.qualityStep + aggregated.data.cummulatedQS.value
@@ -200,7 +205,6 @@ export default class ActorSheetDsa5 extends ActorSheet {
                     this.actor.updateEmbeddedEntity("OwnedItem", aggregated).then(x =>
                         this.actor.items.find(i => i.data._id == itemId).postItem()
                     )
-
                 })
             });
         }
@@ -224,7 +228,6 @@ export default class ActorSheetDsa5 extends ActorSheet {
                     label: game.i18n.localize("cancel"),
                 }
             }
-
         }).render(true)
     }
 

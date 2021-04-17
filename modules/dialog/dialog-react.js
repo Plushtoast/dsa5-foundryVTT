@@ -118,7 +118,7 @@ export class ActAttackDialog extends Dialog {
         let item = ""
         let items = [{
             name: game.i18n.localize("attackWeaponless"),
-            id: "parryWeaponless"
+            id: "attackWeaponless"
         }]
 
         let types = ["meleeweapon", "rangeweapon"]

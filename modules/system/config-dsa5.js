@@ -671,7 +671,7 @@ DSA5.meleeRangeVision = {
     "-1": "meleeVisionDisruption.1",
     "-2": "meleeVisionDisruption.2",
     "-3": "meleeVisionDisruption.3",
-    "-5000": "meleeVisionDisruption.4"
+    "*0.5": "meleeVisionDisruption.4"
 }
 
 DSA5.attributeDifficultyModifiers = {

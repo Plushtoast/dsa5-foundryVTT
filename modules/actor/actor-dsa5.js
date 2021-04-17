@@ -173,11 +173,13 @@ export default class Actordsa5 extends Actor {
                 meleeStats: {
                     parry: 0,
                     attack: 0,
-                    damage: "0"
+                    damage: "0",
+                    defenseMalus: 0
                 },
                 rangeStats: {
                     attack: 0,
-                    damage: "0"
+                    damage: "0",
+                    defenseMalus: 0
                 }
             }
         })
@@ -559,7 +561,7 @@ export default class Actordsa5 extends Actor {
         if (!i.data.effect || i.data.effect.value == undefined)
             return
 
-        for (let mod of i.data.effect.value.split(",").map(x => x.trim())) {
+        for (let mod of i.data.effect.value.split(/,|;/).map(x => x.trim())) {
             let vals = mod.replace(/(\s+)/g, ' ').trim().split(" ")
             if (vals.length == 2) {
                 if (Number(vals[0]) != undefined) {

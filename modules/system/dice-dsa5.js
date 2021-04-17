@@ -980,15 +980,25 @@ export default class DiceDSA5 {
     }
 
     static async _rerenderGC(message, data) {
-        data.qs = data.results.reduce((a, b) => { return a + b.qs }, 0)
-        const content = await renderTemplate("systems/dsa5/templates/chat/roll/groupcheck.html", data)
-        message.update({
-            content,
-            flags: data
-        }).then(newMsg => {
-            ui.chat.updateMessage(newMsg);
-            return newMsg;
-        });
+        if (game.user.isGM) {
+            data.qs = data.results.reduce((a, b) => { return a + b.qs }, 0)
+            const content = await renderTemplate("systems/dsa5/templates/chat/roll/groupcheck.html", data)
+            message.update({
+                content,
+                flags: data
+            }).then(newMsg => {
+                ui.chat.updateMessage(newMsg);
+                return newMsg;
+            });
+        } else {
+            game.socket.emit("system.dsa5", {
+                type: "updateGroupCheck",
+                payload: {
+                    messageId: message._id,
+                    data
+                }
+            })
+        }
     }
 
     static async _removeGCEntry(ev) {

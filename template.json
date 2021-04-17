@@ -915,7 +915,8 @@
             },
             "cummulatedQS": {
                 "value": 0
-            }
+            },
+            "baseModifier": 0
         },
         "skill": {
             "group": {

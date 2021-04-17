@@ -104,7 +104,7 @@ export default class CareerWizard extends WizardDSA5 {
 
     parseCombatskills(combatskills) {
         let result = []
-        for (let k of combatskills.split(",")) {
+        for (let k of combatskills.split(/,|;/)) {
             if (k.includes(game.i18n.localize("combatskillcountdivider") + ":")) {
                 let vals = k.split(":")
                 result.push({

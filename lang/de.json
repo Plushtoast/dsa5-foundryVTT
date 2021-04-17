@@ -726,6 +726,9 @@
     "ACTOR.TypeNpc": "Nichtspielercharakter",
     "ACTOR.TypeCreature": "Kreatur",
 
+    "character": "Charakter",
+    "npc": "Nichtspielercharakter",
+    "creature": "Kreatur",
 
     "UNITS": {
         "weight": "Gewicht in Stein",

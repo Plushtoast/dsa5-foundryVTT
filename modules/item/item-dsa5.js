@@ -109,10 +109,23 @@ export default class Itemdsa5 extends Item {
         }
     }
 
+    static parseValueType(name, val) {
+        let type = ""
+        if (/^\*/.test(val)) {
+            type = "*"
+            val = val.substring(1)
+        }
+        return {
+            name,
+            value: Number(val),
+            type
+        }
+    }
+
     static parseEffect(effect, actor) {
         let itemModifiers = {}
         let regex = new RegExp(game.i18n.localize("CHARAbbrev.GS"), "gi")
-        for (let mod of effect.split(",").map(x => x.trim())) {
+        for (let mod of effect.split(/,|;/).map(x => x.trim())) {
             let vals = mod.replace(/(\s+)/g, ' ').trim().split(" ")
             vals[0] = vals[0].replace(regex, actor.data.data.status.speed.max)
             if (vals.length == 2) {
@@ -133,8 +146,15 @@ export default class Itemdsa5 extends Item {
             let message = game.messages.get(actor.data.flags.oppose.messageId)
             for (let mal of message.data.flags.data.preData.situationalModifiers.filter(x => x.dmmalus != undefined)) {
                 situationalModifiers.push({
-                    name: `${game.i18n.localize('MODS.defenseMalus')} - ${mal.name}`,
+                    name: `${game.i18n.localize('MODS.defenseMalus')} - ${mal.name.replace(/ \[(-)?\d{1,}\]/,"")}`,
                     value: mal.dmmalus,
+                    selected: true
+                })
+            }
+            for (let mal of message.data.flags.data.preData.situationalModifiers.filter(x => x.type == "defenseMalus")) {
+                situationalModifiers.push({
+                    name: mal.name.replace(/ \[(-)?\d{1,}\]/, ""),
+                    value: mal.value,
                     selected: true
                 })
             }
@@ -160,7 +180,7 @@ export default class Itemdsa5 extends Item {
         if (toSearch) {
             toSearch.push(game.i18n.localize("LocalizedIDs.all"))
             toSearch = toSearch.map(x => x.toLowerCase())
-            searchFilter = (x, toSearch) => { return x.data.data.list.value.split(",").map(x => x.trim().toLowerCase()).filter(y => toSearch.includes(y)).length > 0 }
+            searchFilter = (x, toSearch) => { return x.data.data.list.value.split(/;|,/).map(x => x.trim().toLowerCase()).filter(y => toSearch.includes(y)).length > 0 }
         } else
             searchFilter = () => { return true }
 
@@ -236,6 +256,8 @@ export default class Itemdsa5 extends Item {
     static async stackItems(stackOn, newItem, actor) {
         return await Itemdsa5.getSubClass(stackOn.type).combineItem(stackOn, newItem, actor)
     }
+
+
 
     _setupCardOptions(template, title) {
         const speaker = ChatMessage.getSpeaker()
@@ -534,7 +556,19 @@ class SpellItemDSA5 extends Itemdsa5 {
     }
 }
 
-class LiturgyItemDSA5 extends SpellItemDSA5 {}
+class LiturgyItemDSA5 extends SpellItemDSA5 {
+    static chatData(data, name) {
+        return [
+            this._chatLineHelper("castingTime", data.castingTime.value),
+            this._chatLineHelper("KaPCost", data.AsPCost.value),
+            this._chatLineHelper("distribution", data.distribution.value),
+            this._chatLineHelper("duration", data.duration.value),
+            this._chatLineHelper("reach", data.range.value),
+            this._chatLineHelper("targetCategory", data.targetCategory.value),
+            this._chatLineHelper("effect", DSA5_Utility.replaceConditions(DSA5_Utility.replaceDies(data.effect.value)))
+        ]
+    }
+}
 
 class CeremonyItemDSA5 extends LiturgyItemDSA5 {
     static getCallbackData(testData, html, actor) {
@@ -793,6 +827,15 @@ class MeleeweaponDSA5 extends Itemdsa5 {
                 });
             }
 
+            const defenseMalus = Number(actor.data.data.meleeStats.defenseMalus) * -1
+            if (defenseMalus != 0) {
+                situationalModifiers.push({
+                    name: `${game.i18n.localize("statuseffects")} - ${game.i18n.localize('MODS.defenseMalus')}`,
+                    value: defenseMalus,
+                    type: "defenseMalus",
+                    selected: true
+                })
+            }
 
             mergeObject(data, {
                 visionOptions: DSA5.meleeRangeVision,
@@ -826,7 +869,10 @@ class MeleeweaponDSA5 extends Itemdsa5 {
                 selected: true
             })
         }
+
     }
+
+
 
     static setupDialog(ev, options, item, actor) {
         let mode = options.mode
@@ -866,27 +912,25 @@ class MeleeweaponDSA5 extends Itemdsa5 {
                 testData.wrongHand = html.find('[name="wrongHand"]').is(":checked") ? -4 : 0
                 let attackOfOpportunity = html.find('[name="opportunityAttack"]').is(":checked") ? -4 : 0
                 testData.attackOfOpportunity = attackOfOpportunity != 0
-                testData.situationalModifiers.push({
-                    name: game.i18n.localize("sight"),
-                    value: Number(html.find('[name="vision"]').val() || 0)
-                }, {
-                    name: game.i18n.localize("opportunityAttack"),
-                    value: attackOfOpportunity
-                }, {
-                    name: game.i18n.localize("attackFromBehind"),
-                    value: html.find('[name="attackFromBehind"]').is(":checked") ? -4 : 0
-                }, {
-                    name: game.i18n.localize("MODS.damage"),
-                    damageBonus: html.find('[name="damageModifier"]').val(),
-                    value: 0,
-                    step: 1
-                }, {
-                    name: game.i18n.localize("defenseCount"),
-                    value: (Number(html.find('[name="defenseCount"]').val()) || 0) * -3
-                }, {
-                    name: game.i18n.localize("advantageousPosition"),
-                    value: html.find('[name="advantageousPosition"]').is(":checked") ? 2 : 0
-                })
+                testData.situationalModifiers.push(
+                    Itemdsa5.parseValueType(game.i18n.localize("sight"), html.find('[name="vision"]').val() || 0), {
+                        name: game.i18n.localize("opportunityAttack"),
+                        value: attackOfOpportunity
+                    }, {
+                        name: game.i18n.localize("attackFromBehind"),
+                        value: html.find('[name="attackFromBehind"]').is(":checked") ? -4 : 0
+                    }, {
+                        name: game.i18n.localize("MODS.damage"),
+                        damageBonus: html.find('[name="damageModifier"]').val(),
+                        value: 0,
+                        step: 1
+                    }, {
+                        name: game.i18n.localize("defenseCount"),
+                        value: (Number(html.find('[name="defenseCount"]').val()) || 0) * -3
+                    }, {
+                        name: game.i18n.localize("advantageousPosition"),
+                        value: html.find('[name="advantageousPosition"]').is(":checked") ? 2 : 0
+                    })
 
                 testData.situationalModifiers.push(...Itemdsa5.getSpecAbModifiers(html, mode))
 
@@ -1012,6 +1056,17 @@ class RangeweaponItemDSA5 extends Itemdsa5 {
                         targetSize = tar.value
                 });
             }
+
+            const defenseMalus = Number(actor.data.data.rangeStats.defenseMalus) * -1
+            if (defenseMalus != 0) {
+                situationalModifiers.push({
+                    name: `${game.i18n.localize("statuseffects")} - ${game.i18n.localize('MODS.defenseMalus')}`,
+                    value: defenseMalus,
+                    type: "defenseMalus",
+                    selected: true
+                })
+            }
+
             let rangeOptions = {...DSA5.rangeWeaponModifiers }
             delete rangeOptions[AdvantageRulesDSA5.hasVantage(actor, game.i18n.localize('LocalizedIDs.senseOfRange')) ? "long" : "rangesense"]
 
@@ -1311,6 +1366,17 @@ class TraitItemDSA5 extends Itemdsa5 {
                         targetWeaponsize = defWeapon[0].data.data.reach.value
                 });
             }
+
+            const defenseMalus = Number(actor.data.data.meleeStats.defenseMalus) * -1
+            if (defenseMalus != 0) {
+                situationalModifiers.push({
+                    name: `${game.i18n.localize("statuseffects")} - ${game.i18n.localize('MODS.defenseMalus')}`,
+                    value: defenseMalus,
+                    type: "defenseMalus",
+                    selected: true
+                })
+            }
+
             mergeObject(data, {
                 visionOptions: DSA5.meleeRangeVision,
                 weaponSizes: DSA5.meleeRanges,
@@ -1328,6 +1394,17 @@ class TraitItemDSA5 extends Itemdsa5 {
                         targetSize = tar.value
                 });
             }
+
+            const defenseMalus = Number(actor.data.data.rangeStats.defenseMalus) * -1
+            if (defenseMalus != 0) {
+                situationalModifiers.push({
+                    name: `${game.i18n.localize("statuseffects")} - ${game.i18n.localize('MODS.defenseMalus')}`,
+                    value: defenseMalus,
+                    type: "defenseMalus",
+                    selected: true
+                })
+            }
+
             let rangeOptions = {...DSA5.rangeWeaponModifiers }
             delete rangeOptions[AdvantageRulesDSA5.hasVantage(actor, game.i18n.localize('LocalizedIDs.senseOfRange')) ? "long" : "rangesense"]
             mergeObject(data, {
@@ -1438,10 +1515,7 @@ class TraitItemDSA5 extends Itemdsa5 {
                 }, {
                     name: game.i18n.localize("advantageousPosition"),
                     value: html.find('[name="advantageousPosition"]').is(":checked") ? 2 : 0
-                }, {
-                    name: game.i18n.localize("sight"),
-                    value: Number(html.find('[name="vision"]').val() || 0)
-                })
+                }, Itemdsa5.parseValueType(game.i18n.localize("sight"), html.find('[name="vision"]').val() || 0))
                 testData.situationalModifiers.push(...Itemdsa5.getSpecAbModifiers(html, mode))
                 return { testData, cardOptions };
             }

@@ -743,6 +743,10 @@
     "ACTOR.TypeNpc": "Non Player Character",
     "ACTOR.TypeCreature": "Creature",
 
+    "character": "Character",
+    "npc": "Non Player Character",
+    "creature": "Creature",
+
     "UNITS": {
         "weight": "Weight in stone",
         "money": "Value in Silverthaler"

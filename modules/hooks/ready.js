@@ -2,6 +2,7 @@ import DSA5Tutorial from "../system/tutorial.js";
 import OpposedDsa5 from "../system/opposed-dsa5.js";
 import MerchantSheetDSA5 from "../actor/merchant-sheet.js";
 import Itemdsa5 from "../item/item-dsa5.js";
+import DiceDSA5 from "../system/dice-dsa5.js";
 
 export default function() {
     Hooks.on("ready", async() => {
@@ -28,6 +29,9 @@ export default function() {
                         break
                     case "hideQueryButton":
                         OpposedDsa5.hideReactionButton(data.payload.id)
+                        break
+                    case "updateGroupCheck":
+                        DiceDSA5._rerenderGC(game.messages.get(data.payload.messageId), data.payload.data)
                         break
                     case "trade":
                         {

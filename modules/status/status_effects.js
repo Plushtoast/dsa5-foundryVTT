@@ -142,7 +142,7 @@ class ProneEffect extends DSA5StatusEffects {
 
 class RaptureEffect extends DSA5StatusEffects {
     static calculateRollModifier(effect, actor, item, options = {}) {
-        let happyTalents = actor.data.happyTalents.value.split(",").map(x => x.trim())
+        let happyTalents = actor.data.happyTalents.value.split(/;|,/).map(x => x.trim())
         if ((happyTalents.includes(item.name) && ["skill", "combatskill"].includes(item.type)) ||
             (["rangeweapon", "meleeweapon"].includes(item.type) && happyTalents.includes(item.data.data.combatskill.value)) || ["ceremony", "liturgy"].includes(item.type)) {
             return effect.flags.dsa5.value - 1

@@ -23,6 +23,8 @@ class SearchDocument {
     }
     get itemType() {
         switch (this.document.entity) {
+            case 'Actor':
+                return this.document.data.type
             case 'Item':
                 return this.document.type
             default:
@@ -63,7 +65,7 @@ export default class DSA5ItemLibrary extends Application {
             equipment: [],
             character: [],
             spell: [],
-            jounral: [],
+            journal: [],
             zoo: []
         }
         this.journalIndex = new FlexSearch({
@@ -100,7 +102,7 @@ export default class DSA5ItemLibrary extends Application {
                 field: [
                     "name",
                     "data",
-
+                    "itemType"
                 ],
             }
         });
@@ -175,7 +177,11 @@ export default class DSA5ItemLibrary extends Application {
                 }
             },
             zoo: {
-                categories: {},
+                categories: {
+                    "npc": false,
+                    "character": false,
+                    "creature": false
+                },
                 filterBy: {
                     search: ""
                 }

@@ -51,7 +51,7 @@ export default function migrateWorld() {
         if (!game.user.isGM) return
 
         const currentVersion = game.settings.get("dsa5", "migrationVersion")
-        const NEEDS_MIGRATION_VERSION = 4
+        const NEEDS_MIGRATION_VERSION = 5
         const needsMigration = currentVersion < NEEDS_MIGRATION_VERSION
 
         if (!needsMigration) return;
