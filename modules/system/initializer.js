@@ -30,11 +30,15 @@ export default class DSA5Initializer extends Dialog {
     }
 
     async initialize() {
-        game.settings.set(this.module, "initialized", true)
+        try {
+            if (game.settings.get(this.module, "initialized") != undefined)
+                game.settings.set(this.module, "initialized", true)
+        } catch {}
+
 
         await fetch(`modules/${this.module}/initialization${this.lang}.json`).then(async r => r.json()).then(async json => {
             let foldersToCreate = json.folders
-            if (foldersToCreate.length > 0) {
+            if (foldersToCreate) {
                 let head = game.folders.entities.find(x => x.name == foldersToCreate[0].name && x.type == "JournalEntry")
                 if (head) {
                     this.folders[head.data.name] = head
@@ -60,6 +64,7 @@ export default class DSA5Initializer extends Dialog {
                     let folder = entry.getFlag("dsa5", "parent")
                     let sort = entry.getFlag("dsa5", "sort")
                     if (folder) {
+                        console.log(folder)
                         entry.data.folder = this.folders[folder].data._id
                         entry.data.sort = sort
                     }
@@ -82,15 +87,23 @@ export default class DSA5Initializer extends Dialog {
                 let head = await this.getFolderForType("Scene")
                 let scene = game.packs.get(json.scenes)
                 let entries = await scene.getContent()
+                let journal = game.packs.get(json.journal)
+                let journs = await journal.getContent()
+                let journHead = await this.getFolderForType("JournalEntry")
                 for (let entry of entries) {
                     entry.data.folder = head._id
-                    entry.data.notes.forEach(n => {
+                    for (let n of entry.data.notes) {
                         try {
-                            n.entryId = this.journals[getProperty(n, `flags.dsa5.initName`)].data._id
+                            //n.entryId = getProperty(n, `flags.dsa5.initId`) // journs.find(x => x._id == getProperty(n, `flags.dsa5.initId`)).data._id
+                            let journ = journs.find(x => x.data.flags.dsa5.initId == n.entryId)
+                            journ.data.folder = journHead.data._id
+                            let createdEntries = await JournalEntry.create(journ)
+                            console.log(createdEntries)
+                            n.entryId = createdEntries._id
                         } catch (e) {
                             console.warn("Could not initialize Scene Notes" + e)
                         }
-                    })
+                    }
                 }
                 let createdEntries = await Scene.create(entries)
                 for (let entry of createdEntries) {

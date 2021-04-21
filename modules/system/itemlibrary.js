@@ -349,7 +349,7 @@ export default class DSA5ItemLibrary extends Application {
     }
 
     async buildEquipmentIndex() {
-        await this._createIndex("equipment", "Item", game.items)
+        this._createIndex("equipment", "Item", game.items)
     }
 
     async _createIndex(category, entity, worldStuff) {

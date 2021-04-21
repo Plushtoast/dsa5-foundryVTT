@@ -637,7 +637,8 @@
         "ConsumeItem": "Consume item",
         "deactivate": "Deactivate",
         "activate": "Activate",
-        "switchLimited": "Limited view (player view)"
+        "switchLimited": "Limited view (player view)",
+        "import": "Import"
     },
 
     "ITEMSHEET": {

@@ -621,7 +621,8 @@
         "ConsumeItem": "Gegenstand verbrauchen",
         "deactivate": "Deaktivieren",
         "activate": "Aktivieren",
-        "switchLimited": "Begrenzte Ansicht umschalten (Spieleransicht)"
+        "switchLimited": "Begrenzte Ansicht umschalten (Spieleransicht)",
+        "import": "Importieren"
     },
 
     "ITEMSHEET": {

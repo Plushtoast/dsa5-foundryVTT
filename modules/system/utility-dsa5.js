@@ -253,8 +253,10 @@ export default class DSA5_Utility {
 
         return content.replace(DSA5.statusRegex.regex, function(str) {
             let parts = str.split(" ")
-            let cond = DSA5.statusEffects[DSA5.statusRegex.effects.indexOf(parts[1].toLowerCase())]
-            return `${parts[0]} <a class="chatButton chat-condition" data-id="${cond.id}"><img src="${cond.icon}"/>${parts[1]}</a>`
+            let elem = parts.shift()
+            parts = parts.join(" ")
+            let cond = DSA5.statusEffects[DSA5.statusRegex.effects.indexOf(parts.toLowerCase())]
+            return `${elem} <a class="chatButton chat-condition" data-id="${cond.id}"><img src="${cond.icon}"/>${parts}</a>`
         })
     }
 
