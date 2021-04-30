@@ -109,6 +109,7 @@ export default class Itemdsa5 extends Item {
         }
     }
 
+
     static parseValueType(name, val) {
         let type = ""
         if (/^\*/.test(val)) {
@@ -120,6 +121,35 @@ export default class Itemdsa5 extends Item {
             value: Number(val),
             type
         }
+    }
+
+    async addCondition(effect, value = 1, absolute = false, auto = true) {
+        return await DSA5StatusEffects.addCondition(this, effect, value, absolute, auto)
+    }
+
+    async _dependentEffects(statusId, effect, delta) {}
+
+    async removeCondition(effect, value = 1, auto = true, absolute = false) {
+        return DSA5StatusEffects.removeCondition(this, effect, value, auto, absolute)
+    }
+
+    hasCondition(conditionKey) {
+        return DSA5StatusEffects.hasCondition(this, conditionKey)
+    }
+
+    static getSkZkModifier(data) {
+        let skMod = 0
+        let zkMod = 0
+        if (game.user.targets.size) {
+            game.user.targets.forEach(target => {
+                skMod = target.actor.data.data.status.soulpower.max * -1
+                zkMod = target.actor.data.data.status.toughness.max * -1
+            });
+        }
+        mergeObject(data, {
+            SKModifier: skMod,
+            ZKModifier: zkMod
+        });
     }
 
     static parseEffect(effect, actor) {
@@ -256,8 +286,6 @@ export default class Itemdsa5 extends Item {
     static async stackItems(stackOn, newItem, actor) {
         return await Itemdsa5.getSubClass(stackOn.type).combineItem(stackOn, newItem, actor)
     }
-
-
 
     _setupCardOptions(template, title) {
         const speaker = ChatMessage.getSpeaker()
@@ -471,23 +499,13 @@ class SpellItemDSA5 extends Itemdsa5 {
     }
 
     static getSituationalModifiers(situationalModifiers, actor, data, source) {
-        let skMod = 0
-        let zkMod = 0
         situationalModifiers.push(...ItemRulesDSA5.getTalentBonus(actor.data, source.name, ["advantage", "disadvantage", "specialability", "equipment"]))
         situationalModifiers.push(...AdvantageRulesDSA5.getVantageAsModifier(actor.data, game.i18n.localize('LocalizedIDs.minorSpirits'), -1))
         situationalModifiers.push(...AdvantageRulesDSA5.getVantageAsModifier(actor.data, game.i18n.localize('LocalizedIDs.magicalAttunement')))
         situationalModifiers.push(...AdvantageRulesDSA5.getVantageAsModifier(actor.data, game.i18n.localize('LocalizedIDs.magicalRestriction'), -1))
         situationalModifiers.push(...AdvantageRulesDSA5.getVantageAsModifier(actor.data, game.i18n.localize('LocalizedIDs.boundToArtifact'), -1))
-        if (game.user.targets.size) {
-            game.user.targets.forEach(target => {
-                skMod = target.actor.data.data.status.soulpower.max * -1
-                zkMod = target.actor.data.data.status.toughness.max * -1
-            });
-        }
-        mergeObject(data, {
-            SKModifier: skMod,
-            ZKModifier: zkMod
-        });
+        situationalModifiers.push(...actor.getSkillModifier(source.name))
+        this.getSkZkModifier(data)
     }
 
 
@@ -586,18 +604,9 @@ class CeremonyItemDSA5 extends LiturgyItemDSA5 {
     }
 
     static getSituationalModifiers(situationalModifiers, actor, data, source) {
-        let skMod = 0
-        let zkMod = 0
         situationalModifiers.push(...ItemRulesDSA5.getTalentBonus(actor.data, source.name, ["advantage", "disadvantage", "specialability", "equipment"]))
-        if (game.user.targets.size) {
-            game.user.targets.forEach(target => {
-                skMod = target.actor.data.data.status.soulpower.max * -1
-                zkMod = target.actor.data.data.status.toughness.max * -1
-            });
-        }
+        this.getSkZkModifier(data)
         mergeObject(data, {
-            SKModifier: skMod,
-            ZKModifier: zkMod,
             isCeremony: true,
             locationModifiers: DSA5.ceremonyLocationModifiers,
             timeModifiers: DSA5.ceremonyTimeModifiers
@@ -724,18 +733,13 @@ class DiseaseItemDSA5 extends Itemdsa5 {
 
     static getSituationalModifiers(situationalModifiers, actor, data, source) {
         source = source.data ? (source.data.data == undefined ? source : source.data) : source
-        let skMod = 0
-        let zkMod = 0
         if (game.user.targets.size) {
             game.user.targets.forEach(target => {
-                skMod = target.actor.data.data.status.soulpower.max * -1
-                zkMod = target.actor.data.data.status.toughness.max * -1
                 situationalModifiers.push(...AdvantageRulesDSA5.getVantageAsModifier(target.actor.data, game.i18n.localize("LocalizedIDs.ResistanttoDisease"), -1))
             });
         }
+        this.getSkZkModifier(data)
         mergeObject(data, {
-            SKModifier: skMod,
-            ZKModifier: zkMod,
             hasSKModifier: source.data.resistance.value == "SK",
             hasZKModifier: source.data.resistance.value == "ZK"
         })
@@ -838,7 +842,7 @@ class MeleeweaponDSA5 extends Itemdsa5 {
             }
 
             mergeObject(data, {
-                visionOptions: DSA5.meleeRangeVision,
+                visionOptions: DSA5.meleeRangeVision(data.mode),
                 weaponSizes: DSA5.meleeRanges,
                 melee: true,
                 wrongHandDisabled: wrongHandDisabled,
@@ -851,7 +855,7 @@ class MeleeweaponDSA5 extends Itemdsa5 {
         } else if (data.mode == "parry") {
             Itemdsa5.getDefenseMalus(situationalModifiers, actor)
             mergeObject(data, {
-                visionOptions: DSA5.meleeRangeVision,
+                visionOptions: DSA5.meleeRangeVision(data.mode),
                 defenseCount: 0,
                 showDefense: true,
                 wrongHandDisabled: wrongHandDisabled && source.data.worn.offHand,
@@ -871,8 +875,6 @@ class MeleeweaponDSA5 extends Itemdsa5 {
         }
 
     }
-
-
 
     static setupDialog(ev, options, item, actor) {
         let mode = options.mode
@@ -894,7 +896,6 @@ class MeleeweaponDSA5 extends Itemdsa5 {
         let situationalModifiers = actor ? DSA5StatusEffects.getRollModifiers(actor, item, { mode: mode }) : []
         this.getSituationalModifiers(situationalModifiers, actor, data, item)
         data["situationalModifiers"] = situationalModifiers
-
 
         let dialogOptions = {
             title: title,
@@ -962,18 +963,13 @@ class PoisonItemDSA5 extends Itemdsa5 {
 
     static getSituationalModifiers(situationalModifiers, actor, data, source) {
         source = source.data ? (source.data.data == undefined ? source : source.data) : source
-        let skMod = 0
-        let zkMod = 0
         if (game.user.targets.size) {
             game.user.targets.forEach(target => {
-                skMod = target.actor.data.data.status.soulpower.max * -1
-                zkMod = target.actor.data.data.status.toughness.max * -1
                 situationalModifiers.push(...AdvantageRulesDSA5.getVantageAsModifier(target.actor.data, game.i18n.localize("LocalizedIDs.poisonResistance"), -1))
             });
         }
+        this.getSkZkModifier(data)
         mergeObject(data, {
-            SKModifier: skMod,
-            ZKModifier: zkMod,
             hasSKModifier: source.data.resistance.value == "SK",
             hasZKModifier: source.data.resistance.value == "ZK"
         })
@@ -1042,6 +1038,7 @@ class RangeweaponItemDSA5 extends Itemdsa5 {
 
         return res
     }
+
     static getSituationalModifiers(situationalModifiers, actor, data, source) {
         if (data.mode == "attack") {
             source = source.data ? (source.data.data == undefined ? source : source.data) : source
@@ -1203,23 +1200,15 @@ class RitualItemDSA5 extends SpellItemDSA5 {
             value: html.find('[name="timeModifier"]').val()
         })
     }
+
     static getSituationalModifiers(situationalModifiers, actor, data, source) {
-        let skMod = 0
-        let zkMod = 0
         situationalModifiers.push(...ItemRulesDSA5.getTalentBonus(actor.data, source.name, ["advantage", "disadvantage", "specialability", "equipment"]))
         situationalModifiers.push(...AdvantageRulesDSA5.getVantageAsModifier(actor.data, game.i18n.localize('LocalizedIDs.minorSpirits'), -1))
         situationalModifiers.push(...AdvantageRulesDSA5.getVantageAsModifier(actor.data, game.i18n.localize('LocalizedIDs.magicalAttunement')))
         situationalModifiers.push(...AdvantageRulesDSA5.getVantageAsModifier(actor.data, game.i18n.localize('LocalizedIDs.magicalRestriction'), -1))
         situationalModifiers.push(...AdvantageRulesDSA5.getVantageAsModifier(actor.data, game.i18n.localize('LocalizedIDs.boundToArtifact'), -1))
-        if (game.user.targets.size) {
-            game.user.targets.forEach(target => {
-                skMod = target.actor.data.data.status.soulpower.max * -1
-                zkMod = target.actor.data.data.status.toughness.max * -1
-            });
-        }
+        this.getSkZkModifier(data)
         mergeObject(data, {
-            SKModifier: skMod,
-            ZKModifier: zkMod,
             isRitual: true,
             locationModifiers: DSA5.ritualLocationModifiers,
             timeModifiers: DSA5.ritualTimeModifiers
@@ -1237,6 +1226,8 @@ class SkillItemDSA5 extends Itemdsa5 {
     static getSituationalModifiers(situationalModifiers, actor, data, source) {
         situationalModifiers.push(...ItemRulesDSA5.getTalentBonus(actor.data, source.name, ["advantage", "disadvantage", "specialability", "equipment"]))
         situationalModifiers.push(...AdvantageRulesDSA5.getVantageAsModifier(actor.data, game.i18n.localize('LocalizedIDs.minorSpirits'), -1))
+
+        situationalModifiers.push(...actor.getSkillModifier(source.name))
     }
 
     static setupDialog(ev, options, skill, actor) {
@@ -1347,8 +1338,8 @@ class TraitItemDSA5 extends Itemdsa5 {
                     this._chatLineHelper("aspect", data.aspect.value)
                 ]
         }
-        if (data.effect.value != "")
-            res.push(this._chatLineHelper("effect", data.effect.value))
+        if (data.effect.value != "") res.push(this._chatLineHelper("effect", data.effect.value))
+
         return res
     }
 
@@ -1378,7 +1369,7 @@ class TraitItemDSA5 extends Itemdsa5 {
             }
 
             mergeObject(data, {
-                visionOptions: DSA5.meleeRangeVision,
+                visionOptions: DSA5.meleeRangeVision(data.mode),
                 weaponSizes: DSA5.meleeRanges,
                 melee: true,
                 showAttack: true,
@@ -1421,7 +1412,7 @@ class TraitItemDSA5 extends Itemdsa5 {
         } else if (data.mode == "parry") {
             Itemdsa5.getDefenseMalus(situationalModifiers, actor)
             mergeObject(data, {
-                visionOptions: DSA5.meleeRangeVision,
+                visionOptions: DSA5.meleeRangeVision(data.mode),
                 defenseCount: 0,
                 showDefense: true,
                 wrongHandDisabled: false,
@@ -1440,8 +1431,6 @@ class TraitItemDSA5 extends Itemdsa5 {
             })
         }
     }
-
-
 
     static setupDialog(ev, options, item, actor) {
         let mode = options["mode"]

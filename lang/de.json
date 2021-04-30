@@ -60,15 +60,19 @@
         "AT": "AT",
         "FP": "FP",
         "QS": "QS",
+        "TPM": "TPM",
         "damage": "TP",
         "reloadTime": "Lad.",
-        "castingTime": "Zauber- dauer",
+        "castingTime": "Atkions- dauer",
         "duration": "Wirkungs- dauer",
+        "defenseMalus": "DM",
         "fatePoints": "Schips",
         "FtP": "Schip",
         "maintainCost": "Aufr.",
         "*": "*"
     },
+
+
 
     "DIALOG": {
         "RollMode": "Würfelmodus",
@@ -109,6 +113,7 @@
         "money": "Geld"
     },
 
+    "advanced": "Erweitert",
     "requiredFW": "Benötigter FW",
     "traditionArtifact": "Traditionsartefakt",
     "advantageousPosition": "Vorteilhafte Position",
@@ -168,7 +173,7 @@
     "ceremony": "Zeremonie",
     "ceremonies": "Zermonien",
     "ceremonyTest": "Zeremonieprobe",
-    "castingTime": "Zauberdauer",
+    "castingTime": "Aktionsdauer",
     "Combat": "Kampf",
     "combatskill": "Kampftechnik",
     "culture": "Kultur",
@@ -377,6 +382,7 @@
     "shooter": "Schütze",
     "speed": "Geschwindigkeit",
     "statuseffects": "Statuseffekte",
+    "transferredStatusEffects": "Transferierte Statuseffekte",
     "specialAbilities": "Sonderfertigkeiten",
     "specialisation": "Spezialisierung",
     "Spent": "Ausgegeben",
@@ -651,11 +657,6 @@
         "4": "Unsichtbar [Glückstreffer]"
     },
 
-    "TraitMsg": {
-        "AutomaticSuccess": "Automatischer Erfolg",
-        "AutomaticFailure": "Automatischer Misserfolg"
-    },
-
     "CHATNOTIFICATION": {
         "gainsBloodrush": "Der Zorn überwältigt {character} und er/sie verfällt in den Zustand Blutrausch.",
         "unableReroll": "Würfel {die} wegen Unfähigkeit erneut geworfen ({oldVal}/{newVal})",
@@ -670,7 +671,9 @@
         "careerSkills": "Komma separierte Talentliste, z.b. (Betören 2,Etikette 4)",
         "commaSeparated": "Komma separierte Liste",
         "oneQualityPerLine": "Beschreibe eine Qualitätsstufe pro Zeile",
-        "zkModifer": "Die Zähigkeit/Seelenkraft des Ziels muss als Malus eingerechnet werden (Vorzeichen beachten)"
+        "zkModifer": "Die Zähigkeit/Seelenkraft des Ziels muss als Malus eingerechnet werden (Vorzeichen beachten)",
+        "applyEffectCaster": "Effekt auf Wirkenden übertragen",
+        "applyEffectTargets": "Effekt auf Ziele übertragen"
     },
 
     "HELP": {
@@ -765,6 +768,21 @@
         "giant": "Riesig [+8]"
     },
 
+    "DSAREGEX": {
+        "combatRounds": "(Kampfrunde(n)?|KR)",
+        "minutes": "(minute(n)?|min)",
+        "hours": "(stunde(n)?)",
+        "days": "tag(e)?"
+    },
+
+    "ActiveEffects": {
+        "hideOnToken": "Am Token verstecken",
+        "hidePlayers": "Vor Spielern verstecken",
+        "applyTarget": "Effekt (Ziel)",
+        "applySelf": "Effekt (Selbst)",
+        "appliedEffect": "Effekt <b>{source}</b> wurde auf <b>{target}</b> übertragen."
+    },
+
     "ROLL": {
         "Targeting": "gegen",
         "failed": "ist gescheitert"
@@ -809,6 +827,9 @@
         "weakRegenerationLeP": "Schlechte Regeneration (Lebensenergie)",
         "weakRegenerationAsP": "Schlechte Regeneration (Astralenergie)",
         "weakRegenerationKaP": "Schlechte Regeneration (Karmaenergie)",
+        "advancedRegenerationLeP": "tbd",
+        "advancedRegenerationAsP": "Magische Regeneration",
+        "advancedRegenerationKaP": "Karmale Regeneration",
         "weakAstralBody": "Schwacher Astralkörper",
         "weakKarmicBody": "Schwacher Karmalkörper",
         "restrictedSenseSight": "Eingeschränkter Sinn (Sicht)",
@@ -832,15 +853,16 @@
         "featOfStrength": "Kraftakt",
         "literacy": "Schrift",
         "language": "Sprache",
-        "aptitude": "Begabung"
+        "aptitude": "Begabung",
+        "painImmunity": "Immun gegen Schmerzen"
     },
 
     "DSAError": {
         "MacroItemMissing": "Dein Charakter hat kein Item namens {item}. Stelle sicher, dass dir entweder ein Charakter zugeordnet ist oder du einen Token für den Wurf markierst.",
         "APUpdateError": "AP Wert konnte nicht angepasst werden. Bitte manuell durchführen.",
         "RangeCannotBeParsed": "Die Reichweite kan nicht automatisch angepasst werden. Format nicht erkannt.",
-        "CastingTimeLimit": "Die Zauberdauer ist bereits am Limit.",
-        "TimeCannotBeParsed": "Die Zauberdauer kan nicht automatisch angepasst werden. Format nicht erkannt.",
+        "CastingTimeLimit": "Die Aktionsdauer ist bereits am Limit.",
+        "TimeCannotBeParsed": "Die Aktionsdauer kan nicht automatisch angepasst werden. Format nicht erkannt.",
         "DamagePermission": "Du darfst den Schaden nicht übertragen.",
         "NotEnoughXP": "Nicht genug Abenteuerpunkte",
         "NotEnoughAsP": "Nicht genug Astralpunkte",
@@ -862,7 +884,8 @@
         "NotUnlocked": "Noch nichts freigeschalten",
         "onlyGMAllowedToCancel": "Nur der Spielleiter darf Vergleichsproben abbrechen.",
         "unknownCombatSkill": "Das Kampftalent {skill} der Waffe {item} ist unbekannt. Bitte die Waffe anpassen.",
-        "onlyGMcanShapeshift": "Du hast nicht die richtigen Berechtigungen zum Formwandeln."
+        "onlyGMcanShapeshift": "Du hast nicht die richtigen Berechtigungen zum Formwandeln.",
+        "staleData": "Verwaiste Vergleichsprobendaten gefunden. Bitte stelle sicher Vergleichsproben immer abzuschließen. Verwaiste Daten gelöscht."
     },
 
     "Shapeshift": {

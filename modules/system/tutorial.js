@@ -24,7 +24,7 @@ export default class DSA5Tutorial {
         for (let lang of langs) {
             data.buttons[lang] = {
                 label: game.i18n.localize(lang),
-                callback: dlg => {
+                callback: () => {
                     DSA5Tutorial.setLanguage(lang)
                 }
             }

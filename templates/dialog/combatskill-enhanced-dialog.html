@@ -4,11 +4,11 @@
             {{> systems/dsa5/templates/dialog/default-combat-dialog.html}} {{#if melee}}
             <div class="form-group custom-select">
                 <label>{{localize "narrowSpace"}}</label>
-                <input type="checkbox" id="narrowSpace" name="narrowSpace" value="1" {{#if constricted}}checked{{/if}}>
+                <input type="checkbox" id="narrowSpace" name="narrowSpace" value="1" {{checked constricted}}>
             </div>
             <div class="form-group custom-select">
                 <label>{{localize "wrongHand"}} (-4)</label>
-                <input type="checkbox" id="wrongHand" name="wrongHand" value="1" {{#if wrongHandDisabled}}disabled{{/if}} {{#if offHand}}checked{{/if}}>
+                <input type="checkbox" id="wrongHand" name="wrongHand" value="1" {{#if wrongHandDisabled}}disabled{{/if}} {{checked offHand}}>
             </div>
 
             <div class="form-group custom-select">

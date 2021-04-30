@@ -54,9 +54,10 @@
         "PA": "PA",
         "AT": "AT",
         "FP": "SP",
+        "TPM": "PCM",
         "reloadTime": "Rel.",
-        "castingTime": "Casting- time",
-        "duration": "Duration",
+        "castingTime": "Action- duration",
+        "duration": "Effect- Duration",
         "fatePoints": "FtP",
         "maintainCost": "Main.",
         "INI": "INI",
@@ -67,6 +68,7 @@
         "QS": "QL",
         "FtP": "FtP",
         "damage": "DP",
+        "defenseMalus": "VM",
         "*": "*"
     },
 
@@ -126,6 +128,7 @@
         "selectRandomGoods": "Select categories and an amount of additional random commodities. The addition might take a moment, if the index of the library has not been created yet."
     },
 
+    "advanced": "Advanced",
     "requiredFW": "Required SR",
     "traditionArtifact": "Tradition Artifact",
     "advantageousPosition": "Advantageous Position",
@@ -186,7 +189,7 @@
     "ceremony": "Ceremony",
     "ceremonies": "Ceremonies",
     "ceremonyTest": "Ceremony test",
-    "castingTime": "Casting time",
+    "castingTime": "Action duration",
     "consumable": "Consumable",
     "Combat": "Combat",
     "combatskill": "Combat Technique",
@@ -215,7 +218,7 @@
     "damageThreshold": "Damage threshold",
     "damageOverThreshold": "Including bonus damage of the damage threshold",
     "doubleDamage": "double damage",
-    "duration": "Duration",
+    "duration": "Effect duration",
     "doubleAttack": "Two attacks",
     "DSA5Error": "TDE5 - Report error",
     "Description": "Description",
@@ -392,6 +395,7 @@
     "shooter": "Shooter",
     "speed": "Movement",
     "statuseffects": "Status effects",
+    "transferredStatusEffects": "Transferred Status effects",
     "specialAbilities": "Special Abilities",
     "Spent": "Spent",
     "skModifier": "Spirit (Target)",
@@ -668,11 +672,6 @@
         "4": "Invisible [Lucky hit]"
     },
 
-    "TraitMsg": {
-        "AutomaticSuccess": "Automatic Success",
-        "AutomaticFailure": "Automatic Failure"
-    },
-
     "CHATNOTIFICATION": {
         "gainsBloodrush": "The rage consumes {character} and he/she gains the condition bloodrush.",
         "unableReroll": "Die {die} rolled again because of Incompetence ({oldVal}/{newVal})",
@@ -687,7 +686,9 @@
         "careerSkills": "Comma separated talent list, f.e. (Alchemy 2,Carousing 4)",
         "commaSeparated": "Comma separated list",
         "oneQualityPerLine": "Describe one quality level each line",
-        "zkModifer": "The target's soulpower/toughness has to be included as handicap (mind the sign)"
+        "zkModifer": "The target's soulpower/toughness has to be included as handicap (mind the sign)",
+        "applyEffectCaster": "Apply effect to caster",
+        "applyEffectTargets": "Apply effect to targets"
     },
 
     "HELP": {
@@ -805,6 +806,21 @@
         "dm": "dm"
     },
 
+    "DSAREGEX": {
+        "combatRounds": "(combat round(s)?|CR)",
+        "minutes": "(minute(s)?|min)",
+        "hours": "(hour(s)?)",
+        "days": "day(s)?"
+    },
+
+    "ActiveEffects": {
+        "hideOnToken": "Hide on Token",
+        "hidePlayers": "Hide for players",
+        "applyTarget": "Effect (Target)",
+        "applySelf": "Effect (Self)",
+        "appliedEffect": "Effect <b>{source}</b> applied to <b>{target}</b>."
+    },
+
     "LocalizedIDs": {
         "deaf": "Deaf",
         "blind": "Blind",
@@ -826,6 +842,9 @@
         "weakRegenerationLeP": "Weak Regeneration (Life Points)",
         "weakRegenerationAsP": "Weak Regeneration (Arcane Energy)",
         "weakRegenerationKaP": "Weak Regeneration (Karma Points)",
+        "advancedRegenerationLeP": "tbd",
+        "advancedRegenerationAsP": "tbd",
+        "advancedRegenerationKaP": "tbd",
         "weakAstralBody": "Weak Astral Body",
         "weakKarmicBody": "Weak Karmic Body",
         "restrictedSenseSight": "Restricted Sense (Sight)",
@@ -849,7 +868,8 @@
         "featOfStrength": "Feat of Strength",
         "literacy": "Literacy",
         "language": "Language",
-        "aptitude": "Aptitude"
+        "aptitude": "Aptitude",
+        "painImmunity": "Immune to pain"
     },
 
     "Shapeshift": {
@@ -891,7 +911,8 @@
         "NotUnlocked": "Not yet unlocked",
         "onlyGMAllowedToCancel": "Only the game master is allowed to abort opposing tests",
         "unknownCombatSkill": "The combat technique {skill} of the weapon {item} is unknown. Please fix the weapon.",
-        "onlyGMcanShapeshift": "You don't have the right permissions to shapeshift."
+        "onlyGMcanShapeshift": "You don't have the right permissions to shapeshift.",
+        "staleData": "Stale opposing test data found. Please make sure to finish opposing tests. Stale data deleted."
     },
 
     "CEREMONYMODIFIER": {

@@ -21,16 +21,18 @@ export default class ActorSheetDsa5 extends ActorSheet {
         this._setScrollPos();
         this._restoreSeachFields()
 
-        $(this._element).find(".close").attr("title", game.i18n.localize("SHEET.Close"));
-        $(this._element).find(".configure-sheet").attr("title", game.i18n.localize("SHEET.Configure"));
-        $(this._element).find(".configure-token").attr("title", game.i18n.localize("SHEET.Token"));
-        $(this._element).find(".import").attr("title", game.i18n.localize("SHEET.Import"));
-        $(this._element).find(".locksheet").attr("title", game.i18n.localize("SHEET.Lock"));
-        $(this._element).find(".library").attr("title", game.i18n.localize("SHEET.Library"));
-        $(this._element).find(".playerview").attr("title", game.i18n.localize("SHEET.switchLimited"));
+        let elem = $(this._element)
+
+        elem.find(".close").attr("title", game.i18n.localize("SHEET.Close"));
+        elem.find(".configure-sheet").attr("title", game.i18n.localize("SHEET.Configure"));
+        elem.find(".configure-token").attr("title", game.i18n.localize("SHEET.Token"));
+        elem.find(".import").attr("title", game.i18n.localize("SHEET.Import"));
+        elem.find(".locksheet").attr("title", game.i18n.localize("SHEET.Lock"));
+        elem.find(".library").attr("title", game.i18n.localize("SHEET.Library"));
+        elem.find(".playerview").attr("title", game.i18n.localize("SHEET.switchLimited"));
 
         if (this.currentFocus) {
-            $(this._element).find('[data-item-id="' + this.currentFocus + '"] input').focus().select();
+            elem.find('[data-item-id="' + this.currentFocus + '"] input').focus().select();
             this.currentFocus = null;
         }
     }
@@ -122,41 +124,9 @@ export default class ActorSheetDsa5 extends ActorSheet {
         mergeObject(sheetData.actor, this.actor.prepare())
         sheetData.isGM = game.user.isGM;
         sheetData["initDies"] = { "-": "", "1d6": "1d6", "2d6": "2d6", "3d6": "3d6", "4d6": "d6" }
-        this._addDefaultActiveEffects(sheetData)
+        DSA5StatusEffects.prepareActiveEffects(this.actor, sheetData)
         return sheetData;
     }
-
-    _addDefaultActiveEffects(data) {
-        let conditions = duplicate(CONFIG.statusEffects) //.filter(x => x.flags.dsa5.editable)
-        for (let condition of conditions) {
-            let existing = this.actor.effects.find(e => e.data.flags.core != undefined && e.data.flags.core.statusId == condition.id)
-            condition.editable = condition.flags.dsa5.editable
-
-            if (condition.flags.dsa5.value == null)
-                condition.boolean = true;
-
-            if (existing) {
-                condition.value = existing.data.flags.dsa5.value
-                condition.existing = true
-                condition.manual = existing.data.flags.dsa5.manual
-            } else {
-                condition.value = 0;
-                condition.existing = false
-            }
-        }
-        let customConditions = this.actor.effects.filter(e => e.data.flags.dsa5 && e.data.flags.dsa5.custom).map(x => {
-            x.customizable = x.data.flags.dsa5.customizable
-            x.existing = !x.data.disabled
-            x.boolean = true
-            x.label = x.data.label
-            x.icon = x.data.icon
-            return x
-        })
-        data.conditions = conditions.filter(x => x.existing)
-        data.manualConditions = conditions.filter(x => !x.existing)
-        data.conditions.push(...customConditions)
-    }
-
 
     _onItemCreate(event) {
         event.preventDefault();
@@ -525,10 +495,12 @@ export default class ActorSheetDsa5 extends ActorSheet {
         html.find('.condition-show').mousedown(ev => {
             ev.preventDefault()
             let id = ev.currentTarget.getAttribute("data-id")
+            let descriptor = $(ev.currentTarget).parents(".statusEffect").attr("data-descriptor")
             if (ev.button == 0) {
-                let effect = CONFIG.statusEffects.find(x => x.id == id)
+                let effect
                 let text
-                if (effect) {
+                if (descriptor) {
+                    let effect = CONFIG.statusEffects.find(x => x.id == descriptor)
                     text = $(`<div style="padding:5px;"><b><a class="chat-condition chatButton" data-id="${effect.id}"><img src="${effect.icon}"/>${game.i18n.localize(effect.label)}</a></b>: ${game.i18n.localize(effect.description)}</div>`)
                     text.find('.chat-condition').on('click', ev => {
                         DSA5ChatListeners.postStatus($(ev.currentTarget).attr('data-id'))
@@ -544,7 +516,7 @@ export default class ActorSheetDsa5 extends ActorSheet {
                 elem.fadeOut('fast', function() {
                     elem.html(text).fadeIn('fast')
                 })
-            } else if (ev.button == 2) {
+            } else if (ev.button == 2 && !ev.currentTarget.getAttribute("data-locked")) {
                 this._deleteActiveEffect(id)
             }
         })
@@ -612,49 +584,14 @@ export default class ActorSheetDsa5 extends ActorSheet {
             });
         });
 
-        html.find('.ch-combatskill-attack').click(event => {
-            event.preventDefault();
-            let itemId = this._getItemId(event);
-            const item = this.actor.items.find(i => i.data._id == itemId)
-            this.actor.setupCombatskill(item, "attack", event).then(setupData => {
-                this.actor.basicTest(setupData)
-            });
-        });
-
-        html.find('.ch-combatskill-parry').click(event => {
-            event.preventDefault();
-            let itemId = this._getItemId(event);
-            const item = this.actor.items.find(i => i.data._id == itemId)
-            this.actor.setupCombatskill(item, "parry", event).then(setupData => {
-                this.actor.basicTest(setupData)
-            });
-        });
-
         html.find('.item-create').click(ev => this._onItemCreate(ev));
-
-        html.find('.ch-rollCombatParry').click(event => {
-            event.preventDefault();
-            let itemId = this._getItemId(event);
-            const item = this.actor.items.find(i => i.data._id == itemId)
-            this.actor.setupWeapon(item, "parry", event).then(setupData => {
-                this.actor.basicTest(setupData)
-            });
-        });
 
         html.find('.ch-rollCombat').click(event => {
             event.preventDefault();
             let itemId = this._getItemId(event);
+            const mode = $(event.currentTarget).attr("data-mode")
             const item = this.actor.items.find(i => i.data._id == itemId)
-            this.actor.setupWeapon(item, "attack", event).then(setupData => {
-                this.actor.basicTest(setupData)
-            });
-        });
-
-        html.find('.ch-rollDamage').click(event => {
-            event.preventDefault();
-            let itemId = this._getItemId(event);
-            const item = this.actor.items.find(i => i.data._id == itemId)
-            this.actor.setupWeapon(item, "damage", event).then(setupData => {
+            this.actor.setupWeapon(item, mode, event).then(setupData => {
                 this.actor.basicTest(setupData)
             });
         });
@@ -702,7 +639,7 @@ export default class ActorSheetDsa5 extends ActorSheet {
         })
 
         html.find(".condition-value").mousedown(ev => {
-            let condKey = $(ev.currentTarget).parents(".statusEffect").attr("data-id")
+            let condKey = $(ev.currentTarget).parents(".statusEffect").attr("data-descriptor")
             if (ev.button == 0)
                 this.actor.addCondition(condKey, 1, false, false)
             else if (ev.button == 2)
@@ -711,16 +648,6 @@ export default class ActorSheetDsa5 extends ActorSheet {
 
         html.find(".condition-toggle").mousedown(ev => {
             let condKey = $(ev.currentTarget).parents(".statusEffect").attr("data-id")
-            const defaultEffect = CONFIG.statusEffects.find(e => e.id == condKey)
-            if (defaultEffect) {
-                if (CONFIG.statusEffects.find(e => e.id == condKey).flags.dsa5.value == null) {
-                    if (this.actor.hasCondition(condKey))
-                        this.actor.removeCondition(condKey)
-                    else
-                        this.actor.addCondition(condKey)
-                    return
-                }
-            }
             let ef = this.actor.effects.get(condKey)
             ef.update({ disabled: !ef.data.disabled })
         })
@@ -773,9 +700,7 @@ export default class ActorSheetDsa5 extends ActorSheet {
     }
 
     _deleteActiveEffect(id) {
-        let item = this.actor.data.effects.find(x => x.flags.core.statusId == id)
-        if (!item)
-            item = this.actor.data.effects.find(x => x._id == id)
+        let item = this.actor.data.effects.find(x => x._id == id)
 
         if (item) {
             Hooks.call("deleteActorActiveEffect", this.actor, item)
@@ -948,6 +873,8 @@ export default class ActorSheetDsa5 extends ActorSheet {
         item = duplicate(item)
         let res = this.actor.data.items.find(i => Itemdsa5.areEquals(item, i));
         if (!res) {
+            if (this._tabs[0].active == "combat" && item.data.worn) item.data.worn.value = true
+
             await this.actor.createEmbeddedEntity("OwnedItem", item);
         } else {
             Itemdsa5.stackItems(res, item, this.actor)

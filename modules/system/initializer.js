@@ -64,7 +64,6 @@ export default class DSA5Initializer extends Dialog {
                     let folder = entry.getFlag("dsa5", "parent")
                     let sort = entry.getFlag("dsa5", "sort")
                     if (folder) {
-                        console.log(folder)
                         entry.data.folder = this.folders[folder].data._id
                         entry.data.sort = sort
                     }

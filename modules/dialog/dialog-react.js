@@ -56,7 +56,7 @@ export default class DialogReactDSA5 extends Dialog {
 export class ReactToSkillDialog extends DialogReactDSA5 {
     static async getTemplate(startMessage) {
         let attackMessage = game.messages.get(startMessage.data.flags.unopposeData.attackMessageId)
-        let source = attackMessage.data.flags.data.postData.preData.source
+        let source = attackMessage.data.flags.data.preData.source
         let item = source.name
         let items = [{
             name: game.i18n.localize("doNothing"),
@@ -144,8 +144,7 @@ export class ActAttackDialog extends Dialog {
             let types = ["meleeweapon", "trait", "rangeweapon"]
             let result = actor.data.items.find(x => { return types.includes(x.type) && x.name == text })
             if (result) {
-                let fun = result.type == "trait" ? "setupWeaponTrait" : "setupWeapon"
-                actor[fun](result, "attack", {}).then(setupData => {
+                actor.setupWeapon(result, "attack", {}).then(setupData => {
                     actor.basicTest(setupData)
                 });
             }
@@ -199,8 +198,7 @@ export class ReactToAttackDialog extends DialogReactDSA5 {
             let types = ["meleeweapon", "trait"]
             let result = actor.data.items.find(x => { return types.includes(x.type) && x.name == text })
             if (result) {
-                let fun = result.type == "meleeweapon" ? "setupWeapon" : "setupWeaponTrait"
-                actor[fun](result, "parry", {}).then(setupData => {
+                actor.setupWeapon(result, "parry", {}).then(setupData => {
                     actor.basicTest(setupData)
                 });
             }

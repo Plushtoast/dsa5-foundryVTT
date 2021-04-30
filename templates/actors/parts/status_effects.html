@@ -32,62 +32,150 @@
     <div class="row-section  wrap">
 
         <div class="col two row-section skills table-title">
-            <div class="col five">
+            <div class="col ten">
 
             </div>
             <div class="col two">
                 {{localize "condition"}}
             </div>
 
-            <div class="col fifteen center">
+            <div class="col ten center">
                 {{localize "ABBR.modifiers"}}
             </div>
-            <div class="col fifteen center" title="{{localize 'value'}}">
+            <div class="col ten center" title="{{localize 'value'}}">
                 {{localize "ABBR.value"}}
+            </div>
+            <div class="col five">
+
             </div>
         </div>
         <div class="col two row-section skills table-title">
-            <div class="col five">
+            <div class="col ten">
 
             </div>
             <div class="col two">
                 {{localize "condition"}}
             </div>
 
-            <div class="col fifteen center">
+            <div class="col ten center">
                 {{localize "ABBR.modifiers"}}
             </div>
-            <div class="col fifteen center" title="{{localize 'value'}}">
+            <div class="col ten center" title="{{localize 'value'}}">
                 {{localize "ABBR.value"}}
             </div>
+            <div class="col five">
 
+            </div>
         </div>
         {{#each conditions as |item i|}}
-        <div class="row-section col skills two statusEffect" data-id="{{item.id}}">
-            <div class="col five">
-                {{#if item.existing}}
-                <img src="{{item.icon}}" /> {{else}}
-                <img style="opacity:0.5;" src="{{item.icon}}" /> {{/if}}
+        <div class="row-section col skills two statusEffect" data-id="{{item.id}}" {{#if item.descriptor}}data-descriptor="{{item.descriptor}}" {{/if}}>
+            <div class="col ten">
+                {{#if item.disabled}}
+                <img style="opacity:0.5;" src="{{item.icon}}" /> {{else}}
+                <img src="{{item.icon}}" /> {{/if}}
             </div>
             <div class="col two">
                 <a class="condition-show" data-id="{{item.id}}">{{localize item.label}}</a>
             </div>
-
-            <div class="col fifteen center">
+            <div class="col ten center">
                 {{#if item.editable}}{{#unless item.boolean}}<a class="condition-value">{{item.manual}}</a>{{/unless}}{{/if}}
             </div>
-            <div class="col fifteen center" title="{{localize 'value'}}">
-                {{#if item.customizable}}
-                <a class="condition-edit" data-id="{{item.id}}"><i class="fa fa-edit"></i></a> {{/if}} {{#if item.boolean}} {{#if item.existing}}
-                <a class="condition-toggle" title="{{localize 'SHEET.deactivate'}}"><i class="far fa-check-circle"></i></a> {{else}}
-                <a class="condition-toggle" title="{{localize 'SHEET.activate'}}"><i class="far fa-circle"></i></a> {{/if}} {{else}}
-                <span>{{item.value}}</span>{{/if}}
+            <div class="col ten center" title="{{localize 'value'}}">
+                <span>{{item.value}}</span>
+            </div>
+            <div class="col five right">
+                <a class="condition-edit" data-id="{{item.id}}"><i class="fa fa-edit"></i></a> {{#if item.disabled}}
+                <a class="condition-toggle" title="{{localize 'SHEET.activate'}}"><i class="far fa-circle"></i></a> {{else}}
+                <a class="condition-toggle" title="{{localize 'SHEET.deactivate'}}"><i class="far fa-check-circle"></i></a> {{/if}}
             </div>
         </div>
         {{/each}}
     </div>
 
 </div>
+
+<div class="groupbox">
+    <div class="row-section">
+        <div class="col ten">
+
+        </div>
+        <div class="col eighty header-label lineheight">
+            <b>{{localize "transferredStatusEffects"}}</b>
+        </div>
+        <div class="col ten center">
+
+        </div>
+    </div>
+
+    <div class="row-section  wrap">
+
+        <div class="col two row-section skills table-title">
+            <div class="col ten">
+
+            </div>
+            <div class="col two">
+                {{localize "condition"}}
+            </div>
+
+            <div class="col ten center">
+                {{localize "ABBR.modifiers"}}
+            </div>
+            <div class="col ten center" title="{{localize 'value'}}">
+                {{localize "ABBR.value"}}
+            </div>
+            <div class="col five">
+
+            </div>
+        </div>
+        <div class="col two row-section skills table-title">
+            <div class="col ten">
+
+            </div>
+            <div class="col two">
+                {{localize "condition"}}
+            </div>
+
+            <div class="col ten center">
+                {{localize "ABBR.modifiers"}}
+            </div>
+            <div class="col ten center" title="{{localize 'value'}}">
+                {{localize "ABBR.value"}}
+            </div>
+            <div class="col five">
+
+            </div>
+        </div>
+        {{#each transferedConditions as |item i|}}
+        <div class="row-section col skills two statusEffect" data-id="{{item.id}}" {{#if
+            item.descriptor}}data-descriptor="{{item.descriptor}}" {{/if}}>
+            <div class="col ten">
+                {{#if item.disabled}}
+                <img style="opacity:0.5;" src="{{item.icon}}" /> {{else}}
+                <img src="{{item.icon}}" /> {{/if}}
+            </div>
+            <div class="col two">
+                <a class="condition-show" data-locked="true" data-id="{{item.id}}">{{localize item.label}}</a>
+            </div>
+            <div class="col ten center">
+                {{#if item.editable}}{{#unless item.boolean}}<a
+                    class="condition-value">{{item.manual}}</a>{{/unless}}{{/if}}
+            </div>
+            <div class="col ten center" title="{{localize 'value'}}">
+                <span>{{item.value}}</span>
+            </div>
+            <div class="col five right">
+                <a class="condition-edit" data-id="{{item.id}}"><i class="fa fa-edit"></i></a> {{#if item.disabled}}
+                <a class="condition-toggle" title="{{localize 'SHEET.activate'}}"><i class="far fa-circle"></i></a>
+                {{else}}
+                <a class="condition-toggle" title="{{localize 'SHEET.deactivate'}}"><i
+                        class="far fa-check-circle"></i></a> {{/if}}
+            </div>
+        </div>
+        {{/each}}
+    </div>
+
+</div>
+
 <div class="groupbox">
     <div class="row-section">
         <div class="col header-label lineheight">

@@ -21,25 +21,6 @@ export default class ActorSheetdsa5Creature extends ActorSheetDsa5 {
 
     activateListeners(html) {
         super.activateListeners(html);
-
-        html.find('.ch-rollCombatTrait').click(event => {
-            event.preventDefault();
-            let itemId = this._getItemId(event);
-            const item = this.actor.items.find(i => i.data._id == itemId)
-            const mode = $(event.currentTarget).closest('.item').attr("data-mod")
-            this.actor.setupWeaponTrait(item, mode, event).then(setupData => {
-                this.actor.basicTest(setupData)
-            });
-        });
-
-        html.find('.ch-rollDamageTrait').click(event => {
-            event.preventDefault();
-            let itemId = this._getItemId(event);
-            const item = this.actor.items.find(i => i.data._id == itemId)
-            this.actor.setupWeaponTrait(item, "damage", event).then(setupData => {
-                this.actor.basicTest(setupData)
-            });
-        });
     }
 
     async getData() {

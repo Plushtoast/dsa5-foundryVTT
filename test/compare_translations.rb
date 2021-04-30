@@ -26,6 +26,9 @@ def compareKeys
     langs.each do |lang|
         emptyKeys = json[lang].select{|key,val| val == ""}
         puts "Empty keys in lang #{lang}: \n#{emptyKeys.keys.join("\n")}" if emptyKeys.any?
+
+        emptyKeys = json[lang].select{|key,val| val == "tbd"}
+        puts "Tbd keys in lang #{lang}: \n#{emptyKeys.keys.join("\n")}" if emptyKeys.any?
     end
     
     langDependentKeys.each do |x|

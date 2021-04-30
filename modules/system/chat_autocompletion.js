@@ -282,17 +282,12 @@ export default class DSA5ChatAutoCompletion {
             let types = ["meleeweapon", "rangeweapon"]
             let traitTypes = ["meleeAttack", "rangeAttack"]
             let result = actor.data.items.find(x => { return types.includes(x.type) && x.name == target.text() })
+            if(!result) result = actor.data.items.find(x => { return x.type == "trait" && x.name == target.text() && traitTypes.includes(x.data.traitType.value) })
+            
             if (result) {
                 actor.setupWeapon(result, "attack", {}).then(setupData => {
                     actor.basicTest(setupData)
                 });
-            }else{
-                result = actor.data.items.find(x => { return x.type == "trait" && x.name == target.text() && traitTypes.includes(x.data.traitType.value) })
-                if(result){
-                    actor.setupWeaponTrait(result, "attack", {}).then(setupData => {
-                        actor.basicTest(setupData)
-                    });
-                }
             }
         }
     }

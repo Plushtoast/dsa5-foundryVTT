@@ -5,33 +5,42 @@
         <b>{{localize "effect"}}</b>: ...
         <a class="expand-mods"><i class="fas fa-plus"></i></a>
         <div>
-            {{{replaceConditions (diceThingsUp testData.preData.source.data.effect.value)}}}
+            {{{replaceConditions (diceThingsUp preData.source.data.effect.value)}}}
         </div>
     </div>
     <div class="card-content">
-        <b>{{localize "castingTime"}}</b>: {{testData.preData.calculatedSpellModifiers.castingTime}}
+        <b>{{localize "castingTime"}}</b>: {{preData.calculatedSpellModifiers.castingTime}}
     </div>
     <div class="card-content">
-        <b>{{localize "duration"}}</b>: {{testData.preData.source.data.duration.value}}
+        <b>{{localize "duration"}}</b>: {{preData.source.data.duration.value}}
     </div>
     <div class="card-content">
-        <b>{{localize "reach"}}</b>: {{testData.preData.calculatedSpellModifiers.reach}}
+        <b>{{localize "reach"}}</b>: {{preData.calculatedSpellModifiers.reach}}
     </div>
     {{/when}}
     <div class="card-content">
-        <b>{{localize "cost"}}</b>: {{testData.preData.calculatedSpellModifiers.finalcost}}
+        <b>{{localize "cost"}}</b>: {{preData.calculatedSpellModifiers.finalcost}}
     </div>
-    {{#when testData.preData.calculatedSpellModifiers.maintainCost 'noteq' ''}}
+    {{#when preData.calculatedSpellModifiers.maintainCost 'noteq' ''}}
     <div class="card-content">
-        <b>{{localize "maintainCost"}}</b>: {{testData.preData.calculatedSpellModifiers.maintainCost}}
+        <b>{{localize "maintainCost"}}</b>: {{preData.calculatedSpellModifiers.maintainCost}}
     </div>
     {{/when}} {{#if testData.effectResult}}
     <div class="card-content" title="{{testData.calculatedEffectFormula}}">
         <b>{{localize "effectResult"}}</b>: {{testData.effectResult}}
     </div>
-    {{/if}} {{#if testData.preData.extensions }}
+    {{/if}} {{#if preData.extensions }}
     <div class="card-content">
-        <b>{{localize 'extensions'}}</b>: {{{testData.preData.extensions}}}
+        <b>{{localize 'extensions'}}</b>: {{{preData.extensions}}}
+    </div>
+    {{/if}} {{#if applyEffect}}
+    <div class="row-section" style="margin-top:10px">
+        <div class="col two">
+            <button class="applyEffect" data-target="self" title="{{localize 'TT.applyEffectCaster'}}">{{localize 'ActiveEffects.applySelf'}}</button>
+        </div>
+        <div class="col two">
+            <button class="applyEffect" data-target="target" title="{{localize 'TT.applyEffectTargets'}}">{{localize 'ActiveEffects.applyTarget'}}</button>
+        </div>
     </div>
     {{/if}}
 </div>

@@ -74,10 +74,8 @@ export default class MacroDSA5 {
         if (!actor) return ui.notifications.error(game.i18n.format("DSAError.MacroItemMissing", { item: itemName }));
 
         switch (item.type) {
+            case "combatskill":
             case "trait":
-                return actor.setupWeaponTrait(item, bypassData.mod, bypassData).then(setupData => {
-                    actor.basicTest(setupData)
-                });
             case "meleeweapon":
                 return actor.setupWeapon(item, bypassData.mod, bypassData).then(setupData => {
                     actor.basicTest(setupData)
@@ -88,10 +86,6 @@ export default class MacroDSA5 {
                 });
             case "skill":
                 return actor.setupSkill(item.data, bypassData).then(setupData => {
-                    actor.basicTest(setupData)
-                });
-            case "combatskill":
-                return actor.setupCombatskill(item, bypassData.mod, bypassData).then(setupData => {
                     actor.basicTest(setupData)
                 });
             case "ceremony":

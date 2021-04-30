@@ -7,6 +7,7 @@ import AdvantageRulesDSA5 from "../system/advantage-rules-dsa5.js";
 import SpecialabilityRulesDSA5 from "../system/specialability-rules-dsa5.js";
 import DSA5StatusEffects from "../status/status_effects.js"
 import Itemdsa5 from "../item/item-dsa5.js";
+import TraitRulesDSA5 from "../system/trait-rules-dsa5.js";
 
 export default class Actordsa5 extends Actor {
     static async create(data, options) {
@@ -140,7 +141,8 @@ export default class Actordsa5 extends Actor {
                 if (AdvantageRulesDSA5.hasVantage(this, game.i18n.localize('LocalizedIDs.mute'))) this.addCondition("mute")
                 if (AdvantageRulesDSA5.hasVantage(this, game.i18n.localize('LocalizedIDs.deaf'))) this.addCondition("deaf")
 
-                this.addCondition("inpain", pain, true)
+                if (!TraitRulesDSA5.hasTrait(this, game.i18n.localize('LocalizedIDs.painImmunity'))) this.addCondition("inpain", pain, true)
+
                 data.data.status.speed.max = Math.max(0, data.data.status.speed.max - pain)
             }
 
@@ -155,9 +157,42 @@ export default class Actordsa5 extends Actor {
             else if (this.hasCondition("prone"))
                 data.data.status.speed.max = Math.min(1, data.data.status.speed.max)
 
+
         } catch (error) {
             console.error("Something went wrong with preparing actor data: " + error + error.stack)
             ui.notifications.error(game.i18n.localize("ACTOR.PreparationError") + error + error.stack)
+        }
+    }
+
+    prepareEmbeddedEntities() {
+        super.prepareEmbeddedEntities()
+        let notAppliedEffects = []
+        for (let ef of this.effects) {
+            if (ef.data.origin) {
+                let id = ef.data.origin.match(/[^.]+$/)[0]
+                let item = this.items.get(id)
+                if (!item) continue
+                let apply = true
+                switch (item.data.type) {
+                    case "meleeweapon":
+                    case "rangeweapon":
+                    case "armor":
+                        apply = item.data.data.worn.value
+                        break
+                    case "equipment":
+                        apply = item.data.data.worn.wearable && item.data.data.worn.value
+                        break
+                    case "spell":
+                    case "liturgy":
+                    case "ceremony":
+                    case "ritual":
+                        apply = false
+                }
+                if (!apply) notAppliedEffects.push(ef.id)
+            }
+        }
+        for (let id of notAppliedEffects) {
+            this.effects.delete(id)
         }
     }
 
@@ -166,6 +201,12 @@ export default class Actordsa5 extends Actor {
 
         mergeObject(data, {
             data: {
+                skillModifiers: {
+                    FP: [],
+                    step: [],
+                    QL: [],
+                    TPM: []
+                },
                 totalArmor: 0,
                 carryModifier: 0,
                 aspModifier: 0,
@@ -190,6 +231,23 @@ export default class Actordsa5 extends Actor {
         for (let ch of Object.values(data.data.characteristics))
             ch.gearmodifier = 0
 
+    }
+
+    getSkillModifier(name) {
+        let result = []
+        const keys = ["FP", "step", "QL", "TPM"]
+        for (const k of keys) {
+            const type = k == "step" ? "" : k
+            result.push(...this.data.data.skillModifiers[k].filter(x => x.target == name).map((f) => {
+                return {
+                    name: f.source,
+                    value: f.value,
+                    type
+                }
+            }))
+        }
+
+        return result
     }
 
     prepare() {
@@ -467,23 +525,27 @@ export default class Actordsa5 extends Actor {
                 }
 
             } catch (error) {
-                console.error("Something went wrong with preparing item " + i.name + ": " + error)
-                console.log(error)
-                console.log(i)
-                ui.notifications.error("Something went wrong with preparing item " + i.name + ": " + error)
+                this._itemPreparationError(i, error)
             }
         }
 
         for (let wep of inventory.rangeweapons.items) {
-            if (wep.data.worn.value)
-                rangeweapons.push(Actordsa5._prepareRangeWeapon(wep, inventory.ammunition.items, combatskills, this));
+            try {
+                if (wep.data.worn.value) rangeweapons.push(Actordsa5._prepareRangeWeapon(wep, inventory.ammunition.items, combatskills, this));
+            } catch (error) {
+                this._itemPreparationError(wep, error)
+            }
         }
 
         let wornweapons = inventory.meleeweapons.items.filter(x => x.data.worn.value)
         let regex2h = /\(2H/
 
         for (let wep of wornweapons) {
-            meleeweapons.push(Actordsa5._prepareMeleeWeapon(wep, combatskills, actorData, wornweapons.filter(x => x._id != wep._id && !regex2h.test(x.name))))
+            try {
+                meleeweapons.push(Actordsa5._prepareMeleeWeapon(wep, combatskills, actorData, wornweapons.filter(x => x._id != wep._id && !regex2h.test(x.name))))
+            } catch (error) {
+                this._itemPreparationError(wep, error)
+            }
         }
 
         money.coins = money.coins.sort((a, b) => (a.data.price.value > b.data.price.value) ? -1 : 1);
@@ -544,6 +606,13 @@ export default class Actordsa5 extends Actor {
                 trade: skills.trade
             }
         }
+    }
+
+    _itemPreparationError(item, error) {
+        console.error("Something went wrong with preparing item " + item.name + ": " + error)
+        console.log(error)
+        console.log(wep)
+        ui.notifications.error("Something went wrong with preparing item " + item.name + ": " + error)
     }
 
     _applyModiferTransformations(itemModifiers) {
@@ -619,7 +688,7 @@ export default class Actordsa5 extends Actor {
                         cancel: {
                             icon: '<i class="fas fa-times"></i>',
                             label: game.i18n.localize("cancel"),
-                            callback: html => {
+                            callback: () => {
                                 resolve([false, 0])
                             }
                         }
@@ -637,17 +706,7 @@ export default class Actordsa5 extends Actor {
         return false
     }
 
-    setupWeaponTrait(item, mode, options) {
-        options["mode"] = mode
-        return Itemdsa5.getSubClass(item.type).setupDialog(null, options, item, this)
-    }
-
     setupWeapon(item, mode, options) {
-        options["mode"] = mode
-        return Itemdsa5.getSubClass(item.type).setupDialog(null, options, item, this)
-    }
-
-    setupCombatskill(item, mode, options = {}) {
         options["mode"] = mode
         return Itemdsa5.getSubClass(item.type).setupDialog(null, options, item, this)
     }
@@ -655,9 +714,7 @@ export default class Actordsa5 extends Actor {
     setupWeaponless(statusId, options = {}) {
         let item = duplicate(DSA5.defaultWeapon)
         item.name = game.i18n.localize(`${statusId}Weaponless`)
-        item.data.data.combatskill = {
-            value: game.i18n.localize("Combatskill.wrestle")
-        }
+        item.data.data.combatskill = { value: game.i18n.localize("Combatskill.wrestle") }
         item.data.type = "meleeweapon"
         item.data.data.damageThreshold.value = 14
         options["mode"] = statusId
@@ -673,14 +730,14 @@ export default class Actordsa5 extends Actor {
     }
 
     applyDamage(amount) {
-        let newVal = Math.min(this.data.data.status.wounds.max, this.data.data.status.wounds.value - amount)
+        const newVal = Math.min(this.data.data.status.wounds.max, this.data.data.status.wounds.value - amount)
         this.update({ "data.status.wounds.value": newVal })
     }
 
     applyMana(amount, type) {
         let state = type == "AsP" ? "astralenergy" : "karmaenergy"
 
-        let newVal = Math.min(this.data.data.status[state].max, this.data.data.status[state].value - amount)
+        const newVal = Math.min(this.data.data.status[state].max, this.data.data.status[state].value - amount)
         if (newVal >= 0) {
             this.update({
                 [`data.status.${state}.value`]: newVal
@@ -1024,9 +1081,10 @@ export default class Actordsa5 extends Actor {
     static _parseModifiers(search) {
         let res = []
         $(search + " option:selected").each(function() {
+            const val = $(this).val()
             res.push({
-                name: $(this).text().trim(),
-                value: Number($(this).val()),
+                name: $(this).text().trim().split("[")[0],
+                value: isNaN(val) ? val : Number(val),
                 type: $(this).attr("data-type")
             })
         })
@@ -1066,8 +1124,10 @@ export default class Actordsa5 extends Actor {
                 if (!wornWeapons)
                     wornWeapons = actorData.items.filter(x => (x.type == "meleeweapon" && x.data.worn.value && x._id != item._id && !regex2h.test(x.name)))
 
-                item.parry += Math.max(0, ...wornWeapons.map(x => x.data.pamod.offhandMod))
-                item.attack += Math.max(0, ...wornWeapons.map(x => x.data.atmod.offhandMod))
+                if (wornWeapons.length > 0) {
+                    item.parry += Math.max(...wornWeapons.map(x => x.data.pamod.offhandMod))
+                    item.attack += Math.max(...wornWeapons.map(x => x.data.atmod.offhandMod))
+                }
             }
 
             item = this._parseDmg(item)
@@ -1174,27 +1234,8 @@ export default class Actordsa5 extends Actor {
         return { result, cardOptions };
     }
 
-
     async addCondition(effect, value = 1, absolute = false, auto = true) {
-        if (!this.owner) return "Not owned"
-        if (this.compendium) return "Can not add in compendium"
-
-        if (absolute && value <= 0) return this.removeCondition(effect, value, auto, absolute)
-
-        if (typeof(effect) === "string") effect = duplicate(CONFIG.statusEffects.find(e => e.id == effect))
-
-        if (!effect) return "No Effect Found"
-
-        if (!effect.id) return "Conditions require an id field"
-
-        let existing = this.hasCondition(effect.id)
-
-        if (existing && existing.flags.dsa5.value == null)
-            return existing
-        else if (existing)
-            return await DSA5StatusEffects.updateEffect(this, existing, value, absolute, auto)
-        else if (!existing)
-            return await DSA5StatusEffects.createEffect(this, effect, value, auto)
+        return await DSA5StatusEffects.addCondition(this, effect, value, absolute, auto)
     }
 
     async _dependentEffects(statusId, effect, delta) {
@@ -1211,36 +1252,11 @@ export default class Actordsa5 extends Actor {
         }
     }
 
-    async _removeDependentEffects(statusId) {
-        if (statusId == "bloodrush")
-            await this.addCondition("stunned", 2, false, false)
-    }
-
     async removeCondition(effect, value = 1, auto = true, absolute = false) {
-        if (!this.owner) return "Not owned"
-
-        if (typeof(effect) === "string") effect = duplicate(CONFIG.statusEffects.find(e => e.id == effect))
-
-        if (!effect) return "No Effect Found"
-
-        if (!effect.id) return "Conditions require an id field"
-
-        let existing = this.hasCondition(effect.id)
-
-        if (existing && existing.flags.dsa5.value == null) {
-            await this._removeDependentEffects(effect.id)
-            return await this.deleteEmbeddedEntity("ActiveEffect", existing._id)
-        } else if (existing)
-            return await DSA5StatusEffects.removeEffect(this, existing, value, absolute, auto)
-
+        return DSA5StatusEffects.removeCondition(this, effect, value, auto, absolute)
     }
 
     hasCondition(conditionKey) {
-        if (this.data != undefined) {
-            if (this.data.effects == undefined) return false
-
-            return this.data.effects.find(i => getProperty(i, "flags.core.statusId") == conditionKey)
-        }
-        return false
+        return DSA5StatusEffects.hasCondition(this, conditionKey)
     }
 }

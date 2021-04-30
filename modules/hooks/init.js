@@ -70,7 +70,8 @@ Hooks.once("init", () => {
         "systems/dsa5/templates/actors/parts/purse.html",
         "systems/dsa5/templates/actors/parts/healthbar.html",
         "systems/dsa5/templates/actors/merchant/merchant-commerce.html",
-        "systems/dsa5/templates/items/item-header.html"
+        "systems/dsa5/templates/items/item-header.html",
+        "systems/dsa5/templates/items/item-effects.html"
     ]);
 
     Actors.unregisterSheet("core", ActorSheet);

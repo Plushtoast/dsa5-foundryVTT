@@ -7,6 +7,20 @@ export default class DSAActiveEffectConfig extends ActiveEffectConfig {
         })
     }
 
+    async _render(force = false, options = {}) {
+        await super._render(force, options);
+
+        let elem = $(this._element)
+        elem.find(".tabs").append(`<a class="item" data-tab="advanced"><i class="fas fa-shield-alt"></i>${game.i18n.localize("advanced")}</a>`)
+        let template = await renderTemplate('systems/dsa5/templates/status/advanced_effect.html', { effect: this.object.data })
+        elem.find('.tab[data-tab="effects"]').after($(template))
+    }
+
+    getData() {
+        const data = super.getData()
+        return data
+    }
+
     dropDownMenu() {
             let optns = [
                 { name: game.i18n.localize('protection'), val: "data.totalArmor" },
@@ -20,6 +34,10 @@ export default class DSAActiveEffectConfig extends ActiveEffectConfig {
                 { name: `${game.i18n.localize('rangeCombatAttacks')} - ${game.i18n.localize('MODS.defenseMalus')}`, val: "data.rangeStats.defenseMalus" },
                 { name: game.i18n.localize('KaPCost'), val: "data.kapModifier" },
                 { name: game.i18n.localize('AsPCost'), val: "data.aspModifier" },
+                { name: `${game.i18n.localize('skill')} - ${game.i18n.localize("MODS.FP")}`, val: "data.skillModifiers.FP" },
+                { name: `${game.i18n.localize('skill')} - ${game.i18n.localize("stepValue")}`, val: "data.skillModifiers.step" },
+                { name: `${game.i18n.localize('skill')} - ${game.i18n.localize("MODS.QS")}`, val: "data.skillModifiers.QL" },
+                { name: `${game.i18n.localize('skill')} - ${game.i18n.localize("MODS.partChecks")}`, val: "data.skillModifiers.TPM" },
             ]
             const attrs = ["mu", "kl", "in", "ch", "ff", "ge", "ko", "kk"]
             for (const k of attrs)
@@ -35,7 +53,8 @@ export default class DSAActiveEffectConfig extends ActiveEffectConfig {
 
     activateListeners(html) {
         super.activateListeners(html)
-        html.find('.changes-list .effect-change .key').append(this.dropDownMenu())
+        const dropDown = this.dropDownMenu()
+        html.find('.changes-list .effect-change .key').append(dropDown)
         html.find('.selMenu').change(ev => {
             const elem = $(ev.currentTarget)
             elem.siblings('input').val(elem.val())

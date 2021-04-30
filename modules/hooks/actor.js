@@ -1,4 +1,3 @@
-import DSA5 from "../system/config-dsa5.js"
 import DSA5_Utility from "../system/utility-dsa5.js";
 
 export default function() {
@@ -23,6 +22,13 @@ export default function() {
             createData.token.actorLink = true;
         }
 
+    })
+
+    Hooks.on("deleteActorActiveEffect", (actor, effect) => {
+        if (effect.flags.dsa5 && effect.flags.core && effect.flags.core.statusId == "bloodrush") {
+            actor.addCondition("stunned", 2, false, false)
+            return false
+        }
     })
 
     Hooks.on("preUpdateActor", (actor, updatedData) => {

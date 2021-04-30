@@ -18,8 +18,8 @@ export default class DSA5StatusEffects {
         })
     }
 
-    static createCustomEffect(owner, description = "") {
-        const label = game.i18n.localize("CONDITION.custom")
+    static createCustomEffect(owner, description = "", label) {
+        label = label || game.i18n.localize("CONDITION.custom")
         if (description == "") description = label
         owner.addCondition({
             label: label,
@@ -29,14 +29,86 @@ export default class DSA5StatusEffects {
                 dsa5: {
                     value: null,
                     editable: true,
-                    customizable: true,
                     description: description,
                     custom: true
                 }
-            },
-            id: `${Math.random()}`
+            }
         })
     }
+
+    static prepareActiveEffects(target, data) {
+        let systemConditions = duplicate(CONFIG.statusEffects) //.filter(x => x.flags.dsa5.editable)
+        let appliedSystemConditions = []
+        data.conditions = []
+        data.transferedConditions = []
+        for (let condition of target.effects.filter(e => { return game.user.isGM || target.entity == "Item" || !e.getFlag("dsa5", "hidePlayers") })) {
+            condition.disabled = condition.data.disabled
+            condition.boolean = condition.getFlag("dsa5", "value") == null
+            condition.label = condition.data.label
+            condition.icon = condition.data.icon
+            const statusId = condition.getFlag("core", "statusId")
+            if (statusId) {
+                condition.value = condition.getFlag("dsa5", "value")
+                condition.editable = condition.getFlag("dsa5", "editable")
+                condition.descriptor = statusId
+                condition.manual = condition.getFlag("dsa5", "manual")
+                appliedSystemConditions.push(statusId)
+            }
+            if (condition.data.origin == target.uuid || !condition.data.origin)
+                data.conditions.push(condition)
+            else
+                data.transferedConditions.push(condition)
+
+        }
+        data.manualConditions = systemConditions.filter(x => !appliedSystemConditions.includes(x.id))
+    }
+
+    static async addCondition(target, effect, value = 1, absolute = false, auto = true) {
+        if (!target.owner) return "Not owned"
+        if (target.compendium) return "Can not add in compendium"
+
+        if (absolute && value <= 0) return this.removeCondition(target, effect, value, auto, absolute)
+
+        if (typeof(effect) === "string") effect = duplicate(CONFIG.statusEffects.find(e => e.id == effect))
+
+        if (!effect) return "No Effect Found"
+
+        let existing = this.hasCondition(target, effect.id)
+
+        if (existing && existing.flags.dsa5.value == null)
+            return existing
+        else if (existing)
+            return await DSA5StatusEffects.updateEffect(target, existing, value, absolute, auto)
+        else if (!existing)
+            return await DSA5StatusEffects.createEffect(target, effect, value, auto)
+    }
+
+    static hasCondition(target, conditionKey) {
+        if (target.data != undefined && conditionKey) {
+            if (target.data.effects == undefined) return false
+
+            return target.data.effects.find(i => getProperty(i, "flags.core.statusId") == conditionKey)
+        }
+        return false
+    }
+
+    static async removeCondition(target, effect, value = 1, auto = true, absolute = false) {
+        if (!target.owner) return "Not owned"
+
+        if (typeof(effect) === "string") effect = duplicate(CONFIG.statusEffects.find(e => e.id == effect))
+
+        if (!effect) return "No Effect Found"
+
+        let existing = this.hasCondition(target, effect.id)
+
+        if (existing && existing.flags.dsa5.value == null) {
+            Hooks.call("deleteActorActiveEffect", target, existing)
+            return await target.deleteEmbeddedEntity("ActiveEffect", existing._id)
+        } else if (existing)
+            return await DSA5StatusEffects.removeEffect(target, existing, value, absolute, auto)
+
+    }
+
 
     static async createEffect(actor, effect, value, auto) {
         effect.label = game.i18n.localize(effect.label);
@@ -70,7 +142,6 @@ export default class DSA5StatusEffects {
 
         if (existing.flags.dsa5.auto <= 0 && existing.flags.dsa5.manual == 0)
             return actor.deleteEmbeddedEntity("ActiveEffect", existing._id)
-
         else
             return actor.updateEmbeddedEntity("ActiveEffect", existing)
     }
@@ -114,7 +185,7 @@ export default class DSA5StatusEffects {
     static getRollModifiers(actor, item, options = {}) {
         actor = actor.data.data ? actor.data : actor
         return actor.effects.map(effect => {
-            let effectClass = game.dsa5.config.statusEffectClasses[effect.flags.core.statusId] || DSA5StatusEffects
+            let effectClass = game.dsa5.config.statusEffectClasses[getProperty(effect, "flags.core.statusId")] || DSA5StatusEffects
             return {
                 name: effect.label,
                 value: effectClass.calculateRollModifier(effect, actor, item, options),
@@ -170,7 +241,7 @@ class BloodrushEffect extends DSA5StatusEffects {
 
 class PainEffect extends DSA5StatusEffects {
     static ModifierIsSelected(item, options = {}, actor) {
-        return actor.effects.find(x => x.flags.core.statusId == "bloodrush") == undefined
+        return actor.effects.find(x => getProperty(x, "flags.core.statusId") == "bloodrush") == undefined
     }
 }
 
@@ -191,7 +262,6 @@ DSA5.statusEffectClasses = {
 /*Macro Example
 
 const actor = game.actors.getName("Delgado Rochas");
-console.log(actor);
 actor.addCondition({
     label: "Zustandsname",
     icon: "icons/svg/aura.svg",
@@ -205,7 +275,6 @@ actor.addCondition({
         dsa5: {
             value: null,
             editable: true,
-            customizable: true,
             description: "Beschreibung des Effekts",
             custom: true
         }

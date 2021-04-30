@@ -149,6 +149,9 @@ DSA5.statusEffects = [{
         label: "CONDITION.bloodrush",
         icon: "icons/svg/bones.svg",
         description: "CONDITIONDESCRIPTION.bloodrush",
+        changes: [
+            { key: "data.skillModifiers.step", mode: 0, value: "Kraftakt 2;Feat of Strength 2" }
+        ],
         flags: {
             dsa5: {
                 "value": null,
@@ -666,12 +669,14 @@ DSA5.rangeVision = {
     "-5000": "VisionDisruption.step4"
 }
 
-DSA5.meleeRangeVision = {
-    "0": "meleeVisionDisruption.0",
-    "-1": "meleeVisionDisruption.1",
-    "-2": "meleeVisionDisruption.2",
-    "-3": "meleeVisionDisruption.3",
-    "*0.5": "meleeVisionDisruption.4"
+DSA5.meleeRangeVision = (mode) => {
+    return {
+        "0": "meleeVisionDisruption.0",
+        "-1": "meleeVisionDisruption.1",
+        "-2": "meleeVisionDisruption.2",
+        "-3": "meleeVisionDisruption.3",
+        [mode == "attack" ? "*0.5" : "-5000"]: "meleeVisionDisruption.4"
+    }
 }
 
 DSA5.attributeDifficultyModifiers = {

@@ -93,7 +93,6 @@ export default class ItemSheetdsa5 extends ItemSheet {
         }
     }
 
-
     activateListeners(html) {
         super.activateListeners(html);
 
@@ -106,6 +105,32 @@ export default class ItemSheetdsa5 extends ItemSheet {
 
         html.find('[data-edit="img"]').mousedown(ev => {
             if (ev.button == 2) DSA5_Utility.showArtwork(this.item)
+        })
+
+        html.find(".status-add").click(ev => {
+            DSA5StatusEffects.createCustomEffect(this.item, "", this.item.name)
+        })
+
+        html.find('.condition-show').mousedown(ev => {
+            ev.preventDefault()
+            const id = $(ev.currentTarget).attr("data-id")
+            if (ev.button == 0) {
+                const effect = this.item.effects.get(id)
+                effect.sheet.render(true)
+            } else if (ev.button == 2) {
+                this.item.deleteEmbeddedEntity("ActiveEffect", id)
+            }
+        })
+
+        html.find(".condition-toggle").mousedown(ev => {
+            let condKey = $(ev.currentTarget).parents(".statusEffect").attr("data-id")
+            let ef = this.item.effects.get(condKey)
+            ef.update({ disabled: !ef.data.disabled })
+        })
+
+        html.find('.condition-edit').click(ev => {
+            const effect = this.item.effects.get($(ev.currentTarget).attr("data-id"))
+            effect.sheet.render(true)
         })
 
         DSA5StatusEffects.bindButtons(html)
@@ -176,6 +201,8 @@ export default class ItemSheetdsa5 extends ItemSheet {
         data.isOwned = this.item.isOwned
         if (data.isOwned)
             data.canAdvance = this.item.options.actor.data.canAdvance && this._advancable()
+
+        DSA5StatusEffects.prepareActiveEffects(this.item, data)
 
         return data;
     }

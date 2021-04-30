@@ -2,7 +2,7 @@ export default function() {
     Token.prototype.drawEffects = async function() {
         this.effects.removeChildren().forEach(c => c.destroy());
         const tokenEffects = this.data.effects;
-        const actorEffects = this.actor ? this.actor.temporaryEffects.filter(x => x.data.flags.dsa5.value > 0 || x.data.flags.dsa5.value == null) : [];
+        const actorEffects = this.actor ? this.actor.temporaryEffects.filter(x => { return (x.getFlag("dsa5", "value") > 0 || x.getFlag("dsa5", "value") == null) && (game.user.isGM || !x.getFlag("dsa5", "hidePlayers")) && !x.getFlag("dsa5", "hideOnToken") }) : [];
         let overlay = {
             src: this.data.overlayEffect,
             tint: null
@@ -93,4 +93,24 @@ export default function() {
         if (this.hasActiveHUD) canvas.tokens.hud.refreshStatusIcons();
         return active;
     }
+
+    Hooks.on("applyActiveEffect", (actor, change) => {
+        const current = getProperty(actor.data, change.key) || null
+        const ct = getType(current)
+        let update = null
+        switch (ct) {
+            case "Array":
+                let newElems = []
+                const source = change.effect.data.label
+                for (let elem of change.value.split(/(;|,)/)) {
+                    let vals = elem.split(" ")
+                    const value = vals.pop()
+                    const target = vals.join(" ")
+                    newElems.push({ source, value, target })
+                }
+                update = current.concat(newElems)
+        }
+        if (update !== null) setProperty(actor.data, change.key, update)
+        return update
+    })
 }

@@ -855,6 +855,10 @@ input[type="text"].col-Money-H {
     text-align: center
 }
 
+.right {
+    text-align: right;
+}
+
 .very-small {
     font-size: 10px;
 }
@@ -871,6 +875,9 @@ input[type="text"].col-Money-H {
     display: none;
 }
 
+.row-section .twoColors:nth-child(4n-1),
+.row-section .twoColors:nth-child(4n),
+.row-section.rowColors:nth-child(odd),
 .col.morph .tableOdd:nth-child(even),
 .row-section.inverseRowtable>.col:nth-child(odd),
 .row-section.rowtable>.col:nth-child(even) {
@@ -1272,7 +1279,8 @@ form.dsa5.item-sheet {
     background-image: url(../icons/backgrounds/kapitelstart.webp);
     background-size: 112% 110%;
     background-repeat: no-repeat;
-    background-position: -20px -5px;
+    /*background-position: -20px -5px;*/
+    background-position: 67% -5px;
     color: #191815;
 }
 
@@ -1526,11 +1534,13 @@ input[type="search"] {
     border: 1px solid black;
 }
 
+.dsa5.item-sheet .statusEffect img,
 .statusEffect img {
     border: none;
     background: rgba(0, 0, 0, 0.3);
     height: 28px;
     width: 28px;
+    margin: 0;
 }
 
 .statusEffect {
@@ -1869,7 +1879,7 @@ input[type="search"] {
 
 .chatButton img {
     display: inline-block;
-    margin-top: 0;
+    margin: 0;
     margin-right: 4px;
     width: 15px;
     height: 15px;
