@@ -1,0 +1,32 @@
+<h1>{{localize 'Book.preparation'}}</h1>
+<p>{{{localize 'Book.preparationDescription'}}}</p>
+<h2>Modules</h2>
+<div class="row-section table-title lineheight">
+    <div class="col ten center">
+        {{localize 'Book.active'}}
+    </div>
+    <div class="col four">
+        {{localize 'Name'}}
+    </div>
+    <div class="col two">
+        {{localize 'Description'}}
+    </div>
+</div>
+{{#each modules as |item i|}}
+<div class="row-section rowColors">
+    <div class="col ten center">
+        {{#if item.enabled}}
+        <i class="fas fa-check"></i> {{else}}
+        <i class="fas fa-times"></i> {{/if}}
+    </div>
+    <div class="col four">
+        {{item.name}}
+    </div>
+    <div class="col two">
+        {{item.description}}
+    </div>
+</div>
+{{/each}}
+
+<p>{{{info.initDescr}}}</p>
+<button class="importBook sheetButton">Import</button>

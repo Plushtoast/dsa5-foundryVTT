@@ -18,6 +18,7 @@ import ActorSheetdsa5Creature from "./../actor/creature-sheet.js";
 import ActorSheetdsa5NPC from "./../actor/npc-sheet.js";
 import ItemSheetdsa5 from "./../item/item-sheet.js";
 import MerchantSheetDSA5 from "../actor/merchant-sheet.js";
+import BookWizard from "../wizards/adventure_wizard.js";
 
 export default function() {
     initHandleBars.default();
@@ -90,6 +91,8 @@ Hooks.once('setup', function() {
         game.settings.set("core", "language", "de")
     }
     setupKnownEquipmentModifiers()
+
+    BookWizard.initHook()
 })
 
 function setupKnownEquipmentModifiers() {

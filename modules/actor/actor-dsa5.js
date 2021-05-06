@@ -557,12 +557,13 @@ export default class Actordsa5 extends Actor {
 
         const isMerchant = ["merchant", "loot"].includes(getProperty(actorData, "data.merchant.merchantType"))
 
-        if ((actorData.type != "creature" || actorData.canAdvance) && !isMerchant)
+        if ((actorData.type != "creature" || actorData.canAdvance) && !isMerchant) {
             encumbrance += Math.max(0, Math.ceil((totalWeight - carrycapacity - 4) / 4))
 
-        totalWeight = parseFloat(totalWeight.toFixed(3))
-
+        }
         this.addCondition("encumbered", encumbrance, true)
+
+        totalWeight = parseFloat(totalWeight.toFixed(3))
 
         specAbs.magical = specAbs.magical.concat(specAbs.staff)
         specAbs.clerical = specAbs.clerical.concat(specAbs.ceremonial)
@@ -706,27 +707,27 @@ export default class Actordsa5 extends Actor {
         return false
     }
 
-    setupWeapon(item, mode, options) {
+    setupWeapon(item, mode, options, tokenId) {
         options["mode"] = mode
-        return Itemdsa5.getSubClass(item.type).setupDialog(null, options, item, this)
+        return Itemdsa5.getSubClass(item.type).setupDialog(null, options, item, this, tokenId)
     }
 
-    setupWeaponless(statusId, options = {}) {
+    setupWeaponless(statusId, options = {}, tokenId) {
         let item = duplicate(DSA5.defaultWeapon)
         item.name = game.i18n.localize(`${statusId}Weaponless`)
-        item.data.data.combatskill = { value: game.i18n.localize("Combatskill.wrestle") }
+        item.data.data.combatskill = { value: game.i18n.localize("LocalizedIDs.wrestle") }
         item.data.type = "meleeweapon"
         item.data.data.damageThreshold.value = 14
         options["mode"] = statusId
-        return Itemdsa5.getSubClass(item.type).setupDialog(null, options, item, this)
+        return Itemdsa5.getSubClass(item.type).setupDialog(null, options, item, this, tokenId)
     }
 
-    setupSpell(spell, options = {}) {
-        return Itemdsa5.getSubClass(spell.type).setupDialog(null, options, spell, this)
+    setupSpell(spell, options = {}, tokenId) {
+        return Itemdsa5.getSubClass(spell.type).setupDialog(null, options, spell, this, tokenId)
     }
 
-    setupSkill(skill, options = {}) {
-        return Itemdsa5.getSubClass(skill.type).setupDialog(null, options, skill, this)
+    setupSkill(skill, options = {}, tokenId) {
+        return Itemdsa5.getSubClass(skill.type).setupDialog(null, options, skill, this, tokenId)
     }
 
     applyDamage(amount) {
@@ -826,16 +827,15 @@ export default class Actordsa5 extends Actor {
                                 DiceDSA5.showDiceSoNice(newRoll, newTestData.rollMode)
 
                                 let ind = 0
-                                let ro = []
-                                let before = []
+                                let changedRolls = []
                                 for (let k of diesToReroll) {
-                                    ro.push(newRoll.results[ind * 2])
-                                    before.push(newTestData.roll.results[k * 2])
+                                    const attr = game.i18n.localize(`CHARAbbrev.${newTestData.source.data[`characteristic${k + 1}`].value.toUpperCase()}`)
+                                    changedRolls.push(`${attr} - ${newTestData.roll.results[k * 2]}/${newRoll.results[ind * 2]}`)
                                     newTestData.roll.results[k * 2] = Math.min(newRoll.results[ind * 2], newTestData.roll.results[k * 2])
                                     newTestData.roll.terms[k * 2].results[0].result = Math.min(newRoll.results[ind * 2], newTestData.roll.terms[k * 2].results[0].result)
                                     ind += 1
                                 }
-                                infoMsg += `<b>${game.i18n.localize('Roll')}</b>: ${before.join(" ")}/${ro.join(", ")}`
+                                infoMsg += `<b>${game.i18n.localize('Roll')}</b>: ${changedRolls.join(", ")}`
                                 ChatMessage.create(DSA5_Utility.chatDataSetup(infoMsg));
 
                                 this[`${data.postData.postFunction}`]({ testData: newTestData, cardOptions }, { rerenderMessage: message });
@@ -843,7 +843,6 @@ export default class Actordsa5 extends Actor {
                                     "flags.data.talentedRerollUsed": true
                                 });
                             }
-
                         }
                     },
                     cancel: {
@@ -881,13 +880,19 @@ export default class Actordsa5 extends Actor {
                                 newRoll = await DiceDSA5.manualRolls(new Roll(newRoll.join("+")).roll(), "CHATCONTEXT.Reroll")
                                 DiceDSA5.showDiceSoNice(newRoll, newTestData.rollMode)
 
-                                ChatMessage.create(DSA5_Utility.chatDataSetup(infoMsg));
                                 let ind = 0
+                                let changedRolls = []
                                 for (let k of diesToReroll) {
+                                    const attr = game.i18n.localize(`CHARAbbrev.${newTestData.source.data[`characteristic${k+1}`].value.toUpperCase()}`)
+                                    changedRolls.push(`${attr} - ${newTestData.roll.results[k * 2]}/${newRoll.results[ind * 2]}`)
                                     newTestData.roll.results[k * 2] = newRoll.results[ind * 2]
                                     newTestData.roll.terms[k * 2].results[0].result = newRoll.results[ind * 2]
                                     ind += 1
                                 }
+
+                                infoMsg += `<br><b>${game.i18n.localize('Roll')}</b>: ${changedRolls.join(", ")}`
+                                ChatMessage.create(DSA5_Utility.chatDataSetup(infoMsg));
+
                                 this[`${data.postData.postFunction}`]({ testData: newTestData, cardOptions }, { rerenderMessage: message });
                                 message.update({ "flags.data.fatePointRerollUsed": true });
                                 this.update({ "data.status.fatePoints.value": this.data.data.status.fatePoints.value - 1 })
@@ -926,12 +931,13 @@ export default class Actordsa5 extends Actor {
                 <b>${game.i18n.localize("CHATFATE.PointsRemaining")}</b>: ${this.data.data.status.fatePoints.value - 1}`;
 
             let newTestData = data.preData
+            newTestData.extra.actor = DSA5_Utility.getSpeaker(newTestData.extra.speaker).data
 
             this[`fate${type}`](infoMsg, cardOptions, newTestData, message, data)
         }
     }
 
-    setupRegeneration(statusId, options = {}) {
+    setupRegeneration(statusId, options = {}, tokenId) {
         let title = game.i18n.localize("regenerationTest");
 
         let testData = {
@@ -941,8 +947,12 @@ export default class Actordsa5 extends Actor {
             opposable: false,
             extra: {
                 statusId: statusId,
-                actor: this.data,
-                options: options
+                actor: duplicate(this),
+                options: options,
+                speaker: {
+                    token: tokenId,
+                    actor: this.data._id
+                }
             }
         };
 
@@ -979,7 +989,7 @@ export default class Actordsa5 extends Actor {
         });
     }
 
-    setupDodge(options = {}) {
+    setupDodge(options = {}, tokenId) {
         const statusId = "dodge"
         let char = this.data.data.status[statusId];
         let title = game.i18n.localize(statusId) + " " + game.i18n.localize("Test");
@@ -989,8 +999,12 @@ export default class Actordsa5 extends Actor {
             opposable: false,
             extra: {
                 statusId: statusId,
-                actor: this.data,
-                options: options
+                actor: duplicate(this),
+                options: options,
+                speaker: {
+                    token: tokenId,
+                    actor: this.data._id
+                }
             }
         };
 
@@ -1037,7 +1051,7 @@ export default class Actordsa5 extends Actor {
         });
     }
 
-    setupCharacteristic(characteristicId, options = {}) {
+    setupCharacteristic(characteristicId, options = {}, tokenId) {
         let char = this.data.data.characteristics[characteristicId];
         let title = game.i18n.localize(char.label) + " " + game.i18n.localize("Test");
 
@@ -1046,8 +1060,12 @@ export default class Actordsa5 extends Actor {
             source: char,
             extra: {
                 characteristicId: characteristicId,
-                actor: this.data,
-                options: options
+                actor: duplicate(this),
+                options: options,
+                speaker: {
+                    token: tokenId,
+                    actor: this.data._id
+                }
             }
         };
 
@@ -1058,7 +1076,8 @@ export default class Actordsa5 extends Actor {
             template: "/systems/dsa5/templates/dialog/characteristic-dialog.html",
             data: {
                 rollMode: options.rollMode,
-                difficultyLabels: (DSA5.attributeDifficultyLabels)
+                difficultyLabels: (DSA5.attributeDifficultyLabels),
+                modifier: options.modifier || 0
             },
             callback: (html) => {
                 cardOptions.rollMode = html.find('[name="rollMode"]').val();

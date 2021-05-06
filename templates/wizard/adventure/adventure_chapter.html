@@ -1,0 +1,72 @@
+<h1>{{chapter.name}}</h1>
+{{#if chapter.scenes}}
+
+<h2>{{localize 'Book.scenes'}}</h2>
+<div class="row-section table-title lineheight">
+    <div class="col fourty">
+        {{localize 'Name'}}
+    </div>
+    <div class="col ten center">
+        {{localize 'SCENES.Activate'}}
+    </div>
+    <div class="col ten center">
+        {{localize 'SCENES.View'}}
+    </div>
+    <div class="col ten center">
+        {{localize 'SCENES.ToggleNav'}}
+    </div>
+</div>
+{{#each chapter.scenes as |item i|}}
+<div class="row-section lineheight rowColors">
+    <div class="col fourty">
+        {{item}}
+    </div>
+    <div class="col ten center">
+        <a class="activateScene" data-id="{{item}}" data-mode="activate"><i class="fas fa-bullseye"></i></a>
+    </div>
+    <div class="col ten center">
+        <a class="activateScene" data-id="{{item}}" data-mode="view"><i class="fas fa-eye"></i></a>
+    </div>
+    <div class="col ten center">
+        <a class="activateScene" data-id="{{item}}" data-mode="toggle"><i class="fas fa-compass"></i></a>
+    </div>
+</div>
+{{/each}} {{/if}} {{#if actors}}
+<h2>{{localize 'Book.actors'}}</h2>
+<div class="row-section wrap table-title lineheight">
+    <div class="col ten ">
+    </div>
+    <div class="col fourty">
+        {{localize 'Name'}}
+    </div>
+    <div class="col ten ">
+    </div>
+    <div class="col fourty">
+        {{localize 'Name'}}
+    </div>
+
+</div>
+<div class="row-section wrap">
+    {{#each actors as |item i|}}
+    <div class="col two row-section twoColors">
+        <div class="col five picto">
+            {{#if item.actor}}
+            <img height="40" width="40" src="{{item.actor.img}}" /> {{/if}}
+        </div>
+        <div class="col eighty picto">
+            <a class="entity-link" {{#if item.pack}}data-pack="{{item.pack}}" {{/if}} draggable="true" data-entity="Actor" data-id="{{item.actor._id}}"><i class="fas fa-user"></i> {{item.name}}</a>
+        </div>
+    </div>
+    {{/each}}
+</div>
+
+{{/if}}
+
+<div class="toc">
+    <h2>{{localize 'Book.toc'}}</h2>
+    <ul>
+        {{#each subChapters as |item i|}}
+        <li class="fas fa-caret-right"><a class="subChapter">{{item}}</a></li>
+        {{/each}}
+    </ul>
+</div>

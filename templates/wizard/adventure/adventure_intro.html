@@ -1,0 +1,20 @@
+<div>
+    <h1>{{localize 'Book.Wizard'}}</h1>
+    <p>{{localize 'Book.Description'}}</p>
+    {{#if adventures}}
+    <h2>{{localize 'Book.availableModules'}}</h2>
+    <ul class="dsalist">
+        {{#each adventures as |item i|}}
+        <li><a data-type="adventures" class="loadBook">{{item.id}}</a></li>
+        {{/each}}
+    </ul>
+    {{/if}}
+    <h2>{{localize 'Book.availableRules'}}</h2>
+    <ul class="dsalist">
+        {{#if rules}} {{#each rules as |item i|}}
+        <li><a data-type="books" class="loadBook">{{item.id}}</a></li>
+        {{/each}} {{else}}
+        <li>{{localize 'Book.nothing'}}</li>
+        {{/if}}
+    </ul>
+</div>

@@ -13,13 +13,34 @@ export default class DSA5CombatDialog extends Dialog {
     activateListeners(html) {
         super.activateListeners(html)
         let roman = ['', ' I', ' II', ' III', ' IV', ' V', ' VI', ' VII', ' VIII', ' IX']
-        html.find('.specAbs').mousedown(ev => {
 
+        let specAbs = html.find('.specAbs')
+        specAbs.mouseenter(ev => {
+            if (ev.currentTarget.getElementsByClassName('hovermenu').length == 0) {
+                let div = document.createElement('div')
+                div.classList.add("hovermenu")
+                let post = document.createElement('i')
+                post.classList.add("fas", "fa-comment")
+                post.title = game.i18n.localize('SHEET.PostItem')
+                post.addEventListener('mousedown', this._postItem, false)
+                div.appendChild(post)
+                ev.currentTarget.appendChild(div)
+            }
+        });
+        specAbs.mouseleave(ev => {
+            let e = ev.toElement || ev.relatedTarget;
+            if (e.parentNode == this || e == this)
+                return;
+
+            ev.currentTarget.querySelectorAll('.hovermenu').forEach(e => e.remove());
+        });
+
+
+        html.on("mousedown", ".specAbs", ev => {
             if (html.find('.opportunityAttack').is(":checked")) {
                 ui.notifications.error(game.i18n.localize("DSAError.opposedAttackNoSpecAbs"))
                 return
             }
-
             let step = Number($(ev.currentTarget).attr('data-step'))
             let maxStep = Number($(ev.currentTarget).attr('data-maxStep'))
 
@@ -61,5 +82,17 @@ export default class DSA5CombatDialog extends Dialog {
             }
             $(ev.currentTarget).val(val)
         });
+    }
+
+    _postItem(ev) {
+        ev.stopPropagation()
+        const elem = $(ev.currentTarget).closest('.specAbs')
+        const actorId = elem.attr("data-actor")
+        const id = elem.attr("data-id")
+
+        const actor = game.actors.get(actorId)
+        actor.items.get(id).postItem()
+
+        return false
     }
 }

@@ -59,29 +59,30 @@ export default class CareerWizard extends WizardDSA5 {
     }
 
     getData() {
-        let data = super.getData()
-        let advantages = this.parseToItem(this.career.data.recommendedAdvantages.value, ["advantage"])
-        let disadvantages = this.parseToItem(this.career.data.recommendedDisadvantages.value, ["disadvantage"])
-        let requirements = this.parseToItem(this.career.data.requirements.value, ["disadvantage", "advantage", "specialability"])
-        let missingVantages = requirements.filter(x => ["advantage", "disadvantage"].includes(x.type) && !x.disabled)
-        let attributeRequirements = requirements.filter(x => x.attributeRequirement)
-        let combatskillchoices = this.parseCombatskills(this.career.data.combatSkills.value)
-        let baseCost = Number(this.career.data.APValue.value) + requirements.reduce(function(_this, val) {
+        const data = super.getData()
+        const advantages = this.parseToItem(this.career.data.recommendedAdvantages.value, ["advantage"])
+        const disadvantages = this.parseToItem(this.career.data.recommendedDisadvantages.value, ["disadvantage"])
+        const requirements = this.parseToItem(this.career.data.requirements.value, ["disadvantage", "advantage", "specialability"])
+        const missingVantages = requirements.filter(x => ["advantage", "disadvantage"].includes(x.type) && !x.disabled)
+        const attributeRequirements = requirements.filter(x => x.attributeRequirement)
+        const combatskillchoices = this.parseCombatskills(this.career.data.combatSkills.value)
+        const baseCost = Number(this.career.data.APValue.value)
+        const reqCost = requirements.reduce(function(_this, val) {
             return _this + (val.disabled ? 0 : Number(val.data.APValue.value) || 0)
         }, 0)
         let missingSpecialabilities = requirements.filter(x => x.type == "specialability" && !x.disabled)
         mergeObject(data, {
             title: game.i18n.format("WIZARD.addItem", { item: `${game.i18n.localize("career")} ${this.career.name}` }),
             career: this.career,
-            description: game.i18n.format("WIZARD.careerdescr", { career: this.career.name, cost: baseCost }),
-            baseCost: baseCost,
-            advantages: advantages,
-            disadvantages: disadvantages,
-            missingVantages: missingVantages,
-            missingSpecialabilities: missingSpecialabilities,
+            description: game.i18n.format("WIZARD.careerdescr", { career: this.career.name, cost: baseCost + reqCost }),
+            baseCost,
+            advantages,
+            disadvantages,
+            missingVantages,
+            missingSpecialabilities,
             combatskillchoices: combatskillchoices,
             spelltricks: this.parseToItem(this.career.data.spelltricks.value, ["magictrick"]),
-            attributeRequirements: attributeRequirements,
+            attributeRequirements,
             advantagesToChose: advantages.length > 0,
             disadvantagesToChose: disadvantages.length > 0,
             vantagesToChose: advantages.length > 0 || disadvantages.length > 0 || missingVantages.length > 0,
@@ -168,17 +169,6 @@ export default class CareerWizard extends WizardDSA5 {
         }
     }
 
-    /*async deleteOldCareer() {
-        if (this.actor.data.data.details.career.value != "") {
-            let oldCareer = this.items.find(x => x.name == this.actor.data.data.details.career.value && x.type == "career")
-            if (oldCareer) {
-                for (let skill of oldCareer.data.data.skills.value.split(",")) {
-                    await this.updateSkill(skill, "skill", -1)
-                }
-            }
-        }
-    }*/
-
     async updateCharacter() {
         let parent = $(this._element)
         parent.find("button.ok i").toggleClass("fa-check fa-spinner fa-spin")
@@ -188,8 +178,6 @@ export default class CareerWizard extends WizardDSA5 {
             parent.find("button.ok i").toggleClass("fa-check fa-spinner fa-spin")
             return
         }
-
-        //await this.deleteOldCareer()
 
         let update = {
             "data.details.career.value": this.career.name,
@@ -206,6 +194,7 @@ export default class CareerWizard extends WizardDSA5 {
 
         if (this.career.data.mageLevel.value != "mundane") {
             update[`data.guidevalue.${this.career.data.mageLevel.value}`] = this.career.data.guidevalue.value
+            update[`data.energyfactor.${this.career.data.mageLevel.value}`] = this.career.data.guidevalue.factor
             update[`data.tradition.${this.career.data.mageLevel.value}`] = this.career.data.tradition.value
             update[`data.feature.${this.career.data.mageLevel.value}`] = this.career.data.feature.value
         }

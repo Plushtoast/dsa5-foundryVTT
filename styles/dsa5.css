@@ -2032,6 +2032,7 @@ a.inline-roll {
     line-height: 20px;
     overflow: hidden;
     color: #888;
+    position: relative;
 }
 
 .specAbs.active {

@@ -1,3 +1,4 @@
+import DSA5ChatListeners from './chat_listeners.js';
 import DSA5 from './config-dsa5.js'
 
 export default class DSA5_Utility {

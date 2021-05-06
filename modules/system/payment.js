@@ -41,6 +41,7 @@ export default class DSA5Payment {
             if (!silent) {
                 ChatMessage.create(DSA5_Utility.chatDataSetup(msg, "roll"))
             }
+            return true
         }
     }
 
@@ -133,13 +134,27 @@ export default class DSA5Payment {
             return
         }
         let actor = game.user.character
-        if (actor && pay) {
-            DSA5Payment.payMoney(actor, $(ev.currentTarget).attr("data-amount"))
-        } else if (actor && !pay) {
-            DSA5Payment.getMoney(actor, $(ev.currentTarget).attr("data-amount"))
+        const elem = $(ev.currentTarget)
 
+        let result = false
+        if (actor && pay) {
+            result = DSA5Payment.payMoney(actor, elem.attr("data-amount"))
+        } else if (actor && !pay) {
+            result = DSA5Payment.getMoney(actor, elem.attr("data-amount"))
         } else {
             ui.notifications.notify(game.i18n.localize("PAYMENT.onlyActors"))
+        }
+        if (result) {
+            elem.fadeOut()
+            game.socket.emit("system.dsa5", {
+                type: "updateMsg",
+                payload: {
+                    id: elem.closest(".message").attr("data-message-id"),
+                    updateData: {
+                        [`flags.dsa5.userHidden.${game.user.data._id}`]: true
+                    }
+                }
+            })
         }
     }
 

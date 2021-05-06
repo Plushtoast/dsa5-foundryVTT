@@ -63,24 +63,25 @@ export default class SpeciesWizard extends WizardDSA5 {
     }
 
     getData() {
-        let data = super.getData()
-        let advantagegroups = this._toGroups(this.species.data.recommendedAdvantages.value, ["advantage"])
-        let disadvantagegroups = this._toGroups(this.species.data.recommendedDisadvantages.value, ["disadvantage"])
-        let requirements = this.parseToItem(this.species.data.requirements.value, ["disadvantage", "advantage"])
-        let missingVantages = requirements.filter(x => ["advantage", "disadvantage"].includes(x.type) && !x.disabled)
-        let attributeRequirements = this._parseAttributes(this.species.data.attributeChange.value)
-        let baseCost = Number(this.species.data.APValue.value) + requirements.reduce(function(_this, val) {
+        const data = super.getData()
+        const advantagegroups = this._toGroups(this.species.data.recommendedAdvantages.value, ["advantage"])
+        const disadvantagegroups = this._toGroups(this.species.data.recommendedDisadvantages.value, ["disadvantage"])
+        const requirements = this.parseToItem(this.species.data.requirements.value, ["disadvantage", "advantage"])
+        const missingVantages = requirements.filter(x => ["advantage", "disadvantage"].includes(x.type) && !x.disabled)
+        const attributeRequirements = this._parseAttributes(this.species.data.attributeChange.value)
+        const baseCost = Number(this.species.data.APValue.value)
+        const reqCost = requirements.reduce(function(_this, val) {
             return _this + (val.disabled ? 0 : Number(val.data.APValue.value) || 0)
         }, 0)
         mergeObject(data, {
             title: game.i18n.format("WIZARD.addItem", { item: `${game.i18n.localize("species")} ${this.species.name}` }),
             species: this.species,
-            description: game.i18n.format("WIZARD.speciesdescr", { species: this.species.name, cost: baseCost }),
-            advantagegroups: advantagegroups,
-            baseCost: baseCost,
-            disadvantagegroups: disadvantagegroups,
-            missingVantages: missingVantages,
-            attributeRequirements: attributeRequirements,
+            description: game.i18n.format("WIZARD.speciesdescr", { species: this.species.name, cost: baseCost + reqCost }),
+            advantagegroups,
+            baseCost,
+            disadvantagegroups,
+            missingVantages,
+            attributeRequirements,
             anyAttributeRequirements: attributeRequirements.length > 0,
             advantagesToChose: advantagegroups.length > 0,
             missingVantagesToChose: missingVantages.length > 0,
@@ -122,8 +123,8 @@ export default class SpeciesWizard extends WizardDSA5 {
             attributeChoices.push($(k).val())
         }
 
-        ["MU", "KL", "IN", "CH", "FF", "GE", "KO", "KK"].forEach(k => {
-            update[`data.characteristics.${k.toLowerCase()}.species`] = 0
+        ["mu", "kl", "in", "ch", "ff", "ge", "ko", "kk"].forEach(k => {
+            update[`data.characteristics.${k}.species`] = 0
         })
 
         for (let attr of this.species.data.attributeChange.value.split(",").concat(attributeChoices)) {

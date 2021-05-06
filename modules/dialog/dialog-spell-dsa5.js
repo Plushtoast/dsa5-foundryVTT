@@ -24,6 +24,7 @@ export default class DSA5SpellDialog extends Dialog {
 
     activateListeners(html) {
         super.activateListeners(html)
+
         html.find('.specAbs').mousedown(ev => {
             $(ev.currentTarget).toggleClass("active")
         })

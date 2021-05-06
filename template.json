@@ -730,7 +730,8 @@
                 "value": ""
             },
             "guidevalue": {
-                "value": "-"
+                "value": "-",
+                "factor": 1
             },
             "tradition": {
                 "value": ""

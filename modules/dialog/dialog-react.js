@@ -33,9 +33,12 @@ export default class DialogReactDSA5 extends Dialog {
 
         if (!actor) {
             ui.notifications.error(game.i18n.localize("DSAError.noProperActor"))
-            return
+            return {}
         }
-        return actor
+        return {
+            actor,
+            tokenId: speaker.token
+        }
     }
 
 
@@ -75,13 +78,13 @@ export class ReactToSkillDialog extends DialogReactDSA5 {
     }
 
     static callbackResult(text, message) {
-        let actor = DialogReactDSA5.getTargetActor(message)
+        const { actor, tokenId } = DialogReactDSA5.getTargetActor(message)
         if ("doNothing" == text) {
             OpposedDsa5.resolveUndefended(message)
         } else {
             let skill = actor.items.find(i => i.name == text && i.type == "skill")
             if (skill) {
-                actor.setupSkill(skill.data).then(setupData => {
+                actor.setupSkill(skill.data, {}, tokenId).then(setupData => {
                     actor.basicTest(setupData)
                 });
             }
@@ -90,7 +93,7 @@ export class ReactToSkillDialog extends DialogReactDSA5 {
 }
 
 export class ActAttackDialog extends Dialog {
-    static async showDialog(actor) {
+    static async showDialog(actor, tokenId) {
         let fun = this.callbackResult
         new DialogReactDSA5({
             title: game.i18n.localize("attacktest"),
@@ -101,7 +104,7 @@ export class ActAttackDialog extends Dialog {
                     icon: '<i class="fa fa-check"></i>',
                     label: game.i18n.localize("ok"),
                     callback: dlg => {
-                        fun(dlg.find('[name="entryselection"]').val(), actor)
+                        fun(dlg.find('[name="entryselection"]').val(), actor, tokenId)
                     }
                 },
                 cancel: {
@@ -135,16 +138,16 @@ export class ActAttackDialog extends Dialog {
 
         return await renderTemplate('systems/dsa5/templates/dialog/dialog-act.html', { items: items, original: item })
     }
-    static callbackResult(text, actor) {
+    static callbackResult(text, actor, tokenId) {
         if ("attackWeaponless" == text) {
-            actor.setupWeaponless("attack", {}).then(setupData => {
+            actor.setupWeaponless("attack", {}, tokenId).then(setupData => {
                 actor.basicTest(setupData)
             });
         } else {
             let types = ["meleeweapon", "trait", "rangeweapon"]
             let result = actor.data.items.find(x => { return types.includes(x.type) && x.name == text })
             if (result) {
-                actor.setupWeapon(result, "attack", {}).then(setupData => {
+                actor.setupWeapon(result, "attack", {}, tokenId).then(setupData => {
                     actor.basicTest(setupData)
                 });
             }
@@ -167,7 +170,7 @@ export class ReactToAttackDialog extends DialogReactDSA5 {
             id: "parryWeaponless"
         }]
 
-        let actor = DialogReactDSA5.getTargetActor(startMessage)
+        const { actor, tokenId } = DialogReactDSA5.getTargetActor(startMessage)
         if (actor) {
             let types = ["meleeweapon"]
             let result = actor.data.items.filter(x => { return (types.includes(x.type) && x.data.worn.value == true) || (x.type == "trait" && Number(x.data.pa) > 0) })
@@ -183,22 +186,23 @@ export class ReactToAttackDialog extends DialogReactDSA5 {
     }
 
     static callbackResult(text, message) {
-        let actor = DialogReactDSA5.getTargetActor(message)
+        const { actor, tokenId } = DialogReactDSA5.getTargetActor(message)
+
         if ("doNothing" == text) {
             OpposedDsa5.resolveUndefended(message)
         } else if ("dodge" == text) {
-            actor.setupDodge({}).then(setupData => {
+            actor.setupDodge({}, tokenId).then(setupData => {
                 actor.basicTest(setupData)
             });
         } else if ("parryWeaponless" == text) {
-            actor.setupWeaponless("parry", {}).then(setupData => {
+            actor.setupWeaponless("parry", {}, tokenId).then(setupData => {
                 actor.basicTest(setupData)
             });
         } else {
             let types = ["meleeweapon", "trait"]
             let result = actor.data.items.find(x => { return types.includes(x.type) && x.name == text })
             if (result) {
-                actor.setupWeapon(result, "parry", {}).then(setupData => {
+                actor.setupWeapon(result, "parry", {}, tokenId).then(setupData => {
                     actor.basicTest(setupData)
                 });
             }

@@ -179,6 +179,7 @@
     "biography": "Biography",
     "Category": "Category",
     "clerical": "clerical",
+    "confirmed": "Confirmed",
     "charges": "Charges",
     "condition": "Condition",
     "ceremonialItem": "Ceremonial Item",
@@ -425,6 +426,7 @@
     "target": "Target",
     "usedWeaponExpertise": "used weapon aptitude ({a}/{b})",
     "Unopposed": "Reaction",
+    "unconfirmed": "Unconfirmed",
     "usedTestCount": "Rolled checks",
     "value": "Value",
     "vantages": "Dis-/Advantages",
@@ -571,10 +573,6 @@
         "Survival": "<p><b>New Application</b>: Predict Weather</p><p><b>Applications</b>: Build Campsite, Find Campsite, Make Fire</p><p><b>Tools</b>: survival gear, maybe a tent</p><p><b>Quality</b>: the hero doesn’t need as much time to find or build a campsite.</p><p><b>Failed Check</b>: the hero chooses a poor campsite. Regeneration Phases suffer a penalty of -1.</p><p><b>Critical Success</b>: the hero finds a great resting place! Increase regeneration by 1.</p><p><b>Botch</b>: the campsite floods or swarms with vermin.</p>",
         "Willpower": "<p><b>Applications</b>: Face Threats, Resist Fast-Talk, Resist Intimidation, Resist Persuasion, Resist Seduction</p><p><b>Quality</b>: greatly reduce the effects of Seduction or Persuasion, or resist them completely.</p><p><b>Failed Check</b>: the hero cannot resist.</p><p><b>Critical Success</b>: the hero resists and cannot be influenced by that person or thing for the near future.</p><p><b>Botch</b>: the hero succumbs completely to the person attempting the influence, or faints when faced with something like a horrible demon.</p>",
         "Carousing": "<p><b>Applications</b>: Resist Drug Confusion, Resist Drug Intoxication, Resist Drug Pain</p><p><b>Quality</b>: the hero can stomach more than usual.</p><p><b>Failed Check</b>: the hero receives a level of the condition Confusion and awakens the next day with a hangover or some other unwanted consequence.</p><p><b>Critical Success</b>: the hero endures to the bitter end, yet wakes in excellent condition the next day.</p><p><b>Botch</b>: the hero does something embarrassing while intoxicated (such as smashing half of the inn, awakening naked in the market place or in a stranger’s bed the next morning, or blurting out secrets to the enemy) and can’t remember a thing.</p>"
-    },
-
-    "Combatskill": {
-        "wrestle": "Brawling"
     },
 
     "Skill-eeasy": "Extremely easy (+5)",
@@ -860,6 +858,7 @@
         "shields": "Shields",
         "localKnowledge": "Area Knowledge",
         "naturalArmor": "Natural Armor",
+        "wrestle": "Brawling",
         "all": "all",
         "twoWeaponCombat": "Two-Weapon Combat",
         "poisonResistance": "Poison Resitance",
@@ -912,7 +911,8 @@
         "onlyGMAllowedToCancel": "Only the game master is allowed to abort opposing tests",
         "unknownCombatSkill": "The combat technique {skill} of the weapon {item} is unknown. Please fix the weapon.",
         "onlyGMcanShapeshift": "You don't have the right permissions to shapeshift.",
-        "staleData": "Stale opposing test data found. Please make sure to finish opposing tests. Stale data deleted."
+        "staleData": "Stale opposing test data found. Please make sure to finish opposing tests. Stale data deleted.",
+        "sceneNotInitialized": "Scene not found. Already initialized?"
     },
 
     "CEREMONYMODIFIER": {
@@ -939,8 +939,8 @@
     },
 
     "PAYMENT": {
-        "pay": "<b>{actor}</b> pays his debts of {amount}.",
-        "getPaid": "<b>{actor}</b> receives his payment of {amount}.",
+        "pay": "<b>{actor}</b> pays his/her debts of {amount}.",
+        "getPaid": "<b>{actor}</b> receives his/her payment of {amount}.",
         "payexample": "Type /pay and the number of silverthalers to pay. F.e.: /pay 13,45",
         "getPaidexample": "Type /getPaid and the number of silverthalers as payment. Z.B.: /getPaid 13,45",
         "error": "Wrong entry",
@@ -1001,6 +1001,25 @@
         "0": "Unaimed",
         "1": "Aim 1 action",
         "2": "Aim 2 actions"
+    },
+
+    "Book": {
+        "Wizard": "Journal Browser",
+        "Description": "Welcome to the journal browser. This tool is supposed to assist in the usage of source, rule and adventure modules by giving an overview on all included contents like scenes, chapters and descriptions. Moreover hints for the usage are provided and functions for the initialisation of the modules.",
+        "availableModules": "Installed adventure modules",
+        "availableRules": "Available rulebooks",
+        "preparation": "Preparation",
+        "preparationDescription": "To get the most out of this adventure module we recommend to acknowledge the following things: <ul class=\"dsalist\"><li>Read the correspondig journal entries for the current scene in advance.</li><li>Get used to the battle map and place tokens in advance. It is recommended to place the tokens invisible and only showing them once the players encounter those. This helps to avoid spoilers (hold alt while dropping the token to the scene).</li><li>Initialize the contents of the adventure through the available functions. Dragging the content manually into your world does not suffice to setup everything properly. Don't initialize multiple times.</li><li>Check wether you installed all recommended modules. Those are not required but faciliate and improve the mastering of the adventure.</li></ul>",
+        "toc": "Chapter",
+        "info": "Info",
+        "scenes": "Scenes",
+        "active": "Active",
+        "actors": "Actors",
+        "background": "Background",
+        "nothing": "None yet",
+        "home": "Home",
+        "foundryUsage": "Foundry & TDE",
+        "foundryUsagedesc": "<p>You can get more informations on the usage of Foundry with TDE in the <a href=\"https://github.com/Plushtoast/dsa5-foundryVTT/wiki\" target=\"_blank\">Wiki</a>.</p><p>You can also get quick help in the Ulisses or Foundry Discord.</p><p>Using the journal browser: <ul class=\"dsalist\"><li>Right click on images to show them to your players.</li></ul></p>"
     },
 
     "DSASETTINGS": {

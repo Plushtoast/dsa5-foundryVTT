@@ -165,6 +165,7 @@
     "Category": "Kategorie",
     "clerical": "klerikal",
     "condition": "Zustand",
+    "confirmed": "Bestätigter",
     "ceremonialItem": "Zeremonialgegenstand",
     "combatspecialtalents": "Kampfsonderfertigkeiten",
     "CriticalSuccess": "Kritischer Erfolg",
@@ -409,6 +410,7 @@
     "targetCategory": "Zielkategorie",
     "target": "Ziel",
     "usedWeaponExpertise": "Waffenbegabung eingesetzt ({a}/{b})",
+    "unconfirmed": "Unbestätigter",
     "Unopposed": "Reaktion",
     "usedTestCount": "Gewürfelte Proben",
     "value": "Wert",
@@ -558,8 +560,23 @@
         "Zechen": "<p><b>Anwendungsgebiete</b>: Vermeidung von Betäubung durch Rauschmittel, Vermeidung von Schmerz durch Rauschmittel, Vermeidung von Verwirrung durch Rauschmittel</p><p><b>Qualität</b>: Der Held verträgt viel mehr als üblich.</p><p><b>Misslungene Probe</b>: Der Held erhält eine Stufe des Zustands Betäubung und erwacht am nächsten Tag mit Kopfschmerzen oder anderen unliebsamen Auswirkungen seines Gelages.</p><p><b>Kritischer Erfolg</b>: Dem Helden gelingt es, bis zum bitteren Ende durchzuhalten, und trotzdem geht es ihm am nächsten Morgen blendend.</p><p><b>Patzer</b>: Der Held begeht in seinem Zustand jedwede Peinlichkeit. Er zerlegt die halbe Taverne, wacht morgens nackt auf dem Markt oder in einem fremden Bett auf, plaudert Geheimnisse an den Feind aus und kann sich danach an nichts mehr erinnern.</p>"
     },
 
-    "Combatskill": {
-        "wrestle": "Raufen"
+    "Book": {
+        "Wizard": "Journal Browser",
+        "Description": "Willkommen im Journal Browser. Dieses Tool soll dich bei der Verwendung von Quellen-, Regel- und Abenteuermodulen unterstützen und einen Überblick über alle enthaltenen Inhalte liefern, wie z.B. die Szenen, Kapitel und Beschreibungen. Außerdem werden Hinweise zur Anwendung und gegebenenfalls automatische Funktionen zur Initialiserung der Module bereitgestellt.",
+        "availableModules": "Installierte Abenteuermodule",
+        "availableRules": "Verfügbare Regelwerke",
+        "preparation": "Vorbereitung",
+        "preparationDescription": "Um das meiste aus diesem Abenteuermodul zu holen, empfehlen wir folgende Dinge zu beachten: <ul class=\"dsalist\"><li>Lies die passenden Journaleinträge zur aktuellen Szene im Voraus.</li><li>Mache dich ein bisschen mit der Battlemap vertraut und platziere ggf. Tokens bereits zuvor. Empfehlenswert ist es die Token unsichtbar zu platzieren und erst sichtbar zu machen, wenn die Spieler auf diese Treffen. So können Spoiler vermieden werden (z.b. über Alt gedrückt halten beim Platzieren).</li><li>Initialisiere ggf. alle Inhalte des Abenteuers über die unten verfügbare Funktion. Die Szenen nur aus den Kompendien zu ziehen reicht nicht aus, um alles korrekt zu verlinken. Achte darauf, dass du nicht mehrmals initialisierst.</li><li>Überprüfe ob du alle empfohlenen Module installiert und aktiviert hast. Diese erleichtern das Führen des Abenteuers und liefern noch ein paar weitere Details, sind aber nicht zwingend erforderlich (s.u.)</li></ul>",
+        "toc": "Kapitel",
+        "info": "Info",
+        "scenes": "Szenen",
+        "active": "Aktiv",
+        "actors": "Akteure",
+        "background": "Hintergrund",
+        "nothing": "Noch keine",
+        "home": "Hauptverzeichnis",
+        "foundryUsage": "Foundry & DSA",
+        "foundryUsagedesc": "<p>Mehr Informationen über die Verwendung von Foundry gibt's im <a href=\"https://github.com/Plushtoast/dsa5-foundryVTT/wiki\" target=\"_blank\">Wiki</a>.</p><p>Schnelle Hilfe kannst du im Ulisses Discord oder Foundry Discord bekommen.</p><p>Den Journalbrowser verwenden:<ul class=\"dsalist\"><li>Mit einem Rechtsklick auf Bilder kannst du diese separat anzeigen und deinen Spielern zeigen</li></ul></p>"
     },
 
     "Skill-eeasy": "Extrem leicht (+5)",
@@ -851,6 +868,7 @@
         "ResistanttoDisease": "Krankheitsresistenz",
         "perception": "Sinnesschärfe",
         "featOfStrength": "Kraftakt",
+        "wrestle": "Raufen",
         "literacy": "Schrift",
         "language": "Sprache",
         "aptitude": "Begabung",
@@ -885,7 +903,8 @@
         "onlyGMAllowedToCancel": "Nur der Spielleiter darf Vergleichsproben abbrechen.",
         "unknownCombatSkill": "Das Kampftalent {skill} der Waffe {item} ist unbekannt. Bitte die Waffe anpassen.",
         "onlyGMcanShapeshift": "Du hast nicht die richtigen Berechtigungen zum Formwandeln.",
-        "staleData": "Verwaiste Vergleichsprobendaten gefunden. Bitte stelle sicher Vergleichsproben immer abzuschließen. Verwaiste Daten gelöscht."
+        "staleData": "Verwaiste Vergleichsprobendaten gefunden. Bitte stelle sicher Vergleichsproben immer abzuschließen. Verwaiste Daten gelöscht.",
+        "sceneNotInitialized": "Szene nicht gefunden. Schon initialisiert?"
     },
 
     "Shapeshift": {
@@ -923,8 +942,8 @@
     },
 
     "PAYMENT": {
-        "pay": "<b>{actor}</b> bezahlt seine Schulden von {amount}.",
-        "getPaid": "<b>{actor}</b> erhält seine Bezahlung von {amount}.",
+        "pay": "<b>{actor}</b> bezahlt seine/ihre Schulden von {amount}.",
+        "getPaid": "<b>{actor}</b> erhält seine/ihre Bezahlung von {amount}.",
         "payexample": "Gib /pay und die Anzahl der Silbermünzen die zu bezahlen sind ein. Z.B.: /pay 13,45",
         "getPaidexample": "Gib /getPaid und die Anzahl der Silbermünzen die zu erhalten sind ein. Z.B.: /getPaid 13,45",
         "error": "Falsche Eingabe",

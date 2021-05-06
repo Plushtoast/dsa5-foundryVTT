@@ -294,8 +294,8 @@ export default class OpposedDsa5 {
     static async evaluateOpposedTest(attackerTest, defenderTest, options = {}) {
         let opposeResult = {};
 
-        opposeResult.attackerTestResult = attackerTest;
-        opposeResult.defenderTestResult = defenderTest;
+        //opposeResult.attackerTestResult = attackerTest;
+        //opposeResult.defenderTestResult = defenderTest;
 
         opposeResult.other = [];
         if (options.additionalInfo) {
@@ -338,7 +338,9 @@ export default class OpposedDsa5 {
     }
 
     static _calculateOpposedDamage(attackerTest, defenderTest) {
-        let armor = Actordsa5.armorValue(defenderTest.actor)
+        let actor = DSA5_Utility.getSpeaker(defenderTest.speaker).data
+        let armor = Actordsa5.armorValue(actor)
+
         return {
             damage: attackerTest.damage,
             armor: armor,
@@ -424,7 +426,10 @@ export default class OpposedDsa5 {
         let defender = {
             speaker: unopposeData.targetSpeaker,
             testResult: {
-                actor: target.actor.data
+                actor: target.actor.data,
+                speaker: {
+                    token: unopposeData.targetSpeaker.token
+                }
             }
         }
 

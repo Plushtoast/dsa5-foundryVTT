@@ -10,8 +10,10 @@ export default function() {
     Handlebars.registerHelper('mod', function(a, b) {
         return a % b;
     });
-    Handlebars.registerHelper('roman', function(a) {
-        let roman = ['', ' II', ' III', ' IV', ' V', ' VI', ' VII', ' VIII', ' IX']
+    Handlebars.registerHelper('roman', function(a, max) {
+        if (max && max < 2) return ''
+
+        let roman = [' I', ' II', ' III', ' IV', ' V', ' VI', ' VII', ' VIII', ' IX']
         return roman[a - 1]
     });
     Handlebars.registerHelper('join', function(a, b) {

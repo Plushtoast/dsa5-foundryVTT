@@ -18,6 +18,9 @@ export default function() {
                             })
                         }
                         break
+                    case "addEffect":
+                        DiceDSA5._applyEffect(data.payload.id, data.payload.mode, data.payload.actors)
+                        break
                     case "updateMsg":
                         game.messages.get(data.payload.id).update(data.payload.updateData)
                         break

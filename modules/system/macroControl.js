@@ -8,7 +8,7 @@ export default class MacroDSA5 {
         if (speaker.token) actor = game.actors.tokens[speaker.token];
         if (!actor) actor = game.actors.get(speaker.actor);
 
-        this.runWeaponless(actor, char)
+        this.runWeaponless(actor, char, speaker.token)
     }
 
     static weaponLessMacroId(char, actorId) {
@@ -37,7 +37,7 @@ export default class MacroDSA5 {
         if (!actor) actor = game.actors.get(speaker.actor);
 
         let item = actor ? actor.items.find(i => i.name === itemName && i.type == itemType) : null;
-        this.runItem(actor, item, itemName, bypassData)
+        this.runItem(actor, item, itemName, bypassData, speaker.token)
     }
 
     static charMacroById(char, actorId) {
@@ -51,48 +51,48 @@ export default class MacroDSA5 {
         if (speaker.token) actor = game.actors.tokens[speaker.token];
         if (!actor) actor = game.actors.get(speaker.actor);
 
-        this.runChar(actor, char)
+        this.runChar(actor, char, speaker.token)
     }
 
     static runWeaponless(actor, char) {
         if (!actor) return ui.notifications.error(game.i18n.format("DSAError.MacroItemMissing", { item: char }));
         let characteristic = char.split("Weaponless")[0]
-        actor.setupWeaponless(characteristic, event).then(setupData => {
+        actor.setupWeaponless(characteristic, {}, tokenId).then(setupData => {
             actor.basicTest(setupData)
         });
     }
 
-    static runChar(actor, char) {
+    static runChar(actor, char, tokenId) {
         if (!actor) return ui.notifications.error(game.i18n.format("DSAError.MacroItemMissing", { item: char }));
 
-        actor.setupDodge({}).then(setupData => {
+        actor.setupDodge({}, tokenId).then(setupData => {
             actor.basicTest(setupData)
         });
     }
 
-    static runItem(actor, item, itemName, bypassData) {
+    static runItem(actor, item, itemName, bypassData, tokenId) {
         if (!actor) return ui.notifications.error(game.i18n.format("DSAError.MacroItemMissing", { item: itemName }));
 
         switch (item.type) {
             case "combatskill":
             case "trait":
             case "meleeweapon":
-                return actor.setupWeapon(item, bypassData.mod, bypassData).then(setupData => {
+                return actor.setupWeapon(item, bypassData.mod, bypassData, tokenId).then(setupData => {
                     actor.basicTest(setupData)
                 });
             case "rangeweapon":
-                return actor.setupWeapon(item, "attack", bypassData).then(setupData => {
+                return actor.setupWeapon(item, "attack", bypassData, tokenId).then(setupData => {
                     actor.basicTest(setupData)
                 });
             case "skill":
-                return actor.setupSkill(item.data, bypassData).then(setupData => {
+                return actor.setupSkill(item.data, bypassData, tokenId).then(setupData => {
                     actor.basicTest(setupData)
                 });
             case "ceremony":
             case "ritual":
             case "spell":
             case "liturgy":
-                return actor.setupSpell(item.data, bypassData).then(setupData => {
+                return actor.setupSpell(item.data, bypassData, tokenId).then(setupData => {
                     actor.basicTest(setupData)
                 });
         }

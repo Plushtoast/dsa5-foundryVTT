@@ -174,14 +174,14 @@ export default class Itemdsa5 extends Item {
     static getDefenseMalus(situationalModifiers, actor) {
         if (actor.data.flags.oppose) {
             let message = game.messages.get(actor.data.flags.oppose.messageId)
-            for (let mal of message.data.flags.data.preData.situationalModifiers.filter(x => x.dmmalus != undefined)) {
+            for (let mal of message.data.flags.data.preData.situationalModifiers.filter(x => x.dmmalus != undefined && x.dmmalus != 0)) {
                 situationalModifiers.push({
                     name: `${game.i18n.localize('MODS.defenseMalus')} - ${mal.name.replace(/ \[(-)?\d{1,}\]/,"")}`,
                     value: mal.dmmalus,
                     selected: true
                 })
             }
-            for (let mal of message.data.flags.data.preData.situationalModifiers.filter(x => x.type == "defenseMalus")) {
+            for (let mal of message.data.flags.data.preData.situationalModifiers.filter(x => x.type == "defenseMalus" && x.value != 0)) {
                 situationalModifiers.push({
                     name: mal.name.replace(/ \[(-)?\d{1,}\]/, ""),
                     value: mal.value,
@@ -234,7 +234,9 @@ export default class Itemdsa5 extends Item {
                         tpbonus,
                         dmmalus,
                         label: `${at}: ${atbonus}, ${tp}: ${tpbonus}, ${dm}: ${dmmalus}`,
-                        steps: com.data.data.step.value
+                        steps: com.data.data.step.value,
+                        id: com.id,
+                        actor: actor._id
                     })
             }
         } else {
@@ -248,7 +250,9 @@ export default class Itemdsa5 extends Item {
                         tpbonus: 0,
                         dmmalus: 0,
                         label: `${pa}: ${pabonus}`,
-                        steps: com.data.data.step.value
+                        steps: com.data.data.step.value,
+                        id: com.id,
+                        actor: actor._id
                     })
             }
         }
@@ -259,12 +263,13 @@ export default class Itemdsa5 extends Item {
         return `<b>${game.i18n.localize(key)}</b>: ${val ? val : "-"}`
     }
 
-    static setupDialog(ev, options, item, actor) {
+    static setupDialog(ev, options, item, actor, tokenId) {
         return null
     }
 
-    setupEffect(ev, options = {}) {
-        return Itemdsa5.getSubClass(this.data.type).setupDialog(ev, options, this)
+    //TODO find tokenId
+    setupEffect(ev, options = {}, tokenId) {
+        return Itemdsa5.getSubClass(this.data.type).setupDialog(ev, options, this, tokenId)
     }
 
     static checkEquality(item, item2) {
@@ -509,7 +514,7 @@ class SpellItemDSA5 extends Itemdsa5 {
     }
 
 
-    static setupDialog(ev, options, spell, actor) {
+    static setupDialog(ev, options, spell, actor, tokenId) {
         let sheet = "spell"
         if (spell.type == "ceremony" || spell.type == "liturgy")
             sheet = "liturgy"
@@ -522,6 +527,10 @@ class SpellItemDSA5 extends Itemdsa5 {
             extra: {
                 actor: actor.data,
                 options: options,
+                speaker: {
+                    token: tokenId,
+                    actor: actor.data._id
+                }
             }
         };
         let data = {
@@ -621,7 +630,7 @@ class CombatskillDSA5 extends Itemdsa5 {
         ]
     }
 
-    static setupDialog(ev, options, item, actor) {
+    static setupDialog(ev, options, item, actor, tokenId) {
         let mode = options.mode
         let title = game.i18n.localize(item.name) + " " + game.i18n.localize(mode + "test");
 
@@ -631,7 +640,11 @@ class CombatskillDSA5 extends Itemdsa5 {
             mode: mode,
             extra: {
                 actor: actor.data,
-                options: options
+                options: options,
+                speaker: {
+                    token: tokenId,
+                    actor: actor.data._id
+                }
             }
         };
 
@@ -744,14 +757,18 @@ class DiseaseItemDSA5 extends Itemdsa5 {
             hasZKModifier: source.data.resistance.value == "ZK"
         })
     }
-    static setupDialog(ev, options, item, actor) {
+    static setupDialog(ev, options, item, actor, tokenId) {
         let title = item.name + " " + game.i18n.localize(item.type) + " " + game.i18n.localize("Test");
 
         let testData = {
             opposable: false,
             source: item.data,
             extra: {
-                options: options
+                options: options,
+                speaker: {
+                    token: tokenId,
+                    actor: actor ? actor.data._id : undefined
+                }
             }
         };
         let data = {
@@ -876,7 +893,7 @@ class MeleeweaponDSA5 extends Itemdsa5 {
 
     }
 
-    static setupDialog(ev, options, item, actor) {
+    static setupDialog(ev, options, item, actor, tokenId) {
         let mode = options.mode
         let title = game.i18n.localize(item.name) + " " + game.i18n.localize(mode + "test");
 
@@ -886,7 +903,11 @@ class MeleeweaponDSA5 extends Itemdsa5 {
             mode: mode,
             extra: {
                 actor: actor.data,
-                options: options
+                options: options,
+                speaker: {
+                    token: tokenId,
+                    actor: actor.data._id
+                }
             }
         };
         let data = {
@@ -975,14 +996,18 @@ class PoisonItemDSA5 extends Itemdsa5 {
         })
     }
 
-    static setupDialog(ev, options, item, actor) {
+    static setupDialog(ev, options, item, actor, tokenId) {
         let title = item.name + " " + game.i18n.localize(item.type) + " " + game.i18n.localize("Test");
 
         let testData = {
             opposable: false,
             source: item.data,
             extra: {
-                options: options
+                options: options,
+                speaker: {
+                    token: tokenId,
+                    actor: actor ? actor.data._id : undefined
+                }
             }
         };
 
@@ -1089,7 +1114,7 @@ class RangeweaponItemDSA5 extends Itemdsa5 {
         }
     }
 
-    static setupDialog(ev, options, item, actor) {
+    static setupDialog(ev, options, item, actor, tokenId) {
         let mode = options.mode
         let title = game.i18n.localize(item.name) + " " + game.i18n.localize(mode + "test");
 
@@ -1099,7 +1124,11 @@ class RangeweaponItemDSA5 extends Itemdsa5 {
             mode: mode,
             extra: {
                 actor: actor.data,
-                options: options
+                options: options,
+                speaker: {
+                    token: tokenId,
+                    actor: actor.data._id
+                }
             }
         };
 
@@ -1230,7 +1259,7 @@ class SkillItemDSA5 extends Itemdsa5 {
         situationalModifiers.push(...actor.getSkillModifier(source.name))
     }
 
-    static setupDialog(ev, options, skill, actor) {
+    static setupDialog(ev, options, skill, actor, tokenId) {
         let title = skill.name + " " + game.i18n.localize("Test");
         let testData = {
             opposable: true,
@@ -1238,6 +1267,10 @@ class SkillItemDSA5 extends Itemdsa5 {
             extra: {
                 actor: actor.data,
                 options: options,
+                speaker: {
+                    token: tokenId,
+                    actor: actor.data._id
+                }
             }
         };
 
@@ -1432,7 +1465,7 @@ class TraitItemDSA5 extends Itemdsa5 {
         }
     }
 
-    static setupDialog(ev, options, item, actor) {
+    static setupDialog(ev, options, item, actor, tokenId) {
         let mode = options["mode"]
         let title = game.i18n.localize(item.name) + " " + game.i18n.localize(mode + "test");
         let testData = {
@@ -1441,7 +1474,11 @@ class TraitItemDSA5 extends Itemdsa5 {
             mode: mode,
             extra: {
                 actor: actor.data,
-                options: options
+                options: options,
+                speaker: {
+                    token: tokenId,
+                    actor: actor.data._id
+                }
             }
         };
         let data = {

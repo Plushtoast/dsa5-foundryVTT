@@ -163,7 +163,7 @@ export default class ActorSheetDsa5 extends ActorSheet {
                     { name: game.i18n.localize("failedTests"), value: -1 * aggregated.data.previousFailedTests.value, selected: true },
                     { name: game.i18n.localize("Modifier"), value: aggregated.data.baseModifier, selected: true }
                 ]
-            }).then(setupData => {
+            }, this.getTokenId()).then(setupData => {
                 this.actor.basicTest(setupData).then(res => {
                     if (res.result.successLevel > 0) {
                         aggregated.data.cummulatedQS.value = res.result.qualityStep + aggregated.data.cummulatedQS.value
@@ -190,7 +190,7 @@ export default class ActorSheetDsa5 extends ActorSheet {
                     icon: '<i class="fa fa-check"></i>',
                     label: game.i18n.localize("yes"),
                     callback: dlg => {
-                        item.setupEffect(null, {})
+                        item.setupEffect(null, {}, this.getTokenId())
                     }
                 },
                 cancel: {
@@ -352,6 +352,10 @@ export default class ActorSheetDsa5 extends ActorSheet {
         return !game.user.isGM && this.actor.limited
     }
 
+    getTokenId() {
+        return this.token ? this.token._id : undefined
+    }
+
     activateListeners(html) {
         super.activateListeners(html);
 
@@ -427,7 +431,7 @@ export default class ActorSheetDsa5 extends ActorSheet {
             let skill = this.actor.items.find(i => i.data._id == itemId);
 
             if (ev.button == 0)
-                this.actor.setupSkill(skill.data).then(setupData => {
+                this.actor.setupSkill(skill.data, {}, this.getTokenId()).then(setupData => {
                     this.actor.basicTest(setupData)
                 });
             else if (ev.button == 2)
@@ -457,7 +461,7 @@ export default class ActorSheetDsa5 extends ActorSheet {
             let skill = this.actor.items.find(i => i.data._id == itemId);
 
             if (ev.button == 0)
-                this.actor.setupSpell(skill.data).then(setupData => {
+                this.actor.setupSpell(skill.data, {}, this.getTokenId()).then(setupData => {
                     this.actor.basicTest(setupData)
                 });
 
@@ -559,19 +563,19 @@ export default class ActorSheetDsa5 extends ActorSheet {
         html.find('.ch-value').click(event => {
             event.preventDefault();
             let characteristic = event.currentTarget.attributes["data-char"].value;
-            this.actor.setupCharacteristic(characteristic, event).then(setupData => {
+            this.actor.setupCharacteristic(characteristic, {}, this.getTokenId()).then(setupData => {
                 this.actor.basicTest(setupData)
             });
         });
         html.find('.ch-status').click(event => {
             event.preventDefault();
-            this.actor.setupDodge(event).then(setupData => {
+            this.actor.setupDodge({}, this.getTokenId()).then(setupData => {
                 this.actor.basicTest(setupData)
             });
         });
         html.find('.ch-regenerate').click(event => {
             event.preventDefault();
-            this.actor.setupRegeneration("regenerate", event).then(setupData => {
+            this.actor.setupRegeneration("regenerate", {}, this.getTokenId()).then(setupData => {
                 this.actor.basicTest(setupData)
             });
         });
@@ -579,7 +583,7 @@ export default class ActorSheetDsa5 extends ActorSheet {
         html.find('.ch-weaponless').click(event => {
             event.preventDefault();
             let characteristic = event.currentTarget.attributes["data-char"].value;
-            this.actor.setupWeaponless(characteristic, event).then(setupData => {
+            this.actor.setupWeaponless(characteristic, {}, this.getTokenId()).then(setupData => {
                 this.actor.basicTest(setupData)
             });
         });
@@ -591,7 +595,7 @@ export default class ActorSheetDsa5 extends ActorSheet {
             let itemId = this._getItemId(event);
             const mode = $(event.currentTarget).attr("data-mode")
             const item = this.actor.items.find(i => i.data._id == itemId)
-            this.actor.setupWeapon(item, mode, event).then(setupData => {
+            this.actor.setupWeapon(item, mode, {}, this.getTokenId()).then(setupData => {
                 this.actor.basicTest(setupData)
             });
         });
