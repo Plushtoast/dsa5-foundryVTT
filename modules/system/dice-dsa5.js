@@ -975,8 +975,6 @@ export default class DiceDSA5 {
         if (chatOptions.rollMode === "blindroll") chatOptions["blind"] = true;
         else if (chatOptions.rollMode === "selfroll") chatOptions["whisper"] = [game.user];
 
-        //todo remove actor from postdata
-
         chatOptions["flags.data"] = {
             preData,
             postData: testData,
@@ -985,6 +983,7 @@ export default class DiceDSA5 {
             isOpposedTest: chatOptions.isOpposedTest,
             title: chatOptions.title,
             hideData: chatData.hideData,
+            hideDamage: chatData.hideDamage,
             isDSARoll: true
         };
 
@@ -1197,9 +1196,11 @@ export default class DiceDSA5 {
         let data = message.data.flags.data
         let newTestData = data.preData;
         newTestData.extra.actor = DSA5_Utility.getSpeaker(newTestData.extra.speaker).data
-        console.log(newTestData)
         let index
-        game.user.updateTokenTargets([]);
+
+        //Might need to readd that again
+        //game.user.updateTokenTargets([]);
+
         switch (input.attr("data-edit-type")) {
             case "roll":
                 index = input.attr("data-edit-id")

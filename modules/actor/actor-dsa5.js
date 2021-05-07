@@ -829,8 +829,9 @@ export default class Actordsa5 extends Actor {
                                 let ind = 0
                                 let changedRolls = []
                                 for (let k of diesToReroll) {
-                                    const attr = game.i18n.localize(`CHARAbbrev.${newTestData.source.data[`characteristic${k + 1}`].value.toUpperCase()}`)
-                                    changedRolls.push(`${attr} - ${newTestData.roll.results[k * 2]}/${newRoll.results[ind * 2]}`)
+                                    const characteristic = newTestData.source.data[`characteristic${k + 1}`]
+                                    const attr = characteristic ? `${game.i18n.localize(`CHARAbbrev.${characteristic.value.toUpperCase()}`)} - ` : ""
+                                    changedRolls.push(`${attr}${newTestData.roll.results[k * 2]}/${newRoll.results[ind * 2]}`)
                                     newTestData.roll.results[k * 2] = Math.min(newRoll.results[ind * 2], newTestData.roll.results[k * 2])
                                     newTestData.roll.terms[k * 2].results[0].result = Math.min(newRoll.results[ind * 2], newTestData.roll.terms[k * 2].results[0].result)
                                     ind += 1
@@ -883,8 +884,9 @@ export default class Actordsa5 extends Actor {
                                 let ind = 0
                                 let changedRolls = []
                                 for (let k of diesToReroll) {
-                                    const attr = game.i18n.localize(`CHARAbbrev.${newTestData.source.data[`characteristic${k+1}`].value.toUpperCase()}`)
-                                    changedRolls.push(`${attr} - ${newTestData.roll.results[k * 2]}/${newRoll.results[ind * 2]}`)
+                                    const characteristic = newTestData.source.data[`characteristic${k + 1}`]
+                                    const attr = characteristic ? `${game.i18n.localize(`CHARAbbrev.${characteristic.value.toUpperCase()}`)} - ` : ""
+                                    changedRolls.push(`${attr}${newTestData.roll.results[k * 2]}/${newRoll.results[ind * 2]}`)
                                     newTestData.roll.results[k * 2] = newRoll.results[ind * 2]
                                     newTestData.roll.terms[k * 2].results[0].result = newRoll.results[ind * 2]
                                     ind += 1

@@ -215,7 +215,7 @@ export default class OpposedDsa5 {
 
     static async showDamage(message, hide = false) {
         if (game.user.isGM) {
-            if (!message.data.flags.data.hideDamage && message.data.flags.data.postData.damageRoll) {
+            if ((!hide || !message.data.flags.data.hideDamage)  && message.data.flags.data.postData.damageRoll) {
                 message.update({
                     "content": message.data.content.replace(`data-hide-damage="${!hide}"`, `data-hide-damage="${hide}"`),
                     "flags.data.hideDamage": hide
