@@ -489,7 +489,7 @@ class SpellItemDSA5 extends Itemdsa5 {
         testData.extensions = SpellItemDSA5.getSpecAbModifiers(html).join(", ")
         testData.advancedModifiers = {
             chars: [0, 1, 2].map(x => Number(html.find(`[name="ch${x}"]`).val())),
-            fps: Number(html.find(`[name="fp"]`).val()),
+            fws: Number(html.find(`[name="fw"]`).val()),
             qls: Number(html.find(`[name="qs"]`).val())
         }
         Itemdsa5.changeChars(testData.source, ...[0, 1, 2].map(x => html.find(`[name="characteristics${x}"]`).val()))
@@ -513,7 +513,6 @@ class SpellItemDSA5 extends Itemdsa5 {
         this.getSkZkModifier(data)
     }
 
-
     static setupDialog(ev, options, spell, actor, tokenId) {
         let sheet = "spell"
         if (spell.type == "ceremony" || spell.type == "liturgy")
@@ -522,7 +521,7 @@ class SpellItemDSA5 extends Itemdsa5 {
         let title = spell.name + " " + game.i18n.localize(`${spell.type}Test`);
 
         let testData = {
-            opposable: false,
+            opposable: spell.data.effectFormula.value.length > 0,
             source: spell,
             extra: {
                 actor: actor.data,
@@ -1297,7 +1296,7 @@ class SkillItemDSA5 extends Itemdsa5 {
                 testData.situationalModifiers = Actordsa5._parseModifiers('[name="situationalModifiers"]')
                 testData.advancedModifiers = {
                     chars: [0, 1, 2].map(x => Number(html.find(`[name="ch${x}"]`).val())),
-                    fps: Number(html.find(`[name="fp"]`).val()),
+                    fws: Number(html.find(`[name="fw"]`).val()),
                     qls: Number(html.find(`[name="qs"]`).val())
                 }
                 Itemdsa5.changeChars(testData.source, ...[0, 1, 2].map(x => html.find(`[name="characteristics${x}"]`).val()))

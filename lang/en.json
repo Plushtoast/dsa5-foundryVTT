@@ -471,6 +471,7 @@
     "MODS": {
         "partChecks": "Part of skill check modifier",
         "FP": "Skill points modifier",
+        "FW": "Skill rating modifier",
         "combatTurmoil": "Shooting into Melee",
         "QS": "Quality Level modifier",
         "damage": "Damage modifier (f.e. 1d6)",
@@ -805,10 +806,10 @@
     },
 
     "DSAREGEX": {
-        "combatRounds": "(combat round(s)?|CR)",
-        "minutes": "(minute(s)?|min)",
-        "hours": "(hour(s)?)",
-        "days": "day(s)?"
+        "combatRounds": "( )?(in )?(combat round(s)?|CR(s)?)",
+        "minutes": "( )?(in )?(minute(s)?|min)",
+        "hours": "( )?(in )?(hour(s)?)",
+        "days": "( )?(in )?day(s)?"
     },
 
     "ActiveEffects": {
@@ -816,7 +817,16 @@
         "hidePlayers": "Hide for players",
         "applyTarget": "Effect (Target)",
         "applySelf": "Effect (Self)",
-        "appliedEffect": "Effect <b>{source}</b> applied to <b>{target}</b>."
+        "appliedEffect": "Effect <b>{source}</b> applied to <b>{target}</b>.",
+        "custom": "Special effect",
+        "placeholder": {
+            "macros": "Macros have access to the following variables:\nactor - The targeted actor\ntestData - All data for the current check\nsource - The source of the macro"
+        },
+        "advancedFunctions": {
+            "none": "Nichts",
+            "systemEffect": "System effect",
+            "macro": "Macro"
+        }
     },
 
     "LocalizedIDs": {

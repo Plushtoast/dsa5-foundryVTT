@@ -90,11 +90,11 @@ export default class DSA5_Utility {
 
     static parseAbilityString(ability) {
         return {
-            original: ability.replace(/ (FP|SP)?[+-]?\d{1,2}$/, '').trim(),
-            name: ability.replace(/\((.+?)\)/g, "()").replace(/ (FP|SP)?[+-]?\d{1,2}$/, '').trim(),
+            original: ability.replace(/ (FP|SR|FW|SP)?[+-]?\d{1,2}$/, '').trim(),
+            name: ability.replace(/\((.+?)\)/g, "()").replace(/ (FP|SR|FW|SP)?[+-]?\d{1,2}$/, '').trim(),
             step: Number((ability.match(/[+-]?\d{1,2}$/) || [1])[0]),
             special: (ability.match(/\(([^()]+)\)/) || ["", ""])[1],
-            type: ability.match(/ (FP|SP)[+-]?\d{1,2}/) ? "FP" : "",
+            type: ability.match(/ (FP|SP)[+-]?\d{1,2}/) ? "FP" : (ability.match(/ (FW|SR)[+-]?\d{1,2}/) ? "FW" : ""),
             bonus: ability.match(/[-+]\d{1,2}$/) != undefined
         }
     }

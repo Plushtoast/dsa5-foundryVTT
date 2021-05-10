@@ -25,9 +25,9 @@
     <div class="card-content">
         <b>{{localize "maintainCost"}}</b>: {{preData.calculatedSpellModifiers.maintainCost}}
     </div>
-    {{/when}} {{#if testData.effectResult}}
+    {{/when}} {{#if testData.damage}}
     <div class="card-content" title="{{testData.calculatedEffectFormula}}">
-        <b>{{localize "effectResult"}}</b>: {{testData.effectResult}}
+        <b>{{localize "effectResult"}}</b>: {{testData.damage}}
     </div>
     {{/if}} {{#if preData.extensions }}
     <div class="card-content">
@@ -35,10 +35,10 @@
     </div>
     {{/if}} {{#if applyEffect}}
     <div class="row-section" style="margin-top:10px">
-        <div class="col two">
+        <div class="col two center">
             <button class="applyEffect" data-target="self" title="{{localize 'TT.applyEffectCaster'}}">{{localize 'ActiveEffects.applySelf'}}</button>
         </div>
-        <div class="col two">
+        <div class="col two center">
             <button class="applyEffect" data-target="target" title="{{localize 'TT.applyEffectTargets'}}">{{localize 'ActiveEffects.applyTarget'}}</button>
         </div>
     </div>

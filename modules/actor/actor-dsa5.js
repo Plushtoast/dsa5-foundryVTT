@@ -205,7 +205,8 @@ export default class Actordsa5 extends Actor {
                     FP: [],
                     step: [],
                     QL: [],
-                    TPM: []
+                    TPM: [],
+                    FW: []
                 },
                 totalArmor: 0,
                 carryModifier: 0,
@@ -235,7 +236,7 @@ export default class Actordsa5 extends Actor {
 
     getSkillModifier(name) {
         let result = []
-        const keys = ["FP", "step", "QL", "TPM"]
+        const keys = ["FP", "step", "QL", "TPM", "FW"]
         for (const k of keys) {
             const type = k == "step" ? "" : k
             result.push(...this.data.data.skillModifiers[k].filter(x => x.target == name).map((f) => {

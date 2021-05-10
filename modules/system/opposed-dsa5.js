@@ -304,7 +304,7 @@ export default class OpposedDsa5 {
 
         opposeResult.winner = "attacker"
 
-        if (attackerTest.rollType == "weapon" && defenderTest.successLevel == undefined) {
+        if (["weapon","spell","liturgy","ceremony","ritual"].includes(attackerTest.rollType)  && defenderTest.successLevel == undefined) {
             defenderTest.successLevel = -5
         }
 
@@ -313,9 +313,13 @@ export default class OpposedDsa5 {
                 case "talent":
                     this._evaluateTalentOpposedRoll(attackerTest, defenderTest, opposeResult, options)
                     break;
+                case "ceremony":
+                case "ritual":
+                case "spell":
+                case "liturgy":
                 case "weapon":
                     this._evaluateWeaponOpposedRoll(attackerTest, defenderTest, opposeResult, options)
-                    break;
+                    break
                 default:
                     ui.notifications.error("Can not oppose " + attackerTest.rollType)
                     console.warn("Can not oppose " + attackerTest.rollType)
@@ -323,6 +327,7 @@ export default class OpposedDsa5 {
         }
         return opposeResult
     }
+
     static _evaluateWeaponOpposedRoll(attackerTest, defenderTest, opposeResult, options = {}) {
         if (attackerTest.successLevel > 0 && defenderTest.successLevel < 0) {
             let damage = this._calculateOpposedDamage(attackerTest, defenderTest)

@@ -2175,3 +2175,99 @@ select.noAppearance {
     width: 100%;
     left: 0;
 }
+
+.applyEffect{
+    width: auto;
+    padding: 4px;
+    line-height: unset;
+    font-size:12px;
+}
+
+.adventureWizard .fa-check {
+    color: green;
+}
+
+.adventureWizard .fa-times {
+    color: darkred;
+}
+
+.adventureWizard .toc ul,
+.adventureWizard .toc {
+    list-style-type: none;
+    padding-left: 8px;
+}
+
+.getChapter.selected,
+.subChapter.selected {
+    font-weight: bold;
+}
+
+.maskfield .entity-link {
+    color: black;
+}
+
+.subChapter {
+    font-weight: normal;
+    font-family: var(--normalFont);
+}
+
+.toc ul li {
+    display: block;
+    padding: 4px;
+}
+
+.toc ul li:before {
+    color: darkred;
+    margin-right: 5px;
+}
+
+.adventureWizard .cover {
+    width: 100%;
+    position: relative;
+}
+
+.scrollable {
+    overflow-y: auto;
+    max-height: 100%;
+}
+
+.adventureWizard,
+.adventureWizard>div {
+    max-height: 100%;
+}
+
+.adventureWizard .chapter {
+    padding: 8px;
+}
+
+.adventureWizard .toc::-webkit-scrollbar {
+    width: 6px;
+}
+
+.adventureWizard .toc {
+    scrollbar-width: 6px;
+}
+
+.adventureWizard .picto {
+    height: 40px;
+    line-height: 40px;
+}
+
+.picto.ten {
+    max-width: 10%;
+}
+
+.picto.fourty {
+    max-width: 40%;
+}
+
+.journalHeader {
+    position: relative;
+}
+
+.journalHeader .showJournal {
+    position: absolute;
+    right: 5px;
+    top: 5px;
+    color: rgb(92, 92, 92);
+}

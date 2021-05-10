@@ -11,6 +11,7 @@ import CombatTables from "../tables/combattables.js";
 import DSA5StatusEffects from "../status/status_effects.js";
 import DSA5ChatAutoCompletion from "./chat_autocompletion.js";
 import OpposedDsa5 from "./opposed-dsa5.js";
+import DSAActiveEffectConfig from "../status/active_effects.js"
 
 export default class DiceDSA5 {
     static async setupDialog({ dialogOptions, testData, cardOptions }) {
@@ -665,13 +666,13 @@ export default class DiceDSA5 {
                 let formula = testData.source.data.effectFormula.value.replace(game.i18n.localize('CHARAbbrev.QS'), res.qualityStep).replace(/[Ww]/g, "d")
                 let rollEffect = testData.damageRoll ? testData.damageRoll : new Roll(formula).roll()
                 this._addRollDiceSoNice(testData, rollEffect, "black")
-                res["effectResult"] = rollEffect.total
                 res["calculatedEffectFormula"] = formula
                 for (let k of rollEffect.terms) {
                     if (k instanceof Die || k.class == "Die")
                         for (let l of k.results) res["characteristics"].push({ char: "effect", res: l.result, die: "d" + k.faces })
                 }
                 res["damageRoll"] = rollEffect
+                res["damage"] = rollEffect.total
             }
         }
         res.preData.calculatedSpellModifiers.finalcost = Math.max(0, Number(res.preData.calculatedSpellModifiers.finalcost) + AdvantageRulesDSA5.vantageStep(testData.extra.actor, game.i18n.localize('LocalizedIDs.weakKarmicBody')) + AdvantageRulesDSA5.vantageStep(testData.extra.actor, game.i18n.localize('LocalizedIDs.weakAstralBody')) + testData.extra.actor.data[["ceremony", "liturgy"].includes(testData.source.type) ? "kapModifier" : "aspModifier"])
@@ -693,7 +694,7 @@ export default class DiceDSA5 {
         this._appendSituationalModifiers(testData, game.i18n.localize("Difficulty"), testData.testDifficulty)
         let modifier = this._situationalModifiers(testData);
 
-        let fps = testData.source.data.talentValue.value + testData.advancedModifiers.fps + this._situationalModifiers(testData, "FP");
+        let fws = testData.source.data.talentValue.value + testData.advancedModifiers.fws + this._situationalModifiers(testData, "FW");
 
         const pcms = this._situationalPartCheckModifiers(testData, "TPM")
 
@@ -701,7 +702,7 @@ export default class DiceDSA5 {
         let res = [0, 1, 2].map(x => roll.terms[x * 2].results[0].result - tar[x])
 
         for (let k of res)
-            if (k > 0) fps -= k
+            if (k > 0) fws -= k
 
         let failValue = 20
         if ((testData.source.type == "spell" || testData.source.type == "ritual") && AdvantageRulesDSA5.hasVantage(testData.extra.actor, game.i18n.localize('LocalizedIDs.wildMagic')))
@@ -711,8 +712,8 @@ export default class DiceDSA5 {
             let reroll = new Roll("1d20").roll()
             let indexOfMinValue = res.reduce((iMin, x, i, arr) => x < arr[iMin] ? i : iMin, 0)
             let oldValue = roll.results[indexOfMinValue * 2]
-            fps += Math.max(res[indexOfMinValue], 0)
-            fps -= Math.max(0, reroll.total - tar[indexOfMinValue])
+            fws += Math.max(res[indexOfMinValue], 0)
+            fws -= Math.max(0, reroll.total - tar[indexOfMinValue])
             roll.results[indexOfMinValue * 2] = reroll.total
             roll.terms[indexOfMinValue * 2].results[0].result = reroll.total
             this._addRollDiceSoNice(testData, reroll, roll.terms[indexOfMinValue * 2].options.colorset)
@@ -725,7 +726,7 @@ export default class DiceDSA5 {
             description.push(game.i18n.localize("LocalizedIDs.automaticFail"));
             successLevel = -1
         } else {
-            successLevel = DiceDSA5.get3D20SuccessLevel(roll, fps, failValue)
+            successLevel = DiceDSA5.get3D20SuccessLevel(roll, fws, failValue)
             description.push(DiceDSA5.getSuccessDescription(successLevel))
         }
 
@@ -733,15 +734,16 @@ export default class DiceDSA5 {
         let qualityStep = 0
 
         if(successLevel > 0){
-            qualityStep = (fps == 0 ? 1 : (fps > 0 ? Math.ceil(fps / 3) : 0)) + (testData.qualityStep != undefined ? Number(testData.qualityStep) : 0)
+            fws += this._situationalModifiers(testData, "FP")
+            qualityStep = (fws == 0 ? 1 : (fws > 0 ? Math.ceil(fws / 3) : 0)) + (testData.qualityStep != undefined ? Number(testData.qualityStep) : 0)
 
             if (qualityStep > 0) qualityStep += (testData.advancedModifiers.qls || 0) + this._situationalModifiers(testData, "QL")
         }
 
-        Math.min(game.settings.get("dsa5", "capQSat"), qualityStep)
+        qualityStep = Math.min(game.settings.get("dsa5", "capQSat"), qualityStep)
 
         return {
-            result: fps,
+            result: fws,
             characteristics: [0, 1, 2].map(x => { return { char: testData.source.data[`characteristic${x+1}`].value, res: roll.terms[x * 2].results[0].result, suc: res[x] <= 0, tar: tar[x] } }),
             qualityStep,
             description,
@@ -758,12 +760,12 @@ export default class DiceDSA5 {
         return res
     }
 
-    static get3D20SuccessLevel(roll, fps, failValue = 20, critical = 1) {
+    static get3D20SuccessLevel(roll, fws, failValue = 20, critical = 1) {
         if (roll.results.filter(x => x == critical).length == 3) return 3
         else if (roll.results.filter(x => x == critical).length == 2) return 2
         else if (roll.results.filter(x => x >= failValue).length == 3) return -3
         else if (roll.results.filter(x => x >= failValue).length == 2) return -2
-        else return fps >= 0 ? 1 : -1
+        else return fws >= 0 ? 1 : -1
     }
 
     static getSuccessDescription(successLevel) {
@@ -778,25 +780,25 @@ export default class DiceDSA5 {
         this._appendSituationalModifiers(testData, game.i18n.localize("manual"), testData.testModifier)
         let modifier = this._situationalModifiers(testData);
 
-        let fps = Number(testData.source.data.step.value)
+        let fws = Number(testData.source.data.step.value)
         let tar = [1, 2, 3].map(x => 10 + Number(testData.source.data.step.value) + modifier)
         let res = [0, 1, 2].map(x => roll.terms[x * 2].results[0].result - tar[x])
         for (let k of res) {
             if (k > 0)
-                fps -= k
+                fws -= k
         }
 
         let failValue = 20
 
-        const successLevel = DiceDSA5.get3D20SuccessLevel(roll, fps, failValue)
+        const successLevel = DiceDSA5.get3D20SuccessLevel(roll, fws, failValue)
         description.push(DiceDSA5.getSuccessDescription(successLevel))
 
         description = description.join(", ")
 
         let result = {
-            result: fps,
+            result: fws,
             characteristics: [0, 1, 2].map(x => { return { char: testData.source.type, res: roll.terms[x * 2].results[0].result, suc: res[x] <= 0, tar: tar[x] } }),
-            qualityStep: Math.min(game.settings.get("dsa5", "capQSat"), (fps == 0 ? 1 : (fps > 0 ? Math.ceil(fps / 3) : 0)) + (testData.qualityStep != undefined ? Number(testData.qualityStep) : 0)),
+            qualityStep: Math.min(game.settings.get("dsa5", "capQSat"), (fws == 0 ? 1 : (fws > 0 ? Math.ceil(fws / 3) : 0)) + (testData.qualityStep != undefined ? Number(testData.qualityStep) : 0)),
             description,
             preData: testData,
             successLevel,
@@ -963,8 +965,8 @@ export default class DiceDSA5 {
         if (preData.advancedModifiers) {
             if (preData.advancedModifiers.chars.some(x => x != 0))
                 chatData.modifierList.push({ name: game.i18n.localize('MODS.partChecks'), value: preData.advancedModifiers.chars })
-            if (preData.advancedModifiers.fps != 0)
-                chatData.modifierList.push({ name: game.i18n.localize('MODS.FP'), value: preData.advancedModifiers.fps })
+            if (preData.advancedModifiers.fws != 0)
+                chatData.modifierList.push({ name: game.i18n.localize('MODS.FW'), value: preData.advancedModifiers.fws })
             if (preData.advancedModifiers.qls != 0)
                 chatData.modifierList.push({ name: game.i18n.localize('MODS.QS'), value: preData.advancedModifiers.qls })
         }
@@ -1088,19 +1090,26 @@ export default class DiceDSA5 {
                 { regEx: new RegExp(game.i18n.localize("DSAREGEX.hours"), 'gi'), seconds: 3600 },
                 { regEx: new RegExp(game.i18n.localize("DSAREGEX.days"), 'gi'), seconds: 3600 * 24 }
             ]
+
             for (const reg of regexes) {
                 if (reg.regEx.test(duration)) {
                     let time = this._stringToRoll(duration.replace(reg.regEx, "").trim())
                     if (!isNaN(time)) {
                         for (let ef of effects) {
-                            ef.duration.seconds = time * reg.seconds
+                            let calcTime = time * reg.seconds
+                            const customDuration = getProperty(ef, "flags.dsa5.customDuration")
+                            if(customDuration){
+                                let qsDuration = customDuration.split(",")[testData.qualityStep - 1]
+                                if (qsDuration && qsDuration != "-") calcTime = qsDuration
+                            }
+
+                            ef.duration.seconds = calcTime
                             ef.duration.rounds = ef.duration.seconds / 5
                         }
                     }
                     break
                 }
             }
-
         } catch {
             console.error(`Could not parse duration '${duration}' of '${source.name}'`)
         }
@@ -1110,7 +1119,8 @@ export default class DiceDSA5 {
     static async _applyEffect(id, mode, targets) {
         const message = game.messages.get(id)
         const source = message.data.flags.data.preData.source
-        const effects = this._parseEffectDuration(source, message.data.flags.data.postData)
+        const testData = message.data.flags.data.postData
+        const effects = this._parseEffectDuration(source, testData)
         const speaker = message.data.speaker
 
         let actors = []
@@ -1128,10 +1138,12 @@ export default class DiceDSA5 {
         }
         if (game.user.isGM) {
             for (let actor of actors) {
-                actor.createEmbeddedEntity("ActiveEffect", effects.map(x => {
+                const effectsWithChanges = effects.filter(x => x.changes && x.changes.length > 0)
+                actor.createEmbeddedEntity("ActiveEffect", effectsWithChanges.map(x => {
                     x.origin = actor.uuid
                     return x
                 }))
+                DSAActiveEffectConfig.applyAdvancedFunction(actor, effects, source, testData)
                 const infoMsg = game.i18n.format('ActiveEffects.appliedEffect', { target: actor.name, source: source.name })
                 ChatMessage.create(DSA5_Utility.chatDataSetup(infoMsg));
             }
