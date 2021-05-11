@@ -2,7 +2,12 @@ export default function() {
     Token.prototype.drawEffects = async function() {
         this.effects.removeChildren().forEach(c => c.destroy());
         const tokenEffects = this.data.effects;
-        const actorEffects = this.actor ? this.actor.temporaryEffects.filter(x => { return (x.getFlag("dsa5", "value") > 0 || x.getFlag("dsa5", "value") == null) && (game.user.isGM || !x.getFlag("dsa5", "hidePlayers")) && !x.getFlag("dsa5", "hideOnToken") }) : [];
+        /*const actorEffects = this.actor ? this.actor.temporaryEffects.filter(x => {
+            return (x.getFlag("dsa5", "value") > 0 || x.getFlag("dsa5", "value") == null) && (game.user.isGM || !x.getFlag("dsa5", "hidePlayers")) && !x.getFlag("dsa5", "hideOnToken")
+        }) : [];*/
+        const actorEffects = this.actor ? this.actor.temporaryEffects.filter(x => {
+            return (game.user.isGM || !x.getFlag("dsa5", "hidePlayers")) && !x.getFlag("dsa5", "hideOnToken")
+        }) : [];
         let overlay = {
             src: this.data.overlayEffect,
             tint: null

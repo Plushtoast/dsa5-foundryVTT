@@ -646,11 +646,17 @@
         "deactivate": "Deaktivieren",
         "activate": "Aktivieren",
         "switchLimited": "Begrenzte Ansicht umschalten (Spieleransicht)",
-        "import": "Importieren"
+        "import": "Importieren",
+        "actorConfig": "Akteuer konfigurieren"
     },
 
     "ITEMSHEET": {
         "offHandMod": "Bonus/Malus als Nebenhand (z.b. Parierwaffe)"
+    },
+
+    "ActorConfig": {
+        "autoSize": "Automatische Tokengröße",
+        "autoBar": "Automatische Tokenbars"
     },
 
     "RangeMod": {

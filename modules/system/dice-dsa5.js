@@ -219,11 +219,11 @@ export default class DiceDSA5 {
         let chars = []
 
         if (testData.source.type == "meleeweapon") {
-            const skill = Actordsa5._calculateCombatSkillValues(testData.extra.actor.items.find(x => x.type == "combatskill" && x.name == testData.source.data.data.combatskill.value), testData.extra.actor)
-            weapon = Actordsa5._prepareMeleeWeapon(testData.source.data, [skill], testData.extra.actor)
+            const skill = Actordsa5._calculateCombatSkillValues(testData.extra.actor.items.find(x => x.type == "combatskill" && x.name == testData.source.data.combatskill.value), testData.extra.actor)
+            weapon = Actordsa5._prepareMeleeWeapon(testData.source, [skill], testData.extra.actor)
         } else if (testData.source.type == "rangeweapon") {
-            const skill = Actordsa5._calculateCombatSkillValues(testData.extra.actor.items.find(x => x.type == "combatskill" && x.name == testData.source.data.data.combatskill.value), testData.extra.actor)
-            weapon = Actordsa5._prepareRangeWeapon(testData.source.data, [], [skill], testData.extra.actor)
+            const skill = Actordsa5._calculateCombatSkillValues(testData.extra.actor.items.find(x => x.type == "combatskill" && x.name == testData.source.data.combatskill.value), testData.extra.actor)
+            weapon = Actordsa5._prepareRangeWeapon(testData.source, [], [skill], testData.extra.actor)
         } else {
             weapon = testData.source.data
         }
@@ -733,7 +733,7 @@ export default class DiceDSA5 {
         description = description.join(", ")
         let qualityStep = 0
 
-        if(successLevel > 0){
+        if (successLevel > 0) {
             fws += this._situationalModifiers(testData, "FP")
             qualityStep = (fws == 0 ? 1 : (fws > 0 ? Math.ceil(fws / 3) : 0)) + (testData.qualityStep != undefined ? Number(testData.qualityStep) : 0)
 
@@ -891,7 +891,7 @@ export default class DiceDSA5 {
                 case "combatskill":
                 case "trait":
                     if (testData.mode == "damage") {
-                        roll = new Roll(testData.source.data.data.damage.value.replace(/[Ww]/g, "d")).roll()
+                        roll = new Roll(testData.source.data.damage.value.replace(/[Ww]/g, "d")).roll()
                         for (let i = 0; i < roll.dice.length; i++) roll.dice[i].options.colorset = "black"
 
                     } else
@@ -1098,7 +1098,7 @@ export default class DiceDSA5 {
                         for (let ef of effects) {
                             let calcTime = time * reg.seconds
                             const customDuration = getProperty(ef, "flags.dsa5.customDuration")
-                            if(customDuration){
+                            if (customDuration) {
                                 let qsDuration = customDuration.split(",")[testData.qualityStep - 1]
                                 if (qsDuration && qsDuration != "-") calcTime = qsDuration
                             }

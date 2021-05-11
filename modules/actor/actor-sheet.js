@@ -30,6 +30,7 @@ export default class ActorSheetDsa5 extends ActorSheet {
         elem.find(".locksheet").attr("title", game.i18n.localize("SHEET.Lock"));
         elem.find(".library").attr("title", game.i18n.localize("SHEET.Library"));
         elem.find(".playerview").attr("title", game.i18n.localize("SHEET.switchLimited"));
+        elem.find(".actorConfig").attr("title", game.i18n.localize("SHEET.actorConfig"));
 
         if (this.currentFocus) {
             elem.find('[data-item-id="' + this.currentFocus + '"] input').focus().select();
@@ -312,12 +313,42 @@ export default class ActorSheetDsa5 extends ActorSheet {
         game.dsa5.itemLibrary.render(true)
     }
 
+    async _configActor() {
+        const template = await renderTemplate("systems/dsa5/templates/actors/parts/actorConfig.html", { actor: this.actor.data })
+        new Dialog({
+            title: game.i18n.localize("SHEET.actorConfig"),
+            content: template,
+            default: 'yes',
+            buttons: {
+                Yes: {
+                    icon: '<i class="fa fa-check"></i>',
+                    label: game.i18n.localize("yes"),
+                    callback: dlg => {
+                        let update = { "data.config.autoBar": dlg.find('[name="autoBar"]').is(":checked") }
+                        if (this.actor.data.type == "creature") {
+                            update["data.config.autoSize"] = dlg.find('[name="autoSize"]').is(":checked")
+                        }
+                        this.actor.update(update)
+                    }
+                },
+                cancel: {
+                    icon: '<i class="fas fa-times"></i>',
+                    label: game.i18n.localize("cancel")
+                }
+            }
+        }).render(true)
+    }
+
     _getHeaderButtons() {
         let buttons = super._getHeaderButtons();
         buttons.unshift({
             class: "library",
             icon: `fas fa-university`,
-            onclick: async ev => this._openLibrary(ev)
+            onclick: async() => this._openLibrary()
+        }, {
+            class: "actorConfig",
+            icon: `fas fa-link`,
+            onclick: async() => this._configActor()
         })
         if (this.actor.data.canAdvance) {
             buttons.unshift({
@@ -709,8 +740,10 @@ export default class ActorSheetDsa5 extends ActorSheet {
         if (item) {
             Hooks.call("deleteActorActiveEffect", this.actor, item)
 
-            if (this.actor)
-                this.actor.deleteEmbeddedEntity("ActiveEffect", item._id)
+            let actor = this.actor
+            if (this.token) actor = this.token.actor
+
+            if (actor) this.actor.deleteEmbeddedEntity("ActiveEffect", item._id)
         }
     }
 

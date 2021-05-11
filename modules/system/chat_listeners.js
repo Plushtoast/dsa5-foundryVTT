@@ -4,9 +4,8 @@ import DSA5_Utility from "./utility-dsa5.js"
 
 export default class DSA5ChatListeners {
     static chatListeners(html) {
-        html.on('click', '.chat-condition', ev => {
-            DSA5ChatListeners.postStatus($(ev.currentTarget).attr("data-id"))
-        })
+        html.on('click', '.chat-condition', ev => { DSA5ChatListeners.postStatus($(ev.currentTarget).attr("data-id")) })
+        html.on('click', '.openJournalBrowser', () => game.dsa5.apps.journalBrowser.render(true))
         let helpButton = $(`<a class="button showHelp" title="${game.i18n.localize('HELP.showHelp')}"><i class="fas fa-question"></i></a>`)
         helpButton.click(() => { DSA5ChatListeners.getHelp() })
         $(html.find('.control-buttons')).prepend(helpButton)

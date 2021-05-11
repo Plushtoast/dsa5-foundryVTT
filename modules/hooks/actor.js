@@ -32,19 +32,20 @@ export default function() {
     })
 
     Hooks.on("preUpdateActor", (actor, updatedData) => {
-
-        if (actor.data.isMage) {
-            mergeObject(updatedData, {
-                "token.bar2": { "attribute": "status.astralenergy" }
-            });
-        } else if (actor.data.isPriest) {
-            mergeObject(updatedData, {
-                "token.bar2": { "attribute": "status.karmaenergy" }
-            });
-        } else {
-            mergeObject(updatedData, {
-                "token.bar2": {}
-            });
+        if (getProperty(actor.data, "data.config.autoBar")) {
+            if (actor.data.isMage) {
+                mergeObject(updatedData, {
+                    "token.bar2": { "attribute": "status.astralenergy" }
+                });
+            } else if (actor.data.isPriest) {
+                mergeObject(updatedData, {
+                    "token.bar2": { "attribute": "status.karmaenergy" }
+                });
+            } else {
+                mergeObject(updatedData, {
+                    "token.bar2": {}
+                });
+            }
         }
     })
 
@@ -53,7 +54,7 @@ export default function() {
         if (!actor || data.actorLink)
             return;
 
-        if (actor.data.type == "creature") {
+        if (actor.data.type == "creature" && getProperty(actor.data, "data.config.autoSize")) {
             DSA5_Utility.calcTokenSize(duplicate(actor), data)
         }
     })

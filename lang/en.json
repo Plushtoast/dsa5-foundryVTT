@@ -641,11 +641,17 @@
         "deactivate": "Deactivate",
         "activate": "Activate",
         "switchLimited": "Limited view (player view)",
-        "import": "Import"
+        "import": "Import",
+        "actorConfig": "Configure actor"
     },
 
     "ITEMSHEET": {
         "offHandMod": "Bonus/handicap offhand (f.e. parry weapon)"
+    },
+
+    "ActorConfig": {
+        "autoSize": "Auto token size",
+        "autoBar": "Auto token bars"
     },
 
     "RangeMod": {
