@@ -800,38 +800,38 @@ export default class Actordsa5 extends Actor {
     }
 
     async fateisTalented(infoMsg, cardOptions, newTestData, message, data) {
-        cardOptions.talentedRerollUsed = true;
+            cardOptions.talentedRerollUsed = true;
 
-        this.resetTargetAndMessage(data, cardOptions)
+            this.resetTargetAndMessage(data, cardOptions)
 
-        infoMsg = `<h3 class="center"><b>${game.i18n.localize("CHATFATE.faitepointUsed")}</b></h3>
+            infoMsg = `<h3 class="center"><b>${game.i18n.localize("CHATFATE.faitepointUsed")}</b></h3>
             ${game.i18n.format("CHATFATE.isTalented", { character: '<b>' + this.name + '</b>' })}<br>`;
-        renderTemplate('systems/dsa5/templates/dialog/isTalentedReroll-dialog.html', { testData: newTestData, postData: data.postData }).then(html => {
-            new DSA5Dialog({
-                title: game.i18n.localize("CHATFATE.selectDice"),
-                content: html,
-                buttons: {
-                    Yes: {
-                        icon: '<i class="fa fa-check"></i>',
-                        label: game.i18n.localize("Ok"),
-                        callback: async dlg => {
+            renderTemplate('systems/dsa5/templates/dialog/isTalentedReroll-dialog.html', { testData: newTestData, postData: data.postData }).then(html => {
+                        new DSA5Dialog({
+                                    title: game.i18n.localize("CHATFATE.selectDice"),
+                                    content: html,
+                                    buttons: {
+                                        Yes: {
+                                            icon: '<i class="fa fa-check"></i>',
+                                            label: game.i18n.localize("Ok"),
+                                            callback: async dlg => {
 
-                            let diesToReroll = dlg.find('.dieSelected').map(function() { return Number($(this).attr('data-index')) }).get()
-                            if (diesToReroll.length > 0) {
+                                                    let diesToReroll = dlg.find('.dieSelected').map(function() { return Number($(this).attr('data-index')) }).get()
+                                                    if (diesToReroll.length > 0) {
 
-                                let newRoll = []
-                                for (let k of diesToReroll) {
-                                    let term = newTestData.roll.terms[k * 2]
-                                    newRoll.push(term.number + "d" + term.faces + "[" + term.options.colorset + "]")
-                                }
-                                newRoll = await DiceDSA5.manualRolls(new Roll(newRoll.join("+")).roll(), "CHATCONTEXT.talentedReroll")
-                                DiceDSA5.showDiceSoNice(newRoll, newTestData.rollMode)
+                                                        let newRoll = []
+                                                        for (let k of diesToReroll) {
+                                                            let term = newTestData.roll.terms[k * 2]
+                                                            newRoll.push(term.number + "d" + term.faces + "[" + term.options.colorset + "]")
+                                                        }
+                                                        newRoll = await DiceDSA5.manualRolls(new Roll(newRoll.join("+")).roll(), "CHATCONTEXT.talentedReroll")
+                                                        DiceDSA5.showDiceSoNice(newRoll, newTestData.rollMode)
 
-                                let ind = 0
-                                let changedRolls = []
-                                for (let k of diesToReroll) {
-                                    const characteristic = newTestData.source.data[`characteristic${k + 1}`]
-                                    const attr = characteristic ? `${game.i18n.localize(`CHARAbbrev.${characteristic.value.toUpperCase()}`)} - ` : ""
+                                                        let ind = 0
+                                                        let changedRolls = []
+                                                        for (let k of diesToReroll) {
+                                                            const characteristic = newTestData.source.data[`characteristic${k + 1}`]
+                                                            const attr = characteristic ? `${game.i18n.localize(`CHARAbbrev.${characteristic.value.toUpperCase()}`)} - ` : ""
                                     changedRolls.push(`${attr}${newTestData.roll.results[k * 2]}/${newRoll.results[ind * 2]}`)
                                     newTestData.roll.results[k * 2] = Math.min(newRoll.results[ind * 2], newTestData.roll.results[k * 2])
                                     newTestData.roll.terms[k * 2].results[0].result = Math.min(newRoll.results[ind * 2], newTestData.roll.terms[k * 2].results[0].result)
@@ -958,6 +958,9 @@ export default class Actordsa5 extends Actor {
                 }
             }
         };
+
+        testData.extra.actor.isMage = this.data.isMage
+        testData.extra.actor.isPriest = this.data.isPriest
 
         let dialogOptions = {
             title: title,

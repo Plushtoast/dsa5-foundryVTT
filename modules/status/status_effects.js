@@ -106,9 +106,7 @@ export default class DSA5StatusEffects {
             return await target.deleteEmbeddedEntity("ActiveEffect", existing._id)
         } else if (existing)
             return await DSA5StatusEffects.removeEffect(target, existing, value, absolute, auto)
-
     }
-
 
     static async createEffect(actor, effect, value, auto) {
         effect.label = game.i18n.localize(effect.label);
