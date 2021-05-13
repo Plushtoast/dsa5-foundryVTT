@@ -131,11 +131,11 @@ export default class BookWizard extends Application {
     async loadJournal(name) {
         this.showJournal(this.journals.find(x => { return x.name == name && x.data.flags.dsa5.parent == this.selectedChapter }))
     }
-    async loadJournalById(id){
+    async loadJournalById(id) {
         this.showJournal(this.journals.find(x => { return x._id == id }))
     }
 
-    showJournal(journal){
+    showJournal(journal) {
         let content = journal.data.content
         if (!content) content = `<img src="${journal.data.img}"/>`
 
@@ -162,7 +162,7 @@ export default class BookWizard extends Application {
         await fetch(this.book.path).then(async r => r.json()).then(async json => {
             this.bookData = json
             let journal = game.packs.get(json.journal)
-            //Need this to replace links
+                //Need this to replace links
             let index = await journal.getIndex()
             let entries = await journal.getContent()
             this.journals = entries
@@ -253,7 +253,7 @@ export default class BookWizard extends Application {
             }
             return await renderTemplate('systems/dsa5/templates/wizard/adventure/adventure_cover.html', { book: this.book, bookData: this.bookData })
         } else {
-            return await renderTemplate('systems/dsa5/templates/wizard/adventure/adventure_intro.html', { rules: this.books, adventures: game.user.isGM ? this.adventures : this.adventures.filter(x => x.visible) })
+            return await renderTemplate('systems/dsa5/templates/wizard/adventure/adventure_intro.html', { rules: this.books.sort((a, b) => { return a.id.localeCompare(b.id) }), adventures: game.user.isGM ? this.adventures : this.adventures.filter(x => x.visible).sort((a, b) => { return a.id.localeCompare(b.id) }) })
         }
     }
 

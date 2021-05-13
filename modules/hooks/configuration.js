@@ -145,4 +145,13 @@ export default function() {
         default: false,
         type: Boolean
     });
+
+    game.settings.register("dsa5", "playerCanEditSpellMacro", {
+        name: "DSASETTINGS.playerCanEditSpellMacro",
+        hint: "DSASETTINGS.playerCanEditSpellMacroHint",
+        scope: "world",
+        config: true,
+        default: false,
+        type: Boolean
+    });
 }

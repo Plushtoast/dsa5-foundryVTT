@@ -28,6 +28,12 @@ export default function() {
                     reaction.remove()
                 }
             }
+
+            if (!DSA5_Utility.getSpeaker(msg.message.speaker).owner) {
+                let selfButtons = html.find(".selfButton")
+                selfButtons.remove()
+            }
+
             html.find(".hideData").remove()
             let hiddenForMe = getProperty(msg.message, `flags.dsa5.userHidden.${game.user.data._id}`)
             if (hiddenForMe) { html.find(".payButton, .getPaidButton").remove() }

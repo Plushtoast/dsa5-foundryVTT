@@ -14,5 +14,8 @@ export default function() {
         data.duration.combat = game.combat.id
         data.duration.startRound = game.combat.round
         data.duration.startTurn = game.combat.turn
+        if (!data.duration.rounds && data.duration.seconds) {
+            data.duration.rounds = data.duration.seconds / 5
+        }
     })
 }

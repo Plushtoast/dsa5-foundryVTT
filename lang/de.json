@@ -567,7 +567,7 @@
         "availableModules": "Installierte Abenteuermodule",
         "availableRules": "Verfügbare Regelwerke",
         "preparation": "Vorbereitung",
-        "preparationDescription": "Um das meiste aus diesem Abenteuermodul zu holen, empfehlen wir folgende Dinge zu beachten: <ul class=\"dsalist\"><li>Lies die passenden Journaleinträge zur aktuellen Szene im Voraus.</li><li>Mache dich ein bisschen mit der Battlemap vertraut und platziere ggf. Tokens bereits zuvor. Empfehlenswert ist es die Token unsichtbar zu platzieren und erst sichtbar zu machen, wenn die Spieler auf diese Treffen. So können Spoiler vermieden werden (z.b. über Alt gedrückt halten beim Platzieren).</li><li>Initialisiere ggf. alle Inhalte des Abenteuers über die unten verfügbare Funktion. Die Szenen nur aus den Kompendien zu ziehen reicht nicht aus, um alles korrekt zu verlinken. Achte darauf, dass du nicht mehrmals initialisierst.</li><li>Überprüfe ob du alle empfohlenen Module installiert und aktiviert hast. Diese erleichtern das Führen des Abenteuers und liefern noch ein paar weitere Details, sind aber nicht zwingend erforderlich (s.u.)</li></ul>",
+        "preparationDescription": "Um das meiste aus diesem Abenteuermodul zu holen, empfehlen wir folgende Dinge zu beachten: <ul class=\"dsalist\"><li>Lies die passenden Journaleinträge zur aktuellen Szene im Voraus.</li><li>Mache dich ein bisschen mit der Battlemap vertraut und platziere ggf. Tokens bereits zuvor. Empfehlenswert ist es die Token unsichtbar zu platzieren und erst sichtbar zu machen, wenn die Spieler auf diese Treffen (z.b. über Alt gedrückt halten beim Platzieren). So können Spoiler vermieden werden.</li><li>Initialisiere ggf. alle Inhalte des Abenteuers über die unten verfügbare Funktion. Die Szenen nur aus den Kompendien zu ziehen reicht nicht aus, um alles korrekt zu verlinken. Achte darauf, dass du nicht mehrmals initialisierst.</li><li>Überprüfe ob du alle empfohlenen Module installiert und aktiviert hast. Diese erleichtern das Führen des Abenteuers und liefern noch ein paar weitere Details, sind aber nicht zwingend erforderlich (s.u.)</li></ul>",
         "toc": "Kapitel",
         "info": "Info",
         "scenes": "Szenen",
@@ -647,7 +647,7 @@
         "activate": "Aktivieren",
         "switchLimited": "Begrenzte Ansicht umschalten (Spieleransicht)",
         "import": "Importieren",
-        "actorConfig": "Akteuer konfigurieren"
+        "actorConfig": "Akteur konfigurieren"
     },
 
     "ITEMSHEET": {
@@ -1047,7 +1047,9 @@
         "allowPhysicalDice": "Wurf mit echten Würfeln",
         "allowPhysicalDiceHint": "Erlaube die Eingabe des Ergebnis von selbst gewürfelten Würfeln",
         "hideOpposedDamage": "Ergebnis bei Vergleichsprobe verstecken",
-        "hideOpposedDamageHint": "Versteckt z.B. den berechneten Schadenswert bei einer Vergleichsprobe."
+        "hideOpposedDamageHint": "Versteckt z.B. den berechneten Schadenswert bei einer Vergleichsprobe.",
+        "playerCanEditSpellMacro": "Effekt Makros durch Spieler editierbar",
+        "playerCanEditSpellMacroHint": "Spieler können z.B. Zaubermakros editieren (Unsicher)"
     },
 
     "CHATFATE": {

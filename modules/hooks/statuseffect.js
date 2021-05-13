@@ -2,10 +2,7 @@ export default function() {
     Token.prototype.drawEffects = async function() {
         this.effects.removeChildren().forEach(c => c.destroy());
         const tokenEffects = this.data.effects;
-        /*const actorEffects = this.actor ? this.actor.temporaryEffects.filter(x => {
-            return (x.getFlag("dsa5", "value") > 0 || x.getFlag("dsa5", "value") == null) && (game.user.isGM || !x.getFlag("dsa5", "hidePlayers")) && !x.getFlag("dsa5", "hideOnToken")
-        }) : [];*/
-        const actorEffects = this.actor ? this.actor.temporaryEffects.filter(x => {
+        const actorEffects = this.actor ? this.actor.effects.filter(x => {
             return (game.user.isGM || !x.getFlag("dsa5", "hidePlayers")) && !x.getFlag("dsa5", "hideOnToken")
         }) : [];
         let overlay = {
@@ -47,19 +44,18 @@ export default function() {
         icon.x = Math.floor(i / 5) * w;
         icon.y = (i % 5) * w;
 
-
         if (tint) icon.tint = tint;
 
         try {
             bg.drawRoundedRect(icon.x + 1, icon.y + 1, w - 2, w - 2, 2);
         } catch {}
 
-
         this.effects.addChild(icon);
-        let textEffect = game.dsa5.config.effectTextStyle
-        let color = game.settings.get("dsa5", "statusEffectCounterColor")
-        textEffect._fill = /^#[0-9A-F]+$/.test(color) ? color : "#000000"
+
         if (value) {
+            let textEffect = game.dsa5.config.effectTextStyle
+            let color = game.settings.get("dsa5", "statusEffectCounterColor")
+            textEffect._fill = /^#[0-9A-F]+$/.test(color) ? color : "#000000"
             let text = this.effects.addChild(new PreciseText(value, textEffect))
             text.x = icon.x;
             text.y = icon.y;

@@ -1025,7 +1025,7 @@
         "availableModules": "Installed adventure modules",
         "availableRules": "Available rulebooks",
         "preparation": "Preparation",
-        "preparationDescription": "To get the most out of this adventure module we recommend to acknowledge the following things: <ul class=\"dsalist\"><li>Read the correspondig journal entries for the current scene in advance.</li><li>Get used to the battle map and place tokens in advance. It is recommended to place the tokens invisible and only showing them once the players encounter those. This helps to avoid spoilers (hold alt while dropping the token to the scene).</li><li>Initialize the contents of the adventure through the available functions. Dragging the content manually into your world does not suffice to setup everything properly. Don't initialize multiple times.</li><li>Check wether you installed all recommended modules. Those are not required but faciliate and improve the mastering of the adventure.</li></ul>",
+        "preparationDescription": "To get the most out of this adventure module we recommend to acknowledge the following things: <ul class=\"dsalist\"><li>Read the correspondig journal entries for the current scene in advance.</li><li>Get used to the battle map and place tokens in advance. It is recommended to place the tokens invisible and only showing them once the players encounter those (hold alt while dropping the token to the scene). This helps to avoid spoilers.</li><li>Initialize the contents of the adventure through the available functions. Dragging the content manually into your world does not suffice to setup everything properly. Don't initialize multiple times.</li><li>Check wether you installed all recommended modules. Those are not required but faciliate and improve the mastering of the adventure.</li></ul>",
         "toc": "Chapter",
         "info": "Info",
         "scenes": "Scenes",
@@ -1064,7 +1064,9 @@
         "hideOpposedDamage": "Hide opposed test detail result",
         "hideOpposedDamageHint": "Hides calculated damage on opposed tests.",
         "allowPhysicalDice": "Check with real dice",
-        "allowPhysicalDiceHint": "Allow the input of the result of real dice"
+        "allowPhysicalDiceHint": "Allow the input of the result of real dice",
+        "playerCanEditSpellMacro": "Effect Macro editably by players",
+        "playerCanEditSpellMacroHint": "Players can edit spell macros and similar stuff (insecure)."
     },
 
     "CHATFATE": {

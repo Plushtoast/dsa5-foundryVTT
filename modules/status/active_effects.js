@@ -15,7 +15,8 @@ export default class DSAActiveEffectConfig extends ActiveEffectConfig {
             hasSpellEffects: ["spell", "liturgy", "ritual", "ceremony"].includes(getProperty(this.object, "parent.type"))
         }
         const config = {
-            systemEffects: this.getStatusEffects()
+            systemEffects: this.getStatusEffects(),
+            canEditMacros: game.settings.get("dsa5", "playerCanEditSpellMacro")
         }
         let elem = $(this._element)
         elem.find(".tabs").append(`<a class="item" data-tab="advanced"><i class="fas fa-shield-alt"></i>${game.i18n.localize("advanced")}</a>`)
@@ -34,8 +35,8 @@ export default class DSAActiveEffectConfig extends ActiveEffectConfig {
         })
     }
 
-    getStatusEffects(){
-        return duplicate(CONFIG.statusEffects).map(x => {return {id: x.id, label: game.i18n.localize(x.label)}})
+    getStatusEffects() {
+        return duplicate(CONFIG.statusEffects).map(x => { return { id: x.id, label: game.i18n.localize(x.label) } })
     }
 
     getData() {
@@ -43,10 +44,10 @@ export default class DSAActiveEffectConfig extends ActiveEffectConfig {
         return data
     }
 
-    static applyAdvancedFunction(actor, effects, source, testData){
+    static applyAdvancedFunction(actor, effects, source, testData) {
 
         for (const ef of effects) {
-            try{
+            try {
                 const customEf = Number(getProperty(ef, "flags.dsa5.advancedFunction"))
                 const qs = testData.qualityStep
                 switch (customEf) {
@@ -54,19 +55,19 @@ export default class DSAActiveEffectConfig extends ActiveEffectConfig {
                         {
                             const arg0 = getProperty(ef, "flags.dsa5.args0")
                             let arg1 = `${getProperty(ef, "flags.dsa5.args1")}`
-                            if(/,/.test(arg1)){
+                            if (/,/.test(arg1)) {
                                 arg1 = Number(arg1.split(",")[qs - 1])
-                            }else{
+                            } else {
                                 arg1 = Number(arg1.replace(game.i18n.localize('CHARAbbrev.QS'), qs))
                             }
                             actor.addCondition(arg0, arg1, false, false)
                         }
-                                break
+                        break
                     case 2: //Macro
                         eval(getProperty(ef, "flags.dsa5.args3"))
                         break
                 }
-            }catch(exception){
+            } catch (exception) {
                 console.warn("Unable to apply advanced effect")
                 console.warn(exception)
                 console.warn(ef)
