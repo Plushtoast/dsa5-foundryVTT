@@ -12,7 +12,6 @@ export default function() {
     })
 
     Hooks.on("renderCompendiumDirectory", (app, html, data) => {
-
         const button = $(`<button><i class="fas fa-university"></i>${game.i18n.localize("ItemLibrary")}</button>`);
         html.find(".header-actions").append(button);
         button.click(() => { game.dsa5.itemLibrary.render(true) })
@@ -24,6 +23,14 @@ export default function() {
             let name = `${pack.metadata.package}.${pack.metadata.name}`
             game.packs.delete(name)
             html.find(`li[data-pack="${name}"]`).hide()
+        }
+    })
+
+    Hooks.on("renderActorDirectory", (app, html, data) => {
+        if(!game.user.isGM){
+            for (let act of app.entities.filter(x => x.isMerchant() && getProperty(x.data, "data.merchant.hidePlayer"))) {
+                html.find(`[data-entity-id="${act._id}"]`).remove()
+            }
         }
     })
 }

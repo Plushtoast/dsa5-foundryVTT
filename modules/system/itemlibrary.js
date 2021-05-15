@@ -256,6 +256,17 @@ export default class DSA5ItemLibrary extends Application {
         return array;
     }
 
+    async findCompendiumItem(search, category){
+        if (!this.equipmentBuild) {
+            await this.buildEquipmentIndex()
+        }
+        let query = {
+            field: ["name"],
+            where: { itemType: category }
+        }
+        return await this.equipmentIndex.search(search, query).filter(x => x.compendium != "")
+    }
+
     async filterStuff(category, index, page) {
         let search = this.filters[category].filterBy.search
 
@@ -349,7 +360,7 @@ export default class DSA5ItemLibrary extends Application {
     }
 
     async buildEquipmentIndex() {
-        this._createIndex("equipment", "Item", game.items)
+        await this._createIndex("equipment", "Item", game.items)
     }
 
     async _createIndex(category, entity, worldStuff) {

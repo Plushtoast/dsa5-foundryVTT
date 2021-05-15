@@ -580,6 +580,13 @@
         "foundryUsagedesc": "<p>Mehr Informationen über die Verwendung von Foundry gibt's im <a href=\"https://github.com/Plushtoast/dsa5-foundryVTT/wiki\" target=\"_blank\">Wiki</a>.</p><p>Schnelle Hilfe kannst du im Ulisses Discord oder Foundry Discord bekommen.</p><p>Den Journalbrowser verwenden:<ul class=\"dsalist\"><li>Mit einem Rechtsklick auf Bilder kannst du diese separat anzeigen und deinen Spielern zeigen</li></ul></p>"
     },
 
+    "Migrakel": {
+        "Migration": "Actor Migration",
+        "migrationDone": "Migration abgeschlossen",
+        "spells": "Aktualisiere Effekte und Effektformeln von alle Zauber, Liturgien, Ritualen und Zeremonien. ALLE MANUELLEN MODIFIKATIONEN WERDEN ÜBERSCHRIEBEN!",
+        "spellsShort": "Zauber migrieren"
+    },
+
     "Skill-eeasy": "Extrem leicht (+5)",
     "Skill-veasy": "Sehr leicht (+3)",
     "Skill-easy": "Leicht (+1)",
@@ -1170,6 +1177,9 @@
         "sell": "Verkaufen",
         "exchange": "Tauschen",
         "commerce": "Handel",
+        "Factor": "Faktor",
+        "hidePlayer": "Für Spieler verbergen",
+        "hidePlayerHint": "Im Aktuerverzeichnis den Spielern nicht anzeigen. Setzen bevor Spieler Permissions erhalten.",
         "buyingFactor": "Kauffaktor",
         "sellingFactor": "Verkaufsfaktor",
         "typeMerchant": "Händler",

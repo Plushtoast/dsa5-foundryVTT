@@ -556,11 +556,8 @@ export default class Actordsa5 extends Actor {
 
         let carrycapacity = actorData.data.characteristics.kk.value * 2 + actorData.data.carryModifier;
 
-        const isMerchant = ["merchant", "loot"].includes(getProperty(actorData, "data.merchant.merchantType"))
-
-        if ((actorData.type != "creature" || actorData.canAdvance) && !isMerchant) {
+        if ((actorData.type != "creature" || actorData.canAdvance) && !this.isMerchant()) {
             encumbrance += Math.max(0, Math.ceil((totalWeight - carrycapacity - 4) / 4))
-
         }
         this.addCondition("encumbered", encumbrance, true)
 
@@ -608,6 +605,10 @@ export default class Actordsa5 extends Actor {
                 trade: skills.trade
             }
         }
+    }
+
+    isMerchant(){
+        return ["merchant", "loot"].includes(getProperty(this.data, "data.merchant.merchantType"))
     }
 
     _itemPreparationError(item, error) {

@@ -116,6 +116,9 @@
         "sell": "Sell",
         "exchange": "Exchange",
         "commerce": "Trade",
+        "hidePlayer": "Hide for player",
+        "hidePlayerHint": "Hide for players in the actor's directory. Set before giving permissions",
+        "Factor": "Factor",
         "buyingFactor": "Buy factor",
         "sellingFactor": "Sell factor",
         "typeMerchant": "Merchant",
@@ -1036,6 +1039,13 @@
         "home": "Home",
         "foundryUsage": "Foundry & TDE",
         "foundryUsagedesc": "<p>You can get more informations on the usage of Foundry with TDE in the <a href=\"https://github.com/Plushtoast/dsa5-foundryVTT/wiki\" target=\"_blank\">Wiki</a>.</p><p>You can also get quick help in the Ulisses or Foundry Discord.</p><p>Using the journal browser: <ul class=\"dsalist\"><li>Right click on images to show them to your players.</li></ul></p>"
+    },
+
+    "Migrakel": {
+        "Migration": "Actor Migration",
+        "migrationDone": "Migration finished",
+        "spells": "Update effects and effectformula of all spells, liturgical chants, rituals and ceremonies from offical modules. THIS WILL OVERRIDE MANUAL MODIFICATIONS!",
+        "spellsShort": "Migrate Spells"
     },
 
     "DSASETTINGS": {

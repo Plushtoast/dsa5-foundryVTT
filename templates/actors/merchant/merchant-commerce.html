@@ -5,10 +5,10 @@
     <div class="col two">
         <div class="groupbox">
             <div class="row-section">
-                <div class="col two">
+                <div class="col fourty">
                     {{localize "creatureClass"}}
                 </div>
-                <div class="col two">
+                <div class="col sixty">
                     <select name="data.merchant.merchantType" data-dtype="String" style="width:100%">
                         {{#select data.merchant.merchantType}}
                         {{#each merchantTypes as |ch char|}}
@@ -20,19 +20,28 @@
             </div>
             {{#when data.merchant.merchantType 'eq' "merchant"}}
             <div class="row-section">
-                <div class="col two">
-                    {{localize "MERCHANT.sellingFactor"}}
+                <div class="col fourty">
+                    {{localize "MERCHANT.Factor"}}
                 </div>
-                <div class="col two">
+                <div class="col ten center" title="{{localize "MERCHANT.sellingFactor"}}">
+                    <i class="fas fa-piggy-bank"></i>
+                </div>
+                <div class="col five" title="{{localize "MERCHANT.sellingFactor"}}">
                     <input name="data.merchant.sellingFactor" type="text" value="{{data.merchant.sellingFactor}}" data-dtype="Number" />
                 </div>
-            </div>
-            <div class="row-section">
-                <div class="col two">
-                    {{localize "MERCHANT.buyingFactor"}}
+                <div class="col ten center" title="{{localize "MERCHANT.buyingFactor"}}">
+                    <i class="fas fa-coins"></i>
                 </div>
-                <div class="col two">
+                <div class="col five" title="{{localize "MERCHANT.buyingFactor"}}">
                     <input name="data.merchant.buyingFactor" type="text" value="{{data.merchant.buyingFactor}}" data-dtype="Number" />
+                </div>
+            </div>
+            <div class="row-section" title="{{localize 'MERCHANT.hidePlayerHint'}}">
+                <div class="col fourty" >
+                    {{localize 'MERCHANT.hidePlayer'}}
+                </div>
+                <div class="col sixty">
+                    <input name="data.merchant.hidePlayer" type="checkbox" value="1" {{checked data.merchant.hidePlayer}} />
                 </div>
             </div>
             {{/when}}

@@ -5,6 +5,7 @@ import Itemdsa5 from "../item/item-dsa5.js";
 import SpecialabilityRulesDSA5 from "../system/specialability-rules-dsa5.js";
 import DSA5ChatListeners from "../system/chat_listeners.js";
 import DSA5StatusEffects from "../status/status_effects.js";
+import DialogActorConfig from "../dialog/dialog-actorConfig.js";
 
 export default class ActorSheetDsa5 extends ActorSheet {
 
@@ -314,29 +315,7 @@ export default class ActorSheetDsa5 extends ActorSheet {
     }
 
     async _configActor() {
-        const template = await renderTemplate("systems/dsa5/templates/actors/parts/actorConfig.html", { actor: this.actor.data })
-        new Dialog({
-            title: game.i18n.localize("SHEET.actorConfig"),
-            content: template,
-            default: 'yes',
-            buttons: {
-                Yes: {
-                    icon: '<i class="fa fa-check"></i>',
-                    label: game.i18n.localize("yes"),
-                    callback: dlg => {
-                        let update = { "data.config.autoBar": dlg.find('[name="autoBar"]').is(":checked") }
-                        if (this.actor.data.type == "creature") {
-                            update["data.config.autoSize"] = dlg.find('[name="autoSize"]').is(":checked")
-                        }
-                        this.actor.update(update)
-                    }
-                },
-                cancel: {
-                    icon: '<i class="fas fa-times"></i>',
-                    label: game.i18n.localize("cancel")
-                }
-            }
-        }).render(true)
+        DialogActorConfig.buildDialog(this.actor)
     }
 
     _getHeaderButtons() {

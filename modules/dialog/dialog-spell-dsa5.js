@@ -18,10 +18,6 @@ export default class DSA5SpellDialog extends Dialog {
         1920
     ]
 
-    calculateSpellCost() {
-
-    }
-
     activateListeners(html) {
         super.activateListeners(html)
 

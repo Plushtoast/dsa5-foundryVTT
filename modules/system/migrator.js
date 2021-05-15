@@ -39,7 +39,7 @@ import DSA5_Utility from "./utility-dsa5.js"
 async function migrateDSA(currentVersion, migrationVersion) {
     await fetch("systems/dsa5/lazy/updatenotes.json").then(async r => r.json()).then(async json => {
         let version = json["notes"][json["notes"].length - 1]
-        let msg = `<h1>CHANGELOG</h1><p>${json["default"].replace(/VERSION/g, version.version)}. </br><b>Important updates</b>: ${version.text}</p><p>For details or proposals visit our wiki page at <a href="https://github.com/Plushtoast/dsa5-foundryVTT" target="_blank">Github</a>. Have fun.</p>`
+        let msg = `<h1>CHANGELOG</h1><p>${json["default"].replace(/VERSION/g, version.version)}. </br><b>Important updates</b>: ${version.text}</p><p>For details or proposals visit our wiki page at <a href="https://github.com/Plushtoast/dsa5-foundryVTT/wiki" target="_blank">Github</a>. Have fun.</p>`
         ChatMessage.create(DSA5_Utility.chatDataSetup(msg, "roll"))
 
         game.settings.set("dsa5", "migrationVersion", migrationVersion)
@@ -51,7 +51,7 @@ export default function migrateWorld() {
         if (!game.user.isGM) return
 
         const currentVersion = game.settings.get("dsa5", "migrationVersion")
-        const NEEDS_MIGRATION_VERSION = 5
+        const NEEDS_MIGRATION_VERSION = 6
         const needsMigration = currentVersion < NEEDS_MIGRATION_VERSION
 
         if (!needsMigration) return;
