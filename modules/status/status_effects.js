@@ -69,12 +69,13 @@ export default class DSA5StatusEffects {
 
         if (absolute && value <= 0) return this.removeCondition(target, effect, value, auto, absolute)
 
-        if (typeof(effect) === "string") effect = duplicate(CONFIG.statusEffects.find(e => e.id == effect))
+        if (typeof(effect) === "string") {
+            effect = duplicate(CONFIG.statusEffects.find(e => e.id == effect))
+        }
 
         if (!effect) return "No Effect Found"
 
         let existing = this.hasCondition(target, effect.id)
-
         if (existing && existing.flags.dsa5.value == null)
             return existing
         else if (existing)
@@ -102,13 +103,28 @@ export default class DSA5StatusEffects {
         let existing = this.hasCondition(target, effect.id)
 
         if (existing && existing.flags.dsa5.value == null) {
+            if (target.token) target = target.token.actor
+            const res = await target.deleteEmbeddedEntity("ActiveEffect", existing._id)
             Hooks.call("deleteActorActiveEffect", target, existing)
-            return await target.deleteEmbeddedEntity("ActiveEffect", existing._id)
+            return res
         } else if (existing)
             return await DSA5StatusEffects.removeEffect(target, existing, value, absolute, auto)
     }
 
+    static immuneToEffect(target, effect, silent = true) {
+        const immunities = getProperty(target.data, "data.immunities") || []
+        if (immunities.includes(effect.id)) {
+            const msg = game.i18n.format("DSAError.immuneTo", { name: target.name, condition: game.i18n.localize(`CONDITION.${effect.id}`) })
+            if (ui.notifications && !silent) ui.notifications.warn(msg)
+            return msg
+        }
+        return false
+    }
+
     static async createEffect(actor, effect, value, auto) {
+        const immune = this.immuneToEffect(actor, effect)
+        if (immune) return immune
+
         effect.label = game.i18n.localize(effect.label);
         if (auto) {
             effect.flags.dsa5.auto = Math.min(effect.flags.dsa5.max, value);
@@ -145,6 +161,9 @@ export default class DSA5StatusEffects {
     }
 
     static async updateEffect(actor, existing, value, absolute, auto) {
+        const immune = this.immuneToEffect(actor, existing, true)
+        if (immune) return immune
+
         let delta, newValue
 
         if (auto) {

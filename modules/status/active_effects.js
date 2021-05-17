@@ -16,7 +16,7 @@ export default class DSAActiveEffectConfig extends ActiveEffectConfig {
         }
         const config = {
             systemEffects: this.getStatusEffects(),
-            canEditMacros: game.settings.get("dsa5", "playerCanEditSpellMacro")
+            canEditMacros: game.user.isGM || game.settings.get("dsa5", "playerCanEditSpellMacro")
         }
         let elem = $(this._element)
         elem.find(".tabs").append(`<a class="item" data-tab="advanced"><i class="fas fa-shield-alt"></i>${game.i18n.localize("advanced")}</a>`)
@@ -44,7 +44,7 @@ export default class DSAActiveEffectConfig extends ActiveEffectConfig {
         return data
     }
 
-    static applyAdvancedFunction(actor, effects, source, testData) {
+    static async applyAdvancedFunction(actor, effects, source, testData) {
 
         for (const ef of effects) {
             try {
@@ -60,11 +60,11 @@ export default class DSAActiveEffectConfig extends ActiveEffectConfig {
                             } else {
                                 arg1 = Number(arg1.replace(game.i18n.localize('CHARAbbrev.QS'), qs))
                             }
-                            actor.addCondition(arg0, arg1, false, false)
+                            await actor.addCondition(arg0, arg1, false, false)
                         }
                         break
                     case 2: //Macro
-                        eval(getProperty(ef, "flags.dsa5.args3"))
+                        await eval(`(async () => {${getProperty(ef, "flags.dsa5.args3")}})()`)
                         break
                 }
             } catch (exception) {
@@ -93,6 +93,7 @@ export default class DSAActiveEffectConfig extends ActiveEffectConfig {
                 { name: `${game.i18n.localize('skill')} - ${game.i18n.localize("stepValue")}`, val: "data.skillModifiers.step" },
                 { name: `${game.i18n.localize('skill')} - ${game.i18n.localize("MODS.QS")}`, val: "data.skillModifiers.QL" },
                 { name: `${game.i18n.localize('skill')} - ${game.i18n.localize("MODS.partChecks")}`, val: "data.skillModifiers.TPM" },
+                { name: `${game.i18n.localize('skill')} - ${game.i18n.localize("MODS.global")}`, val: "data.skillModifiers.global" },
             ]
             const attrs = ["mu", "kl", "in", "ch", "ff", "ge", "ko", "kk"]
             for (const k of attrs)

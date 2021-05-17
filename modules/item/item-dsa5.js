@@ -510,6 +510,10 @@ class SpellItemDSA5 extends Itemdsa5 {
         situationalModifiers.push(...AdvantageRulesDSA5.getVantageAsModifier(actor.data, game.i18n.localize('LocalizedIDs.magicalRestriction'), -1))
         situationalModifiers.push(...AdvantageRulesDSA5.getVantageAsModifier(actor.data, game.i18n.localize('LocalizedIDs.boundToArtifact'), -1))
         situationalModifiers.push(...actor.getSkillModifier(source.name))
+        for (const thing of actor.data.data.skillModifiers.global) {
+            situationalModifiers.push({ name: thing.source, value: thing.value })
+        }
+
         this.getSkZkModifier(data)
     }
 
@@ -1256,6 +1260,9 @@ class SkillItemDSA5 extends Itemdsa5 {
         situationalModifiers.push(...AdvantageRulesDSA5.getVantageAsModifier(actor.data, game.i18n.localize('LocalizedIDs.minorSpirits'), -1))
 
         situationalModifiers.push(...actor.getSkillModifier(source.name))
+        for (const thing of actor.data.data.skillModifiers.global) {
+            situationalModifiers.push({ name: thing.source, value: thing.value })
+        }
     }
 
     static setupDialog(ev, options, skill, actor, tokenId) {

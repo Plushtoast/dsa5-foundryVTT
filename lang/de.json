@@ -443,7 +443,8 @@
         "combatTurmoil": "Schuss ins Kampfgetümmel",
         "QS": "Qualitätsstufenmodifikator",
         "damage": "Schadensmodifikator (z.B. 1d6)",
-        "defenseMalus": "Verteidigungsmalus"
+        "defenseMalus": "Verteidigungsmalus",
+        "global": "Globaler Modifikator"
     },
 
     "WIZARD": {
@@ -577,7 +578,7 @@
         "nothing": "Noch keine",
         "home": "Hauptverzeichnis",
         "foundryUsage": "Foundry & DSA",
-        "foundryUsagedesc": "<p>Mehr Informationen über die Verwendung von Foundry gibt's im <a href=\"https://github.com/Plushtoast/dsa5-foundryVTT/wiki\" target=\"_blank\">Wiki</a>.</p><p>Schnelle Hilfe kannst du im Ulisses Discord oder Foundry Discord bekommen.</p><p>Den Journalbrowser verwenden:<ul class=\"dsalist\"><li>Mit einem Rechtsklick auf Bilder kannst du diese separat anzeigen und deinen Spielern zeigen</li></ul></p>"
+        "foundryUsagedesc": "<p>Mehr Informationen über die Verwendung von Foundry gibt's im <a href=\"https://github.com/Plushtoast/dsa5-foundryVTT/wiki\" target=\"_blank\">Wiki</a>.</p><p>Schnelle Hilfe kannst du im Ulisses Discord oder Foundry Discord bekommen.</p><p>Den Journalbrowser verwenden:<ul class=\"dsalist\"><li>Mit einem Rechtsklick auf Bilder kannst du diese separat anzeigen und deinen Spielern zeigen</li><li>Da die Module Kopien der Printausgaben sind, können Verweise und Formulierungen auf das jeweilige Printprodukt hinweisen und im Spiel abweichen.</li></ul></p>"
     },
 
     "Migrakel": {
@@ -928,7 +929,8 @@
         "unknownCombatSkill": "Das Kampftalent {skill} der Waffe {item} ist unbekannt. Bitte die Waffe anpassen.",
         "onlyGMcanShapeshift": "Du hast nicht die richtigen Berechtigungen zum Formwandeln.",
         "staleData": "Verwaiste Vergleichsprobendaten gefunden. Bitte stelle sicher Vergleichsproben immer abzuschließen. Verwaiste Daten gelöscht.",
-        "sceneNotInitialized": "Szene nicht gefunden. Schon initialisiert?"
+        "sceneNotInitialized": "Szene nicht gefunden. Schon initialisiert?",
+        "immuneTo": "{name} ist immun gegen \"{condition}\"."
     },
 
     "Shapeshift": {

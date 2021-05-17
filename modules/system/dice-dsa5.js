@@ -88,8 +88,18 @@ export default class DiceDSA5 {
         let rollConfirm = new Roll("1d20").roll();
         let successLevel = res1 >= 0 ? 1 : -1
 
-        let botch = /(\(|,)( )?i\)$/.test(testData.source.name) ? 19 : 20
+        let botch = 20
         let crit = 1
+        if (testData.source.type == "meleeweapon") {
+            botch = testData.extra.actor.data.meleeStats.botch
+            crit = testData.extra.actor.data.meleeStats.crit
+        }
+        if (testData.source.type == "rangeweapon") {
+            botch = testData.extra.actor.data.rangeStats.botch
+            crit = testData.extra.actor.data.rangeStats.crit
+        }
+        if (/(\(|,)( )?i\)$/.test(testData.source.name)) botch = Math.min(19, botch)
+
 
         if (testData.situationalModifiers.find(x => x.name == game.i18n.localize('opportunityAttack') && x.value != 0)) {
             botch = 50
@@ -664,6 +674,9 @@ export default class DiceDSA5 {
         } else {
             if (testData.source.data.effectFormula.value != "") {
                 let formula = testData.source.data.effectFormula.value.replace(game.i18n.localize('CHARAbbrev.QS'), res.qualityStep).replace(/[Ww]/g, "d")
+
+                if (/(,|;)/.test(formula)) formula = formula.split(/[,;]/)[res.qualityStep - 1]
+
                 let rollEffect = testData.damageRoll ? testData.damageRoll : new Roll(formula).roll()
                 this._addRollDiceSoNice(testData, rollEffect, "black")
                 res["calculatedEffectFormula"] = formula
@@ -704,9 +717,10 @@ export default class DiceDSA5 {
         for (let k of res)
             if (k > 0) fws -= k
 
-        let failValue = 20
+        let crit = testData.extra.actor.data.skillModifiers.crit
+        let botch = testData.extra.actor.data.skillModifiers.botch
         if ((testData.source.type == "spell" || testData.source.type == "ritual") && AdvantageRulesDSA5.hasVantage(testData.extra.actor, game.i18n.localize('LocalizedIDs.wildMagic')))
-            failValue = 19
+            botch = 19
 
         if (testData.source.type == "skill" && AdvantageRulesDSA5.hasVantage(testData.extra.actor, `${game.i18n.localize('LocalizedIDs.incompetent')} (${testData.source.name})`)) {
             let reroll = new Roll("1d20").roll()
@@ -726,7 +740,7 @@ export default class DiceDSA5 {
             description.push(game.i18n.localize("LocalizedIDs.automaticFail"));
             successLevel = -1
         } else {
-            successLevel = DiceDSA5.get3D20SuccessLevel(roll, fws, failValue)
+            successLevel = DiceDSA5.get3D20SuccessLevel(roll, fws, botch, crit)
             description.push(DiceDSA5.getSuccessDescription(successLevel))
         }
 
@@ -760,11 +774,11 @@ export default class DiceDSA5 {
         return res
     }
 
-    static get3D20SuccessLevel(roll, fws, failValue = 20, critical = 1) {
+    static get3D20SuccessLevel(roll, fws, botch = 20, critical = 1) {
         if (roll.results.filter(x => x == critical).length == 3) return 3
         else if (roll.results.filter(x => x == critical).length == 2) return 2
-        else if (roll.results.filter(x => x >= failValue).length == 3) return -3
-        else if (roll.results.filter(x => x >= failValue).length == 2) return -2
+        else if (roll.results.filter(x => x >= botch).length == 3) return -3
+        else if (roll.results.filter(x => x >= botch).length == 2) return -2
         else return fws >= 0 ? 1 : -1
     }
 
@@ -1130,20 +1144,18 @@ export default class DiceDSA5 {
             if (actor) actors.push(actor)
         } else {
             if (targets) actors = targets.map(x => DSA5_Utility.getSpeaker(x))
-            else {
-                if (game.user.targets.size) {
-                    game.user.targets.forEach(target => { actors.push(target.actor) });
-                }
+            else if (game.user.targets.size) {
+                game.user.targets.forEach(target => { actors.push(target.actor) });
             }
         }
         if (game.user.isGM) {
             for (let actor of actors) {
                 const effectsWithChanges = effects.filter(x => x.changes && x.changes.length > 0)
-                actor.createEmbeddedEntity("ActiveEffect", effectsWithChanges.map(x => {
+                await actor.createEmbeddedEntity("ActiveEffect", effectsWithChanges.map(x => {
                     x.origin = actor.uuid
                     return x
                 }))
-                DSAActiveEffectConfig.applyAdvancedFunction(actor, effects, source, testData)
+                await DSAActiveEffectConfig.applyAdvancedFunction(actor, effects, source, testData)
                 const infoMsg = game.i18n.format('ActiveEffects.appliedEffect', { target: actor.name, source: source.name })
                 ChatMessage.create(DSA5_Utility.chatDataSetup(infoMsg));
             }

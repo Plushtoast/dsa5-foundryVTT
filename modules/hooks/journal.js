@@ -28,6 +28,11 @@ export default function() {
         html.on('click', '.chat-condition', ev => {
             DSA5ChatListeners.postStatus($(ev.currentTarget).attr("data-id"))
         })
+        html.on('mousedown', "img", ev => {
+            let name = obj.name
+            if (ev.button == 2) game.dsa5.apps.DSA5_Utility.showArtwork({ name: name, uuid: "", img: $(ev.currentTarget).attr("src") })
+            return false
+        })
     })
 
     TextEditor._enrichHTML = TextEditor.enrichHTML

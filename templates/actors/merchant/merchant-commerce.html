@@ -45,6 +45,16 @@
                 </div>
             </div>
             {{/when}}
+            {{#when data.merchant.merchantType 'eq' "loot"}}
+            <div class="row-section" title="{{localize 'MERCHANT.hidePlayerHint'}}">
+                <div class="col fourty">
+                    {{localize 'MERCHANT.hidePlayer'}}
+                </div>
+                <div class="col sixty">
+                    <input name="data.merchant.hidePlayer" type="checkbox" value="1" {{checked data.merchant.hidePlayer}} />
+                </div>
+            </div>
+            {{/when}}
         </div>
     </div>
 </div>

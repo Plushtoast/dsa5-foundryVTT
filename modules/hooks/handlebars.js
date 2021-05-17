@@ -11,7 +11,7 @@ export default function() {
         return a % b;
     });
     Handlebars.registerHelper('roman', function(a, max) {
-        if (max && max < 2) return ''
+        if (max != undefined && Number(max) < 2) return ''
 
         let roman = [' I', ' II', ' III', ' IV', ' V', ' VI', ' VII', ' VIII', ' IX']
         return roman[a - 1]

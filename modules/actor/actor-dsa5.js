@@ -71,8 +71,8 @@ export default class Actordsa5 extends Actor {
 
             if (data.type == "character" || data.type == "npc") {
                 data.data.status.wounds.current = data.data.status.wounds.initial + data.data.characteristics.ko.value * 2
-                data.data.status.soulpower.value = (data.data.status.soulpower.initial ? data.data.status.soulpower.initial : 0) + Math.round((data.data.characteristics.mu.value + data.data.characteristics.kl.value + data.data.characteristics.in.value) / 6)
-                data.data.status.toughness.value = (data.data.status.toughness.initial ? data.data.status.toughness.initial : 0) + Math.round((data.data.characteristics.ko.value + data.data.characteristics.ko.value + data.data.characteristics.kk.value) / 6)
+                data.data.status.soulpower.value = (data.data.status.soulpower.initial || 0) + Math.round((data.data.characteristics.mu.value + data.data.characteristics.kl.value + data.data.characteristics.in.value) / 6)
+                data.data.status.toughness.value = (data.data.status.toughness.initial || 0) + Math.round((data.data.characteristics.ko.value + data.data.characteristics.ko.value + data.data.characteristics.kk.value) / 6)
                 data.data.status.initiative.value = Math.round((data.data.characteristics.mu.value + data.data.characteristics.ge.value) / 2) + (data.data.status.initiative.modifier || 0)
             }
 
@@ -84,9 +84,6 @@ export default class Actordsa5 extends Actor {
                 data.data.status.karmaenergy.current = data.data.status.karmaenergy.initial
                 data.data.status.initiative.value = data.data.status.initiative.current + (data.data.status.initiative.modifier || 0)
             }
-
-            data.data.status.initiative.value += data.data.status.initiative.gearmodifier
-            data.data.status.initiative.value = (1.01 * data.data.status.initiative.value).toFixed(2)
 
             data.data.status.wounds.max = data.data.status.wounds.current + data.data.status.wounds.modifier + data.data.status.wounds.advances + data.data.status.wounds.gearmodifier
             data.data.status.astralenergy.max = data.data.status.astralenergy.current + data.data.status.astralenergy.modifier + data.data.status.astralenergy.advances + data.data.status.astralenergy.gearmodifier
@@ -114,8 +111,14 @@ export default class Actordsa5 extends Actor {
 
             let encumbrance = this.hasCondition('encumbered')
             encumbrance = encumbrance ? Number(encumbrance.flags.dsa5.value) : 0
-            data.data.status.initiative.value -= (Math.min(4, encumbrance))
+
             data.data.status.speed.max = Math.max(0, data.data.status.speed.max - (Math.min(4, encumbrance)))
+
+            data.data.status.initiative.value += data.data.status.initiative.gearmodifier
+            data.data.status.initiative.value -= (Math.min(4, encumbrance))
+            const baseInit = Number((0.01 * data.data.status.initiative.value).toFixed(2))
+            data.data.status.initiative.value *= data.data.status.initiative.multiplier || 1
+            data.data.status.initiative.value += baseInit
 
 
             data.data.status.dodge.max = Number(data.data.status.dodge.value) + Number(data.data.status.dodge.modifier) + (Number(game.settings.get("dsa5", "higherDefense")) / 2)
@@ -206,22 +209,30 @@ export default class Actordsa5 extends Actor {
                     step: [],
                     QL: [],
                     TPM: [],
-                    FW: []
+                    FW: [],
+                    botch: 20,
+                    crit: 1,
+                    global: []
                 },
                 totalArmor: 0,
                 carryModifier: 0,
                 aspModifier: 0,
                 kapModifier: 0,
+                immunities: [],
                 meleeStats: {
                     parry: 0,
                     attack: 0,
                     damage: "0",
-                    defenseMalus: 0
+                    defenseMalus: 0,
+                    botch: 20,
+                    crit: 1
                 },
                 rangeStats: {
                     attack: 0,
                     damage: "0",
-                    defenseMalus: 0
+                    defenseMalus: 0,
+                    botch: 20,
+                    crit: 1
                 }
             }
         })
@@ -607,7 +618,7 @@ export default class Actordsa5 extends Actor {
         }
     }
 
-    isMerchant(){
+    isMerchant() {
         return ["merchant", "loot"].includes(getProperty(this.data, "data.merchant.merchantType"))
     }
 
@@ -1279,7 +1290,7 @@ export default class Actordsa5 extends Actor {
     }
 
     async removeCondition(effect, value = 1, auto = true, absolute = false) {
-        return DSA5StatusEffects.removeCondition(this, effect, value, auto, absolute)
+        return await DSA5StatusEffects.removeCondition(this, effect, value, auto, absolute)
     }
 
     hasCondition(conditionKey) {

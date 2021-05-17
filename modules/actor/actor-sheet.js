@@ -713,16 +713,16 @@ export default class ActorSheetDsa5 extends ActorSheet {
         }
     }
 
-    _deleteActiveEffect(id) {
+    async _deleteActiveEffect(id) {
         let item = this.actor.data.effects.find(x => x._id == id)
 
         if (item) {
-            Hooks.call("deleteActorActiveEffect", this.actor, item)
-
             let actor = this.actor
             if (this.token) actor = this.token.actor
 
-            if (actor) this.actor.deleteEmbeddedEntity("ActiveEffect", item._id)
+            if (actor) await this.actor.deleteEmbeddedEntity("ActiveEffect", item._id)
+
+            Hooks.call("deleteActorActiveEffect", this.actor, item)
         }
     }
 

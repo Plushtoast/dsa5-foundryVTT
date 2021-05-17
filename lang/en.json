@@ -478,7 +478,8 @@
         "combatTurmoil": "Shooting into Melee",
         "QS": "Quality Level modifier",
         "damage": "Damage modifier (f.e. 1d6)",
-        "defenseMalus": "Defense malus"
+        "defenseMalus": "Defense malus",
+        "global": "Global modifier"
     },
 
     "SKILL": {
@@ -1038,7 +1039,7 @@
         "nothing": "None yet",
         "home": "Home",
         "foundryUsage": "Foundry & TDE",
-        "foundryUsagedesc": "<p>You can get more informations on the usage of Foundry with TDE in the <a href=\"https://github.com/Plushtoast/dsa5-foundryVTT/wiki\" target=\"_blank\">Wiki</a>.</p><p>You can also get quick help in the Ulisses or Foundry Discord.</p><p>Using the journal browser: <ul class=\"dsalist\"><li>Right click on images to show them to your players.</li></ul></p>"
+        "foundryUsagedesc": "<p>You can get more informations on the usage of Foundry with TDE in the <a href=\"https://github.com/Plushtoast/dsa5-foundryVTT/wiki\" target=\"_blank\">Wiki</a>.</p><p>You can also get quick help in the Ulisses or Foundry Discord.</p><p>Using the journal browser: <ul class=\"dsalist\"><li>Right click on images to show them to your players.</li><li>Some references and text passages can point to a book location and differ from the game's location, as the modules are copies of printed books.</ul></p>"
     },
 
     "Migrakel": {
@@ -1076,7 +1077,8 @@
         "allowPhysicalDice": "Check with real dice",
         "allowPhysicalDiceHint": "Allow the input of the result of real dice",
         "playerCanEditSpellMacro": "Effect Macro editably by players",
-        "playerCanEditSpellMacroHint": "Players can edit spell macros and similar stuff (insecure)."
+        "playerCanEditSpellMacroHint": "Players can edit spell macros and similar stuff (insecure).",
+        "immuneTo": "{name} is immune to \"{condition}\"."
     },
 
     "CHATFATE": {

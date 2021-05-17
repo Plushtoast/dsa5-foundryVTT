@@ -17,10 +17,10 @@ export default class DialogActorConfig extends Dialog{
           label: game.i18n.localize("Save"),
           callback: dlg => {
             let update = { "data.config.autoBar": dlg.find('[name="autoBar"]').is(":checked") }
-            if (this.actor.data.type == "creature") {
+            if (actor.data.type == "creature") {
               update["data.config.autoSize"] = dlg.find('[name="autoSize"]').is(":checked")
             }
-            this.actor.update(update)
+            actor.update(update)
           }
         },
         cancel: {
@@ -32,6 +32,7 @@ export default class DialogActorConfig extends Dialog{
   }
 
   activateListeners(html){
+    super.activateListeners(html)
     html.find('.updateSpells').click(() => {
       Migrakel.updateSpellsAndLiturgies(this.actor)
     })

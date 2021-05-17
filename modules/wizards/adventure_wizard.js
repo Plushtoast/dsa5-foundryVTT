@@ -249,7 +249,13 @@ export default class BookWizard extends Application {
 
                 let chapter = this.bookData.chapters.find(x => x.name == this.selectedType).content.find(x => x.id == this.selectedChapter)
 
-                return await renderTemplate('systems/dsa5/templates/wizard/adventure/adventure_chapter.html', { chapter, subChapters: this.getSubChapters(), actors: this.prefillActors(chapter) })
+                const subChapters = this.getSubChapters()
+                if (chapter.scenes || chapter.actors || subChapters.length == 0) {
+                    return await renderTemplate('systems/dsa5/templates/wizard/adventure/adventure_chapter.html', { chapter, subChapters: this.getSubChapters(), actors: this.prefillActors(chapter) })
+                } else {
+                    return await this.loadJournal(subChapters[0])
+                }
+
             }
             return await renderTemplate('systems/dsa5/templates/wizard/adventure/adventure_cover.html', { book: this.book, bookData: this.bookData })
         } else {
