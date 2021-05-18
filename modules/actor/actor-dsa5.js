@@ -644,19 +644,17 @@ export default class Actordsa5 extends Actor {
         if (!i.data.effect || i.data.effect.value == undefined)
             return
 
-        for (let mod of i.data.effect.value.split(/,|;/).map(x => x.trim())) {
+        for (let mod of i.data.effect.value.split(/[,;]/).map(x => x.trim())) {
             let vals = mod.replace(/(\s+)/g, ' ').trim().split(" ")
-            if (vals.length == 2) {
-                if (Number(vals[0]) != undefined) {
-                    if (itemModifiers[vals[1]] == undefined) {
-                        itemModifiers[vals[1]] = {
-                            value: Number(vals[0]) * (i.data.step ? Number(i.data.step.value) : 1),
-                            sources: [i.name]
-                        }
-                    } else {
-                        itemModifiers[vals[1]].value += Number(vals[0]) * (i.data.step ? Number(i.data.step.value) : 1)
-                        itemModifiers[vals[1]].sources.push(i.name)
+            if (vals.length == 2 && !isNaN(vals[0]) && isNaN(vals[1])) {
+                if (itemModifiers[vals[1]] == undefined) {
+                    itemModifiers[vals[1]] = {
+                        value: Number(vals[0]) * (i.data.step ? (Number(i.data.step.value) || 1) : 1),
+                        sources: [i.name]
                     }
+                } else {
+                    itemModifiers[vals[1]].value += Number(vals[0]) * (i.data.step ? (Number(i.data.step.value) || 1) : 1)
+                    itemModifiers[vals[1]].sources.push(i.name)
                 }
             }
         }

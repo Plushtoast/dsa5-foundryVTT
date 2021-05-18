@@ -155,7 +155,7 @@ export default class Itemdsa5 extends Item {
     static parseEffect(effect, actor) {
         let itemModifiers = {}
         let regex = new RegExp(game.i18n.localize("CHARAbbrev.GS"), "gi")
-        for (let mod of effect.split(/,|;/).map(x => x.trim())) {
+        for (let mod of effect.split(/[,;]/).map(x => x.trim())) {
             let vals = mod.replace(/(\s+)/g, ' ').trim().split(" ")
             vals[0] = vals[0].replace(regex, actor.data.data.status.speed.max)
             if (vals.length == 2) {
