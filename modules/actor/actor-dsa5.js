@@ -947,6 +947,7 @@ export default class Actordsa5 extends Actor {
 
             let newTestData = data.preData
             newTestData.extra.actor = DSA5_Utility.getSpeaker(newTestData.extra.speaker).data
+            console.log(newTestData)
 
             this[`fate${type}`](infoMsg, cardOptions, newTestData, message, data)
         }
@@ -957,7 +958,8 @@ export default class Actordsa5 extends Actor {
 
         let testData = {
             source: {
-                type: "regenerate"
+                type: "regenerate",
+                data: {}
             },
             opposable: false,
             extra: {
@@ -1013,7 +1015,10 @@ export default class Actordsa5 extends Actor {
         let title = game.i18n.localize(statusId) + " " + game.i18n.localize("Test");
 
         let testData = {
-            source: char,
+            source: {
+                data: char,
+                type: statusId
+            },
             opposable: false,
             extra: {
                 statusId: statusId,
@@ -1030,8 +1035,6 @@ export default class Actordsa5 extends Actor {
         let combatskills = Itemdsa5.buildCombatSpecAbs(this, ["Combat"], toSearch, "parry")
         let situationalModifiers = DSA5StatusEffects.getRollModifiers(testData.extra.actor, testData.source)
         Itemdsa5.getDefenseMalus(situationalModifiers, this)
-
-        testData.source.type = statusId
 
         let dialogOptions = {
             title: title,
@@ -1075,7 +1078,10 @@ export default class Actordsa5 extends Actor {
 
         let testData = {
             opposable: false,
-            source: char,
+            source: {
+                type: "char",
+                data: char,
+            },
             extra: {
                 characteristicId: characteristicId,
                 actor: duplicate(this),
@@ -1086,8 +1092,6 @@ export default class Actordsa5 extends Actor {
                 }
             }
         };
-
-        testData.source.type = "char"
 
         let dialogOptions = {
             title: title,

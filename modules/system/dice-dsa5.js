@@ -199,7 +199,7 @@ export default class DiceDSA5 {
     static rollStatus(testData) {
         let roll = testData.roll ? testData.roll : new Roll("1d20").roll();
         this._appendSituationalModifiers(testData, game.i18n.localize("manual"), testData.testModifier)
-        let result = this._rollSingleD20(roll, testData.source.max, testData.extra.statusId, this._situationalModifiers(testData), testData, "", this._situationalMultipliers(testData))
+        let result = this._rollSingleD20(roll, testData.source.data.max, testData.extra.statusId, this._situationalModifiers(testData), testData, "", this._situationalMultipliers(testData))
         result["rollType"] = "dodge"
         if (testData.extra.statusId == "dodge" && result.successLevel == 3) {
             result["description"] += ", " + game.i18n.localize("attackOfOpportunity")
@@ -217,7 +217,7 @@ export default class DiceDSA5 {
         let roll = testData.roll ? testData.roll : new Roll("1d20").roll();
         this._appendSituationalModifiers(testData, game.i18n.localize("manual"), testData.testModifier)
         this._appendSituationalModifiers(testData, game.i18n.localize("Difficulty"), testData.testDifficulty)
-        let result = this._rollSingleD20(roll, testData.source.value, testData.extra.characteristicId, this._situationalModifiers(testData), testData, "", this._situationalMultipliers(testData))
+        let result = this._rollSingleD20(roll, testData.source.data.value, testData.extra.characteristicId, this._situationalModifiers(testData), testData, "", this._situationalMultipliers(testData))
         result["rollType"] = "attribute"
         return result
     }
@@ -919,7 +919,7 @@ export default class DiceDSA5 {
                     roll = new Roll("1d20[in]+1d20[in]+1d20[in]").roll();
                     break
                 default:
-                    roll = new Roll(`1d20[${testData.source.label.split('.')[1].toLowerCase()}]`).roll();
+                    roll = new Roll(`1d20[${testData.source.data.label.split('.')[1].toLowerCase()}]`).roll();
             }
             roll = await DiceDSA5.manualRolls(roll, testData.source.type)
             this.showDiceSoNice(roll, cardOptions.rollMode);
