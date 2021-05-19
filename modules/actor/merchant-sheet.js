@@ -246,8 +246,8 @@ export default class MerchantSheetDSA5 extends ActorSheetdsa5NPC {
     async removeAllGoods(actor, ev) {
         let text = $(ev.currentTarget).text()
         $(ev.currentTarget).html(' <i class="fa fa-spin fa-spinner"></i>')
-        let ids = actor.data.items.filter(x => ["equipment", "poison", "consumable"].includes(x.type)).map(x => x._id)
-        ids.push(...actor.data.items.filter(x => ["armor", "meleeweapon", "rangeweapon", "equipment"].includes(x.type) && !x.data.worn.value).map(x => x._id))
+        let ids = actor.data.items.filter(x => ["equipment", "poison", "consumable"].includes(x.type)).map(x => x.id)
+        ids.push(...actor.data.items.filter(x => ["armor", "meleeweapon", "rangeweapon", "equipment"].includes(x.type) && !x.data.worn.value).map(x => x.id))
         await actor.deleteEmbeddedDocuments("Item", ids);
         $(ev.currentTarget).text(text)
     }

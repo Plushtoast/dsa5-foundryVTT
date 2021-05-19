@@ -120,7 +120,7 @@ export default class BookWizard extends Application {
         })
 
         html.on('click', '.showJournal', ev => {
-            this.journals.find(x => x._id == $(ev.currentTarget).attr("data-id")).render(true)
+            this.journals.find(x => x.id == $(ev.currentTarget).attr("data-id")).render(true)
         })
 
         html.on('click', '.importBook', () => {
@@ -133,14 +133,14 @@ export default class BookWizard extends Application {
         this.showJournal(this.journals.find(x => { return x.name == name && x.data.flags.dsa5.parent == this.selectedChapter }))
     }
     async loadJournalById(id) {
-        this.showJournal(this.journals.find(x => { return x._id == id }))
+        this.showJournal(this.journals.find(x => { return x.id == id }))
     }
 
     showJournal(journal) {
         let content = journal.data.content
         if (!content) content = `<img src="${journal.data.img}"/>`
 
-        this.content = `<div><h1 class="journalHeader">${journal.name}<a class="showJournal" data-id="${journal._id}"><i class="fas fa-eye"></i></a></h1>${TextEditor.enrichHTML(content)}`
+        this.content = `<div><h1 class="journalHeader">${journal.name}<a class="showJournal" data-id="${journal.id}"><i class="fas fa-eye"></i></a></h1>${TextEditor.enrichHTML(content)}`
         const chapter = $(this._element).find('.chapter')
         chapter.html(this.content)
         chapter.find('.entity-link').click(ev => {
@@ -204,7 +204,7 @@ export default class BookWizard extends Application {
     }
 
     async popJournal(id) {
-        let entry = this.journals.find(x => x._id == id)
+        let entry = this.journals.find(x => x.id == id)
         entry.sheet.render(true)
     }
 

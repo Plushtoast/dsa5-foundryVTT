@@ -118,7 +118,7 @@ export default class OpposedDsa5 {
                         type: "target",
                         payload: {
                             target: target.data._id,
-                            scene: canvas.scene._id,
+                            scene: canvas.scene.id,
                             opposeFlag: {
                                 speaker: message.data.speaker,
                                 messageId: message.data._id,
@@ -173,7 +173,7 @@ export default class OpposedDsa5 {
                 type: "target",
                 payload: {
                     target: data.targetSpeaker.token,
-                    scene: canvas.scene._id,
+                    scene: canvas.scene.id,
                     opposeFlag: {
                         speaker: message.data.speaker,
                         messageId: message.data._id,

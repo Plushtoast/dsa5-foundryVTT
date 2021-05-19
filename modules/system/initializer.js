@@ -93,12 +93,12 @@ export default class DSA5Initializer extends Dialog {
                     entry.data.folder = head._id
                     for (let n of entry.data.notes) {
                         try {
-                            //n.entryId = getProperty(n, `flags.dsa5.initId`) // journs.find(x => x._id == getProperty(n, `flags.dsa5.initId`)).data._id
+                            //n.entryId = getProperty(n, `flags.dsa5.initId`) // journs.find(x => x.id == getProperty(n, `flags.dsa5.initId`)).data._id
                             let journ = journs.find(x => x.data.flags.dsa5.initId == n.entryId)
                             journ.data.folder = journHead.data._id
                             let createdEntries = await JournalEntry.create(journ)
                             console.log(createdEntries)
-                            n.entryId = createdEntries._id
+                            n.entryId = createdEntries.id
                         } catch (e) {
                             console.warn("Could not initialize Scene Notes" + e)
                         }

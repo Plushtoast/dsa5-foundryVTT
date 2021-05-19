@@ -44,7 +44,7 @@ export default class Migrakel {
                 if (find) {
                     find = find[0].document
                     await item.update({ "data.effectFormula.value": find.data.data.effectFormula.value })
-                    for (const id of item.effects.map(x => x._id)) {
+                    for (const id of item.effects.map(x => x.id)) {
                         await item.deleteEmbeddedDocuments("ActiveEffect", [id])
                     }
                     for (const ef of find.effects) {

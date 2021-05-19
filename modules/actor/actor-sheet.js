@@ -260,7 +260,7 @@ export default class ActorSheetDsa5 extends ActorSheet {
         let item = duplicate(this.actor.items.find(i => i.data._id == itemId))
         let cost = DSA5_Utility._calculateAdvCost(Number(item.data.talentValue.value), item.data.StF.value)
         if (await this._checkEnoughXP(cost) && this._checkMaximumItemAdvancement(item, Number(item.data.talentValue.value) + 1)) {
-            await this.actor.updateEmbeddedDocuments("Item", [{ _id: itemId, "data.talentValue.value": item.data.talentValue.value + 1 }])
+            await this.actor.updateEmbeddedDocuments("Item", [{ id: itemId, "data.talentValue.value": item.data.talentValue.value + 1 }])
             await this.actor.update({ "data.details.experience.spent": Number(this.actor.data.data.details.experience.spent) + cost })
         }
     }
@@ -269,7 +269,7 @@ export default class ActorSheetDsa5 extends ActorSheet {
         let item = duplicate(this.actor.items.find(i => i.data._id == itemId))
         if (item.data.talentValue.value > 0) {
             let cost = DSA5_Utility._calculateAdvCost(Number(item.data.talentValue.value), item.data.StF.value, 0)
-            await this.actor.updateEmbeddedDocuments("Item", [{ _id: itemId, "data.talentValue.value": item.data.talentValue.value - 1 }])
+            await this.actor.updateEmbeddedDocuments("Item", [{ id: itemId, "data.talentValue.value": item.data.talentValue.value - 1 }])
             await this.actor.update({ "data.details.experience.spent": Number(this.actor.data.data.details.experience.spent) - cost })
         }
     }
@@ -414,7 +414,7 @@ export default class ActorSheetDsa5 extends ActorSheet {
                 case "rangeweapon":
                 case "meleeweapon":
                 case "equipment":
-                    this.actor.updateEmbeddedDocuments("Item", [{ _id: item._id, "data.worn.value": !item.data.worn.value }]);
+                    this.actor.updateEmbeddedDocuments("Item", [{ id: item.id, "data.worn.value": !item.data.worn.value }]);
                     break;
             }
 
@@ -758,7 +758,7 @@ export default class ActorSheetDsa5 extends ActorSheet {
     }
 
     async _cleverDeleteItem(itemId) {
-        let item = this.actor.data.items.find(x => x._id == itemId)
+        let item = this.actor.data.items.find(x => x.id == itemId)
         let steps, xpCost
         switch (item.type) {
             case "advantage":
@@ -998,7 +998,7 @@ export default class ActorSheetDsa5 extends ActorSheet {
         if (dragData.tokenId) sourceActor = game.actors.tokens[dragData.tokenId];
         if (!sourceActor) sourceActor = game.actors.get(dragData.actorId)
 
-        if (sourceActor && sourceActor.isOwner) sourceActor.deleteEmbeddedDocuments("Item", [item._id])
+        if (sourceActor && sourceActor.isOwner) sourceActor.deleteEmbeddedDocuments("Item", [item.id])
     }
 
     async _handleDragData(dragData, originalEvent) {

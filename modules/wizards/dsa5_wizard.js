@@ -85,7 +85,7 @@ export default class WizardDSA5 extends Application {
 
     async addSelections(elems) {
         for (let k of elems) {
-            let item = duplicate(this.items.find(x => x._id == $(k).val()))
+            let item = duplicate(this.items.find(x => x.id == $(k).val()))
             item.name = $(k).attr("name")
 
             switch (item.type) {

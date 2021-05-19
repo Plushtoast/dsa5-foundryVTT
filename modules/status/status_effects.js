@@ -156,7 +156,7 @@ export default class DSA5StatusEffects {
         existing.data.flags.dsa5.value = Math.max(0, Math.min(4, existing.data.flags.dsa5.manual + existing.data.flags.dsa5.auto))
 
         if (existing.data.flags.dsa5.auto <= 0 && existing.data.flags.dsa5.manual == 0)
-            return actor.deleteEmbeddedDocuments("ActiveEffect", [existing._id])
+            return actor.deleteEmbeddedDocuments("ActiveEffect", [existing.id])
         else
             return actor.updateEmbeddedDocuments("ActiveEffect", [existing])
     }

@@ -116,14 +116,14 @@ export default class DSA5_Utility {
     }
 
     static findItembyId(id) {
-        let item = game.items.entities.find(x => x._id == id);
+        let item = game.items.entities.find(x => x.id == id);
         if (item) {
             return item;
         }
     }
 
     static findActorbyId(id) {
-        let item = game.actors.entities.find(x => x._id == id);
+        let item = game.actors.entities.find(x => x.id == id);
         if (item) {
             return item;
         }
@@ -133,7 +133,7 @@ export default class DSA5_Utility {
         const pack = game.packs.get(packMan)
 
         let item
-        await pack.getDocuments().then(content => item = content.find(i => i._id == id));
+        await pack.getDocuments().then(content => item = content.find(i => i.id == id));
         if (item) {
             return item;
         }

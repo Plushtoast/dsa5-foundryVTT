@@ -30,7 +30,7 @@ export default class ActorSheetdsa5Creature extends ActorSheetDsa5 {
     }
 
     async _cleverDeleteItem(itemId) {
-        let item = this.actor.data.items.find(x => x._id == itemId)
+        let item = this.actor.data.items.find(x => x.id == itemId)
         switch (item.type) {
             case "trait":
                 await this._updateAPs(item.data.APValue.value * -1)

@@ -1087,7 +1087,7 @@ export default class DiceDSA5 {
             game.socket.emit("system.dsa5", {
                 type: "updateGroupCheck",
                 payload: {
-                    messageId: message._id,
+                    messageId: message.id,
                     data
                 }
             })
@@ -1140,7 +1140,7 @@ export default class DiceDSA5 {
         let actors = []
         if (mode == "self") {
             let actor = DSA5_Utility.getSpeaker(speaker)
-            if (!actor) actor = game.actors.get(message.data.flags.data.preData.extra.actor._id)
+            if (!actor) actor = game.actors.get(message.data.flags.data.preData.extra.actor.id)
             if (actor) actors.push(actor)
         } else {
             if (targets) actors = targets.map(x => DSA5_Utility.getSpeaker(x))
