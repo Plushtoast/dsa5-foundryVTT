@@ -64,7 +64,7 @@ export default class DSA5StatusEffects {
     }
 
     static async addCondition(target, effect, value = 1, absolute = false, auto = true) {
-        if (!target.owner) return "Not owned"
+        if (!target.isOwner) return "Not owned"
         if (target.compendium) return "Can not add in compendium"
 
         if (absolute && value <= 0) return this.removeCondition(target, effect, value, auto, absolute)
@@ -95,7 +95,7 @@ export default class DSA5StatusEffects {
     }
 
     static async removeCondition(target, effect, value = 1, auto = true, absolute = false) {
-        if (!target.owner) return "Not owned"
+        if (!target.isOwner) return "Not owned"
 
         if (typeof(effect) === "string") effect = duplicate(CONFIG.statusEffects.find(e => e.id == effect))
 

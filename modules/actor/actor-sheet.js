@@ -998,7 +998,7 @@ export default class ActorSheetDsa5 extends ActorSheet {
         if (dragData.tokenId) sourceActor = game.actors.tokens[dragData.tokenId];
         if (!sourceActor) sourceActor = game.actors.get(dragData.actorId)
 
-        if (sourceActor && sourceActor.owner) sourceActor.deleteEmbeddedDocuments("Item", [item._id])
+        if (sourceActor && sourceActor.isOwner) sourceActor.deleteEmbeddedDocuments("Item", [item._id])
     }
 
     async _handleDragData(dragData, originalEvent) {

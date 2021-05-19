@@ -53,7 +53,7 @@ export default class Actordsa5 extends Actor {
             //We should iterate at some point over the items to prevent multiple loops
 
             let isFamiliar = data.items.find(x => x.name == game.i18n.localize('LocalizedIDs.familiar') && x.type == "trait") != undefined
-            data.canAdvance = (data.type == "character" || isFamiliar) && this.owner
+            data.canAdvance = (data.type == "character" || isFamiliar) && this.isOwner
             data.isMage = isFamiliar || data.items.some(x => ["ritual", "spell", "magictrick"].includes(x.type) || (x.type == "specialability" && ["magical", "staff"].includes(x.data.data.category.value)))
             data.isPriest = data.items.some(x => ["ceremony", "liturgy", "blessing"].includes(x.type) || (x.type == "specialability" && ["ceremonial", "clerical"].includes(x.data.data.category.value)))
             if (data.canAdvance) {
