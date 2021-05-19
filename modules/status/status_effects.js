@@ -41,7 +41,7 @@ export default class DSA5StatusEffects {
         let appliedSystemConditions = []
         data.conditions = []
         data.transferedConditions = []
-        for (let condition of target.effects.filter(e => { return game.user.isGM || target.entity == "Item" || !e.getFlag("dsa5", "hidePlayers") })) {
+        for (let condition of target.effects.filter(e => { return game.user.isGM || target.documentName == "Item" || !e.getFlag("dsa5", "hidePlayers") })) {
             condition.disabled = condition.data.disabled
             condition.boolean = condition.getFlag("dsa5", "value") == null
             condition.label = condition.data.label
@@ -187,6 +187,7 @@ export default class DSA5StatusEffects {
 
 
     static calculateRollModifier(effect, actor, item, options = {}) {
+        console.log(effect)
         if (effect.data.flags.dsa5.value == null)
             return 0
         return effect.data.flags.dsa5.value * -1

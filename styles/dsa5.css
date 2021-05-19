@@ -1148,7 +1148,7 @@ form.dsa5.item-sheet {
     height: 100%;
 }
 
-#sidebar .directory-list .entity,
+#sidebar .directory-list .documentName,
 #sidebar .playlist.now-playing,
 #compendium li.compendium-pack {
     background-color: var(--sheet-bg);
@@ -1993,7 +1993,7 @@ h2 .chatButton {
     background-color: rgb(32, 202, 2);
 }
 
-a.entity-link,
+a.documentName-link,
 a.inline-roll {
     background: var(--bg-color);
 }
@@ -2211,7 +2211,7 @@ select.noAppearance {
     font-weight: bold;
 }
 
-.maskfield .entity-link {
+.maskfield .documentName-link {
     color: black;
 }
 

@@ -22,13 +22,13 @@ class SearchDocument {
         return this.document._id
     }
     get itemType() {
-        switch (this.document.entity) {
+        switch (this.document.documentName) {
             case 'Actor':
                 return this.document.data.type
             case 'Item':
                 return this.document.type
             default:
-                return this.document.entity
+                return this.document.documentName
         }
     }
     get options() {
@@ -369,7 +369,7 @@ export default class DSA5ItemLibrary extends Application {
         //await this[`${category}Index`].clear()
         const target = $(this._element).find(`*[data-tab="${category}"]`)
         this.showLoading(target, category)
-        const packs = game.packs.filter(p => p.entity == entity && (game.user.isGM || !p.private))
+        const packs = game.packs.filter(p => p.documentName == entity && (game.user.isGM || !p.private))
         return Promise.all(packs.map(p => p.getDocuments())).then(indexes => {
             let items = worldStuff.map(x => new SearchDocument(x))
             indexes.forEach((index, idx) => {

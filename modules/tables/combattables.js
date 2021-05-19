@@ -2,19 +2,19 @@ import DSA5_Utility from "../system/utility-dsa5.js"
 
 export default class CombatTables {
     static async getDefenseBotch(weaponless = false) {
-        let res = await new Roll("2d6").roll().results[0]
+        let res = await new Roll("2d6").evaluate({ async: true }).results[0]
         if (weaponless && res < 7)
             res += 5
         return DSA5_Utility.replaceDies(game.i18n.localize("DEFENSEBOTCH." + res))
     }
     static async getMeleeBotch(weaponless = false) {
-        let res = await new Roll("2d6").roll().results[0]
+        let res = await new Roll("2d6").evaluate({ async: true }).results[0]
         if (weaponless && res < 7)
             res += 5
         return DSA5_Utility.replaceDies(game.i18n.localize("MELEEBOTCH." + res))
     }
     static async getRangeBotch() {
-        let res = await new Roll("2d6").roll().results[0]
+        let res = await new Roll("2d6").evaluate({ async: true }).results[0]
         return DSA5_Utility.replaceDies(game.i18n.localize("RANGEBOTCH." + res))
     }
 

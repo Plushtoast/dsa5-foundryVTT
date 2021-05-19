@@ -198,7 +198,7 @@ export default class DSA5_Utility {
         //let item = game.items.entities.find(i => i.permission > 1 && i.type == category && i.name == name)
         if (names.length > 0) {
             for (let p of game.packs) {
-                if (p.metadata.entity == "Item" && (game.user.isGM || !p.private)) {
+                if (p.metadata.documentName == "Item" && (game.user.isGM || !p.private)) {
                     await p.getDocuments().then(content => {
                         for (let k of content) {
                             let index = names.indexOf(k.name)

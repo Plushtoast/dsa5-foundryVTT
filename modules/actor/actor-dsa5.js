@@ -835,7 +835,7 @@ export default class Actordsa5 extends Actor {
                                                             let term = newTestData.roll.terms[k * 2]
                                                             newRoll.push(term.number + "d" + term.faces + "[" + term.options.colorset + "]")
                                                         }
-                                                        newRoll = await DiceDSA5.manualRolls(await new Roll(newRoll.join("+")).roll(), "CHATCONTEXT.talentedReroll")
+                                                        newRoll = await DiceDSA5.manualRolls(await new Roll(newRoll.join("+")).evaluate({ async: true }), "CHATCONTEXT.talentedReroll")
                                                         DiceDSA5.showDiceSoNice(newRoll, newTestData.rollMode)
 
                                                         let ind = 0
@@ -889,7 +889,7 @@ export default class Actordsa5 extends Actor {
                                     let term = newTestData.roll.terms[k * 2]
                                     newRoll.push(term.number + "d" + term.faces + "[" + term.options.colorset + "]")
                                 }
-                                newRoll = await DiceDSA5.manualRolls(await new Roll(newRoll.join("+")).roll(), "CHATCONTEXT.Reroll")
+                                newRoll = await DiceDSA5.manualRolls(await new Roll(newRoll.join("+")).evaluate({ async: true}), "CHATCONTEXT.Reroll")
                                 DiceDSA5.showDiceSoNice(newRoll, newTestData.rollMode)
 
                                 let ind = 0
@@ -1174,7 +1174,7 @@ export default class Actordsa5 extends Actor {
 
                 if (extra > 0) {
                     item.extraDamage = extra;
-                    item.damageAdd = Roll.MATH_PROXY.safeEval(item.damageAdd + " + " + Number(extra))
+                    item.damageAdd = Roll.safeEval(item.damageAdd + " + " + Number(extra))
                     item.damageAdd = (item.damageAdd > 0 ? "+" : "") + item.damageAdd
                 }
             }
@@ -1190,14 +1190,14 @@ export default class Actordsa5 extends Actor {
     }
 
     static _parseDmg(item) {
-        let parseDamage = new Roll(item.data.damage.value.replace(/[Ww]/g, "d"))
+        let parseDamage = new Roll(item.data.damage.value.replace(/[Ww]/g, "d"),{async: false})
         let damageDie = "",
             damageTerm = ""
         for (let k of parseDamage.terms) {
             if (typeof(k) == 'object') damageDie = k.number + "d" + k.faces
             else damageTerm += k
         }
-        if(damageTerm) damageTerm = Roll.MATH_PROXY.safeEval(damageTerm)
+        if(damageTerm) damageTerm = Roll.safeEval(damageTerm)
 
         item.damagedie = damageDie ? damageDie : "0d6"
         item.damageAdd = damageTerm != "" ? (Number(damageTerm) > 0 ? "+" : "") + damageTerm : ""

@@ -4,7 +4,7 @@ export default function() {
     })
 
     Hooks.on('preCreateActiveEffect', function(actor, data, options) {
-        if (actor.entity != "Actor") return
+        if (actor.documentName != "Actor") return
 
         if (!data.duration) data.duration = {}
         if (!data.duration.startTime) data.duration.startTime = game.time.worldTime
