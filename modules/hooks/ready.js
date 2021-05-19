@@ -12,7 +12,7 @@ export default function() {
                     case "target":
                         {
                             let scene = game.scenes.get(data.payload.scene)
-                            let token = new Token(scene.getEmbeddedEntity("Token", data.payload.target))
+                            let token = new Token(scene.getEmbeddedDocument("Token", data.payload.target))
                             token.actor.update({
                                 "flags.oppose": data.payload.opposeFlag
                             })

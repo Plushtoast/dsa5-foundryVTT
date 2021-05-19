@@ -532,7 +532,7 @@ class SpellItemDSA5 extends Itemdsa5 {
                 options: options,
                 speaker: {
                     token: tokenId,
-                    actor: actor.data.id
+                    actor: actor.data._id
                 }
             }
         };
@@ -646,7 +646,7 @@ class CombatskillDSA5 extends Itemdsa5 {
                 options: options,
                 speaker: {
                     token: tokenId,
-                    actor: actor.data.id
+                    actor: actor.data._id
                 }
             }
         };
@@ -770,7 +770,7 @@ class DiseaseItemDSA5 extends Itemdsa5 {
                 options: options,
                 speaker: {
                     token: tokenId,
-                    actor: actor ? actor.data.id : undefined
+                    actor: actor ? actor.data._id : undefined
                 }
             }
         };
@@ -908,7 +908,7 @@ class MeleeweaponDSA5 extends Itemdsa5 {
                 options: options,
                 speaker: {
                     token: tokenId,
-                    actor: actor.data.id
+                    actor: actor.data._id
                 }
             }
         };
@@ -1008,7 +1008,7 @@ class PoisonItemDSA5 extends Itemdsa5 {
                 options: options,
                 speaker: {
                     token: tokenId,
-                    actor: actor ? actor.data.id : undefined
+                    actor: actor ? actor.data._id : undefined
                 }
             }
         };
@@ -1129,7 +1129,7 @@ class RangeweaponItemDSA5 extends Itemdsa5 {
                 options: options,
                 speaker: {
                     token: tokenId,
-                    actor: actor.data.id
+                    actor: actor.data._id
                 }
             }
         };
@@ -1274,7 +1274,7 @@ class SkillItemDSA5 extends Itemdsa5 {
                 options: options,
                 speaker: {
                     token: tokenId,
-                    actor: actor.data.id
+                    actor: actor.data._id
                 }
             }
         };
@@ -1482,7 +1482,7 @@ class TraitItemDSA5 extends Itemdsa5 {
                 options: options,
                 speaker: {
                     token: tokenId,
-                    actor: actor.data.id
+                    actor: actor.data._id
                 }
             }
         };

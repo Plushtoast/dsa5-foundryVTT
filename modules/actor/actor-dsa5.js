@@ -964,7 +964,7 @@ export default class Actordsa5 extends Actor {
                 options: options,
                 speaker: {
                     token: tokenId,
-                    actor: this.data.id
+                    actor: this.data._id
                 }
             }
         };
@@ -1022,7 +1022,7 @@ export default class Actordsa5 extends Actor {
                 options: options,
                 speaker: {
                     token: tokenId,
-                    actor: this.data.id
+                    actor: this.data._id
                 }
             }
         };
@@ -1084,7 +1084,7 @@ export default class Actordsa5 extends Actor {
                 options: options,
                 speaker: {
                     token: tokenId,
-                    actor: this.data.id
+                    actor: this.data._id
                 }
             }
         };
@@ -1224,7 +1224,7 @@ export default class Actordsa5 extends Actor {
         let cardOptions = {
             speaker: {
                 alias: this.data.token.name,
-                actor: this.data.id,
+                actor: this.data._id,
             },
             title: title,
             template: template,
@@ -1232,12 +1232,12 @@ export default class Actordsa5 extends Actor {
         }
         if (this.token) {
             cardOptions.speaker.alias = this.token.data.name;
-            cardOptions.speaker.token = this.token.data.id;
+            cardOptions.speaker.token = this.token.data._id;
             cardOptions.speaker.scene = canvas.scene.id
             cardOptions.flags.img = this.token.data.img;
         } else {
             let speaker = ChatMessage.getSpeaker()
-            if (speaker.actor == this.data.id) {
+            if (speaker.actor == this.data._id) {
                 cardOptions.speaker.alias = speaker.alias
                 cardOptions.speaker.token = speaker.token
                 cardOptions.speaker.scene = speaker.scene

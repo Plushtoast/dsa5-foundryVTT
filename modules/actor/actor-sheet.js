@@ -368,7 +368,7 @@ export default class ActorSheetDsa5 extends ActorSheet {
     }
 
     getTokenId() {
-        return this.token ? this.token._id : undefined
+        return this.token ? this.token.id : undefined
     }
 
     activateListeners(html) {
@@ -526,7 +526,7 @@ export default class ActorSheetDsa5 extends ActorSheet {
                     })
                 } else {
                     //search temporary effects
-                    effect = this.actor.data.effects.find(x => x._id == id)
+                    effect = this.actor.data.effects.find(x => x.id == id)
                     if (effect) {
                         text = $(`<div style="padding:5px;"><b><a class="chat-condition chatButton" data-id="${effect.id}"><img src="${effect.icon}"/>${game.i18n.localize(effect.label)}</a></b>: ${game.i18n.localize(effect.data.flags.dsa5.description)}</div>`)
                     }
@@ -719,13 +719,13 @@ export default class ActorSheetDsa5 extends ActorSheet {
     }
 
     async _deleteActiveEffect(id) {
-        let item = this.actor.data.effects.find(x => x._id == id)
+        let item = this.actor.data.effects.find(x => x.id == id)
 
         if (item) {
             let actor = this.actor
             if (this.token) actor = this.token.actor
 
-            if (actor) await this.actor.deleteEmbeddedDocuments("ActiveEffect", [item._id])
+            if (actor) await this.actor.deleteEmbeddedDocuments("ActiveEffect", [item.id])
 
             Hooks.call("deleteActorActiveEffect", this.actor, item)
         }
@@ -733,7 +733,7 @@ export default class ActorSheetDsa5 extends ActorSheet {
 
     _deleteItem(ev) {
         let itemId = this._getItemId(ev);
-        let item = this.actor.data.items.find(x => x._id == itemId)
+        let item = this.actor.data.items.find(x => x.id == itemId)
         let message = game.i18n.format("DIALOG.DeleteItemDetail", { item: item.name })
         renderTemplate('systems/dsa5/templates/dialog/delete-item-dialog.html', { message: message }).then(html => {
             new Dialog({
@@ -788,7 +788,7 @@ export default class ActorSheetDsa5 extends ActorSheet {
                 let extensions = this.actor.data.items.filter(i => i.type == "spellextension" && item.type == i.data.category && item.name == i.data.source)
                 if (extensions) {
                     apVal += extensions.reduce((a, b) => { return a + b.data.APValue.value }, 0)
-                    await this.actor.deleteEmbeddedDocuments("Item", extensions.map(x => x._id))
+                    await this.actor.deleteEmbeddedDocuments("Item", extensions.map(x => x.id))
                 }
                 this._updateAPs(apVal * -1)
                 break
@@ -834,7 +834,7 @@ export default class ActorSheetDsa5 extends ActorSheet {
         event.dataTransfer.setData("text/plain", JSON.stringify({
             type: "Item",
             sheetTab: this.actor.data.flags["_sheetTab"],
-            actorId: this.actor._id,
+            actorId: this.actor.id,
             tokenId: this.token ? this.token.data._id : null,
             mod: mod,
             data: item,

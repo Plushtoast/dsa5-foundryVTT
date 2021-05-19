@@ -449,7 +449,7 @@ class SpellSheetDSA5 extends ItemSheetdsa5 {
         html.find('.item-edit').click(ev => {
             ev.preventDefault()
             let itemId = this._getItemId(ev)
-            const item = this.item.actor.items.find(i => i.data.id == itemId)
+            const item = this.item.actor.items.find(i => i.data._id == itemId)
             item.sheet.render(true);
         });
 
