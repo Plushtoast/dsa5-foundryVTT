@@ -3,7 +3,7 @@ export default function() {
         this.effects.removeChildren().forEach(c => c.destroy());
         const tokenEffects = this.data.effects;
         const actorEffects = this.actor ? this.actor.effects.filter(x => {
-            return (game.user.isGM || !x.getFlag("dsa5", "hidePlayers")) && !x.getFlag("dsa5", "hideOnToken")
+            return !x.disabled && (game.user.isGM || !x.getFlag("dsa5", "hidePlayers")) && !x.getFlag("dsa5", "hideOnToken")
         }) : [];
         let overlay = {
             src: this.data.overlayEffect,

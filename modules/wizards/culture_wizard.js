@@ -45,7 +45,7 @@ export default class CultureWizard extends WizardDSA5 {
             description: game.i18n.format("WIZARD.culturedescr", { culture: this.culture.name, cost: baseCost }),
             advantages,
             disadvantages,
-            writing,
+            writings,
             languages,
             advantagesToChose: advantages.length > 0,
             disadvantagesToChose: disadvantages.length > 0,

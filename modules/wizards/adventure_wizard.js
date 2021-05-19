@@ -1,5 +1,6 @@
 import DSA5StatusEffects from "../status/status_effects.js"
 import DSA5ChatAutoCompletion from "../system/chat_autocompletion.js"
+import DSA5ChatListeners from "../system/chat_listeners.js"
 
 export default class BookWizard extends Application {
     static wizard

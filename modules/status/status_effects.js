@@ -201,7 +201,7 @@ export default class DSA5StatusEffects {
 
     static getRollModifiers(actor, item, options = {}) {
         actor = actor.data.data ? actor.data : actor
-        return actor.effects.map(effect => {
+        return actor.effects.filter(x => !x.disabled).map(effect => {
             let effectClass = game.dsa5.config.statusEffectClasses[getProperty(effect, "flags.core.statusId")] || DSA5StatusEffects
             return {
                 name: effect.label,
