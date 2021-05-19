@@ -48,7 +48,7 @@ export default class DiceDSA5 {
             rollModes: CONFIG.Dice.rollModes ? CONFIG.Dice.rollModes : CONFIG.rollModes
         })
         mergeObject(cardOptions, {
-            user: game.user._id,
+            user: game.user.id,
         })
 
         if (!testData.extra.options.bypass) {

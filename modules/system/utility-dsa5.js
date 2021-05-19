@@ -97,7 +97,7 @@ export default class DSA5_Utility {
 
     static chatDataSetup(content, modeOverride, forceWhisper) {
         let chatData = {
-            user: game.user._id,
+            user: game.user.id,
             rollMode: modeOverride || game.settings.get("core", "rollMode"),
             content: content
         };

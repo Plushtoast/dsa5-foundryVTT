@@ -100,7 +100,7 @@ export default class OpposedDsa5 {
                 ${unopposedButton}`
 
                 let startMessage = await ChatMessage.create({
-                    user: game.user._id,
+                    user: game.user.id,
                     content: content,
                     speaker: message.data.speaker,
                     ["flags.unopposeData"]: {
@@ -156,7 +156,7 @@ export default class OpposedDsa5 {
                 </div>
                 `
                 await ChatMessage.create({
-                    user: game.user._id,
+                    user: game.user.id,
                     content: content,
                     speaker: message.data.speaker,
                 })
@@ -215,7 +215,7 @@ export default class OpposedDsa5 {
 
     static async showDamage(message, hide = false) {
         if (game.user.isGM) {
-            if ((!hide || !message.data.flags.data.hideDamage)  && message.data.flags.data.postData.damageRoll) {
+            if ((!hide || !message.data.flags.data.hideDamage) && message.data.flags.data.postData.damageRoll) {
                 message.update({
                     "content": message.data.content.replace(`data-hide-damage="${!hide}"`, `data-hide-damage="${hide}"`),
                     "flags.data.hideDamage": hide
@@ -226,7 +226,7 @@ export default class OpposedDsa5 {
             game.socket.emit("system.dsa5", {
                 type: "showDamage",
                 payload: {
-                    id: message._id,
+                    id: message.id,
                     hide: hide
                 }
             })
@@ -304,7 +304,7 @@ export default class OpposedDsa5 {
 
         opposeResult.winner = "attacker"
 
-        if (["weapon","spell","liturgy","ceremony","ritual"].includes(attackerTest.rollType)  && defenderTest.successLevel == undefined) {
+        if (["weapon", "spell", "liturgy", "ceremony", "ritual"].includes(attackerTest.rollType) && defenderTest.successLevel == undefined) {
             defenderTest.successLevel = -5
         }
 
@@ -394,7 +394,7 @@ export default class OpposedDsa5 {
         formattedOpposeResult.hideData = game.settings.get("dsa5", "hideOpposedDamage");
         let html = await renderTemplate("systems/dsa5/templates/chat/roll/opposed-result.html", formattedOpposeResult)
         let chatOptions = {
-            user: game.user._id,
+            user: game.user.id,
             content: html,
             "flags.opposeData": formattedOpposeResult,
             "flags.hideData": formattedOpposeResult.hideData,

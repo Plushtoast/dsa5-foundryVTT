@@ -17,7 +17,7 @@ export default class Miscast {
         let options = {}
         renderTemplate(`systems/dsa5/templates/tables/tableCard.html`, { result: result, title: title }).then(html => {
             let chatOptions = {
-                user: game.user._id,
+                user: game.user.id,
                 content: html,
                 whisper: options.whisper,
                 blind: options.blind,
