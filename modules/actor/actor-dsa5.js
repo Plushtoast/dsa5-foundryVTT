@@ -553,7 +553,7 @@ export default class Actordsa5 extends Actor {
 
         for (let wep of wornweapons) {
             try {
-                meleeweapons.push(Actordsa5._prepareMeleeWeapon(wep, combatskills, actorData, wornweapons.filter(x => x._id != wep._id && !regex2h.test(x.name))))
+                meleeweapons.push(Actordsa5._prepareMeleeWeapon(wep, combatskills, actorData, wornweapons.filter(x => x.id != wep.id && !regex2h.test(x.name))))
             } catch (error) {
                 this._itemPreparationError(wep, error)
             }
@@ -964,7 +964,7 @@ export default class Actordsa5 extends Actor {
                 options: options,
                 speaker: {
                     token: tokenId,
-                    actor: this.data._id
+                    actor: this.data.id
                 }
             }
         };
@@ -1022,7 +1022,7 @@ export default class Actordsa5 extends Actor {
                 options: options,
                 speaker: {
                     token: tokenId,
-                    actor: this.data._id
+                    actor: this.data.id
                 }
             }
         };
@@ -1084,7 +1084,7 @@ export default class Actordsa5 extends Actor {
                 options: options,
                 speaker: {
                     token: tokenId,
-                    actor: this.data._id
+                    actor: this.data.id
                 }
             }
         };
@@ -1159,7 +1159,7 @@ export default class Actordsa5 extends Actor {
             let regex2h = /\(2H/
             if (!regex2h.test(item.name)) {
                 if (!wornWeapons)
-                    wornWeapons = actorData.items.filter(x => (x.type == "meleeweapon" && x.data.data.worn.value && x._id != item._id && !regex2h.test(x.name)))
+                    wornWeapons = actorData.items.filter(x => (x.type == "meleeweapon" && x.data.data.worn.value && x.id != item.id && !regex2h.test(x.name)))
 
                 if (wornWeapons.length > 0) {
                     item.parry += Math.max(...wornWeapons.map(x => x.data.data.pamod.offhandMod))
@@ -1224,7 +1224,7 @@ export default class Actordsa5 extends Actor {
         let cardOptions = {
             speaker: {
                 alias: this.data.token.name,
-                actor: this.data._id,
+                actor: this.data.id,
             },
             title: title,
             template: template,
@@ -1232,12 +1232,12 @@ export default class Actordsa5 extends Actor {
         }
         if (this.token) {
             cardOptions.speaker.alias = this.token.data.name;
-            cardOptions.speaker.token = this.token.data._id;
-            cardOptions.speaker.scene = canvas.scene._id
+            cardOptions.speaker.token = this.token.data.id;
+            cardOptions.speaker.scene = canvas.scene.id
             cardOptions.flags.img = this.token.data.img;
         } else {
             let speaker = ChatMessage.getSpeaker()
-            if (speaker.actor == this.data._id) {
+            if (speaker.actor == this.data.id) {
                 cardOptions.speaker.alias = speaker.alias
                 cardOptions.speaker.token = speaker.token
                 cardOptions.speaker.scene = speaker.scene
@@ -1262,7 +1262,7 @@ export default class Actordsa5 extends Actor {
         if (testData.extra.ammo && !testData.extra.ammoDecreased) {
             testData.extra.ammoDecreased = true
             testData.extra.ammo.data.quantity.value--;
-            this.updateEmbeddedDocuments("Item", [{ _id: testData.extra.ammo._id, "data.quantity.value": testData.extra.ammo.data.quantity.value }]);
+            this.updateEmbeddedDocuments("Item", [{ id: testData.extra.ammo.id, "data.quantity.value": testData.extra.ammo.data.quantity.value }]);
         }
 
         if (!options.suppressMessage)
