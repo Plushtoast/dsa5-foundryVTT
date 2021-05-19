@@ -187,10 +187,9 @@ export default class DSA5StatusEffects {
 
 
     static calculateRollModifier(effect, actor, item, options = {}) {
-        console.log(effect)
-        if (effect.data.flags.dsa5.value == null)
+        if (effect.flags.dsa5.value == null)
             return 0
-        return effect.data.flags.dsa5.value * -1
+        return effect.flags.dsa5.value * -1
     }
 
     static ModifierIsSelected(item, options = {}, actor) {

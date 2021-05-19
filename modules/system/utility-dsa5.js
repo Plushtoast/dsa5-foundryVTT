@@ -116,14 +116,14 @@ export default class DSA5_Utility {
     }
 
     static findItembyId(id) {
-        let item = game.items.entities.find(x => x.id == id);
+        let item = game.items.contents.find(x => x.id == id);
         if (item) {
             return item;
         }
     }
 
     static findActorbyId(id) {
-        let item = game.actors.entities.find(x => x.id == id);
+        let item = game.actors.contents.find(x => x.id == id);
         if (item) {
             return item;
         }
@@ -187,7 +187,7 @@ export default class DSA5_Utility {
         let results = []
         let names = lookup.map(x => x.name)
         let types = lookup.map(x => x.type)
-        for (let k of game.items.entities) {
+        for (let k of game.items.contents) {
             let index = names.indexOf(k.name)
             if (index >= 0 && types[index] == k.type) {
                 names.splice(index, 1)
@@ -195,7 +195,7 @@ export default class DSA5_Utility {
                 results.push(k)
             }
         }
-        //let item = game.items.entities.find(i => i.permission > 1 && i.type == category && i.name == name)
+        //let item = game.items.contents.find(i => i.permission > 1 && i.type == category && i.name == name)
         if (names.length > 0) {
             for (let p of game.packs) {
                 if (p.metadata.documentName == "Item" && (game.user.isGM || !p.private)) {

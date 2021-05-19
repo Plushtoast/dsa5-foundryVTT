@@ -39,7 +39,7 @@ export default class DSA5Initializer extends Dialog {
         await fetch(`modules/${this.module}/initialization${this.lang}.json`).then(async r => r.json()).then(async json => {
             let foldersToCreate = json.folders
             if (foldersToCreate) {
-                let head = game.folders.entities.find(x => x.name == foldersToCreate[0].name && x.type == "JournalEntry")
+                let head = game.folders.contents.find(x => x.name == foldersToCreate[0].name && x.type == "JournalEntry")
                 if (head) {
                     this.folders[head.data.name] = head
                     json.folders.shift()
@@ -133,7 +133,7 @@ export default class DSA5Initializer extends Dialog {
 
     async getFolderForType(entityType) {
         let folderName = game.i18n.localize(`${this.module}.name`)
-        let head = await game.folders.entities.find(x => x.name == folderName && x.type == entityType)
+        let head = await game.folders.contents.find(x => x.name == folderName && x.type == entityType)
         if (!head) {
             head = await Folder.create({
                 "name": folderName,

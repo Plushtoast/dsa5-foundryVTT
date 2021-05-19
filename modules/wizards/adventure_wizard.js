@@ -188,7 +188,7 @@ export default class BookWizard extends Application {
         let result = []
 
         for (let k of chapter.actors) {
-            let actor = game.actors.entities.find(x => x.name == k)
+            let actor = game.actors.contents.find(x => x.name == k)
             let pack = undefined
             if (!actor) {
                 actor = this.actors.find(x => x.name == k)
@@ -209,7 +209,7 @@ export default class BookWizard extends Application {
     }
 
     async showSzene(name, mode = "activate") {
-        let scene = game.scenes.entities.find(x => x.data.name == name)
+        let scene = game.scenes.contents.find(x => x.data.name == name)
         if (!scene)
             return ui.notifications.error(game.i18n.localize("DSAError.sceneNotInitialized"))
 

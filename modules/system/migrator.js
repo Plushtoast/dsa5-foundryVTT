@@ -1,7 +1,7 @@
 import DSA5_Utility from "./utility-dsa5.js"
 
 /*async function migrateDSA() {
-    for (let a of game.actors.entities) {
+    for (let a of game.actors.contents) {
         try {
             const updateData = migrateActorData(a.data);
             if (!isObjectEmpty(updateData)) {

@@ -167,7 +167,7 @@ export default class WizardDSA5 extends Application {
                 })
             }
         }
-        this.items.push(...game.items.entities.filter(i => i.permission > 1 && this.dataTypes.includes(i.type)));
+        this.items.push(...game.items.contents.filter(i => i.permission > 1 && this.dataTypes.includes(i.type)));
     }
 
     _validateInput(parent) {

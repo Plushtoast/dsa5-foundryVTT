@@ -65,7 +65,7 @@ export default function() {
 }
 
 async function createHotBarMacro(command, name, img, slot) {
-    let macro = game.macros.entities.find(m => (m.name === name) && (m.command === command));
+    let macro = game.macros.contents.find(m => (m.name === name) && (m.command === command));
     if (!macro) {
         macro = await Macro.create({
             name: name,
