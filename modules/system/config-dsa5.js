@@ -277,6 +277,44 @@ DSA5.statusEffects = [{
 
 ]
 
+DSA5.localizedCompendiums = {
+    de: [
+        "dsa5.skills",
+        "dsa5.combatskills",
+        "dsa5.species",
+
+        "dsa5-core.corecareers",
+        "dsa5-core.corecultures",
+        "dsa5-core.corespells",
+        "dsa5-core.coreliturgies",
+        "dsa5-core.corevantages",
+        "dsa5-core.coreequipment",
+        "dsa5-core.corespecialabilities",
+        "dsa5-core.corepoisonanddisease",
+        "dsa5-core.corebestiary",
+        "dsa5-core.coreactors",
+        "dsa5-core.corerules",
+        "dsa5-core.coremaps"
+    ],
+    en: [
+        "dsa5.skillsen",
+        "dsa5.combatskillsen",
+        "dsa5.speciesen",
+
+        "dsa5-core.coreencareers",
+        "dsa5-core.coreencultures",
+        "dsa5-core.coreenspells",
+        "dsa5-core.coreenliturgies",
+        "dsa5-core.coreenvantages",
+        "dsa5-core.coreenequipment",
+        "dsa5-core.coreenspecialabilities",
+        "dsa5-core.coreenpoisonanddisease",
+        "dsa5-core.coreenbestiary",
+        "dsa5-core.coreenactors",
+        "dsa5-core.coreenrules",
+        "dsa5-core.coreenmaps"
+    ]
+}
 
 DSA5.effectTextStyle = CONFIG.canvasTextStyle.clone();
 DSA5.effectTextStyle.fontSize = "30";
@@ -671,11 +709,11 @@ DSA5.rangeVision = {
 
 DSA5.meleeRangeVision = (mode) => {
     return {
-        "0": "meleeVisionDisruption.0",
+        "+0": "meleeVisionDisruption.0",
         "-1": "meleeVisionDisruption.1",
         "-2": "meleeVisionDisruption.2",
         "-3": "meleeVisionDisruption.3",
-        [mode == "attack" ? "*0.5" : "-5000"]: "meleeVisionDisruption.4"
+        [mode == "attack" ? "*0,5" : "-5000"]: "meleeVisionDisruption.4"
     }
 }
 

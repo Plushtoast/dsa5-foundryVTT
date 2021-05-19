@@ -76,19 +76,20 @@ export default class DSA5StatusEffects {
         if (!effect) return "No Effect Found"
 
         let existing = this.hasCondition(target, effect.id)
-        if (existing && existing.flags.dsa5.value == null)
+
+        if (existing && existing.data.flags.dsa5.value == null)
             return existing
         else if (existing)
             return await DSA5StatusEffects.updateEffect(target, existing, value, absolute, auto)
-        else if (!existing)
-            return await DSA5StatusEffects.createEffect(target, effect, value, auto)
+
+        return await DSA5StatusEffects.createEffect(target, effect, value, auto)
     }
 
     static hasCondition(target, conditionKey) {
         if (target.data != undefined && conditionKey) {
-            if (target.data.effects == undefined) return false
+            if (!target.data.effects) return false
 
-            return target.data.effects.find(i => getProperty(i, "flags.core.statusId") == conditionKey)
+            return target.data.effects.find(i => getProperty(i.data, "flags.core.statusId") == conditionKey)
         }
         return false
     }
@@ -102,9 +103,9 @@ export default class DSA5StatusEffects {
 
         let existing = this.hasCondition(target, effect.id)
 
-        if (existing && existing.flags.dsa5.value == null) {
+        if (existing && existing.data.flags.dsa5.value == null) {
             if (target.token) target = target.token.actor
-            const res = await target.deleteEmbeddedEntity("ActiveEffect", existing._id)
+            const res = await target.deleteEmbeddedDocuments("ActiveEffect", [existing._id])
             Hooks.call("deleteActorActiveEffect", target, existing)
             return res
         } else if (existing)
@@ -140,7 +141,7 @@ export default class DSA5StatusEffects {
         if (effect.id == "dead")
             effect["flags.core.overlay"] = true;
 
-        let result = await actor.createEmbeddedEntity("ActiveEffect", effect)
+        let result = await actor.createEmbeddedDocuments("ActiveEffect", [effect])
         await actor._dependentEffects(effect.id, effect, 1)
         delete effect.id
         return result
@@ -148,16 +149,16 @@ export default class DSA5StatusEffects {
 
     static async removeEffect(actor, existing, value, absolute, auto) {
         if (auto) {
-            existing.flags.dsa5.auto = absolute ? value : Math.max(0, existing.flags.dsa5.auto - value)
+            existing.data.flags.dsa5.auto = absolute ? value : Math.max(0, existing.data.flags.dsa5.auto - value)
         } else {
-            existing.flags.dsa5.manual = absolute ? value : existing.flags.dsa5.manual - value
+            existing.data.flags.dsa5.manual = absolute ? value : existing.data.flags.dsa5.manual - value
         }
-        existing.flags.dsa5.value = Math.max(0, Math.min(4, existing.flags.dsa5.manual + existing.flags.dsa5.auto))
+        existing.data.flags.dsa5.value = Math.max(0, Math.min(4, existing.data.flags.dsa5.manual + existing.data.flags.dsa5.auto))
 
-        if (existing.flags.dsa5.auto <= 0 && existing.flags.dsa5.manual == 0)
-            return actor.deleteEmbeddedEntity("ActiveEffect", existing._id)
+        if (existing.data.flags.dsa5.auto <= 0 && existing.data.flags.dsa5.manual == 0)
+            return actor.deleteEmbeddedDocuments("ActiveEffect", [existing._id])
         else
-            return actor.updateEmbeddedEntity("ActiveEffect", existing)
+            return actor.updateEmbeddedDocuments("ActiveEffect", [existing])
     }
 
     static async updateEffect(actor, existing, value, absolute, auto) {
@@ -167,28 +168,28 @@ export default class DSA5StatusEffects {
         let delta, newValue
 
         if (auto) {
-            newValue = Math.min(existing.flags.dsa5.max, absolute ? value : existing.flags.dsa5.auto + value)
-            delta = newValue - existing.flags.dsa5.auto
-            existing.flags.dsa5.auto = newValue;
+            newValue = Math.min(existing.data.flags.dsa5.max, absolute ? value : existing.data.flags.dsa5.auto + value)
+            delta = newValue - existing.data.flags.dsa5.auto
+            existing.data.flags.dsa5.auto = newValue;
         } else {
-            newValue = absolute ? value : existing.flags.dsa5.manual + value
-            delta = newValue - existing.flags.dsa5.manual
-            existing.flags.dsa5.manual = newValue;
+            newValue = absolute ? value : existing.data.flags.dsa5.manual + value
+            delta = newValue - existing.data.flags.dsa5.manual
+            existing.data.flags.dsa5.manual = newValue;
         }
 
         if (delta == 0)
             return existing
 
-        existing.flags.dsa5.value = Math.max(0, Math.min(4, existing.flags.dsa5.manual + existing.flags.dsa5.auto))
-        await actor._dependentEffects(existing.flags.core.statusId, existing, delta)
-        return actor.updateEmbeddedEntity("ActiveEffect", existing)
+        existing.data.flags.dsa5.value = Math.max(0, Math.min(4, existing.data.flags.dsa5.manual + existing.data.flags.dsa5.auto))
+        await actor._dependentEffects(existing.data.flags.core.statusId, existing, delta)
+        return actor.updateEmbeddedDocuments("ActiveEffect", [existing])
     }
 
 
     static calculateRollModifier(effect, actor, item, options = {}) {
-        if (effect.flags.dsa5.value == null)
+        if (effect.data.flags.dsa5.value == null)
             return 0
-        return effect.flags.dsa5.value * -1
+        return effect.data.flags.dsa5.value * -1
     }
 
     static ModifierIsSelected(item, options = {}, actor) {
@@ -201,7 +202,7 @@ export default class DSA5StatusEffects {
 
     static getRollModifiers(actor, item, options = {}) {
         actor = actor.data.data ? actor.data : actor
-        return actor.effects.map(effect => {
+        return actor.effects.filter(x => !x.disabled).map(effect => {
             let effectClass = game.dsa5.config.statusEffectClasses[getProperty(effect, "flags.core.statusId")] || DSA5StatusEffects
             return {
                 name: effect.label,
@@ -233,10 +234,10 @@ class RaptureEffect extends DSA5StatusEffects {
         let happyTalents = actor.data.happyTalents.value.split(/;|,/).map(x => x.trim())
         if ((happyTalents.includes(item.name) && ["skill", "combatskill"].includes(item.type)) ||
             (["rangeweapon", "meleeweapon"].includes(item.type) && happyTalents.includes(item.data.data.combatskill.value)) || ["ceremony", "liturgy"].includes(item.type)) {
-            return effect.flags.dsa5.value - 1
+            return effect.data.flags.dsa5.value - 1
         }
         if (["ritual", "spell", "skill", "combatskill"].includes(item.type))
-            return effect.flags.dsa5.value * -1
+            return effect.data.flags.dsa5.value * -1
         return 0
     }
 }

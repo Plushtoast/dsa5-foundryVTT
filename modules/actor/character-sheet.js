@@ -23,7 +23,7 @@ export default class ActorSheetdsa5Character extends ActorSheetDsa5 {
     async _manageDragItems(item, typeClass) {
         switch (typeClass) {
             case "aggregatedTest":
-                await this.actor.createEmbeddedEntity("OwnedItem", item);
+                await this.actor.createEmbeddedDocuments("Item", [item]);
                 break;
             case "species":
                 let spwizard = new SpeciesWizard()

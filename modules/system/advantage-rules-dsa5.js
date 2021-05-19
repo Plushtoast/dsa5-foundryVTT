@@ -47,13 +47,13 @@ export default class AdvantageRulesDSA5 extends ItemRulesDSA5 {
             if (vantage.data.step.value + 1 <= vantage.data.max.value && await actor.checkEnoughXP(xpCost)) {
                 vantage.data.step.value += 1
                 await actor._updateAPs(xpCost)
-                await actor.updateEmbeddedEntity("OwnedItem", vantage);
+                await actor.updateEmbeddedDocuments("Item", [vantage]);
                 await AdvantageRulesDSA5.vantageAdded(actor, vantage)
             }
         } else if (await actor.checkEnoughXP(item.data.APValue.value.split(';').map(x => x.trim())[0])) {
             await AdvantageRulesDSA5.vantageAdded(actor, item)
             await actor._updateAPs(item.data.APValue.value.split(';').map(x => x.trim())[0])
-            await actor.createEmbeddedEntity("OwnedItem", item);
+            await actor.createEmbeddedDocuments("Item", [item]);
         }
     }
 

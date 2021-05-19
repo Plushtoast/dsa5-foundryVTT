@@ -191,8 +191,8 @@ export default class DSA5ItemLibrary extends Application {
 
     }
 
-    getData() {
-        let data = super.getData()
+    getData(options) {
+        const data = super.getData(options);
         data.categories = this.translateFilters()
         data.isGM = game.user.isGM
         data.items = this.items
@@ -256,7 +256,7 @@ export default class DSA5ItemLibrary extends Application {
         return array;
     }
 
-    async findCompendiumItem(search, category){
+    async findCompendiumItem(search, category) {
         if (!this.equipmentBuild) {
             await this.buildEquipmentIndex()
         }

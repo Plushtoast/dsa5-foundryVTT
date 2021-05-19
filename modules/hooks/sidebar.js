@@ -17,7 +17,8 @@ export default function() {
         button.click(() => { game.dsa5.itemLibrary.render(true) })
 
         html.find('li[data-pack="dsa5.money"]').hide()
-        const packs = game.packs.filter(p => p.metadata.langs && !(p.metadata.langs.includes(game.i18n.lang)))
+        const toRemove = game.dsa5.config.localizedCompendiums[`${game.i18n.lang == "de" ? "en" : "de"}`]
+        const packs = game.packs.filter(p => toRemove.includes(`${p.metadata.package}.${p.metadata.name}`))
 
         for (let pack of packs) {
             let name = `${pack.metadata.package}.${pack.metadata.name}`
@@ -27,7 +28,7 @@ export default function() {
     })
 
     Hooks.on("renderActorDirectory", (app, html, data) => {
-        if(!game.user.isGM){
+        if (!game.user.isGM) {
             for (let act of app.entities.filter(x => x.isMerchant() && getProperty(x.data, "data.merchant.hidePlayer"))) {
                 html.find(`[data-entity-id="${act._id}"]`).remove()
             }

@@ -121,9 +121,13 @@ export default class ActorSheetDsa5 extends ActorSheet {
         }
     }
 
-    getData() {
-        const sheetData = super.getData();
-        mergeObject(sheetData.actor, this.actor.prepare())
+    async getData(options) {
+        const baseData = (await super.getData(options));
+
+        const sheetData = { actor: baseData.actor.data }
+        const prepare = this.actor.prepare()
+        mergeObject(sheetData.actor, prepare)
+
         sheetData.isGM = game.user.isGM;
         sheetData["initDies"] = { "-": "", "1d6": "1d6", "2d6": "2d6", "3d6": "3d6", "4d6": "d6" }
         DSA5StatusEffects.prepareActiveEffects(this.actor, sheetData)
@@ -138,7 +142,8 @@ export default class ActorSheetDsa5 extends ActorSheet {
         if (DSA5.equipmentTypes[data.type]) {
             data.type = "equipment"
             data = mergeObject(data, {
-                "data.equipmentType.value": event.currentTarget.attributes["item-section"].value
+                "data.equipmentType.value": event.currentTarget.attributes["item-section"].value,
+                "data.effect.value": ""
             })
         }
         if (data.type == "aggregatedTest") {} else if (data.type == "spell" || data.type == "liturgy") {} else {
@@ -148,7 +153,7 @@ export default class ActorSheetDsa5 extends ActorSheet {
 
         Itemdsa5.defaultIcon(data)
         data["name"] = game.i18n.localize(data.type);
-        this.actor.createEmbeddedEntity("OwnedItem", data);
+        this.actor.createEmbeddedDocuments("Item", [data]);
     }
 
     _handleAggregatedProbe(ev) {
@@ -174,7 +179,7 @@ export default class ActorSheetDsa5 extends ActorSheet {
                         aggregated.data.previousFailedTests.value += 1
                     }
                     aggregated.data.usedTestCount.value += 1
-                    this.actor.updateEmbeddedEntity("OwnedItem", aggregated).then(x =>
+                    this.actor.updateEmbeddedDocuments("Item", [aggregated]).then(x =>
                         this.actor.items.find(i => i.data._id == itemId).postItem()
                     )
                 })
@@ -255,7 +260,7 @@ export default class ActorSheetDsa5 extends ActorSheet {
         let item = duplicate(this.actor.items.find(i => i.data._id == itemId))
         let cost = DSA5_Utility._calculateAdvCost(Number(item.data.talentValue.value), item.data.StF.value)
         if (await this._checkEnoughXP(cost) && this._checkMaximumItemAdvancement(item, Number(item.data.talentValue.value) + 1)) {
-            await this.actor.updateEmbeddedEntity("OwnedItem", { _id: itemId, "data.talentValue.value": item.data.talentValue.value + 1 })
+            await this.actor.updateEmbeddedDocuments("Item", [{ _id: itemId, "data.talentValue.value": item.data.talentValue.value + 1 }])
             await this.actor.update({ "data.details.experience.spent": Number(this.actor.data.data.details.experience.spent) + cost })
         }
     }
@@ -264,7 +269,7 @@ export default class ActorSheetDsa5 extends ActorSheet {
         let item = duplicate(this.actor.items.find(i => i.data._id == itemId))
         if (item.data.talentValue.value > 0) {
             let cost = DSA5_Utility._calculateAdvCost(Number(item.data.talentValue.value), item.data.StF.value, 0)
-            await this.actor.updateEmbeddedEntity("OwnedItem", { _id: itemId, "data.talentValue.value": item.data.talentValue.value - 1 })
+            await this.actor.updateEmbeddedDocuments("Item", [{ _id: itemId, "data.talentValue.value": item.data.talentValue.value - 1 }])
             await this.actor.update({ "data.details.experience.spent": Number(this.actor.data.data.details.experience.spent) - cost })
         }
     }
@@ -387,7 +392,7 @@ export default class ActorSheetDsa5 extends ActorSheet {
             let itemId = this._getItemId(ev);
             let item = duplicate(this.actor.getEmbeddedEntity("OwnedItem", itemId))
             item.data.currentAmmo.value = $(ev.currentTarget).val()
-            this.actor.updateEmbeddedEntity("OwnedItem", item);
+            this.actor.updateEmbeddedDocuments("Item", [item]);
         })
 
         html.find('.condition-edit').click(ev => {
@@ -409,7 +414,7 @@ export default class ActorSheetDsa5 extends ActorSheet {
                 case "rangeweapon":
                 case "meleeweapon":
                 case "equipment":
-                    this.actor.updateEmbeddedEntity("OwnedItem", { _id: item._id, "data.worn.value": !item.data.worn.value });
+                    this.actor.updateEmbeddedDocuments("Item", [{ _id: item._id, "data.worn.value": !item.data.worn.value }]);
                     break;
             }
 
@@ -424,12 +429,12 @@ export default class ActorSheetDsa5 extends ActorSheet {
         html.find(".statusEffectMenu ul").mouseleave(ev => {
             $(ev.currentTarget).fadeOut()
         })
-        html.find(".status-add").click(ev => {
+        html.find(".status-add").click(async(ev) => {
             let status = $(ev.currentTarget).attr("data-id")
             if (status == "custom") {
                 DSA5StatusEffects.createCustomEffect(this.actor)
             } else
-                this.actor.addCondition(status, 1, false, false)
+                await this.actor.addCondition(status, 1, false, false)
         })
 
         html.find('.roll-aggregated').mousedown(ev => {
@@ -494,7 +499,7 @@ export default class ActorSheetDsa5 extends ActorSheet {
                         item.data.quantity.value = 0;
                     break;
             }
-            this.actor.updateEmbeddedEntity("OwnedItem", item);
+            this.actor.updateEmbeddedDocuments("Item", [item]);
         });
 
         html.find(".item-post").click(ev => {
@@ -523,7 +528,7 @@ export default class ActorSheetDsa5 extends ActorSheet {
                     //search temporary effects
                     effect = this.actor.data.effects.find(x => x._id == id)
                     if (effect) {
-                        text = $(`<div style="padding:5px;"><b><a class="chat-condition chatButton" data-id="${effect.id}"><img src="${effect.icon}"/>${game.i18n.localize(effect.label)}</a></b>: ${game.i18n.localize(effect.flags.dsa5.description)}</div>`)
+                        text = $(`<div style="padding:5px;"><b><a class="chat-condition chatButton" data-id="${effect.id}"><img src="${effect.icon}"/>${game.i18n.localize(effect.label)}</a></b>: ${game.i18n.localize(effect.data.flags.dsa5.description)}</div>`)
                     }
                 }
                 let elem = $(ev.currentTarget).closest('.groupbox').find('.effectDescription')
@@ -543,7 +548,7 @@ export default class ActorSheetDsa5 extends ActorSheet {
             let itemId = this._getItemId(ev);
             let itemToEdit = duplicate(this.actor.getEmbeddedEntity("OwnedItem", itemId))
             itemToEdit.data.quantity.value = Number(ev.target.value);
-            await this.actor.updateEmbeddedEntity("OwnedItem", itemToEdit);
+            await this.actor.updateEmbeddedDocuments("Item", [itemToEdit]);
             this.currentFocus = $(document.activeElement).closest('.item').attr('data-item-id');;
         })
 
@@ -551,7 +556,7 @@ export default class ActorSheetDsa5 extends ActorSheet {
             let itemId = this._getItemId(ev);
             let itemToEdit = duplicate(this.actor.getEmbeddedEntity("OwnedItem", itemId))
             itemToEdit.data.talentValue.value = Number(ev.target.value);
-            await this.actor.updateEmbeddedEntity("OwnedItem", itemToEdit);
+            await this.actor.updateEmbeddedDocuments("Item", [itemToEdit]);
             this.currentFocus = $(document.activeElement).closest('.row-section').attr('data-item-id');;
         });
 
@@ -652,12 +657,12 @@ export default class ActorSheetDsa5 extends ActorSheet {
             $(event.currentTarget).toggleClass("filtered")
         })
 
-        html.find(".condition-value").mousedown(ev => {
+        html.find(".condition-value").mousedown(async(ev) => {
             let condKey = $(ev.currentTarget).parents(".statusEffect").attr("data-descriptor")
             if (ev.button == 0)
-                this.actor.addCondition(condKey, 1, false, false)
+                await this.actor.addCondition(condKey, 1, false, false)
             else if (ev.button == 2)
-                this.actor.removeCondition(condKey, 1, false)
+                await this.actor.removeCondition(condKey, 1, false)
         })
 
         html.find(".condition-toggle").mousedown(ev => {
@@ -720,7 +725,7 @@ export default class ActorSheetDsa5 extends ActorSheet {
             let actor = this.actor
             if (this.token) actor = this.token.actor
 
-            if (actor) await this.actor.deleteEmbeddedEntity("ActiveEffect", item._id)
+            if (actor) await this.actor.deleteEmbeddedDocuments("ActiveEffect", [item._id])
 
             Hooks.call("deleteActorActiveEffect", this.actor, item)
         }
@@ -783,12 +788,12 @@ export default class ActorSheetDsa5 extends ActorSheet {
                 let extensions = this.actor.data.items.filter(i => i.type == "spellextension" && item.type == i.data.category && item.name == i.data.source)
                 if (extensions) {
                     apVal += extensions.reduce((a, b) => { return a + b.data.APValue.value }, 0)
-                    await this.actor.deleteEmbeddedEntity("OwnedItem", extensions.map(x => x._id))
+                    await this.actor.deleteEmbeddedDocuments("Item", extensions.map(x => x._id))
                 }
                 this._updateAPs(apVal * -1)
                 break
         }
-        this.actor.deleteEmbeddedEntity("OwnedItem", itemId);
+        this.actor.deleteEmbeddedDocuments("Item", [itemId]);
     }
 
 
@@ -802,9 +807,9 @@ export default class ActorSheetDsa5 extends ActorSheet {
 
         if (moneyItem) {
             moneyItem.data.quantity.value += item.data.quantity.value
-            await this.actor.updateEmbeddedEntity("OwnedItem", moneyItem);
+            await this.actor.updateEmbeddedDocuments("Item", [moneyItem]);
         } else {
-            await this.actor.createEmbeddedEntity("OwnedItem", item);
+            await this.actor.createEmbeddedDocuments("Item", [item]);
         }
     }
 
@@ -853,7 +858,7 @@ export default class ActorSheetDsa5 extends ActorSheet {
                 let apCost = item.data.APValue.value
                 if (await this.actor.checkEnoughXP(apCost)) {
                     this._updateAPs(apCost)
-                    await this.actor.createEmbeddedEntity("OwnedItem", item)
+                    await this.actor.createEmbeddedDocuments("Item", [item])
                 }
             }
         }
@@ -880,7 +885,7 @@ export default class ActorSheetDsa5 extends ActorSheet {
             }
             if (await this.actor.checkEnoughXP(apCost)) {
                 this._updateAPs(apCost)
-                await this.actor.createEmbeddedEntity("OwnedItem", item)
+                await this.actor.createEmbeddedDocuments("Item", [item])
             }
         }
     }
@@ -891,7 +896,7 @@ export default class ActorSheetDsa5 extends ActorSheet {
         if (!res) {
             if (this._tabs[0].active == "combat" && item.data.worn) item.data.worn.value = true
 
-            await this.actor.createEmbeddedEntity("OwnedItem", item);
+            await this.actor.createEmbeddedDocuments("Item", [item]);
         } else {
             Itemdsa5.stackItems(res, item, this.actor)
         }
@@ -901,7 +906,7 @@ export default class ActorSheetDsa5 extends ActorSheet {
         item = duplicate(item)
         let res = this.actor.data.items.find(i => i.type == item.type && i.name == item.name && i.data.description.value == item.data.description.value);
         if (!res) {
-            await this.actor.createEmbeddedEntity("OwnedItem", item);
+            await this.actor.createEmbeddedDocuments("Item", [item]);
         }
     }
 
@@ -955,7 +960,7 @@ export default class ActorSheetDsa5 extends ActorSheet {
                 await this._handleSpellExtension(item)
                 break
             case "condition":
-                this.actor.addCondition(item.payload.id)
+                await this.actor.addCondition(item.payload.id)
                 break
             case "creature":
                 const shapeshift = game.dsa5.config.hooks.shapeshift
@@ -979,7 +984,7 @@ export default class ActorSheetDsa5 extends ActorSheet {
                 }
             }
             //we should improve that so it stacks items
-            await this.actor.createEmbeddedEntity("OwnedItem", lookup)
+            await this.actor.createEmbeddedDocuments("Item", [lookup])
                 //for (let thing of lookup) {
                 //    await this._manageDragItems(thing, thing.type)
                 //}
@@ -993,7 +998,7 @@ export default class ActorSheetDsa5 extends ActorSheet {
         if (dragData.tokenId) sourceActor = game.actors.tokens[dragData.tokenId];
         if (!sourceActor) sourceActor = game.actors.get(dragData.actorId)
 
-        if (sourceActor && sourceActor.permission == ENTITY_PERMISSIONS.OWNER) sourceActor.deleteEmbeddedEntity("OwnedItem", item._id)
+        if (sourceActor && sourceActor.owner) sourceActor.deleteEmbeddedDocuments("Item", [item._id])
     }
 
     async _handleDragData(dragData, originalEvent) {

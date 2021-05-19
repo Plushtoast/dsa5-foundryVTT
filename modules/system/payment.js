@@ -65,7 +65,7 @@ export default class DSA5Payment {
             }
         }
 
-        actor.updateEmbeddedEntity("OwnedItem", money)
+        actor.updateEmbeddedDocuments("Item", [money])
     }
 
     static createGetPaidChatMessage(moneyString) {

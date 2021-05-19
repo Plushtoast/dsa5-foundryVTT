@@ -1,55 +1,63 @@
 import DSA5_Utility from "../system/utility-dsa5.js";
 
 export default function() {
-    Hooks.on("preCreateActor", (createData) => {
+    Hooks.on("preCreateActor", (createData, data, options, userId) => {
+        let update = {}
 
-        if (!createData.token)
-            mergeObject(createData, {
-                "token.bar1": { "attribute": "status.wounds" },
-                "token.displayName": CONST.TOKEN_DISPLAY_MODES.OWNER_HOVER,
-                "token.displayBars": CONST.TOKEN_DISPLAY_MODES.OWNER_HOVER,
-                "token.disposition": CONST.TOKEN_DISPOSITIONS.NEUTRAL,
-                "token.name": createData.name
+        mergeObject(update, {
+            token: {
+                bar1: { attribute: "status.wounds" },
+                displayName: CONST.TOKEN_DISPLAY_MODES.OWNER_HOVER,
+                displayBars: CONST.TOKEN_DISPLAY_MODES.OWNER_HOVER,
+                disposition: CONST.TOKEN_DISPOSITIONS.NEUTRAL,
+                name: createData.name
+            }
+        })
+
+        if (!createData.data.img)
+            update.img = "systems/dsa5/tokens/unknown.webp"
+
+        if (createData.data.type == "character") {
+            mergeObject(update, {
+                token: {
+                    vision: true,
+                    brightSight: game.settings.get('dsa5', 'defaultBrightVision'),
+                    dimSight: game.settings.get('dsa5', 'defaultDimVision'),
+                    actorLink: true
+                }
             })
-
-        if (!createData.img)
-            createData.img = "systems/dsa5/tokens/unknown.webp"
-
-        if (createData.type == "character") {
-            createData.token.vision = true;
-            createData.token.brightSight = game.settings.get('dsa5', 'defaultBrightVision');
-            createData.token.dimSight = game.settings.get('dsa5', 'defaultDimVision');
-            createData.token.actorLink = true;
         }
-
+        createData.data.update(update)
     })
 
     Hooks.on("deleteActorActiveEffect", (actor, effect) => {
-        if (effect.flags.dsa5 && effect.flags.core && effect.flags.core.statusId == "bloodrush") {
+        if (effect.data.flags.dsa5 && effect.data.flags.core && effect.data.flags.core.statusId == "bloodrush") {
             actor.addCondition("stunned", 2, false, false)
             return false
         }
     })
 
-    Hooks.on("preUpdateActor", (actor, updatedData) => {
+    Hooks.on("preUpdateActor", (actor, updatedData, options, userId) => {
+        let update = {}
         if (getProperty(actor.data, "data.config.autoBar")) {
             if (actor.data.isMage) {
-                mergeObject(updatedData, {
+                mergeObject(update, {
                     "token.bar2": { "attribute": "status.astralenergy" }
                 });
             } else if (actor.data.isPriest) {
-                mergeObject(updatedData, {
+                mergeObject(update, {
                     "token.bar2": { "attribute": "status.karmaenergy" }
                 });
             } else {
-                mergeObject(updatedData, {
+                mergeObject(update, {
                     "token.bar2": {}
                 });
             }
         }
+        actor.data.update(update)
     })
 
-    Hooks.on('preCreateToken', (scene, data, options, userId) => {
+    Hooks.on('preCreateToken', (token, data, options, userId) => {
         const actor = game.actors.get(data.actorId);
         if (!actor || data.actorLink)
             return;

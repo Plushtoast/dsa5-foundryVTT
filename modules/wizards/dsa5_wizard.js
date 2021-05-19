@@ -93,17 +93,17 @@ export default class WizardDSA5 extends Application {
                 case "disadvantage":
                     item.data.step.value = Number($(k).attr("data-step"))
                     item.data.APValue.value = Number($(k).attr("data-cost"))
-                    await this.actor.createEmbeddedEntity("OwnedItem", item)
+                    await this.actor.createEmbeddedDocuments("Item", [item])
                     AdvantageRulesDSA5.vantageAdded(this.actor, item)
                     break
                 case "specialability":
                     item.data.step.value = Number($(k).attr("data-step"))
                     item.data.APValue.value = Number($(k).attr("data-cost"))
-                    await this.actor.createEmbeddedEntity("OwnedItem", item)
+                    await this.actor.createEmbeddedDocuments("Item", [item])
                     SpecialabilityRulesDSA5.abilityAdded(this.actor, item)
                     break
                 case "magictrick":
-                    await this.actor.createEmbeddedEntity("OwnedItem", item)
+                    await this.actor.createEmbeddedDocuments("Item", [item])
                     break
             }
         }
@@ -150,9 +150,8 @@ export default class WizardDSA5 extends Application {
         });
         if (res) {
             let skillUpdate = duplicate(res)
-                //skillUpdate.data.talentValue.value = parsed.step + (parsed.bonus ? Number(skillUpdate.data.talentValue.value) : 0)
             skillUpdate.data.talentValue.value = Math.max(0, factor * parsed.step + (bonus ? Number(skillUpdate.data.talentValue.value) : 0))
-            await this.actor.updateEmbeddedEntity("OwnedItem", skillUpdate);
+            await this.actor.updateEmbeddedDocuments("Item", [skillUpdate]);
         } else {
             console.warn(`Could not find ${itemType} ${skill}`)
             this.errors.push(`${game.i18n.localize(itemType)}: ${skill}`)

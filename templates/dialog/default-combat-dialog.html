@@ -52,8 +52,7 @@
       {{#select selectedModifiers}}
       {{#each situationalModifiers as |mod t|}}
       <option title="{{localize mod.name}}"  data-type="{{mod.type}}" value="{{mod.value}}" {{#if mod.selected}}selected{{/if}}>
-        {{localize
-        mod.name}} [{{mod.value}}]
+        {{localize mod.name}} [{{mod.value}}]
       </option>
       {{/each}}
       {{/select}}

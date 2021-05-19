@@ -58,8 +58,8 @@ export default class CareerWizard extends WizardDSA5 {
         return super._validateInput(parent)
     }
 
-    getData() {
-        const data = super.getData()
+    getData(options) {
+        const data = super.getData(options);
         const advantages = this.parseToItem(this.career.data.recommendedAdvantages.value, ["advantage"])
         const disadvantages = this.parseToItem(this.career.data.recommendedDisadvantages.value, ["disadvantage"])
         const requirements = this.parseToItem(this.career.data.requirements.value, ["disadvantage", "advantage", "specialability"])
@@ -130,7 +130,7 @@ export default class CareerWizard extends WizardDSA5 {
                     item.data.talentValue.value = parsed.step
                 if (item.data.step)
                     item.data.step.value = parsed.step
-                await this.actor.updateEmbeddedEntity("OwnedItem", item)
+                await this.actor.updateEmbeddedDocuments("Item", [item])
             } else {
                 item = this.items.find(x => types.includes(x.type) && x.name == parsed.original)
                 if (!item) {
@@ -143,7 +143,7 @@ export default class CareerWizard extends WizardDSA5 {
                         item.data.talentValue.value = parsed.step
                     if (item.data.step)
                         item.data.step.value = parsed.step
-                    await this.actor.createEmbeddedEntity("OwnedItem", item)
+                    await this.actor.createEmbeddedDocuments("Item", [item])
                 } else {
                     this.errors.push(`${types.map(x => game.i18n.localize(x)).join("/")}: ${k}`)
                     ui.notifications.error(game.i18n.format("DSAError.notFound", { category: game.i18n.localize(types[0]), name: k }))
@@ -161,7 +161,7 @@ export default class CareerWizard extends WizardDSA5 {
                 item = this.items.find(x => type == x.type && x.name == name)
             if (item) {
                 item = duplicate(item)
-                await this.actor.createEmbeddedEntity("OwnedItem", item)
+                await this.actor.createEmbeddedDocuments("Item", [item])
             } else {
                 this.errors.push(`${game.i18n.localize(type)}: ${k}`)
                 ui.notifications.error(game.i18n.format("DSAError.notFound", { category: game.i18n.localize(type), name: name }))

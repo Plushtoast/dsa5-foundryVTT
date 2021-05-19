@@ -127,7 +127,7 @@ export class ActAttackDialog extends Dialog {
         let types = ["meleeweapon", "rangeweapon"]
         let traitTypes = ["meleeAttack", "rangeAttack"]
         let result = actor.data.items.filter(x => {
-            return (types.includes(x.type) && x.data.worn.value == true) || (x.type == "trait" && traitTypes.includes(x.data.traitType.value))
+            return (types.includes(x.type) && x.data.data.worn.value == true) || (x.type == "trait" && traitTypes.includes(x.data.data.traitType.value))
         })
         for (let res of result) {
             items.push({
@@ -173,7 +173,7 @@ export class ReactToAttackDialog extends DialogReactDSA5 {
         const { actor, tokenId } = DialogReactDSA5.getTargetActor(startMessage)
         if (actor) {
             let types = ["meleeweapon"]
-            let result = actor.data.items.filter(x => { return (types.includes(x.type) && x.data.worn.value == true) || (x.type == "trait" && Number(x.data.pa) > 0) })
+            let result = actor.data.items.filter(x => { return (types.includes(x.type) && x.data.data.worn.value == true) || (x.type == "trait" && Number(x.data.data.pa) > 0) })
             for (let res of result) {
                 items.push({
                     name: res.name,

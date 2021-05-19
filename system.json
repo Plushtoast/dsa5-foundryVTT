@@ -19,76 +19,49 @@
             "label": "Talente",
             "system": "dsa5",
             "path": "packs/skills.db",
-            "entity": "Item",
-            "tags": [
-                "skill"
-            ],
-            "langs": ["de"]
+            "entity": "Item"
         },
         {
             "name": "skillsen",
             "label": "Skills",
             "system": "dsa5",
             "path": "packs/skillsen.db",
-            "entity": "Item",
-            "tags": [
-                "skill"
-            ],
-            "langs": ["en"]
+            "entity": "Item"
         },
         {
             "name": "combatskills",
             "label": "Kampftalente",
             "system": "dsa5",
             "path": "packs/combatskills.db",
-            "entity": "Item",
-            "tags": [
-                "combatskill"
-            ],
-            "langs": ["de"]
+            "entity": "Item"
         },
         {
             "name": "combatskillsen",
             "label": "Combat Techniques",
             "system": "dsa5",
             "path": "packs/combatskillsen.db",
-            "entity": "Item",
-            "tags": [
-                "combatskill"
-            ],
-            "langs": ["en"]
+            "entity": "Item"
         },
         {
             "name": "money",
             "label": "Geld",
             "system": "dsa5",
             "path": "packs/money.db",
-            "entity": "Item",
-            "tags": [
-                "money"
-            ]
+            "entity": "Item"
         },
         {
             "name": "speciesen",
             "label": "Species",
             "system": "dsa5",
             "path": "packs/speciesen.db",
-            "entity": "Item",
-            "tags": [
-                "species"
-            ],
-            "langs": ["en"]
+            "entity": "Item"
         },
         {
             "name": "species",
             "label": "Spezies",
             "system": "dsa5",
             "path": "packs/species.db",
-            "entity": "Item",
-            "tags": [
-                "species"
-            ],
-            "langs": ["de"]
+            "entity": "Item"
         }
     ],
     "languages": [{
@@ -106,8 +79,8 @@
     "initiative": "@status.initiative.value + @status.initiative.die + @status.initiative.diemodifier",
     "gridDistance": 10,
     "gridUnits": "Schritt",
-    "primaryTokenAttribute": "status.wounds.value",
-    "secondaryTokenAttribute": "status.astralenergy.value",
+    "primaryTokenAttribute": "status.wounds",
+    "secondaryTokenAttribute": "status.astralenergy",
     "minimumCoreVersion": "0.8.4",
     "compatibleCoreVersion": "0.8.4",
     "url": "https://github.com/Plushtoast/dsa5-foundryVTT",

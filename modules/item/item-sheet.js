@@ -118,7 +118,7 @@ export default class ItemSheetdsa5 extends ItemSheet {
                 const effect = this.item.effects.get(id)
                 effect.sheet.render(true)
             } else if (ev.button == 2) {
-                this.item.deleteEmbeddedEntity("ActiveEffect", id)
+                this.item.deleteEmbeddedDocuments("ActiveEffect", [id])
             }
         })
 
@@ -163,8 +163,9 @@ export default class ItemSheetdsa5 extends ItemSheet {
         }
     }
 
-    async getData() {
-        const data = super.getData();
+    async getData(options) {
+        let data = super.getData(options).data;
+
 
         switch (this.item.type) {
             case "skill":
@@ -198,11 +199,12 @@ export default class ItemSheetdsa5 extends ItemSheet {
                 data["allSkills"] = await DSA5_Utility.allSkillsList()
                 break
         }
-        data.isOwned = this.item.isOwned
+        data.isOwned = this.item.actor
         if (data.isOwned)
-            data.canAdvance = this.item.options.actor.data.canAdvance && this._advancable()
+            data.canAdvance = this.item.actor.data.canAdvance && this._advancable()
 
         DSA5StatusEffects.prepareActiveEffects(this.item, data)
+        data.item = this.item
 
         return data;
     }
@@ -227,11 +229,11 @@ class BlessingSheetDSA5 extends ItemSheetdsa5 {
     }
 
     setupEffect(ev) {
-        if (this.item.options.actor.data.data.status.karmaenergy.value < 1)
+        if (this.item.actor.data.data.status.karmaenergy.value < 1)
             return ui.notifications.error(game.i18n.localize("DSAError.NotEnoughKaP"))
 
         const cantrip = game.dsa5.config.ItemSubclasses.magictrick
-        this.item.options.actor.update({ "data.status.karmaenergy.value": this.item.options.actor.data.data.status.karmaenergy.value -= 1 })
+        this.item.actor.update({ "data.status.karmaenergy.value": this.item.actor.data.data.status.karmaenergy.value -= 1 })
         let chatMessage = `<p><b>${this.item.name} - ${game.i18n.localize('blessing')} ${game.i18n.localize('probe')}</b></p><p>${this.item.data.data.description.value}</p><p>${cantrip.chatData(this.item.data.data, "").join("</br>")}</p>`
         ChatMessage.create(DSA5_Utility.chatDataSetup(chatMessage));
 
@@ -246,8 +248,8 @@ class ItemCareerDSA5 extends ItemSheetdsa5 {
         this.mce = null;
     }
 
-    async getData() {
-        const data = await super.getData();
+    async getData(options) {
+        const data = await super.getData(options);
         let chars = duplicate(DSA5.characteristics)
         chars["-"] = "-"
         data["mageLevels"] = DSA5.mageLevels
@@ -273,8 +275,8 @@ class ConsumableSheetDSA5 extends ItemSheetdsa5 {
         }
         return buttons
     }
-    async getData() {
-        const data = await super.getData()
+    async getData(options) {
+        const data = await super.getData(options)
         data["calculatedPrice"] = (data.data.price.value * data.data.QL) || 0
         data["availableSteps"] = data.data.QLList.split("\n").map((x, i) => i + 1)
         data['equipmentTypes'] = DSA5.equipmentTypes;
@@ -305,8 +307,8 @@ class DiseaseSheetDSA5 extends ItemSheetdsa5 {
         })
         return buttons
     }
-    async getData() {
-        const data = await super.getData()
+    async getData(options) {
+        const data = await super.getData(options);
         data["resistances"] = DSA5.magicResistanceModifiers
         return data
     }
@@ -326,19 +328,19 @@ class MagictrickSheetDSA5 extends ItemSheetdsa5 {
     }
 
     setupEffect(ev) {
-        if (this.item.options.actor.data.data.status.astralenergy.value < 1)
+        if (this.item.actor.data.data.status.astralenergy.value < 1)
             return ui.notifications.error(game.i18n.localize("DSAError.NotEnoughAsP"))
 
         const cantrip = game.dsa5.config.ItemSubclasses.magictrick
-        this.item.options.actor.update({ "data.status.astralenergy.value": this.item.options.actor.data.data.status.astralenergy.value -= 1 })
+        this.item.actor.update({ "data.status.astralenergy.value": this.item.actor.data.data.status.astralenergy.value -= 1 })
         let chatMessage = `<p><b>${this.item.name} - ${game.i18n.localize('magictrick')} ${game.i18n.localize('probe')}</b></p><p>${this.item.data.data.description.value}</p><p>${cantrip.chatData(this.item.data.data, "").join("</br>")}</p>`
         ChatMessage.create(DSA5_Utility.chatDataSetup(chatMessage));
     }
 }
 
 class MeleeweaponSheetDSA5 extends ItemSheetdsa5 {
-    async getData() {
-        const data = await super.getData()
+    async getData(options) {
+        const data = await super.getData(options);
         let chars = DSA5.characteristics;
         chars["ge/kk"] = game.i18n.localize("CHAR.GEKK")
         chars["-"] = "-";
@@ -346,9 +348,9 @@ class MeleeweaponSheetDSA5 extends ItemSheetdsa5 {
         data['twoHanded'] = /\(2H/.test(this.item.name)
         data['combatskills'] = await DSA5_Utility.allCombatSkillsList("melee")
         data['ranges'] = DSA5.meleeRanges;
-        if (this.item.options.actor) {
-            let combatSkill = this.item.options.actor.data.items.find(x => x.type == "combatskill" && x.name == this.item.data.data.combatskill.value)
-            data['canBeOffHand'] = combatSkill && !(combatSkill.data.weapontype.twoHanded) && this.item.data.data.worn.value
+        if (this.item.actor) {
+            let combatSkill = this.item.actor.data.items.find(x => x.type == "combatskill" && x.name == this.item.data.data.combatskill.value)
+            data['canBeOffHand'] = combatSkill && !(combatSkill.data.data.weapontype.twoHanded) && this.item.data.data.worn.value
         }
         data['isShield'] = this.item.data.data.combatskill.value == game.i18n.localize("LocalizedIDs.shields")
         data['shieldSizes'] = DSA5.shieldSizes
@@ -366,8 +368,8 @@ class PoisonSheetDSA5 extends ItemSheetdsa5 {
         })
         return buttons
     }
-    async getData() {
-        const data = await super.getData()
+    async getData(options) {
+        const data = await super.getData(options);
         data["resistances"] = DSA5.magicResistanceModifiers
         return data
     }
@@ -382,8 +384,8 @@ class SpecialAbilitySheetDSA5 extends ItemSheetdsa5 {
                 steps = xpCost.split(";").map(x => Number(x.trim()))
                 xpCost = steps[this.item.data.data.step.value - 1]
             }
-            xpCost = await SpecialabilityRulesDSA5.refundFreelanguage(this.item.data, this.item.options.actor, xpCost)
-            await this.item.options.actor._updateAPs(xpCost * -1)
+            xpCost = await SpecialabilityRulesDSA5.refundFreelanguage(this.item.data, this.item.actor, xpCost)
+            await this.item.actor._updateAPs(xpCost * -1)
             await this.item.update({ "data.step.value": this.item.data.data.step.value - 1 })
         }
     }
@@ -396,9 +398,9 @@ class SpecialAbilitySheetDSA5 extends ItemSheetdsa5 {
                 steps = xpCost.split(";").map(x => Number(x.trim()))
                 xpCost = steps[this.item.data.data.step.value]
             }
-            xpCost = await SpecialabilityRulesDSA5.isFreeLanguage(this.item.data, this.item.options.actor, xpCost)
-            if (await this.item.options.actor.checkEnoughXP(xpCost)) {
-                await this.item.options.actor._updateAPs(xpCost)
+            xpCost = await SpecialabilityRulesDSA5.isFreeLanguage(this.item.data, this.item.actor, xpCost)
+            if (await this.item.actor.checkEnoughXP(xpCost)) {
+                await this.item.actor._updateAPs(xpCost)
                 await this.item.update({ "data.step.value": this.item.data.data.step.value + 1 })
             }
         }
@@ -408,8 +410,8 @@ class SpecialAbilitySheetDSA5 extends ItemSheetdsa5 {
         return this.item.data.data.maxRank.value > 0
     }
 
-    async getData() {
-        const data = await super.getData()
+    async getData(options) {
+        const data = await super.getData(options);
         data['categories'] = DSA5.specialAbilityCategories;
         return data
     }
@@ -423,21 +425,21 @@ class ItemSpeciesDSA5 extends ItemSheetdsa5 {
         this.mce = null;
     }
 
-    async getData() {
-        const data = await super.getData();
+    async getData(options) {
+        const data = await super.getData(options);
         data['hasLocalization'] = game.i18n.has(`Racedescr.${this.item.name}`)
         return data
     }
 }
 
 class SpellSheetDSA5 extends ItemSheetdsa5 {
-    async getData() {
-        const data = await super.getData();
+    async getData(options) {
+        const data = await super.getData(options);
         data['characteristics'] = DSA5.characteristics;
         data['StFs'] = DSA5.StFs;
         data['resistances'] = DSA5.magicResistanceModifiers
         if (data.isOwned) {
-            data['extensions'] = this.item.options.actor.data.items.filter(x => { return x.type == "spellextension" && x.data.source == this.item.name && this.item.type == x.data.category })
+            data['extensions'] = this.item.actor.data.items.filter(x => { return x.type == "spellextension" && x.data.source == this.item.name && this.item.type == x.data.category })
         }
         return data
     }
@@ -447,7 +449,7 @@ class SpellSheetDSA5 extends ItemSheetdsa5 {
         html.find('.item-edit').click(ev => {
             ev.preventDefault()
             let itemId = this._getItemId(ev)
-            const item = this.item.options.actor.items.find(i => i.data._id == itemId)
+            const item = this.item.actor.items.find(i => i.data._id == itemId)
             item.sheet.render(true);
         });
 
@@ -483,15 +485,15 @@ class SpellSheetDSA5 extends ItemSheetdsa5 {
     }
 
     async _cleverDeleteItem(itemId) {
-        let item = this.item.options.actor.data.items.find(x => x._id == itemId)
-        await this.item.options.actor._updateAPs(-1 * item.data.APValue.value)
-        this.item.options.actor.deleteEmbeddedEntity("OwnedItem", itemId);
+        let item = this.item.actor.data.items.find(x => x._id == itemId)
+        await this.item.actor._updateAPs(-1 * item.data.APValue.value)
+        this.item.actor.deleteEmbeddedDocuments("Item", [itemId]);
     }
 }
 
 class SpellExtensionSheetDSA5 extends ItemSheetdsa5 {
-    async getData() {
-        const data = await super.getData();
+    async getData(options) {
+        const data = await super.getData(options);
         data['categories'] = ["spell", "liturgy", "ritual", "ceremony"]
         return data
     }
@@ -510,7 +512,7 @@ class VantageSheetDSA5 extends ItemSheetdsa5 {
                 steps = xpCost.split(";").map(x => Number(x.trim()))
                 xpCost = steps[this.item.data.data.step.value - 1]
             }
-            await this.item.options.actor._updateAPs(xpCost * -1)
+            await this.item.actor._updateAPs(xpCost * -1)
             await this.item.update({ "data.step.value": this.item.data.data.step.value - 1 })
         }
     }
@@ -523,8 +525,8 @@ class VantageSheetDSA5 extends ItemSheetdsa5 {
                 steps = xpCost.split(";").map(x => Number(x.trim()))
                 xpCost = steps[this.item.data.data.step.value]
             }
-            if (await this.item.options.actor.checkEnoughXP(xpCost)) {
-                await this.item.options.actor._updateAPs(xpCost)
+            if (await this.item.actor.checkEnoughXP(xpCost)) {
+                await this.item.actor._updateAPs(xpCost)
                 await this.item.update({ "data.step.value": this.item.data.data.step.value + 1 })
             }
         }

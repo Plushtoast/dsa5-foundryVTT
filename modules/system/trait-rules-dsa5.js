@@ -24,7 +24,7 @@ export default class TraitRulesDSA5 extends ItemRulesDSA5 {
                 if (armor) {
                     armor = duplicate(armor)
                     armor.data.at.value = Number(armor.data.at.value) + 1
-                    actor.updateEmbeddedEntity("OwnedItem", armor)
+                    actor.updateEmbeddedDocuments("Item", [armor])
                 } else {
                     //TODO generate armor
                 }
@@ -55,7 +55,7 @@ export default class TraitRulesDSA5 extends ItemRulesDSA5 {
                 if (armor) {
                     armor = duplicate(armor)
                     armor.data.at.value = Number(armor.data.at.value) - 1
-                    actor.updateEmbeddedEntity("OwnedItem", armor)
+                    actor.updateEmbeddedDocuments("Item", [armor])
                 }
                 break
         }

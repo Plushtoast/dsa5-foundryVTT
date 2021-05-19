@@ -31,8 +31,8 @@ export default class CultureWizard extends WizardDSA5 {
         })
     }
 
-    getData() {
-        let data = super.getData()
+    getData(options) {
+        const data = super.getData(options);
         let advantages = this.parseToItem(this.culture.data.recommendedAdvantages.value, ["advantage"])
         let disadvantages = this.parseToItem(this.culture.data.recommendedDisadvantages.value, ["disadvantage"])
         let writings = this.culture.data.writing.value == "" ? [] : this.parseToItem(this.culture.data.writing.value.split(",").map(x => `${game.i18n.localize("LocalizedIDs.literacy")} (${x.trim()})`).join(", "), ["specialability"])
@@ -45,7 +45,7 @@ export default class CultureWizard extends WizardDSA5 {
             description: game.i18n.format("WIZARD.culturedescr", { culture: this.culture.name, cost: baseCost }),
             advantages,
             disadvantages,
-            writing,
+            writings,
             languages,
             advantagesToChose: advantages.length > 0,
             disadvantagesToChose: disadvantages.length > 0,
@@ -107,7 +107,7 @@ export default class CultureWizard extends WizardDSA5 {
             localKnowledge = duplicate(localKnowledge)
             localKnowledge.name = `${game.i18n.localize('LocalizedIDs.localKnowledge')} (${parent.find(".localKnowledge").val()})`
             localKnowledge.data.APValue.value = 0
-            this.actor.createEmbeddedEntity("OwnedItem", localKnowledge)
+            this.actor.createEmbeddedDocuments("Item", [localKnowledge])
         }
 
         await this.addSelections(parent.find('.optional:checked'))

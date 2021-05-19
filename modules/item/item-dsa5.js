@@ -279,7 +279,7 @@ export default class Itemdsa5 extends Item {
     static async combineItem(item1, item2, actor) {
         item1 = duplicate(item1)
         item1.data.quantity.value += item2.data.quantity.value
-        await actor.updateEmbeddedEntity("OwnedItem", item1)
+        await actor.updateEmbeddedDocuments("Item", [item1])
     }
 
     static areEquals(item, item2) {
@@ -325,7 +325,7 @@ export default class Itemdsa5 extends Item {
         if (testData.extra.ammo && !testData.extra.ammoDecreased) {
             testData.extra.ammoDecreased = true
             testData.extra.ammo.data.quantity.value--;
-            this.updateEmbeddedEntity("OwnedItem", { _id: testData.extra.ammo._id, "data.quantity.value": testData.extra.ammo.data.quantity.value });
+            this.updateEmbeddedDocuments("Item", [{ _id: testData.extra.ammo._id, "data.quantity.value": testData.extra.ammo.data.quantity.value }]);
         }
 
         if (!options.suppressMessage)
@@ -525,7 +525,7 @@ class SpellItemDSA5 extends Itemdsa5 {
         let title = spell.name + " " + game.i18n.localize(`${spell.type}Test`);
 
         let testData = {
-            opposable: spell.data.effectFormula.value.length > 0,
+            opposable: spell.data.data.effectFormula.value.length > 0,
             source: spell,
             extra: {
                 actor: actor.data,
@@ -538,19 +538,19 @@ class SpellItemDSA5 extends Itemdsa5 {
         };
         let data = {
             rollMode: options.rollMode,
-            spellCost: spell.data.AsPCost.value,
-            maintainCost: spell.data.maintainCost.value,
-            spellCastingTime: spell.data.castingTime.value,
-            spellReach: spell.data.range.value,
-            canChangeCost: spell.data.canChangeCost.value == "true",
-            canChangeRange: spell.data.canChangeRange.value == "true",
-            canChangeCastingTime: spell.data.canChangeCastingTime.value == "true",
-            hasSKModifier: spell.data.resistanceModifier.value == "SK",
-            hasZKModifier: spell.data.resistanceModifier.value == "ZK",
-            maxMods: Math.floor(Number(spell.data.talentValue.value) / 4),
+            spellCost: spell.data.data.AsPCost.value,
+            maintainCost: spell.data.data.maintainCost.value,
+            spellCastingTime: spell.data.data.castingTime.value,
+            spellReach: spell.data.data.range.value,
+            canChangeCost: spell.data.data.canChangeCost.value == "true",
+            canChangeRange: spell.data.data.canChangeRange.value == "true",
+            canChangeCastingTime: spell.data.data.canChangeCastingTime.value == "true",
+            hasSKModifier: spell.data.data.resistanceModifier.value == "SK",
+            hasZKModifier: spell.data.data.resistanceModifier.value == "ZK",
+            maxMods: Math.floor(Number(spell.data.data.talentValue.value) / 4),
             extensions: this.prepareExtensions(actor, spell),
-            variableBaseCost: spell.data.variableBaseCost == "true",
-            characteristics: [1, 2, 3].map(x => spell.data[`characteristic${x}`].value)
+            variableBaseCost: spell.data.data.variableBaseCost == "true",
+            characteristics: [1, 2, 3].map(x => spell.data.data[`characteristic${x}`].value)
         }
 
         let situationalModifiers = actor ? DSA5StatusEffects.getRollModifiers(actor, spell) : []
@@ -706,7 +706,7 @@ class ConsumableItemDSA extends Itemdsa5 {
         let effect = DSA5_Utility.replaceDies(item.data.data.QLList.split("\n")[item.data.data.QL - 1], true)
         let msg = `<div><b>${title}</b></div><div>${item.data.data.description.value}</div><div><b>${game.i18n.localize('effect')}</b>: ${effect}</div>`
         if (newQuantity == 0) {
-            item.options.actor.deleteEmbeddedEntity("OwnedItem", item.data._id)
+            item.options.actor.deleteEmbeddedDocuments("Item", [item.data._id])
         } else {
             item.update({
                 'data.quantity.value': newQuantity,
@@ -728,7 +728,7 @@ class ConsumableItemDSA extends Itemdsa5 {
         }
         item1.data.quantity.value = newQuantity
         item1.data.charges = newCharges
-        await actor.updateEmbeddedEntity("OwnedItem", item1)
+        await actor.updateEmbeddedDocuments("Item", [item1])
     }
 
 }
@@ -860,7 +860,6 @@ class MeleeweaponDSA5 extends Itemdsa5 {
                     selected: true
                 })
             }
-
             mergeObject(data, {
                 visionOptions: DSA5.meleeRangeVision(data.mode),
                 weaponSizes: DSA5.meleeRanges,

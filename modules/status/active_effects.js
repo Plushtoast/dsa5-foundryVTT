@@ -27,7 +27,7 @@ export default class DSAActiveEffectConfig extends ActiveEffectConfig {
 
         elem.find('.advancedSelector').change(ev => {
             let effect = this.object.data
-            effect.flags.dsa5.advancedFunction = $(ev.currentTarget).val()
+            effect.data.flags.dsa5.advancedFunction = $(ev.currentTarget).val()
 
             renderTemplate('systems/dsa5/templates/status/advanced_functions.html', { effect, config }).then(template => {
                 elem.find('.advancedFunctions').html(template)
@@ -39,8 +39,8 @@ export default class DSAActiveEffectConfig extends ActiveEffectConfig {
         return duplicate(CONFIG.statusEffects).map(x => { return { id: x.id, label: game.i18n.localize(x.label) } })
     }
 
-    getData() {
-        const data = super.getData()
+    getData(options) {
+        const data = super.getData(options);
         return data
     }
 

@@ -62,8 +62,8 @@ export default class SpeciesWizard extends WizardDSA5 {
         return result
     }
 
-    getData() {
-        const data = super.getData()
+    getData(options) {
+        const data = super.getData(options);
         const advantagegroups = this._toGroups(this.species.data.recommendedAdvantages.value, ["advantage"])
         const disadvantagegroups = this._toGroups(this.species.data.recommendedDisadvantages.value, ["disadvantage"])
         const requirements = this.parseToItem(this.species.data.requirements.value, ["disadvantage", "advantage"])

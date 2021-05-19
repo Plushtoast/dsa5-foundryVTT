@@ -23,8 +23,8 @@ export default class ActorSheetdsa5Creature extends ActorSheetDsa5 {
         super.activateListeners(html);
     }
 
-    async getData() {
-        const data = super.getData();
+    async getData(options) {
+        const data = await super.getData(options);
         data["sizeCategories"] = DSA5.sizeCategories
         return data;
     }
@@ -46,7 +46,7 @@ export default class ActorSheetdsa5Creature extends ActorSheetDsa5 {
         });
         if (!res) {
             await this._updateAPs(item.data.data.APValue.value)
-            await this.actor.createEmbeddedEntity("OwnedItem", item);
+            await this.actor.createEmbeddedDocuments("Item", [item]);
             await TraitRulesDSA5.traitAdded(this.actor, item)
         }
     }

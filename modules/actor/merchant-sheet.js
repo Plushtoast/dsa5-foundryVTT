@@ -125,9 +125,9 @@ export default class MerchantSheetDSA5 extends ActorSheetdsa5NPC {
         let item = duplicate(sourceItem)
         if (Number(item.data.quantity.value) > amount || item.type == "money") {
             item.data.quantity.value = Number(item.data.quantity.value) - amount
-            await source.updateEmbeddedEntity("OwnedItem", item)
+            await source.updateEmbeddedDocuments("Item", [item])
         } else {
-            await source.deleteEmbeddedEntity("OwnedItem", itemId)
+            await source.deleteEmbeddedDocuments("Item", [itemId])
         }
         if (!this.noNeedToPay(source, target))
             await DSA5Payment.getMoney(source, price, true)
@@ -137,7 +137,7 @@ export default class MerchantSheetDSA5 extends ActorSheetdsa5NPC {
         let res = target.data.items.find(i => Itemdsa5.areEquals(item, i));
         item.data.quantity.value = amount
         if (!res) {
-            await target.createEmbeddedEntity("OwnedItem", item);
+            await target.createEmbeddedDocuments("Item", [item]);
         } else {
             await Itemdsa5.stackItems(res, item, target)
         }
@@ -239,7 +239,7 @@ export default class MerchantSheetDSA5 extends ActorSheetdsa5NPC {
                 return y.type == x.type && y.name == x.name
             }).length == 0
         })
-        await actor.createEmbeddedEntity("OwnedItem", items)
+        await actor.createEmbeddedDocuments("Item", items)
         $(ev.currentTarget).text(text)
     }
 
@@ -248,12 +248,12 @@ export default class MerchantSheetDSA5 extends ActorSheetdsa5NPC {
         $(ev.currentTarget).html(' <i class="fa fa-spin fa-spinner"></i>')
         let ids = actor.data.items.filter(x => ["equipment", "poison", "consumable"].includes(x.type)).map(x => x._id)
         ids.push(...actor.data.items.filter(x => ["armor", "meleeweapon", "rangeweapon", "equipment"].includes(x.type) && !x.data.worn.value).map(x => x._id))
-        await actor.deleteEmbeddedEntity("OwnedItem", ids);
+        await actor.deleteEmbeddedDocuments("Item", ids);
         $(ev.currentTarget).text(text)
     }
 
-    async getData() {
-        const data = super.getData();
+    async getData(options) {
+        const data = await super.getData(options);
         data["merchantType"] = getProperty(this.actor.data.data, "merchant.merchantType") || "none"
         data["invName"] = { none: game.i18n.localize("equipment"), merchant: game.i18n.localize("MERCHANT.typeMerchant"), loot: game.i18n.localize("MERCHANT.typeLoot") }[data["merchantType"]]
         data["merchantTypes"] = { none: game.i18n.localize("MERCHANT.typeNone"), merchant: game.i18n.localize("MERCHANT.typeMerchant"), loot: game.i18n.localize("MERCHANT.typeLoot") }

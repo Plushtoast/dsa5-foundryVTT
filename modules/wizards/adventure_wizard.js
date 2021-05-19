@@ -1,5 +1,6 @@
 import DSA5StatusEffects from "../status/status_effects.js"
 import DSA5ChatAutoCompletion from "../system/chat_autocompletion.js"
+import DSA5ChatListeners from "../system/chat_listeners.js"
 
 export default class BookWizard extends Application {
     static wizard
@@ -294,10 +295,10 @@ export default class BookWizard extends Application {
         html.find('.chapter').html(template)
     }
 
-    async getData() {
+    async getData(options) {
+        const data = await super.getData(options);
         const template = await this.getChapter()
         const toc = await this.getToc()
-        const data = super.getData()
         data.adventure = this.bookData
         data.currentChapter = template
         data.toc = toc

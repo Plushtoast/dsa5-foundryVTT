@@ -3,7 +3,7 @@ export default function() {
         this.effects.removeChildren().forEach(c => c.destroy());
         const tokenEffects = this.data.effects;
         const actorEffects = this.actor ? this.actor.effects.filter(x => {
-            return (game.user.isGM || !x.getFlag("dsa5", "hidePlayers")) && !x.getFlag("dsa5", "hideOnToken")
+            return !x.disabled && (game.user.isGM || !x.getFlag("dsa5", "hidePlayers")) && !x.getFlag("dsa5", "hideOnToken")
         }) : [];
         let overlay = {
             src: this.data.overlayEffect,
@@ -69,7 +69,7 @@ export default function() {
         const effect = (img.dataset.statusId && this.object.actor) ?
             CONFIG.statusEffects.find(e => e.id === img.dataset.statusId) :
             img.getAttribute("src");
-        if (!effect.flags.dsa5.editable)
+        if (!effect.data.flags.dsa5.editable)
             return
         if (event.button == 0)
             return this.object.incrementCondition(effect)
@@ -81,9 +81,9 @@ export default function() {
     Token.prototype.incrementCondition = async function(effect, { active, overlay = false } = {}) {
         const existing = this.actor.effects.find(e => e.getFlag("core", "statusId") === effect.id);
         if (!existing || Number.isNumeric(getProperty(existing, "data.flags.dsa5.value")))
-            this.actor.addCondition(effect.id, 1, false, false)
+            await this.actor.addCondition(effect.id, 1, false, false)
         else if (existing)
-            this.actor.removeCondition(effect.id, 1, false)
+            await this.actor.removeCondition(effect.id, 1, false)
 
         if (this.hasActiveHUD) canvas.tokens.hud.refreshStatusIcons();
         return active;

@@ -285,7 +285,7 @@ export default class DiceDSA5 {
 
     static _situationalMultipliers(testData) {
         return testData.situationalModifiers.reduce(function(_this, val) {
-            return _this * (val.type == "*" ? (Number(val.value) || 1) : 1)
+            return _this * (val.type == "*" ? (Number(val.value.replace(/,/, ".")) || 1) : 1)
         }, 1);
     }
 
@@ -315,7 +315,7 @@ export default class DiceDSA5 {
     }
 
     static async rollCombatTrait(testData) {
-        let roll = testData.roll ? testData.roll : new Roll("1d20").roll();
+        let roll = testData.roll ? testData.roll : await new Roll("1d20").roll();
         this._appendSituationalModifiers(testData, game.i18n.localize("manual"), testData.testModifier)
         this._appendSituationalModifiers(testData, game.i18n.localize("wrongHand"), testData.wrongHand)
         let source = testData.source.data.data == undefined ? testData.source : testData.source.data
@@ -348,7 +348,7 @@ export default class DiceDSA5 {
                 } else if (testData.mode == "attack" && game.settings.get("dsa5", "rangeBotchTableEnabled")) {
                     result.description += `, <a class="roll-button range-botch" data-weaponless="true"><i class="fas fa-dice"></i>${game.i18n.localize('CriticalFailure')} ${game.i18n.localize("table")}</a>`
                 } else {
-                    result.description += ", " + game.i18n.localize("selfDamage") + (new Roll("1d6+2").roll().total)
+                    result.description += ", " + game.i18n.localize("selfDamage") + (await new Roll("1d6+2").roll().total)
                 }
                 break;
             case 2:
@@ -449,7 +449,7 @@ export default class DiceDSA5 {
     }
 
     static async rollWeapon(testData) {
-        let roll = testData.roll ? testData.roll : new Roll("1d20").roll();
+        let roll = testData.roll ? testData.roll : await new Roll("1d20").roll();
         let weapon;
         this._appendSituationalModifiers(testData, game.i18n.localize("manual"), testData.testModifier)
         this._appendSituationalModifiers(testData, game.i18n.localize("wrongHand"), testData.wrongHand)
@@ -457,7 +457,7 @@ export default class DiceDSA5 {
         let source = testData.source.data.data == undefined ? testData.source : testData.source.data
         let combatskill = source.data.combatskill.value
 
-        let skill = Actordsa5._calculateCombatSkillValues(testData.extra.actor.items.find(x => x.type == "combatskill" && x.name == combatskill), testData.extra.actor)
+        let skill = Actordsa5._calculateCombatSkillValues(testData.extra.actor.items.find(x => x.type == "combatskill" && x.name == combatskill).data, testData.extra.actor)
 
         if (source.type == "meleeweapon") {
             weapon = Actordsa5._prepareMeleeWeapon(source, [skill], testData.extra.actor)
@@ -494,7 +494,7 @@ export default class DiceDSA5 {
                 else if (testData.mode != "attack" && game.settings.get("dsa5", "defenseBotchTableEnabled"))
                     result.description += `, <a class="roll-button defense-botch" data-weaponless="${source.data.combatskill.value == game.i18n.localize('LocalizedIDs.wrestle')}"><i class="fas fa-dice"></i>${game.i18n.localize('CriticalFailure')} ${game.i18n.localize("table")}</a>`
                 else
-                    result.description += ", " + game.i18n.localize("selfDamage") + (new Roll("1d6+2").roll().total)
+                    result.description += ", " + game.i18n.localize("selfDamage") + (await new Roll("1d6+2").roll().total)
                 break;
             case 2:
                 if (testData.mode == "attack") {
@@ -775,10 +775,10 @@ export default class DiceDSA5 {
     }
 
     static get3D20SuccessLevel(roll, fws, botch = 20, critical = 1) {
-        if (roll.results.filter(x => x == critical).length == 3) return 3
-        else if (roll.results.filter(x => x == critical).length == 2) return 2
-        else if (roll.results.filter(x => x >= botch).length == 3) return -3
-        else if (roll.results.filter(x => x >= botch).length == 2) return -2
+        if (roll.terms.filter(x => x.results && x.results[0].result == critical).length == 3) return 3
+        else if (roll.terms.filter(x => x.results && x.results[0].result == critical).length == 2) return 2
+        else if (roll.terms.filter(x => x.results && x.results[0].result >= botch).length == 3) return -3
+        else if (roll.terms.filter(x => x.results && x.results[0].result >= botch).length == 2) return -2
         else return fws >= 0 ? 1 : -1
     }
 
@@ -891,13 +891,13 @@ export default class DiceDSA5 {
                 case "ceremony":
                 case "ritual":
                 case "skill":
-                    roll = new Roll(`1d20[${testData.source.data.characteristic1.value}]+1d20[${testData.source.data.characteristic2.value}]+1d20[${testData.source.data.characteristic3.value}]`).roll();
+                    roll = await new Roll(`1d20[${testData.source.data.characteristic1.value}]+1d20[${testData.source.data.characteristic2.value}]+1d20[${testData.source.data.characteristic3.value}]`).roll();
                     break;
                 case "regenerate":
                     let rollstring = "1d6[mu]"
                     if (testData.extra.actor.isMage) rollstring += "+1d6[ge]"
                     if (testData.extra.actor.isPriest) rollstring += "+1d6[in]"
-                    roll = new Roll(rollstring).roll()
+                    roll = await new Roll(rollstring).roll()
                     break;
                 case "meleeweapon":
                 case "rangeweapon":
@@ -905,21 +905,21 @@ export default class DiceDSA5 {
                 case "combatskill":
                 case "trait":
                     if (testData.mode == "damage") {
-                        roll = new Roll(testData.source.data.damage.value.replace(/[Ww]/g, "d")).roll()
+                        roll = await new Roll(testData.source.data.damage.value.replace(/[Ww]/g, "d")).roll()
                         for (let i = 0; i < roll.dice.length; i++) roll.dice[i].options.colorset = "black"
 
                     } else
-                        roll = new Roll(`1d20[${testData.mode}]`).roll()
+                        roll = await new Roll(`1d20[${testData.mode}]`).roll()
                     break;
                 case "dodge":
-                    roll = new Roll("1d20[in]").roll();
+                    roll = await new Roll("1d20[in]").roll();
                     break;
                 case "poison":
                 case "disease":
-                    roll = new Roll("1d20[in]+1d20[in]+1d20[in]").roll();
+                    roll = await new Roll("1d20[in]+1d20[in]+1d20[in]").roll();
                     break
                 default:
-                    roll = new Roll(`1d20[${testData.source.data.label.split('.')[1].toLowerCase()}]`).roll();
+                    roll = await new Roll(`1d20[${testData.source.data.label.split('.')[1].toLowerCase()}]`).roll();
             }
             roll = await DiceDSA5.manualRolls(roll, testData.source.type)
             this.showDiceSoNice(roll, cardOptions.rollMode);
@@ -1151,7 +1151,7 @@ export default class DiceDSA5 {
         if (game.user.isGM) {
             for (let actor of actors) {
                 const effectsWithChanges = effects.filter(x => x.changes && x.changes.length > 0)
-                await actor.createEmbeddedEntity("ActiveEffect", effectsWithChanges.map(x => {
+                await actor.createEmbeddedDocuments("ActiveEffect", effectsWithChanges.map(x => {
                     x.origin = actor.uuid
                     return x
                 }))
@@ -1230,10 +1230,10 @@ export default class DiceDSA5 {
                 index = input.attr("data-edit-id")
                 let newValue = Number(input.val())
                 let oldDamageRoll = data.postData.damageRoll ? duplicate(data.postData.damageRoll) : undefined
-                if (newTestData.roll.results.length > index * 2) {
+                if (newTestData.roll.terms.length > index * 2) {
                     DSA5_Utility.editRollAtIndex(newTestData.roll, index, newValue)
                 } else {
-                    index = index - newTestData.roll.results.filter(x => !isNaN(x)).length
+                    index = index - newTestData.roll.terms.filter(x => x.results).length
                     oldDamageRoll.total = oldDamageRoll.total - DSA5_Utility.editRollAtIndex(oldDamageRoll, index, newValue) + newValue
                 }
                 newTestData.damageRoll = oldDamageRoll

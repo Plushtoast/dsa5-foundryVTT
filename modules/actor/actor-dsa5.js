@@ -23,25 +23,17 @@ export default class Actordsa5 extends Actor {
         if (!data.img || data.img == "icons/svg/mystery-man.svg")
             data.img = "icons/svg/mystery-man-black.svg"
 
-        let skills = await DSA5_Utility.allSkills() || [];
-        let combatskills = await DSA5_Utility.allCombatSkills() || [];
-        let moneyItems = await DSA5_Utility.allMoneyItems() || [];
+        const skills = await DSA5_Utility.allSkills() || [];
+        const combatskills = await DSA5_Utility.allCombatSkills() || [];
+        const moneyItems = await DSA5_Utility.allMoneyItems() || [];
 
-        moneyItems = moneyItems.sort((a, b) => (a.data.price.value > b.data.price.value) ? -1 : 1);
-        data.items.push(...skills);
-        data.items.push(...combatskills);
-
-        data.items.push(...moneyItems.map(m => {
-            m.data.quantity.value = 0
-            return m
-        }));
+        data.items.push(...skills, ...combatskills, ...moneyItems);
 
         if (data.type != "character") {
             data.data = { status: { fatePoints: { current: 0, value: 0 } } }
         }
         return super.create(data, options);
     }
-
 
     prepareDerivedData() {
         const data = this.data
@@ -62,8 +54,8 @@ export default class Actordsa5 extends Actor {
 
             let isFamiliar = data.items.find(x => x.name == game.i18n.localize('LocalizedIDs.familiar') && x.type == "trait") != undefined
             data.canAdvance = (data.type == "character" || isFamiliar) && this.owner
-            data.isMage = isFamiliar || data.items.some(x => ["ritual", "spell", "magictrick"].includes(x.type) || (x.type == "specialability" && ["magical", "staff"].includes(x.data.category.value)))
-            data.isPriest = data.items.some(x => ["ceremony", "liturgy", "blessing"].includes(x.type) || (x.type == "specialability" && ["ceremonial", "clerical"].includes(x.data.category.value)))
+            data.isMage = isFamiliar || data.items.some(x => ["ritual", "spell", "magictrick"].includes(x.type) || (x.type == "specialability" && ["magical", "staff"].includes(x.data.data.category.value)))
+            data.isPriest = data.items.some(x => ["ceremony", "liturgy", "blessing"].includes(x.type) || (x.type == "specialability" && ["ceremonial", "clerical"].includes(x.data.data.category.value)))
             if (data.canAdvance) {
                 data.data.details.experience.current = data.data.details.experience.total - data.data.details.experience.spent;
                 data.data.details.experience.description = DSA5_Utility.experienceDescription(data.data.details.experience.total)
@@ -110,7 +102,7 @@ export default class Actordsa5 extends Actor {
             data.data.status.dodge.value = Math.round(data.data.characteristics.ge.value / 2) + data.data.status.dodge.gearmodifier
 
             let encumbrance = this.hasCondition('encumbered')
-            encumbrance = encumbrance ? Number(encumbrance.flags.dsa5.value) : 0
+            encumbrance = encumbrance ? Number(encumbrance.data.flags.dsa5.value) : 0
 
             data.data.status.speed.max = Math.max(0, data.data.status.speed.max - (Math.min(4, encumbrance)))
 
@@ -119,7 +111,6 @@ export default class Actordsa5 extends Actor {
             const baseInit = Number((0.01 * data.data.status.initiative.value).toFixed(2))
             data.data.status.initiative.value *= data.data.status.initiative.multiplier || 1
             data.data.status.initiative.value += baseInit
-
 
             data.data.status.dodge.max = Number(data.data.status.dodge.value) + Number(data.data.status.dodge.modifier) + (Number(game.settings.get("dsa5", "higherDefense")) / 2)
 
@@ -263,15 +254,23 @@ export default class Actordsa5 extends Actor {
     }
 
     prepare() {
-        let preparedData = duplicate(this.data)
+        let preData = duplicate(this.data)
+        let preparedData = { data: {} }
+        mergeObject(preparedData, this.prepareItems())
         if (preparedData.canAdvance) {
             const attrs = ["wounds", "astralenergy", "karmaenergy"]
             for (const k of attrs) {
-                preparedData.data.status[k].cost = game.i18n.format("advancementCost", { cost: DSA5_Utility._calculateAdvCost(preparedData.data.status[k].advances, "D") })
-                preparedData.data.status[k].refund = game.i18n.format("refundCost", { cost: DSA5_Utility._calculateAdvCost(preparedData.data.status[k].advances, "D", 0) })
+                mergeObject(preparedData.data, {
+                    status: {
+                        [k]: {
+                            cost: game.i18n.format("advancementCost", { cost: DSA5_Utility._calculateAdvCost(preData.data.status[k].advances, "D") }),
+                            refund: game.i18n.format("refundCost", { cost: DSA5_Utility._calculateAdvCost(preData.data.status[k].advances, "D", 0) })
+                        }
+                    }
+                })
+
             }
         }
-        mergeObject(preparedData, this.prepareItems())
         return preparedData;
     }
 
@@ -280,8 +279,8 @@ export default class Actordsa5 extends Actor {
     }
 
     static armorValue(actor) {
-        let wornArmor = actor.items.filter(x => x.type == "armor" && x.data.worn.value == true).reduce((a, b) => a + Number(b.data.protection.value), 0)
-        let animalArmor = actor.items.filter(x => x.type == "trait" && x.data.traitType.value == "armor").reduce((a, b) => a + Number(b.data.at.value), 0)
+        let wornArmor = actor.items.filter(x => x.type == "armor" && x.data.data.worn.value == true).reduce((a, b) => a + Number(b.data.data.protection.value), 0)
+        let animalArmor = actor.items.filter(x => x.type == "trait" && x.data.data.traitType.value == "armor").reduce((a, b) => a + Number(b.data.data.at.value), 0)
         return wornArmor + animalArmor + (actor.data.totalArmor || 0)
     }
 
@@ -355,10 +354,10 @@ export default class Actordsa5 extends Actor {
         }
 
         let schips = []
-        for (let i = 1; i <= Number(actorData.data.status.fatePoints.max); i++) {
+        for (let i = 1; i <= Number(this.data.data.status.fatePoints.max); i++) {
             schips.push({
                 value: i,
-                cssClass: i <= Number(actorData.data.status.fatePoints.value) ? "fullSchip" : "emptySchip"
+                cssClass: i <= Number(this.data.data.status.fatePoints.value) ? "fullSchip" : "emptySchip"
             })
         }
 
@@ -412,7 +411,7 @@ export default class Actordsa5 extends Actor {
         //we can later make equipment sortable
         //actorData.items = actorData.items.sort((a, b) => (a.sort || 0) - (b.sort || 0))
 
-        let totalArmor = actorData.data.totalArmor || 0;
+        let totalArmor = this.data.data.totalArmor || 0;
         let totalWeight = 0;
         let encumbrance = 0;
 
@@ -565,7 +564,7 @@ export default class Actordsa5 extends Actor {
         //TODO move the encumbrance calculation to a better location
         encumbrance = Math.max(0, encumbrance - SpecialabilityRulesDSA5.abilityStep(this.data, game.i18n.localize('LocalizedIDs.inuredToEncumbrance')))
 
-        let carrycapacity = actorData.data.characteristics.kk.value * 2 + actorData.data.carryModifier;
+        let carrycapacity = this.data.data.characteristics.kk.value * 2 + this.data.data.carryModifier;
 
         if ((actorData.type != "creature" || actorData.canAdvance) && !this.isMerchant()) {
             encumbrance += Math.max(0, Math.ceil((totalWeight - carrycapacity - 4) / 4))
@@ -594,7 +593,7 @@ export default class Actordsa5 extends Actor {
             aggregatedtests,
             wornArmor: armor,
             inventory,
-            itemModifiers: actorData.data.itemModifiers,
+            itemModifiers: this.data.data.itemModifiers,
             languagePoints: {
                 used: actorData.data.freeLanguagePoints ? actorData.data.freeLanguagePoints.used : 0,
                 available: actorData.data.freeLanguagePoints ? actorData.data.freeLanguagePoints.value : 0
@@ -624,8 +623,8 @@ export default class Actordsa5 extends Actor {
 
     _itemPreparationError(item, error) {
         console.error("Something went wrong with preparing item " + item.name + ": " + error)
-        console.log(error)
-        console.log(wep)
+        console.warn(error)
+        console.warn(wep)
         ui.notifications.error("Something went wrong with preparing item " + item.name + ": " + error)
     }
 
@@ -641,20 +640,20 @@ export default class Actordsa5 extends Actor {
     }
 
     _addGearAndAbilityModifiers(itemModifiers, i) {
-        if (!i.data.effect || i.data.effect.value == undefined)
+        if (!i.data.data.effect || !i.data.data.effect.value)
             return
 
-        for (let mod of i.data.effect.value.split(/,|;/).map(x => x.trim())) {
+        for (let mod of i.data.data.effect.value.split(/,|;/).map(x => x.trim())) {
             let vals = mod.replace(/(\s+)/g, ' ').trim().split(" ")
             if (vals.length == 2) {
                 if (Number(vals[0]) != undefined) {
                     if (itemModifiers[vals[1]] == undefined) {
                         itemModifiers[vals[1]] = {
-                            value: Number(vals[0]) * (i.data.step ? Number(i.data.step.value) : 1),
+                            value: Number(vals[0]) * (i.data.data.step ? (Number(i.data.data.step.value) || 1) : 1),
                             sources: [i.name]
                         }
                     } else {
-                        itemModifiers[vals[1]].value += Number(vals[0]) * (i.data.step ? Number(i.data.step.value) : 1)
+                        itemModifiers[vals[1]].value += Number(vals[0]) * (i.data.data.step ? (Number(i.data.data.step.value) || 1) : 1)
                         itemModifiers[vals[1]].sources.push(i.name)
                     }
                 }
@@ -836,7 +835,7 @@ export default class Actordsa5 extends Actor {
                                                             let term = newTestData.roll.terms[k * 2]
                                                             newRoll.push(term.number + "d" + term.faces + "[" + term.options.colorset + "]")
                                                         }
-                                                        newRoll = await DiceDSA5.manualRolls(new Roll(newRoll.join("+")).roll(), "CHATCONTEXT.talentedReroll")
+                                                        newRoll = await DiceDSA5.manualRolls(await new Roll(newRoll.join("+")).roll(), "CHATCONTEXT.talentedReroll")
                                                         DiceDSA5.showDiceSoNice(newRoll, newTestData.rollMode)
 
                                                         let ind = 0
@@ -844,9 +843,8 @@ export default class Actordsa5 extends Actor {
                                                         for (let k of diesToReroll) {
                                                             const characteristic = newTestData.source.data[`characteristic${k + 1}`]
                                                             const attr = characteristic ? `${game.i18n.localize(`CHARAbbrev.${characteristic.value.toUpperCase()}`)} - ` : ""
-                                    changedRolls.push(`${attr}${newTestData.roll.results[k * 2]}/${newRoll.results[ind * 2]}`)
-                                    newTestData.roll.results[k * 2] = Math.min(newRoll.results[ind * 2], newTestData.roll.results[k * 2])
-                                    newTestData.roll.terms[k * 2].results[0].result = Math.min(newRoll.results[ind * 2], newTestData.roll.terms[k * 2].results[0].result)
+                                    changedRolls.push(`${attr}${newTestData.roll.terms[k * 2].result[0].result}/${newRoll.terms[ind * 2].result[0].result}`)
+                                    newTestData.roll.terms[k * 2].result[0].result = Math.min(newRoll.terms[ind * 2].result[0].result, newTestData.roll.terms[k * 2].result[0].result)
                                     ind += 1
                                 }
                                 infoMsg += `<b>${game.i18n.localize('Roll')}</b>: ${changedRolls.join(", ")}`
@@ -891,7 +889,7 @@ export default class Actordsa5 extends Actor {
                                     let term = newTestData.roll.terms[k * 2]
                                     newRoll.push(term.number + "d" + term.faces + "[" + term.options.colorset + "]")
                                 }
-                                newRoll = await DiceDSA5.manualRolls(new Roll(newRoll.join("+")).roll(), "CHATCONTEXT.Reroll")
+                                newRoll = await DiceDSA5.manualRolls(await new Roll(newRoll.join("+")).roll(), "CHATCONTEXT.Reroll")
                                 DiceDSA5.showDiceSoNice(newRoll, newTestData.rollMode)
 
                                 let ind = 0
@@ -899,9 +897,8 @@ export default class Actordsa5 extends Actor {
                                 for (let k of diesToReroll) {
                                     const characteristic = newTestData.source.data[`characteristic${k + 1}`]
                                     const attr = characteristic ? `${game.i18n.localize(`CHARAbbrev.${characteristic.value.toUpperCase()}`)} - ` : ""
-                                    changedRolls.push(`${attr}${newTestData.roll.results[k * 2]}/${newRoll.results[ind * 2]}`)
-                                    newTestData.roll.results[k * 2] = newRoll.results[ind * 2]
-                                    newTestData.roll.terms[k * 2].results[0].result = newRoll.results[ind * 2]
+                                    changedRolls.push(`${attr}${newTestData.roll.terms[k * 2].results[0].result}/${newRoll.terms[ind * 2].results[0].result}`)
+                                    newTestData.roll.terms[k * 2].results[0].result = newRoll.terms[ind * 2].results[0].result
                                     ind += 1
                                 }
 
@@ -947,7 +944,6 @@ export default class Actordsa5 extends Actor {
 
             let newTestData = data.preData
             newTestData.extra.actor = DSA5_Utility.getSpeaker(newTestData.extra.speaker).data
-            console.log(newTestData)
 
             this[`fate${type}`](infoMsg, cardOptions, newTestData, message, data)
         }
@@ -1163,11 +1159,11 @@ export default class Actordsa5 extends Actor {
             let regex2h = /\(2H/
             if (!regex2h.test(item.name)) {
                 if (!wornWeapons)
-                    wornWeapons = actorData.items.filter(x => (x.type == "meleeweapon" && x.data.worn.value && x._id != item._id && !regex2h.test(x.name)))
+                    wornWeapons = actorData.items.filter(x => (x.type == "meleeweapon" && x.data.data.worn.value && x._id != item._id && !regex2h.test(x.name)))
 
                 if (wornWeapons.length > 0) {
-                    item.parry += Math.max(...wornWeapons.map(x => x.data.pamod.offhandMod))
-                    item.attack += Math.max(...wornWeapons.map(x => x.data.atmod.offhandMod))
+                    item.parry += Math.max(...wornWeapons.map(x => x.data.data.pamod.offhandMod))
+                    item.attack += Math.max(...wornWeapons.map(x => x.data.data.atmod.offhandMod))
                 }
             }
 
@@ -1201,9 +1197,10 @@ export default class Actordsa5 extends Actor {
             if (typeof(k) == 'object') damageDie = k.number + "d" + k.faces
             else damageTerm += k
         }
-        damageTerm = Roll.MATH_PROXY.safeEval(damageTerm)
+        if(damageTerm) damageTerm = Roll.MATH_PROXY.safeEval(damageTerm)
+
         item.damagedie = damageDie ? damageDie : "0d6"
-        item.damageAdd = damageTerm != undefined ? (Number(damageTerm) > 0 ? "+" : "") + damageTerm : ""
+        item.damageAdd = damageTerm != "" ? (Number(damageTerm) > 0 ? "+" : "") + damageTerm : ""
         return item
     }
 
@@ -1265,7 +1262,7 @@ export default class Actordsa5 extends Actor {
         if (testData.extra.ammo && !testData.extra.ammoDecreased) {
             testData.extra.ammoDecreased = true
             testData.extra.ammo.data.quantity.value--;
-            this.updateEmbeddedEntity("OwnedItem", { _id: testData.extra.ammo._id, "data.quantity.value": testData.extra.ammo.data.quantity.value });
+            this.updateEmbeddedDocuments("Item", [{ _id: testData.extra.ammo._id, "data.quantity.value": testData.extra.ammo.data.quantity.value }]);
         }
 
         if (!options.suppressMessage)
@@ -1280,9 +1277,10 @@ export default class Actordsa5 extends Actor {
     }
 
     async _dependentEffects(statusId, effect, delta) {
-        if (effect.flags.dsa5.value == 4 && ["encumbered", "stunned", "feared", "inpain", "confused"].includes(statusId)) await this.addCondition("incapacitated")
+        const effectData = duplicate(effect)
+        if (effectData.flags.dsa5.value == 4 && ["encumbered", "stunned", "feared", "inpain", "confused"].includes(statusId)) await this.addCondition("incapacitated")
 
-        if (effect.flags.dsa5.value == 4 && (statusId == "paralysed")) await this.addCondition("rooted")
+        if (effectData.flags.dsa5.value == 4 && (statusId == "paralysed")) await this.addCondition("rooted")
 
         if (statusId == "unconscious") await this.addCondition("prone")
 

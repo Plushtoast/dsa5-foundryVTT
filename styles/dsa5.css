@@ -448,6 +448,16 @@ input[type=text].emphasize {
     color: rgb(172, 172, 172);
 }
 
+#sidebar .global-control {
+    color: white;
+    margin-left: 10px;
+}
+
+#compendium li.compendium-pack .compendium-footer,
+#playlists li.sound .sound-playback .sound-timer {
+    color: rgb(14, 12, 12);
+}
+
 #sidebar {
     border: none;
     overflow: visible;
@@ -2176,11 +2186,11 @@ select.noAppearance {
     left: 0;
 }
 
-.applyEffect{
+.applyEffect {
     width: auto;
     padding: 4px;
     line-height: unset;
-    font-size:12px;
+    font-size: 12px;
 }
 
 .adventureWizard .fa-check {

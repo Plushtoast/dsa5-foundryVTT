@@ -1,8 +1,8 @@
-{{#when effect.flags.dsa5.advancedFunction 'eq' '1'}}
+{{#when effect.data.flags.dsa5.advancedFunction 'eq' '1'}}
 <div class="form-group">
     <label class="label-text">{{localize 'effect'}}</label>
     <select name="flags.dsa5.args0" data-dtype="String">
-    {{#select effect.flags.dsa5.args0}}
+    {{#select effect.data.flags.dsa5.args0}}
     {{#each config.systemEffects as |item i|}}
     <option value="{{item.id}}">{{item.label}}</option>
     {{/each}}
@@ -11,13 +11,13 @@
 </div>
 <div class="form-group">
     <label class="label-text">{{localize 'stepValue'}}</label>
-    <input type="text" name="flags.dsa5.args1" value="{{effect.flags.dsa5.args1}}" />
+    <input type="text" name="flags.dsa5.args1" value="{{effect.data.flags.dsa5.args1}}" />
 </div>
-{{/when}} {{#when effect.flags.dsa5.advancedFunction 'eq' '2'}}
+{{/when}} {{#when effect.data.flags.dsa5.advancedFunction 'eq' '2'}}
 <div class="form-group full-height">
     <label class="label-text">{{localize 'ActiveEffects.advancedFunctions.macro'}}</label> {{#if config.canEditMacros}}
-    <textarea class="input-text" rows="10" type="text" name="flags.dsa5.args3" placeholder="{{localize 'ActiveEffects.placeholder.macros'}}">{{effect.flags.dsa5.args3}}</textarea> {{else}}
-    <p class="input-text">{{#if effect.flags.dsa5.args3}}{{effect.flags.dsa5.args3}}{{else}} - {{/if}}</p>
+    <textarea class="input-text" rows="10" type="text" name="flags.dsa5.args3" placeholder="{{localize 'ActiveEffects.placeholder.macros'}}">{{effect.data.flags.dsa5.args3}}</textarea> {{else}}
+    <p class="input-text">{{#if effect.data.flags.dsa5.args3}}{{effect.data.flags.dsa5.args3}}{{else}} - {{/if}}</p>
     {{/if}}
 </div>
 {{/when}}

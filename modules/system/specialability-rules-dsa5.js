@@ -58,7 +58,7 @@ export default class SpecialabilityRulesDSA5 extends ItemRulesDSA5 {
             if (vantage.data.step.value + 1 <= vantage.data.maxRank.value && await actor.checkEnoughXP(xpCost)) {
                 vantage.data.step.value += 1
                 await actor._updateAPs(xpCost)
-                await actor.updateEmbeddedEntity("OwnedItem", vantage);
+                await actor.updateEmbeddedDocuments("Item", [vantage]);
                 await SpecialabilityRulesDSA5.abilityAdded(actor, vantage)
             }
         } else {
@@ -66,7 +66,7 @@ export default class SpecialabilityRulesDSA5 extends ItemRulesDSA5 {
             if (await actor.checkEnoughXP(xpCost)) {
                 await SpecialabilityRulesDSA5.abilityAdded(actor, item)
                 await actor._updateAPs(xpCost)
-                await actor.createEmbeddedEntity("OwnedItem", item);
+                await actor.createEmbeddedDocuments("Item", [item]);
             }
         }
     }

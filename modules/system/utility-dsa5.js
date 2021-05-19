@@ -6,33 +6,30 @@ export default class DSA5_Utility {
     static async allSkills() {
         let returnSkills = [];
 
-        const packs = game.packs.filter(p => p.metadata.tags && p.metadata.tags.includes("skill") && p.metadata.langs.includes(game.i18n.lang))
-        if (!packs.length)
+        const pack = game.i18n.lang == "de" ? game.packs.get("dsa5.skills") : game.packs.get("dsa5.skillsen")
+        if (!pack)
             return ui.notifications.error("No content found")
 
-        for (let pack of packs) {
-            let items
-            await pack.getContent().then(content => items = content.filter(i => i.data.type == "skill"));
-            for (let i of items) {
-                returnSkills.push(i.data)
-            }
+        let items
+        await pack.getContent().then(content => items = content.filter(i => i.data.type == "skill"));
+        for (let i of items) {
+            returnSkills.push(i.data)
         }
+
         return returnSkills;
     }
 
     static async allCombatSkills() {
         let returnSkills = [];
 
-        const packs = game.packs.filter(p => p.metadata.tags && p.metadata.tags.includes("combatskill"))
-        if (!packs.length)
+        const pack = game.i18n.lang == "de" ? game.packs.get("dsa5.combatskills") : game.packs.get("dsa5.combatskillsen")
+        if (!pack)
             return ui.notifications.error("No content found")
 
-        for (let pack of packs) {
-            let items
-            await pack.getContent().then(content => items = content.filter(i => i.data.type == "combatskill"));
-            for (let i of items) {
-                returnSkills.push(i.data)
-            }
+        let items
+        await pack.getContent().then(content => items = content.filter(i => i.data.type == "combatskill"));
+        for (let i of items) {
+            returnSkills.push(i.data)
         }
         return returnSkills;
     }
@@ -53,21 +50,20 @@ export default class DSA5_Utility {
     }
 
     static async allMoneyItems() {
-        let moneyItems = []
-        const packs = game.packs.filter(p => p.metadata.tags && p.metadata.tags.includes("money"))
-
-        if (!packs.length)
+        const pack = game.packs.get("dsa5.money")
+        if (!pack)
             return ui.notifications.error("No content found")
 
-        for (let pack of packs) {
-            let items
-            await pack.getContent().then(content => items = content.filter(i => i.data.type == "money").map(i => i.data));
+        let items
+        await pack.getContent().then(content => items = content.filter(i => i.data.type == "money").map(i => {
+            let res = duplicate(i.data)
+            res.data.quantity.value = 0
+            return res
+        }));
 
-            let money = items.filter(t => Object.values(DSA5.moneyNames).map(n => n.toLowerCase()).includes(t.name.toLowerCase()))
-
-            moneyItems = moneyItems.concat(money)
-        }
-        return moneyItems
+        return items.filter(t => Object.values(DSA5.moneyNames)
+                .map(n => n.toLowerCase()).includes(t.name.toLowerCase()))
+            .sort((a, b) => (a.data.price.value > b.data.price.value) ? -1 : 1)
     }
 
     static async allSkillsList() {
@@ -170,7 +166,6 @@ export default class DSA5_Utility {
                 if (term.results[index - curindex]) {
                     let oldVal = term.results[index - curindex].result
                     term.results[index - curindex].result = newValue
-                    roll.results[resIndex] = term.results.reduce((x, y) => { return x + y.result }, 0)
                     return oldVal
                 }
                 curindex += term.results.length
