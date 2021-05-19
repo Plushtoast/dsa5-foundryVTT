@@ -162,7 +162,7 @@ export default class WizardDSA5 extends Application {
         this.items = [];
         for (let p of game.packs) {
             if (p.metadata.entity == "Item" && (game.user.isGM || !p.private)) {
-                await p.getContent().then(content => {
+                await p.getDocuments().then(content => {
                     this.items.push(...content.filter(x => this.dataTypes.includes(x.type)))
                 })
             }

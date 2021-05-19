@@ -59,7 +59,7 @@ export default class DSA5Initializer extends Dialog {
                 }
 
                 let journal = game.packs.get(json.journal)
-                let entries = await journal.getContent()
+                let entries = await journal.getDocuments()
                 for (let entry of entries) {
                     let folder = entry.getFlag("dsa5", "parent")
                     let sort = entry.getFlag("dsa5", "sort")
@@ -85,9 +85,9 @@ export default class DSA5Initializer extends Dialog {
             if (json.scenes) {
                 let head = await this.getFolderForType("Scene")
                 let scene = game.packs.get(json.scenes)
-                let entries = await scene.getContent()
+                let entries = await scene.getDocuments()
                 let journal = game.packs.get(json.journal)
-                let journs = await journal.getContent()
+                let journs = await journal.getDocuments()
                 let journHead = await this.getFolderForType("JournalEntry")
                 for (let entry of entries) {
                     entry.data.folder = head._id
@@ -112,7 +112,7 @@ export default class DSA5Initializer extends Dialog {
             if (json.actors) {
                 let head = await this.getFolderForType("Actor")
                 let actor = game.packs.get(json.actors)
-                let entries = await actor.getContent()
+                let entries = await actor.getDocuments()
                 for (let entry of entries) {
                     entry.data.folder = head._id
                 }

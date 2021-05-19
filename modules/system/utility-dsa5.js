@@ -11,7 +11,7 @@ export default class DSA5_Utility {
             return ui.notifications.error("No content found")
 
         let items
-        await pack.getContent().then(content => items = content.filter(i => i.data.type == "skill"));
+        await pack.getDocuments().then(content => items = content.filter(i => i.data.type == "skill"));
         for (let i of items) {
             returnSkills.push(i.data)
         }
@@ -27,7 +27,7 @@ export default class DSA5_Utility {
             return ui.notifications.error("No content found")
 
         let items
-        await pack.getContent().then(content => items = content.filter(i => i.data.type == "combatskill"));
+        await pack.getDocuments().then(content => items = content.filter(i => i.data.type == "combatskill"));
         for (let i of items) {
             returnSkills.push(i.data)
         }
@@ -55,7 +55,7 @@ export default class DSA5_Utility {
             return ui.notifications.error("No content found")
 
         let items
-        await pack.getContent().then(content => items = content.filter(i => i.data.type == "money").map(i => {
+        await pack.getDocuments().then(content => items = content.filter(i => i.data.type == "money").map(i => {
             let res = duplicate(i.data)
             res.data.quantity.value = 0
             return res
@@ -133,7 +133,7 @@ export default class DSA5_Utility {
         const pack = game.packs.get(packMan)
 
         let item
-        await pack.getContent().then(content => item = content.find(i => i._id == id));
+        await pack.getDocuments().then(content => item = content.find(i => i._id == id));
         if (item) {
             return item;
         }
@@ -199,7 +199,7 @@ export default class DSA5_Utility {
         if (names.length > 0) {
             for (let p of game.packs) {
                 if (p.metadata.entity == "Item" && (game.user.isGM || !p.private)) {
-                    await p.getContent().then(content => {
+                    await p.getDocuments().then(content => {
                         for (let k of content) {
                             let index = names.indexOf(k.name)
                             if (index >= 0 && types[index] == k.type) {

@@ -165,7 +165,7 @@ export default class BookWizard extends Application {
             let journal = game.packs.get(json.journal)
                 //Need this to replace links
             let index = await journal.getIndex()
-            let entries = await journal.getContent()
+            let entries = await journal.getDocuments()
             this.journals = entries
             if (json.actors) {
                 journal = game.packs.get(json.actors)

@@ -370,7 +370,7 @@ export default class DSA5ItemLibrary extends Application {
         const target = $(this._element).find(`*[data-tab="${category}"]`)
         this.showLoading(target, category)
         const packs = game.packs.filter(p => p.entity == entity && (game.user.isGM || !p.private))
-        return Promise.all(packs.map(p => p.getContent())).then(indexes => {
+        return Promise.all(packs.map(p => p.getDocuments())).then(indexes => {
             let items = worldStuff.map(x => new SearchDocument(x))
             indexes.forEach((index, idx) => {
                 items.push(...index.map(x => new SearchDocument(x)))
