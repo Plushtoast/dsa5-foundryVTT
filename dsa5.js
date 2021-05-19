@@ -48,10 +48,10 @@ Hooks.once("init", async function() {
         }
     }
 
-    CONFIG.Actor.entityClass = Actordsa5;
-    CONFIG.Item.entityClass = Itemdsa5;
+    CONFIG.Actor.documentClass = Actordsa5;
+    CONFIG.Item.documentClass = Itemdsa5;
     CONFIG.ChatMessage.template = "systems/dsa5/templates/chat/chat-message.html"
-    CONFIG.ChatMessage.entityClass = ChatMessageDSA5Roll
+    CONFIG.ChatMessage.documentClass = ChatMessageDSA5Roll
     CONFIG.ui.combat = DSA5CombatTracker
     CONFIG.combat = DSA5Combat
     CONFIG.ActiveEffect.sheetClass = DSAActiveEffectConfig

@@ -15,7 +15,7 @@ export default function() {
             let message = game.messages.get(li.attr("data-message-id"));
             if (message.data.speaker.actor && message.data.flags.data) {
                 let actor = game.actors.get(message.data.speaker.actor);
-                if (actor.owner || game.user.isGM) {
+                if (actor.isOwner || game.user.isGM) {
                     return ["liturgy", "ceremony", "spell", "ritual"].includes(message.data.flags.data.preData.source.type)
                 }
             }
@@ -39,7 +39,7 @@ export default function() {
             let message = game.messages.get(li.attr("data-message-id"));
             if (message.data.speaker.actor && message.data.flags.data) {
                 let actor = game.actors.get(message.data.speaker.actor);
-                if (actor.owner && actor.data.data.status.fatePoints.value > 0) {
+                if (actor.isOwner && actor.data.data.status.fatePoints.value > 0) {
                     if (!message.data.flags.data.fatePointAddQSUsed) {
                         return message.data.flags.data.postData.successLevel > 0 && message.data.flags.data.postData.qualityStep != undefined
                     }
@@ -51,7 +51,7 @@ export default function() {
             let message = game.messages.get(li.attr("data-message-id"));
             if (message.data.speaker.actor && message.data.flags.data) {
                 let actor = game.actors.get(message.data.speaker.actor);
-                if (actor.owner) {
+                if (actor.isOwner) {
                     return actor.items.find(x => x.name == `${game.i18n.localize('LocalizedIDs.aptitude')} (${message.data.flags.data.preData.source.name})`) != undefined && !message.data.flags.data.talentedRerollUsed;
                 }
             }
@@ -61,7 +61,7 @@ export default function() {
             let message = game.messages.get(li.attr("data-message-id"));
             if (message.data.speaker.actor && message.data.flags.data) {
                 let actor = game.actors.get(message.data.speaker.actor);
-                if (actor.owner && actor.data.data.status.fatePoints.value > 0) {
+                if (actor.isOwner && actor.data.data.status.fatePoints.value > 0) {
                     return message.data.flags.data.postData.damageRoll != undefined && !message.data.flags.data.fatePointDamageRerollUsed;
                 }
             }
@@ -72,7 +72,7 @@ export default function() {
 
             if (message.data.speaker.actor && message.data.flags.data) {
                 let actor = game.actors.get(message.data.speaker.actor);
-                if (actor.owner && actor.data.data.status.fatePoints.value > 0) {
+                if (actor.isOwner && actor.data.data.status.fatePoints.value > 0) {
                     return !message.data.flags.data.fatePointRerollUsed;
                 }
             }
@@ -82,7 +82,7 @@ export default function() {
             let message = game.messages.get(li.attr("data-message-id"));
             if (message.data.speaker.actor && message.data.flags.data) {
                 let actor = game.actors.get(message.data.speaker.actor);
-                if (actor.owner && getProperty(message.data.flags, "data.postData.LeP")) {
+                if (actor.isOwner && getProperty(message.data.flags, "data.postData.LeP")) {
                     return !message.data.flags.data.healApplied
                 }
             }
@@ -114,7 +114,7 @@ export default function() {
             let defenderSpeaker = cardData.speakerDefend;
             let actor = DSA5_Utility.getSpeaker(defenderSpeaker)
 
-            if (!actor.owner) return ui.notifications.error(game.i18n.localize("DSAError.DamagePermission"))
+            if (!actor.isOwner) return ui.notifications.error(game.i18n.localize("DSAError.DamagePermission"))
 
             actor.applyDamage(cardData.damage[mode])
         }
@@ -138,7 +138,7 @@ export default function() {
                 let actor = DSA5_Utility.getSpeaker(message.data.speaker)
                 if (!actor)
                     actor = new Actordsa5(newTestData.extra.actor, { temporary: true })
-                if (!actor.owner)
+                if (!actor.isOwner)
                     return ui.notifications.error(game.i18n.localize("DSAError.DamagePermission"))
 
                 message.update({ "flags.data.healApplied": true });
@@ -158,7 +158,7 @@ export default function() {
                 let actor = DSA5_Utility.getSpeaker(message.data.speaker)
                 if (!actor)
                     actor = new Actordsa5(newTestData.extra.actor, { temporary: true })
-                if (!actor.owner)
+                if (!actor.isOwner)
                     return ui.notifications.error(game.i18n.localize("DSAError.DamagePermission"))
                 actor.applyMana(cardData.preData.calculatedSpellModifiers.finalcost, ["ritual", "spell"].includes(cardData.preData.source.type) ? "AsP" : "KaP")
             }

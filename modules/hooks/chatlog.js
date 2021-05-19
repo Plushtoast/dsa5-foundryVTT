@@ -24,18 +24,18 @@ export default function() {
             let reaction = html.find(".chat-button-target")
             if (reaction.length) {
                 actor = DialogReactDSA5.getTargetActor({ data: msg.message }).actor
-                if (!actor.owner) {
+                if (!actor.isOwner) {
                     reaction.remove()
                 }
             }
 
-            if (!DSA5_Utility.getSpeaker(msg.message.speaker).owner) {
+            if (!DSA5_Utility.getSpeaker(msg.message.speaker).isOwner) {
                 let selfButtons = html.find(".selfButton")
                 selfButtons.remove()
             }
 
             html.find(".hideData").remove()
-            let hiddenForMe = getProperty(msg.message, `flags.dsa5.userHidden.${game.user.data._id}`)
+            let hiddenForMe = getProperty(msg.message, `flags.dsa5.userHidden.${game.user.id}`)
             if (hiddenForMe) { html.find(".payButton, .getPaidButton").remove() }
         }
         DSA5StatusEffects.bindButtons(html)
