@@ -449,7 +449,7 @@ class SpellSheetDSA5 extends ItemSheetdsa5 {
         html.find('.item-edit').click(ev => {
             ev.preventDefault()
             let itemId = this._getItemId(ev)
-            const item = this.item.actor.items.find(i => i.data._id == itemId)
+            const item = this.item.actor.items.find(i => i.data.id == itemId)
             item.sheet.render(true);
         });
 
@@ -460,7 +460,7 @@ class SpellSheetDSA5 extends ItemSheetdsa5 {
 
     _deleteItem(ev) {
         let itemId = this._getItemId(ev);
-        let item = this.actor.data.items.find(x => x._id == itemId)
+        let item = this.actor.data.items.find(x => x.id == itemId)
         let message = game.i18n.format("DIALOG.DeleteItemDetail", { item: item.name })
         renderTemplate('systems/dsa5/templates/dialog/delete-item-dialog.html', { message: message }).then(html => {
             new Dialog({
@@ -485,7 +485,7 @@ class SpellSheetDSA5 extends ItemSheetdsa5 {
     }
 
     async _cleverDeleteItem(itemId) {
-        let item = this.item.actor.data.items.find(x => x._id == itemId)
+        let item = this.item.actor.data.items.find(x => x.id == itemId)
         await this.item.actor._updateAPs(-1 * item.data.APValue.value)
         this.item.actor.deleteEmbeddedDocuments("Item", [itemId]);
     }

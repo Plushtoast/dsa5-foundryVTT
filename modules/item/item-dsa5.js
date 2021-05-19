@@ -236,7 +236,7 @@ export default class Itemdsa5 extends Item {
                         label: `${at}: ${atbonus}, ${tp}: ${tpbonus}, ${dm}: ${dmmalus}`,
                         steps: com.data.data.step.value,
                         id: com.id,
-                        actor: actor._id
+                        actor: actor.id
                     })
             }
         } else {
@@ -252,7 +252,7 @@ export default class Itemdsa5 extends Item {
                         label: `${pa}: ${pabonus}`,
                         steps: com.data.data.step.value,
                         id: com.id,
-                        actor: actor._id
+                        actor: actor.id
                     })
             }
         }
@@ -532,7 +532,7 @@ class SpellItemDSA5 extends Itemdsa5 {
                 options: options,
                 speaker: {
                     token: tokenId,
-                    actor: actor.data._id
+                    actor: actor.data.id
                 }
             }
         };
@@ -646,7 +646,7 @@ class CombatskillDSA5 extends Itemdsa5 {
                 options: options,
                 speaker: {
                     token: tokenId,
-                    actor: actor.data._id
+                    actor: actor.data.id
                 }
             }
         };
@@ -770,7 +770,7 @@ class DiseaseItemDSA5 extends Itemdsa5 {
                 options: options,
                 speaker: {
                     token: tokenId,
-                    actor: actor ? actor.data._id : undefined
+                    actor: actor ? actor.data.id : undefined
                 }
             }
         };
@@ -908,7 +908,7 @@ class MeleeweaponDSA5 extends Itemdsa5 {
                 options: options,
                 speaker: {
                     token: tokenId,
-                    actor: actor.data._id
+                    actor: actor.data.id
                 }
             }
         };
@@ -1008,7 +1008,7 @@ class PoisonItemDSA5 extends Itemdsa5 {
                 options: options,
                 speaker: {
                     token: tokenId,
-                    actor: actor ? actor.data._id : undefined
+                    actor: actor ? actor.data.id : undefined
                 }
             }
         };
@@ -1129,7 +1129,7 @@ class RangeweaponItemDSA5 extends Itemdsa5 {
                 options: options,
                 speaker: {
                     token: tokenId,
-                    actor: actor.data._id
+                    actor: actor.data.id
                 }
             }
         };
@@ -1144,7 +1144,7 @@ class RangeweaponItemDSA5 extends Itemdsa5 {
                     return
                 }
             } else {
-                testData.extra.ammo = duplicate(actor.getEmbeddedEntity("OwnedItem", itemData.currentAmmo.value))
+                testData.extra.ammo = duplicate(actor.getEmbeddedDocument("Item", itemData.currentAmmo.value))
                 if (!testData.extra.ammo || itemData.currentAmmo.value == "" || testData.extra.ammo.data.quantity.value <= 0) {
                     ui.notifications.error(game.i18n.localize("DSAError.NoAmmo"))
                     return
@@ -1274,7 +1274,7 @@ class SkillItemDSA5 extends Itemdsa5 {
                 options: options,
                 speaker: {
                     token: tokenId,
-                    actor: actor.data._id
+                    actor: actor.data.id
                 }
             }
         };
@@ -1482,7 +1482,7 @@ class TraitItemDSA5 extends Itemdsa5 {
                 options: options,
                 speaker: {
                     token: tokenId,
-                    actor: actor.data._id
+                    actor: actor.data.id
                 }
             }
         };

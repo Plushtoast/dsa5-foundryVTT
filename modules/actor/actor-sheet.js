@@ -390,7 +390,7 @@ export default class ActorSheetDsa5 extends ActorSheet {
         html.find('.ammo-selector').change(ev => {
             ev.preventDefault()
             let itemId = this._getItemId(ev);
-            let item = duplicate(this.actor.getEmbeddedEntity("OwnedItem", itemId))
+            let item = duplicate(this.actor.getEmbeddedDocument("Item", itemId))
             item.data.currentAmmo.value = $(ev.currentTarget).val()
             this.actor.updateEmbeddedDocuments("Item", [item]);
         })
@@ -407,7 +407,7 @@ export default class ActorSheetDsa5 extends ActorSheet {
 
         html.find('.item-toggle').click(ev => {
             let itemId = this._getItemId(ev);
-            let item = duplicate(this.actor.getEmbeddedEntity("OwnedItem", itemId))
+            let item = duplicate(this.actor.getEmbeddedDocument("Item", itemId))
 
             switch (item.type) {
                 case "armor":
@@ -486,7 +486,7 @@ export default class ActorSheetDsa5 extends ActorSheet {
 
         html.find('.quantity-click').mousedown(ev => {
             let itemId = this._getItemId(ev);
-            let item = duplicate(this.actor.getEmbeddedEntity("OwnedItem", itemId));
+            let item = duplicate(this.actor.getEmbeddedDocument("Item", itemId));
             let factor = ev.ctrlKey ? 10 : 1
             switch (ev.button) {
                 case 0:
@@ -546,7 +546,7 @@ export default class ActorSheetDsa5 extends ActorSheet {
 
         html.find('.money-change').change(async ev => {
             let itemId = this._getItemId(ev);
-            let itemToEdit = duplicate(this.actor.getEmbeddedEntity("OwnedItem", itemId))
+            let itemToEdit = duplicate(this.actor.getEmbeddedDocument("Item", itemId))
             itemToEdit.data.quantity.value = Number(ev.target.value);
             await this.actor.updateEmbeddedDocuments("Item", [itemToEdit]);
             this.currentFocus = $(document.activeElement).closest('.item').attr('data-item-id');;
@@ -554,7 +554,7 @@ export default class ActorSheetDsa5 extends ActorSheet {
 
         html.find('.skill-advances').change(async ev => {
             let itemId = this._getItemId(ev);
-            let itemToEdit = duplicate(this.actor.getEmbeddedEntity("OwnedItem", itemId))
+            let itemToEdit = duplicate(this.actor.getEmbeddedDocument("Item", itemId))
             itemToEdit.data.talentValue.value = Number(ev.target.value);
             await this.actor.updateEmbeddedDocuments("Item", [itemToEdit]);
             this.currentFocus = $(document.activeElement).closest('.row-section').attr('data-item-id');;
@@ -830,7 +830,7 @@ export default class ActorSheetDsa5 extends ActorSheet {
         let tar = event.currentTarget
         let itemId = tar.getAttribute("data-item-id");
         let mod = tar.getAttribute("data-mod");
-        const item = duplicate(this.actor.getEmbeddedEntity("OwnedItem", itemId))
+        const item = duplicate(this.actor.getEmbeddedDocument("Item", itemId))
         event.dataTransfer.setData("text/plain", JSON.stringify({
             type: "Item",
             sheetTab: this.actor.data.flags["_sheetTab"],
