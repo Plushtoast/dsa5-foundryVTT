@@ -317,8 +317,8 @@ DSA5.localizedCompendiums = {
 }
 
 DSA5.effectTextStyle = CONFIG.canvasTextStyle.clone();
-//DSA5.effectTextStyle.fontSize = "30";
-//DSA5.effectTextStyle.fontFamily = "GentiumBasic"
+DSA5.effectTextStyle.fontSize = "30";
+DSA5.effectTextStyle.fontFamily = "GentiumBasic"
 
 DSA5.knownShortcuts = {}
 

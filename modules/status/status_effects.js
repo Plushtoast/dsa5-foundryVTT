@@ -162,7 +162,6 @@ export default class DSA5StatusEffects {
     }
 
     static async updateEffect(actor, existing, value, absolute, auto) {
-        console.log("should update")
         const immune = this.immuneToEffect(actor, existing, true)
         if (immune) return immune
 
@@ -177,7 +176,6 @@ export default class DSA5StatusEffects {
             delta = newValue - existing.data.flags.dsa5.manual
             existing.data.flags.dsa5.manual = newValue;
         }
-        console.log({ delta })
 
         if (delta == 0)
             return existing

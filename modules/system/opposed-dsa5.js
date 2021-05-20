@@ -72,7 +72,7 @@ export default class OpposedDsa5 {
             whisper: message.data.whisper,
             blind: message.data.blind,
         })
-        OpposedDsa5.clearOpposed(actor)
+        await OpposedDsa5.clearOpposed(actor)
     }
 
     static async createOpposedTest(actor, message, testResult) {
@@ -234,9 +234,10 @@ export default class OpposedDsa5 {
     }
 
     static async clearOpposed(actor) {
-        await actor.update({
-            "-=flags.oppose": null
-        })
+        console.log(actor)
+            //await actor.data.update({ "-=flags.oppose": null })
+        await actor.data.update({ "flags.oppose": null })
+        console.log(actor)
     }
 
     static async _handleReaction(ev) {

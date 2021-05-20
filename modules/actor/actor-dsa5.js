@@ -253,7 +253,7 @@ export default class Actordsa5 extends Actor {
         return result
     }
 
-    prepare() {
+    prepareSheet() {
         let preData = duplicate(this.data)
         let preparedData = { data: {} }
         mergeObject(preparedData, this.prepareItems())
@@ -664,9 +664,7 @@ export default class Actordsa5 extends Actor {
     async _updateAPs(APValue) {
         if (Actordsa5.canAdvance(this.data)) {
             if (!isNaN(APValue) && !(APValue == null)) {
-                await this.update({
-                    "data.details.experience.spent": Number(this.data.data.details.experience.spent) + Number(APValue),
-                });
+                await this.update({ "data.details.experience.spent": Number(this.data.data.details.experience.spent) + Number(APValue) });
             } else {
                 ui.notifications.error(game.i18n.localize("DSAError.APUpdateError"))
             }
@@ -709,9 +707,7 @@ export default class Actordsa5 extends Actor {
                 }).render(true)
             })
             if (result) {
-                await this.update({
-                    "data.details.experience.total": Number(newXp)
-                });
+                await this.update({ "data.details.experience.total": Number(newXp) });
                 return true
             }
         }
@@ -753,8 +749,7 @@ export default class Actordsa5 extends Actor {
         const newVal = Math.min(this.data.data.status[state].max, this.data.data.status[state].value - amount)
         if (newVal >= 0) {
             this.update({
-                [`data.status.${state}.value`]: newVal
-            })
+                [`data.status.${state}.value`]: newVal })
         } else {
             ui.notifications.error(game.i18n.localize(`DSAError.NotEnough${type}`))
         }

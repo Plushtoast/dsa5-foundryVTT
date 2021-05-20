@@ -2,13 +2,13 @@ import DSA5_Utility from "../system/utility-dsa5.js"
 
 export default class Miscast {
     static async getSpellMiscast() {
-        let res = await new Roll("2d6").evaluate({ async: true }).results[0]
-        return DSA5_Utility.replaceDies(game.i18n.localize("SPELLMISCAST." + res))
+        let res = await new Roll("2d6").evaluate({ async: true })
+        return DSA5_Utility.replaceDies(game.i18n.localize("SPELLMISCAST." + res.total))
     }
 
     static async getLiturgyMiscast() {
-        let res = await new Roll("2d6").evaluate({ async: true }).results[0]
-        return DSA5_Utility.replaceDies(game.i18n.localize("LITURGYMISCAST." + res))
+        let res = await new Roll("2d6").evaluate({ async: true })
+        return DSA5_Utility.replaceDies(game.i18n.localize("LITURGYMISCAST." + res.total))
     }
 
     static async showBotchCard(table) {

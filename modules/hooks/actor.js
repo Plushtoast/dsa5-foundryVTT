@@ -38,9 +38,7 @@ export default function() {
     })
 
     Hooks.on("preUpdateActor", (actor, updatedData, options, userId) => {
-        console.log(actor)
         if (getProperty(actor.data, "data.config.autoBar")) {
-            console.log(actor.data)
             if (actor.data.isMage) {
                 mergeObject(updatedData, {
                     "token.bar2": { "attribute": "status.astralenergy" }

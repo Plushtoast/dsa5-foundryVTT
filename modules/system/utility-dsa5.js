@@ -5,10 +5,9 @@ export default class DSA5_Utility {
 
     static async allSkills() {
         let returnSkills = [];
-
         const pack = game.i18n.lang == "de" ? game.packs.get("dsa5.skills") : game.packs.get("dsa5.skillsen")
-        if (!pack)
-            return ui.notifications.error("No content found")
+
+        if (!pack) return ui.notifications.error("No content found")
 
         let items
         await pack.getDocuments().then(content => items = content.filter(i => i.data.type == "skill"));
@@ -21,10 +20,9 @@ export default class DSA5_Utility {
 
     static async allCombatSkills() {
         let returnSkills = [];
-
         const pack = game.i18n.lang == "de" ? game.packs.get("dsa5.combatskills") : game.packs.get("dsa5.combatskillsen")
-        if (!pack)
-            return ui.notifications.error("No content found")
+
+        if (!pack) return ui.notifications.error("No content found")
 
         let items
         await pack.getDocuments().then(content => items = content.filter(i => i.data.type == "combatskill"));
@@ -141,16 +139,6 @@ export default class DSA5_Utility {
 
     static getSpeaker(speaker) {
         let actor = ChatMessage.getSpeakerActor(speaker)
-        if (!actor) {
-            let token = canvas.tokens.get(speaker.token)
-            if (token) actor = token.actor
-        }
-        if (!actor) {
-            let scene = game.scenes.get(speaker.scene)
-            try {
-                if (scene) actor = new Token(scene.getEmbeddedDocument("Token", speaker.token)).actor
-            } catch (error) {}
-        }
         return actor
     }
 

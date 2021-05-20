@@ -122,10 +122,9 @@ export default class ActorSheetDsa5 extends ActorSheet {
     }
 
     async getData(options) {
-        const baseData = (await super.getData(options));
-
+        const baseData = await super.getData(options);
         const sheetData = { actor: baseData.actor.data }
-        const prepare = this.actor.prepare()
+        const prepare = this.actor.prepareSheet()
         mergeObject(sheetData.actor, prepare)
 
         sheetData.isGM = game.user.isGM;

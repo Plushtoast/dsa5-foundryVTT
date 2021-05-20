@@ -2,20 +2,20 @@ import DSA5_Utility from "../system/utility-dsa5.js"
 
 export default class CombatTables {
     static async getDefenseBotch(weaponless = false) {
-        let res = await new Roll("2d6").evaluate({ async: true }).results[0]
+        let res = await new Roll("2d6").evaluate({ async: true })
         if (weaponless && res < 7)
             res += 5
-        return DSA5_Utility.replaceDies(game.i18n.localize("DEFENSEBOTCH." + res))
+        return DSA5_Utility.replaceDies(game.i18n.localize("DEFENSEBOTCH." + res.total))
     }
     static async getMeleeBotch(weaponless = false) {
-        let res = await new Roll("2d6").evaluate({ async: true }).results[0]
+        let res = await new Roll("2d6").evaluate({ async: true })
         if (weaponless && res < 7)
             res += 5
-        return DSA5_Utility.replaceDies(game.i18n.localize("MELEEBOTCH." + res))
+        return DSA5_Utility.replaceDies(game.i18n.localize("MELEEBOTCH." + res.total))
     }
     static async getRangeBotch() {
-        let res = await new Roll("2d6").evaluate({ async: true }).results[0]
-        return DSA5_Utility.replaceDies(game.i18n.localize("RANGEBOTCH." + res))
+        let res = await new Roll("2d6").evaluate({ async: true })
+        return DSA5_Utility.replaceDies(game.i18n.localize("RANGEBOTCH." + res.total))
     }
 
     //TODO blind and whisper missing
