@@ -1,4 +1,3 @@
-import DSA5ChatListeners from './chat_listeners.js';
 import DSA5 from './config-dsa5.js'
 
 export default class DSA5_Utility {
@@ -31,8 +30,6 @@ export default class DSA5_Utility {
         }
         return returnSkills;
     }
-
-
 
     static async allMoneyItems() {
         const pack = game.packs.get("dsa5.money")
@@ -117,6 +114,9 @@ export default class DSA5_Utility {
     }
 
     static getSpeaker(speaker) {
+        if (!speaker.scene) {
+            console.trace()
+        }
         let actor = ChatMessage.getSpeakerActor(speaker)
         if (!actor) {
             let token = canvas.tokens.get(speaker.token)

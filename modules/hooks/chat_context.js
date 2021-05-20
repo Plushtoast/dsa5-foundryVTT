@@ -109,14 +109,14 @@ export default function() {
             game.actors.get(message.data.speaker.actor).useFateOnRoll(message, mode);
         }
 
-        const applyDamage = (li, mode) => {
+        const applyDamage = async(li, mode) => {
             let cardData = game.messages.get(li.attr("data-message-id")).data.flags.opposeData
             let defenderSpeaker = cardData.speakerDefend;
             let actor = DSA5_Utility.getSpeaker(defenderSpeaker)
 
             if (!actor.isOwner) return ui.notifications.error(game.i18n.localize("DSAError.DamagePermission"))
 
-            actor.applyDamage(cardData.damage[mode])
+            await actor.applyDamage(cardData.damage[mode])
         }
 
         options.push({

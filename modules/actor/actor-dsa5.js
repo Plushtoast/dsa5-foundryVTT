@@ -738,9 +738,9 @@ export default class Actordsa5 extends Actor {
         return Itemdsa5.getSubClass(skill.type).setupDialog(null, options, skill, this, tokenId)
     }
 
-    applyDamage(amount) {
+    async applyDamage(amount) {
         const newVal = Math.min(this.data.data.status.wounds.max, this.data.data.status.wounds.value - amount)
-        this.update({ "data.status.wounds.value": newVal })
+        await this.update({ "data.status.wounds.value": newVal })
     }
 
     applyMana(amount, type) {
