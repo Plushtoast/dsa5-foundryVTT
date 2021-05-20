@@ -141,7 +141,7 @@ export default class DSA5StatusEffects {
         if (effect.id == "dead")
             effect["flags.core.overlay"] = true;
 
-        let result = await actor.createEmbeddedDocuments("ActiveEffect", [effect])
+        let result = await actor.createEmbeddedDocuments("ActiveEffect", [duplicate(effect)])
         await actor._dependentEffects(effect.id, effect, 1)
         delete effect.id
         return result
@@ -156,12 +156,13 @@ export default class DSA5StatusEffects {
         existing.data.flags.dsa5.value = Math.max(0, Math.min(4, existing.data.flags.dsa5.manual + existing.data.flags.dsa5.auto))
 
         if (existing.data.flags.dsa5.auto <= 0 && existing.data.flags.dsa5.manual == 0)
-            return actor.deleteEmbeddedDocuments("ActiveEffect", [existing.id])
+            return await actor.deleteEmbeddedDocuments("ActiveEffect", [existing.id])
         else
-            return actor.updateEmbeddedDocuments("ActiveEffect", [existing])
+            return await actor.updateEmbeddedDocuments("ActiveEffect", [existing.data])
     }
 
     static async updateEffect(actor, existing, value, absolute, auto) {
+        console.log("should update")
         const immune = this.immuneToEffect(actor, existing, true)
         if (immune) return immune
 
@@ -176,13 +177,14 @@ export default class DSA5StatusEffects {
             delta = newValue - existing.data.flags.dsa5.manual
             existing.data.flags.dsa5.manual = newValue;
         }
+        console.log({ delta })
 
         if (delta == 0)
             return existing
 
         existing.data.flags.dsa5.value = Math.max(0, Math.min(4, existing.data.flags.dsa5.manual + existing.data.flags.dsa5.auto))
         await actor._dependentEffects(existing.data.flags.core.statusId, existing, delta)
-        return actor.updateEmbeddedDocuments("ActiveEffect", [existing])
+        return await actor.updateEmbeddedDocuments("ActiveEffect", [existing.data])
     }
 
 
@@ -202,7 +204,8 @@ export default class DSA5StatusEffects {
 
     static getRollModifiers(actor, item, options = {}) {
         actor = actor.data.data ? actor.data : actor
-        return actor.effects.filter(x => !x.disabled).map(effect => {
+        return actor.effects.filter(x => !x.disabled).map(ef => {
+            const effect = duplicate(ef)
             let effectClass = game.dsa5.config.statusEffectClasses[getProperty(effect, "flags.core.statusId")] || DSA5StatusEffects
             return {
                 name: effect.label,

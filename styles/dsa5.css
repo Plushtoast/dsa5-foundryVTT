@@ -1148,8 +1148,13 @@ form.dsa5.item-sheet {
     height: 100%;
 }
 
+.directory .directory-list .directory-item.active {
+    border-color: black;
+}
+
 #sidebar .directory-list .documentName,
 #sidebar .playlist.now-playing,
+#sidebar .directory-list .directory-item.entity,
 #compendium li.compendium-pack {
     background-color: var(--sheet-bg);
     margin: 3px;

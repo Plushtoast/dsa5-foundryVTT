@@ -163,7 +163,7 @@ export default class Actordsa5 extends Actor {
         let notAppliedEffects = []
         for (let ef of this.effects) {
             if (ef.data.origin) {
-                let id = ef.data.origin.match(/[^.]+$/)[0]
+                const id = ef.data.origin.match(/[^.]+$/)[0]
                 let item = this.items.get(id)
                 if (!item) continue
                 let apply = true
@@ -1191,16 +1191,18 @@ export default class Actordsa5 extends Actor {
 
     static _parseDmg(item) {
         let parseDamage = new Roll(item.data.damage.value.replace(/[Ww]/g, "d"),{async: false})
+        
         let damageDie = "",
             damageTerm = ""
         for (let k of parseDamage.terms) {
-            if (typeof(k) == 'object') damageDie = k.number + "d" + k.faces
-            else damageTerm += k
+            if (k.faces) damageDie = k.number + "d" + k.faces
+            else if(k.number) damageTerm += k.number
         }
         if(damageTerm) damageTerm = Roll.safeEval(damageTerm)
 
         item.damagedie = damageDie ? damageDie : "0d6"
         item.damageAdd = damageTerm != "" ? (Number(damageTerm) > 0 ? "+" : "") + damageTerm : ""
+
         return item
     }
 
@@ -1262,7 +1264,8 @@ export default class Actordsa5 extends Actor {
         if (testData.extra.ammo && !testData.extra.ammoDecreased) {
             testData.extra.ammoDecreased = true
             testData.extra.ammo.data.quantity.value--;
-            this.updateEmbeddedDocuments("Item", [{ id: testData.extra.ammo.id, "data.quantity.value": testData.extra.ammo.data.quantity.value }]);
+            console.log(testData.extra.ammo)
+            this.updateEmbeddedDocuments("Item", [{ _id: testData.extra.ammo._id, "data.quantity.value": testData.extra.ammo.data.quantity.value }]);
         }
 
         if (!options.suppressMessage)
@@ -1286,7 +1289,7 @@ export default class Actordsa5 extends Actor {
 
         if (delta > 0 && statusId == "inpain" && !this.hasCondition("bloodrush") && AdvantageRulesDSA5.hasVantage(this, game.i18n.localize('LocalizedIDs.frenzy'))) {
             await this.addCondition("bloodrush")
-            let msg = DSA5_Utility.replaceConditions(`${game.i18n.format("CHATNOTIFICATION.gainsBloodrush", {character: "<b>" + this.name + "</b>"})}`);
+            const msg = DSA5_Utility.replaceConditions(`${game.i18n.format("CHATNOTIFICATION.gainsBloodrush", {character: "<b>" + this.name + "</b>"})}`);
             ChatMessage.create(DSA5_Utility.chatDataSetup(msg));
         }
     }

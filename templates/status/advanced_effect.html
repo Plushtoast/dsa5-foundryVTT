@@ -1,25 +1,25 @@
 <section class="tab" data-tab="advanced">
     <div class="form-group">
         <label class="label-text">{{localize 'ActiveEffects.hideOnToken'}}</label>
-        <input type="checkbox" name="flags.dsa5.hideOnToken" {{checked effect.data.flags.dsa5.hideOnToken}} />
+        <input type="checkbox" name="flags.dsa5.hideOnToken" {{checked effect.flags.dsa5.hideOnToken}} />
     </div>
     <div class="form-group">
         <label class="label-text">{{localize 'ActiveEffects.hidePlayers'}}</label>
-        <input type="checkbox" name="flags.dsa5.hidePlayers" {{checked effect.data.flags.dsa5.hidePlayers}}/>
+        <input type="checkbox" name="flags.dsa5.hidePlayers" {{checked effect.flags.dsa5.hidePlayers}}/>
     </div>
     <div class="form-group">
         <label class="label-text">{{localize 'Description'}}</label>
-        <input type="text" name="flags.dsa5.description" value="{{effect.data.flags.dsa5.description}}" />
+        <input type="text" name="flags.dsa5.description" value="{{effect.flags.dsa5.description}}" />
     </div>
     {{#if effectConfigs.hasSpellEffects}}
     <div class="form-group">
         <label class="label-text">{{localize 'duration'}}</label>
-        <input type="text" name="flags.dsa5.customDuration" value="{{effect.data.flags.dsa5.customDuration}}" />
+        <input type="text" name="flags.dsa5.customDuration" value="{{effect.flags.dsa5.customDuration}}" />
     </div>
     <div class="form-group">
         <label class="label-text">{{localize "ActiveEffects.custom"}}</label>
         <select class="advancedSelector" name="flags.dsa5.advancedFunction" data-dtype="String">
-            {{#select effect.data.flags.dsa5.advancedFunction}}
+            {{#select effect.flags.dsa5.advancedFunction}}
             {{#each advancedFunctions as |item i|}}
             <option value="{{i}}">{{localize item}}</option>
             {{/each}}

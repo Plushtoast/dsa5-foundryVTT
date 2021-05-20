@@ -19,7 +19,7 @@ class SearchDocument {
         return $("<div>").html(data).text()
     }
     get id() {
-        return this.document._id
+        return this.document.id
     }
     get itemType() {
         switch (this.document.documentName) {

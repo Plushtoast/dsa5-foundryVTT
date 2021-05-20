@@ -30,7 +30,7 @@ export default function() {
     Hooks.on("renderActorDirectory", (app, html, data) => {
         if (!game.user.isGM) {
             for (let act of app.contents.filter(x => x.isMerchant() && getProperty(x.data, "data.merchant.hidePlayer"))) {
-                html.find(`[data-entity-id="${act._id}"]`).remove()
+                html.find(`[data-entity-id="${act.id}"]`).remove()
             }
         }
     })

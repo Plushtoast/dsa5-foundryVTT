@@ -69,7 +69,7 @@ export default function() {
         const effect = (img.dataset.statusId && this.object.actor) ?
             CONFIG.statusEffects.find(e => e.id === img.dataset.statusId) :
             img.getAttribute("src");
-        if (!effect.data.flags.dsa5.editable)
+        if (!effect.flags.dsa5.editable)
             return
         if (event.button == 0)
             return this.object.incrementCondition(effect)
@@ -80,6 +80,7 @@ export default function() {
 
     Token.prototype.incrementCondition = async function(effect, { active, overlay = false } = {}) {
         const existing = this.actor.effects.find(e => e.getFlag("core", "statusId") === effect.id);
+        console.log(existing)
         if (!existing || Number.isNumeric(getProperty(existing, "data.flags.dsa5.value")))
             await this.actor.addCondition(effect.id, 1, false, false)
         else if (existing)

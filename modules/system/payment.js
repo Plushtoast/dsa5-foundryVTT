@@ -151,7 +151,7 @@ export default class DSA5Payment {
                 payload: {
                     id: elem.closest(".message").attr("data-message-id"),
                     updateData: {
-                        [`flags.dsa5.userHidden.${game.user.data._id}`]: true
+                        [`flags.dsa5.userHidden.${game.user.id}`]: true
                     }
                 }
             })
@@ -164,9 +164,9 @@ export default class DSA5Payment {
         let S = Math.floor((m - (D * 1000)) / 100)
         let H = Math.floor((m - (D * 1000) - S * 100) / 10)
         return {
-            D: D,
-            S: S,
-            H: H,
+            D,
+            S,
+            H,
             K: Math.round(((m - (D * 1000) - S * 100 - H * 10)))
         }
     }

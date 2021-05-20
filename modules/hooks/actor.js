@@ -38,23 +38,23 @@ export default function() {
     })
 
     Hooks.on("preUpdateActor", (actor, updatedData, options, userId) => {
-        let update = {}
+        console.log(actor)
         if (getProperty(actor.data, "data.config.autoBar")) {
+            console.log(actor.data)
             if (actor.data.isMage) {
-                mergeObject(update, {
+                mergeObject(updatedData, {
                     "token.bar2": { "attribute": "status.astralenergy" }
                 });
             } else if (actor.data.isPriest) {
-                mergeObject(update, {
+                mergeObject(updatedData, {
                     "token.bar2": { "attribute": "status.karmaenergy" }
                 });
             } else {
-                mergeObject(update, {
-                    "token.bar2": {}
+                mergeObject(updatedData, {
+                    "token.bar2": { "attribute": "" }
                 });
             }
         }
-        actor.data.update(update)
     })
 
     Hooks.on('preCreateToken', (token, data, options, userId) => {
