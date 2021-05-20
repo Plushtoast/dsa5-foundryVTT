@@ -749,7 +749,8 @@ export default class Actordsa5 extends Actor {
         const newVal = Math.min(this.data.data.status[state].max, this.data.data.status[state].value - amount)
         if (newVal >= 0) {
             this.update({
-                [`data.status.${state}.value`]: newVal })
+                [`data.status.${state}.value`]: newVal
+            })
         } else {
             ui.notifications.error(game.i18n.localize(`DSAError.NotEnough${type}`))
         }
@@ -1177,6 +1178,55 @@ export default class Actordsa5 extends Actor {
             ui.notifications.error(game.i18n.format("DSAError.unknownCombatSkill", { skill: item.data.combatskill.value, item: item.name }))
         }
         return item;
+    }
+
+    async _preUpdate(changed, options, user){
+        if (getProperty(this.data, "data.config.autoBar")) {
+            if (this.data.isMage) {
+                mergeObject(changed, {
+                    "token.bar2": { "attribute": "status.astralenergy" }
+                });
+            } else if (this.data.isPriest) {
+                mergeObject(changed, {
+                    "token.bar2": { "attribute": "status.karmaenergy" }
+                });
+            } else {
+                mergeObject(changed, {
+                    "token.bar2": { "attribute": "" }
+                });
+            }
+        }
+        await super._preUpdate(changed, options, user)
+    }
+
+    async _preCreate(data, options, user){
+        let update = {}
+
+        mergeObject(update, {
+            token: {
+                bar1: { attribute: "status.wounds" },
+                displayName: CONST.TOKEN_DISPLAY_MODES.OWNER_HOVER,
+                displayBars: CONST.TOKEN_DISPLAY_MODES.OWNER_HOVER,
+                disposition: CONST.TOKEN_DISPOSITIONS.NEUTRAL,
+                name: data.name
+            }
+        })
+
+        if (!data.img)
+            update.img = "systems/dsa5/tokens/unknown.webp"
+
+        if (data.type == "character") {
+            mergeObject(update, {
+                token: {
+                    vision: true,
+                    brightSight: game.settings.get('dsa5', 'defaultBrightVision'),
+                    dimSight: game.settings.get('dsa5', 'defaultDimVision'),
+                    actorLink: true
+                }
+            })
+        }
+        this.data.update(update)
+        await super._preCreate(data,options,user)
     }
 
     static _prepareRangeTrait(item) {

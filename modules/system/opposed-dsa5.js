@@ -57,14 +57,10 @@ export default class OpposedDsa5 {
         listOfDefenders.push(message.data._id);
 
         if (game.user.isGM) {
-            attackMessage.update({
-                "flags.data.defenderMessage": listOfDefenders
-            });
+            await attackMessage.update({ "flags.data.defenderMessage": listOfDefenders });
         }
 
-        message.update({
-            "flags.data.attackerMessage": attackMessage.data._id
-        });
+        await message.update({ "flags.data.attackerMessage": attackMessage.data._id });
 
         await this.completeOpposedProcess(attacker, defender, {
             target: true,
@@ -127,7 +123,7 @@ export default class OpposedDsa5 {
                         }
                     })
                 } else {
-                    target.actor.update({
+                    await target.actor.update({
                         "flags.oppose": {
                             speaker: message.data.speaker,
                             messageId: message.data._id,
@@ -137,7 +133,7 @@ export default class OpposedDsa5 {
                 }
                 startMessagesList.push(startMessage.data._id);
                 if (attackOfOpportunity) {
-                    OpposedDsa5.resolveUndefended(startMessage, game.i18n.localize("OPPOSED.attackOfOpportunity"))
+                    await OpposedDsa5.resolveUndefended(startMessage, game.i18n.localize("OPPOSED.attackOfOpportunity"))
                 }
             })
             message.data.flags.data.startMessagesList = startMessagesList;
@@ -146,7 +142,7 @@ export default class OpposedDsa5 {
 
         } else {
             game.user.targets.forEach(async target => {
-                let content =
+                const content =
                     `<div class ="opposed-message">
                   <b>${attacker.name}</b> ${game.i18n.localize("ROLL.Targeting")} <b>${target.data.name}</b> ${game.i18n.localize("ROLL.failed")}
                 </div>
@@ -181,9 +177,7 @@ export default class OpposedDsa5 {
                     }
                 }
             })
-            startMessage.update({
-                "flags.unopposeData.attackMessageId": message.data._id
-            });
+            await startMessage.update({ "flags.unopposeData.attackMessageId": message.data._id });
         }
     }
 
@@ -216,7 +210,7 @@ export default class OpposedDsa5 {
     static async showDamage(message, hide = false) {
         if (game.user.isGM) {
             if ((!hide || !message.data.flags.data.hideDamage) && message.data.flags.data.postData.damageRoll) {
-                message.update({
+                await message.update({
                     "content": message.data.content.replace(`data-hide-damage="${!hide}"`, `data-hide-damage="${hide}"`),
                     "flags.data.hideDamage": hide
                 });
@@ -234,10 +228,8 @@ export default class OpposedDsa5 {
     }
 
     static async clearOpposed(actor) {
-        console.log(actor)
-            //await actor.data.update({ "-=flags.oppose": null })
+        //await actor.data.update({ "-=flags.oppose": null })
         await actor.data.update({ "flags.oppose": null })
-        console.log(actor)
     }
 
     static async _handleReaction(ev) {
@@ -269,9 +261,7 @@ export default class OpposedDsa5 {
                 query.find('button.unopposed-button').remove()
                 query = $('<div></div>').append(query)
 
-                startMessage.update({
-                    content: query.html()
-                })
+                await startMessage.update({ content: query.html() })
             } else {
                 game.socket.emit("system.dsa5", {
                     type: "hideQueryButton",
@@ -404,15 +394,15 @@ export default class OpposedDsa5 {
         }
         if (options.target) {
             chatOptions["flags.startMessageId"] = options.startMessageId
-            ChatMessage.create(chatOptions)
+            await ChatMessage.create(chatOptions)
         } else {
             try {
-                this.startMessage.update(chatOptions).then(resultMsg => {
+                await this.startMessage.update(chatOptions).then(resultMsg => {
                     ui.chat.updateMessage(resultMsg)
                         //OpposedDsa5.clearOpposed();
                 })
             } catch {
-                ChatMessage.create(chatOptions)
+                await ChatMessage.create(chatOptions)
                     //OpposedDsa5.clearOpposed();
             }
         }
@@ -439,12 +429,15 @@ export default class OpposedDsa5 {
             }
         }
 
-        this.completeOpposedProcess(attacker, defender, {
+        console.log(attacker)
+        console.log(defender)
+
+        await this.completeOpposedProcess(attacker, defender, {
             target: true,
             startMessageId: startMessage.data._id,
             additionalInfo: additionalInfo
         });
-        attackMessage.update({
+        await attackMessage.update({
             "flags.data.unopposedStartMessage": startMessage.data._id
         });
     }

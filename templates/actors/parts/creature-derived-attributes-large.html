@@ -138,7 +138,7 @@
         </div>
         <div class="col eight"></div>
         <div class="col eight lineheight center">
-            <input class="input-text" type="text" name="data.actionCount.value" value="{{data.actionCount.value}}" data-dtype="String" />
+            <input class="input-text" type="text" name="data.actionCount.value" value="{{actor.data.actionCount.value}}" data-dtype="String" />
         </div>
     </div>
     <div class="derivedAttrs row-section">
@@ -151,7 +151,7 @@
         </div>
         <div class="col eight"></div>
         <div class="col eight lineheight center">
-            <input class="input-text" type="text" name="data.conjuringDifficulty.value" value="{{data.conjuringDifficulty.value}}" data-dtype="Number" />
+            <input class="input-text" type="text" name="data.conjuringDifficulty.value" value="{{actor.data.conjuringDifficulty.value}}" data-dtype="Number" />
         </div>
     </div>
     <div class="derivedAttrs row-section">
@@ -159,7 +159,7 @@
             {{localize "count"}}
         </div>
         <div class="col two lineheight center">
-            <input class="input-text" type="text" name="data.count.value" value="{{data.count.value}}" data-dtype="String" />
+            <input class="input-text" type="text" name="data.count.value" value="{{actor.data.count.value}}" data-dtype="String" />
         </div>
     </div>
     <div class="derivedAttrs row-section">
@@ -168,7 +168,7 @@
         </div>
         <div class="col two lineheight center">
             <select name="data.status.size.value" data-dtype="String" style="width:100%">
-                {{#select data.status.size.value}}
+                {{#select actor.data.status.size.value}}
                 {{#each sizeCategories as |ch char|}}
                 <option value="{{char}}">{{localize ch}}</option>
                 {{/each}}

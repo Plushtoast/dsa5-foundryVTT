@@ -25,7 +25,7 @@ export default function() {
         if (actor) {
             addThirdBarToHUD(html, actor, app)
         }
-        html.find('.control-icon.target').mousedown(ev => {
+        html.find('.control-icon[data-action="target"]').mousedown(ev => {
             if (ev.button == 2) {
                 game.user.updateTokenTargets([]);
                 $(ev.currentTarget).click()

@@ -32,20 +32,7 @@ export default class DSA5_Utility {
         return returnSkills;
     }
 
-    static calcTokenSize(actor, data) {
-        let tokenSize = DSA5.tokenSizeCategories[actor.data.status.size.value]
-        if (tokenSize) {
-            if (tokenSize < 1) {
-                data.scale = tokenSize;
-                data.width = data.height = 1;
-            } else {
-                const int = Math.floor(tokenSize);
-                data.width = data.height = int;
-                data.scale = tokenSize / int;
-                data.scale = Math.max(data.scale, 0.25);
-            }
-        }
-    }
+
 
     static async allMoneyItems() {
         const pack = game.packs.get("dsa5.money")
@@ -114,17 +101,11 @@ export default class DSA5_Utility {
     }
 
     static findItembyId(id) {
-        let item = game.items.contents.find(x => x.id == id);
-        if (item) {
-            return item;
-        }
+        return game.items.contents.find(x => x.id == id);
     }
 
     static findActorbyId(id) {
-        let item = game.actors.contents.find(x => x.id == id);
-        if (item) {
-            return item;
-        }
+        return game.actors.contents.find(x => x.id == id);
     }
 
     static async findItembyIdAndPack(id, packMan) {
@@ -132,13 +113,22 @@ export default class DSA5_Utility {
 
         let item
         await pack.getDocuments().then(content => item = content.find(i => i.id == id));
-        if (item) {
-            return item;
-        }
+        return item
     }
 
     static getSpeaker(speaker) {
         let actor = ChatMessage.getSpeakerActor(speaker)
+        if (!actor) {
+            let token = canvas.tokens.get(speaker.token)
+            if (token) actor = token.actor
+        }
+        if (!actor) {
+            let scene = game.scenes.get(speaker.scene)
+            try {
+                if (scene) actor = new Token(scene.getEmbeddedDocument("Token", speaker.token)).actor
+            } catch (error) {}
+        }
+
         return actor
     }
 
