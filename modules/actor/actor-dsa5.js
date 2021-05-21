@@ -249,7 +249,6 @@ export default class Actordsa5 extends Actor {
                 }
             }))
         }
-
         return result
     }
 
@@ -268,7 +267,6 @@ export default class Actordsa5 extends Actor {
                         }
                     }
                 })
-
             }
         }
         return preparedData;
@@ -956,7 +954,7 @@ export default class Actordsa5 extends Actor {
             opposable: false,
             extra: {
                 statusId: statusId,
-                actor: duplicate(this),
+                actor: deepClone(this),
                 options: options,
                 speaker: {
                     token: tokenId,
@@ -1014,7 +1012,7 @@ export default class Actordsa5 extends Actor {
             opposable: false,
             extra: {
                 statusId: statusId,
-                actor: duplicate(this),
+                actor: deepClone(this),
                 options: options,
                 speaker: {
                     token: tokenId,
@@ -1076,7 +1074,7 @@ export default class Actordsa5 extends Actor {
             },
             extra: {
                 characteristicId: characteristicId,
-                actor: duplicate(this),
+                actor: deepClone(this),
                 options: options,
                 speaker: {
                     token: tokenId,
@@ -1304,13 +1302,13 @@ export default class Actordsa5 extends Actor {
             cardOptions.isOpposedTest = testData.opposable
             if (cardOptions.isOpposedTest) cardOptions.title += ` - ${game.i18n.localize("Opposed")}`;
             else if (game.settings.get("dsa5", "clearTargets")) game.user.updateTokenTargets([]);
+
         }
 
         if (testData.extra.ammo && !testData.extra.ammoDecreased) {
             testData.extra.ammoDecreased = true
             testData.extra.ammo.data.quantity.value--;
-            console.log(testData.extra.ammo)
-            this.updateEmbeddedDocuments("Item", [{ _id: testData.extra.ammo._id, "data.quantity.value": testData.extra.ammo.data.quantity.value }]);
+            await this.updateEmbeddedDocuments("Item", [{ _id: testData.extra.ammo._id, "data.quantity.value": testData.extra.ammo.data.quantity.value }]);
         }
 
         if (!options.suppressMessage)

@@ -18,7 +18,7 @@ export default class DiceDSA5 {
         let rollMode = game.settings.get("core", "rollMode");
         let sceneStress = "challenging";
 
-        testData.source = duplicate(testData.source)
+        testData.source = deepClone(testData.source)
 
         mergeObject(testData, {
             testDifficulty: sceneStress,
@@ -873,8 +873,7 @@ export default class DiceDSA5 {
                 rollResults = this.rollAttribute(testData)
         }
 
-        //do we need this anymore?
-        mergeObject(rollResults, duplicate(testData.extra))
+        mergeObject(rollResults, deepClone(testData.extra))
         return rollResults
     }
 
@@ -962,7 +961,7 @@ export default class DiceDSA5 {
     }
 
     static async renderRollCard(chatOptions, testData, rerenderMessage) {
-        const preData = duplicate(testData.preData)
+        const preData = deepClone(testData.preData)
         delete preData.extra.actor
         delete testData.actor
         delete testData.preData

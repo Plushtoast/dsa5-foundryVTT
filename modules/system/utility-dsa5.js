@@ -114,9 +114,9 @@ export default class DSA5_Utility {
     }
 
     static getSpeaker(speaker) {
-        if (!speaker.scene) {
+        /*if (!speaker.scene) {
             console.trace()
-        }
+        }*/
         let actor = ChatMessage.getSpeakerActor(speaker)
         if (!actor) {
             let token = canvas.tokens.get(speaker.token)
@@ -204,6 +204,7 @@ export default class DSA5_Utility {
     }
 
     static customEntityLinks(content) {
+        if (!content) return content
         const regex = /@(Rq|Gc)\[[a-zA-zöüäÖÜÄ&; -]+ (-)?\d+\]/g
         const rolls = { "@Rq": "roll", "@Gc": "GC" }
         const titles = { "@Rq": "", "@Gc": `${game.i18n.localize("HELP.groupcheck")} ` }
@@ -216,6 +217,7 @@ export default class DSA5_Utility {
     }
 
     static replaceConditions(content) {
+        if (!content) return content
         if (!DSA5.statusRegex) {
             let effects = DSA5.statusEffects.map(x => game.i18n.localize(x.label).toLowerCase())
             let keywords = ["status", "condition", "level", "levels"].map(x => game.i18n.localize(x)).join("|")

@@ -9,7 +9,6 @@ export class DSA5CombatTracker extends CombatTracker {
         combatants.find('.aggroButton').click(ev => {
             ev.preventDefault()
             ev.stopPropagation()
-            console.log(this)
             const combatant = game.combat.combatant
             if (game.user.isGM || combatant.isOwner)
                 ActAttackDialog.showDialog(combatant.actor, combatant.tokenId)

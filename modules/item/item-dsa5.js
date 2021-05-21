@@ -325,7 +325,7 @@ export default class Itemdsa5 extends Item {
         if (testData.extra.ammo && !testData.extra.ammoDecreased) {
             testData.extra.ammoDecreased = true
             testData.extra.ammo.data.quantity.value--;
-            this.updateEmbeddedDocuments("Item", [{ _id: testData.extra.ammo._id, "data.quantity.value": testData.extra.ammo.data.quantity.value }]);
+            await this.updateEmbeddedDocuments("Item", [{ _id: testData.extra.ammo._id, "data.quantity.value": testData.extra.ammo.data.quantity.value }]);
         }
 
         if (!options.suppressMessage)
@@ -689,7 +689,7 @@ class ConsumableItemDSA extends Itemdsa5 {
     }
 
     static setupDialog(ev, options, item, actor) {
-        let title = game.i18n.format("CHATNOTIFICATION.usesItem", { actor: item.options.actor.name, item: item.name })
+        let title = game.i18n.format("CHATNOTIFICATION.usesItem", { actor: item.actor.name, item: item.name })
 
         if (!item.isOwned)
             return
@@ -706,7 +706,7 @@ class ConsumableItemDSA extends Itemdsa5 {
         let effect = DSA5_Utility.replaceDies(item.data.data.QLList.split("\n")[item.data.data.QL - 1], true)
         let msg = `<div><b>${title}</b></div><div>${item.data.data.description.value}</div><div><b>${game.i18n.localize('effect')}</b>: ${effect}</div>`
         if (newQuantity == 0) {
-            item.options.actor.deleteEmbeddedDocuments("Item", [item.data._id])
+            item.actor.deleteEmbeddedDocuments("Item", [item.data._id])
         } else {
             item.update({
                 'data.quantity.value': newQuantity,
@@ -1140,14 +1140,12 @@ class RangeweaponItemDSA5 extends Itemdsa5 {
             if (itemData.ammunitiongroup.value == "-") {
                 testData.extra.ammo = duplicate(item)
                 if ((testData.extra.ammo.data.quantity.value <= 0)) {
-                    ui.notifications.error(game.i18n.localize("DSAError.NoAmmo"))
-                    return
+                    return ui.notifications.error(game.i18n.localize("DSAError.NoAmmo"))
                 }
             } else {
                 testData.extra.ammo = duplicate(actor.getEmbeddedDocument("Item", itemData.currentAmmo.value))
                 if (!testData.extra.ammo || itemData.currentAmmo.value == "" || testData.extra.ammo.data.quantity.value <= 0) {
-                    ui.notifications.error(game.i18n.localize("DSAError.NoAmmo"))
-                    return
+                    return ui.notifications.error(game.i18n.localize("DSAError.NoAmmo"))
                 }
             }
         }

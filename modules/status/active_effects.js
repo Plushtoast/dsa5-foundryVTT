@@ -23,7 +23,6 @@ export default class DSAActiveEffectConfig extends ActiveEffectConfig {
         let template = await renderTemplate('systems/dsa5/templates/status/advanced_effect.html', { effect: this.object.data, advancedFunctions, effectConfigs, config })
         elem.find('.tab[data-tab="effects"]').after($(template))
 
-        console.log(this.object.data)
         elem.find('.advancedSelector').change(ev => {
             let effect = this.object.data
             effect.flags.dsa5.advancedFunction = $(ev.currentTarget).val()

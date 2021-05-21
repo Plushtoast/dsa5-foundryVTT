@@ -322,7 +322,7 @@ export default class DSA5ItemLibrary extends Application {
                     let item = index.find($(li).attr("data-item-id"))
                     event.originalEvent.dataTransfer.setData("text/plain", JSON.stringify({
                         type: itemType,
-                        pack: item.options.compendium ? `${item.options.compendium.metadata.package}.${item.options.compendium.metadata.name}` : "",
+                        pack: item.compendium ? item.document.pack : "",
                         id: item.id
                     }))
                 })

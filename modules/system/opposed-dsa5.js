@@ -12,16 +12,22 @@ export default class OpposedDsa5 {
 
         let testResult = message.data.flags.data.postData
         if (actor.data.flags.oppose) {
+            console.log("answering opposed")
             OpposedDsa5.answerOpposedTest(actor, message, testResult)
         } else if (game.user.targets.size && message.data.flags.data.isOpposedTest && !message.data.flags.data.defenderMessage && !message.data.flags.data.attackerMessage) {
+            console.log("start opposed")
             OpposedDsa5.createOpposedTest(actor, message, testResult)
         } else if (message.data.flags.data.defenderMessage || message.data.flags.data.attackerMessage) {
+            console.log("end opposed")
             OpposedDsa5.resolveFinalMessage(message)
         } else if (message.data.flags.data.unopposedStartMessage) {
+            console.log("repeat")
             OpposedDsa5.redoUndefended(message)
         } else if (message.data.flags.data.startMessagesList) {
+            console.log("change start")
             OpposedDsa5.changeStartMessage(message)
         } else {
+            console.log("show dmgh")
             this.showDamage(message)
         }
     }
@@ -229,7 +235,7 @@ export default class OpposedDsa5 {
 
     static async clearOpposed(actor) {
         //await actor.data.update({ "-=flags.oppose": null })
-        await actor.data.update({ "flags.oppose": null })
+        let res = await actor.data.update({ "flags.oppose": null })
     }
 
     static async _handleReaction(ev) {
@@ -278,7 +284,7 @@ export default class OpposedDsa5 {
         this.formatOpposedResult(opposedResult, attacker.speaker, defender.speaker);
         this.rerenderMessagesWithModifiers(opposedResult, attacker, defender);
         await this.renderOpposedResult(opposedResult, options)
-        this.hideReactionButton(options.startMessageId)
+        await this.hideReactionButton(options.startMessageId)
         return opposedResult
     }
 
@@ -399,11 +405,11 @@ export default class OpposedDsa5 {
             try {
                 await this.startMessage.update(chatOptions).then(resultMsg => {
                     ui.chat.updateMessage(resultMsg)
-                        //OpposedDsa5.clearOpposed();
+                    OpposedDsa5.clearOpposed();
                 })
             } catch {
                 await ChatMessage.create(chatOptions)
-                    //OpposedDsa5.clearOpposed();
+                OpposedDsa5.clearOpposed();
             }
         }
     }
@@ -428,9 +434,6 @@ export default class OpposedDsa5 {
                 }
             }
         }
-
-        console.log(attacker)
-        console.log(defender)
 
         await this.completeOpposedProcess(attacker, defender, {
             target: true,
