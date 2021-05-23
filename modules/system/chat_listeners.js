@@ -44,9 +44,9 @@ export default class DSA5ChatListeners {
                 status:{wounds: {value:50},fatePoints: {}},
                 characteristics: {
                     mu: {initial: 12},kl: {initial: 12},in: {initial: 12}, ch: {initial: 12},
-                     ff: {initial: 12},ge: {initial: 12},ko: {initial: 12},kk: {initial: 12}
+                    ff: {initial: 12},ge: {initial: 12},ko: {initial: 12},kk: {initial: 12}
                 },
-       
+
             }
         },{temporary: true, noHook: true})
     }
@@ -64,12 +64,12 @@ export default class DSA5ChatListeners {
                 "burden": { "value": "no" }
             }
         }
-       
+
         const actor = await DSA5ChatListeners.emptyActor()
 
         actor.setupSkill(skill, {}, "emptyActor").then(setupData => {
             actor.basicTest(setupData)
-        })      
+        })
     }
 
     static showTables(){

@@ -28,8 +28,8 @@ export default function() {
                     reaction.remove()
                 }
             }
-
-            if (!DSA5_Utility.getSpeaker(msg.message.speaker).isOwner) {
+            const speaker = DSA5_Utility.getSpeaker(msg.message.speaker)
+            if (speaker && !speaker.isOwner) {
                 let selfButtons = html.find(".selfButton")
                 selfButtons.remove()
             }

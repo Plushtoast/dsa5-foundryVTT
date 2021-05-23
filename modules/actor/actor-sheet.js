@@ -958,11 +958,11 @@ export default class ActorSheetDsa5 extends ActorSheet {
             for (let thing of item.items) {
                 if (thing.count) {
                     let elem = lookup.find(x => x.name == thing.name && x.type == thing.type)
-                    elem.data.data.quantity.value = thing.count
+                    elem.data.quantity.value = thing.count
                 }
             }
             //we should improve that so it stacks items
-            await this.actor.createEmbeddedDocuments("Item", [lookup])
+            await this.actor.createEmbeddedDocuments("Item", lookup)
                 //for (let thing of lookup) {
                 //    await this._manageDragItems(thing, thing.type)
                 //}

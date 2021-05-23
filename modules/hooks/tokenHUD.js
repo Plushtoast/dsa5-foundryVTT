@@ -21,9 +21,7 @@ function addThirdBarToHUD(html, actor, app) {
 
 export default function() {
     Hooks.on('renderTokenHUD', (app, html, data) => {
-
         let actor = canvas.tokens.get(data._id).actor
-        console.log(actor)
         if (actor) {
             addThirdBarToHUD(html, actor, app)
         }

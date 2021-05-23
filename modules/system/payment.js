@@ -65,7 +65,7 @@ export default class DSA5Payment {
             }
         }
 
-        actor.updateEmbeddedDocuments("Item", [money])
+        actor.updateEmbeddedDocuments("Item", money)
     }
 
     static createGetPaidChatMessage(moneyString) {
@@ -177,7 +177,7 @@ export default class DSA5Payment {
 
             for (const [key, value] of Object.entries(coins)) {
                 if (value > 0)
-                    res.push(`<span class="nobr">${value} <span title="${game.i18n.localize(`Money-${key}`)}" class="chatmoney money-${key}"></span></span>`)        
+                    res.push(`<span class="nobr">${value} <span title="${game.i18n.localize(`Money-${key}`)}" class="chatmoney money-${key}"></span></span>`)
         }
         return res.join(", ")
     }

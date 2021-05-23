@@ -850,7 +850,6 @@ class MeleeweaponDSA5 extends Itemdsa5 {
                         targetWeaponsize = defWeapon[0].data.data.reach.value
                 });
             }
-            console.log(actor)
             const defenseMalus = Number(actor.data.data.meleeStats.defenseMalus) * -1
             if (defenseMalus != 0) {
                 situationalModifiers.push({

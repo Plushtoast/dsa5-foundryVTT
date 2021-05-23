@@ -12,9 +12,6 @@ export default class OpposedDsa5 {
 
         let testResult = message.data.flags.data.postData
 
-        console.log(actor)
-        console.log(actor.id)
-
         if (actor.data.flags.oppose) {
             console.log("answering opposed")
             OpposedDsa5.answerOpposedTest(actor, message, testResult)

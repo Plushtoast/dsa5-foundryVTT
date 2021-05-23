@@ -138,7 +138,6 @@ export default class DSA5_Utility {
 
     static editRollAtIndex(roll, index, newValue) {
         let curindex = 0
-        let resIndex = 0
         for (let term of roll.terms) {
             if (term instanceof Die || term.class == "Die") {
                 if (term.results[index - curindex]) {
@@ -148,7 +147,6 @@ export default class DSA5_Utility {
                 }
                 curindex += term.results.length
             }
-            resIndex++
         }
         return 0
     }
@@ -176,14 +174,14 @@ export default class DSA5_Utility {
         //let item = game.items.contents.find(i => i.permission > 1 && i.type == category && i.name == name)
         if (names.length > 0) {
             for (let p of game.packs) {
-                if (p.metadata.documentName == "Item" && (game.user.isGM || !p.private)) {
+                if (p.metadata.entity == "Item" && (game.user.isGM || !p.private)) {
                     await p.getDocuments().then(content => {
                         for (let k of content) {
                             let index = names.indexOf(k.name)
                             if (index >= 0 && types[index] == k.type) {
                                 names.splice(index, 1)
                                 types.splice(index, 1)
-                                results.push(k)
+                                results.push(duplicate(k))
                             }
                         }
                     })
