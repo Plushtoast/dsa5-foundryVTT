@@ -207,7 +207,7 @@ export default class DiceDSA5 {
             if (game.settings.get("dsa5", "defenseBotchTableEnabled")) {
                 result["description"] += `, <a class="roll-button defense-botch" data-weaponless="true"><i class="fas fa-dice"></i>${game.i18n.localize('CriticalFailure')} ${game.i18n.localize("table")}</a>`
             } else {
-                result["description"] += ", " + game.i18n.localize("selfDamage") + (new Roll("1d6+2").evaluate({ async: true }).total)
+                result["description"] += ", " + game.i18n.localize("selfDamage") + (new Roll("1d6+2").evaluate({ async: false }).total)
             }
         }
         return result
@@ -775,8 +775,8 @@ export default class DiceDSA5 {
     }
 
     static get3D20SuccessLevel(roll, fws, botch = 20, critical = 1) {
-        if (roll.terms.filter(x => x.results && x.results[0].result == critical).length == 3) return 3
-        else if (roll.terms.filter(x => x.results && x.results[0].result == critical).length == 2) return 2
+        if (roll.terms.filter(x => x.results && x.results[0].result <= critical).length == 3) return 3
+        else if (roll.terms.filter(x => x.results && x.results[0].result <= critical).length == 2) return 2
         else if (roll.terms.filter(x => x.results && x.results[0].result >= botch).length == 3) return -3
         else if (roll.terms.filter(x => x.results && x.results[0].result >= botch).length == 2) return -2
         else return fws >= 0 ? 1 : -1
