@@ -136,8 +136,6 @@ export default function() {
             callback: li => {
                 let message = game.messages.get(li.attr("data-message-id"))
                 let actor = DSA5_Utility.getSpeaker(message.data.speaker)
-                if (!actor)
-                    actor = new Actordsa5(newTestData.extra.actor, { temporary: true })
                 if (!actor.isOwner)
                     return ui.notifications.error(game.i18n.localize("DSAError.DamagePermission"))
 
@@ -157,8 +155,6 @@ export default function() {
                 let message = game.messages.get(li.attr("data-message-id"))
                 let cardData = message.data.flags.data
                 let actor = DSA5_Utility.getSpeaker(message.data.speaker)
-                if (!actor)
-                    actor = new Actordsa5(newTestData.extra.actor, { temporary: true })
                 if (!actor.isOwner)
                     return ui.notifications.error(game.i18n.localize("DSAError.DamagePermission"))
                 actor.applyMana(cardData.preData.calculatedSpellModifiers.finalcost, ["ritual", "spell"].includes(cardData.preData.source.type) ? "AsP" : "KaP")

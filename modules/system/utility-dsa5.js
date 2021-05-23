@@ -171,7 +171,6 @@ export default class DSA5_Utility {
                 results.push(k)
             }
         }
-        //let item = game.items.contents.find(i => i.permission > 1 && i.type == category && i.name == name)
         if (names.length > 0) {
             for (let p of game.packs) {
                 if (p.metadata.entity == "Item" && (game.user.isGM || !p.private)) {

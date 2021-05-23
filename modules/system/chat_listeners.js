@@ -36,7 +36,7 @@ export default class DSA5ChatListeners {
     }
 
     static async emptyActor() {
-        return await Actor.create({
+        return await Actordsa5.create({
             name: "Alrik",
             type: "npc",
             items:[],
@@ -66,6 +66,8 @@ export default class DSA5ChatListeners {
         }
 
         const actor = await DSA5ChatListeners.emptyActor()
+        actor.prepareData()
+        console.log(actor)
 
         actor.setupSkill(skill, {}, "emptyActor").then(setupData => {
             actor.basicTest(setupData)

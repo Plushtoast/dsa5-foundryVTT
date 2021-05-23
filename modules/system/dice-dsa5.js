@@ -1199,8 +1199,8 @@ export default class DiceDSA5 {
             name = input.attr("data-name")
 
         let actor = DSA5_Utility.getSpeaker(speaker)
-        if (!actor && message.data.flags.data)
-            actor = new Actordsa5(message.data.flags.data.preData.extra.actor, { temporary: true })
+        //if (!actor && message.data.flags.data)
+        //    actor = new Actordsa5(message.data.flags.data.preData.extra.actor, { temporary: true })
 
         if (actor) {
             let item = actor.data.items.find(x => x.name == name && x.type == category)
@@ -1267,7 +1267,7 @@ export default class DiceDSA5 {
             new Itemdsa5(newTestData.source, { temporary: true })[`${data.postData.postFunction}`]({ testData: newTestData, cardOptions: chatOptions }, { rerenderMessage: message });
         } else {
             let speaker = DSA5_Utility.getSpeaker(message.data.speaker)
-            if (!speaker) speaker = new Actordsa5(newTestData.extra.actor, { temporary: true })
+            //if (!speaker) speaker = new Actordsa5(newTestData.extra.actor, { temporary: true })
             speaker[`${data.postData.postFunction}`]({ testData: newTestData, cardOptions: chatOptions }, { rerenderMessage: message });
         }
     }

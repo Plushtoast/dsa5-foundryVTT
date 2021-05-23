@@ -1210,7 +1210,7 @@ export default class Actordsa5 extends Actor {
         })
 
         if (!data.img)
-            update.img = "systems/dsa5/tokens/unknown.webp"
+            update.img = "icons/svg/mystery-man-black.svg"
 
         if (data.type == "character") {
             mergeObject(update, {
