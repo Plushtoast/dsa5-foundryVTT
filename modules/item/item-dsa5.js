@@ -528,7 +528,7 @@ class SpellItemDSA5 extends Itemdsa5 {
             opposable: spell.data.data.effectFormula.value.length > 0,
             source: spell,
             extra: {
-                actor: actor.data,
+                actor: actor.toObject(false),
                 options: options,
                 speaker: {
                     token: tokenId,
@@ -642,7 +642,7 @@ class CombatskillDSA5 extends Itemdsa5 {
             source: item,
             mode: mode,
             extra: {
-                actor: actor.data,
+                actor: actor.toObject(false),
                 options: options,
                 speaker: {
                     token: tokenId,
@@ -850,7 +850,7 @@ class MeleeweaponDSA5 extends Itemdsa5 {
                         targetWeaponsize = defWeapon[0].data.data.reach.value
                 });
             }
-
+            console.log(actor)
             const defenseMalus = Number(actor.data.data.meleeStats.defenseMalus) * -1
             if (defenseMalus != 0) {
                 situationalModifiers.push({
@@ -904,7 +904,7 @@ class MeleeweaponDSA5 extends Itemdsa5 {
             source: item,
             mode: mode,
             extra: {
-                actor: actor.data,
+                actor: actor.toObject(false),
                 options: options,
                 speaker: {
                     token: tokenId,
@@ -1125,7 +1125,7 @@ class RangeweaponItemDSA5 extends Itemdsa5 {
             source: item,
             mode: mode,
             extra: {
-                actor: actor.data,
+                actor: actor.toObject(false),
                 options: options,
                 speaker: {
                     token: tokenId,
@@ -1268,7 +1268,7 @@ class SkillItemDSA5 extends Itemdsa5 {
             opposable: true,
             source: skill,
             extra: {
-                actor: actor.data,
+                actor: actor.toObject(false),
                 options: options,
                 speaker: {
                     token: tokenId,
@@ -1476,7 +1476,7 @@ class TraitItemDSA5 extends Itemdsa5 {
             source: item,
             mode: mode,
             extra: {
-                actor: actor.data,
+                actor: actor.toObject(false),
                 options: options,
                 speaker: {
                     token: tokenId,

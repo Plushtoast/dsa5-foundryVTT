@@ -323,7 +323,7 @@ export default class ActorSheetDsa5 extends ActorSheet {
     }
 
     async _changeAdvanceLock(ev) {
-        this.actor.update({ "data.sheetLocked.value": !this.actor.data.data.sheetLocked.value })
+        await this.actor.update({ "data.sheetLocked.value": !this.actor.data.data.sheetLocked.value })
         $(ev.currentTarget).find("i").toggleClass("fa-unlock fa-lock")
     }
 

@@ -327,33 +327,33 @@ DSA5.gearModifyableCalculatedAttributes = ["fatePoints", "initiative", "speed", 
 DSA5.defaultWeapon = {
     name: "default",
     type: "meleeweapon",
-    data: {
-        data: {
-            reach: {
-                value: "short"
-            },
-            damage: {
-                value: "1d6"
-            },
-            atmod: {
-                value: 0,
-                offHandMod: 0
-            },
-            pamod: {
-                value: 0,
-                offHandMod: 0
-            },
-            guidevalue: {
-                value: "ge/kk"
-            },
-            damageThreshold: {
-                value: "5000"
-            },
-            worn: {
-                offhand: false
-            }
+   data: {
+        type: "meleeweapon",
+        reach: {
+            value: "short"
+        },
+        damage: {
+            value: "1d6"
+        },
+        atmod: {
+            value: 0,
+            offHandMod: 0
+        },
+        pamod: {
+            value: 0,
+            offHandMod: 0
+        },
+        guidevalue: {
+            value: "ge/kk"
+        },
+        damageThreshold: {
+            value: "5000"
+        },
+        worn: {
+            offhand: false
         }
     }
+
 }
 
 DSA5.characteristics = {

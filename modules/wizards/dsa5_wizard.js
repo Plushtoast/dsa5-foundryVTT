@@ -196,10 +196,9 @@ export default class WizardDSA5 extends Application {
             if (!this.updating) {
                 this.updating = true
                 this.updateCharacter().then(
-                    x => this.updating = false
+                    () => this.updating = false
                 )
             }
-
         })
         html.find('button.cancel').click(ev => {
             this.close()

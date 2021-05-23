@@ -11,6 +11,10 @@ export default class OpposedDsa5 {
         if (!actor) return
 
         let testResult = message.data.flags.data.postData
+
+        console.log(actor)
+        console.log(actor.id)
+
         if (actor.data.flags.oppose) {
             console.log("answering opposed")
             OpposedDsa5.answerOpposedTest(actor, message, testResult)
@@ -234,8 +238,8 @@ export default class OpposedDsa5 {
     }
 
     static async clearOpposed(actor) {
-        //await actor.data.update({ "-=flags.oppose": null })
-        let res = await actor.data.update({ "flags.oppose": null })
+        await actor.update({ "-=flags.oppose": null })
+        await actor.update({ "flags.oppose": null })
     }
 
     static async _handleReaction(ev) {
@@ -405,11 +409,11 @@ export default class OpposedDsa5 {
             try {
                 await this.startMessage.update(chatOptions).then(resultMsg => {
                     ui.chat.updateMessage(resultMsg)
-                    OpposedDsa5.clearOpposed();
+                    //OpposedDsa5.clearOpposed();
                 })
             } catch {
                 await ChatMessage.create(chatOptions)
-                OpposedDsa5.clearOpposed();
+                //OpposedDsa5.clearOpposed();
             }
         }
     }
@@ -434,6 +438,8 @@ export default class OpposedDsa5 {
                 }
             }
         }
+
+        await this.clearOpposed(target.actor)
 
         await this.completeOpposedProcess(attacker, defender, {
             target: true,

@@ -18,7 +18,8 @@ export default class DiceDSA5 {
         let rollMode = game.settings.get("core", "rollMode");
         let sceneStress = "challenging";
 
-        testData.source = deepClone(testData.source)
+        if (typeof testData.source.toObject === 'function')
+            testData.source = testData.source.toObject(false)
 
         mergeObject(testData, {
             testDifficulty: sceneStress,
@@ -285,7 +286,7 @@ export default class DiceDSA5 {
 
     static _situationalMultipliers(testData) {
         return testData.situationalModifiers.reduce(function(_this, val) {
-            return _this * (val.type == "*" ? (Number(val.value.replace(/,/, ".")) || 1) : 1)
+            return _this * (val.type == "*" ? (Number(`${val.value}`.replace(/,/, ".")) || 1) : 1)
         }, 1);
     }
 
@@ -454,11 +455,12 @@ export default class DiceDSA5 {
         this._appendSituationalModifiers(testData, game.i18n.localize("manual"), testData.testModifier)
         this._appendSituationalModifiers(testData, game.i18n.localize("wrongHand"), testData.wrongHand)
 
-        let source = testData.source.data.data == undefined ? testData.source : testData.source.data
+        let source = testData.source
         let combatskill = source.data.combatskill.value
 
-        let skill = Actordsa5._calculateCombatSkillValues(testData.extra.actor.items.find(x => x.type == "combatskill" && x.name == combatskill).data, testData.extra.actor)
+        let skill = Actordsa5._calculateCombatSkillValues(testData.extra.actor.items.find(x => x.type == "combatskill" && x.name == combatskill), testData.extra.actor)
 
+        console.log(testData.extra.actor)
         if (source.type == "meleeweapon") {
             weapon = Actordsa5._prepareMeleeWeapon(source, [skill], testData.extra.actor)
 
@@ -1218,7 +1220,7 @@ export default class DiceDSA5 {
 
         let data = message.data.flags.data
         let newTestData = data.preData;
-        newTestData.extra.actor = DSA5_Utility.getSpeaker(newTestData.extra.speaker).data
+        newTestData.extra.actor = DSA5_Utility.getSpeaker(newTestData.extra.speaker).toObject(false)
         let index
 
         //Might need to readd that again

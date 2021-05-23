@@ -309,7 +309,7 @@ export default class Actordsa5 extends Actor {
     }
 
     prepareItems() {
-        let actorData = duplicate(this.data)
+        let actorData = this.toObject(false)
         let combatskills = [];
         let advantages = [];
         let disadvantages = []
@@ -352,10 +352,10 @@ export default class Actordsa5 extends Actor {
         }
 
         let schips = []
-        for (let i = 1; i <= Number(this.data.data.status.fatePoints.max); i++) {
+        for (let i = 1; i <= Number(actorData.data.status.fatePoints.max); i++) {
             schips.push({
                 value: i,
-                cssClass: i <= Number(this.data.data.status.fatePoints.value) ? "fullSchip" : "emptySchip"
+                cssClass: i <= Number(actorData.data.status.fatePoints.value) ? "fullSchip" : "emptySchip"
             })
         }
 
@@ -409,7 +409,7 @@ export default class Actordsa5 extends Actor {
         //we can later make equipment sortable
         //actorData.items = actorData.items.sort((a, b) => (a.sort || 0) - (b.sort || 0))
 
-        let totalArmor = this.data.data.totalArmor || 0;
+        let totalArmor = actorData.data.totalArmor || 0;
         let totalWeight = 0;
         let encumbrance = 0;
 
@@ -562,7 +562,7 @@ export default class Actordsa5 extends Actor {
         //TODO move the encumbrance calculation to a better location
         encumbrance = Math.max(0, encumbrance - SpecialabilityRulesDSA5.abilityStep(this.data, game.i18n.localize('LocalizedIDs.inuredToEncumbrance')))
 
-        let carrycapacity = this.data.data.characteristics.kk.value * 2 + this.data.data.carryModifier;
+        let carrycapacity = actorData.data.characteristics.kk.value * 2 + actorData.data.carryModifier;
 
         if ((actorData.type != "creature" || actorData.canAdvance) && !this.isMerchant()) {
             encumbrance += Math.max(0, Math.ceil((totalWeight - carrycapacity - 4) / 4))
@@ -591,7 +591,7 @@ export default class Actordsa5 extends Actor {
             aggregatedtests,
             wornArmor: armor,
             inventory,
-            itemModifiers: this.data.data.itemModifiers,
+            itemModifiers: actorData.data.itemModifiers,
             languagePoints: {
                 used: actorData.data.freeLanguagePoints ? actorData.data.freeLanguagePoints.used : 0,
                 available: actorData.data.freeLanguagePoints ? actorData.data.freeLanguagePoints.value : 0
@@ -721,9 +721,10 @@ export default class Actordsa5 extends Actor {
     setupWeaponless(statusId, options = {}, tokenId) {
         let item = duplicate(DSA5.defaultWeapon)
         item.name = game.i18n.localize(`${statusId}Weaponless`)
-        item.data.data.combatskill = { value: game.i18n.localize("LocalizedIDs.wrestle") }
-        item.data.type = "meleeweapon"
-        item.data.data.damageThreshold.value = 14
+
+        item.data.combatskill = { value: game.i18n.localize("LocalizedIDs.wrestle") }
+        //item.data.type = "meleeweapon"
+        item.data.damageThreshold.value = 14
         options["mode"] = statusId
         return Itemdsa5.getSubClass(item.type).setupDialog(null, options, item, this, tokenId)
     }
@@ -741,12 +742,12 @@ export default class Actordsa5 extends Actor {
         await this.update({ "data.status.wounds.value": newVal })
     }
 
-    applyMana(amount, type) {
+    async applyMana(amount, type) {
         let state = type == "AsP" ? "astralenergy" : "karmaenergy"
 
         const newVal = Math.min(this.data.data.status[state].max, this.data.data.status[state].value - amount)
         if (newVal >= 0) {
-            this.update({
+            await this.update({
                 [`data.status.${state}.value`]: newVal
             })
         } else {
@@ -801,7 +802,7 @@ export default class Actordsa5 extends Actor {
 
         this[`${data.postData.postFunction}`]({ testData: newTestData, cardOptions }, { rerenderMessage: message });
         await message.update({ "flags.data.fatePointDamageRerollUsed": true });
-        this.update({ "data.status.fatePoints.value": this.data.data.status.fatePoints.value - 1 })
+        await this.update({ "data.status.fatePoints.value": this.data.data.status.fatePoints.value - 1 })
     }
 
     async fateisTalented(infoMsg, cardOptions, newTestData, message, data) {
@@ -845,9 +846,7 @@ export default class Actordsa5 extends Actor {
                                 ChatMessage.create(DSA5_Utility.chatDataSetup(infoMsg));
 
                                 this[`${data.postData.postFunction}`]({ testData: newTestData, cardOptions }, { rerenderMessage: message });
-                                message.update({
-                                    "flags.data.talentedRerollUsed": true
-                                });
+                                await message.update({"flags.data.talentedRerollUsed": true});
                             }
                         }
                     },
@@ -900,8 +899,8 @@ export default class Actordsa5 extends Actor {
                                 ChatMessage.create(DSA5_Utility.chatDataSetup(infoMsg));
 
                                 this[`${data.postData.postFunction}`]({ testData: newTestData, cardOptions }, { rerenderMessage: message });
-                                message.update({ "flags.data.fatePointRerollUsed": true });
-                                this.update({ "data.status.fatePoints.value": this.data.data.status.fatePoints.value - 1 })
+                                await message.update({ "flags.data.fatePointRerollUsed": true });
+                                await this.update({ "data.status.fatePoints.value": this.data.data.status.fatePoints.value - 1 })
                             }
                         }
                     },
@@ -923,8 +922,8 @@ export default class Actordsa5 extends Actor {
         newTestData.qualityStep = 1
 
         this[`${data.postData.postFunction}`]({ testData: newTestData, cardOptions }, { rerenderMessage: message });
-        message.update({ "flags.data.fatePointAddQSUsed": true });
-        this.update({ "data.status.fatePoints.value": this.data.data.status.fatePoints.value - 1 })
+        await message.update({ "flags.data.fatePointAddQSUsed": true });
+        await this.update({ "data.status.fatePoints.value": this.data.data.status.fatePoints.value - 1 })
     }
 
     async useFateOnRoll(message, type) {
@@ -937,7 +936,7 @@ export default class Actordsa5 extends Actor {
                 <b>${game.i18n.localize("CHATFATE.PointsRemaining")}</b>: ${this.data.data.status.fatePoints.value - 1}`;
 
             let newTestData = data.preData
-            newTestData.extra.actor = DSA5_Utility.getSpeaker(newTestData.extra.speaker).data
+            newTestData.extra.actor = DSA5_Utility.getSpeaker(newTestData.extra.speaker).toObject(false)
 
             this[`fate${type}`](infoMsg, cardOptions, newTestData, message, data)
         }
@@ -954,7 +953,7 @@ export default class Actordsa5 extends Actor {
             opposable: false,
             extra: {
                 statusId: statusId,
-                actor: deepClone(this),
+                actor: this.toObject(false),
                 options: options,
                 speaker: {
                     token: tokenId,
@@ -1012,7 +1011,7 @@ export default class Actordsa5 extends Actor {
             opposable: false,
             extra: {
                 statusId: statusId,
-                actor: deepClone(this),
+                actor: this.toObject(false),
                 options: options,
                 speaker: {
                     token: tokenId,
@@ -1074,7 +1073,7 @@ export default class Actordsa5 extends Actor {
             },
             extra: {
                 characteristicId: characteristicId,
-                actor: deepClone(this),
+                actor: this.toObject(false),
                 options: options,
                 speaker: {
                     token: tokenId,
@@ -1153,11 +1152,11 @@ export default class Actordsa5 extends Actor {
             let regex2h = /\(2H/
             if (!regex2h.test(item.name)) {
                 if (!wornWeapons)
-                    wornWeapons = actorData.items.filter(x => (x.type == "meleeweapon" && x.data.data.worn.value && x.id != item.id && !regex2h.test(x.name)))
+                    wornWeapons = duplicate(actorData.items).filter(x => (x.type == "meleeweapon" && x.data.worn.value && x.id != item.id && !regex2h.test(x.name)))
 
                 if (wornWeapons.length > 0) {
-                    item.parry += Math.max(...wornWeapons.map(x => x.data.data.pamod.offhandMod))
-                    item.attack += Math.max(...wornWeapons.map(x => x.data.data.atmod.offhandMod))
+                    item.parry += Math.max(...wornWeapons.map(x => x.data.pamod.offhandMod))
+                    item.attack += Math.max(...wornWeapons.map(x => x.data.atmod.offhandMod))
                 }
             }
 
@@ -1234,7 +1233,7 @@ export default class Actordsa5 extends Actor {
 
     static _parseDmg(item) {
         let parseDamage = new Roll(item.data.damage.value.replace(/[Ww]/g, "d"),{async: false})
-        
+
         let damageDie = "",
             damageTerm = ""
         for (let k of parseDamage.terms) {
@@ -1312,8 +1311,8 @@ export default class Actordsa5 extends Actor {
         }
 
         if (!options.suppressMessage)
-            DiceDSA5.renderRollCard(cardOptions, result, options.rerenderMessage).then(msg => {
-                OpposedDsa5.handleOpposedTarget(msg)
+            DiceDSA5.renderRollCard(cardOptions, result, options.rerenderMessage).then(async(msg) => {
+                await OpposedDsa5.handleOpposedTarget(msg)
             })
         return { result, cardOptions };
     }

@@ -2285,3 +2285,7 @@ select.noAppearance {
     top: 5px;
     color: rgb(92, 92, 92);
 }
+
+.sound-name{
+    color: rgb(92, 92, 92);
+}
