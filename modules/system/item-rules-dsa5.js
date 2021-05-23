@@ -7,7 +7,7 @@ export default class ItemRulesDSA5 {
         let selected = game.settings.get("dsa5", "talentModifierEnabled")
         for (let k of actor.items.filter(x => { return types.includes(x.type) && x.data.data.effect.value.includes(talent) })) {
 
-            for (let m of k.data.effect.value.split(/;|,/)) {
+            for (let m of k.data.data.effect.value.split(/;|,/)) {
                 if (m.includes(talent)) {
                     let parsed = DSA5_Utility.parseAbilityString(m.trim())
                     if (parsed.name == talent) {
