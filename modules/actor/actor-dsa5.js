@@ -142,7 +142,7 @@ export default class Actordsa5 extends Actor {
 
             let paralysis = this.hasCondition("paralysed")
             if (paralysis)
-                data.data.status.speed.max = Math.round(data.data.status.speed.max * (1 - paralysis.flags.dsa5.value * 0.25))
+                data.data.status.speed.max = Math.round(data.data.status.speed.max * (1 - paralysis.data.flags.dsa5.value * 0.25))
             if (this.hasCondition("fixated")) {
                 data.data.status.speed.max = 0
                 data.data.status.dodge.max = Math.max(0, data.data.status.dodge.max - 4)
