@@ -14,12 +14,12 @@ export default class ActorSheetDsa5 extends ActorSheet {
     }
 
     async _render(force = false, options = {}) {
-        this._saveScrollPos();
+       // this._saveScrollPos();
         this._saveSearchFields()
         this._saveCollapsed()
         await super._render(force, options);
         this._setCollapsed()
-        this._setScrollPos();
+        //this._setScrollPos();
         this._restoreSeachFields()
 
         let elem = $(this._element)
@@ -45,7 +45,8 @@ export default class ActorSheetDsa5 extends ActorSheet {
         options.tabs = [{ navSelector: ".tabs", contentSelector: ".content", initial: "skills" }]
         mergeObject(options, {
             width: 770,
-            height: 740
+            height: 740,
+            scrollY: [".save-scroll"]
         });
         return options;
     }
@@ -95,28 +96,6 @@ export default class ActorSheetDsa5 extends ActorSheet {
                 $(boxes[i]).attr("class", this.collapsedBoxes[i]);
                 if (this.collapsedBoxes[i] && this.collapsedBoxes[i].indexOf("fa-angle-down") != -1)
                     $(boxes[i]).closest('.groupbox').find('.row-section:nth-child(2)').hide()
-            }
-        }
-    }
-
-    _saveScrollPos() {
-        if (this.form === null)
-            return;
-
-        const html = $(this.form).parent();
-        this.scrollPos = [];
-        let lists = $(html.find(".save-scroll"));
-        for (let list of lists) {
-            this.scrollPos.push($(list).scrollTop());
-        }
-    }
-
-    _setScrollPos() {
-        if (this.scrollPos) {
-            const html = $(this.form).parent();
-            let lists = $(html.find(".save-scroll"));
-            for (let i = 0; i < lists.length; i++) {
-                $(lists[i]).scrollTop(this.scrollPos[i]);
             }
         }
     }
@@ -903,7 +882,7 @@ export default class ActorSheetDsa5 extends ActorSheet {
 
     async _addSkill(item) {
         item = duplicate(item)
-        let res = this.actor.data.items.find(i => i.type == item.type && i.name == item.name && i.data.description.value == item.data.description.value);
+        let res = this.actor.data.items.find(i => i.type == item.type && i.name == item.name && i.data.data.description.value == item.data.description.value);
         if (!res) {
             await this.actor.createEmbeddedDocuments("Item", [item]);
         }
