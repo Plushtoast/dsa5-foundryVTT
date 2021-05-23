@@ -54,7 +54,7 @@ export default class MacroDSA5 {
         this.runChar(actor, char, speaker.token)
     }
 
-    static runWeaponless(actor, char) {
+    static runWeaponless(actor, char, tokenId) {
         if (!actor) return ui.notifications.error(game.i18n.format("DSAError.MacroItemMissing", { item: char }));
         let characteristic = char.split("Weaponless")[0]
         actor.setupWeaponless(characteristic, {}, tokenId).then(setupData => {

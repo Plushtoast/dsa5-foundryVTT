@@ -803,12 +803,12 @@ export default class ActorSheetDsa5 extends ActorSheet {
         SpecialabilityRulesDSA5.needsAdoption(this.actor, item, typeClass)
     }
 
-
     _onDragItemStart(event) {
         let tar = event.currentTarget
         let itemId = tar.getAttribute("data-item-id");
         let mod = tar.getAttribute("data-mod");
-        const item = duplicate(this.actor.getEmbeddedDocument("Item", itemId))
+        const item = itemId ? duplicate(this.actor.getEmbeddedDocument("Item", itemId)) : {}
+
         event.dataTransfer.setData("text/plain", JSON.stringify({
             type: "Item",
             sheetTab: this.actor.data.flags["_sheetTab"],
