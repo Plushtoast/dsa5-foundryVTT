@@ -587,7 +587,9 @@
         "spells": "Aktualisiere Effekte und Effektformeln von allen Zauber, Liturgien, Ritualen und Zeremonien. ALLE MANUELLEN MODIFIKATIONEN WERDEN ÜBERSCHRIEBEN!",
         "spellsShort": "Zauber migrieren",
         "abilities": "Aktualisiere Effekte und Effektformeln von allen Sonderfertigkeiten, Vor- und Nachteilen. ALLE MANUELLEN MODIFIKATIONEN WERDEN ÜBERSCHRIEBEN!",
-        "abilitiesShort": "Sonderfertigkeiten/Vor-/Nachteile migrieren"
+        "abilitiesShort": "Sonderfertigkeiten/Vor-/Nachteile migrieren",
+        "skills": "Aktualisiere Effekte von allen Kampftalenten. ALLE MANUELLEN MODIFIKATIONEN WERDEN ÜBERSCHRIEBEN!",
+        "skillsShort": "Kampftalente migrieren"
     },
 
     "Skill-eeasy": "Extrem leicht (+5)",

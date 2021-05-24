@@ -365,12 +365,12 @@ export default class ActorSheetDsa5 extends ActorSheet {
             elem.trigger("change")
         })
 
-        html.find('.ammo-selector').change(ev => {
+        html.find('.ammo-selector').change(async(ev) => {
             ev.preventDefault()
             let itemId = this._getItemId(ev);
-            let item = duplicate(this.actor.getEmbeddedDocument("Item", itemId))
+            let item = (await this.actor.getEmbeddedDocument("Item", itemId)).toObject()
             item.data.currentAmmo.value = $(ev.currentTarget).val()
-            this.actor.updateEmbeddedDocuments("Item", [item]);
+            await this.actor.updateEmbeddedDocuments("Item", [item]);
         })
 
         html.find('.condition-edit').click(ev => {

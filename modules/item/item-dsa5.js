@@ -259,6 +259,26 @@ export default class Itemdsa5 extends Item {
         return combatskills
     }
 
+    static getCombatSkillModifier(actor, source, situationalModifiers){
+        let combatskill = actor.items.find(x => x.type == "combatskill" && x.name == source.data.combatskill.value)
+
+        for (let ef of combatskill.data.effects) {
+            for (let change of ef.data.changes) {
+                switch (change.key) {
+                    case "data.rangeStats.defenseMalus":
+                    case "data.meleeStats.defenseMalus":
+                        situationalModifiers.push({
+                            name: `${combatskill.name} - ${game.i18n.localize('MODS.defenseMalus')}`,
+                            value: change.value * -1,
+                            type: "defenseMalus",
+                            selected: true
+                        })
+                        break
+                }
+            }
+        }
+    }
+
     static _chatLineHelper(key, val) {
         return `<b>${game.i18n.localize(key)}</b>: ${val ? val : "-"}`
     }
@@ -850,6 +870,9 @@ class MeleeweaponDSA5 extends Itemdsa5 {
                         targetWeaponsize = defWeapon[0].data.data.reach.value
                 });
             }
+
+            this.getCombatSkillModifier(actor, source, situationalModifiers)
+
             const defenseMalus = Number(actor.data.data.meleeStats.defenseMalus) * -1
             if (defenseMalus != 0) {
                 situationalModifiers.push({
@@ -1070,6 +1093,9 @@ class RangeweaponItemDSA5 extends Itemdsa5 {
             source = source.data ? (source.data.data == undefined ? source : source.data) : source
             let toSearch = [source.data.combatskill.value]
             let combatskills = Itemdsa5.buildCombatSpecAbs(actor, ["Combat"], toSearch, data.mode)
+
+            this.getCombatSkillModifier(actor, source, situationalModifiers)
+
             situationalModifiers.push(...AdvantageRulesDSA5.getVantageAsModifier(actor.data, game.i18n.localize('LocalizedIDs.restrictedSenseSight'), -2))
             let targetSize = "average"
             if (game.user.targets.size) {
@@ -1135,15 +1161,15 @@ class RangeweaponItemDSA5 extends Itemdsa5 {
 
         if (actor.data.type != "creature" && mode != "damage") {
             let itemData = item.data.data ? item.data.data : item.data
-
             if (itemData.ammunitiongroup.value == "-") {
                 testData.extra.ammo = duplicate(item)
                 if ((testData.extra.ammo.data.quantity.value <= 0)) {
-                    return ui.notifications.error(game.i18n.localize("DSAError.NoAmmo"))
+                   return ui.notifications.error(game.i18n.localize("DSAError.NoAmmo"))
                 }
             } else {
-                testData.extra.ammo = duplicate(actor.getEmbeddedDocument("Item", itemData.currentAmmo.value))
-                if (!testData.extra.ammo || itemData.currentAmmo.value == "" || testData.extra.ammo.data.quantity.value <= 0) {
+                const ammoItem = actor.getEmbeddedDocument("Item", itemData.currentAmmo.value)
+                if(ammoItem){testData.extra.ammo = ammoItem.toObject()}
+                if (!testData.extra.ammo || !itemData.currentAmmo.value  || testData.extra.ammo.data.quantity.value <= 0) {
                     return ui.notifications.error(game.i18n.localize("DSAError.NoAmmo"))
                 }
             }

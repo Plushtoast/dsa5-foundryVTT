@@ -1048,7 +1048,9 @@
         "spells": "Update effects and effectformula of all spells, liturgical chants, rituals and ceremonies from offical modules. THIS WILL OVERRIDE MANUAL MODIFICATIONS!",
         "spellsShort": "Migrate Spells",
         "abilities": "Update effects and effectformula of all advantages, disadvantages and special abilities. THIS WILL OVERRIDE MANUAL MODIFICATIONS!",
-        "abilitiesShort": "Migrate Dis-/Advantages/Special Abilities"
+        "abilitiesShort": "Migrate Dis-/Advantages/Special Abilities",
+        "skills": "Update effects of all combat techniques. THIS WILL OVERRIDE MANUAL MODIFICATIONS!",
+        "skillsShort": "Migrate Combat Techniques"
     },
 
     "DSASETTINGS": {

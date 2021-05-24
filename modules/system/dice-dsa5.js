@@ -460,7 +460,6 @@ export default class DiceDSA5 {
 
         let skill = Actordsa5._calculateCombatSkillValues(testData.extra.actor.items.find(x => x.type == "combatskill" && x.name == combatskill), testData.extra.actor)
 
-        console.log(testData.extra.actor)
         if (source.type == "meleeweapon") {
             weapon = Actordsa5._prepareMeleeWeapon(source, [skill], testData.extra.actor)
 
@@ -1271,8 +1270,6 @@ export default class DiceDSA5 {
             speaker[`${data.postData.postFunction}`]({ testData: newTestData, cardOptions: chatOptions }, { rerenderMessage: message });
         }
     }
-
-
 
     static async chatListeners(html) {
         html.on("click", '.expand-mods', event => {

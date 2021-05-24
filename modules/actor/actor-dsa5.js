@@ -181,6 +181,7 @@ export default class Actordsa5 extends Actor {
                     case "equipment":
                         apply = item.data.data.worn.wearable && item.data.data.worn.value
                         break
+                    case "combatskill":
                     case "spell":
                     case "liturgy":
                     case "ceremony":

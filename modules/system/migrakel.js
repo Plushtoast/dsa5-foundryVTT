@@ -68,4 +68,22 @@ export default class Migrakel {
             ui.notifications.notify(game.i18n.localize("Migrakel.migrationDone"))
         }
     }
+
+    static async updateCombatskills(actor) {
+        if (await this.showDialog(game.i18n.localize('Migrakel.skills'))) {
+            const itemLibrary = game.dsa5.itemLibrary
+
+            for (let item of actor.items.filter(x => ["combatskill"].includes(x.type))) {
+                let find = await itemLibrary.findCompendiumItem(item.name, item.type)
+                if (find.length > 0) {
+                    find = find[0].document
+                    const update = {
+                        effects: find.effects.toObject()
+                    }
+                    await item.update(update)
+                }
+            }
+            ui.notifications.notify(game.i18n.localize("Migrakel.migrationDone"))
+        }
+    }
 }
