@@ -32,24 +32,37 @@ export default class Migrakel {
     }
 
     static async updateSpellsAndLiturgies(actor) {
-        if (!this.notBefore08()) {
-            ui.notifications.warn("Migration will be available in v0.8 of Foundry")
-            return
-        }
-        if (await this.showDialog(game.i18n.localize('Migrakel.spells'))) {
+         if (await this.showDialog(game.i18n.localize('Migrakel.spells'))) {
             const itemLibrary = game.dsa5.itemLibrary
 
             for (let item of actor.items.filter(x => ["spell", "liturgy", "ritual", "ceremony"].includes(x.type))) {
                 let find = await itemLibrary.findCompendiumItem(item.name, item.type)
-                if (find) {
+                if (find.length > 0) {
                     find = find[0].document
-                    await item.update({ "data.effectFormula.value": find.data.data.effectFormula.value })
-                    for (const id of item.effects.map(x => x.id)) {
-                        await item.deleteEmbeddedDocuments("ActiveEffect", [id])
+                    const update = {
+                        "data.effectFormula.value": find.data.data.effectFormula.value,
+                        effects: find.effects.toObject()
                     }
-                    for (const ef of find.effects) {
-                        await item.createEmbeddedDocuments("ActiveEffect", [ef])
+                    await item.update(update)
+                }
+            }
+            ui.notifications.notify(game.i18n.localize("Migrakel.migrationDone"))
+        }
+    }
+
+    static async updateSpecialAbilities(actor){
+        if (await this.showDialog(game.i18n.localize('Migrakel.abilities'))) {
+            const itemLibrary = game.dsa5.itemLibrary
+
+            for (let item of actor.items.filter(x => ["specialability","advantage","disadvantage"].includes(x.type))) {
+                let find = await itemLibrary.findCompendiumItem(item.name, item.type)
+                if (find.length > 0) {
+                    find = find[0].document
+                    const update = {
+                        "data.effect.value": find.data.data.effect.value,
+                        effects: find.effects.toObject()
                     }
+                    await item.update(update)
                 }
             }
             ui.notifications.notify(game.i18n.localize("Migrakel.migrationDone"))

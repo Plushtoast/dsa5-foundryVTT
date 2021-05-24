@@ -584,8 +584,10 @@
     "Migrakel": {
         "Migration": "Actor Migration",
         "migrationDone": "Migration abgeschlossen",
-        "spells": "Aktualisiere Effekte und Effektformeln von alle Zauber, Liturgien, Ritualen und Zeremonien. ALLE MANUELLEN MODIFIKATIONEN WERDEN ÜBERSCHRIEBEN!",
-        "spellsShort": "Zauber migrieren"
+        "spells": "Aktualisiere Effekte und Effektformeln von allen Zauber, Liturgien, Ritualen und Zeremonien. ALLE MANUELLEN MODIFIKATIONEN WERDEN ÜBERSCHRIEBEN!",
+        "spellsShort": "Zauber migrieren",
+        "abilities": "Aktualisiere Effekte und Effektformeln von allen Sonderfertigkeiten, Vor- und Nachteilen. ALLE MANUELLEN MODIFIKATIONEN WERDEN ÜBERSCHRIEBEN!",
+        "abilitiesShort": "Sonderfertigkeiten/Vor-/Nachteile migrieren"
     },
 
     "Skill-eeasy": "Extrem leicht (+5)",

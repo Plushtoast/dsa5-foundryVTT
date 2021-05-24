@@ -27,7 +27,6 @@ export default class SpecialabilityRulesDSA5 extends ItemRulesDSA5 {
         await actor._updateAPs(-1 * xpCost)
     }
 
-
     static async _specialabilityReturnFunction(actor, item, typeClass, adoption) {
         if (item == null) return
 

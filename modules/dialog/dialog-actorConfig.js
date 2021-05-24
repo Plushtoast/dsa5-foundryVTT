@@ -36,5 +36,8 @@ export default class DialogActorConfig extends Dialog{
     html.find('.updateSpells').click(() => {
       Migrakel.updateSpellsAndLiturgies(this.actor)
     })
+    html.find('.updateAbilities').click(() => {
+      Migrakel.updateSpecialAbilities(this.actor)
+    })
   }
 }
