@@ -12,6 +12,7 @@ import DSA5StatusEffects from "../status/status_effects.js";
 import DSA5ChatAutoCompletion from "./chat_autocompletion.js";
 import OpposedDsa5 from "./opposed-dsa5.js";
 import DSAActiveEffectConfig from "../status/active_effects.js"
+import DSA5SoundEffect from "./dsa-soundeffect.js";
 
 export default class DiceDSA5 {
     static async setupDialog({ dialogOptions, testData, cardOptions }) {
@@ -987,6 +988,8 @@ export default class DiceDSA5 {
 
         this.addApplyEffectData(chatData)
 
+        DSA5SoundEffect.playEffect(preData.mode, preData.source)
+
         if (["gmroll", "blindroll"].includes(chatOptions.rollMode)) chatOptions["whisper"] = game.users.filter(user => user.isGM).map(x => x.data._id)
         if (chatOptions.rollMode === "blindroll") chatOptions["blind"] = true;
         else if (chatOptions.rollMode === "selfroll") chatOptions["whisper"] = [game.user];
@@ -1068,7 +1071,6 @@ export default class DiceDSA5 {
                         DiceDSA5._rerenderGC(message, data)
                     });
             }
-
         }
     }
 

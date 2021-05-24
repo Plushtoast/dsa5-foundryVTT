@@ -1,3 +1,5 @@
+import DSA5SoundEffect from "../system/dsa-soundeffect.js";
+
 export default function() {
     game.settings.register("dsa5", "meleeBotchTableEnabled", {
         name: "DSASETTINGS.meleeBotchTableEnabled",
@@ -154,4 +156,20 @@ export default function() {
         default: false,
         type: Boolean
     });
+
+    game.settings.register("dsa5", "soundConfig", {
+        name: "DSASETTINGS.soundConfig",
+        hint: "DSASETTINGS.soundConfigHint",
+        scope: "world",
+        config: true,
+        default: "",
+        type: String,
+        onChange: () => {
+            DSA5SoundEffect.loadSoundConfig()
+        }
+    });
+
+
 }
+
+

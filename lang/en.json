@@ -1082,7 +1082,9 @@
         "allowPhysicalDiceHint": "Allow the input of the result of real dice",
         "playerCanEditSpellMacro": "Effect Macro editably by players",
         "playerCanEditSpellMacroHint": "Players can edit spell macros and similar stuff (insecure).",
-        "immuneTo": "{name} is immune to \"{condition}\"."
+        "immuneTo": "{name} is immune to \"{condition}\".",
+        "soundConfig": "Sound Effect Configuration",
+        "soundConfigHint": "Sounds for skills and attacks"
     },
 
     "CHATFATE": {
