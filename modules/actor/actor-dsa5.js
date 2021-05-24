@@ -29,9 +29,14 @@ export default class Actordsa5 extends Actor {
 
         data.items.push(...skills, ...combatskills, ...moneyItems);
 
-        if (data.type != "character") {
+        if (data.type != "character")
             data.data = { status: { fatePoints: { current: 0, value: 0 } } }
-        }
+
+        if (data.type != "creature" && [undefined, 0].includes(getProperty(data, "data.status.wounds.value")) )
+            mergeObject(data, {data: {status: {wounds: {value: 16}}}})
+
+
+
         return super.create(data, options);
     }
 

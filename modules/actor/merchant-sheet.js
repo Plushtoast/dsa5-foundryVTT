@@ -239,7 +239,7 @@ export default class MerchantSheetDSA5 extends ActorSheetdsa5NPC {
                 return y.type == x.type && y.name == x.name
             }).length == 0
         })
-        await actor.createEmbeddedDocuments("Item", items)
+        await actor.createEmbeddedDocuments("Item", items.map(x => x.toObject()))
         $(ev.currentTarget).text(text)
     }
 

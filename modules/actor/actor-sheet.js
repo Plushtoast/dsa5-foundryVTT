@@ -174,7 +174,7 @@ export default class ActorSheetDsa5 extends ActorSheet {
                 Yes: {
                     icon: '<i class="fa fa-check"></i>',
                     label: game.i18n.localize("yes"),
-                    callback: dlg => {
+                    callback: () => {
                         item.setupEffect(null, {}, this.getTokenId())
                     }
                 },
