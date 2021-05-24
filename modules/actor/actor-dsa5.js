@@ -336,7 +336,7 @@ export default class Actordsa5 extends Actor {
         let rangeweapons = [];
         let meleeweapons = [];
 
-        let magic = {
+        const magic = {
             hasSpells: this.data.isMage,
             hasPrayers: this.data.isPriest,
             liturgy: [],
@@ -345,6 +345,13 @@ export default class Actordsa5 extends Actor {
             ceremony: [],
             blessing: [],
             magictrick: []
+        }
+
+        const extensions = {
+            spell: {},
+            ritual: {},
+            ceremony: {},
+            liturgy: {}
         }
 
         let traits = {
@@ -434,6 +441,13 @@ export default class Actordsa5 extends Actor {
                         break;
                     case "aggregatedTest":
                         aggregatedtests.push(i)
+                        break
+                    case "spellextension":
+                        if(extensions[i.data.category][i.data.source]){
+                            extensions[i.data.category][i.data.source].push(i.name)
+                        }else{
+                            extensions[i.data.category][i.data.source] = [i.name]
+                            }
                         break
                     case "ritual":
                     case "spell":
@@ -540,6 +554,12 @@ export default class Actordsa5 extends Actor {
 
             } catch (error) {
                 this._itemPreparationError(i, error)
+            }
+        }
+
+        for (let [category, value] of Object.entries(extensions)) {
+            for(let[spell, exts] of Object.entries(value)){
+                magic[category].find(x => x.name == spell).extensions = exts.join(", ")
             }
         }
 
@@ -726,9 +746,7 @@ export default class Actordsa5 extends Actor {
     setupWeaponless(statusId, options = {}, tokenId) {
         let item = duplicate(DSA5.defaultWeapon)
         item.name = game.i18n.localize(`${statusId}Weaponless`)
-
         item.data.combatskill = { value: game.i18n.localize("LocalizedIDs.wrestle") }
-        //item.data.type = "meleeweapon"
         item.data.damageThreshold.value = 14
         options["mode"] = statusId
         return Itemdsa5.getSubClass(item.type).setupDialog(null, options, item, this, tokenId)

@@ -16,11 +16,11 @@ export default class SpecialabilityRulesDSA5 extends ItemRulesDSA5 {
         if (DSA5.removeAbilityRules[item.name]) {
             DSA5.removeAbilityRules[item.name](actor, item)
         }
-        let xpCost = item.data.APValue.value * item.data.step.value
-        if (/;/.test(item.data.APValue.value)) {
-            let steps = item.data.APValue.value.split(";").map(x => Number(x.trim()))
+        let xpCost = item.data.data.APValue.value * item.data.data.step.value
+        if (/;/.test(item.data.data.APValue.value)) {
+            let steps = item.data.data.APValue.value.split(";").map(x => Number(x.trim()))
             xpCost = 0
-            for (let i = 0; i < item.data.step.value; i++)
+            for (let i = 0; i < item.data.data.step.value; i++)
                 xpCost += steps[i]
         }
         xpCost = await SpecialabilityRulesDSA5.refundFreelanguage(item, actor, xpCost)
@@ -71,9 +71,9 @@ export default class SpecialabilityRulesDSA5 extends ItemRulesDSA5 {
     }
 
     static async refundFreelanguage(item, actor, xpCost) {
-        if (item.data.category.value == "language" && actor.data.data.freeLanguagePoints) {
+        if (item.data.data.category.value == "language" && actor.data.data.freeLanguagePoints) {
             let freePoints = Number(actor.data.data.freeLanguagePoints.value)
-            let languageCost = actor.data.items.filter(x => x.type == "specialability" && x.data.category.value == "language").reduce((a, b) => { return a + Number(b.data.step.value) * Number(b.data.APValue.value) }, 0)
+            let languageCost = actor.data.items.filter(x => x.type == "specialability" && x.data.data.category.value == "language").reduce((a, b) => { return a + Number(b.data.data.step.value) * Number(b.data.data.APValue.value) }, 0)
             let usedPoints = Math.min(freePoints, languageCost - Number(xpCost))
             let remainingFreepoints = Math.max(0, freePoints - usedPoints)
             await actor.update({ "data.freeLanguagePoints.used": Math.min(freePoints, Number(usedPoints)) })
@@ -85,7 +85,7 @@ export default class SpecialabilityRulesDSA5 extends ItemRulesDSA5 {
     static async isFreeLanguage(item, actor, xpCost) {
         if (item.data.category.value == "language" && actor.data.data.freeLanguagePoints) {
             let freePoints = Number(actor.data.data.freeLanguagePoints.value)
-            let languageCost = actor.data.items.filter(x => x.type == "specialability" && x.data.category.value == "language").reduce((a, b) => { return a + Number(b.data.step.value) * Number(b.data.APValue.value) }, 0)
+            let languageCost = actor.data.items.filter(x => x.type == "specialability" && x.data.data.category.value == "language").reduce((a, b) => { return a + Number(b.data.data.step.value) * Number(b.data.data.APValue.value) }, 0)
             let usedPoints = Math.min(freePoints, languageCost)
             let remainingFreepoints = Math.max(0, freePoints - usedPoints)
             await actor.update({ "data.freeLanguagePoints.used": Math.min(freePoints, Number(usedPoints) + Number(xpCost)) })

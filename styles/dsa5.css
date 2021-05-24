@@ -2289,3 +2289,18 @@ select.noAppearance {
 .sound-name{
     color: rgb(92, 92, 92);
 }
+
+.sheet-tabs .item{
+    border-top: 1px solid #b5b3a4;
+    border-bottom: 1px solid #b5b3a4;
+}
+
+.sheet nav.sheet-tabs{
+    border:none;
+}
+
+.sheet-tabs .item.active{
+    border-right: 1px solid #b5b3a4;
+    border-left: 1px solid #b5b3a4;
+    border-bottom: none;
+}

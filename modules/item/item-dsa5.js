@@ -1331,8 +1331,8 @@ class SpeciesItemDSA5 extends Itemdsa5 {}
 class SpellextensionItemDSA5 extends Itemdsa5 {
     static chatData(data, name) {
         return [
-            this._chatLineHelper("target", data.source),
-            this._chatLineHelper("category", data.category),
+            this._chatLineHelper("source", data.source),
+            this._chatLineHelper("Category", game.i18n.localize(data.category)),
         ]
     }
 }

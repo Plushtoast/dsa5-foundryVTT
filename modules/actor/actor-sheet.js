@@ -742,11 +742,11 @@ export default class ActorSheetDsa5 extends ActorSheet {
             case "advantage":
             case "disadvantage":
                 await AdvantageRulesDSA5.vantageRemoved(this.actor, item)
-                xpCost = item.data.APValue.value * item.data.step.value
-                if (/;/.test(item.data.APValue.value)) {
-                    steps = item.data.APValue.value.split(";").map(x => Number(x.trim()))
+                xpCost = item.data.data.APValue.value * item.data.data.step.value
+                if (/;/.test(item.data.data.APValue.value)) {
+                    steps = item.data.data.APValue.value.split(";").map(x => Number(x.trim()))
                     xpCost = 0
-                    for (let i = 0; i < item.data.step.value; i++)
+                    for (let i = 0; i < item.data.data.step.value; i++)
                         xpCost += steps[i]
                 }
                 await this._updateAPs(-1 * xpCost)
@@ -756,24 +756,24 @@ export default class ActorSheetDsa5 extends ActorSheet {
                 break;
             case "blessing":
             case "magictrick":
-                this._updateAPs(-1)
+                await this._updateAPs(-1)
                 break
             case "ritual":
             case "ceremony":
             case "liturgy":
             case "spell":
-                let apVal = DSA5_Utility._calculateAdvCost(0, item.data.StF.value, 0)
-                let extensions = this.actor.data.items.filter(i => i.type == "spellextension" && item.type == i.data.category && item.name == i.data.source)
+                //TODO improve ap cost calculation
+                let apVal = DSA5_Utility._calculateAdvCost(0, item.data.data.StF.value, 0)
+                let extensions = this.actor.data.items.filter(i => i.type == "spellextension" && item.type == i.data.data.category && item.name == i.data.data.source)
                 if (extensions) {
-                    apVal += extensions.reduce((a, b) => { return a + b.data.APValue.value }, 0)
+                    apVal += extensions.reduce((a, b) => { return a + b.data.data.APValue.value }, 0)
                     await this.actor.deleteEmbeddedDocuments("Item", extensions.map(x => x.id))
                 }
-                this._updateAPs(apVal * -1)
+                await this._updateAPs(apVal * -1)
                 break
         }
-        this.actor.deleteEmbeddedDocuments("Item", [itemId]);
+        await this.actor.deleteEmbeddedDocuments("Item", [itemId]);
     }
-
 
     _getItemId(ev) {
         return $(ev.currentTarget).parents(".item").attr("data-item-id")
@@ -823,19 +823,19 @@ export default class ActorSheetDsa5 extends ActorSheet {
 
     async _handleSpellExtension(item) {
         let res = this.actor.data.items.find(i => i.type == item.type && i.name == item.name);
-        item = duplicate(item)
         if (!res) {
+            item = duplicate(item)
             let spell = this.actor.data.items.find(i => i.type == item.data.category && i.name == item.data.source)
             if (!spell) {
                 ui.notifications.error(game.i18n.localize("DSAError.noSpellForExtension"))
             } else {
-                if (spell.data.talentValue.value < item.data.talentValue) {
+                if (spell.data.data.talentValue.value < item.data.talentValue) {
                     ui.notifications.error(game.i18n.localize("DSAError.talentValueTooLow"))
                     return
                 }
                 let apCost = item.data.APValue.value
                 if (await this.actor.checkEnoughXP(apCost)) {
-                    this._updateAPs(apCost)
+                    await this._updateAPs(apCost)
                     await this.actor.createEmbeddedDocuments("Item", [item])
                 }
             }
@@ -862,7 +862,7 @@ export default class ActorSheetDsa5 extends ActorSheet {
                     return
             }
             if (await this.actor.checkEnoughXP(apCost)) {
-                this._updateAPs(apCost)
+                await this._updateAPs(apCost)
                 await this.actor.createEmbeddedDocuments("Item", [item])
             }
         }

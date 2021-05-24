@@ -439,7 +439,8 @@ class SpellSheetDSA5 extends ItemSheetdsa5 {
         data['StFs'] = DSA5.StFs;
         data['resistances'] = DSA5.magicResistanceModifiers
         if (data.isOwned) {
-            data['extensions'] = this.item.actor.data.items.filter(x => { return x.type == "spellextension" && x.data.source == this.item.name && this.item.type == x.data.category })
+            data['extensions'] = this.item.actor.data.items.filter(x => { return x.type == "spellextension" && x.data.data.source == this.item.name && this.item.type == x.data.data.category })
+            console.log(data['extensions'])
         }
         return data
     }
@@ -470,7 +471,7 @@ class SpellSheetDSA5 extends ItemSheetdsa5 {
                     Yes: {
                         icon: '<i class="fa fa-check"></i>',
                         label: game.i18n.localize("yes"),
-                        callback: dlg => {
+                        callback: () => {
                             this._cleverDeleteItem(itemId)
                         }
                     },
@@ -486,8 +487,8 @@ class SpellSheetDSA5 extends ItemSheetdsa5 {
 
     async _cleverDeleteItem(itemId) {
         let item = this.item.actor.data.items.find(x => x.id == itemId)
-        await this.item.actor._updateAPs(-1 * item.data.APValue.value)
-        this.item.actor.deleteEmbeddedDocuments("Item", [itemId]);
+        await this.item.actor._updateAPs(-1 * item.data.data.APValue.value)
+        await this.item.actor.deleteEmbeddedDocuments("Item", [itemId]);
     }
 }
 
