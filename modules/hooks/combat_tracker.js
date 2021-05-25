@@ -27,7 +27,6 @@ export class DSA5CombatTracker extends CombatTracker {
             const combatant = data.combat.turns.find(x => x.id == k.id)
             k.defenseCount = combatant.data._source.defenseCount
             k.tokenId = combatant.data.tokenId
-            console.log(k)
         }
         return data
     }

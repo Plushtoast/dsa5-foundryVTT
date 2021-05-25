@@ -258,10 +258,10 @@ export default class Actordsa5 extends Actor {
         return result
     }
 
-    prepareSheet() {
+    prepareSheet(sheetInfo) {
         let preData = duplicate(this.data)
         let preparedData = { data: {} }
-        mergeObject(preparedData, this.prepareItems())
+        mergeObject(preparedData, this.prepareItems(sheetInfo))
         if (preparedData.canAdvance) {
             const attrs = ["wounds", "astralenergy", "karmaenergy"]
             for (const k of attrs) {
@@ -314,7 +314,7 @@ export default class Actordsa5 extends Actor {
         return item
     }
 
-    prepareItems() {
+    prepareItems(sheetInfo) {
         let actorData = this.toObject(false)
         let combatskills = [];
         let advantages = [];
@@ -434,9 +434,25 @@ export default class Actordsa5 extends Actor {
             nature: []
         }
 
+        let containers = new Map()
+        for(let container of actorData.items.filter(x => x.type == "equipment" && x.data.equipmentType.value == "bags")){
+            containers.set(container._id, [])
+        }
+        console.log(sheetInfo)
+
         for (let i of actorData.items) {
             try {
+                let parent_id = getProperty(i, "data.parent_id")
+                if (parent_id && parent_id != i._id){
+                    if(containers.has(parent_id)){
+                        containers.get(parent_id).push(i)
+                        continue
+                    }
+                }
+                if (sheetInfo.details && sheetInfo.details.includes(i._id)) i.detailed =  "shown"
+
                 switch (i.type) {
+
                     case "skill":
                         skills[i.data.group.value].push(this._perpareItemAdvancementCost(i))
                         break;
@@ -525,7 +541,6 @@ export default class Actordsa5 extends Actor {
                         inventory[i.data.equipmentType.value].show = true;
                         totalWeight += Number(i.weight);
                         break
-                    case "consumable":
                     case "equipment":
                         i.weight = parseFloat((i.data.weight.value * i.data.quantity.value).toFixed(3));
                         i.toggle = getProperty(i, "data.worn.wearable") || false
@@ -557,6 +572,24 @@ export default class Actordsa5 extends Actor {
                 this._itemPreparationError(i, error)
             }
         }
+
+        for(let elem of inventory.bags.items){
+            if(containers.has(elem._id)){
+                elem.children = []
+                let bagweight = 0
+                if (!elem.toggleValue) totalWeight -= elem.weight
+
+                for(let child of containers.get(elem._id)){
+                    child.weight = Number(parseFloat((child.data.weight.value * child.data.quantity.value).toFixed(3)))
+                    bagweight += child.weight
+                    elem.children.push(Actordsa5._prepareitemStructure(Actordsa5._prepareConsumable(child)))
+                    if (elem.toggleValue) totalWeight += child.weight
+
+                }
+                elem.bagweight = `${bagweight.toFixed(2)}/${elem.data.capacity}`
+            }
+        }
+
 
         for (let [category, value] of Object.entries(extensions)) {
             for(let[spell, exts] of Object.entries(value)){
@@ -602,6 +635,8 @@ export default class Actordsa5 extends Actor {
 
         let characteristics = duplicate(DSA5.characteristics)
         characteristics["-"] = "-"
+
+        console.log(inventory)
 
         return {
             totalWeight,
@@ -1145,9 +1180,11 @@ export default class Actordsa5 extends Actor {
     }
 
     static _prepareConsumable(item) {
-        item.consumable = true
-        item.structureMax = item.data.maxCharges
-        item.structureCurrent = item.data.charges
+        if(item.data.maxCharges){
+            item.consumable = true
+            item.structureMax = item.data.maxCharges
+            item.structureCurrent = item.data.charges
+        }
         return item
     }
 

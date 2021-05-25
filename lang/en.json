@@ -646,7 +646,8 @@
         "activate": "Activate",
         "switchLimited": "Limited view (player view)",
         "import": "Import",
-        "actorConfig": "Configure actor"
+        "actorConfig": "Configure actor",
+        "weightOnActor": "Being carried by the actor"
     },
 
     "ITEMSHEET": {

@@ -659,7 +659,8 @@
         "activate": "Aktivieren",
         "switchLimited": "Begrenzte Ansicht umschalten (Spieleransicht)",
         "import": "Importieren",
-        "actorConfig": "Akteur konfigurieren"
+        "actorConfig": "Akteur konfigurieren",
+        "weightOnActor": "Wird vom Akteur getragen"
     },
 
     "ITEMSHEET": {

@@ -41,8 +41,7 @@ export default class ActorSheetdsa5Character extends ActorSheetDsa5 {
                 cwizard.render(true)
                 break;
             default:
-                super._manageDragItems(item, typeClass)
-                break
+                return super._manageDragItems(item, typeClass)
         }
     }
 }

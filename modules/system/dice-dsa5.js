@@ -83,7 +83,6 @@ export default class DiceDSA5 {
         return 0
     }
 
-
     static _rollSingleD20(roll, res, id, modifier, testData, combatskill = "", multiplier = 1) {
         let description = "";
 

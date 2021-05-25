@@ -5,12 +5,18 @@
         <div class="col">
             <b>{{localize (concat "Equipment." @key)}}</b>
         </div>
+        {{#when @key 'eq' 'bags'}}
+        <div class="col eight center">
+            <i class="fas fa-weight-hanging" title="{{localize 'carrycapacity'}}"></i>
+        </div>
+        {{/when}}
         <div class="col eight center">
             <i class="fa fa-shield-alt" title="{{localize 'equipped'}}"></i>
         </div>
         <div class="col eight center">
             <span title="{{localize 'quantity'}}">#</span>
         </div>
+
         <div class="col eight center">
             <i class="fa fa-anchor" title="{{localize 'Weight'}}"></i>
         </div>
@@ -20,7 +26,7 @@
     </div>
     <div class="row-section wrap rowtable inventory">
         {{#each section.items as |item i|}}
-        <div class="col item" data-item-id="{{item._id}}">
+        <div class="col item" data-item-id="{{item._id}}" data-category="{{item.data.equipmentType.value}}">
             <div class="row-section">
                 <div class="col eight image" style="background-image: url({{item.img}})">
                     {{#if item.structureMax}}
@@ -32,7 +38,12 @@
                 <div class="col">
                     <a class="item-edit {{#if item.consumable}}consume-item{{/if}}">{{item.name}}</a>
                 </div>
+                {{#when item.data.equipmentType.value 'eq' 'bags'}}
                 <div class="col eight center">
+                    {{item.bagweight}}
+                </div>
+                {{/when}}
+                <div class="col eight center" {{#when item.data.equipmentType.value 'eq' 'bags'}}title="{{localize 'SHEET.weightOnActor'}}"{{/when}}>
                     {{#if item.toggle}} {{#if item.toggleValue}}
                     <a class="item-toggle"><i class="far fa-check-circle"></i></a> {{else}}
                     <a class="item-toggle"><i class="far fa-circle"></i></a> {{/if}} {{/if}}
@@ -51,10 +62,11 @@
                     <a class="item-control item-delete" title="{{localize 'SHEET.DeleteItem'}}"><i class="fas fa-trash"></i></a>
                 </div>
             </div>
-            <div class="row-section lineheight expandDetails">
+            <div class="row-section lineheight expandDetails {{item.detailed}}">
                 <div class="col">
-                    <ul>
-                    </ul>
+                    {{#if item.children}}
+                    {{> systems/dsa5/templates/actors/parts/containerContent.html this}}
+                    {{/if}}
                 </div>
             </div>
 

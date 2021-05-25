@@ -339,7 +339,8 @@
                 },
                 "effect": {
                     "value": ""
-                }
+                },
+                "parent_id": 0
             },
             "encumbrance": {
                 "encumbrance": {
@@ -805,6 +806,7 @@
                 "max": 0,
                 "value": 0
             },
+            "capacity": 0,
             "worn": {
                 "value": false,
                 "wearable": false

@@ -61,6 +61,7 @@ Hooks.once("init", () => {
         "systems/dsa5/templates/actors/creature/creature-religion.html",
         "systems/dsa5/templates/actors/parts/characteristics-small.html",
         "systems/dsa5/templates/actors/parts/characteristics-large.html",
+        "systems/dsa5/templates/actors/parts/containerContent.html",
         "systems/dsa5/templates/actors/npc/npc-main.html",
         "systems/dsa5/templates/actors/character/actor-magic.html",
         "systems/dsa5/templates/actors/character/actor-religion.html",

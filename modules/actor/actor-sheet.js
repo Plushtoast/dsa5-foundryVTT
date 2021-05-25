@@ -8,6 +8,7 @@ import DSA5StatusEffects from "../status/status_effects.js";
 import DialogActorConfig from "../dialog/dialog-actorConfig.js";
 
 export default class ActorSheetDsa5 extends ActorSheet {
+    static equipment = ["meleeweapon", "rangeweapon", "equipment", "ammunition", "armor", "poison", "consumable"]
 
     get actorType() {
         return this.actor.data.type;
@@ -82,16 +83,20 @@ export default class ActorSheetDsa5 extends ActorSheet {
 
         const html = $(this.form).parent();
         this.collapsedBoxes = [];
-        let boxes = $(html.find(".ch-collapse i"));
+        this.openDetails = []
+        let boxes = html.find(".ch-collapse i");
         for (let box of boxes) {
             this.collapsedBoxes.push($(box).attr("class"));
+        }
+        for (const detail of $(html.find('.expandDetails.shown'))){
+            this.openDetails.push($(detail).closest('.item').attr("data-item-id"))
         }
     }
 
     _setCollapsed() {
+        const html = $(this.form).parent();
         if (this.collapsedBoxes) {
-            const html = $(this.form).parent();
-            let boxes = $(html.find(".ch-collapse i"));
+            let boxes = html.find(".ch-collapse i");
             for (let i = 0; i < boxes.length; i++) {
                 $(boxes[i]).attr("class", this.collapsedBoxes[i]);
                 if (this.collapsedBoxes[i] && this.collapsedBoxes[i].indexOf("fa-angle-down") != -1)
@@ -103,7 +108,7 @@ export default class ActorSheetDsa5 extends ActorSheet {
     async getData(options) {
         const baseData = await super.getData(options);
         const sheetData = { actor: baseData.actor.data }
-        const prepare = this.actor.prepareSheet()
+        const prepare = this.actor.prepareSheet({details: this.openDetails})
         mergeObject(sheetData.actor, prepare)
 
         sheetData.isGM = game.user.isGM;
@@ -486,7 +491,7 @@ export default class ActorSheetDsa5 extends ActorSheet {
 
         html.find('.item-dropdown').click(ev => {
             ev.preventDefault()
-            $(ev.currentTarget).closest('.item').find('.expandDetails').fadeToggle()
+            $(ev.currentTarget).closest('.item').find('.expandDetails:first').toggleClass('shown')
         })
 
         html.find('.condition-show').mousedown(ev => {
@@ -874,9 +879,9 @@ export default class ActorSheetDsa5 extends ActorSheet {
         if (!res) {
             if (this._tabs[0].active == "combat" && item.data.worn) item.data.worn.value = true
 
-            await this.actor.createEmbeddedDocuments("Item", [item]);
+            return await this.actor.createEmbeddedDocuments("Item", [item])[0];
         } else {
-            Itemdsa5.stackItems(res, item, this.actor)
+            return await Itemdsa5.stackItems(res, item, this.actor)[0]
         }
     }
 
@@ -889,13 +894,15 @@ export default class ActorSheetDsa5 extends ActorSheet {
     }
 
     async _onDrop(event) {
-        this._handleDragData(JSON.parse(event.dataTransfer.getData("text/plain")), event)
+        const dragData = JSON.parse(event.dataTransfer.getData("text/plain"))
+        this._handleDragData(dragData, event, await this._itemFromDrop(dragData, event))
     }
 
-    handleItemCopy(item, typeClass) {
-        if (["meleeweapon", "rangeweapon", "equipment", "ammunition", "armor", "poison"].includes(typeClass)) {
+    async handleItemCopy(item, typeClass) {
+
+        if (ActorSheetDsa5.equipment.includes(typeClass)) {
             item.name += " (Copy)"
-            this._addLoot(item)
+            return await this._addLoot(item)
         }
     }
 
@@ -908,8 +915,7 @@ export default class ActorSheetDsa5 extends ActorSheet {
             case "armor":
             case "poison":
             case "consumable":
-                await this._addLoot(item)
-                break;
+                return await this._addLoot(item)
             case "disadvantage":
             case "advantage":
                 await this._addVantage(item, typeClass)
@@ -979,17 +985,14 @@ export default class ActorSheetDsa5 extends ActorSheet {
         if (sourceActor && sourceActor.isOwner) sourceActor.deleteEmbeddedDocuments("Item", [item._id])
     }
 
-    async _handleDragData(dragData, originalEvent) {
+    async _itemFromDrop(dragData, originalEvent){
         let item
         let typeClass
-        let selfTarget = dragData.actorId && dragData.actorId == this.actor.data.id
+        let selfTarget = dragData.actorId && dragData.actorId == this.actor.id
 
-        if (selfTarget && !originalEvent.ctrlKey) {
-            return
-        } else if (dragData.id && dragData.pack) {
+        if (dragData.id && dragData.pack) {
             item = await DSA5_Utility.findItembyIdAndPack(dragData.id, dragData.pack);
             typeClass = item.data.type
-
         } else if (dragData.id && dragData.type == "Actor") {
             item = DSA5_Utility.findActorbyId(dragData.id);
             typeClass = item.data.type
@@ -1000,12 +1003,50 @@ export default class ActorSheetDsa5 extends ActorSheet {
             item = dragData.data
             typeClass = item.type
         }
-        if (originalEvent.ctrlKey && selfTarget) {
-            this.handleItemCopy(item, typeClass)
-        } else {
-            await this._manageDragItems(item, typeClass)
+
+        //TODO might not need the creature filter here
+        // also might use ToObject(false)
+        if (typeof item.toObject === 'function' && typeClass != 'creature'){
+            item = item.toObject(true)
         }
-        if (originalEvent.altKey && !selfTarget && ["meleeweapon", "rangeweapon", "equipment", "ammunition", "armor", "poison", "consumable"].includes(typeClass))
+
+        return {item, typeClass, selfTarget}
+    }
+
+    async _handleDragData(dragData, originalEvent, {item, typeClass, selfTarget}) {
+        if(!item) return
+
+        let container_id
+        let parentItem = $(originalEvent.target).parents(".item")
+        while (parentItem.parents(".item").attr("data-category") == "bags"){
+            parentItem = parentItem.parents(".item")
+        }
+        if (parentItem && parentItem.attr("data-category") == "bags" && ActorSheetDsa5.equipment.includes(typeClass)) {
+            if (parentItem.attr("data-item-id") != item._id) {
+                container_id = parentItem.attr("data-item-id")
+
+                item.data.parent_id = container_id
+                if(item.data.worn && item.data.worn.value)
+                    item.data.worn.value = false
+            }
+        }
+
+        if (originalEvent.ctrlKey && selfTarget) {
+            await this.handleItemCopy(item, typeClass)
+        } else if(!selfTarget) {
+            await this._manageDragItems(item, typeClass)
+        } else if (selfTarget && container_id){
+            await this.actor.updateEmbeddedDocuments("Item", [item])
+        } else if (selfTarget && ActorSheetDsa5.equipment.includes(typeClass)){
+            await this.actor.updateEmbeddedDocuments("Item",[ { _id: item._id, data: {parent_id: 0}}])
+        }
+
+        if (container_id && getProperty(item, "data.equipmentType.value") == "bags"){
+            let itemsToMove = this.actor.items.filter(x => ActorSheetDsa5.equipment.includes(x.type) && x.data.data.parent_id == item._id)
+            await this.actor.updateEmbeddedDocuments("Item", itemsToMove.map(x=> {return {_id: x.id, data: {parent_id: container_id}}}))
+        }
+
+        if (originalEvent.altKey && !selfTarget && ActorSheetDsa5.equipment.includes(typeClass))
             await this._handleRemoveSourceOnDrop(dragData, item)
 
     }

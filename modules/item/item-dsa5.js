@@ -299,7 +299,7 @@ export default class Itemdsa5 extends Item {
     static async combineItem(item1, item2, actor) {
         item1 = duplicate(item1)
         item1.data.quantity.value += item2.data.quantity.value
-        await actor.updateEmbeddedDocuments("Item", [item1])
+        return await actor.updateEmbeddedDocuments("Item", [item1])
     }
 
     static areEquals(item, item2) {
@@ -705,7 +705,7 @@ class ConsumableItemDSA extends Itemdsa5 {
     }
 
     static checkEquality(item, item2) {
-        return item2.type == item.type && item.name == item2.name && item.data.description.value == item2.data.description.value && item.data.QL == item2.data.QL
+        return item2.type == item.type && item.name == item2.name && item.data.description.value == item2.data.data.description.value && item.data.QL == item2.data.data.QL
     }
 
     static setupDialog(ev, options, item, actor) {
@@ -748,7 +748,7 @@ class ConsumableItemDSA extends Itemdsa5 {
         }
         item1.data.quantity.value = newQuantity
         item1.data.charges = newCharges
-        await actor.updateEmbeddedDocuments("Item", [item1])
+        return await actor.updateEmbeddedDocuments("Item", [item1])
     }
 
 }

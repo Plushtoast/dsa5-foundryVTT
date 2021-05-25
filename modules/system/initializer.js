@@ -32,7 +32,7 @@ export default class DSA5Initializer extends Dialog {
     async initialize() {
         try {
             if (game.settings.get(this.module, "initialized") != undefined)
-                game.settings.set(this.module, "initialized", true)
+                await game.settings.set(this.module, "initialized", true)
         } catch {}
 
 
@@ -127,7 +127,7 @@ export default class DSA5Initializer extends Dialog {
     }
 
     async dontInitialize() {
-        game.settings.set(this.module, "initialized", true)
+        await game.settings.set(this.module, "initialized", true)
         ui.notifications.notify(game.i18n.localize("initSkipped"))
     }
 

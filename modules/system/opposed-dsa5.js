@@ -28,7 +28,7 @@ export default class OpposedDsa5 {
             console.log("change start")
             OpposedDsa5.changeStartMessage(message)
         } else {
-            console.log("show dmgh")
+            console.log("show dmg")
             this.showDamage(message)
         }
     }

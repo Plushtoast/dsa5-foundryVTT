@@ -19,10 +19,6 @@ export default class ActorSheetdsa5Creature extends ActorSheetDsa5 {
         return "systems/dsa5/templates/actors/creature-sheet.html";
     }
 
-    activateListeners(html) {
-        super.activateListeners(html);
-    }
-
     async getData(options) {
         const data = await super.getData(options);
         data["sizeCategories"] = DSA5.sizeCategories
@@ -41,49 +37,24 @@ export default class ActorSheetdsa5Creature extends ActorSheetDsa5 {
     }
 
     async _addTrait(item) {
-        let res = this.actor.data.items.find(i => {
-            return i.type == "trait" && i.name == item.name
-        });
+        let res = this.actor.data.items.find(i => i.type == "trait" && i.name == item.name);
         if (!res) {
             await this._updateAPs(item.data.data.APValue.value)
-            await this.actor.createEmbeddedDocuments("Item", [item]);
+            await this.actor.createEmbeddedDocuments("Item", [item.toObject()]);
             await TraitRulesDSA5.traitAdded(this.actor, item)
         }
     }
 
-    async _onDrop(event) {
-        let dragData = JSON.parse(event.dataTransfer.getData("text/plain"));
-        let item
-        let typeClass
-        let selfTarget = dragData.actorId && dragData.actorId == this.actor.data._id
+    async _handleDragData(dragData, originalEvent, { item, typeClass, selfTarget }) {
+        if (!item) return
 
-        if (selfTarget && !event.ctrlKey) {
-            return
-        } else if (dragData.id && dragData.pack) {
-            item = await DSA5_Utility.findItembyIdAndPack(dragData.id, dragData.pack);
-            typeClass = item.data.type
-        } else if (dragData.id && dragData.type == "Actor") {
-            item = DSA5_Utility.findActorbyId(dragData.id);
-            typeClass = item.data.type
-        } else if (dragData.id) {
-            item = DSA5_Utility.findItembyId(dragData.id);
-            typeClass = item.data.type
-        } else {
-            item = dragData.data
-            typeClass = item.type
-        }
-
-        if (selfTarget && event.ctrlKey) {
-            super.handleItemCopy(item, typeClass)
-        } else {
-            switch (typeClass) {
-                case "trait":
-                    await this._addTrait(item)
-                    break;
-
-                default:
-                    super._handleDragData(dragData, event)
-            }
+        switch (typeClass) {
+            case "trait":
+                await this._addTrait(item)
+                break;
+            default:
+                super._handleDragData(dragData, originalEvent, { item, typeClass, selfTarget })
         }
     }
+
 }
