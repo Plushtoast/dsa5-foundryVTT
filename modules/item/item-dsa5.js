@@ -338,7 +338,7 @@ export default class Itemdsa5 extends Item {
             cardOptions.isOpposedTest = testData.opposable
             if (cardOptions.isOpposedTest)
                 cardOptions.title += ` - ${game.i18n.localize("Opposed")}`;
-            else if (game.settings.get("dsa5", "clearTargets")) {
+            else if (await game.settings.get("dsa5", "clearTargets")) {
                 game.user.updateTokenTargets([]);
             }
         }
@@ -739,18 +739,17 @@ class ConsumableItemDSA extends Itemdsa5 {
     }
 
     static async _applyActiveEffect(source) {
-
         let effects = source.data.effects.toObject()
-        console.log(source)
-        const effectsWithChanges = effects.filter(x => x.changes && x.changes.length > 0)
-        await source.actor.createEmbeddedDocuments("ActiveEffect", effectsWithChanges.map(x => {
-            x.origin = source.actor.uuid
-            return x
-        }))
-        await DSAActiveEffectConfig.applyAdvancedFunction(source.actor, effects, source, {qualityStep: source.data.QL})
-        const infoMsg = game.i18n.format('ActiveEffects.appliedEffect', { target: source.actor.name, source: source.name })
-        ChatMessage.create(DSA5_Utility.chatDataSetup(infoMsg));
-
+        if(effects.length > 0){
+            const effectsWithChanges = effects.filter(x => x.changes && x.changes.length > 0)
+            await source.actor.createEmbeddedDocuments("ActiveEffect", effectsWithChanges.map(x => {
+                x.origin = source.actor.uuid
+                return x
+            }))
+            await DSAActiveEffectConfig.applyAdvancedFunction(source.actor, effects, source, {qualityStep: source.data.QL})
+            const infoMsg = game.i18n.format('ActiveEffects.appliedEffect', { target: source.actor.name, source: source.name })
+            ChatMessage.create(DSA5_Utility.chatDataSetup(infoMsg));
+        }
     }
 
     static async combineItem(item1, item2, actor) {

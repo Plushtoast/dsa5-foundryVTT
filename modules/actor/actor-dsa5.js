@@ -641,8 +641,6 @@ export default class Actordsa5 extends Actor {
         let characteristics = duplicate(DSA5.characteristics)
         characteristics["-"] = "-"
 
-        console.log(inventory)
-
         return {
             totalWeight,
             totalArmor,
@@ -1281,8 +1279,8 @@ export default class Actordsa5 extends Actor {
             mergeObject(update, {
                 token: {
                     vision: true,
-                    brightSight: game.settings.get('dsa5', 'defaultBrightVision'),
-                    dimSight: game.settings.get('dsa5', 'defaultDimVision'),
+                    brightSight: await game.settings.get('dsa5', 'defaultBrightVision'),
+                    dimSight: await game.settings.get('dsa5', 'defaultDimVision'),
                     actorLink: true
                 }
             })
@@ -1365,7 +1363,7 @@ export default class Actordsa5 extends Actor {
         if (game.user.targets.size) {
             cardOptions.isOpposedTest = testData.opposable
             if (cardOptions.isOpposedTest) cardOptions.title += ` - ${game.i18n.localize("Opposed")}`;
-            else if (game.settings.get("dsa5", "clearTargets")) game.user.updateTokenTargets([]);
+            else if (await game.settings.get("dsa5", "clearTargets")) game.user.updateTokenTargets([]);
 
         }
 
@@ -1388,11 +1386,15 @@ export default class Actordsa5 extends Actor {
 
     async _dependentEffects(statusId, effect, delta) {
         const effectData = duplicate(effect)
-        if (effectData.flags.dsa5.value == 4 && ["encumbered", "stunned", "feared", "inpain", "confused"].includes(statusId)) await this.addCondition("incapacitated")
+        console.log(effectData)
+        if (effectData.flags.dsa5.value == 4 && ["encumbered", "stunned", "feared", "inpain", "confused"].includes(statusId))
+            await this.addCondition("incapacitated")
 
-        if (effectData.flags.dsa5.value == 4 && (statusId == "paralysed")) await this.addCondition("rooted")
+        if (effectData.flags.dsa5.value == 4 && (statusId == "paralysed"))
+            await this.addCondition("rooted")
 
-        if (statusId == "unconscious") await this.addCondition("prone")
+        if (statusId == "unconscious")
+            await this.addCondition("prone")
 
         if (delta > 0 && statusId == "inpain" && !this.hasCondition("bloodrush") && AdvantageRulesDSA5.hasVantage(this, game.i18n.localize('LocalizedIDs.frenzy'))) {
             await this.addCondition("bloodrush")

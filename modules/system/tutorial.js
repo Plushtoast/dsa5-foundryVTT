@@ -4,7 +4,7 @@ export default class DSA5Tutorial {
 
     static async firstTimeMessage() {
 
-        if (!(game.settings.get("dsa5", "firstTimeStart"))) {
+        if (!(await game.settings.get("dsa5", "firstTimeStart"))) {
             let msg = game.i18n.localize('WELCOME')
             ChatMessage.create(DSA5_Utility.chatDataSetup(msg))
             DSA5Tutorial.firstTimeLanguage()

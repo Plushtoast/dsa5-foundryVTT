@@ -16,7 +16,7 @@ export default class DSAActiveEffectConfig extends ActiveEffectConfig {
         }
         const config = {
             systemEffects: this.getStatusEffects(),
-            canEditMacros: game.user.isGM || game.settings.get("dsa5", "playerCanEditSpellMacro")
+            canEditMacros: game.user.isGM || await game.settings.get("dsa5", "playerCanEditSpellMacro")
         }
         let elem = $(this._element)
         elem.find(".tabs").append(`<a class="item" data-tab="advanced"><i class="fas fa-shield-alt"></i>${game.i18n.localize("advanced")}</a>`)

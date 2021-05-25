@@ -166,23 +166,24 @@ export default class DSA5StatusEffects {
         if (immune) return immune
 
         let delta, newValue
-
+        let update
         if (auto) {
             newValue = Math.min(existing.data.flags.dsa5.max, absolute ? value : existing.data.flags.dsa5.auto + value)
             delta = newValue - existing.data.flags.dsa5.auto
-            existing.data.flags.dsa5.auto = newValue;
+            update = { flags: { dsa5: { auto: newValue, manual: existing.data.flags.dsa5.manual}}}
         } else {
             newValue = absolute ? value : existing.data.flags.dsa5.manual + value
             delta = newValue - existing.data.flags.dsa5.manual
-            existing.data.flags.dsa5.manual = newValue;
+            update = { flags: { dsa5: { manual: newValue, auto: existing.data.flags.dsa5.auto  } }}
         }
 
         if (delta == 0)
             return existing
 
-        existing.data.flags.dsa5.value = Math.max(0, Math.min(4, existing.data.flags.dsa5.manual + existing.data.flags.dsa5.auto))
+        update.flags.dsa5.value = Math.max(0, Math.min(4, update.flags.dsa5.manual + update.flags.dsa5.auto))
+        await existing.update(update)
         await actor._dependentEffects(existing.data.flags.core.statusId, existing, delta)
-        return await actor.updateEmbeddedDocuments("ActiveEffect", [existing.data])
+        return existing
     }
 
 

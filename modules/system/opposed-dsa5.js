@@ -145,7 +145,7 @@ export default class OpposedDsa5 {
             })
             message.data.flags.data.startMessagesList = startMessagesList;
 
-            if (game.settings.get("dsa5", "clearTargets")) game.user.updateTokenTargets([]);
+            if (await game.settings.get("dsa5", "clearTargets")) game.user.updateTokenTargets([]);
 
         } else {
             game.user.targets.forEach(async target => {
@@ -389,7 +389,7 @@ export default class OpposedDsa5 {
     }
 
     static async renderOpposedResult(formattedOpposeResult, options = {}) {
-        formattedOpposeResult.hideData = game.settings.get("dsa5", "hideOpposedDamage");
+        formattedOpposeResult.hideData = await game.settings.get("dsa5", "hideOpposedDamage");
         let html = await renderTemplate("systems/dsa5/templates/chat/roll/opposed-result.html", formattedOpposeResult)
         let chatOptions = {
             user: game.user.id,

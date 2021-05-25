@@ -16,7 +16,7 @@ import DSA5SoundEffect from "./dsa-soundeffect.js";
 
 export default class DiceDSA5 {
     static async setupDialog({ dialogOptions, testData, cardOptions }) {
-        let rollMode = game.settings.get("core", "rollMode");
+        let rollMode = await game.settings.get("core", "rollMode");
         let sceneStress = "challenging";
 
         if (typeof testData.source.toObject === 'function')
@@ -351,12 +351,12 @@ export default class DiceDSA5 {
                     result.description += ", " + game.i18n.localize("attackOfOpportunity")
                 break;
             case -3:
-                if (testData.mode == "attack" && source.data.traitType.value == "meleeAttack" && game.settings.get("dsa5", "meleeBotchTableEnabled")) {
+                if (testData.mode == "attack" && source.data.traitType.value == "meleeAttack" && (await game.settings.get("dsa5", "meleeBotchTableEnabled"))) {
                     result.description += `, <a class="roll-button melee-botch" data-weaponless="true"><i class="fas fa-dice"></i>${game.i18n.localize('CriticalFailure')} ${game.i18n.localize("table")}</a>`
-                } else if (testData.mode == "attack" && game.settings.get("dsa5", "rangeBotchTableEnabled")) {
+                } else if (testData.mode == "attack" && (await game.settings.get("dsa5", "rangeBotchTableEnabled"))) {
                     result.description += `, <a class="roll-button range-botch" data-weaponless="true"><i class="fas fa-dice"></i>${game.i18n.localize('CriticalFailure')} ${game.i18n.localize("table")}</a>`
                 } else {
-                    result.description += ", " + game.i18n.localize("selfDamage") + (await new Roll("1d6+2").evaluate({ async: true }).total)
+                    result.description += ", " + game.i18n.localize("selfDamage") + (await new Roll("1d6+2").evaluate({ async: true })).total
                 }
                 break;
             case 2:
@@ -495,14 +495,14 @@ export default class DiceDSA5 {
                     result.description += ", " + game.i18n.localize("attackOfOpportunity")
                 break;
             case -3:
-                if (testData.mode == "attack" && source.type == "meleeweapon" && game.settings.get("dsa5", "meleeBotchTableEnabled"))
+                if (testData.mode == "attack" && source.type == "meleeweapon" && (await game.settings.get("dsa5", "meleeBotchTableEnabled")))
                     result.description += `, <a class="roll-button melee-botch" data-weaponless="${source.data.combatskill.value == game.i18n.localize('LocalizedIDs.wrestle')}"><i class="fas fa-dice"></i>${game.i18n.localize('CriticalFailure')} ${game.i18n.localize("table")}</a>`
-                else if (testData.mode == "attack" && game.settings.get("dsa5", "rangeBotchTableEnabled"))
+                else if (testData.mode == "attack" && (await game.settings.get("dsa5", "rangeBotchTableEnabled")))
                     result.description += `, <a class="roll-button range-botch" data-weaponless="false"><i class="fas fa-dice"></i>${game.i18n.localize('CriticalFailure')} ${game.i18n.localize("table")}</a>`
-                else if (testData.mode != "attack" && game.settings.get("dsa5", "defenseBotchTableEnabled"))
+                else if (testData.mode != "attack" && (await game.settings.get("dsa5", "defenseBotchTableEnabled")))
                     result.description += `, <a class="roll-button defense-botch" data-weaponless="${source.data.combatskill.value == game.i18n.localize('LocalizedIDs.wrestle')}"><i class="fas fa-dice"></i>${game.i18n.localize('CriticalFailure')} ${game.i18n.localize("table")}</a>`
                 else
-                    result.description += ", " + game.i18n.localize("selfDamage") + (await new Roll("1d6+2").evaluate({ async: true }).total)
+                    result.description += ", " + game.i18n.localize("selfDamage") + (await new Roll("1d6+2").evaluate({ async: true })).total
                 break;
             case 2:
                 if (testData.mode == "attack") {

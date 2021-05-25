@@ -54,7 +54,7 @@ export default function() {
 
         if (value) {
             let textEffect = game.dsa5.config.effectTextStyle
-            let color = game.settings.get("dsa5", "statusEffectCounterColor")
+            let color = await game.settings.get("dsa5", "statusEffectCounterColor")
             textEffect._fill = /^#[0-9A-F]+$/.test(color) ? color : "#000000"
             let text = this.effects.addChild(new PreciseText(value, textEffect))
             text.x = icon.x;

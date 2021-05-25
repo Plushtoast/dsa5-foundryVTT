@@ -49,12 +49,12 @@ export default function() {
             })
         }
 
-        if (game.modules.get("vtta-tokenizer") && game.modules.get("vtta-tokenizer").active && !game.settings.get("dsa5", "tokenizerSetup") && game.user.isGM) {
+        if (game.modules.get("vtta-tokenizer") && game.modules.get("vtta-tokenizer").active && !(await game.settings.get("dsa5", "tokenizerSetup")) && game.user.isGM) {
             await game.settings.set("vtta-tokenizer", "default-frame-pc", "systems/dsa5/icons/backgrounds/token_green.webp")
             await game.settings.set("vtta-tokenizer", "default-frame-npc", "systems/dsa5/icons/backgrounds/token_black.webp")
             await game.settings.set("dsa5", "tokenizerSetup", true)
         }
-        if (game.modules.get("dice-so-nice") && game.modules.get("dice-so-nice").active && !game.settings.get("dsa5", "diceSetup") && game.user.isGM) {
+        if (game.modules.get("dice-so-nice") && game.modules.get("dice-so-nice").active && !(await game.settings.get("dsa5", "diceSetup")) && game.user.isGM) {
             await game.settings.set("dice-so-nice", "immediatelyDisplayChatMessages", true)
             await game.settings.set("dsa5", "diceSetup", true)
         }

@@ -50,7 +50,7 @@ export default function migrateWorld() {
     Hooks.once("ready", async function() {
         if (!game.user.isGM) return
 
-        const currentVersion = game.settings.get("dsa5", "migrationVersion")
+        const currentVersion = await game.settings.get("dsa5", "migrationVersion")
         const NEEDS_MIGRATION_VERSION = 6
         const needsMigration = currentVersion < NEEDS_MIGRATION_VERSION
 
