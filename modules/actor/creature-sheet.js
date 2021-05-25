@@ -29,7 +29,7 @@ export default class ActorSheetdsa5Creature extends ActorSheetDsa5 {
         let item = this.actor.data.items.find(x => x.id == itemId)
         switch (item.type) {
             case "trait":
-                await this._updateAPs(item.data.APValue.value * -1)
+                await this._updateAPs(item.data.data.APValue.value * -1)
                 TraitRulesDSA5.traitRemoved(this.actor, item)
                 break;
         }
