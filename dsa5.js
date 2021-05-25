@@ -17,7 +17,7 @@ import SpecialabilityRulesDSA5 from "./modules/system/specialability-rules-dsa5.
 import ChatMessageDSA5Roll from "./modules/chat/ChatMessageDSA5.js";
 import DSA5ChatListeners from "./modules/system/chat_listeners.js";
 import DSA5Payment from "./modules/system/payment.js"
-import { DSA5CombatTracker, DSA5Combat } from "./modules/hooks/combat_tracker.js";
+import { DSA5CombatTracker, DSA5Combat, DSA5Combatant } from "./modules/hooks/combat_tracker.js";
 import DSAActiveEffectConfig from "./modules/status/active_effects.js";
 
 Hooks.once("init", async function() {
@@ -53,7 +53,8 @@ Hooks.once("init", async function() {
     CONFIG.ChatMessage.template = "systems/dsa5/templates/chat/chat-message.html"
     CONFIG.ChatMessage.documentClass = ChatMessageDSA5Roll
     CONFIG.ui.combat = DSA5CombatTracker
-    CONFIG.combat = DSA5Combat
+    CONFIG.Combat.documentClass = DSA5Combat
+    CONFIG.Combatant.documentClass = DSA5Combatant
     CONFIG.ActiveEffect.sheetClass = DSAActiveEffectConfig
 });
 Hooks.once("setup", async function() {

@@ -15,7 +15,7 @@ export default class DSA5ChatAutoCompletion {
                     }).concat({ name: game.i18n.localize('regenerate'), type: "regeneration" }))
             })
         }
-        this.regex = /^\/(sk|at|pa|sp|li|rq|gc) /
+        this.regex = /^\/(sk|at|pa|sp|li|rq|gc|w) /
         this.filtering = false
         this.constants = {
             dodge: game.i18n.localize("dodge"),
@@ -52,13 +52,17 @@ export default class DSA5ChatAutoCompletion {
                 return false
             }
 
-            let cmd = val.substring(1, 3).toUpperCase()
-            let search = val.substring(3).toLowerCase().trim()
+            const cmd = this._getCmd(val)
+            const search = val.substring(1 + cmd.length).toLowerCase().trim()
             this[`_filter${cmd}`](search)
             this.filtering = true
         } else {
             this._closeQuickfind()
         }
+    }
+
+    _getCmd(val){
+        return val.substring(1, 3).toUpperCase().trim()
     }
 
     _completeCurrentEntry(target) {
@@ -68,6 +72,12 @@ export default class DSA5ChatAutoCompletion {
     _closeQuickfind() {
         this.filtering = false
         this.anchor.find(".quickfind").remove()
+    }
+
+    _filterW(search){
+        let result = game.users.contents.filter(x => x.active && x.name.toLowerCase().trim().indexOf(search) != -1).map(x => {return {name: x.name, type:"user"}})
+        this._checkEmpty(result)
+        this._setList(result, "W")
     }
 
     _filterAT(search) {
@@ -164,10 +174,14 @@ export default class DSA5ChatAutoCompletion {
                         target.removeClass("focus").next(".quick-item").addClass("focus")
                     return false;
                 case 13: // Enter
-                    ev.stopPropagation()
-                    ev.preventDefault()
-                    this._quickSelect(target);
-                    return false;
+                    if (target.attr("data-category") == "W"){
+                        break
+                    }else{
+                        ev.stopPropagation()
+                        ev.preventDefault()
+                        this._quickSelect(target);
+                        return false;
+                    }
                 case 9:
                     ev.stopPropagation()
                     ev.preventDefault()
@@ -208,11 +222,15 @@ export default class DSA5ChatAutoCompletion {
         }
     }
 
+    _quickW(target, actor, tokenId){
+
+    }
+
     _quickSK(target, actor, tokenId) {
         switch(target.attr("data-type")){
             case "skill":
                 let skill = actor.items.find(i => i.name == target.text() && i.type == "skill")
-                if (skill) actor.setupSkill(skill.data, {}, tokenId).then(setupData => {actor.basicTest(setupData)});               
+                if (skill) actor.setupSkill(skill.data, {}, tokenId).then(setupData => {actor.basicTest(setupData)});
                 break
             case "attribute":
                 let characteristic = Object.keys(game.dsa5.config.characteristics).find(key => game.i18n.localize(game.dsa5.config.characteristics[key]) == target.text())
@@ -222,7 +240,7 @@ export default class DSA5ChatAutoCompletion {
                 actor.setupRegeneration("regenerate", {}, tokenId).then(setupData => { actor.basicTest(setupData) });
                 break
         }
-        
+
     }
 
     _resetChatAutoCompletion(){
@@ -233,13 +251,13 @@ export default class DSA5ChatAutoCompletion {
     _quickGC(target){
         const modifier = Number($('#chat-message').val().match(/(-)?\d+/g)) || 0
         this._resetChatAutoCompletion()
-        DSA5ChatAutoCompletion.showGCMessage(target.text(), modifier)       
+        DSA5ChatAutoCompletion.showGCMessage(target.text(), modifier)
     }
 
     _quickRQ(target){
         const modifier = Number($('#chat-message').val().match(/(-)?\d+/g)) || 0
         this._resetChatAutoCompletion()
-        DSA5ChatAutoCompletion.showRQMessage(target.text(), modifier)       
+        DSA5ChatAutoCompletion.showRQMessage(target.text(), modifier)
     }
 
     static showRQMessage(target, modifier = 0){
@@ -285,7 +303,7 @@ export default class DSA5ChatAutoCompletion {
             }
         }
     }
-    
+
     _quickAT(target, actor, tokenId) {
         let text = target.text()
         if (this.constants.attackWeaponless == text) {
@@ -298,7 +316,7 @@ export default class DSA5ChatAutoCompletion {
             let traitTypes = ["meleeAttack", "rangeAttack"]
             let result = actor.data.items.find(x => { return types.includes(x.type) && x.name == target.text() })
             if(!result) result = actor.data.items.find(x => { return x.type == "trait" && x.name == target.text() && traitTypes.includes(x.data.traitType.value) })
-            
+
             if (result) {
                 actor.setupWeapon(result, "attack", {}, tokenId).then(setupData => {
                     actor.basicTest(setupData)

@@ -897,7 +897,6 @@ class MeleeweaponDSA5 extends Itemdsa5 {
             Itemdsa5.getDefenseMalus(situationalModifiers, actor)
             mergeObject(data, {
                 visionOptions: DSA5.meleeRangeVision(data.mode),
-                defenseCount: 0,
                 showDefense: true,
                 wrongHandDisabled: wrongHandDisabled && source.data.worn.offHand,
                 melee: true,
@@ -1474,7 +1473,6 @@ class TraitItemDSA5 extends Itemdsa5 {
             Itemdsa5.getDefenseMalus(situationalModifiers, actor)
             mergeObject(data, {
                 visionOptions: DSA5.meleeRangeVision(data.mode),
-                defenseCount: 0,
                 showDefense: true,
                 wrongHandDisabled: false,
                 melee: true,

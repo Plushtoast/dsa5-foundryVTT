@@ -2290,17 +2290,32 @@ select.noAppearance {
     color: rgb(92, 92, 92);
 }
 
-.sheet-tabs .item{
-    border-top: 1px solid #b5b3a4;
-    border-bottom: 1px solid #b5b3a4;
+.combatant-advanced{
+    flex: 0 0 48px;
+    position: relative;
+    height:50px;
+}
+.combatant-advanced i{
+    position:absolute;
+    bottom:0;
+    right:0;
+    color: #000;
+    width:14px;
+
 }
 
-.sheet nav.sheet-tabs{
-    border:none;
+.combatant-advanced i.reversed{
+    transform:scaleX(-1);
 }
 
-.sheet-tabs .item.active{
-    border-right: 1px solid #b5b3a4;
-    border-left: 1px solid #b5b3a4;
-    border-bottom: none;
+.combatant-advanced i.def:after{
+    content:  attr(data-defenseCount);
+    position: absolute;
+    left:0;
+    right:0;
+    text-align: center;
+    z-index:1;
+    color:white;
+     font-size:10px;
+    line-height: 12px;
 }

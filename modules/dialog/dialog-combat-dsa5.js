@@ -9,7 +9,6 @@ export default class DSA5CombatDialog extends Dialog {
         return options;
     }
 
-
     activateListeners(html) {
         super.activateListeners(html)
         let roman = ['', ' I', ' II', ' III', ' IV', ' V', ' VI', ' VII', ' VIII', ' IX']

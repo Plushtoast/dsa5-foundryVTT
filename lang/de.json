@@ -1067,6 +1067,10 @@
         "soundConfigHint": "Töne für Talente und Angriffe"
     },
 
+    "COMBATTRACKER": {
+        "noDefenses": "Anzahl Verteidigungen"
+    },
+
     "CHATFATE": {
         "faitepointUsed": "Das Schicksal ändert sich",
         "reroll": "{character} würfelt erneut.",

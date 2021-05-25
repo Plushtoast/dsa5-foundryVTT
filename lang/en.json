@@ -1087,6 +1087,10 @@
         "soundConfigHint": "Sounds for skills and attacks"
     },
 
+    "COMBATTRACKER": {
+        "noDefenses": "Defense count"
+    },
+
     "CHATFATE": {
         "faitepointUsed": "The fate is changing",
         "reroll": "{character} rolls again.",

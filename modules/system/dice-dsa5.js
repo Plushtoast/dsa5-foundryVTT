@@ -47,7 +47,8 @@ export default class DiceDSA5 {
             hasSituationalModifiers: situationalModifiers.length > 0,
             situationalModifiers: situationalModifiers,
             rollMode: dialogOptions.data.rollMode || rollMode,
-            rollModes: CONFIG.Dice.rollModes ? CONFIG.Dice.rollModes : CONFIG.rollModes
+            rollModes: CONFIG.Dice.rollModes ? CONFIG.Dice.rollModes : CONFIG.rollModes,
+            defenseCount: await this.getDefenseCount(testData)
         })
         mergeObject(cardOptions, {
             user: game.user.id,
@@ -76,6 +77,12 @@ export default class DiceDSA5 {
         }
         reject()
     }
+
+    static async getDefenseCount(testData) {
+        if (game.combat) return await game.combat.getDefenseCount(testData.extra.speaker)
+        return 0
+    }
+
 
     static _rollSingleD20(roll, res, id, modifier, testData, combatskill = "", multiplier = 1) {
         let description = "";
@@ -855,6 +862,7 @@ export default class DiceDSA5 {
                 rollResults = this.rollCombatskill(testData)
                 break;
             case "trait":
+                if (testData.mode == "parry") await this.updateDefenseCount(testData)
                 rollResults = testData.mode == "damage" ? this.rollDamage(testData) : await this.rollCombatTrait(testData)
                 break
             case "regenerate":
@@ -862,9 +870,11 @@ export default class DiceDSA5 {
                 break
             case "meleeweapon":
             case "rangeweapon":
+                if(testData.mode == "parry") await this.updateDefenseCount(testData)
                 rollResults = testData.mode == "damage" ? this.rollDamage(testData) : await this.rollWeapon(testData)
                 break;
             case "dodge":
+                await this.updateDefenseCount(testData)
                 rollResults = this.rollStatus(testData)
                 break;
             case "poison":
@@ -874,10 +884,14 @@ export default class DiceDSA5 {
             default:
                 rollResults = this.rollAttribute(testData)
         }
-
         mergeObject(rollResults, deepClone(testData.extra))
         return rollResults
     }
+
+    static async updateDefenseCount(testData){
+        if (game.combat) await game.combat.updateDefenseCount(testData.extra.speaker)
+    }
+
 
     static _compareWeaponReach(weapon, testData) {
         return Math.min(0, DSA5.meleeRangesArray.indexOf(weapon.data.reach.value) - DSA5.meleeRangesArray.indexOf(testData.opposingWeaponSize)) * 2

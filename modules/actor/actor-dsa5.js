@@ -1056,7 +1056,6 @@ export default class Actordsa5 extends Actor {
                 rollMode: options.rollMode,
                 combatSpecAbs: combatskills,
                 showDefense: true,
-                defenseCount: 0,
                 situationalModifiers
             },
             callback: (html) => {
