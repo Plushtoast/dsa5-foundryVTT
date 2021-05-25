@@ -36,7 +36,6 @@ export default function() {
     })
 
     TextEditor._enrichHTML = TextEditor.enrichHTML
-
     TextEditor.enrichHTML = function(content, { secrets = false, entities = true, links = true, rolls = true, rollData = null } = {}) {
         let result = TextEditor._enrichHTML(content, { secrets, entities, links, rolls, rollData })
         return DSA5_Utility.customEntityLinks(DSA5_Utility.replaceConditions(result))

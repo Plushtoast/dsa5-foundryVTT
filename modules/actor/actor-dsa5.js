@@ -181,6 +181,7 @@ export default class Actordsa5 extends Actor {
                     case "equipment":
                         apply = item.data.data.worn.wearable && item.data.data.worn.value
                         break
+                    case "consumable":
                     case "combatskill":
                     case "spell":
                     case "liturgy":
@@ -210,6 +211,11 @@ export default class Actordsa5 extends Actor {
                     botch: 20,
                     crit: 1,
                     global: []
+                },
+                status: {
+                    initiative: {
+                        multiplier: 1
+                    }
                 },
                 totalArmor: 0,
                 carryModifier: 0,
@@ -438,7 +444,6 @@ export default class Actordsa5 extends Actor {
         for(let container of actorData.items.filter(x => x.type == "equipment" && x.data.equipmentType.value == "bags")){
             containers.set(container._id, [])
         }
-        console.log(sheetInfo)
 
         for (let i of actorData.items) {
             try {

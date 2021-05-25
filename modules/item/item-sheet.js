@@ -285,6 +285,8 @@ class ConsumableSheetDSA5 extends ItemSheetdsa5 {
     setupEffect(ev) {
         this.item.setupEffect()
     }
+
+
 }
 
 

@@ -6,6 +6,7 @@ import AdvantageRulesDSA5 from "../system/advantage-rules-dsa5.js";
 import DSA5 from "../system/config-dsa5.js";
 import SpecialabilityRulesDSA5 from "../system/specialability-rules-dsa5.js";
 import ItemRulesDSA5 from "../system/item-rules-dsa5.js";
+import DSAActiveEffectConfig from "../status/active_effects.js";
 
 export default class Itemdsa5 extends Item {
     static defaultImages = {
@@ -708,7 +709,7 @@ class ConsumableItemDSA extends Itemdsa5 {
         return item2.type == item.type && item.name == item2.name && item.data.description.value == item2.data.data.description.value && item.data.QL == item2.data.data.QL
     }
 
-    static setupDialog(ev, options, item, actor) {
+    static async setupDialog(ev, options, item, actor) {
         let title = game.i18n.format("CHATNOTIFICATION.usesItem", { actor: item.actor.name, item: item.name })
 
         if (!item.isOwned)
@@ -726,14 +727,30 @@ class ConsumableItemDSA extends Itemdsa5 {
         let effect = DSA5_Utility.replaceDies(item.data.data.QLList.split("\n")[item.data.data.QL - 1], true)
         let msg = `<div><b>${title}</b></div><div>${item.data.data.description.value}</div><div><b>${game.i18n.localize('effect')}</b>: ${effect}</div>`
         if (newQuantity == 0) {
-            item.actor.deleteEmbeddedDocuments("Item", [item.data._id])
+            await item.actor.deleteEmbeddedDocuments("Item", [item.data._id])
         } else {
-            item.update({
+            await item.update({
                 'data.quantity.value': newQuantity,
                 'data.charges': newCharges
             })
         }
-        ChatMessage.create(DSA5_Utility.chatDataSetup(msg))
+        await ChatMessage.create(DSA5_Utility.chatDataSetup(msg))
+        await this._applyActiveEffect(item)
+    }
+
+    static async _applyActiveEffect(source) {
+
+        let effects = source.data.effects.toObject()
+        console.log(source)
+        const effectsWithChanges = effects.filter(x => x.changes && x.changes.length > 0)
+        await source.actor.createEmbeddedDocuments("ActiveEffect", effectsWithChanges.map(x => {
+            x.origin = source.actor.uuid
+            return x
+        }))
+        await DSAActiveEffectConfig.applyAdvancedFunction(source.actor, effects, source, {qualityStep: source.data.QL})
+        const infoMsg = game.i18n.format('ActiveEffects.appliedEffect', { target: source.actor.name, source: source.name })
+        ChatMessage.create(DSA5_Utility.chatDataSetup(infoMsg));
+
     }
 
     static async combineItem(item1, item2, actor) {

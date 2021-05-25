@@ -12,7 +12,7 @@ export default class DSAActiveEffectConfig extends ActiveEffectConfig {
 
         const advancedFunctions = ["none", "systemEffect", "macro"].map(x => `ActiveEffects.advancedFunctions.${x}`)
         const effectConfigs = {
-            hasSpellEffects: ["spell", "liturgy", "ritual", "ceremony"].includes(getProperty(this.object, "parent.type"))
+            hasSpellEffects: ["spell", "liturgy", "ritual", "ceremony", "consumable"].includes(getProperty(this.object, "parent.type"))
         }
         const config = {
             systemEffects: this.getStatusEffects(),

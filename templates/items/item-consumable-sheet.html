@@ -41,6 +41,7 @@
     <nav class="sheet-tabs tabs" data-tab-container="primary">
         <a class="item active" data-tab="description">{{localize "Description"}}</a>
         <a class="item" data-tab="details">{{localize "Details"}}</a>
+        <a class="item" data-tab="effects">{{localize "statuseffects"}}</a>
     </nav>
 
     <section class="content">
@@ -83,5 +84,6 @@
                 <textarea class="input-text" type="text" name="data.QLList" data-dtype="String">{{data.QLList}}</textarea>
             </div>
         </div>
+        {{> systems/dsa5/templates/items/item-effects.html}}
     </section>
 </form>
