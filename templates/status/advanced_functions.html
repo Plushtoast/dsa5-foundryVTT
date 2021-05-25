@@ -21,3 +21,9 @@
     {{/if}}
 </div>
 {{/when}}
+ {{#when effect.flags.dsa5.advancedFunction 'eq' '3'}}
+<div class="form-group">
+    <label class="label-text">{{localize 'ActiveEffects.creature'}}</label>
+    <input type="text" name="flags.dsa5.args4" value="{{effect.flags.dsa5.args4}}" />
+</div>
+{{/when}}

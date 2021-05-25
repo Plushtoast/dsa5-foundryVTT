@@ -749,8 +749,8 @@ class ConsumableItemDSA extends Itemdsa5 {
                 x.origin = source.actor.uuid
                 return x
             }))
-            await DSAActiveEffectConfig.applyAdvancedFunction(source.actor, effects, source, {qualityStep: source.data.QL})
-            const infoMsg = game.i18n.format('ActiveEffects.appliedEffect', { target: source.actor.name, source: source.name })
+            const msg = await DSAActiveEffectConfig.applyAdvancedFunction(source.actor, effects, source, {qualityStep: source.data.QL})
+            const infoMsg = `${game.i18n.format('ActiveEffects.appliedEffect', { target: source.actor.name, source: source.name })}${msg || ""}`
             ChatMessage.create(DSA5_Utility.chatDataSetup(infoMsg));
         }
     }

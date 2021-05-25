@@ -10,7 +10,7 @@ export default class DSAActiveEffectConfig extends ActiveEffectConfig {
     async _render(force = false, options = {}) {
         await super._render(force, options);
 
-        const advancedFunctions = ["none", "systemEffect", "macro"].map(x => `ActiveEffects.advancedFunctions.${x}`)
+        const advancedFunctions = ["none", "systemEffect", "macro", "creature"].map(x => `ActiveEffects.advancedFunctions.${x}`)
         const effectConfigs = {
             hasSpellEffects: ["spell", "liturgy", "ritual", "ceremony", "consumable"].includes(getProperty(this.object, "parent.type"))
         }
@@ -43,7 +43,7 @@ export default class DSAActiveEffectConfig extends ActiveEffectConfig {
     }
 
     static async applyAdvancedFunction(actor, effects, source, testData) {
-
+        let msg = ""
         for (const ef of effects) {
             try {
                 const customEf = Number(getProperty(ef, "flags.dsa5.advancedFunction"))
@@ -64,6 +64,9 @@ export default class DSAActiveEffectConfig extends ActiveEffectConfig {
                     case 2: //Macro
                         await eval(`(async () => {${getProperty(ef, "flags.dsa5.args3")}})()`)
                         break
+                    case 3:
+                        msg += `<p><b>${game.i18n.localize('ActiveEffects.advancedFunctions.creature')}</b>:</p><p>${getProperty(ef, "flags.dsa5.args4")}</p>`
+                        break
                 }
             } catch (exception) {
                 console.warn("Unable to apply advanced effect")
@@ -71,6 +74,7 @@ export default class DSAActiveEffectConfig extends ActiveEffectConfig {
                 console.warn(ef)
             }
         }
+        return msg
     }
 
     dropDownMenu() {

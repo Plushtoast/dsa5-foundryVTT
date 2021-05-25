@@ -819,13 +819,15 @@
         "applySelf": "Effekt (Selbst)",
         "appliedEffect": "Effekt <b>{source}</b> wurde auf <b>{target}</b> übertragen.",
         "custom": "Sondereffekt",
+        "creature": "Akteuerlink (z.b. das5-core.corebestiary.Gotongi)",
         "placeholder": {
             "macros": "Macros können auf diese Variablen zugreifen:\nactor - Der anvisierte Akteur\ntestData - All Daten für die aktuelle Probe\nsource - Die Quelle des Macros"
         },
         "advancedFunctions": {
             "none": "Nothing",
             "systemEffect": "Systemeffekt",
-            "macro": "Macro"
+            "macro": "Macro",
+            "creature": "Beschwörung/Gestaltwandlung"
         }
 
     },

@@ -830,13 +830,15 @@
         "applySelf": "Effect (Self)",
         "appliedEffect": "Effect <b>{source}</b> applied to <b>{target}</b>.",
         "custom": "Special effect",
+        "creature": "Actorlink (f.e. das5-core.coreenbestiary.Gotongi)",
         "placeholder": {
             "macros": "Macros have access to the following variables:\nactor - The targeted actor\ntestData - All data for the current check\nsource - The source of the macro"
         },
         "advancedFunctions": {
             "none": "Nichts",
             "systemEffect": "System effect",
-            "macro": "Macro"
+            "macro": "Macro",
+            "creature": "Conjuring/Shapeshift"
         }
     },
 

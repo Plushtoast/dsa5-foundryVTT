@@ -19,6 +19,7 @@ import DSA5ChatListeners from "./modules/system/chat_listeners.js";
 import DSA5Payment from "./modules/system/payment.js"
 import { DSA5CombatTracker, DSA5Combat, DSA5Combatant } from "./modules/hooks/combat_tracker.js";
 import DSAActiveEffectConfig from "./modules/status/active_effects.js";
+import DSA5Hotbar from "./modules/system/tokenHotbar.js";
 
 Hooks.once("init", async function() {
     console.log("Initializing DSA5 system")
@@ -53,6 +54,7 @@ Hooks.once("init", async function() {
     CONFIG.ChatMessage.template = "systems/dsa5/templates/chat/chat-message.html"
     CONFIG.ChatMessage.documentClass = ChatMessageDSA5Roll
     CONFIG.ui.combat = DSA5CombatTracker
+    CONFIG.ui.hotbar = DSA5Hotbar
     CONFIG.Combat.documentClass = DSA5Combat
     CONFIG.Combatant.documentClass = DSA5Combatant
     CONFIG.ActiveEffect.sheetClass = DSAActiveEffectConfig

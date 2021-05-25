@@ -1170,8 +1170,8 @@ export default class DiceDSA5 {
                     x.origin = actor.uuid
                     return x
                 }))
-                await DSAActiveEffectConfig.applyAdvancedFunction(actor, effects, source, testData)
-                const infoMsg = game.i18n.format('ActiveEffects.appliedEffect', { target: actor.name, source: source.name })
+                const msg = await DSAActiveEffectConfig.applyAdvancedFunction(actor, effects, source, testData)
+                const infoMsg = `${game.i18n.format('ActiveEffects.appliedEffect', { target: actor.name, source: source.name })}${msg || ""}`
                 ChatMessage.create(DSA5_Utility.chatDataSetup(infoMsg));
             }
         } else {

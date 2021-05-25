@@ -2332,3 +2332,39 @@ select.noAppearance {
     overflow:hidden;
     border:1px solid black;
 }
+
+.tokenQuickHot{
+    position:absolute;
+    top: 0;
+    height: 35px;
+    left:5px;
+    right:7px;
+    z-index: -2;
+    border-top-left-radius: 5px;
+    border-top-right-radius: 5px;
+
+    transition: transform 0.3s ease-in-out;
+}
+.tokenQuickHot.expanded{
+    transform: translateY(-45px)
+}
+.tokenQuickHot li{
+    background-color:rgba(14, 12, 12, 0.3);
+    display:inline-block;
+    width:33px;
+    height: 33px;
+    border: 1px solid black;
+    pointer-events: all;
+    background-size:cover;
+    box-shadow: inset 0px 0px 25px #403014;
+    background: url(../icons/backgrounds/macrobg.webp);
+}
+.tokenQuickHot li:hover{
+    border: 1px solid red;
+    cursor:pointer;
+}
+.tokenQuickHot div{
+    background-size:cover;
+    height:100%;
+    width:100%;
+}
