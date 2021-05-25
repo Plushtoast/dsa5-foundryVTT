@@ -391,6 +391,9 @@ export default class Itemdsa5 extends Item {
             properties.push(`<b>${game.i18n.localize("price")}</b>: ${chatData.data.price.D} <div title="${game.i18n.localize("Money-D")}" class="chatmoney money-D"></div>, ${chatData.data.price.S} <div title="${game.i18n.localize("Money-S")}" class="chatmoney money-S"></div>, ${chatData.data.price.H} <div title="${game.i18n.localize("Money-H")}" class="chatmoney money-H"></div>, ${chatData.data.price.K} <div title="${game.i18n.localize("Money-K")}" class="chatmoney money-K"></div>`);
         }
 
+        if(this.pack)
+            chatData.itemLink = `@Compendium[${this.pack}.${this.id}]`
+
         if (chatData.img.includes("/blank.webp"))
             chatData.img = null;
 

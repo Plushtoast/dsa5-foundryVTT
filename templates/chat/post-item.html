@@ -1,5 +1,5 @@
 <div class="dsa5 post-item" data-transfer="{{transfer}}">
-    <h3><b>{{name}}</b></h3>
+    <h3><b>{{name}}</b><span class="tinyEntityLink">{{{itemLink}}}</span></h3>
     {{#if img}}
     <div class="center">
         <img src="{{img}}" title="{{name}}" /> </div>{{/if}}
@@ -8,4 +8,6 @@
 
     {{#each properties as |property p|}}
     <div class="chatLineHeight">{{{property}}}</div><br> {{/each}}
+
+
 </div>

@@ -2323,3 +2323,12 @@ select.noAppearance {
      font-size:10px;
     line-height: 12px;
 }
+
+.tinyEntityLink a{
+    width: 22px;
+    overflow: hidden;
+    font-size: 12px;
+    float: right;
+    overflow:hidden;
+    border:1px solid black;
+}
