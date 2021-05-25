@@ -2356,7 +2356,7 @@ select.noAppearance {
     border: 1px solid black;
     pointer-events: all;
     background-size:cover;
-    box-shadow: inset 0px 0px 25px #403014;
+    box-shadow: inset 0px 0px 10px #403014;
     background: url(../icons/backgrounds/macrobg.webp);
 }
 .tokenQuickHot li:hover{
