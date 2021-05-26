@@ -1,3 +1,4 @@
+import Actordsa5 from '../actor/actor-dsa5.js';
 import DSA5 from './config-dsa5.js'
 
 export default class DSA5_Utility {
@@ -249,6 +250,24 @@ export default class DSA5_Utility {
         } else {
             return "EXP.inexperienced";
         }
+    }
+
+    static async emptyActor(attrs = 12) {
+        const actor = await Actordsa5.create({
+            name: "Alrik",
+            type: "npc",
+            items: [],
+            data: {
+                status: { wounds: { value: 50 }, fatePoints: {} },
+                characteristics: {
+                    mu: { initial: attrs }, kl: { initial: attrs }, in: { initial: attrs }, ch: { initial: attrs },
+                    ff: { initial: attrs }, ge: { initial: attrs }, ko: { initial: attrs }, kk: { initial: attrs }
+                },
+
+            }
+        }, { temporary: true, noHook: true })
+        actor.prepareData()
+        return actor
     }
 
 }

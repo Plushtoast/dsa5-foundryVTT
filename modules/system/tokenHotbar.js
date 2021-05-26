@@ -1,10 +1,3 @@
-/*export default function(){
-  Hooks.on("renderHotbar", )
-  Hooks.on("controlToken", (elem, controlTaken) => {
-    console.log("hooked")
-    console.log(elem, controlTaken)
-  })
-}*/
 export default class DSA5Hotbar extends Hotbar{
   constructor(options) {
     super(options);
@@ -19,6 +12,7 @@ export default class DSA5Hotbar extends Hotbar{
   async _render(force = false, options = {}) {
     await super._render(force, options);
     $(this._element).append($('<div class="tokenQuickHot"><ul></ul></div>'))
+    this.addContextColor()
   }
 
   activateListeners(html) {
@@ -34,7 +28,6 @@ export default class DSA5Hotbar extends Hotbar{
       let tooltip = li.find(".tooltip");
       if (tooltip) tooltip.remove();
       let item = this.quickButtons.find(x => x.id == id)
-      console.log("jo")
       tooltip = document.createElement("SPAN");
       tooltip.classList.add("tooltip");
       tooltip.textContent = item.name;
@@ -83,6 +76,21 @@ export default class DSA5Hotbar extends Hotbar{
     }
   }
 
+  addContextColor(){
+    const parry = new RegExp(` ${game.i18n.localize('CHAR.PARRY')}$`)
+    const attack = new RegExp(` ${game.i18n.localize('CHAR.ATTACK')}$`)
+    const macroList = $(this._element).find('#macro-list')
+    for(const macro of this.macros){
+      if(!macro.macro) continue
+
+      if(parry.test(macro.macro.data.name)){
+        macroList.find(`[data-macro-id="${macro.macro.data._id}"]`).addClass("parry")
+      }else if(attack.test(macro.macro.data.name)){
+        macroList.find(`[data-macro-id="${macro.macro.data._id}"]`).addClass("attack")
+      }
+    }
+  }
+
   updateDSA5Hotbar(){
     if(canvas.tokens.controlled.length == 1){
       const actor = canvas.tokens.controlled[0].actor
@@ -92,7 +100,6 @@ export default class DSA5Hotbar extends Hotbar{
       }else{
         this.toggleBar(true)
       }
-      console.log("should show one bar")
     }else{
       this.toggleBar(true)
     }
@@ -135,7 +142,7 @@ export default class DSA5Hotbar extends Hotbar{
       let skills = actor.data.items.filter(x => ["skill"].includes(x.type) && this.combatSkills.includes(x.name))
       for (let res of skills) {
         items.push({
-          name: res.name,
+          name: `${res.name} (${res.data.data.talentValue.value})`,
           id: res.id,
           icon: res.img,
           cssClass: "skill",
@@ -147,7 +154,7 @@ export default class DSA5Hotbar extends Hotbar{
       skills = skills.sort((a, b) => { return b.data.data.talentValue.value - a.data.data.talentValue.value}).slice(0, 10)
       for (let res of skills) {
         items.push({
-          name: res.name,
+          name: `${res.name} (${res.data.data.talentValue.value})`,
           id: res.id,
           icon: res.img,
           cssClass: "skill",

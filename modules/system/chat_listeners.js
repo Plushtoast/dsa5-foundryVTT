@@ -1,4 +1,3 @@
-import Actordsa5 from "../actor/actor-dsa5.js"
 import DSA5 from "./config-dsa5.js"
 import DSA5_Utility from "./utility-dsa5.js"
 
@@ -35,21 +34,7 @@ export default class DSA5ChatListeners {
         ChatMessage.create(DSA5_Utility.chatDataSetup(msg, "roll"))
     }
 
-    static async emptyActor() {
-        return await Actordsa5.create({
-            name: "Alrik",
-            type: "npc",
-            items:[],
-            data: {
-                status:{wounds: {value:50},fatePoints: {}},
-                characteristics: {
-                    mu: {initial: 12},kl: {initial: 12},in: {initial: 12}, ch: {initial: 12},
-                    ff: {initial: 12},ge: {initial: 12},ko: {initial: 12},kk: {initial: 12}
-                },
 
-            }
-        },{temporary: true, noHook: true})
-    }
 
     static async check3D20(){
         const skill = {
@@ -65,8 +50,7 @@ export default class DSA5ChatListeners {
             }
         }
 
-        const actor = await DSA5ChatListeners.emptyActor()
-        actor.prepareData()
+        const actor = await DSA5_Utility.emptyActor()
         actor.setupSkill(skill, {}, "emptyActor").then(setupData => {
             actor.basicTest(setupData)
         })

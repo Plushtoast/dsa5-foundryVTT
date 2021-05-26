@@ -1386,7 +1386,6 @@ export default class Actordsa5 extends Actor {
 
     async _dependentEffects(statusId, effect, delta) {
         const effectData = duplicate(effect)
-        console.log(effectData)
         if (effectData.flags.dsa5.value == 4 && ["encumbered", "stunned", "feared", "inpain", "confused"].includes(statusId))
             await this.addCondition("incapacitated")
 

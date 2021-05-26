@@ -237,6 +237,7 @@
     "disadvantage": "Disadvantage",
     "disease": "Disease",
     "encumbrance": "Encumbrance",
+    "enchantment": "Enchantment",
     "equipment": "Equipment",
     "effectResult": "Effect result",
     "effectFormula": "Effect formula",
@@ -341,6 +342,7 @@
     "PartSuccess": "Partial success",
     "place": "Location",
     "permanentCost": "Permanent cost",
+    "permanent": "Permanent",
     "personalDetails": "Personal data",
     "previousFailedTests": "Failed checks",
     "probe": "Check",
@@ -936,7 +938,10 @@
         "unknownCombatSkill": "The combat technique {skill} of the weapon {item} is unknown. Please fix the weapon.",
         "onlyGMcanShapeshift": "You don't have the right permissions to shapeshift.",
         "staleData": "Stale opposing test data found. Please make sure to finish opposing tests. Stale data deleted.",
-        "sceneNotInitialized": "Scene not found. Already initialized?"
+        "sceneNotInitialized": "Scene not found. Already initialized?",
+        "tooManyEnchants": "A item can only contain 7 enchantments",
+        "onlyCompendiumSpells": "Only spells from compendiums can be used",
+        "enchantmentNotFound": "Referenced spell not found"
     },
 
     "CEREMONYMODIFIER": {

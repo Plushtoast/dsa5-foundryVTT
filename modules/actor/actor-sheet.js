@@ -6,6 +6,7 @@ import SpecialabilityRulesDSA5 from "../system/specialability-rules-dsa5.js";
 import DSA5ChatListeners from "../system/chat_listeners.js";
 import DSA5StatusEffects from "../status/status_effects.js";
 import DialogActorConfig from "../dialog/dialog-actorConfig.js";
+import { itemFromDrop } from "../system/view_helper.js";
 
 export default class ActorSheetDsa5 extends ActorSheet {
     static equipment = ["meleeweapon", "rangeweapon", "equipment", "ammunition", "armor", "poison", "consumable"]
@@ -895,7 +896,7 @@ export default class ActorSheetDsa5 extends ActorSheet {
 
     async _onDrop(event) {
         const dragData = JSON.parse(event.dataTransfer.getData("text/plain"))
-        this._handleDragData(dragData, event, await this._itemFromDrop(dragData, event))
+        this._handleDragData(dragData, event, await itemFromDrop(dragData, this.actor.id))
     }
 
     async handleItemCopy(item, typeClass) {
@@ -985,33 +986,7 @@ export default class ActorSheetDsa5 extends ActorSheet {
         if (sourceActor && sourceActor.isOwner) sourceActor.deleteEmbeddedDocuments("Item", [item._id])
     }
 
-    async _itemFromDrop(dragData, originalEvent){
-        let item
-        let typeClass
-        let selfTarget = dragData.actorId && dragData.actorId == this.actor.id
 
-        if (dragData.id && dragData.pack) {
-            item = await DSA5_Utility.findItembyIdAndPack(dragData.id, dragData.pack);
-            typeClass = item.data.type
-        } else if (dragData.id && dragData.type == "Actor") {
-            item = DSA5_Utility.findActorbyId(dragData.id);
-            typeClass = item.data.type
-        } else if (dragData.id) {
-            item = DSA5_Utility.findItembyId(dragData.id);
-            typeClass = item.data.type
-        } else {
-            item = dragData.data
-            typeClass = item.type
-        }
-
-        //TODO might not need the creature filter here
-        // also might use ToObject(false)
-        if (typeof item.toObject === 'function' && typeClass != 'creature'){
-            item = item.toObject(true)
-        }
-
-        return {item, typeClass, selfTarget}
-    }
 
     async _handleDragData(dragData, originalEvent, {item, typeClass, selfTarget}) {
         if(!item) return

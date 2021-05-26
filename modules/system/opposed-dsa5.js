@@ -235,8 +235,7 @@ export default class OpposedDsa5 {
     }
 
     static async clearOpposed(actor) {
-        await actor.update({ "flags.oppose": null })
-        await actor.update({ "-=flags.someFlag": null })
+        await actor.update({[`flags.-=oppose`]: null})
     }
 
     static async _handleReaction(ev) {

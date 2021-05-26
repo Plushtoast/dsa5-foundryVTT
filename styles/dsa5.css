@@ -910,6 +910,7 @@ input[type="text"].col-Money-H {
 
 .condition-toggle,
 .condition-edit,
+.ench,
 .spells .very-small a .fas,
 .inventory .very-small a .fas {
     padding: 1px;
@@ -1713,6 +1714,12 @@ input[type="search"] {
 #hotbar .macro.active {
     box-shadow: inset 0px 0px 25px #403014;
     background: url(../icons/backgrounds/macrobg.webp);
+}
+#hotbar .macro.active.parry {
+    box-shadow: inset 0px 0px 15px #016e0a;
+}
+#hotbar .macro.active.attack {
+    box-shadow: inset 0px 0px 15px #7e0202;
 }
 
 #hotbar #macro-list {

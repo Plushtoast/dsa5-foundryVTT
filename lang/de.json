@@ -218,6 +218,7 @@
     "disadvantage": "Nachteil",
     "encumbrance": "Belastung",
     "equipment": "Ausrüstung",
+    "enchantment": "Verzauberung",
     "energyfactor": "Leiteig. Multiplikator",
     "effectResult": "Effektergebnis",
     "effectFormula": "Effektformel",
@@ -322,6 +323,7 @@
     "PartSuccess": "Teilerfolg",
     "place": "Ort",
     "permanentCost": "Permanente Kosten",
+    "permanent": "Permanent",
     "personalDetails": "Persönliche Daten",
     "previousFailedTests": "Gescheiterte Proben",
     "probe": "Probe",
@@ -939,7 +941,10 @@
         "onlyGMcanShapeshift": "Du hast nicht die richtigen Berechtigungen zum Formwandeln.",
         "staleData": "Verwaiste Vergleichsprobendaten gefunden. Bitte stelle sicher Vergleichsproben immer abzuschließen. Verwaiste Daten gelöscht.",
         "sceneNotInitialized": "Szene nicht gefunden. Schon initialisiert?",
-        "immuneTo": "{name} ist immun gegen \"{condition}\"."
+        "immuneTo": "{name} ist immun gegen \"{condition}\".",
+        "tooManyEnchants": "Ein Gegenstand kann nur 7 Verzauberungsladungen beinhalten",
+        "onlyCompendiumSpells": "Nur Zauber aus Kompendien können verwendet werden",
+        "enchantmentNotFound": "Referenzierter Zauber konnte nicht gefunden werden"
     },
 
     "Shapeshift": {

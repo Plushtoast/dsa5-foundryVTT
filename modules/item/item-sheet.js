@@ -3,8 +3,7 @@ import DSA5 from "../system/config-dsa5.js"
 import DSA5StatusEffects from "../status/status_effects.js"
 import DSA5ChatListeners from "../system/chat_listeners.js"
 import SpecialabilityRulesDSA5 from "../system/specialability-rules-dsa5.js"
-import { svgAutoFit } from "../system/view_helper.js"
-
+import { itemFromDrop, svgAutoFit } from "../system/view_helper.js"
 
 export default class ItemSheetdsa5 extends ItemSheet {
     constructor(item, options) {
@@ -39,7 +38,9 @@ export default class ItemSheetdsa5 extends ItemSheet {
         Items.registerSheet("dsa5", SpellExtensionSheetDSA5, { makeDefault: true, types: ["spellextension"] });
         Items.registerSheet("dsa5", MagictrickSheetDSA5, { makeDefault: true, types: ["magictrick"] });
         Items.registerSheet("dsa5", BlessingSheetDSA5, { makeDefault: true, types: ["blessing"] });
-        Items.unregisterSheet("dsa5", ItemSheetdsa5, { types: ["blessing", "magictrick", "spellextension", "consumable", "species", "career", "culture", "advantage", "specialability", "disadvantage", "ritual", "ceremony", "liturgy", "spell", "disease", "poison", "meleeweapon"] });
+        Items.registerSheet("dsa5", RangeweaponSheet, { makeDefault: true, types: ["rangeweapon"] });
+        Items.registerSheet("dsa5", EquipmentSheet, { makeDefault: true, types: ["equipment"] });
+        Items.unregisterSheet("dsa5", ItemSheetdsa5, { types: ["equipment","rangeweapon", "blessing", "magictrick", "spellextension", "consumable", "species", "career", "culture", "advantage", "specialability", "disadvantage", "ritual", "ceremony", "liturgy", "spell", "disease", "poison", "meleeweapon"] });
     }
 
     async _render(force = false, options = {}) {
@@ -68,7 +69,6 @@ export default class ItemSheetdsa5 extends ItemSheet {
             this.item.itemTest(setupData)
         });
     }
-
 
     get template() {
         let type = this.item.type;
@@ -181,10 +181,6 @@ export default class ItemSheetdsa5 extends ItemSheet {
                 data['hasLocalization'] = game.i18n.has(`Combatskilldescr.${this.item.name}`)
                 data['StFs'] = DSA5.StFs;
                 break;
-            case "rangeweapon":
-                data['ammunitiongroups'] = DSA5.ammunitiongroups;
-                data['combatskills'] = await DSA5_Utility.allCombatSkillsList("range");
-                break;
             case "ammunition":
                 data['ammunitiongroups'] = DSA5.ammunitiongroups;
                 break;
@@ -192,9 +188,7 @@ export default class ItemSheetdsa5 extends ItemSheet {
                 data["traitCategories"] = DSA5.traitCategories
                 data['ranges'] = DSA5.meleeRanges;
                 break
-            case "equipment":
-                data['equipmentTypes'] = DSA5.equipmentTypes;
-                break;
+
             case "aggregatedTest":
                 data["allSkills"] = await DSA5_Utility.allSkillsList()
                 break
@@ -214,6 +208,176 @@ export default class ItemSheetdsa5 extends ItemSheet {
     }
 }
 
+class Enchantable extends ItemSheetdsa5{
+    async _onDrop(event) {
+        await this.enchant(event)
+    }
+
+    async enchant(event) {
+        const dragData = JSON.parse(event.dataTransfer.getData("text/plain"))
+        const { item, typeClass, selfTarget } = await itemFromDrop(dragData, undefined)
+        if (typeClass == "spell") {
+            let enchantments = this.item.getFlag("dsa5", "enchantments") || []
+            if (enchantments.length >= 7) {
+                return ui.notifications.error(game.i18n.localize("DSAError.tooManyEnchants"))
+            }
+            if(!dragData.pack){
+                return ui.notifications.error(game.i18n.localize("DSAError.onlyCompendiumSpells"))
+            }
+
+            const enchantment = {
+                name: item.name,
+                pack: dragData.pack,
+                id: enchantments.length,
+                itemId: item._id,
+                permanent: false,
+                actorId: dragData.actorId,
+                charged: true,
+                fw: 0
+            }
+            enchantments.push(enchantment)
+            let update = {flags: {dsa5: {enchantments}}}
+            await this.item.update(update)
+        }
+    }
+
+    toggleChargedState(id, enchantments){
+        for (let ench of enchantments) {
+            if (ench.id == id) {
+                ench.charged = !ench.charged
+                break
+            }
+        }
+        this.item.update({ flags: { dsa5: { enchantments } } })
+    }
+
+    activateListeners(html){
+        super.activateListeners(html)
+        html.find('.ench-toggle-permanent').click(ev => {
+            let {id, enchantments} = this.enchantMentId(ev)
+            for(let ench of enchantments){
+                if(ench.id == id){
+                    ench.permanent = !ench.permanent
+                    break
+                }
+            }
+            this.item.update({flags: {dsa5: {enchantments}}})
+        } )
+        html.find('.ench-toggle-charge').click(ev => {
+            let { id, enchantments } = this.enchantMentId(ev)
+            this.toggleChargedState(id, enchantments)
+        })
+        html.find('.ench-roll').click(async(ev) => {
+            let { id, enchantments } = this.enchantMentId(ev)
+            let enchantment = enchantments.find(x => x.id == id)
+            if (!enchantment.charged) return ui.notifications.error(game.i18n.localize("DSAError.NotEnoughCharges"))
+            let item = await this.getSpell(enchantment)
+
+            if (item) {
+                item = item.toObject()
+                item.data.talentValue.value = enchantment.fw
+                const actor = await DSA5_Utility.emptyActor(14)
+                actor.setupSpell(item, {}, "emptyActor").then(async(setupData) => {
+                    await actor.basicTest(setupData)
+                    if(enchantment.permanent){
+                        this.toggleChargedState(id, enchantments)
+                    }else{
+                        this.deleteEnchantment(id, enchantments)
+                    }
+                })
+            }
+        })
+        html.find('.ench-fw').change(ev => {
+            let { id, enchantments } = this.enchantMentId(ev)
+            let fw = Number($(ev.currentTarget).val())
+            if(!fw) return
+
+            for (let ench of enchantments) {
+                if (ench.id == id) {
+                    ench.fw = fw
+                    break
+                }
+            }
+            this.item.update({ flags: { dsa5: { enchantments } } })
+        })
+        html.find('.ench-delete').click(ev => {
+            let { id, enchantments } = this.enchantMentId(ev)
+            this.deleteEnchantment(id, enchantments)
+        })
+        html.find('.ench-show').click(async(ev) => {
+            let { id, enchantments } = this.enchantMentId(ev)
+            let enchantment = enchantments.find(x => x.id == id)
+            let item = await this.getSpell(enchantment)
+
+            if(item){
+                item.sheet.render(true)
+            }
+        })
+    }
+
+    deleteEnchantment(id, enchantments){
+        let enchantment = enchantments.findIndex(x => x.id == id)
+        enchantments.splice(enchantment, 1)
+        this.item.update({ flags: { dsa5: { enchantments } } })
+    }
+
+    async getSpell(enchantment){
+        const pack = await game.packs.get(enchantment.pack)
+
+        if (!pack) {
+            ui.notifications.error(game.i18n.localize('DSAError.enchantmentNotFound'))
+            return
+        }
+
+        let item = await pack.getDocument(enchantment.itemId)
+        if (!item) item = await pack.getName(enchantment.name)
+        if (!item) ui.notifications.error(game.i18n.localize('DSAError.enchantmentNotFound'))
+
+        return item
+    }
+
+    enchantMentId(ev){
+        return {
+            id: $(ev.currentTarget).parents('.statusEffect').attr("data-id"),
+            enchantments: this.item.getFlag("dsa5","enchantments")
+        }
+    }
+
+    static get defaultOptions() {
+        const options = super.defaultOptions;
+        mergeObject(options, {
+            dragDrop: [{ dragSelector: ".item-list .item", dropSelector: ".content" }]
+        });
+        return options;
+    }
+
+    _canDragDrop(selector) {
+        return this.isEditable;
+    }
+
+    async getData(options) {
+        const data = await super.getData(options);
+        data["enchantments"] = this.item.getFlag("dsa5","enchantments")
+        return data
+    }
+}
+
+class EquipmentSheet extends Enchantable{
+    async getData(options) {
+        const data = await super.getData(options);
+        data['equipmentTypes'] = DSA5.equipmentTypes;
+        return data
+    }
+}
+
+class RangeweaponSheet extends Enchantable {
+    async getData(options) {
+        const data = await super.getData(options);
+        data['ammunitiongroups'] = DSA5.ammunitiongroups;
+        data['combatskills'] = await DSA5_Utility.allCombatSkillsList("range");
+        return data
+    }
+}
 
 class BlessingSheetDSA5 extends ItemSheetdsa5 {
     _getHeaderButtons() {
@@ -289,7 +453,6 @@ class ConsumableSheetDSA5 extends ItemSheetdsa5 {
 
 }
 
-
 class ItemCultureDSA5 extends ItemSheetdsa5 {
     constructor(item, options) {
         options.width = 700
@@ -340,7 +503,7 @@ class MagictrickSheetDSA5 extends ItemSheetdsa5 {
     }
 }
 
-class MeleeweaponSheetDSA5 extends ItemSheetdsa5 {
+class MeleeweaponSheetDSA5 extends Enchantable {
     async getData(options) {
         const data = await super.getData(options);
         let chars = DSA5.characteristics;
@@ -442,7 +605,6 @@ class SpellSheetDSA5 extends ItemSheetdsa5 {
         data['resistances'] = DSA5.magicResistanceModifiers
         if (data.isOwned) {
             data['extensions'] = this.item.actor.data.items.filter(x => { return x.type == "spellextension" && x.data.data.source == this.item.name && this.item.type == x.data.data.category })
-            console.log(data['extensions'])
         }
         return data
     }
