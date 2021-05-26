@@ -703,7 +703,8 @@
         "editRoll": "Wurf editieren",
         "BlindRoll": "Blinder Wurf.",
         "usesItem": "{actor} benutzt {item}.",
-        "requestGroupCheck": "{user} fordert eine Gruppenprobe in {item}"
+        "requestGroupCheck": "{user} fordert eine Gruppenprobe in {item}",
+        "enchantmentUsed": "<b>{item}</b> hat eine Ladung <b>{spell}</b> verbraucht."
     },
 
     "TT": {

@@ -278,6 +278,8 @@ class Enchantable extends ItemSheetdsa5{
                 item.data.talentValue.value = enchantment.fw
                 const actor = await DSA5_Utility.emptyActor(14)
                 actor.setupSpell(item, {}, "emptyActor").then(async(setupData) => {
+                    const infoMsg = game.i18n.format('CHATNOTIFICATION.enchantmentUsed', {item: this.item.name, spell: item.name} )
+                    await ChatMessage.create(DSA5_Utility.chatDataSetup(infoMsg));
                     await actor.basicTest(setupData)
                     if(enchantment.permanent){
                         this.toggleChargedState(id, enchantments)

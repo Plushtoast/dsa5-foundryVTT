@@ -11,13 +11,14 @@ export default class OpposedDsa5 {
         if (!actor) return
 
         let testResult = message.data.flags.data.postData
+        let preData = message.data.flags.data.preData
 
         if (actor.data.flags.oppose) {
             console.log("answering opposed")
-            OpposedDsa5.answerOpposedTest(actor, message, testResult)
+            OpposedDsa5.answerOpposedTest(actor, message, testResult, preData)
         } else if (game.user.targets.size && message.data.flags.data.isOpposedTest && !message.data.flags.data.defenderMessage && !message.data.flags.data.attackerMessage) {
             console.log("start opposed")
-            OpposedDsa5.createOpposedTest(actor, message, testResult)
+            OpposedDsa5.createOpposedTest(actor, message, testResult, preData)
         } else if (message.data.flags.data.defenderMessage || message.data.flags.data.attackerMessage) {
             console.log("end opposed")
             OpposedDsa5.resolveFinalMessage(message)
@@ -39,12 +40,12 @@ export default class OpposedDsa5 {
         this.resolveUndefended(startMessage);
     }
 
-    static async answerOpposedTest(actor, message, testResult) {
+    static async answerOpposedTest(actor, message, testResult, preData) {
         let attackMessage = game.messages.get(actor.data.flags.oppose.messageId)
         if (!attackMessage) {
             ui.notifications.error(game.i18n.localize("DSAError.staleData"))
             await OpposedDsa5.clearOpposed(actor)
-            return OpposedDsa5.createOpposedTest(actor, message, testResult)
+            return OpposedDsa5.createOpposedTest(actor, message, testResult, preData)
         }
         let attacker = {
             speaker: actor.data.flags.oppose.speaker,
@@ -78,7 +79,7 @@ export default class OpposedDsa5 {
         await OpposedDsa5.clearOpposed(actor)
     }
 
-    static async createOpposedTest(actor, message, testResult) {
+    static async createOpposedTest(actor, message, testResult, preData) {
         let attacker;
 
         if (message.data.speaker.token)
@@ -145,7 +146,8 @@ export default class OpposedDsa5 {
             })
             message.data.flags.data.startMessagesList = startMessagesList;
 
-            if (await game.settings.get("dsa5", "clearTargets")) game.user.updateTokenTargets([]);
+            if ((await game.settings.get("dsa5", "clearTargets")) && !["spell", "liturgy", "ceremony", "ritual"].includes(preData.source.type))
+                game.user.updateTokenTargets([]);
 
         } else {
             game.user.targets.forEach(async target => {

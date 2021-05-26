@@ -1363,8 +1363,9 @@ export default class Actordsa5 extends Actor {
         if (game.user.targets.size) {
             cardOptions.isOpposedTest = testData.opposable
             if (cardOptions.isOpposedTest) cardOptions.title += ` - ${game.i18n.localize("Opposed")}`;
-            else if (await game.settings.get("dsa5", "clearTargets")) game.user.updateTokenTargets([]);
-
+            else if ((await game.settings.get("dsa5", "clearTargets")) && !["spell", "liturgy", "ceremony", "ritual"].includes(testData.source.type) ){
+                game.user.updateTokenTargets([]);
+            }
         }
 
         if (testData.extra.ammo && !testData.extra.ammoDecreased) {

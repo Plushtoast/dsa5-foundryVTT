@@ -691,7 +691,8 @@
         "editRoll": "Edit roll",
         "BlindRoll": "Blinder Wurf.",
         "usesItem": "{actor} uses {item}.",
-        "requestGroupCheck": "{user} requests a group check in {item}"
+        "requestGroupCheck": "{user} requests a group check in {item}",
+        "enchantmentUsed": "<b>{item}</b> used one charge of <b>{spell}</b>."
     },
 
     "TT": {

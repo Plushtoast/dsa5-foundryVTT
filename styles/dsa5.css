@@ -2394,3 +2394,8 @@ select.noAppearance {
 .tokenQuickHot li.skill{
     box-shadow: inset 0px 0px 10px #0d813e;
 }
+
+.ench-fw{
+    position: relative;
+    top: -3px;
+}

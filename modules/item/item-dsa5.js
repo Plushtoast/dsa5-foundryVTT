@@ -338,7 +338,7 @@ export default class Itemdsa5 extends Item {
             cardOptions.isOpposedTest = testData.opposable
             if (cardOptions.isOpposedTest)
                 cardOptions.title += ` - ${game.i18n.localize("Opposed")}`;
-            else if (await game.settings.get("dsa5", "clearTargets")) {
+            else if ((await game.settings.get("dsa5", "clearTargets"))) {
                 game.user.updateTokenTargets([]);
             }
         }
