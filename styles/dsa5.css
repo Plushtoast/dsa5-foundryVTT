@@ -2340,10 +2340,7 @@ select.noAppearance {
     left:5px;
     right:7px;
     z-index: -2;
-    border-top-left-radius: 5px;
-    border-top-right-radius: 5px;
-
-    transition: transform 0.3s ease-in-out;
+   transition: transform 0.3s ease-in-out;
 }
 .tokenQuickHot.expanded{
     transform: translateY(-45px)
@@ -2354,10 +2351,12 @@ select.noAppearance {
     width:33px;
     height: 33px;
     border: 1px solid black;
+    border-radius: 3px;
     pointer-events: all;
     background-size:cover;
     box-shadow: inset 0px 0px 10px #403014;
     background: url(../icons/backgrounds/macrobg.webp);
+    position: relative;
 }
 .tokenQuickHot li:hover{
     border: 1px solid red;
@@ -2367,4 +2366,24 @@ select.noAppearance {
     background-size:cover;
     height:100%;
     width:100%;
+    position: absolute;
+}
+.tokenQuickHot li span{
+    position: absolute;
+    top: -25px;
+    left: -73px;
+    background: rgb(29, 28, 28);
+    width: 180px;
+    display: inline-block;
+    color: white;
+    padding: 5px;
+    text-align: center;
+    border-radius: 4px;
+}
+
+.tokenQuickHot li.spell{
+    box-shadow: inset 0px 0px 10px #121092;
+}
+.tokenQuickHot li.skill{
+    box-shadow: inset 0px 0px 10px #0d813e;
 }

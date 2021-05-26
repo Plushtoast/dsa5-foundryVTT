@@ -891,7 +891,8 @@
         "literacy": "Literacy",
         "language": "Language",
         "aptitude": "Aptitude",
-        "painImmunity": "Immune to pain"
+        "painImmunity": "Immune to pain",
+        "selfControl": "Self-Control"
     },
 
     "Shapeshift": {

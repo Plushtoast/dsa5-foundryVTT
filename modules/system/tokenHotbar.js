@@ -10,6 +10,7 @@ export default class DSA5Hotbar extends Hotbar{
     super(options);
 
     this.quickButtons = []
+    this.combatSkills = [game.i18n.localize("LocalizedIDs.selfControl"), game.i18n.localize("LocalizedIDs.featOfStrength"), game.i18n.localize("LocalizedIDs.perception")]
     Hooks.on("controlToken", (elem, controlTaken) => {
       this.updateDSA5Hotbar()
     })
@@ -27,6 +28,23 @@ export default class DSA5Hotbar extends Hotbar{
       this.executeQuickButton(ev)
       return false
     })
+    html.on('mouseenter', '.tokenQuickHot li', ev => {
+      const li = $(ev.currentTarget)
+      const id = li.attr("data-id")
+      let tooltip = li.find(".tooltip");
+      if (tooltip) tooltip.remove();
+      let item = this.quickButtons.find(x => x.id == id)
+      console.log("jo")
+      tooltip = document.createElement("SPAN");
+      tooltip.classList.add("tooltip");
+      tooltip.textContent = item.name;
+      li.append($(tooltip));
+    })
+    html.on('mouseout', '.tokenQuickHot li', ev => {
+      const li = $(ev.currentTarget)
+      let tooltip = li.find(".tooltip");
+      if (tooltip) tooltip.remove();
+    })
   }
 
   executeQuickButton(ev){
@@ -40,9 +58,27 @@ export default class DSA5Hotbar extends Hotbar{
     } else {
       let result = actor.items.get(id)
       if (result) {
-        actor.setupWeapon(result, "attack", {}, tokenId).then(setupData => {
-          actor.basicTest(setupData)
-        });
+        switch(result.type){
+          case "meleeweapon":
+          case "rangeweapon":
+          case "trait":
+            actor.setupWeapon(result, "attack", {}, tokenId).then(setupData => {
+              actor.basicTest(setupData)
+            });
+            break
+          case "liturgy":
+          case "spell":
+            actor.setupSpell(result.data, {}, tokenId).then(setupData => {
+              actor.basicTest(setupData)
+            });
+            break
+          case "skill":
+            actor.setupSkill(result.data, {}, tokenId).then(setupData => {
+              actor.basicTest(setupData)
+            });
+            break
+        }
+
       }
     }
   }
@@ -63,27 +99,66 @@ export default class DSA5Hotbar extends Hotbar{
   }
 
   updateIcons(actor){
-    let items = [{
-      name: game.i18n.localize("attackWeaponless"),
-      id: "attackWeaponless",
-      icon: ""
-    }]
-
-    let types = ["meleeweapon", "rangeweapon"]
-    let traitTypes = ["meleeAttack", "rangeAttack"]
-    let result = actor.data.items.filter(x => {
-      return (types.includes(x.type) && x.data.data.worn.value == true) || (x.type == "trait" && traitTypes.includes(x.data.data.traitType.value))
-    })
-    for (let res of result) {
+    let items = []
+    if(game.combat){
       items.push({
-        name: res.name,
-        id: res.id,
-        icon: res.img
+        name: game.i18n.localize("attackWeaponless"),
+        id: "attackWeaponless",
+        icon: "systems/dsa5/icons/categories/attack_weaponless.webp"
       })
+
+      let types = ["meleeweapon", "rangeweapon"]
+      let traitTypes = ["meleeAttack", "rangeAttack"]
+      let attacks = actor.data.items.filter(x => {
+        return (types.includes(x.type) && x.data.data.worn.value == true) || (x.type == "trait" && traitTypes.includes(x.data.data.traitType.value))
+      })
+      for (let res of attacks) {
+        items.push({
+          name: res.name,
+          id: res.id,
+          icon: res.img,
+          cssClass: "",
+          abbrev: res.name[0]
+        })
+      }
+      types = ["liturgy", "spell"]
+      let spells = actor.data.items.filter(x => types.includes(x.type) && x.data.data.effectFormula.value)
+      for (let res of spells) {
+        items.push({
+          name: res.name,
+          id: res.id,
+          icon: res.img,
+          cssClass: "spell",
+          abbrev: res.name[0]
+        })
+      }
+      let skills = actor.data.items.filter(x => ["skill"].includes(x.type) && this.combatSkills.includes(x.name))
+      for (let res of skills) {
+        items.push({
+          name: res.name,
+          id: res.id,
+          icon: res.img,
+          cssClass: "skill",
+          abbrev: res.name[0]
+        })
+      }
+    }else{
+      let skills = actor.data.items.filter(x => ["skill"].includes(x.type) && x.data.data.talentValue.value > 0)
+      skills = skills.sort((a, b) => { return b.data.data.talentValue.value - a.data.data.talentValue.value}).slice(0, 10)
+      for (let res of skills) {
+        items.push({
+          name: res.name,
+          id: res.id,
+          icon: res.img,
+          cssClass: "skill",
+          abbrev: res.name[0]
+        })
+      }
+
     }
     this.quickButtons = items
+    $(this._element).find('.tokenQuickHot ul').html(items.map(x => { return `<li class="${x.cssClass}" data-id="${x.id}"><div style="background-image:url(${x.icon})">${x.abbrev || ""}</div></li>` }).join(""))
 
-    $(this._element).find('.tokenQuickHot ul').html(items.map(x => { return `<li title="${x.name}" data-id="${x.id}"><div style="background-image:url(${x.icon})"></div></li>`}).join(""))
   }
 
   toggleBar(hide){

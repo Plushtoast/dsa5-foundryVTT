@@ -904,7 +904,9 @@
         "literacy": "Schrift",
         "language": "Sprache",
         "aptitude": "Begabung",
-        "painImmunity": "Immun gegen Schmerzen"
+        "painImmunity": "Immun gegen Schmerzen",
+        "selfControl": "Selbstbeherrschung"
+
     },
 
     "DSAError": {
