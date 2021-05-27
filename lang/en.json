@@ -1024,7 +1024,8 @@
         "talentedReroll": "Use Aptitude ",
         "ApplyMana": "Pay AE/KP",
         "hideData": "Hide details to players",
-        "showData": "Show details to players"
+        "showData": "Show details to players",
+        "improveFate": "Improve roll (1 FtP)"
     },
 
     "aimOptions": {
@@ -1101,6 +1102,14 @@
         "noDefenses": "Defense count"
     },
 
+    "SCHIPSKILLS": {
+        "meleeweaponattack": "Improve Attack",
+        "meleeweaponparry": "Improve Parry",
+        "rangeweaponattack": "Improve Ranged Combat",
+        "dodge": "Improve Dodge",
+        "char": "Improve Attribute"
+    },
+
     "CHATFATE": {
         "faitepointUsed": "The fate is changing",
         "reroll": "{character} rolls again.",
@@ -1109,7 +1118,8 @@
         "PointsRemaining": "Remaining fate points",
         "isTalented": "{character} uses Aptitude.",
         "selectDice": "Repeat roll",
-        "selectDieToReroll": "Chose the dice to be rolled again"
+        "selectDieToReroll": "Chose the dice to be rolled again",
+        "Improve": "{character} improves the roll by 2"
     },
 
     "SPELLMISCAST": {

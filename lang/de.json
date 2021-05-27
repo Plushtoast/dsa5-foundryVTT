@@ -591,7 +591,7 @@
         "abilities": "Aktualisiere Effekte und Effektformeln von allen Sonderfertigkeiten, Vor- und Nachteilen. ALLE MANUELLEN MODIFIKATIONEN WERDEN ÜBERSCHRIEBEN!",
         "abilitiesShort": "Sonderfertigkeiten/Vor-/Nachteile migrieren",
         "skills": "Aktualisiere Effekte von allen Kampftalenten. ALLE MANUELLEN MODIFIKATIONEN WERDEN ÜBERSCHRIEBEN!",
-        "skillsShort": "Kampftalente migrieren"
+        "skillsShort": "Kampftechniken migrieren"
     },
 
     "Skill-eeasy": "Extrem leicht (+5)",
@@ -1036,7 +1036,16 @@
         "talentedReroll": "Begabung verwenden",
         "ApplyMana": "KaP/AsP Kosten bezahlen",
         "hideData": "Details für Spieler verstecken",
-        "showData": "Details für Spieler aufdecken"
+        "showData": "Details für Spieler aufdecken",
+        "improveFate": "Wurf verbessern (1 Schip)"
+    },
+
+    "SCHIPSKILLS":{
+        "meleeweaponattack": "Attacke verbessern",
+        "meleeweaponparry": "Parade verbessern",
+        "rangeweaponattack": "Fernkampf verbessern",
+        "dodge": "Ausweichen verbessern",
+        "char": "Eigenschaft verbessern"
     },
 
     "aimOptions": {
@@ -1090,7 +1099,8 @@
         "PointsRemaining": "Verbleibende Schicksalspunkte",
         "isTalented": "{character} benutzt Begabung.",
         "selectDice": "Wurf wiederholen",
-        "selectDieToReroll": "Wähle die zu wiederholenden Würfel"
+        "selectDieToReroll": "Wähle die zu wiederholenden Würfel",
+        "Improve": "{character} verbessert den Wurf um 2"
     },
 
     "SPELLMISCAST": {

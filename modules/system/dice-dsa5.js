@@ -845,6 +845,7 @@ export default class DiceDSA5 {
     }
 
     static async rollTest(testData) {
+        console.log(testData)
         testData.function = "rollTest"
         let rollResults;
         switch (testData.source.type) {

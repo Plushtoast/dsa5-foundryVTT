@@ -988,6 +988,51 @@ export default class Actordsa5 extends Actor {
         await this.update({ "data.status.fatePoints.value": this.data.data.status.fatePoints.value - 1 })
     }
 
+    async fateImprove(infoMsg, cardOptions, newTestData, message, data) {
+        ChatMessage.create(DSA5_Utility.chatDataSetup(infoMsg));
+
+        this.resetTargetAndMessage(data, cardOptions)
+
+        let rollType = message.data.flags.data.preData.source.type
+        if(["spell","liturgy","ceremony","ritual","skill"].includes(rollType)){
+            renderTemplate('systems/dsa5/templates/dialog/fateImprove-dialog.html', { testData: newTestData, postData: data.postData }).then(html => {
+                new DSA5Dialog({
+                    title: game.i18n.localize("CHATFATE.selectDice"),
+                    content: html,
+                    buttons: {
+                        Yes: {
+                            icon: '<i class="fa fa-check"></i>',
+                            label: game.i18n.localize("Ok"),
+                            callback: async dlg => {
+                                let fws = [0,0,0]
+                                let diesToUpgrade = dlg.find('.dieSelected').map(function () { return Number($(this).attr('data-index')) }).get()
+                                if (diesToUpgrade.length == 1) {
+                                    fws[diesToUpgrade] = 2
+                                    const modifier = { name: game.i18n.localize("CHATCONTEXT.improveFate"), value: fws.join("|"), type: "TPM" }
+                                    newTestData.situationalModifiers.push(modifier)
+                                    this[`${data.postData.postFunction}`]({ testData: newTestData, cardOptions }, { rerenderMessage: message });
+                                    await message.update({ "flags.data.fateImproved": true });
+                                    await this.update({ "data.status.fatePoints.value": this.data.data.status.fatePoints.value - 1 })
+                                }
+                            }
+                        },
+                        cancel: {
+                            icon: '<i class="fas fa-times"></i>',
+                            label: game.i18n.localize("cancel")
+                        },
+                    },
+                    default: 'Yes'
+                }).render(true)
+            });
+        }else{
+            const modifier = { name: game.i18n.localize("CHATCONTEXT.improveFate"), value: 2, type: "" }
+            newTestData.situationalModifiers.push(modifier)
+            this[`${data.postData.postFunction}`]({ testData: newTestData, cardOptions }, { rerenderMessage: message });
+            await message.update({ "flags.data.fateImproved": true });
+            await this.update({ "data.status.fatePoints.value": this.data.data.status.fatePoints.value - 1 })
+        }
+    }
+
     async useFateOnRoll(message, type) {
         if (this.data.data.status.fatePoints.value > 0) {
             let data = message.data.flags.data

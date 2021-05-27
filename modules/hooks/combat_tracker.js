@@ -44,17 +44,19 @@ export class DSA5Combat extends Combat {
 
     async getDefenseCount(speaker){
         const comb = this.getCombatantFromActor(speaker)
-        return comb.data._source.defenseCount
+        return comb ? comb.data._source.defenseCount : 0
     }
 
     getCombatantFromActor(speaker){
         let id
+        console.log(this.combatants)
         if (speaker.token) {
-            id = Array.from(this.combatants).find(x => x.data.tokenId == speaker.token).id
+            id = Array.from(this.combatants).find(x => x.data.tokenId == speaker.token)
         } else {
-            id = Array.from(this.combatants).find(x => x.data.actorId == speaker.actor).id
+            id = Array.from(this.combatants).find(x => x.data.actorId == speaker.actor)
         }
-        return this.combatants.get(id)
+
+        return id ? this.combatants.get(id.id) : undefined
     }
     //TODO very clonky
     async updateDefenseCount(speaker){

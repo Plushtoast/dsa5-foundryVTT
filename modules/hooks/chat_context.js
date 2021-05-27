@@ -35,6 +35,22 @@ export default function() {
             }
             return false
         }
+        const canImproveRoll = function(li){
+            let message = game.messages.get(li.attr("data-message-id"));
+            if (message.data.speaker.actor && message.data.flags.data) {
+                if (message.data.flags.data.postData.successLevel > -2){
+                    let actor = game.actors.get(message.data.speaker.actor);
+                    if (actor.isOwner && actor.data.data.status.fatePoints.value > 0){
+                        let rollType = message.data.flags.data.preData.source.type
+                        const mode = message.data.flags.data.preData.mode || ""
+                        if(["skill", "spell", "liturgy", "ritual", "ceremony"].includes(rollType)) rollType = "char"
+                        let schipSkill = game.i18n.localize(`SCHIPSKILLS.${rollType}${mode}`)
+                        return !message.data.flags.data.fateImproved && actor.items.getName(schipSkill)
+                    }
+                }
+            }
+            return false
+        }
         const canIncreaseQS = function(li) {
             let message = game.messages.get(li.attr("data-message-id"));
             if (message.data.speaker.actor && message.data.flags.data) {
@@ -189,6 +205,12 @@ export default function() {
             icon: '<i class="fas fa-dice"></i>',
             condition: canRerollDamage,
             callback: li => { useFate(li, "rerollDamage") }
+        },
+        {
+            name: game.i18n.localize("CHATCONTEXT.improveFate"),
+            icon: '<i class="fas fa-plus-square"></i>',
+            condition: canImproveRoll,
+            callback: li => { useFate(li, "Improve") }
         })
     })
 }
