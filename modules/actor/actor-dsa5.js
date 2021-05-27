@@ -945,8 +945,6 @@ export default class Actordsa5 extends Actor {
 
             let newTestData = data.preData
             newTestData.extra.actor = DSA5_Utility.getSpeaker(newTestData.extra.speaker).data
-            console.log(newTestData)
-
             this[`fate${type}`](infoMsg, cardOptions, newTestData, message, data)
         }
     }

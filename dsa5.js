@@ -20,8 +20,6 @@ import DSA5Payment from "./modules/system/payment.js"
 import { DSA5CombatTracker, DSA5Combat } from "./modules/hooks/combat_tracker.js";
 import DSAActiveEffectConfig from "./modules/status/active_effects.js";
 
-
-
 Hooks.once("init", async function() {
     console.log("Initializing DSA5 system")
 

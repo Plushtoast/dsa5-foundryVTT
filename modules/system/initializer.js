@@ -1,3 +1,4 @@
+import scene from "../hooks/scene.js"
 import Itemdsa5 from "../item/item-dsa5.js"
 
 export default class DSA5Initializer extends Dialog {
@@ -91,13 +92,13 @@ export default class DSA5Initializer extends Dialog {
                 let journHead = await this.getFolderForType("JournalEntry")
                 for (let entry of entries) {
                     entry.data.folder = head._id
+                    entry.data.thumb = null
                     for (let n of entry.data.notes) {
                         try {
                             //n.entryId = getProperty(n, `flags.dsa5.initId`) // journs.find(x => x._id == getProperty(n, `flags.dsa5.initId`)).data._id
                             let journ = journs.find(x => x.data.flags.dsa5.initId == n.entryId)
                             journ.data.folder = journHead.data._id
                             let createdEntries = await JournalEntry.create(journ)
-                            console.log(createdEntries)
                             n.entryId = createdEntries._id
                         } catch (e) {
                             console.warn("Could not initialize Scene Notes" + e)
@@ -107,6 +108,8 @@ export default class DSA5Initializer extends Dialog {
                 let createdEntries = await Scene.create(entries)
                 for (let entry of createdEntries) {
                     this.scenes[entry.data.name] = entry;
+                    let data = await entry.createThumbnail()
+                    entry.update({ thumb: data.thumb })
                 }
             }
             if (json.actors) {
@@ -119,6 +122,7 @@ export default class DSA5Initializer extends Dialog {
                 let createdEntries = await Actor.create(entries.map(x => x.data))
                 for (let entry of createdEntries) {
                     this.actors[entry.data.name] = entry;
+
                 }
             }
         })
