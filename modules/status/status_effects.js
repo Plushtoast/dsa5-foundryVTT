@@ -227,6 +227,7 @@ class EncumberedEffect extends DSA5StatusEffects {
 
 class ProneEffect extends DSA5StatusEffects {
     static calculateRollModifier(effect, actor, item, options = {}) {
+        if(item.type == "dodge") return -2
         return options.mode ? (options.mode == "attack" ? -4 : -2) : 0
     }
 }

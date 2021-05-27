@@ -49,13 +49,11 @@ export class DSA5Combat extends Combat {
 
     getCombatantFromActor(speaker){
         let id
-        console.log(this.combatants)
         if (speaker.token) {
             id = Array.from(this.combatants).find(x => x.data.tokenId == speaker.token)
         } else {
             id = Array.from(this.combatants).find(x => x.data.actorId == speaker.actor)
         }
-
         return id ? this.combatants.get(id.id) : undefined
     }
     //TODO very clonky
