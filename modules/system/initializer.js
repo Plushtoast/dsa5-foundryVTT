@@ -93,9 +93,8 @@ export default class DSA5Initializer extends Dialog {
                     entry.folder = head.id
                     for (let n of entry.notes) {
                         try {
-                            //n.entryId = getProperty(n, `flags.dsa5.initId`) // journs.find(x => x.id == getProperty(n, `flags.dsa5.initId`)).data.id
                             let journ = journs.find(x => x.flags.dsa5.initId == n.entryId)
-                            journ.folder = journHead.data.id
+                            journ.folder = journHead.id
                             let createdEntries = await JournalEntry.create(journ)
                             n.entryId = createdEntries.id
                         } catch (e) {
