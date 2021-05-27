@@ -53,7 +53,7 @@ export default class DSA5Initializer extends Dialog {
                 for (let folder in this.folders) {
                     let parent = this.folders[folder].getFlag("dsa5", "parent")
                     if (parent) {
-                        let parentId = this.folders[parent].data._id
+                        let parentId = this.folders[parent].data.id
                         this.folders[folder].update({ parent: parentId })
                     }
                 }
@@ -64,12 +64,12 @@ export default class DSA5Initializer extends Dialog {
                     let folder = entry.getFlag("dsa5", "parent")
                     let sort = entry.getFlag("dsa5", "sort")
                     if (folder) {
-                        entry.data.folder = this.folders[folder].data._id
+                        entry.data.folder = this.folders[folder].data.id
                         entry.data.sort = sort
                     }
 
                 }
-                let createdEntries = await JournalEntry.create(entries)
+                let createdEntries = await JournalEntry.create(entries.toObject())
                 for (let entry of createdEntries) {
                     this.journals[entry.data.name] = entry;
                 }
@@ -78,26 +78,25 @@ export default class DSA5Initializer extends Dialog {
                 let head = await this.getFolderForType("Item")
 
                 for (let k of json.items)
-                    k.folder = head._id
+                    k.folder = head.id
 
                 await Itemdsa5.create(json.items)
             }
             if (json.scenes) {
                 let head = await this.getFolderForType("Scene")
                 let scene = game.packs.get(json.scenes)
-                let entries = await scene.getDocuments()
+                let entries = (await scene.getDocuments()).map(x => x.toObject())
                 let journal = game.packs.get(json.journal)
-                let journs = await journal.getDocuments()
+                let journs = (await journal.getDocuments()).map(x => x.toObject())
                 let journHead = await this.getFolderForType("JournalEntry")
                 for (let entry of entries) {
-                    entry.data.folder = head._id
-                    for (let n of entry.data.notes) {
+                    entry.folder = head.id
+                    for (let n of entry.notes) {
                         try {
-                            //n.entryId = getProperty(n, `flags.dsa5.initId`) // journs.find(x => x.id == getProperty(n, `flags.dsa5.initId`)).data._id
-                            let journ = journs.find(x => x.data.flags.dsa5.initId == n.entryId)
-                            journ.data.folder = journHead.data._id
+                            //n.entryId = getProperty(n, `flags.dsa5.initId`) // journs.find(x => x.id == getProperty(n, `flags.dsa5.initId`)).data.id
+                            let journ = journs.find(x => x.flags.dsa5.initId == n.entryId)
+                            journ.folder = journHead.data.id
                             let createdEntries = await JournalEntry.create(journ)
-                            console.log(createdEntries)
                             n.entryId = createdEntries.id
                         } catch (e) {
                             console.warn("Could not initialize Scene Notes" + e)
@@ -112,11 +111,11 @@ export default class DSA5Initializer extends Dialog {
             if (json.actors) {
                 let head = await this.getFolderForType("Actor")
                 let actor = game.packs.get(json.actors)
-                let entries = await actor.getDocuments()
+                let entries = (await actor.getDocuments()).map(x => x.toObject())
                 for (let entry of entries) {
-                    entry.data.folder = head._id
+                    entry.folder = head.id
                 }
-                let createdEntries = await Actor.create(entries.map(x => x.data))
+                let createdEntries = await Actor.create(entries)
                 for (let entry of createdEntries) {
                     this.actors[entry.data.name] = entry;
                 }
