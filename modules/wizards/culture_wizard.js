@@ -75,17 +75,6 @@ export default class CultureWizard extends WizardDSA5 {
         return super._validateInput(parent)
     }
 
-    /*async deleteOldCulture() {
-        if (this.actor.data.data.details.culture.value != "") {
-            let oldCulture = this.items.find(x => x.name == this.actor.data.data.details.culture.value && x.type == "culture")
-            if (oldCulture) {
-                for (let skill of oldCulture.data.data.skills.value.split(",")) {
-                    await this.updateSkill(skill, "skill", -1)
-                }
-            }
-        }
-    }*/
-
     async updateCharacter() {
         let parent = $(this._element)
         parent.find("button.ok i").toggleClass("fa-check fa-spinner fa-spin")
@@ -96,28 +85,20 @@ export default class CultureWizard extends WizardDSA5 {
             return
         }
 
-        //await this.deleteOldCulture()
-
-        let update = {
-            "data.details.culture.value": this.culture.name
-        }
+        let update = { "data.details.culture.value": this.culture.name }
 
         let localKnowledge = this.items.find(x => x.name == `${game.i18n.localize('LocalizedIDs.localKnowledge')} ()` && x.type == "specialability")
         if (localKnowledge) {
             localKnowledge = duplicate(localKnowledge)
             localKnowledge.name = `${game.i18n.localize('LocalizedIDs.localKnowledge')} (${parent.find(".localKnowledge").val()})`
             localKnowledge.data.APValue.value = 0
-            this.actor.createEmbeddedDocuments("Item", [localKnowledge])
+            await this.actor.createEmbeddedDocuments("Item", [localKnowledge])
         }
 
         await this.addSelections(parent.find('.optional:checked'))
-
         await this.actor.update(update);
         await this.actor._updateAPs(apCost)
-
-        for (let skill of this.culture.data.skills.value.split(",")) {
-            await this.updateSkill(skill, "skill")
-        }
+        await this.updateSkill(this.culture.data.skills.value.split(","), "skill")
 
         this.finalizeUpdate()
     }

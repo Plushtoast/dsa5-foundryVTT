@@ -84,29 +84,32 @@ export default class WizardDSA5 extends Application {
     }
 
     async addSelections(elems) {
+        let itemsToAdd = []
         for (let k of elems) {
             let item = duplicate(this.items.find(x => x.id == $(k).val()))
+            let parsed = DSA5_Utility.parseAbilityString(item.name)
             item.name = $(k).attr("name")
 
             switch (item.type) {
                 case "advantage":
                 case "disadvantage":
                     item.data.step.value = Number($(k).attr("data-step"))
-                    item.data.APValue.value = Number($(k).attr("data-cost"))
-                    await this.actor.createEmbeddedDocuments("Item", [item])
+                    item = ItemRulesDSA5.reverseAdoptionCalculation(this.actor, parsed, item)
+                    itemsToAdd.push(item)
                     AdvantageRulesDSA5.vantageAdded(this.actor, item)
                     break
                 case "specialability":
                     item.data.step.value = Number($(k).attr("data-step"))
-                    item.data.APValue.value = Number($(k).attr("data-cost"))
-                    await this.actor.createEmbeddedDocuments("Item", [item])
+                    item = ItemRulesDSA5.reverseAdoptionCalculation(this.actor, parsed, item)
+                    itemsToAdd.push(item)
                     SpecialabilityRulesDSA5.abilityAdded(this.actor, item)
                     break
                 case "magictrick":
-                    await this.actor.createEmbeddedDocuments("Item", [item])
+                    itemsToAdd.push(item)
                     break
             }
         }
+        await this.actor.createEmbeddedDocuments("Item", itemsToAdd )
     }
 
     async alreadyAdded(string, category) {
@@ -125,7 +128,7 @@ export default class WizardDSA5 extends Application {
                         icon: '<i class="fas fa-check"></i>',
                         label: game.i18n.localize('Ok'),
                         default: true,
-                        callback: html => {
+                        callback: () => {
                             resolve(false);
                         },
                     },
@@ -133,7 +136,7 @@ export default class WizardDSA5 extends Application {
                         icon: '<i class="fas fa-close"></i>',
                         label: game.i18n.localize('Cancel'),
                         default: true,
-                        callback: html => {
+                        callback: () => {
                             resolve(true);
                         },
                     }
@@ -143,19 +146,21 @@ export default class WizardDSA5 extends Application {
         return result
     }
 
-    async updateSkill(skill, itemType, factor = 1, bonus = true) {
-        let parsed = DSA5_Utility.parseAbilityString(skill.trim())
-        let res = this.actor.data.items.find(i => {
-            return i.type == itemType && i.name == parsed.name
-        });
-        if (res) {
-            let skillUpdate = duplicate(res)
-            skillUpdate.data.talentValue.value = Math.max(0, factor * parsed.step + (bonus ? Number(skillUpdate.data.talentValue.value) : 0))
-            await this.actor.updateEmbeddedDocuments("Item", [skillUpdate]);
-        } else {
-            console.warn(`Could not find ${itemType} ${skill}`)
-            this.errors.push(`${game.i18n.localize(itemType)}: ${skill}`)
+    async updateSkill(skills, itemType, factor = 1, bonus = true) {
+        let itemsToUpdate = []
+        for(let skill of skills){
+            let parsed = DSA5_Utility.parseAbilityString(skill.trim())
+            let res = this.actor.data.items.find(i => {return i.type == itemType && i.name == parsed.name});
+            if (res) {
+                let skillUpdate = duplicate(res)
+                skillUpdate.data.talentValue.value = Math.max(0, factor * parsed.step + (bonus ? Number(skillUpdate.data.talentValue.value) : 0))
+                itemsToUpdate.push(skillUpdate)
+            } else {
+                console.warn(`Could not find ${itemType} ${skill}`)
+                this.errors.push(`${game.i18n.localize(itemType)}: ${skill}`)
+            }
         }
+        await this.actor.updateEmbeddedDocuments("Item", itemsToUpdate);
     }
 
     async _loadCompendiae() {
@@ -192,7 +197,7 @@ export default class WizardDSA5 extends Application {
 
     activateListeners(html) {
         super.activateListeners(html)
-        html.find('button.ok').click(ev => {
+        html.find('button.ok').click(() => {
             if (!this.updating) {
                 this.updating = true
                 this.updateCharacter().then(
@@ -200,9 +205,7 @@ export default class WizardDSA5 extends Application {
                 )
             }
         })
-        html.find('button.cancel').click(ev => {
-            this.close()
-        })
+        html.find('button.cancel').click(() => {this.close()})
         html.find('.show-item').click(ev => {
             let itemId = $(ev.currentTarget).attr("data-id")
             const item = this.items.find(i => i.data._id == itemId)
@@ -224,9 +227,7 @@ export default class WizardDSA5 extends Application {
 
     static flashElem(elem, cssClass = "emphasize") {
         elem.addClass(cssClass)
-        setTimeout(function() {
-            elem.removeClass(cssClass)
-        }, 600)
+        setTimeout(function() { elem.removeClass(cssClass)}, 600)
     }
 
     finalizeUpdate() {

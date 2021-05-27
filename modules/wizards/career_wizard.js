@@ -13,7 +13,6 @@ export default class CareerWizard extends WizardDSA5 {
             "en": ["COU", "SGC", "INT", "CHA", "DEX", "AGI", "CON", "STR"]
         }
         this.attributes = attrs[game.i18n.lang]
-
     }
 
     static get defaultOptions() {
@@ -121,6 +120,9 @@ export default class CareerWizard extends WizardDSA5 {
         if (value.trim() == "")
             return
 
+        let itemsToCreate = []
+        let itemsToUpdate = []
+
         for (let k of value.split(",")) {
             let parsed = DSA5_Utility.parseAbilityString(k.trim())
             let item = this.actor.data.items.find(x => types.includes(x.type) && x.name == parsed.original)
@@ -130,7 +132,7 @@ export default class CareerWizard extends WizardDSA5 {
                     item.data.talentValue.value = parsed.step
                 if (item.data.step)
                     item.data.step.value = parsed.step
-                await this.actor.updateEmbeddedDocuments("Item", [item])
+                itemsToUpdate.push(item)
             } else {
                 item = this.items.find(x => types.includes(x.type) && x.name == parsed.original)
                 if (!item) {
@@ -143,30 +145,35 @@ export default class CareerWizard extends WizardDSA5 {
                         item.data.talentValue.value = parsed.step
                     if (item.data.step)
                         item.data.step.value = parsed.step
-                    await this.actor.createEmbeddedDocuments("Item", [item])
+                    itemsToCreate.push(item)
                 } else {
                     this.errors.push(`${types.map(x => game.i18n.localize(x)).join("/")}: ${k}`)
                     ui.notifications.error(game.i18n.format("DSAError.notFound", { category: game.i18n.localize(types[0]), name: k }))
                 }
             }
         }
+        await this.actor.updateEmbeddedDocuments("Item", itemsToUpdate)
+        await this.actor.createEmbeddedDocuments("Item", itemsToCreate)
     }
 
     async addBlessing(blessings, type) {
+        let itemsToCreate = []
         for (let k of blessings) {
             let name = k.trim()
             if (name == "") continue
             let item = this.actor.data.items.find(x => type == x.type && x.name == name)
-            if (!item)
+            if (!item){
                 item = this.items.find(x => type == x.type && x.name == name)
-            if (item) {
-                item = duplicate(item)
-                await this.actor.createEmbeddedDocuments("Item", [item])
-            } else {
-                this.errors.push(`${game.i18n.localize(type)}: ${k}`)
-                ui.notifications.error(game.i18n.format("DSAError.notFound", { category: game.i18n.localize(type), name: name }))
+                if (item) {
+                    item = duplicate(item)
+                    itemsToCreate.push(item)
+                } else {
+                    this.errors.push(`${game.i18n.localize(type)}: ${k}`)
+                    ui.notifications.error(game.i18n.format("DSAError.notFound", { category: game.i18n.localize(type), name: name }))
+                }
             }
         }
+        await this.actor.createEmbeddedDocuments("Item", itemsToCreate)
     }
 
     async updateCharacter() {
@@ -200,35 +207,27 @@ export default class CareerWizard extends WizardDSA5 {
         }
         if (this.career.data.mageLevel.value == "clerical") {
             update["data.happyTalents.value"] = this.career.data.happyTalents.value
-            this.setAbility(this.career.data.liturgies.value, ["liturgy", "ceremony"])
-            this.addBlessing(this.career.data.blessings.value.split(","), "blessing")
+            await this.setAbility(this.career.data.liturgies.value, ["liturgy", "ceremony"])
+            await this.addBlessing(this.career.data.blessings.value.split(","), "blessing")
         }
         if (this.career.data.mageLevel.value == "magical") {
-            this.setAbility(this.career.data.spells.value, ["spell", "ritual"])
+            await this.setAbility(this.career.data.spells.value, ["spell", "ritual"])
         }
 
-        this.setAbility(this.career.data.specialAbilities.value, ["specialability"])
-
+        await this.setAbility(this.career.data.specialAbilities.value, ["specialability"])
         await this.actor.update(update);
         await this.actor._updateAPs(apCost)
-
         await this.addSelections(parent.find('.optional:checked'))
-
-        for (let skill of this.career.data.skills.value.split(",")) {
-            await this.updateSkill(skill, "skill")
-        }
+        await this.updateSkill(this.career.data.skills.value.split(","), "skill")
 
         let combatSkillselectChoices = []
         for (let k of parent.find('.exclusive:checked')) {
             combatSkillselectChoices.push($(k).val())
         }
 
-        for (let skill of this.career.data.combatSkills.value.split(",").concat(combatSkillselectChoices)) {
-            if (skill.includes(game.i18n.localize("combatskillcountdivider") + ":") || skill == "")
-                continue
-
-            await this.updateSkill(skill, "combatskill", 1, false)
-        }
+        const combatSkills = this.career.data.combatSkills.value.split(",").concat(combatSkillselectChoices)
+            .filter(skill => !(skill.includes(game.i18n.localize("combatskillcountdivider") + ":") || skill == ""))
+        await this.updateSkill(combatSkills, "combatskill", 1, false)
 
         this.finalizeUpdate()
     }
