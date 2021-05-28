@@ -56,7 +56,7 @@ export default class ItemRulesDSA5 {
         if (item) {
             res.push({
                 name: item.name,
-                value: item.data.step.value * factor
+                value: Number(item.data.data == undefined ? item.data.step.value : item.data.data.step.value) * factor
             })
         }
         return res
