@@ -6,14 +6,13 @@ export default class ItemRulesDSA5 {
         let modifier = []
         let selected = game.settings.get("dsa5", "talentModifierEnabled")
         for (let k of actor.items.filter(x => { return types.includes(x.type) && x.data.data.effect.value.includes(talent) })) {
-
             for (let m of k.data.data.effect.value.split(/;|,/)) {
                 if (m.includes(talent)) {
                     let parsed = DSA5_Utility.parseAbilityString(m.trim())
                     if (parsed.name == talent) {
                         modifier.push({
                             name: k.name,
-                            value: parsed.step * (k.data.step ? k.data.step.value : 1),
+                            value: parsed.step * (k.data.data.step ? k.data.data.step.value : 1),
                             type: parsed.type,
                             selected: selected
                         })
