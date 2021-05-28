@@ -298,7 +298,7 @@ export default class MerchantSheetDSA5 extends ActorSheetdsa5NPC {
     prepareTradeFriend(data) {
         let friend = this.getTradeFriend()
         if (friend) {
-            let tradeData = friend.prepareItems()
+            let tradeData = friend.prepareItems({details: []})
             let factor = getProperty(this.actor.data.data, "merchant.merchantType") == "loot" ? 1 : (getProperty(this.actor.data.data, "merchant.buyingFactor") || 1)
             let inventory = this.prepareSellPrices(tradeData.inventory, factor)
             if (inventory["misc"].items.length == 0) inventory["misc"].show = false

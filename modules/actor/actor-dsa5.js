@@ -1285,25 +1285,6 @@ export default class Actordsa5 extends Actor {
         return item;
     }
 
-    async _preUpdate(changed, options, user){
-        if (getProperty(this.data, "data.config.autoBar")) {
-            if (this.data.isMage) {
-                mergeObject(changed, {
-                    "token.bar2": { "attribute": "status.astralenergy" }
-                });
-            } else if (this.data.isPriest) {
-                mergeObject(changed, {
-                    "token.bar2": { "attribute": "status.karmaenergy" }
-                });
-            } else {
-                mergeObject(changed, {
-                    "token.bar2": { "attribute": "" }
-                });
-            }
-        }
-        await super._preUpdate(changed, options, user)
-    }
-
     async _preCreate(data, options, user){
         let update = {}
 
