@@ -108,7 +108,6 @@ export default class DSA5_Utility {
 
     static async findItembyIdAndPack(id, packMan) {
         const pack = game.packs.get(packMan)
-
         let item
         await pack.getDocuments().then(content => item = content.find(i => i.id == id));
         return item

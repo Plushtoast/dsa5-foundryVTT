@@ -1,0 +1,19 @@
+<ul>
+{{#each items as |cat i|}}
+{{#each cat as |item j|}}
+<li class="{{item.cssClass}}" data-id="{{item.id}}" data-name="{{item.name}}">
+  <div style="background-image:url({{item.icon}})">{{item.abbrev}}</div>
+</li>
+{{/each}}
+{{/each}}
+{{#if consumable}}
+<li class="consumable primary" data-id="{{consumable.id}}" data-name="{{consumable.name}}">
+  <div style="background-image:url({{consumable.icon}})">{{consumable.abbrev}}</div>
+</li>
+{{#each consumables as |item i|}}
+<li class="consumable secondary" data-id="{{item.id}}" data-name="{{item.name}}">
+  <div style="background-image:url({{item.icon}})">{{item.abbrev}}</div>
+</li>
+{{/each}}
+{{/if}}
+</ul>

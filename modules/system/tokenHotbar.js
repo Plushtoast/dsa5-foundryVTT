@@ -2,7 +2,6 @@ export default class DSA5Hotbar extends Hotbar{
   constructor(options) {
     super(options);
 
-    this.quickButtons = []
     this.combatSkills = [game.i18n.localize("LocalizedIDs.selfControl"), game.i18n.localize("LocalizedIDs.featOfStrength"), game.i18n.localize("LocalizedIDs.perception")]
     this.defaultSkills = [game.i18n.localize("LocalizedIDs.perception")]
     Hooks.on("controlToken", (elem, controlTaken) => {
@@ -12,36 +11,41 @@ export default class DSA5Hotbar extends Hotbar{
 
   async _render(force = false, options = {}) {
     await super._render(force, options);
-    $(this._element).append($('<div class="tokenQuickHot"><ul></ul></div>'))
+    $(this._element).append($('<div class="tokenQuickHot"></div>'))
     this.addContextColor()
   }
 
   activateListeners(html) {
     super.activateListeners(html);
 
-    html.on('click','.tokenQuickHot li', ev => {
-      this.executeQuickButton(ev)
+    html.on('click','.tokenQuickHot li', async(ev) => {
+      await this.executeQuickButton(ev)
       return false
     })
     html.on('mouseenter', '.tokenQuickHot li', ev => {
       const li = $(ev.currentTarget)
-      const id = li.attr("data-id")
       let tooltip = li.find(".tooltip");
       if (tooltip) tooltip.remove();
-      let item = this.quickButtons.find(x => x.id == id)
       tooltip = document.createElement("SPAN");
       tooltip.classList.add("tooltip");
-      tooltip.textContent = item.name;
+      tooltip.textContent = li.attr("data-name")
       li.append($(tooltip));
+      if(li.hasClass("primary")){
+        html.find('.secondary').addClass("shown")
+      }
     })
-    html.on('mouseout', '.tokenQuickHot li', ev => {
+    html.on('mouseleave', '.tokenQuickHot li', ev => {
       const li = $(ev.currentTarget)
       let tooltip = li.find(".tooltip");
-      if (tooltip) tooltip.remove();
+      if (tooltip) tooltip.remove()
     })
+    html.on('mouseleave', '.tokenQuickHot', ev => {
+      $(ev.currentTarget).find('.secondary').removeClass('shown')
+    })
+
   }
 
-  executeQuickButton(ev){
+  async executeQuickButton(ev){
     const actor = canvas.tokens.controlled[0].actor
     const tokenId = canvas.tokens.controlled[0].id
     const id = $(ev.currentTarget).attr("data-id")
@@ -69,8 +73,28 @@ export default class DSA5Hotbar extends Hotbar{
           case "skill":
             actor.setupSkill(result.data, {}, tokenId).then(setupData => {
               actor.basicTest(setupData)
-            });
-            break
+            })
+          case "consumable":
+           new Dialog({
+             title: game.i18n.localize("SHEET.ConsumeItem") + ": " + result.name,
+             content: game.i18n.localize("SHEET.ConsumeItem") + ": " + result.name,
+              default: 'yes',
+              buttons: {
+                Yes: {
+                  icon: '<i class="fa fa-check"></i>',
+                  label: game.i18n.localize("yes"),
+                  callback: async() => {
+                    await result.setupEffect(null, {}, tokenId)
+                    this.updateDSA5Hotbar()
+                  }
+                },
+                cancel: {
+                  icon: '<i class="fas fa-times"></i>',
+                  label: game.i18n.localize("cancel"),
+                }
+              }
+            }).render(true)
+           break
         }
 
       }
@@ -92,93 +116,68 @@ export default class DSA5Hotbar extends Hotbar{
     }
   }
 
-  updateDSA5Hotbar(){
+  async updateDSA5Hotbar(){
     if(canvas.tokens.controlled.length == 1){
       const actor = canvas.tokens.controlled[0].actor
-      if(actor.isOwner){
-        this.updateIcons(actor)
-        this.toggleBar(false)
+      if(actor && actor.isOwner){
+        await this.updateIcons(actor)
+        await this.toggleBar(false)
       }else{
-        this.toggleBar(true)
+        await this.toggleBar(true)
       }
     }else{
-      this.toggleBar(true)
+      await this.toggleBar(true)
     }
   }
 
-  updateIcons(actor){
-    let items = []
+  async updateIcons(actor){
+    let items = {
+      attacks: [],
+      spells: [],
+      default: [],
+      skills: []
+    }
+    let consumable
+    let consumables = []
     if(game.combat){
-      items.push({
+      items.attacks.push({
         name: game.i18n.localize("attackWeaponless"),
         id: "attackWeaponless",
         icon: "systems/dsa5/icons/categories/attack_weaponless.webp"
       })
 
-      let types = ["meleeweapon", "rangeweapon"]
-      let traitTypes = ["meleeAttack", "rangeAttack"]
-      let attacks = actor.data.items.filter(x => {
-        return (types.includes(x.type) && x.data.data.worn.value == true) || (x.type == "trait" && traitTypes.includes(x.data.data.traitType.value))
-      })
-      for (let res of attacks) {
-        items.push({
-          name: res.name,
-          id: res.id,
-          icon: res.img,
-          cssClass: "",
-          abbrev: res.name[0]
-        })
-      }
-      types = ["liturgy", "spell"]
-      let spells = actor.data.items.filter(x => types.includes(x.type) && x.data.data.effectFormula.value)
-      for (let res of spells) {
-        items.push({
-          name: res.name,
-          id: res.id,
-          icon: res.img,
-          cssClass: "spell",
-          abbrev: res.name[0]
-        })
-      }
-      let skills = actor.data.items.filter(x => ["skill"].includes(x.type) && this.combatSkills.includes(x.name))
-      for (let res of skills) {
-        items.push({
-          name: `${res.name} (${res.data.data.talentValue.value})`,
-          id: res.id,
-          icon: res.img,
-          cssClass: "skill",
-          abbrev: res.name[0]
-        })
-      }
-    }else{
-      let skills = actor.data.items.filter(x => ["skill"].includes(x.type) && this.defaultSkills.includes(x.name))
-      for (let res of skills) {
-        items.push({
-          name: `${res.name} (${res.data.data.talentValue.value})`,
-          id: res.id,
-          icon: res.img,
-          cssClass: "skill",
-          abbrev: res.name[0]
-      })
-    }
-      skills = actor.data.items.filter(x => ["skill"].includes(x.type) && !this.defaultSkills.includes(x.name) && x.data.data.talentValue.value > 0)
-      skills = skills.sort((a, b) => { return b.data.data.talentValue.value - a.data.data.talentValue.value}).slice(0, 10)
-      for (let res of skills) {
-        items.push({
-          name: `${res.name} (${res.data.data.talentValue.value})`,
-          id: res.id,
-          icon: res.img,
-          cssClass: "skill",
-          abbrev: res.name[0]
-        })
-      }
-    }
-    this.quickButtons = items
-    $(this._element).find('.tokenQuickHot ul').html(items.map(x => { return `<li class="${x.cssClass}" data-id="${x.id}"><div style="background-image:url(${x.icon})">${x.abbrev || ""}</div></li>` }).join(""))
+      const attacktypes = ["meleeweapon", "rangeweapon"]
+      const traitTypes = ["meleeAttack", "rangeAttack"]
+      const spellTypes = ["liturgy", "spell"]
 
+      for(let x of actor.data.items){
+        if ((attacktypes.includes(x.type) && x.data.data.worn.value == true) || (x.type == "trait" && traitTypes.includes(x.data.data.traitType.value))){
+          items.attacks.push({name: x.name,id: x.id,icon: x.img,cssClass: "",abbrev: x.name[0]})
+        } else if (spellTypes.includes(x.type) && x.data.data.effectFormula.value){
+          items.spells.push({ name: x.name, id: x.id, icon: x.img, cssClass: "spell", abbrev: x.name[0]})
+        } else if (["skill"].includes(x.type) && this.combatSkills.includes(x.name)){
+          items.default.push({name: `${x.name} (${x.data.data.talentValue.value})`,id: x.id,icon: x.img,cssClass: "skill",abbrev: x.name[0]})
+        } else if (x.type == "consumable"){
+          consumables.push({ name: x.name, id: x.id, icon: x.img, cssClass: "", abbrev: x.data.data.quantity.value })
+        }
+      }
+      consumable = consumables.pop()
+    }else{
+      let descendingSkills = []
+      for (let x of actor.data.items) {
+        if (["skill"].includes(x.type) && this.defaultSkills.includes(x.name)){
+          items.default.push({name: `${x.name} (${x.data.data.talentValue.value})`,id: x.id,icon: x.img,cssClass: "skill",abbrev: x.name[0]})
+        } else if (["skill"].includes(x.type) && !this.defaultSkills.includes(x.name) && x.data.data.talentValue.value > 0){
+          descendingSkills.skills.push({name: `${x.name} (${x.data.data.talentValue.value})`,id: x.id,icon: x.img,cssClass: "skill",abbrev: x.name[0],tw: x.data.data.talentValue.value})
+        }
+      }
+      items.skills.push(...descendingSkills.sort((a, b) => { return b.tw - a.tw }).slice(0, 10))
+    }
+    const template = await renderTemplate("systems/dsa5/templates/status/tokenHotbar.html", { items, consumables, consumable })
+    $(this._element).find('.tokenQuickHot').html(template)
   }
 
-  toggleBar(hide){
+  async toggleBar(hide){
     const elem = $(this._element).find('.tokenQuickHot')
     if(hide){
       elem.removeClass("expanded")

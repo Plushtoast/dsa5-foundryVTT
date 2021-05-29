@@ -2352,14 +2352,19 @@ select.noAppearance {
     z-index: -2;
    transition: transform 0.3s ease-in-out;
 }
+.tokenQuickHot ul{
+    font-size: 0;
+}
+
 .tokenQuickHot.expanded{
     transform: translateY(-45px)
 }
 .tokenQuickHot li{
     background-color:rgba(14, 12, 12, 0.3);
     display:inline-block;
-    width:33px;
-    height: 33px;
+    font-size: 14px;
+    width:35px;
+    height: 35px;
     border: 1px solid black;
     border-radius: 3px;
     pointer-events: all;
@@ -2367,6 +2372,7 @@ select.noAppearance {
     box-shadow: inset 0px 0px 10px #403014;
     background: url(../icons/backgrounds/macrobg.webp);
     position: relative;
+    box-sizing: border-box;
 }
 .tokenQuickHot li:hover{
     border: 1px solid red;
@@ -2378,6 +2384,13 @@ select.noAppearance {
     width:100%;
     position: absolute;
 }
+.tokenQuickHot .secondary div{
+    display:none;
+}
+.tokenQuickHot .secondary.shown div{
+    display:block;
+}
+
 .tokenQuickHot li span{
     position: absolute;
     top: -25px;
@@ -2396,6 +2409,18 @@ select.noAppearance {
 }
 .tokenQuickHot li.skill{
     box-shadow: inset 0px 0px 10px #0d813e;
+}
+
+.consumable.secondary{
+    width: 0;
+    border: none;
+    transition: all 0.3s ease-in-out;
+}
+
+.consumable.secondary.shown{
+    border: 1px solid black;
+    border-color: black;
+    width:35px;
 }
 
 .ench-fw{
@@ -2454,3 +2479,4 @@ select.noAppearance {
     position: relative;
     z-index: 1;
 }
+
