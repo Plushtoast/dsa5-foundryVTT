@@ -119,7 +119,7 @@ export default class DSA5_Utility {
             console.trace()
         }*/
         let actor = ChatMessage.getSpeakerActor(speaker)
-        if (!actor) {
+        if (!actor && canvas.tokens) {
             let token = canvas.tokens.get(speaker.token)
             if (token) actor = token.actor
         }

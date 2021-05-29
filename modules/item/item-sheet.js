@@ -376,7 +376,7 @@ class EquipmentSheet extends Enchantable{
                     weightSum += Number(x.weight)
                     return x
                 })
-            data['weightSum'] = weightSum
+            data['weightSum'] = parseFloat(weightSum.toFixed(3))
             data['weightWidth'] = `style="width: ${Math.min(this.item.data.data.capacity ? weightSum / this.item.data.data.capacity * 100 : 0, 100)}%"`
             data['weightExceeded'] = weightSum > Number(this.item.data.data.capacity) ? "exceeded" : ""
         }

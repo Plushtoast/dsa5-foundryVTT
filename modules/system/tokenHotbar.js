@@ -172,9 +172,6 @@ export default class DSA5Hotbar extends Hotbar{
           abbrev: res.name[0]
         })
       }
-
-
-
     }
     this.quickButtons = items
     $(this._element).find('.tokenQuickHot ul').html(items.map(x => { return `<li class="${x.cssClass}" data-id="${x.id}"><div style="background-image:url(${x.icon})">${x.abbrev || ""}</div></li>` }).join(""))
