@@ -4,6 +4,7 @@ export default class DSA5Hotbar extends Hotbar{
 
     this.quickButtons = []
     this.combatSkills = [game.i18n.localize("LocalizedIDs.selfControl"), game.i18n.localize("LocalizedIDs.featOfStrength"), game.i18n.localize("LocalizedIDs.perception")]
+    this.defaultSkills = [game.i18n.localize("LocalizedIDs.perception")]
     Hooks.on("controlToken", (elem, controlTaken) => {
       this.updateDSA5Hotbar()
     })
@@ -150,7 +151,17 @@ export default class DSA5Hotbar extends Hotbar{
         })
       }
     }else{
-      let skills = actor.data.items.filter(x => ["skill"].includes(x.type) && x.data.data.talentValue.value > 0)
+      let skills = actor.data.items.filter(x => ["skill"].includes(x.type) && this.defaultSkills.includes(x.name))
+      for (let res of skills) {
+        items.push({
+          name: `${res.name} (${res.data.data.talentValue.value})`,
+          id: res.id,
+          icon: res.img,
+          cssClass: "skill",
+          abbrev: res.name[0]
+      })
+    }
+      skills = actor.data.items.filter(x => ["skill"].includes(x.type) && !this.defaultSkills.includes(x.name) && x.data.data.talentValue.value > 0)
       skills = skills.sort((a, b) => { return b.data.data.talentValue.value - a.data.data.talentValue.value}).slice(0, 10)
       for (let res of skills) {
         items.push({
@@ -161,6 +172,8 @@ export default class DSA5Hotbar extends Hotbar{
           abbrev: res.name[0]
         })
       }
+
+
 
     }
     this.quickButtons = items
