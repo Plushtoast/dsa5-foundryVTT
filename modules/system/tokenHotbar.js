@@ -168,7 +168,7 @@ export default class DSA5Hotbar extends Hotbar{
         if (["skill"].includes(x.type) && this.defaultSkills.includes(x.name)){
           items.default.push({name: `${x.name} (${x.data.data.talentValue.value})`,id: x.id,icon: x.img,cssClass: "skill",abbrev: x.name[0]})
         } else if (["skill"].includes(x.type) && !this.defaultSkills.includes(x.name) && x.data.data.talentValue.value > 0){
-          descendingSkills.skills.push({name: `${x.name} (${x.data.data.talentValue.value})`,id: x.id,icon: x.img,cssClass: "skill",abbrev: x.name[0],tw: x.data.data.talentValue.value})
+          descendingSkills.push({name: `${x.name} (${x.data.data.talentValue.value})`,id: x.id,icon: x.img,cssClass: "skill",abbrev: x.name[0],tw: x.data.data.talentValue.value})
         }
       }
       items.skills.push(...descendingSkills.sort((a, b) => { return b.tw - a.tw }).slice(0, 10))
