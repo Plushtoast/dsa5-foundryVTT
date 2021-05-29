@@ -74,6 +74,7 @@ export default class DSA5Hotbar extends Hotbar{
             actor.setupSkill(result.data, {}, tokenId).then(setupData => {
               actor.basicTest(setupData)
             })
+            break
           case "consumable":
            new Dialog({
              title: game.i18n.localize("SHEET.ConsumeItem") + ": " + result.name,
