@@ -13,7 +13,7 @@ export default class ItemSheetdsa5 extends ItemSheet {
 
     static get defaultOptions() {
         const options = super.defaultOptions;
-        options.tabs = [{ navSelector: ".tabs", contentSelector: ".content", initial: "description" }]
+        options.tabs = [{ navSelector: ".tabs", contentSelector: ".content" }]
         mergeObject(options, {
             classes: options.classes.concat(["dsa5", "item"]),
             width: 450,
@@ -165,7 +165,6 @@ export default class ItemSheetdsa5 extends ItemSheet {
 
     async getData(options) {
         let data = super.getData(options).data;
-
 
         switch (this.item.type) {
             case "skill":
@@ -368,7 +367,110 @@ class EquipmentSheet extends Enchantable{
     async getData(options) {
         const data = await super.getData(options);
         data['equipmentTypes'] = DSA5.equipmentTypes;
+        if (this.isBagWithContents()){
+            let weightSum = 0
+            data['containerContent'] = this.item.actor.items
+                .filter(x => DSA5.equipmentCategories.includes(x.type) && x.data.data.parent_id == this.item.id)
+                .map(x => {
+                    x.weight = parseFloat((x.data.data.weight.value * x.data.data.quantity.value).toFixed(3));
+                    weightSum += Number(x.weight)
+                    return x
+                })
+            data['weightSum'] = weightSum
+            data['weightWidth'] = `style="width: ${Math.min(this.item.data.data.capacity ? weightSum / this.item.data.data.capacity * 100 : 0, 100)}%"`
+            data['weightExceeded'] = weightSum > Number(this.item.data.data.capacity) ? "exceeded" : ""
+        }
         return data
+    }
+
+    breakOverflow({name, quantity, weight}, parent) {
+        let elm = $(`<div class="itemInfo">
+            <h3 class="center">${name}</h3>
+            <div class="row-section\">
+                <div class="col ten"></div>
+                <div class="col thirty center">
+                    # ${quantity}
+                </div>
+                <div class="col five"></div>
+                <div class="col thirty center">
+                    <i class="fas fa-anchor\"></i> ${weight}
+                </div>
+                <div class="col ten"></div>
+            </div>
+        </div>`)
+
+        let top = parent.offset().top + 52;
+        let left = parent.offset().left - 75;
+        elm.appendTo($('body'));
+        elm.css({
+            position: 'absolute',
+            left: left + 'px',
+            top: top + 'px',
+            bottom: 'auto',
+            right: 'auto',
+            'z-index': 10000
+        });
+        return elm
+    }
+
+    activateListeners(html){
+        super.activateListeners(html)
+        const slots = html.find('.slot')
+        slots.mouseenter((ev) => {
+            const item = $(ev.currentTarget)
+            let elm = this.breakOverflow({
+                name: item.attr('data-name'),
+                weight: item.attr("data-weight"),
+                quantity: item.attr("data-quantity")
+            }, item)
+            elm.fadeIn()
+            item.mouseleave(() => {
+                elm.remove()
+                item.off('mouseleave')
+            })
+        })
+
+        slots.mousedown(async(ev) => {
+            let itemId = $(ev.currentTarget).attr("data-item-id")
+            let item = this.actor.items.get(itemId);
+
+            if (ev.button == 0)
+                item.sheet.render(true);
+            else if (ev.button == 2){
+                $('.itemInfo').remove()
+                await item.update({ "data.parent_id": 0 });
+                this.render(true)
+            }
+        })
+    }
+
+    isBagWithContents(){
+        return this.item.data.data.equipmentType.value == "bags" && this.item.actor
+    }
+
+    async _onDrop(event) {
+        if(this.isBagWithContents()){
+            const dragData = JSON.parse(event.dataTransfer.getData("text/plain"))
+            const { item, typeClass, selfTarget } = await itemFromDrop(dragData, undefined)
+            const selfItem = this.item.id == item.id
+            const ownItem = this.item.parent.id == dragData.actorId
+
+            if (DSA5.equipmentCategories.includes(typeClass) && !selfItem){
+                item.data.parent_id = this.item.id
+                if (item.data.worn && item.data.worn.value)
+                    item.data.worn.value = false
+
+                if(ownItem){
+                   await this.item.actor.updateEmbeddedDocuments("Item", [item])
+                }else{
+                   await this.item.actor.sheet._addLoot(item)
+                }
+                this.render(true)
+                return
+            }
+        }
+
+        await super._onDrop(event)
     }
 }
 

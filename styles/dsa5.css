@@ -583,6 +583,9 @@ input[type=text].emphasize {
     color: white;
 }
 
+.dice-tooltip .dice-rolls .roll.die{
+    line-height: 35px;
+}
 .d20,
 .d6,
 .d2,
@@ -2398,4 +2401,56 @@ select.noAppearance {
 .ench-fw{
     position: relative;
     top: -3px;
+}
+
+.bags{
+    position: relative;
+}
+
+.bags .slot{
+    width: 50px;
+    height:50px;
+    background-size: contain;
+    border: 1px solid var(--border-color);
+    background-color: antiquewhite;
+    border-radius:5px;
+    cursor: pointer;
+}
+.bags .slot:hover{
+    border-color:rgb(10, 89, 194)
+}
+
+.itemInfo{
+    position: absolute;
+    display:none;
+    width: 200px;
+    border: 1px solid var(--border-color);
+    padding: 5px;
+    background-color: rgba(0, 0, 0, 0.8);
+    color:white;
+    border-radius: 5px;
+}
+
+.bagUsage{
+    position: relative;
+    border:1px solid var(--border-color);
+    margin:5px;
+    background-color:rgba(14, 12, 12, 0.1)
+}
+
+.bagUsage .fillage{
+    position: absolute;
+    top: 0;
+    left:0;
+    bottom: 0;
+    background-color:rgb(64, 169, 221)
+}
+
+.bagUsage .fillage.exceeded{
+    background-color: rgb(212, 45, 45)
+}
+
+.bagUsage .fillText{
+    position: relative;
+    z-index: 1;
 }

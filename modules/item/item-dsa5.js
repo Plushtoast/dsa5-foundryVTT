@@ -853,7 +853,7 @@ class DiseaseItemDSA5 extends Itemdsa5 {
 class EquipmentItemDSA5 extends Itemdsa5 {
     static chatData(data, name) {
         return [
-            this._chatLineHelper("equipmentType", game.i18n.localize(data.equipmentType.value))
+            this._chatLineHelper("equipmentType", game.i18n.localize(`Equipment.${data.equipmentType.value}`))
         ]
     }
 }
