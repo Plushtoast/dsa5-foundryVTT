@@ -85,7 +85,7 @@ export default class ActorSheetDsa5 extends ActorSheet {
         for (let box of boxes) {
             this.collapsedBoxes.push($(box).attr("class"));
         }
-        for (const detail of $(html.find('.expandDetails.shown'))){
+        for (const detail of $(html.find('.expandDetails.shown'))) {
             this.openDetails.push($(detail).closest('.item').attr("data-item-id"))
         }
     }
@@ -105,7 +105,7 @@ export default class ActorSheetDsa5 extends ActorSheet {
     async getData(options) {
         const baseData = await super.getData(options);
         const sheetData = { actor: baseData.actor.data }
-        const prepare = this.actor.prepareSheet({details: this.openDetails})
+        const prepare = this.actor.prepareSheet({ details: this.openDetails })
         mergeObject(sheetData.actor, prepare)
 
         sheetData.isGM = game.user.isGM;
@@ -896,7 +896,6 @@ export default class ActorSheetDsa5 extends ActorSheet {
     }
 
     async handleItemCopy(item, typeClass) {
-
         if (DSA5.equipmentCategories.includes(typeClass)) {
             item.name += " (Copy)"
             return await this._addLoot(item)
@@ -984,12 +983,12 @@ export default class ActorSheetDsa5 extends ActorSheet {
 
 
 
-    async _handleDragData(dragData, originalEvent, {item, typeClass, selfTarget}) {
-        if(!item) return
+    async _handleDragData(dragData, originalEvent, { item, typeClass, selfTarget }) {
+        if (!item) return
 
         let container_id
         let parentItem = $(originalEvent.target).parents(".item")
-        while (parentItem.parents(".item").attr("data-category") == "bags"){
+        while (parentItem.parents(".item").attr("data-category") == "bags") {
             parentItem = parentItem.parents(".item")
         }
         if (parentItem && parentItem.attr("data-category") == "bags" && DSA5.equipmentCategories.includes(typeClass)) {
@@ -997,24 +996,24 @@ export default class ActorSheetDsa5 extends ActorSheet {
                 container_id = parentItem.attr("data-item-id")
 
                 item.data.parent_id = container_id
-                if(item.data.worn && item.data.worn.value)
+                if (item.data.worn && item.data.worn.value)
                     item.data.worn.value = false
             }
         }
 
         if (originalEvent.ctrlKey && selfTarget) {
             await this.handleItemCopy(item, typeClass)
-        } else if(!selfTarget) {
+        } else if (!selfTarget) {
             await this._manageDragItems(item, typeClass)
-        } else if (selfTarget && container_id){
+        } else if (selfTarget && container_id) {
             await this.actor.updateEmbeddedDocuments("Item", [item])
-        } else if (selfTarget && DSA5.equipmentCategories.includes(typeClass)){
-            await this.actor.updateEmbeddedDocuments("Item",[ { _id: item._id, data: {parent_id: 0}}])
+        } else if (selfTarget && DSA5.equipmentCategories.includes(typeClass)) {
+            await this.actor.updateEmbeddedDocuments("Item", [{ _id: item._id, data: { parent_id: 0 } }])
         }
 
-        if (container_id && getProperty(item, "data.equipmentType.value") == "bags"){
+        if (container_id && getProperty(item, "data.equipmentType.value") == "bags") {
             let itemsToMove = this.actor.items.filter(x => DSA5.equipmentCategories.includes(x.type) && x.data.data.parent_id == item._id)
-            await this.actor.updateEmbeddedDocuments("Item", itemsToMove.map(x=> {return {_id: x.id, data: {parent_id: container_id}}}))
+            await this.actor.updateEmbeddedDocuments("Item", itemsToMove.map(x => { return { _id: x.id, data: { parent_id: container_id } } }))
         }
 
         if (originalEvent.altKey && !selfTarget && DSA5.equipmentCategories.includes(typeClass))

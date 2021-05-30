@@ -47,7 +47,7 @@ export default class DSAActiveEffectConfig extends ActiveEffectConfig {
         for (const ef of effects) {
             try {
                 const customEf = Number(getProperty(ef, "flags.dsa5.advancedFunction"))
-                const qs = testData.qualityStep
+                const qs = Math.min(testData.qualityStep, 6)
                 switch (customEf) {
                     case 1: //Systemeffekt
                         {

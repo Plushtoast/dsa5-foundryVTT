@@ -281,38 +281,12 @@ DSA5.localizedCompendiums = {
     de: [
         "dsa5.skills",
         "dsa5.combatskills",
-        "dsa5.species",
-
-        "dsa5-core.corecareers",
-        "dsa5-core.corecultures",
-        "dsa5-core.corespells",
-        "dsa5-core.coreliturgies",
-        "dsa5-core.corevantages",
-        "dsa5-core.coreequipment",
-        "dsa5-core.corespecialabilities",
-        "dsa5-core.corepoisonanddisease",
-        "dsa5-core.corebestiary",
-        "dsa5-core.coreactors",
-        "dsa5-core.corerules",
-        "dsa5-core.coremaps"
+        "dsa5.species"
     ],
     en: [
         "dsa5.skillsen",
         "dsa5.combatskillsen",
-        "dsa5.speciesen",
-
-        "dsa5-core.coreencareers",
-        "dsa5-core.coreencultures",
-        "dsa5-core.coreenspells",
-        "dsa5-core.coreenliturgies",
-        "dsa5-core.coreenvantages",
-        "dsa5-core.coreenequipment",
-        "dsa5-core.coreenspecialabilities",
-        "dsa5-core.coreenpoisonanddisease",
-        "dsa5-core.coreenbestiary",
-        "dsa5-core.coreenactors",
-        "dsa5-core.coreenrules",
-        "dsa5-core.coreenmaps"
+        "dsa5.speciesen"
     ]
 }
 
@@ -327,7 +301,7 @@ DSA5.gearModifyableCalculatedAttributes = ["fatePoints", "initiative", "speed", 
 DSA5.defaultWeapon = {
     name: "default",
     type: "meleeweapon",
-   data: {
+    data: {
         type: "meleeweapon",
         reach: {
             value: "short"

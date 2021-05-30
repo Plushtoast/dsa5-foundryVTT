@@ -72,7 +72,9 @@
         "*": "*"
     },
 
-
+    "LIGHT": {
+        "daylight": "Tageslicht"
+    },
 
     "DIALOG": {
         "RollMode": "Würfelmodus",
@@ -1040,7 +1042,7 @@
         "improveFate": "Wurf verbessern (1 Schip)"
     },
 
-    "SCHIPSKILLS":{
+    "SCHIPSKILLS": {
         "meleeweaponattack": "Attacke verbessern",
         "meleeweaponparry": "Parade verbessern",
         "rangeweaponattack": "Fernkampf verbessern",

@@ -260,7 +260,7 @@ export default class Itemdsa5 extends Item {
         return combatskills
     }
 
-    static getCombatSkillModifier(actor, source, situationalModifiers){
+    static getCombatSkillModifier(actor, source, situationalModifiers) {
         let combatskill = actor.items.find(x => x.type == "combatskill" && x.name == source.data.combatskill.value)
 
         for (let ef of combatskill.data.effects) {
@@ -391,7 +391,7 @@ export default class Itemdsa5 extends Item {
             properties.push(`<b>${game.i18n.localize("price")}</b>: ${chatData.data.price.D} <div title="${game.i18n.localize("Money-D")}" class="chatmoney money-D"></div>, ${chatData.data.price.S} <div title="${game.i18n.localize("Money-S")}" class="chatmoney money-S"></div>, ${chatData.data.price.H} <div title="${game.i18n.localize("Money-H")}" class="chatmoney money-H"></div>, ${chatData.data.price.K} <div title="${game.i18n.localize("Money-K")}" class="chatmoney money-K"></div>`);
         }
 
-        if(this.pack)
+        if (this.pack)
             chatData.itemLink = `@Compendium[${this.pack}.${this.id}]`
 
         if (chatData.img.includes("/blank.webp"))
@@ -727,7 +727,7 @@ class ConsumableItemDSA extends Itemdsa5 {
         let newCharges = item.data.data.charges <= 1 ? item.data.data.maxCharges : item.data.data.charges - 1
         let newQuantity = item.data.data.charges <= 1 ? item.data.data.quantity.value - 1 : item.data.data.quantity.value
 
-        let effect = DSA5_Utility.replaceDies(item.data.data.QLList.split("\n")[item.data.data.QL - 1], true)
+        let effect = DSA5_Utility.replaceDies(item.data.data.QLList.split("\n")[item.data.data.QL - 1], false)
         let msg = `<div><b>${title}</b></div><div>${item.data.data.description.value}</div><div><b>${game.i18n.localize('effect')}</b>: ${effect}</div>`
         if (newQuantity == 0) {
             await item.actor.deleteEmbeddedDocuments("Item", [item.data._id])
@@ -743,14 +743,14 @@ class ConsumableItemDSA extends Itemdsa5 {
 
     static async _applyActiveEffect(source) {
         let effects = source.data.effects.toObject()
-        if(effects.length > 0){
+        if (effects.length > 0) {
             const effectsWithChanges = effects.filter(x => x.changes && x.changes.length > 0)
             await source.actor.createEmbeddedDocuments("ActiveEffect", effectsWithChanges.map(x => {
                 x.origin = source.actor.uuid
                 return x
             }))
-            const msg = await DSAActiveEffectConfig.applyAdvancedFunction(source.actor, effects, source, {qualityStep: source.data.QL})
-            const infoMsg = `${game.i18n.format('ActiveEffects.appliedEffect', { target: source.actor.name, source: source.name })}${msg || ""}`
+            const msg = await DSAActiveEffectConfig.applyAdvancedFunction(source.actor, effects, source, { qualityStep: source.data.data.QL })
+            const infoMsg = `${game.i18n.format('ActiveEffects.appliedEffect', { target: source.actor.name, source: source.name })} ${msg || ""}`
             ChatMessage.create(DSA5_Utility.chatDataSetup(infoMsg));
         }
     }
@@ -1182,12 +1182,12 @@ class RangeweaponItemDSA5 extends Itemdsa5 {
             if (itemData.ammunitiongroup.value == "-") {
                 testData.extra.ammo = duplicate(item)
                 if ((testData.extra.ammo.data.quantity.value <= 0)) {
-                   return ui.notifications.error(game.i18n.localize("DSAError.NoAmmo"))
+                    return ui.notifications.error(game.i18n.localize("DSAError.NoAmmo"))
                 }
             } else {
                 const ammoItem = actor.getEmbeddedDocument("Item", itemData.currentAmmo.value)
-                if(ammoItem){testData.extra.ammo = ammoItem.toObject()}
-                if (!testData.extra.ammo || !itemData.currentAmmo.value  || testData.extra.ammo.data.quantity.value <= 0) {
+                if (ammoItem) { testData.extra.ammo = ammoItem.toObject() }
+                if (!testData.extra.ammo || !itemData.currentAmmo.value || testData.extra.ammo.data.quantity.value <= 0) {
                     return ui.notifications.error(game.i18n.localize("DSAError.NoAmmo"))
                 }
             }

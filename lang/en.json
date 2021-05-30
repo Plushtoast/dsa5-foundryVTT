@@ -72,6 +72,10 @@
         "*": "*"
     },
 
+    "LIGHT": {
+        "daylight": "Daylight"
+    },
+
     "DIALOG": {
         "RollMode": "Rollmode",
         "DeleteItem": "Remove entry?",

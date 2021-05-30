@@ -96,6 +96,12 @@ Hooks.once('setup', function() {
     setupKnownEquipmentModifiers()
 
     BookWizard.initHook()
+
+    CONFIG.Canvas.lightAnimations.daylight = {
+        label: "LIGHT.daylight",
+        animation: PointSource.prototype.animateTime,
+        illuminationShader: DaylightIlluminationShader
+    }
 })
 
 function setupKnownEquipmentModifiers() {
@@ -114,4 +120,34 @@ function setupKnownEquipmentModifiers() {
     for (let k of attrs) {
         game.dsa5.config.knownShortcuts[game.i18n.localize(`CHARAbbrev.${k}`).toLowerCase()] = ["characteristics", k.toLowerCase(), "gearmodifier"]
     }
+}
+
+class DaylightIlluminationShader extends StandardIlluminationShader {
+    static fragmentShader = `
+    precision mediump float;
+    uniform float time;
+    uniform float intensity;
+    uniform float alpha;
+    uniform float ratio;
+    uniform vec3 colorDim;
+    uniform vec3 colorBright;
+    varying vec2 vUvs;
+    const float MU_TWOPI = 0.1591549431;
+       
+    vec3 dayLight(in vec3 color, in float dist) {
+        return smoothstep( 0.1, 1.0, color ) * 10.0;
+    }
+  
+    void main() {
+      float dist = distance(vUvs, vec2(0.5)) * 2.0;
+      vec3 color = mix(colorDim, 
+                       colorBright,
+                       smoothstep(
+                           clamp(0.8 - ratio, 0.0, 1.0),
+                           clamp(1.2 - ratio, 0.0, 1.0),
+                           1.0 - dist));
+
+      vec3 fcolor = mix(color, max(color, dayLight(color, dist)), 1.0 - dist) * alpha;
+      gl_FragColor = vec4(fcolor, 1.0);
+    }`;
 }

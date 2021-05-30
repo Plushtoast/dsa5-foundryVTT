@@ -12,10 +12,10 @@ import TraitRulesDSA5 from "../system/trait-rules-dsa5.js";
 export default class Actordsa5 extends Actor {
     static async create(data, options) {
         if (data instanceof Array)
-            return super.create(data, options);
+            return await super.create(data, options);
 
         if (data.items)
-            return super.create(data, options);
+            return await super.create(data, options);
 
         data.items = [];
         data.flags = {}
@@ -32,12 +32,12 @@ export default class Actordsa5 extends Actor {
         if (data.type != "character")
             data.data = { status: { fatePoints: { current: 0, value: 0 } } }
 
-        if (data.type != "creature" && [undefined, 0].includes(getProperty(data, "data.status.wounds.value")) )
-            mergeObject(data, {data: {status: {wounds: {value: 16}}}})
+        if (data.type != "creature" && [undefined, 0].includes(getProperty(data, "data.status.wounds.value")))
+            mergeObject(data, { data: { status: { wounds: { value: 16 } } } })
 
 
 
-        return super.create(data, options);
+        return await super.create(data, options);
     }
 
     prepareDerivedData() {
@@ -441,20 +441,20 @@ export default class Actordsa5 extends Actor {
         }
 
         let containers = new Map()
-        for(let container of actorData.items.filter(x => x.type == "equipment" && x.data.equipmentType.value == "bags")){
+        for (let container of actorData.items.filter(x => x.type == "equipment" && x.data.equipmentType.value == "bags")) {
             containers.set(container._id, [])
         }
 
         for (let i of actorData.items) {
             try {
                 let parent_id = getProperty(i, "data.parent_id")
-                if (parent_id && parent_id != i._id){
-                    if(containers.has(parent_id)){
+                if (parent_id && parent_id != i._id) {
+                    if (containers.has(parent_id)) {
                         containers.get(parent_id).push(i)
                         continue
                     }
                 }
-                if (sheetInfo.details && sheetInfo.details.includes(i._id)) i.detailed =  "shown"
+                if (sheetInfo.details && sheetInfo.details.includes(i._id)) i.detailed = "shown"
 
                 switch (i.type) {
 
@@ -465,11 +465,11 @@ export default class Actordsa5 extends Actor {
                         aggregatedtests.push(i)
                         break
                     case "spellextension":
-                        if(extensions[i.data.category][i.data.source]){
+                        if (extensions[i.data.category][i.data.source]) {
                             extensions[i.data.category][i.data.source].push(i.name)
-                        }else{
+                        } else {
                             extensions[i.data.category][i.data.source] = [i.name]
-                            }
+                        }
                         break
                     case "ritual":
                     case "spell":
@@ -578,13 +578,13 @@ export default class Actordsa5 extends Actor {
             }
         }
 
-        for(let elem of inventory.bags.items){
-            if(containers.has(elem._id)){
+        for (let elem of inventory.bags.items) {
+            if (containers.has(elem._id)) {
                 elem.children = []
                 let bagweight = 0
                 if (!elem.toggleValue) totalWeight -= elem.weight
 
-                for(let child of containers.get(elem._id)){
+                for (let child of containers.get(elem._id)) {
                     child.weight = Number(parseFloat((child.data.weight.value * child.data.quantity.value).toFixed(3)))
                     bagweight += child.weight
                     elem.children.push(Actordsa5._prepareitemStructure(Actordsa5._prepareConsumable(child)))
@@ -597,7 +597,7 @@ export default class Actordsa5 extends Actor {
 
 
         for (let [category, value] of Object.entries(extensions)) {
-            for(let[spell, exts] of Object.entries(value)){
+            for (let [spell, exts] of Object.entries(value)) {
                 magic[category].find(x => x.name == spell).extensions = exts.join(", ")
             }
         }

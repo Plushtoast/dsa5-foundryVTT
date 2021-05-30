@@ -23,9 +23,11 @@ export class DSA5CombatTracker extends CombatTracker {
 
     async getData(options) {
         const data = await super.getData(options)
-        for(let k of data.turns){
+        for (let k of data.turns) {
             const combatant = data.combat.turns.find(x => x.id == k.id)
             k.defenseCount = combatant.data._source.defenseCount
+
+            //CHECK IF THIS IS REQUIRED IN 0.8.6
             k.tokenId = combatant.data.tokenId
         }
         return data
@@ -36,18 +38,18 @@ export class DSA5Combat extends Combat {
         super(data, context);
     }
     async nextRound() {
-        for(let k of this.turns){
-            await k.update({defenseCount: 0})
+        for (let k of this.turns) {
+            await k.update({ defenseCount: 0 })
         }
         return await super.nextRound()
     }
 
-    async getDefenseCount(speaker){
+    async getDefenseCount(speaker) {
         const comb = this.getCombatantFromActor(speaker)
         return comb ? comb.data._source.defenseCount : 0
     }
 
-    getCombatantFromActor(speaker){
+    getCombatantFromActor(speaker) {
         let id
         if (speaker.token) {
             id = Array.from(this.combatants).find(x => x.data.tokenId == speaker.token)
@@ -56,16 +58,17 @@ export class DSA5Combat extends Combat {
         }
         return id ? this.combatants.get(id.id) : undefined
     }
+
     //TODO very clonky
-    async updateDefenseCount(speaker){
+    async updateDefenseCount(speaker) {
         const comb = this.getCombatantFromActor(speaker)
-        if (comb){
-            await comb.update({ "defenseCount": comb.data._source.defenseCount + 1})
+        if (comb) {
+            await comb.update({ "defenseCount": comb.data._source.defenseCount + 1 })
         }
     }
 }
 
-export class DSA5Combatant extends Combatant{
+export class DSA5Combatant extends Combatant {
     constructor(data, context) {
         data.defenseCount = 0
         super(data, context);
