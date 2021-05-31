@@ -54,6 +54,7 @@ export default class DSA5StatusEffects {
                 condition.manual = condition.getFlag("dsa5", "manual")
                 appliedSystemConditions.push(statusId)
             }
+            console.log(condition)
             if ((condition.data.origin == target.uuid || !condition.data.origin) && !condition.notApplicable)
                 data.conditions.push(condition)
             else if (!condition.notApplicable)

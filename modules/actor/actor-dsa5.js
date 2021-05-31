@@ -193,10 +193,9 @@ export default class Actordsa5 extends Actor {
                             apply = false
                             break
                     }
-                    if (!apply) {
-                        e.notApplicable = true
-                        return changes;
-                    }
+                    e.notApplicable = !apply
+
+                    if (!apply) return changes;
                 }
             }
 
