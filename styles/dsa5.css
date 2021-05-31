@@ -583,9 +583,10 @@ input[type=text].emphasize {
     color: white;
 }
 
-.dice-tooltip .dice-rolls .roll.die{
+.dice-tooltip .dice-rolls .roll.die {
     line-height: 35px;
 }
+
 .d20,
 .d6,
 .d2,
@@ -1344,7 +1345,7 @@ li.folder {
     display: none;
 }
 
-.expandDetails.shown{
+.expandDetails.shown {
     display: block;
 }
 
@@ -1718,9 +1719,11 @@ input[type="search"] {
     box-shadow: inset 0px 0px 25px #403014;
     background: url(../icons/backgrounds/macrobg.webp);
 }
+
 #hotbar .macro.active.parry {
     box-shadow: inset 0px 0px 15px #016e0a;
 }
+
 #hotbar .macro.active.attack {
     box-shadow: inset 0px 0px 15px #7e0202;
 }
@@ -2300,98 +2303,104 @@ select.noAppearance {
     color: rgb(92, 92, 92);
 }
 
-.sound-name{
+.sound-name {
     color: rgb(92, 92, 92);
 }
 
-.combatant-advanced{
+.combatant-advanced {
     flex: 0 0 48px;
     position: relative;
-    height:50px;
-}
-.combatant-advanced i{
-    position:absolute;
-    bottom:0;
-    right:0;
-    color: #000;
-    width:14px;
-
+    height: 50px;
 }
 
-.combatant-advanced i.reversed{
-    transform:scaleX(-1);
-}
-
-.combatant-advanced i.def:after{
-    content:  attr(data-defenseCount);
+.combatant-advanced i {
     position: absolute;
-    left:0;
-    right:0;
+    bottom: 0;
+    right: 0;
+    color: #000;
+    width: 14px;
+}
+
+.combatant-advanced i.reversed {
+    transform: scaleX(-1);
+}
+
+.combatant-advanced i.def:after {
+    content: attr(data-defenseCount);
+    position: absolute;
+    left: 0;
+    right: 0;
     text-align: center;
-    z-index:1;
-    color:white;
-     font-size:10px;
+    z-index: 1;
+    color: white;
+    font-size: 10px;
     line-height: 12px;
 }
 
-.tinyEntityLink a{
+.tinyEntityLink a {
     width: 22px;
     overflow: hidden;
     font-size: 12px;
     float: right;
-    overflow:hidden;
-    border:1px solid black;
+    overflow: hidden;
+    border: 1px solid black;
 }
 
-.tokenQuickHot{
-    position:absolute;
+.tokenQuickHot {
+    position: absolute;
     top: 0;
     height: 35px;
-    left:5px;
-    right:7px;
+    left: 5px;
+    right: 7px;
     z-index: -2;
-   transition: transform 0.3s ease-in-out;
+    transition: transform 0.3s ease-in-out;
 }
-.tokenQuickHot ul{
+
+.tokenQuickHot ul {
     font-size: 0;
 }
 
-.tokenQuickHot.expanded{
+.tokenQuickHot.expanded {
     transform: translateY(-45px)
 }
-.tokenQuickHot li{
-    background-color:rgba(14, 12, 12, 0.3);
-    display:inline-block;
+
+.tokenQuickHot li {
+    background-color: rgba(14, 12, 12, 0.3);
+    display: inline-block;
     font-size: 14px;
-    width:35px;
+    width: 35px;
     height: 35px;
     border: 1px solid black;
     border-radius: 3px;
     pointer-events: all;
-    background-size:cover;
+    background-size: cover;
     box-shadow: inset 0px 0px 10px #403014;
     background: url(../icons/backgrounds/macrobg.webp);
     position: relative;
     box-sizing: border-box;
 }
-.tokenQuickHot li:hover{
+
+.tokenQuickHot li:hover {
     border: 1px solid red;
-    cursor:pointer;
-}
-.tokenQuickHot div{
-    background-size:cover;
-    height:100%;
-    width:100%;
-    position: absolute;
-}
-.tokenQuickHot .secondary div{
-    display:none;
-}
-.tokenQuickHot .secondary.shown div{
-    display:block;
+    cursor: pointer;
 }
 
-.tokenQuickHot li span{
+.tokenQuickHot div {
+    background-size: cover;
+    height: 100%;
+    width: 100%;
+    position: absolute;
+}
+
+.tokenQuickHot .secondary div {
+    display: none;
+}
+
+.tokenQuickHot .secondary.shown div {
+    display: block;
+}
+
+.tokenQuickHot li span {
     position: absolute;
     top: -25px;
     left: -73px;
@@ -2404,79 +2413,84 @@ select.noAppearance {
     border-radius: 4px;
 }
 
-.tokenQuickHot li.spell{
+.tokenQuickHot li.spell {
     box-shadow: inset 0px 0px 10px #121092;
 }
-.tokenQuickHot li.skill{
+
+.tokenQuickHot li.skill {
     box-shadow: inset 0px 0px 10px #0d813e;
 }
 
-.consumable.secondary{
+.consumable.secondary {
     width: 0;
     border: none;
     transition: all 0.3s ease-in-out;
 }
 
-.consumable.secondary.shown{
+.consumable.secondary.shown {
     border: 1px solid black;
     border-color: black;
-    width:35px;
+    width: 35px;
 }
 
-.ench-fw{
+.ench-fw {
     position: relative;
     top: -3px;
 }
 
-.bags{
+.bags {
     position: relative;
 }
 
-.bags .slot{
+.bags .slot {
     width: 50px;
-    height:50px;
+    height: 50px;
     background-size: contain;
     border: 1px solid var(--border-color);
     background-color: antiquewhite;
-    border-radius:5px;
+    border-radius: 5px;
     cursor: pointer;
 }
-.bags .slot:hover{
-    border-color:rgb(10, 89, 194)
+
+.bags .slot:hover {
+    border-color: rgb(10, 89, 194)
 }
 
-.itemInfo{
+.itemInfo {
     position: absolute;
-    display:none;
+    display: none;
     width: 200px;
     border: 1px solid var(--border-color);
     padding: 5px;
     background-color: rgba(0, 0, 0, 0.8);
-    color:white;
+    color: white;
     border-radius: 5px;
 }
 
-.bagUsage{
+.bagUsage {
     position: relative;
-    border:1px solid var(--border-color);
-    margin:5px;
-    background-color:rgba(14, 12, 12, 0.1)
+    border: 1px solid var(--border-color);
+    margin: 5px;
+    background-color: rgba(14, 12, 12, 0.1)
 }
 
-.bagUsage .fillage{
+.bagUsage .fillage {
     position: absolute;
     top: 0;
-    left:0;
+    left: 0;
     bottom: 0;
-    background-color:rgb(64, 169, 221)
+    background-color: rgb(64, 169, 221)
 }
 
-.bagUsage .fillage.exceeded{
+.bagUsage .fillage.exceeded {
     background-color: rgb(212, 45, 45)
 }
 
-.bagUsage .fillText{
+.bagUsage .fillText {
     position: relative;
     z-index: 1;
 }
 
+.maskfield .entity-link {
+    color: black;
+}

@@ -61,7 +61,7 @@ export default class Itemdsa5 extends Item {
 
     static async create(data, options) {
         this.defaultIcon(data)
-        super.create(data, options);
+        return await super.create(data, options);
     }
 
     static getSpecAbModifiers(html, mode) {

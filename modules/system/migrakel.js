@@ -21,6 +21,9 @@ export default class Migrakel {
                             resolve([false])
                         }
                     }
+                },
+                close: () => {
+                    resolve([false])
                 }
             }).render(true)
         })
@@ -32,7 +35,7 @@ export default class Migrakel {
     }
 
     static async updateSpellsAndLiturgies(actor) {
-         if (await this.showDialog(game.i18n.localize('Migrakel.spells'))) {
+        if (await this.showDialog(game.i18n.localize('Migrakel.spells'))) {
             const itemLibrary = game.dsa5.itemLibrary
 
             for (let item of actor.items.filter(x => ["spell", "liturgy", "ritual", "ceremony"].includes(x.type))) {
@@ -50,11 +53,11 @@ export default class Migrakel {
         }
     }
 
-    static async updateSpecialAbilities(actor){
+    static async updateSpecialAbilities(actor) {
         if (await this.showDialog(game.i18n.localize('Migrakel.abilities'))) {
             const itemLibrary = game.dsa5.itemLibrary
 
-            for (let item of actor.items.filter(x => ["specialability","advantage","disadvantage"].includes(x.type))) {
+            for (let item of actor.items.filter(x => ["specialability", "advantage", "disadvantage"].includes(x.type))) {
                 let find = await itemLibrary.findCompendiumItem(item.name, item.type)
                 if (find.length > 0) {
                     find = find[0].document

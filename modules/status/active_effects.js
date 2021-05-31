@@ -64,7 +64,7 @@ export default class DSAActiveEffectConfig extends ActiveEffectConfig {
                     case 2: //Macro
                         await eval(`(async () => {${getProperty(ef, "flags.dsa5.args3")}})()`)
                         break
-                    case 3:
+                    case 3: // Creature Link
                         msg += `<p><b>${game.i18n.localize('ActiveEffects.advancedFunctions.creature')}</b>:</p><p>${getProperty(ef, "flags.dsa5.args4")}</p>`
                         break
                 }

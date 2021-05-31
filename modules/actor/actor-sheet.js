@@ -891,9 +891,7 @@ export default class ActorSheetDsa5 extends ActorSheet {
     async _addSkill(item) {
         item = duplicate(item)
         let res = this.actor.data.items.find(i => i.type == item.type && i.name == item.name && i.data.data.description.value == item.data.description.value);
-        if (!res) {
-            await this.actor.createEmbeddedDocuments("Item", [item]);
-        }
+        if (!res) await this.actor.createEmbeddedDocuments("Item", [item])
     }
 
     async _onDrop(event) {
@@ -984,7 +982,7 @@ export default class ActorSheetDsa5 extends ActorSheet {
         if (dragData.tokenId) sourceActor = game.actors.tokens[dragData.tokenId];
         if (!sourceActor) sourceActor = game.actors.get(dragData.actorId)
 
-        if (sourceActor && sourceActor.isOwner) sourceActor.deleteEmbeddedDocuments("Item", [item._id])
+        if (sourceActor && sourceActor.isOwner) await sourceActor.deleteEmbeddedDocuments("Item", [item._id])
     }
 
 

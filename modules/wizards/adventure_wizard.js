@@ -123,7 +123,7 @@ export default class BookWizard extends Application {
             this.journals.find(x => x.id == $(ev.currentTarget).attr("data-id")).render(true)
         })
 
-        html.on('click', '.importBook', () => {
+        html.on('click', '.importBook', async() => {
             this.importBook()
         })
 
