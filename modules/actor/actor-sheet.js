@@ -723,7 +723,7 @@ export default class ActorSheetDsa5 extends ActorSheet {
                     Yes: {
                         icon: '<i class="fa fa-check"></i>',
                         label: game.i18n.localize("yes"),
-                        callback: dlg => {
+                        callback: () => {
                             this._cleverDeleteItem(itemId)
                         }
                     },
@@ -739,19 +739,21 @@ export default class ActorSheetDsa5 extends ActorSheet {
 
     async _cleverDeleteItem(itemId) {
         let item = this.actor.data.items.find(x => x.id == itemId)
-        let steps, xpCost
+        let itemsToDelete = [itemId]
         switch (item.type) {
             case "advantage":
             case "disadvantage":
-                await AdvantageRulesDSA5.vantageRemoved(this.actor, item)
-                xpCost = item.data.data.APValue.value * item.data.data.step.value
-                if (/;/.test(item.data.data.APValue.value)) {
-                    steps = item.data.data.APValue.value.split(";").map(x => Number(x.trim()))
-                    xpCost = 0
-                    for (let i = 0; i < item.data.data.step.value; i++)
-                        xpCost += steps[i]
+                {
+                    await AdvantageRulesDSA5.vantageRemoved(this.actor, item)
+                    let xpCost = item.data.data.APValue.value * item.data.data.step.value
+                    if (/;/.test(item.data.data.APValue.value)) {
+                        const steps = item.data.data.APValue.value.split(";").map(x => Number(x.trim()))
+                        xpCost = 0
+                        for (let i = 0; i < item.data.data.step.value; i++)
+                            xpCost += steps[i]
+                    }
+                    await this._updateAPs(-1 * xpCost)
                 }
-                await this._updateAPs(-1 * xpCost)
                 break;
             case "specialability":
                 await SpecialabilityRulesDSA5.abilityRemoved(this.actor, item)
@@ -764,17 +766,21 @@ export default class ActorSheetDsa5 extends ActorSheet {
             case "ceremony":
             case "liturgy":
             case "spell":
-                //TODO improve ap cost calculation
-                let apVal = DSA5_Utility._calculateAdvCost(0, item.data.data.StF.value, 0)
-                let extensions = this.actor.data.items.filter(i => i.type == "spellextension" && item.type == i.data.data.category && item.name == i.data.data.source)
-                if (extensions) {
-                    apVal += extensions.reduce((a, b) => { return a + b.data.data.APValue.value }, 0)
-                    await this.actor.deleteEmbeddedDocuments("Item", extensions.map(x => x.id))
+                {
+                    let xpCost = 0
+                    for (let i = 0; i <= item.data.data.talentValue.value; i++) {
+                        xpCost += DSA5_Utility._calculateAdvCost(i, item.data.data.StF.value, 0)
+                    }
+                    const extensions = this.actor.data.items.filter(i => i.type == "spellextension" && item.type == i.data.data.category && item.name == i.data.data.source)
+                    if (extensions) {
+                        xpCost += extensions.reduce((a, b) => { return a + b.data.data.APValue.value }, 0)
+                        itemsToDelete.push(...extensions.map(x => x.id))
+                    }
+                    await this._updateAPs(xpCost * -1)
                 }
-                await this._updateAPs(apVal * -1)
                 break
         }
-        await this.actor.deleteEmbeddedDocuments("Item", [itemId]);
+        await this.actor.deleteEmbeddedDocuments("Item", itemsToDelete);
     }
 
     _getItemId(ev) {
@@ -940,7 +946,7 @@ export default class ActorSheetDsa5 extends ActorSheet {
                 await this._handleSpellExtension(item)
                 break
             case "condition":
-                await this.actor.addCondition(item.payload.id)
+                await this.actor.addCondition(item.payload.id, 1, false, false)
                 break
             case "creature":
                 const shapeshift = game.dsa5.config.hooks.shapeshift
