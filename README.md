@@ -2,11 +2,11 @@
 ![](https://repository-images.githubusercontent.com/311655339/4d523800-55a9-11eb-9e2e-6bbc2b71d8a4)
 
 ### Current Version and Compatibility: 
-1.4.0 - FoundryVTT 0.7.0+
+2.0.1 - FoundryVTT 0.8.6+
 This system is intended for usage with [Foundry Virtual Tabletop](https://foundryvtt.com/) to play "Das Schwarze Auge" 5th edition.
 
 ## Installation - Auto Installer
-In the FVTT Game Systems Menu, click Install System and enter the Manifest URL: `https://raw.githubusercontent.com/Plushtoast/dsa5-foundryVTT/master/system.json`
+In the FVTT Game Systems Menu, click Install System and enter the Manifest URL: `https://raw.githubusercontent.com/Plushtoast/dsa5-foundryVTT/foundry08/system.json`
 
 ## Roadmap
 See [Milestones](https://github.com/Plushtoast/dsa5-foundryVTT/milestones) for our short term goals. Those might be subject to change.
@@ -26,14 +26,18 @@ The core system includes a character sheet and allows you to create your advanta
 * Character generation based on the entered species, culture and profession is available or you can manually enter all the details of your character in the system.
 * Management of inventory with drag and drop and in-depth information on all items.
 * Manual modification of rolls and test results.
+* Shapeshifting
+* Automated spell effects
 
 
 ## Official Modules
 - [Aventurian Magic I (GERMAN ONLY)](https://www.f-shop.de/virtual-tabletops/das-schwarze-auge-vtt/) - with many new spells, rituals and magical traditions
+- [Aventurian Magic II (GERMAN ONLY)](https://www.f-shop.de/virtual-tabletops/das-schwarze-auge-vtt/) - with even more new spells, rituals and magical traditions
 - [Gods of Aventuria (GERMAN ONLY)](https://www.f-shop.de/virtual-tabletops/das-schwarze-auge-vtt/) - including dozens of new liturgical, chants and abilities
 - [Aventurian Bestiary (GERMAN ONLY)](https://www.f-shop.de/virtual-tabletops/das-schwarze-auge-vtt/) - featuring 70+ creatures complete with tokens and stats
+- [Aventurian Bestiary II (GERMAN ONLY)](https://www.f-shop.de/virtual-tabletops/das-schwarze-auge-vtt/) - endless monsters to eat your players
 - [Aventurian Armory (GERMAN ONLY)](https://www.f-shop.de/virtual-tabletops/das-schwarze-auge-vtt/) - with dozens of items, weapons and armour and new special rules
-- [Core Rules](https://www.f-shop.de/virtual-tabletops/das-schwarze-auge-vtt/) - including ALL the content from the TDE core rulebook including everything you need to play lavishly illustrated and ready to use
+- [Core Rules](https://www.f-shop.de/virtual-tabletops/das-schwarze-auge-vtt/) - including ALL the content from the TDE core rulebook including everything you need to play lavishly illustrated and ready to use [English Shop](https://www.ulissesf-shop.com/virtual-tabletops/)
 - [DSA5-Introduction](https://github.com/Plushtoast/dsa5_introduction) - A small adventure with included characters and maps to start playing. Might be of use for experienced players too.
 
 As of this moment several modules are in the making. We will inform you as soon as they will be available.
