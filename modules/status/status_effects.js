@@ -54,9 +54,9 @@ export default class DSA5StatusEffects {
                 condition.manual = condition.getFlag("dsa5", "manual")
                 appliedSystemConditions.push(statusId)
             }
-            if (condition.data.origin == target.uuid || !condition.data.origin)
+            if ((condition.data.origin == target.uuid || !condition.data.origin) && !condition.notApplicable)
                 data.conditions.push(condition)
-            else
+            else if (!condition.notApplicable)
                 data.transferedConditions.push(condition)
 
         }
@@ -170,11 +170,11 @@ export default class DSA5StatusEffects {
         if (auto) {
             newValue = Math.min(existing.data.flags.dsa5.max, absolute ? value : existing.data.flags.dsa5.auto + value)
             delta = newValue - existing.data.flags.dsa5.auto
-            update = { flags: { dsa5: { auto: newValue, manual: existing.data.flags.dsa5.manual}}}
+            update = { flags: { dsa5: { auto: newValue, manual: existing.data.flags.dsa5.manual } } }
         } else {
             newValue = absolute ? value : existing.data.flags.dsa5.manual + value
             delta = newValue - existing.data.flags.dsa5.manual
-            update = { flags: { dsa5: { manual: newValue, auto: existing.data.flags.dsa5.auto  } }}
+            update = { flags: { dsa5: { manual: newValue, auto: existing.data.flags.dsa5.auto } } }
         }
 
         if (delta == 0)
@@ -227,7 +227,7 @@ class EncumberedEffect extends DSA5StatusEffects {
 
 class ProneEffect extends DSA5StatusEffects {
     static calculateRollModifier(effect, actor, item, options = {}) {
-        if(item.type == "dodge") return -2
+        if (item.type == "dodge") return -2
         return options.mode ? (options.mode == "attack" ? -4 : -2) : 0
     }
 }

@@ -32,6 +32,22 @@ export default class DSA5_Utility {
         return returnSkills;
     }
 
+    static calcTokenSize(actorData, data) {
+        let tokenSize = game.dsa5.config.tokenSizeCategories[actorData.data.status.size.value]
+        if (tokenSize) {
+
+            if (tokenSize < 1) {
+                data.scale = tokenSize;
+                data.width = data.height = 1;
+            } else {
+                const int = Math.floor(tokenSize);
+                data.width = data.height = int;
+                data.scale = Math.max(tokenSize / int, 0.25);
+            }
+
+        }
+    }
+
     static async allMoneyItems() {
         const pack = game.packs.get("dsa5.money")
         if (!pack)
@@ -259,8 +275,14 @@ export default class DSA5_Utility {
             data: {
                 status: { wounds: { value: 50 }, fatePoints: {} },
                 characteristics: {
-                    mu: { initial: attrs }, kl: { initial: attrs }, in: { initial: attrs }, ch: { initial: attrs },
-                    ff: { initial: attrs }, ge: { initial: attrs }, ko: { initial: attrs }, kk: { initial: attrs }
+                    mu: { initial: attrs },
+                    kl: { initial: attrs },
+                    in: { initial: attrs },
+                    ch: { initial: attrs },
+                    ff: { initial: attrs },
+                    ge: { initial: attrs },
+                    ko: { initial: attrs },
+                    kk: { initial: attrs }
                 },
 
             }

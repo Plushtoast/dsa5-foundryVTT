@@ -1,3 +1,5 @@
+import DSA5_Utility from "../system/utility-dsa5.js";
+
 export default function() {
     Hooks.on("deleteActorActiveEffect", (actor, effect) => {
         if (effect.data.flags.dsa5 && effect.data.flags.core && effect.data.flags.core.statusId == "bloodrush") {
@@ -18,33 +20,20 @@ export default function() {
                 });
             } else if (actor.data.isPriest) {
                 mergeObject(update, {
-                     bar2: { attribute: "status.karmaenergy" }
+                    bar2: { attribute: "status.karmaenergy" }
                 });
             } else {
                 mergeObject(update, {
-                     bar2: { attribute: "" }
+                    bar2: { attribute: "" }
                 });
             }
         }
 
-        if (!data.actorLink){
+        if (!data.actorLink) {
             if (actor.data.type == "creature" && getProperty(actor.data, "data.config.autoSize")) {
-                let tokenSize = game.dsa5.config.tokenSizeCategories[actor.data.data.status.size.value]
-                if (tokenSize) {
-
-                    if (tokenSize < 1) {
-                        update.scale = tokenSize;
-                        update.width = update.height = 1;
-                    } else {
-                        const int = Math.floor(tokenSize);
-                        update.width = update.height = int;
-                        update.scale = Math.max(tokenSize / int, 0.25);
-                    }
-
-                }
+                DSA5_Utility.calcTokenSize(actor.data, update)
             }
         }
         token.data.update(update)
     })
-
 }

@@ -163,38 +163,60 @@ export default class Actordsa5 extends Actor {
         }
     }
 
-    prepareEmbeddedEntities() {
-        super.prepareEmbeddedEntities()
-        let notAppliedEffects = []
-        for (let ef of this.effects) {
-            if (ef.data.origin) {
-                const id = ef.data.origin.match(/[^.]+$/)[0]
+    applyActiveEffects() {
+        const overrides = {};
+
+        // Organize non-disabled effects by their application priority
+        const changes = this.effects.reduce((changes, e) => {
+            if (e.data.disabled) return changes;
+
+            if (e.data.origin) {
+                const id = e.data.origin.match(/[^.]+$/)[0]
                 let item = this.items.get(id)
-                if (!item) continue
-                let apply = true
-                switch (item.data.type) {
-                    case "meleeweapon":
-                    case "rangeweapon":
-                    case "armor":
-                        apply = item.data.data.worn.value
-                        break
-                    case "equipment":
-                        apply = item.data.data.worn.wearable && item.data.data.worn.value
-                        break
-                    case "consumable":
-                    case "combatskill":
-                    case "spell":
-                    case "liturgy":
-                    case "ceremony":
-                    case "ritual":
-                        apply = false
+                if (item) {
+                    let apply = true
+                    switch (item.data.type) {
+                        case "meleeweapon":
+                        case "rangeweapon":
+                        case "armor":
+                            apply = item.data.data.worn.value
+                            break
+                        case "equipment":
+                            apply = item.data.data.worn.wearable && item.data.data.worn.value
+                            break
+                        case "consumable":
+                        case "combatskill":
+                        case "spell":
+                        case "liturgy":
+                        case "ceremony":
+                        case "ritual":
+                            apply = false
+                            break
+                    }
+                    if (!apply) {
+                        e.notApplicable = true
+                        return changes;
+                    }
                 }
-                if (!apply) notAppliedEffects.push(ef.id)
             }
+
+            return changes.concat(e.data.changes.map(c => {
+                c = foundry.utils.duplicate(c);
+                c.effect = e;
+                c.priority = c.priority ? c.priority : (c.mode * 10);
+                return c;
+            }));
+        }, []);
+        changes.sort((a, b) => a.priority - b.priority);
+
+        // Apply all changes
+        for (let change of changes) {
+            const result = change.effect.apply(this, change);
+            if (result !== null) overrides[change.key] = result;
         }
-        for (let id of notAppliedEffects) {
-            this.effects.delete(id)
-        }
+
+        // Expand the set of final overrides
+        this.overrides = foundry.utils.expandObject(overrides);
     }
 
     prepareBaseData() {
@@ -638,8 +660,8 @@ export default class Actordsa5 extends Actor {
         specAbs.magical = specAbs.magical.concat(specAbs.staff)
         specAbs.clerical = specAbs.clerical.concat(specAbs.ceremonial)
 
-        let characteristics = duplicate(DSA5.characteristics)
-        characteristics["-"] = "-"
+        let guidevalues = duplicate(DSA5.characteristics)
+        guidevalues["-"] = "-"
 
         return {
             totalWeight,
@@ -661,7 +683,7 @@ export default class Actordsa5 extends Actor {
                 available: actorData.data.freeLanguagePoints ? actorData.data.freeLanguagePoints.value : 0
             },
             schips,
-            guidevalues: characteristics,
+            guidevalues,
             magic,
             traits,
             combatskills,

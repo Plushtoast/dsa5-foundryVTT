@@ -37,8 +37,6 @@ export default function() {
 }
 
 Hooks.once("init", () => {
-    game.system.data.gridUnit = "Lego"
-
     loadTemplates([
         "systems/dsa5/templates/actors/actor-main.html",
         "systems/dsa5/templates/actors/actor-talents.html",
@@ -133,21 +131,11 @@ class DaylightIlluminationShader extends StandardIlluminationShader {
     uniform vec3 colorBright;
     varying vec2 vUvs;
     const float MU_TWOPI = 0.1591549431;
-       
-    vec3 dayLight(in vec3 color, in float dist) {
-        return smoothstep( 0.1, 1.0, color ) * 10.0;
-    }
-  
+ 
     void main() {
       float dist = distance(vUvs, vec2(0.5)) * 2.0;
-      vec3 color = mix(colorDim, 
-                       colorBright,
-                       smoothstep(
-                           clamp(0.8 - ratio, 0.0, 1.0),
-                           clamp(1.2 - ratio, 0.0, 1.0),
-                           1.0 - dist));
-
-      vec3 fcolor = mix(color, max(color, dayLight(color, dist)), 1.0 - dist) * alpha;
+      vec3 color = mix(colorDim, colorBright, smoothstep(clamp(0.8 - ratio, 0.0, 1.0), clamp(1.2 - ratio, 0.0, 1.0),1.0 - dist));
+      vec3 fcolor = mix(color, max(color, smoothstep( 0.1, 1.0, color ) * 10.0), 1.0 - dist) * alpha;
       gl_FragColor = vec4(fcolor, 1.0);
     }`;
 }
