@@ -97,7 +97,6 @@ Hooks.once('setup', function() {
 
     CONFIG.Canvas.lightAnimations.daylight = {
         label: "LIGHT.daylight",
-        animation: PointSource.prototype.animateTime,
         illuminationShader: DaylightIlluminationShader
     }
 })

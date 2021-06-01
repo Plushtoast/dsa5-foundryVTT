@@ -164,7 +164,7 @@ export default function() {
         config: true,
         default: "",
         type: String,
-        onChange: () => {
+        onChange: async() => {
             DSA5SoundEffect.loadSoundConfig()
         }
     });
