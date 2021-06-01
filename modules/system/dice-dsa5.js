@@ -387,7 +387,7 @@ export default class DiceDSA5 {
     }
 
     static async evaluateDamage(testData, result, weapon, isRangeWeapon, doubleDamage) {
-        let damageRoll = testData.damageRoll ? testData.damageRoll : await DiceDSA5.manualRolls(new Roll(weapon.data.damage.value.replace(/[Ww]/g, "d")).evaluate({ async: true }), "CHAR.DAMAGE")
+        let damageRoll = testData.damageRoll ? await testData.damageRoll : await DiceDSA5.manualRolls(await new Roll(weapon.data.damage.value.replace(/[Ww]/g, "d")).evaluate({ async: true }), "CHAR.DAMAGE")
         let bonusDmg = testData.situationalModifiers.reduce(function(_this, val) {
             let number = 0
             if (val.damageBonus) {
@@ -396,7 +396,8 @@ export default class DiceDSA5 {
             }
             return _this + number
         }, 0);
-        //this._addRollDiceSoNice(testData, damageRoll, "black")
+        console.log(damageRoll)
+            //this._addRollDiceSoNice(testData, damageRoll, "black")
         let damage = Number(damageRoll.total) + bonusDmg
         let weaponBonus = 0
         let weaponroll = 0
@@ -464,7 +465,7 @@ export default class DiceDSA5 {
 
         let source = testData.source
         let combatskill = source.data.combatskill.value
-
+        console.log(combatskill)
         let skill = Actordsa5._calculateCombatSkillValues(testData.extra.actor.items.find(x => x.type == "combatskill" && x.name == combatskill), testData.extra.actor)
 
         if (source.type == "meleeweapon") {
@@ -570,7 +571,7 @@ export default class DiceDSA5 {
                 } else if (testData.mode != "attack" && game.settings.get("dsa5", "defenseBotchTableEnabled")) {
                     description += `, <a class="roll-button defense-botch" data-weaponless="${source.name == game.i18n.localize('LocalizedIDs.wrestle')}"><i class="fas fa-dice"></i>${game.i18n.localize('CriticalFailure')} ${game.i18n.localize("table")}</a>`
                 } else {
-                    description += ", " + game.i18n.localize("selfDamage") + (new Roll("1d6+2").evaluate({ async: true }).total)
+                    description += ", " + game.i18n.localize("selfDamage") + (new Roll("1d6+2").evaluate({ async: false }).total)
                 }
             }
             this._addRollDiceSoNice(testData, rollConfirm, testData.mode)
@@ -869,7 +870,7 @@ export default class DiceDSA5 {
                 break
             case "meleeweapon":
             case "rangeweapon":
-                if(testData.mode == "parry") await this.updateDefenseCount(testData)
+                if (testData.mode == "parry") await this.updateDefenseCount(testData)
                 rollResults = testData.mode == "damage" ? this.rollDamage(testData) : await this.rollWeapon(testData)
                 break;
             case "dodge":
@@ -887,7 +888,7 @@ export default class DiceDSA5 {
         return rollResults
     }
 
-    static async updateDefenseCount(testData){
+    static async updateDefenseCount(testData) {
         if (game.combat) await game.combat.updateDefenseCount(testData.extra.speaker)
     }
 
@@ -1213,8 +1214,8 @@ export default class DiceDSA5 {
             name = input.attr("data-name")
 
         let actor = DSA5_Utility.getSpeaker(speaker)
-        //if (!actor && message.data.flags.data)
-        //    actor = new Actordsa5(message.data.flags.data.preData.extra.actor, { temporary: true })
+            //if (!actor && message.data.flags.data)
+            //    actor = new Actordsa5(message.data.flags.data.preData.extra.actor, { temporary: true })
 
         if (actor) {
             let item = actor.data.items.find(x => x.name == name && x.type == category)
@@ -1281,7 +1282,7 @@ export default class DiceDSA5 {
             new Itemdsa5(newTestData.source, { temporary: true })[`${data.postData.postFunction}`]({ testData: newTestData, cardOptions: chatOptions }, { rerenderMessage: message });
         } else {
             let speaker = DSA5_Utility.getSpeaker(message.data.speaker)
-            //if (!speaker) speaker = new Actordsa5(newTestData.extra.actor, { temporary: true })
+                //if (!speaker) speaker = new Actordsa5(newTestData.extra.actor, { temporary: true })
             speaker[`${data.postData.postFunction}`]({ testData: newTestData, cardOptions: chatOptions }, { rerenderMessage: message });
         }
     }

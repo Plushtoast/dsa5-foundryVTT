@@ -316,6 +316,7 @@ export default class Actordsa5 extends Actor {
     }
 
     static _calculateCombatSkillValues(i, actorData) {
+        console.log(i)
         if (i.data.weapontype.value == "melee") {
             let vals = i.data.guidevalue.value.split('/').map(x =>
                 Number(actorData.data.characteristics[x].initial) + Number(actorData.data.characteristics[x].modifier) + Number(actorData.data.characteristics[x].advances)
