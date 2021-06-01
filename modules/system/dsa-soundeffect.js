@@ -1,5 +1,6 @@
 export default class DSA5SoundEffect {
     static sounds
+    static triedInit = false
 
     static async playEffect(action, item) {
         const soundPath = await this.getSound(action, item)
@@ -27,11 +28,13 @@ export default class DSA5SoundEffect {
     }
 
     static async getSound(action, item) {
-        if (!this.sounds) {
+        if (!this.sounds && !this.triedInit) {
             await this.loadSoundConfig()
+            this.triedInit = true
 
-            if (!this.sounds) return undefined
         }
+
+        if (!this.sounds) return undefined
 
         /*const sounds = {
           "meleeweapon": {
