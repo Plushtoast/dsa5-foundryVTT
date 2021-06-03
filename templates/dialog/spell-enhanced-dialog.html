@@ -25,7 +25,7 @@
                 <select name="placeModifier">
                     {{#select 0}}
                     {{#each locationModifiers as |label val|}}
-                    <option value="{{label}}">{{localize val}}</option>
+                    <option value="{{val}}">{{localize label}}</option>
                     {{/each}}
                     {{/select}}
                 </select>
@@ -35,7 +35,7 @@
                 <select name="timeModifier">
                     {{#select 0}}
                     {{#each timeModifiers as |label val|}}
-                    <option value="{{label}}">{{localize val}}</option>
+                    <option value="{{val}}">{{localize label}}</option>
                     {{/each}}
                     {{/select}}
                 </select>

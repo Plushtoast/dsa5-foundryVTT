@@ -461,26 +461,26 @@ DSA5.traitCategories = {
 }
 
 DSA5.ritualLocationModifiers = {
-    "-": 0,
-    "RITUALMODIFIER.holysite": 1,
-    "RITUALMODIFIER.wrongsite": -3
+    "0": "-",
+    "1": "RITUALMODIFIER.holysite",
+    "-3": "RITUALMODIFIER.wrongsite"
 }
 
 DSA5.ritualTimeModifiers = {
-    "-": 0,
-    "RITUALMODIFIER.matchingConstellation": 1,
-    "RITUALMODIFIER.wrongConstellation": -1
+    "0": "-",
+    "1": "RITUALMODIFIER.matchingConstellation",
+    "-1": "RITUALMODIFIER\.wrongConstellation"
 }
 
 DSA5.ceremonyLocationModifiers = {
-    "-": 0,
-    "CEREMONYMODIFIER.holysite": 2,
-    "CEREMONYMODIFIER.temple": 1,
-    "CEREMONYMODIFIER.otherTemple": -1,
-    "CEREMONYMODIFIER.enemyGod": -2,
-    "CEREMONYMODIFIER.archDemon": -3,
-    "CEREMONYMODIFIER.nameless": -4,
-    "CEREMONYMODIFIER.nemesis": -5
+    "0": "-",
+    "2": "CEREMONYMODIFIER.holysite",
+    "1": "CEREMONYMODIFIER.temple",
+    "-1": "CEREMONYMODIFIER.otherTemple",
+    "-2": "CEREMONYMODIFIER.enemyGod",
+    "-3": "CEREMONYMODIFIER.archDemon",
+    "-4": "CEREMONYMODIFIER.nameless",
+    "-5": "CEREMONYMODIFIER.nemesis"
 }
 
 DSA5.advancementCosts = {
@@ -545,10 +545,10 @@ DSA5.helpContent = [{
 ]
 
 DSA5.ceremonyTimeModifiers = {
-    "-": 0,
-    "CEREMONYMODIFIER.monthGod": 1,
-    "CEREMONYMODIFIER.celebration": 2,
-    "CEREMONYMODIFIER.namelessDays": -5
+    "0": "-",
+    "1": "CEREMONYMODIFIER.monthGod",
+    "2": "CEREMONYMODIFIER.celebration",
+    "-5": "CEREMONYMODIFIER.namelessDays"
 }
 
 DSA5.mageLevels = {
