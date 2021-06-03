@@ -6,7 +6,7 @@
             <b>{{localize (concat "Equipment." @key)}}</b>
         </div>
         {{#when @key 'eq' 'bags'}}
-        <div class="col eight center">
+        <div class="col five center">
             <i class="fas fa-weight-hanging" title="{{localize 'carrycapacity'}}"></i>
         </div>
         {{/when}}
@@ -28,7 +28,7 @@
         {{#each section.items as |item i|}}
         <div class="col item" data-item-id="{{item._id}}" data-category="{{item.data.equipmentType.value}}">
             <div class="row-section">
-                <div class="col eight image" style="background-image: url({{item.img}})">
+                <div class="col eight image {{item.enchantClass}}" style="background-image: url({{item.img}})">
                     {{#if item.structureMax}}
                     <div class="item-structure" style="--a: {{item.structureMax}}; --b: {{item.structureCurrent}}">
                         <div class="inner"></div>
@@ -39,7 +39,7 @@
                     <a class="item-edit {{#if item.consumable}}consume-item{{/if}}">{{item.name}}</a>
                 </div>
                 {{#when item.data.equipmentType.value 'eq' 'bags'}}
-                <div class="col eight center">
+                <div class="col five center">
                     {{item.bagweight}}
                 </div>
                 {{/when}}

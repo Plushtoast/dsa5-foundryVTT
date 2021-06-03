@@ -6,7 +6,7 @@
             {{localize (concat "Equipment." @key)}}
         </div>
         {{#when @key 'eq' 'bags'}}
-        <div class="col eight center">
+        <div class="col five center">
             <i class="fas fa-weight-hanging" title="{{localize 'carrycapacity'}}"></i>
         </div>
         {{/when}}
@@ -38,7 +38,7 @@
                     <a class="item-edit {{#if item.consumable}}consume-item{{/if}}">{{item.name}}</a>
                 </div>
                 {{#when item.data.equipmentType.value 'eq' 'bags'}}
-                <div class="col eight center">
+                <div class="col five center">
                     {{item.bagweight}}
                 </div>
                 {{/when}}

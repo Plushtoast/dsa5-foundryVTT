@@ -550,7 +550,7 @@ export default class Actordsa5 extends Actor {
                         traits[i.data.traitType.value].push(i)
                         break
                     case "combatskill":
-                        combatskills.push(Actordsa5._calculateCombatSkillValues(i, actorData));
+                        combatskills.push(Actordsa5._calculateCombatSkillValues(i, this.data));
                         break;
                     case "ammunition":
                         i.weight = parseFloat((i.data.weight.value * i.data.quantity.value).toFixed(3));
@@ -645,7 +645,7 @@ export default class Actordsa5 extends Actor {
                     if (elem.toggleValue) totalWeight += child.weight
 
                 }
-                elem.bagweight = `${bagweight.toFixed(2)}/${elem.data.capacity}`
+                elem.bagweight = `${bagweight.toFixed(3)}/${elem.data.capacity}`
             }
         }
 
