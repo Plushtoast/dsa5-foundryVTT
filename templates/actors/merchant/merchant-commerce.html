@@ -49,8 +49,14 @@
                 <div class="col fourty">
                     {{localize 'MERCHANT.hidePlayer'}}
                 </div>
-                <div class="col sixty">
+                <div class="col ten">
                     <input name="data.merchant.hidePlayer" type="checkbox" value="1" {{checked actor.data.merchant.hidePlayer}} />
+                </div>
+                <div class="col fourty">
+                    {{localize 'MERCHANT.locked'}}
+                </div>
+                <div class="col ten">
+                    <input name="data.merchant.locked" type="checkbox" value="1" {{checked actor.data.merchant.locked}} />
                 </div>
             </div>
             {{/when}}
@@ -58,10 +64,46 @@
     </div>
 </div>
 
-{{#when actor.ata.merchant.merchantType 'noteq' "none"}}
+{{#when actor.data.merchant.merchantType 'noteq' "none"}}
 <div class="row-section">
     <button class="sheetButton randomGoods">{{localize "MERCHANT.randomGoods"}}</button>
     <button class="sheetButton clearInventory">{{localize "MERCHANT.clearInventory"}}</button>
+</div>
+<div class="groupbox">
+    <div class="row-section lineheight" title="{{localize 'PERMISSION.Configure'}}">
+        <div class="col fourty table-title ">
+            {{localize 'character'}}
+        </div>
+        <div class="col ten ">
+            <i class="fas fa-unlock"></i>
+        </div>
+        <div class="col fourty table-title ">
+            {{localize 'character'}}
+        </div>
+        <div class="col ten ">
+            <i class="fas fa-unlock"></i>
+        </div>
+    </div>
+    <div class="row-section wrap">
+    {{#each players as |player i|}}
+        <div class="col two row-section">
+            <div class="col eighty">
+                {{player.data.name}}
+            </div>
+            <div class="col five">
+                <a class="allowMerchant" data-user-id="{{player.id}}">
+                    {{#if player.allowedMerchcant}}
+                    <i class="far fa-check-circle"></i>
+                    {{else}}
+                    <i class="far fa-circle"></i>
+                    {{/if}}
+                </a>
+            </div>
+        </div>
+
+    {{/each}}
+    </div>
+
 </div>
 {{/when}} {{#each actor.inventory as |section sid|}} {{#if section.show}}
 <div class="groupbox">

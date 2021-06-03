@@ -13,7 +13,12 @@ export default function() {
         if (!actor) return;
 
         let update = {}
-        if (getProperty(actor.data, "data.config.autoBar")) {
+        if( getProperty(actor.data, "data.merchant.merchantType") == "loot"){
+            mergeObject(update, {
+                displayBars: 0
+            })
+        }
+        else if (getProperty(actor.data, "data.config.autoBar")) {
             if (actor.data.isMage) {
                 mergeObject(update, {
                     bar2: { attribute: "status.astralenergy" }

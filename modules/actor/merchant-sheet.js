@@ -29,6 +29,14 @@ export default class MerchantSheetDSA5 extends ActorSheetdsa5NPC {
 
     activateListeners(html) {
         super.activateListeners(html);
+        html.find('.allowMerchant').click(async(ev) => {
+            const id = $(ev.currentTarget).attr("data-user-id")
+            const i = $(ev.currentTarget).find('i')
+            let curPermissions = duplicate(this.actor.data.permission)
+            curPermissions[id] = i.hasClass("fa-check-circle") ? 0 : 1
+            await this.actor.update({ permission: curPermissions }, { diff: false, recursive: false, noHook: true })
+            i.toggleClass("fa-circle fa-check-circle")
+        })
 
         html.find('.randomGoods').click(ev => {
             this.randomGoods(ev)
@@ -147,6 +155,15 @@ export default class MerchantSheetDSA5 extends ActorSheetdsa5NPC {
         return game.user.character
     }
 
+    async _render(force = false, options = {}) {
+        if(!game.user.isGM && getProperty(this.actor.data.data, "merchant.merchantType") == "loot" && getProperty(this.actor.data.data, "merchant.locked"))
+        {
+            AudioHelper.play({ src: "sounds/lock.wav", loop: false }, false);
+            return
+        }
+        await super._render(force, options);
+    }
+
     _getHeaderButtons() {
         let buttons = super._getHeaderButtons();
         if (game.user.isGM) {
@@ -257,6 +274,10 @@ export default class MerchantSheetDSA5 extends ActorSheetdsa5NPC {
         data["merchantType"] = getProperty(this.actor.data.data, "merchant.merchantType") || "none"
         data["invName"] = { none: game.i18n.localize("equipment"), merchant: game.i18n.localize("MERCHANT.typeMerchant"), loot: game.i18n.localize("MERCHANT.typeLoot") }[data["merchantType"]]
         data["merchantTypes"] = { none: game.i18n.localize("MERCHANT.typeNone"), merchant: game.i18n.localize("MERCHANT.typeMerchant"), loot: game.i18n.localize("MERCHANT.typeLoot") }
+        data["players"] = game.users.filter(x => !x.isGM).map(x => {
+            x.allowedMerchcant = this.actor.testUserPermission(x, "LIMITED", false)
+            return x
+        })
         this.prepareStorage(data)
         if (this.showLimited()) {
             this.prepareTradeFriend(data)

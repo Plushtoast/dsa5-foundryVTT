@@ -132,6 +132,7 @@
         "clearInventory": "Reset",
         "deleteAllGoods": "Remove all commodities?",
         "select": "Choice",
+        "locked": "Locked",
         "selectRandomGoods": "Select categories and an amount of additional random commodities. The addition might take a moment, if the index of the library has not been created yet."
     },
 
@@ -414,7 +415,7 @@
     "status": "State",
     "stone": "Stone",
     "selfDamage": "injured self, Damage: ",
-    "specialability": "Special ability",
+    "specialability": "Special Ability",
     "spelltrickCount": "Count cantrips",
     "spellextension": "Spell/Liturgieextension",
     "specialRules": "Special rules",

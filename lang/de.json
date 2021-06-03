@@ -1224,6 +1224,7 @@
         "clearInventory": "Zurücksetzen",
         "deleteAllGoods": "Alle Waren entfernen?",
         "select": "Auswahl",
+        "locked": "Abgeschlossen",
         "selectRandomGoods": "Wähle Kategorien und Anzahl an zusätzlichen zufälligen Waren. Das Hinzufügen dauert einen Moment, wenn der Index der Bibliothek noch nicht erstellt wurde."
     },
 

@@ -139,8 +139,9 @@ export default class Actordsa5 extends Actor {
                 if (AdvantageRulesDSA5.hasVantage(this, game.i18n.localize('LocalizedIDs.blind'))) this.addCondition("blind")
                 if (AdvantageRulesDSA5.hasVantage(this, game.i18n.localize('LocalizedIDs.mute'))) this.addCondition("mute")
                 if (AdvantageRulesDSA5.hasVantage(this, game.i18n.localize('LocalizedIDs.deaf'))) this.addCondition("deaf")
-
                 if (!TraitRulesDSA5.hasTrait(this, game.i18n.localize('LocalizedIDs.painImmunity'))) this.addCondition("inpain", pain, true)
+
+                if (this.isMerchant()) {this.prepareMerchant()}
 
                 data.data.status.speed.max = Math.max(0, data.data.status.speed.max - pain)
             }
@@ -160,6 +161,36 @@ export default class Actordsa5 extends Actor {
         } catch (error) {
             console.error("Something went wrong with preparing actor data: " + error + error.stack)
             ui.notifications.error(game.i18n.localize("ACTOR.PreparationError") + error + error.stack)
+        }
+    }
+
+    prepareMerchant(){
+        if (getProperty(this, "data.data.merchant.merchantType") == "loot") {
+            if (getProperty(this, "data.data.merchant.locked") && !this.hasCondition("locked")) {
+                this.addCondition(Actordsa5.lockedCondition())
+            } else if (!getProperty(this, "data.data.merchant.locked")) {
+                let ef = this.effects.find(x => getProperty(x, "data.flags.core.statusId") == "locked")
+                if (ef) this.deleteEmbeddedDocuments("ActiveEffect", [ef.id])
+            }
+        }
+    }
+
+    static lockedCondition() {
+        return {
+            label: game.i18n.localize("MERCHANT.locked"),
+            icon: "icons/svg/padlock.svg",
+
+            flags: {
+                core: { statusId: "locked" },
+                dsa5: {
+                    value: null,
+                    editable: true,
+                    noEffect: true,
+                    hidePlayers: true,
+                    description: game.i18n.localize("MERCHANT.locked"),
+                    custom: true
+                }
+            }
         }
     }
 
@@ -305,6 +336,8 @@ export default class Actordsa5 extends Actor {
         return preparedData;
     }
 
+
+
     static canAdvance(actorData) {
         return actorData.canAdvance
     }
@@ -316,7 +349,6 @@ export default class Actordsa5 extends Actor {
     }
 
     static _calculateCombatSkillValues(i, actorData) {
-        console.log(i)
         if (i.data.weapontype.value == "melee") {
             let vals = i.data.guidevalue.value.split('/').map(x =>
                 Number(actorData.data.characteristics[x].initial) + Number(actorData.data.characteristics[x].modifier) + Number(actorData.data.characteristics[x].advances)

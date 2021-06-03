@@ -396,8 +396,7 @@ export default class DiceDSA5 {
             }
             return _this + number
         }, 0);
-        console.log(damageRoll)
-            //this._addRollDiceSoNice(testData, damageRoll, "black")
+        //this._addRollDiceSoNice(testData, damageRoll, "black")
         let damage = Number(damageRoll.total) + bonusDmg
         let weaponBonus = 0
         let weaponroll = 0
@@ -465,7 +464,7 @@ export default class DiceDSA5 {
 
         let source = testData.source
         let combatskill = source.data.combatskill.value
-        console.log(combatskill)
+
         let skill = Actordsa5._calculateCombatSkillValues(testData.extra.actor.items.find(x => x.type == "combatskill" && x.name == combatskill), testData.extra.actor)
 
         if (source.type == "meleeweapon") {
