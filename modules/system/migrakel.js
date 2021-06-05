@@ -41,7 +41,8 @@ export default class Migrakel {
             for (let item of actor.items.filter(x => ["spell", "liturgy", "ritual", "ceremony"].includes(x.type))) {
                 let find = await itemLibrary.findCompendiumItem(item.name, item.type)
                 if (find.length > 0) {
-                    find = find[0].document
+                    find = find[0]
+
                     const update = {
                         "data.effectFormula.value": find.data.data.effectFormula.value,
                         effects: find.effects.toObject()
@@ -60,7 +61,7 @@ export default class Migrakel {
             for (let item of actor.items.filter(x => ["specialability", "advantage", "disadvantage"].includes(x.type))) {
                 let find = await itemLibrary.findCompendiumItem(item.name, item.type)
                 if (find.length > 0) {
-                    find = find[0].document
+                    find = find[0]
                     const update = {
                         "data.effect.value": find.data.data.effect.value,
                         effects: find.effects.toObject()
@@ -79,7 +80,7 @@ export default class Migrakel {
             for (let item of actor.items.filter(x => ["combatskill"].includes(x.type))) {
                 let find = await itemLibrary.findCompendiumItem(item.name, item.type)
                 if (find.length > 0) {
-                    find = find[0].document
+                    find = find[0]
                     const update = {
                         effects: find.effects.toObject()
                     }

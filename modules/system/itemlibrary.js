@@ -2,54 +2,83 @@ import DSA5_Utility from "./utility-dsa5.js"
 
 class SearchDocument {
     constructor(item) {
-        this.document = item
+        let filterType = item.documentName
+        switch (item.documentName) {
+            case 'Actor':
+                filterType = item.data.type
+                break
+            case 'Item':
+                filterType = item.type
+                break
+        }
+        let data = getProperty(item, "data.data.description.value")
+        switch (filterType) {
+            case 'JournalEntry':
+                data = getProperty(item, "data.content")
+                break
+        }
+        let img = item.img
+        switch (filterType) {
+            case 'JournalEntry':
+                img = "systems/dsa5/icons/categories/DSA-Auge.webp"
+                break
+        }
+        this.document = {
+            name: item.name,
+            filterType,
+            data: $("<div>").html(data).text(),
+            id: item.id,
+            visible: item.visible,
+            compendium: item.compendium ? item.compendium.metadata.package : "",
+            pack: item.pack,
+            img
+        }
     }
     get name() {
         return this.document.name
     }
     get data() {
-        let data = ''
-        switch (this.itemType) {
-            case 'JournalEntry':
-                data = getProperty(this.document, "data.content")
-                break
-            default:
-                data = getProperty(this.document, "data.data.description.value")
-        }
-        return $("<div>").html(data).text()
+        return this.document.data
     }
     get id() {
         return this.document.id
     }
     get itemType() {
-        switch (this.document.documentName) {
-            case 'Actor':
-                return this.document.data.type
-            case 'Item':
-                return this.document.type
-            default:
-                return this.document.documentName
+        return this.document.filterType
+    }
+
+    async getItem(){
+        if (this.compendium) {
+            return await(await game.packs.get(this.document.pack)).getDocument(this.id)
+        } else {
+            switch (this.itemType) {
+                case "character":
+                case "creature":
+                case "npc":
+                    return game.actors.get(this.id)
+
+                case "JournalEntry":
+                    return game.journal.get(this.id)
+
+                default:
+                    return game.items.get(this.id)
+            }
         }
     }
-    get options() {
+    /*get options() {
         return this.document.options
-    }
+    }*/
     hasPermission() {
         return this.document.visible
     }
-    render() {
-        this.document.sheet.render(true)
+    async render() {
+        (await this.getItem()).sheet.render(true)
     }
     get compendium() {
-        return this.document.compendium ? this.document.compendium.metadata.package : ""
+        return this.document.compendium
     }
     get img() {
-        switch (this.itemType) {
-            case 'JournalEntry':
-                return "systems/dsa5/icons/categories/DSA-Auge.webp"
-            default:
-                return this.document.img
-        }
+        return this.document.img
     }
 }
 
@@ -264,7 +293,7 @@ export default class DSA5ItemLibrary extends Application {
             field: ["name"],
             where: { itemType: category }
         }
-        return await this.equipmentIndex.search(search, query).filter(x => x.compendium != "")
+        return await Promise.all((await this.equipmentIndex.search(search, query).filter(x => x.compendium != "")).map(x=> x.getItem()))
     }
 
     async filterStuff(category, index, page) {

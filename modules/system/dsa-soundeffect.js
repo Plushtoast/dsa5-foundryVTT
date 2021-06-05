@@ -44,6 +44,7 @@ export default class DSA5SoundEffect {
             case "rangeweapon":
                 paths = [
                     `${item.type}.manual.${item.name}.${action}`,
+                    `${item.type}.manual.${item.name}.default.${action}`,
                     `${item.type}.manual.${item.name}.default`,
                     `${item.type }.${item.data.combatskill.value }.${action}`,
                     `${item.type}.${item.data.combatskill.value}.default`

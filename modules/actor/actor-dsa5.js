@@ -211,7 +211,7 @@ export default class Actordsa5 extends Actor {
                             apply = item.data.data.worn.value
                             break
                         case "equipment":
-                            apply = item.data.data.worn.wearable && item.data.data.worn.value
+                            apply = (item.data.data.worn.wearable && item.data.data.worn.value) || !item.data.data.worn.wearable
                             break
                         case "consumable":
                         case "combatskill":
