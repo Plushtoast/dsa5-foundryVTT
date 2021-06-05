@@ -237,10 +237,10 @@ class RaptureEffect extends DSA5StatusEffects {
         let happyTalents = actor.data.happyTalents.value.split(/;|,/).map(x => x.trim())
         if ((happyTalents.includes(item.name) && ["skill", "combatskill"].includes(item.type)) ||
             (["rangeweapon", "meleeweapon"].includes(item.type) && happyTalents.includes(item.data.data.combatskill.value)) || ["ceremony", "liturgy"].includes(item.type)) {
-            return effect.data.flags.dsa5.value - 1
+            return effect.flags.dsa5.value - 1
         }
         if (["ritual", "spell", "skill", "combatskill"].includes(item.type))
-            return effect.data.flags.dsa5.value * -1
+            return effect.flags.dsa5.value * -1
         return 0
     }
 }

@@ -20,6 +20,7 @@ import DSA5Payment from "./modules/system/payment.js"
 import { DSA5CombatTracker, DSA5Combat, DSA5Combatant } from "./modules/hooks/combat_tracker.js";
 import DSAActiveEffectConfig from "./modules/status/active_effects.js";
 import DSA5Hotbar from "./modules/system/tokenHotbar.js";
+import RollMemory from "./modules/system/roll_memory.js"
 
 Hooks.once("init", async function() {
     console.log("Initializing DSA5 system")
@@ -36,6 +37,7 @@ Hooks.once("init", async function() {
             DSA5Initializer,
             DSA5ChatListeners,
             DSA5Payment
+
         },
         entities: {
             Actordsa5,
@@ -43,6 +45,7 @@ Hooks.once("init", async function() {
         },
         macro: MacroDSA5,
         config: DSA5,
+        memory: new RollMemory(),
         itemLibrary: new DSA5ItemLibrary(),
         lazy: {
             LazyImporter

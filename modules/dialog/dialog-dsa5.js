@@ -1,7 +1,8 @@
 import DSA5CombatDialog from './dialog-combat-dsa5.js'
+import DialogShared from './dialog-shared.js'
 import DSA5SpellDialog from './dialog-spell-dsa5.js'
 
-export default class DSA5Dialog extends Dialog {
+export default class DSA5Dialog extends DialogShared {
     static getDialogForItem(type) {
         switch (type) {
             case "rangeweapon":
@@ -45,6 +46,7 @@ export default class DSA5Dialog extends Dialog {
             $(ev.currentTarget).prop('selected', !$(ev.currentTarget).prop('selected'));
             return false;
         });
+
 
     }
 

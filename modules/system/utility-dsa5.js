@@ -12,7 +12,7 @@ export default class DSA5_Utility {
         let items
         await pack.getDocuments().then(content => items = content.filter(i => i.data.type == "skill"));
         for (let i of items) {
-            returnSkills.push(i.data)
+            returnSkills.push(i.toObject())
         }
 
         return returnSkills;
@@ -27,7 +27,7 @@ export default class DSA5_Utility {
         let items
         await pack.getDocuments().then(content => items = content.filter(i => i.data.type == "combatskill"));
         for (let i of items) {
-            returnSkills.push(i.data)
+            returnSkills.push(i.toObject())
         }
         return returnSkills;
     }
@@ -55,7 +55,7 @@ export default class DSA5_Utility {
 
         let items
         await pack.getDocuments().then(content => items = content.filter(i => i.data.type == "money").map(i => {
-            let res = duplicate(i.data)
+            let res = i.toObject()
             res.data.quantity.value = 0
             return res
         }));
@@ -196,7 +196,7 @@ export default class DSA5_Utility {
                             if (index >= 0 && types[index] == k.type) {
                                 names.splice(index, 1)
                                 types.splice(index, 1)
-                                results.push(duplicate(k))
+                                results.push(k.toObject())
                             }
                         }
                     })

@@ -20,6 +20,7 @@ export default class DSA5SoundEffect {
                 let file = await fetch(effectFile)
                 let json = await file.json()
                 this.sounds = json
+                console.log("DSA5 | Sound Config Loaded")
             } catch (exception) {
                 console.warn(exception)
             }
@@ -36,11 +37,6 @@ export default class DSA5SoundEffect {
 
         if (!this.sounds) return undefined
 
-        /*const sounds = {
-          "meleeweapon": {
-            "Dolche": { default: "/modules/gAudioBundle-1/src/Airy Whooshes/Whoosh_Sound_Design_Airy_Full_Soft_Buffet_Medium.ogg"}
-          }
-        }*/
         let paths = []
         let result
         switch (item.type) {
@@ -72,7 +68,7 @@ export default class DSA5SoundEffect {
         paths.push(`${item.type}.default`)
         for (const p of paths) {
             result = getProperty(this.sounds, p)
-            if (result) break
+            if (result && (typeof result === "string" || result instanceof String)) break
         }
 
         return result

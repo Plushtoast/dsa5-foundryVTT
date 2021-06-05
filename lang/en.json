@@ -860,7 +860,6 @@
         "senseOfRange": "Sense of Range",
         "ambidextrous": "Ambidextrous",
         "weaponAptitude": "Weapon Aptitude",
-        "minorSpirits": "Annoyed by Minor Spirits",
         "wildMagic": "Wild Magic",
         "incompetent": "Incompetent",
         "exceptionalSkill": "Exceptional Skill",
@@ -1080,10 +1079,6 @@
         "higherDefenseHint": "If you want to decrease the chances that your character will get hit, you can choose to raise the character’s Parry in general by 2 or 4 points (and raise character’s Dodge stat by half this amount, as well). Note that both player characters and NPCs can increase defense stats, which means that combats will take longer to resolve. This optional rule does not change the game’s level of complexity",
         "statusEffectCounterColor": "Color of the status effect counter",
         "statusEffectCounterColorHint": "Hex code for the color of countable status effects on the tokens. Format: #000000",
-        "defaultDimVision": "Default dim vision",
-        "defaultDimVisionHint": "Adjust the default dim vision range for new characters and tokens.",
-        "defaultBrightVision": "Default bright vision",
-        "defaultBrightVisionHint": "Adjust the default bright vision range for new characters and tokens.",
         "capQSat": "Max achievable quality level",
         "capQSatHint": "Restrict the max achievable quality level.",
         "talentModifierEnabled": "Skill modifiers activated",
@@ -1129,14 +1124,14 @@
 
     "SPELLMISCAST": {
         "2": "The spellcaster’s mind switches bodies with the nearest creature larger than a rat for 1D6 day(s).",
-        "3": "A minor spirit stalks the spellcaster for 1D6 day(s)",
-        "4 ": "The spell affects a different, random target instead, as determined by the GM. ",
+        "3": "The spellcaster is Condition Annoyed by Minor Spirits for 1D6 day(s)",
+        "4": "The spell affects a different, random target instead, as determined by the GM. ",
         "5": "The spellcaster turns into a small animal of the GM’s choosing for 1D6 hours. ",
         "6": "All remaining AE leaves the spellcaster’s body and manifests as a rain of colorful sparks, illusionary butterflies, and small rainbows. The spellcaster regenerates this AE in the usual way. ",
         "7": "The spellcaster loses the ability to use AE for 1D6 day(s).",
         "8": "The spellcaster suffers a throbbing headache and a level of the condition Stupor for 1D6 day(s).",
         "9": "All remaining AE leaves the spellcaster’s body and jumps to the next closes above the normal maximum. The spellcaster regenerates this AE in the usual way.",
-        "10": "The spellcaster cannot speak for 1D6 day(s). ",
+        "10": "The spellcaster receives the condition mute for 1D6 day(s).",
         "11": "All of the spellcaster’s hair takes on a bright color, but grows back in its original color.",
         "12": "An ethereal voice speaks from out of thin air, saying “Never do that again!”"
     },
@@ -1149,7 +1144,7 @@
         "7": "The Blessed One loses the ability to use KP for 1D6 day(s).",
         "8": "The Blessed One receives 4 levels of Rapture",
         "9": "The Blessed One suffers 3 levels of Confusion for the day and talks nonsense that cannot be remembered later",
-        "10": "The Blessed One can’t speak for 1D6 day(s).",
+        "10": "The Blessed One receives the condition mute for 1D6 day(s).",
         "11": "The Blessed One suffers a stigma for the day.",
         "12": "The Blessed One’s feet become rooted to the ground, restricting movement and causing the Blessed One to suffer the state bound for 1D6 minutes."
     },
@@ -1226,10 +1221,12 @@
         "burning": "Burning",
         "fixated": "Bound",
         "custom": "Custom effect",
-        "add": "Add condition"
+        "add": "Add condition",
+        "minorSpirits": "Annoyed by Minor Spirits"
     },
 
     "CONDITIONDESCRIPTION": {
+        "minorSpirits": "Minor spirits are small elemental creatures that are not inherently dangerous but can be very annoying. Some spellcasters attract minor spirits to themselves when using magic.",
         "shapeshift": "This creature shifted its shape.",
         "encumbered": "Heavy gear and armor can weigh heroes down, restricting their mobility. Encumbered characters suffer penalties to applicable skill checks, based on their current level of Encumbrance. Applicable skills are indicated as such in their descriptions. When heroes discard weight, their levels of Encumbrance go away. When calculating encumbrance due to load, remember to ignore the weight of the hero’s armor, which is already factored into its Encumbrance value.",
         "stunned": "Whether from wine, drugs, exhaustion, or a good brawl, a hero might gain levels of Stupor and suffer disorientation and lethargy. However, the effects of Stupor do not last very long. Remove 1 level of Stupor for every 3 full hours of rest, unless directed otherwise.",

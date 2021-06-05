@@ -1,4 +1,6 @@
-export default class DSA5CombatDialog extends Dialog {
+import DialogShared from "./dialog-shared.js";
+
+export default class DSA5CombatDialog extends DialogShared {
 
     static get defaultOptions() {
         const options = super.defaultOptions;

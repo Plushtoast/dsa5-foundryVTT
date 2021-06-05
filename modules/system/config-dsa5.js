@@ -1,6 +1,22 @@
 const DSA5 = {}
 
-DSA5.statusEffects = [{
+DSA5.statusEffects = [
+    {
+        id: "inpain",
+        label: "CONDITION.inpain",
+        icon: "icons/svg/blood.svg",
+        description: "CONDITIONDESCRIPTION.inpain",
+        flags: {
+            dsa5: {
+                "value": 1,
+                "editable": true,
+                "max": 4
+            }
+        }
+    },
+
+
+    {
         id: "prone",
         label: "CONDITION.prone",
         icon: "icons/svg/falling.svg",
@@ -248,19 +264,7 @@ DSA5.statusEffects = [{
             }
         }
     },
-    {
-        id: "inpain",
-        label: "CONDITION.inpain",
-        icon: "icons/svg/blood.svg",
-        description: "CONDITIONDESCRIPTION.inpain",
-        flags: {
-            dsa5: {
-                "value": 1,
-                "editable": true,
-                "max": 4
-            }
-        }
-    },
+
     {
         id: "confused",
         label: "CONDITION.confused",
@@ -273,8 +277,23 @@ DSA5.statusEffects = [{
                 "max": 4
             }
         }
+    },
+    {
+        id: "minorSpirits",
+        label: "CONDITION.minorSpirits",
+        icon: "icons/svg/terror.svg",
+        description: "CONDITIONDESCRIPTION.minorSpirits",
+        changes: [
+            { key: "data.skillModifiers.global", mode: 0, value: -1 }
+        ],
+        duration: { seconds: 600 },
+        flags: {
+            dsa5: {
+                value: null,
+                editable: true,
+            }
+        }
     }
-
 ]
 
 DSA5.localizedCompendiums = {
@@ -504,44 +523,44 @@ DSA5.startXP = {
 }
 
 DSA5.helpContent = [{
-        name: "pay",
-        command: "/pay [0-9]+",
-        example: "/pay 5.03",
-    }, {
-        name: "getPaid",
-        command: "/getPaid [0-9]+",
-        example: "/getPaid 5.03",
-    },
-    {
-        name: "quickAbility",
-        command: "/sk [a-z]*, /sp [a-z]*, /li [a-z]*, /at [a-z]*, /pa [a-z]*",
-        example: "/sk betören",
-    },
-    {
-        name: "conditions",
-        command: "/conditions",
-        example: "/conditions"
-    },
-    {
-        name: "tables",
-        command: "/tables",
-        example: "/tables"
-    },
-    {
-        name: "request",
-        command: "/rq",
-        example: "/rq betören"
-    },
-    {
-        name: "threeD20Check",
-        command: "/ch",
-        example: "/ch"
-    },
-    {
-        name: "groupcheck",
-        command: "/gc",
-        example: "/gc"
-    }
+    name: "pay",
+    command: "/pay [0-9]+",
+    example: "/pay 5.03",
+}, {
+    name: "getPaid",
+    command: "/getPaid [0-9]+",
+    example: "/getPaid 5.03",
+},
+{
+    name: "quickAbility",
+    command: "/sk [a-z]*, /sp [a-z]*, /li [a-z]*, /at [a-z]*, /pa [a-z]*",
+    example: "/sk betören",
+},
+{
+    name: "conditions",
+    command: "/conditions",
+    example: "/conditions"
+},
+{
+    name: "tables",
+    command: "/tables",
+    example: "/tables"
+},
+{
+    name: "request",
+    command: "/rq",
+    example: "/rq betören"
+},
+{
+    name: "threeD20Check",
+    command: "/ch",
+    example: "/ch"
+},
+{
+    name: "groupcheck",
+    command: "/gc",
+    example: "/gc"
+}
 ]
 
 DSA5.ceremonyTimeModifiers = {

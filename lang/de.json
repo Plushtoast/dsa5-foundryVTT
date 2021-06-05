@@ -870,7 +870,6 @@
         "senseOfRange": "Entfernungssinn",
         "ambidextrous": "Beidhändig",
         "weaponAptitude": "Waffenbegabung",
-        "minorSpirits": "Lästige Mindergeister",
         "wildMagic": "Wilde Magie",
         "incompetent": "Unfähig",
         "exceptionalSkill": "Herausragende Fertigkeit",
@@ -1067,10 +1066,6 @@
         "higherDefenseHint": "Wenn die Chance einen Treffer einzustecken kleiner sein soll, könnt ihr auch beschließen, dass die Parade generell um 2 oder 4 Punkte höher liegt (und der Ausweichenwert um die Hälfte des Bonus der Parade angehoben wird). Die Verteidigungswerte erhöhen sich sowohl für Helden, als auch für Gegner. Dies bedeutet aber, dass Kämpfe länger dauern werden. Durch die Verwendung dieser Optionalregel bleiben die Regeln gleich komplex.",
         "statusEffectCounterColor": "Farbe des Statuseffektzählers",
         "statusEffectCounterColorHint": "Hex Code für die Token Farbe von zählbaren Status Effekten. Format: #000000",
-        "defaultDimVision": "Standard Sichtweite (vage)",
-        "defaultDimVisionHint": "Stell die Standard Sichtweite (vage) für neue Charakter Token ein.",
-        "defaultBrightVision": "Standard Sichtweite (klar)",
-        "defaultBrightVisionHint": "Stell die Standard Sichtweite (klar) für neue Charakter Token ein.",
         "talentModifierEnabled": "Talentmodifikatoren aktiviert",
         "talentModifierEnabledHint": "Talentmodifikatoren im Würfelfenster automatisch selektiert.",
         "capQSat": "Maximale erwürfelbare QS",
@@ -1107,14 +1102,14 @@
 
     "SPELLMISCAST": {
         "2": "Der Geist des Zauberers tauscht für 1D6 Tag(e) den Körper mit dem nächsten Lebewesen in seiner Nähe, das größer ist als eine Ratte.",
-        "3": "Der Zauberer wird für 1D6 Tag(e) von einem Mindergeist verfolgt.",
-        "4 ": "Das Ziel des Zaubers ändert sich zufällig nach Wahl des Meisters.",
+        "3": "Der Zauberer wird für 1D6 Tag(e) von Zustand Lästige Mindergeister verfolgt.",
+        "4": "Das Ziel des Zaubers ändert sich zufällig nach Wahl des Meisters.",
         "5": "Der Zauberer verwandelt sich für 1D6 Stunden in ein Kleintier nach Wahl des Spielleiters.",
         "6": "Die gesamte Astralkraft verlässt den Körper des Zauberers und manifestiert sich als Regen aus bunten Funken, illusionären Schmetterlingen und kleinen Regenbögen. Die verlorenen Astralpunkte können regulär regeneriert werden.",
         "7": "Der Zauberer verliert für 1D6 Tag(e) die Fähigkeit, auf seinen AE-Vorrat zuzugreifen.",
-        "8": "Der Zauberer hat für die nächsten 1D6 Tag(e) pochende Kopfschmerzen. Er leidet während dieser Zeit unter einer Stufe des Zustands Betäubung.",
+        "8": "Der Zauberer hat für die nächsten 1D6 Tag(e) pochende Kopfschmerzen. Er leidet während dieser Zeit unter einer Stufe Betäubung.",
         "9": "Die gesamte Astralkraft verlässt den Körper des Zauberers und springt auf das nächste magisch begabte Ziel über. Das Ziel erhält die gesamten Astralpunkte des Zauberers, auch über sein natürliches Maximum an Astralenergie hinaus. Der Zauberer kann die verlorenen Astralpunkte regulär regenerieren.",
-        "10": "Der Zauberer verliert für 1D6 Tag(e) seine Befähigung zu sprechen.",
+        "10": "Der Zauberer erhält für 1D6 Tag(e) den Zustand Stumm.",
         "11": "Haar und Bart des Zauberers färben sich bunt, wachsen später jedoch in der ursprünglichen Farbe nach",
         "12": "Eine ätherische Stimme erklingt aus dem Nichts und sagt „Tu das nie wieder!“"
     },
@@ -1127,9 +1122,9 @@
         "7": "Der Geweihte verliert für 1D6 Tag(e) die Fähigkeit, auf seinen KE-Vorrat zuzugreifen.",
         "8": "Der Geweihte erhält für einen Tag 4 Stufen Entrückung.",
         "9": "Der Geweihte ist für einen Tag lang verwirrt und redet unverständliches Zeug, an das er sich später nicht mehr erinnert. Er erhält 3 Stufen Verwirrung",
-        "10": "Der Geweihte verliert für 1D6 Tag(e) seine Befähigung zu sprechen.",
+        "10": "Der Geweihte erhält für 1D6 Tag(e) den Zustand Stumm.",
         "11": "Für einen Tag erhält der Geweihte ein Stigma.",
-        "12": "Der Geweihte verwurzelt mit dem Boden und kann seine Füße für 1W6 Minuten nicht bewegen. Er erhält währenddessen den Status Fixiert.“"
+        "12": "Der Geweihte verwurzelt mit dem Boden und kann seine Füße für 1W6 Minuten nicht bewegen. Er erhält währenddessen den Status Fixiert."
     },
     "MELEEBOTCH": {
         "2": "Die Waffe ist unwiederbringlich zerstört. Unzerstörbare Waffen fallen zu Boden.",
@@ -1204,7 +1199,8 @@
         "burning": "Brennend",
         "fixated": "Fixiert",
         "custom": "Manueller Effekt",
-        "add": "Zustand hinzufügen"
+        "add": "Zustand hinzufügen",
+        "minorSpirits": "Lästige Mindergeister"
     },
 
     "MERCHANT": {
@@ -1229,6 +1225,7 @@
     },
 
     "CONDITIONDESCRIPTION": {
+        "minorSpirits": "Mindergeister sind kleine Elementarwesen, die zwar nicht gefährlich sind, aber lästig werden können. Einige Zauberanwender ziehen beim Wirken ihrer Magie Mindergeister geradezu an.",
         "shapeshift": "Diese Kreatur hat ihre Gestalt gewandelt",
         "encumbered": "Schweres Gepäck und Rüstungen können den Träger sehr belasten und seine Bewegungsfreiheit einschränken. So lange diese Lasten getragen werden, erleidet die Person entsprechende Stufen an Belastung. Werden die Lasten abgelegt, verschwinden auch die Belastungsstufen. Das Gewicht von Rüstungen wird bei der Berechnung von Belastung durch Traglast ignoriert.",
         "stunned": "Durch zu viel Wein, Erschöpfung oder eine zünftige Schlägerei kann ein Held Stufen von Betäubung erleiden. Eine Stufe Betäubung verschwindet nach einer Ruhephase von 3 Stunden, so nichts anderes angegeben ist.",

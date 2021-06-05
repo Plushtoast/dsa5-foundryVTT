@@ -15,6 +15,11 @@
         <a class="item-edit {{#if item.consumable}}consume-item{{/if}}">{{item.name}}</a>
       </div>
       <div class="col eight"></div>
+      {{#when item.data.equipmentType.value 'eq' 'bags'}}
+      <div class="col five center">
+        {{item.bagweight}}
+      </div>
+      {{/when}}
       <div class="col eight center">
         {{#if item.toggle}} {{#if item.toggleValue}}
         <a class="item-toggle"><i class="far fa-check-circle"></i></a> {{else}}
@@ -36,9 +41,9 @@
     </div>
     <div class="row-section lineheight expandDetails {{item.detailed}}">
       <div class="col">
-        <ul>
-
-        </ul>
+        {{#if item.children}}
+        {{> systems/dsa5/templates/actors/parts/containerContent.html item}}
+        {{/if}}
       </div>
     </div>
 

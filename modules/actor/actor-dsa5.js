@@ -35,8 +35,6 @@ export default class Actordsa5 extends Actor {
         if (data.type != "creature" && [undefined, 0].includes(getProperty(data, "data.status.wounds.value")))
             mergeObject(data, { data: { status: { wounds: { value: 16 } } } })
 
-
-
         return await super.create(data, options);
     }
 
@@ -502,6 +500,8 @@ export default class Actordsa5 extends Actor {
         for (let i of actorData.items) {
             try {
                 let parent_id = getProperty(i, "data.parent_id")
+                if (i.type == "ammunition") inventory.ammunition.items.push(i);
+
                 if (parent_id && parent_id != i._id) {
                     if (containers.has(parent_id)) {
                         containers.get(parent_id).push(i)
@@ -554,7 +554,7 @@ export default class Actordsa5 extends Actor {
                         break;
                     case "ammunition":
                         i.weight = parseFloat((i.data.weight.value * i.data.quantity.value).toFixed(3));
-                        inventory.ammunition.items.push(i);
+
                         inventory.ammunition.show = true;
                         totalWeight += Number(i.weight);
                         break;
@@ -633,20 +633,7 @@ export default class Actordsa5 extends Actor {
         }
 
         for (let elem of inventory.bags.items) {
-            if (containers.has(elem._id)) {
-                elem.children = []
-                let bagweight = 0
-                if (!elem.toggleValue) totalWeight -= elem.weight
-
-                for (let child of containers.get(elem._id)) {
-                    child.weight = Number(parseFloat((child.data.weight.value * child.data.quantity.value).toFixed(3)))
-                    bagweight += child.weight
-                    elem.children.push(Actordsa5._prepareitemStructure(Actordsa5._prepareConsumable(child)))
-                    if (elem.toggleValue) totalWeight += child.weight
-
-                }
-                elem.bagweight = `${bagweight.toFixed(3)}/${elem.data.capacity}`
-            }
+            totalWeight += this._setBagContent(elem, containers)
         }
 
 
@@ -731,6 +718,28 @@ export default class Actordsa5 extends Actor {
                 trade: skills.trade
             }
         }
+    }
+
+    _setBagContent(elem, containers, topLevel = true){
+        let totalWeight = 0
+        if (containers.has(elem._id)) {
+            elem.children = []
+            let bagweight = 0
+            if (!elem.toggleValue && topLevel) totalWeight -= elem.weight
+
+            for (let child of containers.get(elem._id)) {
+                child.weight = Number(parseFloat((child.data.weight.value * child.data.quantity.value).toFixed(3)))
+                bagweight += child.weight
+                elem.children.push(Actordsa5._prepareitemStructure(Actordsa5._prepareConsumable(child)))
+                if (containers.has(child._id)) {
+                    bagweight += this._setBagContent(child, containers, false)
+                }
+
+            }
+            if (elem.toggleValue || !topLevel) totalWeight += bagweight
+            elem.bagweight = `${bagweight.toFixed(3)}/${elem.data.capacity}`
+        }
+        return totalWeight
     }
 
     isMerchant() {
@@ -1341,14 +1350,9 @@ export default class Actordsa5 extends Actor {
 
     async _preCreate(data, options, user){
         let update = {}
-
         mergeObject(update, {
             token: {
-                bar1: { attribute: "status.wounds" },
-                displayName: CONST.TOKEN_DISPLAY_MODES.OWNER_HOVER,
-                displayBars: CONST.TOKEN_DISPLAY_MODES.OWNER_HOVER,
-                disposition: CONST.TOKEN_DISPOSITIONS.NEUTRAL,
-                name: data.name
+                bar1: { attribute: "status.wounds" }
             }
         })
 
@@ -1359,8 +1363,6 @@ export default class Actordsa5 extends Actor {
             mergeObject(update, {
                 token: {
                     vision: true,
-                    brightSight: await game.settings.get('dsa5', 'defaultBrightVision'),
-                    dimSight: await game.settings.get('dsa5', 'defaultDimVision'),
                     actorLink: true
                 }
             })

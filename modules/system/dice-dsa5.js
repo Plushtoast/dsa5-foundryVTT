@@ -64,11 +64,14 @@ export default class DiceDSA5 {
                     buttons: {
                         rollButton: {
                             label: game.i18n.localize("Roll"),
-                            callback: html => resolve(dialogOptions.callback(html))
+                            callback: (html) => {
+                                game.dsa5.memory.remember(testData.extra.speaker, testData.source, testData.mode, html)
+                                resolve(dialogOptions.callback(html))
+                            }
                         }
                     },
                     default: "rollButton"
-                }).render(true);
+                }).recallSettings(testData.extra.speaker, testData.source, testData.mode).render(true);
             })
         } else {
             testData.testModifier = testData.extra.options.testModifier || testData.testModifier
@@ -669,7 +672,7 @@ export default class DiceDSA5 {
         res["rollType"] = testData.source.type
         res.preData.calculatedSpellModifiers.finalcost = res.preData.calculatedSpellModifiers.cost
         if (res.successLevel >= 2) {
-            let extraFps = new Roll("1d6").evaluate({ async: false }).results[0]
+            let extraFps = new Roll("1d6").evaluate({ async: false }).total
             res.description = res.description + ", " + game.i18n.localize("additionalFPs") + " " + extraFps
             res.result = res.result + extraFps
             res.preData.calculatedSpellModifiers.finalcost = Math.round(res.preData.calculatedSpellModifiers.cost / 2)
@@ -698,11 +701,15 @@ export default class DiceDSA5 {
         }
         res.preData.calculatedSpellModifiers.finalcost = Math.max(0, Number(res.preData.calculatedSpellModifiers.finalcost) + AdvantageRulesDSA5.vantageStep(testData.extra.actor, game.i18n.localize('LocalizedIDs.weakKarmicBody')) + AdvantageRulesDSA5.vantageStep(testData.extra.actor, game.i18n.localize('LocalizedIDs.weakAstralBody')) + testData.extra.actor.data[["ceremony", "liturgy"].includes(testData.source.type) ? "kapModifier" : "aspModifier"])
 
-        if (AdvantageRulesDSA5.hasVantage(testData.extra.actor, game.i18n.localize('LocalizedIDs.minorSpirits'))) {
+        if (AdvantageRulesDSA5.hasVantage(testData.extra.actor, game.i18n.localize('CONDITION.minorSpirits'))
+            && !testData.extra.actor.effects.find(x => x.label == game.i18n.localize('CONDITION.minorSpirits')) ) {
             const ghostroll = new Roll("1d20").evaluate({ async: false })
-            if (ghostroll.total <= res.preData.calculatedSpellModifiers.finalcost)
+            if (ghostroll.total <= res.preData.calculatedSpellModifiers.finalcost){
                 res.description += ", " + game.i18n.localize("minorghostsappear")
+                DSA5_Utility.getSpeaker(testData.extra.speaker).addCondition("minorSpirits")
+            }
         }
+
         return res
     }
 

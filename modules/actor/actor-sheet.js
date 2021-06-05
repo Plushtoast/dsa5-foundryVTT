@@ -645,10 +645,10 @@ export default class ActorSheetDsa5 extends ActorSheet {
                 await this.actor.removeCondition(condKey, 1, false)
         })
 
-        html.find(".condition-toggle").mousedown(ev => {
+        html.find(".condition-toggle").mousedown(async(ev) => {
             let condKey = $(ev.currentTarget).parents(".statusEffect").attr("data-id")
             let ef = this.actor.effects.get(condKey)
-            ef.update({ disabled: !ef.data.disabled })
+            await ef.update({ disabled: !ef.disabled })
         })
 
         html.find('.talentSearch').keyup(event => {
@@ -985,16 +985,12 @@ export default class ActorSheetDsa5 extends ActorSheet {
         if (sourceActor && sourceActor.isOwner) await sourceActor.deleteEmbeddedDocuments("Item", [item._id])
     }
 
-
-
     async _handleDragData(dragData, originalEvent, { item, typeClass, selfTarget }) {
         if (!item) return
 
         let container_id
         let parentItem = $(originalEvent.target).parents(".item")
-        while (parentItem.parents(".item").attr("data-category") == "bags") {
-            parentItem = parentItem.parents(".item")
-        }
+
         if (parentItem && parentItem.attr("data-category") == "bags" && DSA5.equipmentCategories.includes(typeClass)) {
             if (parentItem.attr("data-item-id") != item._id) {
                 container_id = parentItem.attr("data-item-id")
@@ -1013,11 +1009,6 @@ export default class ActorSheetDsa5 extends ActorSheet {
             await this.actor.updateEmbeddedDocuments("Item", [item])
         } else if (selfTarget && DSA5.equipmentCategories.includes(typeClass)) {
             await this.actor.updateEmbeddedDocuments("Item", [{ _id: item._id, data: { parent_id: 0 } }])
-        }
-
-        if (container_id && getProperty(item, "data.equipmentType.value") == "bags") {
-            let itemsToMove = this.actor.items.filter(x => DSA5.equipmentCategories.includes(x.type) && x.data.data.parent_id == item._id)
-            await this.actor.updateEmbeddedDocuments("Item", itemsToMove.map(x => { return { _id: x.id, data: { parent_id: container_id } } }))
         }
 
         if (originalEvent.altKey && !selfTarget && DSA5.equipmentCategories.includes(typeClass))

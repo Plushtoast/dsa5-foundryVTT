@@ -46,22 +46,7 @@ export default function() {
         default: "#FFFFFF",
         type: String
     });
-    game.settings.register("dsa5", "defaultDimVision", {
-        name: "DSASETTINGS.defaultDimVision",
-        hint: "DSASETTINGS.defaultDimVisionHint",
-        scope: "world",
-        config: true,
-        default: 20,
-        type: Number
-    });
-    game.settings.register("dsa5", "defaultBrightVision", {
-        name: "DSASETTINGS.defaultBrightVision",
-        hint: "DSASETTINGS.defaultBrightVisionHint",
-        scope: "world",
-        config: true,
-        default: 10,
-        type: Number
-    });
+
     game.settings.register("dsa5", "migrationVersion", {
         name: "migrationVersion",
         hint: "migrationVersion",
@@ -73,6 +58,14 @@ export default function() {
     game.settings.register("dsa5", "firstTimeStart", {
         name: "firstTimeStart",
         hint: "firstTimeStart",
+        scope: "world",
+        config: false,
+        default: false,
+        type: Boolean
+    })
+    game.settings.register("dsa5", "defaultConfigFinished", {
+        name: "defaultConfigFinished",
+        hint: "defaultConfigFinished",
         scope: "world",
         config: false,
         default: false,
