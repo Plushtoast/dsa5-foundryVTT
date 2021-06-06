@@ -265,8 +265,8 @@ export default class DSA5ItemLibrary extends Application {
     async getRandomItems(category, limit) {
         let filteredItems = []
         let index = this.equipmentIndex
-        filteredItems.push(...index.search(category, { field: ["itemType"] }))
-        return this.shuffle(filteredItems.filter(x => x.hasPermission)).slice(0, limit)
+        filteredItems.push(...(await index.search(category, { field: ["itemType"] })))
+        return await Promise.all(this.shuffle(filteredItems.filter(x => x.hasPermission)).slice(0, limit).map(x => x.getItem()))
     }
 
     shuffle(array) {
@@ -400,7 +400,7 @@ export default class DSA5ItemLibrary extends Application {
         this.showLoading(target, category)
         const packs = game.packs.filter(p => p.documentName == entity && (game.user.isGM || !p.private))
         return Promise.all(packs.map(p => p.getDocuments())).then(indexes => {
-            let items = worldStuff.map(x => new SearchDocument(x))
+            let items = worldStuff.filter(x => x.visible).map(x => new SearchDocument(x))
             indexes.forEach((index, idx) => {
                 items.push(...index.map(x => new SearchDocument(x)))
             })
@@ -424,7 +424,6 @@ export default class DSA5ItemLibrary extends Application {
             }
         }
     }
-
 
     activateListeners(html) {
         super.activateListeners(html)

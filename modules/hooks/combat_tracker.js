@@ -38,8 +38,16 @@ export class DSA5Combat extends Combat {
         super(data, context);
     }
     async nextRound() {
-        for (let k of this.turns) {
-            await k.update({ defenseCount: 0 })
+        if(game.user.isGM){
+            for (let k of this.turns) {
+                await k.update({ defenseCount: 0 })
+            }
+        }else{
+            await game.socket.emit("system.dsa5", {
+                type: "clearCombat",
+                payload: {
+                }
+            })
         }
         return await super.nextRound()
     }
@@ -61,9 +69,18 @@ export class DSA5Combat extends Combat {
 
     //TODO very clonky
     async updateDefenseCount(speaker) {
-        const comb = this.getCombatantFromActor(speaker)
-        if (comb) {
-            await comb.update({ "defenseCount": comb.data._source.defenseCount + 1 })
+        if(game.user.isGM){
+            const comb = this.getCombatantFromActor(speaker)
+            if (comb) {
+                await comb.update({ "defenseCount": comb.data._source.defenseCount + 1 })
+            }
+        }else{
+            await game.socket.emit("system.dsa5", {
+                type: "updateDefenseCount",
+                payload: {
+                    speaker
+                }
+            })
         }
     }
 }

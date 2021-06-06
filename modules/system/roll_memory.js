@@ -18,7 +18,6 @@ export default class RollMemory {
     if(Object.entries(data).length > 0)
       setProperty(this, this.getPath(speaker, source, mode), data)
 
-    console.log(this)
   }
 
   recall(speaker, source, mode) {

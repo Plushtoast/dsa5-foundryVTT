@@ -36,6 +36,12 @@ export default function() {
                     case "updateGroupCheck":
                         DiceDSA5._rerenderGC(game.messages.get(data.payload.messageId), data.payload.data)
                         break
+                    case "clearCombat":
+                        if (game.combat) game.combat.nextRound()
+                        break
+                    case "updateDefenseCount":
+                        if (game.combat) game.combat.updateDefenseCount(data.payload.speaker)
+                        break
                     case "trade":
                         {
                             let source = data.payload.source.token ? game.actors.tokens[data.payload.source.token] : game.actors.get(data.payload.source.actor)

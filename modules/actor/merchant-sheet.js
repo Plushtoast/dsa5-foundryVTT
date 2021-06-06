@@ -245,9 +245,7 @@ export default class MerchantSheetDSA5 extends ActorSheetdsa5NPC {
         }
         let items = []
         for (let cat of categories) {
-            for (let item of await itemLibrary.getRandomItems(cat, numbers[cat])) {
-                items.push(item.document)
-            }
+            items.push(... await itemLibrary.getRandomItems(cat, numbers[cat]))
         }
         var seen = {}
         items = items.filter(function(x) {
@@ -263,8 +261,8 @@ export default class MerchantSheetDSA5 extends ActorSheetdsa5NPC {
     async removeAllGoods(actor, ev) {
         let text = $(ev.currentTarget).text()
         $(ev.currentTarget).html(' <i class="fa fa-spin fa-spinner"></i>')
-        let ids = actor.data.items.filter(x => ["equipment", "poison", "consumable"].includes(x.type)).map(x => x.id)
-        ids.push(...actor.data.items.filter(x => ["armor", "meleeweapon", "rangeweapon", "equipment"].includes(x.type) && !x.data.worn.value).map(x => x.id))
+        let ids = actor.items.filter(x => ["poison", "consumable", "equipment"].includes(x.type)).map(x => x.id)
+        ids.push(...actor.items.filter(x => ["armor", "meleeweapon", "rangeweapon" ].includes(x.type) && !x.data.data.worn.value).map(x => x.id))
         await actor.deleteEmbeddedDocuments("Item", ids);
         $(ev.currentTarget).text(text)
     }

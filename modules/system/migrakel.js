@@ -30,10 +30,6 @@ export default class Migrakel {
         return result
     }
 
-    static notBefore08() {
-        return /^0\.8/.test(game.data.version)
-    }
-
     static async updateSpellsAndLiturgies(actor) {
         if (await this.showDialog(game.i18n.localize('Migrakel.spells'))) {
             const itemLibrary = game.dsa5.itemLibrary
