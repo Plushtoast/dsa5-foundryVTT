@@ -272,7 +272,7 @@
     "guidevalue_small": "Primary attribute",
     "GM notes": "GM notes",
     "general": "general",
-    "gridUnits": "Feet",
+    "gridUnits": "Yard",
     "halfDefense": "Halve the target’s defense stat against this attack",
     "halfDefenseShort": "Half defense",
     "generalSpecialAbilities": "General Special Abilities",
@@ -293,6 +293,7 @@
     "KTW": "Combat talent rating",
     "ItemLibrary": "Library",
     "KaPCost": "Karma points cost",
+    "gmMenu": "GM Menu",
     "language": "Language",
     "localKnowledge": "Area Knowledge",
     "liturgy": "Liturgical chant",
@@ -340,6 +341,7 @@
     "Ongoing": "Running",
     "protection": "Protection",
     "parrytest": "Defense check",
+    "pactgift": "Pact gift",
     "poison": "Poison",
     "purse": "Purse",
     "Players": "Players",
@@ -946,7 +948,8 @@
         "sceneNotInitialized": "Scene not found. Already initialized?",
         "tooManyEnchants": "A item can only contain 7 enchantments",
         "onlyCompendiumSpells": "Only spells from compendiums can be used",
-        "enchantmentNotFound": "Referenced spell not found"
+        "enchantmentNotFound": "Referenced spell not found",
+        "nestedEffectNotSupported": "Foundry currently only supports adding of effects through the item directory."
     },
 
     "CEREMONYMODIFIER": {
@@ -1064,8 +1067,10 @@
         "spellsShort": "Migrate Spells",
         "abilities": "Update effects and effectformula of all advantages, disadvantages and special abilities. THIS WILL OVERRIDE MANUAL MODIFICATIONS!",
         "abilitiesShort": "Migrate Dis-/Advantages/Special Abilities",
-        "skills": "Update effects of all combat techniques. THIS WILL OVERRIDE MANUAL MODIFICATIONS!",
-        "skillsShort": "Migrate Combat Techniques"
+        "cskills": "Update effects of all combat techniques. THIS WILL OVERRIDE MANUAL MODIFICATIONS!",
+        "cskillsShort": "Migrate Combat Techniques",
+        "skills": "Update icons of all talents. THIS WILL OVERRIDE MANUAL MODIFICATIONS!",
+        "skillsShort": "Migrate Talents"
     },
 
     "DSASETTINGS": {
@@ -1223,6 +1228,15 @@
         "custom": "Custom effect",
         "add": "Add condition",
         "minorSpirits": "Annoyed by Minor Spirits"
+    },
+
+    "COMBATSKILLCATEGORY": {
+        "subcategory": "Sub category",
+        "0": "Basic Maneuver",
+        "1": "Special Maneuver",
+        "2": "Combat Style",
+        "3": "Passive",
+        "4": "General"
     },
 
     "CONDITIONDESCRIPTION": {

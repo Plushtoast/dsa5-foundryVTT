@@ -275,6 +275,7 @@
     "KaPCost": "Karmapunktekosten",
     "language": "Sprache",
     "localKnowledge": "Lokalwissen",
+    "gmMenu": "Meister Menü",
     "liturgy": "Liturgie",
     "liturgyTest": "Liturgieprobe",
     "languagePoints": "Sprachpunkte",
@@ -319,6 +320,7 @@
     "Ongoing": "Laufend",
     "protection": "Rüstungsschutz",
     "parrytest": "Verteidigungsprobe",
+    "pactgift": "Paktgeschenk",
     "purse": "Geldbeutel",
     "Players": "Spieler",
     "poisonType": "Art",
@@ -592,8 +594,10 @@
         "spellsShort": "Zauber migrieren",
         "abilities": "Aktualisiere Effekte und Effektformeln von allen Sonderfertigkeiten, Vor- und Nachteilen. ALLE MANUELLEN MODIFIKATIONEN WERDEN ÜBERSCHRIEBEN!",
         "abilitiesShort": "Sonderfertigkeiten/Vor-/Nachteile migrieren",
-        "skills": "Aktualisiere Effekte von allen Kampftalenten. ALLE MANUELLEN MODIFIKATIONEN WERDEN ÜBERSCHRIEBEN!",
-        "skillsShort": "Kampftechniken migrieren"
+        "cskills": "Aktualisiere Effekte von allen Kampftalenten. ALLE MANUELLEN MODIFIKATIONEN WERDEN ÜBERSCHRIEBEN!",
+        "cskillsShort": "Kampftechniken migrieren",
+        "skills": "Aktualisiere Icons von Talenten. ALLE MANUELLEN MODIFIKATIONEN WERDEN ÜBERSCHRIEBEN!",
+        "skillsShort": "Talente migrieren"
     },
 
     "Skill-eeasy": "Extrem leicht (+5)",
@@ -946,7 +950,8 @@
         "immuneTo": "{name} ist immun gegen \"{condition}\".",
         "tooManyEnchants": "Ein Gegenstand kann nur 7 Verzauberungsladungen beinhalten",
         "onlyCompendiumSpells": "Nur Zauber aus Kompendien können verwendet werden",
-        "enchantmentNotFound": "Referenzierter Zauber konnte nicht gefunden werden"
+        "enchantmentNotFound": "Referenzierter Zauber konnte nicht gefunden werden",
+        "nestedEffectNotSupported": "Foundry unterstützt das Hinzufügen von Effekten derzeit nur im Item Directory."
     },
 
     "Shapeshift": {
@@ -959,6 +964,15 @@
         "takeLiturgies": "Liturgien/Zeremonien übernehmen",
         "keepVision": "Sichteinstellung übernehmen",
         "takeSkills": "Talente übernehmen"
+    },
+
+    "COMBATSKILLCATEGORY": {
+        "subcategory": "Subkategorie",
+        "0": "Basismanöver",
+        "1": "Spezialmanöver",
+        "2": "Kampfstil",
+        "3": "Passiv",
+        "4": "Allgemein"
     },
 
     "CEREMONYMODIFIER": {

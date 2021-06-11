@@ -19,6 +19,7 @@ import ActorSheetdsa5NPC from "./../actor/npc-sheet.js";
 import ItemSheetdsa5 from "./../item/item-sheet.js";
 import MerchantSheetDSA5 from "../actor/merchant-sheet.js";
 import BookWizard from "../wizards/adventure_wizard.js";
+import MastersMenu from "../system/masters_menu.js";
 
 export default function() {
     initHandleBars.default();
@@ -86,7 +87,7 @@ Hooks.once("init", () => {
     configuration.default()
 });
 
-Hooks.once('setup', function() {
+Hooks.once('setup', () => {
     if (!["de", "en"].includes(game.i18n.lang)) {
         console.warn(`DSA5 - ${game.i18n.lang} is not a supported language. Falling back to default language.`)
         game.settings.set("core", "language", "de")
@@ -94,6 +95,8 @@ Hooks.once('setup', function() {
     setupKnownEquipmentModifiers()
 
     BookWizard.initHook()
+
+    MastersMenu.registerButtons()
 
     CONFIG.Canvas.lightAnimations.daylight = {
         label: "LIGHT.daylight",

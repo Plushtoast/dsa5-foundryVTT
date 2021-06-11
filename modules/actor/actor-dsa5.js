@@ -122,11 +122,13 @@ export default class Actordsa5 extends Actor {
             if (activeGM && game.user.id == activeGM.id) {
                 let hasDefaultPain = data.type != "creature" || data.data.status.wounds.max >= 20
                 let pain = 0
-                if (hasDefaultPain) {
-                    pain = Math.floor((1 - data.data.status.wounds.value / data.data.status.wounds.max) * 4)
-                    if (data.data.status.wounds.value <= 5) pain = 4
-                } else {
-                    pain = Math.floor(5 - 5 * data.data.status.wounds.value / data.data.status.wounds.max)
+                if (data.data.status.wounds.max > 0) {
+                    if (hasDefaultPain) {
+                        pain = Math.floor((1 - data.data.status.wounds.value / data.data.status.wounds.max) * 4)
+                        if (data.data.status.wounds.value <= 5) pain = 4
+                    } else {
+                        pain = Math.floor(5 - 5 * data.data.status.wounds.value / data.data.status.wounds.max)
+                    }
                 }
 
                 if (pain < 4) pain -= AdvantageRulesDSA5.vantageStep(this, game.i18n.localize('LocalizedIDs.ruggedFighter'))
@@ -139,7 +141,7 @@ export default class Actordsa5 extends Actor {
                 if (AdvantageRulesDSA5.hasVantage(this, game.i18n.localize('LocalizedIDs.deaf'))) this.addCondition("deaf")
                 if (!TraitRulesDSA5.hasTrait(this, game.i18n.localize('LocalizedIDs.painImmunity'))) this.addCondition("inpain", pain, true)
 
-                if (this.isMerchant()) {this.prepareMerchant()}
+                if (this.isMerchant()) { this.prepareMerchant() }
 
                 data.data.status.speed.max = Math.max(0, data.data.status.speed.max - pain)
             }
@@ -162,7 +164,7 @@ export default class Actordsa5 extends Actor {
         }
     }
 
-    prepareMerchant(){
+    prepareMerchant() {
         if (getProperty(this, "data.data.merchant.merchantType") == "loot") {
             if (getProperty(this, "data.data.merchant.locked") && !this.hasCondition("locked")) {
                 this.addCondition(Actordsa5.lockedCondition())
@@ -656,7 +658,7 @@ export default class Actordsa5 extends Actor {
 
         for (let wep of wornweapons) {
             try {
-                meleeweapons.push(Actordsa5._prepareMeleeWeapon(wep, combatskills, actorData, wornweapons.filter(x => x.id != wep.id && !regex2h.test(x.name))))
+                meleeweapons.push(Actordsa5._prepareMeleeWeapon(wep, combatskills, actorData, wornweapons.filter(x => x._id != wep._id && !regex2h.test(x.name))))
             } catch (error) {
                 this._itemPreparationError(wep, error)
             }
@@ -720,7 +722,7 @@ export default class Actordsa5 extends Actor {
         }
     }
 
-    _setBagContent(elem, containers, topLevel = true){
+    _setBagContent(elem, containers, topLevel = true) {
         let totalWeight = 0
         if (containers.has(elem._id)) {
             elem.children = []
@@ -1323,7 +1325,7 @@ export default class Actordsa5 extends Actor {
             let regex2h = /\(2H/
             if (!regex2h.test(item.name)) {
                 if (!wornWeapons)
-                    wornWeapons = duplicate(actorData.items).filter(x => (x.type == "meleeweapon" && x.data.worn.value && x.id != item.id && !regex2h.test(x.name)))
+                    wornWeapons = duplicate(actorData.items).filter(x => (x.type == "meleeweapon" && x.data.worn.value && x._id != item._id && !regex2h.test(x.name)))
 
                 if (wornWeapons.length > 0) {
                     item.parry += Math.max(...wornWeapons.map(x => x.data.pamod.offhandMod))

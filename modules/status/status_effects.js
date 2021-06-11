@@ -21,6 +21,7 @@ export default class DSA5StatusEffects {
     static createCustomEffect(owner, description = "", label) {
         label = label || game.i18n.localize("CONDITION.custom")
         if (description == "") description = label
+
         owner.addCondition({
             label: label,
             icon: "icons/svg/aura.svg",

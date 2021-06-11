@@ -7,7 +7,8 @@ export default class DialogActorConfig extends Dialog {
         this.locks = {
             spells: false,
             abilities: false,
-            combatskills: false
+            combatskills: false,
+            skills: false
         }
     }
     static async buildDialog(actor) {
@@ -56,7 +57,7 @@ export default class DialogActorConfig extends Dialog {
             $(ev.currentTarget).find("i").remove()
             this.locks.abilities = false
         })
-        html.find('.updateSkills').click(async(ev) => {
+        html.find('.updatecSkills').click(async(ev) => {
             if (this.locks.combatskills) return
 
             this.locks.combatskills = true
@@ -64,6 +65,15 @@ export default class DialogActorConfig extends Dialog {
             await Migrakel.updateCombatskills(this.actor)
             $(ev.currentTarget).find("i").remove()
             this.locks.combatskills = false
+        })
+        html.find('.updateSkills').click(async(ev) => {
+            if (this.locks.skills) return
+
+            this.locks.skills = true
+            $(ev.currentTarget).prepend('<i class="fas fa-spinner fa-spin"></i>')
+            await Migrakel.updateSkills(this.actor)
+            $(ev.currentTarget).find("i").remove()
+            this.locks.skills = false
         })
     }
 }

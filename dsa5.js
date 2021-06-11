@@ -22,7 +22,7 @@ import DSAActiveEffectConfig from "./modules/status/active_effects.js";
 import DSA5Hotbar from "./modules/system/tokenHotbar.js";
 import RollMemory from "./modules/system/roll_memory.js"
 
-Hooks.once("init", async function() {
+Hooks.once("init", () => {
     console.log("Initializing DSA5 system")
 
     CONFIG.statusEffects = DSA5.statusEffects
@@ -62,7 +62,7 @@ Hooks.once("init", async function() {
     CONFIG.Combatant.documentClass = DSA5Combatant
     CONFIG.ActiveEffect.sheetClass = DSAActiveEffectConfig
 });
-Hooks.once("setup", async function() {
+Hooks.once("setup", () => {
     AdvantageRulesDSA5.setupFunctions()
     SpecialabilityRulesDSA5.setupFunctions()
 })

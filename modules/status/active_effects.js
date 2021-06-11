@@ -33,6 +33,12 @@ export default class DSAActiveEffectConfig extends ActiveEffectConfig {
         })
     }
 
+    async _onSubmit(event, { updateData = null, preventClose = false, preventRender = false } = {}) {
+        const inActor = getProperty(this.object, "data.document.parent.parent")
+        if (inActor) ui.notifications.error(game.i18n.localize("DSAError.nestedEffectNotSupported"))
+        return await super._onSubmit(event, { updateData, preventClose, preventRender })
+    }
+
     getStatusEffects() {
         return duplicate(CONFIG.statusEffects).map(x => { return { id: x.id, label: game.i18n.localize(x.label) } })
     }
@@ -65,7 +71,8 @@ export default class DSAActiveEffectConfig extends ActiveEffectConfig {
                         await eval(`(async () => {${getProperty(ef, "flags.dsa5.args3")}})()`)
                         break
                     case 3: // Creature Link
-                        msg += `<p><b>${game.i18n.localize('ActiveEffects.advancedFunctions.creature')}</b>:</p><p>${getProperty(ef, "flags.dsa5.args4")}</p>`
+                        let creatures = (getProperty(ef, "flags.dsa5.args4") || "").split(",").map(x => `@Compendium[${x.trim().replace(/(@Compendium\[|\])/)}]`).join(" ")
+                        msg += `<p><b>${game.i18n.localize('ActiveEffects.advancedFunctions.creature')}</b>:</p><p>${creatures}</p>`
                         break
                 }
             } catch (exception) {

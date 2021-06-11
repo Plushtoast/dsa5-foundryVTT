@@ -30,7 +30,7 @@ export default class BookWizard extends Application {
 
         game.dsa5.apps.journalBrowser = BookWizard.wizard
 
-        Hooks.on("renderSidebarTab", async(app, html) => {
+        Hooks.on("renderSidebarTab", (app, html) => {
             if (app.options.id == "journal") {
                 let div = $('<div class="header-actions action-buttons flexrow"></div>')
                 let button = $(`<button><i class="fa fa-book"></i>${game.i18n.localize("Book.Wizard")}</button>`)

@@ -211,7 +211,7 @@ export default class Itemdsa5 extends Item {
         if (toSearch) {
             toSearch.push(game.i18n.localize("LocalizedIDs.all"))
             toSearch = toSearch.map(x => x.toLowerCase())
-            searchFilter = (x, toSearch) => { return x.data.data.list.value.split(/;|,/).map(x => x.trim().toLowerCase()).filter(y => toSearch.includes(y)).length > 0 }
+            searchFilter = (x, toSearch) => { return x.data.data.list.value.split(/;|,/).map(x => x.trim().toLowerCase()).filter(y => toSearch.includes(y.replace(/ \([a-zA-Z äüöÄÖÜ]*\)/, ""))).length > 0 }
         } else
             searchFilter = () => { return true }
 

@@ -2390,6 +2390,8 @@ select.noAppearance {
     height: 100%;
     width: 100%;
     position: absolute;
+    color: white;
+    text-shadow: 2px 2px 0px black;
 }
 
 .tokenQuickHot .secondary div {
@@ -2495,3 +2497,21 @@ select.noAppearance {
     color: black;
 }
 
+.fa-dsa5 {
+    position: relative;
+    width: 100%;
+    height: 25px;
+}
+
+.fa-dsa5:before {
+    content: '';
+    background-image: url(../icons/categories/DSA-Auge.webp);
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: -5px;
+}

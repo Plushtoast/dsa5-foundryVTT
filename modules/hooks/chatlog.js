@@ -17,7 +17,7 @@ export default function() {
         DSA5ChatListeners.chatListeners(html)
     });
 
-    Hooks.on("renderChatMessage", async(app, html, msg) => {
+    Hooks.on("renderChatMessage", (app, html, msg) => {
         if (!game.user.isGM) {
             html.find(".chat-button-gm").remove();
             let actor

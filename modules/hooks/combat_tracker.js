@@ -37,16 +37,30 @@ export class DSA5Combat extends Combat {
     constructor(data, context) {
         super(data, context);
     }
+
+    async refreshTokenbars() {
+        if (ui.hotbar) ui.hotbar.updateDSA5Hotbar()
+    }
+
+    _onCreate(data, options, userId) {
+        super._onCreate(data, options, userId);
+        this.refreshTokenbars()
+    }
+
+    _onDelete(options, userId) {
+        super._onDelete(options, userId);
+        this.refreshTokenbars()
+    }
+
     async nextRound() {
-        if(game.user.isGM){
+        if (game.user.isGM) {
             for (let k of this.turns) {
                 await k.update({ defenseCount: 0 })
             }
-        }else{
+        } else {
             await game.socket.emit("system.dsa5", {
                 type: "clearCombat",
-                payload: {
-                }
+                payload: {}
             })
         }
         return await super.nextRound()
@@ -69,12 +83,12 @@ export class DSA5Combat extends Combat {
 
     //TODO very clonky
     async updateDefenseCount(speaker) {
-        if(game.user.isGM){
+        if (game.user.isGM) {
             const comb = this.getCombatantFromActor(speaker)
             if (comb) {
                 await comb.update({ "defenseCount": comb.data._source.defenseCount + 1 })
             }
-        }else{
+        } else {
             await game.socket.emit("system.dsa5", {
                 type: "updateDefenseCount",
                 payload: {

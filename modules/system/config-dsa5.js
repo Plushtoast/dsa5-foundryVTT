@@ -1,7 +1,6 @@
 const DSA5 = {}
 
-DSA5.statusEffects = [
-    {
+DSA5.statusEffects = [{
         id: "inpain",
         label: "CONDITION.inpain",
         icon: "icons/svg/blood.svg",
@@ -309,6 +308,15 @@ DSA5.localizedCompendiums = {
     ]
 }
 
+DSA5.combatSkillSubCategories = {
+    "0": "COMBATSKILLCATEGORY.0",
+    "1": "COMBATSKILLCATEGORY.1",
+    "2": "COMBATSKILLCATEGORY.2",
+    "3": "COMBATSKILLCATEGORY.3",
+    "4": "COMBATSKILLCATEGORY.4"
+}
+
+
 DSA5.effectTextStyle = CONFIG.canvasTextStyle.clone();
 DSA5.effectTextStyle.fontSize = "30";
 DSA5.effectTextStyle.fontFamily = "GentiumBasic"
@@ -523,44 +531,44 @@ DSA5.startXP = {
 }
 
 DSA5.helpContent = [{
-    name: "pay",
-    command: "/pay [0-9]+",
-    example: "/pay 5.03",
-}, {
-    name: "getPaid",
-    command: "/getPaid [0-9]+",
-    example: "/getPaid 5.03",
-},
-{
-    name: "quickAbility",
-    command: "/sk [a-z]*, /sp [a-z]*, /li [a-z]*, /at [a-z]*, /pa [a-z]*",
-    example: "/sk betören",
-},
-{
-    name: "conditions",
-    command: "/conditions",
-    example: "/conditions"
-},
-{
-    name: "tables",
-    command: "/tables",
-    example: "/tables"
-},
-{
-    name: "request",
-    command: "/rq",
-    example: "/rq betören"
-},
-{
-    name: "threeD20Check",
-    command: "/ch",
-    example: "/ch"
-},
-{
-    name: "groupcheck",
-    command: "/gc",
-    example: "/gc"
-}
+        name: "pay",
+        command: "/pay [0-9]+",
+        example: "/pay 5.03",
+    }, {
+        name: "getPaid",
+        command: "/getPaid [0-9]+",
+        example: "/getPaid 5.03",
+    },
+    {
+        name: "quickAbility",
+        command: "/sk [a-z]*, /sp [a-z]*, /li [a-z]*, /at [a-z]*, /pa [a-z]*",
+        example: "/sk betören",
+    },
+    {
+        name: "conditions",
+        command: "/conditions",
+        example: "/conditions"
+    },
+    {
+        name: "tables",
+        command: "/tables",
+        example: "/tables"
+    },
+    {
+        name: "request",
+        command: "/rq",
+        example: "/rq betören"
+    },
+    {
+        name: "threeD20Check",
+        command: "/ch",
+        example: "/ch"
+    },
+    {
+        name: "groupcheck",
+        command: "/gc",
+        example: "/gc"
+    }
 ]
 
 DSA5.ceremonyTimeModifiers = {
@@ -585,7 +593,8 @@ DSA5.specialAbilityCategories = {
     "language": "language",
     "animal": "animal",
     "staff": "traditionArtifact",
-    "ceremonial": "ceremonialItem"
+    "ceremonial": "ceremonialItem",
+    "pact": "pactgift"
 }
 
 DSA5.dieColors = {

@@ -40,7 +40,7 @@ export default class ItemSheetdsa5 extends ItemSheet {
         Items.registerSheet("dsa5", BlessingSheetDSA5, { makeDefault: true, types: ["blessing"] });
         Items.registerSheet("dsa5", RangeweaponSheet, { makeDefault: true, types: ["rangeweapon"] });
         Items.registerSheet("dsa5", EquipmentSheet, { makeDefault: true, types: ["equipment"] });
-        Items.unregisterSheet("dsa5", ItemSheetdsa5, { types: ["equipment","rangeweapon", "blessing", "magictrick", "spellextension", "consumable", "species", "career", "culture", "advantage", "specialability", "disadvantage", "ritual", "ceremony", "liturgy", "spell", "disease", "poison", "meleeweapon"] });
+        Items.unregisterSheet("dsa5", ItemSheetdsa5, { types: ["equipment", "rangeweapon", "blessing", "magictrick", "spellextension", "consumable", "species", "career", "culture", "advantage", "specialability", "disadvantage", "ritual", "ceremony", "liturgy", "spell", "disease", "poison", "meleeweapon"] });
     }
 
     async _render(force = false, options = {}) {
@@ -107,8 +107,13 @@ export default class ItemSheetdsa5 extends ItemSheet {
             if (ev.button == 2) DSA5_Utility.showArtwork(this.item)
         })
 
-        html.find(".status-add").click(ev => {
-            DSA5StatusEffects.createCustomEffect(this.item, "", this.item.name)
+        html.find(".status-add").click(() => {
+            if (this.item.actor) {
+                ui.notifications.error(game.i18n.localize("DSAError.nestedEffectNotSupported"))
+            } else {
+                DSA5StatusEffects.createCustomEffect(this.item, "", this.item.name)
+            }
+
         })
 
         html.find('.condition-show').mousedown(ev => {
@@ -187,7 +192,6 @@ export default class ItemSheetdsa5 extends ItemSheet {
                 data["traitCategories"] = DSA5.traitCategories
                 data['ranges'] = DSA5.meleeRanges;
                 break
-
             case "aggregatedTest":
                 data["allSkills"] = await DSA5_Utility.allSkillsList()
                 break
@@ -207,7 +211,7 @@ export default class ItemSheetdsa5 extends ItemSheet {
     }
 }
 
-class Enchantable extends ItemSheetdsa5{
+class Enchantable extends ItemSheetdsa5 {
     async _onDrop(event) {
         await this.enchant(event)
     }
@@ -220,7 +224,7 @@ class Enchantable extends ItemSheetdsa5{
             if (enchantments.length >= 7) {
                 return ui.notifications.error(game.i18n.localize("DSAError.tooManyEnchants"))
             }
-            if(!dragData.pack){
+            if (!dragData.pack) {
                 return ui.notifications.error(game.i18n.localize("DSAError.onlyCompendiumSpells"))
             }
 
@@ -235,12 +239,12 @@ class Enchantable extends ItemSheetdsa5{
                 fw: 0
             }
             enchantments.push(enchantment)
-            let update = {flags: {dsa5: {enchantments}}}
+            let update = { flags: { dsa5: { enchantments } } }
             await this.item.update(update)
         }
     }
 
-    toggleChargedState(id, enchantments){
+    toggleChargedState(id, enchantments) {
         for (let ench of enchantments) {
             if (ench.id == id) {
                 ench.charged = !ench.charged
@@ -250,18 +254,18 @@ class Enchantable extends ItemSheetdsa5{
         this.item.update({ flags: { dsa5: { enchantments } } })
     }
 
-    activateListeners(html){
+    activateListeners(html) {
         super.activateListeners(html)
         html.find('.ench-toggle-permanent').click(ev => {
-            let {id, enchantments} = this.enchantMentId(ev)
-            for(let ench of enchantments){
-                if(ench.id == id){
+            let { id, enchantments } = this.enchantMentId(ev)
+            for (let ench of enchantments) {
+                if (ench.id == id) {
                     ench.permanent = !ench.permanent
                     break
                 }
             }
-            this.item.update({flags: {dsa5: {enchantments}}})
-        } )
+            this.item.update({ flags: { dsa5: { enchantments } } })
+        })
         html.find('.ench-toggle-charge').click(ev => {
             let { id, enchantments } = this.enchantMentId(ev)
             this.toggleChargedState(id, enchantments)
@@ -277,12 +281,12 @@ class Enchantable extends ItemSheetdsa5{
                 item.data.talentValue.value = enchantment.fw
                 const actor = await DSA5_Utility.emptyActor(14)
                 actor.setupSpell(item, {}, "emptyActor").then(async(setupData) => {
-                    const infoMsg = game.i18n.format('CHATNOTIFICATION.enchantmentUsed', {item: this.item.name, spell: item.name} )
+                    const infoMsg = game.i18n.format('CHATNOTIFICATION.enchantmentUsed', { item: this.item.name, spell: item.name })
                     await ChatMessage.create(DSA5_Utility.chatDataSetup(infoMsg));
                     await actor.basicTest(setupData)
-                    if(enchantment.permanent){
+                    if (enchantment.permanent) {
                         this.toggleChargedState(id, enchantments)
-                    }else{
+                    } else {
                         this.deleteEnchantment(id, enchantments)
                     }
                 })
@@ -291,7 +295,7 @@ class Enchantable extends ItemSheetdsa5{
         html.find('.ench-fw').change(ev => {
             let { id, enchantments } = this.enchantMentId(ev)
             let fw = Number($(ev.currentTarget).val())
-            if(!fw) return
+            if (!fw) return
 
             for (let ench of enchantments) {
                 if (ench.id == id) {
@@ -310,19 +314,19 @@ class Enchantable extends ItemSheetdsa5{
             let enchantment = enchantments.find(x => x.id == id)
             let item = await this.getSpell(enchantment)
 
-            if(item){
+            if (item) {
                 item.sheet.render(true)
             }
         })
     }
 
-    deleteEnchantment(id, enchantments){
+    deleteEnchantment(id, enchantments) {
         let enchantment = enchantments.findIndex(x => x.id == id)
         enchantments.splice(enchantment, 1)
         this.item.update({ flags: { dsa5: { enchantments } } })
     }
 
-    async getSpell(enchantment){
+    async getSpell(enchantment) {
         const pack = await game.packs.get(enchantment.pack)
 
         if (!pack) {
@@ -337,10 +341,10 @@ class Enchantable extends ItemSheetdsa5{
         return item
     }
 
-    enchantMentId(ev){
+    enchantMentId(ev) {
         return {
             id: $(ev.currentTarget).parents('.statusEffect').attr("data-id"),
-            enchantments: this.item.getFlag("dsa5","enchantments")
+            enchantments: this.item.getFlag("dsa5", "enchantments")
         }
     }
 
@@ -358,16 +362,16 @@ class Enchantable extends ItemSheetdsa5{
 
     async getData(options) {
         const data = await super.getData(options);
-        data["enchantments"] = this.item.getFlag("dsa5","enchantments")
+        data["enchantments"] = this.item.getFlag("dsa5", "enchantments")
         return data
     }
 }
 
-class EquipmentSheet extends Enchantable{
+class EquipmentSheet extends Enchantable {
     async getData(options) {
         const data = await super.getData(options);
         data['equipmentTypes'] = DSA5.equipmentTypes;
-        if (this.isBagWithContents()){
+        if (this.isBagWithContents()) {
             let weightSum = 0
             data['containerContent'] = this.item.actor.items
                 .filter(x => DSA5.equipmentCategories.includes(x.type) && x.data.data.parent_id == this.item.id)
@@ -383,7 +387,7 @@ class EquipmentSheet extends Enchantable{
         return data
     }
 
-    breakOverflow({name, quantity, weight}, parent) {
+    breakOverflow({ name, quantity, weight }, parent) {
         let elm = $(`<div class="itemInfo">
             <h3 class="center">${name}</h3>
             <div class="row-section\">
@@ -413,7 +417,7 @@ class EquipmentSheet extends Enchantable{
         return elm
     }
 
-    activateListeners(html){
+    activateListeners(html) {
         super.activateListeners(html)
         const slots = html.find('.slot')
         slots.mouseenter((ev) => {
@@ -436,7 +440,7 @@ class EquipmentSheet extends Enchantable{
 
             if (ev.button == 0)
                 item.sheet.render(true);
-            else if (ev.button == 2){
+            else if (ev.button == 2) {
                 $('.itemInfo').remove()
                 await item.update({ "data.parent_id": 0 });
                 this.render(true)
@@ -444,26 +448,26 @@ class EquipmentSheet extends Enchantable{
         })
     }
 
-    isBagWithContents(){
+    isBagWithContents() {
         return this.item.data.data.equipmentType.value == "bags" && this.item.actor
     }
 
     async _onDrop(event) {
-        if(this.isBagWithContents()){
+        if (this.isBagWithContents()) {
             const dragData = JSON.parse(event.dataTransfer.getData("text/plain"))
             const { item, typeClass, selfTarget } = await itemFromDrop(dragData, undefined)
             const selfItem = this.item.id == item.id
             const ownItem = this.item.parent.id == dragData.actorId
 
-            if (DSA5.equipmentCategories.includes(typeClass) && !selfItem){
+            if (DSA5.equipmentCategories.includes(typeClass) && !selfItem) {
                 item.data.parent_id = this.item.id
                 if (item.data.worn && item.data.worn.value)
                     item.data.worn.value = false
 
-                if(ownItem){
-                   await this.item.actor.updateEmbeddedDocuments("Item", [item])
-                }else{
-                   await this.item.actor.sheet._addLoot(item)
+                if (ownItem) {
+                    await this.item.actor.updateEmbeddedDocuments("Item", [item])
+                } else {
+                    await this.item.actor.sheet._addLoot(item)
                 }
                 this.render(true)
                 return
@@ -682,6 +686,7 @@ class SpecialAbilitySheetDSA5 extends ItemSheetdsa5 {
     async getData(options) {
         const data = await super.getData(options);
         data['categories'] = DSA5.specialAbilityCategories;
+        data['subCategories'] = DSA5.combatSkillSubCategories
         return data
     }
 }

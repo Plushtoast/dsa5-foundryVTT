@@ -785,7 +785,8 @@
                 "value": 1
             },
             "category": {
-                "value": "general"
+                "value": "general",
+                "sub": 0
             },
             "list": {
                 "value": ""
