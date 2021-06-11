@@ -383,7 +383,7 @@ export default class DiceDSA5 {
 
     static _stringToRoll(text, testData) {
         return Number(Roll.safeEval(`${text}`.replace(/\d{1}[dDwW]\d/g, function(match) {
-            let roll = new Roll(match).evaluate({ async: false })
+            let roll = new Roll(match.replace(/[Ww]/,"d")).evaluate({ async: false })
             if (testData) DiceDSA5._addRollDiceSoNice(testData, roll, "ch")
             return roll.total
         })))
@@ -391,6 +391,7 @@ export default class DiceDSA5 {
 
     static async evaluateDamage(testData, result, weapon, isRangeWeapon, doubleDamage) {
         let damageRoll = testData.damageRoll ? await testData.damageRoll : await DiceDSA5.manualRolls(await new Roll(weapon.data.damage.value.replace(/[Ww]/g, "d")).evaluate({ async: true }), "CHAR.DAMAGE")
+        let overrideDamage = []
         let bonusDmg = testData.situationalModifiers.reduce(function(_this, val) {
             let number = 0
             if (val.damageBonus) {
@@ -447,6 +448,10 @@ export default class DiceDSA5 {
         if (statusDmg != 0) {
             damage += statusDmg
             damageBonusDescription.push(game.i18n.localize("statuseffects") + " " + statusDmg)
+        }
+
+        if(overrideDamage.length > 0){
+
         }
 
         if (doubleDamage) {

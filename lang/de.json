@@ -1095,7 +1095,9 @@
         "playerCanEditSpellMacro": "Effekt Makros durch Spieler editierbar",
         "playerCanEditSpellMacroHint": "Spieler können z.B. Zaubermakros editieren (Unsicher)",
         "soundConfig": "Sound Effekt Konfiguration",
-        "soundConfigHint": "Töne für Talente und Angriffe"
+        "soundConfigHint": "Töne für Talente und Angriffe",
+        "hideEffects": "Status Effekte verbergen",
+        "hideEffectsHint": "Zeige Status Effekte an Tokens nur deren Besitzer"
     },
 
     "COMBATTRACKER": {

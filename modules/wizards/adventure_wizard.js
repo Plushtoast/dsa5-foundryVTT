@@ -126,7 +126,6 @@ export default class BookWizard extends Application {
         html.on('click', '.importBook', async() => {
             this.importBook()
         })
-
     }
 
     async loadJournal(name) {
@@ -143,7 +142,7 @@ export default class BookWizard extends Application {
         this.content = `<div><h1 class="journalHeader">${journal.name}<a class="showJournal" data-id="${journal.id}"><i class="fas fa-eye"></i></a></h1>${TextEditor.enrichHTML(content)}`
         const chapter = $(this._element).find('.chapter')
         chapter.html(this.content)
-        chapter.find('.documentName-link').click(ev => {
+        chapter.find('.documentName-link, .entity-link').click(ev => {
             const elem = $(ev.currentTarget)
             if (this.bookData && elem.attr("data-pack") == this.bookData.journal) {
                 ev.stopPropagation()

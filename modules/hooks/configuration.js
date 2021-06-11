@@ -105,6 +105,15 @@ export default function() {
         type: Boolean
     });
 
+    game.settings.register("dsa5", "hideEffects", {
+        name: "DSASETTINGS.hideEffects",
+        hint: "DSASETTINGS.hideEffectsHint",
+        scope: "world",
+        config: true,
+        default: true,
+        type: Boolean
+    });
+
     game.settings.register("dsa5", "talentModifierEnabled", {
         name: "DSASETTINGS.talentModifierEnabled",
         hint: "DSASETTINGS.talentModifierEnabledHint",

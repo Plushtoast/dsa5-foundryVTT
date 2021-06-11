@@ -1100,7 +1100,9 @@
         "playerCanEditSpellMacroHint": "Players can edit spell macros and similar stuff (insecure).",
         "immuneTo": "{name} is immune to \"{condition}\".",
         "soundConfig": "Sound Effect Configuration",
-        "soundConfigHint": "Sounds for skills and attacks"
+        "soundConfigHint": "Sounds for skills and attacks",
+        "hideEffects": "Hide conditions",
+        "hideEffectsHint": "Show conditions on the token only for their owner"
     },
 
     "COMBATTRACKER": {
