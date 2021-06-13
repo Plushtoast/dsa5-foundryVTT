@@ -4,38 +4,31 @@ import DSA5 from './config-dsa5.js'
 export default class DSA5_Utility {
 
     static async allSkills() {
-        let returnSkills = [];
-        const pack = game.i18n.lang == "de" ? game.packs.get("dsa5.skills") : game.packs.get("dsa5.skillsen")
-
-        if (!pack) return ui.notifications.error("No content found")
-
-        let items
-        await pack.getDocuments().then(content => items = content.filter(i => i.data.type == "skill"));
-        for (let i of items) {
-            returnSkills.push(i.toObject())
-        }
-
-        return returnSkills;
+        const pack = game.i18n.lang == "de" ? "dsa5.skills" :"dsa5.skillsen"
+        return await this.getCompendiumEntries(pack, "skill")
     }
 
     static async allCombatSkills() {
-        let returnSkills = [];
-        const pack = game.i18n.lang == "de" ? game.packs.get("dsa5.combatskills") : game.packs.get("dsa5.combatskillsen")
+        const pack = game.i18n.lang == "de" ? "dsa5.combatskills" : "dsa5.combatskillsen"
+        return await this.getCompendiumEntries(pack, "combatskill")
+    }
 
+    static async getCompendiumEntries(compendium, itemType){
+        const pack = await game.packs.get(compendium)
         if (!pack) return ui.notifications.error("No content found")
 
+        let result = []
         let items
-        await pack.getDocuments().then(content => items = content.filter(i => i.data.type == "combatskill"));
+        await pack.getDocuments().then(content => items = content.filter(i => i.data.type == itemType));
         for (let i of items) {
-            returnSkills.push(i.toObject())
+            result.push(i.toObject())
         }
-        return returnSkills;
+        return result;
     }
 
     static calcTokenSize(actorData, data) {
         let tokenSize = game.dsa5.config.tokenSizeCategories[actorData.data.status.size.value]
         if (tokenSize) {
-
             if (tokenSize < 1) {
                 data.scale = tokenSize;
                 data.width = data.height = 1;
@@ -44,21 +37,14 @@ export default class DSA5_Utility {
                 data.width = data.height = int;
                 data.scale = Math.max(tokenSize / int, 0.25);
             }
-
         }
     }
 
     static async allMoneyItems() {
-        const pack = game.packs.get("dsa5.money")
-        if (!pack)
-            return ui.notifications.error("No content found")
-
-        let items
-        await pack.getDocuments().then(content => items = content.filter(i => i.data.type == "money").map(i => {
-            let res = i.toObject()
-            res.data.quantity.value = 0
-            return res
-        }));
+        let items = (await this.getCompendiumEntries("dsa5.money", "money")).map(i => {
+            i.data.quantity.value = 0
+            return i
+        });
 
         return items.filter(t => Object.values(DSA5.moneyNames)
                 .map(n => n.toLowerCase()).includes(t.name.toLowerCase()))
@@ -104,7 +90,6 @@ export default class DSA5_Utility {
         if (["gmroll", "blindroll"].includes(chatData.rollMode)) chatData["whisper"] = ChatMessage.getWhisperRecipients("GM").map(u => u.id);
         if (chatData.rollMode === "blindroll") chatData["blind"] = true;
         else if (chatData.rollMode === "selfroll") chatData["whisper"] = [game.user];
-
 
         if (forceWhisper) {
             chatData["speaker"] = ChatMessage.getSpeaker();

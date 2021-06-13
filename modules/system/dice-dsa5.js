@@ -383,7 +383,7 @@ export default class DiceDSA5 {
 
     static _stringToRoll(text, testData) {
         return Number(Roll.safeEval(`${text}`.replace(/\d{1}[dDwW]\d/g, function(match) {
-            let roll = new Roll(match.replace(/[Ww]/,"d")).evaluate({ async: false })
+            let roll = new Roll(match.replace(/[Ww]/, "d")).evaluate({ async: false })
             if (testData) DiceDSA5._addRollDiceSoNice(testData, roll, "ch")
             return roll.total
         })))
@@ -450,7 +450,7 @@ export default class DiceDSA5 {
             damageBonusDescription.push(game.i18n.localize("statuseffects") + " " + statusDmg)
         }
 
-        if(overrideDamage.length > 0){
+        if (overrideDamage.length > 0) {
 
         }
 
@@ -706,10 +706,10 @@ export default class DiceDSA5 {
         }
         res.preData.calculatedSpellModifiers.finalcost = Math.max(0, Number(res.preData.calculatedSpellModifiers.finalcost) + AdvantageRulesDSA5.vantageStep(testData.extra.actor, game.i18n.localize('LocalizedIDs.weakKarmicBody')) + AdvantageRulesDSA5.vantageStep(testData.extra.actor, game.i18n.localize('LocalizedIDs.weakAstralBody')) + testData.extra.actor.data[["ceremony", "liturgy"].includes(testData.source.type) ? "kapModifier" : "aspModifier"])
 
-        if (AdvantageRulesDSA5.hasVantage(testData.extra.actor, game.i18n.localize('CONDITION.minorSpirits'))
-            && !testData.extra.actor.effects.find(x => x.label == game.i18n.localize('CONDITION.minorSpirits')) ) {
+        if (AdvantageRulesDSA5.hasVantage(testData.extra.actor, game.i18n.localize('CONDITION.minorSpirits')) &&
+            !testData.extra.actor.effects.find(x => x.label == game.i18n.localize('CONDITION.minorSpirits'))) {
             const ghostroll = new Roll("1d20").evaluate({ async: false })
-            if (ghostroll.total <= res.preData.calculatedSpellModifiers.finalcost){
+            if (ghostroll.total <= res.preData.calculatedSpellModifiers.finalcost) {
                 res.description += ", " + game.i18n.localize("minorghostsappear")
                 DSA5_Utility.getSpeaker(testData.extra.speaker).addCondition("minorSpirits")
             }
@@ -745,11 +745,10 @@ export default class DiceDSA5 {
         if (testData.source.type == "skill" && AdvantageRulesDSA5.hasVantage(testData.extra.actor, `${game.i18n.localize('LocalizedIDs.incompetent')} (${testData.source.name})`)) {
             let reroll = new Roll("1d20").evaluate({ async: false })
             let indexOfMinValue = res.reduce((iMin, x, i, arr) => x < arr[iMin] ? i : iMin, 0)
-            let oldValue = roll.results[indexOfMinValue * 2]
+            let oldValue = roll.terms[indexOfMinValue * 2].total
             fws += Math.max(res[indexOfMinValue], 0)
             fws -= Math.max(0, reroll.total - tar[indexOfMinValue])
-            roll.results[indexOfMinValue * 2] = reroll.total
-            roll.terms[indexOfMinValue * 2].results[0].result = reroll.total
+            DSA5_Utility.editRollAtIndex(roll, indexOfMinValue, reroll.total)
             this._addRollDiceSoNice(testData, reroll, roll.terms[indexOfMinValue * 2].options.colorset)
             description.push(game.i18n.format("CHATNOTIFICATION.unableReroll", { die: (indexOfMinValue + 1), oldVal: oldValue, newVal: reroll.total }))
         }
