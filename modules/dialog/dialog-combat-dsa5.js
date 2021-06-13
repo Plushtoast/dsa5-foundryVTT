@@ -13,7 +13,7 @@ export default class DSA5CombatDialog extends DialogShared {
 
     activateListeners(html) {
         super.activateListeners(html)
-        let roman = ['', ' I', ' II', ' III', ' IV', ' V', ' VI', ' VII', ' VIII', ' IX']
+        const roman = ['', ' I', ' II', ' III', ' IV', ' V', ' VI', ' VII', ' VIII', ' IX']
 
         let specAbs = html.find('.specAbs')
         specAbs.mouseenter(ev => {

@@ -160,7 +160,7 @@ export default class Itemdsa5 extends Item {
             let vals = mod.replace(/(\s+)/g, ' ').trim().split(" ")
             vals[0] = vals[0].replace(regex, actor.data.data.status.speed.max)
             if (vals.length == 2) {
-                if (!isNaN(vals[0]) || /[+-]\d[+-]\d/.test(vals[0]) || /\d[dDwW]\d/.test(vals[0])) {
+                if (!isNaN(vals[0]) || /(=)?[+-]\d([+-]\d)?/.test(vals[0]) || /(=)?\d[dDwW]\d/.test(vals[0])) {
                     if (itemModifiers[vals[1].toLowerCase()] == undefined) {
                         itemModifiers[vals[1].toLowerCase()] = [vals[0]]
                     } else {
@@ -175,16 +175,17 @@ export default class Itemdsa5 extends Item {
     static getDefenseMalus(situationalModifiers, actor) {
         if (actor.data.flags.oppose) {
             let message = game.messages.get(actor.data.flags.oppose.messageId)
+            const regex = / \[(-)?\d{1,}\]/
             for (let mal of message.data.flags.data.preData.situationalModifiers.filter(x => x.dmmalus != undefined && x.dmmalus != 0)) {
                 situationalModifiers.push({
-                    name: `${game.i18n.localize('MODS.defenseMalus')} - ${mal.name.replace(/ \[(-)?\d{1,}\]/,"")}`,
+                    name: `${game.i18n.localize('MODS.defenseMalus')} - ${mal.name.replace(regex,"")}`,
                     value: mal.dmmalus,
                     selected: true
                 })
             }
             for (let mal of message.data.flags.data.preData.situationalModifiers.filter(x => x.type == "defenseMalus" && x.value != 0)) {
                 situationalModifiers.push({
-                    name: mal.name.replace(/ \[(-)?\d{1,}\]/, ""),
+                    name: mal.name.replace(regex, ""),
                     value: mal.value,
                     selected: true
                 })

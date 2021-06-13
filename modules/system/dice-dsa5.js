@@ -382,26 +382,41 @@ export default class DiceDSA5 {
     }
 
     static _stringToRoll(text, testData) {
-        return Number(Roll.safeEval(`${text}`.replace(/\d{1}[dDwW]\d/g, function(match) {
+        return Roll.safeEval(`${text}`.replace(/\d{1}[dDwW]\d/g, function(match) {
             let roll = new Roll(match.replace(/[Ww]/, "d")).evaluate({ async: false })
             if (testData) DiceDSA5._addRollDiceSoNice(testData, roll, "ch")
             return roll.total
-        })))
+        }))
     }
 
     static async evaluateDamage(testData, result, weapon, isRangeWeapon, doubleDamage) {
-        let damageRoll = testData.damageRoll ? await testData.damageRoll : await DiceDSA5.manualRolls(await new Roll(weapon.data.damage.value.replace(/[Ww]/g, "d")).evaluate({ async: true }), "CHAR.DAMAGE")
+        let rollFormula = weapon.data.damage.value.replace(/[Ww]/g, "d")
         let overrideDamage = []
         let bonusDmg = testData.situationalModifiers.reduce(function(_this, val) {
             let number = 0
             if (val.damageBonus) {
-                number = DiceDSA5._stringToRoll(val.damageBonus, testData) * val.step
-                val.damageBonus = number
+                const isOverride = /^=/.test(val.damageBonus)
+                const rollString = `${val.damageBonus}`.replace(/^=/, "")
+                let roll = DiceDSA5._stringToRoll(rollString, testData)
+                number = roll * val.step
+
+                if (isOverride) {
+                    //val.damageBonus = `=${number}`
+                    //val.damageBonus = 0
+                    rollFormula = rollString.replace(/[Ww]/, "d")
+                    overrideDamage.push({ name: val.name, roll })
+                    return _this
+                } else {
+                    val.damageBonus = number
+                    return _this + number
+                }
             }
-            return _this + number
+            return _this
         }, 0);
-        //this._addRollDiceSoNice(testData, damageRoll, "black")
-        let damage = Number(damageRoll.total) + bonusDmg
+        let damageRoll = testData.damageRoll ? await testData.damageRoll : await DiceDSA5.manualRolls(await new Roll(rollFormula).evaluate({ async: true }), "CHAR.DAMAGE")
+            //this._addRollDiceSoNice(testData, damageRoll, "black")
+        let damage = damageRoll.total
+        let damageBonusDescription = []
         let weaponBonus = 0
         let weaponroll = 0
         for (let k of damageRoll.terms) {
@@ -415,44 +430,48 @@ export default class DiceDSA5 {
             }
         }
 
-        let damageBonusDescription = [game.i18n.localize("Roll") + " " + weaponroll]
-        if (weaponBonus != 0)
-            damageBonusDescription.push(game.i18n.localize("weaponModifier") + " " + weaponBonus)
-
-        damageBonusDescription.push(...testData.situationalModifiers.map(x => { return x.damageBonus ? `${x.name} ${x.damageBonus}` : "" }).filter(x => x != ""))
-
-        if (testData.situationalModifiers.find(x => x.name.indexOf(game.i18n.localize("CONDITION.bloodrush")) > -1)) {
-            damage += 2
-            damageBonusDescription.push(game.i18n.localize("CONDITION.bloodrush") + " " + 2)
-        }
-
-        if (weapon.extraDamage) {
-            damage = Number(weapon.extraDamage) + Number(damage)
-            damageBonusDescription.push(game.i18n.localize("damageThreshold") + " " + weapon.extraDamage)
-        }
-
-        let status
-        if (isRangeWeapon) {
-            let rangeDamageMod = DSA5.rangeMods[testData.rangeModifier].damage
-            damage += rangeDamageMod
-            if (rangeDamageMod != 0)
-                damageBonusDescription.push(game.i18n.localize("distance") + " " + rangeDamageMod)
-
-
-            status = testData.extra.actor.data.rangeStats.damage
-        } else {
-            status = testData.extra.actor.data.meleeStats.damage
-        }
-
-        const statusDmg = DiceDSA5._stringToRoll(status, testData)
-        if (statusDmg != 0) {
-            damage += statusDmg
-            damageBonusDescription.push(game.i18n.localize("statuseffects") + " " + statusDmg)
-        }
-
         if (overrideDamage.length > 0) {
+            damageBonusDescription.push(overrideDamage[0].name + " " + damage)
+        } else {
+            damage += bonusDmg
+
+            damageBonusDescription.push(game.i18n.localize("Roll") + " " + weaponroll)
+            if (weaponBonus != 0)
+                damageBonusDescription.push(game.i18n.localize("weaponModifier") + " " + weaponBonus)
+
+            damageBonusDescription.push(...testData.situationalModifiers.map(x => { return x.damageBonus ? `${x.name} ${x.damageBonus}` : "" }).filter(x => x != ""))
+
+            if (testData.situationalModifiers.find(x => x.name.indexOf(game.i18n.localize("CONDITION.bloodrush")) > -1)) {
+                damage += 2
+                damageBonusDescription.push(game.i18n.localize("CONDITION.bloodrush") + " " + 2)
+            }
+
+            if (weapon.extraDamage) {
+                damage = Number(weapon.extraDamage) + Number(damage)
+                damageBonusDescription.push(game.i18n.localize("damageThreshold") + " " + weapon.extraDamage)
+            }
+
+            let status
+            if (isRangeWeapon) {
+                let rangeDamageMod = DSA5.rangeMods[testData.rangeModifier].damage
+                damage += rangeDamageMod
+                if (rangeDamageMod != 0)
+                    damageBonusDescription.push(game.i18n.localize("distance") + " " + rangeDamageMod)
+
+
+                status = testData.extra.actor.data.rangeStats.damage
+            } else {
+                status = testData.extra.actor.data.meleeStats.damage
+            }
+
+            const statusDmg = DiceDSA5._stringToRoll(status, testData)
+            if (statusDmg != 0) {
+                damage += statusDmg
+                damageBonusDescription.push(game.i18n.localize("statuseffects") + " " + statusDmg)
+            }
 
         }
+
 
         if (doubleDamage) {
             damage = damage * 2

@@ -4,7 +4,7 @@ import DSA5 from './config-dsa5.js'
 export default class DSA5_Utility {
 
     static async allSkills() {
-        const pack = game.i18n.lang == "de" ? "dsa5.skills" :"dsa5.skillsen"
+        const pack = game.i18n.lang == "de" ? "dsa5.skills" : "dsa5.skillsen"
         return await this.getCompendiumEntries(pack, "skill")
     }
 
@@ -13,7 +13,7 @@ export default class DSA5_Utility {
         return await this.getCompendiumEntries(pack, "combatskill")
     }
 
-    static async getCompendiumEntries(compendium, itemType){
+    static async getCompendiumEntries(compendium, itemType) {
         const pack = await game.packs.get(compendium)
         if (!pack) return ui.notifications.error("No content found")
 
@@ -206,10 +206,14 @@ export default class DSA5_Utility {
         const regex = /@(Rq|Gc)\[[a-zA-zöüäÖÜÄ&; -]+ (-)?\d+\]/g
         const rolls = { "@Rq": "roll", "@Gc": "GC" }
         const titles = { "@Rq": "", "@Gc": `${game.i18n.localize("HELP.groupcheck")} ` }
+        const rqRegex = /^@(Rq|Gc)/
+        const modRegex = /(-)?\d+/
+        const replaceRegex = /\[[a-zA-zöüäÖÜÄ&; -]+/
+        const replaceRegex2 = /[\[\]]/g
         return content.replace(regex, function(str) {
-            const type = str.match(/^@(Rq|Gc)/)[0]
-            const mod = str.match(/(-)?\d+/)[0]
-            const skill = str.replace(mod, "").match(/\[[a-zA-zöüäÖÜÄ&; -]+/)[0].replace(/[\[\]]/g, "").trim()
+            const type = str.match(rqRegex)[0]
+            const mod = str.match(modRegex)[0]
+            const skill = str.replace(mod, "").match(replaceRegex)[0].replace(replaceRegex2, "").trim()
             return `<a class="roll-button request-${rolls[type]}" data-type="skill" data-modifier="${mod}" data-name="${skill}"><em class="fas fa-dice"></em>${titles[type]}${skill} ${mod}</a>`
         })
     }
@@ -253,6 +257,10 @@ export default class DSA5_Utility {
     }
 
     static async emptyActor(attrs = 12) {
+        if (!Array.isArray(attrs)) {
+            attrs = [attrs, attrs, attrs, attrs, attrs, attrs, attrs, attrs]
+        }
+
         const actor = await Actordsa5.create({
             name: "Alrik",
             type: "npc",
@@ -260,14 +268,14 @@ export default class DSA5_Utility {
             data: {
                 status: { wounds: { value: 50 }, fatePoints: {} },
                 characteristics: {
-                    mu: { initial: attrs },
-                    kl: { initial: attrs },
-                    in: { initial: attrs },
-                    ch: { initial: attrs },
-                    ff: { initial: attrs },
-                    ge: { initial: attrs },
-                    ko: { initial: attrs },
-                    kk: { initial: attrs }
+                    mu: { initial: attrs[0] },
+                    kl: { initial: attrs[1] },
+                    in: { initial: attrs[2] },
+                    ch: { initial: attrs[3] },
+                    ff: { initial: attrs[4] },
+                    ge: { initial: attrs[5] },
+                    ko: { initial: attrs[6] },
+                    kk: { initial: attrs[7] }
                 },
 
             }
