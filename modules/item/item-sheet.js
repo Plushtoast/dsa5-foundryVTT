@@ -179,6 +179,10 @@ export default class ItemSheetdsa5 extends ItemSheet {
                 data['hasLocalization'] = game.i18n.has(`SKILLdescr.${this.item.name}`)
                 data['StFs'] = DSA5.StFs;
                 break;
+            case "application":
+                data['hasLocalization'] = game.i18n.has(`APPLICATION.${this.item.name}`)
+                data['allSkills'] = (await DSA5_Utility.allSkills()).map(x => { return { name: x.name, id: x.name } })
+                break
             case "combatskill":
                 data['weapontypes'] = DSA5.weapontypes;
                 data['guidevalues'] = DSA5.combatskillsGuidevalues;

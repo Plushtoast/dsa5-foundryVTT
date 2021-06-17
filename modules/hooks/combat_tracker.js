@@ -23,14 +23,27 @@ export class DSA5CombatTracker extends CombatTracker {
 
     async getData(options) {
         const data = await super.getData(options)
-        for (let k of data.turns) {
-            const combatant = data.combat.turns.find(x => x.id == k.id)
-            k.defenseCount = combatant.data._source.defenseCount
 
-            //CHECK IF THIS IS REQUIRED IN 0.8.6
-            k.tokenId = combatant.data.tokenId
+        for (let turn of data.turns) {
+            const combatant = data.combat.turns.find(x => x.id == turn.id)
+            const isAllowedToSeeEffects = (game.user.isGM || combatant.actor.isOwner || !(game.settings.get("dsa5", "hideEffects")))
+            turn.defenseCount = combatant.data._source.defenseCount
+
+            turn.effects = new Set();
+            if (combatant.token) {
+                combatant.token.data.effects.forEach(e => turn.effects.add(e));
+                if (combatant.token.data.overlayEffect) turn.effects.add(combatant.token.data.overlayEffect);
+            }
+            if (combatant.actor) combatant.actor.temporaryEffects.forEach(e => {
+                if (e.getFlag("core", "statusId") === CONFIG.Combat.defeatedStatusId) turn.defeated = true;
+                else if (e.data.icon) {
+                    if (isAllowedToSeeEffects && !e.notApplicable && (game.user.isGM || !e.getFlag("dsa5", "hidePlayers")) && !e.getFlag("dsa5", "hideOnToken"))
+                        turn.effects.add(e.data.icon);
+                }
+            });
         }
         return data
+
     }
 }
 export class DSA5Combat extends Combat {
@@ -71,6 +84,7 @@ export class DSA5Combat extends Combat {
         return comb ? comb.data._source.defenseCount : 0
     }
 
+    //TODO very clonky
     getCombatantFromActor(speaker) {
         let id
         if (speaker.token) {
@@ -81,7 +95,6 @@ export class DSA5Combat extends Combat {
         return id ? this.combatants.get(id.id) : undefined
     }
 
-    //TODO very clonky
     async updateDefenseCount(speaker) {
         if (game.user.isGM) {
             const comb = this.getCombatantFromActor(speaker)

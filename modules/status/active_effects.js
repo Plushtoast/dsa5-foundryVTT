@@ -11,8 +11,9 @@ export default class DSAActiveEffectConfig extends ActiveEffectConfig {
         await super._render(force, options);
 
         const advancedFunctions = ["none", "systemEffect", "macro", "creature"].map(x => `ActiveEffects.advancedFunctions.${x}`)
+        const itemType = getProperty(this.object, "parent.type")
         const effectConfigs = {
-            hasSpellEffects: ["spell", "liturgy", "ritual", "ceremony", "consumable"].includes(getProperty(this.object, "parent.type"))
+            hasSpellEffects: ["spell", "liturgy", "ritual", "ceremony", "consumable"].includes(itemType) || ((["specialability"].includes(itemType) && getProperty(this.object, "parent.data.data.category.value") == "Combat"))
         }
         const config = {
             systemEffects: this.getStatusEffects(),

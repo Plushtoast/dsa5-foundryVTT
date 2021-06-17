@@ -396,6 +396,7 @@
     "spellTest": "Spell check",
     "start": "Start",
     "StF": "Improvement cost",
+    "application": "Application",
     "sizeCategory": "Size category",
     "Success": "Success",
     "spell": "Spell",
@@ -761,6 +762,7 @@
     "ITEM.TypeTrait": "Trait (Animal)",
     "ITEM.TypeConsumable": "Consumable",
     "ITEM.TypeSpellextension": "Spell/Liturgyextension",
+    "ITEM.TypeApplication": "Application",
 
     "ACTOR.TypeCharacter": "Character",
     "ACTOR.TypeNpc": "Non Player Character",

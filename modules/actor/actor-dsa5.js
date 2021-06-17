@@ -424,6 +424,7 @@ export default class Actordsa5 extends Actor {
             armor: []
         }
 
+
         let schips = []
         for (let i = 1; i <= Number(actorData.data.status.fatePoints.max); i++) {
             schips.push({
@@ -499,6 +500,8 @@ export default class Actordsa5 extends Actor {
             containers.set(container._id, [])
         }
 
+        let applications = new Map()
+
         for (let i of actorData.items) {
             try {
                 let parent_id = getProperty(i, "data.parent_id")
@@ -513,7 +516,11 @@ export default class Actordsa5 extends Actor {
                 if (sheetInfo.details && sheetInfo.details.includes(i._id)) i.detailed = "shown"
 
                 switch (i.type) {
-
+                    case "application":
+                        console.log(i)
+                        if (applications.has(i.data.skill)) applications.get(i.data.skill).push(i)
+                        else applications.set(i.data.skill, [i])
+                        break
                     case "skill":
                         skills[i.data.group.value].push(this._perpareItemAdvancementCost(i))
                         break;
@@ -663,6 +670,14 @@ export default class Actordsa5 extends Actor {
                 this._itemPreparationError(wep, error)
             }
         }
+
+        for (let [key, value] of Object.entries(skills)) {
+            for (let skill of value) {
+                skill.applications = applications.get(skill.name) || []
+            }
+        }
+
+        console.log(applications)
 
         money.coins = money.coins.sort((a, b) => (a.data.price.value > b.data.price.value) ? -1 : 1);
 
@@ -1447,9 +1462,9 @@ export default class Actordsa5 extends Actor {
         if (game.user.targets.size) {
             cardOptions.isOpposedTest = testData.opposable
             if (cardOptions.isOpposedTest) cardOptions.title += ` - ${game.i18n.localize("Opposed")}`;
-            else if ((await game.settings.get("dsa5", "clearTargets")) && !["spell", "liturgy", "ceremony", "ritual"].includes(testData.source.type) ){
-                game.user.updateTokenTargets([]);
-            }
+            //else if ((await game.settings.get("dsa5", "clearTargets")) && !["spell", "liturgy", "ceremony", "ritual"].includes(testData.source.type) ){
+            //    game.user.updateTokenTargets([]);
+            //}
         }
 
         if (testData.extra.ammo && !testData.extra.ammoDecreased) {

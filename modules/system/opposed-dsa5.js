@@ -146,8 +146,8 @@ export default class OpposedDsa5 {
             })
             message.data.flags.data.startMessagesList = startMessagesList;
 
-            if ((await game.settings.get("dsa5", "clearTargets")) && !["spell", "liturgy", "ceremony", "ritual"].includes(preData.source.type))
-                game.user.updateTokenTargets([]);
+            //if ((await game.settings.get("dsa5", "clearTargets")) && !["spell", "liturgy", "ceremony", "ritual"].includes(preData.source.type))
+            //    game.user.updateTokenTargets([]);
 
         } else {
             game.user.targets.forEach(async target => {
@@ -237,7 +237,8 @@ export default class OpposedDsa5 {
     }
 
     static async clearOpposed(actor) {
-        await actor.update({[`flags.-=oppose`]: null})
+        await actor.update({
+            [`flags.-=oppose`]: null })
     }
 
     static async _handleReaction(ev) {
@@ -407,11 +408,11 @@ export default class OpposedDsa5 {
             try {
                 await this.startMessage.update(chatOptions).then(resultMsg => {
                     ui.chat.updateMessage(resultMsg)
-                    //OpposedDsa5.clearOpposed();
+                        //OpposedDsa5.clearOpposed();
                 })
             } catch {
                 await ChatMessage.create(chatOptions)
-                //OpposedDsa5.clearOpposed();
+                    //OpposedDsa5.clearOpposed();
             }
         }
     }

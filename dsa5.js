@@ -12,8 +12,6 @@ import DSA5 from "./modules/system/config-dsa5.js"
 import DSA5ItemLibrary from "./modules/system/itemlibrary.js"
 import DSA5_Utility from "./modules/system/utility-dsa5.js"
 import DSA5Initializer from "./modules/system/initializer.js"
-import AdvantageRulesDSA5 from "./modules/system/advantage-rules-dsa5.js";
-import SpecialabilityRulesDSA5 from "./modules/system/specialability-rules-dsa5.js"
 import ChatMessageDSA5Roll from "./modules/chat/ChatMessageDSA5.js";
 import DSA5ChatListeners from "./modules/system/chat_listeners.js";
 import DSA5Payment from "./modules/system/payment.js"
@@ -61,9 +59,8 @@ Hooks.once("init", () => {
     CONFIG.Combat.documentClass = DSA5Combat
     CONFIG.Combatant.documentClass = DSA5Combatant
     CONFIG.ActiveEffect.sheetClass = DSAActiveEffectConfig
+
+
 });
-Hooks.once("setup", () => {
-    AdvantageRulesDSA5.setupFunctions()
-    SpecialabilityRulesDSA5.setupFunctions()
-})
+
 initHooks();

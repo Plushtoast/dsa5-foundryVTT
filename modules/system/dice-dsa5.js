@@ -701,7 +701,7 @@ export default class DiceDSA5 {
             res.result = res.result + extraFps
             res.preData.calculatedSpellModifiers.finalcost = Math.round(res.preData.calculatedSpellModifiers.cost / 2)
         } else if (res.successLevel <= -2) {
-            res.description += `, <a class="roll-button ${"spell" ? "spell":"liturgy"}-botch"><i class="fas fa-dice"></i>${game.i18n.localize('CriticalFailure')} ${game.i18n.localize("table")}</a>`
+            res.description += `, <a class="roll-button ${"spell" ? "spell" : "liturgy"}-botch"><i class="fas fa-dice"></i>${game.i18n.localize('CriticalFailure')} ${game.i18n.localize("table")}</a>`
         }
 
         if (res.successLevel < 0) {
@@ -796,7 +796,7 @@ export default class DiceDSA5 {
 
         return {
             result: fws,
-            characteristics: [0, 1, 2].map(x => { return { char: testData.source.data[`characteristic${x+1}`].value, res: roll.terms[x * 2].results[0].result, suc: res[x] <= 0, tar: tar[x] } }),
+            characteristics: [0, 1, 2].map(x => { return { char: testData.source.data[`characteristic${x + 1}`].value, res: roll.terms[x * 2].results[0].result, suc: res[x] <= 0, tar: tar[x] } }),
             qualityStep,
             description,
             preData: testData,
@@ -994,18 +994,31 @@ export default class DiceDSA5 {
         }
     }
 
-    static addApplyEffectData(chatData) {
-        const source = chatData.preData.source
-        if (["spell", "liturgy", "ritual", "ceremony"].includes(source.type)) {
-            if (source.effects.length > 0) {
-                mergeObject(chatData, {
-                    applyEffect: chatData.testData.successLevel > 0
-                })
+    static addApplyEffectData(testData) {
+        const source = testData.preData.source
+        console.log("trying")
+        console.log(source, testData)
+        if (["spell", "liturgy", "ritual", "ceremony"].includes(source.type) && source.effects.length > 0) {
+            return testData.successLevel > 0
+        } else {
+            const specAbIds = testData.preData.situationalModifiers.filter(x => x.specAbId).map(x => x.specAbId)
+            console.log(specAbIds)
+            if (specAbIds.length > 0) {
+                console.log(testData.preData.extra.actor)
+                const specAbs = testData.preData.extra.actor.items.filter(x => specAbIds.includes(x._id))
+                console.log(specAbs)
+                for (const spec of specAbs) {
+                    if (spec.effects.length > 0) return true
+                }
             }
+
         }
+        return false
     }
 
     static async renderRollCard(chatOptions, testData, rerenderMessage) {
+        const applyEffect = this.addApplyEffectData(testData)
+        console.log(applyEffect)
         const preData = deepClone(testData.preData)
         delete preData.extra.actor
         delete testData.actor
@@ -1017,7 +1030,8 @@ export default class DiceDSA5 {
             hideData: game.user.isGM,
             preData,
             hideDamage: rerenderMessage ? rerenderMessage.data.flags.data.hideDamage : preData.mode == "attack",
-            modifierList: preData.situationalModifiers.filter(x => x.value != 0)
+            modifierList: preData.situationalModifiers.filter(x => x.value != 0),
+            applyEffect: applyEffect
         }
 
         if (preData.advancedModifiers) {
@@ -1028,8 +1042,6 @@ export default class DiceDSA5 {
             if (preData.advancedModifiers.qls != 0)
                 chatData.modifierList.push({ name: game.i18n.localize('MODS.QS'), value: preData.advancedModifiers.qls })
         }
-
-        this.addApplyEffectData(chatData)
 
         DSA5SoundEffect.playEffect(preData.mode, preData.source)
 
@@ -1139,9 +1151,20 @@ export default class DiceDSA5 {
         }
     }
 
-    static _parseEffectDuration(source, testData) {
+    static _parseEffectDuration(source, testData, preData, attacker) {
+        console.log(testData)
+        const specAbIds = preData.situationalModifiers.filter(x => x.specAbId).map(x => x.specAbId)
+        console.log(specAbIds)
+        const specAbs = attacker.items.filter(x => specAbIds.includes(x.id))
+        console.log(specAbs)
         let effects = duplicate(source.effects)
-        let duration = source.data.duration.value.replace(' x ', ' * ').replace(game.i18n.localize('CHARAbbrev.QS'), testData.qualityStep)
+        for (const spec of specAbs) {
+            console.log(duplicate(spec))
+            effects.push(...duplicate(spec).effects)
+        }
+
+        let duration = getProperty(source, "data.duration.value") || ""
+        duration = duration.replace(' x ', ' * ').replace(game.i18n.localize('CHARAbbrev.QS'), testData.qualityStep)
         try {
             const regexes = [
                 { regEx: new RegExp(game.i18n.localize("DSAREGEX.combatRounds"), 'gi'), seconds: 5 },
@@ -1179,14 +1202,14 @@ export default class DiceDSA5 {
         const message = game.messages.get(id)
         const source = message.data.flags.data.preData.source
         const testData = message.data.flags.data.postData
-        const effects = this._parseEffectDuration(source, testData)
         const speaker = message.data.speaker
 
+        let attacker = DSA5_Utility.getSpeaker(speaker)
+        if (!attacker) attacker = game.actors.get(message.data.flags.data.preData.extra.actor.id)
+        const effects = this._parseEffectDuration(source, testData, message.data.flags.data.preData, attacker)
         let actors = []
         if (mode == "self") {
-            let actor = DSA5_Utility.getSpeaker(speaker)
-            if (!actor) actor = game.actors.get(message.data.flags.data.preData.extra.actor.id)
-            if (actor) actors.push(actor)
+            if (attacker) attacker.push(actor)
         } else {
             if (targets) actors = targets.map(x => DSA5_Utility.getSpeaker(x))
             else if (game.user.targets.size) {

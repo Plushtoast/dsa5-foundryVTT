@@ -30,7 +30,7 @@
             <div class="col ten" title="{{localize 'Fw'}}">{{localize "CHARAbbrev.FW"}}</div>
         </div>
         {{#each this as |item i|}}
-        <div class="row-section skills lineheight tableOdd item{{#when item.data.talentValue.value 'eq' 0}} notLearned{{/when}}" data-item-id="{{item._id}}">
+        <div class="row-section wrap skills lineheight tableOdd item{{#when item.data.talentValue.value 'eq' 0}} notLearned{{/when}}" data-item-id="{{item._id}}">
             <div class="col two">
                 <a class="item-edit talentName">{{item.name}}</a> {{#if item.canAdvance}}
                 <a class="advance refund-item"><i title="{{item.refund}}" class="fas fa-minus"></i></a>
@@ -42,10 +42,22 @@
                     <span class="d20 diet-{{item.data.characteristic2.value}}">{{localize (concatUp "CHARAbbrev." item.data.characteristic2.value)}}</span>
                     <span class="d20 diet-{{item.data.characteristic3.value}}">{{localize (concatUp "CHARAbbrev." item.data.characteristic3.value)}}</span>
                 </a>
+                {{#if item.applications}}
+                <a class="item-dropdown very-small" title="{{localize 'SHEET.Dropdown'}}"><i class="fas fa-chevron-down"></i></a> {{/if}}
             </div>
             <div class="col ten">{{localize item.data.burden.value}}</div>
             <div class="col ten"><input class="skill-advances" type="text" data-dtype="Number" value="{{item.data.talentValue.value}}" /></div>
+            {{#if item.applications}}
+            <div class="col lineheight expandDetails {{item.detailed}}">
+                <ul>
+                    {{#each item.applications as |apl i|}}
+                    <li class="item" data-item-id="{{apl._id}}"><a class="showApplication">{{apl.name}}</a></li>
+                    {{/each}}
+                </ul>
+            </div>
+            {{/if}}
         </div>
+
         {{/each}} {{/each}}
     </div>
     <div class="col morph">
@@ -77,10 +89,22 @@
                     <span class="d20 diet-{{item.data.characteristic2.value}}">{{localize (concatUp "CHARAbbrev." item.data.characteristic2.value)}}</span>
                     <span class="d20 diet-{{item.data.characteristic3.value}}">{{localize (concatUp "CHARAbbrev." item.data.characteristic3.value)}}</span>
                 </a>
+                {{#if item.applications}}
+                <a class="item-dropdown very-small" title="{{localize 'SHEET.Dropdown'}}"><i class="fas fa-chevron-down"></i></a> {{/if}}
             </div>
             <div class="col ten">{{localize item.data.burden.value}}</div>
             <div class="col ten"><input class="skill-advances" type="text" data-dtype="Number" value="{{item.data.talentValue.value}}" /></div>
+            {{#if item.applications}}
+            <div class="col lineheight expandDetails {{item.detailed}}">
+                <ul>
+                    {{#each item.applications as |apl i|}}
+                    <li class="item" data-item-id="{{apl._id}}"><a class="showApplication">{{apl.name}}</a></li>
+                    {{/each}}
+                </ul>
+            </div>
+            {{/if}}
         </div>
+
         {{/each}}
         <div class="row-section">
             <div class="col">&nbsp;</div>

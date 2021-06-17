@@ -319,7 +319,8 @@
             "poison",
             "disease",
             "consumable",
-            "spellextension"
+            "spellextension",
+            "application"
         ],
         "templates": {
             "skill": {
@@ -434,6 +435,12 @@
                     "value": 0
                 }
             }
+        },
+        "application": {
+            "templates": [
+                "description"
+            ],
+            "skill": ""
         },
         "money": {
             "templates": [

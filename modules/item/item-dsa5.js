@@ -46,7 +46,8 @@ export default class Itemdsa5 extends Item {
         "poison": "systems/dsa5/icons/categories/poison.webp",
         "disease": "systems/dsa5/icons/categories/disease.webp",
         "spellextension": "systems/dsa5/icons/categories/Spellextension.webp",
-        "species": "icons/environment/people/group.webp"
+        "species": "icons/environment/people/group.webp",
+        "application": "systems/dsa5/icons/categories/Skill.webp"
     }
 
     static defaultIcon(data) {
@@ -75,7 +76,8 @@ export default class Itemdsa5 extends Item {
                     value: Number(val) * step,
                     damageBonus: $(k).attr("data-tpbonus"),
                     dmmalus: $(k).attr("data-dmmalus") * step,
-                    step: step
+                    step: step,
+                    specAbId: $(k).attr("data-id")
                 })
             }
         }
@@ -339,9 +341,9 @@ export default class Itemdsa5 extends Item {
             cardOptions.isOpposedTest = testData.opposable
             if (cardOptions.isOpposedTest)
                 cardOptions.title += ` - ${game.i18n.localize("Opposed")}`;
-            else if ((await game.settings.get("dsa5", "clearTargets"))) {
-                game.user.updateTokenTargets([]);
-            }
+            //else if ((await game.settings.get("dsa5", "clearTargets"))) {
+            //    game.user.updateTokenTargets([]);
+            //}
         }
 
         if (testData.extra.ammo && !testData.extra.ammoDecreased) {

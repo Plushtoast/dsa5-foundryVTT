@@ -547,6 +547,18 @@ export default class ActorSheetDsa5 extends ActorSheet {
             item.sheet.render(true);
         });
 
+        html.find('.showApplication').mousedown(ev => {
+            ev.preventDefault()
+
+            if (ev.button == 2) {
+                this._deleteItem(ev)
+            } else {
+                let itemId = this._getItemId(ev);
+                const item = this.actor.items.find(i => i.data._id == itemId)
+                item.sheet.render(true);
+            }
+        })
+
         html.find(".consume-item").mousedown(ev => {
             if (ev.button == 2) {
                 let itemId = this._getItemId(ev);
@@ -940,6 +952,9 @@ export default class ActorSheetDsa5 extends ActorSheet {
             case "lookup":
                 await this._handleLookup(item)
                 break
+            case "application":
+                await this._handleApplication(item)
+                break
             case "spellextension":
                 await this._handleSpellExtension(item)
                 break
@@ -975,6 +990,12 @@ export default class ActorSheetDsa5 extends ActorSheet {
         } else {
             ui.notifications.error(game.i18n.format("DSAError.notFound", { category: thing.type, name: thing.name }))
         }
+    }
+
+    async _handleApplication(item) {
+        item = duplicate(item)
+        let res = this.actor.data.items.find(i => i.type == item.type && i.name == item.name);
+        if (!res) await this.actor.createEmbeddedDocuments("Item", [item])
     }
 
     async _handleRemoveSourceOnDrop(dragData, item) {

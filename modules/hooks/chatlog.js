@@ -30,8 +30,7 @@ export default function() {
             }
             const speaker = DSA5_Utility.getSpeaker(msg.message.speaker)
             if (speaker && !speaker.isOwner) {
-                let selfButtons = html.find(".selfButton")
-                selfButtons.remove()
+                html.find(".selfButton").remove()
             }
 
             html.find(".hideData").remove()

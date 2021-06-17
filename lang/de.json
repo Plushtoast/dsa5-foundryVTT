@@ -125,6 +125,7 @@
     "antidot": "Gegenmittel",
     "arrow": "Pfeil",
     "armor": "Rüstung",
+    "application": "Anwendungsgebiet",
     "aim": "Zielen",
     "advancementCost": "Steigern für {cost} Abenteuerpunkte",
     "animal": "Tier",
@@ -772,6 +773,7 @@
     "ITEM.TypeTrait": "Eigenschaft (Tier)",
     "ITEM.TypeConsumable": "Verbrauchsgegenstand",
     "ITEM.TypeSpellextension": "Zauber/Liturgieerweiterung",
+    "ITEM.TypeApplication": "Anwendungsgebiet",
 
     "ACTOR.TypeCharacter": "Charakter",
     "ACTOR.TypeNpc": "Nichtspielercharakter",

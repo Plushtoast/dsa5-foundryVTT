@@ -20,6 +20,8 @@ import ItemSheetdsa5 from "./../item/item-sheet.js";
 import MerchantSheetDSA5 from "../actor/merchant-sheet.js";
 import BookWizard from "../wizards/adventure_wizard.js";
 import MastersMenu from "../system/masters_menu.js";
+import AdvantageRulesDSA5 from "../system/advantage-rules-dsa5.js";
+import SpecialabilityRulesDSA5 from "../system/specialability-rules-dsa5.js";
 
 export default function() {
     initHandleBars.default();
@@ -35,6 +37,8 @@ export default function() {
     tokenHUD.default()
     migrateWorld.default()
     initScene.default()
+
+
 }
 
 Hooks.once("init", () => {
@@ -85,7 +89,7 @@ Hooks.once("init", () => {
 
     ItemSheetdsa5.setupSheets()
     configuration.default()
-});
+})
 
 Hooks.once('setup', () => {
     if (!["de", "en"].includes(game.i18n.lang)) {
@@ -102,6 +106,9 @@ Hooks.once('setup', () => {
         label: "LIGHT.daylight",
         illuminationShader: DaylightIlluminationShader
     }
+
+    AdvantageRulesDSA5.setupFunctions()
+    SpecialabilityRulesDSA5.setupFunctions()
 })
 
 function setupKnownEquipmentModifiers() {
@@ -116,8 +123,8 @@ function setupKnownEquipmentModifiers() {
         [game.i18n.localize('CHARAbbrev.ZK').toLowerCase()]: ["status", "toughness", "gearmodifier"],
         [game.i18n.localize('CHARAbbrev.FtP').toLowerCase()]: ["status", "fatePoints", "gearmodifier"]
     }
-    let attrs = ["MU", "KL", "IN", "CH", "FF", "GE", "KO", "KK"]
-    for (let k of attrs) {
+    const attrs = ["MU", "KL", "IN", "CH", "FF", "GE", "KO", "KK"]
+    for (const k of attrs) {
         game.dsa5.config.knownShortcuts[game.i18n.localize(`CHARAbbrev.${k}`).toLowerCase()] = ["characteristics", k.toLowerCase(), "gearmodifier"]
     }
 }
