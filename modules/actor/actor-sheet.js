@@ -281,6 +281,15 @@ export default class ActorSheetDsa5 extends ActorSheet {
                 break
             case "spell":
             case "ritual":
+                let focusValue = 0
+                for (const feature of item.data.feature.replace(/\(a-z äöü\-\)/gi, "").split(",").map(x => x.trim())) {
+                    if (SpecialabilityRulesDSA5.hasAbility(this.actor, `${game.i18n.localize('LocalizedIDs.propertyKnowledge')} (${feature})`)) {
+                        focusValue = Math.max(...[this.actor.data.data.characteristics[item.data.characteristic1.value].value, this.actor.data.data.characteristics[item.data.characteristic2.value].value, this.actor.data.data.characteristics[item.data.characteristic3.value].value]) + 2 + AdvantageRulesDSA5.vantageStep(this.actor, `${game.i18n.localize('LocalizedIDs.exceptionalSkill')} (${item.name})`)
+                        break
+                    }
+                }
+                result = newValue <= Math.max(14 + AdvantageRulesDSA5.vantageStep(this.actor, `${game.i18n.localize('LocalizedIDs.exceptionalSkill')} (${item.name})`), focusValue)
+                break
             case "liturgy":
             case "ceremony":
                 result = newValue <= 14 + AdvantageRulesDSA5.vantageStep(this.actor, `${game.i18n.localize('LocalizedIDs.exceptionalSkill')} (${item.name})`)

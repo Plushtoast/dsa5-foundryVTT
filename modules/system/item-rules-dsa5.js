@@ -49,9 +49,10 @@ export default class ItemRulesDSA5 {
         }
     }
 
-    static itemAsModifier(actor, name, factor, types) {
-        let res = []
-        let item = actor.items.find(x => types.includes(x.type) && x.name == name)
+    static itemAsModifier(actor, name, factor, types, startsWith = false) {
+            let res = []
+            const regex = startsWith ? new RegExp(`^${DSA5_Utility.escapeRegex(`${name} (`)}`) : new RegExp(`^${DSA5_Utility.escapeRegex(name)}$`)
+        const item = actor.items.find(x => types.includes(x.type) && regex.test(x.name))
         if (item) {
             res.push({
                 name: item.name,

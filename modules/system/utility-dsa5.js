@@ -218,6 +218,11 @@ export default class DSA5_Utility {
         })
     }
 
+    static escapeRegex(input) {
+        const source = typeof input === 'string' || input instanceof String ? input : '';
+        return source.replace(/[-[/\]{}()*+?.,\\^$|#\s]/g, '\\$&');
+    }
+
     static replaceConditions(content) {
         if (!content) return content
         if (!DSA5.statusRegex) {

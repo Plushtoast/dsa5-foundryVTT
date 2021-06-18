@@ -72,6 +72,21 @@
         "*": "*"
     },
 
+    "Features": {
+        "Object": "Objekt",
+        "Spheres": "Sphären",
+        "Influence": "Einfluss",
+        "Clairvoyance": "Hellsicht",
+        "Healing": "Heilung",
+        "Transformation": "Verwandlung",
+        "Telekinesis": "Telekinese",
+        "Elemental": "Elementar",
+        "Illusion": "Illusion",
+        "Anti-Magic": "Antimagie",
+        "Demonic": "Dämonisch",
+        "Temporal": "Temporal"
+    },
+
     "LIGHT": {
         "daylight": "Tageslicht"
     },
@@ -916,7 +931,9 @@
         "language": "Sprache",
         "aptitude": "Begabung",
         "painImmunity": "Immun gegen Schmerzen",
-        "selfControl": "Selbstbeherrschung"
+        "selfControl": "Selbstbeherrschung",
+        "propertyKnowledge": "Merkmalskenntnis",
+        "propertyFocus": "Merkmalsfokus"
 
     },
 

@@ -759,6 +759,21 @@ DSA5.skillGroups = {
     "nature": "SKILL.nature"
 };
 
+DSA5.features = [
+    "Object",
+    "Spheres",
+    "Influence",
+    "Clairvoyance",
+    "Healing",
+    "Transformation",
+    "Telekinesis",
+    "Elemental",
+    "Illusion",
+    "Anti-Magic",
+    "Demonic",
+    "Temporal"
+]
+
 DSA5.skillBurdens = {
     "yes": "yes",
     "no": "no",

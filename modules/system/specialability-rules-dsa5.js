@@ -152,8 +152,8 @@ export default class SpecialabilityRulesDSA5 extends ItemRulesDSA5 {
         return super.itemStep(actor, talent, ["specialability"])
     }
 
-    static abilityAsModifier(actor, talent, factor = 1) {
-        return super.itemAsModifier(actor, talent, factor, ["specialability"])
+    static abilityAsModifier(actor, talent, factor = 1, startsWith = false) {
+        return super.itemAsModifier(actor, talent, factor, ["specialability"], startsWith)
     }
 
 }

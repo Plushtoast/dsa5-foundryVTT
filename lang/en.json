@@ -493,6 +493,22 @@
         "global": "Global modifier"
     },
 
+    "Features": {
+        "Object": "Object",
+        "Spheres": "Spheres",
+        "Influence": "Influence",
+        "Clairvoyance": "Clairvoyance",
+        "Healing": "Healing",
+        "Transformation": "Transformation",
+        "Telekinesis": "Telekinesis",
+        "Elemental": "Elemental",
+        "Illusion": "Illusion",
+        "Anti-Magic": "Anti-Magic",
+        "Demonic": "Demonic",
+        "Temporal": "Temporal"
+    },
+
+
     "SKILL": {
         "body": "Physical Skills",
         "social": "Social Skills",
@@ -904,7 +920,9 @@
         "language": "Language",
         "aptitude": "Aptitude",
         "painImmunity": "Immune to pain",
-        "selfControl": "Self-Control"
+        "selfControl": "Self-Control",
+        "propertyKnowledge": "Property Knowledge",
+        "propertyFocus": "Property Focus"
     },
 
     "Shapeshift": {
