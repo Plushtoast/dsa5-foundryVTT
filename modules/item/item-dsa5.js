@@ -239,6 +239,7 @@ export default class Itemdsa5 extends Item {
                         dmmalus,
                         label: `${at}: ${atbonus}, ${tp}: ${tpbonus}, ${dm}: ${dmmalus}`,
                         steps: com.data.data.step.value,
+                        category: com.data.data.category.sub,
                         id: com.id,
                         actor: actor.id
                     })
@@ -255,6 +256,7 @@ export default class Itemdsa5 extends Item {
                         dmmalus: 0,
                         label: `${pa}: ${pabonus}`,
                         steps: com.data.data.step.value,
+                        category: com.data.data.category.sub,
                         id: com.id,
                         actor: actor.id
                     })
