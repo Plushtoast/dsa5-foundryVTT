@@ -126,7 +126,6 @@ export default class DSA5StatusEffects {
     static async createEffect(actor, effect, value, auto) {
         const immune = this.immuneToEffect(actor, effect)
         if (immune) return immune
-
         effect.label = game.i18n.localize(effect.label);
         if (auto) {
             effect.flags.dsa5.auto = Math.min(effect.flags.dsa5.max, value);
@@ -165,7 +164,6 @@ export default class DSA5StatusEffects {
     static async updateEffect(actor, existing, value, absolute, auto) {
         const immune = this.immuneToEffect(actor, existing, true)
         if (immune) return immune
-
         let delta, newValue
         let update
         if (auto) {

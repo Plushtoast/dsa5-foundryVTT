@@ -13,7 +13,7 @@ export default class DSAActiveEffectConfig extends ActiveEffectConfig {
         const advancedFunctions = ["none", "systemEffect", "macro", "creature"].map(x => `ActiveEffects.advancedFunctions.${x}`)
         const itemType = getProperty(this.object, "parent.type")
         const effectConfigs = {
-            hasSpellEffects: ["spell", "liturgy", "ritual", "ceremony", "consumable"].includes(itemType) || ((["specialability"].includes(itemType) && getProperty(this.object, "parent.data.data.category.value") == "Combat"))
+            hasSpellEffects: ["spell", "liturgy", "ritual", "ceremony", "consumable", "poison", "disease"].includes(itemType) || ((["specialability"].includes(itemType) && getProperty(this.object, "parent.data.data.category.value") == "Combat"))
         }
         const config = {
             systemEffects: this.getStatusEffects(),
@@ -60,6 +60,7 @@ export default class DSAActiveEffectConfig extends ActiveEffectConfig {
                         {
                             const arg0 = getProperty(ef, "flags.dsa5.args0")
                             let arg1 = `${getProperty(ef, "flags.dsa5.args1")}`
+
                             if (/,/.test(arg1)) {
                                 arg1 = Number(arg1.split(",")[qs - 1])
                             } else {

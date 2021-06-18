@@ -217,6 +217,7 @@ export default class Actordsa5 extends Actor {
                             break
                         case "consumable":
                         case "combatskill":
+                        case "poison":
                         case "spell":
                         case "liturgy":
                         case "ceremony":
@@ -517,7 +518,6 @@ export default class Actordsa5 extends Actor {
 
                 switch (i.type) {
                     case "application":
-                        console.log(i)
                         if (applications.has(i.data.skill)) applications.get(i.data.skill).push(i)
                         else applications.set(i.data.skill, [i])
                         break
@@ -676,8 +676,6 @@ export default class Actordsa5 extends Actor {
                 skill.applications = applications.get(skill.name) || []
             }
         }
-
-        console.log(applications)
 
         money.coins = money.coins.sort((a, b) => (a.data.price.value > b.data.price.value) ? -1 : 1);
 

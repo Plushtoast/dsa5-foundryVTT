@@ -996,17 +996,16 @@ export default class DiceDSA5 {
 
     static addApplyEffectData(testData) {
         const source = testData.preData.source
-        console.log("trying")
-        console.log(source, testData)
-        if (["spell", "liturgy", "ritual", "ceremony"].includes(source.type) && source.effects.length > 0) {
-            return testData.successLevel > 0
-        } else {
+        if (["spell", "liturgy", "ritual", "ceremony"].includes(source.type)) {
+            return testData.successLevel > 0 && source.effects.length > 0
+        }
+        else if(["disease","poison"].includes(source.type)){
+            return source.effects.length > 0
+        }
+        else {
             const specAbIds = testData.preData.situationalModifiers.filter(x => x.specAbId).map(x => x.specAbId)
-            console.log(specAbIds)
             if (specAbIds.length > 0) {
-                console.log(testData.preData.extra.actor)
                 const specAbs = testData.preData.extra.actor.items.filter(x => specAbIds.includes(x._id))
-                console.log(specAbs)
                 for (const spec of specAbs) {
                     if (spec.effects.length > 0) return true
                 }
@@ -1018,7 +1017,6 @@ export default class DiceDSA5 {
 
     static async renderRollCard(chatOptions, testData, rerenderMessage) {
         const applyEffect = this.addApplyEffectData(testData)
-        console.log(applyEffect)
         const preData = deepClone(testData.preData)
         delete preData.extra.actor
         delete testData.actor
@@ -1031,7 +1029,7 @@ export default class DiceDSA5 {
             preData,
             hideDamage: rerenderMessage ? rerenderMessage.data.flags.data.hideDamage : preData.mode == "attack",
             modifierList: preData.situationalModifiers.filter(x => x.value != 0),
-            applyEffect: applyEffect
+            applyEffect
         }
 
         if (preData.advancedModifiers) {
@@ -1152,14 +1150,10 @@ export default class DiceDSA5 {
     }
 
     static _parseEffectDuration(source, testData, preData, attacker) {
-        console.log(testData)
         const specAbIds = preData.situationalModifiers.filter(x => x.specAbId).map(x => x.specAbId)
-        console.log(specAbIds)
-        const specAbs = attacker.items.filter(x => specAbIds.includes(x.id))
-        console.log(specAbs)
+        const specAbs = attacker ? attacker.items.filter(x => specAbIds.includes(x.id)) : []
         let effects = duplicate(source.effects)
         for (const spec of specAbs) {
-            console.log(duplicate(spec))
             effects.push(...duplicate(spec).effects)
         }
 
@@ -1204,8 +1198,12 @@ export default class DiceDSA5 {
         const testData = message.data.flags.data.postData
         const speaker = message.data.speaker
 
+        if(["poison","disease"].includes(source.type)){
+            testData.qualityStep = testData.successLevel > 0 ? 2 : 1
+        }
+
         let attacker = DSA5_Utility.getSpeaker(speaker)
-        if (!attacker) attacker = game.actors.get(message.data.flags.data.preData.extra.actor.id)
+        if (!attacker) attacker = game.actors.get(getProperty(message.data.flags, "data.preData.extra.actor.id"))
         const effects = this._parseEffectDuration(source, testData, message.data.flags.data.preData, attacker)
         let actors = []
         if (mode == "self") {
