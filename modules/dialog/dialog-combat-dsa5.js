@@ -42,21 +42,28 @@ export default class DSA5CombatDialog extends DialogShared {
                 ui.notifications.error(game.i18n.localize("DSAError.opposedAttackNoSpecAbs"))
                 return
             }
-            let step = Number($(ev.currentTarget).attr('data-step'))
-            let maxStep = Number($(ev.currentTarget).attr('data-maxStep'))
+            const elem = $(ev.currentTarget)
+            let step = Number(elem.attr('data-step'))
+            const maxStep = Number(elem.attr('data-maxStep'))
+            const subcategory = Number(elem.attr('data-category'))
 
             if (ev.button == 0) {
                 step = Math.min(maxStep, step + 1)
+                if([0,1].includes(subcategory)){
+                    const siblings = elem.siblings(`[data-category="${subcategory}"]`)
+                    siblings.removeClass('active').attr("data-step", 0)
+                    siblings.find('.step').text(roman[0])
+                }
             } else if (ev.button == 2) {
                 step = Math.max(0, Math.min(maxStep, step - 1))
             }
-            $(ev.currentTarget).attr('data-step', step)
+            elem.attr('data-step', step)
             if (step > 0) {
-                $(ev.currentTarget).addClass("active")
+                elem.addClass("active")
             } else {
-                $(ev.currentTarget).removeClass("active")
+                elem.removeClass("active")
             }
-            $(ev.currentTarget).find('.step').text(roman[step])
+            elem.find('.step').text(roman[step])
         });
         html.find(".opportunityAttack").change(ev => {
             if ($(ev.currentTarget).is(":checked")) {

@@ -2079,6 +2079,22 @@ a.inline-roll {
     background-position: center;
 }
 
+.specImg.ab_1{
+    background-image: url(../icons/categories/Combat_Skill.webp);
+}
+
+.specImg.ab_2{
+    background-image: url(../icons/categories/Skill.webp);
+}
+
+.specImg.ab_3{
+    background-image: url(../icons/categories/Armor.webp);
+}
+
+.specImg.ab_4{
+    background-image: url(../icons/categories/ability_general.webp);
+}
+
 .libraryImg {
     background-image: url(../icons/backgrounds/library.webp);
     margin-top: 50px;

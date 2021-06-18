@@ -231,7 +231,8 @@ export default class Itemdsa5 extends Item {
                 const atbonus = effects[at] || 0
                 const tpbonus = effects[tp] || 0
                 const dmmalus = effects[dm] || 0
-                if (atbonus != 0 || tpbonus != 0 || dmmalus != 0)
+                if (atbonus != 0 || tpbonus != 0 || dmmalus != 0){
+                    const subCategory = game.i18n.localize(DSA5.combatSkillSubCategories[com.data.data.category.sub])
                     combatskills.push({
                         name: com.name,
                         atbonus,
@@ -239,16 +240,22 @@ export default class Itemdsa5 extends Item {
                         dmmalus,
                         label: `${at}: ${atbonus}, ${tp}: ${tpbonus}, ${dm}: ${dmmalus}`,
                         steps: com.data.data.step.value,
-                        category: com.data.data.category.sub,
+                        category: {
+                            id: com.data.data.category.sub,
+                            css: `ab_${com.data.data.category.sub}`,
+                            name: subCategory
+                        },
                         id: com.id,
                         actor: actor.id
                     })
+                }
             }
         } else {
             for (let com of combatSpecAbs) {
                 const effects = Itemdsa5.parseEffect(com.data.data.effect.value, actor)
                 const pabonus = effects[pa] || 0
-                if (pabonus != 0)
+                if (pabonus != 0){
+                    const subCategory = game.i18n.localize(DSA5.combatSkillSubCategories[com.data.data.category.sub])
                     combatskills.push({
                         name: com.name,
                         pabonus,
@@ -256,10 +263,15 @@ export default class Itemdsa5 extends Item {
                         dmmalus: 0,
                         label: `${pa}: ${pabonus}`,
                         steps: com.data.data.step.value,
-                        category: com.data.data.category.sub,
+                        category: {
+                            id: com.data.data.category.sub,
+                            css: `ab_${com.data.data.category.sub}`,
+                            name: subCategory
+                        },
                         id: com.id,
                         actor: actor.id
                     })
+                }
             }
         }
         return combatskills
