@@ -68,6 +68,8 @@ export default class DSA5SoundEffect {
         }
         paths.push(`${item.type}.default`)
         for (const p of paths) {
+            if (!hasProperty(this.sounds, p)) continue
+
             result = getProperty(this.sounds, p)
             if (result && (typeof result === "string" || result instanceof String)) break
         }

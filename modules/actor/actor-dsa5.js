@@ -119,6 +119,7 @@ export default class Actordsa5 extends Actor {
 
             //Prevent double update with multiple GMs, still unsafe
             let activeGM = game.users.find(u => u.active && u.isGM)
+
             if (activeGM && game.user.id == activeGM.id) {
                 let hasDefaultPain = data.type != "creature" || data.data.status.wounds.max >= 20
                 let pain = 0
@@ -164,13 +165,13 @@ export default class Actordsa5 extends Actor {
         }
     }
 
-    prepareMerchant() {
+    async prepareMerchant() {
         if (getProperty(this, "data.data.merchant.merchantType") == "loot") {
             if (getProperty(this, "data.data.merchant.locked") && !this.hasCondition("locked")) {
-                this.addCondition(Actordsa5.lockedCondition())
+                await this.addCondition(Actordsa5.lockedCondition())
             } else if (!getProperty(this, "data.data.merchant.locked")) {
                 let ef = this.effects.find(x => getProperty(x, "data.flags.core.statusId") == "locked")
-                if (ef) this.deleteEmbeddedDocuments("ActiveEffect", [ef.id])
+                if (ef) await this.deleteEmbeddedDocuments("ActiveEffect", [ef.id])
             }
         }
     }
@@ -336,8 +337,6 @@ export default class Actordsa5 extends Actor {
         }
         return preparedData;
     }
-
-
 
     static canAdvance(actorData) {
         return actorData.canAdvance

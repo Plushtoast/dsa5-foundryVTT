@@ -465,6 +465,16 @@
         "noMoreAllowed": "No more rolls allowed."
     },
 
+    "MASTER": {
+        "sceneConfig": "Scene config",
+        "awardXP": "Award Adventure Points",
+        "awardXPText": "Award {heros} with Adventure Points.",
+        "payText": "Pay silverthalers to {heros}.",
+        "getPaidText": "Take silverthalers from {heros}.",
+        "xpMessage": "<b>{heros}</b> received <b>{number}</b> Adventure Points.",
+        "doGroupCheck": "Modifier for <b>{skill}</b> Group Check."
+    },
+
     "WIZARD": {
         "addItem": "Add {item}",
         "careerdescr": "Please select the adequate options of the career <b>{career}</b> and confirm to add it for <b class=\"apCost\">{cost}</b> adventure points to your character.",

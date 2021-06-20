@@ -152,9 +152,9 @@ export default class DSA5_Utility {
         return 0
     }
 
-    static async showArtwork({ img, name, uuid }) {
+    static async showArtwork({ img, name, uuid, isOwner }, hide = false) {
         new ImagePopout(img, {
-            title: name,
+            title: hide ? (isOwner ? name : "-") : name,
             shareable: true,
             uuid: uuid
         }).render(true)

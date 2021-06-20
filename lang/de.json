@@ -71,7 +71,6 @@
         "maintainCost": "Aufr.",
         "*": "*"
     },
-
     "Features": {
         "Object": "Objekt",
         "Spheres": "Sphären",
@@ -86,11 +85,9 @@
         "Demonic": "Dämonisch",
         "Temporal": "Temporal"
     },
-
     "LIGHT": {
         "daylight": "Tageslicht"
     },
-
     "DIALOG": {
         "RollMode": "Würfelmodus",
         "DeleteItem": "Eintrag entfernen?",
@@ -108,7 +105,6 @@
         "selectReaction": "Bitte wähle die passende Reaktion.",
         "selectAction": "Bitte wähle deine Handlung"
     },
-
     "Equipment": {
         "misc": "Allgemein",
         "clothes": "Kleidung",
@@ -129,7 +125,6 @@
         "blessed": "Geweiht",
         "money": "Geld"
     },
-
     "advanced": "Erweitert",
     "requiredFW": "Benötigter FW",
     "traditionArtifact": "Traditionsartefakt",
@@ -454,11 +449,18 @@
     "YouAlreadyHaveit": "Hast du bereits",
     "zkModifier": "Zähigkeit (Ziel)",
     "zoo": "Zoo",
-
     "Aggregated": {
         "noMoreAllowed": "Keine Proben mehr erlaubt."
     },
-
+    "MASTER": {
+        "sceneConfig": "Szeneneinstellung",
+        "awardXP": "Mit Abenteuerpunkten belohnen",
+        "awardXPText": "{heros} mit Abenteuerpunkten belohnen.",
+        "payText": "Silber an {heros} auszahlen.",
+        "getPaidText": "Silber von {heros} einziehen.",
+        "xpMessage": "<b>{heros}</b> hat/haben <b>{number}</b> Abenteuerpunkte erhalten.",
+        "doGroupCheck": "Modifikator für <b>{skill}</b> Gruppenprobe."
+    },
     "MODS": {
         "partChecks": "Teilprobenmodifikator",
         "FP": "Fertigkeitspunktemodifikator",
@@ -469,7 +471,6 @@
         "defenseMalus": "Verteidigungsmalus",
         "global": "Globaler Modifikator"
     },
-
     "WIZARD": {
         "addItem": "{item} hinzufügen",
         "careerdescr": "Bitte wähle die passenden Optionen der Karriere <b>{career}</b> und bestätige, um sie für <b class=\"apCost\">{cost}</b> Abenteuerpunkte zu deinem Charakter hinzuzufügen.",
@@ -486,7 +487,6 @@
         "attributesToChose": "Eigenschaftsänderungen",
         "generalTab": "Allgemein"
     },
-
     "SKILL": {
         "body": "Körpertalente",
         "social": "Gesellschaftstalente",
@@ -584,7 +584,6 @@
         "Willenskraft": "<p><b>Anwendungsgebiete</b>: Bekehren & Überzeugen widerstehen, Bedrohungen standhalten, Betören widerstehen, Einschüchtern widerstehen, Überreden widerstehen</p><p><b>Qualität</b>: Die Auswirkungen von Verführungs- oder Überredungsversuchen sind deutlich abgeschwächt oder es wird ihnen ganz widerstanden.</p><p><b>Misslungene Probe</b>: Der Held kann nicht widerstehen.</p><p><b>Kritischer Erfolg</b>: Der Held widersteht und kann von dieser Person oder Sache in nächster Zeit nicht mehr beeinflusst werden.</p><p><b>Patzer</b>: Der Held ist der Person, die ihn beeinflussen will, vollkommen verfallen oder fällt bei Anblick eines scheußlichen Dämons in Ohnmacht.</p>",
         "Zechen": "<p><b>Anwendungsgebiete</b>: Vermeidung von Betäubung durch Rauschmittel, Vermeidung von Schmerz durch Rauschmittel, Vermeidung von Verwirrung durch Rauschmittel</p><p><b>Qualität</b>: Der Held verträgt viel mehr als üblich.</p><p><b>Misslungene Probe</b>: Der Held erhält eine Stufe des Zustands Betäubung und erwacht am nächsten Tag mit Kopfschmerzen oder anderen unliebsamen Auswirkungen seines Gelages.</p><p><b>Kritischer Erfolg</b>: Dem Helden gelingt es, bis zum bitteren Ende durchzuhalten, und trotzdem geht es ihm am nächsten Morgen blendend.</p><p><b>Patzer</b>: Der Held begeht in seinem Zustand jedwede Peinlichkeit. Er zerlegt die halbe Taverne, wacht morgens nackt auf dem Markt oder in einem fremden Bett auf, plaudert Geheimnisse an den Feind aus und kann sich danach an nichts mehr erinnern.</p>"
     },
-
     "Book": {
         "Wizard": "Journal Browser",
         "Description": "Willkommen im Journal Browser. Dieses Tool soll dich bei der Verwendung von Quellen-, Regel- und Abenteuermodulen unterstützen und einen Überblick über alle enthaltenen Inhalte liefern, wie z.B. die Szenen, Kapitel und Beschreibungen. Außerdem werden Hinweise zur Anwendung und gegebenenfalls automatische Funktionen zur Initialiserung der Module bereitgestellt.",
@@ -603,7 +602,6 @@
         "foundryUsage": "Foundry & DSA",
         "foundryUsagedesc": "<p>Mehr Informationen über die Verwendung von Foundry gibt's im <a href=\"https://github.com/Plushtoast/dsa5-foundryVTT/wiki\" target=\"_blank\">Wiki</a>.</p><p>Schnelle Hilfe kannst du im Ulisses Discord oder Foundry Discord bekommen.</p><p>Den Journalbrowser verwenden:<ul class=\"dsalist\"><li>Mit einem Rechtsklick auf Bilder kannst du diese separat anzeigen und deinen Spielern zeigen</li><li>Da die Module Kopien der Printausgaben sind, können Verweise und Formulierungen auf das jeweilige Printprodukt hinweisen und im Spiel abweichen.</li></ul></p>"
     },
-
     "Migrakel": {
         "Migration": "Actor Migration",
         "migrationDone": "Migration abgeschlossen",
@@ -616,7 +614,6 @@
         "skills": "Aktualisiere Icons von Talenten. ALLE MANUELLEN MODIFIKATIONEN WERDEN ÜBERSCHRIEBEN!",
         "skillsShort": "Talente migrieren"
     },
-
     "Skill-eeasy": "Extrem leicht (+5)",
     "Skill-veasy": "Sehr leicht (+3)",
     "Skill-easy": "Leicht (+1)",
@@ -624,7 +621,6 @@
     "Skill-difficult": "Schwierig (-1)",
     "Skill-hard": "Sehr schwierig (-3)",
     "Skill-vhard": "Extrem schwierig (-5)",
-
     "SKILLAbrev": {
         "body": "<span class=\"d20 diet-mu\">MU</span><span class=\"d20 diet-ge\">GE</span><span class=\"d20 diet-kk\">KK</span>",
         "social": "<span class=\"d20 diet-in\">IN</span><span class=\"d20 diet-ch\">CH</span><span class=\"d20 diet-ch\">CH</span>",
@@ -632,7 +628,6 @@
         "trade": "<span class=\"d20 diet-ff\">FF</span><span class=\"d20 diet-ff\">FF</span><span class=\"d20 diet-ko\">KO</span>",
         "nature": "<span class=\"d20 diet-mu\">MU</span><span class=\"d20 diet-ge\">GE</span><span class=\"d20 diet-ko\">KO</span>"
     },
-
     "EXP": {
         "legendary": "Legendär",
         "brillant": "Brillant",
@@ -642,26 +637,20 @@
         "average": "Durchschnittlich",
         "inexperienced": "Unerfahren"
     },
-
     "ABBR": {
         "value": "Wert",
         "modifiers": "Mod.",
         "advances": "Zukauf",
         "max": "Max"
     },
-
-
     "Range-short": "Kurz",
     "Range-medium": "Mittel",
     "Range-long": "Lang",
-
     "Money-D": "Dukaten",
     "Money-S": "Silber",
     "Money-H": "Heller",
     "Money-K": "Kreuzer",
-
     "WELCOME": "<p><h2>Willkommen zu DSA5<br> für Foundry VTT</h2></p><p>Wir wünschen dir viel Spaß beim Spielen von DSA5.</p><h3>Erste Schritte</h3><p>Für einen einfachen und schnellen Start empfehlen wir das Grundregelmodul in deinem System zu installieren. So kannst du unverzüglich Aventurien erkunden. Wenn du das Grundregelmodul nicht hast, musst du alle Gegenstände, Zauber, Sonderfertigkeiten, Charaktere, etc. selbst anlegen.</p><p>Das Modul kannst du im <a href=\"https://www.f-shop.de/virtual-tabletops/das-schwarze-auge-vtt/\" target=\"_blank\">F-Shop/</a> erwerben.</p><p>Für die Charaktererstellung stelle sicher, dass du per Drag and Drop die Spezies auf dein Charakterblatt ziehst (zur Berechnung der Attribute).</p><p>Du kannst auch das kostenlose <a href=\"https://github.com/Plushtoast/dsa5_introduction\" target=\"_blank\">Einsteigermodul</a> installieren, das Karten, vorgefertigte Charaktere und ein kleines Abenteuer beinhaltet.</p><h3>Hilfe</h3><p>Bei Problemen benutze die Hilfe (/help im Chat), besuche den ulisses-dsa Channel im <a target=\"_blank\" href=\"https://discord.gg/foundryvtt\">Foundry Discord</a> oder schau in unserem <a href=\"https://github.com/Plushtoast/dsa5-foundryVTT/wiki\" target=\"_blank\">Wiki</a> vorbei.</p><p>Diese Nachricht wird nur einmal angezeigt.</p>",
-
     "SHEET": {
         "PostItem": "Im Chat posten",
         "EditItem": "Editieren",
@@ -687,16 +676,13 @@
         "actorConfig": "Akteur konfigurieren",
         "weightOnActor": "Wird vom Akteur getragen"
     },
-
     "ITEMSHEET": {
         "offHandMod": "Bonus/Malus als Nebenhand (z.b. Parierwaffe)"
     },
-
     "ActorConfig": {
         "autoSize": "Automatische Tokengröße",
         "autoBar": "Automatische Tokenbars"
     },
-
     "RangeMod": {
         "short": "Nah [+2 auf FK, +1 TP]",
         "medium": "Mittel [+/–0 auf FK]",
@@ -710,7 +696,6 @@
         "step3": "Schemen [-6]",
         "step4": "Unsichtbar [Glückstreffer]"
     },
-
     "meleeVisionDisruption": {
         "0": "Klare Sicht",
         "1": "Leichte Störung [-1]",
@@ -718,7 +703,6 @@
         "3": "Schemen [-3]",
         "4": "Unsichtbar [Glückstreffer]"
     },
-
     "CHATNOTIFICATION": {
         "gainsBloodrush": "Der Zorn überwältigt {character} und er/sie verfällt in den Zustand Blutrausch.",
         "unableReroll": "Würfel {die} wegen Unfähigkeit erneut geworfen ({oldVal}/{newVal})",
@@ -729,7 +713,6 @@
         "requestGroupCheck": "{user} fordert eine Gruppenprobe in {item}",
         "enchantmentUsed": "<b>{item}</b> hat eine Ladung <b>{spell}</b> verbraucht."
     },
-
     "TT": {
         "careerSkills": "Komma separierte Talentliste, z.b. (Betören 2,Etikette 4)",
         "commaSeparated": "Komma separierte Liste",
@@ -738,7 +721,6 @@
         "applyEffectCaster": "Effekt auf Wirkenden übertragen",
         "applyEffectTargets": "Effekt auf Ziele übertragen"
     },
-
     "HELP": {
         "showHelp": "Hilfe anzeigen",
         "default": "Außerdem kannst du detaillierte Anleitungen und FAQs im <a href=\"https://github.com/Plushtoast/dsa5-foundryVTT/wiki\" target=\"_blank\">Wiki</a> finden und Unterstützung im ulisses-dsa Channel im <a href=\"https://discord.gg/foundryvtt\" target=\"_blank\">Foundry Discord</a> erhalten.",
@@ -761,7 +743,6 @@
         "groupcheck": "Gruppenprobe",
         "descrgroupcheck": "Fordere eine Gruppenprobe an. (Tab + Zahl = mit Modifikator)"
     },
-
     "ITEM.TypeAdvantage": "Vorteil",
     "ITEM.TypeAggregatedtest": "Sammelprobe",
     "ITEM.TypeAmmunition": "Munition",
@@ -789,20 +770,16 @@
     "ITEM.TypeConsumable": "Verbrauchsgegenstand",
     "ITEM.TypeSpellextension": "Zauber/Liturgieerweiterung",
     "ITEM.TypeApplication": "Anwendungsgebiet",
-
     "ACTOR.TypeCharacter": "Charakter",
     "ACTOR.TypeNpc": "Nichtspielercharakter",
     "ACTOR.TypeCreature": "Kreatur",
-
     "character": "Charakter",
     "npc": "Nichtspielercharakter",
     "creature": "Kreatur",
-
     "UNITS": {
         "weight": "Gewicht in Stein",
         "money": "Wert in Silberstücken"
     },
-
     "SIZE": {
         "tiny": "Winzig",
         "small": "Klein",
@@ -810,7 +787,6 @@
         "big": "Groß",
         "giant": "Riesig"
     },
-
     "NarrowSpaceModifiers": {
         "weapon": {
             "short": "Kurze Waffe, +-0 AT/PA",
@@ -823,7 +799,6 @@
             "long": "Großer Schild, -6 AT/-4 PA"
         }
     },
-
     "RANGESIZE": {
         "tiny": "Winzig [-8]",
         "small": "Klein [-4]",
@@ -831,14 +806,12 @@
         "big": "Groß [+4]",
         "giant": "Riesig [+8]"
     },
-
     "DSAREGEX": {
         "combatRounds": "( )?(in )?(Kampfrunde(n)?|KR(s)?)",
         "minutes": "( )?(in )?(minute(n)?|min)",
         "hours": "( )?(in )?(stunde(n)?)",
         "days": "( )?(in )?tag(e)?"
     },
-
     "ActiveEffects": {
         "hideOnToken": "Am Token verstecken",
         "hidePlayers": "Vor Spielern verstecken",
@@ -856,32 +829,26 @@
             "macro": "Macro",
             "creature": "Beschwörung/Gestaltwandlung"
         }
-
     },
-
     "ROLL": {
         "Targeting": "gegen",
         "failed": "ist gescheitert"
     },
-
     "OPPOSED": {
         "winsFP": "<b>{winner}</b> gewinnt gegen <b>{loser}</b> mit {SL} Qualitätsstufe(n)",
         "wins": "<b>{winner}</b> gewinnt gegen <b>{loser}</b>",
         "attackOfOpportunity": "<b>Beschreibung</b>: Passierschlag, Verteidigung unmöglich"
     },
-
     "ReverseSpellRanges": {
         "berühren": "touch",
         "selbst": "self"
     },
-
     "LocalizedAbilityModifiers": {
         "at": "at",
         "pa": "pa",
         "tp": "tp",
         "dm": "vm"
     },
-
     "LocalizedIDs": {
         "deaf": "Taub",
         "blind": "Blind",
@@ -934,9 +901,7 @@
         "selfControl": "Selbstbeherrschung",
         "propertyKnowledge": "Merkmalskenntnis",
         "propertyFocus": "Merkmalsfokus"
-
     },
-
     "DSAError": {
         "MacroItemMissing": "Dein Charakter hat kein Item namens {item}. Stelle sicher, dass dir entweder ein Charakter zugeordnet ist oder du einen Token für den Wurf markierst.",
         "APUpdateError": "AP Wert konnte nicht angepasst werden. Bitte manuell durchführen.",
@@ -973,7 +938,6 @@
         "enchantmentNotFound": "Referenzierter Zauber konnte nicht gefunden werden",
         "nestedEffectNotSupported": "Foundry unterstützt das Hinzufügen von Effekten derzeit nur im Item Directory."
     },
-
     "Shapeshift": {
         "title": "Gestaltwandlung",
         "description": "Bestätige bitte, sofern du {source} in {target} gestaltwandeln möchtest. Dabei wird ein neuer Charakter angelegt, welcher die neuen kombinierten Attribute beinhaltet. Stelle sicher, dass du diesen Vorgang erneut wiederholst und die alte Gestaltwandlung löscht, wenn sich die Attribute der Quelle verändern.<br>Entscheide wo die Attribute und Fähigkeiten ihren Ursprung nehmen:",
@@ -985,7 +949,6 @@
         "keepVision": "Sichteinstellung übernehmen",
         "takeSkills": "Talente übernehmen"
     },
-
     "COMBATSKILLCATEGORY": {
         "subcategory": "Subkategorie",
         "0": "Basismanöver",
@@ -994,7 +957,6 @@
         "3": "Passiv",
         "4": "Allgemein"
     },
-
     "CEREMONYMODIFIER": {
         "holysite": "Heiligtum der Gottheit (+2)",
         "temple": "Tempel der Gottheit (+1)",
@@ -1016,7 +978,6 @@
         "rightClothes": "Passende Kleidung (+1)",
         "rightEquipment": "Passende Gerätschaften (+1)"
     },
-
     "PAYMENT": {
         "pay": "<b>{actor}</b> bezahlt seine/ihre Schulden von {amount}.",
         "getPaid": "<b>{actor}</b> erhält seine/ihre Bezahlung von {amount}.",
@@ -1033,7 +994,6 @@
         "onlyActors": "Nur Spieler können bezahlen/bezahlt werden oder dir wurde kein Charakter zugeordnet.",
         "cannotpay": "<b>{actor}</b> kann seine Schulden von {amount} nicht bezahlen."
     },
-
     "rangeMovementOptions": {
         "STATIONARY": "steht still (+2)",
         "SLOW": "bewegt sich leicht (+-0)",
@@ -1043,25 +1003,21 @@
         "SHOOTERRUNNING": "rennt (-4)",
         "SHOOTERSTATIONARY": "ist stationär (+-0)"
     },
-
     "mountedRangeOptions": {
         "STATIONARY": "steht (+-0)",
         "SCHRITT": "im Schritt (-4)",
         "GALOPP": "im Galopp (-8)"
     },
-
     "regnerationCampLocations": {
         "normal": "Normal",
         "bad": "Schlechter Lagerplatz (-1)",
         "good": "Gute Unterkunft (+1)"
     },
-
     "regenerationInterruptOptions": {
         "small": "Klein - Wache/Ruhestörung (-1)",
         "big": "Groß - Überfall/Hundswache (-2)",
         "none": "Keine (+-0)"
     },
-
     "CHATCONTEXT": {
         "Reroll": "Wurf wiederholen (1 Schip)",
         "AddQS": "QS um eins erhöhen (1 Schip)",
@@ -1074,7 +1030,6 @@
         "showData": "Details für Spieler aufdecken",
         "improveFate": "Wurf verbessern (1 Schip)"
     },
-
     "SCHIPSKILLS": {
         "meleeweaponattack": "Attacke verbessern",
         "meleeweaponparry": "Parade verbessern",
@@ -1082,13 +1037,11 @@
         "dodge": "Ausweichen verbessern",
         "char": "Eigenschaft verbessern"
     },
-
     "aimOptions": {
         "0": "Ungezielt",
         "1": "1 Aktion zielen",
         "2": "2 Aktionen zielen"
     },
-
     "DSASETTINGS": {
         "meleeBotchTableEnabled": "Nahkampf-Patzertabelle",
         "meleeBotchTableEnabledHint": "Anstatt 1W6+2 SP bei einem Patzer, kann auch diese Tabelle benutzt werden (optionale Regel).",
@@ -1119,11 +1072,9 @@
         "hideEffects": "Status Effekte verbergen",
         "hideEffectsHint": "Zeige Status Effekte an Tokens nur deren Besitzer"
     },
-
     "COMBATTRACKER": {
         "noDefenses": "Anzahl Verteidigungen"
     },
-
     "CHATFATE": {
         "faitepointUsed": "Das Schicksal ändert sich",
         "reroll": "{character} würfelt erneut.",
@@ -1135,7 +1086,6 @@
         "selectDieToReroll": "Wähle die zu wiederholenden Würfel",
         "Improve": "{character} verbessert den Wurf um 2"
     },
-
     "SPELLMISCAST": {
         "2": "Der Geist des Zauberers tauscht für 1D6 Tag(e) den Körper mit dem nächsten Lebewesen in seiner Nähe, das größer ist als eine Ratte.",
         "3": "Der Zauberer wird für 1D6 Tag(e) von Zustand Lästige Mindergeister verfolgt.",
@@ -1201,7 +1151,6 @@
         "11": "Der Held hat sich selbst verletzt und erleidet Schaden. Der Schaden seiner Waffe wird unter Einbeziehung des Schadensbonus ausgewürfelt. Bei unbewaffneten Kämpfern wird 1W6 TP angenommen.",
         "12": "Ein schwerer Eigentreffer des Helden. Der Schaden seiner Waffe wird unter Einbeziehung des Schadensbonus ausgewürfelt und dann verdoppelt. Bei unbewaffneten Kämpfern wird 1W6 TP angenommen."
     },
-
     "TABLENAMES": {
         "Defense": "Verteidigung-Patzertabelle",
         "Melee": "Nahkampf-Patzertabelle",
@@ -1209,7 +1158,6 @@
         "Liturgy": "Patzertabelle für Liturgien/Zeremonien",
         "Spell": "Patzertabelle für Zauber/Rituale"
     },
-
     "CONDITION": {
         "shapeshift": "Gestaltwandlung",
         "encumbered": "Belastung",
@@ -1238,7 +1186,6 @@
         "add": "Zustand hinzufügen",
         "minorSpirits": "Lästige Mindergeister"
     },
-
     "MERCHANT": {
         "buy": "Kaufen",
         "sell": "Verkaufen",
@@ -1259,7 +1206,6 @@
         "locked": "Abgeschlossen",
         "selectRandomGoods": "Wähle Kategorien und Anzahl an zusätzlichen zufälligen Waren. Das Hinzufügen dauert einen Moment, wenn der Index der Bibliothek noch nicht erstellt wurde."
     },
-
     "CONDITIONDESCRIPTION": {
         "minorSpirits": "Mindergeister sind kleine Elementarwesen, die zwar nicht gefährlich sind, aber lästig werden können. Einige Zauberanwender ziehen beim Wirken ihrer Magie Mindergeister geradezu an.",
         "shapeshift": "Diese Kreatur hat ihre Gestalt gewandelt",

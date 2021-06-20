@@ -13,8 +13,6 @@ DSA5.statusEffects = [{
             }
         }
     },
-
-
     {
         id: "prone",
         label: "CONDITION.prone",
@@ -206,7 +204,7 @@ DSA5.statusEffects = [{
         flags: {
             dsa5: {
                 "value": 1,
-                "editable": false,
+                "editable": true,
                 "max": 4
             }
         }

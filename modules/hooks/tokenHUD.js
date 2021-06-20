@@ -32,5 +32,7 @@ export default function() {
                 ev.preventDefault()
             }
         })
+        // Prevent double calling of modifytokenattribute
+        html.find(".attribute input").off('change')
     })
 }

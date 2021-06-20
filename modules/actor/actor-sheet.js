@@ -677,7 +677,7 @@ export default class ActorSheetDsa5 extends ActorSheet {
         });
 
         html.find('.charimg').mousedown(ev => {
-            if (ev.button == 2) DSA5_Utility.showArtwork(this.actor)
+            if (ev.button == 2) DSA5_Utility.showArtwork(this.actor, true)
         })
 
         let filterTalents = ev => this._filterTalents($(ev.currentTarget))

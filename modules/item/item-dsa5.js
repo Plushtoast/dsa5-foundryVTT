@@ -1338,7 +1338,7 @@ class SkillItemDSA5 extends Itemdsa5 {
     }
 
     static setupDialog(ev, options, skill, actor, tokenId) {
-        let title = skill.name + " " + game.i18n.localize("Test");
+        let title = skill.name + " " + game.i18n.localize("Test") + (options.subtitle || "");
         let testData = {
             opposable: true,
             source: skill,
