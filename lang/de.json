@@ -459,7 +459,9 @@
         "payText": "Silber an {heros} auszahlen.",
         "getPaidText": "Silber von {heros} einziehen.",
         "xpMessage": "<b>{heros}</b> hat/haben <b>{number}</b> Abenteuerpunkte erhalten.",
-        "doGroupCheck": "Modifikator für <b>{skill}</b> Gruppenprobe."
+        "doGroupCheck": "Modifikator für <b>{skill}</b> Gruppenprobe.",
+        "payTT": "Ausnehmen",
+        "randomPlayer": "Zufälligs Opfer"
     },
     "MODS": {
         "partChecks": "Teilprobenmodifikator",

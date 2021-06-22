@@ -472,7 +472,9 @@
         "payText": "Pay silverthalers to {heros}.",
         "getPaidText": "Take silverthalers from {heros}.",
         "xpMessage": "<b>{heros}</b> received <b>{number}</b> Adventure Points.",
-        "doGroupCheck": "Modifier for <b>{skill}</b> Group Check."
+        "doGroupCheck": "Modifier for <b>{skill}</b> Group Check.",
+        "payTT": "Loot player",
+        "randomPlayer": "Random victim"
     },
 
     "WIZARD": {

@@ -1259,7 +1259,7 @@ form.dsa5.item-sheet {
     background-image: url(../icons/backgrounds/blackcreaturebot.webp);
 }
 
-.window-app.masterMenu:after{
+.window-app.masterMenu:after {
     background-image: url(../icons/backgrounds/masterborder.webp);
 }
 
@@ -1535,7 +1535,8 @@ input[type="search"] {
     background-repeat: no-repeat;
     display: inline-block;
 }
-.schip.tiny{
+
+.schip.tiny {
     width: 15px;
     height: 15px;
 }
@@ -2088,19 +2089,19 @@ a.inline-roll {
     background-position: center;
 }
 
-.specImg.ab_1{
+.specImg.ab_1 {
     background-image: url(../icons/categories/Combat_Skill.webp);
 }
 
-.specImg.ab_2{
+.specImg.ab_2 {
     background-image: url(../icons/categories/Skill.webp);
 }
 
-.specImg.ab_3{
+.specImg.ab_3 {
     background-image: url(../icons/categories/Armor.webp);
 }
 
-.specImg.ab_4{
+.specImg.ab_4 {
     background-image: url(../icons/categories/ability_general.webp);
 }
 
@@ -2541,21 +2542,25 @@ select.noAppearance {
     bottom: -5px;
 }
 
-.verticalFlex{
-    display:flex;
+.verticalFlex {
+    display: flex;
     flex-direction: row;
     position: relative;
 }
 
-.verticalFlex .bar{
+.verticalFlex .bar {
     flex: 1;
     height: 30%;
 }
 
-.verticalFlex .bar.AsP{
+.verticalFlex .bar.AsP {
     top: 30%;
 }
-.verticalFlex .bar.KaP{
+
+.verticalFlex .bar.KaP {
     top: 60%;
 }
 
+.hero.victim {
+    box-shadow: inset 0px 0px 10px #8a0202;
+}
