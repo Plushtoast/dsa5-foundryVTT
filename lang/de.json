@@ -461,7 +461,7 @@
         "xpMessage": "<b>{heros}</b> hat/haben <b>{number}</b> Abenteuerpunkte erhalten.",
         "doGroupCheck": "Modifikator für <b>{skill}</b> Gruppenprobe.",
         "payTT": "Ausnehmen",
-        "randomPlayer": "Zufälligs Opfer"
+        "randomPlayer": "Zufälliges Opfer"
     },
     "MODS": {
         "partChecks": "Teilprobenmodifikator",

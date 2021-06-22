@@ -2564,3 +2564,7 @@ select.noAppearance {
 .hero.victim {
     box-shadow: inset 0px 0px 10px #8a0202;
 }
+
+#combat li.combatant .token-resource {
+    color: rgb(119, 113, 113);
+}

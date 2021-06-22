@@ -128,7 +128,7 @@ class GameMasterMenu extends Application {
         html.find('.schip').click(ev => {
             ev.preventDefault()
             let val = Number(ev.currentTarget.getAttribute("data-val"))
-            if (val == 1 && html.find(".fullSchip").length == 1) val = 0
+            if (val == 1 && $(ev.currentTarget).closest('.hero').find(".fullSchip").length == 1) val = 0
 
             game.actors.get(this.getID(ev)).update({ "data.status.fatePoints.value": val })
         })
