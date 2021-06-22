@@ -30,119 +30,85 @@ export default class Migrakel {
         return result
     }
 
+    static async updateVals(actor, condition, updater) {
+        const itemLibrary = game.dsa5.itemLibrary
+        let itemsToDelete = []
+        let itemsToCreate = []
+        for (let item of actor.items.filter(x => condition(x))) {
+            let find = await itemLibrary.findCompendiumItem(item.name, item.type)
+            if (find.length > 0) {
+                find = find.find(x => x.name == item.name && x.type == item.type)
+                if (!find) continue
+
+                console.log(`MIGRATION - Updated ${item.name}`)
+                const newData = mergeObject(item.toObject(), updater(find))
+                itemsToCreate.push(newData)
+                itemsToDelete.push(item.id)
+            }
+        }
+        await actor.createEmbeddedDocuments("Item", itemsToCreate)
+        await actor.deleteEmbeddedDocuments("Item", itemsToDelete)
+        ui.notifications.notify(game.i18n.localize("Migrakel.migrationDone"))
+    }
+
     static async updateSpellsAndLiturgies(actor) {
         if (await this.showDialog(game.i18n.localize('Migrakel.spells'))) {
-            const itemLibrary = game.dsa5.itemLibrary
-            let itemsToDelete = []
-            let itemsToCreate = []
-            for (let item of actor.items.filter(x => ["spell", "liturgy", "ritual", "ceremony"].includes(x.type))) {
-                let find = await itemLibrary.findCompendiumItem(item.name, item.type)
-                if (find.length > 0) {
-                    find = find.find(x => x.name == item.name && x.type == item.type)
-                    if (!find) continue
-
-                    const update = {
-                        data: { effectFormula: { value: find.data.data.effectFormula.value } },
-                        effects: find.effects.toObject(),
-                    }
-                    console.log(`MIGRATION - Updated ${item.name}`)
-                    const newData = mergeObject(item.toObject(), update)
-                    itemsToCreate.push(newData)
-                    itemsToDelete.push(item.id)
+            const condition = (x) => { return ["spell", "liturgy", "ritual", "ceremony"].includes(x.type) }
+            const updator = (find) => {
+                return {
+                    data: { effectFormula: { value: find.data.data.effectFormula.value } },
+                    effects: find.effects.toObject(),
                 }
             }
-
-            await actor.deleteEmbeddedDocuments("Item", itemsToDelete)
-            await actor.createEmbeddedDocuments("Item", itemsToCreate)
-            ui.notifications.notify(game.i18n.localize("Migrakel.migrationDone"))
+            this.updateVals(actor, condition, updator)
         }
     }
 
     static async updateSpecialAbilities(actor) {
         if (await this.showDialog(game.i18n.localize('Migrakel.abilities'))) {
-            const itemLibrary = game.dsa5.itemLibrary
-            let itemsToDelete = []
-            let itemsToCreate = []
-            for (let item of actor.items.filter(x => ["specialability", "advantage", "disadvantage"].includes(x.type))) {
-                let find = await itemLibrary.findCompendiumItem(item.name, item.type)
-
-                if (find.length > 0) {
-                    find = find.find(x => x.name == item.name && x.type == item.type)
-                    if (!find) continue
-
-                    let update = {
-                        data: { effect: { value: find.data.data.effect.value } },
-                        effects: find.effects.toObject()
-                    }
-                    if (item.type == "specialability") {
-                        mergeObject(update, {
-                            data: {
-                                category: { sub: find.data.data.category.sub || 0 },
-                                list: { value: find.data.data.list.value }
-                            }
-                        })
-                    }
-                    console.log(`MIGRATION - Updated ${item.name}`)
-                    const newData = mergeObject(item.toObject(), update)
-                    itemsToCreate.push(newData)
-                    itemsToDelete.push(item.id)
+            const updator = (find) => {
+                let update = {
+                    data: { effect: { value: find.data.data.effect.value } },
+                    effects: find.effects.toObject()
                 }
+                if (find.type == "specialability") {
+                    mergeObject(update, {
+                        data: {
+                            category: { sub: find.data.data.category.sub || 0 },
+                            list: { value: find.data.data.list.value }
+                        }
+                    })
+                }
+                return update
             }
-            await actor.deleteEmbeddedDocuments("Item", itemsToDelete)
-            await actor.createEmbeddedDocuments("Item", itemsToCreate)
-            ui.notifications.notify(game.i18n.localize("Migrakel.migrationDone"))
+            const condition = (x) => { return ["specialability", "advantage", "disadvantage"].includes(x.type) }
+            this.updateVals(actor, condition, updator)
         }
     }
 
     static async updateCombatskills(actor) {
         if (await this.showDialog(game.i18n.localize('Migrakel.cskills'))) {
-            const itemLibrary = game.dsa5.itemLibrary
-            let itemsToDelete = []
-            let itemsToCreate = []
-            for (let item of actor.items.filter(x => ["combatskill"].includes(x.type))) {
-                let find = await itemLibrary.findCompendiumItem(item.name, item.type)
-                if (find.length > 0) {
-                    find = find.find(x => x.name == item.name && x.type == item.type)
-                    if (!find) continue
-
-                    const update = {
-                        effects: find.effects.toObject()
-                    }
-                    console.log(`MIGRATION - Updated ${item.name}`)
-                    const newData = mergeObject(item.toObject(), update)
-                    itemsToCreate.push(newData)
-                    itemsToDelete.push(item.id)
+            const updator = (find) => {
+                return {
+                    effects: find.effects.toObject()
                 }
             }
-            await actor.deleteEmbeddedDocuments("Item", itemsToDelete)
-            await actor.createEmbeddedDocuments("Item", itemsToCreate)
-            ui.notifications.notify(game.i18n.localize("Migrakel.migrationDone"))
+            const condition = (x) => {
+                return ["combatskill"].includes(x.type)
+            }
+            this.updateVals(actor, condition, updator)
         }
     }
 
     static async updateSkills(actor) {
         if (await this.showDialog(game.i18n.localize('Migrakel.skills'))) {
-            const itemLibrary = game.dsa5.itemLibrary
-            let itemsToDelete = []
-            let itemsToCreate = []
-            for (let item of actor.items.filter(x => ["skill"].includes(x.type))) {
-                let find = await itemLibrary.findCompendiumItem(item.name, item.type)
-                if (find.length > 0) {
-                    find = find.find(x => x.name == item.name && x.type == item.type)
-                    if (!find) continue
-
-                    const update = {
-                        img: find.img
-                    }
-                    console.log(`MIGRATION - Updated ${item.name}`)
-                    const newData = mergeObject(item.toObject(), update)
-                    itemsToCreate.push(newData)
-                    itemsToDelete.push(item.id)
+            const condition = (x) => { return ["skill"].includes(x.type) }
+            const updator = (find) => {
+                return {
+                    img: find.img
                 }
             }
-            await actor.deleteEmbeddedDocuments("Item", itemsToDelete)
-            await actor.createEmbeddedDocuments("Item", itemsToCreate)
-            ui.notifications.notify(game.i18n.localize("Migrakel.migrationDone"))
+            this.updateVals(actor, condition, updator)
         }
     }
 }

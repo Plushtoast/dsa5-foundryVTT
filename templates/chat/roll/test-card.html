@@ -45,4 +45,8 @@
 <div class="card-content">
     <b>{{localize "effect"}}</b>: {{{testData.parsedEffect}}}
 </div>
-{{/if}}
+{{/if}} {{#each testData.other as |string index|}}
+<div>
+    {{{string}}}
+</div>
+{{/each}}

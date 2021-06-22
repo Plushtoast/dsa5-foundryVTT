@@ -225,6 +225,9 @@ export default class Actordsa5 extends Actor {
                         case "ritual":
                             apply = false
                             break
+                        case "specialability":
+                            apply = item.data.data.category.value != "Combat"
+                            break
                     }
                     e.notApplicable = !apply
 
@@ -1363,10 +1366,11 @@ export default class Actordsa5 extends Actor {
     }
 
     async _preCreate(data, options, user){
+        await super._preCreate(data,options,user)
         let update = {}
         mergeObject(update, {
             token: {
-                bar1: { attribute: "status.wounds" }
+                bar1: { attribute: "status.astralenergy" }
             }
         })
 
@@ -1382,7 +1386,7 @@ export default class Actordsa5 extends Actor {
             })
         }
         this.data.update(update)
-        await super._preCreate(data,options,user)
+        
     }
 
     static _prepareRangeTrait(item) {

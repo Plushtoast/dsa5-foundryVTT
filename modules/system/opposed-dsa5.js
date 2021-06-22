@@ -238,7 +238,8 @@ export default class OpposedDsa5 {
 
     static async clearOpposed(actor) {
         await actor.update({
-            [`flags.-=oppose`]: null })
+            [`flags.-=oppose`]: null
+        })
     }
 
     static async _handleReaction(ev) {
@@ -286,8 +287,10 @@ export default class OpposedDsa5 {
         let opposedResult = await this.evaluateOpposedTest(attacker.testResult, defender.testResult, options);
         this.formatOpposedResult(opposedResult, attacker.speaker, defender.speaker);
         this.rerenderMessagesWithModifiers(opposedResult, attacker, defender);
+        await Hooks.call("finishOpposedTest", attacker, defender, opposedResult, options)
         await this.renderOpposedResult(opposedResult, options)
         await this.hideReactionButton(options.startMessageId)
+
         return opposedResult
     }
 

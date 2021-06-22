@@ -75,27 +75,31 @@
                 }
             },
             "status": {
+                "hitbox": 0,
                 "status": {
                     "wounds": {
                         "initial": 0,
                         "value": 0,
                         "advances": 0,
                         "modifier": 0,
-                        "current": 8
+                        "current": 8,
+                        "max": 0
                     },
                     "astralenergy": {
                         "initial": 0,
                         "value": 0,
                         "advances": 0,
                         "modifier": 0,
-                        "current": 0
+                        "current": 0,
+                        "max": 0
                     },
                     "karmaenergy": {
                         "initial": 0,
                         "value": 0,
                         "advances": 0,
                         "modifier": 0,
-                        "current": 0
+                        "current": 0,
+                        "max": 0
                     },
                     "soulpower": {
                         "initial": 0,

@@ -998,11 +998,9 @@ export default class DiceDSA5 {
         const source = testData.preData.source
         if (["spell", "liturgy", "ritual", "ceremony"].includes(source.type)) {
             return testData.successLevel > 0 && source.effects.length > 0
-        }
-        else if(["disease","poison"].includes(source.type)){
+        } else if (["disease", "poison"].includes(source.type)) {
             return source.effects.length > 0
-        }
-        else {
+        } else {
             const specAbIds = testData.preData.situationalModifiers.filter(x => x.specAbId).map(x => x.specAbId)
             if (specAbIds.length > 0) {
                 const specAbs = testData.preData.extra.actor.items.filter(x => specAbIds.includes(x._id))
@@ -1016,8 +1014,11 @@ export default class DiceDSA5 {
     }
 
     static async renderRollCard(chatOptions, testData, rerenderMessage) {
+
         const applyEffect = this.addApplyEffectData(testData)
         const preData = deepClone(testData.preData)
+        const hideDamage = rerenderMessage ? rerenderMessage.data.flags.data.hideDamage : preData.mode == "attack"
+        await Hooks.call("postProcessDSARoll", chatOptions, testData, rerenderMessage, hideDamage)
         delete preData.extra.actor
         delete testData.actor
         delete testData.preData
@@ -1027,7 +1028,7 @@ export default class DiceDSA5 {
             testData,
             hideData: game.user.isGM,
             preData,
-            hideDamage: rerenderMessage ? rerenderMessage.data.flags.data.hideDamage : preData.mode == "attack",
+            hideDamage,
             modifierList: preData.situationalModifiers.filter(x => x.value != 0),
             applyEffect
         }
@@ -1086,7 +1087,7 @@ export default class DiceDSA5 {
 
         if (actor) {
             game.user.updateTokenTargets([]);
-            let options = { modifier: modifier }
+            let options = { modifier }
 
             switch (category) {
                 case "attribute":
@@ -1108,7 +1109,7 @@ export default class DiceDSA5 {
 
         if (actor) {
             game.user.updateTokenTargets([]);
-            let options = { modifier: modifier }
+            let options = { modifier }
             switch (category) {
                 case "attribute":
                     break
@@ -1198,7 +1199,7 @@ export default class DiceDSA5 {
         const testData = message.data.flags.data.postData
         const speaker = message.data.speaker
 
-        if(["poison","disease"].includes(source.type)){
+        if (["poison", "disease"].includes(source.type)) {
             testData.qualityStep = testData.successLevel > 0 ? 2 : 1
         }
 
@@ -1207,7 +1208,7 @@ export default class DiceDSA5 {
         const effects = this._parseEffectDuration(source, testData, message.data.flags.data.preData, attacker)
         let actors = []
         if (mode == "self") {
-            if (attacker) attacker.push(actor)
+            if (attacker) actors.push(attacker)
         } else {
             if (targets) actors = targets.map(x => DSA5_Utility.getSpeaker(x))
             else if (game.user.targets.size) {
