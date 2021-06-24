@@ -638,7 +638,8 @@
                 "value": "1d6"
             },
             "reloadTime": {
-                "value": 1
+                "value": 1,
+                "progress": 0
             },
             "reach": {
                 "value": "5/25/40"

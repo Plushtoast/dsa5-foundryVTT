@@ -7,6 +7,7 @@ import DSA5ChatListeners from "../system/chat_listeners.js";
 import DSA5StatusEffects from "../status/status_effects.js";
 import DialogActorConfig from "../dialog/dialog-actorConfig.js";
 import { itemFromDrop } from "../system/view_helper.js";
+import Actordsa5 from "./actor-dsa5.js";
 
 export default class ActorSheetDsa5 extends ActorSheet {
     get actorType() {
@@ -376,10 +377,26 @@ export default class ActorSheetDsa5 extends ActorSheet {
             elem.trigger("change")
         })
 
+        html.find('.loadWeapon').mousedown(async(ev) => {
+            let itemId = this._getItemId(ev)
+            let item = (await this.actor.getEmbeddedDocument("Item", itemId)).toObject()
+            if (item.data.currentAmmo.value == "") return
+
+            const lz = Actordsa5.calcLZ(item, this.actor)
+
+            if (ev.button == 0)
+                item.data.reloadTime.progress = Math.min(item.data.reloadTime.progress + 1, lz)
+            else if (ev.button == 2)
+                item.data.reloadTime.progress = 0
+
+            await this.actor.updateEmbeddedDocuments("Item", [item]);
+        })
+
         html.find('.ammo-selector').change(async(ev) => {
             ev.preventDefault()
             let itemId = this._getItemId(ev);
             let item = (await this.actor.getEmbeddedDocument("Item", itemId)).toObject()
+
             item.data.currentAmmo.value = $(ev.currentTarget).val()
             await this.actor.updateEmbeddedDocuments("Item", [item]);
         })

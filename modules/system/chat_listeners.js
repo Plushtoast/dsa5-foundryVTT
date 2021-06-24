@@ -36,21 +36,32 @@ export default class DSA5ChatListeners {
 
 
 
-    static async check3D20(){
-        const skill = {
-            name: "3d20",
-            type: "skill",
-            data: {
-                "talentValue": { "value": 0 },
-                "characteristic1": { "value": "mu" },
-                "characteristic2": { "value": "kl" },
-                "characteristic3": { "value": "in" },
-                "RPr": { "value": "no" },
-                "burden": { "value": "no" }
+    static async check3D20(target){
+        let skill
+        let attrs = 12
+        if(target){
+            target = target.get(0)
+            skill = await DSA5_Utility.skillByName(target.textContent)
+            if(target.dataset.attrs) attrs = target.dataset.attrs.split("|")
+            if(skill) skill= skill.toObject()
+        }
+        
+        if(!skill){ 
+            skill = {
+                name: "3d20",
+                type: "skill",
+                data: {
+                    "talentValue": { "value": 0 },
+                    "characteristic1": { "value": "mu" },
+                    "characteristic2": { "value": "kl" },
+                    "characteristic3": { "value": "in" },
+                    "RPr": { "value": "no" },
+                    "burden": { "value": "no" }
+                }
             }
         }
 
-        const actor = await DSA5_Utility.emptyActor()
+        const actor = await DSA5_Utility.emptyActor(attrs)
         actor.setupSkill(skill, {}, "emptyActor").then(setupData => {
             actor.basicTest(setupData)
         })

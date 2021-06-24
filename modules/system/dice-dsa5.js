@@ -58,18 +58,35 @@ export default class DiceDSA5 {
             let html = await renderTemplate(dialogOptions.template, dialogOptions.data);
             return new Promise((resolve, reject) => {
                 let dialog = DSA5Dialog.getDialogForItem(testData.source.type)
+                let buttons = {
+                    rollButton: {
+                        label: game.i18n.localize("Roll"),
+                        callback: (html) => {
+                            game.dsa5.memory.remember(testData.extra.speaker, testData.source, testData.mode, html)
+                            resolve(dialogOptions.callback(html))
+                        }
+                    }
+                }
+                if (testData.source.type == "rangeweapon") {
+                    const LZ = Actordsa5.calcLZ(testData.source, testData.extra.actor)
+                    const progress = testData.source.data.reloadTime.progress
+                    if (progress < LZ) {
+                        mergeObject(buttons, {
+                            reloadButton: {
+                                label: `${game.i18n.localize("WEAPON.reload")} (${progress}/${LZ})`,
+                                callback: async() => {
+                                    await (await DSA5_Utility.getSpeaker(testData.extra.speaker)).updateEmbeddedDocuments("Item", [{ _id: testData.source._id, "data.reloadTime.progress": progress + 1 }])
+                                    const infoMsg = game.i18n.format("WEAPON.isReloading", { actor: testData.extra.actor.name, item: testData.source.name, status: `${progress+1}/${LZ}` })
+                                    await ChatMessage.create(DSA5_Utility.chatDataSetup(infoMsg))
+                                }
+                            }
+                        })
+                    }
+                }
                 new dialog({
                     title: dialogOptions.title,
                     content: html,
-                    buttons: {
-                        rollButton: {
-                            label: game.i18n.localize("Roll"),
-                            callback: (html) => {
-                                game.dsa5.memory.remember(testData.extra.speaker, testData.source, testData.mode, html)
-                                resolve(dialogOptions.callback(html))
-                            }
-                        }
-                    },
+                    buttons,
                     default: "rollButton"
                 }).recallSettings(testData.extra.speaker, testData.source, testData.mode).render(true);
             })
@@ -1042,7 +1059,7 @@ export default class DiceDSA5 {
                 chatData.modifierList.push({ name: game.i18n.localize('MODS.QS'), value: preData.advancedModifiers.qls })
         }
 
-        DSA5SoundEffect.playEffect(preData.mode, preData.source)
+        DSA5SoundEffect.playEffect(preData.mode, preData.source, testData.successLevel)
 
         if (["gmroll", "blindroll"].includes(chatOptions.rollMode)) chatOptions["whisper"] = game.users.filter(user => user.isGM).map(x => x.data._id)
         if (chatOptions.rollMode === "blindroll") chatOptions["blind"] = true;

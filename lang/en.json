@@ -695,7 +695,7 @@
 
     "ActorConfig": {
         "autoSize": "Auto token size",
-        "autoBar": "Auto token bars"
+        "autoBar": "Auto token ressource bars"
     },
 
     "RangeMod": {
@@ -721,12 +721,20 @@
         "4": "Invisible [Lucky hit]"
     },
 
+    "WEAPON": {
+        "loading": "Reloading state: {status}",
+        "loaded": "Reloaded",
+        "reload": "Reload",
+        "isReloading": "{actor} reloads {item} ({status})."
+    },
+
     "CHATNOTIFICATION": {
         "gainsBloodrush": "The rage consumes {character} and he/she gains the condition bloodrush.",
         "unableReroll": "Die {die} rolled again because of Incompetence ({oldVal}/{newVal})",
         "requestRoll": "{user} requests a roll in {item}",
         "editRoll": "Edit roll",
         "BlindRoll": "Blinder Wurf.",
+        "whisper": "Private message",
         "usesItem": "{actor} uses {item}.",
         "requestGroupCheck": "{user} requests a group check in {item}",
         "enchantmentUsed": "<b>{item}</b> used one charge of <b>{spell}</b>."
@@ -906,6 +914,8 @@
         "advancedRegenerationLeP": "tbd",
         "advancedRegenerationAsP": "tbd",
         "advancedRegenerationKaP": "tbd",
+        "throwingWeapons": "Throwing Weapons",
+        "quickdraw": "Quickdraw",
         "weakAstralBody": "Weak Astral Body",
         "weakKarmicBody": "Weak Karmic Body",
         "restrictedSenseSight": "Restricted Sense (Sight)",

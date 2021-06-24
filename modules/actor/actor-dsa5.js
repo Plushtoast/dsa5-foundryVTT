@@ -1411,6 +1411,13 @@ export default class Actordsa5 extends Actor {
         return item
     }
 
+    static calcLZ(item, actor){
+        if(item.data.combatskill.value == game.i18n.localize("LocalizedIDs.throwingWeapons"))
+            return Math.max(0, Number(item.data.reloadTime.value) - SpecialabilityRulesDSA5.abilityStep(actor, game.i18n.localize("LocalizedIDs.quickdraw")))
+
+        return Math.max(0, Number(item.data.reloadTime.value) - SpecialabilityRulesDSA5.abilityStep(actor, `${game.i18n.localize('LocalizedIDs.quickload')} (${game.i18n.localize(item.data.combatskill.value)})`))
+    }
+
     static _prepareRangeWeapon(item, ammunitions, combatskills, actor) {
         let skill = combatskills.find(i => i.name == item.data.combatskill.value)
         if (skill) {
@@ -1420,7 +1427,24 @@ export default class Actordsa5 extends Actor {
                 if (ammunitions) item.ammo = ammunitions.filter(x => x.data.ammunitiongroup.value == item.data.ammunitiongroup.value)
                 else item.ammo = actorData.inventory.ammunition.items.filter(x => x.data.ammunitiongroup.value == item.data.ammunitiongroup.value)
             }
-            item.LZ = Math.max(0, Number(item.data.reloadTime.value) - SpecialabilityRulesDSA5.abilityStep(actor, `${game.i18n.localize('LocalizedIDs.quickload')} (${game.i18n.localize(item.data.combatskill.value)})`))
+            item.LZ = Actordsa5.calcLZ(item, actor)
+            if(item.LZ > 0){
+                const progress = item.data.reloadTime.progress / item.LZ
+                item.title = game.i18n.format("WEAPON.loading", {status: `${item.data.reloadTime.progress}/${item.LZ}`})
+                item.progress = `${item.data.reloadTime.progress}/${item.LZ}`
+                if(progress >= 1){
+                    item.title = game.i18n.localize("WEAPON.loaded")
+                }
+                if (progress >= 0.5){
+                    item.transformRight = "181deg"
+                    item.transformLeft = `${Math.round(progress * 360 - 179)}deg`
+                }else{
+                    item.transformRight = `${Math.round(progress * 360 + 1)}deg`
+                    item.transformLeft = 0
+                }
+            }
+            
+
         } else {
             ui.notifications.error(game.i18n.format("DSAError.unknownCombatSkill", { skill: item.data.combatskill.value, item: item.name }))
         }
@@ -1471,7 +1495,10 @@ export default class Actordsa5 extends Actor {
         if (testData.extra.ammo && !testData.extra.ammoDecreased) {
             testData.extra.ammoDecreased = true
             testData.extra.ammo.data.quantity.value--;
-            await this.updateEmbeddedDocuments("Item", [{ _id: testData.extra.ammo._id, "data.quantity.value": testData.extra.ammo.data.quantity.value }]);
+            await this.updateEmbeddedDocuments("Item", [
+                { _id: testData.extra.ammo._id, "data.quantity.value": testData.extra.ammo.data.quantity.value },
+                {_id: testData.source._id, "data.reloadTime.progress": 0}
+            ]);
         }
 
         if (!options.suppressMessage)

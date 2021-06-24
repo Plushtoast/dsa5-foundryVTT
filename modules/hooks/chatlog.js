@@ -41,7 +41,7 @@ export default function() {
     });
 
     Hooks.on("chatMessage", (html, content, msg) => {
-        let cmd = content.match(/^\/(pay|getPaid|help$|conditions$|tables$|ch$)/)
+        let cmd = content.match(/^\/(pay|getPaid|help$|conditions$|tables)/)
         cmd = cmd ? cmd[0] : ""
         switch (cmd) {
             case "/pay":
@@ -65,10 +65,6 @@ export default function() {
             case "/tables":
                 DSA5ChatListeners.showTables()
                 return false
-            case "/ch":
-                DSA5ChatListeners.check3D20()
-                return false
-
         }
     })
 }

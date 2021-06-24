@@ -2030,13 +2030,19 @@ a.inline-roll {
     background: var(--bg-color);
 }
 
+.privateMessageIndicator .fas,
 .chatIndicator .fas {
     display: none;
-    color: #555;
+}
+
+.whisper .privateMessageIndicator .fas {
+    display: inline-block;
+    color: rgb(157, 13, 13);
 }
 
 .blind .chatIndicator .fa-eye-slash {
     display: inline-block;
+    color: rgb(0, 57, 191);
 }
 
 .dsa5.post-item img {
@@ -2567,4 +2573,79 @@ select.noAppearance {
 
 #combat li.combatant .token-resource {
     color: rgb(119, 113, 113);
+}
+
+.progress {
+    width: 27px;
+    height: 27px;
+    line-height: 27px;
+    background: none;
+    margin: 0 auto;
+    box-shadow: none;
+    position: relative;
+    float: right;
+}
+
+.progress>span {
+    width: 50%;
+    height: 100%;
+    overflow: hidden;
+    position: absolute;
+    top: 0;
+    z-index: 1;
+}
+
+.progress .progress-left {
+    left: 0;
+}
+
+.progress .progress-bar {
+    width: 100%;
+    height: 100%;
+    background: none;
+    border-width: 2px;
+    border-style: solid;
+    position: absolute;
+    top: 0;
+}
+
+.progress .progress-left .progress-bar {
+    left: 100%;
+    border-top-right-radius: 13.5px;
+    border-bottom-right-radius: 13.5px;
+    border-left: 0;
+    -webkit-transform-origin: center left;
+    transform-origin: center left;
+    transform: rotate(var(--transformLeft));
+}
+
+.progress .progress-right {
+    right: 0;
+}
+
+.progress .progress-right .progress-bar {
+    left: -100%;
+    border-top-left-radius: 13.5px;
+    border-bottom-left-radius: 13.5px;
+    border-right: 0;
+    -webkit-transform-origin: center right;
+    transform-origin: center right;
+    transform: rotate(var(--transformRight));
+}
+
+.progress .progress-value {
+    width: 90%;
+    height: 90%;
+    border-radius: 50%;
+    color: #44484b;
+    font-size: 8px;
+    line-height: 27px;
+    text-align: center;
+    position: absolute;
+    top: 5%;
+    left: 5%;
+}
+
+.progress.blue .progress-bar {
+    border-color: #0e4f79;
 }

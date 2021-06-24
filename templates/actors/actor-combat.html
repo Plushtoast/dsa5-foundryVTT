@@ -114,7 +114,18 @@
                         <option class="ammo-option" value="{{ammo._id}}"> ({{ammo.data.quantity.value}}) {{ammo.name}}</option>
                         {{/each}}
                         {{/select}}
-                      </select>
+                      </select> {{#when item.data.ammunitiongroup.value 'noteq' "-"}} {{#when item.LZ 'noteq' 0}}
+                        <a class="loadWeapon" title="{{item.title}}">
+                            <div class="progress blue">
+                                <span class="progress-left" style="--transformLeft:{{item.transformLeft}}">
+                                    <span class="progress-bar"></span>
+                                </span>
+                                <span class="progress-right" style="--transformRight:{{item.transformRight}}">
+                                    <span class="progress-bar"></span>
+                                </span>
+                                <div class="progress-value">{{item.progress}}</div>
+                            </div>
+                        </a> {{/when}} {{/when}}
                     </div>
                     {{else}}
                     <div class="no-ammo">
@@ -130,7 +141,7 @@
                 <div class="col">
                     <ul>
                         <li><b>{{localize "reach"}}</b>: {{item.data.reach.value}}</li>
-                        <li><b>{{localize "reloadTime"}}</b>: {{item.LZ}}</li>
+                        <li><b>{{localize "reloadTime"}}</b>: {{item.LZ}} ({{item.data.reloadTime.progress}})</li>
                     </ul>
                 </div>
             </div>

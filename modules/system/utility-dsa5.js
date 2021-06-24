@@ -2,7 +2,12 @@ import Actordsa5 from '../actor/actor-dsa5.js';
 import DSA5 from './config-dsa5.js'
 
 export default class DSA5_Utility {
-
+    static async skillByName(name) {
+        const pack = game.packs.get(game.i18n.lang == "de" ? "dsa5.skills" : "dsa5.skillsen")
+        await pack.getIndex();
+        const entry = pack.index.find(i => i.name === name);
+        return await pack.getDocument(entry._id)
+    }
     static async allSkills() {
         const pack = game.i18n.lang == "de" ? "dsa5.skills" : "dsa5.skillsen"
         return await this.getCompendiumEntries(pack, "skill")

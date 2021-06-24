@@ -2,8 +2,8 @@ export default class DSA5SoundEffect {
     static sounds
     static triedInit = false
 
-    static async playEffect(action, item) {
-        const soundPath = await this.getSound(action, item)
+    static async playEffect(action, item, successLevel) {
+        const soundPath = await this.getSound(action, item, successLevel)
         if (soundPath) {
             try {
                 AudioHelper.play({ src: soundPath, volume: 0.8, loop: false }, true);
@@ -28,31 +28,52 @@ export default class DSA5SoundEffect {
         }
     }
 
-    static async getSound(action, item) {
+    static successLevelToString(successLevel) {
+        switch (successLevel) {
+            case -1:
+                return ["fail"]
+            case -2:
+                return ["botch", "fail"]
+            case 1:
+                return ["success"]
+            case 2:
+                return ["crit", "success"]
+            default:
+                return []
+        }
+
+    }
+
+    static async getSound(action, item, successLevel) {
         if (!this.sounds && !this.triedInit) {
             await this.loadSoundConfig()
             this.triedInit = true
-
         }
 
         if (!this.sounds) return undefined
 
+        const successLevels = this.successLevelToString(successLevel)
         let paths = []
         let result
         switch (item.type) {
             case "meleeweapon":
             case "rangeweapon":
                 paths = [
+                    ...successLevels.map(x => `${item.type}.manual.${item.name}.${action}_${x}`),
                     `${item.type}.manual.${item.name}.${action}`,
                     `${item.type}.manual.${item.name}.default.${action}`,
                     `${item.type}.manual.${item.name}.default`,
+                    ...successLevels.map(x => `${item.type }.${item.data.combatskill.value }.${action}_${x}`),
                     `${item.type }.${item.data.combatskill.value }.${action}`,
+                    ...successLevels.map(x => `${item.type}.${item.data.combatskill.value}.default_${x}`),
                     `${item.type}.${item.data.combatskill.value}.default`
                 ]
                 break
             case "skill":
                 paths = [
+                    ...successLevels.map(x => `${item.type}.${item.name}.${action}_${x}`),
                     `${item.type}.${item.name}.${action}`,
+                    ...successLevels.map(x => `${item.type}.${item.name}.default_${x}`),
                     `${item.type}.${item.name}.default`
                 ]
                 break
@@ -61,12 +82,17 @@ export default class DSA5SoundEffect {
             case "ceremony":
             case "ritual":
                 paths = [
+                    ...successLevels.map(x => `${item.type}.${item.name}.${action}_${x}`),
                     `${item.type}.${item.name}.${action}`,
+                    ...successLevels.map(x => `${item.type}.${item.name}.default_${x}`)
                     `${item.type}.${item.name}.default`,
                 ]
                 break
         }
-        paths.push(`${item.type}.default`)
+        paths.push(
+            ...successLevels.map(x => `${item.type}.default_${x}`),
+            `${item.type}.default`
+        )
         for (const p of paths) {
             if (!hasProperty(this.sounds, p)) continue
 

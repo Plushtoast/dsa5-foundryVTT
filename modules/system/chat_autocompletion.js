@@ -1,3 +1,4 @@
+import DSA5ChatListeners from "./chat_listeners.js"
 import DSA5_Utility from "./utility-dsa5.js"
 
 
@@ -15,7 +16,7 @@ export default class DSA5ChatAutoCompletion {
                     }).concat({ name: game.i18n.localize('regenerate'), type: "regeneration" }))
             })
         }
-        this.regex = /^\/(sk|at|pa|sp|li|rq|gc|w) /
+        this.regex = /^\/(sk |at |pa |sp |li |rq |gc |w |ch)/
         this.filtering = false
         this.constants = {
             dodge: game.i18n.localize("dodge"),
@@ -61,7 +62,7 @@ export default class DSA5ChatAutoCompletion {
         }
     }
 
-    _getCmd(val){
+    _getCmd(val) {
         return val.substring(1, 3).toUpperCase().trim()
     }
 
@@ -74,8 +75,8 @@ export default class DSA5ChatAutoCompletion {
         this.anchor.find(".quickfind").remove()
     }
 
-    _filterW(search){
-        let result = game.users.contents.filter(x => x.active && x.name.toLowerCase().trim().indexOf(search) != -1).map(x => {return {name: x.name, type:"user"}})
+    _filterW(search) {
+        let result = game.users.contents.filter(x => x.active && x.name.toLowerCase().trim().indexOf(search) != -1).map(x => { return { name: x.name, type: "user" } })
         this._checkEmpty(result)
         this._setList(result, "W")
     }
@@ -135,6 +136,11 @@ export default class DSA5ChatAutoCompletion {
         let result = DSA5ChatAutoCompletion.skills.filter(x => { return x.name.toLowerCase().trim().indexOf(search) != -1 && (type == undefined || type == x.type) }).slice(0, 5)
         this._checkEmpty(result)
         return result
+    }
+
+
+    _filterCH(search) {
+        this._setList(this._getSkills(search), "CH")
     }
 
     _filterSK(search) {
@@ -210,20 +216,31 @@ export default class DSA5ChatAutoCompletion {
 
     _quickSelect(target) {
         let cmd = target.attr("data-category")
-        if(["RQ","GC"].includes(cmd)){
-            this[`_quick${cmd}`](target)
-        }
-        else{
-            const {actor, tokenId} = DSA5ChatAutoCompletion._getActor()
-            if (actor) {
-                this._resetChatAutoCompletion()
-                this[`_quick${cmd}`](target, actor, tokenId)
-            }
+        switch(cmd){
+            case "GC":
+            case "RQ":
+            case "CH":
+                this[`_quick${cmd}`](target)
+                break
+            case "W":
+                this._completeCurrentEntry(target)
+                break
+            default:
+                const {actor, tokenId} = DSA5ChatAutoCompletion._getActor()
+                if (actor) {
+                    this._resetChatAutoCompletion()
+                    this[`_quick${cmd}`](target, actor, tokenId)
+                }
         }
     }
 
     _quickW(target, actor, tokenId){
 
+    }
+
+    _quickCH(target){
+        DSA5ChatListeners.check3D20(target)
+        this._resetChatAutoCompletion()
     }
 
     _quickSK(target, actor, tokenId) {

@@ -683,7 +683,7 @@
     },
     "ActorConfig": {
         "autoSize": "Automatische Tokengröße",
-        "autoBar": "Automatische Tokenbars"
+        "autoBar": "Automatische Ressourcenleiste"
     },
     "RangeMod": {
         "short": "Nah [+2 auf FK, +1 TP]",
@@ -710,7 +710,8 @@
         "unableReroll": "Würfel {die} wegen Unfähigkeit erneut geworfen ({oldVal}/{newVal})",
         "requestRoll": "{user} fordert einen Wurf in {item}",
         "editRoll": "Wurf editieren",
-        "BlindRoll": "Blinder Wurf.",
+        "BlindRoll": "Blinder Wurf",
+        "whisper": "Private Nachricht",
         "usesItem": "{actor} benutzt {item}.",
         "requestGroupCheck": "{user} fordert eine Gruppenprobe in {item}",
         "enchantmentUsed": "<b>{item}</b> hat eine Ladung <b>{spell}</b> verbraucht."
@@ -745,6 +746,13 @@
         "groupcheck": "Gruppenprobe",
         "descrgroupcheck": "Fordere eine Gruppenprobe an. (Tab + Zahl = mit Modifikator)"
     },
+    "WEAPON": {
+        "loading": "Ladestatus: {status}",
+        "loaded": "Geladen",
+        "reload": "Nachladen",
+        "isReloading": "{actor} läd {item} nach ({status})."
+    },
+
     "ITEM.TypeAdvantage": "Vorteil",
     "ITEM.TypeAggregatedtest": "Sammelprobe",
     "ITEM.TypeAmmunition": "Munition",
@@ -887,6 +895,8 @@
         "automaticFail": "Automatischer Misserfolg",
         "familiar": "Vertrauter",
         "shields": "Schilde",
+        "throwingWeapons": "Wurfwaffen",
+        "quickdraw": "Schnellziehen",
         "localKnowledge": "Ortskenntnis",
         "naturalArmor": "Natürliche Rüstung",
         "all": "alle",
