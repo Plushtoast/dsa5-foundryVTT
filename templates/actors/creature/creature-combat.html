@@ -105,6 +105,9 @@
         <div class="col ten">
 
         </div>
+        <div class="col ten">
+
+        </div>
     </div>
     <div class="row-section wrap rowtable inventory">
         {{#each actor.wornRangedWeapons as |item i|}}
@@ -125,7 +128,20 @@
                 <div class="col eight center">
                     <a data-mode="damage" class="ch-rollCombat d6 die-damage">{{item.damagedie}}</a><span title="{{localize 'damageOverThreshold'}}">{{item.damageAdd}}</span>
                 </div>
-
+                <div class="col ten">
+                    {{#when item.LZ 'noteq' 0}}
+                    <a class="loadWeapon" title="{{item.title}}">
+                        <div class="progress blue">
+                            <span class="progress-left" style="--transformLeft:{{item.transformLeft}}">
+                            <span class="progress-bar"></span>
+                            </span>
+                            <span class="progress-right" style="--transformRight:{{item.transformRight}}">
+                            <span class="progress-bar"></span>
+                            </span>
+                            <div class="progress-value">{{item.progress}}</div>
+                        </div>
+                    </a> {{/when}}
+                </div>
                 <div class="col ten very-small center">
                     <a class="item-dropdown" title="{{localize 'SHEET.Dropdown'}}"><i
                             class="fas fa-chevron-down"></i></a>

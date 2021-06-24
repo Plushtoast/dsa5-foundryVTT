@@ -1,3 +1,4 @@
+import Actordsa5 from "../actor/actor-dsa5.js";
 import { ActAttackDialog } from "../dialog/dialog-react.js"
 
 export class DSA5CombatTracker extends CombatTracker {
@@ -22,12 +23,29 @@ export class DSA5CombatTracker extends CombatTracker {
     }
 
     async getData(options) {
-        const data = await super.getData(options)
+            const data = await super.getData(options)
 
-        for (let turn of data.turns) {
-            const combatant = data.combat.turns.find(x => x.id == turn.id)
-            const isAllowedToSeeEffects = (game.user.isGM || combatant.actor.isOwner || !(game.settings.get("dsa5", "hideEffects")))
-            turn.defenseCount = combatant.data._source.defenseCount
+            for (let turn of data.turns) {
+                const combatant = data.combat.turns.find(x => x.id == turn.id)
+                const isAllowedToSeeEffects = (game.user.isGM || combatant.actor.isOwner || !(game.settings.get("dsa5", "hideEffects")))
+                turn.defenseCount = combatant.data._source.defenseCount
+
+                let rangeweapons = combatant._actor.data.items.filter(x => {
+                    return x.type == "rangeweapon" &&
+                        x.data.data.worn.value &&
+                        x.data.data.reloadTime.progress > 0
+                })
+
+                if (rangeweapons.length > 0) {
+                    rangeweapons = rangeweapons.map(x => {
+                        return { name: x.name, remaining: Actordsa5.calcLZ(x.data, combatant._actor.data) - x.data.data.reloadTime.progress }
+                    }).filter(x => x.remaining > 0).sort((a, b) => a.remaining - b.remaining)
+                    if (rangeweapons.length > 0) {
+                        turn.ongoings = `${game.i18n.localize('COMBATTRACKER.ongoing')}\n${rangeweapons.map((x) => `${x.name} - ${x.remaining}`).join("\n")}`
+
+                    turn.ongoing = rangeweapons[0].remaining
+                }
+            }
 
             turn.effects = new Set();
             if (combatant.token) {

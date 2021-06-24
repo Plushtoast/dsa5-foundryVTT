@@ -75,7 +75,8 @@ export default class DiceDSA5 {
                             reloadButton: {
                                 label: `${game.i18n.localize("WEAPON.reload")} (${progress}/${LZ})`,
                                 callback: async() => {
-                                    await (await DSA5_Utility.getSpeaker(testData.extra.speaker)).updateEmbeddedDocuments("Item", [{ _id: testData.source._id, "data.reloadTime.progress": progress + 1 }])
+                                    const actor = await DSA5_Utility.getSpeaker(testData.extra.speaker)
+                                    await actor.updateEmbeddedDocuments("Item", [{ _id: testData.source._id, "data.reloadTime.progress": progress + 1 }])
                                     const infoMsg = game.i18n.format("WEAPON.isReloading", { actor: testData.extra.actor.name, item: testData.source.name, status: `${progress+1}/${LZ}` })
                                     await ChatMessage.create(DSA5_Utility.chatDataSetup(infoMsg))
                                 }

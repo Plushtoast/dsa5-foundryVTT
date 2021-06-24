@@ -380,16 +380,17 @@ export default class ActorSheetDsa5 extends ActorSheet {
         html.find('.loadWeapon').mousedown(async(ev) => {
             let itemId = this._getItemId(ev)
             let item = (await this.actor.getEmbeddedDocument("Item", itemId)).toObject()
-            if (item.data.currentAmmo.value == "") return
+            if (item.data.currentAmmo.value == "" && this.actor.type != "creature") return
 
-            const lz = Actordsa5.calcLZ(item, this.actor)
+            let actor = this.actor
+            const lz = Actordsa5.calcLZ(item, actor)
 
             if (ev.button == 0)
                 item.data.reloadTime.progress = Math.min(item.data.reloadTime.progress + 1, lz)
             else if (ev.button == 2)
                 item.data.reloadTime.progress = 0
 
-            await this.actor.updateEmbeddedDocuments("Item", [item]);
+            await actor.updateEmbeddedDocuments("Item", [item]);
         })
 
         html.find('.ammo-selector').change(async(ev) => {

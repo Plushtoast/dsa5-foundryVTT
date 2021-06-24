@@ -1085,7 +1085,8 @@
         "hideEffectsHint": "Zeige Status Effekte an Tokens nur deren Besitzer"
     },
     "COMBATTRACKER": {
-        "noDefenses": "Anzahl Verteidigungen"
+        "noDefenses": "Anzahl Verteidigungen",
+        "ongoing": "Laufende Handlungen"
     },
     "CHATFATE": {
         "faitepointUsed": "Das Schicksal ändert sich",

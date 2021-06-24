@@ -114,7 +114,7 @@
                         <option class="ammo-option" value="{{ammo._id}}"> ({{ammo.data.quantity.value}}) {{ammo.name}}</option>
                         {{/each}}
                         {{/select}}
-                      </select> {{#when item.data.ammunitiongroup.value 'noteq' "-"}} {{#when item.LZ 'noteq' 0}}
+                      </select> {{#when item.LZ 'noteq' 0}}
                         <a class="loadWeapon" title="{{item.title}}">
                             <div class="progress blue">
                                 <span class="progress-left" style="--transformLeft:{{item.transformLeft}}">
@@ -125,7 +125,7 @@
                                 </span>
                                 <div class="progress-value">{{item.progress}}</div>
                             </div>
-                        </a> {{/when}} {{/when}}
+                        </a> {{/when}}
                     </div>
                     {{else}}
                     <div class="no-ammo">

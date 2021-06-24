@@ -223,7 +223,7 @@ class Enchantable extends ItemSheetdsa5 {
     async enchant(event) {
         const dragData = JSON.parse(event.dataTransfer.getData("text/plain"))
         const { item, typeClass, selfTarget } = await itemFromDrop(dragData, undefined)
-        if (typeClass == "spell") {
+        if (["spell", "liturgy", "ceremony", "ritual"].includes(typeClass)) {
             let enchantments = this.item.getFlag("dsa5", "enchantments") || []
             if (enchantments.length >= 7) {
                 return ui.notifications.error(game.i18n.localize("DSAError.tooManyEnchants"))

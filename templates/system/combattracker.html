@@ -51,7 +51,9 @@
             <div class="combatant-advanced">
                 <img class="token-image" data-src="{{this.img}}" title="{{this.name}}" /> {{#if this.defenseCount}}
                 <i class="fas def fa-shield-alt" data-defenseCount="{{this.defenseCount}}" title="{{localize 'COMBATTRACKER.noDefenses'}}"></i>
-                <i class="fas fa-shield-alt reversed"></i> {{/if}}
+                <i class="fas fa-shield-alt reversed"></i> {{/if}} {{#if this.ongoing}}
+                <div class="ongoing" title="{{this.ongoings}}">{{this.ongoing}}</div>
+                {{/if}}
             </div>
 
             <div class="token-name flexcol">

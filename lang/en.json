@@ -1149,7 +1149,8 @@
     },
 
     "COMBATTRACKER": {
-        "noDefenses": "Defense count"
+        "noDefenses": "Defense count",
+        "ongoing": "Ongoing actions"
     },
 
     "SCHIPSKILLS": {

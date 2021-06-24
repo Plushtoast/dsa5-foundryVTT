@@ -112,6 +112,14 @@ export default class Itemdsa5 extends Item {
         }
     }
 
+    static buildSpeaker(actor, tokenId) {
+        return {
+            token: tokenId,
+            actor: actor ? actor.data._id : undefined,
+            scene: canvas.scene ? canvas.scene.id : null
+        }
+    }
+
 
     static parseValueType(name, val) {
         let type = ""
@@ -231,7 +239,7 @@ export default class Itemdsa5 extends Item {
                 const atbonus = effects[at] || 0
                 const tpbonus = effects[tp] || 0
                 const dmmalus = effects[dm] || 0
-                if (atbonus != 0 || tpbonus != 0 || dmmalus != 0){
+                if (atbonus != 0 || tpbonus != 0 || dmmalus != 0) {
                     const subCategory = game.i18n.localize(DSA5.combatSkillSubCategories[com.data.data.category.sub])
                     combatskills.push({
                         name: com.name,
@@ -254,7 +262,7 @@ export default class Itemdsa5 extends Item {
             for (let com of combatSpecAbs) {
                 const effects = Itemdsa5.parseEffect(com.data.data.effect.value, actor)
                 const pabonus = effects[pa] || 0
-                if (pabonus != 0){
+                if (pabonus != 0) {
                     const subCategory = game.i18n.localize(DSA5.combatSkillSubCategories[com.data.data.category.sub])
                     combatskills.push({
                         name: com.name,
@@ -587,10 +595,7 @@ class SpellItemDSA5 extends Itemdsa5 {
             extra: {
                 actor: actor.toObject(false),
                 options: options,
-                speaker: {
-                    token: tokenId,
-                    actor: actor.data._id
-                }
+                speaker: Itemdsa5.buildSpeaker(actor, tokenId)
             }
         };
         let data = {
@@ -701,10 +706,7 @@ class CombatskillDSA5 extends Itemdsa5 {
             extra: {
                 actor: actor.toObject(false),
                 options: options,
-                speaker: {
-                    token: tokenId,
-                    actor: actor.data._id
-                }
+                speaker: Itemdsa5.buildSpeaker(actor, tokenId)
             }
         };
 
@@ -840,10 +842,7 @@ class DiseaseItemDSA5 extends Itemdsa5 {
             source: item.data,
             extra: {
                 options: options,
-                speaker: {
-                    token: tokenId,
-                    actor: actor ? actor.data._id : undefined
-                }
+                speaker: Itemdsa5.buildSpeaker(actor, tokenId)
             }
         };
         let data = {
@@ -968,6 +967,7 @@ class MeleeweaponDSA5 extends Itemdsa5 {
 
     }
 
+
     static setupDialog(ev, options, item, actor, tokenId) {
         let mode = options.mode
         let title = game.i18n.localize(item.name) + " " + game.i18n.localize(mode + "test");
@@ -979,10 +979,7 @@ class MeleeweaponDSA5 extends Itemdsa5 {
             extra: {
                 actor: actor.toObject(false),
                 options: options,
-                speaker: {
-                    token: tokenId,
-                    actor: actor.data._id
-                }
+                speaker: Itemdsa5.buildSpeaker(actor, tokenId)
             }
         };
         let data = {
@@ -1079,10 +1076,7 @@ class PoisonItemDSA5 extends Itemdsa5 {
             source: item.data,
             extra: {
                 options: options,
-                speaker: {
-                    token: tokenId,
-                    actor: actor ? actor.data._id : undefined
-                }
+                speaker: Itemdsa5.buildSpeaker(actor, tokenId)
             }
         };
 
@@ -1203,10 +1197,7 @@ class RangeweaponItemDSA5 extends Itemdsa5 {
             extra: {
                 actor: actor.toObject(false),
                 options: options,
-                speaker: {
-                    token: tokenId,
-                    actor: actor.data._id
-                }
+                speaker: Itemdsa5.buildSpeaker(actor, tokenId)
             }
         };
 
@@ -1345,10 +1336,7 @@ class SkillItemDSA5 extends Itemdsa5 {
             extra: {
                 actor: actor.toObject(false),
                 options: options,
-                speaker: {
-                    token: tokenId,
-                    actor: actor.data._id
-                }
+                speaker: Itemdsa5.buildSpeaker(actor, tokenId)
             }
         };
 
@@ -1552,10 +1540,7 @@ class TraitItemDSA5 extends Itemdsa5 {
             extra: {
                 actor: actor.toObject(false),
                 options: options,
-                speaker: {
-                    token: tokenId,
-                    actor: actor.data._id
-                }
+                speaker: Itemdsa5.buildSpeaker(actor, tokenId)
             }
         };
         let data = {
