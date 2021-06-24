@@ -1082,7 +1082,9 @@
         "soundConfig": "Sound Effekt Konfiguration",
         "soundConfigHint": "Töne für Talente und Angriffe",
         "hideEffects": "Status Effekte verbergen",
-        "hideEffectsHint": "Zeige Status Effekte an Tokens nur deren Besitzer"
+        "hideEffectsHint": "Zeige Status Effekte an Tokens nur deren Besitzer",
+        "limitCombatSpecAbs": "Spezialmanöver limitieren",
+        "limitCombatSpecAbsHint": "Nur ein Spezial- und Basismanöver erlauben."
     },
     "COMBATTRACKER": {
         "noDefenses": "Anzahl Verteidigungen",

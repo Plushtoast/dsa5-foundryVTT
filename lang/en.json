@@ -1145,7 +1145,9 @@
         "soundConfig": "Sound Effect Configuration",
         "soundConfigHint": "Sounds for skills and attacks",
         "hideEffects": "Hide conditions",
-        "hideEffectsHint": "Show conditions on the token only for their owner"
+        "hideEffectsHint": "Show conditions on the token only for their owner",
+        "limitCombatSpecAbs": "Limit Special Maneuvers",
+        "limitCombatSpecAbsHint": "Only allow one Special and Basic maneuver."
     },
 
     "COMBATTRACKER": {

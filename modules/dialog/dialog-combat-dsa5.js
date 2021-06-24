@@ -49,7 +49,7 @@ export default class DSA5CombatDialog extends DialogShared {
 
             if (ev.button == 0) {
                 step = Math.min(maxStep, step + 1)
-                if([0,1].includes(subcategory)){
+                if ([0, 1].includes(subcategory) && game.settings.get("dsa5", "limitCombatSpecAbs")) {
                     const siblings = elem.siblings(`[data-category="${subcategory}"]`)
                     siblings.removeClass('active').attr("data-step", 0)
                     siblings.find('.step').text(roman[0])

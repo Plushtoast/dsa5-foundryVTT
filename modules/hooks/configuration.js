@@ -123,6 +123,15 @@ export default function() {
         type: Boolean
     });
 
+    game.settings.register("dsa5", "limitCombatSpecAbs", {
+        name: "DSASETTINGS.limitCombatSpecAbs",
+        hint: "DSASETTINGS.limitCombatSpecAbsHint",
+        scope: "world",
+        config: true,
+        default: true,
+        type: Boolean
+    });
+
     game.settings.register("dsa5", "allowPhysicalDice", {
         name: "DSASETTINGS.allowPhysicalDice",
         hint: "DSASETTINGS.allowPhysicalDiceHint",

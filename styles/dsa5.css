@@ -2037,12 +2037,12 @@ a.inline-roll {
 
 .whisper .privateMessageIndicator .fas {
     display: inline-block;
-    color: rgb(157, 13, 13);
+    color: rgb(115, 7, 7);
 }
 
 .blind .chatIndicator .fa-eye-slash {
     display: inline-block;
-    color: rgb(0, 57, 191);
+    color: rgb(34, 72, 162);
 }
 
 .dsa5.post-item img {
