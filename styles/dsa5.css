@@ -2206,6 +2206,7 @@ select.noAppearance {
     background-color: white;
     cursor: pointer;
     box-shadow: 2px 2px 6px black;
+    z-index: 1;
 }
 
 .aggroButton:hover {

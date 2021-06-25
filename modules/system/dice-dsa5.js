@@ -130,7 +130,7 @@ export default class DiceDSA5 {
         if (/(\(|,)( )?i\)$/.test(testData.source.name)) {
             if (!SpecialabilityRulesDSA5.hasAbility(testData.extra.actor, game.i18n.localize("LocalizedIDs.improvisedWeaponMaster"))) botch = Math.min(19, botch)
 
-            this._appendSituationalModifiers(testData, game.i18n.localize("WEAPON.improvised"), 2, "defenseMalus")
+            this._appendSituationalModifiers(testData, `${game.i18n.localize('CHAR.ATTACK')} - ${game.i18n.localize("WEAPON.improvised")}`, 2, "defenseMalus")
         }
 
         if (testData.situationalModifiers.find(x => x.name == game.i18n.localize('opportunityAttack') && x.value != 0)) {
