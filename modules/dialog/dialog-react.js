@@ -41,7 +41,6 @@ export default class DialogReactDSA5 extends Dialog {
         }
     }
 
-
     static async getTemplate(startMessage) { return "" }
 
     static callbackResult(selection, message, ev) {}

@@ -3,9 +3,7 @@ import ItemRulesDSA5 from "./item-rules-dsa5.js";
 
 export default class SpecialabilityRulesDSA5 extends ItemRulesDSA5 {
 
-    static setupFunctions() {
-
-    }
+    static setupFunctions() {}
 
     static async abilityAdded(actor, item) {
         if (DSA5.addAbilityRules[item.name]) {

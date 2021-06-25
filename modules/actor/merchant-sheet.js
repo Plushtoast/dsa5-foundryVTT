@@ -5,11 +5,7 @@ import ActorSheetdsa5NPC from "./npc-sheet.js";
 export default class MerchantSheetDSA5 extends ActorSheetdsa5NPC {
     static get defaultOptions() {
         const options = super.defaultOptions;
-        mergeObject(options, {
-            classes: options.classes.concat(["dsa5", "actor", "npc-sheet", "merchant-sheet"]),
-            width: 770,
-            height: 740,
-        });
+        mergeObject(options, { classes: options.classes.concat(["dsa5", "actor", "npc-sheet", "merchant-sheet"]) });
         return options;
     }
 
@@ -156,8 +152,7 @@ export default class MerchantSheetDSA5 extends ActorSheetdsa5NPC {
     }
 
     async _render(force = false, options = {}) {
-        if(!game.user.isGM && getProperty(this.actor.data.data, "merchant.merchantType") == "loot" && getProperty(this.actor.data.data, "merchant.locked"))
-        {
+        if (!game.user.isGM && getProperty(this.actor.data.data, "merchant.merchantType") == "loot" && getProperty(this.actor.data.data, "merchant.locked")) {
             AudioHelper.play({ src: "sounds/lock.wav", loop: false }, false);
             return
         }
@@ -245,7 +240,7 @@ export default class MerchantSheetDSA5 extends ActorSheetdsa5NPC {
         }
         let items = []
         for (let cat of categories) {
-            items.push(... await itemLibrary.getRandomItems(cat, numbers[cat]))
+            items.push(...await itemLibrary.getRandomItems(cat, numbers[cat]))
         }
         var seen = {}
         items = items.filter(function(x) {
@@ -262,7 +257,7 @@ export default class MerchantSheetDSA5 extends ActorSheetdsa5NPC {
         let text = $(ev.currentTarget).text()
         $(ev.currentTarget).html(' <i class="fa fa-spin fa-spinner"></i>')
         let ids = actor.items.filter(x => ["poison", "consumable", "equipment"].includes(x.type)).map(x => x.id)
-        ids.push(...actor.items.filter(x => ["armor", "meleeweapon", "rangeweapon" ].includes(x.type) && !x.data.data.worn.value).map(x => x.id))
+        ids.push(...actor.items.filter(x => ["armor", "meleeweapon", "rangeweapon"].includes(x.type) && !x.data.data.worn.value).map(x => x.id))
         await actor.deleteEmbeddedDocuments("Item", ids);
         $(ev.currentTarget).text(text)
     }
@@ -317,7 +312,7 @@ export default class MerchantSheetDSA5 extends ActorSheetdsa5NPC {
     prepareTradeFriend(data) {
         let friend = this.getTradeFriend()
         if (friend) {
-            let tradeData = friend.prepareItems({details: []})
+            let tradeData = friend.prepareItems({ details: [] })
             let factor = getProperty(this.actor.data.data, "merchant.merchantType") == "loot" ? 1 : (getProperty(this.actor.data.data, "merchant.buyingFactor") || 1)
             let inventory = this.prepareSellPrices(tradeData.inventory, factor)
             if (inventory["misc"].items.length == 0) inventory["misc"].show = false

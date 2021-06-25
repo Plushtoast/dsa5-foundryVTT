@@ -6,11 +6,7 @@ import TraitRulesDSA5 from "../system/trait-rules-dsa5.js"
 export default class ActorSheetdsa5Creature extends ActorSheetDsa5 {
     static get defaultOptions() {
         const options = super.defaultOptions;
-        mergeObject(options, {
-            classes: options.classes.concat(["dsa5", "actor", "creature-sheet"]),
-            width: 770,
-            height: 740,
-        });
+        mergeObject(options, { classes: options.classes.concat(["dsa5", "actor", "creature-sheet"]) });
         return options;
     }
 

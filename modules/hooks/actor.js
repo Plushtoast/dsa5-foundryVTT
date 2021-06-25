@@ -15,25 +15,15 @@ export default function() {
         let update = {}
 
         if (getProperty(actor.data, "data.merchant.merchantType") == "loot") {
-            mergeObject(update, {
-                displayBars: 0
-            })
+            mergeObject(update, { displayBars: 0 })
         } else if (getProperty(actor.data, "data.config.autoBar")) {
+            mergeObject(update, { bar1: { attribute: "status.wounds" } })
             if (actor.data.isMage) {
-                mergeObject(update, {
-                    bar1: { attribute: "status.wounds" },
-                    bar2: { attribute: "status.astralenergy" }
-                });
+                mergeObject(update, { bar2: { attribute: "status.astralenergy" } });
             } else if (actor.data.isPriest) {
-                mergeObject(update, {
-                    bar1: { attribute: "status.wounds" },
-                    bar2: { attribute: "status.karmaenergy" }
-                });
+                mergeObject(update, { bar2: { attribute: "status.karmaenergy" } });
             } else {
-                mergeObject(update, {
-                    bar1: { attribute: "status.wounds" },
-                    bar2: { attribute: "" }
-                });
+                mergeObject(update, { bar2: { attribute: "" } });
             }
         }
 

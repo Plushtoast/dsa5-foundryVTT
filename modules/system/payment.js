@@ -86,7 +86,6 @@ export default class DSA5Payment {
         }
     }
 
-
     static _getPaidmoney(moneyString) {
         let money = this._parseMoneyString(moneyString)
 
@@ -108,7 +107,6 @@ export default class DSA5Payment {
         }
         return money
     }
-
 
     static _parseMoneyString(moneyString) {
         let match = moneyString.replace(",", ".").match(/\d{1,}(\.\d{1,3}|,\d{1,3})?/)

@@ -37,43 +37,29 @@ export default class DialogActorConfig extends Dialog {
         }).render(true)
     }
 
+    async updateWrapper(lock, fnct, ev) {
+        if (this.locks[lock]) return
+
+        this.locks[lock] = true
+        $(ev.currentTarget).prepend('<i class="fas fa-spinner fa-spin"></i>')
+        Migrakel[fnct](this.actor)
+        $(ev.currentTarget).find("i").remove()
+        this.locks[lock] = false
+    }
+
     activateListeners(html) {
         super.activateListeners(html)
         html.find('.updateSpells').click(async(ev) => {
-            if (this.locks.spells) return
-
-            this.locks.spells = true
-            $(ev.currentTarget).prepend('<i class="fas fa-spinner fa-spin"></i>')
-            await Migrakel.updateSpellsAndLiturgies(this.actor)
-            $(ev.currentTarget).find("i").remove()
-            this.locks.spells = false
+            this.updateWrapper("spells", "updateSpellsAndLiturgies", ev)
         })
         html.find('.updateAbilities').click(async(ev) => {
-            if (this.locks.abilities) return
-
-            this.locks.abilities = true
-            $(ev.currentTarget).prepend('<i class="fas fa-spinner fa-spin"></i>')
-            await Migrakel.updateSpecialAbilities(this.actor)
-            $(ev.currentTarget).find("i").remove()
-            this.locks.abilities = false
+            this.updateWrapper("abilities", "updateSpecialAbilities", ev)
         })
         html.find('.updatecSkills').click(async(ev) => {
-            if (this.locks.combatskills) return
-
-            this.locks.combatskills = true
-            $(ev.currentTarget).prepend('<i class="fas fa-spinner fa-spin"></i>')
-            await Migrakel.updateCombatskills(this.actor)
-            $(ev.currentTarget).find("i").remove()
-            this.locks.combatskills = false
+            this.updateWrapper("combatskills", "updateCombatskills", ev)
         })
         html.find('.updateSkills').click(async(ev) => {
-            if (this.locks.skills) return
-
-            this.locks.skills = true
-            $(ev.currentTarget).prepend('<i class="fas fa-spinner fa-spin"></i>')
-            await Migrakel.updateSkills(this.actor)
-            $(ev.currentTarget).find("i").remove()
-            this.locks.skills = false
+            this.updateWrapper("skills", "updateSkills", ev)
         })
     }
 }

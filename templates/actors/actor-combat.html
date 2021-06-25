@@ -4,8 +4,10 @@
             <b>{{localize "meleeweapons"}}</b>
             <span class="buttons">
                 <a data-mod="dodge" class="ch-status item" title="{{localize 'dodge'}}"><i class="fas fa-reply"></i></a>
-                <a data-char="attack" class="ch-weaponless item" data-mod="attackWeaponless" title="{{localize 'attackWeaponless'}}"><i class="fa attackWeaponless"></i></a>
-                <a data-char="parry" class="ch-weaponless item" data-mod="parryWeaponless" title="{{localize 'parryWeaponless'}}"><i class="fa fa-shield-alt"></i></a>
+                <a data-char="attack" class="ch-weaponless item" data-mod="attackWeaponless"
+                    title="{{localize 'attackWeaponless'}}"><i class="fa attackWeaponless"></i></a>
+                <a data-char="parry" class="ch-weaponless item" data-mod="parryWeaponless"
+                    title="{{localize 'parryWeaponless'}}"><i class="fa fa-shield-alt"></i></a>
             </span>
         </div>
         <div class="col five center small">
@@ -108,13 +110,14 @@
                     {{#if (ne item.data.ammunitiongroup.value "-")}}
                     <div>
                         <select name="currentAmmo-{{item._id}}" class="ammo-selector" data-item-id="{{item._id}}" data-dtype="String">
-                        {{#select item.data.currentAmmo.value}}
-                        <option class="ammo-option" value="">None</option>
-                        {{#each item.ammo as |ammo a|}}
-                        <option class="ammo-option" value="{{ammo._id}}"> ({{ammo.data.quantity.value}}) {{ammo.name}}</option>
-                        {{/each}}
-                        {{/select}}
-                      </select> {{#if (ne item.LZ 0)}}
+                            {{#select item.data.currentAmmo.value}}
+                            <option class="ammo-option" value="">None</option>
+                            {{#each item.ammo as |ammo a|}}
+                            <option class="ammo-option" value="{{ammo._id}}"> ({{ammo.data.quantity.value}})
+                                {{ammo.name}}</option>
+                            {{/each}}
+                            {{/select}}
+                        </select> {{#if (ne item.LZ 0)}}
                         <a class="loadWeapon" title="{{item.title}}">
                             <div class="progress blue">
                                 <span class="progress-left" style="--transformLeft:{{item.transformLeft}}">
@@ -134,7 +137,8 @@
                     {{/if}}
                 </div>
                 <div class="col ten very-small center">
-                    <a class="item-dropdown" title="{{localize 'SHEET.Dropdown'}}"><i class="fas fa-chevron-down"></i></a>
+                    <a class="item-dropdown" title="{{localize 'SHEET.Dropdown'}}"><i
+                            class="fas fa-chevron-down"></i></a>
                 </div>
             </div>
             <div class="row-section lineheight expandDetails {{item.detailed}}">

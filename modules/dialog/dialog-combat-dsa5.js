@@ -13,8 +13,6 @@ export default class DSA5CombatDialog extends DialogShared {
 
     activateListeners(html) {
         super.activateListeners(html)
-        const roman = ['', ' I', ' II', ' III', ' IV', ' V', ' VI', ' VII', ' VIII', ' IX']
-
         let specAbs = html.find('.specAbs')
         specAbs.mouseenter(ev => {
             if (ev.currentTarget.getElementsByClassName('hovermenu').length == 0) {
@@ -52,7 +50,7 @@ export default class DSA5CombatDialog extends DialogShared {
                 if ([0, 1].includes(subcategory) && game.settings.get("dsa5", "limitCombatSpecAbs")) {
                     const siblings = elem.siblings(`[data-category="${subcategory}"]`)
                     siblings.removeClass('active').attr("data-step", 0)
-                    siblings.find('.step').text(roman[0])
+                    siblings.find('.step').text(DialogShared.roman[0])
                 }
             } else if (ev.button == 2) {
                 step = Math.max(0, Math.min(maxStep, step - 1))
@@ -63,7 +61,7 @@ export default class DSA5CombatDialog extends DialogShared {
             } else {
                 elem.removeClass("active")
             }
-            elem.find('.step').text(roman[step])
+            elem.find('.step').text(DialogShared.roman[step])
         });
         html.find(".opportunityAttack").change(ev => {
             if ($(ev.currentTarget).is(":checked")) {

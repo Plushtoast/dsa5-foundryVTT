@@ -46,8 +46,6 @@ export default class DSA5Dialog extends DialogShared {
             $(ev.currentTarget).prop('selected', !$(ev.currentTarget).prop('selected'));
             return false;
         });
-
-
     }
 
     static get defaultOptions() {

@@ -37,8 +37,6 @@ export default function() {
     tokenHUD.default()
     migrateWorld.default()
     initScene.default()
-
-
 }
 
 Hooks.once("init", () => {

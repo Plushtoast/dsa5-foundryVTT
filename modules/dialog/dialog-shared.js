@@ -1,4 +1,6 @@
 export default class DialogShared extends Dialog {
+    static roman = ['', ' I', ' II', ' III', ' IV', ' V', ' VI', ' VII', ' VIII', ' IX']
+
     recallSettings(speaker, source, mode) {
         this.recallData = game.dsa5.memory.recall(speaker, source, mode)
         return this
@@ -10,7 +12,6 @@ export default class DialogShared extends Dialog {
     }
 
     prepareFormRecall(html) {
-        const roman = ['', ' I', ' II', ' III', ' IV', ' V', ' VI', ' VII', ' VIII', ' IX']
         if (this.recallData) {
             for (const key in this.recallData) {
                 if (key == "specAbs") {
@@ -18,7 +19,7 @@ export default class DialogShared extends Dialog {
                         const elem = html.find(`.specAbs[data-id="${spec.id}"]`)
                         elem.addClass('active')
                             .attr("data-step", spec.step)
-                            .text(elem.text() + roman[spec.step])
+                            .text(elem.text() + DialogShared.roman[spec.step])
                     }
                 } else {
                     const elem = html.find(`[name="${key}"]`)
@@ -26,17 +27,11 @@ export default class DialogShared extends Dialog {
                         const options = elem.find('option')
                         for (let opt of options) {
                             let mod = this.recallData[key].find(x => x.name == $(opt).text().trim())
-                            if (mod) {
-                                opt.selected = mod.selected
-                            }
+                            if (mod) opt.selected = mod.selected
                         }
                     } else {
-                        if (elem.attr("type") == "checkbox") {
-                            elem[0].checked = this.recallData[key]
-                        } else {
-                            elem.val(this.recallData[key])
-                        }
-
+                        if (elem.attr("type") == "checkbox") elem[0].checked = this.recallData[key]
+                        else elem.val(this.recallData[key])
                     }
                 }
             }

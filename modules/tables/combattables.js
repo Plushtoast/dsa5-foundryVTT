@@ -3,14 +3,14 @@ import DSA5_Utility from "../system/utility-dsa5.js"
 export default class CombatTables {
     static async getDefenseBotch(weaponless = false) {
         let res = await new Roll("2d6").evaluate({ async: true })
-        if (weaponless && res < 7)
-            res += 5
+        if (weaponless && res < 7) res += 5
+
         return game.i18n.localize("DEFENSEBOTCH." + res.total)
     }
     static async getMeleeBotch(weaponless = false) {
         let res = await new Roll("2d6").evaluate({ async: true })
-        if (weaponless && res < 7)
-            res += 5
+        if (weaponless && res < 7) res += 5
+
         return game.i18n.localize("MELEEBOTCH." + res.total)
     }
     static async getRangeBotch() {
