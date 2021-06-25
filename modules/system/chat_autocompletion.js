@@ -6,7 +6,6 @@ export default class DSA5ChatAutoCompletion {
     //Special thanks to BlueBirdBlackSky and DJ Addi
     static skills = []
 
-
     constructor() {
         if (DSA5ChatAutoCompletion.skills.length == 0) {
             DSA5_Utility.allSkills().then(res => {

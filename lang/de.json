@@ -750,7 +750,8 @@
         "loading": "Ladestatus: {status}",
         "loaded": "Geladen",
         "reload": "Nachladen",
-        "isReloading": "{actor} läd {item} nach ({status})."
+        "isReloading": "{actor} läd {item} nach ({status}).",
+        "improvised": "Improvisierte Waffe"
     },
 
     "ITEM.TypeAdvantage": "Vorteil",
@@ -899,6 +900,7 @@
         "quickdraw": "Schnellziehen",
         "localKnowledge": "Ortskenntnis",
         "naturalArmor": "Natürliche Rüstung",
+        "improvisedWeaponMaster": "Meister der improvisierten Waffen",
         "all": "alle",
         "twoWeaponCombat": "Beidhändiger Kampf",
         "poisonResistance": "Giftresistenz",

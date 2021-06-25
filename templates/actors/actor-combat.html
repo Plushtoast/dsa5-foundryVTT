@@ -105,7 +105,7 @@
                 </div>
 
                 <div class="col five center">
-                    {{#i (ne item.data.ammunitiongroup.value "-")}}
+                    {{#if (ne item.data.ammunitiongroup.value "-")}}
                     <div>
                         <select name="currentAmmo-{{item._id}}" class="ammo-selector" data-item-id="{{item._id}}" data-dtype="String">
                         {{#select item.data.currentAmmo.value}}

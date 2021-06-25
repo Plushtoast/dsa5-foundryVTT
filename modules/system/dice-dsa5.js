@@ -127,8 +127,11 @@ export default class DiceDSA5 {
             botch = testData.extra.actor.data.rangeStats.botch
             crit = testData.extra.actor.data.rangeStats.crit
         }
-        if (/(\(|,)( )?i\)$/.test(testData.source.name)) botch = Math.min(19, botch)
+        if (/(\(|,)( )?i\)$/.test(testData.source.name)) {
+            if (!SpecialabilityRulesDSA5.hasAbility(testData.extra.actor, game.i18n.localize("LocalizedIDs.improvisedWeaponMaster"))) botch = Math.min(19, botch)
 
+            this._appendSituationalModifiers(testData, game.i18n.localize("WEAPON.improvised"), 2, "defenseMalus")
+        }
 
         if (testData.situationalModifiers.find(x => x.name == game.i18n.localize('opportunityAttack') && x.value != 0)) {
             botch = 50
@@ -419,8 +422,6 @@ export default class DiceDSA5 {
                 number = roll * val.step
 
                 if (isOverride) {
-                    //val.damageBonus = `=${number}`
-                    //val.damageBonus = 0
                     rollFormula = rollString.replace(/[Ww]/, "d")
                     overrideDamage.push({ name: val.name, roll })
                     return _this
@@ -432,7 +433,6 @@ export default class DiceDSA5 {
             return _this
         }, 0);
         let damageRoll = testData.damageRoll ? await testData.damageRoll : await DiceDSA5.manualRolls(await new Roll(rollFormula).evaluate({ async: true }), "CHAR.DAMAGE")
-            //this._addRollDiceSoNice(testData, damageRoll, "black")
         let damage = damageRoll.total
         let damageBonusDescription = []
         let weaponBonus = 0

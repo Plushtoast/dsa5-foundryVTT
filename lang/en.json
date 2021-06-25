@@ -725,7 +725,8 @@
         "loading": "Reloading state: {status}",
         "loaded": "Reloaded",
         "reload": "Reload",
-        "isReloading": "{actor} reloads {item} ({status})."
+        "isReloading": "{actor} reloads {item} ({status}).",
+        "improvised": "Improvised weapon"
     },
 
     "CHATNOTIFICATION": {
@@ -917,6 +918,7 @@
         "masterfulDodge": "tbd",
         "masterfulParry": "tbd",
         "throwingWeapons": "tbd",
+        "improvisedWeaponMaster": "tbd",
         "quickdraw": "Quickdraw",
         "weakAstralBody": "Weak Astral Body",
         "weakKarmicBody": "Weak Karmic Body",
