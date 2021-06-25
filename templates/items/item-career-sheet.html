@@ -97,7 +97,7 @@
                   {{/select}}
                 </select>
             </div>
-            {{#when data.mageLevel.value 'noteq' "mundane"}}
+            {{#if (ne data.mageLevel.value "mundane")}}
             <div class="form-group">
                 <label class="label-text">{{localize "guidevalue"}}</label>
                 <select name="data.guidevalue.value" data-dtype="String">
@@ -118,10 +118,10 @@
             </div>
 
             <div class="form-group">
-                <label class="label-text">{{#when data.mageLevel.value 'eq' 'clerical'}}{{localize "aspect"}}{{else}}{{localize "feature"}}{{/when}}</label>
+                <label class="label-text">{{#if (eq data.mageLevel.value 'clerical')}}{{localize "aspect"}}{{else}}{{localize "feature"}}{{/if}}</label>
                 <input class="input-text" type="text" name="data.feature.value" value="{{data.feature.value}}" data-dtype="String" />
             </div>
-            {{#when data.mageLevel.value 'eq' 'clerical'}}
+            {{#if (eq data.mageLevel.value 'clerical')}}
             <div class="form-group full-height">
                 <label class="label-text">{{localize "happyTalents"}}</label>
                 <textarea class="input-text" type="text" name="data.happyTalents.value" data-dtype="String">{{data.happyTalents.value}}</textarea>
@@ -134,7 +134,7 @@
                 <label class="label-text">{{localize "blessings"}}</label>
                 <textarea class="input-text" type="text" name="data.blessings.value" data-dtype="String">{{data.blessings.value}}</textarea>
             </div>
-            {{/when}} {{#when data.mageLevel.value 'eq' 'magical'}}
+            {{/if}} {{#if (eq data.mageLevel.value 'magical')}}
             <div class="form-group full-height">
                 <label class="label-text">{{localize "spells"}}</label>
                 <textarea class="input-text" type="text" name="data.spells.value" data-dtype="String">{{data.spells.value}}</textarea>
@@ -147,7 +147,7 @@
                 <label class="label-text">{{localize "spelltrickCount"}}</label>
                 <input class="input-text" type="text" name="data.spelltrickCount.value" value="{{data.spelltrickCount.value}}" data-dtype="Number" />
             </div>
-            {{/when}} {{/when}}
+            {{/if}} {{/if}}
 
 
         </div>

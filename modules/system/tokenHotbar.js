@@ -87,7 +87,7 @@ export default class DSA5Hotbar extends Hotbar {
                                     label: game.i18n.localize("yes"),
                                     callback: async() => {
                                         await result.setupEffect(null, {}, tokenId)
-                                        this.updateDSA5Hotbar()
+                                        await this.updateDSA5Hotbar()
                                     }
                                 },
                                 cancel: {
@@ -119,8 +119,9 @@ export default class DSA5Hotbar extends Hotbar {
     }
 
     async updateDSA5Hotbar() {
-        if (canvas.tokens.controlled.length == 1) {
-            const actor = canvas.tokens.controlled[0].actor
+        const controlled = canvas.tokens.controlled
+        if (controlled.length === 1) {
+            const actor = controlled[0].actor
             if (actor && actor.isOwner) {
                 await this.updateIcons(actor)
                 await this.toggleBar(false)

@@ -47,7 +47,7 @@
                 <input class="input-text" type="text" name="data.effect.value" value="{{data.effect.value}}" data-dtype="String" />
             </div>
 
-            {{#when data.category.value 'eq' 'Combat'}}
+            {{#if (eq data.category.value 'Combat')}}
             <div class="form-group">
                 <label class="label-text">{{localize "combatskill"}}</label>
                 <input class="input-text" type="text" name="data.list.value" value="{{data.list.value}}" data-dtype="String" />
@@ -62,7 +62,7 @@
                   {{/select}}
                 </select>
             </div>
-            {{/when}} {{#if isOwned}}
+            {{/if}} {{#if isOwned}}
             <div class="form-group">
                 <label class="label-text">{{#if canAdvance}}<a class="refund-step"><i class="fas fa-minus"></i></a> {{/if}}{{localize "stepValue"}}{{#if canAdvance}} <a class="advance-step"><i class="fas fa-plus"></i></a>{{/if}}</label>
                 <input class="input-text" type="number" name="data.step.value" value="{{data.step.value}}" data-dtype="Number" />

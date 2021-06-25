@@ -319,11 +319,14 @@ export default class ActorSheetDsa5 extends ActorSheet {
             class: "library",
             icon: `fas fa-university`,
             onclick: async() => this._openLibrary()
-        }, {
-            class: "actorConfig",
-            icon: `fas fa-link`,
-            onclick: async() => this._configActor()
         })
+        if (this.actor.isOwner) {
+            buttons.unshift({
+                class: "actorConfig",
+                icon: `fas fa-link`,
+                onclick: async() => this._configActor()
+            })
+        }
         if (this.actor.data.canAdvance) {
             buttons.unshift({
                 class: "locksheet",

@@ -1,5 +1,5 @@
 <div class="dsa5 chat-card" data-actor-id="{{actorId}}" data-hide={{hideData}}>
-    {{> systems/dsa5/templates/chat/roll/test-card.html}} {{#when testData.successLevel 'gt' '0'}}
+    {{> systems/dsa5/templates/chat/roll/test-card.html}} {{#if (gt testData.successLevel 0)}}
 
     <div class="card-content chatModifiers">
         <b>{{localize "effect"}}</b>: ...
@@ -17,15 +17,15 @@
     <div class="card-content">
         <b>{{localize "reach"}}</b>: {{preData.calculatedSpellModifiers.reach}}
     </div>
-    {{/when}}
+    {{/if}}
     <div class="card-content">
         <b>{{localize "cost"}}</b>: {{preData.calculatedSpellModifiers.finalcost}}
     </div>
-    {{#when preData.calculatedSpellModifiers.maintainCost 'noteq' ''}}
+    {{#if (ne preData.calculatedSpellModifiers.maintainCost '')}}
     <div class="card-content">
         <b>{{localize "maintainCost"}}</b>: {{preData.calculatedSpellModifiers.maintainCost}}
     </div>
-    {{/when}} {{#if testData.damage}}
+    {{/if}} {{#if testData.damage}}
     <div class="card-content" title="{{testData.calculatedEffectFormula}}">
         <b>{{localize "effectResult"}}</b>: {{testData.damage}}
     </div>

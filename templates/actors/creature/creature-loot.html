@@ -5,11 +5,11 @@
         <div class="col">
             {{localize (concat "Equipment." @key)}}
         </div>
-        {{#when @key 'eq' 'bags'}}
+        {{#if (eq @key 'bags')}}
         <div class="col five center">
             <i class="fas fa-weight-hanging" title="{{localize 'carrycapacity'}}"></i>
         </div>
-        {{/when}}
+        {{/if}}
         <div class="col eight center">
             <i class="fa fa-shield-alt" title="{{localize 'equipped'}}"></i>
         </div>
@@ -37,11 +37,11 @@
                 <div class="col">
                     <a class="item-edit {{#if item.consumable}}consume-item{{/if}}">{{item.name}}</a>
                 </div>
-                {{#when item.data.equipmentType.value 'eq' 'bags'}}
+                {{#if (eq item.data.equipmentType.value 'bags')}}
                 <div class="col five center">
                     {{item.bagweight}}
                 </div>
-                {{/when}}
+                {{/if}}
                 <div class="col eight center">
                     {{#if item.toggle}} {{#if item.toggleValue}}
                     <a class="item-toggle"><i class="far fa-check-circle"></i></a> {{else}}
@@ -63,9 +63,7 @@
             </div>
             <div class="row-section lineheight expandDetails {{item.detailed}}">
                 <div class="col">
-                    {{#if item.children}}
-                    {{> systems/dsa5/templates/actors/parts/containerContent.html this}}
-                    {{/if}}
+                    {{#if item.children}} {{> systems/dsa5/templates/actors/parts/containerContent.html this}} {{/if}}
                 </div>
             </div>
         </div>

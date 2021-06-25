@@ -4,7 +4,7 @@
             <input class="input name" name="name" type="text" value="{{actor.name}}" placeholder="{{localize 'Character Name'}}" />
             <span class="label name">{{localize "Name"}}</span>
         </div>
-        {{#when merchantType 'noteq' 'loot'}}
+        {{#if (ne merchantType 'loot')}}
         <div class="headerInput">
             <input class="input species" name="data.details.species.value" type="text" value="{{actor.data.details.species.value}}" readonly placeholder="{{localize 'species'}}" />
             <span class="label species">{{localize "species"}}</span>
@@ -13,14 +13,14 @@
             <input class="input-details" name="data.details.career.value" type="text" value="{{actor.data.details.career.value}}" placeholder="{{localize 'career'}}" />
             <span class="label-details">{{localize "career"}}</span>
         </div>
-        {{/when}}
+        {{/if}}
     </header>
 
     <div class="general" ondragstart="return false;" ondrop="return false;">
-        <img class="charimg profile" src="{{actor.img}}" title="{{actor.name}}" {{#when merchantType 'eq' 'loot'}}style="margin-left: calc(50% - 57px)" {{/when}} data-edit="img">
+        <img class="charimg profile" src="{{actor.img}}" title="{{actor.name}}" {{#if (eq merchantType 'loot')}}style="margin-left: calc(50% - 57px)" {{/if}} data-edit="img">
 
         <div class="row-section" style="width: 100%;margin-bottom: 20px">
-            {{#when merchantType 'noteq' 'loot'}}
+            {{#if (ne merchantType 'loot')}}
             <div class="col">
                 <div class="row-section wrap charBtns">
                     {{#each actor.data.characteristics as |ch c|}}
@@ -48,26 +48,26 @@
                 </div>
                 {{/if}}
             </div>
-            {{/when}}
+            {{/if}}
         </div>
 
     </div>
     <!-- TABS -->
     <section id="tab-sections">
         <nav id="dsa5-primarytabs" class="sheet-tabs tabs" ondragstart="return false;" ondrop="return false;">
-            {{#when merchantType 'noteq' 'loot'}}
+            {{#if (ne merchantType 'loot')}}
             <a class="item" data-tab="skills">{{localize "skills"}}</a>
             <a class="item" data-tab="combat">{{localize "Combat"}}</a> {{#if actor.magic.hasSpells}}
             <a class="item" data-tab="magic">{{localize "Magic"}}</a> {{/if}} {{#if actor.magic.hasPrayers}}
             <a class="item" data-tab="religion">{{localize "Religion"}}</a> {{/if}}
-            <a class="item" data-tab="main">{{localize "attributes"}}</a> {{/when}}
-            <a class="item active" data-tab="inventory">{{invName}}</a> {{#when merchantType 'noteq' 'loot'}}
+            <a class="item" data-tab="main">{{localize "attributes"}}</a> {{/if}}
+            <a class="item active" data-tab="inventory">{{invName}}</a> {{#if (ne merchantType 'loot')}}
             <a class="item" data-tab="status">{{localize "status"}}</a>
-            <a class="item" data-tab="notes">{{localize "Notes"}}</a> {{/when}}
+            <a class="item" data-tab="notes">{{localize "Notes"}}</a> {{/if}}
         </nav>
 
         <section class="content">
-            {{#when merchantType 'noteq' 'loot'}}
+            {{#if (ne merchantType 'loot')}}
             <div class="tab main save-scroll" data-tab="main">
                 {{> systems/dsa5/templates/actors/npc/npc-main.html}}
             </div>
@@ -85,18 +85,18 @@
             <div class="tab religion save-scroll" data-tab="religion">
                 {{> systems/dsa5/templates/actors/character/actor-religion.html}}
             </div>
-            {{/if}} {{/when}}
+            {{/if}} {{/if}}
             <div class="tab inventory save-scroll" data-tab="inventory">
                 {{> systems/dsa5/templates/actors/merchant/merchant-commerce.html}}
             </div>
-            {{#when merchantType 'noteq' 'loot'}}
+            {{#if (ne merchantType 'loot')}}
             <div class="tab status save-scroll" data-tab="status">
                 {{> systems/dsa5/templates/actors/parts/status_effects.html}}
             </div>
             <div class="tab save-scroll" data-tab="notes">
                 {{> systems/dsa5/templates/actors/actor-notes.html}}
             </div>
-            {{/when}}
+            {{/if}}
         </section>
     </section>
 </form>

@@ -8,6 +8,7 @@ import SpecialabilityRulesDSA5 from "../system/specialability-rules-dsa5.js";
 import DSA5StatusEffects from "../status/status_effects.js"
 import Itemdsa5 from "../item/item-dsa5.js";
 import TraitRulesDSA5 from "../system/trait-rules-dsa5.js";
+import RuleChaos from "../system/rule_chaos.js";
 
 export default class Actordsa5 extends Actor {
     static async create(data, options) {
@@ -1212,6 +1213,8 @@ export default class Actordsa5 extends Actor {
         let situationalModifiers = DSA5StatusEffects.getRollModifiers(testData.extra.actor, testData.source)
         Itemdsa5.getDefenseMalus(situationalModifiers, this)
 
+        const multipleDefenseValue = RuleChaos.multipleDefenseValue(this, testData.source)
+
         let dialogOptions = {
             title: title,
             template: "/systems/dsa5/templates/dialog/combatskill-enhanced-dialog.html",
@@ -1219,7 +1222,8 @@ export default class Actordsa5 extends Actor {
                 rollMode: options.rollMode,
                 combatSpecAbs: combatskills,
                 showDefense: true,
-                situationalModifiers
+                situationalModifiers,
+                defenseCountString: game.i18n.format("defenseCount", {malus: multipleDefenseValue})
             },
             callback: (html) => {
                 cardOptions.rollMode = html.find('[name="rollMode"]').val();
@@ -1230,8 +1234,8 @@ export default class Actordsa5 extends Actor {
                     name: game.i18n.localize("attackFromBehind"),
                     value: html.find('[name="attackFromBehind"]').is(":checked") ? -4 : 0
                 }, {
-                    name: game.i18n.localize("defenseCount"),
-                    value: (Number(html.find('[name="defenseCount"]').val()) || 0) * -3
+                    name: game.i18n.format("defenseCount", {malus: multipleDefenseValue}),
+                    value: (Number(html.find('[name="defenseCount"]').val()) || 0) * multipleDefenseValue
                 })
                 return { testData, cardOptions };
             }

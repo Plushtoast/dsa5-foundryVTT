@@ -1,4 +1,4 @@
-{{#when effect.flags.dsa5.advancedFunction 'eq' '1'}}
+{{#if (eq effect.flags.dsa5.advancedFunction '1')}}
 <div class="form-group">
     <label class="label-text">{{localize 'effect'}}</label>
     <select name="flags.dsa5.args0" data-dtype="String">
@@ -13,17 +13,16 @@
     <label class="label-text">{{localize 'stepValue'}}</label>
     <input type="text" name="flags.dsa5.args1" value="{{effect.flags.dsa5.args1}}" />
 </div>
-{{/when}} {{#when effect.flags.dsa5.advancedFunction 'eq' '2'}}
+{{/if}} {{#if (eq effect.flags.dsa5.advancedFunction '2')}}
 <div class="form-group full-height">
     <label class="label-text">{{localize 'ActiveEffects.advancedFunctions.macro'}}</label> {{#if config.canEditMacros}}
     <textarea class="input-text" rows="10" type="text" name="flags.dsa5.args3" placeholder="{{localize 'ActiveEffects.placeholder.macros'}}">{{effect.flags.dsa5.args3}}</textarea> {{else}}
     <p class="input-text">{{#if effect.flags.dsa5.args3}}{{effect.flags.dsa5.args3}}{{else}} - {{/if}}</p>
     {{/if}}
 </div>
-{{/when}}
- {{#when effect.flags.dsa5.advancedFunction 'eq' '3'}}
+{{/if}} {{#if (eq effect.flags.dsa5.advancedFunction '3')}}
 <div class="form-group">
     <label class="label-text">{{localize 'ActiveEffects.creature'}}</label>
     <input type="text" name="flags.dsa5.args4" value="{{effect.flags.dsa5.args4}}" />
 </div>
-{{/when}}
+{{/if}}

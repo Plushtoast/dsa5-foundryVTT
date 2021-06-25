@@ -18,7 +18,7 @@
                       </select>
                 </div>
             </div>
-            {{#when actor.data.merchant.merchantType 'eq' "merchant"}}
+            {{#if (eq actor.data.merchant.merchantType "merchant")}}
             <div class="row-section">
                 <div class="col fourty">
                     {{localize "MERCHANT.Factor"}}
@@ -44,7 +44,7 @@
                     <input name="data.merchant.hidePlayer" type="checkbox" value="1" {{checked actor.data.merchant.hidePlayer}} />
                 </div>
             </div>
-            {{/when}} {{#when actor.data.merchant.merchantType 'eq' "loot"}}
+            {{/if}} {{#if (eq actor.data.merchant.merchantType "loot")}}
             <div class="row-section" title="{{localize 'MERCHANT.hidePlayerHint'}}">
                 <div class="col fourty">
                     {{localize 'MERCHANT.hidePlayer'}}
@@ -59,12 +59,12 @@
                     <input name="data.merchant.locked" type="checkbox" value="1" {{checked actor.data.merchant.locked}} />
                 </div>
             </div>
-            {{/when}}
+            {{/if}}
         </div>
     </div>
 </div>
 
-{{#when actor.data.merchant.merchantType 'noteq' "none"}}
+{{#if (ne actor.data.merchant.merchantType "none")}}
 <div class="row-section">
     <button class="sheetButton randomGoods">{{localize "MERCHANT.randomGoods"}}</button>
     <button class="sheetButton clearInventory">{{localize "MERCHANT.clearInventory"}}</button>
@@ -85,7 +85,7 @@
         </div>
     </div>
     <div class="row-section wrap">
-    {{#each players as |player i|}}
+        {{#each players as |player i|}}
         <div class="col two row-section">
             <div class="col eighty">
                 {{player.data.name}}
@@ -101,11 +101,11 @@
             </div>
         </div>
 
-    {{/each}}
+        {{/each}}
     </div>
 
 </div>
-{{/when}} {{#each actor.inventory as |section sid|}} {{#if section.show}}
+{{/if}} {{#each actor.inventory as |section sid|}} {{#if section.show}}
 <div class="groupbox">
     <div class="row-section table-title">
         <div class="col eight"></div>

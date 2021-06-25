@@ -7,6 +7,7 @@ import DSA5 from "../system/config-dsa5.js";
 import SpecialabilityRulesDSA5 from "../system/specialability-rules-dsa5.js";
 import ItemRulesDSA5 from "../system/item-rules-dsa5.js";
 import DSAActiveEffectConfig from "../status/active_effects.js";
+import RuleChaos from "../system/rule_chaos.js";
 
 export default class Itemdsa5 extends Item {
     static defaultImages = {
@@ -982,9 +983,11 @@ class MeleeweaponDSA5 extends Itemdsa5 {
                 speaker: Itemdsa5.buildSpeaker(actor, tokenId)
             }
         };
+        const multipleDefenseValue = RuleChaos.multipleDefenseValue(actor, item.toObject())
         let data = {
             rollMode: options.rollMode,
-            mode: mode
+            mode: mode,
+            defenseCountString: game.i18n.format("defenseCount", { malus: multipleDefenseValue })
         }
         let situationalModifiers = actor ? DSA5StatusEffects.getRollModifiers(actor, item, { mode: mode }) : []
         this.getSituationalModifiers(situationalModifiers, actor, data, item)
@@ -1019,8 +1022,8 @@ class MeleeweaponDSA5 extends Itemdsa5 {
                         value: 0,
                         step: 1
                     }, {
-                        name: game.i18n.localize("defenseCount"),
-                        value: (Number(html.find('[name="defenseCount"]').val()) || 0) * -3
+                        name: game.i18n.format("defenseCount", { malus: multipleDefenseValue }),
+                        value: (Number(html.find('[name="defenseCount"]').val()) || 0) * multipleDefenseValue
                     }, {
                         name: game.i18n.localize("advantageousPosition"),
                         value: html.find('[name="advantageousPosition"]').is(":checked") ? 2 : 0
@@ -1543,9 +1546,11 @@ class TraitItemDSA5 extends Itemdsa5 {
                 speaker: Itemdsa5.buildSpeaker(actor, tokenId)
             }
         };
+        const multipleDefenseValue = RuleChaos.multipleDefenseValue(actor, item.toObject())
         let data = {
             rollMode: options.rollMode,
-            mode: mode
+            mode: mode,
+            defenseCountString: game.i18n.format("defenseCount", { malus: multipleDefenseValue })
         }
 
         let situationalModifiers = actor ? DSA5StatusEffects.getRollModifiers(actor, item, { mode: mode }) : []
@@ -1598,8 +1603,8 @@ class TraitItemDSA5 extends Itemdsa5 {
                     value: 0,
                     step: 1
                 }, {
-                    name: game.i18n.localize("defenseCount"),
-                    value: (Number(html.find('[name="defenseCount"]').val()) || 0) * -3
+                    name: game.i18n.format("defenseCount", { malus: multipleDefenseValue }),
+                    value: (Number(html.find('[name="defenseCount"]').val()) || 0) * multipleDefenseValue
                 }, {
                     name: game.i18n.localize("advantageousPosition"),
                     value: html.find('[name="advantageousPosition"]').is(":checked") ? 2 : 0

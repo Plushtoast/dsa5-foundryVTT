@@ -105,7 +105,7 @@
                 </div>
 
                 <div class="col five center">
-                    {{#when item.data.ammunitiongroup.value 'noteq' "-"}}
+                    {{#i (ne item.data.ammunitiongroup.value "-")}}
                     <div>
                         <select name="currentAmmo-{{item._id}}" class="ammo-selector" data-item-id="{{item._id}}" data-dtype="String">
                         {{#select item.data.currentAmmo.value}}
@@ -114,7 +114,7 @@
                         <option class="ammo-option" value="{{ammo._id}}"> ({{ammo.data.quantity.value}}) {{ammo.name}}</option>
                         {{/each}}
                         {{/select}}
-                      </select> {{#when item.LZ 'noteq' 0}}
+                      </select> {{#if (ne item.LZ 0)}}
                         <a class="loadWeapon" title="{{item.title}}">
                             <div class="progress blue">
                                 <span class="progress-left" style="--transformLeft:{{item.transformLeft}}">
@@ -125,13 +125,13 @@
                                 </span>
                                 <div class="progress-value">{{item.progress}}</div>
                             </div>
-                        </a> {{/when}}
+                        </a> {{/if}}
                     </div>
                     {{else}}
                     <div class="no-ammo">
                         -
                     </div>
-                    {{/when}}
+                    {{/if}}
                 </div>
                 <div class="col ten very-small center">
                     <a class="item-dropdown" title="{{localize 'SHEET.Dropdown'}}"><i class="fas fa-chevron-down"></i></a>
@@ -264,7 +264,7 @@
                     <a data-mode="attack" class="ch-rollCombat d20 diet-mu">{{item.data.attack.value}}</a>
                 </div>
                 <div class="col eight center item" data-item-id="{{item._id}}" data-mod="parry">
-                    {{#when item.data.weapontype.value 'eq' 'melee'}} <a data-mode="parry" class="ch-rollCombat d20 diet-in">{{item.data.parry.value}}</a> {{else}}- {{/when}}
+                    {{#if (eq item.data.weapontype.value 'melee')}} <a data-mode="parry" class="ch-rollCombat d20 diet-in">{{item.data.parry.value}}</a> {{else}}- {{/if}}
                 </div>
             </div>
 

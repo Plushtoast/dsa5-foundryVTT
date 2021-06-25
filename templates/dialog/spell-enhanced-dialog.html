@@ -97,11 +97,11 @@
                         <div class="col four center">
                             {{localize "reach"}}
                         </div>
-                        {{#when maintainCost 'noteq' '0'}}
+                        {{#if (ne maintainCost 0}}
                         <div class="col four center" title="{{localize 'maintainCost'}}">
                             {{localize "CHARAbbrev.maintainCost"}}
                         </div>
-                        {{/when}}
+                        {{/if}}
                     </div>
                 </div>
                 <div class="col">
@@ -116,11 +116,11 @@
                         <div class="col four center">
                             <span class="reach" data-mod="0" data-base="{{spellReach}}">{{spellReach}}</span>
                         </div>
-                        {{#when maintainCost 'noteq' '0'}}
+                        {{#if (ne maintainCost 0)}}
                         <div class="col four center">
                             <span class="maintainCost" data-mod="0" data-base="{{maintainCost}}">{{maintainCost}}</span>
                         </div>
-                        {{/when}}
+                        {{/if}}
                     </div>
                 </div>
             </div>

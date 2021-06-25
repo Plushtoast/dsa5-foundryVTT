@@ -24,7 +24,7 @@
                 </select>
             </div>
 
-            {{#when data.traitType.value 'eq' "rangeAttack"}}
+            {{#if (eq data.traitType.value "rangeAttack")}}
             <div class="form-group">
                 <label class="label-text">{{localize "CHAR.ATTACK"}}</label>
                 <input class="input-text" type="text" name="data.at.value" value="{{data.at.value}}" data-dtype="String" />
@@ -46,7 +46,7 @@
                 <label class="label-text">{{localize "effect"}}</label>
                 <input class="input-text" type="text" name="data.effect.value" value="{{data.effect.value}}" data-dtype="String" />
             </div>
-            {{/when}} {{#when data.traitType.value 'eq' "meleeAttack"}}
+            {{/if}} {{#if (eq data.traitType.value "meleeAttack")}}
             <div class="form-group">
                 <label class="label-text">{{localize "CHAR.ATTACK"}}</label>
                 <input class="input-text" type="number" name="data.at.value" value="{{data.at.value}}" data-dtype="Number" />
@@ -74,13 +74,13 @@
                 <label class="label-text">{{localize "effect"}}</label>
                 <input class="input-text" type="text" name="data.effect.value" value="{{data.effect.value}}" data-dtype="String" />
             </div>
-            {{/when}}{{#when data.traitType.value 'eq' "armor"}}
+            {{/if}}{{#if (eq data.traitType.value "armor")}}
             <div class="form-group">
                 <label class="label-text">{{localize "protection"}}</label>
                 <input class="input-text" type="text" name="data.at.value" value="{{data.at.value}}" data-dtype="String" />
             </div>
 
-            {{/when}} {{#when data.traitType.value 'eq' "familiar"}}
+            {{/if}} {{#if (eq data.traitType.value "familiar")}}
             <div class="form-group">
                 <label class="label-text">{{localize "APValue"}}</label>
                 <input class="input-text" type="text" name="data.APValue.value" value="{{data.APValue.value}}" data-dtype="String" />
@@ -97,7 +97,7 @@
                 <label class="label-text">{{localize "aspect"}}</label>
                 <input class="input-text" type="text" name="data.aspect.value" value="{{data.aspect.value}}" data-dtype="String" />
             </div>
-            {{/when}}
+            {{/if}}
 
         </div>
 

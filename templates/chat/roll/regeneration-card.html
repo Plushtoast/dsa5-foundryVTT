@@ -1,9 +1,9 @@
 <div class="dsa5 chat-card" data-actor-id="{{actorId}}" data-hide={{hideData}}>
-    {{> systems/dsa5/templates/chat/roll/test-card.html}} {{#when preData.regenerationFactor 'noteq' '1'}}
+    {{> systems/dsa5/templates/chat/roll/test-card.html}} {{#if (ne preData.regenerationFactor '1')}}
     <div class="card-content">
         <b>{{localize "badEnvironment"}}</b>: x 0.5
     </div>
-    {{/when}}
+    {{/if}}
     <div class="card-content">
         <b>{{localize "wounds"}}</b>: {{testData.LeP}}
     </div>

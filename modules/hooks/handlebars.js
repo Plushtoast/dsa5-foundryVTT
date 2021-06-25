@@ -19,20 +19,7 @@ export default function() {
     Handlebars.registerHelper('join', function(a, b) {
         return b.join(a)
     })
-    Handlebars.registerHelper("when", function(operand_1, operator, operand_2, options) {
-        let operators = {
-            'eq': function(l, r) { return l == r; },
-            'noteq': function(l, r) { return l != r; },
-            'gt': function(l, r) { return Number(l) > Number(r); },
-            'or': function(l, r) { return l || r; },
-            'and': function(l, r) { return l && r; },
-            '%': function(l, r) { return (l % r) === 0; }
-        }
-        let result = operators[operator](operand_1, operand_2);
 
-        if (result) return options.fn(this);
-        else return options.inverse(this);
-    });
     Handlebars.registerHelper("diceThingsUp", function(a) {
         return DSA5_Utility.replaceDies(a)
     })

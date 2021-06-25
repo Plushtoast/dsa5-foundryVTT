@@ -106,6 +106,14 @@ export default class DSA5Initializer extends Dialog {
                 for (let entry of createdEntries) {
                     this.scenes[entry.data.name] = entry;
                 }
+
+                if (json.initialScene) {
+                    const initialScene = this.scenes[json.initialScene]
+                    await game.settings.set("core", NotesLayer.TOGGLE_SETTING, true)
+                    await initialScene.activate()
+                    await initialScene.update({ navigation: true })
+
+                }
             }
             if (json.actors) {
                 let head = await this.getFolderForType("Actor")
