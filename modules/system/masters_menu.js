@@ -81,39 +81,61 @@ class GameMasterMenu extends Application {
         super.activateListeners(html)
 
         html.find('.heroLink').click(ev => {
+            ev.stopPropagation()
             game.actors.get(this.getID(ev)).sheet.render(true)
         })
         html.find('.heroSelector').change(ev => {
+            ev.stopPropagation()
             this.selected[this.getID(ev)] = $(ev.currentTarget).is(":checked")
         })
         html.find('.skillSelektor').change(ev => {
+            ev.stopPropagation()
             this.lastSkill = $(ev.currentTarget).val()
         })
         html.find('.rollChar').click(ev => {
+            ev.stopPropagation()
             this.rollSkill([this.getID(ev)])
         })
-        html.find('.rollAll').click(() => {
+        html.find('.rollAll').click((ev) => {
+            ev.stopPropagation()
             this.rollSkill(this.selectedIDs())
         })
         html.find('.pay').click((ev) => {
+            ev.stopPropagation()
             this.pay([this.getID(ev)])
         })
+        html.find('.actorItem').click(async(ev)=> {
+            ev.stopPropagation()
+            const id = $(ev.currentTarget).attr("data-uuid")
+            const entity = await fromUuid(id)
+            entity.sheet.render(true)
+        })
         html.find('.getPaid').click((ev) => {
+            ev.stopPropagation()
             this.getPaid([this.getID(ev)])
         })
-        html.find('.payAll').click(() => {
-            this.pay(this.selectedIDs())
+        html.find('.payAll').click((ev) => {
+            ev.stopPropagation()
+            this.pay(this.selectedIDs(ev))
         })
-        html.find('.getPaidAll').click(() => {
+        html.find('.getPaidAll').click((ev) => {
+            ev.stopPropagation()
             this.getPaid(this.selectedIDs())
         })
+        html.find('.selectAll').change((ev) => {
+            ev.stopPropagation()
+            html.find('.heroSelector').prop('checked', $(ev.currentTarget).is(":checked"))
+        })
         html.find('.exp').click((ev) => {
+            ev.stopPropagation()
             this.getExp([this.getID(ev)])
         })
-        html.find('.expAll').click(() => {
+        html.find('.expAll').click((ev) => {
+            ev.stopPropagation()
             this.getExp(this.selectedIDs())
         })
         html.find('.randomPlayer').click((ev) => {
+            ev.stopPropagation()
             const heros = html.find('.hero')
             const count = heros.length
             const roll = new Roll(`1d${count}`).evaluate({ async: false }).total
@@ -125,14 +147,21 @@ class GameMasterMenu extends Application {
                 $(ev.currentTarget).find('i').removeClass('fa-spin')
             }, 500)
         })
+        html.find('.heroSelector').click(ev=> ev.stopPropagation())
+        html.find('.hero').click(ev => {
+            ev.stopPropagation(ev)
+            $(ev.currentTarget).find('.expandDetails').fadeToggle()
+        })
         html.find('.schip').click(ev => {
+            ev.stopPropagation()
             ev.preventDefault()
             let val = Number(ev.currentTarget.getAttribute("data-val"))
             if (val == 1 && $(ev.currentTarget).closest('.hero').find(".fullSchip").length == 1) val = 0
 
             game.actors.get(this.getID(ev)).update({ "data.status.fatePoints.value": val })
         })
-        html.find('.groupCheck').click(() => {
+        html.find('.groupCheck').click((ev) => {
+            ev.stopPropagation()
             this.doGroupCheck()
         })
     }
@@ -256,6 +285,11 @@ class GameMasterMenu extends Application {
                 })
             }
             hero.schips = schips
+            hero.purse = hero.items.filter(x => x.type == "money")
+                .sort((a, b) => b.data.data.price.value - a.data.data.price.value)
+                .map(x => `<span title="${game.i18n.localize(x.name)}">${x.data.data.quantity.value}</span>`).join(" - ")
+            hero.advantages = hero.items.filter(x => x.type == "advantage").map(x => {return {name: x.name, uuid: x.uuid}})
+            hero.disadvantages = hero.items.filter(x => x.type == "disadvantage").map(x => { return { name: x.name, uuid: x.uuid } })
         }
         const skills = Object.fromEntries(Object.entries(await DSA5_Utility.allSkillsList()).sort((a, b) => a[0].localeCompare(b[0])))
 

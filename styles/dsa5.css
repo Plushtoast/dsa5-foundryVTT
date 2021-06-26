@@ -2588,6 +2588,18 @@ select.noAppearance {
     box-shadow: inset 0px 0px 10px #8a0202;
 }
 
+.hero .details{
+    display: none;
+}
+
+.hero .actorItem{
+    display: inline-block;
+    padding: 2px;
+    border: 1px solid var(--border-color);
+    line-height: 12px;
+    border-radius: 2px;
+}
+
 #combat li.combatant .token-resource {
     color: rgb(119, 113, 113);
 }
