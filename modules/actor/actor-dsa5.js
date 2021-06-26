@@ -43,10 +43,10 @@ export default class Actordsa5 extends Actor {
         const data = this.data
         try {
             let itemModifiers = {}
-            for (let i of data.items.filter(x => (["meleeweapon", "rangeweapon", "armor", "equipment"].includes(x.type) && getProperty(x, "data.worn.value")) || ["advantage", "specialability", "disadvantage"].includes(x.type))) {
+            for (let i of data.items.filter(x => (["meleeweapon", "rangeweapon", "armor", "equipment"].includes(x.type) && getProperty(x.data, "data.worn.value")) || ["advantage", "specialability", "disadvantage"].includes(x.type))) {
                 this._addGearAndAbilityModifiers(itemModifiers, i)
             }
-            data.data.itemModifiers = this._applyModiferTransformations(itemModifiers)
+            data.itemModifiers = this._applyModiferTransformations(itemModifiers)
 
             for (let ch of Object.values(data.data.characteristics)) {
                 ch.value = ch.initial + ch.advances + (ch.modifier || 0) + ch.gearmodifier;
@@ -199,7 +199,6 @@ export default class Actordsa5 extends Actor {
     applyActiveEffects() {
         const overrides = {};
 
-        // Organize non-disabled effects by their application priority
         const changes = this.effects.reduce((changes, e) => {
             if (e.data.disabled) return changes;
 
@@ -245,13 +244,11 @@ export default class Actordsa5 extends Actor {
         }, []);
         changes.sort((a, b) => a.priority - b.priority);
 
-        // Apply all changes
         for (let change of changes) {
             const result = change.effect.apply(this, change);
             if (result !== null) overrides[change.key] = result;
         }
 
-        // Expand the set of final overrides
         this.overrides = foundry.utils.expandObject(overrides);
     }
 
@@ -714,7 +711,7 @@ export default class Actordsa5 extends Actor {
             aggregatedtests,
             wornArmor: armor,
             inventory,
-            itemModifiers: actorData.data.itemModifiers,
+            itemModifiers: this.data.itemModifiers,
             languagePoints: {
                 used: actorData.data.freeLanguagePoints ? actorData.data.freeLanguagePoints.used : 0,
                 available: actorData.data.freeLanguagePoints ? actorData.data.freeLanguagePoints.value : 0
@@ -783,13 +780,13 @@ export default class Actordsa5 extends Actor {
     }
 
     _addGearAndAbilityModifiers(itemModifiers, i) {
-        if (!i.data.data.effect || !i.data.data.effect.value)
-            return
+        const effect = getProperty(i, "data.data.effect.value")
+        if(!effect) return
 
-        for (let mod of i.data.data.effect.value.split(/,|;/).map(x => x.trim())) {
+        for (let mod of effect.split(/,|;/).map(x => x.trim())) {
             let vals = mod.replace(/(\s+)/g, ' ').trim().split(" ")
             if (vals.length == 2) {
-                if (Number(vals[0]) != undefined) {
+                if (!isNaN(vals[0])) {
                     if (itemModifiers[vals[1]] == undefined) {
                         itemModifiers[vals[1]] = {
                             value: Number(vals[0]) * (i.data.data.step ? (Number(i.data.data.step.value) || 1) : 1),
@@ -1390,7 +1387,7 @@ export default class Actordsa5 extends Actor {
             })
         }
         this.data.update(update)
-        
+
     }
 
     static _prepareRangeTrait(item) {
@@ -1447,7 +1444,7 @@ export default class Actordsa5 extends Actor {
                     item.transformLeft = 0
                 }
             }
-            
+
 
         } else {
             ui.notifications.error(game.i18n.format("DSAError.unknownCombatSkill", { skill: item.data.combatskill.value, item: item.name }))
