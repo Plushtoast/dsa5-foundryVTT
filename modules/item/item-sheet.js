@@ -40,7 +40,8 @@ export default class ItemSheetdsa5 extends ItemSheet {
         Items.registerSheet("dsa5", BlessingSheetDSA5, { makeDefault: true, types: ["blessing"] });
         Items.registerSheet("dsa5", RangeweaponSheet, { makeDefault: true, types: ["rangeweapon"] });
         Items.registerSheet("dsa5", EquipmentSheet, { makeDefault: true, types: ["equipment"] });
-        Items.unregisterSheet("dsa5", ItemSheetdsa5, { types: ["equipment", "rangeweapon", "blessing", "magictrick", "spellextension", "consumable", "species", "career", "culture", "advantage", "specialability", "disadvantage", "ritual", "ceremony", "liturgy", "spell", "disease", "poison", "meleeweapon"] });
+        Items.registerSheet("dsa5", ArmorSheet, { makeDefault: true, types: ["armor"] });
+        Items.unregisterSheet("dsa5", ItemSheetdsa5, { types: ["armor", "equipment", "rangeweapon", "blessing", "magictrick", "spellextension", "consumable", "species", "career", "culture", "advantage", "specialability", "disadvantage", "ritual", "ceremony", "liturgy", "spell", "disease", "poison", "meleeweapon"] });
     }
 
     async _render(force = false, options = {}) {
@@ -480,6 +481,10 @@ class EquipmentSheet extends Enchantable {
 
         await super._onDrop(event)
     }
+}
+
+class ArmorSheet extends Enchantable{
+
 }
 
 class RangeweaponSheet extends Enchantable {

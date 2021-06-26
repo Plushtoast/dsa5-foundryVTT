@@ -41,7 +41,6 @@ export default class BookWizard extends Application {
         })
     }
 
-
     _getHeaderButtons() {
         let buttons = super._getHeaderButtons();
         buttons.unshift({
@@ -223,11 +222,9 @@ export default class BookWizard extends Application {
                 scene.update({ navigation: !scene.data.navigation })
                 break
         }
-
     }
 
     async getChapter() {
-
         if (this.book) {
             if (this.content) {
                 return this.content
