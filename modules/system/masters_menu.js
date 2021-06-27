@@ -104,7 +104,7 @@ class GameMasterMenu extends Application {
             ev.stopPropagation()
             this.pay([this.getID(ev)])
         })
-        html.find('.actorItem').click(async(ev)=> {
+        html.find('.actorItem').click(async(ev) => {
             ev.stopPropagation()
             const id = $(ev.currentTarget).attr("data-uuid")
             const entity = await fromUuid(id)
@@ -124,7 +124,9 @@ class GameMasterMenu extends Application {
         })
         html.find('.selectAll').change((ev) => {
             ev.stopPropagation()
-            html.find('.heroSelector').prop('checked', $(ev.currentTarget).is(":checked"))
+            const allHeros = html.find('.heroSelector')
+            allHeros.prop('checked', $(ev.currentTarget).is(":checked"))
+            allHeros.change()
         })
         html.find('.exp').click((ev) => {
             ev.stopPropagation()
@@ -147,7 +149,7 @@ class GameMasterMenu extends Application {
                 $(ev.currentTarget).find('i').removeClass('fa-spin')
             }, 500)
         })
-        html.find('.heroSelector').click(ev=> ev.stopPropagation())
+        html.find('.heroSelector').click(ev => ev.stopPropagation())
         html.find('.hero').click(ev => {
             ev.stopPropagation(ev)
             $(ev.currentTarget).find('.expandDetails').fadeToggle()
@@ -288,7 +290,7 @@ class GameMasterMenu extends Application {
             hero.purse = hero.items.filter(x => x.type == "money")
                 .sort((a, b) => b.data.data.price.value - a.data.data.price.value)
                 .map(x => `<span title="${game.i18n.localize(x.name)}">${x.data.data.quantity.value}</span>`).join(" - ")
-            hero.advantages = hero.items.filter(x => x.type == "advantage").map(x => {return {name: x.name, uuid: x.uuid}})
+            hero.advantages = hero.items.filter(x => x.type == "advantage").map(x => { return { name: x.name, uuid: x.uuid } })
             hero.disadvantages = hero.items.filter(x => x.type == "disadvantage").map(x => { return { name: x.name, uuid: x.uuid } })
         }
         const skills = Object.fromEntries(Object.entries(await DSA5_Utility.allSkillsList()).sort((a, b) => a[0].localeCompare(b[0])))
