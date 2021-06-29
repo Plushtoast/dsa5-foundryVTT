@@ -66,6 +66,7 @@
         "SK": "SPI",
         "ZK": "TOU",
         "QS": "QL",
+        "QL": "QL",
         "FtP": "FtP",
         "damage": "DP",
         "defenseMalus": "VM",
@@ -1117,7 +1118,10 @@
         "cskills": "Update effects of all combat techniques. THIS WILL OVERRIDE MANUAL MODIFICATIONS!",
         "cskillsShort": "Migrate Combat Techniques",
         "skills": "Update icons of all talents. THIS WILL OVERRIDE MANUAL MODIFICATIONS!",
-        "skillsShort": "Migrate Talents"
+        "skillsShort": "Migrate Talents",
+        "gearShort": "Migrate Gear",
+        "gear": "Update icons, effects and effectformula of all gear, weapons and armors. THIS WILL OVERRIDE MANUAL MODIFICATIONS!"
+
     },
 
     "DSASETTINGS": {

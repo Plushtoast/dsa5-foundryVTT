@@ -60,7 +60,7 @@ export default class Migrakel {
                     effects: find.effects.toObject(),
                 }
             }
-            this.updateVals(actor, condition, updator)
+            await this.updateVals(actor, condition, updator)
         }
     }
 
@@ -82,7 +82,7 @@ export default class Migrakel {
                 return update
             }
             const condition = (x) => { return ["specialability", "advantage", "disadvantage"].includes(x.type) }
-            this.updateVals(actor, condition, updator)
+            await this.updateVals(actor, condition, updator)
         }
     }
 
@@ -96,7 +96,7 @@ export default class Migrakel {
             const condition = (x) => {
                 return ["combatskill"].includes(x.type)
             }
-            this.updateVals(actor, condition, updator)
+            await this.updateVals(actor, condition, updator)
         }
     }
 
@@ -108,7 +108,21 @@ export default class Migrakel {
                     img: find.img
                 }
             }
-            this.updateVals(actor, condition, updator)
+            await this.updateVals(actor, condition, updator)
+        }
+    }
+
+    static async updateGear(actor) {
+        if (await this.showDialog(game.i18n.localize('Migrakel.gear'))) {
+            const condition = (x) => { return ["meleeweapon", "armor", "rangeweapon", "equipment"].includes(x.type) }
+            const updator = (find) => {
+                return {
+                    img: find.img,
+                    effects: find.effects.toObject(),
+                    data: { effect: { value: find.data.data.effect.value } }
+                }
+            }
+            await this.updateVals(actor, condition, updator)
         }
     }
 }

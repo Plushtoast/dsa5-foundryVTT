@@ -60,6 +60,7 @@
         "AT": "AT",
         "FP": "FP",
         "QS": "QS",
+        "QL": "QS",
         "TPM": "TPM",
         "damage": "TP",
         "reloadTime": "Lad.",
@@ -614,7 +615,9 @@
         "cskills": "Aktualisiere Effekte von allen Kampftalenten. ALLE MANUELLEN MODIFIKATIONEN WERDEN ÜBERSCHRIEBEN!",
         "cskillsShort": "Kampftechniken migrieren",
         "skills": "Aktualisiere Icons von Talenten. ALLE MANUELLEN MODIFIKATIONEN WERDEN ÜBERSCHRIEBEN!",
-        "skillsShort": "Talente migrieren"
+        "skillsShort": "Talente migrieren",
+        "gearShort": "Ausrüstung migrieren",
+        "gear": "Aktualisiere Bilder, Effekte und Effektformeln von allen Ausrüstungsgegenständen, Waffen und Rüstungen. ALLE MANUELLEN MODIFIKATIONEN WERDEN ÜBERSCHRIEBEN!"
     },
     "Skill-eeasy": "Extrem leicht (+5)",
     "Skill-veasy": "Sehr leicht (+3)",

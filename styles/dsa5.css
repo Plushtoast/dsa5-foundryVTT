@@ -1350,6 +1350,7 @@ li.folder {
     display: none;
 }
 
+.expandDetails.shown .filterHide,
 .expandDetails.shown {
     display: block;
 }
@@ -2588,11 +2589,11 @@ select.noAppearance {
     box-shadow: inset 0px 0px 10px #8a0202;
 }
 
-.hero .details{
+.hero .details {
     display: none;
 }
 
-.hero .actorItem{
+.hero .actorItem {
     display: inline-block;
     padding: 2px;
     border: 1px solid var(--border-color);

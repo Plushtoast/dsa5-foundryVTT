@@ -181,7 +181,8 @@ export default class ItemSheetdsa5 extends ItemSheet {
                 data['StFs'] = DSA5.StFs;
                 break;
             case "application":
-                data['hasLocalization'] = game.i18n.has(`APPLICATION.${this.item.name}`)
+                data['hasLocalization'] = game.i18n.has(`APPLICATION.${this.item.data.data.skill} - ${this.item.name}`)
+                data['localization'] = game.i18n.localize(`APPLICATION.${this.item.data.data.skill} - ${this.item.name}`)
                 data['allSkills'] = (await DSA5_Utility.allSkills()).map(x => { return { name: x.name, id: x.name } })
                 break
             case "combatskill":
@@ -483,7 +484,7 @@ class EquipmentSheet extends Enchantable {
     }
 }
 
-class ArmorSheet extends Enchantable{
+class ArmorSheet extends Enchantable {
 
 }
 

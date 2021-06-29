@@ -4,12 +4,7 @@ export default class DialogActorConfig extends Dialog {
     constructor(actor, options) {
         super(options)
         this.actor = actor
-        this.locks = {
-            spells: false,
-            abilities: false,
-            combatskills: false,
-            skills: false
-        }
+        this.lock = false
     }
     static async buildDialog(actor) {
         const template = await renderTemplate("systems/dsa5/templates/actors/parts/actorConfig.html", { actor: actor.data })
@@ -37,29 +32,35 @@ export default class DialogActorConfig extends Dialog {
         }).render(true)
     }
 
-    async updateWrapper(lock, fnct, ev) {
-        if (this.locks[lock]) return
+    async updateWrapper(fnct, ev) {
+        if (this.lock) return
 
-        this.locks[lock] = true
-        $(ev.currentTarget).prepend('<i class="fas fa-spinner fa-spin"></i>')
-        Migrakel[fnct](this.actor)
-        $(ev.currentTarget).find("i").remove()
-        this.locks[lock] = false
+        const upd = async() => {
+            this.lock = true
+            $(ev.currentTarget).prepend('<i class="fas fa-spinner fa-spin"></i>')
+            await Migrakel[fnct](this.actor)
+            $(ev.currentTarget).find("i").remove()
+            this.lock = false
+        }
+        upd()
     }
 
     activateListeners(html) {
         super.activateListeners(html)
         html.find('.updateSpells').click(async(ev) => {
-            this.updateWrapper("spells", "updateSpellsAndLiturgies", ev)
+            this.updateWrapper("updateSpellsAndLiturgies", ev)
         })
         html.find('.updateAbilities').click(async(ev) => {
-            this.updateWrapper("abilities", "updateSpecialAbilities", ev)
+            this.updateWrapper("updateSpecialAbilities", ev)
         })
         html.find('.updatecSkills').click(async(ev) => {
-            this.updateWrapper("combatskills", "updateCombatskills", ev)
+            this.updateWrapper("updateCombatskills", ev)
         })
         html.find('.updateSkills').click(async(ev) => {
-            this.updateWrapper("skills", "updateSkills", ev)
+            this.updateWrapper("updateSkills", ev)
+        })
+        html.find('.updateGear').click(async(ev) => {
+            this.updateWrapper("updateGear", ev)
         })
     }
 }
