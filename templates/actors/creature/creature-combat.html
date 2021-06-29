@@ -151,7 +151,7 @@
                 <div class="col">
                     <ul>
                         <li><b>{{localize "reach"}}</b>: {{item.data.reach.value}}</li>
-                        <li><b>{{localize "reloadTime"}}</b>: {{item.LZ}}</li>
+                        <li><b>{{localize "reloadTime"}}</b>: {{item.LZ}} ({{item.data.reloadTime.progress}})</li>
                     </ul>
                 </div>
             </div>
@@ -173,6 +173,20 @@
                 <div class="col eight center">
                     <a data-mode="damage" class="ch-rollCombat d6 die-damage">{{item.damagedie}}</a><span title="{{localize 'damageOverThreshold'}}">{{item.damageAdd}}</span>
                 </div>
+                <div class="col ten">
+                    {{#if (ne item.LZ 0)}}
+                    <a class="loadWeapon" title="{{item.title}}">
+                        <div class="progress blue">
+                            <span class="progress-left" style="--transformLeft:{{item.transformLeft}}">
+                            <span class="progress-bar"></span>
+                            </span>
+                            <span class="progress-right" style="--transformRight:{{item.transformRight}}">
+                            <span class="progress-bar"></span>
+                            </span>
+                            <div class="progress-value">{{item.progress}}</div>
+                        </div>
+                    </a> {{/if}}
+                </div>
                 <div class="col ten very-small center">
                     <a class="item-dropdown" title="{{localize 'SHEET.Dropdown'}}"><i class="fas fa-chevron-down"></i></a>
                 </div>
@@ -181,7 +195,7 @@
                 <div class="col">
                     <ul>
                         <li><b>{{localize "reach"}}</b>: {{item.data.reach.value}}</li>
-                        <li><b>{{localize "reloadTime"}}</b>: {{item.data.reloadTime.value}}</li>
+                        <li><b>{{localize "reloadTime"}}</b>: {{item.LZ}} ({{item.data.reloadTime.progress}})</li>
                     </ul>
                 </div>
             </div>

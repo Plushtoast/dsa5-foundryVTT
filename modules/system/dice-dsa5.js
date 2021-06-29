@@ -67,8 +67,8 @@ export default class DiceDSA5 {
                         }
                     }
                 }
-                if (testData.source.type == "rangeweapon") {
-                    const LZ = Actordsa5.calcLZ(testData.source, testData.extra.actor)
+                if (testData.source.type == "rangeweapon" || (testData.source.type == "trait" && testData.source.data.traitType.value == "rangeAttack")) {
+                    const LZ = testData.source.type == "trait" ? Number(testData.source.data.reloadTime.value) : Actordsa5.calcLZ(testData.source, testData.extra.actor)
                     const progress = testData.source.data.reloadTime.progress
                     if (progress < LZ) {
                         mergeObject(buttons, {

@@ -132,7 +132,18 @@
                     </div>
                     {{else}}
                     <div class="no-ammo">
-                        -
+                        - {{#if (ne item.LZ 0)}}
+                        <a class="loadWeapon" title="{{item.title}}">
+                            <div class="progress blue">
+                                <span class="progress-left" style="--transformLeft:{{item.transformLeft}}">
+                                    <span class="progress-bar"></span>
+                                </span>
+                                <span class="progress-right" style="--transformRight:{{item.transformRight}}">
+                                    <span class="progress-bar"></span>
+                                </span>
+                                <div class="progress-value">{{item.progress}}</div>
+                            </div>
+                        </a> {{/if}}
                     </div>
                     {{/if}}
                 </div>

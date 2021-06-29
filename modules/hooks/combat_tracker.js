@@ -17,8 +17,9 @@ export class DSA5CombatTracker extends CombatTracker {
             ev.preventDefault()
             ev.stopPropagation()
             const combatant = game.combat.combatant
+            console.log(combatant)
             if (game.user.isGM || combatant.isOwner)
-                ActAttackDialog.showDialog(combatant.actor, combatant.tokenId)
+                ActAttackDialog.showDialog(combatant.actor, combatant.data.tokenId)
         })
     }
 

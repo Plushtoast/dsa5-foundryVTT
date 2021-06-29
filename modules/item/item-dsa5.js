@@ -364,11 +364,9 @@ export default class Itemdsa5 extends Item {
             cardOptions.isOpposedTest = testData.opposable
             if (cardOptions.isOpposedTest)
                 cardOptions.title += ` - ${game.i18n.localize("Opposed")}`;
-            //else if ((await game.settings.get("dsa5", "clearTargets"))) {
-            //    game.user.updateTokenTargets([]);
-            //}
         }
 
+        // TODO this can probably be removed
         if (testData.extra.ammo && !testData.extra.ammoDecreased) {
             testData.extra.ammoDecreased = true
             testData.extra.ammo.data.quantity.value--;
@@ -983,7 +981,7 @@ class MeleeweaponDSA5 extends Itemdsa5 {
                 speaker: Itemdsa5.buildSpeaker(actor, tokenId)
             }
         };
-        const multipleDefenseValue = RuleChaos.multipleDefenseValue(actor, item.toObject())
+        const multipleDefenseValue = RuleChaos.multipleDefenseValue(actor, typeof item.toObject === 'function' ? item.toObject() : item)
         let data = {
             rollMode: options.rollMode,
             mode: mode,

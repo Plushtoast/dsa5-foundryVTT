@@ -781,7 +781,7 @@ export default class Actordsa5 extends Actor {
 
     _addGearAndAbilityModifiers(itemModifiers, i) {
         const effect = getProperty(i, "data.data.effect.value")
-        if(!effect) return
+        if (!effect) return
 
         for (let mod of effect.split(/,|;/).map(x => x.trim())) {
             let vals = mod.replace(/(\s+)/g, ' ').trim().split(" ")
@@ -1392,7 +1392,17 @@ export default class Actordsa5 extends Actor {
 
     static _prepareRangeTrait(item) {
         item.attack = Number(item.data.at.value)
+        item.LZ = Number(item.data.reloadTime.value)
+        if(item.LZ > 0) Actordsa5.buildReloadProgress(item)
+
         return this._parseDmg(item)
+    }
+
+    static calcLZ(item, actor){
+        if(item.data.combatskill.value == game.i18n.localize("LocalizedIDs.throwingWeapons"))
+            return Math.max(0, Number(item.data.reloadTime.value) - SpecialabilityRulesDSA5.abilityStep(actor, game.i18n.localize("LocalizedIDs.quickdraw")))
+
+        return Math.max(0, Number(item.data.reloadTime.value) - SpecialabilityRulesDSA5.abilityStep(actor, `${game.i18n.localize('LocalizedIDs.quickload')} (${game.i18n.localize(item.data.combatskill.value)})`))
     }
 
     static _parseDmg(item) {
@@ -1412,11 +1422,20 @@ export default class Actordsa5 extends Actor {
         return item
     }
 
-    static calcLZ(item, actor){
-        if(item.data.combatskill.value == game.i18n.localize("LocalizedIDs.throwingWeapons"))
-            return Math.max(0, Number(item.data.reloadTime.value) - SpecialabilityRulesDSA5.abilityStep(actor, game.i18n.localize("LocalizedIDs.quickdraw")))
-
-        return Math.max(0, Number(item.data.reloadTime.value) - SpecialabilityRulesDSA5.abilityStep(actor, `${game.i18n.localize('LocalizedIDs.quickload')} (${game.i18n.localize(item.data.combatskill.value)})`))
+    static buildReloadProgress(item){
+        const progress = item.data.reloadTime.progress / item.LZ
+        item.title = game.i18n.format("WEAPON.loading", {status: `${item.data.reloadTime.progress}/${item.LZ}`})
+        item.progress = `${item.data.reloadTime.progress}/${item.LZ}`
+        if(progress >= 1){
+            item.title = game.i18n.localize("WEAPON.loaded")
+        }
+        if (progress >= 0.5){
+            item.transformRight = "181deg"
+            item.transformLeft = `${Math.round(progress * 360 - 179)}deg`
+        }else{
+            item.transformRight = `${Math.round(progress * 360 + 1)}deg`
+            item.transformLeft = 0
+        }
     }
 
     static _prepareRangeWeapon(item, ammunitions, combatskills, actor) {
@@ -1429,23 +1448,7 @@ export default class Actordsa5 extends Actor {
                 else item.ammo = actorData.inventory.ammunition.items.filter(x => x.data.ammunitiongroup.value == item.data.ammunitiongroup.value)
             }
             item.LZ = Actordsa5.calcLZ(item, actor)
-            if(item.LZ > 0){
-                const progress = item.data.reloadTime.progress / item.LZ
-                item.title = game.i18n.format("WEAPON.loading", {status: `${item.data.reloadTime.progress}/${item.LZ}`})
-                item.progress = `${item.data.reloadTime.progress}/${item.LZ}`
-                if(progress >= 1){
-                    item.title = game.i18n.localize("WEAPON.loaded")
-                }
-                if (progress >= 0.5){
-                    item.transformRight = "181deg"
-                    item.transformLeft = `${Math.round(progress * 360 - 179)}deg`
-                }else{
-                    item.transformRight = `${Math.round(progress * 360 + 1)}deg`
-                    item.transformLeft = 0
-                }
-            }
-
-
+            if(item.LZ > 0) Actordsa5.buildReloadProgress(item)
         } else {
             ui.notifications.error(game.i18n.format("DSAError.unknownCombatSkill", { skill: item.data.combatskill.value, item: item.name }))
         }
@@ -1488,9 +1491,6 @@ export default class Actordsa5 extends Actor {
         if (game.user.targets.size) {
             cardOptions.isOpposedTest = testData.opposable
             if (cardOptions.isOpposedTest) cardOptions.title += ` - ${game.i18n.localize("Opposed")}`;
-            //else if ((await game.settings.get("dsa5", "clearTargets")) && !["spell", "liturgy", "ceremony", "ritual"].includes(testData.source.type) ){
-            //    game.user.updateTokenTargets([]);
-            //}
         }
 
         if (testData.extra.ammo && !testData.extra.ammoDecreased) {
@@ -1498,6 +1498,11 @@ export default class Actordsa5 extends Actor {
             testData.extra.ammo.data.quantity.value--;
             await this.updateEmbeddedDocuments("Item", [
                 { _id: testData.extra.ammo._id, "data.quantity.value": testData.extra.ammo.data.quantity.value },
+                {_id: testData.source._id, "data.reloadTime.progress": 0}
+            ]);
+        } else if((testData.source.type == "rangeweapon" || (testData.source.type == "trait" && testData.source.data.traitType.value == "rangeAttack")) && !testData.extra.ammoDecreased){
+            testData.extra.ammoDecreased = true
+            await this.updateEmbeddedDocuments("Item", [
                 {_id: testData.source._id, "data.reloadTime.progress": 0}
             ]);
         }
