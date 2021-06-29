@@ -1030,6 +1030,7 @@ class MeleeweaponDSA5 extends Itemdsa5 {
                     })
 
                 testData.situationalModifiers.push(...Itemdsa5.getSpecAbModifiers(html, mode))
+                Hooks.call("callbackDialogCombatDSA5", testData, actor, html, item, tokenId)
 
                 return { testData, cardOptions };
             }
@@ -1268,6 +1269,7 @@ class RangeweaponItemDSA5 extends Itemdsa5 {
                     value: Number(html.find('[name="vision"]').val() || 0)
                 })
                 testData.situationalModifiers.push(...Itemdsa5.getSpecAbModifiers(html, "attack"))
+                Hooks.call("callbackDialogCombatDSA5", testData, actor, html, item, tokenId)
                 return { testData, cardOptions };
             }
         };
@@ -1610,6 +1612,7 @@ class TraitItemDSA5 extends Itemdsa5 {
                     value: html.find('[name="advantageousPosition"]').is(":checked") ? 2 : 0
                 }, Itemdsa5.parseValueType(game.i18n.localize("sight"), html.find('[name="vision"]').val() || 0))
                 testData.situationalModifiers.push(...Itemdsa5.getSpecAbModifiers(html, mode))
+                Hooks.call("callbackDialogCombatDSA5", testData, actor, html, item, tokenId)
                 return { testData, cardOptions };
             }
         };
