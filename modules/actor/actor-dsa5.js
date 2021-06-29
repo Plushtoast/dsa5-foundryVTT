@@ -131,17 +131,20 @@ export default class Actordsa5 extends Actor {
                     } else {
                         pain = Math.floor(5 - 5 * data.data.status.wounds.value / data.data.status.wounds.max)
                     }
+
+                    if (pain < 4) pain -= AdvantageRulesDSA5.vantageStep(this, game.i18n.localize('LocalizedIDs.ruggedFighter'))
+                    if (pain > 0) pain += AdvantageRulesDSA5.vantageStep(this, game.i18n.localize('LocalizedIDs.sensitiveToPain'))
+
+                    pain = Math.max(Math.min(4, pain), 0)
                 }
 
-                if (pain < 4) pain -= AdvantageRulesDSA5.vantageStep(this, game.i18n.localize('LocalizedIDs.ruggedFighter'))
-                if (pain > 0) pain += AdvantageRulesDSA5.vantageStep(this, game.i18n.localize('LocalizedIDs.sensitiveToPain'))
-
-                pain = Math.max(Math.min(4, pain), 0)
+                const changePain = data.pain != pain
+                data.pain = pain
 
                 if (AdvantageRulesDSA5.hasVantage(this, game.i18n.localize('LocalizedIDs.blind'))) this.addCondition("blind")
                 if (AdvantageRulesDSA5.hasVantage(this, game.i18n.localize('LocalizedIDs.mute'))) this.addCondition("mute")
                 if (AdvantageRulesDSA5.hasVantage(this, game.i18n.localize('LocalizedIDs.deaf'))) this.addCondition("deaf")
-                if (!TraitRulesDSA5.hasTrait(this, game.i18n.localize('LocalizedIDs.painImmunity'))) this.addCondition("inpain", pain, true)
+                if (!TraitRulesDSA5.hasTrait(this, game.i18n.localize('LocalizedIDs.painImmunity')) && changePain) this.addCondition("inpain", pain, true)
 
                 if (this.isMerchant()) { this.prepareMerchant() }
 

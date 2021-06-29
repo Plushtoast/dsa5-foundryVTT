@@ -35,7 +35,7 @@ export default class DSAActiveEffectConfig extends ActiveEffectConfig {
     }
 
     async _onSubmit(event, { updateData = null, preventClose = false, preventRender = false } = {}) {
-        const inActor = getProperty(this.object, "data.document.parent.parent")
+        const inActor = getProperty(this.object, "data.document.parent.documentName") != "Actor" && getProperty(this.object, "data.document.parent.parent")
         if (inActor) ui.notifications.error(game.i18n.localize("DSAError.nestedEffectNotSupported"))
         return await super._onSubmit(event, { updateData, preventClose, preventRender })
     }
