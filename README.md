@@ -2,7 +2,7 @@
 ![](https://repository-images.githubusercontent.com/311655339/4d523800-55a9-11eb-9e2e-6bbc2b71d8a4)
 
 ### Current Version and Compatibility:
-2.0.1 - FoundryVTT 0.8.6+
+2.0.4 - FoundryVTT 0.8.6+
 This system is intended for usage with [Foundry Virtual Tabletop](https://foundryvtt.com/) to play "Das Schwarze Auge" 5th edition.
 
 ## Installation - Auto Installer
@@ -16,6 +16,11 @@ Aventuria awaits, as TDE 5 is now fully integrated with Foundry VTT.
 The system includes all relevant mechanisms to play in the wonderous world of Aventuria and The Dark Eye and create your own adventures, characters and stories.
 
 The core system includes a character sheet and allows you to create your advantages, disadvantages, cultures, professions, special skill, spells, liturgies, rituals and equipment as you see fit.
+
+## Discussion & Assistance
+If you want to discuss TDE for foundry or need some assistance you can also join the Discord Servers:
+* [Ulisses](https://discord.gg/WXu4m8sc)
+* [FoundryVTT](https://discord.gg/foundryvtt)
 
 ## Notable Features
 * Skills, attributes, liturgies, ceremonies, spells, rituals, weapon tests, prolonged tests and many more can be rolled.
