@@ -945,7 +945,7 @@
         "opposedAttackNoSpecAbs": "Passierschläge können nicht mit Sonderfertigkeiten kombiniert werden",
         "noSpellForExtension": "Du hast den/die passenden Zauber/Liturgie nicht für diese Erweiterung",
         "talentValueTooLow": "Dein Talentwert ist zu niedrig",
-        "NotUnlocked": "Noch nichts freigeschalten",
+        "NotUnlocked": "Noch nichts freigeschalten.",
         "onlyGMAllowedToCancel": "Nur der Spielleiter darf Vergleichsproben abbrechen.",
         "unknownCombatSkill": "Das Kampftalent {skill} der Waffe {item} ist unbekannt. Bitte die Waffe anpassen.",
         "onlyGMcanShapeshift": "Du hast nicht die richtigen Berechtigungen zum Formwandeln.",
