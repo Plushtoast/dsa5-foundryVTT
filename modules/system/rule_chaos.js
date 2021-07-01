@@ -11,4 +11,8 @@ export default class RuleChaos {
 
         return multipleDefense
     }
+
+    static isFamiliar(data) {
+        return data.items.find(x => x.name == game.i18n.localize('LocalizedIDs.familiar') && x.type == "trait") != undefined
+    }
 }

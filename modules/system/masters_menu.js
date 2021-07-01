@@ -1,6 +1,7 @@
 import DSA5_Utility from "./utility-dsa5.js"
 import DSA5Payment from "./payment.js"
 import DSA5ChatAutoCompletion from "./chat_autocompletion.js"
+import RuleChaos from "./rule_chaos.js"
 
 export default class MastersMenu {
     static registerButtons() {
@@ -193,11 +194,23 @@ class GameMasterMenu extends Application {
         const template = await renderTemplate('systems/dsa5/templates/dialog/master-dialog-award.html', { text: game.i18n.localize(game.i18n.format("MASTER.awardXPText", { heros: this.getNames(actors) })) })
         const callback = async(dlg) => {
             const number = Number(dlg.find('.input-text').val())
+            const familiarXP = Math.max(1, Math.round(number * 0.25))
+            const heros = []
+            const familiars = []
             if (!isNaN(number)) {
                 for (const actor of actors) {
-                    await actor.update({ "data.details.experience.total": actor.data.data.details.experience.total + number });
+                    let xpBonus = number
+                    if (RuleChaos.isFamiliar(actor.data)) {
+                        xpBonus = familiarXP
+                        familiars.push(actor)
+                    } else {
+                        heros.push(actor)
+                    }
+
+                    await actor.update({ "data.details.experience.total": actor.data.data.details.experience.total + xpBonus });
                 }
-                await ChatMessage.create(DSA5_Utility.chatDataSetup(game.i18n.format('MASTER.xpMessage', { heros: this.getNames(actors), number })));
+                if (heros.length > 0) await ChatMessage.create(DSA5_Utility.chatDataSetup(game.i18n.format('MASTER.xpMessage', { heros: this.getNames(heros), number })));
+                if (familiars.length > 0) await ChatMessage.create(DSA5_Utility.chatDataSetup(game.i18n.format('MASTER.xpMessage', { heros: this.getNames(familiars), number })));
             }
         }
         this.buildDialog(game.i18n.localize('MASTER.awardXP'), template, callback)
