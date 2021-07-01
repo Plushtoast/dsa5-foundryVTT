@@ -36,6 +36,9 @@ export default function() {
                     case "updateGroupCheck":
                         DiceDSA5._rerenderGC(game.messages.get(data.payload.messageId), data.payload.data)
                         break
+                    case "updateAttackMessage":
+                        game.messages.get(data.payload.messageId).update({ "flags.data.unopposedStartMessage": data.payload.startMessageId });
+                        break
                     case "clearCombat":
                         if (game.combat) game.combat.nextRound()
                         break
@@ -48,6 +51,9 @@ export default function() {
                             let target = data.payload.target.token ? game.actors.tokens[data.payload.target.token] : game.actors.get(data.payload.target.actor)
                             MerchantSheetDSA5.finishTransaction(source, target, data.payload.price, data.payload.itemId, data.payload.buy, data.payload.amount)
                         }
+                        break
+                    case "updateHits":
+                    case "hideResistButton":
                         break
                     default:
                         console.warn(`Unhandled socket data type ${data.type}`)

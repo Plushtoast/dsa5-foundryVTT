@@ -448,9 +448,18 @@ export default class OpposedDsa5 {
             startMessageId: startMessage.data._id,
             additionalInfo: additionalInfo
         });
-        await attackMessage.update({
-            "flags.data.unopposedStartMessage": startMessage.data._id
-        });
+        if (game.user.isGM) {
+            await attackMessage.update({ "flags.data.unopposedStartMessage": startMessage.data._id });
+        } else {
+            await game.socket.emit("system.dsa5", {
+                type: "updateAttackMessage",
+                payload: {
+                    messageId: attackMessage.id,
+                    startMessageId: startMessage.data._id
+                }
+            })
+        }
+
     }
 
 }

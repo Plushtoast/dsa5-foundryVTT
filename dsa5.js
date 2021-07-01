@@ -20,6 +20,7 @@ import DSAActiveEffectConfig from "./modules/status/active_effects.js";
 import DSA5Hotbar from "./modules/system/tokenHotbar.js";
 import RollMemory from "./modules/system/roll_memory.js"
 import SpecialabilityRulesDSA5 from "./modules/system/specialability-rules-dsa5.js"
+import Migrakel from "./modules/system/migrakel.js"
 
 Hooks.once("init", () => {
     console.log("Initializing DSA5 system")
@@ -36,7 +37,8 @@ Hooks.once("init", () => {
             DSA5Initializer,
             DSA5ChatListeners,
             DSA5Payment,
-            SpecialabilityRulesDSA5
+            SpecialabilityRulesDSA5,
+            Migrakel
         },
         entities: {
             Actordsa5,
