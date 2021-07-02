@@ -176,7 +176,9 @@ export default class DSA5_Utility {
                 types.splice(index, 1)
                 results.push(k)
             }
+            if (names.length <= 0) break
         }
+
         if (names.length > 0) {
             for (let p of game.packs) {
                 if (p.metadata.entity == "Item" && (game.user.isGM || !p.private)) {
@@ -190,13 +192,13 @@ export default class DSA5_Utility {
                             }
                         }
                     })
-                    if (names.length <= 0)
-                        break
+                    if (names.length <= 0) break
                 }
             }
         }
         return results
     }
+
 
     static replaceDies(content, inlineRoll = false) {
         let regex = /( |^)(\d{1,2})?[wWdD][0-9]+((\+|-)[0-9]+)?/g

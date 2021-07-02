@@ -948,6 +948,14 @@ export default class ActorSheetDsa5 extends ActorSheet {
         }
     }
 
+    async _addFullPack(item) {
+        let docs = await game.packs.get(item.name).getDocuments()
+        console.log(docs)
+        let newAppls = docs.filter(x => !this.actor.items.find(y => y.type == x.type && y.name == x.name))
+        console.log(newAppls)
+        await this.actor.createEmbeddedDocuments("Item", newAppls.map(x => x.toObject()))
+    }
+
     async _manageDragItems(item, typeClass) {
         switch (typeClass) {
             case "meleeweapon":
@@ -981,6 +989,9 @@ export default class ActorSheetDsa5 extends ActorSheet {
                 break;
             case "lookup":
                 await this._handleLookup(item)
+                break
+            case "fullpack":
+                await this._addFullPack(item)
                 break
             case "application":
                 await this._handleApplication(item)

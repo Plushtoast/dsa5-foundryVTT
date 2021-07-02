@@ -41,7 +41,6 @@ export default class DSA5SoundEffect {
             default:
                 return []
         }
-
     }
 
     static async getSound(action, item, successLevel) {
