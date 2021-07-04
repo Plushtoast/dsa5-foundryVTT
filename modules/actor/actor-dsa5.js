@@ -949,13 +949,66 @@ export default class Actordsa5 extends Actor {
     }
 
     async fateisTalented(infoMsg, cardOptions, newTestData, message, data) {
-            cardOptions.talentedRerollUsed = true;
+        cardOptions.talentedRerollUsed = true;
 
+        this.resetTargetAndMessage(data, cardOptions)
+
+        infoMsg = `<h3 class="center"><b>${game.i18n.localize("CHATFATE.faitepointUsed")}</b></h3>
+            ${game.i18n.format("CHATFATE.isTalented", { character: '<b>' + this.name + '</b>' })}<br>`;
+        renderTemplate('systems/dsa5/templates/dialog/isTalentedReroll-dialog.html', { testData: newTestData, postData: data.postData }).then(html => {
+            new DSA5Dialog({
+                title: game.i18n.localize("CHATFATE.selectDice"),
+                content: html,
+                buttons: {
+                    Yes: {
+                        icon: '<i class="fa fa-check"></i>',
+                        label: game.i18n.localize("Ok"),
+                        callback: async dlg => {
+                            let diesToReroll = dlg.find('.dieSelected').map(function() { return Number($(this).attr('data-index')) }).get()
+                            if (diesToReroll.length > 0) {
+
+                                let newRoll = []
+                                for (let k of diesToReroll) {
+                                    let term = newTestData.roll.terms[k * 2]
+                                    newRoll.push(term.number + "d" + term.faces + "[" + term.options.colorset + "]")
+                                }
+                                newRoll = await DiceDSA5.manualRolls(await new Roll(newRoll.join("+")).evaluate({ async: true }), "CHATCONTEXT.talentedReroll")
+                                DiceDSA5.showDiceSoNice(newRoll, newTestData.rollMode)
+
+                                let ind = 0
+                                let changedRolls = []
+                                for (let k of diesToReroll) {
+                                    const characteristic = newTestData.source.data[`characteristic${k + 1}`]
+                                    const attr = characteristic ? game.i18n.localize(`CHARAbbrev.${characteristic.value.toUpperCase()}`) + " - " : ""
+
+                                    changedRolls.push(`${attr}${newTestData.roll.terms[k * 2].results[0].result}/${newRoll.terms[ind * 2].results[0].result}`)
+                                    newTestData.roll.terms[k * 2].results[0].result = Math.min(newRoll.terms[ind * 2].results[0].result, newTestData.roll.terms[k * 2].results[0].result)
+
+                                    ind += 1
+                                }
+                                infoMsg += `<b>${game.i18n.localize('Roll')}</b>: ${changedRolls.join(", ")}`
+                                ChatMessage.create(DSA5_Utility.chatDataSetup(infoMsg));
+
+                                this[`${data.postData.postFunction}`]({ testData: newTestData, cardOptions }, { rerenderMessage: message });
+                                await message.update({ "flags.data.talentedRerollUsed": true });
+                            }
+                        }
+                    },
+                    cancel: {
+                        icon: '<i class="fas fa-times"></i>',
+                        label: game.i18n.localize("cancel")
+                    },
+                },
+                default: 'Yes'
+            }).render(true)
+        });
+    }
+
+    async fatereroll(infoMsg, cardOptions, newTestData, message, data) {
+            cardOptions.fatePointDamageRerollUsed = true;
             this.resetTargetAndMessage(data, cardOptions)
 
-            infoMsg = `<h3 class="center"><b>${game.i18n.localize("CHATFATE.faitepointUsed")}</b></h3>
-            ${game.i18n.format("CHATFATE.isTalented", { character: '<b>' + this.name + '</b>' })}<br>`;
-            renderTemplate('systems/dsa5/templates/dialog/isTalentedReroll-dialog.html', { testData: newTestData, postData: data.postData }).then(html => {
+            renderTemplate('systems/dsa5/templates/dialog/fateReroll-dialog.html', { testData: newTestData, postData: data.postData }).then(html => {
                         new DSA5Dialog({
                                     title: game.i18n.localize("CHATFATE.selectDice"),
                                     content: html,
@@ -973,7 +1026,7 @@ export default class Actordsa5 extends Actor {
                                                             let term = newTestData.roll.terms[k * 2]
                                                             newRoll.push(term.number + "d" + term.faces + "[" + term.options.colorset + "]")
                                                         }
-                                                        newRoll = await DiceDSA5.manualRolls(await new Roll(newRoll.join("+")).evaluate({ async: true }), "CHATCONTEXT.talentedReroll")
+                                                        newRoll = await DiceDSA5.manualRolls(await new Roll(newRoll.join("+")).evaluate({ async: true }), "CHATCONTEXT.Reroll")
                                                         DiceDSA5.showDiceSoNice(newRoll, newTestData.rollMode)
 
                                                         let ind = 0
@@ -981,58 +1034,6 @@ export default class Actordsa5 extends Actor {
                                                         for (let k of diesToReroll) {
                                                             const characteristic = newTestData.source.data[`characteristic${k + 1}`]
                                                             const attr = characteristic ? `${game.i18n.localize(`CHARAbbrev.${characteristic.value.toUpperCase()}`)} - ` : ""
-                                    changedRolls.push(`${attr}${newTestData.roll.terms[k * 2].result[0].result}/${newRoll.terms[ind * 2].result[0].result}`)
-                                    newTestData.roll.terms[k * 2].result[0].result = Math.min(newRoll.terms[ind * 2].result[0].result, newTestData.roll.terms[k * 2].result[0].result)
-                                    ind += 1
-                                }
-                                infoMsg += `<b>${game.i18n.localize('Roll')}</b>: ${changedRolls.join(", ")}`
-                                ChatMessage.create(DSA5_Utility.chatDataSetup(infoMsg));
-
-                                this[`${data.postData.postFunction}`]({ testData: newTestData, cardOptions }, { rerenderMessage: message });
-                                await message.update({"flags.data.talentedRerollUsed": true});
-                            }
-                        }
-                    },
-                    cancel: {
-                        icon: '<i class="fas fa-times"></i>',
-                        label: game.i18n.localize("cancel")
-                    },
-                },
-                default: 'Yes'
-            }).render(true)
-        });
-    }
-
-    async fatereroll(infoMsg, cardOptions, newTestData, message, data) {
-        cardOptions.fatePointDamageRerollUsed = true;
-        this.resetTargetAndMessage(data, cardOptions)
-
-        renderTemplate('systems/dsa5/templates/dialog/fateReroll-dialog.html', { testData: newTestData, postData: data.postData }).then(html => {
-            new DSA5Dialog({
-                title: game.i18n.localize("CHATFATE.selectDice"),
-                content: html,
-                buttons: {
-                    Yes: {
-                        icon: '<i class="fa fa-check"></i>',
-                        label: game.i18n.localize("Ok"),
-                        callback: async dlg => {
-
-                            let diesToReroll = dlg.find('.dieSelected').map(function() { return Number($(this).attr('data-index')) }).get()
-                            if (diesToReroll.length > 0) {
-
-                                let newRoll = []
-                                for (let k of diesToReroll) {
-                                    let term = newTestData.roll.terms[k * 2]
-                                    newRoll.push(term.number + "d" + term.faces + "[" + term.options.colorset + "]")
-                                }
-                                newRoll = await DiceDSA5.manualRolls(await new Roll(newRoll.join("+")).evaluate({ async: true}), "CHATCONTEXT.Reroll")
-                                DiceDSA5.showDiceSoNice(newRoll, newTestData.rollMode)
-
-                                let ind = 0
-                                let changedRolls = []
-                                for (let k of diesToReroll) {
-                                    const characteristic = newTestData.source.data[`characteristic${k + 1}`]
-                                    const attr = characteristic ? `${game.i18n.localize(`CHARAbbrev.${characteristic.value.toUpperCase()}`)} - ` : ""
                                     changedRolls.push(`${attr}${newTestData.roll.terms[k * 2].results[0].result}/${newRoll.terms[ind * 2].results[0].result}`)
                                     newTestData.roll.terms[k * 2].results[0].result = newRoll.terms[ind * 2].results[0].result
                                     ind += 1
@@ -1075,7 +1076,7 @@ export default class Actordsa5 extends Actor {
         this.resetTargetAndMessage(data, cardOptions)
 
         let rollType = message.data.flags.data.preData.source.type
-        if(["spell","liturgy","ceremony","ritual","skill"].includes(rollType)){
+        if (["spell", "liturgy", "ceremony", "ritual", "skill"].includes(rollType)) {
             renderTemplate('systems/dsa5/templates/dialog/fateImprove-dialog.html', { testData: newTestData, postData: data.postData }).then(html => {
                 new DSA5Dialog({
                     title: game.i18n.localize("CHATFATE.selectDice"),
@@ -1085,7 +1086,7 @@ export default class Actordsa5 extends Actor {
                             icon: '<i class="fa fa-check"></i>',
                             label: game.i18n.localize("Ok"),
                             callback: async dlg => {
-                                let fws = [0,0,0]
+                                let fws = [0, 0, 0]
                                 let diesToUpgrade = dlg.find('.dieSelected').map(function () { return Number($(this).attr('data-index')) }).get()
                                 if (diesToUpgrade.length == 1) {
                                     fws[diesToUpgrade] = 2
@@ -1105,7 +1106,7 @@ export default class Actordsa5 extends Actor {
                     default: 'Yes'
                 }).render(true)
             });
-        }else{
+        } else {
             const modifier = { name: game.i18n.localize("CHATCONTEXT.improveFate"), value: 2, type: "" }
             newTestData.situationalModifiers.push(modifier)
             this[`${data.postData.postFunction}`]({ testData: newTestData, cardOptions }, { rerenderMessage: message });
@@ -1223,7 +1224,7 @@ export default class Actordsa5 extends Actor {
                 combatSpecAbs: combatskills,
                 showDefense: true,
                 situationalModifiers,
-                defenseCountString: game.i18n.format("defenseCount", {malus: multipleDefenseValue})
+                defenseCountString: game.i18n.format("defenseCount", { malus: multipleDefenseValue })
             },
             callback: (html) => {
                 cardOptions.rollMode = html.find('[name="rollMode"]').val();
@@ -1234,7 +1235,7 @@ export default class Actordsa5 extends Actor {
                     name: game.i18n.localize("attackFromBehind"),
                     value: html.find('[name="attackFromBehind"]').is(":checked") ? -4 : 0
                 }, {
-                    name: game.i18n.format("defenseCount", {malus: multipleDefenseValue}),
+                    name: game.i18n.format("defenseCount", { malus: multipleDefenseValue }),
                     value: (Number(html.find('[name="defenseCount"]').val()) || 0) * multipleDefenseValue
                 })
                 return { testData, cardOptions };
@@ -1300,7 +1301,7 @@ export default class Actordsa5 extends Actor {
 
     static _parseModifiers(search) {
         let res = []
-        $(search + " option:selected").each(function() {
+        $(search + " option:selected").each(function () {
             const val = $(this).val()
             res.push({
                 name: $(this).text().trim().split("[")[0],
@@ -1312,7 +1313,7 @@ export default class Actordsa5 extends Actor {
     }
 
     static _prepareConsumable(item) {
-        if(item.data.maxCharges){
+        if (item.data.maxCharges) {
             item.consumable = true
             item.structureMax = item.data.maxCharges
             item.structureCurrent = item.data.charges
@@ -1369,8 +1370,8 @@ export default class Actordsa5 extends Actor {
         return item;
     }
 
-    async _preCreate(data, options, user){
-        await super._preCreate(data,options,user)
+    async _preCreate(data, options, user) {
+        await super._preCreate(data, options, user)
         let update = {}
         mergeObject(update, {
             token: {
@@ -1396,28 +1397,28 @@ export default class Actordsa5 extends Actor {
     static _prepareRangeTrait(item) {
         item.attack = Number(item.data.at.value)
         item.LZ = Number(item.data.reloadTime.value)
-        if(item.LZ > 0) Actordsa5.buildReloadProgress(item)
+        if (item.LZ > 0) Actordsa5.buildReloadProgress(item)
 
         return this._parseDmg(item)
     }
 
-    static calcLZ(item, actor){
-        if(item.data.combatskill.value == game.i18n.localize("LocalizedIDs.throwingWeapons"))
+    static calcLZ(item, actor) {
+        if (item.data.combatskill.value == game.i18n.localize("LocalizedIDs.throwingWeapons"))
             return Math.max(0, Number(item.data.reloadTime.value) - SpecialabilityRulesDSA5.abilityStep(actor, game.i18n.localize("LocalizedIDs.quickdraw")))
 
         return Math.max(0, Number(item.data.reloadTime.value) - SpecialabilityRulesDSA5.abilityStep(actor, `${game.i18n.localize('LocalizedIDs.quickload')} (${game.i18n.localize(item.data.combatskill.value)})`))
     }
 
     static _parseDmg(item) {
-        let parseDamage = new Roll(item.data.damage.value.replace(/[Ww]/g, "d"),{async: false})
+        let parseDamage = new Roll(item.data.damage.value.replace(/[Ww]/g, "d"), { async: false })
 
         let damageDie = "",
             damageTerm = ""
         for (let k of parseDamage.terms) {
             if (k.faces) damageDie = k.number + "d" + k.faces
-            else if(k.number) damageTerm += k.number
+            else if (k.number) damageTerm += k.number
         }
-        if(damageTerm) damageTerm = Roll.safeEval(damageTerm)
+        if (damageTerm) damageTerm = Roll.safeEval(damageTerm)
 
         item.damagedie = damageDie ? damageDie : "0d6"
         item.damageAdd = damageTerm != "" ? (Number(damageTerm) > 0 ? "+" : "") + damageTerm : ""
@@ -1425,17 +1426,17 @@ export default class Actordsa5 extends Actor {
         return item
     }
 
-    static buildReloadProgress(item){
+    static buildReloadProgress(item) {
         const progress = item.data.reloadTime.progress / item.LZ
-        item.title = game.i18n.format("WEAPON.loading", {status: `${item.data.reloadTime.progress}/${item.LZ}`})
+        item.title = game.i18n.format("WEAPON.loading", { status: `${item.data.reloadTime.progress}/${item.LZ}` })
         item.progress = `${item.data.reloadTime.progress}/${item.LZ}`
-        if(progress >= 1){
+        if (progress >= 1) {
             item.title = game.i18n.localize("WEAPON.loaded")
         }
-        if (progress >= 0.5){
+        if (progress >= 0.5) {
             item.transformRight = "181deg"
             item.transformLeft = `${Math.round(progress * 360 - 179)}deg`
-        }else{
+        } else {
             item.transformRight = `${Math.round(progress * 360 + 1)}deg`
             item.transformLeft = 0
         }
@@ -1451,7 +1452,7 @@ export default class Actordsa5 extends Actor {
                 else item.ammo = actorData.inventory.ammunition.items.filter(x => x.data.ammunitiongroup.value == item.data.ammunitiongroup.value)
             }
             item.LZ = Actordsa5.calcLZ(item, actor)
-            if(item.LZ > 0) Actordsa5.buildReloadProgress(item)
+            if (item.LZ > 0) Actordsa5.buildReloadProgress(item)
         } else {
             ui.notifications.error(game.i18n.format("DSAError.unknownCombatSkill", { skill: item.data.combatskill.value, item: item.name }))
         }
@@ -1501,17 +1502,17 @@ export default class Actordsa5 extends Actor {
             testData.extra.ammo.data.quantity.value--;
             await this.updateEmbeddedDocuments("Item", [
                 { _id: testData.extra.ammo._id, "data.quantity.value": testData.extra.ammo.data.quantity.value },
-                {_id: testData.source._id, "data.reloadTime.progress": 0}
+                { _id: testData.source._id, "data.reloadTime.progress": 0 }
             ]);
-        } else if((testData.source.type == "rangeweapon" || (testData.source.type == "trait" && testData.source.data.traitType.value == "rangeAttack")) && !testData.extra.ammoDecreased){
+        } else if ((testData.source.type == "rangeweapon" || (testData.source.type == "trait" && testData.source.data.traitType.value == "rangeAttack")) && !testData.extra.ammoDecreased) {
             testData.extra.ammoDecreased = true
             await this.updateEmbeddedDocuments("Item", [
-                {_id: testData.source._id, "data.reloadTime.progress": 0}
+                { _id: testData.source._id, "data.reloadTime.progress": 0 }
             ]);
         }
 
         if (!options.suppressMessage)
-            DiceDSA5.renderRollCard(cardOptions, result, options.rerenderMessage).then(async(msg) => {
+            DiceDSA5.renderRollCard(cardOptions, result, options.rerenderMessage).then(async (msg) => {
                 await OpposedDsa5.handleOpposedTarget(msg)
             })
         return { result, cardOptions };
@@ -1534,7 +1535,7 @@ export default class Actordsa5 extends Actor {
 
         if (delta > 0 && statusId == "inpain" && !this.hasCondition("bloodrush") && AdvantageRulesDSA5.hasVantage(this, game.i18n.localize('LocalizedIDs.frenzy'))) {
             await this.addCondition("bloodrush")
-            const msg = DSA5_Utility.replaceConditions(`${game.i18n.format("CHATNOTIFICATION.gainsBloodrush", {character: "<b>" + this.name + "</b>"})}`);
+            const msg = DSA5_Utility.replaceConditions(`${game.i18n.format("CHATNOTIFICATION.gainsBloodrush", { character: "<b>" + this.name + "</b>" })}`);
             ChatMessage.create(DSA5_Utility.chatDataSetup(msg));
         }
     }

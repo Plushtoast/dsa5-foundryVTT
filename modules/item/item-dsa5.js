@@ -552,9 +552,9 @@ class SpellItemDSA5 extends Itemdsa5 {
     }
 
     static getPropertyFocus(actor, item) {
-        const feature = getProperty(item, "data.feature") || ""
+        const features = getProperty(item, "data.feature") || ""
         const res = []
-        for (const feature of item.data.feature.replace(/\(a-z äöü\-\)/gi, "").split(",").map(x => x.trim())) {
+        for (const feature of features.replace(/\(a-z äöü\-\)/gi, "").split(",").map(x => x.trim())) {
             if (SpecialabilityRulesDSA5.hasAbility(actor.data, `${game.i18n.localize('LocalizedIDs.propertyKnowledge')} (${feature})`)) {
                 res.push({
                     name: `${game.i18n.localize('LocalizedIDs.propertyKnowledge')} (${feature})`,
