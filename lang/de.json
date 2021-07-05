@@ -886,6 +886,8 @@
         "advancedRegenerationLeP": "tbd",
         "advancedRegenerationAsP": "Magische Regeneration",
         "advancedRegenerationKaP": "Karmale Regeneration",
+        "energyControl": "Kraftkontrolle",
+        "smallEnergyControl": "Kleine Kraftkontrolle",
         "weakAstralBody": "Schwacher Astralkörper",
         "weakKarmicBody": "Schwacher Karmalkörper",
         "restrictedSenseSight": "Eingeschränkter Sinn (Sicht)",
