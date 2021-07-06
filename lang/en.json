@@ -1107,7 +1107,7 @@
         "nothing": "None yet",
         "home": "Home",
         "foundryUsage": "Foundry & TDE",
-        "foundryUsagedesc": "<p>You can get more informations on the usage of Foundry with TDE in the <a href=\"https://github.com/Plushtoast/dsa5-foundryVTT/wiki\" target=\"_blank\">Wiki</a>.</p><p>You can also get quick help in the Ulisses or Foundry Discord.</p><p>Using the journal browser: <ul class=\"dsalist\"><li>Right click on images to show them to your players.</li><li>Some references and text passages can point to a book location and differ from the game's location, as the modules are copies of printed books.</ul></p>"
+        "foundryUsagedesc": "<p>You can get more informations on the usage of Foundry with TDE in the <a href=\"https://github.com/Plushtoast/dsa5-foundryVTT/wiki\" target=\"_blank\">Wiki</a>.</p><p>You can also get quick help in the Ulisses or Foundry Discord.</p><p>Using the journal browser: <ul class=\"dsalist\"><li>Right click on images to show them to your players.</li><li>Some references and text passages can point to a book location and differ from the game's location, as the modules are copies of printed books.<li>Some of the actors in the adventures might not have a token or statistics, because they only fullfill a tiny narrative role. If you need to make a check, you can use the chat command <b>/ch</b> to improvise a roll.</li></ul></p>"
     },
 
     "Migrakel": {
