@@ -385,17 +385,7 @@ export default class Actordsa5 extends Actor {
         let disadvantages = []
         let aggregatedtests = []
 
-        let specAbs = {
-            general: [],
-            Combat: [],
-            fatePoints: [],
-            magical: [],
-            staff: [],
-            clerical: [],
-            language: [],
-            animal: [],
-            ceremonial: []
-        }
+        let specAbs = Object.fromEntries(Object.keys(DSA5.specialAbilityCategories).map(x => [x, []]))
 
         let armor = [];
         let rangeweapons = [];
@@ -427,7 +417,6 @@ export default class Actordsa5 extends Actor {
             familiar: [],
             armor: []
         }
-
 
         let schips = []
         for (let i = 1; i <= Number(actorData.data.status.fatePoints.max); i++) {
@@ -694,8 +683,8 @@ export default class Actordsa5 extends Actor {
 
         totalWeight = parseFloat(totalWeight.toFixed(3))
 
-        specAbs.magical = specAbs.magical.concat(specAbs.staff)
-        specAbs.clerical = specAbs.clerical.concat(specAbs.ceremonial)
+        specAbs.magical.push(...specAbs.staff, ...specAbs.pact)
+        specAbs.clerical.push(...specAbs.ceremonial)
 
         let guidevalues = duplicate(DSA5.characteristics)
         guidevalues["-"] = "-"
