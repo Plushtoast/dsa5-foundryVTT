@@ -27,7 +27,7 @@ export class DSA5CombatTracker extends CombatTracker {
 
             for (let turn of data.turns) {
                 const combatant = data.combat.turns.find(x => x.id == turn.id)
-                const isAllowedToSeeEffects = (game.user.isGM || combatant.actor.isOwner || !(game.settings.get("dsa5", "hideEffects")))
+                const isAllowedToSeeEffects = (game.user.isGM || (combatant.actor && combatant.actor.testUserPermission(game.user, "OBSERVER")) || !(game.settings.get("dsa5", "hideEffects")))
                 turn.defenseCount = combatant.data._source.defenseCount
 
                 let rangeweapons = combatant._actor.data.items.filter(x => {

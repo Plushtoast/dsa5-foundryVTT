@@ -18,15 +18,15 @@ export default function() {
     });
 
     Hooks.on("renderChatMessage", (app, html, msg) => {
+
         if (!game.user.isGM) {
             html.find(".chat-button-gm").remove();
             let actor
             let reaction = html.find(".chat-button-target")
             if (reaction.length) {
-                actor = DialogReactDSA5.getTargetActor({ data: msg.message }).actor
-                if (!actor.isOwner) {
-                    reaction.remove()
-                }
+                actor = DialogReactDSA5.getTargetActor({ data: msg.message })
+
+                if (actor && actor.actor && !actor.actor.isOwner) reaction.remove()
             }
             const speaker = DSA5_Utility.getSpeaker(msg.message.speaker)
             if (speaker && !speaker.isOwner) {

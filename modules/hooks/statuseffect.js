@@ -2,7 +2,7 @@ export default function() {
     Token.prototype.drawEffects = async function() {
         this.effects.removeChildren().forEach(c => c.destroy());
         const tokenEffects = this.data.effects;
-        const isAllowedToSeeEffects = game.user.isGM || this.isOwner || !(await game.settings.get("dsa5", "hideEffects"))
+        const isAllowedToSeeEffects = game.user.isGM || (this.actor && this.actor.testUserPermission(game.user, "OBSERVER")) || !(await game.settings.get("dsa5", "hideEffects"))
         const actorEffects = this.actor && isAllowedToSeeEffects ? this.actor.effects.filter(x => {
             return !x.data.disabled && !x.notApplicable && (game.user.isGM || !x.getFlag("dsa5", "hidePlayers")) && !x.getFlag("dsa5", "hideOnToken")
         }) : [];

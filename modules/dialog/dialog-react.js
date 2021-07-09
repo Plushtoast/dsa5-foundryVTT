@@ -27,6 +27,8 @@ export default class DialogReactDSA5 extends Dialog {
     }
 
     static getTargetActor(message) {
+        if (!canvas.tokens) return {}
+
         let speaker = message.data.flags.unopposeData.targetSpeaker
         let actor = canvas.tokens.get(speaker.token).actor
 

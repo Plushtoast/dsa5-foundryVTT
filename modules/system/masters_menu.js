@@ -176,7 +176,7 @@ class GameMasterMenu extends Application {
             const number = dlg.find('.input-text').val()
             DSA5Payment.createPayChatMessage(number)
         }
-        this.buildDialog(game.i18n.localize('PAYMENT.payButton'), template, callback)
+        this.buildDialog(game.i18n.localize('PAYMENT.payTT'), template, callback)
     }
 
     async getPaid(ids) {
@@ -186,7 +186,7 @@ class GameMasterMenu extends Application {
             const number = dlg.find('.input-text').val()
             DSA5Payment.createGetPaidChatMessage(number)
         }
-        this.buildDialog(game.i18n.localize('MASTER.payTT'), template, callback)
+        this.buildDialog(game.i18n.localize('MASTER.payButton'), template, callback)
     }
 
     async getExp(ids) {
