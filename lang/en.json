@@ -1157,7 +1157,8 @@
         "hideEffects": "Hide conditions",
         "hideEffectsHint": "Show conditions on the token only for their owner",
         "limitCombatSpecAbs": "Limit Special Maneuvers",
-        "limitCombatSpecAbsHint": "Only allow one Special and Basic maneuver."
+        "limitCombatSpecAbsHint": "Only allow one Special and Basic maneuver.",
+        "changelog": "View recent changes and content updates."
     },
 
     "COMBATTRACKER": {

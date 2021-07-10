@@ -1093,7 +1093,8 @@
         "hideEffects": "Status Effekte verbergen",
         "hideEffectsHint": "Zeige Status Effekte an Tokens nur deren Besitzer",
         "limitCombatSpecAbs": "Spezialmanöver limitieren",
-        "limitCombatSpecAbsHint": "Nur ein Spezial- und Basismanöver erlauben."
+        "limitCombatSpecAbsHint": "Nur ein Spezial- und Basismanöver erlauben.",
+        "changelog": "Schau dir Änderungen und neue Inhalte an."
     },
     "COMBATTRACKER": {
         "noDefenses": "Anzahl Verteidigungen",

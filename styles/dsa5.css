@@ -2679,3 +2679,25 @@ select.noAppearance {
 .progress.blue .progress-bar {
     border-color: #0e4f79;
 }
+
+.patchviewer h1 a {
+    display: block;
+    float: left;
+    color: black;
+}
+
+.patchviewer h1 img {
+    width: 50px;
+    margin: 0;
+    margin-right: 15px;
+    float: left;
+}
+
+.patchviewer h1 {
+    margin: 0;
+}
+
+.patchviewer .table-title {
+    border: 1px solid var(--border-color);
+    border-radius: 10px;
+}

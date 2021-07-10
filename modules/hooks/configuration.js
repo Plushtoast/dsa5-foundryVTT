@@ -1,4 +1,5 @@
 import DSA5SoundEffect from "../system/dsa-soundeffect.js";
+import { showPatchViewer } from "../system/migrator.js"
 
 export default function() {
     game.settings.register("dsa5", "meleeBotchTableEnabled", {
@@ -52,7 +53,7 @@ export default function() {
         hint: "migrationVersion",
         scope: "world",
         config: false,
-        default: 6,
+        default: 7,
         type: Number
     })
     game.settings.register("dsa5", "firstTimeStart", {
@@ -166,10 +167,20 @@ export default function() {
         config: true,
         default: "",
         type: String,
-        onChange: async() => {
-            DSA5SoundEffect.loadSoundConfig()
-        }
+        onChange: async() => { DSA5SoundEffect.loadSoundConfig() }
     });
 
+    game.settings.registerMenu("dsa5", "changelog", {
+        name: "Changelog",
+        label: "Changelog",
+        hint: game.i18n.localize("DSASETTINGS.changelog"),
+        type: ChangelogForm,
+        restricted: false
+    })
+}
 
+class ChangelogForm extends FormApplication {
+    render() {
+        showPatchViewer()
+    }
 }
