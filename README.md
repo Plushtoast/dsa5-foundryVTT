@@ -2,7 +2,7 @@
 ![](https://repository-images.githubusercontent.com/311655339/4d523800-55a9-11eb-9e2e-6bbc2b71d8a4)
 
 ### Current Version and Compatibility:
-2.0.4 - FoundryVTT 0.8.6+
+2.1.0 - FoundryVTT 0.8.6+
 This system is intended for usage with [Foundry Virtual Tabletop](https://foundryvtt.com/) to play "Das Schwarze Auge" 5th edition.
 
 ## Installation - Auto Installer
@@ -33,6 +33,8 @@ If you want to discuss TDE for foundry or need some assistance you can also join
 * Manual modification of rolls and test results.
 * Shapeshifting
 * Automated spell effects
+* Several Game Master Aids
+* Merchant features
 
 
 ## Official Modules
