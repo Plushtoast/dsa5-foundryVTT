@@ -23,8 +23,8 @@
                 <div class="col five">
                     <select name="data.skill" class="skillSelektor" data-dtype="String">
                         {{#select lastSkill}}
-                        {{#each skills as |ch char|}}
-                        <option value="{{ch}}">{{char}}</option>
+                        {{#each skills as |ch|}}
+                        <option value="{{ch}}">{{ch}}</option>
                         {{/each}}
                         {{/select}}
                     </select>
@@ -65,22 +65,18 @@
                         </div>
                     </div>
                     <div class="col ten verticalFlex barRight">
-                        <div class="bar LeP"
-                            style="--a: {{hero.data.data.status.wounds.value}}; --b: {{hero.data.data.status.wounds.max}}">
+                        <div class="bar LeP" style="--a: {{hero.data.data.status.wounds.value}}; --b: {{hero.data.data.status.wounds.max}}">
                         </div>
                         {{#if hero.data.isMage}}
-                        <div class="bar AsP"
-                            style="--a: {{hero.data.data.status.astralenergy.value}}; --b: {{hero.data.data.status.astralenergy.max}}">
+                        <div class="bar AsP" style="--a: {{hero.data.data.status.astralenergy.value}}; --b: {{hero.data.data.status.astralenergy.max}}">
                         </div>
                         {{/if}} {{#if hero.data.isPriest}}
-                        <div class="bar KaP"
-                            style="--a: {{hero.data.data.status.karmaenergy.value}}; --b: {{hero.data.data.status.karmaenergy.max}}">
+                        <div class="bar KaP" style="--a: {{hero.data.data.status.karmaenergy.value}}; --b: {{hero.data.data.status.karmaenergy.max}}">
                         </div>
                         {{/if}}
                     </div>
                     <div class="col ten">
-                        <input type="checkbox" class="heroSelector" name="heroSelector" value="1" {{checked
-                            hero.gmSelected}}>
+                        <input type="checkbox" class="heroSelector" name="heroSelector" value="1" {{checked hero.gmSelected}}>
                     </div>
                     <div class="col five">
                         <a class="rollChar" title="{{localize 'CHAT.RollBlind'}}"><i class="fas fa-dice"></i></a>

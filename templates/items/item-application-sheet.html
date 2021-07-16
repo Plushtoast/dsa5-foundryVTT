@@ -16,8 +16,8 @@
                 <label class="label-text">{{localize "skill"}}</label>
                 <select name="data.skill" data-dtype="String">
                     {{#select data.skill}}
-                    {{#each allSkills as |ch char|}}
-                    <option value="{{ch.name}}">{{ch.name}}</option>
+                    {{#each allSkills as |ch|}}
+                    <option value="{{ch}}">{{ch}}</option>
                     {{/each}}
                     {{/select}}
                 </select>

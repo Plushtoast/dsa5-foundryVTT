@@ -112,7 +112,7 @@ export default class SpecialabilityRulesDSA5 extends ItemRulesDSA5 {
                         SpecialabilityRulesDSA5._specialabilityReturnFunction(actor, item, typeClass, adoption)
                     }
                 } else {
-                    let items = actor.items.filter(x => rule.items.includes(x.type))
+                    let items = actor.items.filter(x => rule.items.includes(x.type)).sort((a, b) => a.name.localeCompare(b.name))
                     template = await renderTemplate('systems/dsa5/templates/dialog/requires-adoption-dialog.html', { items: items, original: item, area: rule.area })
                     callback = function(dlg) {
                         let adoption = items.find(x => x.name == dlg.find('[name="entryselection"]').val())

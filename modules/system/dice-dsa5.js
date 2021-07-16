@@ -43,12 +43,19 @@ export default class DiceDSA5 {
             situationalModifiers.push(...testData.extra.options.moreModifiers)
         }
 
+        let targets = []
+        game.user.targets.forEach(target => {
+            targets.push({ name: target.actor.name, img: target.actor.img })
+        })
+
+
         mergeObject(dialogOptions.data, {
             hasSituationalModifiers: situationalModifiers.length > 0,
             situationalModifiers: situationalModifiers,
             rollMode: dialogOptions.data.rollMode || rollMode,
             rollModes: CONFIG.Dice.rollModes ? CONFIG.Dice.rollModes : CONFIG.rollModes,
-            defenseCount: await this.getDefenseCount(testData)
+            defenseCount: await this.getDefenseCount(testData),
+            targets
         })
         mergeObject(cardOptions, {
             user: game.user.id,
@@ -67,6 +74,18 @@ export default class DiceDSA5 {
                         }
                     }
                 }
+                if (game.user.isGM) {
+                    mergeObject(buttons, {
+                        cheat: {
+                            label: game.i18n.localize("DIALOG.cheat"),
+                            callback: (html) => {
+                                game.dsa5.memory.remember(testData.extra.speaker, testData.source, testData.mode, html)
+                                resolve(dialogOptions.callback(html, { cheat: true }))
+                            }
+                        }
+                    })
+                }
+
                 if (testData.source.type == "rangeweapon" || (testData.source.type == "trait" && testData.source.data.traitType.value == "rangeAttack")) {
                     const LZ = testData.source.type == "trait" ? Number(testData.source.data.reloadTime.value) : Actordsa5.calcLZ(testData.source, testData.extra.actor)
                     const progress = testData.source.data.reloadTime.progress
@@ -432,7 +451,7 @@ export default class DiceDSA5 {
             }
             return _this
         }, 0);
-        let damageRoll = testData.damageRoll ? await testData.damageRoll : await DiceDSA5.manualRolls(await new Roll(rollFormula).evaluate({ async: true }), "CHAR.DAMAGE")
+        let damageRoll = testData.damageRoll ? await testData.damageRoll : await DiceDSA5.manualRolls(await new Roll(rollFormula).evaluate({ async: true }), "CHAR.DAMAGE", testData.extra.options)
         let damage = damageRoll.total
         let damageBonusDescription = []
         let weaponBonus = 0
@@ -641,8 +660,8 @@ export default class DiceDSA5 {
         }
     }
 
-    static async manualRolls(roll, description = "") {
-        if (game.settings.get("dsa5", "allowPhysicalDice")) {
+    static async manualRolls(roll, description = "", options = {}) {
+        if (options.cheat || game.settings.get("dsa5", "allowPhysicalDice")) {
             let result = false;
             let form;
             let dice = []
@@ -657,7 +676,7 @@ export default class DiceDSA5 {
             let template = await renderTemplate('systems/dsa5/templates/dialog/manualroll-dialog.html', { dice: dice, description: description });
             [result, form] = await new Promise((resolve, reject) => {
                 new Dialog({
-                    title: game.i18n.localize("DSASETTINGS.allowPhysicalDice"),
+                    title: game.i18n.localize(options.cheat ? "DIALOG.cheat" : "DSASETTINGS.allowPhysicalDice"),
                     content: template,
                     default: 'ok',
                     buttons: {
@@ -990,7 +1009,7 @@ export default class DiceDSA5 {
                 default:
                     roll = await new Roll(`1d20[${testData.source.data.label.split('.')[1].toLowerCase()}]`).evaluate({ async: true });
             }
-            roll = await DiceDSA5.manualRolls(roll, testData.source.type)
+            roll = await DiceDSA5.manualRolls(roll, testData.source.type, testData.extra.options)
             this.showDiceSoNice(roll, cardOptions.rollMode);
             testData.roll = roll;
             testData.rollMode = cardOptions.rollMode
@@ -1055,7 +1074,8 @@ export default class DiceDSA5 {
             preData,
             hideDamage,
             modifierList: preData.situationalModifiers.filter(x => x.value != 0),
-            applyEffect
+            applyEffect,
+            expandModifiers: game.settings.get("dsa5", "expandChatModifierlist")
         }
 
         if (preData.advancedModifiers) {

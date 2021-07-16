@@ -1,39 +1,44 @@
 import DSA5_Utility from "./utility-dsa5.js"
+import ADVANCEDFILTERS from "./itemlibrary_advanced_filters.js"
+
+//TODO merge existing index with advanced details
+//TODO create index with getIndex(fields)
+//TODO fix pagination for detail filter
 
 class SearchDocument {
-    constructor(item) {
-        let filterType = item.documentName
+    constructor(item, pack = {}) {
+        let filterType = item.documentName || getProperty(item, "type")
         switch (item.documentName) {
-            case 'Actor':
-                filterType = item.data.type
-                break
             case 'Item':
                 filterType = item.type
                 break
         }
-        let data = getProperty(item, "data.data.description.value")
+        let data
         switch (filterType) {
+            case "creature":
+            case "npc":
+            case "character":
+                data = getProperty(item, "data.description.value")
+                break
             case 'JournalEntry':
                 data = getProperty(item, "data.content")
                 break
+            default:
+                data = getProperty(item, "data.data.description.value")
         }
-        let img = item.img
-        switch (filterType) {
-            case 'JournalEntry':
-                img = "systems/dsa5/icons/categories/DSA-Auge.webp"
-                break
-        }
+
         this.document = {
             name: item.name,
             filterType,
             data: $("<div>").html(data).text(),
-            id: item.id,
-            visible: item.visible,
-            compendium: item.compendium ? item.compendium.metadata.package : "",
-            pack: item.pack,
-            img
+            id: item.id || item._id,
+            visible: item.visible ? item.visible : true,
+            compendium: item.compendium ? item.compendium.metadata.package : (pack.package || ""),
+            pack: item.pack || (pack.package ? `${pack.package}.${pack.name}` : undefined),
+            img: item.img
         }
     }
+
     get name() {
         return this.document.name
     }
@@ -47,27 +52,27 @@ class SearchDocument {
         return this.document.filterType
     }
 
-    async getItem(){
-        if (this.compendium) {
-            return await(await game.packs.get(this.document.pack)).getDocument(this.id)
-        } else {
-            switch (this.itemType) {
-                case "character":
-                case "creature":
-                case "npc":
-                    return game.actors.get(this.id)
+    async getItem() {
+            if (this.document.compendium) {
+                return await (await game.packs.get(this.document.pack)).getDocument(this.id)
+            } else {
+                switch (this.itemType) {
+                    case "character":
+                    case "creature":
+                    case "npc":
+                        return game.actors.get(this.id)
 
-                case "JournalEntry":
-                    return game.journal.get(this.id)
+                    case "JournalEntry":
+                        return game.journal.get(this.id)
 
-                default:
-                    return game.items.get(this.id)
+                    default:
+                        return game.items.get(this.id)
+                }
             }
         }
-    }
-    /*get options() {
-        return this.document.options
-    }*/
+        /*get options() {
+            return this.document.options
+        }*/
     hasPermission() {
         return this.document.visible
     }
@@ -78,7 +83,22 @@ class SearchDocument {
         return this.document.compendium
     }
     get img() {
+        if (this.itemType == 'JournalEntry') return "systems/dsa5/icons/categories/DSA-Auge.webp"
+
         return this.document.img
+    }
+}
+
+class AdvancedSearchDocument extends SearchDocument {
+    constructor(item, subcategory) {
+        super(item)
+
+        const attrs = ADVANCEDFILTERS[subcategory] || []
+        for (let attr of attrs) {
+            this[attr.attr] = attr.attr.split(".").reduce((prev, cure) => {
+                return prev[cure]
+            }, item.data.data)
+        }
     }
 }
 
@@ -87,6 +107,7 @@ class SearchDocument {
 export default class DSA5ItemLibrary extends Application {
     constructor(app) {
         super(app)
+        this.advancedFiltering = false
         this.journalBuild = false
         this.equipmentBuild = false
         this.zooBuild = false
@@ -136,14 +157,7 @@ export default class DSA5ItemLibrary extends Application {
             }
         });
 
-        this.subfilters = {
-            "equipment": {
-                enabled: false,
-                attrs: [
-                    { name: "equipmentType.value", label: "equipmentType", value: "" }
-                ]
-            }
-        }
+        this.detailFilter = {}
 
         this.pages = {
             equipment: {},
@@ -179,7 +193,8 @@ export default class DSA5ItemLibrary extends Application {
                     "trait": false,
                     "skill": false,
                     "specialability": false,
-                    "species": false
+                    "species": false,
+                    "application": false
                 },
                 filterBy: {
                     search: ""
@@ -225,6 +240,7 @@ export default class DSA5ItemLibrary extends Application {
         data.categories = this.translateFilters()
         data.isGM = game.user.isGM
         data.items = this.items
+        data.advancedMode = this.advancedFiltering ? "on" : ""
         return data
     }
 
@@ -236,6 +252,16 @@ export default class DSA5ItemLibrary extends Application {
             zoo: this.buildFilter(this.filters.zoo),
             journal: this.buildFilter(this.filters.journal)
         }
+    }
+
+    purgeAdvancedFilters() {
+        for (let key in this.filters) {
+            for (let subkey in this.filters[key]["categories"]) {
+                this.filters[key]["categories"][subkey] = false
+            }
+        }
+        $(this._element).find('.filter[type="checkbox"]').prop("checked", false)
+        this.buildDetailFilter("none", "none", $(this._element))
     }
 
     buildFilter(elem) {
@@ -293,7 +319,52 @@ export default class DSA5ItemLibrary extends Application {
             field: ["name"],
             where: { itemType: category }
         }
-        return await Promise.all((await this.equipmentIndex.search(search, query).filter(x => x.compendium != "")).map(x=> x.getItem()))
+        return await Promise.all((await this.equipmentIndex.search(search, query).filter(x => x.compendium != "")).map(x => x.getItem()))
+    }
+
+    async advancedFilterStuff(category, page) {
+        const dataFilters = $(this._element).find('.detailFilters')
+        const subcategory = dataFilters.attr("data-subc")
+        let search = this.filters[category].filterBy.search.toLowerCase()
+        let index = this.detailFilter[subcategory]
+
+        const sels = []
+        const inps = []
+        for (let elem of dataFilters.find('select')) {
+            let val = $(elem).val()
+            if (val != "") {
+                sels.push([$(elem).attr("name"), val])
+            }
+        }
+        for (let elem of dataFilters.find('input')) {
+            let val = $(elem).val()
+            if (val != "") {
+                inps.push([$(elem).attr("name"), val.toLowerCase()])
+            }
+        }
+
+        const selFnct = (x) => {
+            for (let k of sels) {
+                if (x[k[0]] != k[1]) return false
+            }
+            return true
+        }
+        const txtFnct = (x) => {
+            for (let k of inps) {
+                if (x[k[0]].toLowerCase().indexOf(k[1]) == -1) return false
+            }
+            return true
+        }
+
+        let result = index.where(x => (search == "" || x.name.toLowerCase().indexOf(search) != -1) && selFnct(x) && txtFnct(x))
+
+        //this.pages[category].next = result.length
+
+        let filteredItems = result
+        filteredItems = filteredItems.filter(x => x.hasPermission).sort((a, b) => (a.name.toLowerCase() > b.name.toLowerCase()) ? 1 : -1)
+        this.setBGImage(filteredItems, category)
+
+        return filteredItems
     }
 
     async filterStuff(category, index, page) {
@@ -362,9 +433,15 @@ export default class DSA5ItemLibrary extends Application {
 
     async filterItems(html, category, page) {
         const index = this.selectIndex(category)
-        const filteredItems = await this.filterStuff(category, index.index, page)
-        this.renderResult(html, filteredItems, index, page)
-        return filteredItems;
+        if (this.advancedFiltering && category != "journal") {
+            const filteredItems = await this.advancedFilterStuff(category, page)
+            this.renderResult(html, filteredItems, index, page)
+            return filteredItems;
+        } else {
+            const filteredItems = await this.filterStuff(category, index.index, page)
+            this.renderResult(html, filteredItems, index, page)
+            return filteredItems;
+        }
     }
 
     selectIndex(category) {
@@ -395,14 +472,22 @@ export default class DSA5ItemLibrary extends Application {
     async _createIndex(category, entity, worldStuff) {
         if (this[`${category}Build`]) return
 
-        //await this[`${category}Index`].clear()
         const target = $(this._element).find(`*[data-tab="${category}"]`)
         this.showLoading(target, category)
         const packs = game.packs.filter(p => p.documentName == entity && (game.user.isGM || !p.private))
-        return Promise.all(packs.map(p => p.getDocuments())).then(indexes => {
+        let promise
+        let metadata = packs.map(p => p.metadata)
+        if (entity == "Actor") {
+            const fields = ["name", "data.type", "data.description.value", "img"]
+            promise = packs.map(p => p.getIndex({ fields }))
+        } else {
+            promise = packs.map(p => p.getDocuments())
+        }
+
+        return Promise.all(promise).then(indexes => {
             let items = worldStuff.filter(x => x.visible).map(x => new SearchDocument(x))
             indexes.forEach((index, idx) => {
-                items.push(...index.map(x => new SearchDocument(x)))
+                items.push(...index.map(x => new SearchDocument(x, metadata[idx])))
             })
             this[`${category}Index`].add(items)
             this[`${category}Build`] = true
@@ -410,32 +495,101 @@ export default class DSA5ItemLibrary extends Application {
         })
     }
 
-    buildDetailFilter(html, category, subcategory, isChecked) {
-        //TODO uff
-        if (this.subfilters[subcategory]) {
-            this.subfilters[subcategory].enabled = isChecked
-            if (isChecked) {
-                let filters = this.subfilters[subcategory].attrs.map(x => { return `<input type=\"text\" class=\"subfilterItem\" name=\"${x.name}\" title=\"${game.i18n.localize(x.label)}\" placeholder=\"${game.i18n.localize(x.label)}\"/>` })
-                let newElem = $(`<div class=\"groupbox detail${subcategory}\" data-subcategory=\"${subcategory}\"><span>${game.i18n.localize(subcategory)}</span>${filters.join('')}</div>`)
-                console.log(newElem)
-                html.find(`.${category} .detailBox`).append(newElem)
-            } else {
-                html.find(`.detail${subcategory}`).remove()
+    subcategoryFields(subcategory) {
+        let field = ["name", "itemType"]
+        const attrs = ADVANCEDFILTERS[subcategory] || []
+        for (let attr of attrs) {
+            field.push(attr.attr)
+        }
+        return field
+    }
+
+    async createDetailIndex(category, subcategory) {
+        if (!this.detailFilter[subcategory]) {
+            const field = this.subcategoryFields(subcategory)
+            const target = $(this._element).find(`*[data-tab="${category}"]`)
+            this.showLoading(target, category)
+            this.detailFilter[subcategory] = new FlexSearch({
+                encode: "simple",
+                tokenize: "full",
+                cache: true,
+                doc: {
+                    id: "id",
+                    field
+                }
+            });
+
+            const { index, itemType } = this.selectIndex(category)
+            const worldStuff = itemType == "Item" ? game.items : game.actors
+            let items = worldStuff.filter(x => x.visible && x.data.type == subcategory).map(x => new AdvancedSearchDocument(x, subcategory))
+
+            const result = index.search(subcategory, { field: ["itemType"] })
+            const pids = {}
+            for (let res of result) {
+                if (!res.document.pack) continue
+                if (!pids[res.document.pack]) pids[res.document.pack] = []
+                pids[res.document.pack].push(res.document.id)
             }
+            const promises = []
+            for (const key of Object.entries(pids)) {
+                promises.push(game.packs.get(key[0]).getDocuments({ _id: { $in: key[1] }, type: subcategory }))
+            }
+
+            let final = await Promise.all(promises)
+            for (let k of final) {
+                items.push(...k.map(x => new AdvancedSearchDocument(x, subcategory)))
+            }
+            this.detailFilter[subcategory].add(items)
+            this.hideLoading(target, category)
+        }
+    }
+
+    async buildDetailFilter(category, subcategory, html) {
+        const fields = ADVANCEDFILTERS[subcategory] || []
+
+        if (fields) {
+            let bindex = this.createDetailIndex(category, subcategory)
+            const template = await renderTemplate("systems/dsa5/templates/system/detailFilter.html", { fields, subcategory })
+            await bindex
+            html.find('.advancedSearch .groupbox').html(template)
+        } else {
+            html.find('.advancedSearch .groupbox').html(`<p>${game.i18n.localize('Library.selectAdvanced')}</p>`)
         }
     }
 
     activateListeners(html) {
         super.activateListeners(html)
 
-        html.on("click", ".filter", ev => {
+        html.on("click", ".toggleAdvancedMode", () => {
+            this.advancedFiltering = !this.advancedFiltering
+            if (this.advancedFiltering) {
+                $(this._element).find('.toggleAdvancedMode').addClass("on")
+                $(this._element).find('.advancedSearch').fadeIn()
+                this.purgeAdvancedFilters()
+            } else {
+                $(this._element).find('.toggleAdvancedMode').removeClass("on")
+                $(this._element).find('.advancedSearch').fadeOut()
+            }
+        })
+
+        html.on("change", ".detailFilters input, .detailFilters select", () => {
+            const tab = $(this._element).find('.tab.active')
+            const category = tab.attr("data-tab")
+            this.filterItems(tab, category);
+        })
+
+        html.on("click", ".filter", async(ev) => {
             const tab = $(ev.currentTarget).closest('.tab')
             const category = tab.attr("data-tab")
             const subcategory = $(ev.currentTarget).attr("data-category")
             const isChecked = $(ev.currentTarget).is(":checked")
+            if (this.advancedFiltering && isChecked) {
+                this.purgeAdvancedFilters()
+                $(ev.currentTarget).prop("checked", isChecked)
+                await this.buildDetailFilter(category, subcategory, html)
+            }
             this.filters[category].categories[subcategory] = isChecked
             this.filterItems(tab, category);
-            this.buildDetailFilter(html, category, subcategory, isChecked)
         })
 
         html.on("click", ".item-name", ev => {
@@ -452,23 +606,12 @@ export default class DSA5ItemLibrary extends Application {
             this.filters[category].filterBy.search = $(ev.currentTarget).val();
             this.filterItems(tab, category);
         })
-        html.on("keyup", ".subfilterItem", ev => {
-            const tab = $(ev.currentTarget).closest('.tab')
-            const category = tab.attr("data-tab")
-            const subcategory = $(ev.currentTarget).closest('.groupbox').attr("data-subcategory")
-            this.subfilters[subcategory].attrs.find(x => x.name == $(ev.currentTarget).attr("name"))["value"] = $(ev.currentTarget).val()
-            this.filterItems(tab, category);
-        })
+
         html.find(`*[data-tab="journal"]`).click(x => {
             this._createIndex("journal", "JournalEntry", game.journal)
         })
         html.find(`*[data-tab="zoo"]`).click(x => {
             this._createIndex("zoo", "Actor", game.actors)
-        })
-        html.find('nav .item').click(ev => {
-            const tab = $(ev.currentTarget).attr("data-tab")
-            html.find(`.subfilters .tab`).hide()
-            html.find(`.subfilters [data-tab="${tab}"]`).show()
         })
 
         html.find('.showDetails').click(ev => {
@@ -505,7 +648,7 @@ export default class DSA5ItemLibrary extends Application {
 
     showLoading(html, category) {
         this.setBGImage([1], category)
-        const loading = $(`<div class="loader"><i class="fa fa-4x fa-spinner fa-spin"></i>${game.i18n.localize('buildingIndex')}</div>`)
+        const loading = $(`<div class="loader"><i class="fa fa-4x fa-spinner fa-spin"></i>${game.i18n.localize('Library.buildingIndex')}</div>`)
         loading.appendTo(html.find('.searchResult'))
     }
 

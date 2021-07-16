@@ -56,8 +56,9 @@ export default class Actordsa5 extends Actor {
 
             //We should iterate at some point over the items to prevent multiple loops
 
-            let isFamiliar = RuleChaos.isFamiliar(data)
-            data.canAdvance = (data.type == "character" || isFamiliar) && this.isOwner
+            const isFamiliar = RuleChaos.isFamiliar(data)
+            const isPet = RuleChaos.isPet(data)
+            data.canAdvance = (data.type == "character" || isFamiliar || isPet) && this.isOwner
             data.isMage = isFamiliar || data.items.some(x => ["ritual", "spell", "magictrick"].includes(x.type) || (x.type == "specialability" && ["magical", "staff"].includes(x.data.data.category.value)))
             data.isPriest = data.items.some(x => ["ceremony", "liturgy", "blessing"].includes(x.type) || (x.type == "specialability" && ["ceremonial", "clerical"].includes(x.data.data.category.value)))
             if (data.canAdvance) {
@@ -86,7 +87,7 @@ export default class Actordsa5 extends Actor {
             data.data.status.karmaenergy.max = data.data.status.karmaenergy.current + data.data.status.karmaenergy.modifier + data.data.status.karmaenergy.advances + data.data.status.karmaenergy.gearmodifier
 
             let guide = data.data.guidevalue
-            if (guide && data.type != "creature") {
+            if (isFamiliar || (guide && data.type != "creature")) {
                 data.data.status.astralenergy.current = data.data.status.astralenergy.initial
                 data.data.status.karmaenergy.current = data.data.status.karmaenergy.initial
 
@@ -676,7 +677,7 @@ export default class Actordsa5 extends Actor {
 
         let carrycapacity = actorData.data.characteristics.kk.value * 2 + actorData.data.carryModifier;
 
-        if ((actorData.type != "creature" || actorData.canAdvance) && !this.isMerchant()) {
+        if ((actorData.type != "creature" || this.data.canAdvance) && !this.isMerchant()) {
             encumbrance += Math.max(0, Math.ceil((totalWeight - carrycapacity - 4) / 4))
         }
         this.addCondition("encumbered", encumbrance, true)
@@ -1151,8 +1152,8 @@ export default class Actordsa5 extends Actor {
                 regenerationInterruptOptions: DSA5.regenerationInterruptOptions,
                 regnerationCampLocations: DSA5.regnerationCampLocations
             },
-            callback: (html) => {
-                testData.situationalModifiers = Actordsa5._parseModifiers('[name="situationalModifiers"]')
+            callback: (html, options = {}) => {
+                testData.situationalModifiers = Actordsa5._parseModifiers(html)
                 cardOptions.rollMode = html.find('[name="rollMode"]').val();
                 testData.testModifier = Number(html.find('[name="testModifier"]').val());
                 testData.situationalModifiers.push({
@@ -1163,6 +1164,7 @@ export default class Actordsa5 extends Actor {
                     value: html.find('[name="regenerationInterruptOptions"]').val()
                 })
                 testData.regenerationFactor = html.find('[name="badEnvironment"]').is(":checked") ? 0.5 : 1
+                mergeObject(testData.extra.options, options)
                 return { testData, cardOptions };
             }
         };
@@ -1215,10 +1217,10 @@ export default class Actordsa5 extends Actor {
                 situationalModifiers,
                 defenseCountString: game.i18n.format("defenseCount", { malus: multipleDefenseValue })
             },
-            callback: (html) => {
+            callback: (html, options = {}) => {
                 cardOptions.rollMode = html.find('[name="rollMode"]').val();
                 testData.testModifier = Number(html.find('[name="testModifier"]').val());
-                testData.situationalModifiers = Actordsa5._parseModifiers('[name="situationalModifiers"]')
+                testData.situationalModifiers = Actordsa5._parseModifiers(html)
                 testData.situationalModifiers.push(...Itemdsa5.getSpecAbModifiers(html, "parry"))
                 testData.situationalModifiers.push({
                     name: game.i18n.localize("attackFromBehind"),
@@ -1227,6 +1229,7 @@ export default class Actordsa5 extends Actor {
                     name: game.i18n.format("defenseCount", { malus: multipleDefenseValue }),
                     value: (Number(html.find('[name="defenseCount"]').val()) || 0) * multipleDefenseValue
                 })
+                mergeObject(testData.extra.options, options)
                 return { testData, cardOptions };
             }
         };
@@ -1270,11 +1273,12 @@ export default class Actordsa5 extends Actor {
                 difficultyLabels: (DSA5.attributeDifficultyLabels),
                 modifier: options.modifier || 0
             },
-            callback: (html) => {
+            callback: (html, options = {}) => {
                 cardOptions.rollMode = html.find('[name="rollMode"]').val();
                 testData.testModifier = Number(html.find('[name="testModifier"]').val());
                 testData.testDifficulty = DSA5.attributeDifficultyModifiers[html.find('[name="testDifficulty"]').val()];
-                testData.situationalModifiers = Actordsa5._parseModifiers('[name="situationalModifiers"]')
+                testData.situationalModifiers = Actordsa5._parseModifiers(html)
+                mergeObject(testData.extra.options, options)
                 return { testData, cardOptions };
             }
         };
@@ -1288,9 +1292,9 @@ export default class Actordsa5 extends Actor {
         });
     }
 
-    static _parseModifiers(search) {
+    static _parseModifiers(html, search) {
         let res = []
-        $(search + " option:selected").each(function () {
+        html.find('[name="situationalModifiers"] option:selected').each(function () {
             const val = $(this).val()
             res.push({
                 name: $(this).text().trim().split("[")[0],
@@ -1362,12 +1366,7 @@ export default class Actordsa5 extends Actor {
     async _preCreate(data, options, user) {
         await super._preCreate(data, options, user)
         let update = {}
-        mergeObject(update, {
-            token: {
-                bar1: { attribute: "status.astralenergy" }
-            }
-        })
-
+       
         if (!data.img)
             update.img = "icons/svg/mystery-man-black.svg"
 

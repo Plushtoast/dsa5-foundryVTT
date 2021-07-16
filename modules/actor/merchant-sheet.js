@@ -1,5 +1,7 @@
 import Itemdsa5 from "../item/item-dsa5.js";
+import DSA5SoundEffect from "../system/dsa-soundeffect.js";
 import DSA5Payment from "../system/payment.js";
+import DSA5_Utility from "../system/utility-dsa5.js";
 import ActorSheetdsa5NPC from "./npc-sheet.js";
 
 export default class MerchantSheetDSA5 extends ActorSheetdsa5NPC {
@@ -42,9 +44,11 @@ export default class MerchantSheetDSA5 extends ActorSheetdsa5NPC {
         })
         html.find('.buy-item').click(ev => {
             this.advanceWrapper(ev, "buyItem", ev)
+            DSA5SoundEffect.playMoneySound()
         })
         html.find('.sell-item').click(ev => {
             this.advanceWrapper(ev, "sellItem", ev)
+            DSA5SoundEffect.playMoneySound()
         })
         html.find('.item-external-edit').click(ev => {
             ev.preventDefault()
@@ -111,11 +115,11 @@ export default class MerchantSheetDSA5 extends ActorSheetdsa5NPC {
             let hasPaid = MerchantSheetDSA5.noNeedToPay(target, source) || DSA5Payment.payMoney(target, price, true)
             if (hasPaid) {
                 if (buy) {
-                    await this.updateTargetTransaction(target, item, amount)
+                    await this.updateTargetTransaction(target, item, amount, source)
                     await this.updateSourceTransaction(source, target, item, price, itemId, amount)
                 } else {
                     await this.updateSourceTransaction(source, target, item, price, itemId, amount)
-                    await this.updateTargetTransaction(target, item, amount)
+                    await this.updateTargetTransaction(target, item, amount, source)
                 }
             }
         }
@@ -136,14 +140,21 @@ export default class MerchantSheetDSA5 extends ActorSheetdsa5NPC {
         if (!this.noNeedToPay(source, target))
             await DSA5Payment.getMoney(source, price, true)
     }
-    static async updateTargetTransaction(target, sourceItem, amount) {
+
+    static async updateTargetTransaction(target, sourceItem, amount, source) {
         let item = duplicate(sourceItem)
-        let res = target.data.items.find(i => Itemdsa5.areEquals(item, i));
-        item.data.quantity.value = amount
-        if (!res) {
-            await target.createEmbeddedDocuments("Item", [item]);
+        const isService = getProperty(item, "data.equipmentType.value") == "service"
+        if (isService) {
+            const msg = game.i18n.format("MERCHANT.service", { item: item.name, amount, buyer: target.name, merchant: source.name })
+            ChatMessage.create(DSA5_Utility.chatDataSetup(msg));
         } else {
-            await Itemdsa5.stackItems(res, item, target)
+            let res = target.data.items.find(i => Itemdsa5.areEquals(item, i));
+            item.data.quantity.value = amount
+            if (!res) {
+                await target.createEmbeddedDocuments("Item", [item]);
+            } else {
+                await Itemdsa5.stackItems(res, item, target)
+            }
         }
     }
 

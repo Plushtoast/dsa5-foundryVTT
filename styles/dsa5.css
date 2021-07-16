@@ -2142,6 +2142,14 @@ a.inline-roll {
     position: relative;
 }
 
+.browser-item:hover {
+    box-shadow: inset 0px 0px 5px black;
+}
+
+.browser-item a:hover {
+    text-shadow: none;
+}
+
 .browser-item .compendium {
     position: absolute;
     bottom: 2px;
@@ -2318,6 +2326,35 @@ select.noAppearance {
     line-height: 40px;
 }
 
+.adventureWizard .breadcrumbs {
+    display: flex;
+    background-color: #cab7b461;
+    border-radius: 5px;
+    border-bottom: 1px solid #b5b3a4;
+    border-top: 1px solid #b5b3a4;
+}
+
+.adventureWizard .breadcrumbs>div {
+    flex: 1;
+    max-width: 150px;
+    min-width: 150px;
+    border-radius: 5px;
+    padding: 3px;
+    margin: 1px;
+    box-shadow: inset 0px 0px 3px black;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    transition: all 0.3s ease-in-out;
+    text-align: center;
+}
+
+.adventureWizard .breadcrumbs>div:hover {
+    cursor: pointer;
+    background-color: rgba(14, 12, 12, 0.3);
+    color: white;
+}
+
 .picto.ten {
     max-width: 10%;
 }
@@ -2330,11 +2367,16 @@ select.noAppearance {
     position: relative;
 }
 
+.journalHeader .pinJournal,
 .journalHeader .showJournal {
     position: absolute;
     right: 5px;
-    top: 5px;
+    bottom: -3px;
     color: rgb(92, 92, 92);
+}
+
+.journalHeader .pinJournal {
+    right: 45px;
 }
 
 .sound-name {
@@ -2700,4 +2742,52 @@ select.noAppearance {
 .patchviewer .table-title {
     border: 1px solid var(--border-color);
     border-radius: 10px;
+}
+
+.noscrollWizard .content {
+    overflow-y: hidden;
+}
+
+.skill-test .targets {
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 20px;
+}
+
+.skill-test .targets .image {
+    width: 40px;
+    height: 40px;
+    position: relative;
+}
+
+.skill-test .targets i {
+    color: darkred;
+}
+
+.skill-test .targets .image i {
+    position: absolute;
+    z-index: 1;
+    bottom: 0;
+    left: 0;
+    top: 0;
+    right: 0;
+}
+
+.toggleAdvancedMode.on,
+.fulltextsearch.on {
+    color: darkred;
+}
+
+.advancedSearch .groupbox {
+    margin: 0;
+    margin-right: 10px;
+    padding: 3px;
+}
+
+.advancedSearch .groupbox select {
+    width: 100%;
+}
+
+.advancedSearch .groupbox .form-group {
+    margin-top: 4px;
 }

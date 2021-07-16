@@ -8,6 +8,7 @@ import DSA5StatusEffects from "../status/status_effects.js";
 import DialogActorConfig from "../dialog/dialog-actorConfig.js";
 import { itemFromDrop } from "../system/view_helper.js";
 import Actordsa5 from "./actor-dsa5.js";
+import DSA5SoundEffect from "../system/dsa-soundeffect.js";
 
 export default class ActorSheetDsa5 extends ActorSheet {
     get actorType() {
@@ -138,7 +139,7 @@ export default class ActorSheetDsa5 extends ActorSheet {
     }
 
     _handleAggregatedProbe(ev) {
-        let itemId = this._getItemId(ev);
+        const itemId = this._getItemId(ev);
         let aggregated = duplicate(this.actor.items.find(i => i.data._id == itemId));
         let skill = this.actor.items.find(i => i.data.name == aggregated.data.talent.value && i.type == "skill")
         let infoMsg = `<h3 class="center"><b>${game.i18n.localize("aggregatedTest")}</b></h3>`
@@ -398,7 +399,7 @@ export default class ActorSheetDsa5 extends ActorSheet {
 
         html.find('.ammo-selector').change(async(ev) => {
             ev.preventDefault()
-            let itemId = this._getItemId(ev);
+            const itemId = this._getItemId(ev);
             let item = (await this.actor.getEmbeddedDocument("Item", itemId)).toObject()
 
             item.data.currentAmmo.value = $(ev.currentTarget).val()
@@ -416,7 +417,7 @@ export default class ActorSheetDsa5 extends ActorSheet {
         })
 
         html.find('.item-toggle').click(ev => {
-            let itemId = this._getItemId(ev);
+            const itemId = this._getItemId(ev);
             let item = duplicate(this.actor.getEmbeddedDocument("Item", itemId))
 
             switch (item.type) {
@@ -425,6 +426,7 @@ export default class ActorSheetDsa5 extends ActorSheet {
                 case "meleeweapon":
                 case "equipment":
                     this.actor.updateEmbeddedDocuments("Item", [{ _id: item._id, "data.worn.value": !item.data.worn.value }]);
+                    DSA5SoundEffect.playEquipmentWearStatusChange(item)
                     break;
             }
 
@@ -432,9 +434,7 @@ export default class ActorSheetDsa5 extends ActorSheet {
 
         html.find(".status-create").click(ev => {
             let menu = $(ev.currentTarget).closest(".statusEffectMenu").find('ul')
-            menu.fadeIn('fast', function() {
-                menu.find('input').focus()
-            })
+            menu.fadeIn('fast', () => { menu.find('input').focus() })
         })
         html.find(".statusEffectMenu ul").mouseleave(ev => {
             $(ev.currentTarget).fadeOut()
@@ -452,7 +452,7 @@ export default class ActorSheetDsa5 extends ActorSheet {
         })
 
         html.find('.skill-select').mousedown(ev => {
-            let itemId = this._getItemId(ev);
+            const itemId = this._getItemId(ev);
             let skill = this.actor.items.find(i => i.data._id == itemId);
 
             if (ev.button == 0)
@@ -482,7 +482,7 @@ export default class ActorSheetDsa5 extends ActorSheet {
             this.advanceWrapper(ev, "_refundPointsAdvance", $(ev.currentTarget).attr("data-attr"))
         })
         html.find('.spell-select').mousedown(ev => {
-            let itemId = this._getItemId(ev);
+            const itemId = this._getItemId(ev);
             let skill = this.actor.items.find(i => i.data._id == itemId);
 
             if (ev.button == 0)
@@ -495,7 +495,7 @@ export default class ActorSheetDsa5 extends ActorSheet {
         });
 
         html.find('.quantity-click').mousedown(ev => {
-            let itemId = this._getItemId(ev);
+            const itemId = this._getItemId(ev);
             let item = duplicate(this.actor.getEmbeddedDocument("Item", itemId));
             let factor = ev.ctrlKey ? 10 : 1
             switch (ev.button) {
@@ -523,26 +523,29 @@ export default class ActorSheetDsa5 extends ActorSheet {
 
         html.find('.condition-show').mousedown(ev => {
             ev.preventDefault()
-            let id = ev.currentTarget.getAttribute("data-id")
-            let descriptor = $(ev.currentTarget).parents(".statusEffect").attr("data-descriptor")
+            const id = ev.currentTarget.dataset.id
+            const descriptor = $(ev.currentTarget).parents(".statusEffect").attr("data-descriptor")
             if (ev.button == 0) {
-                let effect
-                let text
-                if (descriptor) {
-                    let effect = CONFIG.statusEffects.find(x => x.id == descriptor)
-                    text = $(`<div style="padding:5px;"><b><a class="chat-condition chatButton" data-id="${effect.id}"><img src="${effect.icon}"/>${game.i18n.localize(effect.label)}</a></b>: ${game.i18n.localize(effect.description)}</div>`)
+                const origin = $(ev.currentTarget).parents(".statusEffect").attr("data-origin")
+                if (origin) {
+                    fromUuid(origin).then(entity => entity.sheet.render(true))
                 } else {
-                    //search temporary effects
-                    effect = this.actor.data.effects.find(x => x.id == id)
-                    if (effect) {
-                        text = $(`<div style="padding:5px;"><b><a class="chat-condition chatButton" data-id="${effect.id}"><img src="${effect.icon}"/>${game.i18n.localize(effect.label)}</a></b>: ${game.i18n.localize(effect.data.flags.dsa5.description)}</div>`)
+                    let effect
+                    let text
+                    if (descriptor) {
+                        let effect = CONFIG.statusEffects.find(x => x.id == descriptor)
+                        text = $(`<div style="padding:5px;"><b><a class="chat-condition chatButton" data-id="${effect.id}"><img src="${effect.icon}"/>${game.i18n.localize(effect.label)}</a></b>: ${game.i18n.localize(effect.description)}</div>`)
+                    } else {
+                        //search temporary effects
+                        effect = this.actor.data.effects.find(x => x.id == id)
+                        if (effect) {
+                            text = $(`<div style="padding:5px;"><b><a class="chat-condition chatButton" data-id="${effect.id}"><img src="${effect.icon}"/>${game.i18n.localize(effect.label)}</a></b>: ${game.i18n.localize(effect.data.flags.dsa5.description)}</div>`)
+                        }
                     }
+                    const elem = $(ev.currentTarget).closest('.groupbox').find('.effectDescription')
+                    elem.fadeOut('fast', function() { elem.html(text).fadeIn('fast') })
                 }
-                let elem = $(ev.currentTarget).closest('.groupbox').find('.effectDescription')
-                elem.fadeOut('fast', function() {
-                    elem.html(text).fadeIn('fast')
-                })
-            } else if (ev.button == 2 && !ev.currentTarget.getAttribute("data-locked")) {
+            } else if (ev.button == 2 && !ev.currentTarget.dataset.locked) {
                 this._deleteActiveEffect(id)
             }
         })
@@ -550,22 +553,18 @@ export default class ActorSheetDsa5 extends ActorSheet {
             DSA5ChatListeners.postStatus($(ev.currentTarget).attr("data-id"))
         })
         html.find('.money-change').change(async ev => {
-            let itemId = this._getItemId(ev);
-            let itemToEdit = duplicate(this.actor.getEmbeddedDocument("Item", itemId))
-            itemToEdit.data.quantity.value = Number(ev.target.value);
-            await this.actor.updateEmbeddedDocuments("Item", [itemToEdit]);
+            const itemId = this._getItemId(ev);
+            await this.actor.updateEmbeddedDocuments("Item", [{ _id: itemId, "data.quantity.value": Number(ev.target.value) }]);
             this.currentFocus = $(document.activeElement).closest('.item').attr('data-item-id');;
         })
         html.find('.skill-advances').change(async ev => {
-            let itemId = this._getItemId(ev);
-            let itemToEdit = duplicate(this.actor.getEmbeddedDocument("Item", itemId))
-            itemToEdit.data.talentValue.value = Number(ev.target.value);
-            await this.actor.updateEmbeddedDocuments("Item", [itemToEdit]);
+            const itemId = this._getItemId(ev);
+            await this.actor.updateEmbeddedDocuments("Item", [{ _id: itemId, "data.talentValue.value": Number(ev.target.value) }]);
             this.currentFocus = $(document.activeElement).closest('.row-section').attr('data-item-id');;
         });
         html.find('.item-edit').click(ev => {
             ev.preventDefault()
-            let itemId = this._getItemId(ev);
+            const itemId = this._getItemId(ev);
             const item = this.actor.items.find(i => i.data._id == itemId)
             item.sheet.render(true);
         });
@@ -575,14 +574,14 @@ export default class ActorSheetDsa5 extends ActorSheet {
             if (ev.button == 2) {
                 this._deleteItem(ev)
             } else {
-                let itemId = this._getItemId(ev);
+                const itemId = this._getItemId(ev);
                 const item = this.actor.items.find(i => i.data._id == itemId)
                 item.sheet.render(true);
             }
         })
         html.find(".consume-item").mousedown(ev => {
             if (ev.button == 2) {
-                let itemId = this._getItemId(ev);
+                const itemId = this._getItemId(ev);
                 const item = this.actor.items.find(i => i.data._id == itemId)
                 this.consumeItem(item)
             }
@@ -743,7 +742,7 @@ export default class ActorSheetDsa5 extends ActorSheet {
     }
 
     _deleteItem(ev) {
-        let itemId = this._getItemId(ev);
+        const itemId = this._getItemId(ev);
         let item = this.actor.data.items.find(x => x.id == itemId)
         let message = game.i18n.format("DIALOG.DeleteItemDetail", { item: item.name })
         renderTemplate('systems/dsa5/templates/dialog/delete-item-dialog.html', { message: message }).then(html => {

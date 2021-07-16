@@ -41,7 +41,6 @@
         "KO": "KO",
         "KK": "KK",
         "FW": "FW",
-        "BE": "BE",
         "STF": "StF",
         "RPR": "RPr",
         "KTW": "KTW",
@@ -72,6 +71,8 @@
         "maintainCost": "Aufr.",
         "*": "*"
     },
+
+
     "Features": {
         "Object": "Objekt",
         "Spheres": "Sphären",
@@ -104,7 +105,9 @@
         "firstTime": "Spracheinstellungen",
         "firstTimeWarning": "Bitte wähle die passende Sprache. Kompendien verschiedener Sprachen sind derzeit nicht miteinander kompatibel und bestehende Charaktere können nicht migriert werden.",
         "selectReaction": "Bitte wähle die passende Reaktion.",
-        "selectAction": "Bitte wähle deine Handlung"
+        "selectAction": "Bitte wähle deine Handlung",
+        "cheat": "SL-Willkür",
+        "noTarget": "Kein Ziel"
     },
     "Equipment": {
         "misc": "Allgemein",
@@ -173,7 +176,6 @@
     "bullet": "Kugel",
     "blessing": "Segnung",
     "blessings": "Segnungen",
-    "buildingIndex": "Index wird erzeugt",
     "Burden": "Belastung",
     "biography": "Hintergrundgeschichte",
     "Category": "Kategorie",
@@ -396,9 +398,6 @@
     "source": "Quelle",
     "stepValue": "Stufe",
     "shieldSize": "Schildgröße",
-    "search": "Suche",
-    "searchPlaceholder": "Durchsuche die Bibliothek",
-    "searchCategoryDescription": "Bitte Filterkategorie(n) auswählen",
     "shooter": "Schütze",
     "speed": "Geschwindigkeit",
     "statuseffects": "Statuseffekte",
@@ -421,6 +420,7 @@
     "trait": "Eigenschaft",
     "table": "Tabelle",
     "traits": "Fähigkeiten",
+    "trick": "Trick",
     "treatment": "Behandlung",
     "traitType": "Eigenschaftskategorie",
     "Total": "Gesamt",
@@ -450,6 +450,16 @@
     "YouAlreadyHaveit": "Hast du bereits",
     "zkModifier": "Zähigkeit (Ziel)",
     "zoo": "Zoo",
+    "Library": {
+        "searchPlaceholder": "Durchsuche die Bibliothek",
+        "searchCategoryDescription": "Bitte Filterkategorie(n) auswählen",
+        "search": "Suche",
+        "buildingIndex": "Index wird erzeugt",
+        "advanced": "Erweiterte Suche",
+        "selectAdvanced": "Wähle eine Kategorie",
+        "noFilter": "Kein Filter"
+    },
+
     "Aggregated": {
         "noMoreAllowed": "Keine Proben mehr erlaubt."
     },
@@ -462,7 +472,7 @@
         "xpMessage": "<b>{heros}</b> hat/haben <b>{number}</b> Abenteuerpunkte erhalten.",
         "doGroupCheck": "Modifikator für <b>{skill}</b> Gruppenprobe.",
         "payTT": "Ausnehmen",
-        "randomPlayer": "Zufälliges Opfer"
+        "randomPlayer": "Zufälliges Opfer (Rechtsklick inklusive Pechmagnet)"
     },
     "MODS": {
         "partChecks": "Teilprobenmodifikator",
@@ -603,7 +613,9 @@
         "nothing": "Noch keine",
         "home": "Hauptverzeichnis",
         "foundryUsage": "Foundry & DSA",
-        "foundryUsagedesc": "<p>Mehr Informationen über die Verwendung von Foundry gibt's im <a href=\"https://github.com/Plushtoast/dsa5-foundryVTT/wiki\" target=\"_blank\">Wiki</a>.</p><p>Schnelle Hilfe kannst du im Ulisses Discord oder Foundry Discord bekommen.</p><p>Den Journalbrowser verwenden:<ul class=\"dsalist\"><li>Mit einem Rechtsklick auf Bilder kannst du diese separat anzeigen und deinen Spielern zeigen</li><li>Da die Module Kopien der Printausgaben sind, können Verweise und Formulierungen auf das jeweilige Printprodukt hinweisen und im Spiel abweichen.</li><li>Einge der Akteure der Abenteuer haben möglicherweise keinen Token und keine Statistiken, da diese nur eine sehr kleine erzählerische Rolle einnehmen. Fall Würfelwürfe notwendig sind, kannst du diese über das Chatcommand <b>/ch</b> improvisieren.</li></ul></p>"
+        "search": "Durchsuchen",
+        "foundryUsagedesc": "<p>Mehr Informationen über die Verwendung von Foundry gibt's im <a href=\"https://github.com/Plushtoast/dsa5-foundryVTT/wiki\" target=\"_blank\">Wiki</a>.</p><p>Schnelle Hilfe kannst du im Ulisses Discord oder Foundry Discord bekommen.</p><p>Den Journalbrowser verwenden:<ul class=\"dsalist\"><li>Mit einem Rechtsklick auf Bilder kannst du diese separat anzeigen und deinen Spielern zeigen</li><li>Da die Module Kopien der Printausgaben sind, können Verweise und Formulierungen auf das jeweilige Printprodukt hinweisen und im Spiel abweichen.</li><li>Einge der Akteure der Abenteuer haben möglicherweise keinen Token und keine Statistiken, da diese nur eine sehr kleine erzählerische Rolle einnehmen. Fall Würfelwürfe notwendig sind, kannst du diese über das Chatcommand <b>/ch</b> improvisieren.</li><li>Wichtige Kreaturen und Charaktere haben gewöhnlicherweise noch extra Informationen im Charakterblatt.</li></ul></p>",
+        "fulltextsearch": "Volltextsuche"
     },
     "Migrakel": {
         "Migration": "Actor Migration",
@@ -900,6 +912,7 @@
         "automaticSuccess": "Automatischer Erfolg",
         "automaticFail": "Automatischer Misserfolg",
         "familiar": "Vertrauter",
+        "companion": "Begleiter",
         "shields": "Schilde",
         "throwingWeapons": "Wurfwaffen",
         "quickdraw": "Schnellziehen",
@@ -913,6 +926,7 @@
         "masterfulDodge": "Meisterliches Ausweichen",
         "masterfulParry": "Meisterparade",
         "perception": "Sinnesschärfe",
+        "misfortune": "Pechmagnet",
         "featOfStrength": "Kraftakt",
         "wrestle": "Raufen",
         "literacy": "Schrift",
@@ -1094,7 +1108,9 @@
         "hideEffectsHint": "Zeige Status Effekte an Tokens nur deren Besitzer",
         "limitCombatSpecAbs": "Spezialmanöver limitieren",
         "limitCombatSpecAbsHint": "Nur ein Spezial- und Basismanöver erlauben.",
-        "changelog": "Schau dir Änderungen und neue Inhalte an."
+        "changelog": "Schau dir Änderungen und neue Inhalte an.",
+        "expandChatModifierlist": "Modifikatoren Liste ausgeklappt",
+        "expandChatModifierlistHint": "Zeige die Modifikatorenliste im Chat immer ausgeklappt."
     },
     "COMBATTRACKER": {
         "noDefenses": "Anzahl Verteidigungen",
@@ -1229,7 +1245,8 @@
         "deleteAllGoods": "Alle Waren entfernen?",
         "select": "Auswahl",
         "locked": "Abgeschlossen",
-        "selectRandomGoods": "Wähle Kategorien und Anzahl an zusätzlichen zufälligen Waren. Das Hinzufügen dauert einen Moment, wenn der Index der Bibliothek noch nicht erstellt wurde."
+        "selectRandomGoods": "Wähle Kategorien und Anzahl an zusätzlichen zufälligen Waren. Das Hinzufügen dauert einen Moment, wenn der Index der Bibliothek noch nicht erstellt wurde.",
+        "service": "{buyer} hat {amount} {item} von {merchant} gekauft."
     },
     "CONDITIONDESCRIPTION": {
         "minorSpirits": "Mindergeister sind kleine Elementarwesen, die zwar nicht gefährlich sind, aber lästig werden können. Einige Zauberanwender ziehen beim Wirken ihrer Magie Mindergeister geradezu an.",

@@ -146,7 +146,7 @@
             </div>
         </div>
         {{#each transferedConditions as |item i|}}
-        <div class="row-section col skills two statusEffect" data-id="{{item.id}}" {{#if item.descriptor}}data-descriptor="{{item.descriptor}}" {{/if}}>
+        <div class="row-section col skills two statusEffect" data-origin="{{item.data.origin}}" data-id="{{item.id}}" {{#if item.descriptor}}data-descriptor="{{item.descriptor}}" {{/if}}>
             <div class="col ten">
                 {{#if item.disabled}}
                 <img style="opacity:0.5;" src="{{item.icon}}" /> {{else}}

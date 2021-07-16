@@ -88,6 +88,42 @@ export default class DSA5CombatDialog extends DialogShared {
             }
             $(ev.currentTarget).val(val)
         });
+
+
+        const readTargets = () => {
+            let targets = []
+            game.user.targets.forEach(x => {
+                targets.push({ name: x.actor.name, img: x.actor.img })
+            })
+            return targets
+        }
+
+        let targets = readTargets()
+        const compareTargets = () => {
+            let newTargets = readTargets()
+            if (JSON.stringify(targets) != JSON.stringify(newTargets)) {
+                targets = newTargets
+                this.updateTargets(html, targets)
+            }
+        }
+
+        // not great
+        this.checkTargets = setInterval(function() {
+            compareTargets()
+        }, 500)
+    }
+
+    updateTargets(html, targets) {
+        if (targets.length > 0) {
+            html.find(".targets").html(targets.map(x => `<div class="image" title="${game.i18n.localize('target')}" style="background-image:url(${x.img})"><i class="fas fa-bullseye"></i></div>`).join(""))
+        } else {
+            html.find(".targets").html(`<div><i class="fas fa-exclamation-circle"></i> ${game.i18n.localize('DIALOG.noTarget')}</div>`)
+        }
+    }
+
+    async close(options = {}) {
+        clearInterval(this.checkTargets)
+        return await super.close(options)
     }
 
     _postItem(ev) {

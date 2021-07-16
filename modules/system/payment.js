@@ -1,3 +1,4 @@
+import DSA5SoundEffect from "./dsa-soundeffect.js";
 import DSA5_Utility from "./utility-dsa5.js";
 
 export default class DSA5Payment {
@@ -183,9 +184,11 @@ export default class DSA5Payment {
     static async chatListeners(html) {
         html.on('click', '.payButton', ev => {
             DSA5Payment.handlePayAction(ev, true)
+            DSA5SoundEffect.playMoneySound()
         })
         html.on('click', '.getPaidButton', ev => {
             DSA5Payment.handlePayAction(ev, false)
+            DSA5SoundEffect.playMoneySound()
         })
     }
 }

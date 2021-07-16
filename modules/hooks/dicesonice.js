@@ -111,5 +111,26 @@ export default function() {
             outline: '#FFFFFF',
             texture: 'none'
         });
+
+        //game.dsa5.apps.DiceSoNiceCustomization = new DiceSoNiceCustomization()
     });
 }
+
+/*class DiceSoNiceCustomization {
+    constructor() {
+        const attrs = ["MU", "KL", "IN", "CH", "FF", "GE", "KO", "KK", "ATTACK", "DODGE", "PARRY"]
+        for (let attr of attrs) {
+            game.settings.register("dsa5", `dice3d_${attr}`, {
+                name: `CHAR.${attr}`,
+                hint: "",
+                scope: "client",
+                config: true,
+                default: attr.toLowerCase(),
+                type: String,
+                choices: 
+            });
+        }
+
+
+    }
+}*/

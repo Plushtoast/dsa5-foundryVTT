@@ -41,7 +41,13 @@ export default class ItemSheetdsa5 extends ItemSheet {
         Items.registerSheet("dsa5", RangeweaponSheet, { makeDefault: true, types: ["rangeweapon"] });
         Items.registerSheet("dsa5", EquipmentSheet, { makeDefault: true, types: ["equipment"] });
         Items.registerSheet("dsa5", ArmorSheet, { makeDefault: true, types: ["armor"] });
-        Items.unregisterSheet("dsa5", ItemSheetdsa5, { types: ["armor", "equipment", "rangeweapon", "blessing", "magictrick", "spellextension", "consumable", "species", "career", "culture", "advantage", "specialability", "disadvantage", "ritual", "ceremony", "liturgy", "spell", "disease", "poison", "meleeweapon"] });
+        Items.unregisterSheet("dsa5", ItemSheetdsa5, {
+            types: [
+                "armor", "equipment", "rangeweapon", "blessing", "magictrick", "spellextension", "consumable",
+                "species", "career", "culture", "advantage", "specialability", "disadvantage", "ritual",
+                "ceremony", "liturgy", "spell", "disease", "poison", "meleeweapon"
+            ]
+        });
     }
 
     async _render(force = false, options = {}) {
@@ -183,7 +189,7 @@ export default class ItemSheetdsa5 extends ItemSheet {
             case "application":
                 data['hasLocalization'] = game.i18n.has(`APPLICATION.${this.item.data.data.skill} - ${this.item.name}`)
                 data['localization'] = game.i18n.localize(`APPLICATION.${this.item.data.data.skill} - ${this.item.name}`)
-                data['allSkills'] = (await DSA5_Utility.allSkills()).map(x => { return { name: x.name, id: x.name } })
+                data['allSkills'] = await DSA5_Utility.allSkillsList()
                 break
             case "combatskill":
                 data['weapontypes'] = DSA5.weapontypes;

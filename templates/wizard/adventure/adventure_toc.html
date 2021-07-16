@@ -2,18 +2,31 @@
 <h2>
     <a class="loadBook">{{book.id}}</a>
 </h2>
-{{/if}} {{#each chapters as |category i|}}
-<b>{{category.name}}</b>
-<ul class="toc" data-type="{{category.name}}">
-    {{#each category.content as |item i|}}
-    <li><a data-id="{{item.id}}" class="{{item.cssClass}} getChapter">{{item.name}}</a>{{#if item.subChapters}}
-        <ul>
-            {{#each item.subChapters as |item i|}}
-            <li class="fas fa-caret-right"><a data-id="{{item}}" class="subChapter">{{item}}</a></li>
-            {{/each}}
-        </ul>
-        {{/if}}
-    </li>
+<div class="row-section lineheight" style="margin-bottom:10px">
+    <div class="col ten">
+        <i class="fas fa-search"></i>
+    </div>
+    <div class="col eighty">
+        <input type="search" data-dtype="String" class="filterJournals" placeholder="{{localize 'Book.search'}}" />
+    </div>
+    <div class="col ten">
+        <a class="fulltextsearch {{fulltextsearch}}"><i class="fas fa-align-center" title="{{localize 'Book.fulltextsearch'}}"></i></a>
+    </div>
+</div>
+<div class="tocContent">
+    {{/if}} {{#each chapters as |category i|}}
+    <b>{{category.name}}</b>
+    <ul class="toc" data-type="{{category.name}}">
+        {{#each category.content as |item i|}}
+        <li><a data-id="{{item.id}}" class="{{item.cssClass}} getChapter">{{item.name}}</a>{{#if item.subChapters}}
+            <ul>
+                {{#each item.subChapters as |item i|}}
+                <li class="fas fa-caret-right"><a data-id="{{item}}" class="subChapter">{{item}}</a></li>
+                {{/each}}
+            </ul>
+            {{/if}}
+        </li>
+        {{/each}}
+    </ul>
     {{/each}}
-</ul>
-{{/each}}
+</div>

@@ -24,7 +24,6 @@ export default class DSA5SoundEffect {
             } catch (exception) {
                 console.warn(exception)
             }
-
         }
     }
 
@@ -100,5 +99,60 @@ export default class DSA5SoundEffect {
         }
 
         return result
+    }
+
+    static async playMoneySound(soundToEveryone = false) {
+        if (!game.modules.get("gAudioBundle-3")) return
+
+        const soundOptions = [
+            "modules/gAudioBundle-3/src/Mint Coins And Money/Coin_Slide_Carpet.ogg",
+            "modules/gAudioBundle-3/src/Mint Coins And Money/Coins_Drop_Carpet_06.ogg",
+            "modules/gAudioBundle-3/src/Mint Coins And Money/Coins_Bottlecaps_Drop.ogg",
+            "modules/gAudioBundle-3/src/Mint Coins And Money/Coins_In_Sack_Held_By_Drawstring_06.ogg",
+            "modules/gAudioBundle-3/src/Money/Money_Coins_Handle.ogg"
+        ]
+        const soundPath = soundOptions[Math.floor(Math.random() * soundOptions.length)]
+        await this.playSoundPath(soundPath, soundToEveryone)
+    }
+
+    static async playEquipmentWearStatusChange(item, soundToEveryone = false) {
+        let soundOptions = []
+        const aBundle2 = game.modules.get("gAudioBundle-2")
+        const aBundle3 = game.modules.get("gAudioBundle-3")
+        const aBundle4 = game.modules.get("gAudioBundle-4")
+
+        switch (item.type) {
+            case "armor":
+                if (aBundle2) soundOptions.push("modules/gAudioBundle-2/src/Footsteps/Footstep And Foley Sounds/Foley_Soldier_Gear_Equipment_Metal_Cloth_Heavy_Movement_Light_08.ogg")
+                break
+            case "meleeweapon":
+                if (aBundle2) soundOptions.push("modules/gAudioBundle-2/src/Gore/Melee_Sword_Attack_04.ogg")
+                if (aBundle3) soundOptions.push("modules/gAudioBundle-3/src/Medieval Armor And Impacts/Weapon_Impact_Parry_01.ogg")
+                break
+            case "rangeweapon":
+                if (aBundle4) soundOptions.push("modules/gAudioBundle-4/src/Super Heroes Sound Design/Hawk's_Arrow_Flies_Bow_And_Arrow_Shoot_2.ogg")
+                break
+        }
+
+        if (soundOptions.length == 0 && aBundle2) {
+            soundOptions.push(
+                "modules/gAudioBundle-2/src/Footsteps/Footstep And Foley Sounds/Foley_Sports_Bag_Grab_Pickup_Catch_04.ogg",
+                "modules/gAudioBundle-2/src/Footsteps/Footstep And Foley Sounds/Footstep_Ice_Crunchy_Run_01.ogg",
+                "modules/gAudioBundle-2/src/Footsteps/Footstep And Foley Sounds/Footstep_Ice_Crunchy_Run_02.ogg"
+            )
+        }
+
+        if (soundOptions.length > 0) {
+            const soundPath = soundOptions[Math.floor(Math.random() * soundOptions.length)]
+            await this.playSoundPath(soundPath, soundToEveryone, 0.5)
+        }
+    }
+
+    static async playSoundPath(soundPath, soundToEveryone = false, volume = 0.8) {
+        try {
+            AudioHelper.play({ src: soundPath, volume, loop: false }, soundToEveryone);
+        } catch (exception) {
+            console.warn(`Could not play item sound effect ${soundPath}`)
+        }
     }
 }

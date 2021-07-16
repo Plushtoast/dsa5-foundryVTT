@@ -41,7 +41,6 @@
         "KO": "CON",
         "KK": "STR",
         "FW": "SR",
-        "BE": "ENC",
         "STF": "IC",
         "RPR": "R",
         "KTW": "CTR",
@@ -92,7 +91,9 @@
         "firstTime": "Language settings",
         "firstTimeWarning": "Please chose your language. Compendiae of different languages are currently not compatible to each other. Existing characters can not be migrated to the other language.",
         "selectReaction": "Chose your reaction.",
-        "selectAction": "Chose your action"
+        "selectAction": "Chose your action",
+        "cheat": "GM arbitrariness",
+        "noTarget": "No Target"
     },
 
     "Equipment": {
@@ -134,7 +135,8 @@
         "deleteAllGoods": "Remove all commodities?",
         "select": "Choice",
         "locked": "Locked",
-        "selectRandomGoods": "Select categories and an amount of additional random commodities. The addition might take a moment, if the index of the library has not been created yet."
+        "selectRandomGoods": "Select categories and an amount of additional random commodities. The addition might take a moment, if the index of the library has not been created yet.",
+        "service": "{buyer} bought {amount} {item} from {merchant}."
     },
 
     "advanced": "Advanced",
@@ -166,7 +168,6 @@
     "AstoundingFailure": "Astounding failure",
     "advantages": "Advantages",
     "advantage": "Advantage",
-    "buildingIndex": "Building Index",
     "attackWeaponless": "Unarmed attack",
     "animalSpecialAbilities": "Animal Special Abilities",
     "Age": "Age",
@@ -405,9 +406,6 @@
     "staff": "Staff",
     "spells": "Spells",
     "source": "Source",
-    "search": "Search",
-    "searchPlaceholder": "Search the library",
-    "searchCategoryDescription": "Please select filter categories",
     "shooter": "Shooter",
     "speed": "Movement",
     "statuseffects": "Status effects",
@@ -432,6 +430,7 @@
     "trait": "Ability",
     "traits": "Abilities",
     "traitType": "Ability type",
+    "trick": "Trick",
     "treatment": "Treatment",
     "table": "Table",
     "Total": "Total",
@@ -462,6 +461,16 @@
     "zkModifier": "Toughness (Target)",
     "zoo": "Zoo",
 
+    "Library": {
+        "search": "Search",
+        "searchPlaceholder": "Search the library",
+        "searchCategoryDescription": "Please select filter categories",
+        "buildingIndex": "Building Index",
+        "advanced": "Advanced search",
+        "selectAdvanced": "Chose a category",
+        "noFilter": "No filter"
+    },
+
     "Aggregated": {
         "noMoreAllowed": "No more rolls allowed."
     },
@@ -475,7 +484,7 @@
         "xpMessage": "<b>{heros}</b> received <b>{number}</b> Adventure Points.",
         "doGroupCheck": "Modifier for <b>{skill}</b> Group Check.",
         "payTT": "Loot player",
-        "randomPlayer": "Random victim"
+        "randomPlayer": "Random victim (right click to include Misfortune)"
     },
 
     "WIZARD": {
@@ -922,6 +931,7 @@
         "masterfulParry": "tbd",
         "throwingWeapons": "tbd",
         "improvisedWeaponMaster": "tbd",
+        "misfortune": "Misfortune",
         "quickdraw": "Quickdraw",
         "weakAstralBody": "Weak Astral Body",
         "weakKarmicBody": "Weak Karmic Body",
@@ -935,6 +945,7 @@
         "automaticSuccess": "Automatic Succes",
         "automaticFail": "Automatic Failure",
         "familiar": "Familiar",
+        "companion": "Companion",
         "shields": "Shields",
         "localKnowledge": "Area Knowledge",
         "naturalArmor": "Natural Armor",
@@ -986,6 +997,7 @@
         "MissingChoices": "There are missing choices.",
         "noProperActor": "No actor has been assigned to you or you did not select a token.",
         "noMatch": "No match",
+        "immuneTo": "{name} is immune to \"{condition}\".",
         "zeroXP": "The character has no adventure points yet. Do you want to add some?",
         "opposedAttackNoSpecAbs": "Attacks of Opportunity can not be combined with Special Abilites",
         "noSpellForExtension": "You don't have a matching spell/liturgy for this extension",
@@ -1106,8 +1118,10 @@
         "background": "Background",
         "nothing": "None yet",
         "home": "Home",
+        "search": "Search",
         "foundryUsage": "Foundry & TDE",
-        "foundryUsagedesc": "<p>You can get more informations on the usage of Foundry with TDE in the <a href=\"https://github.com/Plushtoast/dsa5-foundryVTT/wiki\" target=\"_blank\">Wiki</a>.</p><p>You can also get quick help in the Ulisses or Foundry Discord.</p><p>Using the journal browser: <ul class=\"dsalist\"><li>Right click on images to show them to your players.</li><li>Some references and text passages can point to a book location and differ from the game's location, as the modules are copies of printed books.<li>Some of the actors in the adventures might not have a token or statistics, because they only fullfill a tiny narrative role. If you need to make a check, you can use the chat command <b>/ch</b> to improvise a roll.</li></ul></p>"
+        "foundryUsagedesc": "<p>You can get more informations on the usage of Foundry with TDE in the <a href=\"https://github.com/Plushtoast/dsa5-foundryVTT/wiki\" target=\"_blank\">Wiki</a>.</p><p>You can also get quick help in the Ulisses or Foundry Discord.</p><p>Using the journal browser: <ul class=\"dsalist\"><li>Right click on images to show them to your players.</li><li>Some references and text passages can point to a book location and differ from the game's location, as the modules are copies of printed books.<li>Some of the actors in the adventures might not have a token or statistics, because they only fullfill a tiny narrative role. If you need to make a check, you can use the chat command <b>/ch</b> to improvise a roll.</li><li>Important creatures and characters usually have additional information on their character sheet.</li></ul></p>",
+        "fulltextsearch": "Full text search"
     },
 
     "Migrakel": {
@@ -1151,14 +1165,16 @@
         "allowPhysicalDiceHint": "Allow the input of the result of real dice",
         "playerCanEditSpellMacro": "Effect Macro editably by players",
         "playerCanEditSpellMacroHint": "Players can edit spell macros and similar stuff (insecure).",
-        "immuneTo": "{name} is immune to \"{condition}\".",
+
         "soundConfig": "Sound Effect Configuration",
         "soundConfigHint": "Sounds for skills and attacks",
         "hideEffects": "Hide conditions",
         "hideEffectsHint": "Show conditions on the token only for their owner",
         "limitCombatSpecAbs": "Limit Special Maneuvers",
         "limitCombatSpecAbsHint": "Only allow one Special and Basic maneuver.",
-        "changelog": "View recent changes and content updates."
+        "changelog": "View recent changes and content updates.",
+        "expandChatModifierlist": "Modifier list expanded",
+        "expandChatModifierlistHint": "The modifier list in the chat is always expanded."
     },
 
     "COMBATTRACKER": {

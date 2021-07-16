@@ -22,16 +22,15 @@
             <div class="col two">{{{localize (concat "SKILLAbrev." @key)}}}</div>
         </div>
         <div class="row-section skills table-title">
-            <div class="col two">
+            <div class="col sixty">
                 {{localize "skill"}}
             </div>
             <div class="col third">{{localize "probe"}}</div>
-            <div class="col ten" title="{{localize 'BE'}}">{{localize "CHARAbbrev.BE"}}</div>
             <div class="col ten" title="{{localize 'Fw'}}">{{localize "CHARAbbrev.FW"}}</div>
         </div>
         {{#each this as |item i|}}
         <div class="row-section wrap skills lineheight tableOdd item{{#if (eq item.data.talentValue.value 0)}} notLearned{{/if}}" data-item-id="{{item._id}}">
-            <div class="col two">
+            <div class="col sixty">
                 <a class="item-edit talentName">{{item.name}}</a> {{#if item.canAdvance}}
                 <a class="advance refund-item"><i title="{{item.refund}}" class="fas fa-minus"></i></a>
                 <a class="advance advance-item"><i title="{{item.cost}}" class="fas fa-plus"></i></a> {{/if}}
@@ -45,7 +44,6 @@
                 {{#if item.applications}}
                 <a class="item-dropdown very-small" title="{{localize 'SHEET.Dropdown'}}"><i class="fas fa-chevron-down"></i></a> {{/if}}
             </div>
-            <div class="col ten">{{localize item.data.burden.value}}</div>
             <div class="col ten"><input class="skill-advances" type="text" data-dtype="Number" value="{{item.data.talentValue.value}}" /></div>
             {{#if item.applications}}
             <div class="col lineheight expandDetails {{item.detailed}}">
@@ -69,16 +67,15 @@
             <div class="col two">{{{localize (concat "SKILLAbrev." @key)}}}</div>
         </div>
         <div class="row-section skills table-title">
-            <div class="col two">
+            <div class="col sixty">
                 {{localize "skill"}}
             </div>
             <div class="col third">{{localize "probe"}}</div>
-            <div class="col ten" title="{{localize 'BE'}}">{{localize "CHARAbbrev.BE"}}</div>
             <div class="col ten" title="{{localize 'Fw'}}">{{localize "CHARAbbrev.FW"}}</div>
         </div>
         {{#each this as |item i|}}
         <div class="row-section wrap skills lineheight tableOdd item{{#if (eq item.data.talentValue.value 0)}} notLearned{{/if}}" data-item-id="{{item._id}}">
-            <div class="col two">
+            <div class="col sixty">
                 <a class="item-edit talentName">{{item.name}}</a> {{#if item.canAdvance}}
                 <a class="advance refund-item"><i title="{{item.refund}}" class="fas fa-minus"></i></a>
                 <a class="advance advance-item"><i title="{{item.cost}}" class="fas fa-plus"></i></a>{{/if}}
@@ -92,7 +89,6 @@
                 {{#if item.applications}}
                 <a class="item-dropdown very-small" title="{{localize 'SHEET.Dropdown'}}"><i class="fas fa-chevron-down"></i></a> {{/if}}
             </div>
-            <div class="col ten">{{localize item.data.burden.value}}</div>
             <div class="col ten"><input class="skill-advances" type="text" data-dtype="Number" value="{{item.data.talentValue.value}}" /></div>
             {{#if item.applications}}
             <div class="col lineheight expandDetails {{item.detailed}}">

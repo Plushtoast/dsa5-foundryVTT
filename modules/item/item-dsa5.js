@@ -48,7 +48,10 @@ export default class Itemdsa5 extends Item {
         "disease": "systems/dsa5/icons/categories/disease.webp",
         "spellextension": "systems/dsa5/icons/categories/Spellextension.webp",
         "species": "icons/environment/people/group.webp",
-        "application": "systems/dsa5/icons/categories/Skill.webp"
+        "application": "systems/dsa5/icons/categories/Skill.webp",
+        "trick": "systems/dsa5/icons/categories/Tiere.webp",
+        "disadvantageanimal": "systems/dsa5/icons/categories/VorteilAnimal.webp",
+        "advantageanimal": "systems/dsa5/icons/categories/NachteilAnimal.webp"
     }
 
     static defaultIcon(data) {
@@ -120,7 +123,6 @@ export default class Itemdsa5 extends Item {
             scene: canvas.scene ? canvas.scene.id : null
         }
     }
-
 
     static parseValueType(name, val) {
         let type = ""
@@ -349,8 +351,8 @@ export default class Itemdsa5 extends Item {
             flags: {
                 img: speaker.token ? canvas.tokens.get(speaker.token).data.img : this.img
             },
-            title: title,
-            template: template,
+            title,
+            template,
         }
     }
 
@@ -375,9 +377,7 @@ export default class Itemdsa5 extends Item {
 
         if (!options.suppressMessage)
             DiceDSA5.renderRollCard(cardOptions, result, options.rerenderMessage)
-            //.then(msg => {
-            //OpposedDsa5.handleOpposedTarget(msg)
-            //})
+
         return { result, cardOptions };
     }
 
@@ -502,7 +502,7 @@ class SpellItemDSA5 extends Itemdsa5 {
     static getCallbackData(testData, html, actor) {
         testData.testModifier = Number(html.find('[name="testModifier"]').val());
         testData.testDifficulty = 0
-        testData.situationalModifiers = Actordsa5._parseModifiers('[name="situationalModifiers"]')
+        testData.situationalModifiers = Actordsa5._parseModifiers(html)
         testData.calculatedSpellModifiers = {
             castingTime: html.find(".castingTime").text(),
             cost: html.find(".aspcost").text(),
@@ -593,7 +593,7 @@ class SpellItemDSA5 extends Itemdsa5 {
             source: spell,
             extra: {
                 actor: actor.toObject(false),
-                options: options,
+                options,
                 speaker: Itemdsa5.buildSpeaker(actor, tokenId)
             }
         };
@@ -619,23 +619,20 @@ class SpellItemDSA5 extends Itemdsa5 {
         data["situationalModifiers"] = situationalModifiers
 
         let dialogOptions = {
-            title: title,
+            title,
             template: `/systems/dsa5/templates/dialog/${sheet}-enhanced-dialog.html`,
-            data: data,
-            callback: (html) => {
+            data,
+            callback: (html, options = {}) => {
                 cardOptions.rollMode = html.find('[name="rollMode"]').val();
                 this.getCallbackData(testData, html, actor)
+                mergeObject(testData.extra.options, options)
                 return { testData, cardOptions };
             }
         };
 
         let cardOptions = actor._setupCardOptions("systems/dsa5/templates/chat/roll/spell-card.html", title)
 
-        return DiceDSA5.setupDialog({
-            dialogOptions: dialogOptions,
-            testData: testData,
-            cardOptions: cardOptions
-        });
+        return DiceDSA5.setupDialog({ dialogOptions, testData, cardOptions });
     }
 
     static prepareExtensions(actor, spell) {
@@ -701,35 +698,32 @@ class CombatskillDSA5 extends Itemdsa5 {
         let testData = {
             opposable: true,
             source: item,
-            mode: mode,
+            mode,
             extra: {
                 actor: actor.toObject(false),
-                options: options,
+                options,
                 speaker: Itemdsa5.buildSpeaker(actor, tokenId)
             }
         };
 
         let dialogOptions = {
-            title: title,
+            title,
             template: "/systems/dsa5/templates/dialog/combatskill-dialog.html",
             data: {
                 rollMode: options.rollMode
             },
-            callback: (html) => {
+            callback: (html, options = {}) => {
                 cardOptions.rollMode = html.find('[name="rollMode"]').val();
                 testData.testModifier = Number(html.find('[name="testModifier"]').val());
-                testData.situationalModifiers = Actordsa5._parseModifiers('[name="situationalModifiers"]')
+                testData.situationalModifiers = Actordsa5._parseModifiers(html)
+                mergeObject(testData.extra.options, options)
                 return { testData, cardOptions };
             }
         };
 
         let cardOptions = actor._setupCardOptions("systems/dsa5/templates/chat/roll/combatskill-card.html", title)
 
-        return DiceDSA5.setupDialog({
-            dialogOptions: dialogOptions,
-            testData: testData,
-            cardOptions: cardOptions
-        });
+        return DiceDSA5.setupDialog({ dialogOptions, testData, cardOptions });
     }
 }
 
@@ -840,7 +834,7 @@ class DiseaseItemDSA5 extends Itemdsa5 {
             opposable: false,
             source: item.data,
             extra: {
-                options: options,
+                options,
                 speaker: Itemdsa5.buildSpeaker(actor, tokenId)
             }
         };
@@ -852,13 +846,13 @@ class DiseaseItemDSA5 extends Itemdsa5 {
         data["situationalModifiers"] = situationalModifiers
 
         let dialogOptions = {
-            title: title,
+            title,
             template: "/systems/dsa5/templates/dialog/poison-dialog.html",
-            data: data,
-            callback: (html) => {
+            data,
+            callback: (html, options = {}) => {
                 cardOptions.rollMode = html.find('[name="rollMode"]').val();
                 testData.testModifier = Number(html.find('[name="testModifier"]').val());
-                testData.situationalModifiers = Actordsa5._parseModifiers('[name="situationalModifiers"]')
+                testData.situationalModifiers = Actordsa5._parseModifiers(html)
                 testData.situationalModifiers.push({
                     name: game.i18n.localize("zkModifier"),
                     value: html.find('[name="zkModifier"]').val() || 0
@@ -867,17 +861,14 @@ class DiseaseItemDSA5 extends Itemdsa5 {
                     name: game.i18n.localize("skModifier"),
                     value: html.find('[name="skModifier"]').val() || 0
                 })
+                mergeObject(testData.extra.options, options)
                 return { testData, cardOptions };
             }
         };
 
         let cardOptions = item._setupCardOptions(`systems/dsa5/templates/chat/roll/${item.type}-card.html`, title)
 
-        return DiceDSA5.setupDialog({
-            dialogOptions: dialogOptions,
-            testData: testData,
-            cardOptions: cardOptions
-        });
+        return DiceDSA5.setupDialog({ dialogOptions, testData, cardOptions });
     }
 }
 
@@ -974,31 +965,31 @@ class MeleeweaponDSA5 extends Itemdsa5 {
         let testData = {
             opposable: true,
             source: item,
-            mode: mode,
+            mode,
             extra: {
                 actor: actor.toObject(false),
-                options: options,
+                options,
                 speaker: Itemdsa5.buildSpeaker(actor, tokenId)
             }
         };
         const multipleDefenseValue = RuleChaos.multipleDefenseValue(actor, typeof item.toObject === 'function' ? item.toObject() : item)
         let data = {
             rollMode: options.rollMode,
-            mode: mode,
+            mode,
             defenseCountString: game.i18n.format("defenseCount", { malus: multipleDefenseValue })
         }
-        let situationalModifiers = actor ? DSA5StatusEffects.getRollModifiers(actor, item, { mode: mode }) : []
+        let situationalModifiers = actor ? DSA5StatusEffects.getRollModifiers(actor, item, { mode }) : []
         this.getSituationalModifiers(situationalModifiers, actor, data, item)
         data["situationalModifiers"] = situationalModifiers
 
         let dialogOptions = {
-            title: title,
+            title,
             template: "/systems/dsa5/templates/dialog/combatskill-enhanced-dialog.html",
-            data: data,
-            callback: (html) => {
+            data,
+            callback: (html, options = {}) => {
                 cardOptions.rollMode = html.find('[name="rollMode"]').val();
                 testData.testModifier = Number(html.find('[name="testModifier"]').val());
-                testData.situationalModifiers = Actordsa5._parseModifiers('[name="situationalModifiers"]')
+                testData.situationalModifiers = Actordsa5._parseModifiers(html)
                 testData.rangeModifier = html.find('[name="distance"]').val()
                 testData.sizeModifier = DSA5.rangeSizeModifier[html.find('[name="size"]').val()]
                 testData.opposingWeaponSize = html.find('[name="weaponsize"]').val()
@@ -1028,6 +1019,7 @@ class MeleeweaponDSA5 extends Itemdsa5 {
                     })
 
                 testData.situationalModifiers.push(...Itemdsa5.getSpecAbModifiers(html, mode))
+                mergeObject(testData.extra.options, options)
                 Hooks.call("callbackDialogCombatDSA5", testData, actor, html, item, tokenId)
 
                 return { testData, cardOptions };
@@ -1036,11 +1028,7 @@ class MeleeweaponDSA5 extends Itemdsa5 {
 
         let cardOptions = actor._setupCardOptions("systems/dsa5/templates/chat/roll/combatskill-card.html", title)
 
-        return DiceDSA5.setupDialog({
-            dialogOptions: dialogOptions,
-            testData: testData,
-            cardOptions: cardOptions
-        });
+        return DiceDSA5.setupDialog({ dialogOptions, testData, cardOptions });
     }
 }
 
@@ -1077,7 +1065,7 @@ class PoisonItemDSA5 extends Itemdsa5 {
             opposable: false,
             source: item.data,
             extra: {
-                options: options,
+                options,
                 speaker: Itemdsa5.buildSpeaker(actor, tokenId)
             }
         };
@@ -1091,13 +1079,13 @@ class PoisonItemDSA5 extends Itemdsa5 {
         data["situationalModifiers"] = situationalModifiers
 
         let dialogOptions = {
-            title: title,
+            title,
             template: "/systems/dsa5/templates/dialog/poison-dialog.html",
-            data: data,
-            callback: (html) => {
+            data,
+            callback: (html, options = {}) => {
                 cardOptions.rollMode = html.find('[name="rollMode"]').val();
                 testData.testModifier = Number(html.find('[name="testModifier"]').val());
-                testData.situationalModifiers = Actordsa5._parseModifiers('[name="situationalModifiers"]')
+                testData.situationalModifiers = Actordsa5._parseModifiers(html)
 
                 testData.situationalModifiers.push({
                     name: game.i18n.localize("zkModifier"),
@@ -1107,18 +1095,14 @@ class PoisonItemDSA5 extends Itemdsa5 {
                     name: game.i18n.localize("skModifier"),
                     value: html.find('[name="skModifier"]').val() || 0
                 })
-
+                mergeObject(testData.extra.options, options)
                 return { testData, cardOptions };
             }
         };
 
         let cardOptions = item._setupCardOptions(`systems/dsa5/templates/chat/roll/${item.type}-card.html`, title)
 
-        return DiceDSA5.setupDialog({
-            dialogOptions: dialogOptions,
-            testData: testData,
-            cardOptions: cardOptions
-        });
+        return DiceDSA5.setupDialog({ dialogOptions, testData, cardOptions });
     }
 }
 
@@ -1195,10 +1179,10 @@ class RangeweaponItemDSA5 extends Itemdsa5 {
         let testData = {
             opposable: true,
             source: item,
-            mode: mode,
+            mode,
             extra: {
                 actor: actor.toObject(false),
-                options: options,
+                options,
                 speaker: Itemdsa5.buildSpeaker(actor, tokenId)
             }
         };
@@ -1221,20 +1205,20 @@ class RangeweaponItemDSA5 extends Itemdsa5 {
 
         let data = {
             rollMode: options.rollMode,
-            mode: mode
+            mode
         }
-        let situationalModifiers = actor ? DSA5StatusEffects.getRollModifiers(actor, item, { mode: mode }) : []
+        let situationalModifiers = actor ? DSA5StatusEffects.getRollModifiers(actor, item, { mode }) : []
         this.getSituationalModifiers(situationalModifiers, actor, data, item)
         data["situationalModifiers"] = situationalModifiers
 
         let dialogOptions = {
-            title: title,
+            title,
             template: "/systems/dsa5/templates/dialog/combatskill-enhanced-dialog.html",
-            data: data,
-            callback: (html) => {
+            data,
+            callback: (html, options = {}) => {
                 cardOptions.rollMode = html.find('[name="rollMode"]').val();
                 testData.testModifier = Number(html.find('[name="testModifier"]').val());
-                testData.situationalModifiers = Actordsa5._parseModifiers('[name="situationalModifiers"]')
+                testData.situationalModifiers = Actordsa5._parseModifiers(html)
                 testData.rangeModifier = html.find('[name="distance"]').val()
                 testData.sizeModifier = DSA5.rangeSizeModifier[html.find('[name="size"]').val()]
                 testData.narrowSpace = html.find('[name="narrowSpace"]').is(":checked")
@@ -1267,6 +1251,7 @@ class RangeweaponItemDSA5 extends Itemdsa5 {
                     value: Number(html.find('[name="vision"]').val() || 0)
                 })
                 testData.situationalModifiers.push(...Itemdsa5.getSpecAbModifiers(html, "attack"))
+                mergeObject(testData.extra.options, options)
                 Hooks.call("callbackDialogCombatDSA5", testData, actor, html, item, tokenId)
                 return { testData, cardOptions };
             }
@@ -1274,11 +1259,7 @@ class RangeweaponItemDSA5 extends Itemdsa5 {
 
         let cardOptions = actor._setupCardOptions("systems/dsa5/templates/chat/roll/combatskill-card.html", title)
 
-        return DiceDSA5.setupDialog({
-            dialogOptions: dialogOptions,
-            testData: testData,
-            cardOptions: cardOptions
-        });
+        return DiceDSA5.setupDialog({ dialogOptions, testData, cardOptions });
     }
 }
 
@@ -1338,7 +1319,7 @@ class SkillItemDSA5 extends Itemdsa5 {
             source: skill,
             extra: {
                 actor: actor.toObject(false),
-                options: options,
+                options,
                 speaker: Itemdsa5.buildSpeaker(actor, tokenId)
             }
         };
@@ -1355,32 +1336,28 @@ class SkillItemDSA5 extends Itemdsa5 {
         data["situationalModifiers"] = situationalModifiers
 
         let dialogOptions = {
-            title: title,
+            title,
             template: "/systems/dsa5/templates/dialog/skill-dialog.html",
-            data: data,
-
-            callback: (html) => {
+            data,
+            callback: (html, options = {}) => {
                 cardOptions.rollMode = html.find('[name="rollMode"]').val();
                 testData.testModifier = Number(html.find('[name="testModifier"]').val());
                 testData.testDifficulty = DSA5.skillDifficultyModifiers[html.find('[name="testDifficulty"]').val()];
-                testData.situationalModifiers = Actordsa5._parseModifiers('[name="situationalModifiers"]')
+                testData.situationalModifiers = Actordsa5._parseModifiers(html)
                 testData.advancedModifiers = {
                     chars: [0, 1, 2].map(x => Number(html.find(`[name="ch${x}"]`).val())),
                     fws: Number(html.find(`[name="fw"]`).val()),
                     qls: Number(html.find(`[name="qs"]`).val())
                 }
                 Itemdsa5.changeChars(testData.source, ...[0, 1, 2].map(x => html.find(`[name="characteristics${x}"]`).val()))
+                mergeObject(testData.extra.options, options)
                 return { testData, cardOptions };
             }
         };
 
         let cardOptions = actor._setupCardOptions("systems/dsa5/templates/chat/roll/skill-card.html", title)
 
-        return DiceDSA5.setupDialog({
-            dialogOptions: dialogOptions,
-            testData: testData,
-            cardOptions: cardOptions
-        });
+        return DiceDSA5.setupDialog({ dialogOptions, testData, cardOptions });
     }
 }
 
@@ -1439,6 +1416,12 @@ class TraitItemDSA5 extends Itemdsa5 {
                     this._chatLineHelper("duration", data.duration.value),
                     this._chatLineHelper("aspect", data.aspect.value)
                 ]
+                break
+            case "trick":
+                res = [
+                    this._chatLineHelper("APValue", data.APValue.value),
+                ]
+                break
         }
         if (data.effect.value != "") res.push(this._chatLineHelper("effect", data.effect.value))
 
@@ -1483,8 +1466,7 @@ class TraitItemDSA5 extends Itemdsa5 {
             if (game.user.targets.size) {
                 game.user.targets.forEach(target => {
                     let tar = target.actor.data.data.size
-                    if (tar)
-                        targetSize = tar.value
+                    if (tar) targetSize = tar.value
                 });
             }
 
@@ -1539,32 +1521,32 @@ class TraitItemDSA5 extends Itemdsa5 {
         let testData = {
             opposable: true,
             source: item,
-            mode: mode,
+            mode,
             extra: {
                 actor: actor.toObject(false),
-                options: options,
+                options,
                 speaker: Itemdsa5.buildSpeaker(actor, tokenId)
             }
         };
         const multipleDefenseValue = RuleChaos.multipleDefenseValue(actor, item.toObject())
         let data = {
             rollMode: options.rollMode,
-            mode: mode,
+            mode,
             defenseCountString: game.i18n.format("defenseCount", { malus: multipleDefenseValue })
         }
 
-        let situationalModifiers = actor ? DSA5StatusEffects.getRollModifiers(actor, item, { mode: mode }) : []
+        let situationalModifiers = actor ? DSA5StatusEffects.getRollModifiers(actor, item, { mode }) : []
         this.getSituationalModifiers(situationalModifiers, actor, data, item)
         data["situationalModifiers"] = situationalModifiers
 
         let dialogOptions = {
-            title: title,
+            title,
             template: "/systems/dsa5/templates/dialog/combatskill-enhanced-dialog.html",
-            data: data,
-            callback: (html) => {
+            data,
+            callback: (html, options = {}) => {
                 cardOptions.rollMode = html.find('[name="rollMode"]').val();
                 testData.testModifier = Number(html.find('[name="testModifier"]').val());
-                testData.situationalModifiers = Actordsa5._parseModifiers('[name="situationalModifiers"]')
+                testData.situationalModifiers = Actordsa5._parseModifiers(html)
                 testData.rangeModifier = html.find('[name="distance"]').val()
                 testData.sizeModifier = DSA5.rangeSizeModifier[html.find('[name="size"]').val()]
                 testData.opposingWeaponSize = html.find('[name="weaponsize"]').val()
@@ -1610,6 +1592,7 @@ class TraitItemDSA5 extends Itemdsa5 {
                     value: html.find('[name="advantageousPosition"]').is(":checked") ? 2 : 0
                 }, Itemdsa5.parseValueType(game.i18n.localize("sight"), html.find('[name="vision"]').val() || 0))
                 testData.situationalModifiers.push(...Itemdsa5.getSpecAbModifiers(html, mode))
+                mergeObject(testData.extra.options, options)
                 Hooks.call("callbackDialogCombatDSA5", testData, actor, html, item, tokenId)
                 return { testData, cardOptions };
             }
@@ -1617,11 +1600,7 @@ class TraitItemDSA5 extends Itemdsa5 {
 
         let cardOptions = actor._setupCardOptions("systems/dsa5/templates/chat/roll/combatskill-card.html", title)
 
-        return DiceDSA5.setupDialog({
-            dialogOptions: dialogOptions,
-            testData: testData,
-            cardOptions: cardOptions
-        });
+        return DiceDSA5.setupDialog({ dialogOptions, testData, cardOptions });
     }
 }
 

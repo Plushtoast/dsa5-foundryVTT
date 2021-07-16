@@ -13,6 +13,10 @@ export default class RuleChaos {
     }
 
     static isFamiliar(data) {
-        return data.items.find(x => x.name == game.i18n.localize('LocalizedIDs.familiar') && x.type == "trait") != undefined
+        return data.items.find(x => x.type == "trait" && game.i18n.localize('LocalizedIDs.familiar') == x.name) != undefined
+    }
+
+    static isPet(data) {
+        return data.items.find(x => x.type == "trait" && game.i18n.localize('LocalizedIDs.companion') == x.name) != undefined
     }
 }

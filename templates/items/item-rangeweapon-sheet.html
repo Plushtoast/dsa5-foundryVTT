@@ -45,8 +45,8 @@
                 <label class="label-text">{{localize "combatskill"}}</label>
                 <select name="data.combatskill.value" data-dtype="String">
                   {{#select data.combatskill.value}}
-                  {{#each combatskills as |ch char|}}
-                  <option value="{{char}}">{{localize ch}}</option>
+                  {{#each combatskills as |ch|}}
+                  <option value="{{ch}}">{{ch}}</option>
                   {{/each}}
                   {{/select}}
                 </select>

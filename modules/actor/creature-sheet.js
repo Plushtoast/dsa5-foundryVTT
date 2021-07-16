@@ -26,19 +26,17 @@ export default class ActorSheetdsa5Creature extends ActorSheetDsa5 {
         switch (item.type) {
             case "trait":
                 await this._updateAPs(item.data.data.APValue.value * -1)
-                await TraitRulesDSA5.traitRemoved(this.actor, item)
                 break;
         }
         await super._cleverDeleteItem(itemId)
     }
 
     async _addTrait(item) {
-        item = duplicate(item)
         let res = this.actor.items.find(i => i.type == "trait" && i.name == item.name);
         if (!res) {
             await this._updateAPs(item.data.APValue.value)
-            await this.actor.createEmbeddedDocuments("Item", [item]);
             await TraitRulesDSA5.traitAdded(this.actor, item)
+            await this.actor.createEmbeddedDocuments("Item", [item]);
         }
     }
 

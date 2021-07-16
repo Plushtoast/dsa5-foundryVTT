@@ -2,6 +2,7 @@ import DSA5_Utility from "./utility-dsa5.js"
 import DSA5Payment from "./payment.js"
 import DSA5ChatAutoCompletion from "./chat_autocompletion.js"
 import RuleChaos from "./rule_chaos.js"
+import AdvantageRulesDSA5 from "./advantage-rules-dsa5.js"
 
 export default class MastersMenu {
     static registerButtons() {
@@ -19,7 +20,7 @@ export default class MastersMenu {
                 },
                 {
                     name: "Library",
-                    title: game.i18n.localize("ItemLibrary"),
+                    title: game.i18n.localize("SHEET.Library"),
                     icon: "fas fa-university",
                     button: true,
                     onClick: () => {
@@ -137,16 +138,29 @@ class GameMasterMenu extends Application {
             ev.stopPropagation()
             this.getExp(this.selectedIDs())
         })
-        html.find('.randomPlayer').click((ev) => {
+        html.find('.randomPlayer').mousedown((ev) => {
             ev.stopPropagation()
             const heros = html.find('.hero')
-            const count = heros.length
-            const roll = new Roll(`1d${count}`).evaluate({ async: false }).total
+            const withMisfortune = ev.button == 2
+            let probabilities = {}
+            let index = 0
+            let counter = 1
+            for (const hero of this.heros) {
+                probabilities[counter] = index
+                counter++
+                if (withMisfortune && AdvantageRulesDSA5.hasVantage(hero, game.i18n.localize("LocalizedIDs.misfortune"))) {
+                    probabilities[counter] = index
+                    counter++
+                }
+                index++
+            }
+
+            const roll = new Roll(`1d${counter - 1}`).evaluate({ async: false }).total
             $(ev.currentTarget).find('i').addClass('fa-spin')
             heros.removeClass("victim")
 
             setTimeout(() => {
-                heros.eq(roll - 1).addClass("victim")
+                heros.eq(probabilities[roll]).addClass("victim")
                 $(ev.currentTarget).find('i').removeClass('fa-spin')
             }, 500)
         })
@@ -200,7 +214,7 @@ class GameMasterMenu extends Application {
             if (!isNaN(number)) {
                 for (const actor of actors) {
                     let xpBonus = number
-                    if (RuleChaos.isFamiliar(actor.data)) {
+                    if (RuleChaos.isFamiliar(actor.data) || RuleChaos.isPet(actor.data)) {
                         xpBonus = familiarXP
                         familiars.push(actor)
                     } else {
@@ -306,7 +320,7 @@ class GameMasterMenu extends Application {
             hero.advantages = hero.items.filter(x => x.type == "advantage").map(x => { return { name: x.name, uuid: x.uuid } })
             hero.disadvantages = hero.items.filter(x => x.type == "disadvantage").map(x => { return { name: x.name, uuid: x.uuid } })
         }
-        const skills = Object.fromEntries(Object.entries(await DSA5_Utility.allSkillsList()).sort((a, b) => a[0].localeCompare(b[0])))
+        const skills = await DSA5_Utility.allSkillsList()
 
         mergeObject(data, {
             heros,

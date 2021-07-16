@@ -1,0 +1,18 @@
+<div class="detailFilters" data-subc="{{subcategory}}">
+    {{#each fields as |field|}} {{#if (eq field.type 'select')}}
+    <div class="form-group">
+        <label class="label-text">{{localize field.label}}</label>
+        <select name="{{field.attr}}" data-dtype="String">
+            <option value="">{{localize 'Library.noFilter'}}</option>
+          {{#each options as |ch char|}}
+          <option value="{{char}}">{{localize ch}}</option>
+          {{/each}}
+        </select>
+    </div>
+    {{else if (eq field.type 'text')}}
+    <div class="form-group">
+        <label class="label-text">{{localize field.label}}</label>
+        <input class="input-text" type="text" name="{{field.attr}}" value="" data-dtype="String" />
+    </div>
+    {{/if}} {{/each}}
+</div>

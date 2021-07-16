@@ -177,6 +177,25 @@ export default function() {
         type: ChangelogForm,
         restricted: false
     })
+
+    game.settings.register("dsa5", "breadcrumbs", {
+        name: "DSASETTINGS.breadcrumbs",
+        hint: "DSASETTINGS.breadcrumbsHint",
+        scope: "client",
+        config: false,
+        default: "",
+        type: String
+    });
+
+    game.settings.register("dsa5", "expandChatModifierlist", {
+        name: "DSASETTINGS.expandChatModifierlist",
+        hint: "DSASETTINGS.expandChatModifierlistHint",
+        scope: "client",
+        config: true,
+        default: false,
+        type: Boolean
+    });
+
 }
 
 class ChangelogForm extends FormApplication {

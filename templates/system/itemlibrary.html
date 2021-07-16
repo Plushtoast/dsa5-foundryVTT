@@ -12,60 +12,67 @@
             </nav>
 
             <section class="content">
-                {{#each categories as |cat i|}}
-                <div class="tab {{@key}}" data-tab="{{@key}}">
-                    <div class="row-section">
-                        <div class="col">
-                            <div>
-                                <div class="form-group">
-                                    <label class="label-text">{{ localize "search"}}</label>
-                                    <input class="input-text filterBy-search" name="librarySearch" type="text" placeholder="{{localize 'searchPlaceholder'}}" />
-                                </div>
-                            </div>
+                <div class="row-section">
+                    <div class="col third advancedSearch" {{#unless advancedMode}}style="display:none" {{/unless}}>
+                        <label class="label-text">{{localize 'Library.advanced'}}</label>
+                        <div class="groupbox">
+
                         </div>
                     </div>
-                    {{#if cat}}
-                    <div class="row-section">
-                        <div class="col">
-                            <div class="groupbox">
-                                <div class="row-section">
-                                    <div class="col">
-                                        <p>{{localize "searchCategoryDescription"}}</p>
-                                    </div>
-                                </div>
-                                <div class="row-section">
-                                    <div class="col">
-                                        <ul class="wrap categories">
-                                            {{#each cat as |val fil|}}
-                                            <li title="{{val.label}}"><input class="filter" type="checkbox" id="filter_{{val.key}}" data-category="{{val.key}}" {{checked val.selected}} /><label for="filter_{{val.key}}">{{val.label}}</label></li>
-                                            {{/each}}
-                                        </ul>
+                    <div class="col seventy contentShow">
+                        {{#each categories as |cat i|}}
+                        <div class="tab {{@key}}" data-tab="{{@key}}">
+                            <div class="row-section">
+                                <div class="col">
+                                    <div>
+                                        <div class="form-group">
+                                            <label class="label-text">{{ localize "Library.search"}}</label> <label class="label-text"><a title="{{localize 'Library.advanced'}}" class="toggleAdvancedMode {{../advancedMode}}"><i class="fas fa-brain"></i></a></label>
+                                            <input class="input-text filterBy-search" name="librarySearch" type="text" placeholder="{{localize 'Library.searchPlaceholder'}}" />
+                                        </div>
                                     </div>
                                 </div>
                             </div>
-                        </div>
-                    </div>
-                    {{/if}}
-                    <div class="row-section ">
-                        <a class="showDetails dsahidden" data-btn="{{@key}}" title="{{localize 'SHEET.collapse'}}"><i class="fa fa-caret-right"></i></a>
-                    </div>
-                    <div class="row-section libcontainer libraryImg">
-                        <div class="col third detailBox dsahidden">
+                            {{#if cat}}
+                            <div class="row-section">
+                                <div class="col">
+                                    <div class="groupbox">
+                                        <div class="row-section">
+                                            <div class="col">
+                                                <p>{{localize "Library.searchCategoryDescription"}}</p>
+                                            </div>
+                                        </div>
+                                        <div class="row-section">
+                                            <div class="col">
+                                                <ul class="wrap categories">
+                                                    {{#each cat as |val fil|}}
+                                                    <li title="{{val.label}}"><input class="filter" type="checkbox" id="filter_{{val.key}}" data-category="{{val.key}}" {{checked val.selected}} /><label for="filter_{{val.key}}">{{val.label}}</label></li>
+                                                    {{/each}}
+                                                </ul>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            {{/if}}
+                            <div class="row-section ">
+                                <a class="showDetails dsahidden" data-btn="{{@key}}" title="{{localize 'SHEET.collapse'}}"><i class="fa fa-caret-right"></i></a>
+                            </div>
+                            <div class="row-section libcontainer libraryImg">
+                                <div class="col third detailBox dsahidden">
+
+                                </div>
+                                <div class="col seventy row-section wrap searchResult">
+                                    <ul class="item-list save-scroll">
+                                    </ul>
+                                </div>
+                            </div>
 
                         </div>
-                        <div class="col seventy row-section wrap searchResult">
-                            <ul class="item-list save-scroll">
-                            </ul>
-                        </div>
-                    </div>
 
+                        {{/each}}
+                    </div>
                 </div>
-
-                {{/each}}
-
-
             </section>
         </div>
     </div>
-
 </div>

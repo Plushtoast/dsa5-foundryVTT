@@ -482,7 +482,8 @@ DSA5.traitCategories = {
     "rangeAttack": "rangeCombatAttacks",
     "armor": "armor",
     "general": "general",
-    "familiar": "familiar"
+    "familiar": "familiar",
+    "trick": "trick"
 }
 
 DSA5.ritualLocationModifiers = {

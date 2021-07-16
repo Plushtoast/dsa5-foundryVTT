@@ -61,20 +61,12 @@ export class ReactToSkillDialog extends DialogReactDSA5 {
         let attackMessage = game.messages.get(startMessage.data.flags.unopposeData.attackMessageId)
         let source = attackMessage.data.flags.data.preData.source
         let item = source.name
-        let items = [{
+        let items = (await DSA5_Utility.allSkillsList()).map(k => { return { name: k, id: k } })
+        items.unshift({
             name: game.i18n.localize("doNothing"),
             id: "doNothing"
-        }]
-
-        let skills = await DSA5_Utility.allSkills()
-        for (let k of skills) {
-            items.push({
-                name: k.name,
-                id: k.name
-            })
-        }
-
-        return renderTemplate('systems/dsa5/templates/dialog/dialog-reaction.html', { items: items, original: item })
+        })
+        return renderTemplate('systems/dsa5/templates/dialog/dialog-reaction.html', { items, original: item })
     }
 
     static callbackResult(text, message) {
@@ -113,7 +105,6 @@ export class ActAttackDialog extends Dialog {
 
                 }
             }
-
         }).render(true)
     }
 
