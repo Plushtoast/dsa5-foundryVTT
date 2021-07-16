@@ -235,12 +235,15 @@ export default class DSA5ItemLibrary extends Application {
 
     }
 
-    getData(options) {
-        const data = super.getData(options);
+    async getData(options) {
+        const data = await super.getData(options);
         data.categories = this.translateFilters()
         data.isGM = game.user.isGM
         data.items = this.items
         data.advancedMode = this.advancedFiltering ? "on" : ""
+        if (this.advancedFiltering) {
+            data.advancedFilter = await this.buildDetailFilter("tbd", this.subcategory)
+        }
         return data
     }
 
@@ -261,7 +264,9 @@ export default class DSA5ItemLibrary extends Application {
             }
         }
         $(this._element).find('.filter[type="checkbox"]').prop("checked", false)
-        this.buildDetailFilter("none", "none", $(this._element))
+        this.buildDetailFilter("none", "none").then(templ => {
+            $(this._element).find('.advancedSearch .groupbox').html(templ)
+        })
     }
 
     buildFilter(elem) {
@@ -544,16 +549,16 @@ export default class DSA5ItemLibrary extends Application {
         }
     }
 
-    async buildDetailFilter(category, subcategory, html) {
+    async buildDetailFilter(category, subcategory) {
         const fields = ADVANCEDFILTERS[subcategory] || []
 
         if (fields) {
             let bindex = this.createDetailIndex(category, subcategory)
             const template = await renderTemplate("systems/dsa5/templates/system/detailFilter.html", { fields, subcategory })
             await bindex
-            html.find('.advancedSearch .groupbox').html(template)
+            return template
         } else {
-            html.find('.advancedSearch .groupbox').html(`<p>${game.i18n.localize('Library.selectAdvanced')}</p>`)
+            return `<p>${game.i18n.localize('Library.selectAdvanced')}</p>`
         }
     }
 
@@ -585,8 +590,9 @@ export default class DSA5ItemLibrary extends Application {
             const isChecked = $(ev.currentTarget).is(":checked")
             if (this.advancedFiltering && isChecked) {
                 this.purgeAdvancedFilters()
+                this.subcategory = subcategory
                 $(ev.currentTarget).prop("checked", isChecked)
-                await this.buildDetailFilter(category, subcategory, html)
+                $(this._element).find('.advancedSearch .groupbox').html(await this.buildDetailFilter(category, subcategory))
             }
             this.filters[category].categories[subcategory] = isChecked
             this.filterItems(tab, category);
