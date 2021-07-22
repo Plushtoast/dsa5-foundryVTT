@@ -36,15 +36,16 @@ export default class DSA5ChatListeners {
 
 
 
-    static async check3D20(target){
-        let skill
+    static async check3D20(target, skill){
         let attrs = 12
         if(target){
             target = target.get(0)
             skill = await DSA5_Utility.skillByName(target.textContent)
             if(target.dataset.attrs) attrs = target.dataset.attrs.split("|")
-            if(skill) skill= skill.toObject()
+        }else if(skill){
+            skill = await DSA5_Utility.skillByName(skill)
         }
+        if(skill) skill= skill.toObject()
         
         if(!skill){ 
             skill = {
@@ -68,7 +69,7 @@ export default class DSA5ChatListeners {
     }
 
     static showTables(){
-        let msg = `<a class="roll-button defense-botch" data-weaponless="false"><i class="fas fa-dice"></i>${game.i18n.localize('TABLENAMES.Defense')}</a>
+        const msg = `<a class="roll-button defense-botch" data-weaponless="false"><i class="fas fa-dice"></i>${game.i18n.localize('TABLENAMES.Defense')}</a>
         <a class="roll-button melee-botch" data-weaponless="false"><i class="fas fa-dice"></i>${game.i18n.localize('TABLENAMES.Melee')}</a>
         <a class="roll-button range-botch" data-weaponless="false"><i class="fas fa-dice"></i>${game.i18n.localize('TABLENAMES.Range')}</a>
         <a class="roll-button liturgy-botch"><i class="fas fa-dice"></i>${game.i18n.localize('TABLENAMES.Liturgy')}</a>

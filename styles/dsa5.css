@@ -1191,6 +1191,7 @@ form.dsa5.item-sheet {
     background-color: #100d087a;
 }
 
+.masterMenu button,
 .sheetButton,
 #sidebar button {
     background-image: linear-gradient(to right top, #be2020, #af1622, #9f0d22, #8f0522, #7f0021);

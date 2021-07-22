@@ -50,8 +50,9 @@ export default class Itemdsa5 extends Item {
         "species": "icons/environment/people/group.webp",
         "application": "systems/dsa5/icons/categories/Skill.webp",
         "trick": "systems/dsa5/icons/categories/Tiere.webp",
-        "disadvantageanimal": "systems/dsa5/icons/categories/VorteilAnimal.webp",
-        "advantageanimal": "systems/dsa5/icons/categories/NachteilAnimal.webp"
+        "disadvantageanimal": "systems/dsa5/icons/categories/NachteilAnimal.webp",
+        "advantageanimal": "systems/dsa5/icons/categories/VorteilAnimal.webp",
+        "diseaseanimal": "systems/dsa5/icons/categories/diseaseAnimal.webp",
     }
 
     static defaultIcon(data) {
@@ -954,7 +955,6 @@ class MeleeweaponDSA5 extends Itemdsa5 {
                 selected: true
             })
         }
-
     }
 
 

@@ -675,7 +675,7 @@ export default class DiceDSA5 {
 
             let template = await renderTemplate('systems/dsa5/templates/dialog/manualroll-dialog.html', { dice: dice, description: description });
             [result, form] = await new Promise((resolve, reject) => {
-                new Dialog({
+                new DSA5Dialog({
                     title: game.i18n.localize(options.cheat ? "DIALOG.cheat" : "DSASETTINGS.allowPhysicalDice"),
                     content: template,
                     default: 'ok',
@@ -1316,7 +1316,7 @@ export default class DiceDSA5 {
         if (actor) {
             let item = actor.data.items.find(x => x.name == name && x.type == category)
             if (item) {
-                item = new Itemdsa5(item, { temporary: true })
+                item = new Itemdsa5(item.toObject(), { temporary: true })
                 item.setupEffect().then(setupData => { item.itemTest(setupData) });
             } else {
                 ui.notifications.error(game.i18n.format("DSAError.notFound", { category: category, name: name }))

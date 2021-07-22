@@ -2,7 +2,6 @@ import ItemRulesDSA5 from "./item-rules-dsa5.js";
 
 export default class TraitRulesDSA5 extends ItemRulesDSA5 {
     static async traitAdded(actor, item) {
-        console.log(item)
         const familiar = game.i18n.localize('LocalizedIDs.familiar')
         switch (item.name) {
             case familiar:
@@ -13,7 +12,6 @@ export default class TraitRulesDSA5 extends ItemRulesDSA5 {
                             { "key": "data.status.soulpower.gearmodifier", "mode": 2, "value": 1 },
                             { "key": "data.status.toughness.gearmodifier", "mode": 2, "value": 1 },
                             { "key": "data.status.astralenergy.gearmodifier", "mode": 2, "value": 15 },
-                            { "key": "data.guidevalue.magical", "mode": 5, "value": "ch" },
                             { "key": "data.characteristics.mu.gearmodifier", "mode": 2, "value": 1 },
                             { "key": "data.characteristics.kl.gearmodifier", "mode": 2, "value": 1 },
                             { "key": "data.characteristics.in.gearmodifier", "mode": 2, "value": 1 },

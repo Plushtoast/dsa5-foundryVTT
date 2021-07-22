@@ -1,4 +1,5 @@
 import DSA5ChatAutoCompletion from "./chat_autocompletion.js";
+import DSA5ChatListeners from "./chat_listeners.js";
 
 export default class MacroDSA5 {
 
@@ -22,6 +23,10 @@ export default class MacroDSA5 {
 
     static requestGC(skill, modifier = 0) {
         DSA5ChatAutoCompletion.showGCMessage(skill, modifier)
+    }
+
+    static rollCh(skill) {
+        DSA5ChatListeners.check3D20(undefined, skill)
     }
 
     static itemMacroById(actorId, itemName, itemType, bypassData) {

@@ -8,7 +8,6 @@ export default class MastersMenu {
     static registerButtons() {
         CONFIG.Canvas.layers.dsamenu = DSAMenuLayer
         Hooks.on("getSceneControlButtons", btns => {
-
             const dasMenuOptions = [{
                     name: "JournalBrowser",
                     title: game.i18n.localize("Book.Wizard"),
@@ -29,7 +28,7 @@ export default class MastersMenu {
                 }
             ]
             if (game.user.isGM) {
-                game.dsa5.apps.gameMasterMenu = new GameMasterMenu()
+                if (!game.dsa5.apps.gameMasterMenu) game.dsa5.apps.gameMasterMenu = new GameMasterMenu()
                 dasMenuOptions.push({
                     name: "mastersMenu",
                     title: game.i18n.localize("gmMenu"),
@@ -77,6 +76,7 @@ class GameMasterMenu extends Application {
                 this.render()
             }
         })
+        this.randomCreation = []
     }
 
     activateListeners(html) {
@@ -140,29 +140,7 @@ class GameMasterMenu extends Application {
         })
         html.find('.randomPlayer').mousedown((ev) => {
             ev.stopPropagation()
-            const heros = html.find('.hero')
-            const withMisfortune = ev.button == 2
-            let probabilities = {}
-            let index = 0
-            let counter = 1
-            for (const hero of this.heros) {
-                probabilities[counter] = index
-                counter++
-                if (withMisfortune && AdvantageRulesDSA5.hasVantage(hero, game.i18n.localize("LocalizedIDs.misfortune"))) {
-                    probabilities[counter] = index
-                    counter++
-                }
-                index++
-            }
-
-            const roll = new Roll(`1d${counter - 1}`).evaluate({ async: false }).total
-            $(ev.currentTarget).find('i').addClass('fa-spin')
-            heros.removeClass("victim")
-
-            setTimeout(() => {
-                heros.eq(probabilities[roll]).addClass("victim")
-                $(ev.currentTarget).find('i').removeClass('fa-spin')
-            }, 500)
+            this.randomPlayer(html, ev)
         })
         html.find('.heroSelector').click(ev => ev.stopPropagation())
         html.find('.hero').click(ev => {
@@ -181,6 +159,37 @@ class GameMasterMenu extends Application {
             ev.stopPropagation()
             this.doGroupCheck()
         })
+
+        for (let elem of this.randomCreation) {
+            elem.activateListeners(html)
+        }
+    }
+
+    async randomPlayer(html, ev) {
+        const heros = html.find('.hero')
+        const withMisfortune = ev.button == 2
+        let probabilities = {}
+        let counter = 1
+        const anythingselected = html.find('.heroSelector:checked').length > 0
+        for (const hero of this.heros) {
+            if (!this.selected[hero.id] && anythingselected) continue
+
+            probabilities[counter] = hero.id
+            counter++
+            if (withMisfortune && AdvantageRulesDSA5.hasVantage(hero, game.i18n.localize("LocalizedIDs.misfortune"))) {
+                probabilities[counter] = hero.id
+                counter++
+            }
+        }
+
+        const roll = new Roll(`1d${counter - 1}`).evaluate({ async: false }).total
+        $(ev.currentTarget).find('i').addClass('fa-spin')
+        heros.removeClass("victim")
+
+        setTimeout(() => {
+            $(this._element).find(`.hero[data-id="${probabilities[roll]}"]`).addClass("victim")
+            $(ev.currentTarget).find('i').removeClass('fa-spin')
+        }, 500)
     }
 
     async pay(ids) {
@@ -325,8 +334,13 @@ class GameMasterMenu extends Application {
         mergeObject(data, {
             heros,
             skills,
-            lastSkill: this.lastSkill
+            lastSkill: this.lastSkill,
+            randomCreation: this.randomCreation.map(x => x.template)
         })
         return data
+    }
+
+    registerRandomCreation(elem) {
+        this.randomCreation.push(elem)
     }
 }

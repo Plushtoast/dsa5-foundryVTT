@@ -68,7 +68,7 @@
         "QL": "QL",
         "FtP": "FtP",
         "damage": "DP",
-        "defenseMalus": "VM",
+        "defenseMalus": "DM",
         "*": "*"
     },
 
@@ -484,7 +484,8 @@
         "xpMessage": "<b>{heros}</b> received <b>{number}</b> Adventure Points.",
         "doGroupCheck": "Modifier for <b>{skill}</b> Group Check.",
         "payTT": "Loot player",
-        "randomPlayer": "Random victim (right click to include Misfortune)"
+        "randomPlayer": "Random victim (right click to include Misfortune)",
+        "randomGen": "Breeding pit"
     },
 
     "WIZARD": {
@@ -908,6 +909,8 @@
         "mute": "Mute",
         "ruggedFighter": "Rugged Fighter",
         "sensitiveToPain": "Sensitive to Pain",
+        "fragileAnimal": "tbd",
+        "ruggedAnimal": "tbd",
         "frenzy": "Bloodlust",
         "senseOfRange": "Sense of Range",
         "ambidextrous": "Ambidextrous",
@@ -1174,7 +1177,9 @@
         "limitCombatSpecAbsHint": "Only allow one Special and Basic maneuver.",
         "changelog": "View recent changes and content updates.",
         "expandChatModifierlist": "Modifier list expanded",
-        "expandChatModifierlistHint": "The modifier list in the chat is always expanded."
+        "expandChatModifierlistHint": "The modifier list in the chat is always expanded.",
+        "inventorySound": "Inventory sounds",
+        "inventorySoundHint": "Activate Interface sound in the inventory (requires game audio bundles)"
     },
 
     "COMBATTRACKER": {

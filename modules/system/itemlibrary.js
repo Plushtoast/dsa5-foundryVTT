@@ -327,6 +327,13 @@ export default class DSA5ItemLibrary extends Application {
         return await Promise.all((await this.equipmentIndex.search(search, query).filter(x => x.compendium != "")).map(x => x.getItem()))
     }
 
+    async getCategoryItems(category, asItem = false) {
+        await this.buildEquipmentIndex()
+        if (asItem) return (await Promise.all(this.equipmentIndex.search(category, { field: ["itemType"] }).map(x => x.getItem()))).map(x => x.toObject())
+
+        return this.equipmentIndex.search(category, { field: ["itemType"] })
+    }
+
     async advancedFilterStuff(category, page) {
         const dataFilters = $(this._element).find('.detailFilters')
         const subcategory = dataFilters.attr("data-subc")
@@ -508,6 +515,7 @@ export default class DSA5ItemLibrary extends Application {
         }
         return field
     }
+
 
     async createDetailIndex(category, subcategory) {
         if (!this.detailFilter[subcategory]) {

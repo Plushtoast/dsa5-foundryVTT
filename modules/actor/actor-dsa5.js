@@ -133,8 +133,8 @@ export default class Actordsa5 extends Actor {
                         pain = Math.floor(5 - 5 * data.data.status.wounds.value / data.data.status.wounds.max)
                     }
 
-                    if (pain < 4) pain -= AdvantageRulesDSA5.vantageStep(this, game.i18n.localize('LocalizedIDs.ruggedFighter'))
-                    if (pain > 0) pain += AdvantageRulesDSA5.vantageStep(this, game.i18n.localize('LocalizedIDs.sensitiveToPain'))
+                    if (pain < 4) pain -= AdvantageRulesDSA5.vantageStep(this, game.i18n.localize('LocalizedIDs.ruggedFighter')) - AdvantageRulesDSA5.vantageStep(this, game.i18n.localize('LocalizedIDs.ruggedAnimal'))
+                    if (pain > 0) pain += AdvantageRulesDSA5.vantageStep(this, game.i18n.localize('LocalizedIDs.sensitiveToPain')) + AdvantageRulesDSA5.vantageStep(this, game.i18n.localize('LocalizedIDs.fragileAnimal'))
 
                     pain = Math.max(Math.min(4, pain), 0)
                 }

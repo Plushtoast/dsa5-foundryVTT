@@ -65,7 +65,7 @@
         "reloadTime": "Lad.",
         "castingTime": "Aktions- dauer",
         "duration": "Wirkungs- dauer",
-        "defenseMalus": "DM",
+        "defenseMalus": "VM",
         "fatePoints": "Schips",
         "FtP": "Schip",
         "maintainCost": "Aufr.",
@@ -472,7 +472,8 @@
         "xpMessage": "<b>{heros}</b> hat/haben <b>{number}</b> Abenteuerpunkte erhalten.",
         "doGroupCheck": "Modifikator für <b>{skill}</b> Gruppenprobe.",
         "payTT": "Ausnehmen",
-        "randomPlayer": "Zufälliges Opfer (Rechtsklick inklusive Pechmagnet)"
+        "randomPlayer": "Zufälliges Opfer (Rechtsklick inklusive Pechmagnet)",
+        "randomGen": "Zuchtgrube"
     },
     "MODS": {
         "partChecks": "Teilprobenmodifikator",
@@ -881,6 +882,8 @@
         "mute": "Stumm",
         "ruggedFighter": "Zäher Hund",
         "sensitiveToPain": "Zerbrechlich",
+        "fragileAnimal": "Zerbrechliches Tier",
+        "ruggedAnimal": "Zähes Tier",
         "frenzy": "Blutrausch",
         "senseOfRange": "Entfernungssinn",
         "ambidextrous": "Beidhändig",
@@ -1110,7 +1113,9 @@
         "limitCombatSpecAbsHint": "Nur ein Spezial- und Basismanöver erlauben.",
         "changelog": "Schau dir Änderungen und neue Inhalte an.",
         "expandChatModifierlist": "Modifikatoren Liste ausgeklappt",
-        "expandChatModifierlistHint": "Zeige die Modifikatorenliste im Chat immer ausgeklappt."
+        "expandChatModifierlistHint": "Zeige die Modifikatorenliste im Chat immer ausgeklappt.",
+        "inventorySound": "Inventar Geräusche",
+        "inventorySoundHint": "Aktiviere Interface Geräusche im Inventar (benötigt game audio bundles)"
     },
     "COMBATTRACKER": {
         "noDefenses": "Anzahl Verteidigungen",

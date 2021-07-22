@@ -6,10 +6,9 @@ let ADVANCEDFILTERS = {}
 Hooks.once("ready", () => {
 
     Promise.all([DSA5_Utility.allSkillsList(), DSA5_Utility.allCombatSkills()]).then((result) => {
-        let skills = {}
-        let cskills = {}
-        for (let sk of result[0]) { skills[sk] = sk }
-        for (let sk of result[1]) { cskills[sk.name] = sk.name }
+        const skills = result[0].reduce((prev, now) => ({ ...prev,  [now]: now}), {})
+        const range = result[1].filter(x => x.data.weapontype.value == "range").sort((a, b) => a.name.localeCompare(b.name)).reduce((prev, now) => ({ ...prev, [now.name]: now.name }), {})
+        const melee = result[1].filter(x => x.data.weapontype.value == "melee").sort((a, b) => a.name.localeCompare(b.name)).reduce((prev, now) => ({ ...prev, [now.name]: now.name }), {})
 
         mergeObject(ADVANCEDFILTERS, {
             ammunition: [
@@ -19,11 +18,11 @@ Hooks.once("ready", () => {
                 { label: "equipmentType", attr: "equipmentType.value", type: "select", options: DSA5.equipmentTypes }
             ],
             rangeweapon: [
-                { label: "combatskill", attr: "combatskill.value", type: "select", options: cskills },
+                { label: "combatskill", attr: "combatskill.value", type: "select", options: range },
                 { label: "ammunitiongroup", attr: "ammunitiongroup.value", type: "select", options: DSA5.ammunitiongroups }
             ],
             meleeweapon: [
-                { label: "combatskill", attr: "combatskill.value", type: "select", options: cskills },
+                { label: "combatskill", attr: "combatskill.value", type: "select", options: melee },
                 { label: "guidevalue", attr: "guidevalue.value", type: "select", options: DSA5.combatskillsGuidevalues },
                 { label: "reach", attr: "reach.value", type: "select", options: DSA5.meleeRanges }
             ],
@@ -100,12 +99,8 @@ Hooks.once("ready", () => {
                 { label: "protection", attr: "protection.value", type: "select", options: { "0": "0", "1": "1", "2": "2", "3": "3", "4": "4", "5": "5", "6": "6", "7": "7" } },
                 { label: "encumbrance", attr: "encumbrance.value", type: "select", options: { "0": "0", "1": "1", "2": "2", "3": "3", "4": "4" } }
             ]
-
-
         })
     })
-
-
 })
 
 export default ADVANCEDFILTERS

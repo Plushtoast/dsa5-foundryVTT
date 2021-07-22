@@ -106,6 +106,15 @@ export default function() {
         type: Boolean
     });
 
+    game.settings.register("dsa5", "inventorySound", {
+        name: "DSASETTINGS.inventorySound",
+        hint: "DSASETTINGS.inventorySoundHint",
+        scope: "client",
+        config: true,
+        default: true,
+        type: Boolean
+    });
+
     game.settings.register("dsa5", "talentModifierEnabled", {
         name: "DSASETTINGS.talentModifierEnabled",
         hint: "DSASETTINGS.talentModifierEnabledHint",

@@ -149,6 +149,8 @@ export default class DSA5SoundEffect {
     }
 
     static async playSoundPath(soundPath, soundToEveryone = false, volume = 0.8) {
+        if (!game.settings.get("dsa5", "inventorySound")) return
+
         try {
             AudioHelper.play({ src: soundPath, volume, loop: false }, soundToEveryone);
         } catch (exception) {
