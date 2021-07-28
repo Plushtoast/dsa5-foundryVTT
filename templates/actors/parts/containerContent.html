@@ -4,12 +4,14 @@
             {{#each children as |item i|}}
             <div class="col item" data-item-id="{{item._id}}" data-category="{{item.data.equipmentType.value}}">
                 <div class="row-section">
-                    <div class="col eight image" style="background-image: url({{item.img}})">
-                        {{#if item.structureMax}}
-                        <div class="item-structure" style="--a: {{item.structureMax}}; --b: {{item.structureCurrent}}">
-                            <div class="inner"></div>
+                    <div class="col eight image {{item.enchantClass}}">
+                        <div class="image" style="background-image: url({{item.img}})">
+                            {{#if item.structureMax}}
+                            <div class="item-structure" style="--a: {{item.structureMax}}; --b: {{item.structureCurrent}}">
+                                <div class="inner"></div>
+                            </div>
+                            {{/if}}
                         </div>
-                        {{/if}}
                     </div>
                     <div class="col">
                         <a class="item-edit {{#if item.consumable}}consume-item{{/if}}">{{item.name}}</a>

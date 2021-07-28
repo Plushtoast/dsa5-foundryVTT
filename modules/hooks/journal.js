@@ -23,6 +23,11 @@ export default function() {
             ev.stopPropagation()
             return false
         })
+        html.on('click', '.request-CH', ev => {
+            DSA5ChatListeners.check3D20(undefined, $(ev.currentTarget).attr("data-name"), { modifier: Number($(ev.currentTarget).attr("data-modifier")) || 0 })
+            ev.stopPropagation()
+            return false
+        })
 
         DSA5StatusEffects.bindButtons(html)
         html.on('click', '.chat-condition', ev => {

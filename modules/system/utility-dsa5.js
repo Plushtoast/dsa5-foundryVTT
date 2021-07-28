@@ -200,10 +200,11 @@ export default class DSA5_Utility {
 
     static customEntityLinks(content) {
         if (!content) return content
-        const regex = /@(Rq|Gc)\[[a-zA-zöüäÖÜÄ&; -]+ (-)?\d+\]/g
-        const rolls = { "@Rq": "roll", "@Gc": "GC" }
-        const titles = { "@Rq": "", "@Gc": `${game.i18n.localize("HELP.groupcheck")} ` }
-        const rqRegex = /^@(Rq|Gc)/
+        const regex = /@(Rq|Gc|Ch)\[[a-zA-zöüäÖÜÄ&; -]+ (-)?\d+\]/g
+        const rolls = { "@Rq": "roll", "@Gc": "GC", "@Ch": "CH" }
+        const icons = { "@Rq": "dice", "@Gc": "dice", "@Ch": "user-shield" }
+        const titles = { "@Rq": "", "@Gc": `${game.i18n.localize("HELP.groupcheck")} `, "@Ch": "" }
+        const rqRegex = /^@(Rq|Gc|Ch)/
         const modRegex = /(-)?\d+/
         const replaceRegex = /\[[a-zA-zöüäÖÜÄ&; -]+/
         const replaceRegex2 = /[\[\]]/g
@@ -211,7 +212,7 @@ export default class DSA5_Utility {
             const type = str.match(rqRegex)[0]
             const mod = str.match(modRegex)[0]
             const skill = str.replace(mod, "").match(replaceRegex)[0].replace(replaceRegex2, "").trim()
-            return `<a class="roll-button request-${rolls[type]}" data-type="skill" data-modifier="${mod}" data-name="${skill}"><em class="fas fa-dice"></em>${titles[type]}${skill} ${mod}</a>`
+            return `<a class="roll-button request-${rolls[type]}" data-type="skill" data-modifier="${mod}" data-name="${skill}"><em class="fas fa-${icons[type]}"></em>${titles[type]}${skill} ${mod}</a>`
         })
     }
 

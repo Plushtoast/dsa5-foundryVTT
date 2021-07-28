@@ -2,7 +2,6 @@ import DSA5ChatAutoCompletion from "./chat_autocompletion.js";
 import DSA5ChatListeners from "./chat_listeners.js";
 
 export default class MacroDSA5 {
-
     static weaponLessMacro(char) {
         const speaker = ChatMessage.getSpeaker();
         let actor;
@@ -25,8 +24,8 @@ export default class MacroDSA5 {
         DSA5ChatAutoCompletion.showGCMessage(skill, modifier)
     }
 
-    static rollCh(skill) {
-        DSA5ChatListeners.check3D20(undefined, skill)
+    static rollCh(skill, options = {}) {
+        DSA5ChatListeners.check3D20(undefined, skill, options)
     }
 
     static itemMacroById(actorId, itemName, itemType, bypassData) {

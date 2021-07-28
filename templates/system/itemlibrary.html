@@ -26,7 +26,13 @@
                                 <div class="col">
                                     <div>
                                         <div class="form-group">
-                                            <label class="label-text">{{ localize "Library.search"}}</label> <label class="label-text"><a title="{{localize 'Library.advanced'}}" class="toggleAdvancedMode {{../advancedMode}}"><i class="fas fa-brain"></i></a></label>
+                                            <label class="label-text">{{ localize "Library.search"}}</label>
+                                            <label class="label-text"><a title="{{localize 'Library.advanced'}}" class="toggleAdvancedMode {{../advancedMode}}">
+                                                <i class="fas fa-brain"></i></a>
+                                            </label>
+                                            <label class="label-text"><a title="{{localize 'Library.indexWorldItems'}}" class="toggleWorldIndex {{../worldIndexed}}">
+                                                <i class="fas fa-globe-europe"></i></a>
+                                            </label>
                                             <input class="input-text filterBy-search" name="librarySearch" type="text" placeholder="{{localize 'Library.searchPlaceholder'}}" />
                                         </div>
                                     </div>

@@ -4,6 +4,7 @@ import DSA5StatusEffects from "../status/status_effects.js"
 import DSA5ChatListeners from "../system/chat_listeners.js"
 import SpecialabilityRulesDSA5 from "../system/specialability-rules-dsa5.js"
 import { itemFromDrop, svgAutoFit } from "../system/view_helper.js"
+import Actordsa5 from "../actor/actor-dsa5.js"
 
 export default class ItemSheetdsa5 extends ItemSheet {
     constructor(item, options) {
@@ -41,11 +42,13 @@ export default class ItemSheetdsa5 extends ItemSheet {
         Items.registerSheet("dsa5", RangeweaponSheet, { makeDefault: true, types: ["rangeweapon"] });
         Items.registerSheet("dsa5", EquipmentSheet, { makeDefault: true, types: ["equipment"] });
         Items.registerSheet("dsa5", ArmorSheet, { makeDefault: true, types: ["armor"] });
+        Items.registerSheet("dsa5", AmmunitionSheet, { makeDefault: true, types: ["ammunition"] });
+
         Items.unregisterSheet("dsa5", ItemSheetdsa5, {
             types: [
                 "armor", "equipment", "rangeweapon", "blessing", "magictrick", "spellextension", "consumable",
                 "species", "career", "culture", "advantage", "specialability", "disadvantage", "ritual",
-                "ceremony", "liturgy", "spell", "disease", "poison", "meleeweapon"
+                "ceremony", "liturgy", "spell", "disease", "poison", "meleeweapon", "ammunition"
             ]
         });
     }
@@ -196,9 +199,6 @@ export default class ItemSheetdsa5 extends ItemSheet {
                 data['guidevalues'] = DSA5.combatskillsGuidevalues;
                 data['hasLocalization'] = game.i18n.has(`Combatskilldescr.${this.item.name}`)
                 data['StFs'] = DSA5.StFs;
-                break;
-            case "ammunition":
-                data['ammunitiongroups'] = DSA5.ammunitiongroups;
                 break;
             case "trait":
                 data["traitCategories"] = DSA5.traitCategories
@@ -379,6 +379,14 @@ class Enchantable extends ItemSheetdsa5 {
     }
 }
 
+class AmmunitionSheet extends Enchantable {
+    async getData(options) {
+        const data = await super.getData(options)
+        data['ammunitiongroups'] = DSA5.ammunitiongroups;
+        return data
+    }
+}
+
 class EquipmentSheet extends Enchantable {
     async getData(options) {
         const data = await super.getData(options);
@@ -390,6 +398,12 @@ class EquipmentSheet extends Enchantable {
                 .map(x => {
                     x.weight = parseFloat((x.data.data.weight.value * x.data.data.quantity.value).toFixed(3));
                     weightSum += Number(x.weight)
+                    if (getProperty(x.data, "flags.dsa5.enchantments")) {
+                        x.enchantClass = "rar"
+                    } else if ((x.data.data.effect && x.data.data.effect.value != "") || x.data.effects.length > 0) {
+                        x.enchantClass = "common"
+                    }
+                    console.log(x)
                     return x
                 })
             data['weightSum'] = parseFloat(weightSum.toFixed(3))

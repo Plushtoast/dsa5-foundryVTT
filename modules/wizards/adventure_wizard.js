@@ -15,7 +15,7 @@ export default class BookWizard extends Application {
         const options = super.defaultOptions
         options.tabs = [{ navSelector: ".tabs", contentSelector: ".content", initial: "description" }]
         mergeObject(options, {
-            classes: options.classes.concat(["dsa5", "largeDialog", "noscrollWizard"]),
+            classes: options.classes.concat(["dsa5", "largeDialog", "noscrollWizard", "bookWizardsheet"]),
             width: 800,
             height: 880,
             template: 'systems/dsa5/templates/wizard/adventure/adventure_wizard.html',
@@ -113,6 +113,11 @@ export default class BookWizard extends Application {
         })
         html.on('click', '.request-GC', ev => {
             DSA5ChatAutoCompletion.showGCMessage($(ev.currentTarget).attr("data-name"), Number($(ev.currentTarget).attr("data-modifier")) || 0)
+            ev.stopPropagation()
+            return false
+        })
+        html.on('click', '.request-CH', ev => {
+            DSA5ChatListeners.check3D20(undefined, $(ev.currentTarget).attr("data-name"), { modifier: Number($(ev.currentTarget).attr("data-modifier")) || 0 })
             ev.stopPropagation()
             return false
         })

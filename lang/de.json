@@ -457,7 +457,8 @@
         "buildingIndex": "Index wird erzeugt",
         "advanced": "Erweiterte Suche",
         "selectAdvanced": "Wähle eine Kategorie",
-        "noFilter": "Kein Filter"
+        "noFilter": "Kein Filter",
+        "indexWorldItems": "Welt Items indexieren (Deaktivieren verbessert Leistung)"
     },
 
     "Aggregated": {
@@ -615,7 +616,7 @@
         "home": "Hauptverzeichnis",
         "foundryUsage": "Foundry & DSA",
         "search": "Durchsuchen",
-        "foundryUsagedesc": "<p>Mehr Informationen über die Verwendung von Foundry gibt's im <a href=\"https://github.com/Plushtoast/dsa5-foundryVTT/wiki\" target=\"_blank\">Wiki</a>.</p><p>Schnelle Hilfe kannst du im Ulisses Discord oder Foundry Discord bekommen.</p><p>Den Journalbrowser verwenden:<ul class=\"dsalist\"><li>Mit einem Rechtsklick auf Bilder kannst du diese separat anzeigen und deinen Spielern zeigen</li><li>Da die Module Kopien der Printausgaben sind, können Verweise und Formulierungen auf das jeweilige Printprodukt hinweisen und im Spiel abweichen.</li><li>Einge der Akteure der Abenteuer haben möglicherweise keinen Token und keine Statistiken, da diese nur eine sehr kleine erzählerische Rolle einnehmen. Fall Würfelwürfe notwendig sind, kannst du diese über das Chatcommand <b>/ch</b> improvisieren.</li><li>Wichtige Kreaturen und Charaktere haben gewöhnlicherweise noch extra Informationen im Charakterblatt.</li></ul></p>",
+        "foundryUsagedesc": "<p>Mehr Informationen über die Verwendung von Foundry gibt's im <a href=\"https://github.com/Plushtoast/dsa5-foundryVTT/wiki\" target=\"_blank\">Wiki</a>.</p><p>Schnelle Hilfe kannst du im Ulisses Discord oder Foundry Discord bekommen.</p><p>Den Journalbrowser verwenden:<ul class=\"dsalist\"><li>Mit einem Rechtsklick auf Bilder kannst du diese separat anzeigen und deinen Spielern zeigen</li><li>Da die Module Kopien der Printausgaben sind, können Verweise und Formulierungen auf das jeweilige Printprodukt hinweisen und im Spiel abweichen.</li><li>Einge der Akteure der Abenteuer haben möglicherweise keinen Token und keine Statistiken, da diese nur eine sehr kleine erzählerische Rolle einnehmen. Falls Würfelwürfe notwendig sind, kannst du diese über das Chatcommand <b>/ch</b> improvisieren.</li><li>Wichtige Kreaturen und Charaktere haben gewöhnlicherweise noch extra Informationen im Charakterblatt.</li></ul></p>",
         "fulltextsearch": "Volltextsuche"
     },
     "Migrakel": {
@@ -938,7 +939,11 @@
         "painImmunity": "Immun gegen Schmerzen",
         "selfControl": "Selbstbeherrschung",
         "propertyKnowledge": "Merkmalskenntnis",
-        "propertyFocus": "Merkmalsfokus"
+        "propertyFocus": "Merkmalsfokus",
+        "obligations": "Verpflichtungen",
+        "afraidOf": "Angst vor",
+        "principles": "Prinzipientreue",
+        "skillSpecialization": "Fertigkeitsspezialisierung"
     },
     "DSAError": {
         "MacroItemMissing": "Dein Charakter hat kein Item namens {item}. Stelle sicher, dass dir entweder ein Charakter zugeordnet ist oder du einen Token für den Wurf markierst.",

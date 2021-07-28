@@ -377,6 +377,7 @@ input[type=text].emphasize {
     background: linear-gradient(90deg, rgba(83, 88, 41, 1) 0%, rgba(255, 255, 255, 0) 100%);
 }
 
+.bookWizardsheet .window-content table tr:first-child,
 .journal-sheet .window-content table tr:first-child,
 .table-title,
 .label-text {
@@ -2774,6 +2775,7 @@ select.noAppearance {
     right: 0;
 }
 
+.toggleWorldIndex.on,
 .toggleAdvancedMode.on,
 .fulltextsearch.on {
     color: darkred;
@@ -2791,4 +2793,47 @@ select.noAppearance {
 
 .advancedSearch .groupbox .form-group {
     margin-top: 4px;
+}
+
+input[type="checkbox"].autoCheckbox {
+    width: auto;
+    height: auto;
+}
+
+.slot,
+.item .image.rar,
+.item .image.common {
+    z-index: 0;
+    position: relative;
+}
+
+.slot div {
+    height: 100%;
+    background-size: contain;
+}
+
+.slot.rar:after,
+.slot.common:after,
+.image.rar:after,
+.image.common:after {
+    content: '';
+    background-image: url('../icons/backgrounds/common.webp');
+    background-size: contain;
+    background-repeat: no-repeat;
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    top: 0;
+    z-index: -1;
+    opacity: 0.3;
+}
+
+.image.rar:after,
+.image.common:after {
+    background-position: 4px 0px;
+}
+
+.image.rar:after {
+    background-image: url('../icons/backgrounds/rar.webp');
 }

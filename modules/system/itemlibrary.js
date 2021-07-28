@@ -12,6 +12,9 @@ class SearchDocument {
             case 'Item':
                 filterType = item.type
                 break
+            case 'Actor':
+                filterType = item.data.type
+                break
         }
         let data
         switch (filterType) {
@@ -53,26 +56,22 @@ class SearchDocument {
     }
 
     async getItem() {
-            if (this.document.compendium) {
-                return await (await game.packs.get(this.document.pack)).getDocument(this.id)
-            } else {
-                switch (this.itemType) {
-                    case "character":
-                    case "creature":
-                    case "npc":
-                        return game.actors.get(this.id)
-
-                    case "JournalEntry":
-                        return game.journal.get(this.id)
-
-                    default:
-                        return game.items.get(this.id)
-                }
+        if (this.document.compendium) {
+            return await (await game.packs.get(this.document.pack)).getDocument(this.id)
+        } else {
+            switch (this.itemType) {
+                case "character":
+                case "creature":
+                case "npc":
+                    return game.actors.get(this.id)
+                case "JournalEntry":
+                    return game.journal.get(this.id)
+                default:
+                    return game.items.get(this.id)
             }
         }
-        /*get options() {
-            return this.document.options
-        }*/
+    }
+
     hasPermission() {
         return this.document.visible
     }
@@ -109,8 +108,11 @@ export default class DSA5ItemLibrary extends Application {
         super(app)
         this.advancedFiltering = false
         this.journalBuild = false
+        this.journalWorldBuild = false
         this.equipmentBuild = false
+        this.equipmentWorldBuild
         this.zooBuild = false
+        this.zooWorldBuild = false
         this.currentDetailFilter = {
             equipment: [],
             character: [],
@@ -241,6 +243,7 @@ export default class DSA5ItemLibrary extends Application {
         data.isGM = game.user.isGM
         data.items = this.items
         data.advancedMode = this.advancedFiltering ? "on" : ""
+        data.worldIndexed = game.settings.get("dsa5", "indexWorldItems") ? "on" : ""
         if (this.advancedFiltering) {
             data.advancedFilter = await this.buildDetailFilter("tbd", this.subcategory)
         }
@@ -492,12 +495,18 @@ export default class DSA5ItemLibrary extends Application {
         if (entity == "Actor") {
             const fields = ["name", "data.type", "data.description.value", "img"]
             promise = packs.map(p => p.getIndex({ fields }))
+        } else if (entity == "JournalEntry") {
+            //const fields = ["name", "type", "data.content", "img"]
+            //promise = packs.map(p => p.getIndex({ fields }))
+            promise = packs.map(p => p.getDocuments())
         } else {
+            //const fields = ["name", "type", "data.description.value", "img"]
+            //promise = packs.map(p => p.getIndex({ fields }))
             promise = packs.map(p => p.getDocuments())
         }
 
         return Promise.all(promise).then(indexes => {
-            let items = worldStuff.filter(x => x.visible).map(x => new SearchDocument(x))
+            const items = this.indexWorldItems(worldStuff, category)
             indexes.forEach((index, idx) => {
                 items.push(...index.map(x => new SearchDocument(x, metadata[idx])))
             })
@@ -516,11 +525,21 @@ export default class DSA5ItemLibrary extends Application {
         return field
     }
 
+    indexWorldItems(worldStuff, category) {
+        const items = []
+        if (game.settings.get("dsa5", "indexWorldItems")) {
+            items.push(...worldStuff.filter(x => x.visible).map(x => new SearchDocument(x)))
+            this[`${category}WorldBuild`] = true
+        }
+        return items
+    }
+
 
     async createDetailIndex(category, subcategory) {
         if (!this.detailFilter[subcategory]) {
             const field = this.subcategoryFields(subcategory)
             const target = $(this._element).find(`*[data-tab="${category}"]`)
+            target.find('.searchResult ul').html('')
             this.showLoading(target, category)
             this.detailFilter[subcategory] = new FlexSearch({
                 encode: "simple",
@@ -567,6 +586,20 @@ export default class DSA5ItemLibrary extends Application {
             return template
         } else {
             return `<p>${game.i18n.localize('Library.selectAdvanced')}</p>`
+        }
+    }
+
+    checkWorldStuffIndex() {
+        if (game.settings.get("dsa5", "indexWorldItems")) {
+            if (!this.journalWorldBuild && this.journalBuild) {
+                this.journalIndex.add(this.indexWorldItems(game.journal, "journal"))
+            }
+            if (!this.equipmentWorldBuild && this.equipmentBuild) {
+                this.equipmentIndex.add(this.indexWorldItems(game.items, "equipment"))
+            }
+            if (!this.zooWorldBuild && this.zooBuild) {
+                this.zooIndex.add(this.indexWorldItems(game.actors, "zoo"))
+            }
         }
     }
 
@@ -632,6 +665,12 @@ export default class DSA5ItemLibrary extends Application {
             const tab = $(ev.currentTarget).attr("data-btn")
             $(ev.currentTarget).find('i').toggleClass("fa-caret-left fa-caret-right")
             html.find(`.${tab} .detailBox`).toggleClass("dsahidden")
+        })
+
+        html.find('.toggleWorldIndex').click(ev => {
+            game.settings.set("dsa5", "indexWorldItems", !game.settings.get("dsa5", "indexWorldItems"))
+            this.checkWorldStuffIndex()
+            $(this._element).find('.toggleWorldIndex').toggleClass("on")
         })
 
         const source = this

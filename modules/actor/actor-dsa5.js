@@ -499,7 +499,7 @@ export default class Actordsa5 extends Actor {
         for (let i of actorData.items) {
             try {
                 let parent_id = getProperty(i, "data.parent_id")
-                if (i.type == "ammunition") inventory.ammunition.items.push(i);
+                if (i.type == "ammunition") inventory.ammunition.items.push(Actordsa5._prepareitemStructure(i));
 
                 if (parent_id && parent_id != i._id) {
                     if (containers.has(parent_id)) {
@@ -556,7 +556,6 @@ export default class Actordsa5 extends Actor {
                         break;
                     case "ammunition":
                         i.weight = parseFloat((i.data.weight.value * i.data.quantity.value).toFixed(3));
-
                         inventory.ammunition.show = true;
                         totalWeight += Number(i.weight);
                         break;
@@ -1318,6 +1317,12 @@ export default class Actordsa5 extends Actor {
         if (item.data.structure && item.data.structure.max != 0) {
             item.structureMax = item.data.structure.max
             item.structureCurrent = item.data.structure.value
+        }
+        if(getProperty(item, "flags.dsa5.enchantments")){
+            item.enchantClass = "rar"
+        }
+        else if((item.data.effect && item.data.effect.value != "") || item.effects.length > 0){
+            item.enchantClass = "common"
         }
         return item
     }

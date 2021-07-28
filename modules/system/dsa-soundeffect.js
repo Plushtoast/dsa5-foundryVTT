@@ -82,7 +82,7 @@ export default class DSA5SoundEffect {
                 paths = [
                     ...successLevels.map(x => `${item.type}.${item.name}.${action}_${x}`),
                     `${item.type}.${item.name}.${action}`,
-                    ...successLevels.map(x => `${item.type}.${item.name}.default_${x}`)
+                    ...successLevels.map(x => `${item.type}.${item.name}.default_${x}`),
                     `${item.type}.${item.name}.default`,
                 ]
                 break

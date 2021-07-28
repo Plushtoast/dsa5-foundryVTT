@@ -205,6 +205,14 @@ export default function() {
         type: Boolean
     });
 
+    game.settings.register("dsa5", "indexWorldItems", {
+        name: "DSASETTINGS.indexWorldItems",
+        hint: "DSASETTINGS.indexWorldItemsHint",
+        scope: "client",
+        config: false,
+        default: true,
+        type: Boolean
+    });
 }
 
 class ChangelogForm extends FormApplication {

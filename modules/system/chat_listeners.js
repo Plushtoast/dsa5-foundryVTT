@@ -36,7 +36,7 @@ export default class DSA5ChatListeners {
 
 
 
-    static async check3D20(target, skill){
+    static async check3D20(target, skill, options = {}){
         let attrs = 12
         if(target){
             target = target.get(0)
@@ -63,7 +63,7 @@ export default class DSA5ChatListeners {
         }
 
         const actor = await DSA5_Utility.emptyActor(attrs)
-        actor.setupSkill(skill, {}, "emptyActor").then(setupData => {
+        actor.setupSkill(skill, options, "emptyActor").then(setupData => {
             actor.basicTest(setupData)
         })
     }

@@ -468,7 +468,8 @@
         "buildingIndex": "Building Index",
         "advanced": "Advanced search",
         "selectAdvanced": "Chose a category",
-        "noFilter": "No filter"
+        "noFilter": "No filter",
+        "indexWorldItems": "Index world Items (deactivate to increase performance)"
     },
 
     "Aggregated": {
@@ -965,7 +966,11 @@
         "painImmunity": "Immune to pain",
         "selfControl": "Self-Control",
         "propertyKnowledge": "Property Knowledge",
-        "propertyFocus": "Property Focus"
+        "propertyFocus": "Property Focus",
+        "obligations": "Obligations",
+        "afraidOf": "Afraid of",
+        "principles": "Principles",
+        "skillSpecialization": "Skill Specialization"
     },
 
     "Shapeshift": {

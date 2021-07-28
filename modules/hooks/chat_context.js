@@ -98,7 +98,7 @@ export default function() {
             let message = game.messages.get(li.attr("data-message-id"));
             if (message.data.speaker.actor && message.data.flags.data) {
                 let actor = game.actors.get(message.data.speaker.actor);
-                if (actor.isOwner && getProperty(message.data.flags, "data.postData.LeP")) {
+                if (actor.isOwner && getProperty(message.data.flags, "data.postData.LeP") != undefined) {
                     return !message.data.flags.data.healApplied
                 }
             }
