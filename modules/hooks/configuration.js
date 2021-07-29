@@ -53,7 +53,7 @@ export default function() {
         hint: "migrationVersion",
         scope: "world",
         config: false,
-        default: 7,
+        default: 8,
         type: Number
     })
     game.settings.register("dsa5", "firstTimeStart", {

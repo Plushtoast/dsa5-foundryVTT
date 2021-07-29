@@ -398,7 +398,8 @@ class EquipmentSheet extends Enchantable {
                 .map(x => {
                     x.weight = parseFloat((x.data.data.weight.value * x.data.data.quantity.value).toFixed(3));
                     weightSum += Number(x.weight)
-                    if (getProperty(x.data, "flags.dsa5.enchantments")) {
+                    const enchants = getProperty(x.data, "flags.dsa5.enchantments")
+                    if (enchants && enchants.length > 0) {
                         x.enchantClass = "rar"
                     } else if ((x.data.data.effect && x.data.data.effect.value != "") || x.data.effects.length > 0) {
                         x.enchantClass = "common"

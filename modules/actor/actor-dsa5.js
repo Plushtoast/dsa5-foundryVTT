@@ -1318,7 +1318,8 @@ export default class Actordsa5 extends Actor {
             item.structureMax = item.data.structure.max
             item.structureCurrent = item.data.structure.value
         }
-        if(getProperty(item, "flags.dsa5.enchantments")){
+        const enchants = getProperty(item, "flags.dsa5.enchantments")
+        if(enchants && enchants.length > 0){
             item.enchantClass = "rar"
         }
         else if((item.data.effect && item.data.effect.value != "") || item.effects.length > 0){

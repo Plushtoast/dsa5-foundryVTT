@@ -1,5 +1,6 @@
 import DSA5 from "./config-dsa5.js"
 import DSA5_Utility from "./utility-dsa5.js"
+import { showPatchViewer } from "./migrator.js"
 
 export default class DSA5ChatListeners {
     static chatListeners(html) {
@@ -8,6 +9,7 @@ export default class DSA5ChatListeners {
         let helpButton = $(`<a class="button showHelp" title="${game.i18n.localize('HELP.showHelp')}"><i class="fas fa-question"></i></a>`)
         helpButton.click(() => { DSA5ChatListeners.getHelp() })
         $(html.find('.control-buttons')).prepend(helpButton)
+        html.on('click', '.showPatchViewer', () => showPatchViewer())
     }
 
     static postStatus(id) {

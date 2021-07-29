@@ -675,6 +675,8 @@ export default class DSA5ItemLibrary extends Application {
 
         const source = this
         $(this._element).find('.window-content').on('scroll.infinit', debounce(function(ev) {
+                if (this.advancedFiltering) return
+
                 const log = $(ev.target);
                 const pct = (log.scrollTop() + log.innerHeight()) >= log[0].scrollHeight - 100;
                 const category = html.find('.tabs .item.active').attr("data-tab")

@@ -35,7 +35,7 @@ export default function migrateWorld() {
 
         await setupDefaulTokenConfig()
         const currentVersion = await game.settings.get("dsa5", "migrationVersion")
-        const NEEDS_MIGRATION_VERSION = 8
+        const NEEDS_MIGRATION_VERSION = 9
         const needsMigration = currentVersion < NEEDS_MIGRATION_VERSION
 
         if (!needsMigration) return;
@@ -69,17 +69,24 @@ class PatchViewer extends Application {
     async getData() {
         let version = this.json["notes"][this.json["notes"].length - 1]
         const patchName = this.json["default"].replace(/VERSION/g, version.version)
-        let msg = `<h1>CHANGELOG</h1><p>${patchName}. </br><b>Important updates</b>: ${version.text}</p><p>For details or proposals visit our wiki page at <a href="https://github.com/Plushtoast/dsa5-foundryVTT/wiki" target="_blank">Github</a>. Have fun.</p>`
+        let msg = `<h1>CHANGELOG</h1><p>${patchName}. </br><b>Important updates</b>: ${version.text}</p><p>For details or proposals visit our wiki page at <a href="https://github.com/Plushtoast/dsa5-foundryVTT/wiki" target="_blank">Github</a> or show the <a style="text-decoration: underline;color:#ff6400;" class="showPatchViewer">Full Changelog in Foundry</a>. Have fun.</p>`
         await ChatMessage.create(DSA5_Utility.chatDataSetup(msg, "roll"))
 
         const lang = game.i18n.lang
         const changelog = await renderTemplate(`systems/dsa5/lazy/patchhtml/changelog_${lang}_${version.version}.html`)
         const news = await renderTemplate(`systems/dsa5/lazy/patchhtml/news_${lang}_${version.version}.html`)
 
+        const prevVersions = [this.json["notes"][this.json["notes"].length - 2]]
+        const prevChangeLogs = await Promise.all(prevVersions.map(async(x) => await renderTemplate(`systems/dsa5/lazy/patchhtml/changelog_${lang}_${x.version}.html`)))
+        const prevNews = await Promise.all(prevVersions.map(async(x) => await renderTemplate(`systems/dsa5/lazy/patchhtml/news_${lang}_${x.version}.html`)))
+
         return {
             patchName,
             changelog,
-            news
+            news,
+            prevVersions,
+            prevChangeLogs,
+            prevNews
         }
     }
 }

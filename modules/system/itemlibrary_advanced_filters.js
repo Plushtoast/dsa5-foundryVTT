@@ -6,9 +6,9 @@ let ADVANCEDFILTERS = {}
 Hooks.once("ready", () => {
 
     Promise.all([DSA5_Utility.allSkillsList(), DSA5_Utility.allCombatSkills()]).then((result) => {
-        const skills = result[0].reduce((prev, now) => ({ ...prev,  [now]: now}), {})
-        const range = result[1].filter(x => x.data.weapontype.value == "range").sort((a, b) => a.name.localeCompare(b.name)).reduce((prev, now) => ({ ...prev, [now.name]: now.name }), {})
-        const melee = result[1].filter(x => x.data.weapontype.value == "melee").sort((a, b) => a.name.localeCompare(b.name)).reduce((prev, now) => ({ ...prev, [now.name]: now.name }), {})
+        const skills = result[0].reduce((prev, now) => ({...prev, [now]: now }), {})
+        const range = result[1].filter(x => x.data.weapontype.value == "range").sort((a, b) => a.name.localeCompare(b.name)).reduce((prev, now) => ({...prev, [now.name]: now.name }), {})
+        const melee = result[1].filter(x => x.data.weapontype.value == "melee").sort((a, b) => a.name.localeCompare(b.name)).reduce((prev, now) => ({...prev, [now.name]: now.name }), {})
 
         mergeObject(ADVANCEDFILTERS, {
             ammunition: [
@@ -56,13 +56,13 @@ Hooks.once("ready", () => {
                 { label: "resistanceModifier", attr: "resistanceModifier.value", type: "select", options: DSA5.magicResistanceModifiers },
                 { label: "targetCategory", attr: "targetCategory.value", type: "text" },
                 { label: "distribution", attr: "distribution.value", type: "text" },
-                { label: "feature", attr: "feature.value", type: "text" }
+                { label: "feature", attr: "feature", type: "text" }
             ],
             ritual: [
                 { label: "resistanceModifier", attr: "resistanceModifier.value", type: "select", options: DSA5.magicResistanceModifiers },
                 { label: "targetCategory", attr: "targetCategory.value", type: "text" },
                 { label: "distribution", attr: "distribution.value", type: "text" },
-                { label: "feature", attr: "feature.value", type: "text" }
+                { label: "feature", attr: "feature", type: "text" }
             ],
             ceremony: [
                 { label: "resistanceModifier", attr: "resistanceModifier.value", type: "select", options: DSA5.magicResistanceModifiers },

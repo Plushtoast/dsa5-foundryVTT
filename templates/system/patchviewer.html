@@ -14,10 +14,12 @@
     </nav>
     <section class="content">
         <div class="tab newcontent" data-tab="newcontent">
-            {{{news}}}
+            {{{news}}} {{#each prevNews as |item i|}}
+            <hr style="margin-top:100px" /> {{{item}}} {{/each}}
         </div>
         <div class="tab changelog" data-tab="changelog">
-            {{{changelog}}}
+            {{{changelog}}} {{#each prevChangeLogs as |item i|}}
+            <hr style="margin-top:100px" /> {{{item}}} {{/each}}
         </div>
     </section>
 </div>
