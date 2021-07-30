@@ -36,8 +36,6 @@ export default class DSA5ChatListeners {
         ChatMessage.create(DSA5_Utility.chatDataSetup(msg, "roll"))
     }
 
-
-
     static async check3D20(target, skill, options = {}){
         let attrs = 12
         if(target){
