@@ -69,7 +69,8 @@
         "fatePoints": "Schips",
         "FtP": "Schip",
         "maintainCost": "Aufr.",
-        "*": "*"
+        "*": "*",
+        "roll": " "
     },
 
 
@@ -263,6 +264,7 @@
     "guidevalue": "Leiteigenschaft",
     "guidevalue_small": "Leit&shy;eigenschaft",
     "GM notes": "SL Notizen",
+    "ownerNotes": "Private Notizen",
     "general": "allgemein",
     "gridUnits": "Schritt",
     "halfDefense": "der Verteidigungswert des Gegners muss für diesen Angriff halbiert werden",
@@ -416,6 +418,8 @@
     "tradition": "Tradition",
     "searchTalents": "Talente durchsuchen",
     "spellextension": "Zauber/Liturgieerweiterung",
+    "defense": "Verteidigung",
+    "defenseToggle": "Verteidigung aktivieren/deaktivieren",
     "Test": "Probe",
     "trait": "Eigenschaft",
     "table": "Tabelle",
@@ -730,7 +734,7 @@
         "BlindRoll": "Blinder Wurf",
         "whisper": "Private Nachricht",
         "usesItem": "{actor} benutzt {item}.",
-        "requestGroupCheck": "{user} fordert eine Gruppenprobe in {item}",
+        "requestGroupCheck": " fordert eine Gruppenprobe in ",
         "enchantmentUsed": "<b>{item}</b> hat eine Ladung <b>{spell}</b> verbraucht."
     },
     "TT": {

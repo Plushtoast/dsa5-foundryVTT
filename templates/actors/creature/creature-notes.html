@@ -58,3 +58,20 @@
         </div>
     </div>
 </div>
+{{#if actor.isOwner}}
+<div class="groupbox">
+    <div class="row-section header-label">
+        <div class="col ninety lineheight">
+            <b>{{localize "ownerNotes"}}</b>
+        </div>
+        <div class="col lineheight ten">
+            <a class="ch-collapse"><i class="fas fa-angle-up" title="{{localize 'SHEET.collapse'}}"></i></a>
+        </div>
+    </div>
+    <div class="row-section">
+        <div class="col notes-box">
+            {{editor content=actor.data.details.notes.ownerdescription target="data.details.notes.ownerdescription" button=true owner=owner editable=true}}
+        </div>
+    </div>
+</div>
+{{/if}}

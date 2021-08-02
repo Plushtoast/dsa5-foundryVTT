@@ -689,7 +689,9 @@ export default class Actordsa5 extends Actor {
         let guidevalues = duplicate(DSA5.characteristics)
         guidevalues["-"] = "-"
 
+
         return {
+            isOwner: this.isOwner,
             totalWeight,
             totalArmor,
             money,
@@ -1079,7 +1081,8 @@ export default class Actordsa5 extends Actor {
                                 let diesToUpgrade = dlg.find('.dieSelected').map(function () { return Number($(this).attr('data-index')) }).get()
                                 if (diesToUpgrade.length == 1) {
                                     fws[diesToUpgrade] = 2
-                                    const modifier = { name: game.i18n.localize("CHATCONTEXT.improveFate"), value: fws.join("|"), type: "TPM" }
+                                    const modifier = { name: game.i18n.localize("CHATCONTEXT.improveFate"), value: fws.join("|"), type: "roll" }
+                                    newTestData.roll.terms[diesToUpgrade * 2].results[0].result = Math.max(1, newTestData.roll.terms[diesToUpgrade * 2].results[0].result - 2)
                                     newTestData.situationalModifiers.push(modifier)
                                     this[`${data.postData.postFunction}`]({ testData: newTestData, cardOptions }, { rerenderMessage: message });
                                     await message.update({ "flags.data.fateImproved": true });
@@ -1096,8 +1099,9 @@ export default class Actordsa5 extends Actor {
                 }).render(true)
             });
         } else {
-            const modifier = { name: game.i18n.localize("CHATCONTEXT.improveFate"), value: 2, type: "" }
+            const modifier = { name: game.i18n.localize("CHATCONTEXT.improveFate"), value: 2, type: "roll" }
             newTestData.situationalModifiers.push(modifier)
+            newTestData.roll.terms[0].results[0].result = Math.max(1, newTestData.roll.terms[0].results[0].result - 2)
             this[`${data.postData.postFunction}`]({ testData: newTestData, cardOptions }, { rerenderMessage: message });
             await message.update({ "flags.data.fateImproved": true });
             await this.update({ "data.status.fatePoints.value": this.data.data.status.fatePoints.value - 1 })

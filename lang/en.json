@@ -69,7 +69,8 @@
         "FtP": "FtP",
         "damage": "DP",
         "defenseMalus": "DM",
-        "*": "*"
+        "*": "*",
+        "roll": " "
     },
 
     "LIGHT": {
@@ -237,6 +238,8 @@
     "Difficulty": "Difficulty",
     "distribution": "Traditions",
     "distance": "Distance",
+    "defense": "Defense",
+    "defenseToggle": "Activate/Deactivate defense",
     "Delete Confirmation": "Confirm removal",
     "dodge": "Dodge",
     "Distinguishing_mark": "Distinguishing mark",
@@ -274,6 +277,7 @@
     "guidevalue": "Primary attribute",
     "guidevalue_small": "Primary attribute",
     "GM notes": "GM notes",
+    "ownerNotes": "Private notes",
     "general": "general",
     "gridUnits": "Yard",
     "halfDefense": "Halve the target’s defense stat against this attack",
@@ -749,7 +753,7 @@
         "BlindRoll": "Blinder Wurf.",
         "whisper": "Private message",
         "usesItem": "{actor} uses {item}.",
-        "requestGroupCheck": "{user} requests a group check in {item}",
+        "requestGroupCheck": " requests a group check in ",
         "enchantmentUsed": "<b>{item}</b> used one charge of <b>{spell}</b>."
     },
 

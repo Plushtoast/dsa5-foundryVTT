@@ -11,6 +11,7 @@ export default function() {
             const roman = [' I', ' II', ' III', ' IV', ' V', ' VI', ' VII', ' VIII', ' IX']
             return roman[a - 1]
         },
+        isWEBM: (a) => /.webm$/.test(a),
         joinStr: (a, b) => b.join(a),
         diceThingsUp: DSA5_Utility.replaceDies,
         replaceConditions: DSA5_Utility.replaceConditions,

@@ -5,7 +5,8 @@
             <a class="edit-toggle chat-button-gm" title='{{localize "CHATNOTIFICATION.editRoll"}}'><i class="fas fa-edit"></i></a>
         </div>
     </div>
-    {{{msg}}}
+    {{#if (eq openRolls 0)}} {{target}} - {{localize 'Aggregated.noMoreAllowed'}} {{else}} {{name}}{{localize "CHATNOTIFICATION.requestGroupCheck"}}
+    <a class="roll-button request-gc" data-type="{{type}}" data-modifier="{{calculatedModifier}}" data-name="{{target}}"><i class="fas fa-dice"></i>{{target}} {{calculatedModifier}}</a> {{/if}}
     <ul>
         {{#each results as |item i|}}
         <li><b>{{item.actor}}</b>:
@@ -13,6 +14,22 @@
             <input type="number" value="{{item.qs}}" data-index={{i}} style="display:none; width:10%" class="display-toggle editGC" /> &nbsp;<a><i data-index="{{i}}" class="removeGC fas fa-trash"></i></a></li> {{/each}}
     </ul>
     <div>
-        <b>{{localize 'cummulatedQS'}}</b>: {{qs}}
+        <b>{{localize 'Modifier'}}</b>:
+        <span class="display-toggle">{{modifier}}</span>
+        <input type="number" value="{{modifier}}" style="display:none; width:10%" class="display-toggle editGC" data-field="modifier" />
     </div>
+    <div>
+        <b>{{localize 'failedTests'}}</b>:
+        <span class="display-toggle">{{failed}}</span>
+        <input type="number" value="{{failed}}" style="display:none; width:10%" class="display-toggle editGC" data-field="failed" />
+    </div>
+    <div>
+        <b>{{localize 'probes'}}</b>: {{doneRolls}} / <span class="display-toggle">{{maxRolls}}</span>
+        <input type="number" value="{{maxRolls}}" style="display:none; width:10%" class="display-toggle editGC" data-field="maxRolls" />
+    </div>
+    <div>
+        <b>{{localize 'cummulatedQS'}}</b>: {{qs}} / <span class="display-toggle">{{targetQs}}</span>
+        <input type="number" value="{{targetQs}}" style="display:none; width:10%" class="display-toggle editGC" data-field="targetQs" />
+    </div>
+</div>
 </div>

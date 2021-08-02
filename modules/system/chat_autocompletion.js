@@ -284,12 +284,20 @@ export default class DSA5ChatAutoCompletion {
     }
 
     static async showGCMessage(target, modifier = 0){
-        const mod = modifier < 0 ? ` ${modifier}` : (modifier > 0 ? ` +${modifier}` : "")
         const type = DSA5ChatAutoCompletion.skills.find(x => x.name == target).type
         const data = {
-            msg:  game.i18n.format("CHATNOTIFICATION.requestGroupCheck", {user: game.user.name, item: `<a class="roll-button request-gc" data-type="${type}" data-modifier="${modifier}" data-name="${target}"><i class="fas fa-dice"></i> ${target}${mod}</a>`}),
             results: [],
-            qs: 0
+            qs: 0,
+            failed: 0,
+            modifier,
+            type,
+            target,
+            name: game.user.name,
+            calculatedModifier: modifier,
+            maxRolls: 7,
+            openRolls: 7,
+            doneRolls: 0,
+            targetQs: 10
         }
         const content = await renderTemplate("systems/dsa5/templates/chat/roll/groupcheck.html", data)
         let chatData = DSA5_Utility.chatDataSetup(content)

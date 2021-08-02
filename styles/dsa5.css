@@ -1292,6 +1292,8 @@ form.dsa5.item-sheet {
     border: none;
 }
 
+.defender video,
+.attacker video,
 .attacker img,
 .defender img {
     margin: 5px 25%;
@@ -2841,4 +2843,8 @@ input[type="checkbox"].autoCheckbox {
 .image.rar:after {
     background-image: url('../icons/backgrounds/rar.webp');
     opacity: 0.7;
+}
+
+.defenseToggle .off {
+    color: lightgrey;
 }

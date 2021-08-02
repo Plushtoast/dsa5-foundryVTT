@@ -556,9 +556,9 @@ class SpellItemDSA5 extends Itemdsa5 {
         const features = getProperty(item, "data.feature") || ""
         const res = []
         for (const feature of features.replace(/\(a-z äöü\-\)/gi, "").split(",").map(x => x.trim())) {
-            if (SpecialabilityRulesDSA5.hasAbility(actor.data, `${game.i18n.localize('LocalizedIDs.propertyKnowledge')} (${feature})`)) {
+            if (SpecialabilityRulesDSA5.hasAbility(actor.data, `${game.i18n.localize('LocalizedIDs.propertyFocus')} (${feature})`)) {
                 res.push({
-                    name: `${game.i18n.localize('LocalizedIDs.propertyKnowledge')} (${feature})`,
+                    name: `${game.i18n.localize('LocalizedIDs.propertyFocus')} (${feature})`,
                     value: 1
                 })
                 break

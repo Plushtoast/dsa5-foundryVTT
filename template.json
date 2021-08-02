@@ -204,7 +204,8 @@
                     },
                     "notes": {
                         "value": "",
-                        "gmdescription": ""
+                        "gmdescription": "",
+                        "ownerdescription": ""
                     }
                 }
             }
@@ -258,7 +259,8 @@
             ],
             "config": {
                 "autoBar": true,
-                "autoSize": true
+                "autoSize": true,
+                "defense": false
             },
             "details": {
                 "experience": {
@@ -270,8 +272,7 @@
                 "value": 1
             },
             "count": {
-                "value": "1",
-                "label": "count"
+                "value": "1"
             },
             "creatureClass": {
                 "value": ""

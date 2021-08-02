@@ -404,7 +404,6 @@ class EquipmentSheet extends Enchantable {
                     } else if ((x.data.data.effect && x.data.data.effect.value != "") || x.data.effects.length > 0) {
                         x.enchantClass = "common"
                     }
-                    console.log(x)
                     return x
                 })
             data['weightSum'] = parseFloat(weightSum.toFixed(3))
@@ -588,8 +587,6 @@ class ConsumableSheetDSA5 extends ItemSheetdsa5 {
     setupEffect(ev) {
         this.item.setupEffect()
     }
-
-
 }
 
 class ItemCultureDSA5 extends ItemSheetdsa5 {

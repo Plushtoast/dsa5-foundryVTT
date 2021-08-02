@@ -116,7 +116,7 @@ export class DSA5Combat extends Combat {
     async updateDefenseCount(speaker) {
         if (game.user.isGM) {
             const comb = this.getCombatantFromActor(speaker)
-            if (comb) {
+            if (comb && !getProperty(comb.actor, "data.data.config.defense")) {
                 await comb.update({ "defenseCount": comb.data._source.defenseCount + 1 })
             }
         } else {

@@ -1163,10 +1163,9 @@ export default class DiceDSA5 {
                     actor.setupSkill(skill.data, options, tokenId).then(async(setupData) => {
                         let result = await actor.basicTest(setupData)
                         let message = await game.messages.get(messageId)
-                        const data = {
-                            msg: message.data.flags.msg,
-                            results: message.data.flags.results.concat({ actor: actor.name, qs: (result.result.qualityStep || 0) })
-                        }
+                        const data = message.data.flags
+                        if (result.result.successLevel < 0) data.failed += 1
+                        data.results.push({ actor: actor.name, qs: (result.result.qualityStep || 0) })
                         DiceDSA5._rerenderGC(message, data)
                     });
             }
@@ -1176,14 +1175,18 @@ export default class DiceDSA5 {
     static async _rerenderGC(message, data) {
         if (game.user.isGM) {
             data.qs = data.results.reduce((a, b) => { return a + b.qs }, 0)
+            data.calculatedModifier = data.modifier - data.failed
+            data.openRolls = data.maxRolls - data.results.length
+            data.doneRolls = data.results.length
             const content = await renderTemplate("systems/dsa5/templates/chat/roll/groupcheck.html", data)
             message.update({
-                content,
-                flags: data
-            }).then(newMsg => {
-                ui.chat.updateMessage(newMsg);
-                return newMsg;
-            });
+                    content,
+                    flags: data
+                })
+                /*.then(newMsg => {
+                    ui.chat.updateMessage(newMsg)
+                    return newMsg;
+                });*/
         } else {
             game.socket.emit("system.dsa5", {
                 type: "updateGroupCheck",
@@ -1193,6 +1196,7 @@ export default class DiceDSA5 {
                 }
             })
         }
+        $('#chat-log').find(`[data-message-id="${message.id}"`).appendTo('#chat-log')
     }
 
     static _parseEffectDuration(source, testData, preData, attacker) {
@@ -1297,7 +1301,11 @@ export default class DiceDSA5 {
         const index = Number(elem.attr('data-index'))
         const message = game.messages.get(elem.parents('.message').attr("data-message-id"))
         const data = message.data.flags
-        data.results[index].qs = Number(elem.val())
+        if (index) {
+            data.results[index].qs = Number(elem.val())
+        } else {
+            data[elem.attr("data-field")] = Number(elem.val())
+        }
         DiceDSA5._rerenderGC(message, data)
     }
 

@@ -79,6 +79,13 @@ export default class OpposedDsa5 {
         await OpposedDsa5.clearOpposed(actor)
     }
 
+    static videoOrImgTag(path) {
+        if (/\.webm$/.test(path)) {
+            return `<video loop autoplay src="${path}" width="50" height="50"></video>`
+        }
+        return `<img src="${path}" width="50" height="50"/>`
+    }
+
     static async createOpposedTest(actor, message, testResult, preData) {
         let attacker;
 
@@ -93,19 +100,10 @@ export default class OpposedDsa5 {
             let startMessagesList = [];
 
             game.user.targets.forEach(async target => {
-                let content =
-                    `<div class ="opposed-message">
-                  <b>${attacker.name}</b> ${game.i18n.localize("ROLL.Targeting")} <b>${target.data.name}</b>
-                </div>
-                <div class = "opposed-tokens row-section">
-                    <div class="col two attacker"><img src="${attacker.img}" width="50" height="50"/></div>
-                    <div class="col two defender"><img src="${target.data.img}" width="50" height="50"/></div>
-                </div>
-                ${unopposedButton}`
-
+                const content = `${OpposedDsa5.opposeMessage(attacker, target, false)} ${unopposedButton}`
                 let startMessage = await ChatMessage.create({
                     user: game.user.id,
-                    content: content,
+                    content,
                     speaker: message.data.speaker,
                     ["flags.unopposeData"]: {
                         attackMessageId: message.data._id,
@@ -145,28 +143,26 @@ export default class OpposedDsa5 {
                 }
             })
             message.data.flags.data.startMessagesList = startMessagesList;
-
-            //if ((await game.settings.get("dsa5", "clearTargets")) && !["spell", "liturgy", "ceremony", "ritual"].includes(preData.source.type))
-            //    game.user.updateTokenTargets([]);
-
         } else {
             game.user.targets.forEach(async target => {
-                const content =
-                    `<div class ="opposed-message">
-                  <b>${attacker.name}</b> ${game.i18n.localize("ROLL.Targeting")} <b>${target.data.name}</b> ${game.i18n.localize("ROLL.failed")}
-                </div>
-                <div class = "opposed-tokens row-section">
-                    <div class="col two attacker"><img src="${attacker.img}" width="50" height="50"/></div>
-                    <div class="col two defender"><img src="${target.data.img}" width="50" height="50"/></div>
-                </div>
-                `
                 await ChatMessage.create({
                     user: game.user.id,
-                    content: content,
-                    speaker: message.data.speaker,
+                    content: OpposedDsa5.opposeMessage(attacker, target, true),
+                    speaker: message.data.speaker
                 })
             })
         }
+    }
+
+    static opposeMessage(attacker, target, fail) {
+        return `<div class ="opposed-message">
+            <b>${attacker.name}</b> ${game.i18n.localize("ROLL.Targeting")} <b>${target.data.name}</b> ${fail ? game.i18n.localize("ROLL.failed"): ""}
+            </div>
+            <div class = "opposed-tokens row-section">
+                <div class="col two attacker">${OpposedDsa5.videoOrImgTag(attacker.img)}</div>
+                <div class="col two defender">${OpposedDsa5.videoOrImgTag(target.data.img)}</div>
+            </div>
+             `
     }
 
     static async changeStartMessage(message) {

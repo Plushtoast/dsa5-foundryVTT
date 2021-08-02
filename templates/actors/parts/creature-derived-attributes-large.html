@@ -115,7 +115,7 @@
     </div>
     <div class="derivedAttrs row-section">
         <div class="col two lineheight">
-            {{localize "dodge"}}
+            {{#if actor.data.config.defense}} {{localize "defense"}} {{else}} {{localize "dodge"}}{{/if}} <a class="defenseToggle"><i class="fas fa-shield-alt {{#unless actor.data.config.defense}}off{{/unless}}" title="{{localize 'defenseToggle'}}"></i></a>
         </div>
         <div class="col eight lineheight center">
             {{actor.data.status.dodge.value}}

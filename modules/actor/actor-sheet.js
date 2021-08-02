@@ -381,6 +381,11 @@ export default class ActorSheetDsa5 extends ActorSheet {
             elem.trigger("change")
         })
 
+        html.find('.defenseToggle').click(() => {
+            console.log(this.actor)
+            this.actor.update({ "data.config.defense": !this.actor.data.data.config.defense })
+        })
+
         html.find('.loadWeapon').mousedown(async(ev) => {
             let itemId = this._getItemId(ev)
             let item = (await this.actor.getEmbeddedDocument("Item", itemId)).toObject()
