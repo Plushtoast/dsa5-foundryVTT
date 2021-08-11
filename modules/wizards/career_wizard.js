@@ -162,7 +162,7 @@ export default class CareerWizard extends WizardDSA5 {
             let name = k.trim()
             if (name == "") continue
             let item = this.actor.data.items.find(x => type == x.type && x.name == name)
-            if (!item){
+            if (!item) {
                 item = this.items.find(x => type == x.type && x.name == name)
                 if (item) {
                     item = duplicate(item)
@@ -190,12 +190,14 @@ export default class CareerWizard extends WizardDSA5 {
             "data.details.career.value": this.career.name,
             "data.freeLanguagePoints.value": this.career.data.languagePoints.value
         }
-
         for (let k of parent.find('.attributes')) {
             let attr = $(k).attr("data-attribute").toLowerCase()
             attr = game.dsa5.config.knownShortcuts[attr.toLowerCase()][1]
             if (Number(this.actor.data.data.characteristics[attr].initial) + Number(this.actor.data.data.characteristics[attr].advances) < Number($(k).val())) {
-                update[`data.characteristics.${attr}.advances`] = Number($(k).val()) - Number(this.actor.data.data.characteristics[attr].initial)
+                if (this.actor.data.canAdvance)
+                    update[`data.characteristics.${attr}.advances`] = Number($(k).val()) - Number(this.actor.data.data.characteristics[attr].initial)
+                else
+                    update[`data.characteristics.${attr}.initial`] = Number($(k).val())
             }
         }
 

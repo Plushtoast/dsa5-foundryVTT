@@ -483,7 +483,8 @@ DSA5.traitCategories = {
     "armor": "armor",
     "general": "general",
     "familiar": "familiar",
-    "trick": "trick"
+    "trick": "trick",
+    "training": "training"
 }
 
 DSA5.ritualLocationModifiers = {

@@ -2848,3 +2848,38 @@ input[type="checkbox"].autoCheckbox {
 .defenseToggle .off {
     color: lightgrey;
 }
+
+.garadanborder {
+    max-width: 70%;
+    height: 100px;
+    position: relative;
+    top: -40px;
+    background-image: url('../icons/backgrounds/garadanborder.webp');
+    background-size: 100% 100%;
+    background-repeat: no-repeat;
+    margin: 0 auto;
+}
+
+.garadanicon {
+    background-repeat: no-repeat;
+    background-size: contain;
+    height: 35px;
+    margin-left: 30px;
+    margin-top: 28px;
+}
+
+.garadanborder h1 {
+    text-decoration: none;
+    border: none;
+    margin: 0;
+    margin-top: 0px;
+    margin-top: 25px;
+    font-size: 24px;
+    line-height: 24px;
+}
+
+.garadanborder h2 {
+    margin: 0;
+    border: none;
+    font-size: 14px;
+}

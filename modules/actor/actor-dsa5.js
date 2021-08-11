@@ -386,7 +386,8 @@ export default class Actordsa5 extends Actor {
         let disadvantages = []
         let aggregatedtests = []
 
-        let specAbs = Object.fromEntries(Object.keys(DSA5.specialAbilityCategories).map(x => [x, []]))
+        const specAbs = Object.fromEntries(Object.keys(DSA5.specialAbilityCategories).map(x => [x, []]))
+        const traits = Object.fromEntries(Object.keys(DSA5.traitCategories).map(x => [x, []]))
 
         let armor = [];
         let rangeweapons = [];
@@ -408,15 +409,6 @@ export default class Actordsa5 extends Actor {
             ritual: {},
             ceremony: {},
             liturgy: {}
-        }
-
-        let traits = {
-            rangeAttack: [],
-            meleeAttack: [],
-            general: [],
-            animal: [],
-            familiar: [],
-            armor: []
         }
 
         let schips = []
@@ -924,7 +916,7 @@ export default class Actordsa5 extends Actor {
         this.resetTargetAndMessage(data, cardOptions)
 
         let oldDamageRoll = duplicate(data.postData.damageRoll)
-        let newRoll = await DiceDSA5.manualRolls(Roll.fromData(oldDamageRoll).reroll(), "CHATCONTEXT.rerollDamage")
+        let newRoll = await DiceDSA5.manualRolls(new Roll(oldDamageRoll.formula || oldDamageRoll._formula).evaluate({ async: false }), "CHATCONTEXT.rerollDamage")
 
         for (let i = 0; i < newRoll.dice.length; i++)
             newRoll.dice[i].options.colorset = "black"

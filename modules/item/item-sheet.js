@@ -4,7 +4,6 @@ import DSA5StatusEffects from "../status/status_effects.js"
 import DSA5ChatListeners from "../system/chat_listeners.js"
 import SpecialabilityRulesDSA5 from "../system/specialability-rules-dsa5.js"
 import { itemFromDrop, svgAutoFit } from "../system/view_helper.js"
-import Actordsa5 from "../actor/actor-dsa5.js"
 
 export default class ItemSheetdsa5 extends ItemSheet {
     constructor(item, options) {
