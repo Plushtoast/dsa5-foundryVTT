@@ -82,7 +82,7 @@
     "primaryTokenAttribute": "status.wounds",
     "secondaryTokenAttribute": "status.astralenergy",
     "minimumCoreVersion": "0.8.6",
-    "compatibleCoreVersion": "0.8.8",
+    "compatibleCoreVersion": "0.8.9",
     "url": "https://github.com/Plushtoast/dsa5-foundryVTT",
     "manifest": "https://raw.githubusercontent.com/Plushtoast/dsa5-foundryVTT/foundry08/system.json",
     "download": "https://github.com/Plushtoast/dsa5-foundryVTT/releases/download/2.2.1/dsa5-foundryVTT-2.2.1.zip"
