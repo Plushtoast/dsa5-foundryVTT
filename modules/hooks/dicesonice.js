@@ -112,25 +112,37 @@ export default function() {
             texture: 'none'
         });
 
-        //game.dsa5.apps.DiceSoNiceCustomization = new DiceSoNiceCustomization()
+        import ("../../../../modules/dice-so-nice/Utils.js").then(module => {
+            game.dsa5.apps.DiceSoNiceCustomization = new DiceSoNiceCustomization(module)
+        })
     });
 }
 
-/*class DiceSoNiceCustomization {
-    constructor() {
-        const attrs = ["MU", "KL", "IN", "CH", "FF", "GE", "KO", "KK", "ATTACK", "DODGE", "PARRY"]
-        for (let attr of attrs) {
-            game.settings.register("dsa5", `dice3d_${attr}`, {
-                name: `CHAR.${attr}`,
-                hint: "",
-                scope: "client",
-                config: true,
-                default: attr.toLowerCase(),
-                type: String,
-                choices: 
-            });
+class DiceSoNiceCustomization {
+    constructor(module) {
+        const colors = module.Utils.prepareColorsetList()
+        let choices = {}
+        for (const [key, value] of Object.entries(colors)) {
+            mergeObject(choices, value)
         }
 
-
+        const attrs = ["mu", "kl", "in", "ch", "ff", "ge", "ko", "kk", "attack", "dodge", "parry"]
+        for (let attr of attrs) {
+            game.settings.register("dsa5", `dice3d_${attr}`, {
+                name: `CHAR.${attr.toUpperCase()}`,
+                hint: "Dice so nice Colorset",
+                scope: "client",
+                config: true,
+                default: attr,
+                type: String,
+                choices
+            });
+        }
     }
-}*/
+    getDiceSoNiceColor(value) {
+        if (game.modules.get("dice-so-nice") && game.modules.get("dice-so-nice").active) {
+            return game.settings.get("dsa5", `dice3d_${value}`)
+        }
+        return value
+    }
+}

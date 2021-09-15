@@ -258,6 +258,35 @@ class PainEffect extends DSA5StatusEffects {
     }
 }
 
+class TranceEffect extends DSA5StatusEffects {
+    static calculateRollModifier(effect, actor, item, options = {}) {
+        switch (Number(effect.flags.dsa5.value)) {
+            case 2:
+                let happyTalents = actor.data.happyTalents.value.split(/;|,/).map(x => x.trim())
+                if ((happyTalents.includes(item.name) && ["skill", "combatskill"].includes(item.type)) ||
+                    (["rangeweapon", "meleeweapon"].includes(item.type) && happyTalents.includes(item.data.data.combatskill.value)) || ["ceremony", "liturgy"].includes(item.type)) {
+                    return 2
+                }
+            case 3:
+                return 3
+        }
+        return 0
+    }
+}
+
+class DrunkenEffect extends DSA5StatusEffects {
+    static calculateRollModifier(effect, actor, item, options = {}) {
+        if (item.type == "skill" && item.name == game.i18n.localize("LocalizedIDs.gambling"))
+            return effect.flags.dsa5.value * -1
+
+        return 0
+    }
+}
+
+class ArousalEffect extends DSA5StatusEffects {
+    //TODO
+}
+
 DSA5.statusEffectClasses = {
     inpain: PainEffect,
     encumbered: EncumberedEffect,
@@ -268,30 +297,8 @@ DSA5.statusEffectClasses = {
     confused: DSA5StatusEffects,
     prone: ProneEffect,
     deaf: DeafEffect,
-    bloodrush: BloodrushEffect
+    bloodrush: BloodrushEffect,
+    trance: TranceEffect,
+    drunken: DrunkenEffect,
+    arousal: ArousalEffect
 }
-
-
-/*Macro Example
-
-const actor = game.actors.getName("Delgado Rochas");
-actor.addCondition({
-    label: "Zustandsname",
-    icon: "icons/svg/aura.svg",
-    origin: actor.uuid,
-    changes: [
-        { key: "data.characteristics.ge.gearmodifier", mode: 2, value: 1 },
-        { key: "data.status.speed.gearmodifier", mode: 2, value: -1 }
-    ],
-
-    flags: {
-        dsa5: {
-            value: null,
-            editable: true,
-            description: "Beschreibung des Effekts",
-            custom: true
-        }
-    },
-    id: `${Math.random()}`
-});
-*/

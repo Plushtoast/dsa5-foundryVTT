@@ -134,6 +134,14 @@
                     },
                     "size": {
                         "value": "average"
+                    },
+                    "regeneration": {
+                        "LePTemp": 0,
+                        "AsPTemp": 0,
+                        "KaPTemp": 0,
+                        "LePMod": 0,
+                        "AsPMod": 0,
+                        "KaPMod": 0
                     }
                 }
             },
@@ -325,7 +333,8 @@
             "disease",
             "consumable",
             "spellextension",
-            "application"
+            "application",
+            "effectwrapper"
         ],
         "templates": {
             "skill": {
@@ -451,6 +460,11 @@
             "templates": [
                 "description",
                 "equipment"
+            ]
+        },
+        "effectwrapper": {
+            "templates": [
+                "description"
             ]
         },
         "spellextension": {

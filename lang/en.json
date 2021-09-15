@@ -239,6 +239,7 @@
     "Difficulty": "Difficulty",
     "distribution": "Traditions",
     "distance": "Distance",
+    "damageApplied": "Damage has been applied",
     "defense": "Defense",
     "defenseToggle": "Activate/Deactivate defense",
     "Delete Confirmation": "Confirm removal",
@@ -255,6 +256,7 @@
     "effectFormula": "Effect formula",
     "energyfactor": "Primary Attr. Factor",
     "equipmentType": "Equipment category",
+    "effectwrapper": "Effect container",
     "extensions": "Extensions",
     "entry": "Entry",
     "Eye_color": "Eye color",
@@ -428,6 +430,7 @@
     "spellextension": "Spell/Liturgieextension",
     "specialRules": "Special rules",
     "tradition": "Tradition",
+    "skillglobal": "Skill (global)",
     "searchTalents": "Search skills",
     "shieldSize": "Shield size",
     "specialisation": "Specialization",
@@ -815,6 +818,7 @@
     "ITEM.TypeSpecies": "Species",
     "ITEM.TypeSpell": "Spell",
     "ITEM.TypeTrait": "Trait (Animal)",
+    "ITEM.TypeEffectwrapper": "Effect container",
     "ITEM.TypeConsumable": "Consumable",
     "ITEM.TypeSpellextension": "Spell/Liturgyextension",
     "ITEM.TypeApplication": "Application",
@@ -939,7 +943,8 @@
         "smallEnergyControl": "Small Energy Control",
         "masterfulDodge": "tbd",
         "masterfulParry": "tbd",
-        "throwingWeapons": "tbd",
+        "throwingWeapons": "Throwing Weapons",
+        "crossbows": "Crossbows",
         "improvisedWeaponMaster": "tbd",
         "misfortune": "Misfortune",
         "quickdraw": "Quickdraw",
@@ -950,6 +955,8 @@
         "magicalRestriction": "Magical Restriction",
         "magicalAttunement": "Magical Attunement",
         "traditionWitch": "Tradition (Witch)",
+        "traditionKor": "Tradition (Kor)",
+        "traditionFjarning": "Tradition (Fjarning)",
         "inuredToEncumbrance": "Inured to Encumbrance",
         "quickload": "Quickload",
         "automaticSuccess": "Automatic Succes",
@@ -976,7 +983,8 @@
         "obligations": "Obligations",
         "afraidOf": "Afraid of",
         "principles": "Principles",
-        "skillSpecialization": "Skill Specialization"
+        "skillSpecialization": "Skill Specialization",
+        "gambling": "Gambling"
     },
 
     "Shapeshift": {
@@ -1100,15 +1108,19 @@
 
     "CHATCONTEXT": {
         "Reroll": "Repeat roll (1 FtP)",
+        "RerollGroup": "Repeat roll (1 Group FtP)",
         "AddQS": "Increase QL by one (1 FtP)",
+        "AddQSGroup": "Increase QL by one (1 Group FtP)",
         "rerollDamage": "Repeat damage roll (1 FtP)",
+        "rerollDamageGroup": "Repeat damage roll (1 Group FtP)",
         "ApplyDamage": "Apply damage as DP",
         "ApplyDamageSP": "Apply damage as sDP",
         "talentedReroll": "Use Aptitude ",
         "ApplyMana": "Pay AE/KP",
         "hideData": "Hide details to players",
         "showData": "Show details to players",
-        "improveFate": "Improve roll (1 FtP)"
+        "improveFate": "Improve roll (1 FtP)",
+        "improveFateGroup": "Improve roll (1 Group FtP)"
     },
 
     "aimOptions": {
@@ -1190,7 +1202,9 @@
         "expandChatModifierlist": "Modifier list expanded",
         "expandChatModifierlistHint": "The modifier list in the chat is always expanded.",
         "inventorySound": "Inventory sounds",
-        "inventorySoundHint": "Activate Interface sound in the inventory (requires game audio bundles)"
+        "inventorySoundHint": "Activate Interface sound in the inventory (requires game audio bundles)",
+        "lessRegeneration": "Weaker Regeneration",
+        "lessRegenerationHint": "Regeneration of LE only with 1D3"
     },
 
     "COMBATTRACKER": {
@@ -1212,6 +1226,7 @@
         "rerollDamage": "{character} rolls again.",
         "addQS": "{character} increases the quality level.",
         "PointsRemaining": "Remaining fate points",
+        "GroupPointsRemaining": "Remaining group points",
         "isTalented": "{character} uses Aptitude.",
         "selectDice": "Repeat roll",
         "selectDieToReroll": "Chose the dice to be rolled again",

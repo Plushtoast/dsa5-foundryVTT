@@ -654,7 +654,55 @@ class MeleeweaponSheetDSA5 extends Enchantable {
         }
         data['isShield'] = this.item.data.data.combatskill.value == game.i18n.localize("LocalizedIDs.shields")
         data['shieldSizes'] = DSA5.shieldSizes
+        data["poison"] = this.item.getFlag("dsa5", "poison")
+        data.hasEnchantments = data.poison || data.enchantments
         return data
+    }
+
+    async poison(event) {
+        const dragData = JSON.parse(event.dataTransfer.getData("text/plain"))
+        const { item, typeClass, selfTarget } = await itemFromDrop(dragData, undefined)
+        if (typeClass == "poison") {
+            const poison = {
+                name: item.name,
+                pack: dragData.pack,
+                itemId: item._id,
+                permanent: false,
+                actorId: dragData.actorId
+            }
+            let update = { flags: { dsa5: { poison } } }
+            await this.item.update(update)
+        }
+    }
+
+    activateListeners(html) {
+        super.activateListeners(html)
+        html.find('.poison-toggle-permanent').click(ev => {
+            this.item.update({ flags: { dsa5: { poison: { permanent: !this.item.data.flags.dsa5.poison.permanent } } } })
+        })
+        html.find('.poison-delete').click(ev => {
+            this.deletePoison()
+        })
+        html.find('.poison-show').click(async() => {
+            let item
+            if (this.item.actor) item = this.item.actor.data.items.find(x => x.type == "poison" && x.name == this.item.data.flags.dsa5.poison.name)
+            if (!item) item = await this.getSpell(this.item.data.flags.dsa5.poison)
+
+            if (item) {
+                item.sheet.render(true)
+            }
+        })
+    }
+
+    deletePoison() {
+        this.item.update({
+            [`flags.dsa5.-=poison`]: null
+        })
+    }
+
+    async _onDrop(event) {
+        await super._onDrop(event)
+        await this.poison(event)
     }
 }
 

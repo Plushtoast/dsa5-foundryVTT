@@ -1,52 +1,79 @@
 <div class="tab effects" data-tab="enchantment">
+    {{#if enchantments}}
+    <div class="row-section wrap">
 
-  <div class="row-section wrap">
+        <div class="col row-section skills table-title">
 
-    <div class="col row-section skills table-title">
+            <div class="col fourty">
+                {{localize "enchantment"}}
+            </div>
+            <div class="col ten">
 
-      <div class="col fourty">
-        {{localize "Name"}}
-      </div>
-      <div class="col ten">
+            </div>
+            <div class="col ten center" title="{{localize 'FW'}}">
+                {{localize 'CHARAbbrev.FW'}}
+            </div>
+            <div class="col fifteen center">
 
-      </div>
-      <div class="col ten center" title="{{localize 'FW'}}">
-        {{localize 'CHARAbbrev.FW'}}
-      </div>
-      <div class="col fifteen center">
+            </div>
+            <div class="col ten center">
 
-      </div>
-      <div class="col ten center">
-
-      </div>
+            </div>
+        </div>
+        {{#each enchantments as |item i|}}
+        <div class="row-section col skills statusEffect" data-id="{{item.id}}">
+            <div class="col fourty">
+                <a class="ench-show">{{item.name}}</a>
+            </div>
+            <div class="col ten">
+                <a class="ench-roll"><i class="fas fa-dice-d20"></i></a>
+            </div>
+            <div class="col ten form-group">
+                <input type="number" class="input-text ench-fw" value="{{item.fw}}" />
+            </div>
+            <div class="col fifteen center">
+                {{#if item.permanent}}
+                <a title="{{localize 'permanent'}}" class="ench ench-toggle-permanent"><i class="fas fa-check"></i></a> {{else}}
+                <a title="{{localize 'permanent'}}" class="ench ench-toggle-permanent"><i class="fas fa-times"></i></a> {{/if}} {{#if item.charged}}
+                <a title="{{localize 'charges'}}" class="ench ench-toggle-charge"><i class="fas fa-battery-full"></i></a> {{else}}
+                <a title="{{localize 'charges'}}" class="ench ench-toggle-charge"><i class="fas fa-battery-empty"></i></a> {{/if}}
+            </div>
+            <div class="col ten center">
+                <a class="ench ench-delete"><i class="fas fa-trash"></i></a>
+            </div>
+        </div>
+        {{/each}}
     </div>
-    {{#each enchantments as |item i|}}
-    <div class="row-section col skills statusEffect" data-id="{{item.id}}">
-      <div class="col fourty">
-        <a class="ench-show">{{item.name}}</a>
-      </div>
-      <div class="col ten">
-        <a class="ench-roll"><i class="fas fa-dice-d20"></i></a>
-      </div>
-      <div class="col ten form-group">
-        <input type="number" class="input-text ench-fw" value="{{item.fw}}"/>
-      </div>
-      <div class="col fifteen center" >
-        {{#if item.permanent}}
-          <a title="{{localize 'permanent'}}" class="ench ench-toggle-permanent"><i class="fas fa-check"></i></a>
-        {{else}}
-          <a title="{{localize 'permanent'}}" class="ench ench-toggle-permanent"><i class="fas fa-times"></i></a>
-        {{/if}}
-        {{#if item.charged}}
-        <a title="{{localize 'charges'}}" class="ench ench-toggle-charge"><i class="fas fa-battery-full"></i></a>
-        {{else}}
-        <a title="{{localize 'charges'}}" class="ench ench-toggle-charge"><i class="fas fa-battery-empty"></i></a>
-        {{/if}}
-      </div>
-      <div class="col ten center">
-        <a class="ench ench-delete"><i class="fas fa-trash"></i></a>
-      </div>
+    {{/if}} {{#if poison}}
+    <div class="row-section wrap">
+
+        <div class="col row-section skills table-title">
+
+            <div class="col fourty">
+                {{localize "poison"}}
+            </div>
+            <div class="col fifteen center">
+                {{localize 'permanent'}}
+            </div>
+            <div class="col ten center">
+
+            </div>
+        </div>
+
+        <div class="row-section col skills statusEffect" data-id="{{poison.id}}">
+            <div class="col fourty">
+                <a class="poison-show">{{poison.name}}</a>
+            </div>
+            <div class="col fifteen center">
+                {{#if poison.permanent}}
+                <a title="{{localize 'permanent'}}" class="ench poison-toggle-permanent"><i class="fas fa-check"></i></a> {{else}}
+                <a title="{{localize 'permanent'}}" class="ench poison-toggle-permanent"><i class="fas fa-times"></i></a> {{/if}}
+            </div>
+            <div class="col ten center">
+                <a class="ench poison-delete"><i class="fas fa-trash"></i></a>
+            </div>
+        </div>
+
     </div>
-    {{/each}}
-  </div>
+    {{/if}}
 </div>

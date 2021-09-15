@@ -1,0 +1,46 @@
+<form class="{{cssClass}} lock{{actor.sheetLocked}}" autocomplete="off">
+    <fieldset disabled>
+        <header class="sheet-header row-section" ondragstart="return false;" ondrop="return false;">
+
+        </header>
+        <section id="tab-sections">
+            <nav id="dsa5-primarytabs" class="sheet-tabs tabs" ondragstart="return false;" ondrop="return false;">
+                <a class="item active" data-tab="main">{{localize "WIZARD.generalTab"}}</a>
+                <a class="item" data-tab="notes">{{localize "Notes"}}</a>
+            </nav>
+
+            <section class="content">
+                <div class="tab main save-scroll" data-tab="main">
+                    <div class="row-section">
+                        <div class="col center">
+                            <img src="{{actor.img}}" style="min-height: 200px;max-width:50%;border:none;" />
+                        </div>
+
+                    </div>
+                    <div class="row-section">
+                        <div class="col center">
+                            <div class="garadanborder">
+                                <div class="row-section">
+                                    <div class="col five">
+                                        <div class="garadanicon" style="background-image:url(systems/dsa5/icons/Garadan_1.webp);"></div>
+                                    </div>
+                                    <div class="col eighty">
+                                        <h1>{{actor.name}}</h1>
+                                        <h2>{{actor.data.details.career.value}}</h2>
+                                    </div>
+                                    <div class="col five">
+
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="tab save-scroll" data-tab="notes">
+                    {{> systems/dsa5/templates/actors/actor-notes.html}}
+                </div>
+            </section>
+        </section>
+    </fieldset>
+</form>

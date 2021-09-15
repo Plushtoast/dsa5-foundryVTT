@@ -2,6 +2,12 @@ import DSA5SoundEffect from "../system/dsa-soundeffect.js";
 import { showPatchViewer } from "../system/migrator.js"
 
 export default function() {
+    const redrawMasterMenu = () => {
+        if (game.user.isGM) {
+            game.dsa5.apps.gameMasterMenu.render()
+        }
+    }
+
     game.settings.register("dsa5", "meleeBotchTableEnabled", {
         name: "DSASETTINGS.meleeBotchTableEnabled",
         hint: "DSASETTINGS.meleeBotchTableEnabledHint",
@@ -133,6 +139,15 @@ export default function() {
         type: Boolean
     });
 
+    game.settings.register("dsa5", "lessRegeneration", {
+        name: "DSASETTINGS.lessRegeneration",
+        hint: "DSASETTINGS.lessRegenerationHint",
+        scope: "world",
+        config: true,
+        default: false,
+        type: Boolean
+    });
+
     game.settings.register("dsa5", "limitCombatSpecAbs", {
         name: "DSASETTINGS.limitCombatSpecAbs",
         hint: "DSASETTINGS.limitCombatSpecAbsHint",
@@ -194,6 +209,16 @@ export default function() {
         config: false,
         default: "",
         type: String
+    });
+
+    game.settings.register("dsa5", "groupschips", {
+        name: "DSASETTINGS.groupschips",
+        hint: "DSASETTINGS.groupschips",
+        scope: "world",
+        config: false,
+        default: "0/0",
+        type: String,
+        onChange: async() => { redrawMasterMenu() }
     });
 
     game.settings.register("dsa5", "expandChatModifierlist", {

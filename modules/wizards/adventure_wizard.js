@@ -121,6 +121,10 @@ export default class BookWizard extends Application {
             ev.stopPropagation()
             return false
         })
+        html.find('.tocCollapser').click((ev) => {
+            $(ev.currentTarget).find('i').toggleClass("fa-chevron-right fa-chevron-left")
+            html.find(".tocCollapsing").toggleClass('expanded')
+        })
         html.on("mousedown", '.openPin', async(ev) => {
             const uuid = ev.currentTarget.dataset.uuid
 
@@ -433,8 +437,7 @@ export default class BookWizard extends Application {
 
 class InitializerForm extends FormApplication {
     render(mod) {
-        new game.dsa5.apps.DSA5Initializer("DSA5 Module Initialization", game.i18n.format(`
-            $ { mod }.importContent `, { defaultText: game.i18n.localize("importDefault") }), mod, game.i18n.lang).render(true)
+        new game.dsa5.apps.DSA5Initializer("DSA5 Module Initialization", game.i18n.format(`${mod}.importContent`, { defaultText: game.i18n.localize("importDefault") }), mod, game.i18n.lang).render(true)
     }
 }
 

@@ -27,11 +27,10 @@ export default function() {
             }
         }
 
-        if (!data.actorLink) {
-            if (actor.data.type == "creature" && getProperty(actor.data, "data.config.autoSize")) {
-                DSA5_Utility.calcTokenSize(actor.data, update)
-            }
+        if (actor.data.type == "creature" && getProperty(actor.data, "data.config.autoSize")) {
+            DSA5_Utility.calcTokenSize(actor.data, update)
         }
+
         token.data.update(update)
     })
 }

@@ -26,6 +26,20 @@
         </div>
         <div class="tab main" data-tab="main">
             <div class="row-section">
+                <div class="col ten lineheight center" title="{{localize 'fatePoints'}}">
+                    {{localize 'CHARAbbrev.fatePoints'}}
+                </div>
+                <div class="col eighty center" title="{{localize 'fatePoints'}}">
+                    {{#each groupschips as |item i|}}
+                    <a class="schip groupschip {{item.cssClass}}" data-val="{{item.value}}"></a>
+                    {{/each}}
+                </div>
+                <div class="col ten center">
+                    <a class="addGroupSchip" data-value="-1"><i class="fas fa-minus"></i></a>
+                    <a class="addGroupSchip" data-value="1"><i class="fas fa-plus"></i></a>
+                </div>
+            </div>
+            <div class="row-section">
                 <div class="col ten"></div>
                 <div class="col five">
 
@@ -75,7 +89,7 @@
                         <a class="heroLink">{{hero.name}}</a>
                         <div>
                             {{#each hero.schips as |item i|}}
-                            <a class="tiny schip {{item.cssClass}}" data-val="{{item.value}}"></a>
+                            <a class="tiny heroschip schip {{item.cssClass}}" data-val="{{item.value}}"></a>
                             {{/each}}
 
                         </div>

@@ -3,6 +3,7 @@ import DSA5_Utility from "../system/utility-dsa5.js";
 export default function() {
 
     Hooks.on("getChatLogEntryContext", (html, options) => {
+        const fateAvailable = (actor, group) => { return DSA5_Utility.fateAvailable(actor, group) }
         const canHurt = function(li) {
             let cardData = game.messages.get(li.attr("data-message-id")).data.flags.opposeData
             return (game.user.isGM && li.find(".opposed-card").length || li.find(".dice-roll").length) && cardData && cardData.damage.value > 0
@@ -35,15 +36,15 @@ export default function() {
             }
             return false
         }
-        const canImproveRoll = function(li){
+        const canImproveRoll = function(li, group = false) {
             let message = game.messages.get(li.attr("data-message-id"));
             if (message.data.speaker.actor && message.data.flags.data) {
-                if (message.data.flags.data.postData.successLevel > -2){
+                if (message.data.flags.data.postData.successLevel > -2) {
                     let actor = game.actors.get(message.data.speaker.actor);
-                    if (actor.isOwner && actor.data.data.status.fatePoints.value > 0){
+                    if (actor.isOwner && fateAvailable(actor, group)) {
                         let rollType = message.data.flags.data.preData.source.type
                         const mode = message.data.flags.data.preData.mode || ""
-                        if(["skill", "spell", "liturgy", "ritual", "ceremony"].includes(rollType)) rollType = "char"
+                        if (["skill", "spell", "liturgy", "ritual", "ceremony"].includes(rollType)) rollType = "char"
                         let schipSkill = game.i18n.localize(`SCHIPSKILLS.${rollType}${mode}`)
                         return !message.data.flags.data.fateImproved && actor.items.getName(schipSkill)
                     }
@@ -51,11 +52,14 @@ export default function() {
             }
             return false
         }
-        const canIncreaseQS = function(li) {
+        const canImproveRollGroup = function(li) {
+            return canImproveRoll(li, true)
+        }
+        const canIncreaseQS = function(li, group = false) {
             let message = game.messages.get(li.attr("data-message-id"));
             if (message.data.speaker.actor && message.data.flags.data) {
                 let actor = game.actors.get(message.data.speaker.actor);
-                if (actor.isOwner && actor.data.data.status.fatePoints.value > 0) {
+                if (actor.isOwner && fateAvailable(actor, group)) {
                     if (!message.data.flags.data.fatePointAddQSUsed) {
                         return message.data.flags.data.postData.successLevel > 0 && message.data.flags.data.postData.qualityStep != undefined
                     }
@@ -63,6 +67,9 @@ export default function() {
             }
             return false;
         };
+        const canIncreaseQSGroup = function(li) {
+            return canIncreaseQS(li, true)
+        }
         const isTalented = function(li) {
             let message = game.messages.get(li.attr("data-message-id"));
             if (message.data.speaker.actor && message.data.flags.data) {
@@ -73,27 +80,34 @@ export default function() {
             }
             return false
         }
-        const canRerollDamage = function(li) {
+        const canRerollDamage = function(li, group = false) {
             let message = game.messages.get(li.attr("data-message-id"));
             if (message.data.speaker.actor && message.data.flags.data) {
                 let actor = game.actors.get(message.data.speaker.actor);
-                if (actor.isOwner && actor.data.data.status.fatePoints.value > 0) {
+                if (actor.isOwner && fateAvailable(actor, group)) {
                     return message.data.flags.data.postData.damageRoll != undefined && !message.data.flags.data.fatePointDamageRerollUsed;
                 }
             }
             return false
         };
-        const canReroll = function(li) {
+        const canRerollDamageGroup = function(li) {
+            return canReroll(li, true)
+        }
+        const canReroll = function(li, group = false) {
             let message = game.messages.get(li.attr("data-message-id"));
 
             if (message.data.speaker.actor && message.data.flags.data) {
                 let actor = game.actors.get(message.data.speaker.actor);
-                if (actor.isOwner && actor.data.data.status.fatePoints.value > 0) {
+                if (actor.isOwner && fateAvailable(actor, group)) {
                     return !message.data.flags.data.fatePointRerollUsed;
                 }
             }
             return false;
         };
+        const canRerollGroup = function(li) {
+            return canReroll(li, true)
+        }
+
         const canHeal = function(li) {
             let message = game.messages.get(li.attr("data-message-id"));
             if (message.data.speaker.actor && message.data.flags.data) {
@@ -120,97 +134,118 @@ export default function() {
             }
         }
 
-        const useFate = (li, mode) => {
+        const useFate = (li, mode, fateSource = 0) => {
             let message = game.messages.get(li.attr("data-message-id"));
-            game.actors.get(message.data.speaker.actor).useFateOnRoll(message, mode);
+            game.actors.get(message.data.speaker.actor).useFateOnRoll(message, mode, fateSource);
         }
 
         const applyDamage = async(li, mode) => {
-            let cardData = game.messages.get(li.attr("data-message-id")).data.flags.opposeData
-            let defenderSpeaker = cardData.speakerDefend;
-            let actor = DSA5_Utility.getSpeaker(defenderSpeaker)
+            const cardData = game.messages.get(li.attr("data-message-id")).data.flags.opposeData
+            const defenderSpeaker = cardData.speakerDefend;
+            const actor = DSA5_Utility.getSpeaker(defenderSpeaker)
 
             if (!actor.isOwner) return ui.notifications.error(game.i18n.localize("DSAError.DamagePermission"))
-
+            li.find('.hideAnchor').append(`<i class="fas fa-check" style="float:right" title="${game.i18n.localize("damageApplied")}"></i>`)
             await actor.applyDamage(cardData.damage[mode])
         }
 
         options.push({
-            name: game.i18n.localize("CHATCONTEXT.hideData"),
-            icon: '<i class="fas fa-eye"></i>',
-            condition: canHideData,
-            callback: (li) => { showHideData(li) }
-        }, {
-            name: game.i18n.localize("CHATCONTEXT.showData"),
-            icon: '<i class="fas fa-eye"></i>',
-            condition: canUnhideData,
-            callback: (li) => { showHideData(li) }
-        }, {
-            name: game.i18n.localize("regenerate"),
-            icon: '<i class="fas fa-user-plus"></i>',
-            condition: canHeal,
-            callback: li => {
-                let message = game.messages.get(li.attr("data-message-id"))
-                let actor = DSA5_Utility.getSpeaker(message.data.speaker)
-                if (!actor.isOwner)
-                    return ui.notifications.error(game.i18n.localize("DSAError.DamagePermission"))
+                name: game.i18n.localize("CHATCONTEXT.hideData"),
+                icon: '<i class="fas fa-eye"></i>',
+                condition: canHideData,
+                callback: (li) => { showHideData(li) }
+            }, {
+                name: game.i18n.localize("CHATCONTEXT.showData"),
+                icon: '<i class="fas fa-eye"></i>',
+                condition: canUnhideData,
+                callback: (li) => { showHideData(li) }
+            }, {
+                name: game.i18n.localize("regenerate"),
+                icon: '<i class="fas fa-user-plus"></i>',
+                condition: canHeal,
+                callback: li => {
+                    let message = game.messages.get(li.attr("data-message-id"))
+                    let actor = DSA5_Utility.getSpeaker(message.data.speaker)
+                    if (!actor.isOwner)
+                        return ui.notifications.error(game.i18n.localize("DSAError.DamagePermission"))
 
-                message.update({ "flags.data.healApplied": true });
-                const update = {
-                    "data.status.wounds.value": Math.min(actor.data.data.status.wounds.max, actor.data.data.status.wounds.value + (message.data.flags.data.postData.LeP || 0)),
-                    "data.status.karmaenergy.value": Math.min(actor.data.data.status.karmaenergy.max, actor.data.data.status.karmaenergy.value + (message.data.flags.data.postData.KaP || 0)),
-                    "data.status.astralenergy.value": Math.min(actor.data.data.status.astralenergy.max, actor.data.data.status.astralenergy.value + (message.data.flags.data.postData.AsP || 0))
+                    message.update({ "flags.data.healApplied": true });
+                    const update = {
+                        "data.status.wounds.value": Math.min(actor.data.data.status.wounds.max, actor.data.data.status.wounds.value + (message.data.flags.data.postData.LeP || 0)),
+                        "data.status.karmaenergy.value": Math.min(actor.data.data.status.karmaenergy.max, actor.data.data.status.karmaenergy.value + (message.data.flags.data.postData.KaP || 0)),
+                        "data.status.astralenergy.value": Math.min(actor.data.data.status.astralenergy.max, actor.data.data.status.astralenergy.value + (message.data.flags.data.postData.AsP || 0))
+                    }
+                    actor.update(update)
                 }
-                actor.update(update)
+            }, {
+                name: game.i18n.localize("CHATCONTEXT.ApplyMana"),
+                icon: '<i class="fas fa-user-minus"></i>',
+                condition: canCostMana,
+                callback: li => {
+                    let message = game.messages.get(li.attr("data-message-id"))
+                    let cardData = message.data.flags.data
+                    let actor = DSA5_Utility.getSpeaker(message.data.speaker)
+                    if (!actor.isOwner)
+                        return ui.notifications.error(game.i18n.localize("DSAError.DamagePermission"))
+                    actor.applyMana(cardData.preData.calculatedSpellModifiers.finalcost, ["ritual", "spell"].includes(cardData.preData.source.type) ? "AsP" : "KaP")
+                }
+            }, {
+                name: game.i18n.localize("CHATCONTEXT.ApplyDamage"),
+                icon: '<i class="fas fa-user-minus"></i>',
+                condition: canHurt,
+                callback: li => { applyDamage(li, "value") }
+            }, {
+                name: game.i18n.localize("CHATCONTEXT.ApplyDamageSP"),
+                icon: '<i class="fas fa-user-minus"></i>',
+                condition: canHurtSP,
+                callback: li => { applyDamage(li, "sp") }
+            }, {
+                name: game.i18n.localize("CHATCONTEXT.Reroll"),
+                icon: '<i class="fas fa-dice"></i>',
+                condition: canReroll,
+                callback: li => { useFate(li, "reroll") }
+            }, {
+                name: game.i18n.localize("CHATCONTEXT.RerollGroup"),
+                icon: '<i class="fas fa-dice"></i>',
+                condition: canRerollGroup,
+                callback: li => { useFate(li, "reroll", 1) }
+            }, {
+                name: game.i18n.localize("CHATCONTEXT.talentedReroll"),
+                icon: '<i class="fas fa-dice"></i>',
+                condition: isTalented,
+                callback: li => { useFate(li, "isTalented") }
+            }, {
+                name: game.i18n.localize("CHATCONTEXT.AddQS"),
+                icon: '<i class="fas fa-plus-square"></i>',
+                condition: canIncreaseQS,
+                callback: li => { useFate(li, "addQS") }
+            }, {
+                name: game.i18n.localize("CHATCONTEXT.AddQSGroup"),
+                icon: '<i class="fas fa-plus-square"></i>',
+                condition: canIncreaseQSGroup,
+                callback: li => { useFate(li, "addQS", 1) }
+            }, {
+                name: game.i18n.localize("CHATCONTEXT.rerollDamage"),
+                icon: '<i class="fas fa-dice"></i>',
+                condition: canRerollDamage,
+                callback: li => { useFate(li, "rerollDamage") }
+            }, {
+                name: game.i18n.localize("CHATCONTEXT.rerollDamageGroup"),
+                icon: '<i class="fas fa-dice"></i>',
+                condition: canRerollDamageGroup,
+                callback: li => { useFate(li, "rerollDamage", 1) }
+            }, {
+                name: game.i18n.localize("CHATCONTEXT.improveFate"),
+                icon: '<i class="fas fa-plus-square"></i>',
+                condition: canImproveRoll,
+                callback: li => { useFate(li, "Improve") }
+            }, {
+                name: game.i18n.localize("CHATCONTEXT.improveFateGroup"),
+                icon: '<i class="fas fa-plus-square"></i>',
+                condition: canImproveRollGroup,
+                callback: li => { useFate(li, "Improve", 1) }
             }
-        }, {
-            name: game.i18n.localize("CHATCONTEXT.ApplyMana"),
-            icon: '<i class="fas fa-user-minus"></i>',
-            condition: canCostMana,
-            callback: li => {
-                let message = game.messages.get(li.attr("data-message-id"))
-                let cardData = message.data.flags.data
-                let actor = DSA5_Utility.getSpeaker(message.data.speaker)
-                if (!actor.isOwner)
-                    return ui.notifications.error(game.i18n.localize("DSAError.DamagePermission"))
-                actor.applyMana(cardData.preData.calculatedSpellModifiers.finalcost, ["ritual", "spell"].includes(cardData.preData.source.type) ? "AsP" : "KaP")
-            }
-        }, {
-            name: game.i18n.localize("CHATCONTEXT.ApplyDamage"),
-            icon: '<i class="fas fa-user-minus"></i>',
-            condition: canHurt,
-            callback: li => { applyDamage(li, "value") }
-        }, {
-            name: game.i18n.localize("CHATCONTEXT.ApplyDamageSP"),
-            icon: '<i class="fas fa-user-minus"></i>',
-            condition: canHurtSP,
-            callback: li => { applyDamage(li, "sp") }
-        }, {
-            name: game.i18n.localize("CHATCONTEXT.Reroll"),
-            icon: '<i class="fas fa-dice"></i>',
-            condition: canReroll,
-            callback: li => { useFate(li, "reroll") }
-        }, {
-            name: game.i18n.localize("CHATCONTEXT.talentedReroll"),
-            icon: '<i class="fas fa-dice"></i>',
-            condition: isTalented,
-            callback: li => { useFate(li, "isTalented") }
-        }, {
-            name: game.i18n.localize("CHATCONTEXT.AddQS"),
-            icon: '<i class="fas fa-plus-square"></i>',
-            condition: canIncreaseQS,
-            callback: li => { useFate(li, "addQS") }
-        }, {
-            name: game.i18n.localize("CHATCONTEXT.rerollDamage"),
-            icon: '<i class="fas fa-dice"></i>',
-            condition: canRerollDamage,
-            callback: li => { useFate(li, "rerollDamage") }
-        },
-        {
-            name: game.i18n.localize("CHATCONTEXT.improveFate"),
-            icon: '<i class="fas fa-plus-square"></i>',
-            condition: canImproveRoll,
-            callback: li => { useFate(li, "Improve") }
-        })
+
+        )
     })
 }

@@ -69,7 +69,7 @@ export default class DSA5Initializer extends Dialog {
                     }
 
                 }
-                let createdEntries = await JournalEntry.create(entries.toObject())
+                let createdEntries = await JournalEntry.create(entries.toObject(), { keepId: true })
                 for (let entry of createdEntries) {
                     this.journals[entry.data.name] = entry;
                 }
@@ -80,7 +80,7 @@ export default class DSA5Initializer extends Dialog {
                 for (let k of json.items)
                     k.folder = head.id
 
-                await Itemdsa5.create(json.items)
+                await Itemdsa5.create(json.items, { keepId: true })
             }
             if (json.scenes) {
                 let head = await this.getFolderForType("Scene")
@@ -95,7 +95,7 @@ export default class DSA5Initializer extends Dialog {
                         try {
                             let journ = journs.find(x => x.flags.dsa5.initId == n.entryId)
                             journ.folder = journHead.id
-                            let createdEntries = await JournalEntry.create(journ)
+                            let createdEntries = await JournalEntry.create(journ, { keepId: true })
                             n.entryId = createdEntries.id
                         } catch (e) {
                             console.warn("Could not initialize Scene Notes" + e)
@@ -122,7 +122,7 @@ export default class DSA5Initializer extends Dialog {
                 for (let entry of entries) {
                     entry.folder = head.id
                 }
-                let createdEntries = await Actor.create(entries)
+                let createdEntries = await Actor.create(entries, { keepId: true })
                 for (let entry of createdEntries) {
                     this.actors[entry.data.name] = entry;
                 }

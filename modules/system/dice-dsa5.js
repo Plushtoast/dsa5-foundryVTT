@@ -216,27 +216,30 @@ export default class DiceDSA5 {
 
 
     static rollRegeneration(testData) {
-        this._appendSituationalModifiers(testData, game.i18n.localize("manual"), testData.testModifier)
-        let modifier = this._situationalModifiers(testData);
-        let roll = testData.roll
-        let chars = []
 
-        let result = {
-            rollType: "regenerate",
-            preData: testData,
-            modifiers: modifier,
-            extra: {}
-        }
+            this._appendSituationalModifiers(testData, game.i18n.localize("manual"), testData.testModifier)
+            let modifier = this._situationalModifiers(testData);
+            let roll = testData.roll
+            let chars = []
 
-        let attrs = ["LeP"]
-        if (testData.extra.actor.isMage) attrs.push("AsP")
-        if (testData.extra.actor.isPriest) attrs.push("KaP")
-        let index = 0
+            let result = {
+                rollType: "regenerate",
+                preData: testData,
+                modifiers: modifier,
+                extra: {}
+            }
 
-        for (let k of attrs) {
-            this._appendSituationalModifiers(testData, game.i18n.localize(`LocalizedIDs.regeneration${k}`), AdvantageRulesDSA5.vantageStep(testData.extra.actor, game.i18n.localize(`LocalizedIDs.regeneration${k}`)), k)
-            this._appendSituationalModifiers(testData, game.i18n.localize(`LocalizedIDs.weakRegeneration${k}`), AdvantageRulesDSA5.vantageStep(testData.extra.actor, game.i18n.localize(`LocalizedIDs.weakRegeneration${k}`)) * -1, k)
-            this._appendSituationalModifiers(testData, game.i18n.localize(`LocalizedIDs.advancedRegeneration${k}`), SpecialabilityRulesDSA5.abilityStep(testData.extra.actor, game.i18n.localize(`LocalizedIDs.advancedRegeneration${k}`)), k)
+            let attrs = ["LeP"]
+            if (testData.extra.actor.isMage) attrs.push("AsP")
+            if (testData.extra.actor.isPriest) attrs.push("KaP")
+            let index = 0
+
+            for (let k of attrs) {
+                this._appendSituationalModifiers(testData, game.i18n.localize(`LocalizedIDs.regeneration${k}`), AdvantageRulesDSA5.vantageStep(testData.extra.actor, game.i18n.localize(`LocalizedIDs.regeneration${k}`)), k)
+                this._appendSituationalModifiers(testData, game.i18n.localize(`LocalizedIDs.weakRegeneration${k}`), AdvantageRulesDSA5.vantageStep(testData.extra.actor, game.i18n.localize(`LocalizedIDs.weakRegeneration${k}`)) * -1, k)
+                this._appendSituationalModifiers(testData, game.i18n.localize(`LocalizedIDs.advancedRegeneration${k}`), SpecialabilityRulesDSA5.abilityStep(testData.extra.actor, game.i18n.localize(`LocalizedIDs.advancedRegeneration${k}`)), k)
+                this._appendSituationalModifiers(testData, `${game.i18n.localize(`CHARAbbrev.${k}`)} ${game.i18n.localize('Modifier')}`, testData[`${k}Modifier`], k)
+                this._appendSituationalModifiers(testData, `${game.i18n.localize(`CHARAbbrev.${k}`)} ${game.i18n.localize('regenerate')}`, testData[`regeneration${k}`], k)
 
             chars.push({ char: k, res: roll.terms[index].results[0].result, die: "d6" })
             result[k] = Math.round(Math.max(0, Number(roll.terms[index].results[0].result) + Number(modifier) + this._situationalModifiers(testData, k)) * Number(testData.regenerationFactor))
@@ -415,9 +418,9 @@ export default class DiceDSA5 {
             await DiceDSA5.evaluateDamage(testData, result, source, source.data.traitType.value == "rangeAttack", doubleDamage)
         }
         result["rollType"] = "weapon"
-        let effect = DiceDSA5.parseEffect(source.data.effect.value)
-        if (effect)
-            result["parsedEffect"] = effect
+        const effect = DiceDSA5.parseEffect(source)
+        if (effect) result["parsedEffect"] = effect
+
         return result
     }
 
@@ -582,7 +585,7 @@ export default class DiceDSA5 {
             await DiceDSA5.evaluateDamage(testData, result, weapon, source.type == "rangeweapon", doubleDamage)
 
         result["rollType"] = "weapon"
-        let effect = DiceDSA5.parseEffect(weapon.data.effect ? weapon.data.effect.value : "")
+        const effect = DiceDSA5.parseEffect(weapon)
 
         if (effect) result["parsedEffect"] = effect
 
@@ -710,20 +713,22 @@ export default class DiceDSA5 {
         return roll
     }
 
-    static parseEffect(effectString) {
-        if (!effectString)
-            return ""
-
-        let regex = /^[a-z]+\|[öäüÖÄÜa-zA-z ]+$/
-        let result = []
-        for (let k of effectString.split(";")) {
-            if (regex.test(k.trim())) {
-                let split = k.split("|")
-                result.push(`<a class="roll-button roll-item" data-name="${split[1].trim()}" data-type="${split[0].trim()}"><i class="fas fa-dice"></i>${game.i18n.localize(split[0].trim())}: ${split[1].trim()}</a>`)
+    static parseEffect(source) {
+        const effectString = source.data.effect ? source.data.effect.value : undefined
+        const result = []
+        if (effectString){
+            const regex = /^[a-z]+\|[öäüÖÄÜa-zA-z ]+$/
+            
+            for (let k of effectString.split(";")) {
+                if (regex.test(k.trim())) {
+                    let split = k.split("|")
+                    result.push(`<a class="roll-button roll-item" data-name="${split[1].trim()}" data-type="${split[0].trim()}"><i class="fas fa-dice"></i>${game.i18n.localize(split[0].trim())}: ${split[1].trim()}</a>`)
+                }
             }
-            /*else {
-                           result.push(k)
-                       }*/
+        }
+        if(source.flags && source.flags.dsa5 && source.flags.dsa5.poison){
+            const poison = source.flags.dsa5.poison
+            result.push(`<a class="roll-button roll-item" data-removecharge="${!poison.permanent}" data-name="${poison.name}" data-type="poison"><i class="fas fa-dice"></i>${game.i18n.localize("poison")}: ${poison.name}</a>`)
         }
         return result.join(", ")
     }
@@ -742,7 +747,7 @@ export default class DiceDSA5 {
         }
 
         if (res.successLevel < 0) {
-            res.preData.calculatedSpellModifiers.finalcost = Math.round(res.preData.calculatedSpellModifiers.cost / (SpecialabilityRulesDSA5.hasAbility(testData.extra.actor, game.i18n.localize('LocalizedIDs.traditionWitch')) ? 3 : 2))
+            res.preData.calculatedSpellModifiers.finalcost = Math.round(res.preData.calculatedSpellModifiers.cost / (SpecialabilityRulesDSA5.hasAbility(testData.extra.actor, game.i18n.localize('LocalizedIDs.traditionWitch')) || SpecialabilityRulesDSA5.hasAbility(testData.extra.actor, game.i18n.localize('LocalizedIDs.traditionFjarning')) ? 3 : 2))
         } else {
             if (testData.source.data.effectFormula.value != "") {
                 let formula = testData.source.data.effectFormula.value.replace(game.i18n.localize('CHARAbbrev.QS'), res.qualityStep).replace(/[Ww]/g, "d")
@@ -970,8 +975,11 @@ export default class DiceDSA5 {
         return Math.min(0, DSA5.meleeRangesArray.indexOf(weapon.data.reach.value) - DSA5.meleeRangesArray.indexOf(testData.opposingWeaponSize)) * 2
     }
 
+    
+
     static async rollDices(testData, cardOptions) {
         if (!testData.roll) {
+            const d3dColors = game.dsa5.apps.DiceSoNiceCustomization
             let roll;
             switch (testData.source.type) {
                 case "liturgy":
@@ -979,12 +987,13 @@ export default class DiceDSA5 {
                 case "ceremony":
                 case "ritual":
                 case "skill":
-                    roll = await new Roll(`1d20[${testData.source.data.characteristic1.value}]+1d20[${testData.source.data.characteristic2.value}]+1d20[${testData.source.data.characteristic3.value}]`).evaluate({ async: true });
+                    roll = await new Roll(`1d20[${d3dColors.getDiceSoNiceColor(testData.source.data.characteristic1.value)}]+1d20[${d3dColors.getDiceSoNiceColor(testData.source.data.characteristic2.value)}]+1d20[${d3dColors.getDiceSoNiceColor(testData.source.data.characteristic3.value)}]`).evaluate({ async: true });
                     break;
                 case "regenerate":
-                    let rollstring = "1d6[mu]"
-                    if (testData.extra.actor.isMage) rollstring += "+1d6[ge]"
-                    if (testData.extra.actor.isPriest) rollstring += "+1d6[in]"
+                    const leDie = game.settings.get("dsa5", "lessRegeneration") ? "1d3" : "1d6"
+                    let rollstring = `${leDie}[${d3dColors.getDiceSoNiceColor("mu")}]`
+                    if (testData.extra.actor.isMage) rollstring += `+1d6[${d3dColors.getDiceSoNiceColor("ge")}]`
+                    if (testData.extra.actor.isPriest) rollstring += `+1d6[${d3dColors.getDiceSoNiceColor("in")}]`
                     roll = await new Roll(rollstring).evaluate({ async: true })
                     break;
                 case "meleeweapon":
@@ -997,17 +1006,18 @@ export default class DiceDSA5 {
                         for (let i = 0; i < roll.dice.length; i++) roll.dice[i].options.colorset = "black"
 
                     } else
-                        roll = await new Roll(`1d20[${testData.mode}]`).evaluate({ async: true })
+                        roll = await new Roll(`1d20[${d3dColors.getDiceSoNiceColor(testData.mode)}]`).evaluate({ async: true })
                     break;
                 case "dodge":
-                    roll = await new Roll("1d20[in]").evaluate({ async: true });
+                    roll = await new Roll(`1d20[${d3dColors.getDiceSoNiceColor("dodge")}]`).evaluate({ async: true });
                     break;
                 case "poison":
                 case "disease":
-                    roll = await new Roll("1d20[in]+1d20[in]+1d20[in]").evaluate({ async: true });
+                    let pColor = d3dColors.getDiceSoNiceColor("in")
+                    roll = await new Roll(`1d20[${pColor}]+1d20[${pColor}]+1d20[${pColor}]`).evaluate({ async: true });
                     break
                 default:
-                    roll = await new Roll(`1d20[${testData.source.data.label.split('.')[1].toLowerCase()}]`).evaluate({ async: true });
+                    roll = await new Roll(`1d20[${d3dColors.getDiceSoNiceColor(testData.source.data.label.split('.')[1].toLowerCase())}]`).evaluate({ async: true });
             }
             roll = await DiceDSA5.manualRolls(roll, testData.source.type, testData.extra.options)
             this.showDiceSoNice(roll, cardOptions.rollMode);
@@ -1074,8 +1084,7 @@ export default class DiceDSA5 {
             preData,
             hideDamage,
             modifierList: preData.situationalModifiers.filter(x => x.value != 0),
-            applyEffect,
-            expandModifiers: game.settings.get("dsa5", "expandChatModifierlist")
+            applyEffect
         }
 
         if (preData.advancedModifiers) {
@@ -1322,10 +1331,22 @@ export default class DiceDSA5 {
             //    actor = new Actordsa5(message.data.flags.data.preData.extra.actor, { temporary: true })
 
         if (actor) {
-            let item = actor.data.items.find(x => x.name == name && x.type == category)
-            if (item) {
-                item = new Itemdsa5(item.toObject(), { temporary: true })
-                item.setupEffect().then(setupData => { item.itemTest(setupData) });
+            const source = actor.data.items.find(x => x.name == name && x.type == category)
+            if (source) {
+                const item = new Itemdsa5(source.toObject(), { temporary: true })
+                const removeCharge = input.attr("data-removecharge") ? input.attr("data-removecharge") == "true" : false
+                if(removeCharge){
+                    if(item.data.data.quantity.value < 1){
+                        ui.notifications.error(game.i18n.localize("DSAError.NotEnoughCharges"))
+                        return
+                    }
+                }
+                
+                item.setupEffect().then(async(setupData) => { 
+                    await item.itemTest(setupData) 
+                    if(removeCharge)
+                        await source.update({"data.quantity.value": source.data.data.quantity.value - 1})
+                });
             } else {
                 ui.notifications.error(game.i18n.format("DSAError.notFound", { category: category, name: name }))
             }

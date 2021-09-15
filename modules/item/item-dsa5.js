@@ -53,6 +53,7 @@ export default class Itemdsa5 extends Item {
         "disadvantageanimal": "systems/dsa5/icons/categories/NachteilAnimal.webp",
         "advantageanimal": "systems/dsa5/icons/categories/VorteilAnimal.webp",
         "diseaseanimal": "systems/dsa5/icons/categories/diseaseAnimal.webp",
+        "effectwrapper": "icons/svg/aura.svg"
     }
 
     static defaultIcon(data) {
@@ -113,7 +114,8 @@ export default class Itemdsa5 extends Item {
             skill: SkillItemDSA5,
             consumable: ConsumableItemDSA,
             spellextension: SpellextensionItemDSA5,
-            species: SpeciesItemDSA5
+            species: SpeciesItemDSA5,
+            effectwrapper: EffectWrapperItemDSA5
         }
     }
 
@@ -462,6 +464,14 @@ class AmmunitionItemDSA5 extends Itemdsa5 {
     }
 }
 
+class EffectWrapperItemDSA5 extends Itemdsa5 {
+    static chatData(data, name) {
+        return [
+
+        ]
+    }
+}
+
 class ArmorItemDSA5 extends Itemdsa5 {
     static chatData(data, name) {
         let properties = [
@@ -574,10 +584,11 @@ class SpellItemDSA5 extends Itemdsa5 {
         situationalModifiers.push(...AdvantageRulesDSA5.getVantageAsModifier(actor.data, game.i18n.localize('LocalizedIDs.boundToArtifact'), -1, true))
         situationalModifiers.push(...this.getPropertyFocus(actor, source))
 
-        situationalModifiers.push(...actor.getSkillModifier(source.name))
+        situationalModifiers.push(...actor.getSkillModifier(source.name, source.type))
         for (const thing of actor.data.data.skillModifiers.global) {
             situationalModifiers.push({ name: thing.source, value: thing.value })
         }
+
 
         this.getSkZkModifier(data)
     }
@@ -1306,7 +1317,7 @@ class SkillItemDSA5 extends Itemdsa5 {
     static getSituationalModifiers(situationalModifiers, actor, data, source) {
         situationalModifiers.push(...ItemRulesDSA5.getTalentBonus(actor.data, source.name, ["advantage", "disadvantage", "specialability", "equipment"]))
 
-        situationalModifiers.push(...actor.getSkillModifier(source.name))
+        situationalModifiers.push(...actor.getSkillModifier(source.name, source.type))
         for (const thing of actor.data.data.skillModifiers.global) {
             situationalModifiers.push({ name: thing.source, value: thing.value })
         }

@@ -1,17 +1,55 @@
 <form class="skill-test">
+    <div class="row-section">
+        <div class="col fourty"></div>
+        <div class="row-section col sixty">
+            <div class="col">
+
+            </div>
+            <div class="col center">
+                {{localize 'CHARAbbrev.LeP'}}
+            </div>
+            {{#if showAspModifier}}
+            <div class="col center">
+                {{localize 'CHARAbbrev.AsP'}}
+            </div>
+            {{/if}}{{#if showKapModifier}}
+            <div class="col center">
+                {{localize 'CHARAbbrev.KaP'}}
+            </div>
+            {{/if}}
+        </div>
+    </div>
+
     <div class="form-group">
         <label>{{localize "Modifier"}}</label>
-        <input class="quantity-click" type="number" name="testModifier" value="{{testModifier}}" />
+        <div class="row-section">
+            <div class="col">
+                <input class="quantity-click" type="number" name="testModifier" value="{{testModifier}}" />
+            </div>
+            <div class="col">
+                <input class="quantity-click" type="number" name="lepModifier" value="0" />
+            </div>
+            {{#if showAspModifier}}
+            <div class="col">
+                <input class="quantity-click" type="number" name="aspModifier" value="0" />
+            </div>
+            {{/if}} {{#if showKapModifier}}
+            <div class="col">
+                <input class="quantity-click" type="number" name="kapModifier" value="0" />
+            </div>
+            {{/if}}
+        </div>
+
     </div>
 
     <div class="form-group custom-select">
         <label>{{localize "DIALOG.RollMode"}}</label>
         <select name="rollMode">
-      {{#select rollMode}}
-      {{#each rollModes as |label mode|}}
-      <option value="{{mode}}">{{localize label}}</option>
-      {{/each}}
-      {{/select}}
+        {{#select rollMode}}
+        {{#each rollModes as |label mode|}}
+        <option value="{{mode}}">{{localize label}}</option>
+        {{/each}}
+        {{/select}}
     </select>
     </div>
 

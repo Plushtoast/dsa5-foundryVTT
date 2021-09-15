@@ -3,6 +3,11 @@ export default class DialogShared extends Dialog {
 
     recallSettings(speaker, source, mode) {
         this.recallData = game.dsa5.memory.recall(speaker, source, mode)
+        this.dialogData = {
+            mode,
+            speaker,
+            source
+        }
         return this
     }
 

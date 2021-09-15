@@ -421,6 +421,10 @@ export default class ActorSheetDsa5 extends ActorSheet {
             $(ev.currentTarget).closest(".groupbox").find('.row-section:nth-child(2)').fadeToggle()
         })
 
+        html.find('.collapseField').click(ev => {
+            $(`.${$(ev.currentTarget).attr("data-target")}`).fadeToggle()
+        })
+
         html.find('.item-toggle').click(ev => {
             const itemId = this._getItemId(ev);
             let item = duplicate(this.actor.getEmbeddedDocument("Item", itemId))
@@ -978,6 +982,9 @@ export default class ActorSheetDsa5 extends ActorSheet {
             case "spell":
                 await this._addSpellOrLiturgy(item)
                 break;
+            case "effectwrapper":
+                await this._handleEffectWrapper(item)
+                break
             case "lookup":
                 await this._handleLookup(item)
                 break
@@ -1005,8 +1012,15 @@ export default class ActorSheetDsa5 extends ActorSheet {
         }
     }
 
+    async _handleEffectWrapper(item) {
+        this.actor.createEmbeddedDocuments("ActiveEffect", item.effects.map(x => {
+            x.origin = null
+            return x
+        }))
+    }
+
     async _handleLookup(item) {
-        let lookup = await (await DSA5_Utility.findAnyItem(item.items)).map(x => x.toObject())
+        let lookup = (await DSA5_Utility.findAnyItem(item.items)).map(x => x.toObject())
         if (lookup) {
             for (let thing of item.items) {
                 if (thing.count) {

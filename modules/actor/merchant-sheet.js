@@ -12,16 +12,19 @@ export default class MerchantSheetDSA5 extends ActorSheetdsa5NPC {
     }
 
     get template() {
-        if (this.showLimited() || (this.playerViewEnabled() && ["merchant", "loot"].includes(getProperty(this.actor.data.data, "merchant.merchantType")))) {
+        if (this.showLimited() || (this.playerViewEnabled() && ["merchant", "loot", "epic"].includes(getProperty(this.actor.data.data, "merchant.merchantType")))) {
             switch (getProperty(this.actor.data.data, "merchant.merchantType")) {
                 case "merchant":
                     return "systems/dsa5/templates/actors/merchant/merchant-limited.html";
                 case "loot":
                     return "systems/dsa5/templates/actors/merchant/merchant-limited-loot.html";
+                case "epic":
+                    return "systems/dsa5/templates/actors/merchant/merchant-epic.html";
                 default:
                     return super.template
             }
         }
+
         return "systems/dsa5/templates/actors/merchant/merchant-sheet.html";
     }
 
@@ -64,6 +67,7 @@ export default class MerchantSheetDSA5 extends ActorSheetdsa5NPC {
             });
             ims.on('dragstart', null)
         }
+
     }
 
     playerViewEnabled() {
@@ -276,8 +280,13 @@ export default class MerchantSheetDSA5 extends ActorSheetdsa5NPC {
     async getData(options) {
         const data = await super.getData(options);
         data["merchantType"] = getProperty(this.actor.data.data, "merchant.merchantType") || "none"
-        data["invName"] = { none: game.i18n.localize("equipment"), merchant: game.i18n.localize("MERCHANT.typeMerchant"), loot: game.i18n.localize("MERCHANT.typeLoot") }[data["merchantType"]]
-        data["merchantTypes"] = { none: game.i18n.localize("MERCHANT.typeNone"), merchant: game.i18n.localize("MERCHANT.typeMerchant"), loot: game.i18n.localize("MERCHANT.typeLoot") }
+        data["merchantTypes"] = {
+            none: game.i18n.localize("MERCHANT.typeNone"),
+            merchant: game.i18n.localize("MERCHANT.typeMerchant"),
+            loot: game.i18n.localize("MERCHANT.typeLoot"),
+            epic: game.i18n.localize("MERCHANT.typeEpic")
+        }
+        data["invName"] = data["merchantTypes"][data["merchantType"]]
         data["players"] = game.users.filter(x => !x.isGM).map(x => {
             x.allowedMerchcant = this.actor.testUserPermission(x, "LIMITED", false)
             return x

@@ -197,6 +197,7 @@
     "culture": "Kultur",
     "count": "Anzahl",
     "cost": "Kosten",
+
     "charges": "Ladungen",
     "cancel": "Abbrechen",
     "combatskillcountdivider": "aus",
@@ -227,6 +228,7 @@
     "dart": "Blasrohrpfeil",
     "distribution": "Verbreitung",
     "distance": "Entfernung",
+    "damageApplied": "Schaden wurde übertragen",
     "Delete Confirmation": "Löschen bestätigen",
     "dodge": "Ausweichen",
     "disease": "Krankheit",
@@ -239,6 +241,7 @@
     "enchantment": "Verzauberung",
     "energyfactor": "Leiteig. Multiplikator",
     "effectResult": "Effektergebnis",
+    "effectwrapper": "Effektcontainer",
     "effectFormula": "Effektformel",
     "equipmentType": "Ausrüstungskategorie",
     "extensions": "Erweiterungen",
@@ -417,6 +420,7 @@
     "specialRules": "Sonderregeln",
     "tradition": "Tradition",
     "searchTalents": "Talente durchsuchen",
+    "skillglobal": "Talent (global)",
     "spellextension": "Zauber/Liturgieerweiterung",
     "defense": "Verteidigung",
     "defenseToggle": "Verteidigung aktivieren/deaktivieren",
@@ -698,7 +702,8 @@
         "switchLimited": "Begrenzte Ansicht umschalten (Spieleransicht)",
         "import": "Importieren",
         "actorConfig": "Akteur konfigurieren",
-        "weightOnActor": "Wird vom Akteur getragen"
+        "weightOnActor": "Wird vom Akteur getragen",
+        "tempRegeneration": "Temporär, wird bei Regenerationswurf verbraucht."
     },
     "ITEMSHEET": {
         "offHandMod": "Bonus/Malus als Nebenhand (z.b. Parierwaffe)"
@@ -803,6 +808,7 @@
     "ITEM.TypeConsumable": "Verbrauchsgegenstand",
     "ITEM.TypeSpellextension": "Zauber/Liturgieerweiterung",
     "ITEM.TypeApplication": "Anwendungsgebiet",
+    "ITEM.TypeEffectwrapper": "Effektcontainer",
     "ACTOR.TypeCharacter": "Charakter",
     "ACTOR.TypeNpc": "Nichtspielercharakter",
     "ACTOR.TypeCreature": "Kreatur",
@@ -916,6 +922,8 @@
         "magicalRestriction": "Magische Einschränkung",
         "magicalAttunement": "Magische Einstimmung",
         "traditionWitch": "Tradition (Hexen)",
+        "traditionKor": "Tradition (Korkirche)",
+        "traditionFjarning": "Tradition (Fjarningerschamanen)",
         "inuredToEncumbrance": "Belastungsgewöhnung",
         "quickload": "Schnellladen",
         "automaticSuccess": "Automatischer Erfolg",
@@ -948,7 +956,9 @@
         "obligations": "Verpflichtungen",
         "afraidOf": "Angst vor",
         "principles": "Prinzipientreue",
-        "skillSpecialization": "Fertigkeitsspezialisierung"
+        "skillSpecialization": "Fertigkeitsspezialisierung",
+        "crossbows": "Armbrüste",
+        "gambling": "Zechen"
     },
     "DSAError": {
         "MacroItemMissing": "Dein Charakter hat kein Item namens {item}. Stelle sicher, dass dir entweder ein Charakter zugeordnet ist oder du einen Token für den Wurf markierst.",
@@ -1068,6 +1078,10 @@
     },
     "CHATCONTEXT": {
         "Reroll": "Wurf wiederholen (1 Schip)",
+        "RerollGroup": "Wurf wiederholen (1 Gruppenschip)",
+        "AddQSGroup": "QS um eins erhöhen (1 Gruppenschip)",
+        "rerollDamageGroup": "Schadenswurf wiederholen (1 Gruppenschip)",
+        "improveFateGroup": "Wurf verbessern (1 Gruppenschip)",
         "AddQS": "QS um eins erhöhen (1 Schip)",
         "rerollDamage": "Schadenswurf wiederholen (1 Schip)",
         "ApplyDamage": "Schaden anwenden als TP",
@@ -1125,7 +1139,9 @@
         "expandChatModifierlist": "Modifikatoren Liste ausgeklappt",
         "expandChatModifierlistHint": "Zeige die Modifikatorenliste im Chat immer ausgeklappt.",
         "inventorySound": "Inventar Geräusche",
-        "inventorySoundHint": "Aktiviere Interface Geräusche im Inventar (benötigt game audio bundles)"
+        "inventorySoundHint": "Aktiviere Interface Geräusche im Inventar (benötigt game audio bundles)",
+        "lessRegeneration": "Weniger Regeneration",
+        "lessRegenerationHint": "Regeneration von LeP nur mit 1W3"
     },
     "COMBATTRACKER": {
         "noDefenses": "Anzahl Verteidigungen",
@@ -1137,6 +1153,7 @@
         "rerollDamage": "{character} würfelt erneut.",
         "addQS": "{character} erhöht die Qualitätsstufe.",
         "PointsRemaining": "Verbleibende Schicksalspunkte",
+        "GroupPointsRemaining": "Verbleibende Gruppenschicksalspunkte",
         "isTalented": "{character} benutzt Begabung.",
         "selectDice": "Wurf wiederholen",
         "selectDieToReroll": "Wähle die zu wiederholenden Würfel",

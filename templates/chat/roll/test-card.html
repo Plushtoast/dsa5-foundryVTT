@@ -16,8 +16,8 @@
 <div class="card-content chatModifiers">
     <b>{{localize "Modifiers"}}</b>: <span class="display-toggle">{{testData.modifiers}}</span>
     <input type="number" data-edit-type="mod" value="{{testData.modifiers}}" style="display:none;" class="display-toggle roll-edit" /> {{#if modifierList}}
-    <a class="expand-mods"><i class="fas {{#if expandModifiers}}fa-minus{{else}}fa-plus{{/if}}"></i></a>
-    <ul {{#if expandModifiers}}style="display:block" {{/if}}>
+    <a class="expand-mods"><i class="fas fa-plus"></i></a>
+    <ul>
         {{#each modifierList as |item i|}}
         <li>{{item.name}}: {{item.value}}{{#if item.type}} {{localize (concat 'CHARAbbrev.' item.type)}}{{/if}}</li>
         {{/each}}

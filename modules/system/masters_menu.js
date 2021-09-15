@@ -147,7 +147,13 @@ class GameMasterMenu extends Application {
             ev.stopPropagation(ev)
             $(ev.currentTarget).find('.expandDetails').fadeToggle()
         })
-        html.find('.schip').click(ev => {
+        html.find('.addGroupSchip').click(async(ev) => {
+            await this.changeGroupSchipCount(Number($(ev.currentTarget).attr("data-value")))
+        })
+        html.find('.groupschip').click(ev => {
+            this.changeGroupSchip(ev)
+        })
+        html.find('.heroschip').click(ev => {
             ev.stopPropagation()
             ev.preventDefault()
             let val = Number(ev.currentTarget.getAttribute("data-val"))
@@ -163,6 +169,26 @@ class GameMasterMenu extends Application {
         for (let elem of this.randomCreation) {
             elem.activateListeners(html)
         }
+    }
+
+    getGroupSchipSetting() {
+        return game.settings.get("dsa5", "groupschips").split("/").map(x => Number(x))
+    }
+
+    async changeGroupSchipCount(value) {
+        const schipSetting = this.getGroupSchipSetting()
+        schipSetting[1] = Math.max(0, schipSetting[1] + value)
+        schipSetting[0] = Math.min(schipSetting[1], schipSetting[0])
+        await game.settings.set("dsa5", "groupschips", schipSetting.join("/"))
+    }
+
+    async changeGroupSchip(ev) {
+        let val = Number(ev.currentTarget.getAttribute("data-val"))
+        if (val == 1 && $(ev.currentTarget).closest('.col').find(".fullSchip").length == 1) val = 0
+
+        const schipSetting = this.getGroupSchipSetting()
+        schipSetting[0] = val
+        await game.settings.set("dsa5", "groupschips", schipSetting.join("/"))
     }
 
     async randomPlayer(html, ev) {
@@ -312,6 +338,15 @@ class GameMasterMenu extends Application {
     async getData(options) {
         const data = await super.getData(options);
         const heros = game.actors.filter(x => x.hasPlayerOwner)
+        const schipSetting = this.getGroupSchipSetting()
+        let groupschips = []
+        for (let i = 1; i <= schipSetting[1]; i++) {
+            groupschips.push({
+                value: i,
+                cssClass: i <= schipSetting[0] ? "fullSchip" : "emptySchip"
+            })
+        }
+
         this.heros = heros
         for (const hero of heros) {
             hero.gmSelected = this.selected[hero.id]
@@ -334,6 +369,7 @@ class GameMasterMenu extends Application {
         mergeObject(data, {
             heros,
             skills,
+            groupschips,
             lastSkill: this.lastSkill,
             randomCreation: this.randomCreation.map(x => x.template)
         })

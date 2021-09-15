@@ -1027,10 +1027,19 @@ form.dsa5.item-sheet {
     position: relative;
 }
 
+#dice-config .window-content {
+    position: unset;
+}
+
 .window-app .window-resizable-handle {
     z-index: 2;
     bottom: 11px;
     right: 25px;
+}
+
+#client-settings section.content .settings-list {
+    overflow-y: hidden;
+    max-height: max-content;
 }
 
 .window-app .window-header .window-title {
@@ -2276,6 +2285,30 @@ select.noAppearance {
 .adventureWizard .toc {
     list-style-type: none;
     padding-left: 8px;
+}
+
+.tocCollapsing.expanded .col.three {
+    flex: 20px;
+}
+
+.tocCollapsing.expanded .col.three * {
+    display: none;
+}
+
+.tocCollapsing.expanded .col.seventy {
+    flex: calc(100% - 20px);
+}
+
+.tocCollapserBox {
+    position: relative;
+    height: 0;
+}
+
+.tocCollapser {
+    position: absolute;
+    top: 30px;
+    left: -5px;
+    font-size: 10px;
 }
 
 .getChapter.selected,

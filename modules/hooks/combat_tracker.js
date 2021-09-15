@@ -13,13 +13,15 @@ export class DSA5CombatTracker extends CombatTracker {
 
         const combatants = html.find('.combatant.actor')
         combatants.prepend(`<div class="aggroButton specImg" title="${game.i18n.localize('attacktest')}"></div>`)
-        combatants.find('.aggroButton').click(ev => {
+        const aggroButtons = combatants.find('.aggroButton')
+        aggroButtons.click(ev => {
             ev.preventDefault()
             ev.stopPropagation()
             const combatant = game.combat.combatant
             if (game.user.isGM || combatant.isOwner)
                 ActAttackDialog.showDialog(combatant.actor, combatant.data.tokenId)
         })
+
     }
 
     async getData(options) {

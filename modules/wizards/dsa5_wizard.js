@@ -88,7 +88,7 @@ export default class WizardDSA5 extends Application {
 
         for (let k of elems) {
             const val = $(k).val()
-            if(val == "") continue
+            if (val == "") continue
 
             let item = duplicate(this.items.find(x => x.id == $(k).val()))
             let parsed = DSA5_Utility.parseAbilityString(item.name)
@@ -104,6 +104,9 @@ export default class WizardDSA5 extends Application {
                     break
                 case "specialability":
                     item.data.step.value = Number($(k).attr("data-step"))
+
+                    if ($(k).attr("data-free")) item.data.APValue.value = 0
+
                     item = ItemRulesDSA5.reverseAdoptionCalculation(this.actor, parsed, item)
                     itemsToAdd.push(item)
                     SpecialabilityRulesDSA5.abilityAdded(this.actor, item)
@@ -113,13 +116,11 @@ export default class WizardDSA5 extends Application {
                     break
             }
         }
-        await this.actor.createEmbeddedDocuments("Item", itemsToAdd )
+        await this.actor.createEmbeddedDocuments("Item", itemsToAdd)
     }
 
     async alreadyAdded(string, category) {
-        if (string == "") {
-            return false
-        }
+        if (string == "") return false
 
         let result = false
         result = await new Promise((resolve, reject) => {
@@ -152,9 +153,9 @@ export default class WizardDSA5 extends Application {
 
     async updateSkill(skills, itemType, factor = 1, bonus = true) {
         let itemsToUpdate = []
-        for(let skill of skills){
+        for (let skill of skills) {
             let parsed = DSA5_Utility.parseAbilityString(skill.trim())
-            let res = this.actor.data.items.find(i => {return i.type == itemType && i.name == parsed.name});
+            let res = this.actor.data.items.find(i => { return i.type == itemType && i.name == parsed.name });
             if (res) {
                 let skillUpdate = duplicate(res)
                 skillUpdate.data.talentValue.value = Math.max(0, factor * parsed.step + (bonus ? Number(skillUpdate.data.talentValue.value) : 0))
@@ -209,7 +210,7 @@ export default class WizardDSA5 extends Application {
                 )
             }
         })
-        html.find('button.cancel').click(() => {this.close()})
+        html.find('button.cancel').click(() => { this.close() })
         html.find('.show-item').click(ev => {
             let itemId = $(ev.currentTarget).attr("data-id")
             const item = this.items.find(i => i.data._id == itemId)
@@ -231,7 +232,7 @@ export default class WizardDSA5 extends Application {
 
     static flashElem(elem, cssClass = "emphasize") {
         elem.addClass(cssClass)
-        setTimeout(function() { elem.removeClass(cssClass)}, 600)
+        setTimeout(function() { elem.removeClass(cssClass) }, 600)
     }
 
     finalizeUpdate() {

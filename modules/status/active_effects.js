@@ -104,8 +104,18 @@ export default class DSAActiveEffectConfig extends ActiveEffectConfig {
                 { name: `${game.i18n.localize('skill')} - ${game.i18n.localize("stepValue")}`, val: "data.skillModifiers.step" },
                 { name: `${game.i18n.localize('skill')} - ${game.i18n.localize("MODS.QS")}`, val: "data.skillModifiers.QL" },
                 { name: `${game.i18n.localize('skill')} - ${game.i18n.localize("MODS.partChecks")}`, val: "data.skillModifiers.TPM" },
-                { name: `${game.i18n.localize('skill')} - ${game.i18n.localize("MODS.global")}`, val: "data.skillModifiers.global" },
+                { name: `${game.i18n.localize('skill')} - ${game.i18n.localize("MODS.global")}`, val: "data.skillModifiers.global" }
             ]
+            const models = ["liturgy", "ceremony", "spell", "ritual", "skill"]
+            for (const k of models) {
+                let key = k == "skill" ? "skillglobal" : k
+                optns.push(
+
+                    { name: `${game.i18n.localize(key)} - ${game.i18n.localize("MODS.FW")}`, val: `data.skillModifiers.${k}.step` }, { name: `${game.i18n.localize(key)} - ${game.i18n.localize("MODS.FP")}`, val: `data.skillModifiers.${k}.step` }, { name: `${game.i18n.localize(key)} - ${game.i18n.localize("stepValue")}`, val: `data.skillModifiers.${k}.step` }, { name: `${game.i18n.localize(key)} - ${game.i18n.localize("MODS.QS")}`, val: `data.skillModifiers.${k}.step` }, { name: `${game.i18n.localize(key)} - ${game.i18n.localize("MODS.partChecks")}`, val: `data.skillModifiers.${k}.step` }
+
+                )
+            }
+
             const attrs = ["mu", "kl", "in", "ch", "ff", "ge", "ko", "kk"]
             for (const k of attrs)
                 optns.push({ name: game.i18n.localize(`CHAR.${k.toUpperCase()}`), val: `data.characteristics.${k}.gearmodifier` })
