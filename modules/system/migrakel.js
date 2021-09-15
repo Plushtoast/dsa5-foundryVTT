@@ -34,7 +34,32 @@ export default class Migrakel {
         const itemLibrary = game.dsa5.itemLibrary
         let itemsToDelete = []
         let itemsToCreate = []
-        for (let item of actor.items.filter(x => condition(x))) {
+        let containersIDs = new Map()
+        if (condition({ type: "equipment" })) {
+            const bagsToDelete = []
+            const bagsToCreate = []
+            for (let item of actor.items.filter(x => x.type == "equipment" && x.data.data.equipmentType.value == "bags")) {
+                let find = await itemLibrary.findCompendiumItem(item.name, item.type)
+                if (find.length > 0) {
+                    find = find.find(x => x.name == item.name && x.type == item.type)
+                    if (!find) continue
+
+                    console.log(`MIGRATION - Updated ${item.name}`)
+                    const newData = mergeObject(item.toObject(), updater(find))
+                    bagsToCreate.push(newData)
+                    bagsToDelete.push(item.id)
+                }
+            }
+
+            const result = await actor.createEmbeddedDocuments("Item", bagsToCreate)
+            for (let k = 0; k < result.length; k++) {
+                containersIDs.set(bagsToDelete[k], result[k].id)
+            }
+
+            await actor.deleteEmbeddedDocuments("Item", bagsToDelete)
+        }
+
+        for (let item of actor.items.filter(x => condition(x) && !(x.type == "equipment" && x.data.data.equipmentType.value == "bags"))) {
             let find = await itemLibrary.findCompendiumItem(item.name, item.type)
             if (find.length > 0) {
                 find = find.find(x => x.name == item.name && x.type == item.type)
@@ -42,6 +67,8 @@ export default class Migrakel {
 
                 console.log(`MIGRATION - Updated ${item.name}`)
                 const newData = mergeObject(item.toObject(), updater(find))
+                if (newData.data.parent_id && containersIDs.has(newData.data.parent_id)) newData.data.parent_id = containersIDs.get(newData.data.parent_id)
+
                 itemsToCreate.push(newData)
                 itemsToDelete.push(item.id)
             }
@@ -114,15 +141,22 @@ export default class Migrakel {
 
     static async updateGear(actor) {
         if (await this.showDialog(game.i18n.localize('Migrakel.gear'))) {
-            const condition = (x) => { return ["meleeweapon", "armor", "rangeweapon", "equipment"].includes(x.type) }
-            const updator = (find) => {
-                return {
+            let condition = (x) => { return ["meleeweapon", "armor", "rangeweapon", "equipment", "poison", "consumable"].includes(x.type) }
+            let updator = (find) => {
+                let update = {
                     img: find.img,
-                    effects: find.effects.toObject(),
-                    data: { effect: { value: find.data.data.effect.value } }
+                    effects: find.effects.toObject()
                 }
+                if (!["poison", "consumable"].includes(find.type)) {
+                    mergeObject(update, {
+                        data: { effect: { value: find.data.data.effect.value } }
+                    })
+                }
+                return update
             }
             await this.updateVals(actor, condition, updator)
+
+
         }
     }
 }
