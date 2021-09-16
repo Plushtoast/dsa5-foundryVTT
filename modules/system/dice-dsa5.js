@@ -62,6 +62,7 @@ export default class DiceDSA5 {
         })
 
         if (!testData.extra.options.bypass) {
+
             let html = await renderTemplate(dialogOptions.template, dialogOptions.data);
             return new Promise((resolve, reject) => {
                 let dialog = DSA5Dialog.getDialogForItem(testData.source.type)
@@ -106,7 +107,7 @@ export default class DiceDSA5 {
                     const LZ = Number(testData.source.data.castingTime.value)
                     const progress = testData.source.data.castingTime.progress
                     let modified = testData.source.data.castingTime.modified
-                    if (LZ) {
+                    if (LZ && testData.extra.speaker.token != "emptyActor") {
                         const progressLabel = modified > 0 ? ` (${progress}/${modified})` : ''
                         mergeObject(buttons, {
                             reloadButton: {

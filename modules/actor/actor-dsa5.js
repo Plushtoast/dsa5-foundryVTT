@@ -1595,7 +1595,7 @@ export default class Actordsa5 extends Actor {
         } else if ((testData.source.type == "rangeweapon" || (testData.source.type == "trait" && testData.source.data.traitType.value == "rangeAttack")) && !testData.extra.ammoDecreased) {
             testData.extra.ammoDecreased = true
             await this.updateEmbeddedDocuments("Item", [{ _id: testData.source._id, "data.reloadTime.progress": 0 }]);
-        } else if(["spell","ritual", "ceremony", "liturgy"].includes(testData.source.type)){
+        } else if(["spell","ritual", "ceremony", "liturgy"].includes(testData.source.type) && testData.extra.speaker.token != "emptyActor"){
             await this.updateEmbeddedDocuments("Item", [{ _id: testData.source._id, "data.castingTime.progress": 0, "data.castingTime.modified": 0 }]);
         }
 
