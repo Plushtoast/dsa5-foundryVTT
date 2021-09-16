@@ -2,7 +2,7 @@
 ![](https://repository-images.githubusercontent.com/311655339/4d523800-55a9-11eb-9e2e-6bbc2b71d8a4)
 
 ### Current Version and Compatibility:
-2.2.0 - FoundryVTT 0.8.6+
+2.2.1 - FoundryVTT 0.8.6+
 This system is intended for usage with [Foundry Virtual Tabletop](https://foundryvtt.com/) to play "Das Schwarze Auge" 5th edition.
 
 ## Installation - Auto Installer
@@ -38,6 +38,8 @@ If you want to discuss TDE for foundry or need some assistance you can also join
 
 
 ## Official Modules
+- [Aventurian Companions (GERMAN ONLY)](https://www.f-shop.de/virtual-tabletops/das-schwarze-auge-vtt/)
+- [Aventurian Pandemonium (GERMAN ONLY)](https://www.f-shop.de/virtual-tabletops/das-schwarze-auge-vtt/)
 - [Compendium 1 (GERMAN ONLY)](https://www.f-shop.de/virtual-tabletops/das-schwarze-auge-vtt/) - adds functions for hitzones and applications among plenty of new content
 - [Mittsommerrache (GERMAN ONLY)](https://www.f-shop.de/virtual-tabletops/das-schwarze-auge-vtt/) - a short adventure in thorwal
 - [Aventurian Magic I (GERMAN ONLY)](https://www.f-shop.de/virtual-tabletops/das-schwarze-auge-vtt/) - with many new spells, rituals and magical traditions
