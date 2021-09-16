@@ -780,6 +780,12 @@
         "isReloading": "{actor} läd {item} nach ({status}).",
         "improvised": "Improvisierte Waffe"
     },
+    "SPELL": {
+        "loading": "Zauberstatus: {status}",
+        "loaded": "Bereit",
+        "reload": "Konzentrieren",
+        "isReloading": "{actor} konzentriert sich auf {item} ({status})."
+    },
 
     "ITEM.TypeAdvantage": "Vorteil",
     "ITEM.TypeAggregatedtest": "Sammelprobe",

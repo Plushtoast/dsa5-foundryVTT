@@ -37,7 +37,18 @@
                     {{item.data.AsPCost.value}}
                 </div>
                 <div class="col ten center">
-                    {{item.data.castingTime.value}}
+                    {{item.data.castingTime.value}} {{#if (gt item.LZ 1)}}
+                    <a class="chargeSpell" title="{{item.title}}">
+                        <div class="progress blue">
+                            <span class="progress-left" style="--transformLeft:{{item.transformLeft}}">
+                                    <span class="progress-bar"></span>
+                            </span>
+                            <span class="progress-right" style="--transformRight:{{item.transformRight}}">
+                                    <span class="progress-bar"></span>
+                            </span>
+                            <div class="progress-value">{{item.progress}}</div>
+                        </div>
+                    </a> {{/if}}
                 </div>
                 <div class="col ten center">
                     {{item.data.range.value}}
@@ -46,10 +57,8 @@
                 <div class="col ten very-small center">
                     <a class="item-post" title="{{localize 'SHEET.PostItem'}}"><i class="fas fa-comment"></i></a>
                     <a class="item-dropdown" title="{{localize 'SHEET.Dropdown'}}"><i class="fas fa-chevron-down"></i></a>
-                    <a class="item-control item-delete" title="{{localize 'SHEET.DeleteItem'}}"><i class="fas fa-trash"></i></a>
-                    {{#if item.extensions}}
-                    <i class="fas fa-angle-double-up" title="{{item.extensions}}"></i>
-                    {{/if}}
+                    <a class="item-control item-delete" title="{{localize 'SHEET.DeleteItem'}}"><i class="fas fa-trash"></i></a> {{#if item.extensions}}
+                    <i class="fas fa-angle-double-up" title="{{item.extensions}}"></i> {{/if}}
                 </div>
             </div>
             <div class="row-section lineheight expandDetails {{item.detailed}}">
@@ -104,7 +113,18 @@
                     {{item.data.AsPCost.value}}
                 </div>
                 <div class="col ten center">
-                    {{item.data.castingTime.value}}
+                    {{item.data.castingTime.value}} {{#if (gt item.LZ 1)}}
+                    <a class="chargeSpell" title="{{item.title}}">
+                        <div class="progress blue">
+                            <span class="progress-left" style="--transformLeft:{{item.transformLeft}}">
+                                    <span class="progress-bar"></span>
+                            </span>
+                            <span class="progress-right" style="--transformRight:{{item.transformRight}}">
+                                    <span class="progress-bar"></span>
+                            </span>
+                            <div class="progress-value">{{item.progress}}</div>
+                        </div>
+                    </a> {{/if}}
                 </div>
                 <div class="col ten center">
                     {{item.data.range.value}}
@@ -113,10 +133,8 @@
                 <div class="col ten very-small center">
                     <a class="item-post" title="{{localize 'SHEET.PostItem'}}"><i class="fas fa-comment"></i></a>
                     <a class="item-dropdown" title="{{localize 'SHEET.Dropdown'}}"><i class="fas fa-chevron-down"></i></a>
-                    <a class="item-control item-delete" title="{{localize 'SHEET.DeleteItem'}}"><i class="fas fa-trash"></i></a>
-                    {{#if item.extensions}}
-                    <i class="fas fa-angle-double-up" title="{{item.extensions}}"></i>
-                    {{/if}}
+                    <a class="item-control item-delete" title="{{localize 'SHEET.DeleteItem'}}"><i class="fas fa-trash"></i></a> {{#if item.extensions}}
+                    <i class="fas fa-angle-double-up" title="{{item.extensions}}"></i> {{/if}}
                 </div>
             </div>
             <div class="row-section lineheight expandDetails {{item.detailed}}">

@@ -386,11 +386,11 @@ export default class ActorSheetDsa5 extends ActorSheet {
         })
 
         html.find('.loadWeapon').mousedown(async(ev) => {
-            let itemId = this._getItemId(ev)
-            let item = (await this.actor.getEmbeddedDocument("Item", itemId)).toObject()
+            const itemId = this._getItemId(ev)
+            const item = (await this.actor.getEmbeddedDocument("Item", itemId)).toObject()
             if (getProperty(item, "data.currentAmmo.value") === "" && this.actor.type != "creature") return
 
-            let actor = this.actor
+            const actor = this.actor
             const lz = item.type == "trait" ? item.data.reloadTime.value : Actordsa5.calcLZ(item, actor)
 
             if (ev.button == 0)
@@ -398,6 +398,20 @@ export default class ActorSheetDsa5 extends ActorSheet {
             else if (ev.button == 2)
                 item.data.reloadTime.progress = 0
 
+            await actor.updateEmbeddedDocuments("Item", [item]);
+        })
+
+        html.find('.chargeSpell').mousedown(async(ev) => {
+            const itemId = this._getItemId(ev)
+            const item = (await this.actor.getEmbeddedDocument("Item", itemId)).toObject()
+            const actor = this.actor
+            const lz = Number(item.data.castingTime.modified)
+            if (ev.button == 0)
+                item.data.castingTime.progress = Math.min(item.data.castingTime.progress + 1, lz)
+            else if (ev.button == 2) {
+                item.data.castingTime.progress = 0
+                item.data.castingTime.modified = 0
+            }
             await actor.updateEmbeddedDocuments("Item", [item]);
         })
 

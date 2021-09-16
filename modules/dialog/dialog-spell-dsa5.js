@@ -147,6 +147,7 @@ export default class DSA5SpellDialog extends DialogShared {
                 }
             })
             reach.data('mod', mod)
+            html.find('.reloadButton').prop('disabled', Number(html.find('.castingTime').text()) < 2)
         })
     }
 }

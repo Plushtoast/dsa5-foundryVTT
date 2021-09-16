@@ -749,6 +749,12 @@
         "isReloading": "{actor} reloads {item} ({status}).",
         "improvised": "Improvised weapon"
     },
+    "SPELL": {
+        "loading": "Spell state: {status}",
+        "loaded": "Ready",
+        "reload": "Concentrate",
+        "isReloading": "{actor} is concentrating on {item} ({status})."
+    },
 
     "CHATNOTIFICATION": {
         "gainsBloodrush": "The rage consumes {character} and he/she gains the condition bloodrush.",

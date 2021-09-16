@@ -571,7 +571,7 @@ export default class Actordsa5 extends Actor {
                     case "spell":
                     case "liturgy":
                     case "ceremony":
-                        magic[i.type].push(this._perpareItemAdvancementCost(i))
+                        magic[i.type].push(Actordsa5.buildSpellChargeProgress(this._perpareItemAdvancementCost(i)))
                         break;
                     case "magictrick":
                     case "blessing":
@@ -1506,6 +1506,10 @@ export default class Actordsa5 extends Actor {
         if (progress >= 1) {
             item.title = game.i18n.localize("WEAPON.loaded")
         }
+        this.progressTransformation(item, progress)
+    }
+
+    static progressTransformation(item, progress){
         if (progress >= 0.5) {
             item.transformRight = "181deg"
             item.transformLeft = `${Math.round(progress * 360 - 179)}deg`
@@ -1513,6 +1517,17 @@ export default class Actordsa5 extends Actor {
             item.transformRight = `${Math.round(progress * 360 + 1)}deg`
             item.transformLeft = 0
         }
+    }
+
+    static buildSpellChargeProgress(item) {
+        item.LZ = Number(item.data.castingTime.modified) || 0
+        if(item.LZ > 1){
+            const progress = item.data.castingTime.progress / item.LZ
+            item.title = game.i18n.format("SPELL.loading", { status: `${item.data.castingTime.progress}/${item.LZ}` })
+            item.progress = `${item.data.castingTime.progress}/${item.LZ}`
+            this.progressTransformation(item, progress)
+        }
+        return item
     }
 
     static _prepareRangeWeapon(item, ammunitions, combatskills, actor) {
@@ -1579,9 +1594,9 @@ export default class Actordsa5 extends Actor {
             ]);
         } else if ((testData.source.type == "rangeweapon" || (testData.source.type == "trait" && testData.source.data.traitType.value == "rangeAttack")) && !testData.extra.ammoDecreased) {
             testData.extra.ammoDecreased = true
-            await this.updateEmbeddedDocuments("Item", [
-                { _id: testData.source._id, "data.reloadTime.progress": 0 }
-            ]);
+            await this.updateEmbeddedDocuments("Item", [{ _id: testData.source._id, "data.reloadTime.progress": 0 }]);
+        } else if(["spell","ritual", "ceremony", "liturgy"].includes(testData.source.type)){
+            await this.updateEmbeddedDocuments("Item", [{ _id: testData.source._id, "data.castingTime.progress": 0, "data.castingTime.modified": 0 }]);
         }
 
         if (!options.suppressMessage)

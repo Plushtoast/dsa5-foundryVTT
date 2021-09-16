@@ -102,6 +102,29 @@ export default class DiceDSA5 {
                             }
                         })
                     }
+                } else if (["spell", "ritual", "ceremony", "liturgy"].includes(testData.source.type)) {
+                    const LZ = Number(testData.source.data.castingTime.value)
+                    const progress = testData.source.data.castingTime.progress
+                    let modified = testData.source.data.castingTime.modified
+                    if (LZ) {
+                        const progressLabel = modified > 0 ? ` (${progress}/${modified})` : ''
+                        mergeObject(buttons, {
+                            reloadButton: {
+                                label: `${game.i18n.localize("SPELL.reload")}${progressLabel}`,
+                                callback: async(dlg) => {
+                                    const actor = await DSA5_Utility.getSpeaker(testData.extra.speaker)
+                                    let reloadUpdate = { _id: testData.source._id, "data.castingTime.progress": progress + 1 }
+                                    if (modified == 0) {
+                                        modified = Number(dlg.find('.castingTime').text())
+                                        reloadUpdate["data.castingTime.modified"] = modified
+                                    }
+                                    await actor.updateEmbeddedDocuments("Item", [reloadUpdate])
+                                    const infoMsg = game.i18n.format("SPELL.isReloading", { actor: testData.extra.actor.name, item: testData.source.name, status: `${progress+1}/${modified}` })
+                                    await ChatMessage.create(DSA5_Utility.chatDataSetup(infoMsg))
+                                }
+                            }
+                        })
+                    }
                 }
                 new dialog({
                     title: dialogOptions.title,
