@@ -382,7 +382,6 @@ export default class ActorSheetDsa5 extends ActorSheet {
         })
 
         html.find('.defenseToggle').click(() => {
-            console.log(this.actor)
             this.actor.update({ "data.config.defense": !this.actor.data.data.config.defense })
         })
 

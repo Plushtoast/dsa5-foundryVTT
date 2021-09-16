@@ -38,7 +38,6 @@ export default function() {
             if (hiddenForMe) { html.find(".payButton, .getPaidButton").remove() }
         }
         if (game.settings.get("dsa5", "expandChatModifierlist")) {
-            console.log("muh")
             html.find('.expand-mods i').toggleClass("fa-minus fa-plus")
             html.find('.expand-mods + ul').css({ "display": "block" })
         }

@@ -616,7 +616,6 @@ export default class DiceDSA5 {
         let rollConfirm = new Roll("1d20").evaluate({ async: false });
         rollConfirm.dice[0].options.colorset = testData.mode
 
-
         if (roll.terms[0].results.filter(x => x.result == 1).length == 1) {
             description = game.i18n.localize("CriticalSuccess") + ", " + game.i18n.localize("halfDefense");
             let res2 = res - rollConfirm.terms[0].results[0].result;
@@ -651,7 +650,6 @@ export default class DiceDSA5 {
 
         if (description == "")
             description = game.i18n.localize(res1 >= 0 ? "Success" : "Failure");
-
 
         return {
             rollType: "weapon",

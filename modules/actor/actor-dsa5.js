@@ -403,16 +403,16 @@ export default class Actordsa5 extends Actor {
 
     static _calculateCombatSkillValues(i, actorData) {
         if (i.data.weapontype.value == "melee") {
-            let vals = i.data.guidevalue.value.split('/').map(x =>
-                Number(actorData.data.characteristics[x].initial) + Number(actorData.data.characteristics[x].modifier) + Number(actorData.data.characteristics[x].advances)
+            const vals = i.data.guidevalue.value.split('/').map(x =>
+                Number(actorData.data.characteristics[x].initial) + Number(actorData.data.characteristics[x].modifier) + Number(actorData.data.characteristics[x].advances) + Number(actorData.data.characteristics[x].gearmodifier)
             );
-            let parryChar = Math.max(...vals);
+            const parryChar = Math.max(...vals);
             i.data.parry.value = Math.ceil(i.data.talentValue.value / 2) + Math.max(0, Math.floor((parryChar - 8) / 3)) + Number(game.settings.get("dsa5", "higherDefense"))
-            let attackChar = actorData.data.characteristics.mu.initial + actorData.data.characteristics.mu.modifier + actorData.data.characteristics.mu.advances;
+            const attackChar = actorData.data.characteristics.mu.initial + actorData.data.characteristics.mu.modifier + actorData.data.characteristics.mu.advances + actorData.data.characteristics.mu.gearmodifier;
             i.data.attack.value = i.data.talentValue.value + Math.max(0, Math.floor((attackChar - 8) / 3));
         } else {
             i.data.parry.value = 0;
-            let attackChar = actorData.data.characteristics.ff.initial + actorData.data.characteristics.ff.modifier + actorData.data.characteristics.ff.advances;
+            let attackChar = actorData.data.characteristics.ff.initial + actorData.data.characteristics.ff.modifier + actorData.data.characteristics.ff.advances + actorData.data.characteristics.ff.gearmodifier;
             i.data.attack.value = i.data.talentValue.value + Math.max(0, Math.floor((attackChar - 8) / 3));
         }
         i.cost = game.i18n.format("advancementCost", { cost: DSA5_Utility._calculateAdvCost(i.data.talentValue.value, i.data.StF.value) })
@@ -1410,7 +1410,13 @@ export default class Actordsa5 extends Actor {
         let skill = combatskills.find(i => i.name == item.data.combatskill.value)
         if (skill) {
             item.attack = Number(skill.data.attack.value) + Number(item.data.atmod.value)
-            item.parry = Number(skill.data.parry.value) + Number(item.data.pamod.value) + (item.data.combatskill.value == game.i18n.localize('LocalizedIDs.shields') ? Number(item.data.pamod.value) : 0)
+
+            const vals = item.data.guidevalue.value.split('/').map(x =>
+                Number(actorData.data.characteristics[x].initial) + Number(actorData.data.characteristics[x].modifier) + Number(actorData.data.characteristics[x].advances) + Number(actorData.data.characteristics[x].gearmodifier)
+            );
+            const baseParry = Math.ceil(skill.data.talentValue.value / 2) + Math.max(0, Math.floor((Math.max(...vals) - 8) / 3)) + Number(game.settings.get("dsa5", "higherDefense"))
+
+            item.parry = baseParry + Number(item.data.pamod.value) + (item.data.combatskill.value == game.i18n.localize('LocalizedIDs.shields') ? Number(item.data.pamod.value) : 0)
 
             let regex2h = /\(2H/
             if (!regex2h.test(item.name)) {
