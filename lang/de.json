@@ -67,6 +67,7 @@
         "duration": "Wirkungs- dauer",
         "defenseMalus": "VM",
         "fatePoints": "Schips",
+        "groupFatePoints": "Gruppen&nbsp;Schips",
         "FtP": "Schip",
         "maintainCost": "Aufr.",
         "*": "*",
@@ -260,6 +261,7 @@
     "Fw": "Fertigkeitswert",
     "FP": "Fertigkeitspunkte",
     "fatePoints": "Schicksalspunkte",
+    "groupFatePoints": "Gruppenschicksalspunkte",
     "fatePointsAbilities": "Schicksalspunktesonderfertigkeiten",
     "freeLanguagePoint": "Freie Abenteuerpunkte für Sprachen und Schriften",
     "Gender": "Geschlecht",
@@ -703,7 +705,8 @@
         "import": "Importieren",
         "actorConfig": "Akteur konfigurieren",
         "weightOnActor": "Wird vom Akteur getragen",
-        "tempRegeneration": "Temporär, wird bei Regenerationswurf verbraucht."
+        "tempRegeneration": "Temporär, wird bei Regenerationswurf verbraucht.",
+        "permRegeneration": "Permanent, wird bei jedem Regenerationswurf hinzugezählt"
     },
     "ITEMSHEET": {
         "offHandMod": "Bonus/Malus als Nebenhand (z.b. Parierwaffe)"

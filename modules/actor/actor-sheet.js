@@ -1033,7 +1033,7 @@ export default class ActorSheetDsa5 extends ActorSheet {
     }
 
     async _handleLookup(item) {
-        let lookup = (await DSA5_Utility.findAnyItem(item.items)).map(x => x.toObject())
+        let lookup = (await DSA5_Utility.findAnyItem(item.items))
         if (lookup) {
             for (let thing of item.items) {
                 if (thing.count) {

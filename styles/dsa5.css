@@ -2316,6 +2316,19 @@ select.noAppearance {
     font-weight: bold;
 }
 
+.subMenuAvailable {
+    position: relative;
+}
+
+.subMenuAvailable:after {
+    content: '*';
+    position: absolute;
+    right: -5px;
+    top: -10px;
+    font-size: 10px;
+    color: #82817d;
+}
+
 .maskfield .documentName-link {
     color: black;
 }

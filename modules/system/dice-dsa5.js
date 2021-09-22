@@ -154,7 +154,9 @@ export default class DiceDSA5 {
         res += modifier
         res = Math.round(res * multiplier)
         let res1 = res - roll.terms[0].results[0].result;
-        let color = DSA5.dieColors[id] || id;
+
+        //let color = DSA5.dieColors[id] || id;
+        const color = game.dsa5.apps.DiceSoNiceCustomization.getDiceSoNiceColor(id) || id
 
         chars.push({ char: id, res: roll.terms[0].results[0].result, suc: res1 >= 0, tar: res });
         let rollConfirm = new Roll("1d20").evaluate({ async: false });
@@ -451,7 +453,7 @@ export default class DiceDSA5 {
     static _stringToRoll(text, testData) {
         return Roll.safeEval(`${text}`.replace(/\d{1}[dDwW]\d/g, function(match) {
             let roll = new Roll(match.replace(/[Ww]/, "d")).evaluate({ async: false })
-            if (testData) DiceDSA5._addRollDiceSoNice(testData, roll, "ch")
+            if (testData) DiceDSA5._addRollDiceSoNice(testData, roll, game.dsa5.apps.DiceSoNiceCustomization.getDiceSoNiceColor("ch") || "ch")
             return roll.total
         }))
     }
@@ -646,7 +648,7 @@ export default class DiceDSA5 {
             if (res2 >= 0) {
                 description += ", " + game.i18n.localize("doubleDamage")
             }
-            this._addRollDiceSoNice(testData, rollConfirm, testData.mode)
+            this._addRollDiceSoNice(testData, rollConfirm, game.dsa5.apps.DiceSoNiceCustomization.getDiceSoNiceColor(testData.mode) || testData.mode)
             chars.push({ char: testData.mode, res: rollConfirm.terms[0].results[0].result, suc: res2 >= 0, tar: res });
 
         } else if (roll.terms[0].results.filter(x => x.result == 20).length == 1) {
@@ -663,7 +665,7 @@ export default class DiceDSA5 {
                     description += ", " + game.i18n.localize("selfDamage") + (new Roll("1d6+2").evaluate({ async: false }).total)
                 }
             }
-            this._addRollDiceSoNice(testData, rollConfirm, testData.mode)
+            this._addRollDiceSoNice(testData, rollConfirm, game.dsa5.apps.DiceSoNiceCustomization.getDiceSoNiceColor(testData.mode) || testData.mode)
             chars.push({
                 char: testData.mode,
                 res: rollConfirm.terms[0].results[0].result,

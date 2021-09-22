@@ -58,6 +58,7 @@
         "castingTime": "Action- duration",
         "duration": "Effect- Duration",
         "fatePoints": "FtP",
+        "groupFatePoints": "Group&nbsp;FtP",
         "maintainCost": "Main.",
         "INI": "INI",
         "GS": "MOV",
@@ -273,6 +274,7 @@
     "Fw": "Skillvalue",
     "FP": "Skill points",
     "fatePoints": "Fate points",
+    "groupFatePoints": "Group Fate Points",
     "fatePointsAbilities": "Fate point Special Abilities",
     "freeLanguagePoint": "Free adventure points for languages and writings",
     "Gender": "Gender",
@@ -707,7 +709,9 @@
         "switchLimited": "Limited view (player view)",
         "import": "Import",
         "actorConfig": "Configure actor",
-        "weightOnActor": "Being carried by the actor"
+        "weightOnActor": "Being carried by the actor",
+        "tempRegeneration": "Temporary, consumed on the next regeneration roll",
+        "permRegeneration": "Permanent, bonus for every regeneration roll"
     },
 
     "ITEMSHEET": {
