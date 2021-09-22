@@ -114,18 +114,7 @@
                     {{item.data.AsPCost.value}}
                 </div>
                 <div class="col ten center">
-                    {{item.data.castingTime.value}} {{#if (gt item.LZ 1)}}
-                    <a class="chargeSpell" title="{{item.title}}">
-                        <div class="progress blue">
-                            <span class="progress-left" style="--transformLeft:{{item.transformLeft}}">
-                                    <span class="progress-bar"></span>
-                            </span>
-                            <span class="progress-right" style="--transformRight:{{item.transformRight}}">
-                                    <span class="progress-bar"></span>
-                            </span>
-                            <div class="progress-value">{{item.progress}}</div>
-                        </div>
-                    </a> {{/if}}
+                    {{item.data.castingTime.value}}
                 </div>
                 <div class="col ten center">
                     {{item.data.range.value}}
