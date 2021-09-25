@@ -245,10 +245,11 @@ class Enchantable extends ItemSheetdsa5 {
                 pack: dragData.pack,
                 id: enchantments.length,
                 itemId: item._id,
-                permanent: false,
+                permanent: ["liturgy", "ceremony"].includes(typeClass),
                 actorId: dragData.actorId,
                 charged: true,
-                fw: 0
+                talisman: ["liturgy", "ceremony"].includes(typeClass),
+                fw: ["liturgy", "ceremony"].includes(typeClass) ? 18 : 0
             }
             enchantments.push(enchantment)
             let update = { flags: { dsa5: { enchantments } } }
@@ -259,7 +260,7 @@ class Enchantable extends ItemSheetdsa5 {
     toggleChargedState(id, enchantments) {
         for (let ench of enchantments) {
             if (ench.id == id) {
-                ench.charged = !ench.charged
+                ench.charged = ench.talisman && ench.permanent ? true : !ench.charged
                 break
             }
         }
@@ -377,6 +378,11 @@ class Enchantable extends ItemSheetdsa5 {
     async getData(options) {
         const data = await super.getData(options);
         data["enchantments"] = this.item.getFlag("dsa5", "enchantments")
+        const enchantmentLabel = []
+        if (data.poison) enchantmentLabel.push("poison")
+        if (data.enchantments && data.enchantments.some(x => !x.talisman)) enchantmentLabel.push("enchantment")
+        if (data.enchantments && data.enchantments.some(x => x.talisman)) enchantmentLabel.push("talisman")
+        data.enchantmentLabel = enchantmentLabel.map(x => game.i18n.localize(x)).join("/")
         return data
     }
 }
@@ -658,7 +664,7 @@ class MeleeweaponSheetDSA5 extends Enchantable {
         data['isShield'] = this.item.data.data.combatskill.value == game.i18n.localize("LocalizedIDs.shields")
         data['shieldSizes'] = DSA5.shieldSizes
         data["poison"] = this.item.getFlag("dsa5", "poison")
-        data.hasEnchantments = data.poison || data.enchantments
+        data.hasEnchantments = data.poison || (data.enchantments && data.enchantments.length > 0)
         return data
     }
 
