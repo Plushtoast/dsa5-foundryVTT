@@ -562,6 +562,14 @@ class SpellItemDSA5 extends Itemdsa5 {
         return res
     }
 
+    static attackSpellMalus(source) {
+        let res = []
+        if (source.data.effectFormula.value)
+            res.push({ name: game.i18n.localize('MODS.defenseMalus'), value: -4, type: "defenseMalus", selected: true })
+
+        return res
+    }
+
     static getPropertyFocus(actor, item) {
         const features = getProperty(item, "data.feature") || ""
         const res = []
@@ -583,6 +591,7 @@ class SpellItemDSA5 extends Itemdsa5 {
         situationalModifiers.push(...AdvantageRulesDSA5.getVantageAsModifier(actor.data, game.i18n.localize('LocalizedIDs.magicalRestriction'), -1, true))
         situationalModifiers.push(...AdvantageRulesDSA5.getVantageAsModifier(actor.data, game.i18n.localize('LocalizedIDs.boundToArtifact'), -1, true))
         situationalModifiers.push(...this.getPropertyFocus(actor, source))
+        situationalModifiers.push(...this.attackSpellMalus(source))
 
         situationalModifiers.push(...actor.getSkillModifier(source.name, source.type))
         for (const thing of actor.data.data.skillModifiers.global) {

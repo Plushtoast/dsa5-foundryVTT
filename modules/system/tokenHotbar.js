@@ -37,7 +37,6 @@ export default class DSA5Hotbar extends Hotbar {
             }
         })
         html.on('mouseenter', '.tokenQuickHot .subbuttons', ev => {
-            console.log($(ev.currentTarget).closest('li').find('>.tooltip'))
             $(ev.currentTarget).closest('li').find('>.tooltip').remove()
         })
         html.on('mouseleave', '.tokenQuickHot li', ev => {
