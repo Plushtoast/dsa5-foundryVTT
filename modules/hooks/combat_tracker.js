@@ -25,42 +25,42 @@ export class DSA5CombatTracker extends CombatTracker {
     }
 
     async getData(options) {
-            const data = await super.getData(options)
+
+            const data = await super.getData(options);
 
             for (let turn of data.turns) {
                 const combatant = data.combat.turns.find(x => x.id == turn.id)
-                const isAllowedToSeeEffects = (game.user.isGM || (combatant.actor && combatant.actor.testUserPermission(game.user, "OBSERVER")) || !(game.settings.get("dsa5", "hideEffects")))
+                const isAllowedToSeeEffects = (game.user.isGM || (combatant.actor && combatant.actor.testUserPermission(game.user, "OBSERVER")) || !(game.settings.get("dsa5", "hideEffects")));
                 turn.defenseCount = combatant.data._source.defenseCount
 
-                let rangeweapons = combatant._actor.data.items.filter(x => {
-                    return x.type == "rangeweapon" &&
-                        x.data.data.worn.value &&
-                        x.data.data.reloadTime.progress > 0
-                })
+                let remainders = []
 
-                if (rangeweapons.length > 0) {
-                    rangeweapons = rangeweapons.map(x => {
-                        return { name: x.name, remaining: Actordsa5.calcLZ(x.data, combatant._actor.data) - x.data.data.reloadTime.progress }
-                    }).filter(x => x.remaining > 0).sort((a, b) => a.remaining - b.remaining)
-                    if (rangeweapons.length > 0) {
-                        turn.ongoings = `${game.i18n.localize('COMBATTRACKER.ongoing')}\n${rangeweapons.map((x) => `${x.name} - ${x.remaining}`).join("\n")}`
-
-                    turn.ongoing = rangeweapons[0].remaining
+                for (const x of combatant._actor.data.items) {
+                    if (x.type == "rangeweapon" && x.data.data.worn.value && x.data.data.reloadTime.progress > 0) {
+                        const wpn = { name: x.name, remaining: Actordsa5.calcLZ(x.data, combatant._actor.data) - x.data.data.reloadTime.progress }
+                        if (wpn.remaining > 0) remainders.push(wpn)
+                    } else if (["spell", "liturgy"].includes(x.type) && x.data.data.castingTime.modified > 0) {
+                        const wpn = { name: x.name, remaining: x.data.data.castingTime.modified - x.data.data.castingTime.progress }
+                        if (wpn.remaining > 0) remainders.push(wpn)
+                    }
                 }
-            }
+                remainders = remainders.sort((a, b) => a.remaining - b.remaining)
 
-            turn.effects = new Set();
-            if (combatant.token) {
-                combatant.token.data.effects.forEach(e => turn.effects.add(e));
-                if (combatant.token.data.overlayEffect) turn.effects.add(combatant.token.data.overlayEffect);
-            }
-            if (combatant.actor) combatant.actor.temporaryEffects.forEach(e => {
-                if (e.getFlag("core", "statusId") === CONFIG.Combat.defeatedStatusId) turn.defeated = true;
-                else if (e.data.icon) {
-                    if (isAllowedToSeeEffects && !e.notApplicable && (game.user.isGM || !e.getFlag("dsa5", "hidePlayers")) && !e.getFlag("dsa5", "hideOnToken"))
-                        turn.effects.add(e.data.icon);
-                }
-            });
+                if (remainders.length > 0) {
+                    turn.ongoings = `${game.i18n.localize('COMBATTRACKER.ongoing')}\n${remainders.map((x) => `${x.name} - ${x.remaining}`).join("\n")}`
+        turn.ongoing = remainders[0].remaining
+        }
+
+        
+        turn.effects = new Set();
+        if (combatant.token) {
+            combatant.token.data.effects.forEach(e => turn.effects.add(e));
+            if (combatant.token.data.overlayEffect) turn.effects.add(combatant.token.data.overlayEffect);
+        }
+        if (combatant.actor) combatant.actor.temporaryEffects.forEach(e => {
+            if (e.getFlag("core", "statusId") === CONFIG.Combat.defeatedStatusId) turn.defeated = true;
+            else if (e.data.icon && isAllowedToSeeEffects && !e.notApplicable && (game.user.isGM || !e.getFlag("dsa5", "hidePlayers")) && !e.getFlag("dsa5", "hideOnToken")) turn.effects.add(e.data.icon);
+        })
         }
         return data
 

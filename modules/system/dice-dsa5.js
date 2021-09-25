@@ -116,7 +116,7 @@ export default class DiceDSA5 {
                                     const actor = await DSA5_Utility.getSpeaker(testData.extra.speaker)
                                     let reloadUpdate = { _id: testData.source._id, "data.castingTime.progress": progress + 1 }
                                     if (modified == 0) {
-                                        modified = Number(dlg.find('.castingTime').text())
+                                        modified = Number(dlg.find('.castingTime').text()) - 1
                                         reloadUpdate["data.castingTime.modified"] = modified
                                     }
                                     await actor.updateEmbeddedDocuments("Item", [reloadUpdate])

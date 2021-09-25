@@ -20,6 +20,7 @@ export default class DSA5Hotbar extends Hotbar {
         super.activateListeners(html);
 
         html.on('click', '.tokenQuickHot li', async(ev) => {
+            ev.stopPropagation()
             await this.executeQuickButton(ev)
             return false
         })
@@ -32,13 +33,20 @@ export default class DSA5Hotbar extends Hotbar {
             tooltip.textContent = li.attr("data-name")
             li.append($(tooltip));
             if (li.hasClass("primary")) {
-                html.find('.secondary').addClass("shown")
+                html.find(`.secondary[data-category="${li.attr("data-category")}"]`).addClass("shown")
             }
+        })
+        html.on('mouseenter', '.tokenQuickHot .subbuttons', ev => {
+            console.log($(ev.currentTarget).closest('li').find('>.tooltip'))
+            $(ev.currentTarget).closest('li').find('>.tooltip').remove()
         })
         html.on('mouseleave', '.tokenQuickHot li', ev => {
             const li = $(ev.currentTarget)
             let tooltip = li.find(".tooltip");
             if (tooltip) tooltip.remove()
+            if (li.hasClass("primary")) {
+                html.find(`.secondary[data-category="${li.attr("data-category")}"]`).removeClass("shown")
+            }
         })
         html.on('mouseleave', '.tokenQuickHot', ev => {
             $(ev.currentTarget).find('.secondary').removeClass('shown')
@@ -135,8 +143,8 @@ export default class DSA5Hotbar extends Hotbar {
             skills: []
         }
         let consumable
-        let consumables = []
-        const moreSpells
+        const consumables = []
+        let moreSpells = []
         if (game.combat) {
             items.attacks.push({
                 name: game.i18n.localize("attackWeaponless"),
@@ -151,11 +159,9 @@ export default class DSA5Hotbar extends Hotbar {
             for (const x of actor.data.items) {
                 if ((attacktypes.includes(x.type) && x.data.data.worn.value == true) || (x.type == "trait" && traitTypes.includes(x.data.data.traitType.value))) {
                     items.attacks.push({ name: x.name, id: x.id, icon: x.img, cssClass: "", abbrev: x.name[0] })
-                } else if (spellTypes.includes(x.type) && x.data.data.effectFormula.value) {
-                    if (x.data.data.effectFormula.value)
-                        items.spells.push({ name: x.name, id: x.id, icon: x.img, cssClass: "spell", abbrev: x.name[0] })
-                    else
-                        moreSpells.push({ name: x.name, id: x.id, icon: x.img, cssClass: "spell", abbrev: x.name[0] })
+                } else if (spellTypes.includes(x.type)) {
+                    if (x.data.data.effectFormula.value) items.spells.push({ name: x.name, id: x.id, icon: x.img, cssClass: "spell", abbrev: x.name[0] })
+                    else moreSpells.push({ name: x.name, id: x.id, icon: x.img, cssClass: "spell", abbrev: x.name[0] })
                 } else if (["skill"].includes(x.type) && this.combatSkills.includes(x.name)) {
                     items.default.push({ name: `${x.name} (${x.data.data.talentValue.value})`, id: x.id, icon: x.img, cssClass: "skill", abbrev: x.name[0] })
                 } else if (x.type == "consumable") {
@@ -173,6 +179,17 @@ export default class DSA5Hotbar extends Hotbar {
                 }
             }
             items.skills.push(...descendingSkills.sort((a, b) => { return b.tw - a.tw }).slice(0, 10))
+        }
+        if (items.spells.length == 0 && moreSpells.length > 0) {
+            items.spells.push(moreSpells.pop())
+        }
+        if (items.spells.length > 0 && moreSpells.length > 0) {
+            items.spells[0].more = moreSpells.sort((a, b) => { return a.name.localeCompare(b.name) })
+            items.spells[0].subwidth = `style="width:${moreSpells.length * 35}px"`
+        }
+        if (consumable && consumables.length > 0) {
+            consumable.more = consumables
+            consumable.subwidth = `style="width:${consumables.length * 35}px"`
         }
         const template = await renderTemplate("systems/dsa5/templates/status/tokenHotbar.html", { items, consumables, consumable })
         $(this._element).find('.tokenQuickHot').html(template)

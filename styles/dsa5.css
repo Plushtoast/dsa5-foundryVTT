@@ -2510,6 +2510,15 @@ select.noAppearance {
     transform: translateY(-45px)
 }
 
+.tokenQuickHot>ul>li {
+    position: relative;
+}
+
+.tokenQuickHot .subbuttons {
+    position: absolute;
+    top: -60px;
+}
+
 .tokenQuickHot li {
     background-color: rgba(14, 12, 12, 0.3);
     display: inline-block;
@@ -2540,12 +2549,8 @@ select.noAppearance {
     text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000;
 }
 
-.tokenQuickHot .secondary div {
+.tokenQuickHot .subbuttons .secondary:not(.shown) {
     display: none;
-}
-
-.tokenQuickHot .secondary.shown div {
-    display: block;
 }
 
 .tokenQuickHot li span {
@@ -2567,18 +2572,6 @@ select.noAppearance {
 
 .tokenQuickHot li.skill {
     box-shadow: inset 0px 0px 10px #0d813e;
-}
-
-.consumable.secondary {
-    width: 0;
-    border: none;
-    transition: all 0.3s ease-in-out;
-}
-
-.consumable.secondary.shown {
-    border: 1px solid black;
-    border-color: black;
-    width: 35px;
 }
 
 .ench-fw {

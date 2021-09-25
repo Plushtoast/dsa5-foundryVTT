@@ -22,6 +22,7 @@ export default class DSA5SpellDialog extends DialogShared {
 
     activateListeners(html) {
         super.activateListeners(html)
+        html.find('.reloadButton').prop('disabled', Number(html.find('.castingTime').text()) < 2)
 
         html.find('.specAbs').mousedown(ev => {
             $(ev.currentTarget).toggleClass("active")
