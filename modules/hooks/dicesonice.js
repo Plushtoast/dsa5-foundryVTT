@@ -113,29 +113,35 @@ export default function() {
         });
 
         import ("../../../../modules/dice-so-nice/Utils.js").then(module => {
-            game.dsa5.apps.DiceSoNiceCustomization = new DiceSoNiceCustomization(module)
+            game.dsa5.apps.DiceSoNiceCustomization = new DiceSoNiceCustomization()
+            game.dsa5.apps.DiceSoNiceCustomization.initConfigs(module)
         })
     });
 }
 
-class DiceSoNiceCustomization {
-    constructor(module) {
+class DiceSoNiceCustomization extends Application {
+    initConfigs(module) {
         const colors = module.Utils.prepareColorsetList()
-        let choices = {}
+        this.choices = {}
         for (const [key, value] of Object.entries(colors)) {
-            mergeObject(choices, value)
+            mergeObject(this.choices, value)
         }
 
-        const attrs = ["mu", "kl", "in", "ch", "ff", "ge", "ko", "kk", "attack", "dodge", "parry"]
-        for (let attr of attrs) {
+        this.attrs = ["mu", "kl", "in", "ch", "ff", "ge", "ko", "kk", "attack", "dodge", "parry"]
+        game.settings.registerMenu("dsa5", "dicesonicesettings", {
+            name: "DiceSoNiceSettings",
+            label: "DiceSoNice Settings",
+            hint: game.i18n.localize("DSASETTINGS.dicesonicesettings"),
+            type: DiceSoNiceForm,
+            restricted: false
+        })
+        for (const attr of this.attrs) {
             game.settings.register("dsa5", `dice3d_${attr}`, {
                 name: `CHAR.${attr.toUpperCase()}`,
-                hint: "Dice so nice Colorset",
                 scope: "client",
-                config: true,
+                config: false,
                 default: attr,
-                type: String,
-                choices
+                type: String
             });
         }
     }
@@ -144,5 +150,36 @@ class DiceSoNiceCustomization {
             return game.settings.get("dsa5", `dice3d_${value}`)
         }
         return value
+    }
+
+    activateListeners(html) {
+        super.activateListeners()
+        html.find('[name="entryselection"]').change(ev => {
+            game.settings.set("dsa5", `dice3d_${ev.currentTarget.dataset.attr}`, ev.currentTarget.value)
+        })
+    }
+
+    async getData(options) {
+        const data = await super.getData(options);
+        data.choices = this.choices
+        data.selections = {}
+        for (const attr of this.attrs) data.selections[attr] = game.settings.get("dsa5", `dice3d_${attr}`)
+        return data
+    }
+
+    static get defaultOptions() {
+        const options = super.defaultOptions
+        mergeObject(options, {
+            template: 'systems/dsa5/templates/wizard/dicesonice-configuration.html',
+            title: game.i18n.localize("DSASETTINGS.dicesonicesettings"),
+            width: 400
+        });
+        return options
+    }
+}
+
+class DiceSoNiceForm extends FormApplication {
+    render() {
+        game.dsa5.apps.DiceSoNiceCustomization.render(true)
     }
 }

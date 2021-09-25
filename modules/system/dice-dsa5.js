@@ -103,7 +103,7 @@ export default class DiceDSA5 {
                             }
                         })
                     }
-                } else if (["spell", "ritual", "ceremony", "liturgy"].includes(testData.source.type)) {
+                } else if (["spell", "liturgy"].includes(testData.source.type)) {
                     const LZ = Number(testData.source.data.castingTime.value)
                     const progress = testData.source.data.castingTime.progress
                     let modified = testData.source.data.castingTime.modified

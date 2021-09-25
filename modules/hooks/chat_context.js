@@ -1,3 +1,4 @@
+import Actordsa5 from "../actor/actor-dsa5.js";
 import DSA5_Utility from "../system/utility-dsa5.js";
 
 export default function() {
@@ -133,6 +134,10 @@ export default function() {
                 }
             }
         }
+        let canApplyDefaultRolls = li => {
+            const message = game.messages.get(li.data("messageId"));
+            return message?.isRoll && message?.isContentVisible && canvas.tokens?.controlled.length && li.find('.dice-roll').length;
+        };
 
         const useFate = (li, mode, fateSource = 0) => {
             let message = game.messages.get(li.attr("data-message-id"));
@@ -148,7 +153,16 @@ export default function() {
             li.find('.hideAnchor').append(`<i class="fas fa-check" style="float:right" title="${game.i18n.localize("damageApplied")}"></i>`)
             await actor.applyDamage(cardData.damage[mode])
         }
-
+        const applyChatCardDamage = (li, mode) => {
+            const message = game.messages.get(li.data("messageId"));
+            const roll = message.roll;
+            return Promise.all(canvas.tokens.controlled.map(token => {
+              const actor = token.actor;
+              const damage = mode != "sp" ? roll.total - Actordsa5.armorValue(actor.data) : roll.total
+              return actor.applyDamage(Math.max(0, damage));
+            }));
+        }
+          
         options.push({
                 name: game.i18n.localize("CHATCONTEXT.hideData"),
                 icon: '<i class="fas fa-eye"></i>',
@@ -199,7 +213,20 @@ export default function() {
                 icon: '<i class="fas fa-user-minus"></i>',
                 condition: canHurtSP,
                 callback: li => { applyDamage(li, "sp") }
+            },
+            {
+                name: game.i18n.localize("CHATCONTEXT.ApplyDamage"),
+                icon: '<i class="fas fa-user-minus"></i>',
+                condition: canApplyDefaultRolls,
+                callback: li => { applyChatCardDamage(li, "value") }
             }, {
+                name: game.i18n.localize("CHATCONTEXT.ApplyDamageSP"),
+                icon: '<i class="fas fa-user-minus"></i>',
+                condition: canApplyDefaultRolls,
+                callback: li => { applyChatCardDamage(li, "sp") }
+            },
+            
+            {
                 name: game.i18n.localize("CHATCONTEXT.Reroll"),
                 icon: '<i class="fas fa-dice"></i>',
                 condition: canReroll,

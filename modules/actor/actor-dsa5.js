@@ -127,7 +127,7 @@ export default class Actordsa5 extends Actor {
             let activeGM = game.users.find(u => u.active && u.isGM)
 
             if (activeGM && game.user.id == activeGM.id) {
-                let hasDefaultPain = data.type != "creature" || data.data.status.wounds.max >= 20
+                const hasDefaultPain = data.type != "creature" || data.data.status.wounds.max >= 20
                 let pain = 0
                 if (data.data.status.wounds.max > 0) {
                     if (hasDefaultPain) {
@@ -396,8 +396,8 @@ export default class Actordsa5 extends Actor {
     }
 
     static armorValue(actor) {
-        let wornArmor = actor.items.filter(x => x.type == "armor" && x.data.data.worn.value == true).reduce((a, b) => a + Number(b.data.data.protection.value), 0)
-        let animalArmor = actor.items.filter(x => x.type == "trait" && x.data.data.traitType.value == "armor").reduce((a, b) => a + Number(b.data.data.at.value), 0)
+        const wornArmor = actor.items.filter(x => x.type == "armor" && x.data.data.worn.value == true).reduce((a, b) => a + Number(b.data.data.protection.value), 0)
+        const animalArmor = actor.items.filter(x => x.type == "trait" && x.data.data.traitType.value == "armor").reduce((a, b) => a + Number(b.data.data.at.value), 0)
         return wornArmor + animalArmor + (actor.data.totalArmor || 0)
     }
 
@@ -714,7 +714,7 @@ export default class Actordsa5 extends Actor {
         //TODO move the encumbrance calculation to a better location
         encumbrance = Math.max(0, encumbrance - SpecialabilityRulesDSA5.abilityStep(this.data, game.i18n.localize('LocalizedIDs.inuredToEncumbrance')))
 
-        let carrycapacity = actorData.data.characteristics.kk.value * 2 + actorData.data.carryModifier;
+        const carrycapacity = actorData.data.characteristics.kk.value * 2 + actorData.data.carryModifier;
 
         if ((actorData.type != "creature" || this.data.canAdvance) && !this.isMerchant()) {
             encumbrance += Math.max(0, Math.ceil((totalWeight - carrycapacity - 4) / 4))
@@ -733,7 +733,7 @@ export default class Actordsa5 extends Actor {
         return {
             isOwner: this.isOwner,
             totalWeight,
-            totalArmor,
+            armorSum: totalArmor,
             money,
             encumbrance,
             carrycapacity,

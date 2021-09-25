@@ -367,4 +367,22 @@ export default class DSA5ChatAutoCompletion {
         }
     }
 
+    static bindRollCommands(html){
+        html.on('click', '.request-roll', ev => {
+            DSA5ChatAutoCompletion.showRQMessage($(ev.currentTarget).attr("data-name"), Number($(ev.currentTarget).attr("data-modifier")) || 0)
+            ev.stopPropagation()
+            return false
+        })
+        html.on('click', '.request-GC', ev => {
+            DSA5ChatAutoCompletion.showGCMessage($(ev.currentTarget).attr("data-name"), Number($(ev.currentTarget).attr("data-modifier")) || 0)
+            ev.stopPropagation()
+            return false
+        })
+        html.on('click', '.request-CH', ev => {
+            DSA5ChatListeners.check3D20(undefined, $(ev.currentTarget).attr("data-name"), { modifier: Number($(ev.currentTarget).attr("data-modifier")) || 0 })
+            ev.stopPropagation()
+            return false
+        })
+    }
+
 }

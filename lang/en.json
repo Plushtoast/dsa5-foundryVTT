@@ -1214,7 +1214,8 @@
         "inventorySound": "Inventory sounds",
         "inventorySoundHint": "Activate Interface sound in the inventory (requires game audio bundles)",
         "lessRegeneration": "Weaker Regeneration",
-        "lessRegenerationHint": "Regeneration of LE only with 1D3"
+        "lessRegenerationHint": "Regeneration of LE only with 1D3",
+        "dicesonicesettings": "Chose colors for dice types"
     },
 
     "COMBATTRACKER": {

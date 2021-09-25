@@ -2929,3 +2929,13 @@ input[type="checkbox"].autoCheckbox {
     border: none;
     font-size: 14px;
 }
+
+.reactClick {
+    margin: 2px;
+}
+
+.reactClick img {
+    width: 26px;
+    float: left;
+    border: none;
+}

@@ -61,20 +61,14 @@ export default class DSA5Hotbar extends Hotbar {
                     case "meleeweapon":
                     case "rangeweapon":
                     case "trait":
-                        actor.setupWeapon(result, "attack", {}, tokenId).then(setupData => {
-                            actor.basicTest(setupData)
-                        });
+                        actor.setupWeapon(result, "attack", {}, tokenId).then(setupData => { actor.basicTest(setupData) });
                         break
                     case "liturgy":
                     case "spell":
-                        actor.setupSpell(result.data, {}, tokenId).then(setupData => {
-                            actor.basicTest(setupData)
-                        });
+                        actor.setupSpell(result.data, {}, tokenId).then(setupData => { actor.basicTest(setupData) });
                         break
                     case "skill":
-                        actor.setupSkill(result.data, {}, tokenId).then(setupData => {
-                            actor.basicTest(setupData)
-                        })
+                        actor.setupSkill(result.data, {}, tokenId).then(setupData => { actor.basicTest(setupData) })
                         break
                     case "consumable":
                         new Dialog({
@@ -134,7 +128,7 @@ export default class DSA5Hotbar extends Hotbar {
     }
 
     async updateIcons(actor) {
-        let items = {
+        const items = {
             attacks: [],
             spells: [],
             default: [],
@@ -142,6 +136,7 @@ export default class DSA5Hotbar extends Hotbar {
         }
         let consumable
         let consumables = []
+        const moreSpells
         if (game.combat) {
             items.attacks.push({
                 name: game.i18n.localize("attackWeaponless"),
@@ -153,11 +148,14 @@ export default class DSA5Hotbar extends Hotbar {
             const traitTypes = ["meleeAttack", "rangeAttack"]
             const spellTypes = ["liturgy", "spell"]
 
-            for (let x of actor.data.items) {
+            for (const x of actor.data.items) {
                 if ((attacktypes.includes(x.type) && x.data.data.worn.value == true) || (x.type == "trait" && traitTypes.includes(x.data.data.traitType.value))) {
                     items.attacks.push({ name: x.name, id: x.id, icon: x.img, cssClass: "", abbrev: x.name[0] })
                 } else if (spellTypes.includes(x.type) && x.data.data.effectFormula.value) {
-                    items.spells.push({ name: x.name, id: x.id, icon: x.img, cssClass: "spell", abbrev: x.name[0] })
+                    if (x.data.data.effectFormula.value)
+                        items.spells.push({ name: x.name, id: x.id, icon: x.img, cssClass: "spell", abbrev: x.name[0] })
+                    else
+                        moreSpells.push({ name: x.name, id: x.id, icon: x.img, cssClass: "spell", abbrev: x.name[0] })
                 } else if (["skill"].includes(x.type) && this.combatSkills.includes(x.name)) {
                     items.default.push({ name: `${x.name} (${x.data.data.talentValue.value})`, id: x.id, icon: x.img, cssClass: "skill", abbrev: x.name[0] })
                 } else if (x.type == "consumable") {
@@ -167,7 +165,7 @@ export default class DSA5Hotbar extends Hotbar {
             consumable = consumables.pop()
         } else {
             let descendingSkills = []
-            for (let x of actor.data.items) {
+            for (const x of actor.data.items) {
                 if (["skill"].includes(x.type) && this.defaultSkills.includes(x.name)) {
                     items.default.push({ name: `${x.name} (${x.data.data.talentValue.value})`, id: x.id, icon: x.img, cssClass: "skill", abbrev: x.name[0] })
                 } else if (["skill"].includes(x.type) && !this.defaultSkills.includes(x.name) && x.data.data.talentValue.value > 0) {

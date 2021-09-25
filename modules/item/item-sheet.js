@@ -4,6 +4,7 @@ import DSA5StatusEffects from "../status/status_effects.js"
 import DSA5ChatListeners from "../system/chat_listeners.js"
 import SpecialabilityRulesDSA5 from "../system/specialability-rules-dsa5.js"
 import { itemFromDrop, svgAutoFit } from "../system/view_helper.js"
+import DSA5ChatAutoCompletion from "../system/chat_autocompletion.js"
 
 export default class ItemSheetdsa5 extends ItemSheet {
     constructor(item, options) {
@@ -329,6 +330,8 @@ class Enchantable extends ItemSheetdsa5 {
                 item.sheet.render(true)
             }
         })
+
+        DSA5ChatAutoCompletion.bindRollCommands(html)
     }
 
     deleteEnchantment(id, enchantments) {

@@ -1,0 +1,20 @@
+<div class="section">
+    {{#each selections as |item i|}}
+    <div class="row-section" style="margin-bottom:10px">
+        <div class="col fourty lineheight center">
+            <b>{{localize (concatUp 'CHAR.' @key)}}</b>
+        </div>
+        <div class="col sixty">
+            <select name="entryselection" data-attr="{{@key}}">
+                {{#select item}}
+                {{#each ../choices as |itm i|}}
+                <option value="{{@key}}">{{itm}}</option>
+                {{/each}}
+                {{/select}}
+            </select>
+        </div>
+
+        {{choices}}
+    </div>
+    {{/each}}
+</div>

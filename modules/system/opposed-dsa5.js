@@ -347,7 +347,7 @@ export default class OpposedDsa5 {
 
         return {
             damage: attackerTest.damage,
-            armor: armor,
+            armor,
             sum: attackerTest.damage - armor
         }
     }

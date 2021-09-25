@@ -58,15 +58,15 @@ export default class DialogReactDSA5 extends Dialog {
 
 export class ReactToSkillDialog extends DialogReactDSA5 {
     static async getTemplate(startMessage) {
-        let attackMessage = game.messages.get(startMessage.data.flags.unopposeData.attackMessageId)
-        let source = attackMessage.data.flags.data.preData.source
-        let item = source.name
+        const attackMessage = game.messages.get(startMessage.data.flags.unopposeData.attackMessageId)
+        const source = attackMessage.data.flags.data.preData.source
+        const item = source.name
         let items = (await DSA5_Utility.allSkillsList()).map(k => { return { name: k, id: k } })
         items.unshift({
             name: game.i18n.localize("doNothing"),
             id: "doNothing"
         })
-        return renderTemplate('systems/dsa5/templates/dialog/dialog-reaction.html', { items, original: item })
+        return renderTemplate('systems/dsa5/templates/dialog/dialog-act.html', { items, original: item, title: "DIALOG.selectReaction" })
     }
 
     static callbackResult(text, message) {
@@ -74,7 +74,7 @@ export class ReactToSkillDialog extends DialogReactDSA5 {
         if ("doNothing" == text) {
             OpposedDsa5.resolveUndefended(message)
         } else {
-            let skill = actor.items.find(i => i.name == text && i.type == "skill")
+            const skill = actor.items.find(i => i.name == text && i.type == "skill")
             if (skill) {
                 actor.setupSkill(skill.data, {}, tokenId).then(setupData => {
                     actor.basicTest(setupData)
@@ -86,57 +86,54 @@ export class ReactToSkillDialog extends DialogReactDSA5 {
 
 export class ActAttackDialog extends Dialog {
     static async showDialog(actor, tokenId) {
-        let fun = this.callbackResult
-        new DialogReactDSA5({
+        const dialog = new ActAttackDialog({
             title: game.i18n.localize("attacktest"),
             content: await this.getTemplate(actor),
-            default: 'ok',
-            buttons: {
-                ok: {
-                    icon: '<i class="fa fa-check"></i>',
-                    label: game.i18n.localize("ok"),
-                    callback: dlg => {
-                        fun(dlg.find('[name="entryselection"]').val(), actor, tokenId)
-                    }
-                },
-                cancel: {
-                    icon: '<i class="fas fa-times"></i>',
-                    label: game.i18n.localize("cancel"),
+            buttons: {}
+        })
+        dialog.actor = actor
+        dialog.tokenId = tokenId
+        dialog.render(true)
+    }
 
-                }
-            }
-        }).render(true)
+    activateListeners(html) {
+        super.activateListeners(html);
+        html.find('.reactClick').click(ev => {
+            this.callbackResult(ev.currentTarget.dataset.value, this.actor, this.tokenId)
+            this.close()
+        })
     }
 
     static async getTemplate(actor) {
-        let item = ""
         let items = [{
             name: game.i18n.localize("attackWeaponless"),
-            id: "attackWeaponless"
+            id: "attackWeaponless",
+            img: "systems/dsa5/icons/categories/attack_weaponless.webp"
         }]
 
-        let types = ["meleeweapon", "rangeweapon"]
-        let traitTypes = ["meleeAttack", "rangeAttack"]
-        let result = actor.data.items.filter(x => {
+        const types = ["meleeweapon", "rangeweapon"]
+        const traitTypes = ["meleeAttack", "rangeAttack"]
+        const result = actor.data.items.filter(x => {
             return (types.includes(x.type) && x.data.data.worn.value == true) || (x.type == "trait" && traitTypes.includes(x.data.data.traitType.value))
         })
         for (let res of result) {
             items.push({
                 name: res.name,
-                id: res.name
+                id: res.name,
+                img: res.img
             })
         }
 
-        return await renderTemplate('systems/dsa5/templates/dialog/dialog-act.html', { items: items, original: item })
+        return await renderTemplate('systems/dsa5/templates/dialog/dialog-reaction-attack.html', { items: items, title: "DIALOG.selectAction" })
     }
-    static callbackResult(text, actor, tokenId) {
+    callbackResult(text, actor, tokenId) {
         if ("attackWeaponless" == text) {
             actor.setupWeaponless("attack", {}, tokenId).then(setupData => {
                 actor.basicTest(setupData)
             });
         } else {
-            let types = ["meleeweapon", "trait", "rangeweapon"]
-            let result = actor.data.items.find(x => { return types.includes(x.type) && x.name == text })
+            const types = ["meleeweapon", "trait", "rangeweapon"]
+            const result = actor.data.items.find(x => { return types.includes(x.type) && x.name == text })
             if (result) {
                 actor.setupWeapon(result, "attack", {}, tokenId).then(setupData => {
                     actor.basicTest(setupData)
@@ -147,18 +144,47 @@ export class ActAttackDialog extends Dialog {
 }
 
 export class ReactToAttackDialog extends DialogReactDSA5 {
+    static async showDialog(startMessage) {
+        const dialog = new ReactToAttackDialog({
+            title: game.i18n.localize("Unopposed"),
+            content: await this.getTemplate(startMessage),
+            buttons: {}
+        })
+        dialog.startMessage = startMessage
+        dialog.render(true)
+    }
+
+    activateListeners(html) {
+        super.activateListeners(html);
+        html.find('.reactClick').click(ev => {
+            this.callbackResult(ev.currentTarget.dataset.value, this.startMessage)
+            this.close()
+        })
+    }
+
+    static
+    get defaultOptions() {
+        const options = super.defaultOptions;
+        mergeObject(options, {
+            width: 500,
+
+        });
+        return options;
+    }
 
     static async getTemplate(startMessage) {
-        let item = ""
         let items = [{
             name: game.i18n.localize("doNothing"),
-            id: "doNothing"
+            id: "doNothing",
+            img: "systems/dsa5/icons/categories/disease.webp"
         }, {
             name: game.i18n.localize("dodge"),
-            id: "dodge"
+            id: "dodge",
+            img: "systems/dsa5/icons/categories/Dodge.webp"
         }, {
             name: game.i18n.localize("parryWeaponless"),
-            id: "parryWeaponless"
+            id: "parryWeaponless",
+            img: "systems/dsa5/icons/categories/attack_weaponless.webp"
         }]
 
         const { actor, tokenId } = DialogReactDSA5.getTargetActor(startMessage)
@@ -168,34 +194,29 @@ export class ReactToAttackDialog extends DialogReactDSA5 {
             for (let res of result) {
                 items.push({
                     name: res.name,
-                    id: res.name
+                    id: res.name,
+                    img: res.img
                 })
             }
         }
 
-        return await renderTemplate('systems/dsa5/templates/dialog/dialog-reaction.html', { items: items, original: item })
+        return await renderTemplate('systems/dsa5/templates/dialog/dialog-reaction-attack.html', { items: items, title: "DIALOG.selectReaction" })
     }
 
-    static callbackResult(text, message) {
+    callbackResult(text, message) {
         const { actor, tokenId } = DialogReactDSA5.getTargetActor(message)
 
         if ("doNothing" == text) {
             OpposedDsa5.resolveUndefended(message)
         } else if ("dodge" == text) {
-            actor.setupDodge({}, tokenId).then(setupData => {
-                actor.basicTest(setupData)
-            });
+            actor.setupDodge({}, tokenId).then(setupData => { actor.basicTest(setupData) });
         } else if ("parryWeaponless" == text) {
-            actor.setupWeaponless("parry", {}, tokenId).then(setupData => {
-                actor.basicTest(setupData)
-            });
+            actor.setupWeaponless("parry", {}, tokenId).then(setupData => { actor.basicTest(setupData) });
         } else {
-            let types = ["meleeweapon", "trait"]
-            let result = actor.data.items.find(x => { return types.includes(x.type) && x.name == text })
+            const types = ["meleeweapon", "trait"]
+            const result = actor.data.items.find(x => { return types.includes(x.type) && x.name == text })
             if (result) {
-                actor.setupWeapon(result, "parry", {}, tokenId).then(setupData => {
-                    actor.basicTest(setupData)
-                });
+                actor.setupWeapon(result, "parry", {}, tokenId).then(setupData => { actor.basicTest(setupData) });
             }
         }
     }
