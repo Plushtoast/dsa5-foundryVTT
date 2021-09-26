@@ -251,7 +251,7 @@ export default function() {
         name: "sightOptions",
         scope: "world",
         config: false,
-        default: "0.5|0.7|0.85|0.99",
+        default: "0.5|0.7|0.85|0.95",
         type: String
     });
 }

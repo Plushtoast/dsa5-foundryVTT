@@ -379,7 +379,8 @@ class Enchantable extends ItemSheetdsa5 {
         const data = await super.getData(options);
         data["enchantments"] = this.item.getFlag("dsa5", "enchantments")
         const enchantmentLabel = []
-        if (data.poison) enchantmentLabel.push("poison")
+
+        if (this.item.getFlag("dsa5", "poison")) enchantmentLabel.push("poison")
         if (data.enchantments && data.enchantments.some(x => !x.talisman)) enchantmentLabel.push("enchantment")
         if (data.enchantments && data.enchantments.some(x => x.talisman)) enchantmentLabel.push("talisman")
         data.enchantmentLabel = enchantmentLabel.map(x => game.i18n.localize(x)).join("/")
