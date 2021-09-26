@@ -41,5 +41,6 @@ export default class DialogShared extends Dialog {
                 }
             }
         }
+
     }
 }

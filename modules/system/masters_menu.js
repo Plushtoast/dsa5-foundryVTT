@@ -165,10 +165,33 @@ class GameMasterMenu extends Application {
             ev.stopPropagation()
             this.doGroupCheck()
         })
+        html.find('.changeSightAutomation').change(async(ev) => {
+            await game.settings.set('dsa5', "sightAutomationEnabled", ev.currentTarget.checked)
+        })
+        html.find('.changeSightTreshold').change(async(ev) => {
+            $(ev.currentTarget).closest('.row-section').find('.range-value').text(ev.currentTarget.value)
+            this.updateSightThreshold(ev)
+        })
+        html.find('.updateDarkness').change(async(ev) => {
+            $(ev.currentTarget).closest('.row-section').find('.range-value').text(ev.currentTarget.value)
+            this.updateDarkness(ev)
+        })
 
         for (let elem of this.randomCreation) {
             elem.activateListeners(html)
         }
+    }
+
+    async updateDarkness(ev) {
+        if (canvas.scene) canvas.scene.update({ darkness: Number(ev.currentTarget.value) })
+    }
+
+    async updateSightThreshold(ev) {
+        const index = Number(ev.currentTarget.dataset.index)
+        const value = Number(ev.currentTarget.value)
+        const optns = game.settings.get("dsa5", "sightOptions").split("|")
+        optns[index] = value
+        await game.settings.set("dsa5", "sightOptions", optns.join("|"))
     }
 
     getGroupSchipSetting() {
@@ -345,6 +368,14 @@ class GameMasterMenu extends Application {
                 value: i,
                 cssClass: i <= schipSetting[0] ? "fullSchip" : "emptySchip"
             })
+        }
+        const thresholds = game.settings.get("dsa5", "sightOptions").split("|")
+        const regex = / \[[a-zA-Zäöü\d-]+\]/
+        const visions = [1, 2, 3, 4].map(x => { return { label: game.i18n.localize(`VisionDisruption.step${x}`).replace(regex, ""), value: thresholds[x - 1] } })
+        data.sceneConfig = {
+            sceneAutomationEnabled: game.settings.get("dsa5", "sightAutomationEnabled"),
+            visions,
+            darkness: canvas.scene ? canvas.scene.data.darkness : 0
         }
 
         this.heros = heros

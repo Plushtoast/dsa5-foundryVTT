@@ -486,7 +486,10 @@
         "doGroupCheck": "Modifikator für <b>{skill}</b> Gruppenprobe.",
         "payTT": "Ausnehmen",
         "randomPlayer": "Zufälliges Opfer (Rechtsklick inklusive Pechmagnet)",
-        "randomGen": "Zuchtgrube"
+        "randomGen": "Zuchtgrube",
+        "sightautomation": "Sichtautomatisierung",
+        "threshold": "Dunkelheitsschwelle",
+        "darkness": "Dunkelheit"
     },
     "MODS": {
         "partChecks": "Teilprobenmodifikator",
@@ -974,7 +977,8 @@
         "skillSpecialization": "Fertigkeitsspezialisierung",
         "crossbows": "Armbrüste",
         "gambling": "Zechen",
-        "bodyControl": "Körperbeherrschung"
+        "bodyControl": "Körperbeherrschung",
+        "darksight": "Dunkelsicht"
     },
     "DSAError": {
         "MacroItemMissing": "Dein Charakter hat kein Item namens {item}. Stelle sicher, dass dir entweder ein Charakter zugeordnet ist oder du einen Token für den Wurf markierst.",

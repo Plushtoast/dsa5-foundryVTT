@@ -2,13 +2,55 @@
     <nav class="sheet-tabs tabs" data-tab-container="primary">
         <a class="item active" data-tab="main">{{localize "ACTOR.TypeCharacter"}}</a>
         <a class="item active" data-tab="randomGen">{{localize "MASTER.randomGen"}}</a>
-        <!--a class="item" data-tab="sceneConfig">{{localize "MASTER.sceneConfig"}}</!--a-->
+        <a class="item" data-tab="sceneConfig">{{localize "MASTER.sceneConfig"}}</a>
     </nav>
 
     <section class="content">
-        <!--div class="tab sceneConfig" data-tab="sceneConfig">
-        todo
-      </!--div-->
+        <div class="tab sceneConfig" data-tab="sceneConfig">
+            <div class="groupbox">
+                <h2>{{localize 'sight'}}</h2>
+                <div class="row-section lineheight">
+                    <div class="col fourty table-title">
+                        <label>{{localize "MASTER.sightautomation"}}</label>
+                    </div>
+                    <div class="col sixty">
+                        <input type="checkbox" class="changeSightAutomation" name="changeSightAutomation" value="1" {{checked sceneConfig.sceneAutomationEnabled}}>
+                    </div>
+                </div>
+                <div class="row-section lineheight">
+                    <div class="col fourty table-title">
+                        <label>{{localize "MASTER.darkness"}}</label>
+                    </div>
+                    <div class="col two">
+                        <input type="range" min="0" max="1" step="0.05" class="updateDarkness" name="updateDarkness" value="{{sceneConfig.darkness}}">
+                    </div>
+                    <div class="col ten center">
+                        <span class="range-value">{{item.value}}</span>
+                    </div>
+                </div>
+                <div class="row-section lineheight">
+                    <div class="col fourty">
+                        <label>{{localize "MASTER.threshold"}}</label>
+                    </div>
+                    <div class="col sixty">
+                    </div>
+                </div>
+                {{#each sceneConfig.visions as |item i|}}
+                <div class="row-section lineheight">
+                    <div class="col fourty table-title">
+                        <label>{{item.label}}</label>
+                    </div>
+                    <div class="col two">
+                        <input type="range" min="0" max="1.05" step="0.05" class="changeSightTreshold" name="changeSightTreshold" data-index={{i}} value="{{item.value}}">
+                    </div>
+                    <div class="col ten center">
+                        <span class="range-value">{{item.value}}</span>
+                    </div>
+                </div>
+                {{/each}}
+
+            </div>
+        </div>
         <div class="tab randomGen" data-tab="randomGen">
             {{#unless randomCreation}}
             <div class="row-section">

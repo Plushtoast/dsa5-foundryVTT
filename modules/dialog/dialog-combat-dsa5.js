@@ -1,3 +1,5 @@
+import AdvantageRulesDSA5 from "../system/advantage-rules-dsa5.js";
+import DSA5_Utility from "../system/utility-dsa5.js";
 import DialogShared from "./dialog-shared.js";
 
 export default class DSA5CombatDialog extends DialogShared {
@@ -137,4 +139,23 @@ export default class DSA5CombatDialog extends DialogShared {
 
         return false
     }
+    prepareFormRecall(html) {
+        super.prepareFormRecall(html)
+        if (canvas.scene && game.settings.get("dsa5", "sightAutomationEnabled")) {
+
+            const darkness = canvas.scene.data.darkness
+            const threholds = game.settings.get("dsa5", "sightOptions").split("|").map(x => Number(x))
+            let level = 0
+            while (threholds[level] <= darkness) level += 1
+
+            if (level < 4) {
+                const actor = DSA5_Utility.getSpeaker(this.dialogData.speaker)
+                if (actor) level = Math.max(0, level - AdvantageRulesDSA5.vantageStep(actor.data, game.i18n.localize("LocalizedIDs.darksight")))
+            }
+
+            const elem = html.find(`[name="vision"] option:nth-child(${level + 1})`)
+            if (elem) elem[0].selected = true
+        }
+    }
+
 }

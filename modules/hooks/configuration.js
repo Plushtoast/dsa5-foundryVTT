@@ -238,6 +238,22 @@ export default function() {
         default: true,
         type: Boolean
     });
+
+    game.settings.register("dsa5", "sightAutomationEnabled", {
+        name: "sightAutomationEnabled",
+        scope: "world",
+        config: false,
+        default: false,
+        type: Boolean
+    });
+
+    game.settings.register("dsa5", "sightOptions", {
+        name: "sightOptions",
+        scope: "world",
+        config: false,
+        default: "0.5|0.7|0.85|0.99",
+        type: String
+    });
 }
 
 class ChangelogForm extends FormApplication {
