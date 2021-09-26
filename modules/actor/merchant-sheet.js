@@ -292,9 +292,18 @@ export default class MerchantSheetDSA5 extends ActorSheetdsa5NPC {
             return x
         })
         this.prepareStorage(data)
-        if (this.showLimited()) {
-            this.prepareTradeFriend(data)
-            if (data.actor.inventory["misc"].items.length == 0) data.actor.inventory["misc"].show = false
+        if (!data.merchantType == "epic") {
+            if (this.showLimited()) {
+                this.prepareTradeFriend(data)
+                if (data.actor.inventory["misc"].items.length == 0) data.actor.inventory["misc"].show = false
+            }
+        } else {
+            data.garadanOptions = {
+                1: game.i18n.localize('GARADAN.1'),
+                2: game.i18n.localize('GARADAN.2'),
+                3: game.i18n.localize('GARADAN.3'),
+                4: game.i18n.localize('GARADAN.4')
+            }
         }
         return data;
     }

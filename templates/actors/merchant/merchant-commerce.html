@@ -18,7 +18,23 @@
                       </select>
                 </div>
             </div>
-            {{#if (eq actor.data.merchant.merchantType "merchant")}}
+            {{#if (eq actor.data.merchant.merchantType "epic")}}
+            <div class="row-section">
+                <div class="col fourty">
+                    Garadan
+                </div>
+                <div class="col sixty">
+                    <select name="data.merchant.garadan" data-dtype="String" style="width:100%">
+                    {{#select actor.data.merchant.garadan}}
+                    <option value="1">{{localize "GARADAN.1"}}</option>
+                    <option value="2">{{localize "GARADAN.2"}}</option>
+                    <option value="3">{{localize "GARADAN.3"}}</option>
+                    <option value="4">{{localize "GARADAN.4"}}</option>
+                    {{/select}}
+                  </select>
+                </div>
+            </div>
+            {{/if}} {{#if (eq actor.data.merchant.merchantType "merchant")}}
             <div class="row-section">
                 <div class="col fourty">
                     {{localize "MERCHANT.Factor"}}

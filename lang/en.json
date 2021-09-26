@@ -141,7 +141,12 @@
         "selectRandomGoods": "Select categories and an amount of additional random commodities. The addition might take a moment, if the index of the library has not been created yet.",
         "service": "{buyer} bought {amount} {item} from {merchant}."
     },
-
+    "GARADAN": {
+        "1": "Pawn",
+        "2": "Knight",
+        "3": "Rook",
+        "4": "King"
+    },
     "advanced": "Advanced",
     "requiredFW": "Required SR",
     "traditionArtifact": "Tradition Artifact",

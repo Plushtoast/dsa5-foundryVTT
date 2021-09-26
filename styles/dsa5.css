@@ -2889,8 +2889,8 @@ input[type="checkbox"].autoCheckbox {
 }
 
 .garadanborder {
-    max-width: 70%;
-    height: 100px;
+    max-width: 80%;
+    height: 140px;
     position: relative;
     top: -40px;
     background-image: url('../icons/backgrounds/garadanborder.webp');
@@ -2902,9 +2902,9 @@ input[type="checkbox"].autoCheckbox {
 .garadanicon {
     background-repeat: no-repeat;
     background-size: contain;
-    height: 35px;
-    margin-left: 30px;
-    margin-top: 28px;
+    height: 55px;
+    margin-left: 55%;
+    margin-top: 35px;
 }
 
 .garadanborder h1 {
@@ -2912,7 +2912,7 @@ input[type="checkbox"].autoCheckbox {
     border: none;
     margin: 0;
     margin-top: 0px;
-    margin-top: 25px;
+    margin-top: 45px;
     font-size: 24px;
     line-height: 24px;
 }

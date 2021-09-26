@@ -1302,6 +1302,12 @@
         "selectRandomGoods": "Wähle Kategorien und Anzahl an zusätzlichen zufälligen Waren. Das Hinzufügen dauert einen Moment, wenn der Index der Bibliothek noch nicht erstellt wurde.",
         "service": "{buyer} hat {amount} {item} von {merchant} gekauft."
     },
+    "GARADAN": {
+        "1": "Bauer",
+        "2": "Springer",
+        "3": "Turm",
+        "4": "König"
+    },
     "CONDITIONDESCRIPTION": {
         "minorSpirits": "Mindergeister sind kleine Elementarwesen, die zwar nicht gefährlich sind, aber lästig werden können. Einige Zauberanwender ziehen beim Wirken ihrer Magie Mindergeister geradezu an.",
         "shapeshift": "Diese Kreatur hat ihre Gestalt gewandelt",
