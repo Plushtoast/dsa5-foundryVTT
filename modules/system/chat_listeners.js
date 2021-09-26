@@ -1,6 +1,7 @@
 import DSA5 from "./config-dsa5.js"
 import DSA5_Utility from "./utility-dsa5.js"
 import { showPatchViewer } from "./migrator.js"
+import RuleChaos from "./rule_chaos.js"
 
 export default class DSA5ChatListeners {
     static chatListeners(html) {
@@ -10,6 +11,7 @@ export default class DSA5ChatListeners {
         helpButton.click(() => { DSA5ChatListeners.getHelp() })
         $(html.find('.control-buttons')).prepend(helpButton)
         html.on('click', '.showPatchViewer', () => showPatchViewer())
+        html.on('click', '.functionswitch', (ev) => RuleChaos[ev.currentTarget.dataset.function](ev))
     }
 
     static postStatus(id) {

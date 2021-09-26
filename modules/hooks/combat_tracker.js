@@ -1,5 +1,6 @@
 import Actordsa5 from "../actor/actor-dsa5.js";
 import { ActAttackDialog } from "../dialog/dialog-react.js"
+import DSA5_Utility from "../system/utility-dsa5.js";
 
 export class DSA5CombatTracker extends CombatTracker {
     static get defaultOptions() {
@@ -138,3 +139,47 @@ export class DSA5Combatant extends Combatant {
         super(data, context);
     }
 }
+
+
+
+class RepeatingEffectsHelper {
+    static async preUpdateCombatHook(combat, updateData)  {
+        if (!updateData.round && !updateData.turn)
+            return
+    
+        if (combat.data.round != 0 && combat.turns && combat.data.active && combat.current.turn > -1 && combat.current.turn == combat.turns.length - 1) await RepeatingEffectsHelper.endOfRound(combat)
+    }
+
+    static async endOfRound(combat){
+        const activeGM = game.users.find(u => u.active && u.isGM)
+            
+        if (!(activeGM && game.user.id == activeGM.id)) return
+
+        for (let turn of combat.turns) {
+            if(!turn.defeated){
+                for(let x of turn.actor.effects){
+                    const statusId = x.getFlag("core", "statusId")
+                    if( statusId == "bleeding") await this.applyBleeding(turn)
+                    else if(statusId == "burning") await this.applyBurning(turn, x)
+                }
+            } 
+        }
+    }
+
+    static async applyBleeding(turn){
+        await ChatMessage.create(DSA5_Utility.chatDataSetup(game.i18n.format('CHATNOTIFICATION.bleeding', { actor: turn.actor.name})))
+        await turn.actor.applyDamage(1)
+    }
+
+    static async applyBurning(turn, effect) {
+        const step = Number(effect.getFlag("dsa5", "value"))
+        const die = {1: "1d3", 2: "1d6", 3: "2d6"}[step]
+        const damageRoll = new Roll(die).evaluate({ async: false })
+        const damage = await damageRoll.render()
+        
+        await ChatMessage.create(DSA5_Utility.chatDataSetup(game.i18n.format(`CHATNOTIFICATION.burning.${step}`, { actor: turn.actor.name, damage})))
+        await turn.actor.applyDamage(damageRoll.total)
+    }
+}
+
+Hooks.on("preUpdateCombat", RepeatingEffectsHelper.preUpdateCombatHook)

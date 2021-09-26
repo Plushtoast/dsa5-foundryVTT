@@ -770,7 +770,12 @@
         "whisper": "Private message",
         "usesItem": "{actor} uses {item}.",
         "requestGroupCheck": " requests a group check in ",
-        "enchantmentUsed": "<b>{item}</b> used one charge of <b>{spell}</b>."
+        "enchantmentUsed": "<b>{item}</b> used one charge of <b>{spell}</b>.",
+        "burning": {
+            "1": "{actor} <a class=\"chatButton chat-condition\" data-id=\"burning\" draggable=\"true\"><img src=\"icons/svg/fire.svg\">burns</a> slightly resulting in {damage} sDP.",
+            "2": "{actor} <a class=\"chatButton chat-condition\" data-id=\"burning\" draggable=\"true\"><img src=\"icons/svg/fire.svg\">burns</a> resulting in {damage} sDP.",
+            "3": "{actor} is completely <a class=\"chatButton chat-condition\" data-id=\"burning\" draggable=\"true\"><img src=\"icons/svg/fire.svg\">aflame</a> and receives {damage} sDP."
+        }
     },
 
     "TT": {
@@ -995,7 +1000,8 @@
         "afraidOf": "Afraid of",
         "principles": "Principles",
         "skillSpecialization": "Skill Specialization",
-        "gambling": "Gambling"
+        "gambling": "Gambling",
+        "bodyControl": "Body Control"
     },
 
     "Shapeshift": {

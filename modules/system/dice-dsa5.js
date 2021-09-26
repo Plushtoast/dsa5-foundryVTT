@@ -844,9 +844,11 @@ export default class DiceDSA5 {
             this._addRollDiceSoNice(testData, reroll, roll.terms[indexOfMinValue * 2].options.colorset)
             description.push(game.i18n.format("CHATNOTIFICATION.unableReroll", { die: (indexOfMinValue + 1), oldVal: oldValue, newVal: reroll.total }))
         }
+        let automaticResult = 0
         if (testData.source.type == "skill" && TraitRulesDSA5.hasTrait(testData.extra.actor, `${game.i18n.localize('LocalizedIDs.automaticSuccess')} (${testData.source.name})`)) {
             description.push(game.i18n.localize("LocalizedIDs.automaticSuccess"));
             successLevel = 1
+            automaticResult = 1
         } else if (testData.source.type == "skill" && TraitRulesDSA5.hasTrait(testData.extra.actor, `${game.i18n.localize('LocalizedIDs.automaticFail')} (${testData.source.name})`)) {
             description.push(game.i18n.localize("LocalizedIDs.automaticFail"));
             successLevel = -1
@@ -866,6 +868,7 @@ export default class DiceDSA5 {
         }
 
         qualityStep = Math.min(game.settings.get("dsa5", "capQSat"), qualityStep)
+        if(qualityStep < automaticResult) qualityStep = automaticResult
 
         return {
             result: fws,
@@ -1192,7 +1195,7 @@ export default class DiceDSA5 {
                 case "attribute":
                     break
                 default:
-                    let skill = actor.items.find(i => i.name == name && i.type == category);
+                    const skill = actor.items.find(i => i.name == name && i.type == category);
                     actor.setupSkill(skill.data, options, tokenId).then(async(setupData) => {
                         let result = await actor.basicTest(setupData)
                         let message = await game.messages.get(messageId)

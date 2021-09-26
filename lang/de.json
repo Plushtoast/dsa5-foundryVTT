@@ -745,7 +745,12 @@
         "whisper": "Private Nachricht",
         "usesItem": "{actor} benutzt {item}.",
         "requestGroupCheck": " fordert eine Gruppenprobe in ",
-        "enchantmentUsed": "<b>{item}</b> hat eine Ladung <b>{spell}</b> verbraucht."
+        "enchantmentUsed": "<b>{item}</b> hat eine Ladung <b>{spell}</b> verbraucht.",
+        "burning": {
+            "1": "{actor} <a class=\"chatButton chat-condition\" data-id=\"burning\" draggable=\"true\"><img src=\"icons/svg/fire.svg\">brennt</a> ein bisschen und erhält {damage} Schadenspunkt(e).",
+            "2": "{actor} <a class=\"chatButton chat-condition\" data-id=\"burning\" draggable=\"true\"><img src=\"icons/svg/fire.svg\">brennt</a> und erhält {damage} Schadenspunkt(e).",
+            "3": "{actor} steht komplett in <a class=\"chatButton chat-condition\" data-id=\"burning\" draggable=\"true\"><img src=\"icons/svg/fire.svg\">Flammen</a> und erhält {damage} Schadenspunkte."
+        }
     },
     "TT": {
         "careerSkills": "Komma separierte Talentliste, z.b. (Betören 2,Etikette 4)",
@@ -968,7 +973,8 @@
         "principles": "Prinzipientreue",
         "skillSpecialization": "Fertigkeitsspezialisierung",
         "crossbows": "Armbrüste",
-        "gambling": "Zechen"
+        "gambling": "Zechen",
+        "bodyControl": "Körperbeherrschung"
     },
     "DSAError": {
         "MacroItemMissing": "Dein Charakter hat kein Item namens {item}. Stelle sicher, dass dir entweder ein Charakter zugeordnet ist oder du einen Token für den Wurf markierst.",

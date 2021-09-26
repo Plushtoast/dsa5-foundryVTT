@@ -124,7 +124,7 @@ export default class Actordsa5 extends Actor {
             data.data.status.dodge.max = Number(data.data.status.dodge.value) + Number(data.data.status.dodge.modifier) + (Number(game.settings.get("dsa5", "higherDefense")) / 2)
 
             //Prevent double update with multiple GMs, still unsafe
-            let activeGM = game.users.find(u => u.active && u.isGM)
+            const activeGM = game.users.find(u => u.active && u.isGM)
 
             if (activeGM && game.user.id == activeGM.id) {
                 const hasDefaultPain = data.type != "creature" || data.data.status.wounds.max >= 20
@@ -1607,6 +1607,7 @@ export default class Actordsa5 extends Actor {
     }
 
     async addCondition(effect, value = 1, absolute = false, auto = true) {
+        if(effect == "bleeding") return await RuleChaos.bleedingMessage(this)
         return await DSA5StatusEffects.addCondition(this, effect, value, absolute, auto)
     }
 

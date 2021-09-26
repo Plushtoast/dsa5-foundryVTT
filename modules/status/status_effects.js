@@ -146,7 +146,7 @@ export default class DSA5StatusEffects {
         else
             existing.data.flags.dsa5.manual = absolute ? value : existing.data.flags.dsa5.manual - value
 
-        existing.data.flags.dsa5.value = Math.max(0, Math.min(4, existing.data.flags.dsa5.manual + existing.data.flags.dsa5.auto))
+        existing.data.flags.dsa5.value = Math.max(0, Math.min(existing.data.flags.dsa5.max, existing.data.flags.dsa5.manual + existing.data.flags.dsa5.auto))
 
         if (existing.data.flags.dsa5.auto <= 0 && existing.data.flags.dsa5.manual == 0)
             return await actor.deleteEmbeddedDocuments("ActiveEffect", [existing.id])
@@ -172,7 +172,7 @@ export default class DSA5StatusEffects {
         if (delta == 0)
             return existing
 
-        update.flags.dsa5.value = Math.max(0, Math.min(4, update.flags.dsa5.manual + update.flags.dsa5.auto))
+        update.flags.dsa5.value = Math.max(0, Math.min(existing.data.flags.dsa5.max, update.flags.dsa5.manual + update.flags.dsa5.auto))
         await existing.update(update)
         await actor._dependentEffects(existing.data.flags.core.statusId, existing, delta)
         return existing
@@ -283,6 +283,15 @@ class DrunkenEffect extends DSA5StatusEffects {
     }
 }
 
+class BurningEffect extends DSA5StatusEffects {
+    static calculateRollModifier(effect, actor, item, options = {}) {
+        if (item.type == "skill" && item.name == game.i18n.localize("LocalizedIDs.bodyControl"))
+            return (effect.flags.dsa5.value - 1) * -1
+
+        return 0
+    }
+}
+
 class ArousalEffect extends DSA5StatusEffects {
     //TODO
 }
@@ -300,5 +309,6 @@ DSA5.statusEffectClasses = {
     bloodrush: BloodrushEffect,
     trance: TranceEffect,
     drunken: DrunkenEffect,
-    arousal: ArousalEffect
+    arousal: ArousalEffect,
+    burning: BurningEffect
 }

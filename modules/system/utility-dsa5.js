@@ -249,21 +249,11 @@ export default class DSA5_Utility {
     }
 
     static experienceDescription(experience) {
-        if (experience >= 2100) {
-            return "EXP.legendary";
-        } else if (experience >= 1700) {
-            return "EXP.brillant";
-        } else if (experience >= 1400) {
-            return "EXP.masterful";
-        } else if (experience >= 1200) {
-            return "EXP.competent";
-        } else if (experience >= 1100) {
-            return "EXP.experienced";
-        } else if (experience >= 1000) {
-            return "EXP.average";
-        } else {
-            return "EXP.inexperienced";
+        const grades = { 2100: "EXP.legendary", 1700: "EXP.brillant", 1400: "EXP.masterful", 1200: "EXP.competent", 1100: "EXP.experienced", 1000: "EXP.average" }
+        for (const grade of Object.keys(grades)) {
+            if (experience >= grade) return grades[grade]
         }
+        return "EXP.inexperienced"
     }
 
     static async emptyActor(attrs = 12) {

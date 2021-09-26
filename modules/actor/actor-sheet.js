@@ -555,7 +555,7 @@ export default class ActorSheetDsa5 extends ActorSheet {
                     let effect
                     let text
                     if (descriptor) {
-                        let effect = CONFIG.statusEffects.find(x => x.id == descriptor)
+                        effect = CONFIG.statusEffects.find(x => x.id == descriptor)
                         text = $(`<div style="padding:5px;"><b><a class="chat-condition chatButton" data-id="${effect.id}"><img src="${effect.icon}"/>${game.i18n.localize(effect.label)}</a></b>: ${game.i18n.localize(effect.description)}</div>`)
                     } else {
                         //search temporary effects

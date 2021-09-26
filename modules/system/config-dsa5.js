@@ -128,8 +128,9 @@ DSA5.statusEffects = [{
         description: "CONDITIONDESCRIPTION.burning",
         flags: {
             dsa5: {
-                "value": null,
-                "editable": true
+                "value": 1,
+                "editable": true,
+                "max": 3
             }
         }
     },
