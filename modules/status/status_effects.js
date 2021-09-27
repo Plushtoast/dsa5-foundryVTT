@@ -180,7 +180,7 @@ export default class DSA5StatusEffects {
 
 
     static calculateRollModifier(effect, actor, item, options = {}) {
-        if (effect.flags.dsa5.value == null) return 0
+        if (effect.flags.dsa5.value == null || item.type == "regenerate") return 0
 
         return effect.flags.dsa5.value * -1
     }
@@ -213,13 +213,15 @@ class EncumberedEffect extends DSA5StatusEffects {
     }
 
     static calculateRollModifier(effect, actor, item, options = {}) {
+        if (item.type == "regenerate") return 0
         return (item.type == "skill" && item.data.burden.value == "no") ? 0 : super.calculateRollModifier(effect, actor, item, options)
     }
 }
 
 class ProneEffect extends DSA5StatusEffects {
     static calculateRollModifier(effect, actor, item, options = {}) {
-        if (item.type == "dodge") return -2
+        if (item.type == "regenerate") return 0
+        else if (item.type == "dodge") return -2
         return options.mode ? (options.mode == "attack" ? -4 : -2) : 0
     }
 }
@@ -233,18 +235,21 @@ class RaptureEffect extends DSA5StatusEffects {
         }
         if (["ritual", "spell", "skill", "combatskill"].includes(item.type))
             return effect.flags.dsa5.value * -1
+        if (item.type == "regenerate") return 0
         return 0
     }
 }
 
 class DeafEffect extends DSA5StatusEffects {
     static calculateRollModifier(effect, actor, item, options = {}) {
+        if (item.type == "regenerate") return 0
         return (item.type == "skill" && item.name == game.i18n.localize("LocalizedIDs.perception")) ? -3 : 0
     }
 }
 
 class BloodrushEffect extends DSA5StatusEffects {
     static calculateRollModifier(effect, actor, item, options = {}) {
+        if (item.type == "regenerate") return 0
         if (item.type == "skill")
             return item.name == game.i18n.localize("LocalizedIDs.featOfStrength") ? 2 : 0
 
@@ -260,6 +265,7 @@ class PainEffect extends DSA5StatusEffects {
 
 class TranceEffect extends DSA5StatusEffects {
     static calculateRollModifier(effect, actor, item, options = {}) {
+        if (item.type == "regenerate") return 0
         switch (Number(effect.flags.dsa5.value)) {
             case 2:
                 let happyTalents = actor.data.happyTalents.value.split(/;|,/).map(x => x.trim())
@@ -276,6 +282,7 @@ class TranceEffect extends DSA5StatusEffects {
 
 class DrunkenEffect extends DSA5StatusEffects {
     static calculateRollModifier(effect, actor, item, options = {}) {
+        if (item.type == "regenerate") return 0
         if (item.type == "skill" && item.name == game.i18n.localize("LocalizedIDs.gambling"))
             return effect.flags.dsa5.value * -1
 
@@ -285,6 +292,7 @@ class DrunkenEffect extends DSA5StatusEffects {
 
 class BurningEffect extends DSA5StatusEffects {
     static calculateRollModifier(effect, actor, item, options = {}) {
+        if (item.type == "regenerate") return 0
         if (item.type == "skill" && item.name == game.i18n.localize("LocalizedIDs.bodyControl"))
             return (effect.flags.dsa5.value - 1) * -1
 
@@ -293,7 +301,21 @@ class BurningEffect extends DSA5StatusEffects {
 }
 
 class ArousalEffect extends DSA5StatusEffects {
-    //TODO
+    static calculateRollModifier(effect, actor, item, options = {}) {
+        //TODO this should be TPMs
+        return 0
+    }
+}
+
+class SikaryanlossEffect extends DSA5StatusEffects {
+    static calculateRollModifier(effect, actor, item, options = {}) {
+        if (item.type == "skill" && item.name == game.i18n.localize("LocalizedIDs.willpower"))
+            return (effect.flags.dsa5.value - 1) * -2
+        else if (item.type == "regenerate")
+            return effect.flags.dsa5.value * -1
+
+        return 0
+    }
 }
 
 DSA5.statusEffectClasses = {
@@ -310,5 +332,6 @@ DSA5.statusEffectClasses = {
     trance: TranceEffect,
     drunken: DrunkenEffect,
     arousal: ArousalEffect,
-    burning: BurningEffect
+    burning: BurningEffect,
+    sikaryanloss: SikaryanlossEffect
 }

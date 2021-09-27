@@ -1009,7 +1009,8 @@
         "skillSpecialization": "Skill Specialization",
         "gambling": "Gambling",
         "bodyControl": "Body Control",
-        "darksight": "Darksight"
+        "darksight": "Darksight",
+        "willpower": "Willpower"
     },
 
     "Shapeshift": {

@@ -1204,7 +1204,7 @@ export default class Actordsa5 extends Actor {
 
         testData.extra.actor.isMage = this.data.isMage
         testData.extra.actor.isPriest = this.data.isPriest
-
+        let situationalModifiers = DSA5StatusEffects.getRollModifiers(testData.extra.actor, testData.source)
         let dialogOptions = {
             title: title,
             template: "/systems/dsa5/templates/dialog/regeneration-dialog.html",
@@ -1213,7 +1213,8 @@ export default class Actordsa5 extends Actor {
                 regenerationInterruptOptions: DSA5.regenerationInterruptOptions,
                 regnerationCampLocations: DSA5.regnerationCampLocations,
                 showAspModifier: this.data.isMage,
-                showKapModifier: this.data.isPriest
+                showKapModifier: this.data.isPriest,
+                situationalModifiers
             },
             callback: (html, options = {}) => {
                 testData.situationalModifiers = Actordsa5._parseModifiers(html)

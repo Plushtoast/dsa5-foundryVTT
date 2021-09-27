@@ -79,6 +79,21 @@
         <label>{{localize "badEnvironment"}} (x 0.5)</label>
         <input type="checkbox" name="badEnvironment" value="1">
     </div>
+    {{#if hasSituationalModifiers}}
+    <div class="modifiers form-group custom-select">
+        <label>{{localize "DIALOG.SituationalModifiers"}}</label>
+        <select name="situationalModifiers" multiple title="{{localize 'DIALOG.deselectWithStrg'}}">
+        {{#select selectedModifiers}}
+        {{#each situationalModifiers as |mod t|}}
+        <option title="{{localize mod.name}}" data-type="{{mod.type}}" value="{{mod.value}}" {{#if
+            mod.selected}}selected{{/if}}>
+            {{localize mod.name}} [{{mod.value}} {{mod.type}}]
+        </option>
+        {{/each}}
+        {{/select}}
+    </select>
+    </div>
+    {{/if}}
 
     <div class="roll-dialog-tag">regeneration</div>
 </form>

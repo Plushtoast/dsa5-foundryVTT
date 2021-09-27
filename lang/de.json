@@ -977,7 +977,8 @@
         "crossbows": "Armbrüste",
         "gambling": "Zechen",
         "bodyControl": "Körperbeherrschung",
-        "darksight": "Dunkelsicht"
+        "darksight": "Dunkelsicht",
+        "willpower": "Willenskraft"
     },
     "DSAError": {
         "MacroItemMissing": "Dein Charakter hat kein Item namens {item}. Stelle sicher, dass dir entweder ein Charakter zugeordnet ist oder du einen Token für den Wurf markierst.",
