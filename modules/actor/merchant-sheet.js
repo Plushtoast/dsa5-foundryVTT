@@ -292,7 +292,7 @@ export default class MerchantSheetDSA5 extends ActorSheetdsa5NPC {
             return x
         })
         this.prepareStorage(data)
-        if (!data.merchantType == "epic") {
+        if (data.merchantType != "epic") {
             if (this.showLimited()) {
                 this.prepareTradeFriend(data)
                 if (data.actor.inventory["misc"].items.length == 0) data.actor.inventory["misc"].show = false
