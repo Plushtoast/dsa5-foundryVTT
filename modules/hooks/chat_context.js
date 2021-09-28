@@ -136,7 +136,8 @@ export default function() {
         }
         let canApplyDefaultRolls = li => {
             const message = game.messages.get(li.data("messageId"));
-            return message?.isRoll && message?.isContentVisible && canvas.tokens?.controlled.length && li.find('.dice-roll').length;
+            if (!message || !canvas.tokens) return false
+            return message.isRoll && message.isContentVisible && canvas.tokens.controlled.length && li.find('.dice-roll').length;
         };
 
         const useFate = (li, mode, fateSource = 0) => {
@@ -157,12 +158,12 @@ export default function() {
             const message = game.messages.get(li.data("messageId"));
             const roll = message.roll;
             return Promise.all(canvas.tokens.controlled.map(token => {
-              const actor = token.actor;
-              const damage = mode != "sp" ? roll.total - Actordsa5.armorValue(actor.data) : roll.total
-              return actor.applyDamage(Math.max(0, damage));
+                const actor = token.actor;
+                const damage = mode != "sp" ? roll.total - Actordsa5.armorValue(actor.data) : roll.total
+                return actor.applyDamage(Math.max(0, damage));
             }));
         }
-          
+
         options.push({
                 name: game.i18n.localize("CHATCONTEXT.hideData"),
                 icon: '<i class="fas fa-eye"></i>',
@@ -177,19 +178,14 @@ export default function() {
                 name: game.i18n.localize("regenerate"),
                 icon: '<i class="fas fa-user-plus"></i>',
                 condition: canHeal,
-                callback: li => {
-                    let message = game.messages.get(li.attr("data-message-id"))
-                    let actor = DSA5_Utility.getSpeaker(message.data.speaker)
+                callback: async(li) => {
+                    const message = game.messages.get(li.attr("data-message-id"))
+                    const actor = DSA5_Utility.getSpeaker(message.data.speaker)
                     if (!actor.isOwner)
                         return ui.notifications.error(game.i18n.localize("DSAError.DamagePermission"))
 
-                    message.update({ "flags.data.healApplied": true });
-                    const update = {
-                        "data.status.wounds.value": Math.min(actor.data.data.status.wounds.max, actor.data.data.status.wounds.value + (message.data.flags.data.postData.LeP || 0)),
-                        "data.status.karmaenergy.value": Math.min(actor.data.data.status.karmaenergy.max, actor.data.data.status.karmaenergy.value + (message.data.flags.data.postData.KaP || 0)),
-                        "data.status.astralenergy.value": Math.min(actor.data.data.status.astralenergy.max, actor.data.data.status.astralenergy.value + (message.data.flags.data.postData.AsP || 0))
-                    }
-                    actor.update(update)
+                    await message.update({ "flags.data.healApplied": true });
+                    await actor.applyRegeneration(message.data.flags.data.postData.LeP, message.data.flags.data.postData.AsP, message.data.flags.data.postData.KaP)
                 }
             }, {
                 name: game.i18n.localize("CHATCONTEXT.ApplyMana"),
@@ -213,8 +209,7 @@ export default function() {
                 icon: '<i class="fas fa-user-minus"></i>',
                 condition: canHurtSP,
                 callback: li => { applyDamage(li, "sp") }
-            },
-            {
+            }, {
                 name: game.i18n.localize("CHATCONTEXT.ApplyDamage"),
                 icon: '<i class="fas fa-user-minus"></i>',
                 condition: canApplyDefaultRolls,
@@ -225,7 +220,7 @@ export default function() {
                 condition: canApplyDefaultRolls,
                 callback: li => { applyChatCardDamage(li, "sp") }
             },
-            
+
             {
                 name: game.i18n.localize("CHATCONTEXT.Reroll"),
                 icon: '<i class="fas fa-dice"></i>',
