@@ -1048,7 +1048,8 @@ export default class Actordsa5 extends Actor {
             cardOptions.fatePointDamageRerollUsed = true;
             this.resetTargetAndMessage(data, cardOptions)
 
-            renderTemplate('systems/dsa5/templates/dialog/fateReroll-dialog.html', { testData: newTestData, postData: data.postData }).then(html => {
+            renderTemplate('systems/dsa5/templates/dialog/fateReroll-dialog.html', { testData: newTestData, postData: data.postData })
+                .then(html => {
                         new DSA5Dialog({
                                     title: game.i18n.localize("CHATFATE.selectDice"),
                                     content: html,

@@ -318,6 +318,24 @@ class SikaryanlossEffect extends DSA5StatusEffects {
     }
 }
 
+class DesireEffect extends DSA5StatusEffects {
+    static calculateRollModifier(effect, actor, item, options = {}) {
+        if (item.type == "skill" && item.name == game.i18n.localize("LocalizedIDs.willpower"))
+            return effect.flags.dsa5.value * -1
+
+        return 0
+    }
+}
+
+class TheriakEffect extends DSA5StatusEffects {
+    static calculateRollModifier(effect, actor, item, options = {}) {
+        if (item.type == "regenerate")
+            return effect.flags.dsa5.value * 1
+
+        return 0
+    }
+}
+
 DSA5.statusEffectClasses = {
     inpain: PainEffect,
     encumbered: EncumberedEffect,
@@ -333,5 +351,7 @@ DSA5.statusEffectClasses = {
     drunken: DrunkenEffect,
     arousal: ArousalEffect,
     burning: BurningEffect,
-    sikaryanloss: SikaryanlossEffect
+    sikaryanloss: SikaryanlossEffect,
+    desire: DesireEffect,
+    theriak: TheriakEffect
 }
