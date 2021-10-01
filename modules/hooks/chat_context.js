@@ -92,7 +92,7 @@ export default function() {
             return false
         };
         const canRerollDamageGroup = function(li) {
-            return canReroll(li, true)
+            return canRerollDamage(li, true)
         }
         const canReroll = function(li, group = false) {
             let message = game.messages.get(li.attr("data-message-id"));
