@@ -201,7 +201,7 @@ export default class DSA5_Utility {
         let regex = /( |^)(\d{1,2})?[wWdD][0-9]+((\+|-)[0-9]+)?/g
         let roll = inlineRoll ? "" : "/roll "
         return content.replace(regex, function(str) {
-            return ` [[${roll}${str.replace(/[DwW]/,"d")}]]`
+            return ` [[/r ${roll}${str.replace(/[DwW]/,"d")}]]`
         })
     }
 
