@@ -2932,3 +2932,26 @@ input[type="checkbox"].autoCheckbox {
     float: left;
     border: none;
 }
+
+.didYouKnow {
+    padding: 10px;
+    position: fixed;
+    top: 40%;
+    left: calc(50% - 200px);
+    background-color: rgba(0, 0, 0, 0.548);
+    border-radius: 10px;
+    z-index: 1002;
+    width: 400px;
+    color: white;
+    display: none;
+}
+
+.didYouKnow .col.five {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.didYouKnow img {
+    border: none;
+}

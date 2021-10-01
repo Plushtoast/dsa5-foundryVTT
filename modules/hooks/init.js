@@ -22,6 +22,7 @@ import BookWizard from "../wizards/adventure_wizard.js";
 import MastersMenu from "../system/masters_menu.js";
 import AdvantageRulesDSA5 from "../system/advantage-rules-dsa5.js";
 import SpecialabilityRulesDSA5 from "../system/specialability-rules-dsa5.js";
+import DidYouKnow from "../system/didyouknow.js";
 
 export default function() {
     initHandleBars.default();
@@ -88,6 +89,10 @@ Hooks.once("init", () => {
 
     ItemSheetdsa5.setupSheets()
     configuration.default()
+})
+
+Hooks.once('ready', () => {
+    DidYouKnow.showOneMessage()
 })
 
 Hooks.once('setup', () => {

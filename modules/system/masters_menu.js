@@ -183,7 +183,7 @@ class GameMasterMenu extends Application {
     }
 
     async updateDarkness(ev) {
-        if (canvas.scene) canvas.scene.update({ darkness: Number(ev.currentTarget.value) }, { animateDarkness: 10000 })
+        if (canvas.scene) canvas.scene.update({ darkness: Number(ev.currentTarget.value) }, { animateDarkness: 3000 })
     }
 
     async updateSightThreshold(ev) {
