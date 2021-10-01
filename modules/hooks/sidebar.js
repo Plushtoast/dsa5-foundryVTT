@@ -9,7 +9,7 @@ export default function() {
             button.click(() => { window.open("https://github.com/Plushtoast/dsa5-foundryVTT/wiki", "_blank") })
             html.find("#settings-documentation").append(button)
 
-            button = $(`<button><i class="fas fa-shopping-cart"></i> F-Shop</button>`)
+            button = $(`<button class="fshopButton"><div></div> F-Shop</button>`)
             button.click(() => { window.open(game.i18n.localize("fshopLink"), "_blank") })
             html.find("#settings-documentation").append(button)
         }

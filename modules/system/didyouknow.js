@@ -1,7 +1,7 @@
 export default class DidYouKnow {
     static messages = {
         de: [
-            "Du kannst Gegenstände verzaubern indem du Zauber aus Kompendien auf das Gegenstandsblatt ziehst.",
+            "Du kannst Gegenstände verzaubern, indem du Zauber aus Kompendien auf das Gegenstandsblatt ziehst.",
             "Du kannst Gegenstände in deinem Inventar duplizieren, wenn du STRG hälst und den Gegenstand auf deinem Char Blatt bewegst.",
             "Du kannst die Fähigkeiten und Gegenstände deines Charakters aktualisieren, indem du auf das Kettensymbol auf deinem Charakterblatt klickst.",
             "Du kannst Gegenstände in Taschen ziehen, um dein Inventar sauber zu halten oder die Tasche samt Gewicht schnell abzulegen",

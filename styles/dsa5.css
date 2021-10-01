@@ -2955,3 +2955,22 @@ input[type="checkbox"].autoCheckbox {
 .didYouKnow img {
     border: none;
 }
+
+#settings .fshopButton div {
+    display: inline-block;
+    background-image: url("/systems/dsa5/lazy/patchimages/UlissesDigital.png");
+    background-size: contain;
+    width: 20px;
+    height: 19px;
+    margin: 0;
+    background-repeat: no-repeat;
+    background-position: center;
+    position: relative;
+    top: 5px;
+}
+
+#sidebar button.fshopButton {
+    background: rgb(0, 111, 61);
+    background: linear-gradient(90deg, rgba(0, 38, 13, 1) 0%, rgba(0, 111, 61, 1)100%);
+    position: relative;
+}
