@@ -156,7 +156,8 @@ export default class DiceDSA5 {
         let res1 = res - roll.terms[0].results[0].result;
 
         //let color = DSA5.dieColors[id] || id;
-        const color = game.dsa5.apps.DiceSoNiceCustomization.getDiceSoNiceColor(id) || id
+        //const color = game.dsa5.apps.DiceSoNiceCustomization.getDiceSoNiceColor(id) || id
+        const color = game.dsa5.apps.DiceSoNiceCustomization.getAttributeConfiguration(id)
 
         chars.push({ char: id, res: roll.terms[0].results[0].result, suc: res1 >= 0, tar: res });
         let rollConfirm = new Roll("1d20").evaluate({ async: false });
@@ -453,7 +454,7 @@ export default class DiceDSA5 {
     static _stringToRoll(text, testData) {
         return Roll.safeEval(`${text}`.replace(/\d{1}[dDwW]\d/g, function(match) {
             let roll = new Roll(match.replace(/[Ww]/, "d")).evaluate({ async: false })
-            if (testData) DiceDSA5._addRollDiceSoNice(testData, roll, game.dsa5.apps.DiceSoNiceCustomization.getDiceSoNiceColor("ch") || "ch")
+            if (testData) DiceDSA5._addRollDiceSoNice(testData, roll, game.dsa5.apps.DiceSoNiceCustomization.getAttributeConfiguration("ch") )
             return roll.total
         }))
     }
@@ -620,9 +621,10 @@ export default class DiceDSA5 {
 
     static async _addRollDiceSoNice(testData, roll, color) {
         if (testData.rollMode) {
-            for (let i = 0; i < roll.dice.length; i++)
-                roll.dice[i].options.colorset = color
-
+            for (let i = 0; i < roll.dice.length; i++){
+                //roll.dice[i].options.colorset = color
+                mergeObject(roll.dice[i].options, color)
+            }
             this.showDiceSoNice(roll, testData.rollMode);
         }
     }
@@ -648,7 +650,7 @@ export default class DiceDSA5 {
             if (res2 >= 0) {
                 description += ", " + game.i18n.localize("doubleDamage")
             }
-            this._addRollDiceSoNice(testData, rollConfirm, game.dsa5.apps.DiceSoNiceCustomization.getDiceSoNiceColor(testData.mode) || testData.mode)
+            this._addRollDiceSoNice(testData, rollConfirm, game.dsa5.apps.DiceSoNiceCustomization.getAttributeConfiguration(testData.mode))
             chars.push({ char: testData.mode, res: rollConfirm.terms[0].results[0].result, suc: res2 >= 0, tar: res });
 
         } else if (roll.terms[0].results.filter(x => x.result == 20).length == 1) {
@@ -665,7 +667,7 @@ export default class DiceDSA5 {
                     description += ", " + game.i18n.localize("selfDamage") + (new Roll("1d6+2").evaluate({ async: false }).total)
                 }
             }
-            this._addRollDiceSoNice(testData, rollConfirm, game.dsa5.apps.DiceSoNiceCustomization.getDiceSoNiceColor(testData.mode) || testData.mode)
+            this._addRollDiceSoNice(testData, rollConfirm, game.dsa5.apps.DiceSoNiceCustomization.getAttributeConfiguration(testData.mode))
             chars.push({
                 char: testData.mode,
                 res: rollConfirm.terms[0].results[0].result,
@@ -779,7 +781,7 @@ export default class DiceDSA5 {
                 if (/(,|;)/.test(formula)) formula = formula.split(/[,;]/)[res.qualityStep - 1]
 
                 let rollEffect = testData.damageRoll ? testData.damageRoll : new Roll(formula).evaluate({ async: false })
-                this._addRollDiceSoNice(testData, rollEffect, "black")
+                this._addRollDiceSoNice(testData, rollEffect, game.dsa5.apps.DiceSoNiceCustomization.getAttributeConfiguration("damage"))
                 res["calculatedEffectFormula"] = formula
                 for (let k of rollEffect.terms) {
                     if (k instanceof Die || k.class == "Die")
@@ -841,7 +843,7 @@ export default class DiceDSA5 {
             fws += Math.max(res[indexOfMinValue], 0)
             fws -= Math.max(0, reroll.total - tar[indexOfMinValue])
             DSA5_Utility.editRollAtIndex(roll, indexOfMinValue, reroll.total)
-            this._addRollDiceSoNice(testData, reroll, roll.terms[indexOfMinValue * 2].options.colorset)
+            this._addRollDiceSoNice(testData, reroll, roll.terms[indexOfMinValue * 2].options)
             description.push(game.i18n.format("CHATNOTIFICATION.unableReroll", { die: (indexOfMinValue + 1), oldVal: oldValue, newVal: reroll.total }))
         }
         let automaticResult = 0
@@ -1006,7 +1008,7 @@ export default class DiceDSA5 {
 
     static async rollDices(testData, cardOptions) {
         if (!testData.roll) {
-            const d3dColors = game.dsa5.apps.DiceSoNiceCustomization
+            const d3dColors = game.dsa5.apps.DiceSoNiceCustomization.getAttributeConfiguration
             let roll;
             switch (testData.source.type) {
                 case "liturgy":
@@ -1014,14 +1016,23 @@ export default class DiceDSA5 {
                 case "ceremony":
                 case "ritual":
                 case "skill":
-                    roll = await new Roll(`1d20[${d3dColors.getDiceSoNiceColor(testData.source.data.characteristic1.value)}]+1d20[${d3dColors.getDiceSoNiceColor(testData.source.data.characteristic2.value)}]+1d20[${d3dColors.getDiceSoNiceColor(testData.source.data.characteristic3.value)}]`).evaluate({ async: true });
+                      //roll.dice[0].options.appearance = {system: "spectrum"}// d3dColors(testData.source.data.characteristic1.value)
+                    roll = await new Roll(`1d20+1d20+1d20`).evaluate({ async: true })
+                  
+                    mergeObject(roll.dice[0].options, d3dColors(testData.source.data.characteristic1.value))
+                    mergeObject(roll.dice[1].options, d3dColors(testData.source.data.characteristic2.value))
+                    mergeObject(roll.dice[2].options, d3dColors(testData.source.data.characteristic3.value))
                     break;
                 case "regenerate":
-                    const leDie = game.settings.get("dsa5", "lessRegeneration") ? "1d3" : "1d6"
-                    let rollstring = `${leDie}[${d3dColors.getDiceSoNiceColor("mu")}]`
-                    if (testData.extra.actor.isMage) rollstring += `+1d6[${d3dColors.getDiceSoNiceColor("ge")}]`
-                    if (testData.extra.actor.isPriest) rollstring += `+1d6[${d3dColors.getDiceSoNiceColor("in")}]`
-                    roll = await new Roll(rollstring).evaluate({ async: true })
+                    const leDie = [game.settings.get("dsa5", "lessRegeneration") ? "1d3" : "1d6"]
+                    
+                    if (testData.extra.actor.isMage) leDie.push("1d6")
+                    if (testData.extra.actor.isPriest) leDie.push("1d6")
+
+                    roll = await new Roll(leDie.join("+")).evaluate({ async: true })
+                    mergeObject(roll.dice[0].options, d3dColors("mu"))
+                    if (testData.extra.actor.isMage) mergeObject(roll.dice[1].options, d3dColors("ge"))
+                    if (testData.extra.actor.isPriest) mergeObject(roll.dice[leDie.length - 1].options, d3dColors("in"))
                     break;
                 case "meleeweapon":
                 case "rangeweapon":
@@ -1030,21 +1041,29 @@ export default class DiceDSA5 {
                 case "trait":
                     if (testData.mode == "damage") {
                         roll = await new Roll(testData.source.data.damage.value.replace(/[Ww]/g, "d")).evaluate({ async: true })
-                        for (let i = 0; i < roll.dice.length; i++) roll.dice[i].options.colorset = "black"
+                        for (let i = 0; i < roll.dice.length; i++) mergeObject(roll.dice[i].options, d3dColors("damage"))
 
-                    } else
-                        roll = await new Roll(`1d20[${d3dColors.getDiceSoNiceColor(testData.mode)}]`).evaluate({ async: true })
+                    } else{
+                        roll = await new Roll(`1d20`).evaluate({ async: true })
+                        mergeObject(roll.dice[0].options, d3dColors(testData.mode))
+                    }
+                    
                     break;
                 case "dodge":
-                    roll = await new Roll(`1d20[${d3dColors.getDiceSoNiceColor("dodge")}]`).evaluate({ async: true });
+                    roll = await new Roll(`1d20`).evaluate({ async: true });
+                    mergeObject(roll.dice[0].options, d3dColors("dodge"))
                     break;
                 case "poison":
                 case "disease":
-                    let pColor = d3dColors.getDiceSoNiceColor("in")
-                    roll = await new Roll(`1d20[${pColor}]+1d20[${pColor}]+1d20[${pColor}]`).evaluate({ async: true });
+                    let pColor = d3dColors("in")
+                    roll = await new Roll(`1d20+1d20+1d20`).evaluate({ async: true });
+                    mergeObject(roll.dice[0].options, pColor)
+                    mergeObject(roll.dice[1].options, pColor)
+                    mergeObject(roll.dice[2].options, pColor)
                     break
                 default:
-                    roll = await new Roll(`1d20[${d3dColors.getDiceSoNiceColor(testData.source.data.label.split('.')[1].toLowerCase())}]`).evaluate({ async: true });
+                    roll = await new Roll(`1d20`).evaluate({ async: true });
+                    mergeObject(roll.dice[0].options,d3dColors(testData.source.data.label.split('.')[1].toLowerCase())) 
             }
             roll = await DiceDSA5.manualRolls(roll, testData.source.type, testData.extra.options)
             this.showDiceSoNice(roll, cardOptions.rollMode);

@@ -219,7 +219,7 @@ export default class OpposedDsa5 {
                     "content": message.data.content.replace(`data-hide-damage="${!hide}"`, `data-hide-damage="${hide}"`),
                     "flags.data.hideDamage": hide
                 });
-                if (!hide) DiceDSA5._addRollDiceSoNice(message.data.flags.data.preData, Roll.fromData(message.data.flags.data.postData.damageRoll), "black")
+                if (!hide) DiceDSA5._addRollDiceSoNice(message.data.flags.data.preData, Roll.fromData(message.data.flags.data.postData.damageRoll), game.dsa5.apps.DiceSoNiceCustomization.getAttributeConfiguration("damage"))
             }
         } else {
             game.socket.emit("system.dsa5", {

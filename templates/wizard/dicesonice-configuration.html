@@ -1,20 +1,44 @@
 <div class="section">
+    <div class="row-section" style="margin-bottom:10px">
+        <div class="col fourty lineheight center">
+
+        </div>
+        <div class="col sixty row-section">
+            <div class="col two">
+                Colorset
+            </div>
+            <div class="col two">
+                System
+            </div>
+        </div>
+    </div>
     {{#each selections as |item i|}}
     <div class="row-section" style="margin-bottom:10px">
         <div class="col fourty lineheight center">
             <b>{{localize (concatUp 'CHAR.' @key)}}</b>
         </div>
-        <div class="col sixty">
-            <select name="entryselection" data-attr="{{@key}}">
-                {{#select item}}
-                {{#each ../choices as |itm i|}}
-                <option value="{{@key}}">{{itm}}</option>
-                {{/each}}
-                {{/select}}
-            </select>
-        </div>
+        <div class="col sixty row-section">
+            <div class="col two">
+                <select name="entryselection" data-attr="{{@key}}">
+                    {{#select item.color}}
+                    {{#each ../choices as |itm i|}}
+                    <option value="{{@key}}">{{itm}}</option>
+                    {{/each}}
+                    {{/select}}
+                </select>
+            </div>
+            <div class="col two">
+                <select name="systemselection" data-attr="{{@key}}">
+                    {{#select item.system}}
+                    {{#each ../systems as |itm i|}}
+                    <option value="{{itm.id}}">{{itm.name}}</option>
+                    {{/each}}
+                    {{/select}}
+                </select>
+            </div>
 
-        {{choices}}
+        </div>
     </div>
+
     {{/each}}
 </div>

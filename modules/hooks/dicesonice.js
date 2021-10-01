@@ -1,6 +1,10 @@
 export default function() {
+    Hooks.once('init', () => {
+        game.dsa5.apps.DiceSoNiceCustomization = new DiceSoNiceCustomization()
+    })
 
-    Hooks.once('diceSoNiceReady', (dice3d) => {
+
+    Hooks.once('diceSoNiceReady', (dice3d, b, c, d) => {
         dice3d.addColorset({
             name: 'mu',
             description: 'DSA5.mu',
@@ -113,7 +117,6 @@ export default function() {
         });
 
         import ("../../../../modules/dice-so-nice/Utils.js").then(module => {
-            game.dsa5.apps.DiceSoNiceCustomization = new DiceSoNiceCustomization()
             game.dsa5.apps.DiceSoNiceCustomization.initConfigs(module)
         })
     });
@@ -121,13 +124,14 @@ export default function() {
 
 class DiceSoNiceCustomization extends Application {
     initConfigs(module) {
+        this.labelColor = module.Utils.contrastOf(game.user.data.color)
         const colors = module.Utils.prepareColorsetList()
         this.choices = {}
         for (const [key, value] of Object.entries(colors)) {
             mergeObject(this.choices, value)
         }
-
-        this.attrs = ["mu", "kl", "in", "ch", "ff", "ge", "ko", "kk", "attack", "dodge", "parry"]
+        const otherKey = { damage: "black" }
+        this.attrs = ["mu", "kl", "in", "ch", "ff", "ge", "ko", "kk", "attack", "dodge", "parry", "damage"]
         game.settings.registerMenu("dsa5", "dicesonicesettings", {
             name: "DiceSoNiceSettings",
             label: "DiceSoNice Settings",
@@ -140,30 +144,67 @@ class DiceSoNiceCustomization extends Application {
                 name: `CHAR.${attr.toUpperCase()}`,
                 scope: "client",
                 config: false,
-                default: attr,
+                default: otherKey[attr] || attr,
+                type: String
+            });
+            game.settings.register("dsa5", `dice3d_system_${attr}`, {
+                name: `CHAR.${attr.toUpperCase()}`,
+                scope: "client",
+                config: false,
+                default: "standard",
                 type: String
             });
         }
+
     }
-    getDiceSoNiceColor(value) {
+
+    /*getDiceSoNiceColor(value) {
         if (game.modules.get("dice-so-nice") && game.modules.get("dice-so-nice").active) {
             return game.settings.get("dsa5", `dice3d_${value}`)
         }
         return value
+    }*/
+
+
+
+    getAttributeConfiguration(value) {
+        if (game.modules.get("dice-so-nice") && game.modules.get("dice-so-nice").active) {
+            return {
+                colorset: game.settings.get("dsa5", `dice3d_${value}`),
+            }
+
+            /*{
+                colorset: ,
+            }*/
+            return {
+                colorset: game.settings.get("dsa5", `dice3d_${value}`),
+                system: game.settings.get("dsa5", `dice3d_system_${value}`)
+            }
+        }
+        return { colorset: value }
     }
 
     activateListeners(html) {
         super.activateListeners()
-        html.find('[name="entryselection"]').change(ev => {
-            game.settings.set("dsa5", `dice3d_${ev.currentTarget.dataset.attr}`, ev.currentTarget.value)
+        html.find('[name="entryselection"]').change(async(ev) => {
+            await game.settings.set("dsa5", `dice3d_${ev.currentTarget.dataset.attr}`, ev.currentTarget.value)
+        })
+        html.find('[name="systemselection"]').change(async(ev) => {
+            await game.settings.set("dsa5", `dice3d_system_${ev.currentTarget.dataset.attr}`, ev.currentTarget.value)
         })
     }
 
     async getData(options) {
         const data = await super.getData(options);
         data.choices = this.choices
+        data.systems = duplicate(game.dice3d.DiceFactory.systems)
         data.selections = {}
-        for (const attr of this.attrs) data.selections[attr] = game.settings.get("dsa5", `dice3d_${attr}`)
+        for (const attr of this.attrs) {
+            data.selections[attr] = {
+                color: game.settings.get("dsa5", `dice3d_${attr}`),
+                system: game.settings.get("dsa5", `dice3d_system_${attr}`)
+            }
+        }
         return data
     }
 
@@ -172,7 +213,7 @@ class DiceSoNiceCustomization extends Application {
         mergeObject(options, {
             template: 'systems/dsa5/templates/wizard/dicesonice-configuration.html',
             title: game.i18n.localize("DSASETTINGS.dicesonicesettings"),
-            width: 400
+            width: 600
         });
         return options
     }

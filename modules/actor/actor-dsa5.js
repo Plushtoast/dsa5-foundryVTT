@@ -918,9 +918,9 @@ export default class Actordsa5 extends Actor {
 
     async applyRegeneration(LeP, AsP, KaP) {
         const update = {
-            "data.status.wounds.value": Math.min(actor.data.data.status.wounds.max, actor.data.data.status.wounds.value + (LeP || 0)),
-            "data.status.karmaenergy.value": Math.min(actor.data.data.status.karmaenergy.max, actor.data.data.status.karmaenergy.value + (KaP || 0)),
-            "data.status.astralenergy.value": Math.min(actor.data.data.status.astralenergy.max, actor.data.data.status.astralenergy.value + (AsP || 0))
+            "data.status.wounds.value": Math.min(this.data.data.status.wounds.max, this.data.data.status.wounds.value + (LeP || 0)),
+            "data.status.karmaenergy.value": Math.min(this.data.data.status.karmaenergy.max, this.data.data.status.karmaenergy.value + (KaP || 0)),
+            "data.status.astralenergy.value": Math.min(this.data.data.status.astralenergy.max, this.data.data.status.astralenergy.value + (AsP || 0))
         }
         await this.update(update)
     }

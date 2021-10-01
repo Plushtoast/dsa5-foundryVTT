@@ -150,11 +150,14 @@ export default class DSA5CombatDialog extends DialogShared {
 
             if (level < 4) {
                 const actor = DSA5_Utility.getSpeaker(this.dialogData.speaker)
-                if (actor) level = Math.max(0, level - AdvantageRulesDSA5.vantageStep(actor.data, game.i18n.localize("LocalizedIDs.darksight")))
+                if (actor) {
+                    level = Math.max(0, level - AdvantageRulesDSA5.vantageStep(actor.data, game.i18n.localize("LocalizedIDs.darksight")))
+                    level = Math.max(0, level - AdvantageRulesDSA5.vantageStep(actor.data, game.i18n.localize("LocalizedIDs.traditionBoron")))
+                }
             }
 
             const elem = html.find(`[name="vision"] option:nth-child(${level + 1})`)
-            if (elem) elem[0].selected = true
+            if (elem.length) elem[0].selected = true
         }
     }
 
