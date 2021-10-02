@@ -94,6 +94,6 @@ export default class DidYouKnow {
             $('.didYouKnow').fadeOut(1000, () => {
                 $('.didYouKnow').remove()
             });
-        }, 7000);
+        }, 5000);
     }
 }
