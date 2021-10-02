@@ -176,7 +176,7 @@ export default class Itemdsa5 extends Item {
             let vals = mod.replace(/(\s+)/g, ' ').trim().split(" ")
             vals[0] = vals[0].replace(regex, actor.data.data.status.speed.max)
             if (vals.length == 2) {
-                if (!isNaN(vals[0]) || /(=)?[+-]\d([+-]\d)?/.test(vals[0]) || /(=)?\d[dDwW]\d/.test(vals[0])) {
+                if (!isNaN(vals[0]) || /(=)?[+-]\d([+-]\d)?/.test(vals[0]) || /(=)?\d[dDwW]\d/.test(vals[0]) || /=\d+/.test(vals[0])) {
                     if (itemModifiers[vals[1].toLowerCase()] == undefined) {
                         itemModifiers[vals[1].toLowerCase()] = [vals[0]]
                     } else {
@@ -232,7 +232,14 @@ export default class Itemdsa5 extends Item {
         } else
             searchFilter = () => { return true }
 
-        let combatSpecAbs = actor.items.filter(x => x.type == "specialability" && categories.includes(x.data.data.category.value) && x.data.data.effect.value != "" && searchFilter(x, toSearch))
+
+        const combatSpecAbs = actor.items.filter(x => {
+            return x.type == "specialability" &&
+            categories.includes(x.data.data.category.value) &&
+            x.data.data.effect.value != "" &&
+            searchFilter(x, toSearch)
+        })
+
         let combatskills = []
         const at = game.i18n.localize("LocalizedAbilityModifiers.at")
         const tp = game.i18n.localize("LocalizedAbilityModifiers.tp")
@@ -245,7 +252,7 @@ export default class Itemdsa5 extends Item {
                 const atbonus = effects[at] || 0
                 const tpbonus = effects[tp] || 0
                 const dmmalus = effects[dm] || 0
-                if (atbonus != 0 || tpbonus != 0 || dmmalus != 0) {
+                if (atbonus != 0 || tpbonus != 0 || dmmalus != 0 || com.data.effects.size > 0) {
                     const subCategory = game.i18n.localize(DSA5.combatSkillSubCategories[com.data.data.category.sub])
                     combatskills.push({
                         name: com.name,

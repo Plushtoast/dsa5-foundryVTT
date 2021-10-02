@@ -464,6 +464,7 @@ export default class DiceDSA5 {
         let overrideDamage = []
         let bonusDmg = testData.situationalModifiers.reduce(function(_this, val) {
             let number = 0
+            console.log(val)
             if (val.damageBonus) {
                 const isOverride = /^=/.test(val.damageBonus)
                 const rollString = `${val.damageBonus}`.replace(/^=/, "")
@@ -744,7 +745,7 @@ export default class DiceDSA5 {
         const result = []
         if (effectString){
             const regex = /^[a-z]+\|[öäüÖÄÜa-zA-z ]+$/
-            
+
             for (let k of effectString.split(";")) {
                 if (regex.test(k.trim())) {
                     let split = k.split("|")
@@ -1004,7 +1005,7 @@ export default class DiceDSA5 {
         return Math.min(0, DSA5.meleeRangesArray.indexOf(weapon.data.reach.value) - DSA5.meleeRangesArray.indexOf(testData.opposingWeaponSize)) * 2
     }
 
-    
+
 
     static async rollDices(testData, cardOptions) {
         if (!testData.roll) {
@@ -1018,14 +1019,14 @@ export default class DiceDSA5 {
                 case "skill":
                       //roll.dice[0].options.appearance = {system: "spectrum"}// d3dColors(testData.source.data.characteristic1.value)
                     roll = await new Roll(`1d20+1d20+1d20`).evaluate({ async: true })
-                  
+
                     mergeObject(roll.dice[0].options, d3dColors(testData.source.data.characteristic1.value))
                     mergeObject(roll.dice[1].options, d3dColors(testData.source.data.characteristic2.value))
                     mergeObject(roll.dice[2].options, d3dColors(testData.source.data.characteristic3.value))
                     break;
                 case "regenerate":
                     const leDie = [game.settings.get("dsa5", "lessRegeneration") ? "1d3" : "1d6"]
-                    
+
                     if (testData.extra.actor.isMage) leDie.push("1d6")
                     if (testData.extra.actor.isPriest) leDie.push("1d6")
 
@@ -1047,7 +1048,7 @@ export default class DiceDSA5 {
                         roll = await new Roll(`1d20`).evaluate({ async: true })
                         mergeObject(roll.dice[0].options, d3dColors(testData.mode))
                     }
-                    
+
                     break;
                 case "dodge":
                     roll = await new Roll(`1d20`).evaluate({ async: true });
@@ -1063,7 +1064,7 @@ export default class DiceDSA5 {
                     break
                 default:
                     roll = await new Roll(`1d20`).evaluate({ async: true });
-                    mergeObject(roll.dice[0].options,d3dColors(testData.source.data.label.split('.')[1].toLowerCase())) 
+                    mergeObject(roll.dice[0].options,d3dColors(testData.source.data.label.split('.')[1].toLowerCase()))
             }
             roll = await DiceDSA5.manualRolls(roll, testData.source.type, testData.extra.options)
             this.showDiceSoNice(roll, cardOptions.rollMode);
@@ -1257,7 +1258,7 @@ export default class DiceDSA5 {
     static _parseEffectDuration(source, testData, preData, attacker) {
         const specAbIds = preData.situationalModifiers.filter(x => x.specAbId).map(x => x.specAbId)
         const specAbs = attacker ? attacker.items.filter(x => specAbIds.includes(x.id)) : []
-        let effects = duplicate(source.effects)
+        let effects = source.effects ? duplicate(source.effects) : []
         for (const spec of specAbs) {
             effects.push(...duplicate(spec).effects)
         }
@@ -1387,9 +1388,9 @@ export default class DiceDSA5 {
                         return
                     }
                 }
-                
-                item.setupEffect().then(async(setupData) => { 
-                    await item.itemTest(setupData) 
+
+                item.setupEffect().then(async(setupData) => {
+                    await item.itemTest(setupData)
                     if(removeCharge)
                         await source.update({"data.quantity.value": source.data.data.quantity.value - 1})
                 });
