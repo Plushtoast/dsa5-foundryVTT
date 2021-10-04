@@ -27,7 +27,8 @@ export default class DidYouKnow {
             "Journals auf den Journalbrowser zu ziehen erzeugt ein Bookmark.",
             "Der Namenlose wird dich heute holen.",
             "Du hast heute ein Vorstellungsgespräch als Futter beim Drachen von nebenan.",
-            "Eine Begabung lässt sich durch Rechtsklick auf die passende Chatnachricht verwenden."
+            "Eine Begabung lässt sich durch Rechtsklick auf die passende Chatnachricht verwenden.",
+            "Du kannst mit allem parieren...sogar Zaubern (dem System ist das Wurst)."
         ],
         en: [
             "You can enchant items by dragging spells from compendiums to the item sheet.",
@@ -56,7 +57,8 @@ export default class DidYouKnow {
             "Dropping journal entries onto the journal browser bookmarks those.",
             "The Nameless One is going to catch you today.",
             "You've got a job interview today as fodder for the dragon from next door.",
-            "Your aptitude can be used via a right click on the corresponding chat message."
+            "Your aptitude can be used via a right click on the corresponding chat message.",
+            "You can parry with anything...even spells if you have to (the system doesn't care)."
         ]
     }
 

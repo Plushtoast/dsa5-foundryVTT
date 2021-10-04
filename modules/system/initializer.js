@@ -95,9 +95,8 @@ export default class DSA5Initializer extends Dialog {
                     for (let n of entry.notes) {
                         try {
                             let journ = journs.find(x => x.flags.dsa5.initId == n.entryId)
-                            if(finishedIds.includes(journ.id)) continue
-                            console.log(journ.id)
-                            finishedIds.push(journ.id)
+                            if(finishedIds.includes(journ._id)) continue
+                            finishedIds.push(journ._id)
                             journ.folder = journHead.id
                             let createdEntries = await JournalEntry.create(journ, { keepId: true })
                             n.entryId = createdEntries.id
