@@ -69,7 +69,7 @@ export default class DSA5Initializer extends Dialog {
                     }
 
                 }
-                let createdEntries = await JournalEntry.create(entries.toObject(), { keepId: true })
+                let createdEntries = await JournalEntry.create(entries.toObject())
                 for (let entry of createdEntries) {
                     this.journals[entry.data.name] = entry;
                 }
@@ -80,7 +80,7 @@ export default class DSA5Initializer extends Dialog {
                 for (let k of json.items)
                     k.folder = head.id
 
-                await Itemdsa5.create(json.items, { keepId: true })
+                await Itemdsa5.create(json.items)
             }
             if (json.scenes) {
                 let head = await this.getFolderForType("Scene")
@@ -89,19 +89,20 @@ export default class DSA5Initializer extends Dialog {
                 let journal = game.packs.get(json.journal)
                 let journs = (await journal.getDocuments()).map(x => x.toObject())
                 let journHead = await this.getFolderForType("JournalEntry")
-                let finishedIds = []
+                let finishedIds = new Map()
                 for (let entry of entries) {
                     entry.folder = head.id
                     for (let n of entry.notes) {
                         try {
                             let journ = journs.find(x => x.flags.dsa5.initId == n.entryId)
-                            if(!finishedIds.includes(journ._id)){
-                                finishedIds.push(journ._id)
+                            if (!(finishedIds.has(journ._id))){
+
                                 journ.folder = journHead.id
-                                let createdEntries = await JournalEntry.create(journ, { keepId: true })
+                                let createdEntries = await JournalEntry.create(journ)
+                                finishedIds.set(journ._id, createdEntries.id)
                             }
 
-                            n.entryId = journ._id
+                            n.entryId = finishedIds.get(journ._id)
                         } catch (e) {
                             console.warn("Could not initialize Scene Notes" + e)
                         }
@@ -127,7 +128,7 @@ export default class DSA5Initializer extends Dialog {
                 for (let entry of entries) {
                     entry.folder = head.id
                 }
-                let createdEntries = await Actor.create(entries, { keepId: true })
+                let createdEntries = await Actor.create(entries)
                 for (let entry of createdEntries) {
                     this.actors[entry.data.name] = entry;
                 }
