@@ -89,11 +89,15 @@ export default class DSA5Initializer extends Dialog {
                 let journal = game.packs.get(json.journal)
                 let journs = (await journal.getDocuments()).map(x => x.toObject())
                 let journHead = await this.getFolderForType("JournalEntry")
+                let finishedIds = []
                 for (let entry of entries) {
                     entry.folder = head.id
                     for (let n of entry.notes) {
                         try {
                             let journ = journs.find(x => x.flags.dsa5.initId == n.entryId)
+                            if(finishedIds.includes(journ.id)) continue
+                            console.log(journ.id)
+                            finishedIds.push(journ.id)
                             journ.folder = journHead.id
                             let createdEntries = await JournalEntry.create(journ, { keepId: true })
                             n.entryId = createdEntries.id
