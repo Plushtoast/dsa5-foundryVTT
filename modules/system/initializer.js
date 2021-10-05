@@ -127,6 +127,7 @@ export default class DSA5Initializer extends Dialog {
                 let entries = (await actor.getDocuments()).map(x => x.toObject())
                 for (let entry of entries) {
                     entry.folder = head.id
+                    if(entry._id) delete entry._id
                 }
                 let createdEntries = await Actor.create(entries)
                 for (let entry of createdEntries) {

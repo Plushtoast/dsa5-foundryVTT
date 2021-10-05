@@ -28,7 +28,8 @@ export default class DidYouKnow {
             "Der Namenlose wird dich heute holen.",
             "Du hast heute ein Vorstellungsgespräch als Futter beim Drachen von nebenan.",
             "Eine Begabung lässt sich durch Rechtsklick auf die passende Chatnachricht verwenden.",
-            "Du kannst mit allem parieren...sogar Zaubern (dem System ist das Wurst)."
+            "Du kannst mit allem parieren...sogar Zaubern (dem System ist das Wurst).",
+            "Du kannst einen Vertrauten erstellen, indem du ihm die gleichnamige Eigenschaft gibst (AP/Bonuswerte)"
         ],
         en: [
             "You can enchant items by dragging spells from compendiums to the item sheet.",
@@ -41,7 +42,7 @@ export default class DidYouKnow {
             "You can whisper to players by typing /w in the chat.",
             "You can create merchant and loot actors, which can exchange items with players directly.",
             "The brain button in the library provides some more advanced filtering options.",
-            "Equipment of category service is not transferred to players for merchant sheets (f.e. for hair cuts)",
+            "Equipment of category service is not transferred to players for merchant sheets (e.g. for hair cuts)",
             "Companions and familiars can be created by adding the corresponding ability to the creature sheet.",
             "The game master's menu can roll a random player victim.",
             "You can add temporary modifiers to regeneration in the tab attributes.",
@@ -58,7 +59,8 @@ export default class DidYouKnow {
             "The Nameless One is going to catch you today.",
             "You've got a job interview today as fodder for the dragon from next door.",
             "Your aptitude can be used via a right click on the corresponding chat message.",
-            "You can parry with anything...even spells if you have to (the system doesn't care)."
+            "You can parry with anything...even spells if you have to (the system doesn't care).",
+            "You can create familiars by adding the trait familiar to a creature (AP/Bonus values)"
         ]
     }
 

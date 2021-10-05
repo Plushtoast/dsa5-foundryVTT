@@ -158,15 +158,6 @@ class DiceSoNiceCustomization extends Application {
 
     }
 
-    /*getDiceSoNiceColor(value) {
-        if (game.modules.get("dice-so-nice") && game.modules.get("dice-so-nice").active) {
-            return game.settings.get("dsa5", `dice3d_${value}`)
-        }
-        return value
-    }*/
-
-
-
     getAttributeConfiguration(value) {
         if (game.modules.get("dice-so-nice") && game.modules.get("dice-so-nice").active) {
             return {
@@ -175,11 +166,11 @@ class DiceSoNiceCustomization extends Application {
 
             /*{
                 colorset: ,
-            }*/
+            }
             return {
                 colorset: game.settings.get("dsa5", `dice3d_${value}`),
                 system: game.settings.get("dsa5", `dice3d_system_${value}`)
-            }
+            }*/
         }
         return { colorset: value }
     }
