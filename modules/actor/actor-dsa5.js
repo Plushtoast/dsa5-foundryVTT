@@ -1173,7 +1173,7 @@ export default class Actordsa5 extends Actor {
             let data = message.data.flags.data
             let cardOptions = this.preparePostRollAction(message);
             let fateAvailable
-            let schipText 
+            let schipText
             if(schipsource == 0){
                 fateAvailable = this.data.data.status.fatePoints.value - 1
                 schipText = "PointsRemaining"
@@ -1422,9 +1422,10 @@ export default class Actordsa5 extends Actor {
         if (skill) {
             item.attack = Number(skill.data.attack.value) + Number(item.data.atmod.value)
 
-            const vals = item.data.guidevalue.value.split('/').map(x =>
-                Number(actorData.data.characteristics[x].initial) + Number(actorData.data.characteristics[x].modifier) + Number(actorData.data.characteristics[x].advances) + Number(actorData.data.characteristics[x].gearmodifier)
-            );
+            const vals = item.data.guidevalue.value.split('/').map(x =>{
+                if (!actorData.data.characteristics[x]) return 0
+                return Number(actorData.data.characteristics[x].initial) + Number(actorData.data.characteristics[x].modifier) + Number(actorData.data.characteristics[x].advances) + Number(actorData.data.characteristics[x].gearmodifier)
+            })
             const baseParry = Math.ceil(skill.data.talentValue.value / 2) + Math.max(0, Math.floor((Math.max(...vals) - 8) / 3)) + Number(game.settings.get("dsa5", "higherDefense"))
 
             item.parry = baseParry + Number(item.data.pamod.value) + (item.data.combatskill.value == game.i18n.localize('LocalizedIDs.shields') ? Number(item.data.pamod.value) : 0)
@@ -1460,7 +1461,7 @@ export default class Actordsa5 extends Actor {
     async _preCreate(data, options, user) {
         await super._preCreate(data, options, user)
         let update = {}
-       
+
         if (!data.img)
             update.img = "icons/svg/mystery-man-black.svg"
 
@@ -1488,7 +1489,7 @@ export default class Actordsa5 extends Actor {
         if (item.data.combatskill.value == game.i18n.localize("LocalizedIDs.throwingWeapons"))
             return Math.max(0, Number(item.data.reloadTime.value) - SpecialabilityRulesDSA5.abilityStep(actor, game.i18n.localize("LocalizedIDs.quickdraw")))
         else if (item.data.combatskill.value == game.i18n.localize("LocalizedIDs.crossbows") && SpecialabilityRulesDSA5.hasAbility(actor, `${game.i18n.localize('LocalizedIDs.quickload')} (${game.i18n.localize("LocalizedIDs.crossbows")})`))
-            return Math.max(0, Math.round(Number(item.data.reloadTime.value) * 0.5))            
+            return Math.max(0, Math.round(Number(item.data.reloadTime.value) * 0.5))
 
         return Math.max(0, Number(item.data.reloadTime.value) - SpecialabilityRulesDSA5.abilityStep(actor, `${game.i18n.localize('LocalizedIDs.quickload')} (${game.i18n.localize(item.data.combatskill.value)})`))
     }
@@ -1624,7 +1625,7 @@ export default class Actordsa5 extends Actor {
 
     async _dependentEffects(statusId, effect, delta) {
         const effectData = duplicate(effect)
-        
+
         if(effectData.flags.dsa5.value == 4){
             if (["encumbered", "stunned", "feared", "inpain", "confused", "trance"].includes(statusId))
                 await this.addCondition("incapacitated")
@@ -1635,7 +1636,7 @@ export default class Actordsa5 extends Actor {
                 await this.removeCondition("drunken")
             }
         }
-        
+
         if (statusId == "unconscious")
             await this.addCondition("prone")
 

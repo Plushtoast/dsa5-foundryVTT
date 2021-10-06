@@ -29,7 +29,8 @@ export default class DidYouKnow {
             "Du hast heute ein Vorstellungsgespräch als Futter beim Drachen von nebenan.",
             "Eine Begabung lässt sich durch Rechtsklick auf die passende Chatnachricht verwenden.",
             "Du kannst mit allem parieren...sogar Zaubern (dem System ist das Wurst).",
-            "Du kannst einen Vertrauten erstellen, indem du ihm die gleichnamige Eigenschaft gibst (AP/Bonuswerte)"
+            "Du kannst einen Vertrauten erstellen, indem du ihm die gleichnamige Eigenschaft gibst (AP/Bonuswerte)",
+            "Das Modul \"times-up\" kann Active Effects automatisch nach Ablauf ihrer Wirkungsdauer entfernen."
         ],
         en: [
             "You can enchant items by dragging spells from compendiums to the item sheet.",
@@ -60,7 +61,8 @@ export default class DidYouKnow {
             "You've got a job interview today as fodder for the dragon from next door.",
             "Your aptitude can be used via a right click on the corresponding chat message.",
             "You can parry with anything...even spells if you have to (the system doesn't care).",
-            "You can create familiars by adding the trait familiar to a creature (AP/Bonus values)"
+            "You can create familiars by adding the trait familiar to a creature (AP/Bonus values)",
+            "The module \"times-up\" can automatically remove active effects once they expired."
         ]
     }
 
