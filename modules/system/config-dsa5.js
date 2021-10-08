@@ -788,6 +788,7 @@ DSA5.StFs = {
     "D": "D"
 }
 
-CONFIG.time.turnTime = 5
+CONFIG.time.roundTime = 5
+CONFIG.time.turnTime = 0
 
 export default DSA5

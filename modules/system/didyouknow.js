@@ -32,6 +32,9 @@ export default class DidYouKnow {
             "Du kannst einen Vertrauten erstellen, indem du ihm die gleichnamige Eigenschaft gibst (AP/Bonuswerte)",
             "Das Modul \"times-up\" kann Active Effects automatisch nach Ablauf ihrer Wirkungsdauer entfernen."
         ],
+        esclusivede: [
+            "Im Kompendium kannst du Regeln für Trefferzonen aktivieren."
+        ],
         en: [
             "You can enchant items by dragging spells from compendiums to the item sheet.",
             "You can duplicate items in your inventory by dragging and dropping them on your sheet while holding CTRL",
@@ -63,12 +66,14 @@ export default class DidYouKnow {
             "You can parry with anything...even spells if you have to (the system doesn't care).",
             "You can create familiars by adding the trait familiar to a creature (AP/Bonus values)",
             "The module \"times-up\" can automatically remove active effects once they expired."
-        ]
+        ],
+        esclusiveen: []
     }
 
     static showOneMessage() {
         const lang = ["de", "en"].includes(game.i18n.lang) ? game.i18n.lang : "en"
-        const msg = this.messages[lang][Math.floor(Math.random() * this.messages[lang].length)];
+        const aMsg = this.messages[lang].concat(this.messages[`exclusive${lang}`])
+        const msg = aMsg[Math.floor(Math.random() * aMsg.length)];
         const didYouKnow = `
             <div class="didYouKnow">
                 <div class="row-section">

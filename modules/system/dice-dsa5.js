@@ -798,7 +798,7 @@ export default class DiceDSA5 {
             Number(res.preData.calculatedSpellModifiers.finalcost) +
             AdvantageRulesDSA5.vantageStep(testData.extra.actor, game.i18n.localize('LocalizedIDs.weakKarmicBody')) +
             AdvantageRulesDSA5.vantageStep(testData.extra.actor, game.i18n.localize('LocalizedIDs.weakAstralBody')) +
-            (isClerical ? 0 : (res.successLevel > 0 ? -1 * SpecialabilityRulesDSA5.abilityStep(testData.extra.actor, game.i18n.localize("LocalizedIDs.energyControl")) : SpecialabilityRulesDSA5.abilityStep(testData.extra.actor, game.i18n.localize("LocalizedIDs.weakEnergyControl")) * -1)) +
+            (isClerical ? 0 : (res.successLevel > 0 ? -1 * SpecialabilityRulesDSA5.abilityStep(testData.extra.actor, game.i18n.localize("LocalizedIDs.energyControl")) : SpecialabilityRulesDSA5.abilityStep(testData.extra.actor, game.i18n.localize("LocalizedIDs.smallEnergyControl")) * -1)) +
             testData.extra.actor.data[isClerical ? "kapModifier" : "aspModifier"])
 
         if (AdvantageRulesDSA5.hasVantage(testData.extra.actor, game.i18n.localize('CONDITION.minorSpirits')) &&
