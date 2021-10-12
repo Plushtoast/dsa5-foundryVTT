@@ -98,7 +98,11 @@ Hooks.once("ready", () => {
             armor: [
                 { label: "protection", attr: "protection.value", type: "select", options: { "0": "0", "1": "1", "2": "2", "3": "3", "4": "4", "5": "5", "6": "6", "7": "7" } },
                 { label: "encumbrance", attr: "encumbrance.value", type: "select", options: { "0": "0", "1": "1", "2": "2", "3": "3", "4": "4" } }
-            ]
+            ],
+            plant: [
+                { label: "PLANT.landscape", attr: "location.landscape", type: "text" },
+                { label: "PLANT.region", attr: "location.region", type: "text" },
+            ],
         })
     })
 })

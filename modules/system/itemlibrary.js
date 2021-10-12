@@ -179,7 +179,8 @@ export default class DSA5ItemLibrary extends Application {
                     "rangeweapon": false,
                     "poison": false,
                     "disease": false,
-                    "consumable": false
+                    "consumable": false,
+                    "plant": false
                 },
                 filterBy: {
                     search: ""

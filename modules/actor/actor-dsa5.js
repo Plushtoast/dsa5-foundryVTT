@@ -489,6 +489,16 @@ export default class Actordsa5 extends Actor {
                 show: false,
                 dataType: "ammunition"
             },
+            plant: {
+                items: [],
+                show: false,
+                dataType: "plant"
+            },
+            poison: {
+                items: [],
+                show: false,
+                dataType: "poison"
+            }
         };
 
         for (let t in DSA5.equipmentTypes) {
@@ -497,12 +507,6 @@ export default class Actordsa5 extends Actor {
                 show: false,
                 dataType: t
             }
-        }
-
-        inventory["poison"] = {
-            items: [],
-            show: false,
-            dataType: "poison"
         }
 
         inventory["misc"].show = true
@@ -630,6 +634,12 @@ export default class Actordsa5 extends Actor {
                             armor.push(i);
                         }
                         break;
+                    case "plant":
+                        i.weight = parseFloat((i.data.weight.value * i.data.quantity.value).toFixed(3));
+                        inventory["plant"].items.push(i);
+                        inventory["plant"].show = true;
+                        totalWeight += Number(i.weight);
+                        break
                     case "poison":
                         i.weight = parseFloat((i.data.weight.value * i.data.quantity.value).toFixed(3));
                         inventory["poison"].items.push(i);

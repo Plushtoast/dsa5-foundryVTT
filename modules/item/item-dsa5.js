@@ -55,6 +55,7 @@ export default class Itemdsa5 extends Item {
         "diseaseanimal": "systems/dsa5/icons/categories/diseaseAnimal.webp",
         "effectwrapper": "icons/svg/aura.svg",
         "liturgyTalisman": "systems/dsa5/icons/categories/LiturgieTalisman.webp",
+        "plant": "systems/dsa5/icons/categories/plant.webp",
     }
 
     static defaultIcon(data) {

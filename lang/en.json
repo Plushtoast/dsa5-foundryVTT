@@ -116,7 +116,25 @@
         "ammunition": "Ammunition",
         "poison": "Poison",
         "blessed": "Blessed",
-        "money": "Money"
+        "money": "Money",
+        "plant": "Plant"
+    },
+
+    "PLANT": {
+        "healing": "Medicinal herbs",
+        "poison": "Poisonous plants",
+        "physical": "Plants with physical effect",
+        "psychic": "Plants with psychic effect",
+        "crop": "Crops",
+        "defensive": "Resisting plants",
+        "supernatural": "Supernatural plants",
+        "landscape": "Landscapes",
+        "region": "Regions",
+        "search": "Search difficulty",
+        "identify": "Identify diff.",
+        "usages": "Applications",
+        "recipes": "Recipes",
+        "ingredients": "Ingredients (typical)"
     },
 
     "MERCHANT": {
@@ -232,6 +250,7 @@
     "damage": "Damage",
     "level": "level",
     "levels": "levels",
+    "plant": "Plant",
     "defenseCount": "# Defenses (each {malus})",
     "decreaseCastingTime": "Decrease Spell/Chant duration",
     "damageThreshold": "Damage threshold",
@@ -831,6 +850,7 @@
     "ITEM.TypeDisadvantage": "Disadvantage",
     "ITEM.TypeDisease": "Disease",
     "ITEM.TypeEquipment": "Equipment",
+    "ITEM.TypePlant": "Plant",
     "ITEM.TypeLiturgy": "Liturgical Chant",
     "ITEM.TypeMagictrick": "Cantrip",
     "ITEM.TypeMeleeweapon": "Meleeweapon",

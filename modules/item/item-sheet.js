@@ -43,12 +43,13 @@ export default class ItemSheetdsa5 extends ItemSheet {
         Items.registerSheet("dsa5", EquipmentSheet, { makeDefault: true, types: ["equipment"] });
         Items.registerSheet("dsa5", ArmorSheet, { makeDefault: true, types: ["armor"] });
         Items.registerSheet("dsa5", AmmunitionSheet, { makeDefault: true, types: ["ammunition"] });
+        Items.registerSheet("dsa5", PlantSheet, { makeDefault: true, types: ["plant"] });
 
         Items.unregisterSheet("dsa5", ItemSheetdsa5, {
             types: [
                 "armor", "equipment", "rangeweapon", "blessing", "magictrick", "spellextension", "consumable",
                 "species", "career", "culture", "advantage", "specialability", "disadvantage", "ritual",
-                "ceremony", "liturgy", "spell", "disease", "poison", "meleeweapon", "ammunition"
+                "ceremony", "liturgy", "spell", "disease", "poison", "meleeweapon", "ammunition", "plant"
             ]
         });
     }
@@ -223,6 +224,8 @@ export default class ItemSheetdsa5 extends ItemSheet {
     }
 }
 
+
+
 class Enchantable extends ItemSheetdsa5 {
     async _onDrop(event) {
         await this.enchant(event)
@@ -350,7 +353,10 @@ class Enchantable extends ItemSheetdsa5 {
         }
 
         let item = await pack.getDocument(enchantment.itemId)
-        if (!item) item = await pack.getName(enchantment.name)
+        if (!item) {
+            const itemId = await pack.index.getName(enchantment.name)
+            if (itemId) item = await pack.getDocument(itemId._id)
+        }
         if (!item) ui.notifications.error(game.i18n.localize('DSAError.enchantmentNotFound'))
 
         return item
@@ -515,6 +521,14 @@ class EquipmentSheet extends Enchantable {
 
 export class ArmorSheet extends Enchantable {
 
+}
+
+class PlantSheet extends ItemSheetdsa5 {
+    async getData(options) {
+        const data = await super.getData(options);
+        data.attributes = Object.keys(data.data.planttype).map(x => { return { name: x, checked: data.data.planttype[x] } })
+        return data
+    }
 }
 
 class RangeweaponSheet extends Enchantable {

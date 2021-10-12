@@ -241,6 +241,15 @@ h7 {
     flex: 3;
 }
 
+.form-group.full-height .editor,
+.form-group.full-height .tox {
+    min-height: 100px;
+    flex-grow: 3;
+    border: 1px solid var(--border-color);
+    background-color: rgba(0, 0, 0, 0.05);
+    margin: 0;
+}
+
 form .form-group.full-height label,
 form .form-group.full-height input {
     align-self: stretch;
@@ -2973,4 +2982,62 @@ input[type="checkbox"].autoCheckbox {
     background: rgb(0, 111, 61);
     background: linear-gradient(90deg, rgba(0, 38, 13, 1) 0%, rgba(0, 111, 61, 1)100%);
     position: relative;
+}
+
+.plantContainer {
+    display: inline-block;
+    position: relative;
+    cursor: pointer;
+    height: 45px;
+    width: 45px;
+}
+
+.plantContainer input {
+    position: absolute;
+    opacity: 0;
+    height: 45px;
+    width: 45px;
+}
+
+.plantContainer span {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 45px;
+    width: 45px;
+    background: url(../icons/categories/planthealing.webp);
+    background-position: center;
+    background-size: contain;
+    background-repeat: no-repeat;
+    opacity: 0.45;
+    transition: all 0.3s ease-in-out;
+}
+
+.plantContainer.defensive span {
+    background-image: url(../icons/categories/plantdefensive.webp);
+}
+
+.plantContainer.psychic span {
+    background-image: url(../icons/categories/plantpsychic.webp);
+}
+
+.plantContainer.physical span {
+    background-image: url(../icons/categories/plantphysical.webp);
+}
+
+.plantContainer.crop span {
+    background-image: url(../icons/categories/plantcrop.webp);
+}
+
+.plantContainer.poison span {
+    background-image: url(../icons/categories/plantpoison.webp);
+}
+
+.plantContainer.supernatural span {
+    background-image: url(../icons/categories/plantsupernatural.webp);
+}
+
+.plantContainer:hover input~span,
+.plantContainer input:checked~span {
+    opacity: 1;
 }

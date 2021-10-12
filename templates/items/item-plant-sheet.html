@@ -1,0 +1,97 @@
+<form class="dsa5 item-sheet {{cssClass}}" autocomplete="off">
+    {{> systems/dsa5/templates/items/item-header.html}}
+    <div class="row-section ">
+        <div class="col ten">
+            <img src="{{item.img}}" data-edit="img" />
+        </div>
+        <div class="col ninety item-main">
+            <div class="row-section">
+                <div class="col four">
+                    <label class="label-text table-title">{{localize "Category"}}</label>
+                </div>
+                <div class="col fourty">
+                    <label>{{localize item.type}}</label>
+                </div>
+                <div class="col four">
+                    <label class="label-text table-title">{{localize "quantity"}}</label>
+                </div>
+                <div class="col fifteen">
+                    <input class="input-text" type="text" name="data.quantity.value" value="{{data.quantity.value}}" data-dtype="Number" />
+
+                </div>
+
+            </div>
+            <div class="row-section">
+                <div class="col four">
+                    <label title="{{localize 'UNITS.money'}}" class="label-text table-title">{{localize "price"}}</label>
+                </div>
+                <div class="col fifteen">
+                    <input title="{{localize 'UNITS.money'}}" class="input-text" type="text" name="data.price.raw" value="{{data.price.raw}}" data-dtype="Number" />
+                </div>
+                <div class="col ten lineheight center">
+                    /
+                </div>
+                <div class="col fifteen">
+                    <input title="{{localize 'UNITS.money'}}" class="input-text" type="text" name="data.price.value" value="{{data.price.value}}" data-dtype="Number" />
+                </div>
+
+                <div class="col four">
+                    <label title="{{localize 'UNITS.weight'}}" class="label-text table-title">{{localize "Weight"}}</label>
+                </div>
+                <div class="col fifteen">
+                    <input title="{{localize 'UNITS.weight'}}" class="input-text" type="text" name="data.weight.value" value="{{data.weight.value}}" data-dtype="Number" />
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <nav class="sheet-tabs tabs" data-tab-container="primary">
+        {{#if containerContent}}<a class="item active" data-tab="containerContent">{{localize 'Equipment.bags'}}</a>{{/if}}
+        <a class="item active" data-tab="description">{{localize "Description"}}</a>
+        <a class="item" data-tab="details">{{localize "Details"}}</a>
+    </nav>
+
+    <section class="content">
+        {{> systems/dsa5/templates/items/item-description.html}}
+
+        <div class="tab details" data-tab="details">
+            <div class="center">
+                {{#each attributes}}
+                <label class="plantContainer {{this.name}}" title="{{localize (concat 'PLANT.' this.name)}}">
+                    <input type="checkbox" name="data.planttype.{{this.name}}" value="true" data-dtype="Boolean" {{checked this.checked}}/>
+                    <span></span>
+                </label> {{/each}}
+
+            </div>
+
+            <div class="form-group">
+                <label class="label-text">{{localize "PLANT.landscape"}}</label>
+                <input class="input-text" type="text" name="data.location.landscape" value="{{data.location.landscape}}" data-dtype="String" />
+            </div>
+            <div class="form-group">
+                <label class="label-text">{{localize "PLANT.region"}}</label>
+                <input class="input-text" type="text" name="data.location.region" value="{{data.location.region}}" data-dtype="String" />
+            </div>
+            <div class="form-group">
+                <label class="label-text">{{localize "PLANT.search"}}</label>
+                <input class="input-text" type="text" name="data.difficulty.search" value="{{data.difficulty.search}}" data-dtype="Number" />
+            </div>
+            <div class="form-group">
+                <label class="label-text">{{localize "PLANT.identify"}}</label>
+                <input class="input-text" type="text" name="data.difficulty.identify" value="{{data.difficulty.identify}}" data-dtype="Number" />
+            </div>
+            <div class="form-group">
+                <label class="label-text">{{localize "PLANT.usages"}}</label>
+                <input class="input-text" type="text" name="data.usages" value="{{data.usages}}" data-dtype="String" />
+            </div>
+
+            <div class="form-group full-height">
+                <label class="label-text">{{localize "effect"}}</label> {{editor content=data.effect target="data.effect" button=true owner=owner editable=true}}
+            </div>
+            <div class="form-group full-height">
+                <label class="label-text">{{localize "PLANT.recipes"}}</label> {{editor content=data.recipes target="data.recipes" button=true owner=owner editable=true}}
+            </div>
+        </div>
+
+    </section>
+</form>

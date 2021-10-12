@@ -129,7 +129,8 @@
         "ammunition": "Munition",
         "poison": "Gift",
         "blessed": "Geweiht",
-        "money": "Geld"
+        "money": "Geld",
+        "plant": "Pflanze"
     },
     "advanced": "Erweitert",
     "requiredFW": "Benötigter FW",
@@ -346,6 +347,7 @@
     "purse": "Geldbeutel",
     "Players": "Spieler",
     "poisonType": "Art",
+    "plant": "Pflanze",
     "PartSuccess": "Teilerfolg",
     "place": "Ort",
     "permanentCost": "Permanente Kosten",
@@ -800,6 +802,23 @@
         "isReloading": "{actor} konzentriert sich auf {item} ({status})."
     },
 
+    "PLANT": {
+        "healing": "Heilpflanzen",
+        "poison": "Giftpflanzen",
+        "physical": "Pflanzen mit physischer Wirkung",
+        "psychic": "Pflanze mit psychischer Wirkung",
+        "crop": "Nutzpflanzen",
+        "defensive": "Wehrhafte Pflanzen",
+        "supernatural": "Übernatürliche Pflanzen",
+        "landscape": "Landschaftstypen",
+        "region": "Regionen",
+        "search": "Suchschwierigkeit",
+        "identify": "Bestimmungsschw.",
+        "usages": "Anwendungen",
+        "recipes": "Rezepte",
+        "ingredients": "Zutaten (typisch)"
+    },
+
     "ITEM.TypeAdvantage": "Vorteil",
     "ITEM.TypeAggregatedtest": "Sammelprobe",
     "ITEM.TypeAmmunition": "Munition",
@@ -812,6 +831,7 @@
     "ITEM.TypeDisadvantage": "Nachteil",
     "ITEM.TypeDisease": "Krankheit",
     "ITEM.TypeEquipment": "Ausrüstung",
+    "ITEM.TypePlant": "Pflanze",
     "ITEM.TypeLiturgy": "Liturgie",
     "ITEM.TypeMagictrick": "Zaubertrick",
     "ITEM.TypeMeleeweapon": "Nahkampfwaffe",

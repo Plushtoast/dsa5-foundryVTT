@@ -334,7 +334,8 @@
             "consumable",
             "spellextension",
             "application",
-            "effectwrapper"
+            "effectwrapper",
+            "plant"
         ],
         "templates": {
             "skill": {
@@ -457,6 +458,35 @@
                 "description"
             ],
             "skill": ""
+        },
+        "plant": {
+            "templates": [
+                "description",
+                "equipment"
+            ],
+            "price": {
+                "raw": 0
+            },
+            "location": {
+                "landscape": "",
+                "region": ""
+            },
+            "difficulty": {
+                "search": 0,
+                "identify": 0
+            },
+            "usages": "0/0/0/0/0/0",
+            "effect": "",
+            "recipes": "",
+            "planttype": {
+                "healing": false,
+                "poison": false,
+                "physical": false,
+                "psychic": false,
+                "crop": false,
+                "defensive": false,
+                "supernatural": false
+            }
         },
         "money": {
             "templates": [
@@ -645,7 +675,10 @@
             "QLList": "",
             "QL": 1,
             "charges": 1,
-            "maxCharges": 1
+            "maxCharges": 1,
+            "difficulty": 0,
+            "ingredients": "",
+            "tools": ""
         },
         "rangeweapon": {
             "templates:": [

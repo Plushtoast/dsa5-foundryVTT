@@ -83,6 +83,19 @@
                 <label class="label-text">{{localize "qualitySteps"}}</label>
                 <textarea class="input-text" type="text" name="data.QLList" data-dtype="String">{{data.QLList}}</textarea>
             </div>
+
+            <div class="form-group">
+                <label class="label-text">{{localize "Difficulty"}}</label>
+                <input class="input-text" type="text" name="data.difficulty" value="{{data.difficulty}}" data-dtype="Number" />
+            </div>
+            <div class="form-group full-height">
+                <label class="label-text">{{localize "PLANT.ingredients"}}</label>
+                <textarea class="input-text" type="text" name="data.ingredients" data-dtype="String">{{data.ingredients}}</textarea>
+            </div>
+            <div class="form-group">
+                <label class="label-text">{{localize "Equipment.tools"}}</label>
+                <input class="input-text" type="text" name="data.tools" value="{{data.tools}}" data-dtype="String" />
+            </div>
         </div>
         {{> systems/dsa5/templates/items/item-effects.html}}
     </section>
