@@ -152,6 +152,13 @@ export default class BookWizard extends Application {
         html.on('click', '.importBook', async() => {
             this.importBook()
         })
+        this.slist(html, '.breadcrumbs')
+        this.heightFix()
+    }
+
+    heightFix() {
+        const h = $(this._element).find('.breadcrumbs').height()
+        $(this._element).find('.col.seventy.scrollable').css({ "margin-bottom": `${h}px` })
     }
 
     async loadJournal(name) {
@@ -159,6 +166,53 @@ export default class BookWizard extends Application {
     }
     async loadJournalById(id) {
         this.showJournal(this.journals.find(x => { return x.id == id }))
+    }
+
+
+    async resaveBreadCrumbs(target) {
+        const breadcrumbs = {}
+        for (let elem of target.getElementsByTagName("div")) {
+            breadcrumbs[elem.dataset.uuid] = elem.innerText
+        }
+        await game.settings.set("dsa5", "breadcrumbs", JSON.stringify(breadcrumbs))
+    }
+
+    slist(html, target) {
+        target = html.find(target)[0];
+        target.classList.add("slist");
+        const that = this
+
+        var items = target.getElementsByTagName("div"),
+            current = null;
+        for (let i of items) {
+            i.draggable = true;
+
+            i.addEventListener("dragstart", function(ev) {
+                current = this;
+            });
+
+            i.addEventListener("dragover", function(evt) {
+                evt.preventDefault();
+            });
+
+            i.addEventListener("drop", async function(evt) {
+                evt.preventDefault();
+                if (this != current) {
+                    let currentpos = 0,
+                        droppedpos = 0;
+                    for (let it = 0; it < items.length; it++) {
+                        if (current == items[it]) { currentpos = it; }
+                        if (this == items[it]) { droppedpos = it; }
+                    }
+                    if (currentpos < droppedpos) {
+                        this.parentNode.insertBefore(current, this.nextSibling);
+                    } else {
+                        this.parentNode.insertBefore(current, this);
+                    }
+                    await that.resaveBreadCrumbs(target)
+                }
+            });
+        }
     }
 
     async filterToc(val) {
@@ -413,7 +467,7 @@ export default class BookWizard extends Application {
         const breadcrumbs = this.readBreadCrumbs()
         const btns = Object.entries(breadcrumbs).map(x => `<div title="${x[1]}" data-uuid="${x[0]}" class="openPin item">${x[1]}</div>`)
 
-        if (btns.length > 0) return `<div class="breadcrumbs wrap row-section">${btns.join("")}</div>`
+        if (btns.length > 0) return `<div id"breadcrumbs" class="breadcrumbs wrap row-section">${btns.join("")}</div>`
 
         return ""
     }

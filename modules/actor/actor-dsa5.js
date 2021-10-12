@@ -388,6 +388,7 @@ export default class Actordsa5 extends Actor {
                 })
             }
         }
+
         return preparedData;
     }
 
@@ -710,11 +711,9 @@ export default class Actordsa5 extends Actor {
         }
 
         money.coins = money.coins.sort((a, b) => (a.data.price.value > b.data.price.value) ? -1 : 1);
-
-        //TODO move the encumbrance calculation to a better location
-        encumbrance = Math.max(0, encumbrance - SpecialabilityRulesDSA5.abilityStep(this.data, game.i18n.localize('LocalizedIDs.inuredToEncumbrance')))
-
         const carrycapacity = actorData.data.characteristics.kk.value * 2 + actorData.data.carryModifier;
+        //TODO move the encumbrance calculation to a better location
+        encumbrance = this.getArmorEncumbrance(this.data, encumbrance, armor)
 
         if ((actorData.type != "creature" || this.data.canAdvance) && !this.isMerchant()) {
             encumbrance += Math.max(0, Math.ceil((totalWeight - carrycapacity - 4) / 4))
@@ -767,6 +766,11 @@ export default class Actordsa5 extends Actor {
                 trade: skills.trade
             }
         }
+    }
+
+    getArmorEncumbrance(actorData, encumbrance, wornArmors) {
+        let result = Math.max(0, encumbrance - SpecialabilityRulesDSA5.abilityStep(actorData, game.i18n.localize('LocalizedIDs.inuredToEncumbrance')))
+        return result
     }
 
     _setBagContent(elem, containers, topLevel = true) {

@@ -724,7 +724,12 @@
                 "encumbrance"
             ],
             "protection": {
-                "value": 0
+                "value": 0,
+                "leftleg": 0,
+                "rightleg": 0,
+                "leftarm": 0,
+                "rightarm": 0,
+                "head": 0
             },
             "worn": {
                 "value": false

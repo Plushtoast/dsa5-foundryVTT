@@ -1039,6 +1039,7 @@ export default class ActorSheetDsa5 extends ActorSheet {
                 if (thing.count) {
                     let elem = lookup.find(x => x.name == thing.name && x.type == thing.type)
                     elem.data.quantity.value = thing.count
+                    if (thing.qs && thing.type == "equipment") elem.data.QL = thing.qs
                 }
             }
             //we should improve that so it stacks items

@@ -53,7 +53,8 @@ export default class Itemdsa5 extends Item {
         "disadvantageanimal": "systems/dsa5/icons/categories/NachteilAnimal.webp",
         "advantageanimal": "systems/dsa5/icons/categories/VorteilAnimal.webp",
         "diseaseanimal": "systems/dsa5/icons/categories/diseaseAnimal.webp",
-        "effectwrapper": "icons/svg/aura.svg"
+        "effectwrapper": "icons/svg/aura.svg",
+        "liturgyTalisman": "systems/dsa5/icons/categories/LiturgieTalisman.webp",
     }
 
     static defaultIcon(data) {
@@ -235,9 +236,9 @@ export default class Itemdsa5 extends Item {
 
         const combatSpecAbs = actor.items.filter(x => {
             return x.type == "specialability" &&
-            categories.includes(x.data.data.category.value) &&
-            x.data.data.effect.value != "" &&
-            searchFilter(x, toSearch)
+                categories.includes(x.data.data.category.value) &&
+                x.data.data.effect.value != "" &&
+                searchFilter(x, toSearch)
         })
 
         let combatskills = []

@@ -24,7 +24,9 @@ export default class DialogShared extends Dialog {
                         const elem = html.find(`.specAbs[data-id="${spec.id}"]`)
                         elem.addClass('active')
                             .attr("data-step", spec.step)
-                            .text(elem.text() + DialogShared.roman[spec.step])
+
+                        const a = elem.find('a')
+                        a.text(a.text() + DialogShared.roman[spec.step])
                     }
                 } else {
                     const elem = html.find(`[name="${key}"]`)

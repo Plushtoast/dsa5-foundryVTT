@@ -329,7 +329,7 @@ export default class OpposedDsa5 {
 
     static _evaluateWeaponOpposedRoll(attackerTest, defenderTest, opposeResult, options = {}) {
         if (attackerTest.successLevel > 0 && defenderTest.successLevel < 0) {
-            let damage = this._calculateOpposedDamage(attackerTest, defenderTest)
+            let damage = this._calculateOpposedDamage(attackerTest, defenderTest, options)
             opposeResult.winner = "attacker"
             opposeResult.damage = {
                 description: `<b>${game.i18n.localize("damage")}</b>: ${damage.damage} - ${damage.armor} (${game.i18n.localize("protection")}) = ${damage.sum}`,
@@ -341,10 +341,9 @@ export default class OpposedDsa5 {
         }
     }
 
-    static _calculateOpposedDamage(attackerTest, defenderTest) {
-        let actor = DSA5_Utility.getSpeaker(defenderTest.speaker).data
-        let armor = Actordsa5.armorValue(actor)
-
+    static _calculateOpposedDamage(attackerTest, defenderTest, options = {}) {
+        const actor = DSA5_Utility.getSpeaker(defenderTest.speaker).data
+        const armor = Actordsa5.armorValue(actor, options)
         return {
             damage: attackerTest.damage,
             armor,

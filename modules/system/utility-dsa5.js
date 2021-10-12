@@ -177,7 +177,16 @@ export default class DSA5_Utility {
         }
 
         if (names.length > 0) {
-            for (let p of game.packs) {
+            const regx = /^dsa5-core/
+            const sortedPacks = Array.from(game.packs.keys()).sort((a, b) => {
+                if (regx.test(a) && regx.test(b)) a.localeCompare(b)
+                if (regx.test(b)) return -1
+                if (regx.test(a)) return 1
+                return a.localeCompare(b)
+            })
+
+            for (let pack of sortedPacks) {
+                let p = game.packs.get(pack)
                 if (p.metadata.entity == "Item" && (game.user.isGM || !p.private)) {
                     await p.getDocuments().then(content => {
                         for (let k of content) {

@@ -48,10 +48,9 @@ export default class DiceDSA5 {
             targets.push({ name: target.actor.name, img: target.actor.img })
         })
 
-
         mergeObject(dialogOptions.data, {
             hasSituationalModifiers: situationalModifiers.length > 0,
-            situationalModifiers: situationalModifiers,
+            situationalModifiers,
             rollMode: dialogOptions.data.rollMode || rollMode,
             rollModes: CONFIG.Dice.rollModes ? CONFIG.Dice.rollModes : CONFIG.rollModes,
             defenseCount: await this.getDefenseCount(testData),
@@ -60,6 +59,7 @@ export default class DiceDSA5 {
         mergeObject(cardOptions, {
             user: game.user.id,
         })
+
 
         if (!testData.extra.options.bypass) {
 
@@ -464,7 +464,6 @@ export default class DiceDSA5 {
         let overrideDamage = []
         let bonusDmg = testData.situationalModifiers.reduce(function(_this, val) {
             let number = 0
-            console.log(val)
             if (val.damageBonus) {
                 const isOverride = /^=/.test(val.damageBonus)
                 const rollString = `${val.damageBonus}`.replace(/^=/, "")

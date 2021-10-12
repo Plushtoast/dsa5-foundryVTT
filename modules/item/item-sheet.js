@@ -513,7 +513,7 @@ class EquipmentSheet extends Enchantable {
     }
 }
 
-class ArmorSheet extends Enchantable {
+export class ArmorSheet extends Enchantable {
 
 }
 
