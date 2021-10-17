@@ -151,7 +151,7 @@
         "typeEpic": "Garadan",
         "typeLoot": "Treasure",
         "typeNone": "Normal person",
-        "randomGoods": "Random choic",
+        "randomGoods": "Random choice",
         "clearInventory": "Reset",
         "deleteAllGoods": "Remove all commodities?",
         "select": "Choice",
@@ -1032,6 +1032,7 @@
         "gambling": "Gambling",
         "bodyControl": "Body Control",
         "darksight": "Darksight",
+        "nightBlind": "Night-Blind",
         "willpower": "Willpower",
         "traditionBoron": "Tradition (Church of Boron)"
     },

@@ -20,6 +20,11 @@ export default class DSA5SpellDialog extends DialogShared {
         1920
     ]
 
+    prepareFormRecall(html) {
+        super.prepareFormRecall(html)
+        html.find('.spellModifier').trigger('change')
+    }
+
     activateListeners(html) {
         super.activateListeners(html)
         html.find('.reloadButton').prop('disabled', Number(html.find('.castingTime').text()) < 2)

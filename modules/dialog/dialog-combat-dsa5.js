@@ -148,11 +148,12 @@ export default class DSA5CombatDialog extends DialogShared {
             let level = 0
             while (threholds[level] <= darkness) level += 1
 
-            if (level < 4) {
+            if (level < 4 && level > 0) {
                 const actor = DSA5_Utility.getSpeaker(this.dialogData.speaker)
                 if (actor) {
                     level = Math.max(0, level - AdvantageRulesDSA5.vantageStep(actor.data, game.i18n.localize("LocalizedIDs.darksight")))
                     level = Math.max(0, level - AdvantageRulesDSA5.vantageStep(actor.data, game.i18n.localize("LocalizedIDs.traditionBoron")))
+                    level = Math.min(4, level + AdvantageRulesDSA5.vantageStep(actor.data, game.i18n.localize("LocalizedIDs.nightBlind")))
                 }
             }
 

@@ -382,7 +382,7 @@ DSA5.equipmentTypes = {
     "blessed": "Equipment.blessed"
 };
 
-DSA5.equipmentCategories = ["meleeweapon", "rangeweapon", "equipment", "ammunition", "armor", "poison", "consumable"]
+DSA5.equipmentCategories = ["meleeweapon", "rangeweapon", "equipment", "ammunition", "armor", "poison", "consumable", "plant"]
 
 DSA5.narrowSpaceModifiers = {
     "weaponshort": {

@@ -1,4 +1,5 @@
 import Itemdsa5 from "../item/item-dsa5.js";
+import DSA5 from "../system/config-dsa5.js";
 import DSA5SoundEffect from "../system/dsa-soundeffect.js";
 import DSA5Payment from "../system/payment.js";
 import DSA5_Utility from "../system/utility-dsa5.js";
@@ -192,7 +193,7 @@ export default class MerchantSheetDSA5 extends ActorSheetdsa5NPC {
 
     async randomGoods(ev) {
         let dialogData = {
-            categories: ["meleeweapon", "armor", "equipment", "poison", "consumable", "rangeweapon"]
+            categories: DSA5.equipmentCategories
         }
         renderTemplate('systems/dsa5/templates/dialog/randomGoods-dialog.html', { dialogData }).then(html => {
             new Dialog({
