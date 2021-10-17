@@ -179,6 +179,8 @@ export default class BookWizard extends Application {
 
     slist(html, target) {
         target = html.find(target)[0];
+        if (!target) return
+
         target.classList.add("slist");
         const that = this
 
