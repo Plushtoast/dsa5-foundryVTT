@@ -37,19 +37,7 @@ export default class DSA5SpellDialog extends DialogShared {
             $(ev.currentTarget).prop('selected', !$(ev.currentTarget).prop('selected'));
             return false;
         });
-        html.find('.quantity-click').mousedown(ev => {
-            let val = Number($(ev.currentTarget).val())
-            let factor = ev.ctrlKey ? 10 : 1
-            switch (ev.button) {
-                case 0:
-                    val += factor
-                    break;
-                case 2:
-                    val -= factor
-                    break;
-            }
-            $(ev.currentTarget).val(val)
-        });
+
         html.find('.variableBaseCost').change(ev => {
             let parent = $(ev.currentTarget).parents(".skill-test")
             let oldVal = parent.find('.aspcost').attr("data-base")

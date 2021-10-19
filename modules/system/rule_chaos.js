@@ -1,4 +1,3 @@
-import Itemdsa5 from "../item/item-dsa5.js"
 import DSA5StatusEffects from "../status/status_effects.js"
 import SpecialabilityRulesDSA5 from "./specialability-rules-dsa5.js"
 import DSA5_Utility from "./utility-dsa5.js"
@@ -89,5 +88,13 @@ export default class RuleChaos {
             }
 
         });
+    }
+
+    static increment(ev, item, path, limit = undefined) {
+        const factor = ev.ctrlKey ? 10 : 1
+        const sign = ev.button == 2 ? -1 : 1
+        let value = getProperty(item, path) + (factor * sign)
+        if (limit != undefined) value = Math.max(limit, value)
+        setProperty(item, path, value)
     }
 }

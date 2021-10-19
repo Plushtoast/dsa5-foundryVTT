@@ -77,20 +77,6 @@ export default class DSA5CombatDialog extends DialogShared {
             $(ev.currentTarget).prop('selected', !$(ev.currentTarget).prop('selected'));
             return false;
         });
-        html.find('.quantity-click').mousedown(ev => {
-            let val = Number($(ev.currentTarget).val())
-            let factor = ev.ctrlKey ? 10 : 1
-            switch (ev.button) {
-                case 0:
-                    val += factor
-                    break;
-                case 2:
-                    val -= factor
-                    break;
-            }
-            $(ev.currentTarget).val(val)
-        });
-
 
         const readTargets = () => {
             let targets = []

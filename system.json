@@ -6,7 +6,8 @@
     "templateVersion": 83,
     "author": "Plushtoast",
     "scripts": [
-        "./libs/flexsearch.min.js"
+        "./libs/flexsearch.min.js",
+        "./libs/select2.min.js"
     ],
     "esmodules": [
         "dsa5.js"

@@ -1,3 +1,5 @@
+import RuleChaos from "../system/rule_chaos.js"
+
 export default class DialogShared extends Dialog {
     static roman = ['', ' I', ' II', ' III', ' IV', ' V', ' VI', ' VII', ' VIII', ' IX']
 
@@ -14,6 +16,15 @@ export default class DialogShared extends Dialog {
     async _render(force, options) {
         await super._render(force, options)
         this.prepareFormRecall($(this._element))
+    }
+
+    activateListeners(html) {
+        super.activateListeners(html)
+        html.find('.quantity-click').mousedown(ev => {
+            const val = { val: Number($(ev.currentTarget).val()) }
+            RuleChaos.increment(ev, val, "val")
+            $(ev.currentTarget).val(val.val)
+        });
     }
 
     prepareFormRecall(html) {

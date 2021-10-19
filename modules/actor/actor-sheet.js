@@ -9,6 +9,7 @@ import DialogActorConfig from "../dialog/dialog-actorConfig.js";
 import { itemFromDrop } from "../system/view_helper.js";
 import Actordsa5 from "./actor-dsa5.js";
 import DSA5SoundEffect from "../system/dsa-soundeffect.js";
+import RuleChaos from "../system/rule_chaos.js";
 
 export default class ActorSheetDsa5 extends ActorSheet {
     get actorType() {
@@ -519,18 +520,7 @@ export default class ActorSheetDsa5 extends ActorSheet {
         html.find('.quantity-click').mousedown(ev => {
             const itemId = this._getItemId(ev);
             let item = duplicate(this.actor.getEmbeddedDocument("Item", itemId));
-            let factor = ev.ctrlKey ? 10 : 1
-            switch (ev.button) {
-                case 0:
-                    item.data.quantity.value += factor;
-                    break;
-                case 2:
-                    item.data.quantity.value -= factor
-
-                    if (item.data.quantity.value < 0)
-                        item.data.quantity.value = 0;
-                    break;
-            }
+            RuleChaos.increment(ev, item, "data.quantity.value", 0)
             this.actor.updateEmbeddedDocuments("Item", [item]);
         });
 

@@ -155,8 +155,6 @@ export default class Migrakel {
                 return update
             }
             await this.updateVals(actor, condition, updator)
-
-
         }
     }
 }
