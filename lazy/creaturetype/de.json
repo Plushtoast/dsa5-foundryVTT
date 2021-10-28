@@ -1,0 +1,16 @@
+{
+    "Dämon": "DemonType",
+    "Chimäre": "ChimeraType",
+    "Daimonid": "DaimonidType",
+    "Drache": "DragonType",
+    "Elementar": "ElementalType",
+    "Fee": "FairyType",
+    "Geist": "GhostType",
+    "Golem": "GolemType",
+    "Homunculus": "HomunculiType",
+    "Kulturschaffende": "IntelligentCreatureType",
+    "Pflanze": "PlantType",
+    "Tier": "AnimalType",
+    "Untot": "UndeadType",
+    "Übernatürliches Wesen": "SupernaturalType"
+}

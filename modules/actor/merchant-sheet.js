@@ -13,7 +13,7 @@ export default class MerchantSheetDSA5 extends ActorSheetdsa5NPC {
     }
 
     get template() {
-        if (this.showLimited() || (this.playerViewEnabled() && ["merchant", "loot", "epic"].includes(getProperty(this.actor.data.data, "merchant.merchantType")))) {
+        if (this.merchantSheetActivated()) {
             switch (getProperty(this.actor.data.data, "merchant.merchantType")) {
                 case "merchant":
                     return "systems/dsa5/templates/actors/merchant/merchant-limited.html";
@@ -27,6 +27,10 @@ export default class MerchantSheetDSA5 extends ActorSheetdsa5NPC {
         }
 
         return "systems/dsa5/templates/actors/merchant/merchant-sheet.html";
+    }
+
+    merchantSheetActivated() {
+        return this.showLimited() || (this.playerViewEnabled() && ["merchant", "loot", "epic"].includes(getProperty(this.actor.data.data, "merchant.merchantType")))
     }
 
     activateListeners(html) {
@@ -294,7 +298,8 @@ export default class MerchantSheetDSA5 extends ActorSheetdsa5NPC {
         })
         this.prepareStorage(data)
         if (data.merchantType != "epic") {
-            if (this.showLimited()) {
+            if (this.merchantSheetActivated()) {
+                this.filterWornEquipment(data)
                 this.prepareTradeFriend(data)
                 if (data.actor.inventory["misc"].items.length == 0) data.actor.inventory["misc"].show = false
             }
@@ -307,6 +312,12 @@ export default class MerchantSheetDSA5 extends ActorSheetdsa5NPC {
             }
         }
         return data;
+    }
+
+    filterWornEquipment(data) {
+        for (const [key, value] of Object.entries(data.actor.inventory)) {
+            value.items = value.items.filter(x => !getProperty(x, "data.worn.value"))
+        }
     }
 
     prepareStorage(data) {

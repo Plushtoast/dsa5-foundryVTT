@@ -20,7 +20,7 @@ export function svgAutoFit(elem, width = 320, height = 40) {
     }
 }
 
-export async function itemFromDrop(dragData, actorId){
+export async function itemFromDrop(dragData, actorId) {
     let item
     let typeClass
     let selfTarget = dragData.actorId && dragData.actorId == actorId
@@ -46,4 +46,43 @@ export async function itemFromDrop(dragData, actorId){
     }
 
     return { item, typeClass, selfTarget }
+}
+
+export function slist(html, target, callback, itemTag = "div") {
+    target = html.find(target)[0];
+    if (!target) return
+
+    target.classList.add("slist");
+
+    var items = target.querySelectorAll(itemTag),
+        current = null;
+    for (let i of items) {
+        i.draggable = true;
+
+        i.addEventListener("dragstart", function(ev) {
+            current = this;
+        });
+
+        i.addEventListener("dragover", function(evt) {
+            evt.preventDefault();
+        });
+
+        i.addEventListener("drop", async function(evt) {
+            evt.preventDefault();
+            if (this != current) {
+                let currentpos = 0,
+                    droppedpos = 0;
+                for (let it = 0; it < items.length; it++) {
+                    if (current == items[it]) { currentpos = it; }
+                    if (this == items[it]) { droppedpos = it; }
+                }
+                if (currentpos < droppedpos) {
+                    this.parentNode.insertBefore(current, this.nextSibling);
+                } else {
+                    this.parentNode.insertBefore(current, this);
+                }
+                await callback(target)
+            }
+        });
+    }
 }

@@ -540,11 +540,12 @@ export default class Actordsa5 extends Actor {
         }
 
         let applications = new Map()
+        let availableAmmunition = []
 
         for (let i of actorData.items) {
             try {
                 let parent_id = getProperty(i, "data.parent_id")
-                if (i.type == "ammunition") inventory.ammunition.items.push(Actordsa5._prepareitemStructure(i));
+                if (i.type == "ammunition") availableAmmunition.push(Actordsa5._prepareitemStructure(i));
 
                 if (parent_id && parent_id != i._id) {
                     if (containers.has(parent_id)) {
@@ -601,6 +602,7 @@ export default class Actordsa5 extends Actor {
                         break;
                     case "ammunition":
                         i.weight = parseFloat((i.data.weight.value * i.data.quantity.value).toFixed(3));
+                        inventory.ammunition.items.push(i)
                         inventory.ammunition.show = true;
                         totalWeight += Number(i.weight);
                         break;
@@ -697,7 +699,7 @@ export default class Actordsa5 extends Actor {
 
         for (let wep of inventory.rangeweapons.items) {
             try {
-                if (wep.data.worn.value) rangeweapons.push(Actordsa5._prepareRangeWeapon(wep, inventory.ammunition.items, combatskills, this));
+                if (wep.data.worn.value) rangeweapons.push(Actordsa5._prepareRangeWeapon(wep, availableAmmunition, combatskills, this));
             } catch (error) {
                 this._itemPreparationError(wep, error)
             }

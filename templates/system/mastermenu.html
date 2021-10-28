@@ -121,55 +121,56 @@
                     <a class="groupCheck" title="{{localize 'HELP.groupcheck'}}"><i class="fas fa-users-cog"></i></a>
                 </div>
             </div>
-            {{#each heros as |hero|}}
-            <div class="row-section skills tableOdd hero wrap" data-id="{{hero.id}}">
-                <div class="row-section col">
-                    <div class="col ten">
-                        <img src="{{hero.img}}" data-edit="img" height="50px" style="margin:0;" />
-                    </div>
-                    <div class="col five">
-                        <a class="heroLink">{{hero.name}}</a>
-                        <div>
-                            {{#each hero.schips as |item i|}}
-                            <a class="tiny heroschip schip {{item.cssClass}}" data-val="{{item.value}}"></a>
-                            {{/each}}
+            <div class="heros">
+                {{#each heros as |hero|}}
+                <div class="row-section skills tableOdd hero wrap" data-id="{{hero.id}}">
+                    <div class="row-section col">
+                        <div class="col ten">
+                            <img src="{{hero.img}}" data-edit="img" height="50px" style="margin:0;" />
+                        </div>
+                        <div class="col five">
+                            <a class="heroLink">{{hero.name}}</a>
+                            <div>
+                                {{#each hero.schips as |item i|}}
+                                <a class="tiny heroschip schip {{item.cssClass}}" data-val="{{item.value}}"></a>
+                                {{/each}}
 
+                            </div>
+                        </div>
+                        <div class="col ten verticalFlex barRight">
+                            <div class="bar LeP" style="--a: {{hero.data.data.status.wounds.value}}; --b: {{hero.data.data.status.wounds.max}}">
+                            </div>
+                            {{#if hero.data.isMage}}
+                            <div class="bar AsP" style="--a: {{hero.data.data.status.astralenergy.value}}; --b: {{hero.data.data.status.astralenergy.max}}">
+                            </div>
+                            {{/if}} {{#if hero.data.isPriest}}
+                            <div class="bar KaP" style="--a: {{hero.data.data.status.karmaenergy.value}}; --b: {{hero.data.data.status.karmaenergy.max}}">
+                            </div>
+                            {{/if}}
+                        </div>
+                        <div class="col ten">
+                            <input type="checkbox" class="heroSelector" name="heroSelector" value="1" {{checked hero.gmSelected}}>
+                        </div>
+                        <div class="col five">
+                            <a class="rollChar" title="{{localize 'CHAT.RollBlind'}}"><i class="fas fa-dice"></i></a>
+                            <a class="getPaid" title="{{localize 'PAYMENT.wage'}}"><i class="fas fa-piggy-bank"></i></a>
+                            <a class="pay" title="{{localize 'MASTER.payTT'}}"><i class="fas fa-coins"></i></a>
+                            <a class="exp" title="{{localize 'MASTER.awardXP'}}"><i class="fas fa-trophy"></i></a>
                         </div>
                     </div>
-                    <div class="col ten verticalFlex barRight">
-                        <div class="bar LeP" style="--a: {{hero.data.data.status.wounds.value}}; --b: {{hero.data.data.status.wounds.max}}">
+                    <div class="row-section lineheight expandDetails col">
+                        <div class="col">
+                            <ul>
+                                <li><b>{{localize "purse"}}</b>: {{{hero.purse}}}</li>
+                                <li><b>{{localize "Experience"}}</b>: {{hero.data.data.details.experience.spent}}/{{hero.data.data.details.experience.total}}</li>
+                                <li><b>{{localize "advantages"}}</b>: {{#each hero.advantages as |ad i|}}<a class="actorItem" data-uuid="{{ad.uuid}}">{{ad.name}}</a>{{/each}}</li>
+                                <li><b>{{localize "disadvantages"}}</b>: {{#each hero.disadvantages as |ad i|}}<a class="actorItem" data-uuid="{{ad.uuid}}">{{ad.name}}</a>{{/each}}</li>
+                            </ul>
                         </div>
-                        {{#if hero.data.isMage}}
-                        <div class="bar AsP" style="--a: {{hero.data.data.status.astralenergy.value}}; --b: {{hero.data.data.status.astralenergy.max}}">
-                        </div>
-                        {{/if}} {{#if hero.data.isPriest}}
-                        <div class="bar KaP" style="--a: {{hero.data.data.status.karmaenergy.value}}; --b: {{hero.data.data.status.karmaenergy.max}}">
-                        </div>
-                        {{/if}}
                     </div>
-                    <div class="col ten">
-                        <input type="checkbox" class="heroSelector" name="heroSelector" value="1" {{checked hero.gmSelected}}>
-                    </div>
-                    <div class="col five">
-                        <a class="rollChar" title="{{localize 'CHAT.RollBlind'}}"><i class="fas fa-dice"></i></a>
-                        <a class="getPaid" title="{{localize 'PAYMENT.wage'}}"><i class="fas fa-piggy-bank"></i></a>
-                        <a class="pay" title="{{localize 'MASTER.payTT'}}"><i class="fas fa-coins"></i></a>
-                        <a class="exp" title="{{localize 'MASTER.awardXP'}}"><i class="fas fa-trophy"></i></a>
-                    </div>
-
                 </div>
-                <div class="row-section lineheight expandDetails col">
-                    <div class="col">
-                        <ul>
-                            <li><b>{{localize "purse"}}</b>: {{{hero.purse}}}</li>
-                            <li><b>{{localize "Experience"}}</b>: {{hero.data.data.details.experience.spent}}/{{hero.data.data.details.experience.total}}</li>
-                            <li><b>{{localize "advantages"}}</b>: {{#each hero.advantages as |ad i|}}<a class="actorItem" data-uuid="{{ad.uuid}}">{{ad.name}}</a>{{/each}}</li>
-                            <li><b>{{localize "disadvantages"}}</b>: {{#each hero.disadvantages as |ad i|}}<a class="actorItem" data-uuid="{{ad.uuid}}">{{ad.name}}</a>{{/each}}</li>
-                        </ul>
-                    </div>
-                </div>
+                {{/each}}
             </div>
-            {{/each}}
         </div>
     </section>
 </div>

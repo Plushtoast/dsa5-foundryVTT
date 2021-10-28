@@ -68,10 +68,6 @@
     font-style: normal;
 }
 
-fieldset {
-    border: none;
-}
-
 #tinymce {
     overflow-y: hidden;
     overflow-x: hidden;
@@ -137,12 +133,6 @@ h7 {
 
 .dsa5.item textarea {
     padding: 1px 3px;
-}
-
-[data-hide-damage="true"] .damageSecret,
-[data-hide-damage="true"] .die-damage,
-.dsahidden {
-    display: none;
 }
 
 .dsa5 .editor {
@@ -691,52 +681,6 @@ input[type="text"].col-Money-H {
     box-shadow: 0 0 12px #6e3b018F inset;
 }
 
-
-/*.attr-mu a {
-    background-color: #b3241a;
-}
-
-.attr-kl a {
-    background-color: #8259a3;
-}
-
-.attr-in a {
-    background-color: #388834;
-}
-
-.attr-ch a {
-    background-color: #0d0d0d;
-    color: white;
-}
-
-.attr-ff a {
-    background-color: #d5b467;
-}
-
-.attr-ge a {
-    background-color: #688ec4;
-}
-
-.attr-ko a {
-    background-color: #fbf5ea;
-}
-
-.attr-kk a {
-    background-color: #d6a878;
-}
-
-.attr a {
-    border-radius: 100%;
-    line-height: 25px;
-    text-align: center;
-    width: 30px;
-    height: 30px;
-    margin: 0 auto;
-    display: inline-block;
-    padding: 3px;
-    box-shadow: 0 0 8px #00000052 inset
-}*/
-
 .main-row {
     display: flex;
     width: 100%;
@@ -825,6 +769,10 @@ input[type="text"].col-Money-H {
     flex: 10%;
 }
 
+.row-section .col.zerofive {
+    flex: 5%;
+}
+
 .row-section .col.fourty {
     flex: 40%;
 }
@@ -892,10 +840,6 @@ input[type="text"].col-Money-H {
 
 .small {
     font-size: 12px;
-}
-
-.roll-dialog-tag {
-    display: none;
 }
 
 .row-section .twoColors:nth-child(4n-1),
@@ -1032,6 +976,16 @@ form.dsa5.item-sheet {
     background-size: 100% 40px;
 }
 
+.statusEffectMenu,
+.dsalist li,
+#chat-form,
+.browser-item,
+.effect-change .key,
+.subMenuAvailable,
+.journalHeader,
+.tokenQuickHot>ul>li,
+.bags,
+.hero,
 .window-app .window-content {
     position: relative;
 }
@@ -1067,10 +1021,6 @@ form.dsa5.item-sheet {
     margin-top: 10px;
     color: black;
     text-shadow: 1px 1px white;
-}
-
-.app.sidebar-popout {
-    border: none;
 }
 
 .window-app .header-button.close {
@@ -1109,10 +1059,6 @@ form.dsa5.item-sheet {
 .item-main .row-section {
     margin-left: 10px;
     font-size: 12px;
-}
-
-.dsa5.item h1 {
-    border: none;
 }
 
 .item-main .col label,
@@ -1304,9 +1250,14 @@ form.dsa5.item-sheet {
     width: calc(100% - 4px);
 }
 
+.didYouKnow img,
+fieldset,
+.app.sidebar-popout,
+.dsa5.item h1,
 .journal-sheet img,
 .itemLibrary img,
-.charimg {
+.charimg,
+.dsa5.post-item img {
     border: none;
 }
 
@@ -1362,18 +1313,9 @@ li.folder {
     margin-left: 8px;
 }
 
-.chatModifiers ul,
-.chatModifiers div {
-    display: none;
-}
-
 .chatModifiers .expand-mods {
     float: right;
     font-size: 10px;
-}
-
-.expandDetails {
-    display: none;
 }
 
 .expandDetails.shown .filterHide,
@@ -1407,6 +1349,20 @@ li.folder {
     display: flex;
 }
 
+.locktrue .advance,
+.privateMessageIndicator .fas,
+.chatIndicator .fas,
+.combatant:not(.active) .aggroButton,
+.tocCollapsing.expanded .col.three *,
+.tokenQuickHot .subbuttons .secondary:not(.shown),
+.hero .details,
+[data-hide-damage="true"] .damageSecret,
+[data-hide-damage="true"] .die-damage,
+.dsahidden,
+.roll-dialog-tag,
+.expandDetails,
+.chatModifiers ul,
+.chatModifiers div,
 .notLearned,
 .showAll .filterHide,
 .statusEffectMenu .filterHide,
@@ -1608,10 +1564,6 @@ input[type="search"] {
     line-height: 34px;
 }
 
-.statusEffectMenu {
-    position: relative;
-}
-
 .statusEffectMenu ul {
     display: none;
     position: absolute;
@@ -1788,10 +1740,6 @@ input[type="search"] {
     list-style-type: none;
 }
 
-.dsalist li {
-    position: relative;
-}
-
 .dsalist li::before {
     content: '';
     display: inline-block;
@@ -1932,10 +1880,6 @@ input[type="search"] {
     color: white;
 }
 
-.locktrue .advance {
-    display: none;
-}
-
 .chatButton,
 .roll-button {
     border: 1px solid var(--border-color);
@@ -1986,10 +1930,6 @@ h2 .chatButton {
 .detailbox {
     border: 1px solid var(--border-color);
     padding: 5px;
-}
-
-#chat-form {
-    position: relative;
 }
 
 .quickfind {
@@ -2057,11 +1997,6 @@ a.inline-roll {
     background: var(--bg-color);
 }
 
-.privateMessageIndicator .fas,
-.chatIndicator .fas {
-    display: none;
-}
-
 .whisper .privateMessageIndicator .fas {
     display: inline-block;
     color: rgb(115, 7, 7);
@@ -2070,10 +2005,6 @@ a.inline-roll {
 .blind .chatIndicator .fa-eye-slash {
     display: inline-block;
     color: rgb(34, 72, 162);
-}
-
-.dsa5.post-item img {
-    border: none;
 }
 
 #token-hud .attribute.bar1 input {
@@ -2164,10 +2095,6 @@ a.inline-roll {
     margin: 0 auto;
 }
 
-.browser-item {
-    position: relative;
-}
-
 .browser-item:hover {
     box-shadow: inset 0px 0px 5px black;
 }
@@ -2248,16 +2175,8 @@ select.noAppearance {
     background-color: #d1d1ca;
 }
 
-.combatant:not(.active) .aggroButton {
-    display: none;
-}
-
 #combat-popout .aggroButton {
     left: -1px;
-}
-
-.effect-change .key {
-    position: relative;
 }
 
 .effect-change .key input {
@@ -2300,10 +2219,6 @@ select.noAppearance {
     flex: 20px;
 }
 
-.tocCollapsing.expanded .col.three * {
-    display: none;
-}
-
 .tocCollapsing.expanded .col.seventy {
     flex: calc(100% - 20px);
 }
@@ -2323,10 +2238,6 @@ select.noAppearance {
 .getChapter.selected,
 .subChapter.selected {
     font-weight: bold;
-}
-
-.subMenuAvailable {
-    position: relative;
 }
 
 .subMenuAvailable:after {
@@ -2426,10 +2337,6 @@ select.noAppearance {
     max-width: 40%;
 }
 
-.journalHeader {
-    position: relative;
-}
-
 .journalHeader .pinJournal,
 .journalHeader .showJournal {
     position: absolute;
@@ -2519,10 +2426,6 @@ select.noAppearance {
     transform: translateY(-45px)
 }
 
-.tokenQuickHot>ul>li {
-    position: relative;
-}
-
 .tokenQuickHot .subbuttons {
     position: absolute;
     top: -60px;
@@ -2558,10 +2461,6 @@ select.noAppearance {
     text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000;
 }
 
-.tokenQuickHot .subbuttons .secondary:not(.shown) {
-    display: none;
-}
-
 .tokenQuickHot li span {
     position: absolute;
     top: -25px;
@@ -2586,10 +2485,6 @@ select.noAppearance {
 .ench-fw {
     position: relative;
     top: -3px;
-}
-
-.bags {
-    position: relative;
 }
 
 .bags .slot {
@@ -2685,10 +2580,6 @@ select.noAppearance {
 
 .hero.victim {
     box-shadow: inset 0px 0px 10px #8a0202;
-}
-
-.hero .details {
-    display: none;
 }
 
 .hero .actorItem {
@@ -2959,10 +2850,6 @@ input[type="checkbox"].autoCheckbox {
     display: flex;
     justify-content: center;
     align-items: center;
-}
-
-.didYouKnow img {
-    border: none;
 }
 
 #settings .fshopButton div {

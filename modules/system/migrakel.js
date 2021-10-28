@@ -141,7 +141,7 @@ export default class Migrakel {
 
     static async updateGear(actor) {
         if (await this.showDialog(game.i18n.localize('Migrakel.gear'))) {
-            let condition = (x) => { return ["meleeweapon", "armor", "rangeweapon", "equipment", "poison", "consumable"].includes(x.type) }
+            let condition = (x) => { return ["meleeweapon", "armor", "rangeweapon", "equipment", "poison", "consumable", "ammunition"].includes(x.type) }
             let updator = (find) => {
                 let update = {
                     img: find.img,

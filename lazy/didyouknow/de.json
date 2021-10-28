@@ -31,6 +31,8 @@
         "Du kannst einen Vertrauten erstellen, indem du ihm die gleichnamige Eigenschaft gibst (AP/Bonuswerte)",
         "Das Modul \"times-up\" kann Active Effects automatisch nach Ablauf ihrer Wirkungsdauer entfernen.",
         "Es gibt ein DSA Modul um jede Aktion mit einem Interface Ton auszustatten.",
-        "Im Kompendium kannst du Regeln für Trefferzonen aktivieren."
+        "Im Kompendium kannst du Regeln für Trefferzonen aktivieren.",
+        "Du kannst Zauber per Macro für alle möglichen Effekte automatisieren. Viele vorgefertigte Zauber aus den offiziellen Modulen beinhalten solche Makros bereits.",
+        "Du musst Tokens ins Ziel nehmen, um von der Automatisierung von Vergleichsproben zu profitieren."
     ]
 }

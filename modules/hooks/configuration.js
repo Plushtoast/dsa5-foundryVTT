@@ -254,6 +254,14 @@ export default function() {
         default: "0.5|0.7|0.85|0.95",
         type: String
     });
+
+    game.settings.register("dsa5", "trackedActors", {
+        name: "sightOptions",
+        scope: "world",
+        config: false,
+        default: {},
+        type: Object
+    });
 }
 
 class ChangelogForm extends FormApplication {

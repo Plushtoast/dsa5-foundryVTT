@@ -65,12 +65,12 @@ export default class DSA5SpellDialog extends DialogShared {
                 return
             }
 
-            let baseAsp = aspcost.data('base')
-            let baseReach = reach.data('base')
-            let baseCastingTime = castingTime.data('base')
+            let baseAsp = aspcost.attr('data-base')
+            let baseReach = reach.attr('data-base')
+            let baseCastingTime = castingTime.attr('data-base')
 
             let newPosition = baseAsp
-            let newMaintainCost = maintainCost.data('base')
+            let newMaintainCost = maintainCost.attr('data-base')
             let mod = 0
             parent.find('.spellModifier[data-cost]:checked').each(function(index, element) {
                 newPosition = newPosition * (element.value < 0 ? 0.5 : 2)
@@ -86,7 +86,7 @@ export default class DSA5SpellDialog extends DialogShared {
             } else {
                 aspcost.text(newPosition)
                 maintainCost.text(newMaintainCost)
-                aspcost.data('mod', mod)
+                aspcost.attr('data-mod', mod)
             }
 
             mod = 0
@@ -114,7 +114,7 @@ export default class DSA5SpellDialog extends DialogShared {
                 event.currentTarget.checked = false
             } else {
                 castingTime.text(newPosition)
-                castingTime.data('mod', mod)
+                castingTime.attr('data-mod', mod)
             }
 
             mod = 0
@@ -128,19 +128,17 @@ export default class DSA5SpellDialog extends DialogShared {
                     mod += Number(element.value)
                 } else {
                     let val = baseReach.split(" ")
-                    let newReach = Number(val[0])
+                    newReach = Number(val[0])
                     if (isNaN(newReach)) {
                         event.currentTarget.checked = false
                         ui.notifications.error(game.i18n.localize("DSAError.RangeCannotBeParsed"))
                     } else {
-
                         reach.text((newReach * 2) + " " + game.i18n.localize("step"))
                         mod += Number(element.value)
                     }
-
                 }
             })
-            reach.data('mod', mod)
+            reach.attr('data-mod', mod)
             html.find('.reloadButton').prop('disabled', Number(html.find('.castingTime').text()) < 2)
         })
     }

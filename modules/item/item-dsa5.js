@@ -117,7 +117,8 @@ export default class Itemdsa5 extends Item {
             consumable: ConsumableItemDSA,
             spellextension: SpellextensionItemDSA5,
             species: SpeciesItemDSA5,
-            effectwrapper: EffectWrapperItemDSA5
+            effectwrapper: EffectWrapperItemDSA5,
+            plant: PlantItemDSA5
         }
     }
 
@@ -443,6 +444,18 @@ export default class Itemdsa5 extends Item {
             chatOptions["flags.recreationData"] = chatData;
             ChatMessage.create(chatOptions)
         });
+    }
+}
+
+class PlantItemDSA5 extends Itemdsa5 {
+    static chatData(data, name) {
+        let res = [
+            this._chatLineHelper("effect", data.effect),
+            this._chatLineHelper("PLANT.recipes", data.recipes),
+            this._chatLineHelper("PLANT.usages", data.usages)
+        ]
+
+        return res
     }
 }
 

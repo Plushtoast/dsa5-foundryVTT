@@ -30,6 +30,8 @@
         "You can parry with anything...even spells if you have to (the system doesn't care).",
         "You can create familiars by adding the trait familiar to a creature (AP/Bonus values)",
         "The module \"times-up\" can automatically remove active effects once they expired.",
-        "There is a TDE module to attach a sound to every action."
+        "There is a TDE module to attach a sound to every action.",
+        "You can automate spells via macros. Many spells from the official modules already contain those macros.",
+        "You need to target tokens to take advantage of the opposed test system e.g. for combats."
     ]
 }

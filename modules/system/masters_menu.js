@@ -3,6 +3,7 @@ import DSA5Payment from "./payment.js"
 import DSA5ChatAutoCompletion from "./chat_autocompletion.js"
 import RuleChaos from "./rule_chaos.js"
 import AdvantageRulesDSA5 from "./advantage-rules-dsa5.js"
+import { slist } from "./view_helper.js"
 
 export default class MastersMenu {
     static registerButtons() {
@@ -147,6 +148,30 @@ class GameMasterMenu extends Application {
             ev.stopPropagation(ev)
             $(ev.currentTarget).find('.expandDetails').fadeToggle()
         })
+
+        let deletehand = ev => this._deleteHero(ev);
+
+        html.find(".hero").mouseenter(ev => {
+            if (ev.currentTarget.getElementsByClassName('hovermenu').length == 0) {
+                let div = document.createElement('div')
+                div.classList.add("hovermenu")
+                let del = document.createElement('i')
+                del.classList.add("fas", "fa-times")
+                del.title = game.i18n.localize('SHEET.DeleteItem')
+                del.addEventListener('click', deletehand, false)
+                div.appendChild(del)
+                ev.currentTarget.appendChild(div)
+            }
+        });
+        html.find(".hero").mouseleave(ev => {
+            let e = ev.toElement || ev.relatedTarget;
+            if (e.parentNode == this || e == this)
+                return;
+
+            ev.currentTarget.querySelectorAll('.hovermenu').forEach(e => e.remove());
+        });
+
+
         html.find('.addGroupSchip').click(async(ev) => {
             await this.changeGroupSchipCount(Number($(ev.currentTarget).attr("data-value")))
         })
@@ -180,6 +205,28 @@ class GameMasterMenu extends Application {
         for (let elem of this.randomCreation) {
             elem.activateListeners(html)
         }
+        slist(html, '.heros', this.updateHeroOrder, '.hero')
+    }
+
+    async _deleteHero(ev) {
+        ev.stopPropagation()
+        ev.preventDefault()
+        const toRemove = $(ev.currentTarget).closest(".hero").attr("data-id")
+        const actors = game.settings.get("dsa5", "trackedActors").actors || []
+        const index = actors.indexOf(toRemove)
+        if (index > -1) {
+            actors.splice(index, 1)
+            await game.settings.set("dsa5", "trackedActors", { actors })
+            this.render(true)
+        }
+    }
+
+    async updateHeroOrder(target) {
+        const actors = []
+        for (let elem of target.querySelectorAll(".hero")) {
+            actors.push(elem.dataset.id)
+        }
+        await game.settings.set("dsa5", "trackedActors", { actors })
     }
 
     async updateDarkness(ev) {
@@ -313,6 +360,29 @@ class GameMasterMenu extends Application {
         }).render(true)
     }
 
+    _canDragDrop(selector) {
+        return true
+    }
+
+    async _onDrop(event) {
+        let data;
+        try {
+            data = JSON.parse(event.dataTransfer.getData('text/plain'));
+        } catch (err) {
+            return false;
+        }
+        if (data.type == "Actor") {
+            let tracked = game.settings.get("dsa5", "trackedActors")
+            tracked = tracked.actors || []
+            if (tracked.indexOf(data.id) == -1 && !data.pack) {
+                tracked.push(data.id)
+                await game.settings.set("dsa5", "trackedActors", { actors: tracked })
+                this.render(true)
+            }
+
+        }
+    }
+
     selectedIDs() {
         let ids = []
         for (const [key, value] of Object.entries(this.selected)) {
@@ -352,6 +422,7 @@ class GameMasterMenu extends Application {
             width: 470,
             height: 740,
             title: game.i18n.localize("gmMenu"),
+            dragDrop: [{ dragSelector: null, dropSelector: null }]
         });
         options.template = 'systems/dsa5/templates/system/mastermenu.html'
         options.resizable = true
@@ -360,7 +431,14 @@ class GameMasterMenu extends Application {
 
     async getData(options) {
         const data = await super.getData(options);
-        const heros = game.actors.filter(x => x.hasPlayerOwner)
+        const trackedActors = game.settings.get("dsa5", "trackedActors")
+        let heros = []
+        if (trackedActors.actors && trackedActors.actors.length > 0) {
+            heros = game.actors.filter(x => trackedActors.actors.includes(x.id)).sort((a, b) => { return trackedActors.actors.indexOf(a.id) - trackedActors.actors.indexOf(b.id) })
+        } else {
+            heros = game.actors.filter(x => x.hasPlayerOwner)
+            await game.settings.set("dsa5", "trackedActors", { actors: heros.map(x => x.id) })
+        }
         const schipSetting = this.getGroupSchipSetting()
         let groupschips = []
         for (let i = 1; i <= schipSetting[1]; i++) {
