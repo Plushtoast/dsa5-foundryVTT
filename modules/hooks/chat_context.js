@@ -100,7 +100,7 @@ export default function() {
             if (message.data.speaker.actor && message.data.flags.data) {
                 let actor = game.actors.get(message.data.speaker.actor);
                 if (actor.isOwner && fateAvailable(actor, group)) {
-                    return !message.data.flags.data.fatePointRerollUsed;
+                    return !message.data.flags.data.fatePointRerollUsed && !(message.data.flags.data.postData.rollType == "regenerate")
                 }
             }
             return false;
@@ -179,12 +179,12 @@ export default function() {
                 icon: '<i class="fas fa-user-plus"></i>',
                 condition: canHeal,
                 callback: async(li) => {
-                    const message = game.messages.get(li.attr("data-message-id"))
+                    const message = await game.messages.get(li.attr("data-message-id"))
                     const actor = DSA5_Utility.getSpeaker(message.data.speaker)
                     if (!actor.isOwner)
                         return ui.notifications.error(game.i18n.localize("DSAError.DamagePermission"))
 
-                    await message.update({ "flags.data.healApplied": true });
+                    await message.update({ "flags.data.healApplied": true, content: message.data.content.replace(/<\/div>$/, '<i class="fas fa-check" style="float:right"></i></div>') });
                     await actor.applyRegeneration(message.data.flags.data.postData.LeP, message.data.flags.data.postData.AsP, message.data.flags.data.postData.KaP)
                 }
             }, {
@@ -197,6 +197,7 @@ export default function() {
                     let actor = DSA5_Utility.getSpeaker(message.data.speaker)
                     if (!actor.isOwner)
                         return ui.notifications.error(game.i18n.localize("DSAError.DamagePermission"))
+
                     actor.applyMana(cardData.preData.calculatedSpellModifiers.finalcost, ["ritual", "spell"].includes(cardData.preData.source.type) ? "AsP" : "KaP")
                 }
             }, {
