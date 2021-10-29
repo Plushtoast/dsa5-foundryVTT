@@ -9,6 +9,7 @@ import DSA5StatusEffects from "../status/status_effects.js"
 import Itemdsa5 from "../item/item-dsa5.js";
 import TraitRulesDSA5 from "../system/trait-rules-dsa5.js";
 import RuleChaos from "../system/rule_chaos.js";
+import { tinyNotification } from "../system/view_helper.js";
 
 export default class Actordsa5 extends Actor {
     static async create(data, options) {
@@ -43,8 +44,9 @@ export default class Actordsa5 extends Actor {
         const data = this.data
         try {
             let itemModifiers = {}
+            let compensation = SpecialabilityRulesDSA5.hasAbility(this.data, game.i18n.localize('LocalizedIDs.inuredToEncumbrance'))
             for (let i of data.items.filter(x => (["meleeweapon", "rangeweapon", "armor", "equipment"].includes(x.type) && getProperty(x.data, "data.worn.value")) || ["advantage", "specialability", "disadvantage"].includes(x.type))) {
-                this._addGearAndAbilityModifiers(itemModifiers, i)
+                compensation = this._addGearAndAbilityModifiers(itemModifiers, i, compensation)
             }
             data.itemModifiers = this._applyModiferTransformations(itemModifiers)
 
@@ -829,15 +831,18 @@ export default class Actordsa5 extends Actor {
         return itemModifiers
     }
 
-    _addGearAndAbilityModifiers(itemModifiers, i) {
+    _addGearAndAbilityModifiers(itemModifiers, i, compensation) {
         const effect = getProperty(i, "data.data.effect.value")
-        if (!effect) return
+        if (!effect) return compensation
 
+        let notCompensated = true
         for (let mod of effect.split(/,|;/).map(x => x.trim())) {
             let vals = mod.replace(/(\s+)/g, ' ').trim().split(" ")
             if (vals.length == 2) {
                 if (!isNaN(vals[0])) {
-                    if (itemModifiers[vals[1]] == undefined) {
+                    if (compensation && i.data.type == "armor" && [game.i18n.localize('CHARAbbrev.INI').toLowerCase(), game.i18n.localize('CHARAbbrev.GS').toLowerCase()].includes(vals[1].toLowerCase())) {
+                        notCompensated = false
+                    } else if (itemModifiers[vals[1]] == undefined) {
                         itemModifiers[vals[1]] = {
                             value: Number(vals[0]) * (i.data.data.step ? (Number(i.data.data.step.value) || 1) : 1),
                             sources: [i.name]
@@ -849,12 +854,19 @@ export default class Actordsa5 extends Actor {
                 }
             }
         }
+
+        return compensation && notCompensated
     }
 
-    async _updateAPs(APValue) {
+    async _updateAPs(APValue, dataUpdate = {}) {
         if (Actordsa5.canAdvance(this.data)) {
             if (!isNaN(APValue) && !(APValue == null)) {
-                await this.update({ "data.details.experience.spent": Number(this.data.data.details.experience.spent) + Number(APValue) });
+                const ap = Number(APValue)
+                dataUpdate["data.details.experience.spent"] = Number(this.data.data.details.experience.spent) + ap
+                await this.update(dataUpdate);
+                const msg = game.i18n.format(ap > 0 ? "advancementCost" : "refundCost", { cost: Math.abs(ap) })
+                tinyNotification(msg)
+
             } else {
                 ui.notifications.error(game.i18n.localize("DSAError.APUpdateError"))
             }

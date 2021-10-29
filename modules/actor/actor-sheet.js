@@ -192,49 +192,41 @@ export default class ActorSheetDsa5 extends ActorSheet {
     }
 
     async _advanceAttribute(attr) {
-        let advances = Number(this.actor.data.data.characteristics[attr].advances) + Number(this.actor.data.data.characteristics[attr].initial)
-        let cost = DSA5_Utility._calculateAdvCost(advances, "E")
+        const advances = Number(this.actor.data.data.characteristics[attr].advances) + Number(this.actor.data.data.characteristics[attr].initial)
+        const cost = DSA5_Utility._calculateAdvCost(advances, "E")
         if (await this._checkEnoughXP(cost)) {
-            let attrJs = `data.characteristics.${attr}.advances`
-            await this.actor.update({
-                [attrJs]: Number(this.actor.data.data.characteristics[attr].advances) + 1,
-                "data.details.experience.spent": Number(this.actor.data.data.details.experience.spent) + cost
+            await this._updateAPs(cost, {
+                [`data.characteristics.${attr}.advances`]: Number(this.actor.data.data.characteristics[attr].advances) + 1
             })
         }
     }
 
     async _refundAttributeAdvance(attr) {
-        let advances = Number(this.actor.data.data.characteristics[attr].advances) + Number(this.actor.data.data.characteristics[attr].initial)
+        const advances = Number(this.actor.data.data.characteristics[attr].advances) + Number(this.actor.data.data.characteristics[attr].initial)
         if (Number(this.actor.data.data.characteristics[attr].advances) > 0) {
-            let cost = DSA5_Utility._calculateAdvCost(advances, "E", 0)
-            let attrJs = `data.characteristics.${attr}.advances`
-            await this.actor.update({
-                [attrJs]: Number(this.actor.data.data.characteristics[attr].advances) - 1,
-                "data.details.experience.spent": Number(this.actor.data.data.details.experience.spent) - cost
+            const cost = DSA5_Utility._calculateAdvCost(advances, "E", 0) * -1
+            await this._updateAPs(cost, {
+                [`data.characteristics.${attr}.advances`]: Number(this.actor.data.data.characteristics[attr].advances) - 1
             })
         }
     }
 
     async _advancePoints(attr) {
-        let advances = Number(this.actor.data.data.status[attr].advances)
-        let cost = DSA5_Utility._calculateAdvCost(advances, "D")
+        const advances = Number(this.actor.data.data.status[attr].advances)
+        const cost = DSA5_Utility._calculateAdvCost(advances, "D")
         if (await this._checkEnoughXP(cost) && this._checkMaximumPointAdvancement(attr, advances + 1)) {
-            let attrJs = `data.status.${attr}.advances`
-            await this.actor.update({
-                [attrJs]: Number(this.actor.data.data.status[attr].advances) + 1,
-                "data.details.experience.spent": Number(this.actor.data.data.details.experience.spent) + cost
+            await this._updateAPs(cost, {
+                [`data.status.${attr}.advances`]: Number(this.actor.data.data.status[attr].advances) + 1
             })
         }
     }
 
     async _refundPointsAdvance(attr) {
-        let advances = Number(this.actor.data.data.status[attr].advances)
+        const advances = Number(this.actor.data.data.status[attr].advances)
         if (advances > 0) {
-            let cost = DSA5_Utility._calculateAdvCost(advances, "D", 0)
-            let attrJs = `data.status.${attr}.advances`
-            await this.actor.update({
-                [attrJs]: Number(this.actor.data.data.status[attr].advances) - 1,
-                "data.details.experience.spent": Number(this.actor.data.data.details.experience.spent) - cost
+            const cost = DSA5_Utility._calculateAdvCost(advances, "D", 0) * -1
+            await this._updateAPs(cost, {
+                [`data.status.${attr}.advances`]: Number(this.actor.data.data.status[attr].advances) - 1
             })
         }
     }
@@ -244,16 +236,16 @@ export default class ActorSheetDsa5 extends ActorSheet {
         let cost = DSA5_Utility._calculateAdvCost(Number(item.data.talentValue.value), item.data.StF.value)
         if (await this._checkEnoughXP(cost) && this._checkMaximumItemAdvancement(item, Number(item.data.talentValue.value) + 1)) {
             await this.actor.updateEmbeddedDocuments("Item", [{ _id: itemId, "data.talentValue.value": item.data.talentValue.value + 1 }])
-            await this.actor.update({ "data.details.experience.spent": Number(this.actor.data.data.details.experience.spent) + cost })
+            await this._updateAPs(cost)
         }
     }
 
     async _refundItemAdvance(itemId) {
         let item = duplicate(this.actor.items.find(i => i.data._id == itemId))
         if (item.data.talentValue.value > 0) {
-            let cost = DSA5_Utility._calculateAdvCost(Number(item.data.talentValue.value), item.data.StF.value, 0)
+            let cost = DSA5_Utility._calculateAdvCost(Number(item.data.talentValue.value), item.data.StF.value, 0) * -1
             await this.actor.updateEmbeddedDocuments("Item", [{ _id: itemId, "data.talentValue.value": item.data.talentValue.value - 1 }])
-            await this.actor.update({ "data.details.experience.spent": Number(this.actor.data.data.details.experience.spent) - cost })
+            await this._updateAPs(cost)
         }
     }
 
@@ -841,8 +833,8 @@ export default class ActorSheetDsa5 extends ActorSheet {
         }
     }
 
-    async _updateAPs(APValue) {
-        await this.actor._updateAPs(APValue)
+    async _updateAPs(APValue, update = {}) {
+        await this.actor._updateAPs(APValue, update)
     }
 
     async _addVantage(item, typeClass) {

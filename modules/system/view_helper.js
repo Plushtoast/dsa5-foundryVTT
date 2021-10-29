@@ -86,3 +86,14 @@ export function slist(html, target, callback, itemTag = "div") {
         });
     }
 }
+
+export function tinyNotification(message) {
+    let container = $('.tinyNotifications')
+    if (!container.length) {
+        $('body').append('<ul class="tinyNotifications"></ul>')
+        container = $('.tinyNotifications')
+    }
+    const elem = $(`<li>${message}</li>`)
+    container.prepend(elem)
+    setTimeout(function() { elem.remove() }, 1500)
+}

@@ -2833,16 +2833,20 @@ input[type="checkbox"].autoCheckbox {
     border: none;
 }
 
-.didYouKnow {
+.didYouKnow,
+.tinyNotifications li {
+    background-color: rgba(0, 0, 0, 0.548);
+    color: white;
+    border-radius: 10px;
     padding: 10px;
+}
+
+.didYouKnow {
     position: fixed;
     top: 40%;
     left: calc(50% - 200px);
-    background-color: rgba(0, 0, 0, 0.548);
-    border-radius: 10px;
     z-index: 1002;
     width: 400px;
-    color: white;
     display: none;
 }
 
@@ -2927,4 +2931,14 @@ input[type="checkbox"].autoCheckbox {
 .plantContainer:hover input~span,
 .plantContainer input:checked~span {
     opacity: 1;
+}
+
+.tinyNotifications {
+    position: fixed;
+    top: calc(100% - 250px);
+    left: 50px;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    z-index: 160;
 }
