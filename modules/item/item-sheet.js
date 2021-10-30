@@ -369,6 +369,21 @@ class Enchantable extends ItemSheetdsa5 {
         }
     }
 
+    prepareDomains() {
+        let dom = getProperty(this.item.data.data, "effect.attributes")
+        if (dom) {
+            const magical = new RegExp(game.i18n.localize('WEAPON.magical'), 'i')
+            const blessed = new RegExp(game.i18n.localize('WEAPON.clerical'), 'i')
+            dom = dom.split(",").map(x => {
+                let cssclass = ""
+                if (magical.test(x)) cssclass = "magical"
+                else if (blessed.test(x)) cssclass = "blessed"
+                return `<li class="${cssclass}">${x}</li>`
+            }).join("")
+        }
+        return dom
+    }
+
     static get defaultOptions() {
         const options = super.defaultOptions;
         mergeObject(options, {
@@ -679,6 +694,7 @@ class MeleeweaponSheetDSA5 extends Enchantable {
         data['isShield'] = this.item.data.data.combatskill.value == game.i18n.localize("LocalizedIDs.shields")
         data['shieldSizes'] = DSA5.shieldSizes
         data["poison"] = this.item.getFlag("dsa5", "poison")
+        data['domains'] = this.prepareDomains()
         data.hasEnchantments = data.poison || (data.enchantments && data.enchantments.length > 0)
         return data
     }
@@ -715,6 +731,10 @@ class MeleeweaponSheetDSA5 extends Enchantable {
             if (item) {
                 item.sheet.render(true)
             }
+        })
+        html.find('.domainsPretty').click(ev => {
+            $(ev.currentTarget).hide()
+            $(ev.currentTarget).next('.domainToggle').show()
         })
     }
 

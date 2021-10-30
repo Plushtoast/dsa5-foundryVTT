@@ -232,6 +232,7 @@
     "distribution": "Verbreitung",
     "distance": "Entfernung",
     "damageApplied": "Schaden wurde übertragen",
+    "domains": "Domänen",
     "Delete Confirmation": "Löschen bestätigen",
     "dodge": "Ausweichen",
     "disease": "Krankheit",
@@ -793,7 +794,9 @@
         "loaded": "Geladen",
         "reload": "Nachladen",
         "isReloading": "{actor} läd {item} nach ({status}).",
-        "improvised": "Improvisierte Waffe"
+        "improvised": "Improvisierte Waffe",
+        "magical": "Magisch",
+        "clerical": "Geweiht"
     },
     "SPELL": {
         "loading": "Zauberstatus: {status}",

@@ -354,7 +354,8 @@
                     "value": 0
                 },
                 "effect": {
-                    "value": ""
+                    "value": "",
+                    "attributes": ""
                 },
                 "parent_id": 0
             },
@@ -597,7 +598,8 @@
                 "value": ""
             },
             "effect": {
-                "value": ""
+                "value": "",
+                "attributes": ""
             }
         },
         "ritual": {

@@ -258,6 +258,7 @@
     "doubleDamage": "double damage",
     "duration": "Effect duration",
     "doubleAttack": "Two attacks",
+    "domains": "Domains",
     "DSA5Error": "TDE5 - Report error",
     "DSA5Wiki": "TDE5 - Wiki",
     "Description": "Description",
@@ -780,7 +781,9 @@
         "loaded": "Reloaded",
         "reload": "Reload",
         "isReloading": "{actor} reloads {item} ({status}).",
-        "improvised": "Improvised weapon"
+        "improvised": "Improvised weapon",
+        "magical": "Magical",
+        "clerical": "Blessed"
     },
     "SPELL": {
         "loading": "Spell state: {status}",

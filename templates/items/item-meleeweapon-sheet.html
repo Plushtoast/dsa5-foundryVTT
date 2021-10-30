@@ -98,7 +98,14 @@
                 <label class="label-text">{{localize "effect"}}</label>
                 <input class="input-text" type="text" name="data.effect.value" value="{{data.effect.value}}" data-dtype="String" />
             </div>
-
+            <div class="form-group autoHeight">
+                <label class="label-text">{{localize "domains"}}</label> {{#if domains}}
+                <div class="input-text domainsPretty">
+                    <ul>{{{domains}}}</ul>
+                </div>
+                {{/if}}
+                <input class="input-text {{#if domains}}domainToggle{{/if}}" type="text" name="data.effect.attributes" value="{{data.effect.attributes}}" data-dtype="String" />
+            </div>
 
             <div class="form-group double">
                 <label class="label-text">{{localize "structure"}}</label>

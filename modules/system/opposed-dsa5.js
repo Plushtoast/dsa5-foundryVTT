@@ -297,9 +297,9 @@ export default class OpposedDsa5 {
         //opposeResult.defenderTestResult = defenderTest;
 
         opposeResult.other = [];
-        if (options.additionalInfo) {
-            opposeResult.other.push(options.additionalInfo)
-        }
+        if (options.additionalInfo) opposeResult.other.push(options.additionalInfo)
+
+        console.log(attackerTest)
 
         opposeResult.winner = "attacker"
 

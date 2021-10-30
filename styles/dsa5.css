@@ -240,6 +240,11 @@ h7 {
     margin: 0;
 }
 
+.dsa5.item form .form-group.autoHeight div {
+    height: auto;
+}
+
+form .form-group.autoHeight label,
 form .form-group.full-height label,
 form .form-group.full-height input {
     align-self: stretch;
@@ -273,6 +278,15 @@ form .form-group.tripple .input-text {
 
 form .form-group.doubleInput .input-text {
     flex: 1.45;
+}
+
+form .form-group div.input-text {
+    padding: 0 3px;
+}
+
+form .form-group div.input-text ul {
+    padding: 0;
+    margin: 0;
 }
 
 form .form-group.tripple select {
@@ -1349,6 +1363,7 @@ li.folder {
     display: flex;
 }
 
+.domainToggle,
 .locktrue .advance,
 .privateMessageIndicator .fas,
 .chatIndicator .fas,
@@ -2588,6 +2603,27 @@ select.noAppearance {
     border: 1px solid var(--border-color);
     line-height: 12px;
     border-radius: 2px;
+}
+
+.domainsPretty li {
+    display: inline-block;
+    border: ridge 2px goldenrod;
+    line-height: 18px;
+    border-radius: 2px;
+    margin: 3px;
+    padding: 0px 8px;
+    box-shadow: 1px 1px 3px black;
+    background-color: #f4da99;
+}
+
+.domainsPretty li.magical {
+    border-color: rgb(10, 89, 194);
+    background-color: rgb(192, 219, 255);
+}
+
+.domainsPretty li.blessed {
+    border-color: rgb(0, 111, 61);
+    background-color: #bae1b1;
 }
 
 #combat li.combatant .token-resource {

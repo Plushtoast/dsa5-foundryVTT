@@ -462,9 +462,15 @@ export default class DiceDSA5 {
     static async evaluateDamage(testData, result, weapon, isRangeWeapon, doubleDamage) {
         let rollFormula = weapon.data.damage.value.replace(/[Ww]/g, "d")
         let overrideDamage = []
+        let dmgMultipliers = []
+        let damageBonusDescription = []
         let bonusDmg = testData.situationalModifiers.reduce(function(_this, val) {
             let number = 0
             if (val.damageBonus) {
+                if(/^\*/.test(val.damageBonus)){
+                    dmgMultipliers.push({name: val.name, val: Number(val.damageBonus.replace('*',''))})
+                    return _this
+                }
                 const isOverride = /^=/.test(val.damageBonus)
                 const rollString = `${val.damageBonus}`.replace(/^=/, "")
                 let roll = DiceDSA5._stringToRoll(rollString, testData)
@@ -483,7 +489,6 @@ export default class DiceDSA5 {
         }, 0);
         let damageRoll = testData.damageRoll ? await testData.damageRoll : await DiceDSA5.manualRolls(await new Roll(rollFormula).evaluate({ async: true }), "CHAR.DAMAGE", testData.extra.options)
         let damage = damageRoll.total
-        let damageBonusDescription = []
         let weaponBonus = 0
         let weaponroll = 0
         for (let k of damageRoll.terms) {
@@ -525,7 +530,6 @@ export default class DiceDSA5 {
                 if (rangeDamageMod != 0)
                     damageBonusDescription.push(game.i18n.localize("distance") + " " + rangeDamageMod)
 
-
                 status = testData.extra.actor.data.rangeStats.damage
             } else {
                 status = testData.extra.actor.data.meleeStats.damage
@@ -536,13 +540,14 @@ export default class DiceDSA5 {
                 damage += statusDmg
                 damageBonusDescription.push(game.i18n.localize("statuseffects") + " " + statusDmg)
             }
-
         }
-
 
         if (doubleDamage) {
             damage = damage * 2
             damageBonusDescription.push(game.i18n.localize("doubleDamage"))
+        }
+        for(const el of dmgMultipliers){
+            damage = damage * el.val
         }
 
         result["damagedescription"] = damageBonusDescription.join(", ")

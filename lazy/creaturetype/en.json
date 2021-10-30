@@ -1,16 +1,26 @@
 {
-    "Demon": "DemonType",
-    "Chimera": "ChimeraType",
-    "Daimonid": "DaimonidType",
-    "Dragon": "DragonType",
-    "Elemental": "ElementalType",
-    "Fairy": "FairyType",
-    "Ghost": "GhostType",
-    "Golem": "GolemType",
-    "Homunculus": "HomunculiType",
-    "Intelligent Creature": "IntelligentCreatureType",
-    "Plant": "PlantType",
-    "Animal": "AnimalType",
-    "Undead": "UndeadType",
-    "Supernatural creature": "SupernaturalType"
+    "types": {
+        "Demon": "DemonType",
+        "Chimera": "ChimeraType",
+        "Daimonid": "DaimonidType",
+        "Dragon": "DragonType",
+        "Elemental": "ElementalType",
+        "Fairy": "FairyType",
+        "Ghost": "GhostType",
+        "Golem": "GolemType",
+        "Homunculus": "HomunculiType",
+        "Intelligent Creature": "IntelligentCreatureType",
+        "Plant": "PlantType",
+        "Animal": "AnimalType",
+        "Undead": "UndeadType",
+        "Supernatural creature": "SupernaturalType"
+    },
+    "godOfLife": [
+        "Tsa"
+    ],
+    "godOfDeath": [
+        "Boron",
+        "Tairach"
+    ],
+    "opposingGod": "dark twin god"
 }

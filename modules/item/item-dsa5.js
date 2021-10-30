@@ -8,6 +8,7 @@ import SpecialabilityRulesDSA5 from "../system/specialability-rules-dsa5.js";
 import ItemRulesDSA5 from "../system/item-rules-dsa5.js";
 import DSAActiveEffectConfig from "../status/active_effects.js";
 import RuleChaos from "../system/rule_chaos.js";
+import CreatureType from "../system/creature-type.js";
 
 export default class Itemdsa5 extends Item {
     static defaultImages = {
@@ -130,6 +131,13 @@ export default class Itemdsa5 extends Item {
         }
     }
 
+    static addCreatureTypeModifiers(actorData, source, situationalModifiers){
+        const creatureTypes = CreatureType.detectCreatureType(actorData)
+        for (let k of creatureTypes) {
+            situationalModifiers.push(...k.damageModifier(source))
+        }
+    }
+
     static parseValueType(name, val) {
         let type = ""
         if (/^\*/.test(val)) {
@@ -157,18 +165,30 @@ export default class Itemdsa5 extends Item {
         return DSA5StatusEffects.hasCondition(this, conditionKey)
     }
 
-    static getSkZkModifier(data) {
+    static getSkZkModifier(data, source) {
         let skMod = 0
         let zkMod = 0
+        let spellResistance = 0
+        const hasSpellResistance = ["spell", "liturgy", "ceremony", "ritual"].includes(source.type)
         if (game.user.targets.size) {
             game.user.targets.forEach(target => {
+                if (hasSpellResistance){
+                    const creatureTypes = CreatureType.detectCreatureType(target.actor.data)
+                    spellResistance = creatureTypes.reduce((sum, x) => {return sum + x.spellResistanceModifier(target.actor.data)}, 0)
+                }
+
                 skMod = target.actor.data.data.status.soulpower.max * -1
                 zkMod = target.actor.data.data.status.toughness.max * -1
             });
         }
+        if (hasSpellResistance && source.data.effectFormula.value.trim() == ""){
+            skMod -= spellResistance
+            zkMod -= spellResistance
+        }
         mergeObject(data, {
             SKModifier: skMod,
-            ZKModifier: zkMod
+            ZKModifier: zkMod,
+            spellResistance
         });
     }
 
@@ -620,8 +640,7 @@ class SpellItemDSA5 extends Itemdsa5 {
             situationalModifiers.push({ name: thing.source, value: thing.value })
         }
 
-
-        this.getSkZkModifier(data)
+        this.getSkZkModifier(data, source)
     }
 
     static setupDialog(ev, options, spell, actor, tokenId) {
@@ -718,7 +737,7 @@ class CeremonyItemDSA5 extends LiturgyItemDSA5 {
 
     static getSituationalModifiers(situationalModifiers, actor, data, source) {
         situationalModifiers.push(...ItemRulesDSA5.getTalentBonus(actor.data, source.name, ["advantage", "disadvantage", "specialability", "equipment"]))
-        this.getSkZkModifier(data)
+        this.getSkZkModifier(data, source)
         mergeObject(data, {
             isCeremony: true,
             locationModifiers: DSA5.ceremonyLocationModifiers,
@@ -864,7 +883,7 @@ class DiseaseItemDSA5 extends Itemdsa5 {
                 situationalModifiers.push(...AdvantageRulesDSA5.getVantageAsModifier(target.actor.data, game.i18n.localize("LocalizedIDs.ResistanttoDisease"), -1))
             });
         }
-        this.getSkZkModifier(data)
+        this.getSkZkModifier(data, source)
         mergeObject(data, {
             hasSKModifier: source.data.resistance.value == "SK",
             hasZKModifier: source.data.resistance.value == "ZK"
@@ -952,6 +971,8 @@ class MeleeweaponDSA5 extends Itemdsa5 {
                     let defWeapon = target.actor.items.filter(x => x.data.type == "meleeweapon" && x.data.data.worn.value)
                     if (defWeapon.length > 0)
                         targetWeaponsize = defWeapon[0].data.data.reach.value
+
+                    this.addCreatureTypeModifiers(target.actor.data, source, situationalModifiers)
                 });
             }
 
@@ -1093,7 +1114,7 @@ class PoisonItemDSA5 extends Itemdsa5 {
                 situationalModifiers.push(...AdvantageRulesDSA5.getVantageAsModifier(target.actor.data, game.i18n.localize("LocalizedIDs.poisonResistance"), -1))
             });
         }
-        this.getSkZkModifier(data)
+        this.getSkZkModifier(data, source)
         mergeObject(data, {
             hasSKModifier: source.data.resistance.value == "SK",
             hasZKModifier: source.data.resistance.value == "ZK"
@@ -1174,8 +1195,9 @@ class RangeweaponItemDSA5 extends Itemdsa5 {
             if (game.user.targets.size) {
                 game.user.targets.forEach(target => {
                     let tar = target.actor.data.data.size
-                    if (tar)
-                        targetSize = tar.value
+                    if (tar) targetSize = tar.value
+
+                    this.addCreatureTypeModifiers(target.actor.data, source, situationalModifiers)
                 });
             }
 
@@ -1329,7 +1351,7 @@ class RitualItemDSA5 extends SpellItemDSA5 {
         situationalModifiers.push(...AdvantageRulesDSA5.getVantageAsModifier(actor.data, game.i18n.localize('LocalizedIDs.magicalRestriction'), -1, true))
         situationalModifiers.push(...AdvantageRulesDSA5.getVantageAsModifier(actor.data, game.i18n.localize('LocalizedIDs.boundToArtifact'), -1, true))
         situationalModifiers.push(...this.getPropertyFocus(actor, source))
-        this.getSkZkModifier(data)
+        this.getSkZkModifier(data, source)
         mergeObject(data, {
             isRitual: true,
             locationModifiers: DSA5.ritualLocationModifiers,
@@ -1480,8 +1502,9 @@ class TraitItemDSA5 extends Itemdsa5 {
             if (game.user.targets.size) {
                 game.user.targets.forEach(target => {
                     let defWeapon = target.actor.items.filter(x => x.data.type == "meleeweapon" && x.data.data.worn.value)
-                    if (defWeapon.length > 0)
-                        targetWeaponsize = defWeapon[0].data.data.reach.value
+                    if (defWeapon.length > 0) targetWeaponsize = defWeapon[0].data.data.reach.value
+
+                    this.addCreatureTypeModifiers(target.actor.data, source, situationalModifiers)
                 });
             }
 
@@ -1509,6 +1532,8 @@ class TraitItemDSA5 extends Itemdsa5 {
                 game.user.targets.forEach(target => {
                     let tar = target.actor.data.data.size
                     if (tar) targetSize = tar.value
+
+                    this.addCreatureTypeModifiers(target.actor.data, source, situationalModifiers)
                 });
             }
 

@@ -1405,11 +1405,16 @@ export default class Actordsa5 extends Actor {
         let res = []
         html.find('[name="situationalModifiers"] option:selected').each(function () {
             const val = $(this).val()
-            res.push({
+            let data = {
                 name: $(this).text().trim().split("[")[0],
                 value: isNaN(val) ? val : Number(val),
                 type: $(this).attr("data-type")
-            })
+            }
+            if(data.type == "dmg"){
+                data.damageBonus = data.value
+                data.value = 0
+            }
+            res.push(data)
         })
         return res
     }
