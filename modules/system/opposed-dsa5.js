@@ -293,13 +293,8 @@ export default class OpposedDsa5 {
     static async evaluateOpposedTest(attackerTest, defenderTest, options = {}) {
         let opposeResult = {};
 
-        //opposeResult.attackerTestResult = attackerTest;
-        //opposeResult.defenderTestResult = defenderTest;
-
         opposeResult.other = [];
         if (options.additionalInfo) opposeResult.other.push(options.additionalInfo)
-
-        console.log(attackerTest)
 
         opposeResult.winner = "attacker"
 
@@ -331,8 +326,10 @@ export default class OpposedDsa5 {
         if (attackerTest.successLevel > 0 && defenderTest.successLevel < 0) {
             let damage = this._calculateOpposedDamage(attackerTest, defenderTest, options)
             opposeResult.winner = "attacker"
+            let title = [`${damage.armorMod != 0 ? damage.armorMod + " " + game.i18n.localize('Modifier') : ""}`, `${damage.armorMultiplier != 0 ? "*" + damage.armorMultiplier + " " + game.i18n.localize('Modifier') : "" }`]
+            let description = `<b>${game.i18n.localize("damage")}</b>: ${damage.damage} - <span title="${title.join("")}">${damage.armor} (${game.i18n.localize("protection")})</span> = ${damage.sum}`
             opposeResult.damage = {
-                description: `<b>${game.i18n.localize("damage")}</b>: ${damage.damage} - ${damage.armor} (${game.i18n.localize("protection")}) = ${damage.sum}`,
+                description,
                 value: damage.sum,
                 sp: damage.damage
             }
@@ -343,10 +340,25 @@ export default class OpposedDsa5 {
 
     static _calculateOpposedDamage(attackerTest, defenderTest, options = {}) {
         const actor = DSA5_Utility.getSpeaker(defenderTest.speaker).data
-        const armor = Actordsa5.armorValue(actor, options)
+        let armor = Actordsa5.armorValue(actor, options)
+        let multipliers = []
+        let armorMod = 0
+        for(const mod of (attackerTest.armorPen || [])){
+            if(/^\*/.test(mod)) multipliers.push(Number(mod.replace("*","")))
+            else armorMod += Number(mod)
+        }
+        armor += armorMod
+        let armorMultiplier = 1
+        for(const mod of multipliers){
+            armorMultiplier = armorMultiplier * mod
+        }
+        armor = Math.round(armor * armorMultiplier)
+        armor = Math.max(armor, 0)
         return {
             damage: attackerTest.damage,
             armor,
+            armorMod,
+            armorMultiplier,
             sum: attackerTest.damage - armor
         }
     }
@@ -406,11 +418,9 @@ export default class OpposedDsa5 {
             try {
                 await this.startMessage.update(chatOptions).then(resultMsg => {
                     ui.chat.updateMessage(resultMsg)
-                        //OpposedDsa5.clearOpposed();
                 })
             } catch {
                 await ChatMessage.create(chatOptions)
-                    //OpposedDsa5.clearOpposed();
             }
         }
     }

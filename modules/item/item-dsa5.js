@@ -133,9 +133,17 @@ export default class Itemdsa5 extends Item {
 
     static addCreatureTypeModifiers(actorData, source, situationalModifiers){
         const creatureTypes = CreatureType.detectCreatureType(actorData)
+        const isSpell = ["spell", "ceremony", "liturgy", "ritual"].includes(source.type)
         for (let k of creatureTypes) {
-            situationalModifiers.push(...k.damageModifier(source))
+            const modifiers = k.damageModifier(source)
+            if (isSpell){
+                for(let mod of modifiers){
+                    mod.armorPen = k.spellResistanceModifier(actorData)
+                }
+            }
+            situationalModifiers.push(...modifiers)
         }
+
     }
 
     static parseValueType(name, val) {
@@ -166,29 +174,26 @@ export default class Itemdsa5 extends Item {
     }
 
     static getSkZkModifier(data, source) {
-        let skMod = 0
-        let zkMod = 0
-        let spellResistance = 0
-        const hasSpellResistance = ["spell", "liturgy", "ceremony", "ritual"].includes(source.type)
+        let skMod = [0]
+        let zkMod = [0]
+
+        const hasSpellResistance = ["spell", "liturgy", "ceremony", "ritual"].includes(source.type) && source.data.effectFormula.value.trim() == ""
         if (game.user.targets.size) {
             game.user.targets.forEach(target => {
+                let spellResistance = 0
                 if (hasSpellResistance){
                     const creatureTypes = CreatureType.detectCreatureType(target.actor.data)
                     spellResistance = creatureTypes.reduce((sum, x) => {return sum + x.spellResistanceModifier(target.actor.data)}, 0)
                 }
 
-                skMod = target.actor.data.data.status.soulpower.max * -1
-                zkMod = target.actor.data.data.status.toughness.max * -1
+                skMod.push(target.actor.data.data.status.soulpower.max * -1 - spellResistance)
+                zkMod.push(target.actor.data.data.status.toughness.max * -1 - spellResistance)
             });
         }
-        if (hasSpellResistance && source.data.effectFormula.value.trim() == ""){
-            skMod -= spellResistance
-            zkMod -= spellResistance
-        }
+
         mergeObject(data, {
-            SKModifier: skMod,
-            ZKModifier: zkMod,
-            spellResistance
+            SKModifier: Math.min(...skMod),
+            ZKModifier: Math.min(...zkMod)
         });
     }
 
@@ -634,7 +639,11 @@ class SpellItemDSA5 extends Itemdsa5 {
         situationalModifiers.push(...AdvantageRulesDSA5.getVantageAsModifier(actor.data, game.i18n.localize('LocalizedIDs.boundToArtifact'), -1, true))
         situationalModifiers.push(...this.getPropertyFocus(actor, source))
         situationalModifiers.push(...this.attackSpellMalus(source))
-
+        if (game.user.targets.size) {
+            game.user.targets.forEach(target => {
+                this.addCreatureTypeModifiers(target.actor.data, source, situationalModifiers)
+            });
+        }
         situationalModifiers.push(...actor.getSkillModifier(source.name, source.type))
         for (const thing of actor.data.data.skillModifiers.global) {
             situationalModifiers.push({ name: thing.source, value: thing.value })
@@ -1200,6 +1209,28 @@ class RangeweaponItemDSA5 extends Itemdsa5 {
                     this.addCreatureTypeModifiers(target.actor.data, source, situationalModifiers)
                 });
             }
+            let currentAmmo = actor.items.get(source.data.currentAmmo.value)
+            if (currentAmmo) {
+                if(currentAmmo.data.data.atmod){
+                    situationalModifiers.push({
+                        name: `${currentAmmo.name} - ${game.i18n.localize('atmod')}`,
+                        value: currentAmmo.data.data.atmod,
+                        selected: true,
+                        specAbId: source.data.currentAmmo.value
+                    })
+                }
+                if (currentAmmo.data.data.damageMod || currentAmmo.data.data.armorMod) {
+                    const dmgMod = {
+                        name: `${currentAmmo.name} - ${game.i18n.localize('MODS.damage')}`,
+                        value: currentAmmo.data.data.damageMod.replace(/wWD/g, "d") || 0,
+                        type: "dmg",
+                        selected: true,
+                        specAbId: source.data.currentAmmo.value
+                    }
+                    if (currentAmmo.data.data.armorMod) dmgMod["armorPen"] = currentAmmo.data.data.armorMod
+                    situationalModifiers.push(dmgMod)
+                }
+            }
 
             const defenseMalus = Number(actor.data.data.rangeStats.defenseMalus) * -1
             if (defenseMalus != 0) {
@@ -1352,6 +1383,7 @@ class RitualItemDSA5 extends SpellItemDSA5 {
         situationalModifiers.push(...AdvantageRulesDSA5.getVantageAsModifier(actor.data, game.i18n.localize('LocalizedIDs.boundToArtifact'), -1, true))
         situationalModifiers.push(...this.getPropertyFocus(actor, source))
         this.getSkZkModifier(data, source)
+
         mergeObject(data, {
             isRitual: true,
             locationModifiers: DSA5.ritualLocationModifiers,

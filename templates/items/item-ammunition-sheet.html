@@ -5,28 +5,41 @@
         <a class="item active" data-tab="description">{{localize "Description"}}</a>
         {{#if enchantments}}<a class="item" data-tab="enchantment">{{localize "enchantment"}}</a>{{/if}}
         <a class="item" data-tab="details">{{localize "Details"}}</a>
+        <a class="item" data-tab="effects">{{localize "statuseffects"}}</a>
     </nav>
 
     <section class="content">
 
         {{> systems/dsa5/templates/items/item-description.html}}
-{{> systems/dsa5/templates/items/item-enchantment.html}}
+        {{> systems/dsa5/templates/items/item-enchantment.html}}
+        {{> systems/dsa5/templates/items/item-effects.html}}
         <div class="tab details" data-tab="details">
-
-
-
             <div class="form-group">
                 <label class="label-text">{{localize "ammunitiongroup"}}</label>
                 <select name="data.ammunitiongroup.value" data-dtype="String">
-                  {{#select data.ammunitiongroup.value}}
-                  {{#each ammunitiongroups as |ch char|}}
-                  <option value="{{char}}">{{localize ch}}</option>
-                  {{/each}}
-                  {{/select}}
+                    {{#select data.ammunitiongroup.value}}
+                    {{#each ammunitiongroups as |ch char|}}
+                    <option value="{{char}}">{{localize ch}}</option>
+                    {{/each}}
+                    {{/select}}
                 </select>
             </div>
-
-
+            <div class="form-group">
+                <label class="label-text">{{localize "atmod"}}</label>
+                <input class="input-text" type="number" name="data.atmod" value="{{data.atmod}}" data-dtype="Number" />
+            </div>
+            <div class="form-group">
+                <label class="label-text">{{localize "MODS.damage"}}</label>
+                <input class="input-text" type="text" name="data.damageMod" value="{{data.damageMod}}" data-dtype="String" />
+            </div>
+            <div class="form-group">
+                <label class="label-text">{{localize "MODS.range"}}</label>
+                <input class="input-text" type="number" step="0.1" name="data.rangeMultiplier" value="{{data.rangeMultiplier}}" data-dtype="Number" />
+            </div>
+            <div class="form-group">
+                <label class="label-text">{{localize "MODS.armor"}}</label>
+                <input class="input-text" type="text" name="data.armorMod" value="{{data.armorMod}}" data-dtype="String" />
+            </div>
         </div>
     </section>
 </form>

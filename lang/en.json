@@ -67,6 +67,7 @@
         "ZK": "TOU",
         "QS": "QL",
         "QL": "QL",
+        "RW": "RA",
         "FtP": "FtP",
         "damage": "DP",
         "defenseMalus": "DM",
@@ -478,6 +479,7 @@
     "target": "Target",
     "usedWeaponExpertise": "used weapon aptitude ({a}/{b})",
     "Unopposed": "Reaction",
+    "unknown": "Unknown",
     "unconfirmed": "Unconfirmed",
     "usedTestCount": "Rolled checks",
     "value": "Value",
@@ -553,9 +555,11 @@
         "FW": "Skill rating modifier",
         "combatTurmoil": "Shooting into Melee",
         "QS": "Quality Level modifier",
-        "damage": "Damage modifier (f.e. 1d6)",
+        "damage": "Damage modifier",
         "defenseMalus": "Defense malus",
-        "global": "Global modifier"
+        "global": "Global modifier",
+        "armor": "Armor modifier",
+        "range": "Range multiplier"
     },
 
     "Features": {
@@ -745,7 +749,7 @@
     },
 
     "ITEMSHEET": {
-        "offHandMod": "Bonus/handicap offhand (f.e. parry weapon)"
+        "offHandMod": "Bonus/handicap offhand (e.g. parry weapon)"
     },
 
     "ActorConfig": {
@@ -810,7 +814,7 @@
     },
 
     "TT": {
-        "careerSkills": "Comma separated talent list, f.e. (Alchemy 2,Carousing 4)",
+        "careerSkills": "Comma separated talent list, e.g. (Alchemy 2,Carousing 4)",
         "commaSeparated": "Comma separated list",
         "oneQualityPerLine": "Describe one quality level each line",
         "zkModifer": "The target's soulpower/toughness has to be included as handicap (mind the sign)",
@@ -950,7 +954,7 @@
         "applySelf": "Effect (Self)",
         "appliedEffect": "Effect <b>{source}</b> applied to <b>{target}</b>.",
         "custom": "Special effect",
-        "creature": "Actorlink (f.e. das5-core.coreenbestiary.Gotongi)",
+        "creature": "Actorlink (e.g. das5-core.coreenbestiary.Gotongi)",
         "placeholder": {
             "macros": "Macros have access to the following variables:\nactor - The targeted actor\ntestData - All data for the current check\nsource - The source of the macro"
         },
@@ -1115,7 +1119,7 @@
     "PAYMENT": {
         "pay": "<b>{actor}</b> pays his/her debts of {amount}.",
         "getPaid": "<b>{actor}</b> receives his/her payment of {amount}.",
-        "payexample": "Type /pay and the number of silverthalers to pay. F.e.: /pay 13,45",
+        "payexample": "Type /pay and the number of silverthalers to pay. e.g.: /pay 13,45",
         "getPaidexample": "Type /getPaid and the number of silverthalers as payment. Z.B.: /getPaid 13,45",
         "error": "Wrong entry",
         "bill": "Unpaid bill",
@@ -1258,7 +1262,10 @@
         "inventorySoundHint": "Activate Interface sound in the inventory (requires game audio bundles)",
         "lessRegeneration": "Weaker Regeneration",
         "lessRegenerationHint": "Regeneration of LE only with 1D3",
-        "dicesonicesettings": "Chose colors for dice types"
+        "dicesonicesettings": "Chose colors for dice types",
+        "obfuscateTokenNames": "Obfuscate token names",
+        "obfuscateTokenNamesHint": "Replace token names for unknown creatures",
+        "rename": "Rename"
     },
 
     "COMBATTRACKER": {

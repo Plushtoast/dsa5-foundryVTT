@@ -112,10 +112,10 @@ class DemonType extends CreatureType {
             const regex = new RegExp(attackItem.data.effect.attributes.split(',').map(x => DSA5_Utility.escapeRegex(x.split('(')[0].trim())).join("|"), "i")
             if (regex.test(CreatureType.clerical)) return this.buildDamageMod(`${CreatureType.clerical} (${CreatureType.creatureData.opposingGod})`, "*2", false)
 
-            if (regex.test(CreatureType.magical)) return super.damageModifier(attackItem)
+            if (regex.test(CreatureType.magical)) return this.damageModifier(attackItem)
         }
         else if (["spell", "ceremony", "liturgy", "ritual"].includes(attackItem.type)) {
-            return super.damageModifier(attackItem)
+            return this.buildDamageMod(this.getTypeByClass("DemonType"), "*1")
         }
         return this.buildDamageMod(this.getTypeByClass("DemonType"), "*0.5")
     }
@@ -139,10 +139,10 @@ class ElementalType extends CreatureType {
     damageModifier(attackItem) {
         if (["meleeweapon", "trait", "rangeweapon"].includes(attackItem.type) && attackItem.data.effect.attributes.length) {
             const regex = new RegExp(attackItem.data.effect.attributes.split(',').map(x => DSA5_Utility.escapeRegex(x.split('(')[0].trim())).join("|"), "i")
-            if (regex.test(CreatureType.magical)) super.damageModifier(attackItem)
+            if (regex.test(CreatureType.magical)) return this.damageModifier(attackItem)
         }
         else if (["spell", "ceremony", "liturgy", "ritual"].includes(attackItem.type)) {
-            return super.damageModifier(attackItem)
+            return this.buildDamageMod(this.getTypeByClass("ElementalType"), "*1")
         }
         return this.buildDamageMod(this.getTypeByClass("ElementalType"), "*0.5")
     }
@@ -257,4 +257,3 @@ class SupernaturalType extends CreatureType {
 //TODO where are the type descriptions for animals, intelligent creatures, supernatural and plants
 //TODO spell immunity message
 //TODO poison & disease immunity message
-//TODO extra spell armor

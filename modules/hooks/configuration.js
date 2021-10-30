@@ -247,6 +247,20 @@ export default function() {
         type: Boolean
     });
 
+    game.settings.register("dsa5", "obfuscateTokenNames", {
+        name: "DSASETTINGS.obfuscateTokenNames",
+        hint: "DSASETTINGS.obfuscateTokenNamesHint",
+        scope: "world",
+        config: true,
+        default: "0",
+        type: String,
+        choices: {
+            "0": game.i18n.localize('no'),
+            "1": game.i18n.localize('yes'),
+            "2": game.i18n.localize('DSASETTINGS.rename'),
+        }
+    });
+
     game.settings.register("dsa5", "sightOptions", {
         name: "sightOptions",
         scope: "world",

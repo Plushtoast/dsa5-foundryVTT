@@ -664,7 +664,11 @@
             ],
             "ammunitiongroup": {
                 "value": ""
-            }
+            },
+            "damageMod": "",
+            "rangeMultiplier": 1,
+            "armorMod": "",
+            "atmod": 0
         },
         "consumable": {
             "templates": [

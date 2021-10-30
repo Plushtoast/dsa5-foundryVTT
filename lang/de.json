@@ -60,6 +60,7 @@
         "FP": "FP",
         "QS": "QS",
         "QL": "QS",
+        "RW": "RW",
         "TPM": "TPM",
         "damage": "TP",
         "reloadTime": "Lad.",
@@ -444,6 +445,7 @@
     "targetCategory": "Zielkategorie",
     "target": "Ziel",
     "usedWeaponExpertise": "Waffenbegabung eingesetzt ({a}/{b})",
+    "unknown": "Unbekannt",
     "unconfirmed": "Unbestätigter",
     "Unopposed": "Reaktion",
     "usedTestCount": "Gewürfelte Proben",
@@ -501,9 +503,11 @@
         "FW": "Fertigkeitswertmodifikator",
         "combatTurmoil": "Schuss ins Kampfgetümmel",
         "QS": "Qualitätsstufenmodifikator",
-        "damage": "Schadensmodifikator (z.B. 1d6)",
+        "damage": "Schadensmodifikator",
         "defenseMalus": "Verteidigungsmalus",
-        "global": "Globaler Modifikator"
+        "global": "Globaler Modifikator",
+        "armor": "Rüstungsmodifikator",
+        "range": "Reichweitenfaktor"
     },
     "WIZARD": {
         "addItem": "{item} hinzufügen",
@@ -1189,7 +1193,10 @@
         "inventorySoundHint": "Aktiviere Interface Geräusche im Inventar (benötigt game audio bundles)",
         "lessRegeneration": "Weniger Regeneration",
         "lessRegenerationHint": "Regeneration von LeP nur mit 1W3",
-        "dicesonicesettings": "Wähle Farbschemen für Würfeltypen"
+        "dicesonicesettings": "Wähle Farbschemen für Würfeltypen",
+        "obfuscateTokenNames": "Verberge Token Namen",
+        "obfuscateTokenNamesHint": "Generische Ersetzung des Namens unbekannter Kreaturen oder NSC",
+        "rename": "Umbenennen"
     },
     "COMBATTRACKER": {
         "noDefenses": "Anzahl Verteidigungen",

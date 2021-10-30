@@ -1609,13 +1609,17 @@ input[type="search"] {
     padding: 3px;
     border-radius: 2px;
 }
-
+.form-group input::placeholder,
 .statusEffectMenu li.search input::placeholder {
     color: rgb(173, 170, 170);
 }
 
 .statusEffectMenu li.search:hover {
     border-color: transparent
+}
+
+.opposed-message{
+    text-align: center;
 }
 
 .statusEffectMenu li {

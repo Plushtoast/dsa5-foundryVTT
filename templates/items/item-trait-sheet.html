@@ -80,7 +80,7 @@
                     <ul>{{{domains}}}</ul>
                 </div>
                 {{/if}}
-                <input class="input-text {{#if domains}}domainToggle{{/if}}" type="text" name="data.effect.attributes"
+                <input class="input-text {{#if domains}}domainToggle{{/if}}" placeholder="{{localize 'WEAPON.clerical'}}, {{localize 'WEAPON.magical'}}" type="text" name="data.effect.attributes"
                     value="{{data.effect.attributes}}" data-dtype="String" />
             </div>
             {{/if}}{{#if (eq data.traitType.value "armor")}}

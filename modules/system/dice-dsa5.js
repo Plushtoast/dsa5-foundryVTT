@@ -464,8 +464,10 @@ export default class DiceDSA5 {
         let overrideDamage = []
         let dmgMultipliers = []
         let damageBonusDescription = []
-        let bonusDmg = testData.situationalModifiers.reduce(function(_this, val) {
+        let armorPen = []
+        let bonusDmg = testData.situationalModifiers.reduce((_this, val) => {
             let number = 0
+            if (val.armorPen) armorPen.push(val.armorPen)
             if (val.damageBonus) {
                 if(/^\*/.test(val.damageBonus)){
                     dmgMultipliers.push({name: val.name, val: Number(val.damageBonus.replace('*',''))})
@@ -474,7 +476,7 @@ export default class DiceDSA5 {
                 const isOverride = /^=/.test(val.damageBonus)
                 const rollString = `${val.damageBonus}`.replace(/^=/, "")
                 let roll = DiceDSA5._stringToRoll(rollString, testData)
-                number = roll * val.step
+                number = roll * (val.step || 1)
 
                 if (isOverride) {
                     rollFormula = rollString.replace(/[Ww]/, "d")
@@ -549,7 +551,7 @@ export default class DiceDSA5 {
         for(const el of dmgMultipliers){
             damage = damage * el.val
         }
-
+        result["armorPen"] = armorPen
         result["damagedescription"] = damageBonusDescription.join(", ")
         result["damage"] = Math.round(damage)
         result["damageRoll"] = duplicate(damageRoll)
@@ -782,7 +784,10 @@ export default class DiceDSA5 {
         } else {
             if (testData.source.data.effectFormula.value != "") {
                 let formula = testData.source.data.effectFormula.value.replace(game.i18n.localize('CHARAbbrev.QS'), res.qualityStep).replace(/[Ww]/g, "d")
-
+                let armorPen = []
+                for(let mod of testData.situationalModifiers){
+                    if(mod.armorPen) armorPen.push(mod.armorPen)
+                }
                 if (/(,|;)/.test(formula)) formula = formula.split(/[,;]/)[res.qualityStep - 1]
 
                 let rollEffect = testData.damageRoll ? testData.damageRoll : new Roll(formula).evaluate({ async: false })
@@ -792,6 +797,7 @@ export default class DiceDSA5 {
                     if (k instanceof Die || k.class == "Die")
                         for (let l of k.results) res["characteristics"].push({ char: "effect", res: l.result, die: "d" + k.faces })
                 }
+                res["armorPen"] = armorPen
                 res["damageRoll"] = rollEffect
                 res["damage"] = rollEffect.total
             }

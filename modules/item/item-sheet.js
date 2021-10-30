@@ -113,6 +113,10 @@ export default class ItemSheetdsa5 extends ItemSheet {
         html.find(".refund-step").mousedown(ev => {
             this.advanceWrapper(ev, "_refundStep")
         })
+        html.find('.domainsPretty').click(ev => {
+            $(ev.currentTarget).hide()
+            $(ev.currentTarget).next('.domainToggle').show()
+        })
 
         html.find('[data-edit="img"]').mousedown(ev => {
             if (ev.button == 2) DSA5_Utility.showArtwork(this.item)
@@ -421,6 +425,7 @@ class EquipmentSheet extends Enchantable {
     async getData(options) {
         const data = await super.getData(options);
         data['equipmentTypes'] = DSA5.equipmentTypes;
+        data['domains'] = this.prepareDomains()
         if (this.isBagWithContents()) {
             let weightSum = 0
             data['containerContent'] = this.item.actor.items
@@ -535,7 +540,11 @@ class EquipmentSheet extends Enchantable {
 }
 
 export class ArmorSheet extends Enchantable {
-
+    async getData(options){
+        const data = await super.getData(options)
+        data['domains'] = this.prepareDomains()
+        return data
+    }
 }
 
 class PlantSheet extends ItemSheetdsa5 {
@@ -551,6 +560,7 @@ class RangeweaponSheet extends Enchantable {
         const data = await super.getData(options);
         data['ammunitiongroups'] = DSA5.ammunitiongroups;
         data['combatskills'] = await DSA5_Utility.allCombatSkillsList("range");
+        data['domains'] = this.prepareDomains()
         return data
     }
 }
@@ -731,10 +741,6 @@ class MeleeweaponSheetDSA5 extends Enchantable {
             if (item) {
                 item.sheet.render(true)
             }
-        })
-        html.find('.domainsPretty').click(ev => {
-            $(ev.currentTarget).hide()
-            $(ev.currentTarget).next('.domainToggle').show()
         })
     }
 

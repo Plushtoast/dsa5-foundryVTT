@@ -126,7 +126,7 @@
                     <a data-mode="attack" class="ch-rollCombat d20 die-attack">{{item.attack}}</a>
                 </div>
                 <div class="col eight center">
-                    <a data-mode="damage" class="ch-rollCombat d6 die-damage">{{item.damagedie}}</a><span title="{{localize 'damageOverThreshold'}}">{{item.damageAdd}}</span>
+                    <a data-mode="damage" class="ch-rollCombat d6 die-damage">{{item.damagedie}}</a><span title="{{localize 'damageOverThreshold'}}{{item.damageBonusDescription}}">{{item.damageAdd}}</span>
                 </div>
                 <div class="col ten">
                     {{#if (ne item.LZ 0)}}
@@ -150,7 +150,7 @@
             <div class="row-section lineheight expandDetails {{item.detailed}}">
                 <div class="col">
                     <ul>
-                        <li><b>{{localize "reach"}}</b>: {{item.data.reach.value}}</li>
+                        <li><b>{{localize "reach"}}</b>: {{item.calculatedRange}}</li>
                         <li><b>{{localize "reloadTime"}}</b>: {{item.LZ}} ({{item.data.reloadTime.progress}})</li>
                     </ul>
                 </div>

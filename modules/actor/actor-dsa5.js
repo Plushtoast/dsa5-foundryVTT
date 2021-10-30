@@ -226,6 +226,8 @@ export default class Actordsa5 extends Actor {
                         case "equipment":
                             apply = (item.data.data.worn.wearable && item.data.data.worn.value) || !item.data.data.worn.wearable
                             break
+                        case "ammunition":
+                        case "plant":
                         case "consumable":
                         case "combatskill":
                         case "poison":
@@ -1414,6 +1416,9 @@ export default class Actordsa5 extends Actor {
                 data.damageBonus = data.value
                 data.value = 0
             }
+            if ($(this).attr("data-specAbId")) data.specAbId = $(this).attr("data-specAbId")
+            if ($(this).attr("data-armorPen")) data.armorPen = $(this).attr("data-armorPen")
+
             res.push(data)
         })
         return res
@@ -1527,7 +1532,7 @@ export default class Actordsa5 extends Actor {
         return Math.max(0, Number(item.data.reloadTime.value) - SpecialabilityRulesDSA5.abilityStep(actor, `${game.i18n.localize('LocalizedIDs.quickload')} (${game.i18n.localize(item.data.combatskill.value)})`))
     }
 
-    static _parseDmg(item) {
+    static _parseDmg(item, modification = undefined) {
         let parseDamage = new Roll(item.data.damage.value.replace(/[Ww]/g, "d"), { async: false })
 
         let damageDie = "",
@@ -1536,6 +1541,12 @@ export default class Actordsa5 extends Actor {
             if (k.faces) damageDie = k.number + "d" + k.faces
             else if (k.number) damageTerm += k.number
         }
+        if (modification){
+            let damageMod = getProperty(modification, "data.damageMod")
+            if (Number(damageMod)) damageTerm += `+${Number(damageMod)}`
+            else if(damageMod) item.damageBonusDescription = `, ${damageMod} ${game.i18n.localize('CHARAbbrev.damage')} ${modification.name}`
+        }
+
         if (damageTerm) damageTerm = Roll.safeEval(damageTerm)
 
         item.damagedie = damageDie ? damageDie : "0d6"
@@ -1577,19 +1588,29 @@ export default class Actordsa5 extends Actor {
 
     static _prepareRangeWeapon(item, ammunitions, combatskills, actor) {
         let skill = combatskills.find(i => i.name == item.data.combatskill.value)
+        item.calculatedRange = item.data.reach.value
+
+        let currentAmmo
         if (skill) {
             item.attack = Number(skill.data.attack.value)
 
             if (item.data.ammunitiongroup.value != "-") {
-                if (ammunitions) item.ammo = ammunitions.filter(x => x.data.ammunitiongroup.value == item.data.ammunitiongroup.value)
-                else item.ammo = actorData.inventory.ammunition.items.filter(x => x.data.ammunitiongroup.value == item.data.ammunitiongroup.value)
+                if (!ammunitions) ammunitions = actorData.inventory.ammunition.items
+                item.ammo = ammunitions.filter(x => x.data.ammunitiongroup.value == item.data.ammunitiongroup.value)
+
+                currentAmmo = ammunitions.find(x => x._id == item.data.currentAmmo.value)
+                if(currentAmmo){
+                    const rangeMultiplier = Number(currentAmmo.data.rangeMultiplier) || 1
+                    item.calculatedRange = item.calculatedRange.split("/").map(x => Math.round(Number(x) * rangeMultiplier)).join("/")
+                    item.attack += (Number(currentAmmo.data.atmod) || 0)
+                }
             }
             item.LZ = Actordsa5.calcLZ(item, actor)
             if (item.LZ > 0) Actordsa5.buildReloadProgress(item)
         } else {
             ui.notifications.error(game.i18n.format("DSAError.unknownCombatSkill", { skill: item.data.combatskill.value, item: item.name }))
         }
-        return this._parseDmg(item)
+        return this._parseDmg(item, currentAmmo)
     }
 
     _setupCardOptions(template, title) {

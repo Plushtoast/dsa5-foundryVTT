@@ -8,6 +8,59 @@ export default function() {
         }
     })
 
+    const askForName = (name, actor) => {
+        return new Promise((resolve, reject) => {
+            new Dialog({
+                title: game.i18n.localize("DSASETTINGS.obfuscateTokenNames"),
+                content: `<label for="name">${actor.name} ${game.i18n.localize('DSASETTINGS.rename')}</label> <input name="name" value="${name}"/>`,
+                default: 'cancel',
+                buttons: {
+                    Yes: {
+                        icon: '<i class="fa fa-check"></i>',
+                        label: game.i18n.localize("yes"),
+                        callback: dlg => {
+                            resolve(dlg)
+                        }
+                    },
+                    cancel: {
+                        icon: '<i class="fas fa-times"></i>',
+                        label: game.i18n.localize("cancel"),
+                        callback: () => {
+                            resolve(undefined)
+                        }
+                    }
+                }
+            }).render(true)
+
+        })
+    }
+
+    const obfuscateName = async(actor, update) => {
+        const setting = game.settings.get("dsa5", "obfuscateTokenNames")
+        if(setting == "0") return
+
+        for (let u of game.users) {
+            if (u.isGM) continue;
+            if (actor.testUserPermission(u, "LIMITED")) return;
+        }
+        const sameActorTokens = canvas.scene.data.tokens.filter((x) => x.actor.id === actor.id);
+        let name
+        if(sameActorTokens.length == 0){
+            name = game.i18n.localize("unknown")
+        }else{
+            name = `${sameActorTokens[0].name.replace(/ \d{1,}$/)} ${sameActorTokens.length + 1}`
+        }
+
+        if (setting == "2" && sameActorTokens == 0){
+            askForName(name, actor).then(async(html) => {
+                if (html) name = html.find('[name="name"]').val()
+                const token = canvas.scene.data.tokens.find((x) => x.actor.id === actor.id)
+                await token.update({name})
+            });
+        }
+        update["name"] = name
+    }
+
     Hooks.on('preCreateToken', (token, data, options, userId) => {
         const actor = game.actors.get(data.actorId);
         if (!actor) return;
@@ -31,6 +84,8 @@ export default function() {
             DSA5_Utility.calcTokenSize(actor.data, update)
         }
 
+        obfuscateName(actor, update)
         token.data.update(update)
+
     })
 }
