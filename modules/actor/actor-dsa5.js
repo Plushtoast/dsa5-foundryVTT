@@ -10,6 +10,7 @@ import Itemdsa5 from "../item/item-dsa5.js";
 import TraitRulesDSA5 from "../system/trait-rules-dsa5.js";
 import RuleChaos from "../system/rule_chaos.js";
 import { tinyNotification } from "../system/view_helper.js";
+import EquipmentDamage from "../system/equipment-damage.js";
 
 export default class Actordsa5 extends Actor {
     static async create(data, options) {
@@ -401,7 +402,7 @@ export default class Actordsa5 extends Actor {
     }
 
     static armorValue(actor) {
-        const wornArmor = actor.items.filter(x => x.type == "armor" && x.data.data.worn.value == true).reduce((a, b) => a + Number(b.data.data.protection.value), 0)
+        const wornArmor = actor.items.filter(x => x.type == "armor" && x.data.data.worn.value == true).reduce((a, b) => a + EquipmentDamage.armorWearModifier(b.data, b.data.data.protection.value), 0)
         const animalArmor = actor.items.filter(x => x.type == "trait" && x.data.data.traitType.value == "armor").reduce((a, b) => a + Number(b.data.data.at.value), 0)
         return wornArmor + animalArmor + (actor.data.totalArmor || 0)
     }
@@ -528,7 +529,6 @@ export default class Actordsa5 extends Actor {
 
         let totalArmor = actorData.data.totalArmor || 0;
         let totalWeight = 0;
-        let encumbrance = 0;
 
         let skills = {
             body: [],
@@ -635,7 +635,7 @@ export default class Actordsa5 extends Actor {
                         totalWeight += parseFloat((i.data.weight.value * (i.toggleValue ? Math.max(0, i.data.quantity.value - 1) : i.data.quantity.value)).toFixed(3))
 
                         if (i.data.worn.value) {
-                            encumbrance += Number(i.data.encumbrance.value);
+                            i.data.protection.value = EquipmentDamage.armorWearModifier(i, i.data.protection.value)
                             totalArmor += Number(i.data.protection.value);
                             armor.push(i);
                         }
@@ -694,7 +694,6 @@ export default class Actordsa5 extends Actor {
             totalWeight += this._setBagContent(elem, containers)
         }
 
-
         for (let [category, value] of Object.entries(extensions)) {
             for (let [spell, exts] of Object.entries(value)) {
                 magic[category].find(x => x.name == spell).extensions = exts.join(", ")
@@ -729,7 +728,7 @@ export default class Actordsa5 extends Actor {
         money.coins = money.coins.sort((a, b) => (a.data.price.value > b.data.price.value) ? -1 : 1);
         const carrycapacity = actorData.data.characteristics.kk.value * 2 + actorData.data.carryModifier;
         //TODO move the encumbrance calculation to a better location
-        encumbrance = this.getArmorEncumbrance(this.data, encumbrance, armor)
+        let encumbrance = this.getArmorEncumbrance(this.data, armor)
 
         if ((actorData.type != "creature" || this.data.canAdvance) && !this.isMerchant()) {
             encumbrance += Math.max(0, Math.ceil((totalWeight - carrycapacity - 4) / 4))
@@ -784,9 +783,13 @@ export default class Actordsa5 extends Actor {
         }
     }
 
-    getArmorEncumbrance(actorData, encumbrance, wornArmors) {
-        let result = Math.max(0, encumbrance - SpecialabilityRulesDSA5.abilityStep(actorData, game.i18n.localize('LocalizedIDs.inuredToEncumbrance')))
-        return result
+    getArmorEncumbrance(actorData, wornArmors) {
+        const encumbrance = wornArmors.reduce((sum, a) => {
+            a.calculatedEncumbrance = Number(a.data.encumbrance.value) + EquipmentDamage.armorEncumbranceModifier(a)
+            a.damageToolTip = EquipmentDamage.damageTooltip(a)
+            return sum += a.calculatedEncumbrance
+        }, 0)
+        return Math.max(0, encumbrance - SpecialabilityRulesDSA5.abilityStep(actorData, game.i18n.localize('LocalizedIDs.inuredToEncumbrance')))
     }
 
     _setBagContent(elem, containers, topLevel = true) {
@@ -1466,7 +1469,7 @@ export default class Actordsa5 extends Actor {
             })
             const baseParry = Math.ceil(skill.data.talentValue.value / 2) + Math.max(0, Math.floor((Math.max(...vals) - 8) / 3)) + Number(game.settings.get("dsa5", "higherDefense"))
 
-            item.parry = baseParry + Number(item.data.pamod.value) + (item.data.combatskill.value == game.i18n.localize('LocalizedIDs.shields') ? Number(item.data.pamod.value) : 0)
+            item.parry = baseParry + Number(item.data.pamod.value) + (item.data.combatskill.value == game.i18n.localize('LocalizedIDs.Shields') ? Number(item.data.pamod.value) : 0)
 
             let regex2h = /\(2H/
             if (!regex2h.test(item.name)) {
@@ -1490,6 +1493,8 @@ export default class Actordsa5 extends Actor {
                     item.damageAdd = (item.damageAdd > 0 ? "+" : "") + item.damageAdd
                 }
             }
+            EquipmentDamage.weaponWearModifier(item)
+            item.damageToolTip = EquipmentDamage.damageTooltip(item)
         } else {
             ui.notifications.error(game.i18n.format("DSAError.unknownCombatSkill", { skill: item.data.combatskill.value, item: item.name }))
         }
@@ -1524,9 +1529,9 @@ export default class Actordsa5 extends Actor {
     }
 
     static calcLZ(item, actor) {
-        if (item.data.combatskill.value == game.i18n.localize("LocalizedIDs.throwingWeapons"))
+        if (item.data.combatskill.value == game.i18n.localize("LocalizedIDs.Throwing Weapons"))
             return Math.max(0, Number(item.data.reloadTime.value) - SpecialabilityRulesDSA5.abilityStep(actor, game.i18n.localize("LocalizedIDs.quickdraw")))
-        else if (item.data.combatskill.value == game.i18n.localize("LocalizedIDs.crossbows") && SpecialabilityRulesDSA5.hasAbility(actor, `${game.i18n.localize('LocalizedIDs.quickload')} (${game.i18n.localize("LocalizedIDs.crossbows")})`))
+        else if (item.data.combatskill.value == game.i18n.localize("LocalizedIDs.Crossbows") && SpecialabilityRulesDSA5.hasAbility(actor, `${game.i18n.localize('LocalizedIDs.quickload')} (${game.i18n.localize("LocalizedIDs.Crossbows")})`))
             return Math.max(0, Math.round(Number(item.data.reloadTime.value) * 0.5))
 
         return Math.max(0, Number(item.data.reloadTime.value) - SpecialabilityRulesDSA5.abilityStep(actor, `${game.i18n.localize('LocalizedIDs.quickload')} (${game.i18n.localize(item.data.combatskill.value)})`))
@@ -1607,6 +1612,9 @@ export default class Actordsa5 extends Actor {
             }
             item.LZ = Actordsa5.calcLZ(item, actor)
             if (item.LZ > 0) Actordsa5.buildReloadProgress(item)
+
+            EquipmentDamage.weaponWearModifier(item)
+            item.damageToolTip = EquipmentDamage.damageTooltip(item)
         } else {
             ui.notifications.error(game.i18n.format("DSAError.unknownCombatSkill", { skill: item.data.combatskill.value, item: item.name }))
         }

@@ -1,5 +1,7 @@
 export default class DidYouKnow {
     static async showOneMessage() {
+        if (game.settings.get("dsa5","disableDidYouKnow")) return
+
         fetch(`systems/dsa5/lazy/didyouknow/${game.i18n.lang}.json`).then(async r => r.json()).then(async json => {
             const msg = json.data[Math.floor(Math.random() * json.data.length)];
             const didYouKnow = `

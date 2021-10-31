@@ -26,6 +26,7 @@ export default function() {
                 actor = DialogReactDSA5.getTargetActor({ data: msg.message })
                 if (actor && actor.actor && !actor.actor.isOwner) reaction.remove()
             }
+
             const speaker = DSA5_Utility.getSpeaker(msg.message.speaker)
             if (speaker && !speaker.isOwner) {
                 html.find(".selfButton").remove()

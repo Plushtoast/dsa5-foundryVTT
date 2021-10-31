@@ -13,6 +13,7 @@ import DSA5ChatAutoCompletion from "./chat_autocompletion.js";
 import OpposedDsa5 from "./opposed-dsa5.js";
 import DSAActiveEffectConfig from "../status/active_effects.js"
 import DSA5SoundEffect from "./dsa-soundeffect.js";
+import EquipmentDamage from "./equipment-damage.js";
 
 export default class DiceDSA5 {
     static async setupDialog({ dialogOptions, testData, cardOptions }) {
@@ -388,7 +389,7 @@ export default class DiceDSA5 {
         if (!testData.narrowSpace)
             return 0
 
-        if (game.i18n.localize('LocalizedIDs.shields') == weapon.data.combatskill.value) {
+        if (game.i18n.localize('LocalizedIDs.Shields') == weapon.data.combatskill.value) {
             return DSA5.narrowSpaceModifiers["shield" + weapon.data.reach.shieldSize][testData.mode]
         } else {
             return DSA5.narrowSpaceModifiers["weapon" + weapon.data.reach.value][testData.mode]
@@ -1141,7 +1142,8 @@ export default class DiceDSA5 {
             preData,
             hideDamage,
             modifierList: preData.situationalModifiers.filter(x => x.value != 0),
-            applyEffect
+            applyEffect,
+            showDamageToGear: await EquipmentDamage.showDamageToGear(preData, testData)
         }
 
         if (preData.advancedModifiers) {
@@ -1487,6 +1489,7 @@ export default class DiceDSA5 {
         html.on('click', '.liturgy-botch', () => { Miscast.showBotchCard("Liturgy") })
         html.on('click', '.spell-botch', () => { Miscast.showBotchCard("Spell") })
         html.on('click', '.roll-item', ev => { DiceDSA5._itemRoll(ev) })
+        html.on('click', '.gearDamaged', async (ev) => { EquipmentDamage.breakingTest(await fromUuid(ev.currentTarget.dataset.uuid)) })
         html.on('change', '.roll-edit', ev => { DiceDSA5._rollEdit(ev) })
         html.on('change', '.editGC', ev => { DiceDSA5._editGC(ev) })
         html.on('click', '.applyEffect', ev => {

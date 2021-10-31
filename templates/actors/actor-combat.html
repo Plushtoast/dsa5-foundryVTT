@@ -177,7 +177,7 @@
         {{#each actor.wornArmor as |item i|}}
         <div class="col item" data-item-id="{{item._id}}">
             <div class="row-section">
-                <div class="col ten image" style="background-image: url({{item.img}})">
+                <div class="col ten image" title="{{item.damageToolTip}}" style="background-image: url({{item.img}})">
                 </div>
                 <div class="col fourty">
                     <a class="item-edit">{{item.name}}</a>
@@ -186,7 +186,7 @@
                     {{item.data.protection.value}}
                 </div>
                 <div class="col four center">
-                    {{item.data.encumbrance.value}}
+                    {{item.calculatedEncumbrance}}
                 </div>
             </div>
         </div>

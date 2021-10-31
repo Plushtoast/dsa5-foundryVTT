@@ -247,6 +247,24 @@ export default function() {
         type: Boolean
     });
 
+    game.settings.register("dsa5", "disableDidYouKnow", {
+        name: "DSASETTINGS.disableDidYouKnow",
+        hint: "DSASETTINGS.disableDidYouKnow",
+        scope: "client",
+        config: true,
+        default: false,
+        type: Boolean
+    });
+
+    game.settings.register("dsa5", "armorAndWeaponDamage", {
+        name: "DSASETTINGS.armorAndWeaponDamage",
+        hint: "DSASETTINGS.armorAndWeaponDamageHint",
+        scope: "world",
+        config: true,
+        default: false,
+        type: Boolean
+    });
+
     game.settings.register("dsa5", "obfuscateTokenNames", {
         name: "DSASETTINGS.obfuscateTokenNames",
         hint: "DSASETTINGS.obfuscateTokenNamesHint",

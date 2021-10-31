@@ -5,6 +5,7 @@ import DSA5ChatListeners from "../system/chat_listeners.js"
 import SpecialabilityRulesDSA5 from "../system/specialability-rules-dsa5.js"
 import { itemFromDrop, svgAutoFit } from "../system/view_helper.js"
 import DSA5ChatAutoCompletion from "../system/chat_autocompletion.js"
+import EquipmentDamage from "../system/equipment-damage.js"
 
 export default class ItemSheetdsa5 extends ItemSheet {
     constructor(item, options) {
@@ -63,6 +64,7 @@ export default class ItemSheetdsa5 extends ItemSheet {
         $(this._element).find(".rolleffect").attr("title", game.i18n.localize("SHEET.RollEffect"));
         $(this._element).find(".showItemHead").attr("title", game.i18n.localize("SHEET.PostItem"));
         $(this._element).find(".consumeItem").attr("title", game.i18n.localize("SHEET.ConsumeItem"));
+        $(this._element).find(".rollDamaged").attr("title", game.i18n.localize("DSASETTINGS.armorAndWeaponDamage"));
     }
 
     _getHeaderButtons() {
@@ -543,7 +545,19 @@ export class ArmorSheet extends Enchantable {
     async getData(options){
         const data = await super.getData(options)
         data['domains'] = this.prepareDomains()
+        data['armorSubcategories'] = Object.keys(DSA5.armorSubcategories)
         return data
+    }
+    _getHeaderButtons() {
+        let buttons = super._getHeaderButtons();
+        if (this.item.isOwned && game.settings.get("dsa5", "armorAndWeaponDamage") && this.item.data.data.structure.max > 0) {
+            buttons.unshift({
+                class: "rollDamaged",
+                icon: `fas fa-dice-d20`,
+                onclick: async () => EquipmentDamage.breakingTest(this.item)
+            })
+        }
+        return buttons
     }
 }
 
@@ -556,6 +570,17 @@ class PlantSheet extends ItemSheetdsa5 {
 }
 
 class RangeweaponSheet extends Enchantable {
+    _getHeaderButtons() {
+        let buttons = super._getHeaderButtons();
+        if (this.item.isOwned && game.settings.get("dsa5", "armorAndWeaponDamage") && this.item.data.data.structure.max > 0) {
+            buttons.unshift({
+                class: "rollDamaged",
+                icon: `fas fa-dice-d20`,
+                onclick: async () => EquipmentDamage.breakingTest(this.item)
+            })
+        }
+        return buttons
+    }
     async getData(options) {
         const data = await super.getData(options);
         data['ammunitiongroups'] = DSA5.ammunitiongroups;
@@ -701,7 +726,7 @@ class MeleeweaponSheetDSA5 extends Enchantable {
             let combatSkill = this.item.actor.data.items.find(x => x.type == "combatskill" && x.name == this.item.data.data.combatskill.value)
             data['canBeOffHand'] = combatSkill && !(combatSkill.data.data.weapontype.twoHanded) && this.item.data.data.worn.value
         }
-        data['isShield'] = this.item.data.data.combatskill.value == game.i18n.localize("LocalizedIDs.shields")
+        data['isShield'] = this.item.data.data.combatskill.value == game.i18n.localize("LocalizedIDs.Shields")
         data['shieldSizes'] = DSA5.shieldSizes
         data["poison"] = this.item.getFlag("dsa5", "poison")
         data['domains'] = this.prepareDomains()
@@ -748,6 +773,18 @@ class MeleeweaponSheetDSA5 extends Enchantable {
         this.item.update({
             [`flags.dsa5.-=poison`]: null
         })
+    }
+
+    _getHeaderButtons() {
+        let buttons = super._getHeaderButtons();
+        if (this.item.isOwned && game.settings.get("dsa5", "armorAndWeaponDamage") && this.item.data.data.structure.max > 0) {
+            buttons.unshift({
+                class: "rollDamaged",
+                icon: `fas fa-dice-d20`,
+                onclick: async () => EquipmentDamage.breakingTest(this.item)
+            })
+        }
+        return buttons
     }
 
     async _onDrop(event) {

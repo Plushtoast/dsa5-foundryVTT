@@ -2212,7 +2212,7 @@ select.noAppearance {
     width: 100%;
     left: 0;
 }
-
+.gearDamaged,
 .applyEffect {
     width: auto;
     padding: 4px;

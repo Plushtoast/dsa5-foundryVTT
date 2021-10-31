@@ -44,7 +44,14 @@
 <div class="card-content">
     <b>{{localize "effect"}}</b>: {{{testData.parsedEffect}}}
 </div>
-{{/if}} {{#each testData.other as |string index|}}
+{{/if}}
+{{#if showDamageToGear}}
+<div class="card-content center selfButton" style="margin-top:10px">
+    <button class="gearDamaged" data-uuid="{{showDamageToGear}}">{{localize 'WEAR.checkShort'}}</button>
+</div>
+{{/if}}
+
+{{#each testData.other as |string index|}}
 <div>
     {{{string}}}
 </div>

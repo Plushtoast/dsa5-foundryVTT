@@ -74,11 +74,9 @@
         "*": "*",
         "roll": " "
     },
-
     "LIGHT": {
         "daylight": "Daylight"
     },
-
     "DIALOG": {
         "RollMode": "Rollmode",
         "DeleteItem": "Remove entry?",
@@ -98,7 +96,6 @@
         "cheat": "GM arbitrariness",
         "noTarget": "No Target"
     },
-
     "Equipment": {
         "misc": "General",
         "clothes": "Clothing",
@@ -120,7 +117,6 @@
         "money": "Money",
         "plant": "Plant"
     },
-
     "PLANT": {
         "healing": "Medicinal herbs",
         "poison": "Poisonous plants",
@@ -137,7 +133,6 @@
         "recipes": "Recipes",
         "ingredients": "Ingredients (typical)"
     },
-
     "MERCHANT": {
         "buy": "Buy",
         "sell": "Sell",
@@ -500,7 +495,6 @@
     "YouAlreadyHaveit": "Already owned",
     "zkModifier": "Toughness (Target)",
     "zoo": "Zoo",
-
     "Library": {
         "search": "Search",
         "searchPlaceholder": "Search the library",
@@ -511,11 +505,9 @@
         "noFilter": "No filter",
         "indexWorldItems": "Index world Items (deactivate to increase performance)"
     },
-
     "Aggregated": {
         "noMoreAllowed": "No more rolls allowed."
     },
-
     "MASTER": {
         "sceneConfig": "Scene config",
         "awardXP": "Award Adventure Points",
@@ -531,7 +523,6 @@
         "threshold": "Darkness threshold",
         "darkness": "Darkness"
     },
-
     "WIZARD": {
         "addItem": "Add {item}",
         "careerdescr": "Please select the adequate options of the career <b>{career}</b> and confirm to add it for <b class=\"apCost\">{cost}</b> adventure points to your character.",
@@ -548,7 +539,6 @@
         "attributesToChose": "Attribute Adjustments",
         "generalTab": "General"
     },
-
     "MODS": {
         "partChecks": "Part of skill check modifier",
         "FP": "Skill points modifier",
@@ -561,7 +551,6 @@
         "armor": "Armor modifier",
         "range": "Range multiplier"
     },
-
     "Features": {
         "Object": "Object",
         "Spheres": "Spheres",
@@ -576,8 +565,6 @@
         "Demonic": "Demonic",
         "Temporal": "Temporal"
     },
-
-
     "SKILL": {
         "body": "Physical Skills",
         "social": "Social Skills",
@@ -675,7 +662,6 @@
         "Willpower": "<p><b>Applications</b>: Face Threats, Resist Fast-Talk, Resist Intimidation, Resist Persuasion, Resist Seduction</p><p><b>Quality</b>: greatly reduce the effects of Seduction or Persuasion, or resist them completely.</p><p><b>Failed Check</b>: the hero cannot resist.</p><p><b>Critical Success</b>: the hero resists and cannot be influenced by that person or thing for the near future.</p><p><b>Botch</b>: the hero succumbs completely to the person attempting the influence, or faints when faced with something like a horrible demon.</p>",
         "Carousing": "<p><b>Applications</b>: Resist Drug Confusion, Resist Drug Intoxication, Resist Drug Pain</p><p><b>Quality</b>: the hero can stomach more than usual.</p><p><b>Failed Check</b>: the hero receives a level of the condition Confusion and awakens the next day with a hangover or some other unwanted consequence.</p><p><b>Critical Success</b>: the hero endures to the bitter end, yet wakes in excellent condition the next day.</p><p><b>Botch</b>: the hero does something embarrassing while intoxicated (such as smashing half of the inn, awakening naked in the market place or in a stranger’s bed the next morning, or blurting out secrets to the enemy) and can’t remember a thing.</p>"
     },
-
     "Skill-eeasy": "Extremely easy (+5)",
     "Skill-veasy": "Very easy (+3)",
     "Skill-easy": "Easy (+1)",
@@ -683,7 +669,6 @@
     "Skill-difficult": "Difficult (-1)",
     "Skill-hard": "Very difficult (-3)",
     "Skill-vhard": "Extremely difficult (-5)",
-
     "SKILLAbrev": {
         "body": "<span class=\"d20 diet-mu\">COU</span><span class=\"d20 diet-ge\">AGI</span><span class=\"d20 diet-kk\">STR</span>",
         "social": "<span class=\"d20 diet-in\">INT</span><span class=\"d20 diet-ch\">CHA</span><span class=\"d20 diet-ch\">CHA</span>",
@@ -691,7 +676,6 @@
         "trade": "<span class=\"d20 diet-ff\">DEX</span><span class=\"d20 diet-ff\">DEX</span><span class=\"d20 diet-ko\">CON</span>",
         "nature": "<span class=\"d20 diet-mu\">COU</span><span class=\"d20 diet-ge\">AGI</span><span class=\"d20 diet-ko\">CON</span>"
     },
-
     "EXP": {
         "legendary": "Legendary",
         "brillant": "Brillant",
@@ -701,25 +685,20 @@
         "average": "Ordinary",
         "inexperienced": "Inexperienced"
     },
-
     "ABBR": {
         "value": "Value",
         "modifiers": "Mod.",
         "advances": "Advance",
         "max": "Max"
     },
-
     "Range-short": "Short",
     "Range-medium": "Medium",
     "Range-long": "Long",
-
     "Money-D": "Ducat",
     "Money-S": "Silverthaler",
     "Money-H": "Haler",
     "Money-K": "Kreutzer",
-
     "WELCOME": "<p><h2>Welcome to TDE5<br> for Foundry VTT</h2></p><p>We wish you a lot of fun playing TDE5</p><h3>Quick start</h3>For a fast and easy start we recommend to install the core module in your system. This way you can start immediately to explore Aventuria. If you don't have the core module, you have to create all items, spells, special abilities etc. yourself.</p><p>You can get the core module in the <a href=\"https://www.ulissesf-shop.com/\" target=\"_blank\">F-Shop/</a>.</p><p>To create your character make sure to drag and drop the species onto your character sheet (to calculate dependent character stats).</p><p>You can also try out the free introduction adventure at <a href=\"https://github.com/Plushtoast/dsa5_introduction\" target=\"_blank\">Introduction Module</a>. It includes maps, characters and a tiny adventure.</p><h3>Help</h3>In case of issues use the Help (/help in chat) or visit our <a href=\"https://github.com/Plushtoast/dsa5-foundryVTT/wiki\" target=\"_blank\">Wiki</a>.</p><p><b>If you are a german user, make sure to set the language right, to avoid compatibility problems.</b><p>This message will only be shown once.</p>",
-
     "SHEET": {
         "PostItem": "Post to chat",
         "EditItem": "Edit",
@@ -747,23 +726,19 @@
         "tempRegeneration": "Temporary, consumed on the next regeneration roll",
         "permRegeneration": "Permanent, bonus for every regeneration roll"
     },
-
     "ITEMSHEET": {
         "offHandMod": "Bonus/handicap offhand (e.g. parry weapon)"
     },
-
     "ActorConfig": {
         "autoSize": "Auto token size",
         "autoBar": "Auto token ressource bars"
     },
-
     "RangeMod": {
         "short": "Close [+2 to RC, +1 DP]",
         "medium": "Medium [+/–0 to RC]",
         "long": "Far [–2 to RC, –1 DP]",
         "rangesense": "Far [–1 to RC, –1 DP]"
     },
-
     "VisionDisruption": {
         "step0": "Clear sight",
         "step1": "Slight impairement [-2]",
@@ -771,7 +746,6 @@
         "step3": "Barely shape [-6]",
         "step4": "Invisible [Lucky hit]"
     },
-
     "meleeVisionDisruption": {
         "0": "Clear Sight",
         "1": "Slight impairement [-1]",
@@ -779,7 +753,6 @@
         "3": "Barely shape [-3]",
         "4": "Invisible [Lucky hit]"
     },
-
     "WEAPON": {
         "loading": "Reloading state: {status}",
         "loaded": "Reloaded",
@@ -795,7 +768,6 @@
         "reload": "Concentrate",
         "isReloading": "{actor} is concentrating on {item} ({status})."
     },
-
     "CHATNOTIFICATION": {
         "gainsBloodrush": "The rage consumes {character} and he/she gains the condition bloodrush.",
         "unableReroll": "Die {die} rolled again because of Incompetence ({oldVal}/{newVal})",
@@ -812,7 +784,6 @@
             "3": "{actor} is completely <a class=\"chatButton chat-condition\" data-id=\"burning\" draggable=\"true\"><img src=\"icons/svg/fire.svg\">aflame</a> and receives {damage} sDP."
         }
     },
-
     "TT": {
         "careerSkills": "Comma separated talent list, e.g. (Alchemy 2,Carousing 4)",
         "commaSeparated": "Comma separated list",
@@ -821,7 +792,6 @@
         "applyEffectCaster": "Apply effect to caster",
         "applyEffectTargets": "Apply effect to targets"
     },
-
     "HELP": {
         "showHelp": "Show help",
         "default": "Moreover you can find detailed FAQs in the <a href=\"https://github.com/Plushtoast/dsa5-foundryVTT/wiki\" target=\"_blank\">Wiki</a>.",
@@ -844,7 +814,6 @@
         "groupcheck": "Group Check",
         "descrgroupcheck": "Request a Group Check. (tab + number = with modifier)"
     },
-
     "ITEM.TypeAdvantage": "Advantage",
     "ITEM.TypeAggregatedtest": "Cumulative Check",
     "ITEM.TypeAmmunition": "Ammunition",
@@ -874,20 +843,16 @@
     "ITEM.TypeConsumable": "Consumable",
     "ITEM.TypeSpellextension": "Spell/Liturgyextension",
     "ITEM.TypeApplication": "Application",
-
     "ACTOR.TypeCharacter": "Character",
     "ACTOR.TypeNpc": "Non Player Character",
     "ACTOR.TypeCreature": "Creature",
-
     "character": "Character",
     "npc": "Non Player Character",
     "creature": "Creature",
-
     "UNITS": {
         "weight": "Weight in stone",
         "money": "Value in Silverthaler"
     },
-
     "SIZE": {
         "tiny": "Tiny",
         "small": "Small",
@@ -895,7 +860,6 @@
         "big": "Large",
         "giant": "Huge"
     },
-
     "NarrowSpaceModifiers": {
         "weapon": {
             "short": "Short-reach, +-0 AT/PA",
@@ -908,7 +872,6 @@
             "long": "Large shields, -6 AT/-4 PA"
         }
     },
-
     "RANGESIZE": {
         "tiny": "Tiny [-8]",
         "small": "Small [-4]",
@@ -916,37 +879,31 @@
         "big": "Large [+4]",
         "giant": "Huge [+8]"
     },
-
     "ROLL": {
         "Targeting": "versus",
         "failed": "failed"
     },
-
     "OPPOSED": {
         "winsFP": "<b>{winner}</b> wins versus <b>{loser}</b> with {SL} quality level(s)",
         "wins": "<b>{winner}</b> wins versus <b>{loser}</b>",
         "attackOfOpportunity": "<b>Description</b>: Attack of Opportunity, no defense allowed"
     },
-
     "ReverseSpellRanges": {
         "touch": "touch",
         "self": "self"
     },
-
     "LocalizedAbilityModifiers": {
         "at": "at",
         "pa": "pa",
         "tp": "dp",
         "dm": "dm"
     },
-
     "DSAREGEX": {
         "combatRounds": "( )?(in )?(combat round(s)?|CR(s)?)",
         "minutes": "( )?(in )?(minute(s)?|min)",
         "hours": "( )?(in )?(hour(s)?)",
         "days": "( )?(in )?day(s)?"
     },
-
     "ActiveEffects": {
         "hideOnToken": "Hide on Token",
         "hidePlayers": "Hide for players",
@@ -965,7 +922,6 @@
             "creature": "Conjuring/Shapeshift"
         }
     },
-
     "LocalizedIDs": {
         "deaf": "Deaf",
         "blind": "Blind",
@@ -995,8 +951,6 @@
         "smallEnergyControl": "Small Energy Control",
         "masterfulDodge": "tbd",
         "masterfulParry": "tbd",
-        "throwingWeapons": "Throwing Weapons",
-        "crossbows": "Crossbows",
         "improvisedWeaponMaster": "tbd",
         "misfortune": "Misfortune",
         "quickdraw": "Quickdraw",
@@ -1015,7 +969,6 @@
         "automaticFail": "Automatic Failure",
         "familiar": "Familiar",
         "companion": "Companion",
-        "shields": "Shields",
         "localKnowledge": "Area Knowledge",
         "naturalArmor": "Natural Armor",
         "wrestle": "Brawling",
@@ -1041,9 +994,34 @@
         "darksight": "Darksight",
         "nightBlind": "Night-Blind",
         "willpower": "Willpower",
-        "traditionBoron": "Tradition (Church of Boron)"
-    },
+        "traditionBoron": "Tradition (Church of Boron)",
 
+        "Shields": "Shields",
+        "Throwing Weapons": "Throwing Weapons",
+        "Crossbows": "Crossbows"
+    },
+    "LocalizedCTs": {
+        "Blowpipes": "Blowpipes",
+        "Bows": "Bows",
+        "Brawling": "Brawling",
+        "Chain Weapons": "Chain Weapons",
+        "Crossbows": "Crossbows",
+        "Daggers": "Daggers",
+        "Discuses": "Discuses",
+        "Fans": "Fans",
+        "Fencing Weapons": "Fencing Weapons",
+        "Impact Weapons": "Impact Weapons",
+        "Lances": "Lances",
+        "Pikes": "Pikes",
+        "Polearms": "Polearms",
+        "Shields": "Shields",
+        "Slingshots": "Slingshots",
+        "Swords": "Swords",
+        "Throwing Weapons": "Throwing Weapons",
+        "Two-Handed Impact Weapons": "Two-Handed Impact Weapons",
+        "Two-Handed Swords": "Two-Handed Swords",
+        "Whips": "Whips"
+    },
     "Shapeshift": {
         "title": "Shapeshift",
         "description": "Please confirm if you want to shapeshift {source} into {target}. This will create a new Actor, which includes the new combined abilities. Make sure to repeate this action once the source of the shapeshift changes.<br>Chose the attributes' origins:",
@@ -1055,7 +1033,6 @@
         "keepVision": "Keep vision",
         "takeSkills": "Keep skills"
     },
-
     "DSAError": {
         "MacroItemMissing": "Your character has no item named {item}. Make sure to select a token or assign a character to yourself.",
         "APUpdateError": "Unable to adapt AP value. Please configure manually.",
@@ -1090,9 +1067,9 @@
         "tooManyEnchants": "A item can only contain 7 enchantments",
         "onlyCompendiumSpells": "Only spells from compendiums can be used",
         "enchantmentNotFound": "Referenced spell not found",
-        "nestedEffectNotSupported": "Foundry currently only supports adding of effects through the item directory."
+        "nestedEffectNotSupported": "Foundry currently only supports adding of effects through the item directory.",
+        "noBreakingResistance": "No Breaking Point Rating found for {item}."
     },
-
     "CEREMONYMODIFIER": {
         "holysite": "Sanctum of the god (+2)",
         "temple": "Temple of the god (+1)",
@@ -1106,7 +1083,6 @@
         "namelessDays": "Nameless days (-5)",
         "artefact": "Tradition artifact (+1)"
     },
-
     "RITUALMODIFIER": {
         "holysite": "Sanctum/Magical place (+1)",
         "wrongsite": "Unsuitable ritual space (-3)",
@@ -1115,7 +1091,6 @@
         "rightClothes": "Appropriate clothing (+1)",
         "rightEquipment": "Proper tools (+1)"
     },
-
     "PAYMENT": {
         "pay": "<b>{actor}</b> pays his/her debts of {amount}.",
         "getPaid": "<b>{actor}</b> receives his/her payment of {amount}.",
@@ -1132,7 +1107,6 @@
         "onlyActors": "Only players can receive/pay money. Maybe no character has been assigned to you.",
         "cannotpay": "<b>{actor}</b> can not pay his debts of {amount}."
     },
-
     "rangeMovementOptions": {
         "STATIONARY": "motionless (+2)",
         "SLOW": "moving slowly (+-0)",
@@ -1142,27 +1116,21 @@
         "SHOOTERRUNNING": "running (-4)",
         "SHOOTERSTATIONARY": "stationary (+-0)"
     },
-
     "mountedRangeOptions": {
         "STATIONARY": "standing still (+-0)",
         "SCHRITT": "at walk (-4)",
         "GALOPP": "at gallop (-8)"
     },
-
     "regnerationCampLocations": {
         "normal": "Normal",
         "bad": "Poor campsite (-1)",
         "good": "Good accomodations (+1)"
     },
-
-
     "regenerationInterruptOptions": {
         "small": "Small - Watch/Disturbance (-1)",
         "big": "Lengthy - sentry duty/ambush (-2)",
         "none": "None (+-0)"
     },
-
-
     "CHATCONTEXT": {
         "Reroll": "Repeat roll (1 FtP)",
         "RerollGroup": "Repeat roll (1 Group FtP)",
@@ -1179,13 +1147,11 @@
         "improveFate": "Improve roll (1 FtP)",
         "improveFateGroup": "Improve roll (1 Group FtP)"
     },
-
     "aimOptions": {
         "0": "Unaimed",
         "1": "Aim 1 action",
         "2": "Aim 2 actions"
     },
-
     "Book": {
         "Wizard": "Journal Browser",
         "Description": "Welcome to the journal browser. This tool is supposed to assist in the usage of source, rule and adventure modules by giving an overview on all included contents like scenes, chapters and descriptions. Moreover hints for the usage are provided and functions for the initialisation of the modules.",
@@ -1206,7 +1172,6 @@
         "foundryUsagedesc": "<p>You can get more informations on the usage of Foundry with TDE in the <a href=\"https://github.com/Plushtoast/dsa5-foundryVTT/wiki\" target=\"_blank\">Wiki</a>.</p><p>You can also get quick help in the Ulisses or Foundry Discord.</p><p>Using the journal browser: <ul class=\"dsalist\"><li>Right click on images to show them to your players.</li><li>Some references and text passages can point to a book location and differ from the game's location, as the modules are copies of printed books.<li>Some of the actors in the adventures might not have a token or statistics, because they only fullfill a tiny narrative role. If you need to make a check, you can use the chat command <b>/ch</b> to improvise a roll.</li><li>Important creatures and characters usually have additional information on their character sheet.</li></ul></p>",
         "fulltextsearch": "Full text search"
     },
-
     "Migrakel": {
         "Migration": "Actor Migration",
         "migrationDone": "Migration finished",
@@ -1220,9 +1185,7 @@
         "skillsShort": "Migrate Talents",
         "gearShort": "Migrate Gear",
         "gear": "Update icons, effects and effectformula of all gear, weapons and armors. THIS WILL OVERRIDE MANUAL MODIFICATIONS!"
-
     },
-
     "DSASETTINGS": {
         "meleeBotchTableEnabled": "Close Combat-Botch Table",
         "meleeBotchTableEnabledHint": "Instead of taking 1D6+2 DP on a botch, you can use the following table. If the combatant who botched is unarmed, add 5 to die roll results of 6 or less. (optional rule).",
@@ -1248,7 +1211,6 @@
         "allowPhysicalDiceHint": "Allow the input of the result of real dice",
         "playerCanEditSpellMacro": "Effect Macro editably by players",
         "playerCanEditSpellMacroHint": "Players can edit spell macros and similar stuff (insecure).",
-
         "soundConfig": "Sound Effect Configuration",
         "soundConfigHint": "Sounds for skills and attacks",
         "hideEffects": "Hide conditions",
@@ -1265,14 +1227,52 @@
         "dicesonicesettings": "Chose colors for dice types",
         "obfuscateTokenNames": "Obfuscate token names",
         "obfuscateTokenNamesHint": "Replace token names for unknown creatures",
-        "rename": "Rename"
+        "rename": "Rename",
+        "disableDidYouKnow": "Disable \"Did you know?\"",
+        "disableDidYouKnowHint": "Say NO to education!",
+        "armorAndWeaponDamage": "Weapon breaking and Armor Sturdiness",
+        "armorAndWeaponDamageHint": "Activate the optional rule for weapon breaking and armor sturdiness."
     },
-
+    "WEAR": {
+        "check": "Breaking Point Rating Check ({category})",
+        "checkShort": "Breaking Point Rating Check",
+        "armor": {
+            "0": "In good condition",
+            "1": "Armor slightly damaged; subtract 1 from PRO",
+            "2": "Armor damaged; add 1 to ENC, subtract 1 from PRO",
+            "3": "Armor heavily damaged; unusable until repaired",
+            "4": "Armor destroyed; unrepairable by mundane means"
+        },
+        "meleeweapon": {
+            "0": "In good condition",
+            "1": "Weapon slightly damaged; -1 penalty to AT and PA",
+            "2": "Weapon damaged; -2 penalty to AT and PA",
+            "3": "Weapon severely damaged; unusable until repaired",
+            "4": "Weapon destroyed; unrepairable by mundane means"
+        },
+        "rangeweapon": {
+            "0": "In good condition",
+            "1": "Weapon slightly damaged; -1 penalty to AT",
+            "2": "Weapon damaged; -2 penalty to AT",
+            "3": "Weapon severely damaged; unusable until repaired",
+            "4": "Weapon destroyed; unrepairable by mundane means"
+        }
+    },
+    "ARMORSUBCATEGORIES": {
+        "0": "Clothing, Normal",
+        "1": "Clothing, Heavy",
+        "2": "Cloth/Linothorax Armor",
+        "3": "Leather Armor",
+        "4": "Wooden Armor",
+        "5": "Chain Mail",
+        "6": "Scale Mail",
+        "7": "Plate Mail",
+        "8": "Tournament Armor"
+    },
     "COMBATTRACKER": {
         "noDefenses": "Defense count",
         "ongoing": "Ongoing actions"
     },
-
     "SCHIPSKILLS": {
         "meleeweaponattack": "Improve Attack",
         "meleeweaponparry": "Improve Parry",
@@ -1280,7 +1280,6 @@
         "dodge": "Improve Dodge",
         "char": "Improve Attribute"
     },
-
     "CHATFATE": {
         "faitepointUsed": "The fate is changing",
         "reroll": "{character} rolls again.",
@@ -1293,7 +1292,6 @@
         "selectDieToReroll": "Chose the dice to be rolled again",
         "Improve": "{character} improves the roll by 2"
     },
-
     "SPELLMISCAST": {
         "2": "The spellcaster’s mind switches bodies with the nearest creature larger than a rat for 1D6 day(s).",
         "3": "The spellcaster is Condition Annoyed by Minor Spirits for 1D6 day(s)",
@@ -1359,7 +1357,6 @@
         "11": "Hurt yourself. Suffer your weapon’s damage, including the damage bonus (ignoring PRO). Unarmed combatants suffer 1D6 DP (ignoring PRO).",
         "12": "Suffer double your weapon’s damage, including the damage bonus (ignoring PRO). Unarmed combatants suffer 2D6 DP (ignoring PRO)."
     },
-
     "TABLENAMES": {
         "Defense": "Defense - Botch Table",
         "Melee": "Close Combat - Botch Table",
@@ -1367,7 +1364,6 @@
         "Liturgy": "Botch Table for Ceremonies/Chants",
         "Spell": "Botch Table for Spells"
     },
-
     "CONDITION": {
         "shapeshift": "Shapeshift",
         "encumbered": "Encumbrance",
@@ -1396,7 +1392,6 @@
         "add": "Add condition",
         "minorSpirits": "Annoyed by Minor Spirits"
     },
-
     "COMBATSKILLCATEGORY": {
         "subcategory": "Sub category",
         "0": "Basic Maneuver",
@@ -1405,7 +1400,6 @@
         "3": "Passive",
         "4": "General"
     },
-
     "CONDITIONDESCRIPTION": {
         "minorSpirits": "Minor spirits are small elemental creatures that are not inherently dangerous but can be very annoying. Some spellcasters attract minor spirits to themselves when using magic.",
         "shapeshift": "This creature shifted its shape.",

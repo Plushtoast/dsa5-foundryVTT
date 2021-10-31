@@ -8,31 +8,27 @@ export default function() {
         }
     })
 
-    const askForName = (name, actor) => {
-        return new Promise((resolve, reject) => {
-            new Dialog({
-                title: game.i18n.localize("DSASETTINGS.obfuscateTokenNames"),
-                content: `<label for="name">${actor.name} ${game.i18n.localize('DSASETTINGS.rename')}</label> <input name="name" value="${name}"/>`,
-                default: 'cancel',
-                buttons: {
-                    Yes: {
-                        icon: '<i class="fa fa-check"></i>',
-                        label: game.i18n.localize("yes"),
-                        callback: dlg => {
-                            resolve(dlg)
-                        }
-                    },
-                    cancel: {
-                        icon: '<i class="fas fa-times"></i>',
-                        label: game.i18n.localize("cancel"),
-                        callback: () => {
-                            resolve(undefined)
-                        }
+    const askForName = (actor) => {
+        new Dialog({
+            title: game.i18n.localize("DSASETTINGS.obfuscateTokenNames"),
+            content: `<label for="name">${game.i18n.localize('DSASETTINGS.rename')}</label> <input dtype="string" name="name" type="text" value="${actor.name}"/>`,
+            default: 'Yes',
+            buttons: {
+                Yes: {
+                    icon: '<i class="fa fa-check"></i>',
+                    label: game.i18n.localize("yes"),
+                    callback: async(html) => {
+                        const name = html.find('[name="name"]').val()
+                        const token = canvas.scene.data.tokens.find((x) => x.actor.id === actor.id)
+                        await token.update({ name })
                     }
+                },
+                cancel: {
+                    icon: '<i class="fas fa-times"></i>',
+                    label: game.i18n.localize("cancel")
                 }
-            }).render(true)
-
-        })
+            }
+        }).render(true)
     }
 
     const obfuscateName = async(actor, update) => {
@@ -44,21 +40,16 @@ export default function() {
             if (actor.testUserPermission(u, "LIMITED")) return;
         }
         const sameActorTokens = canvas.scene.data.tokens.filter((x) => x.actor.id === actor.id);
-        let name
-        if(sameActorTokens.length == 0){
-            name = game.i18n.localize("unknown")
-        }else{
+        let name = game.i18n.localize("unknown")
+        if(sameActorTokens.length > 0){
             name = `${sameActorTokens[0].name.replace(/ \d{1,}$/)} ${sameActorTokens.length + 1}`
         }
 
         if (setting == "2" && sameActorTokens == 0){
-            askForName(name, actor).then(async(html) => {
-                if (html) name = html.find('[name="name"]').val()
-                const token = canvas.scene.data.tokens.find((x) => x.actor.id === actor.id)
-                await token.update({name})
-            });
+            askForName(actor)
+        }else{
+            update["name"] = name
         }
-        update["name"] = name
     }
 
     Hooks.on('preCreateToken', (token, data, options, userId) => {
@@ -86,6 +77,5 @@ export default function() {
 
         obfuscateName(actor, update)
         token.data.update(update)
-
     })
 }

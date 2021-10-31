@@ -714,8 +714,8 @@
                 "value": false
             },
             "structure": {
-                "max": 0,
-                "value": 0
+                "max": 4,
+                "value": 4
             }
         },
         "meleeweapon": {
@@ -752,8 +752,8 @@
                 "offhand": false
             },
             "structure": {
-                "max": 0,
-                "value": 0
+                "max": 4,
+                "value": 4
             }
         },
         "armor": {
@@ -773,9 +773,10 @@
             "worn": {
                 "value": false
             },
+            "subcategory": "0",
             "structure": {
-                "max": 0,
-                "value": 0
+                "max": 4,
+                "value": 4
             }
         },
         "career": {

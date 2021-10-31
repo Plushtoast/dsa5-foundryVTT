@@ -152,6 +152,17 @@ export default class Migrakel {
                         data: { effect: { value: find.data.data.effect.value } }
                     })
                 }
+                if (!["armor"].includes(find.type)) {
+                    mergeObject(update, {
+                        data: {
+                            subcategory: find.data.data.subcategory,
+                            structure: {
+                                max: find.data.data.structure.max,
+                                value: find.data.data.structure.value,
+                            }
+                        }
+                    })
+                }
                 return update
             }
             await this.updateVals(actor, condition, updator)

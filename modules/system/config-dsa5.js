@@ -294,6 +294,41 @@ DSA5.statusEffects = [{
     }
 ]
 
+DSA5.armorSubcategories = {
+    "0": 4,
+    "1": 5,
+    "2": 6,
+    "3": 8,
+    "4": 9,
+    "5": 13,
+    "6": 12,
+    "7": 11,
+    "8": 10
+}
+
+DSA5.weaponStabilities = {
+    "Blowpipes": 10,
+    "Bows": 4,
+    "Brawling": 12,
+    "Chain Weapons": 10,
+    "Crossbows": 6,
+    "Daggers": 14,
+    "Discuses": 12,
+    "Fans": 13,
+    "Fencing Weapons": 8,
+    "Impact Weapons": 12,
+    "Lances": 6,
+    "Pikes": 12,
+    "Polearms": 12,
+    "Shields": 10,
+    "Slingshots": 4,
+    "Swords": 13,
+    "Throwing Weapons": 10,
+    "Two-Handed Impact Weapons": 11,
+    "Two-Handed Swords": 12,
+    "Whips": 4
+}
+
 DSA5.localizedCompendiums = {
     de: [
         "dsa5.skills",

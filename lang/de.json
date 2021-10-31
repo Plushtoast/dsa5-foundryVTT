@@ -74,8 +74,6 @@
         "*": "*",
         "roll": " "
     },
-
-
     "Features": {
         "Object": "Objekt",
         "Spheres": "Sphären",
@@ -200,7 +198,6 @@
     "culture": "Kultur",
     "count": "Anzahl",
     "cost": "Kosten",
-
     "charges": "Ladungen",
     "cancel": "Abbrechen",
     "combatskillcountdivider": "aus",
@@ -478,7 +475,6 @@
         "noFilter": "Kein Filter",
         "indexWorldItems": "Welt Items indexieren (Deaktivieren verbessert Leistung)"
     },
-
     "Aggregated": {
         "noMoreAllowed": "Keine Proben mehr erlaubt."
     },
@@ -524,6 +520,42 @@
         "attributeRequirements": "Eigenschaftsvoraussetzungen",
         "attributesToChose": "Eigenschaftsänderungen",
         "generalTab": "Allgemein"
+    },
+    "WEAR": {
+        "check": "Bruchfaktorprobe ({category})",
+        "checkShort": "Bruchfaktorprobe",
+        "armor": {
+            "0": "In gutem Zustand",
+            "1": "Rüstung leicht beschädigt, –1 RS",
+            "2": "Rüstung beschädigt, +1 BE, -1 RS",
+            "3": "Rüstung schwer beschädigt, kann nicht mehr getragen werden und muss repariert werden",
+            "4": "Rüstung zerstört, nicht mehr zu reparieren"
+        },
+        "meleeweapon": {
+            "0": "In gutem Zustand",
+            "1": "Waffe leicht beschädigt, AT und PA um 1 erschwert",
+            "2": "Waffe beschädigt, AT und PA um 2 erschwert",
+            "3": "Waffe schwer beschädigt, kann nicht mehr benutzt werden, bis sie repariert wurde",
+            "4": "Waffe zerstört, nicht mehr zu reparieren"
+        },
+        "rangeweapon": {
+            "0": "In gutem Zustand",
+            "1": "Waffe leicht beschädigt, AT um 1 erschwert",
+            "2": "Waffe beschädigt, AT um 2 erschwert",
+            "3": "Waffe schwer beschädigt, kann nicht mehr benutzt werden, bis sie repariert wurde",
+            "4": "Waffe zerstört, nicht mehr zu reparieren"
+        }
+    },
+    "ARMORSUBCATEGORIES": {
+        "0": "Normale Kleidung",
+        "1": "Schwere Kleidung",
+        "2": "Stoffrüstung",
+        "3": "Lederrüstung",
+        "4": "Holzrüstung",
+        "5": "Kettenrüstung",
+        "6": "Schuppenrüstung",
+        "7": "Plattenrüstung",
+        "8": "Turnierrüstung"
     },
     "SKILL": {
         "body": "Körpertalente",
@@ -808,7 +840,6 @@
         "reload": "Konzentrieren",
         "isReloading": "{actor} konzentriert sich auf {item} ({status})."
     },
-
     "PLANT": {
         "healing": "Heilpflanzen",
         "poison": "Giftpflanzen",
@@ -825,7 +856,6 @@
         "recipes": "Rezepte",
         "ingredients": "Zutaten (typisch)"
     },
-
     "ITEM.TypeAdvantage": "Vorteil",
     "ITEM.TypeAggregatedtest": "Sammelprobe",
     "ITEM.TypeAmmunition": "Munition",
@@ -976,8 +1006,6 @@
         "automaticFail": "Automatischer Misserfolg",
         "familiar": "Vertrauter",
         "companion": "Begleiter",
-        "shields": "Schilde",
-        "throwingWeapons": "Wurfwaffen",
         "quickdraw": "Schnellziehen",
         "localKnowledge": "Ortskenntnis",
         "naturalArmor": "Natürliche Rüstung",
@@ -1003,13 +1031,38 @@
         "afraidOf": "Angst vor",
         "principles": "Prinzipientreue",
         "skillSpecialization": "Fertigkeitsspezialisierung",
-        "crossbows": "Armbrüste",
         "gambling": "Zechen",
         "bodyControl": "Körperbeherrschung",
         "darksight": "Dunkelsicht",
         "nightBlind": "Nachtblind",
         "willpower": "Willenskraft",
-        "traditionBoron": "Tradition (Boronkirche)"
+        "traditionBoron": "Tradition (Boronkirche)",
+
+        "Shields": "Schilde",
+        "Throwing Weapons": "Wurfwaffen",
+        "Crossbows": "Armbrüste"
+    },
+    "LocalizedCTs": {
+        "Blasrohre": "Blowpipes" ,
+        "Bögen":"Bows",
+        "Raufen":"Brawling" ,
+        "Kettenwaffen":"Chain Weapons" ,
+        "Armbrüste": "Crossbows" ,
+        "Dolche": "Daggers",
+        "Diskusse": "Discuses" ,
+        "Fächer":"Fans",
+        "Fechtwaffen": "Fencing Weapons",
+        "Hiebwaffen": "Impact Weapons",
+        "Lanzen": "Lances",
+        "Spießwaffen": "Pikes",
+        "Stangenwaffen": "Polearms" ,
+        "Schilde": "Shields",
+        "Schleudern": "Slingshots",
+        "Schwerter": "Swords" ,
+        "Wurfwaffen": "Throwing Weapons" ,
+        "Zweihandhiebwaffen": "Two-Handed Impact Weapons",
+        "Zweihandschwerter": "Two-Handed Swords",
+        "Peitschen": "Whips"
     },
     "DSAError": {
         "MacroItemMissing": "Dein Charakter hat kein Item namens {item}. Stelle sicher, dass dir entweder ein Charakter zugeordnet ist oder du einen Token für den Wurf markierst.",
@@ -1045,7 +1098,8 @@
         "tooManyEnchants": "Ein Gegenstand kann nur 7 Verzauberungsladungen beinhalten",
         "onlyCompendiumSpells": "Nur Zauber aus Kompendien können verwendet werden",
         "enchantmentNotFound": "Referenzierter Zauber konnte nicht gefunden werden",
-        "nestedEffectNotSupported": "Foundry unterstützt das Hinzufügen von Effekten derzeit nur im Item Directory."
+        "nestedEffectNotSupported": "Foundry unterstützt das Hinzufügen von Effekten derzeit nur im Item Directory.",
+        "noBreakingResistance": "Keinen Bruchfaktorwert für {item} gefunden."
     },
     "Shapeshift": {
         "title": "Gestaltwandlung",
@@ -1196,7 +1250,11 @@
         "dicesonicesettings": "Wähle Farbschemen für Würfeltypen",
         "obfuscateTokenNames": "Verberge Token Namen",
         "obfuscateTokenNamesHint": "Generische Ersetzung des Namens unbekannter Kreaturen oder NSC",
-        "rename": "Umbenennen"
+        "rename": "Umbenennen",
+        "disableDidYouKnow": "\"Wusstest du Schon?\" deaktivieren",
+        "disableDidYouKnowHint": "Sag NEIN zu Weiterbildung!",
+        "armorAndWeaponDamage": "Waffen- und Rüstungsverschleiß",
+        "armorAndWeaponDamageHint": "Aktiviere die optionale Regel für den Waffenbruchfaktor und Rüstungsverschleiß"
     },
     "COMBATTRACKER": {
         "noDefenses": "Anzahl Verteidigungen",

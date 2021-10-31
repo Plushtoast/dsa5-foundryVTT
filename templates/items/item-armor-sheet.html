@@ -24,6 +24,7 @@
                 <input class="input-text" type="text" name="data.encumbrance.value" value="{{data.encumbrance.value}}" data-dtype="Number" />
             </div>
 
+
             <div class="form-group">
                 <label class="label-text">{{localize "effect"}}</label>
                 <input class="input-text" type="text" name="data.effect.value" value="{{data.effect.value}}" data-dtype="String" />
@@ -35,6 +36,16 @@
                 </div>
                 {{/if}}
                 <input class="input-text {{#if domains}}domainToggle{{/if}}" placeholder="{{localize 'WEAPON.clerical'}}, {{localize 'WEAPON.magical'}}" type="text" name="data.effect.attributes" value="{{data.effect.attributes}}" data-dtype="String" />
+            </div>
+            <div class="form-group">
+                <label class="label-text">{{localize "COMBATSKILLCATEGORY.subcategory"}}</label>
+                <select name="data.subcategory" data-dtype="String">
+                    {{#select data.subcategory}}
+                    {{#each armorSubcategories as |ch|}}
+                    <option value="{{ch}}">{{localize (concat 'ARMORSUBCATEGORIES.' ch)}}</option>
+                    {{/each}}
+                    {{/select}}
+                </select>
             </div>
             <div class="form-group double">
                 <label class="label-text">{{localize "structure"}}</label>
