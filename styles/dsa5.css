@@ -1609,6 +1609,7 @@ input[type="search"] {
     padding: 3px;
     border-radius: 2px;
 }
+
 .form-group input::placeholder,
 .statusEffectMenu li.search input::placeholder {
     color: rgb(173, 170, 170);
@@ -1618,7 +1619,7 @@ input[type="search"] {
     border-color: transparent
 }
 
-.opposed-message{
+.opposed-message {
     text-align: center;
 }
 
@@ -2212,6 +2213,7 @@ select.noAppearance {
     width: 100%;
     left: 0;
 }
+
 .gearDamaged,
 .applyEffect {
     width: auto;
@@ -2786,10 +2788,39 @@ input[type="checkbox"].autoCheckbox {
 }
 
 .slot,
+.gearD,
 .item .image.rar,
 .item .image.common {
     z-index: 0;
     position: relative;
+}
+
+.gearD:before {
+    content: '';
+    background-size: contain;
+    background-repeat: no-repeat;
+    position: absolute;
+    width: 12px;
+    height: 12px;
+    left: 25px;
+    bottom: 0;
+    z-index: 1;
+}
+
+.damaged1:before {
+    background-image: url('../icons/damaged1.webp');
+}
+
+.damaged2:before {
+    background-image: url('../icons/damaged2.webp');
+}
+
+.damaged3:before {
+    background-image: url('../icons/damaged3.webp');
+}
+
+.damaged4:before {
+    background-image: url('../icons/damaged3.webp');
 }
 
 .slot div {
@@ -2797,7 +2828,7 @@ input[type="checkbox"].autoCheckbox {
     background-size: contain;
 }
 
-.slot.rar:after,
+.damaged1 .slot.rar:after,
 .slot.common:after,
 .image.rar:after,
 .image.common:after {

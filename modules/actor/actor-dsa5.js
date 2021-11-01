@@ -405,7 +405,7 @@ export default class Actordsa5 extends Actor {
         const wornArmor = actor.items.filter(x => x.type == "armor" && x.data.data.worn.value == true)
         const protection = wornArmor.reduce((a, b) => a + EquipmentDamage.armorWearModifier(b.data, b.data.data.protection.value), 0)
         const animalArmor = actor.items.filter(x => x.type == "trait" && x.data.data.traitType.value == "armor").reduce((a, b) => a + Number(b.data.data.at.value), 0)
-        return { wornArmor, armor: protection + animalArmor + (actor.data.totalArmor || 0)}
+        return { wornArmor, armor: protection + animalArmor + (actor.data.totalArmor || 0) }
     }
 
     static _calculateCombatSkillValues(i, actorData) {
@@ -1496,6 +1496,7 @@ export default class Actordsa5 extends Actor {
             }
             EquipmentDamage.weaponWearModifier(item)
             item.damageToolTip = EquipmentDamage.damageTooltip(item)
+            console.log(item.damageToolTip)
         } else {
             ui.notifications.error(game.i18n.format("DSAError.unknownCombatSkill", { skill: item.data.combatskill.value, item: item.name }))
         }

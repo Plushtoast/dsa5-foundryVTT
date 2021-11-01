@@ -33,8 +33,7 @@ export default class EquipmentDamage {
         if (game.settings.get("dsa5", "armorAndWeaponDamage")) {
             const source = preData.source
             if (source._id && source.data.structure && (testData.successLevel < -1 ||
-                    preData.situationalModifiers.some(x => x.name.trim() == `${game.i18n.localize('MODS.defenseMalus')} - ${game.i18n.localize('halfDefenseShort')}`)) &&
-                ["meleeweapon", "rangeweapon", "armor"].includes(source.type)) {
+                    preData.situationalModifiers.some(x => x.name.trim() == `${game.i18n.localize('MODS.defenseMalus')} - ${game.i18n.localize('halfDefenseShort')}`)) && ["meleeweapon", "rangeweapon", "armor"].includes(source.type)) {
                 const actor = await DSA5_Utility.getSpeaker(testData.speaker)
                 return actor.items.get(source._id).uuid
             }
@@ -101,9 +100,10 @@ export default class EquipmentDamage {
 
   static damageTooltip(item){
     if (game.settings.get("dsa5", "armorAndWeaponDamage")) {
-      return game.i18n.localize(`WEAR.${item.type}.${this.calculateWear(item)}`)
+      const wear = this.calculateWear(item)
+      return {msg: game.i18n.localize(`WEAR.${item.type}.${wear}`), css: `gearD damaged${wear}`}
     }
-    return ""
+    return {msg: "", css:""}
   }
 
   static weaponWearModifier(weaponData) {
