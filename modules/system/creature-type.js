@@ -257,3 +257,5 @@ class SupernaturalType extends CreatureType {
 //TODO where are the type descriptions for animals, intelligent creatures, supernatural and plants
 //TODO spell immunity message
 //TODO poison & disease immunity message
+
+//TODO critical parry weapon damage

@@ -159,7 +159,7 @@ export default function() {
             const roll = message.roll;
             return Promise.all(canvas.tokens.controlled.map(token => {
                 const actor = token.actor;
-                const damage = mode != "sp" ? roll.total - Actordsa5.armorValue(actor.data) : roll.total
+                const damage = mode != "sp" ? roll.total - Actordsa5.armorValue(actor.data).armor : roll.total
                 return actor.applyDamage(Math.max(0, damage));
             }));
         }

@@ -14,6 +14,7 @@ import OpposedDsa5 from "./opposed-dsa5.js";
 import DSAActiveEffectConfig from "../status/active_effects.js"
 import DSA5SoundEffect from "./dsa-soundeffect.js";
 import EquipmentDamage from "./equipment-damage.js";
+import EquipmentDamageDialog from "../dialog/dialog-equipmentdamage.js";
 
 export default class DiceDSA5 {
     static async setupDialog({ dialogOptions, testData, cardOptions }) {
@@ -1011,12 +1012,9 @@ export default class DiceDSA5 {
         if (game.combat) await game.combat.updateDefenseCount(testData.extra.speaker)
     }
 
-
     static _compareWeaponReach(weapon, testData) {
         return Math.min(0, DSA5.meleeRangesArray.indexOf(weapon.data.reach.value) - DSA5.meleeRangesArray.indexOf(testData.opposingWeaponSize)) * 2
     }
-
-
 
     static async rollDices(testData, cardOptions) {
         if (!testData.roll) {
@@ -1386,8 +1384,6 @@ export default class DiceDSA5 {
             name = input.attr("data-name")
 
         let actor = DSA5_Utility.getSpeaker(speaker)
-            //if (!actor && message.data.flags.data)
-            //    actor = new Actordsa5(message.data.flags.data.preData.extra.actor, { temporary: true })
 
         if (actor) {
             const source = actor.data.items.find(x => x.name == name && x.type == category)
@@ -1421,9 +1417,6 @@ export default class DiceDSA5 {
         let newTestData = data.preData;
         newTestData.extra.actor = DSA5_Utility.getSpeaker(newTestData.extra.speaker).toObject(false)
         let index
-
-        //Might need to readd that again
-        //game.user.updateTokenTargets([]);
 
         switch (input.attr("data-edit-type")) {
             case "roll":
@@ -1465,9 +1458,18 @@ export default class DiceDSA5 {
         if (["poison", "disease"].includes(newTestData.source.type)) {
             new Itemdsa5(newTestData.source, { temporary: true })[`${data.postData.postFunction}`]({ testData: newTestData, cardOptions: chatOptions }, { rerenderMessage: message });
         } else {
-            let speaker = DSA5_Utility.getSpeaker(message.data.speaker)
-                //if (!speaker) speaker = new Actordsa5(newTestData.extra.actor, { temporary: true })
+            const speaker = DSA5_Utility.getSpeaker(message.data.speaker)
             speaker[`${data.postData.postFunction}`]({ testData: newTestData, cardOptions: chatOptions }, { rerenderMessage: message });
+        }
+    }
+
+    static async gearDamaged(ev){
+        const ids = ev.currentTarget.dataset.uuid.split(";")
+        if(ids.length > 1){
+            const items = await Promise.all(ids.map((x) => fromUuid(x)))
+            EquipmentDamageDialog.showDialog(items)
+        }else{
+            EquipmentDamage.breakingTest(await fromUuid(ids[0]))
         }
     }
 
@@ -1489,7 +1491,9 @@ export default class DiceDSA5 {
         html.on('click', '.liturgy-botch', () => { Miscast.showBotchCard("Liturgy") })
         html.on('click', '.spell-botch', () => { Miscast.showBotchCard("Spell") })
         html.on('click', '.roll-item', ev => { DiceDSA5._itemRoll(ev) })
-        html.on('click', '.gearDamaged', async (ev) => { EquipmentDamage.breakingTest(await fromUuid(ev.currentTarget.dataset.uuid)) })
+        html.on('click', '.gearDamaged', async (ev) => {
+           DiceDSA5.gearDamaged(ev)
+        })
         html.on('change', '.roll-edit', ev => { DiceDSA5._rollEdit(ev) })
         html.on('change', '.editGC', ev => { DiceDSA5._editGC(ev) })
         html.on('click', '.applyEffect', ev => {

@@ -402,9 +402,10 @@ export default class Actordsa5 extends Actor {
     }
 
     static armorValue(actor) {
-        const wornArmor = actor.items.filter(x => x.type == "armor" && x.data.data.worn.value == true).reduce((a, b) => a + EquipmentDamage.armorWearModifier(b.data, b.data.data.protection.value), 0)
+        const wornArmor = actor.items.filter(x => x.type == "armor" && x.data.data.worn.value == true)
+        const protection = wornArmor.reduce((a, b) => a + EquipmentDamage.armorWearModifier(b.data, b.data.data.protection.value), 0)
         const animalArmor = actor.items.filter(x => x.type == "trait" && x.data.data.traitType.value == "armor").reduce((a, b) => a + Number(b.data.data.at.value), 0)
-        return wornArmor + animalArmor + (actor.data.totalArmor || 0)
+        return { wornArmor, armor: protection + animalArmor + (actor.data.totalArmor || 0)}
     }
 
     static _calculateCombatSkillValues(i, actorData) {

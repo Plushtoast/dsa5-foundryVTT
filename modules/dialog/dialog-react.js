@@ -124,7 +124,7 @@ export class ActAttackDialog extends Dialog {
             })
         }
 
-        return await renderTemplate('systems/dsa5/templates/dialog/dialog-reaction-attack.html', { items: items, title: "DIALOG.selectAction" })
+        return await renderTemplate('systems/dsa5/templates/dialog/dialog-reaction-attack.html', { items, title: "DIALOG.selectAction" })
     }
     callbackResult(text, actor, tokenId) {
         if ("attackWeaponless" == text) {

@@ -2,6 +2,7 @@ import DSA5_Utility from "./utility-dsa5.js";
 import DiceDSA5 from "./dice-dsa5.js";
 import { ReactToAttackDialog, ReactToSkillDialog } from "../dialog/dialog-react.js"
 import Actordsa5 from "../actor/actor-dsa5.js";
+import EquipmentDamage from "./equipment-damage.js";
 
 export default class OpposedDsa5 {
     static async handleOpposedTarget(message) {
@@ -324,7 +325,10 @@ export default class OpposedDsa5 {
 
     static _evaluateWeaponOpposedRoll(attackerTest, defenderTest, opposeResult, options = {}) {
         if (attackerTest.successLevel > 0 && defenderTest.successLevel < 0) {
-            let damage = this._calculateOpposedDamage(attackerTest, defenderTest, options)
+            const damage = this._calculateOpposedDamage(attackerTest, defenderTest, options)
+            if (damage.armorDamaged.damaged && damage.armorDamaged.ids.length)
+                opposeResult.other.push(`<div class="center"><button class="gearDamaged onlyTarget" data-uuid="${damage.armorDamaged.ids.join(";")}">${game.i18n.localize('WEAR.checkShort')}</button></div>`)
+
             opposeResult.winner = "attacker"
             let title = [`${damage.armorMod != 0 ? damage.armorMod + " " + game.i18n.localize('Modifier') : ""}`, `${damage.armorMultiplier != 0 ? "*" + damage.armorMultiplier + " " + game.i18n.localize('Modifier') : "" }`]
             let description = `<b>${game.i18n.localize("damage")}</b>: ${damage.damage} - <span title="${title.join("")}">${damage.armor} (${game.i18n.localize("protection")})</span> = ${damage.sum}`
@@ -340,7 +344,7 @@ export default class OpposedDsa5 {
 
     static _calculateOpposedDamage(attackerTest, defenderTest, options = {}) {
         const actor = DSA5_Utility.getSpeaker(defenderTest.speaker).data
-        let armor = Actordsa5.armorValue(actor, options)
+        let {wornArmor, armor} = Actordsa5.armorValue(actor, options)
         let multipliers = []
         let armorMod = 0
         for(const mod of (attackerTest.armorPen || [])){
@@ -348,15 +352,15 @@ export default class OpposedDsa5 {
             else armorMod += Number(mod)
         }
         armor += armorMod
-        let armorMultiplier = 1
-        for(const mod of multipliers){
-            armorMultiplier = armorMultiplier * mod
-        }
-        armor = Math.round(armor * armorMultiplier)
-        armor = Math.max(armor, 0)
+        const armorMultiplier = multipliers.reduce((sum, x) => {return sum * x}, 1)
+        armor = Math.max(Math.round(armor * armorMultiplier), 0)
+        const armorDamaged = EquipmentDamage.armorGetsDamage(attackerTest.damage, attackerTest)
+        const ids = wornArmor.map(x => x.uuid)
+
         return {
             damage: attackerTest.damage,
             armor,
+            armorDamaged: {damaged: armorDamaged, ids },
             armorMod,
             armorMultiplier,
             sum: attackerTest.damage - armor

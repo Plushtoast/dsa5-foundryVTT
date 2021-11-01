@@ -1099,7 +1099,8 @@
         "onlyCompendiumSpells": "Nur Zauber aus Kompendien können verwendet werden",
         "enchantmentNotFound": "Referenzierter Zauber konnte nicht gefunden werden",
         "nestedEffectNotSupported": "Foundry unterstützt das Hinzufügen von Effekten derzeit nur im Item Directory.",
-        "noBreakingResistance": "Keinen Bruchfaktorwert für {item} gefunden."
+        "noBreakingResistance": "Keinen Bruchfaktorwert für {item} gefunden.",
+        "noBreakingStructure": "{name} hat keinen akzeptierten maximalen Strukturwert."
     },
     "Shapeshift": {
         "title": "Gestaltwandlung",

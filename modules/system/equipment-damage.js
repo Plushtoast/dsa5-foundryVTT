@@ -18,6 +18,10 @@ export default class EquipmentDamage {
     return Math.max(0, Number(armorValue))
   }
 
+  static armorGetsDamage(damage, attackData){
+    return (damage > 14 || attackData.successLevel > 1) && game.settings.get("dsa5", "armorAndWeaponDamage")
+  }
+
   static armorEncumbranceModifier(armor){
     if (game.settings.get("dsa5", "armorAndWeaponDamage")) {
       if (EquipmentDamage.calculateWear(armor) > 1) return 1
@@ -26,9 +30,13 @@ export default class EquipmentDamage {
   }
 
   static async showDamageToGear(preData, testData){
+    console.log(preData, testData)
+    console.log(`${game.i18n.localize('MODS.defenseMalus')} - ${game.i18n.localize('halfDefenseShort')}`)
     if (game.settings.get("dsa5", "armorAndWeaponDamage")) {
       const source = preData.source
-      if(testData.successLevel < -1 && ["meleeweapon","rangeweapon","armor"].includes(source.type)){
+      if (source._id && source.data.structure && (testData.successLevel < -1 ||
+        preData.situationalModifiers.some(x => x.name.trim() == `${game.i18n.localize('MODS.defenseMalus')} - ${game.i18n.localize('halfDefenseShort')}`))
+        && ["meleeweapon","rangeweapon","armor"].includes(source.type)){
         const actor = await DSA5_Utility.getSpeaker(testData.speaker)
         return actor.items.get(source._id).uuid
       }
@@ -37,7 +45,8 @@ export default class EquipmentDamage {
   }
 
   static breakingTest(item){
-    if(item.data.data.structure.max <= 0 || !item) return
+    if (!item) return ui.notifications.warn(game.i18n.format("DSAError.notfound", { category: "", name: game.i18n.localize("equipment") }))
+    if (item.data.data.structure.max <= 0) return ui.notifications.warn(game.i18n.format("DSAError.noBreakingStructure", { name: item.name }))
 
     let breakingResistance = 0
     let category
@@ -119,7 +128,7 @@ export default class EquipmentDamage {
   }
 
   static calculateWear(itemData) {
-    if (Number(itemData.data.structure.max <= 0)) return 0
+    if (!itemData.data.structure || Number(itemData.data.structure.max <= 0)) return 0
 
     return Math.floor((1 - itemData.data.structure.value / itemData.data.structure.max) * 4)
   }

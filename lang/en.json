@@ -1068,7 +1068,8 @@
         "onlyCompendiumSpells": "Only spells from compendiums can be used",
         "enchantmentNotFound": "Referenced spell not found",
         "nestedEffectNotSupported": "Foundry currently only supports adding of effects through the item directory.",
-        "noBreakingResistance": "No Breaking Point Rating found for {item}."
+        "noBreakingResistance": "No Breaking Point Rating found for {item}.",
+        "noBreakingStructure": "{name} has no accepted max structure value."
     },
     "CEREMONYMODIFIER": {
         "holysite": "Sanctum of the god (+2)",
