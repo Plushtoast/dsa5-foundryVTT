@@ -288,7 +288,7 @@
     "initialize": "Initialisieren",
     "interruption": "Unterbrechung",
     "increaseRange": "Reichweite erhöhen",
-    "importDefault": "<div class=\"detailbox\"><p>DAS SCHWARZE AUGE, AVENTURIEN, DERE, MYRANOR, RIESLAND, THARUN, UTHURIA und THE DARK EYE sind eingetragene Marken der Ulisses Spiele GmbH, Waldems.</p><p>Copyright © 2020 by Ulisses Spiele GmbH. Alle Rechte vorbehalten.</p><p>Titel und Inhalte dieses Werkes sind urheberrechtlich geschützt. Der Nachdruck, auch auszugsweise, die Bearbeitung, Verarbeitung, Verbreitung und Vervielfältigung des Werkes in jedweder Form, insbesondere die Vervielfältigung auf photomechanischem, elektronischem oder ähnlichem Weg, sind nur mit schriftlicher Genehmigung der Ulisses Spiele GmbH, Waldems, gestattet.</p></div>",
+    "importDefault": "<div class=\"detailbox\"><p>DAS SCHWARZE AUGE, AVENTURIEN, DERE, MYRANOR, RIESLAND, THARUN, UTHURIA und THE DARK EYE sind eingetragene Marken der Ulisses Spiele GmbH, Waldems.</p><p>Copyright © 2021 by Ulisses Spiele GmbH. Alle Rechte vorbehalten.</p><p>Titel und Inhalte dieses Werkes sind urheberrechtlich geschützt. Der Nachdruck, auch auszugsweise, die Bearbeitung, Verarbeitung, Verbreitung und Vervielfältigung des Werkes in jedweder Form, insbesondere die Vervielfältigung auf photomechanischem, elektronischem oder ähnlichem Weg, sind nur mit schriftlicher Genehmigung der Ulisses Spiele GmbH, Waldems, gestattet.</p></div>",
     "incubation": "Inkubationszeit",
     "interval": "Intervall",
     "increaseCastingTime": "Zauber-/Liturgiedauer erhöhen",
@@ -672,7 +672,9 @@
         "foundryUsage": "Foundry & DSA",
         "search": "Durchsuchen",
         "foundryUsagedesc": "<p>Mehr Informationen über die Verwendung von Foundry gibt's im <a href=\"https://github.com/Plushtoast/dsa5-foundryVTT/wiki\" target=\"_blank\">Wiki</a>.</p><p>Schnelle Hilfe kannst du im Ulisses Discord oder Foundry Discord bekommen.</p><p>Den Journalbrowser verwenden:<ul class=\"dsalist\"><li>Mit einem Rechtsklick auf Bilder kannst du diese separat anzeigen und deinen Spielern zeigen</li><li>Da die Module Kopien der Printausgaben sind, können Verweise und Formulierungen auf das jeweilige Printprodukt hinweisen und im Spiel abweichen.</li><li>Einge der Akteure der Abenteuer haben möglicherweise keinen Token und keine Statistiken, da diese nur eine sehr kleine erzählerische Rolle einnehmen. Falls Würfelwürfe notwendig sind, kannst du diese über das Chatcommand <b>/ch</b> improvisieren.</li><li>Wichtige Kreaturen und Charaktere haben gewöhnlicherweise noch extra Informationen im Charakterblatt.</li></ul></p>",
-        "fulltextsearch": "Volltextsuche"
+        "fulltextsearch": "Volltextsuche",
+        "sceneReset": "Szene aktualisieren",
+        "sceneResetDescription": "Die Szene <b>{name}</b> wurde bereits importiert. Möchtest du diese zurücksetzen?<br/> Es werden alle Änderungen und Token entfernt."
     },
     "Migrakel": {
         "Migration": "Actor Migration",

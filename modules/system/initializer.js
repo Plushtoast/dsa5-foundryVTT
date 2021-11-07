@@ -96,11 +96,20 @@ export default class DSA5Initializer extends Dialog {
             }
             if (json.items) {
                 let head = await this.getFolderForType("Item")
-
-                for (let k of json.items)
+                let itemsToCreate = []
+                let itemsToUpdate = []
+                for (let k of json.items) {
                     k.folder = head.id
-
-                await Itemdsa5.create(json.items)
+                    let existingItem = game.items.find(x => x.name == k.name && x.data.folder == head.id)
+                    if (existingItem) {
+                        k._id = existingItem.data._id
+                        itemsToUpdate.push(k)
+                    } else {
+                        itemsToCreate.push(k)
+                    }
+                }
+                await Itemdsa5.create(itemsToCreate)
+                await Itemdsa5.updateDocuments(itemsToUpdate)
             }
             if (json.scenes) {
                 let head = await this.getFolderForType("Scene")
@@ -109,8 +118,48 @@ export default class DSA5Initializer extends Dialog {
                 let journal = game.packs.get(json.journal)
                 let journs = (await journal.getDocuments()).map(x => x.toObject())
                 let journHead = await this.getFolderForType("JournalEntry")
+                let scenesToCreate = []
+                let scenesToUpdate = []
                 let finishedIds = new Map()
+                let resetAll = false
                 for (let entry of entries) {
+                    let resetScene = resetAll
+                    let found = game.scenes.find(x => x.name == entry.name && x.data.folder == head.id)
+                    if (!resetAll && found) {
+                        [resetScene, resetAll] = await new Promise((resolve, reject) => {
+                            new Dialog({
+                                title: game.i18n.localize("Book.sceneReset"),
+                                content: game.i18n.format("Book.sceneResetDescription", { name: entry.name }),
+                                default: 'yes',
+                                buttons: {
+                                    Yes: {
+                                        icon: '<i class="fa fa-check"></i>',
+                                        label: game.i18n.localize("yes"),
+                                        callback: () => {
+                                            resolve([true, false])
+                                        }
+                                    },
+                                    all: {
+                                        icon: '<i class="fa fa-check"></i>',
+                                        label: game.i18n.localize("LocalizedIDs.all"),
+                                        callback: () => {
+                                            resolve([true, true])
+                                        }
+                                    },
+                                    cancel: {
+                                        icon: '<i class="fas fa-times"></i>',
+                                        label: game.i18n.localize("cancel"),
+                                        callback: () => {
+                                            resolve([false, false])
+                                        }
+                                    }
+                                },
+                                close: () => { resolve([false, false]) }
+                            }).render(true)
+                        })
+                    }
+                    if (found && !resetScene) continue
+
                     entry.folder = head.id
                     for (let n of entry.notes) {
                         try {
@@ -118,8 +167,16 @@ export default class DSA5Initializer extends Dialog {
                             if (!(finishedIds.has(journ._id))) {
 
                                 journ.folder = journHead.id
-                                let createdEntries = await JournalEntry.create(journ)
-                                finishedIds.set(journ._id, createdEntries.id)
+
+                                let existingJourn = game.journal.find(x => x.name == journ.name && x.data.folder == journHead.id && x.data.flags.dsa5.initId == n.entryId)
+                                if (existingJourn) {
+                                    await existingJourn.update(journ)
+                                    finishedIds.set(journ._id, existingJourn.id)
+                                } else {
+                                    let createdEntries = await JournalEntry.create(journ)
+                                    finishedIds.set(journ._id, createdEntries.id)
+                                }
+
                             }
 
                             n.entryId = finishedIds.get(journ._id)
@@ -127,10 +184,22 @@ export default class DSA5Initializer extends Dialog {
                             console.warn("Could not initialize Scene Notes" + e)
                         }
                     }
+                    if (!found) scenesToCreate.push(entry)
+                    else {
+                        entry._id = found.data._id
+                        scenesToUpdate.push(entry)
+                    }
                 }
-                let createdEntries = await Scene.create(entries)
+                let createdEntries = await Scene.create(scenesToCreate)
                 for (let entry of createdEntries) {
                     this.scenes[entry.data.name] = entry;
+                }
+                //await Scene.update(scenesToUpdate)
+                //TODO this does not properly update walls?
+                for (let entry of scenesToUpdate) {
+                    let scene = game.scenes.get(entry._id)
+                    await scene.update(entry)
+                    this.scenes[entry.name] = game.scenes.get(entry._id);
                 }
 
                 if (json.initialScene) {
@@ -145,7 +214,10 @@ export default class DSA5Initializer extends Dialog {
                 let head = await this.getFolderForType("Actor")
                 let actor = game.packs.get(json.actors)
                 let entries = (await actor.getDocuments()).map(x => x.toObject())
+                let entriesToCreate = []
+                let entriesToUpdate = []
                 let actorFolders = new Map()
+                let sort = 0
                 if (getProperty(bookData, "chapters")) {
                     for (const chapter of bookData.chapters) {
                         for (const subChapter of chapter.content) {
@@ -157,7 +229,10 @@ export default class DSA5Initializer extends Dialog {
                                         subChapterHasActors = true
                                     }
                                 }
-                                if (subChapterHasActors) await this.getFolderForType("Actor", head.id, subChapter.name)
+                                if (subChapterHasActors) {
+                                    await this.getFolderForType("Actor", head.id, subChapter.name, sort)
+                                    sort += 1
+                                }
                             }
                         }
                     }
@@ -167,8 +242,17 @@ export default class DSA5Initializer extends Dialog {
 
                     entry.folder = parentFolder.id
                     if (entry._id) delete entry._id
+
+                    let existingActor = game.actors.find(x => x.name == entry.name && [head.id, parentFolder.id].includes(x.data.folder))
+                    if (existingActor) {
+                        entry._id = existingActor.data._id
+                        entriesToUpdate.push(entry)
+                    } else {
+                        entriesToCreate.push(entry)
+                    }
                 }
-                let createdEntries = await Actor.create(entries)
+                let createdEntries = await Actor.create(entriesToCreate)
+                await Actor.updateDocuments(entriesToUpdate)
                 for (let entry of createdEntries) {
                     this.actors[entry.data.name] = entry;
                 }
@@ -198,7 +282,7 @@ export default class DSA5Initializer extends Dialog {
         }
     }
 
-    async getFolderForType(entityType, parent = null, folderName = null) {
+    async getFolderForType(entityType, parent = null, folderName = null, sort = 0) {
         if (!folderName) folderName = game.i18n.localize(`${this.module}.name`)
 
         let folder = await game.folders.contents.find(x => x.name == folderName && x.type == entityType && x.data.parent == parent)
@@ -208,6 +292,7 @@ export default class DSA5Initializer extends Dialog {
                 type: entityType,
                 sorting: "m",
                 color: "",
+                sort,
                 parent
             })
         }
