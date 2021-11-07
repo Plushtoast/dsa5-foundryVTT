@@ -13,7 +13,8 @@
         "Plant": "PlantType",
         "Animal": "AnimalType",
         "Undead": "UndeadType",
-        "Supernatural creature": "SupernaturalType"
+        "Supernatural creature": "SupernaturalType",
+        "magical construct": "MagicalConstructType"
     },
     "godOfLife": [
         "Tsa"

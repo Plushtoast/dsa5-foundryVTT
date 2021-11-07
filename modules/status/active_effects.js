@@ -9,11 +9,15 @@ export default class DSAActiveEffectConfig extends ActiveEffectConfig {
 
     async _render(force = false, options = {}) {
         await super._render(force, options);
-
-        const advancedFunctions = ["none", "systemEffect", "macro", "creature"].map(x => `ActiveEffects.advancedFunctions.${x}`)
+        let index = -1
+        const advancedFunctions = ["none", "systemEffect", "macro", "creature"].map(x => { return { name: `ActiveEffects.advancedFunctions.${x}`, index: index += 1 } })
         const itemType = getProperty(this.object, "parent.type")
         const effectConfigs = {
-            hasSpellEffects: ["spell", "liturgy", "ritual", "ceremony", "consumable", "poison", "disease", "ammunition"].includes(itemType) || ((["specialability"].includes(itemType) && getProperty(this.object, "parent.data.data.category.value") == "Combat"))
+            hasSpellEffects: ["spell", "liturgy", "ritual", "ceremony", "consumable", "poison", "disease", "ammunition"].includes(itemType) || ((["specialability"].includes(itemType) && getProperty(this.object, "parent.data.data.category.value") == "Combat")),
+            hasDamageTransformation: ["ammunition"].includes(itemType)
+        }
+        if (effectConfigs.hasDamageTransformation) {
+            advancedFunctions.push({ name: 'ActiveEffects.advancedFunctions.armorPostprocess', index: 4 }, { name: 'ActiveEffects.advancedFunctions.damagePostprocess', index: 5 })
         }
         const config = {
             systemEffects: this.getStatusEffects(),
@@ -47,6 +51,26 @@ export default class DSAActiveEffectConfig extends ActiveEffectConfig {
     getData(options) {
         const data = super.getData(options);
         return data
+    }
+
+    static applyRollTransformation(actor, options, functionID) {
+        let msg = ""
+        let source = options.origin
+        for (const ef of source.effects) {
+            try {
+                if (Number(getProperty(ef, "flags.dsa5.advancedFunction")) == functionID) {
+                    eval(getProperty(ef, "flags.dsa5.args3"))
+                }
+
+
+            } catch (exception) {
+                console.warn("Unable to apply advanced effect")
+                console.warn(exception)
+                console.warn(ef)
+            }
+        }
+        options.origin = source
+        return { msg, options }
     }
 
     static async applyAdvancedFunction(actor, effects, source, testData) {

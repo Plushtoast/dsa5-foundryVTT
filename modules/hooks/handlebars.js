@@ -16,6 +16,7 @@ export default function() {
         diceThingsUp: DSA5_Utility.replaceDies,
         replaceConditions: DSA5_Utility.replaceConditions,
         floor: (a) => Math.floor(Number(a)),
+        hasElem: (a, b) => a.includes(b),
         grouped_each: (every, context, options) => {
             let out = "",
                 subcontext = [],

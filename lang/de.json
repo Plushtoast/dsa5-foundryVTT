@@ -936,13 +936,16 @@
         "custom": "Sondereffekt",
         "creature": "Akteuerlink (z.b. das5-core.corebestiary.Gotongi)",
         "placeholder": {
-            "macros": "Macros können auf diese Variablen zugreifen:\nactor - Der anvisierte Akteur\ntestData - All Daten für die aktuelle Probe\nsource - Die Quelle des Macros"
+            "macros": "Macros können auf diese Variablen zugreifen:\nactor - Der anvisierte Akteur\ntestData - All Daten für die aktuelle Probe\nsource - Die Quelle des Macros",
+            "armorPostprocess": "Rüstungstransformation können auf diese Variablen zugreifen:\nactor - Der anvisierte Akteur\noptions.armor - Die Rüstungs des Ziels\noptions.attackItem - Die Quelle des Macros"
         },
         "advancedFunctions": {
             "none": "Nothing",
             "systemEffect": "Systemeffekt",
             "macro": "Macro",
-            "creature": "Beschwörung/Gestaltwandlung"
+            "creature": "Beschwörung/Gestaltwandlung",
+            "armorPostprocess": "Rüstungstransformation (Macro)",
+            "damagePostprocess": "Schadenstransformation (Macro)"
         }
     },
     "ROLL": {
@@ -1043,23 +1046,23 @@
         "Crossbows": "Armbrüste"
     },
     "LocalizedCTs": {
-        "Blasrohre": "Blowpipes" ,
-        "Bögen":"Bows",
-        "Raufen":"Brawling" ,
-        "Kettenwaffen":"Chain Weapons" ,
-        "Armbrüste": "Crossbows" ,
+        "Blasrohre": "Blowpipes",
+        "Bögen": "Bows",
+        "Raufen": "Brawling",
+        "Kettenwaffen": "Chain Weapons",
+        "Armbrüste": "Crossbows",
         "Dolche": "Daggers",
-        "Diskusse": "Discuses" ,
-        "Fächer":"Fans",
+        "Diskusse": "Discuses",
+        "Fächer": "Fans",
         "Fechtwaffen": "Fencing Weapons",
         "Hiebwaffen": "Impact Weapons",
         "Lanzen": "Lances",
         "Spießwaffen": "Pikes",
-        "Stangenwaffen": "Polearms" ,
+        "Stangenwaffen": "Polearms",
         "Schilde": "Shields",
         "Schleudern": "Slingshots",
-        "Schwerter": "Swords" ,
-        "Wurfwaffen": "Throwing Weapons" ,
+        "Schwerter": "Swords",
+        "Wurfwaffen": "Throwing Weapons",
         "Zweihandhiebwaffen": "Two-Handed Impact Weapons",
         "Zweihandschwerter": "Two-Handed Swords",
         "Peitschen": "Whips"

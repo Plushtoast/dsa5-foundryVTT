@@ -21,7 +21,7 @@
         <select class="advancedSelector" name="flags.dsa5.advancedFunction" data-dtype="String">
             {{#select effect.flags.dsa5.advancedFunction}}
             {{#each advancedFunctions as |item i|}}
-            <option value="{{i}}">{{localize item}}</option>
+            <option value="{{item.index}}">{{localize item.name}}</option>
             {{/each}}
             {{/select}}
         </select>

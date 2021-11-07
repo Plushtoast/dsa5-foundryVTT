@@ -25,4 +25,18 @@
     <label class="label-text">{{localize 'ActiveEffects.creature'}}</label>
     <input type="text" name="flags.dsa5.args4" value="{{effect.flags.dsa5.args4}}" />
 </div>
+{{/if}} {{#if (eq effect.flags.dsa5.advancedFunction '4')}}
+<div class="form-group full-height">
+    <label class="label-text">{{localize 'ActiveEffects.advancedFunctions.armorPostprocess'}}</label> {{#if config.canEditMacros}}
+    <textarea class="input-text" rows="10" type="text" name="flags.dsa5.args3" placeholder="{{localize 'ActiveEffects.placeholder.armorPostprocess'}}">{{effect.flags.dsa5.args3}}</textarea> {{else}}
+    <p class="input-text">{{#if effect.flags.dsa5.args3}}{{effect.flags.dsa5.args3}}{{else}} - {{/if}}</p>
+    {{/if}}
+</div>
+{{/if}} {{#if (eq effect.flags.dsa5.advancedFunction '5')}}
+<div class="form-group full-height">
+    <label class="label-text">{{localize 'ActiveEffects.advancedFunctions.damagePostprocess'}}</label> {{#if config.canEditMacros}}
+    <textarea class="input-text" rows="10" type="text" name="flags.dsa5.args3" placeholder="{{localize 'ActiveEffects.placeholder.armorPostprocess'}}">{{effect.flags.dsa5.args3}}</textarea> {{else}}
+    <p class="input-text">{{#if effect.flags.dsa5.args3}}{{effect.flags.dsa5.args3}}{{else}} - {{/if}}</p>
+    {{/if}}
+</div>
 {{/if}}

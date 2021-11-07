@@ -32,6 +32,8 @@
         "The module \"times-up\" can automatically remove active effects once they expired.",
         "There is a TDE module to attach a sound to every action.",
         "You can automate spells via macros. Many spells from the official modules already contain those macros.",
-        "You need to target tokens to take advantage of the opposed test system e.g. for combats."
+        "You need to target tokens to take advantage of the opposed test system e.g. for combats.",
+        "You should avoid importing stuff from compendiums at all time and never import the whole compendium if possible (bad performance, no bugfixes and updates).",
+        "Foundry selbst beinhaltet auch bereits tausende Icons für Ausrüstung."
     ]
 }

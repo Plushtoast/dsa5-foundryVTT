@@ -251,8 +251,20 @@ class SupernaturalType extends CreatureType {
 
 }
 
+class MagicalConstructType extends CreatureType {
+    constructor(creatureClass) {
+        super(creatureClass)
+        this.spellImmunities = ['Transformation'].map(x => game.i18n.localize(`Features.${x}`))
+        this.poisonImmunity = true
+        this.diseaseImmunity = true
+    }
+    ignoredCondition(condition) {
+        return !["stunned", "feared", "paralysed", "confused"].includes(condition)
+    }
+}
+
 //TODO where are the type descriptions for animals, intelligent creatures, supernatural and plants
 //TODO spell immunity message
 //TODO poison & disease immunity message
 
-//TODO icons for damaged weapons
+//TODO vampire, werewolf

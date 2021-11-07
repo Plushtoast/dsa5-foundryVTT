@@ -33,6 +33,8 @@
         "Es gibt ein DSA Modul um jede Aktion mit einem Interface Ton auszustatten.",
         "Im Kompendium kannst du Regeln für Trefferzonen aktivieren.",
         "Du kannst Zauber per Macro für alle möglichen Effekte automatisieren. Viele vorgefertigte Zauber aus den offiziellen Modulen beinhalten solche Makros bereits.",
-        "Du musst Tokens ins Ziel nehmen, um von der Automatisierung von Vergleichsproben zu profitieren."
+        "Du musst Tokens ins Ziel nehmen, um von der Automatisierung von Vergleichsproben zu profitieren.",
+        "Du solltest Dinge aus Kompendien nur importieren falls es unbedingt erforderlich ist und niemals das komplette Kompendium (keine Bugfixes und Updates, schlechte Performance).",
+        "Foundry itself already includes several thousand icons for gear."
     ]
 }

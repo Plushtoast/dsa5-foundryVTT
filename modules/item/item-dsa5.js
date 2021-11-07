@@ -131,13 +131,13 @@ export default class Itemdsa5 extends Item {
         }
     }
 
-    static addCreatureTypeModifiers(actorData, source, situationalModifiers){
+    static addCreatureTypeModifiers(actorData, source, situationalModifiers) {
         const creatureTypes = CreatureType.detectCreatureType(actorData)
         const isSpell = ["spell", "ceremony", "liturgy", "ritual"].includes(source.type)
         for (let k of creatureTypes) {
             const modifiers = k.damageModifier(source)
-            if (isSpell){
-                for(let mod of modifiers){
+            if (isSpell) {
+                for (let mod of modifiers) {
                     mod.armorPen = k.spellResistanceModifier(actorData)
                 }
             }
@@ -181,9 +181,9 @@ export default class Itemdsa5 extends Item {
         if (game.user.targets.size) {
             game.user.targets.forEach(target => {
                 let spellResistance = 0
-                if (hasSpellResistance){
+                if (hasSpellResistance) {
                     const creatureTypes = CreatureType.detectCreatureType(target.actor.data)
-                    spellResistance = creatureTypes.reduce((sum, x) => {return sum + x.spellResistanceModifier(target.actor.data)}, 0)
+                    spellResistance = creatureTypes.reduce((sum, x) => { return sum + x.spellResistanceModifier(target.actor.data) }, 0)
                 }
 
                 skMod.push(target.actor.data.data.status.soulpower.max * -1 - spellResistance)
@@ -1211,7 +1211,7 @@ class RangeweaponItemDSA5 extends Itemdsa5 {
             }
             let currentAmmo = actor.items.get(source.data.currentAmmo.value)
             if (currentAmmo) {
-                if(currentAmmo.data.data.atmod){
+                if (currentAmmo.data.data.atmod) {
                     situationalModifiers.push({
                         name: `${currentAmmo.name} - ${game.i18n.localize('atmod')}`,
                         value: currentAmmo.data.data.atmod,
@@ -1230,6 +1230,7 @@ class RangeweaponItemDSA5 extends Itemdsa5 {
                     if (currentAmmo.data.data.armorMod) dmgMod["armorPen"] = currentAmmo.data.data.armorMod
                     situationalModifiers.push(dmgMod)
                 }
+
             }
 
             const defenseMalus = Number(actor.data.data.rangeStats.defenseMalus) * -1

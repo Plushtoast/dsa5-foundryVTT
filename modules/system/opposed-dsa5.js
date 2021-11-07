@@ -3,6 +3,7 @@ import DiceDSA5 from "./dice-dsa5.js";
 import { ReactToAttackDialog, ReactToSkillDialog } from "../dialog/dialog-react.js"
 import Actordsa5 from "../actor/actor-dsa5.js";
 import EquipmentDamage from "./equipment-damage.js";
+import DSAActiveEffectConfig from "../status/active_effects.js";
 
 export default class OpposedDsa5 {
     static async handleOpposedTarget(message) {
@@ -54,6 +55,8 @@ export default class OpposedDsa5 {
             messageId: attackMessage.data._id,
             img: DSA5_Utility.getSpeaker(actor.data.flags.oppose.speaker).data.img
         };
+        attacker.testResult.source = attackMessage.data.flags.data.preData.source
+        if (attacker.testResult.ammo) attacker.testResult.source.effects.push(...attacker.testResult.ammo.effects)
 
         let defender = {
             speaker: message.data.speaker,
@@ -205,12 +208,14 @@ export default class OpposedDsa5 {
     }
 
     static getMessageDude(message) {
-        return {
+        let res = {
             speaker: message.data.speaker,
-            testResult: message.data.flags.data.postData,
+            testResult: mergeObject(message.data.flags.data.postData, { source: attackMessage.data.flags.data.preData.source }),
             img: DSA5_Utility.getSpeaker(message.data.speaker).data.img,
             messageId: message.data._id
         }
+        if (res.testResult.ammo) res.testResult.source.effects.push(...res.testResult.ammo.effects)
+        return res
     }
 
     static async showDamage(message, hide = false) {
@@ -344,26 +349,31 @@ export default class OpposedDsa5 {
 
     static _calculateOpposedDamage(attackerTest, defenderTest, options = {}) {
         const actor = DSA5_Utility.getSpeaker(defenderTest.speaker).data
-        let {wornArmor, armor} = Actordsa5.armorValue(actor, options)
+        options.origin = attackerTest.source
+        options.damage = attackerTest.damage
+
+        let damage = DSAActiveEffectConfig.applyRollTransformation(actor, options, 5).options.damage
+        let { wornArmor, armor } = Actordsa5.armorValue(actor, options)
+
         let multipliers = []
         let armorMod = 0
-        for(const mod of (attackerTest.armorPen || [])){
-            if(/^\*/.test(mod)) multipliers.push(Number(mod.replace("*","")))
+        for (const mod of(attackerTest.armorPen || [])) {
+            if (/^\*/.test(mod)) multipliers.push(Number(mod.replace("*", "")))
             else armorMod += Number(mod)
         }
         armor += armorMod
-        const armorMultiplier = multipliers.reduce((sum, x) => {return sum * x}, 1)
+        const armorMultiplier = multipliers.reduce((sum, x) => { return sum * x }, 1)
         armor = Math.max(Math.round(armor * armorMultiplier), 0)
-        const armorDamaged = EquipmentDamage.armorGetsDamage(attackerTest.damage, attackerTest)
+        const armorDamaged = EquipmentDamage.armorGetsDamage(damage, attackerTest)
         const ids = wornArmor.map(x => x.uuid)
 
         return {
-            damage: attackerTest.damage,
+            damage,
             armor,
-            armorDamaged: {damaged: armorDamaged, ids },
+            armorDamaged: { damaged: armorDamaged, ids },
             armorMod,
             armorMultiplier,
-            sum: attackerTest.damage - armor
+            sum: damage - armor
         }
     }
 
@@ -438,6 +448,8 @@ export default class OpposedDsa5 {
             testResult: attackMessage.data.flags.data.postData,
             messageId: unopposeData.attackMessageId
         }
+        attacker.testResult.source = attackMessage.data.flags.data.preData.source
+        if (attacker.testResult.ammo) attacker.testResult.source.effects.push(...attacker.testResult.ammo.effects)
 
         let target = canvas.tokens.get(unopposeData.targetSpeaker.token)
         let defender = {
@@ -449,7 +461,6 @@ export default class OpposedDsa5 {
                 }
             }
         }
-
         await this.clearOpposed(target.actor)
 
         await this.completeOpposedProcess(attacker, defender, {

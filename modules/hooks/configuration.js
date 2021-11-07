@@ -249,7 +249,7 @@ export default function() {
 
     game.settings.register("dsa5", "disableDidYouKnow", {
         name: "DSASETTINGS.disableDidYouKnow",
-        hint: "DSASETTINGS.disableDidYouKnow",
+        hint: "DSASETTINGS.disableDidYouKnowHint",
         scope: "client",
         config: true,
         default: false,

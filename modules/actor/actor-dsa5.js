@@ -11,6 +11,7 @@ import TraitRulesDSA5 from "../system/trait-rules-dsa5.js";
 import RuleChaos from "../system/rule_chaos.js";
 import { tinyNotification } from "../system/view_helper.js";
 import EquipmentDamage from "../system/equipment-damage.js";
+import DSAActiveEffectConfig from "../status/active_effects.js";
 
 export default class Actordsa5 extends Actor {
     static async create(data, options) {
@@ -401,8 +402,11 @@ export default class Actordsa5 extends Actor {
         return actorData.canAdvance
     }
 
-    static armorValue(actor) {
-        const wornArmor = actor.items.filter(x => x.type == "armor" && x.data.data.worn.value == true)
+    static armorValue(actor, options = {}) {
+        let wornArmor = actor.items.filter(x => x.type == "armor" && x.data.data.worn.value == true)
+        if (options.origin) {
+            wornArmor = wornArmor.map(armor => DSAActiveEffectConfig.applyRollTransformation(actor, mergeObject(options, { armor }), 4).options.armor)
+        }
         const protection = wornArmor.reduce((a, b) => a + EquipmentDamage.armorWearModifier(b.data, b.data.data.protection.value), 0)
         const animalArmor = actor.items.filter(x => x.type == "trait" && x.data.data.traitType.value == "armor").reduce((a, b) => a + Number(b.data.data.at.value), 0)
         return { wornArmor, armor: protection + animalArmor + (actor.data.totalArmor || 0) }
@@ -1496,7 +1500,6 @@ export default class Actordsa5 extends Actor {
             }
             EquipmentDamage.weaponWearModifier(item)
             item.damageToolTip = EquipmentDamage.damageTooltip(item)
-            console.log(item.damageToolTip)
         } else {
             ui.notifications.error(game.i18n.format("DSAError.unknownCombatSkill", { skill: item.data.combatskill.value, item: item.name }))
         }
