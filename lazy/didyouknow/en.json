@@ -34,6 +34,14 @@
         "You can automate spells via macros. Many spells from the official modules already contain those macros.",
         "You need to target tokens to take advantage of the opposed test system e.g. for combats.",
         "You should avoid importing stuff from compendiums at all time and never import the whole compendium if possible (bad performance, no bugfixes and updates).",
-        "Foundry selbst beinhaltet auch bereits tausende Icons für Ausrüstung."
+        "Foundry itself already includes several thousand icons for gear.",
+
+        "You can find several random generators in the game masters menu if you've got the \"master's workshop\" module ready.",
+        "You can enable breaking point checks and weapon and armor damage in the options.",
+        "Modifiers by creature types are automatically applied. You can add on your weapons \"blessed\" and \"magical\" as domain to overcome their resistances.",
+        "The \"Aventurian Armory 2\" enables the usage of the hitzone armor rule.",
+        "You can sort actors in the master's menu with drag and drop.",
+        "You can add actors and enemies to the master's menu with drag and drop.",
+        "You can enable token name obfuscation on drop to the canvas in the settings."
     ]
 }

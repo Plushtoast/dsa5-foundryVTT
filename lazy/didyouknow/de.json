@@ -35,6 +35,15 @@
         "Du kannst Zauber per Macro für alle möglichen Effekte automatisieren. Viele vorgefertigte Zauber aus den offiziellen Modulen beinhalten solche Makros bereits.",
         "Du musst Tokens ins Ziel nehmen, um von der Automatisierung von Vergleichsproben zu profitieren.",
         "Du solltest Dinge aus Kompendien nur importieren falls es unbedingt erforderlich ist und niemals das komplette Kompendium (keine Bugfixes und Updates, schlechte Performance).",
-        "Foundry itself already includes several thousand icons for gear."
+        "Foundry selbst beinhaltet auch bereits tausende Icons für Ausrüstung.",
+
+        "Im Meistermenü kannst du verschiedene Zufallsgeneratoren finden, wenn du das Modul \"Werkstatt des Meisters\" besitzt.",
+        "Du kannst die Bruchfaktorprobe und Waffen- und Rüstungsbeschädigung in den Optionen aktivieren",
+        "Modifikatoren auf Grund der Art von Kreaturen werden automatisch hinzugefügt. Du kannst deinen Waffen als Dömane \"geweiht\" oder \"magisch\" hinzufügen, um diese Eigenarten zu überwinden.",
+        "Die \"Aventurische Rüstkammer 2\" beinhaltet die Funktionen für Trefferzonenrüstungsschutz.",
+        "Du kannst im Meistermenü die Akteure per Drag and Drop sortieren",
+        "Du kannst dem Meistermenü neue Helden und Feinde durch Drag and Drop hinzufügen.",
+        "In den Optionen lässt sich das automatische Token-beim-Drop-aufs-Canvas-Umbennen aktivieren."
+
     ]
 }

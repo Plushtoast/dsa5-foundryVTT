@@ -181,7 +181,7 @@ export default class DSA5Initializer extends Dialog {
 
                             n.entryId = finishedIds.get(journ._id)
                         } catch (e) {
-                            console.warn("Could not initialize Scene Notes" + e)
+                            console.warn(`Could not initialize Scene Notes for scene :${entry.name}` + e)
                         }
                     }
                     if (!found) scenesToCreate.push(entry)

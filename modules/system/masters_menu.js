@@ -71,7 +71,7 @@ class GameMasterMenu extends Application {
         this.lastSkill = game.i18n.localize('LocalizedIDs.perception')
         Hooks.on("updateActor", async(document, data, options, userId) => {
             const properties = ["data.status.fatePoints", "data.status.wounds", "data.status.karmaenergy", "data.status.astralenergy"]
-            if (document.hasPlayerOwner && properties.reduce((a, b) => {
+            if (this.heros.find(x => x.id == document.id) && properties.reduce((a, b) => {
                     return a || hasProperty(data, b)
                 }, false)) {
                 this.render()

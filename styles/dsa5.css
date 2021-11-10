@@ -3013,3 +3013,7 @@ input[type="checkbox"].autoCheckbox {
     padding: 0;
     z-index: 160;
 }
+
+.fxmaster .window-content .directory-item .config input[type="text"] {
+    color: black;
+}
