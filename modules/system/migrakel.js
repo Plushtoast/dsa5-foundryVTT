@@ -30,11 +30,25 @@ export default class Migrakel {
         return result
     }
 
+    static async refreshStatusEffects(actor) {
+        let removeEffects = []
+        for (let i of actor.effects) {
+            if (i.data.origin) {
+                let sourceItem = await fromUuid(i.data.origin)
+                if (!sourceItem) {
+                    removeEffects.push(i.id)
+                }
+            }
+        }
+        await actor.deleteEmbeddedDocuments("ActiveEffect", removeEffects)
+    }
+
     static async updateVals(actor, condition, updater) {
         const itemLibrary = game.dsa5.itemLibrary
         let itemsToDelete = []
         let itemsToCreate = []
         let containersIDs = new Map()
+        await this.refreshStatusEffects(actor)
         if (condition({ type: "equipment" })) {
             const bagsToDelete = []
             const bagsToCreate = []
@@ -152,7 +166,7 @@ export default class Migrakel {
                         data: { effect: { value: find.data.data.effect.value } }
                     })
                 }
-                if (!["armor"].includes(find.type)) {
+                if (["armor"].includes(find.type)) {
                     mergeObject(update, {
                         data: {
                             subcategory: find.data.data.subcategory,
@@ -163,9 +177,11 @@ export default class Migrakel {
                         }
                     })
                 }
+
                 return update
             }
             await this.updateVals(actor, condition, updator)
+
         }
     }
 }

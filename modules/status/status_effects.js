@@ -57,8 +57,10 @@ export default class DSA5StatusEffects {
             }
             if ((condition.data.origin == target.uuid || !condition.data.origin) && !condition.notApplicable)
                 data.conditions.push(condition)
-            else if (!condition.notApplicable)
+            else if (!condition.notApplicable) {
                 data.transferedConditions.push(condition)
+            }
+
 
         }
         data.manualConditions = systemConditions.filter(x => !appliedSystemConditions.includes(x.id))

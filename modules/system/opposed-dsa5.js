@@ -335,6 +335,7 @@ export default class OpposedDsa5 {
                 opposeResult.other.push(`<div class="center"><button class="gearDamaged onlyTarget" data-uuid="${damage.armorDamaged.ids.join(";")}">${game.i18n.localize('WEAR.checkShort')}</button></div>`)
 
             opposeResult.winner = "attacker"
+
             let title = [`${damage.armorMod != 0 ? damage.armorMod + " " + game.i18n.localize('Modifier') : ""}`, `${damage.armorMultiplier != 0 ? "*" + damage.armorMultiplier + " " + game.i18n.localize('Modifier') : "" }`]
             let description = `<b>${game.i18n.localize("damage")}</b>: ${damage.damage} - <span title="${title.join("")}">${damage.armor} (${game.i18n.localize("protection")})</span> = ${damage.sum}`
             opposeResult.damage = {
@@ -353,11 +354,12 @@ export default class OpposedDsa5 {
         options.damage = attackerTest.damage
 
         let damage = DSAActiveEffectConfig.applyRollTransformation(actor, options, 5).options.damage
-        let { wornArmor, armor } = Actordsa5.armorValue(actor, options)
+        let { wornArmor, armor } = game.dsa5.entities.Actordsa5.armorValue(actor, options)
 
         let multipliers = []
         let armorMod = 0
-        for (const mod of(attackerTest.armorPen || [])) {
+        const aPen = attackerTest.armorPen || []
+        for (const mod of aPen) {
             if (/^\*/.test(mod)) multipliers.push(Number(mod.replace("*", "")))
             else armorMod += Number(mod)
         }

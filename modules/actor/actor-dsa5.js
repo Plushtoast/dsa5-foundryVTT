@@ -245,6 +245,7 @@ export default class Actordsa5 extends Actor {
                     }
                     e.notApplicable = !apply
 
+
                     if (!apply) return changes;
                 }
             }
