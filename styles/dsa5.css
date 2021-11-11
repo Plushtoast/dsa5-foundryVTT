@@ -2929,7 +2929,7 @@ input[type="checkbox"].autoCheckbox {
 
 #settings .fshopButton div {
     display: inline-block;
-    background-image: url("/systems/dsa5/lazy/patchimages/UlissesDigital.png");
+    background-image: url("systems/dsa5/lazy/patchimages/UlissesDigital.png");
     background-size: contain;
     width: 20px;
     height: 19px;
