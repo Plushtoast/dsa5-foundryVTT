@@ -77,6 +77,14 @@ class GameMasterMenu extends Application {
                 this.render()
             }
         })
+        Hooks.on("updateScene", async(document, data, options, userId) => {
+            const properties = ["darkness"]
+            if (game.canvas.id == document.id && properties.reduce((a, b) => {
+                    return a || hasProperty(data, b)
+                }, false)) {
+                this.render()
+            }
+        })
         this.randomCreation = []
     }
 

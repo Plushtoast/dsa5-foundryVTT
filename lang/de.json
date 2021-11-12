@@ -1161,7 +1161,7 @@
         "getPaidButton": "Auszahlen",
         "noActor": "Dein Charakter wurde nicht gefunden",
         "onlyActors": "Nur Spieler können bezahlen/bezahlt werden oder dir wurde kein Charakter zugeordnet.",
-        "cannotpay": "<b>{actor}</b> kann seine Schulden von {amount} nicht bezahlen."
+        "cannotpay": "<b>{actor}</b> kann seine/ihre Schulden von {amount} nicht bezahlen."
     },
     "rangeMovementOptions": {
         "STATIONARY": "steht still (+2)",

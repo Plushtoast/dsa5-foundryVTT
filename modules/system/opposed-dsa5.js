@@ -354,7 +354,7 @@ export default class OpposedDsa5 {
         options.damage = attackerTest.damage
 
         let damage = DSAActiveEffectConfig.applyRollTransformation(actor, options, 5).options.damage
-        let { wornArmor, armor } = game.dsa5.entities.Actordsa5.armorValue(actor, options)
+        let { wornArmor, armor } = Actordsa5.armorValue(actor, options)
 
         let multipliers = []
         let armorMod = 0

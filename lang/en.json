@@ -1109,7 +1109,7 @@
         "getPaidButton": "Receive",
         "noActor": "Your character could not be found",
         "onlyActors": "Only players can receive/pay money. Maybe no character has been assigned to you.",
-        "cannotpay": "<b>{actor}</b> can not pay his debts of {amount}."
+        "cannotpay": "<b>{actor}</b> can not pay his/her debts of {amount}."
     },
     "rangeMovementOptions": {
         "STATIONARY": "motionless (+2)",
