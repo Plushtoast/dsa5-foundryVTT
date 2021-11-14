@@ -481,7 +481,9 @@ class GameMasterMenu extends Application {
             hero.advantages = hero.items.filter(x => x.type == "advantage").map(x => { return { name: x.name, uuid: x.uuid } })
             hero.disadvantages = hero.items.filter(x => x.type == "disadvantage").map(x => { return { name: x.name, uuid: x.uuid } })
         }
-        const skills = await DSA5_Utility.allSkillsList()
+        const skills = (await DSA5_Utility.allSkillsList())
+        //    .concat(Object.values(game.dsa5.config.characteristics).map(x => game.i18n.localize(x))
+        //    .concat(game.i18n.localize('regenerate')))
 
         mergeObject(data, {
             heros,

@@ -1203,7 +1203,7 @@ class RangeweaponItemDSA5 extends Itemdsa5 {
             let targetSize = "average"
             if (game.user.targets.size) {
                 game.user.targets.forEach(target => {
-                    let tar = target.actor.data.data.size
+                    const tar = getProperty(target.actor.data, "data.status.size")
                     if (tar) targetSize = tar.value
 
                     this.addCreatureTypeModifiers(target.actor.data, source, situationalModifiers)
@@ -1563,7 +1563,7 @@ class TraitItemDSA5 extends Itemdsa5 {
             let targetSize = "average"
             if (game.user.targets.size) {
                 game.user.targets.forEach(target => {
-                    let tar = target.actor.data.data.size
+                    const tar = getProperty(target.actor.data, "data.status.size")
                     if (tar) targetSize = tar.value
 
                     this.addCreatureTypeModifiers(target.actor.data, source, situationalModifiers)
