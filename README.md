@@ -2,7 +2,7 @@
 ![](https://repository-images.githubusercontent.com/311655339/4d523800-55a9-11eb-9e2e-6bbc2b71d8a4)
 
 ### Current Version and Compatibility:
-2.3.2 - FoundryVTT 0.8.6+
+2.4.0 - FoundryVTT 0.8.6+
 This system is intended for usage with [Foundry Virtual Tabletop](https://foundryvtt.com/) to play "Das Schwarze Auge" 5th edition.
 
 ## Installation - Auto Installer
@@ -50,6 +50,7 @@ If you want to discuss TDE for foundry or need some assistance you can also join
 - [Aventurian Armory](https://www.f-shop.de/virtual-tabletops/das-schwarze-auge-vtt/) - with dozens of items, weapons and armour, new special rules and predefined Active Effects [English Shop](https://www.ulissesf-shop.com/virtual-tabletops/)
 - [Core Rules](https://www.f-shop.de/virtual-tabletops/das-schwarze-auge-vtt/) - including ALL the content from the TDE core rulebook including everything you need to play lavishly illustrated and ready to use [English Shop](https://www.ulissesf-shop.com/virtual-tabletops/)
 - [DSA5-Introduction](https://github.com/Plushtoast/dsa5_introduction) - A small adventure with included characters and maps to start playing. Might be of use for experienced players too.
+- And many more... have a look at Ulisses' F-Shop
 
 As of this moment several modules are in the making. We will inform you as soon as they will be available.
 
