@@ -741,14 +741,14 @@
     },
     "VisionDisruption": {
         "step0": "Clear sight",
-        "step1": "Slight impairement [-2]",
+        "step1": "Slight impairment [-2]",
         "step2": "Shape [-4]",
         "step3": "Barely shape [-6]",
         "step4": "Invisible [Lucky hit]"
     },
     "meleeVisionDisruption": {
         "0": "Clear Sight",
-        "1": "Slight impairement [-1]",
+        "1": "Slight impairment [-1]",
         "2": "Shape [-2]",
         "3": "Barely shape [-3]",
         "4": "Invisible [Lucky hit]"
