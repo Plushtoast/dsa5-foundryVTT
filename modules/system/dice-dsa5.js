@@ -776,6 +776,7 @@ export default class DiceDSA5 {
             let extraFps = new Roll("1d6").evaluate({ async: false }).total
             res.description = res.description + ", " + game.i18n.localize("additionalFPs") + " " + extraFps
             res.result = res.result + extraFps
+            res.qualityStep = Math.ceil(res.result / 3)
             res.preData.calculatedSpellModifiers.finalcost = Math.round(res.preData.calculatedSpellModifiers.cost / 2)
         } else if (res.successLevel <= -2) {
             res.description += `, <a class="roll-button ${"spell" ? "spell" : "liturgy"}-botch"><i class="fas fa-dice"></i>${game.i18n.localize('CriticalFailure')} ${game.i18n.localize("table")}</a>`

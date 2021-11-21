@@ -406,7 +406,10 @@ export default class Actordsa5 extends Actor {
     static armorValue(actor, options = {}) {
         let wornArmor = actor.items.filter(x => x.type == "armor" && x.data.data.worn.value == true)
         if (options.origin) {
-            wornArmor = wornArmor.map(armor => DSAActiveEffectConfig.applyRollTransformation(actor, mergeObject(options, { armor }), 4).options.armor)
+            wornArmor = wornArmor.map(armor => {
+                let optnCopy = mergeObject(duplicate(options), { armor })
+                return DSAActiveEffectConfig.applyRollTransformation(actor, optnCopy, 4).options.armor
+            })
         }
         const protection = wornArmor.reduce((a, b) => a + EquipmentDamage.armorWearModifier(b.data, b.data.data.protection.value), 0)
         const animalArmor = actor.items.filter(x => x.type == "trait" && x.data.data.traitType.value == "armor").reduce((a, b) => a + Number(b.data.data.at.value), 0)

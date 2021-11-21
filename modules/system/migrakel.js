@@ -177,6 +177,16 @@ export default class Migrakel {
                         }
                     })
                 }
+                if (["meleeweapon", "rangeweapon"].includes(find.type)) {
+                    mergeObject(update, {
+                        data: {
+                            structure: {
+                                max: find.data.data.structure.max,
+                                value: find.data.data.structure.value,
+                            }
+                        }
+                    })
+                }
 
                 return update
             }

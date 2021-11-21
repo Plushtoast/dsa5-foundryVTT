@@ -35,21 +35,23 @@ export class DSA5CombatTracker extends CombatTracker {
                 turn.defenseCount = combatant.data._source.defenseCount
 
                 let remainders = []
-
-                for (const x of combatant._actor.data.items) {
-                    if (x.type == "rangeweapon" && x.data.data.worn.value && x.data.data.reloadTime.progress > 0) {
-                        const wpn = { name: x.name, remaining: Actordsa5.calcLZ(x.data, combatant._actor.data) - x.data.data.reloadTime.progress }
-                        if (wpn.remaining > 0) remainders.push(wpn)
-                    } else if (["spell", "liturgy"].includes(x.type) && x.data.data.castingTime.modified > 0) {
-                        const wpn = { name: x.name, remaining: x.data.data.castingTime.modified - x.data.data.castingTime.progress }
-                        if (wpn.remaining > 0) remainders.push(wpn)
+                if (combatant._actor) {
+                    for (const x of combatant._actor.data.items) {
+                        if (x.type == "rangeweapon" && x.data.data.worn.value && x.data.data.reloadTime.progress > 0) {
+                            const wpn = { name: x.name, remaining: Actordsa5.calcLZ(x.data, combatant._actor.data) - x.data.data.reloadTime.progress }
+                            if (wpn.remaining > 0) remainders.push(wpn)
+                        } else if (["spell", "liturgy"].includes(x.type) && x.data.data.castingTime.modified > 0) {
+                            const wpn = { name: x.name, remaining: x.data.data.castingTime.modified - x.data.data.castingTime.progress }
+                            if (wpn.remaining > 0) remainders.push(wpn)
+                        }
                     }
                 }
                 remainders = remainders.sort((a, b) => a.remaining - b.remaining)
 
                 if (remainders.length > 0) {
                     turn.ongoings = `${game.i18n.localize('COMBATTRACKER.ongoing')}\n${remainders.map((x) => `${x.name} - ${x.remaining}`).join("\n")}`
-        turn.ongoing = remainders[0].remaining
+
+            turn.ongoing = remainders[0].remaining
         }
 
         
