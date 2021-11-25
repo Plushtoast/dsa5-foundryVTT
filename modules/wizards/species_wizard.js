@@ -79,6 +79,7 @@ export default class SpeciesWizard extends WizardDSA5 {
             description: game.i18n.format("WIZARD.speciesdescr", { species: this.species.name, cost: baseCost + reqCost }),
             advantagegroups,
             baseCost,
+            speciesDescription: game.i18n.has(`Racedescr.${this.species.name}`) ? game.i18n.localize(`Racedescr.${this.species.name}`) : this.species.data.description.value,
             disadvantagegroups,
             missingVantages,
             attributeRequirements,

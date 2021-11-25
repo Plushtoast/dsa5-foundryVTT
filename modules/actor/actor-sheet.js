@@ -279,7 +279,7 @@ export default class ActorSheetDsa5 extends ActorSheet {
                 let focusValue = 0
                 for (const feature of item.data.feature.replace(/\(a-z äöü\-\)/gi, "").split(",").map(x => x.trim())) {
                     if (SpecialabilityRulesDSA5.hasAbility(this.actor, `${game.i18n.localize('LocalizedIDs.propertyKnowledge')} (${feature})`)) {
-                        focusValue = Math.max(...[this.actor.data.data.characteristics[item.data.characteristic1.value].value, this.actor.data.data.characteristics[item.data.characteristic2.value].value, this.actor.data.data.characteristics[item.data.characteristic3.value].value]) + 2 + AdvantageRulesDSA5.vantageStep(this.actor, `${game.i18n.localize('LocalizedIDs.exceptionalSkill')} (${item.name})`)
+                        focusValue = this.maxByAttr(item)
                         break
                     }
                 }
@@ -287,16 +287,25 @@ export default class ActorSheetDsa5 extends ActorSheet {
                 break
             case "liturgy":
             case "ceremony":
-                result = newValue <= 14 + AdvantageRulesDSA5.vantageStep(this.actor, `${game.i18n.localize('LocalizedIDs.exceptionalSkill')} (${item.name})`)
+                const aspect = new RegExp(`^${game.i18n.localize("LocalizedIDs.aspectKnowledge")}`)
+                let aspectValue = 0
+                if (this.actor.items.filter(x => x.type == "specialability" && aspect.test(x.name)).some(x => item.data.distribution.value.includes(x.name.split("(")[1].split(")")[0]))) {
+                    aspectValue = this.maxByAttr(item)
+                }
+                result = newValue <= Math.max(14 + AdvantageRulesDSA5.vantageStep(this.actor, `${game.i18n.localize('LocalizedIDs.exceptionalSkill')} (${item.name})`), aspectValue)
                 break
             case "skill":
-                result = newValue <= Math.max(...[this.actor.data.data.characteristics[item.data.characteristic1.value].value, this.actor.data.data.characteristics[item.data.characteristic2.value].value, this.actor.data.data.characteristics[item.data.characteristic3.value].value]) + 2 + AdvantageRulesDSA5.vantageStep(this.actor, `${game.i18n.localize('LocalizedIDs.exceptionalSkill')} (${item.name})`)
+                result = newValue <= this.maxByAttr(item)
                 break
         }
         if (!result)
             ui.notifications.error(game.i18n.localize("DSAError.AdvanceMaximumReached"))
 
         return result
+    }
+
+    maxByAttr(item) {
+        return Math.max(...[this.actor.data.data.characteristics[item.data.characteristic1.value].value, this.actor.data.data.characteristics[item.data.characteristic2.value].value, this.actor.data.data.characteristics[item.data.characteristic3.value].value]) + 2 + AdvantageRulesDSA5.vantageStep(this.actor, `${game.i18n.localize('LocalizedIDs.exceptionalSkill')} (${item.name})`)
     }
 
     async _openLibrary() {

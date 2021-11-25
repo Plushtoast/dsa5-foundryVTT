@@ -926,6 +926,7 @@
         }
     },
     "LocalizedIDs": {
+        "aspectKnowledge": "Aspect Knowledge",
         "deaf": "Deaf",
         "blind": "Blind",
         "mute": "Mute",

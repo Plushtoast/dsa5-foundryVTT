@@ -970,6 +970,7 @@
         "dm": "vm"
     },
     "LocalizedIDs": {
+        "aspectKnowledge": "Aspektkenntnis",
         "deaf": "Taub",
         "blind": "Blind",
         "mute": "Stumm",

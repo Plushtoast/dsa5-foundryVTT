@@ -169,15 +169,11 @@ export default class Migrakel {
                 if (["armor"].includes(find.type)) {
                     mergeObject(update, {
                         data: {
-                            subcategory: find.data.data.subcategory,
-                            structure: {
-                                max: find.data.data.structure.max,
-                                value: find.data.data.structure.value,
-                            }
+                            subcategory: find.data.data.subcategory
                         }
                     })
                 }
-                if (["meleeweapon", "rangeweapon"].includes(find.type)) {
+                if (["meleeweapon", "rangeweapon", "armor"].includes(find.type)) {
                     mergeObject(update, {
                         data: {
                             structure: {
