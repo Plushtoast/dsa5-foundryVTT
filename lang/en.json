@@ -521,7 +521,8 @@
         "randomGen": "Breeding pit",
         "sightautomation": "Sight automation",
         "threshold": "Darkness threshold",
-        "darkness": "Darkness"
+        "darkness": "Darkness",
+        "sightautomationTooltip": "Sets automatically a modifier for attack and defense rolls, if the darkness exceeds the darkness threshold value."
     },
     "WIZARD": {
         "addItem": "Add {item}",

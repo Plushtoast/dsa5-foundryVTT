@@ -1106,7 +1106,7 @@ export default class DiceDSA5 {
 
     static addApplyEffectData(testData) {
         const source = testData.preData.source
-        if (["spell", "liturgy", "ritual", "ceremony"].includes(source.type)) {
+        if (["spell", "liturgy", "ritual", "ceremony", "meleeweapon", "rangeweapon"].includes(source.type)) {
             return testData.successLevel > 0 && source.effects.length > 0
         } else if (["disease", "poison"].includes(source.type)) {
             return source.effects.length > 0

@@ -28,11 +28,14 @@
                         <span class="range-value">{{item.value}}</span>
                     </div>
                 </div>
-                <div class="row-section lineheight">
+                <div class="row-section lineheight" title="{{localize 'MASTER.sightautomationTooltip'}}">
                     <div class="col fourty">
                         <label>{{localize "MASTER.threshold"}}</label>
                     </div>
-                    <div class="col sixty">
+                    <div class="col two">
+                    </div>
+                    <div class="col ten center">
+                        <i class="fas fa-info"></i>
                     </div>
                 </div>
                 {{#each sceneConfig.visions as |item i|}}

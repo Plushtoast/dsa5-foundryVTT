@@ -13,7 +13,7 @@ export default class DSAActiveEffectConfig extends ActiveEffectConfig {
         const advancedFunctions = ["none", "systemEffect", "macro", "creature"].map(x => { return { name: `ActiveEffects.advancedFunctions.${x}`, index: index += 1 } })
         const itemType = getProperty(this.object, "parent.type")
         const effectConfigs = {
-            hasSpellEffects: ["spell", "liturgy", "ritual", "ceremony", "consumable", "poison", "disease", "ammunition"].includes(itemType) || ((["specialability"].includes(itemType) && getProperty(this.object, "parent.data.data.category.value") == "Combat")),
+            hasSpellEffects: ["spell", "liturgy", "ritual", "ceremony", "consumable", "poison", "disease", "ammunition", "meleeweapon", "rangeweapon"].includes(itemType) || ((["specialability"].includes(itemType) && getProperty(this.object, "parent.data.data.category.value") == "Combat")),
             hasDamageTransformation: ["ammunition"].includes(itemType)
         }
         if (effectConfigs.hasDamageTransformation) {

@@ -491,7 +491,8 @@
         "randomGen": "Zuchtgrube",
         "sightautomation": "Sichtautomatisierung",
         "threshold": "Dunkelheitsschwelle",
-        "darkness": "Dunkelheit"
+        "darkness": "Dunkelheit",
+        "sightautomationTooltip": "Setzt bei Angriffs- und Verteidigungswürfen automatisch einen Modifikator, wenn der Dunkelheitswert die entsprechende Schwelle überschreitet."
     },
     "MODS": {
         "partChecks": "Teilprobenmodifikator",
