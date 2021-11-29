@@ -131,7 +131,7 @@ export default class DSA5ChatAutoCompletion {
     }
 
     _getSkills(search, type = undefined) {
-        search = search.replace(/(-)?\d+/g, '').trim()
+        search = search.replace(/(-|\+)?\d+/g, '').trim()
         let result = DSA5ChatAutoCompletion.skills.filter(x => { return x.name.toLowerCase().trim().indexOf(search) != -1 && (type == undefined || type == x.type) }).slice(0, 5)
         this._checkEmpty(result)
         return result
@@ -265,13 +265,13 @@ export default class DSA5ChatAutoCompletion {
     }
 
     _quickGC(target){
-        const modifier = Number($('#chat-message').val().match(/(-)?\d+/g)) || 0
+        const modifier = Number($('#chat-message').val().match(/(-|\+)?\d+/g)) || 0
         this._resetChatAutoCompletion()
         DSA5ChatAutoCompletion.showGCMessage(target.text(), modifier)
     }
 
     _quickRQ(target){
-        const modifier = Number($('#chat-message').val().match(/(-)?\d+/g)) || 0
+        const modifier = Number($('#chat-message').val().match(/(-|\+)?\d+/g)) || 0
         this._resetChatAutoCompletion()
         DSA5ChatAutoCompletion.showRQMessage(target.text(), modifier)
     }

@@ -493,7 +493,7 @@ export default class DiceDSA5 {
         }, 0);
         let damageRoll = testData.damageRoll ? await testData.damageRoll : await DiceDSA5.manualRolls(await new Roll(rollFormula).evaluate({ async: true }), "CHAR.DAMAGE", testData.extra.options)
         let damage = damageRoll.total
-        let weaponBonus = 0
+        
         let weaponroll = 0
         for (let k of damageRoll.terms) {
             if (k instanceof Die || k.class == "Die") {
@@ -501,10 +501,9 @@ export default class DiceDSA5 {
                     weaponroll += Number(l.result)
                     result.characteristics.push({ char: "damage", res: l.result, die: "d" + k.faces })
                 }
-            } else if (!isNaN(k)) {
-                weaponBonus += Number(k)
-            }
+            } 
         }
+        let weaponBonus = damage - weaponroll
 
         if (overrideDamage.length > 0) {
             damageBonusDescription.push(overrideDamage[0].name + " " + damage)
@@ -554,7 +553,7 @@ export default class DiceDSA5 {
             damage = damage * el.val
         }
         result["armorPen"] = armorPen
-        result["damagedescription"] = damageBonusDescription.join(", ")
+        result["damagedescription"] = damageBonusDescription.join("\n")
         result["damage"] = Math.round(damage)
         result["damageRoll"] = duplicate(damageRoll)
     }
@@ -1207,7 +1206,7 @@ export default class DiceDSA5 {
                     actor.setupCharacteristic(characteristic, options, tokenId).then(setupData => { actor.basicTest(setupData) });
                     break
                 case "regeneration":
-                    actor.setupRegeneration("regenerate", {}, tokenId).then(setupData => { actor.basicTest(setupData) });
+                    actor.setupRegeneration("regenerate", options, tokenId).then(setupData => { actor.basicTest(setupData) });
                     break
                 default:
                     let skill = actor.items.find(i => i.name == name && i.type == category);

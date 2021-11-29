@@ -1,4 +1,6 @@
+import DialogShared from "../dialog/dialog-shared.js"
 import DSA5 from "./config-dsa5.js"
+import CreatureType from "./creature-type.js"
 import DiceDSA5 from "./dice-dsa5.js"
 import DSA5_Utility from "./utility-dsa5.js"
 
@@ -59,9 +61,15 @@ export default class EquipmentDamage {
             return
         }
 
-        new Dialog({
+        let magicalWarning = ""
+        if (item.data.data.effect.attributes.includes(CreatureType.clerical))
+            magicalWarning = `${game.i18n.format("WEAPON.attributeWarning", { domain: CreatureType.clerical })}<br/>`
+        else if (item.data.data.effect.attributes.includes(CreatureType.magical))
+            magicalWarning = `${game.i18n.format("WEAPON.attributeWarning", { domain: CreatureType.magical })}<br/>`
+
+        new DialogShared({
             title: game.i18n.localize("DSASETTINGS.armorAndWeaponDamage"),
-            content: `<label for="threshold">${game.i18n.format('WEAR.check', {category})}</label>: <input style="width:80px" dtype="number" name="threshold" type="number" value="${breakingResistance}"/>`,
+            content: `${magicalWarning}<label for="threshold">${game.i18n.format('WEAR.check', {category})}</label>: <input class="quantity-click" style="width:80px" dtype="number" name="threshold" type="number" value="${breakingResistance}"/>`,
             buttons: {
                 Yes: {
                     icon: '<i class="fas fa-dice-d20"></i>',

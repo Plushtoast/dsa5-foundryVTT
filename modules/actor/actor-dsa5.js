@@ -1266,7 +1266,8 @@ export default class Actordsa5 extends Actor {
                 regnerationCampLocations: DSA5.regnerationCampLocations,
                 showAspModifier: this.data.isMage,
                 showKapModifier: this.data.isPriest,
-                situationalModifiers
+                situationalModifiers,
+                modifier: options.modifier || 0
             },
             callback: (html, options = {}) => {
                 testData.situationalModifiers = Actordsa5._parseModifiers(html)

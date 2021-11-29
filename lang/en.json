@@ -760,7 +760,8 @@
         "isReloading": "{actor} reloads {item} ({status}).",
         "improvised": "Improvised weapon",
         "magical": "Magical",
-        "clerical": "Blessed"
+        "clerical": "Blessed",
+        "attributeWarning": "This item is <b>{domain}</b> (and possibly indestructible.)."
     },
     "SPELL": {
         "loading": "Spell state: {status}",
