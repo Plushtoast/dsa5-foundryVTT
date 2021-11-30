@@ -3,7 +3,6 @@ import ADVANCEDFILTERS from "./itemlibrary_advanced_filters.js"
 
 //TODO merge existing index with advanced details
 //TODO create index with getIndex(fields)
-//TODO fix pagination for detail filter
 
 class SearchDocument {
     constructor(item, pack = {}) {
@@ -100,8 +99,6 @@ class AdvancedSearchDocument extends SearchDocument {
         }
     }
 }
-
-
 
 export default class DSA5ItemLibrary extends Application {
     constructor(app) {
@@ -352,7 +349,7 @@ export default class DSA5ItemLibrary extends Application {
                 sels.push([$(elem).attr("name"), val])
             }
         }
-        for (let elem of dataFilters.find('input')) {
+        for (let elem of dataFilters.find('input:not(.manualFilter)')) {
             let val = $(elem).val()
             if (val != "") {
                 inps.push([$(elem).attr("name"), val.toLowerCase()])

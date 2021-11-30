@@ -485,7 +485,7 @@ export default class DiceDSA5 {
                     overrideDamage.push({ name: val.name, roll })
                     return _this
                 } else {
-                    val.damageBonus = number
+                    val.damageBonus = roll
                     return _this + number
                 }
             }
@@ -514,7 +514,7 @@ export default class DiceDSA5 {
             if (weaponBonus != 0)
                 damageBonusDescription.push(game.i18n.localize("weaponModifier") + " " + weaponBonus)
 
-            damageBonusDescription.push(...testData.situationalModifiers.map(x => { return x.damageBonus ? `${x.name} ${x.damageBonus}` : "" }).filter(x => x != ""))
+            damageBonusDescription.push(...testData.situationalModifiers.map(x => { return x.damageBonus ? `${x.name} ${x.damageBonus * (x.step || 0 )}` : "" }).filter(x => x != ""))
 
             if (testData.situationalModifiers.find(x => x.name.indexOf(game.i18n.localize("CONDITION.bloodrush")) > -1)) {
                 damage += 2
