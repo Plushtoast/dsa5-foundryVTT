@@ -38,6 +38,9 @@ export default class CareerWizard extends WizardDSA5 {
             parent.find('.optional:checked').each(function() {
                 apCost += Number($(this).attr("data-cost"))
             });
+            parent.find('.attributes:checked').each(function() {
+                apCost += Number($(this).attr("data-cost"))
+            });
             let elem = parent.find('.apCost')
             elem.text(apCost)
             WizardDSA5.flashElem(elem, "emphasize2")

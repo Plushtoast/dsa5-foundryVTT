@@ -185,6 +185,7 @@ export default class DSA5_Utility {
                 return a.localeCompare(b)
             })
 
+            //TODO we can maybe replace this with getDocuments({name: []}), should be faster
             for (let pack of sortedPacks) {
                 let p = game.packs.get(pack)
                 if (p.metadata.entity == "Item" && (game.user.isGM || !p.private)) {

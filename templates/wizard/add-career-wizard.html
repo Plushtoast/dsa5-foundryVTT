@@ -63,7 +63,7 @@
         <div class="row-section wrap">
             {{#each attributeRequirements as |item i|}}
             <div class="col two row-section lineheight">
-                <input type="checkbox" id="attribute_{{item.name}}" class="attributes" name="attribute_{{item.name}}" data-attribute="{{item.name}}" value="{{item.step}}" checked disabled>
+                <input type="checkbox" id="attribute_{{item.name}}" data-cost="{{item.data.APValue.value}}" class="attributes" name="attribute_{{item.name}}" data-attribute="{{item.name}}" value="{{item.step}}" checked disabled>
                 <label for="attribute_{{item.name}}">{{item.name}} {{item.step}} ({{item.data.APValue.value}}
                     AP)</label>
             </div>
