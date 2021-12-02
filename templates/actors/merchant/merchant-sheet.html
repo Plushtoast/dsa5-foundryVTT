@@ -1,7 +1,8 @@
 <form class="{{cssClass}}" autocomplete="off">
-    <header class="sheet-header" ondragstart="return false;" ondrop="return false;">
+    <header class="sheet-header">
         <div class="charname headerInput">
-            <input class="input name" name="name" type="text" value="{{actor.name}}" placeholder="{{localize 'Character Name'}}" />
+            <input class="input name" name="name" style="width:90%" type="text" value="{{actor.name}}" placeholder="{{localize 'Name'}}" />
+            <a class="actorDrag"><i class="fas fa-link"></i></a>
             <span class="label name">{{localize "Name"}}</span>
         </div>
         {{#if (ne merchantType 'loot')}}
@@ -16,7 +17,7 @@
         {{/if}}
     </header>
 
-    <div class="general" ondragstart="return false;" ondrop="return false;">
+    <div class="general">
         <img class="charimg profile" src="{{actor.img}}" title="{{actor.name}}" {{#if (eq merchantType 'loot')}}style="margin-left: calc(50% - 57px)" {{/if}} data-edit="img">
 
         <div class="row-section" style="width: 100%;margin-bottom: 20px">

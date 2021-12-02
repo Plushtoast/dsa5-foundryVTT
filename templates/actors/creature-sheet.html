@@ -1,10 +1,11 @@
 <form class="{{cssClass}} lock{{actor.sheetLocked}}" autocomplete="off">
 
 
-    <header class="sheet-header" ondragstart="return false;" ondrop="return false;">
+    <header class="sheet-header">
 
         <div class="headerInput">
-            <input class="input name" name="name" type="text" value="{{actor.name}}" placeholder="{{localize 'Name'}}" />
+            <input class="input name" name="name" style="width:90%" type="text" value="{{actor.name}}" placeholder="{{localize 'Name'}}" />
+            <a class="actorDrag"><i class="fas fa-link"></i></a>
             <span class="label name">{{localize "Name"}}</span>
         </div>
         <div class="headerInput">
@@ -13,7 +14,7 @@
         </div>
 
     </header>
-    <div class="general" ondragstart="return false;" ondrop="return false; ">
+    <div class="general">
 
         <div class="row-section ">
             <div class="col five ">

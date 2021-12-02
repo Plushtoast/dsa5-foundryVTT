@@ -665,6 +665,18 @@ export default class ActorSheetDsa5 extends ActorSheet {
             ev.currentTarget.querySelectorAll('.hovermenu').forEach(e => e.remove());
         });
 
+        const id = this.actor.id
+        html.find('.actorDrag').each(function(i, cond) {
+            cond.setAttribute("draggable", true);
+            cond.addEventListener("dragstart", ev => {
+                let dataTransfer = {
+                    type: "Actor",
+                    id
+                }
+                ev.dataTransfer.setData("text/plain", JSON.stringify(dataTransfer));
+            });
+        })
+
         let handler = ev => this._onDragItemStart(ev);
         html.find('.content .item').each((i, li) => {
             li.setAttribute("draggable", true);

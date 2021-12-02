@@ -191,6 +191,12 @@ h7 {
     margin-bottom: 10px;
 }
 
+.actor .sheet-header .entity-link {
+    padding: 0;
+    border: none;
+    background: none;
+}
+
 .creature-sheet .headerInput,
 .creature-sheet .sheet-header .headerInput,
 .character-sheet .general .headerInput,
