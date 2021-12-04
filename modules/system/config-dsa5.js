@@ -362,6 +362,7 @@ DSA5.gearModifyableCalculatedAttributes = ["fatePoints", "initiative", "speed", 
 DSA5.defaultWeapon = {
     name: "default",
     type: "meleeweapon",
+    effects: [],
     data: {
         type: "meleeweapon",
         reach: {
