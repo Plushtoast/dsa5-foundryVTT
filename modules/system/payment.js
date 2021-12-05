@@ -69,20 +69,22 @@ export default class DSA5Payment {
         actor.updateEmbeddedDocuments("Item", money)
     }
 
-    static createGetPaidChatMessage(moneyString) {
+    static createGetPaidChatMessage(moneyString, whisper = undefined) {
         let money = this._getPaidmoney(moneyString)
 
         if (money) {
-            let msg = `<p><b>${game.i18n.localize("PAYMENT.wage")}</b></p><p>${game.i18n.format("PAYMENT.getPaidSum", {amount: DSA5Payment._moneyToString(money)})}</p><button class="getPaidButton" data-amount="${money}">${game.i18n.localize("PAYMENT.getPaidButton")}</button>`
+            const whisp = whisper ? ` (${whisper})` : ""
+            let msg = `<p><b>${game.i18n.localize("PAYMENT.wage")}</b></p><p>${game.i18n.format("PAYMENT.getPaidSum", {amount: DSA5Payment._moneyToString(money)})}${whisp}</p><button class="getPaidButton" data-amount="${money}">${game.i18n.localize("PAYMENT.getPaidButton")}</button>`
             ChatMessage.create(DSA5_Utility.chatDataSetup(msg, "roll"))
         }
     }
 
-    static createPayChatMessage(moneyString) {
+    static createPayChatMessage(moneyString, whisper = undefined) {
         let money = this._getPaymoney(moneyString)
 
         if (money) {
-            let msg = `<p><b>${game.i18n.localize("PAYMENT.bill")}</b></p>${game.i18n.format("PAYMENT.paySum", {amount: DSA5Payment._moneyToString(money)})}</p><button class="payButton" data-amount="${money}">${game.i18n.localize("PAYMENT.payButton")}</button>`
+            const whisp = whisper ? ` (${whisper})` : ""
+            let msg = `<p><b>${game.i18n.localize("PAYMENT.bill")}</b></p>${game.i18n.format("PAYMENT.paySum", { amount: DSA5Payment._moneyToString(money) })}${whisp}</p><button class="payButton" data-amount="${money}">${game.i18n.localize("PAYMENT.payButton")}</button>`
             ChatMessage.create(DSA5_Utility.chatDataSetup(msg, "roll"))
         }
     }

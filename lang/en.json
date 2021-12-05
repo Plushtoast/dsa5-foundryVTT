@@ -1399,7 +1399,8 @@
         "fixated": "Bound",
         "custom": "Custom effect",
         "add": "Add condition",
-        "minorSpirits": "Annoyed by Minor Spirits"
+        "minorSpirits": "Annoyed by Minor Spirits",
+        "defeated": "Defeated"
     },
     "COMBATSKILLCATEGORY": {
         "subcategory": "Sub category",
@@ -1433,6 +1434,7 @@
         "sick": "A hero suffering from a disease or serius illness cannot regenerate LP or benefit from regular Regeneration Phases until healed or recovered. Heroes suffering from a state of diseased must devote at least one Regeneration Phase per day to rest (sleeping or staying in bed) or lose 1D3 LP (ignoring Protection) until recovered.",
         "surprised": "People are usually considered to be aware of their surroundings, especially in combat situations. Sometimes, however, a situation arises where a character remains unaware of enemies lurking nearby. Surprise means a hero is startled by an ambush or the sudden appearance of enemies. Surprised characters cannot defend against the first action taken against them. Once this surprise action (most likely an attack) is resolved, regular combat rounds begin.",
         "poisoned": "The hero is poisoned. As long as the poison remains in effect, the character cannot benefit from Regeneration Phases.",
-        "fixated": "Bound characters are glued to the ground or otherwise held down by ropes, vines or traps. While bound characters have a MOV of 0 and suffer a -4 penalty to Dodge."
+        "fixated": "Bound characters are glued to the ground or otherwise held down by ropes, vines or traps. While bound characters have a MOV of 0 and suffer a -4 penalty to Dodge.",
+        "defeated": "The heros is defeated and on his way to Boron."
     }
 }

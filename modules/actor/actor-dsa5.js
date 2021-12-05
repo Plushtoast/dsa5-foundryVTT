@@ -1692,6 +1692,7 @@ export default class Actordsa5 extends Actor {
 
     async addCondition(effect, value = 1, absolute = false, auto = true) {
         if(effect == "bleeding") return await RuleChaos.bleedingMessage(this)
+
         return await DSA5StatusEffects.addCondition(this, effect, value, absolute, auto)
     }
 
@@ -1709,6 +1710,9 @@ export default class Actordsa5 extends Actor {
             }
         }
 
+        if (statusId == "dead" && game.combat) 
+            await this.markDead(true)
+            
         if (statusId == "unconscious")
             await this.addCondition("prone")
 
@@ -1725,5 +1729,12 @@ export default class Actordsa5 extends Actor {
 
     hasCondition(conditionKey) {
         return DSA5StatusEffects.hasCondition(this, conditionKey)
+    }
+
+    async markDead(dead){
+        const tokens = game.canvas.tokens.documentCollection.filter(x => x.data.actorId == this.id && x.combatant)
+        for(let token of tokens){
+            await token.combatant.update({defeated: dead})
+        }
     }
 }

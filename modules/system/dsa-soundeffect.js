@@ -2,11 +2,22 @@ export default class DSA5SoundEffect {
     static sounds
     static triedInit = false
 
-    static async playEffect(action, item, successLevel) {
+    static async playEffect(action, item, successLevel, whisper = undefined, blind = false) {
         const soundPath = await this.getSound(action, item, successLevel)
         if (soundPath) {
             try {
-                AudioHelper.play({ src: soundPath, volume: 0.8, loop: false }, true);
+                if (whisper) {
+                    game.socket.emit("system.dsa5", {
+                        type: "playWhisperSound",
+                        payload: {
+                            whisper,
+                            soundPath
+                        }
+                    })
+                    if (!blind) AudioHelper.play({ src: soundPath, volume: 0.8, loop: false }, false);
+                } else {
+                    AudioHelper.play({ src: soundPath, volume: 0.8, loop: false }, true);
+                }
             } catch (exception) {
                 console.warn(`Could not play item sound effect ${soundPath}`)
             }

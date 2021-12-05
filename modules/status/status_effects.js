@@ -78,7 +78,7 @@ export default class DSA5StatusEffects {
         if (existing && existing.data.flags.dsa5.value == null)
             return existing
         else if (existing)
-            return await DSA5StatusEffects.updateEffect(target, existing, value, absolute, auto)
+            return await DSA5StatusEffects.updateEffect(target, existing, value, absolute, auto, effect)
 
         return await DSA5StatusEffects.createEffect(target, effect, value, auto)
     }
@@ -156,7 +156,7 @@ export default class DSA5StatusEffects {
             return await actor.updateEmbeddedDocuments("ActiveEffect", [existing.data])
     }
 
-    static async updateEffect(actor, existing, value, absolute, auto) {
+    static async updateEffect(actor, existing, value, absolute, auto, newEffect = undefined) {
         const immune = this.immuneToEffect(actor, existing, true)
         if (immune) return immune
         let delta, newValue
@@ -175,6 +175,11 @@ export default class DSA5StatusEffects {
             return existing
 
         update.flags.dsa5.value = Math.max(0, Math.min(existing.data.flags.dsa5.max, update.flags.dsa5.manual + update.flags.dsa5.auto))
+        if (newEffect.duration) {
+            update.duration = newEffect.duration
+            update.duration.startTime = game.time.worldTime
+        }
+
         await existing.update(update)
         await actor._dependentEffects(existing.data.flags.core.statusId, existing, delta)
         return existing

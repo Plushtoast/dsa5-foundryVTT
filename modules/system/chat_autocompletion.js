@@ -1,9 +1,7 @@
 import DSA5ChatListeners from "./chat_listeners.js"
 import DSA5_Utility from "./utility-dsa5.js"
 
-
 export default class DSA5ChatAutoCompletion {
-    //Special thanks to BlueBirdBlackSky and DJ Addi
     static skills = []
 
     constructor() {

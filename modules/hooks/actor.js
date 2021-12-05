@@ -2,8 +2,12 @@ import DSA5_Utility from "../system/utility-dsa5.js";
 
 export default function() {
     Hooks.on("deleteActorActiveEffect", (actor, effect) => {
-        if (effect.data.flags.dsa5 && effect.data.flags.core && effect.data.flags.core.statusId == "bloodrush") {
+        const statusId = getProperty(effect.data, "flags.core.statusId")
+        if (statusId == "bloodrush") {
             actor.addCondition("stunned", 2, false, false)
+            return false
+        } else if (statusId == "dead" && game.combat) {
+            actor.markDead(false)
             return false
         }
     })
@@ -33,7 +37,7 @@ export default function() {
 
     const obfuscateName = async(actor, update) => {
         const setting = game.settings.get("dsa5", "obfuscateTokenNames")
-        if(setting == "0") return
+        if (setting == "0") return
 
         for (let u of game.users) {
             if (u.isGM) continue;
@@ -41,13 +45,13 @@ export default function() {
         }
         const sameActorTokens = canvas.scene.data.tokens.filter((x) => x.actor.id === actor.id);
         let name = game.i18n.localize("unknown")
-        if(sameActorTokens.length > 0){
+        if (sameActorTokens.length > 0) {
             name = `${sameActorTokens[0].name.replace(/ \d{1,}$/)} ${sameActorTokens.length + 1}`
         }
 
-        if (setting == "2" && sameActorTokens == 0){
+        if (setting == "2" && sameActorTokens == 0) {
             askForName(actor)
-        }else{
+        } else {
             update["name"] = name
         }
     }

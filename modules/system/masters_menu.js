@@ -68,7 +68,7 @@ class GameMasterMenu extends Application {
         super(app)
         this.selected = {}
         this.heros = []
-        this.lastSkill = game.i18n.localize('LocalizedIDs.perception')
+        this.lastSkill = `${game.i18n.localize('LocalizedIDs.perception')}|skill`
         Hooks.on("updateActor", async(document, data, options, userId) => {
             const properties = ["data.status.fatePoints", "data.status.wounds", "data.status.karmaenergy", "data.status.astralenergy"]
             if (this.heros.find(x => x.id == document.id) && properties.reduce((a, b) => {
@@ -90,6 +90,7 @@ class GameMasterMenu extends Application {
 
     activateListeners(html) {
         super.activateListeners(html)
+        html.find('select.select2').select2()
 
         html.find('.heroLink').click(ev => {
             ev.stopPropagation()
@@ -105,11 +106,11 @@ class GameMasterMenu extends Application {
         })
         html.find('.rollChar').click(ev => {
             ev.stopPropagation()
-            this.rollSkill([this.getID(ev)])
+            this.rollAbility([this.getID(ev)])
         })
         html.find('.rollAll').click((ev) => {
             ev.stopPropagation()
-            this.rollSkill(this.selectedIDs())
+            this.rollAbility(this.selectedIDs())
         })
         html.find('.pay').click((ev) => {
             ev.stopPropagation()
@@ -298,20 +299,22 @@ class GameMasterMenu extends Application {
 
     async pay(ids) {
         const actors = game.actors.filter(x => ids.includes(x.id))
-        const template = await renderTemplate('systems/dsa5/templates/dialog/master-dialog-award.html', { text: game.i18n.localize(game.i18n.format("MASTER.payText", { heros: this.getNames(actors) })) })
+        const heros = this.getNames(actors)
+        const template = await renderTemplate('systems/dsa5/templates/dialog/master-dialog-award.html', { text: game.i18n.localize(game.i18n.format("MASTER.payText", { heros })) })
         const callback = (dlg) => {
             const number = dlg.find('.input-text').val()
-            DSA5Payment.createPayChatMessage(number)
+            DSA5Payment.createPayChatMessage(number, heros)
         }
         this.buildDialog(game.i18n.localize('PAYMENT.payTT'), template, callback)
     }
 
     async getPaid(ids) {
         const actors = game.actors.filter(x => ids.includes(x.id))
-        const template = await renderTemplate('systems/dsa5/templates/dialog/master-dialog-award.html', { text: game.i18n.localize(game.i18n.format("MASTER.getPaidText", { heros: this.getNames(actors) })) })
+        const heros = this.getNames(actors)
+        const template = await renderTemplate('systems/dsa5/templates/dialog/master-dialog-award.html', { text: game.i18n.localize(game.i18n.format("MASTER.getPaidText", { heros })) })
         const callback = (dlg) => {
             const number = dlg.find('.input-text').val()
-            DSA5Payment.createGetPaidChatMessage(number)
+            DSA5Payment.createGetPaidChatMessage(number, heros)
         }
         this.buildDialog(game.i18n.localize('MASTER.payButton'), template, callback)
     }
@@ -400,18 +403,54 @@ class GameMasterMenu extends Application {
     }
 
     async doGroupCheck() {
-        const template = await renderTemplate('systems/dsa5/templates/dialog/master-dialog-award.html', { text: game.i18n.localize(game.i18n.format("MASTER.doGroupCheck", { skill: this.lastSkill })) })
+        const [skill, type] = this.lastSkill.split("|")
+        if(type != "skill") return
+
+        const template = await renderTemplate('systems/dsa5/templates/dialog/master-dialog-award.html', { text: game.i18n.localize(game.i18n.format("MASTER.doGroupCheck", { skill })) })
         const callback = (dlg) => {
             const number = Number(dlg.find('.input-text').val())
-            DSA5ChatAutoCompletion.showGCMessage(this.lastSkill, number)
+            const [skill, type] = this.lastSkill.split("|")
+            if(type != "skill") return
+
+            DSA5ChatAutoCompletion.showGCMessage(skill, number)
         }
         this.buildDialog(game.i18n.localize('HELP.groupcheck'), template, callback)
     }
 
-    rollSkill(actorIds) {
+    rollAbility(actorIds){
+        const [name, type] = this.lastSkill.split("|")
+        switch(type){
+            case "skill":
+                this.rollSkill(actorIds, name)
+                break
+            case "attribute":
+                this.rollAttribute(actorIds, name)
+                break
+            case "regeneration":
+                this.rollRegeneration(actorIds)
+                break
+        }
+    }
+
+    rollRegeneration(actorIds){
         const actors = game.actors.filter(x => actorIds.includes(x.id))
         for (const actor of actors) {
-            let skill = actor.items.find(x => x.name == this.lastSkill && x.type == "skill")
+            actor.setupRegeneration("regenerate", { rollMode: "blindroll", subtitle: ` (${actor.name})` }, undefined).then(setupData => { actor.basicTest(setupData) });
+        }
+    }
+
+    rollAttribute(actorIds, name) {
+        const actors = game.actors.filter(x => actorIds.includes(x.id))
+        let characteristic = Object.keys(game.dsa5.config.characteristics).find(key => game.i18n.localize(game.dsa5.config.characteristics[key]) == name)
+        for (const actor of actors) {
+            actor.setupCharacteristic(characteristic, { rollMode: "blindroll", subtitle: ` (${actor.name})` }, undefined).then(setupData => { actor.basicTest(setupData) });
+        }
+    }
+
+    rollSkill(actorIds, name) {
+        const actors = game.actors.filter(x => actorIds.includes(x.id))
+        for (const actor of actors) {
+            let skill = actor.items.find(x => x.name == name && x.type == "skill")
             actor.setupSkill(skill.data, { rollMode: "blindroll", subtitle: ` (${actor.name})` }, undefined).then(setupData => {
                 actor.basicTest(setupData)
             });
@@ -481,13 +520,18 @@ class GameMasterMenu extends Application {
             hero.advantages = hero.items.filter(x => x.type == "advantage").map(x => { return { name: x.name, uuid: x.uuid } })
             hero.disadvantages = hero.items.filter(x => x.type == "disadvantage").map(x => { return { name: x.name, uuid: x.uuid } })
         }
-        const skills = (await DSA5_Utility.allSkillsList())
-        //    .concat(Object.values(game.dsa5.config.characteristics).map(x => game.i18n.localize(x))
-        //    .concat(game.i18n.localize('regenerate')))
+
+        if(!this.abilities){
+            const skills = (await DSA5_Utility.allSkillsList())
+            this.abilities = skills.map(x => { return { name: x, type: "skill" } })
+                .concat(Object.values(game.dsa5.config.characteristics).map(x => {
+                    return { name: game.i18n.localize(x), type: "attribute" }
+                }).concat({ name: game.i18n.localize('regenerate'), type: "regeneration" })).sort((x,y) => x.name.localeCompare(y.name))
+        }
 
         mergeObject(data, {
             heros,
-            skills,
+            abilities: this.abilities,
             groupschips,
             lastSkill: this.lastSkill,
             randomCreation: this.randomCreation.map(x => x.template)

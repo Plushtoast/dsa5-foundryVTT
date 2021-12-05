@@ -52,6 +52,11 @@ export default function() {
                             MerchantSheetDSA5.finishTransaction(source, target, data.payload.price, data.payload.itemId, data.payload.buy, data.payload.amount)
                         }
                         break
+                    case "playWhisperSound":
+                        if (data.payload.whisper.includes(game.user.id))
+                            AudioHelper.play({ src: data.payload.soundPath, volume: 0.8, loop: false }, false);
+
+                        break
                     case "updateHits":
                     case "hideResistButton":
                         break

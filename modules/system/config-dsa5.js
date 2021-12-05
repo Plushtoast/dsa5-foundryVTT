@@ -1,6 +1,19 @@
 const DSA5 = {}
 
 DSA5.statusEffects = [{
+        icon: "icons/svg/skull.svg",
+        id: "dead",
+        label: "CONDITION.defeated",
+        description: "CONDITIONDESCRIPTION.defeated",
+        flags: {
+            dsa5: {
+                "value": null,
+                "editable": true
+            }
+        }
+
+    },
+    {
         id: "inpain",
         label: "CONDITION.inpain",
         icon: "icons/svg/blood.svg",

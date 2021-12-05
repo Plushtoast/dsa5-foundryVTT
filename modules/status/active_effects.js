@@ -82,15 +82,15 @@ export default class DSAActiveEffectConfig extends ActiveEffectConfig {
                 switch (customEf) {
                     case 1: //Systemeffekt
                         {
-                            const arg0 = getProperty(ef, "flags.dsa5.args0")
-                            let arg1 = `${getProperty(ef, "flags.dsa5.args1")}`
-
-                            if (/,/.test(arg1)) {
-                                arg1 = Number(arg1.split(",")[qs - 1])
+                            const effect = duplicate(CONFIG.statusEffects.find(e => e.id == getProperty(ef, "flags.dsa5.args0")))
+                            let value = `${getProperty(ef, "flags.dsa5.args1")}`
+                            effect.duration = ef.duration
+                            if (/,/.test(value)) {
+                                value = Number(value.split(",")[qs - 1])
                             } else {
-                                arg1 = Number(arg1.replace(game.i18n.localize('CHARAbbrev.QS'), qs))
+                                value = Number(value.replace(game.i18n.localize('CHARAbbrev.QS'), qs))
                             }
-                            await actor.addCondition(arg0, arg1, false, false)
+                            await actor.addCondition(effect, value, false, false)
                         }
                         break
                     case 2: //Macro

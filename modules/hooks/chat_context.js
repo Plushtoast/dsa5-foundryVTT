@@ -146,13 +146,14 @@ export default function() {
         }
 
         const applyDamage = async(li, mode) => {
-            const cardData = game.messages.get(li.attr("data-message-id")).data.flags.opposeData
+            const message = game.messages.get(li.attr("data-message-id"))
+            const cardData = message.data.flags.opposeData
             const defenderSpeaker = cardData.speakerDefend;
             const actor = DSA5_Utility.getSpeaker(defenderSpeaker)
 
             if (!actor.isOwner) return ui.notifications.error(game.i18n.localize("DSAError.DamagePermission"))
-            li.find('.hideAnchor').append(`<i class="fas fa-check" style="float:right" title="${game.i18n.localize("damageApplied")}"></i>`)
             await actor.applyDamage(cardData.damage[mode])
+            await message.update({ "flags.data.damageApplied": true, content: message.data.content.replace(/hideAnchor">/, `hideAnchor"><i class="fas fa-check" style="float:right" title="${game.i18n.localize("damageApplied")}"></i>`) })
         }
         const applyChatCardDamage = (li, mode) => {
             const message = game.messages.get(li.data("messageId"));
@@ -191,14 +192,16 @@ export default function() {
                 name: game.i18n.localize("CHATCONTEXT.ApplyMana"),
                 icon: '<i class="fas fa-user-minus"></i>',
                 condition: canCostMana,
-                callback: li => {
+                callback: async(li) => {
                     let message = game.messages.get(li.attr("data-message-id"))
                     let cardData = message.data.flags.data
                     let actor = DSA5_Utility.getSpeaker(message.data.speaker)
                     if (!actor.isOwner)
                         return ui.notifications.error(game.i18n.localize("DSAError.DamagePermission"))
 
-                    actor.applyMana(cardData.preData.calculatedSpellModifiers.finalcost, ["ritual", "spell"].includes(cardData.preData.source.type) ? "AsP" : "KaP")
+                    await actor.applyMana(cardData.preData.calculatedSpellModifiers.finalcost, ["ritual", "spell"].includes(cardData.preData.source.type) ? "AsP" : "KaP")
+
+                    await message.update({ "flags.data.manaApplied": true, content: message.data.content.replace(/<span class="costCheck">/, `<span class="costCheck"><i class="fas fa-check" style="float:right"></i>`) })
                 }
             }, {
                 name: game.i18n.localize("CHATCONTEXT.ApplyDamage"),
@@ -220,9 +223,7 @@ export default function() {
                 icon: '<i class="fas fa-user-minus"></i>',
                 condition: canApplyDefaultRolls,
                 callback: li => { applyChatCardDamage(li, "sp") }
-            },
-
-            {
+            }, {
                 name: game.i18n.localize("CHATCONTEXT.Reroll"),
                 icon: '<i class="fas fa-dice"></i>',
                 condition: canReroll,

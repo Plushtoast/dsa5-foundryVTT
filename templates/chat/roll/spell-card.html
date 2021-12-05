@@ -19,7 +19,7 @@
     </div>
     {{/if}}
     <div class="card-content">
-        <b>{{localize "cost"}}</b>: {{preData.calculatedSpellModifiers.finalcost}}
+        <b>{{localize "cost"}}</b>: {{preData.calculatedSpellModifiers.finalcost}} <span class="costCheck"></span>
     </div>
     {{#if (ne preData.calculatedSpellModifiers.maintainCost '')}}
     <div class="card-content">

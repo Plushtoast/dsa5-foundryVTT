@@ -96,10 +96,10 @@
                     <label>{{localize "skill"}}</label>
                 </div>
                 <div class="col five">
-                    <select name="data.skill" class="skillSelektor" data-dtype="String">
+                    <select name="data.skill" class="skillSelektor select2" data-dtype="String">
                         {{#select lastSkill}}
-                        {{#each skills as |ch|}}
-                        <option value="{{ch}}">{{ch}}</option>
+                        {{#each abilities as |ch|}}
+                        <option value="{{ch.name}}|{{ch.type}}">{{ch.name}}</option>
                         {{/each}}
                         {{/select}}
                     </select>

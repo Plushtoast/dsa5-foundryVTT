@@ -1153,11 +1153,13 @@ export default class DiceDSA5 {
                 chatData.modifierList.push({ name: game.i18n.localize('MODS.QS'), value: preData.advancedModifiers.qls })
         }
 
-        DSA5SoundEffect.playEffect(preData.mode, preData.source, testData.successLevel)
+        
 
         if (["gmroll", "blindroll"].includes(chatOptions.rollMode)) chatOptions["whisper"] = game.users.filter(user => user.isGM).map(x => x.data._id)
         if (chatOptions.rollMode === "blindroll") chatOptions["blind"] = true;
-        else if (chatOptions.rollMode === "selfroll") chatOptions["whisper"] = [game.user];
+        else if (chatOptions.rollMode === "selfroll") chatOptions["whisper"] = [game.user.id];
+
+        DSA5SoundEffect.playEffect(preData.mode, preData.source, testData.successLevel, chatOptions["whisper"], chatOptions["blind"])
 
         chatOptions["flags.data"] = {
             preData,
@@ -1282,7 +1284,6 @@ export default class DiceDSA5 {
                 { regEx: new RegExp(game.i18n.localize("DSAREGEX.hours"), 'gi'), seconds: 3600 },
                 { regEx: new RegExp(game.i18n.localize("DSAREGEX.days"), 'gi'), seconds: 3600 * 24 }
             ]
-
             for (const reg of regexes) {
                 if (reg.regEx.test(duration)) {
                     let time = this._stringToRoll(duration.replace(reg.regEx, "").trim())
@@ -1292,9 +1293,8 @@ export default class DiceDSA5 {
                             const customDuration = getProperty(ef, "flags.dsa5.customDuration")
                             if (customDuration) {
                                 let qsDuration = customDuration.split(",")[testData.qualityStep - 1]
-                                if (qsDuration && qsDuration != "-") calcTime = qsDuration
+                                if (qsDuration && qsDuration != "-") calcTime = Number(qsDuration)
                             }
-
                             ef.duration.seconds = calcTime
                             ef.duration.rounds = ef.duration.seconds / 5
                         }
