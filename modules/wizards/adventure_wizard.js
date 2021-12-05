@@ -10,6 +10,7 @@ export default class BookWizard extends Application {
         super(app)
         this.adventures = []
         this.books = []
+        this.rshs = []
     }
 
     static get defaultOptions() {
@@ -340,7 +341,7 @@ export default class BookWizard extends Application {
             }
             return await renderTemplate('systems/dsa5/templates/wizard/adventure/adventure_cover.html', { book: this.book, bookData: this.bookData })
         } else {
-            return await renderTemplate('systems/dsa5/templates/wizard/adventure/adventure_intro.html', { rules: this.books.sort((a, b) => { return a.id.localeCompare(b.id) }), adventures: game.user.isGM ? this.adventures : this.adventures.filter(x => x.visible).sort((a, b) => { return a.id.localeCompare(b.id) }) })
+            return await renderTemplate('systems/dsa5/templates/wizard/adventure/adventure_intro.html', { rshs: this.rshs.sort((a, b) => { return a.id.localeCompare(b.id) }), rules: this.books.sort((a, b) => { return a.id.localeCompare(b.id) }), adventures: game.user.isGM ? this.adventures : this.adventures.filter(x => x.visible).sort((a, b) => { return a.id.localeCompare(b.id) }) })
         }
     }
 

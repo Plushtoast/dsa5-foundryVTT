@@ -17,4 +17,12 @@
         <li>{{localize 'Book.nothing'}}</li>
         {{/if}}
     </ul>
+    <h2>{{localize 'Book.availableRSHs'}}</h2>
+    <ul class="dsalist">
+        {{#if rshs}} {{#each rshs as |item i|}}
+        <li><a data-type="rshs" class="loadBook">{{item.id}}</a></li>
+        {{/each}} {{else}}
+        <li>{{localize 'Book.nothing'}}</li>
+        {{/if}}
+    </ul>
 </div>
