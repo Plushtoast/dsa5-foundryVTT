@@ -86,6 +86,6 @@
     "minimumCoreVersion": "9.233",
     "compatibleCoreVersion": "9",
     "url": "https://github.com/Plushtoast/dsa5-foundryVTT",
-    "manifest": "https://raw.githubusercontent.com/Plushtoast/dsa5-foundryVTT/foundry08/system.json",
-    "download": "https://github.com/Plushtoast/dsa5-foundryVTT/releases/download/3.0.0/dsa5-foundryVTT-3.0.0.zip"
+    "manifest": "https://raw.githubusercontent.com/Plushtoast/dsa5-foundryVTT/foundry9/system.json",
+    "download": "https://github.com/Plushtoast/dsa5-foundryVTT/archive/foundry9.zip"
 }
