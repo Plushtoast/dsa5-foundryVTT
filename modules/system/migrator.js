@@ -23,8 +23,7 @@ async function migrateDSA(currentVersion, migrationVersion) {
 
 export async function showPatchViewer() {
     await fetch("systems/dsa5/lazy/updatenotes.json").then(async r => r.json()).then(async json => {
-        const patchViewer = new PatchViewer()
-        patchViewer.setJson(json)
+        const patchViewer = new PatchViewer(json)
         patchViewer.render(true)
     })
 }
@@ -33,9 +32,11 @@ export default function migrateWorld() {
     Hooks.once("ready", async function() {
         if (!game.user.isGM) return
 
+        await ChatMessage.create(DSA5_Utility.chatDataSetup("<h3>TDE for Foundry 9 is still in beta test. Please report bugs in <a href=\"https://github.com/Plushtoast/dsa5-foundryVTT/issues\">Github</a>.</h3>", "roll"))
+
         await setupDefaulTokenConfig()
         const currentVersion = await game.settings.get("dsa5", "migrationVersion")
-        const NEEDS_MIGRATION_VERSION = 11
+        const NEEDS_MIGRATION_VERSION = 12
         const needsMigration = currentVersion < NEEDS_MIGRATION_VERSION
 
         if (!needsMigration) return;
@@ -45,11 +46,8 @@ export default function migrateWorld() {
 };
 
 class PatchViewer extends Application {
-    constructor(app) {
+    constructor(json, app) {
         super(app)
-    }
-
-    setJson(json) {
         this.json = json
     }
 

@@ -133,7 +133,7 @@ function setupKnownEquipmentModifiers() {
     }
 }
 
-class DaylightIlluminationShader extends StandardIlluminationShader {
+class DaylightIlluminationShader extends AdaptiveIlluminationShader {
     static fragmentShader = `
     precision mediump float;
     uniform float time;

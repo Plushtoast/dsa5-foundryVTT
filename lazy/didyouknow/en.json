@@ -42,6 +42,7 @@
         "The \"Aventurian Armory 2\" enables the usage of the hitzone armor rule.",
         "You can sort actors in the master's menu with drag and drop.",
         "You can add actors and enemies to the master's menu with drag and drop.",
-        "You can enable token name obfuscation on drop to the canvas in the settings."
+        "You can enable token name obfuscation on drop to the canvas in the settings.",
+        "The link button next to the character name on the character sheet can be used to drag the character to the hotbar."
     ]
 }

@@ -1,0 +1,60 @@
+<div class="mume markdown-preview  ">
+    <h1 class="mume-header" id="wichtige-neue-features">2.5.0 Wichtige neue Features (07.12.2021)</h1>
+    <h2 class="mume-header" id="kreaturentypen">Foundry 9</h2>
+    <div class="row-section">
+        <div class="col sixty">
+            <p>
+                Dieser Patch beinhaltet nur wenig Neuerungen (zu viele im letzten Patch). Statt dessen geht es dieses mal um Stabilität und Bugfixes, denn die neue Version von Foundry - 9 - ist am Horizont und Bedarf unserer Aufmerksamkeit. Wir konzentrieren uns nun
+                auf notwendige Änderungen dafür. DSA 2.5 ist nicht mit Foundry 9 kompatibel, deswegen ist es sinnlos dazu Tickets zu schreiben. Bitte wartet auf die bald verfügbare Beta dafür oder wartet bis wir das offiziell unterstützen. Das wird auch
+                der letzte Content und Erweiterungs Patch für Foundry 0.8 sein (vlt noch Bugfixes).
+            </p>
+        </div>
+        <div class="col fourty">
+            <img src="icons/vtt-512.png">
+        </div>
+    </div>
+    <h2 class="mume-header" id="magische-und-geweihte-waffen">Charakter Rechner</h2>
+    <div class="row-section">
+        <div class="col sixty">
+            <p>
+                Das Grundregelwerk Modul beinhaltet nun einen Charakter Rechner, welcher ein bisschen bei der Charakter Erschaffung helfen kann. Er summiert Abenteuerpunktekosten von diversen Charakterelementen, Attributssummen abhängig von der Erfahrungsstufe des Charakters
+                und dergleichen. Er lässt sich über den Chatbefehl /cc oder über ein Macro im Macros Kompendium starten. Ziehe deinen Charakter per Drag and Drop auf den Rechner um die AP Kosten zu sehen (Spieler müssen das über den Draglink neben dem
+                Charakternamen auf dem Charakterblatt machen). Bitte zu diesem Tool keine Tickets in Github erstellen. Wir haben nicht vor uns weiter mit der Pandora Büchse der Charaktererschaffung zu beschäftigen. Tickets werden ignoriert, gevierteilt,
+                ertränkt und an den Namenlosen weitergeleitet.
+            </p>
+        </div>
+        <div class="col fourty">
+            <img src="systems/dsa5/lazy/patchimages/2.5.0/chargen.webp">
+        </div>
+    </div>
+
+    <h1 class="mume-header" id="erweiterungen">Verbesserungen</h1>
+
+    <ul>
+        <li>Der Status "Besiegt" ist nun über das Heldendokument und das Token HUD verfügbar (statt nur über den Combat Tracker)</li>
+        <li>Zauber haben nun ebenfalls einen Haken für bezahlte Kosten</li>
+        <li>Angewandter Schaden bei Angriffen ist nun auch für die Spieler sichtbar</li>
+        <li>Akteuere können nun per Drag und Drop gezogen werden über das Link neben dem Charakternamen (z.b. für den Charakter Rechner)</li>
+        <li>Die Bibliothek kann nun auch nach Modulen filtern</li>
+        <li>Aspect knowledge/Aspektkenntnis berechnet nun die maximale Steigerung für Liturgien</li>
+        <li>Der Tooltip für den Schaden sollte nun etwas übersichtlicher sein.</li>
+        <li>Versteckte Regenerations- und Eigenschaftsproben können nun über das Meistermenü durchgeführt werden.</li>
+        <li>Wurf anfordern im Chat akzeptiert nun auch ein + als Modifikator</li>
+        <li>Bruchfaktorproben zeigen nun eine Warnung wenn die Waffe magisch oder geweiht ist (und damit evtl. unzerstörbar)</li>
+    </ul>
+
+    <h1 class="mume-header" id="bugs">Bugfixes</h1>
+
+    <ul>
+        <li>Der Spezies Wizard zeigt nun die Beschreibung von selbst erstellten Spezies korrekt an</li>
+        <li>Waffenloser Kampf sollte den Schaden wieder korrekt auswürfeln</li>
+        <li>Versteckte Würfelwürfe spielen nicht mehr Soundeffekte für alle Spieler ab</li>
+        <li>Die Schicksalspunkteoption "Schaden wiederholen" sollte nun korrekt berechnet werden</li>
+        <li>Nah- und Fernkampfwaffen können jetzt Effekte ähnlich wie Zauber oder Kampfsonderfertigkeiten beinhalten (damit lässt sich ein Flammenschwert erstellen)</li>
+        <li>Wurf anfordern für Regenerationsproben sollte nun auch den Modifikator berücksichtigen</li>
+        <li>Die Werkstatt des Meisters sollte nun besser mit dem Hoster The Forge kompatibel sein (das Modul wird durch the Forge modifiziert und erzeugt ein paar Probleme...). Der Pfad zu den mitgelieferten Token muss leider trotzdem manuell angesteuert
+            werden.
+        </li>
+    </ul>
+
+</div>

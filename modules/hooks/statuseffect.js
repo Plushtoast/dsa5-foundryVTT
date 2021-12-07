@@ -1,6 +1,6 @@
 export default function() {
     Token.prototype.drawEffects = async function() {
-        this.effects.removeChildren().forEach(c => c.destroy());
+        this.hud.effects.removeChildren().forEach(c => c.destroy());
         const tokenEffects = this.data.effects;
         const isAllowedToSeeEffects = game.user.isGM || (this.actor && this.actor.testUserPermission(game.user, "OBSERVER")) || !(await game.settings.get("dsa5", "hideEffects"))
         const actorEffects = this.actor && isAllowedToSeeEffects ? this.actor.effects.filter(x => {
@@ -15,7 +15,7 @@ export default function() {
         if (tokenEffects.length || actorEffects.length) {
             const promises = [];
             let w = Math.round(canvas.dimensions.size / 2 / 5) * 2;
-            let bg = this.effects.addChild(new PIXI.Graphics()).beginFill(0x000000, 0.40).lineStyle(1.0, 0x000000);
+            let bg = this.hud.effects.addChild(new PIXI.Graphics()).beginFill(0x000000, 0.40).lineStyle(1.0, 0x000000);
             let i = 0;
 
             for (let f of actorEffects) {
@@ -40,7 +40,7 @@ export default function() {
 
     Token.prototype._drawEffect = async function(src, i, bg, w, tint, value) {
         let tex = await loadTexture(src);
-        let icon = this.effects.addChild(new PIXI.Sprite(tex));
+        let icon = this.hud.effects.addChild(new PIXI.Sprite(tex));
 
         icon.width = icon.height = w;
         icon.x = Math.floor(i / 5) * w;
@@ -52,16 +52,16 @@ export default function() {
             bg.drawRoundedRect(icon.x + 1, icon.y + 1, w - 2, w - 2, 2);
         } catch {}
 
-        this.effects.addChild(icon);
+        this.hud.effects.addChild(icon);
 
         if (value) {
             let textEffect = game.dsa5.config.effectTextStyle
             let color = await game.settings.get("dsa5", "statusEffectCounterColor")
             textEffect._fill = /^#[0-9A-F]+$/.test(color) ? color : "#000000"
-            let text = this.effects.addChild(new PreciseText(value, textEffect))
+            let text = this.hud.effects.addChild(new PreciseText(value, textEffect))
             text.x = icon.x;
             text.y = icon.y;
-            this.effects.addChild(text);
+            this.hud.effects.addChild(text);
         }
     }
 

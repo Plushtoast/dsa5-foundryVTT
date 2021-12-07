@@ -7,7 +7,8 @@ import { slist } from "./view_helper.js"
 
 export default class MastersMenu {
     static registerButtons() {
-        CONFIG.Canvas.layers.dsamenu = DSAMenuLayer
+
+        CONFIG.Canvas.layers.dsamenu = { layerClass: DSAMenuLayer, group: "primary" }
         Hooks.on("getSceneControlButtons", btns => {
             const dasMenuOptions = [{
                     name: "JournalBrowser",
@@ -404,22 +405,22 @@ class GameMasterMenu extends Application {
 
     async doGroupCheck() {
         const [skill, type] = this.lastSkill.split("|")
-        if(type != "skill") return
+        if (type != "skill") return
 
         const template = await renderTemplate('systems/dsa5/templates/dialog/master-dialog-award.html', { text: game.i18n.localize(game.i18n.format("MASTER.doGroupCheck", { skill })) })
         const callback = (dlg) => {
             const number = Number(dlg.find('.input-text').val())
             const [skill, type] = this.lastSkill.split("|")
-            if(type != "skill") return
+            if (type != "skill") return
 
             DSA5ChatAutoCompletion.showGCMessage(skill, number)
         }
         this.buildDialog(game.i18n.localize('HELP.groupcheck'), template, callback)
     }
 
-    rollAbility(actorIds){
+    rollAbility(actorIds) {
         const [name, type] = this.lastSkill.split("|")
-        switch(type){
+        switch (type) {
             case "skill":
                 this.rollSkill(actorIds, name)
                 break
@@ -432,7 +433,7 @@ class GameMasterMenu extends Application {
         }
     }
 
-    rollRegeneration(actorIds){
+    rollRegeneration(actorIds) {
         const actors = game.actors.filter(x => actorIds.includes(x.id))
         for (const actor of actors) {
             actor.setupRegeneration("regenerate", { rollMode: "blindroll", subtitle: ` (${actor.name})` }, undefined).then(setupData => { actor.basicTest(setupData) });
@@ -521,12 +522,12 @@ class GameMasterMenu extends Application {
             hero.disadvantages = hero.items.filter(x => x.type == "disadvantage").map(x => { return { name: x.name, uuid: x.uuid } })
         }
 
-        if(!this.abilities){
+        if (!this.abilities) {
             const skills = (await DSA5_Utility.allSkillsList())
             this.abilities = skills.map(x => { return { name: x, type: "skill" } })
                 .concat(Object.values(game.dsa5.config.characteristics).map(x => {
                     return { name: game.i18n.localize(x), type: "attribute" }
-                }).concat({ name: game.i18n.localize('regenerate'), type: "regeneration" })).sort((x,y) => x.name.localeCompare(y.name))
+                }).concat({ name: game.i18n.localize('regenerate'), type: "regeneration" })).sort((x, y) => x.name.localeCompare(y.name))
         }
 
         mergeObject(data, {

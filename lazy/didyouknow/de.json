@@ -43,7 +43,8 @@
         "Die \"Aventurische Rüstkammer 2\" beinhaltet die Funktionen für Trefferzonenrüstungsschutz.",
         "Du kannst im Meistermenü die Akteure per Drag and Drop sortieren",
         "Du kannst dem Meistermenü neue Helden und Feinde durch Drag and Drop hinzufügen.",
-        "In den Optionen lässt sich das automatische Token-beim-Drop-aufs-Canvas-Umbennen aktivieren."
+        "In den Optionen lässt sich das automatische Token-beim-Drop-aufs-Canvas-Umbennen aktivieren.",
+        "Mit dem Linkbutton neben dem Charakternamen auf dem Charakterblatt kannst du den Charakter auf die Hotbar ziehen,"
 
     ]
 }

@@ -131,6 +131,12 @@ h7 {
     border-color: transparent;
 }
 
+.dsa5.item-sheet img.fullImg {
+    width: 100%;
+    max-width: initial;
+    max-height: initial;
+}
+
 .dsa5.item textarea {
     padding: 1px 3px;
 }
@@ -3023,3 +3029,15 @@ input[type="checkbox"].autoCheckbox {
 .fxmaster .window-content .directory-item .config input[type="text"] {
     color: black;
 }
+
+
+/* Foundry9 fixes */
+
+#sidebar,
+#players,
+#hotbar {
+    position: relative;
+}
+
+
+/* End Foundry9 fixes */
