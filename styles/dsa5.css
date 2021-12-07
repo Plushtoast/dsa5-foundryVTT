@@ -131,6 +131,12 @@ h7 {
     border-color: transparent;
 }
 
+.dsa5.item-sheet img.fullImg {
+    width: 100%;
+    max-width: initial;
+    max-height: initial;
+}
+
 .dsa5.item textarea {
     padding: 1px 3px;
 }
