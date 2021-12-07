@@ -1,12 +1,14 @@
+# This is currently in beta phase
+
 # Official Das Schwarze Auge/The Dark Eye system for Foundry
 ![](https://repository-images.githubusercontent.com/311655339/4d523800-55a9-11eb-9e2e-6bbc2b71d8a4)
 
 ### Current Version and Compatibility:
-2.4.1 - FoundryVTT 0.8.6+
+3.0.0 - FoundryVTT 9.+
 This system is intended for usage with [Foundry Virtual Tabletop](https://foundryvtt.com/) to play "Das Schwarze Auge" 5th edition.
 
 ## Installation - Auto Installer
-In the FVTT Game Systems Menu, click Install System and enter the Manifest URL: `https://raw.githubusercontent.com/Plushtoast/dsa5-foundryVTT/foundry08/system.json`
+In the FVTT Game Systems Menu, click Install System and enter the Manifest URL: `https://raw.githubusercontent.com/Plushtoast/dsa5-foundryVTT/foundry9/system.json`
 
 ## Roadmap
 See [Milestones](https://github.com/Plushtoast/dsa5-foundryVTT/milestones) for our short term goals. Those might be subject to change.
