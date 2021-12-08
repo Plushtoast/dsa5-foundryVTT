@@ -171,7 +171,7 @@ export default class WizardDSA5 extends Application {
     async _loadCompendiae() {
         this.items = [];
         for (let p of game.packs) {
-            if (p.metadata.entity == "Item" && (game.user.isGM || !p.private)) {
+            if (p.documentName == "Item" && (game.user.isGM || !p.private)) {
                 await p.getDocuments().then(content => {
                     this.items.push(...content.filter(x => this.dataTypes.includes(x.type)))
                 })
