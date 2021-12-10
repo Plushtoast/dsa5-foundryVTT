@@ -1,12 +1,12 @@
 export default function() {
-    Hooks.on('preCreateScene', function (doc, createData, options, userId) {
-        doc.data.update({gridUnits: game.i18n.localize('gridUnits')})
+    Hooks.on('preCreateScene', function(doc, createData, options, userId) {
+        doc.data.update({ gridUnits: game.i18n.localize('gridUnits') })
     })
 
-    Hooks.on('preCreateActiveEffect', function (doc, createData, options, userId) {
+    Hooks.on('preCreateActiveEffect', function(doc, createData, options, userId) {
         if (doc.parent.documentName != "Actor") return
 
-        let update = {duration: {}}
+        let update = { duration: {} }
         if (!doc.data.duration.startTime) {
             update.duration.startTime = game.time.worldTime
         }
@@ -20,7 +20,7 @@ export default function() {
         update.duration.startRound = game.combat.round
         update.duration.startTurn = game.combat.turn
         if (!doc.data.duration.rounds && doc.data.duration.seconds) {
-            update.duration.rounds = data.duration.seconds / 5
+            update.duration.rounds = doc.data.duration.seconds / 5
         }
         doc.data.update(update)
     })
