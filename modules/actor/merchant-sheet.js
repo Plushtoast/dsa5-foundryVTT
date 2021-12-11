@@ -276,7 +276,7 @@ export default class MerchantSheetDSA5 extends ActorSheetdsa5NPC {
     async removeAllGoods(actor, ev) {
         let text = $(ev.currentTarget).text()
         $(ev.currentTarget).html(' <i class="fa fa-spin fa-spinner"></i>')
-        let ids = actor.items.filter(x => ["poison", "consumable", "equipment"].includes(x.type)).map(x => x.id)
+        let ids = actor.items.filter(x => ["poison", "consumable", "equipment","plant", "ammunition"].includes(x.type)).map(x => x.id)
         ids.push(...actor.items.filter(x => ["armor", "meleeweapon", "rangeweapon"].includes(x.type) && !x.data.data.worn.value).map(x => x.id))
         await actor.deleteEmbeddedDocuments("Item", ids);
         $(ev.currentTarget).text(text)
@@ -294,16 +294,20 @@ export default class MerchantSheetDSA5 extends ActorSheetdsa5NPC {
         data["invName"] = data["merchantTypes"][data["merchantType"]]
         data["players"] = game.users.filter(x => !x.isGM).map(x => {
             x.allowedMerchcant = this.actor.testUserPermission(x, "LIMITED", false)
+            x.buyingFactor = getProperty(this.actor.data.data, `merchant.factors.buyingFactor.${x.id}`)
+            x.sellingFactor = getProperty(this.actor.data.data, `merchant.factors.sellingFactor.${x.id}`)
             return x
         })
-        this.prepareStorage(data)
+
         if (data.merchantType != "epic") {
+            this.prepareStorage(data)
             if (this.merchantSheetActivated()) {
                 this.filterWornEquipment(data)
                 this.prepareTradeFriend(data)
                 if (data.actor.inventory["misc"].items.length == 0) data.actor.inventory["misc"].show = false
             }
         } else {
+            this.prepareStorage(data)
             data.garadanOptions = {
                 1: game.i18n.localize('GARADAN.1'),
                 2: game.i18n.localize('GARADAN.2'),
@@ -325,7 +329,7 @@ export default class MerchantSheetDSA5 extends ActorSheetdsa5NPC {
             for (const [key, value] of Object.entries(data.actor.inventory)) {
                 for (const item of value.items) {
                     item.defaultPrice = this.getItemPrice(item)
-                    item.calculatedPrice = Number(parseFloat(`${item.defaultPrice * (getProperty(this.actor.data.data, "merchant.sellingFactor") || 1)}`).toFixed(2))
+                    item.calculatedPrice = Number(parseFloat(`${item.defaultPrice * (getProperty(this.actor.data.data, "merchant.sellingFactor") || 1)}`).toFixed(2)) * (getProperty(this.actor.data.data, `merchant.factors.sellingFactor.${game.user.id}`) || 1)
                     item.priceTag = ` / ${item.calculatedPrice}`
                 }
             }
@@ -354,7 +358,7 @@ export default class MerchantSheetDSA5 extends ActorSheetdsa5NPC {
         let friend = this.getTradeFriend()
         if (friend) {
             let tradeData = friend.prepareItems({ details: [] })
-            let factor = getProperty(this.actor.data.data, "merchant.merchantType") == "loot" ? 1 : (getProperty(this.actor.data.data, "merchant.buyingFactor") || 1)
+            let factor = getProperty(this.actor.data.data, "merchant.merchantType") == "loot" ? 1 : (getProperty(this.actor.data.data, "merchant.buyingFactor") || 1) * (getProperty(this.actor.data.data, `merchant.factors.buyingFactor.${game.user.id}`) || 1)
             let inventory = this.prepareSellPrices(tradeData.inventory, factor)
             if (inventory["misc"].items.length == 0) inventory["misc"].show = false
 
@@ -393,7 +397,6 @@ export default class MerchantSheetDSA5 extends ActorSheetdsa5NPC {
                 item.calculatedPrice = Number(parseFloat(`${this.getItemPrice(item) * factor}`).toFixed(2))
             }
         }
-
         return inventory
     }
 }

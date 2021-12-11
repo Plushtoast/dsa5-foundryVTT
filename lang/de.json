@@ -492,7 +492,8 @@
         "sightautomation": "Sichtautomatisierung",
         "threshold": "Dunkelheitsschwelle",
         "darkness": "Dunkelheit",
-        "sightautomationTooltip": "Setzt bei Angriffs- und Verteidigungswürfen automatisch einen Modifikator, wenn der Dunkelheitswert die entsprechende Schwelle überschreitet."
+        "sightautomationTooltip": "Setzt bei Angriffs- und Verteidigungswürfen automatisch einen Modifikator, wenn der Dunkelheitswert die entsprechende Schwelle überschreitet.",
+        "gmMenuPlaceholder": "NSC Generatoren u.ä. siehe Werkstatt des Meisters Modul"
     },
     "MODS": {
         "partChecks": "Teilprobenmodifikator",

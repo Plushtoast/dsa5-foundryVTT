@@ -528,7 +528,8 @@
         "sightautomation": "Sight automation",
         "threshold": "Darkness threshold",
         "darkness": "Darkness",
-        "sightautomationTooltip": "Sets automatically a modifier for attack and defense rolls, if the darkness exceeds the darkness threshold value."
+        "sightautomationTooltip": "Sets automatically a modifier for attack and defense rolls, if the darkness exceeds the darkness threshold value.",
+        "gmMenuPlaceholder": "NPC generators and similar things see module Master's Workshop"
     },
     "WIZARD": {
         "addItem": "Add {item}",

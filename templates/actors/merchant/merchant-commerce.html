@@ -87,26 +87,58 @@
 </div>
 <div class="groupbox">
     <div class="row-section lineheight" title="{{localize 'PERMISSION.Configure'}}">
-        <div class="col fourty table-title ">
-            {{localize 'character'}}
+        <div class="col two row-section">
+            <div class="col seventy table-title">
+                {{localize 'character'}}
+            </div>
+            {{#if (eq actor.data.merchant.merchantType "merchant")}}
+            <div class="col ten center" title="{{localize 'MERCHANT.sellingFactor'}}">
+                <i class="fas fa-piggy-bank"></i>
+            </div>
+            <div class="col ten center" title="{{localize 'MERCHANT.buyingFactor'}}">
+                <i class="fas fa-coins"></i>
+            </div>
+            {{/if}}
+            <div class="col ten center">
+                <i class="fas fa-unlock"></i>
+            </div>
         </div>
-        <div class="col ten ">
-            <i class="fas fa-unlock"></i>
+        <div class="col two row-section">
+            <div class="col seventy table-title">
+                {{localize 'character'}}
+            </div>
+            {{#if (eq actor.data.merchant.merchantType "merchant")}}
+            <div class="col ten center" title="{{localize 'MERCHANT.sellingFactor'}}">
+                <i class="fas fa-piggy-bank"></i>
+            </div>
+            <div class="col ten center" title="{{localize 'MERCHANT.buyingFactor'}}">
+                <i class="fas fa-coins"></i>
+            </div>
+            {{/if}}
+            <div class="col ten center">
+                <i class="fas fa-unlock"></i>
+            </div>
         </div>
-        <div class="col fourty table-title ">
-            {{localize 'character'}}
-        </div>
-        <div class="col ten ">
-            <i class="fas fa-unlock"></i>
-        </div>
+
     </div>
     <div class="row-section wrap">
         {{#each players as |player i|}}
         <div class="col two row-section">
-            <div class="col eighty">
+            <div class="col seventy">
                 {{player.data.name}}
             </div>
-            <div class="col five">
+            {{#if (eq ../actor.data.merchant.merchantType "merchant")}}
+            <div class="col ten center" title="{{localize 'MERCHANT.sellingFactor'}}">
+                    <input name="data.merchant.factors.sellingFactor.{{player.id}}" type="text" value="{{player.sellingFactor}}"
+                        data-dtype="Number" />
+
+            </div>
+            <div class="col ten center" title="{{localize 'MERCHANT.buyingFactor'}}">
+                    <input name="data.merchant.factors.buyingFactor.{{player.id}}" type="text"
+                        value="{{player.buyingFactor}}" data-dtype="Number" />
+            </div>
+            {{/if}}
+            <div class="col ten center">
                 <a class="allowMerchant" data-user-id="{{player.id}}">
                     {{#if player.allowedMerchcant}}
                     <i class="far fa-check-circle"></i>

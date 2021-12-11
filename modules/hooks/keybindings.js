@@ -23,7 +23,7 @@ export default function () {
   game.keybindings.register("dsa5", "attacktest", {
     name: "attacktest",
     hint: game.i18n.localize("KEYBINDINGS.attack"),
-    editable: [{key: "a"}],
+    editable: [{key: "b"}],
     onDown: () => DSA5CombatTracker.runActAttackDialog()
   })
 }
