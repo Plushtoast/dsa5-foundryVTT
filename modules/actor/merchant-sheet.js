@@ -93,7 +93,7 @@ export default class MerchantSheetDSA5 extends ActorSheetdsa5NPC {
 
         if (game.user.isGM) {
             MerchantSheetDSA5.finishTransaction(source, target, price, itemId, buy, amount)
-        } else if (MerchantSheetDSA5.noNeedToPay(target, source) || DSA5Payment.canPay(target, price, true)) {
+        } else if (MerchantSheetDSA5.noNeedToPay(target, source, price) || DSA5Payment.canPay(target, price, true)) {
             let targetId = { actor: target.data._id }
             if (target.token) {
                 targetId["token"] = target.token.data._id
@@ -121,7 +121,7 @@ export default class MerchantSheetDSA5 extends ActorSheetdsa5NPC {
         let item = duplicate(await source.getEmbeddedDocument("Item", itemId))
         amount = Math.min(Number(item.data.quantity.value), amount)
         if (Number(item.data.quantity.value) > 0) {
-            let hasPaid = MerchantSheetDSA5.noNeedToPay(target, source) || DSA5Payment.payMoney(target, price, true)
+            const hasPaid = MerchantSheetDSA5.noNeedToPay(target, source, price) || DSA5Payment.payMoney(target, price, true)
             if (hasPaid) {
                 if (buy) {
                     await this.updateTargetTransaction(target, item, amount, source)
@@ -134,8 +134,8 @@ export default class MerchantSheetDSA5 extends ActorSheetdsa5NPC {
         }
     }
 
-    static noNeedToPay(target, source) {
-        return getProperty(target.data.data, "merchant.merchantType") == "loot" || getProperty(source.data.data, "merchant.merchantType") == "loot"
+    static noNeedToPay(target, source, price) {
+        return price == 0 || getProperty(target.data.data, "merchant.merchantType") == "loot" || getProperty(source.data.data, "merchant.merchantType") == "loot"
     }
 
     static async updateSourceTransaction(source, target, sourceItem, price, itemId, amount) {
@@ -146,8 +146,7 @@ export default class MerchantSheetDSA5 extends ActorSheetdsa5NPC {
         } else {
             await source.deleteEmbeddedDocuments("Item", [itemId])
         }
-        if (!this.noNeedToPay(source, target))
-            await DSA5Payment.getMoney(source, price, true)
+        if (!this.noNeedToPay(source, target, price)) await DSA5Payment.getMoney(source, price, true)
     }
 
     static async updateTargetTransaction(target, sourceItem, amount, source) {

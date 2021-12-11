@@ -759,8 +759,7 @@ export default class ActorSheetDsa5 extends ActorSheet {
         let item = this.actor.data.effects.find(x => x.id == id)
 
         if (item) {
-            let actor = this.actor
-            if (this.token) actor = this.token.actor
+            let actor = this.token ? this.token.actor : this.actor
 
             if (actor) await this.actor.deleteEmbeddedDocuments("ActiveEffect", [item.id])
 
