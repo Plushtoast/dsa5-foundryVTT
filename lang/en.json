@@ -161,6 +161,12 @@
         "3": "Rook",
         "4": "King"
     },
+    "KEYBINDINGS": {
+        "masterMenu": "Open the Master's Menu",
+        "journalBrowser": "Open the journal browser",
+        "library": "Open the library",
+        "attack": "Open the attack dialog for the current actor or player"
+    },
     "advanced": "Advanced",
     "requiredFW": "Required SR",
     "traditionArtifact": "Tradition Artifact",

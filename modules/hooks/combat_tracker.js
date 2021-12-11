@@ -18,11 +18,16 @@ export class DSA5CombatTracker extends CombatTracker {
         aggroButtons.click(ev => {
             ev.preventDefault()
             ev.stopPropagation()
-            const combatant = game.combat.combatant
-            if (game.user.isGM || combatant.isOwner)
-                ActAttackDialog.showDialog(combatant.actor, combatant.data.tokenId)
+            DSA5CombatTracker.runActAttackDialog()
         })
+    }
 
+    static runActAttackDialog(){
+        if(!game.combat) return
+
+        const combatant = game.combat.combatant
+        if (game.user.isGM || combatant.isOwner)
+            ActAttackDialog.showDialog(combatant.actor, combatant.data.tokenId)
     }
 
     async getData(options) {
@@ -54,7 +59,7 @@ export class DSA5CombatTracker extends CombatTracker {
             turn.ongoing = remainders[0].remaining
         }
 
-        
+
         turn.effects = new Set();
         if (combatant.token) {
             combatant.token.data.effects.forEach(e => turn.effects.add(e));
@@ -148,13 +153,13 @@ class RepeatingEffectsHelper {
     static async preUpdateCombatHook(combat, updateData)  {
         if (!updateData.round && !updateData.turn)
             return
-    
+
         if (combat.data.round != 0 && combat.turns && combat.data.active && combat.current.turn > -1 && combat.current.turn == combat.turns.length - 1) await RepeatingEffectsHelper.endOfRound(combat)
     }
 
     static async endOfRound(combat){
         const activeGM = game.users.find(u => u.active && u.isGM)
-            
+
         if (!(activeGM && game.user.id == activeGM.id)) return
 
         for (let turn of combat.turns) {
@@ -164,7 +169,7 @@ class RepeatingEffectsHelper {
                     if( statusId == "bleeding") await this.applyBleeding(turn)
                     else if(statusId == "burning") await this.applyBurning(turn, x)
                 }
-            } 
+            }
         }
     }
 
@@ -178,7 +183,7 @@ class RepeatingEffectsHelper {
         const die = {1: "1d3", 2: "1d6", 3: "2d6"}[step]
         const damageRoll = new Roll(die).evaluate({ async: false })
         const damage = await damageRoll.render()
-        
+
         await ChatMessage.create(DSA5_Utility.chatDataSetup(game.i18n.format(`CHATNOTIFICATION.burning.${step}`, { actor: turn.actor.name, damage})))
         await turn.actor.applyDamage(damageRoll.total)
     }

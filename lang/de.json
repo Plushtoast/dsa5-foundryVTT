@@ -522,6 +522,12 @@
         "attributesToChose": "Eigenschaftsänderungen",
         "generalTab": "Allgemein"
     },
+    "KEYBINDINGS": {
+        "masterMenu": "Öffne das Spielleitermenü",
+        "journalBrowser": "Öffne den Journalbrowser",
+        "library": "Öffne die Bibliothek",
+        "attack": "Öffne das Angriffsmenü für den aktuellen Token oder Spieler (im Kampf für den aktuellen Akteuer)"
+    },
     "WEAR": {
         "check": "Bruchfaktorprobe ({category})",
         "checkShort": "Bruchfaktorprobe",
