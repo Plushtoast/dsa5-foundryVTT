@@ -304,12 +304,13 @@ export default class OpposedDsa5 {
 
         opposeResult.winner = "attacker"
 
-        if (["weapon", "spell", "liturgy", "ceremony", "ritual"].includes(attackerTest.rollType) && defenderTest.successLevel == undefined) {
+        if (["weapon", "spell", "liturgy", "ceremony", "ritual", "combatskill"].includes(attackerTest.rollType) && defenderTest.successLevel == undefined) {
             defenderTest.successLevel = -5
         }
 
         if (defenderTest.successLevel != undefined) {
             switch (attackerTest.rollType) {
+                case "combatskill":
                 case "talent":
                     this._evaluateTalentOpposedRoll(attackerTest, defenderTest, opposeResult, options)
                     break;

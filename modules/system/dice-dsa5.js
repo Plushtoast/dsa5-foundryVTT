@@ -493,7 +493,7 @@ export default class DiceDSA5 {
         }, 0);
         let damageRoll = testData.damageRoll ? await testData.damageRoll : await DiceDSA5.manualRolls(await new Roll(rollFormula).evaluate({ async: true }), "CHAR.DAMAGE", testData.extra.options)
         let damage = damageRoll.total
-        
+
         let weaponroll = 0
         for (let k of damageRoll.terms) {
             if (k instanceof Die || k.class == "Die") {
@@ -501,7 +501,7 @@ export default class DiceDSA5 {
                     weaponroll += Number(l.result)
                     result.characteristics.push({ char: "damage", res: l.result, die: "d" + k.faces })
                 }
-            } 
+            }
         }
         let weaponBonus = damage - weaponroll
 
@@ -588,6 +588,20 @@ export default class DiceDSA5 {
         let success = result.successLevel > 0
         let doubleDamage = result.successLevel > 2
 
+        await this.detailedWeaponResult(result, testData)
+
+        if (testData.mode == "attack" && success)
+            await DiceDSA5.evaluateDamage(testData, result, weapon, source.type == "rangeweapon", doubleDamage)
+
+        result["rollType"] = "weapon"
+        const effect = DiceDSA5.parseEffect(weapon)
+
+        if (effect) result["parsedEffect"] = effect
+
+        return result
+    }
+
+    static async detailedWeaponResult(result, testData){
         switch (result.successLevel) {
             case 3:
                 if (testData.mode == "attack") {
@@ -615,16 +629,6 @@ export default class DiceDSA5 {
             case -2:
                 break;
         }
-
-        if (testData.mode == "attack" && success)
-            await DiceDSA5.evaluateDamage(testData, result, weapon, source.type == "rangeweapon", doubleDamage)
-
-        result["rollType"] = "weapon"
-        const effect = DiceDSA5.parseEffect(weapon)
-
-        if (effect) result["parsedEffect"] = effect
-
-        return result
     }
 
     static async _addRollDiceSoNice(testData, roll, color) {
@@ -637,64 +641,15 @@ export default class DiceDSA5 {
         }
     }
 
-    static rollCombatskill(testData) {
+    static async rollCombatskill(testData) {
         let roll = testData.roll ? testData.roll : new Roll("1d20").evaluate({ async: false });
-        let description = "";
         this._appendSituationalModifiers(testData, game.i18n.localize("manual"), testData.testModifier)
-        let modifier = this._situationalModifiers(testData);
-
         let weaponSource = testData.source.data.data == undefined ? testData.source : testData.source.data
         let source = Actordsa5._calculateCombatSkillValues(weaponSource, testData.extra.actor)
-        let res = modifier + source.data[testData.mode].value;
-
-        let res1 = res - roll.terms[0].results[0].result;
-        let chars = [{ char: testData.mode, res: roll.terms[0].results[0].result, suc: res1 >= 0, tar: res }]
-        let rollConfirm = new Roll("1d20").evaluate({ async: false });
-        rollConfirm.dice[0].options.colorset = testData.mode
-
-        if (roll.terms[0].results.filter(x => x.result == 1).length == 1) {
-            description = game.i18n.localize("CriticalSuccess") + ", " + game.i18n.localize("halfDefense");
-            let res2 = res - rollConfirm.terms[0].results[0].result;
-            if (res2 >= 0) {
-                description += ", " + game.i18n.localize("doubleDamage")
-            }
-            this._addRollDiceSoNice(testData, rollConfirm, game.dsa5.apps.DiceSoNiceCustomization.getAttributeConfiguration(testData.mode))
-            chars.push({ char: testData.mode, res: rollConfirm.terms[0].results[0].result, suc: res2 >= 0, tar: res });
-
-        } else if (roll.terms[0].results.filter(x => x.result == 20).length == 1) {
-            description = game.i18n.localize("CriticalFailure");
-            let res2 = res - rollConfirm.terms[0].results[0].result;
-            if (res2 < 0) {
-                if (testData.mode == "attack" && source.data.weapontype.value == "melee" && game.settings.get("dsa5", "meleeBotchTableEnabled")) {
-                    description += `, <a class="roll-button melee-botch" data-weaponless="${source.name == game.i18n.localize('LocalizedIDs.wrestle')}"><i class="fas fa-dice"></i>${game.i18n.localize('CriticalFailure')} ${game.i18n.localize("table")}</a>`
-                } else if (testData.mode == "attack" && game.settings.get("dsa5", "rangeBotchTableEnabled")) {
-                    description += `, <a class="roll-button range-botch" data-weaponless="${source.name == game.i18n.localize('LocalizedIDs.wrestle')}"><i class="fas fa-dice"></i>${game.i18n.localize('CriticalFailure')} ${game.i18n.localize("table")}</a>`
-                } else if (testData.mode != "attack" && game.settings.get("dsa5", "defenseBotchTableEnabled")) {
-                    description += `, <a class="roll-button defense-botch" data-weaponless="${source.name == game.i18n.localize('LocalizedIDs.wrestle')}"><i class="fas fa-dice"></i>${game.i18n.localize('CriticalFailure')} ${game.i18n.localize("table")}</a>`
-                } else {
-                    description += ", " + game.i18n.localize("selfDamage") + (new Roll("1d6+2").evaluate({ async: false }).total)
-                }
-            }
-            this._addRollDiceSoNice(testData, rollConfirm, game.dsa5.apps.DiceSoNiceCustomization.getAttributeConfiguration(testData.mode))
-            chars.push({
-                char: testData.mode,
-                res: rollConfirm.terms[0].results[0].result,
-                suc: res2 < 0,
-                tar: res
-            });
-        }
-
-        if (description == "")
-            description = game.i18n.localize(res1 >= 0 ? "Success" : "Failure");
-
-        return {
-            rollType: "weapon",
-            characteristics: chars,
-            description: description,
-            preData: testData,
-            modifiers: modifier,
-            extra: {}
-        }
+        let result = this._rollSingleD20(roll, source.data[testData.mode].value, testData.mode, this._situationalModifiers(testData), testData, "", this._situationalMultipliers(testData))
+        await this.detailedWeaponResult(result, testData)
+        result["rollType"] = "combatskill"
+        return result
     }
 
     static async manualRolls(roll, description = "", options = {}) {
@@ -775,7 +730,7 @@ export default class DiceDSA5 {
             let extraFps = new Roll("1d6").evaluate({ async: false }).total
             res.description = res.description + ", " + game.i18n.localize("additionalFPs") + " " + extraFps
             res.result = res.result + extraFps
-            res.qualityStep =  Math.min(game.settings.get("dsa5", "capQSat"), Math.ceil(res.result / 3)) 
+            res.qualityStep =  Math.min(game.settings.get("dsa5", "capQSat"), Math.ceil(res.result / 3))
             res.preData.calculatedSpellModifiers.finalcost = Math.round(res.preData.calculatedSpellModifiers.cost / 2)
         } else if (res.successLevel <= -2) {
             res.description += `, <a class="roll-button ${"spell" ? "spell" : "liturgy"}-botch"><i class="fas fa-dice"></i>${game.i18n.localize('CriticalFailure')} ${game.i18n.localize("table")}</a>`
@@ -979,7 +934,7 @@ export default class DiceDSA5 {
                 rollResults = this.rollTalent(testData)
                 break;
             case "combatskill":
-                rollResults = this.rollCombatskill(testData)
+                rollResults = await this.rollCombatskill(testData)
                 break;
             case "trait":
                 if (testData.mode == "parry") await this.updateDefenseCount(testData)
@@ -1153,7 +1108,7 @@ export default class DiceDSA5 {
                 chatData.modifierList.push({ name: game.i18n.localize('MODS.QS'), value: preData.advancedModifiers.qls })
         }
 
-        
+
 
         if (["gmroll", "blindroll"].includes(chatOptions.rollMode)) chatOptions["whisper"] = game.users.filter(user => user.isGM).map(x => x.data._id)
         if (chatOptions.rollMode === "blindroll") chatOptions["blind"] = true;

@@ -868,7 +868,6 @@ class ConsumableItemDSA extends Itemdsa5 {
         item1.data.charges = newCharges
         return await actor.updateEmbeddedDocuments("Item", [item1])
     }
-
 }
 
 class DiseaseItemDSA5 extends Itemdsa5 {
@@ -951,7 +950,6 @@ class EquipmentItemDSA5 extends Itemdsa5 {
     }
 }
 
-
 class MeleeweaponDSA5 extends Itemdsa5 {
     static chatData(data, name) {
         let res = [
@@ -965,7 +963,6 @@ class MeleeweaponDSA5 extends Itemdsa5 {
 
         return res
     }
-
 
     static getSituationalModifiers(situationalModifiers, actor, data, source) {
         let wrongHandDisabled = AdvantageRulesDSA5.hasVantage(actor, game.i18n.localize('LocalizedIDs.ambidextrous'))
