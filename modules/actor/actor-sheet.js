@@ -754,8 +754,9 @@ export default class ActorSheetDsa5 extends ActorSheet {
     }
 
     async _deleteActiveEffect(id) {
-        let item = this.actor.data.effects.find(x => x.id == id)
+        if (!this.isEditable) return
 
+        let item = this.actor.data.effects.find(x => x.id == id)
         if (item) {
             let actor = this.actor
             if (this.token) actor = this.token.actor
@@ -767,6 +768,8 @@ export default class ActorSheetDsa5 extends ActorSheet {
     }
 
     _deleteItem(ev) {
+        if (!this.isEditable) return
+
         const itemId = this._getItemId(ev);
         let item = this.actor.data.items.find(x => x.id == itemId)
         let message = game.i18n.format("DIALOG.DeleteItemDetail", { item: item.name })
