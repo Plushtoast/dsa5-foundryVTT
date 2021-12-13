@@ -78,6 +78,10 @@ export default class BookWizard extends Application {
     activateListeners(html) {
         super.activateListeners(html)
 
+        html.on('click', '.showMapNote', ev => {
+            game.journal.get(ev.currentTarget.dataset.entryid).panToNote()
+        })
+
         html.on("search", ".filterJournals", ev => {
             this.filterToc($(ev.currentTarget).val())
         })
@@ -224,7 +228,9 @@ export default class BookWizard extends Application {
         let content = journal.data.content
         if (!content) content = `<img src="${journal.data.img}"/>`
 
-        this.content = `<div><h1 class="journalHeader" data-uuid="${journal.uuid}">${journal.name}<a class="pinJournal"><i class="fas fa-thumbtack"></i></a><a class="showJournal"><i class="fas fa-eye"></i></a></h1>${TextEditor.enrichHTML(content)}`
+        const pinIcon = this.findSceneNote(journal.getFlag("dsa5", "initId"))
+
+        this.content = `<div><h1 class="journalHeader" data-uuid="${journal.uuid}">${journal.name}<div class="jrnIcons">${pinIcon}<a class="pinJournal"><i class="fas fa-thumbtack"></i></a><a class="showJournal"><i class="fas fa-eye"></i></a></div></h1>${TextEditor.enrichHTML(content)}`
         const chapter = $(this._element).find('.chapter')
         chapter.html(this.content)
         chapter.find('.documentName-link, .entity-link').click(ev => {
@@ -234,6 +240,14 @@ export default class BookWizard extends Application {
                 this.loadJournalById(elem.attr("data-id"))
             }
         })
+    }
+
+    findSceneNote(entryId) {
+        if (entryId) {
+            const importedJournalEntry = game.journal.find(x => x.getFlag("dsa5", "initId") == entryId)
+            if (importedJournalEntry && importedJournalEntry.sceneNote) return `<a class="showMapNote" data-entryId="${importedJournalEntry.id}"><i class="fas fa-map-pin"></i></a>`
+        }
+        return ""
     }
 
     async importBook() {

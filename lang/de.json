@@ -761,7 +761,8 @@
         "actorConfig": "Akteur konfigurieren",
         "weightOnActor": "Wird vom Akteur getragen",
         "tempRegeneration": "Temporär, wird bei Regenerationswurf verbraucht.",
-        "permRegeneration": "Permanent, wird bei jedem Regenerationswurf hinzugezählt"
+        "permRegeneration": "Permanent, wird bei jedem Regenerationswurf hinzugezählt",
+        "panMapNote": "Map Notiz fokussieren"
     },
     "ITEMSHEET": {
         "offHandMod": "Bonus/Malus als Nebenhand (z.b. Parierwaffe)"

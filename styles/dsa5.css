@@ -2370,16 +2370,14 @@ select.noAppearance {
     max-width: 40%;
 }
 
-.journalHeader .pinJournal,
-.journalHeader .showJournal {
-    position: absolute;
-    right: 5px;
-    bottom: -3px;
+.journalHeader .jrnIcons {
     color: rgb(92, 92, 92);
+    float: right;
 }
 
-.journalHeader .pinJournal {
-    right: 45px;
+.journalHeader .jrnIcons a {
+    display: inline-block;
+    margin-right: 10px;
 }
 
 .sound-name {

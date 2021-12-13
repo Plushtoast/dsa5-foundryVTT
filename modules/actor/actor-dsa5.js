@@ -953,6 +953,40 @@ export default class Actordsa5 extends Actor {
         return Itemdsa5.getSubClass(skill.type).setupDialog(null, options, skill, this, tokenId)
     }
 
+    tokenScrollingText(texts) {
+        const tokens = this.isToken ? [this.token ? this.token.object : undefined] : this.getActiveTokens(true);
+        for (let t of tokens) {
+            if (!t || !t.hud) continue;
+
+            let index = 0
+            for (let k of texts) {
+                t.hud.createScrollingText(k.value, {
+                    anchor: index,
+                    direction: k.value > 0 ? 2 : 1,
+                    fontSize: 16,
+                    stroke: k.stroke,
+                    strokeThickness: 1,
+                    jitter: 0.25,
+                    duration: 1000
+                })
+                index += 1
+            }
+        }
+    }
+
+    async _preUpdate(data, options, user) {
+        await super._preUpdate(data, options, user);
+
+        const statusText = { wounds: 0x8b0000, astralenergy: 0x0b0bd9, karmaenergy: 0x04a236 }
+        const scolls = []
+        for (let key of Object.keys(statusText)) {
+            const value = getProperty(data, `data.status.${key}.value`)
+            if (value) scolls.push({ value: value - this.data.data.status[key].value, stroke: statusText[key] })
+        }
+        if (scolls.length) this.tokenScrollingText(scolls)
+    }
+
+
     async applyDamage(amount) {
         const newVal = Math.min(this.data.data.status.wounds.max, this.data.data.status.wounds.value - amount)
         await this.update({ "data.status.wounds.value": newVal })

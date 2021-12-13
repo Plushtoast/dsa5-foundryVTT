@@ -732,7 +732,8 @@
         "actorConfig": "Configure actor",
         "weightOnActor": "Being carried by the actor",
         "tempRegeneration": "Temporary, consumed on the next regeneration roll",
-        "permRegeneration": "Permanent, bonus for every regeneration roll"
+        "permRegeneration": "Permanent, bonus for every regeneration roll",
+        "panMapNote": "Focus map note"
     },
     "ITEMSHEET": {
         "offHandMod": "Bonus/handicap offhand (e.g. parry weapon)"

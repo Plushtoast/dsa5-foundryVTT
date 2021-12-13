@@ -12,6 +12,7 @@ export default function() {
         $(html).find(".entry-text").attr("title", game.i18n.localize("SHEET.textView"));
         $(html).find(".share-image").attr("title", game.i18n.localize("SHEET.showToPlayers"));
         $(html).find(".import").attr("title", game.i18n.localize("SHEET.import"));
+        $(html).find(".panMapNote").attr("title", game.i18n.localize("SHEET.panMapNote"));
 
         DSA5ChatAutoCompletion.bindRollCommands(html)
 
@@ -24,6 +25,15 @@ export default function() {
             if (ev.button == 2) game.dsa5.apps.DSA5_Utility.showArtwork({ name: name, uuid: "", img: $(ev.currentTarget).attr("src") })
             return false
         })
+    })
+
+    Hooks.on("getJournalSheetHeaderButtons", (sheet, buttons) => {
+        if (sheet.document.sceneNote)
+            buttons.unshift({
+                class: "panMapNote",
+                icon: "fas fa-map-pin",
+                onclick: async() => sheet.document.panToNote()
+            })
     })
 
     TextEditor._enrichHTML = TextEditor.enrichHTML
