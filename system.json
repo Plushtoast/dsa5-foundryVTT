@@ -83,9 +83,9 @@
     "gridUnits": "Schritt",
     "primaryTokenAttribute": "status.wounds",
     "secondaryTokenAttribute": "status.astralenergy",
-    "minimumCoreVersion": "9.233",
+    "minimumCoreVersion": "9.235",
     "compatibleCoreVersion": "9",
     "url": "https://github.com/Plushtoast/dsa5-foundryVTT",
     "manifest": "https://raw.githubusercontent.com/Plushtoast/dsa5-foundryVTT/foundry9/system.json",
-    "download": "https://github.com/Plushtoast/dsa5-foundryVTT/archive/foundry9.zip"
+    "download": "https://github.com/Plushtoast/dsa5-foundryVTT/releases/download/3.0.0/dsa5-foundryVTT-3.0.0.zip"
 }
