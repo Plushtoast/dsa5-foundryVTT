@@ -297,6 +297,7 @@ export default class DSA5ItemLibrary extends Application {
     async getRandomItems(category, limit) {
         let filteredItems = []
         let index = this.equipmentIndex
+
         filteredItems.push(...(await index.search(category, { field: ["itemType"] })))
         return await Promise.all(this.shuffle(filteredItems.filter(x => x.hasPermission)).slice(0, limit).map(x => x.getItem()))
     }

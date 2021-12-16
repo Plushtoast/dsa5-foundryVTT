@@ -257,12 +257,18 @@ export default class MerchantSheetDSA5 extends ActorSheetdsa5NPC {
         if (!itemLibrary.equipmentBuild) {
             await itemLibrary.buildEquipmentIndex()
         }
+
         let items = []
         for (let cat of categories) {
             items.push(...await itemLibrary.getRandomItems(cat, numbers[cat]))
         }
+
         var seen = {}
         items = items.filter(function(x) {
+            const domain = getProperty(x, "data.data.effect.attributes") || ""
+            const price = Number(getProperty(x, "data.data.price.value")) || 0
+            if (domain != "" || price > 10000) return false
+
             let seeName = `${x.type}_${x.name}`
             return (seen.hasOwnProperty(seeName) ? false : (seen[seeName] = true)) && actor.data.items.filter(function(y) {
                 return y.type == x.type && y.name == x.name
@@ -275,7 +281,7 @@ export default class MerchantSheetDSA5 extends ActorSheetdsa5NPC {
     async removeAllGoods(actor, ev) {
         let text = $(ev.currentTarget).text()
         $(ev.currentTarget).html(' <i class="fa fa-spin fa-spinner"></i>')
-        let ids = actor.items.filter(x => ["poison", "consumable", "equipment","plant", "ammunition"].includes(x.type)).map(x => x.id)
+        let ids = actor.items.filter(x => ["poison", "consumable", "equipment", "plant", "ammunition"].includes(x.type)).map(x => x.id)
         ids.push(...actor.items.filter(x => ["armor", "meleeweapon", "rangeweapon"].includes(x.type) && !x.data.data.worn.value).map(x => x.id))
         await actor.deleteEmbeddedDocuments("Item", ids);
         $(ev.currentTarget).text(text)
