@@ -15,6 +15,10 @@
         {
             "version": "2.5.0",
             "text": "<ul><li>TDE for Foundry 9 Beta soon</li><li>Character calculator</li><li>VTTom has again plenty of <a href=\"https://www.youtube.com/channel/UCgVzSn5NkMaO-PDxhCiAAjA\" target=\"_blank\">new Tutorials.</a></li><li><a href=\"https://www.f-shop.de/virtual-tabletops/\" target=\"_blank\">The Suncoast & Labyrinth of Intrigues soon available</a></li><li><a href=\"https://www.ulissesf-shop.com/virtual-tabletops//\" target=\"_blank\">The module Aventurian Magic I</a> is available in the US store in english soon.</li><li>And big thanks again to all our voluntary helpers! Especially Gunthgard, VTTom, Nellkir, Niemand, Lambert and Mckee.</li></ul>"
+        },
+        {
+            "version": "3.0.1",
+            "text": "<ul><li>Foundry 9 finished with new features</li><li>Improved performance for maps with many walls and lights</li><li>Card decks</li><li>Keybinds</li><li>...and TDE is ready for v9!</li></ul>"
         }
     ]
 }

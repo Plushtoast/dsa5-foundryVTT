@@ -32,11 +32,9 @@ export default function migrateWorld() {
     Hooks.once("ready", async function() {
         if (!game.user.isGM) return
 
-        //await ChatMessage.create(DSA5_Utility.chatDataSetup("<h3>TDE for Foundry 9 is still in beta test. Please report bugs in <a href=\"https://github.com/Plushtoast/dsa5-foundryVTT/issues\">Github</a>.</h3>", "roll"))
-
         await setupDefaulTokenConfig()
         const currentVersion = await game.settings.get("dsa5", "migrationVersion")
-        const NEEDS_MIGRATION_VERSION = 12
+        const NEEDS_MIGRATION_VERSION = 13
         const needsMigration = currentVersion < NEEDS_MIGRATION_VERSION
 
         if (!needsMigration) return;
