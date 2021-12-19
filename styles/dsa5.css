@@ -3037,5 +3037,9 @@ input[type="checkbox"].autoCheckbox {
     position: relative;
 }
 
+#playlists.sidebar-tab .directory-list .directory-item.playlist.collapsed {
+    color: #555;
+}
+
 
 /* End Foundry9 fixes */
