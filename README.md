@@ -1,10 +1,10 @@
-# This is currently in beta phase
+
 
 # Official Das Schwarze Auge/The Dark Eye system for Foundry
 ![](https://repository-images.githubusercontent.com/311655339/4d523800-55a9-11eb-9e2e-6bbc2b71d8a4)
 
 ### Current Version and Compatibility:
-3.0.0 - FoundryVTT 9.+
+3.0.1 - FoundryVTT 9.+
 This system is intended for usage with [Foundry Virtual Tabletop](https://foundryvtt.com/) to play "Das Schwarze Auge" 5th edition.
 
 ## Installation - Auto Installer
