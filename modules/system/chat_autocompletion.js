@@ -281,7 +281,7 @@ export default class DSA5ChatAutoCompletion {
         ChatMessage.create(DSA5_Utility.chatDataSetup(msg));
     }
 
-    static async showGCMessage(target, modifier = 0){
+    static async showGCMessage(target, modifier = 0, options = {}){
         const type = DSA5ChatAutoCompletion.skills.find(x => x.name == target).type
         const data = {
             results: [],
@@ -297,6 +297,7 @@ export default class DSA5ChatAutoCompletion {
             doneRolls: 0,
             targetQs: 10
         }
+        mergeObject(data, options)
         const content = await renderTemplate("systems/dsa5/templates/chat/roll/groupcheck.html", data)
         let chatData = DSA5_Utility.chatDataSetup(content)
         chatData.flags = data

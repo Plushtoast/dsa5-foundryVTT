@@ -83,6 +83,7 @@ class GameMasterMenu extends Application {
             if (game.canvas.id == document.id && properties.reduce((a, b) => {
                     return a || hasProperty(data, b)
                 }, false)) {
+                if (game.dsa5.apps.LightDialog) game.dsa5.apps.LightDialog.onDarknessChange()
                 this.render()
             }
         })
@@ -216,6 +217,8 @@ class GameMasterMenu extends Application {
             elem.activateListeners(html)
         }
         slist(html, '.heros', this.updateHeroOrder, '.hero')
+
+        if (game.dsa5.apps.LightDialog) game.dsa5.apps.LightDialog.activateButtonListener(html)
     }
 
     async _deleteHero(ev) {
@@ -535,7 +538,8 @@ class GameMasterMenu extends Application {
             abilities: this.abilities,
             groupschips,
             lastSkill: this.lastSkill,
-            randomCreation: this.randomCreation.map(x => x.template)
+            randomCreation: this.randomCreation.map(x => x.template),
+            lightButton: game.dsa5.apps.LightDialog ? game.dsa5.apps.LightDialog.getButtonHTML() : ""
         })
         return data
     }

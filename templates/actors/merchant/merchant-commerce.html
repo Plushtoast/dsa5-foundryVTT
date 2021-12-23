@@ -129,13 +129,11 @@
             </div>
             {{#if (eq ../actor.data.merchant.merchantType "merchant")}}
             <div class="col ten center" title="{{localize 'MERCHANT.sellingFactor'}}">
-                    <input name="data.merchant.factors.sellingFactor.{{player.id}}" type="text" value="{{player.sellingFactor}}"
-                        data-dtype="Number" />
+                <input name="data.merchant.factors.sellingFactor.{{player.id}}" type="text" value="{{player.sellingFactor}}" data-dtype="Number" />
 
             </div>
             <div class="col ten center" title="{{localize 'MERCHANT.buyingFactor'}}">
-                    <input name="data.merchant.factors.buyingFactor.{{player.id}}" type="text"
-                        value="{{player.buyingFactor}}" data-dtype="Number" />
+                <input name="data.merchant.factors.buyingFactor.{{player.id}}" type="text" value="{{player.buyingFactor}}" data-dtype="Number" />
             </div>
             {{/if}}
             <div class="col ten center">

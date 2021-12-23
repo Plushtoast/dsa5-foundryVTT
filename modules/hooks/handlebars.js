@@ -2,7 +2,7 @@ import DSA5_Utility from "../system/utility-dsa5.js";
 
 export default function() {
     Handlebars.registerHelper({
-        concat: (a, b) => a + b,
+        concatDSA: (a, b) => a + b,
         concatUp: (a, b) => a + b.toUpperCase(),
         mod: (a, b) => a % b,
         roman: (a, max) => {

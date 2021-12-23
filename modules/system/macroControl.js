@@ -20,8 +20,8 @@ export default class MacroDSA5 {
         DSA5ChatAutoCompletion.showRQMessage(skill, modifier)
     }
 
-    static requestGC(skill, modifier = 0) {
-        DSA5ChatAutoCompletion.showGCMessage(skill, modifier)
+    static requestGC(skill, modifier = 0, options = {}) {
+        DSA5ChatAutoCompletion.showGCMessage(skill, modifier, options)
     }
 
     static rollCh(skill, options = {}) {

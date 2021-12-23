@@ -31,6 +31,14 @@ export default class DSA5_Utility {
         return result;
     }
 
+
+    static renderToggle(elem) {
+        if (elem.rendered) {
+            if (elem._minimized) elem.maximize();
+            else elem.close()
+        } else elem.render(true);
+    }
+
     static calcTokenSize(actorData, data) {
         let tokenSize = game.dsa5.config.tokenSizeCategories[actorData.data.status.size.value]
         if (tokenSize) {
