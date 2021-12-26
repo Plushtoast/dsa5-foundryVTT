@@ -28,4 +28,16 @@ export default function() {
         editable: [{ key: "KeyB" }],
         onDown: () => DSA5CombatTracker.runActAttackDialog()
     })
+    game.keybindings.register("dsa5", "combatTrackerNext", {
+        name: "COMBAT.TurnNext",
+        hint: game.i18n.localize("COMBAT.TurnNext"),
+        editable: [{ key: "KeyN" }],
+        onDown: () => {game.combat && game.combat.nextTurn()}
+    })
+    game.keybindings.register("dsa5", "combatTrackerPrevious", {
+        name: "COMBAT.TurnPrev",
+        hint: game.i18n.localize("COMBAT.TurnPrev"),
+        editable: [{ key: "KeyV" }],
+        onDown: () => { game.combat && game.combat.previousTurn()}
+    })
 }
