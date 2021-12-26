@@ -2,7 +2,8 @@ import DSA5_Utility from "../system/utility-dsa5.js";
 
 export default function() {
     Handlebars.registerHelper({
-        concatDSA: (a, b) => a + b,
+        //DSA concat conflict with v9 concat helper
+        concat: (...values) => { return HandlebarsHelpers.concat(...values).string },
         concatUp: (a, b) => a + b.toUpperCase(),
         mod: (a, b) => a % b,
         roman: (a, max) => {

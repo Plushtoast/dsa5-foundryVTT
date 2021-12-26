@@ -256,6 +256,20 @@ export default function() {
         type: Boolean
     });
 
+    game.settings.register("dsa5", "scrollingFontsize", {
+        name: "DSASETTINGS.scrollingFontsize",
+        hint: "DSASETTINGS.scrollingFontsizeHint",
+        scope: "client",
+        config: true,
+        default: 16,
+        type: Number,
+        range: {
+            min: 6,
+            max: 50,
+            step: 1
+        }
+    });
+
     game.settings.register("dsa5", "armorAndWeaponDamage", {
         name: "DSASETTINGS.armorAndWeaponDamage",
         hint: "DSASETTINGS.armorAndWeaponDamageHint",

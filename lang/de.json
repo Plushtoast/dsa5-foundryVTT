@@ -489,7 +489,7 @@
         "payTT": "Ausnehmen",
         "randomPlayer": "Zufälliges Opfer (Rechtsklick inklusive Pechmagnet)",
         "randomGen": "Zuchtgrube",
-        "sightautomation": "Sichtautomatisierung",
+        "sightautomation": "Sichtmodifikatoren (auto)",
         "threshold": "Dunkelheitsschwelle",
         "darkness": "Dunkelheit",
         "sightautomationTooltip": "Setzt bei Angriffs- und Verteidigungswürfen automatisch einen Modifikator, wenn der Dunkelheitswert die entsprechende Schwelle überschreitet.",
@@ -1272,7 +1272,9 @@
         "disableDidYouKnow": "\"Wusstest du Schon?\" deaktivieren",
         "disableDidYouKnowHint": "Sag NEIN zu Weiterbildung!",
         "armorAndWeaponDamage": "Waffen- und Rüstungsverschleiß",
-        "armorAndWeaponDamageHint": "Aktiviere die optionale Regel für den Waffenbruchfaktor und Rüstungsverschleiß"
+        "armorAndWeaponDamageHint": "Aktiviere die optionale Regel für den Waffenbruchfaktor und Rüstungsverschleiß",
+        "scrollingFontsize": "Kampftext Schriftgröße",
+        "scrollingFontsizeHint": "Die Schriftgröße für einige der scrollenden Token Texte (z.B. +- LeP)"
     },
     "COMBATTRACKER": {
         "noDefenses": "Anzahl Verteidigungen",

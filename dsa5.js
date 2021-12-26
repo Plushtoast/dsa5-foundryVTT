@@ -20,6 +20,7 @@ import DSAActiveEffectConfig from "./modules/status/active_effects.js";
 import DSA5Hotbar from "./modules/system/tokenHotbar.js";
 import RollMemory from "./modules/system/roll_memory.js"
 import SpecialabilityRulesDSA5 from "./modules/system/specialability-rules-dsa5.js"
+import AdvantageRulesDSA5 from "./modules/system/advantage-rules-dsa5.js"
 import Migrakel from "./modules/system/migrakel.js"
 import DSA5Dialog from "./modules/dialog/dialog-dsa5.js"
 
@@ -39,6 +40,7 @@ Hooks.once("init", () => {
             DSA5ChatListeners,
             DSA5Payment,
             SpecialabilityRulesDSA5,
+            AdvantageRulesDSA5,
             Migrakel,
             DSA5Dialog
         },

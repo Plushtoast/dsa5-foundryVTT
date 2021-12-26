@@ -525,7 +525,7 @@
         "payTT": "Loot player",
         "randomPlayer": "Random victim (right click to include Misfortune)",
         "randomGen": "Breeding pit",
-        "sightautomation": "Sight automation",
+        "sightautomation": "Sight modifiers (auto)",
         "threshold": "Darkness threshold",
         "darkness": "Darkness",
         "sightautomationTooltip": "Sets automatically a modifier for attack and defense rolls, if the darkness exceeds the darkness threshold value.",
@@ -1249,7 +1249,9 @@
         "disableDidYouKnow": "Disable \"Did you know?\"",
         "disableDidYouKnowHint": "Say NO to education!",
         "armorAndWeaponDamage": "Weapon breaking and Armor Sturdiness",
-        "armorAndWeaponDamageHint": "Activate the optional rule for weapon breaking and armor sturdiness."
+        "armorAndWeaponDamageHint": "Activate the optional rule for weapon breaking and armor sturdiness.",
+        "scrollingFontsize": "Combat Text Font Size",
+        "scrollingFontsizeHint": "Font size for some of the scrolling token texts (e.g. +- LP)"
     },
     "WEAR": {
         "check": "Breaking Point Rating Check ({category})",

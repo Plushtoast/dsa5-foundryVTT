@@ -9,17 +9,7 @@
         <div class="tab sceneConfig" data-tab="sceneConfig">
             <div class="groupbox">
                 <h2>{{localize 'sight'}}</h2>
-                <div class="row-section lineheight">
-                    <div class="col fourty table-title">
-                        <label>{{localize "MASTER.sightautomation"}}</label>
-                    </div>
-                    <div class="col two">
-                        <input type="checkbox" class="changeSightAutomation" name="changeSightAutomation" value="1" {{checked sceneConfig.sceneAutomationEnabled}}>
-                    </div>
-                    <div class="col ten center">
-                        {{{lightButton}}}
-                    </div>
-                </div>
+
                 <div class="row-section lineheight">
                     <div class="col fourty table-title">
                         <label>{{localize "MASTER.darkness"}}</label>
@@ -29,6 +19,18 @@
                     </div>
                     <div class="col ten center">
                         <span class="range-value">{{item.value}}</span>
+                    </div>
+                </div>
+                <div class="row-section lineheight">
+                    <div class="col fourty table-title">
+                        <label>{{localize "MASTER.sightautomation"}}</label>
+                    </div>
+                    <div class="col two">
+                        <input type="checkbox" class="changeSightAutomation" name="changeSightAutomation" value="1" {{checked
+                            sceneConfig.sceneAutomationEnabled}}>
+                    </div>
+                    <div class="col ten center">
+
                     </div>
                 </div>
                 <div class="row-section lineheight" title="{{localize 'MASTER.sightautomationTooltip'}}">
@@ -54,7 +56,7 @@
                     </div>
                 </div>
                 {{/each}}
-
+                {{{lightButton}}}
             </div>
         </div>
         <div class="tab randomGen" data-tab="randomGen">

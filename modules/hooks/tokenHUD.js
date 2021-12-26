@@ -20,9 +20,10 @@ function addThirdBarToHUD(html, actor, app) {
 
 export default function() {
     Hooks.on('renderTokenHUD', (app, html, data) => {
-        let actor = canvas.tokens.get(data._id).actor
+        const actor = app.object.actor
         if (actor) {
             addThirdBarToHUD(html, actor, app)
+            if (game.dsa5.apps.LightDialog) game.dsa5.apps.LightDialog.lightHud(html, actor, data)
         }
         html.find('.control-icon[data-action="target"]').mousedown(ev => {
                 if (ev.button == 2) {

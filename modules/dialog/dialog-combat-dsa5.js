@@ -1,4 +1,5 @@
 import AdvantageRulesDSA5 from "../system/advantage-rules-dsa5.js";
+import SpecialabilityRulesDSA5 from "../system/specialability-rules-dsa5.js";
 import DSA5_Utility from "../system/utility-dsa5.js";
 import DialogShared from "./dialog-shared.js";
 
@@ -142,7 +143,7 @@ export default class DSA5CombatDialog extends DialogShared {
                         level = 0
                     } else {
                         level = Math.max(0, level - darkSightLevel)
-                        level = Math.max(0, level - AdvantageRulesDSA5.vantageStep(actor.data, game.i18n.localize("LocalizedIDs.traditionBoron")))
+                        if (SpecialabilityRulesDSA5.hasAbility(actor.data, game.i18n.localize("LocalizedIDs.traditionBoron"))) level = Math.max(0, level - 1)
                         level = Math.min(4, level + AdvantageRulesDSA5.vantageStep(actor.data, game.i18n.localize("LocalizedIDs.nightBlind")))
                     }
                 }

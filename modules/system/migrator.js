@@ -9,8 +9,6 @@ async function setupDefaulTokenConfig() {
         defaultToken.displayBars = CONST.TOKEN_DISPLAY_MODES.OWNER_HOVER
         defaultToken.disposition = CONST.TOKEN_DISPOSITIONS.NEUTRAL
         defaultToken.bar1 = { attribute: "status.wounds" }
-        defaultToken.brightSight = 10
-        defaultToken.dimSight = 20
         await game.settings.set("core", "defaultToken", defaultToken)
         await game.settings.set("dsa5", "defaultConfigFinished", true)
     }

@@ -963,7 +963,7 @@ export default class Actordsa5 extends Actor {
                 t.hud.createScrollingText(k.value, {
                     anchor: index,
                     direction: k.value > 0 ? 2 : 1,
-                    fontSize: 16,
+                    fontSize: game.settings.get("dsa5","scrollingFontsize"),
                     stroke: k.stroke,
                     strokeThickness: 1,
                     jitter: 0.25,
@@ -1744,9 +1744,9 @@ export default class Actordsa5 extends Actor {
             }
         }
 
-        if (statusId == "dead" && game.combat) 
+        if (statusId == "dead" && game.combat)
             await this.markDead(true)
-            
+
         if (statusId == "unconscious")
             await this.addCondition("prone")
 

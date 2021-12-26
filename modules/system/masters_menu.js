@@ -87,6 +87,9 @@ class GameMasterMenu extends Application {
                 this.render()
             }
         })
+        Hooks.on("canvasInit", () => {
+            this.render()
+        })
         this.randomCreation = []
     }
 
@@ -539,7 +542,7 @@ class GameMasterMenu extends Application {
             groupschips,
             lastSkill: this.lastSkill,
             randomCreation: this.randomCreation.map(x => x.template),
-            lightButton: game.dsa5.apps.LightDialog ? game.dsa5.apps.LightDialog.getButtonHTML() : ""
+            lightButton: game.dsa5.apps.LightDialog ? await game.dsa5.apps.LightDialog.getButtonHTML() : ""
         })
         return data
     }

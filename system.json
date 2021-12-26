@@ -21,49 +21,49 @@
             "label": "Talente",
             "system": "dsa5",
             "path": "packs/skills.db",
-            "entity": "Item"
+            "type": "Item"
         },
         {
             "name": "skillsen",
             "label": "Skills",
             "system": "dsa5",
             "path": "packs/skillsen.db",
-            "entity": "Item"
+            "type": "Item"
         },
         {
             "name": "combatskills",
             "label": "Kampftalente",
             "system": "dsa5",
             "path": "packs/combatskills.db",
-            "entity": "Item"
+            "type": "Item"
         },
         {
             "name": "combatskillsen",
             "label": "Combat Techniques",
             "system": "dsa5",
             "path": "packs/combatskillsen.db",
-            "entity": "Item"
+            "type": "Item"
         },
         {
             "name": "money",
             "label": "Geld",
             "system": "dsa5",
             "path": "packs/money.db",
-            "entity": "Item"
+            "type": "Item"
         },
         {
             "name": "speciesen",
             "label": "Species",
             "system": "dsa5",
             "path": "packs/speciesen.db",
-            "entity": "Item"
+            "type": "Item"
         },
         {
             "name": "species",
             "label": "Spezies",
             "system": "dsa5",
             "path": "packs/species.db",
-            "entity": "Item"
+            "type": "Item"
         }
     ],
     "languages": [{

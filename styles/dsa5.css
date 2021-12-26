@@ -437,7 +437,7 @@ input[type=text].emphasize {
 }
 
 .window-app .window-header [id^="popout_"],
-.window-app .window-header .header-button {
+.window-app:not(.monarch) .window-header .header-button {
     width: 15px;
     height: 15px;
     margin-top: 10px;
@@ -991,7 +991,7 @@ form.dsa5.item-sheet {
     box-shadow: none;
 }
 
-.window-app .window-header,
+.window-app:not(.monarch) .window-header,
 .window-app:after {
     background-repeat: no-repeat;
     position: relative;
@@ -1236,22 +1236,19 @@ form.dsa5.item-sheet {
     box-shadow: none;
 }
 
-.window-app .window-header {
-    /*background-image: url(../icons/backgrounds/creature-top.webp);*/
+.window-app:not(.monarch) .window-header {
     background-image: url(../icons/backgrounds/blackhat.webp);
     top: 7px;
     border: none;
 }
 
-.window-app:after {
-    /*background-image: url(../icons/backgrounds/bookBorder.webp);*/
+.window-app:not(.monarch):after {
     background-image: url(../icons/backgrounds/blackbook.webp);
     bottom: 12px;
     content: '';
 }
 
 .window-app.creature-sheet:after {
-    /*background-image: url(../icons/backgrounds/creature-bot.webp);*/
     background-image: url(../icons/backgrounds/blackcreaturebot.webp);
 }
 
@@ -1276,6 +1273,7 @@ form.dsa5.item-sheet {
     width: calc(100% - 4px);
 }
 
+.cards-notification .icon,
 .didYouKnow img,
 fieldset,
 .app.sidebar-popout,
