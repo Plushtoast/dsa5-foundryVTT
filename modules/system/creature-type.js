@@ -68,9 +68,7 @@ export default class CreatureType {
         return Object.keys(CreatureType.creatureData.types).find(key => CreatureType.creatureData.types[key] === className)
     }
 
-
     isAttackItem(attackItem) {
-        console.log(attackItem)
         return ["meleeweapon", "trait", "rangeweapon"].includes(attackItem.type) && isNotEmpty(attackItem.data.effect.attributes)
     }
 

@@ -483,18 +483,18 @@ export default class DSA5ItemLibrary extends Application {
         await this._createIndex("equipment", "Item", game.items)
     }
 
-    async _createIndex(category, entity, worldStuff) {
+    async _createIndex(category, document, worldStuff) {
         if (this[`${category}Build`]) return
 
         const target = $(this._element).find(`*[data-tab="${category}"]`)
         this.showLoading(target, category)
-        const packs = game.packs.filter(p => p.documentName == entity && (game.user.isGM || !p.private))
+        const packs = game.packs.filter(p => p.documentName == document && (game.user.isGM || !p.private))
         let promise
         let metadata = packs.map(p => p.metadata)
-        if (entity == "Actor") {
+        if (document == "Actor") {
             const fields = ["name", "data.type", "data.description.value", "img"]
             promise = packs.map(p => p.getIndex({ fields }))
-        } else if (entity == "JournalEntry") {
+        } else if (document == "JournalEntry") {
             //const fields = ["name", "type", "data.content", "img"]
             //promise = packs.map(p => p.getIndex({ fields }))
             promise = packs.map(p => p.getDocuments())

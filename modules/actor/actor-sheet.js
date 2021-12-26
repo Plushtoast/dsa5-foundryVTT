@@ -541,7 +541,7 @@ export default class ActorSheetDsa5 extends ActorSheet {
             if (ev.button == 0) {
                 const origin = $(ev.currentTarget).parents(".statusEffect").attr("data-origin")
                 if (origin) {
-                    fromUuid(origin).then(entity => entity.sheet.render(true))
+                    fromUuid(origin).then(document => document.sheet.render(true))
                 } else {
                     let effect
                     let text

@@ -193,11 +193,10 @@ export default class DSA5_Utility {
                 return a.localeCompare(b)
             })
 
-            //TODO we can maybe replace this with getDocuments({name: []}), should be faster
             for (let pack of sortedPacks) {
                 let p = game.packs.get(pack)
                 if (p.documentName == "Item" && (game.user.isGM || !p.private)) {
-                    await p.getDocuments().then(content => {
+                    await p.getDocuments({name: {$in: names}, type: {$in: types}}).then(content => {
                         for (let k of content) {
                             let index = names.indexOf(k.name)
                             if (index >= 0 && types[index] == k.type) {

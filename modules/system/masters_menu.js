@@ -124,8 +124,8 @@ class GameMasterMenu extends Application {
         html.find('.actorItem').click(async(ev) => {
             ev.stopPropagation()
             const id = $(ev.currentTarget).attr("data-uuid")
-            const entity = await fromUuid(id)
-            entity.sheet.render(true)
+            const document = await fromUuid(id)
+            document.sheet.render(true)
         })
         html.find('.getPaid').click((ev) => {
             ev.stopPropagation()

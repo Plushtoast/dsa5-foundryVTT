@@ -287,14 +287,14 @@ export default class DSA5Initializer extends Dialog {
         }
     }
 
-    async getFolderForType(entityType, parent = null, folderName = null, sort = 0) {
+    async getFolderForType(documentType, parent = null, folderName = null, sort = 0) {
         if (!folderName) folderName = game.i18n.localize(`${this.module}.name`)
 
-        let folder = await game.folders.contents.find(x => x.name == folderName && x.type == entityType && x.data.parent == parent)
+        let folder = await game.folders.contents.find(x => x.name == folderName && x.type == documentType && x.data.parent == parent)
         if (!folder) {
             folder = await Folder.create({
                 name: folderName,
-                type: entityType,
+                type: documentType,
                 sorting: "m",
                 color: "",
                 sort,
