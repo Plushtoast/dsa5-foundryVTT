@@ -28,7 +28,7 @@ export default class MastersMenu {
                 {
                     name: "PlayerMenu",
                     title: game.i18n.localize("PLAYER.title"),
-                    icon: "fas fa-shield-alt",
+                    icon: "fas fa-tools",
                     button: true,
                     onClick: () => { DSA5_Utility.renderToggle(game.dsa5.apps.playerMenu)}
                 }

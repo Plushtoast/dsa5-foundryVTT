@@ -97,4 +97,12 @@ export default class RuleChaos {
         if (limit != undefined) value = Math.max(limit, value)
         setProperty(item, path, value)
     }
+
+    static magicalImprovement(actor, creationData) {
+        for (let item of actor.items) {
+            if (["ritual", "spell"].includes(item.type)) {
+                item.data.talentValue.value += 4
+            }
+        }
+    }
 }

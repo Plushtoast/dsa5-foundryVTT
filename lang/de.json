@@ -501,7 +501,7 @@
         "request": "Beschwörungsanfrage",
         "requestDescr": "Bestätige die Anfrage um die Beschwörung als Akteur anzulegen. Danach kann die Beschwörung per Drag and Drop auf die Karte gezogen oder mit einem Rechtsclick gelöscht werden (ab und an auch mal den Beschwörungsordner bei den Akteuren aufräumen!).",
         "dragActor": "Kein Beschwörer aktiv (drag and drop)",
-        "dragConjuration": "Keine Beschwörung aktiv (drag and drop)",
+        "dragConjuration": "Keine Beschwörung aktiv (drag and drop, mindestens Observerrechte)",
         "conjurs": "beschwört"
     },
     "PLAYER": {

@@ -1,10 +1,11 @@
 import Actordsa5 from "../actor/actor-dsa5.js";
 import DSA5Dialog from "../dialog/dialog-dsa5.js";
 import OpposedDsa5 from "./opposed-dsa5.js";
+import RuleChaos from "./rule_chaos.js";
 import DSA5_Utility from "./utility-dsa5.js";
 
-//TODO spell modifiers
 //TODO magical weapon resistance
+
 
 export default class PlayerMenu extends Application {
   constructor(app) {
@@ -32,7 +33,7 @@ export default class PlayerMenu extends Application {
           { key: "data.status.dodge.gearmodifier", mode: 2, value: 2 }
         ]
       },
-      { id: 4, name: 'CONJURATION.magicalImprovement', descr: "CONJURATION.magicalImprovementDescr", changes: [] },
+      { id: 4, name: 'CONJURATION.magicalImprovement', descr: "CONJURATION.magicalImprovementDescr", changes: [], fun: RuleChaos.magicalImprovement},
       {
         id: 5, name: 'CONJURATION.resistanceImprovement', descr: "CONJURATION.resistanceImprovementDescr", changes: [
           { key: "data.status.soulpower.gearmodifier", mode: 2, value: 2 },
@@ -300,6 +301,9 @@ class ConjurationRequest extends DSA5Dialog {
           }
         }
       })
+      if(modifier.fun){
+        modifier.fun(this.conjuration, this.creationData)
+      }
     }
     this.conjuration.effects.push({
       "changes": [],

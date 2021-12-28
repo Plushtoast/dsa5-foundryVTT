@@ -537,7 +537,7 @@
         "request": "Summoning request",
         "requestDescr": "Confirm the summoning request to create the actor. Afterwards you can drag & drop the actor onto the map or delete it via right click. (Don't forget to clean up the summoning actor directory from time to time.)",
         "dragActor": "No summoner active (drag and drop)",
-        "dragConjuration": "No summoning target active (drag and drop)",
+        "dragConjuration": "No summoning target active (drag and drop, at least observer permissions)",
         "conjurs": "summons"
     },
     "PLAYER": {
