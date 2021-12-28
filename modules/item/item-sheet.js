@@ -45,12 +45,13 @@ export default class ItemSheetdsa5 extends ItemSheet {
         Items.registerSheet("dsa5", ArmorSheet, { makeDefault: true, types: ["armor"] });
         Items.registerSheet("dsa5", AmmunitionSheet, { makeDefault: true, types: ["ammunition"] });
         Items.registerSheet("dsa5", PlantSheet, { makeDefault: true, types: ["plant"] });
+        Items.registerSheet("dsa5", MagicalSignSheet, { makeDefault: true, types: ["magicalsign"] });
 
         Items.unregisterSheet("dsa5", ItemSheetdsa5, {
             types: [
                 "armor", "equipment", "rangeweapon", "blessing", "magictrick", "spellextension", "consumable",
                 "species", "career", "culture", "advantage", "specialability", "disadvantage", "ritual",
-                "ceremony", "liturgy", "spell", "disease", "poison", "meleeweapon", "ammunition", "plant"
+                "ceremony", "liturgy", "spell", "disease", "poison", "meleeweapon", "ammunition", "plant", "magicalsign"
             ]
         });
     }
@@ -569,6 +570,40 @@ class PlantSheet extends ItemSheetdsa5 {
     }
 }
 
+class MagicalSignSheet extends ItemSheetdsa5{
+    async getData(options) {
+        const data = await super.getData(options);
+        data.categories = {1: game.i18n.localize("magicalsign"), 2: game.i18n.localize("additionalsign")}
+        return data
+    }
+    _getHeaderButtons() {
+        let buttons = super._getHeaderButtons();
+        if (this.item.isOwned) {
+            buttons.unshift({
+                class: "rolleffect",
+                icon: `fas fa-dice-d20`,
+                onclick: async ev => this.setupEffect(ev)
+            })
+        }
+        return buttons
+    }
+    async setupEffect(ev) {
+        const aspcost = Number(this.item.data.data.asp) || 0
+        if (this.item.actor.data.data.status.astralenergy.value < aspcost)
+            return ui.notifications.error(game.i18n.localize("DSAError.NotEnoughAsP"))
+
+        const actor = this.item.actor
+        const sign = game.dsa5.config.ItemSubclasses.magicalsign
+        const skill = actor.items.find(x => x.type == "skill" && x.name == game.i18n.localize("LocalizedIDs.artisticAbility"))
+        const chatMessage = `<hr/><p><b>${this.item.name}</b></p><p>${this.item.data.data.description.value}</p><p>${sign.chatData(this.item.data.data, "").join("</br>")}</p>`
+        actor.setupSkill(skill.data, { other: [chatMessage], subtitle: ` (${game.i18n.localize('magicalsign')})` }, undefined).then(async(setupData) => {
+            //TODO pay this once if successfull
+            //await this.item.actor.update({ "data.status.astralenergy.value": actor.data.data.status.astralenergy.value -= aspcost })
+            const res = await actor.basicTest(setupData)
+        })
+    }
+}
+
 class RangeweaponSheet extends Enchantable {
     _getHeaderButtons() {
         let buttons = super._getHeaderButtons();
@@ -603,15 +638,14 @@ class BlessingSheetDSA5 extends ItemSheetdsa5 {
         return buttons
     }
 
-    setupEffect(ev) {
+    async setupEffect(ev) {
         if (this.item.actor.data.data.status.karmaenergy.value < 1)
             return ui.notifications.error(game.i18n.localize("DSAError.NotEnoughKaP"))
 
         const cantrip = game.dsa5.config.ItemSubclasses.magictrick
-        this.item.actor.update({ "data.status.karmaenergy.value": this.item.actor.data.data.status.karmaenergy.value -= 1 })
+        await this.item.actor.update({ "data.status.karmaenergy.value": this.item.actor.data.data.status.karmaenergy.value -= 1 })
         let chatMessage = `<p><b>${this.item.name} - ${game.i18n.localize('blessing')} ${game.i18n.localize('probe')}</b></p><p>${this.item.data.data.description.value}</p><p>${cantrip.chatData(this.item.data.data, "").join("</br>")}</p>`
-        ChatMessage.create(DSA5_Utility.chatDataSetup(chatMessage));
-
+        await ChatMessage.create(DSA5_Utility.chatDataSetup(chatMessage));
     }
 }
 
@@ -701,14 +735,14 @@ class MagictrickSheetDSA5 extends ItemSheetdsa5 {
         return buttons
     }
 
-    setupEffect(ev) {
+    async setupEffect(ev) {
         if (this.item.actor.data.data.status.astralenergy.value < 1)
             return ui.notifications.error(game.i18n.localize("DSAError.NotEnoughAsP"))
 
         const cantrip = game.dsa5.config.ItemSubclasses.magictrick
-        this.item.actor.update({ "data.status.astralenergy.value": this.item.actor.data.data.status.astralenergy.value -= 1 })
-        let chatMessage = `<p><b>${this.item.name} - ${game.i18n.localize('magictrick')} ${game.i18n.localize('probe')}</b></p><p>${this.item.data.data.description.value}</p><p>${cantrip.chatData(this.item.data.data, "").join("</br>")}</p>`
-        ChatMessage.create(DSA5_Utility.chatDataSetup(chatMessage));
+        await this.item.actor.update({ "data.status.astralenergy.value": this.item.actor.data.data.status.astralenergy.value -= 1 })
+        const chatMessage = `<p><b>${this.item.name} - ${game.i18n.localize('magictrick')} ${game.i18n.localize('probe')}</b></p><p>${this.item.data.data.description.value}</p><p>${cantrip.chatData(this.item.data.data, "").join("</br>")}</p>`
+        await ChatMessage.create(DSA5_Utility.chatDataSetup(chatMessage));
     }
 }
 

@@ -335,7 +335,8 @@
             "spellextension",
             "application",
             "effectwrapper",
-            "plant"
+            "plant",
+            "magicalsign"
         ],
         "templates": {
             "skill": {
@@ -453,6 +454,15 @@
                     "value": 0
                 }
             }
+        },
+        "magicalsign": {
+            "templates": [
+                "description",
+                "APValue"
+            ],
+            "asp": 0,
+            "feature": "",
+            "category": 1
         },
         "application": {
             "templates": [

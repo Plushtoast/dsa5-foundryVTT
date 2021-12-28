@@ -733,7 +733,7 @@ export default class DiceDSA5 {
             res.qualityStep =  Math.min(game.settings.get("dsa5", "capQSat"), Math.ceil(res.result / 3))
             res.preData.calculatedSpellModifiers.finalcost = Math.round(res.preData.calculatedSpellModifiers.cost / 2)
         } else if (res.successLevel <= -2) {
-            res.description += `, <a class="roll-button ${"spell" ? "spell" : "liturgy"}-botch"><i class="fas fa-dice"></i>${game.i18n.localize('CriticalFailure')} ${game.i18n.localize("table")}</a>`
+            res.description += `, <a class="roll-button ${["spell","ritual"].includes(testData.source.type) ? "spell" : "liturgy"}-botch"><i class="fas fa-dice"></i>${game.i18n.localize('CriticalFailure')} ${game.i18n.localize("table")}</a>`
         }
 
         if (res.successLevel < 0) {

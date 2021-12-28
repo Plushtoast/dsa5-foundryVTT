@@ -1,0 +1,88 @@
+<div class="row-section">
+  <div class="col two">
+    <div class="groupbox lineheight" style="padding:4px;">
+      <b>{{localize 'probe'}}</b><br />
+      <div class="row-section">
+        <div class="col sixty table-title">
+          <label class="">{{localize "CHARAbbrev.QS"}}:</label>
+        </div>
+        <div class="col fourty">
+          <input class="conjurationData" data-refresh="true" type="text" name="qs" value="{{conjurationData.qs}}"/>
+        </div>
+      </div>
+      <div class="row-section">
+        <div class="col sixty table-title">
+          <label class="">{{localize "extensions"}}:</label>
+        </div>
+        <div class="col fourty">
+          {{conjurationData.consumedQS}}
+        </div>
+      </div>
+      <div class="row-section">
+        <div class="col sixty table-title">
+          <label class="">{{localize "PLAYER.services"}}:</label>
+        </div>
+        <div class="col fourty">
+          {{services}}
+        </div>
+      </div>
+      <div class="row-section">
+        <div class="col">
+          <button class="finalizeConjuration" title="{{localize 'CONJURATION.finalizeTooltip'}}">{{localize 'PLAYER.finalize'}}</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="groupbox lineheight" style="padding:4px;">
+      <b>{{localize 'PLAYER.conjuration'}}</b><br />
+      <div class="row-section">
+        <div class="col center">
+          <img style="width:70px;height:70px" class="profile" src="{{conjuration.img}}" title="{{actor.name}}">
+        </div>
+      </div>
+      <div class="row-section">
+        <div class="col fourty table-title">
+          <label class="">{{localize "Name"}}:</label>
+        </div>
+        <div class="col sixty">
+          <a class="openChar">{{conjuration.name}}</a>
+        </div>
+      </div>
+      <div class="row-section">
+        <div class="col fourty table-title">
+          <label class="">{{localize "creatureClass"}}:</label>
+        </div>
+        <div class="col sixty">
+          {{conjuration.data.data.creatureClass.value}}
+        </div>
+      </div>
+      <div class="row-section">
+        <div class="col fourty table-title">
+          <label class="">{{localize "conjuringDifficulty"}}:</label>
+        </div>
+        <div class="col sixty">
+          {{conjuration.data.data.conjuringDifficulty.value}}
+        </div>
+      </div>
+    </div>
+
+
+  </div>
+  <div class="col two">
+    <div class="groupbox" style="padding:4px;">
+      <b class="lineheight">{{localize 'extensions'}}</b><br />
+
+      {{#each conjurationModifiers as |item i|}}
+      <div class="row-section wrap tableOdd selectableRow {{#if (hasElem ../conjurationData.selectedIds item.id)}}selected{{/if}}" data-id="{{item.id}}">
+        <div class="col lineheight">
+          {{localize item.name}}
+        </div>
+        <div class="col">
+          <span class="small">{{localize item.descr}}</span>
+        </div>
+      </div>
+      {{/each}}
+    </div>
+
+  </div>
+</div>

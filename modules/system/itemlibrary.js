@@ -208,7 +208,8 @@ export default class DSA5ItemLibrary extends Application {
                     "magictrick": false,
                     "ritual": false,
                     "spell": false,
-                    "spellextension": false
+                    "spellextension": false,
+                    "magicalsign": false
                 },
                 filterBy: {
                     search: ""
@@ -318,7 +319,7 @@ export default class DSA5ItemLibrary extends Application {
         return array;
     }
 
-    async findCompendiumItem(search, category) {
+    async findCompendiumItem(search, category, filterCompendium = true) {
         if (!this.equipmentBuild) {
             await this.buildEquipmentIndex()
         }
@@ -326,7 +327,12 @@ export default class DSA5ItemLibrary extends Application {
             field: ["name"],
             where: { itemType: category }
         }
-        return await Promise.all((await this.equipmentIndex.search(search, query).filter(x => x.compendium != "")).map(x => x.getItem()))
+        let result = await this.equipmentIndex.search(search, query)
+        if (filterCompendium) result = result.filter(x => x.compendium != "")
+
+        console.log(filterCompendium)
+
+        return await Promise.all(result.map(x => x.getItem()))
     }
 
     async getCategoryItems(category, asItem = false) {

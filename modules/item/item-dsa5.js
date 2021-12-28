@@ -119,7 +119,8 @@ export default class Itemdsa5 extends Item {
             spellextension: SpellextensionItemDSA5,
             species: SpeciesItemDSA5,
             effectwrapper: EffectWrapperItemDSA5,
-            plant: PlantItemDSA5
+            plant: PlantItemDSA5,
+            magicalsign: MagicalSignItemDSA5
         }
     }
 
@@ -479,6 +480,17 @@ class PlantItemDSA5 extends Itemdsa5 {
             this._chatLineHelper("PLANT.recipes", data.recipes),
             this._chatLineHelper("PLANT.usages", data.usages)
         ]
+
+        return res
+    }
+}
+
+class MagicalSignItemDSA5 extends Itemdsa5 {
+    static chatData(data, name) {
+        let res = [
+            this._chatLineHelper("AsPCost", data.asp)
+        ]
+        if (data.category == 2) res.push(this._chatLineHelper("feature", data.feature))
 
         return res
     }

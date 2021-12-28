@@ -1,4 +1,5 @@
 import Itemdsa5 from "../item/item-dsa5.js"
+import DSA5_Utility from "./utility-dsa5.js"
 
 export default class DSA5Initializer extends Dialog {
     constructor(title, content, module, lang = "") {
@@ -290,17 +291,6 @@ export default class DSA5Initializer extends Dialog {
     async getFolderForType(documentType, parent = null, folderName = null, sort = 0) {
         if (!folderName) folderName = game.i18n.localize(`${this.module}.name`)
 
-        let folder = await game.folders.contents.find(x => x.name == folderName && x.type == documentType && x.data.parent == parent)
-        if (!folder) {
-            folder = await Folder.create({
-                name: folderName,
-                type: documentType,
-                sorting: "m",
-                color: "",
-                sort,
-                parent
-            })
-        }
-        return folder
+        return DSA5_Utility.getFolderForType(documentType, parent, folderName, sort)
     }
 }

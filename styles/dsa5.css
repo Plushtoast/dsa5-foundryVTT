@@ -868,6 +868,28 @@ input[type="text"].col-Money-H {
     font-size: 12px;
 }
 
+.selectableRow{
+    border: 1px solid black;
+    cursor:pointer
+}
+.row-section.selectableRow.tableOdd:hover,
+.selectableRow:hover{
+    background-color: white;
+}
+.selectableRow.selected{
+    box-shadow: inset 0px 0px 10px 5px rgba(188, 136, 111, 0.8);
+}
+
+a.img-entity-link{
+    border:none;
+    background:none;
+    display:block;
+}
+
+a.img-entity-link:hover{
+    background: white;
+}
+
 .row-section .twoColors:nth-child(4n-1),
 .row-section .twoColors:nth-child(4n),
 .row-section.rowColors:nth-child(odd),
@@ -1236,13 +1258,21 @@ form.dsa5.item-sheet {
     box-shadow: none;
 }
 
-.window-app:not(.monarch) .window-header {
+.window-app.monarch .window-header{
+    background-image: none;
+}
+
+.window-app.monarch:after {
+    background-image: none;
+}
+
+.window-app .window-header {
     background-image: url(../icons/backgrounds/blackhat.webp);
     top: 7px;
     border: none;
 }
 
-.window-app:not(.monarch):after {
+.window-app:after {
     background-image: url(../icons/backgrounds/blackbook.webp);
     bottom: 12px;
     content: '';

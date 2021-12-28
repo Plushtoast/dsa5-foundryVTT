@@ -924,6 +924,9 @@ export default class ActorSheetDsa5 extends ActorSheet {
                 case "magictrick":
                     apCost = 1
                     break
+                case "magicalsign":
+                    apCost = item.data.APValue.value
+                    break
                 default:
                     return
             }
@@ -1000,6 +1003,7 @@ export default class ActorSheetDsa5 extends ActorSheet {
             case "magictrick":
             case "liturgy":
             case "spell":
+            case "magicalsign":
                 await this._addSpellOrLiturgy(item)
                 break;
             case "effectwrapper":

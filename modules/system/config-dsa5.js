@@ -275,7 +275,6 @@ DSA5.statusEffects = [{
             }
         }
     },
-
     {
         id: "confused",
         label: "CONDITION.confused",
@@ -302,6 +301,20 @@ DSA5.statusEffects = [{
             dsa5: {
                 value: null,
                 editable: true,
+            }
+        }
+    },
+    {
+        id: "services",
+        label: "PLAYER.services",
+        icon: "icons/svg/aura.svg",
+        description: "CONDITIONDESCRIPTION.services",
+        flags: {
+            dsa5: {
+                "value": 1,
+                "editable": true,
+                "max": 500,
+                "hideOnToken": true
             }
         }
     }

@@ -1,0 +1,25 @@
+<ul>
+  <div class="opposed-message">
+    <b>{{summoner.name}}</b> {{localize "CONJURATION.conjurs"}} <b>{{actor.name}}</b>
+  </div>
+  <div class="opposed-tokens row-section">
+    <div class="col two attacker">{{{summonerImg}}}</div>
+
+    <div class="col two defender">
+      <a class="entity-link content-link img-entity-link" draggable="true" data-type="Actor" data-entity="Actor" data-id="{{actor.id}}">{{{conjureImg}}}</a>
+    </div>
+  </div>
+  {{#if modifiers}}
+  <div>
+    <b>{{localize 'extensions'}}</b>
+  </div>
+  <ul class="dsalist">
+  {{#each modifiers as |item|}}
+    <li>{{localize item.name}}</li>
+  {{/each}}
+  </ul>
+  {{/if}}
+  <div>
+    <b>{{localize 'PLAYER.services'}}</b>: {{services}}
+  </div>
+</div>

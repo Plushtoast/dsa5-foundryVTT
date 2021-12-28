@@ -348,6 +348,8 @@
     "max": "Max",
     "magical": "magical",
     "meleeweapon": "Meleeweapon",
+    "magicalsign": "Magical Sign",
+    "additionalsign": "Additional Sign",
     "meleeweapons": "Meleeweapons",
     "magicspecialtalents": "Magical Special Abilities",
     "Modifiers": "Modifiers",
@@ -513,6 +515,37 @@
     },
     "Aggregated": {
         "noMoreAllowed": "No more rolls allowed."
+    },
+    "CONJURATION": {
+        "demon": "Demon",
+        "elemental": "Elemental",
+        "offensiveImprovement": "Offensive Improvement",
+        "defensiveImprovement": "Defensive Improvement",
+        "speedImprovement": "Speed Improvement",
+        "magicalImprovement": "Magical Improvement",
+        "resistanceImprovement": "Resistance Improvement",
+        "mentalImprovement": "Mental Improvement",
+        "physicalImprovement": "Physical Improvement",
+        "offensiveImprovementDescr": "+2 AT, +4 DP",
+        "defensiveImprovementDescr": "+2 PA, +2 PRO, +10 LP",
+        "speedImprovementDescr": "+2 MOV, +2 DO",
+        "magicalImprovementDescr": "SR of all known spells +4",
+        "resistanceImprovementDescr": "+2 Spirit and Toughness. Attacks with magical weapons do half damage.",
+        "mentalImprovementDescr": "Raise Mental attributes by 2.",
+        "physicalImprovementDescr": "Raise Physical attributes by 2.",
+        "finalizeTooltip": "Send the creation to the GM so he can place the token.",
+        "request": "Summoning request",
+        "requestDescr": "Confirm the summoning request to create the actor. Afterwards you can drag & drop the actor onto the map or delete it via right click. (Don't forget to clean up the summoning actor directory from time to time.)",
+        "dragActor": "No summoner active (drag and drop)",
+        "dragConjuration": "No summoning target active (drag and drop)",
+        "conjurs": "summons"
+    },
+    "PLAYER": {
+        "title": "Player Menu",
+        "conjuration": "Summoning",
+        "creation": "Production",
+        "services": "Services",
+        "finalize": "Finalize"
     },
     "MASTER": {
         "sceneConfig": "Scene config",
@@ -840,6 +873,7 @@
     "ITEM.TypeLiturgy": "Liturgical Chant",
     "ITEM.TypeMagictrick": "Cantrip",
     "ITEM.TypeMeleeweapon": "Meleeweapon",
+    "ITEM.TypeMagicalsign": "Magical Sign",
     "ITEM.TypeMoney": "Currency",
     "ITEM.TypePoison": "Poison",
     "ITEM.TypeRangeweapon": "Ranged weapon",
@@ -1009,10 +1043,16 @@
         "nightBlind": "Night-Blind",
         "willpower": "Willpower",
         "traditionBoron": "Tradition (Church of Boron)",
-
+        "artisticAbility": "Artistic Ability",
         "Shields": "Shields",
         "Throwing Weapons": "Throwing Weapons",
-        "Crossbows": "Crossbows"
+        "Crossbows": "Crossbows",
+        "invocatioMinima": "Invocatio Minima",
+        "invocatioMinor": "Invocatio Minor",
+        "invocatioMaior": "Invocatio Maior",
+        "manifesto": "Manifesto",
+        "elementalServant": "Elemental Servant",
+        "callDjinn": "Call Djinn"
     },
     "LocalizedCTs": {
         "Blowpipes": "Blowpipes",
@@ -1083,7 +1123,8 @@
         "enchantmentNotFound": "Referenced spell not found",
         "nestedEffectNotSupported": "Foundry currently only supports adding of effects through the item directory.",
         "noBreakingResistance": "No Breaking Point Rating found for {item}.",
-        "noBreakingStructure": "{name} has no accepted max structure value."
+        "noBreakingStructure": "{name} has no accepted max structure value.",
+        "noConjurationActive": "No actor to summon active (drag and drop)"
     },
     "CEREMONYMODIFIER": {
         "holysite": "Sanctum of the god (+2)",
@@ -1422,6 +1463,7 @@
         "4": "General"
     },
     "CONDITIONDESCRIPTION": {
+        "services": "Services the summoned creature owes to the summoner.",
         "minorSpirits": "Minor spirits are small elemental creatures that are not inherently dangerous but can be very annoying. Some spellcasters attract minor spirits to themselves when using magic.",
         "shapeshift": "This creature shifted its shape.",
         "encumbered": "Heavy gear and armor can weigh heroes down, restricting their mobility. Encumbered characters suffer penalties to applicable skill checks, based on their current level of Encumbrance. Applicable skills are indicated as such in their descriptions. When heroes discard weight, their levels of Encumbrance go away. When calculating encumbrance due to load, remember to ignore the weight of the hero’s armor, which is already factored into its Encumbrance value.",

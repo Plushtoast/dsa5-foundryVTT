@@ -4,10 +4,11 @@ import DSA5ChatAutoCompletion from "./chat_autocompletion.js"
 import RuleChaos from "./rule_chaos.js"
 import AdvantageRulesDSA5 from "./advantage-rules-dsa5.js"
 import { slist } from "./view_helper.js"
+import PlayersMenu from "./player_menu.js"
 
 export default class MastersMenu {
     static registerButtons() {
-
+        game.dsa5.apps.playerMenu = new PlayersMenu()
         CONFIG.Canvas.layers.dsamenu = { layerClass: DSAMenuLayer, group: "primary" }
         Hooks.on("getSceneControlButtons", btns => {
             const dasMenuOptions = [{
@@ -15,18 +16,21 @@ export default class MastersMenu {
                     title: game.i18n.localize("Book.Wizard"),
                     icon: "fa fa-book",
                     button: true,
-                    onClick: () => {
-                        game.dsa5.apps.journalBrowser.render(true)
-                    }
+                    onClick: () => { DSA5_Utility.renderToggle(game.dsa5.apps.journalBrowser) }
                 },
                 {
                     name: "Library",
                     title: game.i18n.localize("SHEET.Library"),
                     icon: "fas fa-university",
                     button: true,
-                    onClick: () => {
-                        game.dsa5.itemLibrary.render(true)
-                    }
+                    onClick: () => { DSA5_Utility.renderToggle(game.dsa5.itemLibrary) }
+                },
+                {
+                    name: "PlayerMenu",
+                    title: game.i18n.localize("PLAYER.title"),
+                    icon: "fas fa-shield-alt",
+                    button: true,
+                    onClick: () => { DSA5_Utility.renderToggle(game.dsa5.apps.playerMenu)}
                 }
             ]
             if (game.user.isGM) {
@@ -36,9 +40,7 @@ export default class MastersMenu {
                     title: game.i18n.localize("gmMenu"),
                     icon: "fa fa-dsa5",
                     button: true,
-                    onClick: () => {
-                        game.dsa5.apps.gameMasterMenu.render(true)
-                    }
+                    onClick: () => { DSA5_Utility.renderToggle(game.dsa5.apps.gameMasterMenu) }
                 })
             }
             btns.push({

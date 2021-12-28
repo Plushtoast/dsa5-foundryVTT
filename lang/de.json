@@ -319,6 +319,8 @@
     "mundane": "weltlich",
     "maxlevel": "Maximale Stufe",
     "mount": "Reittier",
+    "magicalsign": "Zauberzeichen",
+    "additionalsign": "Zusatzzeichen",
     "Magic": "Magie",
     "money": "Geld",
     "maintainCost": "Aufrechterhalten",
@@ -477,6 +479,37 @@
     },
     "Aggregated": {
         "noMoreAllowed": "Keine Proben mehr erlaubt."
+    },
+    "CONJURATION": {
+        "demon": "Dämon",
+        "elemental": "Elementar",
+        "offensiveImprovement": "Offensive Verbesserung",
+        "defensiveImprovement": "Defensive Verbesserung",
+        "speedImprovement": "Schnelligkeitsverbesserung",
+        "magicalImprovement": "Magische Verbesserung",
+        "resistanceImprovement": "Resistenzverbesserung",
+        "mentalImprovement": "Geistige Verbesserung",
+        "physicalImprovement": "Körperliche Verbesserung",
+        "offensiveImprovementDescr": "+2 AT, +4 TP",
+        "defensiveImprovementDescr": "+2 PA, +2 RS, +10 LeP",
+        "speedImprovementDescr": "+2 GS, +2 AW",
+        "magicalImprovementDescr": "FW aller beherrschten Zauber um 4 erhöht",
+        "resistanceImprovementDescr": "SK und ZK verbessern sich um 2, Angriffe mit magischen Waffen machen nur den halben Schaden.",
+        "mentalImprovementDescr": "Die geistigen Eigenschaften steigen um 2.",
+        "physicalImprovementDescr": "Die körperlichen Eigenschaften steigen um 2.",
+        "finalizeTooltip": "Die Kreation an den Spielleiter schicken, dass er den Token platzieren kann.",
+        "request": "Beschwörungsanfrage",
+        "requestDescr": "Bestätige die Anfrage um die Beschwörung als Akteur anzulegen. Danach kann die Beschwörung per Drag and Drop auf die Karte gezogen oder mit einem Rechtsclick gelöscht werden (ab und an auch mal den Beschwörungsordner bei den Akteuren aufräumen!).",
+        "dragActor": "Kein Beschwörer aktiv (drag and drop)",
+        "dragConjuration": "Keine Beschwörung aktiv (drag and drop)",
+        "conjurs": "beschwört"
+    },
+    "PLAYER": {
+        "title": "Spieler Menü",
+        "conjuration": "Beschwörung",
+        "creation": "Herstellung",
+        "services": "Dienste",
+        "finalize": "Fertigstellen"
     },
     "MASTER": {
         "sceneConfig": "Szeneneinstellung",
@@ -887,6 +920,7 @@
     "ITEM.TypeMeleeweapon": "Nahkampfwaffe",
     "ITEM.TypeMoney": "Währung",
     "ITEM.TypePoison": "Gift",
+    "ITEM.TypeMagicalsign": "Zauberzeichen",
     "ITEM.TypeRangeweapon": "Fernkampfwaffe",
     "ITEM.TypeRitual": "Ritual",
     "ITEM.TypeSkill": "Talent",
@@ -1054,10 +1088,16 @@
         "nightBlind": "Nachtblind",
         "willpower": "Willenskraft",
         "traditionBoron": "Tradition (Boronkirche)",
-
+        "artisticAbility": "Malen & Zeichnen",
         "Shields": "Schilde",
         "Throwing Weapons": "Wurfwaffen",
-        "Crossbows": "Armbrüste"
+        "Crossbows": "Armbrüste",
+        "invocatioMinima": "Invocatio Minima",
+        "invocatioMinor": "Invocatio Minor",
+        "invocatioMaior": "Invocatio Maior",
+        "manifesto": "Manifesto",
+        "elementalServant": "Elementarer Diener",
+        "callDjinn": "Dschinnenruf"
     },
     "LocalizedCTs": {
         "Blasrohre": "Blowpipes",
@@ -1117,7 +1157,8 @@
         "enchantmentNotFound": "Referenzierter Zauber konnte nicht gefunden werden",
         "nestedEffectNotSupported": "Foundry unterstützt das Hinzufügen von Effekten derzeit nur im Item Directory.",
         "noBreakingResistance": "Keinen Bruchfaktorwert für {item} gefunden.",
-        "noBreakingStructure": "{name} hat keinen akzeptierten maximalen Strukturwert."
+        "noBreakingStructure": "{name} hat keinen akzeptierten maximalen Strukturwert.",
+        "noConjurationActive": "Kein zu beschwörender Akteur aktiv (drag and drop)"
     },
     "Shapeshift": {
         "title": "Gestaltwandlung",
@@ -1422,6 +1463,7 @@
         "4": "König"
     },
     "CONDITIONDESCRIPTION": {
+        "services": "Dienste die die Beschwörung dem Beschwörer schuldet.",
         "minorSpirits": "Mindergeister sind kleine Elementarwesen, die zwar nicht gefährlich sind, aber lästig werden können. Einige Zauberanwender ziehen beim Wirken ihrer Magie Mindergeister geradezu an.",
         "shapeshift": "Diese Kreatur hat ihre Gestalt gewandelt",
         "encumbered": "Schweres Gepäck und Rüstungen können den Träger sehr belasten und seine Bewegungsfreiheit einschränken. So lange diese Lasten getragen werden, erleidet die Person entsprechende Stufen an Belastung. Werden die Lasten abgelegt, verschwinden auch die Belastungsstufen. Das Gewicht von Rüstungen wird bei der Berechnung von Belastung durch Traglast ignoriert.",

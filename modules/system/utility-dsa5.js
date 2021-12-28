@@ -162,6 +162,21 @@ export default class DSA5_Utility {
         return 0
     }
 
+    static async getFolderForType(documentType, parent = null, folderName = null, sort = 0) {
+        let folder = await game.folders.contents.find(x => x.name == folderName && x.type == documentType && x.data.parent == parent)
+        if (!folder) {
+            folder = await Folder.create({
+                name: folderName,
+                type: documentType,
+                sorting: "m",
+                color: "",
+                sort,
+                parent
+            })
+        }
+        return folder
+    }
+
     static async showArtwork({ img, name, uuid, isOwner }, hide = false) {
         new ImagePopout(img, {
             title: hide ? (isOwner ? name : "-") : name,
@@ -218,7 +233,7 @@ export default class DSA5_Utility {
         let regex = /( |^)(\d{1,2})?[wWdD][0-9]+((\+|-)[0-9]+)?/g
         let roll = inlineRoll ? "" : "/roll "
         return content.replace(regex, function(str) {
-            return ` [[/r ${roll}${str.replace(/[DwW]/,"d")}]]`
+            return ` [[${roll}${str.replace(/[DwW]/,"d")}]]`
         })
     }
 

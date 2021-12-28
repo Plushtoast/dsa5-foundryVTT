@@ -471,7 +471,8 @@ export default class Actordsa5 extends Actor {
             ritual: [],
             ceremony: [],
             blessing: [],
-            magictrick: []
+            magictrick: [],
+            magicalsign: []
         }
 
         const extensions = {
@@ -599,6 +600,7 @@ export default class Actordsa5 extends Actor {
                     case "ceremony":
                         magic[i.type].push(Actordsa5.buildSpellChargeProgress(this._perpareItemAdvancementCost(i)))
                         break;
+                    case "magicalsign":
                     case "magictrick":
                     case "blessing":
                         magic[i.type].push(i)
@@ -1703,6 +1705,12 @@ export default class Actordsa5 extends Actor {
         testData = await DiceDSA5.rollDices(testData, cardOptions);
         let result = await DiceDSA5.rollTest(testData);
 
+        if(testData.extra.options.other){
+            if(!result.other) result.other = []
+
+            result.other.push(...testData.extra.options.other)
+        }
+
         result.postFunction = "basicTest";
 
         if (game.user.targets.size) {
@@ -1725,10 +1733,10 @@ export default class Actordsa5 extends Actor {
         }
 
         if (!options.suppressMessage)
-            DiceDSA5.renderRollCard(cardOptions, result, options.rerenderMessage).then(async (msg) => {
+            await DiceDSA5.renderRollCard(cardOptions, result, options.rerenderMessage).then(async (msg) => {
                 await OpposedDsa5.handleOpposedTarget(msg)
             })
-        return { result, cardOptions };
+        return { result, cardOptions, options };
     }
 
     async addCondition(effect, value = 1, absolute = false, auto = true) {

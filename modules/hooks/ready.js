@@ -3,6 +3,7 @@ import OpposedDsa5 from "../system/opposed-dsa5.js";
 import MerchantSheetDSA5 from "../actor/merchant-sheet.js";
 import Itemdsa5 from "../item/item-dsa5.js";
 import DiceDSA5 from "../system/dice-dsa5.js";
+import PlayerMenu from "../system/player_menu.js";
 
 export default function() {
     Hooks.on("ready", async() => {
@@ -59,6 +60,9 @@ export default function() {
                         break
                     case "updateHits":
                     case "hideResistButton":
+                        break
+                    case "summonCreature":
+                        PlayerMenu.createConjuration(data.payload)
                         break
                     default:
                         console.warn(`Unhandled socket data type ${data.type}`)

@@ -1,0 +1,82 @@
+<div class="playerMenu">
+  <div class="row-section">
+    <div class="col third center">
+      <img style="width:70px;height:70px" class="profile" src="{{actor.img}}" title="{{actor.name}}">
+    </div>
+    <div class="col seventy">
+      <div class="row-section">
+        <div class="col fourty table-title">
+          <h3><b>{{localize "Name"}}:</b></h3>
+        </div>
+
+        <div class="col two">
+          <h3><a class="openChar">{{actor.name}}</a></h3>
+        </div>
+        <div class="col ten center">
+
+        </div>
+      </div>
+
+    </div>
+  </div>
+  <nav class="sheet-tabs tabs" data-tab-container="primary">
+    <a class="item active" data-tab="elementals">{{localize "PLAYER.conjuration"}}</a>
+    <!--<a class="item" data-tab="production">{{localize "PLAYER.creation"}}</a>-->
+  </nav>
+
+  <section class="content">
+    <div class="tab elementals" data-tab="elementals">
+      <div class="row-section lineheight">
+        <div class="col fourty table-title">
+          <label>{{localize "Category"}}</label>
+        </div>
+        <div class="col sixty">
+          <select name="conjurationType" class="conjurationData" data-dtype="Number" data-refresh="true">
+            {{#select conjurationData.conjurationType}}
+            {{#each conjurationTypes as |item ch|}}
+            <option value="{{ch}}">{{item}}</option>
+            {{/each}}
+            {{/select}}
+          </select>
+        </div>
+      </div>
+      {{#if actor}}
+      <div class="row-section skills table-title lineheight" style="margin-top:10px;">
+        <div class="col sixty">{{localize 'skill'}}</div>
+        <div class="col third center">{{localize "probe"}}</div>
+        <div class="col ten center">{{localize "CHARAbbrev.FW"}}</div>
+      </div>
+      {{#each conjurationskills as |item i|}}
+
+      <div class="row-section wrap skills item lineheight tableOdd" data-item-id="{{item._id}}">
+        <div class="col sixty">
+          <a class="item-edit talentName">{{item.name}}</a>
+        </div>
+        <div class="col third center">
+          <a class="skill-select">
+            <span class="d20 diet-{{item.data.characteristic1.value}}">{{localize (concatUp "CHARAbbrev."
+              item.data.characteristic1.value)}}</span>
+            <span class="d20 diet-{{item.data.characteristic2.value}}">{{localize (concatUp "CHARAbbrev."
+              item.data.characteristic2.value)}}</span>
+            <span class="d20 diet-{{item.data.characteristic3.value}}">{{localize (concatUp "CHARAbbrev."
+              item.data.characteristic3.value)}}</span>
+          </a>
+
+        </div>
+        <div class="col ten center">
+          {{item.data.talentValue.value}}
+        </div>
+
+      </div>
+
+      {{/each}}
+
+      {{{conjurationSheet}}}
+      {{/if}}
+    </div>
+
+    <div class="tab production" data-tab="production">
+      WIP &#128534;
+    </div>
+  </section>
+</div>
