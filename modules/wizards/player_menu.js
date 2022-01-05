@@ -1,17 +1,16 @@
 import Actordsa5 from "../actor/actor-dsa5.js";
 import DSA5Dialog from "../dialog/dialog-dsa5.js";
-import OpposedDsa5 from "./opposed-dsa5.js";
-import RuleChaos from "./rule_chaos.js";
-import DSA5_Utility from "./utility-dsa5.js";
+import OpposedDsa5 from "../system/opposed-dsa5.js";
+import RuleChaos from "../system/rule_chaos.js";
+import DSA5_Utility from "../system/utility-dsa5.js";
 
 //TODO magical weapon resistance
-
 
 export default class PlayerMenu extends Application {
   constructor(app) {
     super(app)
-
-    const summoningModifiers = [
+    this.entityAbilities = []
+    this.summoningModifiers = [
       {
         id: 1, name: 'CONJURATION.offensiveImprovement', descr: "CONJURATION.offensiveImprovementDescr", changes: [
           { key: "data.meleeStats.attack", mode: 2, value: 2 },
@@ -33,7 +32,7 @@ export default class PlayerMenu extends Application {
           { key: "data.status.dodge.gearmodifier", mode: 2, value: 2 }
         ]
       },
-      { id: 4, name: 'CONJURATION.magicalImprovement', descr: "CONJURATION.magicalImprovementDescr", changes: [], fun: RuleChaos.magicalImprovement},
+      { id: 4, name: 'CONJURATION.magicalImprovement', descr: "CONJURATION.magicalImprovementDescr", changes: [], fun: RuleChaos.magicalImprovement },
       {
         id: 5, name: 'CONJURATION.resistanceImprovement', descr: "CONJURATION.resistanceImprovementDescr", changes: [
           { key: "data.status.soulpower.gearmodifier", mode: 2, value: 2 },
@@ -62,22 +61,23 @@ export default class PlayerMenu extends Application {
       qs: 0,
       consumedQS: 0,
       selectedIds: [],
+      selectedEntityIds: [],
       conjurationTypes: {
         1: game.i18n.localize("CONJURATION.demon"),
         2: game.i18n.localize("CONJURATION.elemental")
       },
-      conjurationType: 1,
-      templates: {
-        1: "systems/dsa5/templates/system/conjuration/demon.html",
-        2: "systems/dsa5/templates/system/conjuration/demon.html",
+      rules: {
+        1: { de: { pack: "dsa5-core.corerules", name: "Beschwörungen" }, en: { pack: "dsa5-core.coreenrules", name: "Summoning" } },
+        2: { de: { pack: "dsa5-core.corerules", name: "Beschwörungen" }, en: { pack: "dsa5-core.coreenrules", name: "Summoning" } }
       },
+      conjurationType: 1,
       skills: {
         1: ["invocatioMinima", "invocatioMinor", "invocatioMaior"].map(x => game.i18n.localize(`LocalizedIDs.${x}`)),
         2: ["manifesto", "elementalServant", "callDjinn"].map(x => game.i18n.localize(`LocalizedIDs.${x}`))
       },
       modifiers: {
-        1: summoningModifiers,
-        2: summoningModifiers
+        1: this.summoningModifiers,
+        2: this.summoningModifiers
       }
     }
   }
@@ -107,6 +107,11 @@ export default class PlayerMenu extends Application {
     html.find('.skill-select').click(ev => {
       this.rollConjuration(ev)
     })
+    html.find('.initLibrary').click(async(ev) => {
+      $(ev.currentTarget).html('<i class="fas fa-spin fa-spinner"></i>')
+      await game.dsa5.itemLibrary.buildEquipmentIndex()
+      this.render()
+    })
     html.find('.item-edit').click(ev => {
       const itemId = $(ev.currentTarget).closest('.item').attr("data-item-id")
       const item = this.actor.items.find(i => i.data._id == itemId)
@@ -114,6 +119,26 @@ export default class PlayerMenu extends Application {
     })
     html.find('.selectableRow').click(ev => this.selectImprovement(ev))
     html.find('.finalizeConjuration').click(() => this.finalizeConjuration())
+    html.find('.ruleLink').click(() => this.openRules())
+    html.find('.showEntity').click(ev => {
+      ev.stopPropagation()
+      const fun = async() => {
+        (await fromUuid(ev.currentTarget.dataset.uuid)).sheet.render(true)
+      }
+      fun()
+    })
+  }
+
+  async openRules() {
+    const rule = this.conjurationData.rules[this.conjurationData.conjurationType][game.i18n.lang]
+    const fun = async () => {
+      const pack = game.packs.get(rule.pack)
+      const docs = await pack.getDocuments({ name: rule.name })
+      for (let doc of docs) {
+        doc.sheet.render(true)
+      }
+    }
+    fun()
   }
 
   finalizeConjuration() {
@@ -127,7 +152,8 @@ export default class PlayerMenu extends Application {
         typeName: this.conjurationData.conjurationTypes[this.conjurationData.conjurationType],
         qs: this.conjurationData.qs,
         consumedQS: this.conjurationData.consumedQS,
-        modifiers: this.conjurationData.modifiers[this.conjurationData.conjurationType].filter(x => this.conjurationData.selectedIds.includes(x.id))
+        modifiers: this.conjurationData.modifiers[this.conjurationData.conjurationType].filter(x => this.conjurationData.selectedIds.includes(x.id)),
+        entityIds: this.conjurationData.selectedEntityIds
       }, summoner: { name: this.actor.name, img: this.actor.img }
     }
 
@@ -148,11 +174,18 @@ export default class PlayerMenu extends Application {
   selectImprovement(ev) {
     $(ev.currentTarget).toggleClass("selected")
     const selectedIds = []
+    const selectedEntityIds = []
+    let entityCost = 0
     $(this._element).find('.selectableRow.selected').each((index, element) => {
-      selectedIds.push(Number(element.dataset.id))
+      if (element.dataset.entityid) {
+        selectedEntityIds.push(element.dataset.id)
+        entityCost += (Number(element.dataset.qs) || 0) * -1
+      }
+      else selectedIds.push(Number(element.dataset.id))
     })
     this.conjurationData.selectedIds = selectedIds
-    this.conjurationData.consumedQS = selectedIds.length
+    this.conjurationData.selectedEntityIds = selectedEntityIds
+    this.conjurationData.consumedQS = selectedIds.length + entityCost
     this.render()
   }
 
@@ -188,6 +221,7 @@ export default class PlayerMenu extends Application {
       if (actor.data.type == "creature") {
         this.conjuration = actor
         this.conjurationData.selectedIds = []
+        this.conjurationData.selectedEntityIds = []
         for (const key of Object.keys(this.conjurationData.conjurationTypes)) {
           if (actor.data.data.creatureClass.value.includes(this.conjurationData.conjurationTypes[key])) {
             this.conjurationData.conjurationType = key
@@ -202,6 +236,18 @@ export default class PlayerMenu extends Application {
     }
   }
 
+  async prepareEntityAbilities(){
+    if (game.dsa5.itemLibrary.equipmentBuild){
+      const entitiesToSearch = [game.i18n.localize("all"), this.conjurationData.conjurationTypes[this.conjurationData.conjurationType]]
+      const items = await Promise.all((await game.dsa5.itemLibrary.getCategoryItems("trait", false)).map(x => x.getItem()))
+
+      return items.filter(x => {
+        return x.data.data.distribution && entitiesToSearch.some(y =>  x.data.data.distribution.includes(y))
+      })
+    }
+    return []
+  }
+
   async getData(options) {
     const data = await super.getData(options);
 
@@ -209,16 +255,19 @@ export default class PlayerMenu extends Application {
 
     if (this.actor) {
       const services = this.conjurationData.qs - this.conjurationData.consumedQS + 1
-      const conjurationSheet = await renderTemplate(this.conjurationData.templates[this.conjurationData.conjurationType],
+      const equipmentIndexLoaded = game.dsa5.itemLibrary.equipmentBuild
+      const conjurationSheet = await renderTemplate("systems/dsa5/templates/system/conjuration/summoning.html",
         {
           actor: this.actor,
           conjuration: this.conjuration || { name: game.i18n.localize('CONJURATION.dragConjuration'), img: "icons/svg/mystery-man-black.svg" },
           conjurationData: this.conjurationData,
           services,
-          conjurationModifiers: this.conjurationData.modifiers[this.conjurationData.conjurationType]
+          conjurationModifiers: this.conjurationData.modifiers[this.conjurationData.conjurationType],
+          equipmentIndexLoaded,
+          entityAbilities: await this.prepareEntityAbilities()
         }
       )
-      const conjurationskills = this.actor.items.filter(x => this.conjurationData.skills[this.conjurationData.conjurationType].includes(x.name) && ["spell", "ritual"].includes(x.type)).map(x => x.toObject())
+      const conjurationskills = this.actor.items.filter(x => this.conjurationData.skills[this.conjurationData.conjurationType].includes(x.name) && ["liturgy", "ceremony", "spell", "ritual"].includes(x.type)).map(x => x.toObject())
       mergeObject(data, {
         conjurationSheet,
         conjurationskills
@@ -258,6 +307,7 @@ class ConjurationRequest extends DSA5Dialog {
       services: this.creationData.qs - this.creationData.consumedQS + 1,
       creationData: this.creationData,
       conjurationModifiers: this.creationData.modifiers,
+      entityModifiers: await Promise.all(this.creationData.entityIds.map(x => fromUuid(x))),
       actor: this.actor
     })
     return data
@@ -301,10 +351,12 @@ class ConjurationRequest extends DSA5Dialog {
           }
         }
       })
-      if(modifier.fun){
+      if (modifier.fun) {
         modifier.fun(this.conjuration, this.creationData)
       }
     }
+    const entityAbilities = (await Promise.all(this.creationData.entityIds.map(x => fromUuid(x)))).map(x => x.toObject(false))
+    this.conjuration.items.push(...entityAbilities)
     this.conjuration.effects.push({
       "changes": [],
       "duration": {},

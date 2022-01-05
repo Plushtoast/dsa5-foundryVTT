@@ -104,56 +104,60 @@ export default class OpposedDsa5 {
             let startMessagesList = [];
 
             game.user.targets.forEach(async target => {
-                const content = `${OpposedDsa5.opposeMessage(attacker, target, false)} ${unopposedButton}`
-                let startMessage = await ChatMessage.create({
-                    user: game.user.id,
-                    content,
-                    speaker: message.data.speaker,
-                    ["flags.unopposeData"]: {
-                        attackMessageId: message.data._id,
-                        targetSpeaker: {
-                            scene: target.scene.data._id,
-                            token: target.data._id,
-                            alias: target.data.name
+                if (target.actor) {
+                    const content = `${OpposedDsa5.opposeMessage(attacker, target, false)} ${unopposedButton}`
+                    let startMessage = await ChatMessage.create({
+                        user: game.user.id,
+                        content,
+                        speaker: message.data.speaker,
+                        ["flags.unopposeData"]: {
+                            attackMessageId: message.data._id,
+                            targetSpeaker: {
+                                scene: target.scene.data._id,
+                                token: target.data._id,
+                                alias: target.data.name
+                            }
                         }
-                    }
-                })
+                    })
 
-                if (!game.user.isGM) {
-                    game.socket.emit("system.dsa5", {
-                        type: "target",
-                        payload: {
-                            target: target.data._id,
-                            scene: canvas.scene.id,
-                            opposeFlag: {
+                    if (!game.user.isGM) {
+                        game.socket.emit("system.dsa5", {
+                            type: "target",
+                            payload: {
+                                target: target.data._id,
+                                scene: canvas.scene.id,
+                                opposeFlag: {
+                                    speaker: message.data.speaker,
+                                    messageId: message.data._id,
+                                    startMessageId: startMessage.data._id
+                                }
+                            }
+                        })
+                    } else {
+                        await target.actor.update({
+                            "flags.oppose": {
                                 speaker: message.data.speaker,
                                 messageId: message.data._id,
                                 startMessageId: startMessage.data._id
                             }
-                        }
-                    })
-                } else {
-                    await target.actor.update({
-                        "flags.oppose": {
-                            speaker: message.data.speaker,
-                            messageId: message.data._id,
-                            startMessageId: startMessage.data._id
-                        }
-                    })
-                }
-                startMessagesList.push(startMessage.data._id);
-                if (attackOfOpportunity) {
-                    await OpposedDsa5.resolveUndefended(startMessage, game.i18n.localize("OPPOSED.attackOfOpportunity"))
+                        })
+                    }
+                    startMessagesList.push(startMessage.data._id);
+                    if (attackOfOpportunity) {
+                        await OpposedDsa5.resolveUndefended(startMessage, game.i18n.localize("OPPOSED.attackOfOpportunity"))
+                    }
                 }
             })
             message.data.flags.data.startMessagesList = startMessagesList;
         } else {
             game.user.targets.forEach(async target => {
-                await ChatMessage.create({
-                    user: game.user.id,
-                    content: OpposedDsa5.opposeMessage(attacker, target, true),
-                    speaker: message.data.speaker
-                })
+                if (target.actor) {
+                    await ChatMessage.create({
+                        user: game.user.id,
+                        content: OpposedDsa5.opposeMessage(attacker, target, true),
+                        speaker: message.data.speaker
+                    })
+                }
             })
         }
     }

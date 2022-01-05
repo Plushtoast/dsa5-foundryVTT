@@ -30,7 +30,7 @@
         <div class="col fourty table-title">
           <label>{{localize "Category"}}</label>
         </div>
-        <div class="col sixty">
+        <div class="col two">
           <select name="conjurationType" class="conjurationData" data-dtype="Number" data-refresh="true">
             {{#select conjurationData.conjurationType}}
             {{#each conjurationTypes as |item ch|}}
@@ -38,6 +38,9 @@
             {{/each}}
             {{/select}}
           </select>
+        </div>
+        <div class="col ten center">
+          <a class="entity-link ruleLink"><i class="fas fa-book-open"></i></a>
         </div>
       </div>
       {{#if actor}}

@@ -1,3 +1,4 @@
+import ItemRulesDSA5 from "../system/item-rules-dsa5.js"
 import DSA5_Utility from "../system/utility-dsa5.js"
 import WizardDSA5 from "./dsa5_wizard.js"
 
@@ -135,6 +136,8 @@ export default class CareerWizard extends WizardDSA5 {
                     item.data.talentValue.value = parsed.step
                 if (item.data.step)
                     item.data.step.value = parsed.step
+
+                item = ItemRulesDSA5.reverseAdoptionCalculation(this.actor, parsed, item)
                 itemsToUpdate.push(item)
             } else {
                 item = this.items.find(x => types.includes(x.type) && x.name == parsed.original)
@@ -148,6 +151,8 @@ export default class CareerWizard extends WizardDSA5 {
                         item.data.talentValue.value = parsed.step
                     if (item.data.step)
                         item.data.step.value = parsed.step
+
+                    item = ItemRulesDSA5.reverseAdoptionCalculation(this.actor, parsed, item)
                     itemsToCreate.push(item)
                 } else {
                     this.errors.push(`${types.map(x => game.i18n.localize(x)).join("/")}: ${k}`)

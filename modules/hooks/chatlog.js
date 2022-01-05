@@ -39,12 +39,12 @@ export default function() {
                     actor: onlyTarget.attr("data-actor"),
                     scene: canvas.scene ? canvas.scene.id : null
                 })
-                if (actor && actor && !actor.isOwner) onlyTarget.remove()
+                if (actor && !actor.isOwner) onlyTarget.remove()
             }
 
             html.find(".hideData").remove()
-            let hiddenForMe = getProperty(msg.message, `flags.dsa5.userHidden.${game.user.id}`)
-            if (hiddenForMe) { html.find(".payButton, .getPaidButton").remove() }
+            const hiddenForMe = getProperty(msg.message, `flags.dsa5.userHidden.${game.user.id}`)
+            if (hiddenForMe) { html.find(".payButton").remove() }
         }
         if (game.settings.get("dsa5", "expandChatModifierlist")) {
             html.find('.expand-mods i').toggleClass("fa-minus fa-plus")

@@ -1272,7 +1272,7 @@ form.dsa5.item-sheet {
     border: none;
 }
 
-.window-app:after {
+.window-app:not(.monarch):after {
     background-image: url(../icons/backgrounds/blackbook.webp);
     bottom: 12px;
     content: '';
@@ -1979,11 +1979,8 @@ h2 .chatButton {
     margin-right: 1px;
 }
 
-.liturgy-botch,
-.spell-botch,
-.range-botch,
-.melee-botch,
-.defense-botch {
+.botch-roll
+{
     color: darkred;
 }
 

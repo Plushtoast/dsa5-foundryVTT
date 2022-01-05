@@ -74,7 +74,7 @@ export default class DSA5Payment {
 
         if (money) {
             const whisp = whisper ? ` (${whisper})` : ""
-            let msg = `<p><b>${game.i18n.localize("PAYMENT.wage")}</b></p><p>${game.i18n.format("PAYMENT.getPaidSum", {amount: DSA5Payment._moneyToString(money)})}${whisp}</p><button class="getPaidButton" data-amount="${money}">${game.i18n.localize("PAYMENT.getPaidButton")}</button>`
+            let msg = `<p><b>${game.i18n.localize("PAYMENT.wage")}</b></p><p>${game.i18n.format("PAYMENT.getPaidSum", { amount: DSA5Payment._moneyToString(money) })}${whisp}</p><button class="payButton" data-pay="1" data-amount="${money}">${game.i18n.localize("PAYMENT.getPaidButton")}</button>`
             ChatMessage.create(DSA5_Utility.chatDataSetup(msg, "roll"))
         }
     }
@@ -84,7 +84,7 @@ export default class DSA5Payment {
 
         if (money) {
             const whisp = whisper ? ` (${whisper})` : ""
-            let msg = `<p><b>${game.i18n.localize("PAYMENT.bill")}</b></p>${game.i18n.format("PAYMENT.paySum", { amount: DSA5Payment._moneyToString(money) })}${whisp}</p><button class="payButton" data-amount="${money}">${game.i18n.localize("PAYMENT.payButton")}</button>`
+            let msg = `<p><b>${game.i18n.localize("PAYMENT.bill")}</b></p>${game.i18n.format("PAYMENT.paySum", { amount: DSA5Payment._moneyToString(money) })}${whisp}</p><button class="payButton" data-pay="0" data-amount="${money}">${game.i18n.localize("PAYMENT.payButton")}</button>`
             ChatMessage.create(DSA5_Utility.chatDataSetup(msg, "roll"))
         }
     }
@@ -129,23 +129,23 @@ export default class DSA5Payment {
         }
     }
 
-    static handlePayAction(ev, pay) {
-        if (game.user.isGM) {
+    static handlePayAction(elem, pay, amount, actor = undefined) {
+        if (game.user.isGM && !actor) {
             ui.notifications.notify(game.i18n.localize("PAYMENT.onlyActors"))
             return
         }
-        let actor = game.user.character
-        const elem = $(ev.currentTarget)
+        if (actor) DSA5SoundEffect.playMoneySound(true)
+        else actor = game.user.character
 
         let result = false
         if (actor && pay) {
-            result = DSA5Payment.payMoney(actor, elem.attr("data-amount"))
+            result = DSA5Payment.payMoney(actor, amount)
         } else if (actor && !pay) {
-            result = DSA5Payment.getMoney(actor, elem.attr("data-amount"))
+            result = DSA5Payment.getMoney(actor, amount)
         } else {
             ui.notifications.notify(game.i18n.localize("PAYMENT.onlyActors"))
         }
-        if (result) {
+        if (result && elem) {
             elem.fadeOut()
             game.socket.emit("system.dsa5", {
                 type: "updateMsg",
@@ -185,11 +185,8 @@ export default class DSA5Payment {
 
     static async chatListeners(html) {
         html.on('click', '.payButton', ev => {
-            DSA5Payment.handlePayAction(ev, true)
-            DSA5SoundEffect.playMoneySound()
-        })
-        html.on('click', '.getPaidButton', ev => {
-            DSA5Payment.handlePayAction(ev, false)
+            const elem = $(ev.currentTarget)
+            DSA5Payment.handlePayAction(elem, Number(elem.attr("data-pay")) == 1, elem.attr("data-amount"))
             DSA5SoundEffect.playMoneySound()
         })
     }

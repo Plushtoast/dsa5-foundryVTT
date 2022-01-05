@@ -20,7 +20,7 @@ import ActorSheetdsa5NPC from "./../actor/npc-sheet.js";
 import ItemSheetdsa5 from "./../item/item-sheet.js";
 import MerchantSheetDSA5 from "../actor/merchant-sheet.js";
 import BookWizard from "../wizards/adventure_wizard.js";
-import MastersMenu from "../system/masters_menu.js";
+import MastersMenu from "../wizards/masters_menu.js";
 import AdvantageRulesDSA5 from "../system/advantage-rules-dsa5.js";
 import SpecialabilityRulesDSA5 from "../system/specialability-rules-dsa5.js";
 import DidYouKnow from "../system/didyouknow.js";

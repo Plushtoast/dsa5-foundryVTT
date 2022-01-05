@@ -3,7 +3,8 @@ import OpposedDsa5 from "../system/opposed-dsa5.js";
 import MerchantSheetDSA5 from "../actor/merchant-sheet.js";
 import Itemdsa5 from "../item/item-dsa5.js";
 import DiceDSA5 from "../system/dice-dsa5.js";
-import PlayerMenu from "../system/player_menu.js";
+import PlayerMenu from "../wizards/player_menu.js";
+import { DiceSoNiceCustomization } from "./dicesonice.js";
 
 export default function() {
     Hooks.on("ready", async() => {
@@ -66,6 +67,17 @@ export default function() {
                         break
                     default:
                         console.warn(`Unhandled socket data type ${data.type}`)
+                }
+            })
+            game.socket.on("system.dsa5.player", data => {
+                switch(data.type){
+                    case "preloadDice3d":
+                        console.log("Preloading forced DSA dice assets")
+                        DiceSoNiceCustomization.preloadDiceAssets(data.payload)
+                        break;
+                    case "getPreloadDice3d":
+                        DiceSoNiceCustomization.requestDicePreloads()
+                        break
                 }
             })
         }

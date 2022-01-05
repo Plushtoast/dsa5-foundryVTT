@@ -82,7 +82,7 @@ export default class DSA5CombatDialog extends DialogShared {
         const readTargets = () => {
             let targets = []
             game.user.targets.forEach(x => {
-                targets.push({ name: x.actor.name, img: x.actor.img })
+                if(x.actor) targets.push({ name: x.actor.name, img: x.actor.img })
             })
             return targets
         }

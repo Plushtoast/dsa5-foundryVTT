@@ -1,14 +1,14 @@
-import DSA5_Utility from "./utility-dsa5.js"
-import DSA5Payment from "./payment.js"
-import DSA5ChatAutoCompletion from "./chat_autocompletion.js"
-import RuleChaos from "./rule_chaos.js"
-import AdvantageRulesDSA5 from "./advantage-rules-dsa5.js"
-import { slist } from "./view_helper.js"
-import PlayersMenu from "./player_menu.js"
+import DSA5_Utility from "../system/utility-dsa5.js"
+import DSA5Payment from "../system/payment.js"
+import DSA5ChatAutoCompletion from "../system/chat_autocompletion.js"
+import RuleChaos from "../system/rule_chaos.js"
+import AdvantageRulesDSA5 from "../system/advantage-rules-dsa5.js"
+import { slist } from "../system/view_helper.js"
+import PlayerMenu from "./player_menu.js"
 
 export default class MastersMenu {
     static registerButtons() {
-        game.dsa5.apps.playerMenu = new PlayersMenu()
+        game.dsa5.apps.playerMenu = new PlayerMenu()
         CONFIG.Canvas.layers.dsamenu = { layerClass: DSAMenuLayer, group: "primary" }
         Hooks.on("getSceneControlButtons", btns => {
             const dasMenuOptions = [{
@@ -121,7 +121,7 @@ class GameMasterMenu extends Application {
         })
         html.find('.pay').click((ev) => {
             ev.stopPropagation()
-            this.pay([this.getID(ev)])
+            this.doPayment([this.getID(ev)], true)
         })
         html.find('.actorItem').click(async(ev) => {
             ev.stopPropagation()
@@ -131,15 +131,15 @@ class GameMasterMenu extends Application {
         })
         html.find('.getPaid').click((ev) => {
             ev.stopPropagation()
-            this.getPaid([this.getID(ev)])
+            this.doPayment([this.getID(ev)], false)
         })
         html.find('.payAll').click((ev) => {
             ev.stopPropagation()
-            this.pay(this.selectedIDs(ev))
+            this.doPayment(this.selectedIDs(ev), true)
         })
         html.find('.getPaidAll').click((ev) => {
             ev.stopPropagation()
-            this.getPaid(this.selectedIDs())
+            this.doPayment(this.selectedIDs(ev), false)
         })
         html.find('.selectAll').change((ev) => {
             ev.stopPropagation()
@@ -306,26 +306,21 @@ class GameMasterMenu extends Application {
         }, 500)
     }
 
-    async pay(ids) {
+    async doPayment(ids, pay){
         const actors = game.actors.filter(x => ids.includes(x.id))
         const heros = this.getNames(actors)
-        const template = await renderTemplate('systems/dsa5/templates/dialog/master-dialog-award.html', { text: game.i18n.localize(game.i18n.format("MASTER.payText", { heros })) })
+        const template = await renderTemplate('systems/dsa5/templates/dialog/master-dialog-award.html', { text: game.i18n.localize(game.i18n.format(pay ? "MASTER.payText" : "MASTER.getPaidText", { heros })) })
         const callback = (dlg) => {
             const number = dlg.find('.input-text').val()
-            DSA5Payment.createPayChatMessage(number, heros)
+            for (let hero of actors)
+                DSA5Payment.handlePayAction(undefined, pay, number, hero)
+
         }
-        this.buildDialog(game.i18n.localize('PAYMENT.payTT'), template, callback)
+        this.buildDialog(game.i18n.localize(pay ? 'PAYMENT.payTT' : 'MASTER.payButton'), template, callback)
     }
 
     async getPaid(ids) {
-        const actors = game.actors.filter(x => ids.includes(x.id))
-        const heros = this.getNames(actors)
-        const template = await renderTemplate('systems/dsa5/templates/dialog/master-dialog-award.html', { text: game.i18n.localize(game.i18n.format("MASTER.getPaidText", { heros })) })
-        const callback = (dlg) => {
-            const number = dlg.find('.input-text').val()
-            DSA5Payment.createGetPaidChatMessage(number, heros)
-        }
-        this.buildDialog(game.i18n.localize('MASTER.payButton'), template, callback)
+        this.doPayment(ids, false)
     }
 
     async getExp(ids) {

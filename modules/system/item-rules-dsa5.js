@@ -2,6 +2,8 @@ import DSA5 from "./config-dsa5.js";
 import DSA5_Utility from "./utility-dsa5.js"
 
 export default class ItemRulesDSA5 {
+    static children = {}
+
     static getTalentBonus(actor, talent, types) {
         let modifier = []
         let selected = game.settings.get("dsa5", "talentModifierEnabled")
@@ -23,16 +25,25 @@ export default class ItemRulesDSA5 {
         return modifier
     }
 
+
+    static simpleAdoption(item, adoption, name, source) {
+        if (source[name].effect) {
+            item.data.effect.value = `${adoption.name} ${source[name].effect}`
+        }
+    }
+
     static reverseAdoptionCalculation(actor, parsed, item) {
-        let adoption
-        if (DSA5.vantagesNeedingAdaption[parsed.name])
-            adoption = actor.items.find(x => DSA5.vantagesNeedingAdaption[parsed.name].items.includes(x.type) && x.name == parsed.special)
-        else if (DSA5.AbilitiesNeedingAdaption[parsed.name])
-            adoption = actor.items.find(x => DSA5.AbilitiesNeedingAdaption[parsed.name].items.includes(x.type) && x.name == parsed.special)
-
-        if (adoption)
-            item.data.APValue.value = item.data.APValue.value.split("/")[adoption.data.data.StF.value.charCodeAt(0) - 65]
-
+        const elems = [DSA5.vantagesNeedingAdaption, DSA5.AbilitiesNeedingAdaption]
+        for(let elem of elems){
+            if (elem[parsed.name]) {
+                let adoption = actor.items.find(x => elem[parsed.name].items.includes(x.type) && x.name == parsed.special)
+                if (adoption) {
+                    item.data.APValue.value = item.data.APValue.value.split("/")[adoption.data.data.StF.value.charCodeAt(0) - 65]
+                    ItemRulesDSA5.simpleAdoption(item, adoption, parsed.name, elem)
+                }
+                break
+            }
+        }
         return item
     }
 

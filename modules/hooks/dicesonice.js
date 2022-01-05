@@ -118,11 +118,13 @@ export default function() {
 
         import ("../../../../modules/dice-so-nice/Utils.js").then(module => {
             game.dsa5.apps.DiceSoNiceCustomization.initConfigs(module)
+            DiceSoNiceCustomization.onConnect()
         })
     });
 }
 
-class DiceSoNiceCustomization extends Application {
+export class DiceSoNiceCustomization extends Application {
+    static attrs = ["mu", "kl", "in", "ch", "ff", "ge", "ko", "kk", "attack", "dodge", "parry", "damage"]
     initConfigs(module) {
         this.labelColor = module.Utils.contrastOf(game.user.data.color)
         const colors = module.Utils.prepareColorsetList()
@@ -131,7 +133,7 @@ class DiceSoNiceCustomization extends Application {
             mergeObject(this.choices, value)
         }
         const otherKey = { damage: "black" }
-        this.attrs = ["mu", "kl", "in", "ch", "ff", "ge", "ko", "kk", "attack", "dodge", "parry", "damage"]
+
         game.settings.registerMenu("dsa5", "dicesonicesettings", {
             name: "DiceSoNiceSettings",
             label: "DiceSoNice Settings",
@@ -139,7 +141,7 @@ class DiceSoNiceCustomization extends Application {
             type: DiceSoNiceForm,
             restricted: false
         })
-        for (const attr of this.attrs) {
+        for (const attr of DiceSoNiceCustomization.attrs) {
             game.settings.register("dsa5", `dice3d_${attr}`, {
                 name: `CHAR.${attr.toUpperCase()}`,
                 scope: "client",
@@ -162,15 +164,11 @@ class DiceSoNiceCustomization extends Application {
         if (game.modules.get("dice-so-nice") && game.modules.get("dice-so-nice").active) {
             return {
                 colorset: game.settings.get("dsa5", `dice3d_${value}`),
+                appearance: {
+                    colorset: game.settings.get("dsa5", `dice3d_${value}`),
+                    system: game.settings.get("dsa5", `dice3d_system_${value}`)
+                }
             }
-
-            /*{
-                colorset: ,
-            }
-            return {
-                colorset: game.settings.get("dsa5", `dice3d_${value}`),
-                system: game.settings.get("dsa5", `dice3d_system_${value}`)
-            }*/
         }
         return { colorset: value }
     }
@@ -182,15 +180,59 @@ class DiceSoNiceCustomization extends Application {
         })
         html.find('[name="systemselection"]').change(async(ev) => {
             await game.settings.set("dsa5", `dice3d_system_${ev.currentTarget.dataset.attr}`, ev.currentTarget.value)
+            DiceSoNiceCustomization.preloadDiceAssets([ev.currentTarget.value])
+            game.socket.emit("system.dsa5.player", {
+                type: "preloadDice3d",
+                payload: {
+                    toPreload: [ev.currentTarget.value]
+                }
+            })
         })
+    }
+
+    static onConnect(){
+        this.collectPreloads()
+        let toPreload = new Set()
+        for (let attr of DiceSoNiceCustomization.attrs) {
+            toPreload.add(game.settings.get("dsa5", `dice3d_system_${attr}`))
+        }
+        this.preloadDiceAssets(toPreload)
+    }
+
+    static collectPreloads(){
+        let toPreload = new Set()
+        for (let attr of DiceSoNiceCustomization.attrs){
+            toPreload.add(game.settings.get("dsa5", `dice3d_system_${attr}`))
+        }
+        toPreload = Array.from(toPreload)
+        this.preloadDiceAssets(toPreload)
+        game.socket.emit("system.dsa5.player", {
+            type: "preloadDice3d",
+            payload: { toPreload }
+        })
+    }
+
+    static requestDicePreloads(){
+        this.collectPreloads()
+    }
+
+    static preloadDiceAssets(names, types = []){
+        for(const name of names){
+            const dieModel = game.dice3d.DiceFactory.systems[name]
+            if(!dieModel) continue
+
+            const dieModelsToLoad = dieModel.dice.filter((el) => types == [] || types.includes(el.type))
+            for(const model of dieModelsToLoad)
+                model.loadModel(game.dice3d.DiceFactory.loaderGLTF)
+        }
     }
 
     async getData(options) {
         const data = await super.getData(options);
         data.choices = this.choices
-        data.systems = duplicate(game.dice3d.DiceFactory.systems)
+        data.systems = game.dice3d.DiceFactory.systems
         data.selections = {}
-        for (const attr of this.attrs) {
+        for (const attr of DiceSoNiceCustomization.attrs) {
             data.selections[attr] = {
                 color: game.settings.get("dsa5", `dice3d_${attr}`),
                 system: game.settings.get("dsa5", `dice3d_system_${attr}`)

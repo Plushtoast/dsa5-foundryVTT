@@ -47,8 +47,9 @@
         "Mit dem Linkbutton neben dem Charakternamen auf dem Charakterblatt kannst du den Charakter auf die Hotbar ziehen,",
 
         "Das Grundregelwerk Modul kann Sichtbereiche automatisch einstellen.",
-        "Die Bibliothek, der Journalbrowser, das Meistermenü und das Angriffsmenü können über ein Taste aktiviert und geschlossen werden."
-
+        "Die Bibliothek, der Journalbrowser, das Meistermenü und das Angriffsmenü können über ein Taste aktiviert und geschlossen werden.",
+        "Im System sind Tokenrahmen für deine eigene Tokens enthalten.",
+        "Das Tokenizer Modul wird automatisch konfiguriert, so dass du schnell die DSA Token Rahmen für eigenes verwenden kannst."
 
     ]
 }

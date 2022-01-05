@@ -84,5 +84,30 @@
       {{/each}}
     </div>
 
+
   </div>
+
+</div>
+<div class="groupbox" style="padding:4px;">
+  <b class="lineheight">{{localize 'entityAbility'}}</b><br />
+  {{#if equipmentIndexLoaded}}
+  <div class="row-section wrap">
+    {{#each entityAbilities as |item i|}}
+    <div data-entityid="true" data-qs="{{item.data.data.AsPCost.value}}" class="row-section col two wrap tableOdd selectableRow {{#if (hasElem ../conjurationData.selectedEntityIds item.uuid)}}selected{{/if}}"
+      data-id="{{item.uuid}}">
+      <div class="col eighty lineheight">
+        {{localize item.name}}
+      </div>
+      <div class="col ten">
+        <span class="small" title="{{localize 'CHARAbbrev.QL'}}">{{item.data.data.AsPCost.value}}</span>
+      </div>
+      <div class="col ten">
+        <a class="showEntity small" data-uuid="{{item.uuid}}"><i class="fas fa-info"></i></a>
+      </div>
+    </div>
+    {{/each}}
+  </div>
+  {{else}}
+  <button class="initLibrary">{{localize "Library.searchPlaceholder"}}</button>
+  {{/if}}
 </div>

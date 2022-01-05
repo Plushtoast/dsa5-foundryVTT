@@ -46,6 +46,8 @@
         "The link button next to the character name on the character sheet can be used to drag the character to the hotbar.",
 
         "The core modul can configure vision for tokens automatically.",
-        "The library, the journal browser, the master's menu and the attack menu can be opened and closed via a keybinding."
+        "The library, the journal browser, the master's menu and the attack menu can be opened and closed via a keybinding.",
+        "The system contains token borders for your own tokens.",
+        "The module tokenizer is automatically configured, so you can quickly use TDE token borders on your own."
     ]
 }

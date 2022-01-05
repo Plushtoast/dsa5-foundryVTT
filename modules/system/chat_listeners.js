@@ -48,8 +48,8 @@ export default class DSA5ChatListeners {
             skill = await DSA5_Utility.skillByName(skill)
         }
         if(skill) skill= skill.toObject()
-        
-        if(!skill){ 
+
+        if(!skill){
             skill = {
                 name: "3d20",
                 type: "skill",
@@ -71,11 +71,11 @@ export default class DSA5ChatListeners {
     }
 
     static showTables(){
-        const msg = `<a class="roll-button defense-botch" data-weaponless="false"><i class="fas fa-dice"></i>${game.i18n.localize('TABLENAMES.Defense')}</a>
-        <a class="roll-button melee-botch" data-weaponless="false"><i class="fas fa-dice"></i>${game.i18n.localize('TABLENAMES.Melee')}</a>
-        <a class="roll-button range-botch" data-weaponless="false"><i class="fas fa-dice"></i>${game.i18n.localize('TABLENAMES.Range')}</a>
-        <a class="roll-button liturgy-botch"><i class="fas fa-dice"></i>${game.i18n.localize('TABLENAMES.Liturgy')}</a>
-        <a class="roll-button spell-botch"><i class="fas fa-dice"></i>${game.i18n.localize('TABLENAMES.Spell')}</a>`
+        const msg = `<a class="roll-button botch-roll" data-table="Defense" data-weaponless="false"><i class="fas fa-dice"></i>${game.i18n.localize('TABLENAMES.Defense')}</a>
+        <a class="roll-button botch-roll" data-table="Melee" data-weaponless="false"><i class="fas fa-dice"></i>${game.i18n.localize('TABLENAMES.Melee')}</a>
+        <a class="roll-button botch-roll" data-table="Range" data-weaponless="false"><i class="fas fa-dice"></i>${game.i18n.localize('TABLENAMES.Range')}</a>
+        <a class="roll-button botch-roll" data-table="Liturgy"><i class="fas fa-dice"></i>${game.i18n.localize('TABLENAMES.Liturgy')}</a>
+        <a class="roll-button botch-roll" data-table="Spell"><i class="fas fa-dice"></i>${game.i18n.localize('TABLENAMES.Spell')}</a>`
         ChatMessage.create(DSA5_Utility.chatDataSetup(msg, "roll"))
     }
 }

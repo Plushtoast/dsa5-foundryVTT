@@ -14,7 +14,7 @@ export default function() {
         },
         isWEBM: (a) => /.webm$/.test(a),
         joinStr: (a, b) => b.join(a),
-        diceThingsUp: DSA5_Utility.replaceDies,
+        diceThingsUp: (a, b) => DSA5_Utility.replaceDies(a, false),
         replaceConditions: DSA5_Utility.replaceConditions,
         floor: (a) => Math.floor(Number(a)),
         hasElem: (a, b) => a.includes(b),

@@ -88,7 +88,7 @@ export default class EquipmentDamage {
     }
 
     static async applyDamageLevelToItem(item, amount) {
-        const damage = Math.floor(item.data.data.structure.max * 0.25) * amount
+        const damage = Math.ceil(item.data.data.structure.max * 0.25) * amount
         await item.update({ "data.structure.value": Math.max(0, item.data.data.structure.value - damage) })
     }
 

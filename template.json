@@ -610,7 +610,8 @@
             "effect": {
                 "value": "",
                 "attributes": ""
-            }
+            },
+            "distribution": ""
         },
         "ritual": {
             "templates": [
@@ -867,12 +868,14 @@
                 "value": 0
             },
             "step": {
-                "value": 1
+                "value": 1,
+                "circle": 1
             },
             "category": {
                 "value": "general",
                 "sub": 0
             },
+            "distribution": "",
             "list": {
                 "value": ""
             },

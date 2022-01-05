@@ -419,7 +419,8 @@ class Enchantable extends ItemSheetdsa5 {
 class AmmunitionSheet extends Enchantable {
     async getData(options) {
         const data = await super.getData(options)
-        data['ammunitiongroups'] = DSA5.ammunitiongroups;
+        data['ammunitiongroups'] = DSA5.ammunitiongroups
+        data['domains'] = this.prepareDomains()
         return data
     }
 }

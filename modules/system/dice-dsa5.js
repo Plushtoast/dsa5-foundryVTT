@@ -1,13 +1,11 @@
 import Actordsa5 from "../actor/actor-dsa5.js";
 import DSA5 from "./config-dsa5.js";
 import DSA5Dialog from "../dialog/dialog-dsa5.js"
-import Miscast from "../tables/spellmiscast.js"
 import DSA5_Utility from "./utility-dsa5.js";
 import AdvantageRulesDSA5 from "./advantage-rules-dsa5.js";
 import SpecialabilityRulesDSA5 from "./specialability-rules-dsa5.js";
 import TraitRulesDSA5 from "./trait-rules-dsa5.js";
 import Itemdsa5 from "../item/item-dsa5.js"
-import CombatTables from "../tables/combattables.js";
 import DSA5StatusEffects from "../status/status_effects.js";
 import DSA5ChatAutoCompletion from "./chat_autocompletion.js";
 import OpposedDsa5 from "./opposed-dsa5.js";
@@ -15,6 +13,7 @@ import DSAActiveEffectConfig from "../status/active_effects.js"
 import DSA5SoundEffect from "./dsa-soundeffect.js";
 import EquipmentDamage from "./equipment-damage.js";
 import EquipmentDamageDialog from "../dialog/dialog-equipmentdamage.js";
+import DSATables from "../tables/dsatables.js";
 
 export default class DiceDSA5 {
     static async setupDialog({ dialogOptions, testData, cardOptions }) {
@@ -47,7 +46,7 @@ export default class DiceDSA5 {
 
         let targets = []
         game.user.targets.forEach(target => {
-            targets.push({ name: target.actor.name, img: target.actor.img })
+            if (target.actor) targets.push({ name: target.actor.name, img: target.actor.img })
         })
 
         mergeObject(dialogOptions.data, {
@@ -288,7 +287,7 @@ export default class DiceDSA5 {
             result["description"] += ", " + game.i18n.localize("attackOfOpportunity")
         } else if (testData.extra.statusId == "dodge" && result.successLevel == -3) {
             if (game.settings.get("dsa5", "defenseBotchTableEnabled")) {
-                result["description"] += `, <a class="roll-button defense-botch" data-weaponless="true"><i class="fas fa-dice"></i>${game.i18n.localize('CriticalFailure')} ${game.i18n.localize("table")}</a>`
+                result["description"] += `, <a class="roll-button botch-roll" data-table="Defense" data-weaponless="true"><i class="fas fa-dice"></i>${game.i18n.localize('CriticalFailure')} ${game.i18n.localize("table")}</a>`
             } else {
                 result["description"] += ", " + game.i18n.localize("selfDamage") + (new Roll("1d6+2").evaluate({ async: false }).total)
             }
@@ -427,9 +426,9 @@ export default class DiceDSA5 {
                 break;
             case -3:
                 if (testData.mode == "attack" && source.data.traitType.value == "meleeAttack" && (await game.settings.get("dsa5", "meleeBotchTableEnabled"))) {
-                    result.description += `, <a class="roll-button melee-botch" data-weaponless="true"><i class="fas fa-dice"></i>${game.i18n.localize('CriticalFailure')} ${game.i18n.localize("table")}</a>`
+                    result.description += `, <a class="roll-button botch-roll" data-table="Melee" data-weaponless="true"><i class="fas fa-dice"></i>${game.i18n.localize('CriticalFailure')} ${game.i18n.localize("table")}</a>`
                 } else if (testData.mode == "attack" && (await game.settings.get("dsa5", "rangeBotchTableEnabled"))) {
-                    result.description += `, <a class="roll-button range-botch" data-weaponless="true"><i class="fas fa-dice"></i>${game.i18n.localize('CriticalFailure')} ${game.i18n.localize("table")}</a>`
+                    result.description += `, <a class="roll-button botch-roll" data-table="Range" data-weaponless="true"><i class="fas fa-dice"></i>${game.i18n.localize('CriticalFailure')} ${game.i18n.localize("table")}</a>`
                 } else {
                     result.description += ", " + game.i18n.localize("selfDamage") + (await new Roll("1d6+2").evaluate({ async: true })).total
                 }
@@ -588,7 +587,7 @@ export default class DiceDSA5 {
         let success = result.successLevel > 0
         let doubleDamage = result.successLevel > 2
 
-        await this.detailedWeaponResult(result, testData)
+        await this.detailedWeaponResult(result, testData, source)
 
         if (testData.mode == "attack" && success)
             await DiceDSA5.evaluateDamage(testData, result, weapon, source.type == "rangeweapon", doubleDamage)
@@ -601,7 +600,7 @@ export default class DiceDSA5 {
         return result
     }
 
-    static async detailedWeaponResult(result, testData){
+    static async detailedWeaponResult(result, testData, source){
         switch (result.successLevel) {
             case 3:
                 if (testData.mode == "attack") {
@@ -612,11 +611,11 @@ export default class DiceDSA5 {
                 break;
             case -3:
                 if (testData.mode == "attack" && source.type == "meleeweapon" && (await game.settings.get("dsa5", "meleeBotchTableEnabled")))
-                    result.description += `, <a class="roll-button melee-botch" data-weaponless="${source.data.combatskill.value == game.i18n.localize('LocalizedIDs.wrestle')}"><i class="fas fa-dice"></i>${game.i18n.localize('CriticalFailure')} ${game.i18n.localize("table")}</a>`
+                    result.description += `, <a class="roll-button botch-roll" data-table="Melee" data-weaponless="${source.data.combatskill.value == game.i18n.localize('LocalizedIDs.wrestle')}"><i class="fas fa-dice"></i>${game.i18n.localize('CriticalFailure')} ${game.i18n.localize("table")}</a>`
                 else if (testData.mode == "attack" && (await game.settings.get("dsa5", "rangeBotchTableEnabled")))
-                    result.description += `, <a class="roll-button range-botch" data-weaponless="false"><i class="fas fa-dice"></i>${game.i18n.localize('CriticalFailure')} ${game.i18n.localize("table")}</a>`
+                    result.description += `, <a class="roll-button botch-roll" data-table="Range" data-weaponless="false"><i class="fas fa-dice"></i>${game.i18n.localize('CriticalFailure')} ${game.i18n.localize("table")}</a>`
                 else if (testData.mode != "attack" && (await game.settings.get("dsa5", "defenseBotchTableEnabled")))
-                    result.description += `, <a class="roll-button defense-botch" data-weaponless="${source.data.combatskill.value == game.i18n.localize('LocalizedIDs.wrestle')}"><i class="fas fa-dice"></i>${game.i18n.localize('CriticalFailure')} ${game.i18n.localize("table")}</a>`
+                    result.description += `, <a class="roll-button botch-roll" data-table="Defense" data-weaponless="${source.data.combatskill.value == game.i18n.localize('LocalizedIDs.wrestle')}"><i class="fas fa-dice"></i>${game.i18n.localize('CriticalFailure')} ${game.i18n.localize("table")}</a>`
                 else
                     result.description += ", " + game.i18n.localize("selfDamage") + (await new Roll("1d6+2").evaluate({ async: true })).total
                 break;
@@ -647,7 +646,7 @@ export default class DiceDSA5 {
         let weaponSource = testData.source.data.data == undefined ? testData.source : testData.source.data
         let source = Actordsa5._calculateCombatSkillValues(weaponSource, testData.extra.actor)
         let result = this._rollSingleD20(roll, source.data[testData.mode].value, testData.mode, this._situationalModifiers(testData), testData, "", this._situationalMultipliers(testData))
-        await this.detailedWeaponResult(result, testData)
+        await this.detailedWeaponResult(result, testData, source)
         result["rollType"] = "combatskill"
         return result
     }
@@ -724,6 +723,7 @@ export default class DiceDSA5 {
 
     static rollSpell(testData) {
         let res = this._rollThreeD20(testData)
+        const isClerical = ["ceremony", "liturgy"].includes(testData.source.type)
         res["rollType"] = testData.source.type
         res.preData.calculatedSpellModifiers.finalcost = res.preData.calculatedSpellModifiers.cost
         if (res.successLevel >= 2) {
@@ -733,7 +733,7 @@ export default class DiceDSA5 {
             res.qualityStep =  Math.min(game.settings.get("dsa5", "capQSat"), Math.ceil(res.result / 3))
             res.preData.calculatedSpellModifiers.finalcost = Math.round(res.preData.calculatedSpellModifiers.cost / 2)
         } else if (res.successLevel <= -2) {
-            res.description += `, <a class="roll-button ${["spell","ritual"].includes(testData.source.type) ? "spell" : "liturgy"}-botch"><i class="fas fa-dice"></i>${game.i18n.localize('CriticalFailure')} ${game.i18n.localize("table")}</a>`
+            res.description += `, <a class="roll-button botch.roll" data-table="${isClerical ? "Liturgy" : "Spell"}"><i class="fas fa-dice"></i>${game.i18n.localize('CriticalFailure')} ${game.i18n.localize("table")}</a>`
         }
 
         if (res.successLevel < 0) {
@@ -754,12 +754,17 @@ export default class DiceDSA5 {
                     if (k instanceof Die || k.class == "Die")
                         for (let l of k.results) res["characteristics"].push({ char: "effect", res: l.result, die: "d" + k.faces })
                 }
+                const damageBonusDescription = []
+                const statusDmg = DiceDSA5._stringToRoll(testData.extra.actor.data[isClerical ? "liturgyStats" : "spellStats"].damage, testData)
+                if (statusDmg != 0) {
+                    damageBonusDescription.push(game.i18n.localize("statuseffects") + " " + statusDmg)
+                }
                 res["armorPen"] = armorPen
                 res["damageRoll"] = rollEffect
-                res["damage"] = rollEffect.total
+                res["damage"] = rollEffect.total + statusDmg
+                res["damagedescription"] = damageBonusDescription.join("\n")
             }
         }
-        const isClerical = ["ceremony", "liturgy"].includes(testData.source.type)
 
         res.preData.calculatedSpellModifiers.finalcost = Math.max(1,
             Number(res.preData.calculatedSpellModifiers.finalcost) +
@@ -981,7 +986,6 @@ export default class DiceDSA5 {
                 case "ceremony":
                 case "ritual":
                 case "skill":
-                      //roll.dice[0].options.appearance = {system: "spectrum"}// d3dColors(testData.source.data.characteristic1.value)
                     roll = await new Roll(`1d20+1d20+1d20`).evaluate({ async: true })
 
                     mergeObject(roll.dice[0].options, d3dColors(testData.source.data.characteristic1.value))
@@ -1108,8 +1112,6 @@ export default class DiceDSA5 {
                 chatData.modifierList.push({ name: game.i18n.localize('MODS.QS'), value: preData.advancedModifiers.qls })
         }
 
-
-
         if (["gmroll", "blindroll"].includes(chatOptions.rollMode)) chatOptions["whisper"] = game.users.filter(user => user.isGM).map(x => x.data._id)
         if (chatOptions.rollMode === "blindroll") chatOptions["blind"] = true;
         else if (chatOptions.rollMode === "selfroll") chatOptions["whisper"] = [game.user.id];
@@ -1129,10 +1131,8 @@ export default class DiceDSA5 {
         };
 
         if (!rerenderMessage) {
-            return renderTemplate(chatOptions.template, chatData).then(html => {
-                chatOptions["content"] = html
-                return ChatMessage.create(chatOptions, false);
-            });
+            chatOptions["content"] = await renderTemplate(chatOptions.template, chatData)
+            return await ChatMessage.create(chatOptions, false)
         } else {
             return renderTemplate(chatOptions.template, chatData).then(html => {
                 //Seems to be a foundry bug, after edit inline rolls are not converted anymore
@@ -1282,7 +1282,7 @@ export default class DiceDSA5 {
         } else {
             if (targets) actors = targets.map(x => DSA5_Utility.getSpeaker(x))
             else if (game.user.targets.size) {
-                game.user.targets.forEach(target => { actors.push(target.actor) });
+                game.user.targets.forEach(target => { if (target.actor)  actors.push(target.actor) });
             }
         }
         if (game.user.isGM) {
@@ -1440,11 +1440,7 @@ export default class DiceDSA5 {
             $(ev.currentTarget).parents(".chat-card").find(".display-toggle").toggle()
         });
 
-        html.on('click', '.defense-botch', ev => { CombatTables.showBotchCard("Defense", ev.currentTarget.dataset.weaponless) })
-        html.on('click', '.melee-botch', ev => { CombatTables.showBotchCard("Melee", ev.currentTarget.dataset.weaponless) })
-        html.on('click', '.range-botch', ev => { CombatTables.showBotchCard("Range", ev.currentTarget.dataset.weaponless) })
-        html.on('click', '.liturgy-botch', () => { Miscast.showBotchCard("Liturgy") })
-        html.on('click', '.spell-botch', () => { Miscast.showBotchCard("Spell") })
+        html.on('click', '.botch-roll', ev => { DSATables.showBotchCard(ev.currentTarget.dataset) })
         html.on('click', '.roll-item', ev => { DiceDSA5._itemRoll(ev) })
         html.on('click', '.gearDamaged', async (ev) => {
            DiceDSA5.gearDamaged(ev)

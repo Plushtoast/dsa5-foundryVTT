@@ -32,12 +32,16 @@ export default function() {
         name: "COMBAT.TurnNext",
         hint: game.i18n.localize("COMBAT.TurnNext"),
         editable: [{ key: "KeyN" }],
-        onDown: () => {game.combat && game.combat.nextTurn()}
+        onDown: () => combatTurn("nextTurn")
     })
     game.keybindings.register("dsa5", "combatTrackerPrevious", {
         name: "COMBAT.TurnPrev",
         hint: game.i18n.localize("COMBAT.TurnPrev"),
         editable: [{ key: "KeyV" }],
-        onDown: () => { game.combat && game.combat.previousTurn()}
+        onDown: () => combatTurn("previousTurn")
     })
+}
+
+const combatTurn = (mode) => {
+    game.combat && game.combat.combatant.isOwner && game.combat[mode]()
 }

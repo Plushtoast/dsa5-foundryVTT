@@ -149,14 +149,17 @@ export class DSA5Combatant extends Combatant {
 
 
 class RepeatingEffectsHelper {
-    static async preUpdateCombatHook(combat, updateData) {
+    static async updateCombatHook(combat, updateData, x, y) {
         if (!updateData.round && !updateData.turn)
             return
 
-        if (combat.data.round != 0 && combat.turns && combat.data.active && combat.current.turn > -1 && combat.current.turn == combat.turns.length - 1) await RepeatingEffectsHelper.endOfRound(combat)
+        if (combat.data.round != 0 && combat.turns && combat.data.active){
+            if(combat.previous.round < combat.current.round)
+                await RepeatingEffectsHelper.startOfRound(combat)
+        }
     }
 
-    static async endOfRound(combat) {
+    static async startOfRound(combat) {
         const activeGM = game.users.find(u => u.active && u.isGM)
 
         if (!(activeGM && game.user.id == activeGM.id)) return
@@ -168,6 +171,24 @@ class RepeatingEffectsHelper {
                     if (statusId == "bleeding") await this.applyBleeding(turn)
                     else if (statusId == "burning") await this.applyBurning(turn, x)
                 }
+
+                await this.startOfRoundEffects(turn)
+            }
+        }
+    }
+
+    static async startOfRoundEffects(turn){
+        const regenerationAttributes = ["wounds", "astralenergy", "karmaenergy"]
+        for(const attr of regenerationAttributes){
+            for (const ef of turn.actor.data.data.repeatingEffects.startOfRound[attr]){
+                const damageRoll = new Roll(ef.value).evaluate({ async: false })
+                const damage = await damageRoll.render()
+                const type = game.i18n.localize(damageRoll.total > 0 ? "CHATNOTIFICATION.regenerates" : "CHATNOTIFICATION.getsHurt")
+                const applyDamage = `${turn.actor.name} ${type} ${game.i18n.localize(attr)} ${damage}`
+                await ChatMessage.create(DSA5_Utility.chatDataSetup(applyDamage))
+
+                if (attr == "wounds") await turn.actor.applyDamage(damageRoll.total * -1)
+                else await turn.actor.applyMana(damageRoll.total * -1, attr == "astralenergy" ? "AsP" : "KaP")
             }
         }
     }
@@ -188,4 +209,4 @@ class RepeatingEffectsHelper {
     }
 }
 
-Hooks.on("preUpdateCombat", RepeatingEffectsHelper.preUpdateCombatHook)
+Hooks.on("updateCombat", RepeatingEffectsHelper.updateCombatHook)

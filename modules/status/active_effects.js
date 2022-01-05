@@ -121,6 +121,8 @@ export default class DSAActiveEffectConfig extends ActiveEffectConfig {
                 { name: `${game.i18n.localize('rangeCombatAttacks')} - ${game.i18n.localize('CHARAbbrev.AT')}`, val: "data.rangeStats.attack" },
                 { name: `${game.i18n.localize('rangeCombatAttacks')} - ${game.i18n.localize('CHARAbbrev.damage')}`, val: "data.rangeStats.damage" },
                 { name: `${game.i18n.localize('rangeCombatAttacks')} - ${game.i18n.localize('MODS.defenseMalus')}`, val: "data.rangeStats.defenseMalus" },
+                { name: `${game.i18n.localize('spell')} - ${game.i18n.localize('CHARAbbrev.damage')}`, val: "data.spellStats.damage" },
+                { name: `${game.i18n.localize('liturgy')} - ${game.i18n.localize('CHARAbbrev.damage')}`, val: "data.liturgyStats.damage" },
                 { name: game.i18n.localize('KaPCost'), val: "data.kapModifier" },
                 { name: game.i18n.localize('AsPCost'), val: "data.aspModifier" },
                 { name: `${game.i18n.localize('skill')} - ${game.i18n.localize("MODS.FW")}`, val: "data.skillModifiers.FW" },

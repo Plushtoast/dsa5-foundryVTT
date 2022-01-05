@@ -182,6 +182,7 @@
     "biography": "Hintergrundgeschichte",
     "Category": "Kategorie",
     "clerical": "klerikal",
+    "circle": "Kreis",
     "condition": "Zustand",
     "confirmed": "Bestätigter",
     "ceremonialItem": "Zeremonialgegenstand",
@@ -243,6 +244,7 @@
     "enchantment": "Verzauberung",
     "energyfactor": "Leiteig. Multiplikator",
     "effectResult": "Effektergebnis",
+    "entityAbility": "Wesensfähigkeit",
     "effectwrapper": "Effektcontainer",
     "effectFormula": "Effektformel",
     "equipmentType": "Ausrüstungskategorie",
@@ -834,6 +836,8 @@
         "usesItem": "{actor} benutzt {item}.",
         "requestGroupCheck": " fordert eine Gruppenprobe in ",
         "enchantmentUsed": "<b>{item}</b> hat eine Ladung <b>{spell}</b> verbraucht.",
+        "regenerates": "regeneriert",
+        "getsHurt": "verliert",
         "burning": {
             "1": "{actor} <a class=\"chatButton chat-condition\" data-id=\"burning\" draggable=\"true\"><img src=\"icons/svg/fire.svg\">brennt</a> ein bisschen und erhält {damage} Schadenspunkt(e).",
             "2": "{actor} <a class=\"chatButton chat-condition\" data-id=\"burning\" draggable=\"true\"><img src=\"icons/svg/fire.svg\">brennt</a> und erhält {damage} Schadenspunkt(e).",
@@ -846,7 +850,8 @@
         "oneQualityPerLine": "Beschreibe eine Qualitätsstufe pro Zeile",
         "zkModifer": "Die Zähigkeit/Seelenkraft des Ziels muss als Malus eingerechnet werden (Vorzeichen beachten)",
         "applyEffectCaster": "Effekt auf Wirkenden übertragen",
-        "applyEffectTargets": "Effekt auf Ziele übertragen"
+        "applyEffectTargets": "Effekt auf Ziele übertragen",
+        "foreignSpell": "Fremdzauber können nicht modifiziert werden"
     },
     "HELP": {
         "showHelp": "Hilfe anzeigen",
@@ -1315,7 +1320,9 @@
         "armorAndWeaponDamage": "Waffen- und Rüstungsverschleiß",
         "armorAndWeaponDamageHint": "Aktiviere die optionale Regel für den Waffenbruchfaktor und Rüstungsverschleiß",
         "scrollingFontsize": "Kampftext Schriftgröße",
-        "scrollingFontsizeHint": "Die Schriftgröße für einige der scrollenden Token Texte (z.B. +- LeP)"
+        "scrollingFontsizeHint": "Die Schriftgröße für einige der scrollenden Token Texte (z.B. +- LeP)",
+        "enableForeignSpellModifer": "Fremdzauber Modifikator",
+        "enableForeignSpellModiferHint": "Aktiviere Fremdzaubermodifikator +2 bei Zauberproben."
     },
     "COMBATTRACKER": {
         "noDefenses": "Anzahl Verteidigungen",

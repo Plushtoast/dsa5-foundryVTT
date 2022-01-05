@@ -82,12 +82,9 @@ export default class BookWizard extends Application {
             game.journal.get(ev.currentTarget.dataset.entryid).panToNote()
         })
 
-        html.on("search", ".filterJournals", ev => {
+        html.on("search keyup", ".filterJournals", ev => {
             this.filterToc($(ev.currentTarget).val())
         })
-        html.on('keyup', '.filterJournals', ev => {
-            this.filterToc($(ev.currentTarget).val())
-        });
 
         html.on('click', '.loadBook', ev => {
             this.selectedChapter = undefined
@@ -174,7 +171,6 @@ export default class BookWizard extends Application {
         this.showJournal(this.journals.find(x => { return x.id == id }))
     }
 
-
     async resaveBreadCrumbs(target) {
         const breadcrumbs = {}
         for (let elem of target.getElementsByTagName("div")) {
@@ -222,6 +218,10 @@ export default class BookWizard extends Application {
             }
 
         }
+    }
+
+    tryShowImportedActor(ev){
+
     }
 
     showJournal(journal) {
@@ -280,22 +280,26 @@ export default class BookWizard extends Application {
 
     }
 
-    prefillActors(chapter) {
+    async prefillActors(chapter) {
         if (!chapter.actors) return []
 
         let result = []
-
+        const head = await game.folders.contents.find(x => x.name == game.i18n.localize(`${this.bookData.moduleName}.name`) && x.type == "Actor" && x.data.parent == null)
+        const folder = head ? await game.folders.contents.find(x => x.name == chapter.name && x.type == "Actor" && x.data.parent == head.id) : undefined
         for (let k of chapter.actors) {
-            let actor = game.actors.contents.find(x => x.name == k)
+            let actor = folder ? game.actors.contents.find(x => x.name == k && x.data.folder == folder.id ) : undefined
             let pack = undefined
+            let id = actor ? actor.id : undefined
             if (!actor) {
                 actor = this.actors.find(x => x.name == k)
                 pack = this.bookData.actors
+                id = actor ? actor._id : undefined
             }
             result.push({
                 name: k,
                 actor,
-                pack
+                pack,
+                id
             })
         }
         return result
@@ -347,7 +351,7 @@ export default class BookWizard extends Application {
 
                 const subChapters = this.getSubChapters()
                 if (chapter.scenes || chapter.actors || subChapters.length == 0) {
-                    return await renderTemplate('systems/dsa5/templates/wizard/adventure/adventure_chapter.html', { chapter, subChapters: this.getSubChapters(), actors: this.prefillActors(chapter) })
+                    return await renderTemplate('systems/dsa5/templates/wizard/adventure/adventure_chapter.html', { chapter, subChapters: this.getSubChapters(), actors: await this.prefillActors(chapter) })
                 } else {
                     return await this.loadJournal(subChapters[0])
                 }

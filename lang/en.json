@@ -224,6 +224,7 @@
     "combatspecialtalents": "Combat Special Abilities",
     "CriticalSuccess": "Critical success",
     "CriticalFailure": "Botch",
+    "circle": "Circle",
     "Characteristic": "Attribute",
     "ceremony": "Ceremony",
     "ceremonies": "Ceremonies",
@@ -279,6 +280,7 @@
     "disadvantage": "Disadvantage",
     "disease": "Disease",
     "encumbrance": "Encumbrance",
+    "entityAbility": "Entity Ability",
     "enchantment": "Enchantment",
     "equipment": "Equipment",
     "effectResult": "Effect result",
@@ -821,6 +823,8 @@
         "usesItem": "{actor} uses {item}.",
         "requestGroupCheck": " requests a group check in ",
         "enchantmentUsed": "<b>{item}</b> used one charge of <b>{spell}</b>.",
+        "regenerates": "regenerates",
+        "getsHurt": "loses",
         "burning": {
             "1": "{actor} <a class=\"chatButton chat-condition\" data-id=\"burning\" draggable=\"true\"><img src=\"icons/svg/fire.svg\">burns</a> slightly resulting in {damage} sDP.",
             "2": "{actor} <a class=\"chatButton chat-condition\" data-id=\"burning\" draggable=\"true\"><img src=\"icons/svg/fire.svg\">burns</a> resulting in {damage} sDP.",
@@ -833,7 +837,8 @@
         "oneQualityPerLine": "Describe one quality level each line",
         "zkModifer": "The target's soulpower/toughness has to be included as handicap (mind the sign)",
         "applyEffectCaster": "Apply effect to caster",
-        "applyEffectTargets": "Apply effect to targets"
+        "applyEffectTargets": "Apply effect to targets",
+        "foreignSpell": "Foreign spells can not be modified"
     },
     "HELP": {
         "showHelp": "Show help",
@@ -994,12 +999,12 @@
         "weakRegenerationKaP": "Weak Regeneration (Karma Points)",
         "advancedRegenerationLeP": "tbd",
         "advancedRegenerationAsP": "Magical Regeneration",
-        "advancedRegenerationKaP": "tbd",
+        "advancedRegenerationKaP": "Karmic Regeneration",
         "energyControl": "Energy Control",
         "smallEnergyControl": "Small Energy Control",
-        "masterfulDodge": "tbd",
-        "masterfulParry": "tbd",
-        "improvisedWeaponMaster": "tbd",
+        "masterfulDodge": "Masterful Dodge",
+        "masterfulParry": "Master Parry",
+        "improvisedWeaponMaster": "Master of Improvised Weapons",
         "misfortune": "Misfortune",
         "quickdraw": "Quickdraw",
         "weakAstralBody": "Weak Astral Body",
@@ -1292,7 +1297,9 @@
         "armorAndWeaponDamage": "Weapon breaking and Armor Sturdiness",
         "armorAndWeaponDamageHint": "Activate the optional rule for weapon breaking and armor sturdiness.",
         "scrollingFontsize": "Combat Text Font Size",
-        "scrollingFontsizeHint": "Font size for some of the scrolling token texts (e.g. +- LP)"
+        "scrollingFontsizeHint": "Font size for some of the scrolling token texts (e.g. +- LP)",
+        "enableForeignSpellModifer": "Foreign spell modifier",
+        "enableForeignSpellModiferHint": "Enable +2 modifier for foreign spell checks."
     },
     "WEAR": {
         "check": "Breaking Point Rating Check ({category})",

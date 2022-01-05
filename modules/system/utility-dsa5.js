@@ -177,6 +177,10 @@ export default class DSA5_Utility {
         return folder
     }
 
+    static toObjectIfPossible(source){
+        return typeof source.toObject === 'function' ? source.toObject(false) : duplicate(source)
+    }
+
     static async showArtwork({ img, name, uuid, isOwner }, hide = false) {
         new ImagePopout(img, {
             title: hide ? (isOwner ? name : "-") : name,

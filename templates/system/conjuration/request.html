@@ -79,6 +79,23 @@
         </div>
         {{/each}}
       </div>
+
+      <div class="groupbox" style="padding:4px;">
+        <b class="lineheight">{{localize 'entityAbility'}}</b><br />
+        {{#each entityModifiers as |item i|}}
+        <div class="row-section col wrap tableOdd" data-id="{{item.uuid}}">
+          <div class="col eighty lineheight">
+            {{localize item.name}}
+          </div>
+          <div class="col ten">
+            <span class="small" title="{{localize 'CHARAbbrev.QL'}}">{{item.data.data.AsPCost.value}}</span>
+          </div>
+          <div class="col ten">
+            <a class="showEntity small" data-uuid="{{item.uuid}}"><i class="fas fa-info"></i></a>
+          </div>
+        </div>
+        {{/each}}
+      </div>
     </div>
   </div>
   {{#if confirmed}}
@@ -90,7 +107,7 @@
 
   {{else}}
   <div style="height:60px;">
-  <button class="createActor">{{localize 'PLAYER.finalize'}}</button>
+    <button class="createActor">{{localize 'PLAYER.finalize'}}</button>
   </div>
   {{/if}}
 </div>

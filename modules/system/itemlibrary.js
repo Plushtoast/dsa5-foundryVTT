@@ -330,8 +330,6 @@ export default class DSA5ItemLibrary extends Application {
         let result = await this.equipmentIndex.search(search, query)
         if (filterCompendium) result = result.filter(x => x.compendium != "")
 
-        console.log(filterCompendium)
-
         return await Promise.all(result.map(x => x.getItem()))
     }
 

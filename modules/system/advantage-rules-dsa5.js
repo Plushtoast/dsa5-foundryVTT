@@ -30,9 +30,7 @@ export default class AdvantageRulesDSA5 extends ItemRulesDSA5 {
         }
 
         if (adoption != null) {
-            if (DSA5.vantagesNeedingAdaption[item.name].effect) {
-                item.data.effect.value = `${adoption.name} ${DSA5.vantagesNeedingAdaption[item.name].effect}`
-            }
+            AdvantageRulesDSA5.simpleAdoption(item, adoption, item.name, DSA5.vantagesNeedingAdaption)
             item.name = `${item.name.replace(' ()', '')} (${adoption.name})`
             if (adoption.data)
                 item.data.APValue.value = item.data.APValue.value.split("/")[adoption.data.data.StF.value.charCodeAt(0) - 65].trim()
@@ -108,3 +106,5 @@ export default class AdvantageRulesDSA5 extends ItemRulesDSA5 {
         return super.itemAsModifier(actor, talent, factor, ["advantage", "disadvantage"], startsWith)
     }
 }
+
+ItemRulesDSA5.children["AdvantageRulesDSA5"] = AdvantageRulesDSA5

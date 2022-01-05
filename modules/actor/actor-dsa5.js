@@ -148,8 +148,8 @@ export default class Actordsa5 extends Actor {
                         pain = Math.floor(5 - 5 * data.data.status.wounds.value / data.data.status.wounds.max)
                     }
 
-                    if (pain < 4) pain -= AdvantageRulesDSA5.vantageStep(this, game.i18n.localize('LocalizedIDs.ruggedFighter')) - AdvantageRulesDSA5.vantageStep(this, game.i18n.localize('LocalizedIDs.ruggedAnimal')) + (SpecialabilityRulesDSA5.hasAbility(this, game.i18n.localize('LocalizedIDs.traditionKor')) ? 1 : 0)
-                    if (pain > 0) pain += AdvantageRulesDSA5.vantageStep(this, game.i18n.localize('LocalizedIDs.sensitiveToPain')) + AdvantageRulesDSA5.vantageStep(this, game.i18n.localize('LocalizedIDs.fragileAnimal'))
+                    if (pain < 4) pain -= (AdvantageRulesDSA5.vantageStep(this, game.i18n.localize('LocalizedIDs.ruggedFighter')) + AdvantageRulesDSA5.vantageStep(this, game.i18n.localize('LocalizedIDs.ruggedAnimal')) + (SpecialabilityRulesDSA5.hasAbility(this, game.i18n.localize('LocalizedIDs.traditionKor')) ? 1 : 0))
+                    if (pain > 0) pain += (AdvantageRulesDSA5.vantageStep(this, game.i18n.localize('LocalizedIDs.sensitiveToPain')) + AdvantageRulesDSA5.vantageStep(this, game.i18n.localize('LocalizedIDs.fragileAnimal')))
 
                     pain = Math.max(Math.min(4, pain), 0)
                 }
@@ -329,11 +329,24 @@ export default class Actordsa5 extends Actor {
                         multiplier: 1
                     }
                 },
+                repeatingEffects: {
+                    startOfRound: {
+                        wounds: [],
+                        karmaenergy: [],
+                        astralenergy: []
+                    }
+                },
                 totalArmor: 0,
                 carryModifier: 0,
                 aspModifier: 0,
                 kapModifier: 0,
                 immunities: [],
+                spellStats: {
+                    damage: "0"
+                },
+                liturgyStats: {
+                    damage: "0"
+                },
                 meleeStats: {
                     parry: 0,
                     attack: 0,
@@ -994,7 +1007,6 @@ export default class Actordsa5 extends Actor {
         }
         if (scolls.length) this.tokenScrollingText(scolls)
     }
-
 
     async applyDamage(amount) {
         const newVal = Math.min(this.data.data.status.wounds.max, this.data.data.status.wounds.value - amount)

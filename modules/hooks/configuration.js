@@ -175,6 +175,15 @@ export default function() {
         type: Boolean
     });
 
+    game.settings.register("dsa5", "enableForeignSpellModifer", {
+        name: "DSASETTINGS.enableForeignSpellModifer",
+        hint: "DSASETTINGS.enableForeignSpellModiferHint",
+        scope: "world",
+        config: true,
+        default: false,
+        type: Boolean
+    });
+
     game.settings.register("dsa5", "playerCanEditSpellMacro", {
         name: "DSASETTINGS.playerCanEditSpellMacro",
         hint: "DSASETTINGS.playerCanEditSpellMacroHint",

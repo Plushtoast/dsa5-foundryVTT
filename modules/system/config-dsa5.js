@@ -547,7 +547,8 @@ DSA5.traitCategories = {
     "general": "general",
     "familiar": "familiar",
     "trick": "trick",
-    "training": "training"
+    "training": "training",
+    "entity": "entityAbility"
 }
 
 DSA5.ritualLocationModifiers = {

@@ -31,16 +31,13 @@ export default class SpecialabilityRulesDSA5 extends ItemRulesDSA5 {
         item = duplicate(item)
 
         if (adoption != null) {
-
             //Different Apval for multiple same vantages
             if (/,/.test(item.data.APValue.value)) {
                 let name = `${item.name.replace(' ()', '')} (${adoption.name}`
                 item.data.APValue.value = item.data.APValue.value.split(",")[actor.items.filter(x => x.type == item.type && x.name.includes(name)).length].trim()
             }
+            SpecialabilityRulesDSA5.simpleAdoption(item, adoption, item.name, DSA5.AbilitiesNeedingAdaption)
 
-            if (DSA5.AbilitiesNeedingAdaption[item.name].effect) {
-                item.data.effect.value = `${adoption.name} ${DSA5.AbilitiesNeedingAdaption[item.name].effect}`
-            }
             item.name = `${item.name.replace(' ()', '')} (${adoption.name}${adoption.customEntry ? ", " + adoption.customEntry : ''})`
             if (adoption.data)
                 item.data.APValue.value = item.data.APValue.value.split("/")[adoption.data.data.StF.value.charCodeAt(0) - 65].trim()
@@ -155,3 +152,5 @@ export default class SpecialabilityRulesDSA5 extends ItemRulesDSA5 {
     }
 
 }
+
+ItemRulesDSA5.children["SpecialabilityRulesDSA5"] = SpecialabilityRulesDSA5
