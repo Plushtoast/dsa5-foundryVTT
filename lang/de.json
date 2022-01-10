@@ -61,6 +61,7 @@
         "QS": "QS",
         "QL": "QS",
         "RW": "RW",
+        "CR": "KR",
         "TPM": "TPM",
         "damage": "TP",
         "reloadTime": "Lad.",
@@ -410,6 +411,7 @@
     "source": "Quelle",
     "stepValue": "Stufe",
     "shieldSize": "Schildgröße",
+    "summoningPackage": "Modifikationspaket",
     "shooter": "Schütze",
     "speed": "Geschwindigkeit",
     "statuseffects": "Statuseffekte",
@@ -1467,7 +1469,9 @@
         "1": "Bauer",
         "2": "Springer",
         "3": "Turm",
-        "4": "König"
+        "4": "König",
+        "5": "Läufer",
+        "6": "Verstorben"
     },
     "CONDITIONDESCRIPTION": {
         "services": "Dienste die die Beschwörung dem Beschwörer schuldet.",

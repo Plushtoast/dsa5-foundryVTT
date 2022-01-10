@@ -156,8 +156,6 @@ export default class DiceDSA5 {
         res = Math.round(res * multiplier)
         let res1 = res - roll.terms[0].results[0].result;
 
-        //let color = DSA5.dieColors[id] || id;
-        //const color = game.dsa5.apps.DiceSoNiceCustomization.getDiceSoNiceColor(id) || id
         const color = game.dsa5.apps.DiceSoNiceCustomization.getAttributeConfiguration(id)
 
         chars.push({ char: id, res: roll.terms[0].results[0].result, suc: res1 >= 0, tar: res });

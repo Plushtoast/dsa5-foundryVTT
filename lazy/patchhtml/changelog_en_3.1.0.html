@@ -1,0 +1,87 @@
+<div class="mume markdown-preview  ">
+    <h1 class="mume-header" id="important-enhancementsnotes">3.1.0 Important Enhancements/Notes (1/13/2022)</h1>
+
+    <div class="row-section">
+        <div class="col">
+            <p>If your Foundry installation behaves quirky try this fix provided by Foundry:</p>
+        </div>
+    </div>
+    <div class="row-section">
+        <div class="col">
+            <img src="systems/dsa5/lazy/patchimages/3.1.0/cache.webp" />
+        </div>
+    </div>
+    <h2 class="mume-header" id="player-menu">Player menu</h2>
+    <div class="row-section">
+        <div class="col sixty">
+            <p>There is now a player menu available next to the game master menu. As the name says this is primarily intended for players to assist in certain complicated procedures. The first one available will be the summoning of creatures (see below).
+                Future updates could include tools and rules to create items, alchemy and other construction kit-like tasks.
+            </p>
+        </div>
+        <div class="col fourty">
+            <img src="systems/dsa5/lazy/patchimages/3.1.0/playermenu.webp" />
+        </div>
+    </div>
+    <h2 class="mume-header" id="summoning">Summoning</h2>
+    <div class="row-section">
+        <div class="col sixty">
+            <p>The player menu now includes the possibility to summon creatures. The base system has rules for elementals and demons. Other creature categories will be added via different modules later on. This tool allows players to assemble summons quickly
+                via a construction kit which respects the relevant rules and shows possible modifications. After finishing the construction plan, the players can send it to the game master who then can decide to push the creation as a token onto the map.
+                To do so the player needs at least observer permission for the summoned creature and drag it onto the summoning application and then roll the summoning spell which is automatically modified by the conjuring modifier of the creature. The
+                app will show you available quality levels that you can then use for additional services or spend to add modifiers and traits to the creature.</p>
+        </div>
+        <div class="col fourty">
+            <img src="systems/dsa5/lazy/patchimages/3.1.0/summoning.webp" />
+        </div>
+    </div>
+    <h2 class="mume-header" id="light-macro-improvement">Light Macro Improvement</h2>
+    <div class="row-section">
+        <div class="col sixty">
+            <p>The light macro included in the core module has been reworked completely. Among the new features you can find the following:
+            </p>
+            <ul class="dsalist">
+                <li>Light controls can be enabled and attached to the token HUD. After enabling the setting you will find a submenu on the token to enable all the lights directly.</li>
+                <li>The presets for light and vision settings can now be altered</li>
+                <li>Light and vision presets can be modified with multiple automatic factors to support different playing styles. You can have a general factor for every light and vision setting applied through the macro. One attached to each scene differently.
+                    And finally one which recalculates the vision range depending on the darkness setting of the scene. This means your players can see less the darker it gets. Keep in mind that the factors are also added to the token HUD light settings.</li>
+                <li>Moreover there is a new &quot;auto&quot; vision mode which detects whether the token has darksight and similar vision -ltering modifiers and then automatically applies a best guess for the active vision settings.</li>
+                <li>Finally you can automate the vision settings altogether so they get updated every time on entering new scenes or changing the darkness setting. While this is a useful and strong new feature, it will also most likely require some more fine
+                    tuning in future patches.</li>
+            </ul>
+        </div>
+        <div class="col fourty">
+            <img src="systems/dsa5/lazy/patchimages/3.1.0/lightmacro.webp" />
+        </div>
+    </div>
+    <h1 class="mume-header" id="enhancements">Enhancements</h1>
+
+    <ul class="dsalist">
+        <li>Regeneration (or degeneration) of AE, KP, and LP at the end of the round is now possible (e.g. for vampires)
+        </li>
+        <li>Actors can now have effects for permanent spell damage increase</li>
+        <li>Category &quot;Magical sign&quot; is now available</li>
+        <li>Category &quot;Pact Gifts&quot; is now available</li>
+        <li>The -2 modifier for unfamiliar spells can now be activated via the configuration. It&apos;ll propose a modifier and put a warning that spell modifications are disallowed. You can still override both proposals if you need to do so. The decision
+            whether the spell is included in your tradition is taken from a comparison between the tradition field of the actor sheet and the distribution field of the spell. So make sure to include the necessary traditions there!
+        </li>
+        <li>The calculation of damage caused by breaking point rating checks has been altered a little bit. The damage is now round up if the structure points are not dividable by four. So damage to a shield with 30 structure points prepatch was 30/4 rounded
+            down = 7. After the patch it&apos;s 30/4 rounded up = 8.</li>
+        <li>Paying and demanding money via the game master menu now deducts or delivers the money immediately without the need of a button press in the chat. This allows to transfer money to actors who are not primarily connected to a player. The chat macro
+            /pay and /getPaid still work the same way.</li>
+        <li>Actor links in journals should now open already imported actors if they reside in the automatically generated folders. If they are unavailable there, the compendium entry will be opened instead.</li>
+        <li>Ammunition transfers its domain attributes (e.g. magical, blessed) to the ranged weapon during a shot, making the attack magical or blessed.</li>
+        <li>The system can now use Rollsmiths&apos; dice so nice custom dice systems. You can set one system for every dice type (e.g. for Courage, Attack). See configuration of TDE.</li>
+    </ul>
+    <h1 class="mume-header" id="bugfixes">Bugfixes</h1>
+
+    <ul class="dsalist">
+        <li>Several compatibility adjustments to TDE modules</li>
+        <li>Proper table for liturgical chant botches should be shown</li>
+        <li>Profession/Species/Culture wizards add abilities which depend on other abilities a little bit better</li>
+        <li>Hotkey for next turn can not be used by players anymore unless it&apos;s their turn</li>
+        <li>Advantage &quot;Tough Animal&quot; calculates pain resistance properly</li>
+        <li>Compatibility to module &quot;multilevel-tokens&quot; improved</li>
+        <li>Compatibility to monarch card sheet</li>
+    </ul>
+
+</div>

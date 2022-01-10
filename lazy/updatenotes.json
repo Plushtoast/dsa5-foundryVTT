@@ -19,6 +19,10 @@
         {
             "version": "3.0.1",
             "text": "<ul><li>Foundry 9 finished with new features</li><li>Improved performance for maps with many walls and lights</li><li>Card decks</li><li>Keybinds</li><li>...and TDE is ready for v9!</li></ul>"
+        },
+        {
+            "version": "3.1.0",
+            "text": "<ul><li>Foundry 9 module adjustments</li><li>The new player menu now harbors its first function - Summoning</li><li>The core module light macro has been vastly improved (please replace the old one)</li><li><a href=\"https://www.f-shop.de/virtual-tabletops/\" target=\"_blank\">Aventurian Necromantheum (German) soon</a></li><li><a href=\"https://www.f-shop.de/virtual-tabletops/\" target=\"_blank\">Rabenkrieg II (German) soon</a></li><li><a href=\"https://www.ulissesf-shop.com/virtual-tabletops//\" target=\"_blank\">Aventurian Gods (English)</a> available</li><li>And don't forget to visit <a href=\"https://www.youtube.com/channel/UCgVzSn5NkMaO-PDxhCiAAjA\" target=\"_blank\">VTTom's Youtube channel</a> for recent tutorial videos (german, some with subtitle)</li><li>And big thanks again to all our voluntary helpers! Especially Gunthgard, VTTom, Nellkir, Niemand, Lambert and Mckee.</li></ul>"
         }
     ]
 }

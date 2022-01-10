@@ -54,6 +54,7 @@
         "AT": "AT",
         "FP": "SP",
         "TPM": "PCM",
+        "CR": "CR",
         "reloadTime": "Rel.",
         "castingTime": "Action- duration",
         "duration": "Effect- Duration",
@@ -159,7 +160,9 @@
         "1": "Pawn",
         "2": "Knight",
         "3": "Rook",
-        "4": "King"
+        "4": "King",
+        "5": "Runner",
+        "6": "Deceased"
     },
     "KEYBINDINGS": {
         "masterMenu": "Open the Master's Menu",
@@ -437,6 +440,7 @@
     "Socialstate": "Social state",
     "soulpower": "Spirit",
     "spellTest": "Spell check",
+    "summoningPackage": "Modification Package",
     "start": "Start",
     "StF": "Improvement cost",
     "application": "Application",

@@ -76,6 +76,23 @@
                 {{/each}}
             </div>
         </div>
+        {{#if actor.hasTrait}}
+        <div class="groupbox">
+            <div class="generalSpecialAbilities row-section">
+                <div class="col header-label lineheight">
+                    <b>{{localize "traits"}}</b>
+                </div>
+            </div>
+            <div class="row-section wrap cards">
+                {{#each actor.traits as |trait i|}} {{#each trait as |item i|}}
+                <div class="item" data-item-id="{{item._id}}">
+                    <a class="item-edit">{{item.name}}</a>
+                </div>
+                {{/each}} {{/each}}
+
+            </div>
+        </div>
+        {{/if}}
     </div>
 
     <div class="column2">

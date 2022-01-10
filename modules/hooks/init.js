@@ -24,6 +24,7 @@ import MastersMenu from "../wizards/masters_menu.js";
 import AdvantageRulesDSA5 from "../system/advantage-rules-dsa5.js";
 import SpecialabilityRulesDSA5 from "../system/specialability-rules-dsa5.js";
 import DidYouKnow from "../system/didyouknow.js";
+import DSAActiveEffectConfig from "../status/active_effects.js";
 
 export default function() {
     initHandleBars.default();
@@ -89,6 +90,7 @@ Hooks.once("init", () => {
     Actors.registerSheet("dsa5", ActorSheetdsa5Creature, { types: ["creature"], makeDefault: true });
     Actors.registerSheet("dsa5", ActorSheetdsa5NPC, { types: ["npc"], makeDefault: true });
     Actors.registerSheet("dsa5", MerchantSheetDSA5, { types: ["npc"] });
+    DocumentSheetConfig.registerSheet(ActiveEffect, "dsa5", DSAActiveEffectConfig, { makeDefault: true })
 
     ItemSheetdsa5.setupSheets()
     configuration.default()

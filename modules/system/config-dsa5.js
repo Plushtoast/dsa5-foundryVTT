@@ -548,7 +548,8 @@ DSA5.traitCategories = {
     "familiar": "familiar",
     "trick": "trick",
     "training": "training",
-    "entity": "entityAbility"
+    "entity": "entityAbility",
+    "summoning": "summoningPackage"
 }
 
 DSA5.ritualLocationModifiers = {
@@ -659,10 +660,6 @@ DSA5.specialAbilityCategories = {
     "staff": "traditionArtifact",
     "ceremonial": "ceremonialItem",
     "pact": "pactgift"
-}
-
-DSA5.dieColors = {
-    "dodge": "ge"
 }
 
 DSA5.addvantageRules = {}

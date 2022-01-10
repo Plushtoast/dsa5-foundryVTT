@@ -317,7 +317,8 @@ export default class MerchantSheetDSA5 extends ActorSheetdsa5NPC {
                 1: game.i18n.localize('GARADAN.1'),
                 2: game.i18n.localize('GARADAN.2'),
                 3: game.i18n.localize('GARADAN.3'),
-                4: game.i18n.localize('GARADAN.4')
+                4: game.i18n.localize('GARADAN.4'),
+                6: game.i18n.localize('GARADAN.6')
             }
         }
         return data;

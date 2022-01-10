@@ -575,6 +575,7 @@ export default class Actordsa5 extends Actor {
 
         let applications = new Map()
         let availableAmmunition = []
+        let hasTrait = false
 
         for (let i of actorData.items) {
             try {
@@ -631,6 +632,7 @@ export default class Actordsa5 extends Actor {
                                 break
                         }
                         traits[i.data.traitType.value].push(i)
+                        hasTrait = true
                         break
                     case "combatskill":
                         combatskills.push(Actordsa5._calculateCombatSkillValues(i, this.data));
@@ -774,7 +776,6 @@ export default class Actordsa5 extends Actor {
         let guidevalues = duplicate(DSA5.characteristics)
         guidevalues["-"] = "-"
 
-
         return {
             isOwner: this.isOwner,
             totalWeight,
@@ -790,6 +791,7 @@ export default class Actordsa5 extends Actor {
             aggregatedtests,
             wornArmor: armor,
             inventory,
+            hasTrait,
             itemModifiers: this.data.itemModifiers,
             languagePoints: {
                 used: actorData.data.freeLanguagePoints ? actorData.data.freeLanguagePoints.used : 0,

@@ -128,6 +128,16 @@
                 <label class="label-text">{{localize "maxlevel"}}</label>
                 <input class="input-text" type="number" name="data.at.value" value="{{data.at.value}}" data-dtype="Number" />
             </div>
+            {{/if}} {{#if (eq data.traitType.value "summoning")}}
+            <div class="form-group">
+                <label class="label-text">{{localize "distribution"}}</label>
+                <input class="input-text" type="text" name="data.distribution" value="{{data.distribution}}" data-dtype="String" />
+            </div>
+            <div class="form-group">
+                <label class="label-text">{{localize "conjuringDifficulty"}}</label>
+                <input class="input-text" type="text" name="data.at.value" value="{{data.at.value}}"
+                    data-dtype="Number" />
+            </div>
             {{/if}}
 
         </div>

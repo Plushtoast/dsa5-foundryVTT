@@ -33,7 +33,7 @@
       </div>
     </div>
 
-    <div class="groupbox lineheight" style="padding:4px;">
+    <div class="groupbox lineheight summoningArea" style="padding:4px;">
       <b>{{localize 'PLAYER.conjuration'}}</b><br />
       <div class="row-section">
         <div class="col center">
@@ -64,6 +64,34 @@
           {{conjuration.data.data.conjuringDifficulty.value}}
         </div>
       </div>
+      {{#if conjurationData.packageModifier}}
+      <div class="row-section">
+        <div class="col fourty table-title">
+          <label class="">{{localize "summoningPackage"}}:</label>
+        </div>
+        <div class="col sixty">
+          {{conjurationData.packageModifier}}
+        </div>
+      </div>
+      {{/if}}
+      {{#if moreModifiers}}
+      {{#each moreModifiers as |item|}}
+      <div class="row-section">
+        <div class="col fourty table-title">
+          <label class="">{{item.name}}:</label>
+        </div>
+        <div class="col sixty">
+          <select name="{{item.name}}" class="moreModifiers" data-name="{{item.name}}" data-dtype="Number">
+            {{#select item.selected}}
+            {{#each item.options as |sktype|}}
+            <option value="{{sktype.val}}">{{sktype.name}} ({{sktype.val}})</option>
+            {{/each}}
+            {{/select}}
+          </select>
+        </div>
+      </div>
+      {{/each}}
+      {{/if}}
     </div>
 
 
@@ -88,6 +116,7 @@
   </div>
 
 </div>
+
 <div class="groupbox" style="padding:4px;">
   <b class="lineheight">{{localize 'entityAbility'}}</b><br />
   {{#if equipmentIndexLoaded}}
@@ -100,6 +129,30 @@
       </div>
       <div class="col ten">
         <span class="small" title="{{localize 'CHARAbbrev.QL'}}">{{item.data.data.AsPCost.value}}</span>
+      </div>
+      <div class="col ten">
+        <a class="showEntity small" data-uuid="{{item.uuid}}"><i class="fas fa-info"></i></a>
+      </div>
+    </div>
+    {{/each}}
+  </div>
+  {{else}}
+  <button class="initLibrary">{{localize "Library.searchPlaceholder"}}</button>
+  {{/if}}
+</div>
+<div class="groupbox" style="padding:4px;">
+  <b class="lineheight">{{localize 'summoningPackage'}}</b><br />
+  {{#if equipmentIndexLoaded}}
+  <div class="row-section wrap">
+    {{#each entityPackages as |item i|}}
+    <div data-packageid="true" data-mod="{{item.data.data.at.value}}"
+      class="row-section col two wrap tableOdd selectableRow {{#if (hasElem ../conjurationData.selectedPackageIds item.uuid)}}selected{{/if}}"
+      data-id="{{item.uuid}}">
+      <div class="col eighty lineheight">
+        {{localize item.name}}
+      </div>
+      <div class="col ten">
+        <span class="small" title="{{localize 'CHARAbbrev.QL'}}">{{item.data.data.at.value}}</span>
       </div>
       <div class="col ten">
         <a class="showEntity small" data-uuid="{{item.uuid}}"><i class="fas fa-info"></i></a>

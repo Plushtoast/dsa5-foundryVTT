@@ -58,7 +58,7 @@ export default class CreatureType {
     buildDamageMod(name, value, selected = true) {
         return [{
             name,
-            value: value,
+            value,
             selected,
             type: "dmg"
         }]
@@ -79,7 +79,7 @@ export default class CreatureType {
 
 class VulnerableToLifeGods extends CreatureType {
     damageModifier(attackItem) {
-        if (this.isAttackItem(att)) {
+        if (this.isAttackItem(attackItem)) {
             const regex = this.attributesRegex(attackItem)
             for (const god of CreatureType.creatureData.godOfLife) {
                 const name = `${CreatureType.clerical} (${god})`
