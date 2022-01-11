@@ -48,6 +48,11 @@
         "The core modul can configure vision for tokens automatically.",
         "The library, the journal browser, the master's menu and the attack menu can be opened and closed via a keybinding.",
         "The system contains token borders for your own tokens.",
-        "The module tokenizer is automatically configured, so you can quickly use TDE token borders on your own."
+        "The module tokenizer is automatically configured, so you can quickly use TDE token borders on your own.",
+
+        "The player menu can aid with summoning.",
+        "The core module contains useful functions to adjust light settings.",
+        "You can enable the modifier for foreign spells via the settings.",
+        "Dice system of the \"Rollsmith\" can be added to the TDE dice."
     ]
 }

@@ -49,7 +49,12 @@
         "Das Grundregelwerk Modul kann Sichtbereiche automatisch einstellen.",
         "Die Bibliothek, der Journalbrowser, das Meistermenü und das Angriffsmenü können über ein Taste aktiviert und geschlossen werden.",
         "Im System sind Tokenrahmen für deine eigene Tokens enthalten.",
-        "Das Tokenizer Modul wird automatisch konfiguriert, so dass du schnell die DSA Token Rahmen für eigenes verwenden kannst."
+        "Das Tokenizer Modul wird automatisch konfiguriert, so dass du schnell die DSA Token Rahmen für eigenes verwenden kannst.",
+
+        "Das Spielermenü hilft dir bei Beschwörungen",
+        "Im Grundregelwerkmodul findest du nützliche Funktionen für Fackeln und sonstige Lichtquellen.",
+        "In den Optionen kannst du den Modifikator für Fremdzauber aktivieren.",
+        "Würfelsysteme von \"Rollsmith\" können den DSA Würfeln zugeordnet werden."
 
     ]
 }
