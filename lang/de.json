@@ -1324,7 +1324,7 @@
         "scrollingFontsize": "Kampftext Schriftgröße",
         "scrollingFontsizeHint": "Die Schriftgröße für einige der scrollenden Token Texte (z.B. +- LeP)",
         "enableForeignSpellModifer": "Fremdzauber Modifikator",
-        "enableForeignSpellModiferHint": "Aktiviere Fremdzaubermodifikator +2 bei Zauberproben."
+        "enableForeignSpellModiferHint": "Aktiviere Fremdzaubermodifikator -2 bei Zauberproben."
     },
     "COMBATTRACKER": {
         "noDefenses": "Anzahl Verteidigungen",
@@ -1499,6 +1499,6 @@
         "surprised": "Die üblichen Kampfhandlungen gehen davon aus, dass alle Parteien ihre Gegner sehen oder wahrnehmen. Allerdings gibt es Situationen wie beispielsweise Hinterhalte, in denen man überrascht ist. Gegen überraschte Personen darf eine Aktion ausgeführt werden, gegen die keine Verteidigung genutzt werden darf. Erst danach beginnt die reguläre Kampfrunde.",
         "poisoned": "Der Held ist vergiftet worden. So lange das Gift wirkt, kann der Held nicht mehr durch eine normale Regenerationsphase regenerieren.",
         "fixated": "Wenn eine Person am Boden festklebt oder von Ranken oder Fallen an Ort und Stelle gehalten wird, gilt sie als Fixiert. Ihre GS fällt auf 0, ihr Ausweichenwert wird um 4 gesenkt.",
-        "defeated": "Der Held ist besiegt und auf den Weg zu Boron."
+        "defeated": "Der Held ist besiegt und auf dem Weg zu Boron."
     }
 }

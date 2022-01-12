@@ -1303,7 +1303,7 @@
         "scrollingFontsize": "Combat Text Font Size",
         "scrollingFontsizeHint": "Font size for some of the scrolling token texts (e.g. +- LP)",
         "enableForeignSpellModifer": "Foreign spell modifier",
-        "enableForeignSpellModiferHint": "Enable +2 modifier for foreign spell checks."
+        "enableForeignSpellModiferHint": "Enable -2 modifier for foreign spell checks."
     },
     "WEAR": {
         "check": "Breaking Point Rating Check ({category})",
@@ -1499,6 +1499,6 @@
         "surprised": "People are usually considered to be aware of their surroundings, especially in combat situations. Sometimes, however, a situation arises where a character remains unaware of enemies lurking nearby. Surprise means a hero is startled by an ambush or the sudden appearance of enemies. Surprised characters cannot defend against the first action taken against them. Once this surprise action (most likely an attack) is resolved, regular combat rounds begin.",
         "poisoned": "The hero is poisoned. As long as the poison remains in effect, the character cannot benefit from Regeneration Phases.",
         "fixated": "Bound characters are glued to the ground or otherwise held down by ropes, vines or traps. While bound characters have a MOV of 0 and suffer a -4 penalty to Dodge.",
-        "defeated": "The heros is defeated and on his way to Boron."
+        "defeated": "The hero is defeated and on his way to Boron."
     }
 }

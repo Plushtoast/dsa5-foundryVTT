@@ -182,7 +182,7 @@ export default class Itemdsa5 extends Item {
         const hasSpellResistance = ["spell", "liturgy", "ceremony", "ritual"].includes(source.type) && source.data.effectFormula.value.trim() == ""
         if (game.user.targets.size) {
             game.user.targets.forEach(target => {
-                if(target.actor) {
+                if (target.actor) {
                     let spellResistance = 0
                     if (hasSpellResistance) {
                         const creatureTypes = CreatureType.detectCreatureType(target.actor.data)
@@ -645,17 +645,15 @@ class SpellItemDSA5 extends Itemdsa5 {
         return res
     }
 
-    static foreignSpellModifier(actor, source, situationalModifiers, data){
-        if(game.settings.get("dsa5", "enableForeignSpellModifer") && ["npc", "character"].includes(actor.data.type) && ["spell", "ritual"].includes(source.type )){
+    static foreignSpellModifier(actor, source, situationalModifiers, data) {
+        if (game.settings.get("dsa5", "enableForeignSpellModifer") && ["npc", "character"].includes(actor.data.type) && ["spell", "ritual"].includes(source.type)) {
             const distributions = source.data.distribution.value.split(",").map(x => x.trim().toLowerCase())
             const regx = new RegExp(`(${game.i18n.localize("tradition")}|\)|\()`, "g")
             const traditions = actor.data.data.tradition.magical.replace(regx, "").split(",").map(x => x.trim().toLowerCase())
             traditions.push(game.i18n.localize("general").toLowerCase())
             data.isForeign = !distributions.some(x => traditions.includes(x))
-            if (data.isForeign){
-                situationalModifiers.push(
-                    { name: game.i18n.localize('DSASETTINGS.enableForeignSpellModifer'), value: -2, selected: true }
-                )
+            if (data.isForeign) {
+                situationalModifiers.push({ name: game.i18n.localize('DSASETTINGS.enableForeignSpellModifer'), value: -2, selected: true })
             }
         }
     }
@@ -670,7 +668,7 @@ class SpellItemDSA5 extends Itemdsa5 {
         this.foreignSpellModifier(actor, source, situationalModifiers, data)
         if (game.user.targets.size) {
             game.user.targets.forEach(target => {
-                if(target.actor) this.addCreatureTypeModifiers(target.actor.data, source, situationalModifiers)
+                if (target.actor) this.addCreatureTypeModifiers(target.actor.data, source, situationalModifiers)
             });
         }
         situationalModifiers.push(...actor.getSkillModifier(source.name, source.type))
@@ -917,7 +915,7 @@ class DiseaseItemDSA5 extends Itemdsa5 {
         source = DSA5_Utility.toObjectIfPossible(source)
         if (game.user.targets.size) {
             game.user.targets.forEach(target => {
-                if(target.actor) situationalModifiers.push(...AdvantageRulesDSA5.getVantageAsModifier(target.actor.data, game.i18n.localize("LocalizedIDs.ResistanttoDisease"), -1))
+                if (target.actor) situationalModifiers.push(...AdvantageRulesDSA5.getVantageAsModifier(target.actor.data, game.i18n.localize("LocalizedIDs.ResistanttoDisease"), -1))
             });
         }
         this.getSkZkModifier(data, source)
@@ -1226,7 +1224,7 @@ class RangeweaponItemDSA5 extends Itemdsa5 {
             const combatskills = Itemdsa5.buildCombatSpecAbs(actor, ["Combat"], toSearch, data.mode)
             let currentAmmo = actor.items.get(source.data.currentAmmo.value)
 
-            if(currentAmmo){
+            if (currentAmmo) {
                 currentAmmo = currentAmmo.toObject(false)
                 source.data.effect.attributes = source.data.effect.attributes.split(",").concat(currentAmmo.data.effect.attributes.split(",")).filter(x => x != "").join(",")
             }
@@ -1237,7 +1235,7 @@ class RangeweaponItemDSA5 extends Itemdsa5 {
             let targetSize = "average"
             if (game.user.targets.size) {
                 game.user.targets.forEach(target => {
-                    if(target.actor) {
+                    if (target.actor) {
                         const tar = getProperty(target.actor.data, "data.status.size")
                         if (tar) targetSize = tar.value
 
@@ -1418,7 +1416,7 @@ class RitualItemDSA5 extends SpellItemDSA5 {
         situationalModifiers.push(...AdvantageRulesDSA5.getVantageAsModifier(actor.data, game.i18n.localize('LocalizedIDs.magicalRestriction'), -1, true))
         situationalModifiers.push(...AdvantageRulesDSA5.getVantageAsModifier(actor.data, game.i18n.localize('LocalizedIDs.boundToArtifact'), -1, true))
         situationalModifiers.push(...this.getPropertyFocus(actor, source))
-        this.foreignSpellModifier(actor, source, situationalModifiers)
+        this.foreignSpellModifier(actor, source, situationalModifiers, data)
         this.getSkZkModifier(data, source)
 
         mergeObject(data, {

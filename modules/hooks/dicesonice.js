@@ -190,7 +190,7 @@ export class DiceSoNiceCustomization extends Application {
         })
     }
 
-    static onConnect(){
+    static onConnect() {
         this.collectPreloads()
         let toPreload = new Set()
         for (let attr of DiceSoNiceCustomization.attrs) {
@@ -199,9 +199,9 @@ export class DiceSoNiceCustomization extends Application {
         this.preloadDiceAssets(toPreload)
     }
 
-    static collectPreloads(){
+    static collectPreloads() {
         let toPreload = new Set()
-        for (let attr of DiceSoNiceCustomization.attrs){
+        for (let attr of DiceSoNiceCustomization.attrs) {
             toPreload.add(game.settings.get("dsa5", `dice3d_system_${attr}`))
         }
         toPreload = Array.from(toPreload)
@@ -212,18 +212,25 @@ export class DiceSoNiceCustomization extends Application {
         })
     }
 
-    static requestDicePreloads(){
+    static requestDicePreloads() {
         this.collectPreloads()
     }
 
-    static preloadDiceAssets(names, types = []){
-        for(const name of names){
+    static async preloadDiceAssets(names, types = []) {
+        for (const name of names) {
             const dieModel = game.dice3d.DiceFactory.systems[name]
-            if(!dieModel) continue
+            if (!dieModel) {
+                continue
+            }
 
-            const dieModelsToLoad = dieModel.dice.filter((el) => types == [] || types.includes(el.type))
-            for(const model of dieModelsToLoad)
-                model.loadModel(game.dice3d.DiceFactory.loaderGLTF)
+            const dieModelsToLoad = dieModel.dice.filter((el) => types.length == 0 || types.includes(el.type))
+            for (const model of dieModelsToLoad) {
+                try {
+                    await model.loadModel(game.dice3d.DiceFactory.loaderGLTF)
+                } catch (error) {
+                    console.warn("Unable to load dice model", name, model)
+                }
+            }
         }
     }
 
