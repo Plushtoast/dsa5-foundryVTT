@@ -219,14 +219,16 @@ export class DiceSoNiceCustomization extends Application {
     static async preloadDiceAssets(names, types = []) {
         for (const name of names) {
             const dieModel = game.dice3d.DiceFactory.systems[name]
-            if (!dieModel) {
-                continue
-            }
+            if (!dieModel) continue
 
             const dieModelsToLoad = dieModel.dice.filter((el) => types.length == 0 || types.includes(el.type))
             for (const model of dieModelsToLoad) {
                 try {
-                    await model.loadModel(game.dice3d.DiceFactory.loaderGLTF)
+                    if (model.modelFile) {
+                        model.loadModel(game.dice3d.DiceFactory.loaderGLTF);
+                    } else {
+                        model.loadTextures();
+                    }
                 } catch (error) {
                     console.warn("Unable to load dice model", name, model)
                 }

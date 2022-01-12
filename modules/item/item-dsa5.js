@@ -648,9 +648,10 @@ class SpellItemDSA5 extends Itemdsa5 {
     static foreignSpellModifier(actor, source, situationalModifiers, data) {
         if (game.settings.get("dsa5", "enableForeignSpellModifer") && ["npc", "character"].includes(actor.data.type) && ["spell", "ritual"].includes(source.type)) {
             const distributions = source.data.distribution.value.split(",").map(x => x.trim().toLowerCase())
-            const regx = new RegExp(`(${game.i18n.localize("tradition")}|\)|\()`, "g")
+            const regx = new RegExp(`(${game.i18n.localize("tradition")}|\\\)|\\\()`, "g")
             const traditions = actor.data.data.tradition.magical.replace(regx, "").split(",").map(x => x.trim().toLowerCase())
             traditions.push(game.i18n.localize("general").toLowerCase())
+
             data.isForeign = !distributions.some(x => traditions.includes(x))
             if (data.isForeign) {
                 situationalModifiers.push({ name: game.i18n.localize('DSASETTINGS.enableForeignSpellModifer'), value: -2, selected: true })
