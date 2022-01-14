@@ -37,6 +37,7 @@ If you want to discuss TDE for foundry or need some assistance you can also join
 * Automated spell effects
 * Several Game Master Aids
 * Merchant features
+* Summoning Assistance
 
 
 ## Official Modules
