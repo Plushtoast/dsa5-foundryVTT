@@ -2,6 +2,7 @@ import Actordsa5 from "../actor/actor-dsa5.js";
 import DSA5Dialog from "../dialog/dialog-dsa5.js";
 import OpposedDsa5 from "../system/opposed-dsa5.js";
 import RuleChaos from "../system/rule_chaos.js";
+import TraitRulesDSA5 from "../system/trait-rules-dsa5.js";
 import DSA5_Utility from "../system/utility-dsa5.js";
 
 //TODO magical weapon resistance
@@ -420,7 +421,7 @@ class ConjurationRequest extends DSA5Dialog {
         }
         const entityAbilities = (await Promise.all(this.creationData.entityIds.map(x => fromUuid(x)))).map(x => x.toObject(false))
         const entityPackages = (await Promise.all(this.creationData.packageIds.map(x => fromUuid(x)))).map(x => x.toObject(false))
-        this.conjuration.items.push(...entityAbilities, ...entityPackages)
+            //this.conjuration.items.push(...entityAbilities, ...entityPackages)
         this.conjuration.effects.push({
             "changes": [],
             "duration": {},
@@ -447,7 +448,22 @@ class ConjurationRequest extends DSA5Dialog {
             await game.dsa5.apps.playerMenu.conjurationData.postFunction[this.creationData.type](this.conjuration)
         }
 
+        if (this.conjuration.type == "creature" && !(this.conjuration.data.creatureClass.value.includes(this.creationData.typeName))) {
+            this.conjuration.data.creatureClass.value += `, ${this.creationData.typeName}`
+        }
+
         this.actor = await Actordsa5.create(this.conjuration)
+
+        const itemsToAdd = [...entityAbilities, ...entityPackages].filter(x => !this.conjuration.items.find(y => y.type == x.type && x.name == y.name))
+        await this.actor.createEmbeddedDocuments("Item", itemsToAdd)
+
+        for (let item of entityPackages)
+            await TraitRulesDSA5.traitAdded(this.actor, item)
+
+        for (let item of entityAbilities)
+            await TraitRulesDSA5.traitAdded(this.actor, item)
+
+        await this.actor.update({ "data.status.wounds.value": this.actor.data.data.status.wounds.max })
 
         const chatmsg = await renderTemplate("systems/dsa5/templates/system/conjuration/chat.html", {
             actor: this.actor,

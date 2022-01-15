@@ -48,11 +48,11 @@ export default class Actordsa5 extends Actor {
             let itemModifiers = {}
             const armorCompensation = SpecialabilityRulesDSA5.abilityStep(this.data, game.i18n.localize('LocalizedIDs.inuredToEncumbrance'))
             const armorEncumbrance = data.items.reduce((sum, x) => {
-                if (x.type == "armor" && getProperty(x.data, "data.worn.value")){
-                    return sum+= Number(x.data.data.encumbrance.value)
+                if (x.type == "armor" && getProperty(x.data, "data.worn.value")) {
+                    return sum += Number(x.data.data.encumbrance.value)
                 }
                 return sum
-            },0)
+            }, 0)
             let compensation = armorCompensation > armorEncumbrance
             for (let i of data.items.filter(x => (["meleeweapon", "rangeweapon", "armor", "equipment"].includes(x.type) && getProperty(x.data, "data.worn.value")) || ["advantage", "specialability", "disadvantage"].includes(x.type))) {
                 compensation = this._addGearAndAbilityModifiers(itemModifiers, i, compensation)
@@ -93,7 +93,7 @@ export default class Actordsa5 extends Actor {
                 data.data.status.initiative.value = data.data.status.initiative.current + (data.data.status.initiative.modifier || 0)
             }
 
-            data.data.status.wounds.max = data.data.status.wounds.current + data.data.status.wounds.modifier + data.data.status.wounds.advances + data.data.status.wounds.gearmodifier
+            data.data.status.wounds.max = Math.round((data.data.status.wounds.current + data.data.status.wounds.modifier + data.data.status.wounds.advances + data.data.status.wounds.gearmodifier) * data.data.status.wounds.multiplier)
             data.data.status.astralenergy.max = data.data.status.astralenergy.current + data.data.status.astralenergy.modifier + data.data.status.astralenergy.advances + data.data.status.astralenergy.gearmodifier
             data.data.status.karmaenergy.max = data.data.status.karmaenergy.current + data.data.status.karmaenergy.modifier + data.data.status.karmaenergy.advances + data.data.status.karmaenergy.gearmodifier
 
@@ -131,6 +131,7 @@ export default class Actordsa5 extends Actor {
             const baseInit = Number((0.01 * data.data.status.initiative.value).toFixed(2))
             data.data.status.initiative.value *= data.data.status.initiative.multiplier || 1
             data.data.status.initiative.value += baseInit
+            data.data.status.initiative.value = Math.round(data.data.status.initiative.value)
 
             data.data.status.dodge.max = Number(data.data.status.dodge.value) + Number(data.data.status.dodge.modifier) + (Number(game.settings.get("dsa5", "higherDefense")) / 2)
 
@@ -326,6 +327,9 @@ export default class Actordsa5 extends Actor {
                 },
                 status: {
                     initiative: {
+                        multiplier: 1
+                    },
+                    wounds: {
                         multiplier: 1
                     }
                 },
@@ -987,7 +991,7 @@ export default class Actordsa5 extends Actor {
                 t.hud.createScrollingText(k.value, {
                     anchor: index,
                     direction: k.value > 0 ? 2 : 1,
-                    fontSize: game.settings.get("dsa5","scrollingFontsize"),
+                    fontSize: game.settings.get("dsa5", "scrollingFontsize"),
                     stroke: k.stroke,
                     strokeThickness: 1,
                     jitter: 0.25,

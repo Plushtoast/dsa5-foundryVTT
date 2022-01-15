@@ -707,8 +707,13 @@ export default class DiceDSA5 {
 
             for (let k of effectString.split(";")) {
                 if (regex.test(k.trim())) {
-                    let split = k.split("|")
-                    result.push(`<a class="roll-button roll-item" data-name="${split[1].trim()}" data-type="${split[0].trim()}"><i class="fas fa-dice"></i>${game.i18n.localize(split[0].trim())}: ${split[1].trim()}</a>`)
+                    const split = k.split("|").map(x => x.trim())
+                    if(split[0] == "condition"){
+                        const effect = CONFIG.statusEffects.find(x=> x.id == split[1])
+                        result.push(`<a class="chat-condition chatButton" data-id="${effect.id}"><img src="${effect.icon}"/>${game.i18n.localize(effect.label)}</a>`)
+                    }
+                    else
+                        result.push(`<a class="roll-button roll-item" data-name="${split[1]}" data-type="${split[0]}"><i class="fas fa-dice"></i>${game.i18n.localize(split[0])}: ${split[1]}</a>`)
                 }
             }
         }
@@ -862,10 +867,10 @@ export default class DiceDSA5 {
     }
 
     static get3D20SuccessLevel(roll, fws, botch = 20, critical = 1) {
-        if (roll.terms.filter(x => x.results && x.results[0].result <= critical).length == 3) return 3
-        if (roll.terms.filter(x => x.results && x.results[0].result <= critical).length == 2) return 2
-        if (roll.terms.filter(x => x.results && x.results[0].result >= botch).length == 3) return -3
-        if (roll.terms.filter(x => x.results && x.results[0].result >= botch).length == 2) return -2
+        const critFilter = roll.terms.filter(x => x.results && x.results[0].result <= critical).length
+        const botchFilter = roll.terms.filter(x => x.results && x.results[0].result >= botch).length
+        if (critFilter >= 2) return critFilter
+        if (botchFilter >= 2) return botchFilter * -1
         return fws >= 0 ? 1 : -1
     }
 
@@ -1200,14 +1205,7 @@ export default class DiceDSA5 {
             data.openRolls = data.maxRolls - data.results.length
             data.doneRolls = data.results.length
             const content = await renderTemplate("systems/dsa5/templates/chat/roll/groupcheck.html", data)
-            message.update({
-                    content,
-                    flags: data
-                })
-                /*.then(newMsg => {
-                    ui.chat.updateMessage(newMsg)
-                    return newMsg;
-                });*/
+            message.update({content, flags: data })
         } else {
             game.socket.emit("system.dsa5", {
                 type: "updateGroupCheck",

@@ -122,7 +122,7 @@ export default class Migrakel {
                 }
                 return update
             }
-            const condition = (x) => { return ["specialability", "advantage", "disadvantage"].includes(x.type) }
+            const condition = (x) => { return ["specialability", "advantage", "disadvantage", "trait"].includes(x.type) }
             await this.updateVals(actor, condition, updator)
         }
     }

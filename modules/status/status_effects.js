@@ -280,10 +280,10 @@ class TranceEffect extends DSA5StatusEffects {
                 const happyTalents = actor.data.happyTalents.value.split(/;|,/).map(x => x.replace(regex, '').trim())
                 if ((happyTalents.includes(item.name) && ["skill", "combatskill"].includes(item.type)) ||
                     (["rangeweapon", "meleeweapon"].includes(item.type) && happyTalents.includes(item.data.data.combatskill.value)) || ["ceremony", "liturgy"].includes(item.type)) {
-                    return 2
+                    return -2
                 }
             case 3:
-                return 3
+                return -3
         }
         return 0
     }
