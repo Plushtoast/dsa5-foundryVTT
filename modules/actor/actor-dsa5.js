@@ -46,14 +46,25 @@ export default class Actordsa5 extends Actor {
         const data = this.data
         try {
             let itemModifiers = {}
-            const armorCompensation = SpecialabilityRulesDSA5.abilityStep(this.data, game.i18n.localize('LocalizedIDs.inuredToEncumbrance'))
-            const armorEncumbrance = data.items.reduce((sum, x) => {
-                if (x.type == "armor" && getProperty(x.data, "data.worn.value")) {
-                    return sum += Number(x.data.data.encumbrance.value)
-                }
-                return sum
-            }, 0)
-            let compensation = armorCompensation > armorEncumbrance
+            let armorZones
+            try {
+                armorZones = game.settings.get("dsa5-armory2", "enableArmorZones")
+            }
+            catch
+            {
+                armorZones = false
+            }
+            let compensation = true
+            if(!armorZones) {
+                const armorCompensation = SpecialabilityRulesDSA5.abilityStep(this.data, game.i18n.localize('LocalizedIDs.inuredToEncumbrance'))
+                const armorEncumbrance = data.items.reduce((sum, x) => {
+                    if (x.type == "armor" && getProperty(x.data, "data.worn.value")) {
+                        return sum += Number(x.data.data.encumbrance.value)
+                    }
+                    return sum
+                }, 0)
+                compensation = armorCompensation > armorEncumbrance
+            }
             for (let i of data.items.filter(x => (["meleeweapon", "rangeweapon", "armor", "equipment"].includes(x.type) && getProperty(x.data, "data.worn.value")) || ["advantage", "specialability", "disadvantage"].includes(x.type))) {
                 compensation = this._addGearAndAbilityModifiers(itemModifiers, i, compensation)
             }
