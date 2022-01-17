@@ -363,7 +363,7 @@ input[type=text].emphasize {
     padding: 0;
 }
 
-.window-app .window-content select option {
+.window-app .window-content select:not([multiple]) option {
     color: white;
     background: rgb(29, 28, 28);
 }
