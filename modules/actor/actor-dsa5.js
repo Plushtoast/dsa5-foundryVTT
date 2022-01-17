@@ -1517,7 +1517,19 @@ export default class Actordsa5 extends Actor {
             item.enchantClass = "rar"
         }
         else if((item.data.effect && item.data.effect.value != "") || item.effects.length > 0){
-            item.enchantClass = "common"
+            if (item.type != "armor") {
+                item.enchantClass = "common"
+            } else {
+                for (let mod of item.data.effect.value.split(/,|;/).map(x => x.trim())) {
+                    let vals = mod.replace(/(\s+)/g, ' ').trim().split(" ")
+                    if (vals.length == 2 && [game.i18n.localize('CHARAbbrev.INI').toLowerCase(), game.i18n.localize('CHARAbbrev.GS').toLowerCase()].includes(vals[1].toLowerCase()) && !isNaN(vals[0]) && vals[0] == -1) {
+                        continue
+                    } else {
+                        item.enchantClass = "common"
+                        break
+                    }
+                }
+            }
         }
         return item
     }
