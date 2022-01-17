@@ -1,7 +1,7 @@
 {{#if isOwned}}
 <div class="tab extensions" data-tab="extensions">
     {{#if extensions}} {{#each extensions as |item i|}}
-    <div class="groupbox item inventory" data-item-id="{{item._id}}">
+    <div class="groupbox item inventory" data-item-id="{{item.id}}">
         <div class="row-section table-title">
             <div class="col center">
                 <b>{{item.name}}</b>

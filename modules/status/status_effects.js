@@ -344,6 +344,11 @@ class TheriakEffect extends DSA5StatusEffects {
         return 0
     }
 }
+class NoModifierEffect extends DSA5StatusEffects {
+    static calculateRollModifier(effect, actor, item, options = {}) {
+        return 0
+    }
+}
 
 DSA5.statusEffectClasses = {
     inpain: PainEffect,
@@ -362,5 +367,6 @@ DSA5.statusEffectClasses = {
     burning: BurningEffect,
     sikaryanloss: SikaryanlossEffect,
     desire: DesireEffect,
-    theriak: TheriakEffect
+    theriak: TheriakEffect,
+    services: NoModifierEffect
 }

@@ -21,7 +21,7 @@ export default class EquipmentDamage {
     }
 
     static armorGetsDamage(damage, attackData) {
-        return (damage > 14 || attackData.successLevel > 1) && game.settings.get("dsa5", "armorAndWeaponDamage")
+        return (damage > 14 || attackData.successLevel > 2) && game.settings.get("dsa5", "armorAndWeaponDamage")
     }
 
     static armorEncumbranceModifier(armor) {
@@ -34,7 +34,7 @@ export default class EquipmentDamage {
     static async showDamageToGear(preData, testData) {
         if (game.settings.get("dsa5", "armorAndWeaponDamage")) {
             const source = preData.source
-            if (source._id && source.data.structure && (testData.successLevel < -1 ||
+            if (source._id && source.data.structure && (testData.successLevel < -2 ||
                     preData.situationalModifiers.some(x => x.name.trim() == `${game.i18n.localize('MODS.defenseMalus')} - ${game.i18n.localize('halfDefenseShort')}`)) && ["meleeweapon", "rangeweapon", "armor"].includes(source.type)) {
                 const actor = await DSA5_Utility.getSpeaker(testData.speaker)
                 return actor.items.get(source._id).uuid

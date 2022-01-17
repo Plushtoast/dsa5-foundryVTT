@@ -735,9 +735,9 @@ class SpellItemDSA5 extends Itemdsa5 {
     }
 
     static prepareExtensions(actor, spell) {
-        return actor.data.items.filter(x => x.type == "spellextension" && x.data.source == spell.name && x.data.category == spell.type).map(x => {
+        return actor.items.filter(x => x.type == "spellextension" && x.data.data.source == spell.name && x.data.data.category == spell.type).map(x => {
             x.shortName = (x.name.split(" - ").length > 1 ? x.name.split(" - ")[1] : x.name)
-            x.descr = $(x.data.description.value).text()
+            x.descr = $(x.data.data.description.value).text()
             return x
         })
     }
