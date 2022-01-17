@@ -162,14 +162,14 @@ export default class DSA5_Utility {
         return 0
     }
 
-    static async getFolderForType(documentType, parent = null, folderName = null, sort = 0) {
+    static async getFolderForType(documentType, parent = null, folderName = null, sort = 0, color = "") {
         let folder = await game.folders.contents.find(x => x.name == folderName && x.type == documentType && x.data.parent == parent)
         if (!folder) {
             folder = await Folder.create({
                 name: folderName,
                 type: documentType,
-                sorting: "m",
-                color: "",
+                sorting: documentType == "JournalEntry" ? "a" : "m",
+                color,
                 sort,
                 parent
             })
@@ -177,7 +177,7 @@ export default class DSA5_Utility {
         return folder
     }
 
-    static toObjectIfPossible(source){
+    static toObjectIfPossible(source) {
         return typeof source.toObject === 'function' ? source.toObject(false) : duplicate(source)
     }
 
@@ -215,7 +215,7 @@ export default class DSA5_Utility {
             for (let pack of sortedPacks) {
                 let p = game.packs.get(pack)
                 if (p.documentName == "Item" && (game.user.isGM || !p.private)) {
-                    await p.getDocuments({name: {$in: names}, type: {$in: types}}).then(content => {
+                    await p.getDocuments({ name: { $in: names }, type: { $in: types } }).then(content => {
                         for (let k of content) {
                             let index = names.indexOf(k.name)
                             if (index >= 0 && types[index] == k.type) {

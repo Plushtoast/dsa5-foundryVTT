@@ -123,6 +123,7 @@ export default class DSA5Initializer extends Dialog {
                 let scenesToUpdate = []
                 let finishedIds = new Map()
                 let resetAll = false
+
                 for (let entry of entries) {
                     let resetScene = resetAll
                     let found = game.scenes.find(x => x.name == entry.name && x.data.folder == head.id)
@@ -169,10 +170,12 @@ export default class DSA5Initializer extends Dialog {
                         try {
                             let journ = journs.find(x => x.flags.dsa5.initId == n.entryId)
                             if (!(finishedIds.has(journ._id))) {
+                                const parent = getProperty(journ, "flags.dsa5.parent")
+                                const parenthead = parent ? await this.getFolderForType("JournalEntry", journHead.id, parent, 0, getProperty(journ, "flags.dsa5.foldercolor") || "") : journHead
 
-                                journ.folder = journHead.id
+                                journ.folder = parenthead.id
 
-                                let existingJourn = game.journal.find(x => x.name == journ.name && x.data.folder == journHead.id && x.data.flags.dsa5.initId == n.entryId)
+                                let existingJourn = game.journal.find(x => x.name == journ.name && x.data.folder == parenthead.id && x.data.flags.dsa5.initId == n.entryId)
                                 if (existingJourn) {
                                     await existingJourn.update(journ)
                                     finishedIds.set(journ._id, existingJourn.id)
@@ -288,9 +291,9 @@ export default class DSA5Initializer extends Dialog {
         }
     }
 
-    async getFolderForType(documentType, parent = null, folderName = null, sort = 0) {
+    async getFolderForType(documentType, parent = null, folderName = null, sort = 0, color = "") {
         if (!folderName) folderName = game.i18n.localize(`${this.module}.name`)
 
-        return DSA5_Utility.getFolderForType(documentType, parent, folderName, sort)
+        return DSA5_Utility.getFolderForType(documentType, parent, folderName, sort, color)
     }
 }
