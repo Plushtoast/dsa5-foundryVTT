@@ -882,7 +882,7 @@ export default class Actordsa5 extends Actor {
             let vals = mod.replace(/(\s+)/g, ' ').trim().split(" ")
             if (vals.length == 2) {
                 if (!isNaN(vals[0])) {
-                    if (compensation && i.data.type == "armor" && [game.i18n.localize('CHARAbbrev.INI').toLowerCase(), game.i18n.localize('CHARAbbrev.GS').toLowerCase()].includes(vals[1].toLowerCase())) {
+                    if (compensation && i.data.type == "armor" && [game.i18n.localize('CHARAbbrev.INI').toLowerCase(), game.i18n.localize('CHARAbbrev.GS').toLowerCase()].includes(vals[1].toLowerCase()) && vals[0] == -1) {
                         notCompensated = false
                     } else if (itemModifiers[vals[1]] == undefined) {
                         itemModifiers[vals[1]] = {
