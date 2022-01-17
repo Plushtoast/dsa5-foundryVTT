@@ -544,7 +544,7 @@ class EquipmentSheet extends Enchantable {
 }
 
 export class ArmorSheet extends Enchantable {
-    async getData(options){
+    async getData(options) {
         const data = await super.getData(options)
         data['domains'] = this.prepareDomains()
         data['armorSubcategories'] = Object.keys(DSA5.armorSubcategories)
@@ -556,7 +556,7 @@ export class ArmorSheet extends Enchantable {
             buttons.unshift({
                 class: "rollDamaged",
                 icon: `fas fa-dice-d20`,
-                onclick: async () => EquipmentDamage.breakingTest(this.item)
+                onclick: async() => EquipmentDamage.breakingTest(this.item)
             })
         }
         return buttons
@@ -571,10 +571,10 @@ class PlantSheet extends ItemSheetdsa5 {
     }
 }
 
-class MagicalSignSheet extends ItemSheetdsa5{
+class MagicalSignSheet extends ItemSheetdsa5 {
     async getData(options) {
         const data = await super.getData(options);
-        data.categories = {1: game.i18n.localize("magicalsign"), 2: game.i18n.localize("additionalsign")}
+        data.categories = { 1: game.i18n.localize("magicalsign"), 2: game.i18n.localize("additionalsign") }
         return data
     }
     _getHeaderButtons() {
@@ -612,7 +612,7 @@ class RangeweaponSheet extends Enchantable {
             buttons.unshift({
                 class: "rollDamaged",
                 icon: `fas fa-dice-d20`,
-                onclick: async () => EquipmentDamage.breakingTest(this.item)
+                onclick: async() => EquipmentDamage.breakingTest(this.item)
             })
         }
         return buttons
@@ -816,7 +816,7 @@ class MeleeweaponSheetDSA5 extends Enchantable {
             buttons.unshift({
                 class: "rollDamaged",
                 icon: `fas fa-dice-d20`,
-                onclick: async () => EquipmentDamage.breakingTest(this.item)
+                onclick: async() => EquipmentDamage.breakingTest(this.item)
             })
         }
         return buttons
@@ -933,7 +933,7 @@ class SpellSheetDSA5 extends ItemSheetdsa5 {
         let itemId = this._getItemId(ev);
         let item = this.actor.data.items.find(x => x.id == itemId)
         let message = game.i18n.format("DIALOG.DeleteItemDetail", { item: item.name })
-        renderTemplate('systems/dsa5/templates/dialog/delete-item-dialog.html', { message: message }).then(html => {
+        renderTemplate('systems/dsa5/templates/dialog/delete-item-dialog.html', { message }).then(html => {
             new Dialog({
                 title: game.i18n.localize("Delete Confirmation"),
                 content: html,
@@ -943,6 +943,7 @@ class SpellSheetDSA5 extends ItemSheetdsa5 {
                         label: game.i18n.localize("yes"),
                         callback: () => {
                             this._cleverDeleteItem(itemId)
+                            $(ev.currentTarget).closest('.item').remove()
                         }
                     },
                     cancel: {

@@ -93,7 +93,7 @@ export default class DSA5SpellDialog extends DialogShared {
             newPosition = baseCastingTime
             parent.find('.spellModifier[data-castingTime]:checked').each(function(index, element) {
                 if (bigCasts) {
-                    let ind = DSA5SpellDialog.bigTimes.indexOf(newPosition)
+                    let ind = DSA5SpellDialog.bigTimes.indexOf(Number(newPosition))
                     if (ind != undefined) {
                         let newIndex = ind + (element.value > 0 ? 1 : -1)
                         if (newIndex < DSA5SpellDialog.bigTimes.length && newIndex >= 0) {

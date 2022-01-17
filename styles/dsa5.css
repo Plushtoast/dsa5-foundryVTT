@@ -363,6 +363,11 @@ input[type=text].emphasize {
     padding: 0;
 }
 
+.window-app .window-content select option {
+    color: white;
+    background: rgb(29, 28, 28);
+}
+
 .characteristics {
     display: flex;
     width: 100%;
@@ -503,6 +508,7 @@ input[type=text].emphasize {
     z-index: -1;
 }
 
+.sidebar-popout .chat-message,
 #sidebar .chat-message {
     background: url(../icons/backgrounds/chatpaper.webp) no-repeat;
     background-size: 100% 100%;
@@ -868,25 +874,27 @@ input[type="text"].col-Money-H {
     font-size: 12px;
 }
 
-.selectableRow{
+.selectableRow {
     border: 1px solid black;
-    cursor:pointer
+    cursor: pointer
 }
+
 .row-section.selectableRow.tableOdd:hover,
-.selectableRow:hover{
+.selectableRow:hover {
     background-color: white;
 }
-.selectableRow.selected{
+
+.selectableRow.selected {
     box-shadow: inset 0px 0px 10px 5px rgba(188, 136, 111, 0.8);
 }
 
-a.img-entity-link{
-    border:none;
-    background:none;
-    display:block;
+a.img-entity-link {
+    border: none;
+    background: none;
+    display: block;
 }
 
-a.img-entity-link:hover{
+a.img-entity-link:hover {
     background: white;
 }
 
@@ -1208,8 +1216,15 @@ form.dsa5.item-sheet {
     background-color: #100d087a;
 }
 
+.sidebar-popout .dice-tray input[type="text"],
+#sidebar .dice-tray input[type="text"] {
+    color: black;
+}
+
 .masterMenu button,
 .sheetButton,
+.sidebar-popout button,
+.sidebar-popout .dice-tray button,
 #sidebar button {
     background-image: linear-gradient(to right top, #be2020, #af1622, #9f0d22, #8f0522, #7f0021);
     color: white;
@@ -1258,7 +1273,7 @@ form.dsa5.item-sheet {
     box-shadow: none;
 }
 
-.window-app.monarch .window-header{
+.window-app.monarch .window-header {
     background-image: none;
 }
 
@@ -1823,6 +1838,10 @@ input[type="search"] {
     background-image: url(../icons/categories/Spellextension.webp);
 }
 
+.extensions p {
+    line-height: 15px;
+}
+
 #players {
     background: none;
     border: none;
@@ -1979,8 +1998,7 @@ h2 .chatButton {
     margin-right: 1px;
 }
 
-.botch-roll
-{
+.botch-roll {
     color: darkred;
 }
 
