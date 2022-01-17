@@ -43,7 +43,7 @@ export default class Actordsa5 extends Actor {
     }
 
     prepareDerivedData() {
-        const data = this.data
+        const data = this.data     
         try {
             let itemModifiers = {}
             let compensation = true
