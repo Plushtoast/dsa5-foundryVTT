@@ -130,8 +130,9 @@ export default class Actordsa5 extends Actor {
             data.data.status.initiative.value -= (Math.min(4, encumbrance))
             const baseInit = Number((0.01 * data.data.status.initiative.value).toFixed(2))
             data.data.status.initiative.value *= data.data.status.initiative.multiplier || 1
-            data.data.status.initiative.value += baseInit
             data.data.status.initiative.value = Math.round(data.data.status.initiative.value)
+            data.data.status.initiative.value += baseInit
+
 
             data.data.status.dodge.max = Number(data.data.status.dodge.value) + Number(data.data.status.dodge.modifier) + (Number(game.settings.get("dsa5", "higherDefense")) / 2)
 
