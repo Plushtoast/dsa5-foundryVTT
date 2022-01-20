@@ -76,8 +76,10 @@ export default class DSA5SpellDialog extends DialogShared {
                 newPosition = newPosition * (element.value < 0 ? 0.5 : 2)
                 if (newMaintainCost != "" && newMaintainCost != undefined) {
                     let maintains = String(newMaintainCost).split(" ")
-                    maintains[0] = Number(maintains[0]) * (element.value < 0 ? 0.5 : 2)
-                    newMaintainCost = maintains.join(" ")
+                    if (maintains[0] > 0) {
+                        maintains[0] = Math.max(1, Number(maintains[0]) * (element.value < 0 ? 0.5 : 2))
+                        newMaintainCost = maintains.join(" ")
+                    }
                 }
                 mod += Number(element.value)
             });
