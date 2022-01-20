@@ -98,7 +98,9 @@ export default function() {
     }
 
     Hooks.on("applyActiveEffect", (actor, change) => {
-        const current = getProperty(actor.data, change.key) || null
+        const current = getProperty(actor.data, change.key)
+        if (current == undefined)
+            current = null
         const ct = getType(current)
         let update = null
         switch (ct) {
@@ -112,6 +114,10 @@ export default function() {
                     newElems.push({ source, value, target })
                 }
                 update = current.concat(newElems)
+                break;
+            case "number":
+                if (!isNaN(change.value))
+                    update = current + Number(change.value)
         }
         if (update !== null) setProperty(actor.data, change.key, update)
         return update
