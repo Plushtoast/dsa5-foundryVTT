@@ -729,6 +729,8 @@ export default class DiceDSA5 {
         const isClerical = ["ceremony", "liturgy"].includes(testData.source.type)
         res["rollType"] = testData.source.type
         res.preData.calculatedSpellModifiers.finalcost = res.preData.calculatedSpellModifiers.cost
+        if (res.preData.calculatedSpellModifiers.maintainCost != 0)
+            res.preData.calculatedSpellModifiers.finalcost = Number(res.preData.calculatedSpellModifiers.finalcost) + Number(res.preData.calculatedSpellModifiers.maintainCost.split(" ")[0])
         if (res.successLevel >= 2) {
             let extraFps = new Roll("1d6").evaluate({ async: false }).total
             res.description = res.description + ", " + game.i18n.localize("additionalFPs") + " " + extraFps
@@ -740,7 +742,7 @@ export default class DiceDSA5 {
         }
 
         if (res.successLevel < 0) {
-            res.preData.calculatedSpellModifiers.finalcost = Math.round(res.preData.calculatedSpellModifiers.cost / (SpecialabilityRulesDSA5.hasAbility(testData.extra.actor, game.i18n.localize('LocalizedIDs.traditionWitch')) || SpecialabilityRulesDSA5.hasAbility(testData.extra.actor, game.i18n.localize('LocalizedIDs.traditionFjarning')) ? 3 : 2))
+            res.preData.calculatedSpellModifiers.finalcost = Math.round(res.preData.calculatedSpellModifiers.finalcost / (SpecialabilityRulesDSA5.hasAbility(testData.extra.actor, game.i18n.localize('LocalizedIDs.traditionWitch')) || SpecialabilityRulesDSA5.hasAbility(testData.extra.actor, game.i18n.localize('LocalizedIDs.traditionFjarning')) ? 3 : 2))
         } else {
             if (testData.source.data.effectFormula.value != "") {
                 let formula = testData.source.data.effectFormula.value.replace(game.i18n.localize('CHARAbbrev.QS'), res.qualityStep).replace(/[Ww]/g, "d")
