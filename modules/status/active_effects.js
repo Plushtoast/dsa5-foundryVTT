@@ -111,46 +111,62 @@ export default class DSAActiveEffectConfig extends ActiveEffectConfig {
     }
 
     dropDownMenu() {
-            let optns = [
-                { name: game.i18n.localize('protection'), val: "data.totalArmor" },
-                { name: game.i18n.localize('carrycapacity'), val: "data.carryModifier" },
-                { name: `${game.i18n.localize('closeCombatAttacks')} - ${game.i18n.localize('CHARAbbrev.AT')}`, val: "data.meleeStats.attack" },
-                { name: `${game.i18n.localize('closeCombatAttacks')} - ${game.i18n.localize('CHARAbbrev.PA')}`, val: "data.meleeStats.parry" },
-                { name: `${game.i18n.localize('closeCombatAttacks')} - ${game.i18n.localize('CHARAbbrev.damage')}`, val: "data.meleeStats.damage" },
-                { name: `${game.i18n.localize('closeCombatAttacks')} - ${game.i18n.localize('MODS.defenseMalus')}`, val: "data.meleeStats.defenseMalus" },
-                { name: `${game.i18n.localize('rangeCombatAttacks')} - ${game.i18n.localize('CHARAbbrev.AT')}`, val: "data.rangeStats.attack" },
-                { name: `${game.i18n.localize('rangeCombatAttacks')} - ${game.i18n.localize('CHARAbbrev.damage')}`, val: "data.rangeStats.damage" },
-                { name: `${game.i18n.localize('rangeCombatAttacks')} - ${game.i18n.localize('MODS.defenseMalus')}`, val: "data.rangeStats.defenseMalus" },
-                { name: `${game.i18n.localize('spell')} - ${game.i18n.localize('CHARAbbrev.damage')}`, val: "data.spellStats.damage" },
-                { name: `${game.i18n.localize('liturgy')} - ${game.i18n.localize('CHARAbbrev.damage')}`, val: "data.liturgyStats.damage" },
-                { name: game.i18n.localize('KaPCost'), val: "data.kapModifier" },
-                { name: game.i18n.localize('AsPCost'), val: "data.aspModifier" },
-                { name: `${game.i18n.localize('skill')} - ${game.i18n.localize("MODS.FW")}`, val: "data.skillModifiers.FW" },
-                { name: `${game.i18n.localize('skill')} - ${game.i18n.localize("MODS.FP")}`, val: "data.skillModifiers.FP" },
-                { name: `${game.i18n.localize('skill')} - ${game.i18n.localize("stepValue")}`, val: "data.skillModifiers.step" },
-                { name: `${game.i18n.localize('skill')} - ${game.i18n.localize("MODS.QS")}`, val: "data.skillModifiers.QL" },
-                { name: `${game.i18n.localize('skill')} - ${game.i18n.localize("MODS.partChecks")}`, val: "data.skillModifiers.TPM" },
-                { name: `${game.i18n.localize('skill')} - ${game.i18n.localize("MODS.global")}`, val: "data.skillModifiers.global" },
-                { name: `${game.i18n.localize('regenerate')} (${game.i18n.localize("CHARAbbrev.CR")}) - ${game.i18n.localize("wounds")}`, val: "data.repeatingEffects.startOfRound.wounds" },
-                { name: `${game.i18n.localize('regenerate')} (${game.i18n.localize("CHARAbbrev.CR")}) - ${game.i18n.localize("astralenergy")}`, val: "data.repeatingEffects.startOfRound.astralenergy" },
-                { name: `${game.i18n.localize('regenerate')} (${game.i18n.localize("CHARAbbrev.CR")}) - ${game.i18n.localize("karmaenergy")}`, val: "data.repeatingEffects.startOfRound.karmaenergy" }
-            ]
-            const models = ["liturgy", "ceremony", "spell", "ritual", "skill"]
-            for (const k of models) {
-                let key = k == "skill" ? "skillglobal" : k
-                optns.push({ name: `${game.i18n.localize(key)} - ${game.i18n.localize("MODS.FW")}`, val: `data.skillModifiers.${k}.FW` }, { name: `${game.i18n.localize(key)} - ${game.i18n.localize("MODS.FP")}`, val: `data.skillModifiers.${k}.FP` }, { name: `${game.i18n.localize(key)} - ${game.i18n.localize("stepValue")}`, val: `data.skillModifiers.${k}.step` }, { name: `${game.i18n.localize(key)} - ${game.i18n.localize("MODS.QS")}`, val: `data.skillModifiers.${k}.QL` }, { name: `${game.i18n.localize(key)} - ${game.i18n.localize("MODS.partChecks")}`, val: `data.skillModifiers.${k}.TPM` })
-            }
+        const FW = game.i18n.localize("MODS.FW")
+        const skill = game.i18n.localize('skill')
+        const FP = game.i18n.localize("MODS.FP")
+        const stepValue = game.i18n.localize("stepValue")
+        const QS = game.i18n.localize("MODS.QS")
+        const partChecks = game.i18n.localize("MODS.partChecks")
 
-            const attrs = ["mu", "kl", "in", "ch", "ff", "ge", "ko", "kk"]
-            for (const k of attrs)
-                optns.push({ name: game.i18n.localize(`CHAR.${k.toUpperCase()}`), val: `data.characteristics.${k}.gearmodifier` })
+        let optns = [
+            { name: game.i18n.localize('protection'), val: "data.totalArmor" },
+            { name: game.i18n.localize('carrycapacity'), val: "data.carryModifier" },
+            { name: `${game.i18n.localize('closeCombatAttacks')} - ${game.i18n.localize('CHARAbbrev.AT')}`, val: "data.meleeStats.attack" },
+            { name: `${game.i18n.localize('closeCombatAttacks')} - ${game.i18n.localize('CHARAbbrev.PA')}`, val: "data.meleeStats.parry" },
+            { name: `${game.i18n.localize('closeCombatAttacks')} - ${game.i18n.localize('CHARAbbrev.damage')}`, val: "data.meleeStats.damage" },
+            { name: `${game.i18n.localize('closeCombatAttacks')} - ${game.i18n.localize('MODS.defenseMalus')}`, val: "data.meleeStats.defenseMalus" },
+            { name: `${game.i18n.localize('rangeCombatAttacks')} - ${game.i18n.localize('CHARAbbrev.AT')}`, val: "data.rangeStats.attack" },
+            { name: `${game.i18n.localize('rangeCombatAttacks')} - ${game.i18n.localize('CHARAbbrev.damage')}`, val: "data.rangeStats.damage" },
+            { name: `${game.i18n.localize('rangeCombatAttacks')} - ${game.i18n.localize('MODS.defenseMalus')}`, val: "data.rangeStats.defenseMalus" },
+            { name: `${game.i18n.localize('spell')} - ${game.i18n.localize('CHARAbbrev.damage')}`, val: "data.spellStats.damage" },
+            { name: `${game.i18n.localize('liturgy')} - ${game.i18n.localize('CHARAbbrev.damage')}`, val: "data.liturgyStats.damage" },
+            { name: game.i18n.localize('KaPCost'), val: "data.kapModifier" },
+            { name: game.i18n.localize('AsPCost'), val: "data.aspModifier" },
+            { name: `${skill} - ${FW}`, val: "data.skillModifiers.FW" },
+            { name: `${skill} - ${FP}`, val: "data.skillModifiers.FP" },
+            { name: `${skill} - ${stepValue}`, val: "data.skillModifiers.step" },
+            { name: `${skill} - ${QS}`, val: "data.skillModifiers.QL" },
+            { name: `${skill} - ${partChecks}`, val: "data.skillModifiers.TPM" },
+            { name: `${skill} - ${game.i18n.localize("MODS.global")}`, val: "data.skillModifiers.global" },
+            { name: `${game.i18n.localize('regenerate')} (${game.i18n.localize("CHARAbbrev.CR")}) - ${game.i18n.localize("wounds")}`, val: "data.repeatingEffects.startOfRound.wounds" },
+            { name: `${game.i18n.localize('regenerate')} (${game.i18n.localize("CHARAbbrev.CR")}) - ${game.i18n.localize("astralenergy")}`, val: "data.repeatingEffects.startOfRound.astralenergy" },
+            { name: `${game.i18n.localize('regenerate')} (${game.i18n.localize("CHARAbbrev.CR")}) - ${game.i18n.localize("karmaenergy")}`, val: "data.repeatingEffects.startOfRound.karmaenergy" }
+        ]
+        const models = ["liturgy", "ceremony", "spell", "ritual", "skill", "feature"]
+        for (const k of models) {
+            let key = k == "skill" ? "skillglobal" : k
+            const el = game.i18n.localize(key)
+            optns.push({ name: `${el} - ${FW}`, val: `data.skillModifiers.${k}.FW` },
 
-            for (const k of DSA5.gearModifyableCalculatedAttributes)
-                optns.push({ name: game.i18n.localize(k), val: `data.status.${k}.gearmodifier` })
+                { name: `${el} - ${FP}`, val: `data.skillModifiers.${k}.FP` },
 
-            optns = optns.sort((a, b) => { return a.name.localeCompare(b.name) })
+                { name: `${el} - ${stepValue}`, val: `data.skillModifiers.${k}.step` },
 
-            return `<select class="selMenu">${optns.map(x=> {return `<option value="${x.val}">${x.name}</option>`})}</select>`
+                { name: `${el} - ${QS}`, val: `data.skillModifiers.${k}.QL` },
+
+                { name: `${el} - ${partChecks}`, val: `data.skillModifiers.${k}.TPM` })
+        }
+
+        const attrs = ["mu", "kl", "in", "ch", "ff", "ge", "ko", "kk"]
+        for (const k of attrs)
+            optns.push({ name: game.i18n.localize(`CHAR.${k.toUpperCase()}`), val: `data.characteristics.${k}.gearmodifier` })
+
+        for (const k of DSA5.gearModifyableCalculatedAttributes)
+            optns.push({ name: game.i18n.localize(k), val: `data.status.${k}.gearmodifier` })
+
+        optns = optns.sort((a, b) => { return a.name.localeCompare(b.name) })
+        optns = optns.map(x => { return `<option value="${x.val}">${x.name}</option>` }).join("\n")
+        return `<select class="selMenu">${optns}</select>`
     }
 
     activateListeners(html) {

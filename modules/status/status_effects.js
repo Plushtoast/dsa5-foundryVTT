@@ -23,14 +23,14 @@ export default class DSA5StatusEffects {
         if (description == "") description = label
 
         owner.addCondition({
-            label: label,
+            label,
             icon: "icons/svg/aura.svg",
             origin: owner.uuid,
             flags: {
                 dsa5: {
                     value: null,
                     editable: true,
-                    description: description,
+                    description,
                     custom: true
                 }
             }

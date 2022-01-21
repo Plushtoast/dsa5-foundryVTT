@@ -205,6 +205,7 @@ export default class PlayerMenu extends Application {
                 type: "summonCreature",
                 payload
             })
+            ui.notifications.notify(game.i18n.localize('CONJURATION.requestSend'))
         }
     }
 

@@ -33,15 +33,27 @@ export default class MerchantSheetDSA5 extends ActorSheetdsa5NPC {
         return this.showLimited() || (this.playerViewEnabled() && ["merchant", "loot", "epic"].includes(getProperty(this.actor.data.data, "merchant.merchantType")))
     }
 
+    async allowMerchant(ids, allow) {
+        let curPermissions = duplicate(this.actor.data.permission)
+        for (const id of ids) {
+            curPermissions[id] = allow ? 1 : 0
+        }
+        await this.actor.update({ permission: curPermissions }, { diff: false, recursive: false, noHook: true })
+    }
+
     activateListeners(html) {
         super.activateListeners(html);
         html.find('.allowMerchant').click(async(ev) => {
             const id = $(ev.currentTarget).attr("data-user-id")
             const i = $(ev.currentTarget).find('i')
-            let curPermissions = duplicate(this.actor.data.permission)
-            curPermissions[id] = i.hasClass("fa-check-circle") ? 0 : 1
-            await this.actor.update({ permission: curPermissions }, { diff: false, recursive: false, noHook: true })
+            await this.allowMerchant([id], !(i.hasClass("fa-check-circle")))
             i.toggleClass("fa-circle fa-check-circle")
+        })
+        html.find('.toggleAllAllowMerchant').click(async(ev) => {
+            const ids = game.users.filter(x => !x.isGM).map(x => x.id)
+            const allow = ev.currentTarget.dataset.lock == "true"
+            await this.allowMerchant(ids, allow)
+            this.render()
         })
 
         html.find('.randomGoods').click(ev => {
@@ -298,7 +310,7 @@ export default class MerchantSheetDSA5 extends ActorSheetdsa5NPC {
         }
         data["invName"] = data["merchantTypes"][data["merchantType"]]
         data["players"] = game.users.filter(x => !x.isGM).map(x => {
-            x.allowedMerchcant = this.actor.testUserPermission(x, "LIMITED", false)
+            x.allowedMerchant = this.actor.testUserPermission(x, "LIMITED", false)
             x.buyingFactor = getProperty(this.actor.data.data, `merchant.factors.buyingFactor.${x.id}`)
             x.sellingFactor = getProperty(this.actor.data.data, `merchant.factors.sellingFactor.${x.id}`)
             return x

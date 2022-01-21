@@ -56,9 +56,21 @@
                 <label class="label-text">{{localize "circle"}}</label>
                 <input class="input-text" type="number" name="data.step.circle" value="{{data.step.circle}}" data-dtype="Number" />
             </div>
-            {{/if}}
+            {{/if}} {{#if (eq data.category.value 'staff')}}
+            <div class="form-group">
+                <label class="label-text">{{localize "volume"}}</label>
+                <input class="input-text" type="number" name="data.volume" value="{{data.volume}}" data-dtype="Number" />
+            </div>
+            <div class="form-group">
+                <label class="label-text">{{localize "AsPCost"}}</label>
+                <input class="input-text" type="text" name="data.AsPCost" value="{{data.AsPCost}}" data-dtype="String" />
+            </div>
+            <div class="form-group">
+                <label class="label-text">{{localize "feature"}}</label>
+                <input class="input-text" type="text" name="data.feature" value="{{data.feature}}" data-dtype="String" />
+            </div>
 
-            {{#if (eq data.category.value 'Combat')}}
+            {{/if}} {{#if (eq data.category.value 'Combat')}}
             <div class="form-group">
                 <label class="label-text">{{localize "combatskill"}}</label>
                 <input class="input-text" type="text" name="data.list.value" value="{{data.list.value}}" data-dtype="String" />

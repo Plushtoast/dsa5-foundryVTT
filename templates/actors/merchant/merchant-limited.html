@@ -24,6 +24,7 @@
                         <div class="col two center">
                             <img src="{{tradeFriend.img}}" style="height: 50px;max-width:50%;border:none;" />
                         </div>
+
                         <div class="col two center">
                             <img src="{{actor.img}}" style="height: 50px;max-width:50%;border:none;" />
                         </div>
@@ -38,7 +39,10 @@
                     </div>
                     <div class="row-section">
                         <div class="col two">
-                            {{#grouped_each 4 tradeFriend.money.coins}}
+                            {{#unless tradeFriend.name}}
+                            <p>{{localize 'DSAError.noProperActor'}}</p>
+                            <p>{{localize 'TT.assignCharacter'}}</p>
+                            {{/unless}} {{#grouped_each 4 tradeFriend.money.coins}}
                             <div class="row-section table-title">
                                 {{#each this}}
                                 <div class="col four center">

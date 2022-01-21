@@ -504,6 +504,7 @@
     "worn": "Worn",
     "wearable": "Wearable",
     "wrongHand": "Wrong hand",
+    "volume": "Volume",
     "writing": "Writing",
     "yes": "Yes",
     "YouAlreadyHaveit": "Already owned",
@@ -544,7 +545,8 @@
         "requestDescr": "Confirm the summoning request to create the actor. Afterwards you can drag & drop the actor onto the map or delete it via right click. (Don't forget to clean up the summoning actor directory from time to time.)",
         "dragActor": "No summoner active (drag and drop)",
         "dragConjuration": "No summoning target active (drag and drop, at least observer permissions)",
-        "conjurs": "summons"
+        "conjurs": "summons",
+        "requestSend": "The request has been send to the game master."
     },
     "PLAYER": {
         "title": "Player Menu",
@@ -554,6 +556,7 @@
         "finalize": "Finalize"
     },
     "MASTER": {
+        "automation": "Automation",
         "sceneConfig": "Scene config",
         "awardXP": "Award Adventure Points",
         "awardXPText": "Award {heros} with Adventure Points.",
@@ -842,7 +845,8 @@
         "zkModifer": "The target's soulpower/toughness has to be included as handicap (mind the sign)",
         "applyEffectCaster": "Apply effect to caster",
         "applyEffectTargets": "Apply effect to targets",
-        "foreignSpell": "Foreign spells can not be modified"
+        "foreignSpell": "Foreign spells can not be modified",
+        "assignCharacter": "Characters can be assigned using a right click on the player list in the bottom left corner."
     },
     "HELP": {
         "showHelp": "Show help",
@@ -1041,7 +1045,6 @@
         "painImmunity": "Immune to pain",
         "selfControl": "Self-Control",
         "propertyKnowledge": "Property Knowledge",
-        "propertyFocus": "Property Focus",
         "obligations": "Obligations",
         "afraidOf": "Afraid of",
         "principles": "Principles",
@@ -1049,6 +1052,7 @@
         "gambling": "Gambling",
         "bodyControl": "Body Control",
         "darksight": "Darksight",
+        "witchSense": "Witch Sense",
         "nightBlind": "Night-Blind",
         "willpower": "Willpower",
         "traditionBoron": "Tradition (Church of Boron)",
@@ -1133,7 +1137,8 @@
         "nestedEffectNotSupported": "Foundry currently only supports adding of effects through the item directory.",
         "noBreakingResistance": "No Breaking Point Rating found for {item}.",
         "noBreakingStructure": "{name} has no accepted max structure value.",
-        "noConjurationActive": "No actor to summon active (drag and drop)"
+        "noConjurationActive": "No actor to summon active (drag and drop)",
+        "notInRangeToLoot": "Zu weit entfernt für eine Interaktion."
     },
     "CEREMONYMODIFIER": {
         "holysite": "Sanctum of the god (+2)",
@@ -1238,7 +1243,8 @@
         "foundryUsagedesc": "<p>You can get more informations on the usage of Foundry with TDE in the <a href=\"https://github.com/Plushtoast/dsa5-foundryVTT/wiki\" target=\"_blank\">Wiki</a>.</p><p>You can also get quick help in the Ulisses or Foundry Discord.</p><p>Using the journal browser: <ul class=\"dsalist\"><li>Right click on images to show them to your players.</li><li>Some references and text passages can point to a book location and differ from the game's location, as the modules are copies of printed books.<li>Some of the actors in the adventures might not have a token or statistics, because they only fullfill a tiny narrative role. If you need to make a check, you can use the chat command <b>/ch</b> to improvise a roll.</li><li>Important creatures and characters usually have additional information on their character sheet.</li></ul></p>",
         "fulltextsearch": "Full text search",
         "sceneReset": "Update scene",
-        "sceneResetDescription": "The scene <b>{name}</b> has already been imported. Do you like to perform a reset for this scene?<br/> All changes and tokens will be removed."
+        "sceneResetDescription": "The scene <b>{name}</b> has already been imported. Do you like to perform a reset for this scene?<br/> All changes and tokens will be removed.",
+        "playerVisibility": "Visibility for players"
     },
     "Migrakel": {
         "Migration": "Actor Migration",
@@ -1303,11 +1309,14 @@
         "scrollingFontsize": "Combat Text Font Size",
         "scrollingFontsizeHint": "Font size for some of the scrolling token texts (e.g. +- LP)",
         "enableForeignSpellModifer": "Foreign spell modifier",
-        "enableForeignSpellModiferHint": "Enable -2 modifier for foreign spell checks."
+        "enableForeignSpellModiferHint": "Enable -2 modifier for foreign spell checks.",
+        "enableDPS": "Activate DPS ",
+        "enableDPSHint": "Activate the \"Dere Positioning System\".\nYou can only interact with merchants in immediate distance.\nRange modifiers for ranged attacks are applied automatically."
     },
     "WEAR": {
         "check": "Breaking Point Rating Check ({category})",
         "checkShort": "Breaking Point Rating Check",
+        "value": "Breaking Point Rating",
         "armor": {
             "0": "In good condition",
             "1": "Armor slightly damaged; subtract 1 from PRO",

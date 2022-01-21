@@ -119,6 +119,15 @@ export default class Migrakel {
                             list: { value: find.data.data.list.value }
                         }
                     })
+                    if (find.data.data.category.value == "staff") {
+                        mergeObject(update, {
+                            data: {
+                                feature: getProperty(find.data, "data.feature") || "",
+                                AsPCost: getProperty(find.data, "data.AsPCost") || "",
+                                volume: Number(getProperty(find.data, "data.volume")) || 0
+                            }
+                        })
+                    }
                 }
                 return update
             }

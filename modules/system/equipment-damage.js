@@ -51,10 +51,10 @@ export default class EquipmentDamage {
         let category
         if (item.type == "armor") {
             category = game.i18n.localize(`ARMORSUBCATEGORIES.${item.data.data.subcategory}`)
-            breakingResistance = DSA5.armorSubcategories[item.data.data.subcategory]
+            breakingResistance = getProperty(item.data, "data.structure.breakPointRating") || DSA5.armorSubcategories[item.data.data.subcategory]
         } else {
             category = item.data.data.combatskill.value
-            breakingResistance = DSA5.weaponStabilities[game.i18n.localize(`LocalizedCTs.${category}`)]
+            breakingResistance = getProperty(item.data, "data.structure.breakPointRating") || DSA5.weaponStabilities[game.i18n.localize(`LocalizedCTs.${category}`)]
         }
         if (!breakingResistance) {
             ui.notifications.error(game.i18n.format("DSAError.noBreakingResistance", { item: item.name }))

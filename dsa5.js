@@ -22,6 +22,7 @@ import SpecialabilityRulesDSA5 from "./modules/system/specialability-rules-dsa5.
 import AdvantageRulesDSA5 from "./modules/system/advantage-rules-dsa5.js"
 import Migrakel from "./modules/system/migrakel.js"
 import DSA5Dialog from "./modules/dialog/dialog-dsa5.js"
+import DPS from "./modules/system/derepositioningsystem.js"
 
 Hooks.once("init", () => {
     console.log("Initializing DSA5 system")
@@ -41,7 +42,8 @@ Hooks.once("init", () => {
             SpecialabilityRulesDSA5,
             AdvantageRulesDSA5,
             Migrakel,
-            DSA5Dialog
+            DSA5Dialog,
+            DPS
         },
         entities: {
             Actordsa5,

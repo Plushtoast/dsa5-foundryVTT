@@ -290,6 +290,13 @@ export default class Actordsa5 extends Actor {
                     botch: 20,
                     crit: 1,
                     global: [],
+                    feature: {
+                        FP: [],
+                        step: [],
+                        QL: [],
+                        TPM: [],
+                        FW: []
+                    },
                     liturgy: {
                         FP: [],
                         step: [],

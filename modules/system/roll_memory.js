@@ -4,10 +4,14 @@ export default class RollMemory {
         this.actors = {}
     }
 
-    static wantedKeys = ["vision", "distance", "targetMovement", "shooterMovement",
-        "quickChange", "mountOptions", "narrowSpace", "advantageousPosition", "doubleAttack",
-        "reduceCostSpell", "forceSpell", "increaseCastingTime", "decreaseCastingTime", "removeGesture", "removeFormula"
-    ]
+    static get wantedKeys() {
+        const wantedKeys = ["vision", "targetMovement", "shooterMovement",
+            "quickChange", "mountOptions", "narrowSpace", "advantageousPosition", "doubleAttack",
+            "reduceCostSpell", "forceSpell", "increaseCastingTime", "decreaseCastingTime", "removeGesture", "removeFormula"
+        ]
+        if (!game.settings.get("dsa5", "enableDPS")) wantedKeys.push("distance")
+        return wantedKeys
+    }
 
     getPath(speaker, source, mode) {
         let subMod = mode || ""

@@ -2277,10 +2277,12 @@ select.noAppearance {
     font-size: 12px;
 }
 
+.adventureWizard .fa-toggle-on,
 .adventureWizard .fa-check {
     color: green;
 }
 
+.adventureWizard .fa-toggle-off,
 .adventureWizard .fa-times {
     color: darkred;
 }
@@ -2614,12 +2616,14 @@ select.noAppearance {
     color: black;
 }
 
+.fa-dsa5-player,
 .fa-dsa5 {
     position: relative;
     width: 100%;
     height: 25px;
 }
 
+.fa-dsa5-player:before,
 .fa-dsa5:before {
     content: '';
     background-image: url(../icons/categories/DSA-Auge.webp);
@@ -2631,6 +2635,10 @@ select.noAppearance {
     right: 0;
     top: 0;
     bottom: -5px;
+}
+
+.fa-dsa5-player:before {
+    background-image: url(../icons/categories/DSA-Auge-Spieler.webp);
 }
 
 .verticalFlex {

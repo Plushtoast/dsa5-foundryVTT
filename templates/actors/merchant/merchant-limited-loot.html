@@ -27,7 +27,10 @@
 
                     <div class="row-section">
                         <div class="col two">
-                            {{#each tradeFriend.inventory as |section sid|}} {{#if section.show}}
+                            {{#unless tradeFriend.name}}
+                            <p>{{localize 'DSAError.noProperActor'}}</p>
+                            <p>{{localize 'TT.assignCharacter'}}</p>
+                            {{/unless}} {{#each tradeFriend.inventory as |section sid|}} {{#if section.show}}
                             <div class="groupbox">
                                 <div class="row-section table-title">
                                     <div class="col eight"></div>

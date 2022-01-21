@@ -466,6 +466,7 @@
     "wrongHand": "Falsche Hand",
     "writing": "Schrift",
     "doNothing": "Keine Reaktion",
+    "volume": "Volumen",
     "yes": "Ja",
     "save": "Speichern",
     "YouAlreadyHaveit": "Hast du bereits",
@@ -506,7 +507,8 @@
         "requestDescr": "Bestätige die Anfrage um die Beschwörung als Akteur anzulegen. Danach kann die Beschwörung per Drag and Drop auf die Karte gezogen oder mit einem Rechtsclick gelöscht werden (ab und an auch mal den Beschwörungsordner bei den Akteuren aufräumen!).",
         "dragActor": "Kein Beschwörer aktiv (drag and drop)",
         "dragConjuration": "Keine Beschwörung aktiv (drag and drop, mindestens Observerrechte)",
-        "conjurs": "beschwört"
+        "conjurs": "beschwört",
+        "requestSend": "Die Anfrage wurde an den Spielleiter geschickt."
     },
     "PLAYER": {
         "title": "Spieler Menü",
@@ -516,6 +518,7 @@
         "finalize": "Fertigstellen"
     },
     "MASTER": {
+        "automation": "Automatisierung",
         "sceneConfig": "Szeneneinstellung",
         "awardXP": "Mit Abenteuerpunkten belohnen",
         "awardXPText": "{heros} mit Abenteuerpunkten belohnen.",
@@ -569,6 +572,7 @@
     "WEAR": {
         "check": "Bruchfaktorprobe ({category})",
         "checkShort": "Bruchfaktorprobe",
+        "value": "Bruchfaktorwert",
         "armor": {
             "0": "In gutem Zustand",
             "1": "Rüstung leicht beschädigt, –1 RS",
@@ -720,7 +724,8 @@
         "foundryUsagedesc": "<p>Mehr Informationen über die Verwendung von Foundry gibt's im <a href=\"https://github.com/Plushtoast/dsa5-foundryVTT/wiki\" target=\"_blank\">Wiki</a>.</p><p>Schnelle Hilfe kannst du im Ulisses Discord oder Foundry Discord bekommen.</p><p>Den Journalbrowser verwenden:<ul class=\"dsalist\"><li>Mit einem Rechtsklick auf Bilder kannst du diese separat anzeigen und deinen Spielern zeigen</li><li>Da die Module Kopien der Printausgaben sind, können Verweise und Formulierungen auf das jeweilige Printprodukt hinweisen und im Spiel abweichen.</li><li>Einge der Akteure der Abenteuer haben möglicherweise keinen Token und keine Statistiken, da diese nur eine sehr kleine erzählerische Rolle einnehmen. Falls Würfelwürfe notwendig sind, kannst du diese über das Chatcommand <b>/ch</b> improvisieren.</li><li>Wichtige Kreaturen und Charaktere haben gewöhnlicherweise noch extra Informationen im Charakterblatt.</li><li>Die zusätzlichen Werte und Fertigkeiten der Nscs in Abenteuern sind ergänzt worden und entsprechen nicht zwingendermaßen dem Inhalt des gedruckten Abenteuers. Sie dienen der breiteren Nutzung der Nscs, sind aber nicht notwendigerweise regelkonform.</li></ul></p>",
         "fulltextsearch": "Volltextsuche",
         "sceneReset": "Szene aktualisieren",
-        "sceneResetDescription": "Die Szene <b>{name}</b> wurde bereits importiert. Möchtest du diese zurücksetzen?<br/> Es werden alle Änderungen und Token entfernt."
+        "sceneResetDescription": "Die Szene <b>{name}</b> wurde bereits importiert. Möchtest du diese zurücksetzen?<br/> Es werden alle Änderungen und Token entfernt.",
+        "playerVisibility": "Sichtbarkeit für Spieler"
     },
     "Migrakel": {
         "Migration": "Actor Migration",
@@ -853,7 +858,8 @@
         "zkModifer": "Die Zähigkeit/Seelenkraft des Ziels muss als Malus eingerechnet werden (Vorzeichen beachten)",
         "applyEffectCaster": "Effekt auf Wirkenden übertragen",
         "applyEffectTargets": "Effekt auf Ziele übertragen",
-        "foreignSpell": "Fremdzauber können nicht modifiziert werden"
+        "foreignSpell": "Fremdzauber können nicht modifiziert werden",
+        "assignCharacter": "Charaktere können in der Spielerliste unten links per Rechtsclick zugewiesen werden."
     },
     "HELP": {
         "showHelp": "Hilfe anzeigen",
@@ -1084,7 +1090,6 @@
         "painImmunity": "Immun gegen Schmerzen",
         "selfControl": "Selbstbeherrschung",
         "propertyKnowledge": "Merkmalskenntnis",
-        "propertyFocus": "Merkmalsfokus",
         "obligations": "Verpflichtungen",
         "afraidOf": "Angst vor",
         "principles": "Prinzipientreue",
@@ -1096,6 +1101,7 @@
         "willpower": "Willenskraft",
         "traditionBoron": "Tradition (Boronkirche)",
         "artisticAbility": "Malen & Zeichnen",
+        "witchSense": "Hexensinn",
         "Shields": "Schilde",
         "Throwing Weapons": "Wurfwaffen",
         "Crossbows": "Armbrüste",
@@ -1165,7 +1171,8 @@
         "nestedEffectNotSupported": "Foundry unterstützt das Hinzufügen von Effekten derzeit nur im Item Directory.",
         "noBreakingResistance": "Keinen Bruchfaktorwert für {item} gefunden.",
         "noBreakingStructure": "{name} hat keinen akzeptierten maximalen Strukturwert.",
-        "noConjurationActive": "Kein zu beschwörender Akteur aktiv (drag and drop)"
+        "noConjurationActive": "Kein zu beschwörender Akteur aktiv (drag and drop)",
+        "notInRangeToLoot": "Zu weit entfernt für eine Interaktion."
     },
     "Shapeshift": {
         "title": "Gestaltwandlung",
@@ -1324,7 +1331,9 @@
         "scrollingFontsize": "Kampftext Schriftgröße",
         "scrollingFontsizeHint": "Die Schriftgröße für einige der scrollenden Token Texte (z.B. +- LeP)",
         "enableForeignSpellModifer": "Fremdzauber Modifikator",
-        "enableForeignSpellModiferHint": "Aktiviere Fremdzaubermodifikator -2 bei Zauberproben."
+        "enableForeignSpellModiferHint": "Aktiviere Fremdzaubermodifikator -2 bei Zauberproben.",
+        "enableDPS": "DPS aktivieren",
+        "enableDPSHint": "Aktiviere das \"Dere Positioning System\".\nMit Händlern kann nur noch aus direkter Nähe interagiert werden.\nDer Distanzmodifikator für Fernkampfwaffen wird automatisch gesetzt."
     },
     "COMBATTRACKER": {
         "noDefenses": "Anzahl Verteidigungen",

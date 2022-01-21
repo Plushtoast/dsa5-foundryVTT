@@ -131,7 +131,6 @@ export default class ItemSheetdsa5 extends ItemSheet {
             } else {
                 DSA5StatusEffects.createCustomEffect(this.item, "", this.item.name)
             }
-
         })
 
         html.find('.condition-show').mousedown(ev => {
@@ -222,7 +221,7 @@ export default class ItemSheetdsa5 extends ItemSheet {
 
         DSA5StatusEffects.prepareActiveEffects(this.item, data)
         data.item = this.item
-
+        data.armorAndWeaponDamage = game.settings.get("dsa5", "armorAndWeaponDamage")
         return data;
     }
 
@@ -232,10 +231,10 @@ export default class ItemSheetdsa5 extends ItemSheet {
 }
 
 
-
 class Enchantable extends ItemSheetdsa5 {
     async _onDrop(event) {
         await this.enchant(event)
+        if (this.isPoisonable) await this.poison(event)
     }
 
     async enchant(event) {
@@ -263,6 +262,22 @@ class Enchantable extends ItemSheetdsa5 {
             }
             enchantments.push(enchantment)
             let update = { flags: { dsa5: { enchantments } } }
+            await this.item.update(update)
+        }
+    }
+
+    async poison(event) {
+        const dragData = JSON.parse(event.dataTransfer.getData("text/plain"))
+        const { item, typeClass, selfTarget } = await itemFromDrop(dragData, undefined)
+        if (typeClass == "poison") {
+            const poison = {
+                name: item.name,
+                pack: dragData.pack,
+                itemId: item._id,
+                permanent: false,
+                actorId: dragData.actorId
+            }
+            let update = { flags: { dsa5: { poison } } }
             await this.item.update(update)
         }
     }
@@ -341,8 +356,29 @@ class Enchantable extends ItemSheetdsa5 {
                 item.sheet.render(true)
             }
         })
+        html.find('.poison-toggle-permanent').click(ev => {
+            this.item.update({ flags: { dsa5: { poison: { permanent: !this.item.data.flags.dsa5.poison.permanent } } } })
+        })
+        html.find('.poison-delete').click(ev => {
+            this.deletePoison()
+        })
+        html.find('.poison-show').click(async() => {
+            let item
+            if (this.item.actor) item = this.item.actor.data.items.find(x => x.type == "poison" && x.name == this.item.data.flags.dsa5.poison.name)
+            if (!item) item = await this.getSpell(this.item.data.flags.dsa5.poison)
+
+            if (item) {
+                item.sheet.render(true)
+            }
+        })
 
         DSA5ChatAutoCompletion.bindRollCommands(html)
+    }
+
+    deletePoison() {
+        this.item.update({
+            [`flags.dsa5.-=poison`]: null
+        })
     }
 
     deleteEnchantment(id, enchantments) {
@@ -407,16 +443,24 @@ class Enchantable extends ItemSheetdsa5 {
         const data = await super.getData(options);
         data["enchantments"] = this.item.getFlag("dsa5", "enchantments")
         const enchantmentLabel = []
+        data.poison = this.item.getFlag("dsa5", "poison")
 
-        if (this.item.getFlag("dsa5", "poison")) enchantmentLabel.push("poison")
+        if (data.poison) enchantmentLabel.push("poison")
         if (data.enchantments && data.enchantments.some(x => !x.talisman)) enchantmentLabel.push("enchantment")
         if (data.enchantments && data.enchantments.some(x => x.talisman)) enchantmentLabel.push("talisman")
         data.enchantmentLabel = enchantmentLabel.map(x => game.i18n.localize(x)).join("/")
+
+        data.hasEnchantments = data.poison || (data.enchantments && data.enchantments.length > 0)
         return data
     }
 }
 
 class AmmunitionSheet extends Enchantable {
+    constructor(item, options) {
+        super(item, options);
+        this.mce = null;
+        this.isPoisonable = true
+    }
     async getData(options) {
         const data = await super.getData(options)
         data['ammunitiongroups'] = DSA5.ammunitiongroups
@@ -546,8 +590,12 @@ class EquipmentSheet extends Enchantable {
 export class ArmorSheet extends Enchantable {
     async getData(options) {
         const data = await super.getData(options)
-        data['domains'] = this.prepareDomains()
-        data['armorSubcategories'] = Object.keys(DSA5.armorSubcategories)
+        mergeObject(data, {
+            domains: this.prepareDomains(),
+            armorSubcategories: Object.keys(DSA5.armorSubcategories),
+            breakPointRating: DSA5.armorSubcategories[this.item.data.data.subcategory]
+        })
+
         return data
     }
     _getHeaderButtons() {
@@ -619,9 +667,12 @@ class RangeweaponSheet extends Enchantable {
     }
     async getData(options) {
         const data = await super.getData(options);
-        data['ammunitiongroups'] = DSA5.ammunitiongroups;
-        data['combatskills'] = await DSA5_Utility.allCombatSkillsList("range");
-        data['domains'] = this.prepareDomains()
+        mergeObject(data, {
+            ammunitiongroups: DSA5.ammunitiongroups,
+            combatskills: await DSA5_Utility.allCombatSkillsList("range"),
+            domains: this.prepareDomains(),
+            breakPointRating: DSA5.weaponStabilities[game.i18n.localize(`LocalizedCTs.${this.item.data.data.combatskill.value}`)]
+        })
         return data
     }
 }
@@ -748,66 +799,33 @@ class MagictrickSheetDSA5 extends ItemSheetdsa5 {
 }
 
 class MeleeweaponSheetDSA5 extends Enchantable {
+    constructor(item, options) {
+        super(item, options);
+        this.mce = null;
+        this.isPoisonable = true
+    }
+
     async getData(options) {
         const data = await super.getData(options);
-        let chars = DSA5.characteristics;
-        chars["ge/kk"] = game.i18n.localize("CHAR.GEKK")
-        chars["-"] = "-";
-        data['characteristics'] = chars;
-        data['twoHanded'] = /\(2H/.test(this.item.name)
-        data['combatskills'] = await DSA5_Utility.allCombatSkillsList("melee")
-        data['ranges'] = DSA5.meleeRanges;
+        const characteristics = mergeObject(duplicate(DSA5.characteristics), {
+            "ge/kk": game.i18n.localize("CHAR.GEKK"),
+            ["-"]: "-"
+        })
+        mergeObject(data, {
+            characteristics,
+            twoHanded: /\(2H/.test(this.item.name),
+            combatskills: await DSA5_Utility.allCombatSkillsList("melee"),
+            ranges: DSA5.meleeRanges,
+            shieldSizes: DSA5.shieldSizes,
+            isShield: this.item.data.data.combatskill.value == game.i18n.localize("LocalizedIDs.Shields"),
+            domains: this.prepareDomains(),
+            breakPointRating: DSA5.weaponStabilities[game.i18n.localize(`LocalizedCTs.${this.item.data.data.combatskill.value}`)]
+        })
         if (this.item.actor) {
-            let combatSkill = this.item.actor.data.items.find(x => x.type == "combatskill" && x.name == this.item.data.data.combatskill.value)
+            const combatSkill = this.item.actor.data.items.find(x => x.type == "combatskill" && x.name == this.item.data.data.combatskill.value)
             data['canBeOffHand'] = combatSkill && !(combatSkill.data.data.weapontype.twoHanded) && this.item.data.data.worn.value
         }
-        data['isShield'] = this.item.data.data.combatskill.value == game.i18n.localize("LocalizedIDs.Shields")
-        data['shieldSizes'] = DSA5.shieldSizes
-        data["poison"] = this.item.getFlag("dsa5", "poison")
-        data['domains'] = this.prepareDomains()
-        data.hasEnchantments = data.poison || (data.enchantments && data.enchantments.length > 0)
         return data
-    }
-
-    async poison(event) {
-        const dragData = JSON.parse(event.dataTransfer.getData("text/plain"))
-        const { item, typeClass, selfTarget } = await itemFromDrop(dragData, undefined)
-        if (typeClass == "poison") {
-            const poison = {
-                name: item.name,
-                pack: dragData.pack,
-                itemId: item._id,
-                permanent: false,
-                actorId: dragData.actorId
-            }
-            let update = { flags: { dsa5: { poison } } }
-            await this.item.update(update)
-        }
-    }
-
-    activateListeners(html) {
-        super.activateListeners(html)
-        html.find('.poison-toggle-permanent').click(ev => {
-            this.item.update({ flags: { dsa5: { poison: { permanent: !this.item.data.flags.dsa5.poison.permanent } } } })
-        })
-        html.find('.poison-delete').click(ev => {
-            this.deletePoison()
-        })
-        html.find('.poison-show').click(async() => {
-            let item
-            if (this.item.actor) item = this.item.actor.data.items.find(x => x.type == "poison" && x.name == this.item.data.flags.dsa5.poison.name)
-            if (!item) item = await this.getSpell(this.item.data.flags.dsa5.poison)
-
-            if (item) {
-                item.sheet.render(true)
-            }
-        })
-    }
-
-    deletePoison() {
-        this.item.update({
-            [`flags.dsa5.-=poison`]: null
-        })
     }
 
     _getHeaderButtons() {
@@ -820,11 +838,6 @@ class MeleeweaponSheetDSA5 extends Enchantable {
             })
         }
         return buttons
-    }
-
-    async _onDrop(event) {
-        await super._onDrop(event)
-        await this.poison(event)
     }
 }
 
@@ -965,8 +978,10 @@ class SpellSheetDSA5 extends ItemSheetdsa5 {
 
 class SpellExtensionSheetDSA5 extends ItemSheetdsa5 {
     async getData(options) {
-        const data = await super.getData(options);
-        data['categories'] = ["spell", "liturgy", "ritual", "ceremony"]
+        const data = await super.getData(options)
+        mergeObject(data, {
+            categories: ["spell", "liturgy", "ritual", "ceremony"]
+        })
         return data
     }
 }

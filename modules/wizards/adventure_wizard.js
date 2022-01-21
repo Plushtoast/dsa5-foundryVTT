@@ -78,6 +78,14 @@ export default class BookWizard extends Application {
     activateListeners(html) {
         super.activateListeners(html)
 
+        html.on('click', '.toggleVisibility', async(ev) => {
+            const id = ev.currentTarget.dataset.itemid
+            const config = game.settings.get("dsa5", "expansionPermissions")
+            config[id] = $(ev.currentTarget).find('i').hasClass("fa-toggle-off")
+            await game.settings.set("dsa5", "expansionPermissions", config)
+            this.render()
+        })
+
         html.on('click', '.showMapNote', ev => {
             game.journal.get(ev.currentTarget.dataset.entryid).panToNote()
         })
@@ -220,7 +228,7 @@ export default class BookWizard extends Application {
         }
     }
 
-    tryShowImportedActor(ev){
+    tryShowImportedActor(ev) {
 
     }
 
@@ -287,7 +295,7 @@ export default class BookWizard extends Application {
         const head = await game.folders.contents.find(x => x.name == game.i18n.localize(`${this.bookData.moduleName}.name`) && x.type == "Actor" && x.data.parent == null)
         const folder = head ? await game.folders.contents.find(x => x.name == chapter.name && x.type == "Actor" && x.data.parent == head.id) : undefined
         for (let k of chapter.actors) {
-            let actor = folder ? game.actors.contents.find(x => x.name == k && x.data.folder == folder.id ) : undefined
+            let actor = folder ? game.actors.contents.find(x => x.name == k && x.data.folder == folder.id) : undefined
             let pack = undefined
             let id = actor ? actor.id : undefined
             if (!actor) {
@@ -359,8 +367,23 @@ export default class BookWizard extends Application {
             }
             return await renderTemplate('systems/dsa5/templates/wizard/adventure/adventure_cover.html', { book: this.book, bookData: this.bookData })
         } else {
-            return await renderTemplate('systems/dsa5/templates/wizard/adventure/adventure_intro.html', { rshs: this.rshs.sort((a, b) => { return a.id.localeCompare(b.id) }), rules: this.books.sort((a, b) => { return a.id.localeCompare(b.id) }), adventures: game.user.isGM ? this.adventures : this.adventures.filter(x => x.visible).sort((a, b) => { return a.id.localeCompare(b.id) }) })
+            return await renderTemplate('systems/dsa5/templates/wizard/adventure/adventure_intro.html', {
+                rshs: this.filterBooks(this.rshs),
+                rules: this.filterBooks(this.books),
+                adventures: this.filterBooks(this.adventures),
+                isGM: game.user.isGM
+            })
         }
+    }
+
+    filterBooks(books) {
+        const bookPermissions = game.settings.get("dsa5", "expansionPermissions")
+        for (const book of books) {
+            if (bookPermissions[book.id] != undefined) book.visible = bookPermissions[book.id]
+        }
+        return game.user.isGM ? books : books.filter(x => x.visible == undefined || x.visible).sort((a, b) => {
+            return a.id.localeCompare(b.id)
+        })
     }
 
     getSubChapters() {
@@ -396,12 +419,14 @@ export default class BookWizard extends Application {
 
     async getData(options) {
         const data = await super.getData(options);
-        const template = await this.getChapter()
+        const currentChapter = await this.getChapter()
         const toc = await this.getToc()
-        data.adventure = this.bookData
-        data.currentChapter = template
-        data.breadcrumbs = this.renderBreadcrumbs()
-        data.toc = toc
+        mergeObject(data, {
+            adventure: this.bookData,
+            currentChapter,
+            breadcrumbs: this.renderBreadcrumbs(),
+            toc
+        })
         return data
     }
 

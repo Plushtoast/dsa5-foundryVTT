@@ -717,8 +717,8 @@ export default class DiceDSA5 {
                 }
             }
         }
-        if(source.flags && source.flags.dsa5 && source.flags.dsa5.poison){
-            const poison = source.flags.dsa5.poison
+        const poison = getProperty(source, "flags.dsa5.poison")
+        if(poison){
             result.push(`<a class="roll-button roll-item" data-removecharge="${!poison.permanent}" data-name="${poison.name}" data-type="poison"><i class="fas fa-dice"></i>${game.i18n.localize("poison")}: ${poison.name}</a>`)
         }
         return result.join(", ")

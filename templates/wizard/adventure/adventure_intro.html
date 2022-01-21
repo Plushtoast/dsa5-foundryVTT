@@ -5,14 +5,32 @@
     <h2>{{localize 'Book.availableModules'}}</h2>
     <ul class="dsalist">
         {{#each adventures as |item i|}}
-        <li><a data-type="adventures" class="loadBook">{{item.id}}</a></li>
+        <li>
+            <div class="row-section">
+                <div class="col ninety">
+                    <a data-type="adventures" class="loadBook">{{item.id}}</a>
+                </div>
+                <div class="col ten">
+                    {{#if ../isGM}}<a title="{{localize 'Book.playerVisibility'}}" class="toggleVisibility" data-itemid="{{item.id}}"><i class="fas {{#if item.visible}}fa-toggle-on{{else}}fa-toggle-off{{/if}}"></i></a>{{/if}}
+                </div>
+            </div>
+        </li>
         {{/each}}
     </ul>
     {{/if}}
     <h2>{{localize 'Book.availableRules'}}</h2>
     <ul class="dsalist">
         {{#if rules}} {{#each rules as |item i|}}
-        <li><a data-type="books" class="loadBook">{{item.id}}</a></li>
+        <li>
+            <div class="row-section">
+                <div class="col ninety">
+                    <a data-type="books" class="loadBook">{{item.id}}</a>
+                </div>
+                <div class="col ten">
+                    {{#if ../isGM}}<a title="{{localize 'Book.playerVisibility'}}" class="toggleVisibility" data-itemid="{{item.id}}"><i class="fas {{#if item.visible}}fa-toggle-on{{else}}fa-toggle-off{{/if}}"></i></a>{{/if}}
+                </div>
+            </div>
+        </li>
         {{/each}} {{else}}
         <li>{{localize 'Book.nothing'}}</li>
         {{/if}}
@@ -20,7 +38,18 @@
     <h2>{{localize 'Book.availableRSHs'}}</h2>
     <ul class="dsalist">
         {{#if rshs}} {{#each rshs as |item i|}}
-        <li><a data-type="rshs" class="loadBook">{{item.id}}</a></li>
+        <li>
+            <div class="row-section">
+                <div class="col ninety">
+                    <a data-type="rshs" class="loadBook">{{item.id}}</a>
+                </div>
+                <div class="col ten">
+                    {{#if ../isGM}}<a title="{{localize 'Book.playerVisibility'}}" class="toggleVisibility" data-itemid="{{item.id}}"><i class="fas {{#if item.visible}}fa-toggle-on{{else}}fa-toggle-off{{/if}}"></i></a>{{/if}}
+                </div>
+
+            </div>
+        </li>
+
         {{/each}} {{else}}
         <li>{{localize 'Book.nothing'}}</li>
         {{/if}}

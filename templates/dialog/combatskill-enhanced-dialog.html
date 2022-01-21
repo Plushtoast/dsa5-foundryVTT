@@ -50,7 +50,7 @@
             <div class="form-group custom-select">
                 <label>{{localize "distance"}}</label>
                 <select name="distance">
-                    {{#select "medium"}}
+                    {{#select rangeDistance}}
                     {{#each rangeOptions as |label val|}}
                     <option value="{{val}}">{{localize label}}</option>
                     {{/each}}

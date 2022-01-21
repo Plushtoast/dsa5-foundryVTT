@@ -52,7 +52,12 @@
                 <input class="input-text" type="text" name="data.structure.value" value="{{data.structure.value}}" data-dtype="Number" /><span> / </span>
                 <input class="input-text" type="text" name="data.structure.max" value="{{data.structure.max}}" data-dtype="Number" />
             </div>
-
+            {{#if armorAndWeaponDamage}}
+            <div class="form-group">
+                <label class="label-text">{{localize "WEAR.value"}}</label>
+                <input class="input-text" type="number" name="data.structure.breakPointRating" value="{{data.structure.breakPointRating}}" placeholder="{{breakPointRating}}" data-dtype="Number" step="1" />
+            </div>
+            {{/if}}
         </div>
 
         {{> systems/dsa5/templates/items/item-effects.html}} {{> systems/dsa5/templates/items/item-enchantment.html}}

@@ -28,9 +28,9 @@ export default class MastersMenu {
                 {
                     name: "PlayerMenu",
                     title: game.i18n.localize("PLAYER.title"),
-                    icon: "fas fa-tools",
+                    icon: "fas fa-dsa5-player",
                     button: true,
-                    onClick: () => { DSA5_Utility.renderToggle(game.dsa5.apps.playerMenu)}
+                    onClick: () => { DSA5_Utility.renderToggle(game.dsa5.apps.playerMenu) }
                 }
             ]
             if (game.user.isGM) {
@@ -206,8 +206,8 @@ class GameMasterMenu extends Application {
             ev.stopPropagation()
             this.doGroupCheck()
         })
-        html.find('.changeSightAutomation').change(async(ev) => {
-            await game.settings.set('dsa5', "sightAutomationEnabled", ev.currentTarget.checked)
+        html.find('.changeSetting').change(async(ev) => {
+            await game.settings.set('dsa5', ev.currentTarget.name, ev.currentTarget.checked)
         })
         html.find('.changeSightTreshold').change(async(ev) => {
             $(ev.currentTarget).closest('.row-section').find('.range-value').text(ev.currentTarget.value)
@@ -306,7 +306,7 @@ class GameMasterMenu extends Application {
         }, 500)
     }
 
-    async doPayment(ids, pay){
+    async doPayment(ids, pay) {
         const actors = game.actors.filter(x => ids.includes(x.id))
         const heros = this.getNames(actors)
         const template = await renderTemplate('systems/dsa5/templates/dialog/master-dialog-award.html', { text: game.i18n.localize(game.i18n.format(pay ? "MASTER.payText" : "MASTER.getPaidText", { heros })) })
@@ -503,6 +503,7 @@ class GameMasterMenu extends Application {
         const visions = [1, 2, 3, 4].map(x => { return { label: game.i18n.localize(`VisionDisruption.step${x}`).replace(regex, ""), value: thresholds[x - 1] } })
         data.sceneConfig = {
             sceneAutomationEnabled: game.settings.get("dsa5", "sightAutomationEnabled"),
+            enableDPS: game.settings.get("dsa5", "enableDPS"),
             visions,
             darkness: canvas.scene ? canvas.scene.data.darkness : 0
         }
