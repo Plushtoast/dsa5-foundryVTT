@@ -891,7 +891,10 @@
         "improvised": "Improvisierte Waffe",
         "magical": "Magisch",
         "clerical": "Geweiht",
-        "attributeWarning": "Dieser Gegenstand ist <b>{domain}</b> (und kann ggf. nicht beschädigt werden)."
+        "silverPlated": "versilbert",
+        "attributeWarning": "Dieser Gegenstand ist <b>{domain}</b> (und kann ggf. nicht beschädigt werden).",
+        "vulnerableTo": "Empfindlich ({name})",
+        "resistantTo": "Resistent ({name})"
     },
     "SPELL": {
         "loading": "Zauberstatus: {status}",
@@ -1172,7 +1175,8 @@
         "noBreakingResistance": "Keinen Bruchfaktorwert für {item} gefunden.",
         "noBreakingStructure": "{name} hat keinen akzeptierten maximalen Strukturwert.",
         "noConjurationActive": "Kein zu beschwörender Akteur aktiv (drag and drop)",
-        "notInRangeToLoot": "Zu weit entfernt für eine Interaktion."
+        "notInRangeToLoot": "Zu weit entfernt für eine Interaktion.",
+        "onlyGMallowed": "Diese Funktion steht nur dem Spielleiter zur Verfügung."
     },
     "Shapeshift": {
         "title": "Gestaltwandlung",

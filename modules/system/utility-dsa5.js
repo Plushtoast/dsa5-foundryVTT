@@ -285,9 +285,12 @@ export default class DSA5_Utility {
     }
 
     static experienceDescription(experience) {
-        const grades = { 2100: "EXP.legendary", 1700: "EXP.brillant", 1400: "EXP.masterful", 1200: "EXP.competent", 1100: "EXP.experienced", 1000: "EXP.average" }
-        for (const grade of Object.keys(grades)) {
-            if (experience >= grade) return grades[grade]
+        const grades = [2100, 1700, 1400, 1200, 1100, 1000]
+        const labels = ["EXP.legendary", "EXP.brillant", "EXP.masterful", "EXP.competent", "EXP.experienced", "EXP.average"]
+        let index = 0
+        for (const grade of grades) {
+            if (Number(experience) >= Number(grade)) return labels[index]
+            index++
         }
         return "EXP.inexperienced"
     }

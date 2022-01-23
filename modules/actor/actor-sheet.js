@@ -372,6 +372,15 @@ export default class ActorSheetDsa5 extends ActorSheet {
 
         let posthand = ev => { this.actor.items.find(i => i.data._id == this._getItemId(ev)).postItem() }
 
+        html.find('.roll-disease').click(ev => {
+            const itemId = this._getItemId(ev)
+            const item = this.actor.items.get(itemId)
+            item.setupEffect(undefined, { rollMode: "gmroll" }).then(async(setupData) => {
+                const result = await item.itemTest(setupData)
+                await this.actor.updateEmbeddedDocuments("Item", [{ _id: item.id, "data.duration.resolved": result.result.duration }])
+            });
+        })
+
         html.find('.schip').click(ev => {
             ev.preventDefault()
             let val = Number(ev.currentTarget.getAttribute("data-val"))
@@ -949,6 +958,11 @@ export default class ActorSheetDsa5 extends ActorSheet {
         }
     }
 
+    async _addDisease(item) {
+        item.data.data.duration.resolved = "?"
+        this._addLoot(item)
+    }
+
     async _addSkill(item) {
         item = duplicate(item)
         let res = this.actor.data.items.find(i => i.type == item.type && i.name == item.name && i.data.data.description.value == item.data.description.value);
@@ -975,6 +989,9 @@ export default class ActorSheetDsa5 extends ActorSheet {
 
     async _manageDragItems(item, typeClass) {
         switch (typeClass) {
+            case "disease":
+                await this._addDisease(item)
+                break
             case "meleeweapon":
             case "rangeweapon":
             case "equipment":

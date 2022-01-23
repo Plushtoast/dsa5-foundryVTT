@@ -14,7 +14,9 @@
         "Animal": "AnimalType",
         "Undead": "UndeadType",
         "Supernatural creature": "SupernaturalType",
-        "magical construct": "MagicalConstructType"
+        "magical construct": "MagicalConstructType",
+        "Were Creature": "WerCreatureType",
+        "Vampire": "VampireType"
     },
     "godOfLife": [
         "Tsa"

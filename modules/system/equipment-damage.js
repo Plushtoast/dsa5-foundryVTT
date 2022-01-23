@@ -33,10 +33,18 @@ export default class EquipmentDamage {
 
     static async showDamageToGear(preData, testData) {
         if (game.settings.get("dsa5", "armorAndWeaponDamage")) {
+            let actor = DSA5_Utility.getSpeaker(preData.extra.speaker)
+            let attackSuccessLevel = 0
+            const opposeMessageId = getProperty(actor, "data.flags.oppose.messageId")
+            if (opposeMessageId) {
+                const attackMessage = game.messages.get(opposeMessageId)
+                if (attackMessage) attackSuccessLevel = getProperty(attackMessage, "data.flags.data.postData.successLevel") || 0
+            }
+
             const source = preData.source
             if (source._id && source.data.structure && (testData.successLevel < -2 ||
-                    preData.situationalModifiers.some(x => x.name.trim() == `${game.i18n.localize('MODS.defenseMalus')} - ${game.i18n.localize('halfDefenseShort')}`)) && ["meleeweapon", "rangeweapon", "armor"].includes(source.type)) {
-                const actor = await DSA5_Utility.getSpeaker(testData.speaker)
+                    attackSuccessLevel > 2) && ["meleeweapon", "rangeweapon", "armor"].includes(source.type)) {
+                actor = await DSA5_Utility.getSpeaker(testData.speaker)
                 return actor.items.get(source._id).uuid
             }
         }

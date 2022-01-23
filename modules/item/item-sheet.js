@@ -6,6 +6,7 @@ import SpecialabilityRulesDSA5 from "../system/specialability-rules-dsa5.js"
 import { itemFromDrop, svgAutoFit } from "../system/view_helper.js"
 import DSA5ChatAutoCompletion from "../system/chat_autocompletion.js"
 import EquipmentDamage from "../system/equipment-damage.js"
+import DiceDSA5 from "../system/dice-dsa5.js"
 
 export default class ItemSheetdsa5 extends ItemSheet {
     constructor(item, options) {
@@ -644,11 +645,11 @@ class MagicalSignSheet extends ItemSheetdsa5 {
         const actor = this.item.actor
         const sign = game.dsa5.config.ItemSubclasses.magicalsign
         const skill = actor.items.find(x => x.type == "skill" && x.name == game.i18n.localize("LocalizedIDs.artisticAbility"))
-        const chatMessage = `<hr/><p><b>${this.item.name}</b></p><p>${this.item.data.data.description.value}</p><p>${sign.chatData(this.item.data.data, "").join("</br>")}</p>`
+        const chatMessage = `<hr/><p><b>${this.item.name}</b></p><p>${this.item.data.data.description.value}</p><p>${sign.chatData(this.item.data.data, "").join("</br>")} <span class="costCheck"></span></p>`
         actor.setupSkill(skill.data, { other: [chatMessage], subtitle: ` (${game.i18n.localize('magicalsign')})` }, undefined).then(async(setupData) => {
-            //TODO pay this once if successfull
-            //await this.item.actor.update({ "data.status.astralenergy.value": actor.data.data.status.astralenergy.value -= aspcost })
-            const res = await actor.basicTest(setupData)
+            const res = await actor.basicTest(setupData, { suppressMessage: true })
+            res.result.preData.calculatedSpellModifiers = { finalcost: aspcost, costsMana: true }
+            await DiceDSA5.renderRollCard(res.cardOptions, res.result, res.options.rerenderMessage)
         })
     }
 }

@@ -242,10 +242,30 @@ export default class OpposedDsa5 {
         }
     }
 
+    static async playAutomatedJBA2(attacker, defender, opposedResult) {
+        if (game.modules.get("autoanimations") && game.modules.get("autoanimations").active) {
+            if (opposedResult.winner == "attacker") {
+                const attackerToken = canvas.tokens.get(attacker.speaker.token)
+                if (!attackerToken || !attackerToken.actor) return
+                const item = attackerToken.actor.items.get(attacker.testResult.source._id)
+                AutoAnimations.playAnimation(attackerToken, Array.from(game.user.targets), item)
+            }
+        }
+    }
+
     static async clearOpposed(actor) {
-        await actor.update({
-            [`flags.-=oppose`]: null
-        })
+        if (game.user.isGM) {
+            await actor.update({
+                [`flags.-=oppose`]: null
+            })
+        } else {
+            game.socket.emit("system.dsa5", {
+                type: "clearOpposed",
+                payload: {
+                    actorId: actor.id
+                }
+            })
+        }
     }
 
     static async _handleReaction(ev) {
@@ -294,6 +314,7 @@ export default class OpposedDsa5 {
         this.formatOpposedResult(opposedResult, attacker.speaker, defender.speaker);
         this.rerenderMessagesWithModifiers(opposedResult, attacker, defender);
         await Hooks.call("finishOpposedTest", attacker, defender, opposedResult, options)
+        this.playAutomatedJBA2(attacker, defender, opposedResult)
         await this.renderOpposedResult(opposedResult, options)
         await this.hideReactionButton(options.startMessageId)
 

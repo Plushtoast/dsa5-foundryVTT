@@ -44,6 +44,9 @@ export default function() {
                     case "clearCombat":
                         if (game.combat) game.combat.nextRound()
                         break
+                    case "clearOpposed":
+                        OpposedDsa5.clearOpposed(game.actors.get(data.payload.actorId))
+                        break
                     case "updateDefenseCount":
                         if (game.combat) game.combat.updateDefenseCount(data.payload.speaker)
                         break
@@ -70,7 +73,7 @@ export default function() {
                 }
             })
             game.socket.on("system.dsa5.player", data => {
-                switch(data.type){
+                switch (data.type) {
                     case "preloadDice3d":
                         console.log("Preloading forced DSA dice assets")
                         DiceSoNiceCustomization.preloadDiceAssets(data.payload)

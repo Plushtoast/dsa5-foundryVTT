@@ -812,7 +812,10 @@
         "improvised": "Improvised weapon",
         "magical": "Magical",
         "clerical": "Blessed",
-        "attributeWarning": "This item is <b>{domain}</b> (and possibly indestructible.)."
+        "silverPlated": "silver plated",
+        "attributeWarning": "This item is <b>{domain}</b> (and possibly indestructible.).",
+        "vulnerableTo": "Vulnerable ({name})",
+        "resistantTo": "Resistant ({name})"
     },
     "SPELL": {
         "loading": "Spell state: {status}",
@@ -845,7 +848,7 @@
         "zkModifer": "The target's soulpower/toughness has to be included as handicap (mind the sign)",
         "applyEffectCaster": "Apply effect to caster",
         "applyEffectTargets": "Apply effect to targets",
-        "foreignSpell": "Foreign spells can not be modified",
+        "foreignSpell": "Unfamiliar tradition spells can not be modified",
         "assignCharacter": "Characters can be assigned using a right click on the player list in the bottom left corner."
     },
     "HELP": {
@@ -1138,7 +1141,8 @@
         "noBreakingResistance": "No Breaking Point Rating found for {item}.",
         "noBreakingStructure": "{name} has no accepted max structure value.",
         "noConjurationActive": "No actor to summon active (drag and drop)",
-        "notInRangeToLoot": "Zu weit entfernt für eine Interaktion."
+        "notInRangeToLoot": "Zu weit entfernt für eine Interaktion.",
+        "onlyGMallowed": "This function is only available to the game master."
     },
     "CEREMONYMODIFIER": {
         "holysite": "Sanctum of the god (+2)",
@@ -1308,8 +1312,8 @@
         "armorAndWeaponDamageHint": "Activate the optional rule for weapon breaking and armor sturdiness.",
         "scrollingFontsize": "Combat Text Font Size",
         "scrollingFontsizeHint": "Font size for some of the scrolling token texts (e.g. +- LP)",
-        "enableForeignSpellModifer": "Foreign spell modifier",
-        "enableForeignSpellModiferHint": "Enable -2 modifier for foreign spell checks.",
+        "enableForeignSpellModifer": "Unfamiliar tradition modifier",
+        "enableForeignSpellModiferHint": "Enable -2 modifier for unfamiliar tradition checks.",
         "enableDPS": "Activate DPS ",
         "enableDPSHint": "Activate the \"Dere Positioning System\".\nYou can only interact with merchants in immediate distance.\nRange modifiers for ranged attacks are applied automatically."
     },

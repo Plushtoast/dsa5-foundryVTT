@@ -135,20 +135,6 @@ export default class Itemdsa5 extends Item {
         }
     }
 
-    static addCreatureTypeModifiers(actorData, source, situationalModifiers) {
-        const creatureTypes = CreatureType.detectCreatureType(actorData)
-        const isSpell = ["spell", "ceremony", "liturgy", "ritual"].includes(source.type)
-        for (let k of creatureTypes) {
-            const modifiers = k.damageModifier(source)
-            if (isSpell) {
-                for (let mod of modifiers) {
-                    mod.armorPen = k.spellResistanceModifier(actorData)
-                }
-            }
-            situationalModifiers.push(...modifiers)
-        }
-    }
-
     static parseValueType(name, val) {
         let type = ""
         if (/^\*/.test(val)) {
@@ -374,7 +360,7 @@ export default class Itemdsa5 extends Item {
                     const tar = getProperty(target.actor.data, "data.status.size")
                     if (tar) targetSize = tar.value
 
-                    this.addCreatureTypeModifiers(target.actor.data, source, situationalModifiers)
+                    CreatureType.addCreatureTypeModifiers(target.actor.data, source, situationalModifiers)
                 }
             });
         }
@@ -415,7 +401,7 @@ export default class Itemdsa5 extends Item {
                     if (defWeapon.length > 0)
                         targetWeaponsize = defWeapon[0].data.data.reach.value
 
-                    this.addCreatureTypeModifiers(target.actor.data, source, situationalModifiers)
+                    CreatureType.addCreatureTypeModifiers(target.actor.data, source, situationalModifiers)
                 }
             });
 
@@ -784,7 +770,7 @@ class SpellItemDSA5 extends Itemdsa5 {
         this.foreignSpellModifier(actor, source, situationalModifiers, data)
         if (game.user.targets.size) {
             game.user.targets.forEach(target => {
-                if (target.actor) this.addCreatureTypeModifiers(target.actor.data, source, situationalModifiers)
+                if (target.actor) CreatureType.addCreatureTypeModifiers(target.actor.data, source, situationalModifiers)
             });
         }
         situationalModifiers.push(...actor.getSkillModifier(source.name, source.type))
@@ -1580,11 +1566,16 @@ class TraitItemDSA5 extends Itemdsa5 {
                 ]
                 break
             case "entity":
-                //TODO put entity to chat
-                res = []
-            case "undead":
-                //TODO put entity to chat
-                res = []
+                res = [
+                    this._chatLineHelper("distribution", data.distribution),
+                    this._chatLineHelper("CHARAbbrev.QL", data.AsPCost.value)
+                ]
+                break
+            case "summoning":
+                res = [
+                    this._chatLineHelper("distribution", data.distribution),
+                    this._chatLineHelper("conjuringDifficulty", data.at.value)
+                ]
                 break
         }
         if (data.effect.value != "") res.push(this._chatLineHelper("effect", data.effect.value))

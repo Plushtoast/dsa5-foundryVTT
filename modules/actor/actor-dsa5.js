@@ -166,7 +166,7 @@ export default class Actordsa5 extends Actor {
 
                 if (this.isMerchant()) { this.prepareMerchant() }
 
-                data.data.status.speed.max = Math.max(0, data.data.status.speed.max - pain)
+                if (!this.hasCondition("bloodrush")) data.data.status.speed.max = Math.max(0, data.data.status.speed.max - pain)
             }
 
             let paralysis = this.hasCondition("paralysed")
@@ -480,6 +480,7 @@ export default class Actordsa5 extends Actor {
         let advantages = [];
         let disadvantages = []
         let aggregatedtests = []
+        let diseases = []
 
         const specAbs = Object.fromEntries(Object.keys(DSA5.specialAbilityCategories).map(x => [x, []]))
         const traits = Object.fromEntries(Object.keys(DSA5.traitCategories).map(x => [x, []]))
@@ -603,10 +604,6 @@ export default class Actordsa5 extends Actor {
                 if (sheetInfo.details && sheetInfo.details.includes(i._id)) i.detailed = "shown"
 
                 switch (i.type) {
-                    case "application":
-                        if (applications.has(i.data.skill)) applications.get(i.data.skill).push(i)
-                        else applications.set(i.data.skill, [i])
-                        break
                     case "skill":
                         skills[i.data.group.value].push(this._perpareItemAdvancementCost(i))
                         break;
@@ -728,6 +725,13 @@ export default class Actordsa5 extends Actor {
                     case "specialability":
                         specAbs[i.data.category.value].push(i)
                         break;
+                    case "disease":
+                        diseases.push(i)
+                        break
+                    case "application":
+                        if (applications.has(i.data.skill)) applications.get(i.data.skill).push(i)
+                        else applications.set(i.data.skill, [i])
+                        break
                 }
 
             } catch (error) {
@@ -804,6 +808,7 @@ export default class Actordsa5 extends Actor {
             wornArmor: armor,
             inventory,
             hasTrait,
+            diseases,
             itemModifiers: this.data.itemModifiers,
             languagePoints: {
                 used: actorData.data.freeLanguagePoints ? actorData.data.freeLanguagePoints.used : 0,

@@ -95,6 +95,12 @@ class GameMasterMenu extends Application {
         this.randomCreation = []
     }
 
+    async _render(force = false, options = {}) {
+        if (!game.user.isGM) return ui.notifications.error("DSAError.onlyGMallowed")
+
+        await super._render(force, options)
+    }
+
     activateListeners(html) {
         super.activateListeners(html)
         html.find('select.select2').select2()
