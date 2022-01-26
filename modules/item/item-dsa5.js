@@ -207,23 +207,46 @@ export default class Itemdsa5 extends Item {
         return itemModifiers
     }
 
+    static attackOfOpportunity(html, situationalModifiers) {
+        let value = html.find('[name="opportunityAttack"]').is(":checked") ? -4 : 0
+        if (value) {
+            situationalModifiers.push({
+                name: game.i18n.localize("opportunityAttack"),
+                value
+            })
+            game.user.targets.forEach(target => {
+                if (target.actor) {
+                    if (target.actor.items.find(x => x.type == "specialability" && x.name == game.i18n.localize("LocalizedIDs.enemySense"))) {
+                        situationalModifiers.push({
+                            name: game.i18n.localize("LocalizedIDs.enemySense"),
+                            value
+                        })
+                        return
+                    }
+                }
+            })
+        }
+        return value != 0
+    }
+
     static getDefenseMalus(situationalModifiers, actor) {
         if (actor.data.flags.oppose) {
             let message = game.messages.get(actor.data.flags.oppose.messageId)
             const regex = / \[(-)?\d{1,}\]/
-            for (let mal of message.data.flags.data.preData.situationalModifiers.filter(x => x.dmmalus != undefined && x.dmmalus != 0)) {
-                situationalModifiers.push({
-                    name: `${game.i18n.localize('MODS.defenseMalus')} - ${mal.name.replace(regex,"")}`,
-                    value: mal.dmmalus,
-                    selected: true
-                })
-            }
-            for (let mal of message.data.flags.data.preData.situationalModifiers.filter(x => x.type == "defenseMalus" && x.value != 0)) {
-                situationalModifiers.push({
-                    name: mal.name.replace(regex, ""),
-                    value: mal.value,
-                    selected: true
-                })
+            for (let mal of message.data.flags.data.preData.situationalModifiers) {
+                if (mal.dmmalus != undefined && mal.dmmalus != 0) {
+                    situationalModifiers.push({
+                        name: `${game.i18n.localize('MODS.defenseMalus')} - ${mal.name.replace(regex,"")}`,
+                        value: mal.dmmalus,
+                        selected: true
+                    })
+                } else if (mal.type == "defenseMalus" && mal.value != 0) {
+                    situationalModifiers.push({
+                        name: mal.name.replace(regex, ""),
+                        value: mal.value,
+                        selected: true
+                    })
+                }
             }
             if (message.data.flags.data.postData.halfDefense) {
                 situationalModifiers.push({
@@ -386,7 +409,7 @@ export default class Itemdsa5 extends Item {
             mountedOptions: DSA5.mountedRangeOptions,
             shooterMovementOptions: DSA5.shooterMovementOptions,
             targetMovementOptions: DSA5.targetMomevementOptions,
-            targetSize: targetSize,
+            targetSize,
             combatSpecAbs: combatskills,
             aimOptions: DSA5.aimOptions
         });
@@ -874,8 +897,7 @@ class CeremonyItemDSA5 extends LiturgyItemDSA5 {
     }
 
     static getSituationalModifiers(situationalModifiers, actor, data, source) {
-        situationalModifiers.push(...ItemRulesDSA5.getTalentBonus(actor.data, source.name, ["advantage", "disadvantage", "specialability", "equipment"]))
-        this.getSkZkModifier(data, source)
+        super.getSituationalModifiers(situationalModifiers, actor, data, source)
         mergeObject(data, {
             isCeremony: true,
             locationModifiers: DSA5.ceremonyLocationModifiers,
@@ -1045,6 +1067,10 @@ class DiseaseItemDSA5 extends Itemdsa5 {
         this.getSituationalModifiers(situationalModifiers, actor, data, item)
         data["situationalModifiers"] = situationalModifiers
 
+        if (options.manualResistance) {
+            mergeObject(data, options.manualResistance)
+        }
+
         let dialogOptions = {
             title,
             template: "/systems/dsa5/templates/dialog/poison-dialog.html",
@@ -1147,13 +1173,9 @@ class MeleeweaponDSA5 extends Itemdsa5 {
                 testData.narrowSpace = html.find('[name="narrowSpace"]').is(":checked")
                 testData.doubleAttack = html.find('[name="doubleAttack"]').is(":checked") ? (-2 + SpecialabilityRulesDSA5.abilityStep(actor, game.i18n.localize('LocalizedIDs.twoWeaponCombat'))) : 0
                 testData.wrongHand = html.find('[name="wrongHand"]').is(":checked") ? -4 : 0
-                let attackOfOpportunity = html.find('[name="opportunityAttack"]').is(":checked") ? -4 : 0
-                testData.attackOfOpportunity = attackOfOpportunity != 0
+                testData.attackOfOpportunity = this.attackOfOpportunity(html, testData.situationalModifiers)
                 testData.situationalModifiers.push(
                     Itemdsa5.parseValueType(game.i18n.localize("sight"), html.find('[name="vision"]').val() || 0), {
-                        name: game.i18n.localize("opportunityAttack"),
-                        value: attackOfOpportunity
-                    }, {
                         name: game.i18n.localize("attackFromBehind"),
                         value: html.find('[name="attackFromBehind"]').is(":checked") ? -4 : 0
                     }, {
@@ -1423,13 +1445,7 @@ class RitualItemDSA5 extends SpellItemDSA5 {
     }
 
     static getSituationalModifiers(situationalModifiers, actor, data, source) {
-        situationalModifiers.push(...ItemRulesDSA5.getTalentBonus(actor.data, source.name, ["advantage", "disadvantage", "specialability", "equipment"]))
-        situationalModifiers.push(...AdvantageRulesDSA5.getVantageAsModifier(actor.data, game.i18n.localize('LocalizedIDs.magicalAttunement'), 1, true))
-        situationalModifiers.push(...AdvantageRulesDSA5.getVantageAsModifier(actor.data, game.i18n.localize('LocalizedIDs.magicalRestriction'), -1, true))
-        situationalModifiers.push(...AdvantageRulesDSA5.getVantageAsModifier(actor.data, game.i18n.localize('LocalizedIDs.boundToArtifact'), -1, true))
-        situationalModifiers.push(...this.getPropertyModifiers(actor, source))
-        this.foreignSpellModifier(actor, source, situationalModifiers, data)
-        this.getSkZkModifier(data, source)
+        super.getSituationalModifiers(situationalModifiers, actor, data, source)
 
         mergeObject(data, {
             isRitual: true,
@@ -1637,12 +1653,8 @@ class TraitItemDSA5 extends Itemdsa5 {
                 testData.narrowSpace = html.find('[name="narrowSpace"]').is(":checked")
                 testData.doubleAttack = html.find('[name="doubleAttack"]').is(":checked") ? (-2 + SpecialabilityRulesDSA5.abilityStep(actor, game.i18n.localize('LocalizedIDs.twoWeaponCombat'))) : 0
                 testData.wrongHand = html.find('[name="wrongHand"]').is(":checked") ? -4 : 0
-                let attackOfOpportunity = html.find('[name="opportunityAttack"]').is(":checked") ? -4 : 0
-                testData.attackOfOpportunity = attackOfOpportunity != 0
+                testData.attackOfOpportunity = this.attackOfOpportunity(html, testData.situationalModifiers)
                 testData.situationalModifiers.push({
-                    name: game.i18n.localize("opportunityAttack"),
-                    value: attackOfOpportunity
-                }, {
                     name: game.i18n.localize("attackFromBehind"),
                     value: html.find('[name="attackFromBehind"]').is(":checked") ? -4 : 0
                 }, {

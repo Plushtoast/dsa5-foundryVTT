@@ -804,7 +804,8 @@
         "weightOnActor": "Wird vom Akteur getragen",
         "tempRegeneration": "Temporär, wird bei Regenerationswurf verbraucht.",
         "permRegeneration": "Permanent, wird bei jedem Regenerationswurf hinzugezählt",
-        "panMapNote": "Map Notiz fokussieren"
+        "panMapNote": "Map Notiz fokussieren",
+        "onUseEffect": "Gegenstand benutzen/Fähigkeit anwenden"
     },
     "ITEMSHEET": {
         "offHandMod": "Bonus/Malus als Nebenhand (z.b. Parierwaffe)"
@@ -998,9 +999,12 @@
         "appliedEffect": "Effekt <b>{source}</b> wurde auf <b>{target}</b> übertragen.",
         "custom": "Sondereffekt",
         "creature": "Akteuerlink (z.b. das5-core.corebestiary.Gotongi)",
+
         "placeholder": {
             "macros": "Macros können auf diese Variablen zugreifen:\nactor - Der anvisierte Akteur\ntestData - All Daten für die aktuelle Probe\nsource - Die Quelle des Macros",
-            "armorPostprocess": "Rüstungstransformation können auf diese Variablen zugreifen:\nactor - Der anvisierte Akteur\noptions.armor - Die Rüstungs des Ziels\noptions.attackItem - Die Quelle des Macros"
+            "armorPostprocess": "Rüstungstransformation können auf diese Variablen zugreifen:\nactor - Der anvisierte Akteur\noptions.armor - Die Rüstungs des Ziels\noptions.attackItem - Die Quelle des Macros",
+            "onRemove": "Macro wird beim Entfernen des Effekts aus dem Akteur ausgeführt.\nVariablen:\nactor - Der Akteur",
+            "onUseEffect": "Macro für die Benutzung des Items.\nVariablen:\nactor - Der Akteur\nitem - Der Gegenstand"
         },
         "advancedFunctions": {
             "none": "Nothing",
@@ -1008,7 +1012,9 @@
             "macro": "Macro",
             "creature": "Beschwörung/Gestaltwandlung",
             "armorPostprocess": "Rüstungstransformation (Macro)",
-            "damagePostprocess": "Schadenstransformation (Macro)"
+            "damagePostprocess": "Schadenstransformation (Macro)",
+            "onRemove": "Macro (Effektende)",
+            "onUseEffect": "Macro (Benutzung)"
         }
     },
     "ROLL": {
@@ -1113,7 +1119,8 @@
         "invocatioMaior": "Invocatio Maior",
         "manifesto": "Manifesto",
         "elementalServant": "Elementarer Diener",
-        "callDjinn": "Dschinnenruf"
+        "callDjinn": "Dschinnenruf",
+        "enemySense": "Feindgespür"
     },
     "LocalizedCTs": {
         "Blasrohre": "Blowpipes",

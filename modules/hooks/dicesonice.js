@@ -181,7 +181,7 @@ export class DiceSoNiceCustomization extends Application {
         html.find('[name="systemselection"]').change(async(ev) => {
             await game.settings.set("dsa5", `dice3d_system_${ev.currentTarget.dataset.attr}`, ev.currentTarget.value)
             DiceSoNiceCustomization.preloadDiceAssets([ev.currentTarget.value])
-            game.socket.emit("system.dsa5.player", {
+            game.socket.emit("system.dsa5", {
                 type: "preloadDice3d",
                 payload: {
                     toPreload: [ev.currentTarget.value]
@@ -191,32 +191,45 @@ export class DiceSoNiceCustomization extends Application {
     }
 
     static onConnect() {
+        game.socket.on("system.dsa5", data => {
+            switch (data.type) {
+                case "preloadDice3d":
+                    console.warn("Preloading forced DSA dice assets")
+                    DiceSoNiceCustomization.preloadDiceAssets(data.payload)
+                    break;
+                case "getPreloadDice3d":
+                    DiceSoNiceCustomization.requestDicePreloads()
+                    break
+            }
+        })
+
         this.collectPreloads()
-        let toPreload = new Set()
-        for (let attr of DiceSoNiceCustomization.attrs) {
-            toPreload.add(game.settings.get("dsa5", `dice3d_system_${attr}`))
-        }
-        this.preloadDiceAssets(toPreload)
+        game.socket.emit("system.dsa5", {
+            type: "getPreloadDice3d"
+        })
     }
 
-    static collectPreloads() {
-        let toPreload = new Set()
+    static collectPreloads(loadSelf = true) {
+        let payload = new Set()
         for (let attr of DiceSoNiceCustomization.attrs) {
-            toPreload.add(game.settings.get("dsa5", `dice3d_system_${attr}`))
+            payload.add(game.settings.get("dsa5", `dice3d_system_${attr}`))
         }
-        toPreload = Array.from(toPreload)
-        this.preloadDiceAssets(toPreload)
-        game.socket.emit("system.dsa5.player", {
+        payload = Array.from(payload)
+
+        if (loadSelf) this.preloadDiceAssets(payload)
+
+        game.socket.emit("system.dsa5", {
             type: "preloadDice3d",
-            payload: { toPreload }
+            payload
         })
     }
 
     static requestDicePreloads() {
-        this.collectPreloads()
+        this.collectPreloads(false)
     }
 
     static async preloadDiceAssets(names, types = []) {
+        console.warn("loading", names)
         for (const name of names) {
             const dieModel = game.dice3d.DiceFactory.systems[name]
             if (!dieModel) continue
@@ -225,9 +238,9 @@ export class DiceSoNiceCustomization extends Application {
             for (const model of dieModelsToLoad) {
                 try {
                     if (model.modelFile) {
-                        model.loadModel(game.dice3d.DiceFactory.loaderGLTF);
+                        await model.loadModel(game.dice3d.DiceFactory.loaderGLTF);
                     } else {
-                        model.loadTextures();
+                        await model.loadTextures();
                     }
                 } catch (error) {
                     console.warn("Unable to load dice model", name, model)

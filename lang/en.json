@@ -775,7 +775,8 @@
         "weightOnActor": "Being carried by the actor",
         "tempRegeneration": "Temporary, consumed on the next regeneration roll",
         "permRegeneration": "Permanent, bonus for every regeneration roll",
-        "panMapNote": "Focus map note"
+        "panMapNote": "Focus map note",
+        "onUseEffect": "Use item/use ability"
     },
     "ITEMSHEET": {
         "offHandMod": "Bonus/handicap offhand (e.g. parry weapon)"
@@ -974,7 +975,9 @@
         "creature": "Actorlink (e.g. das5-core.coreenbestiary.Gotongi)",
         "placeholder": {
             "macros": "Macros have access to the following variables:\nactor - The targeted actor\ntestData - All data for the current check\nsource - The source of the macro",
-            "armorPostprocess": "Armor transformations have access to the following variables:\nactor - The targeted actor\narmor - The armor of the target\nsource - The source of the macro"
+            "armorPostprocess": "Armor transformations have access to the following variables:\nactor - The targeted actor\narmor - The armor of the target\nsource - The source of the macro",
+            "onRemove": "Macro is executed on removal of the effect in an actor.\nVariables:\nactor - The actor",
+            "onUseEffect": "Macro for on use effect of the item.\nVariables:\nactor - The actor\nitem - The item"
         },
         "advancedFunctions": {
             "none": "Nichts",
@@ -982,7 +985,9 @@
             "macro": "Macro",
             "creature": "Conjuring/Shapeshift",
             "armorPostprocess": "Armor transformation (Macro)",
-            "damagePostprocess": "Damage transformation (Macro)"
+            "damagePostprocess": "Damage transformation (Macro)",
+            "onRemove": "Macro (End of effect)",
+            "onUseEffect": "Macro (On Use)"
         }
     },
     "LocalizedIDs": {
@@ -1068,7 +1073,8 @@
         "invocatioMaior": "Invocatio Maior",
         "manifesto": "Manifesto",
         "elementalServant": "Elemental Servant",
-        "callDjinn": "Call Djinn"
+        "callDjinn": "Call Djinn",
+        "enemySense": "Enemy Sense"
     },
     "LocalizedCTs": {
         "Blowpipes": "Blowpipes",

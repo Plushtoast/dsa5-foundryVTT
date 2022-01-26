@@ -1,3 +1,4 @@
+import DSAActiveEffectConfig from "../status/active_effects.js";
 import DSA5_Utility from "../system/utility-dsa5.js";
 
 export default function() {
@@ -10,6 +11,7 @@ export default function() {
             actor.markDead(false)
             return false
         }
+        DSAActiveEffectConfig.onEffectRemove(actor, effect)
     })
 
     const askForName = (actor) => {

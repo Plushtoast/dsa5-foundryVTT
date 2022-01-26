@@ -231,9 +231,9 @@ export default class DiceDSA5 {
 
         return {
             //result: res,
-            successLevel: successLevel,
+            successLevel,
             characteristics: chars,
-            description: description,
+            description,
             preData: testData,
             modifiers: modifier,
             extra: {}
@@ -281,7 +281,6 @@ export default class DiceDSA5 {
                 index += 2
             }
         }
-        console.log(isSick)
 
         result["characteristics"] = chars
         return result
@@ -343,7 +342,7 @@ export default class DiceDSA5 {
 
         return {
             rollType: "damage",
-            damage: damage,
+            damage,
             characteristics: chars,
 
             preData: testData,
@@ -387,9 +386,9 @@ export default class DiceDSA5 {
             existing.value = val
         } else {
             testData.situationalModifiers.push({
-                name: name,
+                name,
                 value: val,
-                type: type
+                type
             })
         }
     }

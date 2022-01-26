@@ -7,6 +7,7 @@ import { itemFromDrop, svgAutoFit } from "../system/view_helper.js"
 import DSA5ChatAutoCompletion from "../system/chat_autocompletion.js"
 import EquipmentDamage from "../system/equipment-damage.js"
 import DiceDSA5 from "../system/dice-dsa5.js"
+import OnUseEffect from "../system/onUseEffects.js"
 
 export default class ItemSheetdsa5 extends ItemSheet {
     constructor(item, options) {
@@ -67,6 +68,7 @@ export default class ItemSheetdsa5 extends ItemSheet {
         $(this._element).find(".showItemHead").attr("title", game.i18n.localize("SHEET.PostItem"));
         $(this._element).find(".consumeItem").attr("title", game.i18n.localize("SHEET.ConsumeItem"));
         $(this._element).find(".rollDamaged").attr("title", game.i18n.localize("DSASETTINGS.armorAndWeaponDamage"));
+        $(this._element).find(".onUseEffect").attr("title", game.i18n.localize("SHEET.onUseEffect"))
     }
 
     _getHeaderButtons() {
@@ -76,13 +78,21 @@ export default class ItemSheetdsa5 extends ItemSheet {
             icon: `fas fa-comment`,
             onclick: async() => this.item.postItem()
         })
+        if (this.item.actor && OnUseEffect.getOnUseEffect(this.item)) {
+            buttons.unshift({
+                class: "onUseEffect",
+                icon: `fas fa-dice-six`,
+                onclick: async() => {
+                    const onUse = new OnUseEffect(this.item)
+                    onUse.executeOnUseEffect()
+                }
+            })
+        }
         return buttons
     }
 
     setupEffect(ev) {
-        this.item.setupEffect().then(setupData => {
-            this.item.itemTest(setupData)
-        });
+        this.item.setupEffect().then(setupData => this.item.itemTest(setupData))
     }
 
     get template() {
@@ -111,12 +121,8 @@ export default class ItemSheetdsa5 extends ItemSheet {
     activateListeners(html) {
         super.activateListeners(html);
 
-        html.find(".advance-step").mousedown(ev => {
-            this.advanceWrapper(ev, "_advanceStep")
-        })
-        html.find(".refund-step").mousedown(ev => {
-            this.advanceWrapper(ev, "_refundStep")
-        })
+        html.find(".advance-step").mousedown(ev => this.advanceWrapper(ev, "_advanceStep"))
+        html.find(".refund-step").mousedown(ev => this.advanceWrapper(ev, "_refundStep"))
         html.find('.domainsPretty').click(ev => {
             $(ev.currentTarget).hide()
             $(ev.currentTarget).next('.domainToggle').show()
@@ -475,6 +481,7 @@ class EquipmentSheet extends Enchantable {
         const data = await super.getData(options);
         data['equipmentTypes'] = DSA5.equipmentTypes;
         data['domains'] = this.prepareDomains()
+        data.canOnUseEffect = game.user.isGM || await game.settings.get("dsa5", "playerCanEditSpellMacro")
         if (this.isBagWithContents()) {
             let weightSum = 0
             data['containerContent'] = this.item.actor.items
@@ -596,7 +603,7 @@ export class ArmorSheet extends Enchantable {
             armorSubcategories: Object.keys(DSA5.armorSubcategories),
             breakPointRating: DSA5.armorSubcategories[this.item.data.data.subcategory]
         })
-
+        data.canOnUseEffect = game.user.isGM || await game.settings.get("dsa5", "playerCanEditSpellMacro")
         return data
     }
     _getHeaderButtons() {
@@ -624,6 +631,7 @@ class MagicalSignSheet extends ItemSheetdsa5 {
     async getData(options) {
         const data = await super.getData(options);
         data.categories = { 1: game.i18n.localize("magicalsign"), 2: game.i18n.localize("additionalsign") }
+        data.canOnUseEffect = game.user.isGM || await game.settings.get("dsa5", "playerCanEditSpellMacro")
         return data
     }
     _getHeaderButtons() {
@@ -667,7 +675,8 @@ class RangeweaponSheet extends Enchantable {
         return buttons
     }
     async getData(options) {
-        const data = await super.getData(options);
+        const data = await super.getData(options)
+        data.canOnUseEffect = game.user.isGM || await game.settings.get("dsa5", "playerCanEditSpellMacro")
         mergeObject(data, {
             ammunitiongroups: DSA5.ammunitiongroups,
             combatskills: await DSA5_Utility.allCombatSkillsList("range"),
@@ -689,6 +698,12 @@ class BlessingSheetDSA5 extends ItemSheetdsa5 {
             })
         }
         return buttons
+    }
+
+    async getData(options) {
+        const data = await super.getData(options)
+        data.canOnUseEffect = game.user.isGM || await game.settings.get("dsa5", "playerCanEditSpellMacro")
+        return data
     }
 
     async setupEffect(ev) {
@@ -788,6 +803,12 @@ class MagictrickSheetDSA5 extends ItemSheetdsa5 {
         return buttons
     }
 
+    async getData(options) {
+        const data = await super.getData(options)
+        data.canOnUseEffect = game.user.isGM || await game.settings.get("dsa5", "playerCanEditSpellMacro")
+        return data
+    }
+
     async setupEffect(ev) {
         if (this.item.actor.data.data.status.astralenergy.value < 1)
             return ui.notifications.error(game.i18n.localize("DSAError.NotEnoughAsP"))
@@ -826,6 +847,7 @@ class MeleeweaponSheetDSA5 extends Enchantable {
             const combatSkill = this.item.actor.data.items.find(x => x.type == "combatskill" && x.name == this.item.data.data.combatskill.value)
             data['canBeOffHand'] = combatSkill && !(combatSkill.data.data.weapontype.twoHanded) && this.item.data.data.worn.value
         }
+        data.canOnUseEffect = game.user.isGM || await game.settings.get("dsa5", "playerCanEditSpellMacro")
         return data
     }
 
@@ -852,6 +874,7 @@ class PoisonSheetDSA5 extends ItemSheetdsa5 {
         })
         return buttons
     }
+
     async getData(options) {
         const data = await super.getData(options);
         data["resistances"] = DSA5.magicResistanceModifiers
@@ -898,8 +921,10 @@ class SpecialAbilitySheetDSA5 extends ItemSheetdsa5 {
         const data = await super.getData(options);
         data['categories'] = DSA5.specialAbilityCategories;
         data['subCategories'] = DSA5.combatSkillSubCategories
+        data.canOnUseEffect = game.user.isGM || await game.settings.get("dsa5", "playerCanEditSpellMacro")
         return data
     }
+
 }
 
 class ItemSpeciesDSA5 extends ItemSheetdsa5 {
@@ -1003,6 +1028,12 @@ class VantageSheetDSA5 extends ItemSheetdsa5 {
             await this.item.actor._updateAPs(xpCost * -1)
             await this.item.update({ "data.step.value": this.item.data.data.step.value - 1 })
         }
+    }
+
+    async getData(options) {
+        const data = await super.getData(options)
+        data.canOnUseEffect = game.user.isGM || await game.settings.get("dsa5", "playerCanEditSpellMacro")
+        return data
     }
 
     async _advanceStep() {

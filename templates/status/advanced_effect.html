@@ -31,4 +31,10 @@
         {{> systems/dsa5/templates/status/advanced_functions.html}}
     </div>
     {{/if}}
+    <div class="form-group full-height">
+        <label class="label-text">{{localize 'ActiveEffects.advancedFunctions.onRemove'}}</label> {{#if config.canEditMacros}}
+        <textarea class="input-text" rows="10" type="text" name="flags.dsa5.onRemove" placeholder="{{localize 'ActiveEffects.placeholder.onRemove'}}">{{effect.flags.dsa5.onRemove}}</textarea> {{else}}
+        <p class="input-text">{{#if effect.flags.dsa5.args3}}{{effect.flags.dsa5.onRemove}}{{else}} - {{/if}}</p>
+        {{/if}}
+    </div>
 </section>

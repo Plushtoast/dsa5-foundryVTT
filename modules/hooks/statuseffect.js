@@ -120,7 +120,7 @@ export default function() {
 
     Hooks.on("applyActiveEffect", (actor, change) => {
         let current = getProperty(actor.data, change.key) || null
-        if (current == null && /^data\.vulnerabilities/.test(change.key)) {
+        if (current == null && /^data\.(vulnerabilities|resistances)/.test(change.key)) {
             current = []
             setProperty(actor.data, change.key, current)
         }

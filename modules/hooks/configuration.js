@@ -334,6 +334,7 @@ export default function() {
         default: {},
         type: Object
     });
+
 }
 
 class ChangelogForm extends FormApplication {

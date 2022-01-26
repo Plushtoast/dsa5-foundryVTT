@@ -244,12 +244,12 @@ export default class OpposedDsa5 {
 
     static async playAutomatedJBA2(attacker, defender, opposedResult) {
         if (game.modules.get("autoanimations") && game.modules.get("autoanimations").active) {
-            if (opposedResult.winner == "attacker") {
-                const attackerToken = canvas.tokens.get(attacker.speaker.token)
-                if (!attackerToken || !attackerToken.actor) return
-                const item = attackerToken.actor.items.get(attacker.testResult.source._id)
-                AutoAnimations.playAnimation(attackerToken, Array.from(game.user.targets), item)
-            }
+            const attackerToken = canvas.tokens.get(attacker.speaker.token)
+            if (!attackerToken || !attackerToken.actor) return
+            const item = attackerToken.actor.items.get(attacker.testResult.source._id)
+            const targets = Array.from(game.user.targets)
+            const hitTargets = opposedResult.winner == "attacker" ? targets : []
+            AutoAnimations.playAnimation(attackerToken, targets, item, { hitTargets, playOnMiss: true })
         }
     }
 

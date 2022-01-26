@@ -133,7 +133,6 @@ export default class Actordsa5 extends Actor {
             data.data.status.initiative.value = Math.round(data.data.status.initiative.value)
             data.data.status.initiative.value += baseInit
 
-
             data.data.status.dodge.max = Number(data.data.status.dodge.value) + Number(data.data.status.dodge.modifier) + (Number(game.settings.get("dsa5", "higherDefense")) / 2)
 
             //Prevent double update with multiple GMs, still unsafe
@@ -241,6 +240,7 @@ export default class Actordsa5 extends Actor {
                         case "plant":
                         case "consumable":
                         case "combatskill":
+                        case "magicsign":
                         case "poison":
                         case "spell":
                         case "liturgy":
@@ -1318,9 +1318,9 @@ export default class Actordsa5 extends Actor {
             },
             opposable: false,
             extra: {
-                statusId: statusId,
+                statusId,
                 actor: this.toObject(false),
-                options: options,
+                options,
                 speaker: {
                     token: tokenId,
                     actor: this.data._id
@@ -1370,9 +1370,9 @@ export default class Actordsa5 extends Actor {
         let cardOptions = this._setupCardOptions("systems/dsa5/templates/chat/roll/regeneration-card.html", title)
 
         return DiceDSA5.setupDialog({
-            dialogOptions: dialogOptions,
-            testData: testData,
-            cardOptions: cardOptions
+            dialogOptions,
+            testData,
+            cardOptions
         });
     }
 
@@ -1390,7 +1390,7 @@ export default class Actordsa5 extends Actor {
             extra: {
                 statusId: statusId,
                 actor: this.toObject(false),
-                options: options,
+                options,
                 speaker: {
                     token: tokenId,
                     actor: this.data._id
@@ -1436,9 +1436,9 @@ export default class Actordsa5 extends Actor {
         let cardOptions = this._setupCardOptions("systems/dsa5/templates/chat/roll/status-card.html", title)
 
         return DiceDSA5.setupDialog({
-            dialogOptions: dialogOptions,
-            testData: testData,
-            cardOptions: cardOptions
+            dialogOptions,
+            testData,
+            cardOptions
         });
     }
 
@@ -1455,7 +1455,7 @@ export default class Actordsa5 extends Actor {
             extra: {
                 characteristicId: characteristicId,
                 actor: this.toObject(false),
-                options: options,
+                options,
                 speaker: {
                     token: tokenId,
                     actor: this.data._id
@@ -1484,9 +1484,9 @@ export default class Actordsa5 extends Actor {
         let cardOptions = this._setupCardOptions("systems/dsa5/templates/chat/roll/characteristic-card.html", title)
 
         return DiceDSA5.setupDialog({
-            dialogOptions: dialogOptions,
-            testData: testData,
-            cardOptions: cardOptions
+            dialogOptions,
+            testData,
+            cardOptions
         });
     }
 
@@ -1711,8 +1711,8 @@ export default class Actordsa5 extends Actor {
                 alias: this.data.token.name,
                 actor: this.data._id,
             },
-            title: title,
-            template: template,
+            title,
+            template,
             flags: { img: this.data.token.randomImg ? this.data.img : this.data.token.img }
         }
         if (this.token) {

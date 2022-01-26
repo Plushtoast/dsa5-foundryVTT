@@ -109,6 +109,7 @@ export default class DSA5StatusEffects {
     }
 
     static immuneToEffect(target, effect, silent = true) {
+        //TODO add this to effect dropdown
         const immunities = getProperty(target.data, "data.immunities") || []
         if (immunities.includes(effect.id)) {
             const msg = game.i18n.format("DSAError.immuneTo", { name: target.name, condition: game.i18n.localize(`CONDITION.${effect.id}`) })
@@ -116,6 +117,18 @@ export default class DSA5StatusEffects {
             return msg
         }
         return false
+    }
+
+    static resistantToEffect(target, effect) {
+        //TODO add this to effect dropdown
+        const effectId = getProperty(effect, "flags.core.statusId")
+        if (!effectId) return 0
+
+        const resistances = getProperty(target, "data.resistances.effects") || []
+        return resistances.reduce((res, val) => {
+            if (val.target == effectId) res += Number(val.value)
+            return res
+        }, 0)
     }
 
     static async createEffect(actor, effect, value, auto) {
@@ -189,7 +202,7 @@ export default class DSA5StatusEffects {
     static calculateRollModifier(effect, actor, item, options = {}) {
         if (effect.flags.dsa5.value == null || item.type == "regenerate") return 0
 
-        return effect.flags.dsa5.value * -1
+        return Math.max(-1 * effect.flags.dsa5.max, Math.min(0, effect.flags.dsa5.value * -1 + this.resistantToEffect(actor, effect)))
     }
 
     static ModifierIsSelected(item, options = {}, actor) {
@@ -293,7 +306,7 @@ class DrunkenEffect extends DSA5StatusEffects {
     static calculateRollModifier(effect, actor, item, options = {}) {
         if (item.type == "regenerate") return 0
         if (item.type == "skill" && item.name == game.i18n.localize("LocalizedIDs.gambling"))
-            return effect.flags.dsa5.value * -1
+            return Math.max(-3, Math.min(effect.flags.dsa5.value * -1 + this.resistantToEffect(actor, effect)))
 
         return 0
     }
@@ -303,7 +316,7 @@ class BurningEffect extends DSA5StatusEffects {
     static calculateRollModifier(effect, actor, item, options = {}) {
         if (item.type == "regenerate") return 0
         if (item.type == "skill" && item.name == game.i18n.localize("LocalizedIDs.bodyControl"))
-            return (effect.flags.dsa5.value - 1) * -1
+            return Math.max(-2, Math.min(0, (effect.flags.dsa5.value - 1) * -1 + this.resistantToEffect(actor, effect)))
 
         return 0
     }
@@ -330,7 +343,7 @@ class SikaryanlossEffect extends DSA5StatusEffects {
 class DesireEffect extends DSA5StatusEffects {
     static calculateRollModifier(effect, actor, item, options = {}) {
         if (item.type == "skill" && item.name == game.i18n.localize("LocalizedIDs.willpower"))
-            return effect.flags.dsa5.value * -1
+            return Math.max(-3, Math.min(0, effect.flags.dsa5.value * -1 + this.resistantToEffect(actor, effect)))
 
         return 0
     }

@@ -1,10 +1,45 @@
 import DSA5 from "../system/config-dsa5.js"
 
+const callMacro = async(packName, name, actor, item, qs, args = {}) => {
+    let result = {}
+    if (!game.user.can("MACRO_SCRIPT")) {
+        ui.notifications.warn(`You are not allowed to use JavaScript macros.`);
+    } else {
+        const pack = game.packs.get(packName)
+        const documents = await pack.getDocuments({ name })
+
+        if (documents.length) {
+            const body = `(async () => {${documents[0].data.command}})()`;
+            const fn = Function("actor", "item", "qs", "args", body);
+            try {
+                args.result = result
+                await fn.call(this, actor, item, qs, args);
+            } catch (err) {
+                ui.notifications.error(`There was an error in your macro syntax. See the console (F12) for details`);
+                console.error(err);
+                result.error = true
+            }
+        }
+    }
+    return result
+}
+
 export default class DSAActiveEffectConfig extends ActiveEffectConfig {
     static get defaultOptions() {
         return mergeObject(super.defaultOptions, {
             resizable: true
         })
+    }
+
+    static async onEffectRemove(actor, effect) {
+        const onRemoveMacro = getProperty(effect, "data.flags.dsa5.onRemove")
+        if (onRemoveMacro) {
+            if (!game.user.can("MACRO_SCRIPT")) {
+                ui.notifications.warn(`You are not allowed to use JavaScript macros.`);
+            } else {
+                await eval(`(async () => {${onRemoveMacro}})()`)
+            }
+        }
     }
 
     async _render(force = false, options = {}) {
@@ -61,12 +96,8 @@ export default class DSAActiveEffectConfig extends ActiveEffectConfig {
                 if (Number(getProperty(ef, "flags.dsa5.advancedFunction")) == functionID) {
                     eval(getProperty(ef, "flags.dsa5.args3"))
                 }
-
-
             } catch (exception) {
-                console.warn("Unable to apply advanced effect")
-                console.warn(exception)
-                console.warn(ef)
+                console.warn("Unable to apply advanced effect", exception, ef)
             }
         }
         options.origin = source
@@ -94,7 +125,11 @@ export default class DSAActiveEffectConfig extends ActiveEffectConfig {
                         }
                         break
                     case 2: //Macro
-                        await eval(`(async () => {${getProperty(ef, "flags.dsa5.args3")}})()`)
+                        if (!game.user.can("MACRO_SCRIPT")) {
+                            ui.notifications.warn(`You are not allowed to use JavaScript macros.`);
+                        } else {
+                            await eval(`(async () => {${getProperty(ef, "flags.dsa5.args3")}})()`)
+                        }
                         break
                     case 3: // Creature Link
                         let creatures = (getProperty(ef, "flags.dsa5.args4") || "").split(",").map(x => `@Compendium[${x.trim().replace(/(@Compendium\[|\])/)}]`).join(" ")

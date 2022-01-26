@@ -96,22 +96,27 @@ export default class CreatureType {
         }]
     }
 
+    weaponAttributes(attackItem) {
+        return getProperty(attackItem, "data.effect.attributes") || ""
+    }
+
     getTypeByClass(className) {
         return Object.keys(CreatureType.creatureData.types).find(key => CreatureType.creatureData.types[key] === className)
     }
 
-    static isAttackItem(attackItem) {
-        return ["meleeweapon", "trait", "rangeweapon"].includes(attackItem.type) && isNotEmpty(attackItem.data.effect.attributes)
+    isAttackItem(attackItem) {
+        return ["meleeweapon", "trait", "rangeweapon"].includes(attackItem.type) && isNotEmpty(this.weaponAttributes(attackItem))
     }
 
     attributesRegex(attackItem) {
-        return new RegExp(`(${attackItem.data.effect.attributes.split(',').map(x => DSA5_Utility.escapeRegex(x.split('(')[0].trim())).join("|")})`, "i")
+        const attributes = this.weaponAttributes(attackItem)
+        return new RegExp(`(${attributes.split(',').map(x => DSA5_Utility.escapeRegex(x.split('(')[0].trim())).join("|")})`, "i")
     }
 }
 
 class VulnerableToLifeGods extends CreatureType {
     damageModifier(attackItem) {
-        if (CreatureType.isAttackItem(attackItem)) {
+        if (this.isAttackItem(attackItem)) {
             const regex = this.attributesRegex(attackItem)
             for (const god of CreatureType.creatureData.godOfLife) {
                 const name = `${CreatureType.clerical} (${god})`
@@ -132,7 +137,7 @@ class DaimonidType extends CreatureType {
         this.spellImmunities = ['Influence', 'Transformation'].map(x => game.i18n.localize(`Features.${x}`))
     }
     damageModifier(attackItem) {
-        if (CreatureType.isAttackItem(attackItem)) {
+        if (this.isAttackItem(attackItem)) {
             const regex = this.attributesRegex(attackItem)
             if (regex.test(CreatureType.clerical)) return CreatureType.buildDamageMod(CreatureType.clerical, "*2")
         }
@@ -152,13 +157,13 @@ class DemonType extends CreatureType {
         this.diseaseImmunity = true
     }
     damageModifier(attackItem) {
-        if (CreatureType.isAttackItem(attackItem)) {
+        if (this.isAttackItem(attackItem)) {
             const regex = this.attributesRegex(attackItem)
             if (regex.test(CreatureType.clerical)) return CreatureType.buildDamageMod(`${CreatureType.clerical} (${CreatureType.creatureData.opposingGod})`, "*2", false)
 
             if (regex.test(CreatureType.magical)) return super.damageModifier(attackItem)
         } else if (["spell", "ceremony", "liturgy", "ritual"].includes(attackItem.type)) {
-            return CreatureType.buildDamageMod(this.getTypeByClass("DemonType"), "*1")
+            return super.damageModifier(attackItem)
         }
         return CreatureType.buildDamageMod(this.getTypeByClass("DemonType"), "*0.5")
     }
@@ -180,8 +185,8 @@ class ElementalType extends CreatureType {
         this.diseaseImmunity = true
     }
     damageModifier(attackItem) {
-        if (CreatureType.isAttackItem(attackItem)) {
-            const regex = new RegExp(attackItem.data.effect.attributes.split(',').map(x => DSA5_Utility.escapeRegex(x.split('(')[0].trim())).join("|"), "i")
+        if (this.isAttackItem(attackItem)) {
+            const regex = new RegExp(this.weaponAttributes(attackItem).split(',').map(x => DSA5_Utility.escapeRegex(x.split('(')[0].trim())).join("|"), "i")
             if (regex.test(CreatureType.magical)) return super.damageModifier(attackItem)
         } else if (["spell", "ceremony", "liturgy", "ritual"].includes(attackItem.type)) {
             return CreatureType.buildDamageMod(this.getTypeByClass("ElementalType"), "*1")
@@ -216,13 +221,13 @@ class GhostType extends CreatureType {
         this.diseaseImmunity = true
     }
     damageModifier(attackItem) {
-        if (CreatureType.isAttackItem(attackItem)) {
-            let regex = new RegExp(attackItem.data.effect.attributes.split(',').map(x => DSA5_Utility.escapeRegex(x.trim())).join("|"), "i")
+        if (this.isAttackItem(attackItem)) {
+            let regex = new RegExp(this.weaponAttributes(attackItem).split(',').map(x => DSA5_Utility.escapeRegex(x.trim())).join("|"), "i")
             for (const god of CreatureType.creatureData.godOfDeath) {
                 const name = `${CreatureType.clerical} (${god})`
                 if (regex.test(name)) return []
             }
-            regex = new RegExp(attackItem.data.effect.attributes.split(',').map(x => DSA5_Utility.escapeRegex(x.split("(")[0].trim())).join("|"), "i")
+            regex = new RegExp(this.weaponAttributes(attackItem).split(',').map(x => DSA5_Utility.escapeRegex(x.split("(")[0].trim())).join("|"), "i")
             if (regex.test(CreatureType.clerical)) return CreatureType.buildDamageMod(CreatureType.clerical, "*0.5")
             if (regex.test(CreatureType.magical)) return CreatureType.buildDamageMod(CreatureType.magical, "*0.5")
         } else if (["spell", "ceremony", "liturgy", "ritual"].includes(attackItem.type)) {
@@ -277,8 +282,8 @@ class UndeadType extends CreatureType {
         this.diseaseImmunity = true
     }
     damageModifier(attackItem) {
-        if (CreatureType.isAttackItem(attackItem)) {
-            const regex = new RegExp(attackItem.data.effect.attributes.split(',').map(x => DSA5_Utility.escapeRegex(x.trim())).join("|"), "i")
+        if (this.isAttackItem(attackItem)) {
+            const regex = new RegExp(this.weaponAttributes(attackItem).split(',').map(x => DSA5_Utility.escapeRegex(x.trim())).join("|"), "i")
             for (const god of CreatureType.creatureData.godOfDeath) {
                 const name = `${CreatureType.clerical} (${god})`
                 if (regex.test(name)) return CreatureType.buildDamageMod(name, "*2")
@@ -309,8 +314,8 @@ class MagicalConstructType extends CreatureType {
 
 class WerCreatureType extends CreatureType {
     damageModifier(attackItem) {
-        if (CreatureType.isAttackItem(attackItem)) {
-            const regex = new RegExp(attackItem.data.effect.attributes.split(',').map(x => DSA5_Utility.escapeRegex(x.trim())).join("|"), "i")
+        if (this.isAttackItem(attackItem)) {
+            const regex = new RegExp(this.weaponAttributes(attackItem).split(',').map(x => DSA5_Utility.escapeRegex(x.trim())).join("|"), "i")
             if (regex.test(CreatureType.silverPlated)) return super.damageModifier(attackItem)
 
             return CreatureType.buildDamageMod(this.getTypeByClass("WerCreatureType"), "*0.5")
@@ -321,7 +326,7 @@ class WerCreatureType extends CreatureType {
 
 class VampireType extends CreatureType {
     damageModifier(attackItem) {
-        if (CreatureType.isAttackItem(attackItem)) {
+        if (this.isAttackItem(attackItem)) {
             return CreatureType.buildDamageMod(this.getTypeByClass("VampireType"), "*0.5")
         }
         return super.damageModifier(attackItem)
