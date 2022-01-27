@@ -940,9 +940,19 @@ export default class ActorSheetDsa5 extends ActorSheet {
         }
     }
 
+    async _addUniqueItem(item) {
+        item = duplicate(item)
+        if (!this.actor.data.items.some(i => Itemdsa5.areEquals(item, i)))
+            return (await this.actor.createEmbeddedDocuments("Item", [item]))[0];
+    }
+
+    async _addDemonMark(item) {
+        return await this._addUniqueItem(item)
+    }
+
     async _addDisease(item) {
         item.data.duration.resolved = "?"
-        this._addLoot(item)
+        return await this._addUniqueItem(item)
     }
 
     async _addSkill(item) {
@@ -1030,6 +1040,9 @@ export default class ActorSheetDsa5 extends ActorSheet {
                     shapeshift.render(true)
                     break
                 }
+            case "demonmark":
+                await this._addDemonMark(item)
+                break
             default:
                 ui.notifications.error(game.i18n.format("DSAError.canNotBeAdded", { item: item.name, category: game.i18n.localize(item.type) }))
         }

@@ -16,7 +16,7 @@ export default class DPS {
     }
 
     static distanceModifier(tokenSource, rangeweapon, currentAmmo) {
-        if (!game.settings.get("dsa5", "enableDPS")) return 1
+        if (!game.settings.get("dsa5", "enableDPS") || !tokenSource) return 1
 
         let maxDist = {}
         for (let target of game.user.targets) {

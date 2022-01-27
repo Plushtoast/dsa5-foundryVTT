@@ -336,7 +336,8 @@
             "application",
             "effectwrapper",
             "plant",
-            "magicalsign"
+            "magicalsign",
+            "demonmark"
         ],
         "templates": {
             "skill": {
@@ -914,6 +915,15 @@
             "effect": {
                 "value": ""
             }
+        },
+        "demonmark": {
+            "templates": [
+                "description"
+            ],
+            "circle": 1,
+            "attribute": "",
+            "skills": "",
+            "domain": ""
         },
         "disadvantage": {
             "templates": [

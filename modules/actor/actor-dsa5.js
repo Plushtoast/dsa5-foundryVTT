@@ -481,6 +481,7 @@ export default class Actordsa5 extends Actor {
         let disadvantages = []
         let aggregatedtests = []
         let diseases = []
+        let demonmarks = []
 
         const specAbs = Object.fromEntries(Object.keys(DSA5.specialAbilityCategories).map(x => [x, []]))
         const traits = Object.fromEntries(Object.keys(DSA5.traitCategories).map(x => [x, []]))
@@ -728,6 +729,9 @@ export default class Actordsa5 extends Actor {
                     case "disease":
                         diseases.push(i)
                         break
+                    case "demonmark":
+                        demonmarks.push(i)
+                        break
                     case "application":
                         if (applications.has(i.data.skill)) applications.get(i.data.skill).push(i)
                         else applications.set(i.data.skill, [i])
@@ -808,6 +812,7 @@ export default class Actordsa5 extends Actor {
             wornArmor: armor,
             inventory,
             hasTrait,
+            demonmarks,
             diseases,
             itemModifiers: this.data.itemModifiers,
             languagePoints: {

@@ -1,0 +1,36 @@
+<form class="dsa5 item-sheet {{cssClass}}" autocomplete="off">
+    {{> systems/dsa5/templates/items/item-header.html}} {{> systems/dsa5/templates/items/item-stat.html}}
+
+    <nav class="sheet-tabs tabs" data-tab-container="primary">
+        <a class="item active" data-tab="description">{{localize "Description"}}</a>
+        <a class="item" data-tab="details">{{localize "Details"}}</a>
+    </nav>
+
+
+    <section class="content">
+
+        {{> systems/dsa5/templates/items/item-description.html}}
+
+        <div class="tab details" data-tab="details">
+
+            <div class="form-group">
+                <label class="label-text">{{localize "circle"}}</label>
+                <input class="input-text" type="number" name="data.circle" value="{{data.circle}}" data-dtype="Number" />
+            </div>
+            <div class="form-group">
+                <label class="label-text">{{localize "domains"}}</label>
+                <input class="input-text" type="text" name="data.domain" value="{{data.domain}}" data-dtype="String" />
+            </div>
+            <div class="form-group">
+                <label class="label-text">{{localize "attributes"}}</label>
+                <input class="input-text" type="text" name="data.attribute" value="{{data.attribute}}" data-dtype="String" />
+            </div>
+            <div class="form-group full-height">
+                <label class="label-text">{{localize "skills"}}</label>
+                <textarea class="input-text" type="text" name="data.skills" data-dtype="String">{{data.skills}}</textarea>
+            </div>
+
+        </div>
+
+    </section>
+</form>
