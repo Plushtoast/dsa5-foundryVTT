@@ -12,6 +12,7 @@ import RuleChaos from "../system/rule_chaos.js";
 import { tinyNotification } from "../system/view_helper.js";
 import EquipmentDamage from "../system/equipment-damage.js";
 import DSAActiveEffectConfig from "../status/active_effects.js";
+import OnUseEffect from "../system/onUseEffects.js";
 
 export default class Actordsa5 extends Actor {
     static async create(data, options) {
@@ -249,7 +250,7 @@ export default class Actordsa5 extends Actor {
                             apply = false
                             break
                         case "specialability":
-                            apply = item.data.data.category.value != "Combat"
+                            apply = item.data.data.category.value != "Combat" || [2, 3].includes(item.data.data.category.sub)
                             break
                     }
                     e.notApplicable = !apply
@@ -274,6 +275,10 @@ export default class Actordsa5 extends Actor {
         }
 
         this.overrides = foundry.utils.expandObject(overrides);
+    }
+
+    _setOnUseEffect(item) {
+        if (getProperty(item, "flags.dsa5.onUseEffect")) item.OnUseEffect = true
     }
 
     prepareBaseData() {
@@ -482,6 +487,7 @@ export default class Actordsa5 extends Actor {
         let aggregatedtests = []
         let diseases = []
         let demonmarks = []
+        let wornweapons = []
 
         const specAbs = Object.fromEntries(Object.keys(DSA5.specialAbilityCategories).map(x => [x, []]))
         const traits = Object.fromEntries(Object.keys(DSA5.traitCategories).map(x => [x, []]))
@@ -657,14 +663,17 @@ export default class Actordsa5 extends Actor {
                         i.weight = parseFloat((i.data.weight.value * i.data.quantity.value).toFixed(3));
                         i.toggleValue = i.data.worn.value || false;
                         i.toggle = true
+                        this._setOnUseEffect(i)
                         inventory.meleeweapons.items.push(Actordsa5._prepareitemStructure(i));
                         inventory.meleeweapons.show = true;
+                        if(i.toggleValue) wornweapons.push(i)
                         totalWeight += Number(i.weight);
                         break;
                     case "rangeweapon":
                         i.weight = parseFloat((i.data.weight.value * i.data.quantity.value).toFixed(3));
                         i.toggleValue = i.data.worn.value || false;
                         i.toggle = true
+                        this._setOnUseEffect(i)
                         inventory.rangeweapons.items.push(Actordsa5._prepareitemStructure(i));
                         inventory.rangeweapons.show = true;
                         totalWeight += Number(i.weight);
@@ -674,6 +683,7 @@ export default class Actordsa5 extends Actor {
                         inventory.armor.items.push(Actordsa5._prepareitemStructure(i));
                         inventory.armor.show = true;
                         i.toggle = true
+                        this._setOnUseEffect(i)
                         i.weight = parseFloat((i.data.weight.value * i.data.quantity.value).toFixed(3));
                         totalWeight += parseFloat((i.data.weight.value * (i.toggleValue ? Math.max(0, i.data.quantity.value - 1) : i.data.quantity.value)).toFixed(3))
 
@@ -707,6 +717,7 @@ export default class Actordsa5 extends Actor {
 
                         if (i.toggle) i.toggleValue = i.data.worn.value || false
 
+                        this._setOnUseEffect(i)
                         inventory[i.data.equipmentType.value].items.push(Actordsa5._prepareitemStructure(i));
                         inventory[i.data.equipmentType.value].show = true;
                         totalWeight += Number(i.weight);
@@ -718,12 +729,15 @@ export default class Actordsa5 extends Actor {
                         money.total += i.data.quantity.value * i.data.price.value;
                         break;
                     case "advantage":
+                        this._setOnUseEffect(i)
                         advantages.push(i)
                         break;
                     case "disadvantage":
+                        this._setOnUseEffect(i)
                         disadvantages.push(i)
                         break;
                     case "specialability":
+                        this._setOnUseEffect(i)
                         specAbs[i.data.category.value].push(i)
                         break;
                     case "disease":
@@ -761,8 +775,7 @@ export default class Actordsa5 extends Actor {
             }
         }
 
-        let wornweapons = inventory.meleeweapons.items.filter(x => x.data.worn.value)
-        let regex2h = /\(2H/
+        const regex2h = /\(2H/
 
         for (let wep of wornweapons) {
             try {
@@ -1537,6 +1550,7 @@ export default class Actordsa5 extends Actor {
         else if((item.data.effect && item.data.effect.value != "") || item.effects.length > 0){
             item.enchantClass = "common"
         }
+
         return item
     }
 
@@ -1630,21 +1644,22 @@ export default class Actordsa5 extends Actor {
         let parseDamage = new Roll(item.data.damage.value.replace(/[Ww]/g, "d"), { async: false })
 
         let damageDie = "",
-            damageTerm = ""
+            damageTerm = "",
+            lastOperator = "+"
         for (let k of parseDamage.terms) {
             if (k.faces) damageDie = k.number + "d" + k.faces
-            else if (k.number) damageTerm += k.number
+            else if (k.operator) lastOperator = k.operator
+            else if (k.number) damageTerm += Number(`${lastOperator}${k.number}`)
         }
         if (modification){
             let damageMod = getProperty(modification, "data.damageMod")
             if (Number(damageMod)) damageTerm += `+${Number(damageMod)}`
             else if(damageMod) item.damageBonusDescription = `, ${damageMod} ${game.i18n.localize('CHARAbbrev.damage')} ${modification.name}`
         }
-
         if (damageTerm) damageTerm = Roll.safeEval(damageTerm)
 
         item.damagedie = damageDie ? damageDie : "0d6"
-        item.damageAdd = damageTerm != "" ? (Number(damageTerm) > 0 ? "+" : "") + damageTerm : ""
+        item.damageAdd = damageTerm != "" ? (Number(damageTerm) >= 0 ? "+" : "") + damageTerm : ""
 
         return item
     }
@@ -1707,6 +1722,7 @@ export default class Actordsa5 extends Actor {
         } else {
             ui.notifications.error(game.i18n.format("DSAError.unknownCombatSkill", { skill: item.data.combatskill.value, item: item.name }))
         }
+
         return this._parseDmg(item, currentAmmo)
     }
 

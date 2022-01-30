@@ -619,7 +619,7 @@ export default class ActorSheetDsa5 extends ActorSheet {
         });
 
         const deletehand = ev => this._deleteItem(ev)
-        const onUseHand = ev => this._onMacroUseItem(ev)
+        html.find('.onUseItem').click(ev => this._onMacroUseItem(ev))
 
         html.find(".cards .item").mouseenter(ev => {
 
@@ -636,13 +636,6 @@ export default class ActorSheetDsa5 extends ActorSheet {
                 post.classList.add("fas", "fa-comment")
                 post.title = game.i18n.localize('SHEET.PostItem')
                 post.addEventListener('click', posthand, false)
-                if (OnUseEffect.getOnUseEffect(item)) {
-                    const onUse = document.createElement('i')
-                    onUse.classList.add("fas", "fa-dice-six")
-                    onUse.title = game.i18n.localize('SHEET.onUseEffect')
-                    onUse.addEventListener('click', onUseHand)
-                    div.appendChild(onUse)
-                }
                 div.appendChild(post)
                 div.appendChild(del)
                 ev.currentTarget.appendChild(div)

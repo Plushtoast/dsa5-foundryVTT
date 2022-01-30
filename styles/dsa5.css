@@ -368,6 +368,15 @@ input[type=text].emphasize {
     background: rgb(29, 28, 28);
 }
 
+select[multiple] option {
+    background-color: transparent;
+}
+
+select[multiple] option:checked {
+    background-color: #12496c;
+    color: white;
+}
+
 .characteristics {
     display: flex;
     width: 100%;
@@ -706,13 +715,25 @@ input[type="text"].col-Money-H {
     position: relative;
 }
 
+.cards .item {
+    box-shadow: 0 0 12px #6e3b018F inset;
+}
+
 .cards a {
     padding: 4px;
     border-radius: 2px;
     width: 100%;
     display: inline-block;
     text-align: center;
-    box-shadow: 0 0 12px #6e3b018F inset;
+}
+
+.cards a.onUseItem {
+    width: 28px;
+    box-shadow: none;
+}
+
+.cards a.onUseItem+a {
+    width: calc(100% - 28px);
 }
 
 .main-row {
@@ -3089,6 +3110,16 @@ input[type="checkbox"].autoCheckbox {
 
 .fxmaster .window-content .directory-item .config input[type="text"] {
     color: black;
+}
+
+.ammo-selector {
+    max-width: calc(100% - 27px);
+}
+
+.window-app .condition-show {
+    text-overflow: ellipsis;
+    overflow: hidden;
+    white-space: nowrap;
 }
 
 

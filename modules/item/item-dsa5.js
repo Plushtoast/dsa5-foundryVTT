@@ -82,14 +82,17 @@ export default class Itemdsa5 extends Item {
         for (let k of html.find('.specAbs')) {
             let step = Number($(k).attr("data-step"))
             if (step > 0) {
-                let val = mode == "attack" ? $(k).attr("data-atbonus") : $(k).attr("data-pabonus")
+                const val = (mode == "attack" ? $(k).attr("data-atbonus") : $(k).attr("data-pabonus"))
+                const reducedVal = val.split(",")
+                    .reduce((prev, cur) => { return prev + Number(cur) }, 0)
                 res.push({
                     name: $(k).find('a').text(),
-                    value: Number(val) * step,
+                    value: isNaN(reducedVal) ? Number(val.replace('*', '')) : Number(reducedVal) * step,
                     damageBonus: $(k).attr("data-tpbonus"),
                     dmmalus: $(k).attr("data-dmmalus") * step,
                     step: step,
-                    specAbId: $(k).attr("data-id")
+                    specAbId: $(k).attr("data-id"),
+                    type: /^\*/.test(val) ? "*" : undefined
                 })
             }
         }
@@ -152,7 +155,7 @@ export default class Itemdsa5 extends Item {
         return await DSA5StatusEffects.addCondition(this, effect, value, absolute, auto)
     }
 
-    async _dependentEffects(statusId, effect, delta) {}
+    async _dependentEffects(statusId, effect, delta) { }
 
     async removeCondition(effect, value = 1, auto = true, absolute = false) {
         return DSA5StatusEffects.removeCondition(this, effect, value, auto, absolute)
@@ -195,7 +198,7 @@ export default class Itemdsa5 extends Item {
             let vals = mod.replace(/(\s+)/g, ' ').trim().split(" ")
             vals[0] = vals[0].replace(regex, actor.data.data.status.speed.max)
             if (vals.length == 2) {
-                if (!isNaN(vals[0]) || /(=)?[+-]\d([+-]\d)?/.test(vals[0]) || /(=)?\d[dDwW]\d/.test(vals[0]) || /=\d+/.test(vals[0])) {
+                if (!isNaN(vals[0]) || /(=)?[+-]\d([+-]\d)?/.test(vals[0]) || /(=)?\d[dDwW]\d/.test(vals[0]) || /=\d+/.test(vals[0]) || /\*\d(\.\d)*/.test(vals[0])) {
                     if (itemModifiers[vals[1].toLowerCase()] == undefined) {
                         itemModifiers[vals[1].toLowerCase()] = [vals[0]]
                     } else {
@@ -236,7 +239,7 @@ export default class Itemdsa5 extends Item {
             for (let mal of message.data.flags.data.preData.situationalModifiers) {
                 if (mal.dmmalus != undefined && mal.dmmalus != 0) {
                     situationalModifiers.push({
-                        name: `${game.i18n.localize('MODS.defenseMalus')} - ${mal.name.replace(regex,"")}`,
+                        name: `${game.i18n.localize('MODS.defenseMalus')} - ${mal.name.replace(regex, "")}`,
                         value: mal.dmmalus,
                         selected: true
                     })
@@ -398,15 +401,18 @@ export default class Itemdsa5 extends Item {
             })
         }
 
-        const rangeOptions = {...DSA5.rangeWeaponModifiers }
+        const rangeOptions = { ...DSA5.rangeWeaponModifiers }
         delete rangeOptions[AdvantageRulesDSA5.hasVantage(actor, game.i18n.localize('LocalizedIDs.senseOfRange')) ? "long" : "rangesense"]
+
+        const drivingArcher = actor.items.some(x => x.name == game.i18n.localize("LocalizedIDs.drivingArcher") && x.type == "specialability")
+        const mountedOptions = drivingArcher ? duplicate(DSA5.drivingArcherOptions) : duplicate(DSA5.mountedRangeOptions)
 
         mergeObject(data, {
             rangeOptions,
             rangeDistance: Object.keys(rangeOptions)[DPS.distanceModifier(game.canvas.tokens.get(tokenId), source, currentAmmo)],
             sizeOptions: DSA5.rangeSizeCategories,
             visionOptions: DSA5.rangeVision,
-            mountedOptions: DSA5.mountedRangeOptions,
+            mountedOptions,
             shooterMovementOptions: DSA5.shooterMovementOptions,
             targetMovementOptions: DSA5.targetMomevementOptions,
             targetSize,
@@ -416,13 +422,16 @@ export default class Itemdsa5 extends Item {
     }
 
     static prepareMeleeAttack(situationalModifiers, actor, data, source, combatskills, wrongHandDisabled) {
-        let targetWeaponsize = "short"
+        let targetWeaponSize = "short"
         if (game.user.targets.size) {
             game.user.targets.forEach(target => {
                 if (target.actor) {
-                    let defWeapon = target.actor.items.filter(x => x.data.type == "meleeweapon" && x.data.data.worn.value)
+                    const defWeapon = target.actor.items.filter(x => {
+                        return (x.data.type == "meleeweapon" && x.data.data.worn.value)
+                            || (x.data.type == "trait" && x.data.data.traitType.value == "meleeAttack" && x.data.data.pa)
+                    })
                     if (defWeapon.length > 0)
-                        targetWeaponsize = defWeapon[0].data.data.reach.value
+                        targetWeaponSize = defWeapon[0].data.data.reach.value
 
                     CreatureType.addCreatureTypeModifiers(target.actor.data, source, situationalModifiers)
                 }
@@ -446,7 +455,7 @@ export default class Itemdsa5 extends Item {
             weaponSizes: DSA5.meleeRanges,
             melee: true,
             showAttack: true,
-            targetWeaponSize: targetWeaponsize,
+            targetWeaponSize,
             combatSpecAbs: combatskills,
 
             constricted: actor.hasCondition("constricted"),
@@ -672,7 +681,7 @@ class CantripItemDSA5 extends Itemdsa5 {
     }
 }
 
-class BlessingItemDSA5 extends CantripItemDSA5 {}
+class BlessingItemDSA5 extends CantripItemDSA5 { }
 
 class SpellItemDSA5 extends Itemdsa5 {
     static chatData(data, name) {
@@ -1176,20 +1185,20 @@ class MeleeweaponDSA5 extends Itemdsa5 {
                 testData.attackOfOpportunity = this.attackOfOpportunity(html, testData.situationalModifiers)
                 testData.situationalModifiers.push(
                     Itemdsa5.parseValueType(game.i18n.localize("sight"), html.find('[name="vision"]').val() || 0), {
-                        name: game.i18n.localize("attackFromBehind"),
-                        value: html.find('[name="attackFromBehind"]').is(":checked") ? -4 : 0
-                    }, {
-                        name: game.i18n.localize("MODS.damage"),
-                        damageBonus: html.find('[name="damageModifier"]').val(),
-                        value: 0,
-                        step: 1
-                    }, {
-                        name: game.i18n.format("defenseCount", { malus: multipleDefenseValue }),
-                        value: (Number(html.find('[name="defenseCount"]').val()) || 0) * multipleDefenseValue
-                    }, {
-                        name: game.i18n.localize("advantageousPosition"),
-                        value: html.find('[name="advantageousPosition"]').is(":checked") ? 2 : 0
-                    },
+                    name: game.i18n.localize("attackFromBehind"),
+                    value: html.find('[name="attackFromBehind"]').is(":checked") ? -4 : 0
+                }, {
+                    name: game.i18n.localize("MODS.damage"),
+                    damageBonus: html.find('[name="damageModifier"]').val(),
+                    value: 0,
+                    step: 1
+                }, {
+                    name: game.i18n.format("defenseCount", { malus: multipleDefenseValue }),
+                    value: (Number(html.find('[name="defenseCount"]').val()) || 0) * multipleDefenseValue
+                }, {
+                    name: game.i18n.localize("advantageousPosition"),
+                    value: html.find('[name="advantageousPosition"]').is(":checked") ? 2 : 0
+                },
                     ...Itemdsa5.getSpecAbModifiers(html, mode)
                 )
 
@@ -1528,7 +1537,7 @@ class SpecialAbilityItemDSA5 extends Itemdsa5 {
     }
 }
 
-class SpeciesItemDSA5 extends Itemdsa5 {}
+class SpeciesItemDSA5 extends Itemdsa5 { }
 
 
 class SpellextensionItemDSA5 extends Itemdsa5 {

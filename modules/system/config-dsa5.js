@@ -534,6 +534,12 @@ DSA5.mountedRangeOptions = {
     "-4": "mountedRangeOptions.SCHRITT",
     "-8": "mountedRangeOptions.GALOPP",
 }
+
+DSA5.drivingArcherOptions = {
+    "0": "mountedRangeOptions.STATIONARY",
+    "-2": "mountedRangeOptions.SCHRITT",
+    "-4": "mountedRangeOptions.GALOPP",
+}
 DSA5.aimOptions = {
     "0": "aimOptions.0",
     "2": "aimOptions.1",

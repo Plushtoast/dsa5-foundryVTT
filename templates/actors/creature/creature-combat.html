@@ -105,7 +105,7 @@
         <div class="col ten">
 
         </div>
-        <div class="col ten">
+        <div class="col zerofive">
 
         </div>
     </div>
@@ -142,7 +142,7 @@
                         </div>
                     </a> {{/if}}
                 </div>
-                <div class="col ten very-small center">
+                <div class="col zerofive very-small center">
                     <a class="item-dropdown" title="{{localize 'SHEET.Dropdown'}}"><i
                             class="fas fa-chevron-down"></i></a>
                 </div>
@@ -187,7 +187,7 @@
                         </div>
                     </a> {{/if}}
                 </div>
-                <div class="col ten very-small center">
+                <div class="col zerofive very-small center">
                     <a class="item-dropdown" title="{{localize 'SHEET.Dropdown'}}"><i class="fas fa-chevron-down"></i></a>
                 </div>
             </div>
@@ -258,7 +258,7 @@
     <div class="row-section wrap cards">
         {{#each actor.specAbs.Combat as |item i|}}
         <div class="item" data-item-id="{{item._id}}">
-            <a class="item-edit">{{item.name}}{{roman item.data.step.value item.data.maxRank.value}}</a>
+            {{#if item.OnUseEffect}}<a title="{{localize 'SHEET.onUseEffect'}}" class="onUseItem"><i class="fas fa-dice-six"></i></a>{{/if}}<a class="item-edit">{{item.name}}{{roman item.data.step.value item.data.maxRank.value}}</a>
         </div>
         {{/each}}
     </div>

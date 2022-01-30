@@ -9,6 +9,7 @@ export default class OnUseEffect {
     async callMacro(packName, name, args = {}) {
         const pack = game.packs.get(packName)
         const documents = await pack.getDocuments({ name })
+        //TODO fallback find macro in other books
         let result = {}
         if (documents.length) {
             const body = `(async () => {${documents[0].data.command}})()`;
@@ -21,6 +22,8 @@ export default class OnUseEffect {
                 console.error(err);
                 result.error = true
             }
+        } else {
+            ui.notifications.error(game.i18n.format("DSAError.macroNotFound", { name }));
         }
         return result
     }
@@ -78,10 +81,7 @@ export default class OnUseEffect {
                 await actor.addCondition(data)
                 names.push(actor.name)
             }
-            if (names.length) {
-                const infoMsg = game.i18n.format("ActiveEffects.appliedEffect", { source: data.label, target: names.join(", ") })
-                await ChatMessage.create(DSA5_Utility.chatDataSetup(infoMsg))
-            }
+            await this.createInfoMessage(data, names)
         } else {
             const payload = {
                 id: this.item.uuid,
@@ -90,6 +90,39 @@ export default class OnUseEffect {
             }
             game.socket.emit("system.dsa5", {
                 type: "socketedConditionAddActor",
+                payload
+            })
+        }
+    }
+
+    async createInfoMessage(data, names){
+        if (names.length) {
+            const infoMsg = game.i18n.format("ActiveEffects.appliedEffect", { source: data.label, target: names.join(", ") })
+            await ChatMessage.create(DSA5_Utility.chatDataSetup(infoMsg))
+        }
+    }
+
+    async socketedRemoveCondition(targets, coreId, amount = 1){
+        if(game.user.isGM){
+            const names = []
+            for (let target of targets) {
+                const token = canvas.tokens.get(target)
+                if (token.actor) {
+                    await token.actor.removeCondition(coreId, amount, false)
+                    names.push(token.name)
+                }
+            }
+            const data = CONFIG.statusEffects.find(x => x.id == coreId)
+            data.label = game.i18n.localize(data.label)
+            await this.createInfoMessage(data, names)
+        }else{
+            const payload = {
+                id: this.item.uuid,
+                coreId,
+                targets
+            }
+            game.socket.emit("system.dsa5", {
+                type: "socketedRemoveCondition",
                 payload
             })
         }
@@ -105,10 +138,7 @@ export default class OnUseEffect {
                     names.push(token.name)
                 }
             }
-            if (names.length) {
-                const infoMsg = game.i18n.format("ActiveEffects.appliedEffect", { source: data.label, target: names.join(", ") })
-                await ChatMessage.create(DSA5_Utility.chatDataSetup(infoMsg))
-            }
+            await this.createInfoMessage(data, names)
         } else {
             const payload = {
                 id: this.item.uuid,

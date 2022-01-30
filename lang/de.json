@@ -1053,6 +1053,9 @@
         "weaponAptitude": "Waffenbegabung",
         "wildMagic": "Wilde Magie",
         "incompetent": "Unfähig",
+        "circumvent": "Unterlaufen",
+        "keepAtDistance": "Auf Distanz halten",
+        "drivingArcher": "Fahrender Schütze",
         "exceptionalSkill": "Herausragende Fertigkeit",
         "exceptionalCombatTechnique": "Herausragende Kampftechnik",
         "regenerationLeP": "Verbesserte Regeneration (Lebensenergie)",
@@ -1094,6 +1097,7 @@
         "perception": "Sinnesschärfe",
         "misfortune": "Pechmagnet",
         "featOfStrength": "Kraftakt",
+        "blindFighting": "Blindkampf",
         "wrestle": "Raufen",
         "literacy": "Schrift",
         "language": "Sprache",
@@ -1185,7 +1189,8 @@
         "noBreakingStructure": "{name} hat keinen akzeptierten maximalen Strukturwert.",
         "noConjurationActive": "Kein zu beschwörender Akteur aktiv (drag and drop)",
         "notInRangeToLoot": "Zu weit entfernt für eine Interaktion.",
-        "onlyGMallowed": "Diese Funktion steht nur dem Spielleiter zur Verfügung."
+        "onlyGMallowed": "Diese Funktion steht nur dem Spielleiter zur Verfügung.",
+        "macroNotFound": "Das Macro {name} konnte nicht gefunden werden...sorry."
     },
     "Shapeshift": {
         "title": "Gestaltwandlung",
@@ -1253,9 +1258,9 @@
         "SHOOTERSTATIONARY": "ist stationär (+-0)"
     },
     "mountedRangeOptions": {
-        "STATIONARY": "steht (+-0)",
-        "SCHRITT": "im Schritt (-4)",
-        "GALOPP": "im Galopp (-8)"
+        "STATIONARY": "steht",
+        "SCHRITT": "im Schritt",
+        "GALOPP": "im Galopp"
     },
     "regnerationCampLocations": {
         "normal": "Normal",

@@ -1005,9 +1005,13 @@
         "senseOfRange": "Sense of Range",
         "ambidextrous": "Ambidextrous",
         "weaponAptitude": "Weapon Aptitude",
+        "blindFighting": "Blind Fighting",
         "wildMagic": "Wild Magic",
         "incompetent": "Incompetent",
         "exceptionalSkill": "Exceptional Skill",
+        "circumvent": "Circumvent",
+        "keepAtDistance": "Keep at Distance",
+        "drivingArcher": "Driving Archer",
         "exceptionalCombatTechnique": "Exceptional Combat Technique",
         "regenerationLeP": "Improved Regeneration (Life Points)",
         "regenerationAsP": "Improved Regeneration (Arcane Energy)",
@@ -1150,7 +1154,8 @@
         "noBreakingStructure": "{name} has no accepted max structure value.",
         "noConjurationActive": "No actor to summon active (drag and drop)",
         "notInRangeToLoot": "Zu weit entfernt für eine Interaktion.",
-        "onlyGMallowed": "This function is only available to the game master."
+        "onlyGMallowed": "This function is only available to the game master.",
+        "macroNotFound": "The macro {name} could not be found...sorry."
     },
     "CEREMONYMODIFIER": {
         "holysite": "Sanctum of the god (+2)",
@@ -1199,9 +1204,9 @@
         "SHOOTERSTATIONARY": "stationary (+-0)"
     },
     "mountedRangeOptions": {
-        "STATIONARY": "standing still (+-0)",
-        "SCHRITT": "at walk (-4)",
-        "GALOPP": "at gallop (-8)"
+        "STATIONARY": "standing still",
+        "SCHRITT": "at walk",
+        "GALOPP": "at gallop"
     },
     "regnerationCampLocations": {
         "normal": "Normal",

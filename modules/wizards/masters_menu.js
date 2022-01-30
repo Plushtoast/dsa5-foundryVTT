@@ -12,26 +12,26 @@ export default class MastersMenu {
         CONFIG.Canvas.layers.dsamenu = { layerClass: DSAMenuLayer, group: "primary" }
         Hooks.on("getSceneControlButtons", btns => {
             const dasMenuOptions = [{
-                    name: "JournalBrowser",
-                    title: game.i18n.localize("Book.Wizard"),
-                    icon: "fa fa-book",
-                    button: true,
-                    onClick: () => { DSA5_Utility.renderToggle(game.dsa5.apps.journalBrowser) }
-                },
-                {
-                    name: "Library",
-                    title: game.i18n.localize("SHEET.Library"),
-                    icon: "fas fa-university",
-                    button: true,
-                    onClick: () => { DSA5_Utility.renderToggle(game.dsa5.itemLibrary) }
-                },
-                {
-                    name: "PlayerMenu",
-                    title: game.i18n.localize("PLAYER.title"),
-                    icon: "fas fa-dsa5-player",
-                    button: true,
-                    onClick: () => { DSA5_Utility.renderToggle(game.dsa5.apps.playerMenu) }
-                }
+                name: "JournalBrowser",
+                title: game.i18n.localize("Book.Wizard"),
+                icon: "fa fa-book",
+                button: true,
+                onClick: () => { DSA5_Utility.renderToggle(game.dsa5.apps.journalBrowser) }
+            },
+            {
+                name: "Library",
+                title: game.i18n.localize("SHEET.Library"),
+                icon: "fas fa-university",
+                button: true,
+                onClick: () => { DSA5_Utility.renderToggle(game.dsa5.itemLibrary) }
+            },
+            {
+                name: "PlayerMenu",
+                title: game.i18n.localize("PLAYER.title"),
+                icon: "fas fa-dsa5-player",
+                button: true,
+                onClick: () => { DSA5_Utility.renderToggle(game.dsa5.apps.playerMenu) }
+            }
             ]
             if (game.user.isGM) {
                 if (!game.dsa5.apps.gameMasterMenu) game.dsa5.apps.gameMasterMenu = new GameMasterMenu()
@@ -72,27 +72,31 @@ class GameMasterMenu extends Application {
         this.selected = {}
         this.heros = []
         this.lastSkill = `${game.i18n.localize('LocalizedIDs.perception')}|skill`
-        Hooks.on("updateActor", async(document, data, options, userId) => {
-            const properties = ["data.status.fatePoints", "data.status.wounds", "data.status.karmaenergy", "data.status.astralenergy"]
-            if (this.heros.find(x => x.id == document.id) && properties.reduce((a, b) => {
-                    return a || hasProperty(data, b)
-                }, false)) {
-                this.render()
-            }
-        })
-        Hooks.on("updateScene", async(document, data, options, userId) => {
-            const properties = ["darkness"]
-            if (game.canvas.id == document.id && properties.reduce((a, b) => {
-                    return a || hasProperty(data, b)
-                }, false)) {
-                if (game.dsa5.apps.LightDialog) game.dsa5.apps.LightDialog.onDarknessChange()
-                this.render()
-            }
-        })
-        Hooks.on("canvasInit", () => {
-            this.render()
-        })
         this.randomCreation = []
+
+        if (game.user.isGM) {
+            Hooks.on("updateActor", async (document, data, options, userId) => {
+                const properties = ["data.status.fatePoints", "data.status.wounds", "data.status.karmaenergy", "data.status.astralenergy"]
+                if (this.heros.find(x => x.id == document.id) && properties.reduce((a, b) => {
+                    return a || hasProperty(data, b)
+                }, false)) {
+                    this.render()
+                }
+            })
+            Hooks.on("updateScene", async (document, data, options, userId) => {
+                const properties = ["darkness"]
+                if (game.canvas.id == document.id && properties.reduce((a, b) => {
+                    return a || hasProperty(data, b)
+                }, false)) {
+                    if (game.dsa5.apps.LightDialog) game.dsa5.apps.LightDialog.onDarknessChange()
+                    this.render()
+                }
+            })
+            Hooks.on("canvasInit", () => {
+                this.render()
+            })
+        }
+
     }
 
     async _render(force = false, options = {}) {
@@ -129,7 +133,7 @@ class GameMasterMenu extends Application {
             ev.stopPropagation()
             this.doPayment([this.getID(ev)], true)
         })
-        html.find('.actorItem').click(async(ev) => {
+        html.find('.actorItem').click(async (ev) => {
             ev.stopPropagation()
             const id = $(ev.currentTarget).attr("data-uuid")
             const document = await fromUuid(id)
@@ -194,7 +198,7 @@ class GameMasterMenu extends Application {
         });
 
 
-        html.find('.addGroupSchip').click(async(ev) => {
+        html.find('.addGroupSchip').click(async (ev) => {
             await this.changeGroupSchipCount(Number($(ev.currentTarget).attr("data-value")))
         })
         html.find('.groupschip').click(ev => {
@@ -212,14 +216,14 @@ class GameMasterMenu extends Application {
             ev.stopPropagation()
             this.doGroupCheck()
         })
-        html.find('.changeSetting').change(async(ev) => {
+        html.find('.changeSetting').change(async (ev) => {
             await game.settings.set('dsa5', ev.currentTarget.name, ev.currentTarget.checked)
         })
-        html.find('.changeSightTreshold').change(async(ev) => {
+        html.find('.changeSightTreshold').change(async (ev) => {
             $(ev.currentTarget).closest('.row-section').find('.range-value').text(ev.currentTarget.value)
             this.updateSightThreshold(ev)
         })
-        html.find('.updateDarkness').change(async(ev) => {
+        html.find('.updateDarkness').change(async (ev) => {
             $(ev.currentTarget).closest('.row-section').find('.range-value').text(ev.currentTarget.value)
             this.updateDarkness(ev)
         })
@@ -332,7 +336,7 @@ class GameMasterMenu extends Application {
     async getExp(ids) {
         const actors = game.actors.filter(x => ids.includes(x.id))
         const template = await renderTemplate('systems/dsa5/templates/dialog/master-dialog-award.html', { text: game.i18n.localize(game.i18n.format("MASTER.awardXPText", { heros: this.getNames(actors) })) })
-        const callback = async(dlg) => {
+        const callback = async (dlg) => {
             const number = Number(dlg.find('.input-text').val())
             const familiarXP = Math.max(1, Math.round(number * 0.25))
             const heros = []

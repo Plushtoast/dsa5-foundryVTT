@@ -129,8 +129,10 @@ export default class Migrakel {
                         })
                     }
                 }
+                this.updateMacro(update, find)
                 return update
             }
+
             const condition = (x) => { return ["specialability", "advantage", "disadvantage", "trait"].includes(x.type) }
             await this.updateVals(actor, condition, updator)
         }
@@ -159,6 +161,15 @@ export default class Migrakel {
                 }
             }
             await this.updateVals(actor, condition, updator)
+        }
+    }
+
+    static updateMacro(update, find){
+        const onUseEffect = find.getFlag("dsa5", "onUseEffect")
+        if (onUseEffect){
+            mergeObject(update, {
+                flags: { dsa5: { onUseEffect}}
+            })
         }
     }
 
@@ -192,7 +203,7 @@ export default class Migrakel {
                         }
                     })
                 }
-
+                this.updateMacro(update, find)
                 return update
             }
             await this.updateVals(actor, condition, updator)

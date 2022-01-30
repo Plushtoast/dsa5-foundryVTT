@@ -991,7 +991,13 @@ export default class DiceDSA5 {
     }
 
     static _compareWeaponReach(weapon, testData) {
-        return Math.min(0, DSA5.meleeRangesArray.indexOf(weapon.data.reach.value) - DSA5.meleeRangesArray.indexOf(testData.opposingWeaponSize)) * 2
+        let circumvent = testData.situationalModifiers.find(x => x.name == game.i18n.localize("LocalizedIDs.circumvent"))
+        const attacker = DSA5.meleeRangesArray.indexOf(weapon.data.reach.value)
+        const defender = DSA5.meleeRangesArray.indexOf(testData.opposingWeaponSize)
+        if(circumvent && defender > attacker)
+            circumvent.value = Math.min(circumvent.step, defender - attacker) * 2
+
+        return Math.min(0, attacker - defender) * 2
     }
 
     static async rollDices(testData, cardOptions) {
@@ -1084,19 +1090,18 @@ export default class DiceDSA5 {
     static addApplyEffectData(testData) {
         const source = testData.preData.source
         if (["spell", "liturgy", "ritual", "ceremony", "meleeweapon", "rangeweapon"].includes(source.type)) {
-            return testData.successLevel > 0 && source.effects.length > 0
+            if(testData.successLevel > 0 && source.effects.length > 0) return true
         } else if (["disease", "poison"].includes(source.type)) {
             return source.effects.length > 0
-        } else {
-            const specAbIds = testData.preData.situationalModifiers.filter(x => x.specAbId).map(x => x.specAbId)
-            if (specAbIds.length > 0) {
-                const specAbs = testData.preData.extra.actor.items.filter(x => specAbIds.includes(x._id))
-                for (const spec of specAbs) {
-                    if (spec.effects.length > 0) return true
-                }
-            }
-
         }
+        const specAbIds = testData.preData.situationalModifiers.filter(x => x.specAbId).map(x => x.specAbId)
+        if (specAbIds.length > 0) {
+            const specAbs = testData.preData.extra.actor.items.filter(x => specAbIds.includes(x._id))
+            for (const spec of specAbs) {
+                if (spec.effects.length > 0) return true
+            }
+        }
+
         return false
     }
 

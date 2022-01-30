@@ -32,7 +32,8 @@ export default class OpposedDsa5 {
             OpposedDsa5.changeStartMessage(message)
         } else {
             console.log("show dmg")
-            this.showDamage(message)
+            await this.showDamage(message)
+            await this.showSpellWithoutTarget(message)
         }
     }
 
@@ -244,12 +245,34 @@ export default class OpposedDsa5 {
 
     static async playAutomatedJBA2(attacker, defender, opposedResult) {
         if (game.modules.get("autoanimations") && game.modules.get("autoanimations").active) {
-            const attackerToken = canvas.tokens.get(attacker.speaker.token)
-            if (!attackerToken || !attackerToken.actor) return
+            //const attackerToken = canvas.tokens.get(attacker.speaker.token)
+            const attackerToken = DSA5_Utility.getSpeaker(attacker.speaker).getActiveTokens()[0]
+            const defenderToken = DSA5_Utility.getSpeaker(defender.speaker).getActiveTokens()[0]
+            if (!attackerToken || !attackerToken.actor || !defenderToken || !defenderToken.actor) {
+                return
+            }
             const item = attackerToken.actor.items.get(attacker.testResult.source._id)
-            const targets = Array.from(game.user.targets)
+            const targets = [defenderToken]
             const hitTargets = opposedResult.winner == "attacker" ? targets : []
             AutoAnimations.playAnimation(attackerToken, targets, item, { hitTargets, playOnMiss: true })
+        }
+    }
+
+    static async showSpellWithoutTarget(message) {
+        if (game.modules.get("autoanimations") && game.modules.get("autoanimations").active) {
+            const msgData = getProperty(message.data, "flags.data")
+            if (!msgData || msgData.isOpposedTest) return
+
+            const result = getProperty(msgData, "postData.result") || -1
+            if (result > 0) {
+                const attackerToken = DSA5_Utility.getSpeaker(msgData.postData.speaker).getActiveTokens()[0]
+                if (!attackerToken || !attackerToken.actor) return
+
+                let targets = Array.from(game.user.targets)
+                const item = attackerToken.actor.items.get(msgData.preData.source._id)
+                if (!targets.length) targets = [attackerToken]
+                AutoAnimations.playAnimation(attackerToken, targets, item)
+            }
         }
     }
 

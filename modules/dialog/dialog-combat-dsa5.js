@@ -82,7 +82,7 @@ export default class DSA5CombatDialog extends DialogShared {
         const readTargets = () => {
             let targets = []
             game.user.targets.forEach(x => {
-                if(x.actor) targets.push({ name: x.actor.name, img: x.actor.img })
+                if (x.actor) targets.push({ name: x.actor.name, img: x.actor.img })
             })
             return targets
         }
@@ -97,7 +97,7 @@ export default class DSA5CombatDialog extends DialogShared {
         }
 
         // not great
-        this.checkTargets = setInterval(function() {
+        this.checkTargets = setInterval(function () {
             compareTargets()
         }, 500)
     }
@@ -135,10 +135,11 @@ export default class DSA5CombatDialog extends DialogShared {
             let level = 0
             while (threholds[level] <= darkness) level += 1
 
-            if (level < 4 && level > 0) {
-                const actor = DSA5_Utility.getSpeaker(this.dialogData.speaker)
-                if (actor) {
-                    const darkSightLevel = AdvantageRulesDSA5.vantageStep(actor.data, game.i18n.localize("LocalizedIDs.darksight"))
+            const actor = DSA5_Utility.getSpeaker(this.dialogData.speaker)
+            if (actor) {
+                const darkSightLevel = AdvantageRulesDSA5.vantageStep(actor.data, game.i18n.localize("LocalizedIDs.darksight"))
+                const blindCombat = SpecialabilityRulesDSA5.abilityStep(actor.data, game.i18n.localize("LocalizedIDs.blindFighting"))
+                if (level < 4 && level > 0) {
                     if (darkSightLevel > 1) {
                         level = 0
                     } else {
@@ -147,6 +148,8 @@ export default class DSA5CombatDialog extends DialogShared {
                         level = Math.min(4, level + AdvantageRulesDSA5.vantageStep(actor.data, game.i18n.localize("LocalizedIDs.nightBlind")))
                     }
                 }
+
+                level = Math.max(0, level - blindCombat)
             }
 
             const elem = html.find(`[name="vision"] option:nth-child(${level + 1})`)

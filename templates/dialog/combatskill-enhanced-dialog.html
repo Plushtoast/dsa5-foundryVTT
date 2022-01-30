@@ -104,7 +104,7 @@
                 <select name="mountedOptions">
                     {{#select "0"}}
                     {{#each mountedOptions as |label val|}}
-                    <option value="{{val}}">{{localize label}}</option>
+                    <option value="{{val}}">{{localize label}} ({{val}})</option>
                     {{/each}}
                     {{/select}}
                 </select>
