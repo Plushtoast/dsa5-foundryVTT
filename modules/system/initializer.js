@@ -60,7 +60,8 @@ export default class DSA5Initializer extends Dialog {
         await fetch(`modules/${this.module}/initialization${this.lang}.json`).then(async r => r.json()).then(async json => {
             let foldersToCreate = json.folders
             if (foldersToCreate) {
-                let head = game.folders.contents.find(x => x.name == foldersToCreate[0].name && x.type == "JournalEntry")
+                let head = await this.getFolderForType("JournalEntry")
+                let headReplace = json.folders[0].name
                 if (head) {
                     this.folders[head.data.name] = head
                     json.folders.shift()
@@ -71,29 +72,15 @@ export default class DSA5Initializer extends Dialog {
                 for (let folder of createdFolders)
                     this.folders[folder.data.name] = folder;
 
+                const updates = []
                 for (let folder in this.folders) {
-                    let parent = this.folders[folder].getFlag("dsa5", "parent")
+                    const flag = this.folders[folder].getFlag("dsa5", "parent")
+                    let parent = flag == headReplace ? game.i18n.localize(`${this.module}.name`) : flag
                     if (parent) {
-                        let parentId = this.folders[parent].data.id
-                        this.folders[folder].update({ parent: parentId })
+                        updates.push({ _id: this.folders[folder].id, parent: this.folders[parent].id })
                     }
                 }
-
-                let journal = game.packs.get(json.journal)
-                let entries = await journal.getDocuments()
-                for (let entry of entries) {
-                    let folder = entry.getFlag("dsa5", "parent")
-                    let sort = entry.getFlag("dsa5", "sort")
-                    if (folder) {
-                        entry.data.folder = this.folders[folder].data.id
-                        entry.data.sort = sort
-                    }
-
-                }
-                let createdEntries = await JournalEntry.create(entries.toObject())
-                for (let entry of createdEntries) {
-                    this.journals[entry.data.name] = entry;
-                }
+                await Folder.updateDocuments(updates)
             }
             if (json.items) {
                 let head = await this.getFolderForType("Item")
@@ -171,7 +158,12 @@ export default class DSA5Initializer extends Dialog {
                             let journ = journs.find(x => x.flags.dsa5.initId == n.entryId)
                             if (!(finishedIds.has(journ._id))) {
                                 const parent = getProperty(journ, "flags.dsa5.parent")
-                                const parenthead = parent ? await this.getFolderForType("JournalEntry", journHead.id, parent, 0, getProperty(journ, "flags.dsa5.foldercolor") || "") : journHead
+                                let parenthead = journHead
+                                if (this.folders[parent]) {
+                                    parenthead = this.folders[parent]
+                                } else if (parent) {
+                                    parenthead = await this.getFolderForType("JournalEntry", journHead.id, parent, 0, getProperty(journ, "flags.dsa5.foldercolor") || "")
+                                }
 
                                 journ.folder = parenthead.id
 
