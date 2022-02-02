@@ -194,7 +194,9 @@ export default class DSA5ItemLibrary extends Application {
                     "skill": false,
                     "specialability": false,
                     "species": false,
-                    "application": false
+                    "application": false,
+                    "demonmark": false,
+                    "patron": false
                 },
                 filterBy: {
                     search: ""

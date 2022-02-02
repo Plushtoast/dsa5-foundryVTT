@@ -153,6 +153,9 @@ export default class DSAActiveEffectConfig extends ActiveEffectConfig {
         const QS = game.i18n.localize("MODS.QS")
         const partChecks = game.i18n.localize("MODS.partChecks")
 
+        //TODO add magical armor
+        //TODO add predefined mode change and placeholder example
+
         let optns = [
             { name: game.i18n.localize('protection'), val: "data.totalArmor" },
             { name: game.i18n.localize('carrycapacity'), val: "data.carryModifier" },

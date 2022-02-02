@@ -354,6 +354,8 @@ export default class Actordsa5 extends Actor {
                     }
                 },
                 totalArmor: 0,
+                spellArmor: 0,
+                liturgyArmor: 0,
                 carryModifier: 0,
                 aspModifier: 0,
                 kapModifier: 0,
@@ -666,7 +668,7 @@ export default class Actordsa5 extends Actor {
                         this._setOnUseEffect(i)
                         inventory.meleeweapons.items.push(Actordsa5._prepareitemStructure(i));
                         inventory.meleeweapons.show = true;
-                        if(i.toggleValue) wornweapons.push(i)
+                        if (i.toggleValue) wornweapons.push(i)
                         totalWeight += Number(i.weight);
                         break;
                     case "rangeweapon":
@@ -743,6 +745,9 @@ export default class Actordsa5 extends Actor {
                     case "disease":
                         diseases.push(i)
                         break
+                    case "patron":
+                        specAbs.magical.push(i)
+                        break
                     case "demonmark":
                         demonmarks.push(i)
                         break
@@ -813,6 +818,8 @@ export default class Actordsa5 extends Actor {
             isOwner: this.isOwner,
             totalWeight,
             armorSum: totalArmor,
+            spellArmor: actorData.data.spellArmor || 0,
+            liturgyArmor: actorData.data.liturgyArmor || 0,
             money,
             encumbrance,
             carrycapacity,
@@ -1000,6 +1007,8 @@ export default class Actordsa5 extends Actor {
         item.name = game.i18n.localize(`${statusId}Weaponless`)
         item.data.combatskill = { value: game.i18n.localize("LocalizedIDs.wrestle") }
         item.data.damageThreshold.value = 14
+        if (SpecialabilityRulesDSA5.hasAbility(this.data, game.i18n.localize('LocalizedIDs.mightyAstralBody'))) mergeObject(item, { data: { effect: { attributes: game.i18n.localize('magical') } } })
+
         options["mode"] = statusId
         return Itemdsa5.getSubClass(item.type).setupDialog(null, options, item, this, tokenId)
     }

@@ -209,6 +209,8 @@
     "actionCount": "Actions",
     "atmod": "Attack modifier",
     "baseValue": "Base value",
+    "spellArmor": "Spell armor",
+    "liturgyArmor": "Holy Protection",
     "badEnvironment": "Bad surroundings",
     "BE": "Encumbrance",
     "behaviour": "Combat Behaviour",
@@ -257,6 +259,7 @@
     "level": "level",
     "levels": "levels",
     "plant": "Plant",
+    "patron": "Patron",
     "defenseCount": "# Defenses (each {malus})",
     "decreaseCastingTime": "Decrease Spell/Chant duration",
     "damageThreshold": "Damage threshold",
@@ -523,6 +526,15 @@
     },
     "Aggregated": {
         "noMoreAllowed": "No more rolls allowed."
+    },
+    "PATRON": {
+        "priority": "Priority",
+        "primary": "Primary",
+        "secondary": "Secondary",
+        "0": "Animal Spirits",
+        "1": "Elemental Beings",
+        "2": "Ancestral Spirits",
+        "3": "Demonice Beings"
     },
     "CONJURATION": {
         "demon": "Demon",
@@ -906,6 +918,7 @@
     "ITEM.TypeConsumable": "Consumable",
     "ITEM.TypeSpellextension": "Spell/Liturgyextension",
     "ITEM.TypeApplication": "Application",
+    "ITEM.TypePatron": "Patron",
     "ACTOR.TypeCharacter": "Character",
     "ACTOR.TypeNpc": "Non Player Character",
     "ACTOR.TypeCreature": "Creature",
@@ -1012,6 +1025,7 @@
         "circumvent": "Circumvent",
         "keepAtDistance": "Keep at Distance",
         "drivingArcher": "Driving Archer",
+        "mightyAstralBody": "tbd",
         "exceptionalCombatTechnique": "Exceptional Combat Technique",
         "regenerationLeP": "Improved Regeneration (Life Points)",
         "regenerationAsP": "Improved Regeneration (Arcane Energy)",

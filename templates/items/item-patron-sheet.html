@@ -1,0 +1,50 @@
+<form class="dsa5 item-sheet {{cssClass}}" autocomplete="off">
+    {{> systems/dsa5/templates/items/item-header.html}} {{> systems/dsa5/templates/items/item-stat.html}}
+
+    <nav class="sheet-tabs tabs" data-tab-container="primary">
+        <a class="item active" data-tab="description">{{localize "Description"}}</a>
+        <a class="item" data-tab="details">{{localize "Details"}}</a>
+    </nav>
+
+
+    <section class="content">
+
+        {{> systems/dsa5/templates/items/item-description.html}}
+
+        <div class="tab details" data-tab="details">
+
+            <div class="form-group">
+                <label class="label-text">{{localize "skills"}}</label>
+                <input class="input-text" type="number" name="data.talents" value="{{data.talents}}" data-dtype="String" />
+            </div>
+            <div class="form-group">
+                <label class="label-text">{{localize "culture"}}</label>
+                <input class="input-text" type="text" name="data.culture" value="{{data.culture}}" data-dtype="String" />
+            </div>
+
+            <div class="form-group">
+                <label class="label-text">{{localize "Category"}}</label>
+                <select name="data.category" data-dtype="Number">
+                    {{#select data.category}}
+                    {{#each patronCategories as |ch char|}}
+                    <option value="{{ch.val}}">{{ch.name}}</option>
+                    {{/each}}
+                    {{/select}}
+                </select>
+            </div>
+            <div class="form-group">
+                <label class="label-text">{{localize "PATRON.priority"}}</label>
+                <select name="data.priority" data-dtype="Number">
+                    {{#select data.priority}}
+                    {{#each priorities as |ch char|}}
+                    <option value="{{char}}">{{localize ch}}</option>
+                    {{/each}}
+                    {{/select}}
+                </select>
+            </div>
+
+
+        </div>
+
+    </section>
+</form>

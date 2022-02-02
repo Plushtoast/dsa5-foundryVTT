@@ -215,7 +215,7 @@ export default class OpposedDsa5 {
     static getMessageDude(message) {
         let res = {
             speaker: message.data.speaker,
-            testResult: mergeObject(message.data.flags.data.postData, { source: attackMessage.data.flags.data.preData.source }),
+            testResult: mergeObject(message.data.flags.data.postData, { source: message.data.flags.data.preData.source }),
             img: DSA5_Utility.getSpeaker(message.data.speaker).data.img,
             messageId: message.data._id
         }
@@ -385,7 +385,12 @@ export default class OpposedDsa5 {
 
             opposeResult.winner = "attacker"
 
-            let title = [`${damage.armorMod != 0 ? damage.armorMod + " " + game.i18n.localize('Modifier') : ""}`, `${damage.armorMultiplier != 0 ? "*" + damage.armorMultiplier + " " + game.i18n.localize('Modifier') : "" }`]
+            let title = [
+                damage.armorMod != 0 ? `${damage.armorMod + " " + game.i18n.localize('Modifier')}` : "",
+                damage.armorMultiplier != 1 ? "*" + damage.armorMultiplier + " " + game.i18n.localize('Modifier') : "",
+                damage.spellArmor != 0 ? `${damage.spellArmor} ${game.i18n.localize('spellArmor')}` : "",
+                damage.liturgyArmor != 0 ? `${damage.liturgyArmor} ${game.i18n.localize('liturgyArmor')}` : ""
+            ]
             let description = `<b>${game.i18n.localize("damage")}</b>: ${damage.damage} - <span title="${title.join("")}">${damage.armor} (${game.i18n.localize("protection")})</span> = ${damage.sum}`
             opposeResult.damage = {
                 description,
@@ -412,9 +417,15 @@ export default class OpposedDsa5 {
             if (/^\*/.test(mod)) multipliers.push(Number(mod.replace("*", "")))
             else armorMod += Number(mod)
         }
+        let spellArmor = 0
+        let liturgyArmor = 0
+        if (["spell", "ritual"].includes(attackerTest.source.type)) spellArmor += actor.data.spellArmor || 0
+        else if (["liturgy", "ceremony"].includes(attackerTest.source.type)) spellArmor += actor.data.liturgyArmor || 0
+
         armor += armorMod
         const armorMultiplier = multipliers.reduce((sum, x) => { return sum * x }, 1)
         armor = Math.max(Math.round(armor * armorMultiplier), 0)
+        armor += spellArmor + liturgyArmor
         const armorDamaged = EquipmentDamage.armorGetsDamage(damage, attackerTest)
         const ids = wornArmor.map(x => x.uuid)
 
@@ -423,6 +434,8 @@ export default class OpposedDsa5 {
             armor,
             armorDamaged: { damaged: armorDamaged, ids },
             armorMod,
+            spellArmor,
+            liturgyArmor,
             armorMultiplier,
             sum: damage - armor
         }

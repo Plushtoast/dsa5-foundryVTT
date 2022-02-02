@@ -103,7 +103,9 @@ Hooks.once("ready", () => {
                 { label: "PLANT.landscape", attr: "location.landscape", type: "text" },
                 { label: "PLANT.region", attr: "location.region", type: "text" },
             ],
-            magicalsign: []
+            magicalsign: [],
+            patron: [],
+            demonmark: []
         })
     })
 })

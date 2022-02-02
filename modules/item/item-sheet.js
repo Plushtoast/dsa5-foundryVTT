@@ -48,12 +48,13 @@ export default class ItemSheetdsa5 extends ItemSheet {
         Items.registerSheet("dsa5", AmmunitionSheet, { makeDefault: true, types: ["ammunition"] });
         Items.registerSheet("dsa5", PlantSheet, { makeDefault: true, types: ["plant"] });
         Items.registerSheet("dsa5", MagicalSignSheet, { makeDefault: true, types: ["magicalsign"] });
+        Items.registerSheet("dsa5", PatronSheet, { makeDefault: true, types: ["patron"] });
 
         Items.unregisterSheet("dsa5", ItemSheetdsa5, {
             types: [
                 "armor", "equipment", "rangeweapon", "blessing", "magictrick", "spellextension", "consumable",
                 "species", "career", "culture", "advantage", "specialability", "disadvantage", "ritual",
-                "ceremony", "liturgy", "spell", "disease", "poison", "meleeweapon", "ammunition", "plant", "magicalsign"
+                "ceremony", "liturgy", "spell", "disease", "poison", "meleeweapon", "ammunition", "plant", "magicalsign", "patron"
             ]
         });
     }
@@ -623,6 +624,15 @@ class PlantSheet extends ItemSheetdsa5 {
     async getData(options) {
         const data = await super.getData(options);
         data.attributes = Object.keys(data.data.planttype).map(x => { return { name: x, checked: data.data.planttype[x] } })
+        return data
+    }
+}
+
+class PatronSheet extends ItemSheetdsa5 {
+    async getData(options) {
+        const data = await super.getData(options);
+        data.patronCategories = [0, 1, 2, 3].map(x => { return { name: game.i18n.localize(`PATRON.${x}`), val: x } })
+        data.priorities = [game.i18n.localize("PATRON.primary"), game.i18n.localize("PATRON.secondary")]
         return data
     }
 }

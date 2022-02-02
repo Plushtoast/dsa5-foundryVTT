@@ -939,7 +939,7 @@ export default class ActorSheetDsa5 extends ActorSheet {
             return (await this.actor.createEmbeddedDocuments("Item", [item]))[0];
     }
 
-    async _addDemonMark(item) {
+    async _addDemonMarkOrPatron(item) {
         return await this._addUniqueItem(item)
     }
 
@@ -1033,8 +1033,9 @@ export default class ActorSheetDsa5 extends ActorSheet {
                     shapeshift.render(true)
                     break
                 }
+            case "patron":
             case "demonmark":
-                await this._addDemonMark(item)
+                await this._addDemonMarkOrPatron(item)
                 break
             default:
                 ui.notifications.error(game.i18n.format("DSAError.canNotBeAdded", { item: item.name, category: game.i18n.localize(item.type) }))

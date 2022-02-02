@@ -277,6 +277,7 @@
     "ownerNotes": "Private Notizen",
     "general": "allgemein",
     "gridUnits": "Schritt",
+    "patron": "Patron",
     "halfDefense": "der Verteidigungswert des Gegners muss für diesen Angriff halbiert werden",
     "halfDefenseShort": "Halbe Verteidigung",
     "generalSpecialAbilities": "Allgemeine Sonderfertigkeiten",
@@ -404,6 +405,8 @@
     "start": "Beginn",
     "StF": "Steigerungsfaktor",
     "sizeCategory": "Größenkategorie",
+    "spellArmor": "Zauberrüstung",
+    "liturgyArmor": "Göttlicher Schutz",
     "Success": "Erfolg",
     "spell": "Zauberspruch",
     "structure": "Strukturpunkte",
@@ -485,6 +488,15 @@
     },
     "Aggregated": {
         "noMoreAllowed": "Keine Proben mehr erlaubt."
+    },
+    "PATRON": {
+        "priority": "Priorität",
+        "primary": "Primär",
+        "secondary": "Sekundär",
+        "0": "Tiergeister",
+        "1": "Elementare Wesen",
+        "2": "Ahnengeister",
+        "3": "Dämonische Wesen"
     },
     "CONJURATION": {
         "demon": "Dämon",
@@ -951,6 +963,7 @@
     "ITEM.TypeSpellextension": "Zauber/Liturgieerweiterung",
     "ITEM.TypeApplication": "Anwendungsgebiet",
     "ITEM.TypeEffectwrapper": "Effektcontainer",
+    "ITEM.TypePatron": "Patron",
     "ACTOR.TypeCharacter": "Charakter",
     "ACTOR.TypeNpc": "Nichtspielercharakter",
     "ACTOR.TypeCreature": "Kreatur",
@@ -1056,6 +1069,7 @@
         "circumvent": "Unterlaufen",
         "keepAtDistance": "Auf Distanz halten",
         "drivingArcher": "Fahrender Schütze",
+        "mightyAstralBody": "Machtvoller Astralleib",
         "exceptionalSkill": "Herausragende Fertigkeit",
         "exceptionalCombatTechnique": "Herausragende Kampftechnik",
         "regenerationLeP": "Verbesserte Regeneration (Lebensenergie)",
