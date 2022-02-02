@@ -1373,7 +1373,6 @@ export default class Actordsa5 extends Actor {
             callback: (html, options = {}) => {
                 testData.situationalModifiers = Actordsa5._parseModifiers(html)
                 cardOptions.rollMode = html.find('[name="rollMode"]').val();
-                testData.testModifier = Number(html.find('[name="testModifier"]').val());
                 testData.situationalModifiers.push({
                     name: game.i18n.localize("camplocation") + " - " + html.find('[name="regnerationCampLocations"] option:selected').text(),
                     value: html.find('[name="regnerationCampLocations"]').val()
@@ -1444,7 +1443,6 @@ export default class Actordsa5 extends Actor {
             },
             callback: (html, options = {}) => {
                 cardOptions.rollMode = html.find('[name="rollMode"]').val();
-                testData.testModifier = Number(html.find('[name="testModifier"]').val());
                 testData.situationalModifiers = Actordsa5._parseModifiers(html)
                 testData.situationalModifiers.push(...Itemdsa5.getSpecAbModifiers(html, "parry"))
                 testData.situationalModifiers.push({
@@ -1500,7 +1498,6 @@ export default class Actordsa5 extends Actor {
             },
             callback: (html, options = {}) => {
                 cardOptions.rollMode = html.find('[name="rollMode"]').val();
-                testData.testModifier = Number(html.find('[name="testModifier"]').val());
                 testData.testDifficulty = DSA5.attributeDifficultyModifiers[html.find('[name="testDifficulty"]').val()];
                 testData.situationalModifiers = Actordsa5._parseModifiers(html)
                 mergeObject(testData.extra.options, options)
@@ -1534,6 +1531,11 @@ export default class Actordsa5 extends Actor {
             if ($(this).attr("data-armorPen")) data.armorPen = $(this).attr("data-armorPen")
 
             res.push(data)
+        })
+        res.push({
+            name: game.i18n.localize("manual"), 
+            value: Number(html.find('[name="testModifier"]').val()),
+            type: ""
         })
         return res
     }

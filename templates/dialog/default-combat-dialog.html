@@ -3,7 +3,7 @@
     <div class="row-section col sixty">
         <div class="col five">
         </div>
-        {{#if showAttack}}
+        {{#if (or showAttack rangeOptions)}}
         <div class="col five center" title="{{localize 'MODS.damage'}}">
             {{localize 'CHARAbbrev.damage'}}
         </div>
@@ -16,25 +16,13 @@
         <div class="col five">
             <input class="quantity-click" type="number" name="testModifier" value="{{testModifier}}" />
         </div>
-        {{#if showAttack}}
+        {{#if (or showAttack rangeOptions)}}
         <div class="col five">
             <input type="text" name="damageModifier" value="0" />
         </div>
         {{/if}}
     </div>
 </div>
-{{#if difficultyLabels}}
-<div class="form-group custom-select">
-    <label>{{localize "Difficulty"}}</label>
-    <select name="testDifficulty">
-      {{#select testDifficulty}}
-      {{#each difficultyLabels as |difficultyLabel difficultyKey|}}
-      <option value="{{difficultyKey}}">{{localize difficultyLabel}}</option>
-      {{/each}}
-      {{/select}}
-    </select>
-</div>
-{{/if}}
 <div class="form-group custom-select">
     <label>{{localize "DIALOG.RollMode"}}</label>
     <select name="rollMode">

@@ -4,12 +4,12 @@ import Actordsa5 from "../actor/actor-dsa5.js";
 import DSA5StatusEffects from "../status/status_effects.js";
 import AdvantageRulesDSA5 from "../system/advantage-rules-dsa5.js";
 import DSA5 from "../system/config-dsa5.js";
-import SpecialabilityRulesDSA5 from "../system/specialability-rules-dsa5.js";
 import ItemRulesDSA5 from "../system/item-rules-dsa5.js";
 import DSAActiveEffectConfig from "../status/active_effects.js";
 import RuleChaos from "../system/rule_chaos.js";
 import CreatureType from "../system/creature-type.js";
 import DPS from "../system/derepositioningsystem.js";
+import DSA5CombatDialog from "../dialog/dialog-combat-dsa5.js";
 
 export default class Itemdsa5 extends Item {
     static defaultImages = {
@@ -212,28 +212,6 @@ export default class Itemdsa5 extends Item {
             }
         }
         return itemModifiers
-    }
-
-    static attackOfOpportunity(html, situationalModifiers) {
-        let value = html.find('[name="opportunityAttack"]').is(":checked") ? -4 : 0
-        if (value) {
-            situationalModifiers.push({
-                name: game.i18n.localize("opportunityAttack"),
-                value
-            })
-            game.user.targets.forEach(target => {
-                if (target.actor) {
-                    if (target.actor.items.find(x => x.type == "specialability" && x.name == game.i18n.localize("LocalizedIDs.enemySense"))) {
-                        situationalModifiers.push({
-                            name: game.i18n.localize("LocalizedIDs.enemySense"),
-                            value
-                        })
-                        return
-                    }
-                }
-            })
-        }
-        return value != 0
     }
 
     static getDefenseMalus(situationalModifiers, actor) {
@@ -725,7 +703,6 @@ class SpellItemDSA5 extends Itemdsa5 {
     }
 
     static getCallbackData(testData, html, actor) {
-        testData.testModifier = Number(html.find('[name="testModifier"]').val());
         testData.testDifficulty = 0
         testData.situationalModifiers = Actordsa5._parseModifiers(html)
         testData.calculatedSpellModifiers = {
@@ -973,7 +950,6 @@ class CombatskillDSA5 extends Itemdsa5 {
             },
             callback: (html, options = {}) => {
                 cardOptions.rollMode = html.find('[name="rollMode"]').val();
-                testData.testModifier = Number(html.find('[name="testModifier"]').val());
                 testData.situationalModifiers = Actordsa5._parseModifiers(html)
                 mergeObject(testData.extra.options, options)
                 return { testData, cardOptions };
@@ -1114,7 +1090,6 @@ class DiseaseItemDSA5 extends Itemdsa5 {
             data,
             callback: (html, options = {}) => {
                 cardOptions.rollMode = html.find('[name="rollMode"]').val();
-                testData.testModifier = Number(html.find('[name="testModifier"]').val());
                 testData.situationalModifiers = Actordsa5._parseModifiers(html)
                 testData.situationalModifiers.push({
                     name: game.i18n.localize("zkModifier"),
@@ -1201,39 +1176,10 @@ class MeleeweaponDSA5 extends Itemdsa5 {
             template: "/systems/dsa5/templates/dialog/combatskill-enhanced-dialog.html",
             data,
             callback: (html, options = {}) => {
-                cardOptions.rollMode = html.find('[name="rollMode"]').val();
-                testData.testModifier = Number(html.find('[name="testModifier"]').val());
-                testData.situationalModifiers = Actordsa5._parseModifiers(html)
-                testData.rangeModifier = html.find('[name="distance"]').val()
-                testData.sizeModifier = DSA5.rangeSizeModifier[html.find('[name="size"]').val()]
-                testData.opposingWeaponSize = html.find('[name="weaponsize"]').val()
-                testData.narrowSpace = html.find('[name="narrowSpace"]').is(":checked")
-                testData.doubleAttack = html.find('[name="doubleAttack"]').is(":checked") ? (-2 + SpecialabilityRulesDSA5.abilityStep(actor, game.i18n.localize('LocalizedIDs.twoWeaponCombat'))) : 0
-                testData.wrongHand = html.find('[name="wrongHand"]').is(":checked") ? -4 : 0
-                testData.attackOfOpportunity = this.attackOfOpportunity(html, testData.situationalModifiers)
-                testData.situationalModifiers.push(
-                    Itemdsa5.parseValueType(game.i18n.localize("sight"), html.find('[name="vision"]').val() || 0), {
-                        name: game.i18n.localize("attackFromBehind"),
-                        value: html.find('[name="attackFromBehind"]').is(":checked") ? -4 : 0
-                    }, {
-                        name: game.i18n.localize("MODS.damage"),
-                        damageBonus: html.find('[name="damageModifier"]').val(),
-                        value: 0,
-                        step: 1
-                    }, {
-                        name: game.i18n.format("defenseCount", { malus: multipleDefenseValue }),
-                        value: (Number(html.find('[name="defenseCount"]').val()) || 0) * multipleDefenseValue
-                    }, {
-                        name: game.i18n.localize("advantageousPosition"),
-                        value: html.find('[name="advantageousPosition"]').is(":checked") ? 2 : 0
-                    },
-                    ...Itemdsa5.getSpecAbModifiers(html, mode)
-                )
-
-                mergeObject(testData.extra.options, options)
+                DSA5CombatDialog.resolveMeleeDialog(testData, cardOptions, html, actor, options, multipleDefenseValue, mode)
                 Hooks.call("callbackDialogCombatDSA5", testData, actor, html, item, tokenId)
 
-                return { testData, cardOptions };
+                return { testData, cardOptions }
             }
         };
 
@@ -1295,7 +1241,6 @@ class PoisonItemDSA5 extends Itemdsa5 {
             data,
             callback: (html, options = {}) => {
                 cardOptions.rollMode = html.find('[name="rollMode"]').val();
-                testData.testModifier = Number(html.find('[name="testModifier"]').val());
                 testData.situationalModifiers = Actordsa5._parseModifiers(html)
 
                 testData.situationalModifiers.push({
@@ -1416,42 +1361,7 @@ class RangeweaponItemDSA5 extends Itemdsa5 {
             template: "/systems/dsa5/templates/dialog/combatskill-enhanced-dialog.html",
             data,
             callback: (html, options = {}) => {
-                cardOptions.rollMode = html.find('[name="rollMode"]').val();
-                testData.testModifier = Number(html.find('[name="testModifier"]').val());
-                testData.situationalModifiers = Actordsa5._parseModifiers(html)
-                testData.rangeModifier = html.find('[name="distance"]').val()
-                testData.sizeModifier = DSA5.rangeSizeModifier[html.find('[name="size"]').val()]
-                testData.narrowSpace = html.find('[name="narrowSpace"]').is(":checked")
-                testData.wrongHand = html.find('[name="wrongHand"]').is(":checked") ? -4 : 0
-                testData.situationalModifiers.push({
-                    name: game.i18n.localize("target") + " " + html.find('[name="targetMovement"] option:selected').text(),
-                    value: Number(html.find('[name="targetMovement"]').val()) || 0
-                }, {
-                    name: game.i18n.localize("shooter") + " " + html.find('[name="shooterMovement"] option:selected').text(),
-                    value: Number(html.find('[name="shooterMovement"]').val()) || 0
-                }, {
-                    name: game.i18n.localize("mount") + " " + html.find('[name="mountedOptions"] option:selected').text(),
-                    value: Number(html.find('[name="mountedOptions"]').val()) || 0
-                }, {
-                    name: game.i18n.localize("rangeMovementOptions.QUICKCHANGE"),
-                    value: html.find('[name="quickChange"]').is(":checked") ? -4 : 0
-                }, {
-                    name: game.i18n.localize("MODS.combatTurmoil"),
-                    value: html.find('[name="combatTurmoil"]').is(":checked") ? -2 : 0
-                }, {
-                    name: game.i18n.localize("aim"),
-                    value: Number(html.find('[name="aim"]').val()) || 0
-                }, {
-                    name: game.i18n.localize("MODS.damage"),
-                    damageBonus: html.find('[name="damageModifier"]').val(),
-                    value: 0,
-                    step: 1
-                }, {
-                    name: game.i18n.localize("sight"),
-                    value: Number(html.find('[name="vision"]').val() || 0)
-                })
-                testData.situationalModifiers.push(...Itemdsa5.getSpecAbModifiers(html, "attack"))
-                mergeObject(testData.extra.options, options)
+                DSA5CombatDialog.resolveRangeDialog(testData, cardOptions, html, actor, options)
                 Hooks.call("callbackDialogCombatDSA5", testData, actor, html, item, tokenId)
                 return { testData, cardOptions };
             }
@@ -1537,7 +1447,6 @@ class SkillItemDSA5 extends Itemdsa5 {
             data,
             callback: (html, options = {}) => {
                 cardOptions.rollMode = html.find('[name="rollMode"]').val();
-                testData.testModifier = Number(html.find('[name="testModifier"]').val());
                 testData.testDifficulty = DSA5.skillDifficultyModifiers[html.find('[name="testDifficulty"]').val()];
                 testData.situationalModifiers = Actordsa5._parseModifiers(html)
                 testData.advancedModifiers = {
@@ -1672,6 +1581,8 @@ class TraitItemDSA5 extends Itemdsa5 {
             defenseCountString: game.i18n.format("defenseCount", { malus: multipleDefenseValue })
         }
 
+        const traitType = getProperty(item, "data.traitType.value") || getProperty(item.data, "data.traitType.value")
+
         let situationalModifiers = actor ? DSA5StatusEffects.getRollModifiers(actor, item, { mode }) : []
         this.getSituationalModifiers(situationalModifiers, actor, data, item, tokenId)
         data["situationalModifiers"] = situationalModifiers
@@ -1681,51 +1592,12 @@ class TraitItemDSA5 extends Itemdsa5 {
             template: "/systems/dsa5/templates/dialog/combatskill-enhanced-dialog.html",
             data,
             callback: (html, options = {}) => {
-                cardOptions.rollMode = html.find('[name="rollMode"]').val();
-                testData.testModifier = Number(html.find('[name="testModifier"]').val());
-                testData.situationalModifiers = Actordsa5._parseModifiers(html)
-                testData.rangeModifier = html.find('[name="distance"]').val()
-                testData.sizeModifier = DSA5.rangeSizeModifier[html.find('[name="size"]').val()]
-                testData.opposingWeaponSize = html.find('[name="weaponsize"]').val()
-                testData.narrowSpace = html.find('[name="narrowSpace"]').is(":checked")
-                testData.doubleAttack = html.find('[name="doubleAttack"]').is(":checked") ? (-2 + SpecialabilityRulesDSA5.abilityStep(actor, game.i18n.localize('LocalizedIDs.twoWeaponCombat'))) : 0
-                testData.wrongHand = html.find('[name="wrongHand"]').is(":checked") ? -4 : 0
-                testData.attackOfOpportunity = this.attackOfOpportunity(html, testData.situationalModifiers)
-                testData.situationalModifiers.push({
-                    name: game.i18n.localize("attackFromBehind"),
-                    value: html.find('[name="attackFromBehind"]').is(":checked") ? -4 : 0
-                }, {
-                    name: game.i18n.localize("target") + " " + html.find('[name="targetMovement"] option:selected').text(),
-                    value: Number(html.find('[name="targetMovement"]').val()) || 0
-                }, {
-                    name: game.i18n.localize("shooter") + " " + html.find('[name="shooterMovement"] option:selected').text(),
-                    value: Number(html.find('[name="shooterMovement"]').val()) || 0
-                }, {
-                    name: game.i18n.localize("mount") + " " + html.find('[name="mountedOptions"] option:selected').text(),
-                    value: Number(html.find('[name="mountedOptions"]').val()) || 0
-                }, {
-                    name: game.i18n.localize("rangeMovementOptions.QUICKCHANGE"),
-                    value: html.find('[name="quickChange"]').is(":checked") ? -4 : 0
-                }, {
-                    name: game.i18n.localize("MODS.combatTurmoil"),
-                    value: html.find('[name="combatTurmoil"]').is(":checked") ? -2 : 0
-                }, {
-                    name: game.i18n.localize("aim"),
-                    value: Number(html.find('[name="aim"]').val()) || 0
-                }, {
-                    name: game.i18n.localize("MODS.damage"),
-                    damageBonus: html.find('[name="damageModifier"]').val(),
-                    value: 0,
-                    step: 1
-                }, {
-                    name: game.i18n.format("defenseCount", { malus: multipleDefenseValue }),
-                    value: (Number(html.find('[name="defenseCount"]').val()) || 0) * multipleDefenseValue
-                }, {
-                    name: game.i18n.localize("advantageousPosition"),
-                    value: html.find('[name="advantageousPosition"]').is(":checked") ? 2 : 0
-                }, Itemdsa5.parseValueType(game.i18n.localize("sight"), html.find('[name="vision"]').val() || 0))
-                testData.situationalModifiers.push(...Itemdsa5.getSpecAbModifiers(html, mode))
-                mergeObject(testData.extra.options, options)
+                if (traitType == "meleeAttack") {
+                    DSA5CombatDialog.resolveMeleeDialog(testData, cardOptions, html, actor, options, multipleDefenseValue, mode)
+                } else {
+                    DSA5CombatDialog.resolveRangeDialog(testData, cardOptions, html, actor, options)
+                }
+
                 Hooks.call("callbackDialogCombatDSA5", testData, actor, html, item, tokenId)
                 return { testData, cardOptions };
             }
