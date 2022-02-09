@@ -120,7 +120,6 @@ export default class DSA5StatusEffects {
     }
 
     static resistantToEffect(target, effect) {
-        //TODO add this to effect dropdown
         const effectId = getProperty(effect, "flags.core.statusId")
         if (!effectId) return 0
 

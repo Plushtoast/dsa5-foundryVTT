@@ -71,6 +71,8 @@
         "RW": "RA",
         "FtP": "FtP",
         "damage": "DP",
+         "AsPCost": "AE",
+        "KaPCost": "KP",
         "defenseMalus": "DM",
         "*": "*",
         "roll": " "
@@ -513,6 +515,7 @@
     "yes": "Yes",
     "YouAlreadyHaveit": "Already owned",
     "zkModifier": "Toughness (Target)",
+    "vulnerability": "Vulnerability",
     "zoo": "Zoo",
     "Library": {
         "search": "Search",
@@ -612,7 +615,8 @@
         "defenseMalus": "Defense malus",
         "global": "Global modifier",
         "armor": "Armor modifier",
-        "range": "Range multiplier"
+        "range": "Range multiplier",
+        "creatureBonus": "Bonus damage (creature)"
     },
     "Features": {
         "Object": "Object",
@@ -1038,6 +1042,8 @@
         "advancedRegenerationKaP": "Karmic Regeneration",
         "energyControl": "Energy Control",
         "smallEnergyControl": "Small Energy Control",
+        "karmaControl": "Control of the Karmic Body",
+        "mightyKarmaControl": "Powerful Control of the Karmic Body",
         "masterfulDodge": "Masterful Dodge",
         "masterfulParry": "Master Parry",
         "improvisedWeaponMaster": "Master of Improvised Weapons",
@@ -1052,6 +1058,7 @@
         "traditionWitch": "Tradition (Witch)",
         "traditionKor": "Tradition (Kor)",
         "traditionFjarning": "Tradition (Fjarning)",
+        "traditionPhex": "Tradition (Church of Phex)",
         "inuredToEncumbrance": "Inured to Encumbrance",
         "quickload": "Quickload",
         "automaticSuccess": "Automatic Succes",

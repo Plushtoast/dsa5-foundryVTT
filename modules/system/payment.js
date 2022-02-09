@@ -130,6 +130,7 @@ export default class DSA5Payment {
     }
 
     static handlePayAction(elem, pay, amount, actor = undefined) {
+        console.log(pay)
         if (game.user.isGM && !actor) {
             ui.notifications.notify(game.i18n.localize("PAYMENT.onlyActors"))
             return
@@ -186,7 +187,7 @@ export default class DSA5Payment {
     static async chatListeners(html) {
         html.on('click', '.payButton', ev => {
             const elem = $(ev.currentTarget)
-            DSA5Payment.handlePayAction(elem, Number(elem.attr("data-pay")) == 1, elem.attr("data-amount"))
+            DSA5Payment.handlePayAction(elem, Number(elem.attr("data-pay")) != 1, elem.attr("data-amount"))
             DSA5SoundEffect.playMoneySound()
         })
     }

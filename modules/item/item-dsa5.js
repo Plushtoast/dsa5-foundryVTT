@@ -1,67 +1,67 @@
-import DSA5_Utility from "../system/utility-dsa5.js";
+import DSA5_Utility from "../system/utility-dsa5.js"
 import DiceDSA5 from "../system/dice-dsa5.js"
-import Actordsa5 from "../actor/actor-dsa5.js";
-import DSA5StatusEffects from "../status/status_effects.js";
-import AdvantageRulesDSA5 from "../system/advantage-rules-dsa5.js";
-import DSA5 from "../system/config-dsa5.js";
-import ItemRulesDSA5 from "../system/item-rules-dsa5.js";
-import DSAActiveEffectConfig from "../status/active_effects.js";
-import RuleChaos from "../system/rule_chaos.js";
-import CreatureType from "../system/creature-type.js";
-import DPS from "../system/derepositioningsystem.js";
-import DSA5CombatDialog from "../dialog/dialog-combat-dsa5.js";
+import Actordsa5 from "../actor/actor-dsa5.js"
+import DSA5StatusEffects from "../status/status_effects.js"
+import AdvantageRulesDSA5 from "../system/advantage-rules-dsa5.js"
+import DSA5 from "../system/config-dsa5.js"
+import ItemRulesDSA5 from "../system/item-rules-dsa5.js"
+import DSAActiveEffectConfig from "../status/active_effects.js"
+import RuleChaos from "../system/rule_chaos.js"
+import CreatureType from "../system/creature-type.js"
+import DPS from "../system/derepositioningsystem.js"
+import DSA5CombatDialog from "../dialog/dialog-combat-dsa5.js"
 
 export default class Itemdsa5 extends Item {
     static defaultImages = {
-        "advantage": "systems/dsa5/icons/categories/Vorteil.webp",
-        "disadvantage": "systems/dsa5/icons/categories/Nachteil.webp",
-        "armor": "systems/dsa5/icons/categories/Armor.webp",
-        "meleeweapon": "systems/dsa5/icons/categories/Meleeweapon.webp",
-        "rangeweapon": "systems/dsa5/icons/categories/Rangeweapon.webp",
-        "equipment": "systems/dsa5/icons/categories/Equipment.webp",
-        "consumable": "systems/dsa5/icons/categories/Equipment.webp",
-        "liturgy": "systems/dsa5/icons/categories/Liturgy.webp",
-        "spell": "systems/dsa5/icons/categories/Spell.webp",
-        "ammunition": "systems/dsa5/icons/categories/Munition.webp",
-        "career": "systems/dsa5/icons/categories/Career.webp",
-        "magictrick": "systems/dsa5/icons/categories/Spelltrick.webp",
-        "blessing": "systems/dsa5/icons/categories/Blessing.webp",
-        "combatskill": "systems/dsa5/icons/categories/Combat_Skill.webp",
-        "skill": "systems/dsa5/icons/categories/Skill.webp",
-        "Geweihte": "systems/dsa5/icons/categories/Geweihte.webp",
-        "Weltliche": "systems/dsa5/icons/categories/Weltliche.webp",
-        "Zauberer": "systems/dsa5/icons/categories/Zauberer.webp",
-        "ritual": "systems/dsa5/icons/categories/ritual.webp",
-        "ceremony": "systems/dsa5/icons/categories/ceremony.webp",
-        "abilityclerical": "systems/dsa5/icons/categories/ability_clerical.webp",
-        "abilityCombat": "systems/dsa5/icons/categories/ability_combat.webp",
-        "abilityfatePoints": "systems/dsa5/icons/categories/ability_fate_points.webp",
-        "abilitygeneral": "systems/dsa5/icons/categories/ability_general.webp",
-        "specialability": "systems/dsa5/icons/categories/ability_general.webp",
-        "abilitymagical": "systems/dsa5/icons/categories/ability_magical.webp",
-        "abilitylanguage": "systems/dsa5/icons/categories/Ability_Language.webp",
-        "abilitystaff": "systems/dsa5/icons/categories/ability_staff.webp",
-        "abilityceremonial": "systems/dsa5/icons/categories/ability_ceremonial.webp",
-        "abilityanimal": "systems/dsa5/icons/categories/ability_animal.webp",
-        "trait": "systems/dsa5/icons/categories/trait.webp",
-        "Tiere": "systems/dsa5/icons/categories/Tiere.webp",
-        "aggregatedTest": "systems/dsa5/icons/categories/aggregated_test.webp",
-        "poison": "systems/dsa5/icons/categories/poison.webp",
-        "disease": "systems/dsa5/icons/categories/disease.webp",
-        "spellextension": "systems/dsa5/icons/categories/Spellextension.webp",
-        "species": "icons/environment/people/group.webp",
-        "application": "systems/dsa5/icons/categories/Skill.webp",
-        "trick": "systems/dsa5/icons/categories/Tiere.webp",
-        "disadvantageanimal": "systems/dsa5/icons/categories/NachteilAnimal.webp",
-        "advantageanimal": "systems/dsa5/icons/categories/VorteilAnimal.webp",
-        "diseaseanimal": "systems/dsa5/icons/categories/diseaseAnimal.webp",
-        "effectwrapper": "icons/svg/aura.svg",
-        "liturgyTalisman": "systems/dsa5/icons/categories/LiturgieTalisman.webp",
-        "plant": "systems/dsa5/icons/categories/plant.webp",
-        "magicalsign": "systems/dsa5/icons/categories/magicalsign.webp",
-        "abilitypact": "systems/dsa5/icons/categories/ability_pact.webp",
-        "demonmark": "systems/dsa5/icons/categories/ability_pact.webp",
-        "patron": "systems/dsa5/icons/categories/ability_pact.webp",
+        advantage: "systems/dsa5/icons/categories/Vorteil.webp",
+        disadvantage: "systems/dsa5/icons/categories/Nachteil.webp",
+        armor: "systems/dsa5/icons/categories/Armor.webp",
+        meleeweapon: "systems/dsa5/icons/categories/Meleeweapon.webp",
+        rangeweapon: "systems/dsa5/icons/categories/Rangeweapon.webp",
+        equipment: "systems/dsa5/icons/categories/Equipment.webp",
+        consumable: "systems/dsa5/icons/categories/Equipment.webp",
+        liturgy: "systems/dsa5/icons/categories/Liturgy.webp",
+        spell: "systems/dsa5/icons/categories/Spell.webp",
+        ammunition: "systems/dsa5/icons/categories/Munition.webp",
+        career: "systems/dsa5/icons/categories/Career.webp",
+        magictrick: "systems/dsa5/icons/categories/Spelltrick.webp",
+        blessing: "systems/dsa5/icons/categories/Blessing.webp",
+        combatskill: "systems/dsa5/icons/categories/Combat_Skill.webp",
+        skill: "systems/dsa5/icons/categories/Skill.webp",
+        Geweihte: "systems/dsa5/icons/categories/Geweihte.webp",
+        Weltliche: "systems/dsa5/icons/categories/Weltliche.webp",
+        Zauberer: "systems/dsa5/icons/categories/Zauberer.webp",
+        ritual: "systems/dsa5/icons/categories/ritual.webp",
+        ceremony: "systems/dsa5/icons/categories/ceremony.webp",
+        abilityclerical: "systems/dsa5/icons/categories/ability_clerical.webp",
+        abilityCombat: "systems/dsa5/icons/categories/ability_combat.webp",
+        abilityfatePoints: "systems/dsa5/icons/categories/ability_fate_points.webp",
+        abilitygeneral: "systems/dsa5/icons/categories/ability_general.webp",
+        specialability: "systems/dsa5/icons/categories/ability_general.webp",
+        abilitymagical: "systems/dsa5/icons/categories/ability_magical.webp",
+        abilitylanguage: "systems/dsa5/icons/categories/Ability_Language.webp",
+        abilitystaff: "systems/dsa5/icons/categories/ability_staff.webp",
+        abilityceremonial: "systems/dsa5/icons/categories/ability_ceremonial.webp",
+        abilityanimal: "systems/dsa5/icons/categories/ability_animal.webp",
+        trait: "systems/dsa5/icons/categories/trait.webp",
+        Tiere: "systems/dsa5/icons/categories/Tiere.webp",
+        aggregatedTest: "systems/dsa5/icons/categories/aggregated_test.webp",
+        poison: "systems/dsa5/icons/categories/poison.webp",
+        disease: "systems/dsa5/icons/categories/disease.webp",
+        spellextension: "systems/dsa5/icons/categories/Spellextension.webp",
+        species: "icons/environment/people/group.webp",
+        application: "systems/dsa5/icons/categories/Skill.webp",
+        trick: "systems/dsa5/icons/categories/Tiere.webp",
+        disadvantageanimal: "systems/dsa5/icons/categories/NachteilAnimal.webp",
+        advantageanimal: "systems/dsa5/icons/categories/VorteilAnimal.webp",
+        diseaseanimal: "systems/dsa5/icons/categories/diseaseAnimal.webp",
+        effectwrapper: "icons/svg/aura.svg",
+        liturgyTalisman: "systems/dsa5/icons/categories/LiturgieTalisman.webp",
+        plant: "systems/dsa5/icons/categories/plant.webp",
+        magicalsign: "systems/dsa5/icons/categories/magicalsign.webp",
+        abilitypact: "systems/dsa5/icons/categories/ability_pact.webp",
+        demonmark: "systems/dsa5/icons/categories/ability_pact.webp",
+        patron: "systems/dsa5/icons/categories/ability_pact.webp",
     }
 
     static defaultIcon(data) {
@@ -69,32 +69,33 @@ export default class Itemdsa5 extends Item {
             if (data.type in this.defaultImages) {
                 data.img = this.defaultImages[data.type]
             } else {
-                data.img = "systems/dsa5/icons/blank.webp";
+                data.img = "systems/dsa5/icons/blank.webp"
             }
         }
     }
 
     static async create(data, options) {
         this.defaultIcon(data)
-        return await super.create(data, options);
+        return await super.create(data, options)
     }
 
     static getSpecAbModifiers(html, mode) {
         let res = []
-        for (let k of html.find('.specAbs')) {
+        for (let k of html.find(".specAbs")) {
             let step = Number($(k).attr("data-step"))
             if (step > 0) {
-                const val = (mode == "attack" ? $(k).attr("data-atbonus") : $(k).attr("data-pabonus"))
-                const reducedVal = val.split(",")
-                    .reduce((prev, cur) => { return prev + Number(cur) }, 0)
+                const val = mode == "attack" ? $(k).attr("data-atbonus") : $(k).attr("data-pabonus")
+                const reducedVal = val.split(",").reduce((prev, cur) => {
+                    return prev + Number(cur)
+                }, 0)
                 res.push({
-                    name: $(k).find('a').text(),
-                    value: isNaN(reducedVal) ? Number(val.replace('*', '')) : Number(reducedVal) * step,
+                    name: $(k).find("a").text(),
+                    value: isNaN(reducedVal) ? Number(val.replace("*", "")) : Number(reducedVal) * step,
                     damageBonus: $(k).attr("data-tpbonus"),
                     dmmalus: $(k).attr("data-dmmalus") * step,
                     step: step,
                     specAbId: $(k).attr("data-id"),
-                    type: /^\*/.test(val) ? "*" : undefined
+                    type: /^\*/.test(val) ? "*" : undefined,
                 })
             }
         }
@@ -130,7 +131,7 @@ export default class Itemdsa5 extends Item {
             plant: PlantItemDSA5,
             magicalsign: MagicalSignItemDSA5,
             patron: PatronItemDSA5,
-            demonmark: DemonmarkItemDSA5
+            demonmark: DemonmarkItemDSA5,
         }
     }
 
@@ -138,7 +139,7 @@ export default class Itemdsa5 extends Item {
         return {
             token: tokenId,
             actor: actor ? actor.data._id : undefined,
-            scene: canvas.scene ? canvas.scene.id : null
+            scene: canvas.scene ? canvas.scene.id : null,
         }
     }
 
@@ -151,7 +152,7 @@ export default class Itemdsa5 extends Item {
         return {
             name,
             value: Number(val),
-            type
+            type,
         }
     }
 
@@ -175,34 +176,41 @@ export default class Itemdsa5 extends Item {
 
         const hasSpellResistance = ["spell", "liturgy", "ceremony", "ritual"].includes(source.type) && source.data.effectFormula.value.trim() == ""
         if (game.user.targets.size) {
-            game.user.targets.forEach(target => {
+            game.user.targets.forEach((target) => {
                 if (target.actor) {
                     let spellResistance = 0
                     if (hasSpellResistance) {
                         const creatureTypes = CreatureType.detectCreatureType(target.actor.data)
-                        spellResistance = creatureTypes.reduce((sum, x) => { return sum + x.spellResistanceModifier(target.actor.data) }, 0)
+                        spellResistance = creatureTypes.reduce((sum, x) => {
+                            return sum + x.spellResistanceModifier(target.actor.data)
+                        }, 0)
                     }
 
                     skMod.push(target.actor.data.data.status.soulpower.max * -1 - spellResistance)
                     zkMod.push(target.actor.data.data.status.toughness.max * -1 - spellResistance)
                 }
-            });
+            })
         }
 
         mergeObject(data, {
             SKModifier: Math.min(...skMod),
-            ZKModifier: Math.min(...zkMod)
-        });
+            ZKModifier: Math.min(...zkMod),
+        })
     }
 
     static parseEffect(effect, actor) {
         let itemModifiers = {}
         let regex = new RegExp(game.i18n.localize("CHARAbbrev.GS"), "gi")
-        for (let mod of effect.split(/,|;/).map(x => x.trim())) {
-            let vals = mod.replace(/(\s+)/g, ' ').trim().split(" ")
+        for (let mod of effect.split(/,|;/).map((x) => x.trim())) {
+            let vals = mod.replace(/(\s+)/g, " ").trim().split(" ")
             vals[0] = vals[0].replace(regex, actor.data.data.status.speed.max)
             if (vals.length == 2) {
-                if (!isNaN(vals[0]) || /(=)?[+-]\d([+-]\d)?/.test(vals[0]) || /(=)?\d[dDwW]\d/.test(vals[0]) || /=\d+/.test(vals[0]) || /\*\d(\.\d)*/.test(vals[0])) {
+                if (!isNaN(vals[0]) ||
+                    /(=)?[+-]\d([+-]\d)?/.test(vals[0]) ||
+                    /(=)?\d[dDwW]\d/.test(vals[0]) ||
+                    /=\d+/.test(vals[0]) ||
+                    /\*\d(\.\d)*/.test(vals[0])
+                ) {
                     if (itemModifiers[vals[1].toLowerCase()] == undefined) {
                         itemModifiers[vals[1].toLowerCase()] = [vals[0]]
                     } else {
@@ -221,21 +229,21 @@ export default class Itemdsa5 extends Item {
             for (let mal of message.data.flags.data.preData.situationalModifiers) {
                 if (mal.dmmalus != undefined && mal.dmmalus != 0) {
                     situationalModifiers.push({
-                        name: `${game.i18n.localize('MODS.defenseMalus')} - ${mal.name.replace(regex, "")}`,
+                        name: `${game.i18n.localize("MODS.defenseMalus")} - ${mal.name.replace(regex, "")}`,
                         value: mal.dmmalus,
-                        selected: true
+                        selected: true,
                     })
                 } else if (mal.type == "defenseMalus" && mal.value != 0) {
                     situationalModifiers.push({
                         name: mal.name.replace(regex, ""),
                         value: mal.value,
-                        selected: true
+                        selected: true,
                     })
                 }
             }
             if (message.data.flags.data.postData.halfDefense) {
                 situationalModifiers.push({
-                    name: `${game.i18n.localize('MODS.defenseMalus')} - ${game.i18n.localize("halfDefenseShort")}`,
+                    name: `${game.i18n.localize("MODS.defenseMalus")} - ${game.i18n.localize("halfDefenseShort")}`,
                     value: 0.5,
                     type: "*",
                     selected: true,
@@ -254,17 +262,27 @@ export default class Itemdsa5 extends Item {
         let searchFilter
         if (toSearch) {
             toSearch.push(game.i18n.localize("LocalizedIDs.all"))
-            toSearch = toSearch.map(x => x.toLowerCase())
-            searchFilter = (x, toSearch) => { return x.data.data.list.value.split(/;|,/).map(x => x.trim().toLowerCase()).filter(y => toSearch.includes(y.replace(/ \([a-zA-Z äüöÄÖÜ]*\)/, ""))).length > 0 }
+            toSearch = toSearch.map((x) => x.toLowerCase())
+            searchFilter = (x, toSearch) => {
+                return (
+                    x.data.data.list.value
+                    .split(/;|,/)
+                    .map((x) => x.trim().toLowerCase())
+                    .filter((y) => toSearch.includes(y.replace(/ \([a-zA-Z äüöÄÖÜ]*\)/, ""))).length > 0
+                )
+            }
         } else
-            searchFilter = () => { return true }
+            searchFilter = () => {
+                return true
+            }
 
-
-        const combatSpecAbs = actor.items.filter(x => {
-            return x.type == "specialability" &&
+        const combatSpecAbs = actor.items.filter((x) => {
+            return (
+                x.type == "specialability" &&
                 categories.includes(x.data.data.category.value) &&
                 x.data.data.effect.value != "" &&
                 searchFilter(x, toSearch)
+            )
         })
 
         let combatskills = []
@@ -291,10 +309,10 @@ export default class Itemdsa5 extends Item {
                         category: {
                             id: com.data.data.category.sub,
                             css: `ab_${com.data.data.category.sub}`,
-                            name: subCategory
+                            name: subCategory,
                         },
                         id: com.id,
-                        actor: actor.id
+                        actor: actor.id,
                     })
                 }
             }
@@ -314,10 +332,10 @@ export default class Itemdsa5 extends Item {
                         category: {
                             id: com.data.data.category.sub,
                             css: `ab_${com.data.data.category.sub}`,
-                            name: subCategory
+                            name: subCategory,
                         },
                         id: com.id,
-                        actor: actor.id
+                        actor: actor.id,
                     })
                 }
             }
@@ -328,7 +346,7 @@ export default class Itemdsa5 extends Item {
     static getCombatSkillModifier(actor, source, situationalModifiers) {
         if (source.type == "trait") return
 
-        const combatskill = actor.items.find(x => x.type == "combatskill" && x.name == source.data.combatskill.value)
+        const combatskill = actor.items.find((x) => x.type == "combatskill" && x.name == source.data.combatskill.value)
 
         for (let ef of combatskill.data.effects) {
             for (let change of ef.data.changes) {
@@ -336,10 +354,10 @@ export default class Itemdsa5 extends Item {
                     case "data.rangeStats.defenseMalus":
                     case "data.meleeStats.defenseMalus":
                         situationalModifiers.push({
-                            name: `${combatskill.name} - ${game.i18n.localize('MODS.defenseMalus')}`,
+                            name: `${combatskill.name} - ${game.i18n.localize("MODS.defenseMalus")}`,
                             value: change.value * -1,
                             type: "defenseMalus",
-                            selected: true
+                            selected: true,
                         })
                         break
                 }
@@ -352,41 +370,47 @@ export default class Itemdsa5 extends Item {
             situationalModifiers.push({
                 name: game.i18n.localize("statuseffects"),
                 value,
-                selected: true
+                selected: true,
             })
         }
     }
 
     static prepareRangeAttack(situationalModifiers, actor, data, source, tokenId, combatskills, currentAmmo = undefined) {
-        situationalModifiers.push(...AdvantageRulesDSA5.getVantageAsModifier(actor.data, game.i18n.localize('LocalizedIDs.restrictedSenseSight'), -2))
+        situationalModifiers.push(
+            ...AdvantageRulesDSA5.getVantageAsModifier(actor.data, game.i18n.localize("LocalizedIDs.restrictedSenseSight"), -2)
+        )
         this.getCombatSkillModifier(actor, source, situationalModifiers)
 
         let targetSize = "average"
         if (game.user.targets.size) {
-            game.user.targets.forEach(target => {
+            game.user.targets.forEach((target) => {
                 if (target.actor) {
                     const tar = getProperty(target.actor.data, "data.status.size")
                     if (tar) targetSize = tar.value
 
-                    CreatureType.addCreatureTypeModifiers(target.actor.data, source, situationalModifiers)
+                    CreatureType.addCreatureTypeModifiers(target.actor.data, source, situationalModifiers, actor)
                 }
-            });
+            })
         }
 
         const defenseMalus = Number(actor.data.data.rangeStats.defenseMalus) * -1
         if (defenseMalus != 0) {
             situationalModifiers.push({
-                name: `${game.i18n.localize("statuseffects")} - ${game.i18n.localize('MODS.defenseMalus')}`,
+                name: `${game.i18n.localize("statuseffects")} - ${game.i18n.localize("MODS.defenseMalus")}`,
                 value: defenseMalus,
                 type: "defenseMalus",
-                selected: true
+                selected: true,
             })
         }
 
         const rangeOptions = {...DSA5.rangeWeaponModifiers }
-        delete rangeOptions[AdvantageRulesDSA5.hasVantage(actor, game.i18n.localize('LocalizedIDs.senseOfRange')) ? "long" : "rangesense"]
+        delete rangeOptions[
+            AdvantageRulesDSA5.hasVantage(actor, game.i18n.localize("LocalizedIDs.senseOfRange")) ? "long" : "rangesense"
+        ]
 
-        const drivingArcher = actor.items.some(x => x.name == game.i18n.localize("LocalizedIDs.drivingArcher") && x.type == "specialability")
+        const drivingArcher = actor.items.some(
+            (x) => x.name == game.i18n.localize("LocalizedIDs.drivingArcher") && x.type == "specialability"
+        )
         const mountedOptions = drivingArcher ? duplicate(DSA5.drivingArcherOptions) : duplicate(DSA5.mountedRangeOptions)
 
         mergeObject(data, {
@@ -399,36 +423,36 @@ export default class Itemdsa5 extends Item {
             targetMovementOptions: DSA5.targetMomevementOptions,
             targetSize,
             combatSpecAbs: combatskills,
-            aimOptions: DSA5.aimOptions
-        });
+            aimOptions: DSA5.aimOptions,
+        })
     }
 
     static prepareMeleeAttack(situationalModifiers, actor, data, source, combatskills, wrongHandDisabled) {
         let targetWeaponSize = "short"
         if (game.user.targets.size) {
-            game.user.targets.forEach(target => {
+            game.user.targets.forEach((target) => {
                 if (target.actor) {
-                    const defWeapon = target.actor.items.filter(x => {
-                        return (x.data.type == "meleeweapon" && x.data.data.worn.value) ||
+                    const defWeapon = target.actor.items.filter((x) => {
+                        return (
+                            (x.data.type == "meleeweapon" && x.data.data.worn.value) ||
                             (x.data.type == "trait" && x.data.data.traitType.value == "meleeAttack" && x.data.data.pa)
+                        )
                     })
-                    if (defWeapon.length > 0)
-                        targetWeaponSize = defWeapon[0].data.data.reach.value
+                    if (defWeapon.length > 0) targetWeaponSize = defWeapon[0].data.data.reach.value
 
-                    CreatureType.addCreatureTypeModifiers(target.actor.data, source, situationalModifiers)
+                    CreatureType.addCreatureTypeModifiers(target.actor.data, source, situationalModifiers, actor)
                 }
-            });
-
+            })
         }
         this.getCombatSkillModifier(actor, source, situationalModifiers)
 
         const defenseMalus = Number(actor.data.data.meleeStats.defenseMalus) * -1
         if (defenseMalus != 0) {
             situationalModifiers.push({
-                name: `${game.i18n.localize("statuseffects")} - ${game.i18n.localize('MODS.defenseMalus')}`,
+                name: `${game.i18n.localize("statuseffects")} - ${game.i18n.localize("MODS.defenseMalus")}`,
                 value: defenseMalus,
                 type: "defenseMalus",
-                selected: true
+                selected: true,
             })
         }
 
@@ -442,8 +466,8 @@ export default class Itemdsa5 extends Item {
 
             constricted: actor.hasCondition("constricted"),
             wrongHandDisabled,
-            offHand: !wrongHandDisabled && getProperty(source, "data.worn.offHand")
-        });
+            offHand: !wrongHandDisabled && getProperty(source, "data.worn.offHand"),
+        })
     }
 
     static prepareMeleeParry(situationalModifiers, actor, data, source, combatskills, wrongHandDisabled) {
@@ -454,8 +478,8 @@ export default class Itemdsa5 extends Item {
             wrongHandDisabled: wrongHandDisabled && getProperty(source, "data.worn.offHand"),
             melee: true,
             combatSpecAbs: combatskills,
-            constricted: actor.hasCondition("constricted")
-        });
+            constricted: actor.hasCondition("constricted"),
+        })
     }
 
     static _chatLineHelper(key, val) {
@@ -472,7 +496,9 @@ export default class Itemdsa5 extends Item {
     }
 
     static checkEquality(item, item2) {
-        return item2.type == item.type && item.name == item2.name && item.data.description.value == item2.data.data.description.value
+        return (
+            item2.type == item.type && item.name == item2.name && item.data.description.value == item2.data.data.description.value
+        )
     }
 
     static async combineItem(item1, item2, actor) {
@@ -496,10 +522,10 @@ export default class Itemdsa5 extends Item {
         return {
             speaker: {
                 alias: speaker.alias,
-                scene: speaker.scene
+                scene: speaker.scene,
             },
             flags: {
-                img: speaker.token ? canvas.tokens.get(speaker.token).data.img : this.img
+                img: speaker.token ? canvas.tokens.get(speaker.token).data.img : this.img,
             },
             title,
             template,
@@ -507,15 +533,14 @@ export default class Itemdsa5 extends Item {
     }
 
     async itemTest({ testData, cardOptions }, options = {}) {
-        testData = await DiceDSA5.rollDices(testData, cardOptions);
-        let result = await DiceDSA5.rollTest(testData);
+        testData = await DiceDSA5.rollDices(testData, cardOptions)
+        let result = await DiceDSA5.rollTest(testData)
 
-        result.postFunction = "itemTest";
+        result.postFunction = "itemTest"
 
         if (game.user.targets.size) {
             cardOptions.isOpposedTest = testData.opposable
-            if (cardOptions.isOpposedTest)
-                cardOptions.title += ` - ${game.i18n.localize("Opposed")}`;
+            if (cardOptions.isOpposedTest) cardOptions.title += ` - ${game.i18n.localize("Opposed")}`
         }
 
         // TODO this can probably be removed
@@ -525,10 +550,9 @@ export default class Itemdsa5 extends Item {
             await this.updateEmbeddedDocuments("Item", [{ _id: testData.extra.ammo._id, "data.quantity.value": testData.extra.ammo.data.quantity.value }]);
         }*/
 
-        if (!options.suppressMessage)
-            DiceDSA5.renderRollCard(cardOptions, result, options.rerenderMessage)
+        if (!options.suppressMessage) DiceDSA5.renderRollCard(cardOptions, result, options.rerenderMessage)
 
-        return { result, cardOptions };
+        return { result, cardOptions }
     }
 
     static chatData(data, name) {
@@ -536,51 +560,56 @@ export default class Itemdsa5 extends Item {
     }
 
     static getSubClass(type) {
-        if (game.dsa5.config.ItemSubclasses[type])
-            return game.dsa5.config.ItemSubclasses[type]
-        else
-            return Itemdsa5
+        if (game.dsa5.config.ItemSubclasses[type]) return game.dsa5.config.ItemSubclasses[type]
+        else return Itemdsa5
     }
 
     async postItem() {
-        let chatData = duplicate(this.data);
+        let chatData = duplicate(this.data)
         const properties = Itemdsa5.getSubClass(this.data.type).chatData(duplicate(chatData.data), this.name)
 
         chatData["properties"] = properties
 
-        chatData.hasPrice = "price" in chatData.data;
+        chatData.hasPrice = "price" in chatData.data
         if (chatData.hasPrice) {
-            let price = chatData.data.price.value;
-            if (chatData.data.QL)
-                price *= chatData.data.QL
+            let price = chatData.data.price.value
+            if (chatData.data.QL) price *= chatData.data.QL
 
-            chatData.data.price.D = Math.floor(price / 10);
-            price -= chatData.data.price.D * 10;
-            chatData.data.price.S = Math.floor(price);
-            price -= chatData.data.price.S;
-            chatData.data.price.H = Math.floor(price / 0.1);
-            price -= (chatData.data.price.H * 0.1);
-            chatData.data.price.K = Math.round(price / 0.01);
+            chatData.data.price.D = Math.floor(price / 10)
+            price -= chatData.data.price.D * 10
+            chatData.data.price.S = Math.floor(price)
+            price -= chatData.data.price.S
+            chatData.data.price.H = Math.floor(price / 0.1)
+            price -= chatData.data.price.H * 0.1
+            chatData.data.price.K = Math.round(price / 0.01)
 
-            properties.push(`<b>${game.i18n.localize("price")}</b>: ${chatData.data.price.D} <div title="${game.i18n.localize("Money-D")}" class="chatmoney money-D"></div>, ${chatData.data.price.S} <div title="${game.i18n.localize("Money-S")}" class="chatmoney money-S"></div>, ${chatData.data.price.H} <div title="${game.i18n.localize("Money-H")}" class="chatmoney money-H"></div>, ${chatData.data.price.K} <div title="${game.i18n.localize("Money-K")}" class="chatmoney money-K"></div>`);
+            properties.push(
+                `<b>${game.i18n.localize("price")}</b>: ${chatData.data.price.D} <div title="${game.i18n.localize(
+                    "Money-D"
+                )}" class="chatmoney money-D"></div>, ${chatData.data.price.S} <div title="${game.i18n.localize(
+                    "Money-S"
+                )}" class="chatmoney money-S"></div>, ${chatData.data.price.H} <div title="${game.i18n.localize(
+                    "Money-H"
+                )}" class="chatmoney money-H"></div>, ${chatData.data.price.K} <div title="${game.i18n.localize(
+                    "Money-K"
+                )}" class="chatmoney money-K"></div>`
+            )
         }
 
-        if (this.pack)
-            chatData.itemLink = `@Compendium[${this.pack}.${this.id}]`
+        if (this.pack) chatData.itemLink = `@Compendium[${this.pack}.${this.id}]`
 
-        if (chatData.img.includes("/blank.webp"))
-            chatData.img = null;
+        if (chatData.img.includes("/blank.webp")) chatData.img = null
 
-        renderTemplate('systems/dsa5/templates/chat/post-item.html', chatData).then(html => {
+        renderTemplate("systems/dsa5/templates/chat/post-item.html", chatData).then((html) => {
             let chatOptions = DSA5_Utility.chatDataSetup(html)
 
             chatOptions["flags.transfer"] = JSON.stringify({
                 type: "postedItem",
                 payload: this.data,
             })
-            chatOptions["flags.recreationData"] = chatData;
+            chatOptions["flags.recreationData"] = chatData
             ChatMessage.create(chatOptions)
-        });
+        })
     }
 }
 
@@ -589,7 +618,7 @@ class PlantItemDSA5 extends Itemdsa5 {
         let res = [
             this._chatLineHelper("effect", data.effect),
             this._chatLineHelper("PLANT.recipes", data.recipes),
-            this._chatLineHelper("PLANT.usages", data.usages)
+            this._chatLineHelper("PLANT.usages", data.usages),
         ]
 
         return res
@@ -598,9 +627,7 @@ class PlantItemDSA5 extends Itemdsa5 {
 
 class MagicalSignItemDSA5 extends Itemdsa5 {
     static chatData(data, name) {
-        let res = [
-            this._chatLineHelper("AsPCost", data.asp)
-        ]
+        let res = [this._chatLineHelper("AsPCost", data.asp)]
         if (data.category == 2) res.push(this._chatLineHelper("feature", data.feature))
 
         return res
@@ -612,7 +639,7 @@ class DemonmarkItemDSA5 extends Itemdsa5 {
         let res = [
             this._chatLineHelper("attributes", data.attribute),
             this._chatLineHelper("skills", data.skills),
-            this._chatLineHelper("domains", data.domain)
+            this._chatLineHelper("domains", data.domain),
         ]
 
         return res
@@ -624,7 +651,7 @@ class PatronItemDSA5 extends Itemdsa5 {
         let res = [
             this._chatLineHelper("skills", data.talents),
             this._chatLineHelper("culture", data.culture),
-            this._chatLineHelper("Category", game.i18n.localize(`PATRON.${data.category}`))
+            this._chatLineHelper("Category", game.i18n.localize(`PATRON.${data.category}`)),
         ]
 
         return res
@@ -652,9 +679,7 @@ class aggregatedTestItemDSA5 extends Itemdsa5 {
 
 class AmmunitionItemDSA5 extends Itemdsa5 {
     static chatData(data, name) {
-        return [
-            this._chatLineHelper("ammunitiongroup", game.i18n.localize(data.ammunitiongroup.value))
-        ]
+        return [this._chatLineHelper("ammunitiongroup", game.i18n.localize(data.ammunitiongroup.value))]
     }
 }
 
@@ -668,10 +693,9 @@ class ArmorItemDSA5 extends Itemdsa5 {
     static chatData(data, name) {
         let properties = [
             this._chatLineHelper("protection", data.protection.value),
-            this._chatLineHelper("encumbrance", data.encumbrance.value)
+            this._chatLineHelper("encumbrance", data.encumbrance.value),
         ]
-        if (data.effect.value != "")
-            properties.push(this._chatLineHelper("effect", data.effect.value))
+        if (data.effect.value != "") properties.push(this._chatLineHelper("effect", data.effect.value))
 
         return properties
     }
@@ -698,7 +722,7 @@ class SpellItemDSA5 extends Itemdsa5 {
             this._chatLineHelper("duration", data.duration.value),
             this._chatLineHelper("reach", data.range.value),
             this._chatLineHelper("targetCategory", data.targetCategory.value),
-            this._chatLineHelper("effect", DSA5_Utility.replaceConditions(DSA5_Utility.replaceDies(data.effect.value)))
+            this._chatLineHelper("effect", DSA5_Utility.replaceConditions(DSA5_Utility.replaceDies(data.effect.value))),
         ]
     }
 
@@ -709,45 +733,45 @@ class SpellItemDSA5 extends Itemdsa5 {
             castingTime: html.find(".castingTime").text(),
             cost: html.find(".aspcost").text(),
             reach: html.find(".reach").text(),
-            maintainCost: html.find(".maintainCost").text()
+            maintainCost: html.find(".maintainCost").text(),
         }
         testData.situationalModifiers.push({
             name: game.i18n.localize("removeGesture"),
-            value: html.find('[name="removeGesture"]').is(":checked") ? -2 : 0
+            value: html.find('[name="removeGesture"]').is(":checked") ? -2 : 0,
         }, {
             name: game.i18n.localize("removeFormula"),
-            value: html.find('[name="removeFormula"]').is(":checked") ? -2 : 0
+            value: html.find('[name="removeFormula"]').is(":checked") ? -2 : 0,
         }, {
             name: game.i18n.localize("castingTime"),
-            value: html.find(".castingTime").data("mod")
+            value: html.find(".castingTime").data("mod"),
         }, {
             name: game.i18n.localize("cost"),
-            value: html.find(".aspcost").data('mod')
+            value: html.find(".aspcost").data("mod"),
         }, {
             name: game.i18n.localize("reach"),
-            value: html.find(".reach").data('mod')
+            value: html.find(".reach").data("mod"),
         }, {
             name: game.i18n.localize("zkModifier"),
-            value: html.find('[name="zkModifier"]').val() || 0
+            value: html.find('[name="zkModifier"]').val() || 0,
         }, {
             name: game.i18n.localize("skModifier"),
-            value: html.find('[name="skModifier"]').val() || 0
+            value: html.find('[name="skModifier"]').val() || 0,
         }, {
             name: game.i18n.localize("maintainedSpells"),
-            value: Number(html.find('[name="maintainedSpells"]').val()) * -1
+            value: Number(html.find('[name="maintainedSpells"]').val()) * -1,
         })
         testData.extensions = SpellItemDSA5.getSpecAbModifiers(html).join(", ")
         testData.advancedModifiers = {
-            chars: [0, 1, 2].map(x => Number(html.find(`[name="ch${x}"]`).val())),
+            chars: [0, 1, 2].map((x) => Number(html.find(`[name="ch${x}"]`).val())),
             fws: Number(html.find(`[name="fw"]`).val()),
-            qls: Number(html.find(`[name="qs"]`).val())
+            qls: Number(html.find(`[name="qs"]`).val()),
         }
-        Itemdsa5.changeChars(testData.source, ...[0, 1, 2].map(x => html.find(`[name="characteristics${x}"]`).val()))
+        Itemdsa5.changeChars(testData.source, ...[0, 1, 2].map((x) => html.find(`[name="characteristics${x}"]`).val()))
     }
 
     static getSpecAbModifiers(html) {
         let res = []
-        for (let k of html.find('.specAbs.active')) {
+        for (let k of html.find(".specAbs.active")) {
             res.push(`<span title="${$(k).attr("title")}">${$(k).attr("data-name")}</span>`)
         }
         return res
@@ -756,59 +780,95 @@ class SpellItemDSA5 extends Itemdsa5 {
     static attackSpellMalus(source) {
         let res = []
         if (source.data.effectFormula.value)
-            res.push({ name: game.i18n.localize('MODS.defenseMalus'), value: -4, type: "defenseMalus", selected: true })
+            res.push({ name: game.i18n.localize("MODS.defenseMalus"), value: -4, type: "defenseMalus", selected: true })
 
         return res
     }
 
     static getPropertyModifiers(actor, item) {
-        const features = (getProperty(item, "data.feature") || "").replace(/\(a-z äöü\-\)/gi, "").split(",").map(x => x.trim())
+        const isClerical = ["ceremony", "liturgy"].includes(item.type)
+        const features = (getProperty(item, "data.feature") || "")
+            .replace(/\(a-z äöü\-\)/gi, "")
+            .split(",")
+            .map((x) => x.trim())
         const res = []
 
-        const keys = ["FP", "step", "QL", "TPM", "FW"]
+        const cost = isClerical ? "KaPCost" : "AsPCost"
+        const keys = ["FP", "step", "QL", "TPM", "FW", cost]
         for (const k of keys) {
             const type = k == "step" ? "" : k
             const modifiers = getProperty(actor.data.data.skillModifiers, `feature.${k}`)
-            res.push(...modifiers.filter(x => features.includes(x.target)).map((f) => {
-                return {
-                    name: f.source,
-                    value: f.value,
-                    type
-                }
-            }))
+            res.push(
+                ...modifiers
+                .filter((x) => features.includes(x.target))
+                .map((f) => {
+                    return {
+                        name: f.source,
+                        value: f.value,
+                        type,
+                    }
+                })
+            )
         }
+        const conditional = getProperty(actor.data.data.skillModifiers, `conditional.${cost}`)
+        res.push(...conditional.map(f => {
+            return {
+                name: f.target,
+                value: f.value,
+                type: cost
+            }
+        }))
+
         return res
     }
 
     static foreignSpellModifier(actor, source, situationalModifiers, data) {
-        if (game.settings.get("dsa5", "enableForeignSpellModifer") && ["npc", "character"].includes(actor.data.type) && ["spell", "ritual"].includes(source.type)) {
-            const distributions = source.data.distribution.value.split(",").map(x => x.trim().toLowerCase())
+        if (
+            game.settings.get("dsa5", "enableForeignSpellModifer") && ["npc", "character"].includes(actor.data.type) && ["spell", "ritual"].includes(source.type)
+        ) {
+            const distributions = source.data.distribution.value.split(",").map((x) => x.trim().toLowerCase())
             const regx = new RegExp(`(${game.i18n.localize("tradition")}|\\\)|\\\()`, "g")
-            const traditions = actor.data.data.tradition.magical.replace(regx, "").split(",").map(x => x.trim().toLowerCase())
+            const traditions = actor.data.data.tradition.magical
+                .replace(regx, "")
+                .split(",")
+                .map((x) => x.trim().toLowerCase())
             traditions.push(game.i18n.localize("general").toLowerCase())
 
-            data.isForeign = !distributions.some(x => traditions.includes(x))
+            data.isForeign = !distributions.some((x) => traditions.includes(x))
             if (data.isForeign) {
-                situationalModifiers.push({ name: game.i18n.localize('DSASETTINGS.enableForeignSpellModifer'), value: -2, selected: true })
+                situationalModifiers.push({
+                    name: game.i18n.localize("DSASETTINGS.enableForeignSpellModifer"),
+                    value: -2,
+                    selected: true,
+                })
             }
         }
     }
 
     static getSituationalModifiers(situationalModifiers, actor, data, source) {
         situationalModifiers.push(
-            ...ItemRulesDSA5.getTalentBonus(actor.data, source.name, ["advantage", "disadvantage", "specialability", "equipment"]),
-            ...AdvantageRulesDSA5.getVantageAsModifier(actor.data, game.i18n.localize('LocalizedIDs.magicalAttunement'), 1, true),
-            ...AdvantageRulesDSA5.getVantageAsModifier(actor.data, game.i18n.localize('LocalizedIDs.magicalRestriction'), -1, true),
-            ...AdvantageRulesDSA5.getVantageAsModifier(actor.data, game.i18n.localize('LocalizedIDs.boundToArtifact'), -1, true),
+            ...ItemRulesDSA5.getTalentBonus(actor.data, source.name, [
+                "advantage",
+                "disadvantage",
+                "specialability",
+                "equipment",
+            ]),
+            ...AdvantageRulesDSA5.getVantageAsModifier(actor.data, game.i18n.localize("LocalizedIDs.magicalAttunement"), 1, true),
+            ...AdvantageRulesDSA5.getVantageAsModifier(
+                actor.data,
+                game.i18n.localize("LocalizedIDs.magicalRestriction"), -1,
+                true
+            ),
+            ...AdvantageRulesDSA5.getVantageAsModifier(actor.data, game.i18n.localize("LocalizedIDs.boundToArtifact"), -1, true),
             ...this.getPropertyModifiers(actor, source),
             ...this.attackSpellMalus(source)
         )
 
         this.foreignSpellModifier(actor, source, situationalModifiers, data)
         if (game.user.targets.size) {
-            game.user.targets.forEach(target => {
-                if (target.actor) CreatureType.addCreatureTypeModifiers(target.actor.data, source, situationalModifiers)
-            });
+            game.user.targets.forEach((target) => {
+                if (target.actor) CreatureType.addCreatureTypeModifiers(target.actor.data, source, situationalModifiers, actor)
+            })
         }
         situationalModifiers.push(...actor.getSkillModifier(source.name, source.type))
         for (const thing of actor.data.data.skillModifiers.global) {
@@ -820,10 +880,9 @@ class SpellItemDSA5 extends Itemdsa5 {
 
     static setupDialog(ev, options, spell, actor, tokenId) {
         let sheet = "spell"
-        if (spell.type == "ceremony" || spell.type == "liturgy")
-            sheet = "liturgy"
+        if (spell.type == "ceremony" || spell.type == "liturgy") sheet = "liturgy"
 
-        let title = spell.name + " " + game.i18n.localize(`${spell.type}Test`);
+        let title = spell.name + " " + game.i18n.localize(`${spell.type}Test`)
 
         let testData = {
             opposable: spell.data.effectFormula.value.length > 0,
@@ -831,9 +890,9 @@ class SpellItemDSA5 extends Itemdsa5 {
             extra: {
                 actor: actor.toObject(false),
                 options,
-                speaker: Itemdsa5.buildSpeaker(actor, tokenId)
-            }
-        };
+                speaker: Itemdsa5.buildSpeaker(actor, tokenId),
+            },
+        }
         let data = {
             rollMode: options.rollMode,
             spellCost: spell.data.AsPCost.value,
@@ -848,7 +907,7 @@ class SpellItemDSA5 extends Itemdsa5 {
             maxMods: Math.floor(Number(spell.data.talentValue.value) / 4),
             extensions: this.prepareExtensions(actor, spell),
             variableBaseCost: spell.data.variableBaseCost == "true",
-            characteristics: [1, 2, 3].map(x => spell.data[`characteristic${x}`].value)
+            characteristics: [1, 2, 3].map((x) => spell.data[`characteristic${x}`].value),
         }
 
         let situationalModifiers = actor ? DSA5StatusEffects.getRollModifiers(actor, spell) : []
@@ -860,24 +919,26 @@ class SpellItemDSA5 extends Itemdsa5 {
             template: `/systems/dsa5/templates/dialog/${sheet}-enhanced-dialog.html`,
             data,
             callback: (html, options = {}) => {
-                cardOptions.rollMode = html.find('[name="rollMode"]').val();
+                cardOptions.rollMode = html.find('[name="rollMode"]').val()
                 this.getCallbackData(testData, html, actor)
                 mergeObject(testData.extra.options, options)
-                return { testData, cardOptions };
-            }
-        };
+                return { testData, cardOptions }
+            },
+        }
 
         let cardOptions = actor._setupCardOptions("systems/dsa5/templates/chat/roll/spell-card.html", title)
 
-        return DiceDSA5.setupDialog({ dialogOptions, testData, cardOptions });
+        return DiceDSA5.setupDialog({ dialogOptions, testData, cardOptions })
     }
 
     static prepareExtensions(actor, spell) {
-        return actor.items.filter(x => x.type == "spellextension" && x.data.data.source == spell.name && x.data.data.category == spell.type).map(x => {
-            x.shortName = (x.name.split(" - ").length > 1 ? x.name.split(" - ")[1] : x.name)
-            x.descr = $(x.data.data.description.value).text()
-            return x
-        })
+        return actor.items
+            .filter((x) => x.type == "spellextension" && x.data.data.source == spell.name && x.data.data.category == spell.type)
+            .map((x) => {
+                x.shortName = x.name.split(" - ").length > 1 ? x.name.split(" - ")[1] : x.name
+                x.descr = $(x.data.data.description.value).text()
+                return x
+            })
     }
 }
 
@@ -890,7 +951,7 @@ class LiturgyItemDSA5 extends SpellItemDSA5 {
             this._chatLineHelper("duration", data.duration.value),
             this._chatLineHelper("reach", data.range.value),
             this._chatLineHelper("targetCategory", data.targetCategory.value),
-            this._chatLineHelper("effect", DSA5_Utility.replaceConditions(DSA5_Utility.replaceDies(data.effect.value)))
+            this._chatLineHelper("effect", DSA5_Utility.replaceConditions(DSA5_Utility.replaceDies(data.effect.value))),
         ]
     }
 }
@@ -900,13 +961,13 @@ class CeremonyItemDSA5 extends LiturgyItemDSA5 {
         super.getCallbackData(testData, html, actor)
         testData.situationalModifiers.push({
             name: game.i18n.localize("CEREMONYMODIFIER.artefact"),
-            value: html.find('[name="artefactUsage"]').is(":checked") ? 1 : 0
+            value: html.find('[name="artefactUsage"]').is(":checked") ? 1 : 0,
         }, {
             name: game.i18n.localize("place"),
-            value: html.find('[name="placeModifier"]').val()
+            value: html.find('[name="placeModifier"]').val(),
         }, {
             name: game.i18n.localize("time"),
-            value: html.find('[name="timeModifier"]').val()
+            value: html.find('[name="timeModifier"]').val(),
         })
     }
 
@@ -915,21 +976,19 @@ class CeremonyItemDSA5 extends LiturgyItemDSA5 {
         mergeObject(data, {
             isCeremony: true,
             locationModifiers: DSA5.ceremonyLocationModifiers,
-            timeModifiers: DSA5.ceremonyTimeModifiers
+            timeModifiers: DSA5.ceremonyTimeModifiers,
         })
     }
 }
 
 class CombatskillDSA5 extends Itemdsa5 {
     static chatData(data, name) {
-        return [
-            this._chatLineHelper("Description", game.i18n.localize(`Combatskilldescr.${name}`)),
-        ]
+        return [this._chatLineHelper("Description", game.i18n.localize(`Combatskilldescr.${name}`))]
     }
 
     static setupDialog(ev, options, item, actor, tokenId) {
         let mode = options.mode
-        let title = game.i18n.localize(item.name) + " " + game.i18n.localize(mode + "test");
+        let title = game.i18n.localize(item.name) + " " + game.i18n.localize(mode + "test")
 
         let testData = {
             opposable: true,
@@ -938,27 +997,27 @@ class CombatskillDSA5 extends Itemdsa5 {
             extra: {
                 actor: actor.toObject(false),
                 options,
-                speaker: Itemdsa5.buildSpeaker(actor, tokenId)
-            }
-        };
+                speaker: Itemdsa5.buildSpeaker(actor, tokenId),
+            },
+        }
 
         let dialogOptions = {
             title,
             template: "/systems/dsa5/templates/dialog/combatskill-dialog.html",
             data: {
-                rollMode: options.rollMode
+                rollMode: options.rollMode,
             },
             callback: (html, options = {}) => {
-                cardOptions.rollMode = html.find('[name="rollMode"]').val();
+                cardOptions.rollMode = html.find('[name="rollMode"]').val()
                 testData.situationalModifiers = Actordsa5._parseModifiers(html)
                 mergeObject(testData.extra.options, options)
-                return { testData, cardOptions };
-            }
-        };
+                return { testData, cardOptions }
+            },
+        }
 
         let cardOptions = actor._setupCardOptions("systems/dsa5/templates/chat/roll/combatskill-card.html", title)
 
-        return DiceDSA5.setupDialog({ dialogOptions, testData, cardOptions });
+        return DiceDSA5.setupDialog({ dialogOptions, testData, cardOptions })
     }
 }
 
@@ -967,19 +1026,23 @@ class ConsumableItemDSA extends Itemdsa5 {
         return [
             this._chatLineHelper("qualityStep", data.QL),
             this._chatLineHelper("effect", DSA5_Utility.replaceDies(data.QLList.split("\n")[data.QL - 1])),
-            this._chatLineHelper("charges", data.charges)
+            this._chatLineHelper("charges", data.charges),
         ]
     }
 
     static checkEquality(item, item2) {
-        return item2.type == item.type && item.name == item2.name && item.data.description.value == item2.data.data.description.value && item.data.QL == item2.data.data.QL
+        return (
+            item2.type == item.type &&
+            item.name == item2.name &&
+            item.data.description.value == item2.data.data.description.value &&
+            item.data.QL == item2.data.data.QL
+        )
     }
 
     static async setupDialog(ev, options, item, actor) {
         let title = game.i18n.format("CHATNOTIFICATION.usesItem", { actor: item.actor.name, item: item.name })
 
-        if (!item.isOwned)
-            return
+        if (!item.isOwned) return
 
         let charges = (item.data.data.quantity.value - 1) * item.data.data.maxCharges + item.data.data.charges
         if (charges <= 0) {
@@ -991,13 +1054,15 @@ class ConsumableItemDSA extends Itemdsa5 {
         let newQuantity = item.data.data.charges <= 1 ? item.data.data.quantity.value - 1 : item.data.data.quantity.value
 
         let effect = DSA5_Utility.replaceDies(item.data.data.QLList.split("\n")[item.data.data.QL - 1], false)
-        let msg = `<div><b>${title}</b></div><div>${item.data.data.description.value}</div><div><b>${game.i18n.localize('effect')}</b>: ${effect}</div>`
+        let msg = `<div><b>${title}</b></div><div>${item.data.data.description.value}</div><div><b>${game.i18n.localize(
+            "effect"
+        )}</b>: ${effect}</div>`
         if (newQuantity == 0) {
             await item.actor.deleteEmbeddedDocuments("Item", [item.data._id])
         } else {
             await item.update({
-                'data.quantity.value': newQuantity,
-                'data.charges': newCharges
+                "data.quantity.value": newQuantity,
+                "data.charges": newCharges,
             })
         }
         await ChatMessage.create(DSA5_Utility.chatDataSetup(msg))
@@ -1007,14 +1072,22 @@ class ConsumableItemDSA extends Itemdsa5 {
     static async _applyActiveEffect(source) {
         let effects = source.data.effects.toObject()
         if (effects.length > 0) {
-            const effectsWithChanges = effects.filter(x => x.changes && x.changes.length > 0)
-            await source.actor.createEmbeddedDocuments("ActiveEffect", effectsWithChanges.map(x => {
-                x.origin = source.actor.uuid
-                return x
-            }))
-            const msg = await DSAActiveEffectConfig.applyAdvancedFunction(source.actor, effects, source, { qualityStep: source.data.data.QL })
-            const infoMsg = `${game.i18n.format('ActiveEffects.appliedEffect', { target: source.actor.name, source: source.name })} ${msg || ""}`
-            ChatMessage.create(DSA5_Utility.chatDataSetup(infoMsg));
+            const effectsWithChanges = effects.filter((x) => x.changes && x.changes.length > 0)
+            await source.actor.createEmbeddedDocuments(
+                "ActiveEffect",
+                effectsWithChanges.map((x) => {
+                    x.origin = source.actor.uuid
+                    return x
+                })
+            )
+            const msg = await DSAActiveEffectConfig.applyAdvancedFunction(source.actor, effects, source, {
+                qualityStep: source.data.data.QL,
+            })
+            const infoMsg = `${game.i18n.format("ActiveEffects.appliedEffect", {
+                target: source.actor.name,
+                source: source.name,
+            })} ${msg || ""}`
+            ChatMessage.create(DSA5_Utility.chatDataSetup(infoMsg))
         }
     }
 
@@ -1044,37 +1117,45 @@ class DiseaseItemDSA5 extends Itemdsa5 {
             this._chatLineHelper("source", DSA5_Utility.replaceDies(data.source.value)),
             this._chatLineHelper("treatment", data.treatment.value),
             this._chatLineHelper("antidot", data.antidot.value),
-            this._chatLineHelper("resistanceModifier", data.resistance.value)
+            this._chatLineHelper("resistanceModifier", data.resistance.value),
         ]
     }
 
     static getSituationalModifiers(situationalModifiers, actor, data, source) {
         source = DSA5_Utility.toObjectIfPossible(source)
         if (game.user.targets.size) {
-            game.user.targets.forEach(target => {
-                if (target.actor) situationalModifiers.push(...AdvantageRulesDSA5.getVantageAsModifier(target.actor.data, game.i18n.localize("LocalizedIDs.ResistanttoDisease"), -1, false, true))
-            });
+            game.user.targets.forEach((target) => {
+                if (target.actor)
+                    situationalModifiers.push(
+                        ...AdvantageRulesDSA5.getVantageAsModifier(
+                            target.actor.data,
+                            game.i18n.localize("LocalizedIDs.ResistanttoDisease"), -1,
+                            false,
+                            true
+                        )
+                    )
+            })
         }
         this.getSkZkModifier(data, source)
         mergeObject(data, {
             hasSKModifier: source.data.resistance.value == "SK",
-            hasZKModifier: source.data.resistance.value == "ZK"
+            hasZKModifier: source.data.resistance.value == "ZK",
         })
     }
     static setupDialog(ev, options, item, actor, tokenId) {
-        let title = item.name + " " + game.i18n.localize(item.type) + " " + game.i18n.localize("Test");
+        let title = item.name + " " + game.i18n.localize(item.type) + " " + game.i18n.localize("Test")
 
         let testData = {
             opposable: false,
             source: item.data,
             extra: {
                 options,
-                speaker: Itemdsa5.buildSpeaker(actor, tokenId)
-            }
-        };
+                speaker: Itemdsa5.buildSpeaker(actor, tokenId),
+            },
+        }
 
         let data = {
-            rollMode: options.rollMode
+            rollMode: options.rollMode,
         }
         let situationalModifiers = []
         this.getSituationalModifiers(situationalModifiers, actor, data, item)
@@ -1089,32 +1170,30 @@ class DiseaseItemDSA5 extends Itemdsa5 {
             template: "/systems/dsa5/templates/dialog/poison-dialog.html",
             data,
             callback: (html, options = {}) => {
-                cardOptions.rollMode = html.find('[name="rollMode"]').val();
+                cardOptions.rollMode = html.find('[name="rollMode"]').val()
                 testData.situationalModifiers = Actordsa5._parseModifiers(html)
                 testData.situationalModifiers.push({
                     name: game.i18n.localize("zkModifier"),
-                    value: html.find('[name="zkModifier"]').val() || 0
+                    value: html.find('[name="zkModifier"]').val() || 0,
                 })
                 testData.situationalModifiers.push({
                     name: game.i18n.localize("skModifier"),
-                    value: html.find('[name="skModifier"]').val() || 0
+                    value: html.find('[name="skModifier"]').val() || 0,
                 })
                 mergeObject(testData.extra.options, options)
-                return { testData, cardOptions };
-            }
-        };
+                return { testData, cardOptions }
+            },
+        }
 
         let cardOptions = item._setupCardOptions(`systems/dsa5/templates/chat/roll/${item.type}-card.html`, title)
 
-        return DiceDSA5.setupDialog({ dialogOptions, testData, cardOptions });
+        return DiceDSA5.setupDialog({ dialogOptions, testData, cardOptions })
     }
 }
 
 class EquipmentItemDSA5 extends Itemdsa5 {
     static chatData(data, name) {
-        return [
-            this._chatLineHelper("equipmentType", game.i18n.localize(`Equipment.${data.equipmentType.value}`))
-        ]
+        return [this._chatLineHelper("equipmentType", game.i18n.localize(`Equipment.${data.equipmentType.value}`))]
     }
 }
 
@@ -1124,16 +1203,15 @@ class MeleeweaponDSA5 extends Itemdsa5 {
             this._chatLineHelper("damage", data.damage.value),
             this._chatLineHelper("atmod", data.atmod.value),
             this._chatLineHelper("pamod", data.pamod.value),
-            this._chatLineHelper("combatskill", data.combatskill.value)
+            this._chatLineHelper("combatskill", data.combatskill.value),
         ]
-        if (data.effect.value != "")
-            res.push(this._chatLineHelper(DSA5_Utility.replaceConditions("effect", data.effect.value)))
+        if (data.effect.value != "") res.push(this._chatLineHelper(DSA5_Utility.replaceConditions("effect", data.effect.value)))
 
         return res
     }
 
     static getSituationalModifiers(situationalModifiers, actor, data, source) {
-        let wrongHandDisabled = AdvantageRulesDSA5.hasVantage(actor, game.i18n.localize('LocalizedIDs.ambidextrous'))
+        let wrongHandDisabled = AdvantageRulesDSA5.hasVantage(actor, game.i18n.localize("LocalizedIDs.ambidextrous"))
         source = DSA5_Utility.toObjectIfPossible(source)
 
         let toSearch = [source.data.combatskill.value]
@@ -1149,7 +1227,7 @@ class MeleeweaponDSA5 extends Itemdsa5 {
 
     static setupDialog(ev, options, item, actor, tokenId) {
         let mode = options.mode
-        let title = game.i18n.localize(item.name) + " " + game.i18n.localize(mode + "test");
+        let title = game.i18n.localize(item.name) + " " + game.i18n.localize(mode + "test")
 
         let testData = {
             opposable: true,
@@ -1158,14 +1236,17 @@ class MeleeweaponDSA5 extends Itemdsa5 {
             extra: {
                 actor: actor.toObject(false),
                 options,
-                speaker: Itemdsa5.buildSpeaker(actor, tokenId)
-            }
-        };
-        const multipleDefenseValue = RuleChaos.multipleDefenseValue(actor, typeof item.toObject === 'function' ? item.toObject() : item)
+                speaker: Itemdsa5.buildSpeaker(actor, tokenId),
+            },
+        }
+        const multipleDefenseValue = RuleChaos.multipleDefenseValue(
+            actor,
+            typeof item.toObject === "function" ? item.toObject() : item
+        )
         let data = {
             rollMode: options.rollMode,
             mode,
-            defenseCountString: game.i18n.format("defenseCount", { malus: multipleDefenseValue })
+            defenseCountString: game.i18n.format("defenseCount", { malus: multipleDefenseValue }),
         }
         let situationalModifiers = actor ? DSA5StatusEffects.getRollModifiers(actor, item, { mode }) : []
         this.getSituationalModifiers(situationalModifiers, actor, data, item)
@@ -1180,12 +1261,12 @@ class MeleeweaponDSA5 extends Itemdsa5 {
                 Hooks.call("callbackDialogCombatDSA5", testData, actor, html, item, tokenId)
 
                 return { testData, cardOptions }
-            }
-        };
+            },
+        }
 
         let cardOptions = actor._setupCardOptions("systems/dsa5/templates/chat/roll/combatskill-card.html", title)
 
-        return DiceDSA5.setupDialog({ dialogOptions, testData, cardOptions });
+        return DiceDSA5.setupDialog({ dialogOptions, testData, cardOptions })
     }
 }
 
@@ -1197,38 +1278,46 @@ class PoisonItemDSA5 extends Itemdsa5 {
             this._chatLineHelper("start", data.start.value),
             this._chatLineHelper("duration", data.duration.value),
             this._chatLineHelper("resistanceModifier", data.resistance.value),
-            this._chatLineHelper("effect", DSA5_Utility.replaceConditions(DSA5_Utility.replaceDies(data.effect.value)))
+            this._chatLineHelper("effect", DSA5_Utility.replaceConditions(DSA5_Utility.replaceDies(data.effect.value))),
         ]
     }
 
     static getSituationalModifiers(situationalModifiers, actor, data, source) {
         source = DSA5_Utility.toObjectIfPossible(source)
         if (game.user.targets.size) {
-            game.user.targets.forEach(target => {
-                if (target.actor) situationalModifiers.push(...AdvantageRulesDSA5.getVantageAsModifier(target.actor.data, game.i18n.localize("LocalizedIDs.poisonResistance"), -1, false, true))
-            });
+            game.user.targets.forEach((target) => {
+                if (target.actor)
+                    situationalModifiers.push(
+                        ...AdvantageRulesDSA5.getVantageAsModifier(
+                            target.actor.data,
+                            game.i18n.localize("LocalizedIDs.poisonResistance"), -1,
+                            false,
+                            true
+                        )
+                    )
+            })
         }
         this.getSkZkModifier(data, source)
         mergeObject(data, {
             hasSKModifier: source.data.resistance.value == "SK",
-            hasZKModifier: source.data.resistance.value == "ZK"
+            hasZKModifier: source.data.resistance.value == "ZK",
         })
     }
 
     static setupDialog(ev, options, item, actor, tokenId) {
-        let title = item.name + " " + game.i18n.localize(item.type) + " " + game.i18n.localize("Test");
+        let title = item.name + " " + game.i18n.localize(item.type) + " " + game.i18n.localize("Test")
 
         let testData = {
             opposable: false,
             source: item.data,
             extra: {
                 options,
-                speaker: Itemdsa5.buildSpeaker(actor, tokenId)
-            }
-        };
+                speaker: Itemdsa5.buildSpeaker(actor, tokenId),
+            },
+        }
 
         let data = {
-            rollMode: options.rollMode
+            rollMode: options.rollMode,
         }
 
         let situationalModifiers = []
@@ -1240,25 +1329,25 @@ class PoisonItemDSA5 extends Itemdsa5 {
             template: "/systems/dsa5/templates/dialog/poison-dialog.html",
             data,
             callback: (html, options = {}) => {
-                cardOptions.rollMode = html.find('[name="rollMode"]').val();
+                cardOptions.rollMode = html.find('[name="rollMode"]').val()
                 testData.situationalModifiers = Actordsa5._parseModifiers(html)
 
                 testData.situationalModifiers.push({
                     name: game.i18n.localize("zkModifier"),
-                    value: html.find('[name="zkModifier"]').val() || 0
+                    value: html.find('[name="zkModifier"]').val() || 0,
                 })
                 testData.situationalModifiers.push({
                     name: game.i18n.localize("skModifier"),
-                    value: html.find('[name="skModifier"]').val() || 0
+                    value: html.find('[name="skModifier"]').val() || 0,
                 })
                 mergeObject(testData.extra.options, options)
-                return { testData, cardOptions };
-            }
-        };
+                return { testData, cardOptions }
+            },
+        }
 
         let cardOptions = item._setupCardOptions(`systems/dsa5/templates/chat/roll/${item.type}-card.html`, title)
 
-        return DiceDSA5.setupDialog({ dialogOptions, testData, cardOptions });
+        return DiceDSA5.setupDialog({ dialogOptions, testData, cardOptions })
     }
 }
 
@@ -1267,10 +1356,9 @@ class RangeweaponItemDSA5 extends Itemdsa5 {
         let res = [
             this._chatLineHelper("damage", data.damage.value),
             this._chatLineHelper("combatskill", data.combatskill.value),
-            this._chatLineHelper("reach", data.reach.value)
+            this._chatLineHelper("reach", data.reach.value),
         ]
-        if (data.effect.value != "")
-            res.push(this._chatLineHelper(DSA5_Utility.replaceConditions("effect", data.effect.value)))
+        if (data.effect.value != "") res.push(this._chatLineHelper(DSA5_Utility.replaceConditions("effect", data.effect.value)))
 
         return res
     }
@@ -1285,7 +1373,11 @@ class RangeweaponItemDSA5 extends Itemdsa5 {
 
             if (currentAmmo) {
                 currentAmmo = currentAmmo.toObject(false)
-                source.data.effect.attributes = source.data.effect.attributes.split(",").concat(currentAmmo.data.effect.attributes.split(",")).filter(x => x != "").join(",")
+                source.data.effect.attributes = source.data.effect.attributes
+                    .split(",")
+                    .concat((currentAmmo.data.effect.attributes || "").split(","))
+                    .filter((x) => x != "")
+                    .join(",")
                 const poison = getProperty(currentAmmo.flags, "dsa5.poison")
                 if (poison) mergeObject(_source.data.flags, { dsa5: { poison } })
             }
@@ -1295,19 +1387,19 @@ class RangeweaponItemDSA5 extends Itemdsa5 {
             if (currentAmmo) {
                 if (currentAmmo.data.atmod) {
                     situationalModifiers.push({
-                        name: `${currentAmmo.name} - ${game.i18n.localize('atmod')}`,
+                        name: `${currentAmmo.name} - ${game.i18n.localize("atmod")}`,
                         value: currentAmmo.data.atmod,
                         selected: true,
-                        specAbId: source.data.currentAmmo.value
+                        specAbId: source.data.currentAmmo.value,
                     })
                 }
                 if (currentAmmo.data.damageMod || currentAmmo.data.armorMod) {
                     const dmgMod = {
-                        name: `${currentAmmo.name} - ${game.i18n.localize('MODS.damage')}`,
+                        name: `${currentAmmo.name} - ${game.i18n.localize("MODS.damage")}`,
                         value: currentAmmo.data.damageMod.replace(/wWD/g, "d") || 0,
                         type: "dmg",
                         selected: true,
-                        specAbId: source.data.currentAmmo.value
+                        specAbId: source.data.currentAmmo.value,
                     }
                     if (currentAmmo.data.armorMod) dmgMod["armorPen"] = currentAmmo.data.armorMod
                     situationalModifiers.push(dmgMod)
@@ -1319,7 +1411,7 @@ class RangeweaponItemDSA5 extends Itemdsa5 {
 
     static setupDialog(ev, options, item, actor, tokenId) {
         let mode = options.mode
-        let title = game.i18n.localize(item.name) + " " + game.i18n.localize(mode + "test");
+        let title = game.i18n.localize(item.name) + " " + game.i18n.localize(mode + "test")
 
         let testData = {
             opposable: true,
@@ -1328,20 +1420,22 @@ class RangeweaponItemDSA5 extends Itemdsa5 {
             extra: {
                 actor: actor.toObject(false),
                 options,
-                speaker: Itemdsa5.buildSpeaker(actor, tokenId)
-            }
-        };
+                speaker: Itemdsa5.buildSpeaker(actor, tokenId),
+            },
+        }
 
         if (actor.data.type != "creature" && mode != "damage") {
             let itemData = item.data.data ? item.data.data : item.data
             if (itemData.ammunitiongroup.value == "-") {
                 testData.extra.ammo = duplicate(item)
-                if ((testData.extra.ammo.data.quantity.value <= 0)) {
+                if (testData.extra.ammo.data.quantity.value <= 0) {
                     return ui.notifications.error(game.i18n.localize("DSAError.NoAmmo"))
                 }
             } else {
                 const ammoItem = actor.getEmbeddedDocument("Item", itemData.currentAmmo.value)
-                if (ammoItem) { testData.extra.ammo = ammoItem.toObject() }
+                if (ammoItem) {
+                    testData.extra.ammo = ammoItem.toObject()
+                }
                 if (!testData.extra.ammo || !itemData.currentAmmo.value || testData.extra.ammo.data.quantity.value <= 0) {
                     return ui.notifications.error(game.i18n.localize("DSAError.NoAmmo"))
                 }
@@ -1350,7 +1444,7 @@ class RangeweaponItemDSA5 extends Itemdsa5 {
 
         let data = {
             rollMode: options.rollMode,
-            mode
+            mode,
         }
         let situationalModifiers = actor ? DSA5StatusEffects.getRollModifiers(actor, item, { mode }) : []
         this.getSituationalModifiers(situationalModifiers, actor, data, item, tokenId)
@@ -1363,13 +1457,13 @@ class RangeweaponItemDSA5 extends Itemdsa5 {
             callback: (html, options = {}) => {
                 DSA5CombatDialog.resolveRangeDialog(testData, cardOptions, html, actor, options)
                 Hooks.call("callbackDialogCombatDSA5", testData, actor, html, item, tokenId)
-                return { testData, cardOptions };
-            }
-        };
+                return { testData, cardOptions }
+            },
+        }
 
         let cardOptions = actor._setupCardOptions("systems/dsa5/templates/chat/roll/combatskill-card.html", title)
 
-        return DiceDSA5.setupDialog({ dialogOptions, testData, cardOptions });
+        return DiceDSA5.setupDialog({ dialogOptions, testData, cardOptions })
     }
 }
 
@@ -1378,16 +1472,16 @@ class RitualItemDSA5 extends SpellItemDSA5 {
         super.getCallbackData(testData, html, actor)
         testData.situationalModifiers.push({
             name: game.i18n.localize("RITUALMODIFIER.rightClothes"),
-            value: html.find('[name="rightClothes"]').is(":checked") ? 1 : 0
+            value: html.find('[name="rightClothes"]').is(":checked") ? 1 : 0,
         }, {
             name: game.i18n.localize("RITUALMODIFIER.rightEquipment"),
-            value: html.find('[name="rightEquipment"]').is(":checked") ? 1 : 0
+            value: html.find('[name="rightEquipment"]').is(":checked") ? 1 : 0,
         }, {
             name: game.i18n.localize("place"),
-            value: html.find('[name="placeModifier"]').val()
+            value: html.find('[name="placeModifier"]').val(),
         }, {
             name: game.i18n.localize("time"),
-            value: html.find('[name="timeModifier"]').val()
+            value: html.find('[name="timeModifier"]').val(),
         })
     }
 
@@ -1397,20 +1491,20 @@ class RitualItemDSA5 extends SpellItemDSA5 {
         mergeObject(data, {
             isRitual: true,
             locationModifiers: DSA5.ritualLocationModifiers,
-            timeModifiers: DSA5.ritualTimeModifiers
+            timeModifiers: DSA5.ritualTimeModifiers,
         })
     }
 }
 
 class SkillItemDSA5 extends Itemdsa5 {
     static chatData(data, name) {
-        return [
-            this._chatLineHelper("Description", game.i18n.localize(`SKILLdescr.${name}`)),
-        ]
+        return [this._chatLineHelper("Description", game.i18n.localize(`SKILLdescr.${name}`))]
     }
 
     static getSituationalModifiers(situationalModifiers, actor, data, source) {
-        situationalModifiers.push(...ItemRulesDSA5.getTalentBonus(actor.data, source.name, ["advantage", "disadvantage", "specialability", "equipment"]))
+        situationalModifiers.push(
+            ...ItemRulesDSA5.getTalentBonus(actor.data, source.name, ["advantage", "disadvantage", "specialability", "equipment"])
+        )
 
         situationalModifiers.push(...actor.getSkillModifier(source.name, source.type))
         for (const thing of actor.data.data.skillModifiers.global) {
@@ -1419,22 +1513,22 @@ class SkillItemDSA5 extends Itemdsa5 {
     }
 
     static setupDialog(ev, options, skill, actor, tokenId) {
-        let title = skill.name + " " + game.i18n.localize("Test") + (options.subtitle || "");
+        let title = skill.name + " " + game.i18n.localize("Test") + (options.subtitle || "")
         let testData = {
             opposable: true,
             source: skill,
             extra: {
                 actor: actor.toObject(false),
                 options,
-                speaker: Itemdsa5.buildSpeaker(actor, tokenId)
-            }
-        };
+                speaker: Itemdsa5.buildSpeaker(actor, tokenId),
+            },
+        }
 
         let data = {
             rollMode: options.rollMode,
-            difficultyLabels: (DSA5.skillDifficultyLabels),
+            difficultyLabels: DSA5.skillDifficultyLabels,
             modifier: options.modifier || 0,
-            characteristics: [1, 2, 3].map(x => skill.data[`characteristic${x}`].value)
+            characteristics: [1, 2, 3].map((x) => skill.data[`characteristic${x}`].value),
         }
 
         let situationalModifiers = actor ? DSA5StatusEffects.getRollModifiers(actor, skill) : []
@@ -1446,48 +1540,41 @@ class SkillItemDSA5 extends Itemdsa5 {
             template: "/systems/dsa5/templates/dialog/skill-dialog.html",
             data,
             callback: (html, options = {}) => {
-                cardOptions.rollMode = html.find('[name="rollMode"]').val();
-                testData.testDifficulty = DSA5.skillDifficultyModifiers[html.find('[name="testDifficulty"]').val()];
+                cardOptions.rollMode = html.find('[name="rollMode"]').val()
+                testData.testDifficulty = DSA5.skillDifficultyModifiers[html.find('[name="testDifficulty"]').val()]
                 testData.situationalModifiers = Actordsa5._parseModifiers(html)
                 testData.advancedModifiers = {
-                    chars: [0, 1, 2].map(x => Number(html.find(`[name="ch${x}"]`).val())),
+                    chars: [0, 1, 2].map((x) => Number(html.find(`[name="ch${x}"]`).val())),
                     fws: Number(html.find(`[name="fw"]`).val()),
-                    qls: Number(html.find(`[name="qs"]`).val())
+                    qls: Number(html.find(`[name="qs"]`).val()),
                 }
-                Itemdsa5.changeChars(testData.source, ...[0, 1, 2].map(x => html.find(`[name="characteristics${x}"]`).val()))
+                Itemdsa5.changeChars(testData.source, ...[0, 1, 2].map((x) => html.find(`[name="characteristics${x}"]`).val()))
                 mergeObject(testData.extra.options, options)
-                return { testData, cardOptions };
-            }
-        };
+                return { testData, cardOptions }
+            },
+        }
 
         let cardOptions = actor._setupCardOptions("systems/dsa5/templates/chat/roll/skill-card.html", title)
 
-        return DiceDSA5.setupDialog({ dialogOptions, testData, cardOptions });
+        return DiceDSA5.setupDialog({ dialogOptions, testData, cardOptions })
     }
 }
 
 class SpecialAbilityItemDSA5 extends Itemdsa5 {
     static chatData(data, name) {
-        return [
-            this._chatLineHelper("rule", data.rule.value),
-        ]
+        return [this._chatLineHelper("rule", data.rule.value)]
     }
 }
 
 class SpeciesItemDSA5 extends Itemdsa5 {}
 
-
 class SpellextensionItemDSA5 extends Itemdsa5 {
     static chatData(data, name) {
-        return [
-            this._chatLineHelper("source", data.source),
-            this._chatLineHelper("Category", game.i18n.localize(data.category)),
-        ]
+        return [this._chatLineHelper("source", data.source), this._chatLineHelper("Category", game.i18n.localize(data.category))]
     }
 }
 
 class TraitItemDSA5 extends Itemdsa5 {
-
     static chatData(data, name) {
         let res = []
         switch (data.traitType.value) {
@@ -1495,7 +1582,7 @@ class TraitItemDSA5 extends Itemdsa5 {
                 res = [
                     this._chatLineHelper("attack", data.at.value),
                     this._chatLineHelper("damage", data.damage.value),
-                    this._chatLineHelper("reach", data.reach.value)
+                    this._chatLineHelper("reach", data.reach.value),
                 ]
                 break
             case "rangeAttack":
@@ -1503,13 +1590,11 @@ class TraitItemDSA5 extends Itemdsa5 {
                     this._chatLineHelper("attack", data.at.value),
                     this._chatLineHelper("damage", data.damage.value),
                     this._chatLineHelper("reach", data.reach.value),
-                    this._chatLineHelper("reloadTime", data.reloadTime.value)
+                    this._chatLineHelper("reloadTime", data.reloadTime.value),
                 ]
                 break
             case "armor":
-                res = [
-                    this._chatLineHelper("protection", data.damage.value),
-                ]
+                res = [this._chatLineHelper("protection", data.damage.value)]
                 break
             case "general":
                 res = []
@@ -1519,24 +1604,22 @@ class TraitItemDSA5 extends Itemdsa5 {
                     this._chatLineHelper("APValue", data.APValue.value),
                     this._chatLineHelper("AsPCost", data.AsPCost.value),
                     this._chatLineHelper("duration", data.duration.value),
-                    this._chatLineHelper("aspect", data.aspect.value)
+                    this._chatLineHelper("aspect", data.aspect.value),
                 ]
                 break
             case "trick":
-                res = [
-                    this._chatLineHelper("APValue", data.APValue.value),
-                ]
+                res = [this._chatLineHelper("APValue", data.APValue.value)]
                 break
             case "entity":
                 res = [
                     this._chatLineHelper("distribution", data.distribution),
-                    this._chatLineHelper("CHARAbbrev.QL", data.AsPCost.value)
+                    this._chatLineHelper("CHARAbbrev.QL", data.AsPCost.value),
                 ]
                 break
             case "summoning":
                 res = [
                     this._chatLineHelper("distribution", data.distribution),
-                    this._chatLineHelper("conjuringDifficulty", data.at.value)
+                    this._chatLineHelper("conjuringDifficulty", data.at.value),
                 ]
                 break
         }
@@ -1558,12 +1641,15 @@ class TraitItemDSA5 extends Itemdsa5 {
             this.prepareMeleeParry(situationalModifiers, actor, data, source, combatskills, false)
         }
 
-        this.attackStatEffect(situationalModifiers, Number(actor.data.data[traitType == "meleeAttack" ? "meleeStats" : "rangeStats"][data.mode]))
+        this.attackStatEffect(
+            situationalModifiers,
+            Number(actor.data.data[traitType == "meleeAttack" ? "meleeStats" : "rangeStats"][data.mode])
+        )
     }
 
     static setupDialog(ev, options, item, actor, tokenId) {
         let mode = options["mode"]
-        let title = game.i18n.localize(item.name) + " " + game.i18n.localize(mode + "test");
+        let title = game.i18n.localize(item.name) + " " + game.i18n.localize(mode + "test")
         let testData = {
             opposable: true,
             source: item,
@@ -1571,14 +1657,14 @@ class TraitItemDSA5 extends Itemdsa5 {
             extra: {
                 actor: actor.toObject(false),
                 options,
-                speaker: Itemdsa5.buildSpeaker(actor, tokenId)
-            }
-        };
+                speaker: Itemdsa5.buildSpeaker(actor, tokenId),
+            },
+        }
         const multipleDefenseValue = RuleChaos.multipleDefenseValue(actor, item.toObject())
         let data = {
             rollMode: options.rollMode,
             mode,
-            defenseCountString: game.i18n.format("defenseCount", { malus: multipleDefenseValue })
+            defenseCountString: game.i18n.format("defenseCount", { malus: multipleDefenseValue }),
         }
 
         const traitType = getProperty(item, "data.traitType.value") || getProperty(item.data, "data.traitType.value")
@@ -1599,20 +1685,18 @@ class TraitItemDSA5 extends Itemdsa5 {
                 }
 
                 Hooks.call("callbackDialogCombatDSA5", testData, actor, html, item, tokenId)
-                return { testData, cardOptions };
-            }
-        };
+                return { testData, cardOptions }
+            },
+        }
 
         let cardOptions = actor._setupCardOptions("systems/dsa5/templates/chat/roll/combatskill-card.html", title)
 
-        return DiceDSA5.setupDialog({ dialogOptions, testData, cardOptions });
+        return DiceDSA5.setupDialog({ dialogOptions, testData, cardOptions })
     }
 }
 
 class VantageItemDSA5 extends Itemdsa5 {
     static chatData(data, name) {
-        return [
-            this._chatLineHelper("effect", data.effect.value),
-        ]
+        return [this._chatLineHelper("effect", data.effect.value)]
     }
 }

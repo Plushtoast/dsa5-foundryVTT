@@ -18,7 +18,7 @@
         <b>{{localize "reach"}}</b>: {{preData.calculatedSpellModifiers.reach}}
     </div>
     {{/if}}
-    <div class="card-content">
+    <div class="card-content" title="{{preData.calculatedSpellModifiers.description}}">
         <b>{{localize "cost"}}</b>: {{preData.calculatedSpellModifiers.finalcost}} <span class="costCheck"></span>
     </div>
     {{#if (ne preData.calculatedSpellModifiers.maintainCost '')}}

@@ -643,7 +643,7 @@ export default class ActorSheetDsa5 extends ActorSheet {
         });
         html.find(".cards .item").mouseleave(ev => {
             let e = ev.toElement || ev.relatedTarget;
-            if (e.parentNode == this || e == this)
+            if (!e || e.parentNode == this || e == this)
                 return;
 
             ev.currentTarget.querySelectorAll('.hovermenu').forEach(e => e.remove());

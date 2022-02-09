@@ -21,8 +21,7 @@ export default function() {
             DSA5ChatListeners.postStatus($(ev.currentTarget).attr("data-id"))
         })
         html.on('mousedown', "img", ev => {
-            let name = obj.name
-            if (ev.button == 2) game.dsa5.apps.DSA5_Utility.showArtwork({ name: name, uuid: "", img: $(ev.currentTarget).attr("src") })
+            if (ev.button == 2) game.dsa5.apps.DSA5_Utility.showArtwork({ name: obj.name, uuid: "", img: $(ev.currentTarget).attr("src") })
             return false
         })
     })

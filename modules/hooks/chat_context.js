@@ -198,7 +198,6 @@ export default function() {
                     if (!actor.isOwner)
                         return ui.notifications.error(game.i18n.localize("DSAError.DamagePermission"))
 
-
                     await actor.applyMana(cardData.preData.calculatedSpellModifiers.finalcost, (["ritual", "spell"].includes(cardData.preData.source.type) || getProperty(cardData.preData.calculatedSpellModifiers, "costsMana")) ? "AsP" : "KaP")
                     await message.update({ "flags.data.manaApplied": true, content: message.data.content.replace(/<span class="costCheck">/, `<span class="costCheck"><i class="fas fa-check" style="float:right"></i>`) })
                 }

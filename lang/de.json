@@ -68,6 +68,8 @@
         "castingTime": "Aktions- dauer",
         "duration": "Wirkungs- dauer",
         "defenseMalus": "VM",
+        "AsPCost": "AsP",
+        "KaPCost": "KaP",
         "fatePoints": "Schips",
         "groupFatePoints": "Gruppen&nbsp;Schips",
         "FtP": "Schip",
@@ -475,6 +477,7 @@
     "save": "Speichern",
     "YouAlreadyHaveit": "Hast du bereits",
     "zkModifier": "Zähigkeit (Ziel)",
+    "vulnerability": "Verwundbarkeit",
     "zoo": "Zoo",
     "Library": {
         "searchPlaceholder": "Durchsuche die Bibliothek",
@@ -558,7 +561,8 @@
         "defenseMalus": "Verteidigungsmalus",
         "global": "Globaler Modifikator",
         "armor": "Rüstungsmodifikator",
-        "range": "Reichweitenfaktor"
+        "range": "Reichweitenfaktor",
+        "creatureBonus": "Bonusschaden (Kreatur)"
     },
     "WIZARD": {
         "addItem": "{item} hinzufügen",
@@ -1083,6 +1087,8 @@
         "advancedRegenerationKaP": "Karmale Regeneration",
         "energyControl": "Kraftkontrolle",
         "smallEnergyControl": "Kleine Kraftkontrolle",
+        "karmaControl": "Kontrolle des Karmalkörpers",
+        "mightyKarmaControl": "Mächtige Kontrolle des Karmalkörpers",
         "weakAstralBody": "Schwacher Astralkörper",
         "weakKarmicBody": "Schwacher Karmalkörper",
         "restrictedSenseSight": "Eingeschränkter Sinn (Sicht)",
@@ -1092,6 +1098,7 @@
         "traditionWitch": "Tradition (Hexen)",
         "traditionKor": "Tradition (Korkirche)",
         "traditionFjarning": "Tradition (Fjarningerschamanen)",
+        "traditionPhex": "Tradition (Phexkirche)",
         "inuredToEncumbrance": "Belastungsgewöhnung",
         "quickload": "Schnellladen",
         "automaticSuccess": "Automatischer Erfolg",

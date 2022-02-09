@@ -3135,5 +3135,9 @@ input[type="checkbox"].autoCheckbox {
     color: #555;
 }
 
+.effect-change input::placeholder {
+    color: #a9a7a0;
+}
+
 
 /* End Foundry9 fixes */
