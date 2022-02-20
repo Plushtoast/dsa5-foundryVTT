@@ -23,6 +23,10 @@
         {
             "version": "3.1.0",
             "text": "<ul><li>Foundry 9 module adjustments</li><li>The new player menu now harbors its first function - Summoning</li><li>The core module light macro has been vastly improved (please replace the old one)</li><li><a href=\"https://www.f-shop.de/virtual-tabletops/\" target=\"_blank\">Aventurian Necromantheum (German) soon</a></li><li><a href=\"https://www.f-shop.de/virtual-tabletops/\" target=\"_blank\">Rabenkrieg II (German) soon</a></li><li><a href=\"https://www.ulissesf-shop.com/virtual-tabletops//\" target=\"_blank\">Aventurian Gods (English)</a> available</li><li>And don't forget to visit <a href=\"https://www.youtube.com/channel/UCgVzSn5NkMaO-PDxhCiAAjA\" target=\"_blank\">VTTom's Youtube channel</a> for recent tutorial videos (german, some with subtitle)</li><li>And big thanks again to all our voluntary helpers! Especially Gunthgard, VTTom, Nellkir, Niemand, Lambert and Mckee.</li></ul>"
+        },
+        {
+            "version": "3.2.0",
+            "text": "<ul><li>On-Use-Effects for abilities and items (included in the next premium module updates)</li><li>Core module - improved light macro</li><li>Disease tracking</li><li>Automated Animations support</li><li>Dere Poisioning System</li><li><a href=\"https://www.f-shop.de/virtual-tabletops/\" target=\"_blank\">Aventurian Magic III (German) soon</a></li><li><a href=\"https://www.f-shop.de/virtual-tabletops/\" target=\"_blank\">Rabenkrieg II (German) soon</a></li><li><a href=\"https://www.ulissesf-shop.com/virtual-tabletops//\" target=\"_blank\">Aventurian Compendium (English)</a> soon</li><li>And don't forget to visit <a href=\"https://www.youtube.com/channel/UCgVzSn5NkMaO-PDxhCiAAjA\" target=\"_blank\">VTTom's Youtube channel</a> for recent tutorial videos (german, some with subtitle)</li><li>And big thanks again to all our voluntary helpers! Especially Gunthgard, VTTom, Nellkir, Niemand, Lambert, Adalariel and Mckee.</li></ul>"
         }
     ]
 }

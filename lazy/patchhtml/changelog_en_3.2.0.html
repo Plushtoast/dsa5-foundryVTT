@@ -1,0 +1,110 @@
+<div class="mume markdown-preview  ">
+
+    <h1 class="mume-header" id="important-enhancementsnotes">3.2.0 Important Enhancements/Notes (2/20/2022)</h1>
+
+    <h2 class="mume-header" id="on-use-effects">On Use Effects</h2>
+    <div class="row-section">
+        <div class="col sixty">
+            <p>Special abilities, Advantages, Disadvantages and Gear can now contain macros for on use effects. If such element contains a macro you can roll the macro using a button on the item sheet or the character sheet. Some of those on-use effects
+                already have been added to the new core module version. You can try the new flame sword, eternal light or leader abilities for example. The flame sword now summons a new item in the inventory to use in combat and there is an attached active
+                effect to remove the sword again. If you activate the times-up module these summoned items will also automatically vanish once the effect duration has finished. These functions are stored in a new compendium and don&apos;t work without
+                the context of an actor. Make sure to migrate your actors to profit from those new functions!<br> We will gradually add this new feature to existing modules.</p>
+            <p>The next modules to profit from this new feature will be Gods of Aventuria I and Aventurian Magic I, then II each and then the other books (it takes time...).</p>
+            <p<b>We highly recommend the module &quot;times-up&quot; for automation</b> , this module automatically expires effects in the combat once their duration comes to an end.</p>
+                <p>This and the new possibilities for active effects will allow making a big chunk of abilities automatable. Make sure to <b>use the migration of abilities</b> for the upcoming module patches.</p>
+        </div>
+        <div class="col fourty">
+            <img src="systems/dsa5/lazy/patchimages/3.2.0/onuse.webp" />
+        </div>
+    </div>
+    <h2 class="mume-header" id="improved-light-macro">Improved light macro</h2>
+
+    <div class="row-section">
+        <div class="col sixty">
+
+            <p>The light macro included in the core module has a few new features. You can now add custom presets to predefine other light sources and vision settings. Also, active effects on the actors can now modifiy the vision and light distance in &quot;auto&quot;
+                mode. On use effects for torches and spells like Flimflam can now activate a light on the source token. Also there is a new auto mode for the vision setting called &quot;compensation&quot; (thanks Qowy). This is the new recommended mode.
+                The darkness setting of the scene gets modified by the compensation. E.g. for actors with darksight the darkness in the vision is always 0.2 less than for normal actors. This topic is a little complicated but very useful (!) once you understand
+                how to use this properly. We totally recommend VTTom&apos;s Tutorial. Playtesting made fiddling with vision settings mostly redundant. Don&apos;t forget to activate the token HUD for lights, so you can add lights to your guards quickly!</p>
+        </div>
+        <div class="col fourty">
+            <img src="systems/dsa5/lazy/patchimages/3.2.0/light.webp" />
+        </div>
+    </div>
+    <h2 class="mume-header" id="disease">Disease</h2>
+    <div class="row-section">
+        <div class="col sixty">
+
+
+            <p>Diseases can now be dragged onto a character sheet. Only the gamemaster will be able so see those diseases on the status tab. You can now track the suffering of your victims much more easily. More enhancements for diseases are planned for
+                the future, like remaining time of sickness.</p>
+        </div>
+        <div class="col fourty">
+            <img src="systems/dsa5/lazy/patchimages/3.2.0/disease.webp" />
+        </div>
+    </div>
+    <h2 class="mume-header" id="automated-animations">Automated Animations</h2>
+    <div class="row-section">
+        <div class="col sixty">
+
+
+            <p>The Dark Eye now supports the module &quot;Automated Animations&quot;. This module adds the possibility to add sound and an animation to every item. It is very useful especially for combat animations like swords and bows hitting the enemy.
+                The module itself has some dependencies like the JB2A module which already has a lot of animations in its free version. It is very easy to setup but we recommend to watch VTTom&apos;s upcoming video on this feature.
+            </p>
+        </div>
+        <div class="col fourty">
+            <img src="systems/dsa5/lazy/patchimages/3.2.0/animated.webp" />
+        </div>
+    </div>
+    <h2 class="mume-header" id="dere-positioning-system-dps">Dere Positioning System (DPS)</h2>
+    <div class="row-section">
+        <div class="col sixty">
+
+
+            <p>We added some support to calculate the distance between tokens. You can enable this feature in the master menu. Currently this limits the distance where loot items and merchants can be accessed by players to less than two tiles. Also this
+                now automatically sets the range modifier for ranged attacks in the attack dialog. We&apos;ve got a few other ideas about what we can do with this feature in the future too &#x1F603; Only works with scene units of Yard/Schritt.</p>
+        </div>
+        <div class="col fourty">
+            <img src="systems/dsa5/lazy/patchimages/3.2.0/dps.webp" />
+        </div>
+    </div>
+
+    <h1 class="mume-header" id="enhancemnets">Enhancements</h1>
+
+    <ul class="dsalist">
+        <li>Some abilities connected to another abilities are now added automatically on dropping them on your character sheet (e.g. witch sense for familiars)</li>
+        <li>New category &quot;demon marks&quot; available. Required for Aventurian Magic 3 and magical pacts.</li>
+        <li>New category patrons available... also for Magic 3</li>
+        <li>There is now an Active Effect key available to ignore levels of conditions (e.g. hero suffers one less level of fear)</li>
+        <li>There are now Active Effect keys available to enhance spells of a certain spell property only</li>
+        <li>There are now Active Effect keys for vulnerabilities against certain items. Currently this is limited to range and meleeweapons. We will add those resistances to existing creatures soon (e.g. Skeletons take double damage from blunt weapons)</li>
+        <li>And another active effect for bonus damage against creature types</li>
+        <li>And because it&apos;s fun one more: Active effects can now also change the AE cost of spells with a certain property (e.g. healing)</li>
+        <li>Random loot in the master&apos;s workshop and the merchant should not contain talismans anymore</li>
+        <li>Active Effects can now have macros which will be executed on removal of the effect. E.g. you gain a bonus to strength and one condition of stunned when the effect fades...also helpful for flame swords and witch claws
+        </li>
+        <li>The AE cost of magical signs can now be paid via a right clicking on the chat message similar to spells</li>
+        <li>Tradition artifacts now have fields for volumne, AE cost and feature...we need this to add more on-use effects &#x1F603;</li>
+        <li>The journal browser now shows buttons to the GM to hide and unhide books for the players</li>
+        <li>All items now contain a field to overwrite the breaking point resistance. You can now create weapons made out of exclusive or magical material!</li>
+        <li>Merchants now show a message if no actor is attached to a player (because they don&apos;t work without one)
+        </li>
+        <li>Merchant sheet now has a button to unlock the actor for all players at once (very usefull for random loot from the master&apos;s workshop)</li>
+        <li>Ammunition can now be poisoned similar to meleeweapons. Drag and drop the poison from your inventory on the ammunition. It will inherit the effect to the weapon on usage.</li>
+        <li>Actors can now have spell &amp; liturgy armor which reduces the amount of damage taken</li>
+        <li>The active effects configuration now contains placeholders as examples and sets the recommended mode for attribute changes automatically</li>
+    </ul>
+    <h1 class="mume-header" id="bugfixes">Bugfixes</h1>
+
+    <ul class="dsalist">
+        <li>Active Effects for rituals and ceremonies should now work properly</li>
+        <li>Button for equipment damage will only show on confirmed critical rolls now</li>
+        <li>Attack of opportunity should now also work for players properly</li>
+        <li>Zone armor should now show the damage icon if the armor is damaged</li>
+        <li>Unarmed combat against creatures should properly work again</li>
+        <li>Bloodrush now also ignores the speed reduction caused by pain</li>
+        <li>Preloading custom dice so nice assets should work properly again</li>
+        <li>/getPaid and /pay command were inverted</li>
+    </ul>
+
+</div>

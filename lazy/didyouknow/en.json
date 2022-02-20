@@ -55,6 +55,19 @@
         "You can enable the modifier for foreign spells via the settings.",
         "Dice system of the \"Rollsmith\" can be added to the TDE dice.",
 
-        "You get help in the Ulisses and Foundry Discord"
+        "You get help in the Ulisses and Foundry Discord",
+
+        "Add a demon mark to your character to track the circle of damnation.",
+        "You can create weapons, which do extra damage versus certain creature types.",
+        "You can create magical armor",
+        "Add a patron to your character, if you want to play a geode.",
+        "Items and abilities can contain an on-use effect",
+        "The game master can add diseases to your character sheet.",
+        "Active Effects can be limited to a spell property",
+        "The module \"Automated Animations\" can add animations to your attacks and spells.",
+        "Spells and magical signs can be paid via a rightclick on the chatcard.",
+        "Activate the Dere Positioning System, so merchants can only be contacted from close distance.",
+        "Activate the Dere Positioning System, so range modifiers will be set automatically in combat",
+        "The core rule modules contains functions to automatically set sight."
     ]
 }

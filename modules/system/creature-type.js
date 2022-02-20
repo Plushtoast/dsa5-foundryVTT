@@ -1,6 +1,6 @@
 import DSA5_Utility from "./utility-dsa5.js"
 
-Hooks.once("ready", async () => {
+Hooks.once("ready", async() => {
     if (!CreatureType.creatureData) {
         const r = await fetch(`systems/dsa5/lazy/creaturetype/${game.i18n.lang}.json`)
         CreatureType.creatureData = await r.json()
@@ -55,12 +55,13 @@ export default class CreatureType {
         const vulnerabilities = getProperty(actorData, "data.vulnerabilities")
         if (vulnerabilities) {
             if (["meleeweapon", "rangeweapon"].includes(source.type)) {
-                const toCombatskills = getProperty(vulnerabilities, "combatskill") || []
+                const toCombatskills = getProperty(vulnerabilities, "combatskill")
+
                 toCombatskills.reduce((prev, x) => {
                     if (x.target == source.data.combatskill.value) {
                         const isBonus = /\*/.test(x.value) ? Number(x.value.replace("*", "")) > 1 : Number(x.value) > 0
                         const key = isBonus ? "WEAPON.vulnerableTo" : "WEAPON.resistantTo"
-                        prev.push(
+                        situationalModifiers.push(
                             ...CreatureType.buildDamageMod(
                                 `${game.i18n.format(key, { name: source.data.combatskill.value })} (${x.source})`,
                                 x.value
@@ -107,14 +108,12 @@ export default class CreatureType {
         return 0
     }
     static buildDamageMod(name, value, selected = true) {
-        return [
-            {
-                name,
-                value,
-                selected,
-                type: "dmg",
-            },
-        ]
+        return [{
+            name,
+            value,
+            selected,
+            type: "dmg",
+        }, ]
     }
 
     weaponAttributes(attackItem) {
@@ -218,9 +217,9 @@ class ElementalType extends CreatureType {
         if (this.isAttackItem(attackItem)) {
             const regex = new RegExp(
                 this.weaponAttributes(attackItem)
-                    .split(",")
-                    .map((x) => DSA5_Utility.escapeRegex(x.split("(")[0].trim()))
-                    .join("|"),
+                .split(",")
+                .map((x) => DSA5_Utility.escapeRegex(x.split("(")[0].trim()))
+                .join("|"),
                 "i"
             )
             if (regex.test(CreatureType.magical)) return super.damageModifier(attackItem)
@@ -262,9 +261,9 @@ class GhostType extends CreatureType {
         if (this.isAttackItem(attackItem)) {
             let regex = new RegExp(
                 this.weaponAttributes(attackItem)
-                    .split(",")
-                    .map((x) => DSA5_Utility.escapeRegex(x.trim()))
-                    .join("|"),
+                .split(",")
+                .map((x) => DSA5_Utility.escapeRegex(x.trim()))
+                .join("|"),
                 "i"
             )
             for (const god of CreatureType.creatureData.godOfDeath) {
@@ -273,9 +272,9 @@ class GhostType extends CreatureType {
             }
             regex = new RegExp(
                 this.weaponAttributes(attackItem)
-                    .split(",")
-                    .map((x) => DSA5_Utility.escapeRegex(x.split("(")[0].trim()))
-                    .join("|"),
+                .split(",")
+                .map((x) => DSA5_Utility.escapeRegex(x.split("(")[0].trim()))
+                .join("|"),
                 "i"
             )
             if (regex.test(CreatureType.clerical)) return CreatureType.buildDamageMod(CreatureType.clerical, "*0.5")
@@ -329,9 +328,9 @@ class UndeadType extends CreatureType {
         if (this.isAttackItem(attackItem)) {
             const regex = new RegExp(
                 this.weaponAttributes(attackItem)
-                    .split(",")
-                    .map((x) => DSA5_Utility.escapeRegex(x.trim()))
-                    .join("|"),
+                .split(",")
+                .map((x) => DSA5_Utility.escapeRegex(x.trim()))
+                .join("|"),
                 "i"
             )
             for (const god of CreatureType.creatureData.godOfDeath) {
@@ -365,9 +364,9 @@ class WerCreatureType extends CreatureType {
         if (this.isAttackItem(attackItem)) {
             const regex = new RegExp(
                 this.weaponAttributes(attackItem)
-                    .split(",")
-                    .map((x) => DSA5_Utility.escapeRegex(x.trim()))
-                    .join("|"),
+                .split(",")
+                .map((x) => DSA5_Utility.escapeRegex(x.trim()))
+                .join("|"),
                 "i"
             )
             if (regex.test(CreatureType.silverPlated)) return super.damageModifier(attackItem)

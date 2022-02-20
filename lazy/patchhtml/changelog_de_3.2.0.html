@@ -1,0 +1,109 @@
+<div class="mume markdown-preview  ">
+
+    <h1 class="mume-header" id="wichtige-erweiterungenhinweise">3.2.0 Wichtige Erweiterungen/Hinweise (20.2.2022)</h1>
+
+    <h2 class="mume-header" id="aktivierungseffekte">Aktivierungseffekte</h2>
+    <div class="row-section">
+        <div class="col sixty">
+            <p>Spezialf&#xE4;higkeiten, Vorteile, Nachteile und Ausr&#xFC;stungsgegenst&#xE4;nde k&#xF6;nnen nun Makros f&#xFC;r Aktivierungseffekte enthalten. Wenn ein solches Element ein Makro enth&#xE4;lt, kannst du das Makro &#xFC;ber eine Schaltfl&#xE4;che
+                auf dem Gegenstandsblatt oder dem Charakterblatt ausl&#xF6;sen. Einige dieser Aktivierungseffekte wurden bereits in die neue Version des Grundregelwerks aufgenommen. Ihr k&#xF6;nnt zum Beispiel die neuen F&#xE4;higkeiten Flammenschwert,
+                Ewiges Licht oder Anf&#xFC;hrer ausprobieren. Das Flammenschwert beschw&#xF6;rt nun einen neuen Gegenstand im Inventar, der im Kampf verwendet werden kann, und es gibt einen angeh&#xE4;ngten Active Effect, um das Schwert wieder zu entfernen.
+                Aktiviert man das Times-Up-Modul, so verschwinden diese beschworenen Gegenst&#xE4;nde nach Ablauf der Effektdauer ebenfalls automatisch. Diese Funktionen sind in einem neuen Kompendium gespeichert und funktionieren nicht ohne den Kontext
+                eines Akteurs. Stelle sicher, dass du deine Akteure migrierst, um von diesen neuen Funktionen zu profitieren!<br> Wir werden diese neue Funktion nach und nach zu den bestehenden Modulen hinzuf&#xFC;gen.</p>
+            <p>Die n&#xE4;chsten Module, die von dieser neuen Funktion Nutzen ziehen werden, sind Aventurisches G&#xF6;tterwirken I und Aventurische Magie I, dann jeweils II und dann die anderen B&#xFC;cher (das braucht Zeit...).</p>
+            <p><b>F&#xFC;r die Automatisierung empfehlen wir das Modul &quot;times-up&quot;</b> , mit dem Effekte im Kampf automatisch ablaufen, sobald ihre Dauer zu Ende ist.</p>
+            <p>Dies und die neuen M&#xF6;glichkeiten f&#xFC;r Active Effects werden es erm&#xF6;glichen, einen gro&#xDF;en Teil der F&#xE4;higkeiten automatisierbar zu machen. Stellt sicher, dass ihr <b>die Migration von F&#xE4;higkeiten</b> f&#xFC;r die
+                kommenden Modulpatches nutzt.</p>
+        </div>
+        <div class="col fourty">
+            <img src="systems/dsa5/lazy/patchimages/3.2.0/onuse.webp" />
+        </div>
+    </div>
+    <h2 class="mume-header" id="verbessertes-lichtmakro">Verbessertes Lichtmakro</h2>
+    <div class="row-section">
+        <div class="col sixty">
+            <p>Das im Kernmodul enthaltene Lichtmakro hat ein paar neue Funktionen. Du kannst nun benutzerdefinierte Voreinstellungen hinzuf&#xFC;gen, um andere Lichtquellen und Sichteinstellungen vorzudefinieren. Au&#xDF;erdem k&#xF6;nnen aktive Effekte
+                auf den Akteuren nun die Sicht und den Lichtabstand im &quot;Auto&quot;-Modus ver&#xE4;ndern. Bei der Verwendung von Effekten f&#xFC;r Fackeln und Zauberspr&#xFC;chen wie Flimflam kann nun ein Licht auf dem Quellen-Token aktiviert werden.
+                Au&#xDF;erdem gibt es einen neuen Automodus f&#xFC;r die Einstellung der Sichtweite namens &quot;Kompensation&quot; (danke Qowy). Dies ist der neue empfohlene Modus. Die Dunkelheitseinstellung der Szene wird durch die Kompensation ver&#xE4;ndert.
+                So ist z.B. bei Akteuren mit Dunkelsicht die Dunkelheit in der Vision immer um 0,2 geringer als bei normalen Akteuren. Dieses Thema ist ein wenig kompliziert, aber sehr n&#xFC;tzlich (!), wenn man einmal verstanden hat, wie man es richtig
+                einsetzt. Wir empfehlen das Tutorial von VTTom. Bei den Spieltests hat das das Fummeln an den Einstellungen f&#xFC;r die Sicht weitgehend &#xFC;berfl&#xFC;ssig gemacht. Vergesst nicht, das Token-HUD f&#xFC;r Lichter zu aktivieren, damit
+                ihr euren Wachen schnell Fackeln hinzuf&#xFC;gen k&#xF6;nnt!</p>
+        </div>
+        <div class="col fourty">
+            <img src="systems/dsa5/lazy/patchimages/3.2.0/light.webp" />
+        </div>
+    </div>
+    <h2 class="mume-header" id="krankheit">Krankheit</h2>
+    <div class="row-section">
+        <div class="col sixty">
+            <p>Krankheiten k&#xF6;nnen nun auf den Charakterbogen gezogen werden. Nur der Spielleiter kann diese Krankheiten auf dem Statusreiter sehen. Ihr k&#xF6;nnt nun das Leiden eurer Opfer viel einfacher verfolgen. Weitere Verbesserungen f&#xFC;r Krankheiten
+                sind f&#xFC;r die Zukunft geplant, wie z.B. die verbleibende Zeit der Krankheit.
+            </p>
+        </div>
+        <div class="col fourty">
+            <img src="systems/dsa5/lazy/patchimages/3.2.0/disease.webp" />
+        </div>
+    </div>
+    <h2 class="mume-header" id="automatisierte-animationen">Automatisierte Animationen</h2>
+    <div class="row-section">
+        <div class="col sixty">
+            <p>Das Schwarze Auge unterst&#xFC;tzt jetzt das Modul &quot;Automated Animations&quot;. Dieses Modul bietet die M&#xF6;glichkeit, jedem Gegenstand einen Sound und eine Animation hinzuzuf&#xFC;gen. Dies ist vor allem f&#xFC;r Kampfanimationen
+                wie Schwerter und B&#xF6;gen, die den Feind treffen, sehr n&#xFC;tzlich. Das Modul selbst hat einige Abh&#xE4;ngigkeiten, wie z.B. das JB2A-Modul, das in seiner kostenlosen Version bereits eine Menge Animationen enth&#xE4;lt. Es ist sehr
+                einfach einzurichten, aber wir empfehlen, das kommende Video von VTTom zu diesem Feature anzusehen.</p>
+        </div>
+        <div class="col fourty">
+            <img src="systems/dsa5/lazy/patchimages/3.2.0/animated.webp" />
+        </div>
+    </div>
+    <h2 class="mume-header" id="dere-positioning-system-dps">Dere Positioning System (DPS)</h2>
+    <div class="row-section">
+        <div class="col sixty">
+            <p>Wir haben Unterst&#xFC;tzung f&#xFC;r die Berechnung der Entfernung zwischen Token hinzugef&#xFC;gt. Ihr k&#xF6;nnt diese Funktion im Hauptmen&#xFC; aktivieren. Zurzeit begrenzt dies die Entfernung, in der Beutegegenst&#xE4;nde und H&#xE4;ndler
+                von Spielern erreicht werden k&#xF6;nnen, auf weniger als zwei Kacheln. Au&#xDF;erdem wird nun automatisch der Entfernungsmodifikator f&#xFC;r Fernkampfangriffe im Angriffsdialog eingestellt. Wir haben noch ein paar andere Ideen, was wir
+                mit dieser Funktion in Zukunft machen k&#xF6;nnen &#x1F603; Funktioniert nur mit Szeneneinheiten von Yard/Schritt.</p>
+        </div>
+        <div class="col fourty">
+            <img src="systems/dsa5/lazy/patchimages/3.2.0/dps.webp" />
+        </div>
+    </div>
+    <h1 class="mume-header" id="erweiterungen">Erweiterungen</h1>
+
+    <ul class="dsalist">
+        <li>Einige F&#xE4;higkeiten, die mit anderen F&#xE4;higkeiten verbunden sind, werden nun automatisch hinzugef&#xFC;gt, wenn man sie auf dem Charakterbogen ablegt (z.B. Hexensinn f&#xFC;r Vertraute)</li>
+        <li>Neue Kategorie &quot;D&#xE4;monenzeichen&quot; verf&#xFC;gbar. Erforderlich f&#xFC;r Aventurische Magie 3 und magische Pakte.</li>
+        <li>Neue Kategorie &quot;Patron&quot; verf&#xFC;gbar... auch f&#xFC;r Magie 3</li>
+        <li>Es gibt jetzt einn &quot;Active Effect&quot;, um Stufen von Zust&#xE4;nden zu ignorieren (z.B. leidet der Held eine Stufe weniger an Furcht)</li>
+        <li>Es gibt jetzt Schl&#xFC;ssel f&#xFC;r &quot;Active Effects&quot;, um nur Zauber einer bestimmten Eigenschaft zu verbessern</li>
+        <li>Es gibt jetzt Schl&#xFC;ssel f&#xFC;r &quot;Active Effects&quot; f&#xFC;r Verwundbarkeiten gegen bestimmte Gegenst&#xE4;nde. Derzeit ist dies auf Fern- und Nahkampfwaffen beschr&#xE4;nkt. Wir werden diese Resistenzen bald zu bestehenden Kreaturen
+            hinzuf&#xFC;gen (z.B. erleiden Skelette doppelten Schaden durch stumpfe Waffen)</li>
+        <li>Und ein weiterer active Effect f&#xFC;r Bonusschaden gegen Kreaturentypen</li>
+        <li>Und weil es Spa&#xDF; macht, noch einer: Aktive Effects k&#xF6;nnen nun auch die AsP-Kosten von Zaubern mit einer bestimmten Eigenschaft ver&#xE4;ndern (z.B. Heilung)</li>
+        <li>Zufallsbeute in der Werkstatt des Meisters und beim H&#xE4;ndler sollte keine Talismane mehr enthalten</li>
+        <li>Active Effects k&#xF6;nnen nun Makros haben, die beim Entfernen des Effekts ausgef&#xFC;hrt werden. Z.B. erh&#xE4;lt man einen Bonus auf St&#xE4;rke und anschlie&#xDF;end eine Stufe Bet&#xE4;ubung, wenn der Effekt abklingt...auch hilfreich f&#xFC;r
+            Flammenschwerter und Hexenklauen</li>
+        <li>Die AsP-Kosten f&#xFC;r magische Zeichen k&#xF6;nnen nun &#xFC;ber einen Rechtsklick auf die Chatnachricht bezahlt werden, &#xE4;hnlich wie bei Zaubern</li>
+        <li>Traditionsartefakte haben jetzt Felder f&#xFC;r Volumen, AsP-Kosten und Merkmale...wir brauchen das, um mehr Aktivierungseffekte hinzuzuf&#xFC;gen &#x1F603;</li>
+        <li>Der Journalbrowser zeigt dem Spielleiter nun Schaltfl&#xE4;chen, um B&#xFC;cher f&#xFC;r die Spieler ein- und auszublenden</li>
+        <li>Alle Gegenst&#xE4;nde enthalten nun ein Feld zum &#xDC;berschreiben des Bruchfaktorwertes. Man kann jetzt Waffen aus exklusivem oder magischem Material herstellen!</li>
+        <li>H&#xE4;ndler zeigen nun eine Meldung an, wenn kein Akteur an einen Spieler gebunden ist (da sie ohne einen solchen nicht funktionieren)</li>
+        <li>Das H&#xE4;ndlerblatt hat jetzt eine Schaltfl&#xE4;che, um den Akteur f&#xFC;r alle Spieler gleichzeitig freizuschalten (sehr n&#xFC;tzlich f&#xFC;r zuf&#xE4;llige Beute aus der Werkstatt des Meisters)</li>
+        <li>Munition kann nun vergiftet werden, &#xE4;hnlich wie bei Nahkampfwaffen. Ziehe das Gift aus deinem Inventar auf die Munition. Die Wirkung wird beim Gebrauch auf die Waffe &#xFC;bertragen.</li>
+        <li>Akteure k&#xF6;nnen nun eine Zauber- und Liturgier&#xFC;stung tragen, die den erlittenen Schaden reduziert.
+        </li>
+        <li>Die Konfiguration der active effects enth&#xE4;lt nun Platzhalter als Beispiele und setzt automatisch den empfohlenen Modus f&#xFC;r Attributs&#xE4;nderungen</li>
+    </ul>
+    <h1 class="mume-header" id="fehlerbehebungen">Fehlerbehebungen</h1>
+
+    <ul class="dsalist">
+        <li>Active effects f&#xFC;r Rituale und Zeremonien sollten nun korrekt funktionieren</li>
+        <li>Button f&#xFC;r Ausr&#xFC;stungsschaden wird jetzt nur noch bei best&#xE4;tigten kritischen W&#xFC;rfen angezeigt
+        </li>
+        <li>Gelegenheitsangriff sollte nun auch f&#xFC;r Spieler korrekt funktionieren</li>
+        <li>Zonenr&#xFC;stungen sollten nun das Schadenssymbol anzeigen, wenn die R&#xFC;stung besch&#xE4;digt ist</li>
+        <li>Unbewaffneter Kampf gegen Kreaturen sollte wieder richtig funktionieren</li>
+        <li>Blutrausch ignoriert nun auch die Geschwindigkeitsreduktion durch Schmerz</li>
+        <li>Das Vorladen von benutzerdefinierten W&#xFC;rfeln (dice so nice) sollte wieder richtig funktionieren.</li>
+        <li>/getPaid und /pay Befehl wurden invertiert</li>
+    </ul>
+
+</div>

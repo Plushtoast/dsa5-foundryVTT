@@ -1,6 +1,6 @@
 <form class="skill-test">
     <div class="row-section">
-        <div class="col sixty">
+        <div class="col sixty" style="max-width:60%">
 
             {{> systems/dsa5/templates/dialog/enhanced-default-dialog.html}}
 
@@ -48,14 +48,11 @@
                 <label>{{localize "RITUALMODIFIER.rightEquipment"}}</label>
                 <input type="checkbox" id="rightEquipment" name="rightEquipment" value="1">
             </div>
-            {{/if}}
-            {{#if isForeign}}
+            {{/if}} {{#if isForeign}}
             <div class="center">
                 <b>{{localize 'TT.foreignSpell'}}</b>
             </div>
-            {{/if}}
-
-            {{#if canChangeCost}}
+            {{/if}} {{#if canChangeCost}}
             <div class="form-group custom-select">
                 <label>{{localize "force"}} (+1)</label>
                 <input type="checkbox" id="forceSpell" class="spellModifier" data-cost="1" name="forceSpell" value="1">

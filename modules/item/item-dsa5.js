@@ -171,8 +171,8 @@ export default class Itemdsa5 extends Item {
     }
 
     static getSkZkModifier(data, source) {
-        let skMod = [0]
-        let zkMod = [0]
+        let skMod = []
+        let zkMod = []
 
         const hasSpellResistance = ["spell", "liturgy", "ceremony", "ritual"].includes(source.type) && source.data.effectFormula.value.trim() == ""
         if (game.user.targets.size) {
@@ -193,8 +193,8 @@ export default class Itemdsa5 extends Item {
         }
 
         mergeObject(data, {
-            SKModifier: Math.min(...skMod),
-            ZKModifier: Math.min(...zkMod),
+            SKModifier: skMod.length > 0 ? Math.min(...skMod) : 0,
+            ZKModifier: zkMod.length > 0 ? Math.min(...zkMod) : 0
         })
     }
 

@@ -130,7 +130,7 @@ export default function() {
             case "Array":
                 let newElems = []
                 const source = change.effect.data.label
-                for (let elem of `${change.value}`.split(/(;|,)/)) {
+                for (let elem of `${change.value}`.split(/[;,]+/)) {
                     let vals = elem.split(" ")
                     const value = vals.pop()
                     const target = vals.join(" ")
