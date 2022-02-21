@@ -206,7 +206,7 @@ export default class DiceDSA5 {
             crit = -50
         }
 
-        if (roll.terms[0].results.filter((x) => x.result == crit).length == 1) {
+        if (roll.terms[0].results.filter((x) => x.result <= crit).length == 1) {
             description = game.i18n.localize("CriticalSuccess")
             if (game.settings.get("dsa5", "noConfirmationRoll")) {
                 successLevel = 3
