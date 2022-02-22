@@ -157,7 +157,6 @@ export class DiceSoNiceCustomization extends Application {
                 type: String
             });
         }
-
     }
 
     getAttributeConfiguration(value) {
