@@ -116,7 +116,7 @@ export default function() {
             texture: 'none'
         });
 
-        import ("/modules/dice-so-nice/Utils.js").then(module => {
+        import (foundry.utils.getRoute('/modules/dice-so-nice/Utils.js')).then(module => {
             game.dsa5.apps.DiceSoNiceCustomization.initConfigs(module)
             DiceSoNiceCustomization.onConnect()
         })
@@ -157,6 +157,7 @@ export class DiceSoNiceCustomization extends Application {
                 type: String
             });
         }
+
     }
 
     getAttributeConfiguration(value) {
