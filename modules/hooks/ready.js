@@ -66,19 +66,19 @@ export default function() {
                     case "socketedConditionAddActor":
                         fromUuid(data.payload.id).then(item => {
                             const onUse = new OnUseEffect(item)
-                            onUse.socketedConditionAddActor(payload.actors.map(x => game.actors.get(x)), payload.data)
+                            onUse.socketedConditionAddActor(data.payload.actors.map(x => game.actors.get(x)), data.payload.data)
                         })
                         break
                     case "socketedConditionAdd":
                         fromUuid(data.payload.id).then(item => {
                             const onUse = new OnUseEffect(item)
-                            onUse.socketedConditionAdd(payload.targets, payload.data)
+                            onUse.socketedConditionAdd(data.payload.targets, data.payload.data)
                         })
                         break
                     case "socketedRemoveCondition":
                         fromUuid(data.payload.id).then(item => {
                             const onUse = new OnUseEffect(item)
-                            onUse.socketedRemoveCondition(payload.targets, payload.coreId)
+                            onUse.socketedRemoveCondition(data.payload.targets, data.payload.coreId)
                         })
                         break
                     case "updateHits":

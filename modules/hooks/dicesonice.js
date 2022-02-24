@@ -126,7 +126,6 @@ export default function() {
 export class DiceSoNiceCustomization extends Application {
     static attrs = ["mu", "kl", "in", "ch", "ff", "ge", "ko", "kk", "attack", "dodge", "parry", "damage"]
     initConfigs(module) {
-        this.labelColor = module.Utils.contrastOf(game.user.data.color)
         const colors = module.Utils.prepareColorsetList()
         this.choices = {}
         for (const [key, value] of Object.entries(colors)) {
@@ -157,7 +156,6 @@ export class DiceSoNiceCustomization extends Application {
                 type: String
             });
         }
-
     }
 
     getAttributeConfiguration(value) {
