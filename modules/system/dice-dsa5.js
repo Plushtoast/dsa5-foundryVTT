@@ -953,15 +953,15 @@ export default class DiceDSA5 {
         costModifiers.push(
             {
                 name: weakBody,
-                value: AdvantageRulesDSA5.vantageStep(testData.extra.actor, weakBody),
+                value: -1 * AdvantageRulesDSA5.vantageStep(testData.extra.actor, weakBody),
             },
             {
                 name: energy,
-                value: -1 * SpecialabilityRulesDSA5.abilityStep(testData.extra.actor, energy),
+                value: SpecialabilityRulesDSA5.abilityStep(testData.extra.actor, energy),
             },
             {
                 name: `${game.i18n.localize("statuseffects")} (${game.i18n.localize("CHARAbbrev." + globalMod.name)})`,
-                value: -1 * testData.extra.actor.data[globalMod.val] + -1 * this._situationalModifiers(testData, feature)
+                value: testData.extra.actor.data[globalMod.val] + this._situationalModifiers(testData, feature)
             }
         )
         costModifiers = costModifiers.filter((x) => x.value != 0)
