@@ -2161,9 +2161,11 @@ export default class Actordsa5 extends Actor {
     }
 
     async markDead(dead) {
-        const tokens = game.canvas.tokens.documentCollection.filter((x) => x.data.actorId == this.id && x.combatant)
+        const tokens = this.getActiveTokens()
+
         for (let token of tokens) {
-            await token.combatant.update({ defeated: dead })
+            if(token.combatant)
+                await token.combatant.update({ defeated: dead })
         }
     }
 }

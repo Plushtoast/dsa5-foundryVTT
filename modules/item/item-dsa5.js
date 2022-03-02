@@ -1373,7 +1373,7 @@ class RangeweaponItemDSA5 extends Itemdsa5 {
 
             if (currentAmmo) {
                 currentAmmo = currentAmmo.toObject(false)
-                source.data.effect.attributes = source.data.effect.attributes
+                source.data.effect.attributes = (source.data.effect.attributes || "")
                     .split(",")
                     .concat((currentAmmo.data.effect.attributes || "").split(","))
                     .filter((x) => x != "")
