@@ -68,6 +68,8 @@
         "Spells and magical signs can be paid via a rightclick on the chatcard.",
         "Activate the Dere Positioning System, so merchants can only be contacted from close distance.",
         "Activate the Dere Positioning System, so range modifiers will be set automatically in combat",
-        "The core rule modules contains functions to automatically set sight."
+        "The core rule modules contains functions to automatically set sight.",
+
+        "Update regularly Foundry, the TDE system and all modules."
     ]
 }

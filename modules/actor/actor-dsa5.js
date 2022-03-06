@@ -82,7 +82,7 @@ export default class Actordsa5 extends Actor {
                 isFamiliar ||
                 data.items.some(
                     (x) => ["ritual", "spell", "magictrick"].includes(x.type) ||
-                    (x.type == "specialability" && ["magical", "staff"].includes(x.data.data.category.value))
+                    (x.type == "specialability" && ["magical", "staff", "pact"].includes(x.data.data.category.value))
                 )
             data.isPriest = data.items.some(
                 (x) => ["ceremony", "liturgy", "blessing"].includes(x.type) ||
