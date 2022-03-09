@@ -953,11 +953,11 @@ export default class DiceDSA5 {
         costModifiers.push(
             {
                 name: weakBody,
-                value: -1 * AdvantageRulesDSA5.vantageStep(testData.extra.actor, weakBody),
+                value: AdvantageRulesDSA5.vantageStep(testData.extra.actor, weakBody),
             },
             {
                 name: energy,
-                value: SpecialabilityRulesDSA5.abilityStep(testData.extra.actor, energy),
+                value: SpecialabilityRulesDSA5.abilityStep(testData.extra.actor, energy) * -1,
             },
             {
                 name: `${game.i18n.localize("statuseffects")} (${game.i18n.localize("CHARAbbrev." + globalMod.name)})`,

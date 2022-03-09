@@ -877,7 +877,8 @@
         "applyEffectCaster": "Effekt auf Wirkenden übertragen",
         "applyEffectTargets": "Effekt auf Ziele übertragen",
         "foreignSpell": "Fremdzauber können nicht modifiziert werden",
-        "assignCharacter": "Charaktere können in der Spielerliste unten links per Rechtsclick zugewiesen werden."
+        "assignCharacter": "Charaktere können in der Spielerliste unten links per Rechtsclick zugewiesen werden.",
+        "dragLink": "Drag & drop Akteur z.B. für Gestaltwandlung und Beschwörung"
     },
     "HELP": {
         "showHelp": "Hilfe anzeigen",

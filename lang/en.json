@@ -867,7 +867,8 @@
         "applyEffectCaster": "Apply effect to caster",
         "applyEffectTargets": "Apply effect to targets",
         "foreignSpell": "Unfamiliar tradition spells can not be modified",
-        "assignCharacter": "Characters can be assigned using a right click on the player list in the bottom left corner."
+        "assignCharacter": "Characters can be assigned using a right click on the player list in the bottom left corner.",
+        "dragLink": "Drag & drop actor e.g. for shapeshifting and summoning"
     },
     "HELP": {
         "showHelp": "Show help",

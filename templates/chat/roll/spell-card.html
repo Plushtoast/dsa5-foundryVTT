@@ -25,10 +25,6 @@
     <div class="card-content">
         <b>{{localize "maintainCost"}}</b>: {{preData.calculatedSpellModifiers.maintainCost}}
     </div>
-    {{/if}} {{#if testData.damage}}
-    <div class="card-content" title="{{testData.calculatedEffectFormula}}&#10;{{testData.damagedescription}}">
-        <b>{{localize "effectResult"}}</b>: {{testData.damage}}
-    </div>
     {{/if}} {{#if preData.extensions }}
     <div class="card-content">
         <b>{{localize 'extensions'}}</b>: {{{preData.extensions}}}

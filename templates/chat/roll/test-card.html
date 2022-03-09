@@ -33,7 +33,7 @@
     <b>{{localize "qualityStep"}}</b>: {{testData.qualityStep}}
 </div>
 {{/if}} {{#if testData.damage}}
-<div class="card-content damageSecret" title="{{testData.damagedescription}}">
+<div class="card-content damageSecret" title="{{#if testData.calculatedEffectFormula}}{{testData.calculatedEffectFormula}}&#10;{{/if}}{{testData.damagedescription}}">
     <b>{{localize "damage"}}</b>: {{testData.damage}}
 </div>
 {{/if}} {{#if testData.description}}
@@ -44,14 +44,11 @@
 <div class="card-content">
     <b>{{localize "effect"}}</b>: {{{testData.parsedEffect}}}
 </div>
-{{/if}}
-{{#if showDamageToGear}}
+{{/if}} {{#if showDamageToGear}}
 <div class="card-content center selfButton" style="margin-top:10px">
     <button class="gearDamaged" data-uuid="{{showDamageToGear}}">{{localize 'WEAR.checkShort'}}</button>
 </div>
-{{/if}}
-
-{{#each testData.other as |string index|}}
+{{/if}} {{#each testData.other as |string index|}}
 <div>
     {{{string}}}
 </div>
