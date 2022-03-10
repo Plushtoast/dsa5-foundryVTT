@@ -231,6 +231,7 @@
     "combatspecialtalents": "Combat Special Abilities",
     "CriticalSuccess": "Critical success",
     "CriticalFailure": "Botch",
+    "critBotch": "Crit./Botch",
     "circle": "Circle",
     "Characteristic": "Attribute",
     "ceremony": "Ceremony",

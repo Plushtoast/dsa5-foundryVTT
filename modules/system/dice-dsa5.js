@@ -179,12 +179,12 @@ export default class DiceDSA5 {
         let botch = 20
         let crit = 1
         if (testData.source.type == "meleeweapon") {
-            botch = testData.extra.actor.data.meleeStats.botch
-            crit = testData.extra.actor.data.meleeStats.crit
+            botch = Math.min(testData.extra.actor.data.meleeStats.botch, testData.source.data.botch)
+            crit = Math.max(testData.extra.actor.data.meleeStats.crit, testData.source.data.crit)
         }
         if (testData.source.type == "rangeweapon") {
-            botch = testData.extra.actor.data.rangeStats.botch
-            crit = testData.extra.actor.data.rangeStats.crit
+            botch = Math.min(testData.extra.actor.data.rangeStats.botch, testData.source.data.botch)
+            crit = Math.max(testData.extra.actor.data.rangeStats.crit, testData.source.data.crit)
         }
         if (/(\(|,)( )?i\)$/.test(testData.source.name)) {
             if (!SpecialabilityRulesDSA5.hasAbility(

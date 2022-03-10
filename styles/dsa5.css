@@ -2843,6 +2843,11 @@ select.noAppearance {
     position: relative;
 }
 
+.missingTarget {
+    margin-left: 25px;
+}
+
+.missingTarget i,
 .skill-test .targets i {
     color: darkred;
 }

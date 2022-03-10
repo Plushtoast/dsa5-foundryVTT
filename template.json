@@ -704,6 +704,8 @@
                 "equipment",
                 "description"
             ],
+            "crit": 1,
+            "botch": 20,
             "damage": {
                 "value": "1d6"
             },
@@ -736,6 +738,8 @@
                 "equipment",
                 "description"
             ],
+            "crit": 1,
+            "botch": 20,
             "damage": {
                 "value": "1d6"
             },
