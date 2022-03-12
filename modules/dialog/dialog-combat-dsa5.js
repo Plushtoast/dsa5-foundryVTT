@@ -106,8 +106,10 @@ export default class DSA5CombatDialog extends DialogShared {
     }
 
     setRollButtonWarning() {
-        if (this.dialogData.mode == "attack")
+        if (this.dialogData.mode == "attack"){
+            const noTarget = game.i18n.localize("DIALOG.noTarget")
             $(this._element).find(".dialog-buttons .rollButton").html(`${game.i18n.localize('Roll')}<span class="missingTarget"><i class="fas fa-exclamation-circle"></i> ${noTarget}</span>`)
+        }
     }
 
     updateTargets(html, targets) {

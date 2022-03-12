@@ -4,7 +4,7 @@
         <div class="col five">
         </div>
         {{#each characteristics as |item i|}}
-        <div class="col five center" title="{{localize (concatUp 'CHAR.' item)}}">
+        <div class="col five center" style="max-width: 16.66%;" title="{{localize (concatUp 'CHAR.' item)}}">
             <select class="noAppearance" name="characteristics{{i}}">
                 {{#select item}}
                 <option value="mu"> {{localize 'CHARAbbrev.MU'}}</option>

@@ -9,6 +9,8 @@ export default class RuleChaos {
 
         if ((item.type == "dodge" || getProperty(item, "data.combatskill.value") == game.i18n.localize("LocalizedIDs.wrestle")) && SpecialabilityRulesDSA5.hasAbility(actor, game.i18n.localize("LocalizedIDs.masterfulDodge")))
             multipleDefense = -2
+        else if (SpecialabilityRulesDSA5.hasAbility(actor, game.i18n.localize("LocalizedIDs.mightyMasterfulParry")))
+            multipleDefense = -1
         else if (SpecialabilityRulesDSA5.hasAbility(actor, game.i18n.localize("LocalizedIDs.masterfulParry")))
             multipleDefense = -2
 

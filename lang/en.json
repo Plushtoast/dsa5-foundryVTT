@@ -994,6 +994,7 @@
         "appliedEffect": "Effect <b>{source}</b> applied to <b>{target}</b>.",
         "custom": "Special effect",
         "creature": "Actorlink (e.g. das5-core.coreenbestiary.Gotongi)",
+        "resistRoll": "Resist check",
         "placeholder": {
             "macros": "Macros have access to the following variables:\nactor - The targeted actor\ntestData - All data for the current check\nsource - The source of the macro",
             "armorPostprocess": "Armor transformations have access to the following variables:\nactor - The targeted actor\narmor - The armor of the target\nsource - The source of the macro",
@@ -1048,6 +1049,7 @@
         "mightyKarmaControl": "Powerful Control of the Karmic Body",
         "masterfulDodge": "Masterful Dodge",
         "masterfulParry": "Master Parry",
+        "mightyMasterfulParry": "tbd",
         "improvisedWeaponMaster": "Master of Improvised Weapons",
         "misfortune": "Misfortune",
         "quickdraw": "Quickdraw",

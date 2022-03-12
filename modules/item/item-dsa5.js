@@ -1072,17 +1072,9 @@ class ConsumableItemDSA extends Itemdsa5 {
     static async _applyActiveEffect(source) {
         let effects = source.data.effects.toObject()
         if (effects.length > 0) {
-            const effectsWithChanges = effects.filter((x) => x.changes && x.changes.length > 0)
-            await source.actor.createEmbeddedDocuments(
-                "ActiveEffect",
-                effectsWithChanges.map((x) => {
-                    x.origin = source.actor.uuid
-                    return x
-                })
-            )
-            const msg = await DSAActiveEffectConfig.applyAdvancedFunction(source.actor, effects, source, {
+            const {msg, resistRolls} = await DSAActiveEffectConfig.applyAdvancedFunction(source.actor, effects, source, {
                 qualityStep: source.data.data.QL,
-            })
+            }, source.actor)
             const infoMsg = `${game.i18n.format("ActiveEffects.appliedEffect", {
                 target: source.actor.name,
                 source: source.name,

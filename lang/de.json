@@ -728,7 +728,7 @@
         "availableRules": "Verfügbare Regelwerke",
         "availableRSHs": "Verfügbare Regionalspielhilfen",
         "preparation": "Vorbereitung",
-        "preparationDescription": "Um das meiste aus diesem Abenteuermodul zu holen, empfehlen wir folgende Dinge zu beachten: <ul class=\"dsalist\"><li>Lies die passenden Journaleinträge zur aktuellen Szene im Voraus.</li><li>Mache dich ein bisschen mit der Battlemap vertraut und platziere ggf. Tokens bereits zuvor. Empfehlenswert ist es die Token unsichtbar zu platzieren und erst sichtbar zu machen, wenn die Spieler auf diese treffen (z.b. über Alt gedrückt halten beim Platzieren). So können Spoiler vermieden werden.</li><li>Initialisiere ggf. alle Inhalte des Abenteuers über die unten verfügbare Funktion. Die Szenen nur aus den Kompendien zu ziehen reicht nicht aus, um alles korrekt zu verlinken. Achte darauf, dass du nicht mehrmals initialisierst.</li><li>Überprüfe ob du alle empfohlenen Module installiert und aktiviert hast. Diese erleichtern das Führen des Abenteuers und liefern noch ein paar weitere Details, sind aber nicht zwingend erforderlich (s.u.)</li><li>Die zur Verfügung gestellten Karten sind nur ein Vorschlag. Du kannst statt dessen auch einfach nur die Karte oder eine passende stimmige Zeichnung verwenden. Für die Battlemaps findet sich sicher später noch eine Verwendung.</li></ul>",
+        "preparationDescription": "Um das meiste aus diesem Abenteuermodul zu holen, empfehlen wir folgende Dinge zu beachten: <ul class=\"dsalist\"><li>Lies die passenden Journaleinträge zur aktuellen Szene im Voraus.</li><li>Mache dich ein bisschen mit der Battlemap vertraut und platziere ggf. Tokens bereits zuvor. Empfehlenswert ist es die Token unsichtbar zu platzieren und erst sichtbar zu machen, wenn die Spieler auf diese treffen (z.b. über Alt gedrückt halten beim Platzieren). So können Spoiler vermieden werden.</li><li>Initialisiere ggf. alle Inhalte des Abenteuers über die oben verfügbare Funktion. Die Szenen nur aus den Kompendien zu ziehen reicht nicht aus, um alles korrekt zu verlinken. Achte darauf, dass du nicht mehrmals initialisierst.</li><li>Überprüfe ob du alle empfohlenen Module installiert und aktiviert hast. Diese erleichtern das Führen des Abenteuers und liefern noch ein paar weitere Details, sind aber nicht zwingend erforderlich (s.u.)</li><li>Die zur Verfügung gestellten Karten sind nur ein Vorschlag. Du kannst statt dessen auch einfach nur die Karte oder eine passende stimmige Zeichnung verwenden. Für die Battlemaps findet sich sicher später noch eine Verwendung.</li></ul>",
         "toc": "Kapitel",
         "info": "Info",
         "scenes": "Szenen",
@@ -1020,6 +1020,7 @@
         "appliedEffect": "Effekt <b>{source}</b> wurde auf <b>{target}</b> übertragen.",
         "custom": "Sondereffekt",
         "creature": "Akteuerlink (z.b. das5-core.corebestiary.Gotongi)",
+        "resistRoll": "Widerstandsprobe",
 
         "placeholder": {
             "macros": "Macros können auf diese Variablen zugreifen:\nactor - Der anvisierte Akteur\ntestData - All Daten für die aktuelle Probe\nsource - Die Quelle des Macros",
@@ -1117,6 +1118,7 @@
         "ResistanttoDisease": "Krankheitsresistenz",
         "masterfulDodge": "Meisterliches Ausweichen",
         "masterfulParry": "Meisterparade",
+        "mightyMasterfulParry": "Machtvolle Meisterparade",
         "perception": "Sinnesschärfe",
         "misfortune": "Pechmagnet",
         "featOfStrength": "Kraftakt",

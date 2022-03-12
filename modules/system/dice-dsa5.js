@@ -7,13 +7,13 @@ import SpecialabilityRulesDSA5 from "./specialability-rules-dsa5.js"
 import TraitRulesDSA5 from "./trait-rules-dsa5.js"
 import Itemdsa5 from "../item/item-dsa5.js"
 import DSA5StatusEffects from "../status/status_effects.js"
-import DSA5ChatAutoCompletion from "./chat_autocompletion.js"
 import OpposedDsa5 from "./opposed-dsa5.js"
 import DSAActiveEffectConfig from "../status/active_effects.js"
 import DSA5SoundEffect from "./dsa-soundeffect.js"
 import EquipmentDamage from "./equipment-damage.js"
 import EquipmentDamageDialog from "../dialog/dialog-equipmentdamage.js"
 import DSATables from "../tables/dsatables.js"
+import RequestRoll from "./request-roll.js"
 
 export default class DiceDSA5 {
     static async setupDialog({ dialogOptions, testData, cardOptions }) {
@@ -355,7 +355,7 @@ export default class DiceDSA5 {
     }
 
     static rollStatus(testData) {
-        let roll = testData.roll ? testData.roll : new Roll("1d20").evaluate({ async: false })
+        let roll = testData.roll || new Roll("1d20").evaluate({ async: false })
         let result = this._rollSingleD20(
             roll,
             testData.source.data.max,
@@ -424,9 +424,7 @@ export default class DiceDSA5 {
             weapon = testData.source.data
         }
 
-        let roll = testData.roll
-            ? testData.roll
-            : new Roll(weapon.data.damage.value.replace(/[Ww]/g, "d")).evaluate({ async: false })
+        let roll =  testData.roll || new Roll(weapon.data.damage.value.replace(/[Ww]/g, "d")).evaluate({ async: false })
         let damage = roll.total + modifiers
 
         for (let k of roll.terms) {
@@ -503,7 +501,7 @@ export default class DiceDSA5 {
     }
 
     static async rollCombatTrait(testData) {
-        let roll = testData.roll ? testData.roll : await new Roll("1d20").evaluate({ async: true })
+        let roll = testData.roll || await new Roll("1d20").evaluate({ async: true })
         let source = testData.source.data.data == undefined ? testData.source : testData.source.data
         if (source.data.traitType.value == "meleeAttack") {
             let weapon = { data: { combatskill: { value: "-" }, reach: { value: source.data.reach.value } } }
@@ -705,7 +703,7 @@ export default class DiceDSA5 {
     }
 
     static async rollWeapon(testData) {
-        let roll = testData.roll ? testData.roll : await new Roll("1d20").evaluate({ async: true })
+        let roll = testData.roll || await new Roll("1d20").evaluate({ async: true })
         let weapon
 
         let source = testData.source
@@ -1044,7 +1042,7 @@ export default class DiceDSA5 {
     }
 
     static _rollThreeD20(testData) {
-        let roll = testData.roll ? testData.roll : new Roll("1d20+1d20+1d20").evaluate({ async: false })
+        let roll = testData.roll || new Roll("1d20+1d20+1d20").evaluate({ async: false })
         let description = []
         let successLevel = 0
 
@@ -1179,7 +1177,7 @@ export default class DiceDSA5 {
     }
 
     static rollItem(testData) {
-        let roll = testData.roll ? testData.roll : new Roll("1d20+1d20+1d20").evaluate({ async: false })
+        let roll = testData.roll || new Roll("1d20+1d20+1d20").evaluate({ async: false })
         let description = []
         let modifier = this._situationalModifiers(testData)
         let fws = Number(testData.source.data.step.value)
@@ -1470,198 +1468,6 @@ export default class DiceDSA5 {
         }
     }
 
-    static async _requestRoll(category, name, modifier = 0) {
-        const { actor, tokenId } = DSA5ChatAutoCompletion._getActor()
-
-        if (actor) {
-            game.user.updateTokenTargets([])
-            let options = { modifier }
-
-            switch (category) {
-                case "attribute":
-                    let characteristic = Object.keys(game.dsa5.config.characteristics).find(
-                        (key) => game.i18n.localize(game.dsa5.config.characteristics[key]) == name
-                    )
-                    actor.setupCharacteristic(characteristic, options, tokenId).then((setupData) => {
-                        actor.basicTest(setupData)
-                    })
-                    break
-                case "regeneration":
-                    actor.setupRegeneration("regenerate", options, tokenId).then((setupData) => {
-                        actor.basicTest(setupData)
-                    })
-                    break
-                default:
-                    let skill = actor.items.find((i) => i.name == name && i.type == category)
-                    actor.setupSkill(skill.data, options, tokenId).then((setupData) => {
-                        actor.basicTest(setupData)
-                    })
-            }
-        }
-    }
-
-    static async _requestGC(category, name, messageId, modifier = 0) {
-        const { actor, tokenId } = DSA5ChatAutoCompletion._getActor()
-
-        if (actor) {
-            game.user.updateTokenTargets([])
-            let options = { modifier }
-            switch (category) {
-                case "attribute":
-                    break
-                default:
-                    const skill = actor.items.find((i) => i.name == name && i.type == category)
-                    actor.setupSkill(skill.data, options, tokenId).then(async (setupData) => {
-                        let result = await actor.basicTest(setupData)
-                        let message = await game.messages.get(messageId)
-                        const data = message.data.flags
-                        if (result.result.successLevel < 0) data.failed += 1
-                        data.results.push({ actor: actor.name, qs: result.result.qualityStep || 0 })
-                        DiceDSA5._rerenderGC(message, data)
-                    })
-            }
-        }
-    }
-
-    static async _rerenderGC(message, data) {
-        if (game.user.isGM) {
-            data.qs = data.results.reduce((a, b) => {
-                return a + b.qs
-            }, 0)
-            data.calculatedModifier = data.modifier - data.failed
-            data.openRolls = data.maxRolls - data.results.length
-            data.doneRolls = data.results.length
-            const content = await renderTemplate("systems/dsa5/templates/chat/roll/groupcheck.html", data)
-            message.update({ content, flags: data })
-        } else {
-            game.socket.emit("system.dsa5", {
-                type: "updateGroupCheck",
-                payload: {
-                    messageId: message.id,
-                    data,
-                },
-            })
-        }
-        $("#chat-log").find(`[data-message-id="${message.id}"`).appendTo("#chat-log")
-    }
-
-    static _parseEffectDuration(source, testData, preData, attacker) {
-        const specAbIds = preData.situationalModifiers.filter((x) => x.specAbId).map((x) => x.specAbId)
-        const specAbs = attacker ? attacker.items.filter((x) => specAbIds.includes(x.id)) : []
-        let effects = source.effects ? duplicate(source.effects) : []
-        for (const spec of specAbs) {
-            effects.push(...duplicate(spec).effects)
-        }
-
-        let duration = getProperty(source, "data.duration.value") || ""
-        duration = duration.replace(" x ", " * ").replace(game.i18n.localize("CHARAbbrev.QS"), testData.qualityStep)
-        try {
-            const regexes = [
-                { regEx: new RegExp(game.i18n.localize("DSAREGEX.combatRounds"), "gi"), seconds: 5 },
-                { regEx: new RegExp(game.i18n.localize("DSAREGEX.minutes"), "gi"), seconds: 60 },
-                { regEx: new RegExp(game.i18n.localize("DSAREGEX.hours"), "gi"), seconds: 3600 },
-                { regEx: new RegExp(game.i18n.localize("DSAREGEX.days"), "gi"), seconds: 3600 * 24 },
-            ]
-            for (const reg of regexes) {
-                if (reg.regEx.test(duration)) {
-                    let time = this._stringToRoll(duration.replace(reg.regEx, "").trim())
-                    if (!isNaN(time)) {
-                        for (let ef of effects) {
-                            let calcTime = time * reg.seconds
-                            const customDuration = getProperty(ef, "flags.dsa5.customDuration")
-                            if (customDuration) {
-                                let qsDuration = customDuration.split(",")[testData.qualityStep - 1]
-                                if (qsDuration && qsDuration != "-") calcTime = Number(qsDuration)
-                            }
-                            ef.duration.seconds = calcTime
-                            ef.duration.rounds = ef.duration.seconds / 5
-                        }
-                    }
-                    break
-                }
-            }
-        } catch {
-            console.error(`Could not parse duration '${duration}' of '${source.name}'`)
-        }
-        return effects
-    }
-
-    static async _applyEffect(id, mode, targets) {
-        const message = game.messages.get(id)
-        const source = message.data.flags.data.preData.source
-        const testData = message.data.flags.data.postData
-        const speaker = message.data.speaker
-
-        if (["poison", "disease"].includes(source.type)) {
-            testData.qualityStep = testData.successLevel > 0 ? 2 : 1
-        }
-
-        let attacker = DSA5_Utility.getSpeaker(speaker)
-        if (!attacker) attacker = game.actors.get(getProperty(message.data.flags, "data.preData.extra.actor.id"))
-        const effects = this._parseEffectDuration(source, testData, message.data.flags.data.preData, attacker)
-        let actors = []
-        if (mode == "self") {
-            if (attacker) actors.push(attacker)
-        } else {
-            if (targets) actors = targets.map((x) => DSA5_Utility.getSpeaker(x))
-            else if (game.user.targets.size) {
-                game.user.targets.forEach((target) => {
-                    if (target.actor) actors.push(target.actor)
-                })
-            }
-        }
-        if (game.user.isGM) {
-            for (let actor of actors) {
-                const effectsWithChanges = effects.filter((x) => x.changes && x.changes.length > 0)
-                await actor.createEmbeddedDocuments(
-                    "ActiveEffect",
-                    effectsWithChanges.map((x) => {
-                        x.origin = actor.uuid
-                        return x
-                    })
-                )
-                const msg = await DSAActiveEffectConfig.applyAdvancedFunction(actor, effects, source, testData)
-                const infoMsg = `${game.i18n.format("ActiveEffects.appliedEffect", { target: actor.name, source: source.name })}${
-                    msg || ""
-                }`
-                ChatMessage.create(DSA5_Utility.chatDataSetup(infoMsg))
-            }
-        } else {
-            game.socket.emit("system.dsa5", {
-                type: "addEffect",
-                payload: {
-                    mode,
-                    id,
-                    actors: actors.map((x) => {
-                        return { token: x.token ? x.token.data._id : undefined, actor: x.data._id }
-                    }),
-                },
-            })
-        }
-    }
-
-    static async _removeGCEntry(ev) {
-        const elem = $(ev.currentTarget)
-        const index = Number(elem.attr("data-index"))
-        const message = game.messages.get(elem.parents(".message").attr("data-message-id"))
-        const data = message.data.flags
-        data.results.splice(index, 1)
-        DiceDSA5._rerenderGC(message, data)
-    }
-
-    static async _editGC(ev) {
-        const elem = $(ev.currentTarget)
-        const index = Number(elem.attr("data-index"))
-        const message = game.messages.get(elem.parents(".message").attr("data-message-id"))
-        const data = message.data.flags
-        if (index) {
-            data.results[index].qs = Number(elem.val())
-        } else {
-            data[elem.attr("data-field")] = Number(elem.val())
-        }
-        DiceDSA5._rerenderGC(message, data)
-    }
-
     static async _itemRoll(ev) {
         let input = $(ev.currentTarget),
             messageId = input.parents(".message").attr("data-message-id"),
@@ -1777,7 +1583,6 @@ export default class DiceDSA5 {
             ev.preventDefault()
             $(ev.currentTarget).parents(".chat-card").find(".display-toggle").toggle()
         })
-
         html.on("click", ".botch-roll", (ev) => {
             DSATables.showBotchCard(ev.currentTarget.dataset)
         })
@@ -1790,33 +1595,13 @@ export default class DiceDSA5 {
         html.on("change", ".roll-edit", (ev) => {
             DiceDSA5._rollEdit(ev)
         })
-        html.on("change", ".editGC", (ev) => {
-            DiceDSA5._editGC(ev)
-        })
         html.on("click", ".applyEffect", (ev) => {
             const elem = $(ev.currentTarget)
             const id = elem.parents(".message").attr("data-message-id")
             const mode = elem.attr("data-target")
 
-            DiceDSA5._applyEffect(id, mode)
+            DSAActiveEffectConfig.applyEffect(id, mode)
         })
-        html.on("click", ".request-roll", (ev) => {
-            const elem = ev.currentTarget.dataset
-            DiceDSA5._requestRoll(elem.type, elem.name, Number(elem.modifier) || 0)
-        })
-        html.on("click", ".request-gc", (ev) => {
-            const elem = ev.currentTarget.dataset
-            DiceDSA5._requestGC(
-                elem.type,
-                elem.name,
-                $(ev.currentTarget).parents(".message").attr("data-message-id"),
-                Number(elem.modifier) || 0
-            )
-        })
-        html.on("click", ".removeGC", (ev) => {
-            DiceDSA5._removeGCEntry(ev)
-        })
-
         html.on("click", ".message-delete", (ev) => {
             let message = game.messages.get($(ev.currentTarget).parents(".message").attr("data-message-id"))
             let targeted = message.data.flags.unopposeData
@@ -1826,5 +1611,9 @@ export default class DiceDSA5 {
             let target = canvas.tokens.get(message.data.flags.unopposeData.targetSpeaker.token)
             OpposedDsa5.clearOpposed(target.actor)
         })
+        html.on("click", ".resistEffect", (ev) => {
+            DSAActiveEffectConfig.resistEffect(ev)
+        })
+        RequestRoll.chatListeners(html)
     }
 }

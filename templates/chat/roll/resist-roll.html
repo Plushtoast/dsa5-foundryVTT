@@ -1,0 +1,25 @@
+<div class="dsa5 chat-card">
+    <div>
+        <b>{{localize 'ActiveEffects.resistRoll'}}</b>
+    </div>
+    <div class="row-section">
+        <div class="col third attacker"><img src="{{resist.target.img}}" width="50" height="50"></div>
+        <div class="col ten"></div>
+        <div class="col sixty" style="margin-top: 10px;">
+            <div>
+                <b>{{localize 'effect'}}</b>: {{resist.effect.label}}
+            </div>
+            <div>
+                <b>{{localize 'target'}}</b>: {{resist.target.name}}
+            </div>
+        </div>
+    </div>
+    
+    <div class="center">
+        <button style="margin-top:10px;" class="resistEffect onlyTarget" data-skill="{{resist.skill}}"
+            data-mod="{{resist.mod}}" data-actor="{{resist.target.id}}" data-token="{{resist.token}}" data-message="{{id}}" data-mode="{{mode}}"
+            data-effect="{{resist.effect._id}}">
+            {{resist.skill}} {{resist.mod}}
+        </button>
+    </div>
+</div>

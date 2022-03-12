@@ -2261,6 +2261,7 @@ select.noAppearance {
     appearance: none;
     height: auto;
     text-align: center;
+    width: 100%;
 }
 
 .aggroButton {
@@ -2303,6 +2304,7 @@ select.noAppearance {
 }
 
 .gearDamaged,
+.resistEffect,
 .applyEffect {
     width: auto;
     padding: 4px;

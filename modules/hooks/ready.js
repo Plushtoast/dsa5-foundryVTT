@@ -6,6 +6,8 @@ import DiceDSA5 from "../system/dice-dsa5.js";
 import PlayerMenu from "../wizards/player_menu.js";
 import { DiceSoNiceCustomization } from "./dicesonice.js";
 import OnUseEffect from "../system/onUseEffects.js";
+import RequestRoll from "../system/request-roll.js";
+import DSAActiveEffectConfig from "../status/active_effects.js";
 
 export default function() {
     Hooks.on("ready", async() => {
@@ -22,7 +24,7 @@ export default function() {
                         }
                         break
                     case "addEffect":
-                        DiceDSA5._applyEffect(data.payload.id, data.payload.mode, data.payload.actors)
+                        DSAActiveEffectConfig.applyEffect(data.payload.id, data.payload.mode, data.payload.actors)
                         break
                     case "updateMsg":
                         game.messages.get(data.payload.id).update(data.payload.updateData)
@@ -37,7 +39,7 @@ export default function() {
                         OpposedDsa5.hideReactionButton(data.payload.id)
                         break
                     case "updateGroupCheck":
-                        DiceDSA5._rerenderGC(game.messages.get(data.payload.messageId), data.payload.data)
+                        RequestRoll.rerenderGC(game.messages.get(data.payload.messageId), data.payload.data)
                         break
                     case "updateAttackMessage":
                         game.messages.get(data.payload.messageId).update({ "flags.data.unopposedStartMessage": data.payload.startMessageId });

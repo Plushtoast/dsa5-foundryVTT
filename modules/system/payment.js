@@ -130,7 +130,6 @@ export default class DSA5Payment {
     }
 
     static handlePayAction(elem, pay, amount, actor = undefined) {
-        console.log(pay)
         if (game.user.isGM && !actor) {
             ui.notifications.notify(game.i18n.localize("PAYMENT.onlyActors"))
             return
