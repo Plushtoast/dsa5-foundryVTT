@@ -51,11 +51,7 @@
             <div class="form-group">
                 <label class="label-text">{{localize "guidevalue"}}</label>
                 <select name="data.guidevalue.value" data-dtype="String">
-                    {{#select data.guidevalue.value}}
-                    {{#each characteristics as |ch char|}}
-                    <option value="{{char}}">{{localize ch}}</option>
-                    {{/each}}
-                    {{/select}}
+                    {{selectOptions characteristics selected=data.guidevalue.value localize=true}}
                 </select>
             </div>
 
@@ -73,11 +69,7 @@
             <div class="form-group">
                 <label class="label-text">{{localize "reach"}}</label>
                 <select name="data.reach.value" data-dtype="String">
-                    {{#select data.reach.value}}
-                    {{#each ranges as |ch char|}}
-                    <option value="{{char}}">{{localize ch}}</option>
-                    {{/each}}
-                    {{/select}}
+                    {{selectOptions ranges selected=data.reach.value localize=true}}
                 </select>
             </div>
 
@@ -91,11 +83,7 @@
             <div class="form-group">
                 <label class="label-text">{{localize "shieldSize"}}</label>
                 <select name="data.reach.shieldSize" data-dtype="String">
-                    {{#select data.reach.shieldSize}}
-                    {{#each shieldSizes as |ch char|}}
-                    <option value="{{char}}">{{localize ch}}</option>
-                    {{/each}}
-                    {{/select}}
+                    {{selectOptions shieldSizes selected=data.reach.shieldSize localize=true}}
                 </select>
             </div>
             {{/if}}

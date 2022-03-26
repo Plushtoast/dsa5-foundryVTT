@@ -63,88 +63,12 @@ export default class DiceDSA5 {
         if (!testData.extra.options.bypass) {
             let html = await renderTemplate(dialogOptions.template, dialogOptions.data)
             return new Promise((resolve, reject) => {
+                //TODO move the button generation to the respective dialogs
                 let dialog = DSA5Dialog.getDialogForItem(testData.source.type)
-                let buttons = {
-                    rollButton: {
-                        label: game.i18n.localize("Roll"),
-                        callback: (html) => {
-                            game.dsa5.memory.remember(testData.extra.speaker, testData.source, testData.mode, html)
-                            resolve(dialogOptions.callback(html))
-                        },
-                    },
-                }
-                if (game.user.isGM) {
-                    mergeObject(buttons, {
-                        cheat: {
-                            label: game.i18n.localize("DIALOG.cheat"),
-                            callback: (html) => {
-                                game.dsa5.memory.remember(testData.extra.speaker, testData.source, testData.mode, html)
-                                resolve(dialogOptions.callback(html, { cheat: true }))
-                            },
-                        },
-                    })
-                }
-
-                if (
-                    testData.source.type == "rangeweapon" ||
-                    (testData.source.type == "trait" && testData.source.data.traitType.value == "rangeAttack")
-                ) {
-                    const LZ =
-                        testData.source.type == "trait" ?
-                        Number(testData.source.data.reloadTime.value) :
-                        Actordsa5.calcLZ(testData.source, testData.extra.actor)
-                    const progress = testData.source.data.reloadTime.progress
-                    if (progress < LZ) {
-                        mergeObject(buttons, {
-                            reloadButton: {
-                                label: `${game.i18n.localize("WEAPON.reload")} (${progress}/${LZ})`,
-                                callback: async() => {
-                                    const actor = await DSA5_Utility.getSpeaker(testData.extra.speaker)
-                                    await actor.updateEmbeddedDocuments("Item", [
-                                        { _id: testData.source._id, "data.reloadTime.progress": progress + 1 },
-                                    ])
-                                    const infoMsg = game.i18n.format("WEAPON.isReloading", {
-                                        actor: testData.extra.actor.name,
-                                        item: testData.source.name,
-                                        status: `${progress + 1}/${LZ}`,
-                                    })
-                                    await ChatMessage.create(DSA5_Utility.chatDataSetup(infoMsg))
-                                },
-                            },
-                        })
-                    }
-                } else if (["spell", "liturgy"].includes(testData.source.type)) {
-                    const LZ = Number(testData.source.data.castingTime.value)
-                    const progress = testData.source.data.castingTime.progress
-                    let modified = testData.source.data.castingTime.modified
-                    if (LZ && testData.extra.speaker.token != "emptyActor") {
-                        const progressLabel = modified > 0 ? ` (${progress}/${modified})` : ""
-                        mergeObject(buttons, {
-                            reloadButton: {
-                                label: `${game.i18n.localize("SPELL.reload")}${progressLabel}`,
-                                callback: async(dlg) => {
-                                    const actor = await DSA5_Utility.getSpeaker(testData.extra.speaker)
-                                    let reloadUpdate = { _id: testData.source._id, "data.castingTime.progress": progress + 1 }
-                                    if (modified == 0) {
-                                        modified = Number(dlg.find(".castingTime").text()) - 1
-                                        reloadUpdate["data.castingTime.modified"] = modified
-                                    }
-                                    await actor.updateEmbeddedDocuments("Item", [reloadUpdate])
-                                    const infoMsg = game.i18n.format("SPELL.isReloading", {
-                                        actor: testData.extra.actor.name,
-                                        item: testData.source.name,
-                                        status: `${progress + 1}/${modified}`,
-                                    })
-                                    await ChatMessage.create(DSA5_Utility.chatDataSetup(infoMsg))
-                                },
-                            },
-                        })
-                    }
-                }
                 new dialog({
                         title: dialogOptions.title,
                         content: html,
-                        buttons,
+                        buttons: dialog.getRollButtons(testData, dialogOptions, resolve, reject),
                         default: "rollButton",
                     })
                     .recallSettings(testData.extra.speaker, testData.source, testData.mode)

@@ -113,7 +113,7 @@ export default class ActorSheetDsa5 extends ActorSheet {
         mergeObject(sheetData.actor, prepare)
 
         sheetData.isGM = game.user.isGM;
-        sheetData["initDies"] = { "-": "", "1d6": "1d6", "2d6": "2d6", "3d6": "3d6", "4d6": "d6" }
+        sheetData["initDies"] = { "-": "", "1d6": "1d6", "2d6": "2d6", "3d6": "3d6", "4d6": "4d6" }
         DSA5StatusEffects.prepareActiveEffects(this.actor, sheetData)
         return sheetData;
     }
@@ -400,24 +400,22 @@ export default class ActorSheetDsa5 extends ActorSheet {
 
         html.find('.loadWeapon').mousedown(async(ev) => {
             const itemId = this._getItemId(ev)
-            const item = (await this.actor.getEmbeddedDocument("Item", itemId)).toObject()
+            const item = this.actor.items.get(itemId).toObject()
             if (getProperty(item, "data.currentAmmo.value") === "" && this.actor.type != "creature") return
 
-            const actor = this.actor
-            const lz = item.type == "trait" ? item.data.reloadTime.value : Actordsa5.calcLZ(item, actor)
+            const lz = item.type == "trait" ? item.data.reloadTime.value : Actordsa5.calcLZ(item, this.actor)
 
             if (ev.button == 0)
                 item.data.reloadTime.progress = Math.min(item.data.reloadTime.progress + 1, lz)
             else if (ev.button == 2)
                 item.data.reloadTime.progress = 0
 
-            await actor.updateEmbeddedDocuments("Item", [item]);
+            await this.actor.updateEmbeddedDocuments("Item", [item]);
         })
 
         html.find('.chargeSpell').mousedown(async(ev) => {
             const itemId = this._getItemId(ev)
-            const item = (await this.actor.getEmbeddedDocument("Item", itemId)).toObject()
-            const actor = this.actor
+            const item = this.actor.items.get(itemId).toObject()
             const lz = Number(item.data.castingTime.modified)
             if (ev.button == 0)
                 item.data.castingTime.progress = Math.min(item.data.castingTime.progress + 1, lz)
@@ -425,16 +423,13 @@ export default class ActorSheetDsa5 extends ActorSheet {
                 item.data.castingTime.progress = 0
                 item.data.castingTime.modified = 0
             }
-            await actor.updateEmbeddedDocuments("Item", [item]);
+            await this.actor.updateEmbeddedDocuments("Item", [item]);
         })
 
         html.find('.ammo-selector').change(async(ev) => {
             ev.preventDefault()
             const itemId = this._getItemId(ev);
-            let item = (await this.actor.getEmbeddedDocument("Item", itemId)).toObject()
-
-            item.data.currentAmmo.value = $(ev.currentTarget).val()
-            await this.actor.updateEmbeddedDocuments("Item", [item]);
+            await this.actor.updateEmbeddedDocuments("Item", [{_id: itemId, "data.currentAmmo.value": $(ev.currentTarget).val()}]);
         })
 
         html.find('.condition-edit').click(ev => {
@@ -451,18 +446,17 @@ export default class ActorSheetDsa5 extends ActorSheet {
 
         html.find('.item-toggle').click(ev => {
             const itemId = this._getItemId(ev);
-            let item = duplicate(this.actor.getEmbeddedDocument("Item", itemId))
+            let item = this.actor.items.get(itemId).toObject()
 
             switch (item.type) {
                 case "armor":
                 case "rangeweapon":
                 case "meleeweapon":
                 case "equipment":
-                    this.actor.updateEmbeddedDocuments("Item", [{ _id: item._id, "data.worn.value": !item.data.worn.value }]);
+                    this.actor.updateEmbeddedDocuments("Item", [{ _id: itemId, "data.worn.value": !item.data.worn.value }]);
                     DSA5SoundEffect.playEquipmentWearStatusChange(item)
                     break;
             }
-
         });
 
         html.find(".status-create").click(ev => {
@@ -512,7 +506,7 @@ export default class ActorSheetDsa5 extends ActorSheet {
 
         html.find('.quantity-click').mousedown(ev => {
             const itemId = this._getItemId(ev);
-            let item = duplicate(this.actor.getEmbeddedDocument("Item", itemId));
+            let item = this.actor.items.get(itemId).toObject()
             RuleChaos.increment(ev, item, "data.quantity.value", 0)
             this.actor.updateEmbeddedDocuments("Item", [item]);
         });
@@ -857,7 +851,7 @@ export default class ActorSheetDsa5 extends ActorSheet {
         let tar = event.currentTarget
         let itemId = tar.getAttribute("data-item-id");
         let mod = tar.getAttribute("data-mod");
-        const item = itemId ? duplicate(this.actor.getEmbeddedDocument("Item", itemId)) : {}
+        const item = itemId ? this.actor.items.get(itemId).toObject() : {}
 
         event.dataTransfer.setData("text/plain", JSON.stringify({
             type: "Item",

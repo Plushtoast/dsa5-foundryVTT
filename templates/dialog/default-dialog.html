@@ -6,36 +6,28 @@
 <div class="form-group custom-select">
     <label>{{localize "Difficulty"}}</label>
     <select name="testDifficulty">
-    {{#select testDifficulty}}
-    {{#each difficultyLabels as |difficultyLabel difficultyKey|}}
-    <option value="{{difficultyKey}}">{{localize difficultyLabel}}</option>
-    {{/each}}
-    {{/select}}
-  </select>
+      {{selectOptions difficultyLabels selected=testDifficulty localize=true}}
+    </select>
 </div>
 {{/if}}
 <div class="form-group custom-select">
     <label>{{localize "DIALOG.RollMode"}}</label>
     <select name="rollMode">
-    {{#select rollMode}}
-    {{#each rollModes as |label mode|}}
-    <option value="{{mode}}">{{localize label}}</option>
-    {{/each}}
-    {{/select}}
-  </select>
+      {{selectOptions rollModes selected=rollMode localize=true}}  
+    </select>
 </div>
 {{#if hasSituationalModifiers}}
 <div class="modifiers form-group custom-select">
     <label>{{localize "DIALOG.SituationalModifiers"}}</label>
     <select name="situationalModifiers" multiple title="{{localize 'DIALOG.deselectWithStrg'}}">
-    {{#select selectedModifiers}}
-    {{#each situationalModifiers as |mod t|}}
-    <option title="{{localize mod.name}}" data-type="{{mod.type}}" value="{{mod.value}}" {{#if mod.selected}}selected{{/if}}>
-      {{localize
-      mod.name}} [{{mod.value}}]
-    </option>
-    {{/each}}
-    {{/select}}
-  </select>
+      {{#select selectedModifiers}}
+      {{#each situationalModifiers as |mod t|}}
+      <option title="{{localize mod.name}}" data-type="{{mod.type}}" value="{{mod.value}}" {{#if mod.selected}}selected{{/if}}>
+        {{localize
+        mod.name}} [{{mod.value}}]
+      </option>
+      {{/each}}
+      {{/select}}
+    </select>
 </div>
 {{/if}}

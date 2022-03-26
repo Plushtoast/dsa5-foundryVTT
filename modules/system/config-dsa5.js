@@ -707,7 +707,9 @@ DSA5.ammunitiongroups = {
     "bolt": "bolt",
     "bullet": "bullet",
     "stone": "stone",
-    "dart": "dart"
+    "dart": "dart",
+    "mag": "mag",
+    "infinite": "infinite"
 }
 
 DSA5.combatskillsGuidevalues = {

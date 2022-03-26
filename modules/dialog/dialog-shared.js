@@ -69,6 +69,11 @@ export default class DialogShared extends Dialog {
             RuleChaos.increment(ev, val, "val")
             $(ev.currentTarget).val(val.val)
         });
+        html.find(".modifiers option").mousedown((ev) => {
+            ev.preventDefault();
+            $(ev.currentTarget).prop("selected", !$(ev.currentTarget).prop("selected"));
+            return false;
+        });
     }
 
     prepareFormRecall(html) {

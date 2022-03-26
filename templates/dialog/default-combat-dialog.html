@@ -26,11 +26,7 @@
 <div class="form-group custom-select">
     <label>{{localize "DIALOG.RollMode"}}</label>
     <select name="rollMode">
-      {{#select rollMode}}
-      {{#each rollModes as |label mode|}}
-      <option value="{{mode}}">{{localize label}}</option>
-      {{/each}}
-      {{/select}}
+        {{selectOptions rollModes selected=rollMode localize=true}}  
     </select>
 </div>
 {{#if hasSituationalModifiers}}
@@ -50,11 +46,7 @@
 <div class="form-group custom-select">
     <label>{{localize "sight"}}</label>
     <select name="vision">
-        {{#select "0"}}
-        {{#each visionOptions as |label val|}}
-        <option value="{{val}}">{{localize label}}</option>
-        {{/each}}
-        {{/select}}
+        {{selectOptions visionOptions selected="0" localize=true}}
     </select>
 </div>
 {{/if}}

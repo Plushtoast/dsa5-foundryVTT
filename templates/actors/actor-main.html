@@ -322,12 +322,8 @@
                 </div>
                 <div class="col two lineheight center">
                     <select name="data.status.initiative.die" data-dtype="String" style="width:100%">
-                        {{#select actor.data.status.initiative.die}}
-                        {{#each initDies as |ch char|}}
-                             <option value="{{ch}}">{{char}}</option>
-                        {{/each}}
-                        {{/select}}
-                      </select>
+                        {{selectOptions initDies selected=actor.data.status.initiative.die localize=false}}
+                    </select>
                 </div>
             </div>
             <div class="derivedAttrs row-section">
@@ -337,12 +333,8 @@
 
                 <div class="col two lineheight center">
                     <select name="data.status.initiative.diemodifier" data-dtype="String" style="width:100%">
-                        {{#select actor.data.status.initiative.diemodifier}}
-                        {{#each initDies as |ch char|}}
-                         <option value="{{ch}}">{{char}}</option>
-                        {{/each}}
-                        {{/select}}
-                      </select>
+                        {{selectOptions initDies selected=actor.data.status.initiative.diemodifier localize=false}}
+                    </select>
                 </div>
             </div>
             <div class="derivedAttrs row-section">

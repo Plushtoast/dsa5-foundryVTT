@@ -31,11 +31,7 @@
             <div class="form-group">
                 <label class="label-text">{{localize "equipmentType"}}</label>
                 <select name="data.equipmentType.value" data-dtype="String">
-                  {{#select data.equipmentType.value}}
-                  {{#each equipmentTypes as |ch char|}}
-                  <option value="{{char}}">{{localize ch}}</option>
-                  {{/each}}
-                  {{/select}}
+                    {{selectOptions equipmentTypes selected=data.equipmentType.value localize=true}}
                 </select>
             </div>
 

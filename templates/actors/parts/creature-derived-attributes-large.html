@@ -168,12 +168,8 @@
         </div>
         <div class="col two lineheight center">
             <select name="data.status.size.value" data-dtype="String" style="width:100%">
-                {{#select actor.data.status.size.value}}
-                {{#each sizeCategories as |ch char|}}
-                <option value="{{char}}">{{localize ch}}</option>
-                {{/each}}
-                {{/select}}
-              </select>
+                {{selectOptions sizeCategories selected=actor.data.status.size.value localize=true}}
+            </select>
         </div>
     </div>
     <div class="derivedAttrs row-section">
@@ -214,12 +210,8 @@
         </div>
         <div class="col two lineheight center">
             <select name="data.status.initiative.die" data-dtype="String" style="width:100%">
-                {{#select actor.data.status.initiative.die}}
-                {{#each initDies as |ch char|}}
-                <option value="{{ch}}">{{char}}</option>
-                {{/each}}
-                {{/select}}
-              </select>
+                {{selectOptions initDies selected=actor.data.status.initiative.die localize=false}}
+            </select>
         </div>
     </div>
     <div class="derivedAttrs row-section">
@@ -229,12 +221,8 @@
 
         <div class="col two lineheight center">
             <select name="data.status.initiative.diemodifier" data-dtype="String" style="width:100%">
-                {{#select actor.data.status.initiative.diemodifier}}
-                {{#each initDies as |ch char|}}
-                <option value="{{ch}}">{{char}}</option>
-                {{/each}}
-                {{/select}}
-              </select>
+                {{selectOptions initDies selected=actor.data.status.initiative.diemodifier localize=false}}
+            </select>
         </div>
     </div>
     <div class="derivedAttrs row-section">

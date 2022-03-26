@@ -1,4 +1,5 @@
 import DSA5 from "../system/config-dsa5.js";
+import DiceDSA5 from "../system/dice-dsa5.js";
 import DSA5_Utility from "../system/utility-dsa5.js";
 
 const callMacro = async(packName, name, actor, item, qs, args = {}) => {
@@ -142,8 +143,9 @@ export default class DSAActiveEffectConfig extends ActiveEffectConfig {
         const effectsWithChanges = [];
         const effectNames = new Set()
 
-
         for (const ef of effects) {
+            if(ef.origin) delete ef.origin
+
             const specStep = Number(getProperty(ef, "flags.dsa5.specStep")) || 0
             try {
                 const customEf = Number(getProperty(ef, "flags.dsa5.advancedFunction"));
@@ -165,7 +167,6 @@ export default class DSAActiveEffectConfig extends ActiveEffectConfig {
                     if (!effectNames.has(ef.label)) effectNames.add(ef.label)
                     if (ef.changes && ef.changes.length > 0) {
                         effectsWithChanges.push(ef);
-
                     }
                     if (customEf) {
                         switch (customEf) {
@@ -288,7 +289,7 @@ export default class DSAActiveEffectConfig extends ActiveEffectConfig {
                     mode,
                     id,
                     actors: actors.map((x) => {
-                        return { token: x.token ? x.token.data._id : undefined, actor: x.data._id };
+                        return { token: x.token ? x.token.data._id : undefined, actor: x.data._id, scene: canvas.scene.id  };
                     }),
                 },
             });
@@ -311,11 +312,8 @@ export default class DSAActiveEffectConfig extends ActiveEffectConfig {
         for (let spec of preData.situationalModifiers.filter((x) => x.specAbId)) {
             specAbIds[spec.specAbId] = spec.step
         }
-        console.log(specAbIds)
         const specKeys = Object.keys(specAbIds)
-        console.log(specKeys, attacker)
         const specAbs = attacker ? attacker.items.filter((x) => specKeys.includes(x.id)) : [];
-        console.log(specAbs)
         let effects = source.effects ? duplicate(source.effects) : [];
         for (const spec of specAbs) {
             const specEffects = duplicate(spec).effects
@@ -336,7 +334,8 @@ export default class DSAActiveEffectConfig extends ActiveEffectConfig {
             ];
             for (const reg of regexes) {
                 if (reg.regEx.test(duration)) {
-                    let time = this._stringToRoll(duration.replace(reg.regEx, "").trim());
+                    const dur = duration.replace(reg.regEx, "").trim()
+                    const time = DiceDSA5._stringToRoll(dur);
                     if (!isNaN(time)) {
                         for (let ef of effects) {
                             let calcTime = time * reg.seconds;
@@ -352,7 +351,7 @@ export default class DSAActiveEffectConfig extends ActiveEffectConfig {
                     break;
                 }
             }
-        } catch {
+        } catch(e) {
             console.error(`Could not parse duration '${duration}' of '${source.name}'`);
         }
         return effects;

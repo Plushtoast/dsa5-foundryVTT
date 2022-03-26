@@ -10,12 +10,8 @@
                 </div>
                 <div class="col sixty">
                     <select name="data.merchant.merchantType" data-dtype="String" style="width:100%">
-                        {{#select actor.data.merchant.merchantType}}
-                        {{#each merchantTypes as |ch char|}}
-                        <option value="{{char}}">{{localize ch}}</option>
-                        {{/each}}
-                        {{/select}}
-                      </select>
+                        {{selectOptions merchantTypes selected=actor.data.merchant.merchantType localize=true}}
+                    </select>
                 </div>
             </div>
             {{#if (eq actor.data.merchant.merchantType "epic")}}
@@ -31,7 +27,6 @@
                     <option value="3">{{localize "GARADAN.3"}}</option>
                     <option value="4">{{localize "GARADAN.4"}}</option>
                     <option value="6">{{localize "GARADAN.6"}}</option>
-
                     {{/select}}
                   </select>
                 </div>

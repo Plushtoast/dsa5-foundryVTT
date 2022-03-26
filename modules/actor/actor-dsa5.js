@@ -756,7 +756,7 @@ export default class Actordsa5 extends Actor {
                         break
                     case "ammunition":
                         i.weight = parseFloat((i.data.weight.value * i.data.quantity.value).toFixed(3))
-                        inventory.ammunition.items.push(i)
+                        inventory.ammunition.items.push(Actordsa5.prepareMag(i))
                         inventory.ammunition.show = true
                         totalWeight += Number(i.weight)
                         break
@@ -1795,6 +1795,14 @@ export default class Actordsa5 extends Actor {
             item.consumable = true
             item.structureMax = item.data.maxCharges
             item.structureCurrent = item.data.charges
+        }
+        return item
+    }
+
+    static prepareMag(item){
+        if(item.data.ammunitiongroup.value == "mag"){
+            item.structureMax = item.data.mag.max
+            item.structureCurrent = item.data.mag.value
         }
         return item
     }

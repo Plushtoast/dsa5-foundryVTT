@@ -27,11 +27,7 @@
             <div class="form-group">
                 <label class="label-text">{{localize "Category"}}</label>
                 <select name="data.category.value" data-dtype="String">
-                  {{#select data.category.value}}
-                  {{#each categories as |ch char|}}
-                  <option value="{{char}}">{{localize ch}}</option>
-                  {{/each}}
-                  {{/select}}
+                    {{selectOptions categories selected=data.category.value localize=true}}  
                 </select>
             </div>
             <div class="form-group full-height">
@@ -78,11 +74,7 @@
             <div class="form-group">
                 <label class="label-text">{{localize "COMBATSKILLCATEGORY.subcategory"}}</label>
                 <select name="data.category.sub" data-dtype="String">
-                  {{#select data.category.sub}}
-                  {{#each subCategories as |ch char|}}
-                  <option value="{{char}}">{{localize ch}}</option>
-                  {{/each}}
-                  {{/select}}
+                    {{selectOptions subCategories selected=data.category.sub localize=true}}
                 </select>
             </div>
             {{/if}} {{#if isOwned}}

@@ -130,7 +130,7 @@ export default class MerchantSheetDSA5 extends ActorSheetdsa5NPC {
     }
 
     static async finishTransaction(source, target, price, itemId, buy, amount) {
-        let item = duplicate(await source.getEmbeddedDocument("Item", itemId))
+        let item = source.items.get(itemId).toObject()
         amount = Math.min(Number(item.data.quantity.value), amount)
         if (Number(item.data.quantity.value) > 0) {
             const hasPaid = MerchantSheetDSA5.noNeedToPay(target, source, price) || DSA5Payment.payMoney(target, price, true)

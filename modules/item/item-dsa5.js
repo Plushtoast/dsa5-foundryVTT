@@ -147,7 +147,7 @@ export default class Itemdsa5 extends Item {
         let type = ""
         if (/^\*/.test(val)) {
             type = "*"
-            val = val.substring(1)
+            val = val.substring(1).replace(",",".")
         }
         return {
             name,
@@ -1402,6 +1402,32 @@ class RangeweaponItemDSA5 extends Itemdsa5 {
         this.attackStatEffect(situationalModifiers, Number(actor.data.data.rangeStats[data.mode]))
     }
 
+    static handleAmmunitionUsage(item, testData, actor, mode){
+        if (actor.data.type != "creature" && mode != "damage") {
+            let itemData = item.data.data ? item.data.data : item.data
+            if(itemData.ammunitiongroup.value == "infinite"){
+                return
+            }
+            else if  (itemData.ammunitiongroup.value == "mag") {
+                //TODO check mag state
+            }
+            else if (itemData.ammunitiongroup.value == "-") {
+                testData.extra.ammo = duplicate(item)
+                if (testData.extra.ammo.data.quantity.value <= 0) {
+                    return ui.notifications.error(game.i18n.localize("DSAError.NoAmmo"))
+                }
+            } else {
+                const ammoItem = actor.items.get(itemData.currentAmmo.value)
+                if (ammoItem) {
+                    testData.extra.ammo = ammoItem.toObject()
+                }
+                if (!testData.extra.ammo || !itemData.currentAmmo.value || testData.extra.ammo.data.quantity.value <= 0) {
+                    return ui.notifications.error(game.i18n.localize("DSAError.NoAmmo"))
+                }
+            }
+        }
+    }
+
     static setupDialog(ev, options, item, actor, tokenId) {
         let mode = options.mode
         let title = game.i18n.localize(item.name) + " " + game.i18n.localize(mode + "test")
@@ -1417,24 +1443,8 @@ class RangeweaponItemDSA5 extends Itemdsa5 {
             },
         }
 
-        if (actor.data.type != "creature" && mode != "damage") {
-            let itemData = item.data.data ? item.data.data : item.data
-            if (itemData.ammunitiongroup.value == "-") {
-                testData.extra.ammo = duplicate(item)
-                if (testData.extra.ammo.data.quantity.value <= 0) {
-                    return ui.notifications.error(game.i18n.localize("DSAError.NoAmmo"))
-                }
-            } else {
-                const ammoItem = actor.getEmbeddedDocument("Item", itemData.currentAmmo.value)
-                if (ammoItem) {
-                    testData.extra.ammo = ammoItem.toObject()
-                }
-                if (!testData.extra.ammo || !itemData.currentAmmo.value || testData.extra.ammo.data.quantity.value <= 0) {
-                    return ui.notifications.error(game.i18n.localize("DSAError.NoAmmo"))
-                }
-            }
-        }
-
+        this.handleAmmunitionUsage(item, testData, actor, mode)
+        
         let data = {
             rollMode: options.rollMode,
             mode,

@@ -35,11 +35,7 @@
             <div class="form-group">
                 <label class="label-text">{{localize "PATRON.priority"}}</label>
                 <select name="data.priority" data-dtype="Number">
-                    {{#select data.priority}}
-                    {{#each priorities as |ch char|}}
-                    <option value="{{char}}">{{localize ch}}</option>
-                    {{/each}}
-                    {{/select}}
+                    {{selectOptions priorities selected=data.priority localize=true}}
                 </select>
             </div>
 

@@ -14,13 +14,16 @@
             <div class="form-group">
                 <label class="label-text">{{localize "ammunitiongroup"}}</label>
                 <select name="data.ammunitiongroup.value" data-dtype="String">
-                    {{#select data.ammunitiongroup.value}}
-                    {{#each ammunitiongroups as |ch char|}}
-                    <option value="{{char}}">{{localize ch}}</option>
-                    {{/each}}
-                    {{/select}}
+                    {{selectOptions ammunitiongroups selected=data.ammunitiongroup.value localize=true}}
                 </select>
             </div>
+            {{#if (eq data.ammunitiongroup.value 'mag')}}
+            <div class="form-group double">
+                <label class="label-text">{{localize "mag"}}</label>
+                <input class="input-text" type="text" name="data.mag.value" value="{{data.mag.value}}" data-dtype="Number" /><span> / </span>
+                <input class="input-text" type="text" name="data.mag.max" value="{{data.mag.max}}" data-dtype="Number" />
+            </div>
+            {{/if}}
             <div class="form-group">
                 <label class="label-text">{{localize "atmod"}}</label>
                 <input class="input-text" type="number" name="data.atmod" value="{{data.atmod}}" data-dtype="Number" />

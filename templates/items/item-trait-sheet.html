@@ -16,11 +16,7 @@
             <div class="form-group">
                 <label class="label-text">{{localize "traitType"}}</label>
                 <select name="data.traitType.value" data-dtype="String">
-                    {{#select data.traitType.value}}
-                    {{#each traitCategories as |type sktype|}}
-                    <option value="{{sktype}}">{{localize type}}</option>
-                    {{/each}}
-                    {{/select}}
+                    {{selectOptions traitCategories selected=data.traitType.value localize=true}}  
                 </select>
             </div>
 
@@ -63,11 +59,7 @@
             <div class="form-group">
                 <label class="label-text">{{localize "reach"}}</label>
                 <select name="data.reach.value" data-dtype="String">
-                  {{#select data.reach.value}}
-                  {{#each ranges as |ch char|}}
-                  <option value="{{char}}">{{localize ch}}</option>
-                  {{/each}}
-                  {{/select}}
+                    {{selectOptions ranges selected=data.reach.value localize=true}}
                 </select>
             </div>
             <div class="form-group">

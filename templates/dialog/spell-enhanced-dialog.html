@@ -23,21 +23,13 @@
             <div class="form-group custom-select ritual">
                 <label>{{localize "place"}}</label>
                 <select name="placeModifier">
-                    {{#select 0}}
-                    {{#each locationModifiers as |label val|}}
-                    <option value="{{val}}">{{localize label}}</option>
-                    {{/each}}
-                    {{/select}}
+                    {{selectOptions locationModifiers selected=0 localize=true}}  
                 </select>
             </div>
             <div class="form-group custom-select">
                 <label>{{localize "time"}}</label>
                 <select name="timeModifier">
-                    {{#select 0}}
-                    {{#each timeModifiers as |label val|}}
-                    <option value="{{val}}">{{localize label}}</option>
-                    {{/each}}
-                    {{/select}}
+                    {{selectOptions timeModifiers selected=0 localize=true}}  
                 </select>
             </div>
             <div class="form-group custom-select">

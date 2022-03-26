@@ -4,6 +4,7 @@ import AdvantageRulesDSA5 from "../system/advantage-rules-dsa5.js";
 import DSA5 from "../system/config-dsa5.js";
 import SpecialabilityRulesDSA5 from "../system/specialability-rules-dsa5.js";
 import DSA5_Utility from "../system/utility-dsa5.js";
+import DSA5Dialog from "./dialog-dsa5.js";
 import DialogShared from "./dialog-shared.js";
 
 export default class DSA5CombatDialog extends DialogShared {
@@ -73,12 +74,7 @@ export default class DSA5CombatDialog extends DialogShared {
                 }
             }
         });
-        html.find(".modifiers option").mousedown((ev) => {
-            ev.preventDefault();
-            $(ev.currentTarget).prop("selected", !$(ev.currentTarget).prop("selected"));
-            return false;
-        });
-
+        
         let targets = this.readTargets();
 
         if (targets.length == 0) {
@@ -107,6 +103,7 @@ export default class DSA5CombatDialog extends DialogShared {
 
         return false;
     }
+
     prepareFormRecall(html) {
         super.prepareFormRecall(html);
         if (canvas.scene && game.settings.get("dsa5", "sightAutomationEnabled")) {
@@ -152,9 +149,9 @@ export default class DSA5CombatDialog extends DialogShared {
         testData.opposingWeaponSize = html.find('[name="weaponsize"]').val();
         testData.narrowSpace = html.find('[name="narrowSpace"]').is(":checked");
         testData.attackOfOpportunity = this.attackOfOpportunity(html, testData.situationalModifiers);
-
         testData.situationalModifiers.push(
-            Itemdsa5.parseValueType(game.i18n.localize("sight"), html.find('[name="vision"]').val() || 0), {
+            Itemdsa5.parseValueType(game.i18n.localize("sight"), html.find('[name="vision"]').val() || 0), 
+            {
                 name: game.i18n.localize("attackFromBehind"),
                 value: html.find('[name="attackFromBehind"]').is(":checked") ? -4 : 0,
             }, {
@@ -250,5 +247,39 @@ export default class DSA5CombatDialog extends DialogShared {
             });
         }
         return value != 0;
+    }
+
+    static getRollButtons(testData, dialogOptions, resolve, reject){
+        let buttons = DSA5Dialog.getRollButtons(testData, dialogOptions, resolve, reject);
+        if (
+            testData.source.type == "rangeweapon" ||
+            (testData.source.type == "trait" && testData.source.data.traitType.value == "rangeAttack")
+        ) {
+            const LZ =
+                testData.source.type == "trait" ?
+                Number(testData.source.data.reloadTime.value) :
+                Actordsa5.calcLZ(testData.source, testData.extra.actor)
+            const progress = testData.source.data.reloadTime.progress
+            if (progress < LZ) {
+                mergeObject(buttons, {
+                    reloadButton: {
+                        label: `${game.i18n.localize("WEAPON.reload")} (${progress}/${LZ})`,
+                        callback: async() => {
+                            const actor = await DSA5_Utility.getSpeaker(testData.extra.speaker)
+                            await actor.updateEmbeddedDocuments("Item", [
+                                { _id: testData.source._id, "data.reloadTime.progress": progress + 1 },
+                            ])
+                            const infoMsg = game.i18n.format("WEAPON.isReloading", {
+                                actor: testData.extra.actor.name,
+                                item: testData.source.name,
+                                status: `${progress + 1}/${LZ}`,
+                            })
+                            await ChatMessage.create(DSA5_Utility.chatDataSetup(infoMsg))
+                        },
+                    },
+                })
+            }
+        }
+        return buttons
     }
 }

@@ -25,11 +25,7 @@
       <div class="form-group">
         <label class="label-text">{{localize "Category"}}</label>
         <select name="data.category" data-dtype="Number">
-          {{#select data.category}}
-          {{#each categories as |ch char|}}
-          <option value="{{char}}">{{localize ch}}</option>
-          {{/each}}
-          {{/select}}
+          {{selectOptions categories selected=data.category localize=true}}
         </select>
       </div>
 

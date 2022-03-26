@@ -8,6 +8,7 @@ export default class DSA5_Utility {
         const entry = pack.index.find(i => i.name === name);
         return await pack.getDocument(entry._id)
     }
+
     static async allSkills() {
         const pack = game.i18n.lang == "de" ? "dsa5.skills" : "dsa5.skillsen"
         return await this.getCompendiumEntries(pack, "skill")
@@ -34,7 +35,6 @@ export default class DSA5_Utility {
         }
         return result;
     }
-
 
     static renderToggle(elem) {
         if (elem.rendered) {

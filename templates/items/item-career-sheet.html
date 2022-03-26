@@ -1,4 +1,4 @@
-<form class="dsa5 item-sheet {{cssClass}}" autocomplete="off" ondragstart="return false;" ondrop="return false;">
+<form class="dsa5 item-sheet {{cssClass}}" autocomplete="off">
     {{> systems/dsa5/templates/items/item-header.html}}
 
     <div class="row-section ">
@@ -90,22 +90,14 @@
             <div class="form-group">
                 <label class="label-text">{{localize "mageLevel"}}</label>
                 <select name="data.mageLevel.value" data-dtype="String">
-                  {{#select data.mageLevel.value}}
-                  {{#each mageLevels as |ch char|}}
-                  <option value="{{char}}">{{localize ch}}</option>
-                  {{/each}}
-                  {{/select}}
+                    {{selectOptions mageLevels selected=data.mageLevel.value localize=true}}  
                 </select>
             </div>
             {{#if (ne data.mageLevel.value "mundane")}}
             <div class="form-group">
                 <label class="label-text">{{localize "guidevalue"}}</label>
                 <select name="data.guidevalue.value" data-dtype="String">
-                    {{#select data.guidevalue.value}}
-                    {{#each guidevalues as |type sktype|}}
-                    <option value="{{sktype}}">{{localize type}}</option>
-                    {{/each}}
-                    {{/select}}
+                    {{selectOptions guidevalues selected=data.guidevalue.value localize=true}}  
                 </select>
             </div>
             <div class="form-group">

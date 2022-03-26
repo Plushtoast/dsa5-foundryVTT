@@ -174,11 +174,7 @@
                 <div class="col sixty">
                     <div class="form-group">
                         <select name="data.guidevalue.clerical" data-dtype="String">
-                            {{#select actor.data.guidevalue.clerical}}
-                            {{#each actor.guidevalues as |type sktype|}}
-                            <option value="{{sktype}}">{{localize type}}</option>
-                            {{/each}}
-                            {{/select}}
+                            {{selectOptions actor.guidevalues selected=actor.data.guidevalue.clerical localize=true}}
                         </select>
                     </div>
                 </div>

@@ -681,7 +681,11 @@
             "damageMod": "",
             "rangeMultiplier": 1,
             "armorMod": "",
-            "atmod": 0
+            "atmod": 0,
+            "mag": {
+                "max": 0,
+                "value": 0
+            }
         },
         "consumable": {
             "templates": [
