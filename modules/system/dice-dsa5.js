@@ -1349,7 +1349,7 @@ export default class DiceDSA5 {
     }
 
     static async showDiceSoNice(roll, rollMode) {
-        if (game.modules.get("dice-so-nice") && game.modules.get("dice-so-nice").active) {
+        if (DSA5_Utility.moduleEnabled("dice-so-nice")) {
             let whisper = null
             let blind = false
             switch (rollMode) {

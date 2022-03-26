@@ -245,7 +245,7 @@ export default class OpposedDsa5 {
     }
 
     static async playAutomatedJBA2(attacker, defender, opposedResult) {
-        if (game.modules.get("autoanimations") && game.modules.get("autoanimations").active) {
+        if (DSA5_Utility.moduleEnabled("autoanimations")) {
             //const attackerToken = canvas.tokens.get(attacker.speaker.token)
             const attackerToken = DSA5_Utility.getSpeaker(attacker.speaker).getActiveTokens()[0]
             const defenderToken = DSA5_Utility.getSpeaker(defender.speaker).getActiveTokens()[0]
@@ -263,7 +263,7 @@ export default class OpposedDsa5 {
     }
 
     static async showSpellWithoutTarget(message) {
-        if (game.modules.get("autoanimations") && game.modules.get("autoanimations").active) {
+        if (DSA5_Utility.moduleEnabled("autoanimations")) {
             const msgData = getProperty(message.data, "flags.data")
             if (!msgData || msgData.isOpposedTest) return
 

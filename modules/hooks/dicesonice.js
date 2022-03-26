@@ -1,3 +1,5 @@
+import DSA5_Utility from "../system/utility-dsa5.js";
+
 export default function() {
     Hooks.once('init', () => {
         game.dsa5.apps.DiceSoNiceCustomization = new DiceSoNiceCustomization()
@@ -159,7 +161,7 @@ export class DiceSoNiceCustomization extends Application {
     }
 
     getAttributeConfiguration(value) {
-        if (game.modules.get("dice-so-nice") && game.modules.get("dice-so-nice").active) {
+        if (DSA5_Utility.moduleEnabled("dice-so-nice")) {
             return {
                 colorset: game.settings.get("dsa5", `dice3d_${value}`),
                 appearance: {

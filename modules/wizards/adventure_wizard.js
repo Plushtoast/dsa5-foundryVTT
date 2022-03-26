@@ -1,6 +1,7 @@
 import DSA5StatusEffects from "../status/status_effects.js"
 import DSA5ChatAutoCompletion from "../system/chat_autocompletion.js"
 import DSA5ChatListeners from "../system/chat_listeners.js"
+import DSA5_Utility from "../system/utility-dsa5.js"
 import { slist } from "../system/view_helper.js"
 
 export default class BookWizard extends Application {
@@ -481,7 +482,7 @@ export default class BookWizard extends Application {
     }
 
     moduleEnabled(id) {
-        return game.modules.get(id) && game.modules.get(id).active
+        return DSA5_Utility.moduleEnabled(id)
     }
 }
 

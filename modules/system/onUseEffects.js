@@ -65,10 +65,7 @@ export default class OnUseEffect {
     }
 
     async automatedAnimation(successLevel, options = {}) {
-        if (
-            game.modules.get("autoanimations") &&
-            game.modules.get("autoanimations").active
-        ) {
+        if (DSA5_Utility.moduleEnabled("autoanimations")) {
             console.warn("Animations for on use effects not enabled yet");
         }
     }

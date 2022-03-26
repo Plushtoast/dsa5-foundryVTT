@@ -141,5 +141,16 @@ export default class DSA5SpellDialog extends DialogShared {
             reach.attr('data-mod', mod)
             html.find('.reloadButton').prop('disabled', Number(html.find('.castingTime').text()) < 2)
         })
+
+        let targets = this.readTargets();
+        
+        if (targets.length == 0) {
+            this.setRollButtonWarning()
+        }
+        // not great
+        const that = this
+        this.checkTargets = setInterval(function() {
+            that.compareTargets(html, targets);
+        }, 500);
     }
 }

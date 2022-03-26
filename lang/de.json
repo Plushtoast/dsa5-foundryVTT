@@ -149,7 +149,7 @@
     "advancementCost": "Steigern für {cost} Abenteuerpunkte",
     "animal": "Tier",
     "attributeChange": "Eigenschaftsänderung",
-    "attackOfOpportunity": "Der Kämpfer kann einen Passierschlag ausführen",
+    "attackOfOpportunity": "Der Kämpfer kann einen Passierschlag ausführen.",
     "opportunityAttack": "Passierschlag",
     "attackFromBehind": "Angriff von Hinten",
     "Advances": "Steigerungen",
@@ -879,7 +879,8 @@
         "applyEffectTargets": "Effekt auf Ziele übertragen",
         "foreignSpell": "Fremdzauber können nicht modifiziert werden",
         "assignCharacter": "Charaktere können in der Spielerliste unten links per Rechtsclick zugewiesen werden.",
-        "dragLink": "Drag & drop Akteur z.B. für Gestaltwandlung und Beschwörung"
+        "dragLink": "Drag & drop Akteur z.B. für Gestaltwandlung und Beschwörung",
+        "onlyGM": "Nur für den Spielleiter sichtbar."
     },
     "HELP": {
         "showHelp": "Hilfe anzeigen",
@@ -1137,6 +1138,7 @@
         "gambling": "Zechen",
         "bodyControl": "Körperbeherrschung",
         "darksight": "Dunkelsicht",
+        "sappeurStyle": "Sappeur-Stil",
         "nightBlind": "Nachtblind",
         "willpower": "Willenskraft",
         "traditionBoron": "Tradition (Boronkirche)",
@@ -1148,6 +1150,7 @@
         "invocatioMinima": "Invocatio Minima",
         "invocatioMinor": "Invocatio Minor",
         "invocatioMaior": "Invocatio Maior",
+        "vinsaltStyle": "Vinsalt-Stil",
         "manifesto": "Manifesto",
         "elementalServant": "Elementarer Diener",
         "callDjinn": "Dschinnenruf",
@@ -1185,6 +1188,7 @@
         "NotEnoughXP": "Nicht genug Abenteuerpunkte",
         "NotEnoughAsP": "Nicht genug Astralpunkte",
         "NotEnoughKaP": "Nicht genug Karmapunkte",
+        "NotEnoughFate": "Nicht genug Schicksalspunkte",
         "NotEnoughCharges": "Nicht genug Ladungen",
         "AdvanceMaximumReached": "Maximale Steigerung bereits erreicht",
         "notFound": "{category} {name} nicht gefunden",
@@ -1404,7 +1408,7 @@
         "8": "Der Zauberer hat für die nächsten 1D6 Tag(e) pochende Kopfschmerzen. Er leidet während dieser Zeit unter einer Stufe Betäubung.",
         "9": "Die gesamte Astralkraft verlässt den Körper des Zauberers und springt auf das nächste magisch begabte Ziel über. Das Ziel erhält die gesamten Astralpunkte des Zauberers, auch über sein natürliches Maximum an Astralenergie hinaus. Der Zauberer kann die verlorenen Astralpunkte regulär regenerieren.",
         "10": "Der Zauberer erhält für 1D6 Tag(e) den Zustand Stumm.",
-        "11": "Haar und Bart des Zauberers färben sich bunt, wachsen später jedoch in der ursprünglichen Farbe nach",
+        "11": "Haar und Bart des Zauberers färben sich bunt, wachsen später jedoch in der ursprünglichen Farbe nach.",
         "12": "Eine ätherische Stimme erklingt aus dem Nichts und sagt „Tu das nie wieder!“"
     },
     "LITURGYMISCAST": {
@@ -1415,7 +1419,7 @@
         "6": "Durch einen Blick in die Sphären ist der Geweihte so eingeschüchtert, dass er einen Tag lang 3 Stufen Furcht erhält.",
         "7": "Der Geweihte verliert für 1D6 Tag(e) die Fähigkeit, auf seinen KE-Vorrat zuzugreifen.",
         "8": "Der Geweihte erhält für einen Tag 4 Stufen Entrückung.",
-        "9": "Der Geweihte ist für einen Tag lang verwirrt und redet unverständliches Zeug, an das er sich später nicht mehr erinnert. Er erhält 3 Stufen Verwirrung",
+        "9": "Der Geweihte ist für einen Tag lang verwirrt und redet unverständliches Zeug, an das er sich später nicht mehr erinnert. Er erhält 3 Stufen Verwirrung.",
         "10": "Der Geweihte erhält für 1D6 Tag(e) den Zustand Stumm.",
         "11": "Für einen Tag erhält der Geweihte ein Stigma.",
         "12": "Der Geweihte verwurzelt mit dem Boden und kann seine Füße für 1W6 Minuten nicht bewegen. Er erhält währenddessen den Status Fixiert."
@@ -1429,7 +1433,7 @@
         "7": "Der Held stolpert und stürzt, wenn seinem Spieler nicht eine um 2 erschwerte Probe auf Körperbeherrschung (Balance) gelingt. Sollte er das nicht schaffen, erhält der Held den Status Liegend.",
         "8": "Der Held stolpert, seine nächste Handlung ist um 2 erschwert.",
         "9": "Der Held erhält für 3 Kampfrunden eine Stufe Schmerz.",
-        "10": "Der Held hat sich im Eifer des Gefechts den Kopf gestoßen. Er erhält für eine Stunde eine Stufe Betäubung",
+        "10": "Der Held hat sich im Eifer des Gefechts den Kopf gestoßen. Er erhält für eine Stunde eine Stufe Betäubung.",
         "11": "Der Held hat sich selbst verletzt und erleidet Schaden. Der Schaden seiner Waffe wird unter Einbeziehung des Schadensbonus ausgewürfelt. Bei unbewaffneten Kämpfern wird 1W6 TP angenommen.",
         "12": "Ein schwerer Eigentreffer des Helden. Der Schaden seiner Waffe wird unter Einbeziehung des Schadensbonus ausgewürfelt und dann verdoppelt. Bei unbewaffneten Kämpfern wird 1W6 TP angenommen."
     },
@@ -1442,7 +1446,7 @@
         "7": "Der spektakuläre Fehlschuss trifft ein Objekt (Ladenschild heruntergeschossen, Glasfenster zu Bruch gegangen etc.).",
         "8": "Der Held hat Rückenschmerzen und erleidet für die nächsten 3 Kampfrunden eine Stufe Schmerz.",
         "9": "Der Held benötigt 2 komplette Kampfrunden, um die Waffe wieder einsatzbereit zu machen.",
-        "10": "Der Held ist mit Zielen oder mit seiner Waffe beschäftigt. Bis zu seiner nächsten Aktion kann er keine Verteidigungen ausführen",
+        "10": "Der Held ist mit Zielen oder mit seiner Waffe beschäftigt. Bis zu seiner nächsten Aktion kann er keine Verteidigungen ausführen.",
         "11": "Der Held hat sich selbst verletzt und erleidet Schaden. Der Schaden der Waffe wird unter Einbeziehung des Schadensbonus ausgewürfelt.",
         "12": "Ein schwerer Eigentreffer. Der Schaden der Waffe wird unter Einbeziehung des Schadensbonus ausgewürfelt und dann verdoppelt."
     },

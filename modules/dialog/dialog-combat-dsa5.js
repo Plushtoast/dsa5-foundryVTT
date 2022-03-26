@@ -79,58 +79,16 @@ export default class DSA5CombatDialog extends DialogShared {
             return false;
         });
 
-        const readTargets = () => {
-            let targets = [];
-            game.user.targets.forEach((x) => {
-                if (x.actor) targets.push({ name: x.actor.name, img: x.actor.img });
-            });
-            return targets;
-        };
-
-        let targets = readTargets();
-        const compareTargets = () => {
-            let newTargets = readTargets();
-            if (JSON.stringify(targets) != JSON.stringify(newTargets)) {
-                targets = newTargets;
-                this.updateTargets(html, targets);
-            }
-        };
+        let targets = this.readTargets();
 
         if (targets.length == 0) {
             this.setRollButtonWarning()
         }
         // not great
+        const that = this
         this.checkTargets = setInterval(function() {
-            compareTargets();
+            that.compareTargets(html, targets);
         }, 500);
-    }
-
-    setRollButtonWarning() {
-        if (this.dialogData.mode == "attack"){
-            const noTarget = game.i18n.localize("DIALOG.noTarget")
-            $(this._element).find(".dialog-buttons .rollButton").html(`${game.i18n.localize('Roll')}<span class="missingTarget"><i class="fas fa-exclamation-circle"></i> ${noTarget}</span>`)
-        }
-    }
-
-    updateTargets(html, targets) {
-        if (targets.length > 0) {
-            html
-                .find(".targets")
-                .html(
-                    targets
-                    .map(
-                        (x) =>
-                        `<div class="image" title="${game.i18n.localize("target")}" style="background-image:url(${
-                  x.img
-                })"><i class="fas fa-bullseye"></i></div>`
-                    ).join("")
-                );
-            $(this._element).find('.dialog-buttons .missingTarget').remove()
-        } else {
-            const noTarget = game.i18n.localize("DIALOG.noTarget")
-            html.find(".targets").html(`<div><i class="fas fa-exclamation-circle"></i> ${noTarget}</div>`);
-            this.setRollButtonWarning()
-        }
     }
 
     async close(options = {}) {
@@ -162,7 +120,7 @@ export default class DSA5CombatDialog extends DialogShared {
 
             const actor = DSA5_Utility.getSpeaker(this.dialogData.speaker);
             if (actor) {
-                const darkSightLevel = AdvantageRulesDSA5.vantageStep(actor.data, game.i18n.localize("LocalizedIDs.darksight"));
+                const darkSightLevel = AdvantageRulesDSA5.vantageStep(actor.data, game.i18n.localize("LocalizedIDs.darksight")) + SpecialabilityRulesDSA5.abilityStep(actor.data, game.i18n.localize("LocalizedIDs.sappeurStyle"));
                 const blindCombat = SpecialabilityRulesDSA5.abilityStep(actor.data, game.i18n.localize("LocalizedIDs.blindFighting"));
                 if (level < 4 && level > 0) {
                     if (darkSightLevel > 1) {

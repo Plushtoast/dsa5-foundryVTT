@@ -1072,12 +1072,12 @@ class ConsumableItemDSA extends Itemdsa5 {
     static async _applyActiveEffect(source) {
         let effects = source.data.effects.toObject()
         if (effects.length > 0) {
-            const {msg, resistRolls} = await DSAActiveEffectConfig.applyAdvancedFunction(source.actor, effects, source, {
+            const { msg, resistRolls, effectNames } = await DSAActiveEffectConfig.applyAdvancedFunction(source.actor, effects, source, {
                 qualityStep: source.data.data.QL,
             }, source.actor)
             const infoMsg = `${game.i18n.format("ActiveEffects.appliedEffect", {
                 target: source.actor.name,
-                source: source.name,
+                source: effectNames.join(", ")
             })} ${msg || ""}`
             ChatMessage.create(DSA5_Utility.chatDataSetup(infoMsg))
         }
@@ -1134,6 +1134,7 @@ class DiseaseItemDSA5 extends Itemdsa5 {
             hasZKModifier: source.data.resistance.value == "ZK",
         })
     }
+
     static setupDialog(ev, options, item, actor, tokenId) {
         let title = item.name + " " + game.i18n.localize(item.type) + " " + game.i18n.localize("Test")
 

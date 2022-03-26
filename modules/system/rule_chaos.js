@@ -14,7 +14,10 @@ export default class RuleChaos {
         else if (SpecialabilityRulesDSA5.hasAbility(actor, game.i18n.localize("LocalizedIDs.masterfulParry")))
             multipleDefense = -2
 
-        return multipleDefense
+        if (SpecialabilityRulesDSA5.hasAbility(actor, game.i18n.localize("LocalizedIDs.vinsaltStyle")))
+            multipleDefense -= 1
+
+        return Math.min(0, multipleDefense)
     }
 
     static isFamiliar(data) {

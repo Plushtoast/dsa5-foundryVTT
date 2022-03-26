@@ -138,6 +138,13 @@
             </div>
         </div>
         <div class="col fourty">
+            <div class="targets row-section wrap item">
+                {{#if targets}} {{#each targets as |item i|}}
+                <div class="image" title="{{localize 'target'}}" style="background-image:url({{item.img}})"><i class="fas fa-bullseye"></i></div>
+                {{/each}} {{else}}
+                <div><i class="fas fa-exclamation-circle"></i> {{localize 'DIALOG.noTarget'}}</div>
+                {{/if}}
+            </div>
             <div class="specAbsContainer">
                 {{#unless extensions}}
                 <div class="row-section">

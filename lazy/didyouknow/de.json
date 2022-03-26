@@ -32,7 +32,7 @@
         "Das Modul \"times-up\" kann Active Effects automatisch nach Ablauf ihrer Wirkungsdauer entfernen.",
         "Es gibt ein DSA Modul um jede Aktion mit einem Interface Ton auszustatten.",
         "Im Kompendium kannst du Regeln für Trefferzonen aktivieren.",
-        "Du kannst Zauber per Macro für alle möglichen Effekte automatisieren. Viele vorgefertigte Zauber aus den offiziellen Modulen beinhalten solche Makros bereits.",
+        "Du kannst Zauber per Macro für alle möglichen Effekte automatisieren. Die meisten vorgefertigten Zauber aus den offiziellen Modulen beinhalten solche Makros bereits.",
         "Du musst Tokens ins Ziel nehmen, um von der Automatisierung von Vergleichsproben zu profitieren.",
         "Du solltest Dinge aus Kompendien nur importieren falls es unbedingt erforderlich ist und niemals das komplette Kompendium (keine Bugfixes und Updates, schlechte Performance).",
         "Foundry selbst beinhaltet auch bereits tausende Icons für Ausrüstung.",
@@ -71,7 +71,9 @@
         "Aktiviere das Dere Positioning System, um den Distanzmodifikator für Fernkampfangriffe automatisch zu setzen.",
         "Das Grundregelwerk enthält Funktionen für die automatische Konfiguration der Sicht.",
 
-        "Update regelmäßig sowohl Foundry, das DSA System und alle Module."
+        "Update regelmäßig sowohl Foundry, das DSA System und alle Module.",
+
+        "Macht’s gut, und danke für den Fisch"
 
 
     ]

@@ -18,6 +18,50 @@ export default class DialogShared extends Dialog {
         this.prepareFormRecall($(this._element))
     }
 
+    setRollButtonWarning() {
+        if (this.dialogData.mode == "attack"){
+            const noTarget = game.i18n.localize("DIALOG.noTarget")
+            $(this._element).find(".dialog-buttons .rollButton").html(`${game.i18n.localize('Roll')}<span class="missingTarget"><i class="fas fa-exclamation-circle"></i> ${noTarget}</span>`)
+        }
+    }
+
+    updateTargets(html, targets) {
+        if (targets.length > 0) {
+            html
+                .find(".targets")
+                .html(
+                    targets
+                    .map(
+                        (x) =>
+                        `<div class="image" title="${game.i18n.localize("target")}" style="background-image:url(${
+                  x.img
+                })"><i class="fas fa-bullseye"></i></div>`
+                    ).join("")
+                );
+            $(this._element).find('.dialog-buttons .missingTarget').remove()
+        } else {
+            const noTarget = game.i18n.localize("DIALOG.noTarget")
+            html.find(".targets").html(`<div><i class="fas fa-exclamation-circle"></i> ${noTarget}</div>`);
+            this.setRollButtonWarning()
+        }
+    }
+
+    readTargets() {
+        let targets = [];
+        game.user.targets.forEach((x) => {
+            if (x.actor) targets.push({ name: x.actor.name, img: x.actor.img });
+        });
+        return targets;
+    }
+
+    compareTargets(html, targets){
+        let newTargets = this.readTargets();
+        if (JSON.stringify(targets) != JSON.stringify(newTargets)) {
+            targets = newTargets;
+            this.updateTargets(html, targets);
+        }
+    }
+
     activateListeners(html) {
         super.activateListeners(html)
         html.find('.quantity-click').mousedown(ev => {

@@ -145,9 +145,9 @@ export default class Actordsa5 extends Actor {
                 data.data.status.karmaenergy.advances +
                 data.data.status.karmaenergy.gearmodifier
 
-            data.data.status.regeneration.LePmax = data.data.status.regeneration.LePTemp + data.data.status.regeneration.LePMod
-            data.data.status.regeneration.KaPmax = data.data.status.regeneration.KaPTemp + data.data.status.regeneration.KaPMod
-            data.data.status.regeneration.AsPmax = data.data.status.regeneration.AsPTemp + data.data.status.regeneration.AsPMod
+            data.data.status.regeneration.LePmax = data.data.status.regeneration.LePTemp + data.data.status.regeneration.LePMod + data.data.status.regeneration.LePgearmodifier
+            data.data.status.regeneration.KaPmax = data.data.status.regeneration.KaPTemp + data.data.status.regeneration.KaPMod + data.data.status.regeneration.KaPgearmodifier
+            data.data.status.regeneration.AsPmax = data.data.status.regeneration.AsPTemp + data.data.status.regeneration.AsPMod + data.data.status.regeneration.AsPgearmodifier
 
             let guide = data.data.guidevalue
             if (isFamiliar || (guide && data.type != "creature")) {
@@ -397,6 +397,11 @@ export default class Actordsa5 extends Actor {
                     wounds: {
                         multiplier: 1,
                     },
+                    regeneration: {
+                        LePgearmodifier: 0,
+                        KaPgearmodifier: 0,
+                        AsPgearmodifier: 0
+                    }
                 },
                 repeatingEffects: {
                     startOfRound: {

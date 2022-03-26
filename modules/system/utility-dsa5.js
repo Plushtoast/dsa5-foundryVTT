@@ -13,6 +13,10 @@ export default class DSA5_Utility {
         return await this.getCompendiumEntries(pack, "skill")
     }
 
+    static moduleEnabled(id){
+        return game.modules.get(id) && game.modules.get(id).active
+    }
+
     static async allCombatSkills() {
         const pack = game.i18n.lang == "de" ? "dsa5.combatskills" : "dsa5.combatskillsen"
         return await this.getCompendiumEntries(pack, "combatskill")
@@ -231,7 +235,6 @@ export default class DSA5_Utility {
         }
         return results
     }
-
 
     static replaceDies(content, inlineRoll = false) {
         let regex = /( |^)(\d{1,2})?[wWdD][0-9]+((\+|-)[0-9]+)?/g

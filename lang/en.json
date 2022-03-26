@@ -869,7 +869,8 @@
         "applyEffectTargets": "Apply effect to targets",
         "foreignSpell": "Unfamiliar tradition spells can not be modified",
         "assignCharacter": "Characters can be assigned using a right click on the player list in the bottom left corner.",
-        "dragLink": "Drag & drop actor e.g. for shapeshifting and summoning"
+        "dragLink": "Drag & drop actor e.g. for shapeshifting and summoning",
+        "onlyGM": "Only visible to the gamemaster."
     },
     "HELP": {
         "showHelp": "Show help",
@@ -1071,6 +1072,7 @@
         "companion": "Companion",
         "localKnowledge": "Area Knowledge",
         "naturalArmor": "Natural Armor",
+        "sappeurStyle": "tbd",
         "wrestle": "Brawling",
         "all": "all",
         "twoWeaponCombat": "Two-Weapon Combat",
@@ -1102,6 +1104,7 @@
         "invocatioMinima": "Invocatio Minima",
         "invocatioMinor": "Invocatio Minor",
         "invocatioMaior": "Invocatio Maior",
+        "vinsaltStyle": "tbd",
         "manifesto": "Manifesto",
         "elementalServant": "Elemental Servant",
         "callDjinn": "Call Djinn",
@@ -1150,6 +1153,7 @@
         "NotEnoughXP": "Not enough adventure points",
         "NotEnoughAsP": "Not enough Astral Energy",
         "NotEnoughKaP": "Not enough Karma Points",
+        "NotEnoughFate": "Not enough fate points",
         "NotEnoughCharges": "Not enough charges",
         "AdvanceMaximumReached": "Max advancements already reached",
         "notFound": "{category} {name} not found",
@@ -1418,9 +1422,9 @@
     "SPELLMISCAST": {
         "2": "The spellcaster’s mind switches bodies with the nearest creature larger than a rat for 1D6 day(s).",
         "3": "The spellcaster is Condition Annoyed by Minor Spirits for 1D6 day(s)",
-        "4": "The spell affects a different, random target instead, as determined by the GM. ",
-        "5": "The spellcaster turns into a small animal of the GM’s choosing for 1D6 hours. ",
-        "6": "All remaining AE leaves the spellcaster’s body and manifests as a rain of colorful sparks, illusionary butterflies, and small rainbows. The spellcaster regenerates this AE in the usual way. ",
+        "4": "The spell affects a different, random target instead, as determined by the GM.",
+        "5": "The spellcaster turns into a small animal of the GM’s choosing for 1D6 hours.",
+        "6": "All remaining AE leaves the spellcaster’s body and manifests as a rain of colorful sparks, illusionary butterflies, and small rainbows. The spellcaster regenerates this AE in the usual way.",
         "7": "The spellcaster loses the ability to use AE for 1D6 day(s).",
         "8": "The spellcaster suffers a throbbing headache and a level of the condition Stupor for 1D6 day(s).",
         "9": "All remaining AE leaves the spellcaster’s body and jumps to the next closes above the normal maximum. The spellcaster regenerates this AE in the usual way.",
@@ -1435,8 +1439,8 @@
         "5": "The Blessed One suffers strange visions and nightmares for 1D6 day(s).",
         "6": "A gaze into another Sphere is so intimidating that the Blessed One suffers 3 levels of the condition Fear for the day.",
         "7": "The Blessed One loses the ability to use KP for 1D6 day(s).",
-        "8": "The Blessed One receives 4 levels of Rapture",
-        "9": "The Blessed One suffers 3 levels of Confusion for the day and talks nonsense that cannot be remembered later",
+        "8": "The Blessed One receives 4 levels of Rapture.",
+        "9": "The Blessed One suffers 3 levels of Confusion for the day and talks nonsense that cannot be remembered later.",
         "10": "The Blessed One receives the condition mute for 1D6 day(s).",
         "11": "The Blessed One suffers a stigma for the day.",
         "12": "The Blessed One’s feet become rooted to the ground, restricting movement and causing the Blessed One to suffer the state bound for 1D6 minutes."
@@ -1449,7 +1453,7 @@
         "6": "The hero’s weapon is stuck in a tree, a wooden wall, the ground, or something similar. Freeing it takes 1 action and a check using Feat of Strength (Dragging & Pulling) with a penalty of 1.",
         "7": "Make a check using Body Control (Balance) with a penalty of 2, or fall to the ground and receive the state prone.",
         "8": "Stumble and suffer a penalty of 2 on your next action.",
-        "9": "Suffer one level of the condition Pain for 3 combat rounds. ",
+        "9": "Suffer one level of the condition Pain for 3 combat rounds.",
         "10": "Bump your head in the chaos of combat and suffer a level of the condition Confusion for one hour.",
         "11": "Suffer your weapon’s damage, including the damage bonus (ignoring PRO). If unarmed, take 1D6 DP (ignoring PRO).",
         "12": "Suffer double your weapon’s damage, including the damage bonus (ignoring PRO). If unarmed, suffer 2D6 DP (ignoring PRO)."
