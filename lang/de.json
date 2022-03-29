@@ -825,7 +825,8 @@
         "tempRegeneration": "Temporär, wird bei Regenerationswurf verbraucht.",
         "permRegeneration": "Permanent, wird bei jedem Regenerationswurf hinzugezählt",
         "panMapNote": "Map Notiz fokussieren",
-        "onUseEffect": "Gegenstand benutzen/Fähigkeit anwenden"
+        "onUseEffect": "Gegenstand benutzen/Fähigkeit anwenden",
+        "swapMag": "Magazin tauschen"
     },
     "ITEMSHEET": {
         "offHandMod": "Bonus/Malus als Nebenhand (z.b. Parierwaffe)"

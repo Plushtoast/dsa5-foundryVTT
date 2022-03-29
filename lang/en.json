@@ -796,7 +796,8 @@
         "tempRegeneration": "Temporary, consumed on the next regeneration roll",
         "permRegeneration": "Permanent, bonus for every regeneration roll",
         "panMapNote": "Focus map note",
-        "onUseEffect": "Use item/use ability"
+        "onUseEffect": "Use item/use ability",
+        "swapMag": "Swap magazine"
     },
     "ITEMSHEET": {
         "offHandMod": "Bonus/handicap offhand (e.g. parry weapon)"

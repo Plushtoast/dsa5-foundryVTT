@@ -13,6 +13,7 @@ import { tinyNotification } from "../system/view_helper.js"
 import EquipmentDamage from "../system/equipment-damage.js"
 import DSAActiveEffectConfig from "../status/active_effects.js"
 import OnUseEffect from "../system/onUseEffects.js"
+import DSA5SoundEffect from "../system/dsa-soundeffect.js"
 
 export default class Actordsa5 extends Actor {
     static async create(data, options) {
@@ -1918,12 +1919,10 @@ export default class Actordsa5 extends Actor {
     }
 
     static calcLZ(item, actor) {
+        let factor = 1
+        let modifier = 0
         if (item.data.combatskill.value == game.i18n.localize("LocalizedIDs.Throwing Weapons"))
-            return Math.max(
-                0,
-                Number(item.data.reloadTime.value) -
-                    SpecialabilityRulesDSA5.abilityStep(actor, game.i18n.localize("LocalizedIDs.quickdraw"))
-            )
+            modifier = SpecialabilityRulesDSA5.abilityStep(actor, game.i18n.localize("LocalizedIDs.quickdraw")) * -1
         else if (
             item.data.combatskill.value == game.i18n.localize("LocalizedIDs.Crossbows") &&
             SpecialabilityRulesDSA5.hasAbility(
@@ -1931,15 +1930,30 @@ export default class Actordsa5 extends Actor {
                 `${game.i18n.localize("LocalizedIDs.quickload")} (${game.i18n.localize("LocalizedIDs.Crossbows")})`
             )
         )
-            return Math.max(0, Math.round(Number(item.data.reloadTime.value) * 0.5))
+            factor = 0.5
+        else{
+            modifier = SpecialabilityRulesDSA5.abilityStep(
+                actor,
+                `${game.i18n.localize("LocalizedIDs.quickload")} (${game.i18n.localize(item.data.combatskill.value)})`
+            ) * -1
+        }
+
+        let reloadTime = `${item.data.reloadTime.value}`.split("/")
+        if(item.data.ammunitiongroup.value == "mag"){
+            let currentAmmo = actor.items.find((x) => x.id == item.data.currentAmmo.value || x._id == item.data.currentAmmo.value)
+            let reloadType = 0
+            if (currentAmmo) {
+                currentAmmo = duplicate(currentAmmo)
+                if(currentAmmo.data.mag.value <= 0) reloadType = 1
+            }
+            reloadTime = reloadTime[reloadType] || reloadTime[0]
+        }else{
+            reloadTime = reloadTime[0]
+        }
 
         return Math.max(
             0,
-            Number(item.data.reloadTime.value) -
-                SpecialabilityRulesDSA5.abilityStep(
-                    actor,
-                    `${game.i18n.localize("LocalizedIDs.quickload")} (${game.i18n.localize(item.data.combatskill.value)})`
-                )
+            Math.round(Number(reloadTime) * factor) - modifier
         )
     }
 
@@ -2025,6 +2039,11 @@ export default class Actordsa5 extends Actor {
                         .map((x) => Math.round(Number(x) * rangeMultiplier))
                         .join("/")
                     item.attack += Number(currentAmmo.data.atmod) || 0
+                    if(currentAmmo.data.ammunitiongroup.value == "mag"){
+                        item.ammoMax = currentAmmo.data.mag.max
+                        item.ammoCurrent = currentAmmo.data.mag.value
+                    }
+                    
                 }
             }
             item.LZ = Actordsa5.calcLZ(item, actor)
@@ -2072,6 +2091,60 @@ export default class Actordsa5 extends Actor {
         }
         return cardOptions
     }
+    
+    async swapMag(weaponId){
+        const weapon = this.items.get(weaponId)
+        const currentAmmo = this.items.get(weapon.data.data.currentAmmo.value)
+        if(currentAmmo && currentAmmo.data.data.quantity.value > 1){
+            await this.updateEmbeddedDocuments("Item",[ {
+                _id: currentAmmo.id, 
+                "data.quantity.value": currentAmmo.data.data.quantity.value - 1, 
+                "data.mag.value": currentAmmo.data.data.mag.max
+            }])
+            DSA5SoundEffect.playEquipmentWearStatusChange(currentAmmo)
+            return currentAmmo
+        }
+        ui.notifications.error(game.i18n.localize("DSAError.NoAmmo"))
+        return undefined
+    }
+
+    async consumeAmmunition(testData){
+        if (testData.extra.ammo && !testData.extra.ammoDecreased) {
+            testData.extra.ammoDecreased = true
+            
+            if (testData.extra.ammo._id) {
+                let ammoUpdate = {_id: testData.extra.ammo._id }
+                if(testData.extra.ammo.data.ammunitiongroup.value == "mag"){
+                    if(testData.extra.ammo.data.mag.value <= 0){
+                        testData.extra.ammo.data.quantity.value--
+                        ammoUpdate["data.quantity.value"] = testData.extra.ammo.data.quantity.value
+                        ammoUpdate["data.mag.value"] = testData.extra.ammo.data.mag.max - 1
+                    }else{
+                        ammoUpdate["data.mag.value"] = testData.extra.ammo.data.mag.value - 1
+                    }
+                }else{
+                    testData.extra.ammo.data.quantity.value--
+                    ammoUpdate["data.quantity.value"] = testData.extra.ammo.data.quantity.value
+                }
+                await this.updateEmbeddedDocuments("Item", [ammoUpdate, { _id: testData.source._id, "data.reloadTime.progress": 0 }])
+            }
+        } else if (
+            (testData.source.type == "rangeweapon" ||
+                (testData.source.type == "trait" && testData.source.data.traitType.value == "rangeAttack")) &&
+            !testData.extra.ammoDecreased
+        ) {
+            testData.extra.ammoDecreased = true
+            await this.updateEmbeddedDocuments("Item", [{ _id: testData.source._id, "data.reloadTime.progress": 0 }])
+        } else if (["spell", "liturgy"].includes(testData.source.type) && testData.extra.speaker.token != "emptyActor") {
+            await this.updateEmbeddedDocuments("Item", [
+                {
+                    _id: testData.source._id,
+                    "data.castingTime.progress": 0,
+                    "data.castingTime.modified": 0,
+                },
+            ])
+        }
+    }
 
     async basicTest({ testData, cardOptions }, options = {}) {
         testData = await DiceDSA5.rollDices(testData, cardOptions)
@@ -2090,34 +2163,7 @@ export default class Actordsa5 extends Actor {
             if (cardOptions.isOpposedTest) cardOptions.title += ` - ${game.i18n.localize("Opposed")}`
         }
 
-        if (testData.extra.ammo && !testData.extra.ammoDecreased) {
-            testData.extra.ammoDecreased = true
-            testData.extra.ammo.data.quantity.value--
-            if (testData.extra.ammo._id) {
-                await this.updateEmbeddedDocuments("Item", [
-                    {
-                        _id: testData.extra.ammo._id,
-                        "data.quantity.value": testData.extra.ammo.data.quantity.value,
-                    },
-                    { _id: testData.source._id, "data.reloadTime.progress": 0 },
-                ])
-            }
-        } else if (
-            (testData.source.type == "rangeweapon" ||
-                (testData.source.type == "trait" && testData.source.data.traitType.value == "rangeAttack")) &&
-            !testData.extra.ammoDecreased
-        ) {
-            testData.extra.ammoDecreased = true
-            await this.updateEmbeddedDocuments("Item", [{ _id: testData.source._id, "data.reloadTime.progress": 0 }])
-        } else if (["spell", "liturgy"].includes(testData.source.type) && testData.extra.speaker.token != "emptyActor") {
-            await this.updateEmbeddedDocuments("Item", [
-                {
-                    _id: testData.source._id,
-                    "data.castingTime.progress": 0,
-                    "data.castingTime.modified": 0,
-                },
-            ])
-        }
+        await this.consumeAmmunition(testData)
 
         if (!options.suppressMessage)
             await DiceDSA5.renderRollCard(cardOptions, result, options.rerenderMessage).then(async (msg) => {

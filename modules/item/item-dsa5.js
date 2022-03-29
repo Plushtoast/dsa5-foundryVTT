@@ -147,7 +147,7 @@ export default class Itemdsa5 extends Item {
         let type = ""
         if (/^\*/.test(val)) {
             type = "*"
-            val = val.substring(1).replace(",",".")
+            val = val.substring(1).replace(",", ".")
         }
         return {
             name,
@@ -1402,33 +1402,37 @@ class RangeweaponItemDSA5 extends Itemdsa5 {
         this.attackStatEffect(situationalModifiers, Number(actor.data.data.rangeStats[data.mode]))
     }
 
-    static handleAmmunitionUsage(item, testData, actor, mode){
+    static async checkAmmunitionState(item, testData, actor, mode) {
+        let hasAmmo = true
         if (actor.data.type != "creature" && mode != "damage") {
+            //TODO this has to go
             let itemData = item.data.data ? item.data.data : item.data
-            if(itemData.ammunitiongroup.value == "infinite"){
-                return
-            }
-            else if  (itemData.ammunitiongroup.value == "mag") {
-                //TODO check mag state
-            }
-            else if (itemData.ammunitiongroup.value == "-") {
+            if (itemData.ammunitiongroup.value == "infinite") {
+                //Dont count ammo
+            } else if (itemData.ammunitiongroup.value == "-") {
                 testData.extra.ammo = duplicate(item)
-                if (testData.extra.ammo.data.quantity.value <= 0) {
-                    return ui.notifications.error(game.i18n.localize("DSAError.NoAmmo"))
-                }
+                hasAmmo = testData.extra.ammo.data.quantity.value > 0
             } else {
                 const ammoItem = actor.items.get(itemData.currentAmmo.value)
                 if (ammoItem) {
                     testData.extra.ammo = ammoItem.toObject()
-                }
-                if (!testData.extra.ammo || !itemData.currentAmmo.value || testData.extra.ammo.data.quantity.value <= 0) {
-                    return ui.notifications.error(game.i18n.localize("DSAError.NoAmmo"))
+                    if (itemData.ammunitiongroup.value == "mag") {
+                        hasAmmo = testData.extra.ammo.data.quantity.value > 1 || (testData.extra.ammo.data.mag.value > 0 && testData.extra.ammo.data.quantity.value > 0)
+
+                    } else {
+                        hasAmmo = testData.extra.ammo.data.quantity.value > 0
+                    }
+                } else {
+                    hasAmmo = false
                 }
             }
         }
+        if (!hasAmmo) ui.notifications.error(game.i18n.localize("DSAError.NoAmmo"))
+
+        return hasAmmo
     }
 
-    static setupDialog(ev, options, item, actor, tokenId) {
+    static async setupDialog(ev, options, item, actor, tokenId) {
         let mode = options.mode
         let title = game.i18n.localize(item.name) + " " + game.i18n.localize(mode + "test")
 
@@ -1443,8 +1447,8 @@ class RangeweaponItemDSA5 extends Itemdsa5 {
             },
         }
 
-        this.handleAmmunitionUsage(item, testData, actor, mode)
-        
+        if (!(await this.checkAmmunitionState(item, testData, actor, mode))) return
+
         let data = {
             rollMode: options.rollMode,
             mode,

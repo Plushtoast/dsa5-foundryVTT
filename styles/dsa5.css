@@ -865,6 +865,10 @@ input[type="text"].col-Money-H {
     max-width: 50%;
 }
 
+.max20 {
+    max-width: 20%;
+}
+
 .groupbox {
     border: 1px solid var(--border-color);
     border-radius: 3px;
@@ -2084,6 +2088,11 @@ h2 .chatButton {
     border-radius: 2px;
 }
 
+.magazinContainer {
+    display: inline-block;
+    width: 3px;
+}
+
 .item-structure {
     border: 0.5px solid var(--bg-color);
     height: 100%;
@@ -3120,7 +3129,9 @@ input[type="checkbox"].autoCheckbox {
 }
 
 .ammo-selector {
-    max-width: calc(100% - 27px);
+    width: calc(100% - 31px);
+    padding: 0px;
+    margin: 0px 1px;
 }
 
 .window-app .condition-show {

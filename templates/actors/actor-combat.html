@@ -65,7 +65,7 @@
 
 <div class="groupbox">
     <div class="row-section table-title lineheight">
-        <div class="col fourtyfive">
+        <div class="col thirtyfive">
             <b>{{localize "rangeweapons"}}</b>
         </div>
         <div class="col five center small">
@@ -75,11 +75,11 @@
         <div class="col ten center small" title="{{localize 'CHAR.ATTACK'}}">
             {{localize "CHARAbbrev.AT"}}
         </div>
-        <div class="col eight center small" title="{{localize 'damage'}}">
+        <div class="col ten center small" title="{{localize 'damage'}}">
             {{localize "CHARAbbrev.damage"}}
         </div>
 
-        <div class="col five center small">
+        <div class="col five center small max20">
             {{localize "ammunition"}}
         </div>
         <div class="col zerofive center">
@@ -97,7 +97,7 @@
                     </div>
                     {{/if}}
                 </div>
-                <div class="col thirtyfive">
+                <div class="col four">
                     <a class="item-edit">{{item.name}}</a>
                 </div>
                 <div class="col five center small">
@@ -107,22 +107,31 @@
                 <div class="col ten center item" data-item-id="{{item._id}}" data-mod="attack">
                     <a data-mode="attack" class="ch-rollCombat d20 die-attack">{{item.attack}}</a>
                 </div>
-                <div class="col eight center">
+                <div class="col ten center">
                     <a data-mode="damage" class="ch-rollCombat d6 die-damage">{{item.damagedie}}</a><span title="{{localize 'damageOverThreshold'}}{{item.damageBonusDescription}}">{{item.damageAdd}}</span>
                 </div>
 
-                <div class="col five center">
+                <div class="col five center max20">
                     {{#if (ne item.data.ammunitiongroup.value "-")}}
-                    <div>
+                    <div class="row-section">
+
+                        <div class="magazinContainer">
+                            {{#if item.ammoMax}}
+                            <div class="item-structure" style="--a: {{item.ammoMax}}; --b: {{item.ammoCurrent}}">
+                                <div class="inner"></div>
+                            </div>
+                            {{/if}}
+                        </div>
+
                         <select name="currentAmmo-{{item._id}}" class="ammo-selector" data-item-id="{{item._id}}" data-dtype="String">
-                            {{#select item.data.currentAmmo.value}}
-                            <option class="ammo-option" value="">None</option>
-                            {{#each item.ammo as |ammo a|}}
-                            <option class="ammo-option" value="{{ammo._id}}"> ({{ammo.data.quantity.value}})
-                                {{ammo.name}}</option>
-                            {{/each}}
-                            {{/select}}
-                        </select> {{#if (ne item.LZ 0)}}
+                                {{#select item.data.currentAmmo.value}}
+                                <option class="ammo-option" value="">None</option>
+                                {{#each item.ammo as |ammo a|}}
+                                <option class="ammo-option" value="{{ammo._id}}"> ({{ammo.data.quantity.value}})
+                                    {{ammo.name}}</option>
+                                {{/each}}
+                                {{/select}}
+                            </select> {{#if (ne item.LZ 0)}}
                         <a class="loadWeapon" title="{{item.title}}">
                             <div class="progress blue">
                                 <span class="progress-left" style="--transformLeft:{{item.transformLeft}}">
@@ -153,8 +162,8 @@
                     {{/if}}
                 </div>
                 <div class="col zerofive very-small center">
-                    <a class="item-dropdown" title="{{localize 'SHEET.Dropdown'}}"><i
-                            class="fas fa-chevron-down"></i></a>
+                    <a class="item-dropdown" title="{{localize 'SHEET.Dropdown'}}"><i class="fas fa-chevron-down"></i></a> {{#if item.ammoMax}}
+                    <a class="item-swapMag" title="{{localize 'SHEET.swapMag'}}"><i class="fas fa-retweet"></i></a> {{/if}}
                 </div>
             </div>
             <div class="row-section lineheight expandDetails {{item.detailed}}">
