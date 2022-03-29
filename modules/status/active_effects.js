@@ -144,7 +144,7 @@ export default class DSAActiveEffectConfig extends ActiveEffectConfig {
         const effectNames = new Set()
 
         for (const ef of effects) {
-            if(ef.origin) delete ef.origin
+            if (ef.origin) delete ef.origin
 
             const specStep = Number(getProperty(ef, "flags.dsa5.specStep")) || 0
             try {
@@ -154,10 +154,10 @@ export default class DSAActiveEffectConfig extends ActiveEffectConfig {
 
                 if (resistRoll && !skipResistRolls) {
                     const skills = resistRoll.split(" ");
-                    const mod = skills.pop();
+                    const mod = `${skills.pop()}`;
                     resistRolls.push({
                         skill: skills.join(" "),
-                        mod: Roll.safeEval(mod.replace(/q(l|s)/i, qs)).replace("step", specStep) || 0,
+                        mod: `${Roll.safeEval(mod.replace(/q(l|s)/i, qs))}`.replace("step", specStep) || 0,
                         effect: ef,
                         target: actor,
                         token: actor.token ? actor.token.data._id : undefined
@@ -289,7 +289,7 @@ export default class DSAActiveEffectConfig extends ActiveEffectConfig {
                     mode,
                     id,
                     actors: actors.map((x) => {
-                        return { token: x.token ? x.token.data._id : undefined, actor: x.data._id, scene: canvas.scene.id  };
+                        return { token: x.token ? x.token.data._id : undefined, actor: x.data._id, scene: canvas.scene.id };
                     }),
                 },
             });
@@ -351,7 +351,7 @@ export default class DSAActiveEffectConfig extends ActiveEffectConfig {
                     break;
                 }
             }
-        } catch(e) {
+        } catch (e) {
             console.error(`Could not parse duration '${duration}' of '${source.name}'`);
         }
         return effects;

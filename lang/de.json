@@ -111,7 +111,10 @@
         "selectReaction": "Bitte wähle die passende Reaktion.",
         "selectAction": "Bitte wähle deine Handlung",
         "cheat": "SL-Willkür",
-        "noTarget": "Kein Ziel"
+        "noTarget": "Kein Ziel",
+        "assassinate": "Meucheln",
+        "stun": "Betäuben",
+        "assassinateDescr": "Opfer muss ahnungslos sein (Wahrnehmung gegen Verbergen)"
     },
     "Equipment": {
         "misc": "Allgemein",

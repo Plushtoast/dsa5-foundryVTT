@@ -30,6 +30,14 @@
                 <label>{{localize "opportunityAttack"}} (-4)</label>
                 <input type="checkbox" class="opportunityAttack" name="opportunityAttack" value="-4">
             </div>
+            <div class="form-group custom-select" title="{{localize 'DIALOG.assassinateDescr'}}">
+                <label>{{localize "DIALOG.assassinate"}}</label>
+                <select name="assassinate">
+                    <option value="-">-</option>
+                    <option value="assassinate">{{localize "DIALOG.assassinate"}}</option>
+                    <option value="stun">{{localize "DIALOG.stun"}}</option>
+                </select>
+            </div>
             {{/if}} {{#if weaponSizes}}
             <div class="form-group custom-select">
                 <label>{{localize "doubleAttack"}} (-2)</label>

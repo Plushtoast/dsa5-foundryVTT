@@ -74,7 +74,7 @@ export default class DSA5CombatDialog extends DialogShared {
                 }
             }
         });
-        
+
         let targets = this.readTargets();
 
         if (targets.length == 0) {
@@ -141,6 +141,73 @@ export default class DSA5CombatDialog extends DialogShared {
         }
     }
 
+    static assassinationModifiers(html, testData) {
+        const mode = html.find('[name="assassinate"]').val()
+        if (!mode || mode == "-") return []
+
+        testData.opposingWeaponSize = 0
+        const advantageousPositionMod = html.find('[name="advantageousPosition"]').is(":checked") ? 2 : 0
+        const opposingWeaponSize = ["short", "medium", "long"].indexOf(html.find('[name="weaponsize"]').val())
+        const modeTranslated = game.i18n.localize(`DIALOG.${mode}`)
+        const result = [{
+            name: modeTranslated,
+            value: 10 - advantageousPositionMod - opposingWeaponSize
+        }]
+        if (mode == "assassinate") {
+            const weaponsize = ["short", "medium", "long"].indexOf(testData.source.data.reach.value)
+
+            const dices = Math.max(1, (new Roll(testData.source.data.damage.value.replace(/[DWw]/g, "d"))).terms.reduce((prev, cur) => {
+                return prev + (cur.faces ? cur.number : 0)
+            }, 0)) - 1
+
+            const tpMod = [2, 0, -2, -4][weaponsize] - dices * 2
+            const multiplier = Math.max(1, 5 - weaponsize - dices)
+
+            result.push({
+                name: modeTranslated + " (" + game.i18n.localize('CHARAbbrev.damage') + ")",
+                damageBonus: tpMod,
+                value: 0,
+                step: 1
+            }, {
+                name: modeTranslated + " (*)",
+                damageBonus: `*${multiplier}`,
+                value: 0,
+                step: 1
+            })
+        } else {
+            if (!testData.source.effects) testData.source.effects = []
+
+            testData.source.effects.push({
+                "_id": modeTranslated,
+                "changes": [],
+                "disabled": false,
+                "duration": {},
+                "icon": "icons/svg/aura.svg",
+                "label": modeTranslated,
+                "transfer": true,
+                "flags": {
+                    "dsa5": {
+                        "value": null,
+                        "editable": true,
+                        "description": modeTranslated,
+                        "custom": true,
+                        "auto": null,
+                        "manual": 0,
+                        "resistRoll": `${game.i18n.localize("LocalizedIDs.selfControl")} -3`,
+                        "hideOnToken": false,
+                        "hidePlayers": false,
+                        "customDuration": "",
+                        "advancedFunction": "1",
+                        "args0": "unconscious",
+                        "args1": ""
+                    }
+                }
+            })
+        }
+
+        return result
+    }
+
     static resolveMeleeDialog(testData, cardOptions, html, actor, options, multipleDefenseValue, mode) {
         this._resolveDefault(testData, cardOptions, html, options);
 
@@ -150,8 +217,7 @@ export default class DSA5CombatDialog extends DialogShared {
         testData.narrowSpace = html.find('[name="narrowSpace"]').is(":checked");
         testData.attackOfOpportunity = this.attackOfOpportunity(html, testData.situationalModifiers);
         testData.situationalModifiers.push(
-            Itemdsa5.parseValueType(game.i18n.localize("sight"), html.find('[name="vision"]').val() || 0), 
-            {
+            Itemdsa5.parseValueType(game.i18n.localize("sight"), html.find('[name="vision"]').val() || 0), {
                 name: game.i18n.localize("attackFromBehind"),
                 value: html.find('[name="attackFromBehind"]').is(":checked") ? -4 : 0,
             }, {
@@ -169,7 +235,8 @@ export default class DSA5CombatDialog extends DialogShared {
                 name: game.i18n.localize("advantageousPosition"),
                 value: html.find('[name="advantageousPosition"]').is(":checked") ? 2 : 0,
             },
-            ...Itemdsa5.getSpecAbModifiers(html, mode)
+            ...Itemdsa5.getSpecAbModifiers(html, mode),
+            ...this.assassinationModifiers(html, testData)
         );
         if (mode == "attack") {
             testData.situationalModifiers.push({
@@ -249,7 +316,7 @@ export default class DSA5CombatDialog extends DialogShared {
         return value != 0;
     }
 
-    static getRollButtons(testData, dialogOptions, resolve, reject){
+    static getRollButtons(testData, dialogOptions, resolve, reject) {
         let buttons = DSA5Dialog.getRollButtons(testData, dialogOptions, resolve, reject);
         if (
             testData.source.type == "rangeweapon" ||

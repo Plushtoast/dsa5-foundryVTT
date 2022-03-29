@@ -97,7 +97,10 @@
         "selectReaction": "Chose your reaction.",
         "selectAction": "Chose your action",
         "cheat": "GM arbitrariness",
-        "noTarget": "No Target"
+        "noTarget": "No Target",
+        "assassinate": "Assassinate",
+        "stun": "Stun",
+        "assassinateDescr": "Approach victim undetected (Perception vs. Stealth)"
     },
     "Equipment": {
         "misc": "General",
