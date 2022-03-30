@@ -543,13 +543,6 @@ export default class Itemdsa5 extends Item {
             if (cardOptions.isOpposedTest) cardOptions.title += ` - ${game.i18n.localize("Opposed")}`
         }
 
-        // TODO this can probably be removed
-        /*if (testData.extra.ammo && !testData.extra.ammoDecreased) {
-            testData.extra.ammoDecreased = true
-            testData.extra.ammo.data.quantity.value--;
-            await this.updateEmbeddedDocuments("Item", [{ _id: testData.extra.ammo._id, "data.quantity.value": testData.extra.ammo.data.quantity.value }]);
-        }*/
-
         if (!options.suppressMessage) DiceDSA5.renderRollCard(cardOptions, result, options.rerenderMessage)
 
         return { result, cardOptions }

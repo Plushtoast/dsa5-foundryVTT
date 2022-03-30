@@ -63,7 +63,6 @@ export default class DiceDSA5 {
         if (!testData.extra.options.bypass) {
             let html = await renderTemplate(dialogOptions.template, dialogOptions.data)
             return new Promise((resolve, reject) => {
-                //TODO move the button generation to the respective dialogs
                 let dialog = DSA5Dialog.getDialogForItem(testData.source.type)
                 new dialog({
                         title: dialogOptions.title,

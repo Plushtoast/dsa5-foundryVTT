@@ -83,7 +83,7 @@ export default class DSA5CombatDialog extends DialogShared {
         // not great
         const that = this
         this.checkTargets = setInterval(function() {
-            that.compareTargets(html, targets);
+            targets = that.compareTargets(html, targets);
         }, 500);
     }
 

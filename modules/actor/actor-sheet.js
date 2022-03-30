@@ -401,7 +401,7 @@ export default class ActorSheetDsa5 extends ActorSheet {
         html.find('.loadWeapon').mousedown(async(ev) => {
             const itemId = this._getItemId(ev)
             const item = this.actor.items.get(itemId).toObject()
-                //TODO have to add mag here
+
             if (getProperty(item, "data.currentAmmo.value") === "" && this.actor.type != "creature") return
 
             const lz = item.type == "trait" ? item.data.reloadTime.value : Actordsa5.calcLZ(item, this.actor)

@@ -19,13 +19,14 @@ export default class DialogShared extends Dialog {
     }
 
     setRollButtonWarning() {
-        if (this.dialogData.mode == "attack"){
+        if (this.dialogData.mode == "attack") {
             const noTarget = game.i18n.localize("DIALOG.noTarget")
             $(this._element).find(".dialog-buttons .rollButton").html(`${game.i18n.localize('Roll')}<span class="missingTarget"><i class="fas fa-exclamation-circle"></i> ${noTarget}</span>`)
         }
     }
 
     updateTargets(html, targets) {
+        console.log(targets)
         if (targets.length > 0) {
             html
                 .find(".targets")
@@ -54,12 +55,13 @@ export default class DialogShared extends Dialog {
         return targets;
     }
 
-    compareTargets(html, targets){
+    compareTargets(html, targets) {
         let newTargets = this.readTargets();
         if (JSON.stringify(targets) != JSON.stringify(newTargets)) {
             targets = newTargets;
             this.updateTargets(html, targets);
         }
+        return targets
     }
 
     activateListeners(html) {

@@ -45,7 +45,7 @@ export default class DSAActiveEffectConfig extends ActiveEffectConfig {
     }
 
     async checkTimesUpInstalled() {
-        //TODO this
+        //TODO checkTimesUpInstalled
         return false
     }
 
