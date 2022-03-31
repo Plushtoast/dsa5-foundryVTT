@@ -14,7 +14,7 @@ export default class DSA5_Utility {
         return await this.getCompendiumEntries(pack, "skill")
     }
 
-    static moduleEnabled(id){
+    static moduleEnabled(id) {
         return game.modules.get(id) && game.modules.get(id).active
     }
 

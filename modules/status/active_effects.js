@@ -2,7 +2,13 @@ import DSA5 from "../system/config-dsa5.js";
 import DiceDSA5 from "../system/dice-dsa5.js";
 import DSA5_Utility from "../system/utility-dsa5.js";
 
-const callMacro = async(packName, name, actor, item, qs, args = {}) => {
+function automatedAnimation(successLevel, options = {}) {
+    if (DSA5_Utility.moduleEnabled("autoanimations")) {
+        console.warn("Animations for on use effects not enabled yet");
+    }
+}
+
+async function callMacro(context, packName, name, actor, item, qs, args = {}) {
     let result = {};
     if (!game.user.can("MACRO_SCRIPT")) {
         ui.notifications.warn(`You are not allowed to use JavaScript macros.`);
@@ -15,7 +21,8 @@ const callMacro = async(packName, name, actor, item, qs, args = {}) => {
             const fn = Function("actor", "item", "qs", "args", body);
             try {
                 args.result = result;
-                await fn.call(this, actor, item, qs, args);
+                const context = mergeObject({ automatedAnimation }, this)
+                await fn.call(context, actor, item, qs, args);
             } catch (err) {
                 ui.notifications.error(`There was an error in your macro syntax. See the console (F12) for details`);
                 console.error(err);
@@ -43,6 +50,8 @@ export default class DSAActiveEffectConfig extends ActiveEffectConfig {
             }
         }
     }
+
+
 
     async checkTimesUpInstalled() {
         //TODO checkTimesUpInstalled

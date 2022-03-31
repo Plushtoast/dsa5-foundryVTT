@@ -26,7 +26,6 @@ export default class DialogShared extends Dialog {
     }
 
     updateTargets(html, targets) {
-        console.log(targets)
         if (targets.length > 0) {
             html
                 .find(".targets")

@@ -842,7 +842,8 @@
         "short": "Nah [+2 auf FK, +1 TP]",
         "medium": "Mittel [+/–0 auf FK]",
         "long": "Weit [–2 auf FK, –1 TP]",
-        "rangesense": "Weit [–1 auf FK, –1 TP]"
+        "rangesense": "Weit [–1 auf FK, –1 TP]",
+        "extreme": "Extrem [–4 auf FK, –2 TP]"
     },
     "VisionDisruption": {
         "step0": "Klare Sicht",
@@ -1110,6 +1111,7 @@
         "traditionFjarning": "Tradition (Fjarningerschamanen)",
         "traditionPhex": "Tradition (Phexkirche)",
         "inuredToEncumbrance": "Belastungsgewöhnung",
+        "extremeShot": "Extremschuss",
         "quickload": "Schnellladen",
         "automaticSuccess": "Automatischer Erfolg",
         "automaticFail": "Automatischer Misserfolg",

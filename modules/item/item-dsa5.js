@@ -10,6 +10,7 @@ import RuleChaos from "../system/rule_chaos.js"
 import CreatureType from "../system/creature-type.js"
 import DPS from "../system/derepositioningsystem.js"
 import DSA5CombatDialog from "../dialog/dialog-combat-dsa5.js"
+import SpecialabilityRulesDSA5 from "../system/specialability-rules-dsa5.js"
 
 export default class Itemdsa5 extends Item {
     static defaultImages = {
@@ -404,13 +405,13 @@ export default class Itemdsa5 extends Item {
         }
 
         const rangeOptions = {...DSA5.rangeWeaponModifiers }
+        console.log(rangeOptions)
         delete rangeOptions[
             AdvantageRulesDSA5.hasVantage(actor, game.i18n.localize("LocalizedIDs.senseOfRange")) ? "long" : "rangesense"
         ]
-
-        const drivingArcher = actor.items.some(
-            (x) => x.name == game.i18n.localize("LocalizedIDs.drivingArcher") && x.type == "specialability"
-        )
+        if (!SpecialabilityRulesDSA5.hasAbility(actor, game.i18n.localize("LocalizedIDs.extremeShot"))) delete rangeOptions["extreme"]
+        console.log(rangeOptions)
+        const drivingArcher = SpecialabilityRulesDSA5.hasAbility(actor, game.i18n.localize("LocalizedIDs.drivingArcher"))
         const mountedOptions = drivingArcher ? duplicate(DSA5.drivingArcherOptions) : duplicate(DSA5.mountedRangeOptions)
 
         mergeObject(data, {

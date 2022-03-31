@@ -502,6 +502,10 @@ DSA5.rangeMods = {
     "rangesense": {
         "damage": -1,
         "attack": -1
+    },
+    "extreme": {
+        "damage": -2,
+        "attack": -4
     }
 }
 
@@ -681,7 +685,8 @@ DSA5.rangeWeaponModifiers = {
     "short": "RangeMod.short",
     "medium": "RangeMod.medium",
     "long": "RangeMod.long",
-    "rangesense": "RangeMod.rangesense"
+    "rangesense": "RangeMod.rangesense",
+    "extreme": "RangeMod.extreme"
 }
 
 DSA5.meleeRangesArray = [

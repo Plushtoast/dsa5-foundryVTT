@@ -322,11 +322,9 @@ export default class DiceDSA5 {
         return result
     }
 
-    static rollDamage(testData) {
-        let modifiers = this._situationalModifiers(testData)
+    static async damageFormula(testData){
         let weapon
-        let chars = []
-
+        
         if (testData.source.type == "meleeweapon") {
             const skill = Actordsa5._calculateCombatSkillValues(
                 testData.extra.actor.items.find(
@@ -346,8 +344,14 @@ export default class DiceDSA5 {
         } else {
             weapon = testData.source.data
         }
+        return testData.source.data.damage.value.replace(/[Ww]/g, "d") + `+${weapon.extraDamage || 0}`
+    }
 
-        let roll =  testData.roll || new Roll(weapon.data.damage.value.replace(/[Ww]/g, "d")).evaluate({ async: false })
+    static async rollDamage(testData) {
+        let modifiers = this._situationalModifiers(testData)
+        let chars = []
+
+        let roll =  testData.roll
         let damage = roll.total + modifiers
 
         for (let k of roll.terms) {
@@ -355,8 +359,6 @@ export default class DiceDSA5 {
                 for (let l of k.results) chars.push({ char: testData.mode, res: l.result, die: "d" + k.faces })
             }
         }
-
-        if (weapon.extraDamage) damage = Number(weapon.extraDamage) + Number(damage)
 
         return {
             rollType: "damage",
@@ -728,7 +730,6 @@ export default class DiceDSA5 {
     static async _addRollDiceSoNice(testData, roll, color) {
         if (testData.rollMode) {
             for (let i = 0; i < roll.dice.length; i++) {
-                //roll.dice[i].options.colorset = color
                 mergeObject(roll.dice[i].options, color)
             }
             await this.showDiceSoNice(roll, testData.rollMode)
@@ -801,11 +802,13 @@ export default class DiceDSA5 {
                         if (val > 0) DSA5_Utility.editRollAtIndex(roll, index, val)
                         index++
                     })
+                    roll._total = roll._evaluateTotal()
                 }
             } else {
                 for (let el of options.predefinedResult) {
                     DSA5_Utility.editRollAtIndex(roll, el.index, el.val)
                 }
+                roll._total = roll._evaluateTotal()
             }
         }
         return roll
@@ -1151,7 +1154,7 @@ export default class DiceDSA5 {
     }
 
     static async rollTest(testData) {
-        testData.function = "rollTest"
+        //testData.function = "rollTest"
         let rollResults
         switch (testData.source.type) {
             case "ceremony":
@@ -1168,7 +1171,7 @@ export default class DiceDSA5 {
                 break
             case "trait":
                 if (testData.mode == "parry") await this.updateDefenseCount(testData)
-                rollResults = testData.mode == "damage" ? this.rollDamage(testData) : await this.rollCombatTrait(testData)
+                rollResults = testData.mode == "damage" ? await this.rollDamage(testData) : await this.rollCombatTrait(testData)
                 break
             case "regenerate":
                 rollResults = this.rollRegeneration(testData)
@@ -1176,7 +1179,7 @@ export default class DiceDSA5 {
             case "meleeweapon":
             case "rangeweapon":
                 if (testData.mode == "parry") await this.updateDefenseCount(testData)
-                rollResults = testData.mode == "damage" ? this.rollDamage(testData) : await this.rollWeapon(testData)
+                rollResults = testData.mode == "damage" ? await this.rollDamage(testData) : await this.rollWeapon(testData)
                 break
             case "dodge":
                 await this.updateDefenseCount(testData)
@@ -1239,13 +1242,14 @@ export default class DiceDSA5 {
                 case "combatskill":
                 case "trait":
                     if (testData.mode == "damage") {
-                        roll = await new Roll(testData.source.data.damage.value.replace(/[Ww]/g, "d")).evaluate({ async: true })
+                        let rollFormula = await this.damageFormula(testData)
+                        //roll = await new Roll(testData.source.data.damage.value.replace(/[Ww]/g, "d")).evaluate({ async: true })
+                        roll = await new Roll(rollFormula).evaluate({ async: true })
                         for (let i = 0; i < roll.dice.length; i++) mergeObject(roll.dice[i].options, d3dColors("damage"))
                     } else {
                         roll = await new Roll(`1d20`).evaluate({ async: true })
                         mergeObject(roll.dice[0].options, d3dColors(testData.mode))
                     }
-
                     break
                 case "dodge":
                     roll = await new Roll(`1d20`).evaluate({ async: true })
