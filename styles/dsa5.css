@@ -2196,6 +2196,7 @@ a.inline-roll {
     background-image: url(../icons/categories/Spellextension.webp);
 }
 
+.rollTarget,
 .specAbs:hover {
     cursor: pointer;
 }
@@ -2854,6 +2855,7 @@ select.noAppearance {
     position: relative;
 }
 
+.multipleTarget,
 .missingTarget {
     margin-left: 25px;
 }
@@ -2861,6 +2863,10 @@ select.noAppearance {
 .missingTarget i,
 .skill-test .targets i {
     color: darkred;
+}
+
+.multipleTarget i{
+    color: #e68044;
 }
 
 .skill-test .targets .image i {

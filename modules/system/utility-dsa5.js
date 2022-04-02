@@ -151,21 +151,6 @@ export default class DSA5_Utility {
         return DSA5.advancementCosts[type][Number(currentAdvances) + modifier]
     }
 
-    static editRollAtIndex(roll, index, newValue) {
-        let curindex = 0
-        for (let term of roll.terms) {
-            if (term instanceof Die || term.class == "Die") {
-                if (term.results[index - curindex]) {
-                    let oldVal = term.results[index - curindex].result
-                    term.results[index - curindex].result = newValue
-                    return oldVal
-                }
-                curindex += term.results.length
-            }
-        }
-        return 0
-    }
-
     static async getFolderForType(documentType, parent = null, folderName = null, sort = 0, color = "") {
         let folder = await game.folders.contents.find(x => x.name == folderName && x.type == documentType && x.data.parent == parent)
         if (!folder) {

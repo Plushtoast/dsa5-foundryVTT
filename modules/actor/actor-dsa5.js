@@ -1257,7 +1257,7 @@ export default class Actordsa5 extends Actor {
 
         this.resetTargetAndMessage(data, cardOptions)
 
-        let oldDamageRoll = duplicate(data.postData.damageRoll)
+        let oldDamageRoll = data.postData.damageRoll
         let newRoll = await DiceDSA5.manualRolls(
             new Roll(oldDamageRoll.formula || oldDamageRoll._formula).evaluate({
                 async: false,

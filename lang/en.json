@@ -100,7 +100,8 @@
         "noTarget": "No Target",
         "assassinate": "Assassinate",
         "stun": "Stun",
-        "assassinateDescr": "Approach victim undetected (Perception vs. Stealth)"
+        "assassinateDescr": "Approach victim undetected (Perception vs. Stealth)",
+        "multipleTarget": "Multiple Targets"
     },
     "Equipment": {
         "misc": "General",

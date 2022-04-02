@@ -45,7 +45,7 @@ export default class DiceDSA5 {
 
         let targets = []
         game.user.targets.forEach((target) => {
-            if (target.actor) targets.push({ name: target.actor.name, img: target.actor.img })
+            if (target.actor) targets.push({ name: target.actor.name, id: target.id, img: target.actor.img })
         })
 
         mergeObject(dialogOptions.data, {
@@ -797,18 +797,16 @@ export default class DiceDSA5 {
                 })
 
                 if (result) {
+                    let changes = []
                     form.find(".dieInput").each(function (index) {
                         let val = Number($(this).val())
-                        if (val > 0) DSA5_Utility.editRollAtIndex(roll, index, val)
+                        if (val > 0) changes.push({val, index})
                         index++
                     })
-                    roll._total = roll._evaluateTotal()
+                    roll.editRollAtIndex(changes)
                 }
             } else {
-                for (let el of options.predefinedResult) {
-                    DSA5_Utility.editRollAtIndex(roll, el.index, el.val)
-                }
-                roll._total = roll._evaluateTotal()
+                roll.editRollAtIndex(options.predefinedResult)
             }
         }
         return roll
@@ -968,7 +966,7 @@ export default class DiceDSA5 {
     }
 
     static _rollThreeD20(testData) {
-        let roll = testData.roll || new Roll("1d20+1d20+1d20").evaluate({ async: false })
+        let roll = testData.roll ? Roll.fromData(testData.roll) : new Roll("1d20+1d20+1d20").evaluate({ async: false })
         let description = []
         let successLevel = 0
 
@@ -1011,7 +1009,8 @@ export default class DiceDSA5 {
             let oldValue = roll.terms[indexOfMinValue * 2].total
             fws += Math.max(res[indexOfMinValue], 0)
             fws -= Math.max(0, reroll.total - tar[indexOfMinValue])
-            DSA5_Utility.editRollAtIndex(roll, indexOfMinValue, reroll.total)
+            //DSA5_Utility.editRollAtIndex(roll, indexOfMinValue, reroll.total)
+            roll.editRollAtIndex({index: indexOfMinValue, val: reroll.total})
             this._addRollDiceSoNice(testData, reroll, roll.terms[indexOfMinValue * 2].options)
             description.push(
                 game.i18n.format("CHATNOTIFICATION.unableReroll", {
@@ -1201,6 +1200,7 @@ export default class DiceDSA5 {
     }
 
     static _compareWeaponReach(weapon, testData) {
+        //TODO move this to roll dialog
         let circumvent = testData.situationalModifiers.find((x) => x.name == game.i18n.localize("LocalizedIDs.circumvent"))
         const attacker = DSA5.meleeRangesArray.indexOf(weapon.data.reach.value)
         const defender = DSA5.meleeRangesArray.indexOf(testData.opposingWeaponSize)
@@ -1435,21 +1435,24 @@ export default class DiceDSA5 {
         let data = message.data.flags.data
         let newTestData = data.preData
         newTestData.extra.actor = DSA5_Utility.getSpeaker(newTestData.extra.speaker).toObject(false)
+        if(newTestData.extra.options.cheat) delete newTestData.extra.options.cheat
         let index
 
         switch (input.attr("data-edit-type")) {
             case "roll":
                 index = input.attr("data-edit-id")
                 let newValue = Number(input.val())
-                let oldDamageRoll = data.postData.damageRoll ? duplicate(data.postData.damageRoll) : undefined
+                
                 if (newTestData.roll.terms.length > index * 2) {
-                    DSA5_Utility.editRollAtIndex(newTestData.roll, index, newValue)
+                    let newRoll = Roll.fromData(newTestData.roll)
+                    newRoll.editRollAtIndex([{index, val: newValue}])
+                    newTestData.roll = newRoll
                 } else {
+                    let oldDamageRoll = Roll.fromData(data.postData.damageRoll)
                     index = index - newTestData.roll.terms.filter((x) => x.results).length
-                    oldDamageRoll.total =
-                        oldDamageRoll.total - DSA5_Utility.editRollAtIndex(oldDamageRoll, index, newValue) + newValue
+                    oldDamageRoll.editRollAtIndex([{index, val: newValue}])
+                    newTestData.damageRoll = oldDamageRoll
                 }
-                newTestData.damageRoll = oldDamageRoll
                 break
             case "mod":
                 index = newTestData.situationalModifiers.findIndex((x) => x.name == game.i18n.localize("chatEdit"))
@@ -1473,6 +1476,7 @@ export default class DiceDSA5 {
 
         if (["gmroll", "blindroll"].includes(chatOptions.rollMode))
             chatOptions["whisper"] = game.users.filter((user) => user.isGM).map((x) => x.data._id)
+
         if (chatOptions.rollMode === "blindroll") chatOptions["blind"] = true
 
         if (["poison", "disease"].includes(newTestData.source.type)) {

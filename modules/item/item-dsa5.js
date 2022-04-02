@@ -405,12 +405,10 @@ export default class Itemdsa5 extends Item {
         }
 
         const rangeOptions = {...DSA5.rangeWeaponModifiers }
-        console.log(rangeOptions)
         delete rangeOptions[
             AdvantageRulesDSA5.hasVantage(actor, game.i18n.localize("LocalizedIDs.senseOfRange")) ? "long" : "rangesense"
         ]
         if (!SpecialabilityRulesDSA5.hasAbility(actor, game.i18n.localize("LocalizedIDs.extremeShot"))) delete rangeOptions["extreme"]
-        console.log(rangeOptions)
         const drivingArcher = SpecialabilityRulesDSA5.hasAbility(actor, game.i18n.localize("LocalizedIDs.drivingArcher"))
         const mountedOptions = drivingArcher ? duplicate(DSA5.drivingArcherOptions) : duplicate(DSA5.mountedRangeOptions)
 

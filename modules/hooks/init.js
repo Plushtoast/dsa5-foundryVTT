@@ -13,6 +13,7 @@ import * as tokenHUD from './tokenHUD.js'
 import * as migrateWorld from '../system/migrator.js'
 import * as initScene from './scene.js'
 import * as initKeybindings from './keybindings.js'
+import * as rollExtensions from './../system/dsarolls.js'
 
 import ActorSheetdsa5Character from "./../actor/character-sheet.js";
 import ActorSheetdsa5Creature from "./../actor/creature-sheet.js";
@@ -40,7 +41,7 @@ export default function() {
     tokenHUD.default()
     migrateWorld.default()
     initScene.default()
-
+    rollExtensions.default()
 }
 
 Hooks.once("init", () => {
@@ -49,6 +50,7 @@ Hooks.once("init", () => {
         "systems/dsa5/templates/actors/actor-talents.html",
         "systems/dsa5/templates/items/item-description.html",
         "systems/dsa5/templates/dialog/default-dialog.html",
+        "systems/dsa5/templates/dialog/parts/targets.html",
         "systems/dsa5/templates/dialog/enhanced-default-dialog.html",
         "systems/dsa5/templates/dialog/default-combat-dialog.html",
         "systems/dsa5/templates/chat/roll/test-card.html",

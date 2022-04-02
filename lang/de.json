@@ -114,7 +114,9 @@
         "noTarget": "Kein Ziel",
         "assassinate": "Meucheln",
         "stun": "Betäuben",
-        "assassinateDescr": "Opfer muss ahnungslos sein (Wahrnehmung gegen Verbergen)"
+        "assassinateDescr": "Opfer muss ahnungslos sein (Wahrnehmung gegen Verbergen)",
+        "multipleTarget": "Mehrere Ziele"
+
     },
     "Equipment": {
         "misc": "Allgemein",

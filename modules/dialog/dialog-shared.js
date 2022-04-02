@@ -21,35 +21,50 @@ export default class DialogShared extends Dialog {
     setRollButtonWarning() {
         if (this.dialogData.mode == "attack") {
             const noTarget = game.i18n.localize("DIALOG.noTarget")
-            $(this._element).find(".dialog-buttons .rollButton").html(`${game.i18n.localize('Roll')}<span class="missingTarget"><i class="fas fa-exclamation-circle"></i> ${noTarget}</span>`)
+            $(this._element).find(".dialog-buttons .rollButton").html(
+                `${game.i18n.localize('Roll')}<span class="missingTarget"><i class="fas fa-exclamation-circle"></i> ${noTarget}</span>`
+                )
         }
     }
 
-    updateTargets(html, targets) {
+    setMultipleTargetsWarning() {
+        if (this.dialogData.mode == "attack") {
+            const noTarget = game.i18n.localize("DIALOG.multipleTarget")
+            $(this._element).find(".dialog-buttons .rollButton").html(
+                `${game.i18n.localize('Roll')}<span class="multipleTarget"><i class="fas fa-exclamation-circle"></i> ${noTarget}</span>`
+                )
+        }
+    }
+
+    async updateTargets(html, targets) {
+        const template = await renderTemplate('systems/dsa5/templates/dialog/parts/targets.html', {targets})
+        html.find(".targets").html(template);
         if (targets.length > 0) {
-            html
-                .find(".targets")
-                .html(
-                    targets
-                    .map(
-                        (x) =>
-                        `<div class="image" title="${game.i18n.localize("target")}" style="background-image:url(${
-                  x.img
-                })"><i class="fas fa-bullseye"></i></div>`
-                    ).join("")
-                );
             $(this._element).find('.dialog-buttons .missingTarget').remove()
+            if(targets.length > 1){
+                this.setMultipleTargetsWarning()
+            }else{
+                $(this._element).find('.dialog-buttons .multipleTarget').remove()
+            }
         } else {
-            const noTarget = game.i18n.localize("DIALOG.noTarget")
-            html.find(".targets").html(`<div><i class="fas fa-exclamation-circle"></i> ${noTarget}</div>`);
             this.setRollButtonWarning()
         }
+    }
+
+    removeTarget(ev){
+        const id = ev.currentTarget.dataset.id
+        $(ev.currentTarget).remove()
+        const newIds = []
+        game.user.targets.forEach((x) => {
+            if (id != x.id) newIds.push(x.id);
+        });
+        game.user.updateTokenTargets(newIds)
     }
 
     readTargets() {
         let targets = [];
         game.user.targets.forEach((x) => {
-            if (x.actor) targets.push({ name: x.actor.name, img: x.actor.img });
+            if (x.actor) targets.push({ name: x.actor.name, img: x.actor.img, id: x.id });
         });
         return targets;
     }
@@ -75,6 +90,7 @@ export default class DialogShared extends Dialog {
             $(ev.currentTarget).prop("selected", !$(ev.currentTarget).prop("selected"));
             return false;
         });
+        html.on('click', '.rollTarget', (ev) => this.removeTarget(ev))
     }
 
     prepareFormRecall(html) {

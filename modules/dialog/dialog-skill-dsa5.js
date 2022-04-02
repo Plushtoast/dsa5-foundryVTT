@@ -18,4 +18,28 @@ export default class DSA5SkillDialog extends DialogShared {
         mergeObject(nonOpposedButton, buttons)
         return nonOpposedButton
     }
+
+    activateListeners(html){
+        super.activateListeners(html)
+
+        let targets = this.readTargets();
+
+        if (targets.length == 0) {
+            this.setRollButtonWarning()
+        }
+        // not great
+        const that = this
+        this.checkTargets = setInterval(function() {
+            targets = that.compareTargets(html, targets);
+        }, 500);
+    }
+
+    static get defaultOptions() {
+        const options = super.defaultOptions;
+        mergeObject(options, {
+            width: 700,
+            resizable: true,
+        });
+        return options;
+    }
 }

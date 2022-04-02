@@ -79,6 +79,8 @@ export default class DSA5CombatDialog extends DialogShared {
 
         if (targets.length == 0) {
             this.setRollButtonWarning()
+        }else if(targets.length > 1){
+            this.setMultipleTargetsWarning()
         }
         // not great
         const that = this
