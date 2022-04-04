@@ -70,12 +70,8 @@ export default class DSA5ChatListeners {
         })
     }
 
-    static showTables(){
-        const msg = `<a class="roll-button botch-roll" data-table="Defense" data-weaponless="false"><i class="fas fa-dice"></i>${game.i18n.localize('TABLENAMES.Defense')}</a>
-        <a class="roll-button botch-roll" data-table="Melee" data-weaponless="false"><i class="fas fa-dice"></i>${game.i18n.localize('TABLENAMES.Melee')}</a>
-        <a class="roll-button botch-roll" data-table="Range" data-weaponless="false"><i class="fas fa-dice"></i>${game.i18n.localize('TABLENAMES.Range')}</a>
-        <a class="roll-button botch-roll" data-table="Liturgy"><i class="fas fa-dice"></i>${game.i18n.localize('TABLENAMES.Liturgy')}</a>
-        <a class="roll-button botch-roll" data-table="Spell"><i class="fas fa-dice"></i>${game.i18n.localize('TABLENAMES.Spell')}</a>`
+    static async showTables(){
+        const msg = await renderTemplate('systems/dsa5/templates/system/systemtables.html', {tables: DSA5.systemTables})
         ChatMessage.create(DSA5_Utility.chatDataSetup(msg, "roll"))
     }
 }

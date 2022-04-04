@@ -88,13 +88,13 @@ export default class TokenHotbar2 extends Application {
                 const effect = actor.effects.get(id)
                 const isSystemEffect = effect.getFlag("core", "statusId")
                 if (ev.button == 0) {
-                    if (isSystemEffect) await actor.addCondition(isSystemEffect)
+                    if (isSystemEffect) await actor.addCondition(isSystemEffect, 1, false, false)
                     else effect.sheet.render(true)
                 } else if (ev.button == 2) {
-                    if (isSystemEffect) await actor.removeCondition(isSystemEffect)
+                    if (isSystemEffect) await actor.removeCondition(isSystemEffect, 1, false)
                     else await actor.sheet._deleteActiveEffect(id)
                 }
-                this.render(true)
+                await this.render(true)
                 break
             case "onUse":
                 let item = actor.items.get(id)

@@ -1484,11 +1484,11 @@
         "12": "Ein schwerer Eigentreffer des Helden. Der Schaden seiner Waffe wird unter Einbeziehung des Schadensbonus ausgewürfelt und dann verdoppelt. Bei unbewaffneten Kämpfern wird 1W6 TP angenommen."
     },
     "TABLENAMES": {
-        "Defense": "Verteidigung-Patzertabelle",
-        "Melee": "Nahkampf-Patzertabelle",
-        "Range": "Fernkampf-Patzertabelle",
-        "Liturgy": "Patzertabelle für Liturgien/Zeremonien",
-        "Spell": "Patzertabelle für Zauber/Rituale"
+        "Defense": "Verteidigung-Patzer",
+        "Melee": "Nahkampf-Patzer",
+        "Range": "Fernkampf-Patzer",
+        "Liturgy": "Patzer für Liturgien/Zeremonien",
+        "Spell": "Patzer für Zauber/Rituale"
     },
     "CONDITION": {
         "shapeshift": "Gestaltwandlung",

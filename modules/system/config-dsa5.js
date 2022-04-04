@@ -446,6 +446,14 @@ DSA5.equipmentTypes = {
 
 DSA5.equipmentCategories = ["meleeweapon", "rangeweapon", "equipment", "ammunition", "armor", "poison", "consumable", "plant"]
 
+DSA5.systemTables = [
+    { name: "Defense", attrs: "data-weaponless=\"false\"", roll: "botch-roll" },
+    { name: "Melee", attrs: "data-weaponless=\"false\"", roll: "botch-roll" },
+    { name: "Range", attrs: "data-weaponless=\"false\"", roll: "botch-roll" },
+    { name: "Liturgy", attrs: "", roll: "botch-roll" },
+    { name: "Spell", attrs: "", roll: "botch-roll" },
+]
+
 DSA5.narrowSpaceModifiers = {
     "weaponshort": {
         "attack": 0,

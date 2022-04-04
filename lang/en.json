@@ -1504,11 +1504,11 @@
         "12": "Suffer double your weapon’s damage, including the damage bonus (ignoring PRO). Unarmed combatants suffer 2D6 DP (ignoring PRO)."
     },
     "TABLENAMES": {
-        "Defense": "Defense - Botch Table",
-        "Melee": "Close Combat - Botch Table",
-        "Range": "Ranged Combat - Botch Table",
-        "Liturgy": "Botch Table for Ceremonies/Chants",
-        "Spell": "Botch Table for Spells"
+        "Defense": "Defense - Botch",
+        "Melee": "Close Combat - Botch",
+        "Range": "Ranged Combat - Botch",
+        "Liturgy": "Botch for Ceremonies/Chants",
+        "Spell": "Botch for Spells"
     },
     "CONDITION": {
         "shapeshift": "Shapeshift",
