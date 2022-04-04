@@ -11,6 +11,7 @@ import Actordsa5 from "./actor-dsa5.js";
 import DSA5SoundEffect from "../system/dsa-soundeffect.js";
 import RuleChaos from "../system/rule_chaos.js";
 import OnUseEffect from "../system/onUseEffects.js";
+import { bindImgToCanvasDragStart } from "../hooks/imgTileDrop.js";
 
 export default class ActorSheetDsa5 extends ActorSheet {
     get actorType() {
@@ -623,8 +624,6 @@ export default class ActorSheetDsa5 extends ActorSheet {
         html.find(".cards .item").mouseenter(ev => {
 
             if (ev.currentTarget.getElementsByClassName('hovermenu').length == 0) {
-                const itemId = $(ev.currentTarget).attr("data-item-id")
-                const item = this.actor.items.get(itemId)
                 const div = document.createElement('div')
                 div.classList.add("hovermenu")
                 const del = document.createElement('i')
@@ -687,20 +686,21 @@ export default class ActorSheetDsa5 extends ActorSheet {
             await ef.update({ disabled: !ef.disabled })
         })
 
-        html.find('.talentSearch').keyup(event => this._filterTalents($(event.currentTarget)))
-
         html.find('.charimg').mousedown(ev => {
             if (ev.button == 2) DSA5_Utility.showArtwork(this.actor, true)
         })
 
         let filterTalents = ev => this._filterTalents($(ev.currentTarget))
         let talSearch = html.find('.talentSearch')
+        talSearch.keyup(event => this._filterTalents($(event.currentTarget)))
         talSearch[0] && talSearch[0].addEventListener("search", filterTalents, false);
 
-        html.find('.conditionSearch').keyup(event => this._filterConditions($(event.currentTarget)))
         let filterConditions = ev => this._filterConditions($(ev.currentTarget))
         let condSearch = html.find('.conditionSearch')
+        condSearch.keyup(event => this._filterConditions($(event.currentTarget)))
         condSearch[0] && condSearch[0].addEventListener("search", filterConditions, false);
+
+        bindImgToCanvasDragStart(html, "img.charimg")
     }
 
     _onMacroUseItem(ev) {
@@ -756,7 +756,7 @@ export default class ActorSheetDsa5 extends ActorSheet {
         const itemId = this._getItemId(ev);
         let item = this.actor.items.get(itemId)
         let message = game.i18n.format("DIALOG.DeleteItemDetail", { item: item.name })
-        renderTemplate('systems/dsa5/templates/dialog/delete-item-dialog.html', { message: message }).then(html => {
+        renderTemplate('systems/dsa5/templates/dialog/delete-item-dialog.html', { message }).then(html => {
             new Dialog({
                 title: game.i18n.localize("Delete Confirmation"),
                 content: html,
@@ -764,9 +764,7 @@ export default class ActorSheetDsa5 extends ActorSheet {
                     Yes: {
                         icon: '<i class="fa fa-check"></i>',
                         label: game.i18n.localize("yes"),
-                        callback: () => {
-                            this._cleverDeleteItem(itemId)
-                        }
+                        callback: () => this._cleverDeleteItem(itemId)
                     },
                     cancel: {
                         icon: '<i class="fas fa-times"></i>',

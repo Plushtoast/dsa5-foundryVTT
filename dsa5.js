@@ -16,7 +16,7 @@ import ChatMessageDSA5Roll from "./modules/chat/ChatMessageDSA5.js";
 import DSA5ChatListeners from "./modules/system/chat_listeners.js";
 import DSA5Payment from "./modules/system/payment.js"
 import { DSA5CombatTracker, DSA5Combat, DSA5Combatant } from "./modules/hooks/combat_tracker.js";
-import DSA5Hotbar from "./modules/system/tokenHotbar.js";
+import DSA5Hotbar from "./modules/system/hotbar.js"
 import RollMemory from "./modules/system/roll_memory.js"
 import SpecialabilityRulesDSA5 from "./modules/system/specialability-rules-dsa5.js"
 import AdvantageRulesDSA5 from "./modules/system/advantage-rules-dsa5.js"

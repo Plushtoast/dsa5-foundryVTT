@@ -57,7 +57,7 @@ export default class DSA5CombatDialog extends DialogShared {
                     siblings.find(".step").text(DialogShared.roman[0]);
                 }
             } else if (ev.button == 2) {
-                step = Math.max(0, Math.min(maxStep, step - 1));
+                step = Math.clamped(maxStep, 0, step - 1)
             }
             elem.attr("data-step", step);
             if (step > 0) {
@@ -79,7 +79,7 @@ export default class DSA5CombatDialog extends DialogShared {
 
         if (targets.length == 0) {
             this.setRollButtonWarning()
-        }else if(targets.length > 1){
+        } else if (targets.length > 1) {
             this.setMultipleTargetsWarning()
         }
         // not great

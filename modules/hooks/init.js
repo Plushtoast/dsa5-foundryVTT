@@ -26,6 +26,7 @@ import AdvantageRulesDSA5 from "../system/advantage-rules-dsa5.js";
 import SpecialabilityRulesDSA5 from "../system/specialability-rules-dsa5.js";
 import DidYouKnow from "../system/didyouknow.js";
 import DSAActiveEffectConfig from "../status/active_effects.js";
+import TokenHotbar2 from "../system/tokenHotbar2.js";
 
 export default function() {
     initHandleBars.default();
@@ -100,6 +101,7 @@ Hooks.once("init", () => {
 
 Hooks.once('ready', () => {
     DidYouKnow.showOneMessage()
+    TokenHotbar2.registerTokenHotbar()
 })
 
 Hooks.once('setup', () => {

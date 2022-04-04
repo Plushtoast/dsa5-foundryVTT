@@ -2532,7 +2532,7 @@ select.noAppearance {
 .tokenQuickHot {
     position: absolute;
     top: 0;
-    height: 35px;
+    height: var(--tokenQuickhotsize);
     left: 5px;
     right: 7px;
     z-index: -2;
@@ -2541,6 +2541,7 @@ select.noAppearance {
 
 .tokenQuickHot ul {
     font-size: 0;
+    display: inline-block;
 }
 
 .tokenQuickHot.expanded {
@@ -2549,21 +2550,53 @@ select.noAppearance {
 
 .tokenQuickHot .subbuttons {
     position: absolute;
-    top: -60px;
+    z-index: 2;
+}
+
+#hotbar .macro .tooltip,
+.tokenQuickHot .tooltip {
+    z-index: 1000;
+}
+
+.tokenQuickHot .direction0 .subbuttons {
+    bottom: var(--tokenQuickhotdistance);
+}
+
+.tokenQuickHot .direction1 .subbuttons {
+    right: var(--tokenQuickhotdistance);
+}
+
+.tokenQuickHot .direction2 .subbuttons {
+    top: var(--tokenQuickhotdistance);
+}
+
+.tokenQuickHot .direction3 .subbuttons {
+    left: var(--tokenQuickhotdistance);
+}
+
+.tokenQuickHot a {
+    box-shadow: inset 0px 0px 10px #403014;
+    color: white;
+    padding: 2px;
+    margin-bottom: 2px;
+}
+
+.tokenQuickHot .effect>div {
+    background-color: rgba(0, 0, 0, 0.3);
 }
 
 .tokenQuickHot li {
     background-color: rgba(14, 12, 12, 0.3);
     display: inline-block;
     font-size: 14px;
-    width: 35px;
-    height: 35px;
+    width: var(--tokenQuickhotsize);
+    height: var(--tokenQuickhotsize);
     border: 1px solid black;
     border-radius: 3px;
     pointer-events: all;
     background-size: cover;
     box-shadow: inset 0px 0px 10px #403014;
-    background: url(../icons/backgrounds/macrobg.webp);
+    background-image: url(../icons/backgrounds/macrobg.webp);
     position: relative;
     box-sizing: border-box;
 }
@@ -2573,7 +2606,7 @@ select.noAppearance {
     cursor: pointer;
 }
 
-.tokenQuickHot div {
+.tokenQuickHot .tokenHotbarInner div {
     background-size: cover;
     height: 100%;
     width: 100%;
@@ -2601,6 +2634,32 @@ select.noAppearance {
 
 .tokenQuickHot li.skill {
     box-shadow: inset 0px 0px 10px #0d813e;
+}
+
+.window-app.tokenQuickHot .window-header {
+    display: none;
+}
+
+.window-app.tokenQuickHot {
+    padding: 0;
+}
+
+.tokenHotbarInner>ul>li.effect>div:before {
+    font-family: "Font Awesome 5 Free";
+    font-weight: 900;
+    content: "\f067";
+}
+
+.window-app.tokenQuickHot::after,
+.window-app.tokenQuickHot .window-content {
+    background: none;
+    margin: 0;
+    padding: 0;
+    overflow: visible;
+}
+
+.window-app.tokenQuickHot::after {
+    content: none;
 }
 
 .ench-fw {
@@ -2865,7 +2924,7 @@ select.noAppearance {
     color: darkred;
 }
 
-.multipleTarget i{
+.multipleTarget i {
     color: #e68044;
 }
 
@@ -3058,7 +3117,7 @@ input[type="checkbox"].autoCheckbox {
 
 #sidebar button.fshopButton {
     background: rgb(0, 111, 61);
-    background: linear-gradient(90deg, rgba(0, 38, 13, 1) 0%, rgba(0, 111, 61, 1)100%);
+    background: linear-gradient(90deg, rgba(0, 38, 13, 1) 0%, rgba(0, 111, 61, 1) 100%);
     position: relative;
 }
 

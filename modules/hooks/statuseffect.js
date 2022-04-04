@@ -1,14 +1,11 @@
 import DPS from "../system/derepositioningsystem.js";
+import actor from "./actor.js";
 
 export default function() {
     Token.prototype.drawEffects = async function() {
         this.hud.effects.removeChildren().forEach(c => c.destroy());
         const tokenEffects = this.data.effects;
-        const allowedEffects = ["dead"]
-        const isAllowedToSeeEffects = game.user.isGM || (this.actor && this.actor.testUserPermission(game.user, "OBSERVER")) || !(await game.settings.get("dsa5", "hideEffects"))
-        const actorEffects = this.actor && isAllowedToSeeEffects ? this.actor.effects.filter(x => {
-            return !x.data.disabled && !x.notApplicable && (game.user.isGM || !x.getFlag("dsa5", "hidePlayers")) && !x.getFlag("dsa5", "hideOnToken")
-        }) : (this.actor ? this.actor.effects.filter(x => allowedEffects.includes(x.getFlag("core", "statusId"))) : []);
+        const actorEffects = this.actor ? await this.actor.actorEffects() : []
 
         let overlay = {
             src: this.data.overlayEffect,
@@ -172,7 +169,7 @@ export default function() {
     }
 
     Hooks.on("applyActiveEffect", (actor, change) => {
-        if (/^@/.test(change.key)) return handleItemEffect(actor, change)
+        //if (/^@/.test(change.key)) return handleItemEffect(actor, change)
 
         return applyCustomEffect(actor, change)
     })

@@ -1,14 +1,10 @@
 <div class="selection">
     <p>{{localize title}}</p>
-
     <div class="row-section wrap">
-
         {{#each items as |itm i|}}
         <div class="col two">
-
             <button class="reactClick" data-value="{{itm.id}}"><img src="{{itm.img}}" />{{itm.name}}</button>
         </div>
         {{/each}}
-
     </div>
 </div>

@@ -505,21 +505,8 @@ class EquipmentSheet extends Enchantable {
         return data
     }
 
-    breakOverflow({ name, quantity, weight }, parent) {
-        let elm = $(`<div class="itemInfo">
-            <h3 class="center">${name}</h3>
-            <div class="row-section\">
-                <div class="col ten"></div>
-                <div class="col thirty center">
-                    # ${quantity}
-                </div>
-                <div class="col five"></div>
-                <div class="col thirty center">
-                    <i class="fas fa-anchor\"></i> ${weight}
-                </div>
-                <div class="col ten"></div>
-            </div>
-        </div>`)
+    async breakOverflow(data, parent) {
+        let elm = $(await renderTemplate('systems/dsa5/templates/items/baghover.html', data))
 
         let top = parent.offset().top + 52;
         let left = parent.offset().left - 75;
@@ -538,9 +525,9 @@ class EquipmentSheet extends Enchantable {
     activateListeners(html) {
         super.activateListeners(html)
         const slots = html.find('.slot')
-        slots.mouseenter((ev) => {
+        slots.mouseenter(async(ev) => {
             const item = $(ev.currentTarget)
-            let elm = this.breakOverflow({
+            let elm = await this.breakOverflow({
                 name: item.attr('data-name'),
                 weight: item.attr("data-weight"),
                 quantity: item.attr("data-quantity")

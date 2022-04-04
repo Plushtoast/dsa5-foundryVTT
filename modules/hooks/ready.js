@@ -2,9 +2,7 @@ import DSA5Tutorial from "../system/tutorial.js";
 import OpposedDsa5 from "../system/opposed-dsa5.js";
 import MerchantSheetDSA5 from "../actor/merchant-sheet.js";
 import Itemdsa5 from "../item/item-dsa5.js";
-import DiceDSA5 from "../system/dice-dsa5.js";
 import PlayerMenu from "../wizards/player_menu.js";
-import { DiceSoNiceCustomization } from "./dicesonice.js";
 import OnUseEffect from "../system/onUseEffects.js";
 import RequestRoll from "../system/request-roll.js";
 import DSAActiveEffectConfig from "../status/active_effects.js";
@@ -97,8 +95,8 @@ export default function() {
         }
 
         if (DSA5_Utility.moduleEnabled("vtta-tokenizer") && !(await game.settings.get("dsa5", "tokenizerSetup")) && game.user.isGM) {
-            await game.settings.set("vtta-tokenizer", "default-frame-pc", "systems/dsa5/icons/backgrounds/token_green.webp")
-            await game.settings.set("vtta-tokenizer", "default-frame-npc", "systems/dsa5/icons/backgrounds/token_black.webp")
+            await game.settings.set("vtta-tokenizer", "default-frame-pc", "[data] systems/dsa5/icons/backgrounds/token_green.webp")
+            await game.settings.set("vtta-tokenizer", "default-frame-npc", "[data] systems/dsa5/icons/backgrounds/token_black.webp")
             await game.settings.set("dsa5", "tokenizerSetup", true)
         }
         if (DSA5_Utility.moduleEnabled("dice-so-nice") && !(await game.settings.get("dsa5", "diceSetup")) && game.user.isGM) {

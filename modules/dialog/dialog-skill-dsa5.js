@@ -23,10 +23,6 @@ export default class DSA5SkillDialog extends DialogShared {
         super.activateListeners(html)
 
         let targets = this.readTargets();
-
-        if (targets.length == 0) {
-            this.setRollButtonWarning()
-        }
         // not great
         const that = this
         this.checkTargets = setInterval(function() {

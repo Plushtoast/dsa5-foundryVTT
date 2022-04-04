@@ -1366,7 +1366,17 @@
         "enableForeignSpellModifer": "Unfamiliar tradition modifier",
         "enableForeignSpellModiferHint": "Enable -2 modifier for unfamiliar tradition checks.",
         "enableDPS": "Activate DPS ",
-        "enableDPSHint": "Activate the \"Dere Positioning System\".\nYou can only interact with merchants in immediate distance.\nRange modifiers for ranged attacks are applied automatically."
+        "enableDPSHint": "Activate the \"Dere Positioning System\".\nYou can only interact with merchants in immediate distance.\nRange modifiers for ranged attacks are applied automatically.",
+        "tokenhotbarSize": "Token hotbar size",
+        "tokenhotbarSizeHint": "Size of the buttons in the token hotbar.",
+        "tokenhotbarLayout": "Tokenhotbar Layout",
+        "tokenhotbarLayoutHint": "Layout and direction of the token hotbar",
+        "tokenhotbarLayout0": "Horizontal, upwards",
+        "tokenhotbarLayout1": "Horizontal, downwards",
+        "tokenhotbarLayout2": "Vertical, left",
+        "tokenhotbarLayout3": "Vertical, right",
+        "resetTokenbar": "Reset token hotbar",
+        "resetTokenbarHint": "Reset the position of the token hotbar"
     },
     "WEAR": {
         "check": "Breaking Point Rating Check ({category})",

@@ -225,7 +225,7 @@ export default class Actordsa5 extends Actor {
                         AdvantageRulesDSA5.vantageStep(this, game.i18n.localize("LocalizedIDs.sensitiveToPain")) +
                         AdvantageRulesDSA5.vantageStep(this, game.i18n.localize("LocalizedIDs.fragileAnimal"))
 
-                    pain = Math.max(Math.min(4, pain), 0)
+                    pain = Math.clamped(pain, 0, 4)
                 }
 
                 const changePain = data.pain != pain
@@ -1891,6 +1891,15 @@ export default class Actordsa5 extends Actor {
             )
         }
         return item
+    }
+
+    async actorEffects(){
+        const allowedEffects = ["dead"]
+        const isAllowedToSeeEffects = game.user.isGM || (this.testUserPermission(game.user, "OBSERVER")) || !(await game.settings.get("dsa5", "hideEffects"))
+
+        return isAllowedToSeeEffects ? this.effects.filter(x => {
+            return !x.data.disabled && !x.notApplicable && (game.user.isGM || !x.getFlag("dsa5", "hidePlayers")) && !x.getFlag("dsa5", "hideOnToken")
+        }) : this.actor.effects.filter(x => allowedEffects.includes(x.getFlag("core", "statusId")));
     }
 
     async _preCreate(data, options, user) {
