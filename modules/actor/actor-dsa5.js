@@ -1259,9 +1259,7 @@ export default class Actordsa5 extends Actor {
 
         let oldDamageRoll = data.postData.damageRoll
         let newRoll = await DiceDSA5.manualRolls(
-            new Roll(oldDamageRoll.formula || oldDamageRoll._formula).evaluate({
-                async: false,
-            }),
+            await new Roll(oldDamageRoll.formula || oldDamageRoll._formula).evaluate({ async: true, }),
             "CHATCONTEXT.rerollDamage"
         )
 
@@ -1967,9 +1965,7 @@ export default class Actordsa5 extends Actor {
     }
 
     static _parseDmg(item, modification = undefined) {
-        let parseDamage = new Roll(item.data.damage.value.replace(/[Ww]/g, "d"), {
-            async: false,
-        })
+        let parseDamage = new Roll(item.data.damage.value.replace(/[Ww]/g, "d"), {async: false})
 
         let damageDie = "",
             damageTerm = "",
@@ -2169,7 +2165,9 @@ export default class Actordsa5 extends Actor {
 
         if (game.user.targets.size) {
             cardOptions.isOpposedTest = testData.opposable
-            if (cardOptions.isOpposedTest) cardOptions.title += ` - ${game.i18n.localize("Opposed")}`
+            const opposed = ` - ${game.i18n.localize("Opposed")}`
+            console.log(cardOptions.title)
+            if (cardOptions.isOpposedTest && cardOptions.title.match(opposed+"$") != opposed) cardOptions.title += opposed
         }
 
         await this.consumeAmmunition(testData)

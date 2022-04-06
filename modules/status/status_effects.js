@@ -356,6 +356,7 @@ class TheriakEffect extends DSA5StatusEffects {
         return 0
     }
 }
+
 class NoModifierEffect extends DSA5StatusEffects {
     static calculateRollModifier(effect, actor, item, options = {}) {
         return 0

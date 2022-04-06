@@ -64,6 +64,20 @@
             "system": "dsa5",
             "path": "packs/species.db",
             "type": "Item"
+        },
+        {
+            "name": "patzer",
+            "label": "Patzer",
+            "system": "dsa5",
+            "path": "packs/patzer.db",
+            "type": "RollTable"
+        },
+        {
+            "name": "botch",
+            "label": "Botch",
+            "system": "dsa5",
+            "path": "packs/botch.db",
+            "type": "RollTable"
         }
     ],
     "languages": [{

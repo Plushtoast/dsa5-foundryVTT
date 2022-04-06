@@ -24,6 +24,7 @@ import Migrakel from "./modules/system/migrakel.js"
 import DSA5Dialog from "./modules/dialog/dialog-dsa5.js"
 import DPS from "./modules/system/derepositioningsystem.js"
 import DSATables from "./modules/tables/dsatables.js"
+import DSA5StatusEffects from './modules/status/status_effects.js'
 
 Hooks.once("init", () => {
     console.log("Initializing DSA5 system")
@@ -44,6 +45,7 @@ Hooks.once("init", () => {
             AdvantageRulesDSA5,
             Migrakel,
             DSA5Dialog,
+            DSA5StatusEffects,
             DPS,
             DSATables
         },

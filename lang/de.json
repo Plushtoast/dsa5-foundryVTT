@@ -650,7 +650,7 @@
         "Bögen": "<p><b>Spezialität</b>: -</p>",
         "Diskusse": "<p><b>Spezialität</b>: -</p>",
         "Dolche": "<p><b>Spezialität</b>: Mit Dolchen können Kettenwaffen, Stangenwaffen, Zweihandhiebwaffen und Zweihandschwerter nicht pariert werden.</p>",
-        "Fächer": "<p><b>Spezialität</b>:  Fächer ein- oder ausklappen dauert jeweils 1 Aktion. Mit dem ausgeklappten Fächer kann man versuchen, Geschosse (Bolzen, Pfeile, Kugeln, Wurfdolche – und Scheiben u. Ä., nicht aber Wurfspeere und -äxte) wie mit einem Schild zu parieren, allerdings erleidet man bei der Parade zusätzlich zu den üblichen Modifikatoren (siehe Regelwerk Seite 244) noch eine Erschwernis von 1.Mit einem offenen Fächer können nur Nahkampfangriffe der Kampftechniken Raufen, Dolche und Fechtwaffen pariert werden sowie Fernkampftechniken (siehe oben). Nur ein offener Fächer kann als kleiner Schild dienen.Mit geschlossenem Fächer können Waffen aller Kampftechniken außer Kettenwaffen, Zweihandhiebwaffen, Zweihandschwerter und Fernkampftechniken pariert werden. Nur ein geschlossener Fächer kann als Parierwaffe dienen.</p>",
+        "Fächer": "<p><b>Spezialität</b>:  Fächer ein- oder ausklappen dauert jeweils 1 Aktion. Mit dem ausgeklappten Fächer kann man versuchen, Geschosse (Bolzen, Pfeile, Kugeln, Wurfdolche – und Scheiben u. Ä., nicht aber Wurfspeere und -äxte) wie mit einem Schild zu parieren, allerdings erleidet man bei der Parade zusätzlich zu den üblichen Modifikatoren noch eine Erschwernis von 1.Mit einem offenen Fächer können nur Nahkampfangriffe der Kampftechniken Raufen, Dolche und Fechtwaffen pariert werden sowie Fernkampftechniken (siehe oben). Nur ein offener Fächer kann als kleiner Schild dienen.Mit geschlossenem Fächer können Waffen aller Kampftechniken außer Kettenwaffen, Zweihandhiebwaffen, Zweihandschwerter und Fernkampftechniken pariert werden. Nur ein geschlossener Fächer kann als Parierwaffe dienen.</p>",
         "Fechtwaffen": "<p><b>Spezialität</b>: Mit Fechtwaffen können Kettenwaffen, Stangenwaffen, Zweihandhiebwaffen und Zweihandschwerter nicht pariert werden. Proben auf  Verteidigung gegen Fechtwaffen-Attacken sind um 1 erschwert.</p>",
         "Feuerspeien": "<p><b>Spezialität</b>: -</p>",
         "Hiebwaffen": "<p><b>Spezialität</b>: -</p>",
@@ -1418,77 +1418,12 @@
         "selectDieToReroll": "Wähle die zu wiederholenden Würfel",
         "Improve": "{character} verbessert den Wurf um 2"
     },
-    "SPELLMISCAST": {
-        "2": "Der Geist des Zauberers tauscht für 1D6 Tag(e) den Körper mit dem nächsten Lebewesen in seiner Nähe, das größer ist als eine Ratte.",
-        "3": "Der Zauberer wird für 1D6 Tag(e) von Zustand Lästige Mindergeister verfolgt.",
-        "4": "Das Ziel des Zaubers ändert sich zufällig nach Wahl des Meisters.",
-        "5": "Der Zauberer verwandelt sich für 1D6 Stunden in ein Kleintier nach Wahl des Spielleiters.",
-        "6": "Die gesamte Astralkraft verlässt den Körper des Zauberers und manifestiert sich als Regen aus bunten Funken, illusionären Schmetterlingen und kleinen Regenbögen. Die verlorenen Astralpunkte können regulär regeneriert werden.",
-        "7": "Der Zauberer verliert für 1D6 Tag(e) die Fähigkeit, auf seinen AE-Vorrat zuzugreifen.",
-        "8": "Der Zauberer hat für die nächsten 1D6 Tag(e) pochende Kopfschmerzen. Er leidet während dieser Zeit unter einer Stufe Betäubung.",
-        "9": "Die gesamte Astralkraft verlässt den Körper des Zauberers und springt auf das nächste magisch begabte Ziel über. Das Ziel erhält die gesamten Astralpunkte des Zauberers, auch über sein natürliches Maximum an Astralenergie hinaus. Der Zauberer kann die verlorenen Astralpunkte regulär regenerieren.",
-        "10": "Der Zauberer erhält für 1D6 Tag(e) den Zustand Stumm.",
-        "11": "Haar und Bart des Zauberers färben sich bunt, wachsen später jedoch in der ursprünglichen Farbe nach.",
-        "12": "Eine ätherische Stimme erklingt aus dem Nichts und sagt „Tu das nie wieder!“"
-    },
-    "LITURGYMISCAST": {
-        "2": "Im Umkreis von 2D6 Metern gehen brennbare Materialien in Flammen auf (außer Lebewesen und die Kleidung des Geweihten).",
-        "3": "Die gewirkte Liturgie/Zeremonie hat einen gegenteiligen Effekt. Ein Bann des Lichts erzeugt Licht, ein Heilsegen fügt dem Ziel Schaden zu usw.",
-        "4": "Das Ziel der Liturgie/Zeremonie ändert sich zufällig nach Wahl des Meisters.",
-        "5": "Der Geweihte hat für 1D6 Tag(e) nachts seltsame Visionen und Alpträume.",
-        "6": "Durch einen Blick in die Sphären ist der Geweihte so eingeschüchtert, dass er einen Tag lang 3 Stufen Furcht erhält.",
-        "7": "Der Geweihte verliert für 1D6 Tag(e) die Fähigkeit, auf seinen KE-Vorrat zuzugreifen.",
-        "8": "Der Geweihte erhält für einen Tag 4 Stufen Entrückung.",
-        "9": "Der Geweihte ist für einen Tag lang verwirrt und redet unverständliches Zeug, an das er sich später nicht mehr erinnert. Er erhält 3 Stufen Verwirrung.",
-        "10": "Der Geweihte erhält für 1D6 Tag(e) den Zustand Stumm.",
-        "11": "Für einen Tag erhält der Geweihte ein Stigma.",
-        "12": "Der Geweihte verwurzelt mit dem Boden und kann seine Füße für 1W6 Minuten nicht bewegen. Er erhält währenddessen den Status Fixiert."
-    },
-    "MELEEBOTCH": {
-        "2": "Die Waffe ist unwiederbringlich zerstört. Unzerstörbare Waffen fallen zu Boden.",
-        "3": "Die Waffe ist nicht mehr einsetzbar, bis sie repariert wird. Unzerstörbare Waffen fallen zu Boden.",
-        "4": "Die Waffe ist beschädigt worden. Alle Proben auf Attacke und Parade sind um 2 erschwert, bis sie repariert wird. Unzerstörbare Waffen fallen zu Boden.",
-        "5": "Die Waffe ist zu Boden gefallen.",
-        "6": "Die Waffe des Helden ist in einem Baum, einer Holzwand, dem Boden oder Ähnlichem stecken geblieben. Um sie zu befreien, ist 1 Aktion und eine um 1 erschwerte Probe auf Kraftakt (Ziehen & Zerren) notwendig.",
-        "7": "Der Held stolpert und stürzt, wenn seinem Spieler nicht eine um 2 erschwerte Probe auf Körperbeherrschung (Balance) gelingt. Sollte er das nicht schaffen, erhält der Held den Status Liegend.",
-        "8": "Der Held stolpert, seine nächste Handlung ist um 2 erschwert.",
-        "9": "Der Held erhält für 3 Kampfrunden eine Stufe Schmerz.",
-        "10": "Der Held hat sich im Eifer des Gefechts den Kopf gestoßen. Er erhält für eine Stunde eine Stufe Betäubung.",
-        "11": "Der Held hat sich selbst verletzt und erleidet Schaden. Der Schaden seiner Waffe wird unter Einbeziehung des Schadensbonus ausgewürfelt. Bei unbewaffneten Kämpfern wird 1W6 TP angenommen.",
-        "12": "Ein schwerer Eigentreffer des Helden. Der Schaden seiner Waffe wird unter Einbeziehung des Schadensbonus ausgewürfelt und dann verdoppelt. Bei unbewaffneten Kämpfern wird 1W6 TP angenommen."
-    },
-    "RANGEBOTCH": {
-        "2": "Die Waffe ist unwiederbringlich zerstört. Unzerstörbare Waffen fallen zu Boden.",
-        "3": "Die Waffe ist nicht mehr einsetzbar, bis sie repariert wird. Unzerstörbare Waffen fallen zu Boden.",
-        "4": "Die Waffe ist beschädigt worden. Alle Proben auf Fernkampf sind um 4 erschwert, bis sie repariert wird. Unzerstörbare Waffen fallen zu Boden.",
-        "5": "Die Waffe ist zu Boden gefallen.",
-        "6": "Das Geschoss trifft aus Versehen einen Freund oder einen am Kampf Unbeteiligten. Ist kein solches Ziel in der Nähe, trifft der Held sich selbst. Der Schaden der Waffe wird unter Einbeziehung des Schadensbonus ausgewürfelt.",
-        "7": "Der spektakuläre Fehlschuss trifft ein Objekt (Ladenschild heruntergeschossen, Glasfenster zu Bruch gegangen etc.).",
-        "8": "Der Held hat Rückenschmerzen und erleidet für die nächsten 3 Kampfrunden eine Stufe Schmerz.",
-        "9": "Der Held benötigt 2 komplette Kampfrunden, um die Waffe wieder einsatzbereit zu machen.",
-        "10": "Der Held ist mit Zielen oder mit seiner Waffe beschäftigt. Bis zu seiner nächsten Aktion kann er keine Verteidigungen ausführen.",
-        "11": "Der Held hat sich selbst verletzt und erleidet Schaden. Der Schaden der Waffe wird unter Einbeziehung des Schadensbonus ausgewürfelt.",
-        "12": "Ein schwerer Eigentreffer. Der Schaden der Waffe wird unter Einbeziehung des Schadensbonus ausgewürfelt und dann verdoppelt."
-    },
-    "DEFENSEBOTCH": {
-        "2": "Die Waffe ist unwiederbringlich zerstört. Unzerstörbare Waffen fallen zu Boden.",
-        "3": "Die Waffe ist nicht mehr einsetzbar, bis sie repariert wird. Unzerstörbare Waffen fallen zu Boden.",
-        "4": "Die Waffe ist beschädigt worden. Alle Proben auf Attacke und Parade sind um 2 erschwert, bis sie repariert wird. Unzerstörbare Waffen fallen zu Boden.",
-        "5": "Die Waffe ist zu Boden gefallen.",
-        "6": "Die Waffe des Helden ist in einem Baum, einer Holzwand, dem Boden oder Ähnlichem stecken geblieben. Um sie zu befreien, ist 1 Aktion und eine um 1 erschwerte Probe auf Kraftakt (Ziehen & Zerren) notwendig.",
-        "7": "Der Held stolpert und stürzt, wenn seinem Spieler nicht eine um 2 erschwerte Probe auf Körperbeherrschung (Balance) gelingt. Sollte er das nicht schaffen, erhält der Held den Status Liegend.",
-        "8": "Der Held stolpert, seine nächste Handlung ist um 2 erschwert.",
-        "9": "Der Held erhält für 3 Kampfrunden eine Stufe Schmerz.",
-        "10": "Der Held hat sich im Eifer des Gefechts den Kopf gestoßen. Er erhält für eine Stunde eine Stufe Betäubung.",
-        "11": "Der Held hat sich selbst verletzt und erleidet Schaden. Der Schaden seiner Waffe wird unter Einbeziehung des Schadensbonus ausgewürfelt. Bei unbewaffneten Kämpfern wird 1W6 TP angenommen.",
-        "12": "Ein schwerer Eigentreffer des Helden. Der Schaden seiner Waffe wird unter Einbeziehung des Schadensbonus ausgewürfelt und dann verdoppelt. Bei unbewaffneten Kämpfern wird 1W6 TP angenommen."
-    },
     "TABLENAMES": {
         "Defense": "Verteidigung-Patzer",
         "Melee": "Nahkampf-Patzer",
         "Range": "Fernkampf-Patzer",
-        "Liturgy": "Patzer für Liturgien/Zeremonien",
-        "Spell": "Patzer für Zauber/Rituale"
+        "Liturgy": "Liturgien-/Zeremonien-Patzer",
+        "Spell": "Zauber-/Rituale-Patzer"
     },
     "CONDITION": {
         "shapeshift": "Gestaltwandlung",

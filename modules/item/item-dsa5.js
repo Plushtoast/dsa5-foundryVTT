@@ -539,7 +539,8 @@ export default class Itemdsa5 extends Item {
 
         if (game.user.targets.size) {
             cardOptions.isOpposedTest = testData.opposable
-            if (cardOptions.isOpposedTest) cardOptions.title += ` - ${game.i18n.localize("Opposed")}`
+            const opposed = ` - ${game.i18n.localize("Opposed")}`
+            if (cardOptions.isOpposedTest && cardOptions.title.match(opposed + "$") != opposed) cardOptions.title += opposed
         }
 
         if (!options.suppressMessage) DiceDSA5.renderRollCard(cardOptions, result, options.rerenderMessage)

@@ -71,7 +71,7 @@ export default class DSA5ChatListeners {
     }
 
     static async showTables(){
-        const msg = await renderTemplate('systems/dsa5/templates/system/systemtables.html', {tables: DSA5.systemTables})
+        const msg = await renderTemplate('systems/dsa5/templates/tables/systemtables.html', {tables: DSA5.systemTables})
         ChatMessage.create(DSA5_Utility.chatDataSetup(msg, "roll"))
     }
 }

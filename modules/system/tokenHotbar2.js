@@ -320,11 +320,14 @@ class AddEffectDialog extends Dialog {
                 id: x.id
             }
         }).sort((a, b) => a.label.localeCompare(b.label))
+
         const dialog = new AddEffectDialog({
             title: game.i18n.localize("CONDITION.add"),
             content: await renderTemplate('systems/dsa5/templates/dialog/addstatusdialog.html', { effects }),
             buttons: {}
         })
+        dialog.position.height = Math.ceil(effects.length / 3) * 36 + 170
+            //console.log(dialog.position.height)
         dialog.render(true)
     }
 
@@ -364,6 +367,7 @@ class AddEffectDialog extends Dialog {
         const height = Math.ceil(CONFIG.statusEffects.length / 3) * 32
 
         mergeObject(options, {
+            classes: ["dsa5", "tokenStatusEffects"],
             width: 700,
             resizable: true,
             height

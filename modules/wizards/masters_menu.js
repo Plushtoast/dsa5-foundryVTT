@@ -306,7 +306,7 @@ class GameMasterMenu extends Application {
             }
         }
 
-        const roll = new Roll(`1d${counter - 1}`).evaluate({ async: false }).total
+        const roll = (await new Roll(`1d${counter - 1}`).evaluate({ async: true })).total
         $(ev.currentTarget).find('i').addClass('fa-spin')
         heros.removeClass("victim")
 

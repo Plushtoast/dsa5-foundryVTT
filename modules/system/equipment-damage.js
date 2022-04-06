@@ -45,8 +45,7 @@ export default class EquipmentDamage {
             if (
                 source._id &&
                 source.data.structure &&
-                (testData.successLevel < -2 || attackSuccessLevel > 2) &&
-                ["meleeweapon", "rangeweapon", "armor"].includes(source.type)
+                (testData.successLevel < -2 || attackSuccessLevel > 2) && ["meleeweapon", "rangeweapon", "armor"].includes(source.type)
             ) {
                 actor = await DSA5_Utility.getSpeaker(testData.speaker)
                 return actor.items.get(source._id).uuid
@@ -114,15 +113,15 @@ export default class EquipmentDamage {
     }
 
     static async resolveBreakingTest(item, threshold, category) {
-        const roll = await DiceDSA5.manualRolls(
-            new Roll("1d20").evaluate({ async: false }),
-            game.i18n.format("WEAR.check", { category })
-        )
-        await DiceDSA5.showDiceSoNice(roll, await game.settings.get("core", "rollMode"))
-        const damage = roll.total > threshold ? 1 : 0
-        await this.applyDamageLevelToItem(item, damage)
-        const wear = EquipmentDamage.calculateWear(item.data)
-        let infoMsg = `<h3><b>${item.name}</b></h3>
+            const roll = await DiceDSA5.manualRolls(
+                await new Roll("1d20").evaluate({ async: true }),
+                game.i18n.format("WEAR.check", { category })
+            )
+            await DiceDSA5.showDiceSoNice(roll, await game.settings.get("core", "rollMode"))
+            const damage = roll.total > threshold ? 1 : 0
+            await this.applyDamageLevelToItem(item, damage)
+            const wear = EquipmentDamage.calculateWear(item.data)
+            let infoMsg = `<h3><b>${item.name}</b></h3>
     <p>${game.i18n.format("WEAR.check", { category })}</p>
     <b>${game.i18n.localize("Roll")}</b>: ${roll.total}<br/>
     <b>${game.i18n.localize("target")}</b>: ${threshold}<br/>

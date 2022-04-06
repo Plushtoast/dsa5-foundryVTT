@@ -181,7 +181,7 @@ class RepeatingEffectsHelper {
         const regenerationAttributes = ["wounds", "astralenergy", "karmaenergy"]
         for(const attr of regenerationAttributes){
             for (const ef of turn.actor.data.data.repeatingEffects.startOfRound[attr]){
-                const damageRoll = new Roll(ef.value).evaluate({ async: false })
+                const damageRoll = await new Roll(ef.value).evaluate({ async: true })
                 const damage = await damageRoll.render()
                 const type = game.i18n.localize(damageRoll.total > 0 ? "CHATNOTIFICATION.regenerates" : "CHATNOTIFICATION.getsHurt")
                 const applyDamage = `${turn.actor.name} ${type} ${game.i18n.localize(attr)} ${damage}`
@@ -201,7 +201,7 @@ class RepeatingEffectsHelper {
     static async applyBurning(turn, effect) {
         const step = Number(effect.getFlag("dsa5", "value"))
         const die = { 1: "1d3", 2: "1d6", 3: "2d6" }[step]
-        const damageRoll = new Roll(die).evaluate({ async: false })
+        const damageRoll = await new Roll(die).evaluate({ async: true })
         const damage = await damageRoll.render()
 
         await ChatMessage.create(DSA5_Utility.chatDataSetup(game.i18n.format(`CHATNOTIFICATION.burning.${step}`, { actor: turn.actor.name, damage })))

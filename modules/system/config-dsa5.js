@@ -359,12 +359,14 @@ DSA5.localizedCompendiums = {
     de: [
         "dsa5.skills",
         "dsa5.combatskills",
-        "dsa5.species"
+        "dsa5.species",
+        "dsa5.patzer"
     ],
     en: [
         "dsa5.skillsen",
         "dsa5.combatskillsen",
-        "dsa5.speciesen"
+        "dsa5.speciesen",
+        "dsa5.botch"
     ]
 }
 
@@ -447,11 +449,11 @@ DSA5.equipmentTypes = {
 DSA5.equipmentCategories = ["meleeweapon", "rangeweapon", "equipment", "ammunition", "armor", "poison", "consumable", "plant"]
 
 DSA5.systemTables = [
-    { name: "Defense", attrs: "data-weaponless=\"false\"", roll: "botch-roll" },
-    { name: "Melee", attrs: "data-weaponless=\"false\"", roll: "botch-roll" },
-    { name: "Range", attrs: "data-weaponless=\"false\"", roll: "botch-roll" },
-    { name: "Liturgy", attrs: "", roll: "botch-roll" },
-    { name: "Spell", attrs: "", roll: "botch-roll" },
+    { name: "Defense", attrs: "data-weaponless=\"false\"", roll: "botch-roll", pack: { de: "dsa5.patzer", en: "dsa5.botch" }, setting: { module: "dsa5", key: "defenseBotchTableEnabled" } },
+    { name: "Melee", attrs: "data-weaponless=\"false\"", roll: "botch-roll", pack: { de: "dsa5.patzer", en: "dsa5.botch" }, setting: { module: "dsa5", key: "meleeBotchTableEnabled" } },
+    { name: "Range", attrs: "data-weaponless=\"false\"", roll: "botch-roll", pack: { de: "dsa5.patzer", en: "dsa5.botch" }, setting: { module: "dsa5", key: "rangeBotchTableEnabled" } },
+    { name: "Liturgy", attrs: "", roll: "botch-roll", pack: { de: "dsa5.patzer", en: "dsa5.botch" }, setting: { module: "", key: "" } },
+    { name: "Spell", attrs: "", roll: "botch-roll", pack: { de: "dsa5.patzer", en: "dsa5.botch" }, setting: { module: "", key: "" } },
 ]
 
 DSA5.narrowSpaceModifiers = {

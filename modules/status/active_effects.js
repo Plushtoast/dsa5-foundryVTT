@@ -259,7 +259,7 @@ export default class DSAActiveEffectConfig extends ActiveEffectConfig {
 
         if (!attacker) attacker = game.actors.get(getProperty(message.data.flags, "data.preData.extra.actor.id"));
         let sourceActor = attacker;
-        let effects = this._parseEffectDuration(source, testData, message.data.flags.data.preData, attacker);
+        let effects = await this._parseEffectDuration(source, testData, message.data.flags.data.preData, attacker);
         if (options.effectIds) effects = effects.filter(x => options.effectIds.includes(x._id))
         let actors = [];
         if (mode == "self") {
@@ -316,7 +316,7 @@ export default class DSAActiveEffectConfig extends ActiveEffectConfig {
         }
     }
 
-    static _parseEffectDuration(source, testData, preData, attacker) {
+    static async _parseEffectDuration(source, testData, preData, attacker) {
         const specAbIds = {}
         for (let spec of preData.situationalModifiers.filter((x) => x.specAbId)) {
             specAbIds[spec.specAbId] = spec.step
