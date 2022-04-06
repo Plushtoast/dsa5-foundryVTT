@@ -30,7 +30,7 @@ export default class DSATables {
 
     static async tableEnabledFor(key) {
         const table = DSA5.systemTables.find(x => x.name == key)
-        return table ? game.settings.get(table.setting.module, table.setting.key) : false
+        return (table ? game.settings.get(table.setting.module, table.setting.key) : false)
     }
 
     static rollCritBotchButton(table, weaponless) {

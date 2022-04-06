@@ -80,9 +80,10 @@ export default class EquipmentDamage {
         }
 
         let magicalWarning = ""
-        if (item.data.data.effect.attributes.includes(CreatureType.clerical))
+        const attributes = getProperty(item.data, "data.effect.attributes") || ""
+        if (attributes.includes(CreatureType.clerical))
             magicalWarning = `${game.i18n.format("WEAPON.attributeWarning", { domain: CreatureType.clerical })}<br/>`
-        else if (item.data.data.effect.attributes.includes(CreatureType.magical))
+        else if (attributes.includes(CreatureType.magical))
             magicalWarning = `${game.i18n.format("WEAPON.attributeWarning", { domain: CreatureType.magical })}<br/>`
 
         new DialogShared({
@@ -113,19 +114,15 @@ export default class EquipmentDamage {
     }
 
     static async resolveBreakingTest(item, threshold, category) {
-            const roll = await DiceDSA5.manualRolls(
-                await new Roll("1d20").evaluate({ async: true }),
-                game.i18n.format("WEAR.check", { category })
-            )
-            await DiceDSA5.showDiceSoNice(roll, await game.settings.get("core", "rollMode"))
-            const damage = roll.total > threshold ? 1 : 0
-            await this.applyDamageLevelToItem(item, damage)
-            const wear = EquipmentDamage.calculateWear(item.data)
-            let infoMsg = `<h3><b>${item.name}</b></h3>
-    <p>${game.i18n.format("WEAR.check", { category })}</p>
-    <b>${game.i18n.localize("Roll")}</b>: ${roll.total}<br/>
-    <b>${game.i18n.localize("target")}</b>: ${threshold}<br/>
-    <b>${game.i18n.localize("result")}</b>: ${game.i18n.localize(`WEAR.${item.type}.${wear}`)}`
+        const roll = await DiceDSA5.manualRolls(
+            await new Roll("1d20").evaluate({ async: true }),
+            game.i18n.format("WEAR.check", { category })
+        )
+        await DiceDSA5.showDiceSoNice(roll, await game.settings.get("core", "rollMode"))
+        const damage = roll.total > threshold ? 1 : 0
+        await this.applyDamageLevelToItem(item, damage)
+        const wear = EquipmentDamage.calculateWear(item.data)
+        let infoMsg = await renderTemplate("systems/dsa5/templates/system/breakingtest.html", { wear, item, threshold, category, roll, result: game.i18n.localize(`WEAR.${item.type}.${wear}`) })
         ChatMessage.create(DSA5_Utility.chatDataSetup(infoMsg))
     }
 

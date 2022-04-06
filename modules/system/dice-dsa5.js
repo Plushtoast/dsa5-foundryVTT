@@ -290,13 +290,13 @@ export default class DiceDSA5 {
         result["rollType"] = "dodge"
         const isDodge = testData.extra.statusId == "dodge"
         if (isDodge && result.successLevel == 3) {
-            if (DSATables.tableEnabledFor("criticalMeleeDefense")) {
+            if (await DSATables.tableEnabledFor("criticalMeleeDefense")) {
                 result["description"] += DSATables.rollCritBotchButton("criticalMeleeDefense", false)
             }else{
                 result["description"] += DSATables.defaultParryCrit()
             }
         } else if (isDodge && result.successLevel == -3) {
-            if (DSATables.tableEnabledFor("Defense")) {
+            if (await DSATables.tableEnabledFor("Defense")) {
                 result["description"] += DSATables.rollCritBotchButton("Defense", true)
             } else {
                 result["description"] += await DSATables.defaultBotch()
@@ -662,7 +662,7 @@ export default class DiceDSA5 {
         switch (result.successLevel) {
             case 3:
                 if (isAttack) {
-                    if(DSATables.tableEnabledFor("criticalAttack")){
+                    if(await DSATables.tableEnabledFor("criticalAttack")){
                         result.description += DSATables.rollCritBotchButton("criticalAttack", false)
                     }else{
                         result.description += DSATables.defaultAttackCrit(true)
@@ -670,9 +670,9 @@ export default class DiceDSA5 {
                     }
                     result.halfDefense = true
                 } else {
-                    if(isMelee && DSATables.tableEnabledFor("criticalMeleeDefense")){
+                    if(isMelee && await DSATables.tableEnabledFor("criticalMeleeDefense")){
                         result.description += DSATables.rollCritBotchButton("criticalMeleeDefense", false)
-                    }else if (DSATables.tableEnabledFor("criticalRangeDefense")){
+                    }else if (await DSATables.tableEnabledFor("criticalRangeDefense")){
                         result.description += DSATables.rollCritBotchButton("criticalRangeDefense", false)
                     }else{
                         result.description += DSATables.defaultParryCrit()
@@ -681,11 +681,11 @@ export default class DiceDSA5 {
                 break
             case -3:
                 const isWeaponless = getProperty(source, "data.combatskill.value") == game.i18n.localize("LocalizedIDs.wrestle") || source.type == "trait"
-                if (isAttack && isMelee && DSATables.tableEnabledFor("Melee"))
+                if (isAttack && isMelee && await DSATables.tableEnabledFor("Melee"))
                     result.description += DSATables.rollCritBotchButton("Melee", isWeaponless)
-                else if (isAttack && DSATables.tableEnabledFor("Range"))
+                else if (isAttack && await DSATables.tableEnabledFor("Range"))
                     result.description += DSATables.rollCritBotchButton("Range", false)
-                else if (!isAttack && DSATables.tableEnabledFor("Defense"))
+                else if (!isAttack && await DSATables.tableEnabledFor("Defense"))
                     result.description += DSATables.rollCritBotchButton("Defense", isWeaponless)
                 else
                     result.description += await DSATables.defaultBotch()
@@ -869,7 +869,7 @@ export default class DiceDSA5 {
     }
 
     static async rollSpell(testData) {
-        let res = this._rollThreeD20(testData)
+        let res = await this._rollThreeD20(testData)
         const isClerical = ["ceremony", "liturgy"].includes(testData.source.type)
         res["rollType"] = testData.source.type
         res.preData.calculatedSpellModifiers.finalcost = res.preData.calculatedSpellModifiers.cost
@@ -945,8 +945,7 @@ export default class DiceDSA5 {
         this._appendSituationalModifiers(testData, game.i18n.localize("Difficulty"), testData.testDifficulty)
         let modifiers = this._situationalModifiers(testData)
 
-        let fws =
-            testData.source.data.talentValue.value + testData.advancedModifiers.fws + this._situationalModifiers(testData, "FW")
+        let fws = testData.source.data.talentValue.value + testData.advancedModifiers.fws + this._situationalModifiers(testData, "FW")
 
         const pcms = this._situationalPartCheckModifiers(testData, "TPM")
 
@@ -1052,7 +1051,7 @@ export default class DiceDSA5 {
     }
 
     static async rollTalent(testData) {
-        let res = this._rollThreeD20(testData)
+        let res = await this._rollThreeD20(testData)
         res["rollType"] = "talent"
         return res
     }

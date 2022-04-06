@@ -79,7 +79,7 @@ export class DSA5Combat extends Combat {
     }
 
     async refreshTokenbars() {
-        if (ui.hotbar) ui.hotbar.updateDSA5Hotbar()
+        if (game.dsa5.apps.tokenHotbar) game.dsa5.apps.tokenHotbar.updateDSA5Hotbar()
     }
 
     _onCreate(data, options, userId) {

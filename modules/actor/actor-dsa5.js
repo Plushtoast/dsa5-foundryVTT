@@ -1897,7 +1897,7 @@ export default class Actordsa5 extends Actor {
 
         return isAllowedToSeeEffects ? this.effects.filter(x => {
             return !x.data.disabled && !x.notApplicable && (game.user.isGM || !x.getFlag("dsa5", "hidePlayers")) && !x.getFlag("dsa5", "hideOnToken")
-        }) : this.actor.effects.filter(x => allowedEffects.includes(x.getFlag("core", "statusId")));
+        }) : this.effects.filter(x => allowedEffects.includes(x.getFlag("core", "statusId")));
     }
 
     async _preCreate(data, options, user) {
