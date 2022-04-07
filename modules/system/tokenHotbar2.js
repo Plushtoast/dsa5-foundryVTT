@@ -63,7 +63,10 @@ export default class TokenHotbar2 extends Application {
         new Draggable(this, html, container[0], this.options.resizable);
 
         container.on('wheel', async(ev) => {
+            ev.stopPropagation()
+            ev.preventDefault()
             await this._onWheelResize(ev)
+            return false
         })
 
         container.on('mousedown', async(ev) => {
@@ -289,13 +292,13 @@ export default class TokenHotbar2 extends Application {
 
         if (vertical) {
             this.position.width = itemWidth
-            this.position.height = itemWidth * count + 12
+            this.position.height = itemWidth * count + 14
         } else {
-            this.position.width = itemWidth * count + 12
+            this.position.width = itemWidth * count + 14
             this.position.height = itemWidth
         }
 
-        mergeObject(data, { items, itemWidth, direction })
+        mergeObject(data, { items, itemWidth, direction, count })
         return data
     }
 

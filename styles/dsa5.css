@@ -2578,20 +2578,24 @@ select.noAppearance {
     left: var(--tokenQuickhotdistance);
 }
 
-.direction1 .dragHandler,
-.direction3 .dragHandler {
-    height: 12px;
+.tokenQuickHot .direction1 .dragHandler,
+.tokenQuickHot .direction3 .dragHandler {
+    height: 14px;
     width: var(--tokenQuickhotsize);
-    line-height: 12px;
+    line-height: 14px;
 }
 
-.dragHandler {
-    width: 12px;
+.tokenQuickHot .dragHandler {
+    width: 14px;
     height: var(--tokenQuickhotsize);
     background: rgba(0, 0, 0, 0.2);
     text-align: center;
     line-height: var(--tokenQuickhotsize);
     float: right;
+}
+
+.tokenQuickHot .dragHandler:hover {
+    color: white;
 }
 
 .tokenQuickHot a {
