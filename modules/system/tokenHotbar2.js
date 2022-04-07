@@ -349,6 +349,7 @@ class AddEffectDialog extends Dialog {
             return {
                 label: game.i18n.localize(x.label),
                 icon: x.icon,
+                description: game.i18n.localize(x.description),
                 id: x.id
             }
         }).sort((a, b) => a.label.localeCompare(b.label))
@@ -371,7 +372,6 @@ class AddEffectDialog extends Dialog {
 
         let search = html.find('.conditionSearch')
         search.keyup(event => this._filterConditions($(event.currentTarget), html))
-        console.log(search)
         search[0] && search[0].addEventListener("search", filterConditions, false);
     }
 

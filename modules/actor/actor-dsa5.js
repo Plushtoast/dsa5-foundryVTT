@@ -2196,6 +2196,10 @@ export default class Actordsa5 extends Actor {
                 await this.addCondition("stunned")
                 await this.removeCondition("drunken")
             }
+            else if (statusId == "exhaustion") {
+                await this.addCondition("stunned")
+                await this.removeCondition("exhaustion")
+            }
         }
 
         if (statusId == "dead" && game.combat) await this.markDead(true)

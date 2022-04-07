@@ -176,6 +176,7 @@
     "aspect": "Aspekt",
     "AsPCost": "Astralpunktekosten",
     "AsPCostDetail": "AsP Detail",
+    "KaPCostDetail": "KaP Detail",
     "actionCount": "Aktionen",
     "atmod": "Angriffsmodifikator",
     "baseValue": "Grundwert",
@@ -927,7 +928,7 @@
         "resistantTo": "Resistent ({name})"
     },
     "SPELL": {
-        "loading": "Zauberstatus: {status}",
+        "loading": "Konzentrationsstatus: {status}",
         "loaded": "Bereit",
         "reload": "Konzentrieren",
         "isReloading": "{actor} konzentriert sich auf {item} ({status})."
