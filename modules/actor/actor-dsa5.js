@@ -273,7 +273,6 @@ export default class Actordsa5 extends Actor {
         return {
             label: game.i18n.localize("MERCHANT.locked"),
             icon: "icons/svg/padlock.svg",
-
             flags: {
                 core: { statusId: "locked" },
                 dsa5: {
@@ -1670,7 +1669,7 @@ export default class Actordsa5 extends Actor {
         let toSearch = [game.i18n.localize(statusId)]
         let combatskills = Itemdsa5.buildCombatSpecAbs(this, ["Combat"], toSearch, "parry")
         let situationalModifiers = DSA5StatusEffects.getRollModifiers(testData.extra.actor, testData.source)
-        Itemdsa5.getDefenseMalus(situationalModifiers, this)
+        const isRangeAttack = Itemdsa5.getDefenseMalus(situationalModifiers, this)
 
         const multipleDefenseValue = RuleChaos.multipleDefenseValue(this, testData.source)
 
@@ -1682,6 +1681,7 @@ export default class Actordsa5 extends Actor {
                 combatSpecAbs: combatskills,
                 showDefense: true,
                 situationalModifiers,
+                isRangeAttack,
                 defenseCountString: game.i18n.format("defenseCount", {
                     malus: multipleDefenseValue,
                 }),

@@ -670,10 +670,11 @@ export default class DiceDSA5 {
                     }
                     result.halfDefense = true
                 } else {
-                    if(isMelee && await DSATables.tableEnabledFor("criticalMeleeDefense")){
-                        result.description += DSATables.rollCritBotchButton("criticalMeleeDefense", false)
-                    }else if (await DSATables.tableEnabledFor("criticalRangeDefense")){
+                    if (testData.isRangeDefense && await DSATables.tableEnabledFor("criticalRangeDefense")){
                         result.description += DSATables.rollCritBotchButton("criticalRangeDefense", false)
+                    }
+                    else if(await DSATables.tableEnabledFor("criticalMeleeDefense")){
+                        result.description += DSATables.rollCritBotchButton("criticalMeleeDefense", false)
                     }else{
                         result.description += DSATables.defaultParryCrit()
                     }

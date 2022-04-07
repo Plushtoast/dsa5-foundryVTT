@@ -224,10 +224,14 @@ export default class Itemdsa5 extends Item {
     }
 
     static getDefenseMalus(situationalModifiers, actor) {
+        let isRangeDefense = false
         if (actor.data.flags.oppose) {
             let message = game.messages.get(actor.data.flags.oppose.messageId)
+            const preData = message.data.flags.data.preData
+            isRangeDefense = !(getProperty(preData, "source.type") == "meleeweapon" || getProperty(preData, "source.data.traitType.value") == "meleeAttack")
+
             const regex = / \[(-)?\d{1,}\]/
-            for (let mal of message.data.flags.data.preData.situationalModifiers) {
+            for (let mal of preData.situationalModifiers) {
                 if (mal.dmmalus != undefined && mal.dmmalus != 0) {
                     situationalModifiers.push({
                         name: `${game.i18n.localize("MODS.defenseMalus")} - ${mal.name.replace(regex, "")}`,
@@ -251,6 +255,7 @@ export default class Itemdsa5 extends Item {
                 })
             }
         }
+        return isRangeDefense
     }
 
     static changeChars(source, ch1, ch2, ch3) {
@@ -470,10 +475,11 @@ export default class Itemdsa5 extends Item {
     }
 
     static prepareMeleeParry(situationalModifiers, actor, data, source, combatskills, wrongHandDisabled) {
-        Itemdsa5.getDefenseMalus(situationalModifiers, actor)
+        const isRangeDefense = Itemdsa5.getDefenseMalus(situationalModifiers, actor)
         mergeObject(data, {
             visionOptions: DSA5.meleeRangeVision(data.mode),
             showDefense: true,
+            isRangeDefense,
             wrongHandDisabled: wrongHandDisabled && getProperty(source, "data.worn.offHand"),
             melee: true,
             combatSpecAbs: combatskills,
@@ -1245,7 +1251,7 @@ class MeleeweaponDSA5 extends Itemdsa5 {
             callback: (html, options = {}) => {
                 DSA5CombatDialog.resolveMeleeDialog(testData, cardOptions, html, actor, options, multipleDefenseValue, mode)
                 Hooks.call("callbackDialogCombatDSA5", testData, actor, html, item, tokenId)
-
+                testData.isRangeDefense = data.isRangeDefense
                 return { testData, cardOptions }
             },
         }
@@ -1683,7 +1689,7 @@ class TraitItemDSA5 extends Itemdsa5 {
                 } else {
                     DSA5CombatDialog.resolveRangeDialog(testData, cardOptions, html, actor, options)
                 }
-
+                testData.isRangeDefense = data.isRangeDefense
                 Hooks.call("callbackDialogCombatDSA5", testData, actor, html, item, tokenId)
                 return { testData, cardOptions }
             },

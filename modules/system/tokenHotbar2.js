@@ -36,10 +36,39 @@ export default class TokenHotbar2 extends Application {
         return options;
     }
 
+    async _onWheelResize(ev) {
+        let newVal = game.settings.get("dsa5", "tokenhotbarSize")
+        if (ev.originalEvent.deltaY > 0) {
+            newVal = Math.min(100, newVal + 5)
+        } else {
+            newVal = Math.max(15, newVal - 5)
+        }
+        await game.settings.set("dsa5", "tokenhotbarSize", newVal)
+        await this.render(true)
+    }
+
+    async _cycleLayout(ev) {
+        if (ev.button == 2) {
+            console.log(ev)
+            let newVal = game.settings.get("dsa5", "tokenhotbarLayout") + 1
+            if (newVal == 4) newVal = 0
+            await game.settings.set("dsa5", "tokenhotbarLayout", newVal)
+            await this.render(true)
+        }
+    }
+
     activateListeners(html) {
         super.activateListeners(html);
-        const container = html.find(".tokenHotbarInner")[0];
-        new Draggable(this, html, container, this.options.resizable);
+        const container = html.find(".dragHandler");
+        new Draggable(this, html, container[0], this.options.resizable);
+
+        container.on('wheel', async(ev) => {
+            await this._onWheelResize(ev)
+        })
+
+        container.on('mousedown', async(ev) => {
+            await this._cycleLayout(ev)
+        })
 
         html.on('mousedown', 'li', async(ev) => {
             ev.stopPropagation()
@@ -260,9 +289,9 @@ export default class TokenHotbar2 extends Application {
 
         if (vertical) {
             this.position.width = itemWidth
-            this.position.height = itemWidth * count
+            this.position.height = itemWidth * count + 12
         } else {
-            this.position.width = itemWidth * count
+            this.position.width = itemWidth * count + 12
             this.position.height = itemWidth
         }
 
@@ -356,7 +385,7 @@ class AddEffectDialog extends Dialog {
 
     async addEffect(ev) {
         for (let token of canvas.tokens.controlled) {
-            await token.actor.addCondition(ev.currentTarget.dataset.value)
+            await token.actor.addCondition(ev.currentTarget.dataset.value, 1, false, false)
         }
         game.dsa5.apps.tokenHotbar.render(true)
         this.close()

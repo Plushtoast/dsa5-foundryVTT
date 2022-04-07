@@ -2578,6 +2578,22 @@ select.noAppearance {
     left: var(--tokenQuickhotdistance);
 }
 
+.direction1 .dragHandler,
+.direction3 .dragHandler {
+    height: 12px;
+    width: var(--tokenQuickhotsize);
+    line-height: 12px;
+}
+
+.dragHandler {
+    width: 12px;
+    height: var(--tokenQuickhotsize);
+    background: rgba(0, 0, 0, 0.2);
+    text-align: center;
+    line-height: var(--tokenQuickhotsize);
+    float: right;
+}
+
 .tokenQuickHot a {
     box-shadow: inset 0px 0px 10px #403014;
     color: white;
