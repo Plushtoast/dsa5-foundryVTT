@@ -1029,6 +1029,7 @@
         "applyTarget": "Effekt (Ziel)",
         "applySelf": "Effekt (Selbst)",
         "appliedEffect": "Effekt <b>{source}</b> wurde auf <b>{target}</b> übertragen.",
+        "removedEffect": "Effekt <b>{source}</b> wurde von <b>{target}</b> entfernt.",
         "custom": "Sondereffekt",
         "creature": "Akteuerlink (z.b. das5-core.corebestiary.Gotongi)",
         "resistRoll": "Widerstandsprobe",

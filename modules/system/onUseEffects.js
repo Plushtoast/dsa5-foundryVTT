@@ -117,9 +117,10 @@ export default class OnUseEffect {
         }
     }
 
-    async createInfoMessage(data, names) {
+    async createInfoMessage(data, names, added = true) {
         if (names.length) {
-            const infoMsg = game.i18n.format("ActiveEffects.appliedEffect", {
+            const format = added ? "ActiveEffects.appliedEffect" : "ActiveEffects.removedEffect"
+            const infoMsg = game.i18n.format(format, {
                 source: data.label,
                 target: names.join(", "),
             });
@@ -139,7 +140,7 @@ export default class OnUseEffect {
             }
             const data = CONFIG.statusEffects.find((x) => x.id == coreId);
             data.label = game.i18n.localize(data.label);
-            await this.createInfoMessage(data, names);
+            await this.createInfoMessage(data, names, true);
         } else {
             const payload = {
                 id: this.item.uuid,

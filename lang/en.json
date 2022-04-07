@@ -1002,6 +1002,7 @@
         "applyTarget": "Effect (Target)",
         "applySelf": "Effect (Self)",
         "appliedEffect": "Effect <b>{source}</b> applied to <b>{target}</b>.",
+        "removedEffect": "Effect <b>{source}</b> removed from <b>{target}</b>.",
         "custom": "Special effect",
         "creature": "Actorlink (e.g. das5-core.coreenbestiary.Gotongi)",
         "resistRoll": "Resist check",
