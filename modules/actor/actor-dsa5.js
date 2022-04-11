@@ -1960,7 +1960,7 @@ export default class Actordsa5 extends Actor {
 
         return Math.max(
             0,
-            Math.round(Number(reloadTime) * factor) - modifier
+            Math.round(Number(reloadTime) * factor) + modifier
         )
     }
 
@@ -2166,7 +2166,6 @@ export default class Actordsa5 extends Actor {
         if (game.user.targets.size) {
             cardOptions.isOpposedTest = testData.opposable
             const opposed = ` - ${game.i18n.localize("Opposed")}`
-            console.log(cardOptions.title)
             if (cardOptions.isOpposedTest && cardOptions.title.match(opposed+"$") != opposed) cardOptions.title += opposed
         }
 

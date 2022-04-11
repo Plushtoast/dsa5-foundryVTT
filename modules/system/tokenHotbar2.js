@@ -16,6 +16,13 @@ export default class TokenHotbar2 extends Application {
         })
     }
 
+    resetPosition() {
+        const hotbarPosition = $('#hotbar').first().position()
+        const itemWidth = game.settings.get("dsa5", "tokenhotbarSize")
+        this.position.left = hotbarPosition.left + 8
+        this.position.top = hotbarPosition.top - itemWidth - 25
+    }
+
     static get defaultOptions() {
         const options = super.defaultOptions;
         const hotbarPosition = $('#hotbar').first().position()
@@ -49,7 +56,6 @@ export default class TokenHotbar2 extends Application {
 
     async _cycleLayout(ev) {
         if (ev.button == 2) {
-            console.log(ev)
             let newVal = game.settings.get("dsa5", "tokenhotbarLayout") + 1
             if (newVal == 4) newVal = 0
             await game.settings.set("dsa5", "tokenhotbarLayout", newVal)
@@ -360,7 +366,6 @@ class AddEffectDialog extends Dialog {
             buttons: {}
         })
         dialog.position.height = Math.ceil(effects.length / 3) * 36 + 170
-            //console.log(dialog.position.height)
         dialog.render(true)
     }
 

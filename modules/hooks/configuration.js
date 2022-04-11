@@ -59,7 +59,7 @@ export default function() {
         hint: "migrationVersion",
         scope: "world",
         config: false,
-        default: 14,
+        default: 15,
         type: Number
     })
     game.settings.register("dsa5", "firstTimeStart", {
@@ -392,10 +392,11 @@ class ChangelogForm extends FormApplication {
 }
 
 class ResetTokenbar extends FormApplication {
-    render() {
-        game.settings.set("dsa5", "tokenhotbarPosition", {})
-        game.settings.set("dsa5", "tokenhotbarLayout", 0)
-        game.settings.set("dsa5", "tokenhotbarSize", 35)
+    async render() {
+        await game.settings.set("dsa5", "tokenhotbarPosition", {})
+        await game.settings.set("dsa5", "tokenhotbarLayout", 0)
+        await game.settings.set("dsa5", "tokenhotbarSize", 35)
+        game.dsa5.apps.tokenHotbar.resetPosition()
         game.dsa5.apps.tokenHotbar.render(true)
     }
 }
