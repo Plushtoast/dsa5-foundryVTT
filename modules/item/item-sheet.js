@@ -224,6 +224,7 @@ export default class ItemSheetdsa5 extends ItemSheet {
                 break
         }
         data.isOwned = this.item.actor
+        data.editable = this.isEditable
         if (data.isOwned)
             data.canAdvance = this.item.actor.data.canAdvance && this._advancable()
 
@@ -619,7 +620,7 @@ class PatronSheet extends ItemSheetdsa5 {
     async getData(options) {
         const data = await super.getData(options);
         data.patronCategories = [0, 1, 2, 3].map(x => { return { name: game.i18n.localize(`PATRON.${x}`), val: x } })
-        data.priorities = [game.i18n.localize("PATRON.primary"), game.i18n.localize("PATRON.secondary")]
+        data.priorities = { 0: game.i18n.localize("PATRON.primary"), 1: game.i18n.localize("PATRON.secondary") }
         return data
     }
 }
@@ -1003,8 +1004,9 @@ class SpellExtensionSheetDSA5 extends ItemSheetdsa5 {
     async getData(options) {
         const data = await super.getData(options)
         mergeObject(data, {
-            categories: ["spell", "liturgy", "ritual", "ceremony"]
+            categories: { spell: "spell", liturgy: "liturgy", ritual: "ritual", ceremony: "ceremony" }
         })
+        console.log(data)
         return data
     }
 }

@@ -114,7 +114,7 @@
         "noTarget": "Kein Ziel",
         "assassinate": "Meucheln",
         "stun": "Betäuben",
-        "assassinateDescr": "Opfer muss ahnungslos sein (Wahrnehmung gegen Verbergen)",
+        "assassinateDescr": "Opfer muss ahnungslos sein (Sinnesschärfe gegen Verbergen)",
         "multipleTarget": "Mehrere Ziele"
 
     },
@@ -593,7 +593,7 @@
         "masterMenu": "Öffne das Spielleitermenü",
         "journalBrowser": "Öffne den Journalbrowser",
         "library": "Öffne die Bibliothek",
-        "attack": "Öffne das Angriffsmenü für den aktuellen Token oder Spieler (im Kampf für den aktuellen Akteuer)"
+        "attack": "Öffne das Angriffsmenü für den aktuellen Token oder Spieler (im Kampf für den aktuellen Akteur)"
     },
     "WEAR": {
         "check": "Bruchfaktorprobe ({category})",
@@ -1031,7 +1031,7 @@
         "appliedEffect": "Effekt <b>{source}</b> wurde auf <b>{target}</b> übertragen.",
         "removedEffect": "Effekt <b>{source}</b> wurde von <b>{target}</b> entfernt.",
         "custom": "Sondereffekt",
-        "creature": "Akteuerlink (z.b. das5-core.corebestiary.Gotongi)",
+        "creature": "Akteurlink (z.b. das5-core.corebestiary.Gotongi)",
         "resistRoll": "Widerstandsprobe",
 
         "placeholder": {

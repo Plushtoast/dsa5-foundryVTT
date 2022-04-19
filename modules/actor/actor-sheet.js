@@ -109,7 +109,7 @@ export default class ActorSheetDsa5 extends ActorSheet {
 
     async getData(options) {
         const baseData = await super.getData(options);
-        const sheetData = { actor: baseData.actor.data }
+        const sheetData = { actor: baseData.actor.data, editable: baseData.editable, limited: baseData.limited, owner: baseData.owner }
         const prepare = this.actor.prepareSheet({ details: this.openDetails })
         mergeObject(sheetData.actor, prepare)
 
@@ -739,14 +739,14 @@ export default class ActorSheetDsa5 extends ActorSheet {
     async _deleteActiveEffect(id) {
         if (!this.isEditable) return
 
-        let item = this.actor.data.effects.find(x => x.id == id)
+        let item = this.actor.effects.find(x => x.id == id)
 
         if (item) {
             let actor = this.token ? this.token.actor : this.actor
 
             if (actor) await this.actor.deleteEmbeddedDocuments("ActiveEffect", [item.id])
 
-            Hooks.call("deleteActorActiveEffect", this.actor, item)
+            //Hooks.call("deleteActorActiveEffect", this.actor, item)
         }
     }
 

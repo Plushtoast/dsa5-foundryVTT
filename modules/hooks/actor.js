@@ -2,16 +2,20 @@ import DSAActiveEffectConfig from "../status/active_effects.js";
 import DSA5_Utility from "../system/utility-dsa5.js";
 
 export default function() {
-    Hooks.on("deleteActorActiveEffect", (actor, effect) => {
-        const statusId = getProperty(effect.data, "flags.core.statusId")
-        if (statusId == "bloodrush") {
-            actor.addCondition("stunned", 2, false, false)
-            return false
-        } else if (statusId == "dead" && game.combat) {
-            actor.markDead(false)
-            return false
+    //Hooks.on("deleteActorActiveEffect", (actor, effect) => {
+    Hooks.on("deleteActiveEffect", (effect) => {
+        const actor = effect.parent
+        if (actor && actor.documentName == "Actor") {
+            const statusId = getProperty(effect.data, "flags.core.statusId")
+            if (statusId == "bloodrush") {
+                actor.addCondition("stunned", 2, false, false)
+                return false
+            } else if (statusId == "dead" && game.combat) {
+                actor.markDead(false)
+                return false
+            }
+            DSAActiveEffectConfig.onEffectRemove(actor, effect)
         }
-        DSAActiveEffectConfig.onEffectRemove(actor, effect)
     })
 
     const askForName = (actor) => {
