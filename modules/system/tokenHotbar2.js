@@ -8,7 +8,7 @@ export default class TokenHotbar2 extends Application {
     constructor(options) {
         super(options);
 
-        this.combatSkills = [game.i18n.localize("LocalizedIDs.selfControl"), game.i18n.localize("LocalizedIDs.featOfStrength"), game.i18n.localize("LocalizedIDs.perception")]
+        this.combatSkills = ["selfControl", "featOfStrength", "bodyControl", "perception"].map(x => game.i18n.localize(`LocalizedIDs.${x}`))
         this.defaultSkills = [game.i18n.localize("LocalizedIDs.perception")]
 
         Hooks.on("controlToken", (elem, controlTaken) => {

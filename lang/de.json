@@ -1113,6 +1113,7 @@
         "traditionWitch": "Tradition (Hexen)",
         "traditionKor": "Tradition (Korkirche)",
         "traditionFjarning": "Tradition (Fjarningerschamanen)",
+        "braniborian": "Braniborier",
         "traditionPhex": "Tradition (Phexkirche)",
         "inuredToEncumbrance": "Belastungsgewöhnung",
         "extremeShot": "Extremschuss",
@@ -1125,6 +1126,7 @@
         "localKnowledge": "Ortskenntnis",
         "naturalArmor": "Natürliche Rüstung",
         "improvisedWeaponMaster": "Meister der improvisierten Waffen",
+        
         "all": "alle",
         "twoWeaponCombat": "Beidhändiger Kampf",
         "poisonResistance": "Giftresistenz",

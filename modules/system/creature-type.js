@@ -7,6 +7,7 @@ Hooks.once("ready", async() => {
         CreatureType.magical = game.i18n.localize("WEAPON.magical")
         CreatureType.clerical = game.i18n.localize("WEAPON.clerical")
         CreatureType.silverPlated = game.i18n.localize("WEAPON.silverPlated")
+        game.dsa5.apps.CreatureType = CreatureType
     }
 })
 

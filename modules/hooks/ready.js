@@ -82,6 +82,12 @@ export default function() {
                             onUse.socketedRemoveCondition(data.payload.targets, data.payload.coreId)
                         })
                         break
+                    case "socketedActorTransformation":
+                        fromUuid(data.payload.id).then(item => {
+                            const onUse = new OnUseEffect(item)
+                            onUse.socketedActorTransformation(data.payload.targets, data.payload.update)
+                        })
+                        break
                     case "updateHits":
                     case "hideResistButton":
                         break

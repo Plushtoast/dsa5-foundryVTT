@@ -1,6 +1,7 @@
 import Actordsa5 from "../actor/actor-dsa5.js";
 import { ActAttackDialog } from "../dialog/dialog-react.js"
 import DSA5_Utility from "../system/utility-dsa5.js";
+import DSA5StatusEffects from "../status/status_effects.js"
 
 export class DSA5CombatTracker extends CombatTracker {
     static get defaultOptions() {
@@ -200,7 +201,8 @@ class RepeatingEffectsHelper {
 
     static async applyBurning(turn, effect) {
         const step = Number(effect.getFlag("dsa5", "value"))
-        const die = { 1: "1d3", 2: "1d6", 3: "2d6" }[step]
+        const protection = DSA5StatusEffects.resistantToEffect(turn.actor.data, effect.data)
+        const die =  { 0: "1", 1: "1d3", 2: "1d6", 3: "2d6" }[step - protection] || "1"
         const damageRoll = await new Roll(die).evaluate({ async: true })
         const damage = await damageRoll.render()
 

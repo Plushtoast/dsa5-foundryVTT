@@ -234,7 +234,7 @@ export default class Actordsa5 extends Actor {
                 if (AdvantageRulesDSA5.hasVantage(this, game.i18n.localize("LocalizedIDs.blind"))) this.addCondition("blind")
                 if (AdvantageRulesDSA5.hasVantage(this, game.i18n.localize("LocalizedIDs.mute"))) this.addCondition("mute")
                 if (AdvantageRulesDSA5.hasVantage(this, game.i18n.localize("LocalizedIDs.deaf"))) this.addCondition("deaf")
-                if (!TraitRulesDSA5.hasTrait(this, game.i18n.localize("LocalizedIDs.painImmunity")) && changePain)
+                if (changePain && !TraitRulesDSA5.hasTrait(this, game.i18n.localize("LocalizedIDs.painImmunity")))
                     this.addCondition("inpain", pain, true).then(() => (data.pain = undefined))
 
                 if (this.isMerchant()) {

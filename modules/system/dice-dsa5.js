@@ -831,10 +831,10 @@ export default class DiceDSA5 {
         let feature
 
         if(res.successLevel < 0){
-            const traditions = [game.i18n.localize("LocalizedIDs.traditionWitch"), game.i18n.localize("LocalizedIDs.traditionFjarning")]
+            const traditions = ["traditionWitch", "traditionFjarning", "braniborian"].map(x => game.i18n.localize(`LocalizedIDs.${x}`))
             const factor = testData.extra.actor.items.some(x => x.type == "specialability" && traditions.includes(x.name)) ? 3 : 2
             res.preData.calculatedSpellModifiers.finalcost = Math.round(res.preData.calculatedSpellModifiers.cost / factor)
-            }
+        }
 
         if (isClerical) {
             feature = "KaPCost"
