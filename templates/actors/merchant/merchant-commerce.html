@@ -171,6 +171,11 @@
         <div class="col">
             <b>{{localize (concat "Equipment." @key)}}</b>
         </div>
+        {{#if (or (eq ../actor.data.merchant.merchantType "merchant") (eq ../actor.data.merchant.merchantType "loot"))}}
+        <div class="col eight center">
+            <i class="fa fa-lock" title="{{localize 'MERCHANT.untradable'}}"></i>
+        </div>
+        {{/if}}
         <div class="col eight center">
             <i class="fa fa-shield-alt" title="{{localize 'equipped'}}"></i>
         </div>
@@ -178,7 +183,7 @@
             <span title="{{localize 'price'}}"><i class="fas fa-coins"></i></span>
         </div>
         <div class="col eight center">
-            <span title="{{localize 'quantity'}}">#</span>
+            <a class="changeAmountAllItems" data-type="{{section.dataType}}"><span title="{{localize 'quantity'}}">#</span></a>
         </div>
         <div class="col eight center">
             <i class="fa fa-anchor" title="{{localize 'Weight'}}"></i>
@@ -203,6 +208,13 @@
                 <div class="col">
                     <a class="item-edit {{#if item.consumable}}consume-item{{/if}}">{{item.name}}</a>
                 </div>
+                {{#if (or (eq ../../actor.data.merchant.merchantType "merchant") (eq ../../actor.data.merchant.merchantType "loot"))}}
+                <div class="col eight center" title="{{localize 'MERCHANT.untradable'}}">
+                    {{#if item.data.tradeLocked}}
+                    <a class="item-tradeLock"><i class="fas fa-lock"></i></a> {{else}}
+                    <a class="item-tradeLock"><i class="fas fa-unlock"></i></a> {{/if}}
+                </div>
+                {{/if}}
                 <div class="col eight center">
                     {{#if item.toggle}} {{#if item.toggleValue}}
                     <a class="item-toggle"><i class="far fa-check-circle"></i></a> {{else}}

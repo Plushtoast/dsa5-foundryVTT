@@ -28,6 +28,8 @@ import SpecialabilityRulesDSA5 from "../system/specialability-rules-dsa5.js";
 import DidYouKnow from "../system/didyouknow.js";
 import DSAActiveEffectConfig from "../status/active_effects.js";
 import TokenHotbar2 from "../system/tokenHotbar2.js";
+import CreatureMerchantSheetDSA5 from "../actor/creature-merchant-sheet.js";
+import CharacterMerchantSheetDSA5 from "../actor/character-merchant-sheet.js";
 
 
 export default function() {
@@ -95,6 +97,8 @@ Hooks.once("init", () => {
     Actors.registerSheet("dsa5", ActorSheetdsa5Creature, { types: ["creature"], makeDefault: true });
     Actors.registerSheet("dsa5", ActorSheetdsa5NPC, { types: ["npc"], makeDefault: true });
     Actors.registerSheet("dsa5", MerchantSheetDSA5, { types: ["npc"] });
+    Actors.registerSheet("dsa5", CreatureMerchantSheetDSA5, { types: ["creature"] })
+    Actors.registerSheet("dsa5", CharacterMerchantSheetDSA5, { types: ["character"] })
     DocumentSheetConfig.registerSheet(ActiveEffect, "dsa5", DSAActiveEffectConfig, { makeDefault: true })
 
     ItemSheetdsa5.setupSheets()

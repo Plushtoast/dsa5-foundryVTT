@@ -160,7 +160,6 @@
         "select": "Choice",
         "locked": "Locked",
         "selectRandomGoods": "Select categories and an amount of additional random commodities. The addition might take a moment, if the index of the library has not been created yet.",
-        "service": "{buyer} bought {amount} {item} from {merchant}.",
         "dropGround": "Drop {name} to the ground?",
         "onlyGM": "Only GM",
         "buyNotification": "<b>{source}</b> buys {amount}x {item} from <b>{target}</b> for {price} Silverthalers.",
@@ -168,7 +167,9 @@
         "buyLootNotification": "<b>{source}</b> takes {amount}x {item} from <b>{target}</b>.",
         "sellLootNotification": "<b>{source}</b> drops {amount}x {item} to <b>{target}</b>.",
         "emptyDestroy": "Temporary",
-        "emptyDestroyHint": "Deletes the actor if its inventory is emptied during trading."
+        "emptyDestroyHint": "Deletes the actor if its inventory is emptied during trading.",
+        "untradable": "Item not tradable",
+        "otherTradeFriend": "Drag an actor (that you own) on the sheet to change the trading partner."
     },
     "GARADAN": {
         "1": "Pawn",

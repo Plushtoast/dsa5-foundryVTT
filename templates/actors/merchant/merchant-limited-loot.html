@@ -2,19 +2,26 @@
     <fieldset disabled>
 
         <section id="tab-sections">
-            <nav id="dsa5-primarytabs" class="sheet-tabs tabs" ondragstart="return false;" ondrop="return false;">
+            <nav id="dsa5-primarytabs" class="sheet-tabs tabs">
                 <a class="item active" data-tab="main">{{localize 'MERCHANT.typeLoot'}}</a>
             </nav>
 
             <section class="content">
                 <div class="tab main save-scroll" data-tab="main">
                     <div class="row-section">
-                        <div class="col two center">
-                            <img src="{{tradeFriend.img}}" style="height: 50px;max-width:50%;border:none;" />
+                        <div class="col ten"></div>
+                        <div class="col fourty center">
+                            <img src="{{tradeFriend.img}}" style="height: 50px;max-width:40%;border:none;" />
                         </div>
-                        <div class="col two center">
-                            <img src="{{actor.img}}" style="height: 50px;max-width:50%;border:none;" />
+                        <div class="col ten">{{#if hasOtherTradeFriend}}
+                            <a class="removeOtherTradeFriend"><i class="fas fa-times"></i></a> {{else}}
+                            <i class="fas fa-info" title="{{localize 'MERCHANT.otherTradeFriend'}}"></i> {{/if}}
                         </div>
+                        <div class="col ten"></div>
+                        <div class="col fourty center">
+                            <img src="{{actor.img}}" style="height: 50px;max-width:40%;border:none;" />
+                        </div>
+                        <div class="col ten"></div>
                     </div>
                     <div class="row-section">
                         <div class="col two">
@@ -30,6 +37,7 @@
                             {{#unless tradeFriend.name}}
                             <p>{{localize 'DSAError.noProperActor'}}</p>
                             <p>{{localize 'TT.assignCharacter'}}</p>
+                            <p>{{localize 'MERCHANT.otherTradeFriend'}}</p>
                             {{/unless}} {{#each tradeFriend.inventory as |section sid|}} {{#if section.show}}
                             <div class="groupbox">
                                 <div class="row-section table-title">
@@ -96,7 +104,7 @@
                                     </div>
                                 </div>
                                 <div class="row-section wrap rowtable inventory">
-                                    {{#each section.items as |item i|}}
+                                    {{#each section.items as |item i|}}{{#unless item.data.tradeLocked}}
                                     <div class="col item" data-item-id="{{item._id}}">
                                         <div class="row-section">
                                             <div class="col eight image {{item.enchantClass}}">
@@ -118,7 +126,7 @@
                                             </div>
                                         </div>
                                     </div>
-                                    {{/each}}
+                                    {{/unless}} {{/each}}
                                 </div>
                             </div>
                             {{/if}} {{/each}}

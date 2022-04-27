@@ -3,7 +3,7 @@ import DSA5_Utility from "../system/utility-dsa5.js"
 
 //TODO update to v10 standard https://gitlab.com/foundrynet/foundryvtt/-/issues/6990
 
-export const dropToGround = async(sourceActor, item, data) => {
+export const dropToGround = async(sourceActor, item, data, amount) => {
     if (game.user.isGM) {
         let items = await game.dsa5.apps.DSA5_Utility.allMoneyItems()
         let folder = await DSA5_Utility.getFolderForType("Actor", null, "Dropped Items")
@@ -13,6 +13,9 @@ export const dropToGround = async(sourceActor, item, data) => {
             prev[cur] = 1
             return prev
         }, { default: 0 })
+
+        const newItem = item.toObject()
+        newItem.data.quantity.value = amount
 
         const actor = {
             type: "npc",
@@ -24,7 +27,7 @@ export const dropToGround = async(sourceActor, item, data) => {
                 height: 0.4
             },
             permission,
-            items: [...items, item.toObject()],
+            items: [...items, newItem],
             flags: { core: { sheetClass: "dsa5.MerchantSheetDSA5" } },
             folder,
             data: {
@@ -44,13 +47,23 @@ export const dropToGround = async(sourceActor, item, data) => {
         await cls.create(td, { parent: canvas.scene });
 
         if (sourceActor) {
-            await sourceActor.deleteEmbeddedDocuments("Item", [data.data._id])
+            const newCount = item.data.data.quantity.value - amount
+            if (newCount <= 0) {
+                await sourceActor.deleteEmbeddedDocuments("Item", [data.data._id])
+            } else {
+                await sourceActor.updateEmbeddedDocuments("Item", [{
+                    _id: data.data._id,
+                    "data.quantity.value": newCount
+                }])
+            }
+
         }
     } else {
         const payload = {
             itemId: item.uuid,
             sourceActorId: sourceActor.id,
             data,
+            amount
         };
         game.socket.emit("system.dsa5", {
             type: "itemDrop",
@@ -80,15 +93,17 @@ export const connectHook = () => {
 
             if (!DSA5.equipmentCategories.includes(item.data.type)) return
 
-            new Dialog({
+            const content = await renderTemplate("systems/dsa5/templates/dialog/dropToGround.html", { name: item.name, count: item.data.data.quantity.value })
+
+            new DropToGroundDialog({
                 title: data.name,
-                content: game.i18n.format('MERCHANT.dropGround', { name: item.name }),
+                content,
                 default: 'yes',
                 buttons: {
                     Yes: {
                         icon: '<i class="fa fa-check"></i>',
                         label: game.i18n.localize("yes"),
-                        callback: async() => dropToGround(sourceActor, item, data)
+                        callback: async(dlg) => dropToGround(sourceActor, item, data, Number(dlg.find('[name="count"]').val()))
                     },
                     cancel: {
                         icon: '<i class="fas fa-times"></i>',
@@ -98,4 +113,13 @@ export const connectHook = () => {
             }).render(true)
         }
     })
+}
+
+class DropToGroundDialog extends Dialog {
+    activateListeners(html) {
+        super.activateListeners(html)
+        html.find('input[type="range"]').change(ev => {
+            $(ev.currentTarget).closest('.row-section').find('.range-value').html($(ev.currentTarget).val())
+        })
+    }
 }

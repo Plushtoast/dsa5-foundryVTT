@@ -101,7 +101,7 @@ export default function() {
                         {
                             let sourceActor = data.payload.sourceActorId ? game.actors.get(data.payload.sourceActorId) : undefined
                             fromUuid(data.payload.itemId).then(item => {
-                                dropToGround(sourceActor, item, data.payload.data)
+                                dropToGround(sourceActor, item, data.payload.data, data.payload.amount)
                             })
                         }
                         break
