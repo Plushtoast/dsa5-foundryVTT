@@ -14,7 +14,7 @@ import * as migrateWorld from '../system/migrator.js'
 import * as initScene from './scene.js'
 import * as initKeybindings from './keybindings.js'
 import * as rollExtensions from './../system/dsarolls.js'
-import * as itemDrop from "./itemDrop.js";
+import { connectHook } from "./itemDrop.js";
 
 import ActorSheetdsa5Character from "./../actor/character-sheet.js";
 import ActorSheetdsa5Creature from "./../actor/creature-sheet.js";
@@ -104,7 +104,7 @@ Hooks.once("init", () => {
 Hooks.once('ready', () => {
     DidYouKnow.showOneMessage()
     TokenHotbar2.registerTokenHotbar()
-    itemDrop.default()
+    connectHook()
 })
 
 Hooks.once('setup', () => {

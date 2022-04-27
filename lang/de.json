@@ -1407,7 +1407,9 @@
         "resetTokenbar": "Reset Tokenhotbar",
         "resetTokenbarHint": "Stelle die Position der Tokenhotbar auf den Ursprungswert",
         "enableItemDropToCanvas": "Items auf die Map legen",
-        "enableItemDropToCanvasHint": "Lege Gegenstände per drag & drop auf die Karte als Schatztoken."
+        "enableItemDropToCanvasHint": "Lege Gegenstände per drag & drop auf die Karte als Schatztoken.",
+        "merchantNotification": "Benachrichtigung bei Handel",
+        "merchantNotificationHint": "Zeige Transfers zwischen Akteuren (Händler/Schatz) im Chat."
     },
     "COMBATTRACKER": {
         "noDefenses": "Anzahl Verteidigungen",
@@ -1482,7 +1484,14 @@
         "locked": "Abgeschlossen",
         "selectRandomGoods": "Wähle Kategorien und Anzahl an zusätzlichen zufälligen Waren. Das Hinzufügen dauert einen Moment, wenn der Index der Bibliothek noch nicht erstellt wurde.",
         "service": "{buyer} hat {amount} {item} von {merchant} gekauft.",
-        "dropGround": "{name} auf dem Boden ablegen?"
+        "dropGround": "{name} auf dem Boden ablegen?",
+        "onlyGM": "Nur GM",
+        "buyNotification": "<b>{source}</b> kauft {amount}x {item} von <b>{target}</b> für {price} Silberstücke.",
+        "sellNotification": "<b>{source}</b> verkauft {amount}x {item} an <b>{target}</b> für {price} Silberstücke.",
+        "buyLootNotification": "<b>{source}</b> nimmt {amount}x {item} aus <b>{target}</b>.",
+        "sellLootNotification": "<b>{source}</b> legt {amount}x {item} in <b>{target}</b>.",
+        "emptyDestroy": "Temporär",
+        "emptyDestroyHint": "Löscht den Akteur, wenn das Inventar beim Handel geleert wird"
     },
     "GARADAN": {
         "1": "Bauer",

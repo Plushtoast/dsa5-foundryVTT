@@ -3,50 +3,63 @@ import DSA5_Utility from "../system/utility-dsa5.js"
 
 //TODO update to v10 standard https://gitlab.com/foundrynet/foundryvtt/-/issues/6990
 
-const dropToGround = async(sourceActor, item, data) => {
-    let items = await game.dsa5.apps.DSA5_Utility.allMoneyItems()
-    let folder = await DSA5_Utility.getFolderForType("Actor", null, "Dropped Items")
-    const userIds = game.users.filter(x => !x.isGM).map(x => x.id)
+export const dropToGround = async(sourceActor, item, data) => {
+    if (game.user.isGM) {
+        let items = await game.dsa5.apps.DSA5_Utility.allMoneyItems()
+        let folder = await DSA5_Utility.getFolderForType("Actor", null, "Dropped Items")
+        const userIds = game.users.filter(x => !x.isGM).map(x => x.id)
 
-    const permission = userIds.reduce((prev, cur) => {
-        prev[cur] = 1
-        return prev
-    }, { default: 0 })
+        const permission = userIds.reduce((prev, cur) => {
+            prev[cur] = 1
+            return prev
+        }, { default: 0 })
 
-    const actor = {
-        type: "npc",
-        name: item.name,
-        img: item.img,
-        token: {
+        const actor = {
+            type: "npc",
+            name: item.name,
             img: item.img,
-            width: 0.4,
-            height: 0.4
-        },
-        permission,
-        items: [...items, item.toObject()],
-        flags: { core: { sheetClass: "dsa5.MerchantSheetDSA5" } },
-        folder,
-        data: {
-            merchant: {
-                merchantType: "loot",
-                hidePlayer: 1
+            token: {
+                img: item.img,
+                width: 0.4,
+                height: 0.4
             },
-            status: { wounds: { value: 16 } }
+            permission,
+            items: [...items, item.toObject()],
+            flags: { core: { sheetClass: "dsa5.MerchantSheetDSA5" } },
+            folder,
+            data: {
+                merchant: {
+                    merchantType: "loot",
+                    temporary: true,
+                    hidePlayer: 1
+                },
+                status: { wounds: { value: 16 } }
+            }
+        };
+        const finalActor = await game.dsa5.entities.Actordsa5.create(actor)
+        const td = await finalActor.getTokenData({ x: data.x, y: data.y, hidden: false });
+        if (!canvas.dimensions.rect.contains(td.x, td.y)) return false
+
+        const cls = getDocumentClass("Token");
+        await cls.create(td, { parent: canvas.scene });
+
+        if (sourceActor) {
+            await sourceActor.deleteEmbeddedDocuments("Item", [data.data._id])
         }
-    };
-    const finalActor = await game.dsa5.entities.Actordsa5.create(actor)
-    const td = await finalActor.getTokenData({ x: data.x, y: data.y, hidden: false });
-    if (!canvas.dimensions.rect.contains(td.x, td.y)) return false
-
-    const cls = getDocumentClass("Token");
-    await cls.create(td, { parent: canvas.scene });
-
-    if (sourceActor) {
-        await sourceActor.deleteEmbeddedDocuments("Item", [data.data._id])
+    } else {
+        const payload = {
+            itemId: item.uuid,
+            sourceActorId: sourceActor.id,
+            data,
+        };
+        game.socket.emit("system.dsa5", {
+            type: "itemDrop",
+            payload
+        });
     }
 }
 
-export default function() {
+export const connectHook = () => {
     Hooks.on("dropCanvasData", async(canvas, data) => {
         if (!(game.settings.get("dsa5", "enableItemDropToCanvas") || game.user.isGM || data.tokenId)) return
 

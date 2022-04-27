@@ -368,6 +368,20 @@ export default function() {
         }
     });
 
+    game.settings.register("dsa5", "merchantNotification", {
+        name: "DSASETTINGS.merchantNotification",
+        hint: "DSASETTINGS.merchantNotificationHint",
+        scope: "world",
+        config: true,
+        default: "0",
+        type: String,
+        choices: {
+            0: game.i18n.localize('no'),
+            1: game.i18n.localize('yes'),
+            2: game.i18n.localize('MERCHANT.onlyGM'),
+        }
+    });
+
     game.settings.register("dsa5", "sightOptions", {
         name: "sightOptions",
         scope: "world",

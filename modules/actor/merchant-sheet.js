@@ -56,12 +56,8 @@ export default class MerchantSheetDSA5 extends ActorSheetdsa5NPC {
             this.render()
         })
 
-        html.find('.randomGoods').click(ev => {
-            this.randomGoods(ev)
-        })
-        html.find(".clearInventory").click(ev => {
-            this.clearInventory(ev)
-        })
+        html.find('.randomGoods').click(ev => this.randomGoods(ev))
+        html.find(".clearInventory").click(ev => this.clearInventory(ev))
         html.find('.buy-item').click(ev => {
             this.advanceWrapper(ev, "buyItem", ev)
             DSA5SoundEffect.playMoneySound()
@@ -106,44 +102,80 @@ export default class MerchantSheetDSA5 extends ActorSheetdsa5NPC {
         if (game.user.isGM) {
             MerchantSheetDSA5.finishTransaction(source, target, price, itemId, buy, amount)
         } else if (MerchantSheetDSA5.noNeedToPay(target, source, price) || DSA5Payment.canPay(target, price, true)) {
-            let targetId = { actor: target.data._id }
-            if (target.token) {
-                targetId["token"] = target.token.data._id
-            }
-            let sourceId = { actor: source.data._id }
-            if (source.token) {
-                sourceId["token"] = source.token.data._id
-            }
-
             game.socket.emit("system.dsa5", {
                 type: "trade",
                 payload: {
-                    target: targetId,
-                    source: sourceId,
-                    price: price,
-                    itemId: itemId,
-                    buy: buy,
-                    amount: amount
+                    target: MerchantSheetDSA5.transferTokenData(target),
+                    source: MerchantSheetDSA5.transferTokenData(source),
+                    price,
+                    itemId,
+                    buy,
+                    amount
                 }
             })
         }
+    }
+
+    static transferTokenData(tokenData) {
+        let id = { actor: tokenData.data._id }
+        if (tokenData.token)
+            id["token"] = tokenData.token.data._id
+
+        return id
     }
 
     static async finishTransaction(source, target, price, itemId, buy, amount) {
         let item = source.items.get(itemId).toObject()
         amount = Math.min(Number(item.data.quantity.value), amount)
         if (Number(item.data.quantity.value) > 0) {
-            const hasPaid = MerchantSheetDSA5.noNeedToPay(target, source, price) || DSA5Payment.payMoney(target, price, true)
+            const noNeedToPay = MerchantSheetDSA5.noNeedToPay(target, source, price)
+            const hasPaid = noNeedToPay || DSA5Payment.payMoney(target, price, true)
             if (hasPaid) {
                 if (buy) {
                     await this.updateTargetTransaction(target, item, amount, source)
                     await this.updateSourceTransaction(source, target, item, price, itemId, amount)
+                    await this.transferNotification(item, target, source, buy, price, amount, noNeedToPay)
+                    await this.selfDestruction(source)
                 } else {
                     await this.updateSourceTransaction(source, target, item, price, itemId, amount)
                     await this.updateTargetTransaction(target, item, amount, source)
+                    await this.transferNotification(item, source, target, buy, price, amount, noNeedToPay)
                 }
             }
         }
+    }
+
+    static async selfDestruction(target) {
+        if (getProperty(target, "data.data.merchant.merchantType") == "loot" && getProperty(target, "data.data.merchant.temporary")) {
+            const hasItemsLeft = target.items.some(x => DSA5.equipmentCategories.includes(x.type) || (x.type == "money" && x.data.data.quantity.value > 0))
+            if (!hasItemsLeft) {
+                game.socket.emit("system.dsa5", {
+                    type: "hideDeletedSheet",
+                    payload: {
+                        target: MerchantSheetDSA5.transferTokenData(target)
+                    }
+                })
+                const tokens = target.getActiveTokens().map(x => x.id)
+                await canvas.scene.deleteEmbeddedDocuments("Token", tokens)
+                await game.actors.get(target.id).delete()
+                this.hideDeletedSheet(target)
+            }
+        }
+    }
+
+    static async hideDeletedSheet(target) {
+        target.sheet.close(true)
+    }
+
+    static async transferNotification(item, source, target, buy, price, amount, noNeedToPay) {
+        const notify = game.settings.get("dsa5", "merchantNotification")
+        if (notify == 0) return
+
+        const notif = "MERCHANT." + (buy ? "buy" : "sell") + (noNeedToPay ? "Loot" : "") + "Notification"
+        const template = game.i18n.format(notif, { item: item.name, source: source.name, target: target.name, amount, price, buy })
+        const chatData = DSA5_Utility.chatDataSetup(template)
+        if (notify == 2) chatData["whisper"] = ChatMessage.getWhisperRecipients("GM").map(u => u.id)
+        await ChatMessage.create(chatData)
     }
 
     static noNeedToPay(target, source, price) {

@@ -161,7 +161,14 @@
         "locked": "Locked",
         "selectRandomGoods": "Select categories and an amount of additional random commodities. The addition might take a moment, if the index of the library has not been created yet.",
         "service": "{buyer} bought {amount} {item} from {merchant}.",
-        "dropGround": "Drop {name} to the ground?"
+        "dropGround": "Drop {name} to the ground?",
+        "onlyGM": "Only GM",
+        "buyNotification": "<b>{source}</b> buys {amount}x {item} from <b>{target}</b> for {price} Silverthalers.",
+        "sellNotification": "<b>{source}</b> sells {amount}x {item} to <b>{target}</b> for {price} Silverthalers.",
+        "buyLootNotification": "<b>{source}</b> takes {amount}x {item} from <b>{target}</b>.",
+        "sellLootNotification": "<b>{source}</b> drops {amount}x {item} to <b>{target}</b>.",
+        "emptyDestroy": "Temporary",
+        "emptyDestroyHint": "Deletes the actor if its inventory is emptied during trading."
     },
     "GARADAN": {
         "1": "Pawn",
@@ -1383,7 +1390,9 @@
         "resetTokenbar": "Reset token hotbar",
         "resetTokenbarHint": "Reset the position of the token hotbar",
         "enableItemDropToCanvas": "Drop items on the map",
-        "enableItemDropToCanvasHint": "Put items as loot sheet on the map via drag & drop."
+        "enableItemDropToCanvasHint": "Put items as loot sheet on the map via drag & drop.",
+        "merchantNotification": "Trade notification",
+        "merchantNotificationHint": "Show transfers of items between actors (merchant/loot) in the chat."
     },
     "WEAR": {
         "check": "Breaking Point Rating Check ({category})",
