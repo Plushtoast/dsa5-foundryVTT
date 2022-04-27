@@ -45,6 +45,15 @@ export default function() {
             "4": "+4",
         }
     });
+    game.settings.register("dsa5", "enableItemDropToCanvas", {
+        name: "DSASETTINGS.enableItemDropToCanvas",
+        hint: "DSASETTINGS.enableItemDropToCanvasHint",
+        scope: "world",
+        config: true,
+        default: true,
+        type: Boolean
+    });
+
     game.settings.register("dsa5", "statusEffectCounterColor", {
         name: "DSASETTINGS.statusEffectCounterColor",
         hint: "DSASETTINGS.statusEffectCounterColorHint",

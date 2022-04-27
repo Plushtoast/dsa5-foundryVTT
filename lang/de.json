@@ -1126,7 +1126,7 @@
         "localKnowledge": "Ortskenntnis",
         "naturalArmor": "Natürliche Rüstung",
         "improvisedWeaponMaster": "Meister der improvisierten Waffen",
-        
+
         "all": "alle",
         "twoWeaponCombat": "Beidhändiger Kampf",
         "poisonResistance": "Giftresistenz",
@@ -1233,7 +1233,8 @@
         "noConjurationActive": "Kein zu beschwörender Akteur aktiv (drag and drop)",
         "notInRangeToLoot": "Zu weit entfernt für eine Interaktion.",
         "onlyGMallowed": "Diese Funktion steht nur dem Spielleiter zur Verfügung.",
-        "macroNotFound": "Das Macro {name} konnte nicht gefunden werden...sorry."
+        "macroNotFound": "Das Macro {name} konnte nicht gefunden werden...sorry.",
+        "notOwner": "Du darfst diesen Charakter nicht modifizieren."
     },
     "Shapeshift": {
         "title": "Gestaltwandlung",
@@ -1404,7 +1405,9 @@
         "tokenhotbarLayout2": "Vertikal, nach links",
         "tokenhotbarLayout3": "Vertikal, nach rechts",
         "resetTokenbar": "Reset Tokenhotbar",
-        "resetTokenbarHint": "Stelle die Position der Tokenhotbar auf den Ursprungswert"
+        "resetTokenbarHint": "Stelle die Position der Tokenhotbar auf den Ursprungswert",
+        "enableItemDropToCanvas": "Items auf die Map legen",
+        "enableItemDropToCanvasHint": "Lege Gegenstände per drag & drop auf die Karte als Schatztoken."
     },
     "COMBATTRACKER": {
         "noDefenses": "Anzahl Verteidigungen",
@@ -1478,7 +1481,8 @@
         "select": "Auswahl",
         "locked": "Abgeschlossen",
         "selectRandomGoods": "Wähle Kategorien und Anzahl an zusätzlichen zufälligen Waren. Das Hinzufügen dauert einen Moment, wenn der Index der Bibliothek noch nicht erstellt wurde.",
-        "service": "{buyer} hat {amount} {item} von {merchant} gekauft."
+        "service": "{buyer} hat {amount} {item} von {merchant} gekauft.",
+        "dropGround": "{name} auf dem Boden ablegen?"
     },
     "GARADAN": {
         "1": "Bauer",

@@ -160,7 +160,8 @@
         "select": "Choice",
         "locked": "Locked",
         "selectRandomGoods": "Select categories and an amount of additional random commodities. The addition might take a moment, if the index of the library has not been created yet.",
-        "service": "{buyer} bought {amount} {item} from {merchant}."
+        "service": "{buyer} bought {amount} {item} from {merchant}.",
+        "dropGround": "Drop {name} to the ground?"
     },
     "GARADAN": {
         "1": "Pawn",
@@ -1196,7 +1197,8 @@
         "noConjurationActive": "No actor to summon active (drag and drop)",
         "notInRangeToLoot": "Zu weit entfernt für eine Interaktion.",
         "onlyGMallowed": "This function is only available to the game master.",
-        "macroNotFound": "The macro {name} could not be found...sorry."
+        "macroNotFound": "The macro {name} could not be found...sorry.",
+        "notOwner": "You are not allowed to modify this actor."
     },
     "CEREMONYMODIFIER": {
         "holysite": "Sanctum of the god (+2)",
@@ -1379,7 +1381,9 @@
         "tokenhotbarLayout2": "Vertical, left",
         "tokenhotbarLayout3": "Vertical, right",
         "resetTokenbar": "Reset token hotbar",
-        "resetTokenbarHint": "Reset the position of the token hotbar"
+        "resetTokenbarHint": "Reset the position of the token hotbar",
+        "enableItemDropToCanvas": "Drop items on the map",
+        "enableItemDropToCanvasHint": "Put items as loot sheet on the map via drag & drop."
     },
     "WEAR": {
         "check": "Breaking Point Rating Check ({category})",

@@ -1,4 +1,5 @@
 import DSA5ChatAutoCompletion from "./chat_autocompletion.js"
+import DSA5_Utility from "./utility-dsa5.js"
 
 export default class RequestRoll {
     static async requestGC(category, name, messageId, modifier = 0) {
@@ -6,22 +7,35 @@ export default class RequestRoll {
 
         if (actor) {
             game.user.updateTokenTargets([])
-            let options = { modifier }
+            let options = { modifier, cummulative: messageId }
             switch (category) {
                 case "attribute":
                     break
                 default:
                     const skill = actor.items.find((i) => i.name == name && i.type == category)
-                    actor.setupSkill(skill.data, options, tokenId).then(async (setupData) => {
+                    actor.setupSkill(skill.data, options, tokenId).then(async(setupData) => {
                         let result = await actor.basicTest(setupData)
-                        let message = await game.messages.get(messageId)
-                        const data = message.data.flags
-                        if (result.result.successLevel < 0) data.failed += 1
-                        data.results.push({ actor: actor.name, qs: result.result.qualityStep || 0 })
-                        RequestRoll.rerenderGC(message, data)
+                        await RequestRoll.editGroupCheckRoll(messageId, result)
                     })
             }
         }
+    }
+
+    static async editGroupCheckRoll(messageId, result) {
+        let message = await game.messages.get(messageId)
+        const data = message.data.flags
+        const isCrit = result.result.successLevel > 1
+        const critMultiplier = isCrit ? 2 : 1
+        data.botched = data.botched || result.result.successLevel < -1
+        const actor = DSA5_Utility.getSpeaker(result.result.speaker)
+        let update = { messageId: result.result.messageId, actor: actor.name, qs: (result.result.qualityStep || 0) * critMultiplier, success: result.result.successLevel }
+        let index = data.results.findIndex(x => x.messageId == update.messageId)
+        if (index >= 0) {
+            data.results[index] = update
+        } else {
+            data.results.push(update)
+        }
+        RequestRoll.rerenderGC(message, data)
     }
 
     static async requestRoll(category, name, modifier = 0) {
@@ -56,10 +70,14 @@ export default class RequestRoll {
 
     static async rerenderGC(message, data) {
         if (game.user.isGM) {
+            let failed = 0
             data.qs = data.results.reduce((a, b) => {
+                failed += b.success < 0 ? 1 : 0
+                if (b.success > 1) failed = 0
                 return a + b.qs
             }, 0)
-            data.calculatedModifier = data.modifier - data.failed
+            data.failed = failed
+            data.calculatedModifier = data.modifier - failed
             data.openRolls = data.maxRolls - data.results.length
             data.doneRolls = data.results.length
             const content = await renderTemplate("systems/dsa5/templates/chat/roll/groupcheck.html", data)
@@ -98,25 +116,21 @@ export default class RequestRoll {
         RequestRoll.rerenderGC(message, data)
     }
 
-    static chatListeners(html){
-        html.on("change", ".editGC", (ev) => {
-            RequestRoll.editGC(ev)
-        })
+    static chatListeners(html) {
+        html.on("change", ".editGC", (ev) => RequestRoll.editGC(ev))
         html.on("click", ".request-roll", (ev) => {
             const elem = ev.currentTarget.dataset
             RequestRoll.requestRoll(elem.type, elem.name, Number(elem.modifier) || 0)
         })
         html.on("click", ".request-gc", (ev) => {
             const elem = ev.currentTarget.dataset
-             RequestRoll.requestGC(
+            RequestRoll.requestGC(
                 elem.type,
                 elem.name,
                 $(ev.currentTarget).parents(".message").attr("data-message-id"),
                 Number(elem.modifier) || 0
             )
         })
-        html.on("click", ".removeGC", (ev) => {
-            RequestRoll.removeGCEntry(ev)
-        })
+        html.on("click", ".removeGC", (ev) => RequestRoll.removeGCEntry(ev))
     }
 }

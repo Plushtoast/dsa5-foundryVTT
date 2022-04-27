@@ -189,7 +189,7 @@ export default class Actordsa5 extends Actor {
             let encumbrance = this.hasCondition("encumbered")
             encumbrance = encumbrance ? Number(encumbrance.data.flags.dsa5.value) : 0
 
-            data.data.status.speed.max = Math.max(0, data.data.status.speed.max - Math.min(4, encumbrance))
+            data.data.status.speed.max = Math.round(Math.max(0, data.data.status.speed.max - Math.min(4, encumbrance)) * (data.data.status.speed.multiplier || 1))
 
             data.data.status.initiative.value += data.data.status.initiative.gearmodifier - Math.min(4, encumbrance)
             const baseInit = Number((0.01 * data.data.status.initiative.value).toFixed(2))
@@ -2171,10 +2171,12 @@ export default class Actordsa5 extends Actor {
 
         await this.consumeAmmunition(testData)
 
-        if (!options.suppressMessage)
-            await DiceDSA5.renderRollCard(cardOptions, result, options.rerenderMessage).then(async (msg) => {
-                await OpposedDsa5.handleOpposedTarget(msg)
-            })
+        if (!options.suppressMessage){
+            const msg = await DiceDSA5.renderRollCard(cardOptions, result, options.rerenderMessage)
+            await OpposedDsa5.handleOpposedTarget(msg)
+            result.messageId = msg.id
+        }
+
         return { result, cardOptions, options }
     }
 

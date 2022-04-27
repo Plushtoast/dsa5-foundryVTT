@@ -91,6 +91,7 @@
             "path": "lang/en.json"
         }
     ],
+    "background": "icons/githublogo.webp",
     "socket": true,
     "initiative": "@status.initiative.value + @status.initiative.die + @status.initiative.diemodifier",
     "gridDistance": 1,

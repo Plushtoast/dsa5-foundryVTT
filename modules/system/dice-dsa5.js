@@ -1022,11 +1022,10 @@ export default class DiceDSA5 {
 
         if (successLevel > 0) {
             fws += this._situationalModifiers(testData, "FP")
-            qualityStep =
+            qualityStep = Math.max(1,
                 (fws == 0 ? 1 : fws > 0 ? Math.ceil(fws / 3) : 0) +
-                (testData.qualityStep != undefined ? Number(testData.qualityStep) : 0)
-
-            if (qualityStep > 0) qualityStep += (testData.advancedModifiers.qls || 0) + this._situationalModifiers(testData, "QL")
+                (testData.qualityStep != undefined ? Number(testData.qualityStep) : 0))
+                + (testData.advancedModifiers.qls || 0) + this._situationalModifiers(testData, "QL")
         }
 
         qualityStep = Math.min(game.settings.get("dsa5", "capQSat"), qualityStep)
@@ -1353,6 +1352,13 @@ export default class DiceDSA5 {
                     game.users.get(rerenderMessage.data.user).character
                 const rollData = actor ? actor.getRollData() : {}
                 chatOptions["content"] = TextEditor.enrichHTML(html, rollData)
+
+                const cummulative = getProperty(rerenderMessage, "data.flags.data.preData.extra.options.cummulative")
+                if(cummulative){
+                    testData.messageId = rerenderMessage.id
+                    RequestRoll.editGroupCheckRoll(cummulative, { result: testData })
+                }
+
                 return rerenderMessage
                     .update({
                         content: chatOptions["content"],
@@ -1485,18 +1491,11 @@ export default class DiceDSA5 {
             ev.preventDefault()
             $(ev.currentTarget).parents(".chat-card").find(".display-toggle").toggle()
         })
-        html.on("click", ".botch-roll", (ev) => {
-            DSATables.showBotchCard(ev.currentTarget.dataset)
-        })
-        html.on("click", ".roll-item", (ev) => {
-            DiceDSA5._itemRoll(ev)
-        })
-        html.on("click", ".gearDamaged", async (ev) => {
-            DiceDSA5.gearDamaged(ev)
-        })
-        html.on("change", ".roll-edit", (ev) => {
-            DiceDSA5._rollEdit(ev)
-        })
+        html.on("click", ".botch-roll", (ev) => DSATables.showBotchCard(ev.currentTarget.dataset))
+        html.on("click", ".roll-item", (ev) => DiceDSA5._itemRoll(ev))
+        html.on("click", ".gearDamaged", async (ev) => DiceDSA5.gearDamaged(ev))
+        html.on("change", ".roll-edit", (ev) => DiceDSA5._rollEdit(ev)
+        )
         html.on("click", ".applyEffect", (ev) => {
             const elem = $(ev.currentTarget)
             const id = elem.parents(".message").attr("data-message-id")
@@ -1513,9 +1512,7 @@ export default class DiceDSA5 {
             let target = canvas.tokens.get(message.data.flags.unopposeData.targetSpeaker.token)
             OpposedDsa5.clearOpposed(target.actor)
         })
-        html.on("click", ".resistEffect", (ev) => {
-            DSAActiveEffectConfig.resistEffect(ev)
-        })
+        html.on("click", ".resistEffect", (ev) => DSAActiveEffectConfig.resistEffect(ev))
         RequestRoll.chatListeners(html)
     }
 }

@@ -1006,7 +1006,6 @@ class SpellExtensionSheetDSA5 extends ItemSheetdsa5 {
         mergeObject(data, {
             categories: { spell: "spell", liturgy: "liturgy", ritual: "ritual", ceremony: "ceremony" }
         })
-        console.log(data)
         return data
     }
 }
