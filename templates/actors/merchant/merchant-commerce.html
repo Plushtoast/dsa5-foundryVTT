@@ -173,7 +173,7 @@
         </div>
         {{#if (or (eq ../actor.data.merchant.merchantType "merchant") (eq ../actor.data.merchant.merchantType "loot"))}}
         <div class="col eight center">
-            <i class="fa fa-lock" title="{{localize 'MERCHANT.untradable'}}"></i>
+            <a class="lockTradeSection" data-type="{{section.dataType}}"><i class="fa fa-lock" title="{{localize 'MERCHANT.untradable'}}"></i></a>
         </div>
         {{/if}}
         <div class="col eight center">
@@ -220,8 +220,9 @@
                     <a class="item-toggle"><i class="far fa-check-circle"></i></a> {{else}}
                     <a class="item-toggle"><i class="far fa-circle"></i></a> {{/if}} {{/if}}
                 </div>
-                <div class="col four center">
-                    {{item.defaultPrice}}{{item.priceTag}}
+                <div class="col four center setCustomPrice" title="{{localize 'MERCHANT.priceMod'}}">
+                    {{item.defaultPrice}}<span class="priceTag">{{item.priceTag}}</span>
+                    <input class="customPriceTag" type="number" data-dtype="Number" value="{{item.flags.dsa5.customPriceTag}}" />
                 </div>
                 <div class="col eight center">
                     <a class="quantity-click">{{item.data.quantity.value}}</a>

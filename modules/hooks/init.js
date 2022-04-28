@@ -30,6 +30,7 @@ import DSAActiveEffectConfig from "../status/active_effects.js";
 import TokenHotbar2 from "../system/tokenHotbar2.js";
 import CreatureMerchantSheetDSA5 from "../actor/creature-merchant-sheet.js";
 import CharacterMerchantSheetDSA5 from "../actor/character-merchant-sheet.js";
+import DPS from "../system/derepositioningsystem.js";
 
 
 export default function() {
@@ -47,6 +48,7 @@ export default function() {
     migrateWorld.default()
     initScene.default()
     rollExtensions.default()
+
 }
 
 Hooks.once("init", () => {
@@ -103,6 +105,7 @@ Hooks.once("init", () => {
 
     ItemSheetdsa5.setupSheets()
     configuration.default()
+    DPS.initDoorMinDistance()
 })
 
 Hooks.once('ready', () => {

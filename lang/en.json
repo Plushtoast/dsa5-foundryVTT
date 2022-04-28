@@ -169,7 +169,8 @@
         "emptyDestroy": "Temporary",
         "emptyDestroyHint": "Deletes the actor if its inventory is emptied during trading.",
         "untradable": "Item not tradable",
-        "otherTradeFriend": "Drag an actor (that you own) on the sheet to change the trading partner."
+        "otherTradeFriend": "Drag an actor (that you own) on the sheet to change the trading partner.",
+        "priceMod": "Base price / Modified price (Double click for custom price)"
     },
     "GARADAN": {
         "1": "Pawn",
@@ -212,6 +213,7 @@
     "ammunitiongroup": "Ammunition type",
     "AstoundingSuccess": "Astounding success",
     "AstoundingFailure": "Astounding failure",
+    "each": "each",
     "advantages": "Advantages",
     "advantage": "Advantage",
     "attackWeaponless": "Unarmed attack",
@@ -1379,7 +1381,7 @@
         "enableForeignSpellModifer": "Unfamiliar tradition modifier",
         "enableForeignSpellModiferHint": "Enable -2 modifier for unfamiliar tradition checks.",
         "enableDPS": "Activate DPS ",
-        "enableDPSHint": "Activate the \"Dere Positioning System\".\nYou can only interact with merchants in immediate distance.\nRange modifiers for ranged attacks are applied automatically.",
+        "enableDPSHint": "Activate the \"Dere Positioning System\".\nYou can only interact with merchants and doors in immediate distance.\nRange modifiers for ranged attacks are applied automatically.",
         "tokenhotbarSize": "Token hotbar size",
         "tokenhotbarSizeHint": "Size of the buttons in the token hotbar.",
         "tokenhotbarLayout": "Tokenhotbar Layout",

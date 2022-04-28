@@ -59,11 +59,15 @@ export const MerchantSheetMixin = (superclass) => class extends superclass {
             await this.allowMerchant(ids, allow)
             this.render()
         })
-
+        html.find('.lockTradeSection').click(ev => this.lockTradeSection(ev))
         html.find('.item-tradeLock').click(ev => this.toggleTradeLock(ev))
         html.find('.randomGoods').click(ev => this.randomGoods(ev))
         html.find(".clearInventory").click(ev => this.clearInventory(ev))
         html.find('.removeOtherTradeFriend').click(ev => this.removeOtherTradeFriend())
+        html.find('.setCustomPrice').click(ev => $(ev.currentTarget).addClass("edit"))
+        html.find('.customPriceTag').change(async ev => this.setCustomPrice(ev))
+            .blur(ev => $(ev.currentTarget).closest('.setCustomPrice').removeClass("edit"))
+
         html.find('.buy-item').click(ev => {
             this.advanceWrapper(ev, "buyItem", ev)
             DSA5SoundEffect.playMoneySound()
@@ -90,13 +94,36 @@ export const MerchantSheetMixin = (superclass) => class extends superclass {
     async toggleTradeLock(ev) {
         const itemId = this._getItemId(ev);
         let item = this.actor.items.get(itemId)
-
         this.actor.updateEmbeddedDocuments("Item", [{ _id: item.id, "data.tradeLocked": !item.data.data.tradeLocked }]);
+    }
+
+    async setCustomPrice(ev) {
+        ev.stopPropagation()
+        ev.preventDefault()
+        const itemId = this._getItemId(ev);
+
+        await this.actor.updateEmbeddedDocuments("Item", [{ _id: itemId, "flags.dsa5.customPriceTag": Number(ev.target.value) }])
     }
 
     removeOtherTradeFriend() {
         this.otherTradeFriend = undefined
         this.render(true)
+    }
+
+    async lockTradeSection(ev) {
+        const updates = []
+        const filter = ev.currentTarget.dataset.type
+        let newValue
+        for (let item of this.actor.items) {
+            if (item.type == filter && DSA5.equipmentCategories.includes(item.type)) {
+                let upd = item.toObject()
+                if (newValue === undefined) newValue = !upd.data.tradeLocked
+
+                upd.data.tradeLocked = newValue
+                updates.push(upd)
+            }
+        }
+        this.actor.updateEmbeddedDocuments("Item", updates);
     }
 
     async changeAmountAllItems(ev) {
@@ -248,6 +275,7 @@ export const MerchantSheetMixin = (superclass) => class extends superclass {
             case "creature":
             case "npc":
             case "character":
+                //TODO skip if not trading window enabled
                 this.setTradeFriend(item)
                 break;
             default:
@@ -340,12 +368,14 @@ export const MerchantSheetMixin = (superclass) => class extends superclass {
 
         let categories = []
         dlg.find('input[type="checkbox"]:checked').each(function() {
-            categories.push($(this).val())
+            const name = $(this).val()
+            categories.push({
+                name,
+                count: Number(dlg.find(`input[name="each_${name}"]`).val()),
+                number: Number(dlg.find(`input[name="number_${name}"]`).val())
+            })
         })
-        let numbers = {}
-        dlg.find('input[type="number"]').each(function() {
-            numbers[$(this).attr("name").split("_")[1]] = Number($(this).val())
-        })
+
         const itemLibrary = game.dsa5.itemLibrary
         if (!itemLibrary.equipmentBuild) {
             await itemLibrary.buildEquipmentIndex()
@@ -353,29 +383,34 @@ export const MerchantSheetMixin = (superclass) => class extends superclass {
 
         let items = []
         for (let cat of categories) {
-            items.push(...await itemLibrary.getRandomItems(cat, numbers[cat]))
+            const randomItems = (await itemLibrary.getRandomItems(cat.name, cat.number)).map(x => {
+                const elem = x.toObject()
+                elem.data.quantity.value = cat.count
+                return elem
+            })
+
+            items.push(...randomItems)
         }
 
         var seen = {}
         items = items.filter(function(x) {
-            const domain = getProperty(x, "data.data.effect.attributes") || ""
-            const price = Number(getProperty(x, "data.data.price.value")) || 0
+            const domain = getProperty(x, "data.effect.attributes") || ""
+            const price = Number(getProperty(x, "data.price.value")) || 0
             if (domain != "" || price > 10000) return false
 
             let seeName = `${x.type}_${x.name}`
-            return (seen.hasOwnProperty(seeName) ? false : (seen[seeName] = true)) && actor.data.items.filter(function(y) {
+            return (seen.hasOwnProperty(seeName) ? false : (seen[seeName] = true)) && actor.items.filter(function(y) {
                 return y.type == x.type && y.name == x.name
             }).length == 0
         })
-        await actor.createEmbeddedDocuments("Item", items.map(x => x.toObject()))
+        await actor.createEmbeddedDocuments("Item", items)
         $(ev.currentTarget).text(text)
     }
 
     async removeAllGoods(actor, ev) {
         let text = $(ev.currentTarget).text()
         $(ev.currentTarget).html(' <i class="fa fa-spin fa-spinner"></i>')
-        let ids = actor.items.filter(x => ["poison", "consumable", "equipment", "plant", "ammunition"].includes(x.type)).map(x => x.id)
-        ids.push(...actor.items.filter(x => ["armor", "meleeweapon", "rangeweapon"].includes(x.type) && !x.data.data.worn.value).map(x => x.id))
+        let ids = actor.items.filter(x => DSA5.equipmentCategories.includes(x.type) && !getProperty(x, "data.data.worn.value")).map(x => x.id)
         await actor.deleteEmbeddedDocuments("Item", ids);
         $(ev.currentTarget).text(text)
     }
@@ -452,7 +487,7 @@ export const MerchantSheetMixin = (superclass) => class extends superclass {
     }
 
     getItemPrice(item) {
-        return Number(item.data.price.value) * (item.type == "consumable" ? (Number(item.data.QL) || 0) : 1)
+        return Number(getProperty(item, "flags.dsa5.customPriceTag")) || (Number(item.data.price.value) * (item.type == "consumable" ? (Number(item.data.QL) || 0) : 1))
     }
 
     prepareTradeFriend(data) {

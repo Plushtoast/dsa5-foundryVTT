@@ -477,6 +477,7 @@
     "weaponModifier": "Waffenmodifikator",
     "weapontype": "Waffengattung",
     "worn": "Ausgerüstet",
+    "each": "je",
     "wearable": "Ausrüstbar",
     "wrongHand": "Falsche Hand",
     "writing": "Schrift",
@@ -1395,7 +1396,7 @@
         "enableForeignSpellModifer": "Fremdzauber Modifikator",
         "enableForeignSpellModiferHint": "Aktiviere Fremdzaubermodifikator -2 bei Zauberproben.",
         "enableDPS": "DPS aktivieren",
-        "enableDPSHint": "Aktiviere das \"Dere Positioning System\".\nMit Händlern kann nur noch aus direkter Nähe interagiert werden.\nDer Distanzmodifikator für Fernkampfwaffen wird automatisch gesetzt.",
+        "enableDPSHint": "Aktiviere das \"Dere Positioning System\".\nMit Händlern und Türen kann nur noch aus direkter Nähe interagiert werden.\nDer Distanzmodifikator für Fernkampfwaffen wird automatisch gesetzt.",
         "tokenhotbarSize": "Tokenhotbar Größe",
         "tokenhotbarSizeHint": "Größe der Buttons in der Tokenhotbar.",
         "tokenhotbarLayout": "Tokenhotbar Layout",
@@ -1492,7 +1493,8 @@
         "emptyDestroy": "Temporär",
         "emptyDestroyHint": "Löscht den Akteur, wenn das Inventar beim Handel geleert wird",
         "untradable": "Gegenstand nicht handelbar",
-        "otherTradeFriend": "Ziehe einen Akteur für den du Ownerrechte hast auf das Charakterblatt um den Handelspartner zu ändern."
+        "otherTradeFriend": "Ziehe einen Akteur für den du Ownerrechte hast auf das Charakterblatt um den Handelspartner zu ändern.",
+        "priceMod": "Grundpreis / Modifizierter Preis (Doppelclick für eigenen Preis)"
     },
     "GARADAN": {
         "1": "Bauer",

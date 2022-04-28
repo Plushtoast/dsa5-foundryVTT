@@ -1445,6 +1445,8 @@ li.folder {
     display: flex;
 }
 
+.setCustomPrice.edit .priceTag,
+.setCustomPrice .customPriceTag,
 .domainToggle,
 .locktrue .advance,
 .privateMessageIndicator .fas,
@@ -1465,6 +1467,10 @@ li.folder {
 .statusEffectMenu .filterHide,
 .filterHide {
     display: none;
+}
+
+.setCustomPrice.edit .customPriceTag {
+    display: block;
 }
 
 .row-section.skills.searchbox input {
