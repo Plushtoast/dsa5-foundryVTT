@@ -91,7 +91,6 @@ If you want to discuss TDE for foundry or need some assistance you can also join
     <a href="https://www.f-shop.de/virtual-tabletops/das-schwarze-auge-vtt/regel-module/2873/dsa5-aventurisches-kompendium-ii-fuer-foundry-vtt" title="Aventurisches Kompendium II">
         <img src="https://ulisses-digital.de/R20/dsa5/modules/dsa5-compendium2/icons/journal/coverde.webp" alt="Aventurisches Kompendium II" style="margin-right: 5px; margin-bottom: 5px; text-align:center; width:220px;">
     </a>
-    
     <a href="https://www.f-shop.de/virtual-tabletops/das-schwarze-auge-vtt/abenteuer-module/2388/dsa5-mitsommerrache-fuer-foundry" title="Mittsommerrache">
         <img src="https://ulisses-digital.de/R20/dsa5/modules/dsa5-mittsommerrache/icons/journal/coverde.webp" alt="Mittsommerrache" style="margin-right: 5px; margin-bottom: 5px; text-align:center; width:220px;">
     </a>
