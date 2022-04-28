@@ -71,12 +71,10 @@ If you want to discuss TDE for foundry or need some assistance you can also join
         <a href="https://www.f-shop.de/virtual-tabletops/das-schwarze-auge-vtt/regel-module/2873/dsa5-aventurisches-kompendium-ii-fuer-foundry-vtt" title="Aventurisches Kompendium II">
             <img src="https://ulisses-digital.de/R20/dsa5/modules/dsa5-compendium2/icons/journal/coverde.webp" alt="Aventurisches Kompendium II" style="margin-right: 5px; margin-bottom: 5px; text-align:center; width:210px;">
         </a>
-
         <h2>Spezialmodule</h2>
         <a href="https://www.f-shop.de/virtual-tabletops/das-schwarze-auge-vtt/regel-module/2645/dsa5-werkstatt-des-meisters-fuer-foundry-vtt" title="Werkstatt des Meisters">
             <img src="https://www.ulissesf-shop.com/media/image/c3/89/d3/ESD1004_0_0999_600x600.jpg" alt="Werkstatt des Meisters" style="margin-right: 5px; margin-bottom: 5px; text-align:center; width:210px;">
         </a>
-
         <h2>Inhalte</h2>
         <a href="https://www.f-shop.de/virtual-tabletops/das-schwarze-auge-vtt/regel-module/2485/dsa5-aventurisches-pandaemonium-fuer-foundry-vtt" title="Aventurisches Pandämonium I">
             <img src="https://ulisses-digital.de/R20/dsa5/modules/dsa5-pandaemonium/icons/journal/coverde.webp" alt="Aventurisches Pandämonium I" style="margin-right: 5px; margin-bottom: 5px; text-align:center; width:210px;">
@@ -102,7 +100,6 @@ If you want to discuss TDE for foundry or need some assistance you can also join
         <a href="https://www.f-shop.de/virtual-tabletops/das-schwarze-auge-vtt/regel-module/2644/dsa5-aventurische-ruestkammer-ii-fuer-foundry-vtt" title="Aventurische Rüstkammer II">
             <img src="https://ulisses-digital.de/R20/dsa5/modules/dsa5-armory2/icons/journals/coverde.webp" alt="Aventurische Rüstkammer II" style="margin-right: 5px; margin-bottom: 5px; text-align:center; width:210px;">
         </a>
-
         <h2>Abenteuer</h2>
         <a href="https://www.f-shop.de/virtual-tabletops/das-schwarze-auge-vtt/abenteuer-module/2640/dsa5-rabenkrieg-1-kampagne-fuer-foundry-vtt" title="Rabenkrieg I - Die Zähne des Kaimans">
             <img src="https://ulisses-digital.de/R20/dsa5/modules/dsa5-rabenkrieg1/icons/journal/coverde.webp" alt="Rabenkrieg I - Die Zähne des Kaimans" style="margin-right: 5px; margin-bottom: 5px; text-align:center; width:210px;">
@@ -119,7 +116,6 @@ If you want to discuss TDE for foundry or need some assistance you can also join
         <a href="https://www.f-shop.de/virtual-tabletops/das-schwarze-auge-vtt/abenteuer-module/2388/dsa5-mitsommerrache-fuer-foundry" title="Mittsommerrache">
             <img src="https://ulisses-digital.de/R20/dsa5/modules/dsa5-mittsommerrache/icons/journal/coverde.webp" alt="Mittsommerrache" style="margin-right: 5px; margin-bottom: 5px; text-align:center; width:210px;">
         </a>
-
         <h2>Regionalspielhilfen</h2>
         <a href="https://www.f-shop.de/virtual-tabletops/das-schwarze-auge-vtt/regel-module/2684/dsa5-sonnenkueste-bundle-fuer-foundry-vtt" title="Die Sonnenküste">
             <img src="https://ulisses-digital.de/R20/dsa5/modules/dsa5-suncoast/icons/journal/coverde.webp" alt="Die Sonnenküste" style="margin-right: 5px; margin-bottom: 5px; text-align:center; width:210px;">
@@ -127,29 +123,30 @@ If you want to discuss TDE for foundry or need some assistance you can also join
     </div>
 <br>
 <h3>English</h3>
-<div>
+<h2>Rules</h2>
     <a href="https://www.ulissesf-shop.com/virtual-tabletops/2147/the-dark-eye-core-rules-for-foundry-vtt" title="The Dark Eye - Core Rules">
-        <img src="https://ulisses-digital.de/R20/dsa5/modules/dsa5-core/icons/journal/coveren.webp" alt="The Dark Eye - Core Rules" style="margin-right: 5px; margin-bottom: 5px; text-align:center; width:220px;">
-    </a>
-    <a href="https://www.ulissesf-shop.com/virtual-tabletops/2152/tde5-aventuria-bestiary-for-foundry" title="Aventurian Bestiary">
-        <img src="https://ulisses-digital.de/R20/dsa5/modules/dsa5-bestiary/icons/journal/coveren.webp" alt="Aventurian Bestiary" style="text-align: center; margin-right: 5px; margin-bottom: 5px; width:220px;">
-    </a>
-    <a href="https://www.ulissesf-shop.com/virtual-tabletops/2153/tde5-aventuria-armory-for-foundry" title="Aventurian Armory">
-        <img src="https://ulisses-digital.de/R20/dsa5/modules/dsa5-armory/icons/journals/coveren.webp" alt="Aventurian Armory" style="margin-right: 5px; margin-bottom: 5px; text-align:center; width:220px;">
+        <img src="https://ulisses-digital.de/R20/dsa5/modules/dsa5-core/icons/journal/coveren.webp" alt="The Dark Eye - Core Rules" style="margin-right: 5px; margin-bottom: 5px; text-align:center; width:210px;">
     </a>
     <a href="https://www.ulissesf-shop.com/virtual-tabletops/2198/tde5-magic-of-aventuria-i-for-foundry" title="Aventurian Magic I">
-        <img src="https://ulisses-digital.de/R20/dsa5/modules/dsa5-magic-1/icons/journals/coveren.webp" alt="Aventurian Magic I" style="margin-right: 5px; margin-bottom: 5px; text-align:center; width:220px;">
+        <img src="https://ulisses-digital.de/R20/dsa5/modules/dsa5-magic-1/icons/journals/coveren.webp" alt="Aventurian Magic I" style="margin-right: 5px; margin-bottom: 5px; text-align:center; width:210px;">
     </a>
     <a href="https://www.ulissesf-shop.com/virtual-tabletops/2200/tde5-gods-of-aventuria-i-for-foundry-vtt" title="Gods of Aventuria">
-        <img src="https://ulisses-digital.de/R20/dsa5/modules/dsa5-godsofaventuria/icons/journals/coveren.webp" alt="Gods of Aventuria" style="margin-right: 5px; margin-bottom: 5px; text-align:center; width:220px;">
+        <img src="https://ulisses-digital.de/R20/dsa5/modules/dsa5-godsofaventuria/icons/journals/coveren.webp" alt="Gods of Aventuria" style="margin-right: 5px; margin-bottom: 5px; text-align:center; width:210px;">
     </a>
     <a href="https://www.ulissesf-shop.com/virtual-tabletops/2201/tde5-aventuria-compendium-for-foundry-vtt" title="Aventuria Compendium">
-        <img src="https://ulisses-digital.de/R20/dsa5/modules/dsa5-compendium/icons/journal/coveren.webp" alt="Aventuria Compendium" style="margin-right: 5px; margin-bottom: 5px; text-align:center; width:220px;">
+        <img src="https://ulisses-digital.de/R20/dsa5/modules/dsa5-compendium/icons/journal/coveren.webp" alt="Aventuria Compendium" style="margin-right: 5px; margin-bottom: 5px; text-align:center; width:210px;">
     </a>
+    <h2>Special modules</h2>
     <a href="https://www.ulissesf-shop.com/virtual-tabletops/2197/tde5-master-s-workshop-for-foundry" title="Master's Workshop">
-        <img src="https://www.ulissesf-shop.com/media/image/c3/89/d3/ESD1004_0_0999_600x600.jpg" alt="Master's Workshop" style="margin-right: 5px; margin-bottom: 5px; text-align:center; width:220px;">
+        <img src="https://www.ulissesf-shop.com/media/image/c3/89/d3/ESD1004_0_0999_600x600.jpg" alt="Master's Workshop" style="margin-right: 5px; margin-bottom: 5px; text-align:center; width:210px;">
     </a>
-</div>
+    <h2>More Content</h2>
+    <a href="https://www.ulissesf-shop.com/virtual-tabletops/2152/tde5-aventuria-bestiary-for-foundry" title="Aventurian Bestiary">
+        <img src="https://ulisses-digital.de/R20/dsa5/modules/dsa5-bestiary/icons/journal/coveren.webp" alt="Aventurian Bestiary" style="text-align: center; margin-right: 5px; margin-bottom: 5px; width:210px;">
+    </a>
+    <a href="https://www.ulissesf-shop.com/virtual-tabletops/2153/tde5-aventuria-armory-for-foundry" title="Aventurian Armory">
+        <img src="https://ulisses-digital.de/R20/dsa5/modules/dsa5-armory/icons/journals/coveren.webp" alt="Aventurian Armory" style="margin-right: 5px; margin-bottom: 5px; text-align:center; width:210px;">
+    </a>
 - And many more... have a look at Ulisses' F-Shop
 
 As of this moment several modules are in the making. We will inform you as soon as they will be available.
