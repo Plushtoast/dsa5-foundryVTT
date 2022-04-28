@@ -52,6 +52,9 @@ If you want to discuss TDE for foundry or need some assistance you can also join
     <a href="https://www.f-shop.de/virtual-tabletops/das-schwarze-auge-vtt/regel-module/2645/dsa5-werkstatt-des-meisters-fuer-foundry-vtt" title="Werkstatt des Meisters">
         <img src="https://www.ulissesf-shop.com/media/image/c3/89/d3/ESD1004_0_0999_600x600.jpg" alt="Werkstatt des Meisters" style="margin-right: 5px; margin-bottom: 5px; text-align:center; width:220px;">
     </a>
+    <a href="https://www.f-shop.de/virtual-tabletops/das-schwarze-auge-vtt/abenteuer-module/2317/dsa5-kampagne-das-geheimnis-des-drachenritters-fuer-foundry" title="Das Geheimnis des Drachenritters">
+        <img src="https://ulisses-digital.de/R20/dsa5/modules/dsa5-drachenritter/icons/journal/cover.webp" alt="Das Geheimnis des Drachenritters" style="margin-right: 5px; margin-bottom: 5px; text-align:center; width:220px;">
+    </a>
     <a href="https://www.f-shop.de/virtual-tabletops/das-schwarze-auge-vtt/regel-module/2218/dsa5-aventurisches-bestiarium-fuer-foundry-vtt" title="Aventurisches Bestiarium">
         <img src="https://ulisses-digital.de/R20/dsa5/modules/dsa5-bestiary/icons/journal/coverde.webp" alt="Aventurisches Bestiarium" style="text-align: center; margin-right: 5px; margin-bottom: 5px; width:220px;">
     </a>
@@ -88,9 +91,7 @@ If you want to discuss TDE for foundry or need some assistance you can also join
     <a href="https://www.f-shop.de/virtual-tabletops/das-schwarze-auge-vtt/regel-module/2873/dsa5-aventurisches-kompendium-ii-fuer-foundry-vtt" title="Aventurisches Kompendium II">
         <img src="https://ulisses-digital.de/R20/dsa5/modules/dsa5-compendium2/icons/journal/coverde.webp" alt="Aventurisches Kompendium II" style="margin-right: 5px; margin-bottom: 5px; text-align:center; width:220px;">
     </a>
-    <a href="https://www.f-shop.de/virtual-tabletops/das-schwarze-auge-vtt/abenteuer-module/2317/dsa5-kampagne-das-geheimnis-des-drachenritters-fuer-foundry" title="Das Geheimnis des Drachenritters">
-        <img src="https://ulisses-digital.de/R20/dsa5/modules/dsa5-drachenritter/icons/journal/cover.webp" alt="Das Geheimnis des Drachenritters" style="margin-right: 5px; margin-bottom: 5px; text-align:center; width:220px;">
-    </a>
+    
     <a href="https://www.f-shop.de/virtual-tabletops/das-schwarze-auge-vtt/abenteuer-module/2388/dsa5-mitsommerrache-fuer-foundry" title="Mittsommerrache">
         <img src="https://ulisses-digital.de/R20/dsa5/modules/dsa5-mittsommerrache/icons/journal/coverde.webp" alt="Mittsommerrache" style="margin-right: 5px; margin-bottom: 5px; text-align:center; width:220px;">
     </a>
