@@ -43,8 +43,8 @@ If you want to discuss TDE for foundry or need some assistance you can also join
 * JB2A support
 
 
-## Official Modules
-<h3>German</h3>
+
+<h2>German Modules</h2>
 <div>
         <h2>Regelbände</h2>
         <a href="https://www.f-shop.de/virtual-tabletops/das-schwarze-auge-vtt/regel-module/2157/dsa5-grundregelwerk-fuer-foundry-vtt" title="Das Schwarze Auge - Grundregelwerk">
@@ -122,7 +122,7 @@ If you want to discuss TDE for foundry or need some assistance you can also join
         </a>
     </div>
 <br>
-<h3>English</h3>
+<h2>English Modules</h2>
 <h2>Rules</h2>
     <a href="https://www.ulissesf-shop.com/virtual-tabletops/2147/the-dark-eye-core-rules-for-foundry-vtt" title="The Dark Eye - Core Rules">
         <img src="https://ulisses-digital.de/R20/dsa5/modules/dsa5-core/icons/journal/coveren.webp" alt="The Dark Eye - Core Rules" style="margin-right: 5px; margin-bottom: 5px; text-align:center; width:210px;">
