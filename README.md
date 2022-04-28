@@ -148,7 +148,7 @@ If you want to discuss TDE for foundry or need some assistance you can also join
         <img src="https://ulisses-digital.de/R20/dsa5/modules/dsa5-armory/icons/journals/coveren.webp" alt="Aventurian Armory" style="margin-right: 5px; margin-bottom: 5px; text-align:center; width:210px;">
     </a>
     
-- And many more... have a look at Ulisses' F-Shop
+And many more... have a look at Ulisses' F-Shop
 
 As of this moment several modules are in the making. We will inform you as soon as they will be available.
 
