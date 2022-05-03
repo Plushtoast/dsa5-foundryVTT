@@ -115,7 +115,9 @@
         "assassinate": "Meucheln",
         "stun": "Betäuben",
         "assassinateDescr": "Opfer muss ahnungslos sein (Sinnesschärfe gegen Verbergen)",
-        "multipleTarget": "Mehrere Ziele"
+        "multipleTarget": "Mehrere Ziele",
+        "addTarget": "Ziel hinzufügen",
+        "onlyInCombatTargets": "Ziele werden nur im Kampf angezeigt."
 
     },
     "Equipment": {
@@ -169,6 +171,7 @@
     "AstoundingFailure": "Schreckliches Missgeschick",
     "advantages": "Vorteile",
     "advantage": "Vorteil",
+    "modules": "Module",
     "fshopLink": "https://www.f-shop.de/virtual-tabletops/das-schwarze-auge-vtt/",
     "attackWeaponless": "Waffenloser Angriff",
     "animalSpecialAbilities": "Tierische Sonderfertigkeiten",
@@ -1410,7 +1413,9 @@
         "enableItemDropToCanvas": "Items auf die Map legen",
         "enableItemDropToCanvasHint": "Lege Gegenstände per drag & drop auf die Karte als Schatztoken.",
         "merchantNotification": "Benachrichtigung bei Handel",
-        "merchantNotificationHint": "Zeige Transfers zwischen Akteuren (Händler/Schatz) im Chat."
+        "merchantNotificationHint": "Zeige Transfers zwischen Akteuren (Händler/Schatz) im Chat.",
+        "enableCombatFlow": "DSA Kampftracker",
+        "enableCombatFlowHint": "Aktiviere den DSA Kampftracker"
     },
     "COMBATTRACKER": {
         "noDefenses": "Anzahl Verteidigungen",

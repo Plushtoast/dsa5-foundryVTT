@@ -14,6 +14,47 @@ export default class TokenHotbar2 extends Application {
         Hooks.on("controlToken", (elem, controlTaken) => {
             this.updateDSA5Hotbar()
         })
+        
+        Hooks.on("updateActor", (actor, updates) => {
+            TokenHotbar2.hookUpdate(actor.id)     
+        });
+    
+        Hooks.on("updateToken", (scene, token, updates) => {
+            if (token._id == getProperty(game.dsa5.apps.tokenHotbar, "actor.token.id"))
+                this.updateDSA5Hotbar()        
+        });
+    
+        Hooks.on("updateOwnedItem", (source, item) => {
+            TokenHotbar2.hookUpdate(source.data.id )       
+        });
+    
+        Hooks.on("createOwnedItem", (source, item) => {
+            TokenHotbar2.hookUpdate(source.data.id )   
+        });
+    
+        Hooks.on("deleteOwnedItem", (source, item) => {
+            TokenHotbar2.hookUpdate(source.data.id )   
+        });
+    
+        Hooks.on("updateItem", (source, item) => {
+            const id = getProperty(source, "parent.id")
+            if(id) TokenHotbar2.hookUpdate(id) 
+        });
+    
+        Hooks.on("createItem", (source, item) => {
+            const id = getProperty(source, "parent.id")
+            if(id) TokenHotbar2.hookUpdate(id)       
+        });
+    
+        Hooks.on("deleteItem", (source, item) => {
+            const id = getProperty(source, "parent.id")
+            if(id) TokenHotbar2.hookUpdate(id)       
+        });
+    }
+
+    static hookUpdate(changeId){
+        if (changeId == getProperty(game.dsa5.apps.tokenHotbar, "actor.id"))
+            game.dsa5.apps.tokenHotbar.updateDSA5Hotbar()   
     }
 
     resetPosition() {

@@ -316,10 +316,7 @@ export const MerchantSheetMixin = (superclass) => class extends superclass {
     }
 
     async randomGoods(ev) {
-        let dialogData = {
-            categories: DSA5.equipmentCategories
-        }
-        renderTemplate('systems/dsa5/templates/dialog/randomGoods-dialog.html', { dialogData }).then(html => {
+        renderTemplate('systems/dsa5/templates/dialog/randomGoods-dialog.html', { categories: DSA5.equipmentCategories }).then(html => {
             new Dialog({
                 title: game.i18n.localize("MERCHANT.randomGoods"),
                 content: html,

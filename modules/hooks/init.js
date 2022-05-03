@@ -31,6 +31,7 @@ import TokenHotbar2 from "../system/tokenHotbar2.js";
 import CreatureMerchantSheetDSA5 from "../actor/creature-merchant-sheet.js";
 import CharacterMerchantSheetDSA5 from "../actor/character-merchant-sheet.js";
 import DPS from "../system/derepositioningsystem.js";
+import DSAIniTracker from "../system/dsa-ini-tracker.js";
 
 
 export default function() {
@@ -112,6 +113,7 @@ Hooks.once('ready', () => {
     DidYouKnow.showOneMessage()
     TokenHotbar2.registerTokenHotbar()
     connectHook()
+    DSAIniTracker.connectHooks()
 })
 
 Hooks.once('setup', () => {

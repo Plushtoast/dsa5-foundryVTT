@@ -50,9 +50,7 @@ export default class DPS {
         const originalDoorControl = DoorControl.prototype._onMouseDown
         DoorControl.prototype._onMouseDown = function(event) {
             if (!game.user.isGM && game.settings.get("dsa5", "enableDPS")) {
-                const distanceAccessible = DPS.inDistance(this)
-
-                if (!distanceAccessible)
+                if (!DPS.inDistance(this))
                     return ui.notifications.warn(game.i18n.localize('DSAError.notInRangeToLoot'))
             }
             return originalDoorControl.apply(this, arguments)

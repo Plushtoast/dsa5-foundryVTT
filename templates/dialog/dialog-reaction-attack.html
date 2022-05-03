@@ -1,5 +1,5 @@
 <div class="selection">
-    <p>{{localize title}}</p>
+    <p>{{localize title}}{{#if defenses}} ({{localize 'COMBATTRACKER.noDefenses'}}: {{defenses}}){{/if}}</p>
     <div class="row-section wrap">
         {{#each items as |itm i|}}
         <div class="col two">

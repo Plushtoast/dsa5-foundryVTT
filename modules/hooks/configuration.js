@@ -250,7 +250,14 @@ export default function() {
         default: {},
         type: Object
     });
-
+    
+    game.settings.register("dsa5", "iniTrackerPosition", {
+        name: "tokenhotbarPosition",
+        scope: "client",
+        config: false,
+        default: {},
+        type: Object
+    });
     game.settings.register("dsa5", "soundConfig", {
         name: "DSASETTINGS.soundConfig",
         hint: "DSASETTINGS.soundConfigHint",
@@ -312,6 +319,21 @@ export default function() {
         config: false,
         default: true,
         type: Boolean
+    });
+
+    game.settings.register("dsa5", "enableCombatFlow", {
+        name: "DSASETTINGS.enableCombatFlow",
+        hint: "DSASETTINGS.enableCombatFlowHint",
+        scope: "client",
+        config: true,
+        default: true,
+        type: Boolean,
+        onchange: ev => {
+            if(game.dsa5.apps.initTracker){
+                game.dsa5.apps.initTracker.close()
+                game.dsa5.apps.initTracker = undefined
+            }
+        }
     });
 
     game.settings.register("dsa5", "sightAutomationEnabled", {

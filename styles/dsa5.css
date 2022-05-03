@@ -1248,6 +1248,7 @@ form.dsa5.item-sheet {
     color: black;
 }
 
+.initTracker button,
 .masterMenu button,
 .sheetButton,
 .sidebar-popout button,
@@ -1817,6 +1818,10 @@ input[type="search"] {
     background-position: 8px 11px, calc(100% - 8px) 11px, center;
 }
 
+#hotbar.collapsedHotbar:before {
+    background-image: url(../icons/backgrounds/hotbarpart.webp);
+}
+
 #hotbar .macro {
     background: none;
     border: 1px solid rgba(0, 0, 0, 0.5);
@@ -2167,6 +2172,7 @@ a.inline-roll {
     color: inherit;
 }
 
+.dialog-buttons img,
 .result-image {
     border: none;
 }
@@ -2514,6 +2520,11 @@ select.noAppearance {
     top: 0;
 }
 
+.initTracker .combatant-advanced .ongoing {
+    bottom: 4px;
+    top: unset;
+}
+
 .combatant-advanced i.reversed {
     transform: scaleX(-1);
 }
@@ -2528,6 +2539,16 @@ select.noAppearance {
     color: white;
     font-size: 10px;
     line-height: 12px;
+}
+
+.initTracker .combatant-advanced i {
+    left: 4px;
+    bottom: 4px;
+    right: unset;
+}
+
+.initTracker .combatant-advanced {
+    height: var(--iniTrackerSize);
 }
 
 .tinyEntityLink a {
@@ -2568,6 +2589,18 @@ select.noAppearance {
     z-index: 1000;
 }
 
+.initTracker .tooltip {
+    position: absolute;
+    top: -20px;
+    color: white;
+    background: black;
+    padding: 5px;
+    margin: 0 auto;
+    border-radius: 5px;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
 .tokenQuickHot .direction0 .subbuttons {
     bottom: var(--tokenQuickhotdistance);
 }
@@ -2591,6 +2624,7 @@ select.noAppearance {
     line-height: 14px;
 }
 
+.initTracker .dragHandler,
 .tokenQuickHot .dragHandler {
     width: 14px;
     height: var(--tokenQuickhotsize);
@@ -2600,6 +2634,7 @@ select.noAppearance {
     float: right;
 }
 
+.initTracker .dragHandler:hover,
 .tokenQuickHot .dragHandler:hover {
     color: white;
 }
@@ -2615,6 +2650,7 @@ select.noAppearance {
     background-color: rgba(0, 0, 0, 0.3);
 }
 
+.initTracker li,
 .tokenQuickHot li {
     background-color: rgba(14, 12, 12, 0.3);
     display: inline-block;
@@ -2627,8 +2663,87 @@ select.noAppearance {
     background-size: cover;
     box-shadow: inset 0px 0px 10px #403014;
     background-image: url(../icons/backgrounds/macrobg.webp);
+    background-repeat: no-repeat;
     position: relative;
     box-sizing: border-box;
+}
+
+.initTracker li {
+    box-shadow: none;
+    border: 1px solid transparent;
+    background-color: transparent;
+    cursor: pointer;
+    background-color: rgba(0, 0, 0, 0.5);
+    border-radius: 10px;
+}
+
+.initTracker li .roll:before {
+    position: absolute;
+    content: '6';
+    color: white;
+    left: 0;
+    right: 0;
+    top: 5px;
+    bottom: 0;
+    text-align: center;
+}
+
+.initTracker .token-initiative {
+    position: absolute;
+    bottom: -20px;
+    left: 0;
+    right: 0;
+}
+
+.initTracker .aggroButton {
+    left: 0;
+    right: 0;
+    margin: 0 auto 0;
+    bottom: 0;
+}
+
+.initTracker li .roll {
+    position: relative;
+    display: block;
+    width: 30px;
+    height: 30px;
+    background: url(../icons/dice/d6white.svg) no-repeat 50% 50%;
+    background-size: auto;
+    background-size: 35px;
+    margin: 0 auto;
+}
+
+.initTracker li.active {
+    border-color: white;
+    box-shadow: inset 0px 0px 10px white;
+}
+
+.initTracker li.defeated,
+.initTracker li.hidden {
+    opacity: 0.5;
+}
+
+.initTracker li.defeated {
+    background-size: 75% 75%;
+    background-position: center;
+}
+
+.iniTrackerList {
+    margin: 0;
+    padding: 0;
+    display: inline-block;
+}
+
+.initTracker .dragHandler {
+    width: 15px;
+    background: none;
+    border: none;
+    line-height: var(--iniTrackerSize);
+}
+
+.initTracker li {
+    width: var(--iniTrackerSize);
+    height: var(--iniTrackerSize);
 }
 
 .tokenQuickHot li:hover {
@@ -2671,12 +2786,64 @@ select.noAppearance {
     box-shadow: inset 0px 0px 10px #0d813e;
 }
 
+.window-app.initTracker .window-header,
 .window-app.tokenQuickHot .window-header {
     display: none;
 }
 
+.window-app.initTracker,
 .window-app.tokenQuickHot {
     padding: 0;
+}
+
+.initTracker .controls {
+    display: inline-block;
+    width: 29px;
+}
+
+.initTracker:hover .iniDetailsList {
+    display: block;
+}
+
+.iniDetailsList {
+    margin: 30px 29px 0 29px;
+    padding: 0;
+    display: none;
+}
+
+.iniDetailsList li {
+    height: 20px;
+    text-align: center;
+    background: rgba(0, 0, 0, 0.5);
+    color: white;
+}
+
+.initTracker .hoverbuttons {
+    color: white;
+    position: absolute;
+    right: 0;
+    top: 25%;
+    opacity: 0;
+    transform: opacity 0.3s;
+}
+
+.initTracker .combat-control {
+    min-width: 20px;
+    display: inline-block;
+}
+
+.initTracker li:hover .hoverbuttons {
+    opacity: 1;
+}
+
+.initTracker .controls i {
+    color: white;
+    background: rgba(0, 0, 0, 0.7);
+    border-radius: 5px;
+}
+
+.initTracker .controls.right {
+    text-align: right;
 }
 
 .tokenHotbarInner>ul>li.effect>div:before {
@@ -2685,6 +2852,8 @@ select.noAppearance {
     content: "\f067";
 }
 
+.window-app.initTracker::after,
+.window-app.initTracker .window-content,
 .window-app.tokenQuickHot::after,
 .window-app.tokenQuickHot .window-content {
     background: none;
@@ -2693,6 +2862,7 @@ select.noAppearance {
     overflow: visible;
 }
 
+.window-app.initTracker::after,
 .window-app.tokenQuickHot::after {
     content: none;
 }
@@ -2954,9 +3124,29 @@ select.noAppearance {
     margin-left: 25px;
 }
 
-.missingTarget i,
-.skill-test .targets i {
+.missingTarget div i,
+.skill-test .targets div i {
     color: darkred;
+}
+
+.targets .addTarget {
+    margin-left: 20px;
+}
+
+.targetChoser .combatant {
+    border: 1px solid transparent;
+}
+
+.targetChoser .combatant.hidden {
+    opacity: 0.5;
+}
+
+.targetChoser .combatant:hover {
+    background: rgba(0, 0, 0, 0.1);
+}
+
+.targetChoser .combatant.selectedTarget {
+    border-color: #000;
 }
 
 .multipleTarget i {

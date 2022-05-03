@@ -188,6 +188,7 @@ export class ReactToAttackDialog extends DialogReactDSA5 {
         }]
 
         const { actor, tokenId } = DialogReactDSA5.getTargetActor(startMessage)
+        let defenses = 0
         if (actor) {
             let types = ["meleeweapon"]
             let result = actor.data.items.filter(x => { return (types.includes(x.type) && x.data.data.worn.value == true) || (x.type == "trait" && Number(x.data.data.pa) > 0) })
@@ -198,9 +199,12 @@ export class ReactToAttackDialog extends DialogReactDSA5 {
                     img: res.img
                 })
             }
+            if(game.combat)
+                defenses = await game.combat.getDefenseCount({actor: actor.id, token: tokenId, scene: canvas.scene ? canvas.scene.id : null})
         }
+        
 
-        return await renderTemplate('systems/dsa5/templates/dialog/dialog-reaction-attack.html', { items: items, title: "DIALOG.selectReaction" })
+        return await renderTemplate('systems/dsa5/templates/dialog/dialog-reaction-attack.html', { items: items, defenses, title: "DIALOG.selectReaction" })
     }
 
     callbackResult(text, message) {

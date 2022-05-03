@@ -13,10 +13,7 @@ export class DSA5CombatTracker extends CombatTracker {
     activateListeners(html) {
         super.activateListeners(html)
 
-        const combatants = html.find('.combatant.actor')
-        combatants.prepend(`<div class="aggroButton specImg" title="${game.i18n.localize('attacktest')}"></div>`)
-        const aggroButtons = combatants.find('.aggroButton')
-        aggroButtons.click(ev => {
+        html.find('.combatant.actor .aggroButton').click(ev => {
             ev.preventDefault()
             ev.stopPropagation()
             DSA5CombatTracker.runActAttackDialog()
@@ -40,10 +37,10 @@ export class DSA5CombatTracker extends CombatTracker {
                 turn.defenseCount = combatant.data._source.defenseCount
 
                 let remainders = []
-                if (combatant._actor) {
-                    for (const x of combatant._actor.data.items) {
+                if (combatant.actor) {
+                    for (const x of combatant.actor.items) {
                         if (x.type == "rangeweapon" && x.data.data.worn.value && x.data.data.reloadTime.progress > 0) {
-                            const wpn = { name: x.name, remaining: Actordsa5.calcLZ(x.data, combatant._actor.data) - x.data.data.reloadTime.progress }
+                            const wpn = { name: x.name, remaining: Actordsa5.calcLZ(x.data, combatant.actor.data) - x.data.data.reloadTime.progress }
                             if (wpn.remaining > 0) remainders.push(wpn)
                         } else if (["spell", "liturgy"].includes(x.type) && x.data.data.castingTime.modified > 0) {
                             const wpn = { name: x.name, remaining: x.data.data.castingTime.modified - x.data.data.castingTime.progress }
@@ -58,7 +55,6 @@ export class DSA5CombatTracker extends CombatTracker {
 
                 turn.ongoing = remainders[0].remaining
             }
-
 
             turn.effects = new Set();
             if (combatant.token) {

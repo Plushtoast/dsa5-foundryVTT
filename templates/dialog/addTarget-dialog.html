@@ -1,0 +1,35 @@
+<div class="directory targetChoser">
+    <ul class="directory-list">
+        <li class="actor directory-item flexrow">
+            <div class="combatant-advanced">
+            </div>
+            <div class="token-name flexcol">
+                <b>{{localize 'Name'}}</b>
+            </div>
+            
+            <div class="token-name flexcol">
+                <b>{{localize 'distance'}}</b>
+            </div>
+        </li>
+        {{#if selectables}}
+    {{#each selectables as |combatant i|}}
+    <li class="combatant actor directory-item flexrow {{#if combatant.hidden}}hidden{{/if}} {{#if combatant.isSelected}}selectedTarget{{/if}}" data-combatant-id="{{combatant.id}}">
+        <div class="combatant-advanced">
+            <img class="token-image" title="{{combatant.token.name}}" src="{{combatant.token.data.img}}">              
+        </div>
+        <div class="token-name flexcol">
+            <h4>{{combatant.token.name}}</h4>
+        </div>
+        
+        <div class="token-name flexcol">
+            {{#if combatant.distance}}
+            <p>{{combatant.distance.distanceSum}} {{combatant.distance.unit}}</p>
+            {{/if}}
+        </div>
+    </li>
+    {{/each}}
+    {{else}}
+    {{localize 'DIALOG.onlyInCombatTargets'}}
+    {{/if}}
+    </ul>
+</div

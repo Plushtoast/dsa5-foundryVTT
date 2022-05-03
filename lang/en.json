@@ -101,7 +101,9 @@
         "assassinate": "Assassinate",
         "stun": "Stun",
         "assassinateDescr": "Approach victim undetected (Perception vs. Stealth)",
-        "multipleTarget": "Multiple Targets"
+        "multipleTarget": "Multiple Targets",
+        "addTarget": "Add Target",
+        "onlyInCombatTargets": "Targets are only shown in combat."
     },
     "Equipment": {
         "misc": "General",
@@ -196,6 +198,7 @@
     "aim": "Aim",
     "arrow": "Arrow",
     "armor": "Armor",
+    "modules": "Modules",
     "advancementCost": "Advance for {cost} adventure points",
     "animal": "Animal",
     "attributeChange": "Attribute change",
@@ -1395,7 +1398,9 @@
         "enableItemDropToCanvas": "Drop items on the map",
         "enableItemDropToCanvasHint": "Put items as loot sheet on the map via drag & drop.",
         "merchantNotification": "Trade notification",
-        "merchantNotificationHint": "Show transfers of items between actors (merchant/loot) in the chat."
+        "merchantNotificationHint": "Show transfers of items between actors (merchant/loot) in the chat.",
+        "enableCombatFlow": "TDE combat tracker",
+        "enableCombatFlowHint": "Activate the TDE combat tracker"
     },
     "WEAR": {
         "check": "Breaking Point Rating Check ({category})",

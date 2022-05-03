@@ -891,7 +891,19 @@ class SpellItemDSA5 extends Itemdsa5 {
                 options,
                 speaker: Itemdsa5.buildSpeaker(actor, tokenId),
             },
+            advancedModifiers: {
+                chars: [0, 0, 0],
+                fws: 0,
+                qls: 0,
+            },
+            calculatedSpellModifiers: {
+                castingTime: 0,
+                cost: 0,
+                reach: 0,
+                maintainCost: 0,
+            }
         }
+
         let data = {
             rollMode: options.rollMode,
             spellCost: spell.data.AsPCost.value,

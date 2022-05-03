@@ -1,4 +1,5 @@
 import RuleChaos from "../system/rule_chaos.js"
+import DPS from "../system/derepositioningsystem.js"
 
 export default class DialogShared extends Dialog {
     static roman = ['', ' I', ' II', ' III', ' IV', ' V', ' VI', ' VII', ' VIII', ' IX']
@@ -91,6 +92,11 @@ export default class DialogShared extends Dialog {
             return false;
         });
         html.on('click', '.rollTarget', (ev) => this.removeTarget(ev))
+        html.on('click', '.addTarget', (ev) => this.addTarget(ev))
+    }
+
+    async addTarget(ev){
+         (await AddTargetDialog.getDialog(this.dialogData.speaker)).render(true)
     }
 
     prepareFormRecall(html) {
@@ -120,5 +126,49 @@ export default class DialogShared extends Dialog {
             }
         }
 
+    }
+}
+
+class AddTargetDialog extends Dialog{
+    static async getDialog(speaker){
+        const targets = Array.from(game.user.targets).map(x => x.id)
+        const selectables = []
+        const token = canvas.scene ? canvas.scene.tokens.get(speaker.token).object : undefined
+        if(game.combat){
+            game.combat.combatants.forEach(combatant => {
+                if (!combatant.visible ) return
+
+                combatant.isSelected = targets.includes(combatant.token.id)
+                if(token && combatant.token){
+                    const combatantToken = canvas.scene.tokens.get(combatant.token.id).object
+                    combatant.distance = DPS.rangeFinder(token, combatantToken)
+                    combatant.distance.distanceSum = Number(combatant.distance.distanceSum.toFixed(1))
+                }
+                selectables.push(combatant)
+            })
+        }
+        return new AddTargetDialog({
+            title: game.i18n.localize("DIALOG.addTarget"),
+            content: await renderTemplate('systems/dsa5/templates/dialog/addTarget-dialog.html', { selectables }),
+            default: "yes",
+                buttons: {},
+        })
+    }
+
+    activateListeners(html){
+        super.activateListeners(html)
+        html.find('.combatant').click(ev => this.setTargets(ev))
+    }
+
+    async setTargets(ev){
+        const isShift = ev.originalEvent.shiftKey
+        if(!isShift)
+            $(ev.currentTarget).closest('.directory').find('.combatant').removeClass('selectedTarget')
+
+        $(ev.currentTarget).addClass("selectedTarget")
+        const combatantId = ev.currentTarget.dataset.combatantId
+        const combatant = game.combat.combatants.get(combatantId)
+        
+        combatant.token.object.setTarget(true, {user: game.user, releaseOthers: !isShift, groupSelection: true });
     }
 }

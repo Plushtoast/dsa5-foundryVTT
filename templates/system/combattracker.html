@@ -48,6 +48,7 @@
     <ol id="combat-tracker" class="directory-list">
         {{#each turns}}
         <li class="combatant actor directory-item flexrow {{this.css}}" data-combatant-id="{{this.id}}">
+            <div class="aggroButton specImg" title="{{localize 'attacktest'}}"></div>
             <div class="combatant-advanced">
                 <img class="token-image" data-src="{{this.img}}" title="{{this.name}}" /> {{#if this.defenseCount}}
                 <i class="fas def fa-shield-alt" data-defenseCount="{{this.defenseCount}}" title="{{localize 'COMBATTRACKER.noDefenses'}}"></i>
