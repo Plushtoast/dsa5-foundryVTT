@@ -144,8 +144,8 @@ export default class DSAIniTracker extends Application {
             tooltip.classList.add("tooltip");
             tooltip.textContent = li.attr("data-name")
             li.append($(tooltip));
-
         })
+                
         html.on('mouseleave', 'li.combatant', ev => {
             const li = $(ev.currentTarget)
             let tooltip = li.find(".tooltip");
@@ -157,6 +157,10 @@ export default class DSAIniTracker extends Application {
             DSA5CombatTracker.runActAttackDialog()
         })
         html.find('.rollMine').click(ev => this.rollMyChars())
+
+        if(!game.user.isGM) return
+
+        html.find('.rolledInit').click(ev => this.editCombatant(ev))
     }
 
     rollMyChars() {
@@ -174,6 +178,10 @@ export default class DSAIniTracker extends Application {
                 combatant.unsetFlag("dsa5", "waitInit")
             }
         }
+    }
+
+    editCombatant(ev){
+        this._getCombatApp()._onConfigureCombatant($(ev.currentTarget))
     }
 
     _onCombatantControl(ev) {

@@ -84,8 +84,8 @@
     <div class="row-section">
         <ul class="iniDetailsList initTrackerList">
             {{#each turns as |turn|}}
-            <li class="{{turn.newRound}}">
-                {{#if turn.hasRolled}} {{turn.initiative}}{{else}} ? {{/if}} <br/> <span class="turnRound">{{turn.round}}</span>
+            <li class="{{turn.newRound}}" >
+                {{#if turn.hasRolled}} <span data-combatant-id="{{turn.id}}" class="rolledInit">{{turn.initiative}}</span>{{else}} ? {{/if}} <br/> <span class="turnRound">{{turn.round}}</span>
             </li>
             {{/each}}
         </ul>
