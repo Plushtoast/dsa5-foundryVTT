@@ -31,7 +31,6 @@ export default class DSAIniTracker extends Application {
     }
 
     static connectHooks() {
-        console.log("connecting ini tracker")
         Hooks.on("renderDSA5CombatTracker", (app, html, data) => {
             if (!game.settings.get("dsa5", "enableCombatFlow")) return
 
@@ -59,6 +58,7 @@ export default class DSAIniTracker extends Application {
         let itemWidth = 70
 
         this.position.width = itemWidth * 5 + 17 + 50 + 28
+        this.position.height = itemWidth + 10
         const turnsToUse = data.turns
         let unRolled = data.turns.some(x => x.owner && !x.hasRolled && (!game.user.isGM || data.combat.combatants.get(x.id).isNPC))
         if (turnsToUse.length) {

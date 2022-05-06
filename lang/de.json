@@ -117,7 +117,10 @@
         "assassinateDescr": "Opfer muss ahnungslos sein (Sinnesschärfe gegen Verbergen)",
         "multipleTarget": "Mehrere Ziele",
         "addTarget": "Ziel hinzufügen",
-        "onlyInCombatTargets": "Ziele werden nur im Kampf angezeigt."
+        "onlyInCombatTargets": "Ziele werden nur im Kampf angezeigt.",
+        "setTargetToUserHint": "Aktuell markierte Ziele auf den User übertragen.",
+        "setTargetToUser": "Spielerziel setzen",
+        "noLoggedinUser": "Keine User eingeloggt/auswählbar."
 
     },
     "Equipment": {
@@ -1416,6 +1419,9 @@
         "merchantNotificationHint": "Zeige Transfers zwischen Akteuren (Händler/Schatz) im Chat.",
         "enableCombatFlow": "DSA Kampftracker",
         "enableCombatFlowHint": "Aktiviere den DSA Kampftracker"
+    },
+    "CONTROLS": {
+        "targetForUser": "Ziel für Spieler wählen"
     },
     "COMBATTRACKER": {
         "noDefenses": "Anzahl Verteidigungen",

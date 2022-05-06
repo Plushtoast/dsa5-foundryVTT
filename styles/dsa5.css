@@ -2584,6 +2584,10 @@ select.noAppearance {
     z-index: 2;
 }
 
+#controls ol li.control-tool[data-tool="targetUser"]{
+    color:#609ec6;
+}
+
 #hotbar .macro .tooltip,
 .tokenQuickHot .tooltip {
     z-index: 1000;

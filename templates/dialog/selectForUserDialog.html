@@ -1,0 +1,20 @@
+<div class="directory targetChoser">
+    <p>{{localize 'DIALOG.setTargetToUserHint'}}</p>
+    {{#if users}}
+    <ul class="directory-list">
+        {{#each users as |usr|}}
+        <li class="combatant actor directory-item flexrow" data-user-id="{{usr.id}}">
+            <div class="combatant-advanced">
+                <img class="token-image" title="{{usr.name}}" src="{{usr.character.img}}">              
+            </div>
+            <div class="token-name flexcol">
+                <h4>{{usr.name}}</h4>
+            </div>
+        </li>
+        {{/each}}
+    </ul>
+
+    {{else}}
+    <p>{{localize 'DIALOG.noLoggedinUser'}}</p>
+    {{/if}}
+</div>

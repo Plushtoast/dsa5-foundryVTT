@@ -103,7 +103,10 @@
         "assassinateDescr": "Approach victim undetected (Perception vs. Stealth)",
         "multipleTarget": "Multiple Targets",
         "addTarget": "Add Target",
-        "onlyInCombatTargets": "Targets are only shown in combat."
+        "onlyInCombatTargets": "Targets are only shown in combat.",
+        "setTargetToUserHint": "Transfer currently targeted tokens to user.",
+        "setTargetToUser": "Set player target",
+        "noLoggedinUser": "No user logged in/available."
     },
     "Equipment": {
         "misc": "General",
@@ -1427,6 +1430,9 @@
             "3": "Weapon severely damaged; unusable until repaired",
             "4": "Weapon destroyed; unrepairable by mundane means"
         }
+    },
+    "CONTROLS": {
+        "targetForUser": "Target for player"
     },
     "ARMORSUBCATEGORIES": {
         "0": "Clothing, Normal",

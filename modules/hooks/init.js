@@ -32,6 +32,7 @@ import CreatureMerchantSheetDSA5 from "../actor/creature-merchant-sheet.js";
 import CharacterMerchantSheetDSA5 from "../actor/character-merchant-sheet.js";
 import DPS from "../system/derepositioningsystem.js";
 import DSAIniTracker from "../system/dsa-ini-tracker.js";
+import { SelectUserDialog } from "../dialog/addTargetDialog.js";
 
 
 export default function() {
@@ -114,6 +115,7 @@ Hooks.once('ready', () => {
     TokenHotbar2.registerTokenHotbar()
     connectHook()
     DSAIniTracker.connectHooks()
+    
 })
 
 Hooks.once('setup', () => {
@@ -127,7 +129,8 @@ Hooks.once('setup', () => {
 
     initKeybindings.default()
     MastersMenu.registerButtons()
-
+    SelectUserDialog.registerButtons()
+    
     CONFIG.Canvas.lightAnimations.daylight = {
         label: "LIGHT.daylight",
         illuminationShader: DaylightIlluminationShader

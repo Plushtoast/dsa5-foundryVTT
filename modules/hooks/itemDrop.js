@@ -91,6 +91,8 @@ export const connectHook = () => {
                 item = game.items.get(data.id)
             }
 
+            //TODO handle drop not from token
+
             if (!DSA5.equipmentCategories.includes(item.data.type)) return
 
             const content = await renderTemplate("systems/dsa5/templates/dialog/dropToGround.html", { name: item.name, count: item.data.data.quantity.value })
