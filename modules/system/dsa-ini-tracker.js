@@ -164,7 +164,7 @@ export default class DSAIniTracker extends Application {
     }
 
     _onRightClick(ev){
-        if(ev.button = 2){
+        if(ev.button == 2){
             const combatant = game.combat.combatants.get(ev.currentTarget.dataset.combatantId)
             if(combatant.isOwner){
                 combatant.unsetFlag("dsa5", "waitInit")

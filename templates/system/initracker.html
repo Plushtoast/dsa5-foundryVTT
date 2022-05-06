@@ -44,7 +44,7 @@
         </ul>
         {{#if waitingTurns}}
         <ul class="waitingTackerList iniTrackerList">
-            <li class="waitTitle" data-title="COMBATTRACKER.waitInit"><i class="far fa-hourglass" ></i></li>
+            <li class="waitTitle" title="{{localize 'COMBATTRACKER.waitInit'}}"><i class="far fa-hourglass" ></i></li>
             {{#each waitingTurns as |turn|}}
             <li data-name="{{turn.name}}" data-combatant-id="{{turn.id}}" class="combatant iniItem" style="background-image:url({{turn.img}});"></li>
             {{/each}}
