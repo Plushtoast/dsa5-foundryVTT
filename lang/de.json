@@ -1425,7 +1425,8 @@
     },
     "COMBATTRACKER": {
         "noDefenses": "Anzahl Verteidigungen",
-        "ongoing": "Laufende Handlungen"
+        "ongoing": "Laufende Handlungen",
+        "waitInit": "Zurückstellen"
     },
     "CHATFATE": {
         "faitepointUsed": "Das Schicksal ändert sich",

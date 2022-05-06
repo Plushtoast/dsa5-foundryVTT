@@ -1447,7 +1447,8 @@
     },
     "COMBATTRACKER": {
         "noDefenses": "Defense count",
-        "ongoing": "Ongoing actions"
+        "ongoing": "Ongoing actions",
+        "waitInit": "Wait"
     },
     "SCHIPSKILLS": {
         "meleeweaponattack": "Improve Attack",

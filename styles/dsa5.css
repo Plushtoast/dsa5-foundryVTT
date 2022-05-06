@@ -2104,6 +2104,11 @@ h2 .chatButton {
     width: 3px;
 }
 
+.initTracker .item-structure{
+    top: -102%;
+    border-color:rgb(14, 12, 12);
+}
+
 .item-structure {
     border: 0.5px solid var(--bg-color);
     height: 100%;
@@ -2670,6 +2675,34 @@ select.noAppearance {
     background-repeat: no-repeat;
     position: relative;
     box-sizing: border-box;
+}
+
+.initTracker .waitingTackerList li{
+    width: calc(var(--iniTrackerSize) * 0.5);
+    height: calc(var(--iniTrackerSize) * 0.5);
+}
+
+.waitingTackerList{
+    position: absolute;
+    top: calc(var(--iniTrackerSize) * -0.5);
+    left: 30px;
+    z-index: -1;
+}
+
+.initTracker .tooltip{
+    pointer-events: none;;
+}
+
+.initTracker .waitTitle{
+    background-image: none;
+}
+
+.initTracker .waitTitle i{
+    float: left;
+    width: 100%;
+    line-height: calc(var(--iniTrackerSize) * 0.5);
+    text-align: center;
+    color: white;
 }
 
 .initTracker li {
