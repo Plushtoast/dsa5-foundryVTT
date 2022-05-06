@@ -70,6 +70,7 @@ export default class DSAIniTracker extends Application {
             let startIndex = -1
             let index = 0
             let loops = 0
+            let currentRound
             while (!(toAdd == 0 || loops == 5)) {
                 const turn = duplicate(turnsToUse[index])
                 const combatant = data.combat.combatants.get(turn.id)
@@ -88,6 +89,9 @@ export default class DSAIniTracker extends Application {
                         turn.maxLP = combatant.token.actor.data.data.status.wounds.max
                         turn.currentLP = combatant.token.actor.data.data.status.wounds.value
                     }
+                    if(currentRound && currentRound != turn.round) turn.newRound = "newRound"
+
+                    currentRound = turn.round
                     filteredTurns.push(turn)
                     toAdd--
                 }

@@ -9,7 +9,7 @@
         </div>
         <ul class="iniTrackerList">
             {{#each turns as |turn|}}
-            <li data-name="{{turn.name}}" data-combatant-id="{{turn.id}}" class=" combatant iniItem {{turn.css}}" style="background-image:url({{turn.img}});">
+            <li data-name="{{turn.name}}" data-combatant-id="{{turn.id}}" class=" combatant iniItem {{turn.newRound}} {{turn.css}}" style="background-image:url({{turn.img}});">
                 <div class="combatant-advanced">
                     {{#if turn.defenseCount}}
                     <i class="fas def fa-shield-alt" data-defenseCount="{{this.defenseCount}}" title="{{localize 'COMBATTRACKER.noDefenses'}}"></i>
@@ -84,8 +84,8 @@
     <div class="row-section">
         <ul class="iniDetailsList initTrackerList">
             {{#each turns as |turn|}}
-            <li>
-                {{#if turn.hasRolled}} {{turn.initiative}}{{else}} ? {{/if}} <br/> {{turn.round}}
+            <li class="{{turn.newRound}}">
+                {{#if turn.hasRolled}} {{turn.initiative}}{{else}} ? {{/if}} <br/> <span class="turnRound">{{turn.round}}</span>
             </li>
             {{/each}}
         </ul>

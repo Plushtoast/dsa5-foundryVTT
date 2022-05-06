@@ -2693,6 +2693,22 @@ select.noAppearance {
     pointer-events: none;;
 }
 
+.initTracker .newRound{
+    border-left-color: #496fd7;
+    border-top-left-radius: 0px;
+    border-bottom-left-radius: 0px;
+}
+.initTracker .turnRound{
+    padding: 2px;
+    border-radius: 100%;
+    width: 21px;
+    display:inline-block;
+}
+
+.initTracker .newRound .turnRound{
+    background-color: #496fd7;
+}
+
 .initTracker .waitTitle{
     background-image: none;
 }
