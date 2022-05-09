@@ -16,6 +16,7 @@ export const dropToGround = async(sourceActor, item, data, amount) => {
 
         const newItem = item.toObject()
         newItem.data.quantity.value = amount
+        if(getProperty(newItem, "data.worn.value")) newItem.data.worn.value = false
 
         const actor = {
             type: "npc",
@@ -82,7 +83,7 @@ export const connectHook = () => {
             if (data.pack) {
                 let dataPack = game.packs.get(data.pack)
                 item = await dataPack.getDocument(data.id)
-            } else if (data.tokenId) {
+            } else if (data.tokenId || data.actorId) {
                 sourceActor = DSA5_Utility.getSpeaker({ actor: data.actorId, token: data.tokenId, scene: canvas.scene.id })
                 if (!sourceActor.isOwner) return ui.notifications.error(game.i18n.localize('DSAError.notOwner'))
 
@@ -90,8 +91,6 @@ export const connectHook = () => {
             } else {
                 item = game.items.get(data.id)
             }
-
-            //TODO handle drop not from token
 
             if (!DSA5.equipmentCategories.includes(item.data.type)) return
 

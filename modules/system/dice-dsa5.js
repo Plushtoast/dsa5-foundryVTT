@@ -947,7 +947,6 @@ export default class DiceDSA5 {
         let modifiers = this._situationalModifiers(testData)
 
         let fws = testData.source.data.talentValue.value + testData.advancedModifiers.fws + this._situationalModifiers(testData, "FW")
-
         const pcms = this._situationalPartCheckModifiers(testData, "TPM")
 
         let tar = [1, 2, 3].map(
@@ -959,7 +958,11 @@ export default class DiceDSA5 {
         )
         let res = [0, 1, 2].map((x) => roll.terms[x * 2].results[0].result - tar[x])
 
-        for (let k of res) if (k > 0) fws -= k
+        if(testData.routine)
+            fws = Math.round(fws / 2)
+        else
+            for (let k of res) if (k > 0) fws -= k
+
 
         let crit = testData.extra.actor.data.skillModifiers.crit
         let botch = testData.extra.actor.data.skillModifiers.botch
@@ -1014,6 +1017,8 @@ export default class DiceDSA5 {
             successLevel = -1
         } else {
             successLevel = DiceDSA5.get3D20SuccessLevel(roll, fws, botch, crit)
+            if(testData.routine) successLevel = 1
+
             description.push(DiceDSA5.getSuccessDescription(successLevel))
         }
 

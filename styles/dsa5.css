@@ -519,6 +519,14 @@ select[multiple] option:checked {
     z-index: -1;
 }
 
+.directory .directory-list .directory-item.folder .context{
+    color: black;
+}
+
+#sidebar.collapsed:before{
+    content: none;
+}
+
 .sidebar-popout .chat-message,
 #sidebar .chat-message {
     background: url(../icons/backgrounds/chatpaper.webp) no-repeat;

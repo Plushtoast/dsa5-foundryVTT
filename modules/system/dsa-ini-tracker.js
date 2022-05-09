@@ -55,7 +55,7 @@ export default class DSAIniTracker extends Application {
 
     async getData(options) {
         const data = this.combatData
-        let itemWidth = 70
+        let itemWidth = game.settings.get("dsa5", "iniTrackerSize")
 
         this.position.width = itemWidth * 5 + 17 + 50 + 28
         this.position.height = itemWidth + 10
@@ -111,7 +111,14 @@ export default class DSAIniTracker extends Application {
     }
 
     async _onWheelResize(ev) {
-
+        let newVal = game.settings.get("dsa5", "iniTrackerSize")
+        if (ev.originalEvent.deltaY > 0) {
+            newVal = Math.min(140, newVal + 5)
+        } else {
+            newVal = Math.max(30, newVal - 5)
+        }
+        await game.settings.set("dsa5", "iniTrackerSize", newVal)
+        await this.render(true)
     }
 
     activateListeners(html) {
@@ -195,7 +202,6 @@ export default class DSAIniTracker extends Application {
         else{
             this._getCombatApp()._onCombatControl(ev)    
         }
-        
     }
 
     async waitInit(ev){
@@ -241,7 +247,7 @@ export default class DSAIniTracker extends Application {
         const data = JSON.parse(event.dataTransfer.getData("text/plain"));
 
         if (data.type == "IniChange") {
-
+            //TODO init tracker resorting
         }
     }
 }

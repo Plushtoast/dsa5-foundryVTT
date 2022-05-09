@@ -55,10 +55,11 @@
         </div>
         {{#if languagesToChose}}
         <h2>{{localize 'language'}}</h2>
+        <p class="allowedCount_1" data-count="1">{{localize 'WIZARD.chose'}} 1.</p>
         <div class="row-section wrap">
             {{#each languages as |item i|}}
             <div class="col two row-section lineheight">
-                <input type="checkbox" id="language_{{i}}" class="optional" data-cost="0" data-free="true" name="{{item.replaceName}}" data-step="{{item.step}}" value="{{item._id}}" disabled checked>
+                <input type="checkbox" id="language_{{i}}" class="optional exclusive exclusive_1" data-cost="0" data-free="true" name="{{item.replaceName}}" data-step="{{item.step}}" value="{{item._id}}" {{#unless ../languagesToSelect}}disabled checked{{/unless}}>
                 <label for="language_{{i}}">{{item.replaceName}} {{roman item.step}}</label>
                 <a class="show-item" data-id="{{item._id}}" title="{{item.tooltip}}"><i class="fas fa-info"></i></a>
             </div>

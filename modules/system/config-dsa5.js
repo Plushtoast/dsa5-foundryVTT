@@ -393,6 +393,8 @@ DSA5.defaultWeapon = {
     effects: [],
     data: {
         type: "meleeweapon",
+        crit: 1,
+        botch: 20,
         reach: {
             value: "short"
         },

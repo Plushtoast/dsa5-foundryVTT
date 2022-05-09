@@ -211,6 +211,24 @@ export default function() {
         type: Boolean
     });
 
+    game.settings.register("dsa5", "iniTrackerSize", {
+        name: "DSASETTINGS.iniTrackerSize",
+        hint: "DSASETTINGS.iniTrackerSizeHint",
+        scope: "client",
+        config: true,
+        default: 70,
+        type: Number,
+        range: {
+            min: 30,
+            max: 140,
+            step: 5
+        },
+        onChange: async(val) => {
+            game.dsa5.apps.tokenHotbar.constructor.defaultOptions.itemWidth = val
+        }
+    });
+
+    
     game.settings.register("dsa5", "tokenhotbarSize", {
         name: "DSASETTINGS.tokenhotbarSize",
         hint: "DSASETTINGS.tokenhotbarSizeHint",

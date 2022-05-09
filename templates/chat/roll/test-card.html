@@ -1,5 +1,5 @@
 <div class="card-content test-data" data-actor-id="{{actorId}}">
-    <b>{{title}}</b>
+    <b>{{title}}{{#if preData.routine}} ({{localize 'ROLL.routine'}}){{/if}}</b>
     <div class="chat-buttons">
         <a class="edit-toggle chat-button-gm" title='{{localize "CHATNOTIFICATION.editRoll"}}'><i class="fas fa-edit"></i></a>
     </div>

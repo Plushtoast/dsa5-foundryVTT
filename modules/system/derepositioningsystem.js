@@ -16,11 +16,8 @@ export default class DPS {
     }
 
     static inDistance(toToken) {
-        const elems = [game.user.character.getActiveTokens(), canvas.tokens.controlled]
-        for (let elem of elems) {
-            for (let token of elem) {
-                if (this.rangeFinder(toToken, token).tileDistance <= 2) return true
-            }
+        for (let token of canvas.scene.tokens) {
+            if (token.isOwner && this.rangeFinder(toToken, token.object).tileDistance <= 2) return true
         }
         return false
     }

@@ -1060,7 +1060,8 @@
     },
     "ROLL": {
         "Targeting": "gegen",
-        "failed": "ist gescheitert"
+        "failed": "ist gescheitert",
+        "routine": "Routine"
     },
     "OPPOSED": {
         "winsFP": "<b>{winner}</b> gewinnt gegen <b>{loser}</b> mit {SL} Qualitätsstufe(n)",
@@ -1418,7 +1419,9 @@
         "merchantNotification": "Benachrichtigung bei Handel",
         "merchantNotificationHint": "Zeige Transfers zwischen Akteuren (Händler/Schatz) im Chat.",
         "enableCombatFlow": "DSA Kampftracker",
-        "enableCombatFlowHint": "Aktiviere den DSA Kampftracker"
+        "enableCombatFlowHint": "Aktiviere den DSA Kampftracker",
+        "iniTrackerSize": "DSA Kampftracker Größe",
+        "iniTrackerSizeHint": "Größe der Buttons im DSA Kampftracker"
     },
     "CONTROLS": {
         "targetForUser": "Ziel für Spieler wählen"

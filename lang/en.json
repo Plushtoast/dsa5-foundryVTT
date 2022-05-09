@@ -990,7 +990,8 @@
     },
     "ROLL": {
         "Targeting": "versus",
-        "failed": "failed"
+        "failed": "failed",
+        "routine": "Routine"
     },
     "OPPOSED": {
         "winsFP": "<b>{winner}</b> wins versus <b>{loser}</b> with {SL} quality level(s)",
@@ -1403,7 +1404,9 @@
         "merchantNotification": "Trade notification",
         "merchantNotificationHint": "Show transfers of items between actors (merchant/loot) in the chat.",
         "enableCombatFlow": "TDE combat tracker",
-        "enableCombatFlowHint": "Activate the TDE combat tracker"
+        "enableCombatFlowHint": "Activate the TDE combat tracker",
+        "iniTrackerSize": "TDE combat tracker size",
+        "iniTrackerSizeHint": "Size of the buttons in the TDE combat tracker."
     },
     "WEAR": {
         "check": "Breaking Point Rating Check ({category})",

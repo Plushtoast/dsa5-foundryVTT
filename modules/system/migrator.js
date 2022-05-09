@@ -10,6 +10,7 @@ async function setupDefaulTokenConfig() {
         defaultToken.disposition = CONST.TOKEN_DISPOSITIONS.NEUTRAL
         defaultToken.bar1 = { attribute: "status.wounds" }
         await game.settings.set("core", "defaultToken", defaultToken)
+        await game.settings.set("core", "leftClickRelease", true)
         await game.settings.set("dsa5", "defaultConfigFinished", true)
     }
 }
