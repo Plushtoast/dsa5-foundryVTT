@@ -76,8 +76,8 @@ export default class ItemRulesDSA5 {
         return actor.items.find(x => types.includes(x.type) && x.name == name) != undefined
     }
 
-    static itemStep(actor, name, types) {
-        let item = actor.items.find(x => types.includes(x.type) && x.name == name)
+    static itemStep(actorData, name, types) {
+        let item = actorData.items.find(x => types.includes(x.type) && x.name == name)
         if (item) {
             return Number(item.data.data == undefined ? item.data.step.value : item.data.data.step.value)
         } else {

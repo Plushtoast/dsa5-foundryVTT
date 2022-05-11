@@ -171,6 +171,34 @@ export default class Itemdsa5 extends Item {
         return DSA5StatusEffects.hasCondition(this, conditionKey)
     }
 
+    static getMiracleModifiers(actor, source, type, bonusAttribute) {
+        const regex = new RegExp(`${game.i18n.localize('combatskill')} `, 'gi')
+        const happyTalents = (getProperty(actor, "data.data.happyTalents.value") || "").split(/;|,/).map(x => x.replace(regex, '').trim())
+        const result = []
+        if (happyTalents.includes(source.name)) {
+            const availableKaP = actor.data.data.status.karmaenergy.value
+            const bonus = getProperty(actor.data, `data.miracle.${bonusAttribute}`) || 0
+            if (availableKaP < 4) return
+
+            result.push({
+                name: game.i18n.localize('LocalizedIDs.miracle'),
+                value: 2 + bonus,
+                type,
+                selected: false
+            })
+            const miracleMight = game.i18n.localize('LocalizedIDs.miracleMight')
+            if (availableKaP >= 6 && SpecialabilityRulesDSA5.hasAbility(actor.data, miracleMight)) {
+                result.push({
+                    name: miracleMight,
+                    value: 3 + bonus,
+                    type,
+                    selected: false
+                })
+            }
+        }
+        return result
+    }
+
     static getSkZkModifier(data, source) {
         let skMod = []
         let zkMod = []
@@ -222,6 +250,7 @@ export default class Itemdsa5 extends Item {
         }
         return itemModifiers
     }
+
 
     static getDefenseMalus(situationalModifiers, actor) {
         let isRangeDefense = false
@@ -1227,6 +1256,8 @@ class MeleeweaponDSA5 extends Itemdsa5 {
             this.prepareMeleeParry(situationalModifiers, actor, data, source, combatskills, wrongHandDisabled)
         }
         this.attackStatEffect(situationalModifiers, Number(actor.data.data.meleeStats[data.mode]))
+
+        if (["attack", "parry"].includes(data.mode)) situationalModifiers.push(...MeleeweaponDSA5.getMiracleModifiers(actor, { name: source.data.combatskill.value }, "", data.mode))
     }
 
     static setupDialog(ev, options, item, actor, tokenId) {
@@ -1409,6 +1440,7 @@ class RangeweaponItemDSA5 extends Itemdsa5 {
                     situationalModifiers.push(dmgMod)
                 }
             }
+            situationalModifiers.push(...RangeweaponItemDSA5.getMiracleModifiers(actor, { name: source.data.combatskill.value }, "", data.mode))
         }
         this.attackStatEffect(situationalModifiers, Number(actor.data.data.rangeStats[data.mode]))
     }
@@ -1521,10 +1553,11 @@ class SkillItemDSA5 extends Itemdsa5 {
 
     static getSituationalModifiers(situationalModifiers, actor, data, source) {
         situationalModifiers.push(
-            ...ItemRulesDSA5.getTalentBonus(actor.data, source.name, ["advantage", "disadvantage", "specialability", "equipment"])
+            ...ItemRulesDSA5.getTalentBonus(actor.data, source.name, ["advantage", "disadvantage", "specialability", "equipment"]),
+            ...actor.getSkillModifier(source.name, source.type),
+            ...SkillItemDSA5.getMiracleModifiers(actor, source, "FW", "skill")
         )
 
-        situationalModifiers.push(...actor.getSkillModifier(source.name, source.type))
         for (const thing of actor.data.data.skillModifiers.global) {
             situationalModifiers.push({ name: thing.source, value: thing.value })
         }

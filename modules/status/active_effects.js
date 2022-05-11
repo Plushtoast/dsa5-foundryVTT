@@ -381,6 +381,7 @@ export default class DSAActiveEffectConfig extends ActiveEffectConfig {
         const regenerate = game.i18n.localize("regenerate")
         const feature = `${game.i18n.localize("Healing")} 1`
         const descriptor = `${game.i18n.localize("Description")} 1`
+        const miracle = `${game.i18n.localize('LocalizedIDs.miracle')}`
 
         let optns = [
             { name: game.i18n.localize("protection"), val: "data.totalArmor", mode: 2, ph: "1" },
@@ -402,6 +403,18 @@ export default class DSAActiveEffectConfig extends ActiveEffectConfig {
             {
                 name: `${closeCombat} - ${game.i18n.localize("CHARAbbrev.PA")}`,
                 val: "data.meleeStats.parry",
+                mode: 2,
+                ph: "1",
+            },
+            {
+                name: `${miracle} - ${game.i18n.localize("CHARAbbrev.AT")}`,
+                val: "data.miracle.attack",
+                mode: 2,
+                ph: "1",
+            },
+            {
+                name: `${miracle} - ${game.i18n.localize("CHARAbbrev.PA")}`,
+                val: "data.miracle.parry",
                 mode: 2,
                 ph: "1",
             },

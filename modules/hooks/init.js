@@ -79,6 +79,7 @@ Hooks.once("init", () => {
         "systems/dsa5/templates/actors/creature/creature-religion.html",
         "systems/dsa5/templates/actors/parts/characteristics-small.html",
         "systems/dsa5/templates/actors/parts/characteristics-large.html",
+        "systems/dsa5/templates/actors/parts/gearSearch.html",
         "systems/dsa5/templates/actors/parts/magicalSigns.html",
         "systems/dsa5/templates/actors/parts/containerContent.html",
         "systems/dsa5/templates/actors/npc/npc-main.html",
@@ -115,7 +116,7 @@ Hooks.once('ready', () => {
     TokenHotbar2.registerTokenHotbar()
     connectHook()
     DSAIniTracker.connectHooks()
-    
+
 })
 
 Hooks.once('setup', () => {
@@ -130,7 +131,7 @@ Hooks.once('setup', () => {
     initKeybindings.default()
     MastersMenu.registerButtons()
     SelectUserDialog.registerButtons()
-    
+
     CONFIG.Canvas.lightAnimations.daylight = {
         label: "LIGHT.daylight",
         illuminationShader: DaylightIlluminationShader

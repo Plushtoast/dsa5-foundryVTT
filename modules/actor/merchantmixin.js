@@ -5,6 +5,9 @@ import DSA5Payment from "../system/payment.js";
 import RuleChaos from "../system/rule_chaos.js";
 import DSA5_Utility from "../system/utility-dsa5.js";
 
+//todo add on use button to merchant sheet
+//todo check masters workshop still working
+
 export const MerchantSheetMixin = (superclass) => class extends superclass {
     static get defaultOptions() {
         const options = super.defaultOptions;
@@ -89,6 +92,7 @@ export const MerchantSheetMixin = (superclass) => class extends superclass {
             ims.each((i, li) => li.setAttribute("draggable", false))
             ims.on('dragstart', null)
         }
+        html.find('.gearSearch').prop("disabled", false)
     }
 
     async toggleTradeLock(ev) {
@@ -187,6 +191,8 @@ export const MerchantSheetMixin = (superclass) => class extends superclass {
             const noNeedToPay = this.noNeedToPay(target, source, price)
             const hasPaid = noNeedToPay || DSA5Payment.payMoney(target, price, true)
             if (hasPaid) {
+                if (getProperty(item, "data.worn.value")) item.data.worn.value = false
+
                 if (buy) {
                     await this.updateTargetTransaction(target, item, amount, source, price)
                     await this.updateSourceTransaction(source, target, item, price, itemId, amount)

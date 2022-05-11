@@ -139,12 +139,12 @@ export default class SpecialabilityRulesDSA5 extends ItemRulesDSA5 {
         }
     }
 
-    static hasAbility(actor, talent) {
-        return super.hasItem(actor, talent, ["specialability"])
+    static hasAbility(actorData, talent) {
+        return super.hasItem(actorData, talent, ["specialability"])
     }
 
-    static abilityStep(actor, talent) {
-        return super.itemStep(actor, talent, ["specialability"])
+    static abilityStep(actorData, talent) {
+        return super.itemStep(actorData, talent, ["specialability"])
     }
 
     static abilityAsModifier(actor, talent, factor = 1, startsWith = false) {

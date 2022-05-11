@@ -60,7 +60,8 @@ export default class ActorSheetDsa5 extends ActorSheet {
         const html = $(this.form).parent()
         this.searchFields = {
             talentFiltered: $(html.find(".filterTalents")).hasClass("filtered"),
-            searchText: $(html.find(".talentSearch")).val()
+            searchText: $(html.find(".talentSearch")).val(),
+            gearSearch: $(html.find(".gearSearch")).val()
         }
     }
 
@@ -71,10 +72,15 @@ export default class ActorSheetDsa5 extends ActorSheet {
                 $(html.find(".filterTalents")).addClass("filtered")
                 $(html.find(".allTalents")).removeClass("showAll")
             }
-            let talentSearchInput = $(html.find(".talentSearch"))
+            const talentSearchInput = $(html.find(".talentSearch"))
             talentSearchInput.val(this.searchFields.searchText)
             if (this.searchFields.searchText != "") {
                 this._filterTalents(talentSearchInput)
+            }
+            const gearSearchInput = $(html.find(".gearSearch"))
+            gearSearchInput.val(this.searchFields.gearSearch)
+            if (this.searchFields.searchText != "") {
+                this._filterGear(gearSearchInput)
             }
         }
     }
@@ -700,6 +706,11 @@ export default class ActorSheetDsa5 extends ActorSheet {
         condSearch.keyup(event => this._filterConditions($(event.currentTarget)))
         condSearch[0] && condSearch[0].addEventListener("search", filterConditions, false);
 
+        let filterGear = ev => this._filterGear($(ev.currentTarget))
+        let gearSearch = html.find('.gearSearch')
+        gearSearch.keyup(event => this._filterGear($(event.currentTarget)))
+        gearSearch[0] && gearSearch[0].addEventListener("search", filterGear, false);
+
         bindImgToCanvasDragStart(html, "img.charimg")
     }
 
@@ -709,6 +720,18 @@ export default class ActorSheetDsa5 extends ActorSheet {
         onUse.executeOnUseEffect()
     }
 
+    _filterGear(tar) {
+        if (tar.val() != undefined) {
+            let val = tar.val().toLowerCase().trim()
+            let gear = $(this.element).find('.inventory .item')
+            gear.removeClass('filterHide')
+            gear.filter(function() {
+                return $(this).find('a.item-edit').text().toLowerCase().trim().indexOf(val) == -1
+            }).addClass('filterHide')
+        }
+    }
+
+    //TODO replace this with foundry SearchFilter
     _filterTalents(tar) {
         if (tar.val() != undefined) {
             let val = tar.val().toLowerCase().trim()

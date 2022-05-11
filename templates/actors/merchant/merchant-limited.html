@@ -1,6 +1,7 @@
 <form class="{{cssClass}} lock{{actor.sheetLocked}}" autocomplete="off">
     <fieldset disabled>
         <header class="sheet-header row-section">
+
             <div class="charname headerInput col fourty">
                 <input class="input name" name="name" type="text" value="{{actor.name}}" placeholder="{{localize 'Name'}}" />
                 <span class="label name">{{localize "Name"}}</span>
@@ -9,38 +10,42 @@
                 <input class="input species" name="data.details.species.value" type="text" value="{{actor.data.details.species.value}}" readonly placeholder="{{localize 'species'}}" />
                 <span class="label species">{{localize "species"}}</span>
             </div>
-        </header>
-        <section id="tab-sections">
-            <nav id="dsa5-primarytabs" class="sheet-tabs tabs">
-                <a class="item active" data-tab="main">{{localize "MERCHANT.commerce"}}</a>
-                <a class="item" data-tab="notes">{{localize "Notes"}}</a>
-            </nav>
 
-            <section class="content">
-                <div class="tab main save-scroll" data-tab="main">
-                    <div class="row-section">
-                        <div class="col ten"></div>
-                        <div class="col fourty center">
-                            <img src="{{tradeFriend.img}}" style="height: 50px;max-width:40%;border:none;" />
-                        </div>
-                        <div class="col ten">{{#if hasOtherTradeFriend}}
-                            <a class="removeOtherTradeFriend"><i class="fas fa-times"></i></a> {{else}}
-                            <i class="fas fa-info" title="{{localize 'MERCHANT.otherTradeFriend'}}"></i> {{/if}}
-                        </div>
-                        <div class="col ten"></div>
-                        <div class="col fourty center">
-                            <img src="{{actor.img}}" style="height: 50px;max-width:40%;border:none;" />
-                        </div>
-                        <div class="col ten"></div>
+        </header>
+    </fieldset>
+    <section id="tab-sections">
+        <nav id="dsa5-primarytabs" class="sheet-tabs tabs">
+            <a class="item active" data-tab="main">{{localize "MERCHANT.commerce"}}</a>
+            <a class="item" data-tab="notes">{{localize "Notes"}}</a>
+        </nav>
+
+        <section class="content">
+            <div class="tab main save-scroll" data-tab="main">
+                <div class="row-section">
+                    <div class="col ten"></div>
+                    <div class="col fourty center">
+                        <img src="{{tradeFriend.img}}" style="height: 50px;max-width:40%;border:none;" />
                     </div>
-                    <div class="row-section">
-                        <div class="col two">
-                            <h3 class="center">{{tradeFriend.name}}</h3>
-                        </div>
-                        <div class="col two">
-                            <h3 class="center">{{actor.name}}</h3>
-                        </div>
+                    <div class="col ten">{{#if hasOtherTradeFriend}}
+                        <a class="removeOtherTradeFriend"><i class="fas fa-times"></i></a> {{else}}
+                        <i class="fas fa-info" title="{{localize 'MERCHANT.otherTradeFriend'}}"></i> {{/if}}
                     </div>
+                    <div class="col ten"></div>
+                    <div class="col fourty center">
+                        <img src="{{actor.img}}" style="height: 50px;max-width:40%;border:none;" />
+                    </div>
+                    <div class="col ten"></div>
+                </div>
+                <div class="row-section">
+                    <div class="col two">
+                        <h3 class="center">{{tradeFriend.name}}</h3>
+                    </div>
+                    <div class="col two">
+                        <h3 class="center">{{actor.name}}</h3>
+                    </div>
+                </div>
+                {{> systems/dsa5/templates/actors/parts/gearSearch.html}}
+                <fieldset disabled>
                     <div class="row-section">
                         <div class="col two">
                             {{#unless tradeFriend.name}}
@@ -83,6 +88,8 @@
                             {{/grouped_each}}
                         </div>
                     </div>
+
+
                     <div class="row-section">
                         <div class="col two">
                             {{#each tradeFriend.inventory as |section sid|}} {{#if section.show}}
@@ -179,12 +186,14 @@
                             {{/if}} {{/each}}
                         </div>
                     </div>
-                </div>
+                </fieldset>
+            </div>
 
-                <div class="tab save-scroll" data-tab="notes">
+            <div class="tab save-scroll" data-tab="notes">
+                <fieldset disabled>
                     {{> systems/dsa5/templates/actors/actor-notes.html}}
-                </div>
-            </section>
+                </fieldset>
+            </div>
         </section>
-    </fieldset>
+    </section>
 </form>

@@ -418,6 +418,10 @@ export default class Actordsa5 extends Actor {
                 kapModifier: 0,
                 immunities: [],
                 creatureBonus: [],
+                miracle: {
+                    attack: 0,
+                    parry: 0
+                },
                 spellStats: {
                     damage: "0",
                 },
@@ -2113,6 +2117,18 @@ export default class Actordsa5 extends Actor {
         return undefined
     }
 
+    async payMiracles(testData){
+        if(!testData.extra.miraclePaid){
+            testData.extra.miraclePaid = true
+            const hasMiracleMight = testData.situationalModifiers.some(x => x.name.trim() == game.i18n.localize('LocalizedIDs.miracleMight'))
+            const hasMiracle = testData.situationalModifiers.some(x => x.name.trim() == game.i18n.localize('LocalizedIDs.miracle'))
+            const cost = hasMiracleMight ? 6 : ( hasMiracle ? 4 : 0)
+            if(cost){
+                await this.update({"data.status.karmaenergy.value": this.data.data.status.karmaenergy.value - cost})
+            }
+        }
+    }
+
     async consumeAmmunition(testData){
         if (testData.extra.ammo && !testData.extra.ammoDecreased) {
             testData.extra.ammoDecreased = true
@@ -2170,6 +2186,7 @@ export default class Actordsa5 extends Actor {
         }
 
         await this.consumeAmmunition(testData)
+        await this.payMiracles(testData)
 
         if (!options.suppressMessage){
             const msg = await DiceDSA5.renderRollCard(cardOptions, result, options.rerenderMessage)

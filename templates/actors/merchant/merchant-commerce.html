@@ -49,6 +49,7 @@
                     <input name="data.merchant.buyingFactor" type="text" value="{{actor.data.merchant.buyingFactor}}" data-dtype="Number" />
                 </div>
             </div>
+            {{#if isGM}}
             <div class="row-section" title="{{localize 'MERCHANT.hidePlayerHint'}}">
                 <div class="col fourty">
                     {{localize 'MERCHANT.hidePlayer'}}
@@ -57,7 +58,7 @@
                     <input name="data.merchant.hidePlayer" type="checkbox" value="1" {{checked actor.data.merchant.hidePlayer}} />
                 </div>
             </div>
-            {{/if}} {{#if (eq actor.data.merchant.merchantType "loot")}}
+            {{/if}} {{/if}} {{#if (eq actor.data.merchant.merchantType "loot")}} {{#if isGM}}
             <div class="row-section">
                 <div class="col fourty" title="{{localize 'MERCHANT.hidePlayerHint'}}">
                     {{localize 'MERCHANT.hidePlayer'}}
@@ -86,16 +87,17 @@
 
                 </div>
             </div>
-            {{/if}}
+            {{/if}} {{/if}}
         </div>
     </div>
 </div>
 
-{{#if (ne actor.data.merchant.merchantType "none")}}
+{{#if (ne actor.data.merchant.merchantType "none")}} {{#if isGM}}
 <div class="row-section">
     <button class="sheetButton randomGoods">{{localize "MERCHANT.randomGoods"}}</button>
     <button class="sheetButton clearInventory">{{localize "MERCHANT.clearInventory"}}</button>
 </div>
+{{/if}}
 <div class="groupbox">
     <div class="row-section lineheight" title="{{localize 'PERMISSION.Configure'}}">
         <div class="col two row-section">
@@ -164,7 +166,7 @@
     </div>
 
 </div>
-{{/if}} {{#each actor.inventory as |section sid|}} {{#if section.show}}
+{{/if}} {{> systems/dsa5/templates/actors/parts/gearSearch.html}} {{#each actor.inventory as |section sid|}} {{#if section.show}}
 <div class="groupbox">
     <div class="row-section table-title">
         <div class="col eight"></div>

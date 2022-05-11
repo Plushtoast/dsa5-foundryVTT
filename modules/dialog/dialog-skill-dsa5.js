@@ -23,6 +23,9 @@ export default class DSA5SkillDialog extends DialogShared {
                 callback: (html) => {
                     game.dsa5.memory.remember(testData.extra.speaker, testData.source, testData.mode, html)
                     testData.routine = true
+                    mergeObject( testData.extra.options, {
+                        cheat: true, predefinedResult: [{ val: 2, index: 0 },{ val: 2, index: 1 },{ val: 2, index: 2 }]
+                    })
                     resolve(dialogOptions.callback(html))
                 },
             }
