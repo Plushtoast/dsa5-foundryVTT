@@ -14,6 +14,8 @@ export default function() {
                 return false
             }
             DSAActiveEffectConfig.onEffectRemove(actor, effect)
+            const result = Hooks.call("deleteActorActiveEffect", actor, effect)
+            if(result === false) return false
         }
     })
 

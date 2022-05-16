@@ -326,7 +326,7 @@ class GameMasterMenu extends Application {
                 DSA5Payment.handlePayAction(undefined, pay, number, hero)
 
         }
-        this.buildDialog(game.i18n.localize(pay ? 'PAYMENT.payTT' : 'MASTER.payButton'), template, callback)
+        this.buildDialog(game.i18n.localize(pay ? 'MASTER.payTT' : 'PAYMENT.payButton'), template, callback)
     }
 
     async getPaid(ids) {

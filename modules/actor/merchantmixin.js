@@ -397,7 +397,8 @@ export const MerchantSheetMixin = (superclass) => class extends superclass {
 
         var seen = {}
         items = items.filter(function(x) {
-            const domain = getProperty(x, "data.effect.attributes") || ""
+            let domain = getProperty(x, "data.effect")
+            domain = typeof domain === 'object' && domain !== null ? getProperty(domain, "attributes") || "" : ""
             const price = Number(getProperty(x, "data.price.value")) || 0
             if (domain != "" || price > 10000) return false
 
