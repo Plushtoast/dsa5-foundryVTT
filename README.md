@@ -22,7 +22,7 @@ The core system includes a character sheet and allows you to create your advanta
 
 ## Discussion & Assistance
 If you want to discuss TDE for foundry or need some assistance you can also join the Discord Servers:
-* [Ulisses](https://discord.gg/WXu4m8sc)
+* [Ulisses](https://discord.com/invite/SnqCgcvPzR)
 * [FoundryVTT](https://discord.gg/foundryvtt)
 
 ## Notable Features
