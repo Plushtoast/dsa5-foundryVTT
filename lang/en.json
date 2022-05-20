@@ -112,7 +112,7 @@
         "misc": "General",
         "clothes": "Clothing",
         "tools": "Tools",
-        "light": "Liqhtsource",
+        "light": "Lightsource",
         "healing": "Remedies",
         "bags": "Bags",
         "wealth": "Valuables",
@@ -901,7 +901,7 @@
     },
     "HELP": {
         "showHelp": "Show help",
-        "default": "Moreover you can find detailed FAQs in the <a href=\"https://github.com/Plushtoast/dsa5-foundryVTT/wiki\" target=\"_blank\">Wiki</a>.",
+        "default": "You can find additional help and FAQs here: <a href=\"https://youtube.com/c/VTTom\" target=\"_blank\"><button>VTTom's YouTube Channel</button></a><a href=\"https://github.com/Plushtoast/dsa5-foundryVTT/wiki\" target=\"_blank\"><button>Wiki & FAQ</button></a><a href=\"https://discord.gg/foundryvtt\" target=\"_blank\"><button>Foundry Discord (ulisses-dsa)</button></a><a href=\"https://discord.gg/foundryvtt\" target=\"_blank\"><a href=\"https://discord.com/invite/SnqCgcvPzR\" target=\"_blank\"><button>Ulisses Discord</button></a",
         "command": "Command",
         "example": "Example",
         "pay": "Pay",
@@ -1177,6 +1177,7 @@
         "takeSkills": "Keep skills"
     },
     "DSAError": {
+        "noTokenSelected": "No token selected",
         "MacroItemMissing": "Your character has no item named {item}. Make sure to select a token or assign a character to yourself.",
         "APUpdateError": "Unable to adapt AP value. Please configure manually.",
         "RangeCannotBeParsed": "Range can not be assigned automatically. Format not recognized",
@@ -1208,7 +1209,7 @@
         "onlyGMcanShapeshift": "You don't have the right permissions to shapeshift.",
         "staleData": "Stale opposing test data found. Please make sure to finish opposing tests. Stale data deleted.",
         "sceneNotInitialized": "Scene not found. Already initialized?",
-        "tooManyEnchants": "A item can only contain 7 enchantments",
+        "tooManyEnchants": "An item can only contain 7 enchantments",
         "onlyCompendiumSpells": "Only spells from compendiums can be used",
         "enchantmentNotFound": "Referenced spell not found",
         "nestedEffectNotSupported": "Foundry currently only supports adding of effects through the item directory.",
@@ -1218,7 +1219,9 @@
         "notInRangeToLoot": "Zu weit entfernt für eine Interaktion.",
         "onlyGMallowed": "This function is only available to the game master.",
         "macroNotFound": "The macro {name} could not be found...sorry.",
-        "notOwner": "You are not allowed to modify this actor."
+        "notOwner": "You are not allowed to modify this actor.",
+        "shouldTimesUp": "The module Times-Up is required for automatically expiring effects.",
+        "requiresModule": "This function requires the module {module}."
     },
     "CEREMONYMODIFIER": {
         "holysite": "Sanctum of the god (+2)",

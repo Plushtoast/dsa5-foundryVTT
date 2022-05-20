@@ -42,8 +42,9 @@ export const MerchantSheetMixin = (superclass) => class extends superclass {
 
     async allowMerchant(ids, allow) {
         let curPermissions = duplicate(this.actor.data.permission)
+        const newPerm = allow ? 1 : 0
         for (const id of ids) {
-            curPermissions[id] = allow ? 1 : 0
+            curPermissions[id] = newPerm
         }
         await this.actor.update({ permission: curPermissions }, { diff: false, recursive: false, noHook: true })
     }
@@ -322,26 +323,23 @@ export const MerchantSheetMixin = (superclass) => class extends superclass {
     }
 
     async randomGoods(ev) {
-        renderTemplate('systems/dsa5/templates/dialog/randomGoods-dialog.html', { categories: DSA5.equipmentCategories }).then(html => {
-            new Dialog({
-                title: game.i18n.localize("MERCHANT.randomGoods"),
-                content: html,
-                default: 'yes',
-                buttons: {
-                    Yes: {
-                        icon: '<i class="fa fa-check"></i>',
-                        label: game.i18n.localize("yes"),
-                        callback: dlg => {
-                            this.addRandomGoods(this.actor, dlg, ev)
-                        }
-                    },
-                    cancel: {
-                        icon: '<i class="fas fa-times"></i>',
-                        label: game.i18n.localize("cancel")
-                    }
+        const html = await renderTemplate('systems/dsa5/templates/dialog/randomGoods-dialog.html', { categories: DSA5.equipmentCategories })
+        new Dialog({
+            title: game.i18n.localize("MERCHANT.randomGoods"),
+            content: html,
+            default: 'yes',
+            buttons: {
+                Yes: {
+                    icon: '<i class="fa fa-check"></i>',
+                    label: game.i18n.localize("yes"),
+                    callback: dlg => this.addRandomGoods(this.actor, dlg, ev)
+                },
+                cancel: {
+                    icon: '<i class="fas fa-times"></i>',
+                    label: game.i18n.localize("cancel")
                 }
-            }).render(true)
-        })
+            }
+        }).render(true)
     }
 
     async clearInventory(ev) {
@@ -395,7 +393,7 @@ export const MerchantSheetMixin = (superclass) => class extends superclass {
             items.push(...randomItems)
         }
 
-        var seen = {}
+        let seen = {}
         items = items.filter(function(x) {
             let domain = getProperty(x, "data.effect")
             domain = typeof domain === 'object' && domain !== null ? getProperty(domain, "attributes") || "" : ""

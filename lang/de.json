@@ -902,7 +902,7 @@
     },
     "HELP": {
         "showHelp": "Hilfe anzeigen",
-        "default": "Außerdem kannst du detaillierte Anleitungen und FAQs im <a href=\"https://github.com/Plushtoast/dsa5-foundryVTT/wiki\" target=\"_blank\">Wiki</a> finden und Unterstützung im ulisses-dsa Channel im <a href=\"https://discord.gg/foundryvtt\" target=\"_blank\">Foundry Discord</a> erhalten.",
+        "default": "Weiterführende Hilfe und Informationen gibt es hier: <a href=\"https://youtube.com/c/VTTom\" target=\"_blank\"><button>VTTom's YouTube Kanal</button></a><a href=\"https://github.com/Plushtoast/dsa5-foundryVTT/wiki\" target=\"_blank\"><button>Wiki & FAQ</button></a><a href=\"https://discord.gg/foundryvtt\" target=\"_blank\"><button>Foundry Discord (ulisses-dsa)</button></a><a href=\"https://discord.gg/foundryvtt\" target=\"_blank\"><a href=\"https://discord.com/invite/SnqCgcvPzR\" target=\"_blank\"><button>Ulisses Discord</button></a>",
         "command": "Befehl",
         "example": "Beispiel",
         "pay": "Bezahlen",
@@ -1204,6 +1204,7 @@
         "Peitschen": "Whips"
     },
     "DSAError": {
+        "noTokenSelected": "Kein Token markiert",
         "MacroItemMissing": "Dein Charakter hat kein Item namens {item}. Stelle sicher, dass dir entweder ein Charakter zugeordnet ist oder du einen Token für den Wurf markierst.",
         "APUpdateError": "AP Wert konnte nicht angepasst werden. Bitte manuell durchführen.",
         "RangeCannotBeParsed": "Die Reichweite kan nicht automatisch angepasst werden. Format nicht erkannt.",
@@ -1245,7 +1246,9 @@
         "notInRangeToLoot": "Zu weit entfernt für eine Interaktion.",
         "onlyGMallowed": "Diese Funktion steht nur dem Spielleiter zur Verfügung.",
         "macroNotFound": "Das Macro {name} konnte nicht gefunden werden...sorry.",
-        "notOwner": "Du darfst diesen Charakter nicht modifizieren."
+        "notOwner": "Du darfst diesen Charakter nicht modifizieren.",
+        "shouldTimesUp": "Für automatische auslaufende Effekte wird das Modul Times-Up benötigt.",
+        "requiresModule": "Diese Funktion benötigt das Modul {module}."
     },
     "Shapeshift": {
         "title": "Gestaltwandlung",

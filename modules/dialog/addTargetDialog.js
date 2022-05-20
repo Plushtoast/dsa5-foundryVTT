@@ -28,7 +28,31 @@ export class AddTargetDialog extends Dialog{
 
     activateListeners(html){
         super.activateListeners(html)
-        html.find('.combatant').click(ev => this.setTargets(ev))
+        const combatants = html.find('.combatant')
+        combatants.click(ev => this.setTargets(ev))
+        combatants.hover(this._onCombatantHoverIn.bind(this), this._onCombatantHoverOut.bind(this));
+        combatants.mousedown(ev => this._onRightClick(ev))
+    }
+
+    _onCombatantHoverOut(ev) {
+        this._getCombatApp()._onCombatantHoverOut(ev)
+    }
+
+    _onCombatantHoverIn(ev) {
+        this._getCombatApp()._onCombatantHoverIn(ev)
+    }
+
+    _onRightClick(ev){
+        if(ev.button == 2){
+            const combatant = game.combat.combatants.get(ev.currentTarget.dataset.combatantId)
+            if ( combatant.token) {
+                return canvas.animatePan({x: combatant.token.data.x, y: combatant.token.data.y});
+            }
+        }
+    }
+
+    _getCombatApp() {
+        return game.combats.apps[0]
     }
 
     async setTargets(ev){
@@ -45,6 +69,14 @@ export class AddTargetDialog extends Dialog{
 }
 
 export class SelectUserDialog extends Dialog{
+    static get defaultOptions() {
+        const options = super.defaultOptions;
+        mergeObject(options, {
+            classes: options.classes.concat(["dsa5Decent"]),
+        });
+        return options;
+    }
+
     static async getDialog(){
         const users = game.users.filter(x => x.active && !x.isGM)
         return new SelectUserDialog({

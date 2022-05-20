@@ -8,7 +8,7 @@ function automatedAnimation(successLevel, options = {}) {
     }
 }
 
-async function callMacro(context, packName, name, actor, item, qs, args = {}) {
+async function callMacro(packName, name, actor, item, qs, args = {}) {
     let result = {};
     if (!game.user.can("MACRO_SCRIPT")) {
         ui.notifications.warn(`You are not allowed to use JavaScript macros.`);
@@ -18,11 +18,11 @@ async function callMacro(context, packName, name, actor, item, qs, args = {}) {
 
         if (documents.length) {
             const body = `(async () => {${documents[0].data.command}})()`;
-            const fn = Function("actor", "item", "qs", "args", body);
+            const fn = Function("actor", "item", "qs", "automatedAnimation", "args", body);
             try {
                 args.result = result;
                 const context = mergeObject({ automatedAnimation }, this)
-                await fn.call(context, actor, item, qs, args);
+                await fn.call(context, actor, item, qs, automatedAnimation, args);
             } catch (err) {
                 ui.notifications.error(`There was an error in your macro syntax. See the console (F12) for details`);
                 console.error(err);
@@ -52,8 +52,9 @@ export default class DSAActiveEffectConfig extends ActiveEffectConfig {
     }
 
     async checkTimesUpInstalled() {
-        //TODO checkTimesUpInstalled
-        return false
+        const isInstalled = DSA5_Utility.moduleEnabled("times-up")
+        if (!isInstalled && game.user.isGM) ui.notifications.warn(game.i18n.localize('DSAError.shouldTimesUp'))
+        return isInstalled
     }
 
     async _render(force = false, options = {}) {
@@ -106,6 +107,8 @@ export default class DSAActiveEffectConfig extends ActiveEffectConfig {
                 elem.find(".advancedFunctions").html(template);
             });
         });
+
+        this.checkTimesUpInstalled()
     }
 
     async _onSubmit(event, { updateData = null, preventClose = false, preventRender = false } = {}) {

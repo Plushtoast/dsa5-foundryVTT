@@ -2852,6 +2852,21 @@ select.noAppearance {
     display: none;
 }
 
+.window-app.dsa5Decent .window-content,
+.window-app.dsa5Decent .window-header{
+    background: rgba(0, 0, 0, 0.5);
+    padding:0;
+    position: unset;
+    color: white;
+}
+
+.window-app.dsa5Decent .window-content li{
+    background: rgba(255,255,255,0.2);
+}
+.window-app.dsa5Decent .window-content li:hover{
+    background: rgba(255,255,255,0.5);
+}
+
 .window-app.initTracker,
 .window-app.tokenQuickHot {
     padding: 0;
@@ -2913,6 +2928,7 @@ select.noAppearance {
     content: "\f067";
 }
 
+.window-app.dsa5Decent:after,
 .window-app.initTracker::after,
 .window-app.initTracker .window-content,
 .window-app.tokenQuickHot::after,

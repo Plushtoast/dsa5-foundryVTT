@@ -3,6 +3,7 @@ import DSA5_Utility from "./utility-dsa5.js"
 
 export default class DSA5ChatAutoCompletion {
     static skills = []
+    static cmds = ["sk", "at", "pa", "sp", "li", "rq", "gc", "w", "ch"]
 
     constructor() {
         if (DSA5ChatAutoCompletion.skills.length == 0) {
@@ -13,13 +14,18 @@ export default class DSA5ChatAutoCompletion {
                     }).concat({ name: game.i18n.localize('regenerate'), type: "regeneration" }))
             })
         }
-        this.regex = /^\/(sk |at |pa |sp |li |rq |gc |w |ch)/
+        this.regex
         this.filtering = false
         this.constants = {
             dodge: game.i18n.localize("dodge"),
             parryWeaponless: game.i18n.localize("parryWeaponless"),
             attackWeaponless: game.i18n.localize("attackWeaponless")
         }
+    }
+
+    get regex() {
+        ///^\/(sk |at |pa |sp |li |rq |gc |w |ch)/
+        return new RegExp(`^\/(${DSA5ChatAutoCompletion.cmds.join(" |")})`)
     }
 
     async chatListeners(html) {
@@ -214,6 +220,7 @@ export default class DSA5ChatAutoCompletion {
     _quickSelect(target) {
         let cmd = target.attr("data-category")
         switch(cmd){
+            case "NM":
             case "GC":
             case "RQ":
             case "CH":

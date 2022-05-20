@@ -47,20 +47,10 @@ export default class DialogActorConfig extends Dialog {
 
     activateListeners(html) {
         super.activateListeners(html)
-        html.find('.updateSpells').click(async(ev) => {
-            this.updateWrapper("updateSpellsAndLiturgies", ev)
-        })
-        html.find('.updateAbilities').click(async(ev) => {
-            this.updateWrapper("updateSpecialAbilities", ev)
-        })
-        html.find('.updatecSkills').click(async(ev) => {
-            this.updateWrapper("updateCombatskills", ev)
-        })
-        html.find('.updateSkills').click(async(ev) => {
-            this.updateWrapper("updateSkills", ev)
-        })
-        html.find('.updateGear').click(async(ev) => {
-            this.updateWrapper("updateGear", ev)
-        })
+        html.find('.updateSpells').click(async(ev) => this.updateWrapper("updateSpellsAndLiturgies", ev))
+        html.find('.updateAbilities').click(async(ev) => this.updateWrapper("updateSpecialAbilities", ev))
+        html.find('.updatecSkills').click(async(ev) => this.updateWrapper("updateCombatskills", ev))
+        html.find('.updateSkills').click(async(ev) => this.updateWrapper("updateSkills", ev))
+        html.find('.updateGear').click(async(ev) => this.updateWrapper("updateGear", ev))
     }
 }

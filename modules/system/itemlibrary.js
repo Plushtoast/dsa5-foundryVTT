@@ -308,7 +308,7 @@ export default class DSA5ItemLibrary extends Application {
     }
 
     shuffle(array) {
-        var currentIndex = array.length,
+        let currentIndex = array.length,
             temporaryValue, randomIndex;
 
         while (0 !== currentIndex) {

@@ -1836,7 +1836,6 @@ export default class Actordsa5 extends Actor {
         let skill = combatskills.find((i) => i.name == item.data.combatskill.value)
         if (skill) {
             item.attack = Number(skill.data.attack.value) + Number(item.data.atmod.value)
-
             const vals = item.data.guidevalue.value.split("/").map((x) => {
                 if (!actorData.data.characteristics[x]) return 0
                 return (

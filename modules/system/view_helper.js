@@ -54,7 +54,7 @@ export function slist(html, target, callback, itemTag = "div") {
 
     target.classList.add("slist");
 
-    var items = target.querySelectorAll(itemTag),
+    let items = target.querySelectorAll(itemTag),
         current = null;
     for (let i of items) {
         i.draggable = true;

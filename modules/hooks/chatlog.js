@@ -13,6 +13,7 @@ export default function() {
         DiceDSA5.chatListeners(html)
         DSA5Payment.chatListeners(html)
         const autoComplete = new DSA5ChatAutoCompletion()
+        Hooks.call("startDSA5ChatAutoCompletion", autoComplete)
         autoComplete.chatListeners(html)
         DSA5ChatListeners.chatListeners(html)
     });
