@@ -21,6 +21,9 @@
   </div>
   <nav class="sheet-tabs tabs" data-tab-container="primary" data-group="primary">
     <a class="item active" data-tab="elementals">{{localize "PLAYER.conjuration"}}</a>
+    {{#each subApps as |app|}}
+    <a class="item" data-tab="{{app.name}}">{{app.name}}</a>
+    {{/each}}
     <!--<a class="item" data-tab="production">{{localize "PLAYER.creation"}}</a>-->
   </nav>
 
@@ -77,6 +80,12 @@
       {{{conjurationSheet}}}
       {{/if}}
     </div>
+
+    {{#each subApps as |app|}}
+    <div class="tab {{app.name}}" data-tab="{{app.name}}">
+      {{{app.view}}}
+    </div>
+    {{/each}}
 
     <div class="tab production" data-tab="production">
       WIP &#128534;
