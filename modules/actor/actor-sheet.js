@@ -12,6 +12,7 @@ import DSA5SoundEffect from "../system/dsa-soundeffect.js";
 import RuleChaos from "../system/rule_chaos.js";
 import OnUseEffect from "../system/onUseEffects.js";
 import { bindImgToCanvasDragStart } from "../hooks/imgTileDrop.js";
+import DSA5ChatAutoCompletion from "../system/chat_autocompletion.js";
 
 export default class ActorSheetDsa5 extends ActorSheet {
     get actorType() {
@@ -695,6 +696,8 @@ export default class ActorSheetDsa5 extends ActorSheet {
         html.find('.charimg').mousedown(ev => {
             if (ev.button == 2) DSA5_Utility.showArtwork(this.actor, true)
         })
+
+        DSA5ChatAutoCompletion.bindRollCommands(html)
 
         let filterTalents = ev => this._filterTalents($(ev.currentTarget))
         let talSearch = html.find('.talentSearch')

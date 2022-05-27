@@ -554,6 +554,7 @@ export default class Actordsa5 extends Actor {
                 actorData.data.characteristics.mu.modifier +
                 actorData.data.characteristics.mu.advances +
                 actorData.data.characteristics.mu.gearmodifier
+            
             i.data.attack.value = i.data.talentValue.value + Math.max(0, Math.floor((attackChar - 8) / 3))
         } else {
             i.data.parry.value = 0

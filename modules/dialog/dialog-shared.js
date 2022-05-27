@@ -22,34 +22,45 @@ export default class DialogShared extends Dialog {
     setRollButtonWarning() {
         if (this.dialogData.mode == "attack") {
             const noTarget = game.i18n.localize("DIALOG.noTarget")
-            $(this._element).find(".dialog-buttons .rollButton").html(
-                `${game.i18n.localize('Roll')}<span class="missingTarget"><i class="fas fa-exclamation-circle"></i> ${noTarget}</span>`
-                )
+            return `<span class="missingTarget"><i class="fas fa-exclamation-circle"></i> ${noTarget}</span>`
         }
+        return ""
     }
 
     setMultipleTargetsWarning() {
         if (this.dialogData.mode == "attack") {
             const noTarget = game.i18n.localize("DIALOG.multipleTarget")
-            $(this._element).find(".dialog-buttons .rollButton").html(
-                `${game.i18n.localize('Roll')}<span class="multipleTarget"><i class="fas fa-exclamation-circle"></i> ${noTarget}</span>`
-                )
+            return `<span class="multipleTarget"><i class="fas fa-exclamation-circle"></i> ${noTarget}</span>`
         }
+        return ""
+    }
+
+    renderRollValueDie(){
+        if(this.dialogData.rollValue && this.dialogData.mode != "damage"){
+            const dieClass = this.dialogData.mode == "attack" ? "die-mu" : "die-in"
+            const modifier = this.dialogData.modifier || 0
+            return `<span class="rollValue ${dieClass} d20">${this.dialogData.rollValue + modifier}</span>`
+        }else{
+            return ""
+        }
+    }
+
+    async updateRollButton(targets){
+        let rollTag = this.renderRollValueDie() + game.i18n.localize('Roll')
+        if (targets.length > 0) {
+            if(targets.length > 1){
+                rollTag += this.setMultipleTargetsWarning()
+            }
+        } else {
+            rollTag += this.setRollButtonWarning()
+        }
+        $(this._element).find(".dialog-buttons .rollButton").html(rollTag)
     }
 
     async updateTargets(html, targets) {
         const template = await renderTemplate('systems/dsa5/templates/dialog/parts/targets.html', {targets})
         html.find(".targets").html(template);
-        if (targets.length > 0) {
-            $(this._element).find('.dialog-buttons .missingTarget').remove()
-            if(targets.length > 1){
-                this.setMultipleTargetsWarning()
-            }else{
-                $(this._element).find('.dialog-buttons .multipleTarget').remove()
-            }
-        } else {
-            this.setRollButtonWarning()
-        }
+        this.updateRollButton(targets)
     }
 
     removeTarget(ev){

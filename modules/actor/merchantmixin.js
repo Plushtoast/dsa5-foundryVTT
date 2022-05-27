@@ -117,10 +117,10 @@ export const MerchantSheetMixin = (superclass) => class extends superclass {
 
     async lockTradeSection(ev) {
         const updates = []
-        const filter = ev.currentTarget.dataset.type
+        const rule = this.filterRule(ev)
         let newValue
         for (let item of this.actor.items) {
-            if (item.type == filter && DSA5.equipmentCategories.includes(item.type)) {
+            if (rule(item)) {
                 let upd = item.toObject()
                 if (newValue === undefined) newValue = !upd.data.tradeLocked
 
@@ -131,11 +131,20 @@ export const MerchantSheetMixin = (superclass) => class extends superclass {
         this.actor.updateEmbeddedDocuments("Item", updates);
     }
 
+    filterRule(ev){
+        const filter = ev.currentTarget.dataset.type
+        if (DSA5.equipmentTypes[filter]) {
+            return (item) => { return item.type == "equipment" && item.data.data.equipmentType.value == filter}
+        }else{
+            return (item) => { return item.type == filter && DSA5.equipmentCategories.includes(item.type)}
+        }
+    }
+
     async changeAmountAllItems(ev) {
         const updates = []
-        const filter = ev.currentTarget.dataset.type
+        const rule = this.filterRule(ev)
         for (let item of this.actor.items) {
-            if (item.type == filter && DSA5.equipmentCategories.includes(item.type)) {
+            if (rule(item)) {
                 let upd = item.toObject()
                 RuleChaos.increment(ev, upd, "data.quantity.value", 0)
                 updates.push(upd)
