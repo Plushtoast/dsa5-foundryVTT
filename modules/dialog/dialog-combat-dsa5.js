@@ -82,7 +82,7 @@ export default class DSA5CombatDialog extends DialogShared {
         })
         html.find('.quantity-click').mousedown(ev => this.calculateModifier(ev));
         let targets = this.readTargets();
-        this.updateRollButton(targets)
+        this.calculateModifier()
         // not great
         const that = this
         this.checkTargets = setInterval(function() {
