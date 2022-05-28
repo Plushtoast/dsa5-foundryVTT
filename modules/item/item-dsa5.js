@@ -510,6 +510,7 @@ export default class Itemdsa5 extends Item {
             showDefense: true,
             isRangeDefense,
             wrongHandDisabled: wrongHandDisabled && getProperty(source, "data.worn.offHand"),
+            offHand: !wrongHandDisabled && getProperty(source, "data.worn.offHand") && getProperty(source, "data.combatskill.value") != game.i18n.localize('LocalizedIDs.Shields'),
             melee: true,
             combatSpecAbs: combatskills,
             constricted: actor.hasCondition("constricted"),
@@ -611,17 +612,9 @@ export default class Itemdsa5 extends Item {
             price -= chatData.data.price.H * 0.1
             chatData.data.price.K = Math.round(price / 0.01)
 
-            properties.push(
-                `<b>${game.i18n.localize("price")}</b>: ${chatData.data.price.D} <div title="${game.i18n.localize(
-                    "Money-D"
-                )}" class="chatmoney money-D"></div>, ${chatData.data.price.S} <div title="${game.i18n.localize(
-                    "Money-S"
-                )}" class="chatmoney money-S"></div>, ${chatData.data.price.H} <div title="${game.i18n.localize(
-                    "Money-H"
-                )}" class="chatmoney money-H"></div>, ${chatData.data.price.K} <div title="${game.i18n.localize(
-                    "Money-K"
-                )}" class="chatmoney money-K"></div>`
-            )
+            const prices = ["D","S","H","K"].map(x => 
+                `${chatData.data.price[x]} <div title="${game.i18n.localize(`Money-${x}`)}" class="chatmoney money-${x}"></div>`).join(",")
+            properties.push(`<b>${game.i18n.localize("price")}</b>: ${prices}`)
         }
 
         if (this.pack) chatData.itemLink = `@Compendium[${this.pack}.${this.id}]`
@@ -1357,7 +1350,7 @@ class PoisonItemDSA5 extends Itemdsa5 {
 
         let situationalModifiers = []
         this.getSituationalModifiers(situationalModifiers, actor, data, item)
-        data["situationalModifiers"] = situationalModifiers
+        data.situationalModifiers = situationalModifiers
 
         let dialogOptions = {
             title,

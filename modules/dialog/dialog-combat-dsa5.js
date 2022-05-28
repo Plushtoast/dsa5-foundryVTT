@@ -258,7 +258,7 @@ export default class DSA5CombatDialog extends DialogShared {
 
         const source = this.dialogData.source
         const isMelee = source.type == "trait" && getProperty(source, "data.traitType.value") || source.type == "meleeweapon"
-        const testData = { extra: {options: {}}}
+        const testData = { source: this.dialogData.source, extra: {options: {}}}
         const actor = DSA5_Utility.getSpeaker(this.dialogData.speaker)
         isMelee ? DSA5CombatDialog.resolveMeleeDialog(testData, {}, this.element,actor.data , {}, -3, this.dialogData.mode)
         : DSA5CombatDialog.resolveRangeDialog(testData, {}, this.element, actor.data, {}, this.dialogData.mode)

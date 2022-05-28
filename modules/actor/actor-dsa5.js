@@ -1544,7 +1544,7 @@ export default class Actordsa5 extends Actor {
     }
 
     async useFateOnRoll(message, type, schipsource) {
-        if (DSA5_Utility.fateAvailable(this, schipsource == 1)) {
+        if (type == "isTalented" || DSA5_Utility.fateAvailable(this, schipsource == 1)) {
             let data = message.data.flags.data
             let cardOptions = this.preparePostRollAction(message)
             let fateAvailable
