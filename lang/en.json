@@ -1216,7 +1216,7 @@
         "noBreakingResistance": "No Breaking Point Rating found for {item}.",
         "noBreakingStructure": "{name} has no accepted max structure value.",
         "noConjurationActive": "No actor to summon active (drag and drop)",
-        "notInRangeToLoot": "Zu weit entfernt für eine Interaktion.",
+        "notInRangeToLoot": "Too far away for an interaction.",
         "onlyGMallowed": "This function is only available to the game master.",
         "macroNotFound": "The macro {name} could not be found...sorry.",
         "notOwner": "You are not allowed to modify this actor.",

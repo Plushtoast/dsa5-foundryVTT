@@ -178,7 +178,7 @@ export default class Itemdsa5 extends Item {
         if (happyTalents.includes(source.name)) {
             const availableKaP = actor.data.data.status.karmaenergy.value
             const bonus = getProperty(actor.data, `data.miracle.${bonusAttribute}`) || 0
-            if (availableKaP < 4) return
+            if (availableKaP < 4) return []
 
             result.push({
                 name: game.i18n.localize('LocalizedIDs.miracle'),
