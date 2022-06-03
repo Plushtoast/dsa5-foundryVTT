@@ -14,7 +14,13 @@ async function callMacro(packName, name, actor, item, qs, args = {}) {
         ui.notifications.warn(`You are not allowed to use JavaScript macros.`);
     } else {
         const pack = game.packs.get(packName);
-        const documents = await pack.getDocuments({ name });
+        let documents = await pack.getDocuments({ name });
+        if (!documents.length) {
+            for (let pack of game.packs.filter(x => x.documentName == "Macro" && /\(internal\)/.test(x.metadata.label))) {
+                documents = await pack.getDocuments({ name });
+                if (documents.length) break
+            }
+        }
 
         if (documents.length) {
             const body = `(async () => {${documents[0].data.command}})()`;
@@ -28,6 +34,10 @@ async function callMacro(packName, name, actor, item, qs, args = {}) {
                 console.error(err);
                 result.error = true;
             }
+        } else {
+            ui.notifications.error(
+                game.i18n.format("DSAError.macroNotFound", { name })
+            );
         }
     }
     return result;
@@ -183,7 +193,7 @@ export default class DSAActiveEffectConfig extends ActiveEffectConfig {
                             case 1: //Systemeffekt
                                 {
                                     const effect = duplicate(CONFIG.statusEffects.find((e) => e.id == getProperty(ef, "flags.dsa5.args0")));
-                                    let value = `${getProperty(ef, "flags.dsa5.args1")}`;
+                                    let value = `${getProperty(ef, "flags.dsa5.args1")}` || "1";
                                     effect.duration = ef.duration;
                                     if (/,/.test(value)) {
                                         value = Number(value.split(",")[qs - 1]);

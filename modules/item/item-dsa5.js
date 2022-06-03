@@ -1432,6 +1432,15 @@ class RangeweaponItemDSA5 extends Itemdsa5 {
                     if (currentAmmo.data.armorMod) dmgMod["armorPen"] = currentAmmo.data.armorMod
                     situationalModifiers.push(dmgMod)
                 }
+                if(currentAmmo.effects.length){
+                    situationalModifiers.push({
+                        name: `${currentAmmo.name} - ${game.i18n.localize("effect")}`,
+                        value: 1,
+                        type: game.i18n.localize('effect'),
+                        selected: true,
+                        specAbId: source.data.currentAmmo.value,
+                    })
+                }
             }
             situationalModifiers.push(...RangeweaponItemDSA5.getMiracleModifiers(actor, { name: source.data.combatskill.value }, "", data.mode))
         }
