@@ -138,7 +138,11 @@ export default class DSA5CombatDialog extends DialogShared {
                 }else if(this.dialogData.mode == "parry"){
                     this.dialogData.rollValue = weapon.parry
                 }
-            }else{
+            }
+            else if(source.type == "dodge"){
+                this.dialogData.rollValue = source.data.value
+            }
+            else{
                 if(this.dialogData.mode == "attack"){
                     this.dialogData.rollValue = Number(source.data.at.value)
                 }else if(this.dialogData.mode == "parry"){

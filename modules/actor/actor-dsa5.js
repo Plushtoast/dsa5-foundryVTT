@@ -1347,7 +1347,7 @@ export default class Actordsa5 extends Actor {
     cardOptions.fatePointDamageRerollUsed = true;
     this.resetTargetAndMessage(data, cardOptions);
 
-    const html = awaitrenderTemplate("systems/dsa5/templates/dialog/fateReroll-dialog.html", {
+    const html = await renderTemplate("systems/dsa5/templates/dialog/fateReroll-dialog.html", {
       testData: newTestData,
       postData: data.postData,
     });
