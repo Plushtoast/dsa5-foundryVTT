@@ -61,6 +61,7 @@ export default class DSAIniTracker extends Application {
         this.position.height = itemWidth + 10
         const turnsToUse = data.turns
         const waitingTurns = []
+        const skipDefeated = game.settings.get("core", Combat.CONFIG_SETTING).skipDefeated
         let unRolled = data.turns.some(x => x.owner && !x.hasRolled && (!game.user.isGM || data.combat.combatants.get(x.id).isNPC))
         if (turnsToUse.length) {
             const filteredTurns = []
@@ -83,7 +84,7 @@ export default class DSAIniTracker extends Application {
                     waitingTurns.push(turn)
                 }
 
-                if (started && !turn.defeated && (game.user.isGM || !turn.hidden)) {
+                if (started && !(skipDefeated && turn.defeated) && (game.user.isGM || !turn.hidden)) {
                     turn.round = data.round + loops
                     if(turn.owner){
                         turn.maxLP = combatant.token.actor.data.data.status.wounds.max
@@ -107,7 +108,20 @@ export default class DSAIniTracker extends Application {
             itemWidth,
             unRolled, waitingTurns
         })
+        const firstTurn = data.turns[0]
+        if(firstTurn) this.panToCurrentCombatant(data.combat.combatants.get(firstTurn.id))
         return data
+    }
+
+    async panToCurrentCombatant(combatant){
+        if(!combatant || !game.settings.get("dsa5", "enableCombatPan")) return
+        
+        const token = combatant.token;
+        if (!token) return;
+        canvas.animatePan({x: token.data.x, y: token.data.y});
+
+        if(!token.object || !combatant.actor || !combatant.actor.isOwner) return
+        token.object.control({releaseOthers: true});        
     }
 
     async _onWheelResize(ev) {

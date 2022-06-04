@@ -1412,7 +1412,9 @@
         "enableCombatFlow": "TDE combat tracker",
         "enableCombatFlowHint": "Activate the TDE combat tracker",
         "iniTrackerSize": "TDE combat tracker size",
-        "iniTrackerSizeHint": "Size of the buttons in the TDE combat tracker."
+        "iniTrackerSizeHint": "Size of the buttons in the TDE combat tracker.",
+        "enableCombatPan": "Pan to current turn",
+        "enableCombatPanHint": "Pan the view to the current turn and select the token if owned."
     },
     "WEAR": {
         "check": "Breaking Point Rating Check ({category})",

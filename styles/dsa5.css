@@ -2719,10 +2719,12 @@ select.noAppearance {
 }
 
 .initTracker .newRound{
-    border-left-color: #496fd7;
+    border-color: #496fd7;
+    box-shadow: inset 0px 0px 10px #496fd7;
     border-top-left-radius: 0px;
     border-bottom-left-radius: 0px;
 }
+
 .initTracker .turnRound{
     padding: 2px;
     border-radius: 100%;

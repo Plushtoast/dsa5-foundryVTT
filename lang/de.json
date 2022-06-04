@@ -1427,7 +1427,9 @@
         "enableCombatFlow": "DSA Kampftracker",
         "enableCombatFlowHint": "Aktiviere den DSA Kampftracker",
         "iniTrackerSize": "DSA Kampftracker Größe",
-        "iniTrackerSizeHint": "Größe der Buttons im DSA Kampftracker"
+        "iniTrackerSizeHint": "Größe der Buttons im DSA Kampftracker",
+        "enableCombatPan": "Schwenke zu aktuellem Zug",
+        "enableCombatPanHint": "Schwenke die Sicht auf den aktuellen Zug und selektiere den Token sofern Besitzerrechte vorhanden."
     },
     "CONTROLS": {
         "targetForUser": "Ziel für Spieler wählen"

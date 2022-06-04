@@ -354,6 +354,15 @@ export default function() {
         }
     });
 
+    game.settings.register("dsa5", "enableCombatPan", {
+        name: "DSASETTINGS.enableCombatPan",
+        hint: "DSASETTINGS.enableCombatPanHint",
+        scope: "client",
+        config: true,
+        default: true,
+        type: Boolean
+    });
+
     game.settings.register("dsa5", "sightAutomationEnabled", {
         name: "sightAutomationEnabled",
         scope: "world",
