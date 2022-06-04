@@ -117,10 +117,10 @@ export default class DSAIniTracker extends Application {
         if(!combatant || !game.settings.get("dsa5", "enableCombatPan")) return
         
         const token = combatant.token;
-        if (!token) return;
+        if (!token || !token.object || !token.object.isVisible) return;
         canvas.animatePan({x: token.data.x, y: token.data.y});
 
-        if(!token.object || !combatant.actor || !combatant.actor.isOwner) return
+        if(!combatant.actor || !combatant.actor.isOwner) return
         token.object.control({releaseOthers: true});        
     }
 
