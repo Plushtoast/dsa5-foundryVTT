@@ -2941,6 +2941,10 @@ select.noAppearance {
     text-align: right;
 }
 
+.initTracker button{
+    line-height: 21px;
+}
+
 .tokenHotbarInner>ul>li.effect>div:before {
     font-family: "Font Awesome 5 Free";
     font-weight: 900;
