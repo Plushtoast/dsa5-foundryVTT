@@ -118,17 +118,16 @@ export default function() {
             texture: 'none'
         });
 
-        import (foundry.utils.getRoute('/modules/dice-so-nice/Utils.js')).then(module => {
-            game.dsa5.apps.DiceSoNiceCustomization.initConfigs(module)
-            DiceSoNiceCustomization.onConnect()
-        })
+
+        game.dsa5.apps.DiceSoNiceCustomization.initConfigs()
+        DiceSoNiceCustomization.onConnect()
     });
 }
 
 export class DiceSoNiceCustomization extends Application {
     static attrs = ["mu", "kl", "in", "ch", "ff", "ge", "ko", "kk", "attack", "dodge", "parry", "damage"]
-    initConfigs(module) {
-        const colors = module.Utils.prepareColorsetList()
+    initConfigs() {
+        const colors = game.dice3d.exports.Utils.prepareColorsetList()
         this.choices = {}
         for (const [key, value] of Object.entries(colors)) {
             mergeObject(this.choices, value)
