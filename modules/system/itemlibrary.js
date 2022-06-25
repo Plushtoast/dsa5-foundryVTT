@@ -98,7 +98,7 @@ class AdvancedSearchDocument extends SearchDocument {
         const attrs = ADVANCEDFILTERS[subcategory] || []
         for (let attr of attrs) {
             this[attr.attr] = attr.attr.split(".").reduce((prev, cure) => {
-                return prev[cure] || {}
+                return prev[cure] === undefined ? {} : prev[cure]
             }, item.data.data)
         }
     }
