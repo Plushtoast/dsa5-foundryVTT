@@ -519,11 +519,11 @@ select[multiple] option:checked {
     z-index: -1;
 }
 
-.directory .directory-list .directory-item.folder .context{
+.directory .directory-list .directory-item.folder .context {
     color: black;
 }
 
-#sidebar.collapsed:before{
+#sidebar.collapsed:before {
     content: none;
 }
 
@@ -663,7 +663,7 @@ select[multiple] option:checked {
 }
 
 .rollButton .d20,
-.reactClick .d20{
+.reactClick .d20 {
     width: 30px;
     height: 30px;
     line-height: 30px;
@@ -671,8 +671,8 @@ select[multiple] option:checked {
     float: right;
 }
 
-.rollButton .d20{
-    float:left;
+.rollButton .d20 {
+    float: left;
 }
 
 .chatmoney {
@@ -2129,9 +2129,9 @@ h2 .chatButton {
     width: 3px;
 }
 
-.initTracker .item-structure{
+.initTracker .item-structure {
     top: -102%;
-    border-color:rgb(14, 12, 12);
+    border-color: rgb(14, 12, 12);
 }
 
 .item-structure {
@@ -2614,8 +2614,8 @@ select.noAppearance {
     z-index: 2;
 }
 
-#controls ol li.control-tool[data-tool="targetUser"]{
-    color:#609ec6;
+#controls ol li.control-tool[data-tool="targetUser"] {
+    color: #609ec6;
 }
 
 #hotbar .macro .tooltip,
@@ -2702,45 +2702,46 @@ select.noAppearance {
     box-sizing: border-box;
 }
 
-.initTracker .waitingTackerList li{
+.initTracker .waitingTackerList li {
     width: calc(var(--iniTrackerSize) * 0.5);
     height: calc(var(--iniTrackerSize) * 0.5);
 }
 
-.waitingTackerList{
+.waitingTackerList {
     position: absolute;
     top: calc(var(--iniTrackerSize) * -0.5);
     left: 30px;
     z-index: -1;
 }
 
-.initTracker .tooltip{
-    pointer-events: none;;
+.initTracker .tooltip {
+    pointer-events: none;
+    ;
 }
 
-.initTracker .newRound{
+.initTracker .newRound {
     border-color: #496fd7;
     box-shadow: inset 0px 0px 10px #496fd7;
     border-top-left-radius: 0px;
     border-bottom-left-radius: 0px;
 }
 
-.initTracker .turnRound{
+.initTracker .turnRound {
     padding: 2px;
     border-radius: 100%;
     width: 21px;
-    display:inline-block;
+    display: inline-block;
 }
 
-.initTracker .newRound .turnRound{
+.initTracker .newRound .turnRound {
     background-color: #496fd7;
 }
 
-.initTracker .waitTitle{
+.initTracker .waitTitle {
     background-image: none;
 }
 
-.initTracker .waitTitle i{
+.initTracker .waitTitle i {
     float: left;
     width: 100%;
     line-height: calc(var(--iniTrackerSize) * 0.5);
@@ -2872,18 +2873,19 @@ select.noAppearance {
 }
 
 .window-app.dsa5Decent .window-content,
-.window-app.dsa5Decent .window-header{
+.window-app.dsa5Decent .window-header {
     background: rgba(0, 0, 0, 0.5);
-    padding:0;
+    padding: 0;
     position: unset;
     color: white;
 }
 
-.window-app.dsa5Decent .window-content li{
-    background: rgba(255,255,255,0.2);
+.window-app.dsa5Decent .window-content li {
+    background: rgba(255, 255, 255, 0.2);
 }
-.window-app.dsa5Decent .window-content li:hover{
-    background: rgba(255,255,255,0.5);
+
+.window-app.dsa5Decent .window-content li:hover {
+    background: rgba(255, 255, 255, 0.5);
 }
 
 .window-app.initTracker,
@@ -2941,7 +2943,7 @@ select.noAppearance {
     text-align: right;
 }
 
-.initTracker button{
+.initTracker button {
     line-height: 21px;
 }
 
@@ -3282,6 +3284,18 @@ select.noAppearance {
     margin-top: 4px;
 }
 
+.advancedSearch .cbParent {
+    line-height: 24px;
+}
+
+.advancedSearch .cbParent label {
+    text-overflow: ellipsis;
+}
+
+.advancedSearch input[type="checkbox"] {
+    float: right;
+}
+
 input[type="checkbox"].autoCheckbox {
     width: auto;
     height: auto;
@@ -3530,6 +3544,13 @@ input[type="checkbox"].autoCheckbox {
     white-space: nowrap;
 }
 
+.panToToken{
+    cursor: pointer;
+}
+
+.panToToken:hover{
+    box-shadow: inset 0px 0px 5px black;
+}
 
 /* Foundry9 fixes */
 

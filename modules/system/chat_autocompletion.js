@@ -32,7 +32,8 @@ export default class DSA5ChatAutoCompletion {
         let target = this
 
         this.anchor = $('#chat-message').parent()
-        $('#chat-message').off('keydown')
+            //$('#chat-message').off('keydown')
+        $("#chat-message").off("keydown", ui.chat._onChatKeyDownBinding);
         html.on('keyup', '#chat-message', async function(ev) {
             target._parseInput(ev)
         })

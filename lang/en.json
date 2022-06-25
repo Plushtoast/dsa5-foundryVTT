@@ -143,7 +143,24 @@
         "identify": "Identify diff.",
         "usages": "Applications",
         "recipes": "Recipes",
-        "ingredients": "Ingredients (typical)"
+        "ingredients": "Ingredients (typical)",
+        "availability": "Availability",
+        "highNorth": "High North",
+        "grasLands": "Grasslands",
+        "swamps": "Swamps",
+        "mountains": "Mountains",
+        "woods": "Woods",
+        "jungle": "Jungle",
+        "desert": "Deserts",
+        "maraskan": "Maraskan",
+        "avLevels": {
+            "5": "common",
+            "4": "occasional",
+            "3": "rarely",
+            "2": "rare",
+            "1": "very rare",
+            "0": "never"
+        }
     },
     "MERCHANT": {
         "buy": "Buy",
@@ -211,6 +228,7 @@
     "Advances": "Advances",
     "attributes": "Attributes",
     "astralenergy": "Arcane energy",
+    "confirm": "Confirm",
     "fshopLink": "https://www.ulissesf-shop.com/virtual-tabletops/",
     "ammunition": "Ammunition",
     "aggregatedTests": "Cumulative checks",

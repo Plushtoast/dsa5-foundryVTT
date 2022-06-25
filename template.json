@@ -499,6 +499,16 @@
                 "crop": false,
                 "defensive": false,
                 "supernatural": false
+            },
+            "availability": {
+                "highNorth": 1,
+                "grasLands": 1,
+                "swamps": 1,
+                "woods": 1,
+                "jungle": 1,
+                "mountains": 1,
+                "desert": 1,
+                "maraskan": 1
             }
         },
         "money": {

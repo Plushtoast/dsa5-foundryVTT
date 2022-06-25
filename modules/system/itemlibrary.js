@@ -41,6 +41,23 @@ class SearchDocument {
         }
     }
 
+    get uuid() {
+        if (this.document.compendium) {
+            return `Compendium.${this.document.pack}.${this.document.id}`
+        } else {
+            switch (this.itemType) {
+                case "character":
+                case "creature":
+                case "npc":
+                    return `JournalEntry.${this.id}`
+                case "JournalEntry":
+                    return `Actor.${this.id}`
+                default:
+                    return `Item.${this.id}`
+            }
+        }
+    }
+
     get name() {
         return this.document.name
     }
@@ -55,20 +72,7 @@ class SearchDocument {
     }
 
     async getItem() {
-        if (this.document.compendium) {
-            return await (await game.packs.get(this.document.pack)).getDocument(this.id)
-        } else {
-            switch (this.itemType) {
-                case "character":
-                case "creature":
-                case "npc":
-                    return game.actors.get(this.id)
-                case "JournalEntry":
-                    return game.journal.get(this.id)
-                default:
-                    return game.items.get(this.id)
-            }
-        }
+        return await fromUuid(this.uuid)
     }
 
     hasPermission() {
@@ -94,7 +98,7 @@ class AdvancedSearchDocument extends SearchDocument {
         const attrs = ADVANCEDFILTERS[subcategory] || []
         for (let attr of attrs) {
             this[attr.attr] = attr.attr.split(".").reduce((prev, cure) => {
-                return prev[cure]
+                return prev[cure] || {}
             }, item.data.data)
         }
     }
@@ -344,6 +348,50 @@ export default class DSA5ItemLibrary extends Application {
         return this.equipmentIndex.search(category, { field: ["itemType"] })
     }
 
+    async executeAdvancedFilter(search, index, selectSearches, textSearches, booleanSearches, rangeSearches = []) {
+        const selFnct = (x) => {
+            for (let k of selectSearches) {
+                if (x[k[0]] != k[1]) return false
+            }
+            return true
+        }
+        const txtFnct = (x) => {
+            for (let k of textSearches) {
+                if (x[k[0]].toLowerCase().indexOf(k[1]) == -1) return false
+            }
+            return true
+        }
+        const cbFnct = (x) => {
+            for (let k of booleanSearches) {
+                if (x[k[0]] != k[1]) return false
+            }
+            return true
+        }
+
+        const rangeFct = (x) => {
+            for (let k of rangeSearches) {
+                if (x[k[0]] < k[1] || x[k[0]] > k[2]) return false
+            }
+            return true
+        }
+
+        let result = index.where(x => (
+                search == "" ||
+                x.name.toLowerCase().indexOf(search) != -1) &&
+            selFnct(x) &&
+            txtFnct(x) &&
+            cbFnct(x) &&
+            rangeFct(x)
+        )
+
+        //this.pages[category].next = result.length
+
+        let filteredItems = result
+        filteredItems = filteredItems.filter(x => x.hasPermission).sort((a, b) => (a.name.toLowerCase() > b.name.toLowerCase()) ? 1 : -1)
+
+        return filteredItems
+    }
+
     async advancedFilterStuff(category, page) {
         const dataFilters = $(this._element).find('.detailFilters')
         const subcategory = dataFilters.attr("data-subc")
@@ -352,41 +400,28 @@ export default class DSA5ItemLibrary extends Application {
 
         const sels = []
         const inps = []
+        const checkboxes = []
         for (let elem of dataFilters.find('select')) {
             let val = $(elem).val()
             if (val != "") {
                 sels.push([$(elem).attr("name"), val])
             }
         }
-        for (let elem of dataFilters.find('input:not(.manualFilter)')) {
+        for (let elem of dataFilters.find('input[type="text"]:not(.manualFilter)')) {
             let val = $(elem).val()
             if (val != "") {
                 inps.push([$(elem).attr("name"), val.toLowerCase()])
             }
         }
-
-        const selFnct = (x) => {
-            for (let k of sels) {
-                if (x[k[0]] != k[1]) return false
+        for (let elem of dataFilters.find('input[type="checkbox"]:checked:not(.manualFilter)')) {
+            let val = $(elem).val()
+            if (val != "") {
+                checkboxes.push([$(elem).attr("name"), val.toLowerCase()])
             }
-            return true
         }
-        const txtFnct = (x) => {
-            for (let k of inps) {
-                if (x[k[0]].toLowerCase().indexOf(k[1]) == -1) return false
-            }
-            return true
-        }
-
-        let result = index.where(x => (search == "" || x.name.toLowerCase().indexOf(search) != -1) && selFnct(x) && txtFnct(x))
-
-        //this.pages[category].next = result.length
-
-        let filteredItems = result
-        filteredItems = filteredItems.filter(x => x.hasPermission).sort((a, b) => (a.name.toLowerCase() > b.name.toLowerCase()) ? 1 : -1)
-        this.setBGImage(filteredItems, category)
-
-        return filteredItems
+        let result = await this.executeAdvancedFilter(search, index, sels, inps, checkboxes)
+        this.setBGImage(result, category)
+        return result
     }
 
     async filterStuff(category, index, page) {

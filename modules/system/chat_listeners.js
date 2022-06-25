@@ -12,6 +12,18 @@ export default class DSA5ChatListeners {
         $(html.find('.control-buttons')).prepend(helpButton)
         html.on('click', '.showPatchViewer', () => showPatchViewer())
         html.on('click', '.functionswitch', (ev) => RuleChaos[ev.currentTarget.dataset.function](ev))
+        html.on('click', '.panToToken', ev => DSA5ChatListeners.panToToken(ev))
+    }
+
+    static async panToToken(ev){
+        const token = await fromUuid(ev.currentTarget.dataset.uuid)
+        if(!token) return
+
+        canvas.animatePan({x: token.data.x, y: token.data.y});
+
+        if(!token.isOwner) return
+
+        token.object.control({releaseOthers: true});        
     }
 
     static postStatus(id) {

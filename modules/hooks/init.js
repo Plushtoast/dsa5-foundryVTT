@@ -50,7 +50,6 @@ export default function() {
     migrateWorld.default()
     initScene.default()
     rollExtensions.default()
-
 }
 
 Hooks.once("init", () => {

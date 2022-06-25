@@ -91,6 +91,49 @@
             <div class="form-group full-height">
                 <label class="label-text">{{localize "PLANT.recipes"}}</label> {{editor content=data.recipes target="data.recipes" button=true owner=owner editable=editable}}
             </div>
+            <div class="form-group">
+                <b class="label-text">{{localize "PLANT.availability"}}</b>
+            </div>
+            <div class="form-group doubleInput">
+                <label class="label-text">{{localize "PLANT.highNorth"}}</label>
+                <input class="input-text" type="range" dtype="number" name="data.availability.highNorth" value="{{data.availability.highNorth}}" min="0" max="5" />
+                <label class="input-text">{{plantify data.availability.highNorth}}</label>
+            </div>
+            <div class="form-group doubleInput">
+                <label class="label-text">{{localize "PLANT.grasLands"}}</label>
+                <input class="input-text" type="range" dtype="number" name="data.availability.grasLands" value="{{data.availability.grasLands}}" min="0" max="5" />
+                <label class="input-text">{{plantify data.availability.grasLands}}</label>
+            </div>
+            <div class="form-group doubleInput">
+                <label class="label-text">{{localize "PLANT.swamps"}}</label>
+                <input class="input-text" type="range" dtype="number" name="data.availability.swamps" value="{{data.availability.swamps}}" min="0" max="5" />
+                <label class="input-text">{{plantify data.availability.swamps}}</label>
+            </div>
+            <div class="form-group doubleInput">
+                <label class="label-text">{{localize "PLANT.woods"}}</label>
+                <input class="input-text" type="range" dtype="number" name="data.availability.woods" value="{{data.availability.woods}}" min="0" max="5" />
+                <label class="input-text">{{plantify data.availability.woods}}</label>
+            </div>
+            <div class="form-group doubleInput">
+                <label class="label-text">{{localize "PLANT.jungle"}}</label>
+                <input class="input-text" type="range" dtype="number" name="data.availability.jungle" value="{{data.availability.jungle}}" min="0" max="5" />
+                <label class="input-text">{{plantify data.availability.jungle}}</label>
+            </div>
+            <div class="form-group doubleInput">
+                <label class="label-text">{{localize "PLANT.mountains"}}</label>
+                <input class="input-text" type="range" dtype="number" name="data.availability.mountains" value="{{data.availability.mountains}}" min="0" max="5" />
+                <label class="input-text">{{plantify data.availability.mountains}}</label>
+            </div>
+            <div class="form-group doubleInput">
+                <label class="label-text">{{localize "PLANT.desert"}}</label>
+                <input class="input-text" type="range" dtype="number" name="data.availability.desert" value="{{data.availability.desert}}" min="0" max="5" />
+                <label class="input-text">{{plantify data.availability.desert}}</label>
+            </div>
+            <div class="form-group doubleInput">
+                <label class="label-text">{{localize "PLANT.maraskan"}}</label>
+                <input class="input-text" type="range" dtype="number" name="data.availability.maraskan" value="{{data.availability.maraskan}}" min="0" max="5" />
+                <label class="input-text">{{plantify data.availability.maraskan}}</label>
+            </div>
         </div>
 
     </section>

@@ -14,6 +14,11 @@
         <label class="label-text">{{localize field.label}}</label>
         <input class="input-text" type="text" name="{{field.attr}}" value="" data-dtype="String" />
     </div>
+    {{else if (eq field.type 'checkbox')}}
+    <div class="form-group cbParent row-section">
+        <label class="label-text col eighty">{{localize field.label}}</label>
+        <input class="input-text col five" type="checkbox" name="{{field.attr}}" value="1" data-dtype="Boolean" />
+    </div>
     {{/if}} {{/each}}
     <div class="form-group">
         <label class="label-text">{{localize 'Module'}}</label>

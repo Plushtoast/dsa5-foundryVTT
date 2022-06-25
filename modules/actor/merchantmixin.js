@@ -6,7 +6,6 @@ import RuleChaos from "../system/rule_chaos.js";
 import DSA5_Utility from "../system/utility-dsa5.js";
 
 //todo add on use button to merchant sheet
-//todo check masters workshop still working
 
 export const MerchantSheetMixin = (superclass) => class extends superclass {
     static get defaultOptions() {

@@ -172,6 +172,7 @@
     "ammunitiongroup": "Munitionstyp",
     "AstoundingSuccess": "Spektakulärer Erfolg",
     "AstoundingFailure": "Schreckliches Missgeschick",
+    "confirm": "Bestätigen",
     "advantages": "Vorteile",
     "advantage": "Vorteil",
     "modules": "Module",
@@ -955,7 +956,24 @@
         "identify": "Bestimmungsschw.",
         "usages": "Anwendungen",
         "recipes": "Rezepte",
-        "ingredients": "Zutaten (typisch)"
+        "ingredients": "Zutaten (typisch)",
+        "availability": "Verfügbarkeit",
+        "highNorth": "Hoher Norden",
+        "grasLands": "Grasländer",
+        "mountains": "Gebirge",
+        "swamps": "Sümpfe",
+        "woods": "Wälder",
+        "jungle": "Regenwälder",
+        "desert": "Wüsten",
+        "maraskan": "Maraskan",
+        "avLevels": {
+            "5": "gewöhnlich",
+            "4": "gelegentlich",
+            "3": "eher selten",
+            "2": "selten",
+            "1": "sehr selten",
+            "0": "nie"
+        }
     },
     "ITEM.TypeAdvantage": "Vorteil",
     "ITEM.TypeAggregatedtest": "Sammelprobe",
