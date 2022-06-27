@@ -391,7 +391,9 @@ export default class BookWizard extends Application {
     }
 
     getSubChapters() {
-        return this.journals.filter(x => x.data.flags.dsa5.parent == this.selectedChapter).sort((a, b) => a.data.flags.dsa5.sort > b.data.flags.dsa5.sort ? 1 : -1).map(x => x.name)
+        return this.journals.filter(x => x.data.flags.dsa5.parent == this.selectedChapter)
+        .sort((a, b) => a.data.flags.dsa5.sort > b.data.flags.dsa5.sort ? 1 : -1)
+        .map(x => {return {name: x.name, id: x.id}})
     }
 
     async getToc() {

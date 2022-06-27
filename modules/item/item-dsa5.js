@@ -1582,11 +1582,11 @@ class SkillItemDSA5 extends Itemdsa5 {
             difficultyLabels: DSA5.skillDifficultyLabels,
             modifier: options.modifier || 0,
             characteristics: [1, 2, 3].map((x) => skill.data[`characteristic${x}`].value),
+            situationalModifiers: actor ? DSA5StatusEffects.getRollModifiers(actor, skill) : []
         }
 
-        let situationalModifiers = actor ? DSA5StatusEffects.getRollModifiers(actor, skill) : []
-        this.getSituationalModifiers(situationalModifiers, actor, data, skill)
-        data["situationalModifiers"] = situationalModifiers
+        if(options.situationalModifiers) data.situationalModifiers.push(...options.situationalModifiers)
+        this.getSituationalModifiers(data.situationalModifiers, actor, data, skill)
 
         let dialogOptions = {
             title,
