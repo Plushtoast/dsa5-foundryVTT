@@ -20,7 +20,7 @@ export default class Itemdsa5 extends Item {
         meleeweapon: "systems/dsa5/icons/categories/Meleeweapon.webp",
         rangeweapon: "systems/dsa5/icons/categories/Rangeweapon.webp",
         equipment: "systems/dsa5/icons/categories/Equipment.webp",
-        consumable: "systems/dsa5/icons/categories/Equipment.webp",
+        consumable: "systems/dsa5/icons/categories/consumable.webp",
         liturgy: "systems/dsa5/icons/categories/Liturgy.webp",
         spell: "systems/dsa5/icons/categories/Spell.webp",
         ammunition: "systems/dsa5/icons/categories/Munition.webp",
@@ -594,26 +594,26 @@ export default class Itemdsa5 extends Item {
     }
 
     async postItem() {
-        let chatData = duplicate(this.data)
-        const properties = Itemdsa5.getSubClass(this.data.type).chatData(duplicate(chatData.data), this.name)
+            let chatData = duplicate(this.data)
+            const properties = Itemdsa5.getSubClass(this.data.type).chatData(duplicate(chatData.data), this.name)
 
-        chatData["properties"] = properties
+            chatData["properties"] = properties
 
-        chatData.hasPrice = "price" in chatData.data
-        if (chatData.hasPrice) {
-            let price = chatData.data.price.value
-            if (chatData.data.QL) price *= chatData.data.QL
+            chatData.hasPrice = "price" in chatData.data
+            if (chatData.hasPrice) {
+                let price = chatData.data.price.value
+                if (chatData.data.QL) price *= chatData.data.QL
 
-            chatData.data.price.D = Math.floor(price / 10)
-            price -= chatData.data.price.D * 10
-            chatData.data.price.S = Math.floor(price)
-            price -= chatData.data.price.S
-            chatData.data.price.H = Math.floor(price / 0.1)
-            price -= chatData.data.price.H * 0.1
-            chatData.data.price.K = Math.round(price / 0.01)
+                chatData.data.price.D = Math.floor(price / 10)
+                price -= chatData.data.price.D * 10
+                chatData.data.price.S = Math.floor(price)
+                price -= chatData.data.price.S
+                chatData.data.price.H = Math.floor(price / 0.1)
+                price -= chatData.data.price.H * 0.1
+                chatData.data.price.K = Math.round(price / 0.01)
 
-            const prices = ["D","S","H","K"].map(x => 
-                `${chatData.data.price[x]} <div title="${game.i18n.localize(`Money-${x}`)}" class="chatmoney money-${x}"></div>`).join(",")
+                const prices = ["D", "S", "H", "K"].map(x =>
+                        `${chatData.data.price[x]} <div title="${game.i18n.localize(`Money-${x}`)}" class="chatmoney money-${x}"></div>`).join(",")
             properties.push(`<b>${game.i18n.localize("price")}</b>: ${prices}`)
         }
 
