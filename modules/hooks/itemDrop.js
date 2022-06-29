@@ -16,7 +16,7 @@ export const dropToGround = async(sourceActor, item, data, amount) => {
 
         const newItem = item.toObject()
         newItem.data.quantity.value = amount
-        if(getProperty(newItem, "data.worn.value")) newItem.data.worn.value = false
+        if (getProperty(newItem, "data.worn.value")) newItem.data.worn.value = false
 
         const actor = {
             type: "npc",
@@ -80,7 +80,10 @@ export const connectHook = () => {
         if (data.type == "Item") {
             let item
             let sourceActor
-            if (data.pack) {
+            if (data.uuid) {
+                item = await fromUuid(data.uuid)
+                if (item.parent) sourceActor = item.parent
+            } else if (data.pack) {
                 let dataPack = game.packs.get(data.pack)
                 item = await dataPack.getDocument(data.id)
             } else if (data.tokenId || data.actorId) {

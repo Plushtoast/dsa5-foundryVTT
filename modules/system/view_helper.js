@@ -24,8 +24,10 @@ export async function itemFromDrop(dragData, actorId) {
     let item
     let typeClass
     let selfTarget = dragData.actorId && dragData.actorId == actorId
-
-    if (dragData.id && dragData.pack) {
+    if (dragData.uuid) {
+        item = await fromUuid(dragData.uuid)
+        typeClass = item.data.type
+    } else if (dragData.id && dragData.pack) {
         item = await DSA5_Utility.findItembyIdAndPack(dragData.id, dragData.pack);
         typeClass = item.data.type
     } else if (dragData.id && dragData.type == "Actor") {
