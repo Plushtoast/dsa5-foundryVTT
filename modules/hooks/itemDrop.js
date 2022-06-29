@@ -83,6 +83,7 @@ export const connectHook = () => {
             if (data.uuid) {
                 item = await fromUuid(data.uuid)
                 if (item.parent) sourceActor = item.parent
+                if (data.amount) item.data.data.quantity.value = Number(data.amount)
             } else if (data.pack) {
                 let dataPack = game.packs.get(data.pack)
                 item = await dataPack.getDocument(data.id)
