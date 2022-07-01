@@ -169,7 +169,7 @@ export const MerchantSheetMixin = (superclass) => class extends superclass {
         let amount = ev.ctrlKey ? 10 : 1
 
         if (game.user.isGM) {
-            this.finishTransaction(source, target, price, itemId, buy, amount)
+            await this.constructor.finishTransaction(source, target, price, itemId, buy, amount)
         } else if (this.constructor.noNeedToPay(target, source, price) || DSA5Payment.canPay(target, price, true)) {
             game.socket.emit("system.dsa5", {
                 type: "trade",
@@ -216,8 +216,12 @@ export const MerchantSheetMixin = (superclass) => class extends superclass {
         }
     }
 
+    static isTemporaryToken(target){
+        return getProperty(target, "data.data.merchant.merchantType") == "loot" && getProperty(target, "data.data.merchant.temporary")
+    }
+
     static async selfDestruction(target) {
-        if (getProperty(target, "data.data.merchant.merchantType") == "loot" && getProperty(target, "data.data.merchant.temporary")) {
+        if (this.isTemporaryToken(target)) {
             const hasItemsLeft = target.items.some(x => DSA5.equipmentCategories.includes(x.type) || (x.type == "money" && x.data.data.quantity.value > 0))
             if (!hasItemsLeft) {
                 game.socket.emit("system.dsa5", {

@@ -13,8 +13,8 @@
         "dsa5.js"
     ],
     "styles": [
-        "styles/dsa5.css",
-        "styles/select2.min.css"
+        "styles/select2.min.css",
+        "styles/dsa5.css"
     ],
     "packs": [{
             "name": "skills",

@@ -3568,5 +3568,8 @@ input[type="checkbox"].autoCheckbox {
     color: #a9a7a0;
 }
 
-
 /* End Foundry9 fixes */
+
+.select2-results__option[role="group"]:hover{
+    background-color: transparent;
+}
