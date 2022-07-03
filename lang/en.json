@@ -1240,7 +1240,8 @@
         "macroNotFound": "The macro {name} could not be found...sorry.",
         "notOwner": "You are not allowed to modify this actor.",
         "shouldTimesUp": "The module Times-Up is required for automatically expiring effects.",
-        "requiresModule": "This function requires the module {module}."
+        "requiresModule": "This function requires the module {module}.",
+        "wrongLanguage": "Your language setting does not match the predefined setting ({lang}). Do you want to change this?"
     },
     "CEREMONYMODIFIER": {
         "holysite": "Sanctum of the god (+2)",
@@ -1433,7 +1434,9 @@
         "iniTrackerSize": "TDE combat tracker size",
         "iniTrackerSizeHint": "Size of the buttons in the TDE combat tracker.",
         "enableCombatPan": "Pan to current turn",
-        "enableCombatPanHint": "Pan the view to the current turn and select the token if owned."
+        "enableCombatPanHint": "Pan the view to the current turn and select the token if owned.",
+        "forceLanguage": "Force language",
+        "forceLanguageHint": "Players receive a message, if their language setting is wrong. Different language settings can lead to issues."
     },
     "WEAR": {
         "check": "Breaking Point Rating Check ({category})",

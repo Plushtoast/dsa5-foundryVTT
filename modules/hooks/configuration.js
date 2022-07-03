@@ -228,7 +228,7 @@ export default function() {
         }
     });
 
-    
+
     game.settings.register("dsa5", "tokenhotbarSize", {
         name: "DSASETTINGS.tokenhotbarSize",
         hint: "DSASETTINGS.tokenhotbarSizeHint",
@@ -261,6 +261,20 @@ export default function() {
         }
     });
 
+    game.settings.register("dsa5", "forceLanguage", {
+        name: "DSASETTINGS.forceLanguage",
+        hint: "DSASETTINGS.forceLanguageHint",
+        scope: "world",
+        config: true,
+        default: "none",
+        type: String,
+        choices: {
+            "none": "-",
+            "de": "German",
+            "en": "English"
+        }
+    });
+
     game.settings.register("dsa5", "tokenhotbarPosition", {
         name: "tokenhotbarPosition",
         scope: "client",
@@ -268,7 +282,7 @@ export default function() {
         default: {},
         type: Object
     });
-    
+
     game.settings.register("dsa5", "iniTrackerPosition", {
         name: "tokenhotbarPosition",
         scope: "client",
@@ -347,7 +361,7 @@ export default function() {
         default: true,
         type: Boolean,
         onchange: ev => {
-            if(game.dsa5.apps.initTracker){
+            if (game.dsa5.apps.initTracker) {
                 game.dsa5.apps.initTracker.close()
                 game.dsa5.apps.initTracker = undefined
             }

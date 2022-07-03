@@ -1267,7 +1267,8 @@
         "macroNotFound": "Das Macro {name} konnte nicht gefunden werden...sorry.",
         "notOwner": "Du darfst diesen Charakter nicht modifizieren.",
         "shouldTimesUp": "Für automatische auslaufende Effekte wird das Modul Times-Up benötigt.",
-        "requiresModule": "Diese Funktion benötigt das Modul {module}."
+        "requiresModule": "Diese Funktion benötigt das Modul {module}.",
+        "wrongLanguage": "Deine Spracheinstellung passt nicht zur vorgegebenen Einstellung ({lang}). Möchtest du die Sprache ändern?"
     },
     "Shapeshift": {
         "title": "Gestaltwandlung",
@@ -1448,7 +1449,9 @@
         "iniTrackerSize": "DSA Kampftracker Größe",
         "iniTrackerSizeHint": "Größe der Buttons im DSA Kampftracker",
         "enableCombatPan": "Schwenke zu aktuellem Zug",
-        "enableCombatPanHint": "Schwenke die Sicht auf den aktuellen Zug und selektiere den Token sofern Besitzerrechte vorhanden."
+        "enableCombatPanHint": "Schwenke die Sicht auf den aktuellen Zug und selektiere den Token sofern Besitzerrechte vorhanden.",
+        "forceLanguage": "Sprache erzwingen",
+        "forceLanguageHint": "Spieler erhalten beim Login einen Dialog, wenn deren Sprache falsch eingestellt ist. Unterschiedliche Spracheinstellungen können zu Problemen führen."
     },
     "CONTROLS": {
         "targetForUser": "Ziel für Spieler wählen"

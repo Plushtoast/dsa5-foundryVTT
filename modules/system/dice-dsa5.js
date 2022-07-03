@@ -902,7 +902,6 @@ export default class DiceDSA5 {
                 }
                 if (/(,|;)/.test(formula)) formula = formula.split(/[,;]/)[res.qualityStep - 1]
 
-                console.log(testData.damageRoll)
                 let rollEffect = testData.damageRoll ? 
                     testData.damageRoll : 
                     await DiceDSA5.manualRolls(
@@ -1516,12 +1515,21 @@ export default class DiceDSA5 {
         html.on("click", ".gearDamaged", async (ev) => DiceDSA5.gearDamaged(ev))
         html.on("change", ".roll-edit", (ev) => DiceDSA5._rollEdit(ev)
         )
-        html.on("click", ".applyEffect", (ev) => {
+        html.on("click", ".applyEffect", async(ev) => {
             const elem = $(ev.currentTarget)
-            const id = elem.parents(".message").attr("data-message-id")
-            const mode = elem.attr("data-target")
+            if(elem.hasClass("locked")) return
 
-            DSAActiveEffectConfig.applyEffect(id, mode)
+            elem.addClass("locked")
+            elem.prepend('<i class="fas fa-spinner fa-spin"></i>')
+            const id = elem.parents(".message").attr("data-message-id")
+            const mode = ev.currentTarget.dataset.target
+
+            await DSAActiveEffectConfig.applyEffect(id, mode)
+            setTimeout(() => {
+                elem.removeClass("locked")
+                elem.find("i").remove()
+            }, 2000)
+            
         })
         html.on("click", ".message-delete", (ev) => {
             let message = game.messages.get($(ev.currentTarget).parents(".message").attr("data-message-id"))

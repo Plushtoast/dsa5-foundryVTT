@@ -33,10 +33,11 @@ export default class DSA5Tutorial {
 
     static async setLanguage(lang) {
         await game.settings.set("dsa5", "firstTimeStart", true)
+        await game.settings.set("dsa5", "forceLanguage", lang)
         await game.settings.set("core", "language", lang)
     }
 
-    static async setupDefaultOptions(){
+    static async setupDefaultOptions() {
         const settings = game.settings.get("core", Combat.CONFIG_SETTING)
         settings.skipDefeated = true
         await game.settings.set("core", Combat.CONFIG_SETTING, settings)

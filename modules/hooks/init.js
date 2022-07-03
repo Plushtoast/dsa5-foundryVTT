@@ -123,6 +123,10 @@ Hooks.once('setup', () => {
         console.warn(`DSA5 - ${game.i18n.lang} is not a supported language. Falling back to default language.`)
         game.settings.set("core", "language", "de")
     }
+    const forceLanguage = game.settings.get("dsa5", "forceLanguage")
+    if (["de", "en"].includes(forceLanguage) && game.i18n.lang != forceLanguage) {
+        showWrongLanguageDialog(forceLanguage)
+    }
     setupKnownEquipmentModifiers()
 
     BookWizard.initHook()
@@ -139,6 +143,26 @@ Hooks.once('setup', () => {
     AdvantageRulesDSA5.setupFunctions()
     SpecialabilityRulesDSA5.setupFunctions()
 })
+
+const showWrongLanguageDialog = (forceLanguage) => {
+    let data = {
+        title: game.i18n.localize("DSASETTINGS.forceLanguage"),
+        content: game.i18n.format("DSAError.wrongLanguage", { lang: forceLanguage }),
+        buttons: {
+            ok: {
+                icon: '<i class="fa fa-check"></i>',
+                label: game.i18n.localize("ok"),
+                callback: () => { game.settings.set("core", "language", forceLanguage) }
+            },
+            cancel: {
+                icon: '<i class="fas fa-times"></i>',
+                label: game.i18n.localize("cancel"),
+
+            }
+        }
+    }
+    new Dialog(data).render(true)
+}
 
 function setupKnownEquipmentModifiers() {
     game.dsa5.config.knownShortcuts = {
