@@ -1089,7 +1089,7 @@ form.dsa5.item-sheet {
 #chat-form,
 .browser-item,
 .effect-change .key,
-.subMenuAvailable,
+.inputTooltipAvailable,
 .journalHeader,
 .tokenQuickHot>ul>li,
 .bags,
@@ -2409,11 +2409,11 @@ select.noAppearance {
     font-weight: bold;
 }
 
-.subMenuAvailable:after {
+.inputTooltipAvailable:after {
     content: '*';
     position: absolute;
-    right: -5px;
-    top: -10px;
+    right: 3px;
+    top: 3px;
     font-size: 10px;
     color: #82817d;
 }

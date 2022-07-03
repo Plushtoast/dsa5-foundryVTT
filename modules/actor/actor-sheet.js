@@ -455,8 +455,6 @@ export default class ActorSheetDsa5 extends ActorSheet {
             $(ev.currentTarget).closest(".groupbox").find('.row-section:nth-child(2)').fadeToggle()
         })
 
-        html.find('.collapseField').click(ev => $(`.${$(ev.currentTarget).attr("data-target")}`).fadeToggle())
-
         html.find('.item-toggle').click(ev => {
             const itemId = this._getItemId(ev);
             let item = this.actor.items.get(itemId).toObject()

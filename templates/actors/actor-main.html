@@ -115,7 +115,7 @@
             </div>
             <div class="derivedAttrs row-section">
                 <div class="col two lineheight">
-                    <a class="collapseField subMenuAvailable" data-target="lepRegeneration">{{localize "wounds"}}</a> {{#if actor.canAdvance}}<a data-attr="wounds" class="advance refund-points"><i title="{{actor.data.status.wounds.refund}}" class="fas fa-minus"></i></a>
+                    {{localize "wounds"}} {{#if actor.canAdvance}}<a data-attr="wounds" class="advance refund-points"><i title="{{actor.data.status.wounds.refund}}" class="fas fa-minus"></i></a>
                     <a data-attr="wounds" class="advance advance-points"><i title="{{actor.data.status.wounds.cost}}" class="fas fa-plus"></i></a>{{/if}}
                     <span class="buttons">
                         <a data-char="regenerate" class="ch-regenerate item" data-mod="regenerate" title="{{localize 'regenerate'}}">&nbsp;<i class="fas fa-moon"></i></a>
@@ -134,7 +134,7 @@
                     {{actor.data.status.wounds.max}}
                 </div>
             </div>
-            <div class="dsahidden lepRegeneration">
+            
                 <div class="derivedAttrs row-section">
                     <div class="col two lineheight">
                         {{localize "CHARAbbrev.LeP"}} {{localize 'regenerate'}}
@@ -142,21 +142,21 @@
                     <div class="col eight lineheight center">
 
                     </div>
-                    <div class="col eight center">
+                    <div class="col eight center inputTooltipAvailable">
                         <input name="data.status.regeneration.LePMod" type="text" value="{{actor.data.status.regeneration.LePMod}}" data-dtype="Number" title="{{localize 'SHEET.permRegeneration'}}" />
                     </div>
-                    <div class="col eight center">
+                    <div class="col eight center inputTooltipAvailable">
                         <input name="data.status.regeneration.LePTemp" type="text" value="{{actor.data.status.regeneration.LePTemp}}" data-dtype="Number" title="{{localize 'SHEET.tempRegeneration'}}" />
                     </div>
                     <div class="col eight lineheight center">
                         {{actor.data.status.regeneration.LePmax}}
                     </div>
                 </div>
-            </div>
+           
             {{#if actor.magic.hasSpells}}
             <div class="derivedAttrs row-section">
                 <div class="col two lineheight">
-                    <a class="collapseField subMenuAvailable" data-target="aspRegeneration">{{localize "astralenergy"}}</a> {{#if actor.canAdvance}}<a data-attr="astralenergy" class="advance refund-points"><i title="{{actor.data.status.astralenergy.refund}}" class="fas fa-minus"></i></a>
+                    {{localize "astralenergy"}} {{#if actor.canAdvance}}<a data-attr="astralenergy" class="advance refund-points"><i title="{{actor.data.status.astralenergy.refund}}" class="fas fa-minus"></i></a>
                     <a data-attr="astralenergy" class="advance advance-points"><i title="{{actor.data.status.astralenergy.cost}}" class="fas fa-plus"></i></a>{{/if}}
                 </div>
                 <div class="col eight lineheight center">
@@ -172,29 +172,29 @@
                     {{actor.data.status.astralenergy.max}}
                 </div>
             </div>
-            <div class="dsahidden aspRegeneration">
-                <div class="derivedAttrs row-section">
-                    <div class="col two lineheight">
-                        {{localize "CHARAbbrev.AsP"}} {{localize 'regenerate'}}
-                    </div>
-                    <div class="col eight lineheight center">
+           
+            <div class="derivedAttrs row-section">
+                <div class="col two lineheight">
+                    {{localize "CHARAbbrev.AsP"}} {{localize 'regenerate'}}
+                </div>
+                <div class="col eight lineheight center">
 
-                    </div>
-                    <div class="col eight center">
-                        <input name="data.status.regeneration.AsPMod" type="text" value="{{actor.data.status.regeneration.AsPMod}}" data-dtype="Number" title="{{localize 'SHEET.permRegeneration'}}" />
-                    </div>
-                    <div class="col eight center">
-                        <input name="data.status.regeneration.AsPTemp" type="text" value="{{actor.data.status.regeneration.AsPTemp}}" data-dtype="Number" title="{{localize 'SHEET.tempRegeneration'}}" />
-                    </div>
-                    <div class="col eight lineheight center">
-                        {{actor.data.status.regeneration.AsPmax}}
-                    </div>
+                </div>
+                <div class="col eight center inputTooltipAvailable">
+                    <input name="data.status.regeneration.AsPMod" type="text" value="{{actor.data.status.regeneration.AsPMod}}" data-dtype="Number" title="{{localize 'SHEET.permRegeneration'}}" />
+                </div>
+                <div class="col eight center inputTooltipAvailable">
+                    <input name="data.status.regeneration.AsPTemp" type="text" value="{{actor.data.status.regeneration.AsPTemp}}" data-dtype="Number" title="{{localize 'SHEET.tempRegeneration'}}" />
+                </div>
+                <div class="col eight lineheight center">
+                    {{actor.data.status.regeneration.AsPmax}}
                 </div>
             </div>
+           
             {{/if}} {{#if actor.magic.hasPrayers}}
             <div class="derivedAttrs row-section">
                 <div class="col two lineheight">
-                    <a class="collapseField subMenuAvailable" data-target="kapRegeneration">{{localize "karmaenergy"}}</a> {{#if actor.canAdvance}} <a data-attr="karmaenergy" class="advance refund-points"><i title="{{actor.data.status.karmaenergy.refund}}"
+                    {{localize "karmaenergy"}} {{#if actor.canAdvance}} <a data-attr="karmaenergy" class="advance refund-points"><i title="{{actor.data.status.karmaenergy.refund}}"
                         class="fas fa-minus"></i></a>
                     <a data-attr="karmaenergy" class="advance advance-points"><i title="{{actor.data.status.karmaenergy.cost}}"
                             class="fas fa-plus"></i></a>{{/if}}
@@ -212,25 +212,25 @@
                     {{actor.data.status.karmaenergy.max}}
                 </div>
             </div>
-            <div class="dsahidden kapRegeneration">
-                <div class="derivedAttrs row-section">
-                    <div class="col two lineheight">
-                        {{localize "CHARAbbrev.KaP"}} {{localize 'regenerate'}}
-                    </div>
-                    <div class="col eight lineheight center">
+            
+            <div class="derivedAttrs row-section">
+                <div class="col two lineheight">
+                    {{localize "CHARAbbrev.KaP"}} {{localize 'regenerate'}}
+                </div>
+                <div class="col eight lineheight center">
 
-                    </div>
-                    <div class="col eight center">
-                        <input name="data.status.regeneration.KaPMod" type="text" value="{{actor.data.status.regeneration.KaPMod}}" data-dtype="Number" title="{{localize 'SHEET.permRegeneration'}}" />
-                    </div>
-                    <div class="col eight center">
-                        <input name="data.status.regeneration.KaPTemp" type="text" value="{{actor.data.status.regeneration.KaPTemp}}" data-dtype="Number" title="{{localize 'SHEET.tempRegeneration'}}" />
-                    </div>
-                    <div class="col eight lineheight center">
-                        {{actor.data.status.regeneration.KaPmax}}
-                    </div>
+                </div>
+                <div class="col eight center inputTooltipAvailable">
+                    <input name="data.status.regeneration.KaPMod" type="text" value="{{actor.data.status.regeneration.KaPMod}}" data-dtype="Number" title="{{localize 'SHEET.permRegeneration'}}" />
+                </div>
+                <div class="col eight center inputTooltipAvailable">
+                    <input name="data.status.regeneration.KaPTemp" type="text" value="{{actor.data.status.regeneration.KaPTemp}}" data-dtype="Number" title="{{localize 'SHEET.tempRegeneration'}}" />
+                </div>
+                <div class="col eight lineheight center">
+                    {{actor.data.status.regeneration.KaPmax}}
                 </div>
             </div>
+            
             {{/if}}
             <div class="derivedAttrs row-section">
                 <div class="col two lineheight">
