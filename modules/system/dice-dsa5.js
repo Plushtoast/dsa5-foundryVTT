@@ -475,11 +475,13 @@ export default class DiceDSA5 {
 
     static async _stringToRoll(text, testData) {
         const promises = [];
-        `${text}`.replace(/\d{1}[dDwW]\d/g, function (match) {
+        const regex = /\d{1}[dDwW]\d/g;
+        const modText = `${text}`
+        modText.replace(regex, function (match) {
             promises.push(new Roll(match.replace(/[Ww]/, "d")).evaluate({ async: true }))
         })
         const data = await Promise.all(promises)
-        const rollString = `${text}`.replace(/\d{1}[dDwW]\d/g, () => {
+        const rollString = modText.replace(regex, () => {
             const roll = data.shift()
             if (testData){
                 DiceDSA5._addRollDiceSoNice(
@@ -900,7 +902,15 @@ export default class DiceDSA5 {
                 }
                 if (/(,|;)/.test(formula)) formula = formula.split(/[,;]/)[res.qualityStep - 1]
 
-                let rollEffect = testData.damageRoll ? testData.damageRoll : await new Roll(formula).evaluate({ async: true })
+                console.log(testData.damageRoll)
+                let rollEffect = testData.damageRoll ? 
+                    testData.damageRoll : 
+                    await DiceDSA5.manualRolls(
+                        await new Roll(formula).evaluate({ async: true }),
+                        "CHAR.DAMAGE",
+                        testData.extra.options
+                    )
+                
                 this._addRollDiceSoNice(
                     testData,
                     rollEffect,
