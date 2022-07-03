@@ -355,7 +355,7 @@ export default class DSAActiveEffectConfig extends ActiveEffectConfig {
             for (const reg of regexes) {
                 if (reg.regEx.test(duration)) {
                     const dur = duration.replace(reg.regEx, "").trim()
-                    const time = DiceDSA5._stringToRoll(dur);
+                    const time = await DiceDSA5._stringToRoll(dur);
                     if (!isNaN(time)) {
                         for (let ef of effects) {
                             let calcTime = time * reg.seconds;

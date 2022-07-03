@@ -473,19 +473,24 @@ export default class DiceDSA5 {
         return result
     }
 
-    static _stringToRoll(text, testData) {
-        return Roll.safeEval(
-            `${text}`.replace(/\d{1}[dDwW]\d/g, function (match) {
-                let roll = new Roll(match.replace(/[Ww]/, "d")).evaluate({ async: false })
-                if (testData)
-                    DiceDSA5._addRollDiceSoNice(
-                        testData,
-                        roll,
-                        game.dsa5.apps.DiceSoNiceCustomization.getAttributeConfiguration("ch")
-                    )
-                return roll.total
-            })
-        )
+    static async _stringToRoll(text, testData) {
+        const promises = [];
+        `${text}`.replace(/\d{1}[dDwW]\d/g, function (match) {
+            promises.push(new Roll(match.replace(/[Ww]/, "d")).evaluate({ async: true }))
+        })
+        const data = await Promise.all(promises)
+        const rollString = `${text}`.replace(/\d{1}[dDwW]\d/g, () => {
+            const roll = data.shift()
+            if (testData){
+                DiceDSA5._addRollDiceSoNice(
+                    testData,
+                    roll,
+                    game.dsa5.apps.DiceSoNiceCustomization.getAttributeConfiguration("ch")
+                )
+            }
+            return roll.total
+        })
+        return await Roll.safeEval(rollString)
     }
 
     static async evaluateDamage(testData, result, weapon, isRangeWeapon, doubleDamage) {
@@ -494,31 +499,31 @@ export default class DiceDSA5 {
         let dmgMultipliers = []
         let damageBonusDescription = []
         let armorPen = []
-        let bonusDmg = testData.situationalModifiers.reduce((_this, val) => {
+        let bonusDmg = 0
+        for(let val of testData.situationalModifiers){
             let number = 0
             if (val.armorPen) armorPen.push(val.armorPen)
             if (val.damageBonus) {
                 if (/^\*/.test(val.damageBonus)) {
                     dmgMultipliers.push({ name: val.name, val: Number(val.damageBonus.replace("*", "")) })
-                    return _this
+                    continue
                 }
                 const isOverride = /^=/.test(val.damageBonus)
                 const rollString = `${val.damageBonus}`.replace(/^=/, "")
 
-                let roll = DiceDSA5._stringToRoll(rollString, testData)
+                let roll = await DiceDSA5._stringToRoll(rollString, testData)
                 number = roll * (val.step || 1)
 
                 if (isOverride) {
                     rollFormula = rollString.replace(/[Ww]/, "d")
                     overrideDamage.push({ name: val.name, roll })
-                    return _this
+                    continue
                 } else {
                     val.damageBonus = roll
-                    return _this + number
+                    bonusDmg += number
                 }
             }
-            return _this
-        }, 0)
+        }
         let damageRoll = testData.damageRoll
             ? await testData.damageRoll
             : await DiceDSA5.manualRolls(
@@ -575,7 +580,7 @@ export default class DiceDSA5 {
                 status = testData.extra.actor.data.meleeStats.damage
             }
 
-            const statusDmg = DiceDSA5._stringToRoll(status, testData)
+            const statusDmg = await DiceDSA5._stringToRoll(status, testData)
             if (statusDmg != 0) {
                 damage += statusDmg
                 damageBonusDescription.push(game.i18n.localize("statuseffects") + " " + statusDmg)
@@ -908,7 +913,7 @@ export default class DiceDSA5 {
                             res["characteristics"].push({ char: "effect", res: l.result, die: "d" + k.faces })
                 }
                 const damageBonusDescription = []
-                const statusDmg = DiceDSA5._stringToRoll(
+                const statusDmg = await DiceDSA5._stringToRoll(
                     testData.extra.actor.data[isClerical ? "liturgyStats" : "spellStats"].damage,
                     testData
                 )
