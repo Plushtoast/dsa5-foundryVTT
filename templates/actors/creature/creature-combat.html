@@ -30,7 +30,7 @@
         {{#each actor.wornMeleeWeapons as |item i|}}
         <div class="col item" data-item-id="{{item._id}}">
             <div class="row-section">
-                <div class="col ten image {{item.damageToolTip.css}}" title="{{item.damageToolTip.msg}}" style="background-image: url({{item.img}})">
+                <div class="col ten image {{item.damageToolTip.css}}" title="{{item.damageToolTip.msg}}" style="background-image: url('{{item.img}}')">
                     {{#if item.structureMax}}
                     <div class="item-structure" style="--a: {{item.structureMax}}; --b: {{item.structureCurrent}}">
                         <div class="inner"></div>
@@ -61,7 +61,7 @@
         {{/each}} {{#each actor.traits.meleeAttack as |item i|}}
         <div class="col item" data-item-id="{{item._id}}">
             <div class="row-section">
-                <div class="col ten image" style="background-image: url({{item.img}})">
+                <div class="col ten image" style="background-image: url('{{item.img}}')">
                 </div>
                 <div class="col third">
                     <a class="item-edit">{{item.name}}</a>
@@ -113,7 +113,7 @@
         {{#each actor.wornRangedWeapons as |item i|}}
         <div class="col item" data-item-id="{{item._id}}">
             <div class="row-section">
-                <div class="col ten image {{item.damageToolTip.css}}" title="{{item.damageToolTip.msg}}" style="background-image: url({{item.img}})">
+                <div class="col ten image {{item.damageToolTip.css}}" title="{{item.damageToolTip.msg}}" style="background-image: url('{{item.img}}')">
                 </div>
                 <div class="col thirtyfive">
                     <a class="item-edit">{{item.name}}</a>
@@ -159,7 +159,7 @@
         {{/each}} {{#each actor.traits.rangeAttack as |item i|}}
         <div class="col item" data-item-id="{{item._id}}">
             <div class="row-section">
-                <div class="col ten image" style="background-image: url({{item.img}})">
+                <div class="col ten image" style="background-image: url('{{item.img}}')">
                 </div>
                 <div class="col thirtyfive">
                     <a class="item-edit">{{item.name}}</a>
@@ -216,7 +216,7 @@
         {{#each actor.wornArmor as |item i|}}
         <div class="col item" data-item-id="{{item._id}}">
             <div class="row-section">
-                <div class="col ten image {{item.damageToolTip.css}}" title="{{item.damageToolTip.msg}}" style="background-image: url({{item.img}})">
+                <div class="col ten image {{item.damageToolTip.css}}" title="{{item.damageToolTip.msg}}" style="background-image: url('{{item.img}}')">
                 </div>
                 <div class="col fourty">
                     <a class="item-edit">{{item.name}}</a>
@@ -232,7 +232,7 @@
         {{/each}} {{#each actor.traits.armor as |item i|}}
         <div class="col item" data-item-id="{{item._id}}">
             <div class="row-section">
-                <div class="col ten image" style="background-image: url({{item.img}})">
+                <div class="col ten image" style="background-image: url('{{item.img}}')">
                 </div>
                 <div class="col fourty">
                     <a class="item-edit">{{item.name}}</a>

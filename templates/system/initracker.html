@@ -9,7 +9,7 @@
         </div>
         <ul class="iniTrackerList">
             {{#each turns as |turn|}}
-            <li data-name="{{turn.name}}" data-combatant-id="{{turn.id}}" class=" combatant iniItem {{turn.newRound}} {{turn.css}}" style="background-image:url({{turn.img}});">
+            <li data-name="{{turn.name}}" data-combatant-id="{{turn.id}}" class=" combatant iniItem {{turn.newRound}} {{turn.css}}" style="background-image:url('{{turn.img}}');">
                 <div class="combatant-advanced">
                     {{#if turn.defenseCount}}
                     <i class="fas def fa-shield-alt" data-defenseCount="{{this.defenseCount}}" title="{{localize 'COMBATTRACKER.noDefenses'}}"></i>
@@ -46,7 +46,7 @@
         <ul class="waitingTackerList iniTrackerList">
             <li class="waitTitle" title="{{localize 'COMBATTRACKER.waitInit'}}"><i class="far fa-hourglass" ></i></li>
             {{#each waitingTurns as |turn|}}
-            <li data-name="{{turn.name}}" data-combatant-id="{{turn.id}}" class="combatant iniItem" style="background-image:url({{turn.img}});"></li>
+            <li data-name="{{turn.name}}" data-combatant-id="{{turn.id}}" class="combatant iniItem" style="background-image:url('{{turn.img}}');"></li>
             {{/each}}
         </ul>
         {{/if}}

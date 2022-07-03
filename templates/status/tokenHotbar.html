@@ -2,12 +2,12 @@
     <ul>
         {{#each items as |cat i|}} {{#each cat as |item j|}}
         <li class="{{item.cssClass}} primary" data-category="{{item.cssClass}}" data-id="{{item.id}}" data-name="{{item.name}}" data-subfunction="{{item.subfunction}}">
-            <div style="background-image:url({{item.icon}})">{{item.abbrev}}</div>
+            <div style="background-image:url('{{item.icon}}')">{{item.abbrev}}</div>
             {{#if item.more}}
             <ul class="subbuttons" {{{item.subwidth}}}>
                 {{#each item.more as |mo i|}}
                 <li class="{{mo.cssClass}} secondary" data-category="{{item.cssClass}}" data-id="{{mo.id}}" data-name="{{mo.name}}" data-subfunction="{{mo.subfunction}}">
-                    <div style="background-image:url({{mo.icon}})">{{mo.abbrev}}</div>
+                    <div style="background-image:url('{{mo.icon}}')">{{mo.abbrev}}</div>
                 </li>
                 {{/each}}
             </ul>
