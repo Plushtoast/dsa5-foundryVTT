@@ -228,7 +228,10 @@ export default class DSA5StatusEffects {
 
 class EncumberedEffect extends DSA5StatusEffects {
     static ModifierIsSelected(item, options = {}, actor) {
-        return (item.type == "skill" && item.data.burden.value == "yes") || (!["skill", "spell", "ritual", "ceremony", "liturgy"].includes(item.type) && options.mode != "damage")
+        const burdenedSkill = item.type == "skill" && item.data.burden.value == "yes"
+        const rangeWeaponEnabled = ["rangeweapon"].includes(item.type) && options.mode != "damage" && game.settings.get("dsa5", "encumbranceForRange")
+        const attack = !["skill", "spell", "ritual", "ceremony", "liturgy", "rangeweapon"].includes(item.type) && options.mode != "damage"
+        return burdenedSkill || attack || rangeWeaponEnabled
     }
 
     static calculateRollModifier(effect, actor, item, options = {}) {

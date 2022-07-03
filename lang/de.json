@@ -1451,7 +1451,9 @@
         "enableCombatPan": "Schwenke zu aktuellem Zug",
         "enableCombatPanHint": "Schwenke die Sicht auf den aktuellen Zug und selektiere den Token sofern Besitzerrechte vorhanden.",
         "forceLanguage": "Sprache erzwingen",
-        "forceLanguageHint": "Spieler erhalten beim Login einen Dialog, wenn deren Sprache falsch eingestellt ist. Unterschiedliche Spracheinstellungen können zu Problemen führen."
+        "forceLanguageHint": "Spieler erhalten beim Login einen Dialog, wenn deren Sprache falsch eingestellt ist. Unterschiedliche Spracheinstellungen können zu Problemen führen.",
+        "encumbranceForRange": "Belastung für Fernkampf (Hausregel)",
+        "encumbranceForRangeHint": "Belastung beeinträchtigt Fernkampf normalerweise nicht. Mach deinen Spielern das Leben noch schwerer."
     },
     "CONTROLS": {
         "targetForUser": "Ziel für Spieler wählen"

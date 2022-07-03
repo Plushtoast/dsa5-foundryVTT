@@ -417,6 +417,15 @@ export default function() {
         type: Boolean
     });
 
+    game.settings.register("dsa5", "encumbranceForRange", {
+        name: "DSASETTINGS.encumbranceForRange",
+        hint: "DSASETTINGS.encumbranceForRangeHint",
+        scope: "world",
+        config: true,
+        default: false,
+        type: Boolean
+    });
+
     game.settings.register("dsa5", "obfuscateTokenNames", {
         name: "DSASETTINGS.obfuscateTokenNames",
         hint: "DSASETTINGS.obfuscateTokenNamesHint",
