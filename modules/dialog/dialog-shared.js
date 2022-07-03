@@ -93,9 +93,15 @@ export default class DialogShared extends Dialog {
     activateListeners(html) {
         super.activateListeners(html)
         html.find('.quantity-click').mousedown(ev => {
-            const val = { val: Number($(ev.currentTarget).val()) }
+            const quantityFocus = ev.currentTarget.dataset.quantityfocus
+            const target = $(ev.currentTarget)
+            if(quantityFocus && !(target.is(":focus"))){
+                setTimeout(function() {target.select(), 100})
+                return
+            }
+            const val = { val: Number(target.val()) }
             RuleChaos.increment(ev, val, "val")
-            $(ev.currentTarget).val(val.val)
+            target.val(val.val)
         });
         html.find(".modifiers option").mousedown((ev) => {
             ev.preventDefault();
