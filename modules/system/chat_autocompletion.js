@@ -1,4 +1,5 @@
 import DSA5ChatListeners from "./chat_listeners.js"
+import RequestRoll from "./request-roll.js"
 import DSA5_Utility from "./utility-dsa5.js"
 
 export default class DSA5ChatAutoCompletion {
@@ -273,43 +274,13 @@ export default class DSA5ChatAutoCompletion {
     _quickGC(target){
         const modifier = Number($('#chat-message').val().match(/(-|\+)?\d+/g)) || 0
         this._resetChatAutoCompletion()
-        DSA5ChatAutoCompletion.showGCMessage(target.text(), modifier)
+        RequestRoll.showGCMessage(target.text(), modifier)
     }
 
     _quickRQ(target){
         const modifier = Number($('#chat-message').val().match(/(-|\+)?\d+/g)) || 0
         this._resetChatAutoCompletion()
-        DSA5ChatAutoCompletion.showRQMessage(target.text(), modifier)
-    }
-
-    static showRQMessage(target, modifier = 0){
-        const mod = modifier < 0 ? ` ${modifier}` : (modifier > 0 ? ` +${modifier}` : "")
-        const type = DSA5ChatAutoCompletion.skills.find(x => x.name == target).type
-        const msg = game.i18n.format("CHATNOTIFICATION.requestRoll", {user: game.user.name, item: `<a class="roll-button request-roll" data-type="${type}" data-modifier="${modifier}" data-name="${target}"><i class="fas fa-dice"></i> ${target}${mod}</a>`})
-        ChatMessage.create(DSA5_Utility.chatDataSetup(msg));
-    }
-
-    static async showGCMessage(target, modifier = 0, options = {}){
-        const type = DSA5ChatAutoCompletion.skills.find(x => x.name == target).type
-        const data = {
-            results: [],
-            qs: 0,
-            failed: 0,
-            modifier,
-            type,
-            target,
-            name: game.user.name,
-            calculatedModifier: modifier,
-            maxRolls: 7,
-            openRolls: 7,
-            doneRolls: 0,
-            targetQs: 10
-        }
-        mergeObject(data, options)
-        const content = await renderTemplate("systems/dsa5/templates/chat/roll/groupcheck.html", data)
-        let chatData = DSA5_Utility.chatDataSetup(content)
-        chatData.flags = data
-        ChatMessage.create(chatData);
+        RequestRoll.showRQMessage(target.text(), modifier)
     }
 
     _quickPA(target, actor, tokenId) {
@@ -376,12 +347,12 @@ export default class DSA5ChatAutoCompletion {
 
     static bindRollCommands(html){
         html.on('click', '.request-roll', ev => {
-            DSA5ChatAutoCompletion.showRQMessage($(ev.currentTarget).attr("data-name"), Number($(ev.currentTarget).attr("data-modifier")) || 0)
+            RequestRoll.showRQMessage($(ev.currentTarget).attr("data-name"), Number($(ev.currentTarget).attr("data-modifier")) || 0)
             ev.stopPropagation()
             return false
         })
         html.on('click', '.request-GC', ev => {
-            DSA5ChatAutoCompletion.showGCMessage($(ev.currentTarget).attr("data-name"), Number($(ev.currentTarget).attr("data-modifier")) || 0)
+            RequestRoll.showGCMessage($(ev.currentTarget).attr("data-name"), Number($(ev.currentTarget).attr("data-modifier")) || 0)
             ev.stopPropagation()
             return false
         })

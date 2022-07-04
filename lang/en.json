@@ -106,7 +106,8 @@
         "onlyInCombatTargets": "Targets are only shown in combat.",
         "setTargetToUserHint": "Transfer currently targeted tokens to user.",
         "setTargetToUser": "Set player target",
-        "noLoggedinUser": "No user logged in/available."
+        "noLoggedinUser": "No user logged in/available.",
+        "selectGroupCheckSkill": "Chose another talent for the cumulative group check."
     },
     "Equipment": {
         "misc": "General",
@@ -282,6 +283,7 @@
     "consumable": "Consumable",
     "Combat": "Combat",
     "combatskill": "Combat Technique",
+    "confirmationRoll": "Confirmation roll",
     "culture": "Culture",
     "count": "Amount",
     "cost": "Cost",

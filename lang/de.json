@@ -120,8 +120,8 @@
         "onlyInCombatTargets": "Ziele werden nur im Kampf angezeigt.",
         "setTargetToUserHint": "Aktuell markierte Ziele auf den User übertragen.",
         "setTargetToUser": "Spielerziel setzen",
-        "noLoggedinUser": "Keine User eingeloggt/auswählbar."
-
+        "noLoggedinUser": "Keine User eingeloggt/auswählbar.",
+        "selectGroupCheckSkill": "Wähle ein weiteres Talent für die Gruppensammelprobe."
     },
     "Equipment": {
         "misc": "Allgemein",
@@ -197,6 +197,7 @@
     "Burden": "Belastung",
     "biography": "Hintergrundgeschichte",
     "Category": "Kategorie",
+    "confirmationRoll": "Bestätigungswurf",
     "clerical": "klerikal",
     "circle": "Kreis",
     "condition": "Zustand",

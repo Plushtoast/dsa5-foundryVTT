@@ -134,6 +134,11 @@ export default class DiceDSA5 {
             if (game.settings.get("dsa5", "noConfirmationRoll")) {
                 successLevel = 3
             } else {
+                rollConfirm = await DiceDSA5.manualRolls(
+                    rollConfirm,
+                    "confirmationRoll",
+                    testData.extra.options
+                )
                 let res2 = res - rollConfirm.terms[0].results[0].result
                 if (
                     AdvantageRulesDSA5.hasVantage(
@@ -157,6 +162,11 @@ export default class DiceDSA5 {
             if (game.settings.get("dsa5", "noConfirmationRoll")) {
                 successLevel = -3
             } else {
+                rollConfirm = await DiceDSA5.manualRolls(
+                    rollConfirm,
+                    "confirmationRoll",
+                    testData.extra.options
+                )
                 let res2 = res - rollConfirm.terms[0].results[0].result
                 if (
                     AdvantageRulesDSA5.hasVantage(
@@ -1373,9 +1383,10 @@ export default class DiceDSA5 {
                 chatOptions["content"] = TextEditor.enrichHTML(html, rollData)
 
                 const cummulative = getProperty(rerenderMessage, "data.flags.data.preData.extra.options.cummulative")
+                console.log(preData)
                 if(cummulative){
                     testData.messageId = rerenderMessage.id
-                    RequestRoll.editGroupCheckRoll(cummulative, { result: testData })
+                    RequestRoll.editGroupCheckRoll(cummulative, { result: testData }, preData.source.name, preData.source.type)
                 }
 
                 return rerenderMessage

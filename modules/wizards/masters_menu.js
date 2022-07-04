@@ -1,10 +1,10 @@
 import DSA5_Utility from "../system/utility-dsa5.js"
 import DSA5Payment from "../system/payment.js"
-import DSA5ChatAutoCompletion from "../system/chat_autocompletion.js"
 import RuleChaos from "../system/rule_chaos.js"
 import AdvantageRulesDSA5 from "../system/advantage-rules-dsa5.js"
 import { slist } from "../system/view_helper.js"
 import PlayerMenu from "./player_menu.js"
+import RequestRoll from "../system/request-roll.js"
 
 export default class MastersMenu {
     static registerButtons() {
@@ -426,7 +426,7 @@ class GameMasterMenu extends Application {
             const [skill, type] = this.lastSkill.split("|")
             if (type != "skill") return
 
-            DSA5ChatAutoCompletion.showGCMessage(skill, number)
+            RequestRoll.showGCMessage(skill, number)
         }
         this.buildDialog(game.i18n.localize('HELP.groupcheck'), template, callback)
     }
