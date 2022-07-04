@@ -558,15 +558,16 @@ export default class ActorSheetDsa5 extends ActorSheet {
             }
         })
         html.on('click', '.chat-condition', ev => DSA5ChatListeners.postStatus($(ev.currentTarget).attr("data-id")))
+        html.find('.money-change, .skill-advances').focusin(ev => {
+            this.currentFocus = $(ev.currentTarget).closest('[data-item-id]').attr('data-item-id');;
+        })
         html.find('.money-change').change(async ev => {
             const itemId = this._getItemId(ev);
             await this.actor.updateEmbeddedDocuments("Item", [{ _id: itemId, "data.quantity.value": Number(ev.target.value) }]);
-            this.currentFocus = $(document.activeElement).closest('.item').attr('data-item-id');;
         })
         html.find('.skill-advances').change(async ev => {
             const itemId = this._getItemId(ev);
             await this.actor.updateEmbeddedDocuments("Item", [{ _id: itemId, "data.talentValue.value": Number(ev.target.value) }]);
-            this.currentFocus = $(document.activeElement).closest('.row-section').attr('data-item-id');;
         });
         html.find('.item-edit').click(ev => {
             ev.preventDefault()
