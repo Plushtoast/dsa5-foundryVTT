@@ -130,12 +130,12 @@ export const MerchantSheetMixin = (superclass) => class extends superclass {
         this.actor.updateEmbeddedDocuments("Item", updates);
     }
 
-    filterRule(ev){
+    filterRule(ev) {
         const filter = ev.currentTarget.dataset.type
         if (DSA5.equipmentTypes[filter]) {
-            return (item) => { return item.type == "equipment" && item.data.data.equipmentType.value == filter}
-        }else{
-            return (item) => { return item.type == filter && DSA5.equipmentCategories.includes(item.type)}
+            return (item) => { return item.type == "equipment" && item.data.data.equipmentType.value == filter }
+        } else {
+            return (item) => { return item.type == filter && DSA5.equipmentCategories.includes(item.type) }
         }
     }
 
@@ -216,13 +216,14 @@ export const MerchantSheetMixin = (superclass) => class extends superclass {
         }
     }
 
-    static isTemporaryToken(target){
+    static isTemporaryToken(target) {
         return getProperty(target, "data.data.merchant.merchantType") == "loot" && getProperty(target, "data.data.merchant.temporary")
     }
 
     static async selfDestruction(target) {
         if (this.isTemporaryToken(target)) {
             const hasItemsLeft = target.items.some(x => DSA5.equipmentCategories.includes(x.type) || (x.type == "money" && x.data.data.quantity.value > 0))
+            console.log(hasItemsLeft)
             if (!hasItemsLeft) {
                 game.socket.emit("system.dsa5", {
                     type: "hideDeletedSheet",
@@ -489,7 +490,7 @@ export const MerchantSheetMixin = (superclass) => class extends superclass {
                     item.calculatedPrice = this.getItemPrice(item)
                 }
             }
-            data.actor.inventory["money"] = {
+            const money = {
                 items: data.actor.money.coins.map(x => {
                     x.name = game.i18n.localize(x.name)
                     return x
@@ -497,6 +498,7 @@ export const MerchantSheetMixin = (superclass) => class extends superclass {
                 show: true,
                 dataType: "money"
             }
+            if (money.items.length) data.actor.inventory["money"] = money
         }
     }
 

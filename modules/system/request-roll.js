@@ -138,7 +138,11 @@ export default class RequestRoll {
 
     static async addSkillToGC(ev) {
         const messageID = $(ev.currentTarget).parents(".message").attr("data-message-id")
-        const content = await renderTemplate("systems/dsa5/templates/dialog/addgroupcheckskill.html", { skills: DSA5ChatAutoCompletion.skills })
+        const content = await renderTemplate("systems/dsa5/templates/dialog/addgroupcheckskill.html", {
+            skills: DSA5ChatAutoCompletion.skills
+                .filter(x => x.type == "skill")
+                .sort((x, y) => x.name.localeCompare(y.name))
+        })
         let data = {
             title: game.i18n.localize("HELP.groupcheck"),
             content,
