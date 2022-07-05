@@ -507,7 +507,8 @@
         "advanced": "Erweiterte Suche",
         "selectAdvanced": "Wähle eine Kategorie",
         "noFilter": "Kein Filter",
-        "indexWorldItems": "Welt Items indexieren (Deaktivieren verbessert Leistung)"
+        "indexWorldItems": "Welt Items indexieren (Deaktivieren verbessert Leistung, erfordert neuladen der Welt)",
+        "fullTextSearch": "Volltextsuche (Deaktivieren verbessert Leistung, erfordert neuladen der Welt)"
     },
     "Aggregated": {
         "noMoreAllowed": "Keine Proben mehr erlaubt."

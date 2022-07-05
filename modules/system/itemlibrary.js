@@ -15,18 +15,20 @@ class SearchDocument {
                 filterType = item.data.type
                 break
         }
-        let data
-        switch (filterType) {
-            case "creature":
-            case "npc":
-            case "character":
-                data = getProperty(item, "data.description.value")
-                break
-            case 'JournalEntry':
-                data = getProperty(item, "data.content")
-                break
-            default:
-                data = getProperty(item, "data.data.description.value")
+        let data = ""
+        if (game.settings.get("dsa5", "indexDescription")) {
+            switch (filterType) {
+                case "creature":
+                case "npc":
+                case "character":
+                    data = getProperty(item, "data.description.value")
+                    break
+                case 'JournalEntry':
+                    data = getProperty(item, "data.content")
+                    break
+                default:
+                    data = getProperty(item, "data.data.description.value")
+            }
         }
 
         this.document = {
@@ -249,6 +251,7 @@ export default class DSA5ItemLibrary extends Application {
         data.items = this.items
         data.advancedMode = this.advancedFiltering ? "on" : ""
         data.worldIndexed = game.settings.get("dsa5", "indexWorldItems") ? "on" : ""
+        data.fullTextEnabled = game.settings.get("dsa5", "indexDescription") ? "on" : ""
         if (this.advancedFiltering) {
             data.advancedFilter = await this.buildDetailFilter("tbd", this.subcategory)
         }
@@ -709,12 +712,15 @@ export default class DSA5ItemLibrary extends Application {
             html.find(`.${tab} .detailBox`).toggleClass("dsahidden")
         })
 
-        html.find('.toggleWorldIndex').click(ev => {
+        html.find('.toggleWorldIndex').click((ev) => {
             game.settings.set("dsa5", "indexWorldItems", !game.settings.get("dsa5", "indexWorldItems"))
             this.checkWorldStuffIndex()
-            $(this._element).find('.toggleWorldIndex').toggleClass("on")
+            $(ev.currentTarget).toggleClass("on")
         })
-
+        html.find('.fulltextsearch').click((ev) => {
+            game.settings.set("dsa5", "indexDescription", !game.settings.get("dsa5", "indexDescription"))
+            $(ev.currentTarget).toggleClass("on")
+        })
         const source = this
 
         $(this._element).find('.window-content').on('scroll.infinit', debounce(function(ev) {

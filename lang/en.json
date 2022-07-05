@@ -572,7 +572,8 @@
         "advanced": "Advanced search",
         "selectAdvanced": "Chose a category",
         "noFilter": "No filter",
-        "indexWorldItems": "Index world Items (deactivate to increase performance)"
+        "indexWorldItems": "Index world Items (deactivate to increase performance, requires reloading of the world)",
+        "fullTextSearch": "Full text search (deactivate to increase performance, requires reloading of the world)"
     },
     "Aggregated": {
         "noMoreAllowed": "No more rolls allowed."
