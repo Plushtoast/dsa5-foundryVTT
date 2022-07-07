@@ -29,7 +29,7 @@ export default class DSA5_Utility {
 
         let result = []
         let items
-        await pack.getDocuments().then(content => items = content.filter(i => i.data.type == itemType));
+        await pack.getDocuments().then(content => items = content.filter(i => i.type == itemType));
         for (let i of items) {
             result.push(i.toObject())
         }

@@ -231,6 +231,7 @@ export default class ItemSheetdsa5 extends ItemSheet {
         DSA5StatusEffects.prepareActiveEffects(this.item, data)
         data.item = this.item
         data.armorAndWeaponDamage = game.settings.get("dsa5", "armorAndWeaponDamage")
+        console.log(data)
         return data;
     }
 

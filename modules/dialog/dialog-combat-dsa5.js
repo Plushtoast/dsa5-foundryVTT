@@ -83,7 +83,7 @@ export default class DSA5CombatDialog extends DialogShared {
         html.find('.quantity-click').mousedown(ev => this.calculateModifier(ev));
         let targets = this.readTargets();
         this.calculateModifier()
-        // not great
+            // not great
         const that = this
         this.checkTargets = setInterval(function() {
             targets = that.compareTargets(html, targets);
@@ -113,19 +113,19 @@ export default class DSA5CombatDialog extends DialogShared {
         return this
     }
 
-    prepareWeapon(){
+    prepareWeapon() {
         let weapon
         const source = this.dialogData.source
         const actor = DSA5_Utility.getSpeaker(this.dialogData.speaker)
-               
+
         if (actor) {
-            if(["meleeweapon", "rangeweapon"].includes(source.type)){
+            if (["meleeweapon", "rangeweapon"].includes(source.type)) {
                 const combatskill = source.data.combatskill.value
                 let skill = Actordsa5._calculateCombatSkillValues(
                     actor.items.find((x) => x.type == "combatskill" && x.name == combatskill).toObject(),
                     actor.data
                 )
-                switch(source.type){
+                switch (source.type) {
                     case "meleeweapon":
                         weapon = Actordsa5._prepareMeleeWeapon(source, [skill], actor.data)
                         break
@@ -133,24 +133,22 @@ export default class DSA5CombatDialog extends DialogShared {
                         weapon = Actordsa5._prepareRangeWeapon(source, [], [skill], actor.data)
                         break
                 }
-                if(this.dialogData.mode == "attack"){
+                if (this.dialogData.mode == "attack") {
                     this.dialogData.rollValue = weapon.attack
-                }else if(this.dialogData.mode == "parry"){
+                } else if (this.dialogData.mode == "parry") {
                     this.dialogData.rollValue = weapon.parry
                 }
-            }
-            else if(source.type == "dodge"){
+            } else if (source.type == "dodge") {
                 this.dialogData.rollValue = source.data.value
-            }
-            else{
-                if(this.dialogData.mode == "attack"){
+            } else {
+                if (this.dialogData.mode == "attack") {
                     this.dialogData.rollValue = Number(source.data.at.value)
-                }else if(this.dialogData.mode == "parry"){
+                } else if (this.dialogData.mode == "parry") {
                     this.dialogData.rollValue = Number(source.data.pa)
                 }
             }
         }
-        
+
     }
 
     prepareFormRecall(html) {
@@ -257,26 +255,26 @@ export default class DSA5CombatDialog extends DialogShared {
         return result
     }
 
-    calculateModifier(){
-        if(this.dialogData.mode == "damage") return
+    calculateModifier() {
+        if (this.dialogData.mode == "damage") return
 
         const source = this.dialogData.source
         const isMelee = source.type == "trait" && getProperty(source, "data.traitType.value") || source.type == "meleeweapon"
-        const testData = { source: this.dialogData.source, extra: {options: {}}}
+        const testData = { source: this.dialogData.source, extra: { options: {} } }
         const actor = DSA5_Utility.getSpeaker(this.dialogData.speaker)
-        isMelee ? DSA5CombatDialog.resolveMeleeDialog(testData, {}, this.element,actor.data , {}, -3, this.dialogData.mode)
-        : DSA5CombatDialog.resolveRangeDialog(testData, {}, this.element, actor.data, {}, this.dialogData.mode)
+        isMelee ? DSA5CombatDialog.resolveMeleeDialog(testData, {}, this.element, actor.data, {}, -3, this.dialogData.mode) :
+            DSA5CombatDialog.resolveRangeDialog(testData, {}, this.element, actor.data, {}, this.dialogData.mode)
 
         this.dialogData.modifier = DiceDSA5._situationalModifiers(testData)
         this.updateRollButton(this.readTargets())
-    }    
+    }
 
     static resolveMeleeDialog(testData, cardOptions, html, actor, options, multipleDefenseValue, mode) {
         this._resolveDefault(testData, cardOptions, html, options);
 
         //TODO move this to situational modifiers only
-        const data = new FormDataExtended(html.find('form')[0]).toObject()
-        //testData.rangeModifier = html.find('[name="distance"]').val();
+        const data = new FormDataExtended(html.find('form')[0]).object
+            //testData.rangeModifier = html.find('[name="distance"]').val();
         testData.opposingWeaponSize = data.weaponsize
         testData.narrowSpace = data.narrowSpace
         testData.attackOfOpportunity = this.attackOfOpportunity(testData.situationalModifiers, data);
@@ -315,7 +313,7 @@ export default class DSA5CombatDialog extends DialogShared {
         this._resolveDefault(testData, cardOptions, html, options);
 
         //TODO move this to situational modifiers only
-        const data = new FormDataExtended(html.find('form')[0]).toObject()
+        const data = new FormDataExtended(html.find('form')[0]).object
         testData.rangeModifier = data.distance
 
         testData.situationalModifiers.push({

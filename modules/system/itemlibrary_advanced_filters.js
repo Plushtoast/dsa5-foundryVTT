@@ -7,8 +7,8 @@ Hooks.once("ready", () => {
 
     Promise.all([DSA5_Utility.allSkillsList(), DSA5_Utility.allCombatSkills()]).then((result) => {
         const skills = result[0].reduce((prev, now) => ({...prev, [now]: now }), {})
-        const range = result[1].filter(x => x.data.weapontype.value == "range").sort((a, b) => a.name.localeCompare(b.name)).reduce((prev, now) => ({...prev, [now.name]: now.name }), {})
-        const melee = result[1].filter(x => x.data.weapontype.value == "melee").sort((a, b) => a.name.localeCompare(b.name)).reduce((prev, now) => ({...prev, [now.name]: now.name }), {})
+        const range = result[1].filter(x => x.system.weapontype.value == "range").sort((a, b) => a.name.localeCompare(b.name)).reduce((prev, now) => ({...prev, [now.name]: now.name }), {})
+        const melee = result[1].filter(x => x.system.weapontype.value == "melee").sort((a, b) => a.name.localeCompare(b.name)).reduce((prev, now) => ({...prev, [now.name]: now.name }), {})
 
         mergeObject(ADVANCEDFILTERS, {
             ammunition: [

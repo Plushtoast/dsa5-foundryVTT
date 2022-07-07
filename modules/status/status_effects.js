@@ -43,10 +43,10 @@ export default class DSA5StatusEffects {
         data.conditions = []
         data.transferedConditions = []
         for (let condition of target.effects.filter(e => { return game.user.isGM || target.documentName == "Item" || !e.getFlag("dsa5", "hidePlayers") })) {
-            condition.disabled = condition.data.disabled
+            condition.disabled = condition.disabled
             condition.boolean = condition.getFlag("dsa5", "value") == null
-            condition.label = condition.data.label
-            condition.icon = condition.data.icon
+            condition.label = condition.label
+            condition.icon = condition.icon
             const statusId = condition.getFlag("core", "statusId")
             if (statusId) {
                 condition.value = condition.getFlag("dsa5", "value")
@@ -55,7 +55,7 @@ export default class DSA5StatusEffects {
                 condition.manual = condition.getFlag("dsa5", "manual")
                 appliedSystemConditions.push(statusId)
             }
-            if ((condition.data.origin == target.uuid || !condition.data.origin) && !condition.notApplicable)
+            if ((condition.origin == target.uuid || !condition.origin) && !condition.notApplicable)
                 data.conditions.push(condition)
             else if (!condition.notApplicable) {
                 data.transferedConditions.push(condition)
@@ -84,10 +84,10 @@ export default class DSA5StatusEffects {
     }
 
     static hasCondition(target, conditionKey) {
-        if (target.data != undefined && conditionKey) {
-            if (!target.data.effects) return false
+        if (target != undefined && conditionKey) {
+            if (!target.effects) return false
 
-            return target.data.effects.find(i => getProperty(i.data, "flags.core.statusId") == conditionKey)
+            return target.effects.find(i => getProperty(i, "flags.core.statusId") == conditionKey)
         }
         return false
     }
