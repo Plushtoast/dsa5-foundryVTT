@@ -85,8 +85,7 @@
                 <input class="input-text" type="text" name="data.difficulty" value="{{data.difficulty}}" data-dtype="Number" />
             </div>
             <div class="form-group full-height">
-                <label class="label-text">{{localize "PLANT.ingredients"}}</label>
-                <textarea class="input-text" type="text" name="data.ingredients" data-dtype="String">{{data.ingredients}}</textarea>
+                <label class="label-text">{{localize "PLANT.ingredients"}}</label> {{editor content=data.ingredients target="data.ingredients" button=true owner=owner editable=editable}}
             </div>
             <div class="form-group">
                 <label class="label-text">{{localize "Equipment.tools"}}</label>
