@@ -528,7 +528,7 @@ export default class Actordsa5 extends Actor {
             .reduce((a, b) => a + Number(b.system.at.value), 0);
         return {
             wornArmor,
-            armor: protection + animalArmor + (actor.data.totalArmor || 0),
+            armor: protection + animalArmor + (actor.system.totalArmor || 0),
         };
     }
 
@@ -538,10 +538,10 @@ export default class Actordsa5 extends Actor {
                 .split("/")
                 .map(
                     (x) =>
-                    Number(actorData.data.characteristics[x].initial) +
-                    Number(actorData.data.characteristics[x].modifier) +
-                    Number(actorData.data.characteristics[x].advances) +
-                    Number(actorData.data.characteristics[x].gearmodifier)
+                    Number(actorData.characteristics[x].initial) +
+                    Number(actorData.characteristics[x].modifier) +
+                    Number(actorData.characteristics[x].advances) +
+                    Number(actorData.characteristics[x].gearmodifier)
                 );
             const parryChar = Math.max(...vals);
             i.data.parry.value =
@@ -549,19 +549,19 @@ export default class Actordsa5 extends Actor {
                 Math.max(0, Math.floor((parryChar - 8) / 3)) +
                 Number(game.settings.get("dsa5", "higherDefense"));
             const attackChar =
-                actorData.data.characteristics.mu.initial +
-                actorData.data.characteristics.mu.modifier +
-                actorData.data.characteristics.mu.advances +
-                actorData.data.characteristics.mu.gearmodifier;
+                actorData.characteristics.mu.initial +
+                actorData.characteristics.mu.modifier +
+                actorData.characteristics.mu.advances +
+                actorData.characteristics.mu.gearmodifier;
 
             i.data.attack.value = i.data.talentValue.value + Math.max(0, Math.floor((attackChar - 8) / 3));
         } else {
             i.data.parry.value = 0;
             let attackChar =
-                actorData.data.characteristics.ff.initial +
-                actorData.data.characteristics.ff.modifier +
-                actorData.data.characteristics.ff.advances +
-                actorData.data.characteristics.ff.gearmodifier;
+                actorData.characteristics.ff.initial +
+                actorData.characteristics.ff.modifier +
+                actorData.characteristics.ff.advances +
+                actorData.characteristics.ff.gearmodifier;
             i.data.attack.value = i.data.talentValue.value + Math.max(0, Math.floor((attackChar - 8) / 3));
         }
         i.cost = game.i18n.format("advancementCost", {
@@ -600,8 +600,8 @@ export default class Actordsa5 extends Actor {
         let meleeweapons = [];
 
         const magic = {
-            hasSpells: this.data.isMage,
-            hasPrayers: this.data.isPriest,
+            hasSpells: this.isMage,
+            hasPrayers: this.isPriest,
             liturgy: [],
             spell: [],
             ritual: [],
@@ -619,10 +619,10 @@ export default class Actordsa5 extends Actor {
         };
 
         let schips = [];
-        for (let i = 1; i <= Number(actorData.data.status.fatePoints.max); i++) {
+        for (let i = 1; i <= Number(actorData.system.status.fatePoints.max); i++) {
             schips.push({
                 value: i,
-                cssClass: i <= Number(actorData.data.status.fatePoints.value) ? "fullSchip" : "emptySchip",
+                cssClass: i <= Number(actorData.system.status.fatePoints.value) ? "fullSchip" : "emptySchip",
             });
         }
 
@@ -682,7 +682,7 @@ export default class Actordsa5 extends Actor {
         //we can later make equipment sortable
         //actorData.items = actorData.items.sort((a, b) => (a.sort || 0) - (b.sort || 0))
 
-        let totalArmor = actorData.data.totalArmor || 0;
+        let totalArmor = actorData.system.totalArmor || 0;
         let totalWeight = 0;
 
         let skills = {
@@ -756,7 +756,7 @@ export default class Actordsa5 extends Actor {
                         hasTrait = true;
                         break;
                     case "combatskill":
-                        combatskills.push(Actordsa5._calculateCombatSkillValues(i, this.data));
+                        combatskills.push(Actordsa5._calculateCombatSkillValues(i, this.system));
                         break;
                     case "ammunition":
                         i.weight = parseFloat((i.data.weight.value * i.data.quantity.value).toFixed(3));
@@ -910,9 +910,9 @@ export default class Actordsa5 extends Actor {
         money.coins = money.coins.sort((a, b) => (a.data.price.value > b.data.price.value ? -1 : 1));
         const carrycapacity = actorData.data.characteristics.kk.value * 2 + actorData.data.carryModifier;
         //TODO move the encumbrance calculation to a better location
-        let encumbrance = this.getArmorEncumbrance(this.data, armor);
+        let encumbrance = this.getArmorEncumbrance(this, armor);
 
-        if ((actorData.type != "creature" || this.data.canAdvance) && !this.isMerchant()) {
+        if ((actorData.type != "creature" || this.canAdvance) && !this.isMerchant()) {
             encumbrance += Math.max(0, Math.ceil((totalWeight - carrycapacity - 4) / 4));
         }
         this.addCondition("encumbered", encumbrance, true);
@@ -945,7 +945,7 @@ export default class Actordsa5 extends Actor {
             hasTrait,
             demonmarks,
             diseases,
-            itemModifiers: this.data.itemModifiers,
+            itemModifiers: this.itemModifiers,
             languagePoints: {
                 used: actorData.data.freeLanguagePoints ? actorData.data.freeLanguagePoints.used : 0,
                 available: actorData.data.freeLanguagePoints ? actorData.data.freeLanguagePoints.value : 0,
@@ -955,7 +955,7 @@ export default class Actordsa5 extends Actor {
             magic,
             traits,
             combatskills,
-            canAdvance: this.data.canAdvance,
+            canAdvance: this.canAdvance,
             sheetLocked: actorData.data.sheetLocked.value,
             allSkillsLeft: {
                 body: skills.body,
@@ -1055,7 +1055,7 @@ export default class Actordsa5 extends Actor {
     }
 
     async _updateAPs(APValue, dataUpdate = {}) {
-        if (Actordsa5.canAdvance(this.data)) {
+        if (Actordsa5.canAdvance(this)) {
             if (!isNaN(APValue) && !(APValue == null)) {
                 const ap = Number(APValue);
                 dataUpdate["data.details.experience.spent"] = Number(this.system.details.experience.spent) + ap;
@@ -1069,7 +1069,7 @@ export default class Actordsa5 extends Actor {
     }
 
     async checkEnoughXP(cost) {
-        if (!Actordsa5.canAdvance(this.data)) return true;
+        if (!Actordsa5.canAdvance(this)) return true;
         if (isNaN(cost) || cost == null) return true;
 
         if (Number(this.system.details.experience.total) - Number(this.system.details.experience.spent) >= cost) {
@@ -1128,7 +1128,7 @@ export default class Actordsa5 extends Actor {
             value: game.i18n.localize("LocalizedIDs.wrestle"),
         };
         item.data.damageThreshold.value = 14;
-        if (SpecialabilityRulesDSA5.hasAbility(this.data, game.i18n.localize("LocalizedIDs.mightyAstralBody")))
+        if (SpecialabilityRulesDSA5.hasAbility(this, game.i18n.localize("LocalizedIDs.mightyAstralBody")))
             mergeObject(item, {
                 data: { effect: { attributes: game.i18n.localize("magical") } },
             });
@@ -1560,8 +1560,8 @@ export default class Actordsa5 extends Actor {
       },
     };
 
-    testData.extra.actor.isMage = this.data.isMage;
-    testData.extra.actor.isPriest = this.data.isPriest;
+    testData.extra.actor.isMage = this.isMage;
+    testData.extra.actor.isPriest = this.isPriest;
     let situationalModifiers = DSA5StatusEffects.getRollModifiers(testData.extra.actor, testData.source);
     let dialogOptions = {
       title: title,
@@ -1570,8 +1570,8 @@ export default class Actordsa5 extends Actor {
         rollMode: options.rollMode,
         regenerationInterruptOptions: DSA5.regenerationInterruptOptions,
         regnerationCampLocations: DSA5.regnerationCampLocations,
-        showAspModifier: this.data.isMage,
-        showKapModifier: this.data.isPriest,
+        showAspModifier: this.isMage,
+        showKapModifier: this.isPriest,
         situationalModifiers,
         modifier: options.modifier || 0,
       },

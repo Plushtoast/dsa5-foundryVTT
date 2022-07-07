@@ -173,7 +173,7 @@ export default class Itemdsa5 extends Item {
 
     static getMiracleModifiers(actor, source, type, bonusAttribute) {
         const regex = new RegExp(`${game.i18n.localize('combatskill')} `, 'gi')
-        const happyTalents = (getProperty(actor, "data.data.happyTalents.value") || "").split(/;|,/).map(x => x.replace(regex, '').trim())
+        const happyTalents = (getProperty(actor, "system.happyTalents.value") || "").split(/;|,/).map(x => x.replace(regex, '').trim())
         const result = []
         if (happyTalents.includes(source.name)) {
             const availableKaP = actor.system.status.karmaenergy.value
@@ -288,9 +288,9 @@ export default class Itemdsa5 extends Item {
     }
 
     static changeChars(source, ch1, ch2, ch3) {
-        source.data.characteristic1.value = ch1
-        source.data.characteristic2.value = ch2
-        source.data.characteristic3.value = ch3
+        source.system.characteristic1.value = ch1
+        source.system.characteristic2.value = ch2
+        source.system.characteristic3.value = ch3
     }
 
     static buildCombatSpecAbs(actor, categories, toSearch, mode) {
@@ -1555,7 +1555,7 @@ class SkillItemDSA5 extends Itemdsa5 {
 
     static getSituationalModifiers(situationalModifiers, actor, data, source) {
         situationalModifiers.push(
-            ...ItemRulesDSA5.getTalentBonus(actor.data, source.name, ["advantage", "disadvantage", "specialability", "equipment"]),
+            ...ItemRulesDSA5.getTalentBonus(actor, source.name, ["advantage", "disadvantage", "specialability", "equipment"]),
             ...actor.getSkillModifier(source.name, source.type),
             ...SkillItemDSA5.getMiracleModifiers(actor, source, "FW", "skill")
         )
@@ -1577,7 +1577,6 @@ class SkillItemDSA5 extends Itemdsa5 {
             },
         }
 
-        console.log(skill)
         let data = {
             rollMode: options.rollMode,
             difficultyLabels: DSA5.skillDifficultyLabels,

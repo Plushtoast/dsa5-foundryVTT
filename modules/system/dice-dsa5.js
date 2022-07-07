@@ -975,7 +975,7 @@ export default class DiceDSA5 {
 
         let tar = [1, 2, 3].map(
             (x) =>
-                testData.extra.actor.data.characteristics[testData.source.system[`characteristic${x}`].value].value +
+                testData.extra.actor.system.characteristics[testData.source.system[`characteristic${x}`].value].value +
                 modifiers +
                 testData.advancedModifiers.chars[x - 1] +
                 pcms[x - 1]
@@ -988,8 +988,8 @@ export default class DiceDSA5 {
             for (let k of res) if (k > 0) fws -= k
 
 
-        let crit = testData.extra.actor.data.skillModifiers.crit
-        let botch = testData.extra.actor.data.skillModifiers.botch
+        let crit = testData.extra.actor.system.skillModifiers.crit
+        let botch = testData.extra.actor.system.skillModifiers.botch
         if (
             (testData.source.type == "spell" || testData.source.type == "ritual") &&
             AdvantageRulesDSA5.hasVantage(testData.extra.actor, game.i18n.localize("LocalizedIDs.wildMagic"))

@@ -56,7 +56,7 @@ export default class DSA5SkillDialog extends DialogShared {
     }
 
     rememberFormData(ev) {
-        const data = new FormDataExtended(this.element.find('form')[0]).toObject()
+        const data = new FormDataExtended(this.element.find('form')[0]).object
         data.situationalModifiers = Actordsa5._parseModifiers(this._element)
         this.calculateRoutine(data)
     }
@@ -74,7 +74,7 @@ export default class DSA5SkillDialog extends DialogShared {
             }
         }
 
-        const fw = this.dialogData.source.data.talentValue.value + data.fw + DiceDSA5._situationalModifiers(data, "FW")
+        const fw = this.dialogData.source.system.talentValue.value + data.fw + DiceDSA5._situationalModifiers(data, "FW")
         const mod = DSA5.skillDifficultyModifiers[data.testDifficulty] + DiceDSA5._situationalModifiers(data)
         const requiredFw = Math.clamped(10 - mod * 3, 1, 19)
         const enoughFw = fw >= requiredFw
