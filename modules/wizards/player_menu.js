@@ -77,36 +77,36 @@ export default class PlayerMenu extends Application {
         ]
 
         this.conjurationData = {
-            qs: 0,
-            consumedQS: 0,
-            packageModifier: 0,
-            selectedIds: [],
-            selectedEntityIds: [],
-            selectedPackageIds: [],
-            conjurationTypes: {
-                1: game.i18n.localize("CONJURATION.demon"),
-                2: game.i18n.localize("CONJURATION.elemental")
+                qs: 0,
+                consumedQS: 0,
+                packageModifier: 0,
+                selectedIds: [],
+                selectedEntityIds: [],
+                selectedPackageIds: [],
+                conjurationTypes: {
+                    1: game.i18n.localize("CONJURATION.demon"),
+                    2: game.i18n.localize("CONJURATION.elemental")
+                },
+                rules: {
+                    1: { de: { pack: "dsa5-core.corerules", name: "Beschwörungen" }, en: { pack: "dsa5-core.coreenrules", name: "Summoning" } },
+                    2: { de: { pack: "dsa5-core.corerules", name: "Beschwörungen" }, en: { pack: "dsa5-core.coreenrules", name: "Summoning" } }
+                },
+                conjurationType: 1,
+                skills: {
+                    1: ["invocatioMinima", "invocatioMinor", "invocatioMaior"].map(x => game.i18n.localize(`LocalizedIDs.${x}`)),
+                    2: ["manifesto", "elementalServant", "callDjinn"].map(x => game.i18n.localize(`LocalizedIDs.${x}`))
+                },
+                modifiers: {
+                    1: this.summoningModifiers,
+                    2: this.summoningModifiers
+                },
+                moreModifiers: {},
+                postFunction: {}
             },
-            rules: {
-                1: { de: { pack: "dsa5-core.corerules", name: "Beschwörungen" }, en: { pack: "dsa5-core.coreenrules", name: "Summoning" } },
-                2: { de: { pack: "dsa5-core.corerules", name: "Beschwörungen" }, en: { pack: "dsa5-core.coreenrules", name: "Summoning" } }
-            },
-            conjurationType: 1,
-            skills: {
-                1: ["invocatioMinima", "invocatioMinor", "invocatioMaior"].map(x => game.i18n.localize(`LocalizedIDs.${x}`)),
-                2: ["manifesto", "elementalServant", "callDjinn"].map(x => game.i18n.localize(`LocalizedIDs.${x}`))
-            },
-            modifiers: {
-                1: this.summoningModifiers,
-                2: this.summoningModifiers
-            },
-            moreModifiers: {},
-            postFunction: {}
-        },
-        this.subApps = []
+            this.subApps = []
     }
 
-    registerSubApp(app){
+    registerSubApp(app) {
         this.subApps.push(app)
     }
 
@@ -114,7 +114,7 @@ export default class PlayerMenu extends Application {
         if (!this.conjuration) return ui.notifications.warn(game.i18n.localize("CONJURATION.dragConjuration"))
 
         const itemId = $(ev.currentTarget).closest('.item').attr("data-item-id")
-        const skill = this.actor.items.find(i => i.data._id == itemId);
+        const skill = this.actor.items.get(itemId);
         const moreModifiers = [
             { name: game.i18n.localize("conjuringDifficulty"), value: getProperty(this.conjuration.data, "data.conjuringDifficulty.value") || 0, selected: true }
         ]
@@ -128,7 +128,7 @@ export default class PlayerMenu extends Application {
             }
         }
 
-        this.actor.setupSkill(skill.data, { moreModifiers, subtitle: ` (${this.conjuration.name})` }, undefined).then(async(setupData) => {
+        this.actor.setupSkill(skill, { moreModifiers, subtitle: ` (${this.conjuration.name})` }, undefined).then(async(setupData) => {
             const res = await this.actor.basicTest(setupData)
             this.conjurationData.qs = res.result.qualityStep
             this.render(true)
@@ -154,7 +154,7 @@ export default class PlayerMenu extends Application {
         })
         html.find('.item-edit').click(ev => {
             const itemId = $(ev.currentTarget).closest('.item').attr("data-item-id")
-            const item = this.actor.items.find(i => i.data._id == itemId)
+            const item = this.actor.items.get(itemId)
             item.sheet.render(true);
         })
         html.find('.selectableRow').click(ev => this.selectImprovement(ev))
@@ -172,7 +172,7 @@ export default class PlayerMenu extends Application {
             mod.selected = $(ev.currentTarget).val()
         })
 
-        for(let app of this.subApps){
+        for (let app of this.subApps) {
             app.activateListeners(html)
         }
     }
@@ -285,7 +285,7 @@ export default class PlayerMenu extends Application {
                 this.conjurationData.selectedPackageIds = []
                 if (actor.data.type == "creature") {
                     for (const key of Object.keys(this.conjurationData.conjurationTypes)) {
-                        if (actor.data.data.creatureClass.value.includes(this.conjurationData.conjurationTypes[key])) {
+                        if (actor.system.creatureClass.value.includes(this.conjurationData.conjurationTypes[key])) {
                             this.conjurationData.conjurationType = key
                             break
                         }
@@ -308,11 +308,11 @@ export default class PlayerMenu extends Application {
             let entitySet = new Set()
             let packageSet = new Set()
             for (const x of items) {
-                if (x.data.data.distribution && entitiesToSearch.some(y => x.data.data.distribution.includes(y))) {
-                    if (x.data.data.traitType.value == "entity" && !entitySet.has(x.name)) {
+                if (x.system.distribution && entitiesToSearch.some(y => x.system.distribution.includes(y))) {
+                    if (x.system.traitType.value == "entity" && !entitySet.has(x.name)) {
                         entitySet.add(x.name)
                         data.entityAbilities.push(x)
-                    } else if (x.data.data.traitType.value == "summoning" && !packageSet.has(x.name)) {
+                    } else if (x.system.traitType.value == "summoning" && !packageSet.has(x.name)) {
                         packageSet.add(x.name)
                         data.entityPackages.push(x)
                     }
@@ -358,30 +358,30 @@ export default class PlayerMenu extends Application {
         return data
     }
 
-    async prepareSubApps(data){
+    async prepareSubApps(data) {
         data.subApps = []
-        for(let app of this.subApps){
+        for (let app of this.subApps) {
             data.subApps.push(await app.prepareApp(data))
         }
     }
 }
 
-class PlayerMenuSubApp{
+class PlayerMenuSubApp {
     static template = ""
-    async getData(data){
+    async getData(data) {
         return {}
     }
-    
-    activateListeners(html){}
 
-    async renderData(data){
+    activateListeners(html) {}
+
+    async renderData(data) {
         const renderData = await this.getData(data)
         mergeObject(renderData, data)
         const template = await renderTemplate(this.constructor.template, renderData)
         return template
     }
 
-    async prepareApp(data){
+    async prepareApp(data) {
         return {
             name: game.i18n.localize(`PLAYER.${this.constructor.name}`),
             view: await this.renderData(data)
@@ -504,7 +504,7 @@ class ConjurationRequest extends DSA5Dialog {
         for (let item of entityAbilities)
             await TraitRulesDSA5.traitAdded(this.actor, item)
 
-        await this.actor.update({ "data.status.wounds.value": this.actor.data.data.status.wounds.max })
+        await this.actor.update({ "data.status.wounds.value": this.actor.system.status.wounds.max })
 
         const chatmsg = await renderTemplate("systems/dsa5/templates/system/conjuration/chat.html", {
             actor: this.actor,

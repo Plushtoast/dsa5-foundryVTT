@@ -205,8 +205,8 @@ export default class ItemSheetdsa5 extends ItemSheet {
                 data['StFs'] = DSA5.StFs;
                 break;
             case "application":
-                data['hasLocalization'] = game.i18n.has(`APPLICATION.${this.item.data.data.skill} - ${this.item.name}`)
-                data['localization'] = game.i18n.localize(`APPLICATION.${this.item.data.data.skill} - ${this.item.name}`)
+                data['hasLocalization'] = game.i18n.has(`APPLICATION.${this.item.system.skill} - ${this.item.name}`)
+                data['localization'] = game.i18n.localize(`APPLICATION.${this.item.system.skill} - ${this.item.name}`)
                 data['allSkills'] = await DSA5_Utility.allSkillsList()
                 break
             case "combatskill":
@@ -422,7 +422,7 @@ class Enchantable extends ItemSheetdsa5 {
     }
 
     prepareDomains() {
-        let dom = getProperty(this.item.data.data, "effect.attributes")
+        let dom = getProperty(this.item.system, "effect.attributes")
         if (dom) {
             const magical = new RegExp(game.i18n.localize('WEAPON.magical'), 'i')
             const blessed = new RegExp(game.i18n.localize('WEAPON.clerical'), 'i')
@@ -487,21 +487,21 @@ class EquipmentSheet extends Enchantable {
         if (this.isBagWithContents()) {
             let weightSum = 0
             data['containerContent'] = this.item.actor.items
-                .filter(x => DSA5.equipmentCategories.includes(x.type) && x.data.data.parent_id == this.item.id)
+                .filter(x => DSA5.equipmentCategories.includes(x.type) && x.system.parent_id == this.item.id)
                 .map(x => {
-                    x.weight = parseFloat((x.data.data.weight.value * x.data.data.quantity.value).toFixed(3));
+                    x.weight = parseFloat((x.system.weight.value * x.system.quantity.value).toFixed(3));
                     weightSum += Number(x.weight)
                     const enchants = getProperty(x.data, "flags.dsa5.enchantments")
                     if (enchants && enchants.length > 0) {
                         x.enchantClass = "rar"
-                    } else if ((x.data.data.effect && x.data.data.effect.value != "") || x.data.effects.length > 0) {
+                    } else if ((x.system.effect && x.system.effect.value != "") || x.data.effects.length > 0) {
                         x.enchantClass = "common"
                     }
                     return x
                 })
             data['weightSum'] = parseFloat(weightSum.toFixed(3))
-            data['weightWidth'] = `style="width: ${Math.min(this.item.data.data.capacity ? weightSum / this.item.data.data.capacity * 100 : 0, 100)}%"`
-            data['weightExceeded'] = weightSum > Number(this.item.data.data.capacity) ? "exceeded" : ""
+            data['weightWidth'] = `style="width: ${Math.min(this.item.system.capacity ? weightSum / this.item.system.capacity * 100 : 0, 100)}%"`
+            data['weightExceeded'] = weightSum > Number(this.item.system.capacity) ? "exceeded" : ""
         }
         return data
     }
@@ -555,7 +555,7 @@ class EquipmentSheet extends Enchantable {
     }
 
     isBagWithContents() {
-        return this.item.data.data.equipmentType.value == "bags" && this.item.actor
+        return this.item.system.equipmentType.value == "bags" && this.item.actor
     }
 
     async _onDrop(event) {
@@ -590,14 +590,14 @@ export class ArmorSheet extends Enchantable {
         mergeObject(data, {
             domains: this.prepareDomains(),
             armorSubcategories: Object.keys(DSA5.armorSubcategories),
-            breakPointRating: DSA5.armorSubcategories[this.item.data.data.subcategory]
+            breakPointRating: DSA5.armorSubcategories[this.item.system.subcategory]
         })
         data.canOnUseEffect = game.user.isGM || await game.settings.get("dsa5", "playerCanEditSpellMacro")
         return data
     }
     _getHeaderButtons() {
         let buttons = super._getHeaderButtons();
-        if (this.item.isOwned && game.settings.get("dsa5", "armorAndWeaponDamage") && this.item.data.data.structure.max > 0) {
+        if (this.item.isOwned && game.settings.get("dsa5", "armorAndWeaponDamage") && this.item.system.structure.max > 0) {
             buttons.unshift({
                 class: "rollDamaged",
                 icon: `fas fa-dice-d20`,
@@ -644,15 +644,15 @@ class MagicalSignSheet extends ItemSheetdsa5 {
         return buttons
     }
     async setupEffect(ev) {
-        const aspcost = Number(this.item.data.data.asp) || 0
-        if (this.item.actor.data.data.status.astralenergy.value < aspcost)
+        const aspcost = Number(this.item.system.asp) || 0
+        if (this.item.actor.system.status.astralenergy.value < aspcost)
             return ui.notifications.error(game.i18n.localize("DSAError.NotEnoughAsP"))
 
         const actor = this.item.actor
         const sign = game.dsa5.config.ItemSubclasses.magicalsign
         const skill = actor.items.find(x => x.type == "skill" && x.name == game.i18n.localize("LocalizedIDs.artisticAbility"))
-        const chatMessage = `<hr/><p><b>${this.item.name}</b></p><p>${this.item.data.data.description.value}</p><p>${sign.chatData(this.item.data.data, "").join("</br>")} <span class="costCheck"></span></p>`
-        actor.setupSkill(skill.data, { other: [chatMessage], subtitle: ` (${game.i18n.localize('magicalsign')})` }, undefined).then(async(setupData) => {
+        const chatMessage = `<hr/><p><b>${this.item.name}</b></p><p>${this.item.system.description.value}</p><p>${sign.chatData(this.item.system, "").join("</br>")} <span class="costCheck"></span></p>`
+        actor.setupSkill(skill, { other: [chatMessage], subtitle: ` (${game.i18n.localize('magicalsign')})` }, undefined).then(async(setupData) => {
             const res = await actor.basicTest(setupData, { suppressMessage: true })
             res.result.preData.calculatedSpellModifiers = { finalcost: aspcost, costsMana: true }
             await DiceDSA5.renderRollCard(res.cardOptions, res.result, res.options.rerenderMessage)
@@ -663,7 +663,7 @@ class MagicalSignSheet extends ItemSheetdsa5 {
 class RangeweaponSheet extends Enchantable {
     _getHeaderButtons() {
         let buttons = super._getHeaderButtons();
-        if (this.item.isOwned && game.settings.get("dsa5", "armorAndWeaponDamage") && this.item.data.data.structure.max > 0) {
+        if (this.item.isOwned && game.settings.get("dsa5", "armorAndWeaponDamage") && this.item.system.structure.max > 0) {
             buttons.unshift({
                 class: "rollDamaged",
                 icon: `fas fa-dice-d20`,
@@ -679,7 +679,7 @@ class RangeweaponSheet extends Enchantable {
             ammunitiongroups: DSA5.ammunitiongroups,
             combatskills: await DSA5_Utility.allCombatSkillsList("range"),
             domains: this.prepareDomains(),
-            breakPointRating: DSA5.weaponStabilities[game.i18n.localize(`LocalizedCTs.${this.item.data.data.combatskill.value}`)]
+            breakPointRating: DSA5.weaponStabilities[game.i18n.localize(`LocalizedCTs.${this.item.system.combatskill.value}`)]
         })
         return data
     }
@@ -705,12 +705,12 @@ class BlessingSheetDSA5 extends ItemSheetdsa5 {
     }
 
     async setupEffect(ev) {
-        if (this.item.actor.data.data.status.karmaenergy.value < 1)
+        if (this.item.actor.system.status.karmaenergy.value < 1)
             return ui.notifications.error(game.i18n.localize("DSAError.NotEnoughKaP"))
 
         const cantrip = game.dsa5.config.ItemSubclasses.magictrick
-        await this.item.actor.update({ "data.status.karmaenergy.value": this.item.actor.data.data.status.karmaenergy.value -= 1 })
-        let chatMessage = `<p><b>${this.item.name} - ${game.i18n.localize('blessing')} ${game.i18n.localize('probe')}</b></p><p>${this.item.data.data.description.value}</p><p>${cantrip.chatData(this.item.data.data, "").join("</br>")}</p>`
+        await this.item.actor.update({ "data.status.karmaenergy.value": this.item.actor.system.status.karmaenergy.value -= 1 })
+        let chatMessage = `<p><b>${this.item.name} - ${game.i18n.localize('blessing')} ${game.i18n.localize('probe')}</b></p><p>${this.item.system.description.value}</p><p>${cantrip.chatData(this.item.system, "").join("</br>")}</p>`
         await ChatMessage.create(DSA5_Utility.chatDataSetup(chatMessage));
     }
 }
@@ -808,12 +808,12 @@ class MagictrickSheetDSA5 extends ItemSheetdsa5 {
     }
 
     async setupEffect(ev) {
-        if (this.item.actor.data.data.status.astralenergy.value < 1)
+        if (this.item.actor.system.status.astralenergy.value < 1)
             return ui.notifications.error(game.i18n.localize("DSAError.NotEnoughAsP"))
 
         const cantrip = game.dsa5.config.ItemSubclasses.magictrick
-        await this.item.actor.update({ "data.status.astralenergy.value": this.item.actor.data.data.status.astralenergy.value -= 1 })
-        const chatMessage = `<p><b>${this.item.name} - ${game.i18n.localize('magictrick')} ${game.i18n.localize('probe')}</b></p><p>${this.item.data.data.description.value}</p><p>${cantrip.chatData(this.item.data.data, "").join("</br>")}</p>`
+        await this.item.actor.update({ "data.status.astralenergy.value": this.item.actor.system.status.astralenergy.value -= 1 })
+        const chatMessage = `<p><b>${this.item.name} - ${game.i18n.localize('magictrick')} ${game.i18n.localize('probe')}</b></p><p>${this.item.system.description.value}</p><p>${cantrip.chatData(this.item.system, "").join("</br>")}</p>`
         await ChatMessage.create(DSA5_Utility.chatDataSetup(chatMessage));
     }
 }
@@ -837,13 +837,13 @@ class MeleeweaponSheetDSA5 extends Enchantable {
             combatskills: await DSA5_Utility.allCombatSkillsList("melee"),
             ranges: DSA5.meleeRanges,
             shieldSizes: DSA5.shieldSizes,
-            isShield: this.item.data.data.combatskill.value == game.i18n.localize("LocalizedIDs.Shields"),
+            isShield: this.item.system.combatskill.value == game.i18n.localize("LocalizedIDs.Shields"),
             domains: this.prepareDomains(),
-            breakPointRating: DSA5.weaponStabilities[game.i18n.localize(`LocalizedCTs.${this.item.data.data.combatskill.value}`)]
+            breakPointRating: DSA5.weaponStabilities[game.i18n.localize(`LocalizedCTs.${this.item.system.combatskill.value}`)]
         })
         if (this.item.actor) {
-            const combatSkill = this.item.actor.data.items.find(x => x.type == "combatskill" && x.name == this.item.data.data.combatskill.value)
-            data['canBeOffHand'] = combatSkill && !(combatSkill.data.data.weapontype.twoHanded) && this.item.data.data.worn.value
+            const combatSkill = this.item.actor.data.items.find(x => x.type == "combatskill" && x.name == this.item.system.combatskill.value)
+            data['canBeOffHand'] = combatSkill && !(combatSkill.system.weapontype.twoHanded) && this.item.system.worn.value
         }
         data.canOnUseEffect = game.user.isGM || await game.settings.get("dsa5", "playerCanEditSpellMacro")
         return data
@@ -851,7 +851,7 @@ class MeleeweaponSheetDSA5 extends Enchantable {
 
     _getHeaderButtons() {
         let buttons = super._getHeaderButtons();
-        if (this.item.isOwned && game.settings.get("dsa5", "armorAndWeaponDamage") && this.item.data.data.structure.max > 0) {
+        if (this.item.isOwned && game.settings.get("dsa5", "armorAndWeaponDamage") && this.item.system.structure.max > 0) {
             buttons.unshift({
                 class: "rollDamaged",
                 icon: `fas fa-dice-d20`,
@@ -883,36 +883,36 @@ class PoisonSheetDSA5 extends ItemSheetdsa5 {
 class SpecialAbilitySheetDSA5 extends ItemSheetdsa5 {
     async _refundStep() {
         let xpCost, steps
-        if (this.item.data.data.step.value > 1) {
-            xpCost = this.item.data.data.APValue.value
+        if (this.item.system.step.value > 1) {
+            xpCost = this.item.system.APValue.value
             if (/;/.test(xpCost)) {
                 steps = xpCost.split(";").map(x => Number(x.trim()))
-                xpCost = steps[this.item.data.data.step.value - 1]
+                xpCost = steps[this.item.system.step.value - 1]
             }
             xpCost = await SpecialabilityRulesDSA5.refundFreelanguage(this.item.data, this.item.actor, xpCost)
             await this.item.actor._updateAPs(xpCost * -1)
-            await this.item.update({ "data.step.value": this.item.data.data.step.value - 1 })
+            await this.item.update({ "data.step.value": this.item.system.step.value - 1 })
         }
     }
 
     async _advanceStep() {
         let xpCost, steps
-        if (this.item.data.data.step.value < this.item.data.data.maxRank.value) {
-            xpCost = this.item.data.data.APValue.value
+        if (this.item.system.step.value < this.item.system.maxRank.value) {
+            xpCost = this.item.system.APValue.value
             if (/;/.test(xpCost)) {
                 steps = xpCost.split(";").map(x => Number(x.trim()))
-                xpCost = steps[this.item.data.data.step.value]
+                xpCost = steps[this.item.system.step.value]
             }
             xpCost = await SpecialabilityRulesDSA5.isFreeLanguage(this.item.data, this.item.actor, xpCost)
             if (await this.item.actor.checkEnoughXP(xpCost)) {
                 await this.item.actor._updateAPs(xpCost)
-                await this.item.update({ "data.step.value": this.item.data.data.step.value + 1 })
+                await this.item.update({ "data.step.value": this.item.system.step.value + 1 })
             }
         }
     }
 
     _advancable() {
-        return this.item.data.data.maxRank.value > 0
+        return this.item.system.maxRank.value > 0
     }
 
     async getData(options) {
@@ -947,7 +947,7 @@ class SpellSheetDSA5 extends ItemSheetdsa5 {
         data['StFs'] = DSA5.StFs;
         data['resistances'] = DSA5.magicResistanceModifiers
         if (data.isOwned) {
-            data['extensions'] = this.item.actor.data.items.filter(x => { return x.type == "spellextension" && x.data.data.source == this.item.name && this.item.type == x.data.data.category })
+            data['extensions'] = this.item.actor.data.items.filter(x => { return x.type == "spellextension" && x.system.source == this.item.name && this.item.type == x.system.category })
         }
         return data
     }
@@ -957,7 +957,7 @@ class SpellSheetDSA5 extends ItemSheetdsa5 {
         html.find('.item-edit').click(ev => {
             ev.preventDefault()
             let itemId = this._getItemId(ev)
-            const item = this.item.actor.items.find(i => i.data._id == itemId)
+            const item = this.item.actor.items.get(itemId)
             item.sheet.render(true);
         });
 
@@ -995,7 +995,7 @@ class SpellSheetDSA5 extends ItemSheetdsa5 {
 
     async _cleverDeleteItem(itemId) {
         let item = this.item.actor.data.items.find(x => x.id == itemId)
-        await this.item.actor._updateAPs(-1 * item.data.data.APValue.value)
+        await this.item.actor._updateAPs(-1 * item.system.APValue.value)
         await this.item.actor.deleteEmbeddedDocuments("Item", [itemId]);
     }
 }
@@ -1012,19 +1012,19 @@ class SpellExtensionSheetDSA5 extends ItemSheetdsa5 {
 
 class VantageSheetDSA5 extends ItemSheetdsa5 {
     _advancable() {
-        return this.item.data.data.max.value > 0
+        return this.item.system.max.value > 0
     }
 
     async _refundStep() {
         let xpCost, steps
-        if (this.item.data.data.step.value > 1) {
-            xpCost = this.item.data.data.APValue.value
+        if (this.item.system.step.value > 1) {
+            xpCost = this.item.system.APValue.value
             if (/;/.test(xpCost)) {
                 steps = xpCost.split(";").map(x => Number(x.trim()))
-                xpCost = steps[this.item.data.data.step.value - 1]
+                xpCost = steps[this.item.system.step.value - 1]
             }
             await this.item.actor._updateAPs(xpCost * -1)
-            await this.item.update({ "data.step.value": this.item.data.data.step.value - 1 })
+            await this.item.update({ "data.step.value": this.item.system.step.value - 1 })
         }
     }
 
@@ -1036,15 +1036,15 @@ class VantageSheetDSA5 extends ItemSheetdsa5 {
 
     async _advanceStep() {
         let xpCost, steps
-        if (this.item.data.data.step.value < this.item.data.data.max.value) {
-            xpCost = this.item.data.data.APValue.value
+        if (this.item.system.step.value < this.item.system.max.value) {
+            xpCost = this.item.system.APValue.value
             if (/;/.test(xpCost)) {
                 steps = xpCost.split(";").map(x => Number(x.trim()))
-                xpCost = steps[this.item.data.data.step.value]
+                xpCost = steps[this.item.system.step.value]
             }
             if (await this.item.actor.checkEnoughXP(xpCost)) {
                 await this.item.actor._updateAPs(xpCost)
-                await this.item.update({ "data.step.value": this.item.data.data.step.value + 1 })
+                await this.item.update({ "data.step.value": this.item.system.step.value + 1 })
             }
         }
     }

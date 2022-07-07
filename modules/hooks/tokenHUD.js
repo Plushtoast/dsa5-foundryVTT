@@ -1,6 +1,6 @@
 function addThirdBarToHUD(html, actor, app) {
     if (actor.data.isPriest && actor.data.isMage) {
-        let currentKaP = actor.data.data.status.karmaenergy.value
+        let currentKaP = actor.system.status.karmaenergy.value
         let attrBar = `<div class="attribute bar3"><input type="text" name="data.status.karmaenergy.value" value="${currentKaP}"></div>`
         html.find('.col.middle').prepend(attrBar)
         html.find('.bar3 input').change(async ev => {

@@ -14,7 +14,7 @@ export default class RequestRoll {
                     break
                 default:
                     const skill = actor.items.find((i) => i.name == name && i.type == category)
-                    actor.setupSkill(skill.data, options, tokenId).then(async(setupData) => {
+                    actor.setupSkill(skill, options, tokenId).then(async(setupData) => {
                         let result = await actor.basicTest(setupData)
                         await RequestRoll.editGroupCheckRoll(messageId, result, name, category)
                     })
@@ -69,7 +69,7 @@ export default class RequestRoll {
                     break
                 default:
                     let skill = actor.items.find((i) => i.name == name && i.type == category)
-                    actor.setupSkill(skill.data, options, tokenId).then((setupData) => {
+                    actor.setupSkill(skill, options, tokenId).then((setupData) => {
                         actor.basicTest(setupData)
                     })
             }

@@ -1,5 +1,6 @@
 export default function() {
     Hooks.on('preCreateScene', function(doc, createData, options, userId) {
+        console.log(doc)
         if (!createData.gridUnits) doc.data.update({ gridUnits: game.i18n.localize('gridUnits') })
     })
 

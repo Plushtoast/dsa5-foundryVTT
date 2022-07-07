@@ -90,7 +90,7 @@ export default class DSA5Initializer extends Dialog {
                     k.folder = head.id
                     let existingItem = game.items.find(x => x.name == k.name && x.data.folder == head.id)
                     if (existingItem) {
-                        k._id = existingItem.data._id
+                        k._id = existingItem.id
                         itemsToUpdate.push(k)
                     } else {
                         itemsToCreate.push(k)
@@ -185,7 +185,7 @@ export default class DSA5Initializer extends Dialog {
                     }
                     if (!found) scenesToCreate.push(entry)
                     else {
-                        entry._id = found.data._id
+                        entry._id = found.id
                         scenesToUpdate.push(entry)
                     }
                 }
@@ -244,7 +244,7 @@ export default class DSA5Initializer extends Dialog {
 
                     let existingActor = game.actors.find(x => x.name == entry.name && [head.id, parentFolder.id].includes(x.data.folder))
                     if (existingActor) {
-                        entry._id = existingActor.data._id
+                        entry._id = existingActor.id
                         await existingActor.deleteEmbeddedDocuments("Item", existingActor.items.map(x => x.id))
                         entriesToUpdate.push(entry)
                     } else {

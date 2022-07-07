@@ -6,14 +6,14 @@ export default class DSA5Hotbar extends Hotbar {
     }
 
     async collapse() {
-        if ( this._collapsed ) return true
+        if (this._collapsed) return true
 
         $(this.element).addClass("collapsedHotbar")
         return super.collapse()
     }
 
     async expand() {
-        if ( !this._collapsed ) return true
+        if (!this._collapsed) return true
 
         $(this.element).removeClass("collapsedHotbar")
         return super.expand()
@@ -27,9 +27,9 @@ export default class DSA5Hotbar extends Hotbar {
             if (!macro.macro) continue
 
             if (parry.test(macro.macro.data.name)) {
-                macroList.find(`[data-macro-id="${macro.macro.data._id}"]`).addClass("parry")
+                macroList.find(`[data-macro-id="${macro.macro.id}"]`).addClass("parry")
             } else if (attack.test(macro.macro.data.name)) {
-                macroList.find(`[data-macro-id="${macro.macro.data._id}"]`).addClass("attack")
+                macroList.find(`[data-macro-id="${macro.macro.id}"]`).addClass("attack")
             }
         }
     }

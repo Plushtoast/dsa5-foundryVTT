@@ -351,7 +351,7 @@ class GameMasterMenu extends Application {
                         heros.push(actor)
                     }
 
-                    await actor.update({ "data.details.experience.total": actor.data.data.details.experience.total + xpBonus });
+                    await actor.update({ "data.details.experience.total": actor.system.details.experience.total + xpBonus });
                 }
                 if (heros.length > 0) await ChatMessage.create(DSA5_Utility.chatDataSetup(game.i18n.format('MASTER.xpMessage', { heros: this.getNames(heros), number })));
                 if (familiars.length > 0) await ChatMessage.create(DSA5_Utility.chatDataSetup(game.i18n.format('MASTER.xpMessage', { heros: this.getNames(familiars), number })));
@@ -465,7 +465,7 @@ class GameMasterMenu extends Application {
         const actors = game.actors.filter(x => actorIds.includes(x.id))
         for (const actor of actors) {
             let skill = actor.items.find(x => x.name == name && x.type == "skill")
-            actor.setupSkill(skill.data, { rollMode: "blindroll", subtitle: ` (${actor.name})` }, undefined).then(setupData => {
+            actor.setupSkill(skill, { rollMode: "blindroll", subtitle: ` (${actor.name})` }, undefined).then(setupData => {
                 actor.basicTest(setupData)
             });
         }
@@ -522,16 +522,16 @@ class GameMasterMenu extends Application {
         for (const hero of heros) {
             hero.gmSelected = this.selected[hero.id]
             let schips = []
-            for (let i = 1; i <= Number(hero.data.data.status.fatePoints.max); i++) {
+            for (let i = 1; i <= Number(hero.system.status.fatePoints.max); i++) {
                 schips.push({
                     value: i,
-                    cssClass: i <= Number(hero.data.data.status.fatePoints.value) ? "fullSchip" : "emptySchip"
+                    cssClass: i <= Number(hero.system.status.fatePoints.value) ? "fullSchip" : "emptySchip"
                 })
             }
             hero.schips = schips
             hero.purse = hero.items.filter(x => x.type == "money")
-                .sort((a, b) => b.data.data.price.value - a.data.data.price.value)
-                .map(x => `<span title="${game.i18n.localize(x.name)}">${x.data.data.quantity.value}</span>`).join(" - ")
+                .sort((a, b) => b.system.price.value - a.system.price.value)
+                .map(x => `<span title="${game.i18n.localize(x.name)}">${x.system.quantity.value}</span>`).join(" - ")
             hero.advantages = hero.items.filter(x => x.type == "advantage").map(x => { return { name: x.name, uuid: x.uuid } })
             hero.disadvantages = hero.items.filter(x => x.type == "disadvantage").map(x => { return { name: x.name, uuid: x.uuid } })
         }

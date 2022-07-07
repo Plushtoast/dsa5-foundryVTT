@@ -157,7 +157,7 @@ export default class ActorSheetDsa5 extends ActorSheet {
             infoMsg += `${game.i18n.localize("Aggregated.noMoreAllowed")}`;
             ChatMessage.create(DSA5_Utility.chatDataSetup(infoMsg));
         } else {
-            this.actor.setupSkill(skill.data, {
+            this.actor.setupSkill(skill, {
                 moreModifiers: [
                     { name: game.i18n.localize("failedTests"), value: -1 * aggregated.data.previousFailedTests.value, selected: true },
                     { name: game.i18n.localize("Modifier"), value: aggregated.data.baseModifier, selected: true }
@@ -201,41 +201,41 @@ export default class ActorSheetDsa5 extends ActorSheet {
     }
 
     async _advanceAttribute(attr) {
-        const advances = Number(this.actor.data.data.characteristics[attr].advances) + Number(this.actor.data.data.characteristics[attr].initial)
+        const advances = Number(this.actor.system.characteristics[attr].advances) + Number(this.actor.system.characteristics[attr].initial)
         const cost = DSA5_Utility._calculateAdvCost(advances, "E")
         if (await this._checkEnoughXP(cost)) {
             await this._updateAPs(cost, {
-                [`data.characteristics.${attr}.advances`]: Number(this.actor.data.data.characteristics[attr].advances) + 1
+                [`data.characteristics.${attr}.advances`]: Number(this.actor.system.characteristics[attr].advances) + 1
             })
         }
     }
 
     async _refundAttributeAdvance(attr) {
-        const advances = Number(this.actor.data.data.characteristics[attr].advances) + Number(this.actor.data.data.characteristics[attr].initial)
-        if (Number(this.actor.data.data.characteristics[attr].advances) > 0) {
+        const advances = Number(this.actor.system.characteristics[attr].advances) + Number(this.actor.system.characteristics[attr].initial)
+        if (Number(this.actor.system.characteristics[attr].advances) > 0) {
             const cost = DSA5_Utility._calculateAdvCost(advances, "E", 0) * -1
             await this._updateAPs(cost, {
-                [`data.characteristics.${attr}.advances`]: Number(this.actor.data.data.characteristics[attr].advances) - 1
+                [`data.characteristics.${attr}.advances`]: Number(this.actor.system.characteristics[attr].advances) - 1
             })
         }
     }
 
     async _advancePoints(attr) {
-        const advances = Number(this.actor.data.data.status[attr].advances)
+        const advances = Number(this.actor.system.status[attr].advances)
         const cost = DSA5_Utility._calculateAdvCost(advances, "D")
         if (await this._checkEnoughXP(cost) && this._checkMaximumPointAdvancement(attr, advances + 1)) {
             await this._updateAPs(cost, {
-                [`data.status.${attr}.advances`]: Number(this.actor.data.data.status[attr].advances) + 1
+                [`data.status.${attr}.advances`]: Number(this.actor.system.status[attr].advances) + 1
             })
         }
     }
 
     async _refundPointsAdvance(attr) {
-        const advances = Number(this.actor.data.data.status[attr].advances)
+        const advances = Number(this.actor.system.status[attr].advances)
         if (advances > 0) {
             const cost = DSA5_Utility._calculateAdvCost(advances, "D", 0) * -1
             await this._updateAPs(cost, {
-                [`data.status.${attr}.advances`]: Number(this.actor.data.data.status[attr].advances) - 1
+                [`data.status.${attr}.advances`]: Number(this.actor.system.status[attr].advances) - 1
             })
         }
     }
@@ -262,13 +262,13 @@ export default class ActorSheetDsa5 extends ActorSheet {
         let result = false
         switch (attr) {
             case "wounds":
-                result = newValue <= this.actor.data.data.characteristics["ko"].value
+                result = newValue <= this.actor.system.characteristics["ko"].value
                 break
             case "astralenergy":
-                result = newValue <= (this.actor.data.data.characteristics[this.actor.data.data.guidevalue.magical] == undefined ? 0 : this.actor.data.data.characteristics[this.actor.data.data.guidevalue.magical].value * this.actor.data.data.energyfactor.magical)
+                result = newValue <= (this.actor.system.characteristics[this.actor.system.guidevalue.magical] == undefined ? 0 : this.actor.system.characteristics[this.actor.system.guidevalue.magical].value * this.actor.system.energyfactor.magical)
                 break
             case "karmaenergy":
-                result = newValue <= (this.actor.data.data.characteristics[this.actor.data.data.guidevalue.clerical] == undefined ? 0 : this.actor.data.data.characteristics[this.actor.data.data.guidevalue.clerical].value * this.actor.data.data.energyfactor.clerical)
+                result = newValue <= (this.actor.system.characteristics[this.actor.system.guidevalue.clerical] == undefined ? 0 : this.actor.system.characteristics[this.actor.system.guidevalue.clerical].value * this.actor.system.energyfactor.clerical)
                 break
         }
         if (!result)
@@ -281,7 +281,7 @@ export default class ActorSheetDsa5 extends ActorSheet {
         let result = false
         switch (item.type) {
             case "combatskill":
-                result = newValue <= Math.max(...(item.data.guidevalue.value.split("/").map(x => this.actor.data.data.characteristics[x].value))) + 2 + AdvantageRulesDSA5.vantageStep(this.actor, `${game.i18n.localize('LocalizedIDs.exceptionalCombatTechnique')} (${item.name})`)
+                result = newValue <= Math.max(...(item.data.guidevalue.value.split("/").map(x => this.actor.system.characteristics[x].value))) + 2 + AdvantageRulesDSA5.vantageStep(this.actor, `${game.i18n.localize('LocalizedIDs.exceptionalCombatTechnique')} (${item.name})`)
                 break
             case "spell":
             case "ritual":
@@ -314,7 +314,7 @@ export default class ActorSheetDsa5 extends ActorSheet {
     }
 
     maxByAttr(item) {
-        return Math.max(...[this.actor.data.data.characteristics[item.data.characteristic1.value].value, this.actor.data.data.characteristics[item.data.characteristic2.value].value, this.actor.data.data.characteristics[item.data.characteristic3.value].value]) + 2 + AdvantageRulesDSA5.vantageStep(this.actor, `${game.i18n.localize('LocalizedIDs.exceptionalSkill')} (${item.name})`)
+        return Math.max(...[this.actor.system.characteristics[item.data.characteristic1.value].value, this.actor.system.characteristics[item.data.characteristic2.value].value, this.actor.system.characteristics[item.data.characteristic3.value].value]) + 2 + AdvantageRulesDSA5.vantageStep(this.actor, `${game.i18n.localize('LocalizedIDs.exceptionalSkill')} (${item.name})`)
     }
 
     async _openLibrary() {
@@ -342,7 +342,7 @@ export default class ActorSheetDsa5 extends ActorSheet {
         if (this.actor.data.canAdvance) {
             buttons.unshift({
                 class: "locksheet",
-                icon: `fas fa-${this.actor.data.data.sheetLocked.value ? "" : "un"}lock`,
+                icon: `fas fa-${this.actor.system.sheetLocked.value ? "" : "un"}lock`,
                 onclick: async ev => this._changeAdvanceLock(ev)
             })
         }
@@ -350,7 +350,7 @@ export default class ActorSheetDsa5 extends ActorSheet {
     }
 
     async _changeAdvanceLock(ev) {
-        await this.actor.update({ "data.sheetLocked.value": !this.actor.data.data.sheetLocked.value })
+        await this.actor.update({ "data.sheetLocked.value": !this.actor.system.sheetLocked.value })
         $(ev.currentTarget).find("i").toggleClass("fa-unlock fa-lock")
     }
 
@@ -378,8 +378,8 @@ export default class ActorSheetDsa5 extends ActorSheet {
 
     rollDisease(itemId) {
         const item = this.actor.items.get(itemId)
-        const SKModifier = this.actor.data.data.status.soulpower.max * -1
-        const ZKModifier = this.actor.data.data.status.toughness.max * -1
+        const SKModifier = this.actor.system.status.soulpower.max * -1
+        const ZKModifier = this.actor.system.status.toughness.max * -1
         item.setupEffect(undefined, { rollMode: "gmroll", manualResistance: { SKModifier, ZKModifier } }).then(async(setupData) => {
             const result = await item.itemTest(setupData)
             await this.actor.updateEmbeddedDocuments("Item", [{ _id: item.id, "data.duration.resolved": result.result.duration }])
@@ -404,7 +404,7 @@ export default class ActorSheetDsa5 extends ActorSheet {
             elem.trigger("change")
         })
 
-        html.find('.defenseToggle').click(() => this.actor.update({ "data.config.defense": !this.actor.data.data.config.defense }))
+        html.find('.defenseToggle').click(() => this.actor.update({ "data.config.defense": !this.actor.system.config.defense }))
 
         html.find('.loadWeapon').mousedown(async(ev) => {
             const itemId = this._getItemId(ev)
@@ -490,7 +490,7 @@ export default class ActorSheetDsa5 extends ActorSheet {
             let skill = this.actor.items.get(itemId);
 
             if (ev.button == 0)
-                this.actor.setupSkill(skill.data, {}, this.getTokenId()).then(setupData => {
+                this.actor.setupSkill(skill, {}, this.getTokenId()).then(setupData => {
                     this.actor.basicTest(setupData)
                 });
             else if (ev.button == 2)
@@ -509,7 +509,7 @@ export default class ActorSheetDsa5 extends ActorSheet {
             let skill = this.actor.items.get(itemId);
 
             if (ev.button == 0)
-                this.actor.setupSpell(skill.data, {}, this.getTokenId()).then(setupData => this.actor.basicTest(setupData));
+                this.actor.setupSpell(skill, {}, this.getTokenId()).then(setupData => this.actor.basicTest(setupData));
 
             else if (ev.button == 2)
                 skill.sheet.render(true);
@@ -809,11 +809,11 @@ export default class ActorSheetDsa5 extends ActorSheet {
             case "disadvantage":
                 {
                     await AdvantageRulesDSA5.vantageRemoved(this.actor, item)
-                    let xpCost = item.data.data.APValue.value * item.data.data.step.value
-                    if (/;/.test(item.data.data.APValue.value)) {
-                        const steps = item.data.data.APValue.value.split(";").map(x => Number(x.trim()))
+                    let xpCost = item.system.APValue.value * item.system.step.value
+                    if (/;/.test(item.system.APValue.value)) {
+                        const steps = item.system.APValue.value.split(";").map(x => Number(x.trim()))
                         xpCost = 0
-                        for (let i = 0; i < item.data.data.step.value; i++)
+                        for (let i = 0; i < item.system.step.value; i++)
                             xpCost += steps[i]
                     }
                     await this._updateAPs(-1 * xpCost)
@@ -832,12 +832,12 @@ export default class ActorSheetDsa5 extends ActorSheet {
             case "spell":
                 {
                     let xpCost = 0
-                    for (let i = 0; i <= item.data.data.talentValue.value; i++) {
-                        xpCost += DSA5_Utility._calculateAdvCost(i, item.data.data.StF.value, 0)
+                    for (let i = 0; i <= item.system.talentValue.value; i++) {
+                        xpCost += DSA5_Utility._calculateAdvCost(i, item.system.StF.value, 0)
                     }
-                    const extensions = this.actor.data.items.filter(i => i.type == "spellextension" && item.type == i.data.data.category && item.name == i.data.data.source)
+                    const extensions = this.actor.data.items.filter(i => i.type == "spellextension" && item.type == i.system.category && item.name == i.system.source)
                     if (extensions) {
-                        xpCost += extensions.reduce((a, b) => { return a + b.data.data.APValue.value }, 0)
+                        xpCost += extensions.reduce((a, b) => { return a + b.system.APValue.value }, 0)
                         itemsToDelete.push(...extensions.map(x => x.id))
                     }
                     await this._updateAPs(xpCost * -1)
@@ -885,7 +885,7 @@ export default class ActorSheetDsa5 extends ActorSheet {
             type: "Item",
             sheetTab: this.actor.data.flags["_sheetTab"],
             actorId: this.actor.id,
-            tokenId: this.token ? this.token.data._id : null,
+            tokenId: this.token ? this.token.id : null,
             mod: mod,
             data: item,
             root: tar.getAttribute("root")
@@ -901,7 +901,7 @@ export default class ActorSheetDsa5 extends ActorSheet {
             if (!spell) {
                 ui.notifications.error(game.i18n.localize("DSAError.noSpellForExtension"))
             } else {
-                if (spell.data.data.talentValue.value < item.data.talentValue) {
+                if (spell.system.talentValue.value < item.data.talentValue) {
                     ui.notifications.error(game.i18n.localize("DSAError.talentValueTooLow"))
                     return
                 }
@@ -972,7 +972,7 @@ export default class ActorSheetDsa5 extends ActorSheet {
 
     async _addSkill(item) {
         item = duplicate(item)
-        let res = this.actor.data.items.find(i => i.type == item.type && i.name == item.name && i.data.data.description.value == item.data.description.value);
+        let res = this.actor.data.items.find(i => i.type == item.type && i.name == item.name && i.system.description.value == item.data.description.value);
         if (!res) await this.actor.createEmbeddedDocuments("Item", [item])
     }
 

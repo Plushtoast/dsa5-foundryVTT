@@ -77,7 +77,7 @@ export class ReactToSkillDialog extends DialogReactDSA5 {
         } else {
             const skill = actor.items.find(i => i.name == text && i.type == "skill")
             if (skill) {
-                actor.setupSkill(skill.data, {}, tokenId).then(setupData => {
+                actor.setupSkill(skill, {}, tokenId).then(setupData => {
                     actor.basicTest(setupData)
                 });
             }
@@ -119,7 +119,7 @@ export class ActAttackDialog extends Dialog {
         const traitTypes = ["meleeAttack", "rangeAttack"]
 
         for (let x of actor.items) {
-            if (types.includes(x.type) && x.data.data.worn.value == true) {
+            if (types.includes(x.type) && x.system.worn.value == true) {
                 const preparedItem = x.type == "meleeweapon" ? Actordsa5._prepareMeleeWeapon(x.toObject(), combatskills, actor.data) : Actordsa5._prepareRangeWeapon(x.toObject(), [], combatskills, actor)
                 items.push({
                     name: x.name,
@@ -127,16 +127,16 @@ export class ActAttackDialog extends Dialog {
                     img: x.img,
                     value: preparedItem.attack
                 })
-            } else if (x.type == "trait" && traitTypes.includes(x.data.data.traitType.value)) {
+            } else if (x.type == "trait" && traitTypes.includes(x.system.traitType.value)) {
                 items.push({
                     name: x.name,
                     id: x.name,
                     img: x.img,
-                    value: x.data.data.at.value
+                    value: x.system.at.value
                 })
             }
         }
-        return await renderTemplate('systems/dsa5/templates/dialog/dialog-reaction-attack.html', {dieClass: "die-mu", items, title: "DIALOG.selectAction" })
+        return await renderTemplate('systems/dsa5/templates/dialog/dialog-reaction-attack.html', { dieClass: "die-mu", items, title: "DIALOG.selectAction" })
     }
     callbackResult(text, actor, tokenId) {
         if ("attackWeaponless" == text) {
@@ -205,7 +205,7 @@ export class ReactToAttackDialog extends DialogReactDSA5 {
             name: game.i18n.localize("dodge"),
             id: "dodge",
             img: "systems/dsa5/icons/categories/Dodge.webp",
-            value: actor.data.data.status.dodge.max
+            value: actor.system.status.dodge.max
         }, {
             name: game.i18n.localize("parryWeaponless"),
             id: "parryWeaponless",
@@ -218,7 +218,7 @@ export class ReactToAttackDialog extends DialogReactDSA5 {
             let types = ["meleeweapon"]
 
             for (let x of actor.items) {
-                if (types.includes(x.type) && x.data.data.worn.value == true) {
+                if (types.includes(x.type) && x.system.worn.value == true) {
                     const preparedItem = Actordsa5._prepareMeleeWeapon(x.toObject(), combatskills, actor.data)
                     items.push({
                         name: x.name,
@@ -226,12 +226,12 @@ export class ReactToAttackDialog extends DialogReactDSA5 {
                         img: x.img,
                         value: preparedItem.parry
                     })
-                } else if (x.type == "trait" && Number(x.data.data.pa) > 0) {
+                } else if (x.type == "trait" && Number(x.system.pa) > 0) {
                     items.push({
                         name: x.name,
                         id: x.name,
                         img: x.img,
-                        value: x.data.data.pa
+                        value: x.system.pa
                     })
                 }
             }

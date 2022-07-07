@@ -10,7 +10,7 @@ export default class ChatMessageDSA5Roll extends ChatMessage {
     }
 
     get isDSARoll() {
-        return this.data.flags.data ? this.data.flags.data.isDSARoll : false
+        return this.flags.data ? this.flags.data.isDSARoll : false
     }
 }
 

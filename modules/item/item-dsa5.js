@@ -139,7 +139,7 @@ export default class Itemdsa5 extends Item {
     static buildSpeaker(actor, tokenId) {
         return {
             token: tokenId,
-            actor: actor ? actor.data._id : undefined,
+            actor: actor ? actor.id : undefined,
             scene: canvas.scene ? canvas.scene.id : null,
         }
     }
@@ -176,7 +176,7 @@ export default class Itemdsa5 extends Item {
         const happyTalents = (getProperty(actor, "data.data.happyTalents.value") || "").split(/;|,/).map(x => x.replace(regex, '').trim())
         const result = []
         if (happyTalents.includes(source.name)) {
-            const availableKaP = actor.data.data.status.karmaenergy.value
+            const availableKaP = actor.system.status.karmaenergy.value
             const bonus = getProperty(actor.data, `data.miracle.${bonusAttribute}`) || 0
             if (availableKaP < 4) return []
 
@@ -215,8 +215,8 @@ export default class Itemdsa5 extends Item {
                         }, 0)
                     }
 
-                    skMod.push(target.actor.data.data.status.soulpower.max * -1 - spellResistance)
-                    zkMod.push(target.actor.data.data.status.toughness.max * -1 - spellResistance)
+                    skMod.push(target.actor.system.status.soulpower.max * -1 - spellResistance)
+                    zkMod.push(target.actor.system.status.toughness.max * -1 - spellResistance)
                 }
             })
         }
@@ -232,7 +232,7 @@ export default class Itemdsa5 extends Item {
         let regex = new RegExp(game.i18n.localize("CHARAbbrev.GS"), "gi")
         for (let mod of effect.split(/,|;/).map((x) => x.trim())) {
             let vals = mod.replace(/(\s+)/g, " ").trim().split(" ")
-            vals[0] = vals[0].replace(regex, actor.data.data.status.speed.max)
+            vals[0] = vals[0].replace(regex, actor.system.status.speed.max)
             if (vals.length == 2) {
                 if (!isNaN(vals[0]) ||
                     /(=)?[+-]\d([+-]\d)?/.test(vals[0]) ||
@@ -300,7 +300,7 @@ export default class Itemdsa5 extends Item {
             toSearch = toSearch.map((x) => x.toLowerCase())
             searchFilter = (x, toSearch) => {
                 return (
-                    x.data.data.list.value
+                    x.system.list.value
                     .split(/;|,/)
                     .map((x) => x.trim().toLowerCase())
                     .filter((y) => toSearch.includes(y.replace(/ \([a-zA-Z äüöÄÖÜ]*\)/, ""))).length > 0
@@ -314,8 +314,8 @@ export default class Itemdsa5 extends Item {
         const combatSpecAbs = actor.items.filter((x) => {
             return (
                 x.type == "specialability" &&
-                categories.includes(x.data.data.category.value) &&
-                x.data.data.effect.value != "" &&
+                categories.includes(x.system.category.value) &&
+                x.system.effect.value != "" &&
                 searchFilter(x, toSearch)
             )
         })
@@ -328,22 +328,22 @@ export default class Itemdsa5 extends Item {
 
         if (mode == "attack") {
             for (let com of combatSpecAbs) {
-                const effects = Itemdsa5.parseEffect(com.data.data.effect.value, actor)
+                const effects = Itemdsa5.parseEffect(com.system.effect.value, actor)
                 const atbonus = effects[at] || 0
                 const tpbonus = effects[tp] || 0
                 const dmmalus = effects[dm] || 0
                 if (atbonus != 0 || tpbonus != 0 || dmmalus != 0 || com.data.effects.size > 0) {
-                    const subCategory = game.i18n.localize(DSA5.combatSkillSubCategories[com.data.data.category.sub])
+                    const subCategory = game.i18n.localize(DSA5.combatSkillSubCategories[com.system.category.sub])
                     combatskills.push({
                         name: com.name,
                         atbonus,
                         tpbonus,
                         dmmalus,
                         label: `${at}: ${atbonus}, ${tp}: ${tpbonus}, ${dm}: ${dmmalus}`,
-                        steps: com.data.data.step.value,
+                        steps: com.system.step.value,
                         category: {
-                            id: com.data.data.category.sub,
-                            css: `ab_${com.data.data.category.sub}`,
+                            id: com.system.category.sub,
+                            css: `ab_${com.system.category.sub}`,
                             name: subCategory,
                         },
                         id: com.id,
@@ -353,20 +353,20 @@ export default class Itemdsa5 extends Item {
             }
         } else {
             for (let com of combatSpecAbs) {
-                const effects = Itemdsa5.parseEffect(com.data.data.effect.value, actor)
+                const effects = Itemdsa5.parseEffect(com.system.effect.value, actor)
                 const pabonus = effects[pa] || 0
                 if (pabonus != 0) {
-                    const subCategory = game.i18n.localize(DSA5.combatSkillSubCategories[com.data.data.category.sub])
+                    const subCategory = game.i18n.localize(DSA5.combatSkillSubCategories[com.system.category.sub])
                     combatskills.push({
                         name: com.name,
                         pabonus,
                         tpbonus: 0,
                         dmmalus: 0,
                         label: `${pa}: ${pabonus}`,
-                        steps: com.data.data.step.value,
+                        steps: com.system.step.value,
                         category: {
-                            id: com.data.data.category.sub,
-                            css: `ab_${com.data.data.category.sub}`,
+                            id: com.system.category.sub,
+                            css: `ab_${com.system.category.sub}`,
                             name: subCategory,
                         },
                         id: com.id,
@@ -383,7 +383,7 @@ export default class Itemdsa5 extends Item {
 
         const combatskill = actor.items.find((x) => x.type == "combatskill" && x.name == source.data.combatskill.value)
 
-        for (let ef of combatskill.data.effects) {
+        for (let ef of combatskill.effects) {
             for (let change of ef.data.changes) {
                 switch (change.key) {
                     case "data.rangeStats.defenseMalus":
@@ -428,7 +428,7 @@ export default class Itemdsa5 extends Item {
             })
         }
 
-        const defenseMalus = Number(actor.data.data.rangeStats.defenseMalus) * -1
+        const defenseMalus = Number(actor.system.rangeStats.defenseMalus) * -1
         if (defenseMalus != 0) {
             situationalModifiers.push({
                 name: `${game.i18n.localize("statuseffects")} - ${game.i18n.localize("MODS.defenseMalus")}`,
@@ -467,11 +467,11 @@ export default class Itemdsa5 extends Item {
                 if (target.actor) {
                     const defWeapon = target.actor.items.filter((x) => {
                         return (
-                            (x.data.type == "meleeweapon" && x.data.data.worn.value) ||
-                            (x.data.type == "trait" && x.data.data.traitType.value == "meleeAttack" && x.data.data.pa)
+                            (x.data.type == "meleeweapon" && x.system.worn.value) ||
+                            (x.data.type == "trait" && x.system.traitType.value == "meleeAttack" && x.system.pa)
                         )
                     })
-                    if (defWeapon.length > 0) targetWeaponSize = defWeapon[0].data.data.reach.value
+                    if (defWeapon.length > 0) targetWeaponSize = defWeapon[0].system.reach.value
 
                     CreatureType.addCreatureTypeModifiers(target.actor.data, source, situationalModifiers, actor)
                 }
@@ -479,7 +479,7 @@ export default class Itemdsa5 extends Item {
         }
         this.getCombatSkillModifier(actor, source, situationalModifiers)
 
-        const defenseMalus = Number(actor.data.data.meleeStats.defenseMalus) * -1
+        const defenseMalus = Number(actor.system.meleeStats.defenseMalus) * -1
         if (defenseMalus != 0) {
             situationalModifiers.push({
                 name: `${game.i18n.localize("statuseffects")} - ${game.i18n.localize("MODS.defenseMalus")}`,
@@ -532,7 +532,7 @@ export default class Itemdsa5 extends Item {
 
     static checkEquality(item, item2) {
         return (
-            item2.type == item.type && item.name == item2.name && item.data.description.value == item2.data.data.description.value
+            item2.type == item.type && item.name == item2.name && item.data.description.value == item2.system.description.value
         )
     }
 
@@ -818,7 +818,7 @@ class SpellItemDSA5 extends Itemdsa5 {
         const keys = ["FP", "step", "QL", "TPM", "FW", cost]
         for (const k of keys) {
             const type = k == "step" ? "" : k
-            const modifiers = getProperty(actor.data.data.skillModifiers, `feature.${k}`)
+            const modifiers = getProperty(actor.system.skillModifiers, `feature.${k}`)
             res.push(
                 ...modifiers
                 .filter((x) => features.includes(x.target))
@@ -831,7 +831,7 @@ class SpellItemDSA5 extends Itemdsa5 {
                 })
             )
         }
-        const conditional = getProperty(actor.data.data.skillModifiers, `conditional.${cost}`)
+        const conditional = getProperty(actor.system.skillModifiers, `conditional.${cost}`)
         res.push(...conditional.map(f => {
             return {
                 name: f.target,
@@ -849,7 +849,7 @@ class SpellItemDSA5 extends Itemdsa5 {
         ) {
             const distributions = source.data.distribution.value.split(",").map((x) => x.trim().toLowerCase())
             const regx = new RegExp(`(${game.i18n.localize("tradition")}|\\\)|\\\()`, "g")
-            const traditions = actor.data.data.tradition.magical
+            const traditions = actor.system.tradition.magical
                 .replace(regx, "")
                 .split(",")
                 .map((x) => x.trim().toLowerCase())
@@ -892,7 +892,7 @@ class SpellItemDSA5 extends Itemdsa5 {
             })
         }
         situationalModifiers.push(...actor.getSkillModifier(source.name, source.type))
-        for (const thing of actor.data.data.skillModifiers.global) {
+        for (const thing of actor.system.skillModifiers.global) {
             situationalModifiers.push({ name: thing.source, value: thing.value })
         }
 
@@ -966,10 +966,10 @@ class SpellItemDSA5 extends Itemdsa5 {
 
     static prepareExtensions(actor, spell) {
         return actor.items
-            .filter((x) => x.type == "spellextension" && x.data.data.source == spell.name && x.data.data.category == spell.type)
+            .filter((x) => x.type == "spellextension" && x.system.source == spell.name && x.system.category == spell.type)
             .map((x) => {
                 x.shortName = x.name.split(" - ").length > 1 ? x.name.split(" - ")[1] : x.name
-                x.descr = $(x.data.data.description.value).text()
+                x.descr = $(x.system.description.value).text()
                 return x
             })
     }
@@ -1067,8 +1067,8 @@ class ConsumableItemDSA extends Itemdsa5 {
         return (
             item2.type == item.type &&
             item.name == item2.name &&
-            item.data.description.value == item2.data.data.description.value &&
-            item.data.QL == item2.data.data.QL
+            item.data.description.value == item2.system.description.value &&
+            item.data.QL == item2.system.QL
         )
     }
 
@@ -1077,21 +1077,21 @@ class ConsumableItemDSA extends Itemdsa5 {
 
         if (!item.isOwned) return
 
-        let charges = (item.data.data.quantity.value - 1) * item.data.data.maxCharges + item.data.data.charges
+        let charges = (item.system.quantity.value - 1) * item.system.maxCharges + item.system.charges
         if (charges <= 0) {
             ui.notifications.error(game.i18n.localize("DSAError.NotEnoughCharges"))
             return
         }
 
-        let newCharges = item.data.data.charges <= 1 ? item.data.data.maxCharges : item.data.data.charges - 1
-        let newQuantity = item.data.data.charges <= 1 ? item.data.data.quantity.value - 1 : item.data.data.quantity.value
+        let newCharges = item.system.charges <= 1 ? item.system.maxCharges : item.system.charges - 1
+        let newQuantity = item.system.charges <= 1 ? item.system.quantity.value - 1 : item.system.quantity.value
 
-        let effect = DSA5_Utility.replaceDies(item.data.data.QLList.split("\n")[item.data.data.QL - 1], false)
-        let msg = `<div><b>${title}</b></div><div>${item.data.data.description.value}</div><div><b>${game.i18n.localize(
+        let effect = DSA5_Utility.replaceDies(item.system.QLList.split("\n")[item.system.QL - 1], false)
+        let msg = `<div><b>${title}</b></div><div>${item.system.description.value}</div><div><b>${game.i18n.localize(
             "effect"
         )}</b>: ${effect}</div>`
         if (newQuantity == 0) {
-            await item.actor.deleteEmbeddedDocuments("Item", [item.data._id])
+            await item.actor.deleteEmbeddedDocuments("Item", [item.id])
         } else {
             await item.update({
                 "data.quantity.value": newQuantity,
@@ -1106,7 +1106,7 @@ class ConsumableItemDSA extends Itemdsa5 {
         let effects = source.data.effects.toObject()
         if (effects.length > 0) {
             const { msg, resistRolls, effectNames } = await DSAActiveEffectConfig.applyAdvancedFunction(source.actor, effects, source, {
-                qualityStep: source.data.data.QL,
+                qualityStep: source.system.QL,
             }, source.actor)
             const infoMsg = `${game.i18n.format("ActiveEffects.appliedEffect", {
                 target: source.actor.name,
@@ -1248,7 +1248,7 @@ class MeleeweaponDSA5 extends Itemdsa5 {
         } else if (data.mode == "parry") {
             this.prepareMeleeParry(situationalModifiers, actor, data, source, combatskills, wrongHandDisabled)
         }
-        this.attackStatEffect(situationalModifiers, Number(actor.data.data.meleeStats[data.mode]))
+        this.attackStatEffect(situationalModifiers, Number(actor.system.meleeStats[data.mode]))
 
         if (["attack", "parry"].includes(data.mode)) situationalModifiers.push(...MeleeweaponDSA5.getMiracleModifiers(actor, { name: source.data.combatskill.value }, "", data.mode))
     }
@@ -1444,14 +1444,14 @@ class RangeweaponItemDSA5 extends Itemdsa5 {
             }
             situationalModifiers.push(...RangeweaponItemDSA5.getMiracleModifiers(actor, { name: source.data.combatskill.value }, "", data.mode))
         }
-        this.attackStatEffect(situationalModifiers, Number(actor.data.data.rangeStats[data.mode]))
+        this.attackStatEffect(situationalModifiers, Number(actor.system.rangeStats[data.mode]))
     }
 
     static async checkAmmunitionState(item, testData, actor, mode) {
         let hasAmmo = true
         if (actor.data.type != "creature" && mode != "damage") {
             //TODO this has to go
-            let itemData = item.data.data ? item.data.data : item.data
+            let itemData = item.system ? item.system : item.data
             if (itemData.ammunitiongroup.value == "infinite") {
                 //Dont count ammo
             } else if (itemData.ammunitiongroup.value == "-") {
@@ -1560,7 +1560,7 @@ class SkillItemDSA5 extends Itemdsa5 {
             ...SkillItemDSA5.getMiracleModifiers(actor, source, "FW", "skill")
         )
 
-        for (const thing of actor.data.data.skillModifiers.global) {
+        for (const thing of actor.system.skillModifiers.global) {
             situationalModifiers.push({ name: thing.source, value: thing.value })
         }
     }
@@ -1577,11 +1577,12 @@ class SkillItemDSA5 extends Itemdsa5 {
             },
         }
 
+        console.log(skill)
         let data = {
             rollMode: options.rollMode,
             difficultyLabels: DSA5.skillDifficultyLabels,
             modifier: options.modifier || 0,
-            characteristics: [1, 2, 3].map((x) => skill.data[`characteristic${x}`].value),
+            characteristics: [1, 2, 3].map((x) => skill.system[`characteristic${x}`].value),
             situationalModifiers: actor ? DSA5StatusEffects.getRollModifiers(actor, skill) : []
         }
 
@@ -1696,7 +1697,7 @@ class TraitItemDSA5 extends Itemdsa5 {
 
         this.attackStatEffect(
             situationalModifiers,
-            Number(actor.data.data[traitType == "meleeAttack" ? "meleeStats" : "rangeStats"][data.mode])
+            Number(actor.system[traitType == "meleeAttack" ? "meleeStats" : "rangeStats"][data.mode])
         )
     }
 

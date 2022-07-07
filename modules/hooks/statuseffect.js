@@ -101,7 +101,7 @@ export default function() {
     const isMerchant = (actor) => {
         if (!actor) return false
 
-        return ["merchant", "loot"].includes(getProperty(actor.data.data, "merchant.merchantType"))
+        return ["merchant", "loot"].includes(getProperty(actor.system, "merchant.merchantType"))
     }
 
     Token.prototype._onClickLeft2 = function(event) {

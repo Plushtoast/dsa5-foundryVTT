@@ -144,7 +144,7 @@ export default class DSA5_Utility {
         if (group)
             return game.settings.get("dsa5", "groupschips").split("/").map(x => Number(x))[0] > 0
 
-        return actor.data.data.status.fatePoints.value > 0
+        return actor.system.status.fatePoints.value > 0
     }
 
     static _calculateAdvCost(currentAdvances, type, modifier = 1) {
@@ -262,7 +262,6 @@ export default class DSA5_Utility {
                 regex: new RegExp(`(${keywords}) (${effects.join('|')})`, 'gi')
             }
         }
-
         return content.replace(DSA5.statusRegex.regex, function(str) {
             let parts = str.split(" ")
             let elem = parts.shift()

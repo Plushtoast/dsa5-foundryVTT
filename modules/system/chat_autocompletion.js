@@ -92,7 +92,7 @@ export default class DSA5ChatAutoCompletion {
             let types = ["meleeweapon", "rangeweapon"]
             let traitTypes = ["meleeAttack", "rangeAttack"]
             let result = actor.data.items.filter(x => {
-                    return ((types.includes(x.type) && x.data.data.worn.value == true) || (x.type == "trait" && traitTypes.includes(x.data.data.traitType.value))) &&
+                    return ((types.includes(x.type) && x.system.worn.value == true) || (x.type == "trait" && traitTypes.includes(x.system.traitType.value))) &&
                         x.name.toLowerCase().trim().indexOf(search) != -1
                 }).slice(0, 5).map(x => { return { name: x.name, type: "item" } })
                 .concat([{ name: this.constants.attackWeaponless, type: "item" }].filter(x => x.name.toLowerCase().trim().indexOf(search) != -1))
@@ -105,7 +105,7 @@ export default class DSA5ChatAutoCompletion {
         const { actor, tokenId } = DSA5ChatAutoCompletion._getActor()
         if (actor) {
             let types = ["meleeweapon"]
-            let result = actor.data.items.filter(x => { return types.includes(x.type) && x.name.toLowerCase().trim().indexOf(search) != -1 && x.data.data.worn.value == true }).slice(0, 5).map(x => { return { name: x.name, type: "item" } })
+            let result = actor.data.items.filter(x => { return types.includes(x.type) && x.name.toLowerCase().trim().indexOf(search) != -1 && x.system.worn.value == true }).slice(0, 5).map(x => { return { name: x.name, type: "item" } })
                 .concat([{ name: this.constants.dodge, type: "item" }, { name: this.constants.parryWeaponless, type: "item" }].filter(x => x.name.toLowerCase().trim().indexOf(search) != -1))
             this._checkEmpty(result)
             this._setList(result, "PA")
@@ -253,7 +253,7 @@ export default class DSA5ChatAutoCompletion {
         switch(target.attr("data-type")){
             case "skill":
                 let skill = actor.items.find(i => i.name == target.text() && i.type == "skill")
-                if (skill) actor.setupSkill(skill.data, {}, tokenId).then(setupData => {actor.basicTest(setupData)});
+                if (skill) actor.setupSkill(skill, {}, tokenId).then(setupData => {actor.basicTest(setupData)});
                 break
             case "attribute":
                 let characteristic = Object.keys(game.dsa5.config.characteristics).find(key => game.i18n.localize(game.dsa5.config.characteristics[key]) == target.text())

@@ -104,7 +104,7 @@ export default class SpeciesWizard extends WizardDSA5 {
         parent.find("button.ok i").toggleClass("fa-check fa-spinner fa-spin")
 
         let apCost = Number(parent.find('.apCost').text())
-        if (!this._validateInput($(this._element)) || !(await this.actor.checkEnoughXP(apCost)) || await this.alreadyAdded(this.actor.data.data.details.species.value, "species")) {
+        if (!this._validateInput($(this._element)) || !(await this.actor.checkEnoughXP(apCost)) || await this.alreadyAdded(this.actor.system.details.species.value, "species")) {
             parent.find("button.ok i").toggleClass("fa-check fa-spinner fa-spin")
             return
         }
@@ -115,7 +115,7 @@ export default class SpeciesWizard extends WizardDSA5 {
             "data.status.soulpower.initial": this.species.data.baseValues.soulpower.value,
             "data.status.toughness.initial": this.species.data.baseValues.toughness.value,
             "data.status.wounds.initial": this.species.data.baseValues.wounds.value,
-            "data.status.wounds.value": this.species.data.baseValues.wounds.value + this.actor.data.data.characteristics["ko"].value * 2
+            "data.status.wounds.value": this.species.data.baseValues.wounds.value + this.actor.system.characteristics["ko"].value * 2
         };
 
 

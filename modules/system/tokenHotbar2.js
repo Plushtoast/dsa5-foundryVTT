@@ -14,47 +14,48 @@ export default class TokenHotbar2 extends Application {
         Hooks.on("controlToken", (elem, controlTaken) => {
             this.updateDSA5Hotbar()
         })
-        
+
         Hooks.on("updateActor", (actor, updates) => {
-            TokenHotbar2.hookUpdate(actor.id)     
+            TokenHotbar2.hookUpdate(actor.id)
         });
-    
+
         Hooks.on("updateToken", (scene, token, updates) => {
             if (token._id == getProperty(game.dsa5.apps.tokenHotbar, "actor.token.id"))
-                this.updateDSA5Hotbar()        
+                this.updateDSA5Hotbar()
         });
-    
+
         Hooks.on("updateOwnedItem", (source, item) => {
-            TokenHotbar2.hookUpdate(source.data.id )       
+            TokenHotbar2.hookUpdate(source.data.id)
         });
-    
+
         Hooks.on("createOwnedItem", (source, item) => {
-            TokenHotbar2.hookUpdate(source.data.id )   
+            TokenHotbar2.hookUpdate(source.data.id)
         });
-    
+
         Hooks.on("deleteOwnedItem", (source, item) => {
-            TokenHotbar2.hookUpdate(source.data.id )   
+            TokenHotbar2.hookUpdate(source.data.id)
         });
-    
+
         Hooks.on("updateItem", (source, item) => {
             const id = getProperty(source, "parent.id")
-            if(id) TokenHotbar2.hookUpdate(id) 
+            if (id) TokenHotbar2.hookUpdate(id)
         });
-    
+
         Hooks.on("createItem", (source, item) => {
+            console.log(source, item)
             const id = getProperty(source, "parent.id")
-            if(id) TokenHotbar2.hookUpdate(id)       
+            if (id) TokenHotbar2.hookUpdate(id)
         });
-    
+
         Hooks.on("deleteItem", (source, item) => {
             const id = getProperty(source, "parent.id")
-            if(id) TokenHotbar2.hookUpdate(id)       
+            if (id) TokenHotbar2.hookUpdate(id)
         });
     }
 
-    static hookUpdate(changeId){
+    static hookUpdate(changeId) {
         if (changeId == getProperty(game.dsa5.apps.tokenHotbar, "actor.id"))
-            game.dsa5.apps.tokenHotbar.updateDSA5Hotbar()   
+            game.dsa5.apps.tokenHotbar.updateDSA5Hotbar()
     }
 
     resetPosition() {
@@ -266,15 +267,15 @@ export default class TokenHotbar2 extends Application {
                 const spellTypes = ["liturgy", "spell"]
 
                 for (const x of actor.items) {
-                    if ((attacktypes.includes(x.type) && x.data.data.worn.value == true) || (x.type == "trait" && traitTypes.includes(x.data.data.traitType.value))) {
+                    if ((attacktypes.includes(x.type) && x.system.worn.value == true) || (x.type == "trait" && traitTypes.includes(x.system.traitType.value))) {
                         items.attacks.push({ name: x.name, id: x.id, icon: x.img, cssClass: "", abbrev: x.name[0] })
                     } else if (spellTypes.includes(x.type)) {
-                        if (x.data.data.effectFormula.value) items.spells.push({ name: x.name, id: x.id, icon: x.img, cssClass: "spell", abbrev: x.name[0] })
+                        if (x.system.effectFormula.value) items.spells.push({ name: x.name, id: x.id, icon: x.img, cssClass: "spell", abbrev: x.name[0] })
                         else moreSpells.push({ name: x.name, id: x.id, icon: x.img, cssClass: "spell", abbrev: x.name[0] })
                     } else if (["skill"].includes(x.type) && this.combatSkills.includes(x.name)) {
-                        items.default.push({ name: `${x.name} (${x.data.data.talentValue.value})`, id: x.id, icon: x.img, cssClass: "skill", abbrev: x.name[0] })
+                        items.default.push({ name: `${x.name} (${x.system.talentValue.value})`, id: x.id, icon: x.img, cssClass: "skill", abbrev: x.name[0] })
                     } else if (x.type == "consumable") {
-                        consumables.push({ name: x.name, id: x.id, icon: x.img, cssClass: "consumable", abbrev: x.data.data.quantity.value })
+                        consumables.push({ name: x.name, id: x.id, icon: x.img, cssClass: "consumable", abbrev: x.system.quantity.value })
                     }
 
                     if (x.getFlag("dsa5", "onUseEffect")) {
@@ -286,9 +287,9 @@ export default class TokenHotbar2 extends Application {
                 let descendingSkills = []
                 for (const x of actor.items) {
                     if (["skill"].includes(x.type) && this.defaultSkills.includes(x.name)) {
-                        items.default.push({ name: `${x.name} (${x.data.data.talentValue.value})`, id: x.id, icon: x.img, cssClass: "skill", abbrev: x.name[0] })
-                    } else if (["skill"].includes(x.type) && !this.defaultSkills.includes(x.name) && x.data.data.talentValue.value > 0) {
-                        descendingSkills.push({ name: `${x.name} (${x.data.data.talentValue.value})`, id: x.id, icon: x.img, cssClass: "skill", abbrev: x.name[0], tw: x.data.data.talentValue.value })
+                        items.default.push({ name: `${x.name} (${x.system.talentValue.value})`, id: x.id, icon: x.img, cssClass: "skill", abbrev: x.name[0] })
+                    } else if (["skill"].includes(x.type) && !this.defaultSkills.includes(x.name) && x.system.talentValue.value > 0) {
+                        descendingSkills.push({ name: `${x.name} (${x.system.talentValue.value})`, id: x.id, icon: x.img, cssClass: "skill", abbrev: x.name[0], tw: x.system.talentValue.value })
                     }
 
                     if (x.getFlag("dsa5", "onUseEffect")) {

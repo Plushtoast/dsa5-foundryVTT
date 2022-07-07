@@ -39,11 +39,11 @@ export class DSA5CombatTracker extends CombatTracker {
                 let remainders = []
                 if (combatant.actor) {
                     for (const x of combatant.actor.items) {
-                        if (x.type == "rangeweapon" && x.data.data.worn.value && x.data.data.reloadTime.progress > 0) {
-                            const wpn = { name: x.name, remaining: Actordsa5.calcLZ(x.data, combatant.actor.data) - x.data.data.reloadTime.progress }
+                        if (x.type == "rangeweapon" && x.system.worn.value && x.system.reloadTime.progress > 0) {
+                            const wpn = { name: x.name, remaining: Actordsa5.calcLZ(x.data, combatant.actor.data) - x.system.reloadTime.progress }
                             if (wpn.remaining > 0) remainders.push(wpn)
-                        } else if (["spell", "liturgy"].includes(x.type) && x.data.data.castingTime.modified > 0) {
-                            const wpn = { name: x.name, remaining: x.data.data.castingTime.modified - x.data.data.castingTime.progress }
+                        } else if (["spell", "liturgy"].includes(x.type) && x.system.castingTime.modified > 0) {
+                            const wpn = { name: x.name, remaining: x.system.castingTime.modified - x.system.castingTime.progress }
                             if (wpn.remaining > 0) remainders.push(wpn)
                         }
                     }
@@ -177,7 +177,7 @@ class RepeatingEffectsHelper {
     static async startOfRoundEffects(turn){
         const regenerationAttributes = ["wounds", "astralenergy", "karmaenergy"]
         for(const attr of regenerationAttributes){
-            for (const ef of turn.actor.data.data.repeatingEffects.startOfRound[attr]){
+            for (const ef of turn.actor.system.repeatingEffects.startOfRound[attr]){
                 const damageRoll = await new Roll(ef.value).evaluate({ async: true })
                 const damage = await damageRoll.render()
                 const type = game.i18n.localize(damageRoll.total > 0 ? "CHATNOTIFICATION.regenerates" : "CHATNOTIFICATION.getsHurt")

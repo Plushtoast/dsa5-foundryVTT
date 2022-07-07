@@ -13,8 +13,8 @@ export default function() {
             button.click(() => { window.open(game.i18n.localize("fshopLink"), "_blank") })
             html.find("#settings-documentation").append(button)
 
-            const systemName = game.system.data.title.split("/")[game.i18n.lang == "de" ? 0 : 1]
-            html.find('#game-details .system').html(`${systemName}<span>${game.system.data.version}</span>`)
+            const systemName = game.system.title.split("/")[game.i18n.lang == "de" ? 0 : 1]
+            html.find('#game-details .system').html(`${systemName}<span>${game.system.version}</span>`)
         }
     })
 
@@ -25,10 +25,10 @@ export default function() {
 
         html.find('li[data-pack="dsa5.money"]').hide()
         const toRemove = game.dsa5.config.localizedCompendiums[`${game.i18n.lang == "de" ? "en" : "de"}`]
-        const packs = game.packs.filter(p => toRemove.includes(`${p.metadata.package}.${p.metadata.name}`))
+        const packs = game.packs.filter(p => toRemove.includes(`${p.metadata.packageName}.${p.metadata.name}`))
 
         for (let pack of packs) {
-            let name = `${pack.metadata.package}.${pack.metadata.name}`
+            let name = `${pack.metadata.packageName}.${pack.metadata.name}`
             game.packs.delete(name)
             html.find(`li[data-pack="${name}"]`).hide()
         }

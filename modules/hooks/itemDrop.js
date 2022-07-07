@@ -48,12 +48,12 @@ export const dropToGround = async(sourceActor, item, data, amount) => {
         await cls.create(td, { parent: canvas.scene });
 
         if (sourceActor) {
-            const newCount = item.data.data.quantity.value - amount
+            const newCount = item.system.quantity.value - amount
             if (newCount <= 0) {
-                await sourceActor.deleteEmbeddedDocuments("Item", [data.data._id])
+                await sourceActor.deleteEmbeddedDocuments("Item", [data.id])
             } else {
                 await sourceActor.updateEmbeddedDocuments("Item", [{
-                    _id: data.data._id,
+                    _id: data.id,
                     "data.quantity.value": newCount
                 }])
             }
@@ -83,7 +83,7 @@ export const connectHook = () => {
             if (data.uuid) {
                 item = await fromUuid(data.uuid)
                 if (item.parent) sourceActor = item.parent
-                if (data.amount) item.data.data.quantity.value = Number(data.amount)
+                if (data.amount) item.system.quantity.value = Number(data.amount)
             } else if (data.pack) {
                 let dataPack = game.packs.get(data.pack)
                 item = await dataPack.getDocument(data.id)
@@ -91,14 +91,14 @@ export const connectHook = () => {
                 sourceActor = DSA5_Utility.getSpeaker({ actor: data.actorId, token: data.tokenId, scene: canvas.scene.id })
                 if (!sourceActor.isOwner) return ui.notifications.error(game.i18n.localize('DSAError.notOwner'))
 
-                item = sourceActor.items.get(data.data._id)
+                item = sourceActor.items.get(data.id)
             } else {
                 item = game.items.get(data.id)
             }
 
             if (!DSA5.equipmentCategories.includes(item.data.type)) return
 
-            const content = await renderTemplate("systems/dsa5/templates/dialog/dropToGround.html", { name: item.name, count: item.data.data.quantity.value })
+            const content = await renderTemplate("systems/dsa5/templates/dialog/dropToGround.html", { name: item.name, count: item.system.quantity.value })
 
             new DropToGroundDialog({
                 title: data.name,

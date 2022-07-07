@@ -59,17 +59,17 @@ export default class EquipmentDamage {
             return ui.notifications.warn(
                 game.i18n.format("DSAError.notfound", { category: "", name: game.i18n.localize("equipment") })
             )
-        if (item.data.data.structure.max <= 0)
+        if (item.system.structure.max <= 0)
             return ui.notifications.warn(game.i18n.format("DSAError.noBreakingStructure", { name: item.name }))
 
         let breakingResistance = 0
         let category
         if (item.type == "armor") {
-            category = game.i18n.localize(`ARMORSUBCATEGORIES.${item.data.data.subcategory}`)
+            category = game.i18n.localize(`ARMORSUBCATEGORIES.${item.system.subcategory}`)
             breakingResistance =
-                getProperty(item.data, "data.structure.breakPointRating") || DSA5.armorSubcategories[item.data.data.subcategory]
+                getProperty(item.data, "data.structure.breakPointRating") || DSA5.armorSubcategories[item.system.subcategory]
         } else {
-            category = item.data.data.combatskill.value
+            category = item.system.combatskill.value
             breakingResistance =
                 getProperty(item.data, "data.structure.breakPointRating") ||
                 DSA5.weaponStabilities[game.i18n.localize(`LocalizedCTs.${category}`)]
@@ -109,8 +109,8 @@ export default class EquipmentDamage {
     }
 
     static async applyDamageLevelToItem(item, amount) {
-        const damage = Math.ceil(item.data.data.structure.max * 0.25) * amount
-        await item.update({ "data.structure.value": Math.max(0, item.data.data.structure.value - damage) })
+        const damage = Math.ceil(item.system.structure.max * 0.25) * amount
+        await item.update({ "data.structure.value": Math.max(0, item.system.structure.value - damage) })
     }
 
     static async resolveBreakingTest(item, threshold, category) {

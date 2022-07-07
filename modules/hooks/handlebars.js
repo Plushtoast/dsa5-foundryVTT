@@ -18,6 +18,7 @@ export default function() {
         replaceConditions: DSA5_Utility.replaceConditions,
         floor: (a) => Math.floor(Number(a)),
         hasElem: (a, b) => a.includes(b),
+        enrich: (content, owner) => TextEditor.enrichHTML(content, { secrets: owner, documents: true, async: false }),
         grouped_each: (every, context, options) => {
             let out = "",
                 subcontext = [],
@@ -34,6 +35,6 @@ export default function() {
             }
             return out;
         },
-        plantify: (a) => { return game.i18n.localize(`PLANT.avLevels.${a || 0}`)}
+        plantify: (a) => { return game.i18n.localize(`PLANT.avLevels.${a || 0}`) }
     })
 }

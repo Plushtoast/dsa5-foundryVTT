@@ -26,7 +26,7 @@ export async function itemFromDrop(dragData, actorId) {
     let selfTarget = dragData.actorId && dragData.actorId == actorId
     if (dragData.uuid) {
         item = await fromUuid(dragData.uuid)
-        if (dragData.amount) item.data.data.quantity.value = Number(dragData.amount)
+        if (dragData.amount) item.system.quantity.value = Number(dragData.amount)
         typeClass = item.data.type
     } else if (dragData.id && dragData.pack) {
         item = await DSA5_Utility.findItembyIdAndPack(dragData.id, dragData.pack);

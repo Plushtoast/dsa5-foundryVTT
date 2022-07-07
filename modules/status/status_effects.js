@@ -213,7 +213,7 @@ export default class DSA5StatusEffects {
     }
 
     static getRollModifiers(actor, item, options = {}) {
-        actor = actor.data.data ? actor.data : actor
+        //actor = actor.system ? actor.data : actor
         return actor.effects.filter(x => !x.disabled).map(ef => {
             const effect = duplicate(ef)
             let effectClass = game.dsa5.config.statusEffectClasses[getProperty(effect, "flags.core.statusId")] || DSA5StatusEffects
@@ -253,7 +253,7 @@ class RaptureEffect extends DSA5StatusEffects {
         const regex = new RegExp(`${game.i18n.localize('combatskill')} `, 'gi')
         const happyTalents = actor.data.happyTalents.value.split(/;|,/).map(x => x.replace(regex, '').trim())
         if ((happyTalents.includes(item.name) && ["skill", "combatskill"].includes(item.type)) ||
-            (["rangeweapon", "meleeweapon"].includes(item.type) && happyTalents.includes(item.data.data.combatskill.value)) || ["ceremony", "liturgy"].includes(item.type)) {
+            (["rangeweapon", "meleeweapon"].includes(item.type) && happyTalents.includes(item.system.combatskill.value)) || ["ceremony", "liturgy"].includes(item.type)) {
             return effect.flags.dsa5.value - 1
         }
         if (["ritual", "spell", "skill", "combatskill"].includes(item.type))
@@ -294,7 +294,7 @@ class TranceEffect extends DSA5StatusEffects {
                 const regex = new RegExp(`${game.i18n.localize('combatskill')} `, 'gi')
                 const happyTalents = actor.data.happyTalents.value.split(/;|,/).map(x => x.replace(regex, '').trim())
                 if ((happyTalents.includes(item.name) && ["skill", "combatskill"].includes(item.type)) ||
-                    (["rangeweapon", "meleeweapon"].includes(item.type) && happyTalents.includes(item.data.data.combatskill.value)) || ["ceremony", "liturgy"].includes(item.type)) {
+                    (["rangeweapon", "meleeweapon"].includes(item.type) && happyTalents.includes(item.system.combatskill.value)) || ["ceremony", "liturgy"].includes(item.type)) {
                     return -2
                 }
             case 3:

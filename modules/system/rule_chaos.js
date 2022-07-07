@@ -68,7 +68,7 @@ export default class RuleChaos {
         if (!actor) return
 
         const skill = actor.items.find(i => i.name == game.i18n.localize('LocalizedIDs.selfControl') && i.type == "skill");
-        actor.setupSkill(skill.data, {}, data.token).then(async(setupData) => {
+        actor.setupSkill(skill, {}, data.token).then(async(setupData) => {
             const result = await actor.basicTest(setupData)
 
             if (result.result.successLevel < 2) {

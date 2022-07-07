@@ -74,9 +74,9 @@ export default class CultureWizard extends WizardDSA5 {
             return false
         }
         const selectOnlyOne = parent.find('.selectOnlyOne')
-        if(selectOnlyOne.length){
+        if (selectOnlyOne.length) {
             const options = selectOnlyOne.find('.optional:checked')
-            if(options.length != 1){
+            if (options.length != 1) {
                 ui.notifications.error(game.i18n.localize("DSAError.MissingChoices"))
                 WizardDSA5.flashElem(selectOnlyOne)
                 let tabElem = selectOnlyOne.closest('.tab').attr("data-tab")
@@ -92,7 +92,7 @@ export default class CultureWizard extends WizardDSA5 {
         parent.find("button.ok i").toggleClass("fa-check fa-spinner fa-spin")
 
         let apCost = Number(parent.find('.apCost').text())
-        if (!this._validateInput($(this._element)) || !(await this.actor.checkEnoughXP(apCost)) || await this.alreadyAdded(this.actor.data.data.details.culture.value, "culture")) {
+        if (!this._validateInput($(this._element)) || !(await this.actor.checkEnoughXP(apCost)) || await this.alreadyAdded(this.actor.system.details.culture.value, "culture")) {
             parent.find("button.ok i").toggleClass("fa-check fa-spinner fa-spin")
             return
         }

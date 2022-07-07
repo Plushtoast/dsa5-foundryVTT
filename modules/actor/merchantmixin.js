@@ -20,7 +20,7 @@ export const MerchantSheetMixin = (superclass) => class extends superclass {
 
     get template() {
         if (this.merchantSheetActivated()) {
-            switch (getProperty(this.actor.data.data, "merchant.merchantType")) {
+            switch (getProperty(this.actor.system, "merchant.merchantType")) {
                 case "merchant":
                     return "systems/dsa5/templates/actors/merchant/merchant-limited.html";
                 case "loot":
@@ -36,7 +36,7 @@ export const MerchantSheetMixin = (superclass) => class extends superclass {
     }
 
     merchantSheetActivated() {
-        return this.showLimited() || (this.playerViewEnabled() && ["merchant", "loot", "epic"].includes(getProperty(this.actor.data.data, "merchant.merchantType")))
+        return this.showLimited() || (this.playerViewEnabled() && ["merchant", "loot", "epic"].includes(getProperty(this.actor.system, "merchant.merchantType")))
     }
 
     async allowMerchant(ids, allow) {
@@ -82,7 +82,7 @@ export const MerchantSheetMixin = (superclass) => class extends superclass {
         html.find('.item-external-edit').click(ev => {
             ev.preventDefault()
             let itemId = this._getItemId(ev);
-            const item = this.getTradeFriend().items.find(i => i.data._id == itemId)
+            const item = this.getTradeFriend().items.get(itemId)
             item.sheet.render(true);
         });
         html.find('.changeAmountAllItems').mousedown(ev => this.changeAmountAllItems(ev))
@@ -98,7 +98,7 @@ export const MerchantSheetMixin = (superclass) => class extends superclass {
     async toggleTradeLock(ev) {
         const itemId = this._getItemId(ev);
         let item = this.actor.items.get(itemId)
-        this.actor.updateEmbeddedDocuments("Item", [{ _id: item.id, "data.tradeLocked": !item.data.data.tradeLocked }]);
+        this.actor.updateEmbeddedDocuments("Item", [{ _id: item.id, "data.tradeLocked": !item.system.tradeLocked }]);
     }
 
     async setCustomPrice(ev) {
@@ -133,7 +133,7 @@ export const MerchantSheetMixin = (superclass) => class extends superclass {
     filterRule(ev) {
         const filter = ev.currentTarget.dataset.type
         if (DSA5.equipmentTypes[filter]) {
-            return (item) => { return item.type == "equipment" && item.data.data.equipmentType.value == filter }
+            return (item) => { return item.type == "equipment" && item.system.equipmentType.value == filter }
         } else {
             return (item) => { return item.type == filter && DSA5.equipmentCategories.includes(item.type) }
         }
@@ -153,7 +153,7 @@ export const MerchantSheetMixin = (superclass) => class extends superclass {
     }
 
     playerViewEnabled() {
-        return getProperty(this.actor.data.data, "merchant.playerView")
+        return getProperty(this.actor.system, "merchant.playerView")
     }
 
     async buyItem(ev) {
@@ -186,9 +186,9 @@ export const MerchantSheetMixin = (superclass) => class extends superclass {
     }
 
     static transferTokenData(tokenData) {
-        let id = { actor: tokenData.data._id }
+        let id = { actor: tokenData.id }
         if (tokenData.token)
-            id["token"] = tokenData.token.data._id
+            id["token"] = tokenData.token.id
 
         return id
     }
@@ -222,7 +222,7 @@ export const MerchantSheetMixin = (superclass) => class extends superclass {
 
     static async selfDestruction(target) {
         if (this.isTemporaryToken(target)) {
-            const hasItemsLeft = target.items.some(x => DSA5.equipmentCategories.includes(x.type) || (x.type == "money" && x.data.data.quantity.value > 0))
+            const hasItemsLeft = target.items.some(x => DSA5.equipmentCategories.includes(x.type) || (x.type == "money" && x.system.quantity.value > 0))
             console.log(hasItemsLeft)
             if (!hasItemsLeft) {
                 game.socket.emit("system.dsa5", {
@@ -255,7 +255,7 @@ export const MerchantSheetMixin = (superclass) => class extends superclass {
     }
 
     static noNeedToPay(target, source, price) {
-        return price == 0 || getProperty(target.data.data, "merchant.merchantType") == "loot" || getProperty(source.data.data, "merchant.merchantType") == "loot"
+        return price == 0 || getProperty(target.system, "merchant.merchantType") == "loot" || getProperty(source.system, "merchant.merchantType") == "loot"
     }
 
     static async updateSourceTransaction(source, target, sourceItem, price, itemId, amount) {
@@ -312,7 +312,7 @@ export const MerchantSheetMixin = (superclass) => class extends superclass {
     }
 
     async _render(force = false, options = {}) {
-        if (!game.user.isGM && getProperty(this.actor.data.data, "merchant.merchantType") == "loot" && getProperty(this.actor.data.data, "merchant.locked")) {
+        if (!game.user.isGM && getProperty(this.actor.system, "merchant.merchantType") == "loot" && getProperty(this.actor.system, "merchant.locked")) {
             AudioHelper.play({ src: "sounds/lock.wav", loop: false }, false);
             return
         }
@@ -332,7 +332,7 @@ export const MerchantSheetMixin = (superclass) => class extends superclass {
     }
 
     _togglePlayerview(ev) {
-        this.actor.update({ "data.merchant.playerView": !getProperty(this.actor.data.data, "merchant.playerView") })
+        this.actor.update({ "data.merchant.playerView": !getProperty(this.actor.system, "merchant.playerView") })
     }
 
     async randomGoods(ev) {
@@ -432,7 +432,7 @@ export const MerchantSheetMixin = (superclass) => class extends superclass {
 
     async getData(options) {
         const data = await super.getData(options);
-        data["merchantType"] = getProperty(this.actor.data.data, "merchant.merchantType") || "none"
+        data["merchantType"] = getProperty(this.actor.system, "merchant.merchantType") || "none"
         data["merchantTypes"] = {
             none: game.i18n.localize("MERCHANT.typeNone"),
             merchant: game.i18n.localize("MERCHANT.typeMerchant"),
@@ -442,8 +442,8 @@ export const MerchantSheetMixin = (superclass) => class extends superclass {
         data["invName"] = data["merchantTypes"][data["merchantType"]]
         data["players"] = game.users.filter(x => !x.isGM).map(x => {
             x.allowedMerchant = this.actor.testUserPermission(x, "LIMITED", false)
-            x.buyingFactor = getProperty(this.actor.data.data, `merchant.factors.buyingFactor.${x.id}`)
-            x.sellingFactor = getProperty(this.actor.data.data, `merchant.factors.sellingFactor.${x.id}`)
+            x.buyingFactor = getProperty(this.actor.system, `merchant.factors.buyingFactor.${x.id}`)
+            x.sellingFactor = getProperty(this.actor.system, `merchant.factors.sellingFactor.${x.id}`)
             return x
         })
 
@@ -480,7 +480,7 @@ export const MerchantSheetMixin = (superclass) => class extends superclass {
             for (const [key, value] of Object.entries(data.actor.inventory)) {
                 for (const item of value.items) {
                     item.defaultPrice = this.getItemPrice(item)
-                    item.calculatedPrice = Number(parseFloat(`${item.defaultPrice * (getProperty(this.actor.data.data, "merchant.sellingFactor") || 1)}`).toFixed(2)) * (getProperty(this.actor.data.data, `merchant.factors.sellingFactor.${game.user.id}`) || 1)
+                    item.calculatedPrice = Number(parseFloat(`${item.defaultPrice * (getProperty(this.actor.system, "merchant.sellingFactor") || 1)}`).toFixed(2)) * (getProperty(this.actor.system, `merchant.factors.sellingFactor.${game.user.id}`) || 1)
                     item.priceTag = ` / ${item.calculatedPrice}`
                 }
             }
@@ -510,7 +510,7 @@ export const MerchantSheetMixin = (superclass) => class extends superclass {
         let friend = this.getTradeFriend()
         if (friend) {
             let tradeData = friend.prepareItems({ details: [] })
-            let factor = getProperty(this.actor.data.data, "merchant.merchantType") == "loot" ? 1 : (getProperty(this.actor.data.data, "merchant.buyingFactor") || 1) * (getProperty(this.actor.data.data, `merchant.factors.buyingFactor.${game.user.id}`) || 1)
+            let factor = getProperty(this.actor.system, "merchant.merchantType") == "loot" ? 1 : (getProperty(this.actor.system, "merchant.buyingFactor") || 1) * (getProperty(this.actor.system, `merchant.factors.buyingFactor.${game.user.id}`) || 1)
             let inventory = this.prepareSellPrices(tradeData.inventory, factor)
             if (inventory["misc"].items.length == 0) inventory["misc"].show = false
 

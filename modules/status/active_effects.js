@@ -87,7 +87,7 @@ export default class DSAActiveEffectConfig extends ActiveEffectConfig {
                     "meleeweapon",
                     "rangeweapon",
                 ].includes(itemType) ||
-                (["specialability"].includes(itemType) && getProperty(this.object, "parent.data.data.category.value") == "Combat"),
+                (["specialability"].includes(itemType) && getProperty(this.object, "parent.system.category.value") == "Combat"),
             hasDamageTransformation: ["ammunition"].includes(itemType),
         };
         if (effectConfigs.hasDamageTransformation) {
@@ -180,7 +180,7 @@ export default class DSAActiveEffectConfig extends ActiveEffectConfig {
                         mod: `${Roll.safeEval(mod.replace(/q(l|s)/i, qs))}`.replace("step", specStep) || 0,
                         effect: ef,
                         target: actor,
-                        token: actor.token ? actor.token.data._id : undefined
+                        token: actor.token ? actor.token.id : undefined
                     });
                 } else {
                     effectApplied = true;
@@ -242,7 +242,7 @@ export default class DSAActiveEffectConfig extends ActiveEffectConfig {
         const actor = DSA5_Utility.getSpeaker(target)
         if (actor) {
             const skill = actor.items.find((x) => x.type == "skill" && x.name == data.skill);
-            actor.setupSkill(skill.data, { modifier: data.mod }, data.token).then(async(setupData) => {
+            actor.setupSkill(skill, { modifier: data.mod }, data.token).then(async(setupData) => {
                 setupData.testData.opposable = false;
                 const res = await actor.basicTest(setupData);
                 const availableQs = res.result.qualityStep || 0;
@@ -309,7 +309,7 @@ export default class DSAActiveEffectConfig extends ActiveEffectConfig {
                     mode,
                     id,
                     actors: actors.map((x) => {
-                        return { token: x.token ? x.token.data._id : undefined, actor: x.data._id, scene: canvas.scene.id };
+                        return { token: x.token ? x.token.id : undefined, actor: x.id, scene: canvas.scene.id };
                     }),
                 },
             });

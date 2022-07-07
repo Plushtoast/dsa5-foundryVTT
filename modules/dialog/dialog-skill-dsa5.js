@@ -68,7 +68,7 @@ export default class DSA5SkillDialog extends DialogShared {
 
         const routineAllowed = true
         for (let i = 0; i < 3; i++) {
-            if (actor.data.data.characteristics[data[`characteristics${i}`]].max * data[`ch${i}`].max < 13) {
+            if (actor.system.characteristics[data[`characteristics${i}`]].max * data[`ch${i}`].max < 13) {
                 routineAllowed = false
                 break
             }

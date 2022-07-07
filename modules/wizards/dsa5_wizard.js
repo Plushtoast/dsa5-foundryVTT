@@ -41,7 +41,7 @@ export default class WizardDSA5 extends Application {
                 if (this.attributes.includes(parsed.name)) {
                     let cost = 0
 
-                    for (let i = this.actor.data.data.characteristics[game.dsa5.config.knownShortcuts[parsed.name.toLowerCase()][1]].value + 1; i < parsed.step + 1; i++) {
+                    for (let i = this.actor.system.characteristics[game.dsa5.config.knownShortcuts[parsed.name.toLowerCase()][1]].value + 1; i < parsed.step + 1; i++) {
                         cost += DSA5.advancementCosts.E[i]
                     }
                     item = {
@@ -213,7 +213,7 @@ export default class WizardDSA5 extends Application {
         html.find('button.cancel').click(() => { this.close() })
         html.find('.show-item').click(ev => {
             let itemId = $(ev.currentTarget).attr("data-id")
-            const item = this.items.find(i => i.data._id == itemId)
+            const item = this.items.find(i => i.id == itemId)
             item.sheet.render(true)
         })
 

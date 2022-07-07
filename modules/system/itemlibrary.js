@@ -37,7 +37,7 @@ class SearchDocument {
             data: $("<div>").html(data).text(),
             id: item.id || item._id,
             visible: item.visible ? item.visible : true,
-            compendium: item.compendium ? item.compendium.metadata.package : (pack.package || ""),
+            compendium: item.compendium ? item.compendium.metadata.packageName : (pack.package || ""),
             pack: item.pack || (pack.package ? `${pack.package}.${pack.name}` : undefined),
             img: item.img
         }
@@ -101,7 +101,7 @@ class AdvancedSearchDocument extends SearchDocument {
         for (let attr of attrs) {
             this[attr.attr] = attr.attr.split(".").reduce((prev, cure) => {
                 return prev[cure] === undefined ? {} : prev[cure]
-            }, item.data.data)
+            }, item.system)
         }
     }
 }
