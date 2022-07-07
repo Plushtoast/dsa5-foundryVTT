@@ -87,6 +87,6 @@ export default function() {
         }
 
         obfuscateName(actor, update)
-        token.data.update(update)
+        token.updateSource(update)
     })
 }

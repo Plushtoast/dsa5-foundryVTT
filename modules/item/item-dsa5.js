@@ -256,7 +256,7 @@ export default class Itemdsa5 extends Item {
         let isRangeDefense = false
         if (actor.data.flags.oppose) {
             let message = game.messages.get(actor.data.flags.oppose.messageId)
-            const preData = message.data.flags.data.preData
+            const preData = message.flags.data.preData
             isRangeDefense = !(getProperty(preData, "source.type") == "meleeweapon" || getProperty(preData, "source.data.traitType.value") == "meleeAttack")
 
             const regex = / \[(-)?\d{1,}\]/
@@ -275,7 +275,7 @@ export default class Itemdsa5 extends Item {
                     })
                 }
             }
-            if (message.data.flags.data.postData.halfDefense) {
+            if (message.flags.data.postData.halfDefense) {
                 situationalModifiers.push({
                     name: `${game.i18n.localize("MODS.defenseMalus")} - ${game.i18n.localize("halfDefenseShort")}`,
                     value: 0.5,

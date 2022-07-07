@@ -59,13 +59,13 @@ export default class DSA5_Utility {
 
     static async allMoneyItems() {
         let items = (await this.getCompendiumEntries("dsa5.money", "money")).map(i => {
-            i.data.quantity.value = 0
+            i.system.quantity.value = 0
             return i
         });
 
         return items.filter(t => Object.values(DSA5.moneyNames)
                 .map(n => n.toLowerCase()).includes(t.name.toLowerCase()))
-            .sort((a, b) => (a.data.price.value > b.data.price.value) ? -1 : 1)
+            .sort((a, b) => (a.system.price.value > b.system.price.value) ? -1 : 1)
     }
 
     static async allSkillsList() {
@@ -73,7 +73,7 @@ export default class DSA5_Utility {
     }
 
     static async allCombatSkillsList(weapontype) {
-        return ((await this.allCombatSkills()).filter(x => x.data.weapontype.value == weapontype) || []).map(x => x.name).sort((a, b) => a.localeCompare(b));
+        return ((await this.allCombatSkills()).filter(x => x.system.weapontype.value == weapontype) || []).map(x => x.name).sort((a, b) => a.localeCompare(b));
     }
 
     static parseAbilityString(ability) {

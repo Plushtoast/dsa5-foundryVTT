@@ -1406,7 +1406,7 @@ export default class DiceDSA5 {
         let input = $(ev.currentTarget),
             messageId = input.parents(".message").attr("data-message-id"),
             message = game.messages.get(messageId),
-            speaker = message.data.speaker,
+            speaker = message.speaker,
             category = input.attr("data-type"),
             name = input.attr("data-name")
 
@@ -1439,7 +1439,7 @@ export default class DiceDSA5 {
             messageId = input.parents(".message").attr("data-message-id"),
             message = game.messages.get(messageId)
 
-        let data = message.data.flags.data
+        let data = message.flags.data
         let newTestData = data.preData
         newTestData.extra.actor = DSA5_Utility.getSpeaker(newTestData.extra.speaker).toObject(false)
         if(newTestData.extra.options.cheat) delete newTestData.extra.options.cheat
@@ -1477,7 +1477,7 @@ export default class DiceDSA5 {
             template: data.template,
             rollMode: data.rollMode,
             title: data.title,
-            speaker: message.data.speaker,
+            speaker: message.speaker,
             user: message.user.id,
         }
 
@@ -1492,7 +1492,7 @@ export default class DiceDSA5 {
                 { rerenderMessage: message }
             )
         } else {
-            const speaker = DSA5_Utility.getSpeaker(message.data.speaker)
+            const speaker = DSA5_Utility.getSpeaker(message.speaker)
             speaker[`${data.postData.postFunction}`](
                 { testData: newTestData, cardOptions: chatOptions },
                 { rerenderMessage: message }
@@ -1544,11 +1544,11 @@ export default class DiceDSA5 {
         })
         html.on("click", ".message-delete", (ev) => {
             let message = game.messages.get($(ev.currentTarget).parents(".message").attr("data-message-id"))
-            let targeted = message.data.flags.unopposeData
+            let targeted = message.flags.unopposeData
 
             if (!targeted) return
 
-            let target = canvas.tokens.get(message.data.flags.unopposeData.targetSpeaker.token)
+            let target = canvas.tokens.get(message.flags.unopposeData.targetSpeaker.token)
             OpposedDsa5.clearOpposed(target.actor)
         })
         html.on("click", ".resistEffect", (ev) => DSAActiveEffectConfig.resistEffect(ev))

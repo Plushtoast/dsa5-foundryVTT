@@ -254,7 +254,7 @@ export default class TokenHotbar2 extends Application {
         if (actor) {
 
             let moreSpells = []
-            effects = (await actor.actorEffects()).map(x => { return { name: x.data.label, id: x.id, icon: x.data.icon, cssClass: "effect", abbrev: `${x.data.label[0]} ${x.getFlag("dsa5","value") || ""}`, subfunction: "effect" } })
+            effects = (await actor.actorEffects()).map(x => { return { name: x.label, id: x.id, icon: x.icon, cssClass: "effect", abbrev: `${x.label[0]} ${x.getFlag("dsa5","value") || ""}`, subfunction: "effect" } })
             if (game.combat) {
                 items.attacks.push({
                     name: game.i18n.localize("attackWeaponless"),

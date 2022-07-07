@@ -258,9 +258,9 @@ export default class DSAActiveEffectConfig extends ActiveEffectConfig {
 
     static async applyEffect(id, mode, targets, options = {}) {
         const message = game.messages.get(id);
-        const source = message.data.flags.data.preData.source;
-        const testData = message.data.flags.data.postData;
-        const speaker = message.data.speaker;
+        const source = message.flags.data.preData.source;
+        const testData = message.flags.data.postData;
+        const speaker = message.speaker;
 
         if (["poison", "disease"].includes(source.type)) {
             testData.qualityStep = testData.successLevel > 0 ? 2 : 1;
@@ -268,9 +268,9 @@ export default class DSAActiveEffectConfig extends ActiveEffectConfig {
 
         let attacker = DSA5_Utility.getSpeaker(speaker);
 
-        if (!attacker) attacker = game.actors.get(getProperty(message.data.flags, "data.preData.extra.actor.id"));
+        if (!attacker) attacker = game.actors.get(getProperty(message.flags, "data.preData.extra.actor.id"));
         let sourceActor = attacker;
-        let effects = await this._parseEffectDuration(source, testData, message.data.flags.data.preData, attacker);
+        let effects = await this._parseEffectDuration(source, testData, message.flags.data.preData, attacker);
         if (options.effectIds) effects = effects.filter(x => options.effectIds.includes(x._id))
         let actors = [];
         if (mode == "self") {

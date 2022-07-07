@@ -9,7 +9,7 @@ import RequestRoll from "../system/request-roll.js"
 export default class MastersMenu {
     static registerButtons() {
         game.dsa5.apps.playerMenu = new PlayerMenu()
-        CONFIG.Canvas.layers.dsamenu = { layerClass: DSAMenuLayer, group: "primary" }
+        CONFIG.Canvas.layers.dsamenu = { layerClass: DSAMenuLayer, group: "interface" }
         Hooks.on("getSceneControlButtons", btns => {
             const dasMenuOptions = [{
                     name: "JournalBrowser",
@@ -64,6 +64,7 @@ class DSAMenuLayer extends CanvasLayer {
             zIndex: 666,
         });
     }
+    async _draw({ type = null, dimensions = null, color, alpha, gridColor, gridAlpha } = {}) {}
 }
 
 class GameMasterMenu extends Application {

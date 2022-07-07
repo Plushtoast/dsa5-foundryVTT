@@ -24,7 +24,7 @@ export default class RequestRoll {
 
     static async editGroupCheckRoll(messageId, result, target, type) {
         let message = await game.messages.get(messageId)
-        const data = message.data.flags
+        const data = message.flags
         const isCrit = result.result.successLevel > 1
         const critMultiplier = isCrit ? 2 : 1
         data.botched = data.botched || result.result.successLevel < -1
@@ -152,7 +152,7 @@ export default class RequestRoll {
                     label: game.i18n.localize("ok"),
                     callback: async(dlg) => {
                         const message = game.messages.get(messageID)
-                        const data = message.data.flags
+                        const data = message.flags
                         data.rollOptions.push({
                             type: "skill",
                             modifier: dlg.find('[name="modifier"]').val(),
@@ -175,7 +175,7 @@ export default class RequestRoll {
         const elem = $(ev.currentTarget)
         const index = Number(ev.currentTarget.dataset.index)
         const message = game.messages.get(elem.parents(".message").attr("data-message-id"))
-        const data = message.data.flags
+        const data = message.flags
         data.results.splice(index, 1)
         RequestRoll.rerenderGC(message, data)
     }
@@ -183,7 +183,7 @@ export default class RequestRoll {
     static removeSkillFromGC(ev) {
         const elem = $(ev.currentTarget)
         const message = game.messages.get(elem.parents(".message").attr("data-message-id"))
-        const data = message.data.flags
+        const data = message.flags
         data.rollOptions = data.rollOptions.filter(x => !(x.type == ev.currentTarget.dataset.type && x.target == ev.currentTarget.dataset.name))
         data.results = data.results.filter(x => !(x.type == ev.currentTarget.dataset.type && x.target == ev.currentTarget.dataset.name))
         RequestRoll.rerenderGC(message, data)
@@ -193,7 +193,7 @@ export default class RequestRoll {
         const elem = $(ev.currentTarget)
         const index = Number(ev.currentTarget.dataset.index)
         const message = game.messages.get(elem.parents(".message").attr("data-message-id"))
-        const data = message.data.flags
+        const data = message.flags
         if (index) {
             data.results[index].qs = Number(elem.val())
         } else if (ev.currentTarget.dataset.name) {

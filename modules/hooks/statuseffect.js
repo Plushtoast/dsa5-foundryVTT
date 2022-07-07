@@ -1,34 +1,32 @@
 import DPS from "../system/derepositioningsystem.js";
-import actor from "./actor.js";
 
 export default function() {
     Token.prototype.drawEffects = async function() {
-        this.hud.effects.removeChildren().forEach(c => c.destroy());
-        const tokenEffects = this.data.effects;
+        this.effects.removeChildren().forEach(c => c.destroy());
+        const tokenEffects = this.document.effects;
         const actorEffects = this.actor ? await this.actor.actorEffects() : []
 
         let overlay = {
-            src: this.data.overlayEffect,
+            src: this.document.overlayEffect,
             tint: null
         };
 
         if (tokenEffects.length || actorEffects.length) {
             const promises = [];
             let w = Math.round(canvas.dimensions.size / 2 / 5) * 2;
-            let bg = this.hud.effects.addChild(new PIXI.Graphics()).beginFill(0x000000, 0.40).lineStyle(1.0, 0x000000);
+            let bg = this.effects.addChild(new PIXI.Graphics()).beginFill(0x000000, 0.40).lineStyle(1.0, 0x000000);
             let i = 0;
 
             for (let f of actorEffects) {
-                if (!f.data.icon) continue;
-                const tint = f.data.tint ? colorStringToHex(f.data.tint) : null;
+                if (!f.icon) continue;
+                const tint = f.tint ? colorStringToHex(f.tint) : null;
                 if (f.getFlag("core", "overlay")) {
-                    overlay = { src: f.data.icon, tint };
+                    overlay = { src: f.icon, tint };
                     continue;
                 }
-                promises.push(this._drawEffect(f.data.icon, i, bg, w, tint, getProperty(f, "data.flags.dsa5.value")));
+                promises.push(this._drawEffect(f.icon, i, bg, w, tint, getProperty(f, "flags.dsa5.value")));
                 i++;
             }
-
             for (let f of tokenEffects) {
                 promises.push(this._drawEffect(f, i, bg, w, null));
                 i++;
@@ -40,7 +38,7 @@ export default function() {
 
     Token.prototype._drawEffect = async function(src, i, bg, w, tint, value) {
         let tex = await loadTexture(src);
-        let icon = this.hud.effects.addChild(new PIXI.Sprite(tex));
+        let icon = this.effects.addChild(new PIXI.Sprite(tex));
 
         icon.width = icon.height = w;
         icon.x = Math.floor(i / 5) * w;
@@ -52,16 +50,16 @@ export default function() {
             bg.drawRoundedRect(icon.x + 1, icon.y + 1, w - 2, w - 2, 2);
         } catch {}
 
-        this.hud.effects.addChild(icon);
+        this.effects.addChild(icon);
 
         if (value) {
             let textEffect = game.dsa5.config.effectTextStyle
             let color = await game.settings.get("dsa5", "statusEffectCounterColor")
             textEffect._fill = /^#[0-9A-F]+$/.test(color) ? color : "#000000"
-            let text = this.hud.effects.addChild(new PreciseText(value, textEffect))
+            let text = this.effects.addChild(new PreciseText(value, textEffect))
             text.x = icon.x;
             text.y = icon.y;
-            this.hud.effects.addChild(text);
+            this.effects.addChild(text);
         }
     }
 

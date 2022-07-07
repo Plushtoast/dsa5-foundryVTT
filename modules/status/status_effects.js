@@ -110,7 +110,7 @@ export default class DSA5StatusEffects {
 
     static immuneToEffect(target, effect, silent = true) {
         //TODO add this to effect dropdown
-        const immunities = getProperty(target.data, "data.immunities") || []
+        const immunities = getProperty(target, "system.immunities") || []
         if (immunities.includes(effect.id)) {
             const msg = game.i18n.format("DSAError.immuneTo", { name: target.name, condition: game.i18n.localize(`CONDITION.${effect.id}`) })
             if (ui.notifications && !silent) ui.notifications.warn(msg)

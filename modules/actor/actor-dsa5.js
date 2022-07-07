@@ -1220,14 +1220,14 @@ export default class Actordsa5 extends Actor {
     }
 
     preparePostRollAction(message) {
-        let data = message.data.flags.data;
+        let data = message.flags.data;
         let cardOptions = {
-            flags: { img: message.data.flags.img },
+            flags: { img: message.flags.img },
             rollMode: data.rollMode,
-            speaker: message.data.speaker,
+            speaker: message.speaker,
             template: data.template,
             title: data.title,
-            user: message.data.user,
+            user: message.user,
         };
         if (data.attackerMessage) cardOptions.attackerMessage = data.attackerMessage;
         if (data.defenderMessage) cardOptions.defenderMessage = data.defenderMessage;
@@ -1439,7 +1439,7 @@ export default class Actordsa5 extends Actor {
 
     this.resetTargetAndMessage(data, cardOptions);
 
-    let rollType = message.data.flags.data.preData.source.type;
+    let rollType = message.flags.data.preData.source.type;
     if (["spell", "liturgy", "ceremony", "ritual", "skill"].includes(rollType)) {
       const html = await renderTemplate("systems/dsa5/templates/dialog/fateImprove-dialog.html", {
         testData: newTestData,
@@ -1516,7 +1516,7 @@ export default class Actordsa5 extends Actor {
 
   async useFateOnRoll(message, type, schipsource) {
     if (type == "isTalented" || DSA5_Utility.fateAvailable(this, schipsource == 1)) {
-      let data = message.data.flags.data;
+      let data = message.flags.data;
       let cardOptions = this.preparePostRollAction(message);
       let fateAvailable;
       let schipText;
@@ -1869,7 +1869,7 @@ export default class Actordsa5 extends Actor {
     return isAllowedToSeeEffects
       ? this.effects.filter((x) => {
           return (
-            !x.data.disabled &&
+            !x.disabled &&
             !x.notApplicable &&
             (game.user.isGM || !x.getFlag("dsa5", "hidePlayers")) &&
             !x.getFlag("dsa5", "hideOnToken")
@@ -1892,7 +1892,7 @@ export default class Actordsa5 extends Actor {
         },
       });
     }
-    this.data.update(update);
+    this.updateSource(update);
   }
 
   static _prepareRangeTrait(item) {
