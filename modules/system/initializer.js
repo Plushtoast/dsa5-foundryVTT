@@ -99,6 +99,26 @@ export default class DSA5Initializer extends Dialog {
                 await Itemdsa5.create(itemsToCreate)
                 await Itemdsa5.updateDocuments(itemsToUpdate)
             }
+            if(json.playlists){
+                let head = await this.getFolderForType("Playlist")
+                let itemsToCreate = []
+                let itemsToUpdate = []
+                let playlist = game.packs.get(json.playlists)
+                let entries = (await playlist.getDocuments()).map(x => x.toObject())
+                for(let k of entries){
+                    k.folder = head.id
+                    let existingItem = game.playlists.find(x => x.name == k.name && x.data.folder == head.id)
+                    if (existingItem) {
+                        k._id = existingItem.data._id
+                        itemsToUpdate.push(k)
+                    } else {
+                        itemsToCreate.push(k)
+                    }
+                }
+                
+                await Playlist.create(itemsToCreate)
+                await Playlist.updateDocuments(itemsToUpdate)
+            }
             if (json.scenes) {
                 let head = await this.getFolderForType("Scene")
                 let scene = game.packs.get(json.scenes)

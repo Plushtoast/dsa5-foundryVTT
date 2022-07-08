@@ -176,10 +176,10 @@ export default class BookWizard extends Application {
     }
 
     async loadJournal(name) {
-        this.showJournal(this.journals.find(x => { return x.name == name && x.data.flags.dsa5.parent == this.selectedChapter }))
+        this.showJournal(this.journals.find(x => x.name == name && x.data.flags.dsa5.parent == this.selectedChapter ))
     }
     async loadJournalById(id) {
-        this.showJournal(this.journals.find(x => { return x.id == id }))
+        this.showJournal(this.journals.find(x => x.id == id))
     }
 
     async resaveBreadCrumbs(target) {
@@ -365,7 +365,7 @@ export default class BookWizard extends Application {
                 if (chapter.scenes || chapter.actors || subChapters.length == 0) {
                     return await renderTemplate('systems/dsa5/templates/wizard/adventure/adventure_chapter.html', { chapter, subChapters: this.getSubChapters(), actors: await this.prefillActors(chapter) })
                 } else {
-                    return await this.loadJournal(subChapters[0])
+                    return await this.loadJournal(subChapters[0].name)
                 }
 
             }

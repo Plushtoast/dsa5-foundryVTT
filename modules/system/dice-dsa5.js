@@ -1383,7 +1383,6 @@ export default class DiceDSA5 {
                 chatOptions["content"] = TextEditor.enrichHTML(html, rollData)
 
                 const cummulative = getProperty(rerenderMessage, "data.flags.data.preData.extra.options.cummulative")
-                console.log(preData)
                 if(cummulative){
                     testData.messageId = rerenderMessage.id
                     RequestRoll.editGroupCheckRoll(cummulative, { result: testData }, preData.source.name, preData.source.type)

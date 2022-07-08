@@ -223,7 +223,6 @@ export const MerchantSheetMixin = (superclass) => class extends superclass {
     static async selfDestruction(target) {
         if (this.isTemporaryToken(target)) {
             const hasItemsLeft = target.items.some(x => DSA5.equipmentCategories.includes(x.type) || (x.type == "money" && x.data.data.quantity.value > 0))
-            console.log(hasItemsLeft)
             if (!hasItemsLeft) {
                 game.socket.emit("system.dsa5", {
                     type: "hideDeletedSheet",

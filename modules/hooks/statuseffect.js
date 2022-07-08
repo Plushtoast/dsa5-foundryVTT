@@ -135,7 +135,6 @@ export default function() {
             overrides[newKey] = (overrides[newKey] || "") + value
 
             item.itemOverrides = foundry.utils.expandObject(overrides);
-            console.log(item)
         }
 
         return true
