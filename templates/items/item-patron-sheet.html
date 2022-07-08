@@ -15,17 +15,17 @@
 
             <div class="form-group">
                 <label class="label-text">{{localize "skills"}}</label>
-                <input class="input-text" type="text" name="data.talents" value="{{data.talents}}" data-dtype="String" />
+                <input class="input-text" type="text" name="system.talents" value="{{system.talents}}" data-dtype="String" />
             </div>
             <div class="form-group">
                 <label class="label-text">{{localize "culture"}}</label>
-                <input class="input-text" type="text" name="data.culture" value="{{data.culture}}" data-dtype="String" />
+                <input class="input-text" type="text" name="system.culture" value="{{system.culture}}" data-dtype="String" />
             </div>
 
             <div class="form-group">
                 <label class="label-text">{{localize "Category"}}</label>
-                <select name="data.category" data-dtype="Number">
-                    {{#select data.category}}
+                <select name="system.category" data-dtype="Number">
+                    {{#select system.category}}
                     {{#each patronCategories as |ch char|}}
                     <option value="{{ch.val}}">{{ch.name}}</option>
                     {{/each}}
@@ -34,8 +34,8 @@
             </div>
             <div class="form-group">
                 <label class="label-text">{{localize "PATRON.priority"}}</label>
-                <select name="data.priority" data-dtype="Number">
-                    {{selectOptions priorities selected=data.priority localize=true}}
+                <select name="system.priority" data-dtype="Number">
+                    {{selectOptions priorities selected=system.priority localize=true}}
                 </select>
             </div>
 

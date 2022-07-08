@@ -75,7 +75,7 @@ export default class DSA5StatusEffects {
 
         let existing = this.hasCondition(target, effect.id)
 
-        if (existing && existing.data.flags.dsa5.value == null)
+        if (existing && existing.flags.dsa5.value == null)
             return existing
         else if (existing)
             return await DSA5StatusEffects.updateEffect(target, existing, value, absolute, auto, effect)
@@ -99,7 +99,7 @@ export default class DSA5StatusEffects {
 
         let existing = this.hasCondition(target, effect.id)
 
-        if (existing && existing.data.flags.dsa5.value == null) {
+        if (existing && existing.flags.dsa5.value == null) {
             if (target.token) target = target.token.actor
             const res = await target.deleteEmbeddedDocuments("ActiveEffect", [existing.id])
                 //Hooks.call("deleteActorActiveEffect", target, existing)
@@ -123,7 +123,7 @@ export default class DSA5StatusEffects {
         const effectId = getProperty(effect, "flags.core.statusId")
         if (!effectId) return 0
 
-        const resistances = getProperty(target, "data.resistances.effects") || []
+        const resistances = getProperty(target, "system.resistances.effects") || []
         return resistances.reduce((res, val) => {
             if (val.target == effectId) res += Number(val.value)
             return res
@@ -156,13 +156,13 @@ export default class DSA5StatusEffects {
 
     static async removeEffect(actor, existing, value, absolute, auto) {
         if (auto)
-            existing.data.flags.dsa5.auto = absolute ? value : Math.max(0, existing.data.flags.dsa5.auto - value)
+            existing.flags.dsa5.auto = absolute ? value : Math.max(0, existing.flags.dsa5.auto - value)
         else
-            existing.data.flags.dsa5.manual = absolute ? value : existing.data.flags.dsa5.manual - value
+            existing.flags.dsa5.manual = absolute ? value : existing.flags.dsa5.manual - value
 
-        existing.data.flags.dsa5.value = Math.max(0, Math.min(existing.data.flags.dsa5.max, existing.data.flags.dsa5.manual + existing.data.flags.dsa5.auto))
+        existing.flags.dsa5.value = Math.max(0, Math.min(existing.flags.dsa5.max, existing.flags.dsa5.manual + existing.flags.dsa5.auto))
 
-        if (existing.data.flags.dsa5.auto <= 0 && existing.data.flags.dsa5.manual == 0)
+        if (existing.flags.dsa5.auto <= 0 && existing.flags.dsa5.manual == 0)
             return await actor.deleteEmbeddedDocuments("ActiveEffect", [existing.id])
         else
             return await actor.updateEmbeddedDocuments("ActiveEffect", [existing.data])
@@ -174,26 +174,26 @@ export default class DSA5StatusEffects {
         let delta, newValue
         let update
         if (auto) {
-            newValue = Math.min(existing.data.flags.dsa5.max, absolute ? value : existing.data.flags.dsa5.auto + value)
-            delta = newValue - existing.data.flags.dsa5.auto
-            update = { flags: { dsa5: { auto: newValue, manual: existing.data.flags.dsa5.manual } } }
+            newValue = Math.min(existing.flags.dsa5.max, absolute ? value : existing.flags.dsa5.auto + value)
+            delta = newValue - existing.flags.dsa5.auto
+            update = { flags: { dsa5: { auto: newValue, manual: existing.flags.dsa5.manual } } }
         } else {
-            newValue = absolute ? value : existing.data.flags.dsa5.manual + value
-            delta = newValue - existing.data.flags.dsa5.manual
-            update = { flags: { dsa5: { manual: newValue, auto: existing.data.flags.dsa5.auto } } }
+            newValue = absolute ? value : existing.flags.dsa5.manual + value
+            delta = newValue - existing.flags.dsa5.manual
+            update = { flags: { dsa5: { manual: newValue, auto: existing.flags.dsa5.auto } } }
         }
 
         if (delta == 0)
             return existing
 
-        update.flags.dsa5.value = Math.max(0, Math.min(existing.data.flags.dsa5.max, update.flags.dsa5.manual + update.flags.dsa5.auto))
+        update.flags.dsa5.value = Math.max(0, Math.min(existing.flags.dsa5.max, update.flags.dsa5.manual + update.flags.dsa5.auto))
         if (newEffect.duration) {
             update.duration = newEffect.duration
             update.duration.startTime = game.time.worldTime
         }
 
         await existing.update(update)
-        await actor._dependentEffects(existing.data.flags.core.statusId, existing, delta)
+        await actor._dependentEffects(existing.flags.core.statusId, existing, delta)
         return existing
     }
 
@@ -228,7 +228,7 @@ export default class DSA5StatusEffects {
 
 class EncumberedEffect extends DSA5StatusEffects {
     static ModifierIsSelected(item, options = {}, actor) {
-        const burdenedSkill = item.type == "skill" && item.data.burden.value == "yes"
+        const burdenedSkill = item.type == "skill" && item.system.burden.value == "yes"
         const rangeWeaponEnabled = ["rangeweapon"].includes(item.type) && options.mode != "damage" && game.settings.get("dsa5", "encumbranceForRange")
         const attack = !["skill", "spell", "ritual", "ceremony", "liturgy", "rangeweapon"].includes(item.type) && options.mode != "damage"
         return burdenedSkill || attack || rangeWeaponEnabled
@@ -236,7 +236,7 @@ class EncumberedEffect extends DSA5StatusEffects {
 
     static calculateRollModifier(effect, actor, item, options = {}) {
         if (item.type == "regenerate") return 0
-        return (item.type == "skill" && item.data.burden.value == "no") ? 0 : super.calculateRollModifier(effect, actor, item, options)
+        return (item.type == "skill" && item.system.burden.value == "no") ? 0 : super.calculateRollModifier(effect, actor, item, options)
     }
 }
 
@@ -251,7 +251,7 @@ class ProneEffect extends DSA5StatusEffects {
 class RaptureEffect extends DSA5StatusEffects {
     static calculateRollModifier(effect, actor, item, options = {}) {
         const regex = new RegExp(`${game.i18n.localize('combatskill')} `, 'gi')
-        const happyTalents = actor.data.happyTalents.value.split(/;|,/).map(x => x.replace(regex, '').trim())
+        const happyTalents = actor.system.happyTalents.value.split(/;|,/).map(x => x.replace(regex, '').trim())
         if ((happyTalents.includes(item.name) && ["skill", "combatskill"].includes(item.type)) ||
             (["rangeweapon", "meleeweapon"].includes(item.type) && happyTalents.includes(item.system.combatskill.value)) || ["ceremony", "liturgy"].includes(item.type)) {
             return effect.flags.dsa5.value - 1
@@ -292,7 +292,7 @@ class TranceEffect extends DSA5StatusEffects {
         switch (Number(effect.flags.dsa5.value)) {
             case 2:
                 const regex = new RegExp(`${game.i18n.localize('combatskill')} `, 'gi')
-                const happyTalents = actor.data.happyTalents.value.split(/;|,/).map(x => x.replace(regex, '').trim())
+                const happyTalents = actor.system.happyTalents.value.split(/;|,/).map(x => x.replace(regex, '').trim())
                 if ((happyTalents.includes(item.name) && ["skill", "combatskill"].includes(item.type)) ||
                     (["rangeweapon", "meleeweapon"].includes(item.type) && happyTalents.includes(item.system.combatskill.value)) || ["ceremony", "liturgy"].includes(item.type)) {
                     return -2

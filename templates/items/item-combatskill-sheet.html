@@ -11,29 +11,29 @@
     <section class="content">
 
         <div class="tab description active" data-tab="description">
-            {{#if hasLocalization}} {{{localize (concat "Combatskilldescr." item.name)}}} {{else}} {{editor content=data.description.value target="data.description.value" button=true owner=owner editable=editable}} {{/if}}
+            {{#if hasLocalization}} {{{localize (concat "Combatskilldescr." item.name)}}} {{else}} {{editor (enrich system.description.value owner) target="system.description.value" button=true owner=owner editable=editable}} {{/if}}
         </div>
 
         <div class="tab details" data-tab="details">
 
             <div class="form-group">
                 <label class="label-text">{{localize "StF"}}</label>
-                <select name="data.StF.value" data-dtype="Strings">
-                    {{selectOptions StFs selected=data.StF.value localize=true}}
+                <select name="system.StF.value" data-dtype="Strings">
+                    {{selectOptions StFs selected=system.StF.value localize=true}}
                 </select>
             </div>
 
             <div class="form-group">
                 <label class="label-text">{{localize "guidevalue"}}</label>
-                <select name="data.guidevalue.value" data-dtype="String">
-                    {{selectOptions guidevalues selected=data.guidevalue.value localize=true}}
+                <select name="system.guidevalue.value" data-dtype="String">
+                    {{selectOptions guidevalues selected=system.guidevalue.value localize=true}}
                 </select>
             </div>
 
             <div class="form-group">
                 <label class="label-text">{{localize "weapontype"}}</label>
-                <select name="data.weapontype.value" data-dtype="String">
-                    {{selectOptions weapontypes selected=data.weapontype.value localize=true}}
+                <select name="system.weapontype.value" data-dtype="String">
+                    {{selectOptions weapontypes selected=system.weapontype.value localize=true}}
                 </select>
             </div>
         </div>

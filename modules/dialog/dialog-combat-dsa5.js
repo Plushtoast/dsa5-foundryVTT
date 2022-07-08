@@ -120,17 +120,17 @@ export default class DSA5CombatDialog extends DialogShared {
 
         if (actor) {
             if (["meleeweapon", "rangeweapon"].includes(source.type)) {
-                const combatskill = source.data.combatskill.value
+                const combatskill = source.system.combatskill.value
                 let skill = Actordsa5._calculateCombatSkillValues(
                     actor.items.find((x) => x.type == "combatskill" && x.name == combatskill).toObject(),
-                    actor.data
+                    actor.system
                 )
                 switch (source.type) {
                     case "meleeweapon":
-                        weapon = Actordsa5._prepareMeleeWeapon(source, [skill], actor.data)
+                        weapon = Actordsa5._prepareMeleeWeapon(source, [skill], actor)
                         break
                     case "rangeweapon":
-                        weapon = Actordsa5._prepareRangeWeapon(source, [], [skill], actor.data)
+                        weapon = Actordsa5._prepareRangeWeapon(source, [], [skill], actor)
                         break
                 }
                 if (this.dialogData.mode == "attack") {
@@ -139,12 +139,12 @@ export default class DSA5CombatDialog extends DialogShared {
                     this.dialogData.rollValue = weapon.parry
                 }
             } else if (source.type == "dodge") {
-                this.dialogData.rollValue = source.data.value
+                this.dialogData.rollValue = source.system.value
             } else {
                 if (this.dialogData.mode == "attack") {
-                    this.dialogData.rollValue = Number(source.data.at.value)
+                    this.dialogData.rollValue = Number(source.system.at.value)
                 } else if (this.dialogData.mode == "parry") {
-                    this.dialogData.rollValue = Number(source.data.pa)
+                    this.dialogData.rollValue = Number(source.system.pa)
                 }
             }
         }
@@ -154,7 +154,7 @@ export default class DSA5CombatDialog extends DialogShared {
     prepareFormRecall(html) {
         super.prepareFormRecall(html);
         if (canvas.scene && game.settings.get("dsa5", "sightAutomationEnabled")) {
-            const darkness = canvas.scene.data.darkness;
+            const darkness = canvas.scene.system.darkness;
             const threholds = game.settings
                 .get("dsa5", "sightOptions")
                 .split("|")
@@ -164,18 +164,18 @@ export default class DSA5CombatDialog extends DialogShared {
 
             const actor = DSA5_Utility.getSpeaker(this.dialogData.speaker);
             if (actor) {
-                const darkSightLevel = AdvantageRulesDSA5.vantageStep(actor.data, game.i18n.localize("LocalizedIDs.darksight")) + SpecialabilityRulesDSA5.abilityStep(actor.data, game.i18n.localize("LocalizedIDs.sappeurStyle"));
-                const blindCombat = SpecialabilityRulesDSA5.abilityStep(actor.data, game.i18n.localize("LocalizedIDs.blindFighting"));
+                const darkSightLevel = AdvantageRulesDSA5.vantageStep(actor, game.i18n.localize("LocalizedIDs.darksight")) + SpecialabilityRulesDSA5.abilityStep(actor, game.i18n.localize("LocalizedIDs.sappeurStyle"));
+                const blindCombat = SpecialabilityRulesDSA5.abilityStep(actor, game.i18n.localize("LocalizedIDs.blindFighting"));
                 if (level < 4 && level > 0) {
                     if (darkSightLevel > 1) {
                         level = 0;
                     } else {
                         level = Math.max(0, level - darkSightLevel);
-                        if (SpecialabilityRulesDSA5.hasAbility(actor.data, game.i18n.localize("LocalizedIDs.traditionBoron")))
+                        if (SpecialabilityRulesDSA5.hasAbility(actor, game.i18n.localize("LocalizedIDs.traditionBoron")))
                             level = Math.max(0, level - 1);
                         level = Math.min(
                             4,
-                            level + AdvantageRulesDSA5.vantageStep(actor.data, game.i18n.localize("LocalizedIDs.nightBlind"))
+                            level + AdvantageRulesDSA5.vantageStep(actor, game.i18n.localize("LocalizedIDs.nightBlind"))
                         );
                     }
                 }
@@ -201,9 +201,9 @@ export default class DSA5CombatDialog extends DialogShared {
             value: 10 - advantageousPositionMod - opposingWeaponSize
         }]
         if (mode == "assassinate") {
-            const weaponsize = ["short", "medium", "long"].indexOf(testData.source.data.reach.value)
+            const weaponsize = ["short", "medium", "long"].indexOf(testData.source.system.reach.value)
 
-            const dices = Math.max(1, (new Roll(testData.source.data.damage.value.replace(/[DWw]/g, "d"))).terms.reduce((prev, cur) => {
+            const dices = Math.max(1, (new Roll(testData.source.system.damage.value.replace(/[DWw]/g, "d"))).terms.reduce((prev, cur) => {
                 return prev + (cur.faces ? cur.number : 0)
             }, 0)) - 1
 
@@ -259,11 +259,11 @@ export default class DSA5CombatDialog extends DialogShared {
         if (this.dialogData.mode == "damage") return
 
         const source = this.dialogData.source
-        const isMelee = source.type == "trait" && getProperty(source, "data.traitType.value") || source.type == "meleeweapon"
+        const isMelee = source.type == "trait" && getProperty(source, "system.traitType.value") || source.type == "meleeweapon"
         const testData = { source: this.dialogData.source, extra: { options: {} } }
         const actor = DSA5_Utility.getSpeaker(this.dialogData.speaker)
-        isMelee ? DSA5CombatDialog.resolveMeleeDialog(testData, {}, this.element, actor.data, {}, -3, this.dialogData.mode) :
-            DSA5CombatDialog.resolveRangeDialog(testData, {}, this.element, actor.data, {}, this.dialogData.mode)
+        isMelee ? DSA5CombatDialog.resolveMeleeDialog(testData, {}, this.element, actor, {}, -3, this.dialogData.mode) :
+            DSA5CombatDialog.resolveRangeDialog(testData, {}, this.element, actor, {}, this.dialogData.mode)
 
         this.dialogData.modifier = DiceDSA5._situationalModifiers(testData)
         this.updateRollButton(this.readTargets())
@@ -383,13 +383,13 @@ export default class DSA5CombatDialog extends DialogShared {
         let buttons = DSA5Dialog.getRollButtons(testData, dialogOptions, resolve, reject);
         if (
             testData.source.type == "rangeweapon" ||
-            (testData.source.type == "trait" && testData.source.data.traitType.value == "rangeAttack")
+            (testData.source.type == "trait" && testData.source.system.traitType.value == "rangeAttack")
         ) {
             const LZ =
                 testData.source.type == "trait" ?
-                Number(testData.source.data.reloadTime.value) :
+                Number(testData.source.system.reloadTime.value) :
                 Actordsa5.calcLZ(testData.source, testData.extra.actor)
-            const progress = testData.source.data.reloadTime.progress
+            const progress = testData.source.system.reloadTime.progress
             if (progress < LZ) {
                 mergeObject(buttons, {
                     reloadButton: {
@@ -397,7 +397,7 @@ export default class DSA5CombatDialog extends DialogShared {
                         callback: async() => {
                             const actor = await DSA5_Utility.getSpeaker(testData.extra.speaker)
                             await actor.updateEmbeddedDocuments("Item", [
-                                { _id: testData.source._id, "data.reloadTime.progress": progress + 1 },
+                                { _id: testData.source._id, "system.reloadTime.progress": progress + 1 },
                             ])
                             const infoMsg = game.i18n.format("WEAPON.isReloading", {
                                 actor: testData.extra.actor.name,

@@ -72,10 +72,10 @@ export default class DSA5SoundEffect {
                     `${item.type}.manual.${item.name}.${action}`,
                     `${item.type}.manual.${item.name}.default.${action}`,
                     `${item.type}.manual.${item.name}.default`,
-                    ...successLevels.map(x => `${item.type }.${item.data.combatskill.value }.${action}_${x}`),
-                    `${item.type }.${item.data.combatskill.value }.${action}`,
-                    ...successLevels.map(x => `${item.type}.${item.data.combatskill.value}.default_${x}`),
-                    `${item.type}.${item.data.combatskill.value}.default`
+                    ...successLevels.map(x => `${item.type }.${item.system.combatskill.value }.${action}_${x}`),
+                    `${item.type }.${item.system.combatskill.value }.${action}`,
+                    ...successLevels.map(x => `${item.type}.${item.system.combatskill.value}.default_${x}`),
+                    `${item.type}.${item.system.combatskill.value}.default`
                 ]
                 break
             case "skill":

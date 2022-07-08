@@ -16,71 +16,71 @@
 
             <div class="form-group">
                 <label class="label-text">{{localize "APValue"}}</label>
-                <input class="input-text" type="text" name="data.APValue.value" value="{{data.APValue.value}}" data-dtype="String" />
+                <input class="input-text" type="text" name="system.APValue.value" value="{{system.APValue.value}}" data-dtype="String" />
             </div>
 
             <div class="form-group">
                 <label class="label-text">{{localize "requirements"}}</label>
-                <input class="input-text" type="text" name="data.requirements.value" value="{{data.requirements.value}}" data-dtype="String" />
+                <input class="input-text" type="text" name="system.requirements.value" value="{{system.requirements.value}}" data-dtype="String" />
             </div>
 
             <div class="form-group">
                 <label class="label-text">{{localize "Category"}}</label>
-                <select name="data.category.value" data-dtype="String">
-                    {{selectOptions categories selected=data.category.value localize=true}}  
+                <select name="system.category.value" data-dtype="String">
+                    {{selectOptions categories selected=system.category.value localize=true}}  
                 </select>
             </div>
             <div class="form-group full-height">
                 <label class="label-text">{{localize "rule"}}</label>
-                <textarea class="input-text" type="text" name="data.rule.value" data-dtype="String">{{data.rule.value}}</textarea>
+                <textarea class="input-text" type="text" name="system.rule.value" data-dtype="String">{{system.rule.value}}</textarea>
             </div>
             <div class="form-group">
                 <label class="label-text">{{localize "maxlevel"}}</label>
-                <input class="input-text" type="Number" name="data.maxRank.value" value="{{data.maxRank.value}}" data-dtype="Number" />
+                <input class="input-text" type="Number" name="system.maxRank.value" value="{{system.maxRank.value}}" data-dtype="Number" />
             </div>
             <div class="form-group">
                 <label class="label-text">{{localize "effect"}}</label>
-                <input class="input-text" type="text" name="data.effect.value" value="{{data.effect.value}}" data-dtype="String" />
+                <input class="input-text" type="text" name="system.effect.value" value="{{system.effect.value}}" data-dtype="String" />
             </div>
 
-            {{#if (eq data.category.value 'pact')}}
+            {{#if (eq system.category.value 'pact')}}
             <div class="form-group">
                 <label class="label-text">{{localize "distribution"}}</label>
-                <input class="input-text" type="text" name="data.distribution" value="{{data.distribution}}" data-dtype="String" />
+                <input class="input-text" type="text" name="system.distribution" value="{{system.distribution}}" data-dtype="String" />
             </div>
             <div class="form-group">
                 <label class="label-text">{{localize "circle"}}</label>
-                <input class="input-text" type="number" name="data.step.circle" value="{{data.step.circle}}" data-dtype="Number" />
+                <input class="input-text" type="number" name="system.step.circle" value="{{system.step.circle}}" data-dtype="Number" />
             </div>
-            {{/if}} {{#if (eq data.category.value 'staff')}}
+            {{/if}} {{#if (eq system.category.value 'staff')}}
             <div class="form-group">
                 <label class="label-text">{{localize "volume"}}</label>
-                <input class="input-text" type="number" name="data.volume" value="{{data.volume}}" data-dtype="Number" />
+                <input class="input-text" type="number" name="system.volume" value="{{system.volume}}" data-dtype="Number" />
             </div>
             <div class="form-group">
                 <label class="label-text">{{localize "AsPCost"}}</label>
-                <input class="input-text" type="text" name="data.AsPCost" value="{{data.AsPCost}}" data-dtype="String" />
+                <input class="input-text" type="text" name="system.AsPCost" value="{{system.AsPCost}}" data-dtype="String" />
             </div>
             <div class="form-group">
                 <label class="label-text">{{localize "feature"}}</label>
-                <input class="input-text" type="text" name="data.feature" value="{{data.feature}}" data-dtype="String" />
+                <input class="input-text" type="text" name="system.feature" value="{{system.feature}}" data-dtype="String" />
             </div>
 
-            {{/if}} {{#if (eq data.category.value 'Combat')}}
+            {{/if}} {{#if (eq system.category.value 'Combat')}}
             <div class="form-group">
                 <label class="label-text">{{localize "combatskill"}}</label>
-                <input class="input-text" type="text" name="data.list.value" value="{{data.list.value}}" data-dtype="String" />
+                <input class="input-text" type="text" name="system.list.value" value="{{system.list.value}}" data-dtype="String" />
             </div>
             <div class="form-group">
                 <label class="label-text">{{localize "COMBATSKILLCATEGORY.subcategory"}}</label>
-                <select name="data.category.sub" data-dtype="String">
-                    {{selectOptions subCategories selected=data.category.sub localize=true}}
+                <select name="system.category.sub" data-dtype="String">
+                    {{selectOptions subCategories selected=system.category.sub localize=true}}
                 </select>
             </div>
             {{/if}} {{#if isOwned}}
             <div class="form-group">
                 <label class="label-text">{{#if canAdvance}}<a class="refund-step"><i class="fas fa-minus"></i></a> {{/if}}{{localize "stepValue"}}{{#if canAdvance}} <a class="advance-step"><i class="fas fa-plus"></i></a>{{/if}}</label>
-                <input class="input-text" type="number" name="data.step.value" value="{{data.step.value}}" data-dtype="Number" />
+                <input class="input-text" type="number" name="system.step.value" value="{{system.step.value}}" data-dtype="Number" />
             </div>
             {{/if}}
 

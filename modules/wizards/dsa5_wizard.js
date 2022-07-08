@@ -68,14 +68,14 @@ export default class WizardDSA5 extends Application {
                 item = duplicate(item)
                 item.tooltip = game.i18n.localize("Details")
                 item = ItemRulesDSA5.reverseAdoptionCalculation(this.actor, parsed, item)
-                if (item.data.APValue) {
-                    item.APunparseable = isNaN(item.data.APValue.value)
-                    item.apCost = item.APunparseable ? item.data.APValue.value : parsed.step * Number(item.data.APValue.value)
+                if (item.system.APValue) {
+                    item.APunparseable = isNaN(item.system.APValue.value)
+                    item.apCost = item.APunparseable ? item.system.APValue.value : parsed.step * Number(item.system.APValue.value)
                 }
             }
             item.replaceName = parsed.original
             item.step = parsed.step
-            let actorHasItem = this.actor.data.items.find(y => types.includes(y.type) && y.name == parsed.original) != undefined
+            let actorHasItem = this.actor.items.find(y => types.includes(y.type) && y.name == parsed.original) != undefined
             item.disabled = actorHasItem || item.notFound || item.APunparseable
             if (actorHasItem)
                 item.tooltip = game.i18n.localize("YouAlreadyHaveit")
@@ -97,15 +97,15 @@ export default class WizardDSA5 extends Application {
             switch (item.type) {
                 case "advantage":
                 case "disadvantage":
-                    item.data.step.value = Number($(k).attr("data-step"))
+                    item.system.step.value = Number($(k).attr("data-step"))
                     item = ItemRulesDSA5.reverseAdoptionCalculation(this.actor, parsed, item)
                     itemsToAdd.push(item)
                     AdvantageRulesDSA5.vantageAdded(this.actor, item)
                     break
                 case "specialability":
-                    item.data.step.value = Number($(k).attr("data-step"))
+                    item.system.step.value = Number($(k).attr("data-step"))
 
-                    if ($(k).attr("data-free")) item.data.APValue.value = 0
+                    if ($(k).attr("data-free")) item.system.APValue.value = 0
 
                     item = ItemRulesDSA5.reverseAdoptionCalculation(this.actor, parsed, item)
                     itemsToAdd.push(item)
@@ -155,10 +155,10 @@ export default class WizardDSA5 extends Application {
         let itemsToUpdate = []
         for (let skill of skills) {
             let parsed = DSA5_Utility.parseAbilityString(skill.trim())
-            let res = this.actor.data.items.find(i => { return i.type == itemType && i.name == parsed.name });
+            let res = this.actor.items.find(i => { return i.type == itemType && i.name == parsed.name });
             if (res) {
                 let skillUpdate = duplicate(res)
-                skillUpdate.data.talentValue.value = Math.max(0, factor * parsed.step + (bonus ? Number(skillUpdate.data.talentValue.value) : 0))
+                skillUpdate.system.talentValue.value = Math.max(0, factor * parsed.step + (bonus ? Number(skillUpdate.system.talentValue.value) : 0))
                 itemsToUpdate.push(skillUpdate)
             } else {
                 console.warn(`Could not find ${itemType} ${skill}`)

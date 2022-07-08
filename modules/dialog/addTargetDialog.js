@@ -46,7 +46,7 @@ export class AddTargetDialog extends Dialog{
         if(ev.button == 2){
             const combatant = game.combat.combatants.get(ev.currentTarget.dataset.combatantId)
             if ( combatant.token) {
-                return canvas.animatePan({x: combatant.token.data.x, y: combatant.token.data.y});
+                return canvas.animatePan({x: combatant.token.x, y: combatant.token.y});
             }
         }
     }

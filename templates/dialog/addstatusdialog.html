@@ -13,7 +13,7 @@
     <div class="row-section wrap statusEffect">
         {{#each effects as |itm i|}}
         <div class="col third filterable">
-            <button class="reactClick" data-value="{{itm.id}}" title="{{itm.description}}"><img src="{{itm.icon}}" /><span>{{itm.label}}</span></button>
+            <button class="reactClick" data-value="{{itm.id}}" data-tooltip="{{itm.description}}"><img src="{{itm.icon}}" /><span>{{itm.label}}</span></button>
         </div>
         {{/each}}
     </div>

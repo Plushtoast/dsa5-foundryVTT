@@ -15,7 +15,7 @@
                     </div>
                     <div class="col ten">{{#if hasOtherTradeFriend}}
                         <a class="removeOtherTradeFriend"><i class="fas fa-times"></i></a> {{else}}
-                        <i class="fas fa-info" title="{{localize 'MERCHANT.otherTradeFriend'}}"></i> {{/if}}
+                        <i class="fas fa-info" data-tooltip="{{localize 'MERCHANT.otherTradeFriend'}}"></i> {{/if}}
                     </div>
                     <div class="col ten"></div>
                     <div class="col fourty center">
@@ -48,10 +48,10 @@
                                     </div>
 
                                     <div class="col four center">
-                                        <span title="{{localize 'UNITS.money'}}"><i class="fas fa-coins"></i></span>
+                                        <span data-tooltip="{{localize 'UNITS.money'}}"><i class="fas fa-coins"></i></span>
                                     </div>
                                     <div class="col eight center">
-                                        <span title="{{localize 'quantity'}}">#</span>
+                                        <span data-tooltip="{{localize 'quantity'}}">#</span>
                                     </div>
                                     <div class="col eight center">
 
@@ -73,10 +73,10 @@
                                                 {{item.calculatedPrice}}
                                             </div>
                                             <div class="col eight center">
-                                                {{item.data.quantity.value}}
+                                                {{item.system.quantity.value}}
                                             </div>
                                             <div class="col eight center">
-                                                <a class="sell-item" data-price="{{item.calculatedPrice}}" title="{{localize 'MERCHANT.exchange'}}"><i class="fas fa-exchange-alt"></i></a>
+                                                <a class="sell-item" data-price="{{item.calculatedPrice}}" data-tooltip="{{localize 'MERCHANT.exchange'}}"><i class="fas fa-exchange-alt"></i></a>
                                             </div>
                                         </div>
                                     </div>
@@ -95,17 +95,17 @@
                                     </div>
 
                                     <div class="col four center">
-                                        <span title="{{localize 'UNITS.money'}}"><i class="fas fa-coins"></i></span>
+                                        <span data-tooltip="{{localize 'UNITS.money'}}"><i class="fas fa-coins"></i></span>
                                     </div>
                                     <div class="col eight center">
-                                        <span title="{{localize 'quantity'}}">#</span>
+                                        <span data-tooltip="{{localize 'quantity'}}">#</span>
                                     </div>
                                     <div class="col eight center">
 
                                     </div>
                                 </div>
                                 <div class="row-section wrap rowtable inventory">
-                                    {{#each section.items as |item i|}}{{#unless item.data.tradeLocked}}
+                                    {{#each section.items as |item i|}}{{#unless item.system.tradeLocked}}
                                     <div class="col item" data-item-id="{{item._id}}">
                                         <div class="row-section">
                                             <div class="col eight image {{item.enchantClass}}">
@@ -120,10 +120,10 @@
                                                 {{item.calculatedPrice}}
                                             </div>
                                             <div class="col eight center">
-                                                {{item.data.quantity.value}}
+                                                {{item.system.quantity.value}}
                                             </div>
                                             <div class="col eight center">
-                                                <a class="buy-item" data-price="{{item.calculatedPrice}}" title="{{localize 'MERCHANT.exchange'}}"><i class="fas fa-exchange-alt"></i></a>
+                                                <a class="buy-item" data-price="{{item.calculatedPrice}}" data-tooltip="{{localize 'MERCHANT.exchange'}}"><i class="fas fa-exchange-alt"></i></a>
                                             </div>
                                         </div>
                                     </div>

@@ -44,7 +44,7 @@ export default class DSA5_Utility {
     }
 
     static calcTokenSize(actorData, data) {
-        let tokenSize = game.dsa5.config.tokenSizeCategories[actorData.data.status.size.value]
+        let tokenSize = game.dsa5.config.tokenSizeCategories[actorData.system.status.size.value]
         if (tokenSize) {
             if (tokenSize < 1) {
                 data.scale = tokenSize;
@@ -152,7 +152,7 @@ export default class DSA5_Utility {
     }
 
     static async getFolderForType(documentType, parent = null, folderName = null, sort = 0, color = "") {
-        let folder = await game.folders.contents.find(x => x.name == folderName && x.type == documentType && x.data.parent == parent)
+        let folder = await game.folders.contents.find(x => x.name == folderName && x.type == documentType && x.system.parent == parent)
         if (!folder) {
             folder = await Folder.create({
                 name: folderName,
@@ -291,7 +291,7 @@ export default class DSA5_Utility {
             name: "Alrik",
             type: "npc",
             items: [],
-            data: {
+            system: {
                 status: { wounds: { value: 50 }, fatePoints: {} },
                 characteristics: {
                     mu: { initial: attrs[0] },

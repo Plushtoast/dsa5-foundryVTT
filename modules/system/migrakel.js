@@ -32,8 +32,8 @@ export default class Migrakel {
     static async refreshStatusEffects(actor) {
         let removeEffects = [];
         for (let i of actor.effects) {
-            if (i.data.origin) {
-                let sourceItem = await fromUuid(i.data.origin);
+            if (i.system.origin) {
+                let sourceItem = await fromUuid(i.system.origin);
                 if (!sourceItem) {
                     removeEffects.push(i.id);
                 }
@@ -87,8 +87,8 @@ export default class Migrakel {
 
                 console.log(`MIGRATION - Updated ${item.name}`);
                 const newData = mergeObject(item.toObject(), updater(find));
-                if (newData.data.parent_id && containersIDs.has(newData.data.parent_id))
-                    newData.data.parent_id = containersIDs.get(newData.data.parent_id);
+                if (newData.system.parent_id && containersIDs.has(newData.system.parent_id))
+                    newData.system.parent_id = containersIDs.get(newData.system.parent_id);
 
                 itemsToCreate.push(newData);
                 itemsToDelete.push(item.id);
@@ -106,7 +106,7 @@ export default class Migrakel {
             };
             const updator = (find) => {
                 return {
-                    data: {
+                    system: {
                         effectFormula: { value: find.system.effectFormula.value },
                     },
                     effects: find.effects.toObject(),
@@ -120,22 +120,22 @@ export default class Migrakel {
         if (await this.showDialog(game.i18n.localize("Migrakel.abilities"))) {
             const updator = (find) => {
                 let update = {
-                    data: { effect: { value: find.system.effect.value } },
+                    system: { effect: { value: find.system.effect.value } },
                     effects: find.effects.toObject(),
                 };
                 if (find.type == "specialability") {
                     mergeObject(update, {
-                        data: {
+                        system: {
                             category: { sub: find.system.category.sub || 0 },
                             list: { value: find.system.list.value },
                         },
                     });
                     if (find.system.category.value == "staff") {
                         mergeObject(update, {
-                            data: {
-                                feature: getProperty(find.data, "data.feature") || "",
-                                AsPCost: getProperty(find.data, "data.AsPCost") || "",
-                                volume: Number(getProperty(find.data, "data.volume")) || 0,
+                            system: {
+                                feature: getProperty(find, "system.feature") || "",
+                                AsPCost: getProperty(find, "system.AsPCost") || "",
+                                volume: Number(getProperty(find, "system.volume")) || 0,
                             },
                         });
                     }
@@ -213,19 +213,19 @@ export default class Migrakel {
                 };
                 if (!["poison", "consumable"].includes(find.type)) {
                     mergeObject(update, {
-                        data: { effect: { value: find.system.effect.value } },
+                        system: { effect: { value: find.system.effect.value } },
                     });
                 }
                 if (["armor"].includes(find.type)) {
                     mergeObject(update, {
-                        data: {
+                        system: {
                             subcategory: find.system.subcategory,
                         },
                     });
                 }
                 if (["meleeweapon", "rangeweapon", "armor"].includes(find.type)) {
                     mergeObject(update, {
-                        data: {
+                        system: {
                             structure: {
                                 max: find.system.structure.max,
                                 value: find.system.structure.value,

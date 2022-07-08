@@ -2,8 +2,8 @@
     <div class="characteristics-table" cellpadding="0">
         <div class="table-row">
             <div class="table-header"></div>
-            {{#each actor.data.characteristics as |ch c|}}
-            <div title="{{localize ch.label}}" class="table-header">
+            {{#each actor.system.characteristics as |ch c|}}
+            <div data-tooltip="{{localize ch.label}}" class="table-header">
                 <div class="header-label">
                     {{localize ch.abrev}}
                 </div>
@@ -16,9 +16,9 @@
                     {{localize "Initial"}}
                 </div>
             </div>
-            {{#each actor.data.characteristics as |ch c|}}
+            {{#each actor.system.characteristics as |ch c|}}
             <div class="table-data">
-                <input name="data.characteristics.{{c}}.initial" type="text" value="{{ch.initial}}" data-dtype="Number">
+                <input name="system.characteristics.{{c}}.initial" type="text" value="{{ch.initial}}" data-dtype="Number">
             </div>
             {{/each}}
         </div>
@@ -29,9 +29,9 @@
                     {{localize "Modifiers"}}
                 </div>
             </div>
-            {{#each actor.data.characteristics as |ch c|}}
+            {{#each actor.system.characteristics as |ch c|}}
             <div class="table-data">
-                <input name="data.characteristics.{{c}}.modifier" type="text" value="{{ch.modifier}}" data-dtype="Number">
+                <input name="system.characteristics.{{c}}.modifier" type="text" value="{{ch.modifier}}" data-dtype="Number">
             </div>
             {{/each}}
         </div>

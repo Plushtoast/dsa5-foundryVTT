@@ -16,28 +16,28 @@
 
             <div class="form-group">
                 <label class="label-text">{{localize "APValue"}}</label>
-                <input class="input-text" type="text" name="data.APValue.value" value="{{data.APValue.value}}" data-dtype="String" />
+                <input class="input-text" type="text" name="system.APValue.value" value="{{system.APValue.value}}" data-dtype="String" />
             </div>
 
             <div class="form-group">
                 <label class="label-text">{{localize "maxlevel"}}</label>
-                <input class="input-text" type="text" name="data.max.value" value="{{data.max.value}}" data-dtype="Number" />
+                <input class="input-text" type="text" name="system.max.value" value="{{system.max.value}}" data-dtype="Number" />
             </div>
 
             <div class="form-group full-height">
                 <label class="label-text">{{localize "requirements"}}</label>
-                <textarea class="input-text" type="text" name="data.requirements.value" data-dtype="String">{{data.requirements.value}}</textarea>
+                <textarea class="input-text" type="text" name="system.requirements.value" data-dtype="String">{{system.requirements.value}}</textarea>
             </div>
 
             <div class="form-group">
                 <label class="label-text">{{localize "effect"}}</label>
-                <input class="input-text" type="text" name="data.effect.value" value="{{data.effect.value}}" data-dtype="String" />
+                <input class="input-text" type="text" name="system.effect.value" value="{{system.effect.value}}" data-dtype="String" />
             </div>
 
             {{#if isOwned}}
             <div class="form-group">
                 <label class="label-text">{{#if canAdvance}}<a class="refund-step"><i class="fas fa-minus"></i></a> {{/if}}{{localize "stepValue"}}{{#if canAdvance}} <a class="advance-step"><i class="fas fa-plus"></i></a>{{/if}}</label>
-                <input class="input-text" type="number" name="data.step.value" value="{{data.step.value}}" data-dtype="Number" />
+                <input class="input-text" type="number" name="system.step.value" value="{{system.step.value}}" data-dtype="Number" />
             </div>
             {{/if}}
         </div>

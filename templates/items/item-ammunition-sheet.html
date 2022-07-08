@@ -13,32 +13,32 @@
         <div class="tab details" data-tab="details">
             <div class="form-group">
                 <label class="label-text">{{localize "ammunitiongroup"}}</label>
-                <select name="data.ammunitiongroup.value" data-dtype="String">
-                    {{selectOptions ammunitiongroups selected=data.ammunitiongroup.value localize=true}}
+                <select name="system.ammunitiongroup.value" data-dtype="String">
+                    {{selectOptions ammunitiongroups selected=system.ammunitiongroup.value localize=true}}
                 </select>
             </div>
-            {{#if (eq data.ammunitiongroup.value 'mag')}}
+            {{#if (eq system.ammunitiongroup.value 'mag')}}
             <div class="form-group double">
                 <label class="label-text">{{localize "mag"}}</label>
-                <input class="input-text" type="text" name="data.mag.value" value="{{data.mag.value}}" data-dtype="Number" /><span> / </span>
-                <input class="input-text" type="text" name="data.mag.max" value="{{data.mag.max}}" data-dtype="Number" />
+                <input class="input-text" type="text" name="system.mag.value" value="{{system.mag.value}}" data-dtype="Number" /><span> / </span>
+                <input class="input-text" type="text" name="system.mag.max" value="{{system.mag.max}}" data-dtype="Number" />
             </div>
             {{/if}}
             <div class="form-group">
                 <label class="label-text">{{localize "atmod"}}</label>
-                <input class="input-text" type="number" name="data.atmod" value="{{data.atmod}}" data-dtype="Number" />
+                <input class="input-text" type="number" name="system.atmod" value="{{system.atmod}}" data-dtype="Number" />
             </div>
             <div class="form-group">
                 <label class="label-text">{{localize "MODS.damage"}}</label>
-                <input class="input-text" type="text" name="data.damageMod" value="{{data.damageMod}}" data-dtype="String" />
+                <input class="input-text" type="text" name="system.damageMod" value="{{system.damageMod}}" data-dtype="String" />
             </div>
             <div class="form-group">
                 <label class="label-text">{{localize "MODS.range"}}</label>
-                <input class="input-text" type="number" step="0.1" name="data.rangeMultiplier" value="{{data.rangeMultiplier}}" data-dtype="Number" />
+                <input class="input-text" type="number" step="0.1" name="system.rangeMultiplier" value="{{system.rangeMultiplier}}" data-dtype="Number" />
             </div>
             <div class="form-group">
                 <label class="label-text">{{localize "MODS.armor"}}</label>
-                <input class="input-text" type="text" name="data.armorMod" value="{{data.armorMod}}" data-dtype="String" />
+                <input class="input-text" type="text" name="system.armorMod" value="{{system.armorMod}}" data-dtype="String" />
             </div>
             <div class="form-group autoHeight">
                 <label class="label-text">{{localize "domains"}}</label> {{#if domains}}
@@ -46,7 +46,7 @@
                     <ul>{{{domains}}}</ul>
                 </div>
                 {{/if}}
-                <input class="input-text {{#if domains}}domainToggle{{/if}}" placeholder="{{localize 'WEAPON.clerical'}}, {{localize 'WEAPON.magical'}}, {{localize 'WEAPON.silverPlated'}}" type="text" name="data.effect.attributes" value="{{data.effect.attributes}}" data-dtype="String"
+                <input class="input-text {{#if domains}}domainToggle{{/if}}" placeholder="{{localize 'WEAPON.clerical'}}, {{localize 'WEAPON.magical'}}, {{localize 'WEAPON.silverPlated'}}" type="text" name="system.effect.attributes" value="{{system.effect.attributes}}" data-dtype="String"
                 />
             </div>
         </div>

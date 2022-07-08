@@ -2,10 +2,10 @@
     {{> systems/dsa5/templates/chat/roll/test-card.html}} {{#if (gt testData.successLevel 0)}} {{#if applyEffect}}
     <div class="row-section {{#if hideDamage}}damageSecret{{/if}}" style="margin-top:10px">
         <div class="col two center">
-            <button class="applyEffect selfButton" data-target="self" title="{{localize 'TT.applyEffectCaster'}}">{{localize 'ActiveEffects.applySelf'}}</button>
+            <button class="applyEffect selfButton" data-target="self" data-tooltip="{{localize 'TT.applyEffectCaster'}}">{{localize 'ActiveEffects.applySelf'}}</button>
         </div>
         <div class="col two center">
-            <button class="applyEffect selfButton" data-target="target" title="{{localize 'TT.applyEffectTargets'}}">{{localize 'ActiveEffects.applyTarget'}}</button>
+            <button class="applyEffect selfButton" data-target="target" data-tooltip="{{localize 'TT.applyEffectTargets'}}">{{localize 'ActiveEffects.applyTarget'}}</button>
         </div>
     </div>
     {{/if}} {{/if}}

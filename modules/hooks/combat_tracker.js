@@ -25,7 +25,7 @@ export class DSA5CombatTracker extends CombatTracker {
 
         const combatant = game.combat.combatant
         if (game.user.isGM || combatant.isOwner)
-            ActAttackDialog.showDialog(combatant.actor, combatant.data.tokenId)
+            ActAttackDialog.showDialog(combatant.actor, combatant.system.tokenId)
     }
 
     async getData(options) {
@@ -34,13 +34,13 @@ export class DSA5CombatTracker extends CombatTracker {
             for (let turn of data.turns) {
                 const combatant = data.combat.turns.find(x => x.id == turn.id)
                 const isAllowedToSeeEffects = (game.user.isGM || (combatant.actor && combatant.actor.testUserPermission(game.user, "OBSERVER")) || !(game.settings.get("dsa5", "hideEffects")));
-                turn.defenseCount = combatant.data._source.defenseCount
+                turn.defenseCount = combatant._source.defenseCount
 
                 let remainders = []
                 if (combatant.actor) {
                     for (const x of combatant.actor.items) {
                         if (x.type == "rangeweapon" && x.system.worn.value && x.system.reloadTime.progress > 0) {
-                            const wpn = { name: x.name, remaining: Actordsa5.calcLZ(x.data, combatant.actor.data) - x.system.reloadTime.progress }
+                            const wpn = { name: x.name, remaining: Actordsa5.calcLZ(x.data, combatant.actor) - x.system.reloadTime.progress }
                             if (wpn.remaining > 0) remainders.push(wpn)
                         } else if (["spell", "liturgy"].includes(x.type) && x.system.castingTime.modified > 0) {
                             const wpn = { name: x.name, remaining: x.system.castingTime.modified - x.system.castingTime.progress }
@@ -58,12 +58,12 @@ export class DSA5CombatTracker extends CombatTracker {
 
             turn.effects = new Set();
             if (combatant.token) {
-                combatant.token.data.effects.forEach(e => turn.effects.add(e));
-                if (combatant.token.data.overlayEffect) turn.effects.add(combatant.token.data.overlayEffect);
+                combatant.token.effects.forEach(e => turn.effects.add(e));
+                if (combatant.token.overlayEffect) turn.effects.add(combatant.token.overlayEffect);
             }
             if (combatant.actor) combatant.actor.temporaryEffects.forEach(e => {
                 if (e.getFlag("core", "statusId") === CONFIG.Combat.defeatedStatusId) turn.defeated = true;
-                else if (e.data.icon && isAllowedToSeeEffects && !e.notApplicable && (game.user.isGM || !e.getFlag("dsa5", "hidePlayers")) && !e.getFlag("dsa5", "hideOnToken")) turn.effects.add(e.data.icon);
+                else if (e.icon && isAllowedToSeeEffects && !e.notApplicable && (game.user.isGM || !e.getFlag("dsa5", "hidePlayers")) && !e.getFlag("dsa5", "hideOnToken")) turn.effects.add(e.icon);
             })
         }
         return data
@@ -105,16 +105,16 @@ export class DSA5Combat extends Combat {
 
     async getDefenseCount(speaker) {
         const comb = this.getCombatantFromActor(speaker)
-        return comb ? comb.data._source.defenseCount : 0
+        return comb ? comb._source.defenseCount : 0
     }
 
     //TODO very clonky
     getCombatantFromActor(speaker) {
         let id
         if (speaker.token) {
-            id = Array.from(this.combatants).find(x => x.data.tokenId == speaker.token)
+            id = Array.from(this.combatants).find(x => x.tokenId == speaker.token)
         } else {
-            id = Array.from(this.combatants).find(x => x.data.actorId == speaker.actor)
+            id = Array.from(this.combatants).find(x => x.actorId == speaker.actor)
         }
         return id ? this.combatants.get(id.id) : undefined
     }
@@ -122,8 +122,8 @@ export class DSA5Combat extends Combat {
     async updateDefenseCount(speaker) {
         if (game.user.isGM) {
             const comb = this.getCombatantFromActor(speaker)
-            if (comb && !getProperty(comb.actor, "data.data.config.defense")) {
-                await comb.update({ "defenseCount": comb.data._source.defenseCount + 1 })
+            if (comb && !getProperty(comb.actor, "config.defense")) {
+                await comb.update({ "defenseCount": comb._source.defenseCount + 1 })
             }
         } else {
             await game.socket.emit("system.dsa5", {
@@ -150,7 +150,7 @@ class RepeatingEffectsHelper {
         if (!updateData.round && !updateData.turn)
             return
 
-        if (combat.data.round != 0 && combat.turns && combat.data.active){
+        if (combat.round != 0 && combat.turns && combat.active){
             if(combat.previous.round < combat.current.round)
                 await RepeatingEffectsHelper.startOfRound(combat)
         }
@@ -191,13 +191,17 @@ class RepeatingEffectsHelper {
     }
 
     static async applyBleeding(turn) {
+        if(turn.actor.system.status.wounds.value <= 0) return 
+
         await ChatMessage.create(DSA5_Utility.chatDataSetup(game.i18n.format('CHATNOTIFICATION.bleeding', { actor: turn.actor.name })))
         await turn.actor.applyDamage(1)
     }
 
     static async applyBurning(turn, effect) {
+        if(turn.actor.system.status.wounds.value <= 0) return 
+        
         const step = Number(effect.getFlag("dsa5", "value"))
-        const protection = DSA5StatusEffects.resistantToEffect(turn.actor.data, effect.data)
+        const protection = DSA5StatusEffects.resistantToEffect(turn.actor, effect)
         const die =  { 0: "1", 1: "1d3", 2: "1d6", 3: "2d6" }[step - protection] || "1"
         const damageRoll = await new Roll(die).evaluate({ async: true })
         const damage = await damageRoll.render()

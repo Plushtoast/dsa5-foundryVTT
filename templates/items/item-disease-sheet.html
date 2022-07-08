@@ -14,38 +14,38 @@
         <div class="tab details" data-tab="details">
             <div class="form-group">
                 <label class="label-text">{{localize "stepValue"}}</label>
-                <input class="input-text" type="text" name="data.step.value" value="{{data.step.value}}" data-dtype="Number" />
+                <input class="input-text" type="text" name="system.step.value" value="{{system.step.value}}" data-dtype="Number" />
             </div>
             <div class="form-group">
                 <label class="label-text">{{localize "incubation"}}</label>
-                <input class="input-text" type="text" name="data.incubation.value" value="{{data.incubation.value}}" data-dtype="String" />
+                <input class="input-text" type="text" name="system.incubation.value" value="{{system.incubation.value}}" data-dtype="String" />
             </div>
             <div class="form-group full-height">
                 <label class="label-text">{{localize "damage"}}</label>
-                <textarea class="input-text" type="text" name="data.damage.value" data-dtype="String">{{data.damage.value}}</textarea>
+                <textarea class="input-text" type="text" name="system.damage.value" data-dtype="String">{{system.damage.value}}</textarea>
             </div>
 
             <div class="form-group">
                 <label class="label-text">{{localize "duration"}}</label>
-                <input class="input-text" type="text" name="data.duration.value" value="{{data.duration.value}}" data-dtype="String" />
+                <input class="input-text" type="text" name="system.duration.value" value="{{system.duration.value}}" data-dtype="String" />
             </div>
             <div class="form-group full-height">
                 <label class="label-text">{{localize "source"}}</label>
-                <textarea class="input-text" type="text" name="data.source.value" data-dtype="String">{{data.source.value}}</textarea>
+                <textarea class="input-text" type="text" name="system.source.value" data-dtype="String">{{system.source.value}}</textarea>
             </div>
             <div class="form-group full-height">
                 <label class="label-text">{{localize "treatment"}}</label>
-                <textarea class="input-text" type="text" name="data.treatment.value" data-dtype="String">{{data.treatment.value}}</textarea>
+                <textarea class="input-text" type="text" name="system.treatment.value" data-dtype="String">{{system.treatment.value}}</textarea>
             </div>
             <div class="form-group full-height">
                 <label class="label-text">{{localize "antidot"}}</label>
-                <textarea class="input-text" type="text" name="data.antidot.value" data-dtype="String">{{data.antidot.value}}</textarea>
+                <textarea class="input-text" type="text" name="system.antidot.value" data-dtype="String">{{system.antidot.value}}</textarea>
             </div>
 
             <div class="form-group">
                 <label class="label-text">{{localize "resistanceModifier"}}</label>
-                <select name="data.resistance.value" data-dtype="String">
-                    {{selectOptions resistances selected=data.resistance.value localize=true}}
+                <select name="system.resistance.value" data-dtype="String">
+                    {{selectOptions resistances selected=system.resistance.value localize=true}}
                 </select>
             </div>
 

@@ -22,9 +22,9 @@ export default class DSA5SpellDialog extends DialogShared {
     static getRollButtons(testData, dialogOptions, resolve, reject) {
         let buttons = DSA5Dialog.getRollButtons(testData, dialogOptions, resolve, reject);
         if (["spell", "liturgy"].includes(testData.source.type)) {
-            const LZ = Number(testData.source.data.castingTime.value);
-            const progress = testData.source.data.castingTime.progress;
-            let modified = testData.source.data.castingTime.modified;
+            const LZ = Number(testData.source.system.castingTime.value);
+            const progress = testData.source.system.castingTime.progress;
+            let modified = testData.source.system.castingTime.modified;
             if (LZ && testData.extra.speaker.token != "emptyActor") {
                 const progressLabel = modified > 0 ? ` (${progress}/${modified})` : "";
                 mergeObject(buttons, {
@@ -32,10 +32,10 @@ export default class DSA5SpellDialog extends DialogShared {
                         label: `${game.i18n.localize("SPELL.reload")}${progressLabel}`,
                         callback: async(dlg) => {
                             const actor = await DSA5_Utility.getSpeaker(testData.extra.speaker);
-                            let reloadUpdate = { _id: testData.source._id, "data.castingTime.progress": progress + 1 };
+                            let reloadUpdate = { _id: testData.source._id, "system.castingTime.progress": progress + 1 };
                             if (modified == 0) {
                                 modified = Number(dlg.find(".castingTime").text()) - 1;
-                                reloadUpdate["data.castingTime.modified"] = modified;
+                                reloadUpdate["system.castingTime.modified"] = modified;
                             }
                             await actor.updateEmbeddedDocuments("Item", [reloadUpdate]);
                             const infoMsg = game.i18n.format("SPELL.isReloading", {

@@ -1,7 +1,7 @@
 <div class="playerMenu">
   <div class="row-section">
     <div class="col third center">
-      <img style="width:70px;height:70px" class="profile" src="{{actor.img}}" title="{{actor.name}}">
+      <img style="width:70px;height:70px" class="profile" src="{{actor.img}}" data-tooltip="{{actor.name}}">
     </div>
     <div class="col seventy">
       <div class="row-section">
@@ -60,17 +60,17 @@
         </div>
         <div class="col third center">
           <a class="skill-select">
-            <span class="d20 diet-{{item.data.characteristic1.value}}">{{localize (concatUp "CHARAbbrev."
-              item.data.characteristic1.value)}}</span>
-            <span class="d20 diet-{{item.data.characteristic2.value}}">{{localize (concatUp "CHARAbbrev."
-              item.data.characteristic2.value)}}</span>
-            <span class="d20 diet-{{item.data.characteristic3.value}}">{{localize (concatUp "CHARAbbrev."
-              item.data.characteristic3.value)}}</span>
+            <span class="d20 diet-{{item.system.characteristic1.value}}">{{localize (concatUp "CHARAbbrev."
+              item.system.characteristic1.value)}}</span>
+            <span class="d20 diet-{{item.system.characteristic2.value}}">{{localize (concatUp "CHARAbbrev."
+              item.system.characteristic2.value)}}</span>
+            <span class="d20 diet-{{item.system.characteristic3.value}}">{{localize (concatUp "CHARAbbrev."
+              item.system.characteristic3.value)}}</span>
           </a>
 
         </div>
         <div class="col ten center">
-          {{item.data.talentValue.value}}
+          {{item.system.talentValue.value}}
         </div>
 
       </div>

@@ -52,16 +52,16 @@ export default class DSA5Payment {
         for (let m of money) {
             switch (m.name) {
                 case "Money-D":
-                    m.data.quantity.value = coins.D
+                    m.system.quantity.value = coins.D
                     break
                 case "Money-S":
-                    m.data.quantity.value = coins.S
+                    m.system.quantity.value = coins.S
                     break
                 case "Money-H":
-                    m.data.quantity.value = coins.H
+                    m.system.quantity.value = coins.H
                     break
                 case "Money-K":
-                    m.data.quantity.value = coins.K
+                    m.system.quantity.value = coins.K
                     break
             }
         }
@@ -121,11 +121,11 @@ export default class DSA5Payment {
     }
 
     static _actorsMoney(actor) {
-        let money = duplicate(actor.data.items.filter(i => i.type == "money"))
+        let money = duplicate(actor.items.filter(i => i.type == "money"))
 
         return {
             money: money,
-            sum: money.reduce((total, current) => total + Number(current.data.quantity.value) * Number(current.data.price.value), 0)
+            sum: money.reduce((total, current) => total + Number(current.system.quantity.value) * Number(current.system.price.value), 0)
         }
     }
 
@@ -178,7 +178,7 @@ export default class DSA5Payment {
 
             for (const [key, value] of Object.entries(coins)) {
                 if (value > 0)
-                    res.push(`<span class="nobr">${value} <span title="${game.i18n.localize(`Money-${key}`)}" class="chatmoney money-${key}"></span></span>`)
+                    res.push(`<span class="nobr">${value} <span data-tooltip="${game.i18n.localize(`Money-${key}`)}" class="chatmoney money-${key}"></span></span>`)
         }
         return res.join(", ")
     }

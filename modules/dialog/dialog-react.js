@@ -106,13 +106,13 @@ export class ActAttackDialog extends Dialog {
     }
 
     static async getTemplate(actor) {
-        const combatskills = actor.items.filter(x => x.type == "combatskill").map(x => Actordsa5._calculateCombatSkillValues(x.toObject(), actor.data))
+        const combatskills = actor.items.filter(x => x.type == "combatskill").map(x => Actordsa5._calculateCombatSkillValues(x.toObject(), actor.system))
         const brawl = combatskills.find(x => x.name == game.i18n.localize('LocalizedIDs.wrestle'))
         let items = [{
             name: game.i18n.localize("attackWeaponless"),
             id: "attackWeaponless",
             img: "systems/dsa5/icons/categories/attack_weaponless.webp",
-            value: brawl.data.attack.value
+            value: brawl.system.attack.value
         }]
 
         const types = ["meleeweapon", "rangeweapon"]
@@ -120,7 +120,7 @@ export class ActAttackDialog extends Dialog {
 
         for (let x of actor.items) {
             if (types.includes(x.type) && x.system.worn.value == true) {
-                const preparedItem = x.type == "meleeweapon" ? Actordsa5._prepareMeleeWeapon(x.toObject(), combatskills, actor.data) : Actordsa5._prepareRangeWeapon(x.toObject(), [], combatskills, actor)
+                const preparedItem = x.type == "meleeweapon" ? Actordsa5._prepareMeleeWeapon(x.toObject(), combatskills, actor) : Actordsa5._prepareRangeWeapon(x.toObject(), [], combatskills, actor)
                 items.push({
                     name: x.name,
                     id: x.name,
@@ -145,7 +145,7 @@ export class ActAttackDialog extends Dialog {
             });
         } else {
             const types = ["meleeweapon", "trait", "rangeweapon"]
-            const result = actor.data.items.find(x => { return types.includes(x.type) && x.name == text })
+            const result = actor.items.find(x => { return types.includes(x.type) && x.name == text })
             if (result) {
                 actor.setupWeapon(result, "attack", {}, tokenId).then(setupData => {
                     actor.basicTest(setupData)
@@ -195,7 +195,7 @@ export class ReactToAttackDialog extends DialogReactDSA5 {
 
     static async getTemplate(startMessage) {
         const { actor, tokenId } = DialogReactDSA5.getTargetActor(startMessage)
-        const combatskills = actor.items.filter(x => x.type == "combatskill").map(x => Actordsa5._calculateCombatSkillValues(x.toObject(), actor.data))
+        const combatskills = actor.items.filter(x => x.type == "combatskill").map(x => Actordsa5._calculateCombatSkillValues(x.toObject(), actor.system))
         const brawl = combatskills.find(x => x.name == game.i18n.localize('LocalizedIDs.wrestle'))
         let items = [{
             name: game.i18n.localize("doNothing"),
@@ -210,7 +210,7 @@ export class ReactToAttackDialog extends DialogReactDSA5 {
             name: game.i18n.localize("parryWeaponless"),
             id: "parryWeaponless",
             img: "systems/dsa5/icons/categories/attack_weaponless.webp",
-            value: brawl.data.parry.value
+            value: brawl.system.parry.value
         }]
 
         let defenses = 0
@@ -219,7 +219,7 @@ export class ReactToAttackDialog extends DialogReactDSA5 {
 
             for (let x of actor.items) {
                 if (types.includes(x.type) && x.system.worn.value == true) {
-                    const preparedItem = Actordsa5._prepareMeleeWeapon(x.toObject(), combatskills, actor.data)
+                    const preparedItem = Actordsa5._prepareMeleeWeapon(x.toObject(), combatskills, actor)
                     items.push({
                         name: x.name,
                         id: x.name,
@@ -254,7 +254,7 @@ export class ReactToAttackDialog extends DialogReactDSA5 {
             actor.setupWeaponless("parry", {}, tokenId).then(setupData => { actor.basicTest(setupData) });
         } else {
             const types = ["meleeweapon", "trait"]
-            const result = actor.data.items.find(x => { return types.includes(x.type) && x.name == text })
+            const result = actor.items.find(x => { return types.includes(x.type) && x.name == text })
             if (result) {
                 actor.setupWeapon(result, "parry", {}, tokenId).then(setupData => { actor.basicTest(setupData) });
             }

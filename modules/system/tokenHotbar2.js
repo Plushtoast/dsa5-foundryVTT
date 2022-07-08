@@ -11,6 +11,11 @@ export default class TokenHotbar2 extends Application {
         this.combatSkills = ["selfControl", "featOfStrength", "bodyControl", "perception"].map(x => game.i18n.localize(`LocalizedIDs.${x}`))
         this.defaultSkills = [game.i18n.localize("LocalizedIDs.perception")]
 
+        const parentUpdate = (source) => {
+            const id = source.parent ? source.parent.id : undefined
+            if (id) TokenHotbar2.hookUpdate(id)
+        }
+
         Hooks.on("controlToken", (elem, controlTaken) => {
             this.updateDSA5Hotbar()
         })
@@ -37,19 +42,15 @@ export default class TokenHotbar2 extends Application {
         });
 
         Hooks.on("updateItem", (source, item) => {
-            const id = getProperty(source, "parent.id")
-            if (id) TokenHotbar2.hookUpdate(id)
+            parentUpdate(source)
         });
 
         Hooks.on("createItem", (source, item) => {
-            console.log(source, item)
-            const id = getProperty(source, "parent.id")
-            if (id) TokenHotbar2.hookUpdate(id)
+            parentUpdate(source)
         });
 
         Hooks.on("deleteItem", (source, item) => {
-            const id = getProperty(source, "parent.id")
-            if (id) TokenHotbar2.hookUpdate(id)
+            parentUpdate(source)
         });
     }
 
@@ -197,10 +198,10 @@ export default class TokenHotbar2 extends Application {
                                 break
                             case "liturgy":
                             case "spell":
-                                actor.setupSpell(result.data, {}, tokenId).then(setupData => { actor.basicTest(setupData) });
+                                actor.setupSpell(result, {}, tokenId).then(setupData => { actor.basicTest(setupData) });
                                 break
                             case "skill":
-                                actor.setupSkill(result.data, {}, tokenId).then(setupData => { actor.basicTest(setupData) })
+                                actor.setupSkill(result, {}, tokenId).then(setupData => { actor.basicTest(setupData) })
                                 break
                             case "consumable":
                                 new Dialog({

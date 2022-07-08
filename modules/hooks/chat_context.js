@@ -4,11 +4,11 @@ import DSA5_Utility from "../system/utility-dsa5.js";
 export default function() {
     const fateAvailable = (actor, group) => { return DSA5_Utility.fateAvailable(actor, group) }
     const canHurt = function(li) {
-        let cardData = game.messages.get(li.attr("data-message-id")).data.flags.opposeData
+        let cardData = game.messages.get(li.attr("data-message-id")).flags.opposeData
         return (game.user.isGM && li.find(".opposed-card").length || li.find(".dice-roll").length) && cardData && cardData.damage.value > 0
     }
     const canHurtSP = function(li) {
-        let cardData = game.messages.get(li.attr("data-message-id")).data.flags.opposeData
+        let cardData = game.messages.get(li.attr("data-message-id")).flags.opposeData
         return (game.user.isGM && li.find(".opposed-card").length || li.find(".dice-roll").length) && cardData && cardData.damage.sp > 0
     }
     const canCostMana = function(li) {
@@ -151,14 +151,14 @@ export default function() {
 
         if (!actor.isOwner) return ui.notifications.error(game.i18n.localize("DSAError.DamagePermission"))
         await actor.applyDamage(cardData.damage[mode])
-        await message.update({ "flags.data.damageApplied": true, content: message.content.replace(/hideAnchor">/, `hideAnchor"><i class="fas fa-check" style="float:right" title="${game.i18n.localize("damageApplied")}"></i>`) })
+        await message.update({ "flags.data.damageApplied": true, content: message.content.replace(/hideAnchor">/, `hideAnchor"><i class="fas fa-check" style="float:right" data-tooltip="${game.i18n.localize("damageApplied")}"></i>`) })
     }
     const applyChatCardDamage = (li, mode) => {
         const message = game.messages.get(li.data("messageId"));
-        const roll = message.roll;
+        const roll = message.rolls[0];
         return Promise.all(canvas.tokens.controlled.map(token => {
             const actor = token.actor;
-            const damage = mode != "sp" ? roll.total - Actordsa5.armorValue(actor.data).armor : roll.total
+            const damage = mode != "sp" ? roll.total - Actordsa5.armorValue(actor).armor : roll.total
             return actor.applyDamage(Math.max(0, damage));
         }));
     }

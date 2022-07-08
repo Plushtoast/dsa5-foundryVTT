@@ -3,23 +3,23 @@
         <div class="col fourty">
             {{localize "closeCombatAttacks"}}
             <span class="buttons">
-                <a data-mod="dodge" class="ch-status item" title="{{localize 'dodge'}}"><i class="fas fa-reply"></i></a>
-                <a data-char="attack" class="ch-weaponless item" data-mod="attackWeaponless" title="{{localize 'attackWeaponless'}}"><i class="fa attackWeaponless"></i></a>
-                <a data-char="parry" class="ch-weaponless item" data-mod="parryWeaponless" title="{{localize 'parryWeaponless'}}"><i class="fa fa-shield-alt"></i></a>
+                <a data-mod="dodge" class="ch-status item" data-tooltip="{{localize 'dodge'}}"><i class="fas fa-reply"></i></a>
+                <a data-char="attack" class="ch-weaponless item" data-mod="attackWeaponless" data-tooltip="{{localize 'attackWeaponless'}}"><i class="fa attackWeaponless"></i></a>
+                <a data-char="parry" class="ch-weaponless item" data-mod="parryWeaponless" data-tooltip="{{localize 'parryWeaponless'}}"><i class="fa fa-shield-alt"></i></a>
 
             </span>
         </div>
         <div class="col five center small">
             {{localize "Group"}}
         </div>
-        <div class="col ten center small" title="{{localize 'CHAR.ATTACK'}}">
+        <div class="col ten center small" data-tooltip="{{localize 'CHAR.ATTACK'}}">
             {{localize "CHARAbbrev.AT"}}
         </div>
-        <div class="col ten center small" title="{{localize 'CHAR.PARRY'}}">
+        <div class="col ten center small" data-tooltip="{{localize 'CHAR.PARRY'}}">
             {{localize "CHARAbbrev.PA"}}
         </div>
 
-        <div class="col ten center small" title="{{localize 'damage'}}">
+        <div class="col ten center small" data-tooltip="{{localize 'damage'}}">
             {{localize "CHARAbbrev.damage"}}
         </div>
         <div class="col ten center small">
@@ -30,7 +30,7 @@
         {{#each actor.wornMeleeWeapons as |item i|}}
         <div class="col item" data-item-id="{{item._id}}">
             <div class="row-section">
-                <div class="col ten image {{item.damageToolTip.css}}" title="{{item.damageToolTip.msg}}" style="background-image: url('{{item.img}}')">
+                <div class="col ten image {{item.damageToolTip.css}}" data-tooltip="{{item.damageToolTip.msg}}" style="background-image: url('{{item.img}}')">
                     {{#if item.structureMax}}
                     <div class="item-structure" style="--a: {{item.structureMax}}; --b: {{item.structureCurrent}}">
                         <div class="inner"></div>
@@ -41,7 +41,7 @@
                     <a class="item-edit">{{item.name}}</a>
                 </div>
                 <div class="col five center small">
-                    {{localize item.data.combatskill.value}}
+                    {{localize item.system.combatskill.value}}
                 </div>
                 <div class="col ten center item" data-item-id="{{item._id}}" data-mod="attack">
                     <a data-mode="attack" class="ch-rollCombat d20 die-attack">{{item.attack}}</a>
@@ -51,10 +51,10 @@
                 </div>
 
                 <div class="col ten center">
-                    <a data-mode="damage" class="ch-rollCombat d6 die-damage">{{item.damagedie}}</a><span title="{{localize 'damageOverThreshold'}}">{{item.damageAdd}}</span>
+                    <a data-mode="damage" class="ch-rollCombat d6 die-damage">{{item.damagedie}}</a><span data-tooltip="{{localize 'damageOverThreshold'}}">{{item.damageAdd}}</span>
                 </div>
                 <div class="col ten center small">
-                    {{localize (concat "Range-" item.data.reach.value)}}
+                    {{localize (concat "Range-" item.system.reach.value)}}
                 </div>
             </div>
         </div>
@@ -76,10 +76,10 @@
                     {{#if item.parry}} <a data-mode="parry" class="ch-rollCombat d20 die-parry">{{item.parry}}</a> {{else}} - {{/if}}
                 </div>
                 <div class="col ten center">
-                    <a data-mode="damage" class="ch-rollCombat d6 die-damage">{{item.damagedie}}</a><span title="{{localize 'damageOverThreshold'}}">{{item.damageAdd}}</span>
+                    <a data-mode="damage" class="ch-rollCombat d6 die-damage">{{item.damagedie}}</a><span data-tooltip="{{localize 'damageOverThreshold'}}">{{item.damageAdd}}</span>
                 </div>
                 <div class="col ten center small">
-                    {{localize (concat "Range-" item.data.reach.value)}}
+                    {{localize (concat "Range-" item.system.reach.value)}}
                 </div>
             </div>
         </div>
@@ -96,10 +96,10 @@
             {{localize "Group"}}
         </div>
 
-        <div class="col ten center small" title="{{localize 'CHAR.ATTACK'}}">
+        <div class="col ten center small" data-tooltip="{{localize 'CHAR.ATTACK'}}">
             {{localize "CHARAbbrev.AT"}}
         </div>
-        <div class="col eight center small" title="{{localize 'damage'}}">
+        <div class="col eight center small" data-tooltip="{{localize 'damage'}}">
             {{localize "CHARAbbrev.damage"}}
         </div>
         <div class="col ten">
@@ -113,24 +113,24 @@
         {{#each actor.wornRangedWeapons as |item i|}}
         <div class="col item" data-item-id="{{item._id}}">
             <div class="row-section">
-                <div class="col ten image {{item.damageToolTip.css}}" title="{{item.damageToolTip.msg}}" style="background-image: url('{{item.img}}')">
+                <div class="col ten image {{item.damageToolTip.css}}" data-tooltip="{{item.damageToolTip.msg}}" style="background-image: url('{{item.img}}')">
                 </div>
                 <div class="col thirtyfive">
                     <a class="item-edit">{{item.name}}</a>
                 </div>
                 <div class="col five center small">
-                    {{localize item.data.combatskill.value}}
+                    {{localize item.system.combatskill.value}}
                 </div>
 
                 <div class="col ten center item" data-item-id="{{item._id}}" data-mod="attack">
                     <a data-mode="attack" class="ch-rollCombat d20 die-attack">{{item.attack}}</a>
                 </div>
                 <div class="col eight center">
-                    <a data-mode="damage" class="ch-rollCombat d6 die-damage">{{item.damagedie}}</a><span title="{{localize 'damageOverThreshold'}}{{item.damageBonusDescription}}">{{item.damageAdd}}</span>
+                    <a data-mode="damage" class="ch-rollCombat d6 die-damage">{{item.damagedie}}</a><span data-tooltip="{{localize 'damageOverThreshold'}}{{item.damageBonusDescription}}">{{item.damageAdd}}</span>
                 </div>
                 <div class="col ten">
                     {{#if (ne item.LZ 0)}}
-                    <a class="loadWeapon" title="{{item.title}}">
+                    <a class="loadWeapon" data-tooltip="{{item.title}}">
                         <div class="progress blue">
                             <span class="progress-left" style="--transformLeft:{{item.transformLeft}}">
                             <span class="progress-bar"></span>
@@ -143,7 +143,7 @@
                     </a> {{/if}}
                 </div>
                 <div class="col zerofive very-small center">
-                    <a class="item-dropdown" title="{{localize 'SHEET.Dropdown'}}"><i
+                    <a class="item-dropdown" data-tooltip="{{localize 'SHEET.Dropdown'}}"><i
                             class="fas fa-chevron-down"></i></a>
                 </div>
             </div>
@@ -151,7 +151,7 @@
                 <div class="col">
                     <ul>
                         <li><b>{{localize "reach"}}</b>: {{item.calculatedRange}}</li>
-                        <li><b>{{localize "reloadTime"}}</b>: {{item.LZ}} ({{item.data.reloadTime.progress}})</li>
+                        <li><b>{{localize "reloadTime"}}</b>: {{item.LZ}} ({{item.system.reloadTime.progress}})</li>
                     </ul>
                 </div>
             </div>
@@ -171,11 +171,11 @@
                     <a data-mode="attack" class="ch-rollCombat d20 die-attack">{{item.attack}}</a>
                 </div>
                 <div class="col eight center">
-                    <a data-mode="damage" class="ch-rollCombat d6 die-damage">{{item.damagedie}}</a><span title="{{localize 'damageOverThreshold'}}">{{item.damageAdd}}</span>
+                    <a data-mode="damage" class="ch-rollCombat d6 die-damage">{{item.damagedie}}</a><span data-tooltip="{{localize 'damageOverThreshold'}}">{{item.damageAdd}}</span>
                 </div>
                 <div class="col ten">
                     {{#if (ne item.LZ 0)}}
-                    <a class="loadWeapon" title="{{item.title}}">
+                    <a class="loadWeapon" data-tooltip="{{item.title}}">
                         <div class="progress blue">
                             <span class="progress-left" style="--transformLeft:{{item.transformLeft}}">
                             <span class="progress-bar"></span>
@@ -188,14 +188,14 @@
                     </a> {{/if}}
                 </div>
                 <div class="col zerofive very-small center">
-                    <a class="item-dropdown" title="{{localize 'SHEET.Dropdown'}}"><i class="fas fa-chevron-down"></i></a>
+                    <a class="item-dropdown" data-tooltip="{{localize 'SHEET.Dropdown'}}"><i class="fas fa-chevron-down"></i></a>
                 </div>
             </div>
             <div class="row-section lineheight expandDetails {{item.detailed}}">
                 <div class="col">
                     <ul>
-                        <li><b>{{localize "reach"}}</b>: {{item.data.reach.value}}</li>
-                        <li><b>{{localize "reloadTime"}}</b>: {{item.LZ}} ({{item.data.reloadTime.progress}})</li>
+                        <li><b>{{localize "reach"}}</b>: {{item.system.reach.value}}</li>
+                        <li><b>{{localize "reloadTime"}}</b>: {{item.LZ}} ({{item.system.reloadTime.progress}})</li>
                     </ul>
                 </div>
             </div>
@@ -209,20 +209,20 @@
         <div class="col two">
             {{localize "Equipment.armor"}}
         </div>
-        <div class="col four center small">{{localize "protection"}} ({{actor.armorSum}}){{#if actor.spellArmor}}<span title="{{localize 'spellArmor'}}">, {{actor.spellArmor}}</span>{{/if}}){{#if actor.liturgyArmor}}<span title="{{localize 'liturgyArmor'}}">, {{actor.liturgyArmor}}</span>{{/if}}</div>
+        <div class="col four center small">{{localize "protection"}} ({{actor.armorSum}}){{#if actor.spellArmor}}<span data-tooltip="{{localize 'spellArmor'}}">, {{actor.spellArmor}}</span>{{/if}}){{#if actor.liturgyArmor}}<span data-tooltip="{{localize 'liturgyArmor'}}">, {{actor.liturgyArmor}}</span>{{/if}}</div>
         <div class="col four center small">{{localize "encumbrance"}}</div>
     </div>
     <div class="row-section wrap rowtable inventory">
         {{#each actor.wornArmor as |item i|}}
         <div class="col item" data-item-id="{{item._id}}">
             <div class="row-section">
-                <div class="col ten image {{item.damageToolTip.css}}" title="{{item.damageToolTip.msg}}" style="background-image: url('{{item.img}}')">
+                <div class="col ten image {{item.damageToolTip.css}}" data-tooltip="{{item.damageToolTip.msg}}" style="background-image: url('{{item.img}}')">
                 </div>
                 <div class="col fourty">
                     <a class="item-edit">{{item.name}}</a>
                 </div>
                 <div class="col four center">
-                    {{item.data.protection.value}}
+                    {{item.system.protection.value}}
                 </div>
                 <div class="col four center">
                     {{item.calculatedEncumbrance}}
@@ -238,7 +238,7 @@
                     <a class="item-edit">{{item.name}}</a>
                 </div>
                 <div class="col four center">
-                    {{item.data.at.value}}
+                    {{item.system.at.value}}
                 </div>
                 <div class="col four center">
                     -
@@ -258,7 +258,7 @@
     <div class="row-section wrap cards">
         {{#each actor.specAbs.Combat as |item i|}}
         <div class="item" data-item-id="{{item._id}}">
-            {{#if item.OnUseEffect}}<a title="{{localize 'SHEET.onUseEffect'}}" class="onUseItem"><i class="fas fa-dice-six"></i></a>{{/if}}<a class="item-edit">{{item.name}}{{roman item.data.step.value item.data.maxRank.value}}</a>
+            {{#if item.OnUseEffect}}<a data-tooltip="{{localize 'SHEET.onUseEffect'}}" class="onUseItem"><i class="fas fa-dice-six"></i></a>{{/if}}<a class="item-edit">{{item.name}}{{roman item.system.step.value item.system.maxRank.value}}</a>
         </div>
         {{/each}}
     </div>
@@ -272,7 +272,7 @@
             <b>{{localize "combatskill"}}</b>
         </div>
         <div class="col lineheight ten center">
-            <a class="ch-collapse"><i class="fas fa-angle-up" title="{{localize 'SHEET.collapse'}}"></i></a>
+            <a class="ch-collapse"><i class="fas fa-angle-up" data-tooltip="{{localize 'SHEET.collapse'}}"></i></a>
         </div>
     </div>
     <div class="row-section wrap">
@@ -285,13 +285,13 @@
                     {{{localize "guidevalue_small"}}}
                 </div>
 
-                <div class="col eight center" title="{{localize 'KTW'}}">
+                <div class="col eight center" data-tooltip="{{localize 'KTW'}}">
                     {{localize "CHARAbbrev.KTW"}}
                 </div>
                 <div class="col eight center">
                     {{localize "CHARAbbrev.ATFK"}}
                 </div>
-                <div class="col eight center" title="{{localize 'CHAR.PARRY'}}">
+                <div class="col eight center" data-tooltip="{{localize 'CHAR.PARRY'}}">
                     {{localize "CHARAbbrev.PA"}}
                 </div>
             </div>
@@ -305,13 +305,13 @@
                     {{{localize "guidevalue_small"}}}
                 </div>
 
-                <div class="col eight center" title="{{localize 'KTW'}}">
+                <div class="col eight center" data-tooltip="{{localize 'KTW'}}">
                     {{localize "CHARAbbrev.KTW"}}
                 </div>
                 <div class="col eight center">
                     {{localize "CHARAbbrev.ATFK"}}
                 </div>
-                <div class="col eight center" title="{{localize 'CHAR.PARRY'}}">
+                <div class="col eight center" data-tooltip="{{localize 'CHAR.PARRY'}}">
                     {{localize "CHARAbbrev.PA"}}
                 </div>
             </div>
@@ -321,21 +321,21 @@
             <div class="row-section item skills lineheight" data-item-id="{{item._id}}">
                 <div class="col fourty">
                     <a class="item-edit">{{item.name}}</a> {{#if item.canAdvance}}
-                    <a class="advance refund-item"><i title="{{item.refund}}" class="fas fa-minus"></i></a>
-                    <a class="advance advance-item"><i title="{{item.cost}}" class="fas fa-plus"></i></a>{{/if}}
+                    <a class="advance refund-item"><i data-tooltip="{{item.refund}}" class="fas fa-minus"></i></a>
+                    <a class="advance advance-item"><i data-tooltip="{{item.cost}}" class="fas fa-plus"></i></a>{{/if}}
                 </div>
                 <div class="col five center">
-                    {{localize (concatUp "CHARAbbrev." item.data.guidevalue.value)}}
+                    {{localize (concatUp "CHARAbbrev." item.system.guidevalue.value)}}
                 </div>
 
                 <div class="col eight center">
-                    <input class="skill-advances" type="text" data-dtype="Number" value="{{item.data.talentValue.value}}" />
+                    <input class="skill-advances" type="text" data-dtype="Number" value="{{item.system.talentValue.value}}" />
                 </div>
                 <div class="col eight center item" data-item-id="{{item._id}}" data-mod="attack">
-                    <a data-mode="attack" class="ch-rollCombat d20 diet-mu">{{item.data.attack.value}}</a>
+                    <a data-mode="attack" class="ch-rollCombat d20 diet-mu">{{item.system.attack.value}}</a>
                 </div>
                 <div class="col eight center item" data-item-id="{{item._id}}" data-mod="parry">
-                    {{#if (eq item.data.weapontype.value 'melee')}} <a data-mode="parry" class="ch-rollCombat d20 diet-in">{{item.data.parry.value}}</a> {{else}}- {{/if}}
+                    {{#if (eq item.system.weapontype.value 'melee')}} <a data-mode="parry" class="ch-rollCombat d20 diet-in">{{item.system.parry.value}}</a> {{else}}- {{/if}}
                 </div>
             </div>
 

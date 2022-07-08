@@ -11,7 +11,7 @@
             <div class="row-section wrap cards">
                 {{#each actor.advantages as |item i|}}
                 <div class="item" data-item-id="{{item._id}}">
-                    <a class="item-edit">{{item.name}}{{roman item.data.step.value item.data.max.value}}</a>
+                    <a class="item-edit">{{item.name}}{{roman item.system.step.value item.system.max.value}}</a>
                 </div>
                 {{/each}}
             </div>
@@ -26,7 +26,7 @@
             <div class="row-section wrap cards">
                 {{#each actor.disadvantages as |item i|}}
                 <div class="item" data-item-id="{{item._id}}">
-                    <a class="item-edit">{{item.name}}{{roman item.data.step.value item.data.max.value}}</a>
+                    <a class="item-edit">{{item.name}}{{roman item.system.step.value item.system.max.value}}</a>
                 </div>
                 {{/each}}
             </div>
@@ -41,7 +41,7 @@
             <div class="row-section wrap cards">
                 {{#each actor.specAbs.general as |item i|}}
                 <div class="item" data-item-id="{{item._id}}">
-                    {{#if item.OnUseEffect}}<a title="{{localize 'SHEET.onUseEffect'}}" class="onUseItem"><i class="fas fa-dice-six"></i></a>{{/if}}<a class="item-edit">{{item.name}}</a>
+                    {{#if item.OnUseEffect}}<a data-tooltip="{{localize 'SHEET.onUseEffect'}}" class="onUseItem"><i class="fas fa-dice-six"></i></a>{{/if}}<a class="item-edit">{{item.name}}</a>
                 </div>
                 {{/each}}
             </div>
@@ -50,13 +50,13 @@
         <div class="groupbox">
             <div class="generalSpecialAbilities row-section">
                 <div class="col header-label lineheight">
-                    <b>{{localize "language"}}</b> <span title="{{localize 'freeLanguagePoint'}}">{{actor.languagePoints.used}} / {{actor.languagePoints.available}}</span>
+                    <b>{{localize "language"}}</b> <span data-tooltip="{{localize 'freeLanguagePoint'}}">{{actor.languagePoints.used}} / {{actor.languagePoints.available}}</span>
                 </div>
             </div>
             <div class="row-section wrap cards">
                 {{#each actor.specAbs.language as |item i|}}
                 <div class="item" data-item-id="{{item._id}}">
-                    {{#if item.OnUseEffect}}<a title="{{localize 'SHEET.onUseEffect'}}" class="onUseItem"><i class="fas fa-dice-six"></i></a>{{/if}}<a class="item-edit">{{item.name}}{{roman item.data.step.value item.data.maxRank.value}}</a>
+                    {{#if item.OnUseEffect}}<a data-tooltip="{{localize 'SHEET.onUseEffect'}}" class="onUseItem"><i class="fas fa-dice-six"></i></a>{{/if}}<a class="item-edit">{{item.name}}{{roman item.system.step.value item.system.maxRank.value}}</a>
                 </div>
                 {{/each}}
             </div>
@@ -65,13 +65,13 @@
         <div class="groupbox">
             <div class="fatePointsAbilities row-section">
                 <div class="col header-label lineheight">
-                    <b>{{localize "fatePointsAbilities"}}</b> {{actor.data.notifications}}
+                    <b>{{localize "fatePointsAbilities"}}</b> {{actor.system.notifications}}
                 </div>
             </div>
             <div class="row-section wrap cards">
                 {{#each actor.specAbs.fatePoints as |item i|}}
                 <div class="item" data-item-id="{{item._id}}">
-                    {{#if item.OnUseEffect}}<a title="{{localize 'SHEET.onUseEffect'}}" class="onUseItem"><i class="fas fa-dice-six"></i></a>{{/if}}<a class="item-edit">{{item.name}}{{roman item.data.step.value item.data.maxRank.value}}</a>
+                    {{#if item.OnUseEffect}}<a data-tooltip="{{localize 'SHEET.onUseEffect'}}" class="onUseItem"><i class="fas fa-dice-six"></i></a>{{/if}}<a class="item-edit">{{item.name}}{{roman item.system.step.value item.system.maxRank.value}}</a>
                 </div>
                 {{/each}}
             </div>
@@ -100,38 +100,38 @@
             <div class="derivedAttrs row-section">
                 <div class="col two">
                 </div>
-                <div class="col eight very-small center" title="{{localize 'value'}}">
+                <div class="col eight very-small center" data-tooltip="{{localize 'value'}}">
                     {{localize "ABBR.value"}}
                 </div>
-                <div class="col eight very-small center" title="{{localize 'Modifiers'}}">
+                <div class="col eight very-small center" data-tooltip="{{localize 'Modifiers'}}">
                     {{localize "ABBR.modifiers"}}
                 </div>
-                <div class="col eight very-small center" title="{{localize 'Advances'}}">
+                <div class="col eight very-small center" data-tooltip="{{localize 'Advances'}}">
                     {{localize "ABBR.advances"}}
                 </div>
-                <div class="col eight very-small center" title="{{localize 'max'}}">
+                <div class="col eight very-small center" data-tooltip="{{localize 'max'}}">
                     {{localize "ABBR.max"}}
                 </div>
             </div>
             <div class="derivedAttrs row-section">
                 <div class="col two lineheight">
-                    {{localize "wounds"}} {{#if actor.canAdvance}}<a data-attr="wounds" class="advance refund-points"><i title="{{actor.data.status.wounds.refund}}" class="fas fa-minus"></i></a>
-                    <a data-attr="wounds" class="advance advance-points"><i title="{{actor.data.status.wounds.cost}}" class="fas fa-plus"></i></a>{{/if}}
+                    {{localize "wounds"}} {{#if actor.canAdvance}}<a data-attr="wounds" class="advance refund-points"><i data-tooltip="{{actor.system.status.wounds.refund}}" class="fas fa-minus"></i></a>
+                    <a data-attr="wounds" class="advance advance-points"><i data-tooltip="{{actor.system.status.wounds.cost}}" class="fas fa-plus"></i></a>{{/if}}
                     <span class="buttons">
-                        <a data-char="regenerate" class="ch-regenerate item" data-mod="regenerate" title="{{localize 'regenerate'}}">&nbsp;<i class="fas fa-moon"></i></a>
+                        <a data-char="regenerate" class="ch-regenerate item" data-mod="regenerate" data-tooltip="{{localize 'regenerate'}}">&nbsp;<i class="fas fa-moon"></i></a>
                     </span>
                 </div>
                 <div class="col eight lineheight center">
-                    {{actor.data.status.wounds.current}}
+                    {{actor.system.status.wounds.current}}
                 </div>
                 <div class="col eight center">
-                    <input name="data.status.wounds.modifier" type="text" value="{{actor.data.status.wounds.modifier}}" data-dtype="Number" />
+                    <input name="system.status.wounds.modifier" type="text" value="{{actor.system.status.wounds.modifier}}" data-dtype="Number" />
                 </div>
                 <div class="col eight center">
-                    <input name="data.status.wounds.advances" type="text" value="{{actor.data.status.wounds.advances}}" data-dtype="Number" />
+                    <input name="system.status.wounds.advances" type="text" value="{{actor.system.status.wounds.advances}}" data-dtype="Number" />
                 </div>
                 <div class="col eight lineheight center">
-                    {{actor.data.status.wounds.max}}
+                    {{actor.system.status.wounds.max}}
                 </div>
             </div>
             
@@ -143,33 +143,33 @@
 
                     </div>
                     <div class="col eight center inputTooltipAvailable">
-                        <input name="data.status.regeneration.LePMod" type="text" value="{{actor.data.status.regeneration.LePMod}}" data-dtype="Number" title="{{localize 'SHEET.permRegeneration'}}" />
+                        <input name="system.status.regeneration.LePMod" type="text" value="{{actor.system.status.regeneration.LePMod}}" data-dtype="Number" data-tooltip="{{localize 'SHEET.permRegeneration'}}" />
                     </div>
                     <div class="col eight center inputTooltipAvailable">
-                        <input name="data.status.regeneration.LePTemp" type="text" value="{{actor.data.status.regeneration.LePTemp}}" data-dtype="Number" title="{{localize 'SHEET.tempRegeneration'}}" />
+                        <input name="system.status.regeneration.LePTemp" type="text" value="{{actor.system.status.regeneration.LePTemp}}" data-dtype="Number" data-tooltip="{{localize 'SHEET.tempRegeneration'}}" />
                     </div>
                     <div class="col eight lineheight center">
-                        {{actor.data.status.regeneration.LePmax}}
+                        {{actor.system.status.regeneration.LePmax}}
                     </div>
                 </div>
            
             {{#if actor.magic.hasSpells}}
             <div class="derivedAttrs row-section">
                 <div class="col two lineheight">
-                    {{localize "astralenergy"}} {{#if actor.canAdvance}}<a data-attr="astralenergy" class="advance refund-points"><i title="{{actor.data.status.astralenergy.refund}}" class="fas fa-minus"></i></a>
-                    <a data-attr="astralenergy" class="advance advance-points"><i title="{{actor.data.status.astralenergy.cost}}" class="fas fa-plus"></i></a>{{/if}}
+                    {{localize "astralenergy"}} {{#if actor.canAdvance}}<a data-attr="astralenergy" class="advance refund-points"><i data-tooltip="{{actor.system.status.astralenergy.refund}}" class="fas fa-minus"></i></a>
+                    <a data-attr="astralenergy" class="advance advance-points"><i data-tooltip="{{actor.system.status.astralenergy.cost}}" class="fas fa-plus"></i></a>{{/if}}
                 </div>
                 <div class="col eight lineheight center">
-                    {{actor.data.status.astralenergy.current}}
+                    {{actor.system.status.astralenergy.current}}
                 </div>
                 <div class="col eight center">
-                    <input name="data.status.astralenergy.modifier" type="text" value="{{actor.data.status.astralenergy.modifier}}" data-dtype="Number" />
+                    <input name="system.status.astralenergy.modifier" type="text" value="{{actor.system.status.astralenergy.modifier}}" data-dtype="Number" />
                 </div>
                 <div class="col eight center">
-                    <input name="data.status.astralenergy.advances" type="text" value="{{actor.data.status.astralenergy.advances}}" data-dtype="Number" />
+                    <input name="system.status.astralenergy.advances" type="text" value="{{actor.system.status.astralenergy.advances}}" data-dtype="Number" />
                 </div>
                 <div class="col eight lineheight center">
-                    {{actor.data.status.astralenergy.max}}
+                    {{actor.system.status.astralenergy.max}}
                 </div>
             </div>
            
@@ -181,35 +181,35 @@
 
                 </div>
                 <div class="col eight center inputTooltipAvailable">
-                    <input name="data.status.regeneration.AsPMod" type="text" value="{{actor.data.status.regeneration.AsPMod}}" data-dtype="Number" title="{{localize 'SHEET.permRegeneration'}}" />
+                    <input name="system.status.regeneration.AsPMod" type="text" value="{{actor.system.status.regeneration.AsPMod}}" data-dtype="Number" data-tooltip="{{localize 'SHEET.permRegeneration'}}" />
                 </div>
                 <div class="col eight center inputTooltipAvailable">
-                    <input name="data.status.regeneration.AsPTemp" type="text" value="{{actor.data.status.regeneration.AsPTemp}}" data-dtype="Number" title="{{localize 'SHEET.tempRegeneration'}}" />
+                    <input name="system.status.regeneration.AsPTemp" type="text" value="{{actor.system.status.regeneration.AsPTemp}}" data-dtype="Number" data-tooltip="{{localize 'SHEET.tempRegeneration'}}" />
                 </div>
                 <div class="col eight lineheight center">
-                    {{actor.data.status.regeneration.AsPmax}}
+                    {{actor.system.status.regeneration.AsPmax}}
                 </div>
             </div>
            
             {{/if}} {{#if actor.magic.hasPrayers}}
             <div class="derivedAttrs row-section">
                 <div class="col two lineheight">
-                    {{localize "karmaenergy"}} {{#if actor.canAdvance}} <a data-attr="karmaenergy" class="advance refund-points"><i title="{{actor.data.status.karmaenergy.refund}}"
+                    {{localize "karmaenergy"}} {{#if actor.canAdvance}} <a data-attr="karmaenergy" class="advance refund-points"><i data-tooltip="{{actor.system.status.karmaenergy.refund}}"
                         class="fas fa-minus"></i></a>
-                    <a data-attr="karmaenergy" class="advance advance-points"><i title="{{actor.data.status.karmaenergy.cost}}"
+                    <a data-attr="karmaenergy" class="advance advance-points"><i data-tooltip="{{actor.system.status.karmaenergy.cost}}"
                             class="fas fa-plus"></i></a>{{/if}}
                 </div>
                 <div class="col eight lineheight center">
-                    {{actor.data.status.karmaenergy.current}}
+                    {{actor.system.status.karmaenergy.current}}
                 </div>
                 <div class="col eight center">
-                    <input name="data.status.karmaenergy.modifier" type="text" value="{{actor.data.status.karmaenergy.modifier}}" data-dtype="Number" />
+                    <input name="system.status.karmaenergy.modifier" type="text" value="{{actor.system.status.karmaenergy.modifier}}" data-dtype="Number" />
                 </div>
                 <div class="col eight center">
-                    <input name="data.status.karmaenergy.advances" type="text" value="{{actor.data.status.karmaenergy.advances}}" data-dtype="Number" />
+                    <input name="system.status.karmaenergy.advances" type="text" value="{{actor.system.status.karmaenergy.advances}}" data-dtype="Number" />
                 </div>
                 <div class="col eight lineheight center">
-                    {{actor.data.status.karmaenergy.max}}
+                    {{actor.system.status.karmaenergy.max}}
                 </div>
             </div>
             
@@ -221,13 +221,13 @@
 
                 </div>
                 <div class="col eight center inputTooltipAvailable">
-                    <input name="data.status.regeneration.KaPMod" type="text" value="{{actor.data.status.regeneration.KaPMod}}" data-dtype="Number" title="{{localize 'SHEET.permRegeneration'}}" />
+                    <input name="system.status.regeneration.KaPMod" type="text" value="{{actor.system.status.regeneration.KaPMod}}" data-dtype="Number" data-tooltip="{{localize 'SHEET.permRegeneration'}}" />
                 </div>
                 <div class="col eight center inputTooltipAvailable">
-                    <input name="data.status.regeneration.KaPTemp" type="text" value="{{actor.data.status.regeneration.KaPTemp}}" data-dtype="Number" title="{{localize 'SHEET.tempRegeneration'}}" />
+                    <input name="system.status.regeneration.KaPTemp" type="text" value="{{actor.system.status.regeneration.KaPTemp}}" data-dtype="Number" data-tooltip="{{localize 'SHEET.tempRegeneration'}}" />
                 </div>
                 <div class="col eight lineheight center">
-                    {{actor.data.status.regeneration.KaPmax}}
+                    {{actor.system.status.regeneration.KaPmax}}
                 </div>
             </div>
             
@@ -237,16 +237,16 @@
                     {{localize "soulpower"}}
                 </div>
                 <div class="col eight lineheight center">
-                    {{actor.data.status.soulpower.value}}
+                    {{actor.system.status.soulpower.value}}
                 </div>
                 <div class="col eight center">
-                    <input name="data.status.soulpower.modifier" type="text" value="{{actor.data.status.soulpower.modifier}}" data-dtype="Number" />
+                    <input name="system.status.soulpower.modifier" type="text" value="{{actor.system.status.soulpower.modifier}}" data-dtype="Number" />
                 </div>
                 <div class="col eight">
 
                 </div>
                 <div class="col eight lineheight center">
-                    {{actor.data.status.soulpower.max}}
+                    {{actor.system.status.soulpower.max}}
                 </div>
             </div>
             <div class="derivedAttrs row-section">
@@ -254,16 +254,16 @@
                     {{localize "toughness"}}
                 </div>
                 <div class="col eight lineheight center">
-                    {{actor.data.status.toughness.value}}
+                    {{actor.system.status.toughness.value}}
                 </div>
                 <div class="col eight center">
-                    <input name="data.status.toughness.modifier" type="text" value="{{actor.data.status.toughness.modifier}}" data-dtype="Number" />
+                    <input name="system.status.toughness.modifier" type="text" value="{{actor.system.status.toughness.modifier}}" data-dtype="Number" />
                 </div>
                 <div class="col eight">
 
                 </div>
                 <div class="col eight lineheight center">
-                    {{actor.data.status.toughness.max}}
+                    {{actor.system.status.toughness.max}}
                 </div>
             </div>
             <div class="derivedAttrs row-section">
@@ -271,16 +271,16 @@
                     {{localize "dodge"}}
                 </div>
                 <div class="col eight lineheight center">
-                    {{actor.data.status.dodge.value}}
+                    {{actor.system.status.dodge.value}}
                 </div>
                 <div class="col eight center">
-                    <input name="data.status.dodge.modifier" type="text" value="{{actor.data.status.dodge.modifier}}" data-dtype="Number" />
+                    <input name="system.status.dodge.modifier" type="text" value="{{actor.system.status.dodge.modifier}}" data-dtype="Number" />
                 </div>
                 <div class="col eight">
 
                 </div>
                 <div class="col eight lineheight center">
-                    {{actor.data.status.dodge.max}}
+                    {{actor.system.status.dodge.max}}
                 </div>
             </div>
             <div class="derivedAttrs row-section">
@@ -288,16 +288,16 @@
                     {{localize "speed"}}
                 </div>
                 <div class="col eight lineheight center">
-                    {{actor.data.status.speed.initial}}
+                    {{actor.system.status.speed.initial}}
                 </div>
                 <div class="col eight center">
-                    <input name="data.status.speed.modifier" type="text" value="{{actor.data.status.speed.modifier}}" data-dtype="Number" />
+                    <input name="system.status.speed.modifier" type="text" value="{{actor.system.status.speed.modifier}}" data-dtype="Number" />
                 </div>
                 <div class="col eight">
 
                 </div>
                 <div class="col eight lineheight center">
-                    {{actor.data.status.speed.max}}
+                    {{actor.system.status.speed.max}}
                 </div>
             </div>
             <div class="derivedAttrs row-section">
@@ -307,13 +307,13 @@
                 <div class="col eight lineheight center">
                 </div>
                 <div class="col eight center">
-                    <input name="data.status.initiative.modifier" type="text" value="{{actor.data.status.initiative.modifier}}" data-dtype="Number" />
+                    <input name="system.status.initiative.modifier" type="text" value="{{actor.system.status.initiative.modifier}}" data-dtype="Number" />
                 </div>
                 <div class="col eight">
 
                 </div>
                 <div class="col eight lineheight center">
-                    {{floor actor.data.status.initiative.value}}
+                    {{floor actor.system.status.initiative.value}}
                 </div>
             </div>
             <div class="derivedAttrs row-section">
@@ -321,8 +321,8 @@
                     {{localize "initDie"}}
                 </div>
                 <div class="col two lineheight center">
-                    <select name="data.status.initiative.die" data-dtype="String" style="width:100%">
-                        {{selectOptions initDies selected=actor.data.status.initiative.die localize=false}}
+                    <select name="system.status.initiative.die" data-dtype="String" style="width:100%">
+                        {{selectOptions initDies selected=actor.system.status.initiative.die localize=false}}
                     </select>
                 </div>
             </div>
@@ -332,8 +332,8 @@
                 </div>
 
                 <div class="col two lineheight center">
-                    <select name="data.status.initiative.diemodifier" data-dtype="String" style="width:100%">
-                        {{selectOptions initDies selected=actor.data.status.initiative.diemodifier localize=false}}
+                    <select name="system.status.initiative.diemodifier" data-dtype="String" style="width:100%">
+                        {{selectOptions initDies selected=actor.system.status.initiative.diemodifier localize=false}}
                     </select>
                 </div>
             </div>
@@ -342,16 +342,16 @@
                     {{localize "fatePoints"}}
                 </div>
                 <div class="col eight lineheight center">
-                    <input name="data.status.fatePoints.current" type="text" value="{{actor.data.status.fatePoints.current}}" data-dtype="Number" />
+                    <input name="system.status.fatePoints.current" type="text" value="{{actor.system.status.fatePoints.current}}" data-dtype="Number" />
                 </div>
                 <div class="col eight center">
-                    <input name="data.status.fatePoints.modifier" type="text" value="{{actor.data.status.fatePoints.modifier}}" data-dtype="Number" />
+                    <input name="system.status.fatePoints.modifier" type="text" value="{{actor.system.status.fatePoints.modifier}}" data-dtype="Number" />
                 </div>
                 <div class="col eight">
 
                 </div>
                 <div class="col eight lineheight center">
-                    {{actor.data.status.fatePoints.max}}
+                    {{actor.system.status.fatePoints.max}}
                 </div>
             </div>
         </div>
@@ -364,7 +364,7 @@
             </div>
             <div class="experience row-section">
                 <div class="col center">
-                    {{localize actor.data.details.experience.description}}
+                    {{localize actor.system.details.experience.description}}
                 </div>
             </div>
             <div class="experience row-section">
@@ -380,13 +380,13 @@
             </div>
             <div class="experience row-section">
                 <div class="col three lineheight center">
-                    {{actor.data.details.experience.current}}
+                    {{actor.system.details.experience.current}}
                 </div>
                 <div class="col three center">
-                    <input name="data.details.experience.spent" type="text" value="{{actor.data.details.experience.spent}}" data-dtype="Number" />
+                    <input name="system.details.experience.spent" type="text" value="{{actor.system.details.experience.spent}}" data-dtype="Number" />
                 </div>
                 <div class="col three center">
-                    <input name="data.details.experience.total" type="text" value="{{actor.data.details.experience.total}}" data-dtype="Number" />
+                    <input name="system.details.experience.total" type="text" value="{{actor.system.details.experience.total}}" data-dtype="Number" />
                 </div>
 
             </div>

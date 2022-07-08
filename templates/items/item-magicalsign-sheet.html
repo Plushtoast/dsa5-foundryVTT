@@ -15,24 +15,24 @@
 
       <div class="form-group">
         <label class="label-text">{{localize "APValue"}}</label>
-        <input class="input-text" type="number" name="data.APValue.value" value="{{data.APValue.value}}"
+        <input class="input-text" type="number" name="system.APValue.value" value="{{system.APValue.value}}"
           data-dtype="Number" />
       </div>
       <div class="form-group">
         <label class="label-text">{{localize "AsPCost"}}</label>
-        <input class="input-text" type="number" name="data.asp" value="{{data.asp}}" data-dtype="Number" />
+        <input class="input-text" type="number" name="system.asp" value="{{system.asp}}" data-dtype="Number" />
       </div>
       <div class="form-group">
         <label class="label-text">{{localize "Category"}}</label>
-        <select name="data.category" data-dtype="Number">
-          {{selectOptions categories selected=data.category localize=true}}
+        <select name="system.category" data-dtype="Number">
+          {{selectOptions categories selected=system.m.category localize=true}}
         </select>
       </div>
 
-      {{#if (eq data.category 2)}}
+      {{#if (eq system.m.category 2)}}
       <div class="form-group">
         <label class="label-text">{{localize "feature"}}</label>
-        <input class="input-text" type="text" name="data.feature" value="{{data.feature}}" data-dtype="String" />
+        <input class="input-text" type="text" name="system.feature" value="{{system.feature}}" data-dtype="String" />
       </div>
       {{/if}}
     </div>

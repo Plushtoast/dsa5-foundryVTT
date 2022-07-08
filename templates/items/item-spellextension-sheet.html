@@ -14,24 +14,24 @@
         <div class="tab details" data-tab="details">
             <div class="form-group">
                 <label class="label-text">{{localize "APValue"}}</label>
-                <input class="input-text" type="text" name="data.APValue.value" value="{{data.APValue.value}}" data-dtype="Number" />
+                <input class="input-text" type="text" name="system.APValue.value" value="{{system.APValue.value}}" data-dtype="Number" />
             </div>
             <div class="form-group">
                 <label class="label-text">{{localize "requiredFW"}}</label>
-                <input class="input-text" type="text" name="data.talentValue" value="{{data.talentValue}}" data-dtype="Number" />
+                <input class="input-text" type="text" name="system.talentValue" value="{{system.talentValue}}" data-dtype="Number" />
             </div>
             <div class="form-group">
-                <label class="label-text">{{localize data.category}}</label>
-                <input class="input-text" type="text" name="data.source" value="{{data.source}}" data-dtype="String" {{#if isOwned}}disabled{{/if}}/>
+                <label class="label-text">{{localize system.category}}</label>
+                <input class="input-text" type="text" name="system.source" value="{{system.source}}" data-dtype="String" {{#if isOwned}}disabled{{/if}}/>
             </div>
             <div class="form-group">
                 <label class="label-text">{{localize "effect"}}</label>
-                <input class="input-text" type="text" name="data.effect" value="{{data.effect}}" data-dtype="String" />
+                <input class="input-text" type="text" name="system.effect" value="{{system.effect}}" data-dtype="String" />
             </div>
             <div class="form-group">
                 <label class="label-text">{{localize "Category"}}</label>
-                <select name="data.category" data-dtype="String" {{#if isOwned}}disabled{{/if}}>
-                    {{selectOptions categories selected=data.category localize=true}}
+                <select name="system.category" data-dtype="String" {{#if isOwned}}disabled{{/if}}>
+                    {{selectOptions categories selected=system.category localize=true}}
                 </select>
             </div>
         </div>

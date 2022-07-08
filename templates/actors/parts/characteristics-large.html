@@ -2,11 +2,11 @@
     <div class="characteristics-table" cellpadding="0">
         <div class="table-row">
             <div class="table-header"></div>
-            {{#each actor.data.characteristics as |ch c|}}
-            <div title="{{localize ch.label}}" class="table-header">
+            {{#each actor.system.characteristics as |ch c|}}
+            <div data-tooltip="{{localize ch.label}}" class="table-header">
                 <div class="header-label">
-                    {{#if ../actor.canAdvance}}<a data-attr="{{c}}" class="advance refund-attribute"><i title="{{ch.refund}}" class="fas fa-minus"></i></a>{{/if}}
-                    <b>{{localize ch.abrev}}</b> {{#if ../actor.canAdvance}}<a data-attr="{{c}}" class="advance advance-attribute"><i title="{{ch.cost}}" class="fas fa-plus"></i></a>{{/if}}
+                    {{#if ../actor.canAdvance}}<a data-attr="{{c}}" class="advance refund-attribute"><i data-tooltip="{{ch.refund}}" class="fas fa-minus"></i></a>{{/if}}
+                    <b>{{localize ch.abrev}}</b> {{#if ../actor.canAdvance}}<a data-attr="{{c}}" class="advance advance-attribute"><i data-tooltip="{{ch.cost}}" class="fas fa-plus"></i></a>{{/if}}
                 </div>
             </div>
             {{/each}}
@@ -17,9 +17,9 @@
                     {{localize "Initial"}}
                 </div>
             </div>
-            {{#each actor.data.characteristics as |ch c|}}
+            {{#each actor.system.characteristics as |ch c|}}
             <div class="table-data">
-                <input name="data.characteristics.{{c}}.initial" type="text" value="{{ch.initial}}" data-dtype="Number">
+                <input name="system.characteristics.{{c}}.initial" type="text" value="{{ch.initial}}" data-dtype="Number">
             </div>
             {{/each}}
         </div>
@@ -29,9 +29,9 @@
                     {{localize "Advances"}}
                 </div>
             </div>
-            {{#each actor.data.characteristics as |ch c|}}
+            {{#each actor.system.characteristics as |ch c|}}
             <div class="table-data">
-                <input name="data.characteristics.{{c}}.advances" type="text" value="{{ch.advances}}" data-dtype="Number">
+                <input name="system.characteristics.{{c}}.advances" type="text" value="{{ch.advances}}" data-dtype="Number">
             </div>
             {{/each}}
         </div>
@@ -41,9 +41,9 @@
                     {{localize "Modifiers"}}
                 </div>
             </div>
-            {{#each actor.data.characteristics as |ch c|}}
+            {{#each actor.system.characteristics as |ch c|}}
             <div class="table-data">
-                <input name="data.characteristics.{{c}}.modifier" type="text" value="{{ch.modifier}}" data-dtype="Number">
+                <input name="system.characteristics.{{c}}.modifier" type="text" value="{{ch.modifier}}" data-dtype="Number">
             </div>
             {{/each}}
         </div>

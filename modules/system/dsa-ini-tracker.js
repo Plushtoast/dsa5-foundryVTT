@@ -119,7 +119,7 @@ export default class DSAIniTracker extends Application {
 
         const token = combatant.token;
         if (!token || !token.object || !token.object.isVisible) return;
-        canvas.animatePan({ x: token.data.x, y: token.data.y });
+        canvas.animatePan({ x: token.x, y: token.y });
 
         if (!combatant.actor || !combatant.actor.isOwner) return
         token.object.control({ releaseOthers: true });

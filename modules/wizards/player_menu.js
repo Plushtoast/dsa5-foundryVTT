@@ -17,10 +17,10 @@ export default class PlayerMenu extends Application {
                 name: 'CONJURATION.offensiveImprovement',
                 descr: "CONJURATION.offensiveImprovementDescr",
                 changes: [
-                    { key: "data.meleeStats.attack", mode: 2, value: 2 },
-                    { key: "data.meleeStats.damage", mode: 2, value: 4 },
-                    { key: "data.rangeStats.attack", mode: 2, value: 2 },
-                    { key: "data.rangeStats.damage", mode: 2, value: 4 }
+                    { key: "system.meleeStats.attack", mode: 2, value: 2 },
+                    { key: "system.meleeStats.damage", mode: 2, value: 4 },
+                    { key: "system.rangeStats.attack", mode: 2, value: 2 },
+                    { key: "system.rangeStats.damage", mode: 2, value: 4 }
                 ]
             },
             {
@@ -28,9 +28,9 @@ export default class PlayerMenu extends Application {
                 name: 'CONJURATION.defensiveImprovement',
                 descr: "CONJURATION.defensiveImprovementDescr",
                 changes: [
-                    { key: "data.meleeStats.parry", mode: 2, value: 2 },
-                    { key: "data.totalArmor", mode: 2, value: 2 },
-                    { key: "data.status.wounds.gearmodifier", mode: 2, value: 10 }
+                    { key: "system.meleeStats.parry", mode: 2, value: 2 },
+                    { key: "system.totalArmor", mode: 2, value: 2 },
+                    { key: "system.status.wounds.gearmodifier", mode: 2, value: 10 }
                 ]
             },
             {
@@ -38,8 +38,8 @@ export default class PlayerMenu extends Application {
                 name: 'CONJURATION.speedImprovement',
                 descr: "CONJURATION.speedImprovementDescr",
                 changes: [
-                    { key: "data.status.speed.gearmodifier", mode: 2, value: 2 },
-                    { key: "data.status.dodge.gearmodifier", mode: 2, value: 2 }
+                    { key: "system.status.speed.gearmodifier", mode: 2, value: 2 },
+                    { key: "system.status.dodge.gearmodifier", mode: 2, value: 2 }
                 ]
             },
             { id: 4, name: 'CONJURATION.magicalImprovement', descr: "CONJURATION.magicalImprovementDescr", changes: [], fun: RuleChaos.magicalImprovement },
@@ -48,8 +48,8 @@ export default class PlayerMenu extends Application {
                 name: 'CONJURATION.resistanceImprovement',
                 descr: "CONJURATION.resistanceImprovementDescr",
                 changes: [
-                    { key: "data.status.soulpower.gearmodifier", mode: 2, value: 2 },
-                    { key: "data.status.toughness.gearmodifier", mode: 2, value: 2 }
+                    { key: "system.status.soulpower.gearmodifier", mode: 2, value: 2 },
+                    { key: "system.status.toughness.gearmodifier", mode: 2, value: 2 }
                 ]
             },
             {
@@ -57,10 +57,10 @@ export default class PlayerMenu extends Application {
                 name: 'CONJURATION.mentalImprovement',
                 descr: "CONJURATION.mentalImprovementDescr",
                 changes: [
-                    { key: "data.characteristics.mu.gearmodifier", mode: 2, value: 2 },
-                    { key: "data.characteristics.kl.gearmodifier", mode: 2, value: 2 },
-                    { key: "data.characteristics.in.gearmodifier", mode: 2, value: 2 },
-                    { key: "data.characteristics.ch.gearmodifier", mode: 2, value: 2 }
+                    { key: "system.characteristics.mu.gearmodifier", mode: 2, value: 2 },
+                    { key: "system.characteristics.kl.gearmodifier", mode: 2, value: 2 },
+                    { key: "system.characteristics.in.gearmodifier", mode: 2, value: 2 },
+                    { key: "system.characteristics.ch.gearmodifier", mode: 2, value: 2 }
                 ]
             },
             {
@@ -68,10 +68,10 @@ export default class PlayerMenu extends Application {
                 name: 'CONJURATION.physicalImprovement',
                 descr: "CONJURATION.physicalImprovementDescr",
                 changes: [
-                    { key: "data.characteristics.ff.gearmodifier", mode: 2, value: 2 },
-                    { key: "data.characteristics.ge.gearmodifier", mode: 2, value: 2 },
-                    { key: "data.characteristics.ko.gearmodifier", mode: 2, value: 2 },
-                    { key: "data.characteristics.kk.gearmodifier", mode: 2, value: 2 }
+                    { key: "system.characteristics.ff.gearmodifier", mode: 2, value: 2 },
+                    { key: "system.characteristics.ge.gearmodifier", mode: 2, value: 2 },
+                    { key: "system.characteristics.ko.gearmodifier", mode: 2, value: 2 },
+                    { key: "system.characteristics.kk.gearmodifier", mode: 2, value: 2 }
                 ]
             }
         ]
@@ -116,7 +116,7 @@ export default class PlayerMenu extends Application {
         const itemId = $(ev.currentTarget).closest('.item').attr("data-item-id")
         const skill = this.actor.items.get(itemId);
         const moreModifiers = [
-            { name: game.i18n.localize("conjuringDifficulty"), value: getProperty(this.conjuration.data, "data.conjuringDifficulty.value") || 0, selected: true }
+            { name: game.i18n.localize("conjuringDifficulty"), value: getProperty(this.conjuration, "system.conjuringDifficulty.value") || 0, selected: true }
         ]
         if (this.conjurationData.packageModifier)
             moreModifiers.push({ name: game.i18n.localize("summoningPackage"), value: this.conjurationData.packageModifier, selected: true })
@@ -278,12 +278,12 @@ export default class PlayerMenu extends Application {
         if (data.type == "Actor") {
             const actor = game.actors.get(data.id)
 
-            if (actor.data.type == "creature" || $(event.target).closest('.summoningArea').length > 0) {
+            if (actor.system.type == "creature" || $(event.target).closest('.summoningArea').length > 0) {
                 this.conjuration = actor
                 this.conjurationData.selectedIds = []
                 this.conjurationData.selectedEntityIds = []
                 this.conjurationData.selectedPackageIds = []
-                if (actor.data.type == "creature") {
+                if (actor.system.type == "creature") {
                     for (const key of Object.keys(this.conjurationData.conjurationTypes)) {
                         if (actor.system.creatureClass.value.includes(this.conjurationData.conjurationTypes[key])) {
                             this.conjurationData.conjurationType = key
@@ -489,8 +489,8 @@ class ConjurationRequest extends DSA5Dialog {
             await game.dsa5.apps.playerMenu.conjurationData.postFunction[this.creationData.type](this.conjuration, this.creationData.qs - this.creationData.consumedQS, this.creationData.type)
         }
 
-        if (this.conjuration.type == "creature" && !(this.conjuration.data.creatureClass.value.includes(this.creationData.typeName))) {
-            this.conjuration.data.creatureClass.value += `, ${this.creationData.typeName}`
+        if (this.conjuration.type == "creature" && !(this.conjuration.system.creatureClass.value.includes(this.creationData.typeName))) {
+            this.conjuration.system.creatureClass.value += `, ${this.creationData.typeName}`
         }
 
         this.actor = await Actordsa5.create(this.conjuration)
@@ -504,7 +504,7 @@ class ConjurationRequest extends DSA5Dialog {
         for (let item of entityAbilities)
             await TraitRulesDSA5.traitAdded(this.actor, item)
 
-        await this.actor.update({ "data.status.wounds.value": this.actor.system.status.wounds.max })
+        await this.actor.update({ "system.status.wounds.value": this.actor.system.status.wounds.max })
 
         const chatmsg = await renderTemplate("systems/dsa5/templates/system/conjuration/chat.html", {
             actor: this.actor,

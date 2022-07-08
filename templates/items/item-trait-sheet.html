@@ -15,56 +15,56 @@
 
             <div class="form-group">
                 <label class="label-text">{{localize "traitType"}}</label>
-                <select name="data.traitType.value" data-dtype="String">
-                    {{selectOptions traitCategories selected=data.traitType.value localize=true}}  
+                <select name="system.traitType.value" data-dtype="String">
+                    {{selectOptions traitCategories selected=system.traitType.value localize=true}}  
                 </select>
             </div>
 
-            {{#if (eq data.traitType.value "rangeAttack")}}
+            {{#if (eq system.traitType.value "rangeAttack")}}
             <div class="form-group">
                 <label class="label-text">{{localize "CHAR.ATTACK"}}</label>
-                <input class="input-text" type="text" name="data.at.value" value="{{data.at.value}}" data-dtype="String" />
+                <input class="input-text" type="text" name="system.at.value" value="{{system.at.value}}" data-dtype="String" />
             </div>
 
             <div class="form-group">
                 <label class="label-text">{{localize "damage"}}</label>
-                <input class="input-text" type="text" name="data.damage.value" value="{{data.damage.value}}" data-dtype="String" />
+                <input class="input-text" type="text" name="system.damage.value" value="{{system.damage.value}}" data-dtype="String" />
             </div>
             <div class="form-group">
                 <label class="label-text">{{localize "reach"}}</label>
-                <input class="input-text" type="text" name="data.reach.value" value="{{data.reach.value}}" data-dtype="String" />
+                <input class="input-text" type="text" name="system.reach.value" value="{{system.reach.value}}" data-dtype="String" />
             </div>
             <div class="form-group">
                 <label class="label-text">{{localize "reloadTime"}}</label>
-                <input class="input-text" type="text" name="data.reloadTime.value" value="{{data.reloadTime.value}}" data-dtype="String" />
+                <input class="input-text" type="text" name="system.reloadTime.value" value="{{system.reloadTime.value}}" data-dtype="String" />
             </div>
             <div class="form-group">
                 <label class="label-text">{{localize "effect"}}</label>
-                <input class="input-text" type="text" name="data.effect.value" value="{{data.effect.value}}" data-dtype="String" />
+                <input class="input-text" type="text" name="system.effect.value" value="{{system.effect.value}}" data-dtype="String" />
             </div>
-            {{/if}} {{#if (eq data.traitType.value "meleeAttack")}}
+            {{/if}} {{#if (eq system.traitType.value "meleeAttack")}}
             <div class="form-group">
                 <label class="label-text">{{localize "CHAR.ATTACK"}}</label>
-                <input class="input-text" type="number" name="data.at.value" value="{{data.at.value}}" data-dtype="Number" />
+                <input class="input-text" type="number" name="system.at.value" value="{{system.at.value}}" data-dtype="Number" />
             </div>
             <div class="form-group">
                 <label class="label-text">{{localize "CHAR.PARRY"}}</label>
-                <input class="input-text" type="number" name="data.pa" value="{{data.pa}}" data-dtype="Number" />
+                <input class="input-text" type="number" name="system.pa" value="{{system.pa}}" data-dtype="Number" />
             </div>
 
             <div class="form-group">
                 <label class="label-text">{{localize "damage"}}</label>
-                <input class="input-text" type="text" name="data.damage.value" value="{{data.damage.value}}" data-dtype="String" />
+                <input class="input-text" type="text" name="system.damage.value" value="{{system.damage.value}}" data-dtype="String" />
             </div>
             <div class="form-group">
                 <label class="label-text">{{localize "reach"}}</label>
-                <select name="data.reach.value" data-dtype="String">
-                    {{selectOptions ranges selected=data.reach.value localize=true}}
+                <select name="system.reach.value" data-dtype="String">
+                    {{selectOptions ranges selected=system.reach.value localize=true}}
                 </select>
             </div>
             <div class="form-group">
                 <label class="label-text">{{localize "effect"}}</label>
-                <input class="input-text" type="text" name="data.effect.value" value="{{data.effect.value}}" data-dtype="String" />
+                <input class="input-text" type="text" name="system.effect.value" value="{{system.effect.value}}" data-dtype="String" />
             </div>
             <div class="form-group autoHeight">
                 <label class="label-text">{{localize "domains"}}</label> {{#if domains}}
@@ -72,62 +72,62 @@
                     <ul>{{{domains}}}</ul>
                 </div>
                 {{/if}}
-                <input class="input-text {{#if domains}}domainToggle{{/if}}" placeholder="{{localize 'WEAPON.clerical'}}, {{localize 'WEAPON.magical'}}" type="text" name="data.effect.attributes"
-                    value="{{data.effect.attributes}}" data-dtype="String" />
+                <input class="input-text {{#if domains}}domainToggle{{/if}}" placeholder="{{localize 'WEAPON.clerical'}}, {{localize 'WEAPON.magical'}}" type="text" name="system.effect.attributes"
+                    value="{{system.effect.attributes}}" data-dtype="String" />
             </div>
-            {{/if}}{{#if (eq data.traitType.value "armor")}}
+            {{/if}}{{#if (eq system.traitType.value "armor")}}
             <div class="form-group">
                 <label class="label-text">{{localize "protection"}}</label>
-                <input class="input-text" type="text" name="data.at.value" value="{{data.at.value}}" data-dtype="String" />
+                <input class="input-text" type="text" name="system.at.value" value="{{system.at.value}}" data-dtype="String" />
             </div>
 
-            {{/if}} {{#if (eq data.traitType.value "familiar")}}
+            {{/if}} {{#if (eq system.traitType.value "familiar")}}
             <div class="form-group">
                 <label class="label-text">{{localize "APValue"}}</label>
-                <input class="input-text" type="text" name="data.APValue.value" value="{{data.APValue.value}}" data-dtype="String" />
+                <input class="input-text" type="text" name="system.APValue.value" value="{{system.APValue.value}}" data-dtype="String" />
             </div>
             <div class="form-group">
                 <label class="label-text">{{localize "AsPCost"}}</label>
-                <input class="input-text" type="text" name="data.AsPCost.value" value="{{data.AsPCost.value}}" data-dtype="String" />
+                <input class="input-text" type="text" name="system.AsPCost.value" value="{{system.AsPCost.value}}" data-dtype="String" />
             </div>
             <div class="form-group">
                 <label class="label-text">{{localize "duration"}}</label>
-                <input class="input-text" type="text" name="data.duration.value" value="{{data.duration.value}}" data-dtype="String" />
+                <input class="input-text" type="text" name="system.duration.value" value="{{system.duration.value}}" data-dtype="String" />
             </div>
             <div class="form-group">
                 <label class="label-text">{{localize "aspect"}}</label>
-                <input class="input-text" type="text" name="data.aspect.value" value="{{data.aspect.value}}" data-dtype="String" />
+                <input class="input-text" type="text" name="system.aspect.value" value="{{system.aspect.value}}" data-dtype="String" />
             </div>
-            {{/if}}{{#if (eq data.traitType.value "trick")}}
+            {{/if}}{{#if (eq system.traitType.value "trick")}}
             <div class="form-group">
                 <label class="label-text">{{localize "APValue"}}</label>
-                <input class="input-text" type="text" name="data.APValue.value" value="{{data.APValue.value}}" data-dtype="String" />
+                <input class="input-text" type="text" name="system.APValue.value" value="{{system.APValue.value}}" data-dtype="String" />
             </div>
             <div class="form-group">
                 <label class="label-text">{{localize "requirements"}}</label>
-                <input class="input-text" type="text" name="data.aspect.value" value="{{data.aspect.value}}" data-dtype="String" />
+                <input class="input-text" type="text" name="system.aspect.value" value="{{system.aspect.value}}" data-dtype="String" />
             </div>
-            {{/if}} {{#if (eq data.traitType.value "entity")}}
+            {{/if}} {{#if (eq system.traitType.value "entity")}}
             <div class="form-group">
                 <label class="label-text">{{localize "distribution"}}</label>
-                <input class="input-text" type="text" name="data.distribution" value="{{data.distribution}}" data-dtype="String" />
+                <input class="input-text" type="text" name="system.distribution" value="{{system.distribution}}" data-dtype="String" />
             </div>
             <div class="form-group">
                 <label class="label-text">{{localize "CHARAbbrev.QS"}}</label>
-                <input class="input-text" type="text" name="data.AsPCost.value" value="{{data.AsPCost.value}}" data-dtype="Number" />
+                <input class="input-text" type="text" name="system.AsPCost.value" value="{{system.AsPCost.value}}" data-dtype="Number" />
             </div>
             <div class="form-group">
                 <label class="label-text">{{localize "maxlevel"}}</label>
-                <input class="input-text" type="number" name="data.at.value" value="{{data.at.value}}" data-dtype="Number" />
+                <input class="input-text" type="number" name="system.at.value" value="{{system.at.value}}" data-dtype="Number" />
             </div>
-            {{/if}} {{#if (eq data.traitType.value "summoning")}}
+            {{/if}} {{#if (eq system.traitType.value "summoning")}}
             <div class="form-group">
                 <label class="label-text">{{localize "distribution"}}</label>
-                <input class="input-text" type="text" name="data.distribution" value="{{data.distribution}}" data-dtype="String" />
+                <input class="input-text" type="text" name="system.distribution" value="{{system.distribution}}" data-dtype="String" />
             </div>
             <div class="form-group">
                 <label class="label-text">{{localize "conjuringDifficulty"}}</label>
-                <input class="input-text" type="text" name="data.at.value" value="{{data.at.value}}"
+                <input class="input-text" type="text" name="system.at.value" value="{{system.at.value}}"
                     data-dtype="Number" />
             </div>
             {{/if}}

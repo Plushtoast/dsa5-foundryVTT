@@ -1,11 +1,11 @@
 {{#if targets}} 
     {{#each targets as |item i|}}
-    <div class="image rollTarget" data-id="{{item.id}}" title="{{localize 'target'}}" style="background-image:url('{{item.img}}')"><i class="fas fa-bullseye"></i></div>
+    <div class="image rollTarget" data-id="{{item.id}}" data-tooltip="{{localize 'target'}}" style="background-image:url('{{item.img}}')"><i class="fas fa-bullseye"></i></div>
     {{/each}} 
 {{else}}
 <div>
     <i class="fas fa-exclamation-circle"></i> {{localize 'DIALOG.noTarget'}}
 </div>
 {{/if}}
-<a title="{{localize 'DIALOG.addTarget'}}" class="addTarget"><i class="fas fa-2x fa-plus"></i></a>
+<a data-tooltip="{{localize 'DIALOG.addTarget'}}" class="addTarget"><i class="fas fa-2x fa-plus"></i></a>
     

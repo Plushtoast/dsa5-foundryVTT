@@ -15,8 +15,8 @@ export const dropToGround = async(sourceActor, item, data, amount) => {
         }, { default: 0 })
 
         const newItem = item.toObject()
-        newItem.data.quantity.value = amount
-        if (getProperty(newItem, "data.worn.value")) newItem.data.worn.value = false
+        newItem.system.quantity.value = amount
+        if (getProperty(newItem, "system.worn.value")) newItem.system.worn.value = false
 
         const actor = {
             type: "npc",
@@ -31,7 +31,7 @@ export const dropToGround = async(sourceActor, item, data, amount) => {
             items: [...items, newItem],
             flags: { core: { sheetClass: "dsa5.MerchantSheetDSA5" } },
             folder,
-            data: {
+            system: {
                 merchant: {
                     merchantType: "loot",
                     temporary: true,
@@ -54,7 +54,7 @@ export const dropToGround = async(sourceActor, item, data, amount) => {
             } else {
                 await sourceActor.updateEmbeddedDocuments("Item", [{
                     _id: data.id,
-                    "data.quantity.value": newCount
+                    "system.quantity.value": newCount
                 }])
             }
 
@@ -96,7 +96,7 @@ export const connectHook = () => {
                 item = game.items.get(data.id)
             }
 
-            if (!DSA5.equipmentCategories.includes(item.data.type)) return
+            if (!DSA5.equipmentCategories.includes(item.system.type)) return
 
             const content = await renderTemplate("systems/dsa5/templates/dialog/dropToGround.html", { name: item.name, count: item.system.quantity.value })
 

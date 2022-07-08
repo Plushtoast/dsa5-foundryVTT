@@ -6,12 +6,12 @@
                     {{localize "liturgies"}}
                 </div>
                 <div class="col four center">{{localize "probe"}}</div>
-                <div class="col ten center" title="{{localize 'Fw'}}">{{localize "CHARAbbrev.FW"}}</div>
-                <div class="col ten center" title="{{localize 'AsPCost'}}">{{localize "cost"}}</div>
+                <div class="col ten center" data-tooltip="{{localize 'Fw'}}">{{localize "CHARAbbrev.FW"}}</div>
+                <div class="col ten center" data-tooltip="{{localize 'AsPCost'}}">{{localize "cost"}}</div>
                 <div class="col ten center">{{localize "CHARAbbrev.castingTime"}}</div>
                 <div class="col ten center">{{localize "reach"}}</div>
                 <div class="col ten center">
-                    <a class="item-create very-small" title="{{localize 'SHEET.addItem'}}" item-section="liturgy" data-type="liturgy"><i class="fas fa-plus"></i></a>
+                    <a class="item-create very-small" data-tooltip="{{localize 'SHEET.addItem'}}" item-section="liturgy" data-type="liturgy"><i class="fas fa-plus"></i></a>
                 </div>
             </div>
         </div>
@@ -20,28 +20,28 @@
             <div class="row-section skills lineheight">
                 <div class="col four">
                     <a class="item-edit">{{item.name}}</a>{{#if item.canAdvance}}
-                    <a class="advance refund-item"><i title="{{item.refund}}" class="fas fa-minus"></i></a>
-                    <a class="advance advance-item"><i title="{{item.cost}}" class="fas fa-plus"></i></a>{{/if}}
+                    <a class="advance refund-item"><i data-tooltip="{{item.refund}}" class="fas fa-minus"></i></a>
+                    <a class="advance advance-item"><i data-tooltip="{{item.cost}}" class="fas fa-plus"></i></a>{{/if}}
                 </div>
                 <div class="col four center">
                     <a class="spell-select">
-                        <span class="d20 diet-{{item.data.characteristic1.value}}">{{localize (concatUp "CHARAbbrev."
-              item.data.characteristic1.value)}}</span>
-                        <span class="d20 diet-{{item.data.characteristic2.value}}">{{localize (concatUp "CHARAbbrev."
-              item.data.characteristic2.value)}}</span>
-                        <span class="d20 diet-{{item.data.characteristic3.value}}">{{localize (concatUp "CHARAbbrev."
-              item.data.characteristic3.value)}}</span>
+                        <span class="d20 diet-{{item.system.characteristic1.value}}">{{localize (concatUp "CHARAbbrev."
+              item.system.characteristic1.value)}}</span>
+                        <span class="d20 diet-{{item.system.characteristic2.value}}">{{localize (concatUp "CHARAbbrev."
+              item.system.characteristic2.value)}}</span>
+                        <span class="d20 diet-{{item.system.characteristic3.value}}">{{localize (concatUp "CHARAbbrev."
+              item.system.characteristic3.value)}}</span>
                     </a>
                 </div>
                 <div class="col ten center">
-                    <input class="skill-advances" type="text" data-dtype="Number" value="{{item.data.talentValue.value}}" />
+                    <input class="skill-advances" type="text" data-dtype="Number" value="{{item.system.talentValue.value}}" />
                 </div>
                 <div class="col ten center">
-                    {{item.data.AsPCost.value}}
+                    {{item.system.AsPCost.value}}
                 </div>
                 <div class="col ten center">
-                    {{item.data.castingTime.value}}{{#if (gt item.LZ 1)}}
-                    <a class="chargeSpell" title="{{item.title}}">
+                    {{item.system.castingTime.value}}{{#if (gt item.LZ 1)}}
+                    <a class="chargeSpell" data-tooltip="{{item.title}}">
                         <div class="progress blue">
                             <span class="progress-left" style="--transformLeft:{{item.transformLeft}}">
                                     <span class="progress-bar"></span>
@@ -54,20 +54,20 @@
                     </a> {{/if}}
                 </div>
                 <div class="col ten center">
-                    {{item.data.range.value}}
+                    {{item.system.range.value}}
                 </div>
                 <div class="col ten very-small center">
-                    <a class="item-post" title="{{localize 'SHEET.PostItem'}}"><i class="fas fa-comment"></i></a>
-                    <a class="item-dropdown" title="{{localize 'SHEET.Dropdown'}}"><i class="fas fa-chevron-down"></i></a>
-                    <a class="item-control item-delete" title="{{localize 'SHEET.DeleteItem'}}"><i class="fas fa-trash"></i></a> {{#if item.extensions}}
-                    <i class="fas fa-angle-double-up" title="{{item.extensions}}"></i> {{/if}}
+                    <a class="item-post" data-tooltip="{{localize 'SHEET.PostItem'}}"><i class="fas fa-comment"></i></a>
+                    <a class="item-dropdown" data-tooltip="{{localize 'SHEET.Dropdown'}}"><i class="fas fa-chevron-down"></i></a>
+                    <a class="item-control item-delete" data-tooltip="{{localize 'SHEET.DeleteItem'}}"><i class="fas fa-trash"></i></a> {{#if item.extensions}}
+                    <i class="fas fa-angle-double-up" data-tooltip="{{item.extensions}}"></i> {{/if}}
                 </div>
             </div>
             <div class="row-section lineheight expandDetails {{item.detailed}}">
                 <div class="col">
                     <ul>
-                        <li><b>{{localize "duration"}}</b>: {{item.data.duration.value}}</li>
-                        <li><b>{{localize "cost"}}</b>: {{item.data.AsPCostDetail.value}}</li>
+                        <li><b>{{localize "duration"}}</b>: {{item.system.duration.value}}</li>
+                        <li><b>{{localize "cost"}}</b>: {{item.system.AsPCostDetail.value}}</li>
                     </ul>
                 </div>
             </div>
@@ -85,13 +85,13 @@
                     {{localize "ceremonies"}}
                 </div>
                 <div class="col four center">{{localize "probe"}}</div>
-                <div class="col ten center" title="{{localize 'Fw'}}">{{localize "CHARAbbrev.FW"}}</div>
-                <div class="col ten center" title="{{localize 'KaPCost'}}">{{localize "cost"}}</div>
+                <div class="col ten center" data-tooltip="{{localize 'Fw'}}">{{localize "CHARAbbrev.FW"}}</div>
+                <div class="col ten center" data-tooltip="{{localize 'KaPCost'}}">{{localize "cost"}}</div>
                 <div class="col ten center">{{localize "CHARAbbrev.castingTime"}}</div>
                 <div class="col ten center">{{localize "reach"}}</div>
 
                 <div class="col ten center">
-                    <a class="item-create very-small" title="{{localize 'SHEET.addItem'}}" item-section="ceremony" data-type="ceremony"><i class="fas fa-plus"></i></a>
+                    <a class="item-create very-small" data-tooltip="{{localize 'SHEET.addItem'}}" item-section="ceremony" data-type="ceremony"><i class="fas fa-plus"></i></a>
                 </div>
             </div>
         </div>
@@ -100,44 +100,44 @@
             <div class="row-section skills lineheight">
                 <div class="col four">
                     <a class="item-edit">{{item.name}}</a>{{#if item.canAdvance}}
-                    <a class="advance refund-item"><i title="{{item.refund}}" class="fas fa-minus"></i></a>
-                    <a class="advance advance-item"><i title="{{item.cost}}" class="fas fa-plus"></i></a>{{/if}}
+                    <a class="advance refund-item"><i data-tooltip="{{item.refund}}" class="fas fa-minus"></i></a>
+                    <a class="advance advance-item"><i data-tooltip="{{item.cost}}" class="fas fa-plus"></i></a>{{/if}}
                 </div>
                 <div class="col four center">
                     <a class="spell-select">
-                        <span class="d20 diet-{{item.data.characteristic1.value}}">{{localize (concatUp "CHARAbbrev."
-              item.data.characteristic1.value)}}</span>
-                        <span class="d20 diet-{{item.data.characteristic2.value}}">{{localize (concatUp "CHARAbbrev."
-              item.data.characteristic2.value)}}</span>
-                        <span class="d20 diet-{{item.data.characteristic3.value}}">{{localize (concatUp "CHARAbbrev."
-              item.data.characteristic3.value)}}</span>
+                        <span class="d20 diet-{{item.system.characteristic1.value}}">{{localize (concatUp "CHARAbbrev."
+              item.system.characteristic1.value)}}</span>
+                        <span class="d20 diet-{{item.system.characteristic2.value}}">{{localize (concatUp "CHARAbbrev."
+              item.system.characteristic2.value)}}</span>
+                        <span class="d20 diet-{{item.system.characteristic3.value}}">{{localize (concatUp "CHARAbbrev."
+              item.system.characteristic3.value)}}</span>
                     </a>
                 </div>
                 <div class="col ten center">
-                    <input class="skill-advances" type="text" data-dtype="Number" value="{{item.data.talentValue.value}}" />
+                    <input class="skill-advances" type="text" data-dtype="Number" value="{{item.system.talentValue.value}}" />
                 </div>
                 <div class="col ten center">
-                    {{item.data.AsPCost.value}}
+                    {{item.system.AsPCost.value}}
                 </div>
                 <div class="col ten center">
-                    {{item.data.castingTime.value}}
+                    {{item.system.castingTime.value}}
                 </div>
                 <div class="col ten center">
-                    {{item.data.range.value}}
+                    {{item.system.range.value}}
                 </div>
 
                 <div class="col ten very-small center">
-                    <a class="item-post" title="{{localize 'SHEET.PostItem'}}"><i class="fas fa-comment"></i></a>
-                    <a class="item-dropdown" title="{{localize 'SHEET.Dropdown'}}"><i class="fas fa-chevron-down"></i></a>
-                    <a class="item-control item-delete" title="{{localize 'SHEET.DeleteItem'}}"><i class="fas fa-trash"></i></a> {{#if item.extensions}}
-                    <i class="fas fa-angle-double-up" title="{{item.extensions}}"></i> {{/if}}
+                    <a class="item-post" data-tooltip="{{localize 'SHEET.PostItem'}}"><i class="fas fa-comment"></i></a>
+                    <a class="item-dropdown" data-tooltip="{{localize 'SHEET.Dropdown'}}"><i class="fas fa-chevron-down"></i></a>
+                    <a class="item-control item-delete" data-tooltip="{{localize 'SHEET.DeleteItem'}}"><i class="fas fa-trash"></i></a> {{#if item.extensions}}
+                    <i class="fas fa-angle-double-up" data-tooltip="{{item.extensions}}"></i> {{/if}}
                 </div>
             </div>
             <div class="row-section lineheight expandDetails {{item.detailed}}">
                 <div class="col">
                     <ul>
-                        <li><b>{{localize "duration"}}</b>: {{item.data.duration.value}}</li>
-                        <li><b>{{localize "cost"}}</b>: {{item.data.AsPCostDetail.value}}</li>
+                        <li><b>{{localize "duration"}}</b>: {{item.system.duration.value}}</li>
+                        <li><b>{{localize "cost"}}</b>: {{item.system.AsPCostDetail.value}}</li>
                     </ul>
                 </div>
             </div>
@@ -154,7 +154,7 @@
     <div class="row-section wrap cards">
         {{#each actor.specAbs.clerical as |item i|}}
         <div class="item" data-item-id="{{item._id}}">
-            {{#if item.OnUseEffect}}<a title="{{localize 'SHEET.onUseEffect'}}" class="onUseItem"><i class="fas fa-dice-six"></i></a>{{/if}}<a class="item-edit">{{item.name}}{{roman item.data.step.value item.data.maxRank.value}}</a>
+            {{#if item.OnUseEffect}}<a data-tooltip="{{localize 'SHEET.onUseEffect'}}" class="onUseItem"><i class="fas fa-dice-six"></i></a>{{/if}}<a class="item-edit">{{item.name}}{{roman item.system.step.value item.system.maxRank.value}}</a>
         </div>
         {{/each}}
     </div>

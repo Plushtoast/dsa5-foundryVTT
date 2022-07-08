@@ -77,7 +77,7 @@ class GameMasterMenu extends Application {
 
         if (game.user.isGM) {
             Hooks.on("updateActor", async(document, data, options, userId) => {
-                const properties = ["data.status.fatePoints", "data.status.wounds", "data.status.karmaenergy", "data.status.astralenergy"]
+                const properties = ["system.status.fatePoints", "system.status.wounds", "system.status.karmaenergy", "system.status.astralenergy"]
                 if (this.heros.find(x => x.id == document.id) && properties.reduce((a, b) => {
                         return a || hasProperty(data, b)
                     }, false)) {
@@ -211,7 +211,7 @@ class GameMasterMenu extends Application {
             let val = Number(ev.currentTarget.getAttribute("data-val"))
             if (val == 1 && $(ev.currentTarget).closest('.hero').find(".fullSchip").length == 1) val = 0
 
-            game.actors.get(this.getID(ev)).update({ "data.status.fatePoints.value": val })
+            game.actors.get(this.getID(ev)).update({ "system.status.fatePoints.value": val })
         })
         html.find('.groupCheck').click((ev) => {
             ev.stopPropagation()
@@ -345,14 +345,14 @@ class GameMasterMenu extends Application {
             if (!isNaN(number)) {
                 for (const actor of actors) {
                     let xpBonus = number
-                    if (RuleChaos.isFamiliar(actor.data) || RuleChaos.isPet(actor.data)) {
+                    if (RuleChaos.isFamiliar(actor) || RuleChaos.isPet(actor)) {
                         xpBonus = familiarXP
                         familiars.push(actor)
                     } else {
                         heros.push(actor)
                     }
 
-                    await actor.update({ "data.details.experience.total": actor.system.details.experience.total + xpBonus });
+                    await actor.update({ "system.details.experience.total": actor.system.details.experience.total + xpBonus });
                 }
                 if (heros.length > 0) await ChatMessage.create(DSA5_Utility.chatDataSetup(game.i18n.format('MASTER.xpMessage', { heros: this.getNames(heros), number })));
                 if (familiars.length > 0) await ChatMessage.create(DSA5_Utility.chatDataSetup(game.i18n.format('MASTER.xpMessage', { heros: this.getNames(familiars), number })));
@@ -516,7 +516,7 @@ class GameMasterMenu extends Application {
             sceneAutomationEnabled: game.settings.get("dsa5", "sightAutomationEnabled"),
             enableDPS: game.settings.get("dsa5", "enableDPS"),
             visions,
-            darkness: canvas.scene ? canvas.scene.data.darkness : 0
+            darkness: canvas.scene ? canvas.scene.darkness : 0
         }
 
         this.heros = heros
@@ -532,7 +532,7 @@ class GameMasterMenu extends Application {
             hero.schips = schips
             hero.purse = hero.items.filter(x => x.type == "money")
                 .sort((a, b) => b.system.price.value - a.system.price.value)
-                .map(x => `<span title="${game.i18n.localize(x.name)}">${x.system.quantity.value}</span>`).join(" - ")
+                .map(x => `<span data-tooltip="${game.i18n.localize(x.name)}">${x.system.quantity.value}</span>`).join(" - ")
             hero.advantages = hero.items.filter(x => x.type == "advantage").map(x => { return { name: x.name, uuid: x.uuid } })
             hero.disadvantages = hero.items.filter(x => x.type == "disadvantage").map(x => { return { name: x.name, uuid: x.uuid } })
         }

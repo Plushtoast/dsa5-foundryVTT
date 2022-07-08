@@ -45,17 +45,17 @@ export default class OpposedDsa5 {
     }
 
     static async answerOpposedTest(actor, message, testResult, preData) {
-        let attackMessage = game.messages.get(actor.data.flags.oppose.messageId)
+        let attackMessage = game.messages.get(actor.flags.oppose.messageId)
         if (!attackMessage) {
             ui.notifications.error(game.i18n.localize("DSAError.staleData"))
             await OpposedDsa5.clearOpposed(actor)
             return OpposedDsa5.createOpposedTest(actor, message, testResult, preData)
         }
         let attacker = {
-            speaker: actor.data.flags.oppose.speaker,
+            speaker: actor.flags.oppose.speaker,
             testResult: attackMessage.flags.data.postData,
             messageId: attackMessage.id,
-            img: DSA5_Utility.getSpeaker(actor.data.flags.oppose.speaker).data.img
+            img: DSA5_Utility.getSpeaker(actor.flags.oppose.speaker).data.img
         };
         attacker.testResult.source = attackMessage.flags.data.preData.source
         if (attacker.testResult.ammo) attacker.testResult.source.effects.push(...attacker.testResult.ammo.effects)
@@ -78,7 +78,7 @@ export default class OpposedDsa5 {
 
         await this.completeOpposedProcess(attacker, defender, {
             target: true,
-            startMessageId: actor.data.flags.oppose.startMessageId,
+            startMessageId: actor.flags.oppose.startMessageId,
             whisper: message.whisper,
             blind: message.blind,
         })
@@ -395,7 +395,7 @@ export default class OpposedDsa5 {
                 damage.spellArmor != 0 ? `${damage.spellArmor} ${game.i18n.localize('spellArmor')}` : "",
                 damage.liturgyArmor != 0 ? `${damage.liturgyArmor} ${game.i18n.localize('liturgyArmor')}` : ""
             ]
-            let description = `<b>${game.i18n.localize("damage")}</b>: ${damage.damage} - <span title="${title.join("")}">${damage.armor} (${game.i18n.localize("protection")})</span> = ${damage.sum}`
+            let description = `<b>${game.i18n.localize("damage")}</b>: ${damage.damage} - <span data-tooltip="${title.join("")}">${damage.armor} (${game.i18n.localize("protection")})</span> = ${damage.sum}`
             opposeResult.damage = {
                 description,
                 value: damage.sum,
@@ -423,8 +423,8 @@ export default class OpposedDsa5 {
         }
         let spellArmor = 0
         let liturgyArmor = 0
-        if (["spell", "ritual"].includes(attackerTest.source.type)) spellArmor += actor.data.spellArmor || 0
-        else if (["liturgy", "ceremony"].includes(attackerTest.source.type)) spellArmor += actor.data.liturgyArmor || 0
+        if (["spell", "ritual"].includes(attackerTest.source.type)) spellArmor += actor.system.spellArmor || 0
+        else if (["liturgy", "ceremony"].includes(attackerTest.source.type)) spellArmor += actor.system.liturgyArmor || 0
 
         armor += armorMod
         const armorMultiplier = multipliers.reduce((sum, x) => { return sum * x }, 1)

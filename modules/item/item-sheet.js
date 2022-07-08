@@ -155,7 +155,7 @@ export default class ItemSheetdsa5 extends ItemSheet {
         html.find(".condition-toggle").mousedown(ev => {
             let condKey = $(ev.currentTarget).parents(".statusEffect").attr("data-id")
             let ef = this.item.effects.get(condKey)
-            ef.update({ disabled: !ef.data.disabled })
+            ef.update({ disabled: !ef.system.disabled })
         })
 
         html.find('.condition-edit').click(ev => {
@@ -226,12 +226,11 @@ export default class ItemSheetdsa5 extends ItemSheet {
         data.isOwned = this.item.actor
         data.editable = this.isEditable
         if (data.isOwned)
-            data.canAdvance = this.item.actor.data.canAdvance && this._advancable()
+            data.canAdvance = this.item.actor.system.canAdvance && this._advancable()
 
         DSA5StatusEffects.prepareActiveEffects(this.item, data)
         data.item = this.item
         data.armorAndWeaponDamage = game.settings.get("dsa5", "armorAndWeaponDamage")
-        console.log(data)
         return data;
     }
 
@@ -326,7 +325,7 @@ class Enchantable extends ItemSheetdsa5 {
 
             if (item) {
                 item = item.toObject()
-                item.data.talentValue.value = enchantment.fw
+                item.system.talentValue.value = enchantment.fw
                 const actor = await DSA5_Utility.emptyActor(14)
                 actor.setupSpell(item, {}, "emptyActor").then(async(setupData) => {
                     const infoMsg = game.i18n.format('CHATNOTIFICATION.enchantmentUsed', { item: this.item.name, spell: item.name })
@@ -367,15 +366,15 @@ class Enchantable extends ItemSheetdsa5 {
             }
         })
         html.find('.poison-toggle-permanent').click(ev => {
-            this.item.update({ flags: { dsa5: { poison: { permanent: !this.item.data.flags.dsa5.poison.permanent } } } })
+            this.item.update({ flags: { dsa5: { poison: { permanent: !this.item.flags.dsa5.poison.permanent } } } })
         })
         html.find('.poison-delete').click(ev => {
             this.deletePoison()
         })
         html.find('.poison-show').click(async() => {
             let item
-            if (this.item.actor) item = this.item.actor.data.items.find(x => x.type == "poison" && x.name == this.item.data.flags.dsa5.poison.name)
-            if (!item) item = await this.getSpell(this.item.data.flags.dsa5.poison)
+            if (this.item.actor) item = this.item.actor.items.find(x => x.type == "poison" && x.name == this.item.flags.dsa5.poison.name)
+            if (!item) item = await this.getSpell(this.item.flags.dsa5.poison)
 
             if (item) {
                 item.sheet.render(true)
@@ -492,10 +491,10 @@ class EquipmentSheet extends Enchantable {
                 .map(x => {
                     x.weight = parseFloat((x.system.weight.value * x.system.quantity.value).toFixed(3));
                     weightSum += Number(x.weight)
-                    const enchants = getProperty(x.data, "flags.dsa5.enchantments")
+                    const enchants = getProperty(x, "flags.dsa5.enchantments")
                     if (enchants && enchants.length > 0) {
                         x.enchantClass = "rar"
-                    } else if ((x.system.effect && x.system.effect.value != "") || x.data.effects.length > 0) {
+                    } else if ((x.system.effect && x.system.effect.value != "") || x.system.effects.length > 0) {
                         x.enchantClass = "common"
                     }
                     return x
@@ -549,7 +548,7 @@ class EquipmentSheet extends Enchantable {
                 item.sheet.render(true);
             else if (ev.button == 2) {
                 $('.itemInfo').remove()
-                await item.update({ "data.parent_id": 0 });
+                await item.update({ "system.parent_id": 0 });
                 this.render(true)
             }
         })
@@ -567,9 +566,9 @@ class EquipmentSheet extends Enchantable {
             const ownItem = this.item.parent.id == dragData.actorId
 
             if (DSA5.equipmentCategories.includes(typeClass) && !selfItem) {
-                item.data.parent_id = this.item.id
-                if (item.data.worn && item.data.worn.value)
-                    item.data.worn.value = false
+                item.system.parent_id = this.item.id
+                if (item.system.worn && item.system.worn.value)
+                    item.system.worn.value = false
 
                 if (ownItem) {
                     await this.item.actor.updateEmbeddedDocuments("Item", [item])
@@ -612,7 +611,7 @@ export class ArmorSheet extends Enchantable {
 class PlantSheet extends ItemSheetdsa5 {
     async getData(options) {
         const data = await super.getData(options);
-        data.attributes = Object.keys(data.data.planttype).map(x => { return { name: x, checked: data.data.planttype[x] } })
+        data.attributes = Object.keys(data.system.planttype).map(x => { return { name: x, checked: data.system.planttype[x] } })
         return data
     }
 }
@@ -710,7 +709,7 @@ class BlessingSheetDSA5 extends ItemSheetdsa5 {
             return ui.notifications.error(game.i18n.localize("DSAError.NotEnoughKaP"))
 
         const cantrip = game.dsa5.config.ItemSubclasses.magictrick
-        await this.item.actor.update({ "data.status.karmaenergy.value": this.item.actor.system.status.karmaenergy.value -= 1 })
+        await this.item.actor.update({ "system.status.karmaenergy.value": this.item.actor.system.status.karmaenergy.value -= 1 })
         let chatMessage = `<p><b>${this.item.name} - ${game.i18n.localize('blessing')} ${game.i18n.localize('probe')}</b></p><p>${this.item.system.description.value}</p><p>${cantrip.chatData(this.item.system, "").join("</br>")}</p>`
         await ChatMessage.create(DSA5_Utility.chatDataSetup(chatMessage));
     }
@@ -753,8 +752,8 @@ class ConsumableSheetDSA5 extends ItemSheetdsa5 {
     }
     async getData(options) {
         const data = await super.getData(options)
-        data["calculatedPrice"] = (data.data.price.value * data.data.QL) || 0
-        data["availableSteps"] = data.data.QLList.split("\n").map((x, i) => i + 1)
+        data["calculatedPrice"] = (data.system.price.value * data.system.QL) || 0
+        data["availableSteps"] = data.system.QLList.split("\n").map((x, i) => i + 1)
         data['equipmentTypes'] = DSA5.equipmentTypes;
         return data
     }
@@ -813,7 +812,7 @@ class MagictrickSheetDSA5 extends ItemSheetdsa5 {
             return ui.notifications.error(game.i18n.localize("DSAError.NotEnoughAsP"))
 
         const cantrip = game.dsa5.config.ItemSubclasses.magictrick
-        await this.item.actor.update({ "data.status.astralenergy.value": this.item.actor.system.status.astralenergy.value -= 1 })
+        await this.item.actor.update({ "system.status.astralenergy.value": this.item.actor.system.status.astralenergy.value -= 1 })
         const chatMessage = `<p><b>${this.item.name} - ${game.i18n.localize('magictrick')} ${game.i18n.localize('probe')}</b></p><p>${this.item.system.description.value}</p><p>${cantrip.chatData(this.item.system, "").join("</br>")}</p>`
         await ChatMessage.create(DSA5_Utility.chatDataSetup(chatMessage));
     }
@@ -843,7 +842,7 @@ class MeleeweaponSheetDSA5 extends Enchantable {
             breakPointRating: DSA5.weaponStabilities[game.i18n.localize(`LocalizedCTs.${this.item.system.combatskill.value}`)]
         })
         if (this.item.actor) {
-            const combatSkill = this.item.actor.data.items.find(x => x.type == "combatskill" && x.name == this.item.system.combatskill.value)
+            const combatSkill = this.item.actor.items.find(x => x.type == "combatskill" && x.name == this.item.system.combatskill.value)
             data['canBeOffHand'] = combatSkill && !(combatSkill.system.weapontype.twoHanded) && this.item.system.worn.value
         }
         data.canOnUseEffect = game.user.isGM || await game.settings.get("dsa5", "playerCanEditSpellMacro")
@@ -892,7 +891,7 @@ class SpecialAbilitySheetDSA5 extends ItemSheetdsa5 {
             }
             xpCost = await SpecialabilityRulesDSA5.refundFreelanguage(this.item.data, this.item.actor, xpCost)
             await this.item.actor._updateAPs(xpCost * -1)
-            await this.item.update({ "data.step.value": this.item.system.step.value - 1 })
+            await this.item.update({ "system.step.value": this.item.system.step.value - 1 })
         }
     }
 
@@ -907,7 +906,7 @@ class SpecialAbilitySheetDSA5 extends ItemSheetdsa5 {
             xpCost = await SpecialabilityRulesDSA5.isFreeLanguage(this.item.data, this.item.actor, xpCost)
             if (await this.item.actor.checkEnoughXP(xpCost)) {
                 await this.item.actor._updateAPs(xpCost)
-                await this.item.update({ "data.step.value": this.item.system.step.value + 1 })
+                await this.item.update({ "system.step.value": this.item.system.step.value + 1 })
             }
         }
     }
@@ -948,7 +947,7 @@ class SpellSheetDSA5 extends ItemSheetdsa5 {
         data['StFs'] = DSA5.StFs;
         data['resistances'] = DSA5.magicResistanceModifiers
         if (data.isOwned) {
-            data['extensions'] = this.item.actor.data.items.filter(x => { return x.type == "spellextension" && x.system.source == this.item.name && this.item.type == x.system.category })
+            data['extensions'] = this.item.actor.items.filter(x => { return x.type == "spellextension" && x.system.source == this.item.name && this.item.type == x.system.category })
         }
         return data
     }
@@ -969,7 +968,7 @@ class SpellSheetDSA5 extends ItemSheetdsa5 {
 
     _deleteItem(ev) {
         let itemId = this._getItemId(ev);
-        let item = this.actor.data.items.find(x => x.id == itemId)
+        let item = this.actor.items.find(x => x.id == itemId)
         let message = game.i18n.format("DIALOG.DeleteItemDetail", { item: item.name })
         renderTemplate('systems/dsa5/templates/dialog/delete-item-dialog.html', { message }).then(html => {
             new Dialog({
@@ -995,7 +994,7 @@ class SpellSheetDSA5 extends ItemSheetdsa5 {
     }
 
     async _cleverDeleteItem(itemId) {
-        let item = this.item.actor.data.items.find(x => x.id == itemId)
+        let item = this.item.actor.items.find(x => x.id == itemId)
         await this.item.actor._updateAPs(-1 * item.system.APValue.value)
         await this.item.actor.deleteEmbeddedDocuments("Item", [itemId]);
     }
@@ -1025,7 +1024,7 @@ class VantageSheetDSA5 extends ItemSheetdsa5 {
                 xpCost = steps[this.item.system.step.value - 1]
             }
             await this.item.actor._updateAPs(xpCost * -1)
-            await this.item.update({ "data.step.value": this.item.system.step.value - 1 })
+            await this.item.update({ "system.step.value": this.item.system.step.value - 1 })
         }
     }
 
@@ -1045,7 +1044,7 @@ class VantageSheetDSA5 extends ItemSheetdsa5 {
             }
             if (await this.item.actor.checkEnoughXP(xpCost)) {
                 await this.item.actor._updateAPs(xpCost)
-                await this.item.update({ "data.step.value": this.item.system.step.value + 1 })
+                await this.item.update({ "system.step.value": this.item.system.step.value + 1 })
             }
         }
     }

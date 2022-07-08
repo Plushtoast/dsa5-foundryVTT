@@ -176,7 +176,7 @@ export default class BookWizard extends Application {
     }
 
     async loadJournal(name) {
-        this.showJournal(this.journals.find(x => { return x.name == name && x.data.flags.dsa5.parent == this.selectedChapter }))
+        this.showJournal(this.journals.find(x => { return x.name == name && x.flags.dsa5.parent == this.selectedChapter }))
     }
     async loadJournalById(id) {
         this.showJournal(this.journals.find(x => { return x.id == id }))
@@ -236,8 +236,8 @@ export default class BookWizard extends Application {
     }
 
     showJournal(journal) {
-        let content = journal.data.content
-        if (!content) content = `<img src="${journal.data.img}"/>`
+        let content = journal.system.content
+        if (!content) content = `<img src="${journal.system.img}"/>`
 
         const pinIcon = this.findSceneNote(journal.getFlag("dsa5", "initId"))
 
@@ -296,10 +296,10 @@ export default class BookWizard extends Application {
         if (!chapter.actors) return []
 
         let result = []
-        const head = await game.folders.contents.find(x => x.name == game.i18n.localize(`${this.bookData.moduleName}.name`) && x.type == "Actor" && x.data.parent == null)
-        const folder = head ? await game.folders.contents.find(x => x.name == chapter.name && x.type == "Actor" && x.data.parent == head.id) : undefined
+        const head = await game.folders.contents.find(x => x.name == game.i18n.localize(`${this.bookData.moduleName}.name`) && x.type == "Actor" && x.system.parent == null)
+        const folder = head ? await game.folders.contents.find(x => x.name == chapter.name && x.type == "Actor" && x.system.parent == head.id) : undefined
         for (let k of chapter.actors) {
-            let actor = folder ? game.actors.contents.find(x => x.name == k && x.data.folder == folder.id) : undefined
+            let actor = folder ? game.actors.contents.find(x => x.name == k && x.system.folder == folder.id) : undefined
             let pack = undefined
             let id = actor ? actor.id : undefined
             if (!actor) {
@@ -323,7 +323,7 @@ export default class BookWizard extends Application {
     }
 
     async showSzene(name, mode = "activate") {
-        let scene = game.scenes.contents.find(x => x.data.name == name)
+        let scene = game.scenes.contents.find(x => x.system.name == name)
         if (!scene)
             return ui.notifications.error(game.i18n.localize("DSAError.sceneNotInitialized"))
 
@@ -335,7 +335,7 @@ export default class BookWizard extends Application {
                 scene.view()
                 break
             case "toggle":
-                scene.update({ navigation: !scene.data.navigation })
+                scene.update({ navigation: !scene.system.navigation })
                 break
         }
     }
@@ -391,8 +391,8 @@ export default class BookWizard extends Application {
     }
 
     getSubChapters() {
-        return this.journals.filter(x => x.data.flags.dsa5.parent == this.selectedChapter)
-        .sort((a, b) => a.data.flags.dsa5.sort > b.data.flags.dsa5.sort ? 1 : -1)
+        return this.journals.filter(x => x.flags.dsa5.parent == this.selectedChapter)
+        .sort((a, b) => a.flags.dsa5.sort > b.flags.dsa5.sort ? 1 : -1)
         .map(x => {return {name: x.name, id: x.id}})
     }
 
@@ -479,7 +479,7 @@ export default class BookWizard extends Application {
 
     renderBreadcrumbs() {
         const breadcrumbs = this.readBreadCrumbs()
-        const btns = Object.entries(breadcrumbs).map(x => `<div title="${x[1]}" data-uuid="${x[0]}" class="openPin item">${x[1]}</div>`)
+        const btns = Object.entries(breadcrumbs).map(x => `<div data-tooltip="${x[1]}" data-uuid="${x[0]}" class="openPin item">${x[1]}</div>`)
 
         if (btns.length > 0) return `<div id"breadcrumbs" class="breadcrumbs wrap row-section">${btns.join("")}</div>`
 
@@ -499,7 +499,7 @@ class InitializerForm extends FormApplication {
 
 class JournalSearch {
     constructor(item) {
-        let data = getProperty(item, "data.content")
+        let data = getProperty(item, "system.content")
         this.document = {
             name: item.name,
             data: $("<div>").html(data).text(),

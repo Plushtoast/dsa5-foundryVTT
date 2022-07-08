@@ -1,17 +1,17 @@
 export default class DPS {
     static rangeFinder(tokenSource, tokenTarget) {
-        const gridSize = canvas.scene.data.grid
+        const gridSize = canvas.scene.system.grid
         const ray = new Ray(tokenSource, tokenTarget)
         const tileDistance = ray.distance / gridSize
-        const distance = tileDistance * canvas.scene.data.gridDistance
-        const elevation = Math.abs((getProperty(tokenSource, "data.elevation") || 0) - (getProperty(tokenTarget, "data.elevation") || 0))
+        const distance = tileDistance * canvas.scene.system.gridDistance
+        const elevation = Math.abs((getProperty(tokenSource, "system.elevation") || 0) - (getProperty(tokenTarget, "system.elevation") || 0))
         const distanceSum = Math.hypot(distance, elevation)
         return {
             elevation,
             distance,
             distanceSum,
             tileDistance,
-            unit: canvas.scene.data.gridUnits
+            unit: canvas.scene.system.gridUnits
         }
     }
 
@@ -32,8 +32,8 @@ export default class DPS {
         }
 
         if (maxDist.unit == game.i18n.localize("gridUnits")) {
-            const rangeMultiplier = Number(getProperty(currentAmmo, "data.rangeMultiplier")) || 1
-            const rangeBands = rangeweapon.data.reach.value.split("/").map(x => Number(x) * rangeMultiplier)
+            const rangeMultiplier = Number(getProperty(currentAmmo, "system.rangeMultiplier")) || 1
+            const rangeBands = rangeweapon.system.reach.value.split("/").map(x => Number(x) * rangeMultiplier)
             let index = 0
             while (index < 2 && rangeBands[index] < maxDist.distanceSum) { index++ }
 

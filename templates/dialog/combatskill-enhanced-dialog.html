@@ -30,7 +30,7 @@
                 <label>{{localize "opportunityAttack"}} (-4)</label>
                 <input type="checkbox" class="opportunityAttack" name="opportunityAttack" value="-4">
             </div>
-            <div class="form-group custom-select" title="{{localize 'DIALOG.assassinateDescr'}}">
+            <div class="form-group custom-select" data-tooltip="{{localize 'DIALOG.assassinateDescr'}}">
                 <label>{{localize "DIALOG.assassinate"}}</label>
                 <select name="assassinate">
                     <option value="-">-</option>
@@ -112,13 +112,13 @@
             <div class="specAbsContainer">
                 {{#unless combatSpecAbs}}
                 <div class="row-section">
-                    <div class="col specImg" style="height: 120px" title="{{localize 'DIALOG.noCombatskills'}}"></div>
+                    <div class="col specImg" style="height: 120px" data-tooltip="{{localize 'DIALOG.noCombatskills'}}"></div>
                 </div>
 
                 {{else}} {{#each combatSpecAbs as |item i|}}
                 <div class="row-section specAbs" data-actor="{{item.actor}}" data-category="{{item.category.id}}" data-id="{{item.id}}" data-step="0" data-maxStep="{{item.steps}}" data-dmmalus="{{item.dmmalus}}" data-atbonus="{{item.atbonus}}" data-tpbonus="{{item.tpbonus}}"
-                    data-pabonus="{{item.pabonus}}" title="{{item.label}}">
-                    <div class="specImg col ten {{item.category.css}}" title="{{item.category.name}}">
+                    data-pabonus="{{item.pabonus}}" data-tooltip="{{item.label}}">
+                    <div class="specImg col ten {{item.category.css}}" data-tooltip="{{item.category.name}}">
                     </div>
                     <div class="col ninety">
                         <a>{{item.name}}</a><span class="step"></span>

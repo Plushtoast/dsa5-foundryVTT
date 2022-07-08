@@ -14,23 +14,21 @@
                 <label class="label-text table-title">{{localize "quantity"}}</label>
             </div>
             <div class="col fifteen">
-                <input class="input-text" type="text" name="data.quantity.value" value="{{data.quantity.value}}" data-dtype="Number" />
-
+                <input class="input-text" type="text" name="system.quantity.value" value="{{system.quantity.value}}" data-dtype="Number" />
             </div>
-
         </div>
         <div class="row-section">
             <div class="col four">
-                <label title="{{localize 'UNITS.money'}}" class="label-text table-title">{{localize "price"}}</label>
+                <label data-tooltip="{{localize 'UNITS.money'}}" class="label-text table-title">{{localize "price"}}</label>
             </div>
             <div class="col fourty">
-                <input title="{{localize 'UNITS.money'}}" class="input-text" type="text" name="data.price.value" value="{{data.price.value}}" data-dtype="Number" />
+                <input data-tooltip="{{localize 'UNITS.money'}}" class="input-text" type="text" name="system.price.value" value="{{system.price.value}}" data-dtype="Number" />
             </div>
             <div class="col four">
-                <label title="{{localize 'UNITS.weight'}}" class="label-text table-title">{{localize "Weight"}}</label>
+                <label data-tooltip="{{localize 'UNITS.weight'}}" class="label-text table-title">{{localize "Weight"}}</label>
             </div>
             <div class="col fifteen">
-                <input title="{{localize 'UNITS.weight'}}" class="input-text" type="text" name="data.weight.value" value="{{data.weight.value}}" data-dtype="Number" />
+                <input data-tooltip="{{localize 'UNITS.weight'}}" class="input-text" type="text" name="system.weight.value" value="{{system.weight.value}}" data-dtype="Number" />
             </div>
         </div>
     </div>

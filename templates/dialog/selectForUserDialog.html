@@ -5,7 +5,7 @@
         {{#each users as |usr|}}
         <li class="combatant actor directory-item flexrow" data-user-id="{{usr.id}}">
             <div class="combatant-advanced">
-                <img class="token-image" title="{{usr.name}}" src="{{usr.character.img}}">              
+                <img class="token-image" data-tooltip="{{usr.name}}" src="{{usr.character.img}}">              
             </div>
             <div class="token-name flexcol">
                 <h4>{{usr.name}}</h4>

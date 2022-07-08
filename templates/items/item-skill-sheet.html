@@ -9,50 +9,50 @@
 
     <section class="content">
         <div class="tab description active" data-tab="description">
-            {{#if hasLocalization}} {{{localize (concat "SKILLdescr." item.name)}}} {{else}} {{editor content=data.description.value target="data.description.value" button=true owner=owner editable=editable}} {{/if}}
+            {{#if hasLocalization}} {{{localize (concat "SKILLdescr." item.name)}}} {{else}} {{editor (enrich system.description.value owner) target="system.description.value" button=true owner=owner editable=editable}} {{/if}}
         </div>
 
         <div class="tab details" data-tab="details">
 
             <div class="form-group">
                 <label class="label-text">{{localize "Characteristic"}} 1</label>
-                <select name="data.characteristic1.value" data-dtype="String">
-                    {{selectOptions characteristics selected=data.characteristic1.value localize=true}} 
+                <select name="system.characteristic1.value" data-dtype="String">
+                    {{selectOptions characteristics selected=system.characteristic1.value localize=true}} 
                 </select>
             </div>
 
             <div class="form-group">
                 <label class="label-text">{{localize "Characteristic"}} 2</label>
-                <select name="data.characteristic2.value" data-dtype="String">
-                    {{selectOptions characteristics selected=data.characteristic2.value localize=true}} 
+                <select name="system.characteristic2.value" data-dtype="String">
+                    {{selectOptions characteristics selected=system.characteristic2.value localize=true}} 
                 </select>
             </div>
 
             <div class="form-group">
                 <label class="label-text">{{localize "Characteristic"}} 3</label>
-                <select name="data.characteristic3.value" data-dtype="String">
-                    {{selectOptions characteristics selected=data.characteristic3.value localize=true}} 
+                <select name="system.characteristic3.value" data-dtype="String">
+                    {{selectOptions characteristics selected=system.characteristic3.value localize=true}} 
                 </select>
             </div>
 
             <div class="form-group">
                 <label class="label-text">{{localize "Group"}}</label>
-                <select name="data.group.value" data-dtype="String">
-                    {{selectOptions skillGroups selected=data.group.value localize=true}}  
+                <select name="system.group.value" data-dtype="String">
+                    {{selectOptions skillGroups selected=system.group.value localize=true}}  
                 </select>
             </div>
 
             <div class="form-group">
                 <label class="label-text">{{localize "Burden"}}</label>
-                <select name="data.burden.value" data-dtype="String">
-                    {{selectOptions skillBurdens selected=data.burden.value localize=true}} 
+                <select name="system.burden.value" data-dtype="String">
+                    {{selectOptions skillBurdens selected=system.burden.value localize=true}} 
                 </select>
             </div>
 
             <div class="form-group">
                 <label class="label-text">{{localize "StF"}}</label>
-                <select name="data.StF.value" data-dtype="String">
-                    {{selectOptions StFs selected=data.StF.value localize=true}} 
+                <select name="system.StF.value" data-dtype="String">
+                    {{selectOptions StFs selected=system.StF.value localize=true}} 
                 </select>
             </div>
         </div>

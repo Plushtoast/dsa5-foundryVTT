@@ -35,7 +35,7 @@
         <b>{{localize 'PLAYER.conjuration'}}</b><br />
         <div class="row-section">
           <div class="col center">
-            <img style="width:70px;height:70px" class="profile" src="{{conjuration.img}}" title="{{actor.name}}">
+            <img style="width:70px;height:70px" class="profile" src="{{conjuration.img}}" data-tooltip="{{actor.name}}">
           </div>
         </div>
         <div class="row-section">
@@ -51,7 +51,7 @@
             <label class="">{{localize "creatureClass"}}:</label>
           </div>
           <div class="col sixty">
-            {{conjuration.data.creatureClass.value}}
+            {{conjuration.system.creatureClass.value}}
           </div>
         </div>
         <div class="row-section">
@@ -59,7 +59,7 @@
             <label class="">{{localize "conjuringDifficulty"}}:</label>
           </div>
           <div class="col sixty">
-            {{conjuration.data.conjuringDifficulty.value}}
+            {{conjuration.system.conjuringDifficulty.value}}
           </div>
         </div>
       </div>
@@ -88,7 +88,7 @@
             {{localize item.name}}
           </div>
           <div class="col ten">
-            <span class="small" title="{{localize 'CHARAbbrev.QL'}}">{{item.data.data.AsPCost.value}}</span>
+            <span class="small" data-tooltip="{{localize 'CHARAbbrev.QL'}}">{{item.AsPCost.value}}</span>
           </div>
           <div class="col ten">
             <a class="showEntity small" data-uuid="{{item.uuid}}"><i class="fas fa-info"></i></a>
@@ -104,7 +104,7 @@
             {{localize item.name}}
           </div>
           <div class="col ten">
-            <span class="small">{{item.data.data.at.value}}</span>
+            <span class="small">{{item.at.value}}</span>
           </div>
           <div class="col ten">
             <a class="showEntity small" data-uuid="{{item.uuid}}"><i class="fas fa-info"></i></a>
@@ -118,7 +118,7 @@
 
   <div class="center bags">
     <div class="slot newNPC" draggable="true" style="margin:0 auto;background-image:url('{{actor.img}}')" data-id="{{actor.id}}"
-      title="{{actor.name}}"></div>
+      data-tooltip="{{actor.name}}"></div>
   </div>
 
   {{else}}

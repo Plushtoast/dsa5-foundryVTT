@@ -21,13 +21,13 @@ class SearchDocument {
                 case "creature":
                 case "npc":
                 case "character":
-                    data = getProperty(item, "data.description.value")
+                    data = getProperty(item, "system.description.value")
                     break
                 case 'JournalEntry':
-                    data = getProperty(item, "data.content")
+                    data = getProperty(item, "system.content")
                     break
                 default:
-                    data = getProperty(item, "data.data.description.value")
+                    data = getProperty(item, "description.value")
             }
         }
 
@@ -538,15 +538,11 @@ export default class DSA5ItemLibrary extends Application {
         let promise
         let metadata = packs.map(p => p.metadata)
         if (document == "Actor") {
-            const fields = ["name", "data.type", "data.description.value", "img"]
+            const fields = ["name", "system.type", "system.description.value", "img"]
             promise = packs.map(p => p.getIndex({ fields }))
         } else if (document == "JournalEntry") {
-            //const fields = ["name", "type", "data.content", "img"]
-            //promise = packs.map(p => p.getIndex({ fields }))
             promise = packs.map(p => p.getDocuments())
         } else {
-            //const fields = ["name", "type", "data.description.value", "img"]
-            //promise = packs.map(p => p.getIndex({ fields }))
             promise = packs.map(p => p.getDocuments())
         }
 

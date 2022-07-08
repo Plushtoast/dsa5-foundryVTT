@@ -26,25 +26,25 @@
                 {{localize "skill"}}
             </div>
             <div class="col third">{{localize "probe"}}</div>
-            <div class="col ten" title="{{localize 'Fw'}}">{{localize "CHARAbbrev.FW"}}</div>
+            <div class="col ten" data-tooltip="{{localize 'Fw'}}">{{localize "CHARAbbrev.FW"}}</div>
         </div>
         {{#each this as |item i|}}
-        <div class="row-section wrap skills lineheight tableOdd item{{#if (eq item.data.talentValue.value 0)}} notLearned{{/if}}" data-item-id="{{item._id}}">
+        <div class="row-section wrap skills lineheight tableOdd item{{#if (eq item.system.talentValue.value 0)}} notLearned{{/if}}" data-item-id="{{item._id}}">
             <div class="col sixty">
                 <a class="item-edit talentName">{{item.name}}</a> {{#if item.canAdvance}}
-                <a class="advance refund-item"><i title="{{item.refund}}" class="fas fa-minus"></i></a>
-                <a class="advance advance-item"><i title="{{item.cost}}" class="fas fa-plus"></i></a> {{/if}}
+                <a class="advance refund-item"><i data-tooltip="{{item.refund}}" class="fas fa-minus"></i></a>
+                <a class="advance advance-item"><i data-tooltip="{{item.cost}}" class="fas fa-plus"></i></a> {{/if}}
             </div>
             <div class="col third">
                 <a class="skill-select">
-                    <span class="d20 diet-{{item.data.characteristic1.value}}">{{localize (concatUp "CHARAbbrev." item.data.characteristic1.value)}}</span>
-                    <span class="d20 diet-{{item.data.characteristic2.value}}">{{localize (concatUp "CHARAbbrev." item.data.characteristic2.value)}}</span>
-                    <span class="d20 diet-{{item.data.characteristic3.value}}">{{localize (concatUp "CHARAbbrev." item.data.characteristic3.value)}}</span>
+                    <span class="d20 diet-{{item.system.characteristic1.value}}">{{localize (concatUp "CHARAbbrev." item.system.characteristic1.value)}}</span>
+                    <span class="d20 diet-{{item.system.characteristic2.value}}">{{localize (concatUp "CHARAbbrev." item.system.characteristic2.value)}}</span>
+                    <span class="d20 diet-{{item.system.characteristic3.value}}">{{localize (concatUp "CHARAbbrev." item.system.characteristic3.value)}}</span>
                 </a>
                 {{#if item.applications}}
-                <a class="item-dropdown very-small" title="{{localize 'SHEET.Dropdown'}}"><i class="fas fa-chevron-down"></i></a> {{/if}}
+                <a class="item-dropdown very-small" data-tooltip="{{localize 'SHEET.Dropdown'}}"><i class="fas fa-chevron-down"></i></a> {{/if}}
             </div>
-            <div class="col ten"><input class="skill-advances" type="number" data-dtype="Number" value="{{item.data.talentValue.value}}" /></div>
+            <div class="col ten"><input class="skill-advances" type="number" data-dtype="Number" value="{{item.system.talentValue.value}}" /></div>
             {{#if item.applications}}
             <div class="col lineheight expandDetails {{item.detailed}}">
                 <ul>
@@ -71,25 +71,25 @@
                 {{localize "skill"}}
             </div>
             <div class="col third">{{localize "probe"}}</div>
-            <div class="col ten" title="{{localize 'Fw'}}">{{localize "CHARAbbrev.FW"}}</div>
+            <div class="col ten" data-tooltip="{{localize 'Fw'}}">{{localize "CHARAbbrev.FW"}}</div>
         </div>
         {{#each this as |item i|}}
-        <div class="row-section wrap skills lineheight tableOdd item{{#if (eq item.data.talentValue.value 0)}} notLearned{{/if}}" data-item-id="{{item._id}}">
+        <div class="row-section wrap skills lineheight tableOdd item{{#if (eq item.system.talentValue.value 0)}} notLearned{{/if}}" data-item-id="{{item._id}}">
             <div class="col sixty">
                 <a class="item-edit talentName">{{item.name}}</a> {{#if item.canAdvance}}
-                <a class="advance refund-item"><i title="{{item.refund}}" class="fas fa-minus"></i></a>
-                <a class="advance advance-item"><i title="{{item.cost}}" class="fas fa-plus"></i></a>{{/if}}
+                <a class="advance refund-item"><i data-tooltip="{{item.refund}}" class="fas fa-minus"></i></a>
+                <a class="advance advance-item"><i data-tooltip="{{item.cost}}" class="fas fa-plus"></i></a>{{/if}}
             </div>
             <div class="col third">
                 <a class="skill-select">
-                    <span class="d20 diet-{{item.data.characteristic1.value}}">{{localize (concatUp "CHARAbbrev." item.data.characteristic1.value)}}</span>
-                    <span class="d20 diet-{{item.data.characteristic2.value}}">{{localize (concatUp "CHARAbbrev." item.data.characteristic2.value)}}</span>
-                    <span class="d20 diet-{{item.data.characteristic3.value}}">{{localize (concatUp "CHARAbbrev." item.data.characteristic3.value)}}</span>
+                    <span class="d20 diet-{{item.system.characteristic1.value}}">{{localize (concatUp "CHARAbbrev." item.system.characteristic1.value)}}</span>
+                    <span class="d20 diet-{{item.system.characteristic2.value}}">{{localize (concatUp "CHARAbbrev." item.system.characteristic2.value)}}</span>
+                    <span class="d20 diet-{{item.system.characteristic3.value}}">{{localize (concatUp "CHARAbbrev." item.system.characteristic3.value)}}</span>
                 </a>
                 {{#if item.applications}}
-                <a class="item-dropdown very-small" title="{{localize 'SHEET.Dropdown'}}"><i class="fas fa-chevron-down"></i></a> {{/if}}
+                <a class="item-dropdown very-small" data-tooltip="{{localize 'SHEET.Dropdown'}}"><i class="fas fa-chevron-down"></i></a> {{/if}}
             </div>
-            <div class="col ten"><input class="skill-advances" type="text" data-dtype="Number" value="{{item.data.talentValue.value}}" /></div>
+            <div class="col ten"><input class="skill-advances" type="text" data-dtype="Number" value="{{item.system.talentValue.value}}" /></div>
             {{#if item.applications}}
             <div class="col lineheight expandDetails {{item.detailed}}">
                 <ul>

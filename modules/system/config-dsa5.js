@@ -177,7 +177,7 @@ DSA5.statusEffects = [{
         icon: "icons/svg/bones.svg",
         description: "CONDITIONDESCRIPTION.bloodrush",
         changes: [
-            { key: "data.skillModifiers.step", mode: 0, value: "Kraftakt 2;Feat of Strength 2" }
+            { key: "system.skillModifiers.step", mode: 0, value: "Kraftakt 2;Feat of Strength 2" }
         ],
         flags: {
             dsa5: {
@@ -294,7 +294,7 @@ DSA5.statusEffects = [{
         icon: "icons/svg/terror.svg",
         description: "CONDITIONDESCRIPTION.minorSpirits",
         changes: [
-            { key: "data.skillModifiers.global", mode: 0, value: -1 }
+            { key: "system.skillModifiers.global", mode: 0, value: -1 }
         ],
         duration: { seconds: 600 },
         flags: {
@@ -391,7 +391,7 @@ DSA5.defaultWeapon = {
     name: "default",
     type: "meleeweapon",
     effects: [],
-    data: {
+    system: {
         type: "meleeweapon",
         crit: 1,
         botch: 20,

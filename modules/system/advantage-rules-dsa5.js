@@ -24,33 +24,33 @@ export default class AdvantageRulesDSA5 extends ItemRulesDSA5 {
         item = duplicate(item)
 
         //Different Apval for multiple same vantages
-        if (/,/.test(item.data.APValue.value)) {
+        if (/,/.test(item.system.APValue.value)) {
             let name = item.name.replace(' ()', '')
-            item.data.APValue.value = item.data.APValue.value.split(",")[actor.items.filter(x => x.type == item.type && x.name.includes(name)).length].trim()
+            item.system.APValue.value = item.system.APValue.value.split(",")[actor.items.filter(x => x.type == item.type && x.name.includes(name)).length].trim()
         }
 
         if (adoption != null) {
             AdvantageRulesDSA5.simpleAdoption(item, adoption, item.name, DSA5.vantagesNeedingAdaption)
             item.name = `${item.name.replace(' ()', '')} (${adoption.name})`
             if (adoption.data)
-                item.data.APValue.value = item.data.APValue.value.split("/")[adoption.system.StF.value.charCodeAt(0) - 65].trim()
+                item.system.APValue.value = item.system.APValue.value.split("/")[adoption.system.StF.value.charCodeAt(0) - 65].trim()
         }
-        let res = actor.data.items.find(i => {
+        let res = actor.items.find(i => {
             return i.type == typeClass && i.name == item.name
         });
         if (res) {
             let vantage = duplicate(res)
-            let xpCost = /;/.test(vantage.data.APValue.value) ? vantage.data.APValue.value.split(';').map(x => Number(x.trim()))[vantage.data.step.value] : vantage.data.APValue.value
+            let xpCost = /;/.test(vantage.system.APValue.value) ? vantage.system.APValue.value.split(';').map(x => Number(x.trim()))[vantage.system.step.value] : vantage.system.APValue.value
 
-            if (vantage.data.step.value + 1 <= vantage.data.max.value && await actor.checkEnoughXP(xpCost)) {
-                vantage.data.step.value += 1
+            if (vantage.system.step.value + 1 <= vantage.system.max.value && await actor.checkEnoughXP(xpCost)) {
+                vantage.system.step.value += 1
                 await actor._updateAPs(xpCost)
                 await actor.updateEmbeddedDocuments("Item", [vantage]);
                 await AdvantageRulesDSA5.vantageAdded(actor, vantage)
             }
-        } else if (await actor.checkEnoughXP(item.data.APValue.value.split(';').map(x => x.trim())[0])) {
+        } else if (await actor.checkEnoughXP(item.system.APValue.value.split(';').map(x => x.trim())[0])) {
             await AdvantageRulesDSA5.vantageAdded(actor, item)
-            await actor._updateAPs(item.data.APValue.value.split(';').map(x => x.trim())[0])
+            await actor._updateAPs(item.system.APValue.value.split(';').map(x => x.trim())[0])
             await actor.createEmbeddedDocuments("Item", [item]);
         }
     }

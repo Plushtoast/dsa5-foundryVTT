@@ -35,16 +35,16 @@ export default class EquipmentDamage {
         if (game.settings.get("dsa5", "armorAndWeaponDamage")) {
             let actor = DSA5_Utility.getSpeaker(preData.extra.speaker)
             let attackSuccessLevel = 0
-            const opposeMessageId = getProperty(actor, "data.flags.oppose.messageId")
+            const opposeMessageId = getProperty(actor, "flags.oppose.messageId")
             if (opposeMessageId) {
                 const attackMessage = game.messages.get(opposeMessageId)
-                if (attackMessage) attackSuccessLevel = getProperty(attackMessage, "data.flags.data.postData.successLevel") || 0
+                if (attackMessage) attackSuccessLevel = getProperty(attackMessage, "flags.data.postData.successLevel") || 0
             }
 
             const source = preData.source
             if (
                 source._id &&
-                source.data.structure &&
+                source.system.structure &&
                 (testData.successLevel < -2 || attackSuccessLevel > 2) && ["meleeweapon", "rangeweapon", "armor"].includes(source.type)
             ) {
                 actor = await DSA5_Utility.getSpeaker(testData.speaker)
@@ -67,11 +67,11 @@ export default class EquipmentDamage {
         if (item.type == "armor") {
             category = game.i18n.localize(`ARMORSUBCATEGORIES.${item.system.subcategory}`)
             breakingResistance =
-                getProperty(item.data, "data.structure.breakPointRating") || DSA5.armorSubcategories[item.system.subcategory]
+                getProperty(item, "structure.breakPointRating") || DSA5.armorSubcategories[item.system.subcategory]
         } else {
             category = item.system.combatskill.value
             breakingResistance =
-                getProperty(item.data, "data.structure.breakPointRating") ||
+                getProperty(item, "structure.breakPointRating") ||
                 DSA5.weaponStabilities[game.i18n.localize(`LocalizedCTs.${category}`)]
         }
         if (!breakingResistance) {
@@ -80,7 +80,7 @@ export default class EquipmentDamage {
         }
 
         let magicalWarning = ""
-        const attributes = getProperty(item.data, "data.effect.attributes") || ""
+        const attributes = getProperty(item, "effect.attributes") || ""
         if (attributes.includes(CreatureType.clerical))
             magicalWarning = `${game.i18n.format("WEAPON.attributeWarning", { domain: CreatureType.clerical })}<br/>`
         else if (attributes.includes(CreatureType.magical))
@@ -110,7 +110,7 @@ export default class EquipmentDamage {
 
     static async applyDamageLevelToItem(item, amount) {
         const damage = Math.ceil(item.system.structure.max * 0.25) * amount
-        await item.update({ "data.structure.value": Math.max(0, item.system.structure.value - damage) })
+        await item.update({ "system.structure.value": Math.max(0, item.system.structure.value - damage) })
     }
 
     static async resolveBreakingTest(item, threshold, category) {
@@ -154,8 +154,8 @@ export default class EquipmentDamage {
     }
 
     static calculateWear(itemData) {
-        if (!itemData.data.structure || Number(itemData.data.structure.max <= 0)) return 0
+        if (!itemData.system.structure || Number(itemData.system.structure.max <= 0)) return 0
 
-        return Math.floor((1 - itemData.data.structure.value / itemData.data.structure.max) * 4)
+        return Math.floor((1 - itemData.system.structure.value / itemData.system.structure.max) * 4)
     }
 }

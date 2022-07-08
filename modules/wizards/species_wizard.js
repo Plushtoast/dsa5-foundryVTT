@@ -64,14 +64,14 @@ export default class SpeciesWizard extends WizardDSA5 {
 
     getData(options) {
         const data = super.getData(options);
-        const advantagegroups = this._toGroups(this.species.data.recommendedAdvantages.value, ["advantage"])
-        const disadvantagegroups = this._toGroups(this.species.data.recommendedDisadvantages.value, ["disadvantage"])
-        const requirements = this.parseToItem(this.species.data.requirements.value, ["disadvantage", "advantage"])
+        const advantagegroups = this._toGroups(this.species.system.recommendedAdvantages.value, ["advantage"])
+        const disadvantagegroups = this._toGroups(this.species.system.recommendedDisadvantages.value, ["disadvantage"])
+        const requirements = this.parseToItem(this.species.system.requirements.value, ["disadvantage", "advantage"])
         const missingVantages = requirements.filter(x => ["advantage", "disadvantage"].includes(x.type) && !x.disabled)
-        const attributeRequirements = this._parseAttributes(this.species.data.attributeChange.value)
-        const baseCost = Number(this.species.data.APValue.value)
+        const attributeRequirements = this._parseAttributes(this.species.system.attributeChange.value)
+        const baseCost = Number(this.species.system.APValue.value)
         const reqCost = requirements.reduce(function(_this, val) {
-            return _this + (val.disabled ? 0 : Number(val.data.APValue.value) || 0)
+            return _this + (val.disabled ? 0 : Number(val.system.APValue.value) || 0)
         }, 0)
         mergeObject(data, {
             title: game.i18n.format("WIZARD.addItem", { item: `${game.i18n.localize("species")} ${this.species.name}` }),
@@ -79,7 +79,7 @@ export default class SpeciesWizard extends WizardDSA5 {
             description: game.i18n.format("WIZARD.speciesdescr", { species: this.species.name, cost: baseCost + reqCost }),
             advantagegroups,
             baseCost,
-            speciesDescription: game.i18n.has(`Racedescr.${this.species.name}`) ? game.i18n.localize(`Racedescr.${this.species.name}`) : this.species.data.description.value,
+            speciesDescription: game.i18n.has(`Racedescr.${this.species.name}`) ? game.i18n.localize(`Racedescr.${this.species.name}`) : this.species.system.description.value,
             disadvantagegroups,
             missingVantages,
             attributeRequirements,
@@ -110,12 +110,12 @@ export default class SpeciesWizard extends WizardDSA5 {
         }
 
         let update = {
-            "data.details.species.value": this.species.name,
-            "data.status.speed.initial": this.species.data.baseValues.speed.value,
-            "data.status.soulpower.initial": this.species.data.baseValues.soulpower.value,
-            "data.status.toughness.initial": this.species.data.baseValues.toughness.value,
-            "data.status.wounds.initial": this.species.data.baseValues.wounds.value,
-            "data.status.wounds.value": this.species.data.baseValues.wounds.value + this.actor.system.characteristics["ko"].value * 2
+            "system.details.species.value": this.species.name,
+            "system.status.speed.initial": this.species.system.baseValues.speed.value,
+            "system.status.soulpower.initial": this.species.system.baseValues.soulpower.value,
+            "system.status.toughness.initial": this.species.system.baseValues.toughness.value,
+            "system.status.wounds.initial": this.species.system.baseValues.wounds.value,
+            "system.status.wounds.value": this.species.system.baseValues.wounds.value + this.actor.system.characteristics["ko"].value * 2
         };
 
 
@@ -128,7 +128,7 @@ export default class SpeciesWizard extends WizardDSA5 {
             update[`data.characteristics.${k}.species`] = 0
         })
 
-        for (let attr of this.species.data.attributeChange.value.split(",").concat(attributeChoices)) {
+        for (let attr of this.species.system.attributeChange.value.split(",").concat(attributeChoices)) {
             if (attr.includes(game.i18n.localize("combatskillcountdivider") + ":") || attr == "")
                 continue
 

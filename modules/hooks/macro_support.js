@@ -30,12 +30,12 @@ export default function() {
 
         } else if (data.type == "Item") {
             let possibleItems = ["ritual", "ceremony", "meleeweapon", "rangeweapon", "skill", "combatskill", "spell", "liturgy", "char", "trait"]
-            if (!possibleItems.includes(data.data.type))
+            if (!possibleItems.includes(data.system.type))
                 return
 
-            if ((data.data.type == "meleeweapon" || data.data.type == "combatskill") && !['attack', 'parry'].includes(data.mod)) {
+            if ((data.system.type == "meleeweapon" || data.system.type == "combatskill") && !['attack', 'parry'].includes(data.mod)) {
                 return
-            } else if ((data.data.type == "rangeweapon" || data.data.type == "trait") && !['attack'].includes(data.mod)) {
+            } else if ((data.system.type == "rangeweapon" || data.system.type == "trait") && !['attack'].includes(data.mod)) {
                 return
             }
             let item = data.data
@@ -53,7 +53,7 @@ export default function() {
             let actor = game.actors.get(data.id);
             let command = `game.actors.get("${data.id}").sheet.render(true)`
 
-            await createHotBarMacro(command, actor.name, actor.data.img, slot)
+            await createHotBarMacro(command, actor.name, actor.img, slot)
         } else if (data.type == "JournalEntry") {
             let journal = game.journal.get(data.id);
             let command = `game.journal.get("${data.id}").sheet.render(true)`

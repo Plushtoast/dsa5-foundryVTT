@@ -8,14 +8,14 @@
 
     <section class="content">
         <div class="tab description active" data-tab="description">
-            {{#if hasLocalization}} {{{localization }}} {{else}} {{editor content=data.description.value target="data.description.value" button=true owner=owner editable=editable}} {{/if}}
+            {{#if hasLocalization}} {{{localization }}} {{else}} {{editor (enrich system.description.value owner) target="system.description.value" button=true owner=owner editable=editable}} {{/if}}
         </div>
 
         <div class="tab details" data-tab="details">
             <div class="form-group">
                 <label class="label-text">{{localize "skill"}}</label>
-                <select name="data.skill" data-dtype="String">
-                    {{#select data.skill}}
+                <select name="system.skill" data-dtype="String">
+                    {{#select system.skill}}
                     {{#each allSkills as |ch|}}
                     <option value="{{ch}}">{{ch}}</option>
                     {{/each}}

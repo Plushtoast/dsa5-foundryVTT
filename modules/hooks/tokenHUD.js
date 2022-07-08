@@ -1,7 +1,7 @@
 function addThirdBarToHUD(html, actor, app) {
     if (actor.isPriest && actor.isMage) {
         let currentKaP = actor.system.status.karmaenergy.value
-        let attrBar = `<div class="attribute bar3"><input type="text" name="data.status.karmaenergy.value" value="${currentKaP}"></div>`
+        let attrBar = `<div class="attribute bar3"><input type="text" name="system.status.karmaenergy.value" value="${currentKaP}"></div>`
         html.find('.col.middle').prepend(attrBar)
         html.find('.bar3 input').change(async ev => {
             const input = ev.currentTarget;
@@ -9,7 +9,7 @@ function addThirdBarToHUD(html, actor, app) {
             let isDelta = strVal.startsWith("+") || strVal.startsWith("-");
             if (strVal.startsWith("=")) strVal = strVal.slice(1);
             let value = Number(strVal);
-            const current = input.name.split('.').reduce((o, i) => o[i], actor.data)
+            const current = input.name.split('.').reduce((o, i) => o[i], actor)
             await actor.update({
                 [input.name]: isDelta ? current + value : value
             });

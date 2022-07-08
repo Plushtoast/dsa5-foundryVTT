@@ -15,7 +15,7 @@
     {{#each selectables as |combatant i|}}
     <li class="combatant actor directory-item flexrow {{#if combatant.hidden}}hidden{{/if}} {{#if combatant.isSelected}}selectedTarget{{/if}}" data-combatant-id="{{combatant.id}}">
         <div class="combatant-advanced">
-            <img class="token-image" title="{{combatant.token.name}}" src="{{combatant.token.data.img}}">              
+            <img class="token-image" data-tooltip="{{combatant.token.name}}" src="{{combatant.token.img}}">              
         </div>
         <div class="token-name flexcol">
             <h4>{{combatant.token.name}}</h4>

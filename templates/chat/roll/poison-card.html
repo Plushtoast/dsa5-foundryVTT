@@ -5,7 +5,7 @@
         <b>{{localize "effect"}}</b>: {{{diceThingsUp testData.effect}}}
     </div>
     <div class="card-content">
-        <b>{{localize "start"}}</b>: {{preData.source.data.start.value}}
+        <b>{{localize "start"}}</b>: {{preData.source.system.start.value}}
     </div>
     <div class="card-content">
         <b>{{localize "duration"}}</b>: {{testData.duration}}
@@ -14,7 +14,7 @@
     <div class="row-section" style="margin-top:10px">
         <div class="col two center">
             <button class="applyEffect selfButton" data-target="target"
-                title="{{localize 'TT.applyEffectTargets'}}">{{localize 'ActiveEffects.applyTarget'}}</button>
+                data-tooltip="{{localize 'TT.applyEffectTargets'}}">{{localize 'ActiveEffects.applyTarget'}}</button>
         </div>
     </div>
     {{/if}}

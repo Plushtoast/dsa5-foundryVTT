@@ -27,10 +27,10 @@
         <div class="tab description active" data-tab="description">
             <div class="row-section">
                 <div class="col two">
-                    {{editor content=data.description.value target="data.description.value" button=true owner=owner editable=editable}}
+                    {{editor (enrich system.description.value owner) target="system.description.value" button=true owner=owner editable=editable}}
                 </div>
                 <div class="col two">
-                    <img src="{{item.img}}" class="fullImg" data-edit="img" /> {{editor content=data.clothing.value target="data.clothing.value" button=true owner=owner editable=editable}}
+                    <img src="{{item.img}}" class="fullImg" data-edit="img" /> {{editor (enrich system.clothing.value owner) target="system.clothing.value" button=true owner=owner editable=editable}}
                 </div>
             </div>
         </div>
@@ -39,105 +39,105 @@
 
             <div class="form-group">
                 <label class="label-text">{{localize "APValue"}}</label>
-                <input class="input-text" type="text" name="data.APValue.value" value="{{data.APValue.value}}" data-dtype="Number" />
+                <input class="input-text" type="text" name="system.APValue.value" value="{{system.APValue.value}}" data-dtype="Number" />
             </div>
 
             <div class="form-group">
                 <label class="label-text">{{localize "languagePoints"}}</label>
-                <input class="input-text" type="text" name="data.languagePoints.value" value="{{data.languagePoints.value}}" data-dtype="Number" />
+                <input class="input-text" type="text" name="system.languagePoints.value" value="{{system.languagePoints.value}}" data-dtype="Number" />
             </div>
 
-            <div class="form-group full-height" title="{{localize 'TT.commaSeparated'}}">
+            <div class="form-group full-height" data-tooltip="{{localize 'TT.commaSeparated'}}">
                 <label class="label-text">{{localize "requirements"}}</label>
-                <textarea class="input-text" type="text" name="data.requirements.value" data-dtype="String">{{data.requirements.value}}</textarea>
+                <textarea class="input-text" type="text" name="system.requirements.value" data-dtype="String">{{system.requirements.value}}</textarea>
             </div>
 
-            <div class="form-group full-height" title="{{localize 'TT.commaSeparated'}}">
+            <div class="form-group full-height" data-tooltip="{{localize 'TT.commaSeparated'}}">
                 <label class="label-text">{{localize "recommendedAdvantages"}}</label>
-                <textarea class="input-text" type="text" name="data.recommendedAdvantages.value" data-dtype="String">{{data.recommendedAdvantages.value}}</textarea>
+                <textarea class="input-text" type="text" name="system.recommendedAdvantages.value" data-dtype="String">{{system.recommendedAdvantages.value}}</textarea>
             </div>
 
-            <div class="form-group full-height" title="{{localize 'TT.commaSeparated'}}">
+            <div class="form-group full-height" data-tooltip="{{localize 'TT.commaSeparated'}}">
                 <label class="label-text">{{localize "recommendedDisadvantages"}}</label>
-                <textarea class="input-text" type="text" name="data.recommendedDisadvantages.value" data-dtype="String">{{data.recommendedDisadvantages.value}}</textarea>
+                <textarea class="input-text" type="text" name="system.recommendedDisadvantages.value" data-dtype="String">{{system.recommendedDisadvantages.value}}</textarea>
             </div>
 
-            <div class="form-group full-height" title="{{localize 'TT.commaSeparated'}}">
+            <div class="form-group full-height" data-tooltip="{{localize 'TT.commaSeparated'}}">
                 <label class="label-text">{{localize "notsuitableAdvantages"}}</label>
-                <textarea class="input-text" type="text" name="data.notsuitableAdvantages.value" data-dtype="String">{{data.notsuitableAdvantages.value}}</textarea>
+                <textarea class="input-text" type="text" name="system.notsuitableAdvantages.value" data-dtype="String">{{system.notsuitableAdvantages.value}}</textarea>
             </div>
 
-            <div class="form-group full-height" title="{{localize 'TT.commaSeparated'}}">
+            <div class="form-group full-height" data-tooltip="{{localize 'TT.commaSeparated'}}">
                 <label class="label-text">{{localize "notsuitableDisadvantages"}}</label>
-                <textarea class="input-text" type="text" name="data.notsuitableDisadvantages.value" data-dtype="String">{{data.notsuitableDisadvantages.value}}</textarea>
+                <textarea class="input-text" type="text" name="system.notsuitableDisadvantages.value" data-dtype="String">{{system.notsuitableDisadvantages.value}}</textarea>
             </div>
 
-            <div class="form-group full-height" title="{{localize 'TT.careerSkills'}}">
+            <div class="form-group full-height" data-tooltip="{{localize 'TT.careerSkills'}}">
                 <label class="label-text">{{localize "skills"}}</label>
-                <textarea class="input-text" type="text" name="data.skills.value" data-dtype="String">{{data.skills.value}}</textarea>
+                <textarea class="input-text" type="text" name="system.skills.value" data-dtype="String">{{system.skills.value}}</textarea>
             </div>
 
-            <div class="form-group full-height" title="{{localize 'TT.careerSkills'}}">
+            <div class="form-group full-height" data-tooltip="{{localize 'TT.careerSkills'}}">
                 <label class="label-text">{{localize "combatskill"}}</label>
-                <textarea class="input-text" type="text" name="data.combatSkills.value" data-dtype="String">{{data.combatSkills.value}}</textarea>
+                <textarea class="input-text" type="text" name="system.combatSkills.value" data-dtype="String">{{system.combatSkills.value}}</textarea>
             </div>
 
-            <div class="form-group full-height" title="{{localize 'TT.careerSkills'}}">
+            <div class="form-group full-height" data-tooltip="{{localize 'TT.careerSkills'}}">
                 <label class="label-text">{{localize "specialAbilities"}}</label>
-                <textarea class="input-text" type="text" name="data.specialAbilities.value" data-dtype="String">{{data.specialAbilities.value}}</textarea>
+                <textarea class="input-text" type="text" name="system.specialAbilities.value" data-dtype="String">{{system.specialAbilities.value}}</textarea>
             </div>
 
             <div class="form-group">
                 <label class="label-text">{{localize "mageLevel"}}</label>
-                <select name="data.mageLevel.value" data-dtype="String">
-                    {{selectOptions mageLevels selected=data.mageLevel.value localize=true}}  
+                <select name="system.mageLevel.value" data-dtype="String">
+                    {{selectOptions mageLevels selected=system.mageLevel.value localize=true}}  
                 </select>
             </div>
-            {{#if (ne data.mageLevel.value "mundane")}}
+            {{#if (ne system.mageLevel.value "mundane")}}
             <div class="form-group">
                 <label class="label-text">{{localize "guidevalue"}}</label>
-                <select name="data.guidevalue.value" data-dtype="String">
-                    {{selectOptions guidevalues selected=data.guidevalue.value localize=true}}  
+                <select name="system.guidevalue.value" data-dtype="String">
+                    {{selectOptions guidevalues selected=system.guidevalue.value localize=true}}  
                 </select>
             </div>
             <div class="form-group">
                 <label class="label-text">{{localize "energyfactor"}}</label>
-                <input class="input-text" type="text" name="data.guidevalue.factor" value="{{data.guidevalue.factor}}" data-dtype="Number" />
+                <input class="input-text" type="text" name="system.guidevalue.factor" value="{{system.guidevalue.factor}}" data-dtype="Number" />
             </div>
             <div class="form-group">
                 <label class="label-text">{{localize "tradition"}}</label>
-                <input class="input-text" type="text" name="data.tradition.value" value="{{data.tradition.value}}" data-dtype="String" />
+                <input class="input-text" type="text" name="system.tradition.value" value="{{system.tradition.value}}" data-dtype="String" />
             </div>
 
             <div class="form-group">
-                <label class="label-text">{{#if (eq data.mageLevel.value 'clerical')}}{{localize "aspect"}}{{else}}{{localize "feature"}}{{/if}}</label>
-                <input class="input-text" type="text" name="data.feature.value" value="{{data.feature.value}}" data-dtype="String" />
+                <label class="label-text">{{#if (eq system.mageLevel.value 'clerical')}}{{localize "aspect"}}{{else}}{{localize "feature"}}{{/if}}</label>
+                <input class="input-text" type="text" name="system.feature.value" value="{{system.feature.value}}" data-dtype="String" />
             </div>
-            {{#if (eq data.mageLevel.value 'clerical')}}
+            {{#if (eq system.mageLevel.value 'clerical')}}
             <div class="form-group full-height">
                 <label class="label-text">{{localize "happyTalents"}}</label>
-                <textarea class="input-text" type="text" name="data.happyTalents.value" data-dtype="String">{{data.happyTalents.value}}</textarea>
+                <textarea class="input-text" type="text" name="system.happyTalents.value" data-dtype="String">{{system.happyTalents.value}}</textarea>
             </div>
             <div class="form-group full-height">
                 <label class="label-text">{{localize "liturgies"}}</label>
-                <textarea class="input-text" type="text" name="data.liturgies.value" data-dtype="String">{{data.liturgies.value}}</textarea>
+                <textarea class="input-text" type="text" name="system.liturgies.value" data-dtype="String">{{system.liturgies.value}}</textarea>
             </div>
             <div class="form-group full-height">
                 <label class="label-text">{{localize "blessings"}}</label>
-                <textarea class="input-text" type="text" name="data.blessings.value" data-dtype="String">{{data.blessings.value}}</textarea>
+                <textarea class="input-text" type="text" name="system.blessings.value" data-dtype="String">{{system.blessings.value}}</textarea>
             </div>
-            {{/if}} {{#if (eq data.mageLevel.value 'magical')}}
+            {{/if}} {{#if (eq system.mageLevel.value 'magical')}}
             <div class="form-group full-height">
                 <label class="label-text">{{localize "spells"}}</label>
-                <textarea class="input-text" type="text" name="data.spells.value" data-dtype="String">{{data.spells.value}}</textarea>
+                <textarea class="input-text" type="text" name="system.spells.value" data-dtype="String">{{system.spells.value}}</textarea>
             </div>
             <div class="form-group full-height">
                 <label class="label-text">{{localize "magictricks"}}</label>
-                <textarea class="input-text" type="text" name="data.spelltricks.value" data-dtype="String">{{data.spelltricks.value}}</textarea>
+                <textarea class="input-text" type="text" name="system.spelltricks.value" data-dtype="String">{{system.spelltricks.value}}</textarea>
             </div>
             <div class="form-group">
                 <label class="label-text">{{localize "spelltrickCount"}}</label>
-                <input class="input-text" type="text" name="data.spelltrickCount.value" value="{{data.spelltrickCount.value}}" data-dtype="Number" />
+                <input class="input-text" type="text" name="system.spelltrickCount.value" value="{{system.spelltrickCount.value}}" data-dtype="Number" />
             </div>
             {{/if}} {{/if}}
 

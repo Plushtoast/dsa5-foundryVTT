@@ -15,29 +15,29 @@
         <div class="tab details" data-tab="details">
             <div class="form-group">
                 <label class="label-text">{{localize "stepValue"}}</label>
-                <input class="input-text" type="text" name="data.step.value" value="{{data.step.value}}" data-dtype="Number" />
+                <input class="input-text" type="text" name="system.step.value" value="{{system.step.value}}" data-dtype="Number" />
             </div>
             <div class="form-group">
                 <label class="label-text">{{localize "poisonType"}}</label>
-                <input class="input-text" type="text" name="data.poisonType.value" value="{{data.poisonType.value}}" data-dtype="String" />
+                <input class="input-text" type="text" name="system.poisonType.value" value="{{system.poisonType.value}}" data-dtype="String" />
             </div>
             <div class="form-group">
                 <label class="label-text">{{localize "effect"}}</label>
-                <input class="input-text" type="text" name="data.effect.value" value="{{data.effect.value}}" data-dtype="String" />
+                <input class="input-text" type="text" name="system.effect.value" value="{{system.effect.value}}" data-dtype="String" />
             </div>
             <div class="form-group">
                 <label class="label-text">{{localize "start"}}</label>
-                <input class="input-text" type="text" name="data.start.value" value="{{data.start.value}}" data-dtype="String" />
+                <input class="input-text" type="text" name="system.start.value" value="{{system.start.value}}" data-dtype="String" />
             </div>
             <div class="form-group">
                 <label class="label-text">{{localize "duration"}}</label>
-                <input class="input-text" type="text" name="data.duration.value" value="{{data.duration.value}}" data-dtype="String" />
+                <input class="input-text" type="text" name="system.duration.value" value="{{system.duration.value}}" data-dtype="String" />
             </div>
 
             <div class="form-group">
                 <label class="label-text">{{localize "resistanceModifier"}}</label>
-                <select name="data.resistance.value" data-dtype="String">
-                    {{selectOptions resistances selected=data.resistance.value localize=true}}
+                <select name="system.resistance.value" data-dtype="String">
+                    {{selectOptions resistances selected=system.resistance.value localize=true}}
                 </select>
             </div>
         </div>

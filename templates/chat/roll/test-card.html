@@ -7,10 +7,10 @@
 
 <div class="card-content hide-option roll-result">
     <b>{{localize "Roll"}}</b>: {{#each testData.characteristics as |item i|}}
-    <span title="{{localize (concatUp 'CHAR.' item.char)}}{{#if item.tar}} vs {{item.tar}}{{/if}}" class="display-toggle {{#if item.suc}}suc{{else}}fail{{/if}} die-{{item.char}} {{#if item.die}}{{item.die}}{{else}}d20{{/if}}">
+    <span data-tooltip="{{localize (concatUp 'CHAR.' item.char)}}{{#if item.tar}} vs {{item.tar}}{{/if}}" class="display-toggle {{#if item.suc}}suc{{else}}fail{{/if}} die-{{item.char}} {{#if item.die}}{{item.die}}{{else}}d20{{/if}}">
         {{item.res}}</span>
 
-    <input type="number" data-edit-type="roll" data-edit-id="{{i}}" title="{{localize (concatUp 'CHAR.' item.char)}}{{#if item.tar}} vs {{item.tar}}{{/if}}" value="{{item.res}}" style="display: none;" class="roll-edit display-toggle" /> {{/each}}
+    <input type="number" data-edit-type="roll" data-edit-id="{{i}}" data-tooltip="{{localize (concatUp 'CHAR.' item.char)}}{{#if item.tar}} vs {{item.tar}}{{/if}}" value="{{item.res}}" style="display: none;" class="roll-edit display-toggle" /> {{/each}}
 </div>
 
 <div class="card-content chatModifiers">
@@ -33,7 +33,7 @@
     <b>{{localize "qualityStep"}}</b>: {{testData.qualityStep}}
 </div>
 {{/if}} {{#if testData.damage}}
-<div class="card-content damageSecret" title="{{#if testData.calculatedEffectFormula}}{{testData.calculatedEffectFormula}}&#10;{{/if}}{{testData.damagedescription}}">
+<div class="card-content damageSecret" data-tooltip="{{#if testData.calculatedEffectFormula}}{{testData.calculatedEffectFormula}}&#10;{{/if}}{{testData.damagedescription}}">
     <b>{{localize "damage"}}</b>: {{testData.damage}}
 </div>
 {{/if}} {{#if testData.description}}

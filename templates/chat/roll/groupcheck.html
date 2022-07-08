@@ -11,7 +11,7 @@
             <b>{{localize 'skill'}}</b>
         </div>
 
-        <div class="col fifteen center" title="{{localize 'Modifier'}}">
+        <div class="col fifteen center" data-tooltip="{{localize 'Modifier'}}">
             <b>{{localize 'ABBR.modifiers'}}</b>
         </div>
         <div class="col zerofive">
@@ -46,7 +46,7 @@
                     <input type="number" value="{{item.qs}}" data-index={{i}} style="display:none; width:10%" class="display-toggle editGC" />
                 </div>
                 <div class="col ten">
-                    <i class="fas fa-info" title="{{item.qs}} {{localize 'CHARAbbrev.QS'}} {{item.target}}"></i>
+                    <i class="fas fa-info" data-tooltip="{{item.qs}} {{localize 'CHARAbbrev.QS'}} {{item.target}}"></i>
                 </div>
                 <div class="col ten">
                     <a><i data-index="{{i}}" class="removeGC chat-button-gm fas fa-trash"></i></a>

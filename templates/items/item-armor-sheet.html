@@ -16,18 +16,18 @@
 
             <div class="form-group">
                 <label class="label-text">{{localize "protection"}}</label>
-                <input class="input-text" type="text" name="data.protection.value" value="{{data.protection.value}}" data-dtype="Number" />
+                <input class="input-text" type="text" name="system.protection.value" value="{{system.protection.value}}" data-dtype="Number" />
             </div>
 
             <div class="form-group">
                 <label class="label-text">{{localize "encumbrance"}}</label>
-                <input class="input-text" type="text" name="data.encumbrance.value" value="{{data.encumbrance.value}}" data-dtype="Number" />
+                <input class="input-text" type="text" name="system.encumbrance.value" value="{{system.encumbrance.value}}" data-dtype="Number" />
             </div>
 
 
             <div class="form-group">
                 <label class="label-text">{{localize "effect"}}</label>
-                <input class="input-text" type="text" name="data.effect.value" value="{{data.effect.value}}" data-dtype="String" />
+                <input class="input-text" type="text" name="system.effect.value" value="{{system.effect.value}}" data-dtype="String" />
             </div>
             <div class="form-group autoHeight">
                 <label class="label-text">{{localize "domains"}}</label> {{#if domains}}
@@ -35,12 +35,12 @@
                     <ul>{{{domains}}}</ul>
                 </div>
                 {{/if}}
-                <input class="input-text {{#if domains}}domainToggle{{/if}}" placeholder="{{localize 'WEAPON.clerical'}}, {{localize 'WEAPON.magical'}}" type="text" name="data.effect.attributes" value="{{data.effect.attributes}}" data-dtype="String" />
+                <input class="input-text {{#if domains}}domainToggle{{/if}}" placeholder="{{localize 'WEAPON.clerical'}}, {{localize 'WEAPON.magical'}}" type="text" name="system.effect.attributes" value="{{system.effect.attributes}}" data-dtype="String" />
             </div>
             <div class="form-group">
                 <label class="label-text">{{localize "COMBATSKILLCATEGORY.subcategory"}}</label>
-                <select name="data.subcategory" data-dtype="String">
-                    {{#select data.subcategory}}
+                <select name="system.subcategory" data-dtype="String">
+                    {{#select system.subcategory}}
                     {{#each armorSubcategories as |ch|}}
                     <option value="{{ch}}">{{localize (concat 'ARMORSUBCATEGORIES.' ch)}}</option>
                     {{/each}}
@@ -49,13 +49,13 @@
             </div>
             <div class="form-group double">
                 <label class="label-text">{{localize "structure"}}</label>
-                <input class="input-text" type="text" name="data.structure.value" value="{{data.structure.value}}" data-dtype="Number" /><span> / </span>
-                <input class="input-text" type="text" name="data.structure.max" value="{{data.structure.max}}" data-dtype="Number" />
+                <input class="input-text" type="text" name="system.structure.value" value="{{system.structure.value}}" data-dtype="Number" /><span> / </span>
+                <input class="input-text" type="text" name="system.structure.max" value="{{system.structure.max}}" data-dtype="Number" />
             </div>
             {{#if armorAndWeaponDamage}}
             <div class="form-group">
                 <label class="label-text">{{localize "WEAR.value"}}</label>
-                <input class="input-text" type="number" name="data.structure.breakPointRating" value="{{data.structure.breakPointRating}}" placeholder="{{breakPointRating}}" data-dtype="Number" step="1" />
+                <input class="input-text" type="number" name="system.structure.breakPointRating" value="{{system.structure.breakPointRating}}" placeholder="{{breakPointRating}}" data-dtype="Number" step="1" />
             </div>
             {{/if}}
         </div>

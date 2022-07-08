@@ -16,30 +16,30 @@
 
             <div class="form-group">
                 <label class="label-text">{{localize "damage"}}</label>
-                <input class="input-text" type="text" name="data.damage.value" value="{{data.damage.value}}" data-dtype="String" />
+                <input class="input-text" type="text" name="system.damage.value" value="{{system.damage.value}}" data-dtype="String" />
             </div>
 
             <div class="form-group">
                 <label class="label-text">{{localize "reloadTime"}}</label>
-                <input class="input-text" type="text" name="data.reloadTime.value" value="{{data.reloadTime.value}}" data-dtype="String" />
+                <input class="input-text" type="text" name="system.reloadTime.value" value="{{system.reloadTime.value}}" data-dtype="String" />
             </div>
 
             <div class="form-group">
                 <label class="label-text">{{localize "reach"}}</label>
-                <input class="input-text weaponreach" type="text" name="data.reach.value" value="{{data.reach.value}}" data-dtype="String" />
+                <input class="input-text weaponreach" type="text" name="system.reach.value" value="{{system.reach.value}}" data-dtype="String" />
             </div>
 
             <div class="form-group">
                 <label class="label-text">{{localize "ammunitiongroup"}}</label>
-                <select name="data.ammunitiongroup.value" data-dtype="String">
-                    {{selectOptions ammunitiongroups selected=data.ammunitiongroup.value localize=true}}
+                <select name="system.ammunitiongroup.value" data-dtype="String">
+                    {{selectOptions ammunitiongroups selected=system.ammunitiongroup.value localize=true}}
                 </select>
             </div>
 
             <div class="form-group">
                 <label class="label-text">{{localize "combatskill"}}</label>
-                <select name="data.combatskill.value" data-dtype="String">
-                  {{#select data.combatskill.value}}
+                <select name="system.combatskill.value" data-dtype="String">
+                  {{#select system.combatskill.value}}
                   {{#each combatskills as |ch|}}
                   <option value="{{ch}}">{{ch}}</option>
                   {{/each}}
@@ -49,14 +49,14 @@
 
             <div class="form-group doubleInput">
                 <label class="label-text">{{localize 'critBotch'}}</label>
-                <input class="input-text" type="text" name="data.crit" value="{{data.crit}}" data-dtype="Number" title="{{localize 'CriticalSuccess'}}" />
-                <input class="input-text" type="text" name="data.botch" value="{{data.botch}}" data-dtype="Number" title="{{localize 'CriticalFailure'}}" />
+                <input class="input-text" type="text" name="system.crit" value="{{system.crit}}" data-dtype="Number" data-tooltip="{{localize 'CriticalSuccess'}}" />
+                <input class="input-text" type="text" name="system.botch" value="{{system.botch}}" data-dtype="Number" data-tooltip="{{localize 'CriticalFailure'}}" />
             </div>
 
 
             <div class="form-group">
                 <label class="label-text">{{localize "effect"}}</label>
-                <input class="input-text" type="text" name="data.effect.value" value="{{data.effect.value}}" data-dtype="String" />
+                <input class="input-text" type="text" name="system.effect.value" value="{{system.effect.value}}" data-dtype="String" />
             </div>
             <div class="form-group autoHeight">
                 <label class="label-text">{{localize "domains"}}</label> {{#if domains}}
@@ -64,19 +64,19 @@
                     <ul>{{{domains}}}</ul>
                 </div>
                 {{/if}}
-                <input class="input-text {{#if domains}}domainToggle{{/if}}" placeholder="{{localize 'WEAPON.clerical'}}, {{localize 'WEAPON.magical'}}, {{localize 'WEAPON.silverPlated'}}" type="text" name="data.effect.attributes" value="{{data.effect.attributes}}" data-dtype="String"
+                <input class="input-text {{#if domains}}domainToggle{{/if}}" placeholder="{{localize 'WEAPON.clerical'}}, {{localize 'WEAPON.magical'}}, {{localize 'WEAPON.silverPlated'}}" type="text" name="system.effect.attributes" value="{{system.effect.attributes}}" data-dtype="String"
                 />
             </div>
 
             <div class="form-group double">
                 <label class="label-text">{{localize "structure"}}</label>
-                <input class="input-text" type="text" name="data.structure.value" value="{{data.structure.value}}" data-dtype="Number" /><span> / </span>
-                <input class="input-text" type="text" name="data.structure.max" value="{{data.structure.max}}" data-dtype="Number" />
+                <input class="input-text" type="text" name="system.structure.value" value="{{system.structure.value}}" data-dtype="Number" /><span> / </span>
+                <input class="input-text" type="text" name="system.structure.max" value="{{system.structure.max}}" data-dtype="Number" />
             </div>
             {{#if armorAndWeaponDamage}}
             <div class="form-group">
                 <label class="label-text">{{localize "WEAR.value"}}</label>
-                <input class="input-text" type="number" name="data.structure.breakPointRating" value="{{data.structure.breakPointRating}}" placeholder="{{breakPointRating}}" data-dtype="Number" step="1" />
+                <input class="input-text" type="number" name="system.structure.breakPointRating" value="{{system.structure.breakPointRating}}" placeholder="{{breakPointRating}}" data-dtype="Number" step="1" />
             </div>
             {{/if}}
         </div>

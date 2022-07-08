@@ -16,30 +16,30 @@
                     <label class="label-text table-title">{{localize "quantity"}}</label>
                 </div>
                 <div class="col fifteen">
-                    <input class="input-text" type="text" name="data.quantity.value" value="{{data.quantity.value}}" data-dtype="Number" />
+                    <input class="input-text" type="text" name="system.quantity.value" value="{{system.quantity.value}}" data-dtype="Number" />
 
                 </div>
 
             </div>
             <div class="row-section">
                 <div class="col four">
-                    <label title="{{localize 'UNITS.money'}}" class="label-text table-title">{{localize "price"}}</label>
+                    <label data-tooltip="{{localize 'UNITS.money'}}" class="label-text table-title">{{localize "price"}}</label>
                 </div>
                 <div class="col fifteen">
-                    <input title="{{localize 'UNITS.money'}}" class="input-text" type="text" name="data.price.raw" value="{{data.price.raw}}" data-dtype="Number" />
+                    <input data-tooltip="{{localize 'UNITS.money'}}" class="input-text" type="text" name="system.price.raw" value="{{system.price.raw}}" data-dtype="Number" />
                 </div>
                 <div class="col ten lineheight center">
                     /
                 </div>
                 <div class="col fifteen">
-                    <input title="{{localize 'UNITS.money'}}" class="input-text" type="text" name="data.price.value" value="{{data.price.value}}" data-dtype="Number" />
+                    <input data-tooltip="{{localize 'UNITS.money'}}" class="input-text" type="text" name="system.price.value" value="{{system.price.value}}" data-dtype="Number" />
                 </div>
 
                 <div class="col four">
-                    <label title="{{localize 'UNITS.weight'}}" class="label-text table-title">{{localize "Weight"}}</label>
+                    <label data-tooltip="{{localize 'UNITS.weight'}}" class="label-text table-title">{{localize "Weight"}}</label>
                 </div>
                 <div class="col fifteen">
-                    <input title="{{localize 'UNITS.weight'}}" class="input-text" type="text" name="data.weight.value" value="{{data.weight.value}}" data-dtype="Number" />
+                    <input data-tooltip="{{localize 'UNITS.weight'}}" class="input-text" type="text" name="system.weight.value" value="{{system.weight.value}}" data-dtype="Number" />
                 </div>
             </div>
         </div>
@@ -57,8 +57,8 @@
         <div class="tab details" data-tab="details">
             <div class="center">
                 {{#each attributes}}
-                <label class="plantContainer {{this.name}}" title="{{localize (concat 'PLANT.' this.name)}}">
-                    <input type="checkbox" name="data.planttype.{{this.name}}" value="true" data-dtype="Boolean" {{checked this.checked}}/>
+                <label class="plantContainer {{this.name}}" data-tooltip="{{localize (concat 'PLANT.' this.name)}}">
+                    <input type="checkbox" name="system.planttype.{{this.name}}" value="true" data-dtype="Boolean" {{checked this.checked}}/>
                     <span></span>
                 </label> {{/each}}
 
@@ -66,73 +66,73 @@
 
             <div class="form-group">
                 <label class="label-text">{{localize "PLANT.landscape"}}</label>
-                <input class="input-text" type="text" name="data.location.landscape" value="{{data.location.landscape}}" data-dtype="String" />
+                <input class="input-text" type="text" name="system.location.landscape" value="{{system.location.landscape}}" data-dtype="String" />
             </div>
             <div class="form-group">
                 <label class="label-text">{{localize "PLANT.region"}}</label>
-                <input class="input-text" type="text" name="data.location.region" value="{{data.location.region}}" data-dtype="String" />
+                <input class="input-text" type="text" name="system.location.region" value="{{system.location.region}}" data-dtype="String" />
             </div>
             <div class="form-group">
                 <label class="label-text">{{localize "PLANT.search"}}</label>
-                <input class="input-text" type="text" name="data.difficulty.search" value="{{data.difficulty.search}}" data-dtype="Number" />
+                <input class="input-text" type="text" name="system.difficulty.search" value="{{system.difficulty.search}}" data-dtype="Number" />
             </div>
             <div class="form-group">
                 <label class="label-text">{{localize "PLANT.identify"}}</label>
-                <input class="input-text" type="text" name="data.difficulty.identify" value="{{data.difficulty.identify}}" data-dtype="Number" />
+                <input class="input-text" type="text" name="system.difficulty.identify" value="{{system.difficulty.identify}}" data-dtype="Number" />
             </div>
             <div class="form-group">
                 <label class="label-text">{{localize "PLANT.usages"}}</label>
-                <input class="input-text" type="text" name="data.usages" value="{{data.usages}}" data-dtype="String" />
+                <input class="input-text" type="text" name="system.usages" value="{{system.usages}}" data-dtype="String" />
             </div>
 
             <div class="form-group full-height">
-                <label class="label-text">{{localize "effect"}}</label> {{editor content=data.effect target="data.effect" button=true owner=owner editable=editable}}
+                <label class="label-text">{{localize "effect"}}</label> {{editor (enrich system.effect owner) target="system.effect" button=true owner=owner editable=editable}}
             </div>
             <div class="form-group full-height">
-                <label class="label-text">{{localize "PLANT.recipes"}}</label> {{editor content=data.recipes target="data.recipes" button=true owner=owner editable=editable}}
+                <label class="label-text">{{localize "PLANT.recipes"}}</label> {{editor (enrich system.recipes owner) target="system.recipes" button=true owner=owner editable=editable}}
             </div>
             <div class="form-group">
                 <b class="label-text">{{localize "PLANT.availability"}}</b>
             </div>
             <div class="form-group doubleInput">
                 <label class="label-text">{{localize "PLANT.highNorth"}}</label>
-                <input class="input-text" type="range" dtype="number" name="data.availability.highNorth" value="{{data.availability.highNorth}}" min="0" max="5" />
-                <label class="input-text">{{plantify data.availability.highNorth}}</label>
+                <input class="input-text" type="range" dtype="number" name="system.availability.highNorth" value="{{system.availability.highNorth}}" min="0" max="5" />
+                <label class="input-text">{{plantify system.availability.highNorth}}</label>
             </div>
             <div class="form-group doubleInput">
                 <label class="label-text">{{localize "PLANT.grasLands"}}</label>
-                <input class="input-text" type="range" dtype="number" name="data.availability.grasLands" value="{{data.availability.grasLands}}" min="0" max="5" />
-                <label class="input-text">{{plantify data.availability.grasLands}}</label>
+                <input class="input-text" type="range" dtype="number" name="system.availability.grasLands" value="{{system.availability.grasLands}}" min="0" max="5" />
+                <label class="input-text">{{plantify system.availability.grasLands}}</label>
             </div>
             <div class="form-group doubleInput">
                 <label class="label-text">{{localize "PLANT.swamps"}}</label>
-                <input class="input-text" type="range" dtype="number" name="data.availability.swamps" value="{{data.availability.swamps}}" min="0" max="5" />
-                <label class="input-text">{{plantify data.availability.swamps}}</label>
+                <input class="input-text" type="range" dtype="number" name="system.availability.swamps" value="{{system.availability.swamps}}" min="0" max="5" />
+                <label class="input-text">{{plantify system.availability.swamps}}</label>
             </div>
             <div class="form-group doubleInput">
                 <label class="label-text">{{localize "PLANT.woods"}}</label>
-                <input class="input-text" type="range" dtype="number" name="data.availability.woods" value="{{data.availability.woods}}" min="0" max="5" />
-                <label class="input-text">{{plantify data.availability.woods}}</label>
+                <input class="input-text" type="range" dtype="number" name="system.availability.woods" value="{{system.availability.woods}}" min="0" max="5" />
+                <label class="input-text">{{plantify system.availability.woods}}</label>
             </div>
             <div class="form-group doubleInput">
                 <label class="label-text">{{localize "PLANT.jungle"}}</label>
-                <input class="input-text" type="range" dtype="number" name="data.availability.jungle" value="{{data.availability.jungle}}" min="0" max="5" />
-                <label class="input-text">{{plantify data.availability.jungle}}</label>
+                <input class="input-text" type="range" dtype="number" name="system.availability.jungle" value="{{system.availability.jungle}}" min="0" max="5" />
+                <label class="input-text">{{plantify system.availability.jungle}}</label>
             </div>
             <div class="form-group doubleInput">
                 <label class="label-text">{{localize "PLANT.mountains"}}</label>
-                <input class="input-text" type="range" dtype="number" name="data.availability.mountains" value="{{data.availability.mountains}}" min="0" max="5" />
-                <label class="input-text">{{plantify data.availability.mountains}}</label>
+                <input class="input-text" type="range" dtype="number" name="system.availability.mountains" value="{{system.availability.mountains}}" min="0" max="5" />
+                <label class="input-text">{{plantify system.availability.mountains}}</label>
             </div>
             <div class="form-group doubleInput">
                 <label class="label-text">{{localize "PLANT.desert"}}</label>
-                <input class="input-text" type="range" dtype="number" name="data.availability.desert" value="{{data.availability.desert}}" min="0" max="5" />
-                <label class="input-text">{{plantify data.availability.desert}}</label>
+                <input class="input-text" type="range" dtype="number" name="system.availability.desert" value="{{system.availability.desert}}" min="0" max="5" />
+                <label class="input-text">{{plantify system.availability.desert}}</label>
             </div>
             <div class="form-group doubleInput">
                 <label class="label-text">{{localize "PLANT.maraskan"}}</label>
-                <input class="input-text" type="range" dtype="number" name="data.availability.maraskan" value="{{data.availability.maraskan}}" min="0" max="5" />
-                <label class="input-text">{{plantify data.availability.maraskan}}</label>
+                <input class="input-text" type="range" dtype="number" name="system.availability.maraskan" value="{{system.availability.maraskan}}" min="0" max="5" />
+                <label class="input-text">{{plantify system.availability.maraskan}}</label>
             </div>
         </div>
 

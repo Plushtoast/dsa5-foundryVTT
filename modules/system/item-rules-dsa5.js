@@ -28,7 +28,7 @@ export default class ItemRulesDSA5 {
 
     static simpleAdoption(item, adoption, name, source) {
         if (source[name].effect) {
-            item.data.effect.value = `${adoption.name} ${source[name].effect}`
+            item.system.effect.value = `${adoption.name} ${source[name].effect}`
         }
         if (source[name].activeEffect) {
             const change = duplicate(source[name].activeEffect)
@@ -63,7 +63,7 @@ export default class ItemRulesDSA5 {
             if (elem[parsed.name]) {
                 let adoption = actor.items.find(x => elem[parsed.name].items.includes(x.type) && x.name == parsed.special)
                 if (adoption) {
-                    item.data.APValue.value = item.data.APValue.value.split("/")[adoption.system.StF.value.charCodeAt(0) - 65]
+                    item.system.APValue.value = item.system.APValue.value.split("/")[adoption.system.StF.value.charCodeAt(0) - 65]
                     ItemRulesDSA5.simpleAdoption(item, adoption, parsed.name, elem)
                 }
                 break
@@ -79,7 +79,7 @@ export default class ItemRulesDSA5 {
     static itemStep(actorData, name, types) {
         let item = actorData.items.find(x => types.includes(x.type) && x.name == name)
         if (item) {
-            return Number(item.system == undefined ? item.data.step.value : item.system.step.value)
+            return Number(item.system == undefined ? item.system.step.value : item.system.step.value)
         } else {
             return 0
         }
@@ -92,7 +92,7 @@ export default class ItemRulesDSA5 {
         if (item) {
             res.push({
                 name: item.name,
-                value: Number(item.system == undefined ? item.data.step.value : item.system.step.value) * factor,
+                value: Number(item.system == undefined ? item.system.step.value : item.system.step.value) * factor,
                 selected
             })
         }

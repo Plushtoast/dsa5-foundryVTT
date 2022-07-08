@@ -10,10 +10,10 @@
     <div class="tab description active" data-tab="description">
         <div class="row-section">
             <div class="col two">
-                {{{career.data.description.value}}}
+                {{{career.system.description.value}}}
             </div>
             <div class="col two">
-                <img src="{{career.img}}" style="max-width:100%; max-height: 100%;float: left;" data-edit="img" /> {{{career.data.clothing.value}}}
+                <img src="{{career.img}}" style="max-width:100%; max-height: 100%;float: left;" data-edit="img" /> {{{career.system.clothing.value}}}
             </div>
         </div>
     </div>
@@ -28,7 +28,7 @@
             <div class="col two row-section lineheight">
                 <input type="checkbox" id="missingvantage_{{i}}" class="optional" data-cost="{{item.apCost}}" name="{{item.replaceName}}" data-step="{{item.step}}" value="{{item._id}}" disabled checked>
                 <label for="missingvantage_{{i}}">{{item.replaceName}} {{roman item.step}} ({{item.apCost}} AP)</label>
-                <a class="show-item" data-id="{{item._id}}" title="{{item.tooltip}}"><i class="fas fa-info"></i></a>
+                <a class="show-item" data-id="{{item._id}}" data-tooltip="{{item.tooltip}}"><i class="fas fa-info"></i></a>
             </div>
             {{/each}}
         </div>
@@ -39,7 +39,7 @@
             <div class="col two row-section lineheight">
                 <input type="checkbox" id="advantage_{{i}}" class="optional" data-cost="{{item.apCost}}" name="{{item.replaceName}}" data-step="{{item.step}}" value="{{item._id}}" {{#if item.disabled}}disabled{{/if}}>
                 <label for="advantage_{{i}}">{{item.replaceName}} {{roman item.step}} ({{item.apCost}} AP)</label>
-                <a class="show-item" data-id="{{item._id}}" title="{{item.tooltip}}"><i class="fas fa-info"></i></a>
+                <a class="show-item" data-id="{{item._id}}" data-tooltip="{{item.tooltip}}"><i class="fas fa-info"></i></a>
             </div>
             {{/each}}
         </div>
@@ -50,7 +50,7 @@
             <div class="col two row-section lineheight">
                 <input type="checkbox" id="disadvantage_{{i}}" class="optional" data-cost="{{item.apCost}}" name="{{item.replaceName}}" data-step="{{item.step}}" value="{{item._id}}" {{#if item.disabled}}disabled{{/if}}>
                 <label for="disadvantage_{{i}}">{{item.replaceName}} {{roman item.step}} ({{item.apCost}} AP)</label>
-                <a class="show-item" data-id="{{item._id}}" title="{{item.tooltip}}"><i class="fas fa-info"></i></a>
+                <a class="show-item" data-id="{{item._id}}" data-tooltip="{{item.tooltip}}"><i class="fas fa-info"></i></a>
             </div>
             {{/each}}
         </div>
@@ -63,8 +63,8 @@
         <div class="row-section wrap">
             {{#each attributeRequirements as |item i|}}
             <div class="col two row-section lineheight">
-                <input type="checkbox" id="attribute_{{item.name}}" data-cost="{{item.data.APValue.value}}" class="attributes" name="attribute_{{item.name}}" data-attribute="{{item.name}}" value="{{item.step}}" checked disabled>
-                <label for="attribute_{{item.name}}">{{item.name}} {{item.step}} ({{item.data.APValue.value}}
+                <input type="checkbox" id="attribute_{{item.name}}" data-cost="{{item.system.APValue.value}}" class="attributes" name="attribute_{{item.name}}" data-attribute="{{item.name}}" value="{{item.step}}" checked disabled>
+                <label for="attribute_{{item.name}}">{{item.name}} {{item.step}} ({{item.system.APValue.value}}
                     AP)</label>
             </div>
             {{/each}}
@@ -76,7 +76,7 @@
             <div class="col two row-section lineheight">
                 <input type="checkbox" id="missinspecialability_{{i}}" class="optional" data-cost="{{item.apCost}}" name="{{item.replaceName}}" data-step="{{item.step}}" value="{{item._id}}" disabled checked>
                 <label for="missinspecialability_{{i}}">{{item.replaceName}} {{roman item.step}} ({{item.apCost}} AP)</label>
-                <a class="show-item" data-id="{{item._id}}" title="{{item.tooltip}}"><i class="fas fa-info"></i></a>
+                <a class="show-item" data-id="{{item._id}}" data-tooltip="{{item.tooltip}}"><i class="fas fa-info"></i></a>
             </div>
             {{/each}}
         </div>
@@ -100,13 +100,13 @@
     {{/if}} {{#if magicToChose}}
     <div class="tab magic" data-tab="magic">
         <h2>{{localize 'magictricks'}}</h2>
-        <p class="maxTricks" data-spelltricklimit="{{career.data.spelltrickCount.value}}">{{localize 'WIZARD.chose'}} {{career.data.spelltrickCount.value}}.</p>
+        <p class="maxTricks" data-spelltricklimit="{{career.system.spelltrickCount.value}}">{{localize 'WIZARD.chose'}} {{career.system.spelltrickCount.value}}.</p>
         <div class="row-section wrap">
             {{#each spelltricks as |item i|}}
             <div class="col two row-section lineheight">
                 <input type="checkbox" id="spelltrick_{{i}}" class="optional exclusiveTricks" data-cost="0" name="{{item.replaceName}}" data-step="{{item.step}}" value="{{item._id}}" {{#if item.disabled}}disabled{{/if}}>
                 <label for="spelltrick_{{i}}">{{item.replaceName}}</label>
-                <a class="show-item" data-id="{{item._id}}" title="{{item.tooltip}}"><i class="fas fa-info"></i></a>
+                <a class="show-item" data-id="{{item._id}}" data-tooltip="{{item.tooltip}}"><i class="fas fa-info"></i></a>
             </div>
             {{/each}}
         </div>

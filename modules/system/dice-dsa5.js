@@ -102,12 +102,12 @@ export default class DiceDSA5 {
         let botch = 20
         let crit = 1
         if (testData.source.type == "meleeweapon") {
-            botch = Math.min(testData.extra.actor.data.meleeStats.botch, testData.source.system.botch)
-            crit = Math.max(testData.extra.actor.data.meleeStats.crit, testData.source.system.crit)
+            botch = Math.min(testData.extra.actor.system.meleeStats.botch, testData.source.system.botch)
+            crit = Math.max(testData.extra.actor.system.meleeStats.crit, testData.source.system.crit)
         }
         if (testData.source.type == "rangeweapon") {
-            botch = Math.min(testData.extra.actor.data.rangeStats.botch, testData.source.system.botch)
-            crit = Math.max(testData.extra.actor.data.rangeStats.crit, testData.source.system.crit)
+            botch = Math.min(testData.extra.actor.system.rangeStats.botch, testData.source.system.botch)
+            crit = Math.max(testData.extra.actor.system.rangeStats.crit, testData.source.system.crit)
         }
         if (/(\(|,)( )?i\)$/.test(testData.source.name)) {
             if (!SpecialabilityRulesDSA5.hasAbility(
@@ -339,7 +339,7 @@ export default class DiceDSA5 {
                 testData.extra.actor.items.find(
                     (x) => x.type == "combatskill" && x.name == testData.source.system.combatskill.value
                 ),
-                testData.extra.actor
+                testData.extra.actor.system
             )
             weapon = Actordsa5._prepareMeleeWeapon(testData.source, [skill], testData.extra.actor)
         } else if (testData.source.type == "rangeweapon") {
@@ -347,7 +347,7 @@ export default class DiceDSA5 {
                 testData.extra.actor.items.find(
                     (x) => x.type == "combatskill" && x.name == testData.source.system.combatskill.value
                 ),
-                testData.extra.actor
+                testData.extra.actor.system
             )
             weapon = Actordsa5._prepareRangeWeapon(testData.source, [], [skill], testData.extra.actor)
         } else {
@@ -427,10 +427,10 @@ export default class DiceDSA5 {
     static _getNarrowSpaceModifier(weapon, testData) {
         if (!testData.narrowSpace) return 0
 
-        if (game.i18n.localize("LocalizedIDs.Shields") == weapon.data.combatskill.value) {
-            return DSA5.narrowSpaceModifiers["shield" + weapon.data.reach.shieldSize][testData.mode]
+        if (game.i18n.localize("LocalizedIDs.Shields") == weapon.system.combatskill.value) {
+            return DSA5.narrowSpaceModifiers["shield" + weapon.system.reach.shieldSize][testData.mode]
         } else {
-            return DSA5.narrowSpaceModifiers["weapon" + weapon.data.reach.value][testData.mode]
+            return DSA5.narrowSpaceModifiers["weapon" + weapon.system.reach.value][testData.mode]
         }
     }
 
@@ -440,7 +440,7 @@ export default class DiceDSA5 {
         const isMelee = source.system.traitType.value == "meleeAttack"
         const isAttack = testData.mode == "attack"
         if (isMelee) {
-            let weapon = { data: { combatskill: { value: "-" }, reach: { value: source.system.reach.value } } }
+            let weapon = { system: { combatskill: { value: "-" }, reach: { value: source.system.reach.value } } }
 
             this._appendSituationalModifiers(
                 testData,
@@ -506,7 +506,7 @@ export default class DiceDSA5 {
     }
 
     static async evaluateDamage(testData, result, weapon, isRangeWeapon, doubleDamage) {
-        let rollFormula = weapon.data.damage.value.replace(/[Ww]/g, "d")
+        let rollFormula = weapon.system.damage.value.replace(/[Ww]/g, "d")
         let overrideDamage = []
         let dmgMultipliers = []
         let damageBonusDescription = []
@@ -587,9 +587,9 @@ export default class DiceDSA5 {
                 damage += rangeDamageMod
                 if (rangeDamageMod != 0) damageBonusDescription.push(game.i18n.localize("distance") + " " + rangeDamageMod)
 
-                status = testData.extra.actor.data.rangeStats.damage
+                status = testData.extra.actor.system.rangeStats.damage
             } else {
-                status = testData.extra.actor.data.meleeStats.damage
+                status = testData.extra.actor.system.meleeStats.damage
             }
 
             const statusDmg = await DiceDSA5._stringToRoll(status, testData)
@@ -621,7 +621,7 @@ export default class DiceDSA5 {
 
         let skill = Actordsa5._calculateCombatSkillValues(
             testData.extra.actor.items.find((x) => x.type == "combatskill" && x.name == combatskill),
-            testData.extra.actor
+            testData.extra.actor.system
         )
 
         const isMelee = source.type == "meleeweapon"
@@ -675,7 +675,7 @@ export default class DiceDSA5 {
 
     static async detailedWeaponResult(result, testData, source) {
         const isAttack = testData.mode == "attack"
-        const isMelee = source.type == "meleeweapon" || getProperty(source, "data.traitType.value") == "meleeAttack"
+        const isMelee = source.type == "meleeweapon" || getProperty(source, "system.traitType.value") == "meleeAttack"
         switch (result.successLevel) {
             case 3:
                 if (isAttack) {
@@ -698,7 +698,7 @@ export default class DiceDSA5 {
                 }
                 break
             case -3:
-                const isWeaponless = getProperty(source, "data.combatskill.value") == game.i18n.localize("LocalizedIDs.wrestle") || source.type == "trait"
+                const isWeaponless = getProperty(source, "system.combatskill.value") == game.i18n.localize("LocalizedIDs.wrestle") || source.type == "trait"
                 if (isAttack && isMelee && await DSATables.tableEnabledFor("Melee"))
                     result.description += DSATables.rollCritBotchButton("Melee", isWeaponless)
                 else if (isAttack && await DSATables.tableEnabledFor("Range"))
@@ -730,8 +730,7 @@ export default class DiceDSA5 {
 
     static async rollCombatskill(testData) {
         let roll = testData.roll ? testData.roll : await new Roll("1d20").evaluate({ async: true })
-        let weaponSource = testData.source.system == undefined ? testData.source : testData.source.system
-        let source = Actordsa5._calculateCombatSkillValues(weaponSource, testData.extra.actor)
+        let source = Actordsa5._calculateCombatSkillValues(testData.source, testData.extra.actor.system)
         let result = await this._rollSingleD20(
             roll,
             source.system[testData.mode].value,
@@ -875,7 +874,7 @@ export default class DiceDSA5 {
             },
             {
                 name: `${game.i18n.localize("statuseffects")} (${game.i18n.localize("CHARAbbrev." + globalMod.name)})`,
-                value: testData.extra.actor.data[globalMod.val] + this._situationalModifiers(testData, feature)
+                value: testData.extra.actor.system[globalMod.val] + this._situationalModifiers(testData, feature)
             }
         )
         costModifiers = costModifiers.filter((x) => x.value != 0)
@@ -933,7 +932,7 @@ export default class DiceDSA5 {
                 }
                 const damageBonusDescription = []
                 const statusDmg = await DiceDSA5._stringToRoll(
-                    testData.extra.actor.data[isClerical ? "liturgyStats" : "spellStats"].damage,
+                    testData.extra.actor.system[isClerical ? "liturgyStats" : "spellStats"].damage,
                     testData
                 )
                 if (statusDmg != 0) {
@@ -1202,7 +1201,7 @@ export default class DiceDSA5 {
     static _compareWeaponReach(weapon, testData) {
         //TODO move this to roll dialog
         let circumvent = testData.situationalModifiers.find((x) => x.name == game.i18n.localize("LocalizedIDs.circumvent"))
-        const attacker = DSA5.meleeRangesArray.indexOf(weapon.data.reach.value)
+        const attacker = DSA5.meleeRangesArray.indexOf(weapon.system.reach.value)
         const defender = DSA5.meleeRangesArray.indexOf(testData.opposingWeaponSize)
         if (circumvent && defender > attacker) circumvent.value = Math.min(circumvent.step, defender - attacker) * 2
 
@@ -1316,7 +1315,7 @@ export default class DiceDSA5 {
     static async renderRollCard(chatOptions, testData, rerenderMessage) {
         const applyEffect = this.addApplyEffectData(testData)
         const preData = deepClone(testData.preData)
-        const hideDamage = rerenderMessage ? rerenderMessage.data.flags.data.hideDamage : preData.mode == "attack"
+        const hideDamage = rerenderMessage ? rerenderMessage.flags.data.hideDamage : preData.mode == "attack"
         await Hooks.call("postProcessDSARoll", chatOptions, testData, rerenderMessage, hideDamage)
         delete preData.extra.actor
         delete testData.actor
@@ -1382,8 +1381,7 @@ export default class DiceDSA5 {
                 const rollData = actor ? actor.getRollData() : {}
                 chatOptions["content"] = TextEditor.enrichHTML(html, rollData)
 
-                const cummulative = getProperty(rerenderMessage, "data.flags.data.preData.extra.options.cummulative")
-                console.log(preData)
+                const cummulative = getProperty(rerenderMessage, "flags.data.preData.extra.options.cummulative")
                 if(cummulative){
                     testData.messageId = rerenderMessage.id
                     RequestRoll.editGroupCheckRoll(cummulative, { result: testData }, preData.source.name, preData.source.type)
@@ -1413,7 +1411,7 @@ export default class DiceDSA5 {
         let actor = DSA5_Utility.getSpeaker(speaker)
 
         if (actor) {
-            const source = actor.data.items.find((x) => x.name == name && x.type == category)
+            const source = actor.items.find((x) => x.name == name && x.type == category)
             if (source) {
                 const item = new Itemdsa5(source.toObject(), { temporary: true })
                 const removeCharge = input.attr("data-removecharge") ? input.attr("data-removecharge") == "true" : false
@@ -1426,7 +1424,7 @@ export default class DiceDSA5 {
 
                 item.setupEffect().then(async (setupData) => {
                     await item.itemTest(setupData)
-                    if (removeCharge) await source.update({ "data.quantity.value": source.system.quantity.value - 1 })
+                    if (removeCharge) await source.update({ "system.quantity.value": source.system.quantity.value - 1 })
                 })
             } else {
                 ui.notifications.error(game.i18n.format("DSAError.notFound", { category: category, name: name }))

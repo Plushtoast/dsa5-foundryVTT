@@ -5,7 +5,7 @@ export default function() {
     Hooks.on("deleteActiveEffect", (effect) => {
         const actor = effect.parent
         if (actor && actor.documentName == "Actor") {
-            const statusId = getProperty(effect.data, "flags.core.statusId")
+            const statusId = getProperty(effect, "flags.core.statusId")
             if (statusId == "bloodrush") {
                 actor.addCondition("stunned", 2, false, false)
                 return false
@@ -44,7 +44,7 @@ export default function() {
 
     const obfuscateName = async(actor, update) => {
         const setting = game.settings.get("dsa5", "obfuscateTokenNames")
-        if (setting == "0" || getProperty(actor, "data.data.merchant.merchantType") == "loot") return
+        if (setting == "0" || getProperty(actor, "merchant.merchantType") == "loot") return
 
         for (let u of game.users) {
             if (u.isGM) continue;
@@ -69,21 +69,21 @@ export default function() {
 
         let update = {}
 
-        if (getProperty(actor.data, "data.merchant.merchantType") == "loot") {
+        if (getProperty(actor, "merchant.merchantType") == "loot") {
             mergeObject(update, { displayBars: 0 })
-        } else if (getProperty(actor.data, "data.config.autoBar")) {
+        } else if (getProperty(actor, "config.autoBar")) {
             mergeObject(update, { bar1: { attribute: "status.wounds" } })
-            if (actor.data.isMage) {
+            if (actor.system.isMage) {
                 mergeObject(update, { bar2: { attribute: "status.astralenergy" } });
-            } else if (actor.data.isPriest) {
+            } else if (actor.system.isPriest) {
                 mergeObject(update, { bar2: { attribute: "status.karmaenergy" } });
             } else {
                 mergeObject(update, { bar2: { attribute: "" } });
             }
         }
 
-        if (actor.data.type == "creature" && getProperty(actor.data, "data.config.autoSize")) {
-            DSA5_Utility.calcTokenSize(actor.data, update)
+        if (actor.system.type == "creature" && getProperty(actor, "config.autoSize")) {
+            DSA5_Utility.calcTokenSize(actor, update)
         }
 
         obfuscateName(actor, update)

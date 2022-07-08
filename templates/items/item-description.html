@@ -1,5 +1,5 @@
 <div class="tab description active" data-tab="description">
-    {{editor (enrich data.description.value owner) target="data.description.value" button=true owner=owner editable=editable}} {{#if isGM}}
+    {{editor (enrich system.description.value owner) target="system.description.value" button=true owner=owner editable=editable}} {{#if isGM}}
     <h2 class="note-section label">{{localize "GM Notes"}}</h2>
-    {{editor (enrich data.gmdescription.value owner) target="data.gmdescription.value" button=true owner=owner editable=editable}} {{/if}}
+    {{editor (enrich system.gmdescription.value owner) target="system.gmdescription.value" button=true owner=owner editable=editable}} {{/if}}
 </div>

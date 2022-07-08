@@ -28,7 +28,7 @@
       </div>
       <div class="row-section">
         <div class="col">
-          <button class="finalizeConjuration" title="{{localize 'CONJURATION.finalizeTooltip'}}">{{localize 'PLAYER.finalize'}}</button>
+          <button class="finalizeConjuration" data-tooltip="{{localize 'CONJURATION.finalizeTooltip'}}">{{localize 'PLAYER.finalize'}}</button>
         </div>
       </div>
     </div>
@@ -37,7 +37,7 @@
       <b>{{localize 'PLAYER.conjuration'}}</b><br />
       <div class="row-section">
         <div class="col center">
-          <img style="width:70px;height:70px" class="profile" src="{{conjuration.img}}" title="{{actor.name}}">
+          <img style="width:70px;height:70px" class="profile" src="{{conjuration.img}}" data-tooltip="{{actor.name}}">
         </div>
       </div>
       <div class="row-section">
@@ -53,7 +53,7 @@
           <label class="">{{localize "creatureClass"}}:</label>
         </div>
         <div class="col sixty">
-          {{conjuration.data.data.creatureClass.value}}
+          {{conjuration.creatureClass.value}}
         </div>
       </div>
       <div class="row-section">
@@ -61,7 +61,7 @@
           <label class="">{{localize "conjuringDifficulty"}}:</label>
         </div>
         <div class="col sixty">
-          {{conjuration.data.data.conjuringDifficulty.value}}
+          {{conjuration.conjuringDifficulty.value}}
         </div>
       </div>
       {{#if conjurationData.packageModifier}}
@@ -122,13 +122,13 @@
   {{#if equipmentIndexLoaded}}
   <div class="row-section wrap">
     {{#each entityAbilities as |item i|}}
-    <div data-entityid="true" data-qs="{{item.data.data.AsPCost.value}}" class="row-section col two wrap tableOdd selectableRow {{#if (hasElem ../conjurationData.selectedEntityIds item.uuid)}}selected{{/if}}"
+    <div data-entityid="true" data-qs="{{item.AsPCost.value}}" class="row-section col two wrap tableOdd selectableRow {{#if (hasElem ../conjurationData.selectedEntityIds item.uuid)}}selected{{/if}}"
       data-id="{{item.uuid}}">
       <div class="col eighty lineheight">
         {{localize item.name}}
       </div>
       <div class="col ten">
-        <span class="small" title="{{localize 'CHARAbbrev.QL'}}">{{item.data.data.AsPCost.value}}</span>
+        <span class="small" data-tooltip="{{localize 'CHARAbbrev.QL'}}">{{item.AsPCost.value}}</span>
       </div>
       <div class="col ten">
         <a class="showEntity small" data-uuid="{{item.uuid}}"><i class="fas fa-info"></i></a>
@@ -145,14 +145,14 @@
   {{#if equipmentIndexLoaded}}
   <div class="row-section wrap">
     {{#each entityPackages as |item i|}}
-    <div data-packageid="true" data-mod="{{item.data.data.at.value}}"
+    <div data-packageid="true" data-mod="{{item.at.value}}"
       class="row-section col two wrap tableOdd selectableRow {{#if (hasElem ../conjurationData.selectedPackageIds item.uuid)}}selected{{/if}}"
       data-id="{{item.uuid}}">
       <div class="col eighty lineheight">
         {{localize item.name}}
       </div>
       <div class="col ten">
-        <span class="small" title="{{localize 'CHARAbbrev.QL'}}">{{item.data.data.at.value}}</span>
+        <span class="small" data-tooltip="{{localize 'CHARAbbrev.QL'}}">{{item.at.value}}</span>
       </div>
       <div class="col ten">
         <a class="showEntity small" data-uuid="{{item.uuid}}"><i class="fas fa-info"></i></a>

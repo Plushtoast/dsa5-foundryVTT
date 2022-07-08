@@ -63,15 +63,15 @@ export default class CareerWizard extends WizardDSA5 {
 
     getData(options) {
         const data = super.getData(options);
-        const advantages = this.parseToItem(this.career.data.recommendedAdvantages.value, ["advantage"])
-        const disadvantages = this.parseToItem(this.career.data.recommendedDisadvantages.value, ["disadvantage"])
-        const requirements = this.parseToItem(this.career.data.requirements.value, ["disadvantage", "advantage", "specialability"])
+        const advantages = this.parseToItem(this.career.system.recommendedAdvantages.value, ["advantage"])
+        const disadvantages = this.parseToItem(this.career.system.recommendedDisadvantages.value, ["disadvantage"])
+        const requirements = this.parseToItem(this.career.system.requirements.value, ["disadvantage", "advantage", "specialability"])
         const missingVantages = requirements.filter(x => ["advantage", "disadvantage"].includes(x.type) && !x.disabled)
         const attributeRequirements = requirements.filter(x => x.attributeRequirement)
-        const combatskillchoices = this.parseCombatskills(this.career.data.combatSkills.value)
-        const baseCost = Number(this.career.data.APValue.value)
+        const combatskillchoices = this.parseCombatskills(this.career.system.combatSkills.value)
+        const baseCost = Number(this.career.system.APValue.value)
         const reqCost = requirements.reduce(function(_this, val) {
-            return _this + (val.disabled ? 0 : Number(val.data.APValue.value) || 0)
+            return _this + (val.disabled ? 0 : Number(val.system.APValue.value) || 0)
         }, 0)
         let missingSpecialabilities = requirements.filter(x => x.type == "specialability" && !x.disabled)
         mergeObject(data, {
@@ -84,7 +84,7 @@ export default class CareerWizard extends WizardDSA5 {
             missingVantages,
             missingSpecialabilities,
             combatskillchoices: combatskillchoices,
-            spelltricks: this.parseToItem(this.career.data.spelltricks.value, ["magictrick"]),
+            spelltricks: this.parseToItem(this.career.system.spelltricks.value, ["magictrick"]),
             attributeRequirements,
             advantagesToChose: advantages.length > 0,
             disadvantagesToChose: disadvantages.length > 0,
@@ -92,7 +92,7 @@ export default class CareerWizard extends WizardDSA5 {
             missingVantagesToChose: missingVantages.length > 0,
             missingSpecialabiltiesToChose: missingSpecialabilities.length > 0,
             combatToChose: combatskillchoices.length > 0,
-            magicToChose: this.career.data.spelltrickCount.value > 0,
+            magicToChose: this.career.system.spelltrickCount.value > 0,
             religionToChose: false,
             anyAttributeRequirements: attributeRequirements.length > 0,
             generalToChose: missingSpecialabilities.length > 0 || attributeRequirements.length > 0
@@ -129,13 +129,13 @@ export default class CareerWizard extends WizardDSA5 {
 
         for (let k of value.split(",")) {
             let parsed = DSA5_Utility.parseAbilityString(k.trim())
-            let item = this.actor.data.items.find(x => types.includes(x.type) && x.name == parsed.original)
+            let item = this.actor.system.items.find(x => types.includes(x.type) && x.name == parsed.original)
             if (item) {
                 item = duplicate(item)
-                if (item.data.talentValue)
-                    item.data.talentValue.value = parsed.step
-                if (item.data.step)
-                    item.data.step.value = parsed.step
+                if (item.system.talentValue)
+                    item.system.talentValue.value = parsed.step
+                if (item.system.step)
+                    item.system.step.value = parsed.step
 
                 item = ItemRulesDSA5.reverseAdoptionCalculation(this.actor, parsed, item)
                 itemsToUpdate.push(item)
@@ -147,10 +147,10 @@ export default class CareerWizard extends WizardDSA5 {
                 if (item) {
                     item = duplicate(item)
                     item.name = parsed.original
-                    if (item.data.talentValue)
-                        item.data.talentValue.value = parsed.step
-                    if (item.data.step)
-                        item.data.step.value = parsed.step
+                    if (item.system.talentValue)
+                        item.system.talentValue.value = parsed.step
+                    if (item.system.step)
+                        item.system.step.value = parsed.step
 
                     item = ItemRulesDSA5.reverseAdoptionCalculation(this.actor, parsed, item)
                     itemsToCreate.push(item)
@@ -169,7 +169,7 @@ export default class CareerWizard extends WizardDSA5 {
         for (let k of blessings) {
             let name = k.trim()
             if (name == "") continue
-            let item = this.actor.data.items.find(x => type == x.type && x.name == name)
+            let item = this.actor.system.items.find(x => type == x.type && x.name == name)
             if (!item) {
                 item = this.items.find(x => type == x.type && x.name == name)
                 if (item) {
@@ -195,47 +195,47 @@ export default class CareerWizard extends WizardDSA5 {
         }
 
         let update = {
-            "data.details.career.value": this.career.name,
-            "data.freeLanguagePoints.value": this.career.data.languagePoints.value
+            "system.details.career.value": this.career.name,
+            "system.freeLanguagePoints.value": this.career.system.languagePoints.value
         }
         for (let k of parent.find('.attributes')) {
             let attr = $(k).attr("data-attribute").toLowerCase()
             attr = game.dsa5.config.knownShortcuts[attr.toLowerCase()][1]
             if (Number(this.actor.system.characteristics[attr].initial) + Number(this.actor.system.characteristics[attr].advances) < Number($(k).val())) {
-                if (this.actor.data.canAdvance)
-                    update[`data.characteristics.${attr}.advances`] = Number($(k).val()) - Number(this.actor.system.characteristics[attr].initial)
+                if (this.actor.system.canAdvance)
+                    update[`system.characteristics.${attr}.advances`] = Number($(k).val()) - Number(this.actor.system.characteristics[attr].initial)
                 else
-                    update[`data.characteristics.${attr}.initial`] = Number($(k).val())
+                    update[`system.characteristics.${attr}.initial`] = Number($(k).val())
             }
         }
 
-        if (this.career.data.mageLevel.value != "mundane") {
-            update[`data.guidevalue.${this.career.data.mageLevel.value}`] = this.career.data.guidevalue.value
-            update[`data.energyfactor.${this.career.data.mageLevel.value}`] = this.career.data.guidevalue.factor
-            update[`data.tradition.${this.career.data.mageLevel.value}`] = this.career.data.tradition.value
-            update[`data.feature.${this.career.data.mageLevel.value}`] = this.career.data.feature.value
+        if (this.career.system.mageLevel.value != "mundane") {
+            update[`system.guidevalue.${this.career.system.mageLevel.value}`] = this.career.system.guidevalue.value
+            update[`system.energyfactor.${this.career.system.mageLevel.value}`] = this.career.system.guidevalue.factor
+            update[`system.tradition.${this.career.system.mageLevel.value}`] = this.career.system.tradition.value
+            update[`system.feature.${this.career.system.mageLevel.value}`] = this.career.system.feature.value
         }
-        if (this.career.data.mageLevel.value == "clerical") {
-            update["data.happyTalents.value"] = this.career.data.happyTalents.value
-            await this.setAbility(this.career.data.liturgies.value, ["liturgy", "ceremony"])
-            await this.addBlessing(this.career.data.blessings.value.split(","), "blessing")
+        if (this.career.system.mageLevel.value == "clerical") {
+            update["system.happyTalents.value"] = this.career.system.happyTalents.value
+            await this.setAbility(this.career.system.liturgies.value, ["liturgy", "ceremony"])
+            await this.addBlessing(this.career.system.blessings.value.split(","), "blessing")
         }
-        if (this.career.data.mageLevel.value == "magical") {
-            await this.setAbility(this.career.data.spells.value, ["spell", "ritual"])
+        if (this.career.system.mageLevel.value == "magical") {
+            await this.setAbility(this.career.system.spells.value, ["spell", "ritual"])
         }
 
-        await this.setAbility(this.career.data.specialAbilities.value, ["specialability"])
+        await this.setAbility(this.career.system.specialAbilities.value, ["specialability"])
         await this.actor.update(update);
         await this.actor._updateAPs(apCost)
         await this.addSelections(parent.find('.optional:checked'))
-        await this.updateSkill(this.career.data.skills.value.split(","), "skill")
+        await this.updateSkill(this.career.system.skills.value.split(","), "skill")
 
         let combatSkillselectChoices = []
         for (let k of parent.find('.exclusive:checked')) {
             combatSkillselectChoices.push($(k).val())
         }
 
-        const combatSkills = this.career.data.combatSkills.value.split(",").concat(combatSkillselectChoices)
+        const combatSkills = this.career.system.combatSkills.value.split(",").concat(combatSkillselectChoices)
             .filter(skill => !(skill.includes(game.i18n.localize("combatskillcountdivider") + ":") || skill == ""))
         await this.updateSkill(combatSkills, "combatskill", 1, false)
 

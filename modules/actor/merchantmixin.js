@@ -98,7 +98,7 @@ export const MerchantSheetMixin = (superclass) => class extends superclass {
     async toggleTradeLock(ev) {
         const itemId = this._getItemId(ev);
         let item = this.actor.items.get(itemId)
-        this.actor.updateEmbeddedDocuments("Item", [{ _id: item.id, "data.tradeLocked": !item.system.tradeLocked }]);
+        this.actor.updateEmbeddedDocuments("Item", [{ _id: item.id, "system.tradeLocked": !item.system.tradeLocked }]);
     }
 
     async setCustomPrice(ev) {
@@ -121,9 +121,9 @@ export const MerchantSheetMixin = (superclass) => class extends superclass {
         for (let item of this.actor.items) {
             if (rule(item)) {
                 let upd = item.toObject()
-                if (newValue === undefined) newValue = !upd.data.tradeLocked
+                if (newValue === undefined) newValue = !upd.system.tradeLocked
 
-                upd.data.tradeLocked = newValue
+                upd.system.tradeLocked = newValue
                 updates.push(upd)
             }
         }
@@ -145,7 +145,7 @@ export const MerchantSheetMixin = (superclass) => class extends superclass {
         for (let item of this.actor.items) {
             if (rule(item)) {
                 let upd = item.toObject()
-                RuleChaos.increment(ev, upd, "data.quantity.value", 0)
+                RuleChaos.increment(ev, upd, "system.quantity.value", 0)
                 updates.push(upd)
             }
         }
@@ -195,12 +195,12 @@ export const MerchantSheetMixin = (superclass) => class extends superclass {
 
     static async finishTransaction(source, target, price, itemId, buy, amount) {
         let item = source.items.get(itemId).toObject()
-        amount = Math.min(Number(item.data.quantity.value), amount)
-        if (Number(item.data.quantity.value) > 0) {
+        amount = Math.min(Number(item.system.quantity.value), amount)
+        if (Number(item.system.quantity.value) > 0) {
             const noNeedToPay = this.noNeedToPay(target, source, price)
             const hasPaid = noNeedToPay || DSA5Payment.payMoney(target, price, true)
             if (hasPaid) {
-                if (getProperty(item, "data.worn.value")) item.data.worn.value = false
+                if (getProperty(item, "system.worn.value")) item.system.worn.value = false
 
                 if (buy) {
                     await this.updateTargetTransaction(target, item, amount, source, price)
@@ -217,13 +217,12 @@ export const MerchantSheetMixin = (superclass) => class extends superclass {
     }
 
     static isTemporaryToken(target) {
-        return getProperty(target, "data.data.merchant.merchantType") == "loot" && getProperty(target, "data.data.merchant.temporary")
+        return getProperty(target, "merchant.merchantType") == "loot" && getProperty(target, "merchant.temporary")
     }
 
     static async selfDestruction(target) {
         if (this.isTemporaryToken(target)) {
             const hasItemsLeft = target.items.some(x => DSA5.equipmentCategories.includes(x.type) || (x.type == "money" && x.system.quantity.value > 0))
-            console.log(hasItemsLeft)
             if (!hasItemsLeft) {
                 game.socket.emit("system.dsa5", {
                     type: "hideDeletedSheet",
@@ -245,7 +244,7 @@ export const MerchantSheetMixin = (superclass) => class extends superclass {
 
     static async transferNotification(item, source, target, buy, price, amount, noNeedToPay) {
         const notify = game.settings.get("dsa5", "merchantNotification")
-        if (notify == 0 || getProperty(item, "data.equipmentType.value") == "service") return
+        if (notify == 0 || getProperty(item, "system.equipmentType.value") == "service") return
 
         const notif = "MERCHANT." + (buy ? "buy" : "sell") + (noNeedToPay ? "Loot" : "") + "Notification"
         const template = game.i18n.format(notif, { item: item.name, source: source.name, target: target.name, amount, price, buy })
@@ -260,8 +259,8 @@ export const MerchantSheetMixin = (superclass) => class extends superclass {
 
     static async updateSourceTransaction(source, target, sourceItem, price, itemId, amount) {
         let item = duplicate(sourceItem)
-        if (Number(item.data.quantity.value) > amount || item.type == "money") {
-            item.data.quantity.value = Number(item.data.quantity.value) - amount
+        if (Number(item.system.quantity.value) > amount || item.type == "money") {
+            item.system.quantity.value = Number(item.system.quantity.value) - amount
             await source.updateEmbeddedDocuments("Item", [item])
         } else {
             await source.deleteEmbeddedDocuments("Item", [itemId])
@@ -271,13 +270,13 @@ export const MerchantSheetMixin = (superclass) => class extends superclass {
 
     static async updateTargetTransaction(target, sourceItem, amount, source, price) {
         let item = duplicate(sourceItem)
-        const isService = getProperty(item, "data.equipmentType.value") == "service"
+        const isService = getProperty(item, "system.equipmentType.value") == "service"
         if (isService) {
             const msg = game.i18n.format("MERCHANT.buyNotification", { item: item.name, amount, source: target.name, target: source.name, price })
             ChatMessage.create(DSA5_Utility.chatDataSetup(msg));
         } else {
-            let res = target.data.items.find(i => Itemdsa5.areEquals(item, i));
-            item.data.quantity.value = amount
+            let res = target.items.find(i => Itemdsa5.areEquals(item, i));
+            item.system.quantity.value = amount
             if (!res) {
                 await target.createEmbeddedDocuments("Item", [item]);
             } else {
@@ -332,7 +331,7 @@ export const MerchantSheetMixin = (superclass) => class extends superclass {
     }
 
     _togglePlayerview(ev) {
-        this.actor.update({ "data.merchant.playerView": !getProperty(this.actor.system, "merchant.playerView") })
+        this.actor.update({ "system.merchant.playerView": !getProperty(this.actor.system, "merchant.playerView") })
     }
 
     async randomGoods(ev) {
@@ -399,7 +398,7 @@ export const MerchantSheetMixin = (superclass) => class extends superclass {
         for (let cat of categories) {
             const randomItems = (await itemLibrary.getRandomItems(cat.name, cat.number)).map(x => {
                 const elem = x.toObject()
-                elem.data.quantity.value = cat.count
+                elem.system.quantity.value = cat.count
                 return elem
             })
 
@@ -408,9 +407,9 @@ export const MerchantSheetMixin = (superclass) => class extends superclass {
 
         let seen = {}
         items = items.filter(function(x) {
-            let domain = getProperty(x, "data.effect")
+            let domain = getProperty(x, "system.effect")
             domain = typeof domain === 'object' && domain !== null ? getProperty(domain, "attributes") || "" : ""
-            const price = Number(getProperty(x, "data.price.value")) || 0
+            const price = Number(getProperty(x, "system.price.value")) || 0
             if (domain != "" || price > 10000) return false
 
             let seeName = `${x.type}_${x.name}`
@@ -425,7 +424,7 @@ export const MerchantSheetMixin = (superclass) => class extends superclass {
     async removeAllGoods(actor, ev) {
         let text = $(ev.currentTarget).text()
         $(ev.currentTarget).html(' <i class="fa fa-spin fa-spinner"></i>')
-        let ids = actor.items.filter(x => DSA5.equipmentCategories.includes(x.type) && !getProperty(x, "data.data.worn.value")).map(x => x.id)
+        let ids = actor.items.filter(x => DSA5.equipmentCategories.includes(x.type) && !getProperty(x, "worn.value")).map(x => x.id)
         await actor.deleteEmbeddedDocuments("Item", ids);
         $(ev.currentTarget).text(text)
     }
@@ -471,7 +470,7 @@ export const MerchantSheetMixin = (superclass) => class extends superclass {
 
     filterWornEquipment(data) {
         for (const [key, value] of Object.entries(data.actor.inventory)) {
-            value.items = value.items.filter(x => !getProperty(x, "data.worn.value"))
+            value.items = value.items.filter(x => !getProperty(x, "system.worn.value"))
         }
     }
 
@@ -503,7 +502,7 @@ export const MerchantSheetMixin = (superclass) => class extends superclass {
     }
 
     getItemPrice(item) {
-        return Number(getProperty(item, "flags.dsa5.customPriceTag")) || (Number(item.data.price.value) * (item.type == "consumable" ? (Number(item.data.QL) || 0) : 1))
+        return Number(getProperty(item, "flags.dsa5.customPriceTag")) || (Number(item.system.price.value) * (item.type == "consumable" ? (Number(item.system.QL) || 0) : 1))
     }
 
     prepareTradeFriend(data) {

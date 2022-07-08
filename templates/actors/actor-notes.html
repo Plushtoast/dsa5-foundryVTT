@@ -9,20 +9,20 @@
             <div class="row-section wrap">
                 <div class="col row-section">
                     <div class="headerInput col four">
-                        <input class="input gender" name="data.details.gender.value" type="text" value="{{actor.data.details.gender.value}}" placeholder="{{localize 'Gender'}}" />
+                        <input class="input gender" name="system.details.gender.value" type="text" value="{{actor.system.details.gender.value}}" placeholder="{{localize 'Gender'}}" />
                         <span class="label gender">{{localize "Gender"}}</span>
                     </div>
 
                     <div class="headerInput col four">
-                        <input class="input-details" name="data.details.culture.value" type="text" value="{{actor.data.details.culture.value}}" placeholder="{{localize 'culture'}}" />
+                        <input class="input-details" name="system.details.culture.value" type="text" value="{{actor.system.details.culture.value}}" placeholder="{{localize 'culture'}}" />
                         <span class="label-details">{{localize "culture"}}</span>
                     </div>
                     <div class="headerInput col four">
-                        <input class="input-details" name="data.details.socialstate.value" type="text" value="{{actor.data.details.socialstate.value}}" placeholder="{{localize 'Socialstate'}}" />
+                        <input class="input-details" name="system.details.socialstate.value" type="text" value="{{actor.system.details.socialstate.value}}" placeholder="{{localize 'Socialstate'}}" />
                         <span class="label-details">{{localize "Socialstate"}}</span>
                     </div>
                     <div class="headerInput col four">
-                        <input class="input-details" name="data.details.Home.value" type="text" value="{{actor.data.details.Home.value}}" placeholder="{{localize 'Home'}}" />
+                        <input class="input-details" name="system.details.Home.value" type="text" value="{{actor.system.details.Home.value}}" placeholder="{{localize 'Home'}}" />
                         <span class="label-details">{{localize "Home"}}</span>
                     </div>
                 </div>
@@ -30,23 +30,23 @@
                 <div class="col row-section">
 
                     <div class="headerInput col four">
-                        <input class="input-details" name="data.details.family.value" type="text" value="{{actor.data.details.family.value}}" placeholder="{{localize 'Family'}}" />
+                        <input class="input-details" name="system.details.family.value" type="text" value="{{actor.system.details.family.value}}" placeholder="{{localize 'Family'}}" />
                         <span class="label-details">{{localize "Family"}}</span>
                     </div>
 
                     <div class="headerInput col four">
-                        <input class="input-details" name="data.details.age.value" type="text" value="{{actor.data.details.age.value}}" placeholder="{{localize 'Age'}}" />
+                        <input class="input-details" name="system.details.age.value" type="text" value="{{actor.system.details.age.value}}" placeholder="{{localize 'Age'}}" />
                         <span class="label-details">{{localize "Age"}}<span>
                     </div>
 
                     <div class="headerInput col four">
                         <input class="input-details"
-                            name="data.details.haircolor.value" type="text" value="{{actor.data.details.haircolor.value}}"
+                            name="system.details.haircolor.value" type="text" value="{{actor.system.details.haircolor.value}}"
                             placeholder="{{localize 'Hair_color'}}" />
                         <span class="label-details">{{localize "Hair_color"}}</span>
                     </div>
                     <div class="headerInput col four">
-                        <input class="input-details" name="data.details.eyecolor.value" type="text" value="{{actor.data.details.eyecolor.value}}" placeholder="{{localize 'Eye_color'}}" />
+                        <input class="input-details" name="system.details.eyecolor.value" type="text" value="{{actor.system.details.eyecolor.value}}" placeholder="{{localize 'Eye_color'}}" />
                         <span class="label-details">{{localize "Eye_color"}}</span>
                     </div>
                 </div>
@@ -54,17 +54,17 @@
                 <div class="col row-section">
 
                     <div class="headerInput col four">
-                        <input class="input-details" name="data.details.height.value" type="text" value="{{actor.data.details.height.value}}" placeholder="{{localize 'Height'}}" />
+                        <input class="input-details" name="system.details.height.value" type="text" value="{{actor.system.details.height.value}}" placeholder="{{localize 'Height'}}" />
                         <span class="label-details">{{localize "Height"}}</span>
                     </div>
 
                     <div class="headerInput col four">
-                        <input class="input-details" name="data.details.weight.value" type="text" value="{{actor.data.details.weight.value}}" placeholder="{{localize 'Weight'}}" />
+                        <input class="input-details" name="system.details.weight.value" type="text" value="{{actor.system.details.weight.value}}" placeholder="{{localize 'Weight'}}" />
                         <span class="label-details">{{localize "Weight"}}</span>
                     </div>
 
                     <div class="headerInput col two">
-                        <input class="input-details" name="data.details.distinguishingmark.value" type="text" value="{{actor.data.details.distinguishingmark.value}}" placeholder="{{localize 'Distinguishing_mark'}}" />
+                        <input class="input-details" name="system.details.distinguishingmark.value" type="text" value="{{actor.system.details.distinguishingmark.value}}" placeholder="{{localize 'Distinguishing_mark'}}" />
                         <span class="label-details">{{localize "Distinguishing_mark"}}</span>
                     </div>
 
@@ -82,12 +82,12 @@
             <b>{{localize "biography"}}</b>
         </div>
         <div class="col lineheight ten">
-            <a class="ch-collapse"><i class="fas fa-angle-up" title="{{localize 'SHEET.collapse'}}"></i></a>
+            <a class="ch-collapse"><i class="fas fa-angle-up" data-tooltip="{{localize 'SHEET.collapse'}}"></i></a>
         </div>
     </div>
     <div class="row-section">
         <div class="col notes-box">
-            {{editor content=actor.data.details.biography.value target="data.details.biography.value" button=true owner=owner editable=editable}}
+            {{editor (enrich actor.system.details.biography.value owner) target="system.details.biography.value" button=true owner=owner editable=editable}}
         </div>
     </div>
 </div>
@@ -97,12 +97,12 @@
             <b>{{localize "Notes"}}</b>
         </div>
         <div class="col lineheight ten">
-            <a class="ch-collapse"><i class="fas fa-angle-up" title="{{localize 'SHEET.collapse'}}"></i></a>
+            <a class="ch-collapse"><i class="fas fa-angle-up" data-tooltip="{{localize 'SHEET.collapse'}}"></i></a>
         </div>
     </div>
     <div class="row-section">
         <div class="col notes-box">
-            {{editor content=actor.data.details.notes.value target="data.details.notes.value" button=true owner=owner editable=editable}}
+            {{editor (enrich actor.system.details.notes.value owner) target="system.details.notes.value" button=true owner=owner editable=editable}}
         </div>
     </div>
 </div>
@@ -113,12 +113,12 @@
             <b>{{localize "ownerNotes"}}</b>
         </div>
         <div class="col lineheight ten">
-            <a class="ch-collapse"><i class="fas fa-angle-up" title="{{localize 'SHEET.collapse'}}"></i></a>
+            <a class="ch-collapse"><i class="fas fa-angle-up" data-tooltip="{{localize 'SHEET.collapse'}}"></i></a>
         </div>
     </div>
     <div class="row-section">
         <div class="col notes-box">
-            {{editor content=actor.data.details.notes.ownerdescription target="data.details.notes.ownerdescription" button=true owner=owner editable=editable}}
+            {{editor (enrich actor.system.details.notes.ownerdescription owner) target="system.details.notes.ownerdescription" button=true owner=owner editable=editable}}
         </div>
     </div>
 </div>
@@ -129,12 +129,12 @@
             <b>{{localize "GM Notes"}}</b>
         </div>
         <div class="col lineheight ten">
-            <a class="ch-collapse"><i class="fas fa-angle-up" title="{{localize 'SHEET.collapse'}}"></i></a>
+            <a class="ch-collapse"><i class="fas fa-angle-up" data-tooltip="{{localize 'SHEET.collapse'}}"></i></a>
         </div>
     </div>
     <div class="row-section">
         <div class="col notes-box">
-            {{editor content=actor.data.details.notes.gmdescription target="data.details.notes.gmdescription" button=true owner=owner editable=editable}}
+            {{editor (enrich actor.system.details.notes.gmdescription owner) target="system.details.notes.gmdescription" button=true owner=owner editable=editable}}
         </div>
     </div>
 </div>

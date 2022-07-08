@@ -7,25 +7,25 @@
         </div>
         {{#if (eq @key 'bags')}}
         <div class="col five center">
-            <i class="fas fa-weight-hanging" title="{{localize 'carrycapacity'}}"></i>
+            <i class="fas fa-weight-hanging" data-tooltip="{{localize 'carrycapacity'}}"></i>
         </div>
         {{/if}}
         <div class="col eight center">
-            <i class="fa fa-shield-alt" title="{{localize 'equipped'}}"></i>
+            <i class="fa fa-shield-alt" data-tooltip="{{localize 'equipped'}}"></i>
         </div>
         <div class="col eight center">
-            <span title="{{localize 'quantity'}}">#</span>
+            <span data-tooltip="{{localize 'quantity'}}">#</span>
         </div>
         <div class="col eight center">
-            <i class="fa fa-anchor" title="{{localize 'Weight'}}"></i>
+            <i class="fa fa-anchor" data-tooltip="{{localize 'Weight'}}"></i>
         </div>
         <div class="col ten center">
-            <a class="item-create very-small" title="{{localize 'SHEET.addItem'}}" item-section="{{sid}}" data-type="{{section.dataType}}"><i class="fas fa-plus"></i></a>
+            <a class="item-create very-small" data-tooltip="{{localize 'SHEET.addItem'}}" item-section="{{sid}}" data-type="{{section.dataType}}"><i class="fas fa-plus"></i></a>
         </div>
     </div>
     <div class="row-section wrap rowtable inventory">
         {{#each section.items as |item i|}}
-        <div class="col item" data-item-id="{{item._id}}" data-category="{{item.data.equipmentType.value}}">
+        <div class="col item" data-item-id="{{item._id}}" data-category="{{item.system.equipmentType.value}}">
             <div class="row-section">
                 <div class="col eight image {{item.enchantClass}}">
                     <div class="image" style="background-image: url('{{item.img}}')">
@@ -39,7 +39,7 @@
                 <div class="col">
                     <a class="item-edit {{#if item.consumable}}consume-item{{/if}}">{{item.name}}</a>
                 </div>
-                {{#if (eq item.data.equipmentType.value 'bags')}}
+                {{#if (eq item.system.equipmentType.value 'bags')}}
                 <div class="col five center">
                     {{item.bagweight}}
                 </div>
@@ -51,17 +51,17 @@
                 </div>
 
                 <div class="col eight center">
-                    <a class="quantity-click">{{item.data.quantity.value}}</a>
+                    <a class="quantity-click">{{item.system.quantity.value}}</a>
                 </div>
                 <div class="col eight center">
                     {{item.weight}}
                 </div>
                 <div class="col ten very-small center">
-                    {{#if item.OnUseEffect}}<a title="{{localize 'SHEET.onUseEffect'}}" class="onUseItem"><i class="fas fa-dice-six"></i></a>{{/if}}
-                    <a class="item-post" title="{{localize 'SHEET.PostItem'}}"><i class="fas fa-comment"></i></a>
-                    <a class="item-control item-edit" title="{{localize 'SHEET.EditItem'}}"><i class="fas fa-edit"></i></a>
-                    <a class="item-dropdown" title="{{localize 'SHEET.Dropdown'}}"><i class="fas fa-chevron-down"></i></a>
-                    <a class="item-control item-delete" title="{{localize 'SHEET.DeleteItem'}}"><i class="fas fa-trash"></i></a>
+                    {{#if item.OnUseEffect}}<a data-tooltip="{{localize 'SHEET.onUseEffect'}}" class="onUseItem"><i class="fas fa-dice-six"></i></a>{{/if}}
+                    <a class="item-post" data-tooltip="{{localize 'SHEET.PostItem'}}"><i class="fas fa-comment"></i></a>
+                    <a class="item-control item-edit" data-tooltip="{{localize 'SHEET.EditItem'}}"><i class="fas fa-edit"></i></a>
+                    <a class="item-dropdown" data-tooltip="{{localize 'SHEET.Dropdown'}}"><i class="fas fa-chevron-down"></i></a>
+                    <a class="item-control item-delete" data-tooltip="{{localize 'SHEET.DeleteItem'}}"><i class="fas fa-trash"></i></a>
                 </div>
             </div>
             <div class="row-section lineheight expandDetails {{item.detailed}}">

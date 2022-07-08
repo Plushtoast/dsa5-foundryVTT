@@ -1,16 +1,16 @@
 <li class="chat-message message flexcol {{cssClass}}" data-message-id="{{message._id}}" {{#if borderColor}}style="border-color:{{borderColor}}" {{/if}}>
     <header class="message-header flexrow">
         {{#if message.flags.img}} {{#if (isWEBM message.flags.img)}}
-        <video class="sender-image" src="{{message.flags.img}}" title="{{message.flags.name}}" autoplay loop></video> {{else}}
-        <img class="sender-image" src="{{message.flags.img}}" title="{{message.flags.name}}" /> {{/if}}
+        <video class="sender-image" src="{{message.flags.img}}" data-tooltip="{{message.flags.name}}" autoplay loop></video> {{else}}
+        <img class="sender-image" src="{{message.flags.img}}" data-tooltip="{{message.flags.name}}" /> {{/if}}
         <h4 class="message-sender with-image">{{alias}}</h4>
         {{else}}
         <h4 class="message-sender">{{alias}}</h4>
         {{/if}}
         <span class="message-metadata">
             <time class="message-timestamp">{{timeSince message.timestamp}}</time>
-            <span class="chatIndicator"><i title="{{localize 'CHATNOTIFICATION.BlindRoll'}}" class="fas fa-eye-slash"></i></span>
-        <span class="privateMessageIndicator"><i title="{{localize 'CHATNOTIFICATION.whisper'}}" class="fas fa-mask"></i></span> {{#if user.isGM}}
+            <span class="chatIndicator"><i data-tooltip="{{localize 'CHATNOTIFICATION.BlindRoll'}}" class="fas fa-eye-slash"></i></span>
+        <span class="privateMessageIndicator"><i data-tooltip="{{localize 'CHATNOTIFICATION.whisper'}}" class="fas fa-mask"></i></span> {{#if user.isGM}}
         <a class="button message-delete"><i class="fas fa-trash"></i></a> {{/if}}
         </span> {{#if isWhisper}}
         <span class="whisper-to">{{localize 'CHAT.To'}}: {{whisperTo}}</span> {{/if}} {{#if message.flavor}}

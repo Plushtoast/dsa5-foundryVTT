@@ -2,6 +2,6 @@
 <div class="card-content hide-option roll-result center">
     {{#each postData.characteristics as |item i|}} {{#if (ne item.char 'damage')}}
     <a class="dieButton" data-index="{{i}}">
-        <span title="{{localize (concatUp 'CHAR.' item.char)}}{{#if item.tar}} vs {{item.tar}}{{/if}}" class="{{#if item.suc}}suc{{else}}fail{{/if}} die-{{item.char}} {{#if item.die}}{{item.die}}{{else}}d20{{/if}}">
+        <span data-tooltip="{{localize (concatUp 'CHAR.' item.char)}}{{#if item.tar}} vs {{item.tar}}{{/if}}" class="{{#if item.suc}}suc{{else}}fail{{/if}} die-{{item.char}} {{#if item.die}}{{item.die}}{{else}}d20{{/if}}">
         {{item.res}}</span></a> {{/if}}{{/each}}
 </div>

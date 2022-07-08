@@ -10,19 +10,19 @@
                     {{localize "creatureClass"}}
                 </div>
                 <div class="col sixty">
-                    <select name="data.merchant.merchantType" data-dtype="String" style="width:100%">
-                        {{selectOptions merchantTypes selected=actor.data.merchant.merchantType localize=true}}
+                    <select name="system.merchant.merchantType" data-dtype="String" style="width:100%">
+                        {{selectOptions merchantTypes selected=actor.system.merchant.merchantType localize=true}}
                     </select>
                 </div>
             </div>
-            {{#if (eq actor.data.merchant.merchantType "epic")}}
+            {{#if (eq actor.system.merchant.merchantType "epic")}}
             <div class="row-section">
                 <div class="col fourty">
                     Garadan
                 </div>
                 <div class="col sixty">
-                    <select name="data.merchant.garadan" data-dtype="String" style="width:100%">
-                    {{#select actor.data.merchant.garadan}}
+                    <select name="system.merchant.garadan" data-dtype="String" style="width:100%">
+                    {{#select actor.system.merchant.garadan}}
                     <option value="1">{{localize "GARADAN.1"}}</option>
                     <option value="2">{{localize "GARADAN.2"}}</option>
                     <option value="3">{{localize "GARADAN.3"}}</option>
@@ -32,54 +32,54 @@
                   </select>
                 </div>
             </div>
-            {{/if}} {{#if (eq actor.data.merchant.merchantType "merchant")}}
+            {{/if}} {{#if (eq actor.system.merchant.merchantType "merchant")}}
             <div class="row-section">
                 <div class="col fourty">
                     {{localize "MERCHANT.Factor"}}
                 </div>
-                <div class="col ten center" title="{{localize 'MERCHANT.sellingFactor'}}">
+                <div class="col ten center" data-tooltip="{{localize 'MERCHANT.sellingFactor'}}">
                     <i class="fas fa-piggy-bank"></i>
                 </div>
-                <div class="col five" title="{{localize 'MERCHANT.sellingFactor'}}">
-                    <input name="data.merchant.sellingFactor" type="text" value="{{actor.data.merchant.sellingFactor}}" data-dtype="Number" />
+                <div class="col five" data-tooltip="{{localize 'MERCHANT.sellingFactor'}}">
+                    <input name="system.merchant.sellingFactor" type="text" value="{{actor.system.merchant.sellingFactor}}" data-dtype="Number" />
                 </div>
-                <div class="col ten center" title="{{localize 'MERCHANT.buyingFactor'}}">
+                <div class="col ten center" data-tooltip="{{localize 'MERCHANT.buyingFactor'}}">
                     <i class="fas fa-coins"></i>
                 </div>
-                <div class="col five" title="{{localize 'MERCHANT.buyingFactor'}}">
-                    <input name="data.merchant.buyingFactor" type="text" value="{{actor.data.merchant.buyingFactor}}" data-dtype="Number" />
+                <div class="col five" data-tooltip="{{localize 'MERCHANT.buyingFactor'}}">
+                    <input name="system.merchant.buyingFactor" type="text" value="{{actor.system.merchant.buyingFactor}}" data-dtype="Number" />
                 </div>
             </div>
             {{#if isGM}}
-            <div class="row-section" title="{{localize 'MERCHANT.hidePlayerHint'}}">
+            <div class="row-section" data-tooltip="{{localize 'MERCHANT.hidePlayerHint'}}">
                 <div class="col fourty">
                     {{localize 'MERCHANT.hidePlayer'}}
                 </div>
                 <div class="col sixty">
-                    <input name="data.merchant.hidePlayer" type="checkbox" value="1" {{checked actor.data.merchant.hidePlayer}} />
+                    <input name="system.merchant.hidePlayer" type="checkbox" value="1" {{checked actor.system.merchant.hidePlayer}} />
                 </div>
             </div>
-            {{/if}} {{/if}} {{#if (eq actor.data.merchant.merchantType "loot")}} {{#if isGM}}
+            {{/if}} {{/if}} {{#if (eq actor.system.merchant.merchantType "loot")}} {{#if isGM}}
             <div class="row-section">
-                <div class="col fourty" title="{{localize 'MERCHANT.hidePlayerHint'}}">
+                <div class="col fourty" data-tooltip="{{localize 'MERCHANT.hidePlayerHint'}}">
                     {{localize 'MERCHANT.hidePlayer'}}
                 </div>
-                <div class="col ten" title="{{localize 'MERCHANT.hidePlayerHint'}}">
-                    <input name="data.merchant.hidePlayer" type="checkbox" value="1" {{checked actor.data.merchant.hidePlayer}} />
+                <div class="col ten" data-tooltip="{{localize 'MERCHANT.hidePlayerHint'}}">
+                    <input name="system.merchant.hidePlayer" type="checkbox" value="1" {{checked actor.system.merchant.hidePlayer}} />
                 </div>
                 <div class="col fourty">
                     {{localize 'MERCHANT.locked'}}
                 </div>
                 <div class="col ten">
-                    <input name="data.merchant.locked" type="checkbox" value="1" {{checked actor.data.merchant.locked}} />
+                    <input name="system.merchant.locked" type="checkbox" value="1" {{checked actor.system.merchant.locked}} />
                 </div>
             </div>
             <div class="row-section">
-                <div class="col fourty" title="{{localize 'MERCHANT.emptyDestroyHint'}}">
+                <div class="col fourty" data-tooltip="{{localize 'MERCHANT.emptyDestroyHint'}}">
                     {{localize 'MERCHANT.emptyDestroy'}}
                 </div>
                 <div class="col ten">
-                    <input name="data.merchant.temporary" title="{{localize 'MERCHANT.emptyDestroyHint'}}" type="checkbox" value="1" {{checked actor.data.merchant.temporary}} />
+                    <input name="system.merchant.temporary" data-tooltip="{{localize 'MERCHANT.emptyDestroyHint'}}" type="checkbox" value="1" {{checked actor.system.merchant.temporary}} />
                 </div>
                 <div class="col fourty">
 
@@ -93,23 +93,23 @@
     </div>
 </div>
 
-{{#if (ne actor.data.merchant.merchantType "none")}} {{#if isGM}}
+{{#if (ne actor.system.merchant.merchantType "none")}} {{#if isGM}}
 <div class="row-section">
     <button class="sheetButton randomGoods">{{localize "MERCHANT.randomGoods"}}</button>
     <button class="sheetButton clearInventory">{{localize "MERCHANT.clearInventory"}}</button>
 </div>
 {{/if}}
 <div class="groupbox">
-    <div class="row-section lineheight" title="{{localize 'PERMISSION.Configure'}}">
+    <div class="row-section lineheight" data-tooltip="{{localize 'PERMISSION.Configure'}}">
         <div class="col two row-section">
             <div class="col seventy table-title">
                 {{localize 'character'}}
             </div>
-            {{#if (eq actor.data.merchant.merchantType "merchant")}}
-            <div class="col ten center" title="{{localize 'MERCHANT.sellingFactor'}}">
+            {{#if (eq actor.system.merchant.merchantType "merchant")}}
+            <div class="col ten center" data-tooltip="{{localize 'MERCHANT.sellingFactor'}}">
                 <i class="fas fa-piggy-bank"></i>
             </div>
-            <div class="col ten center" title="{{localize 'MERCHANT.buyingFactor'}}">
+            <div class="col ten center" data-tooltip="{{localize 'MERCHANT.buyingFactor'}}">
                 <i class="fas fa-coins"></i>
             </div>
             {{/if}}
@@ -122,11 +122,11 @@
             <div class="col seventy table-title">
                 {{localize 'character'}}
             </div>
-            {{#if (eq actor.data.merchant.merchantType "merchant")}}
-            <div class="col ten center" title="{{localize 'MERCHANT.sellingFactor'}}">
+            {{#if (eq actor.system.merchant.merchantType "merchant")}}
+            <div class="col ten center" data-tooltip="{{localize 'MERCHANT.sellingFactor'}}">
                 <i class="fas fa-piggy-bank"></i>
             </div>
-            <div class="col ten center" title="{{localize 'MERCHANT.buyingFactor'}}">
+            <div class="col ten center" data-tooltip="{{localize 'MERCHANT.buyingFactor'}}">
                 <i class="fas fa-coins"></i>
             </div>
             {{/if}}
@@ -143,13 +143,13 @@
             <div class="col seventy">
                 {{player.data.name}}
             </div>
-            {{#if (eq ../actor.data.merchant.merchantType "merchant")}}
-            <div class="col ten center" title="{{localize 'MERCHANT.sellingFactor'}}">
-                <input name="data.merchant.factors.sellingFactor.{{player.id}}" type="text" value="{{player.sellingFactor}}" data-dtype="Number" />
+            {{#if (eq ../actor.system.merchant.merchantType "merchant")}}
+            <div class="col ten center" data-tooltip="{{localize 'MERCHANT.sellingFactor'}}">
+                <input name="system.merchant.factors.sellingFactor.{{player.id}}" type="text" value="{{player.sellingFactor}}" data-dtype="Number" />
 
             </div>
-            <div class="col ten center" title="{{localize 'MERCHANT.buyingFactor'}}">
-                <input name="data.merchant.factors.buyingFactor.{{player.id}}" type="text" value="{{player.buyingFactor}}" data-dtype="Number" />
+            <div class="col ten center" data-tooltip="{{localize 'MERCHANT.buyingFactor'}}">
+                <input name="system.merchant.factors.buyingFactor.{{player.id}}" type="text" value="{{player.buyingFactor}}" data-dtype="Number" />
             </div>
             {{/if}}
             <div class="col ten center">
@@ -174,25 +174,25 @@
         <div class="col">
             <b>{{localize (concat "Equipment." @key)}}</b>
         </div>
-        {{#if (or (eq ../actor.data.merchant.merchantType "merchant") (eq ../actor.data.merchant.merchantType "loot"))}}
+        {{#if (or (eq ../actor.system.merchant.merchantType "merchant") (eq ../actor.system.merchant.merchantType "loot"))}}
         <div class="col eight center">
-            <a class="lockTradeSection" data-type="{{section.dataType}}"><i class="fa fa-lock" title="{{localize 'MERCHANT.untradable'}}"></i></a>
+            <a class="lockTradeSection" data-type="{{section.dataType}}"><i class="fa fa-lock" data-tooltip="{{localize 'MERCHANT.untradable'}}"></i></a>
         </div>
         {{/if}}
         <div class="col eight center">
-            <i class="fa fa-shield-alt" title="{{localize 'equipped'}}"></i>
+            <i class="fa fa-shield-alt" data-tooltip="{{localize 'equipped'}}"></i>
         </div>
         <div class="col four center">
-            <span title="{{localize 'price'}}"><i class="fas fa-coins"></i></span>
+            <span data-tooltip="{{localize 'price'}}"><i class="fas fa-coins"></i></span>
         </div>
         <div class="col eight center">
-            <a class="changeAmountAllItems" data-type="{{section.dataType}}"><span title="{{localize 'quantity'}}">#</span></a>
+            <a class="changeAmountAllItems" data-type="{{section.dataType}}"><span data-tooltip="{{localize 'quantity'}}">#</span></a>
         </div>
         <div class="col eight center">
-            <i class="fa fa-anchor" title="{{localize 'Weight'}}"></i>
+            <i class="fa fa-anchor" data-tooltip="{{localize 'Weight'}}"></i>
         </div>
         <div class="col ten center">
-            <a class="item-create very-small" title="{{localize 'SHEET.addItem'}}" item-section="{{sid}}" data-type="{{section.dataType}}"><i class="fas fa-plus"></i></a>
+            <a class="item-create very-small" data-tooltip="{{localize 'SHEET.addItem'}}" item-section="{{sid}}" data-type="{{section.dataType}}"><i class="fas fa-plus"></i></a>
         </div>
     </div>
     <div class="row-section wrap rowtable inventory">
@@ -211,9 +211,9 @@
                 <div class="col">
                     <a class="item-edit {{#if item.consumable}}consume-item{{/if}}">{{item.name}}</a>
                 </div>
-                {{#if (or (eq ../../actor.data.merchant.merchantType "merchant") (eq ../../actor.data.merchant.merchantType "loot"))}}
-                <div class="col eight center" title="{{localize 'MERCHANT.untradable'}}">
-                    {{#if item.data.tradeLocked}}
+                {{#if (or (eq ../../actor.system.merchant.merchantType "merchant") (eq ../../actor.system.merchant.merchantType "loot"))}}
+                <div class="col eight center" data-tooltip="{{localize 'MERCHANT.untradable'}}">
+                    {{#if item.system.tradeLocked}}
                     <a class="item-tradeLock"><i class="fas fa-lock"></i></a> {{else}}
                     <a class="item-tradeLock"><i class="fas fa-unlock"></i></a> {{/if}}
                 </div>
@@ -223,21 +223,21 @@
                     <a class="item-toggle"><i class="far fa-check-circle"></i></a> {{else}}
                     <a class="item-toggle"><i class="far fa-circle"></i></a> {{/if}} {{/if}}
                 </div>
-                <div class="col four center setCustomPrice" title="{{localize 'MERCHANT.priceMod'}}">
+                <div class="col four center setCustomPrice" data-tooltip="{{localize 'MERCHANT.priceMod'}}">
                     {{item.defaultPrice}}<span class="priceTag">{{item.priceTag}}</span>
                     <input class="customPriceTag" type="number" data-dtype="Number" value="{{item.flags.dsa5.customPriceTag}}" />
                 </div>
                 <div class="col eight center">
-                    <a class="quantity-click">{{item.data.quantity.value}}</a>
+                    <a class="quantity-click">{{item.system.quantity.value}}</a>
                 </div>
                 <div class="col eight center">
                     {{item.weight}}
                 </div>
                 <div class="col ten very-small center">
-                    <a class="item-post" title="{{localize 'SHEET.PostItem'}}"><i class="fas fa-comment"></i></a>
-                    <a class="item-control item-edit" title="{{localize 'SHEET.EditItem'}}"><i class="fas fa-edit"></i></a>
-                    <a class="item-dropdown" title="{{localize 'SHEET.Dropdown'}}"><i class="fas fa-chevron-down"></i></a>
-                    <a class="item-control item-delete" title="{{localize 'SHEET.DeleteItem'}}"><i class="fas fa-trash"></i></a>
+                    <a class="item-post" data-tooltip="{{localize 'SHEET.PostItem'}}"><i class="fas fa-comment"></i></a>
+                    <a class="item-control item-edit" data-tooltip="{{localize 'SHEET.EditItem'}}"><i class="fas fa-edit"></i></a>
+                    <a class="item-dropdown" data-tooltip="{{localize 'SHEET.Dropdown'}}"><i class="fas fa-chevron-down"></i></a>
+                    <a class="item-control item-delete" data-tooltip="{{localize 'SHEET.DeleteItem'}}"><i class="fas fa-trash"></i></a>
                 </div>
             </div>
             <div class="row-section lineheight expandDetails {{item.detailed}}">

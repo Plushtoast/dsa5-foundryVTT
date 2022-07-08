@@ -80,7 +80,7 @@ export default function() {
 
     Token.prototype.incrementCondition = async function(effect, { active, overlay = false } = {}) {
         const existing = this.actor.effects.find(e => e.getFlag("core", "statusId") === effect.id);
-        if (!existing || Number.isNumeric(getProperty(existing, "data.flags.dsa5.value")))
+        if (!existing || Number.isNumeric(getProperty(existing, "flags.dsa5.value")))
             await this.actor.addCondition(effect.id, 1, false, false)
         else if (existing)
             await this.actor.removeCondition(effect.id, 1, false)
@@ -133,7 +133,6 @@ export default function() {
             overrides[newKey] = (overrides[newKey] || "") + value
 
             item.itemOverrides = foundry.utils.expandObject(overrides);
-            console.log(item)
         }
 
         return true

@@ -23,7 +23,7 @@ async function callMacro(packName, name, actor, item, qs, args = {}) {
         }
 
         if (documents.length) {
-            const body = `(async () => {${documents[0].data.command}})()`;
+            const body = `(async () => {${documents[0].system.command}})()`;
             const fn = Function("actor", "item", "qs", "automatedAnimation", "args", body);
             try {
                 args.result = result;
@@ -51,7 +51,7 @@ export default class DSAActiveEffectConfig extends ActiveEffectConfig {
     }
 
     static async onEffectRemove(actor, effect) {
-        const onRemoveMacro = getProperty(effect, "data.flags.dsa5.onRemove");
+        const onRemoveMacro = getProperty(effect, "flags.dsa5.onRemove");
         if (onRemoveMacro) {
             if (!game.user.can("MACRO_SCRIPT")) {
                 ui.notifications.warn(`You are not allowed to use JavaScript macros.`);
@@ -123,8 +123,8 @@ export default class DSAActiveEffectConfig extends ActiveEffectConfig {
 
     async _onSubmit(event, { updateData = null, preventClose = false, preventRender = false } = {}) {
         const inActor =
-            getProperty(this.object, "data.document.parent.documentName") != "Actor" &&
-            getProperty(this.object, "data.document.parent.parent");
+            getProperty(this.object, "system.document.parent.documentName") != "Actor" &&
+            getProperty(this.object, "system.document.parent.parent");
         if (inActor) ui.notifications.error(game.i18n.localize("DSAError.nestedEffectNotSupported"));
         return await super._onSubmit(event, { updateData, preventClose, preventRender });
     }
@@ -343,7 +343,7 @@ export default class DSAActiveEffectConfig extends ActiveEffectConfig {
             effects.push(...specEffects);
         }
 
-        let duration = getProperty(source, "data.duration.value") || "";
+        let duration = getProperty(source, "system.duration.value") || "";
         duration = duration.replace(" x ", " * ").replace(game.i18n.localize("CHARAbbrev.QS"), testData.qualityStep);
         try {
             const regexes = [
@@ -397,136 +397,136 @@ export default class DSAActiveEffectConfig extends ActiveEffectConfig {
         const miracle = `${game.i18n.localize('LocalizedIDs.miracle')}`
 
         let optns = [
-            { name: game.i18n.localize("protection"), val: "data.totalArmor", mode: 2, ph: "1" },
-            { name: game.i18n.localize("liturgyArmor"), val: "data.liturgyArmor", mode: 2, ph: "1" },
+            { name: game.i18n.localize("protection"), val: "system.totalArmor", mode: 2, ph: "1" },
+            { name: game.i18n.localize("liturgyArmor"), val: "system.liturgyArmor", mode: 2, ph: "1" },
             {
                 name: `${game.i18n.localize("resistanceModifier")} (${game.i18n.localize("condition")})`,
-                val: "data.resistances.effects",
+                val: "system.resistances.effects",
                 mode: 0,
                 ph: "inpain 1",
             },
-            { name: game.i18n.localize("spellArmor"), val: "data.spellArmor", mode: 2, ph: "1" },
-            { name: game.i18n.localize("carrycapacity"), val: "data.carryModifier", mode: 2, ph: "1" },
+            { name: game.i18n.localize("spellArmor"), val: "system.spellArmor", mode: 2, ph: "1" },
+            { name: game.i18n.localize("carrycapacity"), val: "system.carryModifier", mode: 2, ph: "1" },
             {
                 name: `${closeCombat} - ${game.i18n.localize("CHARAbbrev.AT")}`,
-                val: "data.meleeStats.attack",
+                val: "system.meleeStats.attack",
                 mode: 2,
                 ph: "1",
             },
             {
                 name: `${closeCombat} - ${game.i18n.localize("CHARAbbrev.PA")}`,
-                val: "data.meleeStats.parry",
+                val: "system.meleeStats.parry",
                 mode: 2,
                 ph: "1",
             },
             {
                 name: `${miracle} - ${game.i18n.localize("CHARAbbrev.AT")}`,
-                val: "data.miracle.attack",
+                val: "system.miracle.attack",
                 mode: 2,
                 ph: "1",
             },
             {
                 name: `${miracle} - ${game.i18n.localize("CHARAbbrev.PA")}`,
-                val: "data.miracle.parry",
+                val: "system.miracle.parry",
                 mode: 2,
                 ph: "1",
             },
             {
                 name: `${closeCombat} - ${game.i18n.localize("CHARAbbrev.damage")}`,
-                val: "data.meleeStats.damage",
+                val: "system.meleeStats.damage",
                 mode: 2,
                 ph: "1d6",
             },
             {
                 name: `${closeCombat} - ${game.i18n.localize("MODS.defenseMalus")}`,
-                val: "data.meleeStats.defenseMalus",
+                val: "system.meleeStats.defenseMalus",
                 mode: 2,
                 ph: "1",
             },
             {
                 name: game.i18n.localize("MODS.creatureBonus"),
-                val: "data.creatureBonus",
+                val: "system.creatureBonus",
                 mode: 0,
                 ph: `${game.i18n.localize("CONJURATION.elemental")} 1`,
             },
             {
                 name: `${rangeCombat} - ${game.i18n.localize("CHARAbbrev.AT")}`,
-                val: "data.rangeStats.attack",
+                val: "system.rangeStats.attack",
                 mode: 2,
                 ph: "1",
             },
             {
                 name: `${rangeCombat} - ${game.i18n.localize("CHARAbbrev.damage")}`,
-                val: "data.rangeStats.damage",
+                val: "system.rangeStats.damage",
                 mode: 2,
                 ph: "1d6",
             },
             {
                 name: `${rangeCombat} - ${game.i18n.localize("MODS.defenseMalus")}`,
-                val: "data.rangeStats.defenseMalus",
+                val: "system.rangeStats.defenseMalus",
                 mode: 2,
                 ph: "1",
             },
             {
                 name: `${game.i18n.localize("spell")} - ${game.i18n.localize("CHARAbbrev.damage")}`,
-                val: "data.spellStats.damage",
+                val: "system.spellStats.damage",
                 mode: 2,
                 ph: "1",
             },
             {
                 name: `${game.i18n.localize("liturgy")} - ${game.i18n.localize("CHARAbbrev.damage")}`,
-                val: "data.liturgyStats.damage",
+                val: "system.liturgyStats.damage",
                 mode: 2,
                 ph: "1",
             },
-            { name: KaPCost, val: "data.kapModifier", mode: 2, ph: "1" },
-            { name: AsPCost, val: "data.aspModifier", mode: 2, ph: "1" },
-            { name: `${skill} - ${FW}`, val: "data.skillModifiers.FW", mode: 0, ph: demo },
-            { name: `${skill} - ${FP}`, val: "data.skillModifiers.FP", mode: 0, ph: demo },
-            { name: `${skill} - ${stepValue}`, val: "data.skillModifiers.step", mode: 0, ph: demo },
-            { name: `${skill} - ${QS}`, val: "data.skillModifiers.QL", mode: 0, ph: demo },
-            { name: `${skill} - ${partChecks}`, val: "data.skillModifiers.TPM", mode: 0, ph: demo },
+            { name: KaPCost, val: "system.kapModifier", mode: 2, ph: "1" },
+            { name: AsPCost, val: "system.aspModifier", mode: 2, ph: "1" },
+            { name: `${skill} - ${FW}`, val: "system.skillModifiers.FW", mode: 0, ph: demo },
+            { name: `${skill} - ${FP}`, val: "system.skillModifiers.FP", mode: 0, ph: demo },
+            { name: `${skill} - ${stepValue}`, val: "system.skillModifiers.step", mode: 0, ph: demo },
+            { name: `${skill} - ${QS}`, val: "system.skillModifiers.QL", mode: 0, ph: demo },
+            { name: `${skill} - ${partChecks}`, val: "system.skillModifiers.TPM", mode: 0, ph: demo },
             {
                 name: `${game.i18n.localize("vulnerability")} - ${game.i18n.localize("combatskill")}`,
-                val: "data.vulnerabilities.combatskill",
+                val: "system.vulnerabilities.combatskill",
                 mode: 0,
                 ph: democs,
             },
 
-            { name: `${skill} - ${game.i18n.localize("MODS.global")}`, val: "data.skillModifiers.global", mode: 0, ph: "1" },
+            { name: `${skill} - ${game.i18n.localize("MODS.global")}`, val: "system.skillModifiers.global", mode: 0, ph: "1" },
             {
                 name: `${combatReg} - ${game.i18n.localize("wounds")}`,
-                val: "data.repeatingEffects.startOfRound.wounds",
+                val: "system.repeatingEffects.startOfRound.wounds",
                 mode: 0,
                 ph: "1d6",
             },
             {
                 name: `${combatReg} - ${game.i18n.localize("astralenergy")}`,
-                val: "data.repeatingEffects.startOfRound.astralenergy",
+                val: "system.repeatingEffects.startOfRound.astralenergy",
                 mode: 0,
                 ph: "1d6",
             },
             {
                 name: `${combatReg} - ${game.i18n.localize("karmaenergy")}`,
-                val: "data.repeatingEffects.startOfRound.karmaenergy",
+                val: "system.repeatingEffects.startOfRound.karmaenergy",
                 mode: 0,
                 ph: "1d6",
             },
             {
                 name: `${regenerate} - ${game.i18n.localize("wounds")}`,
-                val: "data.status.regeneration.LePgearmodifier",
+                val: "system.status.regeneration.LePgearmodifier",
                 mode: 2,
                 ph: "1",
             },
             {
                 name: `${regenerate} - ${game.i18n.localize("astralenergy")}`,
-                val: "data.status.regeneration.AsPgearmodifier",
+                val: "system.status.regeneration.AsPgearmodifier",
                 mode: 2,
                 ph: "1",
             },
             {
                 name: `${regenerate} - ${game.i18n.localize("karmaenergy")}`,
-                val: "data.status.regeneration.KaPgearmodifier",
+                val: "system.status.regeneration.KaPgearmodifier",
                 mode: 2,
                 ph: "1",
             },

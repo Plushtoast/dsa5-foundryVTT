@@ -2,46 +2,46 @@
     <header class="sheet-header">
         <div class="charname headerInput">
             <input class="input name" name="name" style="width:90%" type="text" value="{{actor.name}}" placeholder="{{localize 'Name'}}" />
-            <a class="actorDrag" title="{{localize 'TT.dragLink'}}"><i class="fas fa-link"></i></a>
+            <a class="actorDrag" data-tooltip="{{localize 'TT.dragLink'}}"><i class="fas fa-link"></i></a>
             <span class="label name">{{localize "Name"}}</span>
         </div>
         {{#if (ne merchantType 'loot')}}
         <div class="headerInput">
-            <input class="input species" name="data.details.species.value" type="text" value="{{actor.data.details.species.value}}" readonly placeholder="{{localize 'species'}}" />
+            <input class="input species" name="system.details.species.value" type="text" value="{{actor.system.details.species.value}}" readonly placeholder="{{localize 'species'}}" />
             <span class="label species">{{localize "species"}}</span>
         </div>
         <div id="field-careerlevel" class="headerInput">
-            <input class="input-details" name="data.details.career.value" type="text" value="{{actor.data.details.career.value}}" placeholder="{{localize 'career'}}" />
+            <input class="input-details" name="system.details.career.value" type="text" value="{{actor.system.details.career.value}}" placeholder="{{localize 'career'}}" />
             <span class="label-details">{{localize "career"}}</span>
         </div>
         {{/if}}
     </header>
 
     <div class="general">
-        <img class="charimg profile" src="{{actor.img}}" title="{{actor.name}}" {{#if (eq merchantType 'loot')}}style="margin-left: calc(50% - 57px)" {{/if}} data-edit="img">
+        <img class="charimg profile" src="{{actor.img}}" data-tooltip="{{actor.name}}" {{#if (eq merchantType 'loot')}}style="margin-left: calc(50% - 57px)" {{/if}} data-edit="img">
 
         <div class="row-section" style="width: 100%;margin-bottom: 20px">
             {{#if (ne merchantType 'loot')}}
             <div class="col">
                 <div class="row-section wrap charBtns">
-                    {{#each actor.data.characteristics as |ch c|}}
-                    <div title="{{localize ch.label}}" class="col eight center">
+                    {{#each actor.system.characteristics as |ch c|}}
+                    <div data-tooltip="{{localize ch.label}}" class="col eight center">
                         {{localize ch.abrev}}
                     </div>
                     {{/each}}
                 </div>
                 <div class="row-section wrap charBtns">
-                    {{#each actor.data.characteristics as |ch c|}}
+                    {{#each actor.system.characteristics as |ch c|}}
                     <div class="ch-value col eight center" data-char="{{c}}"><a class="d20 die-{{c}}">{{ch.value}}</a></div>
                     {{/each}}
                 </div>
                 {{> systems/dsa5/templates/actors/parts/healthbar.html}} {{#if actor.schips}}
                 <div class="row-section">
-                    <div class="col ten lineheight center" title="{{localize 'fatePoints'}}">
+                    <div class="col ten lineheight center" data-tooltip="{{localize 'fatePoints'}}">
                         {{localize 'CHARAbbrev.fatePoints'}}
                     </div>
-                    <div class="col eighty center" title="{{localize 'fatePoints'}}">
-                        <input class="dsahidden" type="text" name="data.status.fatePoints.value" data-dtype="Number" value="{{actor.data.status.fatePoints.value}}" /> {{#each actor.schips as |item i|}}
+                    <div class="col eighty center" data-tooltip="{{localize 'fatePoints'}}">
+                        <input class="dsahidden" type="text" name="system.status.fatePoints.value" data-dtype="Number" value="{{actor.system.status.fatePoints.value}}" /> {{#each actor.schips as |item i|}}
                         <a class="schip {{item.cssClass}}" data-val="{{item.value}}"></a> {{/each}}
                     </div>
                     <div class="col ten center">

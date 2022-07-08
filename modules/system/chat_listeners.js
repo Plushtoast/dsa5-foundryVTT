@@ -7,7 +7,7 @@ export default class DSA5ChatListeners {
     static chatListeners(html) {
         html.on('click', '.chat-condition', ev => { DSA5ChatListeners.postStatus($(ev.currentTarget).attr("data-id")) })
         html.on('click', '.openJournalBrowser', () => game.dsa5.apps.journalBrowser.render(true))
-        let helpButton = $(`<a class="button showHelp" title="${game.i18n.localize('HELP.showHelp')}"><i class="fas fa-question"></i></a>`)
+        let helpButton = $(`<a class="button showHelp" data-tooltip="${game.i18n.localize('HELP.showHelp')}"><i class="fas fa-question"></i></a>`)
         helpButton.click(() => { DSA5ChatListeners.getHelp() })
         $(html.find('.control-buttons')).prepend(helpButton)
         html.on('click', '.showPatchViewer', () => showPatchViewer())
@@ -15,15 +15,15 @@ export default class DSA5ChatListeners {
         html.on('click', '.panToToken', ev => DSA5ChatListeners.panToToken(ev))
     }
 
-    static async panToToken(ev){
+    static async panToToken(ev) {
         const token = await fromUuid(ev.currentTarget.dataset.uuid)
-        if(!token) return
+        if (!token) return
 
-        canvas.animatePan({x: token.data.x, y: token.data.y});
+        canvas.animatePan({ x: token.x, y: token.y });
 
-        if(!token.isOwner) return
+        if (!token.isOwner) return
 
-        token.object.control({releaseOthers: true});        
+        token.object.control({ releaseOthers: true });
     }
 
     static postStatus(id) {
@@ -65,7 +65,7 @@ export default class DSA5ChatListeners {
             skill = {
                 name: "3d20",
                 type: "skill",
-                data: {
+                system: {
                     "talentValue": { "value": 0 },
                     "characteristic1": { "value": "mu" },
                     "characteristic2": { "value": "kl" },

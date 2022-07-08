@@ -29,7 +29,7 @@ export default class CreatureType {
 
     static detectCreatureType(actor) {
         if (actor.type == "creature") {
-            const creatureClass = actor.data.creatureClass.value
+            const creatureClass = actor.system.creatureClass.value
             const types = Object.keys(CreatureType.creatureData.types).filter((x) => creatureClass.indexOf(x) >= 0)
             return types.map((x) => eval(`new ${CreatureType.creatureData.types[x]}(creatureClass)`))
         }
@@ -53,18 +53,18 @@ export default class CreatureType {
     }
 
     static addVulnerabilitiesToSource(actorData, source, situationalModifiers) {
-        const vulnerabilities = getProperty(actorData, "data.vulnerabilities")
+        const vulnerabilities = getProperty(actorData, "system.vulnerabilities")
         if (vulnerabilities) {
             if (["meleeweapon", "rangeweapon"].includes(source.type)) {
                 const toCombatskills = getProperty(vulnerabilities, "combatskill")
 
                 toCombatskills.reduce((prev, x) => {
-                    if (x.target == source.data.combatskill.value) {
+                    if (x.target == source.system.combatskill.value) {
                         const isBonus = /\*/.test(x.value) ? Number(x.value.replace("*", "")) > 1 : Number(x.value) > 0
                         const key = isBonus ? "WEAPON.vulnerableTo" : "WEAPON.resistantTo"
                         situationalModifiers.push(
                             ...CreatureType.buildDamageMod(
-                                `${game.i18n.format(key, { name: source.data.combatskill.value })} (${x.source})`,
+                                `${game.i18n.format(key, { name: source.system.combatskill.value })} (${x.source})`,
                                 x.value
                             )
                         )
@@ -83,8 +83,8 @@ export default class CreatureType {
     static creatureBonusDamage(actor, attacker) {
         const bonusModifiers = []
         if (actor.type == "creature") {
-            const mods = getProperty(attacker.data, "data.creatureBonus")
-            const creatureClass = actor.data.creatureClass.value
+            const mods = getProperty(attacker, "creatureBonus")
+            const creatureClass = actor.system.creatureClass.value
             for (let mod of mods) {
                 if (creatureClass.indexOf(mod.target) >= 0)
                     bonusModifiers.push(...this.buildDamageMod(mod.source, mod.value, true))
@@ -118,7 +118,7 @@ export default class CreatureType {
     }
 
     weaponAttributes(attackItem) {
-        return getProperty(attackItem, "data.effect.attributes") || ""
+        return getProperty(attackItem, "system.effect.attributes") || ""
     }
 
     getTypeByClass(className) {
@@ -198,10 +198,10 @@ class DemonType extends CreatureType {
         return CreatureType.buildDamageMod(this.getTypeByClass("DemonType"), "*0.5")
     }
     spellArmorModifier(actorData) {
-        return Number(actorData.data.status.soulpower.max)
+        return Number(actorData.system.status.soulpower.max)
     }
     spellResistanceModifier(actorData) {
-        return Number(actorData.data.status.soulpower.max)
+        return Number(actorData.system.status.soulpower.max)
     }
     ignoredCondition(condition) {
         return true
@@ -230,10 +230,10 @@ class ElementalType extends CreatureType {
         return CreatureType.buildDamageMod(this.getTypeByClass("ElementalType"), "*0.5")
     }
     spellArmorModifier(actorData) {
-        return Number(actorData.data.status.soulpower.max)
+        return Number(actorData.system.status.soulpower.max)
     }
     spellResistanceModifier(actorData) {
-        return Number(actorData.data.status.soulpower.max)
+        return Number(actorData.system.status.soulpower.max)
     }
     ignoredCondition(condition) {
         return true

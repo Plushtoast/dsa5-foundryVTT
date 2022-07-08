@@ -89,14 +89,14 @@ export default class MacroDSA5 {
                     actor.basicTest(setupData)
                 });
             case "skill":
-                return actor.setupSkill(item.data, bypassData, tokenId).then(setupData => {
+                return actor.setupSkill(item, bypassData, tokenId).then(setupData => {
                     actor.basicTest(setupData)
                 });
             case "ceremony":
             case "ritual":
             case "spell":
             case "liturgy":
-                return actor.setupSpell(item.data, bypassData, tokenId).then(setupData => {
+                return actor.setupSpell(item, bypassData, tokenId).then(setupData => {
                     actor.basicTest(setupData)
                 });
         }
