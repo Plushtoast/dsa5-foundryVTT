@@ -55,7 +55,7 @@ export default class MastersMenu {
     }
 }
 
-class DSAMenuLayer extends CanvasLayer {
+class DSAMenuLayer extends InteractionLayer {
     static get layerOptions() {
         return foundry.utils.mergeObject(super.layerOptions, {
             name: "dsamenu",
@@ -64,8 +64,7 @@ class DSAMenuLayer extends CanvasLayer {
             rotatableObjects: true,
             zIndex: 666,
         });
-    }
-    async _draw({ type = null, dimensions = null, color, alpha, gridColor, gridAlpha } = {}) {}
+    }    
 }
 
 class GameMasterMenu extends Application {

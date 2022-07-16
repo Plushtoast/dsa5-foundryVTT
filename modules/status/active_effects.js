@@ -102,7 +102,7 @@ export default class DSAActiveEffectConfig extends ActiveEffectConfig {
             .find(".tabs")
             .append(`<a class="item" data-tab="advanced"><i class="fas fa-shield-alt"></i>${game.i18n.localize("advanced")}</a>`);
         let template = await renderTemplate("systems/dsa5/templates/status/advanced_effect.html", {
-            effect: this.object.data,
+            effect: this.object,
             advancedFunctions,
             effectConfigs,
             config,
@@ -110,7 +110,7 @@ export default class DSAActiveEffectConfig extends ActiveEffectConfig {
         elem.find('.tab[data-tab="effects"]').after($(template));
 
         elem.find(".advancedSelector").change((ev) => {
-            let effect = this.object.data;
+            let effect = this.object;
             effect.flags.dsa5.advancedFunction = $(ev.currentTarget).val();
 
             renderTemplate("systems/dsa5/templates/status/advanced_functions.html", { effect, config }).then((template) => {

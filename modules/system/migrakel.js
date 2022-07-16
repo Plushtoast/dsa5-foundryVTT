@@ -32,11 +32,17 @@ export default class Migrakel {
     static async refreshStatusEffects(actor) {
         let removeEffects = [];
         for (let i of actor.effects) {
-            if (i.system.origin) {
-                let sourceItem = await fromUuid(i.system.origin);
+            if (i.origin) {
+                let sourceItem 
+                try{
+                    sourceItem = await fromUuid(i.origin);
+                }
+                catch(ev){}
+                
                 if (!sourceItem) {
                     removeEffects.push(i.id);
                 }
+                
             }
         }
         await actor.deleteEmbeddedDocuments("ActiveEffect", removeEffects);

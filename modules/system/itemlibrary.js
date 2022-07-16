@@ -542,7 +542,7 @@ export default class DSA5ItemLibrary extends Application {
         } else if (document == "JournalEntry") {
             promise = packs.map(p => p.getDocuments())
         } else {
-            promise = packs.map(p => p.getDocuments())
+            promise = packs.map(p => p.getDocuments({type: { $in: game.system.documentTypes.Item }}))
         }
 
         return Promise.all(promise).then(indexes => {

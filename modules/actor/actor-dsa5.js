@@ -296,10 +296,11 @@ export default class Actordsa5 extends Actor {
 
             if (e.origin) {
                 const id = e.origin.match(/[^.]+$/)[0];
-                let item = this.items.get(id);
+                const item = this.items.get(id);
                 if (item) {
                     let apply = true;
-                    switch (item.system.type) {
+                    
+                    switch (item.type) {
                         case "meleeweapon":
                         case "rangeweapon":
                         case "armor":
@@ -599,8 +600,8 @@ export default class Actordsa5 extends Actor {
         let meleeweapons = [];
 
         const magic = {
-            hasSpells: this.isMage,
-            hasPrayers: this.isPriest,
+            hasSpells: this.system.isMage,
+            hasPrayers: this.system.isPriest,
             liturgy: [],
             spell: [],
             ritual: [],
@@ -943,7 +944,7 @@ export default class Actordsa5 extends Actor {
             hasTrait,
             demonmarks,
             diseases,
-            itemModifiers: this.itemModifiers,
+            itemModifiers: this.system.itemModifiers,
             languagePoints: {
                 used: actorData.system.freeLanguagePoints ? actorData.system.freeLanguagePoints.used : 0,
                 available: actorData.system.freeLanguagePoints ? actorData.system.freeLanguagePoints.value : 0,
@@ -953,7 +954,7 @@ export default class Actordsa5 extends Actor {
             magic,
             traits,
             combatskills,
-            canAdvance: this.canAdvance,
+            canAdvance: this.system.canAdvance,
             sheetLocked: actorData.system.sheetLocked.value,
             allSkillsLeft: {
                 body: skills.body,
@@ -1031,7 +1032,7 @@ export default class Actordsa5 extends Actor {
                 if (!isNaN(vals[0])) {
                     if (
                         compensation &&
-                        i.system.type == "armor" && [game.i18n.localize("CHARAbbrev.INI").toLowerCase(), game.i18n.localize("CHARAbbrev.GS").toLowerCase()].includes(
+                        i.type == "armor" && [game.i18n.localize("CHARAbbrev.INI").toLowerCase(), game.i18n.localize("CHARAbbrev.GS").toLowerCase()].includes(
                             vals[1].toLowerCase()
                         )
                     ) {

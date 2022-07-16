@@ -80,7 +80,6 @@ export const connectHook = () => {
         if (data.type == "Item") {
             let item
             let sourceActor
-            console.log(data)
             if (data.uuid) {
                 item = await fromUuid(data.uuid)
                 if (item.parent) sourceActor = item.parent
