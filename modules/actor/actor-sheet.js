@@ -205,7 +205,7 @@ export default class ActorSheetDsa5 extends ActorSheet {
         const cost = DSA5_Utility._calculateAdvCost(advances, "E")
         if (await this._checkEnoughXP(cost)) {
             await this._updateAPs(cost, {
-                [`data.characteristics.${attr}.advances`]: Number(this.actor.system.characteristics[attr].advances) + 1
+                [`system.characteristics.${attr}.advances`]: Number(this.actor.system.characteristics[attr].advances) + 1
             })
         }
     }
@@ -215,7 +215,7 @@ export default class ActorSheetDsa5 extends ActorSheet {
         if (Number(this.actor.system.characteristics[attr].advances) > 0) {
             const cost = DSA5_Utility._calculateAdvCost(advances, "E", 0) * -1
             await this._updateAPs(cost, {
-                [`data.characteristics.${attr}.advances`]: Number(this.actor.system.characteristics[attr].advances) - 1
+                [`system.characteristics.${attr}.advances`]: Number(this.actor.system.characteristics[attr].advances) - 1
             })
         }
     }
@@ -225,7 +225,7 @@ export default class ActorSheetDsa5 extends ActorSheet {
         const cost = DSA5_Utility._calculateAdvCost(advances, "D")
         if (await this._checkEnoughXP(cost) && this._checkMaximumPointAdvancement(attr, advances + 1)) {
             await this._updateAPs(cost, {
-                [`data.status.${attr}.advances`]: Number(this.actor.system.status[attr].advances) + 1
+                [`system.status.${attr}.advances`]: Number(this.actor.system.status[attr].advances) + 1
             })
         }
     }
@@ -235,7 +235,7 @@ export default class ActorSheetDsa5 extends ActorSheet {
         if (advances > 0) {
             const cost = DSA5_Utility._calculateAdvCost(advances, "D", 0) * -1
             await this._updateAPs(cost, {
-                [`data.status.${attr}.advances`]: Number(this.actor.system.status[attr].advances) - 1
+                [`system.status.${attr}.advances`]: Number(this.actor.system.status[attr].advances) - 1
             })
         }
     }
