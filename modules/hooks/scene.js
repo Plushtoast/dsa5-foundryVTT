@@ -1,6 +1,6 @@
 export default function() {
     Hooks.on('preCreateScene', function(doc, createData, options, userId) {
-        if (!createData.gridUnits) doc.updateSource({ gridUnits: game.i18n.localize('gridUnits') })
+        if (!createData.grid.units) doc.updateSource({ grid: { units: game.i18n.localize('gridUnits') }})
     })
 
     Hooks.on('preCreateActiveEffect', function(doc, createData, options, userId) {

@@ -64,29 +64,29 @@ export default function() {
     }
 
     Hooks.on('preCreateToken', (token, data, options, userId) => {
-        const actor = game.actors.get(data.actorId);
+        const actor = token.actor
         if (!actor) return;
 
-        let update = {}
-
-        if (getProperty(actor, "merchant.merchantType") == "loot") {
-            mergeObject(update, { displayBars: 0 })
-        } else if (getProperty(actor, "config.autoBar")) {
-            mergeObject(update, { bar1: { attribute: "status.wounds" } })
+        let modify = {} 
+        if (getProperty(actor, "system.merchant.merchantType") == "loot") {
+            mergeObject(modify, { displayBars: 0 })
+        } else if (getProperty(actor, "system.config.autoBar")) {
+            mergeObject(modify, { bar1: { attribute: "status.wounds" } })
+            
             if (actor.system.isMage) {
-                mergeObject(update, { bar2: { attribute: "status.astralenergy" } });
+                mergeObject(modify, { bar2: { attribute: "status.astralenergy" } })
             } else if (actor.system.isPriest) {
-                mergeObject(update, { bar2: { attribute: "status.karmaenergy" } });
+                mergeObject(modify, { bar2: { attribute: "status.karmaenergy" } })
             } else {
-                mergeObject(update, { bar2: { attribute: "" } });
+                mergeObject(modify, { bar2: { attribute: "tbd" } })
             }
         }
-
-        if (actor.type == "creature" && getProperty(actor, "config.autoSize")) {
-            DSA5_Utility.calcTokenSize(actor, update)
+        
+        if (actor.type == "creature" && getProperty(actor, "system.config.autoSize")) {
+            DSA5_Utility.calcTokenSize(actor, modify)
         }
 
-        obfuscateName(actor, update)
-        token.updateSource(update)
+        obfuscateName(actor, modify)
+        token.updateSource(modify)
     })
 }

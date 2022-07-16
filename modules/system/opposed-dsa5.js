@@ -55,7 +55,7 @@ export default class OpposedDsa5 {
             speaker: actor.flags.oppose.speaker,
             testResult: attackMessage.flags.data.postData,
             messageId: attackMessage.id,
-            img: DSA5_Utility.getSpeaker(actor.flags.oppose.speaker).data.img
+            img: DSA5_Utility.getSpeaker(actor.flags.oppose.speaker).img
         };
         attacker.testResult.source = attackMessage.flags.data.preData.source
         if (attacker.testResult.ammo) attacker.testResult.source.effects.push(...attacker.testResult.ammo.effects)
@@ -64,7 +64,7 @@ export default class OpposedDsa5 {
             speaker: message.speaker,
             testResult,
             messageId: message.id,
-            img: actor.data.msg
+            img: actor.msg
         };
 
         let listOfDefenders = attackMessage.flags.data.defenderMessage ? Array.from(attackMessage.flags.data.defenderMessage) : [];
@@ -96,7 +96,7 @@ export default class OpposedDsa5 {
         let attacker;
 
         if (message.speaker.token)
-            attacker = canvas.tokens.get(message.speaker.token).data
+            attacker = canvas.tokens.get(message.speaker.token).document
         else
             attacker = actor.prototypeToken
 
@@ -117,7 +117,7 @@ export default class OpposedDsa5 {
                             targetSpeaker: {
                                 scene: target.scene.id,
                                 token: target.id,
-                                alias: target.data.name
+                                alias: target.document.name
                             }
                         }
                     })
@@ -166,11 +166,11 @@ export default class OpposedDsa5 {
 
     static opposeMessage(attacker, target, fail) {
         return `<div class ="opposed-message">
-            <b>${attacker.name}</b> ${game.i18n.localize("ROLL.Targeting")} <b>${target.data.name}</b> ${fail ? game.i18n.localize("ROLL.failed"): ""}
+            <b>${attacker.name}</b> ${game.i18n.localize("ROLL.Targeting")} <b>${target.document.name}</b> ${fail ? game.i18n.localize("ROLL.failed"): ""}
             </div>
             <div class = "opposed-tokens row-section">
-                <div class="col two attacker">${OpposedDsa5.videoOrImgTag(attacker.img)}</div>
-                <div class="col two defender">${OpposedDsa5.videoOrImgTag(target.data.img)}</div>
+                <div class="col two attacker">${OpposedDsa5.videoOrImgTag(attacker.texture.src)}</div>
+                <div class="col two defender">${OpposedDsa5.videoOrImgTag(target.document.texture.src)}</div>
             </div>
              `
     }
@@ -407,7 +407,7 @@ export default class OpposedDsa5 {
     }
 
     static _calculateOpposedDamage(attackerTest, defenderTest, options = {}) {
-        const actor = DSA5_Utility.getSpeaker(defenderTest.speaker).data
+        const actor = DSA5_Utility.getSpeaker(defenderTest.speaker)
         options.origin = attackerTest.source
         options.damage = attackerTest.damage
 
@@ -523,7 +523,7 @@ export default class OpposedDsa5 {
         let defender = {
             speaker: unopposeData.targetSpeaker,
             testResult: {
-                actor: target.actor.data,
+                actor: target.actor,
                 speaker: {
                     token: unopposeData.targetSpeaker.token
                 }

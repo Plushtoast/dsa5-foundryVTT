@@ -129,7 +129,7 @@ export default class CareerWizard extends WizardDSA5 {
 
         for (let k of value.split(",")) {
             let parsed = DSA5_Utility.parseAbilityString(k.trim())
-            let item = this.actor.system.items.find(x => types.includes(x.type) && x.name == parsed.original)
+            let item = this.actor.items.find(x => types.includes(x.type) && x.name == parsed.original)
             if (item) {
                 item = duplicate(item)
                 if (item.system.talentValue)
@@ -169,7 +169,7 @@ export default class CareerWizard extends WizardDSA5 {
         for (let k of blessings) {
             let name = k.trim()
             if (name == "") continue
-            let item = this.actor.system.items.find(x => type == x.type && x.name == name)
+            let item = this.actor.items.find(x => type == x.type && x.name == name)
             if (!item) {
                 item = this.items.find(x => type == x.type && x.name == name)
                 if (item) {

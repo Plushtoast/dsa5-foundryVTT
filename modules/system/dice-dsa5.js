@@ -220,8 +220,8 @@ export default class DiceDSA5 {
             }
 
             let attrs = ["LeP"]
-            if (testData.extra.actor.isMage) attrs.push("AsP")
-            if (testData.extra.actor.isPriest) attrs.push("KaP")
+            if (testData.extra.actor.system.isMage) attrs.push("AsP")
+            if (testData.extra.actor.system.isPriest) attrs.push("KaP")
             let index = 0
 
             const isSick = testData.extra.actor.effects.some((x) => getProperty(x, "flags.core.statusId") == "sick")
@@ -436,7 +436,7 @@ export default class DiceDSA5 {
 
     static async rollCombatTrait(testData) {
         let roll = testData.roll || await new Roll("1d20").evaluate({ async: true })
-        let source = testData.source.system == undefined ? testData.source : testData.source.system
+        let source = testData.source //.system == undefined ? testData.source : testData.source.system
         const isMelee = source.system.traitType.value == "meleeAttack"
         const isAttack = testData.mode == "attack"
         if (isMelee) {
@@ -1227,13 +1227,13 @@ export default class DiceDSA5 {
                 case "regenerate":
                     const leDie = [game.settings.get("dsa5", "lessRegeneration") ? "1d3" : "1d6"]
 
-                    if (testData.extra.actor.isMage) leDie.push("1d6")
-                    if (testData.extra.actor.isPriest) leDie.push("1d6")
+                    if (testData.extra.actor.system.isMage) leDie.push("1d6")
+                    if (testData.extra.actor.system.isPriest) leDie.push("1d6")
 
                     roll = await new Roll(leDie.join("+")).evaluate({ async: true })
                     mergeObject(roll.dice[0].options, d3dColors("mu"))
-                    if (testData.extra.actor.isMage) mergeObject(roll.dice[1].options, d3dColors("ge"))
-                    if (testData.extra.actor.isPriest) mergeObject(roll.dice[leDie.length - 1].options, d3dColors("in"))
+                    if (testData.extra.actor.system.isMage) mergeObject(roll.dice[1].options, d3dColors("ge"))
+                    if (testData.extra.actor.system.isPriest) mergeObject(roll.dice[leDie.length - 1].options, d3dColors("in"))
                     break
                 case "meleeweapon":
                 case "rangeweapon":

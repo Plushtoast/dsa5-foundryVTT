@@ -59,7 +59,7 @@ export default class BookWizard extends Application {
     async _render(force = false, options = {}) {
         await super._render(force, options)
 
-        $(this._element).find('.library').attr("title", game.i18n.localize("Book.home"))
+        $(this._element).find('.library').attr("data-tooltip", game.i18n.localize("Book.home"))
     }
 
     _showBooks() {

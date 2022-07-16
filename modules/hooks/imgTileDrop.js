@@ -8,7 +8,7 @@ export function bindImgToCanvasDragStart(html, selector = "img") {
 }
 
 const dragTileImg = (event) => {
-    canvas.activateLayer("background")
+    canvas.tiles.activate()
     const imgPath = event.currentTarget.src
     const img = event.currentTarget
     const ratioY = canvas.dimensions.sceneHeight / img.naturalHeight
@@ -17,7 +17,7 @@ const dragTileImg = (event) => {
     const tileSize = Math.round(canvas.dimensions.size / ratio);
     let dragData = {
         type: "Tile",
-        img: imgPath,
+        texture: {src: imgPath},
         tileSize
     };
     event.dataTransfer.setData("text/plain", JSON.stringify(dragData));

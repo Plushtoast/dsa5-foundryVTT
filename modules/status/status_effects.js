@@ -154,18 +154,23 @@ export default class DSA5StatusEffects {
         return result
     }
 
-    static async removeEffect(actor, existing, value, absolute, auto) {
-        if (auto)
-            existing.flags.dsa5.auto = absolute ? value : Math.max(0, existing.flags.dsa5.auto - value)
-        else
-            existing.flags.dsa5.manual = absolute ? value : existing.flags.dsa5.manual - value
+    static async removeEffect(actor, existing, value, absolute, autoMode) {
+        const auto = autoMode ? (absolute ? value : Math.max(0, existing.flags.dsa5.auto - value)) : existing.flags.dsa5.auto
+        const manual = autoMode ? existing.flags.dsa5.manual : (absolute ? value : Math.max(0, existing.flags.dsa5.manual - value))
+        const update = {
+            flags: {
+                dsa5: { 
+                    auto,
+                    manual,
+                    value: Math.max(0, Math.min(existing.flags.dsa5.max, manual + auto))
+                }
+            }
+        }   
 
-        existing.flags.dsa5.value = Math.max(0, Math.min(existing.flags.dsa5.max, existing.flags.dsa5.manual + existing.flags.dsa5.auto))
-
-        if (existing.flags.dsa5.auto <= 0 && existing.flags.dsa5.manual == 0)
+        if (update.flags.dsa5.auto <= 0 && update.flags.dsa5.manual == 0)
             return await actor.deleteEmbeddedDocuments("ActiveEffect", [existing.id])
         else
-            return await actor.updateEmbeddedDocuments("ActiveEffect", [existing.data])
+            return await existing.update(update)
     }
 
     static async updateEffect(actor, existing, value, absolute, auto, newEffect = undefined) {

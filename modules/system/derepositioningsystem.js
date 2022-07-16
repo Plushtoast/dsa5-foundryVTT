@@ -1,9 +1,9 @@
 export default class DPS {
     static rangeFinder(tokenSource, tokenTarget) {
-        const gridSize = canvas.scene.system.grid
+        const gridSize = canvas.scene.grid.size
         const ray = new Ray(tokenSource, tokenTarget)
         const tileDistance = ray.distance / gridSize
-        const distance = tileDistance * canvas.scene.system.gridDistance
+        const distance = tileDistance * canvas.scene.grid.distance
         const elevation = Math.abs((getProperty(tokenSource, "system.elevation") || 0) - (getProperty(tokenTarget, "system.elevation") || 0))
         const distanceSum = Math.hypot(distance, elevation)
         return {
@@ -11,7 +11,7 @@ export default class DPS {
             distance,
             distanceSum,
             tileDistance,
-            unit: canvas.scene.system.gridUnits
+            unit: canvas.scene.grid.units
         }
     }
 

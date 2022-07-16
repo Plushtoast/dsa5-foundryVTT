@@ -28,14 +28,14 @@ export default class ActorSheetDsa5 extends ActorSheet {
 
         let elem = $(this._element)
 
-        elem.find(".close").attr("title", game.i18n.localize("SHEET.Close"));
-        elem.find(".configure-sheet").attr("title", game.i18n.localize("SHEET.Configure"));
-        elem.find(".configure-token").attr("title", game.i18n.localize("SHEET.Token"));
-        elem.find(".import").attr("title", game.i18n.localize("SHEET.Import"));
-        elem.find(".locksheet").attr("title", game.i18n.localize("SHEET.Lock"));
-        elem.find(".library").attr("title", game.i18n.localize("SHEET.Library"));
-        elem.find(".playerview").attr("title", game.i18n.localize("SHEET.switchLimited"));
-        elem.find(".actorConfig").attr("title", game.i18n.localize("SHEET.actorConfig"));
+        elem.find(".close").attr("data-tooltip", game.i18n.localize("SHEET.Close"));
+        elem.find(".configure-sheet").attr("data-tooltip", game.i18n.localize("SHEET.Configure"));
+        elem.find(".configure-token").attr("data-tooltip", game.i18n.localize("SHEET.Token"));
+        elem.find(".import").attr("data-tooltip", game.i18n.localize("SHEET.Import"));
+        elem.find(".locksheet").attr("data-tooltip", game.i18n.localize("SHEET.Lock"));
+        elem.find(".library").attr("data-tooltip", game.i18n.localize("SHEET.Library"));
+        elem.find(".playerview").attr("data-tooltip", game.i18n.localize("SHEET.switchLimited"));
+        elem.find(".actorConfig").attr("data-tooltip", game.i18n.localize("SHEET.actorConfig"));
 
         if (this.currentFocus) {
             elem.find('[data-item-id="' + this.currentFocus + '"] input').focus().select();
@@ -756,7 +756,7 @@ export default class ActorSheetDsa5 extends ActorSheet {
             let conditions = $(this.form).find('.statusEffectMenu li:not(.search)')
             conditions.removeClass('filterHide')
             conditions.filter(function() {
-                return $(this).find('a').attr('title').toLowerCase().trim().indexOf(val) == -1
+                return $(this).find('a').attr('data-tooltip').toLowerCase().trim().indexOf(val) == -1
             }).addClass('filterHide')
         }
     }

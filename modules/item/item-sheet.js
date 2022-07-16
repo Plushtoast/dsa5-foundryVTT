@@ -62,14 +62,14 @@ export default class ItemSheetdsa5 extends ItemSheet {
     async _render(force = false, options = {}) {
         await super._render(force, options);
 
-        $(this._element).find(".close").attr("title", game.i18n.localize("SHEET.Close"));
-        $(this._element).find(".configure-sheet").attr("title", game.i18n.localize("SHEET.Configure"));
-        $(this._element).find(".import").attr("title", game.i18n.localize("SHEET.Import"));
-        $(this._element).find(".rolleffect").attr("title", game.i18n.localize("SHEET.RollEffect"));
-        $(this._element).find(".showItemHead").attr("title", game.i18n.localize("SHEET.PostItem"));
-        $(this._element).find(".consumeItem").attr("title", game.i18n.localize("SHEET.ConsumeItem"));
-        $(this._element).find(".rollDamaged").attr("title", game.i18n.localize("DSASETTINGS.armorAndWeaponDamage"));
-        $(this._element).find(".onUseEffect").attr("title", game.i18n.localize("SHEET.onUseEffect"))
+        $(this._element).find(".close").attr("data-tooltip", game.i18n.localize("SHEET.Close"));
+        $(this._element).find(".configure-sheet").attr("data-tooltip", game.i18n.localize("SHEET.Configure"));
+        $(this._element).find(".import").attr("data-tooltip", game.i18n.localize("SHEET.Import"));
+        $(this._element).find(".rolleffect").attr("data-tooltip", game.i18n.localize("SHEET.RollEffect"));
+        $(this._element).find(".showItemHead").attr("data-tooltip", game.i18n.localize("SHEET.PostItem"));
+        $(this._element).find(".consumeItem").attr("data-tooltip", game.i18n.localize("SHEET.ConsumeItem"));
+        $(this._element).find(".rollDamaged").attr("data-tooltip", game.i18n.localize("DSASETTINGS.armorAndWeaponDamage"));
+        $(this._element).find(".onUseEffect").attr("data-tooltip", game.i18n.localize("SHEET.onUseEffect"))
     }
 
     _getHeaderButtons() {

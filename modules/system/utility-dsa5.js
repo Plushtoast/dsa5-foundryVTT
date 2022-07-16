@@ -47,8 +47,9 @@ export default class DSA5_Utility {
         let tokenSize = game.dsa5.config.tokenSizeCategories[actorData.system.status.size.value]
         if (tokenSize) {
             if (tokenSize < 1) {
-                data.scale = tokenSize;
-                data.width = data.height = 1;
+                //data.scale = tokenSize;
+                //data.width = data.height = 1;
+                data.width = data.height = tokenSize;
             } else {
                 const int = Math.floor(tokenSize);
                 data.width = data.height = int;
@@ -152,7 +153,6 @@ export default class DSA5_Utility {
     }
 
     static async getFolderForType(documentType, parent = null, folderName = null, sort = 0, color = "") {
-        console.log(folderName, documentType, parent)
         let folder = await game.folders.contents.find(x => x.name == folderName && x.type == documentType && x.folder?.id == parent)
         if (!folder) {
             folder = await Folder.create({
@@ -175,7 +175,7 @@ export default class DSA5_Utility {
         new ImagePopout(img, {
             title: hide ? (isOwner ? name : "-") : name,
             shareable: true,
-            uuid: uuid
+            uuid
         }).render(true)
     }
 

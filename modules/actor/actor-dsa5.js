@@ -1561,8 +1561,8 @@ export default class Actordsa5 extends Actor {
       },
     };
 
-    testData.extra.actor.isMage = this.isMage;
-    testData.extra.actor.isPriest = this.isPriest;
+    testData.extra.actor.isMage = this.system.isMage;
+    testData.extra.actor.isPriest = this.system.isPriest;
     let situationalModifiers = DSA5StatusEffects.getRollModifiers(testData.extra.actor, testData.source);
     let dialogOptions = {
       title: title,
@@ -1571,8 +1571,8 @@ export default class Actordsa5 extends Actor {
         rollMode: options.rollMode,
         regenerationInterruptOptions: DSA5.regenerationInterruptOptions,
         regnerationCampLocations: DSA5.regnerationCampLocations,
-        showAspModifier: this.isMage,
-        showKapModifier: this.isPriest,
+        showAspModifier: this.system.isMage,
+        showKapModifier: this.system.isPriest,
         situationalModifiers,
         modifier: options.modifier || 0,
       },

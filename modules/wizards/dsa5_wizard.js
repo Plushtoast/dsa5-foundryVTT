@@ -48,7 +48,7 @@ export default class WizardDSA5 extends Application {
                         name: parsed.name,
                         step: parsed.step,
                         attributeRequirement: true,
-                        data: {
+                        system: {
                             APValue: {
                                 value: cost
                             }

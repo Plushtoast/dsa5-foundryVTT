@@ -83,7 +83,7 @@ export default class CreatureType {
     static creatureBonusDamage(actor, attacker) {
         const bonusModifiers = []
         if (actor.type == "creature") {
-            const mods = getProperty(attacker, "creatureBonus")
+            const mods = getProperty(attacker, "system.creatureBonus")
             const creatureClass = actor.system.creatureClass.value
             for (let mod of mods) {
                 if (creatureClass.indexOf(mod.target) >= 0)
