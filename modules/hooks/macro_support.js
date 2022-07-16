@@ -29,13 +29,13 @@ export default function() {
             await createHotBarMacro(command, item.name, item.img, slot)
 
         } else if (data.type == "Item") {
-            let possibleItems = ["ritual", "ceremony", "meleeweapon", "rangeweapon", "skill", "combatskill", "spell", "liturgy", "char", "trait"]
-            if (!possibleItems.includes(data.system.type))
+            const possibleItems = ["ritual", "ceremony", "meleeweapon", "rangeweapon", "skill", "combatskill", "spell", "liturgy", "char", "trait"]
+            if (!possibleItems.includes(data.data.type))
                 return
 
-            if ((data.system.type == "meleeweapon" || data.system.type == "combatskill") && !['attack', 'parry'].includes(data.mod)) {
+            if ((data.data.type == "meleeweapon" || data.data.type == "combatskill") && !['attack', 'parry'].includes(data.mod)) {
                 return
-            } else if ((data.system.type == "rangeweapon" || data.system.type == "trait") && !['attack'].includes(data.mod)) {
+            } else if ((data.data.type == "rangeweapon" || data.data.type == "trait") && !['attack'].includes(data.mod)) {
                 return
             }
             let item = data.data
@@ -48,17 +48,11 @@ export default function() {
             }
             let name = data.mod == undefined ? item.name : `${item.name} - ${game.i18n.localize("CHAR." + data.mod.toUpperCase())}`
             await createHotBarMacro(command, name, item.img, slot)
-        } else
-        if (data.type == "Actor") {
-            let actor = game.actors.get(data.id);
-            let command = `game.actors.get("${data.id}").sheet.render(true)`
+        } else if (data.type == "Actor" || data.type == "JournalEntry") {
+            const elem = await fromUuid(data.uuid)
+            let command = `(await fromUuid('${data.uuid}')).sheet.render(true)`
 
-            await createHotBarMacro(command, actor.name, actor.img, slot)
-        } else if (data.type == "JournalEntry") {
-            let journal = game.journal.get(data.id);
-            let command = `game.journal.get("${data.id}").sheet.render(true)`
-
-            await createHotBarMacro(command, journal.name, journal.img, slot)
+            await createHotBarMacro(command, elem.name, elem.img, slot)
         }
         return false;
     });
@@ -68,10 +62,10 @@ async function createHotBarMacro(command, name, img, slot) {
     let macro = game.macros.contents.find(m => (m.name === name) && (m.command === command));
     if (!macro) {
         macro = await Macro.create({
-            name: name,
+            name,
             type: "script",
-            img: img,
-            command: command
+            img,
+            command
         }, { displaySheet: false })
 
     }

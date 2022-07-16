@@ -5,6 +5,7 @@ import AdvantageRulesDSA5 from "../system/advantage-rules-dsa5.js"
 import { slist } from "../system/view_helper.js"
 import PlayerMenu from "./player_menu.js"
 import RequestRoll from "../system/request-roll.js"
+import ActorSheetDsa5 from "../actor/actor-sheet.js"
 
 export default class MastersMenu {
     static registerButtons() {
@@ -394,10 +395,11 @@ class GameMasterMenu extends Application {
         let data;
         try {
             data = JSON.parse(event.dataTransfer.getData('text/plain'));
+            data = await Actor.implementation.fromDropData(data)
         } catch (err) {
             return false;
         }
-        if (data.type == "Actor") {
+        if (data.documentName == "Actor") {
             let tracked = game.settings.get("dsa5", "trackedActors")
             tracked = tracked.actors || []
             if (tracked.indexOf(data.id) == -1 && !data.pack) {

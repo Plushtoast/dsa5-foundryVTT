@@ -139,17 +139,17 @@ export default function() {
     }
 
     const applyCustomEffect = (elem, change) => {
-        let current = getProperty(elem.data, change.key) || null
-        if (current == null && /^data\.(vulnerabilities|resistances)/.test(change.key)) {
+        let current = getProperty(elem, change.key) || null
+        if (current == null && /^system\.(vulnerabilities|resistances)/.test(change.key)) {
             current = []
-            setProperty(elem.data, change.key, current)
+            setProperty(elem, change.key, current)
         }
         const ct = getType(current)
         let update = null
         switch (ct) {
             case "Array":
                 let newElems = []
-                const source = change.effect.data.label
+                const source = change.effect.label
                 for (let elem of `${change.value}`.split(/[;,]+/)) {
                     let vals = elem.split(" ")
                     const value = vals.pop()
@@ -158,7 +158,7 @@ export default function() {
                 }
                 update = current.concat(newElems)
         }
-        if (update !== null) setProperty(elem.data, change.key, update)
+        if (update !== null) setProperty(elem, change.key, update)
         return update
     }
 

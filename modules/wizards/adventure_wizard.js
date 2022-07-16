@@ -176,10 +176,10 @@ export default class BookWizard extends Application {
     }
 
     async loadJournal(name) {
-        this.showJournal(this.journals.find(x => { return x.name == name && x.flags.dsa5.parent == this.selectedChapter }))
+        this.showJournal(this.journals.find(x => x.name == name && x.flags.dsa5.parent == this.selectedChapter ))
     }
     async loadJournalById(id) {
-        this.showJournal(this.journals.find(x => { return x.id == id }))
+        this.showJournal(this.journals.find(x => x.id == id))
     }
 
     async resaveBreadCrumbs(target) {
@@ -212,7 +212,6 @@ export default class BookWizard extends Application {
                             }
                         });
                         await this.journalIndex.add(this.journals.map(x => new JournalSearch(x)))
-
                     }
                     result = await this.journalIndex.search(val)
                 } else {
@@ -236,8 +235,9 @@ export default class BookWizard extends Application {
     }
 
     showJournal(journal) {
-        let content = journal.system.content
-        if (!content) content = `<img src="${journal.system.img}"/>`
+        let content = journal.pages.find(x => true).text.content
+
+        if (!content) content = `<img src="${journal.img}"/>`
 
         const pinIcon = this.findSceneNote(journal.getFlag("dsa5", "initId"))
 
@@ -365,7 +365,7 @@ export default class BookWizard extends Application {
                 if (chapter.scenes || chapter.actors || subChapters.length == 0) {
                     return await renderTemplate('systems/dsa5/templates/wizard/adventure/adventure_chapter.html', { chapter, subChapters: this.getSubChapters(), actors: await this.prefillActors(chapter) })
                 } else {
-                    return await this.loadJournal(subChapters[0])
+                    return await this.loadJournal(subChapters[0].name)
                 }
 
             }
@@ -499,7 +499,7 @@ class InitializerForm extends FormApplication {
 
 class JournalSearch {
     constructor(item) {
-        let data = getProperty(item, "system.content")
+        const data = item.pages.find(x => true).text.content
         this.document = {
             name: item.name,
             data: $("<div>").html(data).text(),

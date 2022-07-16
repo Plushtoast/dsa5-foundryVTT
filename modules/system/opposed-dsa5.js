@@ -98,7 +98,7 @@ export default class OpposedDsa5 {
         if (message.speaker.token)
             attacker = canvas.tokens.get(message.speaker.token).data
         else
-            attacker = actor.data.token
+            attacker = actor.prototypeToken
 
         if (testResult.successLevel > 0) {
             let attackOfOpportunity = message.flags.data.preData.attackOfOpportunity

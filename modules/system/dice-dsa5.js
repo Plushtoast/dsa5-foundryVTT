@@ -1376,8 +1376,8 @@ export default class DiceDSA5 {
             return renderTemplate(chatOptions.template, chatData).then((html) => {
                 //Seems to be a foundry bug, after edit inline rolls are not converted anymore
                 const actor =
-                    ChatMessage.getSpeakerActor(rerenderMessage.data.speaker) ||
-                    game.users.get(rerenderMessage.data.user).character
+                    ChatMessage.getSpeakerActor(rerenderMessage.speaker) ||
+                    game.users.get(rerenderMessage.user).character
                 const rollData = actor ? actor.getRollData() : {}
                 chatOptions["content"] = TextEditor.enrichHTML(html, rollData)
 

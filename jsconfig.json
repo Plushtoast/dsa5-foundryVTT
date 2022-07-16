@@ -1,0 +1,11 @@
+{
+  "compilerOptions": {
+    "module": "commonjs",
+    "target": "es2022"
+  },
+  "include": [
+    "./**/*",
+    "/mnt/d/FoundryVTT-10.272/resources/app/public/scripts/foundry.js",
+    "/mnt/d/FoundryVTT-10.272/resources/app/public/scripts/commons.js"
+  ]
+}

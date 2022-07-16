@@ -21,10 +21,10 @@ async function migrateDSA(currentVersion, migrationVersion) {
 }
 
 export async function showPatchViewer() {
-    await fetch("systems/dsa5/lazy/updatenotes.json").then(async r => r.json()).then(async json => {
-        const patchViewer = new PatchViewer(json)
-        patchViewer.render(true)
-    })
+    const notes = await fetch("systems/dsa5/lazy/updatenotes.json")
+    const json = await notes.json()
+    const patchViewer = new PatchViewer(json)
+    patchViewer.render(true)
 }
 
 export default function migrateWorld() {
@@ -33,7 +33,7 @@ export default function migrateWorld() {
 
         await setupDefaulTokenConfig()
         const currentVersion = await game.settings.get("dsa5", "migrationVersion")
-        const NEEDS_MIGRATION_VERSION = 17
+        const NEEDS_MIGRATION_VERSION = 18
         const needsMigration = currentVersion < NEEDS_MIGRATION_VERSION
 
         if (!needsMigration) return;

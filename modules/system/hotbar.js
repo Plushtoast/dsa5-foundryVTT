@@ -26,9 +26,9 @@ export default class DSA5Hotbar extends Hotbar {
         for (const macro of this.macros) {
             if (!macro.macro) continue
 
-            if (parry.test(macro.macro.system.name)) {
+            if (parry.test(macro.macro.name)) {
                 macroList.find(`[data-macro-id="${macro.macro.id}"]`).addClass("parry")
-            } else if (attack.test(macro.macro.system.name)) {
+            } else if (attack.test(macro.macro.name)) {
                 macroList.find(`[data-macro-id="${macro.macro.id}"]`).addClass("attack")
             }
         }

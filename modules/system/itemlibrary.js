@@ -3,16 +3,15 @@ import ADVANCEDFILTERS from "./itemlibrary_advanced_filters.js"
 
 //TODO merge existing index with advanced details
 //TODO create index with getIndex(fields)
+//TODO check if we can use the uuid right from the start
 
 class SearchDocument {
     constructor(item, pack = {}) {
-        let filterType = item.documentName || getProperty(item, "type")
+        let filterType = item.documentName || item.type
         switch (item.documentName) {
+            case 'Actor':
             case 'Item':
                 filterType = item.type
-                break
-            case 'Actor':
-                filterType = item.data.type
                 break
         }
         let data = ""
@@ -594,7 +593,7 @@ export default class DSA5ItemLibrary extends Application {
 
             const { index, itemType } = this.selectIndex(category)
             const worldStuff = itemType == "Item" ? game.items : game.actors
-            let items = worldStuff.filter(x => x.visible && x.data.type == subcategory).map(x => new AdvancedSearchDocument(x, subcategory))
+            let items = worldStuff.filter(x => x.visible && x.type == subcategory).map(x => new AdvancedSearchDocument(x, subcategory))
 
             const result = index.search(subcategory, { field: ["itemType"] })
             const pids = {}

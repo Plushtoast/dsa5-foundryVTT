@@ -40,12 +40,12 @@ export const MerchantSheetMixin = (superclass) => class extends superclass {
     }
 
     async allowMerchant(ids, allow) {
-        let curPermissions = duplicate(this.actor.data.permission)
+        let curPermissions = duplicate(this.actor.ownership)
         const newPerm = allow ? 1 : 0
         for (const id of ids) {
             curPermissions[id] = newPerm
         }
-        await this.actor.update({ permission: curPermissions }, { diff: false, recursive: false, noHook: true })
+        await this.actor.update({ ownership: curPermissions }, { diff: false, recursive: false, noHook: true })
     }
 
     activateListeners(html) {

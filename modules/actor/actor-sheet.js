@@ -16,7 +16,7 @@ import DSA5ChatAutoCompletion from "../system/chat_autocompletion.js";
 
 export default class ActorSheetDsa5 extends ActorSheet {
     get actorType() {
-        return this.actor.system.type;
+        return this.actor.type;
     }
 
     async _render(force = false, options = {}) {
@@ -116,7 +116,7 @@ export default class ActorSheetDsa5 extends ActorSheet {
 
     async getData(options) {
         const baseData = await super.getData(options);
-        const sheetData = { actor: baseData.actor.data, editable: baseData.editable, limited: baseData.limited, owner: baseData.owner }
+        const sheetData = { actor: baseData.actor, editable: baseData.editable, limited: baseData.limited, owner: baseData.owner }
         const prepare = this.actor.prepareSheet({ details: this.openDetails })
         mergeObject(sheetData.actor, prepare)
 
@@ -653,13 +653,13 @@ export default class ActorSheetDsa5 extends ActorSheet {
             ev.currentTarget.querySelectorAll('.hovermenu').forEach(e => e.remove());
         });
 
-        const id = this.actor.id
+        const uuid = this.actor.uuid
         html.find('.actorDrag').each(function(i, cond) {
             cond.setAttribute("draggable", true);
             cond.addEventListener("dragstart", ev => {
                 let dataTransfer = {
                     type: "Actor",
-                    id
+                    uuid
                 }
                 ev.dataTransfer.setData("text/plain", JSON.stringify(dataTransfer));
             });

@@ -2,19 +2,19 @@
     <header id="combat-round">
         {{#if user.isGM}}
         <nav class="encounters flexrow">
-            <a class="combat-create" data-tooltip="oltip="{{localize 'COMBAT.Create'}}">
+            <a class="combat-create" data-tooltip="{{localize 'COMBAT.Create'}}">
                 <i class="fas fa-plus"></i>
             </a>
             {{#if combatCount}}
-            <a class="combat-cycle" data-tooltip="oltip="{{localize 'COMBAT.EncounterPrevious'}}" {{#if previousId}}data-combat-id="{{previousId}}" {{else}}disabled{{/if}}>
+            <a class="combat-cycle" data-tooltip="{{localize 'COMBAT.EncounterPrevious'}}" {{#if previousId}}data-combat-id="{{previousId}}" {{else}}disabled{{/if}}>
                 <i class="fas fa-caret-left"></i>
             </a>
             <h4 class="encounter">{{localize "COMBAT.Encounter"}} {{currentIndex}} / {{combatCount}}</h4>
-            <a class="combat-cycle" data-tooltip="oltip="{{localize 'COMBAT.EncounterNext'}}" {{#if nextId}}data-combat-id="{{nextId}}" {{else}}disabled{{/if}}>
+            <a class="combat-cycle" data-tooltip="{{localize 'COMBAT.EncounterNext'}}" {{#if nextId}}data-combat-id="{{nextId}}" {{else}}disabled{{/if}}>
                 <i class="fas fa-caret-right"></i>
             </a>
             {{/if}}
-            <a class="combat-control" data-tooltip="oltip="{{localize 'COMBAT.Delete'}}" data-control="endCombat" {{#unless combatCount}}disabled{{/unless}}>
+            <a class="combat-control" data-tooltip="{{localize 'COMBAT.Delete'}}" data-control="endCombat" {{#unless combatCount}}disabled{{/unless}}>
                 <i class="fas fa-trash"></i>
             </a>
         </nav>
@@ -22,10 +22,10 @@
 
         <nav class="encounters flexrow">
             {{#if user.isGM}}
-            <a class="combat-control" data-tooltip="oltip="{{localize 'COMBAT.RollAll'}}" data-control="rollAll" {{#unless turns}}disabled{{/unless}}>
+            <a class="combat-control" data-tooltip="{{localize 'COMBAT.RollAll'}}" data-control="rollAll" {{#unless turns}}disabled{{/unless}}>
                 <i class="fas fa-users"></i>
             </a>
-            <a class="combat-control" data-tooltip="oltip="{{localize 'COMBAT.RollNPC'}}" data-control="rollNPC" {{#unless turns}}disabled{{/unless}}>
+            <a class="combat-control" data-tooltip="{{localize 'COMBAT.RollNPC'}}" data-control="rollNPC" {{#unless turns}}disabled{{/unless}}>
                 <i class="fas fa-users-cog"></i>
             </a>
             {{/if}} {{#if combatCount}} {{#if combat.round}}
@@ -35,14 +35,14 @@
             {{/if}} {{else}}
             <h3>{{localize "COMBAT.None"}}</h3>
             {{/if}} {{#if user.isGM}}
-            <a class="combat-control" data-tooltip="oltip="{{localize 'COMBAT.InitiativeReset'}}" data-control="resetAll" {{#unless hasCombat}}disabled{{/unless}}>
+            <a class="combat-control" data-tooltip="{{localize 'COMBAT.InitiativeReset'}}" data-control="resetAll" {{#unless hasCombat}}disabled{{/unless}}>
                 <i class="fas fa-undo"></i>
             </a>
-            <a class="combat-control" data-tooltip="oltip="{{labels.scope}}"
+            <a class="combat-control" data-tooltip="{{labels.scope}}"
                 data-control="toggleSceneLink" {{#unless hasCombat}}disabled{{/unless}}>
                 <i class="fas fa-{{#unless linked}}un{{/unless}}link"></i>
             </a>
-            <a class="combat-settings" data-tooltip="oltip="{{localize 'COMBAT.Settings'}}" data-control="trackerSettings">
+            <a class="combat-settings" data-tooltip="{{localize 'COMBAT.Settings'}}" data-control="trackerSettings">
                 <i class="fas fa-cog"></i>
             </a>
             {{/if}}
@@ -52,12 +52,12 @@
     <ol id="combat-tracker" class="directory-list">
         {{#each turns}}
         <li class="combatant actor directory-item flexrow {{this.css}}" data-combatant-id="{{this.id}}">
-            <div class="aggroButton specImg" data-tooltip="oltip="{{localize 'attacktest'}}"></div>
+            <div class="aggroButton specImg" data-tooltip="{{localize 'attacktest'}}"></div>
             <div class="combatant-advanced">
-                <img class="token-image" data-src="{{this.img}}" data-tooltip="oltip="{{this.name}}" /> {{#if this.defenseCount}}
-                <i class="fas def fa-shield-alt" data-defenseCount="{{this.defenseCount}}" data-tooltip="oltip="{{localize 'COMBATTRACKER.noDefenses'}}"></i>
+                <img class="token-image" data-src="{{this.img}}" data-tooltip="{{this.name}}" /> {{#if this.defenseCount}}
+                <i class="fas def fa-shield-alt" data-defenseCount="{{this.defenseCount}}" data-tooltip="{{localize 'COMBATTRACKER.noDefenses'}}"></i>
                 <i class="fas fa-shield-alt reversed"></i> {{/if}} {{#if this.ongoing}}
-                <div class="ongoing" data-tooltip="oltip="{{this.ongoings}}">{{this.ongoing}}</div>
+                <div class="ongoing" data-tooltip="{{this.ongoings}}">{{this.ongoing}}</div>
                 {{/if}}
             </div>
 
@@ -65,9 +65,9 @@
                 <h4>{{this.name}}</h4>
                 <div class="combatant-controls flexrow">
                     {{#if ../user.isGM}}
-                    <a class="combatant-control {{#if this.hidden}}active{{/if}}" data-tooltip="oltip="{{localize 'COMBAT.ToggleVis'}}" data-control="toggleHidden">
+                    <a class="combatant-control {{#if this.hidden}}active{{/if}}" data-tooltip="{{localize 'COMBAT.ToggleVis'}}" data-control="toggleHidden">
                         <i class="fas fa-eye-slash"></i></a>
-                    <a class="combatant-control {{#if this.defeated}}active{{/if}}" data-tooltip="oltip="{{localize 'COMBAT.ToggleDead'}}" data-control="toggleDefeated">
+                    <a class="combatant-control {{#if this.defeated}}active{{/if}}" data-tooltip="{{localize 'COMBAT.ToggleDead'}}" data-control="toggleDefeated">
                         <i class="fas fa-skull"></i></a>
                     {{/if}}
                     <div class="token-effects">
@@ -86,7 +86,7 @@
             <div class="token-initiative">
                 {{#if this.hasRolled}}
                 <span class="initiative">{{this.initiative}}</span> {{else if this.owner}}
-                <a class="combatant-control roll" data-tooltip="oltip="{{localize 'COMBAT.InitiativeRoll'}}" data-control="rollInitiative"></a>
+                <a class="combatant-control roll" data-tooltip="{{localize 'COMBAT.InitiativeRoll'}}" data-control="rollInitiative"></a>
                 {{/if}}
             </div>
         </li>
@@ -95,23 +95,23 @@
 
     <nav id="combat-controls" class="directory-footer flexrow">
         {{#if hasCombat}} {{#if user.isGM}} {{#if round}}
-        <a class="combat-control" data-tooltip="oltip="{{localize 'COMBAT.RoundPrev'}}" data-control="previousRound"><i
+        <a class="combat-control" data-tooltip="{{localize 'COMBAT.RoundPrev'}}" data-control="previousRound"><i
         class="fas fa-step-backward"></i></a>
-        <a class="combat-control" data-tooltip="oltip="{{localize 'COMBAT.TurnPrev'}}" data-control="previousTurn"><i
+        <a class="combat-control" data-tooltip="{{localize 'COMBAT.TurnPrev'}}" data-control="previousTurn"><i
         class="fas fa-arrow-left"></i></a>
-        <a class="combat-control center" data-tooltip="oltip="{{localize 'COMBAT.End'}}" data-control="endCombat">{{localize
+        <a class="combat-control center" data-tooltip="{{localize 'COMBAT.End'}}" data-control="endCombat">{{localize
       'COMBAT.End'}}</a>
-        <a class="combat-control" data-tooltip="oltip="{{localize 'COMBAT.TurnNext'}}" data-control="nextTurn"><i
+        <a class="combat-control" data-tooltip="{{localize 'COMBAT.TurnNext'}}" data-control="nextTurn"><i
         class="fas fa-arrow-right"></i></a>
-        <a class="combat-control" data-tooltip="oltip="{{localize 'COMBAT.RoundNext'}}" data-control="nextRound"><i
+        <a class="combat-control" data-tooltip="{{localize 'COMBAT.RoundNext'}}" data-control="nextRound"><i
         class="fas fa-step-forward"></i></a> {{else}}
-        <a class="combat-control center" data-tooltip="oltip="{{localize 'COMBAT.Begin'}}" data-control="startCombat">{{localize
+        <a class="combat-control center" data-tooltip="{{localize 'COMBAT.Begin'}}" data-control="startCombat">{{localize
       'COMBAT.Begin'}}</a> {{/if}} {{else if control}}
-        <a class="combat-control" data-tooltip="oltip="{{localize 'COMBAT.TurnPrev'}}" data-control="previousTurn"><i
+        <a class="combat-control" data-tooltip="{{localize 'COMBAT.TurnPrev'}}" data-control="previousTurn"><i
         class="fas fa-arrow-left"></i></a>
-        <a class="combat-control center" data-tooltip="oltip="{{localize 'COMBAT.TurnEnd'}}" data-control="nextTurn">{{localize
+        <a class="combat-control center" data-tooltip="{{localize 'COMBAT.TurnEnd'}}" data-control="nextTurn">{{localize
       'COMBAT.TurnEnd'}}</a>
-        <a class="combat-control" data-tooltip="oltip="{{localize 'COMBAT.TurnNext'}}" data-control="nextTurn"><i
+        <a class="combat-control" data-tooltip="{{localize 'COMBAT.TurnNext'}}" data-control="nextTurn"><i
         class="fas fa-arrow-right"></i></a> {{/if}} {{/if}}
     </nav>
 </section>

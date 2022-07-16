@@ -9,7 +9,7 @@ export const dropToGround = async(sourceActor, item, data, amount) => {
         let folder = await DSA5_Utility.getFolderForType("Actor", null, "Dropped Items")
         const userIds = game.users.filter(x => !x.isGM).map(x => x.id)
 
-        const permission = userIds.reduce((prev, cur) => {
+        const ownership = userIds.reduce((prev, cur) => {
             prev[cur] = 1
             return prev
         }, { default: 0 })
@@ -22,12 +22,12 @@ export const dropToGround = async(sourceActor, item, data, amount) => {
             type: "npc",
             name: item.name,
             img: item.img,
-            token: {
+            prototypeToken: {
                 img: item.img,
                 width: 0.4,
                 height: 0.4
             },
-            permission,
+            ownership,
             items: [...items, newItem],
             flags: { core: { sheetClass: "dsa5.MerchantSheetDSA5" } },
             folder,
@@ -50,10 +50,10 @@ export const dropToGround = async(sourceActor, item, data, amount) => {
         if (sourceActor) {
             const newCount = item.system.quantity.value - amount
             if (newCount <= 0) {
-                await sourceActor.deleteEmbeddedDocuments("Item", [data.id])
+                await sourceActor.deleteEmbeddedDocuments("Item", [data.data._id])
             } else {
                 await sourceActor.updateEmbeddedDocuments("Item", [{
-                    _id: data.id,
+                    _id: data.data._id,
                     "system.quantity.value": newCount
                 }])
             }
@@ -80,23 +80,24 @@ export const connectHook = () => {
         if (data.type == "Item") {
             let item
             let sourceActor
+            console.log(data)
             if (data.uuid) {
                 item = await fromUuid(data.uuid)
                 if (item.parent) sourceActor = item.parent
                 if (data.amount) item.system.quantity.value = Number(data.amount)
             } else if (data.pack) {
                 let dataPack = game.packs.get(data.pack)
-                item = await dataPack.getDocument(data.id)
+                item = await dataPack.getDocument(data.data._id)
             } else if (data.tokenId || data.actorId) {
                 sourceActor = DSA5_Utility.getSpeaker({ actor: data.actorId, token: data.tokenId, scene: canvas.scene.id })
                 if (!sourceActor.isOwner) return ui.notifications.error(game.i18n.localize('DSAError.notOwner'))
 
-                item = sourceActor.items.get(data.id)
+                item = sourceActor.items.get(data.data._id)
             } else {
-                item = game.items.get(data.id)
+                item = game.items.get(data.data._id)
             }
 
-            if (!DSA5.equipmentCategories.includes(item.system.type)) return
+            if (!DSA5.equipmentCategories.includes(item.type)) return
 
             const content = await renderTemplate("systems/dsa5/templates/dialog/dropToGround.html", { name: item.name, count: item.system.quantity.value })
 

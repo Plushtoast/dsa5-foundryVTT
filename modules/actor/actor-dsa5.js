@@ -77,7 +77,7 @@ export default class Actordsa5 extends Actor {
 
             const isFamiliar = RuleChaos.isFamiliar(this);
             const isPet = RuleChaos.isPet(this);
-            data.canAdvance = (data.type == "character" || isFamiliar || isPet) && this.isOwner;
+            data.canAdvance = (this.type == "character" || isFamiliar || isPet) && this.isOwner;
             data.isMage =
                 isFamiliar ||
                 this.items.some(
@@ -92,8 +92,7 @@ export default class Actordsa5 extends Actor {
                 data.details.experience.current = data.details.experience.total - data.details.experience.spent;
                 data.details.experience.description = DSA5_Utility.experienceDescription(data.details.experience.total);
             }
-
-            if (data.type == "character" || data.type == "npc") {
+            if (this.type == "character" || this.type == "npc") {
                 data.status.wounds.current = data.status.wounds.initial + data.characteristics.ko.value * 2;
                 data.status.soulpower.value =
                     (data.status.soulpower.initial || 0) +
@@ -115,7 +114,7 @@ export default class Actordsa5 extends Actor {
                 Number(data.status.fatePoints.modifier) +
                 data.status.fatePoints.gearmodifier;
 
-            if (data.type == "creature") {
+            if (this.type == "creature") {
                 data.status.wounds.current = data.status.wounds.initial;
                 data.status.astralenergy.current = data.status.astralenergy.initial;
                 data.status.karmaenergy.current = data.status.karmaenergy.initial;
@@ -152,7 +151,7 @@ export default class Actordsa5 extends Actor {
                 data.status.regeneration.AsPgearmodifier;
 
             let guide = data.guidevalue;
-            if (isFamiliar || (guide && data.type != "creature")) {
+            if (isFamiliar || (guide && this.type != "creature")) {
                 data.status.astralenergy.current = data.status.astralenergy.initial;
                 data.status.karmaenergy.current = data.status.karmaenergy.initial;
 
@@ -207,7 +206,7 @@ export default class Actordsa5 extends Actor {
             const activeGM = game.users.find((u) => u.active && u.isGM);
 
             if (activeGM && game.user.id == activeGM.id) {
-                const hasDefaultPain = data.type != "creature" || data.status.wounds.max >= 20;
+                const hasDefaultPain = this.type != "creature" || data.status.wounds.max >= 20;
                 let pain = 0;
                 if (data.status.wounds.max > 0) {
                     if (hasDefaultPain) {
@@ -487,12 +486,12 @@ export default class Actordsa5 extends Actor {
 
     prepareSheet(sheetInfo) {
         let preData = duplicate(this);
-        let preparedData = { data: {} };
+        let preparedData = { system: {} };
         mergeObject(preparedData, this.prepareItems(sheetInfo));
         if (preparedData.canAdvance) {
             const attrs = ["wounds", "astralenergy", "karmaenergy"];
             for (const k of attrs) {
-                mergeObject(preparedData.data, {
+                mergeObject(preparedData.system, {
                     status: {
                         [k]: {
                             cost: game.i18n.format("advancementCost", {
@@ -912,7 +911,7 @@ export default class Actordsa5 extends Actor {
         //TODO move the encumbrance calculation to a better location
         let encumbrance = this.getArmorEncumbrance(this, armor);
 
-        if ((actorData.type != "creature" || this.canAdvance) && !this.isMerchant()) {
+        if ((this.type != "creature" || this.canAdvance) && !this.isMerchant()) {
             encumbrance += Math.max(0, Math.ceil((totalWeight - carrycapacity - 4) / 4));
         }
         this.addCondition("encumbered", encumbrance, true);
@@ -926,7 +925,6 @@ export default class Actordsa5 extends Actor {
         guidevalues["-"] = "-";
 
         return {
-            isOwner: this.isOwner,
             totalWeight,
             armorSum: totalArmor,
             spellArmor: actorData.system.spellArmor || 0,
@@ -1009,7 +1007,7 @@ export default class Actordsa5 extends Actor {
     _itemPreparationError(item, error) {
         console.error("Something went wrong with preparing item " + item.name + ": " + error);
         console.warn(error);
-        console.warn(wep);
+        console.warn(item);
         ui.notifications.error("Something went wrong with preparing item " + item.name + ": " + error);
     }
 
@@ -1072,8 +1070,10 @@ export default class Actordsa5 extends Actor {
         if (!Actordsa5.canAdvance(this)) return true;
         if (isNaN(cost) || cost == null) return true;
 
+        
         if (Number(this.system.details.experience.total) - Number(this.system.details.experience.spent) >= cost) {
             return true;
+        
         } else if (Number(this.system.details.experience.total == 0)) {
             let selOptions = Object.entries(DSA5.startXP)
                 .map(([key, val]) => `<option value="${key}">${game.i18n.localize(val)} (${key})</option>`)
@@ -1122,7 +1122,7 @@ export default class Actordsa5 extends Actor {
     }
 
     setupWeaponless(statusId, options = {}, tokenId) {
-        let item = duplicate(DSA5.defaultWeapon);
+        let item = foundry.utils.duplicate(DSA5.defaultWeapon);
         item.name = game.i18n.localize(`${statusId}Weaponless`);
         item.system.combatskill = {
             value: game.i18n.localize("LocalizedIDs.wrestle"),
@@ -1886,8 +1886,8 @@ export default class Actordsa5 extends Actor {
 
     if (data.type == "character") {
       mergeObject(update, {
-        token: {
-          vision: true,
+        prototypeToken: {
+          sight: {enabled: true},
           actorLink: true,
         },
       });
@@ -1920,7 +1920,7 @@ export default class Actordsa5 extends Actor {
       modifier =
         SpecialabilityRulesDSA5.abilityStep(
           actor,
-          `${game.i18n.localize("LocalizedIDs.quickload")} (${game.i18n.localize(item.data.combatskill.value)})`
+          `${game.i18n.localize("LocalizedIDs.quickload")} (${game.i18n.localize(item.system.combatskill.value)})`
         ) * -1;
     }
 

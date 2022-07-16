@@ -30,7 +30,7 @@ export default function() {
                     label: game.i18n.localize("yes"),
                     callback: async(html) => {
                         const name = html.find('[name="name"]').val()
-                        const token = canvas.scene.data.tokens.find((x) => x.actor.id === actor.id)
+                        const token = canvas.scene.tokens.find((x) => x.actor.id === actor.id)
                         await token.update({ name })
                     }
                 },
@@ -50,7 +50,7 @@ export default function() {
             if (u.isGM) continue;
             if (actor.testUserPermission(u, "LIMITED")) return;
         }
-        const sameActorTokens = canvas.scene.data.tokens.filter((x) => x.actor && x.actor.id === actor.id);
+        const sameActorTokens = canvas.scene.tokens.filter((x) => x.actor && x.actor.id === actor.id);
         let name = game.i18n.localize("unknown")
         if (sameActorTokens.length > 0) {
             name = `${sameActorTokens[0].name.replace(/ \d{1,}$/)} ${sameActorTokens.length + 1}`
@@ -82,7 +82,7 @@ export default function() {
             }
         }
 
-        if (actor.system.type == "creature" && getProperty(actor, "config.autoSize")) {
+        if (actor.type == "creature" && getProperty(actor, "config.autoSize")) {
             DSA5_Utility.calcTokenSize(actor, update)
         }
 

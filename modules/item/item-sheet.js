@@ -494,7 +494,7 @@ class EquipmentSheet extends Enchantable {
                     const enchants = getProperty(x, "flags.dsa5.enchantments")
                     if (enchants && enchants.length > 0) {
                         x.enchantClass = "rar"
-                    } else if ((x.system.effect && x.system.effect.value != "") || x.system.effects.length > 0) {
+                    } else if ((x.system.effect && x.system.effect.value != "") || x.effects.length > 0) {
                         x.enchantClass = "common"
                     }
                     return x

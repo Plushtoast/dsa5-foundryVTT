@@ -384,7 +384,7 @@ export default class Itemdsa5 extends Item {
         const combatskill = actor.items.find((x) => x.type == "combatskill" && x.name == source.system.combatskill.value)
 
         for (let ef of combatskill.effects) {
-            for (let change of ef.data.changes) {
+            for (let change of ef.changes) {
                 switch (change.key) {
                     case "system.rangeStats.defenseMalus":
                     case "system.meleeStats.defenseMalus":
@@ -467,8 +467,8 @@ export default class Itemdsa5 extends Item {
                 if (target.actor) {
                     const defWeapon = target.actor.items.filter((x) => {
                         return (
-                            (x.system.type == "meleeweapon" && x.system.worn.value) ||
-                            (x.system.type == "trait" && x.system.traitType.value == "meleeAttack" && x.system.pa)
+                            (x.type == "meleeweapon" && x.system.worn.value) ||
+                            (x.type == "trait" && x.system.traitType.value == "meleeAttack" && x.system.pa)
                         )
                     })
                     if (defWeapon.length > 0) targetWeaponSize = defWeapon[0].system.reach.value
@@ -527,7 +527,7 @@ export default class Itemdsa5 extends Item {
 
     //TODO find tokenId
     setupEffect(ev, options = {}, tokenId) {
-        return Itemdsa5.getSubClass(this.system.type).setupDialog(ev, options, this, tokenId)
+        return Itemdsa5.getSubClass(this.type).setupDialog(ev, options, this, tokenId)
     }
 
     static checkEquality(item, item2) {
@@ -560,7 +560,7 @@ export default class Itemdsa5 extends Item {
                 scene: speaker.scene,
             },
             flags: {
-                img: speaker.token ? canvas.tokens.get(speaker.token).data.img : this.img,
+                img: speaker.token ? canvas.tokens.get(speaker.token).document.img : this.img,
             },
             title,
             template,
@@ -595,7 +595,7 @@ export default class Itemdsa5 extends Item {
 
     async postItem() {
             let chatData = duplicate(this)
-            const properties = Itemdsa5.getSubClass(this.system.type).chatData(duplicate(chatData.system), this.name)
+            const properties = Itemdsa5.getSubClass(this.type).chatData(duplicate(chatData.system), this.name)
 
             chatData["properties"] = properties
 
@@ -845,7 +845,7 @@ class SpellItemDSA5 extends Itemdsa5 {
 
     static foreignSpellModifier(actor, source, situationalModifiers, data) {
         if (
-            game.settings.get("dsa5", "enableForeignSpellModifer") && ["npc", "character"].includes(actor.system.type) && ["spell", "ritual"].includes(source.type)
+            game.settings.get("dsa5", "enableForeignSpellModifer") && ["npc", "character"].includes(actor.type) && ["spell", "ritual"].includes(source.type)
         ) {
             const distributions = source.system.distribution.value.split(",").map((x) => x.trim().toLowerCase())
             const regx = new RegExp(`(${game.i18n.localize("tradition")}|\\\)|\\\()`, "g")
@@ -1173,7 +1173,7 @@ class DiseaseItemDSA5 extends Itemdsa5 {
 
         let testData = {
             opposable: false,
-            source: item.data,
+            source: item,
             extra: {
                 options,
                 speaker: Itemdsa5.buildSpeaker(actor, tokenId),
@@ -1337,7 +1337,7 @@ class PoisonItemDSA5 extends Itemdsa5 {
 
         let testData = {
             opposable: false,
-            source: item.data,
+            source: item,
             extra: {
                 options,
                 speaker: Itemdsa5.buildSpeaker(actor, tokenId),
@@ -1413,7 +1413,7 @@ class RangeweaponItemDSA5 extends Itemdsa5 {
             this.prepareRangeAttack(situationalModifiers, actor, data, source, tokenId, combatskills, currentAmmo)
 
             if (currentAmmo) {
-                if (currentAmmo.data.atmod) {
+                if (currentAmmo.system.atmod) {
                     situationalModifiers.push({
                         name: `${currentAmmo.name} - ${game.i18n.localize("atmod")}`,
                         value: currentAmmo.system.atmod,
@@ -1449,7 +1449,7 @@ class RangeweaponItemDSA5 extends Itemdsa5 {
 
     static async checkAmmunitionState(item, testData, actor, mode) {
         let hasAmmo = true
-        if (actor.system.type != "creature" && mode != "damage") {
+        if (actor.type != "creature" && mode != "damage") {
             //TODO this has to go
             let itemData = item.system ? item.system : item.data
             if (itemData.ammunitiongroup.value == "infinite") {

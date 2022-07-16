@@ -18,7 +18,7 @@ export default class DialogActorConfig extends Dialog {
                     label: game.i18n.localize("Save"),
                     callback: dlg => {
                         let update = { "system.config.autoBar": dlg.find('[name="autoBar"]').is(":checked") }
-                        if (actor.system.type == "creature") {
+                        if (actor.type == "creature") {
                             update["system.config.autoSize"] = dlg.find('[name="autoSize"]').is(":checked")
                         }
                         actor.update(update)

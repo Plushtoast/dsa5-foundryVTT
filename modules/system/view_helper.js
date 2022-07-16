@@ -23,6 +23,8 @@ export function svgAutoFit(elem, width = 320, height = 40) {
 export async function itemFromDrop(dragData, actorId) {
     let item
     let typeClass
+
+    //Todo nice all fucked
     let selfTarget = dragData.actorId && dragData.actorId == actorId
     if (dragData.uuid) {
         item = await fromUuid(dragData.uuid)
@@ -33,7 +35,7 @@ export async function itemFromDrop(dragData, actorId) {
         typeClass = item.type
     } else if (dragData.id && dragData.type == "Actor") {
         item = DSA5_Utility.findActorbyId(dragData.id);
-        typeClass = item.system.type
+        typeClass = item.type
     } else if (dragData.id) {
         item = DSA5_Utility.findItembyId(dragData.id);
         typeClass = item.type

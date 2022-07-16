@@ -272,18 +272,19 @@ export default class PlayerMenu extends Application {
         let data;
         try {
             data = JSON.parse(event.dataTransfer.getData('text/plain'));
+            data = await Actor.implementation.fromDropData(data)
         } catch (err) {
             return false;
         }
-        if (data.type == "Actor") {
+        if (data.documentName == "Actor") {
             const actor = game.actors.get(data.id)
 
-            if (actor.system.type == "creature" || $(event.target).closest('.summoningArea').length > 0) {
+            if (actor.type == "creature" || $(event.target).closest('.summoningArea').length > 0) {
                 this.conjuration = actor
                 this.conjurationData.selectedIds = []
                 this.conjurationData.selectedEntityIds = []
                 this.conjurationData.selectedPackageIds = []
-                if (actor.system.type == "creature") {
+                if (actor.type == "creature") {
                     for (const key of Object.keys(this.conjurationData.conjurationTypes)) {
                         if (actor.system.creatureClass.value.includes(this.conjurationData.conjurationTypes[key])) {
                             this.conjurationData.conjurationType = key

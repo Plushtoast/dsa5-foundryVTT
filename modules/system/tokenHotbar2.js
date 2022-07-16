@@ -25,7 +25,7 @@ export default class TokenHotbar2 extends Application {
         });
 
         Hooks.on("updateToken", (scene, token, updates) => {
-            if (token._id == getProperty(game.dsa5.apps.tokenHotbar, "actor.token.id"))
+            if (token._id == getProperty(game.dsa5.apps.tokenHotbar, "actor.prototypeToken.id"))
                 this.updateDSA5Hotbar()
         });
 
