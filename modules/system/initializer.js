@@ -211,7 +211,7 @@ export default class DSA5Initializer extends Dialog {
                 }
                 let createdEntries = await Scene.create(scenesToCreate)
                 for (let entry of createdEntries) {
-                    this.scenes[entry.data.name] = entry;
+                    this.scenes[entry.name] = entry;
                 }
                 //await Scene.update(scenesToUpdate)
                 //TODO this does not properly update walls?
@@ -275,7 +275,7 @@ export default class DSA5Initializer extends Dialog {
 
                 await Actor.updateDocuments(entriesToUpdate)
                 for (let entry of createdEntries) {
-                    this.actors[entry.data.name] = entry;
+                    this.actors[entry.name] = entry;
                 }
             }
 

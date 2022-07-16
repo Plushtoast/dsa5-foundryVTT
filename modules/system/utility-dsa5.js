@@ -152,7 +152,8 @@ export default class DSA5_Utility {
     }
 
     static async getFolderForType(documentType, parent = null, folderName = null, sort = 0, color = "") {
-        let folder = await game.folders.contents.find(x => x.name == folderName && x.type == documentType && x.parent == parent)
+        console.log(folderName, documentType, parent)
+        let folder = await game.folders.contents.find(x => x.name == folderName && x.type == documentType && x.folder?.id == parent)
         if (!folder) {
             folder = await Folder.create({
                 name: folderName,
