@@ -1520,7 +1520,7 @@
         "commerce": "Handel",
         "Factor": "Faktor",
         "hidePlayer": "Für Spieler verbergen",
-        "hidePlayerHint": "Im Aktuerverzeichnis den Spielern nicht anzeigen. Setzen bevor Spieler Permissions erhalten.",
+        "hidePlayerHint": "Im Aktuerverzeichnis den Spielern nicht anzeigen. Setzen bevor Spieler Berechtigungen erhalten.",
         "buyingFactor": "Kauffaktor",
         "sellingFactor": "Verkaufsfaktor",
         "typeMerchant": "Händler",

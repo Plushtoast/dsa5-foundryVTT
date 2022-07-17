@@ -141,7 +141,7 @@
         {{#each players as |player i|}}
         <div class="col two row-section">
             <div class="col seventy">
-                {{player.data.name}}
+                {{player.name}}
             </div>
             {{#if (eq ../actor.system.merchant.merchantType "merchant")}}
             <div class="col ten center" data-tooltip="{{localize 'MERCHANT.sellingFactor'}}">

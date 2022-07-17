@@ -260,10 +260,10 @@ export default class Actordsa5 extends Actor {
     }
 
     async prepareMerchant() {
-        if (getProperty(this, "merchant.merchantType") == "loot") {
-            if (getProperty(this, "merchant.locked") && !this.hasCondition("locked")) {
+        if (getProperty(this, "system.merchant.merchantType") == "loot") {
+            if (getProperty(this, "system.merchant.locked") && !this.hasCondition("locked")) {
                 await this.addCondition(Actordsa5.lockedCondition());
-            } else if (!getProperty(this, "merchant.locked")) {
+            } else if (!getProperty(this, "system.merchant.locked")) {
                 let ef = this.effects.find((x) => getProperty(x, "flags.core.statusId") == "locked");
                 if (ef) await this.deleteEmbeddedDocuments("ActiveEffect", [ef.id]);
             }
@@ -1002,7 +1002,7 @@ export default class Actordsa5 extends Actor {
     }
 
     isMerchant() {
-        return ["merchant", "loot"].includes(getProperty(this, "merchant.merchantType"));
+        return ["merchant", "loot"].includes(getProperty(this, "system.merchant.merchantType"));
     }
 
     _itemPreparationError(item, error) {
