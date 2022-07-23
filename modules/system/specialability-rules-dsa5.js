@@ -39,7 +39,7 @@ export default class SpecialabilityRulesDSA5 extends ItemRulesDSA5 {
             SpecialabilityRulesDSA5.simpleAdoption(item, adoption, item.name, DSA5.AbilitiesNeedingAdaption)
 
             item.name = `${item.name.replace(' ()', '')} (${adoption.name}${adoption.customEntry ? ", " + adoption.customEntry : ''})`
-            if (adoption.data)
+            if (adoption.data && adoption.data.data.StF?.value && /\//.test(item.data.APValue.value))
                 item.data.APValue.value = item.data.APValue.value.split("/")[adoption.data.data.StF.value.charCodeAt(0) - 65].trim()
         }
         let res = actor.data.items.find(i => {

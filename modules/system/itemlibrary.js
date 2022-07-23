@@ -541,13 +541,9 @@ export default class DSA5ItemLibrary extends Application {
             const fields = ["name", "data.type", "data.description.value", "img"]
             promise = packs.map(p => p.getIndex({ fields }))
         } else if (document == "JournalEntry") {
-            //const fields = ["name", "type", "data.content", "img"]
-            //promise = packs.map(p => p.getIndex({ fields }))
             promise = packs.map(p => p.getDocuments())
         } else {
-            //const fields = ["name", "type", "data.description.value", "img"]
-            //promise = packs.map(p => p.getIndex({ fields }))
-            promise = packs.map(p => p.getDocuments())
+            promise = packs.map(p => p.getDocuments({ type: { $in: game.system.documentTypes.Item } }))
         }
 
         return Promise.all(promise).then(indexes => {

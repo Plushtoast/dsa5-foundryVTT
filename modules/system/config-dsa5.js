@@ -760,6 +760,8 @@ DSA5.sizeCategories = {
     "giant": "SIZE.giant"
 }
 
+DSA5.morePackages = {}
+
 DSA5.tokenSizeCategories = {
     "tiny": 0.5,
     "small": 0.8,
