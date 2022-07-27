@@ -27,6 +27,12 @@ export async function showPatchViewer() {
     patchViewer.render(true)
 }
 
+
+function betaWarning() {
+    const msg = "This is the beta version for DSA/TDE for Foundry v10. Foundry v10 is still in development and so is TDE/DSA. You might encounter on or more issues. Please report those on the official TDE/DSA Github. Thank you."
+    ChatMessage.create(DSA5_Utility.chatDataSetup(msg));
+}
+
 export default function migrateWorld() {
     Hooks.once("ready", async function() {
         if (!game.user.isGM) return

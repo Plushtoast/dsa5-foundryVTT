@@ -150,7 +150,7 @@ export default class ActorSheetDsa5 extends ActorSheet {
 
     _handleAggregatedProbe(ev) {
         const itemId = this._getItemId(ev);
-        let aggregated = duplicate(this.actor.items.get(itemId));
+        let aggregated = this.actor.items.get(itemId).toObject()
         let skill = this.actor.items.find(i => i.name == aggregated.system.talent.value && i.type == "skill")
         let infoMsg = `<h3 class="center"><b>${game.i18n.localize("aggregatedTest")}</b></h3>`
         if (aggregated.system.usedTestCount.value >= aggregated.system.allowedTestCount.value) {
@@ -241,7 +241,7 @@ export default class ActorSheetDsa5 extends ActorSheet {
     }
 
     async _advanceItem(itemId) {
-        let item = duplicate(this.actor.items.get(itemId))
+        let item = this.actor.items.get(itemId).toObject()
         let cost = DSA5_Utility._calculateAdvCost(Number(item.system.talentValue.value), item.system.StF.value)
         if (await this._checkEnoughXP(cost) && this._checkMaximumItemAdvancement(item, Number(item.system.talentValue.value) + 1)) {
             await this.actor.updateEmbeddedDocuments("Item", [{ _id: itemId, "system.talentValue.value": item.system.talentValue.value + 1 }])
@@ -250,7 +250,7 @@ export default class ActorSheetDsa5 extends ActorSheet {
     }
 
     async _refundItemAdvance(itemId) {
-        let item = duplicate(this.actor.items.get(itemId))
+        let item = this.actor.items.get(itemId).toObject()
         if (item.system.talentValue.value > 0) {
             let cost = DSA5_Utility._calculateAdvCost(Number(item.system.talentValue.value), item.system.StF.value, 0) * -1
             await this.actor.updateEmbeddedDocuments("Item", [{ _id: itemId, "system.talentValue.value": item.system.talentValue.value - 1 }])

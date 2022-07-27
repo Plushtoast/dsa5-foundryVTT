@@ -1,32 +1,32 @@
-import ActorSheetdsa5 from "./modules/actor/actor-sheet.js"
-import ActorSheetdsa5Character from "./modules/actor/character-sheet.js";
-import ActorSheetdsa5Creature from "./modules/actor/creature-sheet.js";
-import ActorSheetdsa5NPC from "./modules/actor/npc-sheet.js";
-import Actordsa5 from "./modules/actor/actor-dsa5.js";
-import Itemdsa5 from "./modules/item/item-dsa5.js";
-import ItemSheetdsa5 from "./modules/item/item-sheet.js";
-import initHooks from "./modules/hooks/init.js";
-import MacroDSA5 from "./modules/system/macroControl.js";
-import LazyImporter from "./modules/importer/lazy_importer.js"
-import DSA5 from "./modules/system/config-dsa5.js"
-import DSA5ItemLibrary from "./modules/system/itemlibrary.js"
-import DSA5_Utility from "./modules/system/utility-dsa5.js"
-import DSA5Initializer from "./modules/system/initializer.js"
-import ChatMessageDSA5Roll from "./modules/chat/ChatMessageDSA5.js";
-import DSA5ChatListeners from "./modules/system/chat_listeners.js";
-import DSA5Payment from "./modules/system/payment.js"
-import { DSA5CombatTracker, DSA5Combat, DSA5Combatant } from "./modules/hooks/combat_tracker.js";
-import DSA5Hotbar from "./modules/system/hotbar.js"
-import RollMemory from "./modules/system/roll_memory.js"
-import SpecialabilityRulesDSA5 from "./modules/system/specialability-rules-dsa5.js"
-import AdvantageRulesDSA5 from "./modules/system/advantage-rules-dsa5.js"
-import Migrakel from "./modules/system/migrakel.js"
-import DSA5Dialog from "./modules/dialog/dialog-dsa5.js"
-import DPS from "./modules/system/derepositioningsystem.js"
-import DSATables from "./modules/tables/dsatables.js"
-import DiceDSA5 from "./modules/system/dice-dsa5.js";
-import DSA5StatusEffects from './modules/status/status_effects.js'
-import { MerchantSheetMixin } from './modules/actor/merchantmixin.js'
+import ActorSheetdsa5 from "./actor/actor-sheet.js"
+import ActorSheetdsa5Character from "./actor/character-sheet.js";
+import ActorSheetdsa5Creature from "./actor/creature-sheet.js";
+import ActorSheetdsa5NPC from "./actor/npc-sheet.js";
+import Actordsa5 from "./actor/actor-dsa5.js";
+import Itemdsa5 from "./item/item-dsa5.js";
+import ItemSheetdsa5 from "./item/item-sheet.js";
+import initHooks from "./hooks/init.js";
+import MacroDSA5 from "./system/macroControl.js";
+import LazyImporter from "./importer/lazy_importer.js"
+import DSA5 from "./system/config-dsa5.js"
+import DSA5ItemLibrary from "./system/itemlibrary.js"
+import DSA5_Utility from "./system/utility-dsa5.js"
+import DSA5Initializer from "./system/initializer.js"
+import ChatMessageDSA5Roll from "./chat/ChatMessageDSA5.js";
+import DSA5ChatListeners from "./system/chat_listeners.js";
+import DSA5Payment from "./system/payment.js"
+import { DSA5CombatTracker, DSA5Combat, DSA5Combatant } from "./hooks/combat_tracker.js";
+import DSA5Hotbar from "./system/hotbar.js"
+import RollMemory from "./system/roll_memory.js"
+import SpecialabilityRulesDSA5 from "./system/specialability-rules-dsa5.js"
+import AdvantageRulesDSA5 from "./system/advantage-rules-dsa5.js"
+import Migrakel from "./system/migrakel.js"
+import DSA5Dialog from "./dialog/dialog-dsa5.js"
+import DPS from "./system/derepositioningsystem.js"
+import DSATables from "./tables/dsatables.js"
+import DiceDSA5 from "./system/dice-dsa5.js";
+import DSA5StatusEffects from './status/status_effects.js'
+import { MerchantSheetMixin } from './actor/merchantmixin.js'
 
 Hooks.once("init", () => {
     console.log("Initializing DSA5 system")

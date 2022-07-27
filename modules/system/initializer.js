@@ -88,7 +88,7 @@ export default class DSA5Initializer extends Dialog {
                 let itemsToUpdate = []
                 for (let k of json.items) {
                     k.folder = head.id
-                    let existingItem = game.items.find(x => x.name == k.name && x.data.folder == head.id)
+                    let existingItem = game.items.find(x => x.name == k.name && x.folder?.id == head.id)
                     if (existingItem) {
                         k._id = existingItem.id
                         itemsToUpdate.push(k)
@@ -107,7 +107,7 @@ export default class DSA5Initializer extends Dialog {
                 let entries = (await playlist.getDocuments()).map(x => x.toObject())
                 for(let k of entries){
                     k.folder = head.id
-                    let existingItem = game.playlists.find(x => x.name == k.name && x.data.folder == head.id)
+                    let existingItem = game.playlists.find(x => x.name == k.name && x.folder?.id == head.id)
                     if (existingItem) {
                         k._id = existingItem.data._id
                         itemsToUpdate.push(k)
@@ -133,7 +133,7 @@ export default class DSA5Initializer extends Dialog {
 
                 for (let entry of entries) {
                     let resetScene = resetAll
-                    let found = game.scenes.find(x => x.name == entry.name && x.data.folder == head.id)
+                    let found = game.scenes.find(x => x.name == entry.name && x.folder?.id == head.id)
                     if (!resetAll && found) {
                         [resetScene, resetAll] = await new Promise((resolve, reject) => {
                             new Dialog({
@@ -187,7 +187,7 @@ export default class DSA5Initializer extends Dialog {
 
                                 journ.folder = parenthead.id
 
-                                let existingJourn = game.journal.find(x => x.name == journ.name && x.data.folder == parenthead.id && x.data.flags.dsa5.initId == n.entryId)
+                                let existingJourn = game.journal.find(x => x.name == journ.name && x.folder?.id == parenthead.id && x.flags.dsa5.initId == n.entryId)
                                 if (existingJourn) {
                                     await existingJourn.update(journ)
                                     finishedIds.set(journ._id, existingJourn.id)
@@ -212,6 +212,8 @@ export default class DSA5Initializer extends Dialog {
                 let createdEntries = await Scene.create(scenesToCreate)
                 for (let entry of createdEntries) {
                     this.scenes[entry.name] = entry;
+                    const thumb = await entry.createThumbnail()
+                    await entry.update({thumb: thumb.thumb}, {diff: false});
                 }
                 //await Scene.update(scenesToUpdate)
                 //TODO this does not properly update walls?
@@ -262,7 +264,7 @@ export default class DSA5Initializer extends Dialog {
                     entry.folder = parentFolder.id
                     if (entry._id) delete entry._id
 
-                    let existingActor = game.actors.find(x => x.name == entry.name && [head.id, parentFolder.id].includes(x.data.folder))
+                    let existingActor = game.actors.find(x => x.name == entry.name && [head.id, parentFolder.id].includes(x.folder?.id))
                     if (existingActor) {
                         entry._id = existingActor.id
                         await existingActor.deleteEmbeddedDocuments("Item", existingActor.items.map(x => x.id))

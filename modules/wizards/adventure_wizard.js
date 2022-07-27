@@ -49,9 +49,10 @@ export default class BookWizard extends Application {
     _getHeaderButtons() {
         let buttons = super._getHeaderButtons();
         buttons.unshift({
+            label: "Library",
             class: "library",
             icon: `fas fa-book`,
-            onclick: async ev => this._showBooks(ev)
+            onclick: async ev => this._showBooks()
         })
         return buttons
     }
@@ -296,10 +297,10 @@ export default class BookWizard extends Application {
         if (!chapter.actors) return []
 
         let result = []
-        const head = await game.folders.contents.find(x => x.name == game.i18n.localize(`${this.bookData.moduleName}.name`) && x.type == "Actor" && x.system.parent == null)
-        const folder = head ? await game.folders.contents.find(x => x.name == chapter.name && x.type == "Actor" && x.system.parent == head.id) : undefined
+        const head = await game.folders.contents.find(x => x.name == game.i18n.localize(`${this.bookData.moduleName}.name`) && x.type == "Actor" && x.parent == null)
+        const folder = head ? await game.folders.contents.find(x => x.name == chapter.name && x.type == "Actor" && x.parent?.id == head.id) : undefined
         for (let k of chapter.actors) {
-            let actor = folder ? game.actors.contents.find(x => x.name == k && x.system.folder == folder.id) : undefined
+            let actor = folder ? game.actors.contents.find(x => x.name == k && x.folder?.id == folder.id) : undefined
             let pack = undefined
             let id = actor ? actor.id : undefined
             if (!actor) {

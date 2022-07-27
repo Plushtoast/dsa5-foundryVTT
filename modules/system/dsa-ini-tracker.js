@@ -158,21 +158,6 @@ export default class DSAIniTracker extends Application {
 
         html.find('.combatant-control').click(ev => this._onCombatantControl(ev));
 
-        html.on('mouseenter', 'li.combatant', ev => {
-            const li = $(ev.currentTarget)
-            let tooltip = li.find(".tooltip");
-            if (tooltip) tooltip.remove();
-            tooltip = document.createElement("SPAN");
-            tooltip.classList.add("tooltip");
-            tooltip.textContent = li.attr("data-name")
-            li.append($(tooltip));
-        })
-
-        html.on('mouseleave', 'li.combatant', ev => {
-            const li = $(ev.currentTarget)
-            let tooltip = li.find(".tooltip");
-            if (tooltip) tooltip.remove()
-        })
         html.find('.combatant .aggroButton').click(ev => {
             ev.preventDefault()
             ev.stopPropagation()

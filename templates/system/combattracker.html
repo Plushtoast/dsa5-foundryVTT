@@ -1,4 +1,4 @@
-<section class="tab sidebar-tab directory flexcol" id="combat" data-tab="combat">
+<section class="tab sidebar-tab directory flexcol combat-sidebar" id="combat" data-tab="combat">
     <header id="combat-round">
         {{#if user.isGM}}
         <nav class="encounters flexrow">
@@ -20,7 +20,7 @@
         </nav>
         {{/if}}
 
-        <nav class="encounters flexrow">
+        <nav class="encounters flexrow {{#if hasCombat}}combat{{/if}}">
             {{#if user.isGM}}
             <a class="combat-control" data-tooltip="{{localize 'COMBAT.RollAll'}}" data-control="rollAll" {{#unless turns}}disabled{{/unless}}>
                 <i class="fas fa-users"></i>

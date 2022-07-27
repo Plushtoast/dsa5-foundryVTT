@@ -47,13 +47,25 @@ export default class DSA5_Utility {
         let tokenSize = game.dsa5.config.tokenSizeCategories[actorData.system.status.size.value]
         if (tokenSize) {
             if (tokenSize < 1) {
-                //data.scale = tokenSize;
-                //data.width = data.height = 1;
-                data.width = data.height = tokenSize;
+                mergeObject(data, {
+                    texture: {
+                        scaleX: tokenSize,
+                        scaleY: tokenSize
+                    },
+                    width: 1,
+                    height: 1
+                })
             } else {
                 const int = Math.floor(tokenSize);
-                data.width = data.height = int;
-                data.scale = Math.max(tokenSize / int, 0.25);
+                const scale = Math.max(tokenSize / int, 0.25)
+                mergeObject(data, {
+                    width: int,
+                    height: int,
+                    texture: {
+                        scaleX: scale,
+                        scaleY: scale
+                    }
+                })
             }
         }
     }

@@ -30,7 +30,7 @@ export default function() {
                     label: game.i18n.localize("yes"),
                     callback: async(html) => {
                         const name = html.find('[name="name"]').val()
-                        const token = canvas.scene.tokens.find((x) => x.actor.id === actor.id)
+                        const token = canvas.scene.tokens.find((x) => x.actor?.id === actor.id)
                         await token.update({ name })
                     }
                 },

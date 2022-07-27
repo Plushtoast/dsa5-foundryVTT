@@ -3,109 +3,105 @@
     "title": "Das Schwarze Auge/The Dark Eye (5th Edition)",
     "description": "The \"Das Schwarze Auge\" system for Foundry VTT. Includes all relevant mechanisms to play in the wonderous world of Aventuria and Das Schwarze Auge/The Dark Eye.",
     "version": "4.0.0",
-    "authors": [
-      {
+    "authors": [{
         "name": "Plushtoast"
-      }
-    ],
+    }],
     "scripts": [
-      "libs/flexsearch.min.js",
-      "libs/select2.min.js"
+        "libs/flexsearch.min.js",
+        "libs/select2.min.js"
     ],
     "esmodules": [
-      "dsa5.js"
+        "modules/dsa5.js"
     ],
     "styles": [
-      "styles/select2.min.css",
-      "styles/dsa5.css"
+        "styles/select2.min.css",
+        "styles/dsa5.css"
     ],
-    "packs": [
-      {
-        "name": "skills",
-        "label": "Talente",
-        "system": "dsa5",
-        "path": "packs/skills.db",
-        "type": "Item",
-        "private": false
-      },
-      {
-        "name": "skillsen",
-        "label": "Skills",
-        "system": "dsa5",
-        "path": "packs/skillsen.db",
-        "type": "Item",
-        "private": false
-      },
-      {
-        "name": "combatskills",
-        "label": "Kampftalente",
-        "system": "dsa5",
-        "path": "packs/combatskills.db",
-        "type": "Item",
-        "private": false
-      },
-      {
-        "name": "combatskillsen",
-        "label": "Combat Techniques",
-        "system": "dsa5",
-        "path": "packs/combatskillsen.db",
-        "type": "Item",
-        "private": false
-      },
-      {
-        "name": "money",
-        "label": "Geld",
-        "system": "dsa5",
-        "path": "packs/money.db",
-        "type": "Item",
-        "private": false
-      },
-      {
-        "name": "speciesen",
-        "label": "Species",
-        "system": "dsa5",
-        "path": "packs/speciesen.db",
-        "type": "Item",
-        "private": false
-      },
-      {
-        "name": "species",
-        "label": "Spezies",
-        "system": "dsa5",
-        "path": "packs/species.db",
-        "type": "Item",
-        "private": false
-      },
-      {
-        "name": "patzer",
-        "label": "Patzer",
-        "system": "dsa5",
-        "path": "packs/patzer.db",
-        "type": "RollTable",
-        "private": false
-      },
-      {
-        "name": "botch",
-        "label": "Botch",
-        "system": "dsa5",
-        "path": "packs/botch.db",
-        "type": "RollTable",
-        "private": false
-      }
+    "packs": [{
+            "name": "skills",
+            "label": "Talente",
+            "system": "dsa5",
+            "path": "packs/skills.db",
+            "type": "Item",
+            "private": false
+        },
+        {
+            "name": "skillsen",
+            "label": "Skills",
+            "system": "dsa5",
+            "path": "packs/skillsen.db",
+            "type": "Item",
+            "private": false
+        },
+        {
+            "name": "combatskills",
+            "label": "Kampftalente",
+            "system": "dsa5",
+            "path": "packs/combatskills.db",
+            "type": "Item",
+            "private": false
+        },
+        {
+            "name": "combatskillsen",
+            "label": "Combat Techniques",
+            "system": "dsa5",
+            "path": "packs/combatskillsen.db",
+            "type": "Item",
+            "private": false
+        },
+        {
+            "name": "money",
+            "label": "Geld",
+            "system": "dsa5",
+            "path": "packs/money.db",
+            "type": "Item",
+            "private": false
+        },
+        {
+            "name": "speciesen",
+            "label": "Species",
+            "system": "dsa5",
+            "path": "packs/speciesen.db",
+            "type": "Item",
+            "private": false
+        },
+        {
+            "name": "species",
+            "label": "Spezies",
+            "system": "dsa5",
+            "path": "packs/species.db",
+            "type": "Item",
+            "private": false
+        },
+        {
+            "name": "patzer",
+            "label": "Patzer",
+            "system": "dsa5",
+            "path": "packs/patzer.db",
+            "type": "RollTable",
+            "private": false
+        },
+        {
+            "name": "botch",
+            "label": "Botch",
+            "system": "dsa5",
+            "path": "packs/botch.db",
+            "type": "RollTable",
+            "private": false
+        }
     ],
-    "languages": [
-      {
-        "lang": "de",
-        "name": "Deutsch",
-        "path": "lang/de.json"
-      },
-      {
-        "lang": "en",
-        "name": "English",
-        "path": "lang/en.json"
-      }
+    "languages": [{
+            "lang": "de",
+            "name": "Deutsch",
+            "path": "lang/de.json"
+        },
+        {
+            "lang": "en",
+            "name": "English",
+            "path": "lang/en.json"
+        }
     ],
-    "background": "icons/githublogo.webp",
+    "background": "systems/dsa5/icons/githublogo.webp",
     "socket": true,
     "initiative": "@status.initiative.value + @status.initiative.die + @status.initiative.diemodifier",
     "gridDistance": 1,
@@ -113,13 +109,13 @@
     "primaryTokenAttribute": "status.wounds",
     "secondaryTokenAttribute": "status.astralenergy",
     "compatibility": {
-      "minimum": "10.273",
-      "verified": "10.273",
-      "maximum": "10"
+        "minimum": "10.275",
+        "verified": "10.275",
+        "maximum": "10"
     },
     "url": "https://github.com/Plushtoast/dsa5-foundryVTT",
     "manifest": "https://raw.githubusercontent.com/Plushtoast/dsa5-foundryVTT/foundry10/system.json",
     "download": "https://github.com/Plushtoast/dsa5-foundryVTT/releases/download/4.0.0/dsa5-foundryVTT-4.0.0.zip",
     "name": "dsa5",
-    "minimiumCoreVersion": "10.273"
-  }
+    "minimumCoreVersion": "10.275"
+}

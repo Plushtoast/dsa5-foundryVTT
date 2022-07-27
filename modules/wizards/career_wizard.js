@@ -6,7 +6,6 @@ export default class CareerWizard extends WizardDSA5 {
     constructor(app) {
         super(app)
         this.items = []
-        this.actor = null
         this.career = null
         this.dataTypes = ["magictrick", "blessing", "spell", "ritual", "liturgy", "ceremony", "advantage", "disadvantage", "specialability"]
         const attrs = {
