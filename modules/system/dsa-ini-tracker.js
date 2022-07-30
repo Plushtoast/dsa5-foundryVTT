@@ -118,12 +118,14 @@ export default class DSAIniTracker extends Application {
     async panToCurrentCombatant(combatant) {
         if (!combatant || !game.settings.get("dsa5", "enableCombatPan")) return
 
-        const token = combatant.token;
-        if (!token || !token.object || !token.object.isVisible) return;
-        canvas.animatePan({ x: token.x, y: token.y });
-
-        if (!combatant.actor || !combatant.actor.isOwner) return
-        token.object.control({ releaseOthers: true });
+        setTimeout(() => {
+            const token = combatant.token;
+            if (!token || !token.object || !token.object.isVisible) return;
+            canvas.animatePan({ x: token.x, y: token.y });
+    
+            if (!combatant.actor || !combatant.actor.isOwner) return
+            token.object.control({ releaseOthers: true });
+        }, 300)        
     }
 
     async _onWheelResize(ev) {

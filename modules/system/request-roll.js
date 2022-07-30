@@ -8,7 +8,7 @@ export default class RequestRoll {
         if (!actor)  return 
 
         game.user.updateTokenTargets([])
-        let options = { modifier, cummulative: messageId }
+        let options = { modifier, postFunction: { cummulative: messageId, functionName: "RequestRoll.autoEditGroupCheckRoll"} }
         switch (category) {
             case "attribute":
                 break
@@ -19,6 +19,10 @@ export default class RequestRoll {
                     await RequestRoll.editGroupCheckRoll(messageId, result, name, category)
                 })
         }
+    }
+
+    static async autoEditGroupCheckRoll(postFunction, result, source){
+        await RequestRoll.editGroupCheckRoll(postFunction.cummulative, result, source.name, source.type)
     }
 
     static async editGroupCheckRoll(messageId, result, target, type) {
@@ -202,14 +206,19 @@ export default class RequestRoll {
         RequestRoll.rerenderGC(message, data)
     }
 
+    static async updateInformationRoll(postFunction, result, source){
+
+    }
+
     static async informationRequestRoll(ev){
         const modifier = ev.currentTarget.dataset.mod
         const uuid = ev.currentTarget.dataset.uuid
         const { actor, tokenId } = DSA5ChatAutoCompletion._getActor()
         if(!actor) return
 
+        const optns =  { modifier, postFunction: { functionName: "RequestRoll.updateInformationRoll", uuid} }
         let skill = actor.items.find((i) => i.name == ev.currentTarget.dataset.skill && i.type == "skill")
-        actor.setupSkill(skill, { modifier }, tokenId).then(async(setupData) => {
+        actor.setupSkill(skill, optns, tokenId).then(async(setupData) => {
             setupData.testData.opposable = false
             const res = await actor.basicTest(setupData)
             const availableQs = res.result.qualityStep || 0

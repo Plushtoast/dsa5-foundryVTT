@@ -25,7 +25,8 @@ export class DSA5CombatTracker extends CombatTracker {
 
         const combatant = game.combat.combatant
         if (game.user.isGM || combatant.isOwner)
-            ActAttackDialog.showDialog(combatant.actor, combatant.system.tokenId)
+            ActAttackDialog.showDialog(combatant.actor, combatant.tokenId)
+            
     }
 
     async getData(options) {

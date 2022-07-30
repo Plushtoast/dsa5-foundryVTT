@@ -247,15 +247,13 @@ export default class BookWizard extends Application {
         }
     }
 
-    tryShowImportedActor(ev) {
-
-    }
-
     showJournal(journal) {
-        let content = journal.pages.find(x => true).text.content
-
-        if (!content) content = `<img src="${journal.img}"/>`
-
+        let content = ""
+        for(let page of journal.pages){
+            if(page.type == "text") content += page.text.content
+            else if(page.type == "image") content += `<img src="${page.src}"/>`
+            else ui.notifications.warn(`Page type ${page.type} not supported by the journal browser yet`)
+        }
         const pinIcon = this.findSceneNote(journal.getFlag("dsa5", "initId"))
 
         this.content = `<div><h1 class="journalHeader" data-uuid="${journal.uuid}">${journal.name}<div class="jrnIcons">${pinIcon}<a class="pinJournal"><i class="fas fa-thumbtack"></i></a><a class="showJournal"><i class="fas fa-eye"></i></a></div></h1>${TextEditor.enrichHTML(content)}`
@@ -265,7 +263,7 @@ export default class BookWizard extends Application {
         chapter.find('.documentName-link, .entity-link').click(ev => {
             const elem = $(ev.currentTarget)
             if (this.bookData && elem.attr("data-pack") == this.bookData.journal) {
-                ev.stopPropagation()
+                ev.stopPropagation()    
                 this.loadJournalById(elem.attr("data-id"))
             }
         })

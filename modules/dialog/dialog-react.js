@@ -25,7 +25,7 @@ export default class DialogReactDSA5 extends Dialog {
             }
 
         }).render(true)
-    }
+    }t
 
     static getTargetActor(message) {
         if (!canvas.tokens) return {}
@@ -59,8 +59,8 @@ export default class DialogReactDSA5 extends Dialog {
 
 export class ReactToSkillDialog extends DialogReactDSA5 {
     static async getTemplate(startMessage) {
-        const attackMessage = game.messages.get(startMessage.data.flags.unopposeData.attackMessageId)
-        const source = attackMessage.data.flags.data.preData.source
+        const attackMessage = game.messages.get(startMessage.flags.unopposeData.attackMessageId)
+        const source = attackMessage.flags.data.preData.source
         const item = source.name
         let items = (await DSA5_Utility.allSkillsList()).map(k => { return { name: k, id: k } })
         items.unshift({

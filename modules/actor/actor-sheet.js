@@ -1080,8 +1080,13 @@ export default class ActorSheetDsa5 extends ActorSheet {
             for (let thing of item.items) {
                 if (thing.count) {
                     let elem = lookup.find(x => x.name == thing.name && x.type == thing.type)
-                    elem.system.quantity.value = thing.count
-                    if (thing.qs && thing.type == "equipment") elem.system.QL = thing.qs
+                    if(elem){
+                        elem.system.quantity.value = thing.count
+                        if (thing.qs && thing.type == "equipment") elem.system.QL = thing.qs
+                    }else{
+                        ui.notifications.warn(game.i18n.format('DSAError.notFound', {category: thing.type, name: thing.name}))    
+                    }
+                    
                 }
             }
             //we should improve that so it stacks items

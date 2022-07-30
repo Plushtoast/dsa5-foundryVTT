@@ -1381,10 +1381,10 @@ export default class DiceDSA5 {
                 const rollData = actor ? actor.getRollData() : {}
                 chatOptions["content"] = TextEditor.enrichHTML(html, rollData)
 
-                const cummulative = getProperty(rerenderMessage, "flags.data.preData.extra.options.cummulative")
-                if(cummulative){
-                    testData.messageId = rerenderMessage.id
-                    RequestRoll.editGroupCheckRoll(cummulative, { result: testData }, preData.source.name, preData.source.type)
+                const postFunction = getProperty(rerenderMessage, "flags.data.preData.extra.options.postFunction")
+                if(postFunction){
+                    testData.messageId = rerenderMessage.id;
+                    eval(postFunction.functionName)(postFunction, { result: testData }, preData.source)
                 }
 
                 return rerenderMessage

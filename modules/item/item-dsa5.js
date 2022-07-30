@@ -1414,7 +1414,7 @@ class RangeweaponItemDSA5 extends Itemdsa5 {
                     .filter((x) => x != "")
                     .join(",")
                 const poison = getProperty(currentAmmo.flags, "dsa5.poison")
-                if (poison) mergeObject(_source.data.flags, { dsa5: { poison } })
+                if (poison) mergeObject(_source.flags, { dsa5: { poison } })
             }
 
             this.prepareRangeAttack(situationalModifiers, actor, data, source, tokenId, combatskills, currentAmmo)
@@ -1457,8 +1457,7 @@ class RangeweaponItemDSA5 extends Itemdsa5 {
     static async checkAmmunitionState(item, testData, actor, mode) {
         let hasAmmo = true
         if (actor.type != "creature" && mode != "damage") {
-            //TODO this has to go
-            let itemData = item.system ? item.system : item.data
+            let itemData = item.system
             if (itemData.ammunitiongroup.value == "infinite") {
                 //Dont count ammo
             } else if (itemData.ammunitiongroup.value == "-") {

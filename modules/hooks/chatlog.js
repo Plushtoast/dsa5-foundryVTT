@@ -24,7 +24,7 @@ export default function() {
             let actor
             const reaction = html.find(".chat-button-target")
             if (reaction.length) {
-                actor = DialogReactDSA5.getTargetActor({ data: msg.message })
+                actor = DialogReactDSA5.getTargetActor(msg.message)
                 if (actor && actor.actor && !actor.actor.isOwner) reaction.remove()
             }
 

@@ -24,7 +24,6 @@ export async function itemFromDrop(dragData, actorId) {
     let item
     let typeClass
 
-    //Todo nice all fucked
     let selfTarget = dragData.actorId && dragData.actorId == actorId
     if (dragData.uuid) {
         item = await fromUuid(dragData.uuid)
