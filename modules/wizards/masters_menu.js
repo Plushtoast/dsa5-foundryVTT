@@ -64,7 +64,11 @@ class DSAMenuLayer extends InteractionLayer {
             rotatableObjects: true,
             zIndex: 666,
         });
-    }    
+    }   
+    
+    selectObjects(optns) {
+        canvas.tokens.selectObjects(optns)
+    }
 }
 
 class GameMasterMenu extends Application {
