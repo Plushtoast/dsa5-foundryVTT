@@ -45,6 +45,19 @@ export default function() {
             "4": "+4",
         }
     });
+    game.settings.register("dsa5", "informationDistribution", {
+        name: "DSASETTINGS.informationDistribution",
+        hint: "DSASETTINGS.informationDistributionHint",
+        scope: "world",
+        config: true,
+        default: "0",
+        type: String,
+        choices: {
+            0: game.i18n.localize('DSASETTINGS.information0'),
+            1: game.i18n.localize('DSASETTINGS.information1'),
+            2: game.i18n.localize('DSASETTINGS.information2')
+        }
+    });
     game.settings.register("dsa5", "enableItemDropToCanvas", {
         name: "DSASETTINGS.enableItemDropToCanvas",
         hint: "DSASETTINGS.enableItemDropToCanvasHint",

@@ -78,15 +78,31 @@ export default class BookWizard extends Application {
         this.loadPage(this._element)
     }
 
+    async toggleBookVisibility(id, type, toggle){
+        const config = game.settings.get("dsa5", "expansionPermissions")
+        config[id] = toggle
+        await game.settings.set("dsa5", "expansionPermissions", config)
+
+        let book = this[type].find(x => x.id == id)
+        const json = await (await fetch(book.path)).json()
+        const keys = ["actors","journal","scenes"]
+        for(const key of keys){
+            if(!json[key]) continue
+
+            let pack = game.packs.get(json[key]);
+            await pack.configure({private: !toggle});
+        }
+        this.render()
+    }
+
     activateListeners(html) {
         super.activateListeners(html)
 
         html.on('click', '.toggleVisibility', async(ev) => {
             const id = ev.currentTarget.dataset.itemid
-            const config = game.settings.get("dsa5", "expansionPermissions")
-            config[id] = $(ev.currentTarget).find('i').hasClass("fa-toggle-off")
-            await game.settings.set("dsa5", "expansionPermissions", config)
-            this.render()
+            const type = ev.currentTarget.dataset.type
+            const toggle = $(ev.currentTarget).find('i').hasClass("fa-toggle-off")
+            this.toggleBookVisibility(id, type, toggle)
         })
 
         html.on('click', '.showMapNote', ev => {

@@ -8,7 +8,8 @@ export default class DSAIniTracker extends Application {
             template: "systems/dsa5/templates/system/initracker.html",
             dragDrop: [{ dragSelector: ".iniItem", dropSelector: [".iniTrackerList"] }],
             top: 100,
-            left: 170
+            left: 170,
+            title: "DSAIniTracker"
         });
         const position = game.settings.get("dsa5", "iniTrackerPosition")
         mergeObject(options, position)

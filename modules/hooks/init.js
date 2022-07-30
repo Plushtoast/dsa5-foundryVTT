@@ -33,6 +33,7 @@ import CharacterMerchantSheetDSA5 from "../actor/character-merchant-sheet.js";
 import DPS from "../system/derepositioningsystem.js";
 import DSAIniTracker from "../system/dsa-ini-tracker.js";
 import { SelectUserDialog } from "../dialog/addTargetDialog.js";
+import DSAJournalSheet from "../journal/dsa_journal_sheet.js";
 
 
 export default function() {
@@ -93,7 +94,8 @@ Hooks.once("init", () => {
         "systems/dsa5/templates/actors/merchant/merchant-commerce.html",
         "systems/dsa5/templates/items/item-header.html",
         "systems/dsa5/templates/items/item-effects.html",
-        "systems/dsa5/templates/status/advanced_functions.html"
+        "systems/dsa5/templates/status/advanced_functions.html",
+        "systems/dsa5/templates/actors/parts/information.html"
     ]);
 
     Actors.unregisterSheet("core", ActorSheet);
@@ -104,6 +106,7 @@ Hooks.once("init", () => {
     Actors.registerSheet("dsa5", CreatureMerchantSheetDSA5, { types: ["creature"] })
     Actors.registerSheet("dsa5", CharacterMerchantSheetDSA5, { types: ["character"] })
     DocumentSheetConfig.registerSheet(ActiveEffect, "dsa5", DSAActiveEffectConfig, { makeDefault: true })
+    Journal.registerSheet("dsa5", DSAJournalSheet, {makeDefault: true})
 
     ItemSheetdsa5.setupSheets()
     configuration.default()

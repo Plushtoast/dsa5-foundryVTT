@@ -541,7 +541,7 @@ class ConjurationRequest extends DSA5Dialog {
         html.on("dragstart", ".newNPC", event => {
             event.stopPropagation();
             const a = event.currentTarget;
-            let dragData = { type: "Actor", id: a.dataset.id };
+            let dragData = { type: "Actor", uuid: a.dataset.uuid };
             event.originalEvent.dataTransfer.setData("text/plain", JSON.stringify(dragData));
         })
         html.find('.showEntity').click(ev => {

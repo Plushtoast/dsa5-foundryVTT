@@ -36,8 +36,8 @@ class SearchDocument {
             data: $("<div>").html(data).text(),
             id: item.id || item._id,
             visible: item.visible ? item.visible : true,
-            compendium: item.compendium ? item.compendium.metadata.packageName : (pack.package || ""),
-            pack: item.pack || (pack.package ? `${pack.package}.${pack.name}` : undefined),
+            compendium: item.compendium ? item.compendium.metadata.packageName : (pack.packageName || ""),
+            pack: item.pack || (pack.packageName ? pack.id : undefined),
             img: item.img
         }
     }
@@ -50,9 +50,9 @@ class SearchDocument {
                 case "character":
                 case "creature":
                 case "npc":
-                    return `JournalEntry.${this.id}`
-                case "JournalEntry":
                     return `Actor.${this.id}`
+                case "JournalEntry":
+                    return `JournalEntry.${this.id}`
                 default:
                     return `Item.${this.id}`
             }
@@ -481,8 +481,7 @@ export default class DSA5ItemLibrary extends Application {
                     let item = index.find($(li).attr("data-item-id"))
                     event.originalEvent.dataTransfer.setData("text/plain", JSON.stringify({
                         type: itemType,
-                        pack: item.compendium ? item.document.pack : "",
-                        id: item.id
+                        uuid: item.uuid
                     }))
                 })
             })
@@ -531,27 +530,35 @@ export default class DSA5ItemLibrary extends Application {
     async _createIndex(category, document, worldStuff) {
         if (this[`${category}Build`]) return
 
+        SceneNavigation.displayProgressBar({label: game.i18n.format('Library.loading', {item: ""}), pct: 0})
         const target = $(this._element).find(`*[data-tab="${category}"]`)
         this.showLoading(target, category)
         const packs = game.packs.filter(p => p.documentName == document && (game.user.isGM || !p.private))
-        let promise
-        let metadata = packs.map(p => p.metadata)
+        const percentage = 100 / (packs.length + 1)
+        let count = percentage
+        const actorFields = ["name", "system.type", "system.description.value", "img"]
+        let func
         if (document == "Actor") {
-            const fields = ["name", "system.type", "system.description.value", "img"]
-            promise = packs.map(p => p.getIndex({ fields }))
+            func = (p) => { return p.getIndex({actorFields})}
         } else if (document == "JournalEntry") {
-            promise = packs.map(p => p.getDocuments())
+            func = (p) => { return p.getDocuments()}
         } else {
-            promise = packs.map(p => p.getDocuments({type: { $in: game.system.documentTypes.Item }}))
+            func = (p) => {return p.getDocuments({type: { $in: game.system.documentTypes.Item }})}
         }
+        const items = this.indexWorldItems(worldStuff, category)
+        SceneNavigation.displayProgressBar({label: game.i18n.format('Library.loading', {item: "world items"}), pct: Math.round(percentage)})
+
+        let promise = packs.map(async(p) => {
+            const index = await func(p)
+            count += percentage
+            SceneNavigation.displayProgressBar({label: game.i18n.format('Library.loading', {item: `${p.metadata.label} (${p.metadata.id})`}), pct: Math.round(count)})
+            items.push(...index.map(x => new SearchDocument(x, p.metadata)))
+        })
 
         return Promise.all(promise).then(indexes => {
-            const items = this.indexWorldItems(worldStuff, category)
-            indexes.forEach((index, idx) => {
-                items.push(...index.map(x => new SearchDocument(x, metadata[idx])))
-            })
             this[`${category}Index`].add(items)
             this[`${category}Build`] = true
+            SceneNavigation.displayProgressBar({label: game.i18n.format('Library.loading', {item: ""}), pct: 100})
             this.hideLoading(target, category)
         })
     }

@@ -63,6 +63,7 @@ export default class Itemdsa5 extends Item {
         abilitypact: "systems/dsa5/icons/categories/ability_pact.webp",
         demonmark: "systems/dsa5/icons/categories/ability_pact.webp",
         patron: "systems/dsa5/icons/categories/ability_pact.webp",
+        information: "systems/dsa5/icons/categories/DSA-Auge.webp"
     }
 
     static defaultIcon(data) {
@@ -133,6 +134,7 @@ export default class Itemdsa5 extends Item {
             magicalsign: MagicalSignItemDSA5,
             patron: PatronItemDSA5,
             demonmark: DemonmarkItemDSA5,
+            information: InformationItemDSA5
         }
     }
 
@@ -593,9 +595,13 @@ export default class Itemdsa5 extends Item {
         else return Itemdsa5
     }
 
-    async postItem() {
-            let chatData = duplicate(this)
-            const properties = Itemdsa5.getSubClass(this.type).chatData(duplicate(chatData.system), this.name)
+    async postItem(){
+        Itemdsa5.getSubClass(this.type)._postItem(this)
+    }
+
+    static async _postItem(item) {
+            let chatData = duplicate(item)
+            const properties = Itemdsa5.getSubClass(item.type).chatData(duplicate(chatData.system), item.name)
 
             chatData["properties"] = properties
 
@@ -617,20 +623,13 @@ export default class Itemdsa5 extends Item {
             properties.push(`<b>${game.i18n.localize("price")}</b>: ${prices}`)
         }
 
-        if (this.pack) chatData.itemLink = `@Compendium[${this.pack}.${this.id}]`
+        if (item.pack) chatData.itemLink = `@Compendium[${item.pack}.${item.id}]`
 
         if (chatData.img.includes("/blank.webp")) chatData.img = null
 
-        renderTemplate("systems/dsa5/templates/chat/post-item.html", chatData).then((html) => {
-            let chatOptions = DSA5_Utility.chatDataSetup(html)
-
-            chatOptions["flags.transfer"] = JSON.stringify({
-                type: "postedItem",
-                payload: this.system,
-            })
-            chatOptions["flags.recreationData"] = chatData
-            ChatMessage.create(chatOptions)
-        })
+        const html = await renderTemplate("systems/dsa5/templates/chat/post-item.html", chatData)
+        const chatOptions = DSA5_Utility.chatDataSetup(html)
+        ChatMessage.create(chatOptions)
     }
 }
 
@@ -1036,7 +1035,7 @@ class CombatskillDSA5 extends Itemdsa5 {
 
         let dialogOptions = {
             title,
-            template: "/systems/dsa5/templates/dialog/combatskill-dialog.html",
+            template: "systems/dsa5/templates/dialog/combatskill-dialog.html",
             data: {
                 rollMode: options.rollMode,
             },
@@ -1055,7 +1054,7 @@ class CombatskillDSA5 extends Itemdsa5 {
 }
 
 class ConsumableItemDSA extends Itemdsa5 {
-    static chatData(dat, name) {
+    static chatData(data, name) {
         return [
             this._chatLineHelper("qualityStep", data.QL),
             this._chatLineHelper("effect", DSA5_Utility.replaceDies(data.QLList.split("\n")[data.QL - 1])),
@@ -1129,6 +1128,14 @@ class ConsumableItemDSA extends Itemdsa5 {
         item1.system.quantity.value = newQuantity
         item1.system.charges = newCharges
         return await actor.updateEmbeddedDocuments("Item", [item1])
+    }
+}
+
+class InformationItemDSA5 extends Itemdsa5{
+    static async _postItem(item){
+        const html = await renderTemplate("systems/dsa5/templates/chat/informationRequestRoll.html", {item})
+        const chatOptions = DSA5_Utility.chatDataSetup(html)
+        ChatMessage.create(chatOptions)
     }
 }
 

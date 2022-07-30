@@ -80,7 +80,8 @@ export default class TokenHotbar2 extends Application {
             zIndex: 61,
             left: hotbarPosition.left + 8,
             top: hotbarPosition.top - itemWidth - 25,
-            template: "systems/dsa5/templates/status/tokenHotbar.html"
+            template: "systems/dsa5/templates/status/tokenHotbar.html",
+            title: "TokenHotbar"
         });
         mergeObject(options, position)
         return options;
@@ -129,23 +130,13 @@ export default class TokenHotbar2 extends Application {
         })
         html.on('mouseenter', 'li', ev => {
             const li = $(ev.currentTarget)
-            let tooltip = li.find(".tooltip");
-            if (tooltip) tooltip.remove();
-            tooltip = document.createElement("SPAN");
-            tooltip.classList.add("tooltip");
-            tooltip.textContent = li.attr("data-name")
-            li.append($(tooltip));
             if (li.hasClass("primary")) {
                 html.find(`.secondary[data-category="${li.attr("data-category")}"]`).addClass("shown")
             }
         })
-        html.on('mouseenter', '.subbuttons', ev => {
-            $(ev.currentTarget).closest('li').find('>.tooltip').remove()
-        })
+        
         html.on('mouseleave', 'li', ev => {
             const li = $(ev.currentTarget)
-            let tooltip = li.find(".tooltip");
-            if (tooltip) tooltip.remove()
             if (li.hasClass("primary")) {
                 html.find(`.secondary[data-category="${li.attr("data-category")}"]`).removeClass("shown")
             }

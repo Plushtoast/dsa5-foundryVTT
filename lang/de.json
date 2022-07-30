@@ -172,6 +172,7 @@
     "ammunitiongroup": "Munitionstyp",
     "AstoundingSuccess": "Spektakulärer Erfolg",
     "AstoundingFailure": "Schreckliches Missgeschick",
+    "information": "Information",
     "confirm": "Bestätigen",
     "advantages": "Vorteile",
     "advantage": "Vorteil",
@@ -508,7 +509,8 @@
         "selectAdvanced": "Wähle eine Kategorie",
         "noFilter": "Kein Filter",
         "indexWorldItems": "Welt Items indexieren (Deaktivieren verbessert Leistung, erfordert neuladen der Welt)",
-        "fullTextSearch": "Volltextsuche (Deaktivieren verbessert Leistung, erfordert neuladen der Welt)"
+        "fullTextSearch": "Volltextsuche (Deaktivieren verbessert Leistung, erfordert neuladen der Welt)",
+        "loading": "Lade {item}..."
     },
     "Aggregated": {
         "noMoreAllowed": "Keine Proben mehr erlaubt."
@@ -878,6 +880,7 @@
         "gainsBloodrush": "Der Zorn überwältigt {character} und er/sie verfällt in den Zustand Blutrausch.",
         "unableReroll": "Würfel {die} wegen Unfähigkeit erneut geworfen ({oldVal}/{newVal})",
         "requestRoll": "{user} fordert einen Wurf in {item}",
+        "requestInformation": "Was weiß mein Held über...",
         "editRoll": "Wurf editieren",
         "BlindRoll": "Blinder Wurf",
         "whisper": "Private Nachricht",
@@ -980,6 +983,7 @@
     },
     "ITEM.TypeAdvantage": "Vorteil",
     "ITEM.TypeAggregatedtest": "Sammelprobe",
+    "ITEM.TypeInformation": "Information",
     "ITEM.TypeAmmunition": "Munition",
     "ITEM.TypeArmor": "Rüstung",
     "ITEM.TypeBlessing": "Segnung",
@@ -1455,7 +1459,12 @@
         "forceLanguage": "Sprache erzwingen",
         "forceLanguageHint": "Spieler erhalten beim Login einen Dialog, wenn deren Sprache falsch eingestellt ist. Unterschiedliche Spracheinstellungen können zu Problemen führen.",
         "encumbranceForRange": "Belastung für Fernkampf (Hausregel)",
-        "encumbranceForRangeHint": "Belastung beeinträchtigt Fernkampf normalerweise nicht. Mach deinen Spielern das Leben noch schwerer."
+        "encumbranceForRangeHint": "Belastung beeinträchtigt Fernkampf normalerweise nicht. Mach deinen Spielern das Leben noch schwerer.",
+        "information0": "Jeder",
+        "information1": "Nur Spieler",
+        "information2": "Nur SL",
+        "informationDistribution": "Informationsergebnisse anzeigen",
+        "informationDistributionHint": "Lege fest wer das Ergebnis von Informationswürfen sehen kann."
     },
     "CONTROLS": {
         "targetForUser": "Ziel für Spieler wählen"

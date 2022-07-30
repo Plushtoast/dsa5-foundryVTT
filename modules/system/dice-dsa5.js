@@ -1353,8 +1353,8 @@ export default class DiceDSA5 {
             preData.mode,
             preData.source,
             testData.successLevel,
-            chatOptions["whisper"],
-            chatOptions["blind"]
+            chatOptions.whisper,
+            chatOptions.blind
         )
 
         chatOptions["flags.data"] = {

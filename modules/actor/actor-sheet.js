@@ -1055,6 +1055,9 @@ export default class ActorSheetDsa5 extends ActorSheet {
                     shapeshift.render(true)
                     break
                 }
+            case "information":
+                await this._addUniqueItem(item)
+                break
             case "patron":
             case "demonmark":
                 await this._addDemonMarkOrPatron(item)

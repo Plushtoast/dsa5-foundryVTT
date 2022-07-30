@@ -417,7 +417,7 @@ select[multiple] option:checked {
 }
 
 .bookWizardsheet .window-content table tr:first-child,
-.journal-sheet .window-content table tr:first-child,
+.dsajournal .window-content table tr:first-child,
 .table-title,
 .label-text {
     font-weight: bold;
@@ -1024,7 +1024,7 @@ a.img-entity-link:hover {
     background-size: 101% 1400px;
 }
 
-.window-app.journal-sheet .window-content {
+.window-app.dsajournal .window-content {
     background-image: url(../icons/backgrounds/journalentry.webp);
     background-size: 97% 1000px;
     background-position: center;
@@ -1032,7 +1032,22 @@ a.img-entity-link:hover {
     padding: 0 50px;
 }
 
-.window-app.journal-sheet .editor-content p {
+.sheet.journal-entry:not(.dsajournal) .sidebar.directory{
+    background: rgba(0,0,0,0.4);
+}
+
+.dsajournal.sheet.journal-entry .journal-entry-content{
+    background: none;
+    border: none;
+}
+
+.dsajournal .header-search,
+.dsajournal.sheet.journal-entry .pages-list .directory-item .page-number,
+.dsajournal .directory-item{
+    color: black;
+}
+
+.window-app.dsajournal .editor-content p {
     margin-right: 10px;
 }
 
@@ -1376,7 +1391,7 @@ form.dsa5.item-sheet {
 fieldset,
 .app.sidebar-popout,
 .dsa5.item h1,
-.journal-sheet img,
+.dsajournal img,
 .itemLibrary img,
 .charimg,
 .dsa5.post-item img {
@@ -2278,7 +2293,7 @@ a.inline-roll {
 
 .chat-condition,
 .item-sheet .chatButton,
-.journal-sheet .chatButton {
+.dsajournal .chatButton {
     padding: 0px 4px;
     border: 1px solid #4b4a44;
     border-radius: 2px;
@@ -2291,7 +2306,7 @@ a.inline-roll {
 
 .chat-condition img,
 .item-sheet .chatButton img,
-.journal-sheet .chatButton img {
+.dsajournal .chatButton img {
     top: 3px;
 }
 
@@ -2304,7 +2319,7 @@ a.inline-roll {
     color: white;
 }
 
-.journal-sheet .window-content .maskfield tr:first-child {
+.dsajournal .window-content .maskfield tr:first-child {
     background: none;
 }
 
@@ -2618,23 +2633,6 @@ select.noAppearance {
     color: #609ec6;
 }
 
-#hotbar .macro .tooltip,
-.tokenQuickHot .tooltip {
-    z-index: 1000;
-}
-
-.initTracker .tooltip {
-    position: absolute;
-    top: -20px;
-    color: white;
-    background: black;
-    padding: 5px;
-    margin: 0 auto;
-    border-radius: 5px;
-    left: 50%;
-    transform: translateX(-50%);
-}
-
 .tokenQuickHot .direction0 .subbuttons {
     bottom: var(--tokenQuickhotdistance);
 }
@@ -2712,11 +2710,6 @@ select.noAppearance {
     top: calc(var(--iniTrackerSize) * -0.5);
     left: 30px;
     z-index: -1;
-}
-
-.initTracker .tooltip {
-    pointer-events: none;
-    ;
 }
 
 .initTracker .newRound {

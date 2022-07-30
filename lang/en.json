@@ -563,6 +563,7 @@
     "YouAlreadyHaveit": "Already owned",
     "zkModifier": "Toughness (Target)",
     "vulnerability": "Vulnerability",
+    "information": "Information",
     "zoo": "Zoo",
     "Library": {
         "search": "Search",
@@ -573,7 +574,8 @@
         "selectAdvanced": "Chose a category",
         "noFilter": "No filter",
         "indexWorldItems": "Index world Items (deactivate to increase performance, requires reloading of the world)",
-        "fullTextSearch": "Full text search (deactivate to increase performance, requires reloading of the world)"
+        "fullTextSearch": "Full text search (deactivate to increase performance, requires reloading of the world)",
+        "loading": "Loading {item}..."
     },
     "Aggregated": {
         "noMoreAllowed": "No more rolls allowed."
@@ -901,6 +903,7 @@
         "usesItem": "{actor} uses {item}.",
         "requestGroupCheck": " requests a group check in ",
         "enchantmentUsed": "<b>{item}</b> used one charge of <b>{spell}</b>.",
+        "requestInformation": "What does my hero know about...",
         "regenerates": "regenerates",
         "getsHurt": "loses",
         "burning": {
@@ -945,6 +948,7 @@
     },
     "ITEM.TypeAdvantage": "Advantage",
     "ITEM.TypeAggregatedtest": "Cumulative Check",
+    "ITEM.TypeInformation": "Information",
     "ITEM.TypeAmmunition": "Ammunition",
     "ITEM.TypeArmor": "Armor",
     "ITEM.TypeBlessing": "Blessing",
@@ -1441,7 +1445,12 @@
         "forceLanguage": "Force language",
         "forceLanguageHint": "Players receive a message, if their language setting is wrong. Different language settings can lead to issues.",
         "encumbranceForRange": "Encumbrance for range combat (house rule)",
-        "encumbranceForRangeHint": "Encumbrance normally doesn't affect range combat. Lay more weight on your players by increasing the difficulty."
+        "encumbranceForRangeHint": "Encumbrance normally doesn't affect range combat. Lay more weight on your players by increasing the difficulty.",
+        "information0": "Everyone",
+        "information1": "Only Player",
+        "information2": "Only GM",
+        "informationDistribution": "Show information results",
+        "informationDistributionHint": "Define who gets the results of information rolls."
     },
     "WEAR": {
         "check": "Breaking Point Rating Check ({category})",

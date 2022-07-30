@@ -49,11 +49,12 @@ export default class ItemSheetdsa5 extends ItemSheet {
         Items.registerSheet("dsa5", PlantSheet, { makeDefault: true, types: ["plant"] });
         Items.registerSheet("dsa5", MagicalSignSheet, { makeDefault: true, types: ["magicalsign"] });
         Items.registerSheet("dsa5", PatronSheet, { makeDefault: true, types: ["patron"] });
+        Items.registerSheet("dsa5", InformationSheet, { makeDefault: true, types: ["information"] });
 
         Items.unregisterSheet("dsa5", ItemSheetdsa5, {
             types: [
                 "armor", "equipment", "rangeweapon", "blessing", "magictrick", "spellextension", "consumable",
-                "species", "career", "culture", "advantage", "specialability", "disadvantage", "ritual",
+                "species", "career", "culture", "advantage", "specialability", "disadvantage", "ritual", "information",
                 "ceremony", "liturgy", "spell", "disease", "poison", "meleeweapon", "ammunition", "plant", "magicalsign", "patron"
             ]
         });
@@ -238,7 +239,6 @@ export default class ItemSheetdsa5 extends ItemSheet {
         return false
     }
 }
-
 
 class Enchantable extends ItemSheetdsa5 {
     async _onDrop(event) {
@@ -460,6 +460,14 @@ class Enchantable extends ItemSheetdsa5 {
         data.enchantmentLabel = enchantmentLabel.map(x => game.i18n.localize(x)).join("/")
 
         data.hasEnchantments = data.poison || (data.enchantments && data.enchantments.length > 0)
+        return data
+    }
+}
+
+class InformationSheet extends ItemSheetdsa5{
+    async getData(options) {
+        const data = await super.getData(options)
+        data["allSkills"] = await DSA5_Utility.allSkillsList()
         return data
     }
 }

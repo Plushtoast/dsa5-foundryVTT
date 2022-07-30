@@ -5,20 +5,19 @@ import DSA5_Utility from "./utility-dsa5.js"
 export default class RequestRoll {
     static async requestGC(category, name, messageId, modifier = 0) {
         const { actor, tokenId } = DSA5ChatAutoCompletion._getActor()
+        if (!actor)  return 
 
-        if (actor) {
-            game.user.updateTokenTargets([])
-            let options = { modifier, cummulative: messageId }
-            switch (category) {
-                case "attribute":
-                    break
-                default:
-                    const skill = actor.items.find((i) => i.name == name && i.type == category)
-                    actor.setupSkill(skill, options, tokenId).then(async(setupData) => {
-                        let result = await actor.basicTest(setupData)
-                        await RequestRoll.editGroupCheckRoll(messageId, result, name, category)
-                    })
-            }
+        game.user.updateTokenTargets([])
+        let options = { modifier, cummulative: messageId }
+        switch (category) {
+            case "attribute":
+                break
+            default:
+                const skill = actor.items.find((i) => i.name == name && i.type == category)
+                actor.setupSkill(skill, options, tokenId).then(async(setupData) => {
+                    let result = await actor.basicTest(setupData)
+                    await RequestRoll.editGroupCheckRoll(messageId, result, name, category)
+                })
         }
     }
 
@@ -110,8 +109,6 @@ export default class RequestRoll {
         const msg = game.i18n.format("CHATNOTIFICATION.requestRoll", { user: game.user.name, item: `<a class="roll-button request-roll" data-type="${type}" data-modifier="${modifier}" data-name="${target}"><i class="fas fa-dice"></i> ${target}${mod}</a>` })
         ChatMessage.create(DSA5_Utility.chatDataSetup(msg));
     }
-
-
 
     static async showGCMessage(target, modifier = 0, options = {}) {
         const type = DSA5ChatAutoCompletion.skills.find(x => x.name == target).type
@@ -205,6 +202,41 @@ export default class RequestRoll {
         RequestRoll.rerenderGC(message, data)
     }
 
+    static async informationRequestRoll(ev){
+        const modifier = ev.currentTarget.dataset.mod
+        const uuid = ev.currentTarget.dataset.uuid
+        const { actor, tokenId } = DSA5ChatAutoCompletion._getActor()
+        if(!actor) return
+
+        let skill = actor.items.find((i) => i.name == ev.currentTarget.dataset.skill && i.type == "skill")
+        actor.setupSkill(skill, { modifier }, tokenId).then(async(setupData) => {
+            setupData.testData.opposable = false
+            const res = await actor.basicTest(setupData)
+            const availableQs = res.result.qualityStep || 0
+            if(availableQs > 0){
+                const item = await fromUuid(uuid)
+                const msg = []
+                for(let i = 1;i<=availableQs;i++){
+                    const qs = `qs${i}`
+                    if(item.system[qs]){
+                        msg.push(`<p>${item.system[qs]}</p>`)
+                    }
+                }
+                const recipientsTarget = game.settings.get("dsa5", "informationDistribution")
+                const chatData = DSA5_Utility.chatDataSetup(msg.join(""))
+                if(recipientsTarget == 1){
+                    const users = game.users.filter((user) => user.isGM).map((x) => x.id)
+                    users.push(game.user.id)
+                    chatData["whisper"] = users
+                }else if(recipientsTarget == 2){
+                    chatData["whisper"] = game.users.filter((user) => user.isGM).map((x) => x.id)
+                }
+                
+                ChatMessage.create(chatData);
+            }
+        })
+    }
+
     static chatListeners(html) {
         html.on("change", ".editGC", (ev) => RequestRoll.editGC(ev))
         html.on("click", ".request-roll", (ev) => {
@@ -223,5 +255,6 @@ export default class RequestRoll {
         html.on("click", ".removeGC", (ev) => RequestRoll.removeGCEntry(ev))
         html.on('click', '.removeSkillFromGC', ev => RequestRoll.removeSkillFromGC(ev))
         html.on('click', '.addSkillToGC', ev => RequestRoll.addSkillToGC(ev))
+        html.on('click', '.informationRequestRoll', ev => RequestRoll.informationRequestRoll(ev))
     }
 }

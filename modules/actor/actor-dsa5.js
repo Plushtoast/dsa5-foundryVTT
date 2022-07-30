@@ -567,6 +567,7 @@ export default class Actordsa5 extends Actor {
         let diseases = [];
         let demonmarks = [];
         let wornweapons = [];
+        let information = []
 
         const specAbs = Object.fromEntries(Object.keys(DSA5.specialAbilityCategories).map((x) => [x, []]));
         const traits = Object.fromEntries(Object.keys(DSA5.traitCategories).map((x) => [x, []]));
@@ -695,6 +696,9 @@ export default class Actordsa5 extends Actor {
                     case "skill":
                         skills[i.system.group.value].push(this._perpareItemAdvancementCost(i));
                         break;
+                    case "information":
+                        information.push(i)
+                        break
                     case "aggregatedTest":
                         aggregatedtests.push(i);
                         break;
@@ -916,6 +920,7 @@ export default class Actordsa5 extends Actor {
             advantages,
             disadvantages,
             specAbs,
+            information,
             aggregatedtests,
             wornArmor: armor,
             inventory,

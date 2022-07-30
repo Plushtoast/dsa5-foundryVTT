@@ -1,0 +1,55 @@
+<form class="dsa5 item-sheet {{cssClass}}" autocomplete="off">
+    {{> systems/dsa5/templates/items/item-header.html}}
+    {{> systems/dsa5/templates/items/item-stat.html}}
+
+    <nav class="sheet-tabs tabs" data-tab-container="primary">
+        <a class="item" data-tab="details">{{localize "Details"}}</a> 
+    </nav>
+
+
+    <section class="content">
+
+        <div class="tab details" data-tab="details">
+            <div class="form-group">
+                <label class="label-text">{{localize "skill"}}</label>
+                <select name="system.skill" data-dtype="String">
+                    {{#select system.skill}}
+                    {{#each allSkills as |ch|}}
+                    <option value="{{ch}}">{{ch}}</option>
+                    {{/each}}
+                    {{/select}}
+                </select>
+            </div>
+            <div class="form-group">
+                <label class="label-text">{{localize "Modifier"}}</label>
+                <input class="input-text" type="number" name="system.modifier" value="{{system.modifier}}" data-dtype="Number" />
+            </div>
+            <div class="form-group full-height">
+                <label class="label-text">{{localize "CHARAbbrev.QS"}} 1</label>
+                <textarea class="input-text" type="text" name="system.qs1" data-dtype="String">{{system.qs1}}</textarea>
+            </div>
+            <div class="form-group full-height">
+                <label class="label-text">{{localize "CHARAbbrev.QS"}} 2</label>
+                <textarea class="input-text" type="text" name="system.qs2" data-dtype="String">{{system.qs2}}</textarea>
+            </div>
+            <div class="form-group full-height">
+                <label class="label-text">{{localize "CHARAbbrev.QS"}} 3</label>
+                <textarea class="input-text" type="text" name="system.qs3" data-dtype="String">{{system.qs3}}</textarea>
+            </div>
+            <div class="form-group full-height">
+                <label class="label-text">{{localize "CHARAbbrev.QS"}} 4</label>
+                <textarea class="input-text" type="text" name="system.qs4" data-dtype="String">{{system.qs4}}</textarea>
+            </div>
+            <div class="form-group full-height">
+                <label class="label-text">{{localize "CHARAbbrev.QS"}} 5</label>
+                <textarea class="input-text" type="text" name="system.qs5" data-dtype="String">{{system.qs5}}</textarea>
+            </div>
+            <div class="form-group full-height">
+                <label class="label-text">{{localize "CHARAbbrev.QS"}} 6</label>
+                <textarea class="input-text" type="text" name="system.qs6" data-dtype="String">{{system.qs6}}</textarea>
+            </div>
+            
+        </div>
+
+    </section>
+</form>

@@ -338,7 +338,8 @@
             "plant",
             "magicalsign",
             "demonmark",
-            "patron"
+            "patron",
+            "information"
         ],
         "templates": {
             "skill": {
@@ -531,6 +532,16 @@
             "effect": "",
             "source": "",
             "category": "spell"
+        },
+        "information": {
+            "qs1": "",
+            "qs2": "",
+            "qs3": "",
+            "qs4": "",
+            "qs5": "",
+            "qs6": "",
+            "skill": "",
+            "modifier": 0
         },
         "culture": {
             "templates": [

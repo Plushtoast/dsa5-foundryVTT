@@ -1,0 +1,5 @@
+<div>
+    <div class="hideData"><b>{{item.name}}{{#if item.parent}} ({{item.parent.name}}){{/if}}</b></div>
+    <p>{{localize 'CHATNOTIFICATION.requestInformation'}}</p>
+    <button class="informationRequestRoll" data-uuid="{{item.uuid}}"  data-skill="{{item.system.skill}}" data-mod="{{item.system.modifier}}">{{item.system.skill}} ({{item.system.modifier}})</button>
+</div>

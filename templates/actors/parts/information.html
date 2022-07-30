@@ -1,0 +1,16 @@
+{{#if actor.information}}
+<div class="groupbox">
+    <div class="disadvantages row-section">
+        <div class="col header-label lineheight">
+            <b>{{localize "information"}}</b>
+        </div>
+    </div>
+    <div class="row-section wrap cards">
+        {{#each actor.information as |item i|}}
+        <div class="item" data-item-id="{{item._id}}">
+            <a class="item-edit">{{item.name}}</a>
+        </div>
+        {{/each}}
+    </div>
+</div>
+{{/if}}

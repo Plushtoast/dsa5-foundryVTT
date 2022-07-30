@@ -233,6 +233,12 @@ class GameMasterMenu extends Application {
             elem.activateListeners(html)
         }
         slist(html, '.heros', this.updateHeroOrder, '.hero')
+        html.on("dragstart", ".hero", event => {
+            event.stopPropagation();
+            const a = event.currentTarget;
+            let dragData = { type: "Actor", uuid: a.dataset.uuid };
+            event.originalEvent.dataTransfer.setData("text/plain", JSON.stringify(dragData));
+        })
 
         if (game.dsa5.apps.LightDialog) game.dsa5.apps.LightDialog.activateButtonListener(html)
     }
