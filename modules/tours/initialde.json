@@ -1,0 +1,59 @@
+{
+    "title": "DSA spezifische Tools",
+    "module": "dsa5",
+    "id": "tdeTools",
+    "canBeResumed": true,
+    "display": true,
+    "steps": [
+      {
+        "id": "step-0",
+        "selector": "[data-tool=\"JournalBrowser\"]",
+        "title": "Journalbrowser",
+        "content": "Der Journalbrowser zeigt dir den Inhalt aller verfügbaren DSA Premium Module und erlaubt das Importieren von Abenteuern. (Standard Hotkey J)",
+        "activateLayer": "dsamenu"
+      },
+      {
+        "id": "step-1",
+        "selector": "[data-tool=\"Library\"]",
+        "title": "Bibliothek",
+        "content": "Die Bibliothek ermöglicht es dir alle Gegenstände und Fähigkeiten zu durchsuchen und sie schnell per Drag & Drop deinen Charakteren hinzuzufügen. (Standard Hotkey L)",
+        "activateLayer": "dsamenu"
+      },
+      {
+        "id": "step-2",
+        "selector": "[data-tool=\"PlayerMenu\"]",
+        "title": "Spielermenü",
+        "content": "Das Spielermenü gibt dir Zugriff zu komplizierteren Spielautomatismen wie z.B. der Beschwörung oder dem Erstellen von Artefakten.",
+        "activateLayer": "dsamenu"
+      },
+      {
+        "id": "step-3",
+        "selector": "[data-tool=\"mastersMenu\"]",
+        "title": "Meistermenü",
+        "content": "Das Meistermenü ermöglicht es dir den Überblick über den Zustand der Spieler zu bewahren. Außerdem findest du dort alle verfügbaren Zufallsgeneratoren und hast Zugriff auf weitere Spieleinstellungen oder die DSA Lichteinstellungen. (Standard Hotkey M)",
+        "activateLayer": "dsamenu"
+      },
+      {
+        "id": "step-4",
+        "selector": "#chat-message",
+        "title": "Chatbefehle",
+        "content": "DSA unterstützt einige Chatbefehle die den Spielfluss beschleunigen können. Tippe im Chat /help um alle verfügbaren Befehle anzuzeigen. Du kannst so z.B. schnell Proben anfordern oder Charaktere angreifen lassen.",
+        "activateTab": "chat"
+      }, 
+      {
+        "id": "step-5",
+        "selector": "[data-tab=\"settings\"] [data-action=\"configure\"]",
+        "title": "Einstellungen",
+        "content": "In den Einstellungen kannst du neben den installierten Modulen auch noch einige spezifische Einstellungen für das DSA System modifizieren. Darunter z.b. Optionalregeln oder grafische Elemente.",
+        "activateTab": "settings"
+      }, 
+      {
+        "id": "step-6",
+        "selector": "#reportADSABug",
+        "title": "Fehler melden",
+        "content": "Solltest du Fehler finden kannst du diese in Github oder dem Ulisses Discord melden. Wir freuen uns über konstruktives Feedback.",
+        "activateTab": "settings"
+      }        
+    ]
+  }
+  

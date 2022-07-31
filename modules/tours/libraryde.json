@@ -1,0 +1,41 @@
+{
+    "title": "Bibliothek",
+    "module": "dsa5",
+    "id": "tdeLibrary",
+    "canBeResumed": false,
+    "display": true,
+    "preCommand": "await game.dsa5.itemLibrary.render(true, {focus: true})",
+    "steps": [
+      {
+        "id": "step-0",
+        "selector": ".itemLibrary [name=\"librarySearch\"]",
+        "title": "Gegenstandssuche",
+        "content": "In der Bibliothek kannst du nach allen Dingen suchen, die du in deiner DSA Welt zur Verfügung hast. (Default Hotkey L)"
+      },
+      {
+        "id": "step-1",
+        "selector": ".itemLibrary .groupbox p",
+        "title": "Filter",
+        "content": "Das Suchergebnis lässt sich weiter durch das Einschränken der Kategorie verfeinern."
+      }, 
+      {
+        "id": "step-2",
+        "selector": ".itemLibrary .toggleAdvancedMode",
+        "title": "Detailfilter",
+        "content": "Zusätzlich kannst du den Detailfilter aktivieren, um die jeweilige Kategorie nach speziellen Attributen zu durchsuchen."
+      },
+      {
+        "id": "step-3",
+        "selector": ".itemLibrary .toggleWorldIndex",
+        "title": "Welt Items indexieren",
+        "content": "Hier kannst du das Durchsuchen der Weltgegenstände aktivieren oder deaktivieren. Weltgegenstände ist alles was nicht in Kompendien zu finden ist. Das erhöht ein bisschen die Leistung."
+      },
+      {
+        "id": "step-4",
+        "selector": ".itemLibrary .fulltextsearch",
+        "title": "Volltextsuche",
+        "content": "Hier kannst die Volltextsuche deaktivieren oder aktivieren."
+      }
+    ]
+  }
+  

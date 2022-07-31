@@ -1,0 +1,82 @@
+{
+    "title": "Heldendokument",
+    "module": "dsa5",
+    "id": "tdeActor",
+    "canBeResumed": false,
+    "display": true,
+    "preCommand": "const actor = game.actors.find(x => true);if(!actor) return ui.notifications.warn(\"Mindestens ein Akteur muss verfügbar sein\"); this.app = actor;await actor.sheet.render(true)",
+    "steps": [
+   
+      {
+        "id": "step-0",
+        "selector": ".actor.sheet",
+        "title": "Heldendokument",
+        "content": "Das Heldendokument beinhaltet alle Information, Fähigkeiten und sonstige Daten die ein Charakter benötigt. Grundsätzlich können Gegenstände und Fähigkeiten per Drag & Drop z.b. aus der Bibliothek hinzugefügt werden. Einige der Tabs erscheinen erst nach dem Hinzufügen entsprechender Fähigkeiten (z.b. Magie).",
+        "appTab": "skills"
+      },
+      {
+        "id": "step-0b",
+        "selector": ".actor.sheet .general",
+        "title": "Attributswürfe",
+        "content": "Generelle Attributsproben löst du in diesem Bereich aus. Außerdem kannst du hier einfach den Zustand des Charakters erfassen und dessen derzeite Anzahl an Schips.",
+        "appTab": "skills"
+        },
+      {
+        "id": "step-1",
+        "selector": ".actor.sheet .tab.skills",
+        "title": "Talente",
+        "content": "Im Abschnitt Talente finden sich alle Talente des Charakters. Über einen klick auf die Würfel lässt sich eine Probe auslösen. Auf diesem Tab findest du auch die Möglichkeit Sammelproben zu verfolgen.",
+        "appTab": "skills"
+      },
+      {
+        "id": "step-2",
+        "selector": ".actor.sheet .tab.combat",
+        "title": "Kampf",
+        "content": "Im Abschnitt Kampf finden sich alle Kampftechniken des Charakters, sowie alle ausgerüsteten Waffen oder Angriffsfähigkeiten. Über die Würfel lässt sich auch hier eine Probe auslösen.",
+        "appTab": "combat"
+      },
+      {
+        "id": "step-3",
+        "selector": ".actor.sheet .tab.combat .buttons",
+        "title": "Waffenloser Kampf",
+        "content": "Hier finden sich z.b. Buttons um auszuweichen oder waffenlos anzugreifen bzw. zu parieren.",
+        "appTab": "combat"
+      },
+      {
+        "id": "step-4",
+        "selector": ".actor.sheet .tab.main",
+        "title": "Eigenschaften",
+        "content": "Unter Eigenschaften befinden sich alle Grundwerte des Charakters, sowie Vor- und Nachteile, allgemeine Sonderfertigkeiten und Abenteuerpunkte.",
+        "appTab": "main"
+      },
+      {
+        "id": "step-5",
+        "selector": ".actor.sheet .tab.main .ch-regenerate",
+        "title": "Regeneration",
+        "content": "Ebenso befindet sich hier die Möglichkeit eine Regenerationsprobe durchzuführen.",
+        "appTab": "main"
+      },
+      {
+        "id": "step-6",
+        "selector": ".actor.sheet .tab.inventory",
+        "title": "Ausrüstung",
+        "content": "Der Ausrüstungsabschnitt zeigt alle Ausrüstungsgegenstände an, summiert deren Gewicht und erlaubt es Gegenstände an- und abzulegen (z.b. Rüstungen).",
+        "appTab": "inventory"
+      },
+      {
+        "id": "step-6",
+        "selector": ".actor.sheet .tab.status",
+        "title": "Status",
+        "content": "Hier befinden sich alle Zustände unter denen der Charakter derzeit leidet. Außerdem kannst du hier zusätzliche Modifikatoren hinzufügen z.b. durch einen Krafttrank.",
+        "appTab": "status"
+      },
+      {
+        "id": "step-7",
+        "selector": ".actor.sheet .tab.notes",
+        "title": "Notizen",
+        "content": "Der letzte Abschnitt beschäftigt sich mit den Hintergrundinformationen des jeweiligen Charakters.",
+        "appTab": "notes"
+      }
+    ]
+  }
+  

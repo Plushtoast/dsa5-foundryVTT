@@ -1,7 +1,7 @@
 export default function() {
     Hooks.on("renderSidebarTab", (app, html) => {
         if (app.options.id == "settings") {
-            let button = $(`<button><i class="fas fa-bug"></i> ${game.i18n.localize("DSA5Error")}</button>`)
+            let button = $(`<button id="reportADSABug"><i class="fas fa-bug"></i> ${game.i18n.localize("DSA5Error")}</button>`)
             button.click(() => { window.open("https://github.com/Plushtoast/dsa5-foundryVTT/issues", "_blank") })
             html.find("#settings-documentation").append(button)
 
@@ -19,7 +19,7 @@ export default function() {
     })
 
     Hooks.on("renderCompendiumDirectory", (app, html, data) => {
-        const button = $(`<button><i class="fas fa-university"></i>${game.i18n.localize("ItemLibrary")}</button>`);
+        const button = $(`<button id="openLibrary"><i class="fas fa-university"></i>${game.i18n.localize("ItemLibrary")}</button>`);
         html.find(".header-actions").append(button);
         button.click(() => { game.dsa5.itemLibrary.render(true) })
 

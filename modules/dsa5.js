@@ -27,7 +27,7 @@ import DSATables from "./tables/dsatables.js"
 import DiceDSA5 from "./system/dice-dsa5.js";
 import DSA5StatusEffects from './status/status_effects.js'
 import { MerchantSheetMixin } from './actor/merchantmixin.js'
-
+import DSATour from './tours/dsa_tour.js'
 Hooks.once("init", () => {
     console.log("Initializing DSA5 system")
 
@@ -51,7 +51,8 @@ Hooks.once("init", () => {
             DSA5StatusEffects,
             DPS,
             DSATables,
-            DiceDSA5
+            DiceDSA5,
+            DSATour
         },
         entities: {
             Actordsa5,

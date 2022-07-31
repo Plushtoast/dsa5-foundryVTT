@@ -34,6 +34,7 @@ import DPS from "../system/derepositioningsystem.js";
 import DSAIniTracker from "../system/dsa-ini-tracker.js";
 import { SelectUserDialog } from "../dialog/addTargetDialog.js";
 import DSAJournalSheet from "../journal/dsa_journal_sheet.js";
+import DSATour from "../tours/dsa_tour.js";
 
 
 export default function() {
@@ -118,7 +119,14 @@ Hooks.once('ready', () => {
     TokenHotbar2.registerTokenHotbar()
     connectHook()
     DSAIniTracker.connectHooks()
-
+    const hook = (dat) => {
+        if(dat.tabName == "settings") {
+            DSATour.travelAgency()
+            Hooks.off('changeSidebarTab', hook)
+        }
+    }
+    Hooks.on('changeSidebarTab', hook)
+    
 })
 
 Hooks.once('setup', () => {

@@ -51,5 +51,5 @@ export default function() {
 }
 
 const combatTurn = (mode) => {
-    game.combat && game.combat.combatant.isOwner && game.combat[mode]()
+    game.combat?.combatant?.isOwner && game.combat[mode]()
 }
