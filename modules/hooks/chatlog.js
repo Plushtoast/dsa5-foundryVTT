@@ -31,7 +31,7 @@ export default function() {
             const speaker = DSA5_Utility.getSpeaker(msg.message.speaker)
             if (speaker && !speaker.isOwner) {
                 html.find(".selfButton").remove()
-                html.find('.d20').attr('title', '')
+                html.find('.d20').data('tooltip', '')
             }
 
             const onlyTarget = html.find(".onlyTarget")

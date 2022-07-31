@@ -386,6 +386,15 @@ export default class ActorSheetDsa5 extends ActorSheet {
         });
     }
 
+    async swapWeaponHand(ev){
+        const itemId = this._getItemId(ev)
+        const item = this.actor.items.get(itemId)
+
+        if(!["Daggers", "Fencing Weapons"].includes(game.i18n.localize(`LocalizedCTs.${item.system.combatskill.value}`))){
+            await this.actor.updateEmbeddedDocuments("Item", [{_id: itemId, "system.worn.wrongGrip": !item.system.worn.wrongGrip}]);
+        }
+    }
+
     activateListeners(html) {
         super.activateListeners(html);
 
@@ -403,6 +412,8 @@ export default class ActorSheetDsa5 extends ActorSheet {
             elem.val(val)
             elem.trigger("change")
         })
+
+        html.find('.swapWeaponHand').click(ev => this.swapWeaponHand(ev))
 
         html.find('.defenseToggle').click(() => this.actor.update({ "system.config.defense": !this.actor.system.config.defense }))
 

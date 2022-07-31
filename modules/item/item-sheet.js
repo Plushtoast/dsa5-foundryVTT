@@ -8,6 +8,7 @@ import DSA5ChatAutoCompletion from "../system/chat_autocompletion.js"
 import EquipmentDamage from "../system/equipment-damage.js"
 import DiceDSA5 from "../system/dice-dsa5.js"
 import OnUseEffect from "../system/onUseEffects.js"
+import RuleChaos from "../system/rule_chaos.js"
 
 export default class ItemSheetdsa5 extends ItemSheet {
     constructor(item, options) {
@@ -839,9 +840,31 @@ class MeleeweaponSheetDSA5 extends Enchantable {
             "ge/kk": game.i18n.localize("CHAR.GEKK"),
             ["-"]: "-"
         })
+        const twoHanded = RuleChaos.regex2h.test(this.item.name)
+        let wrongGripHint = ""
+        if(!twoHanded){
+            wrongGripHint = "wrongGrip.yieldTwo"
+        }else{
+            const localizedCT = game.i18n.localize(`LocalizedCTs.${this.item.system.combatskill.value}`)
+            switch(localizedCT){
+                case "Two-Handed Impact Weapons":
+                case "Two-Handed Swords":
+                    const reg = new RegExp(game.i18n.localize('wrongGrip.wrongGripBastardRegex'))
+                    if(reg.test(this.item.name))
+                        wrongGripHint = "wrongGrip.yieldOneBastard"
+                    else
+                        wrongGripHint = "wrongGrip.yieldOneSwordBlunt"
+
+                    break
+                default:
+                    wrongGripHint = "wrongGrip.yieldOnePolearms"
+            }
+        }
         mergeObject(data, {
             characteristics,
-            twoHanded: /\(2H/.test(this.item.name),
+            twoHanded,
+            wrongGripLabel: twoHanded ? "wrongGrip.oneHanded" : "wrongGrip.twoHanded",
+            wrongGripHint,
             combatskills: await DSA5_Utility.allCombatSkillsList("melee"),
             ranges: DSA5.meleeRanges,
             shieldSizes: DSA5.shieldSizes,
@@ -852,6 +875,7 @@ class MeleeweaponSheetDSA5 extends Enchantable {
         if (this.item.actor) {
             const combatSkill = this.item.actor.items.find(x => x.type == "combatskill" && x.name == this.item.system.combatskill.value)
             data['canBeOffHand'] = combatSkill && !(combatSkill.system.weapontype.twoHanded) && this.item.system.worn.value
+            data['canBeWrongGrip'] = !["Daggers", "Fencing Weapons"].includes(game.i18n.localize(`LocalizedCTs.${this.item.system.combatskill.value}`))
         }
         data.canOnUseEffect = game.user.isGM || await game.settings.get("dsa5", "playerCanEditSpellMacro")
         return data

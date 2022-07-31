@@ -508,8 +508,8 @@ export default class DiceDSA5 {
     static async evaluateDamage(testData, result, weapon, isRangeWeapon, doubleDamage) {
         let rollFormula = weapon.system.damage.value.replace(/[Ww]/g, "d")
         let overrideDamage = []
-        let dmgMultipliers = []
-        let damageBonusDescription = []
+        let dmgMultipliers = weapon.dmgMultipliers || []
+        let damageBonusDescription = dmgMultipliers.map( x => `${x.name} *${x.val}`)
         let armorPen = []
         let bonusDmg = 0
         for(let val of testData.situationalModifiers){
@@ -607,7 +607,7 @@ export default class DiceDSA5 {
             damage = damage * el.val
         }
         result["armorPen"] = armorPen
-        result["damagedescription"] = damageBonusDescription.join("\n")
+        result["damagedescription"] = damageBonusDescription.join(", ")
         result["damage"] = Math.round(damage)
         result["damageRoll"] = duplicate(damageRoll)
     }

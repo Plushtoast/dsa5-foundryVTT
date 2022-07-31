@@ -866,8 +866,6 @@ export default class Actordsa5 extends Actor {
             }
         }
 
-        const regex2h = /\(2H/;
-
         for (let wep of wornweapons) {
             try {
                 meleeweapons.push(
@@ -875,7 +873,7 @@ export default class Actordsa5 extends Actor {
                         wep,
                         combatskills,
                         actorData,
-                        wornweapons.filter((x) => x._id != wep._id && !regex2h.test(x.name))
+                        wornweapons.filter((x) => x._id != wep._id && !RuleChaos.isYieldedTwohanded(x))
                     )
                 );
             } catch (error) {
@@ -1807,16 +1805,47 @@ export default class Actordsa5 extends Actor {
         Number(item.system.pamod.value) +
         (item.system.combatskill.value == game.i18n.localize("LocalizedIDs.Shields") ? Number(item.system.pamod.value) : 0);
 
-      let regex2h = /\(2H/;
-      if (!regex2h.test(item.name)) {
+      item.yieldedTwoHand = RuleChaos.isYieldedTwohanded(item)
+      if (!item.yieldedTwoHand) {
         if (!wornWeapons)
           wornWeapons = duplicate(actorData.items).filter(
-            (x) => x.type == "meleeweapon" && x.system.worn.value && x._id != item._id && !regex2h.test(x.name)
+            (x) => x.type == "meleeweapon" && x.system.worn.value && x._id != item._id && !RuleChaos.isYieldedTwohanded(x)
           );
 
         if (wornWeapons.length > 0) {
           item.parry += Math.max(...wornWeapons.map((x) => x.system.pamod.offhandMod));
           item.attack += Math.max(...wornWeapons.map((x) => x.system.atmod.offhandMod));
+        }
+      }
+      
+      let gripDamageMod = 0
+      if(item.system.worn.wrongGrip){
+        if(item.yieldedTwoHand){
+          item.parry -= 1
+          gripDamageMod = 1
+        }
+        else{
+          item.system.reach.value = "medium"
+
+          const localizedCT = game.i18n.localize(`LocalizedCTs.${item.system.combatskill.value}`)
+          switch(localizedCT){
+              case "Two-Handed Impact Weapons":
+              case "Two-Handed Swords":
+                item.parry -= 3
+                  const reg = new RegExp(game.i18n.localize('wrongGrip.wrongGripBastardRegex'))
+                  if(reg.test(item.name)){
+                    gripDamageMod = -2
+                  }
+                  else{
+                    const oneHanded = game.i18n.localize('wrongGrip.oneHanded')
+                    item.gripDamageText = ` (${oneHanded} * 0.5)`
+                    item.dmgMultipliers = [{name: oneHanded, val: "0.5"}]
+                  }
+                  break
+              default:
+                item.parry -= 1
+                gripDamageMod = -1
+          }
         }
       }
 
@@ -1825,7 +1854,7 @@ export default class Actordsa5 extends Actor {
         let val = Math.max(
           ...item.system.guidevalue.value.split("/").map((x) => Number(actorData.system.characteristics[x].value))
         );
-        let extra = val - Number(item.system.damageThreshold.value);
+        let extra = val - Number(item.system.damageThreshold.value) + gripDamageMod;
 
         if (extra > 0) {
           item.extraDamage = extra;

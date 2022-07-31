@@ -112,12 +112,20 @@
                 <label class="label-text">{{localize "WEAR.value"}}</label>
                 <input class="input-text" type="number" name="system.structure.breakPointRating" value="{{system.structure.breakPointRating}}" placeholder="{{breakPointRating}}" data-dtype="Number" step="1" />
             </div>
-            {{/if}} {{#if isOwned}} {{#if canBeOffHand}}
+            {{/if}} {{#if isOwned}} 
+            {{#if canBeOffHand}}
             <div class="form-group">
                 <label class="label-text">{{localize "offHand"}}</label>
                 <input type="checkbox" name="system.worn.offHand" value="{{system.worn.offHand}}" data-dtype="Boolean" {{checked system.worn.offHand}} />
             </div>
-            {{/if}} {{/if}}
+            {{/if}} 
+            {{#if canBeWrongGrip}}
+            <div class="form-group" data-tooltip="{{localize wrongGripHint}}">
+                <label class="label-text">{{localize wrongGripLabel}}</label>
+                <input type="checkbox" name="system.worn.wrongGrip" value="{{system.worn.wrongGrip}}" data-dtype="Boolean" {{checked system.worn.wrongGrip}} />
+            </div>            
+            {{/if}}
+            {{/if}}
         </div>
 
         {{> systems/dsa5/templates/items/item-effects.html}} {{> systems/dsa5/templates/items/item-enchantment.html}}

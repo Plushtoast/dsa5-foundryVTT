@@ -3,6 +3,7 @@ import Itemdsa5 from "../item/item-dsa5.js";
 import AdvantageRulesDSA5 from "../system/advantage-rules-dsa5.js";
 import DSA5 from "../system/config-dsa5.js";
 import DiceDSA5 from "../system/dice-dsa5.js";
+import RuleChaos from "../system/rule_chaos.js";
 import SpecialabilityRulesDSA5 from "../system/specialability-rules-dsa5.js";
 import DSA5_Utility from "../system/utility-dsa5.js";
 import DSA5Dialog from "./dialog-dsa5.js";
@@ -201,7 +202,10 @@ export default class DSA5CombatDialog extends DialogShared {
             value: 10 - advantageousPositionMod - opposingWeaponSize
         }]
         if (mode == "assassinate") {
-            const weaponsize = ["short", "medium", "long"].indexOf(testData.source.system.reach.value)
+            let weaponsize = ["short", "medium", "long"].indexOf(testData.source.system.reach.value)
+            if(!RuleChaos.isYieldedTwohanded(testData.source) && testData.source.system.worn.wrongGrip){
+                weaponsize = Math.min(weaponsize, 1)
+            }
 
             const dices = Math.max(1, (new Roll(testData.source.system.damage.value.replace(/[DWw]/g, "d"))).terms.reduce((prev, cur) => {
                 return prev + (cur.faces ? cur.number : 0)

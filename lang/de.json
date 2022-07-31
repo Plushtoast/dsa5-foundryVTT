@@ -182,6 +182,7 @@
     "animalSpecialAbilities": "Tierische Sonderfertigkeiten",
     "Age": "Alter",
     "aspect": "Aspekt",
+   
     "AsPCost": "Astralpunktekosten",
     "AsPCostDetail": "AsP Detail",
     "KaPCostDetail": "KaP Detail",
@@ -1020,6 +1021,15 @@
     "character": "Charakter",
     "npc": "Nichtspielercharakter",
     "creature": "Kreatur",
+    "wrongGrip": {
+        "oneHanded": "Einhändig geführt",
+        "twoHanded": "Beidhändig geführt",
+        "yieldTwo": "PA -1, TP +1, kann nur während deines Zuges einmal geändert werden",
+        "yieldOnePolearms": "Waffenreichweite mittel, -1 TP, -1 PA",
+        "yieldOneSwordBlunt": "Waffenreichweite mittel, 0.5 * TP, -3 PA",
+        "yieldOneBastard": "Waffenreichweite mittel, -2 TP, -3 PA",
+        "wrongGripBastardRegex": "(Anderthalbhänder|Bastardschwert)"
+    },
     "UNITS": {
         "weight": "Gewicht in Stein",
         "money": "Wert in Silberstücken"

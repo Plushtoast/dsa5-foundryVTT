@@ -4,6 +4,8 @@ import SpecialabilityRulesDSA5 from "./specialability-rules-dsa5.js"
 import DSA5_Utility from "./utility-dsa5.js"
 
 export default class RuleChaos {
+    static regex2h = /\(2H/;
+
     static multipleDefenseValue(actor, item) {
         let multipleDefense = -3
 
@@ -41,6 +43,12 @@ export default class RuleChaos {
                 scene: canvas.scene ? canvas.scene.id : null
             })
         }
+    }
+
+    static isYieldedTwohanded(item){
+        const twoHanded = this.regex2h.test(item.name)
+        const wrongGrip = item.system.worn.wrongGrip
+        return (twoHanded && !wrongGrip) || (!twoHanded && wrongGrip)
     }
 
     static _buildDuration(rounds) {

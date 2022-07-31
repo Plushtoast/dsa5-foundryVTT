@@ -668,6 +668,15 @@
         "range": "Range multiplier",
         "creatureBonus": "Bonus damage (creature)"
     },
+    "wrongGrip": {
+        "oneHanded": "One-handed guided",
+        "twoHanded": "Two-handed guided",
+        "yieldTwo": "PA -1, DP +1, can be changed once on your turn only",
+        "yieldOnePolearms": "Weapon reach medium, -1 DP, -1 PA",
+        "yieldOneSwordBlunt": "Weapon reach medium, 0.5 * DP, -3 PA",
+        "yieldOneBastard": "Weapon reach medium, -2 DP, -3 PA",
+        "wrongGripBastardRegex": "(Bastard Sword)"
+    },
     "Features": {
         "Object": "Object",
         "Spheres": "Spheres",

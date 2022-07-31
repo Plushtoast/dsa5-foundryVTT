@@ -791,7 +791,8 @@
             },
             "worn": {
                 "value": false,
-                "offhand": false
+                "offhand": false,
+                "wrongGrip": false
             },
             "structure": {
                 "max": 4,
