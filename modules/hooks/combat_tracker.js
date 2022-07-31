@@ -179,6 +179,8 @@ class RepeatingEffectsHelper {
         const regenerationAttributes = ["wounds", "astralenergy", "karmaenergy"]
         for(const attr of regenerationAttributes){
             for (const ef of turn.actor.system.repeatingEffects.startOfRound[attr]){
+                if(getProperty(turn.actor.system.repeatingEffects, `disabled.${attr}`)) continue
+
                 const damageRoll = await new Roll(ef.value).evaluate({ async: true })
                 const damage = await damageRoll.render()
                 const type = game.i18n.localize(damageRoll.total > 0 ? "CHATNOTIFICATION.regenerates" : "CHATNOTIFICATION.getsHurt")

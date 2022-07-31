@@ -307,7 +307,52 @@
 
         </div>
         {{/each}}
+       
     </div>
 
 
+</div>
+
+<div class="groupbox">
+    <div class="row-section">
+        <div class="col header-label lineheight">
+            <b>{{localize "SHEET.actorConfig"}}</b>
+        </div>
+    </div>
+    <div class="row-section wrap">
+        {{#if actor.system.repeatingEffects.startOfRound.wounds}}
+        <div class="row-section skills col two">
+            <div class="col nintey">
+                {{localize 'regenerate'}} ({{localize 'wounds'}})
+            </div>
+            <div class="col five">
+                
+            </div>
+            <div class="col ten">
+                <a class="disableRegeneration" data-type="wounds">{{#if actor.system.repeatingEffects.disabled.wounds}}<i class="far fa-circle"></i>{{else}}<i class="far fa-check-circle"></i>{{/if}}</a>
+            </div>
+        </div>
+        {{/if}}
+
+        {{#if actor.system.repeatingEffects.startOfRound.astralenergy}}
+        <div class="row-section skills col two">
+            <div class="col nintey">
+                {{localize 'regenerate'}} {{localize 'CHARAbbrev.CR'}} ({{localize 'astralenergy'}})
+            </div>
+            <div class="col ten">
+                <a class="disableRegeneration" data-type="astralenergy">{{#if actor.system.repeatingEffects.disabled.astralenergy}}<i class="far fa-circle"></i>{{else}}<i class="far fa-check-circle"></i>{{/if}}</a>
+            </div>
+        </div>
+        {{/if}}
+        {{#if actor.system.repeatingEffects.startOfRound.karmaenergy}}
+        <div class="row-section skills col two">
+            <div class="col nintey">
+                {{localize 'regenerate'}} {{localize 'CHARAbbrev.CR'}} ({{localize 'karmaenergy'}})
+            </div>
+            <div class="col ten">
+                <a class="disableRegeneration" data-type="karmaenergy">{{#if actor.system.repeatingEffects.disabled.karmaenergy}}<i class="far fa-circle"></i>{{else}}<i class="far fa-check-circle"></i>{{/if}}</a>
+            </div>
+        </div>
+        {{/if}}
+    </div>
 </div>

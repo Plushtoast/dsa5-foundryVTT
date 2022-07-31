@@ -597,6 +597,13 @@ export default class ActorSheetDsa5 extends ActorSheet {
                 item.sheet.render(true);
             }
         })
+
+        html.find('.disableRegeneration').click(ev => {
+            const type = ev.currentTarget.dataset.type
+            const prop = `system.repeatingEffects.disabled.${type}`
+            this.actor.update({[prop]: !getProperty(this.actor, prop)})
+        })
+
         html.find(".consume-item").mousedown(ev => {
             if (ev.button == 2) {
                 const itemId = this._getItemId(ev);
