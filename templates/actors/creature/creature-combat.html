@@ -51,10 +51,22 @@
                 </div>
 
                 <div class="col ten center">
-                    <a data-mode="damage" class="ch-rollCombat d6 die-damage">{{item.damagedie}}</a><span data-tooltip="{{localize 'damageOverThreshold'}}">{{item.damageAdd}}</span>
+                    <a data-mode="damage" class="ch-rollCombat d6 die-damage">{{item.damagedie}}</a><span data-tooltip="{{localize 'damageOverThreshold'}}{{item.gripDamageText}}">{{item.damageAdd}}</span>
                 </div>
-                <div class="col ten center small">
-                    {{localize (concat "Range-" item.system.reach.value)}}
+                <div class="col row-section ten center small">
+                    <div class="col nintey center">
+                        {{localize (concat "Range-" item.system.reach.value)}}
+                    </div>
+                    <div class="col ten center very-small">
+                        <a class="swapWeaponHand lineheight">
+                        {{#if item.yieldedTwoHand}}
+                        <i data-tooltip="{{localize 'wrongGrip.twoHanded'}}" class="fas fa-hands"></i>
+                        {{else}}
+                        <i data-tooltip="{{localize 'wrongGrip.oneHanded'}}" class="fas fa-hand"></i>
+                        {{/if}}
+                        </a>
+                    </div>
+                    
                 </div>
             </div>
         </div>
