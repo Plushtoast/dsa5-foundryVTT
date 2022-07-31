@@ -72,7 +72,7 @@
       },
       {
         "id": "step-7",
-        "selector": ".actor.sheet .tab.notes",
+        "selector": ".actor.sheet .tab[data-tab=\"notes\"]",
         "title": "Notizen",
         "content": "Der letzte Abschnitt beschäftigt sich mit den Hintergrundinformationen des jeweiligen Charakters.",
         "appTab": "notes"

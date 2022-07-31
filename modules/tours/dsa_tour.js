@@ -41,11 +41,12 @@ export default class DSATour extends Tour{
             const fn = await eval(`(async() => { ${this.config.preCommand} })`)
             await fn()
             if(this.app){
-                console.log("muh")
                 while(!this.app.sheet.rendered) await timeout(50)
             }
         }
-        return super.start()
+        const res = await super.start()
+        $('#tooltip').show()
+        return res
     }
 }
 
