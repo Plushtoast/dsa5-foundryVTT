@@ -244,6 +244,16 @@ class GameMasterMenu extends Application {
             event.originalEvent.dataTransfer.setData("text/plain", JSON.stringify(dragData));
         })
 
+        html.find('.dragEveryone').each(function(i, cond) {
+            cond.setAttribute("draggable", true);
+        })
+        html.on("dragstart", ".dragEveryone", ev => {
+            ev.stopPropagation();
+            const a = ev.currentTarget;
+            let dragData = { type: "GroupDrop", ids: this.selectedIDs() };
+            ev.originalEvent.dataTransfer.setData("text/plain", JSON.stringify(dragData));
+        })
+
         if (game.dsa5.apps.LightDialog) game.dsa5.apps.LightDialog.activateButtonListener(html)
     }
 
@@ -425,6 +435,7 @@ class GameMasterMenu extends Application {
         for (const [key, value] of Object.entries(this.selected)) {
             if (value) ids.push(key)
         }
+        if(!ids.length) return game.settings.get("dsa5", "trackedActors").actors || []
         return ids
     }
 

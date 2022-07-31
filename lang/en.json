@@ -637,7 +637,8 @@
         "threshold": "Darkness threshold",
         "darkness": "Darkness",
         "sightautomationTooltip": "Sets automatically a modifier for attack and defense rolls, if the darkness exceeds the darkness threshold value.",
-        "gmMenuPlaceholder": "NPC generators and similar things see module Master's Workshop"
+        "gmMenuPlaceholder": "NPC generators and similar things see module Master's Workshop",
+        "dragEveryone": "Drag all selected characters to the map"
     },
     "WIZARD": {
         "addItem": "Add {item}",

@@ -73,49 +73,76 @@ export const dropToGround = async(sourceActor, item, data, amount) => {
     }
 }
 
+const  handleItemDrop = async(canvas, data) => {
+    let item
+    let sourceActor
+    if (data.uuid) {
+        item = await fromUuid(data.uuid)
+        if (item.parent) sourceActor = item.parent
+        if (data.amount) item.system.quantity.value = Number(data.amount)
+    } else if (data.pack) {
+        let dataPack = game.packs.get(data.pack)
+        item = await dataPack.getDocument(data.data._id)
+    } else if (data.tokenId || data.actorId) {
+        sourceActor = DSA5_Utility.getSpeaker({ actor: data.actorId, token: data.tokenId, scene: canvas.scene.id })
+        if (!sourceActor.isOwner) return ui.notifications.error(game.i18n.localize('DSAError.notOwner'))
+
+        item = sourceActor.items.get(data.data._id)
+    } else {
+        item = game.items.get(data.data._id)
+    }
+
+    if (!DSA5.equipmentCategories.includes(item.type)) return
+
+    const content = await renderTemplate("systems/dsa5/templates/dialog/dropToGround.html", { name: item.name, count: item.system.quantity.value })
+
+    new DropToGroundDialog({
+        title: data.name,
+        content,
+        default: 'yes',
+        buttons: {
+            Yes: {
+                icon: '<i class="fa fa-check"></i>',
+                label: game.i18n.localize("yes"),
+                callback: async(dlg) => dropToGround(sourceActor, item, data, Number(dlg.find('[name="count"]').val()))
+            },
+            cancel: {
+                icon: '<i class="fas fa-times"></i>',
+                label: game.i18n.localize("cancel")
+            }
+        }
+    }).render(true)
+}
+
+const handleGroupDrop = async(canvas, data) => {
+    let x = data.x
+    let y = data.y
+    let count = 0
+    const gridSize = canvas.grid.size
+    const rowLength = Math.ceil(Math.sqrt(data.ids.length))
+    for(let id of data.ids){
+        const actor = game.actors.get(id)
+        const td = await actor.getTokenData({x, y, hidden: false});
+        td.constructor.create(td, {parent: canvas.scene});
+        if(rowLength % count == 0 && count > 0){
+            y += gridSize
+            x = data.x
+        }else{
+            x += gridSize
+        }
+        count++
+    }
+}
+
 export const connectHook = () => {
     Hooks.on("dropCanvasData", async(canvas, data) => {
         if (!(game.settings.get("dsa5", "enableItemDropToCanvas") || game.user.isGM || data.tokenId)) return
 
         if (data.type == "Item") {
-            let item
-            let sourceActor
-            if (data.uuid) {
-                item = await fromUuid(data.uuid)
-                if (item.parent) sourceActor = item.parent
-                if (data.amount) item.system.quantity.value = Number(data.amount)
-            } else if (data.pack) {
-                let dataPack = game.packs.get(data.pack)
-                item = await dataPack.getDocument(data.data._id)
-            } else if (data.tokenId || data.actorId) {
-                sourceActor = DSA5_Utility.getSpeaker({ actor: data.actorId, token: data.tokenId, scene: canvas.scene.id })
-                if (!sourceActor.isOwner) return ui.notifications.error(game.i18n.localize('DSAError.notOwner'))
-
-                item = sourceActor.items.get(data.data._id)
-            } else {
-                item = game.items.get(data.data._id)
-            }
-
-            if (!DSA5.equipmentCategories.includes(item.type)) return
-
-            const content = await renderTemplate("systems/dsa5/templates/dialog/dropToGround.html", { name: item.name, count: item.system.quantity.value })
-
-            new DropToGroundDialog({
-                title: data.name,
-                content,
-                default: 'yes',
-                buttons: {
-                    Yes: {
-                        icon: '<i class="fa fa-check"></i>',
-                        label: game.i18n.localize("yes"),
-                        callback: async(dlg) => dropToGround(sourceActor, item, data, Number(dlg.find('[name="count"]').val()))
-                    },
-                    cancel: {
-                        icon: '<i class="fas fa-times"></i>',
-                        label: game.i18n.localize("cancel")
-                    }
-                }
-            }).render(true)
+            handleItemDrop(canvas, data)
+        }
+        else if(data.type == "GroupDrop"){
+            handleGroupDrop(canvas, data)
         }
     })
 }
