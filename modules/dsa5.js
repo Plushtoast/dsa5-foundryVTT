@@ -1,4 +1,4 @@
-import ActorSheetdsa5 from "./actor/actor-sheet.js"
+import ActorSheetdsa5 from "./actor/actor-sheet.js";
 import ActorSheetdsa5Character from "./actor/character-sheet.js";
 import ActorSheetdsa5Creature from "./actor/creature-sheet.js";
 import ActorSheetdsa5NPC from "./actor/npc-sheet.js";
