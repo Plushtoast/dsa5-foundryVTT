@@ -1,18 +1,18 @@
 export default class DSATour extends Tour{
-    static tours = ["systems/dsa5/modules/tours/initial", "systems/dsa5/modules/tours/library", "systems/dsa5/modules/tours/actor"]    
-    static gmTours = ["systems/dsa5/modules/tours/mastermenu"]
+    static tours = ["systems/dsa5/modules/tours/lang/initial", "systems/dsa5/modules/tours/lang/library", "systems/dsa5/modules/tours/lang/actor"]    
+    static gmTours = ["systems/dsa5/modules/tours/lang/mastermenu"]
 
     static async travelAgency(){
         const lang = game.i18n.lang == "de" ? "de" : "en"
         console.log("Adding DSA/TDE Tours")
         for(let tour of this.tours){
-            const obj = await game.dsa5.apps.DSATour.fromJSON(`${tour}${lang}.json`);
+            const obj = await game.dsa5.apps.DSATour.fromJSON(`${tour.replace("/lang/", `/${lang}/`)}.json`);
             game.tours.register(obj.config.module, obj.id, obj);
         }
         if(!game.user.isGM) return
 
         for(let tour of this.gmTours){
-            const obj = await game.dsa5.apps.DSATour.fromJSON(`${tour}${lang}.json`);
+            const obj = await game.dsa5.apps.DSATour.fromJSON(`${tour.replace("/lang/", `/${lang}/`)}.json`);
             game.tours.register(obj.config.module, obj.id, obj);
         }
     }
@@ -40,9 +40,7 @@ export default class DSATour extends Tour{
             TooltipManager.TOOLTIP_ACTIVATION_MS = 50000000000
             const fn = await eval(`(async() => { ${this.config.preCommand} })`)
             await fn()
-            if(this.app){
-                while(!this.app.sheet.rendered) await timeout(50)
-            }
+            while(!$(this.steps[this.stepIndex + 1].selector + ':visible').length) await timeout(50)
         }
         const res = await super.start()
         $('#tooltip').show()

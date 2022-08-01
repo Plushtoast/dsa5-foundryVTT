@@ -1033,7 +1033,7 @@ a.img-entity-link:hover {
 }
 
 .sheet.journal-entry:not(.dsajournal) .sidebar.directory{
-    background: rgba(0,0,0,0.4);
+    background: rgba(0,0,0,0.6);
 }
 
 .dsajournal.sheet.journal-entry .journal-entry-content{

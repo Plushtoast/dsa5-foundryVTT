@@ -122,6 +122,8 @@ const handleGroupDrop = async(canvas, data) => {
     const rowLength = Math.ceil(Math.sqrt(data.ids.length))
     for(let id of data.ids){
         const actor = game.actors.get(id)
+        if(!actor) continue
+        
         const td = await actor.getTokenData({x, y, hidden: false});
         td.constructor.create(td, {parent: canvas.scene});
         if(rowLength % count == 0 && count > 0){

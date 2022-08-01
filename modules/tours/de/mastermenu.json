@@ -15,7 +15,7 @@
       {
         "id": "step-1",
         "selector": ".masterMenu [data-tab=\"randomGen\"]",
-        "title": "Zuchtgrub",
+        "title": "Zuchtgrube",
         "content": "Die Zuchtgrube ermöglicht es dir zufällige Charaktere, Schätze oder ähnliches anzulegen."
       }, 
       {

@@ -1,0 +1,41 @@
+{
+    "title": "Library",
+    "module": "dsa5",
+    "id": "tdeLibrary",
+    "canBeResumed": false,
+    "display": true,
+    "preCommand": "await game.dsa5.itemLibrary.render(true, {focus: true})",
+    "steps": [
+      {
+        "id": "step-0",
+        "selector": ".itemLibrary [name=\"librarySearch\"]",
+        "title": "Item search",
+        "content": "In the library you can search for all things you have available in your TDE world. (Default Hotkey L)"
+      },
+      {
+        "id": "step-1",
+        "selector": ".itemLibrary .groupbox p",
+        "title": "Filter",
+        "content": "Das Suchergebnis lässt sich weiter durch das Einschränken der Kategorie verfeinern."
+      }, 
+      {
+        "id": "step-2",
+        "selector": ".itemLibrary .toggleAdvancedMode",
+        "title": "Detail filter",
+        "content": "Additionally, you can activate the detail filter to search the respective category for specific attributes."
+      },
+      {
+        "id": "step-3",
+        "selector": ".itemLibrary .toggleWorldIndex",
+        "title": "Index World Items",
+        "content": "Here you can enable or disable browsing of world items. World items is everything that can't be found in compendiums. This increases the performance a bit."
+      },
+      {
+        "id": "step-4",
+        "selector": ".itemLibrary .fulltextsearch",
+        "title": "Full text search",
+        "content": "Here you can disable or enable the full text search."
+      }
+    ]
+  }
+  

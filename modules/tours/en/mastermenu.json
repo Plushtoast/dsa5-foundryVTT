@@ -1,0 +1,59 @@
+{
+    "title": "Master menu",
+    "module": "dsa5",
+    "id": "tdeMastermenu",
+    "canBeResumed": false,
+    "display": true,
+    "preCommand": "await game.dsa5.apps.gameMasterMenu.render(true, {focus: true})",
+    "steps": [
+      {
+        "id": "step-0",
+        "selector": ".masterMenu",
+        "title": "Master menu",
+        "content": "The master menu gives you an overview of your players or important characters and gives you access to functions that are only intended for the master. (Default Hotkey M)"
+      },
+      {
+        "id": "step-1",
+        "selector": ".masterMenu [data-tab=\"randomGen\"]",
+        "title": "Breeding pit",
+        "content": "The breeding pit allows you to create random characters, treasures or the like."
+      }, 
+      {
+        "id": "step-2",
+        "selector": ".masterMenu [data-tab=\"sceneConfig\"]",
+        "title": "Scene settings",
+        "content": "The scene settings allow quick access to settings such as darkness or the options for automatic light and vision configuration."
+      },
+      {
+        "id": "step-3",
+        "selector": ".masterMenu .dragEveryone",
+        "title": "All players (drag & drop)",
+        "content": "Here you can drag and drop all tracked actors onto the map at once."
+      },
+      {
+        "id": "step-4",
+        "selector": ".masterMenu .randomPlayer",
+        "title": "Random victim",
+        "content": "If you need a player for a random event, you can roll one here."
+      },
+      {
+        "id": "step-5",
+        "selector": ".masterMenu .select2",
+        "title": "Master check",
+        "content": "You can also make face-down rolls with the respective player characters."
+      },
+      {
+        "id": "step-5",
+        "selector": ".masterMenu .heroschip",
+        "title": "Player fate points",
+        "content": "Player fate points can also be overviewed and managed here."
+      },
+      {
+        "id": "step-0",
+        "selector": ".masterMenu",
+        "title": "Other functions",
+        "content": "The master menu offers many more functions. For example, you can add more players, sort them, give them money or adventure points, show special properties, etc...."
+      }
+    ]
+  }
+  

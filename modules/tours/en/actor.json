@@ -1,0 +1,82 @@
+{
+    "title": "Hero document",
+    "module": "dsa5",
+    "id": "tdeActor",
+    "canBeResumed": false,
+    "display": true,
+    "preCommand": "const actor = game.actors.find(x => true);if(!actor) return ui.notifications.warn(\"At least one actor needs to be available\"); this.app = actor;await actor.sheet.render(true)",
+    "steps": [
+   
+      {
+        "id": "step-0",
+        "selector": ".actor.sheet",
+        "title": "Hero document",
+        "content": "The hero document contains all the information, skills and other data a character needs. Basically, items and skills can be added by drag & drop, e.g. from the library. Some of the tabs appear only after adding the corresponding skills (e.g. magic).",
+        "appTab": "skills"
+      },
+      {
+        "id": "step-0b",
+        "selector": ".actor.sheet .general",
+        "title": "Attribute rolls",
+        "content": "General attribute checks are done in this section. In addition, you can easily see the state of the character and its current number of chips.",
+        "appTab": "skills"
+        },
+      {
+        "id": "step-1",
+        "selector": ".actor.sheet .tab.skills",
+        "title": "Skills",
+        "content": "In the Talents section you can find all the talents of the character. You can trigger a check by clicking on the dice. On this tab you will also find the possibility to track cumulative checks.",
+        "appTab": "skills"
+      },
+      {
+        "id": "step-2",
+        "selector": ".actor.sheet .tab.combat",
+        "title": "Combat",
+        "content": "The Combat section contains all of the character's combat techniques, as well as any equipped weapons or attack abilities. The dice can also be used to trigger a check here.",
+        "appTab": "combat"
+      },
+      {
+        "id": "step-3",
+        "selector": ".actor.sheet .tab.combat .buttons",
+        "title": "Unarmed Combat",
+        "content": "Here you can find buttons to dodge or attack without weapons or to parry.",
+        "appTab": "combat"
+      },
+      {
+        "id": "step-4",
+        "selector": ".actor.sheet .tab.main",
+        "title": "Characteristics",
+        "content": "Under characteristics are all the basic values of the character, as well as advantages and disadvantages, general special abilities and adventure points.",
+        "appTab": "main"
+      },
+      {
+        "id": "step-5",
+        "selector": ".actor.sheet .tab.main .ch-regenerate",
+        "title": "Regeneration",
+        "content": "Here you will also find the possibility to perform a regeneration test.",
+        "appTab": "main"
+      },
+      {
+        "id": "step-6",
+        "selector": ".actor.sheet .tab.inventory",
+        "title": "Equipment",
+        "content": "The equipment section displays all equipment items, totals their weight and allows you to put on and take off items (e.g. armor).",
+        "appTab": "inventory"
+      },
+      {
+        "id": "step-6",
+        "selector": ".actor.sheet .tab.status",
+        "title": "Status",
+        "content": "Here you can find all the conditions the character is currently suffering from. You can also add additional modifiers here, e.g. a power potion.",
+        "appTab": "status"
+      },
+      {
+        "id": "step-7",
+        "selector": ".actor.sheet .tab[data-tab=\"notes\"]",
+        "title": "Notes",
+        "content": "The last section deals with the background information of the respective character.",
+        "appTab": "notes"
+      }
+    ]
+  }
+  

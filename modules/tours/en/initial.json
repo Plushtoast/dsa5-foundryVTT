@@ -1,0 +1,59 @@
+{
+    "title": "TDE specific tools",
+    "module": "dsa5",
+    "id": "tdeTools",
+    "canBeResumed": true,
+    "display": true,
+    "steps": [
+      {
+        "id": "step-0",
+        "selector": "[data-tool=\"JournalBrowser\"]",
+        "title": "Journalbrowser",
+        "content": "The journal browser shows you the content of all available TDE Premium modules and allows you to import adventures. (Default Hotkey J)",
+        "activateLayer": "dsamenu"
+      },
+      {
+        "id": "step-1",
+        "selector": "[data-tool=\"Library\"]",
+        "title": "Library",
+        "content": "The library allows you to browse all items and abilities and quickly add them to your characters via drag & drop. (Default Hotkey L)",
+        "activateLayer": "dsamenu"
+      },
+      {
+        "id": "step-2",
+        "selector": "[data-tool=\"PlayerMenu\"]",
+        "title": "Player menu",
+        "content": "The player menu gives you access to more complicated game automata such as summoning or creating artifacts.",
+        "activateLayer": "dsamenu"
+      },
+      {
+        "id": "step-3",
+        "selector": "[data-tool=\"mastersMenu\"]",
+        "title": "Master menu",
+        "content": "The master menu allows you to keep track of the state of the players. You will also find all available random generators and have access to further game settings or the TDE light settings. (Default Hotkey M)",
+        "activateLayer": "dsamenu"
+      },
+      {
+        "id": "step-4",
+        "selector": "#chat-message",
+        "title": "Chat commands",
+        "content": "TDE supports some chat commands that can speed up the game flow. Type /help in the chat to display all available commands. For example, you can quickly request samples or have characters attack.",
+        "activateTab": "chat"
+      }, 
+      {
+        "id": "step-5",
+        "selector": "[data-tab=\"settings\"] [data-action=\"configure\"]",
+        "title": "Settings",
+        "content": "In the settings you can modify the installed modules and some specific settings for the TDE system. Among them e.g. optional rules or graphical elements.",
+        "activateTab": "settings"
+      }, 
+      {
+        "id": "step-6",
+        "selector": "#reportADSABug",
+        "title": "Report bug",
+        "content": "If you find any bugs you can report them in Github or the Ulisses Discord. We appreciate constructive feedback.",
+        "activateTab": "settings"
+      }        
+    ]
+  }
+  

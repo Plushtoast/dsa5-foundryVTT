@@ -574,7 +574,7 @@
         "darkness": "Dunkelheit",
         "sightautomationTooltip": "Setzt bei Angriffs- und Verteidigungswürfen automatisch einen Modifikator, wenn der Dunkelheitswert die entsprechende Schwelle überschreitet.",
         "gmMenuPlaceholder": "NSC Generatoren u.ä. siehe Werkstatt des Meisters Modul",
-        "dragEveryone": "Ziehe alle markierten Charakter auf die Map"
+        "dragEveryone": "Ziehe alle markierten Charaktere auf die Map"
     },
     "MODS": {
         "partChecks": "Teilprobenmodifikator",
