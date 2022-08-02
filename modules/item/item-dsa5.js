@@ -1055,7 +1055,7 @@ class CombatskillDSA5 extends Itemdsa5 {
 }
 
 class ConsumableItemDSA extends Itemdsa5 {
-    static chatData(dat, name) {
+    static chatData(data, name) {
         return [
             this._chatLineHelper("qualityStep", data.QL),
             this._chatLineHelper("effect", DSA5_Utility.replaceDies(data.QLList.split("\n")[data.QL - 1])),
