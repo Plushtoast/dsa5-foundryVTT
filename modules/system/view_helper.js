@@ -20,7 +20,7 @@ export function svgAutoFit(elem, width = 320, height = 40) {
     }
 }
 
-export async function itemFromDrop(dragData, actorId) {
+export async function itemFromDrop(dragData, actorId, toObject = true) {
     let item
     let typeClass
 
@@ -44,7 +44,7 @@ export async function itemFromDrop(dragData, actorId) {
     }
     //TODO might not need the creature filter here
     // also might use ToObject(false)
-    if (typeof item.toObject === 'function' && typeClass != 'creature') {
+    if (typeof item.toObject === 'function' && typeClass != 'creature' && toObject) {
         item = item.toObject(true)
     }
 

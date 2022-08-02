@@ -314,8 +314,8 @@ export default class DSA5ChatAutoCompletion {
             });
         }
         else {
-            let types = ["meleeweapon", "rangeweapon"]
-            let traitTypes = ["meleeAttack", "rangeAttack"]
+            const types = ["meleeweapon", "rangeweapon"]
+            const traitTypes = ["meleeAttack", "rangeAttack"]
             let result = actor.items.find(x => { return types.includes(x.type) && x.name == target.text() })
             if(!result) result = actor.items.find(x => { return x.type == "trait" && x.name == target.text() && traitTypes.includes(x.system.traitType.value) })
 
@@ -327,8 +327,8 @@ export default class DSA5ChatAutoCompletion {
         }
     }
     _quickSP(target, actor, tokenId) {
-        let types = ["ritual", "spell"]
-        let result = actor.items.find(x => { return types.includes(x.type) && x.name == target.text() })
+        const types = ["ritual", "spell"]
+        const result = actor.items.find(x => { return types.includes(x.type) && x.name == target.text() })
         if (result) {
             actor.setupSpell(result, {}, tokenId).then(setupData => {
                 actor.basicTest(setupData)
@@ -336,8 +336,8 @@ export default class DSA5ChatAutoCompletion {
         }
     }
     _quickLI(target, actor, tokenId) {
-        let types = ["liturgy", "ceremony"]
-        let result = actor.items.find(x => { return types.includes(x.type) && x.name == target.text() })
+        const types = ["liturgy", "ceremony"]
+        const result = actor.items.find(x => { return types.includes(x.type) && x.name == target.text() })
         if (result) {
             actor.setupSpell(result, {}, tokenId).then(setupData => {
                 actor.basicTest(setupData)

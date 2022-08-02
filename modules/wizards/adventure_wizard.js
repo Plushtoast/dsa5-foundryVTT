@@ -451,9 +451,9 @@ export default class BookWizard extends Application {
         return data
     }
 
-    async pinJournal(uuid, name) {
+    async pinJournal(uuid, name = undefined) {
         let breadcrumbs = this.readBreadCrumbs()
-        if (!name) name = (await fromUuid(uuid)).name
+        if (!name) name = (await fromUuid(uuid))?.name || ""
         breadcrumbs[uuid] = name
         game.settings.set("dsa5", "breadcrumbs", JSON.stringify(breadcrumbs))
         this.render(true)

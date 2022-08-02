@@ -249,40 +249,46 @@ class Enchantable extends ItemSheetdsa5 {
 
     async enchant(event) {
         const dragData = JSON.parse(event.dataTransfer.getData("text/plain"))
-        const { item, typeClass, selfTarget } = await itemFromDrop(dragData, undefined)
-        if (["spell", "liturgy", "ceremony", "ritual"].includes(typeClass)) {
-            let enchantments = this.item.getFlag("dsa5", "enchantments") || []
-            if (enchantments.length >= 7) {
-                return ui.notifications.error(game.i18n.localize("DSAError.tooManyEnchants"))
-            }
-            if (!dragData.pack) {
-                return ui.notifications.error(game.i18n.localize("DSAError.onlyCompendiumSpells"))
-            }
+        await this._enchant([dragData])
+    }
 
-            const enchantment = {
-                name: item.name,
-                pack: dragData.pack,
-                id: enchantments.length,
-                itemId: item._id,
-                permanent: ["liturgy", "ceremony"].includes(typeClass),
-                actorId: dragData.actorId,
-                charged: true,
-                talisman: ["liturgy", "ceremony"].includes(typeClass),
-                fw: ["liturgy", "ceremony"].includes(typeClass) ? 18 : 0
+    async _enchant(dragDataArray) {
+        const enchantments = this.item.getFlag("dsa5", "enchantments") || []
+        if (enchantments.length + dragDataArray.length > 7) return ui.notifications.error(game.i18n.localize("DSAError.tooManyEnchants"))
+
+        for (let dragData of dragDataArray) {
+            const { item, typeClass, selfTarget } = await itemFromDrop(dragData, undefined, false)
+            if (["spell", "liturgy", "ceremony", "ritual"].includes(typeClass)) {
+                if (!item.pack) return ui.notifications.error(game.i18n.localize("DSAError.onlyCompendiumSpells"))
+
+                const enchantment = {
+                    name: item.name,
+                    pack: item.pack,
+                    id: enchantments.length,
+                    itemId: item.id,
+                    permanent: ["liturgy", "ceremony"].includes(typeClass) || dragData.permanent,
+                    actorId: dragData.actorId,
+                    charged: true,
+                    talisman: ["liturgy", "ceremony"].includes(typeClass),
+                    fw: ["liturgy", "ceremony"].includes(typeClass) ? 18 : dragData.fw || 0
+                }
+                enchantments.push(enchantment)
             }
-            enchantments.push(enchantment)
-            let update = { flags: { dsa5: { enchantments } } }
+        }
+        if (enchantments.length) {
+            const update = { flags: { dsa5: { enchantments } } }
             await this.item.update(update)
         }
+
     }
 
     async poison(event) {
         const dragData = JSON.parse(event.dataTransfer.getData("text/plain"))
-        const { item, typeClass, selfTarget } = await itemFromDrop(dragData, undefined)
+        const { item, typeClass, selfTarget } = await itemFromDrop(dragData, undefined, false)
         if (typeClass == "poison") {
             const poison = {
                 name: item.name,
-                pack: dragData.pack,
+                pack: item.pack,
                 itemId: item._id,
                 permanent: false,
                 actorId: dragData.actorId
@@ -465,7 +471,7 @@ class Enchantable extends ItemSheetdsa5 {
     }
 }
 
-class InformationSheet extends ItemSheetdsa5{
+class InformationSheet extends ItemSheetdsa5 {
     async getData(options) {
         const data = await super.getData(options)
         data["allSkills"] = await DSA5_Utility.allSkillsList()
@@ -842,15 +848,15 @@ class MeleeweaponSheetDSA5 extends Enchantable {
         })
         const twoHanded = RuleChaos.regex2h.test(this.item.name)
         let wrongGripHint = ""
-        if(!twoHanded){
+        if (!twoHanded) {
             wrongGripHint = "wrongGrip.yieldTwo"
-        }else{
+        } else {
             const localizedCT = game.i18n.localize(`LocalizedCTs.${this.item.system.combatskill.value}`)
-            switch(localizedCT){
+            switch (localizedCT) {
                 case "Two-Handed Impact Weapons":
                 case "Two-Handed Swords":
                     const reg = new RegExp(game.i18n.localize('wrongGrip.wrongGripBastardRegex'))
-                    if(reg.test(this.item.name))
+                    if (reg.test(this.item.name))
                         wrongGripHint = "wrongGrip.yieldOneBastard"
                     else
                         wrongGripHint = "wrongGrip.yieldOneSwordBlunt"

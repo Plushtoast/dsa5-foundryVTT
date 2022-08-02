@@ -4,6 +4,7 @@ import OpposedDsa5 from "../system/opposed-dsa5.js";
 import RuleChaos from "../system/rule_chaos.js";
 import TraitRulesDSA5 from "../system/trait-rules-dsa5.js";
 import DSA5_Utility from "../system/utility-dsa5.js";
+import { PlayerMenuSubApp } from './player_menu_subapps.js'
 
 //TODO magical weapon resistance
 
@@ -11,6 +12,7 @@ export default class PlayerMenu extends Application {
     constructor(app) {
         super(app)
         this.entityAbilities = []
+
         game.dsa5.apps.PlayerMenuSubApp = PlayerMenuSubApp
         this.summoningModifiers = [{
                 id: 1,
@@ -130,7 +132,7 @@ export default class PlayerMenu extends Application {
 
         this.actor.setupSkill(skill, { moreModifiers, subtitle: ` (${this.conjuration.name})` }, undefined).then(async(setupData) => {
             const res = await this.actor.basicTest(setupData)
-            this.conjurationData.qs = res.result.qualityStep
+            this.conjurationData.qs = res.result.qualityStep || 0
             this.render(true)
         })
     }
@@ -144,9 +146,7 @@ export default class PlayerMenu extends Application {
 
             if (elem.attr("data-refresh")) this.render()
         })
-        html.find('.skill-select').click(ev => {
-            this.rollConjuration(ev)
-        })
+        html.find('.skill-select').click(ev => this.rollConjuration(ev))
         html.find('.initLibrary').click(async(ev) => {
             $(ev.currentTarget).html('<i class="fas fa-spin fa-spinner"></i>')
             await game.dsa5.itemLibrary.buildEquipmentIndex()
@@ -159,7 +159,7 @@ export default class PlayerMenu extends Application {
         })
         html.find('.selectableRow').click(ev => this.selectImprovement(ev))
         html.find('.finalizeConjuration').click(() => this.finalizeConjuration())
-        html.find('.ruleLink').click(() => this.openRules())
+        html.find('.ruleLink').click((ev) => this.openRules(ev))
         html.find('.showEntity').click(ev => {
             ev.stopPropagation()
             const fun = async() => {
@@ -177,8 +177,9 @@ export default class PlayerMenu extends Application {
         }
     }
 
-    async openRules() {
-        const rule = this.conjurationData.rules[this.conjurationData.conjurationType][game.i18n.lang]
+    async openRules(ev) {
+        const subapp = ev.currentTarget.dataset.subapp
+        const rule = (subapp ? this.subApps.find(x => x.constructor.name == subapp).constructor.rulePath : this.conjurationData.rules[this.conjurationData.conjurationType])[game.i18n.lang]
         const fun = async() => {
             const pack = game.packs.get(rule.pack)
             const docs = await pack.getDocuments({ name: rule.name })
@@ -254,7 +255,7 @@ export default class PlayerMenu extends Application {
         ]
         mergeObject(options, {
             classes: options.classes.concat(["dsa5", "largeDialog", "playerMenu"]),
-            width: 470,
+            width: 500,
             height: 740,
             title: game.i18n.localize("PLAYER.title"),
             dragDrop: [{ dragSelector: null, dropSelector: null }]
@@ -363,29 +364,6 @@ export default class PlayerMenu extends Application {
         data.subApps = []
         for (let app of this.subApps) {
             data.subApps.push(await app.prepareApp(data))
-        }
-    }
-}
-
-class PlayerMenuSubApp {
-    static template = ""
-    async getData(data) {
-        return {}
-    }
-
-    activateListeners(html) {}
-
-    async renderData(data) {
-        const renderData = await this.getData(data)
-        mergeObject(renderData, data)
-        const template = await renderTemplate(this.constructor.template, renderData)
-        return template
-    }
-
-    async prepareApp(data) {
-        return {
-            name: game.i18n.localize(`PLAYER.${this.constructor.name}`),
-            view: await this.renderData(data)
         }
     }
 }

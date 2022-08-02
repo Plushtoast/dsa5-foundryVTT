@@ -14,8 +14,8 @@
         "bundle/dsa5.bundle.js"
     ],
     "styles": [
-        "styles/select2.min.css",
-        "styles/dsa5.css"
+        "styles/css/select2.min.css",
+        "styles/css/dsa5.css"
     ],
     "packs": [{
             "name": "skills",

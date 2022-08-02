@@ -14,6 +14,7 @@ import EquipmentDamage from "../system/equipment-damage.js";
 import DSAActiveEffectConfig from "../status/active_effects.js";
 import OnUseEffect from "../system/onUseEffects.js";
 import DSA5SoundEffect from "../system/dsa-soundeffect.js";
+import CreatureType from "../system/creature-type.js";
 
 export default class Actordsa5 extends Actor {
     static async create(data, options) {
@@ -235,6 +236,10 @@ export default class Actordsa5 extends Actor {
             console.error("Something went wrong with preparing actor data: " + error + error.stack);
             ui.notifications.error(game.i18n.localize("ACTOR.PreparationError") + error + error.stack);
         }
+    }
+
+    get creatureType() {
+        return CreatureType.creatureTypeName(this)
     }
 
     async prepareMerchant() {
@@ -1886,7 +1891,8 @@ export default class Actordsa5 extends Actor {
             !x.disabled &&
             !x.notApplicable &&
             (game.user.isGM || !x.getFlag("dsa5", "hidePlayers")) &&
-            !x.getFlag("dsa5", "hideOnToken")
+            !x.getFlag("dsa5", "hideOnToken") && 
+            (x.origin == this.uuid || !x.origin) 
           );
         })
       : this.effects.filter((x) => allowedEffects.includes(x.getFlag("core", "statusId")));

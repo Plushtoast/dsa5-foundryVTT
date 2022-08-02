@@ -10,5 +10,10 @@
     "./**/*",
     "/mnt/d/FoundryVTT-10.272/resources/app/public/scripts/foundry.js",
     "/mnt/d/FoundryVTT-10.272/resources/app/public/scripts/commons.js"
+  ],
+  "exclude": [
+    "./bundle/**/*",
+    "./bundle/*",
+    "./libs/*"
   ]
 }

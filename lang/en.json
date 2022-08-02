@@ -619,7 +619,8 @@
         "conjuration": "Summoning",
         "creation": "Production",
         "services": "Services",
-        "finalize": "Finalize"
+        "finalize": "Finalize",
+        "material": "Material"
     },
     "MASTER": {
         "automation": "Automation",

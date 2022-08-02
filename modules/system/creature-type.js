@@ -36,6 +36,15 @@ export default class CreatureType {
         return []
     }
 
+    static creatureTypeName(actor){
+        if(actor.type == "creature"){
+            const creatureClass = actor.system.creatureClass.value
+            return Object.keys(CreatureType.creatureData.types).filter((x) => creatureClass.indexOf(x) >= 0)[0]
+        }
+        else
+            return actor.system.details.species.value
+    }
+
     static addCreatureTypeModifiers(actorData, source, situationalModifiers, attacker) {
         const creatureTypes = CreatureType.detectCreatureType(actorData)
         const isSpell = ["spell", "ceremony", "liturgy", "ritual"].includes(source.type)

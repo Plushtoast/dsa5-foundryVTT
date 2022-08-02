@@ -4,7 +4,7 @@ export class AddTargetDialog extends Dialog{
     static async getDialog(speaker){
         const targets = Array.from(game.user.targets).map(x => x.id)
         const selectables = []
-        const token = canvas.scene ? canvas.scene.tokens.get(speaker.token).object : undefined
+        const token = canvas.scene ? canvas.scene.tokens.get(speaker.token)?.object : undefined
         if(game.combat){
             game.combat.combatants.forEach(combatant => {
                 if (!combatant.visible ) return

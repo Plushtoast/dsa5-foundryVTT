@@ -60,8 +60,6 @@ export default class DSA5StatusEffects {
             else if (!condition.notApplicable) {
                 data.transferedConditions.push(condition)
             }
-
-
         }
         data.manualConditions = systemConditions.filter(x => !appliedSystemConditions.includes(x.id))
     }
@@ -159,13 +157,13 @@ export default class DSA5StatusEffects {
         const manual = autoMode ? existing.flags.dsa5.manual : (absolute ? value : existing.flags.dsa5.manual - value)
         const update = {
             flags: {
-                dsa5: { 
+                dsa5: {
                     auto,
                     manual,
                     value: Math.max(0, Math.min(existing.flags.dsa5.max, manual + auto))
                 }
             }
-        }   
+        }
         if (update.flags.dsa5.auto <= 0 && update.flags.dsa5.manual == 0)
             return await actor.deleteEmbeddedDocuments("ActiveEffect", [existing.id])
         else

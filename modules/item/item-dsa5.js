@@ -595,7 +595,7 @@ export default class Itemdsa5 extends Item {
         else return Itemdsa5
     }
 
-    async postItem(){
+    async postItem() {
         Itemdsa5.getSubClass(this.type)._postItem(this)
     }
 
@@ -902,7 +902,7 @@ class SpellItemDSA5 extends Itemdsa5 {
         let sheet = "spell"
         if (spell.type == "ceremony" || spell.type == "liturgy") sheet = "liturgy"
 
-        let title = spell.name + " " + game.i18n.localize(`${spell.type}Test`)
+        let title = spell.name + " " + game.i18n.localize(`${spell.type}Test`)  + (options.subtitle || "")
 
         let testData = {
             opposable: spell.system.effectFormula.value.length > 0,
@@ -1102,7 +1102,7 @@ class ConsumableItemDSA extends Itemdsa5 {
     }
 
     static async _applyActiveEffect(source) {
-        let effects = source.data.effects.toObject()
+        let effects = source.effects.toObject()
         if (effects.length > 0) {
             const { msg, resistRolls, effectNames } = await DSAActiveEffectConfig.applyAdvancedFunction(source.actor, effects, source, {
                 qualityStep: source.system.QL,
