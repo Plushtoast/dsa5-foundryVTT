@@ -18,33 +18,21 @@
             <div class="form-group">
                 <label class="label-text">{{localize "Characteristic"}} 1</label>
                 <select name="data.characteristic1.value" data-dtype="String">
-                    {{#select data.characteristic1.value}}
-                    {{#each characteristics as |ch char|}}
-                    <option value="{{char}}">{{localize ch}}</option>
-                    {{/each}}
-                    {{/select}}
+                    {{selectOptions characteristics selected=data.characteristic1.value localize=true}}  
                 </select>
             </div>
 
             <div class="form-group">
                 <label class="label-text">{{localize "Characteristic"}} 2</label>
                 <select name="data.characteristic2.value" data-dtype="String">
-                    {{#select data.characteristic2.value}}
-                    {{#each characteristics as |ch char|}}
-                    <option value="{{char}}">{{localize ch}}</option>
-                    {{/each}}
-                    {{/select}}
+                    {{selectOptions characteristics selected=data.characteristic2.value localize=true}}  
                 </select>
             </div>
 
             <div class="form-group">
                 <label class="label-text">{{localize "Characteristic"}} 3</label>
                 <select name="data.characteristic3.value" data-dtype="String">
-                    {{#select data.characteristic3.value}}
-                    {{#each characteristics as |ch char|}}
-                    <option value="{{char}}">{{localize ch}}</option>
-                    {{/each}}
-                    {{/select}}
+                    {{selectOptions characteristics selected=data.characteristic3.value localize=true}}  
                 </select>
             </div>
 
@@ -53,7 +41,6 @@
                 <input class="input-text" type="text" name="data.range.value" value="{{data.range.value}}" data-dtype="String" />
                 <select name="data.canChangeRange.value" data-dtype="String">
                     {{#select data.canChangeRange.value}}
-
                     <option value="true">{{localize "yes"}}</option>
                     <option value="false">{{localize "no"}}</option>
                     {{/select}}
@@ -73,7 +60,6 @@
                 <input class="input-text" type="text" name="data.castingTime.value" value="{{data.castingTime.value}}" data-dtype="String" />
                 <select name="data.canChangeCastingTime.value" data-dtype="String">
                     {{#select data.canChangeCastingTime.value}}
-
                     <option value="true">{{localize "yes"}}</option>
                     <option value="false">{{localize "no"}}</option>
                     {{/select}}
@@ -85,14 +71,13 @@
                 <input class="input-text" type="number" name="data.AsPCost.value" value="{{data.AsPCost.value}}" data-dtype="Number" />
                 <select name="data.canChangeCost.value" data-dtype="String">
                     {{#select data.canChangeCost.value}}
-
                     <option value="true">{{localize "yes"}}</option>
                     <option value="false">{{localize "no"}}</option>
                     {{/select}}
                 </select>
             </div>
             <div class="form-group">
-                <label class="label-text">{{localize "AsPCostDetail"}}</label>
+                <label class="label-text">{{localize "KaPCostDetail"}}</label>
                 <input class="input-text" type="text" name="data.AsPCostDetail.value" value="{{data.AsPCostDetail.value}}" data-dtype="String" />
             </div>
             <div class="form-group">
@@ -103,7 +88,6 @@
                 <label class="label-text">{{localize "variableCost"}}</label>
                 <select name="data.variableBaseCost" data-dtype="String">
                     {{#select data.variableBaseCost}}
-    
                     <option value="true">{{localize "yes"}}</option>
                     <option value="false">{{localize "no"}}</option>
                     {{/select}}
@@ -124,21 +108,13 @@
             <div class="form-group">
                 <label class="label-text">{{localize "resistanceModifier"}}</label>
                 <select name="data.resistanceModifier.value" data-dtype="String">
-                    {{#select data.resistanceModifier.value}}
-                    {{#each resistances as |type sktype|}}
-                    <option value="{{sktype}}">{{localize type}}</option>
-                    {{/each}}
-                    {{/select}}
+                    {{selectOptions resistances selected=data.resistanceModifier.value localize=true}}
                 </select>
             </div>
             <div class="form-group">
                 <label class="label-text">{{localize "StF"}}</label>
                 <select name="data.StF.value" data-dtype="String">
-                    {{#select data.StF.value}}
-                    {{#each StFs as |type sktype|}}
-                    <option value="{{sktype}}">{{localize type}}</option>
-                    {{/each}}
-                    {{/select}}
+                    {{selectOptions StFs selected=data.StF.value localize=true}}
                 </select>
             </div>
         </div>

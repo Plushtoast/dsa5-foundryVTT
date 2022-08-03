@@ -21,7 +21,7 @@
 
             <div class="form-group">
                 <label class="label-text">{{localize "reloadTime"}}</label>
-                <input class="input-text" type="text" name="data.reloadTime.value" value="{{data.reloadTime.value}}" data-dtype="Number" />
+                <input class="input-text" type="text" name="data.reloadTime.value" value="{{data.reloadTime.value}}" data-dtype="String" />
             </div>
 
             <div class="form-group">
@@ -32,11 +32,7 @@
             <div class="form-group">
                 <label class="label-text">{{localize "ammunitiongroup"}}</label>
                 <select name="data.ammunitiongroup.value" data-dtype="String">
-                  {{#select data.ammunitiongroup.value}}
-                  {{#each ammunitiongroups as |ch char|}}
-                  <option value="{{char}}">{{localize ch}}</option>
-                  {{/each}}
-                  {{/select}}
+                    {{selectOptions ammunitiongroups selected=data.ammunitiongroup.value localize=true}}
                 </select>
             </div>
 
@@ -51,6 +47,13 @@
                 </select>
             </div>
 
+            <div class="form-group doubleInput">
+                <label class="label-text">{{localize 'critBotch'}}</label>
+                <input class="input-text" type="text" name="data.crit" value="{{data.crit}}" data-dtype="Number" title="{{localize 'CriticalSuccess'}}" />
+                <input class="input-text" type="text" name="data.botch" value="{{data.botch}}" data-dtype="Number" title="{{localize 'CriticalFailure'}}" />
+            </div>
+
+
             <div class="form-group">
                 <label class="label-text">{{localize "effect"}}</label>
                 <input class="input-text" type="text" name="data.effect.value" value="{{data.effect.value}}" data-dtype="String" />
@@ -61,7 +64,8 @@
                     <ul>{{{domains}}}</ul>
                 </div>
                 {{/if}}
-                <input class="input-text {{#if domains}}domainToggle{{/if}}" placeholder="{{localize 'WEAPON.clerical'}}, {{localize 'WEAPON.magical'}}" type="text" name="data.effect.attributes" value="{{data.effect.attributes}}" data-dtype="String" />
+                <input class="input-text {{#if domains}}domainToggle{{/if}}" placeholder="{{localize 'WEAPON.clerical'}}, {{localize 'WEAPON.magical'}}, {{localize 'WEAPON.silverPlated'}}" type="text" name="data.effect.attributes" value="{{data.effect.attributes}}" data-dtype="String"
+                />
             </div>
 
             <div class="form-group double">
@@ -69,7 +73,12 @@
                 <input class="input-text" type="text" name="data.structure.value" value="{{data.structure.value}}" data-dtype="Number" /><span> / </span>
                 <input class="input-text" type="text" name="data.structure.max" value="{{data.structure.max}}" data-dtype="Number" />
             </div>
-
+            {{#if armorAndWeaponDamage}}
+            <div class="form-group">
+                <label class="label-text">{{localize "WEAR.value"}}</label>
+                <input class="input-text" type="number" name="data.structure.breakPointRating" value="{{data.structure.breakPointRating}}" placeholder="{{breakPointRating}}" data-dtype="Number" step="1" />
+            </div>
+            {{/if}}
         </div>
 
         {{> systems/dsa5/templates/items/item-effects.html}} {{> systems/dsa5/templates/items/item-enchantment.html}}

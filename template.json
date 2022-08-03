@@ -336,7 +336,9 @@
             "application",
             "effectwrapper",
             "plant",
-            "magicalsign"
+            "magicalsign",
+            "demonmark",
+            "patron"
         ],
         "templates": {
             "skill": {
@@ -497,6 +499,16 @@
                 "crop": false,
                 "defensive": false,
                 "supernatural": false
+            },
+            "availability": {
+                "highNorth": 1,
+                "grasLands": 1,
+                "swamps": 1,
+                "woods": 1,
+                "jungle": 1,
+                "mountains": 1,
+                "desert": 1,
+                "maraskan": 1
             }
         },
         "money": {
@@ -679,7 +691,11 @@
             "damageMod": "",
             "rangeMultiplier": 1,
             "armorMod": "",
-            "atmod": 0
+            "atmod": 0,
+            "mag": {
+                "max": 0,
+                "value": 0
+            }
         },
         "consumable": {
             "templates": [
@@ -702,6 +718,8 @@
                 "equipment",
                 "description"
             ],
+            "crit": 1,
+            "botch": 20,
             "damage": {
                 "value": "1d6"
             },
@@ -734,6 +752,8 @@
                 "equipment",
                 "description"
             ],
+            "crit": 1,
+            "botch": 20,
             "damage": {
                 "value": "1d6"
             },
@@ -914,6 +934,24 @@
             "effect": {
                 "value": ""
             }
+        },
+        "demonmark": {
+            "templates": [
+                "description"
+            ],
+            "circle": 1,
+            "attribute": "",
+            "skills": "",
+            "domain": ""
+        },
+        "patron": {
+            "templates": [
+                "description"
+            ],
+            "talents": "",
+            "culture": "",
+            "category": 0,
+            "priority": 0
         },
         "disadvantage": {
             "templates": [

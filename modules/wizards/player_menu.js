@@ -11,6 +11,7 @@ export default class PlayerMenu extends Application {
     constructor(app) {
         super(app)
         this.entityAbilities = []
+        game.dsa5.apps.PlayerMenuSubApp = PlayerMenuSubApp
         this.summoningModifiers = [{
                 id: 1,
                 name: 'CONJURATION.offensiveImprovement',
@@ -101,7 +102,12 @@ export default class PlayerMenu extends Application {
             },
             moreModifiers: {},
             postFunction: {}
-        }
+        },
+        this.subApps = []
+    }
+
+    registerSubApp(app){
+        this.subApps.push(app)
     }
 
     async rollConjuration(ev) {
@@ -165,6 +171,10 @@ export default class PlayerMenu extends Application {
             const mod = this.conjurationData.moreModifiers[this.conjurationData.conjurationType].find(x => x.name == ev.currentTarget.dataset.name)
             mod.selected = $(ev.currentTarget).val()
         })
+
+        for(let app of this.subApps){
+            app.activateListeners(html)
+        }
     }
 
     async openRules() {
@@ -205,6 +215,7 @@ export default class PlayerMenu extends Application {
                 type: "summonCreature",
                 payload
             })
+            ui.notifications.notify(game.i18n.localize('CONJURATION.requestSend'))
         }
     }
 
@@ -343,9 +354,39 @@ export default class PlayerMenu extends Application {
             conjurationData: this.conjurationData,
             conjurationTypes: this.conjurationData.conjurationTypes
         })
+        await this.prepareSubApps(data)
         return data
     }
 
+    async prepareSubApps(data){
+        data.subApps = []
+        for(let app of this.subApps){
+            data.subApps.push(await app.prepareApp(data))
+        }
+    }
+}
+
+class PlayerMenuSubApp{
+    static template = ""
+    async getData(data){
+        return {}
+    }
+    
+    activateListeners(html){}
+
+    async renderData(data){
+        const renderData = await this.getData(data)
+        mergeObject(renderData, data)
+        const template = await renderTemplate(this.constructor.template, renderData)
+        return template
+    }
+
+    async prepareApp(data){
+        return {
+            name: game.i18n.localize(`PLAYER.${this.constructor.name}`),
+            view: await this.renderData(data)
+        }
+    }
 }
 
 class ConjurationRequest extends DSA5Dialog {
@@ -445,7 +486,7 @@ class ConjurationRequest extends DSA5Dialog {
         })
 
         if (game.dsa5.apps.playerMenu.conjurationData.postFunction[this.creationData.type]) {
-            await game.dsa5.apps.playerMenu.conjurationData.postFunction[this.creationData.type](this.conjuration)
+            await game.dsa5.apps.playerMenu.conjurationData.postFunction[this.creationData.type](this.conjuration, this.creationData.qs - this.creationData.consumedQS, this.creationData.type)
         }
 
         if (this.conjuration.type == "creature" && !(this.conjuration.data.creatureClass.value.includes(this.creationData.typeName))) {

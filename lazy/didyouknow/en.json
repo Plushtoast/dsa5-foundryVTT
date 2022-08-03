@@ -31,7 +31,7 @@
         "You can create familiars by adding the trait familiar to a creature (AP/Bonus values)",
         "The module \"times-up\" can automatically remove active effects once they expired.",
         "There is a TDE module to attach a sound to every action.",
-        "You can automate spells via macros. Many spells from the official modules already contain those macros.",
+        "You can automate spells via macros. Most of the spells from the official modules already contain those macros.",
         "You need to target tokens to take advantage of the opposed test system e.g. for combats.",
         "You should avoid importing stuff from compendiums at all time and never import the whole compendium if possible (bad performance, no bugfixes and updates).",
         "Foundry itself already includes several thousand icons for gear.",
@@ -53,6 +53,29 @@
         "The player menu can aid with summoning.",
         "The core module contains useful functions to adjust light settings.",
         "You can enable the modifier for foreign spells via the settings.",
-        "Dice system of the \"Rollsmith\" can be added to the TDE dice."
+        "Dice system of the \"Rollsmith\" can be added to the TDE dice.",
+
+        "You get help in the Ulisses and Foundry Discord",
+
+        "Add a demon mark to your character to track the circle of damnation.",
+        "You can create weapons, which do extra damage versus certain creature types.",
+        "You can create magical armor",
+        "Add a patron to your character, if you want to play a geode.",
+        "Items and abilities can contain an on-use effect",
+        "The game master can add diseases to your character sheet.",
+        "Active Effects can be limited to a spell property",
+        "The module \"Automated Animations\" can add animations to your attacks and spells.",
+        "Spells and magical signs can be paid via a rightclick on the chatcard.",
+        "Activate the Dere Positioning System, so merchants can only be contacted from close distance.",
+        "Activate the Dere Positioning System, so range modifiers will be set automatically in combat",
+        "The core rule modules contains functions to automatically set sight.",
+
+        "Update regularly Foundry, the TDE system and all modules.",
+
+        "So long, and thanks for all the fish",
+
+        "The tokenbar can be customized and moved.",
+        "Character images and images from journals can be dragged to the scene directly.",
+        "You can put items on the map via drag & drop."
     ]
 }

@@ -13,6 +13,7 @@ export default function() {
         DiceDSA5.chatListeners(html)
         DSA5Payment.chatListeners(html)
         const autoComplete = new DSA5ChatAutoCompletion()
+        Hooks.call("startDSA5ChatAutoCompletion", autoComplete)
         autoComplete.chatListeners(html)
         DSA5ChatListeners.chatListeners(html)
     });
@@ -30,6 +31,7 @@ export default function() {
             const speaker = DSA5_Utility.getSpeaker(msg.message.speaker)
             if (speaker && !speaker.isOwner) {
                 html.find(".selfButton").remove()
+                html.find('.d20').attr('title', '')
             }
 
             const onlyTarget = html.find(".onlyTarget")

@@ -38,6 +38,10 @@
             <a class="combat-control" title="{{localize 'COMBAT.InitiativeReset'}}" data-control="resetAll" {{#unless hasCombat}}disabled{{/unless}}>
                 <i class="fas fa-undo"></i>
             </a>
+            <a class="combat-control" title="{{labels.scope}}"
+                data-control="toggleSceneLink" {{#unless hasCombat}}disabled{{/unless}}>
+                <i class="fas fa-{{#unless linked}}un{{/unless}}link"></i>
+            </a>
             <a class="combat-settings" title="{{localize 'COMBAT.Settings'}}" data-control="trackerSettings">
                 <i class="fas fa-cog"></i>
             </a>
@@ -48,6 +52,7 @@
     <ol id="combat-tracker" class="directory-list">
         {{#each turns}}
         <li class="combatant actor directory-item flexrow {{this.css}}" data-combatant-id="{{this.id}}">
+            <div class="aggroButton specImg" title="{{localize 'attacktest'}}"></div>
             <div class="combatant-advanced">
                 <img class="token-image" data-src="{{this.img}}" title="{{this.name}}" /> {{#if this.defenseCount}}
                 <i class="fas def fa-shield-alt" data-defenseCount="{{this.defenseCount}}" title="{{localize 'COMBATTRACKER.noDefenses'}}"></i>

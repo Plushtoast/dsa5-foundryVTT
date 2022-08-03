@@ -1,5 +1,5 @@
-import DSA5ChatAutoCompletion from "./chat_autocompletion.js";
 import DSA5ChatListeners from "./chat_listeners.js";
+import RequestRoll from "./request-roll.js";
 
 export default class MacroDSA5 {
     static weaponLessMacro(char) {
@@ -17,11 +17,11 @@ export default class MacroDSA5 {
     }
 
     static requestRoll(skill, modifier = 0) {
-        DSA5ChatAutoCompletion.showRQMessage(skill, modifier)
+        RequestRoll.showRQMessage(skill, modifier)
     }
 
     static requestGC(skill, modifier = 0, options = {}) {
-        DSA5ChatAutoCompletion.showGCMessage(skill, modifier, options)
+        RequestRoll.showGCMessage(skill, modifier, options)
     }
 
     static rollCh(skill, options = {}) {

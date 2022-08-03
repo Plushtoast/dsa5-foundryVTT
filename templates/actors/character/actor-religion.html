@@ -148,7 +148,7 @@
     <div class="row-section wrap cards">
         {{#each actor.specAbs.clerical as |item i|}}
         <div class="item" data-item-id="{{item._id}}">
-            <a class="item-edit">{{item.name}}{{roman item.data.step.value item.data.maxRank.value}}</a>
+            {{#if item.OnUseEffect}}<a title="{{localize 'SHEET.onUseEffect'}}" class="onUseItem"><i class="fas fa-dice-six"></i></a>{{/if}}<a class="item-edit">{{item.name}}{{roman item.data.step.value item.data.maxRank.value}}</a>
         </div>
         {{/each}}
     </div>
@@ -174,11 +174,7 @@
                 <div class="col sixty">
                     <div class="form-group">
                         <select name="data.guidevalue.clerical" data-dtype="String">
-                            {{#select actor.data.guidevalue.clerical}}
-                            {{#each actor.guidevalues as |type sktype|}}
-                            <option value="{{sktype}}">{{localize type}}</option>
-                            {{/each}}
-                            {{/select}}
+                            {{selectOptions actor.guidevalues selected=actor.data.guidevalue.clerical localize=true}}
                         </select>
                     </div>
                 </div>

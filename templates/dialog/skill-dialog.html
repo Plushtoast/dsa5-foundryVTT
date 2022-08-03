@@ -1,5 +1,13 @@
 <form class="skill-test">
-    {{> systems/dsa5/templates/dialog/enhanced-default-dialog.html}}
-
+    <div class="row-section">
+        <div class="col sixty" style="max-width:60%">
+        {{> systems/dsa5/templates/dialog/enhanced-default-dialog.html}}
+        </div>
+        <div class="col fourty">
+            <div class="targets row-section wrap item">
+                {{> systems/dsa5/templates/dialog/parts/targets.html}}
+            </div>
+        </div>
+    </div>
     <div class="roll-dialog-tag">skill</div>
 </form>

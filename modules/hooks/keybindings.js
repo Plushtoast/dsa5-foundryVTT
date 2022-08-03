@@ -1,3 +1,4 @@
+import { SelectUserDialog } from "../dialog/addTargetDialog.js"
 import DSA5_Utility from "../system/utility-dsa5.js"
 import { DSA5CombatTracker } from "./combat_tracker.js"
 
@@ -39,6 +40,13 @@ export default function() {
         hint: game.i18n.localize("COMBAT.TurnPrev"),
         editable: [{ key: "KeyV" }],
         onDown: () => combatTurn("previousTurn")
+    })
+    game.keybindings.register("dsa5", "setTargetToUser", {
+        name: "DIALOG.setTargetToUser",
+        hint: game.i18n.localize("DIALOG.setTargetToUserHint"),
+        editable: [],
+        onDown: async() => (await SelectUserDialog.getDialog()).render(true),
+        restricted: true
     })
 }
 

@@ -6,6 +6,8 @@ import SpecialabilityRulesDSA5 from "../system/specialability-rules-dsa5.js"
 import { itemFromDrop, svgAutoFit } from "../system/view_helper.js"
 import DSA5ChatAutoCompletion from "../system/chat_autocompletion.js"
 import EquipmentDamage from "../system/equipment-damage.js"
+import DiceDSA5 from "../system/dice-dsa5.js"
+import OnUseEffect from "../system/onUseEffects.js"
 
 export default class ItemSheetdsa5 extends ItemSheet {
     constructor(item, options) {
@@ -46,12 +48,13 @@ export default class ItemSheetdsa5 extends ItemSheet {
         Items.registerSheet("dsa5", AmmunitionSheet, { makeDefault: true, types: ["ammunition"] });
         Items.registerSheet("dsa5", PlantSheet, { makeDefault: true, types: ["plant"] });
         Items.registerSheet("dsa5", MagicalSignSheet, { makeDefault: true, types: ["magicalsign"] });
+        Items.registerSheet("dsa5", PatronSheet, { makeDefault: true, types: ["patron"] });
 
         Items.unregisterSheet("dsa5", ItemSheetdsa5, {
             types: [
                 "armor", "equipment", "rangeweapon", "blessing", "magictrick", "spellextension", "consumable",
                 "species", "career", "culture", "advantage", "specialability", "disadvantage", "ritual",
-                "ceremony", "liturgy", "spell", "disease", "poison", "meleeweapon", "ammunition", "plant", "magicalsign"
+                "ceremony", "liturgy", "spell", "disease", "poison", "meleeweapon", "ammunition", "plant", "magicalsign", "patron"
             ]
         });
     }
@@ -66,6 +69,7 @@ export default class ItemSheetdsa5 extends ItemSheet {
         $(this._element).find(".showItemHead").attr("title", game.i18n.localize("SHEET.PostItem"));
         $(this._element).find(".consumeItem").attr("title", game.i18n.localize("SHEET.ConsumeItem"));
         $(this._element).find(".rollDamaged").attr("title", game.i18n.localize("DSASETTINGS.armorAndWeaponDamage"));
+        $(this._element).find(".onUseEffect").attr("title", game.i18n.localize("SHEET.onUseEffect"))
     }
 
     _getHeaderButtons() {
@@ -75,13 +79,21 @@ export default class ItemSheetdsa5 extends ItemSheet {
             icon: `fas fa-comment`,
             onclick: async() => this.item.postItem()
         })
+        if (this.item.actor && OnUseEffect.getOnUseEffect(this.item)) {
+            buttons.unshift({
+                class: "onUseEffect",
+                icon: `fas fa-dice-six`,
+                onclick: async() => {
+                    const onUse = new OnUseEffect(this.item)
+                    onUse.executeOnUseEffect()
+                }
+            })
+        }
         return buttons
     }
 
     setupEffect(ev) {
-        this.item.setupEffect().then(setupData => {
-            this.item.itemTest(setupData)
-        });
+        this.item.setupEffect().then(setupData => this.item.itemTest(setupData))
     }
 
     get template() {
@@ -110,12 +122,8 @@ export default class ItemSheetdsa5 extends ItemSheet {
     activateListeners(html) {
         super.activateListeners(html);
 
-        html.find(".advance-step").mousedown(ev => {
-            this.advanceWrapper(ev, "_advanceStep")
-        })
-        html.find(".refund-step").mousedown(ev => {
-            this.advanceWrapper(ev, "_refundStep")
-        })
+        html.find(".advance-step").mousedown(ev => this.advanceWrapper(ev, "_advanceStep"))
+        html.find(".refund-step").mousedown(ev => this.advanceWrapper(ev, "_refundStep"))
         html.find('.domainsPretty').click(ev => {
             $(ev.currentTarget).hide()
             $(ev.currentTarget).next('.domainToggle').show()
@@ -131,7 +139,6 @@ export default class ItemSheetdsa5 extends ItemSheet {
             } else {
                 DSA5StatusEffects.createCustomEffect(this.item, "", this.item.name)
             }
-
         })
 
         html.find('.condition-show').mousedown(ev => {
@@ -217,12 +224,13 @@ export default class ItemSheetdsa5 extends ItemSheet {
                 break
         }
         data.isOwned = this.item.actor
+        data.editable = this.isEditable
         if (data.isOwned)
             data.canAdvance = this.item.actor.data.canAdvance && this._advancable()
 
         DSA5StatusEffects.prepareActiveEffects(this.item, data)
         data.item = this.item
-
+        data.armorAndWeaponDamage = game.settings.get("dsa5", "armorAndWeaponDamage")
         return data;
     }
 
@@ -232,10 +240,10 @@ export default class ItemSheetdsa5 extends ItemSheet {
 }
 
 
-
 class Enchantable extends ItemSheetdsa5 {
     async _onDrop(event) {
         await this.enchant(event)
+        if (this.isPoisonable) await this.poison(event)
     }
 
     async enchant(event) {
@@ -263,6 +271,22 @@ class Enchantable extends ItemSheetdsa5 {
             }
             enchantments.push(enchantment)
             let update = { flags: { dsa5: { enchantments } } }
+            await this.item.update(update)
+        }
+    }
+
+    async poison(event) {
+        const dragData = JSON.parse(event.dataTransfer.getData("text/plain"))
+        const { item, typeClass, selfTarget } = await itemFromDrop(dragData, undefined)
+        if (typeClass == "poison") {
+            const poison = {
+                name: item.name,
+                pack: dragData.pack,
+                itemId: item._id,
+                permanent: false,
+                actorId: dragData.actorId
+            }
+            let update = { flags: { dsa5: { poison } } }
             await this.item.update(update)
         }
     }
@@ -341,8 +365,29 @@ class Enchantable extends ItemSheetdsa5 {
                 item.sheet.render(true)
             }
         })
+        html.find('.poison-toggle-permanent').click(ev => {
+            this.item.update({ flags: { dsa5: { poison: { permanent: !this.item.data.flags.dsa5.poison.permanent } } } })
+        })
+        html.find('.poison-delete').click(ev => {
+            this.deletePoison()
+        })
+        html.find('.poison-show').click(async() => {
+            let item
+            if (this.item.actor) item = this.item.actor.data.items.find(x => x.type == "poison" && x.name == this.item.data.flags.dsa5.poison.name)
+            if (!item) item = await this.getSpell(this.item.data.flags.dsa5.poison)
+
+            if (item) {
+                item.sheet.render(true)
+            }
+        })
 
         DSA5ChatAutoCompletion.bindRollCommands(html)
+    }
+
+    deletePoison() {
+        this.item.update({
+            [`flags.dsa5.-=poison`]: null
+        })
     }
 
     deleteEnchantment(id, enchantments) {
@@ -407,16 +452,24 @@ class Enchantable extends ItemSheetdsa5 {
         const data = await super.getData(options);
         data["enchantments"] = this.item.getFlag("dsa5", "enchantments")
         const enchantmentLabel = []
+        data.poison = this.item.getFlag("dsa5", "poison")
 
-        if (this.item.getFlag("dsa5", "poison")) enchantmentLabel.push("poison")
+        if (data.poison) enchantmentLabel.push("poison")
         if (data.enchantments && data.enchantments.some(x => !x.talisman)) enchantmentLabel.push("enchantment")
         if (data.enchantments && data.enchantments.some(x => x.talisman)) enchantmentLabel.push("talisman")
         data.enchantmentLabel = enchantmentLabel.map(x => game.i18n.localize(x)).join("/")
+
+        data.hasEnchantments = data.poison || (data.enchantments && data.enchantments.length > 0)
         return data
     }
 }
 
 class AmmunitionSheet extends Enchantable {
+    constructor(item, options) {
+        super(item, options);
+        this.mce = null;
+        this.isPoisonable = true
+    }
     async getData(options) {
         const data = await super.getData(options)
         data['ammunitiongroups'] = DSA5.ammunitiongroups
@@ -430,6 +483,7 @@ class EquipmentSheet extends Enchantable {
         const data = await super.getData(options);
         data['equipmentTypes'] = DSA5.equipmentTypes;
         data['domains'] = this.prepareDomains()
+        data.canOnUseEffect = game.user.isGM || await game.settings.get("dsa5", "playerCanEditSpellMacro")
         if (this.isBagWithContents()) {
             let weightSum = 0
             data['containerContent'] = this.item.actor.items
@@ -452,21 +506,8 @@ class EquipmentSheet extends Enchantable {
         return data
     }
 
-    breakOverflow({ name, quantity, weight }, parent) {
-        let elm = $(`<div class="itemInfo">
-            <h3 class="center">${name}</h3>
-            <div class="row-section\">
-                <div class="col ten"></div>
-                <div class="col thirty center">
-                    # ${quantity}
-                </div>
-                <div class="col five"></div>
-                <div class="col thirty center">
-                    <i class="fas fa-anchor\"></i> ${weight}
-                </div>
-                <div class="col ten"></div>
-            </div>
-        </div>`)
+    async breakOverflow(data, parent) {
+        let elm = $(await renderTemplate('systems/dsa5/templates/items/baghover.html', data))
 
         let top = parent.offset().top + 52;
         let left = parent.offset().left - 75;
@@ -485,9 +526,9 @@ class EquipmentSheet extends Enchantable {
     activateListeners(html) {
         super.activateListeners(html)
         const slots = html.find('.slot')
-        slots.mouseenter((ev) => {
+        slots.mouseenter(async(ev) => {
             const item = $(ev.currentTarget)
-            let elm = this.breakOverflow({
+            let elm = await this.breakOverflow({
                 name: item.attr('data-name'),
                 weight: item.attr("data-weight"),
                 quantity: item.attr("data-quantity")
@@ -546,8 +587,12 @@ class EquipmentSheet extends Enchantable {
 export class ArmorSheet extends Enchantable {
     async getData(options) {
         const data = await super.getData(options)
-        data['domains'] = this.prepareDomains()
-        data['armorSubcategories'] = Object.keys(DSA5.armorSubcategories)
+        mergeObject(data, {
+            domains: this.prepareDomains(),
+            armorSubcategories: Object.keys(DSA5.armorSubcategories),
+            breakPointRating: DSA5.armorSubcategories[this.item.data.data.subcategory]
+        })
+        data.canOnUseEffect = game.user.isGM || await game.settings.get("dsa5", "playerCanEditSpellMacro")
         return data
     }
     _getHeaderButtons() {
@@ -571,10 +616,20 @@ class PlantSheet extends ItemSheetdsa5 {
     }
 }
 
+class PatronSheet extends ItemSheetdsa5 {
+    async getData(options) {
+        const data = await super.getData(options);
+        data.patronCategories = [0, 1, 2, 3].map(x => { return { name: game.i18n.localize(`PATRON.${x}`), val: x } })
+        data.priorities = { 0: game.i18n.localize("PATRON.primary"), 1: game.i18n.localize("PATRON.secondary") }
+        return data
+    }
+}
+
 class MagicalSignSheet extends ItemSheetdsa5 {
     async getData(options) {
         const data = await super.getData(options);
         data.categories = { 1: game.i18n.localize("magicalsign"), 2: game.i18n.localize("additionalsign") }
+        data.canOnUseEffect = game.user.isGM || await game.settings.get("dsa5", "playerCanEditSpellMacro")
         return data
     }
     _getHeaderButtons() {
@@ -596,11 +651,11 @@ class MagicalSignSheet extends ItemSheetdsa5 {
         const actor = this.item.actor
         const sign = game.dsa5.config.ItemSubclasses.magicalsign
         const skill = actor.items.find(x => x.type == "skill" && x.name == game.i18n.localize("LocalizedIDs.artisticAbility"))
-        const chatMessage = `<hr/><p><b>${this.item.name}</b></p><p>${this.item.data.data.description.value}</p><p>${sign.chatData(this.item.data.data, "").join("</br>")}</p>`
+        const chatMessage = `<hr/><p><b>${this.item.name}</b></p><p>${this.item.data.data.description.value}</p><p>${sign.chatData(this.item.data.data, "").join("</br>")} <span class="costCheck"></span></p>`
         actor.setupSkill(skill.data, { other: [chatMessage], subtitle: ` (${game.i18n.localize('magicalsign')})` }, undefined).then(async(setupData) => {
-            //TODO pay this once if successfull
-            //await this.item.actor.update({ "data.status.astralenergy.value": actor.data.data.status.astralenergy.value -= aspcost })
-            const res = await actor.basicTest(setupData)
+            const res = await actor.basicTest(setupData, { suppressMessage: true })
+            res.result.preData.calculatedSpellModifiers = { finalcost: aspcost, costsMana: true }
+            await DiceDSA5.renderRollCard(res.cardOptions, res.result, res.options.rerenderMessage)
         })
     }
 }
@@ -618,10 +673,14 @@ class RangeweaponSheet extends Enchantable {
         return buttons
     }
     async getData(options) {
-        const data = await super.getData(options);
-        data['ammunitiongroups'] = DSA5.ammunitiongroups;
-        data['combatskills'] = await DSA5_Utility.allCombatSkillsList("range");
-        data['domains'] = this.prepareDomains()
+        const data = await super.getData(options)
+        data.canOnUseEffect = game.user.isGM || await game.settings.get("dsa5", "playerCanEditSpellMacro")
+        mergeObject(data, {
+            ammunitiongroups: DSA5.ammunitiongroups,
+            combatskills: await DSA5_Utility.allCombatSkillsList("range"),
+            domains: this.prepareDomains(),
+            breakPointRating: DSA5.weaponStabilities[game.i18n.localize(`LocalizedCTs.${this.item.data.data.combatskill.value}`)]
+        })
         return data
     }
 }
@@ -637,6 +696,12 @@ class BlessingSheetDSA5 extends ItemSheetdsa5 {
             })
         }
         return buttons
+    }
+
+    async getData(options) {
+        const data = await super.getData(options)
+        data.canOnUseEffect = game.user.isGM || await game.settings.get("dsa5", "playerCanEditSpellMacro")
+        return data
     }
 
     async setupEffect(ev) {
@@ -736,6 +801,12 @@ class MagictrickSheetDSA5 extends ItemSheetdsa5 {
         return buttons
     }
 
+    async getData(options) {
+        const data = await super.getData(options)
+        data.canOnUseEffect = game.user.isGM || await game.settings.get("dsa5", "playerCanEditSpellMacro")
+        return data
+    }
+
     async setupEffect(ev) {
         if (this.item.actor.data.data.status.astralenergy.value < 1)
             return ui.notifications.error(game.i18n.localize("DSAError.NotEnoughAsP"))
@@ -748,66 +819,34 @@ class MagictrickSheetDSA5 extends ItemSheetdsa5 {
 }
 
 class MeleeweaponSheetDSA5 extends Enchantable {
+    constructor(item, options) {
+        super(item, options);
+        this.mce = null;
+        this.isPoisonable = true
+    }
+
     async getData(options) {
         const data = await super.getData(options);
-        let chars = DSA5.characteristics;
-        chars["ge/kk"] = game.i18n.localize("CHAR.GEKK")
-        chars["-"] = "-";
-        data['characteristics'] = chars;
-        data['twoHanded'] = /\(2H/.test(this.item.name)
-        data['combatskills'] = await DSA5_Utility.allCombatSkillsList("melee")
-        data['ranges'] = DSA5.meleeRanges;
+        const characteristics = mergeObject(duplicate(DSA5.characteristics), {
+            "ge/kk": game.i18n.localize("CHAR.GEKK"),
+            ["-"]: "-"
+        })
+        mergeObject(data, {
+            characteristics,
+            twoHanded: /\(2H/.test(this.item.name),
+            combatskills: await DSA5_Utility.allCombatSkillsList("melee"),
+            ranges: DSA5.meleeRanges,
+            shieldSizes: DSA5.shieldSizes,
+            isShield: this.item.data.data.combatskill.value == game.i18n.localize("LocalizedIDs.Shields"),
+            domains: this.prepareDomains(),
+            breakPointRating: DSA5.weaponStabilities[game.i18n.localize(`LocalizedCTs.${this.item.data.data.combatskill.value}`)]
+        })
         if (this.item.actor) {
-            let combatSkill = this.item.actor.data.items.find(x => x.type == "combatskill" && x.name == this.item.data.data.combatskill.value)
+            const combatSkill = this.item.actor.data.items.find(x => x.type == "combatskill" && x.name == this.item.data.data.combatskill.value)
             data['canBeOffHand'] = combatSkill && !(combatSkill.data.data.weapontype.twoHanded) && this.item.data.data.worn.value
         }
-        data['isShield'] = this.item.data.data.combatskill.value == game.i18n.localize("LocalizedIDs.Shields")
-        data['shieldSizes'] = DSA5.shieldSizes
-        data["poison"] = this.item.getFlag("dsa5", "poison")
-        data['domains'] = this.prepareDomains()
-        data.hasEnchantments = data.poison || (data.enchantments && data.enchantments.length > 0)
+        data.canOnUseEffect = game.user.isGM || await game.settings.get("dsa5", "playerCanEditSpellMacro")
         return data
-    }
-
-    async poison(event) {
-        const dragData = JSON.parse(event.dataTransfer.getData("text/plain"))
-        const { item, typeClass, selfTarget } = await itemFromDrop(dragData, undefined)
-        if (typeClass == "poison") {
-            const poison = {
-                name: item.name,
-                pack: dragData.pack,
-                itemId: item._id,
-                permanent: false,
-                actorId: dragData.actorId
-            }
-            let update = { flags: { dsa5: { poison } } }
-            await this.item.update(update)
-        }
-    }
-
-    activateListeners(html) {
-        super.activateListeners(html)
-        html.find('.poison-toggle-permanent').click(ev => {
-            this.item.update({ flags: { dsa5: { poison: { permanent: !this.item.data.flags.dsa5.poison.permanent } } } })
-        })
-        html.find('.poison-delete').click(ev => {
-            this.deletePoison()
-        })
-        html.find('.poison-show').click(async() => {
-            let item
-            if (this.item.actor) item = this.item.actor.data.items.find(x => x.type == "poison" && x.name == this.item.data.flags.dsa5.poison.name)
-            if (!item) item = await this.getSpell(this.item.data.flags.dsa5.poison)
-
-            if (item) {
-                item.sheet.render(true)
-            }
-        })
-    }
-
-    deletePoison() {
-        this.item.update({
-            [`flags.dsa5.-=poison`]: null
-        })
     }
 
     _getHeaderButtons() {
@@ -821,11 +860,6 @@ class MeleeweaponSheetDSA5 extends Enchantable {
         }
         return buttons
     }
-
-    async _onDrop(event) {
-        await super._onDrop(event)
-        await this.poison(event)
-    }
 }
 
 class PoisonSheetDSA5 extends ItemSheetdsa5 {
@@ -838,6 +872,7 @@ class PoisonSheetDSA5 extends ItemSheetdsa5 {
         })
         return buttons
     }
+
     async getData(options) {
         const data = await super.getData(options);
         data["resistances"] = DSA5.magicResistanceModifiers
@@ -884,8 +919,10 @@ class SpecialAbilitySheetDSA5 extends ItemSheetdsa5 {
         const data = await super.getData(options);
         data['categories'] = DSA5.specialAbilityCategories;
         data['subCategories'] = DSA5.combatSkillSubCategories
+        data.canOnUseEffect = game.user.isGM || await game.settings.get("dsa5", "playerCanEditSpellMacro")
         return data
     }
+
 }
 
 class ItemSpeciesDSA5 extends ItemSheetdsa5 {
@@ -965,8 +1002,10 @@ class SpellSheetDSA5 extends ItemSheetdsa5 {
 
 class SpellExtensionSheetDSA5 extends ItemSheetdsa5 {
     async getData(options) {
-        const data = await super.getData(options);
-        data['categories'] = ["spell", "liturgy", "ritual", "ceremony"]
+        const data = await super.getData(options)
+        mergeObject(data, {
+            categories: { spell: "spell", liturgy: "liturgy", ritual: "ritual", ceremony: "ceremony" }
+        })
         return data
     }
 }
@@ -987,6 +1026,12 @@ class VantageSheetDSA5 extends ItemSheetdsa5 {
             await this.item.actor._updateAPs(xpCost * -1)
             await this.item.update({ "data.step.value": this.item.data.data.step.value - 1 })
         }
+    }
+
+    async getData(options) {
+        const data = await super.getData(options)
+        data.canOnUseEffect = game.user.isGM || await game.settings.get("dsa5", "playerCanEditSpellMacro")
+        return data
     }
 
     async _advanceStep() {

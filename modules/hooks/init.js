@@ -13,6 +13,8 @@ import * as tokenHUD from './tokenHUD.js'
 import * as migrateWorld from '../system/migrator.js'
 import * as initScene from './scene.js'
 import * as initKeybindings from './keybindings.js'
+import * as rollExtensions from './../system/dsarolls.js'
+import { connectHook } from "./itemDrop.js";
 
 import ActorSheetdsa5Character from "./../actor/character-sheet.js";
 import ActorSheetdsa5Creature from "./../actor/creature-sheet.js";
@@ -25,6 +27,13 @@ import AdvantageRulesDSA5 from "../system/advantage-rules-dsa5.js";
 import SpecialabilityRulesDSA5 from "../system/specialability-rules-dsa5.js";
 import DidYouKnow from "../system/didyouknow.js";
 import DSAActiveEffectConfig from "../status/active_effects.js";
+import TokenHotbar2 from "../system/tokenHotbar2.js";
+import CreatureMerchantSheetDSA5 from "../actor/creature-merchant-sheet.js";
+import CharacterMerchantSheetDSA5 from "../actor/character-merchant-sheet.js";
+import DPS from "../system/derepositioningsystem.js";
+import DSAIniTracker from "../system/dsa-ini-tracker.js";
+import { SelectUserDialog } from "../dialog/addTargetDialog.js";
+
 
 export default function() {
     initHandleBars.default();
@@ -40,7 +49,7 @@ export default function() {
     tokenHUD.default()
     migrateWorld.default()
     initScene.default()
-
+    rollExtensions.default()
 }
 
 Hooks.once("init", () => {
@@ -49,6 +58,7 @@ Hooks.once("init", () => {
         "systems/dsa5/templates/actors/actor-talents.html",
         "systems/dsa5/templates/items/item-description.html",
         "systems/dsa5/templates/dialog/default-dialog.html",
+        "systems/dsa5/templates/dialog/parts/targets.html",
         "systems/dsa5/templates/dialog/enhanced-default-dialog.html",
         "systems/dsa5/templates/dialog/default-combat-dialog.html",
         "systems/dsa5/templates/chat/roll/test-card.html",
@@ -68,6 +78,7 @@ Hooks.once("init", () => {
         "systems/dsa5/templates/actors/creature/creature-religion.html",
         "systems/dsa5/templates/actors/parts/characteristics-small.html",
         "systems/dsa5/templates/actors/parts/characteristics-large.html",
+        "systems/dsa5/templates/actors/parts/gearSearch.html",
         "systems/dsa5/templates/actors/parts/magicalSigns.html",
         "systems/dsa5/templates/actors/parts/containerContent.html",
         "systems/dsa5/templates/actors/npc/npc-main.html",
@@ -90,14 +101,21 @@ Hooks.once("init", () => {
     Actors.registerSheet("dsa5", ActorSheetdsa5Creature, { types: ["creature"], makeDefault: true });
     Actors.registerSheet("dsa5", ActorSheetdsa5NPC, { types: ["npc"], makeDefault: true });
     Actors.registerSheet("dsa5", MerchantSheetDSA5, { types: ["npc"] });
+    Actors.registerSheet("dsa5", CreatureMerchantSheetDSA5, { types: ["creature"] })
+    Actors.registerSheet("dsa5", CharacterMerchantSheetDSA5, { types: ["character"] })
     DocumentSheetConfig.registerSheet(ActiveEffect, "dsa5", DSAActiveEffectConfig, { makeDefault: true })
 
     ItemSheetdsa5.setupSheets()
     configuration.default()
+    DPS.initDoorMinDistance()
 })
 
 Hooks.once('ready', () => {
     DidYouKnow.showOneMessage()
+    TokenHotbar2.registerTokenHotbar()
+    connectHook()
+    DSAIniTracker.connectHooks()
+
 })
 
 Hooks.once('setup', () => {
@@ -105,12 +123,17 @@ Hooks.once('setup', () => {
         console.warn(`DSA5 - ${game.i18n.lang} is not a supported language. Falling back to default language.`)
         game.settings.set("core", "language", "de")
     }
+    const forceLanguage = game.settings.get("dsa5", "forceLanguage")
+    if (["de", "en"].includes(forceLanguage) && game.i18n.lang != forceLanguage) {
+        showWrongLanguageDialog(forceLanguage)
+    }
     setupKnownEquipmentModifiers()
 
     BookWizard.initHook()
 
     initKeybindings.default()
     MastersMenu.registerButtons()
+    SelectUserDialog.registerButtons()
 
     CONFIG.Canvas.lightAnimations.daylight = {
         label: "LIGHT.daylight",
@@ -120,6 +143,26 @@ Hooks.once('setup', () => {
     AdvantageRulesDSA5.setupFunctions()
     SpecialabilityRulesDSA5.setupFunctions()
 })
+
+const showWrongLanguageDialog = (forceLanguage) => {
+    let data = {
+        title: game.i18n.localize("DSASETTINGS.forceLanguage"),
+        content: game.i18n.format("DSAError.wrongLanguage", { lang: forceLanguage }),
+        buttons: {
+            ok: {
+                icon: '<i class="fa fa-check"></i>',
+                label: game.i18n.localize("ok"),
+                callback: () => { game.settings.set("core", "language", forceLanguage) }
+            },
+            cancel: {
+                icon: '<i class="fas fa-times"></i>',
+                label: game.i18n.localize("cancel"),
+
+            }
+        }
+    }
+    new Dialog(data).render(true)
+}
 
 function setupKnownEquipmentModifiers() {
     game.dsa5.config.knownShortcuts = {

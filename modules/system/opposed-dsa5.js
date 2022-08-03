@@ -4,6 +4,7 @@ import { ReactToAttackDialog, ReactToSkillDialog } from "../dialog/dialog-react.
 import Actordsa5 from "../actor/actor-dsa5.js";
 import EquipmentDamage from "./equipment-damage.js";
 import DSAActiveEffectConfig from "../status/active_effects.js";
+import Itemdsa5 from "../item/item-dsa5.js";
 
 export default class OpposedDsa5 {
     static async handleOpposedTarget(message) {
@@ -32,7 +33,8 @@ export default class OpposedDsa5 {
             OpposedDsa5.changeStartMessage(message)
         } else {
             console.log("show dmg")
-            this.showDamage(message)
+            await this.showDamage(message)
+            await this.showSpellWithoutTarget(message)
         }
     }
 
@@ -214,7 +216,7 @@ export default class OpposedDsa5 {
     static getMessageDude(message) {
         let res = {
             speaker: message.data.speaker,
-            testResult: mergeObject(message.data.flags.data.postData, { source: attackMessage.data.flags.data.preData.source }),
+            testResult: mergeObject(message.data.flags.data.postData, { source: message.data.flags.data.preData.source }),
             img: DSA5_Utility.getSpeaker(message.data.speaker).data.img,
             messageId: message.data._id
         }
@@ -242,10 +244,55 @@ export default class OpposedDsa5 {
         }
     }
 
+    static async playAutomatedJBA2(attacker, defender, opposedResult) {
+        if (DSA5_Utility.moduleEnabled("autoanimations")) {
+            //const attackerToken = canvas.tokens.get(attacker.speaker.token)
+            const attackerToken = DSA5_Utility.getSpeaker(attacker.speaker).getActiveTokens()[0]
+            const defenderToken = DSA5_Utility.getSpeaker(defender.speaker).getActiveTokens()[0]
+            if (!attackerToken || !attackerToken.actor || !defenderToken || !defenderToken.actor) {
+                return
+            }
+            let item = attackerToken.actor.items.get(attacker.testResult.source._id)
+            if (!item) item = new Itemdsa5(attacker.testResult.source, { temporary: true })
+            if (!item) return
+
+            const targets = [defenderToken]
+            const hitTargets = opposedResult.winner == "attacker" ? targets : []
+            AutoAnimations.playAnimation(attackerToken, targets, item, { hitTargets, playOnMiss: true })
+        }
+    }
+
+    static async showSpellWithoutTarget(message) {
+        if (DSA5_Utility.moduleEnabled("autoanimations")) {
+            const msgData = getProperty(message.data, "flags.data")
+            if (!msgData || msgData.isOpposedTest) return
+
+            const result = getProperty(msgData, "postData.result") || -1
+            if (result > 0) {
+                const attackerToken = DSA5_Utility.getSpeaker(msgData.postData.speaker).getActiveTokens()[0]
+                if (!attackerToken || !attackerToken.actor) return
+
+                let targets = Array.from(game.user.targets)
+                const item = attackerToken.actor.items.get(msgData.preData.source._id)
+                if (!targets.length) targets = [attackerToken]
+                AutoAnimations.playAnimation(attackerToken, targets, item)
+            }
+        }
+    }
+
     static async clearOpposed(actor) {
-        await actor.update({
-            [`flags.-=oppose`]: null
-        })
+        if (game.user.isGM) {
+            await actor.update({
+                [`flags.-=oppose`]: null
+            })
+        } else {
+            game.socket.emit("system.dsa5", {
+                type: "clearOpposed",
+                payload: {
+                    actorId: actor.id
+                }
+            })
+        }
     }
 
     static async _handleReaction(ev) {
@@ -294,6 +341,7 @@ export default class OpposedDsa5 {
         this.formatOpposedResult(opposedResult, attacker.speaker, defender.speaker);
         this.rerenderMessagesWithModifiers(opposedResult, attacker, defender);
         await Hooks.call("finishOpposedTest", attacker, defender, opposedResult, options)
+        this.playAutomatedJBA2(attacker, defender, opposedResult)
         await this.renderOpposedResult(opposedResult, options)
         await this.hideReactionButton(options.startMessageId)
 
@@ -341,7 +389,12 @@ export default class OpposedDsa5 {
 
             opposeResult.winner = "attacker"
 
-            let title = [`${damage.armorMod != 0 ? damage.armorMod + " " + game.i18n.localize('Modifier') : ""}`, `${damage.armorMultiplier != 0 ? "*" + damage.armorMultiplier + " " + game.i18n.localize('Modifier') : "" }`]
+            let title = [
+                damage.armorMod != 0 ? `${damage.armorMod + " " + game.i18n.localize('Modifier')}` : "",
+                damage.armorMultiplier != 1 ? "*" + damage.armorMultiplier + " " + game.i18n.localize('Modifier') : "",
+                damage.spellArmor != 0 ? `${damage.spellArmor} ${game.i18n.localize('spellArmor')}` : "",
+                damage.liturgyArmor != 0 ? `${damage.liturgyArmor} ${game.i18n.localize('liturgyArmor')}` : ""
+            ]
             let description = `<b>${game.i18n.localize("damage")}</b>: ${damage.damage} - <span title="${title.join("")}">${damage.armor} (${game.i18n.localize("protection")})</span> = ${damage.sum}`
             opposeResult.damage = {
                 description,
@@ -368,9 +421,15 @@ export default class OpposedDsa5 {
             if (/^\*/.test(mod)) multipliers.push(Number(mod.replace("*", "")))
             else armorMod += Number(mod)
         }
+        let spellArmor = 0
+        let liturgyArmor = 0
+        if (["spell", "ritual"].includes(attackerTest.source.type)) spellArmor += actor.data.spellArmor || 0
+        else if (["liturgy", "ceremony"].includes(attackerTest.source.type)) spellArmor += actor.data.liturgyArmor || 0
+
         armor += armorMod
         const armorMultiplier = multipliers.reduce((sum, x) => { return sum * x }, 1)
         armor = Math.max(Math.round(armor * armorMultiplier), 0)
+        armor += spellArmor + liturgyArmor
         const armorDamaged = EquipmentDamage.armorGetsDamage(damage, attackerTest)
         const ids = wornArmor.map(x => x.uuid)
 
@@ -379,6 +438,8 @@ export default class OpposedDsa5 {
             armor,
             armorDamaged: { damaged: armorDamaged, ids },
             armorMod,
+            spellArmor,
+            liturgyArmor,
             armorMultiplier,
             sum: damage - armor
         }

@@ -1,10 +1,10 @@
 import DSA5_Utility from "../system/utility-dsa5.js"
 import DSA5Payment from "../system/payment.js"
-import DSA5ChatAutoCompletion from "../system/chat_autocompletion.js"
 import RuleChaos from "../system/rule_chaos.js"
 import AdvantageRulesDSA5 from "../system/advantage-rules-dsa5.js"
 import { slist } from "../system/view_helper.js"
 import PlayerMenu from "./player_menu.js"
+import RequestRoll from "../system/request-roll.js"
 
 export default class MastersMenu {
     static registerButtons() {
@@ -28,9 +28,9 @@ export default class MastersMenu {
                 {
                     name: "PlayerMenu",
                     title: game.i18n.localize("PLAYER.title"),
-                    icon: "fas fa-tools",
+                    icon: "fas fa-dsa5-player",
                     button: true,
-                    onClick: () => { DSA5_Utility.renderToggle(game.dsa5.apps.playerMenu)}
+                    onClick: () => { DSA5_Utility.renderToggle(game.dsa5.apps.playerMenu) }
                 }
             ]
             if (game.user.isGM) {
@@ -72,27 +72,37 @@ class GameMasterMenu extends Application {
         this.selected = {}
         this.heros = []
         this.lastSkill = `${game.i18n.localize('LocalizedIDs.perception')}|skill`
-        Hooks.on("updateActor", async(document, data, options, userId) => {
-            const properties = ["data.status.fatePoints", "data.status.wounds", "data.status.karmaenergy", "data.status.astralenergy"]
-            if (this.heros.find(x => x.id == document.id) && properties.reduce((a, b) => {
-                    return a || hasProperty(data, b)
-                }, false)) {
-                this.render()
-            }
-        })
-        Hooks.on("updateScene", async(document, data, options, userId) => {
-            const properties = ["darkness"]
-            if (game.canvas.id == document.id && properties.reduce((a, b) => {
-                    return a || hasProperty(data, b)
-                }, false)) {
-                if (game.dsa5.apps.LightDialog) game.dsa5.apps.LightDialog.onDarknessChange()
-                this.render()
-            }
-        })
-        Hooks.on("canvasInit", () => {
-            this.render()
-        })
         this.randomCreation = []
+
+        if (game.user.isGM) {
+            Hooks.on("updateActor", async(document, data, options, userId) => {
+                const properties = ["data.status.fatePoints", "data.status.wounds", "data.status.karmaenergy", "data.status.astralenergy"]
+                if (this.heros.find(x => x.id == document.id) && properties.reduce((a, b) => {
+                        return a || hasProperty(data, b)
+                    }, false)) {
+                    this.render()
+                }
+            })
+            Hooks.on("updateScene", async(document, data, options, userId) => {
+                const properties = ["darkness"]
+                if (game.canvas.id == document.id && properties.reduce((a, b) => {
+                        return a || hasProperty(data, b)
+                    }, false)) {
+                    if (game.dsa5.apps.LightDialog) game.dsa5.apps.LightDialog.onDarknessChange()
+                    this.render()
+                }
+            })
+            Hooks.on("canvasInit", () => {
+                this.render()
+            })
+        }
+
+    }
+
+    async _render(force = false, options = {}) {
+        if (!game.user.isGM) return ui.notifications.error("DSAError.onlyGMallowed")
+
+        await super._render(force, options)
     }
 
     activateListeners(html) {
@@ -181,7 +191,7 @@ class GameMasterMenu extends Application {
         });
         html.find(".hero").mouseleave(ev => {
             let e = ev.toElement || ev.relatedTarget;
-            if (e.parentNode == this || e == this)
+            if (!e || e.parentNode == this || e == this)
                 return;
 
             ev.currentTarget.querySelectorAll('.hovermenu').forEach(e => e.remove());
@@ -206,8 +216,8 @@ class GameMasterMenu extends Application {
             ev.stopPropagation()
             this.doGroupCheck()
         })
-        html.find('.changeSightAutomation').change(async(ev) => {
-            await game.settings.set('dsa5', "sightAutomationEnabled", ev.currentTarget.checked)
+        html.find('.changeSetting').change(async(ev) => {
+            await game.settings.set('dsa5', ev.currentTarget.name, ev.currentTarget.checked)
         })
         html.find('.changeSightTreshold').change(async(ev) => {
             $(ev.currentTarget).closest('.row-section').find('.range-value').text(ev.currentTarget.value)
@@ -296,7 +306,7 @@ class GameMasterMenu extends Application {
             }
         }
 
-        const roll = new Roll(`1d${counter - 1}`).evaluate({ async: false }).total
+        const roll = (await new Roll(`1d${counter - 1}`).evaluate({ async: true })).total
         $(ev.currentTarget).find('i').addClass('fa-spin')
         heros.removeClass("victim")
 
@@ -306,7 +316,7 @@ class GameMasterMenu extends Application {
         }, 500)
     }
 
-    async doPayment(ids, pay){
+    async doPayment(ids, pay) {
         const actors = game.actors.filter(x => ids.includes(x.id))
         const heros = this.getNames(actors)
         const template = await renderTemplate('systems/dsa5/templates/dialog/master-dialog-award.html', { text: game.i18n.localize(game.i18n.format(pay ? "MASTER.payText" : "MASTER.getPaidText", { heros })) })
@@ -316,7 +326,7 @@ class GameMasterMenu extends Application {
                 DSA5Payment.handlePayAction(undefined, pay, number, hero)
 
         }
-        this.buildDialog(game.i18n.localize(pay ? 'PAYMENT.payTT' : 'MASTER.payButton'), template, callback)
+        this.buildDialog(game.i18n.localize(pay ? 'MASTER.payTT' : 'PAYMENT.payButton'), template, callback)
     }
 
     async getPaid(ids) {
@@ -416,7 +426,7 @@ class GameMasterMenu extends Application {
             const [skill, type] = this.lastSkill.split("|")
             if (type != "skill") return
 
-            DSA5ChatAutoCompletion.showGCMessage(skill, number)
+            RequestRoll.showGCMessage(skill, number)
         }
         this.buildDialog(game.i18n.localize('HELP.groupcheck'), template, callback)
     }
@@ -503,6 +513,7 @@ class GameMasterMenu extends Application {
         const visions = [1, 2, 3, 4].map(x => { return { label: game.i18n.localize(`VisionDisruption.step${x}`).replace(regex, ""), value: thresholds[x - 1] } })
         data.sceneConfig = {
             sceneAutomationEnabled: game.settings.get("dsa5", "sightAutomationEnabled"),
+            enableDPS: game.settings.get("dsa5", "enableDPS"),
             visions,
             darkness: canvas.scene ? canvas.scene.data.darkness : 0
         }

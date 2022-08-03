@@ -18,16 +18,12 @@
         <b>{{localize "reach"}}</b>: {{preData.calculatedSpellModifiers.reach}}
     </div>
     {{/if}}
-    <div class="card-content">
+    <div class="card-content" title="{{preData.calculatedSpellModifiers.description}}">
         <b>{{localize "cost"}}</b>: {{preData.calculatedSpellModifiers.finalcost}} <span class="costCheck"></span>
     </div>
     {{#if (ne preData.calculatedSpellModifiers.maintainCost '')}}
     <div class="card-content">
         <b>{{localize "maintainCost"}}</b>: {{preData.calculatedSpellModifiers.maintainCost}}
-    </div>
-    {{/if}} {{#if testData.damage}}
-    <div class="card-content" title="{{testData.calculatedEffectFormula}}&#10;{{testData.damagedescription}}">
-        <b>{{localize "effectResult"}}</b>: {{testData.damage}}
     </div>
     {{/if}} {{#if preData.extensions }}
     <div class="card-content">

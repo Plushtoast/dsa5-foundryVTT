@@ -27,11 +27,7 @@
             <div class="form-group">
                 <label class="label-text">{{localize "Category"}}</label>
                 <select name="data.category.value" data-dtype="String">
-                  {{#select data.category.value}}
-                  {{#each categories as |ch char|}}
-                  <option value="{{char}}">{{localize ch}}</option>
-                  {{/each}}
-                  {{/select}}
+                    {{selectOptions categories selected=data.category.value localize=true}}  
                 </select>
             </div>
             <div class="form-group full-height">
@@ -56,9 +52,21 @@
                 <label class="label-text">{{localize "circle"}}</label>
                 <input class="input-text" type="number" name="data.step.circle" value="{{data.step.circle}}" data-dtype="Number" />
             </div>
-            {{/if}}
+            {{/if}} {{#if (eq data.category.value 'staff')}}
+            <div class="form-group">
+                <label class="label-text">{{localize "volume"}}</label>
+                <input class="input-text" type="number" name="data.volume" value="{{data.volume}}" data-dtype="Number" />
+            </div>
+            <div class="form-group">
+                <label class="label-text">{{localize "AsPCost"}}</label>
+                <input class="input-text" type="text" name="data.AsPCost" value="{{data.AsPCost}}" data-dtype="String" />
+            </div>
+            <div class="form-group">
+                <label class="label-text">{{localize "feature"}}</label>
+                <input class="input-text" type="text" name="data.feature" value="{{data.feature}}" data-dtype="String" />
+            </div>
 
-            {{#if (eq data.category.value 'Combat')}}
+            {{/if}} {{#if (eq data.category.value 'Combat')}}
             <div class="form-group">
                 <label class="label-text">{{localize "combatskill"}}</label>
                 <input class="input-text" type="text" name="data.list.value" value="{{data.list.value}}" data-dtype="String" />
@@ -66,11 +74,7 @@
             <div class="form-group">
                 <label class="label-text">{{localize "COMBATSKILLCATEGORY.subcategory"}}</label>
                 <select name="data.category.sub" data-dtype="String">
-                  {{#select data.category.sub}}
-                  {{#each subCategories as |ch char|}}
-                  <option value="{{char}}">{{localize ch}}</option>
-                  {{/each}}
-                  {{/select}}
+                    {{selectOptions subCategories selected=data.category.sub localize=true}}
                 </select>
             </div>
             {{/if}} {{#if isOwned}}

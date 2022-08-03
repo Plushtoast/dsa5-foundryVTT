@@ -14,7 +14,9 @@
         "Tier": "AnimalType",
         "Untot": "UndeadType",
         "Übernatürliches Wesen": "SupernaturalType",
-        "magische Konstrukte": "MagicalConstructType"
+        "magische Konstrukte": "MagicalConstructType",
+        "Werkreatur": "WerCreatureType",
+        "Vampir": "VampireType"
     },
     "godOfLife": [
         "Tsa"

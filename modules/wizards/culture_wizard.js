@@ -51,6 +51,7 @@ export default class CultureWizard extends WizardDSA5 {
             disadvantagesToChose: disadvantages.length > 0,
             writingsToChose: writings.length > 0,
             languagesToChose: languages.length > 0,
+            languagesToSelect: languages.length > 1,
             vantagesToChose: advantages.length > 0 || disadvantages.length > 0,
             generalToChose: writings.length > 0 || languages.length > 0
         })
@@ -64,13 +65,24 @@ export default class CultureWizard extends WizardDSA5 {
     }
 
     _validateInput(parent) {
-        let choice = parent.find('.localKnowledge')
+        const choice = parent.find('.localKnowledge')
         if (choice.val() == "") {
             ui.notifications.error(game.i18n.localize("DSAError.MissingChoices"))
             WizardDSA5.flashElem(choice)
             let tabElem = choice.closest('.tab').attr("data-tab")
             WizardDSA5.flashElem(parent.find(`.tabs a[data-tab='${tabElem}']`))
             return false
+        }
+        const selectOnlyOne = parent.find('.selectOnlyOne')
+        if(selectOnlyOne.length){
+            const options = selectOnlyOne.find('.optional:checked')
+            if(options.length != 1){
+                ui.notifications.error(game.i18n.localize("DSAError.MissingChoices"))
+                WizardDSA5.flashElem(selectOnlyOne)
+                let tabElem = selectOnlyOne.closest('.tab').attr("data-tab")
+                WizardDSA5.flashElem(parent.find(`.tabs a[data-tab='${tabElem}']`))
+                return false
+            }
         }
         return super._validateInput(parent)
     }

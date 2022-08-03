@@ -1,20 +1,24 @@
 <div>
     <p>{{localize 'MERCHANT.selectRandomGoods'}}</p>
     <div class="row-section table-title">
-        <div class="col two">{{localize 'Category'}}</div>
-        <div class="col four">{{localize 'MERCHANT.select'}}</div>
-        <div class="col ten">{{localize 'count'}}</div>
+        <div class="col fourty">{{localize 'Category'}}</div>
+        <div class="col five center">{{localize 'MERCHANT.select'}}</div>
+        <div class="col five center">{{localize 'count'}}</div>
+        <div class="col five center">{{localize 'count'}} {{localize 'each'}}</div>
     </div>
-    {{#each dialogData.categories as |item i|}}
+    {{#each categories as |item i|}}
     <div class="row-section">
-        <div class="col two">
+        <div class="col fourty">
             <label for="">{{localize item}}</label>
         </div>
-        <div class="col four">
+        <div class="col five center">
             <input type="checkbox" id="check_{{item}}" name="{{item}}" value="{{item}}">
         </div>
-        <div class="col ten">
+        <div class="col five center">
             <input type="number" name="number_{{item}}" value="10" data-dtype="Number" />
+        </div>
+        <div class="col five center">
+            <input type="number" name="each_{{item}}" value="1" data-dtype="Number" />
         </div>
     </div>
     {{/each}}

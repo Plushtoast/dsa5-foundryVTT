@@ -45,11 +45,7 @@
             <div class="form-group">
                 <label class="label-text">{{localize "resistanceModifier"}}</label>
                 <select name="data.resistance.value" data-dtype="String">
-                    {{#select data.resistance.value}}
-                    {{#each resistances as |ch char|}}
-                    <option value="{{char}}">{{localize ch}}</option>
-                    {{/each}}
-                    {{/select}}
+                    {{selectOptions resistances selected=data.resistance.value localize=true}}
                 </select>
             </div>
 

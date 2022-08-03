@@ -1,0 +1,23 @@
+<div>
+    <p>{{localize 'DIALOG.selectGroupCheckSkill'}}</p>
+    <div class="row-section lineheight">
+        <div class="col fourty table-title">
+            <label>{{localize 'Modifier'}}</label>
+        </div>
+        <div class="col sixty">
+            <input name="modifier" class="quantity-click" type="Number" value="0" />
+        </div>
+    </div>
+    <div class="row-section lineheight">
+        <div class="col fourty table-title">
+            <label>{{localize 'skill'}}</label>
+        </div>
+        <div class="col sixty">
+            <select name="skill" class="select2" style="width:100%;">
+                {{#each skills as |skill|}}
+                <option value="{{skill.name}}">{{skill.name}}</option>
+                {{/each}}
+            </select>
+        </div>
+    </div>
+</div>

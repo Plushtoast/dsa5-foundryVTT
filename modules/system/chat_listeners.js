@@ -12,6 +12,18 @@ export default class DSA5ChatListeners {
         $(html.find('.control-buttons')).prepend(helpButton)
         html.on('click', '.showPatchViewer', () => showPatchViewer())
         html.on('click', '.functionswitch', (ev) => RuleChaos[ev.currentTarget.dataset.function](ev))
+        html.on('click', '.panToToken', ev => DSA5ChatListeners.panToToken(ev))
+    }
+
+    static async panToToken(ev){
+        const token = await fromUuid(ev.currentTarget.dataset.uuid)
+        if(!token) return
+
+        canvas.animatePan({x: token.data.x, y: token.data.y});
+
+        if(!token.isOwner) return
+
+        token.object.control({releaseOthers: true});        
     }
 
     static postStatus(id) {
@@ -70,12 +82,8 @@ export default class DSA5ChatListeners {
         })
     }
 
-    static showTables(){
-        const msg = `<a class="roll-button botch-roll" data-table="Defense" data-weaponless="false"><i class="fas fa-dice"></i>${game.i18n.localize('TABLENAMES.Defense')}</a>
-        <a class="roll-button botch-roll" data-table="Melee" data-weaponless="false"><i class="fas fa-dice"></i>${game.i18n.localize('TABLENAMES.Melee')}</a>
-        <a class="roll-button botch-roll" data-table="Range" data-weaponless="false"><i class="fas fa-dice"></i>${game.i18n.localize('TABLENAMES.Range')}</a>
-        <a class="roll-button botch-roll" data-table="Liturgy"><i class="fas fa-dice"></i>${game.i18n.localize('TABLENAMES.Liturgy')}</a>
-        <a class="roll-button botch-roll" data-table="Spell"><i class="fas fa-dice"></i>${game.i18n.localize('TABLENAMES.Spell')}</a>`
+    static async showTables(){
+        const msg = await renderTemplate('systems/dsa5/templates/tables/systemtables.html', {tables: DSA5.systemTables})
         ChatMessage.create(DSA5_Utility.chatDataSetup(msg, "roll"))
     }
 }

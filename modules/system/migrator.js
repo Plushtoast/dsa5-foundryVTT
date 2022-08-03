@@ -10,6 +10,7 @@ async function setupDefaulTokenConfig() {
         defaultToken.disposition = CONST.TOKEN_DISPOSITIONS.NEUTRAL
         defaultToken.bar1 = { attribute: "status.wounds" }
         await game.settings.set("core", "defaultToken", defaultToken)
+        await game.settings.set("core", "leftClickRelease", true)
         await game.settings.set("dsa5", "defaultConfigFinished", true)
     }
 }
@@ -32,7 +33,7 @@ export default function migrateWorld() {
 
         await setupDefaulTokenConfig()
         const currentVersion = await game.settings.get("dsa5", "migrationVersion")
-        const NEEDS_MIGRATION_VERSION = 14
+        const NEEDS_MIGRATION_VERSION = 18
         const needsMigration = currentVersion < NEEDS_MIGRATION_VERSION
 
         if (!needsMigration) return;
@@ -73,6 +74,7 @@ class PatchViewer extends Application {
         const prevVersions = [this.json["notes"][this.json["notes"].length - 2]]
         const prevChangeLogs = await Promise.all(prevVersions.map(async(x) => await renderTemplate(`systems/dsa5/lazy/patchhtml/changelog_${lang}_${x.version}.html`)))
         const prevNews = await Promise.all(prevVersions.map(async(x) => await renderTemplate(`systems/dsa5/lazy/patchhtml/news_${lang}_${x.version}.html`)))
+        const modules = await renderTemplate(`systems/dsa5/lazy/patchhtml/modules_${lang}.html`)
 
         return {
             patchName,
@@ -80,7 +82,8 @@ class PatchViewer extends Application {
             news,
             prevVersions,
             prevChangeLogs,
-            prevNews
+            prevNews,
+            modules
         }
     }
 }

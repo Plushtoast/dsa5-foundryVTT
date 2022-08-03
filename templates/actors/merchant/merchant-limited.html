@@ -1,44 +1,58 @@
 <form class="{{cssClass}} lock{{actor.sheetLocked}}" autocomplete="off">
     <fieldset disabled>
-        <header class="sheet-header row-section" ondragstart="return false;" ondrop="return false;">
+        <header class="sheet-header row-section">
+
             <div class="charname headerInput col fourty">
                 <input class="input name" name="name" type="text" value="{{actor.name}}" placeholder="{{localize 'Name'}}" />
                 <span class="label name">{{localize "Name"}}</span>
             </div>
-
             <div class="headerInput col fourty">
                 <input class="input species" name="data.details.species.value" type="text" value="{{actor.data.details.species.value}}" readonly placeholder="{{localize 'species'}}" />
                 <span class="label species">{{localize "species"}}</span>
             </div>
 
         </header>
-        <section id="tab-sections">
-            <nav id="dsa5-primarytabs" class="sheet-tabs tabs" ondragstart="return false;" ondrop="return false;">
-                <a class="item active" data-tab="main">{{localize "MERCHANT.commerce"}}</a>
-                <a class="item" data-tab="notes">{{localize "Notes"}}</a>
-            </nav>
+    </fieldset>
+    <section id="tab-sections">
+        <nav id="dsa5-primarytabs" class="sheet-tabs tabs">
+            <a class="item active" data-tab="main">{{localize "MERCHANT.commerce"}}</a>
+            <a class="item" data-tab="notes">{{localize "Notes"}}</a>
+        </nav>
 
-            <section class="content">
-                <div class="tab main save-scroll" data-tab="main">
-                    <div class="row-section">
-                        <div class="col two center">
-                            <img src="{{tradeFriend.img}}" style="height: 50px;max-width:50%;border:none;" />
-                        </div>
-                        <div class="col two center">
-                            <img src="{{actor.img}}" style="height: 50px;max-width:50%;border:none;" />
-                        </div>
+        <section class="content">
+            <div class="tab main save-scroll" data-tab="main">
+                <div class="row-section">
+                    <div class="col ten"></div>
+                    <div class="col fourty center">
+                        <img src="{{tradeFriend.img}}" style="height: 50px;max-width:40%;border:none;" />
                     </div>
-                    <div class="row-section">
-                        <div class="col two">
-                            <h3 class="center">{{tradeFriend.name}}</h3>
-                        </div>
-                        <div class="col two">
-                            <h3 class="center">{{actor.name}}</h3>
-                        </div>
+                    <div class="col ten">{{#if hasOtherTradeFriend}}
+                        <a class="removeOtherTradeFriend"><i class="fas fa-times"></i></a> {{else}}
+                        <i class="fas fa-info" title="{{localize 'MERCHANT.otherTradeFriend'}}"></i> {{/if}}
                     </div>
+                    <div class="col ten"></div>
+                    <div class="col fourty center">
+                        <img src="{{actor.img}}" style="height: 50px;max-width:40%;border:none;" />
+                    </div>
+                    <div class="col ten"></div>
+                </div>
+                <div class="row-section">
+                    <div class="col two">
+                        <h3 class="center">{{tradeFriend.name}}</h3>
+                    </div>
+                    <div class="col two">
+                        <h3 class="center">{{actor.name}}</h3>
+                    </div>
+                </div>
+                {{> systems/dsa5/templates/actors/parts/gearSearch.html}}
+                <fieldset disabled>
                     <div class="row-section">
                         <div class="col two">
-                            {{#grouped_each 4 tradeFriend.money.coins}}
+                            {{#unless tradeFriend.name}}
+                            <p>{{localize 'DSAError.noProperActor'}}</p>
+                            <p>{{localize 'TT.assignCharacter'}}</p>
+                            <p>{{localize 'MERCHANT.otherTradeFriend'}}</p>
+                            {{/unless}} {{#grouped_each 4 tradeFriend.money.coins}}
                             <div class="row-section table-title">
                                 {{#each this}}
                                 <div class="col four center">
@@ -74,6 +88,8 @@
                             {{/grouped_each}}
                         </div>
                     </div>
+
+
                     <div class="row-section">
                         <div class="col two">
                             {{#each tradeFriend.inventory as |section sid|}} {{#if section.show}}
@@ -81,7 +97,7 @@
                                 <div class="row-section table-title">
                                     <div class="col eight"></div>
                                     <div class="col">
-                                        <b>{{localize (concat "Equipment" @key)}}</b>
+                                        <b>{{localize (concat "Equipment." @key)}}</b>
                                     </div>
 
                                     <div class="col four center">
@@ -99,7 +115,7 @@
                                     <div class="col item" data-item-id="{{item._id}}">
                                         <div class="row-section">
                                             <div class="col eight image {{item.enchantClass}}">
-                                                <div class="image" style="background-image: url({{item.img}})">
+                                                <div class="image" style="background-image: url('{{item.img}}')">
 
                                                 </div>
                                             </div>
@@ -128,7 +144,7 @@
                                 <div class="row-section table-title">
                                     <div class="col eight"></div>
                                     <div class="col">
-                                        <b>{{localize (concat "Equipment" @key)}}</b>
+                                        <b>{{localize (concat "Equipment." @key)}}</b>
                                     </div>
 
                                     <div class="col four center">
@@ -142,11 +158,11 @@
                                     </div>
                                 </div>
                                 <div class="row-section wrap rowtable inventory">
-                                    {{#each section.items as |item i|}}
+                                    {{#each section.items as |item i|}} {{#unless item.data.tradeLocked}}
                                     <div class="col item" data-item-id="{{item._id}}">
                                         <div class="row-section">
                                             <div class="col eight image {{item.enchantClass}}">
-                                                <div class="image" style="background-image: url({{item.img}})">
+                                                <div class="image" style="background-image: url('{{item.img}}')">
 
                                                 </div>
                                             </div>
@@ -164,18 +180,20 @@
                                             </div>
                                         </div>
                                     </div>
-                                    {{/each}}
+                                    {{/unless}} {{/each}}
                                 </div>
                             </div>
                             {{/if}} {{/each}}
                         </div>
                     </div>
-                </div>
+                </fieldset>
+            </div>
 
-                <div class="tab save-scroll" data-tab="notes">
+            <div class="tab save-scroll" data-tab="notes">
+                <fieldset disabled>
                     {{> systems/dsa5/templates/actors/actor-notes.html}}
-                </div>
-            </section>
+                </fieldset>
+            </div>
         </section>
-    </fieldset>
+    </section>
 </form>

@@ -24,8 +24,11 @@ export async function itemFromDrop(dragData, actorId) {
     let item
     let typeClass
     let selfTarget = dragData.actorId && dragData.actorId == actorId
-
-    if (dragData.id && dragData.pack) {
+    if (dragData.uuid) {
+        item = await fromUuid(dragData.uuid)
+        if (dragData.amount) item.data.data.quantity.value = Number(dragData.amount)
+        typeClass = item.data.type
+    } else if (dragData.id && dragData.pack) {
         item = await DSA5_Utility.findItembyIdAndPack(dragData.id, dragData.pack);
         typeClass = item.data.type
     } else if (dragData.id && dragData.type == "Actor") {
@@ -54,7 +57,7 @@ export function slist(html, target, callback, itemTag = "div") {
 
     target.classList.add("slist");
 
-    var items = target.querySelectorAll(itemTag),
+    let items = target.querySelectorAll(itemTag),
         current = null;
     for (let i of items) {
         i.draggable = true;

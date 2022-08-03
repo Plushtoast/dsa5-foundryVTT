@@ -41,7 +41,7 @@
             <div class="row-section wrap cards">
                 {{#each actor.specAbs.general as |item i|}}
                 <div class="item" data-item-id="{{item._id}}">
-                    <a class="item-edit">{{item.name}}{{roman item.data.step.value item.data.maxRank.value}}</a>
+                    {{#if item.OnUseEffect}}<a title="{{localize 'SHEET.onUseEffect'}}" class="onUseItem"><i class="fas fa-dice-six"></i></a>{{/if}}<a class="item-edit">{{item.name}}{{roman item.data.step.value item.data.maxRank.value}}</a>
                 </div>
                 {{/each}}
             </div>
@@ -56,7 +56,7 @@
             <div class="row-section wrap cards">
                 {{#each actor.specAbs.language as |item i|}}
                 <div class="item" data-item-id="{{item._id}}">
-                    <a class="item-edit">{{item.name}}{{roman item.data.step.value item.data.maxRank.value}}</a>
+                    {{#if item.OnUseEffect}}<a title="{{localize 'SHEET.onUseEffect'}}" class="onUseItem"><i class="fas fa-dice-six"></i></a>{{/if}}<a class="item-edit">{{item.name}}{{roman item.data.step.value item.data.maxRank.value}}</a>
                 </div>
                 {{/each}}
             </div>
@@ -72,13 +72,12 @@
             <div class="row-section wrap cards">
                 {{#each actor.specAbs.fatePoints as |item i|}}
                 <div class="item" data-item-id="{{item._id}}">
-                    <a class="item-edit">{{item.name}}{{roman item.data.step.value item.data.maxRank.value}}</a>
+                    {{#if item.OnUseEffect}}<a title="{{localize 'SHEET.onUseEffect'}}" class="onUseItem"><i class="fas fa-dice-six"></i></a>{{/if}}<a class="item-edit">{{item.name}}{{roman item.data.step.value item.data.maxRank.value}}</a>
                 </div>
                 {{/each}}
             </div>
         </div>
-        {{/if}}
-        {{#if hasTrait}}
+        {{/if}} {{#if hasTrait}}
         <div class="groupbox">
             <div class="generalSpecialAbilities row-section">
                 <div class="col header-label lineheight">
@@ -115,6 +114,9 @@
             <div class="derivedAttrs row-section">
                 <div class="col two lineheight">
                     {{localize "wounds"}}
+                    <span class="buttons">
+                        <a data-char="regenerate" class="ch-regenerate item" data-mod="regenerate" title="{{localize 'regenerate'}}">&nbsp;<i class="fas fa-moon"></i></a>
+                    </span>
                 </div>
                 <div class="col eight lineheight center">
                     {{actor.data.status.wounds.current}}
@@ -250,12 +252,8 @@
                 </div>
                 <div class="col two lineheight center">
                     <select name="data.status.initiative.die" data-dtype="String" style="width:100%">
-                        {{#select actor.data.status.initiative.die}}
-                        {{#each initDies as |ch char|}}
-                <option value="{{ch}}">{{char}}</option>
-                        {{/each}}
-                        {{/select}}
-                      </select>
+                        {{selectOptions initDies selected=actor.data.status.initiative.die localize=false}}
+                    </select>
                 </div>
             </div>
             <div class="derivedAttrs row-section">
@@ -265,12 +263,8 @@
 
                 <div class="col two lineheight center">
                     <select name="data.status.initiative.diemodifier" data-dtype="String" style="width:100%">
-                        {{#select data.status.initiative.diemodifier}}
-                        {{#each initDies as |ch char|}}
-                        <option value="{{ch}}">{{char}}</option>
-                        {{/each}}
-                        {{/select}}
-                      </select>
+                        {{selectOptions initDies selected=actor.data.status.initiative.diemodifier localize=false}}
+                    </select>
                 </div>
             </div>
             <div class="derivedAttrs row-section">

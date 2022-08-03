@@ -3,7 +3,7 @@
     <header class="sheet-header">
         <div class="charname headerInput">
             <input class="input name" name="name" style="width:90%" type="text" value="{{actor.name}}" placeholder="{{localize 'Name'}}" />
-            <a class="actorDrag"><i class="fas fa-link"></i></a>
+            <a class="actorDrag" title="{{localize 'TT.dragLink'}}"><i class="fas fa-link"></i></a>
             <span class="label name">{{localize "Name"}}</span>
         </div>
 
@@ -54,7 +54,7 @@
     </div>
     <!-- TABS -->
     <section id="tab-sections">
-        <nav id="dsa5-primarytabs" class="sheet-tabs tabs" ondragstart="return false;" ondrop="return false;">
+        <nav id="dsa5-primarytabs" class="sheet-tabs tabs">
             <a class="item active" data-tab="skills">{{localize "skills"}}</a>
             <a class="item" data-tab="combat">{{localize "Combat"}}</a> {{#if actor.magic.hasSpells}}
             <a class="item" data-tab="magic">{{localize "Magic"}}</a> {{/if}} {{#if actor.magic.hasPrayers}}

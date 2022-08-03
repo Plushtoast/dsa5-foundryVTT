@@ -1,4 +1,5 @@
 <div class="row-section">
+    <button type="submit" disabled style="display: none" aria-hidden="true"></button>
     <div class="col two">
         {{> systems/dsa5/templates/actors/parts/purse.html}}
     </div>
@@ -10,12 +11,8 @@
                 </div>
                 <div class="col sixty">
                     <select name="data.merchant.merchantType" data-dtype="String" style="width:100%">
-                        {{#select actor.data.merchant.merchantType}}
-                        {{#each merchantTypes as |ch char|}}
-                        <option value="{{char}}">{{localize ch}}</option>
-                        {{/each}}
-                        {{/select}}
-                      </select>
+                        {{selectOptions merchantTypes selected=actor.data.merchant.merchantType localize=true}}
+                    </select>
                 </div>
             </div>
             {{#if (eq actor.data.merchant.merchantType "epic")}}
@@ -31,7 +28,6 @@
                     <option value="3">{{localize "GARADAN.3"}}</option>
                     <option value="4">{{localize "GARADAN.4"}}</option>
                     <option value="6">{{localize "GARADAN.6"}}</option>
-
                     {{/select}}
                   </select>
                 </div>
@@ -54,6 +50,7 @@
                     <input name="data.merchant.buyingFactor" type="text" value="{{actor.data.merchant.buyingFactor}}" data-dtype="Number" />
                 </div>
             </div>
+            {{#if isGM}}
             <div class="row-section" title="{{localize 'MERCHANT.hidePlayerHint'}}">
                 <div class="col fourty">
                     {{localize 'MERCHANT.hidePlayer'}}
@@ -62,12 +59,12 @@
                     <input name="data.merchant.hidePlayer" type="checkbox" value="1" {{checked actor.data.merchant.hidePlayer}} />
                 </div>
             </div>
-            {{/if}} {{#if (eq actor.data.merchant.merchantType "loot")}}
-            <div class="row-section" title="{{localize 'MERCHANT.hidePlayerHint'}}">
-                <div class="col fourty">
+            {{/if}} {{/if}} {{#if (eq actor.data.merchant.merchantType "loot")}} {{#if isGM}}
+            <div class="row-section">
+                <div class="col fourty" title="{{localize 'MERCHANT.hidePlayerHint'}}">
                     {{localize 'MERCHANT.hidePlayer'}}
                 </div>
-                <div class="col ten">
+                <div class="col ten" title="{{localize 'MERCHANT.hidePlayerHint'}}">
                     <input name="data.merchant.hidePlayer" type="checkbox" value="1" {{checked actor.data.merchant.hidePlayer}} />
                 </div>
                 <div class="col fourty">
@@ -77,16 +74,31 @@
                     <input name="data.merchant.locked" type="checkbox" value="1" {{checked actor.data.merchant.locked}} />
                 </div>
             </div>
-            {{/if}}
+            <div class="row-section">
+                <div class="col fourty" title="{{localize 'MERCHANT.emptyDestroyHint'}}">
+                    {{localize 'MERCHANT.emptyDestroy'}}
+                </div>
+                <div class="col ten">
+                    <input name="data.merchant.temporary" title="{{localize 'MERCHANT.emptyDestroyHint'}}" type="checkbox" value="1" {{checked actor.data.merchant.temporary}} />
+                </div>
+                <div class="col fourty">
+
+                </div>
+                <div class="col ten">
+
+                </div>
+            </div>
+            {{/if}} {{/if}}
         </div>
     </div>
 </div>
 
-{{#if (ne actor.data.merchant.merchantType "none")}}
+{{#if (ne actor.data.merchant.merchantType "none")}} {{#if isGM}}
 <div class="row-section">
     <button class="sheetButton randomGoods">{{localize "MERCHANT.randomGoods"}}</button>
     <button class="sheetButton clearInventory">{{localize "MERCHANT.clearInventory"}}</button>
 </div>
+{{/if}}
 <div class="groupbox">
     <div class="row-section lineheight" title="{{localize 'PERMISSION.Configure'}}">
         <div class="col two row-section">
@@ -102,7 +114,8 @@
             </div>
             {{/if}}
             <div class="col ten center">
-                <i class="fas fa-unlock"></i>
+                <a class="toggleAllAllowMerchant" data-lock="true"><i class="fas fa-unlock"></i></a>
+                <a class="toggleAllAllowMerchant" data-lock="false"><i class="fas fa-lock"></i></a>
             </div>
         </div>
         <div class="col two row-section">
@@ -118,7 +131,8 @@
             </div>
             {{/if}}
             <div class="col ten center">
-                <i class="fas fa-unlock"></i>
+                <a class="toggleAllAllowMerchant" data-lock="true"><i class="fas fa-unlock"></i></a>
+                <a class="toggleAllAllowMerchant" data-lock="false"><i class="fas fa-lock"></i></a>
             </div>
         </div>
 
@@ -140,7 +154,7 @@
             {{/if}}
             <div class="col ten center">
                 <a class="allowMerchant" data-user-id="{{player.id}}">
-                    {{#if player.allowedMerchcant}}
+                    {{#if player.allowedMerchant}}
                     <i class="far fa-check-circle"></i>
                     {{else}}
                     <i class="far fa-circle"></i>
@@ -153,13 +167,18 @@
     </div>
 
 </div>
-{{/if}} {{#each actor.inventory as |section sid|}} {{#if section.show}}
+{{/if}} {{> systems/dsa5/templates/actors/parts/gearSearch.html}} {{#each actor.inventory as |section sid|}} {{#if section.show}}
 <div class="groupbox">
     <div class="row-section table-title">
         <div class="col eight"></div>
         <div class="col">
             <b>{{localize (concat "Equipment." @key)}}</b>
         </div>
+        {{#if (or (eq ../actor.data.merchant.merchantType "merchant") (eq ../actor.data.merchant.merchantType "loot"))}}
+        <div class="col eight center">
+            <a class="lockTradeSection" data-type="{{section.dataType}}"><i class="fa fa-lock" title="{{localize 'MERCHANT.untradable'}}"></i></a>
+        </div>
+        {{/if}}
         <div class="col eight center">
             <i class="fa fa-shield-alt" title="{{localize 'equipped'}}"></i>
         </div>
@@ -167,7 +186,7 @@
             <span title="{{localize 'price'}}"><i class="fas fa-coins"></i></span>
         </div>
         <div class="col eight center">
-            <span title="{{localize 'quantity'}}">#</span>
+            <a class="changeAmountAllItems" data-type="{{section.dataType}}"><span title="{{localize 'quantity'}}">#</span></a>
         </div>
         <div class="col eight center">
             <i class="fa fa-anchor" title="{{localize 'Weight'}}"></i>
@@ -181,7 +200,7 @@
         <div class="col item" data-item-id="{{item._id}}">
             <div class="row-section">
                 <div class="col eight image {{item.enchantClass}}">
-                    <div class="image" style="background-image: url({{item.img}})">
+                    <div class="image" style="background-image: url('{{item.img}}')">
                         {{#if item.structureMax}}
                         <div class="item-structure" style="--a: {{item.structureMax}}; --b: {{item.structureCurrent}}">
                             <div class="inner"></div>
@@ -192,13 +211,21 @@
                 <div class="col">
                     <a class="item-edit {{#if item.consumable}}consume-item{{/if}}">{{item.name}}</a>
                 </div>
+                {{#if (or (eq ../../actor.data.merchant.merchantType "merchant") (eq ../../actor.data.merchant.merchantType "loot"))}}
+                <div class="col eight center" title="{{localize 'MERCHANT.untradable'}}">
+                    {{#if item.data.tradeLocked}}
+                    <a class="item-tradeLock"><i class="fas fa-lock"></i></a> {{else}}
+                    <a class="item-tradeLock"><i class="fas fa-unlock"></i></a> {{/if}}
+                </div>
+                {{/if}}
                 <div class="col eight center">
                     {{#if item.toggle}} {{#if item.toggleValue}}
                     <a class="item-toggle"><i class="far fa-check-circle"></i></a> {{else}}
                     <a class="item-toggle"><i class="far fa-circle"></i></a> {{/if}} {{/if}}
                 </div>
-                <div class="col four center">
-                    {{item.defaultPrice}}{{item.priceTag}}
+                <div class="col four center setCustomPrice" title="{{localize 'MERCHANT.priceMod'}}">
+                    {{item.defaultPrice}}<span class="priceTag">{{item.priceTag}}</span>
+                    <input class="customPriceTag" type="number" data-dtype="Number" value="{{item.flags.dsa5.customPriceTag}}" />
                 </div>
                 <div class="col eight center">
                     <a class="quantity-click">{{item.data.quantity.value}}</a>

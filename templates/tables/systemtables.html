@@ -1,0 +1,4 @@
+{{#each tables as |tbl i|}}
+<a class="roll-button {{tbl.roll}}" data-table="{{tbl.name}}" {{{tbl.attrs}}}>
+    <i class="fas fa-dice"></i>{{localize (concat 'TABLENAMES.' tbl.name)}}
+</a> {{/each}}

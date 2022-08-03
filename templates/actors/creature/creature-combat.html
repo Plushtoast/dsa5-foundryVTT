@@ -30,7 +30,7 @@
         {{#each actor.wornMeleeWeapons as |item i|}}
         <div class="col item" data-item-id="{{item._id}}">
             <div class="row-section">
-                <div class="col ten image {{item.damageToolTip.css}}" title="{{item.damageToolTip.msg}}" style="background-image: url({{item.img}})">
+                <div class="col ten image {{item.damageToolTip.css}}" title="{{item.damageToolTip.msg}}" style="background-image: url('{{item.img}}')">
                     {{#if item.structureMax}}
                     <div class="item-structure" style="--a: {{item.structureMax}}; --b: {{item.structureCurrent}}">
                         <div class="inner"></div>
@@ -61,7 +61,7 @@
         {{/each}} {{#each actor.traits.meleeAttack as |item i|}}
         <div class="col item" data-item-id="{{item._id}}">
             <div class="row-section">
-                <div class="col ten image" style="background-image: url({{item.img}})">
+                <div class="col ten image" style="background-image: url('{{item.img}}')">
                 </div>
                 <div class="col third">
                     <a class="item-edit">{{item.name}}</a>
@@ -105,7 +105,7 @@
         <div class="col ten">
 
         </div>
-        <div class="col ten">
+        <div class="col zerofive">
 
         </div>
     </div>
@@ -113,7 +113,7 @@
         {{#each actor.wornRangedWeapons as |item i|}}
         <div class="col item" data-item-id="{{item._id}}">
             <div class="row-section">
-                <div class="col ten image {{item.damageToolTip.css}}" title="{{item.damageToolTip.msg}}" style="background-image: url({{item.img}})">
+                <div class="col ten image {{item.damageToolTip.css}}" title="{{item.damageToolTip.msg}}" style="background-image: url('{{item.img}}')">
                 </div>
                 <div class="col thirtyfive">
                     <a class="item-edit">{{item.name}}</a>
@@ -142,7 +142,7 @@
                         </div>
                     </a> {{/if}}
                 </div>
-                <div class="col ten very-small center">
+                <div class="col zerofive very-small center">
                     <a class="item-dropdown" title="{{localize 'SHEET.Dropdown'}}"><i
                             class="fas fa-chevron-down"></i></a>
                 </div>
@@ -159,7 +159,7 @@
         {{/each}} {{#each actor.traits.rangeAttack as |item i|}}
         <div class="col item" data-item-id="{{item._id}}">
             <div class="row-section">
-                <div class="col ten image" style="background-image: url({{item.img}})">
+                <div class="col ten image" style="background-image: url('{{item.img}}')">
                 </div>
                 <div class="col thirtyfive">
                     <a class="item-edit">{{item.name}}</a>
@@ -187,7 +187,7 @@
                         </div>
                     </a> {{/if}}
                 </div>
-                <div class="col ten very-small center">
+                <div class="col zerofive very-small center">
                     <a class="item-dropdown" title="{{localize 'SHEET.Dropdown'}}"><i class="fas fa-chevron-down"></i></a>
                 </div>
             </div>
@@ -209,14 +209,14 @@
         <div class="col two">
             {{localize "Equipment.armor"}}
         </div>
-        <div class="col four center small">{{localize "protection"}} ({{actor.armorSum}})</div>
+        <div class="col four center small">{{localize "protection"}} ({{actor.armorSum}}){{#if actor.spellArmor}}<span title="{{localize 'spellArmor'}}">, {{actor.spellArmor}}</span>{{/if}}){{#if actor.liturgyArmor}}<span title="{{localize 'liturgyArmor'}}">, {{actor.liturgyArmor}}</span>{{/if}}</div>
         <div class="col four center small">{{localize "encumbrance"}}</div>
     </div>
     <div class="row-section wrap rowtable inventory">
         {{#each actor.wornArmor as |item i|}}
         <div class="col item" data-item-id="{{item._id}}">
             <div class="row-section">
-                <div class="col ten image {{item.damageToolTip.css}}" title="{{item.damageToolTip.msg}}" style="background-image: url({{item.img}})">
+                <div class="col ten image {{item.damageToolTip.css}}" title="{{item.damageToolTip.msg}}" style="background-image: url('{{item.img}}')">
                 </div>
                 <div class="col fourty">
                     <a class="item-edit">{{item.name}}</a>
@@ -232,7 +232,7 @@
         {{/each}} {{#each actor.traits.armor as |item i|}}
         <div class="col item" data-item-id="{{item._id}}">
             <div class="row-section">
-                <div class="col ten image" style="background-image: url({{item.img}})">
+                <div class="col ten image" style="background-image: url('{{item.img}}')">
                 </div>
                 <div class="col fourty">
                     <a class="item-edit">{{item.name}}</a>
@@ -258,7 +258,7 @@
     <div class="row-section wrap cards">
         {{#each actor.specAbs.Combat as |item i|}}
         <div class="item" data-item-id="{{item._id}}">
-            <a class="item-edit">{{item.name}}{{roman item.data.step.value item.data.maxRank.value}}</a>
+            {{#if item.OnUseEffect}}<a title="{{localize 'SHEET.onUseEffect'}}" class="onUseItem"><i class="fas fa-dice-six"></i></a>{{/if}}<a class="item-edit">{{item.name}}{{roman item.data.step.value item.data.maxRank.value}}</a>
         </div>
         {{/each}}
     </div>

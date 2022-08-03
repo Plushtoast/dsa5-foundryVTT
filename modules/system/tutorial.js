@@ -3,8 +3,8 @@ import DSA5_Utility from './utility-dsa5.js'
 export default class DSA5Tutorial {
 
     static async firstTimeMessage() {
-
         if (!(await game.settings.get("dsa5", "firstTimeStart"))) {
+            await DSA5Tutorial.setupDefaultOptions()
             let msg = game.i18n.localize('WELCOME')
             ChatMessage.create(DSA5_Utility.chatDataSetup(msg))
             DSA5Tutorial.firstTimeLanguage()
@@ -24,9 +24,7 @@ export default class DSA5Tutorial {
         for (const lang of langs) {
             data.buttons[lang] = {
                 label: game.i18n.localize(lang),
-                callback: () => {
-                    DSA5Tutorial.setLanguage(lang)
-                }
+                callback: () => DSA5Tutorial.setLanguage(lang)
             }
         }
 
@@ -35,6 +33,14 @@ export default class DSA5Tutorial {
 
     static async setLanguage(lang) {
         await game.settings.set("dsa5", "firstTimeStart", true)
+        await game.settings.set("dsa5", "forceLanguage", lang)
         await game.settings.set("core", "language", lang)
+    }
+
+    static async setupDefaultOptions() {
+        const settings = game.settings.get("core", Combat.CONFIG_SETTING)
+        settings.skipDefeated = true
+        await game.settings.set("core", Combat.CONFIG_SETTING, settings)
+        await game.settings.set("core", "leftClickRelease", true)
     }
 }

@@ -4,7 +4,7 @@
         <div class="col five">
         </div>
         {{#each characteristics as |item i|}}
-        <div class="col five center" title="{{localize (concatUp 'CHAR.' item)}}">
+        <div class="col five center" style="max-width: 16.66%;" title="{{localize (concatUp 'CHAR.' item)}}">
             <select class="noAppearance" name="characteristics{{i}}">
                 {{#select item}}
                 <option value="mu"> {{localize 'CHARAbbrev.MU'}}</option>
@@ -50,22 +50,14 @@
 <div class="form-group custom-select">
     <label>{{localize "Difficulty"}}</label>
     <select name="testDifficulty">
-        {{#select testDifficulty}}
-        {{#each difficultyLabels as |difficultyLabel difficultyKey|}}
-        <option value="{{difficultyKey}}">{{localize difficultyLabel}}</option>
-        {{/each}}
-        {{/select}}
+        {{selectOptions difficultyLabels selected=testDifficulty localize=true}}  
     </select>
 </div>
 {{/if}}
 <div class="form-group custom-select">
     <label>{{localize "DIALOG.RollMode"}}</label>
     <select name="rollMode">
-        {{#select rollMode}}
-        {{#each rollModes as |label mode|}}
-        <option value="{{mode}}">{{localize label}}</option>
-        {{/each}}
-        {{/select}}
+        {{selectOptions rollModes selected=rollMode localize=true}}  
     </select>
 </div>
 {{#if hasSituationalModifiers}}

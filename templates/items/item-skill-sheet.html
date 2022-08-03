@@ -9,7 +9,7 @@
 
     <section class="content">
         <div class="tab description active" data-tab="description">
-            {{#if hasLocalization}} {{{localize (concat "SKILLdescr." item.name)}}} {{else}} {{editor content=data.description.value target="data.description.value" button=true owner=owner editable=true}} {{/if}}
+            {{#if hasLocalization}} {{{localize (concat "SKILLdescr." item.name)}}} {{else}} {{editor content=data.description.value target="data.description.value" button=true owner=owner editable=editable}} {{/if}}
         </div>
 
         <div class="tab details" data-tab="details">
@@ -17,66 +17,42 @@
             <div class="form-group">
                 <label class="label-text">{{localize "Characteristic"}} 1</label>
                 <select name="data.characteristic1.value" data-dtype="String">
-                    {{#select data.characteristic1.value}}
-                    {{#each characteristics as |ch char|}}
-                    <option value="{{char}}">{{localize ch}}</option>
-                    {{/each}}
-                    {{/select}}
+                    {{selectOptions characteristics selected=data.characteristic1.value localize=true}} 
                 </select>
             </div>
 
             <div class="form-group">
                 <label class="label-text">{{localize "Characteristic"}} 2</label>
                 <select name="data.characteristic2.value" data-dtype="String">
-                    {{#select data.characteristic2.value}}
-                    {{#each characteristics as |ch char|}}
-                    <option value="{{char}}">{{localize ch}}</option>
-                    {{/each}}
-                    {{/select}}
+                    {{selectOptions characteristics selected=data.characteristic2.value localize=true}} 
                 </select>
             </div>
 
             <div class="form-group">
                 <label class="label-text">{{localize "Characteristic"}} 3</label>
                 <select name="data.characteristic3.value" data-dtype="String">
-                    {{#select data.characteristic3.value}}
-                    {{#each characteristics as |ch char|}}
-                    <option value="{{char}}">{{localize ch}}</option>
-                    {{/each}}
-                    {{/select}}
+                    {{selectOptions characteristics selected=data.characteristic3.value localize=true}} 
                 </select>
             </div>
 
             <div class="form-group">
                 <label class="label-text">{{localize "Group"}}</label>
                 <select name="data.group.value" data-dtype="String">
-                    {{#select data.group.value}}
-                    {{#each skillGroups as |type sktype|}}
-                    <option value="{{sktype}}">{{localize type}}</option>
-                    {{/each}}
-                    {{/select}}
+                    {{selectOptions skillGroups selected=data.group.value localize=true}}  
                 </select>
             </div>
 
             <div class="form-group">
                 <label class="label-text">{{localize "Burden"}}</label>
                 <select name="data.burden.value" data-dtype="String">
-                    {{#select data.burden.value}}
-                    {{#each skillBurdens as |type sktype|}}
-                    <option value="{{sktype}}">{{localize type}}</option>
-                    {{/each}}
-                    {{/select}}
+                    {{selectOptions skillBurdens selected=data.burden.value localize=true}} 
                 </select>
             </div>
 
             <div class="form-group">
                 <label class="label-text">{{localize "StF"}}</label>
                 <select name="data.StF.value" data-dtype="String">
-                    {{#select data.StF.value}}
-                    {{#each StFs as |type sktype|}}
-                    <option value="{{sktype}}">{{localize type}}</option>
-                    {{/each}}
-                    {{/select}}
+                    {{selectOptions StFs selected=data.StF.value localize=true}} 
                 </select>
             </div>
         </div>

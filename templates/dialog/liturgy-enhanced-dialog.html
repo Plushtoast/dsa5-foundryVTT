@@ -5,37 +5,29 @@
 
             <div class="form-group">
                 <label>{{localize "maintainedSpells"}}</label>
-                <input type="number" name="maintainedSpells" value="0" />
+                <input type="number" name="maintainedSpells" class="quantity-click" value="0" />
             </div>
             {{#if hasSKModifier}}
             <div class="form-group" title="{{localize 'TT.zkModifer'}}">
                 <label>{{localize "skModifier"}}</label>
-                <input type="number" name="skModifier" value="{{SKModifier}}" />
+                <input type="number" class="quantity-click" name="skModifier" value="{{SKModifier}}" />
             </div>
             {{/if}} {{#if hasZKModifier}}
             <div class="form-group" title="{{localize 'TT.zkModifer'}}">
                 <label>{{localize "zkModifier"}}</label>
-                <input type="number" name="zkModifier" value="{{ZKModifier}}" />
+                <input type="number" class="quantity-click" name="zkModifier" value="{{ZKModifier}}" />
             </div>
             {{/if}}{{#if isCeremony}}
             <div class="form-group custom-select ritual">
                 <label>{{localize "place"}}</label>
                 <select name="placeModifier">
-                    {{#select 0}}
-                    {{#each locationModifiers as |label val|}}
-                    <option value="{{val}}">{{localize label}}</option>
-                    {{/each}}
-                    {{/select}}
+                    {{selectOptions locationModifiers selected=0 localize=true}}  
                 </select>
             </div>
             <div class="form-group custom-select">
                 <label>{{localize "time"}}</label>
                 <select name="timeModifier">
-                    {{#select 0}}
-                    {{#each timeModifiers as |label val|}}
-                    <option value="{{val}}">{{localize label}}</option>
-                    {{/each}}
-                    {{/select}}
+                    {{selectOptions timeModifiers selected=0 localize=true}}  
                 </select>
             </div>
             <div class="form-group custom-select">
@@ -129,6 +121,9 @@
             </div>
         </div>
         <div class="col fourty">
+            <div class="targets row-section wrap item">
+                {{> systems/dsa5/templates/dialog/parts/targets.html}}
+            </div>
             <div class="specAbsContainer">
                 {{#unless extensions}}
                 <div class="row-section">

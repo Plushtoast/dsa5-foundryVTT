@@ -60,7 +60,8 @@ export default class DSA5Initializer extends Dialog {
         await fetch(`modules/${this.module}/initialization${this.lang}.json`).then(async r => r.json()).then(async json => {
             let foldersToCreate = json.folders
             if (foldersToCreate) {
-                let head = game.folders.contents.find(x => x.name == foldersToCreate[0].name && x.type == "JournalEntry")
+                let head = await this.getFolderForType("JournalEntry")
+                let headReplace = json.folders[0].name
                 if (head) {
                     this.folders[head.data.name] = head
                     json.folders.shift()
@@ -71,29 +72,15 @@ export default class DSA5Initializer extends Dialog {
                 for (let folder of createdFolders)
                     this.folders[folder.data.name] = folder;
 
+                const updates = []
                 for (let folder in this.folders) {
-                    let parent = this.folders[folder].getFlag("dsa5", "parent")
+                    const flag = this.folders[folder].getFlag("dsa5", "parent")
+                    let parent = flag == headReplace ? game.i18n.localize(`${this.module}.name`) : flag
                     if (parent) {
-                        let parentId = this.folders[parent].data.id
-                        this.folders[folder].update({ parent: parentId })
+                        updates.push({ _id: this.folders[folder].id, parent: this.folders[parent].id })
                     }
                 }
-
-                let journal = game.packs.get(json.journal)
-                let entries = await journal.getDocuments()
-                for (let entry of entries) {
-                    let folder = entry.getFlag("dsa5", "parent")
-                    let sort = entry.getFlag("dsa5", "sort")
-                    if (folder) {
-                        entry.data.folder = this.folders[folder].data.id
-                        entry.data.sort = sort
-                    }
-
-                }
-                let createdEntries = await JournalEntry.create(entries.toObject())
-                for (let entry of createdEntries) {
-                    this.journals[entry.data.name] = entry;
-                }
+                await Folder.updateDocuments(updates)
             }
             if (json.items) {
                 let head = await this.getFolderForType("Item")
@@ -112,6 +99,26 @@ export default class DSA5Initializer extends Dialog {
                 await Itemdsa5.create(itemsToCreate)
                 await Itemdsa5.updateDocuments(itemsToUpdate)
             }
+            if(json.playlists){
+                let head = await this.getFolderForType("Playlist")
+                let itemsToCreate = []
+                let itemsToUpdate = []
+                let playlist = game.packs.get(json.playlists)
+                let entries = (await playlist.getDocuments()).map(x => x.toObject())
+                for(let k of entries){
+                    k.folder = head.id
+                    let existingItem = game.playlists.find(x => x.name == k.name && x.data.folder == head.id)
+                    if (existingItem) {
+                        k._id = existingItem.data._id
+                        itemsToUpdate.push(k)
+                    } else {
+                        itemsToCreate.push(k)
+                    }
+                }
+                
+                await Playlist.create(itemsToCreate)
+                await Playlist.updateDocuments(itemsToUpdate)
+            }
             if (json.scenes) {
                 let head = await this.getFolderForType("Scene")
                 let scene = game.packs.get(json.scenes)
@@ -123,6 +130,7 @@ export default class DSA5Initializer extends Dialog {
                 let scenesToUpdate = []
                 let finishedIds = new Map()
                 let resetAll = false
+
                 for (let entry of entries) {
                     let resetScene = resetAll
                     let found = game.scenes.find(x => x.name == entry.name && x.data.folder == head.id)
@@ -169,10 +177,17 @@ export default class DSA5Initializer extends Dialog {
                         try {
                             let journ = journs.find(x => x.flags.dsa5.initId == n.entryId)
                             if (!(finishedIds.has(journ._id))) {
+                                const parent = getProperty(journ, "flags.dsa5.parent")
+                                let parenthead = journHead
+                                if (this.folders[parent]) {
+                                    parenthead = this.folders[parent]
+                                } else if (parent) {
+                                    parenthead = await this.getFolderForType("JournalEntry", journHead.id, parent, 0, getProperty(journ, "flags.dsa5.foldercolor") || "")
+                                }
 
-                                journ.folder = journHead.id
+                                journ.folder = parenthead.id
 
-                                let existingJourn = game.journal.find(x => x.name == journ.name && x.data.folder == journHead.id && x.data.flags.dsa5.initId == n.entryId)
+                                let existingJourn = game.journal.find(x => x.name == journ.name && x.data.folder == parenthead.id && x.data.flags.dsa5.initId == n.entryId)
                                 if (existingJourn) {
                                     await existingJourn.update(journ)
                                     finishedIds.set(journ._id, existingJourn.id)
@@ -288,9 +303,9 @@ export default class DSA5Initializer extends Dialog {
         }
     }
 
-    async getFolderForType(documentType, parent = null, folderName = null, sort = 0) {
+    async getFolderForType(documentType, parent = null, folderName = null, sort = 0, color = "") {
         if (!folderName) folderName = game.i18n.localize(`${this.module}.name`)
 
-        return DSA5_Utility.getFolderForType(documentType, parent, folderName, sort)
+        return DSA5_Utility.getFolderForType(documentType, parent, folderName, sort, color)
     }
 }

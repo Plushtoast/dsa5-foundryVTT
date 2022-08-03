@@ -9,7 +9,7 @@ export default function() {
         roman: (a, max) => {
             if (max != undefined && Number(max) < 2) return ''
 
-            const roman = [' I', ' II', ' III', ' IV', ' V', ' VI', ' VII', ' VIII', ' IX']
+            const roman = [' I', ' II', ' III', ' IV', ' V', ' VI', ' VII', ' VIII', ' IX', ' X']
             return roman[a - 1]
         },
         isWEBM: (a) => /.webm$/.test(a),
@@ -33,6 +33,7 @@ export default function() {
                 out += options.fn(subcontext);
             }
             return out;
-        }
+        },
+        plantify: (a) => { return game.i18n.localize(`PLANT.avLevels.${a || 0}`)}
     })
 }

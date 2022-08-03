@@ -12,7 +12,7 @@
     <div class="row-section">
         {{#each dice as |item i|}}
         <div class="col ten center">
-            <input type="number" class="dieInput quantity-click" name="die_{{i}}" data-dtype="Number" value="{{item.val}}">
+            <input type="number" class="dieInput quantity-click" data-quantityfocus="1" name="die_{{i}}" data-dtype="Number" value="{{item.val}}">
         </div>
         {{/each}}
     </div>

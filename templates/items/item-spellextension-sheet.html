@@ -7,7 +7,7 @@
         <a class="item" data-tab="details">{{localize "Details"}}</a>
     </nav>
 
-    <section class="content" ondragstart="return false;" ondrop="return false;">
+    <section class="content">
 
         {{> systems/dsa5/templates/items/item-description.html}}
 
@@ -31,11 +31,7 @@
             <div class="form-group">
                 <label class="label-text">{{localize "Category"}}</label>
                 <select name="data.category" data-dtype="String" {{#if isOwned}}disabled{{/if}}>
-                  {{#select data.category}}
-                  {{#each categories as |ch char|}}
-                  <option value="{{ch}}">{{localize ch}}</option>
-                  {{/each}}
-                  {{/select}}
+                    {{selectOptions categories selected=data.category localize=true}}
                 </select>
             </div>
         </div>

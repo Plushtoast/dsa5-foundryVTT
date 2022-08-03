@@ -1,0 +1,20 @@
+<div class="selection">
+
+    <div class="row-section skills searchbox">
+        <div class="col third lineheight">
+            <b>{{localize "CONDITION.add"}}</b>
+        </div>
+        <div class="col third"></div>
+        <div class="col third lineheight">
+            <i class="fas fa-search"></i>
+            <input type="search" data-dtype="String" class="conditionSearch" placeholder="{{localize 'Library.search'}}" />
+        </div>
+    </div>
+    <div class="row-section wrap statusEffect">
+        {{#each effects as |itm i|}}
+        <div class="col third filterable">
+            <button class="reactClick" data-value="{{itm.id}}" title="{{itm.description}}"><img src="{{itm.icon}}" /><span>{{itm.label}}</span></button>
+        </div>
+        {{/each}}
+    </div>
+</div>

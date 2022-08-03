@@ -363,9 +363,18 @@ input[type=text].emphasize {
     padding: 0;
 }
 
-.window-app .window-content select option {
+.window-app .window-content select:not([multiple]) option {
     color: white;
     background: rgb(29, 28, 28);
+}
+
+select[multiple] option {
+    background-color: transparent;
+}
+
+select[multiple] option:checked {
+    background-color: #12496c;
+    color: white;
 }
 
 .characteristics {
@@ -441,6 +450,7 @@ input[type=text].emphasize {
     flex: 50%;
 }
 
+.window-app .window-header .aa-item-settings,
 .window-app .window-header [id^="popout_"],
 .window-app:not(.monarch) .window-header .header-button {
     width: 15px;
@@ -448,6 +458,7 @@ input[type=text].emphasize {
     margin-top: 10px;
 }
 
+.window-app .aa-item-settings i,
 .window-app .window-header [id^="popout_"] i,
 .header-button i {
     width: 22px;
@@ -506,6 +517,14 @@ input[type=text].emphasize {
     background-repeat: repeat-y;
     background-size: 100%;
     z-index: -1;
+}
+
+.directory .directory-list .directory-item.folder .context {
+    color: black;
+}
+
+#sidebar.collapsed:before {
+    content: none;
 }
 
 .sidebar-popout .chat-message,
@@ -643,6 +662,19 @@ input[type=text].emphasize {
     display: inline-block;
 }
 
+.rollButton .d20,
+.reactClick .d20 {
+    width: 30px;
+    height: 30px;
+    line-height: 30px;
+    font-size: 12px;
+    float: right;
+}
+
+.rollButton .d20 {
+    float: left;
+}
+
 .chatmoney {
     width: 15px;
     height: 15px;
@@ -665,24 +697,28 @@ input[type="text"].col-Money-H {
     color: #944b32;
 }
 
+.Money-D,
 .money-D {
     background: url(../icons/money-D.webp);
     background-repeat: no-repeat;
     background-size: contain;
 }
 
+.Money-K,
 .money-K {
     background: url(../icons/money-K.webp);
     background-repeat: no-repeat;
     background-size: contain;
 }
 
+.Money-S,
 .money-S {
     background: url(../icons/money-S.webp);
     background-repeat: no-repeat;
     background-size: contain;
 }
 
+.Money-H,
 .money-H {
     background: url(../icons/money-H.webp);
     background-repeat: no-repeat;
@@ -704,13 +740,25 @@ input[type="text"].col-Money-H {
     position: relative;
 }
 
+.cards .item {
+    box-shadow: 0 0 12px #6e3b018F inset;
+}
+
 .cards a {
     padding: 4px;
     border-radius: 2px;
     width: 100%;
     display: inline-block;
     text-align: center;
-    box-shadow: 0 0 12px #6e3b018F inset;
+}
+
+.cards a.onUseItem {
+    width: 28px;
+    box-shadow: none;
+}
+
+.cards a.onUseItem+a {
+    width: calc(100% - 28px);
 }
 
 .main-row {
@@ -840,6 +888,10 @@ input[type="text"].col-Money-H {
 .row-section .col.two {
     flex: 50%;
     max-width: 50%;
+}
+
+.max20 {
+    max-width: 20%;
 }
 
 .groupbox {
@@ -1037,7 +1089,7 @@ form.dsa5.item-sheet {
 #chat-form,
 .browser-item,
 .effect-change .key,
-.subMenuAvailable,
+.inputTooltipAvailable,
 .journalHeader,
 .tokenQuickHot>ul>li,
 .bags,
@@ -1221,6 +1273,7 @@ form.dsa5.item-sheet {
     color: black;
 }
 
+.initTracker button,
 .masterMenu button,
 .sheetButton,
 .sidebar-popout button,
@@ -1418,6 +1471,8 @@ li.folder {
     display: flex;
 }
 
+.setCustomPrice.edit .priceTag,
+.setCustomPrice .customPriceTag,
 .domainToggle,
 .locktrue .advance,
 .privateMessageIndicator .fas,
@@ -1438,6 +1493,10 @@ li.folder {
 .statusEffectMenu .filterHide,
 .filterHide {
     display: none;
+}
+
+.setCustomPrice.edit .customPriceTag {
+    display: block;
 }
 
 .row-section.skills.searchbox input {
@@ -1629,6 +1688,16 @@ input[type="search"] {
     margin: 0;
 }
 
+.diseases .statusEffect img {
+    height: 20px;
+    width: 20px;
+    border: 1px solid transparent;
+}
+
+.diseases .statusEffect img:hover {
+    border-color: black;
+}
+
 .statusEffect {
     height: 34px;
     line-height: 34px;
@@ -1772,6 +1841,10 @@ input[type="search"] {
     top: -10px;
     z-index: -1;
     background-position: 8px 11px, calc(100% - 8px) 11px, center;
+}
+
+#hotbar.collapsedHotbar:before {
+    background-image: url(../icons/backgrounds/hotbarpart.webp);
 }
 
 #hotbar .macro {
@@ -2051,6 +2124,16 @@ h2 .chatButton {
     border-radius: 2px;
 }
 
+.magazinContainer {
+    display: inline-block;
+    width: 3px;
+}
+
+.initTracker .item-structure {
+    top: -102%;
+    border-color: rgb(14, 12, 12);
+}
+
 .item-structure {
     border: 0.5px solid var(--bg-color);
     height: 100%;
@@ -2119,6 +2202,11 @@ a.inline-roll {
     color: inherit;
 }
 
+.dialog-buttons img,
+.result-image {
+    border: none;
+}
+
 .libraryImg,
 .extImg,
 .specImg {
@@ -2154,6 +2242,7 @@ a.inline-roll {
     background-image: url(../icons/categories/Spellextension.webp);
 }
 
+.rollTarget,
 .specAbs:hover {
     cursor: pointer;
 }
@@ -2228,6 +2317,7 @@ select.noAppearance {
     appearance: none;
     height: auto;
     text-align: center;
+    width: 100%;
 }
 
 .aggroButton {
@@ -2270,6 +2360,7 @@ select.noAppearance {
 }
 
 .gearDamaged,
+.resistEffect,
 .applyEffect {
     width: auto;
     padding: 4px;
@@ -2277,10 +2368,12 @@ select.noAppearance {
     font-size: 12px;
 }
 
+.adventureWizard .fa-toggle-on,
 .adventureWizard .fa-check {
     color: green;
 }
 
+.adventureWizard .fa-toggle-off,
 .adventureWizard .fa-times {
     color: darkred;
 }
@@ -2316,11 +2409,11 @@ select.noAppearance {
     font-weight: bold;
 }
 
-.subMenuAvailable:after {
+.inputTooltipAvailable:after {
     content: '*';
     position: absolute;
-    right: -5px;
-    top: -10px;
+    right: 3px;
+    top: 3px;
     font-size: 10px;
     color: #82817d;
 }
@@ -2457,6 +2550,11 @@ select.noAppearance {
     top: 0;
 }
 
+.initTracker .combatant-advanced .ongoing {
+    bottom: 4px;
+    top: unset;
+}
+
 .combatant-advanced i.reversed {
     transform: scaleX(-1);
 }
@@ -2473,6 +2571,16 @@ select.noAppearance {
     line-height: 12px;
 }
 
+.initTracker .combatant-advanced i {
+    left: 4px;
+    bottom: 4px;
+    right: unset;
+}
+
+.initTracker .combatant-advanced {
+    height: var(--iniTrackerSize);
+}
+
 .tinyEntityLink a {
     width: 22px;
     overflow: hidden;
@@ -2485,7 +2593,7 @@ select.noAppearance {
 .tokenQuickHot {
     position: absolute;
     top: 0;
-    height: 35px;
+    height: var(--tokenQuickhotsize);
     left: 5px;
     right: 7px;
     z-index: -2;
@@ -2494,6 +2602,7 @@ select.noAppearance {
 
 .tokenQuickHot ul {
     font-size: 0;
+    display: inline-block;
 }
 
 .tokenQuickHot.expanded {
@@ -2502,23 +2611,220 @@ select.noAppearance {
 
 .tokenQuickHot .subbuttons {
     position: absolute;
-    top: -60px;
+    z-index: 2;
 }
 
+#controls ol li.control-tool[data-tool="targetUser"] {
+    color: #609ec6;
+}
+
+#hotbar .macro .tooltip,
+.tokenQuickHot .tooltip {
+    z-index: 1000;
+}
+
+.initTracker .tooltip {
+    position: absolute;
+    top: -20px;
+    color: white;
+    background: black;
+    padding: 5px;
+    margin: 0 auto;
+    border-radius: 5px;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+.tokenQuickHot .direction0 .subbuttons {
+    bottom: var(--tokenQuickhotdistance);
+}
+
+.tokenQuickHot .direction1 .subbuttons {
+    right: var(--tokenQuickhotdistance);
+}
+
+.tokenQuickHot .direction2 .subbuttons {
+    top: var(--tokenQuickhotdistance);
+}
+
+.tokenQuickHot .direction3 .subbuttons {
+    left: var(--tokenQuickhotdistance);
+}
+
+.tokenQuickHot .direction1 .dragHandler,
+.tokenQuickHot .direction3 .dragHandler {
+    height: 14px;
+    width: var(--tokenQuickhotsize);
+    line-height: 14px;
+}
+
+.initTracker .dragHandler,
+.tokenQuickHot .dragHandler {
+    width: 14px;
+    height: var(--tokenQuickhotsize);
+    background: rgba(0, 0, 0, 0.2);
+    text-align: center;
+    line-height: var(--tokenQuickhotsize);
+    float: right;
+}
+
+.initTracker .dragHandler:hover,
+.tokenQuickHot .dragHandler:hover {
+    color: white;
+}
+
+.tokenQuickHot a {
+    box-shadow: inset 0px 0px 10px #403014;
+    color: white;
+    padding: 2px;
+    margin-bottom: 2px;
+}
+
+.tokenQuickHot .effect>div {
+    background-color: rgba(0, 0, 0, 0.3);
+}
+
+.initTracker li,
 .tokenQuickHot li {
     background-color: rgba(14, 12, 12, 0.3);
     display: inline-block;
     font-size: 14px;
-    width: 35px;
-    height: 35px;
+    width: var(--tokenQuickhotsize);
+    height: var(--tokenQuickhotsize);
     border: 1px solid black;
     border-radius: 3px;
     pointer-events: all;
     background-size: cover;
     box-shadow: inset 0px 0px 10px #403014;
-    background: url(../icons/backgrounds/macrobg.webp);
+    background-image: url(../icons/backgrounds/macrobg.webp);
+    background-repeat: no-repeat;
     position: relative;
     box-sizing: border-box;
+}
+
+.initTracker .waitingTackerList li {
+    width: calc(var(--iniTrackerSize) * 0.5);
+    height: calc(var(--iniTrackerSize) * 0.5);
+}
+
+.waitingTackerList {
+    position: absolute;
+    top: calc(var(--iniTrackerSize) * -0.5);
+    left: 30px;
+    z-index: -1;
+}
+
+.initTracker .tooltip {
+    pointer-events: none;
+    ;
+}
+
+.initTracker .newRound {
+    border-color: #496fd7;
+    box-shadow: inset 0px 0px 10px #496fd7;
+    border-top-left-radius: 0px;
+    border-bottom-left-radius: 0px;
+}
+
+.initTracker .turnRound {
+    padding: 2px;
+    border-radius: 100%;
+    width: 21px;
+    display: inline-block;
+}
+
+.initTracker .newRound .turnRound {
+    background-color: #496fd7;
+}
+
+.initTracker .waitTitle {
+    background-image: none;
+}
+
+.initTracker .waitTitle i {
+    float: left;
+    width: 100%;
+    line-height: calc(var(--iniTrackerSize) * 0.5);
+    text-align: center;
+    color: white;
+}
+
+.initTracker li {
+    box-shadow: none;
+    border: 1px solid transparent;
+    background-color: transparent;
+    cursor: pointer;
+    background-color: rgba(0, 0, 0, 0.5);
+    border-radius: 10px;
+}
+
+.initTracker li .roll:before {
+    position: absolute;
+    content: '6';
+    color: white;
+    left: 0;
+    right: 0;
+    top: 5px;
+    bottom: 0;
+    text-align: center;
+}
+
+.initTracker .token-initiative {
+    position: absolute;
+    bottom: -20px;
+    left: 0;
+    right: 0;
+}
+
+.initTracker .aggroButton {
+    left: 0;
+    right: 0;
+    margin: 0 auto 0;
+    bottom: 0;
+}
+
+.initTracker li .roll {
+    position: relative;
+    display: block;
+    width: 30px;
+    height: 30px;
+    background: url(../icons/dice/d6white.svg) no-repeat 50% 50%;
+    background-size: auto;
+    background-size: 35px;
+    margin: 0 auto;
+}
+
+.initTracker li.active {
+    border-color: white;
+    box-shadow: inset 0px 0px 10px white;
+}
+
+.initTracker li.defeated,
+.initTracker li.hidden {
+    opacity: 0.5;
+}
+
+.initTracker li.defeated {
+    background-size: 75% 75%;
+    background-position: center;
+}
+
+.iniTrackerList {
+    margin: 0;
+    padding: 0;
+    display: inline-block;
+}
+
+.initTracker .dragHandler {
+    width: 15px;
+    background: none;
+    border: none;
+    line-height: var(--iniTrackerSize);
+}
+
+.initTracker li {
+    width: var(--iniTrackerSize);
+    height: var(--iniTrackerSize);
 }
 
 .tokenQuickHot li:hover {
@@ -2526,7 +2832,12 @@ select.noAppearance {
     cursor: pointer;
 }
 
-.tokenQuickHot div {
+.tokenStatusEffects .dialog-content {
+    height: 100%;
+    min-height: calc(100% - 24px);
+}
+
+.tokenQuickHot .tokenHotbarInner div {
     background-size: cover;
     height: 100%;
     width: 100%;
@@ -2554,6 +2865,108 @@ select.noAppearance {
 
 .tokenQuickHot li.skill {
     box-shadow: inset 0px 0px 10px #0d813e;
+}
+
+.window-app.initTracker .window-header,
+.window-app.tokenQuickHot .window-header {
+    display: none;
+}
+
+.window-app.dsa5Decent .window-content,
+.window-app.dsa5Decent .window-header {
+    background: rgba(0, 0, 0, 0.5);
+    padding: 0;
+    position: unset;
+    color: white;
+}
+
+.window-app.dsa5Decent .window-content li {
+    background: rgba(255, 255, 255, 0.2);
+}
+
+.window-app.dsa5Decent .window-content li:hover {
+    background: rgba(255, 255, 255, 0.5);
+}
+
+.window-app.initTracker,
+.window-app.tokenQuickHot {
+    padding: 0;
+}
+
+.initTracker .controls {
+    display: inline-block;
+    width: 29px;
+}
+
+.initTracker:hover .iniDetailsList {
+    display: block;
+}
+
+.iniDetailsList {
+    margin: 30px 29px 0 29px;
+    padding: 0;
+    display: none;
+}
+
+.iniDetailsList li {
+    height: 20px;
+    text-align: center;
+    background: rgba(0, 0, 0, 0.5);
+    color: white;
+}
+
+.initTracker .hoverbuttons {
+    color: white;
+    position: absolute;
+    right: 0;
+    top: 25%;
+    opacity: 0;
+    transform: opacity 0.3s;
+}
+
+.initTracker .combat-control {
+    min-width: 20px;
+    display: inline-block;
+}
+
+.initTracker li:hover .hoverbuttons {
+    opacity: 1;
+}
+
+.initTracker .controls i {
+    color: white;
+    background: rgba(0, 0, 0, 0.7);
+    border-radius: 5px;
+}
+
+.initTracker .controls.right {
+    text-align: right;
+}
+
+.initTracker button {
+    line-height: 21px;
+}
+
+.tokenHotbarInner>ul>li.effect>div:before {
+    font-family: "Font Awesome 5 Free";
+    font-weight: 900;
+    content: "\f067";
+}
+
+.window-app.dsa5Decent:after,
+.window-app.initTracker::after,
+.window-app.initTracker .window-content,
+.window-app.tokenQuickHot::after,
+.window-app.tokenQuickHot .window-content {
+    background: none;
+    margin: 0;
+    padding: 0;
+    overflow: visible;
+}
+
+.window-app.initTracker::after,
+.window-app.tokenQuickHot::after {
+    content: none;
 }
 
 .ench-fw {
@@ -2614,12 +3027,14 @@ select.noAppearance {
     color: black;
 }
 
+.fa-dsa5-player,
 .fa-dsa5 {
     position: relative;
     width: 100%;
     height: 25px;
 }
 
+.fa-dsa5-player:before,
 .fa-dsa5:before {
     content: '';
     background-image: url(../icons/categories/DSA-Auge.webp);
@@ -2631,6 +3046,10 @@ select.noAppearance {
     right: 0;
     top: 0;
     bottom: -5px;
+}
+
+.fa-dsa5-player:before {
+    background-image: url(../icons/categories/DSA-Auge-Spieler.webp);
 }
 
 .verticalFlex {
@@ -2802,8 +3221,38 @@ select.noAppearance {
     position: relative;
 }
 
-.skill-test .targets i {
+.multipleTarget,
+.missingTarget {
+    margin-left: 25px;
+}
+
+.missingTarget div i,
+.skill-test .targets div i {
     color: darkred;
+}
+
+.targets .addTarget {
+    margin-left: 20px;
+}
+
+.targetChoser .combatant {
+    border: 1px solid transparent;
+}
+
+.targetChoser .combatant.hidden {
+    opacity: 0.5;
+}
+
+.targetChoser .combatant:hover {
+    background: rgba(0, 0, 0, 0.1);
+}
+
+.targetChoser .combatant.selectedTarget {
+    border-color: #000;
+}
+
+.multipleTarget i {
+    color: #e68044;
 }
 
 .skill-test .targets .image i {
@@ -2833,6 +3282,18 @@ select.noAppearance {
 
 .advancedSearch .groupbox .form-group {
     margin-top: 4px;
+}
+
+.advancedSearch .cbParent {
+    line-height: 24px;
+}
+
+.advancedSearch .cbParent label {
+    text-overflow: ellipsis;
+}
+
+.advancedSearch input[type="checkbox"] {
+    float: right;
 }
 
 input[type="checkbox"].autoCheckbox {
@@ -2995,7 +3456,7 @@ input[type="checkbox"].autoCheckbox {
 
 #sidebar button.fshopButton {
     background: rgb(0, 111, 61);
-    background: linear-gradient(90deg, rgba(0, 38, 13, 1) 0%, rgba(0, 111, 61, 1)100%);
+    background: linear-gradient(90deg, rgba(0, 38, 13, 1) 0%, rgba(0, 111, 61, 1) 100%);
     position: relative;
 }
 
@@ -3071,6 +3532,25 @@ input[type="checkbox"].autoCheckbox {
     color: black;
 }
 
+.ammo-selector {
+    width: calc(100% - 31px);
+    padding: 0px;
+    margin: 0px 1px;
+}
+
+.window-app .condition-show {
+    text-overflow: ellipsis;
+    overflow: hidden;
+    white-space: nowrap;
+}
+
+.panToToken{
+    cursor: pointer;
+}
+
+.panToToken:hover{
+    box-shadow: inset 0px 0px 5px black;
+}
 
 /* Foundry9 fixes */
 
@@ -3084,5 +3564,12 @@ input[type="checkbox"].autoCheckbox {
     color: #555;
 }
 
+.effect-change input::placeholder {
+    color: #a9a7a0;
+}
 
 /* End Foundry9 fixes */
+
+.select2-results__option[role="group"]:hover{
+    background-color: transparent;
+}

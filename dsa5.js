@@ -16,12 +16,17 @@ import ChatMessageDSA5Roll from "./modules/chat/ChatMessageDSA5.js";
 import DSA5ChatListeners from "./modules/system/chat_listeners.js";
 import DSA5Payment from "./modules/system/payment.js"
 import { DSA5CombatTracker, DSA5Combat, DSA5Combatant } from "./modules/hooks/combat_tracker.js";
-import DSA5Hotbar from "./modules/system/tokenHotbar.js";
+import DSA5Hotbar from "./modules/system/hotbar.js"
 import RollMemory from "./modules/system/roll_memory.js"
 import SpecialabilityRulesDSA5 from "./modules/system/specialability-rules-dsa5.js"
 import AdvantageRulesDSA5 from "./modules/system/advantage-rules-dsa5.js"
 import Migrakel from "./modules/system/migrakel.js"
 import DSA5Dialog from "./modules/dialog/dialog-dsa5.js"
+import DPS from "./modules/system/derepositioningsystem.js"
+import DSATables from "./modules/tables/dsatables.js"
+import DiceDSA5 from "./modules/system/dice-dsa5.js";
+import DSA5StatusEffects from './modules/status/status_effects.js'
+import { MerchantSheetMixin } from './modules/actor/merchantmixin.js'
 
 Hooks.once("init", () => {
     console.log("Initializing DSA5 system")
@@ -33,6 +38,7 @@ Hooks.once("init", () => {
             ActorSheetdsa5Character,
             ActorSheetdsa5Creature,
             ActorSheetdsa5NPC,
+            MerchantSheetMixin,
             ItemSheetdsa5,
             DSA5_Utility,
             DSA5Initializer,
@@ -41,7 +47,11 @@ Hooks.once("init", () => {
             SpecialabilityRulesDSA5,
             AdvantageRulesDSA5,
             Migrakel,
-            DSA5Dialog
+            DSA5Dialog,
+            DSA5StatusEffects,
+            DPS,
+            DSATables,
+            DiceDSA5
         },
         entities: {
             Actordsa5,

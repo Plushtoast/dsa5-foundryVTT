@@ -5,7 +5,7 @@
         </div>
     </div>
     <div class="row-section">
-        <section class="general col" ondragstart="return false;" ondrop="return false;">
+        <section class="general col">
             <div class="row-section wrap">
                 <div class="col row-section">
                     <div class="headerInput col four">
@@ -87,7 +87,7 @@
     </div>
     <div class="row-section">
         <div class="col notes-box">
-            {{editor content=actor.data.details.biography.value target="data.details.biography.value" button=true owner=owner editable=true}}
+            {{editor content=actor.data.details.biography.value target="data.details.biography.value" button=true owner=owner editable=editable}}
         </div>
     </div>
 </div>
@@ -102,7 +102,7 @@
     </div>
     <div class="row-section">
         <div class="col notes-box">
-            {{editor content=actor.data.details.notes.value target="data.details.notes.value" button=true owner=owner editable=true}}
+            {{editor content=actor.data.details.notes.value target="data.details.notes.value" button=true owner=owner editable=editable}}
         </div>
     </div>
 </div>
@@ -118,7 +118,7 @@
     </div>
     <div class="row-section">
         <div class="col notes-box">
-            {{editor content=actor.data.details.notes.ownerdescription target="data.details.notes.ownerdescription" button=true owner=owner editable=true}}
+            {{editor content=actor.data.details.notes.ownerdescription target="data.details.notes.ownerdescription" button=true owner=owner editable=editable}}
         </div>
     </div>
 </div>
@@ -134,7 +134,7 @@
     </div>
     <div class="row-section">
         <div class="col notes-box">
-            {{editor content=actor.data.details.notes.gmdescription target="data.details.notes.gmdescription" button=true owner=owner editable=true}}
+            {{editor content=actor.data.details.notes.gmdescription target="data.details.notes.gmdescription" button=true owner=owner editable=editable}}
         </div>
     </div>
 </div>

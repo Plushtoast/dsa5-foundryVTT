@@ -68,6 +68,8 @@
         "castingTime": "Aktions- dauer",
         "duration": "Wirkungs- dauer",
         "defenseMalus": "VM",
+        "AsPCost": "AsP",
+        "KaPCost": "KaP",
         "fatePoints": "Schips",
         "groupFatePoints": "Gruppen&nbsp;Schips",
         "FtP": "Schip",
@@ -109,7 +111,17 @@
         "selectReaction": "Bitte wähle die passende Reaktion.",
         "selectAction": "Bitte wähle deine Handlung",
         "cheat": "SL-Willkür",
-        "noTarget": "Kein Ziel"
+        "noTarget": "Kein Ziel",
+        "assassinate": "Meucheln",
+        "stun": "Betäuben",
+        "assassinateDescr": "Opfer muss ahnungslos sein (Sinnesschärfe gegen Verbergen)",
+        "multipleTarget": "Mehrere Ziele",
+        "addTarget": "Ziel hinzufügen",
+        "onlyInCombatTargets": "Ziele werden nur im Kampf angezeigt.",
+        "setTargetToUserHint": "Aktuell markierte Ziele auf den User übertragen.",
+        "setTargetToUser": "Spielerziel setzen",
+        "noLoggedinUser": "Keine User eingeloggt/auswählbar.",
+        "selectGroupCheckSkill": "Wähle ein weiteres Talent für die Gruppensammelprobe."
     },
     "Equipment": {
         "misc": "Allgemein",
@@ -147,7 +159,7 @@
     "advancementCost": "Steigern für {cost} Abenteuerpunkte",
     "animal": "Tier",
     "attributeChange": "Eigenschaftsänderung",
-    "attackOfOpportunity": "Der Kämpfer kann einen Passierschlag ausführen",
+    "attackOfOpportunity": "Der Kämpfer kann einen Passierschlag ausführen.",
     "opportunityAttack": "Passierschlag",
     "attackFromBehind": "Angriff von Hinten",
     "Advances": "Steigerungen",
@@ -160,15 +172,18 @@
     "ammunitiongroup": "Munitionstyp",
     "AstoundingSuccess": "Spektakulärer Erfolg",
     "AstoundingFailure": "Schreckliches Missgeschick",
+    "confirm": "Bestätigen",
     "advantages": "Vorteile",
     "advantage": "Vorteil",
-    "fshopLink": "https://www.f-shop.de/virtual-tabletops/",
+    "modules": "Module",
+    "fshopLink": "https://www.f-shop.de/virtual-tabletops/das-schwarze-auge-vtt/",
     "attackWeaponless": "Waffenloser Angriff",
     "animalSpecialAbilities": "Tierische Sonderfertigkeiten",
     "Age": "Alter",
     "aspect": "Aspekt",
     "AsPCost": "Astralpunktekosten",
     "AsPCostDetail": "AsP Detail",
+    "KaPCostDetail": "KaP Detail",
     "actionCount": "Aktionen",
     "atmod": "Angriffsmodifikator",
     "baseValue": "Grundwert",
@@ -182,6 +197,7 @@
     "Burden": "Belastung",
     "biography": "Hintergrundgeschichte",
     "Category": "Kategorie",
+    "confirmationRoll": "Bestätigungswurf",
     "clerical": "klerikal",
     "circle": "Kreis",
     "condition": "Zustand",
@@ -190,6 +206,7 @@
     "combatspecialtalents": "Kampfsonderfertigkeiten",
     "CriticalSuccess": "Kritischer Erfolg",
     "CriticalFailure": "Patzer",
+    "critBotch": "Krit./Patzer",
     "Characteristic": "Attribut",
     "ceremony": "Zeremonie",
     "ceremonies": "Zermonien",
@@ -202,6 +219,7 @@
     "cost": "Kosten",
     "charges": "Ladungen",
     "cancel": "Abbrechen",
+    "ok": "Ok",
     "combatskillcountdivider": "aus",
     "closeCombatAttacks": "Nahkampfangriffe",
     "Current": "Aktuell",
@@ -229,10 +247,13 @@
     "Difficulty": "Schwierigkeit",
     "didyouknow": "Wusstest du schon?",
     "dart": "Blasrohrpfeil",
+    "mag": "Magazin",
+    "infinite": "Unendlich",
     "distribution": "Verbreitung",
     "distance": "Entfernung",
     "damageApplied": "Schaden wurde übertragen",
     "domains": "Domänen",
+    "demonmark": "Dämonenmal",
     "Delete Confirmation": "Löschen bestätigen",
     "dodge": "Ausweichen",
     "disease": "Krankheit",
@@ -276,6 +297,7 @@
     "ownerNotes": "Private Notizen",
     "general": "allgemein",
     "gridUnits": "Schritt",
+    "patron": "Patron",
     "halfDefense": "der Verteidigungswert des Gegners muss für diesen Angriff halbiert werden",
     "halfDefenseShort": "Halbe Verteidigung",
     "generalSpecialAbilities": "Allgemeine Sonderfertigkeiten",
@@ -403,6 +425,8 @@
     "start": "Beginn",
     "StF": "Steigerungsfaktor",
     "sizeCategory": "Größenkategorie",
+    "spellArmor": "Zauberrüstung",
+    "liturgyArmor": "Göttlicher Schutz",
     "Success": "Erfolg",
     "spell": "Zauberspruch",
     "structure": "Strukturpunkte",
@@ -430,6 +454,7 @@
     "tradition": "Tradition",
     "talisman": "Talisman",
     "searchTalents": "Talente durchsuchen",
+    "gearSearch": "Ausrüstung durchsuchen",
     "skillglobal": "Talent (global)",
     "spellextension": "Zauber/Liturgieerweiterung",
     "defense": "Verteidigung",
@@ -462,14 +487,17 @@
     "weaponModifier": "Waffenmodifikator",
     "weapontype": "Waffengattung",
     "worn": "Ausgerüstet",
+    "each": "je",
     "wearable": "Ausrüstbar",
     "wrongHand": "Falsche Hand",
     "writing": "Schrift",
     "doNothing": "Keine Reaktion",
+    "volume": "Volumen",
     "yes": "Ja",
     "save": "Speichern",
     "YouAlreadyHaveit": "Hast du bereits",
     "zkModifier": "Zähigkeit (Ziel)",
+    "vulnerability": "Verwundbarkeit",
     "zoo": "Zoo",
     "Library": {
         "searchPlaceholder": "Durchsuche die Bibliothek",
@@ -479,10 +507,20 @@
         "advanced": "Erweiterte Suche",
         "selectAdvanced": "Wähle eine Kategorie",
         "noFilter": "Kein Filter",
-        "indexWorldItems": "Welt Items indexieren (Deaktivieren verbessert Leistung)"
+        "indexWorldItems": "Welt Items indexieren (Deaktivieren verbessert Leistung, erfordert neuladen der Welt)",
+        "fullTextSearch": "Volltextsuche (Deaktivieren verbessert Leistung, erfordert neuladen der Welt)"
     },
     "Aggregated": {
         "noMoreAllowed": "Keine Proben mehr erlaubt."
+    },
+    "PATRON": {
+        "priority": "Priorität",
+        "primary": "Primär",
+        "secondary": "Sekundär",
+        "0": "Tiergeister",
+        "1": "Elementare Wesen",
+        "2": "Ahnengeister",
+        "3": "Dämonische Wesen"
     },
     "CONJURATION": {
         "demon": "Dämon",
@@ -506,7 +544,8 @@
         "requestDescr": "Bestätige die Anfrage um die Beschwörung als Akteur anzulegen. Danach kann die Beschwörung per Drag and Drop auf die Karte gezogen oder mit einem Rechtsclick gelöscht werden (ab und an auch mal den Beschwörungsordner bei den Akteuren aufräumen!).",
         "dragActor": "Kein Beschwörer aktiv (drag and drop)",
         "dragConjuration": "Keine Beschwörung aktiv (drag and drop, mindestens Observerrechte)",
-        "conjurs": "beschwört"
+        "conjurs": "beschwört",
+        "requestSend": "Die Anfrage wurde an den Spielleiter geschickt."
     },
     "PLAYER": {
         "title": "Spieler Menü",
@@ -516,6 +555,7 @@
         "finalize": "Fertigstellen"
     },
     "MASTER": {
+        "automation": "Automatisierung",
         "sceneConfig": "Szeneneinstellung",
         "awardXP": "Mit Abenteuerpunkten belohnen",
         "awardXPText": "{heros} mit Abenteuerpunkten belohnen.",
@@ -542,7 +582,8 @@
         "defenseMalus": "Verteidigungsmalus",
         "global": "Globaler Modifikator",
         "armor": "Rüstungsmodifikator",
-        "range": "Reichweitenfaktor"
+        "range": "Reichweitenfaktor",
+        "creatureBonus": "Bonusschaden (Kreatur)"
     },
     "WIZARD": {
         "addItem": "{item} hinzufügen",
@@ -564,11 +605,12 @@
         "masterMenu": "Öffne das Spielleitermenü",
         "journalBrowser": "Öffne den Journalbrowser",
         "library": "Öffne die Bibliothek",
-        "attack": "Öffne das Angriffsmenü für den aktuellen Token oder Spieler (im Kampf für den aktuellen Akteuer)"
+        "attack": "Öffne das Angriffsmenü für den aktuellen Token oder Spieler (im Kampf für den aktuellen Akteur)"
     },
     "WEAR": {
         "check": "Bruchfaktorprobe ({category})",
         "checkShort": "Bruchfaktorprobe",
+        "value": "Bruchfaktorwert",
         "armor": {
             "0": "In gutem Zustand",
             "1": "Rüstung leicht beschädigt, –1 RS",
@@ -621,7 +663,7 @@
         "Bögen": "<p><b>Spezialität</b>: -</p>",
         "Diskusse": "<p><b>Spezialität</b>: -</p>",
         "Dolche": "<p><b>Spezialität</b>: Mit Dolchen können Kettenwaffen, Stangenwaffen, Zweihandhiebwaffen und Zweihandschwerter nicht pariert werden.</p>",
-        "Fächer": "<p><b>Spezialität</b>:  Fächer ein- oder ausklappen dauert jeweils 1 Aktion. Mit dem ausgeklappten Fächer kann man versuchen, Geschosse (Bolzen, Pfeile, Kugeln, Wurfdolche – und Scheiben u. Ä., nicht aber Wurfspeere und -äxte) wie mit einem Schild zu parieren, allerdings erleidet man bei der Parade zusätzlich zu den üblichen Modifikatoren (siehe Regelwerk Seite 244) noch eine Erschwernis von 1.Mit einem offenen Fächer können nur Nahkampfangriffe der Kampftechniken Raufen, Dolche und Fechtwaffen pariert werden sowie Fernkampftechniken (siehe oben). Nur ein offener Fächer kann als kleiner Schild dienen.Mit geschlossenem Fächer können Waffen aller Kampftechniken außer Kettenwaffen, Zweihandhiebwaffen, Zweihandschwerter und Fernkampftechniken pariert werden. Nur ein geschlossener Fächer kann als Parierwaffe dienen.</p>",
+        "Fächer": "<p><b>Spezialität</b>:  Fächer ein- oder ausklappen dauert jeweils 1 Aktion. Mit dem ausgeklappten Fächer kann man versuchen, Geschosse (Bolzen, Pfeile, Kugeln, Wurfdolche – und Scheiben u. Ä., nicht aber Wurfspeere und -äxte) wie mit einem Schild zu parieren, allerdings erleidet man bei der Parade zusätzlich zu den üblichen Modifikatoren noch eine Erschwernis von 1.Mit einem offenen Fächer können nur Nahkampfangriffe der Kampftechniken Raufen, Dolche und Fechtwaffen pariert werden sowie Fernkampftechniken (siehe oben). Nur ein offener Fächer kann als kleiner Schild dienen.Mit geschlossenem Fächer können Waffen aller Kampftechniken außer Kettenwaffen, Zweihandhiebwaffen, Zweihandschwerter und Fernkampftechniken pariert werden. Nur ein geschlossener Fächer kann als Parierwaffe dienen.</p>",
         "Fechtwaffen": "<p><b>Spezialität</b>: Mit Fechtwaffen können Kettenwaffen, Stangenwaffen, Zweihandhiebwaffen und Zweihandschwerter nicht pariert werden. Proben auf  Verteidigung gegen Fechtwaffen-Attacken sind um 1 erschwert.</p>",
         "Feuerspeien": "<p><b>Spezialität</b>: -</p>",
         "Hiebwaffen": "<p><b>Spezialität</b>: -</p>",
@@ -706,7 +748,7 @@
         "availableRules": "Verfügbare Regelwerke",
         "availableRSHs": "Verfügbare Regionalspielhilfen",
         "preparation": "Vorbereitung",
-        "preparationDescription": "Um das meiste aus diesem Abenteuermodul zu holen, empfehlen wir folgende Dinge zu beachten: <ul class=\"dsalist\"><li>Lies die passenden Journaleinträge zur aktuellen Szene im Voraus.</li><li>Mache dich ein bisschen mit der Battlemap vertraut und platziere ggf. Tokens bereits zuvor. Empfehlenswert ist es die Token unsichtbar zu platzieren und erst sichtbar zu machen, wenn die Spieler auf diese treffen (z.b. über Alt gedrückt halten beim Platzieren). So können Spoiler vermieden werden.</li><li>Initialisiere ggf. alle Inhalte des Abenteuers über die unten verfügbare Funktion. Die Szenen nur aus den Kompendien zu ziehen reicht nicht aus, um alles korrekt zu verlinken. Achte darauf, dass du nicht mehrmals initialisierst.</li><li>Überprüfe ob du alle empfohlenen Module installiert und aktiviert hast. Diese erleichtern das Führen des Abenteuers und liefern noch ein paar weitere Details, sind aber nicht zwingend erforderlich (s.u.)</li><li>Die zur Verfügung gestellten Karten sind nur ein Vorschlag. Du kannst statt dessen auch einfach nur die Karte oder eine passende stimmige Zeichnung verwenden. Für die Battlemaps findet sich sicher später noch eine Verwendung.</li></ul>",
+        "preparationDescription": "Um das meiste aus diesem Abenteuermodul zu holen, empfehlen wir folgende Dinge zu beachten: <ul class=\"dsalist\"><li>Lies die passenden Journaleinträge zur aktuellen Szene im Voraus.</li><li>Mache dich ein bisschen mit der Battlemap vertraut und platziere ggf. Tokens bereits zuvor. Empfehlenswert ist es die Token unsichtbar zu platzieren und erst sichtbar zu machen, wenn die Spieler auf diese treffen (z.b. über Alt gedrückt halten beim Platzieren). So können Spoiler vermieden werden.</li><li>Initialisiere ggf. alle Inhalte des Abenteuers über die oben verfügbare Funktion. Die Szenen nur aus den Kompendien zu ziehen reicht nicht aus, um alles korrekt zu verlinken. Achte darauf, dass du nicht mehrmals initialisierst.</li><li>Überprüfe ob du alle empfohlenen Module installiert und aktiviert hast. Diese erleichtern das Führen des Abenteuers und liefern noch ein paar weitere Details, sind aber nicht zwingend erforderlich (s.u.)</li><li>Die zur Verfügung gestellten Karten sind nur ein Vorschlag. Du kannst statt dessen auch einfach nur die Karte oder eine passende stimmige Zeichnung verwenden. Für die Battlemaps findet sich sicher später noch eine Verwendung.</li></ul>",
         "toc": "Kapitel",
         "info": "Info",
         "scenes": "Szenen",
@@ -717,10 +759,11 @@
         "home": "Hauptverzeichnis",
         "foundryUsage": "Foundry & DSA",
         "search": "Durchsuchen",
-        "foundryUsagedesc": "<p>Mehr Informationen über die Verwendung von Foundry gibt's im <a href=\"https://github.com/Plushtoast/dsa5-foundryVTT/wiki\" target=\"_blank\">Wiki</a>.</p><p>Schnelle Hilfe kannst du im Ulisses Discord oder Foundry Discord bekommen.</p><p>Den Journalbrowser verwenden:<ul class=\"dsalist\"><li>Mit einem Rechtsklick auf Bilder kannst du diese separat anzeigen und deinen Spielern zeigen</li><li>Da die Module Kopien der Printausgaben sind, können Verweise und Formulierungen auf das jeweilige Printprodukt hinweisen und im Spiel abweichen.</li><li>Einge der Akteure der Abenteuer haben möglicherweise keinen Token und keine Statistiken, da diese nur eine sehr kleine erzählerische Rolle einnehmen. Falls Würfelwürfe notwendig sind, kannst du diese über das Chatcommand <b>/ch</b> improvisieren.</li><li>Wichtige Kreaturen und Charaktere haben gewöhnlicherweise noch extra Informationen im Charakterblatt.</li><li>Die zusätzlichen Werte und Fertigkeiten der Nscs in Abenteuern sind ergänzt worden und entsprechen nicht zwingendermaßen dem Inhalt des gedruckten Abenteuers. Sie dienen der breiteren Nutzung der Nscs, sind aber nicht notwendigerweise regelkonform.</li></ul></p>",
+        "foundryUsagedesc": "<p>Den Journalbrowser verwenden:<ul class=\"dsalist\"><li>Mit einem Rechtsklick auf Bilder kannst du diese separat anzeigen und deinen Spielern zeigen</li><li>Da die Module Kopien der Printausgaben sind, können Verweise und Formulierungen auf das jeweilige Printprodukt hinweisen und im Spiel abweichen.</li><li>Einge der Akteure der Abenteuer haben möglicherweise keinen Token und keine Statistiken, da diese nur eine sehr kleine erzählerische Rolle einnehmen. Falls Würfelwürfe notwendig sind, kannst du diese über das Chatcommand <b>/ch</b> improvisieren.</li><li>Wichtige Kreaturen und Charaktere haben gewöhnlicherweise noch extra Informationen im Charakterblatt.</li><li>Die zusätzlichen Werte und Fertigkeiten der Nscs in Abenteuern sind ergänzt worden und entsprechen nicht zwingendermaßen dem Inhalt des gedruckten Abenteuers. Sie dienen der breiteren Nutzung der Nscs, sind aber nicht notwendigerweise regelkonform.</li></ul></p>",
         "fulltextsearch": "Volltextsuche",
         "sceneReset": "Szene aktualisieren",
-        "sceneResetDescription": "Die Szene <b>{name}</b> wurde bereits importiert. Möchtest du diese zurücksetzen?<br/> Es werden alle Änderungen und Token entfernt."
+        "sceneResetDescription": "Die Szene <b>{name}</b> wurde bereits importiert. Möchtest du diese zurücksetzen?<br/> Es werden alle Änderungen und Token entfernt.",
+        "playerVisibility": "Sichtbarkeit für Spieler"
     },
     "Migrakel": {
         "Migration": "Actor Migration",
@@ -799,7 +842,9 @@
         "weightOnActor": "Wird vom Akteur getragen",
         "tempRegeneration": "Temporär, wird bei Regenerationswurf verbraucht.",
         "permRegeneration": "Permanent, wird bei jedem Regenerationswurf hinzugezählt",
-        "panMapNote": "Map Notiz fokussieren"
+        "panMapNote": "Map Notiz fokussieren",
+        "onUseEffect": "Gegenstand benutzen/Fähigkeit anwenden",
+        "swapMag": "Magazin tauschen"
     },
     "ITEMSHEET": {
         "offHandMod": "Bonus/Malus als Nebenhand (z.b. Parierwaffe)"
@@ -812,7 +857,8 @@
         "short": "Nah [+2 auf FK, +1 TP]",
         "medium": "Mittel [+/–0 auf FK]",
         "long": "Weit [–2 auf FK, –1 TP]",
-        "rangesense": "Weit [–1 auf FK, –1 TP]"
+        "rangesense": "Weit [–1 auf FK, –1 TP]",
+        "extreme": "Extrem [–4 auf FK, –2 TP]"
     },
     "VisionDisruption": {
         "step0": "Klare Sicht",
@@ -853,11 +899,14 @@
         "zkModifer": "Die Zähigkeit/Seelenkraft des Ziels muss als Malus eingerechnet werden (Vorzeichen beachten)",
         "applyEffectCaster": "Effekt auf Wirkenden übertragen",
         "applyEffectTargets": "Effekt auf Ziele übertragen",
-        "foreignSpell": "Fremdzauber können nicht modifiziert werden"
+        "foreignSpell": "Fremdzauber können nicht modifiziert werden",
+        "assignCharacter": "Charaktere können in der Spielerliste unten links per Rechtsclick zugewiesen werden.",
+        "dragLink": "Drag & drop Akteur z.B. für Gestaltwandlung und Beschwörung",
+        "onlyGM": "Nur für den Spielleiter sichtbar."
     },
     "HELP": {
         "showHelp": "Hilfe anzeigen",
-        "default": "Außerdem kannst du detaillierte Anleitungen und FAQs im <a href=\"https://github.com/Plushtoast/dsa5-foundryVTT/wiki\" target=\"_blank\">Wiki</a> finden und Unterstützung im ulisses-dsa Channel im <a href=\"https://discord.gg/foundryvtt\" target=\"_blank\">Foundry Discord</a> erhalten.",
+        "default": "Weiterführende Hilfe und Informationen gibt es hier: <a href=\"https://youtube.com/c/VTTom\" target=\"_blank\"><button>VTTom's YouTube Kanal</button></a><a href=\"https://github.com/Plushtoast/dsa5-foundryVTT/wiki\" target=\"_blank\"><button>Wiki & FAQ</button></a><a href=\"https://discord.gg/foundryvtt\" target=\"_blank\"><button>Foundry Discord (ulisses-dsa)</button></a><a href=\"https://discord.gg/foundryvtt\" target=\"_blank\"><a href=\"https://discord.com/invite/SnqCgcvPzR\" target=\"_blank\"><button>Ulisses Discord</button></a>",
         "command": "Befehl",
         "example": "Beispiel",
         "pay": "Bezahlen",
@@ -885,10 +934,13 @@
         "improvised": "Improvisierte Waffe",
         "magical": "Magisch",
         "clerical": "Geweiht",
-        "attributeWarning": "Dieser Gegenstand ist <b>{domain}</b> (und kann ggf. nicht beschädigt werden)."
+        "silverPlated": "versilbert",
+        "attributeWarning": "Dieser Gegenstand ist <b>{domain}</b> (und kann ggf. nicht beschädigt werden).",
+        "vulnerableTo": "Empfindlich ({name})",
+        "resistantTo": "Resistent ({name})"
     },
     "SPELL": {
-        "loading": "Zauberstatus: {status}",
+        "loading": "Konzentrationsstatus: {status}",
         "loaded": "Bereit",
         "reload": "Konzentrieren",
         "isReloading": "{actor} konzentriert sich auf {item} ({status})."
@@ -907,7 +959,24 @@
         "identify": "Bestimmungsschw.",
         "usages": "Anwendungen",
         "recipes": "Rezepte",
-        "ingredients": "Zutaten (typisch)"
+        "ingredients": "Zutaten (typisch)",
+        "availability": "Verfügbarkeit",
+        "highNorth": "Hoher Norden",
+        "grasLands": "Grasländer",
+        "mountains": "Gebirge",
+        "swamps": "Sümpfe",
+        "woods": "Wälder",
+        "jungle": "Regenwälder",
+        "desert": "Wüsten",
+        "maraskan": "Maraskan",
+        "avLevels": {
+            "5": "gewöhnlich",
+            "4": "gelegentlich",
+            "3": "eher selten",
+            "2": "selten",
+            "1": "sehr selten",
+            "0": "nie"
+        }
     },
     "ITEM.TypeAdvantage": "Vorteil",
     "ITEM.TypeAggregatedtest": "Sammelprobe",
@@ -925,6 +994,7 @@
     "ITEM.TypeLiturgy": "Liturgie",
     "ITEM.TypeMagictrick": "Zaubertrick",
     "ITEM.TypeMeleeweapon": "Nahkampfwaffe",
+    "ITEM.TypeDemonmark": "Dämonenmal",
     "ITEM.TypeMoney": "Währung",
     "ITEM.TypePoison": "Gift",
     "ITEM.TypeMagicalsign": "Zauberzeichen",
@@ -939,6 +1009,7 @@
     "ITEM.TypeSpellextension": "Zauber/Liturgieerweiterung",
     "ITEM.TypeApplication": "Anwendungsgebiet",
     "ITEM.TypeEffectwrapper": "Effektcontainer",
+    "ITEM.TypePatron": "Patron",
     "ACTOR.TypeCharacter": "Charakter",
     "ACTOR.TypeNpc": "Nichtspielercharakter",
     "ACTOR.TypeCreature": "Kreatur",
@@ -987,11 +1058,16 @@
         "applyTarget": "Effekt (Ziel)",
         "applySelf": "Effekt (Selbst)",
         "appliedEffect": "Effekt <b>{source}</b> wurde auf <b>{target}</b> übertragen.",
+        "removedEffect": "Effekt <b>{source}</b> wurde von <b>{target}</b> entfernt.",
         "custom": "Sondereffekt",
-        "creature": "Akteuerlink (z.b. das5-core.corebestiary.Gotongi)",
+        "creature": "Akteurlink (z.b. das5-core.corebestiary.Gotongi)",
+        "resistRoll": "Widerstandsprobe",
+
         "placeholder": {
             "macros": "Macros können auf diese Variablen zugreifen:\nactor - Der anvisierte Akteur\ntestData - All Daten für die aktuelle Probe\nsource - Die Quelle des Macros",
-            "armorPostprocess": "Rüstungstransformation können auf diese Variablen zugreifen:\nactor - Der anvisierte Akteur\noptions.armor - Die Rüstungs des Ziels\noptions.attackItem - Die Quelle des Macros"
+            "armorPostprocess": "Rüstungstransformation können auf diese Variablen zugreifen:\nactor - Der anvisierte Akteur\noptions.armor - Die Rüstungs des Ziels\noptions.attackItem - Die Quelle des Macros",
+            "onRemove": "Macro wird beim Entfernen des Effekts aus dem Akteur ausgeführt.\nVariablen:\nactor - Der Akteur",
+            "onUseEffect": "Macro für die Benutzung des Items.\nVariablen:\nactor - Der Akteur\nitem - Der Gegenstand"
         },
         "advancedFunctions": {
             "none": "Nothing",
@@ -999,12 +1075,15 @@
             "macro": "Macro",
             "creature": "Beschwörung/Gestaltwandlung",
             "armorPostprocess": "Rüstungstransformation (Macro)",
-            "damagePostprocess": "Schadenstransformation (Macro)"
+            "damagePostprocess": "Schadenstransformation (Macro)",
+            "onRemove": "Macro (Effektende)",
+            "onUseEffect": "Macro (Benutzung)"
         }
     },
     "ROLL": {
         "Targeting": "gegen",
-        "failed": "ist gescheitert"
+        "failed": "ist gescheitert",
+        "routine": "Routine"
     },
     "OPPOSED": {
         "winsFP": "<b>{winner}</b> gewinnt gegen <b>{loser}</b> mit {SL} Qualitätsstufe(n)",
@@ -1036,6 +1115,12 @@
         "weaponAptitude": "Waffenbegabung",
         "wildMagic": "Wilde Magie",
         "incompetent": "Unfähig",
+        "miracle": "Mirakel",
+        "miracleMight": "Mirakelmacht",
+        "circumvent": "Unterlaufen",
+        "keepAtDistance": "Auf Distanz halten",
+        "drivingArcher": "Fahrender Schütze",
+        "mightyAstralBody": "Machtvoller Astralleib",
         "exceptionalSkill": "Herausragende Fertigkeit",
         "exceptionalCombatTechnique": "Herausragende Kampftechnik",
         "regenerationLeP": "Verbesserte Regeneration (Lebensenergie)",
@@ -1049,6 +1134,8 @@
         "advancedRegenerationKaP": "Karmale Regeneration",
         "energyControl": "Kraftkontrolle",
         "smallEnergyControl": "Kleine Kraftkontrolle",
+        "karmaControl": "Kontrolle des Karmalkörpers",
+        "mightyKarmaControl": "Mächtige Kontrolle des Karmalkörpers",
         "weakAstralBody": "Schwacher Astralkörper",
         "weakKarmicBody": "Schwacher Karmalkörper",
         "restrictedSenseSight": "Eingeschränkter Sinn (Sicht)",
@@ -1058,7 +1145,10 @@
         "traditionWitch": "Tradition (Hexen)",
         "traditionKor": "Tradition (Korkirche)",
         "traditionFjarning": "Tradition (Fjarningerschamanen)",
+        "braniborian": "Braniborier",
+        "traditionPhex": "Tradition (Phexkirche)",
         "inuredToEncumbrance": "Belastungsgewöhnung",
+        "extremeShot": "Extremschuss",
         "quickload": "Schnellladen",
         "automaticSuccess": "Automatischer Erfolg",
         "automaticFail": "Automatischer Misserfolg",
@@ -1068,15 +1158,18 @@
         "localKnowledge": "Ortskenntnis",
         "naturalArmor": "Natürliche Rüstung",
         "improvisedWeaponMaster": "Meister der improvisierten Waffen",
+
         "all": "alle",
         "twoWeaponCombat": "Beidhändiger Kampf",
         "poisonResistance": "Giftresistenz",
         "ResistanttoDisease": "Krankheitsresistenz",
         "masterfulDodge": "Meisterliches Ausweichen",
         "masterfulParry": "Meisterparade",
+        "mightyMasterfulParry": "Machtvolle Meisterparade",
         "perception": "Sinnesschärfe",
         "misfortune": "Pechmagnet",
         "featOfStrength": "Kraftakt",
+        "blindFighting": "Blindkampf",
         "wrestle": "Raufen",
         "literacy": "Schrift",
         "language": "Sprache",
@@ -1084,7 +1177,6 @@
         "painImmunity": "Immun gegen Schmerzen",
         "selfControl": "Selbstbeherrschung",
         "propertyKnowledge": "Merkmalskenntnis",
-        "propertyFocus": "Merkmalsfokus",
         "obligations": "Verpflichtungen",
         "afraidOf": "Angst vor",
         "principles": "Prinzipientreue",
@@ -1092,19 +1184,23 @@
         "gambling": "Zechen",
         "bodyControl": "Körperbeherrschung",
         "darksight": "Dunkelsicht",
+        "sappeurStyle": "Sappeur-Stil",
         "nightBlind": "Nachtblind",
         "willpower": "Willenskraft",
         "traditionBoron": "Tradition (Boronkirche)",
         "artisticAbility": "Malen & Zeichnen",
+        "witchSense": "Hexensinn",
         "Shields": "Schilde",
         "Throwing Weapons": "Wurfwaffen",
         "Crossbows": "Armbrüste",
         "invocatioMinima": "Invocatio Minima",
         "invocatioMinor": "Invocatio Minor",
         "invocatioMaior": "Invocatio Maior",
+        "vinsaltStyle": "Vinsalt-Stil",
         "manifesto": "Manifesto",
         "elementalServant": "Elementarer Diener",
-        "callDjinn": "Dschinnenruf"
+        "callDjinn": "Dschinnenruf",
+        "enemySense": "Feindgespür"
     },
     "LocalizedCTs": {
         "Blasrohre": "Blowpipes",
@@ -1129,6 +1225,7 @@
         "Peitschen": "Whips"
     },
     "DSAError": {
+        "noTokenSelected": "Kein Token markiert",
         "MacroItemMissing": "Dein Charakter hat kein Item namens {item}. Stelle sicher, dass dir entweder ein Charakter zugeordnet ist oder du einen Token für den Wurf markierst.",
         "APUpdateError": "AP Wert konnte nicht angepasst werden. Bitte manuell durchführen.",
         "RangeCannotBeParsed": "Die Reichweite kan nicht automatisch angepasst werden. Format nicht erkannt.",
@@ -1138,6 +1235,7 @@
         "NotEnoughXP": "Nicht genug Abenteuerpunkte",
         "NotEnoughAsP": "Nicht genug Astralpunkte",
         "NotEnoughKaP": "Nicht genug Karmapunkte",
+        "NotEnoughFate": "Nicht genug Schicksalspunkte",
         "NotEnoughCharges": "Nicht genug Ladungen",
         "AdvanceMaximumReached": "Maximale Steigerung bereits erreicht",
         "notFound": "{category} {name} nicht gefunden",
@@ -1152,7 +1250,7 @@
         "opposedAttackNoSpecAbs": "Passierschläge können nicht mit Sonderfertigkeiten kombiniert werden",
         "noSpellForExtension": "Du hast den/die passenden Zauber/Liturgie nicht für diese Erweiterung",
         "talentValueTooLow": "Dein Talentwert ist zu niedrig",
-        "NotUnlocked": "Noch nichts freigeschalten.",
+        "NotUnlocked": "Noch nichts freigeschaltet.",
         "onlyGMAllowedToCancel": "Nur der Spielleiter darf Vergleichsproben abbrechen.",
         "unknownCombatSkill": "Das Kampftalent {skill} der Waffe {item} ist unbekannt. Bitte die Waffe anpassen.",
         "onlyGMcanShapeshift": "Du hast nicht die richtigen Berechtigungen zum Formwandeln.",
@@ -1165,7 +1263,14 @@
         "nestedEffectNotSupported": "Foundry unterstützt das Hinzufügen von Effekten derzeit nur im Item Directory.",
         "noBreakingResistance": "Keinen Bruchfaktorwert für {item} gefunden.",
         "noBreakingStructure": "{name} hat keinen akzeptierten maximalen Strukturwert.",
-        "noConjurationActive": "Kein zu beschwörender Akteur aktiv (drag and drop)"
+        "noConjurationActive": "Kein zu beschwörender Akteur aktiv (drag and drop)",
+        "notInRangeToLoot": "Zu weit entfernt für eine Interaktion.",
+        "onlyGMallowed": "Diese Funktion steht nur dem Spielleiter zur Verfügung.",
+        "macroNotFound": "Das Macro {name} konnte nicht gefunden werden...sorry.",
+        "notOwner": "Du darfst diesen Charakter nicht modifizieren.",
+        "shouldTimesUp": "Für automatische auslaufende Effekte wird das Modul Times-Up benötigt.",
+        "requiresModule": "Diese Funktion benötigt das Modul {module}.",
+        "wrongLanguage": "Deine Spracheinstellung passt nicht zur vorgegebenen Einstellung ({lang}). Möchtest du die Sprache ändern?"
     },
     "Shapeshift": {
         "title": "Gestaltwandlung",
@@ -1233,9 +1338,9 @@
         "SHOOTERSTATIONARY": "ist stationär (+-0)"
     },
     "mountedRangeOptions": {
-        "STATIONARY": "steht (+-0)",
-        "SCHRITT": "im Schritt (-4)",
-        "GALOPP": "im Galopp (-8)"
+        "STATIONARY": "steht",
+        "SCHRITT": "im Schritt",
+        "GALOPP": "im Galopp"
     },
     "regnerationCampLocations": {
         "normal": "Normal",
@@ -1324,11 +1429,41 @@
         "scrollingFontsize": "Kampftext Schriftgröße",
         "scrollingFontsizeHint": "Die Schriftgröße für einige der scrollenden Token Texte (z.B. +- LeP)",
         "enableForeignSpellModifer": "Fremdzauber Modifikator",
-        "enableForeignSpellModiferHint": "Aktiviere Fremdzaubermodifikator -2 bei Zauberproben."
+        "enableForeignSpellModiferHint": "Aktiviere Fremdzaubermodifikator -2 bei Zauberproben.",
+        "enableDPS": "DPS aktivieren",
+        "enableDPSHint": "Aktiviere das \"Dere Positioning System\".\nMit Händlern und Türen kann nur noch aus direkter Nähe interagiert werden.\nDer Distanzmodifikator für Fernkampfwaffen wird automatisch gesetzt.",
+        "tokenhotbarSize": "Tokenhotbar Größe",
+        "tokenhotbarSizeHint": "Größe der Buttons in der Tokenhotbar.",
+        "tokenhotbarLayout": "Tokenhotbar Layout",
+        "tokenhotbarLayoutHint": "Layout und Ausklappausrichtung der Tokenhotbar",
+        "tokenhotbarLayout0": "Horizontal, nach oben",
+        "tokenhotbarLayout1": "Horizontal, nach unten",
+        "tokenhotbarLayout2": "Vertikal, nach links",
+        "tokenhotbarLayout3": "Vertikal, nach rechts",
+        "resetTokenbar": "Reset Tokenhotbar",
+        "resetTokenbarHint": "Stelle die Position der Tokenhotbar auf den Ursprungswert",
+        "enableItemDropToCanvas": "Items auf die Map legen",
+        "enableItemDropToCanvasHint": "Lege Gegenstände per drag & drop auf die Karte als Schatztoken.",
+        "merchantNotification": "Benachrichtigung bei Handel",
+        "merchantNotificationHint": "Zeige Transfers zwischen Akteuren (Händler/Schatz) im Chat.",
+        "enableCombatFlow": "DSA Kampftracker",
+        "enableCombatFlowHint": "Aktiviere den DSA Kampftracker",
+        "iniTrackerSize": "DSA Kampftracker Größe",
+        "iniTrackerSizeHint": "Größe der Buttons im DSA Kampftracker",
+        "enableCombatPan": "Schwenke zu aktuellem Zug",
+        "enableCombatPanHint": "Schwenke die Sicht auf den aktuellen Zug und selektiere den Token sofern Besitzerrechte vorhanden.",
+        "forceLanguage": "Sprache erzwingen",
+        "forceLanguageHint": "Spieler erhalten beim Login einen Dialog, wenn deren Sprache falsch eingestellt ist. Unterschiedliche Spracheinstellungen können zu Problemen führen.",
+        "encumbranceForRange": "Belastung für Fernkampf (Hausregel)",
+        "encumbranceForRangeHint": "Belastung beeinträchtigt Fernkampf normalerweise nicht. Mach deinen Spielern das Leben noch schwerer."
+    },
+    "CONTROLS": {
+        "targetForUser": "Ziel für Spieler wählen"
     },
     "COMBATTRACKER": {
         "noDefenses": "Anzahl Verteidigungen",
-        "ongoing": "Laufende Handlungen"
+        "ongoing": "Laufende Handlungen",
+        "waitInit": "Zurückstellen"
     },
     "CHATFATE": {
         "faitepointUsed": "Das Schicksal ändert sich",
@@ -1342,77 +1477,12 @@
         "selectDieToReroll": "Wähle die zu wiederholenden Würfel",
         "Improve": "{character} verbessert den Wurf um 2"
     },
-    "SPELLMISCAST": {
-        "2": "Der Geist des Zauberers tauscht für 1D6 Tag(e) den Körper mit dem nächsten Lebewesen in seiner Nähe, das größer ist als eine Ratte.",
-        "3": "Der Zauberer wird für 1D6 Tag(e) von Zustand Lästige Mindergeister verfolgt.",
-        "4": "Das Ziel des Zaubers ändert sich zufällig nach Wahl des Meisters.",
-        "5": "Der Zauberer verwandelt sich für 1D6 Stunden in ein Kleintier nach Wahl des Spielleiters.",
-        "6": "Die gesamte Astralkraft verlässt den Körper des Zauberers und manifestiert sich als Regen aus bunten Funken, illusionären Schmetterlingen und kleinen Regenbögen. Die verlorenen Astralpunkte können regulär regeneriert werden.",
-        "7": "Der Zauberer verliert für 1D6 Tag(e) die Fähigkeit, auf seinen AE-Vorrat zuzugreifen.",
-        "8": "Der Zauberer hat für die nächsten 1D6 Tag(e) pochende Kopfschmerzen. Er leidet während dieser Zeit unter einer Stufe Betäubung.",
-        "9": "Die gesamte Astralkraft verlässt den Körper des Zauberers und springt auf das nächste magisch begabte Ziel über. Das Ziel erhält die gesamten Astralpunkte des Zauberers, auch über sein natürliches Maximum an Astralenergie hinaus. Der Zauberer kann die verlorenen Astralpunkte regulär regenerieren.",
-        "10": "Der Zauberer erhält für 1D6 Tag(e) den Zustand Stumm.",
-        "11": "Haar und Bart des Zauberers färben sich bunt, wachsen später jedoch in der ursprünglichen Farbe nach",
-        "12": "Eine ätherische Stimme erklingt aus dem Nichts und sagt „Tu das nie wieder!“"
-    },
-    "LITURGYMISCAST": {
-        "2": "Im Umkreis von 2D6 Metern gehen brennbare Materialien in Flammen auf (außer Lebewesen und die Kleidung des Geweihten).",
-        "3": "Die gewirkte Liturgie/Zeremonie hat einen gegenteiligen Effekt. Ein Bann des Lichts erzeugt Licht, ein Heilsegen fügt dem Ziel Schaden zu usw.",
-        "4": "Das Ziel der Liturgie/Zeremonie ändert sich zufällig nach Wahl des Meisters.",
-        "5": "Der Geweihte hat für 1D6 Tag(e) nachts seltsame Visionen und Alpträume.",
-        "6": "Durch einen Blick in die Sphären ist der Geweihte so eingeschüchtert, dass er einen Tag lang 3 Stufen Furcht erhält.",
-        "7": "Der Geweihte verliert für 1D6 Tag(e) die Fähigkeit, auf seinen KE-Vorrat zuzugreifen.",
-        "8": "Der Geweihte erhält für einen Tag 4 Stufen Entrückung.",
-        "9": "Der Geweihte ist für einen Tag lang verwirrt und redet unverständliches Zeug, an das er sich später nicht mehr erinnert. Er erhält 3 Stufen Verwirrung",
-        "10": "Der Geweihte erhält für 1D6 Tag(e) den Zustand Stumm.",
-        "11": "Für einen Tag erhält der Geweihte ein Stigma.",
-        "12": "Der Geweihte verwurzelt mit dem Boden und kann seine Füße für 1W6 Minuten nicht bewegen. Er erhält währenddessen den Status Fixiert."
-    },
-    "MELEEBOTCH": {
-        "2": "Die Waffe ist unwiederbringlich zerstört. Unzerstörbare Waffen fallen zu Boden.",
-        "3": "Die Waffe ist nicht mehr einsetzbar, bis sie repariert wird. Unzerstörbare Waffen fallen zu Boden.",
-        "4": "Die Waffe ist beschädigt worden. Alle Proben auf Attacke und Parade sind um 2 erschwert, bis sie repariert wird. Unzerstörbare Waffen fallen zu Boden.",
-        "5": "Die Waffe ist zu Boden gefallen.",
-        "6": "Die Waffe des Helden ist in einem Baum, einer Holzwand, dem Boden oder Ähnlichem stecken geblieben. Um sie zu befreien, ist 1 Aktion und eine um 1 erschwerte Probe auf Kraftakt (Ziehen & Zerren) notwendig.",
-        "7": "Der Held stolpert und stürzt, wenn seinem Spieler nicht eine um 2 erschwerte Probe auf Körperbeherrschung (Balance) gelingt. Sollte er das nicht schaffen, erhält der Held den Status Liegend.",
-        "8": "Der Held stolpert, seine nächste Handlung ist um 2 erschwert.",
-        "9": "Der Held erhält für 3 Kampfrunden eine Stufe Schmerz.",
-        "10": "Der Held hat sich im Eifer des Gefechts den Kopf gestoßen. Er erhält für eine Stunde eine Stufe Betäubung",
-        "11": "Der Held hat sich selbst verletzt und erleidet Schaden. Der Schaden seiner Waffe wird unter Einbeziehung des Schadensbonus ausgewürfelt. Bei unbewaffneten Kämpfern wird 1W6 TP angenommen.",
-        "12": "Ein schwerer Eigentreffer des Helden. Der Schaden seiner Waffe wird unter Einbeziehung des Schadensbonus ausgewürfelt und dann verdoppelt. Bei unbewaffneten Kämpfern wird 1W6 TP angenommen."
-    },
-    "RANGEBOTCH": {
-        "2": "Die Waffe ist unwiederbringlich zerstört. Unzerstörbare Waffen fallen zu Boden.",
-        "3": "Die Waffe ist nicht mehr einsetzbar, bis sie repariert wird. Unzerstörbare Waffen fallen zu Boden.",
-        "4": "Die Waffe ist beschädigt worden. Alle Proben auf Fernkampf sind um 4 erschwert, bis sie repariert wird. Unzerstörbare Waffen fallen zu Boden.",
-        "5": "Die Waffe ist zu Boden gefallen.",
-        "6": "Das Geschoss trifft aus Versehen einen Freund oder einen am Kampf Unbeteiligten. Ist kein solches Ziel in der Nähe, trifft der Held sich selbst. Der Schaden der Waffe wird unter Einbeziehung des Schadensbonus ausgewürfelt.",
-        "7": "Der spektakuläre Fehlschuss trifft ein Objekt (Ladenschild heruntergeschossen, Glasfenster zu Bruch gegangen etc.).",
-        "8": "Der Held hat Rückenschmerzen und erleidet für die nächsten 3 Kampfrunden eine Stufe Schmerz.",
-        "9": "Der Held benötigt 2 komplette Kampfrunden, um die Waffe wieder einsatzbereit zu machen.",
-        "10": "Der Held ist mit Zielen oder mit seiner Waffe beschäftigt. Bis zu seiner nächsten Aktion kann er keine Verteidigungen ausführen",
-        "11": "Der Held hat sich selbst verletzt und erleidet Schaden. Der Schaden der Waffe wird unter Einbeziehung des Schadensbonus ausgewürfelt.",
-        "12": "Ein schwerer Eigentreffer. Der Schaden der Waffe wird unter Einbeziehung des Schadensbonus ausgewürfelt und dann verdoppelt."
-    },
-    "DEFENSEBOTCH": {
-        "2": "Die Waffe ist unwiederbringlich zerstört. Unzerstörbare Waffen fallen zu Boden.",
-        "3": "Die Waffe ist nicht mehr einsetzbar, bis sie repariert wird. Unzerstörbare Waffen fallen zu Boden.",
-        "4": "Die Waffe ist beschädigt worden. Alle Proben auf Attacke und Parade sind um 2 erschwert, bis sie repariert wird. Unzerstörbare Waffen fallen zu Boden.",
-        "5": "Die Waffe ist zu Boden gefallen.",
-        "6": "Die Waffe des Helden ist in einem Baum, einer Holzwand, dem Boden oder Ähnlichem stecken geblieben. Um sie zu befreien, ist 1 Aktion und eine um 1 erschwerte Probe auf Kraftakt (Ziehen & Zerren) notwendig.",
-        "7": "Der Held stolpert und stürzt, wenn seinem Spieler nicht eine um 2 erschwerte Probe auf Körperbeherrschung (Balance) gelingt. Sollte er das nicht schaffen, erhält der Held den Status Liegend.",
-        "8": "Der Held stolpert, seine nächste Handlung ist um 2 erschwert.",
-        "9": "Der Held erhält für 3 Kampfrunden eine Stufe Schmerz.",
-        "10": "Der Held hat sich im Eifer des Gefechts den Kopf gestoßen. Er erhält für eine Stunde eine Stufe Betäubung.",
-        "11": "Der Held hat sich selbst verletzt und erleidet Schaden. Der Schaden seiner Waffe wird unter Einbeziehung des Schadensbonus ausgewürfelt. Bei unbewaffneten Kämpfern wird 1W6 TP angenommen.",
-        "12": "Ein schwerer Eigentreffer des Helden. Der Schaden seiner Waffe wird unter Einbeziehung des Schadensbonus ausgewürfelt und dann verdoppelt. Bei unbewaffneten Kämpfern wird 1W6 TP angenommen."
-    },
     "TABLENAMES": {
-        "Defense": "Verteidigung-Patzertabelle",
-        "Melee": "Nahkampf-Patzertabelle",
-        "Range": "Fernkampf-Patzertabelle",
-        "Liturgy": "Patzertabelle für Liturgien/Zeremonien",
-        "Spell": "Patzertabelle für Zauber/Rituale"
+        "Defense": "Verteidigung-Patzer",
+        "Melee": "Nahkampf-Patzer",
+        "Range": "Fernkampf-Patzer",
+        "Liturgy": "Liturgien-/Zeremonien-Patzer",
+        "Spell": "Zauber-/Rituale-Patzer"
     },
     "CONDITION": {
         "shapeshift": "Gestaltwandlung",
@@ -1463,7 +1533,17 @@
         "select": "Auswahl",
         "locked": "Abgeschlossen",
         "selectRandomGoods": "Wähle Kategorien und Anzahl an zusätzlichen zufälligen Waren. Das Hinzufügen dauert einen Moment, wenn der Index der Bibliothek noch nicht erstellt wurde.",
-        "service": "{buyer} hat {amount} {item} von {merchant} gekauft."
+        "dropGround": "{name} auf dem Boden ablegen?",
+        "onlyGM": "Nur GM",
+        "buyNotification": "<b>{source}</b> kauft {amount}x {item} von <b>{target}</b> für {price} Silberstücke.",
+        "sellNotification": "<b>{source}</b> verkauft {amount}x {item} an <b>{target}</b> für {price} Silberstücke.",
+        "buyLootNotification": "<b>{source}</b> nimmt {amount}x {item} aus <b>{target}</b>.",
+        "sellLootNotification": "<b>{source}</b> legt {amount}x {item} in <b>{target}</b>.",
+        "emptyDestroy": "Temporär",
+        "emptyDestroyHint": "Löscht den Akteur, wenn das Inventar beim Handel geleert wird",
+        "untradable": "Gegenstand nicht handelbar",
+        "otherTradeFriend": "Ziehe einen Akteur für den du Ownerrechte hast auf das Charakterblatt um den Handelspartner zu ändern.",
+        "priceMod": "Grundpreis / Modifizierter Preis (Doppelclick für eigenen Preis)"
     },
     "GARADAN": {
         "1": "Bauer",

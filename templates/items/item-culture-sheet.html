@@ -1,4 +1,4 @@
-<form class="dsa5 item-sheet {{cssClass}}" autocomplete="off" ondragstart="return false;" ondrop="return false;">
+<form class="dsa5 item-sheet {{cssClass}}" autocomplete="off">
     {{> systems/dsa5/templates/items/item-header.html}}
 
     <div class="row-section ">
@@ -25,11 +25,11 @@
         <div class="tab description active" data-tab="description">
             <div class="row-section">
                 <div class="col sixty">
-                    {{editor content=data.description.value target="data.description.value" button=true owner=owner editable=true}}
+                    {{editor content=data.description.value target="data.description.value" button=true owner=owner editable=editable}}
 
                 </div>
                 <div class="col fourty">
-                    <img src="{{item.img}}" style="max-width:100%; max-height: 100%;float: left;" data-edit="img" />{{editor content=data.clothing.value target="data.clothing.value" button=true owner=owner editable=true}}
+                    <img src="{{item.img}}" style="max-width:100%; max-height: 100%;float: left;" data-edit="img" />{{editor content=data.clothing.value target="data.clothing.value" button=true owner=owner editable=editable}}
                 </div>
             </div>
         </div>

@@ -1,6 +1,8 @@
+import { bindImgToCanvasDragStart } from "../hooks/imgTileDrop.js"
 import DSA5StatusEffects from "../status/status_effects.js"
 import DSA5ChatAutoCompletion from "../system/chat_autocompletion.js"
 import DSA5ChatListeners from "../system/chat_listeners.js"
+import DSA5_Utility from "../system/utility-dsa5.js"
 import { slist } from "../system/view_helper.js"
 
 export default class BookWizard extends Application {
@@ -78,6 +80,14 @@ export default class BookWizard extends Application {
     activateListeners(html) {
         super.activateListeners(html)
 
+        html.on('click', '.toggleVisibility', async(ev) => {
+            const id = ev.currentTarget.dataset.itemid
+            const config = game.settings.get("dsa5", "expansionPermissions")
+            config[id] = $(ev.currentTarget).find('i').hasClass("fa-toggle-off")
+            await game.settings.set("dsa5", "expansionPermissions", config)
+            this.render()
+        })
+
         html.on('click', '.showMapNote', ev => {
             game.journal.get(ev.currentTarget.dataset.entryid).panToNote()
         })
@@ -152,9 +162,10 @@ export default class BookWizard extends Application {
             DSA5ChatListeners.postStatus($(ev.currentTarget).attr("data-id"))
         })
 
-        html.on('click', '.importBook', async() => {
-            this.importBook()
-        })
+        html.on('click', '.importBook', async() => this.importBook())
+        
+        bindImgToCanvasDragStart(html)
+
         slist(html, '.breadcrumbs', this.resaveBreadCrumbs)
         this.heightFix()
     }
@@ -165,10 +176,10 @@ export default class BookWizard extends Application {
     }
 
     async loadJournal(name) {
-        this.showJournal(this.journals.find(x => { return x.name == name && x.data.flags.dsa5.parent == this.selectedChapter }))
+        this.showJournal(this.journals.find(x => x.name == name && x.data.flags.dsa5.parent == this.selectedChapter ))
     }
     async loadJournalById(id) {
-        this.showJournal(this.journals.find(x => { return x.id == id }))
+        this.showJournal(this.journals.find(x => x.id == id))
     }
 
     async resaveBreadCrumbs(target) {
@@ -220,7 +231,7 @@ export default class BookWizard extends Application {
         }
     }
 
-    tryShowImportedActor(ev){
+    tryShowImportedActor(ev) {
 
     }
 
@@ -233,6 +244,7 @@ export default class BookWizard extends Application {
         this.content = `<div><h1 class="journalHeader" data-uuid="${journal.uuid}">${journal.name}<div class="jrnIcons">${pinIcon}<a class="pinJournal"><i class="fas fa-thumbtack"></i></a><a class="showJournal"><i class="fas fa-eye"></i></a></div></h1>${TextEditor.enrichHTML(content)}`
         const chapter = $(this._element).find('.chapter')
         chapter.html(this.content)
+        bindImgToCanvasDragStart(chapter)
         chapter.find('.documentName-link, .entity-link').click(ev => {
             const elem = $(ev.currentTarget)
             if (this.bookData && elem.attr("data-pack") == this.bookData.journal) {
@@ -287,7 +299,7 @@ export default class BookWizard extends Application {
         const head = await game.folders.contents.find(x => x.name == game.i18n.localize(`${this.bookData.moduleName}.name`) && x.type == "Actor" && x.data.parent == null)
         const folder = head ? await game.folders.contents.find(x => x.name == chapter.name && x.type == "Actor" && x.data.parent == head.id) : undefined
         for (let k of chapter.actors) {
-            let actor = folder ? game.actors.contents.find(x => x.name == k && x.data.folder == folder.id ) : undefined
+            let actor = folder ? game.actors.contents.find(x => x.name == k && x.data.folder == folder.id) : undefined
             let pack = undefined
             let id = actor ? actor.id : undefined
             if (!actor) {
@@ -353,18 +365,35 @@ export default class BookWizard extends Application {
                 if (chapter.scenes || chapter.actors || subChapters.length == 0) {
                     return await renderTemplate('systems/dsa5/templates/wizard/adventure/adventure_chapter.html', { chapter, subChapters: this.getSubChapters(), actors: await this.prefillActors(chapter) })
                 } else {
-                    return await this.loadJournal(subChapters[0])
+                    return await this.loadJournal(subChapters[0].name)
                 }
 
             }
             return await renderTemplate('systems/dsa5/templates/wizard/adventure/adventure_cover.html', { book: this.book, bookData: this.bookData })
         } else {
-            return await renderTemplate('systems/dsa5/templates/wizard/adventure/adventure_intro.html', { rshs: this.rshs.sort((a, b) => { return a.id.localeCompare(b.id) }), rules: this.books.sort((a, b) => { return a.id.localeCompare(b.id) }), adventures: game.user.isGM ? this.adventures : this.adventures.filter(x => x.visible).sort((a, b) => { return a.id.localeCompare(b.id) }) })
+            return await renderTemplate('systems/dsa5/templates/wizard/adventure/adventure_intro.html', {
+                rshs: this.filterBooks(this.rshs),
+                rules: this.filterBooks(this.books),
+                adventures: this.filterBooks(this.adventures),
+                isGM: game.user.isGM
+            })
         }
     }
 
+    filterBooks(books) {
+        const bookPermissions = game.settings.get("dsa5", "expansionPermissions")
+        for (const book of books) {
+            if (bookPermissions[book.id] != undefined) book.visible = bookPermissions[book.id]
+        }
+        return game.user.isGM ? books : books.filter(x => x.visible == undefined || x.visible).sort((a, b) => {
+            return a.id.localeCompare(b.id)
+        })
+    }
+
     getSubChapters() {
-        return this.journals.filter(x => x.data.flags.dsa5.parent == this.selectedChapter).sort((a, b) => a.data.flags.dsa5.sort > b.data.flags.dsa5.sort ? 1 : -1).map(x => x.name)
+        return this.journals.filter(x => x.data.flags.dsa5.parent == this.selectedChapter)
+        .sort((a, b) => a.data.flags.dsa5.sort > b.data.flags.dsa5.sort ? 1 : -1)
+        .map(x => {return {name: x.name, id: x.id}})
     }
 
     async getToc() {
@@ -396,12 +425,14 @@ export default class BookWizard extends Application {
 
     async getData(options) {
         const data = await super.getData(options);
-        const template = await this.getChapter()
+        const currentChapter = await this.getChapter()
         const toc = await this.getToc()
-        data.adventure = this.bookData
-        data.currentChapter = template
-        data.breadcrumbs = this.renderBreadcrumbs()
-        data.toc = toc
+        mergeObject(data, {
+            adventure: this.bookData,
+            currentChapter,
+            breadcrumbs: this.renderBreadcrumbs(),
+            toc
+        })
         return data
     }
 
@@ -456,7 +487,7 @@ export default class BookWizard extends Application {
     }
 
     moduleEnabled(id) {
-        return game.modules.get(id) && game.modules.get(id).active
+        return DSA5_Utility.moduleEnabled(id)
     }
 }
 

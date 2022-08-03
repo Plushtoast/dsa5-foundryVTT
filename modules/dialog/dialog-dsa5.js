@@ -1,5 +1,6 @@
 import DSA5CombatDialog from './dialog-combat-dsa5.js'
 import DialogShared from './dialog-shared.js'
+import DSA5SkillDialog from './dialog-skill-dsa5.js'
 import DSA5SpellDialog from './dialog-spell-dsa5.js'
 
 export default class DSA5Dialog extends DialogShared {
@@ -15,8 +16,35 @@ export default class DSA5Dialog extends DialogShared {
             case "liturgy":
             case "ceremony":
                 return DSA5SpellDialog
+            case "skill":
+                return DSA5SkillDialog
+            
         }
         return DSA5Dialog
+    }
+
+    static getRollButtons(testData, dialogOptions, resolve, reject){
+        let buttons = {
+            rollButton: {
+                label: game.i18n.localize("Roll"),
+                callback: (html) => {
+                    game.dsa5.memory.remember(testData.extra.speaker, testData.source, testData.mode, html)
+                    resolve(dialogOptions.callback(html))
+                },
+            },
+        }
+        if (game.user.isGM) {
+            mergeObject(buttons, {
+                cheat: {
+                    label: game.i18n.localize("DIALOG.cheat"),
+                    callback: (html) => {
+                        game.dsa5.memory.remember(testData.extra.speaker, testData.source, testData.mode, html)
+                        resolve(dialogOptions.callback(html, { cheat: true }))
+                    },
+                },
+            })
+        }
+        return buttons
     }
 
     activateListeners(html) {
@@ -28,12 +56,6 @@ export default class DSA5Dialog extends DialogShared {
             }
             elem.toggleClass('dieSelected')
         })
-
-        html.find('.modifiers option').mousedown(ev => {
-            ev.preventDefault();
-            $(ev.currentTarget).prop('selected', !$(ev.currentTarget).prop('selected'));
-            return false;
-        });
     }
 
     static get defaultOptions() {

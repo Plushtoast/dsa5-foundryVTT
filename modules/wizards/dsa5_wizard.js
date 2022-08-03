@@ -83,6 +83,21 @@ export default class WizardDSA5 extends Application {
         })
     }
 
+    mergeLevels(itemsToAdd, item) {
+        let merged = false
+        let existing = itemsToAdd.find(x => x.name == item.name && x.type == item.type)
+        if (existing) {
+            merged = true
+            const level = Number(getProperty(item, "data.step.value"))
+            if (level) {
+                existing.data.step.value += level
+            }
+        } else {
+            itemsToAdd.push(item)
+        }
+        return merged
+    }
+
     async addSelections(elems) {
         let itemsToAdd = []
 
@@ -99,8 +114,8 @@ export default class WizardDSA5 extends Application {
                 case "disadvantage":
                     item.data.step.value = Number($(k).attr("data-step"))
                     item = ItemRulesDSA5.reverseAdoptionCalculation(this.actor, parsed, item)
-                    itemsToAdd.push(item)
-                    AdvantageRulesDSA5.vantageAdded(this.actor, item)
+
+                    if (!this.mergeLevels(itemsToAdd, item)) AdvantageRulesDSA5.vantageAdded(this.actor, item)
                     break
                 case "specialability":
                     item.data.step.value = Number($(k).attr("data-step"))
@@ -108,11 +123,11 @@ export default class WizardDSA5 extends Application {
                     if ($(k).attr("data-free")) item.data.APValue.value = 0
 
                     item = ItemRulesDSA5.reverseAdoptionCalculation(this.actor, parsed, item)
-                    itemsToAdd.push(item)
-                    SpecialabilityRulesDSA5.abilityAdded(this.actor, item)
+
+                    if (!this.mergeLevels(itemsToAdd, item)) SpecialabilityRulesDSA5.abilityAdded(this.actor, item)
                     break
                 case "magictrick":
-                    itemsToAdd.push(item)
+                    this.mergeLevels(itemsToAdd, item)
                     break
             }
         }

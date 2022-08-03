@@ -1,0 +1,93 @@
+<div style="--iniTrackerSize:{{itemWidth}}px">
+    <div class="row-section">
+        <div class="controls right">
+            {{#if user.isGM}}
+            <a class="combat-control" title="{{localize 'COMBAT.RollNPC'}}" data-control="rollNPC" {{#unless turns}}disabled{{/unless}}><i class="fas fa-users-cog"></i></a>
+            <a class="combat-control" title="{{localize 'COMBAT.RoundPrev'}}" data-control="previousRound"><i class="fas fa-step-backward"></i></a>
+            <a class="combat-control" title="{{localize 'COMBAT.TurnPrev'}}" data-control="previousTurn"><i class="fas fa-2x fa-arrow-left"></i></a> {{else if control}}
+            <a class="combat-control" title="{{localize 'COMBAT.TurnPrev'}}" data-control="previousTurn"><i class="fas fa-2x fa-arrow-left"></i></a> {{/if}}
+        </div>
+        <ul class="iniTrackerList">
+            {{#each turns as |turn|}}
+            <li data-name="{{turn.name}}" data-combatant-id="{{turn.id}}" class=" combatant iniItem {{turn.newRound}} {{turn.css}}" style="background-image:url('{{turn.img}}');">
+                <div class="combatant-advanced">
+                    {{#if turn.defenseCount}}
+                    <i class="fas def fa-shield-alt" data-defenseCount="{{this.defenseCount}}" title="{{localize 'COMBATTRACKER.noDefenses'}}"></i>
+                    <i class="fas fa-shield-alt reversed"></i> {{/if}} {{#if turn.ongoing}}
+                    <div class="ongoing" title="{{this.ongoings}}">{{turn.ongoing}}</div>
+                    {{/if}}
+                </div>
+                {{#if turn.owner}}
+                <div class="item-structure" style="--a: {{turn.maxLP}}; --b: {{turn.currentLP}}">
+                    <div class="inner"></div>
+                </div>
+                {{/if}}
+                <div class="hoverbuttons">
+                    <div class="combatant-controls flexrow">
+                        {{#if ../user.isGM}}
+                        <a class="combatant-control {{#if this.hidden}}active{{/if}}" title="{{localize 'COMBAT.ToggleVis'}}" data-control="toggleHidden">
+                            <i class="fas fa-eye-slash"></i></a>
+                    </div>
+                    <div class="combatant-controls flexrow">
+                        <a class="combatant-control {{#if this.defeated}}active{{/if}}" title="{{localize 'COMBAT.ToggleDead'}}" data-control="toggleDefeated">
+                            <i class="fas fa-skull"></i></a>
+                        {{/if}}
+                    </div>
+                </div>
+                <div class="token-initiative">
+                    {{#if turn.hasRolled}}
+                    <a class="aggroButton specImg" title="{{localize 'attacktest'}}"></a> {{else if turn.owner}}
+                    <a class="combatant-control roll" title="{{localize 'COMBAT.InitiativeRoll'}}" data-control="rollInitiative"></a>
+                    {{/if}}
+                </div>
+            </li>{{/each}}
+        </ul>
+        {{#if waitingTurns}}
+        <ul class="waitingTackerList iniTrackerList">
+            <li class="waitTitle" title="{{localize 'COMBATTRACKER.waitInit'}}"><i class="far fa-hourglass" ></i></li>
+            {{#each waitingTurns as |turn|}}
+            <li data-name="{{turn.name}}" data-combatant-id="{{turn.id}}" class="combatant iniItem" style="background-image:url('{{turn.img}}');"></li>
+            {{/each}}
+        </ul>
+        {{/if}}
+        <div class="controls">
+            {{#if user.isGM}}
+            <a class="combat-control" title="{{localize 'COMBAT.Delete'}}" data-control="endCombat" {{#unless combatCount}}disabled{{/unless}}><i class="fas fa-trash"></i></a>
+            <a class="combat-control" title="{{localize 'COMBAT.RoundNext'}}" data-control="nextRound"><i class="fas fa-step-forward"></i></a>
+            <a class="combat-control" title="{{localize 'COMBAT.TurnNext'}}" data-control="nextTurn"><i class="fas fa-2x fa-arrow-right"></i></a> {{else if control}}
+            <a class="combat-control" title="{{localize 'COMBAT.TurnNext'}}" data-control="nextTurn"><i class="fas fa-2x fa-arrow-right"></i></a> {{/if}}
+        </div>
+        <section class="dragHandler">
+            <i class="fas fa-grip-vertical"></i>
+        </section>
+    </div>
+
+    {{#if unRolled}}
+    <div class="row-section">
+        <button class="rollMine">{{localize 'COMBAT.InitiativeRoll'}}</button>
+    </div>
+    {{/if}} {{#unless round}} {{#if user.isGM}}
+    <div class="row-section">
+        <button class="combat-control" data-control="startCombat">{{localize 'COMBAT.Begin'}}</button>
+    </div>
+    {{/if}}{{else}}
+    {{#if (or control user.isGM)}}
+    <div class="row-section">
+        <button class="col two combat-control" title="{{localize 'COMBAT.TurnEnd'}}" data-control="nextTurn">{{localize 'COMBAT.TurnEnd'}}</button>
+        <button class="col two combat-control" title="{{localize 'COMBATTRACKER.waitInit'}}" data-control="waitInit">{{localize 'COMBATTRACKER.waitInit'}}</button>
+    </div>
+    
+    {{/if}}
+    {{/unless}}
+
+
+    <div class="row-section">
+        <ul class="iniDetailsList initTrackerList">
+            {{#each turns as |turn|}}
+            <li class="{{turn.newRound}}" >
+                {{#if turn.hasRolled}} <span data-combatant-id="{{turn.id}}" class="rolledInit">{{turn.initiative}}</span>{{else}} ? {{/if}} <br/> <span class="turnRound">{{turn.round}}</span>
+            </li>
+            {{/each}}
+        </ul>
+    </div>
+</div>

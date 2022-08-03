@@ -1,6 +1,6 @@
 <form class="skill-test">
     <div class="row-section">
-        <div class="col sixty">
+        <div class="col sixty" style="max-width:60%">
 
             {{> systems/dsa5/templates/dialog/enhanced-default-dialog.html}}
 
@@ -11,33 +11,25 @@
             {{#if hasSKModifier}}
             <div class="form-group" title="{{localize 'TT.zkModifer'}}">
                 <label>{{localize "skModifier"}}</label>
-                <input type="number" name="skModifier" value="{{SKModifier}}" />
+                <input type="number" class="quantity-click" name="skModifier" value="{{SKModifier}}" />
             </div>
             {{/if}} {{#if hasZKModifier}}
             <div class="form-group" title="{{localize 'TT.zkModifer'}}">
                 <label>{{localize "zkModifier"}}</label>
-                <input type="number" name="zkModifier" value="{{ZKModifier}}" />
+                <input type="number" class="quantity-click" name="zkModifier" value="{{ZKModifier}}" />
             </div>
             {{/if}} {{#if isRitual}}
 
             <div class="form-group custom-select ritual">
                 <label>{{localize "place"}}</label>
                 <select name="placeModifier">
-                    {{#select 0}}
-                    {{#each locationModifiers as |label val|}}
-                    <option value="{{val}}">{{localize label}}</option>
-                    {{/each}}
-                    {{/select}}
+                    {{selectOptions locationModifiers selected=0 localize=true}}  
                 </select>
             </div>
             <div class="form-group custom-select">
                 <label>{{localize "time"}}</label>
                 <select name="timeModifier">
-                    {{#select 0}}
-                    {{#each timeModifiers as |label val|}}
-                    <option value="{{val}}">{{localize label}}</option>
-                    {{/each}}
-                    {{/select}}
+                    {{selectOptions timeModifiers selected=0 localize=true}}  
                 </select>
             </div>
             <div class="form-group custom-select">
@@ -48,14 +40,11 @@
                 <label>{{localize "RITUALMODIFIER.rightEquipment"}}</label>
                 <input type="checkbox" id="rightEquipment" name="rightEquipment" value="1">
             </div>
-            {{/if}}
-            {{#if isForeign}}
+            {{/if}} {{#if isForeign}}
             <div class="center">
                 <b>{{localize 'TT.foreignSpell'}}</b>
             </div>
-            {{/if}}
-
-            {{#if canChangeCost}}
+            {{/if}} {{#if canChangeCost}}
             <div class="form-group custom-select">
                 <label>{{localize "force"}} (+1)</label>
                 <input type="checkbox" id="forceSpell" class="spellModifier" data-cost="1" name="forceSpell" value="1">
@@ -141,6 +130,9 @@
             </div>
         </div>
         <div class="col fourty">
+            <div class="targets row-section wrap item">
+                {{> systems/dsa5/templates/dialog/parts/targets.html}}
+            </div>
             <div class="specAbsContainer">
                 {{#unless extensions}}
                 <div class="row-section">

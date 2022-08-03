@@ -26,8 +26,7 @@
                         <label>{{localize "MASTER.sightautomation"}}</label>
                     </div>
                     <div class="col two">
-                        <input type="checkbox" class="changeSightAutomation" name="changeSightAutomation" value="1" {{checked
-                            sceneConfig.sceneAutomationEnabled}}>
+                        <input type="checkbox" class="changeSetting" name="sightAutomationEnabled" value="1" {{checked sceneConfig.sceneAutomationEnabled}}>
                     </div>
                     <div class="col ten center">
 
@@ -55,9 +54,25 @@
                         <span class="range-value">{{item.value}}</span>
                     </div>
                 </div>
-                {{/each}}
-                {{{lightButton}}}
+                {{/each}} {{{lightButton}}}
             </div>
+            <div class="groupbox">
+                <h2>{{localize 'MASTER.automation'}}</h2>
+
+                <div class="row-section lineheight" title="{{localize 'DSASETTINGS.enableDPSHint'}}">
+                    <div class="col fourty table-title">
+                        <label>{{localize "DSASETTINGS.enableDPS"}}</label>
+                    </div>
+                    <div class="col two">
+                        <input type="checkbox" class="changeSetting" name="enableDPS" value="1" {{checked sceneConfig.enableDPS}}>
+                    </div>
+                    <div class="col ten center">
+                        <i class="fas fa-info"></i>
+                    </div>
+                </div>
+
+            </div>
+
         </div>
         <div class="tab randomGen" data-tab="randomGen">
             {{#unless randomCreation}}

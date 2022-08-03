@@ -2,28 +2,28 @@
     {{> systems/dsa5/templates/items/item-header.html}} {{> systems/dsa5/templates/items/item-equipment.html}}
 
     <nav class="sheet-tabs tabs" data-tab-container="primary">
-        <a class="item active" data-tab="description">{{localize "Description"}}</a>
-        {{#if enchantments}}<a class="item" data-tab="enchantment">{{localize "enchantment"}}</a>{{/if}}
+        <a class="item active" data-tab="description">{{localize "Description"}}</a> {{#if hasEnchantments}}<a class="item" data-tab="enchantment">{{enchantmentLabel}}</a> {{/if}}
         <a class="item" data-tab="details">{{localize "Details"}}</a>
         <a class="item" data-tab="effects">{{localize "statuseffects"}}</a>
     </nav>
 
     <section class="content">
 
-        {{> systems/dsa5/templates/items/item-description.html}}
-        {{> systems/dsa5/templates/items/item-enchantment.html}}
-        {{> systems/dsa5/templates/items/item-effects.html}}
+        {{> systems/dsa5/templates/items/item-description.html}} {{> systems/dsa5/templates/items/item-enchantment.html}} {{> systems/dsa5/templates/items/item-effects.html}}
         <div class="tab details" data-tab="details">
             <div class="form-group">
                 <label class="label-text">{{localize "ammunitiongroup"}}</label>
                 <select name="data.ammunitiongroup.value" data-dtype="String">
-                    {{#select data.ammunitiongroup.value}}
-                    {{#each ammunitiongroups as |ch char|}}
-                    <option value="{{char}}">{{localize ch}}</option>
-                    {{/each}}
-                    {{/select}}
+                    {{selectOptions ammunitiongroups selected=data.ammunitiongroup.value localize=true}}
                 </select>
             </div>
+            {{#if (eq data.ammunitiongroup.value 'mag')}}
+            <div class="form-group double">
+                <label class="label-text">{{localize "mag"}}</label>
+                <input class="input-text" type="text" name="data.mag.value" value="{{data.mag.value}}" data-dtype="Number" /><span> / </span>
+                <input class="input-text" type="text" name="data.mag.max" value="{{data.mag.max}}" data-dtype="Number" />
+            </div>
+            {{/if}}
             <div class="form-group">
                 <label class="label-text">{{localize "atmod"}}</label>
                 <input class="input-text" type="number" name="data.atmod" value="{{data.atmod}}" data-dtype="Number" />
@@ -46,9 +46,8 @@
                     <ul>{{{domains}}}</ul>
                 </div>
                 {{/if}}
-                <input class="input-text {{#if domains}}domainToggle{{/if}}"
-                    placeholder="{{localize 'WEAPON.clerical'}}, {{localize 'WEAPON.magical'}}" type="text"
-                    name="data.effect.attributes" value="{{data.effect.attributes}}" data-dtype="String" />
+                <input class="input-text {{#if domains}}domainToggle{{/if}}" placeholder="{{localize 'WEAPON.clerical'}}, {{localize 'WEAPON.magical'}}, {{localize 'WEAPON.silverPlated'}}" type="text" name="data.effect.attributes" value="{{data.effect.attributes}}" data-dtype="String"
+                />
             </div>
         </div>
     </section>

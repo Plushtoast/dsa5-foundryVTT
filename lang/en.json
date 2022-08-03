@@ -71,6 +71,8 @@
         "RW": "RA",
         "FtP": "FtP",
         "damage": "DP",
+        "AsPCost": "AE",
+        "KaPCost": "KP",
         "defenseMalus": "DM",
         "*": "*",
         "roll": " "
@@ -95,13 +97,23 @@
         "selectReaction": "Chose your reaction.",
         "selectAction": "Chose your action",
         "cheat": "GM arbitrariness",
-        "noTarget": "No Target"
+        "noTarget": "No Target",
+        "assassinate": "Assassinate",
+        "stun": "Stun",
+        "assassinateDescr": "Approach victim undetected (Perception vs. Stealth)",
+        "multipleTarget": "Multiple Targets",
+        "addTarget": "Add Target",
+        "onlyInCombatTargets": "Targets are only shown in combat.",
+        "setTargetToUserHint": "Transfer currently targeted tokens to user.",
+        "setTargetToUser": "Set player target",
+        "noLoggedinUser": "No user logged in/available.",
+        "selectGroupCheckSkill": "Chose another talent for the cumulative group check."
     },
     "Equipment": {
         "misc": "General",
         "clothes": "Clothing",
         "tools": "Tools",
-        "light": "Liqhtsource",
+        "light": "Lightsource",
         "healing": "Remedies",
         "bags": "Bags",
         "wealth": "Valuables",
@@ -132,7 +144,24 @@
         "identify": "Identify diff.",
         "usages": "Applications",
         "recipes": "Recipes",
-        "ingredients": "Ingredients (typical)"
+        "ingredients": "Ingredients (typical)",
+        "availability": "Availability",
+        "highNorth": "High North",
+        "grasLands": "Grasslands",
+        "swamps": "Swamps",
+        "mountains": "Mountains",
+        "woods": "Woods",
+        "jungle": "Jungle",
+        "desert": "Deserts",
+        "maraskan": "Maraskan",
+        "avLevels": {
+            "5": "common",
+            "4": "occasional",
+            "3": "rarely",
+            "2": "rare",
+            "1": "very rare",
+            "0": "never"
+        }
     },
     "MERCHANT": {
         "buy": "Buy",
@@ -154,7 +183,17 @@
         "select": "Choice",
         "locked": "Locked",
         "selectRandomGoods": "Select categories and an amount of additional random commodities. The addition might take a moment, if the index of the library has not been created yet.",
-        "service": "{buyer} bought {amount} {item} from {merchant}."
+        "dropGround": "Drop {name} to the ground?",
+        "onlyGM": "Only GM",
+        "buyNotification": "<b>{source}</b> buys {amount}x {item} from <b>{target}</b> for {price} Silverthalers.",
+        "sellNotification": "<b>{source}</b> sells {amount}x {item} to <b>{target}</b> for {price} Silverthalers.",
+        "buyLootNotification": "<b>{source}</b> takes {amount}x {item} from <b>{target}</b>.",
+        "sellLootNotification": "<b>{source}</b> drops {amount}x {item} to <b>{target}</b>.",
+        "emptyDestroy": "Temporary",
+        "emptyDestroyHint": "Deletes the actor if its inventory is emptied during trading.",
+        "untradable": "Item not tradable",
+        "otherTradeFriend": "Drag an actor (that you own) on the sheet to change the trading partner.",
+        "priceMod": "Base price / Modified price (Double click for custom price)"
     },
     "GARADAN": {
         "1": "Pawn",
@@ -180,6 +219,8 @@
     "aim": "Aim",
     "arrow": "Arrow",
     "armor": "Armor",
+    "ok": "Ok",
+    "modules": "Modules",
     "advancementCost": "Advance for {cost} adventure points",
     "animal": "Animal",
     "attributeChange": "Attribute change",
@@ -189,7 +230,8 @@
     "Advances": "Advances",
     "attributes": "Attributes",
     "astralenergy": "Arcane energy",
-    "fshopLink": "https://www.ulissesf-shop.com",
+    "confirm": "Confirm",
+    "fshopLink": "https://www.ulissesf-shop.com/virtual-tabletops/",
     "ammunition": "Ammunition",
     "aggregatedTests": "Cumulative checks",
     "aggregatedTest": "Cumulative check",
@@ -197,6 +239,7 @@
     "ammunitiongroup": "Ammunition type",
     "AstoundingSuccess": "Astounding success",
     "AstoundingFailure": "Astounding failure",
+    "each": "each",
     "advantages": "Advantages",
     "advantage": "Advantage",
     "attackWeaponless": "Unarmed attack",
@@ -206,9 +249,12 @@
     "AsPCost": "AE cost",
     "antidot": "Antidote",
     "AsPCostDetail": "AE detail",
+    "KaPCostDetail": "KE detail",
     "actionCount": "Actions",
     "atmod": "Attack modifier",
     "baseValue": "Base value",
+    "spellArmor": "Spell armor",
+    "liturgyArmor": "Holy Protection",
     "badEnvironment": "Bad surroundings",
     "BE": "Encumbrance",
     "behaviour": "Combat Behaviour",
@@ -227,6 +273,7 @@
     "combatspecialtalents": "Combat Special Abilities",
     "CriticalSuccess": "Critical success",
     "CriticalFailure": "Botch",
+    "critBotch": "Crit./Botch",
     "circle": "Circle",
     "Characteristic": "Attribute",
     "ceremony": "Ceremony",
@@ -236,6 +283,7 @@
     "consumable": "Consumable",
     "Combat": "Combat",
     "combatskill": "Combat Technique",
+    "confirmationRoll": "Confirmation roll",
     "culture": "Culture",
     "count": "Amount",
     "cost": "Cost",
@@ -253,10 +301,13 @@
     "chatEdit": "Manual correction",
     "Details": "Details",
     "dart": "Dart",
+    "mag": "Magazine",
+    "infinite": "Infinite",
     "damage": "Damage",
     "level": "level",
     "levels": "levels",
     "plant": "Plant",
+    "patron": "Patron",
     "defenseCount": "# Defenses (each {malus})",
     "decreaseCastingTime": "Decrease Spell/Chant duration",
     "damageThreshold": "Damage threshold",
@@ -276,6 +327,7 @@
     "defense": "Defense",
     "defenseToggle": "Activate/Deactivate defense",
     "Delete Confirmation": "Confirm removal",
+    "demonmark": "Demon Mark",
     "dodge": "Dodge",
     "Distinguishing_mark": "Distinguishing mark",
     "damagetest": "Damage test",
@@ -470,6 +522,7 @@
     "tradition": "Tradition",
     "skillglobal": "Skill (global)",
     "searchTalents": "Search skills",
+    "gearSearch": "Search equipment",
     "shieldSize": "Shield size",
     "specialisation": "Specialization",
     "talisman": "Talisman",
@@ -504,10 +557,12 @@
     "worn": "Worn",
     "wearable": "Wearable",
     "wrongHand": "Wrong hand",
+    "volume": "Volume",
     "writing": "Writing",
     "yes": "Yes",
     "YouAlreadyHaveit": "Already owned",
     "zkModifier": "Toughness (Target)",
+    "vulnerability": "Vulnerability",
     "zoo": "Zoo",
     "Library": {
         "search": "Search",
@@ -517,10 +572,20 @@
         "advanced": "Advanced search",
         "selectAdvanced": "Chose a category",
         "noFilter": "No filter",
-        "indexWorldItems": "Index world Items (deactivate to increase performance)"
+        "indexWorldItems": "Index world Items (deactivate to increase performance, requires reloading of the world)",
+        "fullTextSearch": "Full text search (deactivate to increase performance, requires reloading of the world)"
     },
     "Aggregated": {
         "noMoreAllowed": "No more rolls allowed."
+    },
+    "PATRON": {
+        "priority": "Priority",
+        "primary": "Primary",
+        "secondary": "Secondary",
+        "0": "Animal Spirits",
+        "1": "Elemental Beings",
+        "2": "Ancestral Spirits",
+        "3": "Demonice Beings"
     },
     "CONJURATION": {
         "demon": "Demon",
@@ -544,7 +609,8 @@
         "requestDescr": "Confirm the summoning request to create the actor. Afterwards you can drag & drop the actor onto the map or delete it via right click. (Don't forget to clean up the summoning actor directory from time to time.)",
         "dragActor": "No summoner active (drag and drop)",
         "dragConjuration": "No summoning target active (drag and drop, at least observer permissions)",
-        "conjurs": "summons"
+        "conjurs": "summons",
+        "requestSend": "The request has been send to the game master."
     },
     "PLAYER": {
         "title": "Player Menu",
@@ -554,6 +620,7 @@
         "finalize": "Finalize"
     },
     "MASTER": {
+        "automation": "Automation",
         "sceneConfig": "Scene config",
         "awardXP": "Award Adventure Points",
         "awardXPText": "Award {heros} with Adventure Points.",
@@ -596,7 +663,8 @@
         "defenseMalus": "Defense malus",
         "global": "Global modifier",
         "armor": "Armor modifier",
-        "range": "Range multiplier"
+        "range": "Range multiplier",
+        "creatureBonus": "Bonus damage (creature)"
     },
     "Features": {
         "Object": "Object",
@@ -702,7 +770,7 @@
         "Dancing": "<p><b>Applications</b>: Court, Religious, Exotic, Folk</p><p><b>Quality</b>: the dancing is so good that the audience applauds loudly.</p><p><b>Failed Check</b>: the hero confuses the dance steps.</p><p><b>Critical Success</b>: the hero’s perfect steps entrance the audience. For QL, competitive checks, and cumulative checks, SP = 2xSR.</p><p><b>Botch</b>: step on your partner’s toes and cause injury, or fall and embarrass yourself.</p>",
         "Pickpocket": "<p><b>Applications</b>: Create Distractions, Steal from Person, Steal Item, Slip Item</p><p><b>Tools</b>: maybe a knife or a dagger</p><p><b>Quality</b>: the theft isn’t noticed for a while.</p><p><b>Failed Check</b>: the attempt isn’t successful, or the victim notices the attempt immediately.</p><p><b>Critical Success</b>: the victim doesn’t notice the thief, who manages to obtain especially valuable items or steal from more than one victim. For QL, competitive checks, and cumulative checks, SP = 2xSR.</p><p><b>Botch</b>: people in the area, possibly even the victim, notice the attempt, but the thief remains ignorant of this detection. The attempt fails, and in addition, the thief is surprised.</p>",
         "Animal Lore": "<p><b>Use</b>: Mimicry</p><p><b>Applications</b>: Domesticated Animals, Monsters, Wild Animals</p><p><b>Quality</b>: the hero gains more information about an animal</p><p><b>Failed Check</b>: the hero has no idea.</p><p><b>Critical Success</b>: the hero has extensive knowledge of that type of animal.</p><p><b>Botch</b>: you feel confident, but everything you think you know about the animal is wrong (you think an animal isn’t dangerous even though it is highly poisonous, or you believe it is herbivorous when it is actually carnivorous).</p>",
-        "Fast-Talk": "<p><b>Use</b>: Leader (see page 217)</p><p><b>Applications</b>: Hard Sell, Begging, Manipulation, Provocation, Subterfuge, Sweet-Talk</p><p><b>Quality</b>: the target character does more for the hero.</p><p><b>Failed Check</b>: the hero can’t persuade the target character.</p><p><b>Critical Success</b>: the target character does much more than expected.</p><p><b>Botch</b>: the target character grows angry with the hero and can’t be convinced of anything.</p>",
+        "Fast-Talk": "<p><b>Use</b>: Leader</p><p><b>Applications</b>: Hard Sell, Begging, Manipulation, Provocation, Subterfuge, Sweet-Talk</p><p><b>Quality</b>: the target character does more for the hero.</p><p><b>Failed Check</b>: the hero can’t persuade the target character.</p><p><b>Critical Success</b>: the target character does much more than expected.</p><p><b>Botch</b>: the target character grows angry with the hero and can’t be convinced of anything.</p>",
         "Stealth": "<p><b>Applications</b>: Hide, Sneak</p><p><b>Quality</b>: the hero is harder to detect or finds a hiding place more quickly.</p><p><b>Failed Check</b>: the hero is poorly hidden, or makes noise while sneaking.</p><p><b>Critical Success</b>: the hero finds the perfect hiding place or moves as silently as a cat. For QL, competitive checks, and cumulative checks, SP = 2xSR.</p><p><b>Botch</b>: something (a plate, a piece of furniture) falls and breaks.</p>",
         "Disguise": "<p><b>Applications</b>: Costuming, Imitate Person, Stage Acting</p><p><b>Tools</b>: a disguise</p><p><b>Quality</b>: it’s hard to see through the disguise.</p><p><b>Failed Check</b>: the disguise is a poor one that won’t pass close examination.</p><p><b>Critical Success</b>: the disguise is flawless.</p><p><b>Botch</b>: people see through the disguise at once. The hero will probably get in trouble.</p>",
         "Survival": "<p><b>New Application</b>: Predict Weather</p><p><b>Applications</b>: Build Campsite, Find Campsite, Make Fire</p><p><b>Tools</b>: survival gear, maybe a tent</p><p><b>Quality</b>: the hero doesn’t need as much time to find or build a campsite.</p><p><b>Failed Check</b>: the hero chooses a poor campsite. Regeneration Phases suffer a penalty of -1.</p><p><b>Critical Success</b>: the hero finds a great resting place! Increase regeneration by 1.</p><p><b>Botch</b>: the campsite floods or swarms with vermin.</p>",
@@ -772,7 +840,9 @@
         "weightOnActor": "Being carried by the actor",
         "tempRegeneration": "Temporary, consumed on the next regeneration roll",
         "permRegeneration": "Permanent, bonus for every regeneration roll",
-        "panMapNote": "Focus map note"
+        "panMapNote": "Focus map note",
+        "onUseEffect": "Use item/use ability",
+        "swapMag": "Swap magazine"
     },
     "ITEMSHEET": {
         "offHandMod": "Bonus/handicap offhand (e.g. parry weapon)"
@@ -785,7 +855,8 @@
         "short": "Close [+2 to RC, +1 DP]",
         "medium": "Medium [+/–0 to RC]",
         "long": "Far [–2 to RC, –1 DP]",
-        "rangesense": "Far [–1 to RC, –1 DP]"
+        "rangesense": "Far [–1 to RC, –1 DP]",
+        "extreme": "Far [–4 to RC, –2 DP]"
     },
     "VisionDisruption": {
         "step0": "Clear sight",
@@ -809,10 +880,13 @@
         "improvised": "Improvised weapon",
         "magical": "Magical",
         "clerical": "Blessed",
-        "attributeWarning": "This item is <b>{domain}</b> (and possibly indestructible.)."
+        "silverPlated": "silver plated",
+        "attributeWarning": "This item is <b>{domain}</b> (and possibly indestructible.).",
+        "vulnerableTo": "Vulnerable ({name})",
+        "resistantTo": "Resistant ({name})"
     },
     "SPELL": {
-        "loading": "Spell state: {status}",
+        "loading": "State of concentration: {status}",
         "loaded": "Ready",
         "reload": "Concentrate",
         "isReloading": "{actor} is concentrating on {item} ({status})."
@@ -842,11 +916,14 @@
         "zkModifer": "The target's soulpower/toughness has to be included as handicap (mind the sign)",
         "applyEffectCaster": "Apply effect to caster",
         "applyEffectTargets": "Apply effect to targets",
-        "foreignSpell": "Foreign spells can not be modified"
+        "foreignSpell": "Unfamiliar tradition spells can not be modified",
+        "assignCharacter": "Characters can be assigned using a right click on the player list in the bottom left corner.",
+        "dragLink": "Drag & drop actor e.g. for shapeshifting and summoning",
+        "onlyGM": "Only visible to the gamemaster."
     },
     "HELP": {
         "showHelp": "Show help",
-        "default": "Moreover you can find detailed FAQs in the <a href=\"https://github.com/Plushtoast/dsa5-foundryVTT/wiki\" target=\"_blank\">Wiki</a>.",
+        "default": "You can find additional help and FAQs here: <a href=\"https://youtube.com/c/VTTom\" target=\"_blank\"><button>VTTom's YouTube Channel</button></a><a href=\"https://github.com/Plushtoast/dsa5-foundryVTT/wiki\" target=\"_blank\"><button>Wiki & FAQ</button></a><a href=\"https://discord.gg/foundryvtt\" target=\"_blank\"><button>Foundry Discord (ulisses-dsa)</button></a><a href=\"https://discord.gg/foundryvtt\" target=\"_blank\"><a href=\"https://discord.com/invite/SnqCgcvPzR\" target=\"_blank\"><button>Ulisses Discord</button></a",
         "command": "Command",
         "example": "Example",
         "pay": "Pay",
@@ -893,9 +970,11 @@
     "ITEM.TypeSpell": "Spell",
     "ITEM.TypeTrait": "Trait (Animal)",
     "ITEM.TypeEffectwrapper": "Effect container",
+    "ITEM.TypeDemonmark": "Demon Mark",
     "ITEM.TypeConsumable": "Consumable",
     "ITEM.TypeSpellextension": "Spell/Liturgyextension",
     "ITEM.TypeApplication": "Application",
+    "ITEM.TypePatron": "Patron",
     "ACTOR.TypeCharacter": "Character",
     "ACTOR.TypeNpc": "Non Player Character",
     "ACTOR.TypeCreature": "Creature",
@@ -934,7 +1013,8 @@
     },
     "ROLL": {
         "Targeting": "versus",
-        "failed": "failed"
+        "failed": "failed",
+        "routine": "Routine"
     },
     "OPPOSED": {
         "winsFP": "<b>{winner}</b> wins versus <b>{loser}</b> with {SL} quality level(s)",
@@ -963,11 +1043,15 @@
         "applyTarget": "Effect (Target)",
         "applySelf": "Effect (Self)",
         "appliedEffect": "Effect <b>{source}</b> applied to <b>{target}</b>.",
+        "removedEffect": "Effect <b>{source}</b> removed from <b>{target}</b>.",
         "custom": "Special effect",
         "creature": "Actorlink (e.g. das5-core.coreenbestiary.Gotongi)",
+        "resistRoll": "Resist check",
         "placeholder": {
             "macros": "Macros have access to the following variables:\nactor - The targeted actor\ntestData - All data for the current check\nsource - The source of the macro",
-            "armorPostprocess": "Armor transformations have access to the following variables:\nactor - The targeted actor\narmor - The armor of the target\nsource - The source of the macro"
+            "armorPostprocess": "Armor transformations have access to the following variables:\nactor - The targeted actor\narmor - The armor of the target\nsource - The source of the macro",
+            "onRemove": "Macro is executed on removal of the effect in an actor.\nVariables:\nactor - The actor",
+            "onUseEffect": "Macro for on use effect of the item.\nVariables:\nactor - The actor\nitem - The item"
         },
         "advancedFunctions": {
             "none": "Nichts",
@@ -975,7 +1059,9 @@
             "macro": "Macro",
             "creature": "Conjuring/Shapeshift",
             "armorPostprocess": "Armor transformation (Macro)",
-            "damagePostprocess": "Damage transformation (Macro)"
+            "damagePostprocess": "Damage transformation (Macro)",
+            "onRemove": "Macro (End of effect)",
+            "onUseEffect": "Macro (On Use)"
         }
     },
     "LocalizedIDs": {
@@ -990,10 +1076,18 @@
         "frenzy": "Bloodlust",
         "senseOfRange": "Sense of Range",
         "ambidextrous": "Ambidextrous",
+        "miracle": "Miracle",
+        "miracleMight": "Miracle Power",
         "weaponAptitude": "Weapon Aptitude",
+        "blindFighting": "Blind Fighting",
         "wildMagic": "Wild Magic",
         "incompetent": "Incompetent",
         "exceptionalSkill": "Exceptional Skill",
+        "circumvent": "Circumvent",
+        "keepAtDistance": "Keep at Distance",
+        "drivingArcher": "Driving Archer",
+        "mightyAstralBody": "tbd",
+        "extremeShot": "tbd",
         "exceptionalCombatTechnique": "Exceptional Combat Technique",
         "regenerationLeP": "Improved Regeneration (Life Points)",
         "regenerationAsP": "Improved Regeneration (Arcane Energy)",
@@ -1006,8 +1100,11 @@
         "advancedRegenerationKaP": "Karmic Regeneration",
         "energyControl": "Energy Control",
         "smallEnergyControl": "Small Energy Control",
+        "karmaControl": "Control of the Karmic Body",
+        "mightyKarmaControl": "Powerful Control of the Karmic Body",
         "masterfulDodge": "Masterful Dodge",
         "masterfulParry": "Master Parry",
+        "mightyMasterfulParry": "tbd",
         "improvisedWeaponMaster": "Master of Improvised Weapons",
         "misfortune": "Misfortune",
         "quickdraw": "Quickdraw",
@@ -1018,8 +1115,10 @@
         "magicalRestriction": "Magical Restriction",
         "magicalAttunement": "Magical Attunement",
         "traditionWitch": "Tradition (Witch)",
-        "traditionKor": "Tradition (Kor)",
+        "braniborian": "Braniborians",
+        "traditionKor": "Tradition (Church of Kor)",
         "traditionFjarning": "Tradition (Fjarning)",
+        "traditionPhex": "Tradition (Church of Phex)",
         "inuredToEncumbrance": "Inured to Encumbrance",
         "quickload": "Quickload",
         "automaticSuccess": "Automatic Succes",
@@ -1028,6 +1127,7 @@
         "companion": "Companion",
         "localKnowledge": "Area Knowledge",
         "naturalArmor": "Natural Armor",
+        "sappeurStyle": "tbd",
         "wrestle": "Brawling",
         "all": "all",
         "twoWeaponCombat": "Two-Weapon Combat",
@@ -1041,7 +1141,6 @@
         "painImmunity": "Immune to pain",
         "selfControl": "Self-Control",
         "propertyKnowledge": "Property Knowledge",
-        "propertyFocus": "Property Focus",
         "obligations": "Obligations",
         "afraidOf": "Afraid of",
         "principles": "Principles",
@@ -1049,6 +1148,7 @@
         "gambling": "Gambling",
         "bodyControl": "Body Control",
         "darksight": "Darksight",
+        "witchSense": "Witch Sense",
         "nightBlind": "Night-Blind",
         "willpower": "Willpower",
         "traditionBoron": "Tradition (Church of Boron)",
@@ -1059,9 +1159,11 @@
         "invocatioMinima": "Invocatio Minima",
         "invocatioMinor": "Invocatio Minor",
         "invocatioMaior": "Invocatio Maior",
+        "vinsaltStyle": "tbd",
         "manifesto": "Manifesto",
         "elementalServant": "Elemental Servant",
-        "callDjinn": "Call Djinn"
+        "callDjinn": "Call Djinn",
+        "enemySense": "Enemy Sense"
     },
     "LocalizedCTs": {
         "Blowpipes": "Blowpipes",
@@ -1097,6 +1199,7 @@
         "takeSkills": "Keep skills"
     },
     "DSAError": {
+        "noTokenSelected": "No token selected",
         "MacroItemMissing": "Your character has no item named {item}. Make sure to select a token or assign a character to yourself.",
         "APUpdateError": "Unable to adapt AP value. Please configure manually.",
         "RangeCannotBeParsed": "Range can not be assigned automatically. Format not recognized",
@@ -1106,6 +1209,7 @@
         "NotEnoughXP": "Not enough adventure points",
         "NotEnoughAsP": "Not enough Astral Energy",
         "NotEnoughKaP": "Not enough Karma Points",
+        "NotEnoughFate": "Not enough fate points",
         "NotEnoughCharges": "Not enough charges",
         "AdvanceMaximumReached": "Max advancements already reached",
         "notFound": "{category} {name} not found",
@@ -1127,13 +1231,20 @@
         "onlyGMcanShapeshift": "You don't have the right permissions to shapeshift.",
         "staleData": "Stale opposing test data found. Please make sure to finish opposing tests. Stale data deleted.",
         "sceneNotInitialized": "Scene not found. Already initialized?",
-        "tooManyEnchants": "A item can only contain 7 enchantments",
+        "tooManyEnchants": "An item can only contain 7 enchantments",
         "onlyCompendiumSpells": "Only spells from compendiums can be used",
         "enchantmentNotFound": "Referenced spell not found",
         "nestedEffectNotSupported": "Foundry currently only supports adding of effects through the item directory.",
         "noBreakingResistance": "No Breaking Point Rating found for {item}.",
         "noBreakingStructure": "{name} has no accepted max structure value.",
-        "noConjurationActive": "No actor to summon active (drag and drop)"
+        "noConjurationActive": "No actor to summon active (drag and drop)",
+        "notInRangeToLoot": "Too far away for an interaction.",
+        "onlyGMallowed": "This function is only available to the game master.",
+        "macroNotFound": "The macro {name} could not be found...sorry.",
+        "notOwner": "You are not allowed to modify this actor.",
+        "shouldTimesUp": "The module Times-Up is required for automatically expiring effects.",
+        "requiresModule": "This function requires the module {module}.",
+        "wrongLanguage": "Your language setting does not match the predefined setting ({lang}). Do you want to change this?"
     },
     "CEREMONYMODIFIER": {
         "holysite": "Sanctum of the god (+2)",
@@ -1182,9 +1293,9 @@
         "SHOOTERSTATIONARY": "stationary (+-0)"
     },
     "mountedRangeOptions": {
-        "STATIONARY": "standing still (+-0)",
-        "SCHRITT": "at walk (-4)",
-        "GALOPP": "at gallop (-8)"
+        "STATIONARY": "standing still",
+        "SCHRITT": "at walk",
+        "GALOPP": "at gallop"
     },
     "regnerationCampLocations": {
         "normal": "Normal",
@@ -1235,10 +1346,11 @@
         "home": "Home",
         "search": "Search",
         "foundryUsage": "Foundry & TDE",
-        "foundryUsagedesc": "<p>You can get more informations on the usage of Foundry with TDE in the <a href=\"https://github.com/Plushtoast/dsa5-foundryVTT/wiki\" target=\"_blank\">Wiki</a>.</p><p>You can also get quick help in the Ulisses or Foundry Discord.</p><p>Using the journal browser: <ul class=\"dsalist\"><li>Right click on images to show them to your players.</li><li>Some references and text passages can point to a book location and differ from the game's location, as the modules are copies of printed books.<li>Some of the actors in the adventures might not have a token or statistics, because they only fullfill a tiny narrative role. If you need to make a check, you can use the chat command <b>/ch</b> to improvise a roll.</li><li>Important creatures and characters usually have additional information on their character sheet.</li></ul></p>",
+        "foundryUsagedesc": "<p>Using the journal browser: <ul class=\"dsalist\"><li>Right click on images to show them to your players.</li><li>Some references and text passages can point to a book location and differ from the game's location, as the modules are copies of printed books.<li>Some of the actors in the adventures might not have a token or statistics, because they only fullfill a tiny narrative role. If you need to make a check, you can use the chat command <b>/ch</b> to improvise a roll.</li><li>Important creatures and characters usually have additional information on their character sheet.</li></ul></p>",
         "fulltextsearch": "Full text search",
         "sceneReset": "Update scene",
-        "sceneResetDescription": "The scene <b>{name}</b> has already been imported. Do you like to perform a reset for this scene?<br/> All changes and tokens will be removed."
+        "sceneResetDescription": "The scene <b>{name}</b> has already been imported. Do you like to perform a reset for this scene?<br/> All changes and tokens will be removed.",
+        "playerVisibility": "Visibility for players"
     },
     "Migrakel": {
         "Migration": "Actor Migration",
@@ -1302,12 +1414,39 @@
         "armorAndWeaponDamageHint": "Activate the optional rule for weapon breaking and armor sturdiness.",
         "scrollingFontsize": "Combat Text Font Size",
         "scrollingFontsizeHint": "Font size for some of the scrolling token texts (e.g. +- LP)",
-        "enableForeignSpellModifer": "Foreign spell modifier",
-        "enableForeignSpellModiferHint": "Enable -2 modifier for foreign spell checks."
+        "enableForeignSpellModifer": "Unfamiliar tradition modifier",
+        "enableForeignSpellModiferHint": "Enable -2 modifier for unfamiliar tradition checks.",
+        "enableDPS": "Activate DPS ",
+        "enableDPSHint": "Activate the \"Dere Positioning System\".\nYou can only interact with merchants and doors in immediate distance.\nRange modifiers for ranged attacks are applied automatically.",
+        "tokenhotbarSize": "Token hotbar size",
+        "tokenhotbarSizeHint": "Size of the buttons in the token hotbar.",
+        "tokenhotbarLayout": "Tokenhotbar Layout",
+        "tokenhotbarLayoutHint": "Layout and direction of the token hotbar",
+        "tokenhotbarLayout0": "Horizontal, upwards",
+        "tokenhotbarLayout1": "Horizontal, downwards",
+        "tokenhotbarLayout2": "Vertical, left",
+        "tokenhotbarLayout3": "Vertical, right",
+        "resetTokenbar": "Reset token hotbar",
+        "resetTokenbarHint": "Reset the position of the token hotbar",
+        "enableItemDropToCanvas": "Drop items on the map",
+        "enableItemDropToCanvasHint": "Put items as loot sheet on the map via drag & drop.",
+        "merchantNotification": "Trade notification",
+        "merchantNotificationHint": "Show transfers of items between actors (merchant/loot) in the chat.",
+        "enableCombatFlow": "TDE combat tracker",
+        "enableCombatFlowHint": "Activate the TDE combat tracker",
+        "iniTrackerSize": "TDE combat tracker size",
+        "iniTrackerSizeHint": "Size of the buttons in the TDE combat tracker.",
+        "enableCombatPan": "Pan to current turn",
+        "enableCombatPanHint": "Pan the view to the current turn and select the token if owned.",
+        "forceLanguage": "Force language",
+        "forceLanguageHint": "Players receive a message, if their language setting is wrong. Different language settings can lead to issues.",
+        "encumbranceForRange": "Encumbrance for range combat (house rule)",
+        "encumbranceForRangeHint": "Encumbrance normally doesn't affect range combat. Lay more weight on your players by increasing the difficulty."
     },
     "WEAR": {
         "check": "Breaking Point Rating Check ({category})",
         "checkShort": "Breaking Point Rating Check",
+        "value": "Breaking Point Rating",
         "armor": {
             "0": "In good condition",
             "1": "Armor slightly damaged; subtract 1 from PRO",
@@ -1330,6 +1469,9 @@
             "4": "Weapon destroyed; unrepairable by mundane means"
         }
     },
+    "CONTROLS": {
+        "targetForUser": "Target for player"
+    },
     "ARMORSUBCATEGORIES": {
         "0": "Clothing, Normal",
         "1": "Clothing, Heavy",
@@ -1343,7 +1485,8 @@
     },
     "COMBATTRACKER": {
         "noDefenses": "Defense count",
-        "ongoing": "Ongoing actions"
+        "ongoing": "Ongoing actions",
+        "waitInit": "Wait"
     },
     "SCHIPSKILLS": {
         "meleeweaponattack": "Improve Attack",
@@ -1364,77 +1507,12 @@
         "selectDieToReroll": "Chose the dice to be rolled again",
         "Improve": "{character} improves the roll by 2"
     },
-    "SPELLMISCAST": {
-        "2": "The spellcaster’s mind switches bodies with the nearest creature larger than a rat for 1D6 day(s).",
-        "3": "The spellcaster is Condition Annoyed by Minor Spirits for 1D6 day(s)",
-        "4": "The spell affects a different, random target instead, as determined by the GM. ",
-        "5": "The spellcaster turns into a small animal of the GM’s choosing for 1D6 hours. ",
-        "6": "All remaining AE leaves the spellcaster’s body and manifests as a rain of colorful sparks, illusionary butterflies, and small rainbows. The spellcaster regenerates this AE in the usual way. ",
-        "7": "The spellcaster loses the ability to use AE for 1D6 day(s).",
-        "8": "The spellcaster suffers a throbbing headache and a level of the condition Stupor for 1D6 day(s).",
-        "9": "All remaining AE leaves the spellcaster’s body and jumps to the next closes above the normal maximum. The spellcaster regenerates this AE in the usual way.",
-        "10": "The spellcaster receives the condition mute for 1D6 day(s).",
-        "11": "All of the spellcaster’s hair takes on a bright color, but grows back in its original color.",
-        "12": "An ethereal voice speaks from out of thin air, saying “Never do that again!”"
-    },
-    "LITURGYMISCAST": {
-        "2": "All flammable materials are set ablaze in an area of 2D6 square yards (does not affect creatures or the Blessed One’s clothes).",
-        "3": "The liturgical chant has the opposite effect (Banish Darkness creates darkness, a Blessing of Healing causes injury instead, and so on).",
-        "4": "The liturgical chant targets someone or something else randomly, as determined by the GM.",
-        "5": "The Blessed One suffers strange visions and nightmares for 1D6 day(s).",
-        "6": "A gaze into another Sphere is so intimidating that the Blessed One suffers 3 levels of the condition Fear for the day.",
-        "7": "The Blessed One loses the ability to use KP for 1D6 day(s).",
-        "8": "The Blessed One receives 4 levels of Rapture",
-        "9": "The Blessed One suffers 3 levels of Confusion for the day and talks nonsense that cannot be remembered later",
-        "10": "The Blessed One receives the condition mute for 1D6 day(s).",
-        "11": "The Blessed One suffers a stigma for the day.",
-        "12": "The Blessed One’s feet become rooted to the ground, restricting movement and causing the Blessed One to suffer the state bound for 1D6 minutes."
-    },
-    "MELEEBOTCH": {
-        "2": "The weapon is irreparably destroyed. If the weapon is unbreakable, it falls to the ground.",
-        "3": "The weapon cannot be used again until repaired. If the weapon is unbreakable, it falls to the ground.",
-        "4": "The weapon is damaged. All checks against attack and parry suffer a penalty of 2 until the weapon is repaired. If the weapon is unbreakable, it falls to the ground.",
-        "5": "The weapon falls to the ground.",
-        "6": "The hero’s weapon is stuck in a tree, a wooden wall, the ground, or something similar. Freeing it takes 1 action and a check using Feat of Strength (Dragging & Pulling) with a penalty of 1.",
-        "7": "Make a check using Body Control (Balance) with a penalty of 2, or fall to the ground and receive the state prone.",
-        "8": "Stumble and suffer a penalty of 2 on your next action.",
-        "9": "Suffer one level of the condition Pain for 3 combat rounds. ",
-        "10": "Bump your head in the chaos of combat and suffer a level of the condition Confusion for one hour.",
-        "11": "Suffer your weapon’s damage, including the damage bonus (ignoring PRO). If unarmed, take 1D6 DP (ignoring PRO).",
-        "12": "Suffer double your weapon’s damage, including the damage bonus (ignoring PRO). If unarmed, suffer 2D6 DP (ignoring PRO)."
-    },
-    "RANGEBOTCH": {
-        "2": "The weapon is irreparably destroyed. If the weapon is unbreakable, it falls to the ground.",
-        "3": "You cannot use the weapon until it is repaired. If the weapon is unbreakable, it falls to the ground",
-        "4": "The weapon is damaged. All checks against ranged combat suffer a penalty of 4 until the weapon is repaired. If the weapon is unbreakable, it falls to the ground",
-        "5": "The weapon falls to the ground.",
-        "6": "Hits a friend or an innocent bystander, determined randomly. If no such target is near, you hurt Yourself. The weapon inflicts normal damage, including the usual damage bonus.",
-        "7": "The shot misses in a spectacular way and hits an object (shoots down a shop sign, breaks a window, or some such thing).",
-        "8": "The hero experiences a sudden back spasm and suffers a level of the condition Pain for the next 3 combat rounds.",
-        "9": "Take two complete combat rounds to make your weapon usable again.",
-        "10": "You are concentrating too hard on aiming or are otherwise occupied with the weapon and cannot make defenses until your next action.",
-        "11": "You injure yourself and suffer damage. Take the weapon’s normal damage, including the damage bonus.",
-        "12": "You injure yourself badly and suffer damage. Roll the weapon’s normal damage, including the damage bonus, and double the result."
-    },
-    "DEFENSEBOTCH": {
-        "2": "The weapon is irreparably destroyed. If the weapon is unbreakable, it falls to the ground.",
-        "3": "You cannot use the weapon until it is repaired. If the weapon is unbreakable, it falls to the ground.",
-        "4": "The weapon is damaged. All checks against Attack or Parry suffer a penalty of 2 until the weapon is repaired. If the weapon is unbreakable, it falls to the ground.",
-        "5": "The weapon falls to the ground.",
-        "6": "The hero’s weapon is stuck in a tree, a wooden wall, the ground, or something similar. Freeing it takes 1 action and a check using Feat of Strength (Dragging & Pulling) with a penalty of 1.",
-        "7": "Make a check using Body Control (Balance) with a penalty of 2, or else fall to the ground and receive the state of prone.",
-        "8": "Stumble and suffer a penalty of 2 on your next action.",
-        "9": "Suffer one level of the condition Pain for 3 combat rounds.",
-        "10": "Bump your head in the chaos of combat and suffer one level of Stupor for one hour.",
-        "11": "Hurt yourself. Suffer your weapon’s damage, including the damage bonus (ignoring PRO). Unarmed combatants suffer 1D6 DP (ignoring PRO).",
-        "12": "Suffer double your weapon’s damage, including the damage bonus (ignoring PRO). Unarmed combatants suffer 2D6 DP (ignoring PRO)."
-    },
     "TABLENAMES": {
-        "Defense": "Defense - Botch Table",
-        "Melee": "Close Combat - Botch Table",
-        "Range": "Ranged Combat - Botch Table",
-        "Liturgy": "Botch Table for Ceremonies/Chants",
-        "Spell": "Botch Table for Spells"
+        "Defense": "Defense-Botch",
+        "Melee": "Close Combat-Botch",
+        "Range": "Ranged Combat-Botch",
+        "Liturgy": "Ceremonies-/Chants-Botch",
+        "Spell": "Spell-Botch"
     },
     "CONDITION": {
         "shapeshift": "Shapeshift",
@@ -1482,10 +1560,10 @@
         "raptured": "When Blessed Ones use large numbers of karma points (KP) within a short period of time, they acquire a condition called Rapture. Every passing hour reduces Rapture levels by 1.",
         "feared": "Terribly monstrous creatures, certain magical spells, and the disadvantage Fear of… can all induce Fear. Creatures react to fear in very different ways. Some won't let the cause of their panic out of their sight, others try to back away or even flee, and still others clumsily try to get rid of the cause. Catatonia is an example of a very strong reaction. The negative effects of this condition persist as long as the cause remains close by. When the cause is removed, Fear lowers by 1 level every 5 minutes, unless stated otherwise.",
         "paralysed": "Whether from a ghoul’s attack, a Paralysis spell, or pure terror, you might someday find yourself unable to move. As the condition Paralysis takes hold, your limbs and tongue grow stiff until, in the worst cases, the entire body becomes unresponsive. The victim remains conscious and able to breathe, but cannot act. Unless directed otherwise, remove one level of Paralysis every hour.",
-        "inpain": "Wounds, poison, magical spells, and other troubles might cause heroes Pain, which in the worst cases leaves them incapacitated as well. Heroes can suffer from this condition simply from losing life points (LP), and gain a level of Pain every time their LP drop by 25% of the total amount. Thus, a hero gains a level of Pain at 75% LP, a second level at 50%, and a third at 25%. Heroes gain the fourth level of Pain when their LP drop to 5 or lower. To remain active when suffering 4 levels of Pain, the character must make a Self-Control (Stay Conscious) check with a penalty of –4. When healing, one level of Pain goes away every time a hero’s LP rise back above these benchmarks (5 LP, 25%, 50%, and 75%). ",
+        "inpain": "Wounds, poison, magical spells, and other troubles might cause heroes Pain, which in the worst cases leaves them incapacitated as well. Heroes can suffer from this condition simply from losing life points (LP), and gain a level of Pain every time their LP drop by 25% of the total amount. Thus, a hero gains a level of Pain at 75% LP, a second level at 50%, and a third at 25%. Heroes gain the fourth level of Pain when their LP drop to 5 or lower. To remain active when suffering 4 levels of Pain, the character must make a Self-Control (Stay Conscious) check with a penalty of –4. When healing, one level of Pain goes away every time a hero’s LP rise back above these benchmarks (5 LP, 25%, 50%, and 75%).",
         "confused": "Certain drugs, poisons, injuries, illnesses, spells, demonic powers, and even a creature called the ikanaria butterfly can all influence a hero’s mind and cause the condition Confused. The duration for this condition is given in the description of the respective cause. Remove one level of Confusion every hour, unless directed otherwise.",
         "unconscious": "A sleeping character is considered unconscious, and a hero who suffers a massive blow to the head might be rendered unconscious as well. Even though the body remains functional, the character’s mind is either distracted, seemingly inactive, or otherwise unresponsive. In short, all the lights are out. Furthermore, an unconscious hero is incapacitated.",
-        "blind": "A blind person cannot see, whether due to the Blind disadvantage, total darkness, or even a simple blindfold. How well blind characters orient depends on their other senses. Even the simplest actions might require a skill check on Perception. Some skills are impossible for blind heroes to use, while other skills suffer large penalties. The GM decides which skills belong in these categories, and the degree of penalty, based on the situation. For example, a blind hero may be able to discern an enemy’s position during combat if the enemy makes a lot of noise. This might require checks on Perception (Search) vs. Stealth (Sneak). Blind heroes that hear their foes in this manner can still fight, but with the following restrictions. • Blind heroes make all close combat attacks at half the normal close combat Attack value • Ranged combat becomes a game of pure chance, requiring a roll of 1 on 1D20 to hit • Parries are as difficult to perform as ranged attacks, also requiring a roll of 1 on 1D20 to succeed • Dodging an incoming ranged attack is impossible while blind • Blind characters must touch opponents in order to affect them with spells or liturgical chants",
+        "blind": "A blind person cannot see, whether due to the Blind disadvantage, total darkness, or even a simple blindfold. How well blind characters orient depends on their other senses. Even the simplest actions might require a skill check on Perception. Some skills are impossible for blind heroes to use, while other skills suffer large penalties. The GM decides which skills belong in these categories, and the degree of penalty, based on the situation. For example, a blind hero may be able to discern an enemy’s position during combat if the enemy makes a lot of noise. This might require checks on Perception (Search) vs. Stealth (Sneak). Blind heroes that hear their foes in this manner can still fight, but with the following restrictions. • Blind heroes make all close combat attacks at half the normal close combat Attack value • Ranged combat becomes a game of pure chance, requiring a roll of 1 on 1D20 to hit • Parries are as difficult to perform as ranged attacks, also requiring a roll of 1 on 1D20 to succeed • Dodging an incoming ranged attack is impossible while blind • Blind characters must touch opponents in order to affect them with spells or liturgical chants.",
         "bloodrush": "Starting on the next combat round after entering this state, a hero gains a +4 bonus to attacks, a +2 bonus to damage, and a +2 bonus to Feat of Strength checks. In addition, the hero ignores the effects of the condition Pain. However, the hero may no longer defend, engage in ranged combat, use skills other than physical skills and Intimidation, or use special combat abilities other than Forceful Blow. The GM secretly rolls 2D20 to determine the duration of the bloodlust in combat rounds. During this time the hero attacks enemies, but when all enemies are disabled, the hero attacks the next closest person, be it a friend, an innocent bystander, a city guard, or even the Empress Rohaja herself. If no one is near, the hero goes on a rampage in search of targets. When bloodlust ends, the character gains 2 levels of the condition Stupor.",
         "burning": "The hero’s clothing catches fire, and the hero suffers fire damage as long as this state remains in effect. Extinguishing a burning character requires a check on Body Control. Rolls to put out small fires have no modifier, while bigger fires incur a –1 penalty, and extinguishing a person who is completely aflame suffers a –2 penalty. You may roll to extinguish a burning character once every combat round. Others may help in the effort to extinguish the flames, making checks on Body Control, but each may make only one roll per combat round. Water, sand, and other aids may grant a bonus to the check. The GM decides whether a hero must make a skill check to pour a bucket of water over a burning character. These rules also apply for heroes that are attacked by or covered in acid, although neutralizing acid requires a huge amount of water or other suitable substance. Without such a substance, no skill check is allowed.",
         "constricted": "Characters in exceedingly small, narrow, or tight places are cramped. Even finding oneself in the midst of a large crowd can trigger this state. A cramped hero can barely move and suffers penalties for weapon and shield use in combat situations. Short weapons suffer no penalties. Attacks and parries with medium weapons suffer a – 4 penalty, while attacks and parries with long weapons suffer a –8 penalty. Checks for other skills may suffer a penalty of up to –2, at the GM’s discretion. Spells and liturgical chants suffer no penalties for casting while cramped.",
@@ -1494,7 +1572,7 @@
         "incapacitated": "Incapacitated characters can no longer act due to a condition, state, or other influence, or any combination thereof. These characters have MOV 0, cannot act or defend, and are probably rendered prone. Depending on the situation, the GM may allow such characters to use free actions to speak.",
         "rooted": "Paralysis, quicksand, or strong bindings can immobilize characters completely. Immobilized characters cannot move, but can still perceive their surroundings and do anything that does not require much physical activity, such as using most types of lore skills, or casting spells or liturgical chants without gestures.",
         "mute": "A mute person cannot speak. Besides possibly hindering communication, this might also affect the casting of spells or liturgical chants.",
-        "deaf": "Deaf heroes cannot hear, hindering communication. Furthermore, they are not allowed to roll skill checks on Perception that depend upon hearing. Checks on Perception (Detect Ambush) suffer a –3 penalty",
+        "deaf": "Deaf heroes cannot hear, hindering communication. Furthermore, they are not allowed to roll skill checks on Perception that depend upon hearing. Checks on Perception (Detect Ambush) suffer a –3 penalty.",
         "sick": "A hero suffering from a disease or serius illness cannot regenerate LP or benefit from regular Regeneration Phases until healed or recovered. Heroes suffering from a state of diseased must devote at least one Regeneration Phase per day to rest (sleeping or staying in bed) or lose 1D3 LP (ignoring Protection) until recovered.",
         "surprised": "People are usually considered to be aware of their surroundings, especially in combat situations. Sometimes, however, a situation arises where a character remains unaware of enemies lurking nearby. Surprise means a hero is startled by an ambush or the sudden appearance of enemies. Surprised characters cannot defend against the first action taken against them. Once this surprise action (most likely an attack) is resolved, regular combat rounds begin.",
         "poisoned": "The hero is poisoned. As long as the poison remains in effect, the character cannot benefit from Regeneration Phases.",

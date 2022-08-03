@@ -66,4 +66,12 @@
         </div>
         {{/each}}
     </div>
+    {{#if canOnUseEffect}}
+
+    <div class="form-group full-height" style="margin-top:40px;">
+        <label class="label-text">{{localize 'ActiveEffects.advancedFunctions.onUseEffect'}}</label>
+        <textarea class="input-text" rows="10" type="text" data-dtype="String" name="flags.dsa5.onUseEffect" placeholder="{{localize 'ActiveEffects.placeholder.onUseEffect'}}">{{flags.dsa5.onUseEffect}}</textarea>
+    </div>
+
+    {{/if}}
 </div>

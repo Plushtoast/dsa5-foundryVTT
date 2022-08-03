@@ -1,6 +1,7 @@
 import Actordsa5 from "../actor/actor-dsa5.js";
 import { ActAttackDialog } from "../dialog/dialog-react.js"
 import DSA5_Utility from "../system/utility-dsa5.js";
+import DSA5StatusEffects from "../status/status_effects.js"
 
 export class DSA5CombatTracker extends CombatTracker {
     static get defaultOptions() {
@@ -12,10 +13,7 @@ export class DSA5CombatTracker extends CombatTracker {
     activateListeners(html) {
         super.activateListeners(html)
 
-        const combatants = html.find('.combatant.actor')
-        combatants.prepend(`<div class="aggroButton specImg" title="${game.i18n.localize('attacktest')}"></div>`)
-        const aggroButtons = combatants.find('.aggroButton')
-        aggroButtons.click(ev => {
+        html.find('.combatant.actor .aggroButton').click(ev => {
             ev.preventDefault()
             ev.stopPropagation()
             DSA5CombatTracker.runActAttackDialog()
@@ -31,33 +29,32 @@ export class DSA5CombatTracker extends CombatTracker {
     }
 
     async getData(options) {
-        const data = await super.getData(options);
+            const data = await super.getData(options);
 
-        for (let turn of data.turns) {
-            const combatant = data.combat.turns.find(x => x.id == turn.id)
-            const isAllowedToSeeEffects = (game.user.isGM || (combatant.actor && combatant.actor.testUserPermission(game.user, "OBSERVER")) || !(game.settings.get("dsa5", "hideEffects")));
-            turn.defenseCount = combatant.data._source.defenseCount
+            for (let turn of data.turns) {
+                const combatant = data.combat.turns.find(x => x.id == turn.id)
+                const isAllowedToSeeEffects = (game.user.isGM || (combatant.actor && combatant.actor.testUserPermission(game.user, "OBSERVER")) || !(game.settings.get("dsa5", "hideEffects")));
+                turn.defenseCount = combatant.data._source.defenseCount
 
-            let remainders = []
-            if (combatant._actor) {
-                for (const x of combatant._actor.data.items) {
-                    if (x.type == "rangeweapon" && x.data.data.worn.value && x.data.data.reloadTime.progress > 0) {
-                        const wpn = { name: x.name, remaining: Actordsa5.calcLZ(x.data, combatant._actor.data) - x.data.data.reloadTime.progress }
-                        if (wpn.remaining > 0) remainders.push(wpn)
-                    } else if (["spell", "liturgy"].includes(x.type) && x.data.data.castingTime.modified > 0) {
-                        const wpn = { name: x.name, remaining: x.data.data.castingTime.modified - x.data.data.castingTime.progress }
-                        if (wpn.remaining > 0) remainders.push(wpn)
+                let remainders = []
+                if (combatant.actor) {
+                    for (const x of combatant.actor.items) {
+                        if (x.type == "rangeweapon" && x.data.data.worn.value && x.data.data.reloadTime.progress > 0) {
+                            const wpn = { name: x.name, remaining: Actordsa5.calcLZ(x.data, combatant.actor.data) - x.data.data.reloadTime.progress }
+                            if (wpn.remaining > 0) remainders.push(wpn)
+                        } else if (["spell", "liturgy"].includes(x.type) && x.data.data.castingTime.modified > 0) {
+                            const wpn = { name: x.name, remaining: x.data.data.castingTime.modified - x.data.data.castingTime.progress }
+                            if (wpn.remaining > 0) remainders.push(wpn)
+                        }
                     }
                 }
-            }
-            remainders = remainders.sort((a, b) => a.remaining - b.remaining)
+                remainders = remainders.sort((a, b) => a.remaining - b.remaining)
 
-            if (remainders.length > 0) {
-                turn.ongoings = `${game.i18n.localize('COMBATTRACKER.ongoing')}\n${remainders.map((x) => `${x.name} - ${x.remaining}`).join("\n")}`
+                if (remainders.length > 0) {
+                    turn.ongoings = `${game.i18n.localize('COMBATTRACKER.ongoing')}\n${remainders.map((x) => `${x.name} - ${x.remaining}`).join("\n")}`
 
                 turn.ongoing = remainders[0].remaining
             }
-
 
             turn.effects = new Set();
             if (combatant.token) {
@@ -79,7 +76,7 @@ export class DSA5Combat extends Combat {
     }
 
     async refreshTokenbars() {
-        if (ui.hotbar) ui.hotbar.updateDSA5Hotbar()
+        if (game.dsa5.apps.tokenHotbar) game.dsa5.apps.tokenHotbar.updateDSA5Hotbar()
     }
 
     _onCreate(data, options, userId) {
@@ -181,7 +178,7 @@ class RepeatingEffectsHelper {
         const regenerationAttributes = ["wounds", "astralenergy", "karmaenergy"]
         for(const attr of regenerationAttributes){
             for (const ef of turn.actor.data.data.repeatingEffects.startOfRound[attr]){
-                const damageRoll = new Roll(ef.value).evaluate({ async: false })
+                const damageRoll = await new Roll(ef.value).evaluate({ async: true })
                 const damage = await damageRoll.render()
                 const type = game.i18n.localize(damageRoll.total > 0 ? "CHATNOTIFICATION.regenerates" : "CHATNOTIFICATION.getsHurt")
                 const applyDamage = `${turn.actor.name} ${type} ${game.i18n.localize(attr)} ${damage}`
@@ -200,8 +197,9 @@ class RepeatingEffectsHelper {
 
     static async applyBurning(turn, effect) {
         const step = Number(effect.getFlag("dsa5", "value"))
-        const die = { 1: "1d3", 2: "1d6", 3: "2d6" }[step]
-        const damageRoll = new Roll(die).evaluate({ async: false })
+        const protection = DSA5StatusEffects.resistantToEffect(turn.actor.data, effect.data)
+        const die =  { 0: "1", 1: "1d3", 2: "1d6", 3: "2d6" }[step - protection] || "1"
+        const damageRoll = await new Roll(die).evaluate({ async: true })
         const damage = await damageRoll.render()
 
         await ChatMessage.create(DSA5_Utility.chatDataSetup(game.i18n.format(`CHATNOTIFICATION.burning.${step}`, { actor: turn.actor.name, damage })))

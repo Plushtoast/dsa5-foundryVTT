@@ -21,7 +21,7 @@
         <li><a data-id="{{item.id}}" class="{{item.cssClass}} getChapter">{{item.name}}</a>{{#if item.subChapters}}
             <ul>
                 {{#each item.subChapters as |item i|}}
-                <li class="fas fa-caret-right"><a data-id="{{item}}" class="subChapter">{{item}}</a></li>
+                <li class="fas fa-caret-right"><a data-jid="{{item.id}}" class="subChapter">{{item.name}}</a></li>
                 {{/each}}
             </ul>
             {{/if}}

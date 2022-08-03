@@ -1,3 +1,4 @@
+import Itemdsa5 from "../item/item-dsa5.js"
 import DSA5StatusEffects from "../status/status_effects.js"
 import SpecialabilityRulesDSA5 from "./specialability-rules-dsa5.js"
 import DSA5_Utility from "./utility-dsa5.js"
@@ -8,10 +9,15 @@ export default class RuleChaos {
 
         if ((item.type == "dodge" || getProperty(item, "data.combatskill.value") == game.i18n.localize("LocalizedIDs.wrestle")) && SpecialabilityRulesDSA5.hasAbility(actor, game.i18n.localize("LocalizedIDs.masterfulDodge")))
             multipleDefense = -2
+        else if (SpecialabilityRulesDSA5.hasAbility(actor, game.i18n.localize("LocalizedIDs.mightyMasterfulParry")))
+            multipleDefense = -1
         else if (SpecialabilityRulesDSA5.hasAbility(actor, game.i18n.localize("LocalizedIDs.masterfulParry")))
             multipleDefense = -2
 
-        return multipleDefense
+        if (SpecialabilityRulesDSA5.hasAbility(actor, game.i18n.localize("LocalizedIDs.vinsaltStyle")))
+            multipleDefense -= 1
+
+        return Math.min(0, multipleDefense)
     }
 
     static isFamiliar(data) {

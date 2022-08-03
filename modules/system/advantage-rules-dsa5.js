@@ -102,8 +102,8 @@ export default class AdvantageRulesDSA5 extends ItemRulesDSA5 {
         return super.itemStep(actor, talent, ["advantage", "disadvantage"])
     }
 
-    static getVantageAsModifier(actor, talent, factor = 1, startsWith = false) {
-        return super.itemAsModifier(actor, talent, factor, ["advantage", "disadvantage"], startsWith)
+    static getVantageAsModifier(actor, talent, factor = 1, startsWith = false, selected = false) {
+        return super.itemAsModifier(actor, talent, factor, ["advantage", "disadvantage"], startsWith, selected)
     }
 }
 

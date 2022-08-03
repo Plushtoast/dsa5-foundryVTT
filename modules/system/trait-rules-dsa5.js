@@ -1,5 +1,6 @@
 import DSA5 from "./config-dsa5.js";
 import ItemRulesDSA5 from "./item-rules-dsa5.js";
+import DSA5_Utility from "./utility-dsa5.js";
 
 export default class TraitRulesDSA5 extends ItemRulesDSA5 {
     static async traitAdded(actor, item) {
@@ -48,6 +49,11 @@ Hooks.on("setup", () => {
                     }
                 },
             }]
+        }
+        const witchSenseName = game.i18n.localize('LocalizedIDs.witchSense')
+        if (!ItemRulesDSA5.hasItem(actor, witchSenseName, ["trait"])) {
+            const witchSense = await DSA5_Utility.findAnyItem([{ name: witchSenseName, type: "trait" }])
+            await actor.createEmbeddedDocuments("Item", witchSense)
         }
     }
 })

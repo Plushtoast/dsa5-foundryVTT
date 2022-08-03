@@ -1,11 +1,11 @@
+import DPS from "../system/derepositioningsystem.js";
+import actor from "./actor.js";
+
 export default function() {
     Token.prototype.drawEffects = async function() {
         this.hud.effects.removeChildren().forEach(c => c.destroy());
         const tokenEffects = this.data.effects;
-        const isAllowedToSeeEffects = game.user.isGM || (this.actor && this.actor.testUserPermission(game.user, "OBSERVER")) || !(await game.settings.get("dsa5", "hideEffects"))
-        const actorEffects = this.actor && isAllowedToSeeEffects ? this.actor.effects.filter(x => {
-            return !x.data.disabled && !x.notApplicable && (game.user.isGM || !x.getFlag("dsa5", "hidePlayers")) && !x.getFlag("dsa5", "hideOnToken")
-        }) : [];
+        const actorEffects = this.actor ? await this.actor.actorEffects() : []
 
         let overlay = {
             src: this.data.overlayEffect,
@@ -97,15 +97,62 @@ export default function() {
         return active;
     }
 
-    Hooks.on("applyActiveEffect", (actor, change) => {
-        const current = getProperty(actor.data, change.key) || null
+    const defaulTokenLeftClick2 = Token.prototype._onClickLeft2
+    const isMerchant = (actor) => {
+        if (!actor) return false
+
+        return ["merchant", "loot"].includes(getProperty(actor.data.data, "merchant.merchantType"))
+    }
+
+    Token.prototype._onClickLeft2 = function(event) {
+        const distanceAccessible = game.user.isGM || !game.settings.get("dsa5", "enableDPS") || !isMerchant(this.actor) || DPS.inDistance(this)
+
+        if (!distanceAccessible)
+            return ui.notifications.warn(game.i18n.localize('DSAError.notInRangeToLoot'))
+
+        defaulTokenLeftClick2.call(this, event)
+    }
+
+    const handleItemEffect = (actor, change) => {
+        return null
+
+        //TODO item effects
+        let update = null
+        const data = change.key.split(".")
+        let type = data.shift()
+        type = type.replace("@", "").toLowerCase()
+        const newKey = data.join(".")
+        const valueData = change.value.split(" ")
+        const value = valueData.pop()
+        const itemName = valueData.join(" ")
+            //Todo mode
+            //const effect = { mode: 2, key: newKey, value }
+            //console.log({ effect, data, newKey, value, itemName, type })
+        for (let item of actor.items.filter(x => x.type == type && (x.name == itemName || x.id == itemName))) {
+            //dummyEffect.apply(actor, effect)
+
+            const overrides = foundry.utils.flattenObject(item.itemOverrides || {});
+            overrides[newKey] = (overrides[newKey] || "") + value
+
+            item.itemOverrides = foundry.utils.expandObject(overrides);
+        }
+
+        return true
+    }
+
+    const applyCustomEffect = (elem, change) => {
+        let current = getProperty(elem.data, change.key) || null
+        if (current == null && /^data\.(vulnerabilities|resistances)/.test(change.key)) {
+            current = []
+            setProperty(elem.data, change.key, current)
+        }
         const ct = getType(current)
         let update = null
         switch (ct) {
             case "Array":
                 let newElems = []
                 const source = change.effect.data.label
-                for (let elem of `${change.value}`.split(/(;|,)/)) {
+                for (let elem of `${change.value}`.split(/[;,]+/)) {
                     let vals = elem.split(" ")
                     const value = vals.pop()
                     const target = vals.join(" ")
@@ -113,7 +160,13 @@ export default function() {
                 }
                 update = current.concat(newElems)
         }
-        if (update !== null) setProperty(actor.data, change.key, update)
+        if (update !== null) setProperty(elem.data, change.key, update)
         return update
+    }
+
+    Hooks.on("applyActiveEffect", (actor, change) => {
+        //if (/^@/.test(change.key)) return handleItemEffect(actor, change)
+
+        return applyCustomEffect(actor, change)
     })
 }

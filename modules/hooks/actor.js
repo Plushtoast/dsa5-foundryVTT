@@ -1,14 +1,21 @@
+import DSAActiveEffectConfig from "../status/active_effects.js";
 import DSA5_Utility from "../system/utility-dsa5.js";
 
 export default function() {
-    Hooks.on("deleteActorActiveEffect", (actor, effect) => {
-        const statusId = getProperty(effect.data, "flags.core.statusId")
-        if (statusId == "bloodrush") {
-            actor.addCondition("stunned", 2, false, false)
-            return false
-        } else if (statusId == "dead" && game.combat) {
-            actor.markDead(false)
-            return false
+    Hooks.on("deleteActiveEffect", (effect) => {
+        const actor = effect.parent
+        if (actor && actor.documentName == "Actor") {
+            const statusId = getProperty(effect.data, "flags.core.statusId")
+            if (statusId == "bloodrush") {
+                actor.addCondition("stunned", 2, false, false)
+                return false
+            } else if (statusId == "dead" && game.combat) {
+                actor.markDead(false)
+                return false
+            }
+            DSAActiveEffectConfig.onEffectRemove(actor, effect)
+            const result = Hooks.call("deleteActorActiveEffect", actor, effect)
+            if (result === false) return false
         }
     })
 
@@ -37,13 +44,13 @@ export default function() {
 
     const obfuscateName = async(actor, update) => {
         const setting = game.settings.get("dsa5", "obfuscateTokenNames")
-        if (setting == "0") return
+        if (setting == "0" || getProperty(actor, "data.data.merchant.merchantType") == "loot") return
 
         for (let u of game.users) {
             if (u.isGM) continue;
             if (actor.testUserPermission(u, "LIMITED")) return;
         }
-        const sameActorTokens = canvas.scene.data.tokens.filter((x) => x.actor.id === actor.id);
+        const sameActorTokens = canvas.scene.data.tokens.filter((x) => x.actor && x.actor.id === actor.id);
         let name = game.i18n.localize("unknown")
         if (sameActorTokens.length > 0) {
             name = `${sameActorTokens[0].name.replace(/ \d{1,}$/)} ${sameActorTokens.length + 1}`

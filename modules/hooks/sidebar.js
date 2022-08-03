@@ -12,6 +12,9 @@ export default function() {
             button = $(`<button class="fshopButton"><div></div> F-Shop</button>`)
             button.click(() => { window.open(game.i18n.localize("fshopLink"), "_blank") })
             html.find("#settings-documentation").append(button)
+
+            const systemName = game.system.data.title.split("/")[game.i18n.lang == "de" ? 0 : 1]
+            html.find('#game-details .system').html(`${systemName}<span>${game.system.data.version}</span>`)
         }
     })
 
