@@ -219,9 +219,10 @@ export default class DiceDSA5 {
                 extra: {},
             }
 
-            let attrs = ["LeP"]
-            if (testData.extra.actor.system.isMage) attrs.push("AsP")
-            if (testData.extra.actor.system.isPriest) attrs.push("KaP")
+            const attrs = []
+            if (testData.regenerateLeP) attrs.push("LeP")
+            if (testData.extra.actor.system.isMage && testData.regenerateAsP) attrs.push("AsP")
+            if (testData.extra.actor.system.isPriest && testData.regenerateKaP) attrs.push("KaP")
             let index = 0
 
             const isSick = testData.extra.actor.effects.some((x) => getProperty(x, "flags.core.statusId") == "sick")
@@ -761,9 +762,9 @@ export default class DiceDSA5 {
 
                 let template = await renderTemplate("systems/dsa5/templates/dialog/manualroll-dialog.html", {
                     dice: dice,
-                    description: description,
-                })
-                ;[result, form] = await new Promise((resolve, reject) => {
+                    description,
+                });
+                [result, form] = await new Promise((resolve, reject) => {
                     new DSA5Dialog({
                         title: game.i18n.localize(options.cheat ? "DIALOG.cheat" : "DSASETTINGS.allowPhysicalDice"),
                         content: template,
@@ -815,9 +816,9 @@ export default class DiceDSA5 {
                     if (split[0] == "condition") {
                         const effect = CONFIG.statusEffects.find((x) => x.id == split[1])
                         result.push(
-                            `<a class="chat-condition chatButton" data-id="${effect.id}"><img src="${
-                                effect.icon
-                            }"/>${game.i18n.localize(effect.label)}</a>`
+                            `<a class="chat-condition chatButton" data-id="${effect.id}">
+                            <img src="${effect.icon}"/>${game.i18n.localize(effect.label)}
+                            </a>`
                         )
                     } else
                         result.push(
@@ -1225,15 +1226,17 @@ export default class DiceDSA5 {
                     mergeObject(roll.dice[2].options, d3dColors(testData.source.system.characteristic3.value))
                     break
                 case "regenerate":
-                    const leDie = [game.settings.get("dsa5", "lessRegeneration") ? "1d3" : "1d6"]
+                    const leDie = []
 
-                    if (testData.extra.actor.system.isMage) leDie.push("1d6")
-                    if (testData.extra.actor.system.isPriest) leDie.push("1d6")
+                    if (testData.regenerateLeP ) leDie.push([game.settings.get("dsa5", "lessRegeneration") ? "1d3" : "1d6"])
+                    if (testData.extra.actor.isMage && testData.regenerateAsP) leDie.push("1d6")
+                    if (testData.extra.actor.isPriest && testData.regenerateKaP) leDie.push("1d6")
 
                     roll = await new Roll(leDie.join("+")).evaluate({ async: true })
-                    mergeObject(roll.dice[0].options, d3dColors("mu"))
-                    if (testData.extra.actor.system.isMage) mergeObject(roll.dice[1].options, d3dColors("ge"))
-                    if (testData.extra.actor.system.isPriest) mergeObject(roll.dice[leDie.length - 1].options, d3dColors("in"))
+                    if (testData.regenerateLeP ) mergeObject(roll.dice[0].options, d3dColors("mu"))
+                    if (testData.extra.actor.isMage && testData.regenerateAsP) mergeObject(roll.dice[leDie.length - 1].options, d3dColors("ge"))
+                    if (testData.extra.actor.isPriest && testData.regenerateKaP) mergeObject(roll.dice[leDie.length - 1].options, d3dColors("in"))
+                    if (testData.extra.actor.isMage && testData.regenerateAsP && testData.extra.actor.isPriest && testData.regenerateKaP) mergeObject(roll.dice[leDie.length - 2].options, d3dColors("ge"))
                     break
                 case "meleeweapon":
                 case "rangeweapon":
@@ -1508,6 +1511,13 @@ export default class DiceDSA5 {
         }
     }
 
+    static async rollResistPain(ev){
+        const data = ev.currentTarget.dataset;
+        const target = { token: data.token, actor: data.actor, scene: canvas.id }
+        const actor = DSA5_Utility.getSpeaker(target)
+        if(actor) actor.finishResistPainRoll()
+    }
+
     static async chatListeners(html) {
         html.on("click", ".expand-mods", (event) => {
             event.preventDefault()
@@ -1522,8 +1532,7 @@ export default class DiceDSA5 {
         html.on("click", ".botch-roll", (ev) => DSATables.showBotchCard(ev.currentTarget.dataset))
         html.on("click", ".roll-item", (ev) => DiceDSA5._itemRoll(ev))
         html.on("click", ".gearDamaged", async (ev) => DiceDSA5.gearDamaged(ev))
-        html.on("change", ".roll-edit", (ev) => DiceDSA5._rollEdit(ev)
-        )
+        html.on("change", ".roll-edit", (ev) => DiceDSA5._rollEdit(ev))
         html.on("click", ".applyEffect", async(ev) => {
             const elem = $(ev.currentTarget)
             if(elem.hasClass("locked")) return
@@ -1550,6 +1559,7 @@ export default class DiceDSA5 {
             OpposedDsa5.clearOpposed(target.actor)
         })
         html.on("click", ".resistEffect", (ev) => DSAActiveEffectConfig.resistEffect(ev))
+        html.on("click", ".resistPain", ev => DiceDSA5.rollResistPain(ev))
         RequestRoll.chatListeners(html)
     }
 }

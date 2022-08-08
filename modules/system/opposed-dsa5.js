@@ -340,13 +340,16 @@ export default class OpposedDsa5 {
         let opposedResult = await this.evaluateOpposedTest(attacker.testResult, defender.testResult, options);
         this.formatOpposedResult(opposedResult, attacker.speaker, defender.speaker);
         this.rerenderMessagesWithModifiers(opposedResult, attacker, defender);
-        await Hooks.call("finishOpposedTest", attacker, defender, opposedResult, options)
+        Hooks.call("finishOpposedTest", attacker, defender, opposedResult, options)
+        await this.finishOpposedTestHookAsync(attacker, defender, opposedResult, options)
         this.playAutomatedJBA2(attacker, defender, opposedResult)
         await this.renderOpposedResult(opposedResult, options)
         await this.hideReactionButton(options.startMessageId)
 
         return opposedResult
     }
+
+    static async finishOpposedTestHookAsync(attacker, defender, opposedResult, options) {}
 
     static async evaluateOpposedTest(attackerTest, defenderTest, options = {}) {
         let opposeResult = {};

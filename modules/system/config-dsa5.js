@@ -355,21 +355,6 @@ DSA5.weaponStabilities = {
     "Whips": 4
 }
 
-DSA5.localizedCompendiums = {
-    de: [
-        "dsa5.skills",
-        "dsa5.combatskills",
-        "dsa5.species",
-        "dsa5.patzer"
-    ],
-    en: [
-        "dsa5.skillsen",
-        "dsa5.combatskillsen",
-        "dsa5.speciesen",
-        "dsa5.botch"
-    ]
-}
-
 DSA5.combatSkillSubCategories = {
     "0": "COMBATSKILLCATEGORY.0",
     "1": "COMBATSKILLCATEGORY.1",
@@ -377,7 +362,6 @@ DSA5.combatSkillSubCategories = {
     "3": "COMBATSKILLCATEGORY.3",
     "4": "COMBATSKILLCATEGORY.4"
 }
-
 
 DSA5.effectTextStyle = CONFIG.canvasTextStyle.clone();
 DSA5.effectTextStyle.fontSize = "30";
@@ -874,6 +858,15 @@ DSA5.StFs = {
     "B": "B",
     "C": "C",
     "D": "D"
+}
+
+DSA5.noteIcons = {
+    "Griffin Shield": "systems/dsa5/icons/thirdparty/griffinshield.svg",
+    "At Sea": "systems/dsa5/icons/thirdparty/at-sea.svg",
+    "Medieval Gate": "systems/dsa5/icons/thirdparty/medieval-gate.svg",
+    "Position Marker": "systems/dsa5/icons/thirdparty/position-marker.svg",
+    "River": "systems/dsa5/icons/thirdparty/river.svg",
+    "Trail": "systems/dsa5/icons/thirdparty/trail.svg",
 }
 
 CONFIG.time.roundTime = 5

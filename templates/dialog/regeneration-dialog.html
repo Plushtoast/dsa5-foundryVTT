@@ -27,15 +27,15 @@
                 <input class="quantity-click" type="number" name="testModifier" value="{{testModifier}}" />
             </div>
             <div class="col">
-                <input class="quantity-click" type="number" name="lepModifier" value="0" />
+                <input class="quantity-click" type="number" name="LePModifier" value="0" />
             </div>
             {{#if showAspModifier}}
             <div class="col">
-                <input class="quantity-click" type="number" name="aspModifier" value="0" />
+                <input class="quantity-click" type="number" name="AsPModifier" value="0" />
             </div>
             {{/if}} {{#if showKapModifier}}
             <div class="col">
-                <input class="quantity-click" type="number" name="kapModifier" value="0" />
+                <input class="quantity-click" type="number" name="KaPModifier" value="0" />
             </div>
             {{/if}}
         </div>
@@ -73,7 +73,7 @@
         <select name="situationalModifiers" multiple data-tooltip="{{localize 'DIALOG.deselectWithStrg'}}">
         {{#select selectedModifiers}}
         {{#each situationalModifiers as |mod t|}}
-        <option data-tooltip="{{localize mod.name}}" data-type="{{mod.type}}" value="{{mod.value}}" {{#if
+        <option data-tooltip="{{situationalTooltip mod}}" data-type="{{mod.type}}" value="{{mod.value}}" {{#if
             mod.selected}}selected{{/if}}>
             {{localize mod.name}} [{{mod.value}} {{mod.type}}]
         </option>
@@ -81,6 +81,32 @@
         {{/select}}
     </select>
     </div>
+    {{/if}}
+
+    {{#if (or showAspModifier showKapModifier)}}
+        <div class="form-group custom-select">
+            <label>{{localize 'CHAR.LEP'}}</label>
+            <input type="checkbox" name="regenerateLeP" value="1" checked="checked">
+        </div>
+    {{else}}
+        <div class="form-group custom-select" hidden>
+            <label hidden>nur LeP</label>
+            <input type="checkbox" name="regenerateLeP" value="1" checked="checked" hidden>
+        </div>    
+    {{/if}}
+    
+    {{#if showAspModifier}}
+        <div class="form-group custom-select">
+            <label>{{localize 'CHAR.ASP'}}</label>
+            <input type="checkbox" name="regenerateAsP" value="1" checked="checked">
+        </div>    
+    {{/if}}
+    
+    {{#if showKapModifier}}
+        <div class="form-group custom-select">
+            <label>{{localize 'CHAR.KAP'}}</label>
+            <input type="checkbox" name="regenerateKaP" value="1" checked="checked">
+        </div> 
     {{/if}}
 
     <div class="roll-dialog-tag">regeneration</div>

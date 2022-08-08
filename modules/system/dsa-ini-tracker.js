@@ -87,7 +87,7 @@ export default class DSAIniTracker extends Application {
 
                 if (started && !(skipDefeated && turn.defeated) && (game.user.isGM || !turn.hidden)) {
                     turn.round = data.round + loops
-                    if (turn.owner && combatant.token.actor) {
+                    if (turn.owner && combatant.token?.actor) {
                         turn.maxLP = combatant.token.actor.system.status.wounds.max
                         turn.currentLP = combatant.token.actor.system.status.wounds.value
                     }

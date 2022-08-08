@@ -5,7 +5,7 @@ export default class DSA5StatusEffects {
         html.find('.chat-condition').each(function(i, cond) {
             cond.setAttribute("draggable", true);
             cond.addEventListener("dragstart", ev => {
-                let dataTransfer = {
+                const dataTransfer = {
                     data: {
                         type: "condition",
                         payload: {
@@ -222,7 +222,8 @@ export default class DSA5StatusEffects {
             return {
                 name: effect.label,
                 value: effectClass.calculateRollModifier(effect, actor, item, options),
-                selected: effectClass.ModifierIsSelected(item, options, actor)
+                selected: effectClass.ModifierIsSelected(item, options, actor),
+                source: game.i18n.localize('status') + "/" + game.i18n.localize('condition')
             }
         }).filter(x => x.value != 0)
     }

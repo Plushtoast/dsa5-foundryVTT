@@ -43,20 +43,20 @@ export default function() {
     }
 
     const obfuscateName = async(actor, update) => {
-        const setting = game.settings.get("dsa5", "obfuscateTokenNames")
-        if (setting == "0" || getProperty(actor, "merchant.merchantType") == "loot") return
+        const setting = Number(game.settings.get("dsa5", "obfuscateTokenNames"))
+        if (setting == 0 || getProperty(actor, "merchant.merchantType") == "loot") return
 
         for (let u of game.users) {
             if (u.isGM) continue;
             if (actor.testUserPermission(u, "LIMITED")) return;
         }
-        const sameActorTokens = canvas.scene.tokens.filter((x) => x.actor && x.actor.id === actor.id);
+        const sameActorTokens = setting >  canvas.scene.tokens.filter((x) => x.actor && x.actor.id === actor.id);
         let name = game.i18n.localize("unknown")
-        if (sameActorTokens.length > 0) {
+        if (sameActorTokens.length > 0 && setting < 3) {
             name = `${sameActorTokens[0].name.replace(/ \d{1,}$/)} ${sameActorTokens.length + 1}`
         }
 
-        if (setting == "2" && sameActorTokens == 0) {
+        if (setting == 2 && sameActorTokens == 0) {
             askForName(actor)
         } else {
             update["name"] = name

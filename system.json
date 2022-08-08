@@ -23,7 +23,8 @@
             "system": "dsa5",
             "path": "packs/skills.db",
             "type": "Item",
-            "private": false
+            "private": false,
+            "flags": { "dsalang": "de"}
         },
         {
             "name": "skillsen",
@@ -31,7 +32,8 @@
             "system": "dsa5",
             "path": "packs/skillsen.db",
             "type": "Item",
-            "private": false
+            "private": false,
+            "flags": { "dsalang": "en"}
         },
         {
             "name": "combatskills",
@@ -39,7 +41,8 @@
             "system": "dsa5",
             "path": "packs/combatskills.db",
             "type": "Item",
-            "private": false
+            "private": false,
+            "flags": { "dsalang": "de"}
         },
         {
             "name": "combatskillsen",
@@ -47,7 +50,8 @@
             "system": "dsa5",
             "path": "packs/combatskillsen.db",
             "type": "Item",
-            "private": false
+            "private": false,
+            "flags": { "dsalang": "en"}
         },
         {
             "name": "money",
@@ -63,7 +67,8 @@
             "system": "dsa5",
             "path": "packs/speciesen.db",
             "type": "Item",
-            "private": false
+            "private": false,
+            "flags": { "dsalang": "en"}
         },
         {
             "name": "species",
@@ -71,7 +76,8 @@
             "system": "dsa5",
             "path": "packs/species.db",
             "type": "Item",
-            "private": false
+            "private": false,
+            "flags": { "dsalang": "de"}
         },
         {
             "name": "patzer",
@@ -79,7 +85,8 @@
             "system": "dsa5",
             "path": "packs/patzer.db",
             "type": "RollTable",
-            "private": false
+            "private": false,
+            "flags": { "dsalang": "de"}
         },
         {
             "name": "botch",
@@ -87,7 +94,8 @@
             "system": "dsa5",
             "path": "packs/botch.db",
             "type": "RollTable",
-            "private": false
+            "private": false,
+            "flags": { "dsalang": "en"}
         }
     ],
     "languages": [{

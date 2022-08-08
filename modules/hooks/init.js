@@ -35,6 +35,7 @@ import DSAIniTracker from "../system/dsa-ini-tracker.js";
 import { SelectUserDialog } from "../dialog/addTargetDialog.js";
 import DSAJournalSheet from "../journal/dsa_journal_sheet.js";
 import DSATour from "../tours/dsa_tour.js";
+import DSA5 from "../system/config-dsa5.js";
 
 
 export default function() {
@@ -112,6 +113,7 @@ Hooks.once("init", () => {
     ItemSheetdsa5.setupSheets()
     configuration.default()
     DPS.initDoorMinDistance()
+    mergeObject(CONFIG.JournalEntry.noteIcons, DSA5.noteIcons)
 })
 
 Hooks.once('ready', () => {
@@ -126,7 +128,6 @@ Hooks.once('ready', () => {
         }
     }
     Hooks.on('changeSidebarTab', hook)
-    
 })
 
 Hooks.once('setup', () => {

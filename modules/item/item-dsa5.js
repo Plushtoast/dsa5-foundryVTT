@@ -623,7 +623,7 @@ export default class Itemdsa5 extends Item {
             properties.push(`<b>${game.i18n.localize("price")}</b>: ${prices}`)
         }
 
-        if (item.pack) chatData.itemLink = `@Compendium[${item.pack}.${item.id}]`
+        if (item.pack) chatData.itemLink = item.link
 
         if (chatData.img.includes("/blank.webp")) chatData.img = null
 
@@ -800,7 +800,7 @@ class SpellItemDSA5 extends Itemdsa5 {
     static attackSpellMalus(source) {
         let res = []
         if (source.system.effectFormula.value)
-            res.push({ name: game.i18n.localize("MODS.defenseMalus"), value: -4, type: "defenseMalus", selected: true })
+            res.push({ name: game.i18n.localize("MODS.defenseMalus"), value: -4, type: "defenseMalus", selected: true, source: source.name })
 
         return res
     }
@@ -826,6 +826,7 @@ class SpellItemDSA5 extends Itemdsa5 {
                         name: f.source,
                         value: f.value,
                         type,
+                        source: f.source
                     }
                 })
             )

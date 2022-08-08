@@ -668,7 +668,8 @@
         "global": "Global modifier",
         "armor": "Armor modifier",
         "range": "Range multiplier",
-        "creatureBonus": "Bonus damage (creature)"
+        "creatureBonus": "Bonus damage (creature)",
+        "armorPen": "Armor penetration"
     },
     "wrongGrip": {
         "oneHanded": "One-handed guided",
@@ -1062,6 +1063,7 @@
         "custom": "Special effect",
         "creature": "Actorlink (e.g. das5-core.coreenbestiary.Gotongi)",
         "resistRoll": "Resist check",
+        "resistPain": "The pain is overwhelming (level 4). The ability to act can only be maintained via a self-control check.",
         "placeholder": {
             "macros": "Macros have access to the following variables:\nactor - The targeted actor\ntestData - All data for the current check\nsource - The source of the macro",
             "armorPostprocess": "Armor transformations have access to the following variables:\nactor - The targeted actor\narmor - The armor of the target\nsource - The source of the macro",
@@ -1461,7 +1463,14 @@
         "information1": "Only Player",
         "information2": "Only GM",
         "informationDistribution": "Show information results",
-        "informationDistributionHint": "Define who gets the results of information rolls."
+        "informationDistributionHint": "Define who gets the results of information rolls.",
+        "selfControlOnPain": "Self-Control on Pain",
+        "selfControlOnPainHint": "Show a automatic check for Self-Control if the pain gets too strong (Level 4).",
+        "selfControlOnPain0": "All",
+        "selfControlOnPain1": "Only players",
+        "selfControlOnPain2": "Off",
+        "yesNumbered": "Yes (Numbering)",
+        "renameNumbered": "Rename (Numbering)"
     },
     "WEAR": {
         "check": "Breaking Point Rating Check ({category})",

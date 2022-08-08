@@ -25,7 +25,7 @@ export default class DialogReactDSA5 extends Dialog {
             }
 
         }).render(true)
-    }t
+    }
 
     static getTargetActor(message) {
         if (!canvas.tokens) return {}

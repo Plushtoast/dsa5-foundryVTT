@@ -28,6 +28,9 @@ import DiceDSA5 from "./system/dice-dsa5.js";
 import DSA5StatusEffects from './status/status_effects.js'
 import { MerchantSheetMixin } from './actor/merchantmixin.js'
 import DSATour from './tours/dsa_tour.js'
+import OpposeDSA from './system/opposed-dsa5.js'
+import DSAActiveEffect from "./status/dsa_active_effects.js";
+
 Hooks.once("init", () => {
     console.log("Initializing DSA5 system")
 
@@ -52,7 +55,8 @@ Hooks.once("init", () => {
             DPS,
             DSATables,
             DiceDSA5,
-            DSATour
+            DSATour,
+            OpposeDSA
         },
         entities: {
             Actordsa5,
@@ -75,6 +79,7 @@ Hooks.once("init", () => {
     CONFIG.ui.hotbar = DSA5Hotbar
     CONFIG.Combat.documentClass = DSA5Combat
     CONFIG.Combatant.documentClass = DSA5Combatant
+    CONFIG.ActiveEffect.documentClass = DSAActiveEffect
 });
 
 initHooks();

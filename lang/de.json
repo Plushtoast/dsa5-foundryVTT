@@ -588,7 +588,8 @@
         "global": "Globaler Modifikator",
         "armor": "Rüstungsmodifikator",
         "range": "Reichweitenfaktor",
-        "creatureBonus": "Bonusschaden (Kreatur)"
+        "creatureBonus": "Bonusschaden (Kreatur)",
+        "armorPen": "Rüstungsdurchdringung"
     },
     "WIZARD": {
         "addItem": "{item} hinzufügen",
@@ -1078,7 +1079,7 @@
         "custom": "Sondereffekt",
         "creature": "Akteurlink (z.b. das5-core.corebestiary.Gotongi)",
         "resistRoll": "Widerstandsprobe",
-
+        "resistPain": "Der Schmerz ist überwältigend (Stufe 4). Die Handlungsfähigkeit ist nur über eine Selbstbeherrschungsprobe zu bewahren.",
         "placeholder": {
             "macros": "Macros können auf diese Variablen zugreifen:\nactor - Der anvisierte Akteur\ntestData - All Daten für die aktuelle Probe\nsource - Die Quelle des Macros",
             "armorPostprocess": "Rüstungstransformation können auf diese Variablen zugreifen:\nactor - Der anvisierte Akteur\noptions.armor - Die Rüstungs des Ziels\noptions.attackItem - Die Quelle des Macros",
@@ -1476,7 +1477,15 @@
         "information1": "Nur Spieler",
         "information2": "Nur SL",
         "informationDistribution": "Informationsergebnisse anzeigen",
-        "informationDistributionHint": "Lege fest wer das Ergebnis von Informationswürfen sehen kann."
+        "informationDistributionHint": "Lege fest wer das Ergebnis von Informationswürfen sehen kann.",
+        "selfControlOnPain": "Selbstbeherrschung bei Schmerz",
+        "selfControlOnPainHint": "Löse einen automatischen Wurf für Selbstbeherrschung aus, wenn der Schmerz zu groß wird.",
+        "selfControlOnPain0": "Alle",
+        "selfControlOnPain1": "Nur Spieler",
+        "selfControlOnPain2": "Aus",
+        "yesNumbered": "Ja (Nummeriert)",
+        "renameNumbered": "Umbennenen (Nummeriert)"
+
     },
     "CONTROLS": {
         "targetForUser": "Ziel für Spieler wählen"

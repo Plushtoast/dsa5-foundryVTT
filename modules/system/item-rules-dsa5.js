@@ -16,7 +16,8 @@ export default class ItemRulesDSA5 {
                             name: k.name,
                             value: parsed.step * (k.system.step ? k.system.step.value : 1),
                             type: parsed.type,
-                            selected: selected
+                            selected: selected,
+                            source: k.name
                         })
                     }
                 }
@@ -93,7 +94,8 @@ export default class ItemRulesDSA5 {
             res.push({
                 name: item.name,
                 value: Number(item.system == undefined ? item.system.step.value : item.system.step.value) * factor,
-                selected
+                selected,
+                source: item.name
             })
         }
         return res

@@ -4,9 +4,11 @@
         <b>{{localize "badEnvironment"}}</b>: x 0.5
     </div>
     {{/if}}
+    {{#if testData.LeP}}
     <div class="card-content">
         <b>{{localize "wounds"}}</b>: {{testData.LeP}}
     </div>
+    {{/if}}
     {{#if testData.AsP}}
     <div class="card-content">
         <b>{{localize "astralenergy"}}</b>: {{testData.AsP}}

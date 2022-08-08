@@ -277,6 +277,7 @@ export default class Actordsa5 extends Actor {
         const changes = this.effects.reduce((changes, e) => {
             if (e.disabled) return changes;
 
+            let multiply = 1
             if (e.origin) {
                 const id = e.origin.match(/[^.]+$/)[0];
                 const item = this.items.get(id);
@@ -306,6 +307,11 @@ export default class Actordsa5 extends Actor {
                             break;
                         case "specialability":
                             apply = item.system.category.value != "Combat" || [2, 3].includes(item.system.category.sub);
+                            multiply = Number(item.system.step.value) || 1
+                            break
+                        case "advantage":
+                        case "disadvantage":
+                            multiply = Number(item.system.step.value) || 1
                             break;
                     }
                     e.notApplicable = !apply;
@@ -314,14 +320,17 @@ export default class Actordsa5 extends Actor {
                 }
             }
 
-            return changes.concat(
-                e.changes.map((c) => {
-                    c = foundry.utils.duplicate(c);
-                    c.effect = e;
-                    c.priority = c.priority ? c.priority : c.mode * 10;
-                    return c;
+            for(let i = 0;i<multiply;i++){
+              changes.push(
+                ...e.changes.map((c) => {
+                  c = foundry.utils.duplicate(c);
+                  c.effect = e;
+                  c.priority = c.priority ? c.priority : c.mode * 10;
+                  return c;
                 })
-            );
+              )
+            }
+            return changes
         }, []);
         changes.sort((a, b) => a.priority - b.priority);
 
@@ -1579,18 +1588,18 @@ export default class Actordsa5 extends Actor {
           }
         );
         testData.regenerationFactor = html.find('[name="badEnvironment"]').is(":checked") ? 0.5 : 1;
-        testData.AsPModifier = Number(html.find('[name="aspModifier"]').val() || 0);
-        testData.KaPModifier = Number(html.find('[name="kapModifier"]').val() || 0);
-        testData.LePModifier = Number(html.find('[name="lepModifier"]').val());
-        testData.regenerationAsP = Number(this.system.status.regeneration.AsPmax);
-        testData.regenerationKaP = Number(this.system.status.regeneration.KaPmax);
-        testData.regenerationLeP = Number(this.system.status.regeneration.LePmax);
+        const attrs = ["LeP", "KaP", "AsP"]
+        const update = {}
+        for(let k of attrs){
+          testData[`${k}Modifier`] = Number(html.find(`[name="${k}Modifier"]`).val() || 0);
+          testData[`regeneration${k}`] = Number(this.system.status.regeneration[`${k}max`])
+          const regenerate = html.find(`[name="regenerate${k}"]`).is(":checked") ? 1 : 0
+          testData[`regenerate${k}`] = regenerate
+          if(regenerate) update[`system.status.regeneration.${k}Temp`] = 0
+        }
+        
         mergeObject(testData.extra.options, options);
-        this.update({
-          "system.status.regeneration.LePTemp": 0,
-          "system.status.regeneration.KaPTemp": 0,
-          "system.status.regeneration.AsPTemp": 0,
-        });
+        this.update(update);
         return { testData, cardOptions };
       },
     };
@@ -2198,19 +2207,39 @@ export default class Actordsa5 extends Actor {
     return await DSA5StatusEffects.addCondition(this, effect, value, absolute, auto);
   }
 
+  async initResistPainRoll(){
+    const showMessage = game.settings.get("dsa5", "selfControlOnPain")
+
+    if(showMessage == 2 || this.hasCondition("incapacitated") || (showMessage == 1 && !this.hasPlayerOwner)) return
+
+    const template = await renderTemplate("systems/dsa5/templates/chat/roll/resist-pain.html", { actor: this })
+    await ChatMessage.create(DSA5_Utility.chatDataSetup(template))
+  }
+
+  async finishResistPainRoll(){
+    const skill = this.items.find(x => x.name == game.i18n.localize('LocalizedIDs.selfControl') && x.type == "skill")
+    this.setupSkill(skill, { subtitle: ` (${game.i18n.localize('ActiveEffects.resistRoll')})` }, this.token?.id).then(async(setupData) => {
+        const res = await this.basicTest(setupData)
+        const ql = res.result.successLevel || 0
+        if (ql < 1) {
+          this.addCondition("incapacitated")
+        }
+    })
+  }
+
   async _dependentEffects(statusId, effect, delta) {
     const effectData = duplicate(effect);
 
     if (effectData.flags.dsa5.value == 4) {
-      if (["encumbered", "stunned", "feared", "inpain", "confused", "trance"].includes(statusId))
+      if(statusId == "inpain")
+        await this.initResistPainRoll()
+      else if (["encumbered", "stunned", "feared", "confused", "trance"].includes(statusId))
         await this.addCondition("incapacitated");
-      else if (statusId == "paralysed") await this.addCondition("rooted");
-      else if (statusId == "drunken") {
+      else if (statusId == "paralysed") 
+        await this.addCondition("rooted");
+      else if (["drunken", "exhaustion"].includes(statusId)) {
         await this.addCondition("stunned");
-        await this.removeCondition("drunken");
-      } else if (statusId == "exhaustion") {
-        await this.addCondition("stunned");
-        await this.removeCondition("exhaustion");
+        await this.removeCondition(statusId);
       }
     }
 

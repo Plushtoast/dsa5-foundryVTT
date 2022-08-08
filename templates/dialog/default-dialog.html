@@ -22,7 +22,7 @@
     <select name="situationalModifiers" multiple data-tooltip="{{localize 'DIALOG.deselectWithStrg'}}">
       {{#select selectedModifiers}}
       {{#each situationalModifiers as |mod t|}}
-      <option data-tooltip="{{localize mod.name}}" data-type="{{mod.type}}" value="{{mod.value}}" {{#if mod.selected}}selected{{/if}}>
+      <option data-tooltip="{{situationalTooltip mod}}" data-type="{{mod.type}}" value="{{mod.value}}" {{#if mod.selected}}selected{{/if}}>
         {{localize
         mod.name}} [{{mod.value}}]
       </option>

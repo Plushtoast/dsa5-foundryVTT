@@ -23,11 +23,12 @@ export function svgAutoFit(elem, width = 320, height = 40) {
 export async function itemFromDrop(dragData, actorId, toObject = true) {
     let item
     let typeClass
+    //TODO see if foundry can do this by default
+
 
     let selfTarget = dragData.actorId && dragData.actorId == actorId
     if (dragData.uuid) {
         item = await fromUuid(dragData.uuid)
-        if (dragData.amount) item.system.quantity.value = Number(dragData.amount)
         typeClass = item.type
     } else if (dragData.id && dragData.pack) {
         item = await DSA5_Utility.findItembyIdAndPack(dragData.id, dragData.pack);
@@ -43,11 +44,12 @@ export async function itemFromDrop(dragData, actorId, toObject = true) {
         typeClass = item.type
     }
     //TODO might not need the creature filter here
-    // also might use ToObject(false)
     if (typeof item.toObject === 'function' && typeClass != 'creature' && toObject) {
-        item = item.toObject(true)
+        item = item.toObject()
     }
 
+    if(dragData.amount) item.system.quantity.value = Number(dragData.amount)
+    
     return { item, typeClass, selfTarget }
 }
 

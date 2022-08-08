@@ -24,8 +24,9 @@ export default function() {
         button.click(() => { game.dsa5.itemLibrary.render(true) })
 
         html.find('li[data-pack="dsa5.money"]').hide()
-        const toRemove = game.dsa5.config.localizedCompendiums[`${game.i18n.lang == "de" ? "en" : "de"}`]
-        const packs = game.packs.filter(p => toRemove.includes(`${p.metadata.packageName}.${p.metadata.name}`))
+        
+        const toRemove = game.i18n.lang == "de" ? "en" : "de"
+        const packs = game.packs.filter(p => getProperty(p.metadata, "flags.dsalang") == toRemove)
 
         for (let pack of packs) {
             let name = `${pack.metadata.packageName}.${pack.metadata.name}`

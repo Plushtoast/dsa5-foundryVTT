@@ -16,6 +16,13 @@ export default class ItemSheetdsa5 extends ItemSheet {
         this.mce = null;
     }
 
+    _getSubmitData(updateData = {}) {
+        const data = super._getSubmitData(updateData);
+        const overrides = foundry.utils.flattenObject(this.item.overrides || {});
+        Object.keys(overrides).forEach((v) => delete data[v]);
+        return data;
+    }
+
     static get defaultOptions() {
         const options = super.defaultOptions;
         options.tabs = [{ navSelector: ".tabs", contentSelector: ".content" }]
@@ -927,7 +934,7 @@ class SpecialAbilitySheetDSA5 extends ItemSheetdsa5 {
                 steps = xpCost.split(";").map(x => Number(x.trim()))
                 xpCost = steps[this.item.system.step.value - 1]
             }
-            xpCost = await SpecialabilityRulesDSA5.refundFreelanguage(this.item.data, this.item.actor, xpCost)
+            xpCost = await SpecialabilityRulesDSA5.refundFreelanguage(this.item, this.item.actor, xpCost)
             await this.item.actor._updateAPs(xpCost * -1)
             await this.item.update({ "system.step.value": this.item.system.step.value - 1 })
         }
@@ -941,7 +948,7 @@ class SpecialAbilitySheetDSA5 extends ItemSheetdsa5 {
                 steps = xpCost.split(";").map(x => Number(x.trim()))
                 xpCost = steps[this.item.system.step.value]
             }
-            xpCost = await SpecialabilityRulesDSA5.isFreeLanguage(this.item.data, this.item.actor, xpCost)
+            xpCost = await SpecialabilityRulesDSA5.isFreeLanguage(this.item, this.item.actor, xpCost)
             if (await this.item.actor.checkEnoughXP(xpCost)) {
                 await this.item.actor._updateAPs(xpCost)
                 await this.item.update({ "system.step.value": this.item.system.step.value + 1 })

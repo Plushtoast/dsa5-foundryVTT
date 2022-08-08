@@ -47,6 +47,8 @@ export default function() {
             html.find(".hideData").remove()
             const hiddenForMe = getProperty(msg.message, `flags.dsa5.userHidden.${game.user.id}`)
             if (hiddenForMe) { html.find(".payButton").remove() }
+        }else{
+            html.find(".chat-button-player").remove()
         }
         if (game.settings.get("dsa5", "expandChatModifierlist")) {
             html.find('.expand-mods i').toggleClass("fa-minus fa-plus")
