@@ -30,6 +30,8 @@ import { MerchantSheetMixin } from './actor/merchantmixin.js'
 import DSATour from './tours/dsa_tour.js'
 import OpposeDSA from './system/opposed-dsa5.js'
 import DSAActiveEffect from "./status/dsa_active_effects.js";
+import EquipmentDamage from "./system/equipment-damage.js"
+import DidYouKnow from "./system/didyouknow.js";
 
 Hooks.once("init", () => {
     console.log("Initializing DSA5 system")
@@ -56,11 +58,16 @@ Hooks.once("init", () => {
             DSATables,
             DiceDSA5,
             DSATour,
-            OpposeDSA
+            OpposeDSA,
+            EquipmentDamage,
+            DidYouKnow
         },
         entities: {
             Actordsa5,
             Itemdsa5
+        },
+        sheets: {
+
         },
         macro: MacroDSA5,
         config: DSA5,

@@ -76,6 +76,16 @@
 
         "The tokenbar can be customized and moved.",
         "Character images and images from journals can be dragged to the scene directly.",
-        "You can put items on the map via drag & drop."
+        "You can put items on the map via drag & drop.",
+
+        "You can also wield weapons with one hand with two hands.",
+        "You can also wield two-handed weapons with one hand.",
+        "Via the Information item, you can give knowledge to players depending on a roll.",
+        "Active Effects can also directly modify weapons.",
+        "You can drag actors from the Master Menu directly to the playing area.",
+        "There is a button in the master menu to drag the whole group to the playing area at once.",
+        "You can set the blood colour for the Splatter module depending on the creature type."
+
+
     ]
 }

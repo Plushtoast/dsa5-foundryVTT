@@ -78,6 +78,14 @@
         "Die Tokenbar lässt sich verschieben und anpassen.",
         "Du kannst Charaktergrafiken und Bilder in Journals direkt per Drag and Drop auf die Szene ziehen.",
         
-        "Du kannst Gegenstände per Drag & Drop auf der Karte ablegen."
+        "Du kannst Gegenstände per Drag & Drop auf der Karte ablegen.",
+
+        "Du kannst Waffen einhändige Waffen auch zweihändig führen.",
+        "Du kannst zweihändige Waffen auch einhändig führen.",
+        "Über den Gegenstand Information kannst du den Spielern Wissen in Abhängigkeit von einer Probe zukommen lassen.",
+        "Active Effects können auch direkt Waffen modifizieren.",
+        "Du kannst Akteuere vom Meistermenü direkt auf die Spielfläche ziehen.",
+        "Im Meistermenü ist ein Button, um die ganze Gruppe auf einmal auf die Spielfläche zu ziehen.",
+        "Du kannst für das Modul Splatter die Blutfarbe in Abhängigkeit vom Kreaturentyp einstellen."
     ]
 }
