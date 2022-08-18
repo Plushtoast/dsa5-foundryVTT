@@ -32,6 +32,7 @@ import OpposeDSA from './system/opposed-dsa5.js'
 import DSAActiveEffect from "./status/dsa_active_effects.js";
 import EquipmentDamage from "./system/equipment-damage.js"
 import DidYouKnow from "./system/didyouknow.js";
+import MerchantSheetDSA5 from "./actor/merchant-sheet.js"
 
 Hooks.once("init", () => {
     console.log("Initializing DSA5 system")
@@ -39,12 +40,6 @@ Hooks.once("init", () => {
     CONFIG.statusEffects = DSA5.statusEffects
     game.dsa5 = {
         apps: {
-            ActorSheetdsa5,
-            ActorSheetdsa5Character,
-            ActorSheetdsa5Creature,
-            ActorSheetdsa5NPC,
-            MerchantSheetMixin,
-            ItemSheetdsa5,
             DSA5_Utility,
             DSA5Initializer,
             DSA5ChatListeners,
@@ -67,7 +62,13 @@ Hooks.once("init", () => {
             Itemdsa5
         },
         sheets: {
-
+            ActorSheetdsa5,
+            ActorSheetdsa5Character,
+            ActorSheetdsa5Creature,
+            ActorSheetdsa5NPC,
+            MerchantSheetMixin,
+            MerchantSheetDSA5,
+            ItemSheetdsa5,
         },
         macro: MacroDSA5,
         config: DSA5,

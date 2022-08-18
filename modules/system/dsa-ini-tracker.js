@@ -110,13 +110,25 @@ export default class DSAIniTracker extends Application {
             unRolled,
             waitingTurns
         })
-        const firstTurn = data.turns[0]
-        if (firstTurn) this.panToCurrentCombatant(data.combat.combatants.get(firstTurn.id))
+                
+        this.conditionalPanToCurrentCombatant(data)
         return data
     }
 
-    async panToCurrentCombatant(combatant) {
-        if (!combatant || !game.settings.get("dsa5", "enableCombatPan")) return
+    hasChangedTurn(data){
+        const res = data.turn != this.lastTurnUpdate || data.round != this.lastRoundUpdate
+        this.lastTurnUpdate = data.turn
+        this.lastRoundUpdate = data.round
+        return res
+    }
+
+    async conditionalPanToCurrentCombatant(data) {
+        if (!game.settings.get("dsa5", "enableCombatPan")) return
+
+        const firstTurn = data.turns[0]
+        const combatant = data.combat.combatants.get(firstTurn.id)
+
+        if(!combatant || !this.hasChangedTurn(data)) return
 
         setTimeout(() => {
             const token = combatant.token;

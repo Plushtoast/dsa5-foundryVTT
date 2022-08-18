@@ -42,7 +42,7 @@ export default class Actordsa5 extends Actor {
   }
 
   _getArmorCompensation(actor, wornArmors, itemModifiers) {
-    const armorCompensation = SpecialabilityRulesDSA5.abilityStep(this, game.i18n.localize("LocalizedIDs.inuredToEncumbrance"));
+    const armorCompensation = SpecialabilityRulesDSA5.abilityStep(actor, game.i18n.localize("LocalizedIDs.inuredToEncumbrance"));
     const armorEncumbrance = wornArmors.reduce((sum, x) => {
       return (sum += Number(x.system.encumbrance.value));
     }, 0);

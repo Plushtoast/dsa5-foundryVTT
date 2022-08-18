@@ -334,7 +334,7 @@ export default class Itemdsa5 extends Item {
                 const atbonus = effects[at] || 0
                 const tpbonus = effects[tp] || 0
                 const dmmalus = effects[dm] || 0
-                if (atbonus != 0 || tpbonus != 0 || dmmalus != 0 || com.data.effects.size > 0) {
+                if (atbonus != 0 || tpbonus != 0 || dmmalus != 0 || com.effects.size > 0) {
                     const subCategory = game.i18n.localize(DSA5.combatSkillSubCategories[com.system.category.sub])
                     combatskills.push({
                         name: com.name,
