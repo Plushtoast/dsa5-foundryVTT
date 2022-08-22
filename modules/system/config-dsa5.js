@@ -442,7 +442,13 @@ DSA5.systemTables = [
     { name: "Spell", attrs: "", roll: "botch-roll", pack: { de: "dsa5.patzer", en: "dsa5.botch" }, setting: { module: "", key: "" } },
 ]
 
-DSA5.morePackages = {}
+DSA5.morePackages = {
+    packages: {},
+    names: {
+        de: [],
+        en: []
+    }
+ }
 
 DSA5.narrowSpaceModifiers = {
     "weaponshort": {
