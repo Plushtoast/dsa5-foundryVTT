@@ -1078,8 +1078,8 @@ export default class ActorSheetDsa5 extends ActorSheet {
                 if (thing.count) {
                     let elem = lookup.find(x => x.name == thing.name && x.type == thing.type)
                     if(elem){
-                        elem.system.quantity.value = thing.count
-                        if (thing.qs && thing.type == "equipment") elem.system.QL = thing.qs
+                        elem.data.quantity.value = thing.count
+                        if (thing.qs && thing.type == "equipment") elem.data.QL = thing.qs
                     }else{
                         ui.notifications.warn(game.i18n.format('DSAError.notFound', {category: thing.type, name: thing.name}))    
                     }
