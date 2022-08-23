@@ -1612,7 +1612,7 @@ export default class Actordsa5 extends Actor {
       },
     };
 
-    let cardOptions = this._setupCardOptions("systems/dsa5/templates/chat/roll/regeneration-card.html", title);
+    let cardOptions = this._setupCardOptions("systems/dsa5/templates/chat/roll/regeneration-card.html", title, tokenId);
 
     return DiceDSA5.setupDialog({
       dialogOptions,
@@ -1683,7 +1683,7 @@ export default class Actordsa5 extends Actor {
       },
     };
 
-    let cardOptions = this._setupCardOptions("systems/dsa5/templates/chat/roll/status-card.html", title);
+    let cardOptions = this._setupCardOptions("systems/dsa5/templates/chat/roll/status-card.html", title, tokenId);
 
     return DiceDSA5.setupDialog({
       dialogOptions,
@@ -1730,7 +1730,7 @@ export default class Actordsa5 extends Actor {
       },
     };
 
-    let cardOptions = this._setupCardOptions("systems/dsa5/templates/chat/roll/characteristic-card.html", title);
+    let cardOptions = this._setupCardOptions("systems/dsa5/templates/chat/roll/characteristic-card.html", title, tokenId);
 
     return DiceDSA5.setupDialog({
       dialogOptions,
@@ -2046,10 +2046,11 @@ export default class Actordsa5 extends Actor {
     return this._parseDmg(item, currentAmmo);
   }
 
-  _setupCardOptions(template, title) {
+  _setupCardOptions(template, title, tokenId) {
+    const token = game.canvas.tokens.get(tokenId)
     let cardOptions = {
       speaker: {
-        alias: this.data.token.name,
+        alias: token ? token.name : this.data.token.name,
         actor: this.data._id,
       },
       title,
