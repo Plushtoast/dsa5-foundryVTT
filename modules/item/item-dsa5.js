@@ -554,7 +554,7 @@ export default class Itemdsa5 extends Item {
         return await Itemdsa5.getSubClass(stackOn.type).combineItem(stackOn, newItem, actor)
     }
 
-    _setupCardOptions(template, title) {
+    _setupCardOptions(template, title, tokenId) {
         const speaker = ChatMessage.getSpeaker()
         return {
             speaker: {
@@ -959,7 +959,7 @@ class SpellItemDSA5 extends Itemdsa5 {
             },
         }
 
-        let cardOptions = actor._setupCardOptions("systems/dsa5/templates/chat/roll/spell-card.html", title)
+        let cardOptions = actor._setupCardOptions("systems/dsa5/templates/chat/roll/spell-card.html", title, tokenId)
 
         return DiceDSA5.setupDialog({ dialogOptions, testData, cardOptions })
     }
@@ -1048,7 +1048,7 @@ class CombatskillDSA5 extends Itemdsa5 {
             },
         }
 
-        let cardOptions = actor._setupCardOptions("systems/dsa5/templates/chat/roll/combatskill-card.html", title)
+        let cardOptions = actor._setupCardOptions("systems/dsa5/templates/chat/roll/combatskill-card.html", title, tokenId)
 
         return DiceDSA5.setupDialog({ dialogOptions, testData, cardOptions })
     }
@@ -1219,7 +1219,7 @@ class DiseaseItemDSA5 extends Itemdsa5 {
             },
         }
 
-        let cardOptions = item._setupCardOptions(`systems/dsa5/templates/chat/roll/${item.type}-card.html`, title)
+        let cardOptions = item._setupCardOptions(`systems/dsa5/templates/chat/roll/${item.type}-card.html`, title, tokenId)
 
         return DiceDSA5.setupDialog({ dialogOptions, testData, cardOptions })
     }
@@ -1300,7 +1300,7 @@ class MeleeweaponDSA5 extends Itemdsa5 {
             },
         }
 
-        let cardOptions = actor._setupCardOptions("systems/dsa5/templates/chat/roll/combatskill-card.html", title)
+        let cardOptions = actor._setupCardOptions("systems/dsa5/templates/chat/roll/combatskill-card.html", title, tokenId)
 
         return DiceDSA5.setupDialog({ dialogOptions, testData, cardOptions })
     }
@@ -1381,7 +1381,7 @@ class PoisonItemDSA5 extends Itemdsa5 {
             },
         }
 
-        let cardOptions = item._setupCardOptions(`systems/dsa5/templates/chat/roll/${item.type}-card.html`, title)
+        let cardOptions = item._setupCardOptions(`systems/dsa5/templates/chat/roll/${item.type}-card.html`, title, tokenId)
 
         return DiceDSA5.setupDialog({ dialogOptions, testData, cardOptions })
     }
@@ -1520,7 +1520,7 @@ class RangeweaponItemDSA5 extends Itemdsa5 {
             },
         }
 
-        let cardOptions = actor._setupCardOptions("systems/dsa5/templates/chat/roll/combatskill-card.html", title)
+        let cardOptions = actor._setupCardOptions("systems/dsa5/templates/chat/roll/combatskill-card.html", title, tokenId)
 
         return DiceDSA5.setupDialog({ dialogOptions, testData, cardOptions })
     }
@@ -1614,7 +1614,7 @@ class SkillItemDSA5 extends Itemdsa5 {
             },
         }
 
-        let cardOptions = actor._setupCardOptions("systems/dsa5/templates/chat/roll/skill-card.html", title)
+        let cardOptions = actor._setupCardOptions("systems/dsa5/templates/chat/roll/skill-card.html", title, tokenId)
 
         return DiceDSA5.setupDialog({ dialogOptions, testData, cardOptions })
     }
@@ -1749,7 +1749,7 @@ class TraitItemDSA5 extends Itemdsa5 {
             },
         }
 
-        let cardOptions = actor._setupCardOptions("systems/dsa5/templates/chat/roll/combatskill-card.html", title)
+        let cardOptions = actor._setupCardOptions("systems/dsa5/templates/chat/roll/combatskill-card.html", title, tokenId)
 
         return DiceDSA5.setupDialog({ dialogOptions, testData, cardOptions })
     }
