@@ -35,6 +35,7 @@ export default class DSA5Tutorial {
         await game.settings.set("dsa5", "firstTimeStart", true)
         await game.settings.set("dsa5", "forceLanguage", lang)
         await game.settings.set("core", "language", lang)
+        foundry.utils.debouncedReload()
     }
 
     static async setupDefaultOptions() {

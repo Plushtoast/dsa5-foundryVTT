@@ -1,6 +1,6 @@
 export default function() {
 
-    Hooks.on("hotbarDrop", async(bar, data, slot) => {
+    Hooks.on("hotbarDrop", (bar, data, slot) => {
         if (data.mod == "dodge") {
             let item = {
                 name: game.i18n.localize(data.mod),
@@ -13,7 +13,7 @@ export default function() {
                 command = `game.dsa5.macro.charMacroById("${data.mod}", "${data.actorId}")`
             }
 
-            await createHotBarMacro(command, item.name, item.img, slot)
+            return createHotBarMacro(command, item.name, item.img, slot)
         } else if (data.mod == "attackWeaponless" || data.mod == "parryWeaponless") {
             let item = {
                 name: game.i18n.localize(data.mod),
@@ -26,7 +26,7 @@ export default function() {
                 command = `game.dsa5.macro.weaponLessMacroId("${data.mod}", "${data.actorId}")`
             }
 
-            await createHotBarMacro(command, item.name, item.img, slot)
+            return createHotBarMacro(command, item.name, item.img, slot)
 
         } else if (data.type == "Item") {
             const possibleItems = ["ritual", "ceremony", "meleeweapon", "rangeweapon", "skill", "combatskill", "spell", "liturgy", "char", "trait"]
@@ -47,27 +47,28 @@ export default function() {
                 command = `game.dsa5.macro.itemMacroById("${data.actorId}", "${item.name}", "${item.type}", ${param})`;
             }
             let name = data.mod == undefined ? item.name : `${item.name} - ${game.i18n.localize("CHAR." + data.mod.toUpperCase())}`
-            await createHotBarMacro(command, name, item.img, slot)
+            return createHotBarMacro(command, name, item.img, slot)
         } else if (data.type == "Actor" || data.type == "JournalEntry") {
-            const elem = await fromUuid(data.uuid)
+            const elem = fromUuidSync(data.uuid)
             let command = `(await fromUuid('${data.uuid}')).sheet.render(true)`
 
-            await createHotBarMacro(command, elem.name, elem.img, slot)
+            return createHotBarMacro(command, elem.name, elem.img, slot)
         }
-        return false;
     });
 }
 
-async function createHotBarMacro(command, name, img, slot) {
+function createHotBarMacro(command, name, img, slot) {
     let macro = game.macros.contents.find(m => (m.name === name) && (m.command === command));
     if (!macro) {
-        macro = await Macro.create({
+        Macro.create({
             name,
             type: "script",
             img,
             command
-        }, { displaySheet: false })
-
+        }, { displaySheet: false }).then(macro => game.user.assignHotbarMacro(macro, slot))
+    }else{
+        game.user.assignHotbarMacro(macro, slot);
     }
-    game.user.assignHotbarMacro(macro, slot);
+    return false
 }
+    

@@ -133,7 +133,7 @@ Hooks.once('ready', () => {
 Hooks.once('setup', () => {
     if (!["de", "en"].includes(game.i18n.lang)) {
         console.warn(`DSA5 - ${game.i18n.lang} is not a supported language. Falling back to default language.`)
-        game.settings.set("core", "language", "de")
+        game.settings.set("core", "language", "de").then(()=> foundry.utils.debouncedReload())
     }
     const forceLanguage = game.settings.get("dsa5", "forceLanguage")
     if (["de", "en"].includes(forceLanguage) && game.i18n.lang != forceLanguage) {
@@ -164,7 +164,10 @@ const showWrongLanguageDialog = (forceLanguage) => {
             ok: {
                 icon: '<i class="fa fa-check"></i>',
                 label: game.i18n.localize("ok"),
-                callback: () => { game.settings.set("core", "language", forceLanguage) }
+                callback: async() => { 
+                    await game.settings.set("core", "language", forceLanguage) 
+                    foundry.utils.debouncedReload()
+                }
             },
             cancel: {
                 icon: '<i class="fas fa-times"></i>',
