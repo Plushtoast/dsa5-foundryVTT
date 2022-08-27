@@ -164,13 +164,13 @@ export default class DSA5_Utility {
         return DSA5.advancementCosts[type][Number(currentAdvances) + modifier]
     }
 
-    static async getFolderForType(documentType, parent = null, folderName = null, sort = 0, color = "") {
+    static async getFolderForType(documentType, parent = null, folderName = null, sort = 0, color = "", sorting = undefined) {
         let folder = await game.folders.contents.find(x => x.name == folderName && x.type == documentType && x.folder?.id == parent)
         if (!folder) {
             folder = await Folder.create({
                 name: folderName,
                 type: documentType,
-                sorting: documentType == "JournalEntry" ? "a" : "m",
+                sorting: sorting || (documentType == "JournalEntry" ? "a" : "m"),
                 color,
                 sort,
                 parent

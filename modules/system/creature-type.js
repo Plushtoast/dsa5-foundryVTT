@@ -30,8 +30,30 @@ export default class CreatureType {
     static detectCreatureType(actor) {
         const creatureClass = actor.type == "creature" ? actor.system.creatureClass.value : actor.system.details.species.value
         const types = Object.keys(CreatureType.creatureData.types).filter((x) => creatureClass.indexOf(x) >= 0)
-        console.log(creatureClass, types)
-        return types.map((x) => eval(`new ${CreatureType.creatureData.types[x]}(creatureClass)`))
+        return types.map((x) => this.getClass(CreatureType.creatureData.types[x], creatureClass))
+    }
+
+    static getClass(type, creatureClass){
+        const cl = {
+            "DemonType": DemonType,
+            "ChimeraType": ChimeraType,
+            "DaimonidType": DaimonidType,
+            "DragonType": DragonType,
+            "ElementalType": ElementalType,
+            "FairyType": FairyType,
+            "GhostType": GhostType,
+            "GolemType": GolemType,
+            "HomunculiType": HomunculiType,
+            "IntelligentCreatureType": IntelligentCreatureType,
+            "PlantType": PlantType,
+            "AnimalType": AnimalType,
+            "UndeadType": UndeadType,
+            "SupernaturalType": SupernaturalType,
+            "MagicalConstructType": MagicalConstructType,
+            "WerCreatureType": WerCreatureType,
+            "VampireType": VampireType
+        }[type]
+        return new cl(creatureClass)
     }
 
     static creatureTypeName(actor){
