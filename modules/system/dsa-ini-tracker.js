@@ -126,6 +126,8 @@ export default class DSAIniTracker extends Application {
         if (!game.settings.get("dsa5", "enableCombatPan")) return
 
         const firstTurn = data.turns[0]
+        if(!firstTurn) return
+        
         const combatant = data.combat.combatants.get(firstTurn.id)
 
         if(!combatant || !this.hasChangedTurn(data)) return
