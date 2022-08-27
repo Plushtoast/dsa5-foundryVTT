@@ -29,6 +29,7 @@
       {
         "id": "step-3",
         "selector": "[data-tool=\"mastersMenu\"]",
+        "restricted": true,
         "title": "Master menu",
         "content": "The master menu allows you to keep track of the state of the players. You will also find all available random generators and have access to further game settings or the TDE light settings. (Default Hotkey M)",
         "activateLayer": "dsamenu"

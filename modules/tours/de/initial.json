@@ -30,6 +30,7 @@
         "id": "step-3",
         "selector": "[data-tool=\"mastersMenu\"]",
         "title": "Meistermenü",
+        "restricted": true,
         "content": "Das Meistermenü ermöglicht es dir den Überblick über den Zustand der Spieler zu bewahren. Außerdem findest du dort alle verfügbaren Zufallsgeneratoren und hast Zugriff auf weitere Spieleinstellungen oder die DSA Lichteinstellungen. (Standard Hotkey M)",
         "activateLayer": "dsamenu"
       },

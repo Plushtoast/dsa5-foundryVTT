@@ -195,21 +195,19 @@ function setupKnownEquipmentModifiers() {
 }
 
 class DaylightIlluminationShader extends AdaptiveIlluminationShader {
-    static fragmentShader = `
-    precision mediump float;
-    uniform float time;
-    uniform float intensity;
-    uniform float alpha;
-    uniform float ratio;
-    uniform vec3 colorDim;
-    uniform vec3 colorBright;
-    varying vec2 vUvs;
-    const float MU_TWOPI = 0.1591549431;
+    static fragmentShader =  `
+    ${this.SHADER_HEADER}
+    ${this.PERCEIVED_BRIGHTNESS}
 
     void main() {
-      float dist = distance(vUvs, vec2(0.5)) * 2.0;
-      vec3 color = mix(colorDim, colorBright, smoothstep(clamp(0.8 - ratio, 0.0, 1.0), clamp(1.2 - ratio, 0.0, 1.0),1.0 - dist));
-      vec3 fcolor = mix(color, max(color, smoothstep( 0.1, 1.0, color ) * 10.0), 1.0 - dist) * alpha;
-      gl_FragColor = vec4(fcolor, 1.0);
-    }`;
+        ${this.FRAGMENT_BEGIN}
+        ${this.TRANSITION}
+       
+        // Darkness
+        framebufferColor = max(framebufferColor, colorBackground);        
+        // Elevation
+        finalColor = mix(finalColor, max(finalColor, smoothstep( 0.1, 1.0, finalColor ) * 10.0), 1.0) * depth;        
+        // Final
+        gl_FragColor = vec4(finalColor, 1.0);
+      }`;
 }

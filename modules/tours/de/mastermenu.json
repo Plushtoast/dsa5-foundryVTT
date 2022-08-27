@@ -1,59 +1,67 @@
 {
-    "title": "Meistermenü",
-    "module": "dsa5",
-    "id": "tdeMastermenu",
-    "canBeResumed": false,
-    "display": true,
-    "preCommand": "await game.dsa5.apps.gameMasterMenu.render(true, {focus: true})",
-    "steps": [
-      {
-        "id": "step-0",
-        "selector": ".masterMenu",
-        "title": "Meistermenü",
-        "content": "Das Meistermenü gibt dir einen Überblick über deine Spieler oder wichtige Charaktere und gibt dir Zugriff auf Funktionen die nur für den Meister vorgesehen sind. (Default Hotkey M)"
-      },
-      {
-        "id": "step-1",
-        "selector": ".masterMenu [data-tab=\"randomGen\"]",
-        "title": "Zuchtgrube",
-        "content": "Die Zuchtgrube ermöglicht es dir zufällige Charaktere, Schätze oder ähnliches anzulegen."
-      }, 
-      {
-        "id": "step-2",
-        "selector": ".masterMenu [data-tab=\"sceneConfig\"]",
-        "title": "Szeneinstellungen",
-        "content": "Die Szeneinstellungen ermöglichen den schnellen Zugriff auf Einstellung wie die Dunkelheit oder die Optionen für die automatische Licht- und Sichtkonfiguration."
-      },
-      {
-        "id": "step-3",
-        "selector": ".masterMenu .dragEveryone",
-        "title": "Alle Spieler (drag & drop)",
-        "content": "Hier kannst du z.b. alle getrackten Akteure auf einmal auf die Map ziehen (drag & drop)."
-      },
-      {
-        "id": "step-4",
-        "selector": ".masterMenu .randomPlayer",
-        "title": "Zufallsopfer",
-        "content": "Benötigst du einen Spieler für ein zufälliges Ereignis, kannst du hier einen auswürfeln."
-      },
-      {
-        "id": "step-5",
-        "selector": ".masterMenu .select2",
-        "title": "Meisterwurf",
-        "content": "Außerdem kannst du verdeckt Wurfe mit den jeweiligen Spielercharakteren durchführen."
-      },
-      {
-        "id": "step-5",
-        "selector": ".masterMenu .heroschip",
-        "title": "Spielerchips",
-        "content": "Auch Spielerschips lassen sich hier überblicken und verwalten."
-      },
-      {
-        "id": "step-0",
-        "selector": ".masterMenu",
-        "title": "Sonstige Funktionen",
-        "content": "Das Meistermenü bietet noch viele weiter Funktionen. So kannst du z.b. weitere Akteure hinzufügen, sortieren, ihnen Geld oder Abenteuerpunkte geben, besondere Eigenschaften anzeigen, etc..."
-      }
-    ]
-  }
-  
+  "title": "Meistermenü",
+  "module": "dsa5",
+  "id": "tdeMastermenu",
+  "canBeResumed": false,
+  "restricted": true,
+  "display": true,
+  "preCommand": "await game.dsa5.apps.gameMasterMenu.render(true, {focus: true})",
+  "steps": [
+    {
+      "id": "step-0",
+      "selector": ".masterMenu",
+      "title": "Meistermenü",
+      "restricted": true,
+      "content": "Das Meistermenü gibt dir einen Überblick über deine Spieler oder wichtige Charaktere und gibt dir Zugriff auf Funktionen die nur für den Meister vorgesehen sind. (Default Hotkey M)"
+    },
+    {
+      "id": "step-1",
+      "selector": ".masterMenu [data-tab=\"randomGen\"]",
+      "title": "Zuchtgrube",
+      "restricted": true,
+      "content": "Die Zuchtgrube ermöglicht es dir zufällige Charaktere, Schätze oder ähnliches anzulegen."
+    },
+    {
+      "id": "step-2",
+      "selector": ".masterMenu [data-tab=\"sceneConfig\"]",
+      "title": "Szeneinstellungen",
+      "restricted": true,
+      "content": "Die Szeneinstellungen ermöglichen den schnellen Zugriff auf Einstellung wie die Dunkelheit oder die Optionen für die automatische Licht- und Sichtkonfiguration."
+    },
+    {
+      "id": "step-3",
+      "selector": ".masterMenu .dragEveryone",
+      "title": "Alle Spieler (drag & drop)",
+      "restricted": true,
+      "content": "Hier kannst du z.b. alle getrackten Akteure auf einmal auf die Map ziehen (drag & drop)."
+    },
+    {
+      "id": "step-4",
+      "selector": ".masterMenu .randomPlayer",
+      "title": "Zufallsopfer",
+      "restricted": true,
+      "content": "Benötigst du einen Spieler für ein zufälliges Ereignis, kannst du hier einen auswürfeln."
+    },
+    {
+      "id": "step-5",
+      "selector": ".masterMenu .select2",
+      "title": "Meisterwurf",
+      "restricted": true,
+      "content": "Außerdem kannst du verdeckt Wurfe mit den jeweiligen Spielercharakteren durchführen."
+    },
+    {
+      "id": "step-5",
+      "selector": ".masterMenu .heroschip",
+      "title": "Spielerchips",
+      "restricted": true,
+      "content": "Auch Spielerschips lassen sich hier überblicken und verwalten."
+    },
+    {
+      "id": "step-0",
+      "selector": ".masterMenu",
+      "title": "Sonstige Funktionen",
+      "restricted": true,
+      "content": "Das Meistermenü bietet noch viele weiter Funktionen. So kannst du z.b. weitere Akteure hinzufügen, sortieren, ihnen Geld oder Abenteuerpunkte geben, besondere Eigenschaften anzeigen, etc..."
+    }
+  ]
+}

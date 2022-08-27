@@ -3,6 +3,9 @@ import DPS from "../system/derepositioningsystem.js";
 export default function() {
     Token.prototype.drawEffects = async function() {
         this.effects.removeChildren().forEach(c => c.destroy());
+        this.effects.bg = this.effects.addChild(new PIXI.Graphics());
+        this.effects.overlay = null;
+
         const tokenEffects = this.document.effects;
         const actorEffects = this.actor ? await this.actor.actorEffects() : []
 
@@ -13,55 +16,72 @@ export default function() {
 
         if (tokenEffects.length || actorEffects.length) {
             const promises = [];
-            let w = Math.round(canvas.dimensions.size / 2 / 5) * 2;
-            let bg = this.effects.addChild(new PIXI.Graphics()).beginFill(0x000000, 0.40).lineStyle(1.0, 0x000000);
-            let i = 0;
 
             for (let f of actorEffects) {
                 if (!f.icon) continue;
-                const tint = f.tint ? colorStringToHex(f.tint) : null;
+                const tint = Color.from(f.tint ?? null);
                 if (f.getFlag("core", "overlay")) {
                     overlay = { src: f.icon, tint };
                     continue;
                 }
-                promises.push(this._drawEffect(f.icon, i, bg, w, tint, getProperty(f, "flags.dsa5.value")));
-                i++;
+                promises.push(this._drawEffect(f.icon, tint, getProperty(f, "flags.dsa5.value"))) //, bg, w, i, getProperty(f, "flags.dsa5.value")));
             }
             for (let f of tokenEffects) {
-                promises.push(this._drawEffect(f, i, bg, w, null));
-                i++;
+                promises.push(this._drawEffect(f, null))//, bg, w, i));
             }
             await Promise.all(promises);
         }
-        return this._drawOverlay(overlay)
+        
+        this.effects.overlay = await this._drawOverlay(overlay.src, overlay.tint);
+        this._refreshEffects();
     }
 
-    Token.prototype._drawEffect = async function(src, i, bg, w, tint, value) {
-        let tex = await loadTexture(src);
-        let icon = this.effects.addChild(new PIXI.Sprite(tex));
+    Token.prototype._refreshEffects = function() {
+        let i = 0;
+        const w = Math.round(canvas.dimensions.size / 2 / 5) * 2;
+        const rows = Math.floor(this.document.height * 5);
+        const bg = this.effects.bg.clear().beginFill(0x000000, 0.40).lineStyle(1.0, 0x000000);
+        for ( const effect of this.effects.children ) {
+          if ( effect === bg ) continue;
+          if ( effect.isCounter) continue
+    
+          // Overlay effect
+          if ( effect === this.effects.overlay ) {
+            const size = Math.min(this.w * 0.6, this.h * 0.6);
+            effect.width = effect.height = size;
+            effect.position.set((this.w - size) / 2, (this.h - size) / 2);
+          }
+    
+          // Status effect
+          else {
+            effect.width = effect.height = w;
+            effect.x = Math.floor(i / rows) * w;
+            effect.y = (i % rows) * w;
+            bg.drawRoundedRect(effect.x + 1, effect.y + 1, w - 2, w - 2, 2);
 
-        icon.width = icon.height = w;
-        icon.x = Math.floor(i / 5) * w;
-        icon.y = (i % 5) * w;
-
-        if (tint) icon.tint = tint;
-
-        try {
-            bg.drawRoundedRect(icon.x + 1, icon.y + 1, w - 2, w - 2, 2);
-        } catch {}
-
-        this.effects.addChild(icon);
-
-        if (value) {
-            let textEffect = game.dsa5.config.effectTextStyle
-            let color = await game.settings.get("dsa5", "statusEffectCounterColor")
-            textEffect._fill = /^#[0-9A-F]+$/.test(color) ? color : "#000000"
-            let text = this.effects.addChild(new PreciseText(value, textEffect))
-            text.x = icon.x;
-            text.y = icon.y;
-            this.effects.addChild(text);
+            if(effect.counter > 1 && !effect.counterDrawn){
+                let textEffect = game.dsa5.config.effectTextStyle
+                let color = game.settings.get("dsa5", "statusEffectCounterColor")
+                textEffect._fill = /^#[0-9A-F]+$/.test(color) ? color : "#000000"
+                let text = this.effects.addChild(new PreciseText(effect.counter, textEffect))
+                text.x = effect.x;
+                text.y = effect.y;
+                text.isCounter = true
+                effect.counterDrawn = true
+            }
+            i++;
+          }
         }
-    }
+      }
+
+    Token.prototype._drawEffect = async function(src, tint, value) {
+        if ( !src ) return;
+        let tex = await loadTexture(src, {fallback: "icons/svg/hazard.svg"});
+        let icon = new PIXI.Sprite(tex);
+        if ( tint ) icon.tint = tint;
+        icon.counter = value
+        return this.effects.addChild(icon);
+     }
 
     TokenHUD.prototype._onToggleEffect = function(event, { overlay = false } = {}) {
         event.preventDefault();
