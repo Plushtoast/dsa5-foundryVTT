@@ -4,15 +4,15 @@
 ![](https://repository-images.githubusercontent.com/311655339/4d523800-55a9-11eb-9e2e-6bbc2b71d8a4)
 
 ### Current Version and Compatibility:
-4.0.x - FoundryVTT 9.+
+4.0.x - FoundryVTT 10.+
 This system is intended for usage with [Foundry Virtual Tabletop](https://foundryvtt.com/) to play "Das Schwarze Auge" 5th edition.
 If you want to learn more checkout the [German](https://ulisses-spiele.de/virtual-tabletop-dsa-vtt/) or [English](https://ulisses-us.com/ulisses-virtual-tabletops/virtual-tabletop-dsa-vtt/) VTT Page by Ulisses Spiele.
 
 ## Installation - Auto Installer
-In the FVTT Game Systems Menu, click Install System and enter the Manifest URL: `https://raw.githubusercontent.com/Plushtoast/dsa5-foundryVTT/foundry9/system.json`
+In the FVTT Game Systems Menu, click Install System and enter the Manifest URL: `https://raw.githubusercontent.com/Plushtoast/dsa5-foundryVTT/foundry10/system.json`
 
 ## Roadmap
-See [Milestones](https://github.com/Plushtoast/dsa5-foundryVTT/milestones) for our short term goals. Those might be subject to change.
+See [Roadmap](https://github.com/users/Plushtoast/projects/1/views/6) for our short term goals. Those might be subject to change.
 
 ## Current State
 Aventuria awaits, as TDE 5 is now fully integrated with Foundry VTT.

@@ -1,0 +1,77 @@
+<div>
+    <h1 class="mume-header" id="important-enhancements">4.0.3 Important Enhancements/Notes (8/30/2022)</h1>
+
+    <h2 class="mume-header" id="swap-hands-modifiers">Swap Hands modifiers</h2>
+
+    <p>One-handed weapons can now be wielded two-handed and two-handed weapons the other way around. All modifiers are
+        included. You are allowed to swap hands once every time it is your turn in combat. Using a shield with a spear
+        is now possible!</p>
+    <h2 class="mume-header" id="new-item-information">New item &quot;information&quot;</h2>
+
+    <p>The new item type &quot;information&quot; is now available. It can start a roll check to define how many
+        information an user knows about a specific topic. The player or GM (configurable in the settings) receives a
+        whispered message according to the result of the roll and can then process the information as he sees fit (e.g.
+        tell the other players). We updated all the creatures to include those informations where necessary. Later on we
+        will also update all plants.</p>
+    <h2 class="mume-header" id="artifact-creation">Artifact creation</h2>
+
+    <p>The core module now brings an artifact creation helper to the player menu. It assists in creating magical
+        artifacts by showing all roll modifiers, costs and other important parts of the process. We will probably add
+        more helpers for complex rule elements like this in the future.</p>
+    <h2 class="mume-header" id="active-effects-for-weapons-and-other-items">Active Effects for weapons and other items
+    </h2>
+
+    <p>Active effects can now modify other items. You can now create e.g. a ring which modifies your preferred weapon
+        and increases the attack mod value.<br>
+        This will come in handy for special abilites for traditional artifact items and the like. We will add those to
+        the compendiae at a later time. Fields that have been modified by such an active effect can not be changed
+        manually anymore until the effect is gone!<br>
+        Example key: &quot;@meleeweapon.Dagger.system.atmod.value, mode: add, value 2 - would increase the attack value
+        of each item named dagger of type meleeweapon by 2</p>
+    <h1 class="mume-header" id="enhancements">Enhancements</h1>
+
+    <ul class="dsalist">
+        <li>Active Effects of special abilites, advantages and disadvantages are now applied according to their level x
+            times</li>
+        <li>The master menu has now a button to drag all tracked actors at the same time to the canvas</li>
+        <li>The library has now a loading bar, so you know what&apos;s going on</li>
+        <li>You can now drag actors from the master menu directly to the canvas</li>
+        <li>You can now disable the combat regeneration of creatures (e.g. if you hit the werewolf with a silver sword)
+        </li>
+        <li>The stituational modifiers should have a more helpful tooltip now</li>
+        <li>Traditional artifact special abilities now have their respective artifact as icon so they can be found
+            easier in the library</li>
+        <li>The TDE journal sheet style can now for the most part be deactivated by switching the journal sheet</li>
+        <li>A few tours have been added</li>
+        <li>The tooltips have been migrated to the v10 default style</li>
+        <li>Regeneration rolls can now be selective (e.g. only AE, LE)</li>
+        <li>Actors now have a method to detect the creature class which can be used to define e.g. blood colors for the
+            module splatter. The core module contains a predefined macro to set those colors (thanks to VTTom). You can
+            modify it to your likings.</li>
+        <li>We added a few more map note icons</li>
+        <li>An automatic self-control check request is now posted to the chat whenever an actor receives 4 level of
+            pain, so he can try to avoid becoming incapacitated (this can be disabled in the options)</li>
+        <li>TDE is now bundled and compressed which should improve loading time (a bit experimental)</li>
+        <li>Enabling or disabling access of books for the players now also shows or hides the connected compendiae</li>
+        <li>Automatic renaming of tokens dropped to the canvas can now be done without numbering</li>
+        <li>The lighthelper in the core module has now all light settings available. Moreover the token player HUD can
+            now be customized with own light configurations.</li>
+        <li>GM arbitrariness now also works for hitzones</li>
+        <li>The &quot;did you know message&quot; now fades after 8s (instead of 4) and the fade can be stopped entirely.
+            After the stop you can request more messages. Just hit the right button.</li>
+        <li>Ini and movement modifiers for zone armor should be calculated properly now (thanks to Qowy)</li>
+        <li>The creature type detection now also works for the &quot;npc&quot; and &quot;character&quot; sheet (instead
+            of &quot;creature&quot; only). Keep in mind that the species field is readonly as the species should only be
+            dragged to the character to ensure all base attributes are set properly. To make the detection work, you
+            need to create an active effect which overrides the species name (this is included in the lykanthropie and
+            wercreature conditions)</li>
+    </ul>
+    <h1 class="mume-header" id="bugfixes">Bugfixes</h1>
+
+    <ul class="dsalist">
+        <li>Parry rolls should now properly show the token name instead of the actor name</li>
+        <li>Fixed calculation of wercreature damage modifiers</li>
+        <li>Fixed level depiction of general special abilities for the character sheet</li>
+        <li>Auto pan to token in combat shouldn&apos;t occur so excessive anymore</li>
+    </ul>
+</div>
