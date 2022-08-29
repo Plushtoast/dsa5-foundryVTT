@@ -70,6 +70,11 @@
                     <a class="combatant-control {{#if this.defeated}}active{{/if}}" data-tooltip="COMBAT.ToggleDead" data-control="toggleDefeated">
                         <i class="fas fa-skull"></i></a>
                     {{/if}}
+                    {{#if this.canPing}}
+                    <a class="combatant-control" data-tooltip="COMBAT.PingCombatant" data-control="pingCombatant">
+                        <i class="fa-solid fa-bullseye-arrow"></i>
+                    </a>
+                    {{/if}}
                     <div class="token-effects">
                         {{#each this.effects}}
                         <img class="token-effect" src="{{this}}" /> {{/each}}

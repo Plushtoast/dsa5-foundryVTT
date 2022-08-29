@@ -119,21 +119,6 @@ export default class DSA5_Utility {
         return chatData;
     }
 
-    static findItembyId(id) {
-        return game.items.contents.find(x => x.id == id);
-    }
-
-    static findActorbyId(id) {
-        return game.actors.contents.find(x => x.id == id);
-    }
-
-    static async findItembyIdAndPack(id, packMan) {
-        const pack = game.packs.get(packMan)
-        let item
-        await pack.getDocuments().then(content => item = content.find(i => i.id == id));
-        return item
-    }
-
     static getSpeaker(speaker) {
         /*if (!speaker.scene) {
             console.trace()

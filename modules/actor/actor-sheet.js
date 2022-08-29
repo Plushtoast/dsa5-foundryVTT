@@ -6,7 +6,6 @@ import SpecialabilityRulesDSA5 from "../system/specialability-rules-dsa5.js";
 import DSA5ChatListeners from "../system/chat_listeners.js";
 import DSA5StatusEffects from "../status/status_effects.js";
 import DialogActorConfig from "../dialog/dialog-actorConfig.js";
-import { itemFromDrop } from "../system/view_helper.js";
 import Actordsa5 from "./actor-dsa5.js";
 import DSA5SoundEffect from "../system/dsa-soundeffect.js";
 import RuleChaos from "../system/rule_chaos.js";
@@ -50,7 +49,8 @@ export default class ActorSheetDsa5 extends ActorSheet {
         mergeObject(options, {
             width: 770,
             height: 740,
-            scrollY: [".save-scroll"]
+            scrollY: [".save-scroll"],
+            dragDrop: [{dragSelector: ".content .item", dropSelector: null}],
         });
         return options;
     }
@@ -683,12 +683,6 @@ export default class ActorSheetDsa5 extends ActorSheet {
             });
         })
 
-        let handler = ev => this._onDragItemStart(ev);
-        html.find('.content .item').each((i, li) => {
-            li.setAttribute("draggable", true);
-            li.addEventListener("dragstart", handler, false);
-        });
-
         html.find('.item-delete').click(ev => this._deleteItem(ev))
 
         html.find('.filterTalents').click(event => {
@@ -894,21 +888,42 @@ export default class ActorSheetDsa5 extends ActorSheet {
     }
 
     _onDragItemStart(event) {
+        // TOdo might not need this anymore
         let tar = event.currentTarget
-        let itemId = tar.getAttribute("data-item-id");
-        let mod = tar.getAttribute("data-mod");
-        const item = itemId ? this.actor.items.get(itemId).toObject() : {}
+        let itemId = tar.dataset.itemId;
+        let mod = tar.dataset.mod;
+        const item = this.actor.items.get(itemId)
 
-        event.dataTransfer.setData("text/plain", JSON.stringify({
-            type: "Item",
-            sheetTab: this.actor.flags["_sheetTab"],
-            actorId: this.actor.id,
-            tokenId: this.token ? this.token.id : null,
-            mod: mod,
-            data: item,
-            root: tar.getAttribute("root")
-        }));
+        const dragData = item.toDragData();
+        mergeObject(dragData, {
+                     
+            mod
+        })
+        event.dataTransfer.setData("text/plain", JSON.stringify(dragData))
         event.stopPropagation()
+    }
+
+    _onDragStart(event) {
+        const li = event.currentTarget;
+        if ( event.target.classList.contains("content-link") ) return;
+    
+        let dragData;
+    
+        if ( li.dataset.itemId ) {
+          const item = this.actor.items.get(li.dataset.itemId);
+          dragData = item.toDragData();
+          if(li.dataset.mod) dragData.mod = li.dataset.mod
+        }
+
+        //todo check this for effects
+        if ( li.dataset.effectId ) {
+          const effect = this.actor.effects.get(li.dataset.effectId);
+          dragData = effect.toDragData();
+        }
+    
+        if ( !dragData ) return;
+    
+        event.dataTransfer.setData("text/plain", JSON.stringify(dragData));
     }
 
     async _handleSpellExtension(item) {
@@ -994,10 +1009,6 @@ export default class ActorSheetDsa5 extends ActorSheet {
         if (!res) await this.actor.createEmbeddedDocuments("Item", [item])
     }
 
-    async _onDrop(event) {
-        const dragData = JSON.parse(event.dataTransfer.getData("text/plain"))
-        this._handleDragData(dragData, event, await itemFromDrop(dragData, this.actor.id))
-    }
 
     async handleItemCopy(item, typeClass) {
         if (DSA5.equipmentCategories.includes(typeClass)) {
@@ -1123,42 +1134,59 @@ export default class ActorSheetDsa5 extends ActorSheet {
         if (!res) await this.actor.createEmbeddedDocuments("Item", [item])
     }
 
-    async _handleRemoveSourceOnDrop(dragData, item) {
-        let sourceActor
-        if (dragData.tokenId) sourceActor = game.actors.tokens[dragData.tokenId];
-        if (!sourceActor) sourceActor = game.actors.get(dragData.actorId)
+    async _handleRemoveSourceOnDrop(item) {
+        let sourceActor = item.parent
 
         if (sourceActor && sourceActor.isOwner) await sourceActor.deleteEmbeddedDocuments("Item", [item._id])
     }
 
-    async _handleDragData(dragData, originalEvent, { item, typeClass, selfTarget }) {
-        if (!item) return
+    async _onDropItemCreate(itemData) {
+        if(itemData instanceof Array){
+            return this.actor.createEmbeddedDocuments("Item", itemData);
+        }
+        return await this._manageDragItems(itemData, itemData.type)       
+    }
+
+    async _onDropActor(event, data) {
+        if ( !this.actor.isOwner ) return false;
+
+        const { itemData, typeClass, selfTarget } = await itemFromDrop(data, this.id)
+
+        if(selfTarget) return
+
+        return await this._manageDragItems(itemData, typeClass) 
+    }
+
+    async _onDropItem(event, data) {
+        if ( !this.actor.isOwner ) return false;
+
+        const item = await Item.implementation.fromDropData(data);
+        const itemData = item.toObject();
 
         let container_id
-        let parentItem = $(originalEvent.target).parents(".item")
+        let parentItem = $(event.target).parents(".item")
 
-        if (parentItem && parentItem.attr("data-category") == "bags" && DSA5.equipmentCategories.includes(typeClass)) {
-            if (parentItem.attr("data-item-id") != item._id) {
-                container_id = parentItem.attr("data-item-id")
-
-                item.system.parent_id = container_id
+        if (parentItem && parentItem.attr("data-category") == "bags" && DSA5.equipmentCategories.includes(item.type)) {
+            if (parentItem.attr("data-item-id") != item.id) container_id = parentItem.attr("data-item-id")
+        }
+        const selfTarget = this.actor.uuid === item.parent?.uuid
+        if ( selfTarget ){
+            if(event.ctrlKey){
+               await this.handleItemCopy(itemData, item.type) 
+            } else if(container_id){
+                const upd = {_id: item.id, "system.parent_id": container_id}
                 if (item.system.worn && item.system.worn.value)
-                    item.system.worn.value = false
+                    upd["system.worn.value"] = false
+                await this.actor.updateEmbeddedDocuments("Item", [upd])
+            } else if(DSA5.equipmentCategories.includes(item.type)){
+                await this.actor.updateEmbeddedDocuments("Item", [{ _id: item.id, system: { parent_id: 0 } }])
             }
+            //return this._onSortItem(event, itemData);
+        }else{
+            await this._onDropItemCreate(itemData);
         }
-
-        if (originalEvent.ctrlKey && selfTarget) {
-            await this.handleItemCopy(item, typeClass)
-        } else if (!selfTarget) {
-            await this._manageDragItems(item, typeClass)
-        } else if (selfTarget && container_id) {
-            await this.actor.updateEmbeddedDocuments("Item", [item])
-        } else if (selfTarget && DSA5.equipmentCategories.includes(typeClass)) {
-            await this.actor.updateEmbeddedDocuments("Item", [{ _id: item._id, system: { parent_id: 0 } }])
-        }
-
-        if (originalEvent.altKey && !selfTarget && DSA5.equipmentCategories.includes(typeClass))
-            await this._handleRemoveSourceOnDrop(dragData, item)
-
+    
+        if (event.altKey && !selfTarget && DSA5.equipmentCategories.includes(item.type))
+            await this._handleRemoveSourceOnDrop(item)
     }
 }

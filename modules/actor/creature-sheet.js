@@ -40,16 +40,9 @@ export default class ActorSheetdsa5Creature extends ActorSheetDsa5 {
         }
     }
 
-    async _handleDragData(dragData, originalEvent, { item, typeClass, selfTarget }) {
-        if (!item) return
+    async _onDropItemCreate(itemData) {
+        if(itemData.type == "trait") return this._addTrait(itemData)
 
-        switch (typeClass) {
-            case "trait":
-                await this._addTrait(item)
-                break;
-            default:
-                super._handleDragData(dragData, originalEvent, { item, typeClass, selfTarget })
-        }
+        return super._onDropItemCreate(itemData)
     }
-
 }

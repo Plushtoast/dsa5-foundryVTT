@@ -1,8 +1,6 @@
 import DSA5 from "../system/config-dsa5.js"
 import DSA5_Utility from "../system/utility-dsa5.js"
 
-//TODO update to v10 standard https://gitlab.com/foundrynet/foundryvtt/-/issues/6990
-
 export const dropToGround = async(sourceActor, item, data, amount) => {
     if (game.user.isGM) {
         let items = await game.dsa5.apps.DSA5_Utility.allMoneyItems()
@@ -41,7 +39,7 @@ export const dropToGround = async(sourceActor, item, data, amount) => {
             }
         };
         const finalActor = await game.dsa5.entities.Actordsa5.create(actor)
-        const td = await finalActor.getTokenData({ x: data.x, y: data.y, hidden: false });
+        const td = await finalActor.getTokenDocument({ x: data.x, y: data.y, hidden: false });
         if (!canvas.dimensions.rect.contains(td.x, td.y)) return false
 
         const cls = getDocumentClass("Token");
@@ -50,14 +48,13 @@ export const dropToGround = async(sourceActor, item, data, amount) => {
         if (sourceActor) {
             const newCount = item.system.quantity.value - amount
             if (newCount <= 0) {
-                await sourceActor.deleteEmbeddedDocuments("Item", [data.data._id])
+                await sourceActor.deleteEmbeddedDocuments("Item", [item.id])
             } else {
                 await sourceActor.updateEmbeddedDocuments("Item", [{
-                    _id: data.data._id,
+                    _id: item.id,
                     "system.quantity.value": newCount
                 }])
             }
-
         }
     } else {
         const payload = {
@@ -74,23 +71,8 @@ export const dropToGround = async(sourceActor, item, data, amount) => {
 }
 
 const  handleItemDrop = async(canvas, data) => {
-    let item
-    let sourceActor
-    if (data.uuid) {
-        item = await fromUuid(data.uuid)
-        if (item.parent) sourceActor = item.parent
-        if (data.amount) item.system.quantity.value = Number(data.amount)
-    } else if (data.pack) {
-        let dataPack = game.packs.get(data.pack)
-        item = await dataPack.getDocument(data.data._id)
-    } else if (data.tokenId || data.actorId) {
-        sourceActor = DSA5_Utility.getSpeaker({ actor: data.actorId, token: data.tokenId, scene: canvas.scene.id })
-        if (!sourceActor.isOwner) return ui.notifications.error(game.i18n.localize('DSAError.notOwner'))
-
-        item = sourceActor.items.get(data.data._id)
-    } else {
-        item = game.items.get(data.data._id)
-    }
+    const item = await Item.implementation.fromDropData(data);
+    const sourceActor = item.parent
 
     if (!DSA5.equipmentCategories.includes(item.type)) return
 
@@ -124,7 +106,7 @@ const handleGroupDrop = async(canvas, data) => {
         const actor = game.actors.get(id)
         if(!actor) continue
         
-        const td = await actor.getTokenData({x, y, hidden: false});
+        const td = await actor.getTokenDocument({x, y, hidden: false});
         td.constructor.create(td, {parent: canvas.scene});
         if(rowLength % count == 0 && count > 0){
             y += gridSize

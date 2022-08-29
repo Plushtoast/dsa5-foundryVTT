@@ -117,7 +117,7 @@
     "primaryTokenAttribute": "status.wounds",
     "secondaryTokenAttribute": "status.astralenergy",
     "compatibility": {
-        "minimum": "10.275",
+        "minimum": "10.279",
         "verified": "10",
         "maximum": "10"
     },
@@ -125,5 +125,5 @@
     "manifest": "https://raw.githubusercontent.com/Plushtoast/dsa5-foundryVTT/foundry10/system.json",
     "download": "https://github.com/Plushtoast/dsa5-foundryVTT/releases/download/4.0.2/dsa5-foundryVTT-4.0.2.zip",
     "name": "dsa5",
-    "minimumCoreVersion": "10.275"
+    "minimumCoreVersion": "10.279"
 }
