@@ -7,6 +7,7 @@ import DSA5ChatListeners from "../system/chat_listeners.js";
 import DSA5StatusEffects from "../status/status_effects.js";
 import DialogActorConfig from "../dialog/dialog-actorConfig.js";
 import Actordsa5 from "./actor-dsa5.js";
+import { itemFromDrop } from "../system/view_helper.js";
 import DSA5SoundEffect from "../system/dsa-soundeffect.js";
 import RuleChaos from "../system/rule_chaos.js";
 import OnUseEffect from "../system/onUseEffects.js";
@@ -887,22 +888,6 @@ export default class ActorSheetDsa5 extends ActorSheet {
         SpecialabilityRulesDSA5.needsAdoption(this.actor, item, typeClass)
     }
 
-    _onDragItemStart(event) {
-        // TOdo might not need this anymore
-        let tar = event.currentTarget
-        let itemId = tar.dataset.itemId;
-        let mod = tar.dataset.mod;
-        const item = this.actor.items.get(itemId)
-
-        const dragData = item.toDragData();
-        mergeObject(dragData, {
-                     
-            mod
-        })
-        event.dataTransfer.setData("text/plain", JSON.stringify(dragData))
-        event.stopPropagation()
-    }
-
     _onDragStart(event) {
         const li = event.currentTarget;
         if ( event.target.classList.contains("content-link") ) return;
@@ -1082,8 +1067,8 @@ export default class ActorSheetDsa5 extends ActorSheet {
                 if (shapeshift) {
                     shapeshift.setShapeshift(this.actor, item)
                     shapeshift.render(true)
-                    break
                 }
+                break
             case "information":
                 await this._addUniqueItem(item)
                 break
@@ -1150,11 +1135,11 @@ export default class ActorSheetDsa5 extends ActorSheet {
     async _onDropActor(event, data) {
         if ( !this.actor.isOwner ) return false;
 
-        const { itemData, typeClass, selfTarget } = await itemFromDrop(data, this.id)
+        const { item, typeClass, selfTarget } = await itemFromDrop(data, this.id, false)
 
         if(selfTarget) return
 
-        return await this._manageDragItems(itemData, typeClass) 
+        return await this._manageDragItems(item, typeClass) 
     }
 
     async _onDropItem(event, data) {
