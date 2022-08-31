@@ -87,13 +87,11 @@ export const MerchantSheetMixin = (superclass) => class extends superclass {
         });
         html.find('.changeAmountAllItems').mousedown(ev => this.changeAmountAllItems(ev))
 
-        //Todo check if is working
-        if (this.showLimited()) {
-            let ims = html.find('.content .item')
-            ims.each((i, li) => li.setAttribute("draggable", false))
-            ims.on('dragstart', null)
-        }
         html.find('.gearSearch').prop("disabled", false)
+    }
+
+    _canDragStart(selector) {
+        return !this.playerViewEnabled() &&!showLimited && this.isEditable;
     }
 
     async toggleTradeLock(ev) {

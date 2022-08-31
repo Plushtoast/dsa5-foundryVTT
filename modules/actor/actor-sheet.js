@@ -51,7 +51,7 @@ export default class ActorSheetDsa5 extends ActorSheet {
             width: 770,
             height: 740,
             scrollY: [".save-scroll"],
-            dragDrop: [{dragSelector: ".content .item", dropSelector: null}],
+            dragDrop: [{dragSelector: ".content .item", dropSelector: null},{dragSelector: ".mainEffects .statusEffect", dropSelector: null}],
         });
         return options;
     }
@@ -900,9 +900,8 @@ export default class ActorSheetDsa5 extends ActorSheet {
           if(li.dataset.mod) dragData.mod = li.dataset.mod
         }
 
-        //todo check this for effects
-        if ( li.dataset.effectId ) {
-          const effect = this.actor.effects.get(li.dataset.effectId);
+        if ( li.dataset.id ) {
+          const effect = this.actor.effects.get(li.dataset.id);
           dragData = effect.toDragData();
         }
     
