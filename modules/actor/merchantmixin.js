@@ -91,7 +91,7 @@ export const MerchantSheetMixin = (superclass) => class extends superclass {
     }
 
     _canDragStart(selector) {
-        return !this.playerViewEnabled() &&!showLimited && this.isEditable;
+        return !this.merchantSheetActivated() && this.isEditable;
     }
 
     async toggleTradeLock(ev) {
