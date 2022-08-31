@@ -4,7 +4,7 @@
     "id": "tdeActor",
     "canBeResumed": false,
     "display": true,
-    "preCommand": "const actor = game.actors.find(x => true);if(!actor) return ui.notifications.warn(\"At least one actor needs to be available\"); this.app = actor;await actor.sheet.render(true)",
+    "preCommand": "const actor = game.actors.find(x => true);if(!actor) return ui.notifications.warn(\"Mindestens ein Akteur muss verfügbar sein\");await actor.sheet.render(true, {focus: true});this.app = actor.sheet;while(!this.app.rendered) await delay(50);",
     "steps": [
    
       {

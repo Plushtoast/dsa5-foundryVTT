@@ -23,31 +23,35 @@ export default class DSATour extends Tour{
         }
         else if(this.currentStep.activateLayer && canvas.activeLayer.options.name != this.currentStep.activateLayer){
             await canvas[this.currentStep.activateLayer].activate()
-            await timeout(100)
+            await delay(100)
         }
         else if(this.currentStep.appTab){
-            this.app.sheet.activateTab(this.currentStep.appTab)
+            this.app.activateTab(this.currentStep.appTab)
         }
     }
 
     exit(){
-        TooltipManager.TOOLTIP_ACTIVATION_MS = 500
         super.exit()
     }
 
     async start() {
         if(this.config.preCommand){
-            TooltipManager.TOOLTIP_ACTIVATION_MS = 50000000000
             const fn = await eval(`(async() => { ${this.config.preCommand} })`)
-            await fn()
-            while(!$(this.steps[this.stepIndex + 1].selector + ':visible').length) await timeout(50)
+            await fn()            
         }
+        if(this.app){
+            await this.app.render(true, {focus: true})
+            while(!this.app.rendered) await delay(50)            
+        }
+        if(this.app || this.config.preCommand) 
+            while(!$(this.steps[this.stepIndex + 1].selector + ':visible').length) await delay(50)
+
         const res = await super.start()
         $('#tooltip').show()
         return res
     }
 }
 
-function timeout(ms) {
+function delay(ms) {
     return new Promise(resolve => setTimeout(resolve, ms));
 }

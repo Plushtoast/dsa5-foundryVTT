@@ -5,13 +5,14 @@
   "canBeResumed": false,
   "display": true,
   "restricted": true,
-  "preCommand": "await game.dsa5.apps.gameMasterMenu.render(true, {focus: true})",
+  "preCommand": "this.app=game.dsa5.apps.gameMasterMenu;",
   "steps": [
     {
       "id": "step-0",
       "selector": ".masterMenu",
       "title": "Master menu",
       "restricted": true,
+      "appTab": "main",
       "content": "The master menu gives you an overview of your players or important characters and gives you access to functions that are only intended for the master. (Default Hotkey M)"
     },
     {
@@ -19,6 +20,7 @@
       "selector": ".masterMenu [data-tab=\"randomGen\"]",
       "title": "Breeding pit",
       "restricted": true,
+      "appTab": "main",
       "content": "The breeding pit allows you to create random characters, treasures or the like."
     },
     {
@@ -26,6 +28,7 @@
       "selector": ".masterMenu [data-tab=\"sceneConfig\"]",
       "title": "Scene settings",
       "restricted": true,
+      "appTab": "main",
       "content": "The scene settings allow quick access to settings such as darkness or the options for automatic light and vision configuration."
     },
     {
@@ -33,6 +36,7 @@
       "selector": ".masterMenu .dragEveryone",
       "title": "All players (drag & drop)",
       "restricted": true,
+      "appTab": "main",
       "content": "Here you can drag and drop all tracked actors onto the map at once."
     },
     {
@@ -40,6 +44,7 @@
       "selector": ".masterMenu .randomPlayer",
       "title": "Random victim",
       "restricted": true,
+      "appTab": "main",
       "content": "If you need a player for a random event, you can roll one here."
     },
     {
@@ -47,6 +52,7 @@
       "selector": ".masterMenu .select2",
       "title": "Master check",
       "restricted": true,
+      "appTab": "main",
       "content": "You can also make face-down rolls with the respective player characters."
     },
     {
@@ -54,6 +60,7 @@
       "selector": ".masterMenu .heroschip",
       "title": "Player fate points",
       "restricted": true,
+      "appTab": "main",
       "content": "Player fate points can also be overviewed and managed here."
     },
     {
@@ -61,6 +68,7 @@
       "selector": ".masterMenu",
       "title": "Other functions",
       "restricted": true,
+      "appTab": "main",
       "content": "The master menu offers many more functions. For example, you can add more players, sort them, give them money or adventure points, show special properties, etc...."
     }
   ]
