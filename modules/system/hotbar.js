@@ -1,7 +1,6 @@
 export default class DSA5Hotbar extends Hotbar {
     async _render(force = false, options = {}) {
         await super._render(force, options);
-        //$(this._element).append($('<div class="tokenQuickHot"></div>'))
         this.addContextColor()
     }
 

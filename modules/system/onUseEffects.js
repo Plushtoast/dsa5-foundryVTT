@@ -18,7 +18,7 @@ export default class OnUseEffect {
         }
         let result = {};
         if (documents.length) {
-            const body = `(async () => {${documents[0].data.command}})()`;
+            const body = `(async () => {${documents[0].command}})()`;
             const fn = Function("args", "actor", "item", body);
             try {
                 args.result = result;

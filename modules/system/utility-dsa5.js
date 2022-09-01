@@ -120,9 +120,6 @@ export default class DSA5_Utility {
     }
 
     static getSpeaker(speaker) {
-        /*if (!speaker.scene) {
-            console.trace()
-        }*/
         let actor = ChatMessage.getSpeakerActor(speaker)
         if (!actor && canvas.tokens) {
             let token = canvas.tokens.get(speaker.token)
@@ -227,6 +224,7 @@ export default class DSA5_Utility {
         })
     }
 
+    //todo see if v10 feature can replace this
     static customEntityLinks(content) {
         if (!content) return content
         const regex = /@(Rq|Gc|Ch)\[[a-zA-zöüäÖÜÄ&; -]+ (-|\+)?\d+\]/g
