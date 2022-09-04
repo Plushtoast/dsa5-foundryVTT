@@ -14,7 +14,8 @@ export default function() {
             html.find("#settings-documentation").append(button)
 
             const systemName = game.system.title.split("/")[game.i18n.lang == "de" ? 0 : 1]
-            html.find('#game-details .system').html(`${systemName}<span>${game.system.version}</span>`)
+            const version = html.find('#game-details .system span').html()
+            html.find('#game-details .system').html(`${systemName}<span>${version}</span>`)
         }
     })
 

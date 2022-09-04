@@ -54,7 +54,7 @@
             <img height="40" width="40" src="{{item.actor.img}}" /> {{/if}}
         </div>
         <div class="col eighty picto">
-            <a class="entity-link content-link" {{#if item.pack}}data-pack="{{item.pack}}" {{/if}} draggable="true" data-type="Actor" data-entity="Actor" data-id="{{item.id}}"><i class="fas fa-user"></i> {{item.name}}</a>
+            <a class="entity-link content-link" {{#if item.pack}}data-pack="{{item.pack}}" {{/if}} draggable="true" data-type="Actor" data-entity="Actor" data-uuid="{{item.uuid}}"><i class="fas fa-user"></i> {{item.name}}</a>
         </div>
     </div>
     {{/each}}

@@ -7,7 +7,6 @@ import Itemdsa5 from "./item/item-dsa5.js";
 import ItemSheetdsa5 from "./item/item-sheet.js";
 import initHooks from "./hooks/init.js";
 import MacroDSA5 from "./system/macroControl.js";
-import LazyImporter from "./importer/lazy_importer.js"
 import DSA5 from "./system/config-dsa5.js"
 import DSA5ItemLibrary from "./system/itemlibrary.js"
 import DSA5_Utility from "./system/utility-dsa5.js"
@@ -73,10 +72,7 @@ Hooks.once("init", () => {
         macro: MacroDSA5,
         config: DSA5,
         memory: new RollMemory(),
-        itemLibrary: new DSA5ItemLibrary(),
-        lazy: {
-            LazyImporter
-        }
+        itemLibrary: new DSA5ItemLibrary()
     }
 
     CONFIG.Actor.documentClass = Actordsa5;

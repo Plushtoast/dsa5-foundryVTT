@@ -311,22 +311,25 @@ export default class BookWizard extends Application {
         if (!chapter.actors) return []
 
         let result = []
-        const head = await game.folders.contents.find(x => x.name == game.i18n.localize(`${this.bookData.moduleName}.name`) && x.type == "Actor" && x.parent == null)
-        const folder = head ? await game.folders.contents.find(x => x.name == chapter.name && x.type == "Actor" && x.parent?.id == head.id) : undefined
+        const head = await game.folders.contents.find(x => x.name == game.i18n.localize(`${this.bookData.moduleName}.name`) && x.type == "Actor" && x.folder == null)
+        const folderids = head ? await game.folders.contents.filter(x => x.type == "Actor" && x.folder?.id == head.id).map(x => x.id) : undefined
         for (let k of chapter.actors) {
-            let actor = folder ? game.actors.contents.find(x => x.name == k && x.folder?.id == folder.id) : undefined
+            let actor = folderids?.length ? game.actors.contents.find(x => x.name == k && folderids.includes(x.folder?.id)) : undefined
             let pack = undefined
-            let id = actor ? actor.id : undefined
+            let id = actor?.id
+            let uuid = actor?.uuid
             if (!actor) {
                 actor = this.actors.find(x => x.name == k)
                 pack = this.bookData.actors
-                id = actor ? actor._id : undefined
+                id = actor?._id
+                uuid = actor ? `Compendium.${pack}.${id}` : undefined
             }
             result.push({
                 name: k,
                 actor,
                 pack,
-                id
+                id,
+                uuid
             })
         }
         return result
