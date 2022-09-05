@@ -341,7 +341,7 @@ export default class BookWizard extends Application {
     }
 
     async showSzene(name, mode = "activate") {
-        let scene = game.scenes.contents.find(x => x.system.name == name)
+        let scene = game.scenes.contents.find(x => x.name == name)
         if (!scene)
             return ui.notifications.error(game.i18n.localize("DSAError.sceneNotInitialized"))
 
@@ -353,7 +353,7 @@ export default class BookWizard extends Application {
                 scene.view()
                 break
             case "toggle":
-                scene.update({ navigation: !scene.system.navigation })
+                scene.update({ navigation: !scene.navigation })
                 break
         }
     }
