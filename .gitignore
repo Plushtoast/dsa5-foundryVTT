@@ -4,4 +4,3 @@ package-lock.json
 webpack.config.js
 .babelrc
 test
-styles/css/*.map

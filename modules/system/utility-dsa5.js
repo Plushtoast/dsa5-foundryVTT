@@ -1,4 +1,5 @@
 import Actordsa5 from '../actor/actor-dsa5.js';
+import { conditionsMatcher } from '../hooks/texteditor.js';
 import DSA5 from './config-dsa5.js'
 
 export default class DSA5_Utility {
@@ -224,25 +225,6 @@ export default class DSA5_Utility {
         })
     }
 
-    //todo see if v10 feature can replace this
-    static customEntityLinks(content) {
-        if (!content) return content
-        const regex = /@(Rq|Gc|Ch)\[[a-zA-zöüäÖÜÄ&; -]+ (-|\+)?\d+\]/g
-        const rolls = { "@Rq": "roll", "@Gc": "GC", "@Ch": "CH" }
-        const icons = { "@Rq": "dice", "@Gc": "dice", "@Ch": "user-shield" }
-        const titles = { "@Rq": "", "@Gc": `${game.i18n.localize("HELP.groupcheck")} `, "@Ch": "" }
-        const rqRegex = /^@(Rq|Gc|Ch)/
-        const modRegex = /(-|\+)?\d+/
-        const replaceRegex = /\[[a-zA-zöüäÖÜÄ&; -]+/
-        const replaceRegex2 = /[\[\]]/g
-        return content.replace(regex, function(str) {
-            const type = str.match(rqRegex)[0]
-            const mod = Number(str.match(modRegex)[0])
-            const skill = str.replace(mod, "").match(replaceRegex)[0].replace(replaceRegex2, "").trim()
-            return `<a class="roll-button request-${rolls[type]}" data-type="skill" data-modifier="${mod}" data-name="${skill}"><em class="fas fa-${icons[type]}"></em>${titles[type]}${skill} ${mod}</a>`
-        })
-    }
-
     static escapeRegex(input) {
         const source = typeof input === 'string' || input instanceof String ? input : '';
         return source.replace(/[-[/\]{}()*+?.,\\^$|#\s]/g, '\\$&');
@@ -250,21 +232,8 @@ export default class DSA5_Utility {
 
     static replaceConditions(content) {
         if (!content) return content
-        if (!DSA5.statusRegex) {
-            let effects = DSA5.statusEffects.map(x => game.i18n.localize(x.label).toLowerCase())
-            let keywords = ["status", "condition", "level", "levels"].map(x => game.i18n.localize(x)).join("|")
-            DSA5.statusRegex = {
-                effects: effects,
-                regex: new RegExp(`(${keywords}) (${effects.join('|')})`, 'gi')
-            }
-        }
-        return content.replace(DSA5.statusRegex.regex, function(str) {
-            let parts = str.split(" ")
-            let elem = parts.shift()
-            parts = parts.join(" ")
-            let cond = DSA5.statusEffects[DSA5.statusRegex.effects.indexOf(parts.toLowerCase())]
-            return `${elem} <a class="chatButton chat-condition" data-id="${cond.id}"><img src="${cond.icon}"/>${parts}</a>`
-        })
+
+        return content.replace(DSA5.statusRegex.regex, (str) => conditionsMatcher([str]))
     }
 
     static experienceDescription(experience) {

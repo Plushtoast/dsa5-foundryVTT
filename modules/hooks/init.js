@@ -14,6 +14,7 @@ import * as migrateWorld from '../system/migrator.js'
 import * as initScene from './scene.js'
 import * as initKeybindings from './keybindings.js'
 import * as rollExtensions from './../system/dsarolls.js'
+import {setEnrichers} from './texteditor.js'
 import { connectHook } from "./itemDrop.js";
 
 import ActorSheetdsa5Character from "./../actor/character-sheet.js";
@@ -128,6 +129,8 @@ Hooks.once('ready', () => {
         }
     }
     Hooks.on('changeSidebarTab', hook)
+    
+    setEnrichers()
 })
 
 Hooks.once('setup', () => {
