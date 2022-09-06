@@ -1,4 +1,3 @@
-import DSA5_Utility from "../system/utility-dsa5.js";
 import DSA5 from "../system/config-dsa5.js"
 import ActorSheetDsa5 from "./actor-sheet.js";
 import TraitRulesDSA5 from "../system/trait-rules-dsa5.js"
@@ -18,6 +17,10 @@ export default class ActorSheetdsa5Creature extends ActorSheetDsa5 {
     async getData(options) {
         const data = await super.getData(options);
         data["sizeCategories"] = DSA5.sizeCategories
+        data.enrichedDescription = await TextEditor.enrichHTML(getProperty(this.actor.system, "description.value"), {async: true})
+        data.enrichedBehaviour = await TextEditor.enrichHTML(getProperty(this.actor.system, "behaviour.value"), {async: true})
+        data.enrichedFlight = await TextEditor.enrichHTML(getProperty(this.actor.system, "flight.value"), {async: true})
+        data.enrichedSpecialrules = await TextEditor.enrichHTML(getProperty(this.actor.system, "specialRules.value"), {async: true})
         return data;
     }
 

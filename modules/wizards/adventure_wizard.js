@@ -193,10 +193,10 @@ export default class BookWizard extends Application {
     }
 
     async loadJournal(name) {
-        this.showJournal(this.journals.find(x => x.name == name && x.flags.dsa5.parent == this.selectedChapter ))
+        await this.showJournal(this.journals.find(x => x.name == name && x.flags.dsa5.parent == this.selectedChapter ))
     }
     async loadJournalById(id) {
-        this.showJournal(this.journals.find(x => x.id == id))
+        await this.showJournal(this.journals.find(x => x.id == id))
     }
 
     async resaveBreadCrumbs(target) {
@@ -247,7 +247,7 @@ export default class BookWizard extends Application {
         }
     }
 
-    showJournal(journal) {
+    async showJournal(journal) {
         let content = ""
         for(let page of journal.pages){
             if(page.type == "text") content += page.text.content
@@ -255,8 +255,8 @@ export default class BookWizard extends Application {
             else ui.notifications.warn(`Page type ${page.type} not supported by the journal browser yet`)
         }
         const pinIcon = this.findSceneNote(journal.getFlag("dsa5", "initId"))
-
-        this.content = `<div><h1 class="journalHeader" data-uuid="${journal.uuid}">${journal.name}<div class="jrnIcons">${pinIcon}<a class="pinJournal"><i class="fas fa-thumbtack"></i></a><a class="showJournal"><i class="fas fa-eye"></i></a></div></h1>${TextEditor.enrichHTML(content)}`
+        const enriched = await TextEditor.enrichHTML(content, { async: true})
+        this.content = `<div><h1 class="journalHeader" data-uuid="${journal.uuid}">${journal.name}<div class="jrnIcons">${pinIcon}<a class="pinJournal"><i class="fas fa-thumbtack"></i></a><a class="showJournal"><i class="fas fa-eye"></i></a></div></h1>${enriched}`
         const chapter = $(this._element).find('.chapter')
         chapter.html(this.content)
         bindImgToCanvasDragStart(chapter)

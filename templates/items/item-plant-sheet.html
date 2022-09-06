@@ -86,10 +86,10 @@
             </div>
 
             <div class="form-group full-height">
-                <label class="label-text">{{localize "effect"}}</label> {{editor (enrich system.effect owner) target="system.effect" button=true owner=owner editable=editable}}
+                <label class="label-text">{{localize "effect"}}</label> {{editor enrichedEffect target="system.effect" button=true owner=owner editable=editable}}
             </div>
             <div class="form-group full-height">
-                <label class="label-text">{{localize "PLANT.recipes"}}</label> {{editor (enrich system.recipes owner) target="system.recipes" button=true owner=owner editable=editable}}
+                <label class="label-text">{{localize "PLANT.recipes"}}</label> {{editor enrichedRecipes target="system.recipes" button=true owner=owner editable=editable}}
             </div>
             <div class="form-group">
                 <b class="label-text">{{localize "PLANT.availability"}}</b>

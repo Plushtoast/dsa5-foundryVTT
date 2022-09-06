@@ -1376,30 +1376,28 @@ export default class DiceDSA5 {
             chatOptions["content"] = await renderTemplate(chatOptions.template, chatData)
             return await ChatMessage.create(chatOptions, false)
         } else {
-            return renderTemplate(chatOptions.template, chatData).then((html) => {
+            const html = await renderTemplate(chatOptions.template, chatData)
                 //Seems to be a foundry bug, after edit inline rolls are not converted anymore
-                const actor =
-                    ChatMessage.getSpeakerActor(rerenderMessage.speaker) ||
-                    game.users.get(rerenderMessage.user).character
-                const rollData = actor ? actor.getRollData() : {}
-                chatOptions["content"] = TextEditor.enrichHTML(html, rollData)
+            const actor =
+                ChatMessage.getSpeakerActor(rerenderMessage.speaker) ||
+                game.users.get(rerenderMessage.user).character
+            const rollData = actor ? actor.getRollData() : {}
+            const enriched = await TextEditor.enrichHTML(html, {rollData, async: true})
+            chatOptions["content"] = enriched
 
-                const postFunction = getProperty(rerenderMessage, "flags.data.preData.extra.options.postFunction")
-                if(postFunction){
-                    testData.messageId = rerenderMessage.id;
-                    eval(postFunction.functionName)(postFunction, { result: testData }, preData.source)
-                }
+            const postFunction = getProperty(rerenderMessage, "flags.data.preData.extra.options.postFunction")
+            if(postFunction){
+                testData.messageId = rerenderMessage.id;
+                eval(postFunction.functionName)(postFunction, { result: testData }, preData.source)
+            }
 
-                return rerenderMessage
-                    .update({
-                        content: chatOptions["content"],
-                        ["flags.data"]: chatOptions["flags.data"],
-                    })
-                    .then((newMsg) => {
-                        ui.chat.updateMessage(newMsg)
-                        return newMsg
-                    })
-            })
+            const newMsg = await rerenderMessage.update({
+                    content: chatOptions["content"],
+                    ["flags.data"]: chatOptions["flags.data"],
+                })
+                
+            ui.chat.updateMessage(newMsg)
+            return newMsg
         }
     }
 

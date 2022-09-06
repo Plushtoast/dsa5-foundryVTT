@@ -11,7 +11,7 @@
     </div>
     <div class="row-section">
         <div class="col notes-box">
-            {{editor (enrich actor.system.description.value owner) target="system.description.value" button=true owner=owner editable=editable}}
+            {{editor enrichedDescription target="system.description.value" button=true owner=owner editable=editable}}
         </div>
     </div>
 </div>
@@ -26,7 +26,7 @@
     </div>
     <div class="row-section">
         <div class="col notes-box">
-            {{editor (enrich actor.system.behaviour.value owner) target="system.behaviour.value" button=true owner=owner editable=editable}}
+            {{editor enrichedBehaviour target="system.behaviour.value" button=true owner=owner editable=editable}}
         </div>
     </div>
 </div>
@@ -41,7 +41,7 @@
     </div>
     <div class="row-section">
         <div class="col notes-box">
-            {{editor (enrich actor.system.flight.value owner) target="system.flight.value" button=true owner=owner editable=editable}}
+            {{editor enrichedFlight target="system.flight.value" button=true owner=owner editable=editable}}
         </div>
     </div>
 </div>
@@ -56,7 +56,7 @@
     </div>
     <div class="row-section">
         <div class="col notes-box">
-            {{editor (enrich actor.system.specialRules.value owner) target="system.specialRules.value" button=true owner=owner editable=editable}}
+            {{editor enrichedSpecialrules target="system.specialRules.value" button=true owner=owner editable=editable}}
         </div>
     </div>
 </div>
@@ -72,7 +72,7 @@
     </div>
     <div class="row-section">
         <div class="col notes-box">
-            {{editor (enrich actor.system.details.notes.ownerdescription owner) target="system.details.notes.ownerdescription" button=true owner=owner editable=editable}}
+            {{editor enrichedOwnerdescription target="system.details.notes.ownerdescription" button=true owner=owner editable=editable}}
         </div>
     </div>
 </div>

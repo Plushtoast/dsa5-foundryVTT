@@ -240,6 +240,9 @@ export default class ItemSheetdsa5 extends ItemSheet {
         DSA5StatusEffects.prepareActiveEffects(this.item, data)
         data.item = this.item
         data.armorAndWeaponDamage = game.settings.get("dsa5", "armorAndWeaponDamage")
+
+        data.enrichedDescription = await TextEditor.enrichHTML(getProperty(this.item.system, "description.value"), {async: true})
+        data.enrichedGmdescription = await TextEditor.enrichHTML(getProperty(this.item.system, "gmdescription.value"), {async: true})
         return data;
     }
 
@@ -634,6 +637,9 @@ class PlantSheet extends ItemSheetdsa5 {
     async getData(options) {
         const data = await super.getData(options);
         data.attributes = Object.keys(data.system.planttype).map(x => { return { name: x, checked: data.system.planttype[x] } })
+        data.enrichedEffect = await TextEditor.enrichHTML(getProperty(this.item.system, "effect"), {async: true})
+        data.enrichedRecipes = await TextEditor.enrichHTML(getProperty(this.item.system, "recipes"), {async: true})
+
         return data
     }
 }
@@ -751,6 +757,7 @@ class ItemCareerDSA5 extends ItemSheetdsa5 {
         chars["-"] = "-"
         data["mageLevels"] = DSA5.mageLevels
         data['guidevalues'] = chars;
+        data.enrichedClothing = await TextEditor.enrichHTML(getProperty(this.item.system, "clothing.value"), {async: true})
         return data
     }
 }
@@ -777,6 +784,8 @@ class ConsumableSheetDSA5 extends ItemSheetdsa5 {
         data["calculatedPrice"] = (data.system.price.value * data.system.QL) || 0
         data["availableSteps"] = data.system.QLList.split("\n").map((x, i) => i + 1)
         data['equipmentTypes'] = DSA5.equipmentTypes;
+
+        data.enrichedIngredients = await TextEditor.enrichHTML(getProperty(this.item.system, "ingredients"), {async: true})
         return data
     }
     setupEffect(ev) {
@@ -791,6 +800,12 @@ class ItemCultureDSA5 extends ItemSheetdsa5 {
         super(item, options);
         this.mce = null;
     }
+
+    async getData(options) {
+        const data = await super.getData(options);
+        data.enrichedClothing = await TextEditor.enrichHTML(getProperty(this.item.system, "clothing.value"), {async: true})
+        return data
+    }
 }
 
 class DiseaseSheetDSA5 extends ItemSheetdsa5 {
@@ -803,6 +818,7 @@ class DiseaseSheetDSA5 extends ItemSheetdsa5 {
         })
         return buttons
     }
+
     async getData(options) {
         const data = await super.getData(options);
         data["resistances"] = DSA5.magicResistanceModifiers

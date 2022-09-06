@@ -32,7 +32,6 @@ export default function() {
         replaceConditions: DSA5_Utility.replaceConditions,
         floor: (a) => Math.floor(Number(a)),
         hasElem: (a, b) => a.includes(b),
-        enrich: (content, owner) => TextEditor.enrichHTML(content, { secrets: owner, documents: true, async: false }),
         situationalTooltip: (mod) => {
             const key = game.i18n.localize(modifierTypes[mod.type] || "Modifier")
             let res = `${mod.name}<br/>${key}: ${mod.value}`

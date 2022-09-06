@@ -124,6 +124,11 @@ export default class ActorSheetDsa5 extends ActorSheet {
         sheetData.isGM = game.user.isGM;
         sheetData["initDies"] = { "": "-", "1d6": "1d6", "2d6": "2d6", "3d6": "3d6", "4d6": "4d6" }
         DSA5StatusEffects.prepareActiveEffects(this.actor, sheetData)
+        sheetData.enrichedOwnerdescription = await TextEditor.enrichHTML(getProperty(this.actor.system, "details.notes.ownerdescription"), {async: true})
+        sheetData.enrichedGmdescription = await TextEditor.enrichHTML(getProperty(this.actor.system, "details.notes.gmdescription"), {async: true})
+        sheetData.enrichedNotes = await TextEditor.enrichHTML(getProperty(this.actor.system, "details.notes.value"), {async: true})
+        sheetData.enrichedBiography = await TextEditor.enrichHTML(getProperty(this.actor.system, "details.biography.value"), {async: true})
+
         return sheetData;
     }
 
