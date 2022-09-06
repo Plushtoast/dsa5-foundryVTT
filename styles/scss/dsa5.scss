@@ -927,6 +927,16 @@
   
     &.eighty {
       flex: 80%;
+      &.fixed{
+        position: relative;
+        max-width: 80%;
+        overflow: hidden;
+        &:hover{
+          overflow: visible;
+          z-index:50;
+          
+        }
+      }
     }
   
     &.seventy {
