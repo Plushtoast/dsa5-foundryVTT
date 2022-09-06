@@ -9,6 +9,7 @@ Hooks.once("ready", () => {
         const skills = result[0].reduce((prev, now) => ({...prev, [now]: now }), {})
         const range = result[1].filter(x => x.system.weapontype.value == "range").sort((a, b) => a.name.localeCompare(b.name)).reduce((prev, now) => ({...prev, [now.name]: now.name }), {})
         const melee = result[1].filter(x => x.system.weapontype.value == "melee").sort((a, b) => a.name.localeCompare(b.name)).reduce((prev, now) => ({...prev, [now.name]: now.name }), {})
+        const allCombat = result[1].sort((a, b) => a.name.localeCompare(b.name)).reduce((prev, now) => ({...prev, [now.name]: now.name }), {})
 
         mergeObject(ADVANCEDFILTERS, {
             ammunition: [
@@ -45,7 +46,8 @@ Hooks.once("ready", () => {
                 { label: "mageLevel", attr: "mageLevel.value", type: "select", options: DSA5.mageLevels }
             ],
             specialability: [
-                { label: "Category", attr: "category.value", type: "select", options: DSA5.specialAbilityCategories }
+                { label: "Category", attr: "category.value", type: "select", options: DSA5.specialAbilityCategories },
+                { label: "combatskill", attr: "list.value", type: "select", options: allCombat, notStrict: true }
             ],
             liturgy: [
                 { label: "resistanceModifier", attr: "resistanceModifier.value", type: "select", options: DSA5.magicResistanceModifiers },

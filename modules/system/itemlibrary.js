@@ -353,7 +353,7 @@ export default class DSA5ItemLibrary extends Application {
     async executeAdvancedFilter(search, index, selectSearches, textSearches, booleanSearches, rangeSearches = []) {
         const selFnct = (x) => {
             for (let k of selectSearches) {
-                if (x[k[0]] != k[1]) return false
+                if (x[2] ? (x[k[0]] != k[1]) : (x[k[0]].indexOf(k[1]) == -1)) return false
             }
             return true
         }
@@ -406,7 +406,7 @@ export default class DSA5ItemLibrary extends Application {
         for (let elem of dataFilters.find('select')) {
             let val = $(elem).val()
             if (val != "") {
-                sels.push([$(elem).attr("name"), val])
+                sels.push([$(elem).attr("name"), val, elem.dataset.notstrict != "true"])
             }
         }
         for (let elem of dataFilters.find('input[type="text"]:not(.manualFilter)')) {

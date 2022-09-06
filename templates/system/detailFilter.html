@@ -2,7 +2,7 @@
     {{#each fields as |field|}} {{#if (eq field.type 'select')}}
     <div class="form-group">
         <label class="label-text">{{localize field.label}}</label>
-        <select name="{{field.attr}}" data-dtype="String">
+        <select name="{{field.attr}}" data-dtype="String" data-notstrict="{{field.notStrict}}">
             <option value="">{{localize 'Library.noFilter'}}</option>
           {{#each options as |ch char|}}
           <option value="{{char}}">{{localize ch}}</option>
