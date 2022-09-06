@@ -15,8 +15,7 @@ export default class ActorSheetdsa5Creature extends ActorSheetDsa5 {
     }
 
     async getData(options) {
-        const data = await super.getData(options);
-        data["sizeCategories"] = DSA5.sizeCategories
+        const data = await super.getData(options);        
         data.enrichedDescription = await TextEditor.enrichHTML(getProperty(this.actor.system, "description.value"), {async: true})
         data.enrichedBehaviour = await TextEditor.enrichHTML(getProperty(this.actor.system, "behaviour.value"), {async: true})
         data.enrichedFlight = await TextEditor.enrichHTML(getProperty(this.actor.system, "flight.value"), {async: true})

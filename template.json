@@ -226,7 +226,8 @@
                 "magic"
             ],
             "config": {
-                "autoBar": true
+                "autoBar": true,
+                "autoSize": true
             },
             "details": {
                 "experience": {
@@ -251,7 +252,8 @@
                 "config"
             ],
             "config": {
-                "autoBar": true
+                "autoBar": true,
+                "autoSize": true
             },
             "sheetLocked": {
                 "value": false

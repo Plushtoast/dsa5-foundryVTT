@@ -82,7 +82,7 @@ export default function() {
             }
         }
         
-        if (actor.type == "creature" && getProperty(actor, "system.config.autoSize")) {
+        if (getProperty(actor, "system.config.autoSize")) {
             DSA5_Utility.calcTokenSize(actor, modify)
         }
 

@@ -120,7 +120,7 @@ export default class ActorSheetDsa5 extends ActorSheet {
         const sheetData = { actor: baseData.actor, editable: baseData.editable, limited: baseData.limited, owner: baseData.owner }
         const prepare = this.actor.prepareSheet({ details: this.openDetails })
         mergeObject(sheetData.actor, prepare)
-
+        sheetData["sizeCategories"] = DSA5.sizeCategories
         sheetData.isGM = game.user.isGM;
         sheetData["initDies"] = { "": "-", "1d6": "1d6", "2d6": "2d6", "3d6": "3d6", "4d6": "4d6" }
         DSA5StatusEffects.prepareActiveEffects(this.actor, sheetData)

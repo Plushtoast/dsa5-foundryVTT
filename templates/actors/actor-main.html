@@ -300,6 +300,7 @@
                     {{actor.system.status.speed.max}}
                 </div>
             </div>
+            
             <div class="derivedAttrs row-section">
                 <div class="col two lineheight">
                     {{localize "initiative"}}
@@ -334,6 +335,16 @@
                 <div class="col two lineheight center">
                     <select name="system.status.initiative.diemodifier" data-dtype="String" style="width:100%">
                         {{selectOptions initDies selected=actor.system.status.initiative.diemodifier localize=false}}
+                    </select>
+                </div>
+            </div>
+            <div class="derivedAttrs row-section">
+                <div class="col two lineheight">
+                    {{localize "sizeCategory"}}
+                </div>
+                <div class="col two lineheight center">
+                    <select name="system.status.size.value" data-dtype="String" style="width:100%">
+                        {{selectOptions sizeCategories selected=actor.system.status.size.value localize=true}}
                     </select>
                 </div>
             </div>

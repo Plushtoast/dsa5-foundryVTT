@@ -7,7 +7,7 @@ export default class DialogActorConfig extends Dialog {
         this.lock = false
     }
     static async buildDialog(actor) {
-        const template = await renderTemplate("systems/dsa5/templates/actors/parts/actorConfig.html", { actor: actor })
+        const template = await renderTemplate("systems/dsa5/templates/actors/parts/actorConfig.html", { actor })
         new DialogActorConfig(actor, {
             title: game.i18n.localize("SHEET.actorConfig"),
             content: template,
@@ -17,9 +17,9 @@ export default class DialogActorConfig extends Dialog {
                     icon: '<i class="fa fa-check"></i>',
                     label: game.i18n.localize("Save"),
                     callback: dlg => {
-                        let update = { "system.config.autoBar": dlg.find('[name="autoBar"]').is(":checked") }
-                        if (actor.type == "creature") {
-                            update["system.config.autoSize"] = dlg.find('[name="autoSize"]').is(":checked")
+                        let update = { 
+                            "system.config.autoBar": dlg.find('[name="autoBar"]').is(":checked"),
+                            "system.config.autoSize": dlg.find('[name="autoSize"]').is(":checked")
                         }
                         actor.update(update)
                     }
