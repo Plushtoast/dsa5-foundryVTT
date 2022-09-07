@@ -41,7 +41,7 @@ export class DSA5CombatTracker extends CombatTracker {
                 if (combatant.actor) {
                     for (const x of combatant.actor.items) {
                         if (x.type == "rangeweapon" && x.system.worn.value && x.system.reloadTime.progress > 0) {
-                            const wpn = { name: x.name, remaining: Actordsa5.calcLZ(x.data, combatant.actor) - x.system.reloadTime.progress }
+                            const wpn = { name: x.name, remaining: Actordsa5.calcLZ(x, combatant.actor) - x.system.reloadTime.progress }
                             if (wpn.remaining > 0) remainders.push(wpn)
                         } else if (["spell", "liturgy"].includes(x.type) && x.system.castingTime.modified > 0) {
                             const wpn = { name: x.name, remaining: x.system.castingTime.modified - x.system.castingTime.progress }

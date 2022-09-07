@@ -1223,7 +1223,9 @@
         "takeLiturgies": "Keep Liturgies/Ceremonies",
         "done": "The shapeshift has been finished.",
         "keepVision": "Keep vision",
-        "takeSkills": "Keep skills"
+        "takeSkills": "Keep skills",
+        "keepItems": "Keep equipment",
+        "keepToken": "Keep token"
     },
     "DSAError": {
         "noTokenSelected": "No token selected",

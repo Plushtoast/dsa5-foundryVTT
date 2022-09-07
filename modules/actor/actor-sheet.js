@@ -427,16 +427,17 @@ export default class ActorSheetDsa5 extends ActorSheet {
             const itemId = this._getItemId(ev)
             const item = this.actor.items.get(itemId).toObject()
 
-            if (getProperty(item, "system.currentAmmo.value") === "" && this.actor.type != "creature") return
+            if (getProperty(item, "system.currentAmmo.value") === "") return
 
-            const lz = item.type == "trait" ? item.system.reloadTime.value : Actordsa5.calcLZ(item, this.actor)
-
-            if (ev.button == 0)
-                item.system.reloadTime.progress = Math.min(item.system.reloadTime.progress + 1, lz)
+            const update = {_id: itemId}
+            if (ev.button == 0){
+                const lz = item.type == "trait" ? item.system.reloadTime.value : Actordsa5.calcLZ(item, this.actor)
+                update["system.reloadTime.progress"] = Math.min(item.system.reloadTime.progress + 1, lz)
+            }                
             else if (ev.button == 2)
-                item.system.reloadTime.progress = 0
+                update["system.reloadTime.progress"] = 0
 
-            await this.actor.updateEmbeddedDocuments("Item", [item]);
+            await this.actor.updateEmbeddedDocuments("Item", [update]);
         })
 
         html.find('.chargeSpell').mousedown(async(ev) => {

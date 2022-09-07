@@ -1472,7 +1472,7 @@ class RangeweaponItemDSA5 extends Itemdsa5 {
 
     static async checkAmmunitionState(item, testData, actor, mode) {
         let hasAmmo = true
-        if (actor.type != "creature" && mode != "damage") {
+        if (mode != "damage") {
             let itemData = item.system
             if (itemData.ammunitiongroup.value == "infinite") {
                 //Dont count ammo
@@ -1493,6 +1493,7 @@ class RangeweaponItemDSA5 extends Itemdsa5 {
                     hasAmmo = false
                 }
             }
+            if(!hasAmmo && actor.type == "creature") hasAmmo = true
         }
         if (!hasAmmo) ui.notifications.error(game.i18n.localize("DSAError.NoAmmo"))
 

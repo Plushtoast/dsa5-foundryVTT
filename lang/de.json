@@ -1308,7 +1308,9 @@
         "takeSpells": "Zauber/Rituale übernehmen",
         "takeLiturgies": "Liturgien/Zeremonien übernehmen",
         "keepVision": "Sichteinstellung übernehmen",
-        "takeSkills": "Talente übernehmen"
+        "takeSkills": "Talente übernehmen",
+        "keepItems": "Ausrüstung behalten",
+        "keepToken": "Token behalten"
     },
     "COMBATSKILLCATEGORY": {
         "subcategory": "Subkategorie",
