@@ -305,6 +305,7 @@ export default class Actordsa5 extends Actor {
             case "liturgy":
             case "ceremony":
             case "ritual":
+            case "spellextension":
               apply = false;
               break;
             case "specialability":

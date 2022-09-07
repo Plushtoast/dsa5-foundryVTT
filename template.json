@@ -444,6 +444,11 @@
                 "variableBaseCost": "false",
                 "effectFormula": {
                     "value": ""
+                },
+                "target": {
+                    "value": 0,
+                    "type": "",
+                    "width": 0
                 }
             },
             "description": {

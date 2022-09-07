@@ -1004,11 +1004,12 @@ class ItemSpeciesDSA5 extends ItemSheetdsa5 {
 class SpellSheetDSA5 extends ItemSheetdsa5 {
     async getData(options) {
         const data = await super.getData(options);
-        data['characteristics'] = DSA5.characteristics;
-        data['StFs'] = DSA5.StFs;
-        data['resistances'] = DSA5.magicResistanceModifiers
+        data.characteristics = DSA5.characteristics;
+        data.StFs = DSA5.StFs;
+        data.resistances = DSA5.magicResistanceModifiers
+        data.targetTypes = DSA5.areaTargetTypes
         if (data.isOwned) {
-            data['extensions'] = this.item.actor.items.filter(x => { return x.type == "spellextension" && x.system.source == this.item.name && this.item.type == x.system.category })
+            data.extensions = this.item.actor.items.filter(x => { return x.type == "spellextension" && x.system.source == this.item.name && this.item.type == x.system.category })
         }
         return data
     }

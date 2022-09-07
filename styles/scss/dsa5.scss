@@ -2562,11 +2562,12 @@
     }
   }
   
-  .gearDamaged, .resistEffect, .applyEffect {
-    width: auto;
+  .gearDamaged, .resistEffect, .applyEffect, .placeTemplate {
+    width: 100%;
     padding: 4px;
+    height: 100%;
     line-height: unset;
-    font-size: 12px;
+    font-size: 11px;
   }
   
   .adventureWizard {

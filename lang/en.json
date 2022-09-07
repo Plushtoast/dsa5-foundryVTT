@@ -468,6 +468,7 @@
     "parryWeaponless": "Unarmed defense",
     "rangeweapon": "Rangeweapon",
     "refundCost": "Refund {cost} adventure points",
+    "AoE": "Area of Effect",
     "Roll": "Roll",
     "result": "Result",
     "rule": "Rule",
@@ -536,6 +537,7 @@
     "table": "Table",
     "Total": "Total",
     "time": "Time",
+    "aoewidth": "Width",
     "toughness": "Toughness",
     "targetCategory": "Target category",
     "target": "Target",
@@ -818,7 +820,14 @@
         "value": "Value",
         "modifiers": "Mod.",
         "advances": "Advance",
-        "max": "Max"
+        "max": "Max", 
+        "AoE": "Size in yard, Template"
+    },
+    "areaTargetTypes": {
+        "rect": "Cube",
+        "ray": "Ray",
+        "circle": "Sphere",
+        "cone": "Cone"
     },
     "Range-short": "Short",
     "Range-medium": "Medium",
@@ -934,7 +943,8 @@
         "foreignSpell": "Unfamiliar tradition spells can not be modified",
         "assignCharacter": "Characters can be assigned using a right click on the player list in the bottom left corner.",
         "dragLink": "Drag & drop actor e.g. for shapeshifting and summoning",
-        "onlyGM": "Only visible to the gamemaster."
+        "onlyGM": "Only visible to the gamemaster.",
+        "placeTemplate": "Place Area of Effect template"
     },
     "HELP": {
         "showHelp": "Show help",

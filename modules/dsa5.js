@@ -32,6 +32,7 @@ import DSAActiveEffect from "./status/dsa_active_effects.js";
 import EquipmentDamage from "./system/equipment-damage.js"
 import DidYouKnow from "./system/didyouknow.js";
 import MerchantSheetDSA5 from "./actor/merchant-sheet.js"
+import { MeasuredTemplateDSA } from "./system/measuretemplate.js"
 
 Hooks.once("init", () => {
     console.log("Initializing DSA5 system")
@@ -54,7 +55,8 @@ Hooks.once("init", () => {
             DSATour,
             OpposeDSA,
             EquipmentDamage,
-            DidYouKnow
+            DidYouKnow, 
+            MeasuredTemplateDSA
         },
         entities: {
             Actordsa5,

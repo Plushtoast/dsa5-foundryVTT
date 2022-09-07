@@ -749,6 +749,7 @@ class SpellItemDSA5 extends Itemdsa5 {
     static getCallbackData(testData, html, actor) {
         testData.testDifficulty = 0
         testData.situationalModifiers = Actordsa5._parseModifiers(html)
+        const formData = new FormDataExtended(html.find('form')[0]).object
         testData.calculatedSpellModifiers = {
             castingTime: html.find(".castingTime").text(),
             cost: html.find(".aspcost").text(),
@@ -757,10 +758,10 @@ class SpellItemDSA5 extends Itemdsa5 {
         }
         testData.situationalModifiers.push({
             name: game.i18n.localize("removeGesture"),
-            value: html.find('[name="removeGesture"]').is(":checked") ? -2 : 0,
+            value: Number(formData.removeGesture) || 0,
         }, {
             name: game.i18n.localize("removeFormula"),
-            value: html.find('[name="removeFormula"]').is(":checked") ? -2 : 0,
+            value: Number(formData.removeFormula) || 0,
         }, {
             name: game.i18n.localize("castingTime"),
             value: html.find(".castingTime").data("mod"),
@@ -772,27 +773,41 @@ class SpellItemDSA5 extends Itemdsa5 {
             value: html.find(".reach").data("mod"),
         }, {
             name: game.i18n.localize("zkModifier"),
-            value: html.find('[name="zkModifier"]').val() || 0,
+            value: formData.zkModifier || 0,
         }, {
             name: game.i18n.localize("skModifier"),
-            value: html.find('[name="skModifier"]').val() || 0,
+            value: formData.skModifier || 0,
         }, {
             name: game.i18n.localize("maintainedSpells"),
-            value: Number(html.find('[name="maintainedSpells"]').val()) * -1,
+            value: formData.maintainedSpells * -1,
         })
-        testData.extensions = SpellItemDSA5.getSpecAbModifiers(html).join(", ")
+        testData.extensions = SpellItemDSA5.getSpecAbModifiers(html)
         testData.advancedModifiers = {
-            chars: [0, 1, 2].map((x) => Number(html.find(`[name="ch${x}"]`).val())),
-            fws: Number(html.find(`[name="fw"]`).val()),
-            qls: Number(html.find(`[name="qs"]`).val()),
+            chars: [0, 1, 2].map((x) => formData[`ch${x}`]),
+            fws: formData.fw,
+            qls: formData.qs,
         }
-        Itemdsa5.changeChars(testData.source, ...[0, 1, 2].map((x) => html.find(`[name="characteristics${x}"]`).val()))
+        Itemdsa5.changeChars(testData.source, ...[0, 1, 2].map((x) => formData[`characteristics${x}`]))
+        this.applyExtensions(testData.source, testData.extensions, actor)
+    }
+
+    static applyExtensions(source, extensions, actor){
+        for(let extension of extensions){
+            const item = fromUuidSync(extension.uuid)
+            if(!item) continue
+
+            for(let ef of item.effects){
+                for(let change of ef.changes){
+                    ef.apply(source, change)
+                }
+            }
+        }
     }
 
     static getSpecAbModifiers(html) {
         let res = []
         for (let k of html.find(".specAbs.active")) {
-            res.push(`<span data-tooltip="${$(k).attr("title")}">${$(k).attr("data-name")}</span>`)
+            res.push({name: k.dataset.name, title: k.getAttribute('title'), uuid: k.dataset.uuid})
         }
         return res
     }
@@ -969,7 +984,7 @@ class SpellItemDSA5 extends Itemdsa5 {
             .filter((x) => x.type == "spellextension" && x.system.source == spell.name && x.system.category == spell.type)
             .map((x) => {
                 x.shortName = x.name.split(" - ").length > 1 ? x.name.split(" - ")[1] : x.name
-                x.descr = $(x.system.description.value).text()
+                x.descr = $(x.system.description.value).text() || ""
                 return x
             })
     }

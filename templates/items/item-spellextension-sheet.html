@@ -5,6 +5,7 @@
     <nav class="sheet-tabs tabs" data-tab-container="primary">
         <a class="item active" data-tab="description">{{localize "Description"}}</a>
         <a class="item" data-tab="details">{{localize "Details"}}</a>
+        <a class="item" data-tab="effects">{{localize "statuseffects"}}</a>
     </nav>
 
     <section class="content">
@@ -35,5 +36,7 @@
                 </select>
             </div>
         </div>
+
+        {{> systems/dsa5/templates/items/item-effects.html}}
     </section>
 </form>

@@ -490,6 +490,13 @@ DSA5.moneyNames = {
     "K": "Money-K"
 }
 
+DSA5.areaTargetTypes = {
+    cube: "rect",
+    line: "ray",
+    sphere: "circle",
+    cone: "cone"
+}
+
 DSA5.rangeMods = {
     "short": {
         "damage": 1,

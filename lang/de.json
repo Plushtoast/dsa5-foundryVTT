@@ -334,6 +334,7 @@
     "Main": "Daten",
     "maybe": "Evtl",
     "max": "Max",
+    "aoewidth": "Breite",
     "magical": "magisch",
     "meleeweapon": "Nahkampfwaffe",
     "meleeweapons": "Nahkampfwaffen",
@@ -501,6 +502,13 @@
     "zkModifier": "Zähigkeit (Ziel)",
     "vulnerability": "Verwundbarkeit",
     "zoo": "Zoo",
+    "AoE": "Flächeneffekt",
+    "areaTargetTypes": {
+        "rect": "Würfel",
+        "ray": "Strahl",
+        "circle": "Sphäre",
+        "cone": "Kegel"
+    },
     "Library": {
         "searchPlaceholder": "Durchsuche die Bibliothek",
         "searchCategoryDescription": "Bitte Filterkategorie(n) auswählen",
@@ -812,7 +820,8 @@
         "value": "Wert",
         "modifiers": "Mod.",
         "advances": "Zukauf",
-        "max": "Max"
+        "max": "Max", 
+        "AoE": "Größe in Schritt, Template"
     },
     "Range-short": "Kurz",
     "Range-medium": "Mittel",
@@ -909,7 +918,8 @@
         "foreignSpell": "Fremdzauber können nicht modifiziert werden",
         "assignCharacter": "Charaktere können in der Spielerliste unten links per Rechtsclick zugewiesen werden.",
         "dragLink": "Drag & drop Akteur z.B. für Gestaltwandlung und Beschwörung",
-        "onlyGM": "Nur für den Spielleiter sichtbar."
+        "onlyGM": "Nur für den Spielleiter sichtbar.",
+        "placeTemplate": "Flächeneffekt Template platzieren"
     },
     "HELP": {
         "showHelp": "Hilfe anzeigen",

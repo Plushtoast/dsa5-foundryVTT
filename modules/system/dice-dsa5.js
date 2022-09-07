@@ -14,6 +14,7 @@ import EquipmentDamage from "./equipment-damage.js"
 import EquipmentDamageDialog from "../dialog/dialog-equipmentdamage.js"
 import DSATables from "../tables/dsatables.js"
 import RequestRoll from "./request-roll.js"
+import { MeasuredTemplateDSA } from "./measuretemplate.js"
 
 export default class DiceDSA5 {
     static async setupDialog({ dialogOptions, testData, cardOptions }) {
@@ -1324,6 +1325,8 @@ export default class DiceDSA5 {
         delete testData.actor
         delete testData.preData
 
+        const hasAreaTemplate = testData.successLevel > 0 && preData.source.system.target && (preData.source.system.target.type in game.dsa5.config.areaTargetTypes)
+
         let chatData = {
             title: chatOptions.title,
             testData,
@@ -1332,6 +1335,7 @@ export default class DiceDSA5 {
             hideDamage,
             modifierList: preData.situationalModifiers.filter((x) => x.value != 0),
             applyEffect,
+            hasAreaTemplate,
             showDamageToGear: await EquipmentDamage.showDamageToGear(preData, testData),
         }
 
@@ -1547,6 +1551,7 @@ export default class DiceDSA5 {
             }, 2000)
             
         })
+        html.on("click", ".placeTemplate", async(ev)=>  MeasuredTemplateDSA.placeTemplateFromChat(ev))
         html.on("click", ".message-delete", (ev) => {
             let message = game.messages.get($(ev.currentTarget).parents(".message").attr("data-message-id"))
             let targeted = message.flags.unopposeData

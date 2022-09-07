@@ -21,22 +21,31 @@
     <div class="card-content" data-tooltip="{{preData.calculatedSpellModifiers.description}}">
         <b>{{localize "cost"}}</b>: {{preData.calculatedSpellModifiers.finalcost}} <span class="costCheck"></span>
     </div>
-    {{#if (ne preData.calculatedSpellModifiers.maintainCost '')}}
+    {{#unless (or (eq preData.calculatedSpellModifiers.maintainCost '') (eq preData.calculatedSpellModifiers.maintainCost '0') (eq preData.calculatedSpellModifiers.maintainCost 0))}}
     <div class="card-content">
         <b>{{localize "maintainCost"}}</b>: {{preData.calculatedSpellModifiers.maintainCost}}
     </div>
-    {{/if}} {{#if preData.extensions }}
+    {{/unless}} {{#if preData.extensions }}
     <div class="card-content">
-        <b>{{localize 'extensions'}}</b>: {{{preData.extensions}}}
+        <b>{{localize 'extensions'}}</b>: {{#each preData.extensions as |ext|}}
+        <span data-uuid="{{ext.uuid}}" data-tooltip="{{ext.title}}">{{ext.name}}</span>
+        {{/each}}
     </div>
-    {{/if}} {{#if applyEffect}}
+    {{/if}} {{#if (or hasAreaTemplate applyEffect)}}
     <div class="row-section" style="margin-top:10px">
+        {{#if applyEffect}}
         <div class="col two center">
             <button class="applyEffect selfButton" data-target="self" data-tooltip="{{localize 'TT.applyEffectCaster'}}">{{localize 'ActiveEffects.applySelf'}}</button>
         </div>
         <div class="col two center">
             <button class="applyEffect selfButton" data-target="target" data-tooltip="{{localize 'TT.applyEffectTargets'}}">{{localize 'ActiveEffects.applyTarget'}}</button>
         </div>
+        {{/if}}
+        {{#if hasAreaTemplate}}
+        <div class="col two center">
+            <button class="placeTemplate selfButton" data-tooltip="{{localize 'TT.placeTemplate'}}">{{localize 'AoE'}}</button>
+        </div>
+        {{/if}}
     </div>
     {{/if}}
 </div>
