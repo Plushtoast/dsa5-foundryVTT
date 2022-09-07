@@ -851,7 +851,7 @@ export default class DiceDSA5 {
         if(res.successLevel < 0){
             const traditions = ["traditionWitch", "traditionFjarning", "braniborian"].map(x => game.i18n.localize(`LocalizedIDs.${x}`))
             const factor = testData.extra.actor.items.some(x => x.type == "specialability" && traditions.includes(x.name)) ? 3 : 2
-            res.preData.calculatedSpellModifiers.finalcost = Math.round(res.preData.calculatedSpellModifiers.cost / factor)
+            res.preData.calculatedSpellModifiers.finalcost = Math.round(res.preData.calculatedSpellModifiers.finalcost / factor)
         }
 
         if (isClerical) {
@@ -885,6 +885,9 @@ export default class DiceDSA5 {
             1,
             Number(res.preData.calculatedSpellModifiers.finalcost) + costModifiers.reduce((b, a) => {return b + a.value}, 0)
         )
+        if (res.successLevel > 0 && res.preData.calculatedSpellModifiers.maintainCost != 0)
+            res.preData.calculatedSpellModifiers.finalcost += Number(res.preData.calculatedSpellModifiers.maintainCost.split(" ")[0])
+        
     }
 
     static async rollSpell(testData) {
