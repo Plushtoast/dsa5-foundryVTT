@@ -1638,7 +1638,7 @@ export default class Actordsa5 extends Actor {
       },
     };
 
-    let toSearch = [game.i18n.localize(statusId)];
+    let toSearch = [game.i18n.localize(statusId), game.i18n.localize('LocalizedIDs.wrestle')];
     let combatskills = Itemdsa5.buildCombatSpecAbs(this, ["Combat"], toSearch, "parry");
     let situationalModifiers = DSA5StatusEffects.getRollModifiers(testData.extra.actor, testData.source);
     const isRangeAttack = Itemdsa5.getDefenseMalus(situationalModifiers, this);

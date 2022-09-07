@@ -309,9 +309,7 @@ export default class Itemdsa5 extends Item {
                 )
             }
         } else
-            searchFilter = () => {
-                return true
-            }
+            searchFilter = () => { return true }
 
         const combatSpecAbs = actor.items.filter((x) => {
             return (

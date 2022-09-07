@@ -33,6 +33,18 @@ export function setEnrichers() {
             enricher: (match, options) => {
                 return $(conditionsMatcher(match))[0]
             }
+        },
+        {
+            pattern: /@Info\[[a-zA-zöüäÖÜÄ&; -\.0-9]+\]/g,
+            enricher: async(match, options) => {
+                let uuid = match[0].match(/(?<=\[)(.*?)(?=\])/)[0]
+                const item = await fromUuid(uuid)
+                if(!item || item.type != "information") return $('<a class="content-link broken"><i class="fas fa-unlink"></i>info</a>')[0]
+                if(!item.isOwner) return $(`<a class="content-link"><i class="fas fa-mask"></i>${game.i18n.localize('GM notes')}</a>`)[0]
+
+                const templ = await renderTemplate("systems/dsa5/templates/items/infopreview.html", { item })
+                return $(templ)[0]
+            }
         })
 }
 

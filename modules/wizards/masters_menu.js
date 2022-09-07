@@ -5,7 +5,6 @@ import AdvantageRulesDSA5 from "../system/advantage-rules-dsa5.js"
 import { slist } from "../system/view_helper.js"
 import PlayerMenu from "./player_menu.js"
 import RequestRoll from "../system/request-roll.js"
-import ActorSheetDsa5 from "../actor/actor-sheet.js"
 
 export default class MastersMenu {
     static registerButtons() {

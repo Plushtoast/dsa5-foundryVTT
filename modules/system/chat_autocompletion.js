@@ -347,17 +347,24 @@ export default class DSA5ChatAutoCompletion {
 
     static bindRollCommands(html){
         html.on('click', '.request-roll', ev => {
-            RequestRoll.showRQMessage($(ev.currentTarget).attr("data-name"), Number($(ev.currentTarget).attr("data-modifier")) || 0)
+            RequestRoll.showRQMessage(ev.currentTarget.dataset.name, Number(ev.currentTarget.dataset.modifier) || 0)
+            ev.stopPropagation()
+            return false
+        })
+        html.on('click', '.postInfo', ev => {
+            const item = fromUuidSync(ev.currentTarget.dataset.uuid)
+            if(item) item.postItem()
+
             ev.stopPropagation()
             return false
         })
         html.on('click', '.request-GC', ev => {
-            RequestRoll.showGCMessage($(ev.currentTarget).attr("data-name"), Number($(ev.currentTarget).attr("data-modifier")) || 0)
+            RequestRoll.showGCMessage(ev.currentTarget.dataset.name, Number(ev.currentTarget.dataset.modifier) || 0)
             ev.stopPropagation()
             return false
         })
         html.on('click', '.request-CH', ev => {
-            DSA5ChatListeners.check3D20(undefined, $(ev.currentTarget).attr("data-name"), { modifier: Number($(ev.currentTarget).attr("data-modifier")) || 0 })
+            DSA5ChatListeners.check3D20(undefined, ev.currentTarget.dataset.name, { modifier: Number(ev.currentTarget.dataset.modifier) || 0 })
             ev.stopPropagation()
             return false
         })

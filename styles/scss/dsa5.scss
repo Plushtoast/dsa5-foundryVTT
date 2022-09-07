@@ -185,6 +185,13 @@
     border: none;
     background: none;
   }
+
+  table.infoTable{
+    width: 100%;
+    tr td:first-child{
+      width: 15%;
+    }    
+  }
   
   .creature-sheet {
     .headerInput, .sheet-header .headerInput {

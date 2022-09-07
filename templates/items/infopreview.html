@@ -1,0 +1,44 @@
+<table class="infoTable">
+    <tr>
+        <td colspan="2">
+            <a class="roll-button postInfo" data-uuid="{{item.uuid}}"><em class="fas fa-comment"></em> {{item.name}}</a>    
+            <a class="content-link" style="float:right" draggable="true" data-type="Item" data-uuid="{{item.uuid}}"><i class="fas fa-info"></i></a>
+        </td>
+    </tr>
+    {{#if item.system.qs1}}
+    <tr>
+        <td>{{localize 'CHARAbbrev.QS'}} 1</td>
+        <td>{{item.system.qs1}}</td>
+    </tr>
+    {{/if}}
+    {{#if item.system.qs2}}
+    <tr>
+        <td>{{localize 'CHARAbbrev.QS'}} 2</td>
+        <td>{{item.system.qs2}}</td>
+    </tr>
+    {{/if}}
+    {{#if item.system.qs3}}
+    <tr>
+        <td>{{localize 'CHARAbbrev.QS'}} 3</td>
+        <td>{{item.system.qs3}}</td>
+    </tr>
+    {{/if}}
+    {{#if item.system.qs4}}
+    <tr>
+        <td>{{localize 'CHARAbbrev.QS'}} 4</td>
+        <td>{{item.system.qs4}}</td>
+    </tr>
+    {{/if}}
+    {{#if item.system.qs5}}
+    <tr>
+        <td>{{localize 'CHARAbbrev.QS'}} 5</td>
+        <td>{{item.system.qs5}}</td>
+    </tr>
+    {{/if}}
+    {{#if item.system.qs6}}
+    <tr>
+        <td>{{localize 'CHARAbbrev.QS'}} 6</td>
+        <td>{{item.system.qs6}}</td>
+    </tr>
+    {{/if}}
+</table>
