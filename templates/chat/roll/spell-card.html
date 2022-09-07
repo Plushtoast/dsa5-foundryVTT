@@ -27,8 +27,8 @@
     </div>
     {{/unless}} {{#if preData.extensions }}
     <div class="card-content">
-        <b>{{localize 'extensions'}}</b>: {{#each preData.extensions as |ext|}}
-        <span data-uuid="{{ext.uuid}}" data-tooltip="{{ext.title}}">{{ext.name}}</span>
+        <b>{{localize 'extensions'}}</b>: {{#each preData.extensions as |item|}}
+        <a class="entity-link content-link" data-tooltip="{{item.title}}" draggable="true" data-type="Item" data-entity="Item" data-uuid="{{item.uuid}}">{{item.name}}</a>
         {{/each}}
     </div>
     {{/if}} {{#if (or hasAreaTemplate applyEffect)}}
