@@ -7,10 +7,12 @@ export default function() {
         let cardData = game.messages.get(li.attr("data-message-id")).flags.opposeData
         return (game.user.isGM && li.find(".opposed-card").length || li.find(".dice-roll").length) && cardData && cardData.damage.value > 0
     }
+
     const canHurtSP = function(li) {
         let cardData = game.messages.get(li.attr("data-message-id")).flags.opposeData
         return (game.user.isGM && li.find(".opposed-card").length || li.find(".dice-roll").length) && cardData && cardData.damage.sp > 0
     }
+
     const canCostMana = function(li) {
         let message = game.messages.get(li.attr("data-message-id"));
         if (message.speaker.actor && message.flags.data) {
@@ -21,6 +23,7 @@ export default function() {
         }
         return false
     }
+
     const canUnhideData = function(li) {
         if (game.user.isGM && game.settings.get("dsa5", "hideOpposedDamage")) {
             let message = game.messages.get(li.attr("data-message-id"));
@@ -28,6 +31,7 @@ export default function() {
         }
         return false
     }
+
     const canHideData = function(li) {
         if (game.user.isGM && game.settings.get("dsa5", "hideOpposedDamage")) {
             let message = game.messages.get(li.attr("data-message-id"));
@@ -35,6 +39,7 @@ export default function() {
         }
         return false
     }
+
     const canImproveRoll = function(li, group = false) {
         let message = game.messages.get(li.attr("data-message-id"));
         if (message.speaker.actor && message.flags.data) {
@@ -51,9 +56,11 @@ export default function() {
         }
         return false
     }
+
     const canImproveRollGroup = function(li) {
         return canImproveRoll(li, true)
     }
+
     const canIncreaseQS = function(li, group = false) {
         let message = game.messages.get(li.attr("data-message-id"));
         if (message.speaker.actor && message.flags.data) {
@@ -66,9 +73,11 @@ export default function() {
         }
         return false;
     };
+
     const canIncreaseQSGroup = function(li) {
         return canIncreaseQS(li, true)
     }
+
     const isTalented = function(li) {
         let message = game.messages.get(li.attr("data-message-id"));
         if (message.speaker.actor && message.flags.data) {
@@ -79,6 +88,7 @@ export default function() {
         }
         return false
     }
+
     const canRerollDamage = function(li, group = false) {
         let message = game.messages.get(li.attr("data-message-id"));
         if (message.speaker.actor && message.flags.data) {
@@ -89,9 +99,11 @@ export default function() {
         }
         return false
     };
+
     const canRerollDamageGroup = function(li) {
         return canRerollDamage(li, true)
     }
+
     const canReroll = function(li, group = false) {
         let message = game.messages.get(li.attr("data-message-id"));
 
@@ -103,6 +115,7 @@ export default function() {
         }
         return false;
     };
+
     const canRerollGroup = function(li) {
         return canReroll(li, true)
     }
@@ -132,7 +145,8 @@ export default function() {
             }
         }
     }
-    let canApplyDefaultRolls = li => {
+
+    const canApplyDefaultRolls = li => {
         const message = game.messages.get(li.data("messageId"));
         if (!message || !canvas.tokens) return false
         return message.isRoll && message.isContentVisible && canvas.tokens.controlled.length && li.find('.dice-roll').length;
@@ -153,6 +167,7 @@ export default function() {
         await actor.applyDamage(cardData.damage[mode])
         await message.update({ "flags.data.damageApplied": true, content: message.content.replace(/hideAnchor">/, `hideAnchor"><i class="fas fa-check" style="float:right" data-tooltip="${game.i18n.localize("damageApplied")}"></i>`) })
     }
+
     const applyChatCardDamage = (li, mode) => {
         const message = game.messages.get(li.data("messageId"));
         const roll = message.rolls[0];
@@ -170,14 +185,15 @@ export default function() {
         if (!actor.isOwner)
             return ui.notifications.error(game.i18n.localize("DSAError.DamagePermission"))
 
-        const maintain = cardData.preData.calculatedSpellModifiers.maintainCost
+        const maintain = cardData.preData.calculatedSpellModifiers.maintainCost.trim()
         const payType = (["ritual", "spell"].includes(cardData.preData.source.type) || getProperty(cardData.preData.calculatedSpellModifiers, "costsMana")) ? "AsP" : "KaP"
         const manaApplied = await actor.applyMana(cardData.preData.calculatedSpellModifiers.finalcost, payType)
         if(maintain && maintain != 0 && manaApplied && cardData.postData.successLevel > 0){
             const name = cardData.preData.source.name
             try {
                 const cost = maintain.match(/^\d{1,3}/)[0]
-                const duration = Number(maintain.replace(/^\d{1,3}/, "").match(/\d{1,3}/)[0])
+                let duration = Number(maintain.replace(/^\d{1,3}/, "").match(/\d{1,3}/))
+                duration = duration[0] || 1
                 const effect = {
                     label: `${name} (${game.i18n.localize("maintainCost")})`,
                     icon: "icons/svg/daze.svg",
@@ -193,6 +209,7 @@ export default function() {
                             custom: true,
                         },
                     },
+                    changes: [],
                     duration: {}
                 }
                 const regexes = [
@@ -210,7 +227,6 @@ export default function() {
                         break;
                     }
                 } 
-                console.log(cost, effect)
                 await actor.addCondition(effect)
             } catch (e) {
                 console.error(`Could not parse duration '${maintain}' of '${name}'`);

@@ -115,7 +115,7 @@ export default class RuleChaos {
     static magicalImprovement(actor, creationData) {
         for (let item of actor.items) {
             if (["ritual", "spell"].includes(item.type)) {
-                item.data.talentValue.value += 4
+                item.system.talentValue.value += 4
             }
         }
     }

@@ -61,6 +61,7 @@ export default class DSAIniTracker extends Application {
         const turnsToUse = data.turns
         const waitingTurns = []
         const skipDefeated = game.settings.get("core", Combat.CONFIG_SETTING).skipDefeated
+        
         let unRolled = data.turns.some(x => x.owner && !x.hasRolled && (!game.user.isGM || data.combat.combatants.get(x.id).isNPC))
         if (turnsToUse.length) {
             const filteredTurns = []
@@ -79,11 +80,11 @@ export default class DSAIniTracker extends Application {
                 if (turn.active && !started) {
                     started = true
                     startIndex = index
-                } else if (combatant.getFlag("dsa5", "waitInit") == data.round + loops && !turn.defeated && (game.user.isGM || !turn.hidden)) {
+                } else if (combatant.getFlag("dsa5", "waitInit") == data.round + loops && !combatant.defeated && (game.user.isGM || !combatant.hidden)) {
                     waitingTurns.push(turn)
                 }
 
-                if (started && !(skipDefeated && turn.defeated) && (game.user.isGM || !turn.hidden)) {
+                if (started && !(skipDefeated && combatant.defeated) && (game.user.isGM || !combatant.hidden)) {
                     turn.round = data.round + loops
                     if (turn.owner && combatant.token?.actor) {
                         turn.maxLP = combatant.token.actor.system.status.wounds.max
@@ -115,6 +116,7 @@ export default class DSAIniTracker extends Application {
         })
                 
         this.conditionalPanToCurrentCombatant(data)
+
         return data
     }
 

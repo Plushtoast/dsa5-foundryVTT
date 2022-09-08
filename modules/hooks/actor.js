@@ -14,8 +14,18 @@ export default function() {
                         Yes: {
                             icon: '<i class="fa fa-check"></i>',
                             label: game.i18n.localize("HELP.pay"),
-                            callback: dlg => {
-                                actor.applyMana(Number(getProperty(effect, "flags.dsa5.maintain")), getProperty(effect, "flags.dsa5.payType"))
+                            callback: async(dlg) => {
+                                const paid = await actor.applyMana(Number(getProperty(effect, "flags.dsa5.maintain")), getProperty(effect, "flags.dsa5.payType"))
+                                if(paid){
+                                    const duration = {
+                                        startTime: game.time.worldTime
+                                    }
+                                    if(game.combat){
+                                        duration.startRound = game.combat.round
+                                        duration.startTurn = game.combat.turn
+                                    }
+                                    actor.updateEmbeddedDocuments("ActiveEffect", [{_id: effect._id, duration}])
+                                }
                             }
                         },
                         delete: {
