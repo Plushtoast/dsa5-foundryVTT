@@ -163,6 +163,63 @@ export default function() {
         }));
     }
 
+    const payMana = async(li) => {
+        let message = game.messages.get(li.attr("data-message-id"))
+        let cardData = message.flags.data
+        let actor = DSA5_Utility.getSpeaker(message.speaker)
+        if (!actor.isOwner)
+            return ui.notifications.error(game.i18n.localize("DSAError.DamagePermission"))
+
+        const maintain = cardData.preData.calculatedSpellModifiers.maintainCost
+        const payType = (["ritual", "spell"].includes(cardData.preData.source.type) || getProperty(cardData.preData.calculatedSpellModifiers, "costsMana")) ? "AsP" : "KaP"
+        const manaApplied = await actor.applyMana(cardData.preData.calculatedSpellModifiers.finalcost, payType)
+        if(maintain && maintain != 0 && manaApplied && cardData.postData.successLevel > 0){
+            const name = cardData.preData.source.name
+            try {
+                const cost = maintain.match(/^\d{1,3}/)[0]
+                const duration = Number(maintain.replace(/^\d{1,3}/, "").match(/\d{1,3}/)[0])
+                const effect = {
+                    label: `${name} (${game.i18n.localize("maintainCost")})`,
+                    icon: "icons/svg/daze.svg",
+                    flags: {
+                        dsa5: {
+                            value: null,
+                            editable: true,
+                            hidePlayers: true,
+                            hideOnToken: true,
+                            description: maintain,
+                            maintain: cost,
+                            payType,
+                            custom: true,
+                        },
+                    },
+                    duration: {}
+                }
+                const regexes = [
+                    { regEx: new RegExp(game.i18n.localize("DSAREGEXmaintain.combatRounds"), "gi"), seconds: 5 },
+                    { regEx: new RegExp(game.i18n.localize("DSAREGEXmaintain.minutes"), "gi"), seconds: 60 },
+                    { regEx: new RegExp(game.i18n.localize("DSAREGEXmaintain.hours"), "gi"), seconds: 3600 },
+                    { regEx: new RegExp(game.i18n.localize("DSAREGEXmaintain.days"), "gi"), seconds: 3600 * 24 },
+                ];
+                for (const reg of regexes) {
+                    if (reg.regEx.test(maintain)) {
+                        const calcTime = Number(duration) * reg.seconds;
+                        effect.duration.seconds = calcTime;
+                        effect.duration.rounds = effect.duration.seconds / 5;
+                        
+                        break;
+                    }
+                } 
+                console.log(cost, effect)
+                await actor.addCondition(effect)
+            } catch (e) {
+                console.error(`Could not parse duration '${maintain}' of '${name}'`);
+            }
+        }
+        await message.update({ "flags.data.manaApplied": true, content: message.content.replace(/<span class="costCheck">/, `<span class="costCheck"><i class="fas fa-check" style="float:right"></i>`) })
+
+    }
+ 
     Hooks.on("getChatLogEntryContext", (html, options) => {
         options.push({
                 name: game.i18n.localize("CHATCONTEXT.hideData"),
@@ -191,16 +248,7 @@ export default function() {
                 name: game.i18n.localize("CHATCONTEXT.ApplyMana"),
                 icon: '<i class="fas fa-user-minus"></i>',
                 condition: canCostMana,
-                callback: async(li) => {
-                    let message = game.messages.get(li.attr("data-message-id"))
-                    let cardData = message.flags.data
-                    let actor = DSA5_Utility.getSpeaker(message.speaker)
-                    if (!actor.isOwner)
-                        return ui.notifications.error(game.i18n.localize("DSAError.DamagePermission"))
-
-                    await actor.applyMana(cardData.preData.calculatedSpellModifiers.finalcost, (["ritual", "spell"].includes(cardData.preData.source.type) || getProperty(cardData.preData.calculatedSpellModifiers, "costsMana")) ? "AsP" : "KaP")
-                    await message.update({ "flags.data.manaApplied": true, content: message.content.replace(/<span class="costCheck">/, `<span class="costCheck"><i class="fas fa-check" style="float:right"></i>`) })
-                }
+                callback: async(li) => { payMana(li) }
             }, {
                 name: game.i18n.localize("CHATCONTEXT.ApplyDamage"),
                 icon: '<i class="fas fa-user-minus"></i>',

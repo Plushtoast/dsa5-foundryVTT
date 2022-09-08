@@ -105,7 +105,7 @@ export default class DSAIniTracker extends Application {
         }
         if(!data.round) itemWidth = 20
 
-        this.position.width = itemWidth * 5 + 17 + 50 + 28
+        this.position.width = itemWidth * 5 + 95
         this.position.height = itemWidth + 10
 
         mergeObject(data, {

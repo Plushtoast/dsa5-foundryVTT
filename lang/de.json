@@ -121,7 +121,8 @@
         "setTargetToUserHint": "Aktuell markierte Ziele auf den User übertragen.",
         "setTargetToUser": "Spielerziel setzen",
         "noLoggedinUser": "Keine User eingeloggt/auswählbar.",
-        "selectGroupCheckSkill": "Wähle ein weiteres Talent für die Gruppensammelprobe."
+        "selectGroupCheckSkill": "Wähle ein weiteres Talent für die Gruppensammelprobe.",
+        "updateMaintainSpell": "Möchtest du ein neues Interval bezahlen oder den Effekt beenden?"
     },
     "Equipment": {
         "misc": "Allgemein",
@@ -221,6 +222,7 @@
     "cost": "Kosten",
     "charges": "Ladungen",
     "cancel": "Abbrechen",
+    "delete": "Löschen",
     "ok": "Ok",
     "combatskillcountdivider": "aus",
     "closeCombatAttacks": "Nahkampfangriffe",
@@ -1078,6 +1080,12 @@
         "minutes": "( )?(in )?(minute(n)?|min)",
         "hours": "( )?(in )?(stunde(n)?)",
         "days": "( )?(in )?tag(e)?"
+    },
+    "DSAREGEXmaintain": {
+        "combatRounds": "(Kampfrunde(n)?|KR(s)?)",
+        "minutes": "(minute(n)?|min)",
+        "hours": "(stunde(n)?)",
+        "days": "tag(e)?"
     },
     "ActiveEffects": {
         "hideOnToken": "Am Token verstecken",

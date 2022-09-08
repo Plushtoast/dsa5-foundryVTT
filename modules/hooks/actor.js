@@ -2,6 +2,36 @@ import DSAActiveEffectConfig from "../status/active_effects.js";
 import DSA5_Utility from "../system/utility-dsa5.js";
 
 export default function() {
+    Hooks.on("preDeleteActiveEffect", (effect, options, user_id) => {
+        const actor = effect.parent
+        if (actor && actor.documentName == "Actor") {
+            if(getProperty(effect, "flags.dsa5.maintain")){
+                new Dialog({
+                    title: effect.label,
+                    content: game.i18n.localize('DIALOG.updateMaintainSpell'),
+                    default: 'yes',
+                    buttons: {
+                        Yes: {
+                            icon: '<i class="fa fa-check"></i>',
+                            label: game.i18n.localize("HELP.pay"),
+                            callback: dlg => {
+                                actor.applyMana(Number(getProperty(effect, "flags.dsa5.maintain")), getProperty(effect, "flags.dsa5.payType"))
+                            }
+                        },
+                        delete: {
+                            icon: '<i class="fas fa-trash"></i>',
+                            label: game.i18n.localize("delete"),
+                            callback: dlg => {
+                                actor.deleteEmbeddedDocuments("ActiveEffect", [effect._id], {noHook: true})
+                            }
+                        }
+                    }
+                }).render(true)
+                return false
+            }
+        }
+    })
+
     Hooks.on("deleteActiveEffect", (effect) => {
         const actor = effect.parent
         if (actor && actor.documentName == "Actor") {
@@ -14,6 +44,8 @@ export default function() {
                 return false
             }
             DSAActiveEffectConfig.onEffectRemove(actor, effect)
+
+            //todo this might need to go to predelete
             const result = Hooks.call("deleteActorActiveEffect", actor, effect)
             if (result === false) return false
         }
@@ -90,3 +122,4 @@ export default function() {
         token.updateSource(modify)
     })
 }
+

@@ -107,7 +107,8 @@
         "setTargetToUserHint": "Transfer currently targeted tokens to user.",
         "setTargetToUser": "Set player target",
         "noLoggedinUser": "No user logged in/available.",
-        "selectGroupCheckSkill": "Chose another talent for the cumulative group check."
+        "selectGroupCheckSkill": "Chose another talent for the cumulative group check.",
+        "updateMaintainSpell": "Do you want to pay for a new interval or end the effect?"
     },
     "Equipment": {
         "misc": "General",
@@ -376,6 +377,7 @@
     "Hair_color": "Hair color",
     "Height": "Height",
     "Home": "Home",
+    "delete": "Delete",
     "Initial": "Initial value",
     "initiative": "Initiative",
     "initDieMod": "Initiative die mod.",
@@ -1062,6 +1064,12 @@
         "minutes": "( )?(in )?(minute(s)?|min)",
         "hours": "( )?(in )?(hour(s)?)",
         "days": "( )?(in )?day(s)?"
+    },
+    "DSAREGEXmaintain": {
+        "combatRounds": "(combat round(s)?|CR(s)?)",
+        "minutes": "(minute(s)?|min)",
+        "hours": "(hour(s)?)",
+        "days": "day(s)?"
     },
     "ActiveEffects": {
         "hideOnToken": "Hide on Token",
