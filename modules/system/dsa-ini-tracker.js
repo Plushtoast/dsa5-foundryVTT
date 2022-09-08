@@ -58,8 +58,6 @@ export default class DSAIniTracker extends Application {
         const data = this.combatData
         let itemWidth = game.settings.get("dsa5", "iniTrackerSize")
 
-        this.position.width = itemWidth * 5 + 17 + 50 + 28
-        this.position.height = itemWidth + 10
         const turnsToUse = data.turns
         const waitingTurns = []
         const skipDefeated = game.settings.get("core", Combat.CONFIG_SETTING).skipDefeated
@@ -105,6 +103,11 @@ export default class DSAIniTracker extends Application {
             }
             data.turns = filteredTurns
         }
+        if(!data.round) itemWidth = 20
+
+        this.position.width = itemWidth * 5 + 17 + 50 + 28
+        this.position.height = itemWidth + 10
+
         mergeObject(data, {
             itemWidth,
             unRolled,

@@ -1,7 +1,7 @@
 <div style="--iniTrackerSize:{{itemWidth}}px">
     <div class="row-section">
         <div class="controls right">
-            {{#if user.isGM}}
+            {{#if (and user.isGM round)}}
             <a class="combat-control" data-tooltip="{{localize 'COMBAT.RollNPC'}}" data-control="rollNPC" {{#unless turns}}disabled{{/unless}}><i class="fas fa-users-cog"></i></a>
             <a class="combat-control" data-tooltip="{{localize 'COMBAT.RoundPrev'}}" data-control="previousRound"><i class="fas fa-step-backward"></i></a>
             <a class="combat-control" data-tooltip="{{localize 'COMBAT.TurnPrev'}}" data-control="previousTurn"><i class="fas fa-2x fa-arrow-left"></i></a> {{else if control}}
@@ -53,9 +53,10 @@
         <div class="controls">
             {{#if user.isGM}}
             <a class="combat-control" data-tooltip="{{localize 'COMBAT.Delete'}}" data-control="endCombat" {{#unless combatCount}}disabled{{/unless}}><i class="fas fa-trash"></i></a>
+            {{#if round}}
             <a class="combat-control" data-tooltip="{{localize 'COMBAT.RoundNext'}}" data-control="nextRound"><i class="fas fa-step-forward"></i></a>
             <a class="combat-control" data-tooltip="{{localize 'COMBAT.TurnNext'}}" data-control="nextTurn"><i class="fas fa-2x fa-arrow-right"></i></a> {{else if control}}
-            <a class="combat-control" data-tooltip="{{localize 'COMBAT.TurnNext'}}" data-control="nextTurn"><i class="fas fa-2x fa-arrow-right"></i></a> {{/if}}
+            <a class="combat-control" data-tooltip="{{localize 'COMBAT.TurnNext'}}" data-control="nextTurn"><i class="fas fa-2x fa-arrow-right"></i></a> {{/if}} {{/if}}
         </div>
         <section class="dragHandler">
             <i class="fas fa-grip-vertical"></i>
