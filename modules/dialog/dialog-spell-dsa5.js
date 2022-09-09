@@ -52,12 +52,134 @@ export default class DSA5SpellDialog extends DialogShared {
         return buttons;
     }
 
+    applyExtensions(source, extensions, actor){
+        for(let extension of extensions){
+            const item = fromUuidSync(extension.uuid)
+            if(!item) continue
+
+            for(let ef of item.effects){
+                for(let change of ef.changes){
+                    ef.apply(source, change)
+                }
+            }
+        }
+    }
+
+    recalcSpellModifiers(html, event){
+        const parent = html
+        const source = duplicate(this.dialogData.source)
+        let castingTime = parent.find(".castingTime");
+        let aspcost = parent.find(".aspcost");
+        let reach = parent.find(".reach");
+        let maintainCost = parent.find(".maintainCost");
+
+        let bigCasts = parent.find(".ritual").length > 0;
+
+        for(let k of parent.find('.specAbs.active')){
+            const item = fromUuidSync(k.dataset.uuid)
+            if(!item) continue
+
+            for(let ef of item.effects){
+                for(let change of ef.changes){
+                    ef.apply(source, change)
+                }
+            }
+        }       
+
+        let maxMods = parent.find(".maxMods");
+        if (parent.find(".spellModifier:checked").length > Number(maxMods.text())) {
+            if(event) event.currentTarget.checked = false;
+            maxMods.addClass("emphasize");
+            setTimeout(function() {
+                maxMods.removeClass("emphasize");
+            }, 600);
+            return;
+        }
+
+        let baseAsp = source.system.AsPCost.value
+        let baseReach = source.system.range.value
+        let baseCastingTime = source.system.castingTime.value
+
+        let newPosition = baseAsp;
+        let newMaintainCost = source.system.maintainCost.value
+        let mod = 0;
+        parent.find(".spellModifier[data-cost]:checked").each(function(index, element) {
+            newPosition = newPosition * (element.value < 0 ? 0.5 : 2);
+            if (newMaintainCost != "" && newMaintainCost != undefined) {
+                let maintains = String(newMaintainCost).split(" ");
+                maintains[0] = Math.max(Number(maintains[0]) * (element.value < 0 ? 0.5 : 2));
+                newMaintainCost = maintains.join(" ");
+            }
+            mod += Number(element.value);
+        });
+        if (newPosition < 1) {
+            if(event) event.currentTarget.checked = false;
+        } else {
+            aspcost.text(newPosition);
+            maintainCost.text(newMaintainCost);
+            aspcost.attr("data-mod", mod);
+        }
+
+        mod = 0;
+        newPosition = baseCastingTime;
+        parent.find(".spellModifier[data-castingTime]:checked").each(function(index, element) {
+            if (bigCasts) {
+                let ind = DSA5SpellDialog.bigTimes.indexOf(Number(newPosition));
+                if (ind != undefined) {
+                    let newIndex = ind + (element.value > 0 ? 1 : -1);
+                    if (newIndex < DSA5SpellDialog.bigTimes.length && newIndex >= 0) {
+                        newPosition = DSA5SpellDialog.bigTimes[newIndex];
+                    } else {
+                        ui.notifications.error(game.i18n.localize("DSAError.CastingTimeLimit"));
+                    }
+                } else {
+                    ui.notifications.error(game.i18n.localize("DSAError.TimeCannotBeParsed"));
+                }
+            } else {
+                newPosition = newPosition * (element.value > 0 ? 2 : 0.5);
+            }
+
+            mod += Number(element.value);
+        });
+        if (newPosition < 1) {
+            if(event) event.currentTarget.checked = false;
+        } else {
+            castingTime.text(newPosition);
+            castingTime.attr("data-mod", mod);
+        }
+
+        mod = 0;
+        let newReach = game.i18n.localize("ReverseSpellRanges." + baseReach);
+        reach.text(baseReach);
+        parent.find(".spellModifier[data-reach]:checked").each(function(index, element) {
+            if (newReach == "self") {
+                element.checked = false;
+            } else if (newReach == "touch") {
+                reach.text("4 " + game.i18n.localize("step"));
+                mod += Number(element.value);
+            } else {
+                let val = baseReach.split(" ");
+                newReach = Number(val[0]);
+                if (isNaN(newReach)) {
+                    if(event) event.currentTarget.checked = false;
+                    ui.notifications.error(game.i18n.localize("DSAError.RangeCannotBeParsed"));
+                } else {
+                    reach.text(newReach * 2 + " " + game.i18n.localize("step"));
+                    mod += Number(element.value);
+                }
+            }
+        });
+        reach.attr("data-mod", mod);
+        html.find(".reloadButton").prop("disabled", Number(html.find(".castingTime").text()) < 2);
+    }
+
     activateListeners(html) {
         super.activateListeners(html);
         html.find(".reloadButton").prop("disabled", Number(html.find(".castingTime").text()) < 2);
 
         html.find(".specAbs").mousedown((ev) => {
             $(ev.currentTarget).toggleClass("active");
+            this.recalcSpellModifiers(html)
         });
 
         html.find(".variableBaseCost").change((ev) => {
@@ -68,102 +190,8 @@ export default class DSA5SpellDialog extends DialogShared {
             parent.find(".aspcost").text((Number(parent.find(".aspcost").text()) * newVal) / oldVal);
         });
 
-        html.find(".spellModifier").change((event) => {
-            let parent = $(event.currentTarget).parents(".skill-test");
-            let castingTime = parent.find(".castingTime");
-            let aspcost = parent.find(".aspcost");
-            let reach = parent.find(".reach");
-            let maintainCost = parent.find(".maintainCost");
-
-            let bigCasts = parent.find(".ritual").length > 0;
-
-            let maxMods = parent.find(".maxMods");
-            if (parent.find(".spellModifier:checked").length > Number(maxMods.text())) {
-                event.currentTarget.checked = false;
-                maxMods.addClass("emphasize");
-                setTimeout(function() {
-                    maxMods.removeClass("emphasize");
-                }, 600);
-                return;
-            }
-
-            let baseAsp = aspcost.attr("data-base");
-            let baseReach = reach.attr("data-base");
-            let baseCastingTime = castingTime.attr("data-base");
-
-            let newPosition = baseAsp;
-            let newMaintainCost = maintainCost.attr("data-base");
-            let mod = 0;
-            parent.find(".spellModifier[data-cost]:checked").each(function(index, element) {
-                newPosition = newPosition * (element.value < 0 ? 0.5 : 2);
-                if (newMaintainCost != "" && newMaintainCost != undefined) {
-                    let maintains = String(newMaintainCost).split(" ");
-                    maintains[0] = Math.max(Number(maintains[0]) * (element.value < 0 ? 0.5 : 2));
-                    newMaintainCost = maintains.join(" ");
-                }
-                mod += Number(element.value);
-            });
-            if (newPosition < 1) {
-                event.currentTarget.checked = false;
-            } else {
-                aspcost.text(newPosition);
-                maintainCost.text(newMaintainCost);
-                aspcost.attr("data-mod", mod);
-            }
-
-            mod = 0;
-            newPosition = baseCastingTime;
-            parent.find(".spellModifier[data-castingTime]:checked").each(function(index, element) {
-                if (bigCasts) {
-                    let ind = DSA5SpellDialog.bigTimes.indexOf(Number(newPosition));
-                    if (ind != undefined) {
-                        let newIndex = ind + (element.value > 0 ? 1 : -1);
-                        if (newIndex < DSA5SpellDialog.bigTimes.length && newIndex >= 0) {
-                            newPosition = DSA5SpellDialog.bigTimes[newIndex];
-                        } else {
-                            ui.notifications.error(game.i18n.localize("DSAError.CastingTimeLimit"));
-                        }
-                    } else {
-                        ui.notifications.error(game.i18n.localize("DSAError.TimeCannotBeParsed"));
-                    }
-                } else {
-                    newPosition = newPosition * (element.value > 0 ? 2 : 0.5);
-                }
-
-                mod += Number(element.value);
-            });
-            if (newPosition < 1) {
-                event.currentTarget.checked = false;
-            } else {
-                castingTime.text(newPosition);
-                castingTime.attr("data-mod", mod);
-            }
-
-            mod = 0;
-            let newReach = game.i18n.localize("ReverseSpellRanges." + baseReach);
-            reach.text(baseReach);
-            parent.find(".spellModifier[data-reach]:checked").each(function(index, element) {
-                if (newReach == "self") {
-                    element.checked = false;
-                } else if (newReach == "touch") {
-                    reach.text("4 " + game.i18n.localize("step"));
-                    mod += Number(element.value);
-                } else {
-                    let val = baseReach.split(" ");
-                    newReach = Number(val[0]);
-                    if (isNaN(newReach)) {
-                        event.currentTarget.checked = false;
-                        ui.notifications.error(game.i18n.localize("DSAError.RangeCannotBeParsed"));
-                    } else {
-                        reach.text(newReach * 2 + " " + game.i18n.localize("step"));
-                        mod += Number(element.value);
-                    }
-                }
-            });
-            reach.attr("data-mod", mod);
-            html.find(".reloadButton").prop("disabled", Number(html.find(".castingTime").text()) < 2);
-        });
-
+        html.find(".spellModifier").change((event) => this.recalcSpellModifiers(html, event))
+        
         let targets = this.readTargets();
 
         if (targets.length == 0) {

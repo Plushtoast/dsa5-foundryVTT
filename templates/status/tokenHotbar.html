@@ -12,6 +12,14 @@
                 {{/each}}
             </ul>
             {{/if}}
+            {{#if item.attack}}
+            <ul class="subbuttons" style="width: 100px">
+                <li class="secondary" data-category="{{item.cssClass}}">
+                    {{item.x.system.damage.value}}
+                </li>
+                
+            </ul>
+            {{/if}}
         </li>
         {{/each}} {{/each}}
     </ul>

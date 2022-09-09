@@ -260,7 +260,7 @@ export default class TokenHotbar2 extends Application {
 
                 for (const x of actor.items) {
                     if ((attacktypes.includes(x.type) && x.system.worn.value == true) || (x.type == "trait" && traitTypes.includes(x.system.traitType.value))) {
-                        items.attacks.push({ name: x.name, id: x.id, icon: x.img, cssClass: "", abbrev: x.name[0] })
+                        items.attacks.push({ name: x.name, id: x.id, icon: x.img, cssClass: `weapon ${x.id}`, abbrev: x.name[0], attack: true, x })
                     } else if (spellTypes.includes(x.type)) {
                         if (x.system.effectFormula.value) items.spells.push({ name: x.name, id: x.id, icon: x.img, cssClass: "spell", abbrev: x.name[0] })
                         else moreSpells.push({ name: x.name, id: x.id, icon: x.img, cssClass: "spell", abbrev: x.name[0] })
