@@ -61,7 +61,7 @@ export default function() {
         }
     })
 
-    const askForName = (actor) => {
+    const askForName = async (actor) => {
         new Dialog({
             title: game.i18n.localize("DSASETTINGS.obfuscateTokenNames"),
             content: `<label for="name">${game.i18n.localize('DSASETTINGS.rename')}</label> <input dtype="string" name="name" type="text" value="${actor.name}"/>`,
@@ -92,17 +92,19 @@ export default function() {
             if (u.isGM) continue;
             if (actor.testUserPermission(u, "LIMITED")) return;
         }
-        const sameActorTokens = setting >  canvas.scene.tokens.filter((x) => x.actor && x.actor.id === actor.id);
+        let sameActorTokens = canvas.scene.tokens.filter((x) => x.actor && x.actor.id === actor.id);
         let name = game.i18n.localize("unknown")
+        if ([2,4].includes(setting)) {
+            sameActorTokens = sameActorTokens.filter(x => x.name == actor.name)
+            if(sameActorTokens.length == 0) {
+                askForName(actor)
+                return
+            }
+        }
         if (sameActorTokens.length > 0 && setting < 3) {
             name = `${sameActorTokens[0].name.replace(/ \d{1,}$/)} ${sameActorTokens.length + 1}`
         }
-
-        if (setting == 2 && sameActorTokens == 0) {
-            askForName(actor)
-        } else {
-            update["name"] = name
-        }
+        update["name"] = name
     }
 
     Hooks.on('preCreateToken', (token, data, options, userId) => {
