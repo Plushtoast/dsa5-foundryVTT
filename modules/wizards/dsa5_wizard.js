@@ -127,7 +127,7 @@ export default class WizardDSA5 extends Application {
                     if (!this.mergeLevels(itemsToAdd, item)) SpecialabilityRulesDSA5.abilityAdded(this.actor, item)
                     break
                 case "magictrick":
-                    his.mergeLevels(itemsToAdd, item)
+                    this.mergeLevels(itemsToAdd, item)
                     break
             }
         }
