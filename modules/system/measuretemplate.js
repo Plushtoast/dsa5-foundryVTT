@@ -19,7 +19,7 @@ export class MeasuredTemplateDSA extends MeasuredTemplate {
         const templateShape = game.dsa5.config.areaTargetTypes[target.type];
         if (!templateShape || !target.value) return null;
 
-        const distance = Roll.safeEval(Number(`${target.value}`.replace(/(qs|ql)/gi, qs)) || 1)
+        const distance = Number(Roll.safeEval(`${target.value}`.replace(/(qs|ql)/gi, qs))) || 1
         const templateData = {
             t: templateShape,
             user: game.user.id,
@@ -41,7 +41,7 @@ export class MeasuredTemplateDSA extends MeasuredTemplate {
                 templateData.direction = 45;
                 break;
             case "ray":
-                templateData.width = target.width ? Roll.safeEval((Number(`${target.width}`.replace(/(qs|ql)/gi, qs)) || canvas.dimensions.distance)) : canvas.dimensions.distance;
+                templateData.width = target.width ? (Number(Roll.safeEval(`${target.width}`.replace(/(qs|ql)/gi, qs))) || canvas.dimensions.distance) : canvas.dimensions.distance;
                 break;
         }
 
