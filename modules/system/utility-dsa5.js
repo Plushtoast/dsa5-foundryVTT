@@ -90,6 +90,35 @@ export default class DSA5_Utility {
         return ((await this.allCombatSkills()).filter(x => x.system.weapontype.value == weapontype) || []).map(x => x.name).sort((a, b) => a.localeCompare(b));
     }
 
+    static async callItemTransformationMacro(macroName, source, args = {}) {
+        const parts = macroName.split(".")
+        const pack = game.packs.get(`${parts[0]}.${parts[1]}`);
+        if(!pack) return {}
+
+        let documents = await pack.getDocuments({ name: parts[2] });
+        let result = {};
+        if (documents.length) {
+            const document = documents[0]
+            const body = `(async () => {${document.command}})()`;
+            const fn = Function("args", "source", body);
+            try {
+                args.result = result;
+                await fn.call(this, args, source);
+            } catch (err) {
+                ui.notifications.error(
+                    `There was an error in your macro syntax. See the console (F12) for details`
+                );
+                console.error(err);
+                result.error = true;
+            }
+        } else {
+            ui.notifications.error(
+                game.i18n.format("DSAError.macroNotFound", { name: macroName })
+            );
+        }
+        return result;
+    }
+
     static parseAbilityString(ability) {
         return {
             original: ability.replace(/ (FP|SR|FW|SP)?[+-]?\d{1,2}$/, '').trim(),

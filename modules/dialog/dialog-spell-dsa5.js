@@ -3,6 +3,8 @@ import DSA5Dialog from "./dialog-dsa5.js";
 import DialogShared from "./dialog-shared.js";
 
 export default class DSA5SpellDialog extends DialogShared {
+    static rollChanges = ["defenseMalus"]
+
     static get defaultOptions() {
         const options = super.defaultOptions;
         mergeObject(options, {
@@ -65,7 +67,35 @@ export default class DSA5SpellDialog extends DialogShared {
         }
     }
 
-    recalcSpellModifiers(html, event){
+    async applyTransformations(source, parent){
+        const sit = parent.find('[name="situationalModifiers"]')
+        sit.find('option[data-extension="1"]').remove()
+        const mods = []
+        for(let k of parent.find('.specAbs.active')){
+            const item = fromUuidSync(k.dataset.uuid)
+            if(!item) continue
+            
+            for(let ef of item.effects){
+                for(let change of ef.changes){
+                    if(DSA5SpellDialog.rollChanges.includes(change.key)){
+                        let name = item.name.split(" - ")
+                        const typeName = game.i18n.localize(`MODS.${change.key}`)
+                        name = `${name[1] || name[0]}`
+                        const tooltip = `${typeName}: ${change.value}<br/>${game.i18n.localize('spellextension')}: ${name}`
+                        mods.push(`<option data-extension="1" selected="" data-tooltip="${tooltip}" data-type="${change.key}" value="${change.value}">${name} - ${typeName}</option>`)
+                    }else if(change.key == "macro.transform"){
+                        await DSA5_Utility.callItemTransformationMacro(change.value, source)
+                    }else{
+                        ef.apply(source, change)
+                    }
+                    
+                }
+            }
+        }  
+        sit.append(mods.join(""))
+    }
+
+    async recalcSpellModifiers(html, event){
         const parent = html
         const source = duplicate(this.dialogData.source)
         let castingTime = parent.find(".castingTime");
@@ -74,17 +104,7 @@ export default class DSA5SpellDialog extends DialogShared {
         let maintainCost = parent.find(".maintainCost");
 
         let bigCasts = parent.find(".ritual").length > 0;
-
-        for(let k of parent.find('.specAbs.active')){
-            const item = fromUuidSync(k.dataset.uuid)
-            if(!item) continue
-
-            for(let ef of item.effects){
-                for(let change of ef.changes){
-                    ef.apply(source, change)
-                }
-            }
-        }       
+        await this.applyTransformations(source, parent)            
 
         let maxMods = parent.find(".maxMods");
         if (parent.find(".spellModifier:checked").length > Number(maxMods.text())) {
@@ -102,6 +122,8 @@ export default class DSA5SpellDialog extends DialogShared {
 
         let newPosition = baseAsp;
         let newMaintainCost = source.system.maintainCost.value
+
+        parent.find(".variableBaseCost")[source.system.variableBaseCost == "true" ? "show" : "hide"]()
         let mod = 0;
         parent.find(".spellModifier[data-cost]:checked").each(function(index, element) {
             newPosition = newPosition * (element.value < 0 ? 0.5 : 2);

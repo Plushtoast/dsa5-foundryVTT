@@ -11,6 +11,7 @@ import CreatureType from "../system/creature-type.js"
 import DPS from "../system/derepositioningsystem.js"
 import DSA5CombatDialog from "../dialog/dialog-combat-dsa5.js"
 import SpecialabilityRulesDSA5 from "../system/specialability-rules-dsa5.js"
+import DSA5SpellDialog from "../dialog/dialog-spell-dsa5.js"
 
 export default class Itemdsa5 extends Item {
     static defaultImages = {
@@ -744,7 +745,7 @@ class SpellItemDSA5 extends Itemdsa5 {
         ]
     }
 
-    static getCallbackData(testData, html, actor) {
+    static async getCallbackData(testData, html, actor) {
         testData.testDifficulty = 0
         testData.situationalModifiers = Actordsa5._parseModifiers(html)
         const formData = new FormDataExtended(html.find('form')[0]).object
@@ -786,17 +787,23 @@ class SpellItemDSA5 extends Itemdsa5 {
             qls: formData.qs,
         }
         Itemdsa5.changeChars(testData.source, ...[0, 1, 2].map((x) => formData[`characteristics${x}`]))
-        this.applyExtensions(testData.source, testData.extensions, actor)
+        await this.applyExtensions(testData.source, testData.extensions, actor)
     }
 
-    static applyExtensions(source, extensions, actor){
+    static async applyExtensions(source, extensions, actor){
         for(let extension of extensions){
             const item = fromUuidSync(extension.uuid)
             if(!item) continue
 
             for(let ef of item.effects){
                 for(let change of ef.changes){
-                    ef.apply(source, change)
+                    if(DSA5SpellDialog.rollChanges.includes(change.key)) continue
+                    
+                    if(change.key == "macro.transform"){
+                        await DSA5_Utility.callItemTransformationMacro(change.value, source)
+                    }else{
+                        ef.apply(source, change)
+                    }
                 }
             }
         }
@@ -964,9 +971,9 @@ class SpellItemDSA5 extends Itemdsa5 {
             title,
             template: `/systems/dsa5/templates/dialog/${sheet}-enhanced-dialog.html`,
             data,
-            callback: (html, options = {}) => {
+            callback: async(html, options = {}) => {
                 cardOptions.rollMode = html.find('[name="rollMode"]').val()
-                this.getCallbackData(testData, html, actor)
+                await this.getCallbackData(testData, html, actor)
                 mergeObject(testData.extra.options, options)
                 return { testData, cardOptions }
             },

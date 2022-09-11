@@ -217,6 +217,7 @@ export default function() {
                     { regEx: new RegExp(game.i18n.localize("DSAREGEXmaintain.minutes"), "gi"), seconds: 60 },
                     { regEx: new RegExp(game.i18n.localize("DSAREGEXmaintain.hours"), "gi"), seconds: 3600 },
                     { regEx: new RegExp(game.i18n.localize("DSAREGEXmaintain.days"), "gi"), seconds: 3600 * 24 },
+                    { regEx: new RegExp(game.i18n.localize("DSAREGEXmaintain.seconds"), "gi"), seconds: 1 },
                 ];
                 for (const reg of regexes) {
                     if (reg.regEx.test(maintain)) {

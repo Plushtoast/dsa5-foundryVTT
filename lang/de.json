@@ -1083,6 +1083,7 @@
     },
     "DSAREGEXmaintain": {
         "combatRounds": "(Kampfrunde(n)?|KR(s)?)",
+        "seconds": "(sekunden(n)?)",
         "minutes": "(minute(n)?|min)",
         "hours": "(stunde(n)?)",
         "days": "tag(e)?"

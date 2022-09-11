@@ -1068,6 +1068,7 @@
     "DSAREGEXmaintain": {
         "combatRounds": "(combat round(s)?|CR(s)?)",
         "minutes": "(minute(s)?|min)",
+        "seconds": "(second(s)?)",
         "hours": "(hour(s)?)",
         "days": "day(s)?"
     },
