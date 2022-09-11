@@ -43,8 +43,7 @@ export default class ActorSheetDsa5 extends ActorSheet {
         }
     }
 
-    static
-    get defaultOptions() {
+    static get defaultOptions() {
         const options = super.defaultOptions;
         options.tabs = [{ navSelector: ".tabs", contentSelector: ".content", initial: "skills" }]
         mergeObject(options, {
@@ -691,6 +690,8 @@ export default class ActorSheetDsa5 extends ActorSheet {
         })
 
         html.find('.item-delete').click(ev => this._deleteItem(ev))
+        html.find('.tradition-delete').click(ev => this._deleteTraditionArtifact(ev))
+        html.find('.selectTraditionartifact').click(() => this.selectTraditionartifact())
 
         html.find('.filterTalents').click(event => {
             $(event.currentTarget).closest('.content').find('.allTalents').toggleClass('showAll')
@@ -750,6 +751,19 @@ export default class ActorSheetDsa5 extends ActorSheet {
                 return $(this).find('a.item-edit').text().toLowerCase().trim().indexOf(val) == -1
             }).addClass('filterHide')
         }
+    }
+
+    async selectTraditionartifact(){
+        if (!this.isEditable) return
+
+        new TraditionArtifactpicker(this.actor).render(true)
+    }
+    
+    _deleteTraditionArtifact(ev){
+        if (!this.isEditable) return
+
+        const item = this.actor.items.get(this._getItemId(ev))
+        item.update({"system.isArtifact": false})
     }
 
     //TODO replace this with foundry SearchFilter
@@ -1178,5 +1192,44 @@ export default class ActorSheetDsa5 extends ActorSheet {
     
         if (event.altKey && !selfTarget && DSA5.equipmentCategories.includes(item.type))
             await this._handleRemoveSourceOnDrop(item)
+    }
+}
+
+class TraditionArtifactpicker extends Application{
+    constructor(actor, optns = {}){
+        super(optns)
+        this.actor = actor
+    }
+
+    get template() {
+        return "systems/dsa5/templates/actors/traditionPicker.html";
+    }
+
+    static
+    get defaultOptions() {
+        const options = super.defaultOptions;
+        mergeObject(options, {
+            width: 440,
+            resizable: true
+        });
+        return options;
+    }
+
+    async getData(optns){
+        const data = await super.getData(optns)
+        const items = this.actor.items.filter(x => ["equipment", "armor", "rangeweapon", "meleeweapon"].includes(x.type))
+        mergeObject(data, {
+            items
+        })
+        return data
+    }
+
+    activateListeners(html){
+        super.activateListeners(html)
+
+        html.find('.slot').click(async(ev) => {
+            const item = this.actor.items.get(ev.currentTarget.dataset.itemId)
+            await item.update({"system.isArtifact": !item.system.isArtifact})
+        })
     }
 }

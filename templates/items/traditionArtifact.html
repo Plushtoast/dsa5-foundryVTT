@@ -1,0 +1,12 @@
+{{#if system.isArtifact}}
+<div class="form-group">
+    <label class="label-text">{{localize "traditionArtifact"}}</label>
+    <select name="system.artifact" data-dtype="String">
+        {{#select system.artifact}}
+        {{#each traditionArtifacts as |ch char|}}
+        <option value="{{char}}">{{localize (concat 'traditionArtifacts.' char)}}</option>
+        {{/each}}
+        {{/select}}
+    </select>
+</div>
+{{/if}}

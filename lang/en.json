@@ -108,7 +108,7 @@
         "setTargetToUser": "Set player target",
         "noLoggedinUser": "No user logged in/available.",
         "selectGroupCheckSkill": "Chose another talent for the cumulative group check.",
-        "updateMaintainSpell": "Do you want to pay for a new interval or end the effect?"
+        "updateMaintainSpell": "Pay for a new interval or end the effect for {actor}?"
     },
     "Equipment": {
         "misc": "General",
@@ -867,7 +867,28 @@
         "permRegeneration": "Permanent, bonus for every regeneration roll",
         "panMapNote": "Focus map note",
         "onUseEffect": "Use item/use ability",
-        "swapMag": "Swap magazine"
+        "swapMag": "Swap magazine",
+        "selectTraditionartifact": "Select tradition artifact"
+    },
+    "traditionArtifacts": {
+        "Animistenwaffe": "Animist weapon",
+        "Bannschwert": "Spell-Sword",
+        "Druidendolch": "Druid's dagger",
+        "Druidensichel": "Druid's sickle",
+        "Zauberkleidung": "Magical Attire",
+        "Magierkugel": "Magical Orb",
+        "Zauberinstrument": "Magical instrument",
+        "Narrenkappe": "Jester's cap",
+        "Hexenkessel": "Witch's cauldron",
+        "Krallenkette": "Claw necklace",
+        "Lebensring": "Ring of Life",
+        "Alchimistenschale": "Alchemist bowl",
+        "Scharlatanische Zauberkugel": "Charlatan magic ball",
+        "Sippenchronik": "Chronicle of clans",
+        "Schelmenspielzeug": "Rascal Toys",
+        "Zauberstecken": "Magic Wand",
+        "Magierstab": "Mage's staff",
+        "Trinkhorn": "Drinking horn"
     },
     "ITEMSHEET": {
         "offHandMod": "Bonus/handicap offhand (e.g. parry weapon)"

@@ -483,6 +483,27 @@ DSA5.narrowSpaceModifiers = {
     }
 }
 
+DSA5.traditionArtifacts = {
+    "Animistenwaffe": 15,
+    "Bannschwert": 15,
+    "Druidendolch": 15,
+    "Druidensichel": 12,
+    "Zauberkleidung": 15,
+    "Magierkugel": 12,
+    "Zauberinstrument": 15,
+    "Narrenkappe": 15,
+    "Hexenkessel": 15,
+    "Krallenkette": 12,
+    "Lebensring": 12,
+    "Alchimistenschale": 15,
+    "Scharlatanische Zauberkugel": 15,
+    "Sippenchronik": 15,
+    "Schelmenspielzeug": 12,
+    "Zauberstecken": 0,
+    "Magierstab": 18,
+    "Trinkhorn": 0
+}
+
 DSA5.moneyNames = {
     "D": "Money-D",
     "S": "Money-S",

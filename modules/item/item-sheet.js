@@ -476,6 +476,7 @@ class Enchantable extends ItemSheetdsa5 {
         if (data.enchantments && data.enchantments.some(x => x.talisman)) enchantmentLabel.push("talisman")
         data.enchantmentLabel = enchantmentLabel.map(x => game.i18n.localize(x)).join("/")
 
+        data.traditionArtifacts = DSA5.traditionArtifacts
         data.hasEnchantments = data.poison || (data.enchantments && data.enchantments.length > 0)
         return data
     }
@@ -980,6 +981,7 @@ class SpecialAbilitySheetDSA5 extends ItemSheetdsa5 {
         const data = await super.getData(options);
         data['categories'] = DSA5.specialAbilityCategories;
         data['subCategories'] = DSA5.combatSkillSubCategories
+        data.traditionArtifacts = DSA5.traditionArtifacts
         data.canOnUseEffect = game.user.isGM || await game.settings.get("dsa5", "playerCanEditSpellMacro")
         return data
     }

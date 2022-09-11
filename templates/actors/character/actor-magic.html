@@ -138,6 +138,44 @@
         {{/each}}
     </div>
 </div>
+
+<div class="groupbox">
+    <div class="row-section wrap inverseRowtable">
+        <div class="col">
+            <div class="row-section skills table-title">
+                <div class="col third">{{localize "traditionArtifact"}}</div>
+                <div class="col third center">{{localize "Category"}}</div>
+                <div class="col third center">{{localize "volume"}}</div>
+                <div class="col ten center">
+                    <a class="selectTraditionartifact very-small" data-tooltip="{{localize 'SHEET.selectTraditionartifact'}}"><i class="fas fa-plus"></i></a>
+                </div>
+            </div>
+        </div>
+        {{#each actor.traditionArtifacts as |item i|}}
+        <div class="col spells item" data-item-id="{{item._id}}">
+            <div class="row-section skills lineheight">
+                <div class="col third"><a class="item-edit">{{item.name}}</a></div>
+                <div class="col third center">{{item.system.artifact}}</div>
+                <div class="col third center">{{item.volumeFinal}} / {{item.volume}}</div>
+                <div class="col ten very-small center">
+                    <a class="item-dropdown" data-tooltip="{{localize 'SHEET.Dropdown'}}"><i class="fas fa-chevron-down"></i></a>
+                    <a class="tradition-delete" data-tooltip="{{localize 'SHEET.DeleteItem'}}"><i class="fas fa-trash"></i></a>
+                </div>
+            </div>
+            <div class="row-section expandDetails {{item.detailed}}">
+                <div class="row-section wrap cards col">
+                {{#each item.abilities as |ab i|}}
+                <div class="item" data-item-id="{{ab._id}}">
+                    <a class="item-edit">{{ab.name}}</a>
+                </div>
+                {{/each}}
+                </div>
+            </div>
+        </div>
+        {{/each}}
+    </div>
+</div>
+
 <div class="groupbox">
     <div class="row-section">
         <div class="col header-label lineheight">
@@ -151,7 +189,6 @@
         </div>
         {{/each}}
     </div>
-
 </div>
 
 <div class="row-section">

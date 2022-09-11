@@ -122,7 +122,7 @@
         "setTargetToUser": "Spielerziel setzen",
         "noLoggedinUser": "Keine User eingeloggt/auswählbar.",
         "selectGroupCheckSkill": "Wähle ein weiteres Talent für die Gruppensammelprobe.",
-        "updateMaintainSpell": "Möchtest du ein neues Interval bezahlen oder den Effekt beenden?"
+        "updateMaintainSpell": "Für {actor} ein neues Interval bezahlen oder den Effekt beenden?"
     },
     "Equipment": {
         "misc": "Allgemein",
@@ -861,7 +861,28 @@
         "permRegeneration": "Permanent, wird bei jedem Regenerationswurf hinzugezählt",
         "panMapNote": "Map Notiz fokussieren",
         "onUseEffect": "Gegenstand benutzen/Fähigkeit anwenden",
-        "swapMag": "Magazin tauschen"
+        "swapMag": "Magazin tauschen",
+        "selectTraditionartifact": "Traditionsartefakt auswählen"
+    },
+    "traditionArtifacts": {
+        "Animistenwaffe": "Animistenwaffe",
+        "Bannschwert": "Bannschwert",
+        "Druidendolch": "Druidendolch",
+        "Druidensichel": "Druidensichel",
+        "Zauberkleidung": "Zauberkleidung",
+        "Magierkugel": "Magierkugel",
+        "Zauberinstrument": "Zauberinstrument",
+        "Narrenkappe": "Narrenkappe",
+        "Hexenkessel": "Hexenkessel",
+        "Krallenkette": "Krallenkette",
+        "Lebensring": "Lebensring",
+        "Alchimistenschale": "Alchimistenschale",
+        "Scharlatanische Zauberkugel": "Scharlatanische Zauberkugel",
+        "Sippenchronik": "Sippenchronik",
+        "Schelmenspielzeug": "Schelmenspielzeug",
+        "Zauberstecken": "Zauberstecken",
+        "Magierstab": "Magierstab",
+        "Trinkhorn": "Trinkhorn"
     },
     "ITEMSHEET": {
         "offHandMod": "Bonus/Malus als Nebenhand (z.b. Parierwaffe)"

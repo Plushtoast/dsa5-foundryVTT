@@ -65,7 +65,7 @@
                 {{/if}}
                 <input class="input-text {{#if domains}}domainToggle{{/if}}" placeholder="{{localize 'WEAPON.clerical'}}, {{localize 'WEAPON.magical'}}" type="text" name="system.effect.attributes" value="{{system.effect.attributes}}" data-dtype="String" />
             </div>
-
+            {{> systems/dsa5/templates/items/traditionArtifact.html}}
         </div>
 
         {{> systems/dsa5/templates/items/item-effects.html}} {{> systems/dsa5/templates/items/item-enchantment.html}}

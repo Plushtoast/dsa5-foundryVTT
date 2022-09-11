@@ -592,6 +592,7 @@ export default class Actordsa5 extends Actor {
     let armor = [];
     let rangeweapons = [];
     let meleeweapons = [];
+    const traditionArtifacts = []
 
     const magic = {
       hasSpells: this.system.isMage,
@@ -708,6 +709,12 @@ export default class Actordsa5 extends Actor {
           }
         }
         if (sheetInfo.details && sheetInfo.details.includes(i._id)) i.detailed = "shown";
+
+        if(i.system.isArtifact) {
+          i.volume = DSA5.traditionArtifacts[i.system.artifact] || 0
+          i.volumeFinal = 0
+          traditionArtifacts.push(i)
+        }
 
         switch (i.type) {
           case "skill":
@@ -916,14 +923,28 @@ export default class Actordsa5 extends Actor {
 
     totalWeight = parseFloat(totalWeight.toFixed(3));
 
-    specAbs.magical.push(...specAbs.staff, ...specAbs.pact);
+    specAbs.magical.push(...specAbs.pact);
     specAbs.clerical.push(...specAbs.ceremonial);
+
+    for(let traditionAbility of specAbs.staff){
+      const artifact = traditionArtifacts.find(x => x.system.artifact == traditionAbility.system.artifact)
+      if(artifact){
+        if(artifact.abilities == undefined) artifact.abilities = []
+
+        artifact.abilities.push(traditionAbility)
+        artifact.volumeFinal += (Number(traditionAbility.system.volume) || 0) * Number(traditionAbility.system.step.value)
+      }
+      else{
+        specAbs.magical.push(traditionAbility)
+      }
+    }
 
     let guidevalues = duplicate(DSA5.characteristics);
     guidevalues["-"] = "-";
 
     return {
       totalWeight,
+      traditionArtifacts,
       armorSum: totalArmor,
       spellArmor: actorData.system.spellArmor || 0,
       liturgyArmor: actorData.system.liturgyArmor || 0,

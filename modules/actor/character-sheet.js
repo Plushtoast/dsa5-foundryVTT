@@ -16,7 +16,6 @@ export default class ActorSheetdsa5Character extends ActorSheetDsa5 {
     get template() {
         if (this.showLimited()) return "systems/dsa5/templates/actors/npc-limited.html";
         return "systems/dsa5/templates/actors/actor-sheet.html";
-
     }
 
     async _manageDragItems(item, typeClass) {

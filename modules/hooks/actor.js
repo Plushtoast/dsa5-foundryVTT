@@ -8,7 +8,7 @@ export default function() {
             if(getProperty(effect, "flags.dsa5.maintain")){
                 new Dialog({
                     title: effect.label,
-                    content: game.i18n.localize('DIALOG.updateMaintainSpell'),
+                    content: game.i18n.format('DIALOG.updateMaintainSpell',  {actor: actor.name}),
                     default: 'yes',
                     buttons: {
                         Yes: {
