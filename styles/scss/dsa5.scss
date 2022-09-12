@@ -96,6 +96,10 @@
     font-family: "Andalus";
     overflow: hidden;
   }
+
+  .obfuscateSection.pale{
+    opacity: 0.3;
+  }
   
   .dsa5 {
     .tab.description.active {
@@ -1202,6 +1206,29 @@
       height: 40px;
       width: 100%;
       background-size: 100% 40px;
+    }
+  }
+
+  .qOverlay{
+    position: relative;
+    .img{
+      position: absolute;
+      left:0;
+      right: 0;
+      top:0;
+      bottom: 0;
+      
+      background-repeat: no-repeat;
+      background-position: center;
+      background-size:contain;
+    }
+    .overlay{
+      height:100%;
+      width:100%;
+      min-height: 200px;
+      line-height: 200px;
+      font-size: 200px;
+      opacity: 0.2;
     }
   }
   

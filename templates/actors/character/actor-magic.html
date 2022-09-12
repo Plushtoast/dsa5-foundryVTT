@@ -158,15 +158,14 @@
                 <div class="col third center">{{item.system.artifact}}</div>
                 <div class="col third center">{{item.volumeFinal}} / {{item.volume}}</div>
                 <div class="col ten very-small center">
-                    <a class="item-dropdown" data-tooltip="{{localize 'SHEET.Dropdown'}}"><i class="fas fa-chevron-down"></i></a>
                     <a class="tradition-delete" data-tooltip="{{localize 'SHEET.DeleteItem'}}"><i class="fas fa-trash"></i></a>
                 </div>
             </div>
-            <div class="row-section expandDetails {{item.detailed}}">
+            <div class="row-section expandDetails shown">
                 <div class="row-section wrap cards col">
                 {{#each item.abilities as |ab i|}}
                 <div class="item" data-item-id="{{ab._id}}">
-                    <a class="item-edit">{{ab.name}}</a>
+                    {{#if ab.OnUseEffect}}<a data-tooltip="{{localize 'SHEET.onUseEffect'}}" class="onUseItem"><i class="fas fa-dice-six"></i></a>{{/if}}<a class="item-edit">{{ab.name}}{{roman ab.system.step.value ab.system.maxRank.value}}</a>
                 </div>
                 {{/each}}
                 </div>

@@ -201,8 +201,6 @@ export default function() {
                         dsa5: {
                             value: null,
                             editable: true,
-                            hidePlayers: true,
-                            hideOnToken: true,
                             description: maintain,
                             maintain: cost,
                             payType,

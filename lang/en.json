@@ -868,7 +868,9 @@
         "panMapNote": "Focus map note",
         "onUseEffect": "Use item/use ability",
         "swapMag": "Swap magazine",
-        "selectTraditionartifact": "Select tradition artifact"
+        "selectTraditionartifact": "Select tradition artifact",
+        "deobfuscateItem": "Deobfuscate section",
+        "obfuscateItem": "Obfuscate section"
     },
     "traditionArtifacts": {
         "Animistenwaffe": "Animist weapon",

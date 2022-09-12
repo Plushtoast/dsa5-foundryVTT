@@ -862,7 +862,9 @@
         "panMapNote": "Map Notiz fokussieren",
         "onUseEffect": "Gegenstand benutzen/Fähigkeit anwenden",
         "swapMag": "Magazin tauschen",
-        "selectTraditionartifact": "Traditionsartefakt auswählen"
+        "selectTraditionartifact": "Traditionsartefakt auswählen",
+        "deobfuscateItem": "Abschnitt entschleieren",
+        "obfuscateItem": "Abschnitt verschleiern"
     },
     "traditionArtifacts": {
         "Animistenwaffe": "Animistenwaffe",

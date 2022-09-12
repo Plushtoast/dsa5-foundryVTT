@@ -9,6 +9,7 @@ import EquipmentDamage from "../system/equipment-damage.js"
 import DiceDSA5 from "../system/dice-dsa5.js"
 import OnUseEffect from "../system/onUseEffects.js"
 import RuleChaos from "../system/rule_chaos.js"
+import { ItemSheetObfuscation } from "./obfuscatemixin.js"
 
 export default class ItemSheetdsa5 extends ItemSheet {
     constructor(item, options) {
@@ -504,7 +505,7 @@ class AmmunitionSheet extends Enchantable {
     }
 }
 
-class EquipmentSheet extends Enchantable {
+class EquipmentSheet extends ItemSheetObfuscation(Enchantable) {
     async getData(options) {
         const data = await super.getData(options);
         data['equipmentTypes'] = DSA5.equipmentTypes;
@@ -610,7 +611,7 @@ class EquipmentSheet extends Enchantable {
     }
 }
 
-export class ArmorSheet extends Enchantable {
+export class ArmorSheet extends ItemSheetObfuscation(Enchantable) {
     async getData(options) {
         const data = await super.getData(options)
         mergeObject(data, {
@@ -634,7 +635,7 @@ export class ArmorSheet extends Enchantable {
     }
 }
 
-class PlantSheet extends ItemSheetdsa5 {
+class PlantSheet extends ItemSheetObfuscation(ItemSheetdsa5) {
     async getData(options) {
         const data = await super.getData(options);
         data.attributes = Object.keys(data.system.planttype).map(x => { return { name: x, checked: data.system.planttype[x] } })
@@ -689,7 +690,7 @@ class MagicalSignSheet extends ItemSheetdsa5 {
     }
 }
 
-class RangeweaponSheet extends Enchantable {
+class RangeweaponSheet extends ItemSheetObfuscation(Enchantable) {
     _getHeaderButtons() {
         let buttons = super._getHeaderButtons();
         if (this.item.isOwned && game.settings.get("dsa5", "armorAndWeaponDamage") && this.item.system.structure.max > 0) {
@@ -857,7 +858,7 @@ class MagictrickSheetDSA5 extends ItemSheetdsa5 {
     }
 }
 
-class MeleeweaponSheetDSA5 extends Enchantable {
+class MeleeweaponSheetDSA5 extends ItemSheetObfuscation(Enchantable) {
     constructor(item, options) {
         super(item, options);
         this.mce = null;
