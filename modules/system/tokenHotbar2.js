@@ -128,23 +128,28 @@ export default class TokenHotbar2 extends Application {
             await this.executeQuickButton(ev)
             return false
         })
-        html.on('mouseenter', 'li', ev => {
-            const li = $(ev.currentTarget)
-            if (li.hasClass("primary")) {
-                html.find(`.secondary[data-category="${li.attr("data-category")}"]`).addClass("shown")
-            }
+                 
+        html.on('mouseenter', 'li.primary', ev => {
+            const cat = ev.currentTarget.dataset.category
+            this.category = cat
+            setTimeout(() => {
+                html.find('.secondary').removeClass('shown')
+                html.find(`.secondary[data-category="${cat}"]`).addClass("shown")
+            }, 500)
         })
-        
-        html.on('mouseleave', 'li', ev => {
-            const li = $(ev.currentTarget)
-            if (li.hasClass("primary")) {
-                html.find(`.secondary[data-category="${li.attr("data-category")}"]`).removeClass("shown")
-            }
+        html.on('mouseleave', 'li.primary', ev => {
+            const cat = ev.currentTarget.dataset.category
+            this.category = undefined
+            setTimeout(()=>{
+                if(cat!=this.category) 
+                    html.find(`.secondary[data-category="${cat}"]`).removeClass("shown")
+            },50)
         })
-        html.on('mouseleave', '.tokenQuickHot', ev => {
-            $(ev.currentTarget).find('.secondary').removeClass('shown')
-        })
-
+        /*html.on('mouseleave', '.tokenQuickHot', () => {
+            clearTimeout(timeout)
+            html.find('.secondary').removeClass('shown')
+            console.log("jo")            
+        })*/
     }
 
     async executeQuickButton(ev) {
