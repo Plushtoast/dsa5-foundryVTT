@@ -39,7 +39,7 @@
                 </div>
                 <div class="row-section">
                     <div class="col two">
-                        <h3 class="center">{{tradeFriend.name}}</h3>
+                        <h3 class="center">&zwnj;{{tradeFriend.name}}</h3>
                     </div>
                     <div class="col two">
                         <h3 class="center">{{actor.name}}</h3>
@@ -49,11 +49,7 @@
                 <fieldset disabled>
                     <div class="row-section">
                         <div class="col two">
-                            {{#unless tradeFriend.name}}
-                            <p>{{localize 'DSAError.noProperActor'}}</p>
-                            <p>{{localize 'TT.assignCharacter'}}</p>
-                            <p>{{localize 'MERCHANT.otherTradeFriend'}}</p>
-                            {{/unless}} {{#grouped_each 4 tradeFriend.money.coins}}
+                             {{#grouped_each 4 tradeFriend.money.coins}}
                             <div class="row-section table-title">
                                 {{#each this}}
                                 <div class="col four center">
@@ -90,9 +86,17 @@
                         </div>
                     </div>
 
-
                     <div class="row-section">
                         <div class="col two">
+                            {{#unless tradeFriend.name}}
+                            <div class="row-section">
+                                <div class="col">
+                                    <p>{{localize 'DSAError.noProperActor'}}</p>
+                                    <p>{{localize 'TT.assignCharacter'}}</p>
+                                    <p>{{localize 'MERCHANT.otherTradeFriend'}}</p>
+                                </div>                            
+                            </div>
+                            {{/unless}}
                             {{#each tradeFriend.inventory as |section sid|}} {{#if section.show}}
                             <div class="groupbox">
                                 <div class="row-section table-title">
