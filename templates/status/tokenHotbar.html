@@ -4,20 +4,12 @@
         <li class="{{item.cssClass}} primary" data-category="{{item.cssClass}}" data-id="{{item.id}}" data-tooltip="{{item.name}}" data-name="{{item.name}}" data-subfunction="{{item.subfunction}}">
             <div style="background-image:url('{{item.icon}}')">{{item.abbrev}}</div>
             {{#if item.more}}
-            <ul class="subbuttons" {{{item.subwidth}}}>
+            <ul class="subbuttons skillsBtns" {{{item.subwidth}}}>
                 {{#each item.more as |mo i|}}
-                <li class="{{mo.cssClass}} secondary" data-category="{{item.cssClass}}" data-id="{{mo.id}}" data-tooltip="{{mo.name}}" data-name="{{mo.name}}" data-subfunction="{{mo.subfunction}}">
-                    <div style="background-image:url('{{mo.icon}}')">{{mo.abbrev}}</div>
+                <li class="{{mo.cssClass}} {{mo.addClass}} secondary" data-category="{{item.cssClass}}" data-id="{{mo.id}}" data-name="{{mo.name}}" data-subfunction="{{mo.subfunction}}">
+                    <div style="background-image:url('{{mo.icon}}')"></div><label>{{mo.name}}</label>
                 </li>
                 {{/each}}
-            </ul>
-            {{/if}}
-            {{#if item.attack}}
-            <ul class="subbuttons" style="width: 100px">
-                <li class="secondary" data-category="{{item.cssClass}}">
-                    {{item.x.system.damage.value}}
-                </li>
-                
             </ul>
             {{/if}}
         </li>

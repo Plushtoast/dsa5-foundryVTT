@@ -222,8 +222,8 @@ export default class TokenHotbar2 extends Application {
         }
     }
 
-    subWidth(items, itemWidth) {
-        return `style="width:${Math.ceil(items.length / 3) * itemWidth}px"`
+    subWidth(items, itemWidth, defaultCount = 7) {
+        return `style="width:${Math.ceil(items.length / defaultCount) * 200}px"`
     }
 
     async getData() {
@@ -244,7 +244,7 @@ export default class TokenHotbar2 extends Application {
         const vertical = direction % 2
         const itemWidth = TokenHotbar2.defaultOptions.itemWidth
         if (actor) {
-
+            const moreSkills = []
             let moreSpells = []
             effects = (await actor.actorEffects()).map(x => { return { name: x.label, id: x.id, icon: x.icon, cssClass: "effect", abbrev: `${x.label[0]} ${x.getFlag("dsa5","value") || ""}`, subfunction: "effect" } })
             if (game.combat) {
@@ -266,7 +266,12 @@ export default class TokenHotbar2 extends Application {
                         else moreSpells.push({ name: x.name, id: x.id, icon: x.img, cssClass: "spell", abbrev: x.name[0] })
                     } else if (["skill"].includes(x.type) && this.combatSkills.includes(x.name)) {
                         items.default.push({ name: `${x.name} (${x.system.talentValue.value})`, id: x.id, icon: x.img, cssClass: "skill", abbrev: x.name[0] })
-                    } else if (x.type == "consumable") {
+                    } 
+                    else if (["skill"].includes(x.type)){
+                        const elem = { name: `${x.name} (${x.system.talentValue.value})`, id: x.id, icon: x.img, cssClass: "skill",addClass: x.system.group.value, abbrev: x.name[0], tw: x.system.talentValue.value }
+                        moreSkills.push(elem)
+                    }
+                    else if (x.type == "consumable") {
                         consumables.push({ name: x.name, id: x.id, icon: x.img, cssClass: "consumable", abbrev: x.system.quantity.value })
                     }
 
@@ -280,15 +285,18 @@ export default class TokenHotbar2 extends Application {
                 for (const x of actor.items) {
                     if (["skill"].includes(x.type) && this.defaultSkills.includes(x.name)) {
                         items.default.push({ name: `${x.name} (${x.system.talentValue.value})`, id: x.id, icon: x.img, cssClass: "skill", abbrev: x.name[0] })
-                    } else if (["skill"].includes(x.type) && !this.defaultSkills.includes(x.name) && x.system.talentValue.value > 0) {
-                        descendingSkills.push({ name: `${x.name} (${x.system.talentValue.value})`, id: x.id, icon: x.img, cssClass: "skill", abbrev: x.name[0], tw: x.system.talentValue.value })
+                    } else if (["skill"].includes(x.type)) {
+                        const elem = { name: `${x.name} (${x.system.talentValue.value})`, id: x.id, icon: x.img, cssClass: "skill",addClass: x.system.group.value, abbrev: x.name[0], tw: x.system.talentValue.value }
+                        if(x.system.talentValue.value > 0) descendingSkills.push(elem)
+
+                        moreSkills.push(elem)
                     }
 
                     if (x.getFlag("dsa5", "onUseEffect")) {
                         onUsages.push({ name: x.name, id: x.id, icon: x.img, cssClass: "onUse", abbrev: x.name[0], subfunction: "onUse" })
                     }
                 }
-                items.skills.push(...descendingSkills.sort((a, b) => { return b.tw - a.tw }).slice(0, 10))
+                items.skills.push(...descendingSkills.sort((a, b) => { return b.tw - a.tw }).slice(0, 5))
             }
 
             onUse = onUsages.pop()
@@ -299,6 +307,10 @@ export default class TokenHotbar2 extends Application {
             if (items.spells.length > 0 && moreSpells.length > 0) {
                 items.spells[0].more = moreSpells.sort((a, b) => { return a.name.localeCompare(b.name) })
                 items.spells[0].subwidth = this.subWidth(moreSpells, itemWidth)
+            }
+            if (items.default.length > 0 && moreSkills.length > 0) {
+                items.default[0].more = moreSkills.sort((a, b) => { return a.addClass.localeCompare(b.addClass) || a.name.localeCompare(b.name) })
+                items.default[0].subwidth = this.subWidth(moreSkills, itemWidth, 20)
             }
 
             if (consumable) {

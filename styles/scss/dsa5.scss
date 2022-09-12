@@ -2935,6 +2935,13 @@
     background-repeat: no-repeat;
     position: relative;
     box-sizing: border-box;
+
+  }
+
+  .tokenQuickHot li .subbuttons li{
+    width: 200px;
+    height: 28px;
+    line-height: 28px;
   }
   
   .initTracker .waitingTackerList li {
@@ -3073,13 +3080,64 @@
   }
   
   .tokenQuickHot {
-    .tokenHotbarInner div {
-      background-size: cover;
-      height: 100%;
-      width: 100%;
-      position: absolute;
-      color: white;
-      text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000;
+    .tokenHotbarInner {
+      .skill {
+        &.body {
+          background: rgb(79, 109, 101);
+          box-shadow: none;
+          background: linear-gradient(90deg, rgba(79, 109, 101, 1) 0%, rgba(255, 255, 255, 1) 100%);
+        }
+      
+        &.social {
+          background: rgb(133, 48, 46);
+          box-shadow: none;
+          background: linear-gradient(90deg, rgba(133, 48, 46, 1) 0%, rgba(255, 255, 255, 1) 100%);
+        }
+      
+        &.knowledge {
+          background: rgb(75, 101, 133);
+          box-shadow: none;
+          background: linear-gradient(90deg, rgba(75, 101, 133, 1) 0%, rgba(255, 255, 255, 1) 100%);
+        }
+      
+        &.trade {
+          background: rgb(205, 162, 94);
+          box-shadow: none;
+          background: linear-gradient(90deg, rgba(205, 162, 94, 1) 0%, rgba(255, 255, 255, 1) 100%);
+        }
+      
+        &.nature {
+          background: rgb(83, 88, 41);
+          box-shadow: none;
+          background: linear-gradient(90deg, rgba(83, 88, 41, 1) 0%, rgba(255, 255, 255, 1) 100%);
+        }        
+      }
+      div {
+        background-size: cover;
+        height: 100%;
+        width: 100%;
+        position: absolute;
+        color: white;
+        text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000;
+      }
+      .subbuttons{
+        div{
+          background-size: contain;
+          background-repeat: no-repeat;
+          background-position: center;
+          width: 30px;
+          position: inherit;
+          float: left;
+        }
+        label{
+          display: inline-block;
+          cursor: pointer;
+          overflow: hidden;
+          max-width: 155px;
+          text-overflow: ellipsis;
+          white-space: nowrap;
+        }
+      } 
     }
   
     li {
