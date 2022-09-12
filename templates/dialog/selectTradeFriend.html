@@ -1,0 +1,20 @@
+<div class="directory targetChoser">
+    <p>{{localize 'MERCHANT.otherTradeFriend'}}</p>
+    {{#if users}}
+    <ul class="directory-list">
+        {{#each users as |usr|}}
+        <li class="combatant actor directory-item flexrow" data-id="{{usr.id}}">
+            <div class="combatant-advanced">
+                <img class="token-image" data-tooltip="{{usr.name}}" src="{{usr.img}}">
+            </div>
+            <div class="token-name flexcol">
+                <h4>{{usr.name}}</h4>
+            </div>
+        </li>
+        {{/each}}
+    </ul>
+
+    {{else}}
+    <p>{{localize 'DIALOG.noLoggedinUser'}}</p>
+    {{/if}}
+</div>

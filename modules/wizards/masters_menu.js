@@ -512,8 +512,7 @@ class GameMasterMenu extends Application {
         return options;
     }
 
-    async getData(options) {
-        const data = await super.getData(options);
+    async getTrackedHeros(){
         const trackedActors = game.settings.get("dsa5", "trackedActors")
         let heros = []
         if (trackedActors.actors && trackedActors.actors.length > 0) {
@@ -522,6 +521,12 @@ class GameMasterMenu extends Application {
             heros = game.actors.filter(x => x.hasPlayerOwner)
             await game.settings.set("dsa5", "trackedActors", { actors: heros.map(x => x.id) })
         }
+        return heros
+    }
+
+    async getData(options) {
+        const data = await super.getData(options);
+        const heros = await this.getTrackedHeros()
         const schipSetting = this.getGroupSchipSetting()
         let groupschips = []
         for (let i = 1; i <= schipSetting[1]; i++) {

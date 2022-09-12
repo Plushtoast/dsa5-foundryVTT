@@ -66,7 +66,8 @@ export const MerchantSheetMixin = (superclass) => class extends superclass {
         html.find('.item-tradeLock').click(ev => this.toggleTradeLock(ev))
         html.find('.randomGoods').click(ev => this.randomGoods(ev))
         html.find(".clearInventory").click(ev => this.clearInventory(ev))
-        html.find('.removeOtherTradeFriend').click(ev => this.removeOtherTradeFriend())
+        html.find('.removeOtherTradeFriend').click(() => this.removeOtherTradeFriend())
+        html.find('.choseTradefriend').click(() => this.choseTradefriend())
         html.find('.setCustomPrice').click(ev => $(ev.currentTarget).addClass("edit"))
         html.find('.customPriceTag').change(async ev => this.setCustomPrice(ev))
             .blur(ev => $(ev.currentTarget).closest('.setCustomPrice').removeClass("edit"))
@@ -111,6 +112,10 @@ export const MerchantSheetMixin = (superclass) => class extends superclass {
     removeOtherTradeFriend() {
         this.otherTradeFriend = undefined
         this.render(true)
+    }
+
+    async choseTradefriend(){
+        (await SelectTradefriendDialog.getDialog(this)).render(true)
     }
 
     async lockTradeSection(ev) {
@@ -548,5 +553,36 @@ export const MerchantSheetMixin = (superclass) => class extends superclass {
             }
         }
         return inventory
+    }
+}
+
+class SelectTradefriendDialog extends Dialog{
+    static get defaultOptions() {
+        const options = super.defaultOptions;
+        mergeObject(options, {
+        });
+        return options;
+    }
+
+    static async getDialog(actor){
+        const users = await game.dsa5.apps.gameMasterMenu.getTrackedHeros()
+        const dialog = new SelectTradefriendDialog({
+            title: game.i18n.localize("DIALOG.setTargetToUser"),
+            content: await renderTemplate('systems/dsa5/templates/dialog/selectTradeFriend.html', { users }),
+            default: "yes",
+            buttons: {},
+        })
+        dialog.actor = actor
+        return dialog
+    }
+
+    activateListeners(html){
+        super.activateListeners(html)
+        html.find('.combatant').click(ev => this.setTargetToUser(ev))
+    }
+
+    setTargetToUser(ev){
+        this.actor.setTradeFriend({_id: ev.currentTarget.dataset.id})
+        this.close()
     }
 }
