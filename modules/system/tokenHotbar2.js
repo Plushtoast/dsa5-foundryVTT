@@ -1,3 +1,4 @@
+import Actordsa5 from "../actor/actor-dsa5.js";
 import OnUseEffect from "./onUseEffects.js";
 
 export default class TokenHotbar2 extends Application {
@@ -134,8 +135,9 @@ export default class TokenHotbar2 extends Application {
             this.category = cat
             setTimeout(() => {
                 html.find('.secondary').removeClass('shown')
-                html.find(`.secondary[data-category="${cat}"]`).addClass("shown")
-            }, 500)
+                if(cat==this.category) 
+                    html.find(`.secondary[data-category="${cat}"]`).addClass("shown")
+            }, 700)
         })
         html.on('mouseleave', 'li.primary', ev => {
             const cat = ev.currentTarget.dataset.category
@@ -145,11 +147,6 @@ export default class TokenHotbar2 extends Application {
                     html.find(`.secondary[data-category="${cat}"]`).removeClass("shown")
             },50)
         })
-        /*html.on('mouseleave', '.tokenQuickHot', () => {
-            clearTimeout(timeout)
-            html.find('.secondary').removeClass('shown')
-            console.log("jo")            
-        })*/
     }
 
     async executeQuickButton(ev) {
@@ -186,6 +183,8 @@ export default class TokenHotbar2 extends Application {
                 } else {
                     let result = actor.items.get(id)
                     if (result) {
+                        if(ev.button == 2) return result.sheet.render(true)
+
                         switch (result.type) {
                             case "meleeweapon":
                             case "rangeweapon":
@@ -253,19 +252,28 @@ export default class TokenHotbar2 extends Application {
             let moreSpells = []
             effects = (await actor.actorEffects()).map(x => { return { name: x.label, id: x.id, icon: x.icon, cssClass: "effect", abbrev: `${x.label[0]} ${x.getFlag("dsa5","value") || ""}`, subfunction: "effect" } })
             if (game.combat) {
+                const combatskills = actor.items.filter(x => x.type == "combatskill").map(x => Actordsa5._calculateCombatSkillValues(x.toObject(), actor.system))
+                const brawl = combatskills.find(x => x.name == game.i18n.localize('LocalizedIDs.wrestle'))
                 items.attacks.push({
                     name: game.i18n.localize("attackWeaponless"),
                     id: "attackWeaponless",
-                    icon: "systems/dsa5/icons/categories/attack_weaponless.webp"
+                    icon: "systems/dsa5/icons/categories/attack_weaponless.webp",
+                    attack: brawl.system.attack.value,
+                    damage: "1d6"
                 })
-
+                
                 const attacktypes = ["meleeweapon", "rangeweapon"]
                 const traitTypes = ["meleeAttack", "rangeAttack"]
                 const spellTypes = ["liturgy", "spell"]
 
                 for (const x of actor.items) {
-                    if ((attacktypes.includes(x.type) && x.system.worn.value == true) || (x.type == "trait" && traitTypes.includes(x.system.traitType.value))) {
-                        items.attacks.push({ name: x.name, id: x.id, icon: x.img, cssClass: `weapon ${x.id}`, abbrev: x.name[0], attack: true, x })
+                    if (x.type == "trait" && traitTypes.includes(x.system.traitType.value)) {
+                        const preparedItem = Actordsa5._parseDmg(x.toObject())
+                        items.attacks.push({ name: x.name, id: x.id, icon: x.img, cssClass: `weapon ${x.id}`, abbrev: x.name[0], attack: x.system.at.value, damage: preparedItem.damagedie, dadd: preparedItem.damageAdd})
+                    }
+                    else if (attacktypes.includes(x.type) && x.system.worn.value == true) {
+                        const preparedItem = x.type == "meleeweapon" ? Actordsa5._prepareMeleeWeapon(x.toObject(), combatskills, actor) : Actordsa5._prepareRangeWeapon(x.toObject(), [], combatskills, actor)
+                        items.attacks.push({ name: x.name, id: x.id, icon: x.img, cssClass: `weapon ${x.id}`, abbrev: x.name[0], attack: preparedItem.attack, damage: preparedItem.damagedie, dadd: preparedItem.damageAdd })
                     } else if (spellTypes.includes(x.type)) {
                         if (x.system.effectFormula.value) items.spells.push({ name: x.name, id: x.id, icon: x.img, cssClass: "spell", abbrev: x.name[0] })
                         else moreSpells.push({ name: x.name, id: x.id, icon: x.img, cssClass: "spell", abbrev: x.name[0] })

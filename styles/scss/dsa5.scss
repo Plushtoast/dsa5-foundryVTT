@@ -3121,6 +3121,12 @@
         text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000;
       }
       .subbuttons{
+        .combatTooltip{
+          height: 35px;
+          line-height: 35px;
+          text-align: center;
+          width: 100px;;
+        }
         div{
           background-size: contain;
           background-repeat: no-repeat;

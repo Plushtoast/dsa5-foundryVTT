@@ -12,6 +12,13 @@
                 {{/each}}
             </ul>
             {{/if}}
+            {{#if item.attack}}
+            <ul class="subbuttons" {{{item.subwidth}}}>
+            <li class="combatTooltip secondary" data-category="{{item.cssClass}}">
+                <label class="die-mu d20">{{item.attack}}</label> <label class="die-damage d6">{{item.damage}}</label><label>{{item.dadd}}</label>
+            </li>
+        </ul>
+            {{/if}}
         </li>
         {{/each}} {{/each}}
     </ul>
