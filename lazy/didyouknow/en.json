@@ -86,7 +86,13 @@
         "There is a button in the master menu to drag the whole group to the playing area at once.",
         "You can set the blood colour for the Splatter module depending on the creature type.",
         "Some helpful TDE functions can be accessed via hotkeys.",
-        "The core module provides a button on the token to activate different light sources quickly."
+        "The core module provides a button on the token to activate different light sources quickly.",
+
+        "Spell extensions can modify spells via Active Effects",
+        "You can set an area template for spells.",
+        "The game master can hide individual tabs of equipment items.",
+        "Information items can be embedded in journals.",
+        "The volume of tradition artifacts can be calculated automatically."
 
 
     ]

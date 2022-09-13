@@ -89,6 +89,12 @@
         "Du kannst für das Modul Splatter die Blutfarbe in Abhängigkeit vom Kreaturentyp einstellen.",
         "Einige nützliche DSA Funktionen lassen sich über Hotkeys aufrufen.",
         "Das Herbarium beinhaltet Tools um die Pflanzensuche zu vereinfachen.",
-        "Das Grundregelwerk beinhaltet Funktionen um unterschiedliche Lichtquellen am Token zu aktivieren."
+        "Das Grundregelwerk beinhaltet Funktionen um unterschiedliche Lichtquellen am Token zu aktivieren.",
+
+        "Zaubererweiterungen können Zauber über Active Effects modifizieren",
+        "Du kannst für Zauber ein Flächentemplate einstellen.",
+        "Der Spielleiter kann einzelne Tabs von Ausrüstungsgegenständen verbergen.",
+        "Informationsitems können in Journalen eingebettet werden.",
+        "Das Volumen von Traditionsartefakten kann automatisch berechnet werden."
     ]
 }

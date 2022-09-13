@@ -1,0 +1,66 @@
+<div>
+    <h1 class="mume-header" id="wichtige-erweiterungen">4.1.0 Wichtige Erweiterungen (16.9.2022)</h1>
+
+    <h2 class="mume-header" id="zaubererweiterungen-funktional">Zaubererweiterungen funktional</h2>
+
+    <p>Zaubererweiterungen k&#xF6;nnen nun active effects haben und die Attribute von Zaubern dynamisch ver&#xE4;ndern.
+        Man kann nun Erweiterungen erstellen, die z.B. den Schaden, die Reichweite oder etwas anderes erh&#xF6;hen.<br>
+        Alle Zauberattribute sollten als Modifikator funktionieren. Da TDE mehr als 3000 Erweiterungen hat, ist es
+        unwahrscheinlich, dass wir alle diese Mods selbst hinzuf&#xFC;gen. Aber ihr k&#xF6;nnt auf freiwilliger Basis
+        dazu beitragen!</p>
+    <pre data-role="codeBlock" data-info="json" class="language-json"><span class="token punctuation">{</span>
+    <span class="token punctuation">{</span><span class="token property">&quot;key&quot;</span><span class="token operator">:</span> <span class="token string">&quot;system.effectFormula.value&quot;</span><span class="token punctuation">,</span> <span class="token property">&quot;mode&quot;</span><span class="token operator">:</span> <span class="token number">2</span><span class="token punctuation">,</span> <span class="token property">&quot;value&quot;</span><span class="token operator">:</span> <span class="token string">&quot;+2&quot;</span><span class="token punctuation">}</span><span class="token punctuation">,</span> 
+    <span class="token punctuation">{</span><span class="token property">&quot;Schl&#xFC;ssel&quot;</span><span class="token operator">:</span> <span class="token string">&quot;system.range.value&quot;</span><span class="token punctuation">,</span> <span class="token property">&quot;mode&quot;</span><span class="token operator">:</span> <span class="token number">5</span><span class="token punctuation">,</span> <span class="token property">&quot;Wert&quot;</span><span class="token operator">:</span> <span class="token string">&quot;32 Schritt&quot;</span><span class="token punctuation">}</span><span class="token punctuation">,</span> 
+<span class="token punctuation">}</span>
+</pre>
+    <p>Eine vollst&#xE4;ndige Abdeckung bzw. Funktionalit&#xE4;t ist nur durch gemeinsame Anstrengungen der
+        TDE/DSA-Community m&#xF6;glich. F&#xFC;hlt euch frei, etwas beizutragen, wir werden die Effekte in Intervallen
+        zu den offiziellen Modulen hinzuf&#xFC;gen. Siehe <a
+            href="https://github.com/Plushtoast/dsa5-extensiondb">https://github.com/Plushtoast/dsa5-extensiondb</a></p>
+    <h2 class="mume-header" id="fl%C3%A4chenvorlagen-f%C3%BCr-zauberspr%C3%BCche">Fl&#xE4;chenvorlagen f&#xFC;r
+        Zauberspr&#xFC;che</h2>
+
+    <p>Zauberspr&#xFC;che haben jetzt Einstellungen f&#xFC;r Fl&#xE4;chenvorlagen auf der Registerkarte Details. Nach
+        einem erfolgreichen Zauber kann man die Schablone auf dem Spielfeld ablegen, um sie einfach zu vermessen. Die
+        Entfernungswerte unterst&#xFC;tzen Formeln, die die QS/QL des Wurfes beinhalten, z.B. &quot;qs*2&quot;. Wir
+        werden sehen, ob wir dies in Zukunft verbessern k&#xF6;nnen, um Zaubereffekte (mit Animationen) und
+        &#xE4;hnliches anzuwenden.</p>
+    <h2 class="mume-header" id="info-item-f%C3%BCr-pflanzen-journale">Info-Item f&#xFC;r Pflanzen &amp; Journale</h2>
+
+    <p>Textbereiche k&#xF6;nnen nun eine Vorschau f&#xFC;r Informations-Items enthalten, die die Probe und alle
+        erforderlichen Informationen enthalten.<br>
+        Um einen solchen zu erstellen, zieht einen Information-Item in den Textbereich und ersetzt UUID durch Info wie
+        folgt:</p>
+    <pre data-role="codeBlock" data-info class="language-"><code>@Info[Item.3XAB0PU0Z6IS9YA]
+</code></pre>
+    <p>Pflanzen bzw. das Herbarium werden dies bald standardm&#xE4;&#xDF;ig erhalten. Abenteuer werden mit der Zeit
+        aktualisiert.</p>
+    <h2 class="mume-header" id="gegenst%C3%A4nde-verschleiern">Gegenst&#xE4;nde verschleiern</h2>
+
+    <p>Der Spielleiter hat nun kleine Buttons auf den Gegenstandsbl&#xE4;ttern, um Informationen auf einem einzelnen
+        Reiter vor den Spielern zu verbergen. Auf diese Weise kann man mysteri&#xF6;se Gegenst&#xE4;nde mit unbekannten
+        Effekten herstellen oder Metagaming verhindern. Das Herbarium wird aktualisiert, damit kritische Informationen
+        standardm&#xE4;&#xDF;ig verdeckt werden k&#xF6;nnen.</p>
+    <h1 class="mume-header" id="erweiterungen">Erweiterungen</h1>
+
+    <ul>
+        <li>Aufrechterhaltene Kosten von Zaubern werden nun zu den Zauberkosten addiert und werden zu einem
+            zus&#xE4;tzlichen Effekt auf den Zauberwirkenden, der AE automatisch in Intervallen abzieht, bis er
+            gel&#xF6;scht wird (danke Qowy, erfordert das Modul &quot;times-up&quot;)</li>
+        <li>Kreaturen k&#xF6;nnen nun auch Munition benutzen (m&#xFC;ssen es aber nicht)</li>
+        <li>Shapeshifting kann nun Ausr&#xFC;stung und Token Artwork behalten (f&#xFC;r Besessenheit)</li>
+        <li>NSC- und Charakterb&#xF6;gen k&#xF6;nnen nun auch die Gr&#xF6;&#xDF;e der Kreaturen festlegen</li>
+        <li>Der Bibliotheks-Gehirnfilter kann nun in den Sonderfertigkeiten nach Kampffertigkeiten suchen</li>
+        <li>Traditionelle Artefakte k&#xF6;nnen nun besser verfolgt werden</li>
+        <li>H&#xE4;ndler haben nun einen +-Button, um Akteure auszuw&#xE4;hlen, die vom Spielleitermen&#xFC; verfolgt
+            werden (Tischhybrid)</li>
+        <li>Die Token-Hotbar wurde &#xFC;berarbeitet</li>
+        <li>Das englische Grundregelwerk erh&#xE4;lt eine zus&#xE4;tzliche Hires-Aventurien-Karte</li>
+        <li>Das Ork-Modul erh&#xE4;lt die neue Rasse Holberker</li>
+    </ul>
+    <h1 class="mume-header" id="fehlerbehebungen">Fehlerbehebungen</h1>
+
+    <ul>
+        <li>Token-Verschleierung behoben</li>
+    </ul>
+</div>

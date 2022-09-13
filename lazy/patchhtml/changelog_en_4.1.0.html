@@ -1,0 +1,58 @@
+<div>
+    <h1 class="mume-header" id="important-enhancements">4.1.0 Important Enhancements  (9/16/2022)</h1>
+
+    <h2 class="mume-header" id="spellextensions-functional">Spellextensions functional</h2>
+
+    <p>Spell extensions can now have active effects and modify the attributes of spells dynamically. You can now create
+        extensions which increase e.g. the damage, range or anything else.<br>
+        All spell attributes should work as modifier. Since TDE has more than 3000 extensions it is unlikely that we add
+        all those mods ourselves. But you can contribute on a voluntary basis!</p>
+    <pre data-role="codeBlock" data-info="json" class="language-json"><span class="token punctuation">{</span>
+    <span class="token punctuation">{</span><span class="token property">&quot;key&quot;</span><span class="token operator">:</span> <span class="token string">&quot;system.effectFormula.value&quot;</span><span class="token punctuation">,</span> <span class="token property">&quot;mode&quot;</span><span class="token operator">:</span> <span class="token number">2</span><span class="token punctuation">,</span> <span class="token property">&quot;value&quot;</span><span class="token operator">:</span> <span class="token string">&quot;+2&quot;</span><span class="token punctuation">}</span><span class="token punctuation">,</span> 
+    <span class="token punctuation">{</span><span class="token property">&quot;key&quot;</span><span class="token operator">:</span> <span class="token string">&quot;system.range.value&quot;</span><span class="token punctuation">,</span> <span class="token property">&quot;mode&quot;</span><span class="token operator">:</span> <span class="token number">5</span><span class="token punctuation">,</span> <span class="token property">&quot;value&quot;</span><span class="token operator">:</span> <span class="token string">&quot;32 Schritt&quot;</span><span class="token punctuation">}</span><span class="token punctuation">,</span> 
+<span class="token punctuation">}</span>
+</pre>
+    <p>A complete coverage or functionality is only possible through joined efforts by the community of TDE/DSA. Feel
+        free to contribute, we&apos;ll add the effects in intervals to the official modules. See <a
+            href="https://github.com/Plushtoast/dsa5-extensiondb">https://github.com/Plushtoast/dsa5-extensiondb</a></p>
+    <h2 class="mume-header" id="area-templates-for-spells">Area templates for spells</h2>
+
+    <p>Spells have now settings for area templates at the details tab. After a successfull cast you can drop the
+        template to the canvas for easy measurement. The distance values support formulas which include the QS/QL of the
+        roll, e.g. &quot;qs*2&quot;. We will see if we can improve on this in the future to apply spell effects (with
+        animations) and similar stuff.</p>
+    <h2 class="mume-header" id="info-item-for-plants-journals">Info item for plants &amp; journals</h2>
+
+    <p>Text areas can now include a preview for information items which contain the roll request and all required
+        information.<br>
+        To create one drag an information item to the textarea and replace UUID with Info like so:</p>
+    <pre data-role="codeBlock" data-info class="language-"><code>
+        @Info[Item.3XAB0PU0Z6IS9YA]
+</code></pre>
+    <p>Plants respectively the Herbarium will get this by default soon. Adventures will be updated over time.</p>
+    <h2 class="mume-header" id="obfuscate-items">Obfuscate items</h2>
+
+    <p>The gamemaster has now small buttons on itemsheets to hide information on a single tab to the players. This way
+        you can make mysteri&#xF6;s items with unknown effects or prevent metagaming. The herbarium will be updated to
+        allow for default occlusion of critical information by default.</p>
+    <h1 class="mume-header" id="enhancements">Enhancements</h1>
+
+    <ul class="dsalist">
+        <li>Maintained costs of spells are now added to the spell costs and become an additional effect on the casting
+            actor which deducts AE automatically in intervals until deleted (thanks Qowy, requires times-up module)</li>
+        <li>Creatures can now use ammunition too (but they still don&apos;t have to)</li>
+        <li>Shapeshifting can now keep gear and token art (for possesion)</li>
+        <li>NPC and character sheets can now also set the creature size</li>
+        <li>The library brain filter can now search for combatskills in combat special abilities</li>
+        <li>Tradition artifacts can now be tracked better</li>
+        <li>Merchants have now a + button to select actors tracked by the game master menu (table hybrid)</li>
+        <li>The token hotbar has been altered</li>
+        <li>The english core module receives an additional hires aventuria map</li>
+        <li>The orcs module receives the new race holberker</li>
+    </ul>
+    <h1 class="mume-header" id="bugfixes">Bugfixes</h1>
+
+    <ul>
+        <li>Token obfuscation fixed</li>
+    </ul>
+</div>
