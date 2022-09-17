@@ -84,7 +84,7 @@ export default class DSA5SpellDialog extends DialogShared {
                         const tooltip = `${typeName}: ${change.value}<br/>${game.i18n.localize('spellextension')}: ${name}`
                         mods.push(`<option data-extension="1" selected="" data-tooltip="${tooltip}" data-type="${change.key}" value="${change.value}">${name} - ${typeName}</option>`)
                     }else if(change.key == "macro.transform"){
-                        await DSA5_Utility.callItemTransformationMacro(change.value, source)
+                        await DSA5_Utility.callItemTransformationMacro(change.value, source, ef)
                     }else{
                         ef.apply(source, change)
                     }

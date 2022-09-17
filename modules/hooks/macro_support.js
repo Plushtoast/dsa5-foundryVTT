@@ -29,16 +29,16 @@ export default function() {
             return createHotBarMacro(command, item.name, item.img, slot)
 
         } else if (data.type == "Item") {
+            const item = fromUuidSync(data.uuid)
             const possibleItems = ["ritual", "ceremony", "meleeweapon", "rangeweapon", "skill", "combatskill", "spell", "liturgy", "char", "trait"]
-            if (!possibleItems.includes(data.data.type))
+            if (!possibleItems.includes(item.type))
                 return
 
-            if ((data.data.type == "meleeweapon" || data.data.type == "combatskill") && !['attack', 'parry'].includes(data.mod)) {
+            if ((item.type == "meleeweapon" || item.type == "combatskill") && !['attack', 'parry'].includes(data.mod)) {
                 return
-            } else if ((data.data.type == "rangeweapon" || data.data.type == "trait") && !['attack'].includes(data.mod)) {
+            } else if ((item.type == "rangeweapon" || item.type == "trait") && !['attack'].includes(data.mod)) {
                 return
             }
-            let item = data.data
             let param = `{mod: "${data.mod}"}`
             let command
             if (game.user.isGM || data.actorId == undefined) {

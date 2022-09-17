@@ -108,15 +108,16 @@ export default class Migrakel {
     static async updateSpellsAndLiturgies(actor) {
         if (await this.showDialog(game.i18n.localize("Migrakel.spells"))) {
             const condition = (x) => {
-                return ["spell", "liturgy", "ritual", "ceremony"].includes(x.type);
+                return ["spell", "liturgy", "ritual", "ceremony", "spellextension"].includes(x.type);
             };
             const updator = (find) => {
-                return {
-                    system: {
-                        effectFormula: { value: find.system.effectFormula.value },
-                    },
-                    effects: find.effects.toObject(),
-                };
+                const upd = {
+                    effects: find.effects.toObject()
+                }
+                if(find.type != "spellextension")
+                    upd.system = { effectFormula: { value: find.system.effectFormula.value } }
+                    
+                return upd
             };
             await this.updateVals(actor, condition, updator);
         }

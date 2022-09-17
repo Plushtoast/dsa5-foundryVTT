@@ -1086,7 +1086,10 @@
         "combatRounds": "( )?(in )?(combat round(s)?|CR(s)?)",
         "minutes": "( )?(in )?(minute(s)?|min)",
         "hours": "( )?(in )?(hour(s)?)",
-        "days": "( )?(in )?day(s)?"
+        "days": "( )?(in )?day(s)?",
+        "weeks": "( )?(in )?week(s)?",
+        "months": "( )?(in )?month(s)?",
+        "years": "( )?(in )?year(s)?"
     },
     "DSAREGEXmaintain": {
         "combatRounds": "(combat round(s)?|CR(s)?)",

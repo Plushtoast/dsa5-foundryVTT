@@ -1102,7 +1102,10 @@
         "combatRounds": "( )?(in )?(Kampfrunde(n)?|KR(s)?)",
         "minutes": "( )?(in )?(minute(n)?|min)",
         "hours": "( )?(in )?(stunde(n)?)",
-        "days": "( )?(in )?tag(e)?"
+        "days": "( )?(in )?tag(e)?",
+        "weeks": "( )?(in )?woche(n)?",
+        "months": "( )?(in )?monat(e)?",
+        "years": "( )?(in )?jahr(e)?"
     },
     "DSAREGEXmaintain": {
         "combatRounds": "(Kampfrunde(n)?|KR(s)?)",

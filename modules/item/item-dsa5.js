@@ -800,7 +800,7 @@ class SpellItemDSA5 extends Itemdsa5 {
                     if(DSA5SpellDialog.rollChanges.includes(change.key)) continue
                     
                     if(change.key == "macro.transform"){
-                        await DSA5_Utility.callItemTransformationMacro(change.value, source)
+                        await DSA5_Utility.callItemTransformationMacro(change.value, source, ef)
                     }else{
                         ef.apply(source, change)
                     }

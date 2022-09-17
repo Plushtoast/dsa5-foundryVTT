@@ -351,6 +351,9 @@ export default class DSAActiveEffectConfig extends ActiveEffectConfig {
                 { regEx: new RegExp(game.i18n.localize("DSAREGEX.minutes"), "gi"), seconds: 60 },
                 { regEx: new RegExp(game.i18n.localize("DSAREGEX.hours"), "gi"), seconds: 3600 },
                 { regEx: new RegExp(game.i18n.localize("DSAREGEX.days"), "gi"), seconds: 3600 * 24 },
+                { regEx: new RegExp(game.i18n.localize("DSAREGEXmaintain.weeks"), "gi"), seconds: 3600 * 24 * 7 },
+                { regEx: new RegExp(game.i18n.localize("DSAREGEXmaintain.months"), "gi"), seconds: 3600 * 24 * 30 },
+                { regEx: new RegExp(game.i18n.localize("DSAREGEXmaintain.years"), "gi"), seconds: 3600 * 24 * 350 }
             ];
             for (const reg of regexes) {
                 if (reg.regEx.test(duration)) {
