@@ -54,19 +54,6 @@ export default class DSA5SpellDialog extends DialogShared {
         return buttons;
     }
 
-    applyExtensions(source, extensions, actor){
-        for(let extension of extensions){
-            const item = fromUuidSync(extension.uuid)
-            if(!item) continue
-
-            for(let ef of item.effects){
-                for(let change of ef.changes){
-                    ef.apply(source, change)
-                }
-            }
-        }
-    }
-
     async applyTransformations(source, parent){
         const sit = parent.find('[name="situationalModifiers"]')
         sit.find('option[data-extension="1"]').remove()
