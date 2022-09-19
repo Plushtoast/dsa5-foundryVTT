@@ -61,18 +61,25 @@ export default function() {
         }
     })
 
-    const askForName = async (actor) => {
+    const askForName = async (tokenObject, setting) => {
         new Dialog({
             title: game.i18n.localize("DSASETTINGS.obfuscateTokenNames"),
-            content: `<label for="name">${game.i18n.localize('DSASETTINGS.rename')}</label> <input dtype="string" name="name" type="text" value="${actor.name}"/>`,
+            content: `<label for="name">${game.i18n.localize('DSASETTINGS.rename')}</label> <input dtype="string" name="name" type="text" value="${tokenObject.actor.name}"/>`,
             default: 'Yes',
             buttons: {
                 Yes: {
                     icon: '<i class="fa fa-check"></i>',
                     label: game.i18n.localize("yes"),
                     callback: async(html) => {
-                        const name = html.find('[name="name"]').val()
-                        const token = canvas.scene.tokens.find((x) => x.actor?.id === actor.id)
+                        const tokenId = tokenObject.id || tokenObject._id
+                        let name = html.find('[name="name"]').val()
+                        if(setting == 2){
+                            let sameActorTokens = canvas.scene.tokens.filter((x) => x.name === name);
+                            if (sameActorTokens.length > 0) {
+                                name = `${name.replace(/ \d{1,}$/)} ${sameActorTokens.length + 1}`
+                            }
+                        }
+                        const token = canvas.scene.tokens.get(tokenId)
                         await token.update({ name })
                     }
                 },
@@ -84,7 +91,8 @@ export default function() {
         }).render(true)
     }
 
-    const obfuscateName = async(actor, update) => {
+    const obfuscateName = async(token, update) => {
+        const actor = token.actor
         const setting = Number(game.settings.get("dsa5", "obfuscateTokenNames"))
         if (setting == 0 || getProperty(actor, "merchant.merchantType") == "loot") return
 
@@ -95,11 +103,13 @@ export default function() {
         let sameActorTokens = canvas.scene.tokens.filter((x) => x.actor && x.actor.id === actor.id);
         let name = game.i18n.localize("unknown")
         if ([2,4].includes(setting)) {
-            sameActorTokens = sameActorTokens.filter(x => x.name == actor.name)
-            if(sameActorTokens.length == 0) {
-                askForName(actor)
-                return
-            }
+            //sameActorTokens = sameActorTokens.filter(x => x.name == actor.name)
+            const tokenId = token.id || token._id
+            if(!tokenId) return
+            
+            askForName(token, setting)
+            return
+            
         }
         if (sameActorTokens.length > 0 && setting < 3) {
             name = `${sameActorTokens[0].name.replace(/ \d{1,}$/)} ${sameActorTokens.length + 1}`
@@ -129,9 +139,13 @@ export default function() {
         if (getProperty(actor, "system.config.autoSize")) {
             DSA5_Utility.calcTokenSize(actor, modify)
         }
-
-        obfuscateName(actor, modify)
+        
+        obfuscateName(token, modify)
         token.updateSource(modify)
+    })
+
+    Hooks.on('createToken', (token, options, id) => {
+        obfuscateName(token, {})
     })
 }
 

@@ -582,7 +582,7 @@ class EquipmentSheet extends ItemSheetObfuscation(Enchantable) {
     }
 
     isBagWithContents() {
-        return this.item.system.equipmentType.value == "bags" && this.item.actor
+        return this.item.actor && getProperty(this.item, "system.equipmentType.value") == "bags"
     }
 
     async _onDrop(event) {

@@ -184,47 +184,45 @@ export default class Actordsa5 extends Actor {
         Number(data.status.dodge.modifier) +
         Number(game.settings.get("dsa5", "higherDefense")) / 2;
 
-      //Prevent double update with multiple GMs, still unsafe
-      const activeGM = game.users.find((u) => u.active && u.isGM);
-
-      if (activeGM && game.user.id == activeGM.id) {
-        const hasDefaultPain = this.type != "creature" || data.status.wounds.max >= 20;
-        let pain = 0;
-        if (data.status.wounds.max > 0) {
-          if (hasDefaultPain) {
-            pain = Math.floor((1 - data.status.wounds.value / data.status.wounds.max) * 4);
-            if (data.status.wounds.value <= 5) pain = 4;
-          } else {
-            pain = Math.floor(5 - (5 * data.status.wounds.value) / data.status.wounds.max);
-          }
-
-          if (pain < 4)
-            pain -=
-              AdvantageRulesDSA5.vantageStep(this, game.i18n.localize("LocalizedIDs.ruggedFighter")) +
-              AdvantageRulesDSA5.vantageStep(this, game.i18n.localize("LocalizedIDs.ruggedAnimal")) +
-              (SpecialabilityRulesDSA5.hasAbility(this, game.i18n.localize("LocalizedIDs.traditionKor")) ? 1 : 0);
-          if (pain > 0)
-            pain +=
-              AdvantageRulesDSA5.vantageStep(this, game.i18n.localize("LocalizedIDs.sensitiveToPain")) +
-              AdvantageRulesDSA5.vantageStep(this, game.i18n.localize("LocalizedIDs.fragileAnimal"));
-
-          pain = Math.clamped(pain, 0, 4);
+      const hasDefaultPain = this.type != "creature" || data.status.wounds.max >= 20;
+      let pain = 0;
+      if (data.status.wounds.max > 0) {
+        if (hasDefaultPain) {
+          pain = Math.floor((1 - data.status.wounds.value / data.status.wounds.max) * 4);
+          if (data.status.wounds.value <= 5) pain = 4;
+        } else {
+          pain = Math.floor(5 - (5 * data.status.wounds.value) / data.status.wounds.max);
         }
 
+        if (pain < 4)
+          pain -=
+            AdvantageRulesDSA5.vantageStep(this, game.i18n.localize("LocalizedIDs.ruggedFighter")) +
+            AdvantageRulesDSA5.vantageStep(this, game.i18n.localize("LocalizedIDs.ruggedAnimal")) +
+            (SpecialabilityRulesDSA5.hasAbility(this, game.i18n.localize("LocalizedIDs.traditionKor")) ? 1 : 0);
+        if (pain > 0)
+          pain +=
+            AdvantageRulesDSA5.vantageStep(this, game.i18n.localize("LocalizedIDs.sensitiveToPain")) +
+            AdvantageRulesDSA5.vantageStep(this, game.i18n.localize("LocalizedIDs.fragileAnimal"));
+
+        pain = Math.clamped(pain, 0, 4);
+      }      
+
+      if (!this.hasCondition("bloodrush")) data.status.speed.max = Math.max(0, data.status.speed.max - pain);
+      
+      //Prevent double update with multiple GMs, still unsafe
+      const activeGM = game.users.find((u) => u.active && u.isGM);
+      if (activeGM && game.user.id == activeGM.id) {
         const changePain = data.pain != pain;
         data.pain = pain;
+
+        if (changePain && !TraitRulesDSA5.hasTrait(this, game.i18n.localize("LocalizedIDs.painImmunity")))
+          this.addCondition("inpain", pain, true).then(() => (data.pain = undefined));
 
         if (AdvantageRulesDSA5.hasVantage(this, game.i18n.localize("LocalizedIDs.blind"))) this.addCondition("blind");
         if (AdvantageRulesDSA5.hasVantage(this, game.i18n.localize("LocalizedIDs.mute"))) this.addCondition("mute");
         if (AdvantageRulesDSA5.hasVantage(this, game.i18n.localize("LocalizedIDs.deaf"))) this.addCondition("deaf");
-        if (changePain && !TraitRulesDSA5.hasTrait(this, game.i18n.localize("LocalizedIDs.painImmunity")))
-          this.addCondition("inpain", pain, true).then(() => (data.pain = undefined));
 
-        if (this.isMerchant()) {
-          this.prepareMerchant();
-        }
-
-        if (!this.hasCondition("bloodrush")) data.status.speed.max = Math.max(0, data.status.speed.max - pain);
+        if (this.isMerchant()) this.prepareMerchant()
       }
 
       let paralysis = this.hasCondition("paralysed");
