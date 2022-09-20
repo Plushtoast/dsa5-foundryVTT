@@ -791,6 +791,7 @@ class SpellItemDSA5 extends Itemdsa5 {
     }
 
     static async applyExtensions(source, extensions, actor){
+        RuleChaos.ensureNumber(source)
         for(let extension of extensions){
             const item = fromUuidSync(extension.uuid)
             if(!item) continue

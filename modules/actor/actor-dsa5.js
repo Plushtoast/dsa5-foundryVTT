@@ -930,7 +930,9 @@ export default class Actordsa5 extends Actor {
         if(artifact.abilities == undefined) artifact.abilities = []
 
         artifact.abilities.push(traditionAbility)
-        artifact.volumeFinal += (Number(traditionAbility.system.volume) || 0) * Number(traditionAbility.system.step.value)
+        const vol = Number(traditionAbility.system.volume) || 0
+        const volAttr = vol > 0 ? "volumeFinal" : "volume"
+        artifact[volAttr] += Math.abs(vol) * Number(traditionAbility.system.step.value)
       }
       else{
         specAbs.magical.push(traditionAbility)

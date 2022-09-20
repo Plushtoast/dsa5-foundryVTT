@@ -45,6 +45,11 @@ export default class RuleChaos {
         }
     }
 
+    //todo this should not be necessary
+    static ensureNumber(source){
+        source.system.AsPCost.value = Number(source.system.AsPCost.value) || source.system.AsPCost.value
+    }
+
     static isYieldedTwohanded(item){
         const twoHanded = this.regex2h.test(item.name)
         const wrongGrip = item.system.worn.wrongGrip

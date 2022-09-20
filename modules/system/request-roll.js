@@ -8,7 +8,7 @@ export default class RequestRoll {
         if (!actor) return
 
         game.user.updateTokenTargets([])
-        let options = { modifier, postFunction: { cummulative: messageId, functionName: "RequestRoll.autoEditGroupCheckRoll" } }
+        let options = { modifier, postFunction: { cummulative: messageId, functionName: "game.dsa5.apps.RequestRoll.autoEditGroupCheckRoll" } }
         switch (category) {
             case "attribute":
                 break
@@ -238,7 +238,7 @@ export default class RequestRoll {
         } else if (recipientsTarget == 2) {
             recipients = game.users.filter((user) => user.isGM).map((x) => x.id)
         }
-        const optns = { modifier, postFunction: { functionName: "RequestRoll.updateInformationRoll", uuid, recipients } }
+        const optns = { modifier, postFunction: { functionName: "game.dsa5.apps.RequestRoll.updateInformationRoll", uuid, recipients } }
         let skill = actor.items.find((i) => i.name == ev.currentTarget.dataset.skill && i.type == "skill")
         actor.setupSkill(skill, optns, tokenId).then(async(setupData) => {
             setupData.testData.opposable = false

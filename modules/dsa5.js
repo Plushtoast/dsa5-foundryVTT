@@ -33,6 +33,7 @@ import EquipmentDamage from "./system/equipment-damage.js"
 import DidYouKnow from "./system/didyouknow.js";
 import MerchantSheetDSA5 from "./actor/merchant-sheet.js"
 import { MeasuredTemplateDSA } from "./system/measuretemplate.js"
+import RequestRoll from "./system/request-roll.js"
 
 Hooks.once("init", () => {
     console.log("Initializing DSA5 system")
@@ -51,6 +52,7 @@ Hooks.once("init", () => {
             DSA5StatusEffects,
             DPS,
             DSATables,
+            RequestRoll,
             DiceDSA5,
             DSATour,
             OpposeDSA,

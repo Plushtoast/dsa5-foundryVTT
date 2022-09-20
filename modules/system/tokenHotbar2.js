@@ -247,6 +247,7 @@ export default class TokenHotbar2 extends Application {
         const direction = game.settings.get("dsa5", "tokenhotbarLayout")
         const vertical = direction % 2
         const itemWidth = TokenHotbar2.defaultOptions.itemWidth
+        const spellTypes = ["liturgy", "spell"]
         if (actor) {
             const moreSkills = []
             let moreSpells = []
@@ -263,8 +264,7 @@ export default class TokenHotbar2 extends Application {
                 })
                 
                 const attacktypes = ["meleeweapon", "rangeweapon"]
-                const traitTypes = ["meleeAttack", "rangeAttack"]
-                const spellTypes = ["liturgy", "spell"]
+                const traitTypes = ["meleeAttack", "rangeAttack"]                
 
                 for (const x of actor.items) {
                     if (x.type == "trait" && traitTypes.includes(x.system.traitType.value)) {
@@ -303,6 +303,9 @@ export default class TokenHotbar2 extends Application {
                         if(x.system.talentValue.value > 0) descendingSkills.push(elem)
 
                         moreSkills.push(elem)
+                    }else if (spellTypes.includes(x.type)) {
+                        if (x.system.effectFormula.value) items.spells.push({ name: x.name, id: x.id, icon: x.img, cssClass: "spell", abbrev: x.name[0] })
+                        else moreSpells.push({ name: x.name, id: x.id, icon: x.img, cssClass: "spell", abbrev: x.name[0] })
                     }
 
                     if (x.getFlag("dsa5", "onUseEffect")) {

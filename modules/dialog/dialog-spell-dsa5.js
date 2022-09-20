@@ -1,3 +1,4 @@
+import RuleChaos from "../system/rule_chaos.js";
 import DSA5_Utility from "../system/utility-dsa5.js";
 import DSA5Dialog from "./dialog-dsa5.js";
 import DialogShared from "./dialog-shared.js";
@@ -85,6 +86,7 @@ export default class DSA5SpellDialog extends DialogShared {
     async recalcSpellModifiers(html, event){
         const parent = html
         const source = duplicate(this.dialogData.source)
+        RuleChaos.ensureNumber(source)
         let castingTime = parent.find(".castingTime");
         let aspcost = parent.find(".aspcost");
         let reach = parent.find(".reach");
