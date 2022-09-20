@@ -23,7 +23,7 @@ async function callMacro(packName, name, actor, item, qs, args = {}) {
         }
 
         if (documents.length) {
-            const body = `(async () => {${documents[0].system.command}})()`;
+            const body = `(async () => {${documents[0].command}})()`;
             const fn = Function("actor", "item", "qs", "automatedAnimation", "args", body);
             try {
                 args.result = result;
