@@ -209,9 +209,7 @@ export default class Actordsa5 extends Actor {
 
       if (!this.hasCondition("bloodrush")) data.status.speed.max = Math.max(0, data.status.speed.max - pain);
       
-      //Prevent double update with multiple GMs, still unsafe
-      const activeGM = game.users.find((u) => u.active && u.isGM);
-      if (activeGM && game.user.id == activeGM.id) {
+      if (DSA5_Utility.isActiveGM()) {
         const changePain = data.pain != pain;
         data.pain = pain;
 

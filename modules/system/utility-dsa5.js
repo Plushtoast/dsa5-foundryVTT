@@ -118,6 +118,13 @@ export default class DSA5_Utility {
         return result;
     }
 
+    static isActiveGM(){
+        //Prevent double update with multiple GMs, still unsafe
+        const activeGM = game.users.find((u) => u.active && u.isGM);
+        
+        return activeGM && game.user.id == activeGM.id
+    }
+
     static parseAbilityString(ability) {
         return {
             original: ability.replace(/ (FP|SR|FW|SP)?[+-]?\d{1,2}$/, '').trim(),

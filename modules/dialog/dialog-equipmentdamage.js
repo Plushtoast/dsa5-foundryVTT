@@ -23,6 +23,7 @@ export default class EquipmentDamageDialog extends Dialog {
         const items = data.map(x => { return { name: x.name, id: x.id, img: x.img } })
         return await renderTemplate('systems/dsa5/templates/dialog/dialog-reaction-attack.html', { items, title: "WEAR.checkShort" })
     }
+    
     callbackResult(ev) {
         EquipmentDamage.breakingTest(this.items.find(x => x.id == ev.currentTarget.dataset.value))
     }

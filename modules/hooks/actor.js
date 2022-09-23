@@ -62,44 +62,17 @@ export default function() {
     })
 
     const askForName = async (tokenObject, setting) => {
-        new Dialog({
-            title: game.i18n.localize("DSASETTINGS.obfuscateTokenNames"),
-            content: `<label for="name">${game.i18n.localize('DSASETTINGS.rename')}</label> <input dtype="string" name="name" type="text" value="${tokenObject.actor.name}"/>`,
-            default: 'Yes',
-            buttons: {
-                Yes: {
-                    icon: '<i class="fa fa-check"></i>',
-                    label: game.i18n.localize("yes"),
-                    callback: async(html) => {
-                        const tokenId = tokenObject.id || tokenObject._id
-                        let name = html.find('[name="name"]').val()
-                        if(setting == 2){
-                            let sameActorTokens = canvas.scene.tokens.filter((x) => x.name === name);
-                            if (sameActorTokens.length > 0) {
-                                name = `${name.replace(/ \d{1,}$/)} ${sameActorTokens.length + 1}`
-                            }
-                        }
-                        const token = canvas.scene.tokens.get(tokenId)
-                        await token.update({ name })
-                    }
-                },
-                cancel: {
-                    icon: '<i class="fas fa-times"></i>',
-                    label: game.i18n.localize("cancel")
-                }
-            }
-        }).render(true)
+        const dialogConstructor = game.dsa5.apps.AskForNameDialog || AskForNameDialog
+        dialogConstructor.getDialog(tokenObject, setting)
     }
 
     const obfuscateName = async(token, update) => {
+        if(!DSA5_Utility.isActiveGM()) return
+
         const actor = token.actor
         const setting = Number(game.settings.get("dsa5", "obfuscateTokenNames"))
         if (setting == 0 || getProperty(actor, "merchant.merchantType") == "loot") return
 
-        for (let u of game.users) {
-            if (u.isGM) continue;
-            if (actor.testUserPermission(u, "LIMITED")) return;
-        }
         let sameActorTokens = canvas.scene.tokens.filter((x) => x.actor && x.actor.id === actor.id);
         let name = game.i18n.localize("unknown")
         if ([2,4].includes(setting)) {
@@ -109,7 +82,6 @@ export default function() {
             
             askForName(token, setting)
             return
-            
         }
         if (sameActorTokens.length > 0 && setting < 3) {
             name = `${sameActorTokens[0].name.replace(/ \d{1,}$/)} ${sameActorTokens.length + 1}`
@@ -149,3 +121,34 @@ export default function() {
     })
 }
 
+class AskForNameDialog extends Dialog{
+    static async getDialog(tokenObject, setting){
+        new Dialog({
+            title: game.i18n.localize("DSASETTINGS.obfuscateTokenNames"),
+            content: `<label for="name">${game.i18n.localize('DSASETTINGS.rename')}</label> <input dtype="string" name="name" type="text" value="${tokenObject.actor.name}"/>`,
+            default: 'Yes',
+            buttons: {
+                Yes: {
+                    icon: '<i class="fa fa-check"></i>',
+                    label: game.i18n.localize("yes"),
+                    callback: async(html) => {
+                        const tokenId = tokenObject.id || tokenObject._id
+                        let name = html.find('[name="name"]').val()
+                        if(setting == 2){
+                            let sameActorTokens = canvas.scene.tokens.filter((x) => x.name === name);
+                            if (sameActorTokens.length > 0) {
+                                name = `${name.replace(/ \d{1,}$/)} ${sameActorTokens.length + 1}`
+                            }
+                        }
+                        const token = canvas.scene.tokens.get(tokenId)
+                        await token.update({ name })
+                    }
+                },
+                cancel: {
+                    icon: '<i class="fas fa-times"></i>',
+                    label: game.i18n.localize("cancel")
+                }
+            }
+        }).render(true)
+    }
+}

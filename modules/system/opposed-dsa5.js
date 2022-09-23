@@ -217,7 +217,7 @@ export default class OpposedDsa5 {
         let res = {
             speaker: message.speaker,
             testResult: mergeObject(message.flags.data.postData, { source: message.flags.data.preData.source }),
-            img: DSA5_Utility.getSpeaker(message.speaker).data.img,
+            img: DSA5_Utility.getSpeaker(message.speaker).img,
             messageId: message.id
         }
         if (res.testResult.ammo) res.testResult.source.effects.push(...res.testResult.ammo.effects)
