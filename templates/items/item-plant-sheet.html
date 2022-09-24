@@ -46,7 +46,6 @@
     </div>
 
     <nav class="sheet-tabs tabs" data-tab-container="primary">
-        {{#if containerContent}}<a class="item active" data-tab="containerContent">{{localize 'Equipment.bags'}}</a>{{/if}}
         <a class="item active" data-tab="description">{{localize "Description"}}</a>
         <a class="item" data-tab="details">{{localize "Details"}}</a>
     </nav>
@@ -63,6 +62,10 @@
                 </label> {{/each}}
 
             </div>
+
+            {{#if isGM}}
+                {{{enrichedInformation}}}
+            {{/if}}
 
             <div class="form-group">
                 <label class="label-text">{{localize "PLANT.landscape"}}</label>

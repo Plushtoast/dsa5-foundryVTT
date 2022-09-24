@@ -345,6 +345,11 @@ export default class DSA5ChatAutoCompletion {
         }
     }
 
+    static async infoItemAsync(uuid){
+        const item = await fromUuid(uuid)
+        item.postItem()
+    }
+
     static bindRollCommands(html){
         html.on('click', '.request-roll', ev => {
             RequestRoll.showRQMessage(ev.currentTarget.dataset.name, Number(ev.currentTarget.dataset.modifier) || 0)
@@ -353,7 +358,13 @@ export default class DSA5ChatAutoCompletion {
         })
         html.on('click', '.postInfo', ev => {
             const item = fromUuidSync(ev.currentTarget.dataset.uuid)
-            if(item) item.postItem()
+            if(item) {
+                if(typeof item.postItem === 'function'){
+                    item.postItem()
+                }else{
+                    this.infoItemAsync(ev.currentTarget.dataset.uuid)
+                }
+            }
 
             ev.stopPropagation()
             return false

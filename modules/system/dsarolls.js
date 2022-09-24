@@ -7,7 +7,7 @@ export default function() {
             let curindex = 0
             
             for (let term of this.terms) {
-                const isDie = term instanceof DiceTerm || term.class == "DiceTerm"
+                const isDie = term instanceof DiceTerm || term.class == "DiceTerm" || term instanceof Die || term.class == "Die"
                 const isOperator = term instanceof OperatorTerm
                 if (isDie || term.faces) {
                     if (term.results[index - curindex]) {

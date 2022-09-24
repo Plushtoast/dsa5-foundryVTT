@@ -28,11 +28,11 @@ export const ItemSheetObfuscation = (superclass) => class extends superclass {
             const ele = $(this._element).find(`nav [data-tab="${tab}"]`)
             if(!ele.length) continue
 
-            const inVisible = this.isObfuscated(tab)
-            const tooltip = game.i18n.localize(`SHEET.${inVisible ? "deobfuscateItem" : "obfuscateItem"}`)
+            const invisible = options.tabsinvisible ||this.isObfuscated(tab)
+            const tooltip = game.i18n.localize(`SHEET.${invisible ? "deobfuscateItem" : "obfuscateItem"}`)
             if(game.user.isGM){
                 ele.append(` <a data-tooltip="${tooltip}" class="obfuscateSection${this.obfuscationCss(tab)}" data-obfuscate="${tab}"><i class="fas fa-mask"></i></a>`)
-            }else if(inVisible){
+            }else if(invisible){
                 if(ele.hasClass('active')) swaptab = true
                 ele.remove()
 
@@ -47,7 +47,7 @@ export const ItemSheetObfuscation = (superclass) => class extends superclass {
             if(tabs.length){
                 this.activateTab(tabs.attr("data-tab"))
             }else {
-                const templ = await renderTemplate('systems/dsa5/templates/items/obfuscateditem.html', {item: this.item})
+                const templ = await renderTemplate('systems/dsa5/templates/items/obfuscatedItem.html', {item: this.item})
                 $(this._element).find('.content').html(templ)
             }
         }

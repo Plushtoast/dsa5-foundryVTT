@@ -56,6 +56,13 @@ export default class RuleChaos {
         return (twoHanded && !wrongGrip) || (!twoHanded && wrongGrip)
     }
 
+    static obfuscateDropData(item, obfuscations){
+        if(obfuscations) {
+            for(let section of obfuscations) 
+                mergeObject(item, { system: {obfuscation: { [section]: true} } } )
+        }
+    }
+
     static _buildDuration(rounds) {
         const update = {
             duration: {

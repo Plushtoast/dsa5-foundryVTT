@@ -255,13 +255,15 @@ export default class TokenHotbar2 extends Application {
             if (game.combat) {
                 const combatskills = actor.items.filter(x => x.type == "combatskill").map(x => Actordsa5._calculateCombatSkillValues(x.toObject(), actor.system))
                 const brawl = combatskills.find(x => x.name == game.i18n.localize('LocalizedIDs.wrestle'))
-                items.attacks.push({
-                    name: game.i18n.localize("attackWeaponless"),
-                    id: "attackWeaponless",
-                    icon: "systems/dsa5/icons/categories/attack_weaponless.webp",
-                    attack: brawl.system.attack.value,
-                    damage: "1d6"
-                })
+                if(brawl) {
+                    items.attacks.push({
+                        name: game.i18n.localize("attackWeaponless"),
+                        id: "attackWeaponless",
+                        icon: "systems/dsa5/icons/categories/attack_weaponless.webp",
+                        attack: brawl.system.attack.value,
+                        damage: "1d6"
+                    })
+                }
                 
                 const attacktypes = ["meleeweapon", "rangeweapon"]
                 const traitTypes = ["meleeAttack", "rangeAttack"]                

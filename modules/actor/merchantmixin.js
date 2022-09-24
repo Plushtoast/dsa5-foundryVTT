@@ -221,7 +221,7 @@ export const MerchantSheetMixin = (superclass) => class extends superclass {
     }
 
     static isTemporaryToken(target) {
-        return getProperty(target, "merchant.merchantType") == "loot" && getProperty(target, "merchant.temporary")
+        return getProperty(target.system, "merchant.merchantType") == "loot" && getProperty(target.system, "merchant.temporary")
     }
 
     static async selfDestruction(target) {

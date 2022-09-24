@@ -1,4 +1,5 @@
 import DSA5 from "../system/config-dsa5.js"
+import RuleChaos from "../system/rule_chaos.js"
 import DSA5_Utility from "../system/utility-dsa5.js"
 
 export const dropToGround = async(sourceActor, item, data, amount) => {
@@ -14,6 +15,8 @@ export const dropToGround = async(sourceActor, item, data, amount) => {
 
         const newItem = item.toObject()
         newItem.system.quantity.value = amount
+        RuleChaos.obfuscateDropData(newItem, data.tabsinvisible)
+
         if (getProperty(newItem, "system.worn.value")) newItem.system.worn.value = false
 
         const actor = {
@@ -59,7 +62,7 @@ export const dropToGround = async(sourceActor, item, data, amount) => {
     } else {
         const payload = {
             itemId: item.uuid,
-            sourceActorId: sourceActor.id,
+            sourceActorId: sourceActor?.id,
             data,
             amount
         };
