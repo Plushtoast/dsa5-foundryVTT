@@ -83,6 +83,7 @@ export default class DiceDSA5 {
 
     static async getDefenseCount(testData) {
         if (game.combat) return await game.combat.getDefenseCount(testData.extra.speaker)
+        
         return 0
     }
 

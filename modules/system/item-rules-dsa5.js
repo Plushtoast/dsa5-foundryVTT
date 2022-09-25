@@ -26,7 +26,6 @@ export default class ItemRulesDSA5 {
         return modifier
     }
 
-
     static simpleAdoption(item, adoption, name, source) {
         if (source[name].effect) {
             item.system.effect.value = `${adoption.name} ${source[name].effect}`

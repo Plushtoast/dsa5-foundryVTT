@@ -5,12 +5,12 @@ export default function() {
     const fateAvailable = (actor, group) => { return DSA5_Utility.fateAvailable(actor, group) }
     const canHurt = function(li) {
         let cardData = game.messages.get(li.attr("data-message-id")).flags.opposeData
-        return (game.user.isGM && li.find(".opposed-card").length || li.find(".dice-roll").length) && cardData && cardData.damage.value > 0
+        return (game.user.isGM && li.find(".opposed-card").length || li.find(".dice-roll").length) && (getProperty(cardData, "damage.value") || 0) > 0
     }
 
     const canHurtSP = function(li) {
         let cardData = game.messages.get(li.attr("data-message-id")).flags.opposeData
-        return (game.user.isGM && li.find(".opposed-card").length || li.find(".dice-roll").length) && cardData && cardData.damage.sp > 0
+        return (game.user.isGM && li.find(".opposed-card").length || li.find(".dice-roll").length) && (getProperty(cardData, "damage.sp") || 0) > 0
     }
 
     const canCostMana = function(li) {

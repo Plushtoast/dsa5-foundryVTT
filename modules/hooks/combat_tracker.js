@@ -35,7 +35,7 @@ export class DSA5CombatTracker extends CombatTracker {
             for (let turn of data.turns) {
                 const combatant = data.combat.turns.find(x => x.id == turn.id)
                 const isAllowedToSeeEffects = (game.user.isGM || (combatant.actor && combatant.actor.testUserPermission(game.user, "OBSERVER")) || !(game.settings.get("dsa5", "hideEffects")));
-                turn.defenseCount = combatant._source.defenseCount
+                turn.defenseCount = combatant.getFlag("dsa5", "defenseCount") || 0
 
                 let remainders = []
                 if (combatant.actor) {
@@ -93,7 +93,7 @@ export class DSA5Combat extends Combat {
     async nextRound() {
         if (game.user.isGM) {
             for (let k of this.turns) {
-                await k.update({ defenseCount: 0 })
+                await k.setFlag("dsa5", "defenseCount", 0 )
             }
         } else {
             await game.socket.emit("system.dsa5", {
@@ -106,7 +106,7 @@ export class DSA5Combat extends Combat {
 
     async getDefenseCount(speaker) {
         const comb = this.getCombatantFromActor(speaker)
-        return comb ? comb._source.defenseCount : 0
+        return comb ? (comb.getFlag("dsa5", "defenseCount") || 0) : 0
     }
 
     //TODO very clonky
@@ -123,8 +123,8 @@ export class DSA5Combat extends Combat {
     async updateDefenseCount(speaker) {
         if (game.user.isGM) {
             const comb = this.getCombatantFromActor(speaker)
-            if (comb && !getProperty(comb.actor, "config.defense")) {
-                await comb.update({ "defenseCount": comb._source.defenseCount + 1 })
+            if (comb && !getProperty(comb.actor, "system.config.defense")) {
+                await comb.setFlag("dsa5", "defenseCount", (comb.getFlag("dsa5", "defenseCount") || 0) + 1)
             }
         } else {
             await game.socket.emit("system.dsa5", {
@@ -139,12 +139,13 @@ export class DSA5Combat extends Combat {
 
 export class DSA5Combatant extends Combatant {
     constructor(data, context) {
-        data.defenseCount = 0
+        if(data.flags == undefined) data.flags = {}
+        mergeObject(data.flags, {
+            dsa5: {defenseCount: 0}
+        })
         super(data, context);
     }
 }
-
-
 
 class RepeatingEffectsHelper {
     static async updateCombatHook(combat, updateData, x, y) {
