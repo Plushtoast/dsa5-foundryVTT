@@ -161,13 +161,13 @@
                             </div>
                         </div>
                         <div class="col ten verticalFlex barRight">
-                            <div class="bar LeP" style="--a: {{hero.status.wounds.value}}; --b: {{hero.status.wounds.max}}">
+                            <div class="bar LeP" style="--a: {{hero.system.status.wounds.value}}; --b: {{hero.system.status.wounds.max}}">
                             </div>
                             {{#if hero.system.isMage}}
-                            <div class="bar AsP" style="--a: {{hero.status.astralenergy.value}}; --b: {{hero.status.astralenergy.max}}">
+                            <div class="bar AsP" style="--a: {{hero.system.status.astralenergy.value}}; --b: {{hero.system.status.astralenergy.max}}">
                             </div>
                             {{/if}} {{#if hero.system.isPriest}}
-                            <div class="bar KaP" style="--a: {{hero.status.karmaenergy.value}}; --b: {{hero.status.karmaenergy.max}}">
+                            <div class="bar KaP" style="--a: {{hero.system.status.karmaenergy.value}}; --b: {{hero.system.status.karmaenergy.max}}">
                             </div>
                             {{/if}}
                         </div>
@@ -185,7 +185,7 @@
                         <div class="col">
                             <ul>
                                 <li><b>{{localize "purse"}}</b>: {{{hero.purse}}}</li>
-                                <li><b>{{localize "Experience"}}</b>: {{hero.details.experience.spent}}/{{hero.details.experience.total}}</li>
+                                <li><b>{{localize "Experience"}}</b>: {{hero.system.details.experience.spent}}/{{hero.system.details.experience.total}}</li>
                                 <li><b>{{localize "advantages"}}</b>: {{#each hero.advantages as |ad i|}}<a class="actorItem" data-uuid="{{ad.uuid}}">{{ad.name}}</a>{{/each}}</li>
                                 <li><b>{{localize "disadvantages"}}</b>: {{#each hero.disadvantages as |ad i|}}<a class="actorItem" data-uuid="{{ad.uuid}}">{{ad.name}}</a>{{/each}}</li>
                             </ul>

@@ -61,7 +61,7 @@ export default class Actordsa5 extends Actor {
       )) {
         compensation = this._addGearAndAbilityModifiers(itemModifiers, i, compensation);
       }
-      data.itemModifiers = this._applyModiferTransformations(itemModifiers);
+      this.itemModifiers = this._applyModiferTransformations(itemModifiers);
 
       for (let ch of Object.values(data.characteristics)) {
         ch.value = ch.initial + ch.advances + (ch.modifier || 0) + ch.gearmodifier;
@@ -961,7 +961,7 @@ export default class Actordsa5 extends Actor {
       hasTrait,
       demonmarks,
       diseases,
-      itemModifiers: this.system.itemModifiers,
+      itemModifiers: this.itemModifiers,
       languagePoints: {
         used: actorData.system.freeLanguagePoints ? actorData.system.freeLanguagePoints.used : 0,
         available: actorData.system.freeLanguagePoints ? actorData.system.freeLanguagePoints.value : 0,

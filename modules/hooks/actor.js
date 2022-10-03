@@ -3,6 +3,8 @@ import DSA5_Utility from "../system/utility-dsa5.js";
 
 export default function() {
     Hooks.on("preDeleteActiveEffect", (effect, options, user_id) => {
+        if(options.noHook) return
+        
         const actor = effect.parent
         if (actor && actor.documentName == "Actor") {
             if(getProperty(effect, "flags.dsa5.maintain")){
@@ -42,7 +44,9 @@ export default function() {
         }
     })
 
-    Hooks.on("deleteActiveEffect", (effect) => {
+    Hooks.on("deleteActiveEffect", (effect, options) => {
+        if(options.noHook) return
+
         const actor = effect.parent
         if (actor && actor.documentName == "Actor") {
             const statusId = getProperty(effect, "flags.core.statusId")

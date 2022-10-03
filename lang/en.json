@@ -357,7 +357,7 @@
     "failedTests": "Failed tests",
     "flight": "Flight",
     "force": "Force",
-    "Fw": "Skillvalue",
+    "Fw": "Skill value",
     "FP": "Skill points",
     "fatePoints": "Fate points",
     "groupFatePoints": "Group Fate Points",
@@ -973,7 +973,7 @@
     },
     "HELP": {
         "showHelp": "Show help",
-        "default": "You can find additional help and FAQs here: <a href=\"https://youtube.com/c/VTTom\" target=\"_blank\"><button>VTTom's YouTube Channel</button></a><a href=\"https://github.com/Plushtoast/dsa5-foundryVTT/wiki\" target=\"_blank\"><button>Wiki & FAQ</button></a><a href=\"https://discord.gg/foundryvtt\" target=\"_blank\"><button>Foundry Discord (ulisses-dsa)</button></a><a href=\"https://discord.gg/foundryvtt\" target=\"_blank\"><a href=\"https://discord.com/invite/SnqCgcvPzR\" target=\"_blank\"><button>Ulisses Discord</button></a",
+        "default": "You can find additional help and FAQs here: <a href=\"https://youtube.com/c/VTTom\" target=\"_blank\"><button>VTTom's YouTube Channel</button></a><a href=\"https://github.com/Plushtoast/dsa5-foundryVTT/wiki\" target=\"_blank\"><button>Wiki & FAQ</button></a><a href=\"https://discord.gg/foundryvtt\" target=\"_blank\"><button>Foundry Discord (ulisses-dsa)</button></a><a href=\"https://discord.gg/foundryvtt\" target=\"_blank\"><a href=\"https://discord.com/invite/SnqCgcvPzR\" target=\"_blank\"><button>Ulisses Discord</button></a>",
         "command": "Command",
         "example": "Example",
         "pay": "Pay",
