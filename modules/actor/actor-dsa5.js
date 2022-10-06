@@ -46,23 +46,36 @@ export default class Actordsa5 extends Actor {
     const armorEncumbrance = wornArmors.reduce((sum, x) => {
       return (sum += Number(x.system.encumbrance.value));
     }, 0);
-    return armorCompensation > armorEncumbrance;
+    
+    if(armorCompensation > armorEncumbrance){
+      const modKeys = [game.i18n.localize('CHARAbbrev.GS'), game.i18n.localize('CHARAbbrev.INI')]
+      for(let modkey of modKeys){
+          if(!itemModifiers[modkey]) continue
+
+          itemModifiers[modkey] = itemModifiers[modkey].filter(x => x.type != "armor")
+      }
+    }
+  }
+
+  _getItemModifiers(){
+    let wornArmor = []
+    let itemModifiers = {}
+    for (let i of this.items.filter(
+      (x) =>
+        (["meleeweapon", "rangeweapon", "armor", "equipment"].includes(x.type) && getProperty(x, "system.worn.value")) || ["advantage", "specialability", "disadvantage"].includes(x.type)
+    )) {
+      this._buildGearAndAbilityModifiers(itemModifiers, i);
+
+      if(i.type == "armor") wornArmor.push(i)
+    }
+    this._getArmorCompensation(this, wornArmor, itemModifiers)
+    this._applyModiferTransformations(itemModifiers);
   }
 
   prepareDerivedData() {
     const data = this.system;
-    try {
-      let itemModifiers = {};
-
-      let compensation = this._getArmorCompensation(this, this.items.filter(i => i.type == "armor" && getProperty(i, "system.worn.value")), itemModifiers)
-      for (let i of this.items.filter(
-        (x) =>
-          (["meleeweapon", "rangeweapon", "armor", "equipment"].includes(x.type) && getProperty(x, "system.worn.value")) || ["advantage", "specialability", "disadvantage"].includes(x.type)
-      )) {
-        compensation = this._addGearAndAbilityModifiers(itemModifiers, i, compensation);
-      }
-      this.itemModifiers = this._applyModiferTransformations(itemModifiers);
-
+    try {      
+      this._getItemModifiers()
       for (let ch of Object.values(data.characteristics)) {
         ch.value = ch.initial + ch.advances + (ch.modifier || 0) + ch.gearmodifier;
         ch.cost = game.i18n.format("advancementCost", {
@@ -349,6 +362,7 @@ export default class Actordsa5 extends Actor {
     const system = this.system;
 
     mergeObject(system, {
+      itemModifiers: {},
       skillModifiers: {
         FP: [],
         step: [],
@@ -961,10 +975,10 @@ export default class Actordsa5 extends Actor {
       hasTrait,
       demonmarks,
       diseases,
-      itemModifiers: this.itemModifiers,
+      itemModifiers: this.system.itemModifiers,
       languagePoints: {
-        used: actorData.system.freeLanguagePoints ? actorData.system.freeLanguagePoints.used : 0,
-        available: actorData.system.freeLanguagePoints ? actorData.system.freeLanguagePoints.value : 0,
+        used: actorData.system.freeLanguagePoints?.used || 0,
+        available: actorData.system.freeLanguagePoints?.value || 0,
       },
       schips,
       guidevalues,
@@ -1030,44 +1044,41 @@ export default class Actordsa5 extends Actor {
   }
 
   _applyModiferTransformations(itemModifiers) {
-    for (const [key, value] of Object.entries(itemModifiers)) {
+    this.system.itemModifiers = {}
+    for (const key of Object.keys(itemModifiers)) {
       let shortCut = game.dsa5.config.knownShortcuts[key.toLowerCase()];
-      if (shortCut) this.system[shortCut[0]][shortCut[1]][shortCut[2]] += value.value;
-      else delete itemModifiers[key];
+      if (shortCut) {
+        const modSum = itemModifiers[key].reduce((prev, cur) => prev = prev + cur.value, 0)
+
+        this.system[shortCut[0]][shortCut[1]][shortCut[2]] += modSum;
+
+        this.system.itemModifiers[key] = { value: modSum, sources: itemModifiers[key].map(x => x.source)}
+      }
     }
-    return itemModifiers;
   }
 
-  _addGearAndAbilityModifiers(itemModifiers, i, compensation) {
+  _buildGearAndAbilityModifiers(itemModifiers, i) {
     const effect = getProperty(i, "system.effect.value");
-    if (!effect) return compensation;
+    if (!effect) return
 
-    let notCompensated = true;
     for (let mod of effect.split(/,|;/).map((x) => x.trim())) {
       let vals = mod.replace(/(\s+)/g, " ").trim().split(" ");
       if (vals.length == 2) {
         if (!isNaN(vals[0])) {
-          if (
-            compensation &&
-            i.type == "armor" && [game.i18n.localize("CHARAbbrev.INI").toLowerCase(), game.i18n.localize("CHARAbbrev.GS").toLowerCase()].includes(
-              vals[1].toLowerCase()
-            )
-          ) {
-            notCompensated = false;
-          } else if (itemModifiers[vals[1]] == undefined) {
-            itemModifiers[vals[1]] = {
-              value: Number(vals[0]) * (i.system.step ? Number(i.system.step.value) || 1 : 1),
-              sources: [i.name],
-            };
+          let elem = {
+            value: Number(vals[0]) * (i.system.step ? Number(i.system.step.value) || 1 : 1),
+            source: i.name,
+            type: i.type
+          }
+
+          if (itemModifiers[vals[1]] == undefined) {
+            itemModifiers[vals[1]] = [elem]
           } else {
-            itemModifiers[vals[1]].value += Number(vals[0]) * (i.system.step ? Number(i.system.step.value) || 1 : 1);
-            itemModifiers[vals[1]].sources.push(i.name);
+            itemModifiers[vals[1]].push(elem)
           }
         }
       }
     }
-
-    return compensation && notCompensated;
   }
 
   async _updateAPs(APValue, dataUpdate = {}) {
@@ -1993,7 +2004,7 @@ export default class Actordsa5 extends Actor {
       let currentAmmo = actor.items.find((x) => x.id == item.system.currentAmmo.value || x._id == item.system.currentAmmo.value);
       let reloadType = 0;
       if (currentAmmo) {
-        currentAmmo = currentAmmo.toObject();
+        currentAmmo =  DSA5_Utility.toObjectIfPossible(currentAmmo)
         if (currentAmmo.system.mag.value <= 0) reloadType = 1;
       }
       reloadTime = reloadTime[reloadType] || reloadTime[0];

@@ -174,6 +174,10 @@ export default class DSA5CombatDialog extends DialogShared {
                         level = Math.max(0, level - darkSightLevel);
                         if (SpecialabilityRulesDSA5.hasAbility(actor, game.i18n.localize("LocalizedIDs.traditionBoron")))
                             level = Math.max(0, level - 1);
+                        if (SpecialabilityRulesDSA5.hasAbility(actor, game.i18n.localize("LocalizedIDs.traditionMarbo")))
+                            level = Math.max(0, level - 1);
+
+
                         level = Math.min(
                             4,
                             level + AdvantageRulesDSA5.vantageStep(actor, game.i18n.localize("LocalizedIDs.nightBlind"))

@@ -116,7 +116,7 @@ export default class DSA5Initializer extends Dialog {
                     }
                 }
                 
-                await Playlist.create(itemsToCreate, {keepId: true})
+                await Playlist.create(itemsToCreate, { keepId: true })
                 await Playlist.updateDocuments(itemsToUpdate)
             }
             if (json.scenes) {
