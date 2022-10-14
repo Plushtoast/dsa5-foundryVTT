@@ -886,9 +886,12 @@ export default class DiceDSA5 {
             1,
             Number(res.preData.calculatedSpellModifiers.finalcost) + costModifiers.reduce((b, a) => {return b + a.value}, 0)
         )
-        if (res.successLevel > 0 && res.preData.calculatedSpellModifiers.maintainCost != 0)
-            res.preData.calculatedSpellModifiers.finalcost += Number(res.preData.calculatedSpellModifiers.maintainCost.split(" ")[0])
-        
+        if (res.successLevel > 0 && res.preData.calculatedSpellModifiers.maintainCost != 0){
+            const mtCost = res.preData.calculatedSpellModifiers.maintainCost.split(" ")
+            mtCost[0] = Math.round(Number(mtCost[0]))
+            res.preData.calculatedSpellModifiers.finalcost += mtCost[0]
+            res.preData.calculatedSpellModifiers.maintainCost = mtCost.join(" ")
+        }
     }
 
     static async rollSpell(testData) {

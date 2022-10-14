@@ -338,6 +338,7 @@
     "max": "Max",
     "aoewidth": "Breite",
     "magical": "magisch",
+    "blessed": "geweiht",
     "meleeweapon": "Nahkampfwaffe",
     "meleeweapons": "Nahkampfwaffen",
     "magicspecialtalents": "Magische Sonderfertigkeiten",
@@ -944,7 +945,8 @@
         "assignCharacter": "Charaktere können in der Spielerliste unten links per Rechtsclick zugewiesen werden.",
         "dragLink": "Drag & drop Akteur z.B. für Gestaltwandlung und Beschwörung",
         "onlyGM": "Nur für den Spielleiter sichtbar.",
-        "placeTemplate": "Flächeneffekt Template platzieren"
+        "placeTemplate": "Flächeneffekt Template platzieren",
+        "resizer": "Drag zum Verschieben<br/>Mausrad um zu verkleinern/vergrößern<br/>ggf. Rechte Maustaste Ausrichtung"
     },
     "HELP": {
         "showHelp": "Hilfe anzeigen",
@@ -1183,6 +1185,7 @@
         "keepAtDistance": "Auf Distanz halten",
         "drivingArcher": "Fahrender Schütze",
         "mightyAstralBody": "Machtvoller Astralleib",
+        "mightyKarmalBody": "Geweihter Karmalleib",
         "exceptionalSkill": "Herausragende Fertigkeit",
         "exceptionalCombatTechnique": "Herausragende Kampftechnik",
         "regenerationLeP": "Verbesserte Regeneration (Lebensenergie)",

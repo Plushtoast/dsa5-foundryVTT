@@ -1129,8 +1129,9 @@ class ConsumableItemDSA extends Itemdsa5 {
             const { msg, resistRolls, effectNames } = await DSAActiveEffectConfig.applyAdvancedFunction(source.actor, effects, source, {
                 qualityStep: source.system.QL,
             }, source.actor)
+            
             const infoMsg = `${game.i18n.format("ActiveEffects.appliedEffect", {
-                target: source.actor.name,
+                target: source.actor.token?.name || source.actor.name,
                 source: effectNames.join(", ")
             })} ${msg || ""}`
             ChatMessage.create(DSA5_Utility.chatDataSetup(infoMsg))

@@ -164,7 +164,7 @@ export default class DSA5_Utility {
         if (!actor) {
             let scene = game.scenes.get(speaker.scene)
             try {
-                if (scene) actor = new Token(scene.getEmbeddedDocument("Token", speaker.token)).actor
+                if (scene) actor = new Token(scene.getEmbeddedDocument("Token", speaker.token))?.actor
             } catch (error) {}
         }
 

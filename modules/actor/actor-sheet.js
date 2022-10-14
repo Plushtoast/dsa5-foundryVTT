@@ -707,6 +707,8 @@ export default class ActorSheetDsa5 extends ActorSheet {
         })
 
         html.find(".condition-toggle").mousedown(async(ev) => {
+            if (!this.isEditable) return
+            
             let condKey = $(ev.currentTarget).parents(".statusEffect").attr("data-id")
             let ef = this.actor.effects.get(condKey)
             await ef.update({ disabled: !ef.disabled })

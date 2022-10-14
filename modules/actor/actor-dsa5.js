@@ -1155,10 +1155,15 @@ export default class Actordsa5 extends Actor {
       value: game.i18n.localize("LocalizedIDs.wrestle"),
     };
     item.system.damageThreshold.value = 14;
+
+    const attributes = []
+
     if (SpecialabilityRulesDSA5.hasAbility(this, game.i18n.localize("LocalizedIDs.mightyAstralBody")))
-      mergeObject(item, {
-        system: { effect: { attributes: game.i18n.localize("magical") } },
-      });
+      attributes.push(game.i18n.localize("magical"))
+    if (SpecialabilityRulesDSA5.hasAbility(this, game.i18n.localize("LocalizedIDs.mightyKarmalBody")))
+      attributes.push(game.i18n.localize("blessed"))
+      
+    mergeObject(item, { system: { effect: { attributes: attributes.join(", ") } }});
 
     options["mode"] = statusId;
     return Itemdsa5.getSubClass(item.type).setupDialog(null, options, item, this, tokenId);

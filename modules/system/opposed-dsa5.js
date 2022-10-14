@@ -55,7 +55,7 @@ export default class OpposedDsa5 {
             speaker: actor.flags.oppose.speaker,
             testResult: attackMessage.flags.data.postData,
             messageId: attackMessage.id,
-            img: DSA5_Utility.getSpeaker(actor.flags.oppose.speaker).img
+            img: DSA5_Utility.getSpeaker(actor.flags.oppose.speaker)?.img
         };
         attacker.testResult.source = attackMessage.flags.data.preData.source
         if (attacker.testResult.ammo) attacker.testResult.source.effects.push(...attacker.testResult.ammo.effects)

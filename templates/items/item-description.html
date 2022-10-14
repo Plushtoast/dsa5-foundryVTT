@@ -3,9 +3,18 @@
         {{editor enrichedDescription target="system.description.value" button=true owner=owner editable=editable}} 
     </div>
     {{#if isGM}}
-    <div style="min-height: 200px;margin-top: 20px;">
-        <h3 class="note-section label">{{localize "GM Notes"}}</h3>
-        {{editor enrichedGmdescription target="system.gmdescription.value" button=true owner=owner editable=editable}} 
+    <div class="groupbox">
+        <div class="row-section table-title lineheight">
+            <div class="col col90">
+                {{localize "GM Notes"}}
+            </div>
+            <div class="col ten center">
+                <i class="fas fa-mask" data-tooltip="{{localize 'TT.onlyGM'}}"></i>
+            </div>
+        </div>
+        <div style="min-height: 200px;">
+            {{editor enrichedGmdescription target="system.gmdescription.value" button=true owner=owner editable=editable}} 
+        </div>
     </div>
     {{/if}}
 </div>

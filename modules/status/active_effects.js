@@ -294,7 +294,7 @@ export default class DSAActiveEffectConfig extends ActiveEffectConfig {
                     options.skipResistRolls || false
                 );
                 if (effectApplied) {
-                    const appliedEffect = game.i18n.format("ActiveEffects.appliedEffect", { target: actor.name, source: effectNames.join(", ") });
+                    const appliedEffect = game.i18n.format("ActiveEffects.appliedEffect", { target: actor.token?.name || actor.name, source: effectNames.join(", ") });
                     const infoMsg = `${appliedEffect}${msg || ""}`;
                     await ChatMessage.create(DSA5_Utility.chatDataSetup(infoMsg));
                 }

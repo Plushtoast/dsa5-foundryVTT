@@ -74,13 +74,14 @@ export default function() {
         if(!DSA5_Utility.isActiveGM()) return
 
         const actor = token.actor
+        if(actor.hasPlayerOwner) return
+
         const setting = Number(game.settings.get("dsa5", "obfuscateTokenNames"))
         if (setting == 0 || getProperty(actor, "merchant.merchantType") == "loot") return
 
         let sameActorTokens = canvas.scene.tokens.filter((x) => x.actor && x.actor.id === actor.id);
         let name = game.i18n.localize("unknown")
         if ([2,4].includes(setting)) {
-            //sameActorTokens = sameActorTokens.filter(x => x.name == actor.name)
             const tokenId = token.id || token._id
             if(!tokenId) return
             
