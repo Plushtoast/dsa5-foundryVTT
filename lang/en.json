@@ -1063,6 +1063,13 @@
         "big": "Large [+4]",
         "giant": "Huge [+8]"
     },
+    "MELEESIZE": {
+        "tiny": "Tiny [-4]",
+        "small": "Small [0]",
+        "average": "Medium",
+        "big": "Large [0]",
+        "giant": "Huge [0]"
+    },
     "ROLL": {
         "Targeting": "versus",
         "failed": "failed",

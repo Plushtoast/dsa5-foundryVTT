@@ -49,7 +49,12 @@
                     {{selectOptions weaponSizes selected=targetWeaponSize localize=true}}
                 </select>
             </div>
-
+            <div class="form-group custom-select">
+                <label>{{localize "sizeCategory"}}</label>
+                <select name="size">
+                    {{selectOptions meleeSizeOptions selected=targetSize localize=true}}
+                </select>
+            </div>
             {{/if}} {{#if rangeOptions}}
             <div class="form-group custom-select">
                 <label>{{localize "distance"}}</label>

@@ -794,6 +794,14 @@ DSA5.rangeSizeCategories = {
     "average": "RANGESIZE.average",
     "big": "RANGESIZE.big",
     "giant": "RANGESIZE.giant"
+},
+
+DSA5.meleeSizeCategories = {
+    "tiny": "MELEESIZE.tiny",
+    "small": "MELEESIZE.small",
+    "average": "MELEESIZE.average",
+    "big": "MELEESIZE.big",
+    "giant": "MELEESIZE.giant"
 }
 
 DSA5.shieldSizes = {
@@ -808,6 +816,14 @@ DSA5.rangeSizeModifier = {
     "average": 0,
     "big": 4,
     "giant": 8
+}
+
+DSA5.meleeSizeModifier = {
+    "tiny": -4,
+    "small": 0,
+    "average": 0,
+    "big": 0,
+    "giant": 0
 }
 
 DSA5.rangeVision = {

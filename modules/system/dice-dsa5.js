@@ -15,6 +15,7 @@ import EquipmentDamageDialog from "../dialog/dialog-equipmentdamage.js"
 import DSATables from "../tables/dsatables.js"
 import RequestRoll from "./request-roll.js"
 import { MeasuredTemplateDSA } from "./measuretemplate.js"
+import TableEffects from "../tables/tableEffects.js"
 
 export default class DiceDSA5 {
     static async setupDialog({ dialogOptions, testData, cardOptions }) {
@@ -304,13 +305,13 @@ export default class DiceDSA5 {
         const isDodge = testData.extra.statusId == "dodge"
         if (isDodge && result.successLevel == 3) {
             if (await DSATables.tableEnabledFor("criticalMeleeDefense")) {
-                result["description"] += DSATables.rollCritBotchButton("criticalMeleeDefense", false)
+                result["description"] += DSATables.rollCritBotchButton("criticalMeleeDefense", false, testData, testData)
             }else{
                 result["description"] += DSATables.defaultParryCrit()
             }
         } else if (isDodge && result.successLevel == -3) {
             if (await DSATables.tableEnabledFor("Defense")) {
-                result["description"] += DSATables.rollCritBotchButton("Defense", true)
+                result["description"] += DSATables.rollCritBotchButton("Defense", true, testData, testData)
             } else {
                 result["description"] += await DSATables.defaultBotch()
             }
@@ -683,7 +684,7 @@ export default class DiceDSA5 {
             case 3:
                 if (isAttack) {
                     if(await DSATables.tableEnabledFor("criticalAttack")){
-                        result.description += DSATables.rollCritBotchButton("criticalAttack", false)
+                        result.description += DSATables.rollCritBotchButton("criticalAttack", false, testData)
                     }else{
                         result.description += DSATables.defaultAttackCrit(true)
                         result.doubleDamage = true
@@ -691,10 +692,10 @@ export default class DiceDSA5 {
                     result.halfDefense = true
                 } else {
                     if (testData.isRangeDefense && await DSATables.tableEnabledFor("criticalRangeDefense")){
-                        result.description += DSATables.rollCritBotchButton("criticalRangeDefense", false)
+                        result.description += DSATables.rollCritBotchButton("criticalRangeDefense", false, testData)
                     }
                     else if(await DSATables.tableEnabledFor("criticalMeleeDefense")){
-                        result.description += DSATables.rollCritBotchButton("criticalMeleeDefense", false)
+                        result.description += DSATables.rollCritBotchButton("criticalMeleeDefense", false, testData)
                     }else{
                         result.description += DSATables.defaultParryCrit()
                     }
@@ -703,11 +704,11 @@ export default class DiceDSA5 {
             case -3:
                 const isWeaponless = getProperty(source, "system.combatskill.value") == game.i18n.localize("LocalizedIDs.wrestle") || source.type == "trait"
                 if (isAttack && isMelee && await DSATables.tableEnabledFor("Melee"))
-                    result.description += DSATables.rollCritBotchButton("Melee", isWeaponless)
+                    result.description += DSATables.rollCritBotchButton("Melee", isWeaponless, testData)
                 else if (isAttack && await DSATables.tableEnabledFor("Range"))
-                    result.description += DSATables.rollCritBotchButton("Range", false)
+                    result.description += DSATables.rollCritBotchButton("Range", false, testData)
                 else if (!isAttack && await DSATables.tableEnabledFor("Defense"))
-                    result.description += DSATables.rollCritBotchButton("Defense", isWeaponless)
+                    result.description += DSATables.rollCritBotchButton("Defense", isWeaponless, testData)
                 else
                     result.description += await DSATables.defaultBotch()
                 break
@@ -906,7 +907,7 @@ export default class DiceDSA5 {
             res.qualityStep = Math.min(game.settings.get("dsa5", "capQSat"), Math.ceil(res.result / 3))
             res.preData.calculatedSpellModifiers.finalcost = Math.round(res.preData.calculatedSpellModifiers.cost / 2)
         } else if (res.successLevel <= -2) {
-            res.description += DSATables.rollCritBotchButton(isClerical ? "Liturgy" : "Spell", false)
+            res.description += DSATables.rollCritBotchButton(isClerical ? "Liturgy" : "Spell", false, testData)
         }
 
         if (res.successLevel > 0) {
@@ -1311,16 +1312,13 @@ export default class DiceDSA5 {
             if (testData.successLevel > 0 && source.effects.length > 0) return true
         } else if (["disease", "poison"].includes(source.type)) {
             return source.effects.length > 0
-        }
-        const specAbIds = testData.preData.situationalModifiers.filter((x) => x.specAbId).map((x) => x.specAbId)
-        if (specAbIds.length > 0) {
-            const specAbs = testData.preData.extra.actor.items.filter((x) => specAbIds.includes(x._id))
-            for (const spec of specAbs) {
-                if (spec.effects.length > 0) return true
-            }
-        }
+        } else if(source.type == "trait" && source.effects.length > 0 && testData.successLevel > 0) return true
 
-        return false
+        const specAbIds = testData.preData.situationalModifiers.filter((x) => x.specAbId).map((x) => x.specAbId)
+        return specAbIds.some(x => {
+            const et = testData.preData.extra.actor.items.get(x) 
+            return et?.effects.length > 0
+        })
     }
 
     static async renderRollCard(chatOptions, testData, rerenderMessage) {
@@ -1527,6 +1525,20 @@ export default class DiceDSA5 {
         if(actor) actor.finishResistPainRoll()
     }
 
+    static async wrapLock(ev, callback){
+        const elem = $(ev.currentTarget)
+
+        if(elem.hasClass("locked")) return
+
+        elem.addClass("locked")
+        elem.prepend('<i class="fas fa-spinner fa-spin"></i>')
+        await callback(ev, elem)
+        setTimeout(() => {
+            elem.removeClass("locked")
+            elem.find("i").remove()
+        }, 2000)
+    }
+
     static async chatListeners(html) {
         html.on("click", ".expand-mods", (event) => {
             event.preventDefault()
@@ -1543,20 +1555,18 @@ export default class DiceDSA5 {
         html.on("click", ".gearDamaged", async (ev) => DiceDSA5.gearDamaged(ev))
         html.on("change", ".roll-edit", (ev) => DiceDSA5._rollEdit(ev))
         html.on("click", ".applyEffect", async(ev) => {
-            const elem = $(ev.currentTarget)
-            if(elem.hasClass("locked")) return
-
-            elem.addClass("locked")
-            elem.prepend('<i class="fas fa-spinner fa-spin"></i>')
-            const id = elem.parents(".message").attr("data-message-id")
-            const mode = ev.currentTarget.dataset.target
-
-            await DSAActiveEffectConfig.applyEffect(id, mode)
-            setTimeout(() => {
-                elem.removeClass("locked")
-                elem.find("i").remove()
-            }, 2000)
-            
+            DiceDSA5.wrapLock(ev, async(ev, elem) => { 
+                const id = elem.parents(".message").attr("data-message-id")
+                const mode = ev.currentTarget.dataset.target
+                await DSAActiveEffectConfig.applyEffect(id, mode) 
+            })
+        })
+        html.on("click", ".applyTableEffect", async(ev) => {
+            DiceDSA5.wrapLock(ev, async(ev, elem) => { 
+                const id = elem.parents(".message").attr("data-message-id")
+                const mode = ev.currentTarget.dataset.target
+                await TableEffects.applyEffect(id, mode) 
+            })
         })
         html.on("click", ".placeTemplate", async(ev)=>  MeasuredTemplateDSA.placeTemplateFromChat(ev))
         html.on("click", ".message-delete", (ev) => {

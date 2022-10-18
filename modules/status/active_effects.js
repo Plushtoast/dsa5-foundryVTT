@@ -87,7 +87,9 @@ export default class DSAActiveEffectConfig extends ActiveEffectConfig {
                     "meleeweapon",
                     "rangeweapon",
                 ].includes(itemType) ||
-                (["specialability"].includes(itemType) && getProperty(this.object, "parent.system.category.value") == "Combat"),
+                (["specialability"].includes(itemType) && getProperty(this.object, "parent.system.category.value") == "Combat") ||
+                (itemType == "trait" && ["meleeAttack", "rangeAttack"].includes(getProperty(this.object, "parent.system.traitType.value")))
+                ,
             hasDamageTransformation: ["ammunition"].includes(itemType),
         };
         if (effectConfigs.hasDamageTransformation) {

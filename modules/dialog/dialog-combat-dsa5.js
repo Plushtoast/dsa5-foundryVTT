@@ -305,6 +305,10 @@ export default class DSA5CombatDialog extends DialogShared {
                 name: game.i18n.localize("advantageousPosition"),
                 value: data.advantageousPosition ? 2 : 0,
             },
+            {
+                name: game.i18n.localize("sizeCategory"),
+                value: DSA5.meleeSizeModifier[data.size],
+            },
             ...Itemdsa5.getSpecAbModifiers(html, mode),
             ...this.assassinationModifiers(testData, data)
         );
@@ -351,7 +355,8 @@ export default class DSA5CombatDialog extends DialogShared {
                 name: game.i18n.localize("sight"),
                 value: Number(data.vision || 0),
             },
-            ...Itemdsa5.getSpecAbModifiers(html, "attack"), {
+            ...Itemdsa5.getSpecAbModifiers(html, "attack"), 
+            {
                 name: game.i18n.localize("sizeCategory"),
                 value: DSA5.rangeSizeModifier[data.size],
             }

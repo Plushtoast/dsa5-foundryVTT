@@ -3,4 +3,14 @@
     <div class="card-content">
         <b>{{localize "Description"}}</b>: {{{result}}}
     </div>
+    {{#if hasEffect}}
+    <div class="row-section" style="margin-top:10px">
+        <div class="col two center">
+            <button class="applyTableEffect selfButton" data-target="self" data-tooltip="{{localize 'TT.applyEffectCaster'}}">{{localize 'ActiveEffects.applySelf'}}</button>
+        </div>
+        <div class="col two center">
+            <button class="applyTableEffect selfButton" data-target="target" data-tooltip="{{localize 'TT.applyEffectTargets'}}">{{localize 'ActiveEffects.applyTarget'}}</button>
+        </div>
+    </div>
+    {{/if}}
 </div>

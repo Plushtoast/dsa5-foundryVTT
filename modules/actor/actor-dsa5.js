@@ -302,8 +302,11 @@ export default class Actordsa5 extends Actor {
               apply = item.system.worn.value;
               break;
             case "equipment":
-              apply = (item.system.worn.wearable && item.system.worn.value) || !item.system.worn.wearable;
+              apply = !item.system.worn.wearable || (item.system.worn.wearable && item.system.worn.value)
               break;
+            case "trait":
+              apply = !["meleeAttack", "rangeAttack"].includes(item.system.traitType.value)
+              break
             case "ammunition":
             case "plant":
             case "consumable":

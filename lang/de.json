@@ -1100,6 +1100,13 @@
         "big": "Groß [+4]",
         "giant": "Riesig [+8]"
     },
+    "MELEESIZE": {
+        "tiny": "Winzig [-4]",
+        "small": "Klein [-0]",
+        "average": "Mittel",
+        "big": "Groß [0]",
+        "giant": "Riesig [0]"
+    },
     "DSAREGEX": {
         "combatRounds": "( )?(in )?(Kampfrunde(n)?|KR(s)?)",
         "minutes": "( )?(in )?(minute(n)?|min)",

@@ -411,23 +411,26 @@ export default class Itemdsa5 extends Item {
         }
     }
 
+    static getTargetSizeAndModifier(actor, source, situationalModifiers){
+        let targetSize = "average"
+        game.user.targets.forEach((target) => {
+            if (target.actor) {
+                const size = getProperty(target.actor, "system.status.size.value")
+                if(size) targetSize = size
+
+                CreatureType.addCreatureTypeModifiers(target.actor, source, situationalModifiers, actor)
+            }
+        })
+        return targetSize
+    }
+
     static prepareRangeAttack(situationalModifiers, actor, data, source, tokenId, combatskills, currentAmmo = undefined) {
         situationalModifiers.push(
             ...AdvantageRulesDSA5.getVantageAsModifier(actor, game.i18n.localize("LocalizedIDs.restrictedSenseSight"), -2)
         )
         this.getCombatSkillModifier(actor, source, situationalModifiers)
 
-        let targetSize = "average"
-        if (game.user.targets.size) {
-            game.user.targets.forEach((target) => {
-                if (target.actor) {
-                    const tar = getProperty(target.actor, "system.status.size")
-                    if (tar) targetSize = tar.value
-
-                    CreatureType.addCreatureTypeModifiers(target.actor, source, situationalModifiers, actor)
-                }
-            })
-        }
+        const targetSize = this.getTargetSizeAndModifier(actor, source, situationalModifiers)
 
         const defenseMalus = Number(actor.system.rangeStats.defenseMalus) * -1
         if (defenseMalus != 0) {
@@ -463,21 +466,20 @@ export default class Itemdsa5 extends Item {
 
     static prepareMeleeAttack(situationalModifiers, actor, data, source, combatskills, wrongHandDisabled) {
         let targetWeaponSize = "short"
-        if (game.user.targets.size) {
-            game.user.targets.forEach((target) => {
-                if (target.actor) {
-                    const defWeapon = target.actor.items.filter((x) => {
-                        return (
-                            (x.type == "meleeweapon" && x.system.worn.value) ||
-                            (x.type == "trait" && x.system.traitType.value == "meleeAttack" && x.system.pa)
-                        )
-                    })
-                    if (defWeapon.length > 0) targetWeaponSize = defWeapon[0].system.reach.value
-
-                    CreatureType.addCreatureTypeModifiers(target.actor, source, situationalModifiers, actor)
-                }
-            })
-        }
+        
+        game.user.targets.forEach((target) => {
+            if (target.actor) {
+                const defWeapon = target.actor.items.filter((x) => {
+                    return (
+                        (x.type == "meleeweapon" && x.system.worn.value) ||
+                        (x.type == "trait" && x.system.traitType.value == "meleeAttack" && x.system.pa)
+                    )
+                })
+                if (defWeapon.length > 0) targetWeaponSize = defWeapon[0].system.reach.value
+            }
+        })
+        
+        const targetSize = this.getTargetSizeAndModifier(actor, source, situationalModifiers)
         this.getCombatSkillModifier(actor, source, situationalModifiers)
 
         const defenseMalus = Number(actor.system.meleeStats.defenseMalus) * -1
@@ -497,7 +499,8 @@ export default class Itemdsa5 extends Item {
             showAttack: true,
             targetWeaponSize,
             combatSpecAbs: combatskills,
-
+            meleeSizeOptions: DSA5.meleeSizeCategories,
+            targetSize,
             constricted: actor.hasCondition("constricted"),
             wrongHandDisabled,
             offHand: !wrongHandDisabled && getProperty(source, "system.worn.offHand"),
