@@ -766,7 +766,7 @@ class ItemCareerDSA5 extends ItemSheetdsa5 {
     }
 }
 
-class ConsumableSheetDSA5 extends ItemSheetdsa5 {
+class ConsumableSheetDSA5 extends ItemSheetObfuscation(ItemSheetdsa5) {
     constructor(item, options) {
         options.width = 480
         super(item, options);
@@ -927,7 +927,7 @@ class MeleeweaponSheetDSA5 extends ItemSheetObfuscation(Enchantable) {
     }
 }
 
-class PoisonSheetDSA5 extends ItemSheetdsa5 {
+class PoisonSheetDSA5 extends ItemSheetObfuscation(ItemSheetdsa5) {
     _getHeaderButtons() {
         let buttons = super._getHeaderButtons();
         buttons.unshift({

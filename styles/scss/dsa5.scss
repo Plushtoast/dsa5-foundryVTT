@@ -164,6 +164,10 @@
   .notes-box {
     min-height: 70px;
   }
+
+  .item-box {
+    min-height: 30px;
+  }
   
   .character-sheet nav.sheet-tabs, .creature-sheet nav.sheet-tabs, .npc-sheet nav.sheet-tabs {
     margin-bottom: 20px;
@@ -2525,6 +2529,11 @@
   .chat-condition img, .item-sheet .chatButton img, .dsajournal .chatButton img {
     top: 3px;
   }
+
+  /* double button on render bugfix*/
+  .obfuscationBtn:nth-of-type(2){
+    display: none;
+  }
   
   .maskfield {
     background: url('../../icons/backgrounds/mask.webp'), url('../../icons/backgrounds/maskfield.webp');
@@ -2533,6 +2542,10 @@
     background-position: bottom center, center top;
     padding: 10px 20px 60px 20px;
     color: white;
+
+    .editor .mce-content-body{
+      color: white
+    }
 
     a.content-link{
       color: black;

@@ -31,7 +31,15 @@ export const ItemSheetObfuscation = (superclass) => class extends superclass {
             const invisible = options.tabsinvisible ||this.isObfuscated(tab)
             const tooltip = game.i18n.localize(`SHEET.${invisible ? "deobfuscateItem" : "obfuscateItem"}`)
             if(game.user.isGM){
-                ele.append(` <a data-tooltip="${tooltip}" class="obfuscateSection${this.obfuscationCss(tab)}" data-obfuscate="${tab}"><i class="fas fa-mask"></i></a>`)
+                const sectionName = `obfuscateSection${this.obfuscationCss(tab)}`
+                const existingElem = ele.find(`.${sectionName}`)
+                const btn = `<a data-tooltip="${tooltip}" class="obfuscationBtn ${sectionName}" data-obfuscate="${tab}"><i class="fas fa-mask"></i></a>`
+                if(existingElem.length){
+                    existingElem.replaceWith(btn)
+                }else{
+                    ele.append(` ${btn}`)
+                }
+                    
             }else if(invisible){
                 if(ele.hasClass('active')) swaptab = true
                 ele.remove()

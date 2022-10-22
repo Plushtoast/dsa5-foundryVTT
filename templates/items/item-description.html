@@ -1,19 +1,27 @@
 <div class="tab description active" data-tab="description">
     <div>
-        {{editor enrichedDescription target="system.description.value" button=true owner=owner editable=editable}} 
-    </div>
-    {{#if isGM}}
-    <div class="groupbox">
-        <div class="row-section table-title lineheight">
-            <div class="col col90">
-                {{localize "GM Notes"}}
-            </div>
-            <div class="col ten center">
-                <i class="fas fa-mask" data-tooltip="{{localize 'TT.onlyGM'}}"></i>
+        <div class="row-section">
+            <div class="col {{#unless system.description.value}}item-box{{/unless}}">
+                {{editor enrichedDescription target="system.description.value" button=true owner=owner editable=editable}} 
             </div>
         </div>
-        <div style="min-height: 200px;">
-            {{editor enrichedGmdescription target="system.gmdescription.value" button=true owner=owner editable=editable}} 
+    </div>
+    {{#if isGM}}
+    <div class="row-section" style="margin-top:20px">
+        <div class="col maskfield">
+            <div class="row-section lineheight">
+                <div class="col col90">
+                    <b>{{localize "GM Notes"}}</b>
+                </div>
+                <div class="col ten center">
+                    <i class="fas fa-mask" data-tooltip="{{localize 'TT.onlyGM'}}"></i>
+                </div>
+            </div>
+            <div class="row-section">
+                <div class="col {{#unless system.gmdescription.value}}item-box{{/unless}}">
+                    {{editor enrichedGmdescription target="system.gmdescription.value" button=true owner=owner editable=editable}} 
+                </div>
+            </div>
         </div>
     </div>
     {{/if}}

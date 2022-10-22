@@ -1068,20 +1068,11 @@ export default class ActorSheetDsa5 extends ActorSheet {
             case "effectwrapper":
                 await this._handleEffectWrapper(item)
                 break
-            case "lookup":
-                await this._handleLookup(item)
-                break
-            case "fullpack":
-                await this._addFullPack(item)
-                break
             case "application":
                 await this._handleApplication(item)
                 break
             case "spellextension":
                 await this._handleSpellExtension(item)
-                break
-            case "condition":
-                await this.actor.addCondition(item.payload.id, 1, false, false)
                 break
             case "creature":
                 const shapeshift = game.dsa5.config.hooks.shapeshift
