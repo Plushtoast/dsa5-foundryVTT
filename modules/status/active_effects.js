@@ -268,9 +268,10 @@ export default class DSAActiveEffectConfig extends ActiveEffectConfig {
             testData.qualityStep = testData.successLevel > 0 ? 2 : 1;
         }
 
-        let attacker = DSA5_Utility.getSpeaker(speaker);
+        const attacker = DSA5_Utility.getSpeaker(speaker) || 
+            DSA5_Utility.getSpeaker(getProperty(message.flags, "data.preData.extra.speaker")) || 
+            game.actors.get(getProperty(message.flags, "data.preData.extra.actor.id"))
 
-        if (!attacker) attacker = game.actors.get(getProperty(message.flags, "data.preData.extra.actor.id"));
         let sourceActor = attacker;
         let effects = await this._parseEffectDuration(source, testData, message.flags.data.preData, attacker);
         if (options.effectIds) effects = effects.filter(x => options.effectIds.includes(x._id))

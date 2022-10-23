@@ -772,6 +772,7 @@ class ConsumableSheetDSA5 extends ItemSheetObfuscation(ItemSheetdsa5) {
         super(item, options);
         this.mce = null;
     }
+
     _getHeaderButtons() {
         let buttons = super._getHeaderButtons();
         if (this.item.isOwned) {
@@ -783,6 +784,7 @@ class ConsumableSheetDSA5 extends ItemSheetObfuscation(ItemSheetdsa5) {
         }
         return buttons
     }
+    
     async getData(options) {
         const data = await super.getData(options)
         data["calculatedPrice"] = (data.system.price.value * data.system.QL) || 0

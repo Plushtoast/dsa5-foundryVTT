@@ -1154,6 +1154,16 @@ export default class ActorSheetDsa5 extends ActorSheet {
         return await this._manageDragItems(item, typeClass) 
     }
 
+    async _onDropActiveEffect(event, data) {
+        const effect = await ActiveEffect.implementation.fromDropData(data);
+        if ( !this.actor.isOwner || !effect ) return false;
+        if ( this.actor.uuid === effect.parent?.uuid ) return false;
+
+        const ef = effect.toObject()
+        ef.origin = this.actor.uuid
+        return ActiveEffect.create(ef, {parent: this.actor});
+    }
+
     async _onDropItem(event, data) {
         if ( !this.actor.isOwner ) return false;
 

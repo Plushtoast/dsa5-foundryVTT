@@ -250,9 +250,12 @@ export default class BookWizard extends Application {
     async showJournal(journal) {
         let content = ""
         for(let page of journal.pages){
-            if(page.type == "text") content += page.text.content
-            else if(page.type == "image") content += `<img src="${page.src}"/>`
-            else ui.notifications.warn(`Page type ${page.type} not supported by the journal browser yet`)
+            const sheet = page.sheet
+            const data = await sheet.getData();
+            const view = (await sheet._renderInner(data)).get();
+            let pageContent = $(view[view.length -1]).html()
+            if(page.type == "video") pageContent = `<div class="video-container">${pageContent}</div>`
+            content += pageContent
         }
         const pinIcon = this.findSceneNote(journal.getFlag("dsa5", "initId"))
         const enriched = await TextEditor.enrichHTML(content, {secrets: true, async: true})

@@ -39,6 +39,7 @@ export default class Migrakel {
                 }
                 catch(ev){}
                 
+                //todo there should be a better detection for this
                 if (!sourceItem) {
                     removeEffects.push(i.id);
                 }

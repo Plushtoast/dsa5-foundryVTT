@@ -1,4 +1,5 @@
 import DSA5 from "../system/config-dsa5.js"
+import OnUseEffect from "../system/onUseEffects.js"
 import DSA5_Utility from "../system/utility-dsa5.js"
 
 export default class DSATables {
@@ -8,7 +9,7 @@ export default class DSATables {
             actor: dataset.actor,
             scene: dataset.scene
         }
-        options.source = dataset.source_id
+        options.source = dataset.source
 
         const table = DSA5.systemTables.find(x => x.name == dataset.table)
         const tableResult = await DSATables.getRollTable(table.pack[game.i18n.lang], game.i18n.localize(`TABLENAMES.${dataset.table}`), dataset)
@@ -17,17 +18,63 @@ export default class DSATables {
         const title = `${game.i18n.localize("TABLENAMES." + dataset.table)}`
         const content = await renderTemplate(`systems/dsa5/templates/tables/tableCard.html`, { result, title, hasEffect })
 
+        console.log(tableResult)
+        console.log(hasEffect)
+        const effects = await this.buildEffects(tableResult, hasEffect)
+        console.log(effects)
         ChatMessage.create({
             user: game.user.id,
             content,
             whisper: options.whisper,
             blind: options.blind,
-            flags: { dsa5: { hasEffect, options } }
+            flags: { 
+                data: {
+                    preData: {
+                        source: {
+                            effects
+                        },
+                        extra: {
+                            actor: { id: options.speaker.actor },
+                            speaker: options.speaker
+                        },
+                        situationalModifiers: []
+                    },
+                    postData: {
+
+                    }
+                },
+                dsa5: { 
+                    hasEffect, 
+                    options 
+                }
+            }
         })
     }
 
     static async hasEffect(tableResult){
         return getProperty(tableResult.results[0], "flags.dsa5") || false
+    }
+
+    static async buildEffects(tableResult, hasEffect){
+        let effects = []
+        if(hasEffect && hasEffect.resistEffect){
+            const ef = new OnUseEffect().effectDummy(hasEffect.resistEffect.fail.description, hasEffect.resistEffect.changes || [], hasEffect.resistEffect.duration || { })
+            if(hasEffect.resistEffect.fail.systemEffect){
+                mergeObject(ef, {
+                    _id: "botchEffect",
+                    flags: {
+                        dsa5: {
+                            hideOnToken: false,
+                            hidePlayers: false,
+                            advancedFunction: 2,
+                            args3: "await actor.addCondition(\"prone\");"
+                        }
+                    }
+                })
+            }
+            effects.push(ef)
+        }
+        return effects
     }
 
     static async getRollTable(packName, name, options = {}) {

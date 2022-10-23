@@ -65,6 +65,20 @@ export default function() {
         }
     })
 
+    Hooks.on("dropActorSheetData", (actor, sheet, data) => {
+        switch(data.data?.type){
+            case "condition":
+                actor.addCondition(data.data.payload.id, 1, false, false)
+                return false
+            case "lookup":
+                sheet._handleLookup(data.data)
+                return false
+            case "fullpack": 
+                sheet._addFullPack(data.data)
+                return false
+        }
+    }) 
+
     const askForName = async (tokenObject, setting) => {
         const dialogConstructor = game.dsa5.apps.AskForNameDialog || AskForNameDialog
         dialogConstructor.getDialog(tokenObject, setting)
@@ -147,6 +161,15 @@ class AskForNameDialog extends Dialog{
                         }
                         const token = canvas.scene.tokens.get(tokenId)
                         await token.update({ name })
+                    }
+                },
+                unknown: {
+                    icon: '<i class="fa fa-question"></i>',
+                    label: game.i18n.localize("unknown"),
+                    callback: async(html) => {
+                        const tokenId = tokenObject.id || tokenObject._id
+                        const token = canvas.scene.tokens.get(tokenId)
+                        await token.update({ name: game.i18n.localize("unknown") })
                     }
                 },
                 cancel: {
