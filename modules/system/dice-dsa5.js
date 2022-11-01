@@ -1315,10 +1315,15 @@ export default class DiceDSA5 {
         } else if(source.type == "trait" && source.effects.length > 0 && testData.successLevel > 0) return true
 
         const specAbIds = testData.preData.situationalModifiers.filter((x) => x.specAbId).map((x) => x.specAbId)
-        return specAbIds.some(x => {
-            const et = testData.preData.extra.actor.items.get(x) 
-            return et?.effects.length > 0
-        })
+        if (specAbIds.length > 0) {
+            const specAbs = testData.preData.extra.actor.items.filter((x) => specAbIds.includes(x._id))
+            for (const spec of specAbs) {
+                if (spec.effects.length > 0) return true
+            }
+        }
+
+        return false
+        
     }
 
     static async renderRollCard(chatOptions, testData, rerenderMessage) {
