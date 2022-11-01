@@ -174,6 +174,7 @@
     "AstoundingSuccess": "Spektakulärer Erfolg",
     "AstoundingFailure": "Schreckliches Missgeschick",
     "information": "Information",
+    "botchCritEffect": "Patzer/Krit",
     "confirm": "Bestätigen",
     "advantages": "Vorteile",
     "advantage": "Vorteil",
@@ -461,6 +462,7 @@
     "talisman": "Talisman",
     "searchTalents": "Talente durchsuchen",
     "gearSearch": "Ausrüstung durchsuchen",
+    "searchCompendium": "Kompendium suchen",
     "skillglobal": "Talent (global)",
     "spellextension": "Zauber/Liturgieerweiterung",
     "defense": "Verteidigung",
@@ -981,7 +983,8 @@
         "silverPlated": "versilbert",
         "attributeWarning": "Dieser Gegenstand ist <b>{domain}</b> (und kann ggf. nicht beschädigt werden).",
         "vulnerableTo": "Empfindlich ({name})",
-        "resistantTo": "Resistent ({name})"
+        "resistantTo": "Resistent ({name})",
+        "dropped": "Der Gegenstand fliegt {distance} Schritt davon."
     },
     "SPELL": {
         "loading": "Konzentrationsstatus: {status}",
@@ -1130,6 +1133,7 @@
         "applySelf": "Effekt (Selbst)",
         "appliedEffect": "Effekt <b>{source}</b> wurde auf <b>{target}</b> übertragen.",
         "removedEffect": "Effekt <b>{source}</b> wurde von <b>{target}</b> entfernt.",
+        "apply": "Anwenden",
         "custom": "Sondereffekt",
         "creature": "Akteurlink (z.b. das5-core.corebestiary.Gotongi)",
         "resistRoll": "Widerstandsprobe",
@@ -1343,7 +1347,8 @@
         "notOwner": "Du darfst diesen Charakter nicht modifizieren.",
         "shouldTimesUp": "Für automatische auslaufende Effekte wird das Modul Times-Up benötigt.",
         "requiresModule": "Diese Funktion benötigt das Modul {module}.",
-        "wrongLanguage": "Deine Spracheinstellung passt nicht zur vorgegebenen Einstellung ({lang}). Möchtest du die Sprache ändern?"
+        "wrongLanguage": "Deine Spracheinstellung passt nicht zur vorgegebenen Einstellung ({lang}). Möchtest du die Sprache ändern?",
+        "noVictim": "Kein Opfer im anvisiert, Selbsttreffer wird ausgewertet."
     },
     "Shapeshift": {
         "title": "Gestaltwandlung",

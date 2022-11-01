@@ -174,11 +174,7 @@ export default class ItemSheetdsa5 extends ItemSheet {
         })
 
         DSA5ChatAutoCompletion.bindRollCommands(html)
-
         DSA5StatusEffects.bindButtons(html)
-        html.on('click', '.chat-condition', ev => {
-            DSA5ChatListeners.postStatus($(ev.currentTarget).attr("data-id"))
-        })
 
         let toObserve = html.find(".item-header")
         if (toObserve.length) {

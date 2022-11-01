@@ -249,7 +249,8 @@ export default class DSAActiveEffectConfig extends ActiveEffectConfig {
                 const res = await actor.basicTest(setupData);
                 const availableQs = res.result.qualityStep || 0;
                 //this.automatedAnimation(res.result.successLevel);
-                if (availableQs <= 0) {
+
+                if (availableQs < 1) {
                     await this.applyEffect(data.message, data.mode, [target], { effectIds: [data.effect], skipResistRolls: true })
                 }
             });
@@ -538,25 +539,25 @@ export default class DSAActiveEffectConfig extends ActiveEffectConfig {
             },
             {
                 name: `${game.i18n.localize("feature")} - ${AsPCost}`,
-                val: `data.skillModifiers.feature.AsPCost`,
+                val: `system.skillModifiers.feature.AsPCost`,
                 mode: 0,
                 ph: feature,
             },
             {
                 name: `${game.i18n.localize("advanced")} - ${AsPCost}`,
-                val: `data.skillModifiers.conditional.AsPCost`,
+                val: `system.skillModifiers.conditional.AsPCost`,
                 mode: 0,
                 ph: descriptor,
             },
             {
                 name: `${game.i18n.localize("feature")} - ${KaPCost}`,
-                val: `data.skillModifiers.feature.KaPCost`,
+                val: `system.skillModifiers.feature.KaPCost`,
                 mode: 0,
                 ph: feature,
             },
             {
                 name: `${game.i18n.localize("advanced")} - ${KaPCost}`,
-                val: `data.skillModifiers.conditional.KaPCost`,
+                val: `system.skillModifiers.conditional.KaPCost`,
                 mode: 0,
                 ph: descriptor,
             },
@@ -565,20 +566,20 @@ export default class DSAActiveEffectConfig extends ActiveEffectConfig {
         for (const k of models) {
             let key = k == "skill" ? "skillglobal" : k;
             const el = game.i18n.localize(key);
-            optns.push({ name: `${el} - ${FW}`, val: `data.skillModifiers.${k}.FW`, mode: 0, ph: demo }, { name: `${el} - ${FP}`, val: `data.skillModifiers.${k}.FP`, mode: 0, ph: demo }, { name: `${el} - ${stepValue}`, val: `data.skillModifiers.${k}.step`, mode: 0, ph: demo }, { name: `${el} - ${QS}`, val: `data.skillModifiers.${k}.QL`, mode: 0, ph: demo }, { name: `${el} - ${partChecks}`, val: `data.skillModifiers.${k}.TPM`, mode: 0, ph: demo });
+            optns.push({ name: `${el} - ${FW}`, val: `system.skillModifiers.${k}.FW`, mode: 0, ph: demo }, { name: `${el} - ${FP}`, val: `system.skillModifiers.${k}.FP`, mode: 0, ph: demo }, { name: `${el} - ${stepValue}`, val: `system.skillModifiers.${k}.step`, mode: 0, ph: demo }, { name: `${el} - ${QS}`, val: `system.skillModifiers.${k}.QL`, mode: 0, ph: demo }, { name: `${el} - ${partChecks}`, val: `system.skillModifiers.${k}.TPM`, mode: 0, ph: demo });
         }
 
         const attrs = ["mu", "kl", "in", "ch", "ff", "ge", "ko", "kk"];
         for (const k of attrs)
             optns.push({
                 name: game.i18n.localize(`CHAR.${k.toUpperCase()}`),
-                val: `data.characteristics.${k}.gearmodifier`,
+                val: `system.characteristics.${k}.gearmodifier`,
                 mode: 2,
                 ph: "1",
             });
 
         for (const k of DSA5.gearModifyableCalculatedAttributes)
-            optns.push({ name: game.i18n.localize(k), val: `data.status.${k}.gearmodifier`, mode: 2, ph: "1" });
+            optns.push({ name: game.i18n.localize(k), val: `system.status.${k}.gearmodifier`, mode: 2, ph: "1" });
 
         optns = optns.sort((a, b) => {
             return a.name.localeCompare(b.name);

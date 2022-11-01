@@ -113,12 +113,21 @@ If you want to discuss TDE for foundry or need some assistance you can also join
         <a href="https://www.f-shop.de/virtual-tabletops/das-schwarze-auge-vtt/regel-module/3029/dsa5-orks-hauer-und-schwarzer-pelz-fuer-foundry-vtt" target="_blank" data-tooltip="Orks - Hauer & Schwarzer Pelz">
             <img src="https://ulisses-digital.de/R20/dsa5/modules/dsa5-orcs/icons/journal/coverde.webp" alt="Aventurisches Transmutarium" style="margin-right: 5px; margin-bottom: 5px; text-align:center; width:210px;">
         </a>
+        <a href="https://www.f-shop.de/virtual-tabletops/das-schwarze-auge-vtt/regel-module/3115/dsa5-elementarium-fuer-foundry-vtt" target="_blank" data-tooltip="Aventurisches Elementarium">
+            <img src="https://ulisses-digital.de/R20/dsa5/modules/dsa5-elementarium/icons/journal/coverde.webp" alt="Aventurisches Elementarium" style="margin-right: 5px; margin-bottom: 5px; text-align:center; width:210px;">
+        </a>
         <h2>Abenteuer</h2>
         <a href="https://www.f-shop.de/virtual-tabletops/das-schwarze-auge-vtt/abenteuer-module/2640/dsa5-rabenkrieg-1-kampagne-fuer-foundry-vtt" title="Rabenkrieg I - Die Zähne des Kaimans">
             <img src="https://ulisses-digital.de/R20/dsa5/modules/dsa5-rabenkrieg1/icons/journal/coverde.webp" alt="Rabenkrieg I - Die Zähne des Kaimans" style="margin-right: 5px; margin-bottom: 5px; text-align:center; width:210px;">
         </a>
         <a href="https://www.f-shop.de/virtual-tabletops/das-schwarze-auge-vtt/abenteuer-module/2737/dsa5-rabenkrieg-2-kampagne-fuer-foundry-vtt" title="Rabenkrieg II - Der Biss der Spinne">
-            <img src="https://ulisses-digital.de/R20/dsa5/modules/dsa5-rabenkrieg2/icons/journal/coverde.webp" alt="Rabenkrieg I - Die Zähne des Kaimans" style="margin-right: 5px; margin-bottom: 5px; text-align:center; width:210px;">
+            <img src="https://ulisses-digital.de/R20/dsa5/modules/dsa5-rabenkrieg2/icons/journal/coverde.webp" alt="Rabenkrieg II - Der Biss der Spinne" style="margin-right: 5px; margin-bottom: 5px; text-align:center; width:210px;">
+        </a>
+        <a href="https://www.f-shop.de/virtual-tabletops/das-schwarze-auge-vtt/abenteuer-module/3104/dsa5-rabenkrieg-3-kampagne-fuer-foundry-vtt" target="_blank" data-tooltip="Rabenkrieg III - Der Sturz des Adlers">
+            <img src="https://ulisses-digital.de/R20/dsa5/modules/dsa5-rabenkrieg3/icons/journal/coverde.webp" alt="Rabenkrieg III - Der Sturz des Adlers" style="margin-right: 5px; margin-bottom: 5px; text-align:center; width:210px;">
+        </a>
+        <a href="https://www.f-shop.de/virtual-tabletops/das-schwarze-auge-vtt/abenteuer-module/3112/dsa5-verhandlungskunst-und-friedensschwur-fuer-foundry-vtt" target="_blank" data-tooltip="Verhandlungskunst und Friedensschwur">
+            <img src="https://ulisses-digital.de/R20/dsa5/modules/dsa5-negotiationpeace/icons/journal/coverde.webp" alt="Verhandlungskunst und Friedensschwur" style="margin-right: 5px; margin-bottom: 5px; text-align:center; width:210px;">
         </a>
         <a href="https://www.f-shop.de/virtual-tabletops/das-schwarze-auge-vtt/abenteuer-module/2317/dsa5-kampagne-das-geheimnis-des-drachenritters-fuer-foundry" title="Das Geheimnis des Drachenritters">
             <img src="https://ulisses-digital.de/R20/dsa5/modules/dsa5-drachenritter/icons/journal/cover.webp" alt="Das Geheimnis des Drachenritters" style="margin-right: 5px; margin-bottom: 5px; text-align:center; width:210px;">
@@ -170,5 +179,6 @@ The following modules are recommended for the best gaming experience:
 - [Dice So Nice!](https://gitlab.com/riccisi/foundryvtt-dice-so-nice) - Shows beautiful 3d dice on every roll. A must have! DSA5 fully integrates this module.
 - [VTTA Tokenizer](https://github.com/mrprimate/vtta-tokenizer) - Lets you create beautiful Tokens. DSA5 sets up token frames for the Tokenizer on the first time the module gets activated.
 - [Dice Tray](https://gitlab.com/asacolips-projects/foundry-mods/foundry-vtt-dice-calculator) - If you want to do quick die rolls without knowing foundry's chat syntax. Not needed for advanced users.
+- [times-up](https://gitlab.com/tposney/times-up) - Automatically expires buffs and debuffs on actors
 
 

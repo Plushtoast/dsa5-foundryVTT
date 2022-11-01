@@ -1,3 +1,4 @@
+import DSA5ChatListeners from '../system/chat_listeners.js';
 import DSA5 from '../system/config-dsa5.js'
 
 export default class DSA5StatusEffects {
@@ -16,6 +17,7 @@ export default class DSA5StatusEffects {
                 ev.dataTransfer.setData("text/plain", JSON.stringify(dataTransfer));
             });
         })
+        html.find('.chat-condition').click(ev => DSA5ChatListeners.postStatus($(ev.currentTarget).attr("data-id")))
     }
 
     static createCustomEffect(owner, description = "", label) {
@@ -67,7 +69,7 @@ export default class DSA5StatusEffects {
     static async addCondition(target, effect, value = 1, absolute = false, auto = true) {
         if (!target.isOwner) return "Not owned"
         if (target.compendium) return "Can not add in compendium"
-        if (absolute && value <= 0) return this.removeCondition(target, effect, value, auto, absolute)
+        if (absolute && value < 1) return this.removeCondition(target, effect, value, auto, absolute)
         if (typeof(effect) === "string") effect = duplicate(CONFIG.statusEffects.find(e => e.id == effect))
         if (!effect) return "No Effect Found"
 
@@ -164,7 +166,7 @@ export default class DSA5StatusEffects {
                 }
             }
         }
-        if (update.flags.dsa5.auto <= 0 && update.flags.dsa5.manual == 0)
+        if (update.flags.dsa5.auto < 1 && update.flags.dsa5.manual == 0)
             return await actor.deleteEmbeddedDocuments("ActiveEffect", [existing.id])
         else
             return await existing.update(update)

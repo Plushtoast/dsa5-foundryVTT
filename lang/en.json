@@ -230,6 +230,7 @@
     "attackFromBehind": "Attack from behind",
     "Advances": "Advances",
     "attributes": "Attributes",
+    "botchCritEffect": "Botch/Crit",
     "astralenergy": "Arcane energy",
     "confirm": "Confirm",
     "fshopLink": "https://www.ulissesf-shop.com/virtual-tabletops/",
@@ -527,6 +528,7 @@
     "skillglobal": "Skill (global)",
     "searchTalents": "Search skills",
     "gearSearch": "Search equipment",
+    "searchCompendium": "Search compendium",
     "shieldSize": "Shield size",
     "specialisation": "Specialization",
     "talisman": "Talisman",
@@ -932,7 +934,8 @@
         "silverPlated": "silver plated",
         "attributeWarning": "This item is <b>{domain}</b> (and possibly indestructible.).",
         "vulnerableTo": "Vulnerable ({name})",
-        "resistantTo": "Resistant ({name})"
+        "resistantTo": "Resistant ({name})",
+        "dropped": "The item drops {distance} yards away."
     },
     "SPELL": {
         "loading": "State of concentration: {status}",
@@ -1114,6 +1117,7 @@
         "appliedEffect": "Effect <b>{source}</b> applied to <b>{target}</b>.",
         "removedEffect": "Effect <b>{source}</b> removed from <b>{target}</b>.",
         "custom": "Special effect",
+        "apply": "Apply",
         "creature": "Actorlink (e.g. das5-core.coreenbestiary.Gotongi)",
         "resistRoll": "Resist check",
         "resistPain": "The pain is overwhelming (level 4). The ability to act can only be maintained via a self-control check.",
@@ -1318,7 +1322,8 @@
         "notOwner": "You are not allowed to modify this actor.",
         "shouldTimesUp": "The module Times-Up is required for automatically expiring effects.",
         "requiresModule": "This function requires the module {module}.",
-        "wrongLanguage": "Your language setting does not match the predefined setting ({lang}). Do you want to change this?"
+        "wrongLanguage": "Your language setting does not match the predefined setting ({lang}). Do you want to change this?",
+        "noVictim": "No targets marked. Effect is transferred to self."
     },
     "CEREMONYMODIFIER": {
         "holysite": "Sanctum of the god (+2)",

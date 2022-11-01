@@ -517,10 +517,20 @@
       }
     }
   
-    &:not(.monarch) .window-header .header-button {
+    &:not(.monarch) .window-header > a {
       width: 15px;
       height: 15px;
       margin-top: 10px;
+
+      i {
+        width: 22px;
+        border: 1px solid #111;
+        padding: 3px;
+        background-color: #444;
+        text-align: center;
+        border-radius: 100%;
+        color: white;
+      }
     }
   
     .aa-item-settings i, .window-header [id^="popout_"] i {
@@ -532,16 +542,6 @@
       border-radius: 100%;
       color: white;
     }
-  }
-  
-  .header-button i {
-    width: 22px;
-    border: 1px solid #111;
-    padding: 3px;
-    background-color: #444;
-    text-align: center;
-    border-radius: 100%;
-    color: white;
   }
   
   #combat #combat-round .encounters {

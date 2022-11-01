@@ -68,7 +68,6 @@ export class DSA5CombatTracker extends CombatTracker {
             })
         }
         return data
-
     }
 }
 export class DSA5Combat extends Combat {

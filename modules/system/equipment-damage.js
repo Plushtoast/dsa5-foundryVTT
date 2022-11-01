@@ -81,9 +81,10 @@ export default class EquipmentDamage {
 
         let magicalWarning = ""
         const attributes = getProperty(item, "effect.attributes") || ""
-        if (attributes.includes(CreatureType.clerical))
+        
+        if ((new RegExp(`${CreatureType.magical}`, "i")).test(attributes))
             magicalWarning = `${game.i18n.format("WEAPON.attributeWarning", { domain: CreatureType.clerical })}<br/>`
-        else if (attributes.includes(CreatureType.magical))
+        else if ((new RegExp(`${CreatureType.clerical}`, "i")).test(attributes))
             magicalWarning = `${game.i18n.format("WEAPON.attributeWarning", { domain: CreatureType.magical })}<br/>`
 
         new DialogShared({
@@ -111,6 +112,11 @@ export default class EquipmentDamage {
     static async applyDamageLevelToItem(item, amount) {
         const damage = Math.ceil(item.system.structure.max * 0.25) * amount
         await item.update({ "system.structure.value": Math.max(0, item.system.structure.value - damage) })
+    }
+
+    static async absoluteDamageLevelToItem(item, amount) {
+        const damage = Math.ceil(item.system.structure.max * 0.25) * amount
+        await item.update({ "system.structure.value": Math.min(item.system.structure.value, Math.max(0, item.system.structure.max - damage)) })
     }
 
     static async resolveBreakingTest(item, threshold, category) {

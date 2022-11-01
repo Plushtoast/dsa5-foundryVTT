@@ -175,9 +175,6 @@ export default class BookWizard extends Application {
         })
 
         DSA5StatusEffects.bindButtons(html)
-        html.on('click', '.chat-condition', ev => {
-            DSA5ChatListeners.postStatus($(ev.currentTarget).attr("data-id"))
-        })
 
         html.on('click', '.importBook', async() => this.importBook())
         

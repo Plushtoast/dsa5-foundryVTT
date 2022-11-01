@@ -8,6 +8,7 @@ import RequestRoll from "../system/request-roll.js";
 import DSAActiveEffectConfig from "../status/active_effects.js";
 import DSA5_Utility from "../system/utility-dsa5.js";
 import { dropToGround } from "./itemDrop.js";
+import Actordsa5 from "../actor/actor-dsa5.js";
 
 export default function() {
     Hooks.on("ready", async() => {
@@ -110,6 +111,9 @@ export default function() {
                         break
                     case "updateHits":
                     case "hideResistButton":
+                        break
+                    case "reduceGroupSchip":
+                        Actordsa5.reduceGroupSchip()
                         break
                     case "summonCreature":
                         PlayerMenu.createConjuration(data.payload)

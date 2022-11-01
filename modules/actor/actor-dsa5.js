@@ -1537,16 +1537,25 @@ export default class Actordsa5 extends Actor {
 
   async reduceSchips(schipsource) {
     if (schipsource == 0)
-      await this.update({
-        "system.status.fatePoints.value": this.system.status.fatePoints.value - 1,
-      });
+      await this.update({"system.status.fatePoints.value": this.system.status.fatePoints.value - 1});
     else {
+      await Actordsa5.reduceGroupSchip()
+    }
+  }
+
+  static async reduceGroupSchip(){
+    if(game.user.isGM){
       const groupschips = game.settings
         .get("dsa5", "groupschips")
         .split("/")
         .map((x) => Number(x));
       groupschips[0] = groupschips[0] - 1;
       await game.settings.set("dsa5", "groupschips", groupschips.join("/"));
+    }else {
+      game.socket.emit("system.dsa5", {
+          type: "reduceGroupSchip",
+          payload: { }
+      })
     }
   }
 
