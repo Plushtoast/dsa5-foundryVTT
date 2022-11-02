@@ -14,8 +14,6 @@ import * as migrateWorld from '../system/migrator.js'
 import * as initScene from './scene.js'
 import * as initKeybindings from './keybindings.js'
 import * as rollExtensions from './../system/dsarolls.js'
-import {setEnrichers} from './texteditor.js'
-import { connectHook } from "./itemDrop.js";
 
 import ActorSheetdsa5Character from "./../actor/character-sheet.js";
 import ActorSheetdsa5Creature from "./../actor/creature-sheet.js";
@@ -26,16 +24,12 @@ import BookWizard from "../wizards/adventure_wizard.js";
 import MastersMenu from "../wizards/masters_menu.js";
 import AdvantageRulesDSA5 from "../system/advantage-rules-dsa5.js";
 import SpecialabilityRulesDSA5 from "../system/specialability-rules-dsa5.js";
-import DidYouKnow from "../system/didyouknow.js";
 import DSAActiveEffectConfig from "../status/active_effects.js";
-import TokenHotbar2 from "../system/tokenHotbar2.js";
 import CreatureMerchantSheetDSA5 from "../actor/creature-merchant-sheet.js";
 import CharacterMerchantSheetDSA5 from "../actor/character-merchant-sheet.js";
 import DPS from "../system/derepositioningsystem.js";
-import DSAIniTracker from "../system/dsa-ini-tracker.js";
 import { SelectUserDialog } from "../dialog/addTargetDialog.js";
 import DSAJournalSheet from "../journal/dsa_journal_sheet.js";
-import DSATour from "../tours/dsa_tour.js";
 import DSA5 from "../system/config-dsa5.js";
 
 
@@ -117,22 +111,6 @@ Hooks.once("init", () => {
     configuration.default()
     DPS.initDoorMinDistance()
     mergeObject(CONFIG.JournalEntry.noteIcons, DSA5.noteIcons)
-})
-
-Hooks.once('ready', () => {
-    DidYouKnow.showOneMessage()
-    TokenHotbar2.registerTokenHotbar()
-    connectHook()
-    DSAIniTracker.connectHooks()
-    const hook = (dat) => {
-        if(dat.tabName == "settings") {
-            DSATour.travelAgency()
-            Hooks.off('changeSidebarTab', hook)
-        }
-    }
-    Hooks.on('changeSidebarTab', hook)
-    
-    setEnrichers()
 })
 
 Hooks.once('setup', () => {

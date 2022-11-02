@@ -107,8 +107,7 @@ export default class ItemSheetdsa5 extends ItemSheet {
     }
 
     get template() {
-        let type = this.item.type;
-        return `systems/dsa5/templates/items/item-${type}-sheet.html`;
+        return `systems/dsa5/templates/items/item-${this.item.type}-sheet.html`;
     }
 
     _getItemId(ev) {
@@ -240,7 +239,7 @@ export default class ItemSheetdsa5 extends ItemSheet {
         data.item = this.item
         data.armorAndWeaponDamage = game.settings.get("dsa5", "armorAndWeaponDamage")
         data.isGM = game.user.isGM
-
+        data.categoryType = game.i18n.localize(`ITEM.Type${this.item.type.slice(0,1).toUpperCase()}${this.item.type.slice(1)}`)
         data.enrichedDescription = await TextEditor.enrichHTML(getProperty(this.item.system, "description.value"), {secrets: true, async: true})
         data.enrichedGmdescription = await TextEditor.enrichHTML(getProperty(this.item.system, "gmdescription.value"), {secrets: true, async: true})
         return data;

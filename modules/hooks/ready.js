@@ -8,7 +8,12 @@ import RequestRoll from "../system/request-roll.js";
 import DSAActiveEffectConfig from "../status/active_effects.js";
 import DSA5_Utility from "../system/utility-dsa5.js";
 import { dropToGround } from "./itemDrop.js";
+import { setEnrichers } from './texteditor.js'
+import { connectHook } from "./itemDrop.js";
 import Actordsa5 from "../actor/actor-dsa5.js";
+import DidYouKnow from "../system/didyouknow.js";
+import TokenHotbar2 from "../system/tokenHotbar2.js";
+import DSAIniTracker from "../system/dsa-ini-tracker.js";
 
 export default function() {
     Hooks.on("ready", async() => {
@@ -138,5 +143,19 @@ export default function() {
         await DSA5Tutorial.firstTimeMessage()
 
         Itemdsa5.setupSubClasses()
+
+        DidYouKnow.showOneMessage()
+        TokenHotbar2.registerTokenHotbar()
+        connectHook()
+        DSAIniTracker.connectHooks()
+        const hook = (dat) => {
+            if(dat.tabName == "settings") {
+                DSATour.travelAgency()
+                Hooks.off('changeSidebarTab', hook)
+            }
+        }
+        Hooks.on('changeSidebarTab', hook)
+        
+        setEnrichers()
     });
 }

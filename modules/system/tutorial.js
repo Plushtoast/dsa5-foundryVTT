@@ -12,7 +12,6 @@ export default class DSA5Tutorial {
         }
     }
 
-
     static firstTimeLanguage() {
         const langs = ["de", "en"]
         let data = {

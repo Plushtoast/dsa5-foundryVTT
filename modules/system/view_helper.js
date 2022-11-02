@@ -1,5 +1,3 @@
-import DSA5_Utility from "./utility-dsa5.js";
-
 export function svgAutoFit(elem, width = 320, height = 40) {
     elem.attr({
         'width': width * 0.8,

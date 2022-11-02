@@ -2,12 +2,11 @@
     <h3><b>{{name}}</b><span class="tinyEntityLink">{{{itemLink}}}</span></h3>
     {{#if img}}
     <div class="center">
-        <img src="{{img}}" data-tooltip="{{name}}" /> </div>{{/if}}
-
+        <img src="{{img}}" data-tooltip="{{name}}" /> 
+    </div>
+    {{/if}}
     <div class="card-content">{{{replaceConditions data.description.value}}}</div>
-
     {{#each properties as |property p|}}
-    <div class="chatLineHeight">{{{property}}}</div><br> {{/each}}
-
-
+        <div class="chatLineHeight">{{{property}}}</div><br> 
+    {{/each}}
 </div>
