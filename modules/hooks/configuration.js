@@ -219,7 +219,7 @@ export default function() {
         name: "DSASETTINGS.enableDPS",
         hint: "DSASETTINGS.enableDPSHint",
         scope: "world",
-        config: false,
+        config: true,
         default: true,
         type: Boolean
     });
@@ -373,7 +373,6 @@ export default function() {
 
     game.settings.register("dsa5", "indexWorldItems", {
         name: "DSASETTINGS.indexWorldItems",
-        hint: "DSASETTINGS.indexWorldItemsHint",
         scope: "client",
         config: false,
         default: true,
@@ -446,7 +445,6 @@ export default function() {
 
     game.settings.register("dsa5", "indexDescription", {
         name: "DSASETTINGS.indexDescription",
-        hint: "DSASETTINGS.indexDescription",
         scope: "client",
         config: false,
         default: true,

@@ -28,13 +28,9 @@ export default class DSA5_Utility {
         const pack = await game.packs.get(compendium)
         if (!pack) return ui.notifications.error("No content found")
 
-        let result = []
-        let items
-        await pack.getDocuments().then(content => items = content.filter(i => i.type == itemType));
-        for (let i of items) {
-            result.push(i.toObject())
-        }
-        return result;
+        let search = Array.isArray(itemType) ? itemType : [itemType]
+        let items = (await pack.getDocuments()).filter(i => search.includes(i.type));
+        return items.map(x => x.toObject());
     }
 
     static renderToggle(elem) {

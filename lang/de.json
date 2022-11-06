@@ -96,6 +96,7 @@
     },
     "DIALOG": {
         "RollMode": "Würfelmodus",
+        "deleteConfirmation": "Löschen bestätigen",
         "DeleteItem": "Eintrag entfernen?",
         "SituationalModifiers": "Bedingte\nModifikatoren",
         "DeleteItemDetail": "Möchtest du <b>{item}</b> entfernen?",
@@ -198,7 +199,6 @@
     "bullet": "Kugel",
     "blessing": "Segnung",
     "blessings": "Segnungen",
-    "Burden": "Belastung",
     "biography": "Hintergrundgeschichte",
     "Category": "Kategorie",
     "confirmationRoll": "Bestätigungswurf",
@@ -259,7 +259,6 @@
     "damageApplied": "Schaden wurde übertragen",
     "domains": "Domänen",
     "demonmark": "Dämonenmal",
-    "Delete Confirmation": "Löschen bestätigen",
     "dodge": "Ausweichen",
     "disease": "Krankheit",
     "Distinguishing_mark": "Charakteristika",
@@ -1317,7 +1316,7 @@
         "AdvanceMaximumReached": "Maximale Steigerung bereits erreicht",
         "notFound": "{category} {name} nicht gefunden",
         "itemNotFound": "Dieser Eintrag wurde nicht in der Datenbank gefunden, bitte manuell anlegen",
-        "notUnderstood": "Folgende Einträge  konnten nicht umgesetzt bzw. in der Datenbank gefunden werden. Bitte manuell anpassen/hinzufügen.",
+        "notUnderstood": "Folgende Einträge konnten nicht umgesetzt bzw. in der Datenbank gefunden werden. Bitte manuell anpassen/hinzufügen.",
         "canNotBeAdded": "{item} der Kategory {category} kann nicht hinzugefügt werden. Dies ist keine unterstützte Kategorie.",
         "NoAmmo": "Nicht genug Munition.",
         "MissingChoices": "Noch nicht alle Optionen ausgefüllt.",
@@ -1348,7 +1347,8 @@
         "shouldTimesUp": "Für automatische auslaufende Effekte wird das Modul Times-Up benötigt.",
         "requiresModule": "Diese Funktion benötigt das Modul {module}.",
         "wrongLanguage": "Deine Spracheinstellung passt nicht zur vorgegebenen Einstellung ({lang}). Möchtest du die Sprache ändern?",
-        "noVictim": "Kein Opfer im anvisiert, Selbsttreffer wird ausgewertet."
+        "noVictim": "Kein Opfer im anvisiert, Selbsttreffer wird ausgewertet.",
+        "PreparationError": "Die Initialisierung es Akteurs {name} ist fehlgeschlagen."
     },
     "Shapeshift": {
         "title": "Gestaltwandlung",

@@ -2,14 +2,14 @@
     <div class="derivedAttrs row-section">
         <div class="col two">
         </div>
-        <div class="col eight very-small center" data-tooltip="{{localize 'value'}}">
+        <div class="col eight very-small center" data-tooltip="value">
             {{localize "ABBR.value"}}
         </div>
-        <div class="col eight very-small center" data-tooltip="{{localize 'Modifiers'}}">
+        <div class="col eight very-small center" data-tooltip="Modifiers">
             {{localize "ABBR.modifiers"}}
         </div>
 
-        <div class="col eight very-small center" data-tooltip="{{localize 'max'}}">
+        <div class="col eight very-small center" data-tooltip="max">
             {{localize "ABBR.max"}}
         </div>
     </div>
@@ -17,7 +17,7 @@
         <div class="col two lineheight">
             {{localize "wounds"}}
             <span class="buttons">
-                <a data-char="regenerate" class="ch-regenerate item" data-mod="regenerate" data-tooltip="{{localize 'regenerate'}}">&nbsp;<i class="fas fa-moon"></i></a>
+                <a data-char="regenerate" class="ch-regenerate item" data-mod="regenerate" data-tooltip="regenerate">&nbsp;<i class="fas fa-moon"></i></a>
             </span>
         </div>
         <div class="col eight lineheight center">
@@ -103,7 +103,7 @@
     </div>
     <div class="derivedAttrs row-section">
         <div class="col two lineheight">
-            {{#if actor.system.config.defense}} {{localize "defense"}} {{else}} {{localize "dodge"}}{{/if}} <a class="defenseToggle"><i class="fas fa-shield-alt {{#unless actor.system.config.defense}}off{{/unless}}" data-tooltip="{{localize 'defenseToggle'}}"></i></a>
+            {{#if actor.system.config.defense}} {{localize "defense"}} {{else}} {{localize "dodge"}}{{/if}} <a class="defenseToggle"><i class="fas fa-shield-alt {{#unless actor.system.config.defense}}off{{/unless}}" data-tooltip="defenseToggle"></i></a>
         </div>
         <div class="col eight lineheight center">
             {{actor.system.status.dodge.value}}

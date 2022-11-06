@@ -83,6 +83,7 @@
     "DIALOG": {
         "RollMode": "Rollmode",
         "DeleteItem": "Remove entry?",
+        "deleteConfirmation": "Confirm removal",
         "SituationalModifiers": "Situational\nModifiers",
         "DeleteItemDetail": "Do you want to remove <b>{item}</b>?",
         "ItemRequiresAdoption": "Adapt entry",
@@ -264,7 +265,6 @@
     "bullet": "Bullet",
     "blessing": "Blessing",
     "blessings": "Blessings",
-    "Burden": "Encumbrance",
     "biography": "Biography",
     "Category": "Category",
     "clerical": "clerical",
@@ -329,7 +329,6 @@
     "damageApplied": "Damage has been applied",
     "defense": "Defense",
     "defenseToggle": "Activate/Deactivate defense",
-    "Delete Confirmation": "Confirm removal",
     "demonmark": "Demon Mark",
     "dodge": "Dodge",
     "Distinguishing_mark": "Distinguishing mark",
@@ -1323,7 +1322,8 @@
         "shouldTimesUp": "The module Times-Up is required for automatically expiring effects.",
         "requiresModule": "This function requires the module {module}.",
         "wrongLanguage": "Your language setting does not match the predefined setting ({lang}). Do you want to change this?",
-        "noVictim": "No targets marked. Effect is transferred to self."
+        "noVictim": "No targets marked. Effect is transferred to self.",
+        "PreparationError": "The preparation of actor {name} failed."
     },
     "CEREMONYMODIFIER": {
         "holysite": "Sanctum of the god (+2)",

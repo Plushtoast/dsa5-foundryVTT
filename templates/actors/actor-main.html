@@ -41,7 +41,7 @@
             <div class="row-section wrap cards">
                 {{#each actor.specAbs.general as |item i|}}
                 <div class="item" data-item-id="{{item._id}}">
-                    {{#if item.OnUseEffect}}<a data-tooltip="{{localize 'SHEET.onUseEffect'}}" class="onUseItem"><i class="fas fa-dice-six"></i></a>{{/if}}<a class="item-edit">{{item.name}}{{roman item.system.step.value item.system.maxRank.value}}</a>
+                    {{#if item.OnUseEffect}}<a data-tooltip="SHEET.onUseEffect" class="onUseItem"><i class="fas fa-dice-six"></i></a>{{/if}}<a class="item-edit">{{item.name}}{{roman item.system.step.value item.system.maxRank.value}}</a>
                 </div>
                 {{/each}}
             </div>
@@ -50,13 +50,13 @@
         <div class="groupbox">
             <div class="generalSpecialAbilities row-section">
                 <div class="col header-label lineheight">
-                    <b>{{localize "language"}}</b> <span data-tooltip="{{localize 'freeLanguagePoint'}}">{{actor.languagePoints.used}} / {{actor.languagePoints.available}}</span>
+                    <b>{{localize "language"}}</b> <span data-tooltip="freeLanguagePoint">{{actor.languagePoints.used}} / {{actor.languagePoints.available}}</span>
                 </div>
             </div>
             <div class="row-section wrap cards">
                 {{#each actor.specAbs.language as |item i|}}
                 <div class="item" data-item-id="{{item._id}}">
-                    {{#if item.OnUseEffect}}<a data-tooltip="{{localize 'SHEET.onUseEffect'}}" class="onUseItem"><i class="fas fa-dice-six"></i></a>{{/if}}<a class="item-edit">{{item.name}}{{roman item.system.step.value item.system.maxRank.value}}</a>
+                    {{#if item.OnUseEffect}}<a data-tooltip="SHEET.onUseEffect" class="onUseItem"><i class="fas fa-dice-six"></i></a>{{/if}}<a class="item-edit">{{item.name}}{{roman item.system.step.value item.system.maxRank.value}}</a>
                 </div>
                 {{/each}}
             </div>
@@ -71,7 +71,7 @@
             <div class="row-section wrap cards">
                 {{#each actor.specAbs.fatePoints as |item i|}}
                 <div class="item" data-item-id="{{item._id}}">
-                    {{#if item.OnUseEffect}}<a data-tooltip="{{localize 'SHEET.onUseEffect'}}" class="onUseItem"><i class="fas fa-dice-six"></i></a>{{/if}}<a class="item-edit">{{item.name}}{{roman item.system.step.value item.system.maxRank.value}}</a>
+                    {{#if item.OnUseEffect}}<a data-tooltip="SHEET.onUseEffect" class="onUseItem"><i class="fas fa-dice-six"></i></a>{{/if}}<a class="item-edit">{{item.name}}{{roman item.system.step.value item.system.maxRank.value}}</a>
                 </div>
                 {{/each}}
             </div>
@@ -100,16 +100,16 @@
             <div class="derivedAttrs row-section">
                 <div class="col two">
                 </div>
-                <div class="col eight very-small center" data-tooltip="{{localize 'value'}}">
+                <div class="col eight very-small center" data-tooltip="value">
                     {{localize "ABBR.value"}}
                 </div>
-                <div class="col eight very-small center" data-tooltip="{{localize 'Modifiers'}}">
+                <div class="col eight very-small center" data-tooltip="Modifiers">
                     {{localize "ABBR.modifiers"}}
                 </div>
-                <div class="col eight very-small center" data-tooltip="{{localize 'Advances'}}">
+                <div class="col eight very-small center" data-tooltip="Advances">
                     {{localize "ABBR.advances"}}
                 </div>
-                <div class="col eight very-small center" data-tooltip="{{localize 'max'}}">
+                <div class="col eight very-small center" data-tooltip="max">
                     {{localize "ABBR.max"}}
                 </div>
             </div>
@@ -118,7 +118,7 @@
                     {{localize "wounds"}} {{#if actor.canAdvance}}<a data-attr="wounds" class="advance refund-points"><i data-tooltip="{{actor.system.status.wounds.refund}}" class="fas fa-minus"></i></a>
                     <a data-attr="wounds" class="advance advance-points"><i data-tooltip="{{actor.system.status.wounds.cost}}" class="fas fa-plus"></i></a>{{/if}}
                     <span class="buttons">
-                        <a data-char="regenerate" class="ch-regenerate item" data-mod="regenerate" data-tooltip="{{localize 'regenerate'}}">&nbsp;<i class="fas fa-moon"></i></a>
+                        <a data-char="regenerate" class="ch-regenerate item" data-mod="regenerate" data-tooltip="regenerate">&nbsp;<i class="fas fa-moon"></i></a>
                     </span>
                 </div>
                 <div class="col eight lineheight center">
@@ -143,10 +143,10 @@
 
                     </div>
                     <div class="col eight center inputTooltipAvailable">
-                        <input name="system.status.regeneration.LePMod" type="text" value="{{actor.system.status.regeneration.LePMod}}" data-dtype="Number" data-tooltip="{{localize 'SHEET.permRegeneration'}}" />
+                        <input name="system.status.regeneration.LePMod" type="text" value="{{actor.system.status.regeneration.LePMod}}" data-dtype="Number" data-tooltip="SHEET.permRegeneration" />
                     </div>
                     <div class="col eight center inputTooltipAvailable">
-                        <input name="system.status.regeneration.LePTemp" type="text" value="{{actor.system.status.regeneration.LePTemp}}" data-dtype="Number" data-tooltip="{{localize 'SHEET.tempRegeneration'}}" />
+                        <input name="system.status.regeneration.LePTemp" type="text" value="{{actor.system.status.regeneration.LePTemp}}" data-dtype="Number" data-tooltip="SHEET.tempRegeneration" />
                     </div>
                     <div class="col eight lineheight center">
                         {{actor.system.status.regeneration.LePmax}}
@@ -181,10 +181,10 @@
 
                 </div>
                 <div class="col eight center inputTooltipAvailable">
-                    <input name="system.status.regeneration.AsPMod" type="text" value="{{actor.system.status.regeneration.AsPMod}}" data-dtype="Number" data-tooltip="{{localize 'SHEET.permRegeneration'}}" />
+                    <input name="system.status.regeneration.AsPMod" type="text" value="{{actor.system.status.regeneration.AsPMod}}" data-dtype="Number" data-tooltip="SHEET.permRegeneration" />
                 </div>
                 <div class="col eight center inputTooltipAvailable">
-                    <input name="system.status.regeneration.AsPTemp" type="text" value="{{actor.system.status.regeneration.AsPTemp}}" data-dtype="Number" data-tooltip="{{localize 'SHEET.tempRegeneration'}}" />
+                    <input name="system.status.regeneration.AsPTemp" type="text" value="{{actor.system.status.regeneration.AsPTemp}}" data-dtype="Number" data-tooltip="SHEET.tempRegeneration" />
                 </div>
                 <div class="col eight lineheight center">
                     {{actor.system.status.regeneration.AsPmax}}
@@ -221,10 +221,10 @@
 
                 </div>
                 <div class="col eight center inputTooltipAvailable">
-                    <input name="system.status.regeneration.KaPMod" type="text" value="{{actor.system.status.regeneration.KaPMod}}" data-dtype="Number" data-tooltip="{{localize 'SHEET.permRegeneration'}}" />
+                    <input name="system.status.regeneration.KaPMod" type="text" value="{{actor.system.status.regeneration.KaPMod}}" data-dtype="Number" data-tooltip="SHEET.permRegeneration" />
                 </div>
                 <div class="col eight center inputTooltipAvailable">
-                    <input name="system.status.regeneration.KaPTemp" type="text" value="{{actor.system.status.regeneration.KaPTemp}}" data-dtype="Number" data-tooltip="{{localize 'SHEET.tempRegeneration'}}" />
+                    <input name="system.status.regeneration.KaPTemp" type="text" value="{{actor.system.status.regeneration.KaPTemp}}" data-dtype="Number" data-tooltip="SHEET.tempRegeneration" />
                 </div>
                 <div class="col eight lineheight center">
                     {{actor.system.status.regeneration.KaPmax}}
@@ -394,10 +394,10 @@
                     {{actor.system.details.experience.current}}
                 </div>
                 <div class="col three center">
-                    <input name="system.details.experience.spent" type="text" value="{{actor.system.details.experience.spent}}" data-dtype="Number" />
+                    <input name="system.details.experience.spent" type="number" value="{{actor.system.details.experience.spent}}" data-dtype="Number" />
                 </div>
                 <div class="col three center">
-                    <input name="system.details.experience.total" type="text" value="{{actor.system.details.experience.total}}" data-dtype="Number" />
+                    <input name="system.details.experience.total" type="number" value="{{actor.system.details.experience.total}}" data-dtype="Number" />
                 </div>
 
             </div>

@@ -63,7 +63,7 @@ export default class ItemRulesDSA5 {
             if (elem[parsed.name]) {
                 let adoption = actor.items.find(x => elem[parsed.name].items.includes(x.type) && x.name == parsed.special)
                 if (adoption) {
-                    item.system.APValue.value = item.system.APValue.value.split("/")[adoption.system.StF.value.charCodeAt(0) - 65]
+                    item.system.APValue.value = item.system.APValue.value ? item.system.APValue.value.split("/")[adoption.system.StF.value.charCodeAt(0) - 65] : 0
                     ItemRulesDSA5.simpleAdoption(item, adoption, parsed.name, elem)
                 }
                 break
@@ -79,20 +79,20 @@ export default class ItemRulesDSA5 {
     static itemStep(actorData, name, types) {
         let item = actorData.items.find(x => types.includes(x.type) && x.name == name)
         if (item) {
-            return Number(item.system == undefined ? item.system.step.value : item.system.step.value)
+            return Number(item.system.step.value)
         } else {
             return 0
         }
     }
 
     static itemAsModifier(actor, name, factor, types, startsWith = false, selected = false) {
-            let res = []
-            const regex = startsWith ? new RegExp(`^${DSA5_Utility.escapeRegex(`${name} (`)}`) : new RegExp(`^${DSA5_Utility.escapeRegex(name)}$`)
+        let res = []
+        const regex = startsWith ? new RegExp(`^${DSA5_Utility.escapeRegex(`${name} (`)}`) : new RegExp(`^${DSA5_Utility.escapeRegex(name)}$`)
         const item = actor.items.find(x => types.includes(x.type) && regex.test(x.name))
         if (item) {
             res.push({
                 name: item.name,
-                value: Number(item.system == undefined ? item.system.step.value : item.system.step.value) * factor,
+                value: Number(item.system.step.value) * factor,
                 selected,
                 source: item.name
             })

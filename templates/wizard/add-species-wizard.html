@@ -26,35 +26,35 @@
         <div class="row-section wrap">
             {{#each missingVantages as |item i|}}
             <div class="col two row-section lineheight">
-                <input type="checkbox" id="missingvantage_{{i}}" class="optional" data-cost="{{item.apCost}}" name="{{item.replaceName}}" data-step="{{item.step}}" value="{{item._id}}" disabled checked>
-                <label for="missingvantage_{{i}}">{{item.replaceName}} {{roman item.step}} ({{item.apCost}} AP)</label>
-                <a class="show-item" data-id="{{item._id}}" data-tooltip="{{item.tooltip}}"><i class="fas fa-info"></i></a>
+                <input type="checkbox" id="missingvantage_{{i}}" class="optional" data-cost="{{item.apCost}}" name="{{item.replaceName}}" data-step="{{item.step}}" value="{{item.uuid}}" disabled checked>
+                <label for="missingvantage_{{i}}">{{item.replaceName}} {{roman item.step (or item.system.max.value item.system.maxRank.value)}} ({{item.apCost}} AP)</label>
+                <a class="show-item" data-id="{{item.uuid}}" data-tooltip="{{item.tooltip}}"><i class="fas fa-info"></i></a>
             </div>
             {{/each}}
         </div>
         {{/if}} {{#if advantagesToChose}}
         <h2>{{localize 'recommendedAdvantages'}}</h2>
         {{#each advantagegroups as |group j|}}
-        <h3>{{group.name}}</h3>
+        {{#if group.name}}<h3>{{group.name}}</h3>{{/if}}
         <div class="row-section wrap">
             {{#each group.res as |item i|}}
             <div class="col two row-section lineheight">
-                <input type="checkbox" id="advantage_{{i}}_{{j}}" class="optional" data-cost="{{item.apCost}}" name="{{item.replaceName}}" data-step="{{item.step}}" value="{{item._id}}" {{#if item.disabled}}disabled{{/if}}>
-                <label for="advantage_{{i}}_{{j}}">{{item.replaceName}} {{roman item.step}}  ({{item.apCost}} AP)</label>
-                <a class="show-item" data-id="{{item._id}}" data-tooltip="{{item.tooltip}}"><i class="fas fa-info"></i></a>
+                <input type="checkbox" id="advantage_{{i}}_{{j}}" class="optional" data-cost="{{item.apCost}}" name="{{item.replaceName}}" data-step="{{item.step}}" value="{{item.uuid}}" {{#if item.disabled}}disabled{{/if}}>
+                <label for="advantage_{{i}}_{{j}}">{{item.replaceName}} {{roman item.step item.system.max.value}}  ({{item.apCost}} AP)</label>
+                <a class="show-item" data-id="{{item.uuid}}" data-tooltip="{{item.tooltip}}"><i class="fas fa-info"></i></a>
             </div>
             {{/each}}
         </div>
         {{/each }} {{/if}} {{#if disadvantagesToChose}}
         <h2>{{localize 'recommendedDisadvantages'}}</h2>
         {{#each disadvantagegroups as |group j|}}
-        <h3>{{group.name}}</h3>
+        {{#if group.name}}<h3>{{group.name}}</h3>{{/if}}
         <div class="row-section wrap">
             {{#each group.res as |item i|}}
             <div class="col two row-section lineheight">
-                <input type="checkbox" id="disadvantage_{{i}}_{{j}}" class="optional" data-cost="{{item.apCost}}" name="{{item.replaceName}}" data-step="{{item.step}}" value="{{item._id}}" {{#if item.disabled}}disabled{{/if}}>
-                <label for="disadvantage_{{i}}_{{j}}">{{item.replaceName}} {{roman item.step}}  ({{item.apCost}} AP)</label>
-                <a class="show-item" data-id="{{item._id}}" data-tooltip="{{item.tooltip}}"><i class="fas fa-info"></i></a>
+                <input type="checkbox" id="disadvantage_{{i}}_{{j}}" class="optional" data-cost="{{item.apCost}}" name="{{item.replaceName}}" data-step="{{item.step}}" value="{{item.uuid}}" {{#if item.disabled}}disabled{{/if}}>
+                <label for="disadvantage_{{i}}_{{j}}">{{item.replaceName}} {{roman item.step item.system.max.value}}  ({{item.apCost}} AP)</label>
+                <a class="show-item" data-id="{{item.uuid}}" data-tooltip="{{item.tooltip}}"><i class="fas fa-info"></i></a>
             </div>
             {{/each}}
         </div>

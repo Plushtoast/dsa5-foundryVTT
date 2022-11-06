@@ -14,6 +14,7 @@ import Actordsa5 from "../actor/actor-dsa5.js";
 import DidYouKnow from "../system/didyouknow.js";
 import TokenHotbar2 from "../system/tokenHotbar2.js";
 import DSAIniTracker from "../system/dsa-ini-tracker.js";
+import DSATour from "../tours/dsa_tour.js";
 
 export default function() {
     Hooks.on("ready", async() => {
@@ -135,6 +136,7 @@ export default function() {
             await game.settings.set("vtta-tokenizer", "default-frame-neutral", "[data] systems/dsa5/icons/backgrounds/token_blue.webp")
             await game.settings.set("dsa5", "tokenizerSetup", true)
         }
+
         if (DSA5_Utility.moduleEnabled("dice-so-nice") && !(await game.settings.get("dsa5", "diceSetup")) && game.user.isGM) {
             await game.settings.set("dice-so-nice", "immediatelyDisplayChatMessages", true)
             await game.settings.set("dsa5", "diceSetup", true)

@@ -5,7 +5,6 @@ export default function() {
         game.dsa5.apps.DiceSoNiceCustomization = new DiceSoNiceCustomization()
     })
 
-
     Hooks.once('diceSoNiceReady', (dice3d, b, c, d) => {
         dice3d.addColorset({
             name: 'mu',

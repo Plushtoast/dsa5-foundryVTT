@@ -17,11 +17,10 @@ export default class DialogActorConfig extends Dialog {
                     icon: '<i class="fa fa-check"></i>',
                     label: game.i18n.localize("Save"),
                     callback: dlg => {
-                        let update = { 
+                        actor.update({ 
                             "system.config.autoBar": dlg.find('[name="autoBar"]').is(":checked"),
                             "system.config.autoSize": dlg.find('[name="autoSize"]').is(":checked")
-                        }
-                        actor.update(update)
+                        })
                     }
                 },
                 cancel: {

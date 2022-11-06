@@ -41,7 +41,7 @@
             <div class="row-section wrap cards">
                 {{#each actor.specAbs.general as |item i|}}
                 <div class="item" data-item-id="{{item._id}}">
-                    {{#if item.OnUseEffect}}<a data-tooltip="{{localize 'SHEET.onUseEffect'}}" class="onUseItem"><i class="fas fa-dice-six"></i></a>{{/if}}<a class="item-edit">{{item.name}}{{roman item.system.step.value item.system.maxRank.value}}</a>
+                    {{#if item.OnUseEffect}}<a data-tooltip="SHEET.onUseEffect" class="onUseItem"><i class="fas fa-dice-six"></i></a>{{/if}}<a class="item-edit">{{item.name}}{{roman item.system.step.value item.system.maxRank.value}}</a>
                 </div>
                 {{/each}}
             </div>
@@ -56,7 +56,7 @@
             <div class="row-section wrap cards">
                 {{#each actor.specAbs.language as |item i|}}
                 <div class="item" data-item-id="{{item._id}}">
-                    {{#if item.OnUseEffect}}<a data-tooltip="{{localize 'SHEET.onUseEffect'}}" class="onUseItem"><i class="fas fa-dice-six"></i></a>{{/if}}<a class="item-edit">{{item.name}}{{roman item.system.step.value item.system.maxRank.value}}</a>
+                    {{#if item.OnUseEffect}}<a data-tooltip="SHEET.onUseEffect" class="onUseItem"><i class="fas fa-dice-six"></i></a>{{/if}}<a class="item-edit">{{item.name}}{{roman item.system.step.value item.system.maxRank.value}}</a>
                 </div>
                 {{/each}}
             </div>
@@ -72,7 +72,7 @@
             <div class="row-section wrap cards">
                 {{#each actor.specAbs.fatePoints as |item i|}}
                 <div class="item" data-item-id="{{item._id}}">
-                    {{#if item.OnUseEffect}}<a data-tooltip="{{localize 'SHEET.onUseEffect'}}" class="onUseItem"><i class="fas fa-dice-six"></i></a>{{/if}}<a class="item-edit">{{item.name}}{{roman item.system.step.value item.system.maxRank.value}}</a>
+                    {{#if item.OnUseEffect}}<a data-tooltip="SHEET.onUseEffect" class="onUseItem"><i class="fas fa-dice-six"></i></a>{{/if}}<a class="item-edit">{{item.name}}{{roman item.system.step.value item.system.maxRank.value}}</a>
                 </div>
                 {{/each}}
             </div>
@@ -101,13 +101,13 @@
             <div class="derivedAttrs row-section">
                 <div class="col two">
                 </div>
-                <div class="col eight very-small center" data-tooltip="{{localize 'value'}}">
+                <div class="col eight very-small center" data-tooltip="value">
                     {{localize "ABBR.value"}}
                 </div>
-                <div class="col eight very-small center" data-tooltip="{{localize 'Modifiers'}}">
+                <div class="col eight very-small center" data-tooltip="Modifiers">
                     {{localize "ABBR.modifiers"}}
                 </div>
-                <div class="col eight very-small center" data-tooltip="{{localize 'max'}}">
+                <div class="col eight very-small center" data-tooltip="max">
                     {{localize "ABBR.max"}}
                 </div>
             </div>
@@ -115,7 +115,7 @@
                 <div class="col two lineheight">
                     {{localize "wounds"}}
                     <span class="buttons">
-                        <a data-char="regenerate" class="ch-regenerate item" data-mod="regenerate" data-tooltip="{{localize 'regenerate'}}">&nbsp;<i class="fas fa-moon"></i></a>
+                        <a data-char="regenerate" class="ch-regenerate item" data-mod="regenerate" data-tooltip="regenerate">&nbsp;<i class="fas fa-moon"></i></a>
                     </span>
                 </div>
                 <div class="col eight lineheight center">

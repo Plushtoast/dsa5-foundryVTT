@@ -6,11 +6,13 @@
                 <i class="fas fa-plus"></i>
             </a>
             {{#if combatCount}}
-            <a class="combat-button combat-cycle" data-tooltip="COMBAT.EncounterPrevious" {{#if previousId}}data-combat-id="{{previousId}}" {{else}}disabled{{/if}}>
+            <a class="combat-button combat-cycle" data-tooltip="COMBAT.EncounterPrevious"
+               {{#if previousId}}data-document-id="{{previousId}}"{{else}}disabled{{/if}}>
                 <i class="fas fa-caret-left"></i>
             </a>
             <h4 class="encounter">{{localize "COMBAT.Encounter"}} {{currentIndex}} / {{combatCount}}</h4>
-            <a class="combat-button combat-cycle" data-tooltip="COMBAT.EncounterNext" {{#if nextId}}data-combat-id="{{nextId}}" {{else}}disabled{{/if}}>
+            <a class="combat-button combat-cycle" data-tooltip="COMBAT.EncounterNext"
+               {{#if nextId}}data-document-id="{{nextId}}"{{else}}disabled{{/if}}>
                 <i class="fas fa-caret-right"></i>
             </a>
             {{/if}}

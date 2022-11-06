@@ -7,7 +7,6 @@ import DSA5_Utility from "../system/utility-dsa5.js"
 export default class WizardDSA5 extends Application {
     constructor(app) {
         super(app)
-        this.items = []
         this.actor = null
         this.errors = []
         this.dataTypes = []
@@ -27,15 +26,25 @@ export default class WizardDSA5 extends Application {
         return options;
     }
 
-    parseToItem(value, types) {
+    async findCompendiumItem(name, types){
+        for(let type of types){
+            const results = await game.dsa5.itemLibrary.findCompendiumItem(name, type)
+            //todo make sure this loads the right thing e.g. armory instead of core
+            if(results.length && results[0].system) return results[0]
+        }
+        
+        return undefined
+    }
+
+    async parseToItem(value, types) {
         if (value.trim() == "")
             return []
 
-        return value.split(", ").map(x => {
+        return await Promise.all(value.split(", ").map(async(x) => {
             let parsed = DSA5_Utility.parseAbilityString(x.trim())
-            let item = this.items.find(y => y.name == parsed.original && types.includes(y.type))
+            let item = await this.findCompendiumItem(parsed.original, types)
             if (!item) {
-                item = this.items.find(y => y.name == parsed.name && types.includes(y.type))
+                item = await this.findCompendiumItem(parsed.name, types)
             }
             if (!item) {
                 if (this.attributes.includes(parsed.name)) {
@@ -65,7 +74,9 @@ export default class WizardDSA5 extends Application {
                     }
                 }
             } else {
+                const uuid = item.uuid
                 item = duplicate(item)
+                item.uuid = uuid
                 item.tooltip = game.i18n.localize("Details")
                 item = ItemRulesDSA5.reverseAdoptionCalculation(this.actor, parsed, item)
                 if (item.system.APValue) {
@@ -80,15 +91,16 @@ export default class WizardDSA5 extends Application {
             if (actorHasItem)
                 item.tooltip = game.i18n.localize("YouAlreadyHaveit")
             return item
-        })
+        }))
     }
 
     mergeLevels(itemsToAdd, item) {
         let merged = false
         let existing = itemsToAdd.find(x => x.name == item.name && x.type == item.type)
+        console.log(item, existing)
         if (existing) {
             merged = true
-            const level = Number(getProperty(item, "system.step.value"))
+            let level = Number(getProperty(item, "system.step.value")) 
             if (level) {
                 existing.system.step.value += level
             }
@@ -105,7 +117,7 @@ export default class WizardDSA5 extends Application {
             const val = $(k).val()
             if (val == "") continue
 
-            let item = duplicate(this.items.find(x => x.id == $(k).val()))
+            let item = await fromUuid($(k).val())
             let parsed = DSA5_Utility.parseAbilityString(item.name)
             item.name = $(k).attr("name")
 
@@ -132,6 +144,14 @@ export default class WizardDSA5 extends Application {
             }
         }
         await this.actor.createEmbeddedDocuments("Item", itemsToAdd)
+    }
+
+    async fixPreviousCosts(previous, toFix) {
+        for(let item of toFix){
+            const hasFixable = previous.find(x => x.type == item.type && x.name == item.name)
+
+            if(hasFixable) item.apCost -= hasFixable.apCost
+        }
     }
 
     async alreadyAdded(string, category) {
@@ -172,9 +192,7 @@ export default class WizardDSA5 extends Application {
             let parsed = DSA5_Utility.parseAbilityString(skill.trim())
             let res = this.actor.items.find(i => { return i.type == itemType && i.name == parsed.name });
             if (res) {
-                let skillUpdate = duplicate(res)
-                skillUpdate.system.talentValue.value = Math.max(0, factor * parsed.step + (bonus ? Number(skillUpdate.system.talentValue.value) : 0))
-                itemsToUpdate.push(skillUpdate)
+                itemsToUpdate.push({_id: res.id, "system.talentValue.value": Math.max(0, factor * parsed.step + (bonus ? Number(res.system.talentValue.value) : 0))})
             } else {
                 console.warn(`Could not find ${itemType} ${skill}`)
                 this.errors.push(`${game.i18n.localize(itemType)}: ${skill}`)
@@ -183,16 +201,10 @@ export default class WizardDSA5 extends Application {
         await this.actor.updateEmbeddedDocuments("Item", itemsToUpdate);
     }
 
-    async _loadCompendiae() {
-        this.items = [];
-        for (let p of game.packs) {
-            if (p.documentName == "Item" && (game.user.isGM || !p.private)) {
-                await p.getDocuments().then(content => {
-                    this.items.push(...content.filter(x => this.dataTypes.includes(x.type)))
-                })
-            }
-        }
-        this.items.push(...game.items.contents.filter(i => i.permission > 1 && this.dataTypes.includes(i.type)));
+    async getData(options){
+        const data = await super.getData(options)
+        await game.dsa5.itemLibrary.buildEquipmentIndex()
+        return data
     }
 
     _validateInput(parent) {
@@ -226,9 +238,9 @@ export default class WizardDSA5 extends Application {
             }
         })
         html.find('button.cancel').click(() => { this.close() })
-        html.find('.show-item').click(ev => {
+        html.find('.show-item').click(async(ev) => {
             let itemId = $(ev.currentTarget).attr("data-id")
-            const item = this.items.find(i => i.id == itemId)
+            const item = await fromUuid(itemId)
             item.sheet.render(true)
         })
 

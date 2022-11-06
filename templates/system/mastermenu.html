@@ -32,7 +32,7 @@
 
                     </div>
                 </div>
-                <div class="row-section lineheight" data-tooltip="{{localize 'MASTER.sightautomationTooltip'}}">
+                <div class="row-section lineheight" data-tooltip="MASTER.sightautomationTooltip">
                     <div class="col fourty">
                         <label>{{localize "MASTER.threshold"}}</label>
                     </div>
@@ -59,7 +59,7 @@
             <div class="groupbox">
                 <h2>{{localize 'MASTER.automation'}}</h2>
 
-                <div class="row-section lineheight" data-tooltip="{{localize 'DSASETTINGS.enableDPSHint'}}">
+                <div class="row-section lineheight" data-tooltip="DSASETTINGS.enableDPSHint">
                     <div class="col fourty table-title">
                         <label>{{localize "DSASETTINGS.enableDPS"}}</label>
                     </div>
@@ -91,10 +91,10 @@
         </div>
         <div class="tab main" data-tab="main">
             <div class="row-section">
-                <div class="col ten lineheight center" data-tooltip="{{localize 'groupFatePoints'}}">
+                <div class="col ten lineheight center" data-tooltip="groupFatePoints">
                     {{{localize 'CHARAbbrev.groupFatePoints'}}}
                 </div>
-                <div class="col eighty center" data-tooltip="{{localize 'fatePoints'}}">
+                <div class="col eighty center" data-tooltip="fatePoints">
                     {{#each groupschips as |item i|}}
                     <a class="schip groupschip {{item.cssClass}}" data-val="{{item.value}}"></a>
                     {{/each}}
@@ -126,9 +126,9 @@
                 </div>
             </div>
             <div class="row-section skills table-title">
-                <div class="col ten"><a class="dragEveryone" data-tooltip="{{localize 'MASTER.dragEveryone'}}"><i class="fas fa-grip-vertical"></i></a></div>
+                <div class="col ten"><a class="dragEveryone" data-tooltip="MASTER.dragEveryone"><i class="fas fa-grip-vertical"></i></a></div>
                 <div class="col five">
-                    {{localize 'Name'}} <a class="randomPlayer" data-tooltip="{{localize 'MASTER.randomPlayer'}}"><i
+                    {{localize 'Name'}} <a class="randomPlayer" data-tooltip="MASTER.randomPlayer"><i
                             class="fas fa-dice-six"></i></a>
                 </div>
                 <div class="col ten">
@@ -137,11 +137,11 @@
                     <input type="checkbox" class="selectAll" name="selectAll" value="1">
                 </div>
                 <div class="col five">
-                    <a class="rollAll" data-tooltip="{{localize 'CHAT.RollBlind'}}"><i class="fas fa-dice"></i></a>
-                    <a class="getPaidAll" data-tooltip="{{localize 'PAYMENT.wage'}}"><i class="fas fa-piggy-bank"></i></a>
-                    <a class="payAll" data-tooltip="{{localize 'MASTER.payTT'}}"><i class="fas fa-coins"></i></a>
-                    <a class="expAll" data-tooltip="{{localize 'MASTER.awardXP'}}"><i class="fas fa-trophy"></i></a>
-                    <a class="groupCheck" data-tooltip="{{localize 'HELP.groupcheck'}}"><i class="fas fa-users-cog"></i></a>
+                    <a class="rollAll" data-tooltip="CHAT.RollBlind"><i class="fas fa-dice"></i></a>
+                    <a class="getPaidAll" data-tooltip="PAYMENT.wage"><i class="fas fa-piggy-bank"></i></a>
+                    <a class="payAll" data-tooltip="MASTER.payTT"><i class="fas fa-coins"></i></a>
+                    <a class="expAll" data-tooltip="MASTER.awardXP"><i class="fas fa-trophy"></i></a>
+                    <a class="groupCheck" data-tooltip="HELP.groupcheck"><i class="fas fa-users-cog"></i></a>
                 </div>
             </div>
             <div class="heros">
@@ -175,10 +175,10 @@
                             <input type="checkbox" class="heroSelector" name="heroSelector" value="1" {{checked hero.gmSelected}}>
                         </div>
                         <div class="col five">
-                            <a class="rollChar" data-tooltip="{{localize 'CHAT.RollBlind'}}"><i class="fas fa-dice"></i></a>
-                            <a class="getPaid" data-tooltip="{{localize 'PAYMENT.wage'}}"><i class="fas fa-piggy-bank"></i></a>
-                            <a class="pay" data-tooltip="{{localize 'MASTER.payTT'}}"><i class="fas fa-coins"></i></a>
-                            <a class="exp" data-tooltip="{{localize 'MASTER.awardXP'}}"><i class="fas fa-trophy"></i></a>
+                            <a class="rollChar" data-tooltip="CHAT.RollBlind"><i class="fas fa-dice"></i></a>
+                            <a class="getPaid" data-tooltip="PAYMENT.wage"><i class="fas fa-piggy-bank"></i></a>
+                            <a class="pay" data-tooltip="MASTER.payTT"><i class="fas fa-coins"></i></a>
+                            <a class="exp" data-tooltip="MASTER.awardXP"><i class="fas fa-trophy"></i></a>
                         </div>
                     </div>
                     <div class="row-section lineheight expandDetails col">

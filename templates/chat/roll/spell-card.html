@@ -35,15 +35,15 @@
     <div class="row-section" style="margin-top:10px">
         {{#if applyEffect}}
         <div class="col two center">
-            <button class="applyEffect selfButton" data-target="self" data-tooltip="{{localize 'TT.applyEffectCaster'}}">{{localize 'ActiveEffects.applySelf'}}</button>
+            <button class="applyEffect selfButton" data-target="self" data-tooltip="TT.applyEffectCaster">{{localize 'ActiveEffects.applySelf'}}</button>
         </div>
         <div class="col two center">
-            <button class="applyEffect selfButton" data-target="target" data-tooltip="{{localize 'TT.applyEffectTargets'}}">{{localize 'ActiveEffects.applyTarget'}}</button>
+            <button class="applyEffect selfButton" data-target="target" data-tooltip="TT.applyEffectTargets">{{localize 'ActiveEffects.applyTarget'}}</button>
         </div>
         {{/if}}
         {{#if hasAreaTemplate}}
         <div class="col two center">
-            <button class="placeTemplate selfButton" data-tooltip="{{localize 'TT.placeTemplate'}}">{{localize 'AoE'}}</button>
+            <button class="placeTemplate selfButton" data-tooltip="TT.placeTemplate">{{localize 'AoE'}}</button>
         </div>
         {{/if}}
     </div>

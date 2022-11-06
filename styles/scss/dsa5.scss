@@ -483,6 +483,8 @@
     /*box-shadow: 0 0 14px #00000052 inset;*/
     background: rgb(188, 136, 111);
     background: linear-gradient(90deg, rgba(188, 136, 111, 0.8) 0%, rgba(255, 255, 255, 0) 100%);
+
+    
   }
   
   .table-title {
@@ -1147,6 +1149,21 @@
       background-position: center;
       background-repeat: repeat-y;
       padding: 0 50px;
+
+      .video-container{
+        position: relative;
+        width: 100%;
+        padding-bottom: 56.25%;
+    
+        iframe {
+          position: absolute;
+          top: 0;
+          left: 0;
+          width: 100%;
+          height: 100%;
+          border: 0;
+        }
+      }
     }
   }
   
@@ -1193,7 +1210,7 @@
       top: 2px;
     }
   
-    &.npc-sheet:after, &.character-sheet:after, &.item:after {
+    &.npc-sheet:after, &.character-sheet:after, &.item:not(.monarch):after {
       background-image: url('../../icons/backgrounds/sidebar-bot.webp');
       bottom: 2px;
       content: '';
@@ -1427,33 +1444,21 @@
     color: black;
   }
   
-  .initTracker button, .masterMenu button, .sheetButton {
+#sidebar button,
+.initTracker button, .masterMenu button, .sheetButton,
+.sidebar-popout button, 
+.sidebar-popout .dice-tray button  {
     background-image: linear-gradient(to right top, #be2020, #af1622, #9f0d22, #8f0522, #7f0021);
     color: white;
     border: 1px solid black;
-  }
-  
-  .sidebar-popout {
-    button, .dice-tray button {
-      background-image: linear-gradient(to right top, #be2020, #af1622, #9f0d22, #8f0522, #7f0021);
-      color: white;
-      border: 1px solid black;
-    }
-  }
-  
-  #sidebar button {
-    background-image: linear-gradient(to right top, #be2020, #af1622, #9f0d22, #8f0522, #7f0021);
-    color: white;
-    border: 1px solid black;
-  
     &:active {
       box-shadow: inset 0 0 5px black;
     }
   
     &:hover {
-      box-shadow: 0 0 5px white;
+      box-shadow: inset 0 0 3px white;
     }
-  }
+}
   
   #combat li.combatant .roll {
     background-image: url('../../icons/dice/d6white.svg');
@@ -2535,20 +2540,6 @@
     display: none;
   }
 
-  .video-container{
-    position: relative;
-    width: 100%;
-    padding-bottom: 56.25%;
-
-    iframe {
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      border: 0;
-    }
-  }
   
   .maskfield {
     background: url('../../icons/backgrounds/mask.webp'), url('../../icons/backgrounds/maskfield.webp');
@@ -3826,6 +3817,10 @@
     background-position: center;
     position: relative;
     top: 5px;
+  }
+
+  .settings-sidebar button{
+    margin: 3px 0;
   }
   
   #sidebar button.fshopButton {

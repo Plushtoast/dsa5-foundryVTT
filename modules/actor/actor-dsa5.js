@@ -18,12 +18,7 @@ import CreatureType from "../system/creature-type.js";
 
 export default class Actordsa5 extends Actor {
   static async create(data, options) {
-    if (data instanceof Array) return await super.create(data, options);
-
-    if (data.items) return await super.create(data, options);
-
-    data.items = [];
-    //if (!data.flags) data.flags = []
+    if (data instanceof Array || data.items) return await super.create(data, options);
 
     if (!data.img || data.img == "icons/svg/mystery-man.svg") data.img = "icons/svg/mystery-man-black.svg";
 
@@ -31,8 +26,8 @@ export default class Actordsa5 extends Actor {
     const combatskills = (await DSA5_Utility.allCombatSkills()) || [];
     const moneyItems = (await DSA5_Utility.allMoneyItems()) || [];
 
-    data.items.push(...skills, ...combatskills, ...moneyItems);
-
+    data.items = [...skills, ...combatskills, ...moneyItems];
+    
     if (data.type != "character") data.system = { status: { fatePoints: { current: 0, value: 0 } } };
 
     if (data.type != "creature" && [undefined, 0].includes(getProperty(data, "system.status.wounds.value")))
@@ -132,16 +127,7 @@ export default class Actordsa5 extends Actor {
         (data.status.wounds.current + data.status.wounds.modifier + data.status.wounds.advances) * data.status.wounds.multiplier +
         data.status.wounds.gearmodifier
       );
-      data.status.astralenergy.max =
-        data.status.astralenergy.current +
-        data.status.astralenergy.modifier +
-        data.status.astralenergy.advances +
-        data.status.astralenergy.gearmodifier;
-      data.status.karmaenergy.max =
-        data.status.karmaenergy.current +
-        data.status.karmaenergy.modifier +
-        data.status.karmaenergy.advances +
-        data.status.karmaenergy.gearmodifier;
+      
 
       data.status.regeneration.LePmax =
         data.status.regeneration.LePTemp + data.status.regeneration.LePMod + data.status.regeneration.LePgearmodifier;
@@ -160,18 +146,18 @@ export default class Actordsa5 extends Actor {
 
         if (data.characteristics[guide.clerical])
           data.status.karmaenergy.current += Math.round(data.characteristics[guide.clerical].value * data.energyfactor.clerical);
-
-        data.status.astralenergy.max =
-          data.status.astralenergy.current +
-          data.status.astralenergy.modifier +
-          data.status.astralenergy.advances +
-          data.status.astralenergy.gearmodifier;
-        data.status.karmaenergy.max =
-          data.status.karmaenergy.current +
-          data.status.karmaenergy.modifier +
-          data.status.karmaenergy.advances +
-          data.status.karmaenergy.gearmodifier;
       }
+
+      data.status.astralenergy.max =
+        data.status.astralenergy.current +
+        data.status.astralenergy.modifier +
+        data.status.astralenergy.advances +
+        data.status.astralenergy.gearmodifier;
+      data.status.karmaenergy.max =
+        data.status.karmaenergy.current +
+        data.status.karmaenergy.modifier +
+        data.status.karmaenergy.advances +
+        data.status.karmaenergy.gearmodifier;
 
       data.status.speed.max = data.status.speed.initial + (data.status.speed.modifier || 0) + data.status.speed.gearmodifier;
       data.status.soulpower.max =
@@ -245,7 +231,7 @@ export default class Actordsa5 extends Actor {
       else if (this.hasCondition("prone")) data.status.speed.max = Math.min(1, data.status.speed.max);
     } catch (error) {
       console.error("Something went wrong with preparing actor data: " + error + error.stack);
-      ui.notifications.error(game.i18n.localize("ACTOR.PreparationError") + error + error.stack);
+      ui.notifications.error(game.i18n.format("dsk.DSKError.PreparationError", {name: this.name}) + error + error.stack);
     }
   }
 
@@ -1832,7 +1818,11 @@ export default class Actordsa5 extends Actor {
     const enchants = getProperty(item, "flags.dsa5.enchantments");
     if (enchants && enchants.length > 0) {
       item.enchantClass = "rar";
-    } else if ((item.system.effect && item.system.effect.value != "") || item.effects.length > 0) {
+    } 
+    else if(item.effects.length > 0){
+      item.enchantClass = "common"
+    }
+    else if (item.system.effect && item.system.effect.value != "") {
       if (item.type == "armor") {
         for (let mod of item.system.effect.value.split(/,|;/).map(x => x.trim())) {
           let vals = mod.replace(/(\s+)/g, ' ').trim().split(" ")

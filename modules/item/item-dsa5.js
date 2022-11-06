@@ -593,8 +593,7 @@ export default class Itemdsa5 extends Item {
     }
 
     static getSubClass(type) {
-        if (game.dsa5.config.ItemSubclasses[type]) return game.dsa5.config.ItemSubclasses[type]
-        else return Itemdsa5
+        return game.dsa5.config.ItemSubclasses[type] || Itemdsa5
     }
 
     async postItem() {
@@ -705,11 +704,7 @@ class AmmunitionItemDSA5 extends Itemdsa5 {
     }
 }
 
-class EffectWrapperItemDSA5 extends Itemdsa5 {
-    static chatData(data, name) {
-        return []
-    }
-}
+class EffectWrapperItemDSA5 extends Itemdsa5 { }
 
 class ArmorItemDSA5 extends Itemdsa5 {
     static chatData(data, name) {
@@ -1262,7 +1257,8 @@ class MeleeweaponDSA5 extends Itemdsa5 {
             this._chatLineHelper("damage", data.damage.value),
             this._chatLineHelper("atmod", data.atmod.value),
             this._chatLineHelper("pamod", data.pamod.value),
-            this._chatLineHelper("combatskill", data.combatskill.value),
+            this._chatLineHelper("reach", game.i18n.localize(`Range.${data.rw}`)),
+            this._chatLineHelper("ITEM.TypeCombatskill", data.combatskill.value),
         ]
         if (data.effect.value != "") res.push(this._chatLineHelper(DSA5_Utility.replaceConditions("effect", data.effect.value)))
 
@@ -1416,7 +1412,7 @@ class RangeweaponItemDSA5 extends Itemdsa5 {
     static chatData(data, name) {
         let res = [
             this._chatLineHelper("damage", data.damage.value),
-            this._chatLineHelper("combatskill", data.combatskill.value),
+            this._chatLineHelper("ITEM.TypeCombatskill", data.combatskill.value),
             this._chatLineHelper("reach", data.reach.value),
         ]
         if (data.effect.value != "") res.push(this._chatLineHelper(DSA5_Utility.replaceConditions("effect", data.effect.value)))

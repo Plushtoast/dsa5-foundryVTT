@@ -26,9 +26,9 @@
         <div class="row-section wrap">
             {{#each missingVantages as |item i|}}
             <div class="col two row-section lineheight">
-                <input type="checkbox" id="missingvantage_{{i}}" class="optional" data-cost="{{item.apCost}}" name="{{item.replaceName}}" data-step="{{item.step}}" value="{{item._id}}" disabled checked>
+                <input type="checkbox" id="missingvantage_{{i}}" class="optional" data-cost="{{item.apCost}}" name="{{item.replaceName}}" data-step="{{item.step}}" value="{{item.uuid}}" disabled checked>
                 <label for="missingvantage_{{i}}">{{item.replaceName}} {{roman item.step}} ({{item.apCost}} AP)</label>
-                <a class="show-item" data-id="{{item._id}}" data-tooltip="{{item.tooltip}}"><i class="fas fa-info"></i></a>
+                <a class="show-item" data-id="{{item.uuid}}" data-tooltip="{{item.tooltip}}"><i class="fas fa-info"></i></a>
             </div>
             {{/each}}
         </div>
@@ -37,9 +37,9 @@
         <div class="row-section wrap">
             {{#each advantages as |item i|}}
             <div class="col two row-section lineheight">
-                <input type="checkbox" id="advantage_{{i}}" class="optional" data-cost="{{item.apCost}}" name="{{item.replaceName}}" data-step="{{item.step}}" value="{{item._id}}" {{#if item.disabled}}disabled{{/if}}>
+                <input type="checkbox" id="advantage_{{i}}" class="optional" data-cost="{{item.apCost}}" name="{{item.replaceName}}" data-step="{{item.step}}" value="{{item.uuid}}" {{#if item.disabled}}disabled{{/if}}>
                 <label for="advantage_{{i}}">{{item.replaceName}} {{roman item.step}} ({{item.apCost}} AP)</label>
-                <a class="show-item" data-id="{{item._id}}" data-tooltip="{{item.tooltip}}"><i class="fas fa-info"></i></a>
+                <a class="show-item" data-id="{{item.uuid}}" data-tooltip="{{item.tooltip}}"><i class="fas fa-info"></i></a>
             </div>
             {{/each}}
         </div>
@@ -48,9 +48,9 @@
         <div class="row-section wrap">
             {{#each disadvantages as |item i|}}
             <div class="col two row-section lineheight">
-                <input type="checkbox" id="disadvantage_{{i}}" class="optional" data-cost="{{item.apCost}}" name="{{item.replaceName}}" data-step="{{item.step}}" value="{{item._id}}" {{#if item.disabled}}disabled{{/if}}>
+                <input type="checkbox" id="disadvantage_{{i}}" class="optional" data-cost="{{item.apCost}}" name="{{item.replaceName}}" data-step="{{item.step}}" value="{{item.uuid}}" {{#if item.disabled}}disabled{{/if}}>
                 <label for="disadvantage_{{i}}">{{item.replaceName}} {{roman item.step}} ({{item.apCost}} AP)</label>
-                <a class="show-item" data-id="{{item._id}}" data-tooltip="{{item.tooltip}}"><i class="fas fa-info"></i></a>
+                <a class="show-item" data-id="{{item.uuid}}" data-tooltip="{{item.tooltip}}"><i class="fas fa-info"></i></a>
             </div>
             {{/each}}
         </div>
@@ -74,9 +74,9 @@
         <div class="row-section wrap">
             {{#each missingSpecialabilities as |item i|}}
             <div class="col two row-section lineheight">
-                <input type="checkbox" id="missinspecialability_{{i}}" class="optional" data-cost="{{item.apCost}}" name="{{item.replaceName}}" data-step="{{item.step}}" value="{{item._id}}" disabled checked>
+                <input type="checkbox" id="missinspecialability_{{i}}" class="optional" data-cost="{{item.apCost}}" name="{{item.replaceName}}" data-step="{{item.step}}" value="{{item.uuid}}" disabled checked>
                 <label for="missinspecialability_{{i}}">{{item.replaceName}} {{roman item.step}} ({{item.apCost}} AP)</label>
-                <a class="show-item" data-id="{{item._id}}" data-tooltip="{{item.tooltip}}"><i class="fas fa-info"></i></a>
+                <a class="show-item" data-id="{{item.uuid}}" data-tooltip="{{item.tooltip}}"><i class="fas fa-info"></i></a>
             </div>
             {{/each}}
         </div>
@@ -104,9 +104,9 @@
         <div class="row-section wrap">
             {{#each spelltricks as |item i|}}
             <div class="col two row-section lineheight">
-                <input type="checkbox" id="spelltrick_{{i}}" class="optional exclusiveTricks" data-cost="0" name="{{item.replaceName}}" data-step="{{item.step}}" value="{{item._id}}" {{#if item.disabled}}disabled{{/if}}>
+                <input type="checkbox" id="spelltrick_{{i}}" class="optional exclusiveTricks" data-cost="0" name="{{item.replaceName}}" data-step="{{item.step}}" value="{{item.uuid}}" {{#if item.disabled}}disabled{{/if}}>
                 <label for="spelltrick_{{i}}">{{item.replaceName}}</label>
-                <a class="show-item" data-id="{{item._id}}" data-tooltip="{{item.tooltip}}"><i class="fas fa-info"></i></a>
+                <a class="show-item" data-id="{{item.uuid}}" data-tooltip="{{item.tooltip}}"><i class="fas fa-info"></i></a>
             </div>
             {{/each}}
         </div>

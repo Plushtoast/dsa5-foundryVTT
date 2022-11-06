@@ -27,6 +27,9 @@ export default function() {
             return roman[a - 1]
         },
         isWEBM: (a) => /.webm$/.test(a),
+        itemCategory: (a) => {
+            return game.i18n.localize(`ITEM.Type${a.slice(0,1).toUpperCase()}${a.slice(1)}`)
+        },
         joinStr: (a, b) => b.join(a),
         diceThingsUp: (a, b) => DSA5_Utility.replaceDies(a, false),
         replaceConditions: DSA5_Utility.replaceConditions,

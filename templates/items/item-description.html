@@ -9,7 +9,7 @@
     {{#if isGM}}
     <div class="row-section" style="margin-top:20px">
         <div class="col maskfield">
-            <div class="row-section" data-tooltip="{{localize 'TT.onlyGM'}}">
+            <div class="row-section" data-tooltip="TT.onlyGM">
                 <div class="col {{#unless system.gmdescription.value}}item-box{{/unless}}">
                     {{editor enrichedGmdescription target="system.gmdescription.value" button=true owner=owner editable=editable}} 
                 </div>

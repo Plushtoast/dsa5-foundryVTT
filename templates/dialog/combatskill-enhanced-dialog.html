@@ -30,7 +30,7 @@
                 <label>{{localize "opportunityAttack"}} (-4)</label>
                 <input type="checkbox" class="opportunityAttack" name="opportunityAttack" value="-4">
             </div>
-            <div class="form-group custom-select" data-tooltip="{{localize 'DIALOG.assassinateDescr'}}">
+            <div class="form-group custom-select" data-tooltip="DIALOG.assassinateDescr">
                 <label>{{localize "DIALOG.assassinate"}}</label>
                 <select name="assassinate">
                     <option value="-">-</option>
@@ -117,7 +117,7 @@
             <div class="specAbsContainer">
                 {{#unless combatSpecAbs}}
                 <div class="row-section">
-                    <div class="col specImg" style="height: 120px" data-tooltip="{{localize 'DIALOG.noCombatskills'}}"></div>
+                    <div class="col specImg" style="height: 120px" data-tooltip="DIALOG.noCombatskills"></div>
                 </div>
 
                 {{else}} {{#each combatSpecAbs as |item i|}}

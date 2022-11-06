@@ -28,14 +28,19 @@ export default class ActorSheetDsa5 extends ActorSheet {
 
         let elem = $(this._element)
 
-        elem.find(".close").attr("data-tooltip", game.i18n.localize("SHEET.Close"));
-        elem.find(".configure-sheet").attr("data-tooltip", game.i18n.localize("SHEET.Configure"));
-        elem.find(".configure-token").attr("data-tooltip", game.i18n.localize("SHEET.Token"));
-        elem.find(".import").attr("data-tooltip", game.i18n.localize("SHEET.Import"));
-        elem.find(".locksheet").attr("data-tooltip", game.i18n.localize("SHEET.Lock"));
-        elem.find(".library").attr("data-tooltip", game.i18n.localize("SHEET.Library"));
-        elem.find(".playerview").attr("data-tooltip", game.i18n.localize("SHEET.switchLimited"));
-        elem.find(".actorConfig").attr("data-tooltip", game.i18n.localize("SHEET.actorConfig"));
+        const tooltips = {
+            ".close": "SHEET.Close",
+            ".configure-sheet": "SHEET.Configure",
+            ".configure-token": "SHEET.Token",
+            ".import": "SHEET.Import",
+            ".locksheet": "SHEET.Lock",
+            ".library": "SHEET.Library",
+            ".playerview": "SHEET.switchLimited",
+            ".actorConfig": "SHEET.actorConfig"
+        }
+        for(let key of Object.keys(tooltips)){
+            elem.find(key).attr("data-tooltip", game.i18n.localize(tooltips[key]));    
+        }
 
         if (this.currentFocus) {
             elem.find('[data-item-id="' + this.currentFocus + '"] input').focus().select();
@@ -818,7 +823,7 @@ export default class ActorSheetDsa5 extends ActorSheet {
         let message = game.i18n.format("DIALOG.DeleteItemDetail", { item: item.name })
         renderTemplate('systems/dsa5/templates/dialog/delete-item-dialog.html', { message }).then(html => {
             new Dialog({
-                title: game.i18n.localize("Delete Confirmation"),
+                title: game.i18n.localize("deleteConfirmation"),
                 content: html,
                 buttons: {
                     Yes: {
@@ -1009,13 +1014,6 @@ export default class ActorSheetDsa5 extends ActorSheet {
         return await this._addUniqueItem(item)
     }
 
-    async _addSkill(item) {
-        item = duplicate(item)
-        let res = this.actor.items.find(i => i.type == item.type && i.name == item.name && i.system.description.value == item.system.description.value);
-        if (!res) await this.actor.createEmbeddedDocuments("Item", [item])
-    }
-
-
     async handleItemCopy(item, typeClass) {
         if (DSA5.equipmentCategories.includes(typeClass)) {
             item.name += " (Copy)"
@@ -1053,9 +1051,6 @@ export default class ActorSheetDsa5 extends ActorSheet {
             case "money":
                 await this._addMoney(item)
                 break;
-            case "skill":
-                await this._addSkill(item)
-                break
             case "ritual":
             case "ceremony":
             case "blessing":
@@ -1081,6 +1076,7 @@ export default class ActorSheetDsa5 extends ActorSheet {
                     shapeshift.render(true)
                 }
                 break
+            case "skill":
             case "information":
                 await this._addUniqueItem(item)
                 break

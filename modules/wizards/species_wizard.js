@@ -31,21 +31,25 @@ export default class SpeciesWizard extends WizardDSA5 {
         })
     }
 
-    _toGroups(input, categories) {
-        return input.split("\n").map(x => {
+    async _toGroups(input, categories, previous) {
+        const groups = await Promise.all(input.split("\n").map(async(x) => {
             let vals = x.split(":")
+            let elem
             if (vals.length > 1) {
-                return {
+                elem = {
                     name: vals[0].trim(),
-                    res: this.parseToItem(vals[1].trim(), categories)
+                    res: await this.parseToItem(vals[1].trim(), categories)
                 }
             } else {
-                return {
+                elem = {
                     name: "",
-                    res: this.parseToItem(x, categories)
+                    res: await this.parseToItem(x, categories)
                 }
             }
-        })
+            this.fixPreviousCosts(previous, elem.res)
+            return elem
+        }))
+        return groups
     }
 
     _parseAttributes(attr) {
@@ -62,12 +66,12 @@ export default class SpeciesWizard extends WizardDSA5 {
         return result
     }
 
-    getData(options) {
-        const data = super.getData(options);
-        const advantagegroups = this._toGroups(this.species.system.recommendedAdvantages.value, ["advantage"])
-        const disadvantagegroups = this._toGroups(this.species.system.recommendedDisadvantages.value, ["disadvantage"])
-        const requirements = this.parseToItem(this.species.system.requirements.value, ["disadvantage", "advantage"])
+    async getData(options) {
+        const data = await super.getData(options);
+        const requirements = await this.parseToItem(this.species.system.requirements.value, ["disadvantage", "advantage"])
         const missingVantages = requirements.filter(x => ["advantage", "disadvantage"].includes(x.type) && !x.disabled)
+        const advantagegroups = await this._toGroups(this.species.system.recommendedAdvantages.value, ["advantage"], requirements)
+        const disadvantagegroups = await this._toGroups(this.species.system.recommendedDisadvantages.value, ["disadvantage"], requirements)
         const attributeRequirements = this._parseAttributes(this.species.system.attributeChange.value)
         const baseCost = Number(this.species.system.APValue.value)
         const reqCost = requirements.reduce(function(_this, val) {
@@ -96,7 +100,6 @@ export default class SpeciesWizard extends WizardDSA5 {
     async addSpecies(actor, item) {
         this.actor = actor
         this.species = duplicate(item)
-        await this._loadCompendiae()
     }
 
     async updateCharacter() {

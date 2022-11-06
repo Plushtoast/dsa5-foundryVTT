@@ -45,19 +45,16 @@ export const dropToGround = async(sourceActor, item, data, amount) => {
         const td = await finalActor.getTokenDocument({ x: data.x, y: data.y, hidden: false });
         if (!canvas.dimensions.rect.contains(td.x, td.y)) return false
 
-        const cls = getDocumentClass("Token");
-        await cls.create(td, { parent: canvas.scene });
-
         if (sourceActor) {
+            await canvas.scene.createEmbeddedDocuments("Token", [td], { noHook: true })
             const newCount = item.system.quantity.value - amount
             if (newCount < 1) {
                 await sourceActor.deleteEmbeddedDocuments("Item", [item.id])
             } else {
-                await sourceActor.updateEmbeddedDocuments("Item", [{
-                    _id: item.id,
-                    "system.quantity.value": newCount
-                }])
+                await sourceActor.updateEmbeddedDocuments("Item", [{ _id: item.id, "system.quantity.value": newCount }])
             }
+        }else {
+            await canvas.scene.createEmbeddedDocuments("Token", [td])
         }
     } else {
         const payload = {

@@ -7,20 +7,20 @@
         </div>
         {{#if (eq @key 'bags')}}
         <div class="col five center">
-            <i class="fas fa-weight-hanging" data-tooltip="{{localize 'carrycapacity'}}"></i>
+            <i class="fas fa-weight-hanging" data-tooltip="carrycapacity"></i>
         </div>
         {{/if}}
         <div class="col eight center">
-            <i class="fa fa-shield-alt" data-tooltip="{{localize 'equipped'}}"></i>
+            <i class="fa fa-shield-alt" data-tooltip="equipped"></i>
         </div>
         <div class="col eight center">
-            <span data-tooltip="{{localize 'quantity'}}">#</span>
+            <span data-tooltip="quantity">#</span>
         </div>
         <div class="col eight center">
-            <i class="fa fa-anchor" data-tooltip="{{localize 'Weight'}}"></i>
+            <i class="fa fa-anchor" data-tooltip="Weight"></i>
         </div>
         <div class="col ten center">
-            <a class="item-create very-small" data-tooltip="{{localize 'SHEET.addItem'}}" item-section="{{sid}}" data-type="{{section.dataType}}"><i class="fas fa-plus"></i></a>
+            <a class="item-create very-small" data-tooltip="SHEET.addItem" item-section="{{sid}}" data-type="{{section.dataType}}"><i class="fas fa-plus"></i></a>
         </div>
     </div>
     <div class="row-section wrap rowtable inventory">
@@ -57,11 +57,11 @@
                     {{item.weight}}
                 </div>
                 <div class="col ten very-small center">
-                    {{#if item.OnUseEffect}}<a data-tooltip="{{localize 'SHEET.onUseEffect'}}" class="onUseItem"><i class="fas fa-dice-six"></i></a>{{/if}}
-                    <a class="item-post" data-tooltip="{{localize 'SHEET.PostItem'}}"><i class="fas fa-comment"></i></a>
-                    <a class="item-control item-edit" data-tooltip="{{localize 'SHEET.EditItem'}}"><i class="fas fa-edit"></i></a>
-                    <a class="item-dropdown" data-tooltip="{{localize 'SHEET.Dropdown'}}"><i class="fas fa-chevron-down"></i></a>
-                    <a class="item-control item-delete" data-tooltip="{{localize 'SHEET.DeleteItem'}}"><i class="fas fa-trash"></i></a>
+                    {{#if item.OnUseEffect}}<a data-tooltip="SHEET.onUseEffect" class="onUseItem"><i class="fas fa-dice-six"></i></a>{{/if}}
+                    <a class="item-post" data-tooltip="SHEET.PostItem"><i class="fas fa-comment"></i></a>
+                    <a class="item-control item-edit" data-tooltip="SHEET.EditItem"><i class="fas fa-edit"></i></a>
+                    <a class="item-dropdown" data-tooltip="SHEET.Dropdown"><i class="fas fa-chevron-down"></i></a>
+                    <a class="item-control item-delete" data-tooltip="SHEET.DeleteItem"><i class="fas fa-trash"></i></a>
                 </div>
             </div>
             <div class="row-section lineheight expandDetails {{item.detailed}}">

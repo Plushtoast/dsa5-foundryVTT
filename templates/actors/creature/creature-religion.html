@@ -6,12 +6,12 @@
                     {{localize "liturgies"}}
                 </div>
                 <div class="col four center">{{localize "probe"}}</div>
-                <div class="col ten center" data-tooltip="{{localize 'Fw'}}">{{localize "CHARAbbrev.FW"}}</div>
-                <div class="col ten center" data-tooltip="{{localize 'AsPCost'}}">{{localize "cost"}}</div>
+                <div class="col ten center" data-tooltip="Fw">{{localize "CHARAbbrev.FW"}}</div>
+                <div class="col ten center" data-tooltip="AsPCost">{{localize "cost"}}</div>
                 <div class="col ten center">{{localize "CHARAbbrev.castingTime"}}</div>
                 <div class="col ten center">{{localize "reach"}}</div>
                 <div class="col ten center">
-                    <a class="item-create very-small" data-tooltip="{{localize 'SHEET.addItem'}}" item-section="liturgy" data-type="liturgy"><i class="fas fa-plus"></i></a>
+                    <a class="item-create very-small" data-tooltip="SHEET.addItem" item-section="liturgy" data-type="liturgy"><i class="fas fa-plus"></i></a>
                 </div>
             </div>
         </div>
@@ -57,9 +57,9 @@
                     {{item.system.range.value}}
                 </div>
                 <div class="col ten very-small center">
-                    <a class="item-post" data-tooltip="{{localize 'SHEET.PostItem'}}"><i class="fas fa-comment"></i></a>
-                    <a class="item-dropdown" data-tooltip="{{localize 'SHEET.Dropdown'}}"><i class="fas fa-chevron-down"></i></a>
-                    <a class="item-control item-delete" data-tooltip="{{localize 'SHEET.DeleteItem'}}"><i class="fas fa-trash"></i></a> {{#if item.extensions}}
+                    <a class="item-post" data-tooltip="SHEET.PostItem"><i class="fas fa-comment"></i></a>
+                    <a class="item-dropdown" data-tooltip="SHEET.Dropdown"><i class="fas fa-chevron-down"></i></a>
+                    <a class="item-control item-delete" data-tooltip="SHEET.DeleteItem"><i class="fas fa-trash"></i></a> {{#if item.extensions}}
                     <i class="fas fa-angle-double-up" data-tooltip="{{item.extensions}}"></i> {{/if}}
                 </div>
             </div>
@@ -85,13 +85,13 @@
                     {{localize "ceremonies"}}
                 </div>
                 <div class="col four center">{{localize "probe"}}</div>
-                <div class="col ten center" data-tooltip="{{localize 'Fw'}}">{{localize "CHARAbbrev.FW"}}</div>
-                <div class="col ten center" data-tooltip="{{localize 'KaPCost'}}">{{localize "cost"}}</div>
+                <div class="col ten center" data-tooltip="Fw">{{localize "CHARAbbrev.FW"}}</div>
+                <div class="col ten center" data-tooltip="KaPCost">{{localize "cost"}}</div>
                 <div class="col ten center">{{localize "CHARAbbrev.castingTime"}}</div>
                 <div class="col ten center">{{localize "reach"}}</div>
 
                 <div class="col ten center">
-                    <a class="item-create very-small" data-tooltip="{{localize 'SHEET.addItem'}}" item-section="ceremony" data-type="ceremony"><i class="fas fa-plus"></i></a>
+                    <a class="item-create very-small" data-tooltip="SHEET.addItem" item-section="ceremony" data-type="ceremony"><i class="fas fa-plus"></i></a>
                 </div>
             </div>
         </div>
@@ -127,9 +127,9 @@
                 </div>
 
                 <div class="col ten very-small center">
-                    <a class="item-post" data-tooltip="{{localize 'SHEET.PostItem'}}"><i class="fas fa-comment"></i></a>
-                    <a class="item-dropdown" data-tooltip="{{localize 'SHEET.Dropdown'}}"><i class="fas fa-chevron-down"></i></a>
-                    <a class="item-control item-delete" data-tooltip="{{localize 'SHEET.DeleteItem'}}"><i class="fas fa-trash"></i></a> {{#if item.extensions}}
+                    <a class="item-post" data-tooltip="SHEET.PostItem"><i class="fas fa-comment"></i></a>
+                    <a class="item-dropdown" data-tooltip="SHEET.Dropdown"><i class="fas fa-chevron-down"></i></a>
+                    <a class="item-control item-delete" data-tooltip="SHEET.DeleteItem"><i class="fas fa-trash"></i></a> {{#if item.extensions}}
                     <i class="fas fa-angle-double-up" data-tooltip="{{item.extensions}}"></i> {{/if}}
                 </div>
             </div>
@@ -154,7 +154,7 @@
     <div class="row-section wrap cards">
         {{#each actor.specAbs.clerical as |item i|}}
         <div class="item" data-item-id="{{item._id}}">
-            {{#if item.OnUseEffect}}<a data-tooltip="{{localize 'SHEET.onUseEffect'}}" class="onUseItem"><i class="fas fa-dice-six"></i></a>{{/if}}<a class="item-edit">{{item.name}}{{roman item.system.step.value item.system.maxRank.value}}</a>
+            {{#if item.OnUseEffect}}<a data-tooltip="SHEET.onUseEffect" class="onUseItem"><i class="fas fa-dice-six"></i></a>{{/if}}<a class="item-edit">{{item.name}}{{roman item.system.step.value item.system.maxRank.value}}</a>
         </div>
         {{/each}}
     </div>

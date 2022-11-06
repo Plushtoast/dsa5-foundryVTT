@@ -136,6 +136,8 @@ export default function() {
     })
 
     Hooks.on('createToken', (token, options, id) => {
+        if(options.noHook) return
+        
         obfuscateName(token, {})
     })
 }

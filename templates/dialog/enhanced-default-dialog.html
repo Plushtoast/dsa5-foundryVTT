@@ -19,10 +19,10 @@
             </select>
         </div>
         {{/each}}
-        <div class="col five center" data-tooltip="{{localize 'Fw'}}">
+        <div class="col five center" data-tooltip="Fw">
             {{localize 'CHARAbbrev.FW'}}
         </div>
-        <div class="col five center" data-tooltip="{{localize 'qualityStep'}}">
+        <div class="col five center" data-tooltip="qualityStep">
             {{localize 'CHARAbbrev.QS'}}
         </div>
     </div>
@@ -34,14 +34,14 @@
             <input class="quantity-click" type="number" name="testModifier" value="{{testModifier}}" />
         </div>
         {{#each characteristics as |item i|}}
-        <div class="col five" data-tooltip="{{localize 'MODS.partChecks'}}">
+        <div class="col five" data-tooltip="MODS.partChecks">
             <input class="quantity-click" type="number" name="ch{{i}}" value="0" />
         </div>
         {{/each}}
-        <div class="col five" data-tooltip="{{localize 'MODS.FW'}}">
+        <div class="col five" data-tooltip="MODS.FW">
             <input class="quantity-click" type="number" name="fw" value="0" />
         </div>
-        <div class="col five" data-tooltip="{{localize 'MODS.QS'}}">
+        <div class="col five" data-tooltip="MODS.QS">
             <input class="quantity-click" type="number" name="qs" value="0" />
         </div>
     </div>
@@ -63,7 +63,7 @@
 {{#if hasSituationalModifiers}}
 <div class="modifiers form-group custom-select">
     <label>{{localize "DIALOG.SituationalModifiers"}}</label>
-    <select name="situationalModifiers" multiple data-tooltip="{{localize 'DIALOG.deselectWithStrg'}}">
+    <select name="situationalModifiers" multiple data-tooltip="DIALOG.deselectWithStrg">
         {{#select selectedModifiers}}
         {{#each situationalModifiers as |mod t|}}
         <option data-tooltip="{{situationalTooltip mod}}" data-type="{{mod.type}}" {{#if mod.armorPen}}data-armorPen="{{mod.armorPen}}"{{/if}} value="{{mod.value}}" {{#if

@@ -3,24 +3,24 @@
         <div class="col fourty">
             <b>{{localize "meleeweapons"}}</b>
             <span class="buttons">
-                <a data-mod="dodge" class="ch-status item" data-tooltip="{{localize 'dodge'}}"><i class="fas fa-reply"></i></a>
+                <a data-mod="dodge" class="ch-status item" data-tooltip="dodge"><i class="fas fa-reply"></i></a>
                 <a data-char="attack" class="ch-weaponless item" data-mod="attackWeaponless"
-                    data-tooltip="{{localize 'attackWeaponless'}}"><i class="fa attackWeaponless"></i></a>
+                    data-tooltip="attackWeaponless"><i class="fa attackWeaponless"></i></a>
                 <a data-char="parry" class="ch-weaponless item" data-mod="parryWeaponless"
-                    data-tooltip="{{localize 'parryWeaponless'}}"><i class="fa fa-shield-alt"></i></a>
+                    data-tooltip="parryWeaponless"><i class="fa fa-shield-alt"></i></a>
             </span>
         </div>
         <div class="col five center small">
             {{localize "Group"}}
         </div>
-        <div class="col ten center small" data-tooltip="{{localize 'CHAR.ATTACK'}}">
+        <div class="col ten center small" data-tooltip="CHAR.ATTACK">
             {{localize "CHARAbbrev.AT"}}
         </div>
-        <div class="col ten center small" data-tooltip="{{localize 'CHAR.PARRY'}}">
+        <div class="col ten center small" data-tooltip="CHAR.PARRY">
             {{localize "CHARAbbrev.PA"}}
         </div>
 
-        <div class="col ten center small" data-tooltip="{{localize 'damage'}}">
+        <div class="col ten center small" data-tooltip="damage">
             {{localize "CHARAbbrev.damage"}}
         </div>
         <div class="col ten center small">
@@ -61,9 +61,9 @@
                     <div class="col ten center very-small">
                         <a class="swapWeaponHand lineheight">
                         {{#if item.yieldedTwoHand}}
-                        <i data-tooltip="{{localize 'wrongGrip.twoHanded'}}" class="fas fa-hands"></i>
+                        <i data-tooltip="wrongGrip.twoHanded" class="fas fa-hands"></i>
                         {{else}}
-                        <i data-tooltip="{{localize 'wrongGrip.oneHanded'}}" class="fas fa-hand"></i>
+                        <i data-tooltip="wrongGrip.oneHanded" class="fas fa-hand"></i>
                         {{/if}}
                         </a>
                     </div>
@@ -84,10 +84,10 @@
             {{localize "Group"}}
         </div>
 
-        <div class="col ten center small" data-tooltip="{{localize 'CHAR.ATTACK'}}">
+        <div class="col ten center small" data-tooltip="CHAR.ATTACK">
             {{localize "CHARAbbrev.AT"}}
         </div>
-        <div class="col ten center small" data-tooltip="{{localize 'damage'}}">
+        <div class="col ten center small" data-tooltip="damage">
             {{localize "CHARAbbrev.damage"}}
         </div>
 
@@ -174,8 +174,8 @@
                     {{/if}}
                 </div>
                 <div class="col zerofive very-small center">
-                    <a class="item-dropdown" data-tooltip="{{localize 'SHEET.Dropdown'}}"><i class="fas fa-chevron-down"></i></a> {{#if item.ammoMax}}
-                    <a class="item-swapMag" data-tooltip="{{localize 'SHEET.swapMag'}}"><i class="fas fa-retweet"></i></a> {{/if}}
+                    <a class="item-dropdown" data-tooltip="SHEET.Dropdown"><i class="fas fa-chevron-down"></i></a> {{#if item.ammoMax}}
+                    <a class="item-swapMag" data-tooltip="SHEET.swapMag"><i class="fas fa-retweet"></i></a> {{/if}}
                 </div>
             </div>
             <div class="row-section lineheight expandDetails {{item.detailed}}">
@@ -196,7 +196,7 @@
         <div class="col two">
             <b>{{localize "Equipment.armor"}}</b>
         </div>
-        <div class="col four center small">{{localize "protection"}} ({{actor.armorSum}}{{#if actor.spellArmor}}<span data-tooltip="{{localize 'spellArmor'}}">, {{actor.spellArmor}}</span>{{/if}}){{#if actor.liturgyArmor}}<span data-tooltip="{{localize 'liturgyArmor'}}">, {{actor.liturgyArmor}}</span>{{/if}}</div>
+        <div class="col four center small">{{localize "protection"}} ({{actor.armorSum}}{{#if actor.spellArmor}}<span data-tooltip="spellArmor">, {{actor.spellArmor}}</span>{{/if}}){{#if actor.liturgyArmor}}<span data-tooltip="liturgyArmor">, {{actor.liturgyArmor}}</span>{{/if}}</div>
         <div class="col four center small">{{localize "encumbrance"}}</div>
     </div>
     <div class="row-section wrap rowtable inventory">
@@ -234,7 +234,7 @@
     <div class="row-section wrap cards">
         {{#each actor.specAbs.Combat as |item i|}}
         <div class="item" data-item-id="{{item._id}}">
-            {{#if item.OnUseEffect}}<a data-tooltip="{{localize 'SHEET.onUseEffect'}}" class="onUseItem"><i class="fas fa-dice-six"></i></a>{{/if}}<a class="item-edit">{{item.name}}{{roman item.system.step.value item.system.maxRank.value}}</a>
+            {{#if item.OnUseEffect}}<a data-tooltip="SHEET.onUseEffect" class="onUseItem"><i class="fas fa-dice-six"></i></a>{{/if}}<a class="item-edit">{{item.name}}{{roman item.system.step.value item.system.maxRank.value}}</a>
         </div>
         {{/each}}
     </div>
@@ -247,7 +247,7 @@
             <b>{{localize "combatskill"}}</b>
         </div>
         <div class="col lineheight ten center">
-            <a class="ch-collapse"><i class="fas fa-angle-up" data-tooltip="{{localize 'SHEET.collapse'}}"></i></a>
+            <a class="ch-collapse"><i class="fas fa-angle-up" data-tooltip="SHEET.collapse"></i></a>
         </div>
     </div>
     <div class="row-section wrap">
@@ -260,13 +260,13 @@
                     {{{localize "guidevalue_small"}}}
                 </div>
 
-                <div class="col eight center" data-tooltip="{{localize 'KTW'}}">
+                <div class="col eight center" data-tooltip="KTW">
                     {{localize "CHARAbbrev.KTW"}}
                 </div>
                 <div class="col eight center">
                     {{localize "CHARAbbrev.ATFK"}}
                 </div>
-                <div class="col eight center" data-tooltip="{{localize 'CHAR.PARRY'}}">
+                <div class="col eight center" data-tooltip="CHAR.PARRY">
                     {{localize "CHARAbbrev.PA"}}
                 </div>
             </div>
@@ -280,13 +280,13 @@
                     {{{localize "guidevalue_small"}}}
                 </div>
 
-                <div class="col eight center" data-tooltip="{{localize 'KTW'}}">
+                <div class="col eight center" data-tooltip="KTW">
                     {{localize "CHARAbbrev.KTW"}}
                 </div>
                 <div class="col eight center">
                     {{localize "CHARAbbrev.ATFK"}}
                 </div>
-                <div class="col eight center" data-tooltip="{{localize 'CHAR.PARRY'}}">
+                <div class="col eight center" data-tooltip="CHAR.PARRY">
                     {{localize "CHARAbbrev.PA"}}
                 </div>
             </div>

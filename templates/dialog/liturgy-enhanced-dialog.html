@@ -8,12 +8,12 @@
                 <input type="number" name="maintainedSpells" class="quantity-click" value="0" />
             </div>
             {{#if hasSKModifier}}
-            <div class="form-group" data-tooltip="{{localize 'TT.zkModifer'}}">
+            <div class="form-group" data-tooltip="TT.zkModifer">
                 <label>{{localize "skModifier"}}</label>
                 <input type="number" class="quantity-click" name="skModifier" value="{{SKModifier}}" />
             </div>
             {{/if}} {{#if hasZKModifier}}
-            <div class="form-group" data-tooltip="{{localize 'TT.zkModifer'}}">
+            <div class="form-group" data-tooltip="TT.zkModifer">
                 <label>{{localize "zkModifier"}}</label>
                 <input type="number" class="quantity-click" name="zkModifier" value="{{ZKModifier}}" />
             </div>
@@ -84,7 +84,7 @@
                             {{localize "reach"}}
                         </div>
                         {{#if (ne maintainCost 0)}}
-                        <div class="col four center" data-tooltip="{{localize 'maintainCost'}}">
+                        <div class="col four center" data-tooltip="maintainCost">
                             {{localize "CHARAbbrev.maintainCost"}}
                         </div>
                         {{/if}}
@@ -96,7 +96,7 @@
                             <span class="castingTime" data-mod="0" data-base="{{spellCastingTime}}">{{spellCastingTime}}</span>
                         </div>
                         <div class="col four center row-section">
-                            <input data-tooltip="{{localize 'variableCost'}}" class="{{#unless variableBaseCost}}dsahidden{{/unless}} col two variableBaseCost" type="number" data-mod="0" data-base="{{spellCost}}" name="variableBaseCost" value="{{spellCost}}" />
+                            <input data-tooltip="variableCost" class="{{#unless variableBaseCost}}dsahidden{{/unless}} col two variableBaseCost" type="number" data-mod="0" data-base="{{spellCost}}" name="variableBaseCost" value="{{spellCost}}" />
                             <span class="col {{#if variableBaseCost}}two {{/if}}aspcost" data-mod="0" data-base="{{spellCost}}">{{spellCost}}</span>
                         </div>
                         <div class="col four center">
@@ -127,7 +127,7 @@
             <div class="specAbsContainer">
                 {{#unless extensions}}
                 <div class="row-section">
-                    <div class="col extImg" style="height: 120px" data-tooltip="{{localize 'DIALOG.noExtensions'}}">
+                    <div class="col extImg" style="height: 120px" data-tooltip="DIALOG.noExtensions">
                     </div>
                 </div>
 
