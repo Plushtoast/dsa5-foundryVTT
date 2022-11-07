@@ -58,7 +58,7 @@ export default class DSAIniTracker extends Application {
         const data = this.combatData
         let itemWidth = game.settings.get("dsa5", "iniTrackerSize")
 
-        const combatStarted = data.started
+        const combatStarted = data.round
         const turnsToUse = data.turns
 
         const waitingTurns = []

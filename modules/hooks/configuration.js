@@ -443,6 +443,15 @@ export default function() {
         type: Boolean
     });
 
+    game.settings.register("dsa5", "hideRegenerationToOwner", {
+        name: "DSASETTINGS.hideRegenerationToOwner",
+        hint: "DSASETTINGS.hideRegenerationToOwnerHint",
+        scope: "world",
+        config: true,
+        default: true,
+        type: Boolean
+    });
+
     game.settings.register("dsa5", "indexDescription", {
         name: "DSASETTINGS.indexDescription",
         scope: "client",

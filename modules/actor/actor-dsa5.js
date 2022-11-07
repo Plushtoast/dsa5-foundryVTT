@@ -1369,6 +1369,7 @@ export default class Actordsa5 extends Actor {
     const html = await renderTemplate("systems/dsa5/templates/dialog/fateReroll-dialog.html", {
       testData: newTestData,
       postData: data.postData,
+      singleDie: data.postData.characteristics.length == 1
     });
     new DSA5Dialog({
       title: game.i18n.localize("CHATFATE.selectDice"),
@@ -1584,10 +1585,7 @@ export default class Actordsa5 extends Actor {
         statusId,
         actor: this.toObject(false),
         options,
-        speaker: {
-          token: tokenId,
-          actor: this.id,
-        },
+        speaker: Itemdsa5.buildSpeaker(actor, tokenId),
       },
     };
 
@@ -1595,7 +1593,7 @@ export default class Actordsa5 extends Actor {
     testData.extra.actor.isPriest = this.system.isPriest;
     let situationalModifiers = DSA5StatusEffects.getRollModifiers(testData.extra.actor, testData.source);
     let dialogOptions = {
-      title: title,
+      title,
       template: "/systems/dsa5/templates/dialog/regeneration-dialog.html",
       data: {
         rollMode: options.rollMode,
@@ -1661,13 +1659,10 @@ export default class Actordsa5 extends Actor {
       },
       opposable: false,
       extra: {
-        statusId: statusId,
+        statusId,
         actor: this.toObject(false),
         options,
-        speaker: {
-          token: tokenId,
-          actor: this.id,
-        },
+        speaker: Itemdsa5.buildSpeaker(actor, tokenId),
       },
     };
 
@@ -1678,7 +1673,7 @@ export default class Actordsa5 extends Actor {
     const multipleDefenseValue = RuleChaos.multipleDefenseValue(this, testData.source);
 
     let dialogOptions = {
-      title: title,
+      title,
       template: "/systems/dsa5/templates/dialog/combatskill-enhanced-dialog.html",
       data: {
         rollMode: options.rollMode,
@@ -1731,18 +1726,15 @@ export default class Actordsa5 extends Actor {
         system: char,
       },
       extra: {
-        characteristicId: characteristicId,
+        characteristicId,
         actor: this.toObject(false),
         options,
-        speaker: {
-          token: tokenId,
-          actor: this.id,
-        },
+        speaker: Itemdsa5.buildSpeaker(actor, tokenId),
       },
     };
 
     let dialogOptions = {
-      title: title,
+      title,
       template: "/systems/dsa5/templates/dialog/characteristic-dialog.html",
       data: {
         rollMode: options.rollMode,
@@ -1760,11 +1752,7 @@ export default class Actordsa5 extends Actor {
 
     let cardOptions = this._setupCardOptions("systems/dsa5/templates/chat/roll/characteristic-card.html", title, tokenId);
 
-    return DiceDSA5.setupDialog({
-      dialogOptions,
-      testData,
-      cardOptions,
-    });
+    return DiceDSA5.setupDialog({ dialogOptions, testData, cardOptions });
   }
 
   static _parseModifiers(html, search) {

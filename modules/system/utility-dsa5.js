@@ -132,7 +132,7 @@ export default class DSA5_Utility {
         }
     }
 
-    static chatDataSetup(content, modeOverride, forceWhisper) {
+    static chatDataSetup(content, modeOverride, forceWhisper, forceWhisperIDs) {
         let chatData = {
             user: game.user.id,
             rollMode: modeOverride || game.settings.get("core", "rollMode"),
@@ -146,6 +146,10 @@ export default class DSA5_Utility {
         if (forceWhisper) {
             chatData["speaker"] = ChatMessage.getSpeaker();
             chatData["whisper"] = ChatMessage.getWhisperRecipients(forceWhisper);
+        }
+        if (forceWhisperIDs) {
+            chatData["speaker"] = ChatMessage.getSpeaker();
+            chatData["whisper"] = forceWhisperIDs
         }
 
         return chatData;

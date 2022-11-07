@@ -97,7 +97,6 @@ export default class WizardDSA5 extends Application {
     mergeLevels(itemsToAdd, item) {
         let merged = false
         let existing = itemsToAdd.find(x => x.name == item.name && x.type == item.type)
-        console.log(item, existing)
         if (existing) {
             merged = true
             let level = Number(getProperty(item, "system.step.value")) 

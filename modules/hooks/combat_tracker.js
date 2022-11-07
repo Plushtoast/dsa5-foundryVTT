@@ -166,16 +166,16 @@ class RepeatingEffectsHelper {
             if (!turn.defeated) {
                 for (let x of turn.actor.effects) {
                     const statusId = x.getFlag("core", "statusId")
-                    if (statusId == "bleeding") await this.applyBleeding(turn)
-                    else if (statusId == "burning") await this.applyBurning(turn, x)
+                    if (statusId == "bleeding") await this.applyBleeding(turn, combat)
+                    else if (statusId == "burning") await this.applyBurning(turn, x, combat)
                 }
 
-                await this.startOfRoundEffects(turn)
+                await this.startOfRoundEffects(turn, combat)
             }
         }
     }
 
-    static async startOfRoundEffects(turn){
+    static async startOfRoundEffects(turn, combat){
         const regenerationAttributes = ["wounds", "astralenergy", "karmaenergy"]
         for(const attr of regenerationAttributes){
             for (const ef of turn.actor.system.repeatingEffects.startOfRound[attr]){
@@ -185,32 +185,44 @@ class RepeatingEffectsHelper {
                 const damage = await damageRoll.render()
                 const type = game.i18n.localize(damageRoll.total > 0 ? "CHATNOTIFICATION.regenerates" : "CHATNOTIFICATION.getsHurt")
                 const applyDamage = `${turn.actor.name} ${type} ${game.i18n.localize(attr)} ${damage}`
-                await ChatMessage.create(DSA5_Utility.chatDataSetup(applyDamage))
-
+                
+                await this.sendEventMessage(applyDamage, combat, turn)
                 if (attr == "wounds") await turn.actor.applyDamage(damageRoll.total * -1)
                 else await turn.actor.applyMana(damageRoll.total * -1, attr == "astralenergy" ? "AsP" : "KaP")
             }
         }
     }
 
-    static async applyBleeding(turn) {
-        if(turn.actor.system.status.wounds.value <= 0) return 
-
-        await ChatMessage.create(DSA5_Utility.chatDataSetup(game.i18n.format('CHATNOTIFICATION.bleeding', { actor: turn.actor.name })))
+    static async applyBleeding(turn, combat) {
+        if(turn.actor.system.status.wounds.value < 1) return 
+        
+        const msg = game.i18n.format('CHATNOTIFICATION.bleeding', { actor: turn.actor.name })
+        await this.sendEventMessage(msg, combat, turn)
         await turn.actor.applyDamage(1)
     }
 
-    static async applyBurning(turn, effect) {
-        if(turn.actor.system.status.wounds.value <= 0) return 
+    static async applyBurning(turn, effect, combat) {
+        if(turn.actor.system.status.wounds.value < 1) return 
         
         const step = Number(effect.getFlag("dsa5", "value"))
         const protection = DSA5StatusEffects.resistantToEffect(turn.actor, effect)
         const die =  { 0: "1", 1: "1d3", 2: "1d6", 3: "2d6" }[step - protection] || "1"
         const damageRoll = await new Roll(die).evaluate({ async: true })
         const damage = await damageRoll.render()
-
-        await ChatMessage.create(DSA5_Utility.chatDataSetup(game.i18n.format(`CHATNOTIFICATION.burning.${step}`, { actor: turn.actor.name, damage })))
+        const msg = game.i18n.format(`CHATNOTIFICATION.burning.${step}`, { actor: turn.actor.name, damage })
+        
+        await this.sendEventMessage(msg, combat, turn)
         await turn.actor.applyDamage(damageRoll.total)
+    }
+
+    static async sendEventMessage(content, combat, turn){
+        if(game.settings.get("dsa5", "hideRegenerationToOwner")){
+            const recipients = combat.combatants.get(turn.id).players
+            recipients.push(...game.users.filter(x => x.isGM).map(x => x.id))
+            await ChatMessage.create(DSA5_Utility.chatDataSetup(content, undefined, undefined, recipients))
+        }else{
+            await ChatMessage.create(DSA5_Utility.chatDataSetup(content))
+        }
     }
 }
 

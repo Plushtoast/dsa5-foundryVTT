@@ -33,13 +33,7 @@ export default class DiceDSA5 {
             testModifier: dialogOptions.data.modifier || 0,
         })
 
-        let situationalModifiers
-        if (dialogOptions.data.situationalModifiers) {
-            situationalModifiers = dialogOptions.data.situationalModifiers
-        } else {
-            situationalModifiers = testData.extra.actor ?
-                DSA5StatusEffects.getRollModifiers(testData.extra.actor, testData.source) : []
-        }
+        let situationalModifiers = dialogOptions.data.situationalModifiers || (testData.extra.actor ? DSA5StatusEffects.getRollModifiers(testData.extra.actor, testData.source) : [])
 
         if (testData.extra.options.moreModifiers != undefined) {
             situationalModifiers.push(...testData.extra.options.moreModifiers)
@@ -54,7 +48,7 @@ export default class DiceDSA5 {
             hasSituationalModifiers: situationalModifiers.length > 0,
             situationalModifiers,
             rollMode: dialogOptions.data.rollMode || rollMode,
-            rollModes: CONFIG.Dice.rollModes ? CONFIG.Dice.rollModes : CONFIG.rollModes,
+            rollModes: CONFIG.Dice.rollModes,
             defenseCount: await this.getDefenseCount(testData),
             targets,
         })

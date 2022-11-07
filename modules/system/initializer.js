@@ -4,7 +4,7 @@ import DSA5_Utility from "./utility-dsa5.js"
 export default class DSA5Initializer extends Dialog {
     constructor(title, content, module, lang = "") {
         let data = {
-            title: title,
+            title,
             content: content,
             buttons: {
                 initialize: {

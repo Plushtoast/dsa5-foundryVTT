@@ -1458,6 +1458,8 @@
         "statusEffectCounterColorHint": "Hex code for the color of countable status effects on the tokens. Format: #000000",
         "capQSat": "Max achievable quality level",
         "capQSatHint": "Restrict the max achievable quality level.",
+        "hideRegenerationToOwner": "Hide regeneration (CR)",
+        "hideRegenerationToOwnerHint": "Show automatic regeneration in combatrounds only to token owners",
         "talentModifierEnabled": "Skill modifiers activated",
         "talentModifierEnabledHint": "Skill modifiers are selected by default in the roll window",
         "noConfirmationRoll": "No confirmation roll",

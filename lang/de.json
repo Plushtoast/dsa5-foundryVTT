@@ -1025,7 +1025,7 @@
         }
     },
     "ITEM.TypeAdvantage": "Vorteil",
-    "ITEM.TypeAggregatedtest": "Sammelprobe",
+    "ITEM.TypeAggregatedest": "Sammelprobe",
     "ITEM.TypeInformation": "Information",
     "ITEM.TypeAmmunition": "Munition",
     "ITEM.TypeArmor": "Rüstung",
@@ -1478,6 +1478,8 @@
         "noConfirmationRoll": "Kein Bestätigungswurf",
         "noConfirmationRollHint": "Bei Angriffen und Eigenschaftswürfen keinen Bestätigungswurf durchführen.",
         "clearTargets": "Ziel löschen nach Angriff",
+        "hideRegenerationToOwner": "Regeneration (KR) verstecken",
+        "hideRegenerationToOwnerHint": "Automatische Regeneration in Kampfrunden nur dem Besitzer des Tokens anzeigen",
         "clearTargetsHint": "Entfernt die Zielmarkierung nach einer Probe.",
         "allowPhysicalDice": "Wurf mit echten Würfeln",
         "allowPhysicalDiceHint": "Erlaube die Eingabe des Ergebnis von selbst gewürfelten Würfeln",
