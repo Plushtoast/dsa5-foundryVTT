@@ -146,6 +146,11 @@ export class DSA5Combatant extends Combatant {
     }
 }
 
+Hooks.on("preCreateCombatant", (data, options, user) => {
+    const actor = DSA5_Utility.getSpeaker({actor: data.actorId, scene: data.sceneId, token: data.token_id})
+    if(getProperty(actor.system, "merchant.merchantType") == "loot") return false
+})
+
 class RepeatingEffectsHelper {
     static async updateCombatHook(combat, updateData, x, y) {
         if (!updateData.round && !updateData.turn)

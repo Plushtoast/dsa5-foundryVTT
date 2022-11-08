@@ -97,7 +97,6 @@ export default function() {
             return this.object.decrementCondition(effect)
     }
 
-
     Token.prototype.incrementCondition = async function(effect, { active, overlay = false } = {}) {
         const existing = this.actor.effects.find(e => e.getFlag("core", "statusId") === effect.id);
         if (!existing || Number.isNumeric(getProperty(existing, "flags.dsa5.value")))

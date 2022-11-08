@@ -1585,7 +1585,7 @@ export default class Actordsa5 extends Actor {
         statusId,
         actor: this.toObject(false),
         options,
-        speaker: Itemdsa5.buildSpeaker(actor, tokenId),
+        speaker: Itemdsa5.buildSpeaker(this.actor, tokenId),
       },
     };
 
@@ -1662,7 +1662,7 @@ export default class Actordsa5 extends Actor {
         statusId,
         actor: this.toObject(false),
         options,
-        speaker: Itemdsa5.buildSpeaker(actor, tokenId),
+        speaker: Itemdsa5.buildSpeaker(this.actor, tokenId),
       },
     };
 
@@ -1729,7 +1729,7 @@ export default class Actordsa5 extends Actor {
         characteristicId,
         actor: this.toObject(false),
         options,
-        speaker: Itemdsa5.buildSpeaker(actor, tokenId),
+        speaker: Itemdsa5.buildSpeaker(this.actor, tokenId),
       },
     };
 
