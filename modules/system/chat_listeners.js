@@ -2,6 +2,7 @@ import DSA5 from "./config-dsa5.js"
 import DSA5_Utility from "./utility-dsa5.js"
 import { showPatchViewer } from "./migrator.js"
 import RuleChaos from "./rule_chaos.js"
+import { showPopout } from "../hooks/imagepopouttochat.js"
 
 export default class DSA5ChatListeners {
     static chatListeners(html) {
@@ -12,6 +13,7 @@ export default class DSA5ChatListeners {
         html.on('click', '.showPatchViewer', () => showPatchViewer())
         html.on('click', '.functionswitch', (ev) => RuleChaos[ev.currentTarget.dataset.function](ev))
         html.on('click', '.panToToken', ev => DSA5ChatListeners.panToToken(ev))
+        html.on('click', '.popoutImage', ev => showPopout(ev))
     }
 
     static async panToToken(ev) {

@@ -91,10 +91,10 @@
         </div>
         <div class="tab main" data-tab="main">
             <div class="row-section">
-                <div class="col ten lineheight center" data-tooltip="groupFatePoints">
-                    {{{localize 'CHARAbbrev.groupFatePoints'}}}
+                <div class="col third lineheight center" data-tooltip="groupFatePoints">
+                    <b>{{{localize 'CHARAbbrev.groupFatePoints'}}}</b>
                 </div>
-                <div class="col eighty center" data-tooltip="fatePoints">
+                <div class="col sixty center" data-tooltip="fatePoints">
                     {{#each groupschips as |item i|}}
                     <a class="schip groupschip {{item.cssClass}}" data-val="{{item.value}}"></a>
                     {{/each}}
@@ -105,17 +105,12 @@
                 </div>
             </div>
             <div class="row-section">
-                <div class="col ten"></div>
-                <div class="col five">
-
+                
+                
+                <div class="col third lineheight center">
+                    <b>{{localize "skill"}}</b>
                 </div>
-                <div class="col ten">
-
-                </div>
-                <div class="col ten lineheight">
-                    <label>{{localize "skill"}}</label>
-                </div>
-                <div class="col five">
+                <div class="col sixty">
                     <select name="data.skill" class="skillSelektor select2" data-dtype="String">
                         {{#select lastSkill}}
                         {{#each abilities as |ch|}}
@@ -123,6 +118,10 @@
                         {{/each}}
                         {{/select}}
                     </select>
+                </div>
+         
+                <div class="col ten lineheight center">
+                    <a class="requestRoll" data-tooltip="HELP.request"><i class="fas fa-dice-two"></i></a>
                 </div>
             </div>
             <div class="row-section skills table-title">

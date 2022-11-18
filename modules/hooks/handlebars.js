@@ -28,7 +28,7 @@ export default function() {
         },
         isWEBM: (a) => /.webm$/.test(a),
         itemCategory: (a) => {
-            return game.i18n.localize(`ITEM.Type${a.slice(0,1).toUpperCase()}${a.slice(1).toLowerCase()}`)
+            return DSA5_Utility.categoryLocalization(a)
         },
         joinStr: (a, b) => b.join(a),
         diceThingsUp: (a, b) => DSA5_Utility.replaceDies(a, false),

@@ -579,6 +579,7 @@
         "payText": "Silber von {heros} einziehen.",
         "xpMessage": "<b>{heros}</b> hat/haben <b>{number}</b> Abenteuerpunkte erhalten.",
         "doGroupCheck": "Modifikator für <b>{skill}</b> Gruppenprobe.",
+        "doRequestRoll": "Modifikator für <b>{skill}</b> Probenaufforderung.",
         "payTT": "Ausnehmen",
         "randomPlayer": "Zufälliges Opfer (Rechtsklick inklusive Pechmagnet)",
         "randomGen": "Zuchtgrube",
@@ -1025,7 +1026,7 @@
         }
     },
     "ITEM.TypeAdvantage": "Vorteil",
-    "ITEM.TypeAggregatedest": "Sammelprobe",
+    "ITEM.TypeAggregatedtest": "Sammelprobe",
     "ITEM.TypeInformation": "Information",
     "ITEM.TypeAmmunition": "Munition",
     "ITEM.TypeArmor": "Rüstung",
@@ -1066,6 +1067,7 @@
     "wrongGrip": {
         "oneHanded": "Einhändig geführt",
         "twoHanded": "Beidhändig geführt",
+        "wrongGripped": "Einhändig/Beidhändig geführt",
         "yieldTwo": "PA -1, TP +1, kann nur während deines Zuges einmal geändert werden",
         "yieldOnePolearms": "Waffenreichweite mittel, -1 TP, -1 PA",
         "yieldOneSwordBlunt": "Waffenreichweite mittel, 0.5 * TP, -3 PA",
@@ -1619,6 +1621,8 @@
         "buyingFactor": "Kauffaktor",
         "sellingFactor": "Verkaufsfaktor",
         "typeMerchant": "Händler",
+        "hideMoney": "Geld verbergen",
+        "hideMoneyHint": "Dem Spieler wird die Kaufkraft des Händlers nicht mehr angezeigt",
         "typeEpic": "Garadan",
         "typeLoot": "Schatz",
         "typeNone": "Normale Person",

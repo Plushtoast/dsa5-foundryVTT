@@ -311,7 +311,7 @@ export default function() {
     });
 
     game.settings.register("dsa5", "iniTrackerPosition", {
-        name: "tokenhotbarPosition",
+        name: "iniTrackerPosition",
         scope: "client",
         config: false,
         default: {},
@@ -343,7 +343,7 @@ export default function() {
         restricted: false
     })
 
-    game.settings.register("dsa5", "breadcrumbs", {
+    game.settings.register("dsa5", `breadcrumbs_${game.world.id}`, {
         name: "DSASETTINGS.breadcrumbs",
         hint: "DSASETTINGS.breadcrumbsHint",
         scope: "client",

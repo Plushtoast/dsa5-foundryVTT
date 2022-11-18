@@ -148,13 +148,13 @@ export default class ActorSheetDsa5 extends ActorSheet {
                 "system.effect.value": ""
             })
         }
-        if (data.type == "aggregatedTest") {} else if (data.type == "spell" || data.type == "liturgy") {} else {
+        if(!["aggregatedTest", "spell", "liturgy", "ritual", "ceremony"].includes(data.type)){
             data["system.weight.value"] = 0
             data["system.quantity.value"] = 0
         }
 
         Itemdsa5.defaultIcon(data)
-        data["name"] = game.i18n.localize(data.type);
+        data["name"] = DSA5_Utility.categoryLocalization(data.type)
         this.actor.createEmbeddedDocuments("Item", [data]);
     }
 

@@ -1180,6 +1180,7 @@
     .header-search, &.sheet.journal-entry .pages-list .directory-item .page-number, .directory-item {
       color: black;
     }
+  
   }
   
   .window-app {
@@ -1426,6 +1427,10 @@
       color: white;
       margin-left: 3px;
     }
+  }
+
+  .popoutImage{
+    cursor:pointer;
   }
   
   #combat li.combatant {

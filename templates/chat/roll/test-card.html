@@ -21,6 +21,9 @@
         {{#each modifierList as |item i|}}
         <li>{{item.name}}: {{item.value}}{{#if item.type}} {{localize (concat 'CHARAbbrev.' item.type)}}{{/if}}</li>
         {{/each}}
+        {{#if preData.source.system.worn.wrongGrip}}
+        <li>{{localize "wrongGrip.wrongGripped"}}</li>
+        {{/if}}
     </ul>
     {{/if}}
 </div>

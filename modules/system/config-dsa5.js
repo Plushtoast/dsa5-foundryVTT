@@ -11,7 +11,6 @@ DSA5.statusEffects = [{
                 "editable": true
             }
         }
-
     },
     {
         id: "inpain",
@@ -576,6 +575,7 @@ DSA5.drivingArcherOptions = {
     "-2": "mountedRangeOptions.SCHRITT",
     "-4": "mountedRangeOptions.GALOPP",
 }
+
 DSA5.aimOptions = {
     "0": "aimOptions.0",
     "2": "aimOptions.1",

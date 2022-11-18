@@ -78,7 +78,7 @@
                             <div class="row-section">
                                 {{#each this}}
                                 <div class="col four center">
-                                    {{system.quantity.value}}
+                                    {{#if ../../actor.system.merchant.hideMoney}}?{{else}}{{system.quantity.value}}{{/if}}
                                 </div>
                                 {{/each}}
                             </div>

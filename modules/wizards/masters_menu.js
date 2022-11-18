@@ -5,6 +5,7 @@ import AdvantageRulesDSA5 from "../system/advantage-rules-dsa5.js"
 import { slist } from "../system/view_helper.js"
 import PlayerMenu from "./player_menu.js"
 import RequestRoll from "../system/request-roll.js"
+import DialogShared from "../dialog/dialog-shared.js"
 
 export default class MastersMenu {
     static registerButtons() {
@@ -172,6 +173,10 @@ class GameMasterMenu extends Application {
         html.find('.randomPlayer').mousedown((ev) => {
             ev.stopPropagation()
             this.randomPlayer(html, ev)
+        })
+        html.find('.requestRoll').click(ev => {
+            ev.stopPropagation()
+            this.rollRequest()
         })
         html.find('.heroSelector').click(ev => ev.stopPropagation())
         html.find('.hero').click(ev => {
@@ -385,7 +390,7 @@ class GameMasterMenu extends Application {
     }
 
     buildDialog(title, content, callbackFunction) {
-        new Dialog({
+        new DialogShared({
             title,
             content,
             default: 'yes',
@@ -451,6 +456,21 @@ class GameMasterMenu extends Application {
             RequestRoll.showGCMessage(skill, number)
         }
         this.buildDialog(game.i18n.localize('HELP.groupcheck'), template, callback)
+    }
+
+    async rollRequest(){
+        const [skill, type] = this.lastSkill.split("|")
+        if (type != "skill") return
+
+        const template = await renderTemplate('systems/dsa5/templates/dialog/master-dialog-award.html', { text: game.i18n.localize(game.i18n.format("MASTER.doRequestRoll", { skill })) })
+        const callback = (dlg) => {
+            const number = Number(dlg.find('.input-text').val())
+            const [skill, type] = this.lastSkill.split("|")
+            if (type != "skill") return
+
+            RequestRoll.showRQMessage(skill, number)
+        }
+        this.buildDialog(game.i18n.localize('HELP.request'), template, callback)
     }
 
     rollAbility(actorIds) {

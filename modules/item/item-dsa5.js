@@ -601,27 +601,32 @@ export default class Itemdsa5 extends Item {
     }
 
     static async _postItem(item) {
-            let chatData = duplicate(item)
-            const properties = Itemdsa5.getSubClass(item.type).chatData(duplicate(chatData.system), item.name)
+        let chatData = duplicate(item)
 
-            chatData["properties"] = properties
+        const detailsObfuscated = getProperty(chatData, "system.obfuscation.details")
+        const descriptionObfuscated = getProperty(chatData, "system.obfuscation.description")
+        
+        mergeObject(chatData, {
+            properties: detailsObfuscated ? [] : Itemdsa5.getSubClass(item.type).chatData(duplicate(chatData.system), item.name),
+            descriptionObfuscated
+        })
 
-            chatData.hasPrice = "price" in chatData.system
-            if (chatData.hasPrice) {
-                let price = chatData.system.price.value
-                if (chatData.system.QL) price *= chatData.system.QL
+        chatData.hasPrice = ("price" in chatData.system) && !detailsObfuscated
+        if (chatData.hasPrice) {
+            let price = chatData.system.price.value
+            if (chatData.system.QL) price *= chatData.system.QL
 
-                chatData.system.price.D = Math.floor(price / 10)
-                price -= chatData.system.price.D * 10
-                chatData.system.price.S = Math.floor(price)
-                price -= chatData.system.price.S
-                chatData.system.price.H = Math.floor(price / 0.1)
-                price -= chatData.system.price.H * 0.1
-                chatData.system.price.K = Math.round(price / 0.01)
+            chatData.system.price.D = Math.floor(price / 10)
+            price -= chatData.system.price.D * 10
+            chatData.system.price.S = Math.floor(price)
+            price -= chatData.system.price.S
+            chatData.system.price.H = Math.floor(price / 0.1)
+            price -= chatData.system.price.H * 0.1
+            chatData.system.price.K = Math.round(price / 0.01)
 
-                const prices = ["D", "S", "H", "K"].map(x =>
-                        `${chatData.system.price[x]} <div data-tooltip="${game.i18n.localize(`Money-${x}`)}" class="chatmoney money-${x}"></div>`).join(",")
-            properties.push(`<b>${game.i18n.localize("price")}</b>: ${prices}`)
+            const prices = ["D", "S", "H", "K"].map(x =>
+                    `${chatData.system.price[x]} <div data-tooltip="${game.i18n.localize(`Money-${x}`)}" class="chatmoney money-${x}"></div>`).join(",")
+            chatData.properties.push(`<b>${game.i18n.localize("price")}</b>: ${prices}`)
         }
 
         if (item.pack) chatData.itemLink = item.link
@@ -1040,7 +1045,7 @@ class CombatskillDSA5 extends Itemdsa5 {
 
     static setupDialog(ev, options, item, actor, tokenId) {
         let mode = options.mode
-        let title = game.i18n.localize(item.name) + " " + game.i18n.localize(mode + "test")
+        let title = item.name + " " + game.i18n.localize(mode + "test")
 
         let testData = {
             opposable: true,
@@ -1257,7 +1262,7 @@ class MeleeweaponDSA5 extends Itemdsa5 {
             this._chatLineHelper("damage", data.damage.value),
             this._chatLineHelper("atmod", data.atmod.value),
             this._chatLineHelper("pamod", data.pamod.value),
-            this._chatLineHelper("reach", game.i18n.localize(`Range.${data.rw}`)),
+            this._chatLineHelper("reach", game.i18n.localize(`Range-${data.reach.value}`)),
             this._chatLineHelper("ITEM.TypeCombatskill", data.combatskill.value),
         ]
         if (data.effect.value != "") res.push(this._chatLineHelper(DSA5_Utility.replaceConditions("effect", data.effect.value)))
@@ -1284,7 +1289,7 @@ class MeleeweaponDSA5 extends Itemdsa5 {
 
     static setupDialog(ev, options, item, actor, tokenId) {
         let mode = options.mode
-        let title = game.i18n.localize(item.name) + " " + game.i18n.localize(mode + "test")
+        let title = item.name + " " + game.i18n.localize(mode + "test")
 
         let testData = {
             opposable: true,
@@ -1296,10 +1301,7 @@ class MeleeweaponDSA5 extends Itemdsa5 {
                 speaker: Itemdsa5.buildSpeaker(actor, tokenId),
             },
         }
-        const multipleDefenseValue = RuleChaos.multipleDefenseValue(
-            actor,
-            typeof item.toObject === "function" ? item.toObject() : item
-        )
+        const multipleDefenseValue = RuleChaos.multipleDefenseValue(actor, DSA5_Utility.toObjectIfPossible(item))
         let data = {
             rollMode: options.rollMode,
             mode,
@@ -1508,7 +1510,7 @@ class RangeweaponItemDSA5 extends Itemdsa5 {
 
     static async setupDialog(ev, options, item, actor, tokenId) {
         let mode = options.mode
-        let title = game.i18n.localize(item.name) + " " + game.i18n.localize(mode + "test")
+        let title = item.name + " " + game.i18n.localize(mode + "test")
 
         let testData = {
             opposable: true,
@@ -1731,7 +1733,7 @@ class TraitItemDSA5 extends Itemdsa5 {
 
     static setupDialog(ev, options, item, actor, tokenId) {
         let mode = options["mode"]
-        let title = game.i18n.localize(item.name) + " " + game.i18n.localize(mode + "test")
+        let title = item.name + " " + game.i18n.localize(mode + "test")
         let testData = {
             opposable: true,
             source: item,
@@ -1749,7 +1751,7 @@ class TraitItemDSA5 extends Itemdsa5 {
             defenseCountString: game.i18n.format("defenseCount", { malus: multipleDefenseValue }),
         }
 
-        const traitType = getProperty(item, "system.traitType.value") || getProperty(item.data, "system.traitType.value")
+        const traitType = getProperty(item, "system.traitType.value")
 
         let situationalModifiers = actor ? DSA5StatusEffects.getRollModifiers(actor, item, { mode }) : []
         this.getSituationalModifiers(situationalModifiers, actor, data, item, tokenId)

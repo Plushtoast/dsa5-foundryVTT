@@ -15,6 +15,7 @@ import DidYouKnow from "../system/didyouknow.js";
 import TokenHotbar2 from "../system/tokenHotbar2.js";
 import DSAIniTracker from "../system/dsa-ini-tracker.js";
 import DSATour from "../tours/dsa_tour.js";
+import { initImagePopoutTochat } from "./imagepopouttochat.js";
 
 export default function() {
     Hooks.on("ready", async() => {
@@ -159,5 +160,6 @@ export default function() {
         Hooks.on('changeSidebarTab', hook)
         
         setEnrichers()
+        initImagePopoutTochat()
     });
 }

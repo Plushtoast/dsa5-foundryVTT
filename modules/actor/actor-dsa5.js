@@ -1909,7 +1909,7 @@ export default class Actordsa5 extends Actor {
         let val = Math.max(
           ...item.system.guidevalue.value.split("/").map((x) => Number(actorData.system.characteristics[x].value))
         );
-        let extra = val - Number(item.system.damageThreshold.value) + gripDamageMod;
+        let extra = Math.max(val - Number(item.system.damageThreshold.value), 0) + gripDamageMod;
 
         if (extra > 0) {
           item.extraDamage = extra;

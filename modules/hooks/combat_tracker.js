@@ -144,11 +144,32 @@ export class DSA5Combatant extends Combatant {
         })
         super(data, context);
     }
+
+    async recalcInitiative(){
+        if(this.initiative){
+            const roll = await this.getFlag("dsa5", "baseRoll") || 0
+            const update = { "initiative": roll + this.actor.system.status.initiative.value}
+            await this.update(update)
+        }
+    }
 }
 
 Hooks.on("preCreateCombatant", (data, options, user) => {
     const actor = DSA5_Utility.getSpeaker({actor: data.actorId, scene: data.sceneId, token: data.token_id})
     if(getProperty(actor.system, "merchant.merchantType") == "loot") return false
+})
+
+Hooks.on("updateCombatant", (combatant, change, user) => {
+    if(change.initiative){
+        const baseRoll = combatant.getFlag("dsa5", "baseRoll")
+        if(!baseRoll) {
+            const parts = `${change.initiative}`.split(".")
+            const roll = Number(parts[0]) - Math.round(combatant.actor.system.status.initiative.value)
+            combatant.setFlag("dsa5", "baseRoll", roll)
+        }
+    } else if("initiative" in change && change.initiative == null){
+        combatant.update({ [`flags.dsa5.-=baseRoll`]: null }).then(x => console.log(combatant))
+    }
 })
 
 class RepeatingEffectsHelper {
