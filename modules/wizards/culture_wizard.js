@@ -1,17 +1,9 @@
 import WizardDSA5 from "./dsa5_wizard.js"
 
 export default class CultureWizard extends WizardDSA5 {
-
-    constructor(app) {
-        super(app)
-        this.actor = null
-        this.culture = null
-        this.dataTypes = ["advantage", "disadvantage", "specialability", "combatskill"]
-    }
-
     static get defaultOptions() {
         const options = super.defaultOptions;
-        options.title = game.i18n.format("WIZARD.addItem", { item: `${game.i18n.localize("culture")}` })
+        options.title = game.i18n.format("WIZARD.addItem", { item: `${game.i18n.localize("ITEM.TypeCulture")}` })
         options.template = 'systems/dsa5/templates/wizard/add-culture-wizard.html'
         return options;
     }

@@ -1,3 +1,4 @@
+import DSA5 from "../system/config-dsa5.js"
 import ItemRulesDSA5 from "../system/item-rules-dsa5.js"
 import DSA5_Utility from "../system/utility-dsa5.js"
 import WizardDSA5 from "./dsa5_wizard.js"
@@ -5,18 +6,12 @@ import WizardDSA5 from "./dsa5_wizard.js"
 export default class CareerWizard extends WizardDSA5 {
     constructor(app) {
         super(app)
-        this.career = null
-        this.dataTypes = ["magictrick", "blessing", "spell", "ritual", "liturgy", "ceremony", "advantage", "disadvantage", "specialability"]
-        const attrs = {
-            "de": ["MU", "KL", "IN", "CH", "FF", "GE", "KO", "KK"],
-            "en": ["COU", "SGC", "INT", "CHA", "DEX", "AGI", "CON", "STR"]
-        }
-        this.attributes = attrs[game.i18n.lang]
+        this.attributes = Object.keys(DSA5.characteristics).map(x => game.i18n.localize(`CHARAbbrev.${x.toUpperCase()}`))
     }
 
     static get defaultOptions() {
         const options = super.defaultOptions;
-        options.title = game.i18n.format("WIZARD.addItem", { item: `${game.i18n.localize("career")}` })
+        options.title = game.i18n.format("WIZARD.addItem", { item: `${game.i18n.localize("ITEM.TypeCareer")}` })
         options.template = 'systems/dsa5/templates/wizard/add-career-wizard.html'
         return options;
     }
@@ -73,7 +68,7 @@ export default class CareerWizard extends WizardDSA5 {
         const reqCost = requirements.reduce(function(_this, val) {
             return _this + (val.disabled ? 0 : Number(val.system.APValue.value) || 0)
         }, 0)
-        let missingSpecialabilities = requirements.filter(x => x.type == "specialability" && !x.disabled)
+        const missingSpecialabilities = requirements.filter(x => x.type == "specialability" && !x.disabled)
         mergeObject(data, {
             title: game.i18n.format("WIZARD.addItem", { item: `${game.i18n.localize("career")} ${this.career.name}` }),
             career: this.career,
@@ -154,8 +149,9 @@ export default class CareerWizard extends WizardDSA5 {
                     item = ItemRulesDSA5.reverseAdoptionCalculation(this.actor, parsed, item)
                     itemsToCreate.push(item)
                 } else {
-                    this.errors.push(`${types.map(x => game.i18n.localize(x)).join("/")}: ${k}`)
-                    ui.notifications.error(game.i18n.format("DSAError.notFound", { category: game.i18n.localize(types[0]), name: k }))
+                    const langCats = types.map(x => DSA5_Utility.categoryLocalization(x)).join("/")
+                    this.errors.push(`${langCats}: ${k}`)
+                    ui.notifications.error(game.i18n.format("DSAError.notFound", { category: langCats, name: k }))
                 }
             }
         }
@@ -175,7 +171,7 @@ export default class CareerWizard extends WizardDSA5 {
                     item = duplicate(item)
                     itemsToCreate.push(item)
                 } else {
-                    this.errors.push(`${game.i18n.localize(type)}: ${k}`)
+                    this.errors.push(`${DSA5_Utility.categoryLocalization(type)}: ${k}`)
                     ui.notifications.error(game.i18n.format("DSAError.notFound", { category: game.i18n.localize(type), name: name }))
                 }
             }

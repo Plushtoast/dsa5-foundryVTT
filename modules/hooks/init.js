@@ -174,9 +174,8 @@ function setupKnownEquipmentModifiers() {
         [game.i18n.localize('CHARAbbrev.ZK').toLowerCase()]: ["status", "toughness", "gearmodifier"],
         [game.i18n.localize('CHARAbbrev.FtP').toLowerCase()]: ["status", "fatePoints", "gearmodifier"]
     }
-    const attrs = ["MU", "KL", "IN", "CH", "FF", "GE", "KO", "KK"]
-    for (const k of attrs) {
-        game.dsa5.config.knownShortcuts[game.i18n.localize(`CHARAbbrev.${k}`).toLowerCase()] = ["characteristics", k.toLowerCase(), "gearmodifier"]
+    for (const k of Object.keys(DSA5.characteristics)) {
+        game.dsa5.config.knownShortcuts[game.i18n.localize(`CHARAbbrev.${k.toUpperCase()}`).toLowerCase()] = ["characteristics", k.toLowerCase(), "gearmodifier"]
     }
 }
 

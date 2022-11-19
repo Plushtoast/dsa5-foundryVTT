@@ -9,7 +9,6 @@ export default class WizardDSA5 extends Application {
         super(app)
         this.actor = null
         this.errors = []
-        this.dataTypes = []
         this.attributes = []
         this.updating = false
     }
@@ -30,7 +29,7 @@ export default class WizardDSA5 extends Application {
         for(let type of types){
             const results = await game.dsa5.itemLibrary.findCompendiumItem(name, type)
             //todo make sure this loads the right thing e.g. armory instead of core
-            if(results.length && results[0].system) return results[0]
+            if(results.length) return results.find((x) => x.name == name && x.type == type && x.system);
         }
         
         return undefined
@@ -65,7 +64,8 @@ export default class WizardDSA5 extends Application {
                     }
                 } else {
                     console.warn(`Not found <${x}>`)
-                    this.errors.push(`${types.map(x => game.i18n.localize(x)).join("/")}: ${x}`)
+                    const langCats = types.map(x => DSA5_Utility.categoryLocalization(x)).join("/")
+                    this.errors.push(`${langCats}: ${x}`)
                     item = {
                         name: x.trim(),
                         notFound: true,
@@ -160,7 +160,7 @@ export default class WizardDSA5 extends Application {
         result = await new Promise((resolve, reject) => {
             new Dialog({
                 title: game.i18n.localize("DIALOG.warning"),
-                content: game.i18n.format('DIALOG.alreadyAddedCharacterpart', { category: game.i18n.localize(category) }),
+                content: game.i18n.format('DIALOG.alreadyAddedCharacterpart', { category: DSA5_Utility.categoryLocalization(category) }),
                 default: 'ok',
                 buttons: {
                     ok: {
@@ -194,7 +194,7 @@ export default class WizardDSA5 extends Application {
                 itemsToUpdate.push({_id: res.id, "system.talentValue.value": Math.max(0, factor * parsed.step + (bonus ? Number(res.system.talentValue.value) : 0))})
             } else {
                 console.warn(`Could not find ${itemType} ${skill}`)
-                this.errors.push(`${game.i18n.localize(itemType)}: ${skill}`)
+                this.errors.push(`${DSA5_Utility.categoryLocalization(itemType)}: ${skill}`)
             }
         }
         await this.actor.updateEmbeddedDocuments("Item", itemsToUpdate);

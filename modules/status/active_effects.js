@@ -387,6 +387,7 @@ export default class DSAActiveEffectConfig extends ActiveEffectConfig {
     dropDownMenu() {
         const FW = game.i18n.localize("MODS.FW");
         const skill = game.i18n.localize("skill");
+        const regenerate = game.i18n.localize("regenerate")
         const FP = game.i18n.localize("MODS.FP");
         const stepValue = game.i18n.localize("stepValue");
         const QS = game.i18n.localize("MODS.QS");
@@ -395,10 +396,9 @@ export default class DSAActiveEffectConfig extends ActiveEffectConfig {
         const democs = `${game.i18n.localize("LocalizedIDs.wrestle")} 1`;
         const closeCombat = game.i18n.localize("closeCombatAttacks");
         const rangeCombat = game.i18n.localize("rangeCombatAttacks");
-        const combatReg = `${game.i18n.localize("regenerate")} (${game.i18n.localize("CHARAbbrev.CR")})`;
+        const combatReg = `${regenerate} (${game.i18n.localize("CHARAbbrev.CR")})`;
         const AsPCost = game.i18n.localize("AsPCost");
         const KaPCost = game.i18n.localize("KaPCost");
-        const regenerate = game.i18n.localize("regenerate")
         const feature = `${game.i18n.localize("Healing")} 1`
         const descriptor = `${game.i18n.localize("Description")} 1`
         const miracle = `${game.i18n.localize('LocalizedIDs.miracle')}`
@@ -569,8 +569,7 @@ export default class DSAActiveEffectConfig extends ActiveEffectConfig {
             optns.push({ name: `${el} - ${FW}`, val: `system.skillModifiers.${k}.FW`, mode: 0, ph: demo }, { name: `${el} - ${FP}`, val: `system.skillModifiers.${k}.FP`, mode: 0, ph: demo }, { name: `${el} - ${stepValue}`, val: `system.skillModifiers.${k}.step`, mode: 0, ph: demo }, { name: `${el} - ${QS}`, val: `system.skillModifiers.${k}.QL`, mode: 0, ph: demo }, { name: `${el} - ${partChecks}`, val: `system.skillModifiers.${k}.TPM`, mode: 0, ph: demo });
         }
 
-        const attrs = ["mu", "kl", "in", "ch", "ff", "ge", "ko", "kk"];
-        for (const k of attrs)
+        for (const k of Object.keys(DSA5.characteristics))
             optns.push({
                 name: game.i18n.localize(`CHAR.${k.toUpperCase()}`),
                 val: `system.characteristics.${k}.gearmodifier`,

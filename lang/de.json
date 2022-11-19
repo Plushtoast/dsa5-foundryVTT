@@ -606,7 +606,7 @@
     },
     "WIZARD": {
         "addItem": "{item} hinzufügen",
-        "careerdescr": "Bitte wähle die passenden Optionen der Karriere <b>{career}</b> und bestätige, um sie für <b class=\"apCost\">{cost}</b> Abenteuerpunkte zu deinem Charakter hinzuzufügen.",
+        "careerdescr": "Bitte wähle die passenden Optionen der Profession <b>{career}</b> und bestätige, um sie für <b class=\"apCost\">{cost}</b> Abenteuerpunkte zu deinem Charakter hinzuzufügen.",
         "culturedescr": "Bitte wähle die passenden Optionen der Kultur <b>{culture}</b> und bestätige, um sie für <b class=\"apCost\">{cost}</b> Abenteuerpunkte zu deinem Charakter hinzuzufügen.",
         "speciesdescr": "Bitte wähle die passenden Optionen der Spezies <b>{species}</b> und bestätige, um sie für <b class=\"apCost\">{cost}</b> Abenteuerpunkte zu deinem Charakter hinzuzufügen.",
         "vantageDescription": "Wähle passende Vor- und Nachteile um deine Profession abzurunden.",

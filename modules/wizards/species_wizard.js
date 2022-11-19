@@ -1,17 +1,10 @@
+import DSA5 from "../system/config-dsa5.js";
 import WizardDSA5 from "./dsa5_wizard.js"
 
 export default class SpeciesWizard extends WizardDSA5 {
-    constructor(app) {
-        super(app)
-        this.actor = null
-        this.culture = null
-        this.dataTypes = ["advantage", "disadvantage"]
-        this.attributes = []
-    }
-
     static get defaultOptions() {
         const options = super.defaultOptions;
-        options.title = game.i18n.format("WIZARD.addItem", { item: `${game.i18n.localize("species")}` })
+        options.title = game.i18n.format("WIZARD.addItem", { item: `${game.i18n.localize("ITEM.TypeSpecies")}` })
         options.template = 'systems/dsa5/templates/wizard/add-species-wizard.html'
         return options;
     }
@@ -127,7 +120,7 @@ export default class SpeciesWizard extends WizardDSA5 {
             attributeChoices.push($(k).val())
         }
 
-        ["mu", "kl", "in", "ch", "ff", "ge", "ko", "kk"].forEach(k => {
+        Object.keys(DSA5.characteristics).forEach(k => {
             update[`data.characteristics.${k}.species`] = 0
         })
 

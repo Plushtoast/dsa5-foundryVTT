@@ -139,7 +139,7 @@ export default class DSA5Initializer extends Dialog {
                             new Dialog({
                                 title: game.i18n.localize("Book.sceneReset"),
                                 content: game.i18n.format("Book.sceneResetDescription", { name: entry.name }),
-                                default: 'yes',
+                                default: 'Yes',
                                 buttons: {
                                     Yes: {
                                         icon: '<i class="fa fa-check"></i>',

@@ -26,7 +26,7 @@
             {{#each advantages as |item i|}}
             <div class="col two row-section lineheight">
                 <input type="checkbox" id="advantage_{{i}}" class="optional" data-cost="{{item.apCost}}" name="{{item.replaceName}}" data-step="{{item.step}}" value="{{item.uuid}}" {{#if item.disabled}}disabled{{/if}}>
-                <label for="advantage_{{i}}">{{item.replaceName}} {{roman item.step}}  ({{item.apCost}} AP)</label>
+                <label for="advantage_{{i}}">{{item.replaceName}} {{roman item.step}} ({{item.apCost}} AP)</label>
                 <a class="show-item" data-id="{{item.uuid}}" data-tooltip="{{item.tooltip}}"><i class="fas fa-info"></i></a>
             </div>
             {{/each}}
@@ -37,7 +37,7 @@
             {{#each disadvantages as |item i|}}
             <div class="col two row-section lineheight">
                 <input type="checkbox" id="disadvantage_{{i}}" class="optional" data-cost="{{item.apCost}}" name="{{item.replaceName}}" data-step="{{item.step}}" value="{{item.uuid}}" {{#if item.disabled}}disabled{{/if}}>
-                <label for="disadvantage_{{i}}">{{item.replaceName}} {{roman item.step}}  ({{item.apCost}} AP)</label>
+                <label for="disadvantage_{{i}}">{{item.replaceName}} {{roman item.step}} ({{item.apCost}} AP)</label>
                 <a class="show-item" data-id="{{item.uuid}}" data-tooltip="{{item.tooltip}}"><i class="fas fa-info"></i></a>
             </div>
             {{/each}}
@@ -71,7 +71,7 @@
             {{#each writings as |item i|}}
             <div class="col two row-section lineheight">
                 <input type="checkbox" id="writing_{{i}}" class="optional" data-cost="{{item.apCost}}" name="{{item.replaceName}}" data-step="{{item.step}}" value="{{item.uuid}}" {{#if item.disabled}}disabled{{/if}}>
-                <label for="writing_{{i}}">{{item.replaceName}} {{roman item.step}}  ({{item.apCost}} AP)</label>
+                <label for="writing_{{i}}">{{item.replaceName}} {{roman item.step}} ({{item.apCost}} AP)</label>
                 <a class="show-item" data-id="{{item.uuid}}" data-tooltip="{{item.tooltip}}"><i class="fas fa-info"></i></a>
             </div>
             {{/each}}

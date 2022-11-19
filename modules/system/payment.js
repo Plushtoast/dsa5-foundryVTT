@@ -178,7 +178,7 @@ export default class DSA5Payment {
 
             for (const [key, value] of Object.entries(coins)) {
                 if (value > 0)
-                    res.push(`<span class="nobr">${value} <span data-tooltip="${game.i18n.localize(`Money-${key}`)}" class="chatmoney money-${key}"></span></span>`)
+                    res.push(`<span class="nobr">${value} <span data-tooltip="Money-${key}" class="chatmoney money-${key}"></span></span>`)
         }
         return res.join(", ")
     }
