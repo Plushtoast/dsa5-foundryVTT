@@ -2079,7 +2079,6 @@ export default class Actordsa5 extends Actor {
       item.attack = Number(skill.system.attack.value);
 
       if (item.system.ammunitiongroup.value != "-") {
-        if (!ammunitions) ammunitions = actorData.inventory.ammunition.items;
         item.ammo = ammunitions.filter((x) => x.system.ammunitiongroup.value == item.system.ammunitiongroup.value);
 
         currentAmmo = ammunitions.find((x) => x._id == item.system.currentAmmo.value);

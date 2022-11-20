@@ -258,7 +258,8 @@ export default class OpposedDsa5 {
 
             const targets = [defenderToken]
             const hitTargets = opposedResult.winner == "attacker" ? targets : []
-            AutoAnimations.playAnimation(attackerToken, targets, item, { hitTargets, playOnMiss: true })
+
+            AutomatedAnimations.playAnimation(attackerToken, item, { targets, hitTargets, playOnMiss: true })
         }
     }
 
@@ -275,7 +276,8 @@ export default class OpposedDsa5 {
                 let targets = Array.from(game.user.targets)
                 const item = attackerToken.actor.items.get(msgData.preData.source._id)
                 if (!targets.length) targets = [attackerToken]
-                AutoAnimations.playAnimation(attackerToken, targets, item)
+                
+                AutomatedAnimations.playAnimation(attackerToken, item, { targets })
             }
         }
     }
