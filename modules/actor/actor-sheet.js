@@ -272,7 +272,7 @@ export default class ActorSheetDsa5 extends ActorSheet {
         let result = false
         switch (attr) {
             case "wounds":
-                result = newValue <= this.actor.system.characteristics["ko"].value
+                result = newValue <= this.actor.system.characteristics.ko.value
                 break
             case "astralenergy":
                 result = newValue <= (this.actor.system.characteristics[this.actor.system.guidevalue.magical] == undefined ? 0 : this.actor.system.characteristics[this.actor.system.guidevalue.magical].value * this.actor.system.energyfactor.magical)

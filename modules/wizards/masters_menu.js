@@ -544,22 +544,10 @@ class GameMasterMenu extends Application {
         return heros
     }
 
-    getGroupSchips(){
-        const schipSetting = this.getGroupSchipSetting()
-        const groupschips = []
-        for (let i = 1; i <= schipSetting[1]; i++) {
-            groupschips.push({
-                value: i,
-                cssClass: i <= schipSetting[0] ? "fullSchip" : "emptySchip"
-            })
-        }
-        return groupschips
-    }
-
     async getData(options) {
         const data = await super.getData(options);
         const heros = await this.getTrackedHeros()
-        const groupschips = this.getGroupSchips()
+        const groupschips = RuleChaos.getGroupSchips()
         
         const thresholds = game.settings.get("dsa5", "sightOptions").split("|")
         const regex = / \[[a-zA-Zäöü\d-]+\]/

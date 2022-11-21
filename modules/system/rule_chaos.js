@@ -44,6 +44,18 @@ export default class RuleChaos {
         }
     }
 
+    static getGroupSchips(){
+        const schipSetting = game.settings.get("dsa5", "groupschips").split("/").map(x => Number(x))
+        const groupschips = []
+        for (let i = 1; i <= schipSetting[1]; i++) {
+            groupschips.push({
+                value: i,
+                cssClass: i <= schipSetting[0] ? "fullSchip" : "emptySchip"
+            })
+        }
+        return groupschips
+    }
+
     //todo this should not be necessary
     static ensureNumber(source){
         source.system.AsPCost.value = Number(source.system.AsPCost.value) || source.system.AsPCost.value

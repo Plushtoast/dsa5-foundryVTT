@@ -623,8 +623,7 @@ export default class Actordsa5 extends Actor {
       liturgy: {},
     };
 
-    const groupschips = this.hasPlayerOwner ? game.dsa5.apps.gameMasterMenu.getGroupSchips() : []
-    console.log(groupschips)
+    const groupschips = this.hasPlayerOwner ? RuleChaos.getGroupSchips() : []
     const schips = this.schipshtml()
 
     const inventory = {
