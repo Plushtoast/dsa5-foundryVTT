@@ -35,19 +35,8 @@
                     <div class="ch-value col eight center" data-char="{{c}}"><a class="d20 die-{{c}}">{{ch.value}}</a></div>
                     {{/each}}
                 </div>
-                {{> systems/dsa5/templates/actors/parts/healthbar.html}} {{#if actor.schips}}
-                <div class="row-section">
-                    <div class="col ten lineheight center" data-tooltip="fatePoints">
-                        {{localize 'CHARAbbrev.fatePoints'}}
-                    </div>
-                    <div class="col eighty center" data-tooltip="fatePoints">
-                        <input class="dsahidden" type="text" name="system.status.fatePoints.value" data-dtype="Number" value="{{actor.system.status.fatePoints.value}}" /> {{#each actor.schips as |item i|}}
-                        <a class="schip {{item.cssClass}}" data-val="{{item.value}}"></a> {{/each}}
-                    </div>
-                    <div class="col ten center">
-                    </div>
-                </div>
-                {{/if}}
+                {{> systems/dsa5/templates/actors/parts/healthbar.html}} 
+                {{> systems/dsa5/templates/actors/parts/schipspart.html}}                
             </div>
 
         </div>

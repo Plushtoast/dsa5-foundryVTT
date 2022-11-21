@@ -71,6 +71,7 @@
         "AsPCost": "AsP",
         "KaPCost": "KaP",
         "fatePoints": "Schips",
+        "gfatePoints": "GSchips",
         "groupFatePoints": "Gruppen&nbsp;Schips",
         "FtP": "Schip",
         "maintainCost": "Aufr.",

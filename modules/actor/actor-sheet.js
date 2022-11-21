@@ -412,15 +412,12 @@ export default class ActorSheetDsa5 extends ActorSheet {
 
         html.find('.roll-disease').click(ev => this.rollDisease(this._getItemId(ev)))
 
-        html.find('.schip').click(ev => {
+        html.find('.schipUpdate').click(ev => {
             ev.preventDefault()
             let val = Number(ev.currentTarget.getAttribute("data-val"))
-            let elem = $(this.form).parent().find('[name="system.status.fatePoints.value"]')
-
             if (val == 1 && $(this.form).find(".fullSchip").length == 1) val = 0
 
-            elem.val(val)
-            elem.trigger("change")
+            this.actor.update({"system.status.fatePoints.value": val})
         })
 
         html.find('.swapWeaponHand').click(ev => this.swapWeaponHand(ev))

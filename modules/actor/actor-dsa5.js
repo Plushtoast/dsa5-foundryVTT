@@ -574,6 +574,17 @@ export default class Actordsa5 extends Actor {
     return item;
   }
 
+  schipshtml(){
+    const schips = []
+    for (let i = 1; i <= Number(this.system.status.fatePoints.max); i++) {
+        schips.push({
+            value: i,
+            cssClass: i <= Number(this.system.status.fatePoints.value) ? "fullSchip" : "emptySchip"
+        })
+    }
+    return schips
+  }
+
   prepareItems(sheetInfo) {
     let actorData = this.toObject(false);
     let combatskills = [];
@@ -612,13 +623,9 @@ export default class Actordsa5 extends Actor {
       liturgy: {},
     };
 
-    let schips = [];
-    for (let i = 1; i <= Number(actorData.system.status.fatePoints.max); i++) {
-      schips.push({
-        value: i,
-        cssClass: i <= Number(actorData.system.status.fatePoints.value) ? "fullSchip" : "emptySchip",
-      });
-    }
+    const groupschips = this.hasPlayerOwner ? game.dsa5.apps.gameMasterMenu.getGroupSchips() : []
+    console.log(groupschips)
+    const schips = this.schipshtml()
 
     const inventory = {
       meleeweapons: {
@@ -970,6 +977,7 @@ export default class Actordsa5 extends Actor {
         available: actorData.system.freeLanguagePoints?.value || 0,
       },
       schips,
+      groupschips,
       guidevalues,
       magic,
       traits,

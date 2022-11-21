@@ -544,17 +544,23 @@ class GameMasterMenu extends Application {
         return heros
     }
 
-    async getData(options) {
-        const data = await super.getData(options);
-        const heros = await this.getTrackedHeros()
+    getGroupSchips(){
         const schipSetting = this.getGroupSchipSetting()
-        let groupschips = []
+        const groupschips = []
         for (let i = 1; i <= schipSetting[1]; i++) {
             groupschips.push({
                 value: i,
                 cssClass: i <= schipSetting[0] ? "fullSchip" : "emptySchip"
             })
         }
+        return groupschips
+    }
+
+    async getData(options) {
+        const data = await super.getData(options);
+        const heros = await this.getTrackedHeros()
+        const groupschips = this.getGroupSchips()
+        
         const thresholds = game.settings.get("dsa5", "sightOptions").split("|")
         const regex = / \[[a-zA-Zäöü\d-]+\]/
         const visions = [1, 2, 3, 4].map(x => { return { label: game.i18n.localize(`VisionDisruption.step${x}`).replace(regex, ""), value: thresholds[x - 1] } })
@@ -568,14 +574,7 @@ class GameMasterMenu extends Application {
         this.heros = heros
         for (const hero of heros) {
             hero.gmSelected = this.selected[hero.id]
-            let schips = []
-            for (let i = 1; i <= Number(hero.system.status.fatePoints.max); i++) {
-                schips.push({
-                    value: i,
-                    cssClass: i <= Number(hero.system.status.fatePoints.value) ? "fullSchip" : "emptySchip"
-                })
-            }
-            hero.schips = schips
+            hero.schips = hero.schipshtml()
             hero.purse = hero.items.filter(x => x.type == "money")
                 .sort((a, b) => b.system.price.value - a.system.price.value)
                 .map(x => `<span data-tooltip="${game.i18n.localize(x.name)}">${x.system.quantity.value}</span>`).join(" - ")

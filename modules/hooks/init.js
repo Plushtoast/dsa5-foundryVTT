@@ -65,6 +65,7 @@ Hooks.once("init", () => {
         "systems/dsa5/templates/actors/actor-combat.html",
         "systems/dsa5/templates/actors/actor-equipment.html",
         "systems/dsa5/templates/actors/actor-notes.html",
+        "systems/dsa5/templates/actors/parts/schipspart.html",
         "systems/dsa5/templates/chat/post-item.html",
         "systems/dsa5/templates/items/item-stat.html",
         "systems/dsa5/templates/items/item-extension.html",

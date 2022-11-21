@@ -59,6 +59,7 @@
         "castingTime": "Action- duration",
         "duration": "Effect- Duration",
         "fatePoints": "FtP",
+        "gfatePoints": "GFtP",
         "groupFatePoints": "Group&nbsp;FtP",
         "maintainCost": "Main.",
         "INI": "INI",

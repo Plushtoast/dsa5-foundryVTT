@@ -160,6 +160,8 @@ Hooks.on("preCreateCombatant", (data, options, user) => {
 })
 
 Hooks.on("updateCombatant", (combatant, change, user) => {
+    if(!game.user.isGM) return
+
     if(change.initiative){
         const baseRoll = combatant.getFlag("dsa5", "baseRoll")
         if(!baseRoll) {
