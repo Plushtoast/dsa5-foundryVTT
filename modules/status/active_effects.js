@@ -571,6 +571,17 @@ export default class DSAActiveEffectConfig extends ActiveEffectConfig {
             optns.push({ name: `${el} - ${FW}`, val: `system.skillModifiers.${k}.FW`, mode: 0, ph: demo }, { name: `${el} - ${FP}`, val: `system.skillModifiers.${k}.FP`, mode: 0, ph: demo }, { name: `${el} - ${stepValue}`, val: `system.skillModifiers.${k}.step`, mode: 0, ph: demo }, { name: `${el} - ${QS}`, val: `system.skillModifiers.${k}.QL`, mode: 0, ph: demo }, { name: `${el} - ${partChecks}`, val: `system.skillModifiers.${k}.TPM`, mode: 0, ph: demo });
         }
 
+        for(let ef of CONFIG.statusEffects){
+            if(getProperty(ef, "flags.dsa5.max")){
+                optns.push({
+                    name: game.i18n.localize(ef.label),
+                    val: `system.condition.${ef.id}`,
+                    mode: 2,
+                    ph: 1
+                })
+            }
+        }
+
         for (const k of Object.keys(DSA5.characteristics))
             optns.push({
                 name: game.i18n.localize(`CHAR.${k.toUpperCase()}`),

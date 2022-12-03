@@ -6,6 +6,10 @@ import DialogShared from "./dialog-shared.js";
 export default class DSA5SpellDialog extends DialogShared {
     static rollChanges = ["defenseMalus"]
 
+    static rollModifiers = {
+        
+    }
+
     static get defaultOptions() {
         const options = super.defaultOptions;
         mergeObject(options, {

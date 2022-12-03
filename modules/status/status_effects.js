@@ -64,6 +64,20 @@ export default class DSA5StatusEffects {
             }
         }
         data.manualConditions = systemConditions.filter(x => !appliedSystemConditions.includes(x.id))
+
+        const cumulativeConditions = []
+        for(let key of Object.keys(target.system?.condition || {})) {
+          if(target.system.condition[key]){
+            const ef = DSA5.statusEffects.find(x => x.id == key)
+            cumulativeConditions.push({
+              icon: ef.icon,
+              id: key,
+              label: game.i18n.localize(ef.label),
+              value: target.system.condition[key]
+            })
+          }
+        }
+        data.cumulativeConditions = cumulativeConditions
     }
 
     static async addCondition(target, effect, value = 1, absolute = false, auto = true) {
@@ -205,7 +219,18 @@ export default class DSA5StatusEffects {
     static calculateRollModifier(effect, actor, item, options = {}) {
         if (effect.flags.dsa5.value == null || item.type == "regenerate") return 0
 
-        return Math.max(-1 * effect.flags.dsa5.max, Math.min(0, effect.flags.dsa5.value * -1 + this.resistantToEffect(actor, effect)))
+        
+        return DSA5StatusEffects.clampedCondition(actor, effect)
+    }
+
+    static clampedCondition(actor, effect){
+        const statusId = getProperty(effect, "flags.core.statusId")
+        if(!statusId) return 0
+
+        const max = Number(effect.flags.dsa5.max)
+        const mod = Math.clamped(actor.system.condition[statusId] || 0, 0, max) * -1
+        const resist = this.resistantToEffect(actor, effect)
+        return  Math.clamped(mod + resist, -1 * max,0)
     }
 
     static ModifierIsSelected(item, options = {}, actor) {
@@ -259,10 +284,12 @@ class RaptureEffect extends DSA5StatusEffects {
         const happyTalents = actor.system.happyTalents.value.split(/;|,/).map(x => x.replace(regex, '').trim())
         if ((happyTalents.includes(item.name) && ["skill", "combatskill"].includes(item.type)) ||
             (["rangeweapon", "meleeweapon"].includes(item.type) && happyTalents.includes(item.system.combatskill.value)) || ["ceremony", "liturgy"].includes(item.type)) {
-            return effect.flags.dsa5.value - 1
+            return this.clampedCondition(actor, effect) * -1 - 1
         }
+
         if (["ritual", "spell", "skill", "combatskill"].includes(item.type))
-            return effect.flags.dsa5.value * -1
+            return this.clampedCondition(actor, effect)
+
         if (item.type == "regenerate") return 0
         return 0
     }
@@ -294,15 +321,15 @@ class PainEffect extends DSA5StatusEffects {
 class TranceEffect extends DSA5StatusEffects {
     static calculateRollModifier(effect, actor, item, options = {}) {
         if (item.type == "regenerate") return 0
-        switch (Number(effect.flags.dsa5.value)) {
-            case 2:
+        switch (Number(this.clampedCondition(actor, effect))) {
+            case -2:
                 const regex = new RegExp(`${game.i18n.localize('combatskill')} `, 'gi')
                 const happyTalents = actor.system.happyTalents.value.split(/;|,/).map(x => x.replace(regex, '').trim())
                 if ((happyTalents.includes(item.name) && ["skill", "combatskill"].includes(item.type)) ||
                     (["rangeweapon", "meleeweapon"].includes(item.type) && happyTalents.includes(item.system.combatskill.value)) || ["ceremony", "liturgy"].includes(item.type)) {
                     return -2
                 }
-            case 3:
+            case -3:
                 return -3
         }
         return 0
@@ -313,7 +340,7 @@ class DrunkenEffect extends DSA5StatusEffects {
     static calculateRollModifier(effect, actor, item, options = {}) {
         if (item.type == "regenerate") return 0
         if (item.type == "skill" && item.name == game.i18n.localize("LocalizedIDs.gambling"))
-            return Math.max(-3, Math.min(effect.flags.dsa5.value * -1 + this.resistantToEffect(actor, effect)))
+            return Math.clamped(this.clampedCondition(actor, effect), -3, 0)
 
         return 0
     }
@@ -323,7 +350,7 @@ class BurningEffect extends DSA5StatusEffects {
     static calculateRollModifier(effect, actor, item, options = {}) {
         if (item.type == "regenerate") return 0
         if (item.type == "skill" && item.name == game.i18n.localize("LocalizedIDs.bodyControl"))
-            return Math.max(-2, Math.min(0, (effect.flags.dsa5.value - 1) * -1 + this.resistantToEffect(actor, effect)))
+            return Math.clamped(this.clampedCondition(actor, effect) + 1, -2, 0)
 
         return 0
     }
@@ -339,9 +366,9 @@ class ArousalEffect extends DSA5StatusEffects {
 class SikaryanlossEffect extends DSA5StatusEffects {
     static calculateRollModifier(effect, actor, item, options = {}) {
         if (item.type == "skill" && item.name == game.i18n.localize("LocalizedIDs.willpower"))
-            return (effect.flags.dsa5.value - 1) * -2
+            return (this.clampedCondition(actor, effect) + 1) * 2
         else if (item.type == "regenerate")
-            return effect.flags.dsa5.value * -1
+            return this.clampedCondition(actor, effect)
 
         return 0
     }
@@ -350,7 +377,7 @@ class SikaryanlossEffect extends DSA5StatusEffects {
 class DesireEffect extends DSA5StatusEffects {
     static calculateRollModifier(effect, actor, item, options = {}) {
         if (item.type == "skill" && item.name == game.i18n.localize("LocalizedIDs.willpower"))
-            return Math.max(-3, Math.min(0, effect.flags.dsa5.value * -1 + this.resistantToEffect(actor, effect)))
+            return Math.clamped(this.clampedCondition(actor, effect), -3, 0)
 
         return 0
     }
@@ -359,7 +386,7 @@ class DesireEffect extends DSA5StatusEffects {
 class TheriakEffect extends DSA5StatusEffects {
     static calculateRollModifier(effect, actor, item, options = {}) {
         if (item.type == "regenerate")
-            return effect.flags.dsa5.value * 1
+            return this.clampedCondition(actor, effect) * -1
 
         return 0
     }

@@ -1164,6 +1164,8 @@
         "failed": "ist gescheitert",
         "routine": "Routine"
     },
+    "cummulativeStatusEffects": "Kumulative Statuseffekte",
+    "cummulativeStatusEffectsHint": "Zustände deren Gesamteffekt aus mehreren Quellen berechnet wird.",
     "OPPOSED": {
         "winsFP": "<b>{winner}</b> gewinnt gegen <b>{loser}</b> mit {SL} Qualitätsstufe(n)",
         "wins": "<b>{winner}</b> gewinnt gegen <b>{loser}</b>",

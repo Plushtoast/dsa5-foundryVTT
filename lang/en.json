@@ -226,6 +226,8 @@
     "armor": "Armor",
     "ok": "Ok",
     "modules": "Modules",
+    "cummulativeStatusEffects": "Cumulative conditions",
+    "cummulativeStatusEffectsHint": "All conditions which are calculated as a sum of different sources.",
     "advancementCost": "Advance for {cost} adventure points",
     "animal": "Animal",
     "attributeChange": "Attribute change",

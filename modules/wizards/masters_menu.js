@@ -329,6 +329,10 @@ class GameMasterMenu extends Application {
                 probabilities[counter] = hero.id
                 counter++
             }
+            if (withMisfortune && hero.hasCondition("badluck")) {
+                probabilities[counter] = hero.id
+                counter++
+            }
         }
 
         const roll = (await new Roll(`1d${counter - 1}`).evaluate({ async: true })).total

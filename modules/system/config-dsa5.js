@@ -17,6 +17,7 @@ DSA5.statusEffects = [{
         label: "CONDITION.inpain",
         icon: "icons/svg/blood.svg",
         description: "CONDITIONDESCRIPTION.inpain",
+        changes: [ { "key": "system.condition.inpain", "mode": 2, "value": 1 }],
         flags: {
             dsa5: {
                 "value": 1,
@@ -213,6 +214,7 @@ DSA5.statusEffects = [{
         id: "encumbered",
         label: "CONDITION.encumbered",
         icon: "icons/svg/anchor.svg",
+        changes: [ { "key": "system.condition.encumbered", "mode": 2, "value": 1 }],
         description: "CONDITIONDESCRIPTION.encumbered",
         flags: {
             dsa5: {
@@ -226,6 +228,7 @@ DSA5.statusEffects = [{
         id: "stunned",
         label: "CONDITION.stunned",
         icon: "icons/svg/daze.svg",
+        changes: [ { "key": "system.condition.stunned", "mode": 2, "value": 1 }],
         description: "CONDITIONDESCRIPTION.stunned",
         flags: {
             dsa5: {
@@ -239,6 +242,7 @@ DSA5.statusEffects = [{
         id: "raptured",
         label: "CONDITION.raptured",
         icon: "icons/svg/ice-aura.svg",
+        changes: [ { "key": "system.condition.raptured", "mode": 2, "value": 1 }],
         description: "CONDITIONDESCRIPTION.raptured",
         flags: {
             dsa5: {
@@ -253,6 +257,7 @@ DSA5.statusEffects = [{
         label: "CONDITION.feared",
         icon: "icons/svg/terror.svg",
         description: "CONDITIONDESCRIPTION.feared",
+        changes: [ { "key": "system.condition.feared", "mode": 2, "value": 1 }],
         flags: {
             dsa5: {
                 "value": 1,
@@ -266,6 +271,7 @@ DSA5.statusEffects = [{
         label: "CONDITION.paralysed",
         icon: "icons/svg/paralysis.svg",
         description: "CONDITIONDESCRIPTION.paralysed",
+        changes: [ { "key": "system.condition.paralysed", "mode": 2, "value": 1 }],
         flags: {
             dsa5: {
                 "value": 1,
@@ -279,6 +285,7 @@ DSA5.statusEffects = [{
         label: "CONDITION.confused",
         icon: "icons/svg/stoned.svg",
         description: "CONDITIONDESCRIPTION.confused",
+        changes: [ { "key": "system.condition.confused", "mode": 2, "value": 1 }],
         flags: {
             dsa5: {
                 "value": 1,

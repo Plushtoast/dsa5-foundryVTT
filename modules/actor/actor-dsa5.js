@@ -318,12 +318,18 @@ export default class Actordsa5 extends Actor {
             case "disadvantage":
               multiply = Number(item.system.step.value) || 1
               break;
-          }
+          } 
           e.notApplicable = !apply;
 
           if (!apply) return changes;
         }
-      }
+        
+      }else{
+        const flag = e.getFlag("dsa5", "value")
+        if(flag){
+          multiply = Number(flag)
+        }
+      } 
 
       for (let i = 0; i < multiply; i++) {
         changes.push(
@@ -356,6 +362,7 @@ export default class Actordsa5 extends Actor {
 
     mergeObject(system, {
       itemModifiers: {},
+      condition: {},
       skillModifiers: {
         FP: [],
         step: [],
@@ -2288,9 +2295,7 @@ export default class Actordsa5 extends Actor {
   }
 
   async _dependentEffects(statusId, effect, delta) {
-    const effectData = duplicate(effect);
-
-    if (effectData.flags.dsa5.value == 4) {
+    if (this.system.condition[statusId] == 4) {
       if (statusId == "inpain")
         await this.initResistPainRoll()
       else if (["encumbered", "stunned", "feared", "confused", "trance"].includes(statusId))
