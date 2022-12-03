@@ -793,7 +793,7 @@ export default class ActorSheetDsa5 extends ActorSheet {
             let conditions = $(this.form).find('.statusEffectMenu li:not(.search)')
             conditions.removeClass('filterHide')
             conditions.filter(function() {
-                return $(this).find('a').attr('data-tooltip').toLowerCase().trim().indexOf(val) == -1
+                return game.i18n.localize($(this).find('a').attr('data-tooltip')).toLowerCase().trim().indexOf(val) == -1
             }).addClass('filterHide')
         }
     }

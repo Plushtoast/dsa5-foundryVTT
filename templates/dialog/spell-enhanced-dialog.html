@@ -59,16 +59,13 @@
                 <input type="checkbox" id="increaseRangeSpell" class="spellModifier" data-reach="-1" name="increaseRangeSpell" value="-1">
             </div>
 
-            {{/if}} {{#if canChangeCastingTime}}
-            <div class="form-group custom-select">
-                <label>{{localize "increaseCastingTime"}} (+1)</label>
-                <input type="checkbox" id="increaseCastingTime" class="spellModifier" data-castingTime="1" name="increaseCastingTime" value="1">
+            {{/if}} 
+            
+            <div class="canChangeCastingTime">
+                {{#if canChangeCastingTime}}
+                    {{> systems/dsa5/templates/dialog/parts/canChangeCastingTime.html}}
+                {{/if}}
             </div>
-            <div class="form-group custom-select">
-                <label>{{localize "decreaseCastingTime"}} (-1)</label>
-                <input type="checkbox" id="decreaseCastingTime" class="spellModifier" data-castingTime="-1" name="decreaseCastingTime" value="-1">
-            </div>
-            {{/if}}
 
             <div class="form-group custom-select">
                 <label>{{localize "removeGesture"}} (-2)</label>

@@ -111,6 +111,8 @@ export default class Actordsa5 extends Actor {
         data.status.initiative.value =
           Math.round((data.characteristics.mu.value + data.characteristics.ge.value) / 2) +
           (data.status.initiative.modifier || 0);
+
+        data.status.wounds.min = -1 * data.characteristics.ko.value
       }
 
       data.status.fatePoints.max =
@@ -284,14 +286,16 @@ export default class Actordsa5 extends Actor {
           switch (item.type) {
             case "meleeweapon":
             case "rangeweapon":
+              apply = item.system.worn.value && e.getFlag("dsa5", "applyToOwner");
+              break
             case "armor":
-              apply = item.system.worn.value;
+              apply = item.system.worn.value
               break;
             case "equipment":
               apply = !item.system.worn.wearable || (item.system.worn.wearable && item.system.worn.value)
               break;
             case "trait":
-              apply = !["meleeAttack", "rangeAttack"].includes(item.system.traitType.value)
+              apply = !["meleeAttack", "rangeAttack"].includes(item.system.traitType.value) || e.getFlag("dsa5", "applyToOwner")
               break
             case "ammunition":
             case "plant":
@@ -506,6 +510,7 @@ export default class Actordsa5 extends Actor {
     return actorData.canAdvance;
   }
 
+  //TODO get right of the multiple loops
   static armorValue(actor, options = {}) {
     let wornArmor = actor.items.filter((x) => x.type == "armor" && x.system.worn.value == true);
     if (options.origin) {
@@ -572,6 +577,21 @@ export default class Actordsa5 extends Actor {
     });
     item.canAdvance = Actordsa5.canAdvance(this);
     return item;
+  }
+
+  async modifyTokenAttribute(attribute, value, isDelta=false, isBar=true) {
+    const current = foundry.utils.getProperty(this.system, attribute);
+
+    let updates;
+    if ( isBar ) {
+      if (isDelta) value = Math.clamped(current.min || 0, Number(current.value) + value, current.max);
+      updates = {[`system.${attribute}.value`]: value};
+    } else {
+      if ( isDelta ) value = Number(current) + value;
+      updates = {[`system.${attribute}`]: value};
+    }
+    const allowed = Hooks.call("modifyTokenAttribute", {attribute, value, isDelta, isBar}, updates);
+    return allowed !== false ? this.update(updates) : this;
   }
 
   schipshtml(){
@@ -1265,7 +1285,7 @@ export default class Actordsa5 extends Actor {
   }
 
   resetTargetAndMessage(data, cardOptions) {
-    if (data.originalTargets && data.originalTargets.size > 0) {
+    if (data.originalTargets?.size) {
       game.user.targets = data.originalTargets;
       game.user.targets.user = game.user;
     }
@@ -1276,7 +1296,6 @@ export default class Actordsa5 extends Actor {
 
   async fatererollDamage(infoMsg, cardOptions, newTestData, message, data, schipsource) {
     cardOptions.fatePointDamageRerollUsed = true;
-
     this.resetTargetAndMessage(data, cardOptions);
 
     let oldDamageRoll = data.postData.damageRoll;
@@ -1302,7 +1321,7 @@ export default class Actordsa5 extends Actor {
 
     this.resetTargetAndMessage(data, cardOptions);
 
-    infoMsg = `<h3 class="center"><b>${game.i18n.localize("CHATFATE.faitepointUsed")}</b></h3>
+    infoMsg = `<h3 class="center"><b>${game.i18n.localize("CHATFATE.fatepointUsed")}</b></h3>
             ${game.i18n.format("CHATFATE.isTalented", {
       character: "<b>" + this.name + "</b>",
     })}<br>`;
@@ -1318,12 +1337,7 @@ export default class Actordsa5 extends Actor {
           icon: '<i class="fa fa-check"></i>',
           label: game.i18n.localize("Ok"),
           callback: async (dlg) => {
-            let diesToReroll = dlg
-              .find(".dieSelected")
-              .map(function () {
-                return Number($(this).attr("data-index"));
-              })
-              .get();
+            let diesToReroll = dlg.find(".dieSelected").map(function () {return Number($(this).attr("data-index"));}).get();
             if (diesToReroll.length > 0) {
               let newRoll = [];
               for (let k of diesToReroll) {
@@ -1338,6 +1352,7 @@ export default class Actordsa5 extends Actor {
 
               let ind = 0;
               let changedRolls = [];
+
               for (let k of diesToReroll) {
                 const characteristic = newTestData.source.system[`characteristic${k + 1}`];
                 const attr = characteristic ? game.i18n.localize(`CHARAbbrev.${characteristic.value.toUpperCase()}`) + " - " : "";
@@ -1369,6 +1384,7 @@ export default class Actordsa5 extends Actor {
     }).render(true);
   }
 
+  //todo refactor this with istalented
   async fatereroll(infoMsg, cardOptions, newTestData, message, data, schipsource) {
     cardOptions.fatePointDamageRerollUsed = true;
     this.resetTargetAndMessage(data, cardOptions);
@@ -1386,12 +1402,7 @@ export default class Actordsa5 extends Actor {
           icon: '<i class="fa fa-check"></i>',
           label: game.i18n.localize("Ok"),
           callback: async (dlg) => {
-            let diesToReroll = dlg
-              .find(".dieSelected")
-              .map(function () {
-                return Number($(this).attr("data-index"));
-              })
-              .get();
+            let diesToReroll = dlg.find(".dieSelected").map(function () {return Number($(this).attr("data-index"));}).get();
             if (diesToReroll.length > 0) {
               let newRoll = [];
               for (let k of diesToReroll) {
@@ -1410,6 +1421,7 @@ export default class Actordsa5 extends Actor {
               const phexTradition = game.i18n.localize("LocalizedIDs.traditionPhex");
               const isPhex = actor.items.some((x) => x.type == "specialability" && x.name == phexTradition);
 
+              //todo replace with roll.editrollatindex & istalented
               for (let k of diesToReroll) {
                 const characteristic = newTestData.source.system[`characteristic${k + 1}`];
                 const attr = characteristic ? `${game.i18n.localize(`CHARAbbrev.${characteristic.value.toUpperCase()}`)} - ` : "";
@@ -1566,7 +1578,7 @@ export default class Actordsa5 extends Actor {
         fateAvailable = game.settings.get("dsa5", "groupschips").split("/")[0];
         schipText = "GroupPointsRemaining";
       }
-      let infoMsg = `<h3 class="center"><b>${game.i18n.localize("CHATFATE.faitepointUsed")}</b></h3>
+      let infoMsg = `<h3 class="center"><b>${game.i18n.localize("CHATFATE.fatepointUsed")}</b></h3>
                 ${game.i18n.format("CHATFATE." + type, {
         character: "<b>" + this.name + "</b>",
       })}<br>

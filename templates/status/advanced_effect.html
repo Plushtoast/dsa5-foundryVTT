@@ -7,6 +7,12 @@
         <label class="label-text">{{localize 'ActiveEffects.hidePlayers'}}</label>
         <input type="checkbox" name="flags.dsa5.hidePlayers" {{checked effect.flags.dsa5.hidePlayers}}/>
     </div>
+    {{#if isWeapon}}
+    <div class="form-group" data-tooltip="ActiveEffects.applyToOwnerHint">
+        <label class="label-text">{{localize 'ActiveEffects.applyToOwner'}}</label>
+        <input type="checkbox" name="flags.dsa5.applyToOwner" {{checked effect.flags.dsa5.applyToOwner}}/>
+    </div>
+    {{/if}}
     <div class="form-group">
         <label class="label-text">{{localize 'Description'}}</label>
         <input type="text" name="flags.dsa5.description" value="{{effect.flags.dsa5.description}}" />

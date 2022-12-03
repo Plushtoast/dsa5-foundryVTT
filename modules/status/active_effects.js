@@ -43,6 +43,10 @@ async function callMacro(packName, name, actor, item, qs, args = {}) {
     return result;
 };
 
+Hooks.on("renderDSAActiveEffectConfig", (obj, html, data) => {
+    
+})
+
 export default class DSAActiveEffectConfig extends ActiveEffectConfig {
     static get defaultOptions() {
         return mergeObject(super.defaultOptions, {
@@ -74,8 +78,9 @@ export default class DSAActiveEffectConfig extends ActiveEffectConfig {
             return { name: `ActiveEffects.advancedFunctions.${x}`, index: (index += 1) };
         });
         const itemType = getProperty(this.object, "parent.type");
+        const isWeapon = ["meleeweapon", "rangeweapon"].includes(itemType) || (itemType == "trait" && ["meleeAttack", "rangeAttack"].includes(getProperty(this.object, "parent.system.traitType.value")))
         const effectConfigs = {
-            hasSpellEffects: [
+            hasSpellEffects: isWeapon || [
                     "spell",
                     "liturgy",
                     "ritual",
@@ -83,13 +88,9 @@ export default class DSAActiveEffectConfig extends ActiveEffectConfig {
                     "consumable",
                     "poison",
                     "disease",
-                    "ammunition",
-                    "meleeweapon",
-                    "rangeweapon",
+                    "ammunition"
                 ].includes(itemType) ||
-                (["specialability"].includes(itemType) && getProperty(this.object, "parent.system.category.value") == "Combat") ||
-                (itemType == "trait" && ["meleeAttack", "rangeAttack"].includes(getProperty(this.object, "parent.system.traitType.value")))
-                ,
+                (["specialability"].includes(itemType) && getProperty(this.object, "parent.system.category.value") == "Combat"),
             hasDamageTransformation: ["ammunition"].includes(itemType),
         };
         if (effectConfigs.hasDamageTransformation) {
@@ -108,6 +109,7 @@ export default class DSAActiveEffectConfig extends ActiveEffectConfig {
             advancedFunctions,
             effectConfigs,
             config,
+            isWeapon
         });
         elem.find('.tab[data-tab="effects"]').after($(template));
 

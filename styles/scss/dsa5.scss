@@ -1211,7 +1211,7 @@
       top: 2px;
     }
   
-    &.npc-sheet:after, &.character-sheet:after, &.item:not(.monarch):after {
+    &.npc-sheet:not(.monarch):after, &.character-sheet:not(.monarch):after, &.item:not(.monarch):after {
       background-image: url('../../icons/backgrounds/sidebar-bot.webp');
       bottom: 2px;
       content: '';

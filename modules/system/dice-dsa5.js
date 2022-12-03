@@ -535,7 +535,7 @@ export default class DiceDSA5 {
             }
         }
         let damageRoll = testData.damageRoll
-            ? await testData.damageRoll
+            ? testData.damageRoll
             : await DiceDSA5.manualRolls(
                   await new Roll(rollFormula).evaluate({ async: true }),
                   "CHAR.DAMAGE",
@@ -993,18 +993,15 @@ export default class DiceDSA5 {
 
         let crit = testData.extra.actor.system.skillModifiers.crit
         let botch = testData.extra.actor.system.skillModifiers.botch
-        if (
-            (testData.source.type == "spell" || testData.source.type == "ritual") &&
+        if ( 
+            ["spell", "ritual"].includes(testData.source.type) &&
             AdvantageRulesDSA5.hasVantage(testData.extra.actor, game.i18n.localize("LocalizedIDs.wildMagic"))
         )
             botch = 19
 
         if (
             testData.source.type == "skill" &&
-            AdvantageRulesDSA5.hasVantage(
-                testData.extra.actor,
-                `${game.i18n.localize("LocalizedIDs.incompetent")} (${testData.source.name})`
-            )
+            AdvantageRulesDSA5.hasVantage(testData.extra.actor, `${game.i18n.localize("LocalizedIDs.incompetent")} (${testData.source.name})`)
         ) {
             let reroll = await new Roll("1d20").evaluate({ async: true })
             let indexOfMinValue = res.reduce((iMin, x, i, arr) => (x < arr[iMin] ? i : iMin), 0)
@@ -1302,12 +1299,19 @@ export default class DiceDSA5 {
 
     static addApplyEffectData(testData) {
         const source = testData.preData.source
-        if (["spell", "liturgy", "ritual", "ceremony", "meleeweapon", "rangeweapon"].includes(source.type)) {
-            if (testData.successLevel > 0 && source.effects.length > 0) return true
-        } else if (["disease", "poison"].includes(source.type)) {
+        if(testData.successLevel > 0){
+            if(["meleeweapon", "rangeweapon"].includes(source.type) || (source.type == "trait" && ["rangeAttack", "meleeAttack"].includes(source.system.traitType.value))){
+                if (source.effects.some(x => {
+                    return !getProperty(x, "flags.dsa5.applyToOwner")
+                })) return true
+            }
+            else if (["spell", "liturgy", "ritual", "ceremony", "trait"].includes(source.type)) {
+                if (source.effects.length > 0) return true
+            } 
+        }else if (["disease", "poison"].includes(source.type)) {
             return source.effects.length > 0
-        } else if(source.type == "trait" && source.effects.length > 0 && testData.successLevel > 0) return true
-
+        }
+        
         const specAbIds = testData.preData.situationalModifiers.filter((x) => x.specAbId).map((x) => x.specAbId)
         if (specAbIds.length > 0) {
             const specAbs = testData.preData.extra.actor.items.filter((x) => specAbIds.includes(x._id))

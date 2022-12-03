@@ -17,7 +17,7 @@ export default class DSA5StatusEffects {
                 ev.dataTransfer.setData("text/plain", JSON.stringify(dataTransfer));
             });
         })
-        html.find('.chat-condition').click(ev => DSA5ChatListeners.postStatus($(ev.currentTarget).attr("data-id")))
+        html.on('click', '.chat-condition', ev => DSA5ChatListeners.postStatus($(ev.currentTarget).attr("data-id")))
     }
 
     static createCustomEffect(owner, description = "", label) {
@@ -218,14 +218,14 @@ export default class DSA5StatusEffects {
 
     static getRollModifiers(actor, item, options = {}) {
         //actor = actor.system ? actor.data : actor
+        const source = game.i18n.localize('status') + "/" + game.i18n.localize('condition')
         return actor.effects.filter(x => !x.disabled).map(ef => {
-            const effect = duplicate(ef)
-            let effectClass = game.dsa5.config.statusEffectClasses[getProperty(effect, "flags.core.statusId")] || DSA5StatusEffects
+            const effectClass = game.dsa5.config.statusEffectClasses[getProperty(ef, "flags.core.statusId")] || DSA5StatusEffects
             return {
-                name: effect.label,
-                value: effectClass.calculateRollModifier(effect, actor, item, options),
+                name: ef.label,
+                value: effectClass.calculateRollModifier(ef, actor, item, options),
                 selected: effectClass.ModifierIsSelected(item, options, actor),
-                source: game.i18n.localize('status') + "/" + game.i18n.localize('condition')
+                source
             }
         }).filter(x => x.value != 0)
     }

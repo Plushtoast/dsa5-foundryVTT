@@ -105,6 +105,19 @@ export default class DSA5SpellDialog extends DialogShared {
             return;
         }
 
+        const changeCast = html.find('.canChangeCastingTime')
+        if(source.system.canChangeCastingTime.value == "true"){
+            if(changeCast.is(":empty")) {
+                changeCast.html(await renderTemplate('systems/dsa5/templates/dialog/parts/canChangeCastingTime.html'))
+                this.setPosition({ height: "auto" })
+            }
+        }else{
+            if(!changeCast.is(":empty")){
+                changeCast.html('')
+                this.setPosition({ height: "auto" })
+            }
+        }
+
         let baseAsp = source.system.AsPCost.value
         let baseReach = source.system.range.value
         let baseCastingTime = source.system.castingTime.value

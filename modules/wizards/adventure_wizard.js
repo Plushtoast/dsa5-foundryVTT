@@ -1,7 +1,6 @@
 import { bindImgToCanvasDragStart } from "../hooks/imgTileDrop.js"
 import DSA5StatusEffects from "../status/status_effects.js"
 import DSA5ChatAutoCompletion from "../system/chat_autocompletion.js"
-import DSA5ChatListeners from "../system/chat_listeners.js"
 import DSA5_Utility from "../system/utility-dsa5.js"
 import { slist } from "../system/view_helper.js"
 
@@ -260,7 +259,7 @@ export default class BookWizard extends Application {
         const chapter = $(this._element).find('.chapter')
         chapter.html(this.content)
         bindImgToCanvasDragStart(chapter)
-        chapter.find('.documentName-link, .entity-link').click(ev => {
+        chapter.find('.documentName-link, .entity-link, .content-link').click(ev => {
             const elem = $(ev.currentTarget)
             if (this.bookData && elem.attr("data-pack") == this.bookData.journal) {
                 ev.stopPropagation()    

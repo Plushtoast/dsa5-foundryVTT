@@ -1140,6 +1140,8 @@
         "creature": "Akteurlink (z.b. das5-core.corebestiary.Gotongi)",
         "resistRoll": "Widerstandsprobe",
         "resistPain": "Der Schmerz ist überwältigend (Stufe 4). Die Handlungsfähigkeit ist nur über eine Selbstbeherrschungsprobe zu bewahren.",
+        "applyToOwner": "Effekt auf Träger übertragen",
+        "applyToOwnerHint": "Waffen übertragen ihren Effekt standardmäßig auf das Ziel eines Angriffs. Setze den Haken um den Effekt statt dessen auf den Träger anzuwenden.",
         "placeholder": {
             "macros": "Macros können auf diese Variablen zugreifen:\nactor - Der anvisierte Akteur\ntestData - All Daten für die aktuelle Probe\nsource - Die Quelle des Macros",
             "armorPostprocess": "Rüstungstransformation können auf diese Variablen zugreifen:\nactor - Der anvisierte Akteur\noptions.armor - Die Rüstungs des Ziels\noptions.attackItem - Die Quelle des Macros",
@@ -1564,7 +1566,7 @@
         "waitInit": "Zurückstellen"
     },
     "CHATFATE": {
-        "faitepointUsed": "Das Schicksal ändert sich",
+        "fatepointUsed": "Das Schicksal ändert sich",
         "reroll": "{character} würfelt erneut.",
         "rerollDamage": "{character} würfelt erneut.",
         "addQS": "{character} erhöht die Qualitätsstufe.",

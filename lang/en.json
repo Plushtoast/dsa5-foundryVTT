@@ -1125,6 +1125,8 @@
         "creature": "Actorlink (e.g. das5-core.coreenbestiary.Gotongi)",
         "resistRoll": "Resist check",
         "resistPain": "The pain is overwhelming (level 4). The ability to act can only be maintained via a self-control check.",
+        "applyToOwner": "Apply effect to owner",
+        "applyToOwnerHint": "Weapons apply their effect by default to the target of an attack. Check this box if you want to apply the effect to the carrier of the weapon instead.",
         "placeholder": {
             "macros": "Macros have access to the following variables:\nactor - The targeted actor\ntestData - All data for the current check\nsource - The source of the macro",
             "armorPostprocess": "Armor transformations have access to the following variables:\nactor - The targeted actor\narmor - The armor of the target\nsource - The source of the macro",
@@ -1594,7 +1596,7 @@
         "char": "Improve Attribute"
     },
     "CHATFATE": {
-        "faitepointUsed": "The fate is changing",
+        "fatepointUsed": "The fate is changing",
         "reroll": "{character} rolls again.",
         "rerollDamage": "{character} rolls again.",
         "addQS": "{character} increases the quality level.",
