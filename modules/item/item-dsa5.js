@@ -475,7 +475,18 @@ export default class Itemdsa5 extends Item {
                         (x.type == "trait" && x.system.traitType.value == "meleeAttack" && x.system.pa)
                     )
                 })
-                if (defWeapon.length > 0) targetWeaponSize = defWeapon[0].system.reach.value
+                if (defWeapon.length > 0) {
+                    for(const weapon of defWeapon) {
+                        switch(targetWeaponSize) {
+                            case "short":
+                                targetWeaponSize = weapon.system.reach.value
+                                break
+                            case "medium":
+                                if (weapon.system.reach.value == "long") targetWeaponSize = "long"
+                                break
+                        }
+                    }
+                }
             }
         })
         
