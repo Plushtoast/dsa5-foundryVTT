@@ -217,9 +217,10 @@ export default class Itemdsa5 extends Item {
                             return sum + x.spellResistanceModifier(target.actor)
                         }, 0)
                     }
-
-                    skMod.push(target.actor.system.status.soulpower.max * -1 - spellResistance)
-                    zkMod.push(target.actor.system.status.toughness.max * -1 - spellResistance)
+                    const itemResistSoulpower = getProperty(target.actor, `system.status.soulpower.${source.type}resist`) || 0
+                    const itemResistToughness = getProperty(target.actor, `system.status.toughness.${source.type}resist`) || 0
+                    skMod.push((target.actor.system.status.soulpower.max + itemResistSoulpower) * -1 - spellResistance)
+                    zkMod.push((target.actor.system.status.toughness.max + itemResistToughness) * -1 - spellResistance)
                 }
             })
         }
