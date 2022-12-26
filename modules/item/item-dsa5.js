@@ -470,22 +470,12 @@ export default class Itemdsa5 extends Item {
         
         game.user.targets.forEach((target) => {
             if (target.actor) {
-                const defWeapon = target.actor.items.filter((x) => {
-                    return (
-                        (x.type == "meleeweapon" && x.system.worn.value) ||
-                        (x.type == "trait" && x.system.traitType.value == "meleeAttack" && x.system.pa)
-                    )
-                })
-                if (defWeapon.length > 0) {
-                    for(const weapon of defWeapon) {
-                        switch(targetWeaponSize) {
-                            case "short":
-                                targetWeaponSize = weapon.system.reach.value
-                                break
-                            case "medium":
-                                if (weapon.system.reach.value == "long") targetWeaponSize = "long"
-                                break
-                        }
+                for(let x of target.actor.items){
+                    if((x.type == "meleeweapon" && x.system.worn.value) || (x.type == "trait" && x.system.traitType.value == "meleeAttack" && x.system.pa)){
+                        if(DSA5.meleeRangesArray.indexOf(x.system.reach.value) > DSA5.meleeRangesArray.indexOf(targetWeaponSize)) 
+                            targetWeaponSize = x.system.reach.value
+
+                        if(targetWeaponSize == "long") break
                     }
                 }
             }
@@ -541,7 +531,6 @@ export default class Itemdsa5 extends Item {
         return null
     }
 
-    //TODO find tokenId
     setupEffect(ev, options = {}, tokenId) {
         return Itemdsa5.getSubClass(this.type).setupDialog(ev, options, this, tokenId)
     }

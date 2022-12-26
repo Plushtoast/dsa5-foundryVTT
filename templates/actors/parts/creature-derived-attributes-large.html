@@ -18,8 +18,8 @@
     <div class="derivedAttrs row-section">
         <div class="col two lineheight">
             {{localize "wounds"}}
-            <a data-attr="wounds" class="advance refund-points"><i data-tooltip="{{actor.system.status.wounds.refund}}" class="fas fa-minus"></i></a>
-            <a data-attr="wounds" class="advance advance-points"><i data-tooltip="{{actor.system.status.wounds.cost}}" class="fas fa-plus"></i></a>
+            <a data-attr="wounds" class="advance refund-points"><i data-tooltip="{{prepare.system.status.wounds.refund}}" class="fas fa-minus"></i></a>
+            <a data-attr="wounds" class="advance advance-points"><i data-tooltip="{{prepare.system.status.wounds.cost}}" class="fas fa-plus"></i></a>
             <span class="buttons">
                 <a data-char="regenerate" class="ch-regenerate item" data-mod="regenerate" data-tooltip="regenerate">&nbsp;<i class="fas fa-moon"></i></a>
             </span>
@@ -37,12 +37,12 @@
             {{actor.system.status.wounds.max}}
         </div>
     </div>
-    {{#if actor.magic.hasSpells}}
+    {{#if prepare.magic.hasSpells}}
     <div class="derivedAttrs row-section">
         <div class="col two lineheight">
             {{localize "astralenergy"}}
-            <a data-attr="astralenergy" class="advance refund-points"><i data-tooltip="{{actor.system.status.astralenergy.refund}}" class="fas fa-minus"></i></a>
-            <a data-attr="astralenergy" class="advance advance-points"><i data-tooltip="{{actor.system.status.astralenergy.cost}}" class="fas fa-plus"></i></a>
+            <a data-attr="astralenergy" class="advance refund-points"><i data-tooltip="{{prepare.system.status.astralenergy.refund}}" class="fas fa-minus"></i></a>
+            <a data-attr="astralenergy" class="advance advance-points"><i data-tooltip="{{prepare.system.status.astralenergy.cost}}" class="fas fa-plus"></i></a>
         </div>
         <div class="col eight lineheight center">
             {{actor.system.status.astralenergy.current}}
@@ -58,13 +58,13 @@
 
         </div>
     </div>
-    {{/if}} {{#if actor.magic.hasPrayers}}
+    {{/if}} {{#if prepare.magic.hasPrayers}}
     <div class="derivedAttrs row-section">
         <div class="col two lineheight">
             {{localize "karmaenergy"}}
-            <a data-attr="karmaenergy" class="advance refund-points"><i data-tooltip="{{actor.system.status.karmaenergy.refund}}"
+            <a data-attr="karmaenergy" class="advance refund-points"><i data-tooltip="{{prepare.system.status.karmaenergy.refundnd}}"
                 class="fas fa-minus"></i></a>
-            <a data-attr="karmaenergy" class="advance advance-points"><i data-tooltip="{{actor.system.status.karmaenergy.cost}}"
+            <a data-attr="karmaenergy" class="advance advance-points"><i data-tooltip="{{prepare.system.status.karmaenergy.cost}}"
                     class="fas fa-plus"></i></a>
         </div>
         <div class="col eight lineheight center">

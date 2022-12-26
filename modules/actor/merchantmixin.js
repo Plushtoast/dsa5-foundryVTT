@@ -455,7 +455,7 @@ export const MerchantSheetMixin = (superclass) => class extends superclass {
             if (this.merchantSheetActivated()) {
                 this.filterWornEquipment(data)
                 this.prepareTradeFriend(data)
-                if (data.actor.inventory["misc"].items.length == 0) data.actor.inventory["misc"].show = false
+                if (data.prepare.inventory["misc"].items.length == 0) data.actor.inventory["misc"].show = false
             }
         } else {
             this.prepareStorage(data)
@@ -494,7 +494,7 @@ export const MerchantSheetMixin = (superclass) => class extends superclass {
                 }
             }
             const money = {
-                items: data.actor.money.coins.map(x => {
+                items: data.prepare.money.coins.map(x => {
                     x.name = game.i18n.localize(x.name)
                     return x
                 }),

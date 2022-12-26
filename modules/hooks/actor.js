@@ -1,5 +1,6 @@
 import DSAActiveEffectConfig from "../status/active_effects.js";
 import DSA5_Utility from "../system/utility-dsa5.js";
+import Riding from "../system/riding.js"
 
 export default function() {
     Hooks.on("preDeleteActiveEffect", (effect, options, user_id) => {
@@ -131,6 +132,14 @@ export default function() {
         update["name"] = name
     }
 
+    Hooks.on("updateToken", (token, data, options) => {
+        Riding.updateTokenHook(token, data, options)
+    })
+
+    Hooks.on("deleteToken", (token) => {
+        Riding.deleteTokenHook(token)
+    })
+
     Hooks.on('preCreateToken', (token, data, options, userId) => {
         const actor = token.actor
         if (!actor) return;
@@ -162,6 +171,7 @@ export default function() {
         if(options.noHook) return
         
         obfuscateName(token, {})
+        Riding.createTokenHook(token, options, id)
     })
 }
 

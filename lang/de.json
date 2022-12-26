@@ -6,6 +6,23 @@
     "Attribute-difficult": "Schwierig (-2)",
     "Attribute-hard": "Sehr schwierig (-4)",
     "Attribute-vhard": "Extrem schwierig (-6)",
+    "RIDING": {
+        "unmount": "Absitzen",
+        "mount": "Aufsitzen",
+        "horse": "Reittier",
+        "riding": "Reitend",
+        "mode": "Gangart",
+        "ridingDescription": "Der Charakter geniest eine vorteilhafte Position gegenüber nicht reitenden Charakteren. Die Geschwindigkeit und der Initiativegrundwert des Pferdes ersetzen den Wert des Charakters.",
+        "description": "Markiere zwei Token und sitze über das Token HUD Menü auf oder ziehe ein Reittier per drag and drop auf den Charakterbogen",
+        "increase": "Hü",
+        "decrease": "Brr",
+        "speeds": {
+            "0": "Stehend",
+            "-4": "Schritt",
+            "-5000": "Trab",
+            "-8": "Galopp"
+        }
+    },
     "CHAR": {
         "MU": "Mut",
         "KL": "Klugheit",
@@ -119,6 +136,7 @@
         "assassinateDescr": "Opfer muss ahnungslos sein (Sinnesschärfe gegen Verbergen)",
         "multipleTarget": "Mehrere Ziele",
         "addTarget": "Ziel hinzufügen",
+        "whichFunction": "Welche Funktion möchtest du anwenden?",
         "onlyInCombatTargets": "Ziele werden nur im Kampf angezeigt.",
         "setTargetToUserHint": "Aktuell markierte Ziele auf den User übertragen.",
         "setTargetToUser": "Spielerziel setzen",
@@ -373,6 +391,7 @@
     "Opposed": "Vergleichsprobe",
     "opposingWeaponSize": "Waffengröße Gegner",
     "offHand": "Nebenhand",
+    "globalConfig": "global",
     "Ongoing": "Laufend",
     "protection": "Rüstungsschutz",
     "parrytest": "Verteidigungsprobe",
@@ -445,6 +464,7 @@
     "summoningPackage": "Modifikationspaket",
     "shooter": "Schütze",
     "speed": "Geschwindigkeit",
+    "aoeangle": "Winkel",
     "statuseffects": "Statuseffekte",
     "transferredStatusEffects": "Transferierte Statuseffekte",
     "specialAbilities": "Sonderfertigkeiten",
@@ -1185,7 +1205,9 @@
         "aspectKnowledge": "Aspektkenntnis",
         "deaf": "Taub",
         "blind": "Blind",
+        "loyalty": "Loyalität",
         "mute": "Stumm",
+        "riding": "Reiten",
         "ruggedFighter": "Zäher Hund",
         "sensitiveToPain": "Zerbrechlich",
         "fragileAnimal": "Zerbrechliches Tier",
@@ -1427,6 +1449,7 @@
     "mountedRangeOptions": {
         "STATIONARY": "steht",
         "SCHRITT": "im Schritt",
+        "TROT": "im Trab",
         "GALOPP": "im Galopp"
     },
     "regnerationCampLocations": {

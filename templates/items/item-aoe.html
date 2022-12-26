@@ -16,3 +16,9 @@
     <input class="input-text" type="text" placeholder="{{localize 'gridUnits'}}" name="system.target.width" value="{{system.target.width}}" data-dtype="String" />
 </div>
 {{/if}}
+{{#if (eq system.target.type 'cone')}}
+<div class="form-group">
+    <label class="label-text">{{localize "aoeangle"}} °</label>
+    <input class="input-text" type="number" name="system.target.angle" value="{{system.target.angle}}" data-dtype="String" />
+</div>
+{{/if}}

@@ -1,3 +1,4 @@
+import DSA5SpellDialog from "../dialog/dialog-spell-dsa5.js";
 import DSA5 from "../system/config-dsa5.js";
 import DiceDSA5 from "../system/dice-dsa5.js";
 import DSA5_Utility from "../system/utility-dsa5.js";
@@ -592,6 +593,23 @@ export default class DSAActiveEffectConfig extends ActiveEffectConfig {
 
         for (const k of DSA5.gearModifyableCalculatedAttributes)
             optns.push({ name: game.i18n.localize(k), val: `system.status.${k}.gearmodifier`, mode: 2, ph: "1" });
+
+        
+
+        for(let model of ["spell", "liturgy", "ceremony", "ritual"]){
+            const modelName = DSA5_Utility.categoryLocalization(model)
+            for(const k of ["soulpower", "toughness"]){
+                optns.push({ name: `${game.i18n.localize(k)} (${modelName})`, val: `system.status.${k}.${model}resist`, mode: 2, ph: "1" });
+            }
+            for(const k of Object.keys(DSA5SpellDialog.rollModifiers)){
+                optns.push({
+                    name: `${modelName} - ${game.i18n.localize(k.replace("Spell", ""))}`,
+                    val: `system.${model}RollModifiers.${k}.mod`,
+                    mode: 2,
+                    ph: "1",
+                })
+            }
+        }        
 
         optns = optns.sort((a, b) => {
             return a.name.localeCompare(b.name);

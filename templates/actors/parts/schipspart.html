@@ -1,15 +1,15 @@
-{{#if (and actor.schips.length actor.groupschips.length)}}
+{{#if (and prepare.schips.length prepare.groupschips.length)}}
 <div class="row-section">
     <div class="col ten lineheight center" data-tooltip="fatePoints">
         {{localize 'CHARAbbrev.fatePoints'}}
     </div>
     <div class="col fourty center" data-tooltip="fatePoints">
-        {{#each actor.schips as |item i|}}
+        {{#each prepare.schipsps as |item i|}}
         <a class="schip schipUpdate {{item.cssClass}}" data-val="{{item.value}}"></a>
         {{/each}}
     </div>
     <div class="col fourty center" data-tooltip="CHARAbbrev.groupFatePoints">
-        {{#each actor.groupschips as |item i|}}
+        {{#each prepare.groupschips as |item i|}}
         <a class="schip {{item.cssClass}}" data-val="{{item.value}}"></a>
         {{/each}}
     </div>
@@ -17,26 +17,26 @@
         {{localize 'CHARAbbrev.gfatePoints'}}
     </div>
 </div>
-{{else if actor.schips.length}}
+{{else if prepare.schips.length}}
 <div class="row-section">
     <div class="col ten lineheight center" data-tooltip="fatePoints">
         {{localize 'CHARAbbrev.fatePoints'}}
     </div>
     <div class="col eighty center" data-tooltip="fatePoints">
-        {{#each actor.schips as |item i|}}
+        {{#each prepare.schips as |item i|}}
         <a class="schip schipUpdate {{item.cssClass}}" data-val="{{item.value}}"></a>
         {{/each}}
     </div>
     <div class="col ten center">
     </div>
 </div>
-{{else if actor.groupschips.length}}
+{{else if prepare.groupschips.length}}
 <div class="row-section">
     <div class="col ten lineheight center" data-tooltip="CHARAbbrev.groupFatePoints">
         {{localize 'CHARAbbrev.gfatePoints'}}
     </div>
     <div class="col eighty center" data-tooltip="CHARAbbrev.groupFatePoints">
-        {{#each actor.groupschips as |item i|}}
+        {{#each prepare.groupschips as |item i|}}
         <a class="schip {{item.cssClass}}" data-val="{{item.value}}"></a>
         {{/each}}
     </div>

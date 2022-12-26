@@ -1,4 +1,4 @@
-<form class="{{cssClass}} lock{{actor.sheetLocked}}" autocomplete="off">
+<form class="{{cssClass}} lock{{prepare.sheetLocked}}" autocomplete="off">
     <fieldset disabled>
         <header class="sheet-header row-section">
 
@@ -67,7 +67,7 @@
                             {{/grouped_each}}
                         </div>
                         <div class="col two">
-                            {{#grouped_each 4 actor.money.coins}}
+                            {{#grouped_each 4 prepare.money.coins}}
                             <div class="row-section table-title">
                                 {{#each this}}
                                 <div class="col four center">
@@ -144,7 +144,7 @@
                             {{/if}} {{/each}}
                         </div>
                         <div class="col two">
-                            {{#each actor.inventory as |section sid|}} {{#if section.show}}
+                            {{#each prepare.inventory as |section sid|}} {{#if section.show}}
                             <div class="groupbox">
                                 <div class="row-section table-title">
                                     <div class="col eight"></div>

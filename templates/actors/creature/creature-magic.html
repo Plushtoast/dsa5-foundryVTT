@@ -15,7 +15,7 @@
                 </div>
             </div>
         </div>
-        {{#each actor.magic.spell as |item i|}}
+        {{#each prepare.magic.spell as |item i|}}
         <div class="col spells item" data-item-id="{{item._id}}">
             <div class="row-section skills lineheight">
                 <div class="col four">
@@ -94,7 +94,7 @@
                 </div>
             </div>
         </div>
-        {{#each actor.magic.ritual as |item i|}}
+        {{#each prepare.magic.ritual as |item i|}}
         <div class="col spells item" data-item-id="{{item._id}}">
             <div class="row-section skills lineheight">
                 <div class="col four">
@@ -151,7 +151,7 @@
         </div>
     </div>
     <div class="row-section wrap cards">
-        {{#each actor.specAbs.magical as |item i|}}
+        {{#each prepare.specAbs.magical as |item i|}}
         <div class="item" data-item-id="{{item._id}}">
             {{#if item.OnUseEffect}}<a data-tooltip="SHEET.onUseEffect" class="onUseItem"><i class="fas fa-dice-six"></i></a>{{/if}}<a class="item-edit">{{item.name}}{{roman item.system.step.value item.system.maxRank.value}}</a>
         </div>
@@ -170,7 +170,7 @@
                 </div>
             </div>
             <div class="row-section wrap cards">
-                {{#each actor.magic.magictrick as |item i|}}
+                {{#each prepare.magic.magictrick as |item i|}}
                 <div class="item" data-item-id="{{item._id}}">
                     <a class="item-edit">{{item.name}}</a>
                 </div>

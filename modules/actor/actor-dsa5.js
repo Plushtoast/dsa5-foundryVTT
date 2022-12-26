@@ -15,6 +15,7 @@ import DSAActiveEffectConfig from "../status/active_effects.js";
 import OnUseEffect from "../system/onUseEffects.js";
 import DSA5SoundEffect from "../system/dsa-soundeffect.js";
 import CreatureType from "../system/creature-type.js";
+import Riding from "../system/riding.js";
 
 export default class Actordsa5 extends Actor {
   static async create(data, options) {
@@ -108,10 +109,6 @@ export default class Actordsa5 extends Actor {
         data.status.toughness.value =
           (data.status.toughness.initial || 0) +
           Math.round((data.characteristics.ko.value + data.characteristics.ko.value + data.characteristics.kk.value) / 6);
-        data.status.initiative.value =
-          Math.round((data.characteristics.mu.value + data.characteristics.ge.value) / 2) +
-          (data.status.initiative.modifier || 0);
-
         data.status.wounds.min = -1 * data.characteristics.ko.value
       }
 
@@ -122,14 +119,12 @@ export default class Actordsa5 extends Actor {
         data.status.wounds.current = data.status.wounds.initial;
         data.status.astralenergy.current = data.status.astralenergy.initial;
         data.status.karmaenergy.current = data.status.karmaenergy.initial;
-        data.status.initiative.value = data.status.initiative.current + (data.status.initiative.modifier || 0);
       }
 
       data.status.wounds.max = Math.round(
         (data.status.wounds.current + data.status.wounds.modifier + data.status.wounds.advances) * data.status.wounds.multiplier +
         data.status.wounds.gearmodifier
-      );
-      
+      );     
 
       data.status.regeneration.LePmax =
         data.status.regeneration.LePTemp + data.status.regeneration.LePMod + data.status.regeneration.LePgearmodifier;
@@ -161,55 +156,28 @@ export default class Actordsa5 extends Actor {
         data.status.karmaenergy.advances +
         data.status.karmaenergy.gearmodifier;
 
-      data.status.speed.max = data.status.speed.initial + (data.status.speed.modifier || 0) + data.status.speed.gearmodifier;
+      
       data.status.soulpower.max =
         data.status.soulpower.value + data.status.soulpower.modifier + data.status.soulpower.gearmodifier;
       data.status.toughness.max =
         data.status.toughness.value + data.status.toughness.modifier + data.status.toughness.gearmodifier;
       data.status.dodge.value = Math.round(data.characteristics.ge.value / 2) + data.status.dodge.gearmodifier;
 
-      let encumbrance = this.hasCondition("encumbered");
-      encumbrance = encumbrance ? Number(encumbrance.flags.dsa5.value) : 0;
+      let encumbrance = this.calcEncumbrance()
 
-      data.status.speed.max = Math.round(
-        Math.max(0, data.status.speed.max - Math.min(4, encumbrance)) * (data.status.speed.multiplier || 1)
-      );
-
-      data.status.initiative.value += data.status.initiative.gearmodifier - Math.min(4, encumbrance);
-      const baseInit = Number((0.01 * data.status.initiative.value).toFixed(2));
-      data.status.initiative.value *= data.status.initiative.multiplier || 1;
-      data.status.initiative.value = Math.round(data.status.initiative.value) + baseInit;
-
+      const horse = Riding.isRiding(this) ? Riding.getHorse(this) : undefined
+      this.calcInitiative(data, encumbrance, horse)
+      
       data.status.dodge.max =
         Number(data.status.dodge.value) +
         Number(data.status.dodge.modifier) +
         Number(game.settings.get("dsa5", "higherDefense")) / 2;
 
-      const hasDefaultPain = this.type != "creature" || data.status.wounds.max >= 20;
-      let pain = 0;
-      if (data.status.wounds.max > 0) {
-        if (hasDefaultPain) {
-          pain = Math.floor((1 - data.status.wounds.value / data.status.wounds.max) * 4);
-          if (data.status.wounds.value <= 5) pain = 4;
-        } else {
-          pain = Math.floor(5 - (5 * data.status.wounds.value) / data.status.wounds.max);
-        }
+      const pain = this.calcPain(data)
+                 
+      const fixated = this.hasCondition("fixated")
+      this.calcSpeed(data, encumbrance, pain, fixated, horse)
 
-        if (pain < 4)
-          pain -=
-            AdvantageRulesDSA5.vantageStep(this, game.i18n.localize("LocalizedIDs.ruggedFighter")) +
-            AdvantageRulesDSA5.vantageStep(this, game.i18n.localize("LocalizedIDs.ruggedAnimal")) +
-            (SpecialabilityRulesDSA5.hasAbility(this, game.i18n.localize("LocalizedIDs.traditionKor")) ? 1 : 0);
-        if (pain > 0)
-          pain +=
-            AdvantageRulesDSA5.vantageStep(this, game.i18n.localize("LocalizedIDs.sensitiveToPain")) +
-            AdvantageRulesDSA5.vantageStep(this, game.i18n.localize("LocalizedIDs.fragileAnimal"));
-
-        pain = Math.clamped(pain, 0, 4);
-      }      
-
-      if (!this.hasCondition("bloodrush")) data.status.speed.max = Math.max(0, data.status.speed.max - pain);
-      
       if (DSA5_Utility.isActiveGM()) {
         const changePain = data.pain != pain;
         data.pain = pain;
@@ -222,18 +190,99 @@ export default class Actordsa5 extends Actor {
         if (AdvantageRulesDSA5.hasVantage(this, game.i18n.localize("LocalizedIDs.deaf"))) this.addCondition("deaf");
 
         if (this.isMerchant()) this.prepareMerchant()
-      }
-
-      let paralysis = this.hasCondition("paralysed");
-      if (paralysis) data.status.speed.max = Math.round(data.status.speed.max * (1 - paralysis.flags.dsa5.value * 0.25));
-      if (this.hasCondition("fixated")) {
-        data.status.speed.max = 0;
+      }      
+      
+      if (fixated) {
         data.status.dodge.max = Math.max(0, data.status.dodge.max - 4);
-      } else if (this.hasCondition("rooted") || this.hasCondition("incapacitated")) data.status.speed.max = 0;
-      else if (this.hasCondition("prone")) data.status.speed.max = Math.min(1, data.status.speed.max);
+      }      
     } catch (error) {
       console.error("Something went wrong with preparing actor data: " + error + error.stack);
       ui.notifications.error(game.i18n.format("dsk.DSKError.PreparationError", {name: this.name}) + error + error.stack);
+    }
+  }
+
+  calcPain(data){
+    let pain = 0;
+    if (data.status.wounds.max > 0) {
+      const hasDefaultPain = this.type != "creature" || data.status.wounds.max >= 20;
+      if (hasDefaultPain) {
+        pain = Math.floor((1 - data.status.wounds.value / data.status.wounds.max) * 4);
+        if (data.status.wounds.value <= 5) pain = 4;
+      } else {
+        pain = Math.floor(5 - (5 * data.status.wounds.value) / data.status.wounds.max);
+      }
+
+      if (pain < 4)
+        pain -=
+          AdvantageRulesDSA5.vantageStep(this, game.i18n.localize("LocalizedIDs.ruggedFighter")) +
+          AdvantageRulesDSA5.vantageStep(this, game.i18n.localize("LocalizedIDs.ruggedAnimal")) +
+          (SpecialabilityRulesDSA5.hasAbility(this, game.i18n.localize("LocalizedIDs.traditionKor")) ? 1 : 0);
+      if (pain > 0)
+        pain +=
+          AdvantageRulesDSA5.vantageStep(this, game.i18n.localize("LocalizedIDs.sensitiveToPain")) +
+          AdvantageRulesDSA5.vantageStep(this, game.i18n.localize("LocalizedIDs.fragileAnimal"));
+
+      pain = Math.clamped(pain, 0, 4);
+    } 
+    return pain
+  }
+
+  calcSpeed(data, encumbrance, pain, fixated, horse){
+    if(horse){
+      data.status.speed.max = horse.system.status.speed.max
+      if(!data.status.speed.max){
+        const horseData = horse.system
+        //Todo need to calc pain
+        horse.calcSpeed(horseData, horse.calcEncumbrance(), 0, horse.hasCondition("fixated"))
+      }
+      data.status.speed.max = horse.system.status.speed.max
+    } else {
+      data.status.speed.max = data.status.speed.initial + (data.status.speed.modifier || 0) + (data.status.speed.gearmodifier || 0);
+      data.status.speed.max = Math.round(
+        Math.max(0, data.status.speed.max - Math.min(4, encumbrance)) * (data.status.speed.multiplier ?? 1)
+      );
+
+      if (!this.hasCondition("bloodrush")) data.status.speed.max = Math.max(0, data.status.speed.max - pain);
+
+      const paralysis = this.hasCondition("paralysed");
+      if (paralysis) data.status.speed.max = Math.round(data.status.speed.max * (1 - paralysis.flags.dsa5.value * 0.25));
+        if (fixated) {
+          data.status.speed.max = 0;
+        } else if (this.hasCondition("rooted") || this.hasCondition("incapacitated")) 
+          data.status.speed.max = 0;
+        else if (this.hasCondition("prone")) 
+          data.status.speed.max = Math.min(1, data.status.speed.max);
+
+      Riding.updateRiderSpeed(this, data.status.speed.max)
+    }
+  }
+
+  calcEncumbrance(){
+    let encumbrance = this.hasCondition("encumbered");
+    return encumbrance ? Number(encumbrance.flags.dsa5.value) : 0;
+  }
+
+  calcInitiative(data, encumbrance, horse){
+    if (this.type == "character" || this.type == "npc") {
+      data.status.initiative.value =
+      Math.round((data.characteristics.mu.value + data.characteristics.ge.value) / 2) +
+      (data.status.initiative.modifier || 0);
+    }else{
+      data.status.initiative.value = data.status.initiative.current + (data.status.initiative.modifier || 0);
+    }
+
+    if(horse){
+      data.status.initiative.value = horse.system.status.initiative.value 
+      if(!data.status.initiative.value){
+        const horseData = horse.system
+        horse.calcInitiative(horseData, horse.calcEncumbrance())
+        data.status.initiative.value = horseData.status.initiative.value 
+      }
+    } else {
+      data.status.initiative.value += (data.status.initiative.gearmodifier || 0) - Math.min(4, encumbrance);
+      const baseInit = Number((0.01 * data.status.initiative.value).toFixed(2));
+      data.status.initiative.value *= data.status.initiative.multiplier || 1;
+      data.status.initiative.value = Math.round(data.status.initiative.value) + baseInit;
     }
   }
 
@@ -489,7 +538,6 @@ export default class Actordsa5 extends Actor {
   }
 
   prepareSheet(sheetInfo) {
-    let preData = duplicate(this);
     let preparedData = { system: {} };
     mergeObject(preparedData, this.prepareItems(sheetInfo));
     if (preparedData.canAdvance) {
@@ -499,17 +547,16 @@ export default class Actordsa5 extends Actor {
           status: {
             [k]: {
               cost: game.i18n.format("advancementCost", {
-                cost: DSA5_Utility._calculateAdvCost(preData.system.status[k].advances, "D"),
+                cost: DSA5_Utility._calculateAdvCost(this.system.status[k].advances, "D"),
               }),
               refund: game.i18n.format("refundCost", {
-                cost: DSA5_Utility._calculateAdvCost(preData.system.status[k].advances, "D", 0),
+                cost: DSA5_Utility._calculateAdvCost(this.system.status[k].advances, "D", 0),
               }),
             },
           },
         });
       }
     }
-
     return preparedData;
   }
 
@@ -517,7 +564,7 @@ export default class Actordsa5 extends Actor {
     return actorData.canAdvance;
   }
 
-  //TODO get right of the multiple loops
+  //TODO get rid of the multiple loops
   static armorValue(actor, options = {}) {
     let wornArmor = actor.items.filter((x) => x.type == "armor" && x.system.worn.value == true);
     if (options.origin) {
@@ -728,6 +775,7 @@ export default class Actordsa5 extends Actor {
     let applications = new Map();
     let availableAmmunition = [];
     let hasTrait = false;
+    const horse = Riding.getHorse(this)
 
     for (let i of actorData.items) {
       try {
@@ -987,6 +1035,7 @@ export default class Actordsa5 extends Actor {
       carrycapacity,
       wornRangedWeapons: rangeweapons,
       wornMeleeWeapons: meleeweapons,
+      horseActor: horse,
       advantages,
       disadvantages,
       specAbs,
@@ -1028,9 +1077,10 @@ export default class Actordsa5 extends Actor {
       a.damageToolTip = EquipmentDamage.damageTooltip(a);
       return (sum += a.calculatedEncumbrance);
     }, 0);
+    const ridingModifier = Riding.isRiding(this) ? -1 : 0
     return Math.max(
       0,
-      encumbrance - SpecialabilityRulesDSA5.abilityStep(actorData, game.i18n.localize("LocalizedIDs.inuredToEncumbrance"))
+      encumbrance - SpecialabilityRulesDSA5.abilityStep(actorData, game.i18n.localize("LocalizedIDs.inuredToEncumbrance")) + ridingModifier
     );
   }
 
@@ -1596,6 +1646,10 @@ export default class Actordsa5 extends Actor {
 
       this[`fate${type}`](infoMsg, cardOptions, newTestData, message, data, schipsource);
     }
+  }
+
+  get horseSpeed(){
+    return Riding.getHorseSpeed(this)
   }
 
   setupRegeneration(statusId, options = {}, tokenId) {

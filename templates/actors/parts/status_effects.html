@@ -249,7 +249,7 @@
 
 </div>
 
-{{#if actor.demonmarks}}
+{{#if prepare.demonmarks}}
 <div class="groupbox">
     <div class="row-section table-title lineheight">
         <div class="col third">
@@ -262,7 +262,7 @@
         </div>
     </div>
     <div class="row-section wrap inventory diseases">
-        {{#each actor.demonmarks as |item i|}}
+        {{#each prepare.demonmarks as |item i|}}
         <div class="col item" data-item-id="{{item._id}}">
             <div class="row-section skills lineheight">
                 <div class="col ten image">
@@ -305,7 +305,7 @@
         </div>
     </div>
     <div class="row-section wrap inventory diseases">
-        {{#each actor.diseases as |item i|}}
+        {{#each prepare.diseases as |item i|}}
         <div class="col item" data-item-id="{{item._id}}">
             <div class="row-section skills lineheight">
                 <div class="col third">
@@ -369,7 +369,7 @@
                 {{localize "source"}}
             </div>
         </div>
-        {{#each actor.itemModifiers as |item i|}}
+        {{#each prepare.itemModifiers as |item i|}}
         <div class="row-section skills col two">
             <div class="col five">
                 {{@key}}

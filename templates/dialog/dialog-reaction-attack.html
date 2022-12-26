@@ -3,7 +3,7 @@
     <div class="row-section wrap">
         {{#each items as |itm i|}}
         <div class="col two">
-            <button class="reactClick" data-value="{{itm.id}}"><img src="{{itm.img}}" /><span class="{{../dieClass}} d20">{{itm.value}}</span>{{itm.name}}</button>
+            <button class="reactClick" {{#if itm.item.system.worn.offHand}}data-tooltip="offHand"{{/if}} data-value="{{itm.id}}"><img src="{{itm.img}}" /><span class="{{../dieClass}} d20">{{itm.value}}</span>{{itm.name}}{{#if itm.item.system.worn.offHand}}(*){{/if}}</button>
         </div>
         {{/each}}
     </div>

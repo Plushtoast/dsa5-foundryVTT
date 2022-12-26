@@ -1,8 +1,8 @@
 <div class="form-group custom-select">
-    <label>{{localize "increaseCastingTime"}} (+1)</label>
-    <input type="checkbox" id="increaseCastingTime" class="spellModifier" data-castingTime="1" name="increaseCastingTime" value="1">
+    <label>{{localize "increaseCastingTime"}} ({{rollModifiers.increaseCastingTime.mod}})</label>
+    <input type="checkbox" id="increaseCastingTime" class="spellModifier" data-castingTime="1" name="increaseCastingTime" value="{{rollModifiers.increaseCastingTime.mod}}">
 </div>
 <div class="form-group custom-select">
-    <label>{{localize "decreaseCastingTime"}} (-1)</label>
-    <input type="checkbox" id="decreaseCastingTime" class="spellModifier" data-castingTime="-1" name="decreaseCastingTime" value="-1">
+    <label>{{localize "decreaseCastingTime"}} ({{rollModifiers.decreaseCastingTime.mod}})</label>
+    <input type="checkbox" id="decreaseCastingTime" class="spellModifier" data-castingTime="-1" name="decreaseCastingTime" value="{{rollModifiers.decreaseCastingTime.mod}}">
 </div>

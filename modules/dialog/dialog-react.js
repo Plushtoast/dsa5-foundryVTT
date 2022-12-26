@@ -125,7 +125,8 @@ export class ActAttackDialog extends Dialog {
                     name: x.name,
                     id: x.name,
                     img: x.img,
-                    value: preparedItem.attack
+                    value: preparedItem.attack,
+                    item: preparedItem
                 })
             } else if (x.type == "trait" && traitTypes.includes(x.system.traitType.value)) {
                 items.push({
@@ -154,12 +155,10 @@ export class ActAttackDialog extends Dialog {
             }
         }
     }
-    static
-    get defaultOptions() {
+    static get defaultOptions() {
         const options = super.defaultOptions;
         mergeObject(options, {
             width: 550,
-
         });
         return options;
     }
@@ -184,12 +183,10 @@ export class ReactToAttackDialog extends DialogReactDSA5 {
         })
     }
 
-    static
-    get defaultOptions() {
+    static get defaultOptions() {
         const options = super.defaultOptions;
         mergeObject(options, {
             width: 550,
-
         });
         return options;
     }

@@ -1,4 +1,4 @@
-<form class="{{cssClass}} lock{{actor.sheetLocked}}" autocomplete="off">
+<form class="{{cssClass}} lock{{prepare.sheetLocked}}" autocomplete="off">
 
 
     <section id="tab-sections">
@@ -86,7 +86,7 @@
                             {{/if}} {{/each}}
                         </div>
                         <div class="col two">
-                            {{#each actor.inventory as |section sid|}} {{#if section.show}}
+                            {{#each prepare.inventory as |section sid|}} {{#if section.show}}
                             <div class="groupbox">
                                 <div class="row-section table-title">
                                     <div class="col eight"></div>

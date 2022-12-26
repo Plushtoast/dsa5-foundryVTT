@@ -6,7 +6,7 @@ import DSA5_Utility from "../system/utility-dsa5.js"
 
 
 export default class TableEffects{
-    //todo maybe add the effect later with second button and undspecific target
+    //todo maybe add the effect later with second button and unspecific target
 
     static async applyEffect(id, mode){
         const message = game.messages.get(id)

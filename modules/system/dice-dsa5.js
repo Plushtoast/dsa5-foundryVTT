@@ -57,9 +57,9 @@ export default class DiceDSA5 {
         })
 
         if (!testData.extra.options.bypass) {
+            let dialog = DSA5Dialog.getDialogForItem(testData.source.type, dialogOptions.data, testData.extra.actor)
             let html = await renderTemplate(dialogOptions.template, dialogOptions.data)
             return new Promise((resolve, reject) => {
-                let dialog = DSA5Dialog.getDialogForItem(testData.source.type)
                 new dialog({
                         title: dialogOptions.title,
                         content: html,
@@ -422,16 +422,6 @@ export default class DiceDSA5 {
         }
     }
 
-    static _getNarrowSpaceModifier(weapon, testData) {
-        if (!testData.narrowSpace) return 0
-
-        if (game.i18n.localize("LocalizedIDs.Shields") == weapon.system.combatskill.value) {
-            return DSA5.narrowSpaceModifiers["shield" + weapon.system.reach.shieldSize][testData.mode]
-        } else {
-            return DSA5.narrowSpaceModifiers["weapon" + weapon.system.reach.value][testData.mode]
-        }
-    }
-
     static async rollCombatTrait(testData) {
         let roll = testData.roll || await new Roll("1d20").evaluate({ async: true })
         let source = testData.source //.system == undefined ? testData.source : testData.source.system
@@ -442,19 +432,8 @@ export default class DiceDSA5 {
 
             this._appendSituationalModifiers(
                 testData,
-                game.i18n.localize("narrowSpace"),
-                this._getNarrowSpaceModifier(weapon, testData)
-            )
-            this._appendSituationalModifiers(
-                testData,
                 game.i18n.localize("opposingWeaponSize"),
                 this._compareWeaponReach(weapon, testData)
-            )
-        } else {
-            this._appendSituationalModifiers(
-                testData,
-                game.i18n.localize("distance"),
-                DSA5.rangeMods[testData.rangeModifier || "medium"].attack
             )
         }
         let result = await this._rollSingleD20(
@@ -579,17 +558,7 @@ export default class DiceDSA5 {
                 damageBonusDescription.push(game.i18n.localize("damageThreshold") + " " + weapon.extraDamage)
             }
 
-            let status
-            if (isRangeWeapon) {
-                let rangeDamageMod = DSA5.rangeMods[testData.rangeModifier || "medium"].damage
-                damage += rangeDamageMod
-                if (rangeDamageMod != 0) damageBonusDescription.push(game.i18n.localize("distance") + " " + rangeDamageMod)
-
-                status = testData.extra.actor.system.rangeStats.damage
-            } else {
-                status = testData.extra.actor.system.meleeStats.damage
-            }
-
+            let status = testData.extra.actor.system[isRangeWeapon ? "rangeStats" : "meleeStats"].damage
             const statusDmg = await DiceDSA5._stringToRoll(status, testData)
             if (statusDmg != 0) {
                 damage += statusDmg
@@ -625,13 +594,6 @@ export default class DiceDSA5 {
         const isMelee = source.type == "meleeweapon"
         if (isMelee) {
             weapon = Actordsa5._prepareMeleeWeapon(source, [skill], testData.extra.actor)
-
-            this._appendSituationalModifiers(
-                testData,
-                game.i18n.localize("narrowSpace"),
-                this._getNarrowSpaceModifier(weapon, testData)
-            )
-
             if (testData.mode == "attack") {
                 this._appendSituationalModifiers(
                     testData,
@@ -641,12 +603,6 @@ export default class DiceDSA5 {
             }
         } else {
             weapon = Actordsa5._prepareRangeWeapon(source, [], [skill], testData.extra.actor)
-
-            this._appendSituationalModifiers(
-                testData,
-                game.i18n.localize("distance"),
-                DSA5.rangeMods[testData.rangeModifier || "medium"].attack
-            )
         }
         let result = await this._rollSingleD20(
             roll,

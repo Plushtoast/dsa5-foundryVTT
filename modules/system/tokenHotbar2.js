@@ -1,5 +1,6 @@
 import Actordsa5 from "../actor/actor-dsa5.js";
 import OnUseEffect from "./onUseEffects.js";
+import Riding from "./riding.js";
 
 export default class TokenHotbar2 extends Application {
     static registerTokenHotbar() {
@@ -9,7 +10,7 @@ export default class TokenHotbar2 extends Application {
     constructor(options) {
         super(options);
 
-        this.combatSkills = ["selfControl", "featOfStrength", "bodyControl", "perception"].map(x => game.i18n.localize(`LocalizedIDs.${x}`))
+        this.combatSkills = ["selfControl", "featOfStrength", "bodyControl", "perception", "loyalty"].map(x => game.i18n.localize(`LocalizedIDs.${x}`))
         this.defaultSkills = [game.i18n.localize("LocalizedIDs.perception")]
 
         const parentUpdate = (source) => {
@@ -176,7 +177,10 @@ export default class TokenHotbar2 extends Application {
                 onUse.executeOnUseEffect()
                 break
             default:
-                if ("attackWeaponless" == id) {
+                if("rideLoyaltyID" == id){
+                    Riding.rollLoyalty(actor)
+                }
+                else if ("attackWeaponless" == id) {
                     actor.setupWeaponless("attack", {}, tokenId).then(setupData => {
                         actor.basicTest(setupData)
                     });
@@ -251,6 +255,9 @@ export default class TokenHotbar2 extends Application {
         if (actor) {
             const moreSkills = []
             let moreSpells = []
+            const isRiding = Riding.isRiding(actor)
+            const rideName = game.i18n.localize("LocalizedIDs.riding")
+
             effects = (await actor.actorEffects()).map(x => { return { name: x.label, id: x.id, icon: x.icon, cssClass: "effect", abbrev: `${x.label[0]} ${x.getFlag("dsa5","value") || ""}`, subfunction: "effect" } })
             if (game.combat) {
                 const combatskills = actor.items.filter(x => x.type == "combatskill").map(x => Actordsa5._calculateCombatSkillValues(x.toObject(), actor.system))
@@ -266,7 +273,7 @@ export default class TokenHotbar2 extends Application {
                 }
                 
                 const attacktypes = ["meleeweapon", "rangeweapon"]
-                const traitTypes = ["meleeAttack", "rangeAttack"]                
+                const traitTypes = ["meleeAttack", "rangeAttack"]         
 
                 for (const x of actor.items) {
                     if (x.type == "trait" && traitTypes.includes(x.system.traitType.value)) {
@@ -279,7 +286,7 @@ export default class TokenHotbar2 extends Application {
                     } else if (spellTypes.includes(x.type)) {
                         if (x.system.effectFormula.value) items.spells.push({ name: x.name, id: x.id, icon: x.img, cssClass: "spell", abbrev: x.name[0] })
                         else moreSpells.push({ name: x.name, id: x.id, icon: x.img, cssClass: "spell", abbrev: x.name[0] })
-                    } else if (["skill"].includes(x.type) && this.combatSkills.includes(x.name)) {
+                    } else if (["skill"].includes(x.type) && (this.combatSkills.some(y => x.name.startsWith(y)) || (isRiding && rideName == x.name))) {
                         items.default.push({ name: `${x.name} (${x.system.talentValue.value})`, id: x.id, icon: x.img, cssClass: "skill", abbrev: x.name[0] })
                     } 
                     else if (["skill"].includes(x.type)){
@@ -295,10 +302,20 @@ export default class TokenHotbar2 extends Application {
                     }
                 }
                 consumable = consumables.pop()
+
+                if(isRiding){
+                    const horse = Riding.getHorse(actor)
+                    if(horse){
+                        const x = Riding.getLoyaltyFromHorse(horse)
+                        if(x){
+                            items.default.push({ name: `${x.name} (${x.system.talentValue.value})`, id: "rideLoyaltyID", icon: x.img, cssClass: "skill", abbrev: x.name[0] })
+                        }
+                    }
+                }
             } else {
                 let descendingSkills = []
                 for (const x of actor.items) {
-                    if (["skill"].includes(x.type) && this.defaultSkills.includes(x.name)) {
+                    if (["skill"].includes(x.type) && (this.defaultSkills.includes(x.name)  || (isRiding && rideName == x.name))) {
                         items.default.push({ name: `${x.name} (${x.system.talentValue.value})`, id: x.id, icon: x.img, cssClass: "skill", abbrev: x.name[0] })
                     } else if (["skill"].includes(x.type)) {
                         const elem = { name: `${x.name} (${x.system.talentValue.value})`, id: x.id, icon: x.img, cssClass: "skill",addClass: x.system.group.value, abbrev: x.name[0], tw: x.system.talentValue.value }

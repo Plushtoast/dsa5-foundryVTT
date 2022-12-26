@@ -9,7 +9,7 @@
                 </div>
             </div>
             <div class="row-section wrap cards">
-                {{#each actor.advantages as |item i|}}
+                {{#each prepare.advantages as |item i|}}
                 <div class="item" data-item-id="{{item._id}}">
                     <a class="item-edit">{{item.name}}{{roman item.system.step.value item.system.max.value}}</a>
                 </div>
@@ -24,7 +24,7 @@
                 </div>
             </div>
             <div class="row-section wrap cards">
-                {{#each actor.disadvantages as |item i|}}
+                {{#each prepare.disadvantages as |item i|}}
                 <div class="item" data-item-id="{{item._id}}">
                     <a class="item-edit">{{item.name}}{{roman item.system.step.value item.system.max.value}}</a>
                 </div>
@@ -39,7 +39,7 @@
                 </div>
             </div>
             <div class="row-section wrap cards">
-                {{#each actor.specAbs.general as |item i|}}
+                {{#each prepare.specAbs.general as |item i|}}
                 <div class="item" data-item-id="{{item._id}}">
                     {{#if item.OnUseEffect}}<a data-tooltip="SHEET.onUseEffect" class="onUseItem"><i class="fas fa-dice-six"></i></a>{{/if}}<a class="item-edit">{{item.name}}{{roman item.system.step.value item.system.maxRank.value}}</a>
                 </div>
@@ -54,7 +54,7 @@
                 </div>
             </div>
             <div class="row-section wrap cards">
-                {{#each actor.specAbs.language as |item i|}}
+                {{#each prepare.specAbs.language as |item i|}}
                 <div class="item" data-item-id="{{item._id}}">
                     {{#if item.OnUseEffect}}<a data-tooltip="SHEET.onUseEffect" class="onUseItem"><i class="fas fa-dice-six"></i></a>{{/if}}<a class="item-edit">{{item.name}}{{roman item.system.step.value item.system.maxRank.value}}</a>
                 </div>
@@ -62,7 +62,7 @@
             </div>
         </div>
 
-        {{#if actor.schips}}
+        {{#if prepare.schips}}
         <div class="groupbox">
             <div class="fatePointsAbilities row-section">
                 <div class="col header-label lineheight">
@@ -70,7 +70,7 @@
                 </div>
             </div>
             <div class="row-section wrap cards">
-                {{#each actor.specAbs.fatePoints as |item i|}}
+                {{#each prepare.specAbs.fatePoints as |item i|}}
                 <div class="item" data-item-id="{{item._id}}">
                     {{#if item.OnUseEffect}}<a data-tooltip="SHEET.onUseEffect" class="onUseItem"><i class="fas fa-dice-six"></i></a>{{/if}}<a class="item-edit">{{item.name}}{{roman item.system.step.value item.system.maxRank.value}}</a>
                 </div>
@@ -85,7 +85,7 @@
                 </div>
             </div>
             <div class="row-section wrap cards">
-                {{#each actor.traits as |trait i|}} {{#each trait as |item i|}}
+                {{#each prepare.traits as |trait i|}} {{#each trait as |item i|}}
                 <div class="item" data-item-id="{{item._id}}">
                     <a class="item-edit">{{item.name}}</a>
                 </div>

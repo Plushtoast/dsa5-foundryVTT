@@ -1,4 +1,4 @@
-{{> systems/dsa5/templates/actors/parts/gearSearch.html}} {{#each actor.inventory as |section sid|}} {{#if section.show}}
+{{> systems/dsa5/templates/actors/parts/gearSearch.html}} {{#each prepare.inventory as |section sid|}} {{#if section.show}}
 <div class="groupbox">
     <div class="row-section table-title">
         <div class="col eight"></div>
@@ -98,13 +98,13 @@
             </div>
             <div class="row-section">
                 <div class="col three center">
-                    {{actor.carrycapacity}}
+                    {{prepare.carrycapacity}}
                 </div>
                 <div class="col three center">
-                    {{actor.totalWeight}}
+                    {{prepare.totalWeight}}
                 </div>
                 <div class="col three center">
-                    {{actor.encumbrance}}
+                    {{prepare.encumbrance}}
                 </div>
             </div>
         </div>

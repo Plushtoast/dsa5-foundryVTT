@@ -22,8 +22,13 @@ export default class DPS {
         return false
     }
 
+    static get isEnabled(){
+        const sceneFlag = canvas?.scene?.getFlag("dsa5", "enableDPS")
+        return sceneFlag ? sceneFlag == "2" : game.settings.get("dsa5", "enableDPS")
+    }
+
     static distanceModifier(tokenSource, rangeweapon, currentAmmo) {
-        if (!game.settings.get("dsa5", "enableDPS") || !tokenSource) return 1
+        if (!this.isEnabled || !tokenSource) return 1
 
         let maxDist = {}
         for (let target of game.user.targets) {
@@ -46,7 +51,7 @@ export default class DPS {
     static initDoorMinDistance() {
         const originalDoorControl = DoorControl.prototype._onMouseDown
         DoorControl.prototype._onMouseDown = function(event) {
-            if (!game.user.isGM && game.settings.get("dsa5", "enableDPS")) {
+            if (!game.user.isGM && this.isEnabled) {
                 if (!DPS.inDistance(this))
                     return ui.notifications.warn(game.i18n.localize('DSAError.notInRangeToLoot'))
             }
@@ -55,3 +60,16 @@ export default class DPS {
     }
 
 }
+
+Hooks.on("renderSceneConfig", (app, html, msg) => {
+    const sceneFlag = getProperty(app.object, "flags.dsa5.enableDPS")
+    const dpsSelector = `<div class="form-group">
+        <label data-tooltip="DSASETTINGS.enableDPSHint">${game.i18n.localize('DSASETTINGS.enableDPS')}</label>
+        <select name="flags.dsa5.enableDPS">
+            <option value="" ${sceneFlag == "" ? "selected" : ""}>${game.i18n.localize("globalConfig")}</option>
+            <option value="2" ${sceneFlag == "2" ? "selected" : ""}>${game.i18n.localize("yes")}</option>
+            <option value="1" ${sceneFlag == "1" ? "selected" : ""}>${game.i18n.localize("no")}</option>
+        </select>
+    </div>`
+    html.find('.tab[data-tab="grid"]').append(dpsSelector)
+})

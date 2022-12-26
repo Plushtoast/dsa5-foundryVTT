@@ -3,6 +3,7 @@ import Itemdsa5 from "../item/item-dsa5.js";
 import AdvantageRulesDSA5 from "../system/advantage-rules-dsa5.js";
 import DSA5 from "../system/config-dsa5.js";
 import DiceDSA5 from "../system/dice-dsa5.js";
+import Riding from "../system/riding.js";
 import RuleChaos from "../system/rule_chaos.js";
 import SpecialabilityRulesDSA5 from "../system/specialability-rules-dsa5.js";
 import DSA5_Utility from "../system/utility-dsa5.js";
@@ -191,6 +192,31 @@ export default class DSA5CombatDialog extends DialogShared {
             const elem = html.find(`[name="vision"] option:nth-child(${level + 1})`);
             if (elem.length) elem[0].selected = true;
         }
+        const actor = DSA5_Utility.getSpeaker(this.dialogData.speaker)
+
+        const isRider =  Riding.isRiding(actor)
+        
+        const advantageousPosition = html.find('[name="advantageousPosition"]')[0]
+        if (this.dialogData.mode == "attack"){
+            const targetIsRider = Array.from(game.user.targets).some(x => Riding.isRiding(x.actor))
+            if(advantageousPosition && (targetIsRider || isRider))
+                advantageousPosition.checked = isRider && !targetIsRider
+
+            const mountedOptions = html.find('[name="mountedOptions"]')
+            if(isRider && mountedOptions){
+                const horse = Riding.getHorse(actor)
+                if(horse){
+                    mountedOptions.val(Riding.getHorseSpeed(horse))
+                }
+            }
+        } 
+        else if(this.dialogData.mode == "parry" && actor.flags.oppose){
+            const attacker = DSA5_Utility.getSpeaker(actor.flags.oppose.speaker)
+            const attackerIsRider = Riding.isRiding(attacker)
+            if(advantageousPosition && (attackerIsRider || isRider))
+                advantageousPosition.checked = isRider && !attackerIsRider
+        }        
+        this.calculateModifier()
     }
 
     static assassinationModifiers(testData, formData) {
@@ -280,11 +306,18 @@ export default class DSA5CombatDialog extends DialogShared {
     static resolveMeleeDialog(testData, cardOptions, html, actor, options, multipleDefenseValue, mode) {
         this._resolveDefault(testData, cardOptions, html, options);
 
-        //TODO move this to situational modifiers only
+        //TODO move this to situational modifiers onlye
         const data = new FormDataExtended(html.find('form')[0]).object
-            //testData.rangeModifier = html.find('[name="distance"]').val();
+
+        let narrowSpace = 0
+        if(data.narrowSpace){
+            if (game.i18n.localize("LocalizedIDs.Shields") == getProperty(testData, "source.system.combatskill.value")) {
+                narrowSpace = DSA5.Modifiers["shield" + testData.source.system.reach.shieldSize][mode]
+            } else {
+                narrowSpace = DSA5.narrowSpaceModifiers["weapon" + testData.source.system.reach.value][mode]
+            }
+        }
         testData.opposingWeaponSize = data.weaponsize
-        testData.narrowSpace = data.narrowSpace
         testData.attackOfOpportunity = this.attackOfOpportunity(testData.situationalModifiers, data);
         testData.situationalModifiers.push(
             Itemdsa5.parseValueType(game.i18n.localize("sight"), data.vision || 0), {
@@ -310,7 +343,11 @@ export default class DSA5CombatDialog extends DialogShared {
                 value: DSA5.meleeSizeModifier[data.size],
             },
             ...Itemdsa5.getSpecAbModifiers(html, mode),
-            ...this.assassinationModifiers(testData, data)
+            ...this.assassinationModifiers(testData, data),
+            {
+                name: game.i18n.localize("narrowSpace"),
+                value: narrowSpace
+            }
         );
         if (mode == "attack") {
             testData.situationalModifiers.push({
@@ -321,13 +358,9 @@ export default class DSA5CombatDialog extends DialogShared {
         }
     }
 
-    static resolveRangeDialog(testData, cardOptions, html, actor, options) {
+     static resolveRangeDialog(testData, cardOptions, html, actor, options) {
         this._resolveDefault(testData, cardOptions, html, options);
-
-        //TODO move this to situational modifiers only
         const data = new FormDataExtended(html.find('form')[0]).object
-        testData.rangeModifier = data.distance
-
         testData.situationalModifiers.push({
                 name: game.i18n.localize("target") + " " + html.find('[name="targetMovement"] option:selected').text(),
                 value: Number(data.targetMovement) || 0,
@@ -359,6 +392,11 @@ export default class DSA5CombatDialog extends DialogShared {
             {
                 name: game.i18n.localize("sizeCategory"),
                 value: DSA5.rangeSizeModifier[data.size],
+            },
+            {
+                name: game.i18n.localize("distance"),
+                value: DSA5.rangeMods[ data.distance || "medium"].attack,
+                damageBonus: DSA5.rangeMods[ data.distance || "medium"].damage
             }
         );
     }

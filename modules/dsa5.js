@@ -34,6 +34,7 @@ import DidYouKnow from "./system/didyouknow.js";
 import MerchantSheetDSA5 from "./actor/merchant-sheet.js"
 import { MeasuredTemplateDSA } from "./system/measuretemplate.js"
 import RequestRoll from "./system/request-roll.js"
+import Riding from "./system/riding.js"
 
 Hooks.once("init", () => {
     console.log("Initializing DSA5 system")
@@ -58,7 +59,8 @@ Hooks.once("init", () => {
             OpposeDSA,
             EquipmentDamage,
             DidYouKnow, 
-            MeasuredTemplateDSA
+            MeasuredTemplateDSA,
+            Riding
         },
         entities: {
             Actordsa5,

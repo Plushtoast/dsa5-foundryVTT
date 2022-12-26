@@ -13,6 +13,7 @@ import RuleChaos from "../system/rule_chaos.js";
 import OnUseEffect from "../system/onUseEffects.js";
 import { bindImgToCanvasDragStart } from "../hooks/imgTileDrop.js";
 import DSA5ChatAutoCompletion from "../system/chat_autocompletion.js";
+import Riding from "../system/riding.js";
 
 export default class ActorSheetDsa5 extends ActorSheet {
     get actorType() {
@@ -122,11 +123,11 @@ export default class ActorSheetDsa5 extends ActorSheet {
     async getData(options) {
         const baseData = await super.getData(options);
         const sheetData = { actor: baseData.actor, editable: baseData.editable, limited: baseData.limited, owner: baseData.owner }
-        const prepare = this.actor.prepareSheet({ details: this.openDetails })
-        mergeObject(sheetData.actor, prepare)
+        sheetData["prepare"] = this.actor.prepareSheet({ details: this.openDetails })
         sheetData["sizeCategories"] = DSA5.sizeCategories
         sheetData.isGM = game.user.isGM;
         sheetData["initDies"] = { "": "-", "1d6": "1d6", "2d6": "2d6", "3d6": "3d6", "4d6": "4d6" }
+        sheetData.horseSpeeds = Object.keys(Riding.speedKeys)
         DSA5StatusEffects.prepareActiveEffects(this.actor, sheetData)
         sheetData.enrichedOwnerdescription = await TextEditor.enrichHTML(getProperty(this.actor.system, "details.notes.ownerdescription"), {secrets: true, async: true})
         sheetData.enrichedGmdescription = await TextEditor.enrichHTML(getProperty(this.actor.system, "details.notes.gmdescription"), {secrets: true, async: true})
@@ -383,7 +384,7 @@ export default class ActorSheetDsa5 extends ActorSheet {
     }
 
     getTokenId() {
-        return this.token ? this.token.id : undefined
+        return this.token?.id
     }
 
     rollDisease(itemId) {
@@ -738,6 +739,8 @@ export default class ActorSheetDsa5 extends ActorSheet {
         gearSearch[0] && gearSearch[0].addEventListener("search", filterGear, false);
 
         bindImgToCanvasDragStart(html, "img.charimg")
+
+        Riding.activateListeners(html, this.actor)
     }
 
     _onMacroUseItem(ev) {
@@ -846,7 +849,7 @@ export default class ActorSheetDsa5 extends ActorSheet {
             case "disadvantage":
                 {
                     await AdvantageRulesDSA5.vantageRemoved(this.actor, item)
-                    let xpCost = item.system.APValue.value * item.system.step.value
+                    let xpCost = item.system.APValue.value * (item.system.step.value || 1)
                     if (/;/.test(item.system.APValue.value)) {
                         const steps = item.system.APValue.value.split(";").map(x => Number(x.trim()))
                         xpCost = 0
@@ -1024,6 +1027,38 @@ export default class ActorSheetDsa5 extends ActorSheet {
         await this.actor.createEmbeddedDocuments("Item", newAppls.map(x => x.toObject()))
     }
 
+    async creatureDrop(item) {
+        if (game.dsa5.config.hooks.shapeshift) {
+            new Dialog({
+                title: game.i18n.localize("DIALOG.ItemRequiresAdoption") + ": " + item.name,
+                content: game.i18n.localize("DIALOG.whichFunction") + ": " + item.name,
+                default: 'horse',
+                buttons: {
+                    shapeshift: {
+                        icon: '<i class="fas fa-paw"></i>',
+                        label: game.i18n.localize("CONDITION.shapeshift"),
+                        callback: () => {
+                            const shapeshift = game.dsa5.config.hooks.shapeshift
+                            shapeshift.setShapeshift(this.actor, item)
+                            shapeshift.render(true)
+                        }
+                    },
+                    horse: {
+                        icon: '<i class="fas fa-horse"></i>',
+                        label: game.i18n.localize("RIDING.horse"),
+                        callback: () => {
+                            Riding.setHorse(this.actor, item)
+                        } 
+                    }
+                }
+            }).render(true)
+        }
+        else {
+            Riding.setHorse(this.actor, item)
+        }
+    }
+
+
     async _manageDragItems(item, typeClass) {
         switch (typeClass) {
             case "disease":
@@ -1067,11 +1102,7 @@ export default class ActorSheetDsa5 extends ActorSheet {
                 await this._handleSpellExtension(item)
                 break
             case "creature":
-                const shapeshift = game.dsa5.config.hooks.shapeshift
-                if (shapeshift) {
-                    shapeshift.setShapeshift(this.actor, item)
-                    shapeshift.render(true)
-                }
+                this.creatureDrop(item)                
                 break
             case "skill":
             case "information":
@@ -1203,8 +1234,7 @@ class TraditionArtifactpicker extends Application{
         return "systems/dsa5/templates/actors/traditionPicker.html";
     }
 
-    static
-    get defaultOptions() {
+    static get defaultOptions() {
         const options = super.defaultOptions;
         mergeObject(options, {
             width: 440,

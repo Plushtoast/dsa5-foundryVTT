@@ -1,3 +1,5 @@
+import Riding from "../system/riding.js";
+
 function addThirdBarToHUD(html, actor, app) {
     if (actor.system.isPriest && actor.system.isMage) {
         let currentKaP = actor.system.status.karmaenergy.value
@@ -34,5 +36,7 @@ export default function() {
             })
             // Prevent double calling of modifytokenattribute
         html.find(".attribute input").off('change')
+
+        Riding.renderTokenHUD(app, html, data)
     })
 }

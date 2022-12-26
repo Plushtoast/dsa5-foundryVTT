@@ -87,6 +87,7 @@
         "deleteConfirmation": "Confirm removal",
         "SituationalModifiers": "Situational\nModifiers",
         "DeleteItemDetail": "Do you want to remove <b>{item}</b>?",
+        "whichFunction": "Which function do you want to use?",
         "ItemRequiresAdoption": "Adapt entry",
         "ItemRequiresAdoptionDescription": "The addition requires an Adaptation first. Select the matching entry for ",
         "alreadyAddedCharacterpart": "You already have a {category}. Do you want to override it? Already added modifications of the former {category} can not be removed automatically.",
@@ -239,6 +240,7 @@
     "botchCritEffect": "Botch/Crit",
     "astralenergy": "Arcane energy",
     "confirm": "Confirm",
+    "globalConfig": "global",
     "fshopLink": "https://www.ulissesf-shop.com/virtual-tabletops/",
     "ammunition": "Ammunition",
     "aggregatedTests": "Cumulative checks",
@@ -441,6 +443,7 @@
     "notsuitableDisadvantages": "Unsuitable disadvantages",
     "notsuitableTalents": "Unsuitable skills",
     "no": "No",
+    "aoeangle": "Angle",
     "Notes": "Notes",
     "Opposed": "Competitive check",
     "opposingWeaponSize": "Weaponsize opponent",
@@ -1150,7 +1153,9 @@
         "aspectKnowledge": "Aspect Knowledge",
         "deaf": "Deaf",
         "blind": "Blind",
+        "loyalty": "Loyalty",
         "mute": "Mute",
+        "riding": "Riding",
         "ruggedFighter": "Rugged Fighter",
         "sensitiveToPain": "Sensitive to Pain",
         "fragileAnimal": "tbd",
@@ -1383,6 +1388,7 @@
     "mountedRangeOptions": {
         "STATIONARY": "standing still",
         "SCHRITT": "at walk",
+        "TROT": "at trot",
         "GALOPP": "at gallop"
     },
     "regnerationCampLocations": {
@@ -1652,6 +1658,23 @@
         "2": "Combat Style",
         "3": "Passive",
         "4": "General"
+    },
+    "RIDING": {
+        "unmount": "Unmount",
+        "mount": "Mount",
+        "horse": "Mount",
+        "riding": "Riding",
+        "mode": "Gear",
+        "ridingDescription": "The character enjoys an advantageous position over non-riding characters. The speed and the basic initiative value of the horse replace the value of the character.",
+        "description": "Mark two token to mount via the Token HUD or drag a mount onto the character sheet",
+        "increase": "Accelerate",
+        "decrease": "Decelerate",
+        "speeds": {
+            "0": "Standing",
+            "-4": "Walk",
+            "-5000": "Trot",
+            "-8": "Gallop"
+        }
     },
     "CONDITIONDESCRIPTION": {
         "services": "Services the summoned creature owes to the summoner.",

@@ -28,7 +28,7 @@
         </div>
     </div>
     <div class="row-section wrap rowtable inventory">
-        {{#each actor.wornMeleeWeapons as |item i|}}
+        {{#each prepare.wornMeleeWeapons as |item i|}}
         <div class="col item" data-item-id="{{item._id}}">
             <div class="row-section">
                 <div class="col ten image {{item.damageToolTip.css}}" data-tooltip="{{item.damageToolTip.msg}}" style="background-image: url('{{item.img}}')">
@@ -99,7 +99,7 @@
         </div>
     </div>
     <div class="row-section wrap rowtable inventory">
-        {{#each actor.wornRangedWeapons as |item i|}}
+        {{#each prepare.wornRangedWeapons as |item i|}}
         <div class="col item" data-item-id="{{item._id}}">
             <div class="row-section">
                 <div class="col ten image  {{item.damageToolTip.css}}" data-tooltip="{{item.damageToolTip.msg}}" style="background-image: url('{{item.img}}')">
@@ -196,11 +196,11 @@
         <div class="col two">
             <b>{{localize "Equipment.armor"}}</b>
         </div>
-        <div class="col four center small">{{localize "protection"}} ({{actor.armorSum}}{{#if actor.spellArmor}}<span data-tooltip="spellArmor">, {{actor.spellArmor}}</span>{{/if}}){{#if actor.liturgyArmor}}<span data-tooltip="liturgyArmor">, {{actor.liturgyArmor}}</span>{{/if}}</div>
+        <div class="col four center small">{{localize "protection"}} ({{prepare.armorSum}}{{#if prepare.spellArmor}}<span data-tooltip="spellArmor">, {{prepare.spellArmor}}</span>{{/if}}){{#if prepare.liturgyArmor}}<span data-tooltip="liturgyArmor">, {{prepare.liturgyArmor}}</span>{{/if}}</div>
         <div class="col four center small">{{localize "encumbrance"}}</div>
     </div>
     <div class="row-section wrap rowtable inventory">
-        {{#each actor.wornArmor as |item i|}}
+        {{#each prepare.wornArmor as |item i|}}
         <div class="col item" data-item-id="{{item._id}}">
             <div class="row-section">
                 <div class="col ten image {{item.damageToolTip.css}}" data-tooltip="{{item.damageToolTip.msg}}" style="background-image: url('{{item.img}}')">
@@ -225,6 +225,8 @@
     </div>
 </div>
 
+{{> systems/dsa5/templates/actors/parts/horse.html}}
+
 <div class="groupbox">
     <div class="row-section">
         <div class="col header-label lineheight">
@@ -232,7 +234,7 @@
         </div>
     </div>
     <div class="row-section wrap cards">
-        {{#each actor.specAbs.Combat as |item i|}}
+        {{#each prepare.specAbs.Combat as |item i|}}
         <div class="item" data-item-id="{{item._id}}">
             {{#if item.OnUseEffect}}<a data-tooltip="SHEET.onUseEffect" class="onUseItem"><i class="fas fa-dice-six"></i></a>{{/if}}<a class="item-edit">{{item.name}}{{roman item.system.step.value item.system.maxRank.value}}</a>
         </div>
@@ -291,7 +293,7 @@
                 </div>
             </div>
         </div>
-        {{#each actor.combatskills as |item i|}}
+        {{#each prepare.combatskills as |item i|}}
         <div class="col two">
             <div class="row-section item skills lineheight" data-item-id="{{item._id}}">
                 <div class="col fourty">

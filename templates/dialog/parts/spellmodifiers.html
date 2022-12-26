@@ -1,0 +1,32 @@
+{{#if canChangeCost}}
+<div class="form-group custom-select">
+    <label>{{localize "force"}} ({{rollModifiers.forceSpell.mod}})</label>
+    <input type="checkbox" id="forceSpell" class="spellModifier" data-cost="1" name="forceSpell" value="{{rollModifiers.forceSpell.mod}}">
+</div>
+<div class="form-group custom-select">
+    <label>{{localize "reduceCost"}} ({{rollModifiers.reduceCostSpell.mod}})</label>
+    <input type="checkbox" id="reduceCostSpell" class="spellModifier" data-cost="-1" name="reduceCostSpell" value="{{rollModifiers.reduceCostSpell.mod}}">
+</div>
+{{/if}} {{#if canChangeRange}}
+<div class="form-group custom-select">
+    <label>{{localize "increaseRange"}} ({{rollModifiers.increaseRangeSpell.mod}})</label>
+    <input type="checkbox" id="increaseRangeSpell" class="spellModifier" data-reach="-1" name="increaseRangeSpell" value="{{rollModifiers.increaseRangeSpell.mod}}">
+</div>
+
+{{/if}} 
+
+<div class="canChangeCastingTime">
+    {{#if canChangeCastingTime}}
+        {{> systems/dsa5/templates/dialog/parts/canChangeCastingTime.html}}
+    {{/if}}
+</div>
+
+<div class="form-group custom-select">
+    <label>{{localize "removeGesture"}} ({{rollModifiers.removeGesture.mod}})</label>
+    <input type="checkbox" id="removeGesture" class="spellModifier" name="removeGesture" value="{{rollModifiers.removeGesture.mod}}">
+</div>
+
+<div class="form-group custom-select">
+    <label>{{localize "removeFormula"}} ({{rollModifiers.removeFormula.mod}})</label>
+    <input type="checkbox" id="removeFormula" class="spellModifier" name="removeFormula" value="{{rollModifiers.removeFormula.mod}}">
+</div>

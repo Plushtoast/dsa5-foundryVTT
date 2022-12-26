@@ -5,8 +5,8 @@
             {{#each actor.system.characteristics as |ch c|}}
             <div data-tooltip="{{localize ch.label}}" class="table-header">
                 <div class="header-label">
-                    {{#if ../actor.canAdvance}}<a data-attr="{{c}}" class="advance refund-attribute"><i data-tooltip="{{ch.refund}}" class="fas fa-minus"></i></a>{{/if}}
-                    <b>{{localize ch.abrev}}</b> {{#if ../actor.canAdvance}}<a data-attr="{{c}}" class="advance advance-attribute"><i data-tooltip="{{ch.cost}}" class="fas fa-plus"></i></a>{{/if}}
+                    {{#if ../prepare.canAdvance}}<a data-attr="{{c}}" class="advance refund-attribute"><i data-tooltip="{{ch.refund}}" class="fas fa-minus"></i></a>{{/if}}
+                    <b>{{localize ch.abrev}}</b> {{#if ../prepare.canAdvancece}}<a data-attr="{{c}}" class="advance advance-attribute"><i data-tooltip="{{ch.cost}}" class="fas fa-plus"></i></a>{{/if}}
                 </div>
             </div>
             {{/each}}

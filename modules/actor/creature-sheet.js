@@ -1,4 +1,3 @@
-import DSA5 from "../system/config-dsa5.js"
 import ActorSheetDsa5 from "./actor-sheet.js";
 import TraitRulesDSA5 from "../system/trait-rules-dsa5.js"
 

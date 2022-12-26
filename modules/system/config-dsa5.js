@@ -574,6 +574,7 @@ DSA5.shooterMovementOptions = {
 DSA5.mountedRangeOptions = {
     "0": "mountedRangeOptions.STATIONARY",
     "-4": "mountedRangeOptions.SCHRITT",
+    "-5000": "mountedRangeOptions.TROT",
     "-8": "mountedRangeOptions.GALOPP",
 }
 

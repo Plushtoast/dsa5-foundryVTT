@@ -9,7 +9,7 @@
                 </div>
             </div>
             <div class="row-section wrap cards">
-                {{#each actor.advantages as |item i|}}
+                {{#each prepare.advantages as |item i|}}
                 <div class="item" data-item-id="{{item._id}}">
                     <a class="item-edit">{{item.name}}{{roman item.system.step.value item.system.max.value}}</a>
                 </div>
@@ -24,7 +24,7 @@
                 </div>
             </div>
             <div class="row-section wrap cards">
-                {{#each actor.disadvantages as |item i|}}
+                {{#each prepare.disadvantages as |item i|}}
                 <div class="item" data-item-id="{{item._id}}">
                     <a class="item-edit">{{item.name}}{{roman item.system.step.value item.system.max.value}}</a>
                 </div>
@@ -39,7 +39,7 @@
                 </div>
             </div>
             <div class="row-section wrap cards">
-                {{#each actor.specAbs.general as |item i|}}
+                {{#each prepare.specAbs.general as |item i|}}
                 <div class="item" data-item-id="{{item._id}}">
                     {{#if item.OnUseEffect}}<a data-tooltip="SHEET.onUseEffect" class="onUseItem"><i class="fas fa-dice-six"></i></a>{{/if}}<a class="item-edit">{{item.name}}{{roman item.system.step.value item.system.maxRank.value}}</a>
                 </div>
@@ -50,11 +50,11 @@
         <div class="groupbox">
             <div class="generalSpecialAbilities row-section">
                 <div class="col header-label lineheight">
-                    <b>{{localize "language"}}</b> <span data-tooltip="freeLanguagePoint">{{actor.languagePoints.used}} / {{actor.languagePoints.available}}</span>
+                    <b>{{localize "language"}}</b> <span data-tooltip="freeLanguagePoint">{{prepare.languagePoints.used}} / {{prepare.languagePoints.available}}</span>
                 </div>
             </div>
             <div class="row-section wrap cards">
-                {{#each actor.specAbs.language as |item i|}}
+                {{#each prepare.specAbs.language as |item i|}}
                 <div class="item" data-item-id="{{item._id}}">
                     {{#if item.OnUseEffect}}<a data-tooltip="SHEET.onUseEffect" class="onUseItem"><i class="fas fa-dice-six"></i></a>{{/if}}<a class="item-edit">{{item.name}}{{roman item.system.step.value item.system.maxRank.value}}</a>
                 </div>
@@ -69,14 +69,14 @@
                 </div>
             </div>
             <div class="row-section wrap cards">
-                {{#each actor.specAbs.fatePoints as |item i|}}
+                {{#each prepare.specAbsbs.fatePoints as |item i|}}
                 <div class="item" data-item-id="{{item._id}}">
                     {{#if item.OnUseEffect}}<a data-tooltip="SHEET.onUseEffect" class="onUseItem"><i class="fas fa-dice-six"></i></a>{{/if}}<a class="item-edit">{{item.name}}{{roman item.system.step.value item.system.maxRank.value}}</a>
                 </div>
                 {{/each}}
             </div>
         </div>
-        {{#if actor.hasTrait}}
+        {{#if prepare.hasTrait}}
         <div class="groupbox">
             <div class="generalSpecialAbilities row-section">
                 <div class="col header-label lineheight">
@@ -84,7 +84,7 @@
                 </div>
             </div>
             <div class="row-section wrap cards">
-                {{#each actor.traits as |trait i|}} {{#each trait as |item i|}}
+                {{#each prepare.traits as |trait i|}} {{#each trait as |item i|}}
                 <div class="item" data-item-id="{{item._id}}">
                     <a class="item-edit">{{item.name}}</a>
                 </div>
@@ -115,8 +115,8 @@
             </div>
             <div class="derivedAttrs row-section">
                 <div class="col two lineheight">
-                    {{localize "wounds"}} {{#if actor.canAdvance}}<a data-attr="wounds" class="advance refund-points"><i data-tooltip="{{actor.system.status.wounds.refund}}" class="fas fa-minus"></i></a>
-                    <a data-attr="wounds" class="advance advance-points"><i data-tooltip="{{actor.system.status.wounds.cost}}" class="fas fa-plus"></i></a>{{/if}}
+                    {{localize "wounds"}} {{#if prepare.canAdvance}}<a data-attr="wounds" class="advance refund-points"><i data-tooltip="{{prepare.system.status.wounds.refund}}" class="fas fa-minus"></i></a>
+                    <a data-attr="wounds" class="advance advance-points"><i data-tooltip="{{prepare.system.status.wounds.cost}}" class="fas fa-plus"></i></a>{{/if}}
                     <span class="buttons">
                         <a data-char="regenerate" class="ch-regenerate item" data-mod="regenerate" data-tooltip="regenerate">&nbsp;<i class="fas fa-moon"></i></a>
                     </span>
@@ -153,11 +153,11 @@
                     </div>
                 </div>
            
-            {{#if actor.magic.hasSpells}}
+            {{#if prepare.magic.hasSpells}}
             <div class="derivedAttrs row-section">
                 <div class="col two lineheight">
-                    {{localize "astralenergy"}} {{#if actor.canAdvance}}<a data-attr="astralenergy" class="advance refund-points"><i data-tooltip="{{actor.system.status.astralenergy.refund}}" class="fas fa-minus"></i></a>
-                    <a data-attr="astralenergy" class="advance advance-points"><i data-tooltip="{{actor.system.status.astralenergy.cost}}" class="fas fa-plus"></i></a>{{/if}}
+                    {{localize "astralenergy"}} {{#if prepare.canAdvance}}<a data-attr="astralenergy" class="advance refund-points"><i data-tooltip="{{prepare.system.status.astralenergy.refund}}" class="fas fa-minus"></i></a>
+                    <a data-attr="astralenergy" class="advance advance-points"><i data-tooltip="{{prepare.system.status.astralenergy.cost}}" class="fas fa-plus"></i></a>{{/if}}
                 </div>
                 <div class="col eight lineheight center">
                     {{actor.system.status.astralenergy.current}}
@@ -191,12 +191,12 @@
                 </div>
             </div>
            
-            {{/if}} {{#if actor.magic.hasPrayers}}
+            {{/if}} {{#if prepare.magic.hasPrayers}}
             <div class="derivedAttrs row-section">
                 <div class="col two lineheight">
-                    {{localize "karmaenergy"}} {{#if actor.canAdvance}} <a data-attr="karmaenergy" class="advance refund-points"><i data-tooltip="{{actor.system.status.karmaenergy.refund}}"
+                    {{localize "karmaenergy"}} {{#if prepare.canAdvancece}} <a data-attr="karmaenergy" class="advance refund-points"><i data-tooltip="{{prepare.system.status.karmaenergy.refund}}"
                         class="fas fa-minus"></i></a>
-                    <a data-attr="karmaenergy" class="advance advance-points"><i data-tooltip="{{actor.system.status.karmaenergy.cost}}"
+                    <a data-attr="karmaenergy" class="advance advance-points"><i data-tooltip="{{prepare.system.status.karmaenergy.costst}}"
                             class="fas fa-plus"></i></a>{{/if}}
                 </div>
                 <div class="col eight lineheight center">

@@ -122,7 +122,7 @@ export default function() {
     }
 
     Token.prototype._onClickLeft2 = function(event) {
-        const distanceAccessible = game.user.isGM || !game.settings.get("dsa5", "enableDPS") || !isMerchant(this.actor) || DPS.inDistance(this)
+        const distanceAccessible = game.user.isGM || !DPS.isEnabled || !isMerchant(this.actor) || DPS.inDistance(this)
 
         if (!distanceAccessible)
             return ui.notifications.warn(game.i18n.localize('DSAError.notInRangeToLoot'))

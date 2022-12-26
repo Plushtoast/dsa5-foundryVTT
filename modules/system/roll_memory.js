@@ -1,3 +1,5 @@
+import DPS from "./derepositioningsystem.js"
+
 export default class RollMemory {
     constructor() {
         this.tokens = {}
@@ -9,7 +11,7 @@ export default class RollMemory {
             "quickChange", "mountOptions", "narrowSpace", "advantageousPosition", "doubleAttack",
             "reduceCostSpell", "forceSpell", "increaseCastingTime", "decreaseCastingTime", "removeGesture", "removeFormula"
         ]
-        if (!game.settings.get("dsa5", "enableDPS")) wantedKeys.push("distance")
+        if (!DPS.isEnabled) wantedKeys.push("distance")
         return wantedKeys
     }
 

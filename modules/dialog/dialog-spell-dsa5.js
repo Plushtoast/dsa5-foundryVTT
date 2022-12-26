@@ -7,7 +7,13 @@ export default class DSA5SpellDialog extends DialogShared {
     static rollChanges = ["defenseMalus"]
 
     static rollModifiers = {
-        
+        forceSpell: { mod: 1 },
+        reduceCostSpell: { mod: -1 },
+        increaseRangeSpell: { mod: -1 },
+        increaseCastingTime: { mod: 1 },
+        decreaseCastingTime: { mod: -1 },
+        removeGesture: { mod: -2 },
+        removeFormula: { mod: -2 }
     }
 
     static get defaultOptions() {
@@ -87,6 +93,17 @@ export default class DSA5SpellDialog extends DialogShared {
         sit.append(mods.join(""))
     }
 
+    static setData(actor, type){
+        const rollModifiers = duplicate(DSA5SpellDialog.rollModifiers)
+        const tt = `${type}RollModifiers`
+        if(actor.system[tt]){
+            for(let key of Object.keys(actor.system[tt])){
+                rollModifiers[key].mod += Number(actor.system[tt][key])
+            }
+        }
+        return rollModifiers
+    }
+
     async recalcSpellModifiers(html, event){
         const parent = html
         const source = duplicate(this.dialogData.source)
@@ -112,7 +129,7 @@ export default class DSA5SpellDialog extends DialogShared {
         const changeCast = html.find('.canChangeCastingTime')
         if(source.system.canChangeCastingTime.value == "true"){
             if(changeCast.is(":empty")) {
-                changeCast.html(await renderTemplate('systems/dsa5/templates/dialog/parts/canChangeCastingTime.html'))
+                changeCast.html(await renderTemplate('systems/dsa5/templates/dialog/parts/canChangeCastingTime.html', { rollModifiers: DSA5SpellDialog.rollModifiers }))
                 this.setPosition({ height: "auto" })
             }
         }else{
@@ -218,7 +235,7 @@ export default class DSA5SpellDialog extends DialogShared {
             parent.find(".aspcost").text((Number(parent.find(".aspcost").text()) * newVal) / oldVal);
         });
 
-        html.find(".spellModifier").change((event) => this.recalcSpellModifiers(html, event))
+        html.on('change', ".spellModifier", (event) => this.recalcSpellModifiers(html, event))
         
         let targets = this.readTargets();
 

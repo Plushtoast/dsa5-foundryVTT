@@ -448,7 +448,8 @@
                 "target": {
                     "value": 0,
                     "type": "",
-                    "width": 0
+                    "width": 0,
+                    "angle": 45
                 }
             },
             "description": {

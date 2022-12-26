@@ -33,7 +33,7 @@ export class MeasuredTemplateDSA extends MeasuredTemplate {
 
         switch (templateShape) {
             case "cone":
-                templateData.angle = CONFIG.MeasuredTemplate.defaults.angle;
+                templateData.angle = Number(target.angle) || CONFIG.MeasuredTemplate.defaults.angle;
                 break;
             case "rect":
                 templateData.distance = Math.hypot(distance, distance);
