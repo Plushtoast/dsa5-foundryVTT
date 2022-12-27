@@ -3,7 +3,7 @@ import DSAActiveEffectConfig from "../status/active_effects.js"
 import CreatureType from "../system/creature-type.js"
 import EquipmentDamage from "../system/equipment-damage.js"
 import DSA5_Utility from "../system/utility-dsa5.js"
-
+import OnUseEffect from "../system/onUseEffects.js"
 
 export default class TableEffects{
     //todo maybe add the effect later with second button and unspecific target
@@ -13,7 +13,6 @@ export default class TableEffects{
         const hasEffect = getProperty(message, "flags.dsa5.hasEffect")
         const options = getProperty(message, "flags.dsa5.options") || {}
  
-        console.log(hasEffect, options)
         if(hasEffect) {
             //maintain order
             const methods = ["damageModifier", "gearDamaged", "gearLost", "resistEffect", "malus", "selfDamage"]
@@ -108,15 +107,23 @@ export default class TableEffects{
         for(let malus of args){
             const alternateEffect = !hasTargets && malus.noTarget
             const systemEffect = alternateEffect ? malus.noTarget.systemEffect : malus.systemEffect
-            const systemEffectLevel  = alternateEffect ? malus.noTarget.level : malus.level
+            const systemEffectLevel = (alternateEffect ? malus.noTarget.level : malus.level || 1)
 
-            const changes = alternateEffect ? malus.noTarget.changes : malus.changes
+            let changes = alternateEffect ? malus.noTarget.changes : malus.changes
             const duration = alternateEffect ? malus.noTarget.duration : malus.duration
 
             if(systemEffect){
-                //todo duration for system effects
+                const baseEffect = CONFIG.statusEffects.find(x => x.id == systemEffect)
+                if(!changes){
+                    changes = duplicate(baseEffect.changes)
+                    const baseChange = changes.find(x => x.key == `system.condition.${systemEffect}`)
+                    baseChange.value = systemEffectLevel
+                }
+                const lbl = game.i18n.localize(`CONDITION.${systemEffect}`) + " - " + game.i18n.localize("botchCritEffect")
+                const ef = new OnUseEffect().effectDummy(lbl, changes, duration || { })
+                ef.icon = baseEffect.icon
                 for(let target of finalTargets){
-                    await target.addCondition(systemEffect, systemEffectLevel || 1 , false, false)
+                    await target.addCondition(ef)
                 }
                 return true
             } else if(changes) {

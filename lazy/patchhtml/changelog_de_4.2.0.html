@@ -1,0 +1,169 @@
+<div>
+    <h1 class="mume-header" id="wichtige-erweiterungen">4.2.0 Wichtige Erweiterungen (1.1.2023)</h1>
+
+    <h2 class="mume-header" id="verbesserte-tabellen-f%C3%BCr-kritische-und-verpatzte-w%C3%BCrfe">Verbesserte Tabellen
+        f&#xFC;r kritische und verpatzte W&#xFC;rfe</h2>
+
+    <p>Ein gro&#xDF;er Teil der W&#xFC;rfeltabellen f&#xFC;r kritische und verpfuschte W&#xFC;rfe ist nun automatisiert.
+        Dazu geh&#xF6;ren Funktionen f&#xFC;r besch&#xE4;digte Ausr&#xFC;stung, verlorene Ausr&#xFC;stung,
+        widerstandsf&#xE4;hige Effekte, Mali und Boni sowie alle Arten von unerw&#xFC;nschten Unf&#xE4;llen und deren
+        schmerzhafte Folgen. Das Basissystem enth&#xE4;lt bereits einige dieser Tabellen, w&#xE4;hrend alle anderen
+        Tabellen Teil des Kompendiums 2 sind, das auch bald sein Update f&#xFC;r diese Funktion erhalten wird.</p>
+    <h2 class="mume-header" id="refactor">Refactor</h2>
+
+    <p>Die Umstellung auf Foundry 10 war ein enormer Arbeitsaufwand (fast wie eine komplette Neuprogrammierung des
+        Systems). Im Zuge dieses Refactorings haben wir auch viele unserer eigenen Funktionen ge&#xE4;ndert, um das
+        TDE/DSA-System zu verbessern und den Weg f&#xFC;r neue M&#xF6;glichkeiten und F&#xE4;higkeiten in der Zukunft zu
+        ebnen.</p>
+    <h2 class="mume-header" id="general%C3%BCberholtes-statussystem">General&#xFC;berholtes Statussystem</h2>
+
+    <p>Das Statussystem wurde ein wenig &#xFC;berarbeitet. Es gibt jetzt einen neuen Abschnitt auf dem Statusreiter des
+        Charakterbogens, der mit &quot;kumulative Effekte&quot; bezeichnet ist. In diesem Abschnitt k&#xF6;nnen
+        Statuseffekte aus verschiedenen Quellen kombiniert werden. Z.B. zwei Stufen Schmerz durch erlittenen Schaden +
+        eine weitere durch einen Schmerzzauber oder &#xE4;hnliches. Diese Verbesserung erlaubt es, eine Dauer f&#xFC;r
+        alle diese Effekte hinzuzuf&#xFC;gen. So kann der Zaubereffekt nach x Kampfrunden abklingen, w&#xE4;hrend der
+        Schmerz durch den erlittenen Schaden bestehen bleibt (jede Stufe des Schmerzes kann zu einem anderen Zeitpunkt
+        abklingen). Wir werden versuchen, alle bestehenden Automatisierungen f&#xFC;r solche Effekte zu aktualisieren,
+        wo es m&#xF6;glich ist.</p>
+    <h2 class="mume-header" id="berittener-kampf">Berittener Kampf</h2>
+
+    <p>Die Regeln f&#xFC;r den berittenen Kampf (wiihiiihi) haben ihren Weg in TDE/DSA f&#xFC;r Foundry gefunden. Es
+        handelt sich um eine komplexere Funktion, f&#xFC;r die man einige Zeit braucht, um sie zu lernen. Hofft also auf
+        ein Video von VTTom &#x1F603;</p>
+    <p>Die derzeitigen M&#xF6;glichkeiten umfassen:</p>
+    <ul>
+        <li>Zwei Token ausw&#xE4;hlen, das Token-HUD des Reiters &#xF6;ffnen und den Mount-Button dr&#xFC;cken, um auf
+            ein Pferd aufzusteigen</li>
+        <li>Ein Pferd auf das Reitercharakterblatt ziehen, um es als Pferd einzustellen</li>
+        <li>Der Reiter hat die Geschwindigkeit und Basisinitiative des Pferdes.</li>
+        <li>Bogensch&#xFC;tzen auf Pferden bekommen den Geschwindigkeitsmodifikator automatisch gesetzt.</li>
+        <li>Reiter haben die Fertigkeiten &quot;Reiten&quot; und &quot;Loyalit&#xE4;t&quot; ihres Pferdes immer in ihrer
+            Tokenhotbar, wenn sie gerade reiten.</li>
+        <li>Reiter erhalten automatisch eine vorteilhafte Position gegen&#xFC;ber Nicht-Reitern.</li>
+        <li>Wenn dein Reiter ein Pferd hat und es auch gerade reitet, wird der Pferdetoken auch auf der Karte platziert,
+            wenn du einen neuen Reitertoken erstellst.</li>
+        <li>Achte darauf, dass das actorLink f&#xFC;r benannte Pferde Ihrer Helden gesetzt ist, da sich unverbundene
+            Pferde etwas anders verhalten.</li>
+        <li>Bewege die Reitermarke auf der Karte und das Pferd wird ihr folgen.</li>
+        <li>Der Z-Index kann manchmal etwas spinnen. In diesem Fall ziehe eine Selectbox um das Reiter-Pferd-Paar und
+            beide Token tauschen ihren Z-Index (das andere Token kommt nach vorne, derzeit keine gute L&#xF6;sung
+            bekannt)</li>
+        <li>Setze die Geschwindigkeit oder den Gang des Pferdes &#xFC;ber den Token HUD des Reiters oder den
+            Charakterbogen. Das Einstellen der Geschwindigkeit ist f&#xFC;r die automatische Berechnung von
+            Sturmangriffen und dergleichen gedacht</li>
+        <li>Einige Spezialf&#xE4;higkeiten f&#xFC;r den berittenen Kampf werden bald verbessert, so dass sie tun, was
+            sie tun sollen. Vergesst nicht, eure Akteure zu diesem Zeitpunkt zu migrieren.</li>
+    </ul>
+    <p>Dinge, die derzeit noch nicht implementiert sind, aber vielleicht in Zukunft kommen werden:</p>
+    <ul>
+        <li>Automatische Reitenprobe, wenn das Pferd Schadenspunkte erleidet</li>
+        <li>Automatische Reitenprobe, wenn das Pferd langsamer wird</li>
+    </ul>
+    <p>Bitte teile uns mit, wenn du noch etwas f&#xFC;r ein reibungsloses Pferde-Spielerlebnis vermisst.<br>
+        Schaut euch auch das Modul &quot;Tiergef&#xE4;hrten&quot; an, das eine Reihe von sch&#xF6;nen Pferden und
+        anderen Reitbegleitern enth&#xE4;lt.</p>
+    <h1 class="mume-header" id="verbesserungen">Verbesserungen</h1>
+
+    <p>Einige dieser Verbesserungen wurden bereits mit den letzten Hotfix-Patches eingef&#xFC;hrt.</p>
+    <ul>
+        <li>Liturgien sind nun auch au&#xDF;erhalb des Kampfes &#xFC;ber die Token-Hotbar verf&#xFC;gbar (4.1.1)</li>
+        <li>Token-Namensverschleierung wird f&#xFC;r Spielercharaktere nicht mehr ausgef&#xFC;hrt (4.1.10)</li>
+        <li>Der Resizer der Tokenhotbar und des TDE-Initiative-Trackers zeigt nun einen Tooltip, der alle Optionen
+            erkl&#xE4;rt (4.1.10)</li>
+        <li>Nahkampfangriffe beinhalten nun die Gr&#xF6;&#xDF;enmodifikatoren von Kreaturen (meist sehr kleine
+            Kreaturen) (4.1.10)</li>
+        <li>Angriffseigenschaften k&#xF6;nnen nun aktive Effekte haben, die auf das Ziel angewendet werden, &#xE4;hnlich
+            wie bei Nahkampfwaffen (z.B. eine Stufe Schmerz bei einem Treffer) (4.1.10)</li>
+        <li>Die Funktion zum Verschleiern (Umbenennen) von Spielsteinen zeigt nun immer auch eine Schaltfl&#xE4;che zum
+            Umbenennen des Spielsteins in &quot;unbekannt&quot; an (4.1.11)</li>
+        <li>Npc&apos;s k&#xF6;nnen nun Sammelproben auf ihren Sheets haben (z.B. ein Schmied, der eine komplizierte
+            Waffe baut) (4.1.15)</li>
+        <li>Eine Angriffs-Chatkarte zeigt nun an, wenn die Waffe mit dem falschen Griff gehalten wurde (z.B. eine
+            Zweihandwaffe mit einer Hand) (4.1.17)</li>
+        <li>Bilder k&#xF6;nnen nun vom Bildbetrachter aus in den Chat gepostet werden, so dass Spieler die letzten
+            R&#xE4;tsel-/Gedankentheater-/Schauspieler-Kunstwerke erneut ansehen und &#xF6;ffnen k&#xF6;nnen. (4.1.17)
+        </li>
+        <li>Das Meistermen&#xFC; verf&#xFC;gt nun auch &#xFC;ber die Funktion &quot;Probe anfordern&quot; (4.1.17)</li>
+        <li>Das Geld eines H&#xE4;ndlers kann nun vor den Spielern versteckt werden (damit sie nicht mehr daran denken,
+            jeden H&#xE4;ndler auszurauben) (4.1.17)</li>
+        <li>Aktive Effekte, die die Initiative ver&#xE4;ndern, tun dies nun automatisch. Es ist kein manuelles Editieren
+            des Kampftrackers mehr n&#xF6;tig. Besonders n&#xFC;tzlich beim automatischen Abklingen von Effekten
+            &#xFC;ber das Modul &quot;times-up&quot;. Axxeleratus ist jetzt perfekt! (4.1.17)</li>
+        <li>Gruppen-Schips sind jetzt auf Charakterb&#xF6;gen sichtbar (4.1.19)</li>
+        <li>Aktive Effekte k&#xF6;nnen nun die Modifikationen von Zaubermodifikatoren wie Kraft, Kosten reduzieren,
+            Kosten erh&#xF6;hen, Geste entfernen, Formel entfernen, Reichweite erh&#xF6;hen, Reichweite verringern,
+            Wirkzeit erh&#xF6;hen, Wirkzeit verringern &#xE4;ndern. Die neuen Tasten sind im Dropdown-Men&#xFC; der
+            aktiven Effekte zu finden. Dies ist besonders n&#xFC;tzlich f&#xFC;r Traditionen und Zaubererweiterungen und
+            wird in K&#xFC;rze zu allen bestehenden Spezialf&#xE4;higkeiten hinzugef&#xFC;gt.</li>
+        <li>Zaubererweiterungen k&#xF6;nnen nun die Modifikatoren zur Erh&#xF6;hung und Verringerung der Wirkzeit
+            aktivieren.</li>
+        <li>Traditionen aus offiziellen Modulen werden demn&#xE4;chst automatisch den Richtwert f&#xFC;r AE/KE setzen
+        </li>
+        <li>Die LE kann nun auch f&#xFC;r Charaktere und NPCs auf Token auf einen negativen Wert ge&#xE4;ndert werden
+            (Sterberegel)</li>
+        <li>Gifte, Krankheiten und Verbrauchsmaterialien aus dem Aventurischen Almanach wurden auf mehrere offizielle
+            Module verteilt</li>
+        <li>Aktive Effekte auf Waffen wenden ihre Wirkung standardm&#xE4;&#xDF;ig auf das Ziel eines Angriffs an (z.B.
+            um zus&#xE4;tzliche Schmerzen zu verursachen). Nun k&#xF6;nnen sie zus&#xE4;tzlich Effekte enthalten, die
+            auf den Tr&#xE4;ger der Waffe angewendet werden. Aktiviere dazu das entsprechende Kontrollk&#xE4;stchen in
+            der Konfiguration der aktiven Effekte. Man kann nun z.B. eine verfluchte Waffe erstellen, die dem
+            Tr&#xE4;ger der Waffe eine Stufe Angst und allen Zielen im Kampf eine Stufe Bet&#xE4;ubung zuf&#xFC;gt.</li>
+        <li>Das Dere Positioning System (DPS) kann nun auch pro Szene konfiguriert werden. Ihr findet die Einstellung
+            auf der Registerkarte &quot;Gitter&quot; in der Szenenkonfiguration. Ihr k&#xF6;nnt nun die
+            Reichweiten&#xFC;berpr&#xFC;fung je nach Szene deaktivieren oder aktivieren.</li>
+        <li>Es gibt jetzt einen aktiven Effekt f&#xFC;r erh&#xF6;hte Seelenkraft oder Z&#xE4;higkeit gegen Zauber (wir
+            werden dies zu bestehenden F&#xE4;higkeiten hinzuf&#xFC;gen, sobald die Zeit daf&#xFC;r reif ist)</li>
+        <li>Der Angriffsdialog zeigt nun einen kleinen Indikator f&#xFC;r Offhand-Waffen an</li>
+        <li>Die Erkennung der Reichweite der gegnerischen Waffe verwendet nun die gr&#xF6;&#xDF;te angelegt Waffe, statt
+            der ersten</li>
+        <li>Die Messvorlage f&#xFC;r Kegelzaubereffekte enth&#xE4;lt nun auch ein Feld f&#xFC;r den Winkel</li>
+    </ul>
+    <h1 class="mume-header" id="fehlerbehebungen">Fehlerbehebungen</h1>
+
+    <p>Einige dieser Fehlerbehebungen wurden bereits mit den letzten Hotfix-Patches ausgerollt.</p>
+    <ul>
+        <li>Die Modifikatoren von Fernkampfangriffen werden nun in der Vorschau des W&#xFC;rfelwurfs in Dialogen
+            f&#xFC;r Fernkampfangriffe berechnet.</li>
+        <li>Ein Fehler mit Liturgie-Erweiterungen wurde behoben (4.1.1)</li>
+        <li>Fatepoints in Kombination mit Informationsw&#xFC;rfen behoben (4.1.1)</li>
+        <li>Die automatische Namensverschleierung beim Fallenlassen von Spielergegenst&#xE4;nden wurde behoben (4.1.2)
+        </li>
+        <li>Ein Fehler wurde behoben, der nur f&#xFC;r Spieler sichtbar war, die alles auf einem Gegenstandsblatt
+            verschleiert hatten (4.1.5)</li>
+        <li>Fehler bei der Anzeige der Ergebnisse von gegnerischen W&#xFC;rfen &#xFC;ber das Chat-Kontextmen&#xFC;
+            behoben (4.1.6)</li>
+        <li>Fehler bei der automatischen Z&#xE4;hlung der Anzahl der Verteidigungen in einem Kampf behoben (4.1.6)</li>
+        <li>Fehler behoben, dass LP, AE, KE nicht im Men&#xFC; des Meisters angezeigt wurden (4.1.7)</li>
+        <li>Fehler bei der Berechnung der Ladezeit f&#xFC;r Fernkampfwaffen behoben (4.1.9)</li>
+        <li>Die Belastung der R&#xFC;stungszone wurde beim ersten Laden nicht angezeigt (4.1.9)</li>
+        <li>Ein Fehler bei der &#xDC;bertragung von Effekten wurde behoben, der den Namen des Token-Akteurs anstelle des
+            Token-Namens anzeigte (4.1.10)</li>
+        <li>Ein Rundungsfehler bei den AE/KE-Kosten von erhaltenen Zaubern wurde behoben (4.1.10)</li>
+        <li>Es wurde ein Fehler behoben, der beim Deaktivieren des aktiven Effekts eines nicht besessenen Akteurs
+            auftrat (4.1.10)</li>
+        <li>Behoben, dass Liturgie-/Zaubererweiterungen bei Zaubern/Liturgien nicht mehr korrekt angezeigt wurden
+            (4.1.10)</li>
+        <li>Fehler bei Ausweichw&#xFC;rfen behoben (4.1.10)</li>
+        <li>Fehler beim Ziehen eines aktiven Effekts von einem Akteur zum anderen behoben (4.1.11)</li>
+        <li>GM-Infos zu Gegenst&#xE4;nden neu gestaltet (wahrscheinlich noch nicht der endg&#xFC;ltige Stand) (4.1.11)
+        </li>
+        <li>Die Duplizierung von Verschleierungssymbolen auf Gegenst&#xE4;nden wurde behoben (4.1.11)</li>
+        <li>Behoben: /apps und /conditions lassen sich nicht mehr auf Schauspieler ziehen (4.1.11)</li>
+        <li>Probleme mit der englischen Version der Spezies Half-Elf behoben (4.1.11)</li>
+        <li>Doppeltes Posten von Bedingungen aus Bedingungslinks behoben (4.1.11)</li>
+        <li>Es wurde behoben, dass Spieler nicht in der Lage waren, Gruppen-Fatepoints zu benutzen (4.1.11)</li>
+        <li>&#xDC;berarbeitung des TDE-Kampftrackers, um ihn mehr an v9 anzupassen (4.1.11)</li>
+        <li>Token-Namensverschleierung wird nicht mehr f&#xFC;r Item-Drops aufgerufen (4.1.14)</li>
+        <li>Fehler behoben, dass der TDE-Kampf-Tracker nur die 5 wichtigsten Akteure des Kampfes anzeigt (4.1.15)</li>
+        <li>Fehler behoben, dass der Kampf-Tracker nicht auf den Token der aktuellen Runde schwenkt (4.1.15)</li>
+        <li>Beute-Akteure und Pflanzen k&#xF6;nnen nicht mehr zum Kampf-Tracker hinzugef&#xFC;gt werden (4.1.16)</li>
+        <li>Fehler bei den Ausweichkn&#xF6;pfen behoben (4.1.16)</li>
+        <li>Fehler bei Attribut- und Regenerationsw&#xFC;rfen behoben (4.1.16)</li>
+        <li>Es wurde ein Fehler behoben, bei dem falsche Griffmodifikatoren der Waffe nicht korrekt angewendet wurden,
+            wenn die Attribute des Akteurs zu niedrig waren (4.1.17)</li>
+        <li>Das Posten eines Gegenstandes in den Chat kann keine verschleierten Daten mehr offenbaren (4.1.17)</li>
+        <li>Journalbrowser-Pins werden nun pro Welt und nicht mehr pro Client gespeichert (4.1.17)</li>
+        <li>Kompatibilit&#xE4;t zu automatischen Animationen behoben (4.1.19)</li>
+        <li>Fehler in der automatischen Initiative-Update-Funktion behoben (4.1.19)</li>
+    </ul>
+</div>

@@ -1,0 +1,144 @@
+<div>
+    <h1 class="mume-header" id="important-enhancements">4.2.0 Important enhancements (1/1/2023)</h1>
+
+    <h2 class="mume-header" id="improved-criticalbotch-roll-tables">Improved critical/botch roll tables</h2>
+
+    <p>A large chunk of the roll tables for critical and botch rolls is now automated. This includes functions for
+        damaged gear, lost gear, resistable effects, mali and boni, and all kinds of unwanted accidents and their
+        painful results. The base system already includes a few of those tables, while all the remaining tables are part
+        of the compendium 2, which will get its update for this function soon, too.</p>
+    <h2 class="mume-header" id="refactor">Refactor</h2>
+
+    <p>The switch to Foundry 10 has been a tremendous amount of work (almost like a complete rewrite of the system).
+        Along this refactoring we also changed a lot of our own functions to improve and lay the way for new
+        possibilities and capabilities of the TDE/DSA system in the future.</p>
+    <h2 class="mume-header" id="general-overhauled-conditions-system">General overhauled conditions system</h2>
+
+    <p>The conditions system has been overhauled a bit. There is now a new section on the status tab of the character
+        sheet, labeled &quot;cumulative effects&quot;. This section can combine status effects of different sources.
+        E.g. two levels of pain lost through suffered damage + another one coming from a pain inflicting spell or
+        similar things. This improvement allows to add a duration for all such effects. So the spell effect can fade
+        after x amount of combat rounds while the pain from the damage remains (each level of pain can fade at a
+        different time). We will try to update all existing automations for such effects where possible.</p>
+    <h2 class="mume-header" id="mounted-combat">Mounted combat</h2>
+
+    <p>The rules for mounted combat (wiihiiihi) found their way into TDE/DSA for foundry. It&apos;s a more complex
+        function and might require some time to learn it. So hope for a video by VTTom &#x1F603;</p>
+    <p>Current possibilities include:</p>
+    <ul>
+        <li>Select two tokens, open the token HUD of the rider and press the mount button to jump on a horse</li>
+        <li>Drag a horse onto the riders sheet to set it as horse</li>
+        <li>The rider will have the speed and base initiative of the horse</li>
+        <li>Archers on horse get the speed modifier set automatically</li>
+        <li>Riders have the skill &quot;Riding&quot; and &quot;Loyalty&quot; of their horse always in their tokenhotbar
+            if they are currently riding</li>
+        <li>Riders gain the advantageous position against non riders automatically</li>
+        <li>If your rider has a horse connected and is currently riding it, then the horse token will be placed on the
+            map too, each time you create a new rider token.</li>
+        <li>Make sure to mark the actorLink for named horses of your heros, as unlinked horses behave slightly different
+        </li>
+        <li>Move the rider token around the map and the horse will follow</li>
+        <li>The Z-index sometimes might flip. In this case draw a select box around the rider-horse pair and both tokens
+            swap their z-Index (other token comes to the front, currently no good fix known)</li>
+        <li>Set the speed or gear of the horse via the token HUD of the rider or the character sheet. Setting the speed
+            is intended for the automatic calculation of charged attacks and the like</li>
+        <li>Some special abilities for mounted combat will be improved soon, so they do what they should do. Don&apos;t
+            forget to migrate your actors at that time.</li>
+    </ul>
+    <p>Things currently not implemented that might come in the future:</p>
+    <ul>
+        <li>Automatic riding roll if horse suffers damage points</li>
+        <li>Automatic riding roll if horse slows down</li>
+    </ul>
+    <p>Please let us know, if you are missing something else for a smooth horsy playing experience.<br>
+        Also checkout the &quot;Tiergef&#xE4;hrten&quot; (german only) module for a bunch of beautiful horses and other
+        riding companions.</p>
+    <h1 class="mume-header" id="enhancements">Enhancements</h1>
+
+    <p>Some of these have already been rolled out with recent hotfix patches.</p>
+    <ul>
+        <li>Liturgical chants are now available via the token hotbar out of combat (4.1.1)</li>
+        <li>Token name obfuscation not executed for player characters anymore (4.1.10)</li>
+        <li>The resizer of the tokenhotbar and TDE initiative tracker now shows a tooltip explaining all options
+            (4.1.10)</li>
+        <li>Melee attacks now include the size modifiers of creatures (mostly very tiny creatures) (4.1.10)</li>
+        <li>Attack trait&apos;s can now have active effects which are applied to the target similar to meleeweapons
+            (e.g. one level of pain on hit) (4.1.10)</li>
+        <li>The token obfuscation (rename) function now always also shows a button to rename the token to
+            &quot;unknown&quot; (4.1.11)</li>
+        <li>Npc&apos;s can now have cummulative checks on their sheets (e.g. a smith building a complicated weapon)
+            (4.1.15)</li>
+        <li>An attack chat card now shows if the weapon has been held with the wrong grip (e.g. a two-handed weapon with
+            one hand) (4.1.17)</li>
+        <li>Images can now be posted to the chat from the image artwork viewer so players can revisit and open recent
+            riddle/theatre of mind/actor artworks. (4.1.17)</li>
+        <li>The master menu now also has the request check functionality (4.1.17)</li>
+        <li>A merchant&apos;s money can now be hidden from the players (so they stop thinking of robbing every merchant)
+            (4.1.17)</li>
+        <li>Active effects which modify the initiative now do this automatically. No manual edit of the combat tracker
+            necessary anymore. Especially useful with automatic decay of effects via the module &quot;times-up&quot;.
+            Axxeleratus is now perfect! (4.1.17)</li>
+        <li>Group fatepoints are now visible on character sheets (4.1.19)</li>
+        <li>Active effects can now alter the modifications of of spell modifiers like force, reduce cost, increase cost,
+            remove gesture, remove formula, increase range, decrease range, increase casting time, decrease casting
+            time. You can find the new keys in the active effects dropdown. This is especially useful for traditions and
+            spell extensions and will be added to all existing specialabilities sometime soon.</li>
+        <li>Spell extensions can now enable the modifiers for increase and decrease castingtime</li>
+        <li>Traditions from official modules are going to set the guidevalue for AE/KE automatically soon</li>
+        <li>The LE can now be modified on tokens to a negative value also for characters and npcs (dying rule)</li>
+        <li>Poisons, diseases and consumables from the Aventurian Almanach have been distributed to several offical
+            modules</li>
+        <li>Active effects on weapons apply their effect by default to the target of an attack (e.g. to add additional
+            pain). Now they can additionally contain effects which are applied to the bearer of the weapon. To do so
+            check the corresponding checkbox on the active effects configuration. You can create e.g. now a cursed
+            weapon which applies one level of fear to the bearer of the weapon and one level of stun to all targets in
+            combat.</li>
+        <li>The Dere Positioning System (DPS) can now be configured per scene also. Find the setting on the grid tab of
+            the scene config. You can now disable or enable the range check for special scenes.</li>
+        <li>There is now an active effect for increased soulpower or toughness vs. spells (we will add this to existing
+            abilities whenever there is time to do so)</li>
+        <li>The attack dialog shows now a small indicator for offhand weapons</li>
+        <li>The target weapon range detection no always uses the largest equipped weapon instead of the first one</li>
+        <li>The measure template for cone spell effects now also contains a field for the angle</li>
+    </ul>
+    <h1 class="mume-header" id="bugfixes">Bugfixes</h1>
+
+    <p>Some of these bugfixes have already been rolled out with recent hotfix patches.</p>
+    <ul>
+        <li>Modifiers of ranged attacks is now calculated into the preview roll die on range attack dialogs</li>
+        <li>Fixed a bug with liturgy extensions (4.1.1)</li>
+        <li>Fixed fatepoints in combination with information rolls (4.1.1)</li>
+        <li>Fixed auto token name obfuscating getting called on player item drop (4.1.2)</li>
+        <li>Fixed a bug visible only to players with everything obfuscated on an item sheet (4.1.5)</li>
+        <li>Fixed reveal of opposed rolls results via chat context menu (4.1.6)</li>
+        <li>Fixed a bug with automatic counting of the number of defenses in a combat (4.1.6)</li>
+        <li>Fixed LP, AE, KE not showing in the master&apos;s menu (4.1.7)</li>
+        <li>Fixed a loading time calculation bug for rangeweapons (4.1.9)</li>
+        <li>Fixed armor zone encumbrance not showing on initial load (4.1.9)</li>
+        <li>Fixed effect transfer revealing the token actors name instead of the token name (4.1.10)</li>
+        <li>Fixed a rounding error for AE/KE cost of maintained spells (4.1.10)</li>
+        <li>Fixed disabling of an unowned actor&apos;s active effect showing an error (4.1.10)</li>
+        <li>Fixed liturgy/spell extensions not showing properly anymore on spells/liturgies (4.1.10)</li>
+        <li>Fixed a bug with dodge rolls (4.1.10)</li>
+        <li>Fixed a bug with dragging an active effect from one actor to the other (4.1.11)</li>
+        <li>GM info on items restyle (probably still not the final state) (4.1.11)</li>
+        <li>Fixed the duplication of obfuscation icons on items (4.1.11)</li>
+        <li>Fixed /apps and /conditions not possible to drag to actors anymore (4.1.11)</li>
+        <li>Fixed an issues with the english version of the species Half-Elf (4.1.11)</li>
+        <li>Fixed double posting of conditions from condition links (4.1.11)</li>
+        <li>Fixed players not being able to use group fatepoints (4.1.11)</li>
+        <li>Reworked TDE combat tracker to be more like v9 (4.1.11)</li>
+        <li>Token name obfuscation will not be called for item drops anymore (4.1.14)</li>
+        <li>Fixed a bug with the TDE combat tracker only showing the top most 5 actors of the combat (4.1.15)</li>
+        <li>Fixed a bug combat tracker not panning to the token of the current turn (4.1.15)</li>
+        <li>Loot actors and plants can not be added to the combat tracker anymore (4.1.16)</li>
+        <li>Fixed a bug with dodge buttons (4.1.16)</li>
+        <li>Fixed a bug with attribute and regeneration rolls (4.1.16)</li>
+        <li>Fixed a bug where wrong grip modifiers of weapon weren&apos;t applied properly if the attributes of the
+            actor were too low (4.1.17)</li>
+        <li>Posting an item to the chat can not reveal obfuscated data anymore (4.1.17)</li>
+        <li>Journalbrowser pins are now save per world instead of per client (4.1.17)</li>
+        <li>Fixed compatibility to automated animations (4.1.19)</li>
+        <li>Fixed a bug with the automatic initiative update function (4.1.19)</li>
+    </ul>
+</div>

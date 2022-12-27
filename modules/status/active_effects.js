@@ -607,6 +607,12 @@ export default class DSAActiveEffectConfig extends ActiveEffectConfig {
                     val: `system.${model}RollModifiers.${k}.mod`,
                     mode: 2,
                     ph: "1",
+                },
+                {
+                    name: `${modelName} - ${game.i18n.localize(k.replace("Spell", ""))} ${game.i18n.localize("advanced")}`,
+                    val: `system.${model}RollModifiers.${k}.custom`,
+                    mode: 0,
+                    ph: descriptor,
                 })
             }
         }        

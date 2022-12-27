@@ -66,7 +66,7 @@ export default class DiceDSA5 {
                         buttons: dialog.getRollButtons(testData, dialogOptions, resolve, reject),
                         default: "rollButton",
                     })
-                    .recallSettings(testData.extra.speaker, testData.source, testData.mode)
+                    .recallSettings(testData.extra.speaker, testData.source, testData.mode, dialogOptions.data)
                     .render(true)
             })
         } else {

@@ -69,11 +69,14 @@ export default class DSA5SpellDialog extends DialogShared {
         const sit = parent.find('[name="situationalModifiers"]')
         sit.find('option[data-extension="1"]').remove()
         const mods = []
+        const rollModifierKeys = Object.keys(DSA5SpellDialog.rollModifiers).map(x => `${x}.mod`)
+        this.dialogData.renderData.rollModifiersPrepared = duplicate(this.dialogData.renderData.rollModifiers)
         for(let k of parent.find('.specAbs.active')){
             const item = fromUuidSync(k.dataset.uuid)
             if(!item) continue
             
             for(let ef of item.effects){
+                
                 for(let change of ef.changes){
                     if(DSA5SpellDialog.rollChanges.includes(change.key)){
                         let name = item.name.split(" - ")
@@ -83,7 +86,11 @@ export default class DSA5SpellDialog extends DialogShared {
                         mods.push(`<option data-extension="1" selected="" data-tooltip="${tooltip}" data-type="${change.key}" value="${change.value}">${name} - ${typeName}</option>`)
                     }else if(change.key == "macro.transform"){
                         await DSA5_Utility.callItemTransformationMacro(change.value, source, ef)
-                    }else{
+                    }
+                    else if(rollModifierKeys.includes(change.key)){
+                        ef.apply(this.dialogData.renderData.rollModifiersPrepared, change)
+                    }
+                    else{
                         ef.apply(source, change)
                     }
                     
@@ -98,7 +105,7 @@ export default class DSA5SpellDialog extends DialogShared {
         const tt = `${type}RollModifiers`
         if(actor.system[tt]){
             for(let key of Object.keys(actor.system[tt])){
-                rollModifiers[key].mod += Number(actor.system[tt][key])
+                rollModifiers[key].mod += (Number(actor.system[tt][key]?.mod ?? 0))
             }
         }
         return rollModifiers
@@ -126,10 +133,16 @@ export default class DSA5SpellDialog extends DialogShared {
             return;
         }
 
+        for(let key of Object.keys(this.dialogData.renderData.rollModifiersPrepared)){
+            const val = this.dialogData.renderData.rollModifiersPrepared[key].mod
+            html.find(`.${key}Label`).text(`(${val})`)
+            html.find(`#${key}`).val(val)
+        }
+
         const changeCast = html.find('.canChangeCastingTime')
         if(source.system.canChangeCastingTime.value == "true"){
             if(changeCast.is(":empty")) {
-                changeCast.html(await renderTemplate('systems/dsa5/templates/dialog/parts/canChangeCastingTime.html', { rollModifiers: DSA5SpellDialog.rollModifiers }))
+                changeCast.html(await renderTemplate('systems/dsa5/templates/dialog/parts/canChangeCastingTime.html', { rollModifiers: this.dialogData.renderData.rollModifiers }))
                 this.setPosition({ height: "auto" })
             }
         }else{

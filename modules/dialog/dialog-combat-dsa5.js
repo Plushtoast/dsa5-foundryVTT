@@ -109,8 +109,8 @@ export default class DSA5CombatDialog extends DialogShared {
         return false;
     }
 
-    recallSettings(speaker, source, mode) {
-        super.recallSettings(speaker, source, mode)
+    recallSettings(speaker, source, mode, renderData) {
+        super.recallSettings(speaker, source, mode, renderData)
         this.prepareWeapon()
         return this
     }

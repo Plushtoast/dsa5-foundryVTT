@@ -4,12 +4,13 @@ import { AddTargetDialog } from "./addTargetDialog.js"
 export default class DialogShared extends Dialog {
     static roman = ['', ' I', ' II', ' III', ' IV', ' V', ' VI', ' VII', ' VIII', ' IX',' X']
 
-    recallSettings(speaker, source, mode) {
+    recallSettings(speaker, source, mode, renderData) {
         this.recallData = game.dsa5.memory.recall(speaker, source, mode)
         this.dialogData = {
             mode,
             speaker,
-            source
+            source,
+            renderData
         }
         return this
     }

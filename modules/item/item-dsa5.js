@@ -796,6 +796,7 @@ class SpellItemDSA5 extends Itemdsa5 {
 
     static async applyExtensions(source, extensions, actor){
         RuleChaos.ensureNumber(source)
+        const rollModifiers = Object.keys(DSA5SpellDialog.rollModifiers).map(x => `${x}.mod`)
         for(let extension of extensions){
             const item = fromUuidSync(extension.uuid)
             if(!item) continue
@@ -803,10 +804,13 @@ class SpellItemDSA5 extends Itemdsa5 {
             for(let ef of item.effects){
                 for(let change of ef.changes){
                     if(DSA5SpellDialog.rollChanges.includes(change.key)) continue
-                    
+                    if(rollModifiers.includes(change.key)) continue
+
                     if(change.key == "macro.transform"){
                         await DSA5_Utility.callItemTransformationMacro(change.value, source, ef)
-                    }else{
+                    }
+                    
+                    else{
                         ef.apply(source, change)
                     }
                 }
