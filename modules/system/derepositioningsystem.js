@@ -63,7 +63,7 @@ export default class DPS {
 
 Hooks.on("renderSceneConfig", (app, html, msg) => {
     const sceneFlag = getProperty(app.object, "flags.dsa5.enableDPS")
-    const dpsSelector = `<div class="form-group">
+    const dpsSelector = `<div class="form-group dpsSelector">
         <label data-tooltip="DSASETTINGS.enableDPSHint">${game.i18n.localize('DSASETTINGS.enableDPS')}</label>
         <select name="flags.dsa5.enableDPS">
             <option value="" ${sceneFlag == "" ? "selected" : ""}>${game.i18n.localize("globalConfig")}</option>
@@ -71,5 +71,6 @@ Hooks.on("renderSceneConfig", (app, html, msg) => {
             <option value="1" ${sceneFlag == "1" ? "selected" : ""}>${game.i18n.localize("no")}</option>
         </select>
     </div>`
+    html.find('.dpsSelector').remove()
     html.find('.tab[data-tab="grid"]').append(dpsSelector)
 })

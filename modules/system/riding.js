@@ -12,11 +12,6 @@ export default class Riding {
     <div class="control-icon" data-action="rideDecrease"><i class="fas fa-caret-down" data-tooltip="RIDING.decrease" width="36" height="36"></div>
     `
     
-
-    static getHorseSpeed(horse){
-        return horse.effects.find(x => getProperty(x, "flags.dsa5.horseSpeed"))?.flags.dsa5.horseSpeed || 0
-    }
-
     static async createTokenHook(token, options, id){
         if(!DSA5_Utility.isActiveGM()) return
 
@@ -31,7 +26,7 @@ export default class Riding {
 
             //Todo check if tokens need to be modified because of e.g. sizes
             const horseToken = (await scene.createEmbeddedDocuments("Token", [horseTokenSource]))[0]
-            await token.update({"flags.dsa5.horseTokenId": horseToken.id}) 
+            await token.update({"flags.dsa5.horseTokenId": horseToken.id, elevation: (horseToken.elevation ?? 0) + 1}) 
 
             if(!horseToken.actorLink){
                 await token.actor.update({
@@ -39,7 +34,6 @@ export default class Riding {
                     "system.horse.token": { scene: scene.id, token: horseToken.id }
                 })
             }
-            this.setZIndex(token, horseToken)
         }
     }
 
@@ -152,7 +146,7 @@ export default class Riding {
 
     static async unmountHorse(actor, token){
         await this.clearMount(actor)
-        await token.update({ [`flags.dsa5.-=horseTokenId`]: null })
+        await token.update({ [`flags.dsa5.-=horseTokenId`]: null, elevation: Math.max(0, (token.elevation ?? 0) - 1) })
     }
 
     static async clearMount(actor){
@@ -167,13 +161,6 @@ export default class Riding {
             }
         })
         await this.removeRidingCondition(actor)
-    }
-
-    static setZIndex(rider, horse){
-        setTimeout(() => {
-            rider.zIndex = 1
-            horse.zIndex = 0
-        }, 500)
     }
 
     static ridingCondition() {
@@ -236,14 +223,14 @@ export default class Riding {
                  }}
             })
         }
+
         await rider.actor.update(actorUpdate)
         await canvas.scene.updateEmbeddedDocuments("Token",
         [
-            { _id: rider.id, "flags.dsa5.horseTokenId": horse.id, x: horse.x, y: horse.y},
+            { _id: rider.id, "flags.dsa5.horseTokenId": horse.id, x: horse.x, y: horse.y, elevation: (horse.elevation ?? 0) + 1},
             { _id: horse.id, [`flags.dsa5.-=horseTokenId`]: null }
         ], { noHooks: true })
         await this.addRidingCondition(rider.actor)
-        this.setZIndex(rider, horse)
     }
 
     static speedKeys = {
@@ -251,6 +238,15 @@ export default class Riding {
         "-4": { key: "system.status.speed.initial", mode: 5, value: 4},
         "-5000": { key: "system.status.speed.multiplier", mode: 5, value: 0.66},
         "-8": { key: "system.status.speed.multiplier", mode: 5, value: 1}
+    }
+
+    static getHorseSpeed(horse){
+        return horse.effects.find(x => getProperty(x, "flags.dsa5.horseSpeed"))?.flags.dsa5.horseSpeed || 0
+    }
+
+    static horseSpeedModifier(horse){
+        const speed = this.getHorseSpeed(horse)
+        return Object.keys(this.speedKeys).map(x => Number(x)).indexOf(speed)
     }
  
     static increaseSpeed(horse){

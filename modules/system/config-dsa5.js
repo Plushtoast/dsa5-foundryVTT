@@ -571,17 +571,24 @@ DSA5.shooterMovementOptions = {
     "-4": "rangeMovementOptions.SHOOTERRUNNING"
 }
 
+DSA5.mountedRangeOptionsSpecAb = {
+    "STATIONARY": "0",
+    "SCHRITT": "0",
+    "TROT": "-5000",
+    "GALOPP": "-4"
+}
+
 DSA5.mountedRangeOptions = {
-    "0": "mountedRangeOptions.STATIONARY",
-    "-4": "mountedRangeOptions.SCHRITT",
-    "-5000": "mountedRangeOptions.TROT",
-    "-8": "mountedRangeOptions.GALOPP",
+    "STATIONARY": "0",
+    "SCHRITT": "-4",
+    "TROT": "-5000",
+    "GALOPP": "-8",
 }
 
 DSA5.drivingArcherOptions = {
-    "0": "mountedRangeOptions.STATIONARY",
-    "-2": "mountedRangeOptions.SCHRITT",
-    "-4": "mountedRangeOptions.GALOPP",
+    "STATIONARY": "0",
+    "SCHRITT": "-2",
+    "GALOPP": "-4",
 }
 
 DSA5.aimOptions = {

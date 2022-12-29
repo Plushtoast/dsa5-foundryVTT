@@ -12,6 +12,7 @@ import DPS from "../system/derepositioningsystem.js"
 import DSA5CombatDialog from "../dialog/dialog-combat-dsa5.js"
 import SpecialabilityRulesDSA5 from "../system/specialability-rules-dsa5.js"
 import DSA5SpellDialog from "../dialog/dialog-spell-dsa5.js"
+import Riding from "../system/riding.js"
 
 export default class Itemdsa5 extends Item {
     static defaultImages = {
@@ -449,7 +450,17 @@ export default class Itemdsa5 extends Item {
         ]
         if (!SpecialabilityRulesDSA5.hasAbility(actor, game.i18n.localize("LocalizedIDs.extremeShot"))) delete rangeOptions["extreme"]
         const drivingArcher = SpecialabilityRulesDSA5.hasAbility(actor, game.i18n.localize("LocalizedIDs.drivingArcher"))
-        const mountedOptions = drivingArcher ? duplicate(DSA5.drivingArcherOptions) : duplicate(DSA5.mountedRangeOptions)
+        const mountedArcher = SpecialabilityRulesDSA5.hasAbility(actor, game.i18n.localize("LocalizedIDs.mountedArcher"))
+        let mountedOptions
+        if(mountedArcher && Riding.isRiding(actor)){
+            mountedOptions = duplicate(DSA5.mountedRangeOptionsSpecAb)
+        }
+        else if(drivingArcher){
+            mountedOptions = duplicate(DSA5.drivingArcherOptions)
+        }
+        else {
+            mountedOptions = duplicate(DSA5.mountedRangeOptions)
+        }
 
         mergeObject(data, {
             rangeOptions,
