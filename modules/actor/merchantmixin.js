@@ -455,7 +455,7 @@ export const MerchantSheetMixin = (superclass) => class extends superclass {
             if (this.merchantSheetActivated()) {
                 this.filterWornEquipment(data)
                 this.prepareTradeFriend(data)
-                if (data.prepare.inventory["misc"].items.length == 0) data.actor.inventory["misc"].show = false
+                if (data.prepare.inventory["misc"].items.length == 0) data.prepare.inventory["misc"].show = false
             }
         } else {
             this.prepareStorage(data)
@@ -473,14 +473,14 @@ export const MerchantSheetMixin = (superclass) => class extends superclass {
     }
 
     filterWornEquipment(data) {
-        for (const [key, value] of Object.entries(data.actor.inventory)) {
+        for (const [key, value] of Object.entries(data.prepare.inventory)) {
             value.items = value.items.filter(x => !getProperty(x, "system.worn.value"))
         }
     }
 
     prepareStorage(data) {
         if (data["merchantType"] == "merchant") {
-            for (const [key, value] of Object.entries(data.actor.inventory)) {
+            for (const [key, value] of Object.entries(data.prepare.inventory)) {
                 for (const item of value.items) {
                     item.defaultPrice = this.getItemPrice(item)
                     item.calculatedPrice = Number(parseFloat(`${item.defaultPrice * (getProperty(this.actor.system, "merchant.sellingFactor") || 1)}`).toFixed(2)) * (getProperty(this.actor.system, `merchant.factors.sellingFactor.${game.user.id}`) || 1)
@@ -488,7 +488,7 @@ export const MerchantSheetMixin = (superclass) => class extends superclass {
                 }
             }
         } else if (data["merchantType"] == "loot") {
-            for (const [key, value] of Object.entries(data.actor.inventory)) {
+            for (const [key, value] of Object.entries(data.prepare.inventory)) {
                 for (const item of value.items) {
                     item.calculatedPrice = this.getItemPrice(item)
                 }
@@ -501,7 +501,7 @@ export const MerchantSheetMixin = (superclass) => class extends superclass {
                 show: true,
                 dataType: "money"
             }
-            if (money.items.length) data.actor.inventory["money"] = money
+            if (money.items.length) data.prepare.inventory["money"] = money
         }
     }
 

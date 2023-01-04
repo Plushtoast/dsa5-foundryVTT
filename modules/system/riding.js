@@ -104,15 +104,27 @@ export default class Riding {
     static async toggleIsRiding(actor){
         await actor.update({"system.horse.isRiding": !actor.system.horse?.isRiding})
        
+        const tokenUpdates = []
         if(!actor.system.horse.isRiding){
             for(let token of actor.getActiveTokens()){
-                await token.document.update({ [`flags.dsa5.-=horseTokenId`]: null })
+                tokenUpdates.push({ _id: token.document.id, [`flags.dsa5.-=horseTokenId`]: null, elevation: Math.max(0, (token.elevation ?? 0) - 1) })
             }
             await this.removeRidingCondition(actor)
         }else{
+            const horse =  this.getHorse(actor)
+            let horseTokenId 
+            for(let horseToken of horse.getActiveTokens()){
+                tokenUpdates.push({ _id: horseToken.document.id, [`flags.dsa5.-=horseTokenId`]: null })
+                horseTokenId = horseToken.document.id
+            }
+            for(let token of actor.getActiveTokens()){
+                tokenUpdates.push({ _id: token.document.id, elevation: Math.max(0, (token.elevation ?? 0) + 1), "flags.dsa5.horseTokenId": horseTokenId })
+            }
+
             //TODO might need to create or search token?
             await this.addRidingCondition(actor)
         }
+        await canvas.scene.updateEmbeddedDocuments("Token", tokenUpdates, { noHooks: true })
     }
 
     static getRidingCondition(actor){

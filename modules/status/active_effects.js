@@ -277,7 +277,7 @@ export default class DSAActiveEffectConfig extends ActiveEffectConfig {
             game.actors.get(getProperty(message.flags, "data.preData.extra.actor.id"))
 
         let sourceActor = attacker;
-        let effects = await this._parseEffectDuration(source, testData, message.flags.data.preData, attacker);
+        let effects = (await this._parseEffectDuration(source, testData, message.flags.data.preData, attacker)).filter(x => !getProperty(x, "flags.dsa5.applyToOwner"));
         if (options.effectIds) effects = effects.filter(x => options.effectIds.includes(x._id))
         let actors = [];
         if (mode == "self") {

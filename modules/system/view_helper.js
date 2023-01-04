@@ -21,6 +21,7 @@ export function svgAutoFit(elem, width = 320, height = 40) {
 export async function itemFromDrop(dragData, actorId, toObject = true) {
     let item
     let selfTarget
+    console.log(dragData)
     if(dragData.type == "Actor"){
         item = await Actor.implementation.fromDropData(dragData)
         selfTarget = actorId === item.id
@@ -29,6 +30,8 @@ export async function itemFromDrop(dragData, actorId, toObject = true) {
         selfTarget = actorId === item.parent?.uuid
     }
     let typeClass = item?.type
+
+    console.log(item)
     
     if (toObject) {
         item = item.toObject()

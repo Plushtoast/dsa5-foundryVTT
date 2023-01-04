@@ -1276,8 +1276,7 @@ export default class DiceDSA5 {
             }
         }
 
-        return false
-        
+        return false        
     }
 
     static async renderRollCard(chatOptions, testData, rerenderMessage) {

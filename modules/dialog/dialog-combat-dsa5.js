@@ -202,11 +202,11 @@ export default class DSA5CombatDialog extends DialogShared {
             if(advantageousPosition && (targetIsRider || isRider))
                 advantageousPosition.checked = isRider && !targetIsRider
 
-            const mountedOptions = html.find('[name="mountedOptions"]')
+            const mountedOptions = html.find('[name="mountedOptions"]')[0]
             if(isRider && mountedOptions){
                 const horse = Riding.getHorse(actor)
                 if(horse){
-                    mountedOptions[0].selectedIndex = Riding.horseSpeedModifier(horse)
+                    mountedOptions.selectedIndex = Riding.horseSpeedModifier(horse)
                 }
             }
         } 
@@ -225,14 +225,14 @@ export default class DSA5CombatDialog extends DialogShared {
 
         testData.opposingWeaponSize = 0
         const advantageousPositionMod = formData.advantageousPosition ? 2 : 0
-        const opposingWeaponSize = ["short", "medium", "long"].indexOf(formData.weaponsize)
+        const opposingWeaponSize = DSA5.meleeRangesArray.indexOf(formData.weaponsize)
         const modeTranslated = game.i18n.localize(`DIALOG.${mode}`)
         const result = [{
             name: modeTranslated,
             value: 10 - advantageousPositionMod - opposingWeaponSize
         }]
         if (mode == "assassinate") {
-            let weaponsize = ["short", "medium", "long"].indexOf(testData.source.system.reach.value)
+            let weaponsize = DSA5.meleeRangesArray.indexOf(testData.source.system.reach.value)
             if(!RuleChaos.isYieldedTwohanded(testData.source) && testData.source.system.worn.wrongGrip){
                 weaponsize = Math.min(weaponsize, 1)
             }
