@@ -562,7 +562,6 @@ export default class Actordsa5 extends Actor {
   }
 
   static canAdvance(actorData) {
-    console.log(actorData)
     return actorData.canAdvance;
   }
 
