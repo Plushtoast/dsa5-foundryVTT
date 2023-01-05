@@ -233,7 +233,7 @@ export default class ItemSheetdsa5 extends ItemSheet {
         data.isOwned = this.item.actor
         data.editable = this.isEditable
         if (data.isOwned)
-            data.canAdvance = this.item.actor.system.canAdvance && this._advancable()
+            data.canAdvance = this.item.actor.canAdvance && this._advancable()
 
         DSA5StatusEffects.prepareActiveEffects(this.item, data)
         data.item = this.item

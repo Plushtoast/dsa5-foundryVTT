@@ -87,6 +87,7 @@ export default class Actordsa5 extends Actor {
       const isFamiliar = RuleChaos.isFamiliar(this);
       const isPet = RuleChaos.isPet(this);
       data.canAdvance = (this.type == "character" || isFamiliar || isPet) && this.isOwner;
+      this.canAdvance = data.canAdvance
       data.isMage =
         isFamiliar ||
         this.items.some(
@@ -197,7 +198,7 @@ export default class Actordsa5 extends Actor {
       }      
     } catch (error) {
       console.error("Something went wrong with preparing actor data: " + error + error.stack);
-      ui.notifications.error(game.i18n.format("dsk.DSKError.PreparationError", {name: this.name}) + error + error.stack);
+      ui.notifications.error(game.i18n.format("DSAError.PreparationError", {name: this.name}) + error + error.stack);
     }
   }
 
@@ -561,6 +562,7 @@ export default class Actordsa5 extends Actor {
   }
 
   static canAdvance(actorData) {
+    console.log(actorData)
     return actorData.canAdvance;
   }
 
@@ -617,8 +619,7 @@ export default class Actordsa5 extends Actor {
     }
     i.cost = game.i18n.format("advancementCost", {
       cost: DSA5_Utility._calculateAdvCost(i.system.talentValue.value, i.system.StF.value),
-    });
-    i.canAdvance = Actordsa5.canAdvance(actorData);
+    })
     return i;
   }
 
@@ -628,8 +629,7 @@ export default class Actordsa5 extends Actor {
     });
     item.refund = game.i18n.format("refundCost", {
       cost: DSA5_Utility._calculateAdvCost(item.system.talentValue.value, item.system.StF.value, 0),
-    });
-    item.canAdvance = Actordsa5.canAdvance(this);
+    })
     return item;
   }
 
@@ -1024,6 +1024,8 @@ export default class Actordsa5 extends Actor {
     let guidevalues = duplicate(DSA5.characteristics);
     guidevalues["-"] = "-";
 
+    console.log(this.system.canAdvance)
+
     return {
       totalWeight,
       traditionArtifacts,
@@ -1057,7 +1059,7 @@ export default class Actordsa5 extends Actor {
       magic,
       traits,
       combatskills,
-      canAdvance: this.system.canAdvance,
+      canAdvance: this.canAdvance,
       sheetLocked: actorData.system.sheetLocked.value,
       allSkillsLeft: {
         body: skills.body,

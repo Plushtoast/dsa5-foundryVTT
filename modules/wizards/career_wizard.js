@@ -197,7 +197,7 @@ export default class CareerWizard extends WizardDSA5 {
             let attr = $(k).attr("data-attribute").toLowerCase()
             attr = game.dsa5.config.knownShortcuts[attr.toLowerCase()][1]
             if (Number(this.actor.system.characteristics[attr].initial) + Number(this.actor.system.characteristics[attr].advances) < Number($(k).val())) {
-                if (this.actor.system.canAdvance)
+                if (this.actor.canAdvance)
                     update[`system.characteristics.${attr}.advances`] = Number($(k).val()) - Number(this.actor.system.characteristics[attr].initial)
                 else
                     update[`system.characteristics.${attr}.initial`] = Number($(k).val())
