@@ -258,7 +258,7 @@ export default class Riding {
 
     static horseSpeedModifier(horse){
         const speed = this.getHorseSpeed(horse)
-        return Object.keys(this.speedKeys).map(x => Number(x)).indexOf(speed)
+        return Object.keys(this.speedKeys).map(x => Number(x)).indexOf(Number(speed))
     }
  
     static increaseSpeed(horse){

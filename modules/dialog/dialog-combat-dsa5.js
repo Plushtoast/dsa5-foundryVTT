@@ -206,6 +206,7 @@ export default class DSA5CombatDialog extends DialogShared {
             if(isRider && mountedOptions){
                 const horse = Riding.getHorse(actor)
                 if(horse){
+                    console.log(Riding.horseSpeedModifier(horse))
                     mountedOptions.selectedIndex = Riding.horseSpeedModifier(horse)
                 }
             }
