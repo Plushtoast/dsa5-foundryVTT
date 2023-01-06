@@ -206,7 +206,6 @@ export default class DSA5CombatDialog extends DialogShared {
             if(isRider && mountedOptions){
                 const horse = Riding.getHorse(actor)
                 if(horse){
-                    console.log(Riding.horseSpeedModifier(horse))
                     mountedOptions.selectedIndex = Riding.horseSpeedModifier(horse)
                 }
             }
@@ -350,11 +349,10 @@ export default class DSA5CombatDialog extends DialogShared {
                 value: narrowSpace
             }
         );
-        if (mode == "attack") {
+        if (mode == "attack" && data.doubleAttack) {
             testData.situationalModifiers.push({
                 name: game.i18n.localize("doubleAttack"),
-                value: data.doubleAttack ?
-                    -2 + SpecialabilityRulesDSA5.abilityStep(actor, game.i18n.localize("LocalizedIDs.twoWeaponCombat")) : 0,
+                value: -2 + SpecialabilityRulesDSA5.abilityStep(actor, game.i18n.localize("LocalizedIDs.twoWeaponCombat"))
             });
         }
     }
@@ -362,6 +360,9 @@ export default class DSA5CombatDialog extends DialogShared {
      static resolveRangeDialog(testData, cardOptions, html, actor, options) {
         this._resolveDefault(testData, cardOptions, html, options);
         const data = new FormDataExtended(html.find('form')[0]).object
+        const quickChangeMod = data.quickChange ? -4 : 0
+        const sizeMod = DSA5.rangeSizeModifier[data.size]
+        const rangeMod = DSA5.rangeMods[ data.distance || "medium"].attack
         testData.situationalModifiers.push({
                 name: game.i18n.localize("target") + " " + html.find('[name="targetMovement"] option:selected').text(),
                 value: Number(data.targetMovement) || 0,
@@ -373,7 +374,7 @@ export default class DSA5CombatDialog extends DialogShared {
                 value: Number(data.mountedOptions) || 0,
             }, {
                 name: game.i18n.localize("rangeMovementOptions.QUICKCHANGE"),
-                value: data.quickChange ? -4 : 0,
+                value: quickChangeMod,
             }, {
                 name: game.i18n.localize("MODS.combatTurmoil"),
                 value: data.combatTurmoil ? -2 : 0,
@@ -392,14 +393,33 @@ export default class DSA5CombatDialog extends DialogShared {
             ...Itemdsa5.getSpecAbModifiers(html, "attack"), 
             {
                 name: game.i18n.localize("sizeCategory"),
-                value: DSA5.rangeSizeModifier[data.size],
+                value: sizeMod,
             },
             {
                 name: game.i18n.localize("distance"),
-                value: DSA5.rangeMods[ data.distance || "medium"].attack,
+                value: rangeMod,
                 damageBonus: DSA5.rangeMods[ data.distance || "medium"].damage
             }
         );
+
+        const sharpshooter = actor.items.find(x => x.type == "specialability" && x.name == game.i18n.localize("LocalizedIDs.sharpshooter"))
+        if(sharpshooter){
+            const toSearch = getProperty(testData.source, "system.combatskill.value")?.toLowerCase()
+            if(toSearch && sharpshooter.system.list.value.split(/;|,/).map((x) => x.trim().toLowerCase()).includes(toSearch)){
+                const possibleMods = [data.targetMovement, data.shooterMovement, data.mountedOptions, quickChangeMod, sizeMod, rangeMod]
+                const sumMod = Math.abs(possibleMods.reduce((prev, cur) => {
+                    if(Number(cur) < 0) prev += Number(cur)
+                    return prev
+                }, 0))
+                const sharpshooterMod = Math.min(Number(sharpshooter.system.step.value) * 2, sumMod)
+                if(sharpshooterMod){
+                    testData.situationalModifiers.push({
+                        name: game.i18n.localize("LocalizedIDs.sharpshooter"),
+                        value: sharpshooterMod
+                    })
+                }
+            }
+        }
     }
 
     static _resolveDefault(testData, cardOptions, html, options) {
@@ -417,14 +437,12 @@ export default class DSA5CombatDialog extends DialogShared {
             });
             const enemySense = game.i18n.localize("LocalizedIDs.enemySense")
             game.user.targets.forEach((target) => {
-                if (target.actor) {
-                    if (target.actor.items.find((x) => x.type == "specialability" && x.name == enemySense)) {
-                        situationalModifiers.push({
-                            name: enemySense,
-                            value,
-                        });
-                        return;
-                    }
+                if (target.actor?.items.find((x) => x.type == "specialability" && x.name == enemySense)) {
+                    situationalModifiers.push({
+                        name: enemySense,
+                        value,
+                    });
+                    return;
                 }
             });
         }

@@ -9,64 +9,48 @@
             "characteristics": {
                 "characteristics": {
                     "mu": {
-                        "label": "CHAR.MU",
-                        "abrev": "CHARAbbrev.MU",
                         "initial": 8,
                         "species": 0,
                         "modifier": 0,
                         "advances": 0
                     },
                     "kl": {
-                        "label": "CHAR.KL",
-                        "abrev": "CHARAbbrev.KL",
                         "species": 0,
                         "initial": 8,
                         "modifier": 0,
                         "advances": 0
                     },
                     "in": {
-                        "label": "CHAR.IN",
-                        "abrev": "CHARAbbrev.IN",
                         "species": 0,
                         "initial": 8,
                         "modifier": 0,
                         "advances": 0
                     },
                     "ch": {
-                        "label": "CHAR.CH",
-                        "abrev": "CHARAbbrev.CH",
                         "species": 0,
                         "initial": 8,
                         "modifier": 0,
                         "advances": 0
                     },
                     "ff": {
-                        "label": "CHAR.FF",
-                        "abrev": "CHARAbbrev.FF",
                         "species": 0,
                         "initial": 8,
                         "modifier": 0,
                         "advances": 0
                     },
                     "ge": {
-                        "label": "CHAR.GE",
-                        "abrev": "CHARAbbrev.GE",
                         "species": 0,
                         "initial": 8,
                         "modifier": 0,
                         "advances": 0
                     },
                     "ko": {
-                        "label": "CHAR.KO",
-                        "abrev": "CHARAbbrev.KO",
                         "species": 0,
                         "initial": 8,
                         "modifier": 0,
                         "advances": 0
                     },
                     "kk": {
-                        "label": "CHAR.KK",
-                        "abrev": "CHARAbbrev.KK",
                         "species": 0,
                         "initial": 8,
                         "modifier": 0,

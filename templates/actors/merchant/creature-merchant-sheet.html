@@ -25,8 +25,8 @@
             <div class="col eighty ">
                 <div class="row-section wrap charBtns">
                     {{#each actor.system.characteristics as |ch c|}}
-                    <div data-tooltip="{{localize ch.label}}" class="col eight center">
-                        {{localize ch.abrev}}
+                    <div data-tooltip="{{attrName c}}" class="col eight center">
+                        {{attrAbbr c}}
                     </div>
                     {{/each}}
                 </div>

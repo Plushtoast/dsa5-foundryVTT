@@ -136,6 +136,14 @@ export default class DSA5_Utility {
         return game.i18n.localize(`ITEM.Type${a.slice(0,1).toUpperCase()}${a.slice(1).toLowerCase()}`)
     }
 
+    static attributeLocalization(a){
+        return game.i18n.localize(`CHAR.${a.toUpperCase()}`)
+    }
+
+    static attributeAbbrLocalization(a){
+        return game.i18n.localize(`CHARAbbrev.${a.toUpperCase()}`)
+    }
+
     static chatDataSetup(content, modeOverride, forceWhisper, forceWhisperIDs) {
         let chatData = {
             user: game.user.id,

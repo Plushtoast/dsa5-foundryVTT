@@ -3,9 +3,9 @@
         <div class="table-row">
             <div class="table-header"></div>
             {{#each actor.system.characteristics as |ch c|}}
-            <div data-tooltip="{{localize ch.label}}" class="table-header">
+            <div data-tooltip="{{attrName c}}" class="table-header">
                 <div class="header-label">
-                    {{localize ch.abrev}}
+                    {{attrAbbr c}}
                 </div>
             </div>
             {{/each}}

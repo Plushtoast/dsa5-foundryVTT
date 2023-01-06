@@ -31,6 +31,8 @@ export default function() {
             return DSA5_Utility.categoryLocalization(a)
         },
         joinStr: (a, b) => b.join(a),
+        attrName: (a) => DSA5_Utility.attributeLocalization(a),
+        attrAbbr: (a) => DSA5_Utility.attributeAbbrLocalization(a),
         diceThingsUp: (a, b) => DSA5_Utility.replaceDies(a, false),
         replaceConditions: DSA5_Utility.replaceConditions,
         floor: (a) => Math.floor(Number(a)),

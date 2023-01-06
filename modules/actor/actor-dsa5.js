@@ -1023,8 +1023,6 @@ export default class Actordsa5 extends Actor {
     let guidevalues = duplicate(DSA5.characteristics);
     guidevalues["-"] = "-";
 
-    console.log(this.system.canAdvance)
-
     return {
       totalWeight,
       traditionArtifacts,
@@ -1798,7 +1796,7 @@ export default class Actordsa5 extends Actor {
 
   setupCharacteristic(characteristicId, options = {}, tokenId) {
     let char = this.system.characteristics[characteristicId];
-    let title = game.i18n.localize(char.label) + " " + game.i18n.localize("Test");
+    let title = DSA5_Utility.attributeLocalization(characteristicId) + " " + game.i18n.localize("Test");
 
     let testData = {
       opposable: false,
