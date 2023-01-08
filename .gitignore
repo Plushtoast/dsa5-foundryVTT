@@ -4,3 +4,4 @@ package-lock.json
 webpack.config.js
 .babelrc
 test
+.eslintrc.json

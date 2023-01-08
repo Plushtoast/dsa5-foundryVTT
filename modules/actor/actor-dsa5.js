@@ -12,7 +12,6 @@ import RuleChaos from "../system/rule_chaos.js";
 import { tinyNotification } from "../system/view_helper.js";
 import EquipmentDamage from "../system/equipment-damage.js";
 import DSAActiveEffectConfig from "../status/active_effects.js";
-import OnUseEffect from "../system/onUseEffects.js";
 import DSA5SoundEffect from "../system/dsa-soundeffect.js";
 import CreatureType from "../system/creature-type.js";
 import Riding from "../system/riding.js";
