@@ -57,7 +57,7 @@ export default class EquipmentDamage {
     static breakingTest(item) {
         if (!item)
             return ui.notifications.warn(
-                game.i18n.format("DSAError.notfound", { category: "", name: game.i18n.localize("equipment") })
+                game.i18n.format("DSAError.notfound", { category: "", name: game.i18n.ocalize("equipment") })
             )
         if (item.system.structure.max <= 0)
             return ui.notifications.warn(game.i18n.format("DSAError.noBreakingStructure", { name: item.name }))
@@ -67,11 +67,11 @@ export default class EquipmentDamage {
         if (item.type == "armor") {
             category = game.i18n.localize(`ARMORSUBCATEGORIES.${item.system.subcategory}`)
             breakingResistance =
-                getProperty(item, "structure.breakPointRating") || DSA5.armorSubcategories[item.system.subcategory]
+                getProperty(item, "system.structure.breakPointRating") || DSA5.armorSubcategories[item.system.subcategory]
         } else {
             category = item.system.combatskill.value
             breakingResistance =
-                getProperty(item, "structure.breakPointRating") ||
+                getProperty(item, "system.structure.breakPointRating") ||
                 DSA5.weaponStabilities[game.i18n.localize(`LocalizedCTs.${category}`)]
         }
         if (!breakingResistance) {
