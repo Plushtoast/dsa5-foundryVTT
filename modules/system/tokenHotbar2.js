@@ -1,6 +1,8 @@
 import Actordsa5 from "../actor/actor-dsa5.js";
 import OnUseEffect from "./onUseEffects.js";
 import Riding from "./riding.js";
+import RuleChaos from "./rule_chaos.js";
+import DSA5_Utility from "./utility-dsa5.js";
 
 export default class TokenHotbar2 extends Application {
     static registerTokenHotbar() {
@@ -155,13 +157,14 @@ export default class TokenHotbar2 extends Application {
         const tokenId = canvas.tokens.controlled[0].id
         const id = ev.currentTarget.dataset.id
         const subFunction = ev.currentTarget.dataset.subfunction
+        console.log("test")
         switch (subFunction) {
             case "addEffect":
                 AddEffectDialog.showDialog()
                 break
             case "effect":
                 const effect = actor.effects.get(id)
-                const isSystemEffect = effect.getFlag("core", "statusId")
+                const isSystemEffect = effect.getFlag("core", "statusId")                
                 if (ev.button == 0) {
                     if (isSystemEffect) await actor.addCondition(isSystemEffect, 1, false, false)
                     else effect.sheet.render(true)
@@ -452,7 +455,10 @@ class AddEffectDialog extends Dialog {
 
     activateListeners(html) {
         super.activateListeners(html);
-        html.find('.reactClick').click(ev => this.addEffect(ev))
+        html.find('.reactClick').click(ev => {
+            if (game.combat && DSA5_Utility.moduleEnabled("times-up")) this.setDuration(ev)
+            else this.addEffect(ev)
+        })
 
         let filterConditions = ev => this._filterConditions($(ev.currentTarget), html)
 
@@ -472,9 +478,36 @@ class AddEffectDialog extends Dialog {
         }
     }
 
+    async setDuration(ev) {
+        new Dialog({
+            title: game.i18n.localize("CONDITION." + ev.currentTarget.dataset.value),
+            content: `<div class="row-section"><div class="col"><label>${game.i18n.localize("EFFECT.TabDuration") + ' in ' +game.i18n.localize("COMBAT.Rounds")}</label></div><div class="col"><input type="number" class="rounds" value="" placeholder="optional"></div></div>`,
+            default: 'add',
+            buttons: {
+                add: {
+                    icon: '<i class="fa fa-check"></i>',
+                    label: game.i18n.localize("CONDITION.add"),
+                    callback: async(html) => {
+                        ev.currentTarget.dataset.rounds = html.find('.rounds').val()
+                        await this.addEffect(ev)
+                    }
+                },
+                cancel: {
+                    icon: '<i class="fas fa-times"></i>',
+                    label: game.i18n.localize("cancel")
+                }
+            }
+        }).render(true)
+    }
+
     async addEffect(ev) {
+        const effect = duplicate(CONFIG.statusEffects.find(x => x.id == ev.currentTarget.dataset.value))
+        if (ev.currentTarget.dataset.rounds > 0) {
+            const duration = RuleChaos._buildDuration(ev.currentTarget.dataset.rounds)
+            mergeObject(effect, duration)
+        }
         for (let token of canvas.tokens.controlled) {
-            await token.actor.addCondition(ev.currentTarget.dataset.value, 1, false, false)
+            await token.actor.addCondition(effect, 1, false, false)
         }
         game.dsa5.apps.tokenHotbar.render(true)
         this.close()
