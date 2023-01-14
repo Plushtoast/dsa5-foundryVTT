@@ -163,7 +163,6 @@ export default class DSA5StatusEffects {
             effect["flags.core.overlay"] = true;
 
         let result = await actor.createEmbeddedDocuments("ActiveEffect", [duplicate(effect)])
-        await actor._dependentEffects(effect.id, effect, 1)
         delete effect.id
         return result
     }
@@ -211,7 +210,6 @@ export default class DSA5StatusEffects {
         }
 
         await existing.update(update)
-        await actor._dependentEffects(existing.flags.core.statusId, existing, delta)
         return existing
     }
 

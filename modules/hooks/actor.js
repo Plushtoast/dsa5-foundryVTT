@@ -1,6 +1,7 @@
 import DSAActiveEffectConfig from "../status/active_effects.js";
 import DSA5_Utility from "../system/utility-dsa5.js";
 import Riding from "../system/riding.js"
+import AdvantageRulesDSA5 from "../system/advantage-rules-dsa5.js";
 
 export default function() {
     Hooks.on("preDeleteActiveEffect", (effect, options, user_id) => {
@@ -82,24 +83,82 @@ export default function() {
 
 
     Hooks.on("createActiveEffect", (effect, options, user) => {
+        if(!game.user.isGM) return
+
         checkIniChange(effect)
+        createEffects(effect)
     })
 
     Hooks.on("deleteActiveEffect", (effect, options, user) => {
+        if(!game.user.isGM) return
+
         checkIniChange(effect)
     })
 
     Hooks.on("updateActiveEffect", (effect, options, user) => {
+        if(!game.user.isGM) return
+
         checkIniChange(effect)
+        countableDependentEffects(effect)
     })
 
     function checkIniChange(effect){
-        if(!game.user.isGM) return
-
         if(game.combat && effect.changes.some(x => /(system\.status\.initiative|system\.characteristics.mu|system\.characteristics\.ge)/.test(x.key))){
             const actorId = effect.parent.id
             const combatant = game.combat.combatants.find(x => x.actor.id == actorId)
             if(combatant) combatant.recalcInitiative()
+        }
+    }
+
+    const createEffects = async(effect) => {
+        const actor = effect.parent
+        if(!actor) return
+
+        await countableDependentEffects(effect, {}, actor)
+        const statusId = getProperty(effect, "flags.core.statusId")
+
+        if (statusId == "dead" && game.combat) await actor.markDead(true);
+        else if (statusId == "unconscious") await actor.addCondition("prone");
+    }
+
+    const countableDependentEffects = async(effect, toCheck = {}, actor) => {
+        if(!actor) actor = effect.parent
+        if(!actor) return
+
+        const efKeys = /^system\.condition\./
+        for(let ef of effect.changes || []){
+          if(efKeys.test(ef.key) && ef.mode == 2){
+            toCheck[ef.key.split(".")[2]] = Number(ef.value)
+          }
+        }
+   
+        for(let key of Object.keys(toCheck)){
+          if (actor.system.condition[key] >= 4) {
+            if (key == "inpain")
+              await actor.initResistPainRoll(effect)
+            else if (["encumbered", "stunned", "feared", "confused", "trance"].includes(key))
+              await actor.addCondition("incapacitated");
+            else if (key == "paralysed")
+              await actor.addCondition("rooted");
+            else if (["drunken", "exhaustion"].includes(key)) {
+              await actor.addCondition("stunned");
+              await actor.removeCondition(statusId);
+            }
+          }
+          if (
+            ((Number(toCheck.inpain) || 0) > 0) &&
+            !actor.hasCondition("bloodrush") &&
+            actor.system.condition.inpain > 0 &&
+            AdvantageRulesDSA5.hasVantage(actor, game.i18n.localize("LocalizedIDs.frenzy"))
+          ) {
+            await actor.addCondition("bloodrush");
+            const msg = DSA5_Utility.replaceConditions(
+              `${game.i18n.format("CHATNOTIFICATION.gainsBloodrush", {
+                character: "<b>" + actor.name + "</b>",
+              })}`
+            );
+            ChatMessage.create(DSA5_Utility.chatDataSetup(msg));
+          }
         }
     }
 

@@ -2609,14 +2609,31 @@
     }
   
     .selMenu {
-      width: 8%;
+      /*width: 8%;
       position: absolute;
-      background: #efe4e4;
+      background: #efe4e4;*/
   
-      &:focus {
+      &+.select2{
+        width: 8%;
+        background: #efe4e4;
+        position: absolute;
+        .select2-selection__rendered {
+          width: 0px;
+          padding:0;
+        }
+        &.select2-container--open {
+          width: 100%;
+          left: 0;
+          .select2-selection__rendered {
+            width: 100%;
+            padding:0;
+          }
+        }
+      }
+      /*&:focus {
         width: 100%;
         left: 0;
-      }
+      }*/
     }
   }
   

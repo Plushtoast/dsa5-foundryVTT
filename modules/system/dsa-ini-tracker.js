@@ -64,7 +64,8 @@ export default class DSAIniTracker extends Application {
         const waitingTurns = []
         const skipDefeated = game.settings.get("core", Combat.CONFIG_SETTING).skipDefeated
 
-       
+        //todo change this to one loop
+        const anyActive = turnsToUse.some(x => x.active)
         let unRolled = data.turns.some(x => x.owner && !x.hasRolled && (!game.user.isGM || data.combat.combatants.get(x.id).isNPC))
         if (turnsToUse.length) {
             const filteredTurns = []
@@ -80,7 +81,7 @@ export default class DSAIniTracker extends Application {
                 const combatant = data.combat.combatants.get(turn.id)
                 if (started && (index == startIndex)) turn.css = turn.css.replace("active", "")
 
-                if (!combatStarted || (turn.active && !started)) {
+                if (!combatStarted || (turn.active && !started) || (!anyActive && !started)) {
                     started = true
                     startIndex = index
                 } else if (combatant.getFlag("dsa5", "waitInit") == data.round + loops && !combatant.defeated && (game.user.isGM || !combatant.hidden)) {
@@ -108,7 +109,7 @@ export default class DSAIniTracker extends Application {
             data.turns = filteredTurns
         }
         //if(!data.round) itemWidth = 20
-
+        
         this.position.width = itemWidth * 5 + 95
         this.position.height = itemWidth + 10
 

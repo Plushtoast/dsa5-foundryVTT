@@ -112,8 +112,7 @@ export default class DSAActiveEffectConfig extends ActiveEffectConfig {
             config,
             isWeapon
         });
-        elem.find('.tab[data-tab="effects"]').after($(template));
-
+        elem.find('.tab[data-tab="effects"]').after($(template));       
         elem.find(".advancedSelector").change((ev) => {
             let effect = this.object;
             effect.flags.dsa5.advancedFunction = $(ev.currentTarget).val();
@@ -122,7 +121,6 @@ export default class DSAActiveEffectConfig extends ActiveEffectConfig {
                 elem.find(".advancedFunctions").html(template);
             });
         });
-
         this.checkTimesUpInstalled()
     }
 
@@ -637,7 +635,7 @@ export default class DSAActiveEffectConfig extends ActiveEffectConfig {
         super.activateListeners(html);
         const dropDown = this.dropDownMenu();
         html.find(".changes-list .effect-change .key").append(dropDown);
-        html.find(".selMenu").change((ev) => {
+        html.find(".selMenu").select2({ width: "element"}).change((ev) => {
             const elem = $(ev.currentTarget);
             elem.siblings("input").val(elem.val());
             const parent = elem.closest(".effect-change");
@@ -646,5 +644,8 @@ export default class DSAActiveEffectConfig extends ActiveEffectConfig {
             parent.find(".value input").attr("placeholder", data.attr("data-ph"));
             elem.blur();
         });
+        html.find('.select2').each((i, el) => {
+            $(el)[0].style.removeProperty("width")
+        })
     }
 }

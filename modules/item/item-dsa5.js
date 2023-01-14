@@ -165,8 +165,6 @@ export default class Itemdsa5 extends Item {
         return await DSA5StatusEffects.addCondition(this, effect, value, absolute, auto)
     }
 
-    async _dependentEffects(statusId, effect, delta) {}
-
     async removeCondition(effect, value = 1, auto = true, absolute = false) {
         return DSA5StatusEffects.removeCondition(this, effect, value, auto, absolute)
     }

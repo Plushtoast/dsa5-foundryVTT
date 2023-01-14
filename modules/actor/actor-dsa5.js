@@ -155,7 +155,6 @@ export default class Actordsa5 extends Actor {
         data.status.karmaenergy.modifier +
         data.status.karmaenergy.advances +
         data.status.karmaenergy.gearmodifier;
-
       
       data.status.soulpower.max =
         data.status.soulpower.value + data.status.soulpower.modifier + data.status.soulpower.gearmodifier;
@@ -163,7 +162,7 @@ export default class Actordsa5 extends Actor {
         data.status.toughness.value + data.status.toughness.modifier + data.status.toughness.gearmodifier;
       data.status.dodge.value = Math.round(data.characteristics.ge.value / 2) + data.status.dodge.gearmodifier;
 
-      let encumbrance = this.calcEncumbrance()
+      let encumbrance = this.calcEncumbrance(data)
 
       const horse = Riding.isRiding(this) ? Riding.getHorse(this) : undefined
       this.calcInitiative(data, encumbrance, horse)
@@ -173,24 +172,30 @@ export default class Actordsa5 extends Actor {
         Number(data.status.dodge.modifier) +
         Number(game.settings.get("dsa5", "higherDefense")) / 2;
 
-      const pain = this.calcPain(data)
-                 
-      const fixated = this.hasCondition("fixated")
-      this.calcSpeed(data, encumbrance, pain, fixated, horse)
-
       if (DSA5_Utility.isActiveGM()) {
-        const changePain = data.pain != pain;
-        data.pain = pain;
+        const pain = this.woundPain(data)
+        const currentPain = this.effects.find(x => "inpain" == getProperty(x, "flags.core.statusId"))?.flags.dsa5.auto || 0
+      
+        const changePain = !this.changingPain && (currentPain != pain)
+        this.changingPain = currentPain != pain;
 
-        if (changePain && !TraitRulesDSA5.hasTrait(this, game.i18n.localize("LocalizedIDs.painImmunity")))
-          this.addCondition("inpain", pain, true).then(() => (data.pain = undefined));
+        if (changePain && !TraitRulesDSA5.hasTrait(this, game.i18n.localize("LocalizedIDs.painImmunity"))){
+          this.addCondition("inpain", pain, true).then(() => this.changingPain = undefined);
+        }          
 
         if (AdvantageRulesDSA5.hasVantage(this, game.i18n.localize("LocalizedIDs.blind"))) this.addCondition("blind");
         if (AdvantageRulesDSA5.hasVantage(this, game.i18n.localize("LocalizedIDs.mute"))) this.addCondition("mute");
         if (AdvantageRulesDSA5.hasVantage(this, game.i18n.localize("LocalizedIDs.deaf"))) this.addCondition("deaf");
 
         if (this.isMerchant()) this.prepareMerchant()
-      }      
+
+        //console.log(this.name, "updated")
+      }   
+
+      this.effectivePain(data)
+      
+      const fixated = this.hasCondition("fixated")
+      this.calcSpeed(data, fixated, horse)
       
       if (fixated) {
         data.status.dodge.max = Math.max(0, data.status.dodge.max - 4);
@@ -201,7 +206,23 @@ export default class Actordsa5 extends Actor {
     }
   }
 
-  calcPain(data){
+  effectivePain(data){
+    let pain = data.condition.inpain || 0
+    if (pain < 4)
+      pain -=
+        AdvantageRulesDSA5.vantageStep(this, game.i18n.localize("LocalizedIDs.ruggedFighter")) +
+        AdvantageRulesDSA5.vantageStep(this, game.i18n.localize("LocalizedIDs.ruggedAnimal")) +
+        (SpecialabilityRulesDSA5.hasAbility(this, game.i18n.localize("LocalizedIDs.traditionKor")) ? 1 : 0);
+    if (pain > 0)
+      pain +=
+        AdvantageRulesDSA5.vantageStep(this, game.i18n.localize("LocalizedIDs.sensitiveToPain")) +
+        AdvantageRulesDSA5.vantageStep(this, game.i18n.localize("LocalizedIDs.fragileAnimal"));
+
+    pain = Math.clamped(pain, 0, 4);
+    data.condition.inpain = pain
+  }
+
+  woundPain(data){
     let pain = 0;
     if (data.status.wounds.max > 0) {
       const hasDefaultPain = this.type != "creature" || data.status.wounds.max >= 20;
@@ -211,38 +232,25 @@ export default class Actordsa5 extends Actor {
       } else {
         pain = Math.floor(5 - (5 * data.status.wounds.value) / data.status.wounds.max);
       }
-
-      if (pain < 4)
-        pain -=
-          AdvantageRulesDSA5.vantageStep(this, game.i18n.localize("LocalizedIDs.ruggedFighter")) +
-          AdvantageRulesDSA5.vantageStep(this, game.i18n.localize("LocalizedIDs.ruggedAnimal")) +
-          (SpecialabilityRulesDSA5.hasAbility(this, game.i18n.localize("LocalizedIDs.traditionKor")) ? 1 : 0);
-      if (pain > 0)
-        pain +=
-          AdvantageRulesDSA5.vantageStep(this, game.i18n.localize("LocalizedIDs.sensitiveToPain")) +
-          AdvantageRulesDSA5.vantageStep(this, game.i18n.localize("LocalizedIDs.fragileAnimal"));
-
-      pain = Math.clamped(pain, 0, 4);
     } 
-    return pain
+    return Math.clamped(pain, 0, 4)
   }
 
-  calcSpeed(data, encumbrance, pain, fixated, horse){
+  calcSpeed(data, fixated, horse){
     if(horse){
       data.status.speed.max = horse.system.status.speed.max
       if(!data.status.speed.max){
         const horseData = horse.system
-        //Todo need to calc pain
-        horse.calcSpeed(horseData, horse.calcEncumbrance(), 0, horse.hasCondition("fixated"))
+        horse.calcSpeed(horseData, horse.hasCondition("fixated"))
       }
       data.status.speed.max = horse.system.status.speed.max
     } else {
       data.status.speed.max = data.status.speed.initial + (data.status.speed.modifier || 0) + (data.status.speed.gearmodifier || 0);
       data.status.speed.max = Math.round(
-        Math.max(0, data.status.speed.max - Math.min(4, encumbrance)) * (data.status.speed.multiplier ?? 1)
+        Math.max(0, data.status.speed.max - Math.min(4, this.calcEncumbrance(data))) * (data.status.speed.multiplier ?? 1)
       );
 
-      if (!this.hasCondition("bloodrush")) data.status.speed.max = Math.max(0, data.status.speed.max - pain);
+      if (!this.hasCondition("bloodrush")) data.status.speed.max = Math.max(0, data.status.speed.max - (data.condition.inpain || 0));
 
       const paralysis = this.hasCondition("paralysed");
       if (paralysis) data.status.speed.max = Math.round(data.status.speed.max * (1 - paralysis.flags.dsa5.value * 0.25));
@@ -257,9 +265,8 @@ export default class Actordsa5 extends Actor {
     }
   }
 
-  calcEncumbrance(){
-    let encumbrance = this.hasCondition("encumbered");
-    return encumbrance ? Number(encumbrance.flags.dsa5.value) : 0;
+  calcEncumbrance(data){
+    return Math.clamped(data.condition.encumbered || 0, 0, 4)
   }
 
   calcInitiative(data, encumbrance, horse){
@@ -2326,10 +2333,15 @@ export default class Actordsa5 extends Actor {
     return await DSA5StatusEffects.addCondition(this, effect, value, absolute, auto);
   }
 
-  async initResistPainRoll() {
+  async initResistPainRoll(effect) {
     const showMessage = game.settings.get("dsa5", "selfControlOnPain")
 
-    if (showMessage == 2 || this.hasCondition("incapacitated") || (showMessage == 1 && !this.hasPlayerOwner)) return
+    if(this.hasCondition("incapacitated")) return
+
+    if (showMessage == 2 || (showMessage == 1 && !this.hasPlayerOwner)) {
+      await this.addCondition("incapacitated")
+      return
+    }
 
     const template = await renderTemplate("systems/dsa5/templates/chat/roll/resist-pain.html", { actor: this })
     await ChatMessage.create(DSA5_Utility.chatDataSetup(template))
@@ -2344,40 +2356,6 @@ export default class Actordsa5 extends Actor {
         this.addCondition("incapacitated")
       }
     })
-  }
-
-  async _dependentEffects(statusId, effect, delta) {
-    if (this.system.condition[statusId] == 4) {
-      if (statusId == "inpain")
-        await this.initResistPainRoll()
-      else if (["encumbered", "stunned", "feared", "confused", "trance"].includes(statusId))
-        await this.addCondition("incapacitated");
-      else if (statusId == "paralysed")
-        await this.addCondition("rooted");
-      else if (["drunken", "exhaustion"].includes(statusId)) {
-        await this.addCondition("stunned");
-        await this.removeCondition(statusId);
-      }
-    }
-
-    if (statusId == "dead" && game.combat) await this.markDead(true);
-
-    if (statusId == "unconscious") await this.addCondition("prone");
-
-    if (
-      delta > 0 &&
-      statusId == "inpain" &&
-      !this.hasCondition("bloodrush") &&
-      AdvantageRulesDSA5.hasVantage(this, game.i18n.localize("LocalizedIDs.frenzy"))
-    ) {
-      await this.addCondition("bloodrush");
-      const msg = DSA5_Utility.replaceConditions(
-        `${game.i18n.format("CHATNOTIFICATION.gainsBloodrush", {
-          character: "<b>" + this.name + "</b>",
-        })}`
-      );
-      ChatMessage.create(DSA5_Utility.chatDataSetup(msg));
-    }
   }
 
   async removeCondition(effect, value = 1, auto = true, absolute = false) {
