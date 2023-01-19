@@ -521,9 +521,9 @@ class AddEffectDialog extends Dialog {
                     label: game.i18n.localize("CONDITION.add"),
                     callback: async(html) => {
                         const options = {}
-                        const duration = html.find('[name=unit]:checked').val() == "seconds" ? Math.round(html.find('.duration').val()) : html.find('.duration').val()
+                        const duration = html.find('[name=unit]:checked').val() == "seconds" ? Math.round(html.find('.duration').val() / 5) : html.find('.duration').val()
                         const label = html.find('.effectname').val()
-                        if (duration) {
+                        if (duration > 0) {
                             mergeObject(options, RuleChaos._buildDuration(duration))
                         }
                         if (label) {
