@@ -1166,7 +1166,8 @@
             "macros": "Macros können auf diese Variablen zugreifen:\nactor - Der anvisierte Akteur\ntestData - All Daten für die aktuelle Probe\nsource - Die Quelle des Macros",
             "armorPostprocess": "Rüstungstransformation können auf diese Variablen zugreifen:\nactor - Der anvisierte Akteur\noptions.armor - Die Rüstungs des Ziels\noptions.attackItem - Die Quelle des Macros",
             "onRemove": "Macro wird beim Entfernen des Effekts aus dem Akteur ausgeführt.\nVariablen:\nactor - Der Akteur",
-            "onUseEffect": "Macro für die Benutzung des Items.\nVariablen:\nactor - Der Akteur\nitem - Der Gegenstand"
+            "onUseEffect": "Macro für die Benutzung des Items.\nVariablen:\nactor - Der Akteur\nitem - Der Gegenstand",
+            "effectname": "z.B. um Ursache anzugeben"
         },
         "advancedFunctions": {
             "none": "Nothing",
@@ -1177,6 +1178,14 @@
             "damagePostprocess": "Schadenstransformation (Macro)",
             "onRemove": "Macro (Effektende)",
             "onUseEffect": "Macro (Benutzung)"
+        },
+        "dialog": {
+            "duration": "Effektdauer",
+            "unit": "Zeiteinheit",
+            "rounds": "Runden",
+            "seconds": "Sekunden",
+            "name": "Effektname",
+            "overwrite": "Standardnamen überschreiben"
         }
     },
     "ROLL": {
