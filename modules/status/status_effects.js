@@ -69,12 +69,14 @@ export default class DSA5StatusEffects {
         for(let key of Object.keys(target.system?.condition || {})) {
           if(target.system.condition[key]){
             const ef = DSA5.statusEffects.find(x => x.id == key)
-            cumulativeConditions.push({
-              icon: ef.icon,
-              id: key,
-              label: game.i18n.localize(ef.label),
-              value: target.system.condition[key]
-            })
+            if(ef){
+                cumulativeConditions.push({
+                    icon: ef.icon,
+                    id: key,
+                    label: game.i18n.localize(ef.label),
+                    value: target.system.condition[key]
+                  })
+            }
           }
         }
         data.cumulativeConditions = cumulativeConditions

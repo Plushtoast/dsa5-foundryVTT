@@ -681,7 +681,8 @@
             ],
             "feature": {
                 "value": ""
-            }
+            },
+            "distribution": ""
         },
         "ammunition": {
             "templates": [

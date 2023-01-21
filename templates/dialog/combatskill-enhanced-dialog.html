@@ -9,14 +9,15 @@
             <div class="form-group custom-select">
                 <label>{{localize "wrongHand"}} (-4)</label>
                 <input type="checkbox" id="wrongHand" name="wrongHand" value="1" {{#if wrongHandDisabled}}disabled{{/if}} {{checked offHand}}>
-            </div>
-
+            </div>            
+            {{/if}} 
+            {{#if (or melee isDodge)}}          
             <div class="form-group custom-select">
                 <label>{{localize "advantageousPosition"}} (+2)</label>
                 <input type="checkbox" id="advantageousPosition" name="advantageousPosition" value="2">
             </div>
-
-            {{/if}} {{#if showDefense}}
+            {{/if}}
+            {{#if showDefense}}
             <div class="form-group">
                 <label>{{defenseCountString}}</label>
                 <input class="quantity-click" type="number" name="defenseCount" value="{{defenseCount}}" />

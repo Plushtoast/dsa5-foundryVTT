@@ -293,7 +293,7 @@ export default class DSA5CombatDialog extends DialogShared {
         if (this.dialogData.mode == "damage") return
 
         const source = this.dialogData.source
-        const isMelee = (source.type == "trait" && getProperty(source, "system.traitType.value") == "meleeAttack") || source.type == "meleeweapon"
+        const isMelee = (source.type == "trait" && getProperty(source, "system.traitType.value") == "meleeAttack") || source.type == "meleeweapon" || source.type == "dodge"
         const testData = { source: this.dialogData.source, extra: { options: {} } }
         const actor = DSA5_Utility.getSpeaker(this.dialogData.speaker)
         isMelee ? DSA5CombatDialog.resolveMeleeDialog(testData, {}, this.element, actor, {}, -3, this.dialogData.mode) :

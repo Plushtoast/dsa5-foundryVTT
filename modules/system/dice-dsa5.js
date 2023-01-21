@@ -1222,7 +1222,7 @@ export default class DiceDSA5 {
                     break
                 default:
                     roll = await new Roll(`1d20`).evaluate({ async: true })
-                    mergeObject(roll.dice[0].options, d3dColors(testData.source.system.label.split(".")[1].toLowerCase()))
+                    mergeObject(roll.dice[0].options, d3dColors(testData.source.system.attr))
             }
             roll = await DiceDSA5.manualRolls(roll, testData.source.type, testData.extra.options)
             await this.showDiceSoNice(roll, cardOptions.rollMode)

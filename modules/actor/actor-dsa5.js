@@ -247,7 +247,7 @@ export default class Actordsa5 extends Actor {
     } else {
       data.status.speed.max = data.status.speed.initial + (data.status.speed.modifier || 0) + (data.status.speed.gearmodifier || 0);
       data.status.speed.max = Math.round(
-        Math.max(0, data.status.speed.max - Math.min(4, this.calcEncumbrance(data))) * (data.status.speed.multiplier ?? 1)
+        Math.max(0, data.status.speed.max - Math.min(4, this.calcEncumbrance(data))) * data.status.speed.multiplier
       );
 
       if (!this.hasCondition("bloodrush")) data.status.speed.max = Math.max(0, data.status.speed.max - (data.condition.inpain || 0));
@@ -458,6 +458,9 @@ export default class Actordsa5 extends Actor {
         },
         wounds: {
           multiplier: 1,
+        },
+        speed: {
+          multiplier: 1
         },
         regeneration: {
           LePgearmodifier: 0,
@@ -963,7 +966,11 @@ export default class Actordsa5 extends Actor {
 
     for (let [category, value] of Object.entries(extensions)) {
       for (let [spell, exts] of Object.entries(value)) {
-        magic[category].find((x) => x.name == spell).extensions = exts.join(", ");
+        const findspell = magic[category].find((x) => x.name == spell)
+        if(findspell)
+          findspell.extensions = exts.join(", ");
+        else
+          ui.notifications.warn(game.i18n.format("DSAError.noSpellForExtension", { name: spell, category: DSA5_Utility.categoryLocalization(category), extension: exts.join(",")}))
       }
     }
 
@@ -1733,6 +1740,7 @@ export default class Actordsa5 extends Actor {
   }
 
   setupDodge(options = {}, tokenId) {
+    //todo clean this up
     const statusId = "dodge";
     let char = this.system.status[statusId];
     let title = game.i18n.localize(statusId) + " " + game.i18n.localize("Test");
@@ -1769,6 +1777,7 @@ export default class Actordsa5 extends Actor {
         defenseCountString: game.i18n.format("defenseCount", {
           malus: multipleDefenseValue,
         }),
+        isDodge: true
       },
       callback: (html, options = {}) => {
         cardOptions.rollMode = html.find('[name="rollMode"]').val();
@@ -1784,7 +1793,11 @@ export default class Actordsa5 extends Actor {
               malus: multipleDefenseValue,
             }),
             value: (Number(html.find('[name="defenseCount"]').val()) || 0) * multipleDefenseValue,
-          }
+          },
+          {
+            name: game.i18n.localize("advantageousPosition"),
+            value: html.find('[name="advantageousPosition"]').is(":checked") ? 2 : 0,
+          },
         );
         mergeObject(testData.extra.options, options);
         return { testData, cardOptions };
@@ -1801,9 +1814,10 @@ export default class Actordsa5 extends Actor {
   }
 
   setupCharacteristic(characteristicId, options = {}, tokenId) {
-    let char = this.system.characteristics[characteristicId];
+    let char = duplicate(this.system.characteristics[characteristicId]);
     let title = DSA5_Utility.attributeLocalization(characteristicId) + " " + game.i18n.localize("Test");
 
+    char.attr = characteristicId
     let testData = {
       opposable: false,
       source: {

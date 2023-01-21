@@ -1202,6 +1202,7 @@
         "dm": "vm"
     },
     "LocalizedIDs": {
+        "reversalis": "Reversalis",
         "aspectKnowledge": "Aspektkenntnis",
         "sharpshooter": "Scharfschütze",
         "deaf": "Taub",
@@ -1343,6 +1344,7 @@
         "NotEnoughAsP": "Nicht genug Astralpunkte",
         "NotEnoughKaP": "Nicht genug Karmapunkte",
         "NotEnoughFate": "Nicht genug Schicksalspunkte",
+        "noSpellForExtension": "{category} {name} für Zauber-/Liturgieerweiterung {extension} nicht vorhanden.",
         "NotEnoughCharges": "Nicht genug Ladungen",
         "AdvanceMaximumReached": "Maximale Steigerung bereits erreicht",
         "notFound": "{category} {name} nicht gefunden",
@@ -1355,7 +1357,6 @@
         "noMatch": "Keine Übereinstimmung",
         "zeroXP": "Der Charakter hat noch keine Abenteuerpunkte. Möchtest du welche hinzufügen?",
         "opposedAttackNoSpecAbs": "Passierschläge können nicht mit Sonderfertigkeiten kombiniert werden",
-        "noSpellForExtension": "Du hast den/die passenden Zauber/Liturgie nicht für diese Erweiterung",
         "talentValueTooLow": "Dein Talentwert ist zu niedrig",
         "NotUnlocked": "Noch nichts freigeschaltet.",
         "onlyGMAllowedToCancel": "Nur der Spielleiter darf Vergleichsproben abbrechen.",

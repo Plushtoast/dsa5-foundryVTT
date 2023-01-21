@@ -1150,6 +1150,7 @@
         }
     },
     "LocalizedIDs": {
+        "reversalis": "Reversalis",
         "aspectKnowledge": "Aspect Knowledge",
         "sharpshooter": "Sharpshooter",
         "deaf": "Deaf",
@@ -1316,7 +1317,7 @@
         "immuneTo": "{name} is immune to \"{condition}\".",
         "zeroXP": "The character has no adventure points yet. Do you want to add some?",
         "opposedAttackNoSpecAbs": "Attacks of Opportunity can not be combined with Special Abilites",
-        "noSpellForExtension": "You don't have a matching spell/liturgy for this extension",
+        "noSpellForExtension": "{category} {name} for spell extension {extension} not found.",
         "talentValueTooLow": "Your Skill value is too low",
         "NotUnlocked": "Not yet unlocked",
         "onlyGMAllowedToCancel": "Only the game master is allowed to abort opposing tests",

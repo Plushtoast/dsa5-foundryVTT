@@ -77,7 +77,8 @@ Hooks.once("ready", () => {
             ],
             magictrick: [
                 { label: "targetCategory", attr: "targetCategory.value", type: "text" },
-                { label: "feature", attr: "feature.value", type: "text" }
+                { label: "feature", attr: "feature.value", type: "text" },
+                { label: "distribution", attr: "distribution", type: "text" }
             ],
             blessing: [
                 { label: "targetCategory", attr: "targetCategory.value", type: "text" },

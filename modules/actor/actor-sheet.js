@@ -943,7 +943,7 @@ export default class ActorSheetDsa5 extends ActorSheet {
             item = duplicate(item)
             let spell = this.actor.items.find(i => i.type == item.system.category && i.name == item.system.source)
             if (!spell) {
-                ui.notifications.error(game.i18n.localize("DSAError.noSpellForExtension"))
+                ui.notifications.error(game.i18n.format("DSAError.noSpellForExtension", { name: item.system.source, category: DSA5_Utility.categoryLocalization(item.system.category), extension: item.name}))
             } else {
                 if (spell.system.talentValue.value < item.system.talentValue) {
                     ui.notifications.error(game.i18n.localize("DSAError.talentValueTooLow"))
