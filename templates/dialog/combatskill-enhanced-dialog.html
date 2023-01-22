@@ -39,11 +39,12 @@
                     <option value="stun">{{localize "DIALOG.stun"}}</option>
                 </select>
             </div>
-            {{/if}} {{#if weaponSizes}}
+            {{/if}}
             <div class="form-group custom-select">
-                <label>{{localize "doubleAttack"}} (-2)</label>
-                <input type="checkbox" id="doubleAttack" name="doubleAttack" value="1">
+                <label>{{localize "doubleAttack" malus=twoWeaponCombatMalus}}</label>
+                <input type="checkbox" id="doubleAttack" name="doubleAttack" value="{{twoWeaponCombatMalus}}">
             </div>
+            {{#if weaponSizes}}
             <div class="form-group custom-select">
                 <label>{{localize "opposingWeaponSize"}}</label>
                 <select name="weaponsize">

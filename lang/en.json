@@ -324,7 +324,7 @@
     "damageOverThreshold": "Including bonus damage of the damage threshold",
     "doubleDamage": "double damage",
     "duration": "Effect duration",
-    "doubleAttack": "Two attacks",
+    "doubleAttack": "Two attacks ({malus})",
     "domains": "Domains",
     "DSA5Error": "TDE5 - Report error",
     "DSA5Wiki": "TDE5 - Wiki",

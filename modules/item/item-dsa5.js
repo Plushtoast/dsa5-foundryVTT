@@ -506,6 +506,7 @@ export default class Itemdsa5 extends Item {
         mergeObject(data, {
             visionOptions: DSA5.meleeRangeVision(data.mode),
             weaponSizes: DSA5.meleeRanges,
+            twoWeaponCombatMalus: -2 + SpecialabilityRulesDSA5.abilityStep(actor, game.i18n.localize("LocalizedIDs.twoWeaponCombat")),
             melee: true,
             showAttack: true,
             targetWeaponSize,
@@ -522,6 +523,7 @@ export default class Itemdsa5 extends Item {
         const isRangeDefense = Itemdsa5.getDefenseMalus(situationalModifiers, actor)
         mergeObject(data, {
             visionOptions: DSA5.meleeRangeVision(data.mode),
+            twoWeaponCombatMalus: -2 + SpecialabilityRulesDSA5.abilityStep(actor, game.i18n.localize("LocalizedIDs.twoWeaponCombat")),
             showDefense: true,
             isRangeDefense,
             wrongHandDisabled: wrongHandDisabled && getProperty(source, "system.worn.offHand"),

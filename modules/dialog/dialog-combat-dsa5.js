@@ -349,10 +349,10 @@ export default class DSA5CombatDialog extends DialogShared {
                 value: narrowSpace
             }
         );
-        if (mode == "attack" && data.doubleAttack) {
+        if (data.doubleAttack) {
             testData.situationalModifiers.push({
                 name: game.i18n.localize("doubleAttack"),
-                value: -2 + SpecialabilityRulesDSA5.abilityStep(actor, game.i18n.localize("LocalizedIDs.twoWeaponCombat"))
+                value: data.doubleAttack
             });
         }
     }
