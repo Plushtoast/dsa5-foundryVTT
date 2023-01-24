@@ -192,7 +192,7 @@ export default function() {
             const name = cardData.preData.source.name
             try {
                 const cost = maintain.match(/^\d{1,3}/)[0]
-                let duration = Number(maintain.replace(/^\d{1,3}/, "").match(/\d{1,3}/))
+                let duration = maintain.replace(/^\d{1,3}/, "").match(/\d{1,3}/)
                 duration = duration[0] || 1
                 const effect = {
                     label: `${name} (${game.i18n.localize("maintainCost")})`,
