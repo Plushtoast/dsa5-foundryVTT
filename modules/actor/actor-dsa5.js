@@ -2342,7 +2342,7 @@ export default class Actordsa5 extends Actor {
   }
 
   async addCondition(effect, value = 1, absolute = false, auto = true) {
-    if (effect == "bleeding") return await RuleChaos.bleedingMessage(this);
+    if (effect == "bleeding" || effect.id == "bleeding") return await RuleChaos.bleedingMessage(this);
 
     return await DSA5StatusEffects.addCondition(this, effect, value, absolute, auto);
   }
