@@ -10,6 +10,10 @@ export default function() {
         const actor = effect.parent
         if (actor && actor.documentName == "Actor") {
             if(getProperty(effect, "flags.dsa5.maintain")){
+                const effectsToRemove = [effect._id]
+                const searchEffect = effect.label.replace('(' + game.i18n.localize('maintainCost') +')', "").trim()
+                const relatedEffect = actor.effects.find(x => x.label == searchEffect)
+                if (relatedEffect) effectsToRemove.push(relatedEffect.id)                
                 new Dialog({
                     title: effect.label,
                     content: game.i18n.format('DIALOG.updateMaintainSpell',  {actor: actor.name}),
@@ -36,7 +40,7 @@ export default function() {
                             icon: '<i class="fas fa-trash"></i>',
                             label: game.i18n.localize("delete"),
                             callback: dlg => {
-                                actor.deleteEmbeddedDocuments("ActiveEffect", [effect._id], {noHook: true})
+                                actor.deleteEmbeddedDocuments("ActiveEffect", effectsToRemove, {noHook: true})
                             }
                         }
                     }
