@@ -523,6 +523,8 @@
     "doNothing": "Keine Reaktion",
     "volume": "Volumen",
     "yes": "Ja",
+    "update": "Aktualisieren",
+    "replace": "Ersetzen",
     "save": "Speichern",
     "YouAlreadyHaveit": "Hast du bereits",
     "zkModifier": "Zähigkeit (Ziel)",
@@ -809,7 +811,7 @@
     "Migrakel": {
         "Migration": "Actor Migration",
         "migrationDone": "Migration abgeschlossen",
-        "spells": "Aktualisiere Effekte und Effektformeln von allen Zauber, Liturgien, Ritualen und Zeremonien. ALLE MANUELLEN MODIFIKATIONEN WERDEN ÜBERSCHRIEBEN!",
+        "spells": "<b>Aktualisiere</b> Effekte und Effektformeln von allen Zauber, Liturgien, Ritualen und Zeremonien oder <b>Ersetze</b> alle Werte. ALLE MANUELLEN MODIFIKATIONEN WERDEN ÜBERSCHRIEBEN!",
         "spellsShort": "Zauber migrieren",
         "abilities": "Aktualisiere Effekte und Effektformeln von allen Sonderfertigkeiten, Vor- und Nachteilen und Eigenschaften (Tier). ALLE MANUELLEN MODIFIKATIONEN WERDEN ÜBERSCHRIEBEN!",
         "abilitiesShort": "Sonderfertigkeiten/Vor-/Nachteile migrieren",

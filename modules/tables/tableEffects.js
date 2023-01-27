@@ -7,6 +7,9 @@ import OnUseEffect from "../system/onUseEffects.js"
 
 export default class TableEffects{
     //todo maybe add the effect later with second button and unspecific target
+    //todo add "target": "attacker"
+    //todo add modifier for basis & special manöver
+    //add one time use effects
 
     static async applyEffect(id, mode){
         const message = game.messages.get(id)
@@ -15,7 +18,7 @@ export default class TableEffects{
  
         if(hasEffect) {
             //maintain order
-            const methods = ["damageModifier", "gearDamaged", "gearLost", "resistEffect", "malus", "selfDamage"]
+            const methods = ["damageModifier", "gearDamaged", "gearLost", "resistEffect", "malus", "selfDamage", "nextAction"]
 
             let targets = []
             let source = undefined
@@ -31,7 +34,7 @@ export default class TableEffects{
                 const ef = getProperty(hasEffect, method)
                 if(ef) {
                     const result = await TableEffects[method](ef, mode, targets, source, id, message)
-                    if(!result) console.warn(`Table effect for <${method} not working yet`, args, mode,  targets, source)
+                    if(!result) console.warn(`Table effect for <${method} not working yet`, ef, mode,  targets, source)
                 }
             }
             const tt = game.i18n.format("ActiveEffects.appliedEffect", { source: game.i18n.localize('table'), target: targets.map(x => x.name).join(", ") })
@@ -42,6 +45,14 @@ export default class TableEffects{
     static async damageModifier(args, mode, targets, source){
         //TODO
     } 
+
+    static async nextAction(args, mode, targets, source){
+        //TODO
+    }
+
+    static async opportunityAttack(args, mode, targets, source){
+        //TODO
+    }
     
     static async gearDamaged(args, mode, targets, source){
         if(source && ["meleeweapon", "rangeweapon"].includes(source.type)){
@@ -76,7 +87,10 @@ export default class TableEffects{
                 {
                     skill: args.roll,
                     mod: args.modifier || 0,
-                    effect: {_id: "botchEffect", label: args.fail.description},
+                    effect: {
+                        _id: "botchEffect", 
+                        label: args.fail.description
+                    },
                     target,
                     token: target.token ? target.token.id : undefined
                 }
@@ -117,11 +131,20 @@ export default class TableEffects{
                 if(!changes){
                     changes = duplicate(baseEffect.changes)
                     const baseChange = changes.find(x => x.key == `system.condition.${systemEffect}`)
-                    baseChange.value = systemEffectLevel
+                    if(baseChange) {
+                        baseChange.value = systemEffectLevel
+                    }
                 }
-                const lbl = game.i18n.localize(`CONDITION.${systemEffect}`) + " - " + game.i18n.localize("botchCritEffect")
-                const ef = new OnUseEffect().effectDummy(lbl, changes, duration || { })
-                ef.icon = baseEffect.icon
+                let ef
+                if(changes){
+                    const lbl = game.i18n.localize(`CONDITION.${systemEffect}`) + " - " + game.i18n.localize("botchCritEffect")
+                    ef = new OnUseEffect().effectDummy(lbl, changes, duration || { })
+                    ef.icon = baseEffect.icon
+                } else {
+                    //todo add duration
+                    ef = systemEffect
+                }
+                
                 for(let target of finalTargets){
                     await target.addCondition(ef)
                 }
@@ -150,7 +173,11 @@ export default class TableEffects{
     //todo include target area
     //todo args defendable modifier
     static async selfAttack(args, mode, targets, source){
+        const { hasTargets, finalTargets} = this.evaluateTargetArg(args, targets)
+        
+        if(source){
 
+        }
     }
 
     static async selfDamage(args, mode, targets, source){
@@ -173,6 +200,14 @@ export default class TableEffects{
                 const damage = (preparedItem.damagedie + preparedItem.damageAdd).replace(/wWD/g, "d")
                 const roll = await new Roll(`(${damage})*${args.multiplier || 1}${args.modifier || ""}`).evaluate({async: true})
                 
+                await actor.applyDamage(Math.round(roll.total))
+                ChatMessage.create(DSA5_Utility.chatDataSetup(await roll.render()))
+            }
+            return true
+        } else {
+            for(let actor of finalTargets){
+                const roll = await new Roll("1d6").evaluate({async: true})
+                    
                 await actor.applyDamage(Math.round(roll.total))
                 ChatMessage.create(DSA5_Utility.chatDataSetup(await roll.render()))
             }

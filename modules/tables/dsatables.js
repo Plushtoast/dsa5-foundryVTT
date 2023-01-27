@@ -57,21 +57,37 @@ export default class DSATables {
     static async buildEffects(tableResult, hasEffect){
         let effects = []
         if(hasEffect && hasEffect.resistEffect){
-            const ef = new OnUseEffect().effectDummy(hasEffect.resistEffect.fail.description, hasEffect.resistEffect.changes || [], hasEffect.resistEffect.duration || { })
-            if(hasEffect.resistEffect.fail.systemEffect){
-                mergeObject(ef, {
-                    _id: "botchEffect",
-                    flags: {
-                        dsa5: {
-                            hideOnToken: false,
-                            hidePlayers: false,
-                            advancedFunction: 2,
-                            args3: "await actor.addCondition(\"prone\");"
+            const failEffects = Array.isArray(hasEffect.resistEffect.fail) ? hasEffect.resistEffect.fail : [hasEffect.resistEffect.fail]
+            for(let fail of failEffects){
+                const ef = new OnUseEffect().effectDummy(fail.description, hasEffect.resistEffect.changes || [], hasEffect.resistEffect.duration || { })
+                if(fail.systemEffect){
+                    //todo add duration
+                    mergeObject(ef, {
+                        _id: "botchEffect",
+                        flags: {
+                            dsa5: {
+                                hideOnToken: false,
+                                hidePlayers: false,
+                                advancedFunction: 2,
+                                args3: `await actor.addCondition(\"${fail.systemEffect}\", ${fail.level || 1});`
+                            }
                         }
-                    }
-                })
-            }
-            effects.push(ef)
+                    })
+                } else if(fail.command){
+                    mergeObject(ef, {
+                        _id: "botchEffect",
+                        flags: {
+                            dsa5: {
+                                hideOnToken: false,
+                                hidePlayers: false,
+                                advancedFunction: 2,
+                                args3: fail.command
+                            }
+                        }
+                    })
+                }
+                effects.push(ef)
+            }            
         }
         return effects
     }

@@ -1,26 +1,38 @@
 export default class Migrakel {
-    static async showDialog(content) {
+    static async showDialog(content, migrateAll = false) {
         let [result] = await new Promise((resolve, reject) => {
+            const buttons = {
+                Yes: {
+                    icon: '<i class="fa fa-check"></i>',
+                    label: game.i18n.localize("update"),
+                    callback: () => {
+                        resolve([true]);
+                    },
+                },
+                cancel: {
+                    icon: '<i class="fas fa-times"></i>',
+                    label: game.i18n.localize("cancel"),
+                    callback: () => {
+                        resolve([false]);
+                    },
+                },
+            }
+            if(migrateAll){
+                buttons["migrateAll"] = {
+                    icon: '<i class="fas fa-exclamation-triangle "></i>',
+                    label: game.i18n.localize("replace"),
+                    callback: () => {
+                        resolve([2]);
+                    },
+                }
+            }
+
+
             new Dialog({
                 title: game.i18n.localize("Migrakel.Migration"),
                 content,
                 default: "yes",
-                buttons: {
-                    Yes: {
-                        icon: '<i class="fa fa-check"></i>',
-                        label: game.i18n.localize("yes"),
-                        callback: () => {
-                            resolve([true]);
-                        },
-                    },
-                    cancel: {
-                        icon: '<i class="fas fa-times"></i>',
-                        label: game.i18n.localize("cancel"),
-                        callback: () => {
-                            resolve([false]);
-                        },
-                    },
-                },
+                buttons,
                 close: () => {
                     resolve([false]);
                 },
@@ -107,10 +119,21 @@ export default class Migrakel {
     }
 
     static async updateSpellsAndLiturgies(actor) {
-        if (await this.showDialog(game.i18n.localize("Migrakel.spells"))) {
-            const condition = (x) => {
-                return ["spell", "liturgy", "ritual", "ceremony", "spellextension"].includes(x.type);
+        const res = await this.showDialog(game.i18n.localize("Migrakel.spells"), true)
+        const condition = (x) => {
+            return ["spell", "liturgy", "ritual", "ceremony", "spellextension"].includes(x.type);
+        };
+        if(res == 2){
+            const updator = (find) => {
+                const upd = find.toObject()
+                delete upd.system.talentValue
+                    
+                return upd
             };
+            await this.updateVals(actor, condition, updator);
+        }
+        else if (res) {
+            
             const updator = (find) => {
                 const upd = {
                     effects: find.effects.toObject()
