@@ -11,8 +11,7 @@ export default function() {
         if (actor && actor.documentName == "Actor") {
             if(getProperty(effect, "flags.dsa5.maintain")){
                 const effectsToRemove = [effect._id]
-                const searchEffect = effect.label.replace('(' + game.i18n.localize('maintainCost') +')', "").trim()
-                const relatedEffect = actor.effects.find(x => x.label == searchEffect)
+                const relatedEffect = actor.effects.find(x => effect.label.includes(x.label))
                 if (relatedEffect) effectsToRemove.push(relatedEffect.id)                
                 new Dialog({
                     title: effect.label,
