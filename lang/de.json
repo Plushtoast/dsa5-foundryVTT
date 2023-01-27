@@ -142,7 +142,8 @@
         "setTargetToUser": "Spielerziel setzen",
         "noLoggedinUser": "Keine User eingeloggt/auswählbar.",
         "selectGroupCheckSkill": "Wähle ein weiteres Talent für die Gruppensammelprobe.",
-        "updateMaintainSpell": "Für {actor} ein neues Interval bezahlen oder den Effekt beenden?"
+        "updateMaintainSpell": "Für {actor} ein neues Interval bezahlen oder den Effekt beenden?",
+        "dependentMaintainEffects": "Abhängige Effekte (Ebenfalls löschen)"
     },
     "Equipment": {
         "misc": "Allgemein",

@@ -12,11 +12,15 @@ export default function() {
             if(getProperty(effect, "flags.dsa5.maintain")){
                 const effectsToRemove = [effect._id]
                 const searchEffect = effect.label.replace('(' + game.i18n.localize('maintainCost') +')', "").trim()
-                const relatedEffect = actor.effects.find(x => x.label == searchEffect)
-                if (relatedEffect) effectsToRemove.push(relatedEffect.id)                
+                const relatedEffects = actor.effects.filter(x => x.label.startsWith(searchEffect) && !x.origin && x.id != effect._id)
+                let content = game.i18n.format('DIALOG.updateMaintainSpell',  {actor: actor.name})
+                if(relatedEffects){
+                    content += `<p>${game.i18n.localize("DIALOG.dependentMaintainEffects")}</p>`
+                    content +=  relatedEffects.map(x => `<p><label for="rel${x.id}">${x.label}</label><input class="effectRemoveSelector" checked type="checkbox" value="${x.id}" name="rel${x.id}"/></p>` ).join("")
+                }                
                 new Dialog({
                     title: effect.label,
-                    content: game.i18n.format('DIALOG.updateMaintainSpell',  {actor: actor.name}),
+                    content,
                     default: 'yes',
                     buttons: {
                         Yes: {
@@ -40,6 +44,9 @@ export default function() {
                             icon: '<i class="fas fa-trash"></i>',
                             label: game.i18n.localize("delete"),
                             callback: dlg => {
+                                for(let it of dlg.find(".effectRemoveSelector:checked")){
+                                    effectsToRemove.push($(it).val())
+                                }
                                 actor.deleteEmbeddedDocuments("ActiveEffect", effectsToRemove, {noHook: true})
                             }
                         }

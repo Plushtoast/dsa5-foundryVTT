@@ -111,7 +111,8 @@
         "setTargetToUser": "Set player target",
         "noLoggedinUser": "No user logged in/available.",
         "selectGroupCheckSkill": "Chose another talent for the cumulative group check.",
-        "updateMaintainSpell": "Pay for a new interval or end the effect for {actor}?"
+        "updateMaintainSpell": "Pay for a new interval or end the effect for {actor}?",
+        "dependentMaintainEffects": "Dependent effects (delete too)"
     },
     "Equipment": {
         "misc": "General",

@@ -193,7 +193,7 @@ export default function() {
             try {
                 const cost = maintain.match(/^\d{1,3}/)[0]
                 let duration = maintain.replace(/^\d{1,3}/, "").match(/\d{1,3}/)
-                duration = duration[0] || 1
+                duration = duration ? (Number(duration[0]) || 1) : 1
                 const effect = {
                     label: `${name} (${game.i18n.localize("maintainCost")})`,
                     icon: "icons/svg/daze.svg",
