@@ -133,6 +133,7 @@ export default class RuleChaos {
         let value = getProperty(item, path) + (factor * sign)
         if (limit != undefined) value = Math.max(limit, value)
         setProperty(item, path, value)
+        return value
     }
 
     static magicalImprovement(actor, creationData) {

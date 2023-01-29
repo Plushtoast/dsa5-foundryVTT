@@ -1058,7 +1058,6 @@ export default class ActorSheetDsa5 extends ActorSheet {
         }
     }
 
-
     async _manageDragItems(item, typeClass) {
         switch (typeClass) {
             case "disease":

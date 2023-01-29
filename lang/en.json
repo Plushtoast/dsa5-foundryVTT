@@ -1455,7 +1455,7 @@
     "Migrakel": {
         "Migration": "Actor Migration",
         "migrationDone": "Migration finished",
-        "spells": "<b>Update</b> effects and effectformula of all spells, liturgical chants, rituals and ceremonies from offical modules or <b>replace</b> all values. THIS WILL OVERRIDE MANUAL MODIFICATIONS!",
+        "spells": "<b>Update</b> effects and effectformula of all spells, liturgical chants, rituals and ceremonies from offical modules or <b>replace all</b> values. THIS WILL OVERRIDE MANUAL MODIFICATIONS!",
         "spellsShort": "Migrate Spells",
         "abilities": "Update effects and effectformula of all advantages, disadvantages, special abilities and traits. THIS WILL OVERRIDE MANUAL MODIFICATIONS!",
         "abilitiesShort": "Migrate Dis-/Advantages/Special Abilities",

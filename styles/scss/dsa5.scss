@@ -884,6 +884,17 @@
     line-height: 26px;
   }
   
+  .item .image {
+    height: 30px;
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: 4px 0px;
+  }
+  
+  .inventory {
+    line-height: 30px;
+  }
+  
   .row-section .col {
     &.three {
       flex: 30%;
@@ -900,20 +911,7 @@
     &.fourtyfive {
       flex: 45%;
     }
-  }
-  
-  .item .image {
-    height: 30px;
-    background-size: contain;
-    background-repeat: no-repeat;
-    background-position: 4px 0px;
-  }
-  
-  .inventory {
-    line-height: 30px;
-  }
-  
-  .row-section .col {
+    
     &.five {
       flex: 20%;
     }

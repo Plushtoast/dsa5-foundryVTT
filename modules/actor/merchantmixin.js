@@ -4,6 +4,7 @@ import DSA5SoundEffect from "../system/dsa-soundeffect.js";
 import DSA5Payment from "../system/payment.js";
 import RuleChaos from "../system/rule_chaos.js";
 import DSA5_Utility from "../system/utility-dsa5.js";
+import { itemFromDrop } from "../system/view_helper.js";
 
 //todo add on use button to merchant sheet
 
@@ -306,6 +307,21 @@ export const MerchantSheetMixin = (superclass) => class extends superclass {
         }
     }
 
+    async _onDropActor(event, data) {
+        const limited = this.actor.limited
+        const owner = this.actor.isOwner
+        
+        if ( !(limited || owner)  ) return false
+
+        const { item, typeClass, selfTarget } = await itemFromDrop(data, this.id, false)
+        
+        if(selfTarget) return
+
+        if(owner || (limited && item.documentName == "Actor")) {
+            return await this._manageDragItems(item, typeClass) 
+        }
+    }
+
     setTradeFriend(otherTradeFriend) {
         const newTradeFriend = game.actors.get(otherTradeFriend._id)
         if (newTradeFriend.isOwner) {
@@ -565,7 +581,7 @@ class SelectTradefriendDialog extends Dialog{
     }
 
     static async getDialog(actor){
-        const users = await game.dsa5.apps.gameMasterMenu.getTrackedHeros()
+        const users = game.user.isGM ? await game.dsa5.apps.gameMasterMenu.getTrackedHeros() : game.actors.filter(x => x.isOwner)
         const dialog = new SelectTradefriendDialog({
             title: game.i18n.localize("DIALOG.setTargetToUser"),
             content: await renderTemplate('systems/dsa5/templates/dialog/selectTradeFriend.html', { users }),
