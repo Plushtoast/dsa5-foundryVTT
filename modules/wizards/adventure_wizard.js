@@ -116,7 +116,7 @@ export default class BookWizard extends Application {
             this.selectedChapter = undefined
             this.selectedType = undefined
             this.content = undefined
-            this.loadBook($(ev.currentTarget).text(), html, ev.currentTarget.dataset.typetype)
+            this.loadBook($(ev.currentTarget).text(), html, ev.currentTarget.dataset.type)
         })
         html.on('click', '.getChapter', ev => {
             this.selectedType = $(ev.currentTarget).closest('.toc').attr("data-type")

@@ -129,14 +129,11 @@ export default class WizardDSA5 extends Application {
                     if (!this.mergeLevels(itemsToAdd, item)) AdvantageRulesDSA5.vantageAdded(this.actor, item)
                     break
                 case "specialability":
-                    console.log(k.dataset)
                     item.system.step.value = Number(k.dataset.step)
 
                     if (k.dataset.free == "true") item.system.APValue.value = 0
 
                     item = ItemRulesDSA5.reverseAdoptionCalculation(this.actor, parsed, item)
-
-                    console.log(item)
 
                     if (!this.mergeLevels(itemsToAdd, item)) SpecialabilityRulesDSA5.abilityAdded(this.actor, item)
                     break
@@ -145,9 +142,7 @@ export default class WizardDSA5 extends Application {
                     break
             }
         }
-        console.log(itemsToAdd)
-        const res = await this.actor.createEmbeddedDocuments("Item", itemsToAdd)
-        console.log(res)
+        await this.actor.createEmbeddedDocuments("Item", itemsToAdd)
     }
 
     async fixPreviousCosts(previous, toFix) {
