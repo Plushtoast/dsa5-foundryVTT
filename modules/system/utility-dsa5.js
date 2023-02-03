@@ -144,6 +144,12 @@ export default class DSA5_Utility {
         return game.i18n.localize(`CHARAbbrev.${a.toUpperCase()}`)
     }
 
+    static async callAsyncHooks(hook, args){
+        for(let func of DSA5.asyncHooks[hook]){
+            await func(...args)
+        }
+    }
+
     static chatDataSetup(content, modeOverride, forceWhisper, forceWhisperIDs) {
         let chatData = {
             user: game.user.id,

@@ -10,14 +10,14 @@ export default class DSA5StatusEffects {
                     data: {
                         type: "condition",
                         payload: {
-                            id: $(ev.currentTarget).attr("data-id")
+                            id: ev.currentTarget.dataset.id
                         }
                     }
                 }
                 ev.dataTransfer.setData("text/plain", JSON.stringify(dataTransfer));
             });
         })
-        html.on('click', '.chat-condition', ev => DSA5ChatListeners.postStatus($(ev.currentTarget).attr("data-id")))
+        html.on('click', '.chat-condition', ev => DSA5ChatListeners.postStatus(ev.currentTarget.dataset.id))
     }
 
     static createCustomEffect(owner, description = "", label) {

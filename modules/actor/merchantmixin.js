@@ -52,7 +52,7 @@ export const MerchantSheetMixin = (superclass) => class extends superclass {
     activateListeners(html) {
         super.activateListeners(html);
         html.find('.allowMerchant').click(async(ev) => {
-            const id = $(ev.currentTarget).attr("data-user-id")
+            const id = ev.currentTarget.dataset.userId
             const i = $(ev.currentTarget).find('i')
             await this.allowMerchant([id], !(i.hasClass("fa-check-circle")))
             i.toggleClass("fa-circle fa-check-circle")
@@ -170,7 +170,7 @@ export const MerchantSheetMixin = (superclass) => class extends superclass {
 
     async transferItem(source, target, ev, buy = true) {
         let itemId = this._getItemId(ev);
-        let price = $(ev.currentTarget).attr("data-price")
+        let price = ev.currentTarget.dataset.price
         let amount = ev.ctrlKey ? 10 : 1
 
         if (game.user.isGM) {

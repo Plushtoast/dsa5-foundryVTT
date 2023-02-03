@@ -31,7 +31,7 @@ export default function() {
         for (let pack of packsToRemove) {
             let name = `${pack.metadata.packageName}.${pack.metadata.name}`
             game.packs.delete(name)
-            html.find(`li[data-pack="${name}"]`).hide()
+            html.find(`li[data-pack="${name}"]`).remove()
         }
 
         const search = $(`

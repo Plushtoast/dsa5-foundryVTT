@@ -466,7 +466,7 @@ export default class ActorSheetDsa5 extends ActorSheet {
         })
 
         html.find('.condition-edit').click(ev => {
-            const effect = this.actor.effects.get($(ev.currentTarget).attr("data-id"))
+            const effect = this.actor.effects.get(ev.currentTarget.dataset.id)
             effect.sheet.render(true)
         })
 
@@ -496,7 +496,7 @@ export default class ActorSheetDsa5 extends ActorSheet {
         })
         html.find(".statusEffectMenu ul").mouseleave(ev => $(ev.currentTarget).fadeOut())
         html.find(".status-add").click(async(ev) => {
-            let status = $(ev.currentTarget).attr("data-id")
+            let status = ev.currentTarget.dataset.id
             if (status == "custom") {
                 DSA5StatusEffects.createCustomEffect(this.actor)
             } else
@@ -517,12 +517,12 @@ export default class ActorSheetDsa5 extends ActorSheet {
                 skill.sheet.render(true);
         });
 
-        html.find(".advance-attribute").mousedown(ev => this.advanceWrapper(ev, "_advanceAttribute", $(ev.currentTarget).attr("data-attr")))
-        html.find(".refund-attribute").mousedown(ev => this.advanceWrapper(ev, "_refundAttributeAdvance", $(ev.currentTarget).attr("data-attr")))
+        html.find(".advance-attribute").mousedown(ev => this.advanceWrapper(ev, "_advanceAttribute", ev.currentTarget.dataset.attr))
+        html.find(".refund-attribute").mousedown(ev => this.advanceWrapper(ev, "_refundAttributeAdvance", ev.currentTarget.dataset.attr))
         html.find(".advance-item").mousedown(ev => this.advanceWrapper(ev, "_advanceItem", this._getItemId(ev)))
         html.find(".refund-item").mousedown(ev => this.advanceWrapper(ev, "_refundItemAdvance", this._getItemId(ev)))
-        html.find(".advance-points").mousedown(ev => this.advanceWrapper(ev, "_advancePoints", $(ev.currentTarget).attr("data-attr")))
-        html.find(".refund-points").mousedown(ev => this.advanceWrapper(ev, "_refundPointsAdvance", $(ev.currentTarget).attr("data-attr")))
+        html.find(".advance-points").mousedown(ev => this.advanceWrapper(ev, "_advancePoints", ev.currentTarget.dataset.attr))
+        html.find(".refund-points").mousedown(ev => this.advanceWrapper(ev, "_refundPointsAdvance", ev.currentTarget.dataset.attr))
 
         html.find('.spell-select').mousedown(ev => {
             const itemId = this._getItemId(ev);
@@ -577,7 +577,7 @@ export default class ActorSheetDsa5 extends ActorSheet {
                 this._deleteActiveEffect(id)
             }
         })
-        html.on('click', '.chat-condition', ev => DSA5ChatListeners.postStatus($(ev.currentTarget).attr("data-id")))
+        html.on('click', '.chat-condition', ev => DSA5ChatListeners.postStatus(ev.currentTarget.dataset.id))
         html.find('.money-change, .skill-advances').focusin(ev => {
             this.currentFocus = $(ev.currentTarget).closest('[data-item-id]').attr('data-item-id');;
         })
@@ -646,7 +646,7 @@ export default class ActorSheetDsa5 extends ActorSheet {
         html.find('.ch-rollCombat').click(event => {
             event.preventDefault();
             let itemId = this._getItemId(event);
-            const mode = $(event.currentTarget).attr("data-mode")
+            const mode = event.currentTarget.dataset.mode
             const item = this.actor.items.get(itemId)
             this.actor.setupWeapon(item, mode, {}, this.getTokenId()).then(setupData => this.actor.basicTest(setupData))
         });

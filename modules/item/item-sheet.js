@@ -152,7 +152,7 @@ export default class ItemSheetdsa5 extends ItemSheet {
 
         html.find('.condition-show').mousedown(ev => {
             ev.preventDefault()
-            const id = $(ev.currentTarget).attr("data-id")
+            const id = ev.currentTarget.dataset.id
             if (ev.button == 0) {
                 const effect = this.item.effects.get(id)
                 effect.sheet.render(true)
@@ -168,7 +168,7 @@ export default class ItemSheetdsa5 extends ItemSheet {
         })
 
         html.find('.condition-edit').click(ev => {
-            const effect = this.item.effects.get($(ev.currentTarget).attr("data-id"))
+            const effect = this.item.effects.get(ev.currentTarget.dataset.id)
             effect.sheet.render(true)
         })
 
@@ -568,7 +568,7 @@ class EquipmentSheet extends ItemSheetObfuscation(Enchantable) {
         })
 
         slots.mousedown(async(ev) => {
-            let itemId = $(ev.currentTarget).attr("data-item-id")
+            let itemId = ev.currentTarget.dataset.itemId
             let item = this.actor.items.get(itemId);
 
             if (ev.button == 0)

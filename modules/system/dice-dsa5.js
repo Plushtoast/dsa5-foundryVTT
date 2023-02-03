@@ -714,7 +714,7 @@ export default class DiceDSA5 {
                 }
 
                 let template = await renderTemplate("systems/dsa5/templates/dialog/manualroll-dialog.html", {
-                    dice: dice,
+                    dice,
                     description,
                 });
                 [result, form] = await new Promise((resolve, reject) => {
@@ -1283,7 +1283,8 @@ export default class DiceDSA5 {
         const applyEffect = this.addApplyEffectData(testData)
         const preData = deepClone(testData.preData)
         const hideDamage = rerenderMessage ? rerenderMessage.flags.data.hideDamage : preData.mode == "attack"
-        await Hooks.call("postProcessDSARoll", chatOptions, testData, rerenderMessage, hideDamage)
+        Hooks.call("postProcessDSARoll", chatOptions, testData, rerenderMessage, hideDamage)
+        await DSA5_Utility.callAsyncHooks("postProcessDSARoll", [testData])
         delete preData.extra.actor
         delete testData.actor
         delete testData.preData

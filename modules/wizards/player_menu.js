@@ -505,14 +505,14 @@ class ConjurationRequest extends DSA5Dialog {
         })
 
         html.on('mousedown', '.newNPC', async(ev) => {
-            const id = $(ev.currentTarget).attr("data-id")
+            const id = ev.currentTarget.dataset.id
             if (ev.button == 2) {
                 game.actors.get(id).delete()
                 $(ev.currentTarget).remove()
             }
         })
         html.on('click', '.newNPC', async(ev) => {
-            const id = $(ev.currentTarget).attr("data-id")
+            const id = ev.currentTarget.dataset.id
             game.actors.get(id).sheet.render(true)
         })
 

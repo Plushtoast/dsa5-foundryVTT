@@ -116,24 +116,27 @@ export default class WizardDSA5 extends Application {
             const val = $(k).val()
             if (val == "") continue
 
-            let item = await fromUuid($(k).val())
+            let item = (await fromUuid($(k).val())).toObject()
             let parsed = DSA5_Utility.parseAbilityString(item.name)
             item.name = $(k).attr("name")
 
             switch (item.type) {
                 case "advantage":
                 case "disadvantage":
-                    item.system.step.value = Number($(k).attr("data-step"))
+                    item.system.step.value = Number(k.dataset.step)
                     item = ItemRulesDSA5.reverseAdoptionCalculation(this.actor, parsed, item)
 
                     if (!this.mergeLevels(itemsToAdd, item)) AdvantageRulesDSA5.vantageAdded(this.actor, item)
                     break
                 case "specialability":
-                    item.system.step.value = Number($(k).attr("data-step"))
+                    console.log(k.dataset)
+                    item.system.step.value = Number(k.dataset.step)
 
-                    if ($(k).attr("data-free")) item.system.APValue.value = 0
+                    if (k.dataset.free == "true") item.system.APValue.value = 0
 
                     item = ItemRulesDSA5.reverseAdoptionCalculation(this.actor, parsed, item)
+
+                    console.log(item)
 
                     if (!this.mergeLevels(itemsToAdd, item)) SpecialabilityRulesDSA5.abilityAdded(this.actor, item)
                     break
@@ -142,7 +145,9 @@ export default class WizardDSA5 extends Application {
                     break
             }
         }
-        await this.actor.createEmbeddedDocuments("Item", itemsToAdd)
+        console.log(itemsToAdd)
+        const res = await this.actor.createEmbeddedDocuments("Item", itemsToAdd)
+        console.log(res)
     }
 
     async fixPreviousCosts(previous, toFix) {
@@ -238,7 +243,7 @@ export default class WizardDSA5 extends Application {
         })
         html.find('button.cancel').click(() => { this.close() })
         html.find('.show-item').click(async(ev) => {
-            let itemId = $(ev.currentTarget).attr("data-id")
+            let itemId = ev.currentTarget.dataset.id
             const item = await fromUuid(itemId)
             item.sheet.render(true)
         })

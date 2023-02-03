@@ -140,7 +140,7 @@ class GameMasterMenu extends Application {
         })
         html.find('.actorItem').click(async(ev) => {
             ev.stopPropagation()
-            const id = $(ev.currentTarget).attr("data-uuid")
+            const id = ev.currentTarget.dataset.uuid
             const document = await fromUuid(id)
             document.sheet.render(true)
         })
@@ -208,7 +208,7 @@ class GameMasterMenu extends Application {
 
 
         html.find('.addGroupSchip').click(async(ev) => {
-            await this.changeGroupSchipCount(Number($(ev.currentTarget).attr("data-value")))
+            await this.changeGroupSchipCount(Number(ev.currentTarget.dataset.value))
         })
         html.find('.groupschip').click(ev => {
             this.changeGroupSchip(ev)

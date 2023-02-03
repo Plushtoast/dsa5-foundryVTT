@@ -412,6 +412,10 @@ DSA5.defaultWeapon = {
 
 }
 
+DSA5.asyncHooks = {
+    postProcessDSARoll: []
+}
+
 DSA5.characteristics = {
     "mu": "CHAR.MU",
     "kl": "CHAR.KL",

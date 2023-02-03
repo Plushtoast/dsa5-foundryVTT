@@ -116,17 +116,17 @@ export default class BookWizard extends Application {
             this.selectedChapter = undefined
             this.selectedType = undefined
             this.content = undefined
-            this.loadBook($(ev.currentTarget).text(), html, $(ev.currentTarget).attr("data-type"))
+            this.loadBook($(ev.currentTarget).text(), html, ev.currentTarget.dataset.typetype)
         })
         html.on('click', '.getChapter', ev => {
             this.selectedType = $(ev.currentTarget).closest('.toc').attr("data-type")
-            this.selectedChapter = $(ev.currentTarget).attr("data-id")
+            this.selectedChapter = ev.currentTarget.dataset.id
             this.content = undefined
             this.loadPage(html)
         })
         html.on('click', '.subChapter', ev => {
             const name = $(ev.currentTarget).text()
-            const jid = $(ev.currentTarget).attr("data-jid")
+            const jid = ev.currentTarget.dataset.jid
             if (jid) {
                 this.loadJournalById(jid)
             } else {
@@ -159,7 +159,7 @@ export default class BookWizard extends Application {
             this.pinJournal(id, name)
         })
         html.on('click', '.activateScene', ev => {
-            this.showSzene($(ev.currentTarget).attr("data-id"), $(ev.currentTarget).attr("data-mode"))
+            this.showSzene(ev.currentTarget.dataset.id, ev.currentTarget.dataset.mode)
         })
         html.on('click', '.fulltextsearch', (ev) => {
             this.fulltextsearch = !this.fulltextsearch

@@ -674,7 +674,7 @@ export default class DSA5ItemLibrary extends Application {
         html.on("click", ".filter", async(ev) => {
             const tab = $(ev.currentTarget).closest('.tab')
             const category = tab.attr("data-tab")
-            const subcategory = $(ev.currentTarget).attr("data-category")
+            const subcategory = ev.currentTarget.dataset.category
             const isChecked = $(ev.currentTarget).is(":checked")
             if (this.advancedFiltering && isChecked) {
                 this.purgeAdvancedFilters()
@@ -709,7 +709,7 @@ export default class DSA5ItemLibrary extends Application {
         })
 
         html.find('.showDetails').click(ev => {
-            const tab = $(ev.currentTarget).attr("data-btn")
+            const tab = ev.currentTarget.dataset.btn
             $(ev.currentTarget).find('i').toggleClass("fa-caret-left fa-caret-right")
             html.find(`.${tab} .detailBox`).toggleClass("dsahidden")
         })
