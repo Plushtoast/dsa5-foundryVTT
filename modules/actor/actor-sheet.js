@@ -640,6 +640,10 @@ export default class ActorSheetDsa5 extends ActorSheet {
             let characteristic = event.currentTarget.attributes["data-char"].value;
             this.actor.setupWeaponless(characteristic, {}, this.getTokenId()).then(setupData => this.actor.basicTest(setupData))
         });
+        html.find('.ch-fallingDamage').click(ev => {
+            ev.preventDefault();
+            this.actor.setupFallingDamage({}, this.getTokenId())
+        })
 
         html.find('.item-create').click(ev => this._onItemCreate(ev));
 

@@ -13,11 +13,15 @@ export default class DSA5ChatAutoCompletion {
                 DSA5ChatAutoCompletion.skills = res.map(x => { return { name: x.name, type: "skill" } })
                     .concat(Object.values(game.dsa5.config.characteristics).map(x => {
                         return { name: game.i18n.localize(x), type: "attribute" }
-                    }).concat({ name: game.i18n.localize('regenerate'), type: "regeneration" }))
+                    }).concat([
+                        { name: game.i18n.localize('regenerate'), type: "regeneration" },
+                        { name: game.i18n.localize('fallingDamage'), type: "fallingDamage" },
+                    ]))
             })
         }
+        
         this.filtering = false
-        this.constants = {
+        this.combatConstants = {
             dodge: game.i18n.localize("dodge"),
             parryWeaponless: game.i18n.localize("parryWeaponless"),
             attackWeaponless: game.i18n.localize("attackWeaponless")
@@ -96,7 +100,7 @@ export default class DSA5ChatAutoCompletion {
                     return ((types.includes(x.type) && x.system.worn.value == true) || (x.type == "trait" && traitTypes.includes(x.system.traitType.value))) &&
                         x.name.toLowerCase().trim().indexOf(search) != -1
                 }).slice(0, 5).map(x => { return { name: x.name, type: "item" } })
-                .concat([{ name: this.constants.attackWeaponless, type: "item" }].filter(x => x.name.toLowerCase().trim().indexOf(search) != -1))
+                .concat([{ name: this.combatConstants.attackWeaponless, type: "item" }].filter(x => x.name.toLowerCase().trim().indexOf(search) != -1))
             this._checkEmpty(result)
             this._setList(result, "AT", ev)
         }
@@ -107,7 +111,7 @@ export default class DSA5ChatAutoCompletion {
         if (actor) {
             let types = ["meleeweapon"]
             let result = actor.items.filter(x => { return types.includes(x.type) && x.name.toLowerCase().trim().indexOf(search) != -1 && x.system.worn.value == true }).slice(0, 5).map(x => { return { name: x.name, type: "item" } })
-                .concat([{ name: this.constants.dodge, type: "item" }, { name: this.constants.parryWeaponless, type: "item" }].filter(x => x.name.toLowerCase().trim().indexOf(search) != -1))
+                .concat([{ name: this.combatConstants.dodge, type: "item" }, { name: this.combatConstants.parryWeaponless, type: "item" }].filter(x => x.name.toLowerCase().trim().indexOf(search) != -1))
             this._checkEmpty(result)
             this._setList(result, "PA", ev)
         }
@@ -289,11 +293,11 @@ export default class DSA5ChatAutoCompletion {
     _quickPA(target, actor, tokenId) {
         let text = target.text()
 
-        if (this.constants.dodge == text) {
+        if (this.combatConstants.dodge == text) {
             actor.setupDodge({}, tokenId).then(setupData => {
                 actor.basicTest(setupData)
             });
-        } else if (this.constants.parryWeaponless == text) {
+        } else if (this.combatConstants.parryWeaponless == text) {
             actor.setupWeaponless("parry", {}, tokenId).then(setupData => {
                 actor.basicTest(setupData)
             });
@@ -311,7 +315,7 @@ export default class DSA5ChatAutoCompletion {
 
     _quickAT(target, actor, tokenId) {
         let text = target.text()
-        if (this.constants.attackWeaponless == text) {
+        if (this.combatConstants.attackWeaponless == text) {
             actor.setupWeaponless("attack", {}, tokenId).then(setupData => {
                 actor.basicTest(setupData)
             });

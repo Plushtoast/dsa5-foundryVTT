@@ -32,6 +32,7 @@ export default function() {
         default: false,
         type: Boolean
     });
+
     game.settings.register("dsa5", "higherDefense", {
         name: "DSASETTINGS.higherDefense",
         hint: "DSASETTINGS.higherDefenseHint",

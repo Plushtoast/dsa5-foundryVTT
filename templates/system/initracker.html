@@ -13,8 +13,12 @@
                 <div class="combatant-advanced">
                     {{#if turn.defenseCount}}
                     <i class="fas def fa-shield-alt" data-defenseCount="{{this.defenseCount}}" data-tooltip="COMBATTRACKER.noDefenses"></i>
-                    <i class="fas fa-shield-alt reversed"></i> {{/if}} {{#if turn.ongoing}}
+                    <i class="fas fa-shield-alt reversed"></i> {{/if}} 
+                    {{#if turn.ongoing}}
                     <div class="ongoing" data-tooltip="{{this.ongoings}}">{{turn.ongoing}}</div>
+                    {{/if}}
+                    {{#if (and turn.owner (gt this.actionCount 1))}}
+                    <div class="actions" data-tooltip="{{this.actionCounts}}">{{this.actionCount}}</div>
                     {{/if}}
                 </div>
                 {{#if turn.owner}}
@@ -85,8 +89,9 @@
     <div class="row-section">
         <ul class="iniDetailsList initTrackerList">
             {{#each turns as |turn|}}
-            <li class="{{turn.newRound}}" >
-                {{#if turn.hasRolled}} <span data-combatant-id="{{turn.id}}" class="rolledInit">{{turn.initiative}}</span>{{else}} ? {{/if}} <br/> <span class="turnRound">{{turn.round}}</span>
+            <li class="{{turn.newRound}}">
+                {{#if turn.hasRolled}} <span data-combatant-id="{{turn.id}}" class="rolledInit">{{turn.initiative}}</span>{{else}} ? {{/if}} <br/> <span class="turnRound">{{turn.round}}</span><br/>
+                <span class="actionCount">{{#if (and turn.owner (gt this.actionCount 1))}}{{turn.actionCounts}}{{else}}&nbsp;{{/if}}</span> 
             </li>
             {{/each}}
         </ul>

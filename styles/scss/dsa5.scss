@@ -1306,6 +1306,11 @@
         cursor: pointer;
       }
     }
+
+    .editor.prosemirror{
+      min-height: 300px;
+    }
+
   
     div.item-header, .item-header input {
       text-align: center;
@@ -2542,7 +2547,6 @@
   .obfuscationBtn:nth-of-type(2){
     display: none;
   }
-
   
   .maskfield {
     background: url('../../icons/backgrounds/mask.webp'), url('../../icons/backgrounds/maskfield.webp');
@@ -2554,6 +2558,15 @@
 
     .editor .mce-content-body{
       color: white
+    }
+
+    .editor.prosemirror{
+      .editor-menu{
+        background-color: white;
+      }
+      &.editing-source textarea{
+        color:white;
+      }
     }
 
     a.content-link{
@@ -2818,6 +2831,7 @@
       width: 14px;
     }
   
+    .actions,
     .ongoing {
       font-size: 10px;
       background: #6f3900;
@@ -2833,12 +2847,24 @@
       right: 0;
       top: 0;
     }
+
+    .actions{
+      left: 0;
+      right: auto;
+      background: #6d0400;
+    }
   }
   
-  .initTracker .combatant-advanced .ongoing {
-    bottom: 4px;
-    top: unset;
-  }
+  .initTracker .combatant-advanced{
+    .actions{
+      right: 0;
+      left: unset;
+    }
+    .ongoing {
+      bottom: 4px;
+      top: unset;
+    }
+  } 
   
   .combatant-advanced i {
     &.reversed {
@@ -3961,13 +3987,21 @@
   }
 
   .postChatSection {
-    padding: 15px;
-    box-shadow: 0 0 12px rgba(110,59,1,.5607843137) inset;
-    border: 1px solid var(--button-color);
-    border-radius: 5px;
-    margin: 10px;
-
+    &.maskfield{
+      background-image: url('../../icons/backgrounds/blackbook.webp'), url('../../icons/backgrounds/maskfield.webp');
+      background-size: 250px 30px,100% calc(100% - 25px);
+      background-position: center calc(100% - 6px),center top;
+    }
     .postContentChat{
       cursor: pointer;
+      em{
+        padding: 5px;
+        border-radius:50%;
+        transition: 0.3s ease-in-out all;
+      }
+      &:hover em{
+        background-color: white;
+        color: black;
+      }
     }
   }

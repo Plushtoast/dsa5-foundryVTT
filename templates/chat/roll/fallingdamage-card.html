@@ -1,0 +1,27 @@
+<div class="dsa5 chat-card" data-actor-id="{{actorId}}" data-hide={{hideData}}>
+    <hr/>
+    <div class="card-content hide-option roll-result">
+        <b>{{localize "Roll"}}</b>: 
+        {{#each result.characteristics as |item i|}}
+        <span data-tooltip="CHAR.DAMAGE" class="die-damage d6">{{item.res}}</span>
+        {{/each}}
+    </div>
+    <div class="card-content">
+        <b>{{localize 'fallingHeight'}}</b>: {{result.preData.fallingHeight}} {{localize 'gridUnits'}}
+    </div>
+    <div class="card-content chatModifiers">
+        <b>{{localize "Modifiers"}}</b>: <span>{{result.modifiers}}</span>
+        {{#if result.preData.situationalModifiers}}
+        <a class="expand-mods"><i class="fas fa-plus"></i></a>
+        <ul>
+            {{#each result.preData.situationalModifiers as |item i|}}
+            <li>{{item.name}}: {{item.value}}{{#if item.type}} {{localize (concat 'CHARAbbrev.' item.type)}}{{/if}}</li>
+            {{/each}}
+        </ul>
+        {{/if}}
+    </div>
+   
+    <div class="card-content" data-tooltip="{{result.formula}}">
+        <b>{{localize 'fallingDamage'}}</b>: {{result.damage}}
+    </div>
+</div>

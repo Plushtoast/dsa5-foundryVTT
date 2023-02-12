@@ -192,6 +192,20 @@
     "aggregatedTest": "Sammelprobe",
     "allowedTestCount": "Erlaubte Proben",
     "ammunitiongroup": "Munitionstyp",
+    "fallingDamage": "Sturzschaden",
+    "fallingFloor": "Bodenbeschaffenheit",
+    "fallingHorses": "Sturz von einem Pferd wie 2 Schritt Höhe<br>Sturz von einem galoppierendem Pferd wie 3 Schritt Höhe",
+    "fallingConditions": {
+        "normal": "Normaler Boden (+-0)",
+        "soft1": "Weicher Boden (-1)",
+        "soft2": "Weicher Boden (-2)",
+        "soft3": "Weicher Boden (-3)",
+        "soft4": "Weicher Boden (-4)",
+        "rough1": "Harter Boden (+1)",
+        "rough2": "Harter Boden (+2)",
+        "rough3": "Harter Boden (+3)",
+        "rough4": "Harter Boden (+4)"
+    },
     "AstoundingSuccess": "Spektakulärer Erfolg",
     "AstoundingFailure": "Schreckliches Missgeschick",
     "information": "Information",
@@ -231,6 +245,7 @@
     "CriticalSuccess": "Kritischer Erfolg",
     "CriticalFailure": "Patzer",
     "critBotch": "Krit./Patzer",
+    "fallingHeight": "Fallhöhe",
     "Characteristic": "Attribut",
     "ceremony": "Zeremonie",
     "ceremonies": "Zeremonien",
@@ -1339,9 +1354,9 @@
         "noTokenSelected": "Kein Token markiert",
         "MacroItemMissing": "Dein Charakter hat kein Item namens {item}. Stelle sicher, dass dir entweder ein Charakter zugeordnet ist oder du einen Token für den Wurf markierst.",
         "APUpdateError": "AP Wert konnte nicht angepasst werden. Bitte manuell durchführen.",
-        "RangeCannotBeParsed": "Die Reichweite kan nicht automatisch angepasst werden. Format nicht erkannt.",
+        "RangeCannotBeParsed": "Die Reichweite kann nicht automatisch angepasst werden. Format nicht erkannt.",
         "CastingTimeLimit": "Die Aktionsdauer ist bereits am Limit.",
-        "TimeCannotBeParsed": "Die Aktionsdauer kan nicht automatisch angepasst werden. Format nicht erkannt.",
+        "TimeCannotBeParsed": "Die Aktionsdauer kann nicht automatisch angepasst werden. Format nicht erkannt.",
         "DamagePermission": "Du darfst den Schaden nicht übertragen.",
         "NotEnoughXP": "Nicht genug Abenteuerpunkte",
         "NotEnoughAsP": "Nicht genug Astralpunkte",
@@ -1586,7 +1601,6 @@
         "selfControlOnPain2": "Aus",
         "yesNumbered": "Ja (Nummeriert)",
         "renameNumbered": "Umbenennen (Nummeriert)"
-
     },
     "CONTROLS": {
         "targetForUser": "Ziel für Spieler wählen"

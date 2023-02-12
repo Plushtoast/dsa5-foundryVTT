@@ -56,10 +56,17 @@
         <li class="combatant actor directory-item flexrow {{this.css}}" data-combatant-id="{{this.id}}">
             <div class="aggroButton specImg" data-tooltip="attacktest"></div>
             <div class="combatant-advanced">
-                <img class="token-image" data-src="{{this.img}}" data-tooltip="{{this.name}}" /> {{#if this.defenseCount}}
+                <img class="token-image" data-src="{{this.img}}" data-tooltip="{{this.name}}" /> 
+                {{#if this.defenseCount}}
                 <i class="fas def fa-shield-alt" data-defenseCount="{{this.defenseCount}}" data-tooltip="COMBATTRACKER.noDefenses"></i>
-                <i class="fas fa-shield-alt reversed"></i> {{/if}} {{#if this.ongoing}}
+                <i class="fas fa-shield-alt reversed"></i> 
+                {{/if}} 
+                {{#if this.ongoing}}
                 <div class="ongoing" data-tooltip="{{this.ongoings}}">{{this.ongoing}}</div>
+                {{/if}}
+                {{log}}
+                {{#if (gt this.actionCount 1)}}
+                <div class="actions" data-tooltip="{{this.actionCounts}}">{{this.actionCount}}</div>
                 {{/if}}
             </div>
 

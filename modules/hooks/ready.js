@@ -34,9 +34,7 @@ export default function() {
                         {
                             let scene = game.scenes.get(data.payload.scene)
                             let token = new Token(scene.getEmbeddedDocument("Token", data.payload.target))
-                            token.actor.update({
-                                "flags.oppose": data.payload.opposeFlag
-                            })
+                            token.actor.update({ "flags.oppose": data.payload.opposeFlag })
                         }
                         break
                     case "addEffect":

@@ -122,32 +122,29 @@ export default class OpposedDsa5 {
                         }
                     })
 
+                    const opposeFlag = {
+                        speaker: message.speaker,
+                        messageId: message.id,
+                        startMessageId: startMessage.id
+                    }
+
                     if (!game.user.isGM) {
                         game.socket.emit("system.dsa5", {
                             type: "target",
                             payload: {
                                 target: target.id,
                                 scene: canvas.scene.id,
-                                opposeFlag: {
-                                    speaker: message.speaker,
-                                    messageId: message.id,
-                                    startMessageId: startMessage.id
-                                }
+                                opposeFlag
                             }
                         })
                     } else {
-                        await target.actor.update({
-                            "flags.oppose": {
-                                speaker: message.speaker,
-                                messageId: message.id,
-                                startMessageId: startMessage.id
-                            }
-                        })
+                        await target.actor.update({ "flags.oppose": opposeFlag })
                     }
                     startMessagesList.push(startMessage.id);
                     if (attackOfOpportunity) {
                         await OpposedDsa5.resolveUndefended(startMessage, game.i18n.localize("OPPOSED.attackOfOpportunity"))
                     }
+                    Hooks.call("DSAOpposedRollStart", target)
                 }
             })
             message.flags.data.startMessagesList = startMessagesList;

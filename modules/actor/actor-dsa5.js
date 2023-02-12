@@ -1664,6 +1664,78 @@ export default class Actordsa5 extends Actor {
     return Riding.getHorseSpeed(this)
   }
 
+  setupFallingDamage(options, tokenId){
+    const name = game.i18n.localize("fallingDamage")
+    const skill = this.items.find(x => x.type == "skill" && x.name == game.i18n.localize('LocalizedIDs.bodyControl')).toObject()
+    const optns = { subtitle: ` (${name})`, postFunction: { functionName: "game.dsa5.entities.Actordsa5.updateFallingDamage", options, tokenId, speaker: Itemdsa5.buildSpeaker(this, tokenId) } }
+    this.setupSkill(skill, optns, tokenId).then(async(finalData) => {
+      finalData.testData.opposable = false
+      const res = await this.basicTest(finalData, { suppressMessage: true })
+      await Actordsa5.updateFallingDamage(optns.postFunction, res)
+      await DiceDSA5.renderRollCard(res.cardOptions, res.result, res.options.rerenderMessage)
+    })
+  }
+
+  static async updateFallingDamage(postFunction, result, source){
+    const availableQs = (result.result.qualityStep || 0) * 2
+    mergeObject(postFunction.options, { availableQs })
+    const actor = DSA5_Utility.getSpeaker(postFunction.speaker)
+    const setupData = await actor._setupFallingHeight(postFunction.options, postFunction.tokenId)
+    const fallingDamage = await actor.basicTest(setupData, { suppressMessage: true })
+    const html = await renderTemplate("systems/dsa5/templates/chat/roll/fallingdamage-card.html", fallingDamage)
+
+    if (!result.result.other) result.result.other = []
+    
+    result.result.other.push(html)
+    
+    if(result.chatData){ result.chatData.other = [html] }    
+  }
+
+  _setupFallingHeight(options, tokenId){
+    let title = game.i18n.localize("fallingDamage")
+    let testData = {
+      source: {
+        type: "fallingDamage"
+      },
+      opposable: false,
+      extra: {
+        actor: this.toObject(false),
+        options,
+        speaker: Itemdsa5.buildSpeaker(this.actor, tokenId),
+      },
+    };
+
+    let situationalModifiers = []
+    let dialogOptions = {
+      title,
+      template: "/systems/dsa5/templates/dialog/fallingdamage-dialog.html",
+      data: {
+        rollMode: options.rollMode,
+        situationalModifiers,
+        fallingFloorOptions: DSA5.fallingConditions,
+        modifier: options.modifier || 0,
+      },
+      callback: (html, options = {}) => {
+        testData.situationalModifiers = []
+        testData.situationalModifiers.push({
+          name: game.i18n.localize("fallingFloor"), value: html.find('[name="fallingFloor"]').val()
+        })
+        cardOptions.rollMode = html.find('[name="rollMode"]').val();
+        testData.fallingHeight = html.find('[name="testModifier"]').val();
+        mergeObject(testData.extra.options, options);
+        return { testData, cardOptions };
+      },
+    };
+    
+    let cardOptions = this._setupCardOptions("systems/dsa5/templates/chat/roll/fallingdamage-card.html", title, tokenId);
+
+    return DiceDSA5.setupDialog({
+      dialogOptions,
+      testData,
+      cardOptions,
+    });
+  }
+
   setupRegeneration(statusId, options = {}, tokenId) {
     let title = game.i18n.localize("regenerationTest");
 

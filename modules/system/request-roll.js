@@ -70,6 +70,9 @@ export default class RequestRoll {
                         actor.basicTest(setupData)
                     })
                     break
+                case "fallingDamage": 
+                    actor.setupFallingDamage(options, tokenId)
+                    break
                 default:
                     let skill = actor.items.find((i) => i.name == name && i.type == category)
                     actor.setupSkill(skill, options, tokenId).then((setupData) => {

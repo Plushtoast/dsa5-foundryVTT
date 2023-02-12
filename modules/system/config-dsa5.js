@@ -361,6 +361,18 @@ DSA5.weaponStabilities = {
     "Whips": 4
 }
 
+DSA5.fallingConditions = {
+    normal: 0,
+    soft1: -1,
+    soft2: -2,
+    soft3: -3,
+    soft4: -4,
+    rough1: 1,
+    rough2: 2,
+    rough3: 3,
+    rough4: 4
+},
+
 DSA5.combatSkillSubCategories = {
     "0": "COMBATSKILLCATEGORY.0",
     "1": "COMBATSKILLCATEGORY.1",

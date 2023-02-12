@@ -36,6 +36,8 @@ export class DSA5CombatTracker extends CombatTracker {
                 const combatant = data.combat.turns.find(x => x.id == turn.id)
                 const isAllowedToSeeEffects = (game.user.isGM || (combatant.actor && combatant.actor.testUserPermission(game.user, "OBSERVER")) || !(game.settings.get("dsa5", "hideEffects")));
                 turn.defenseCount = combatant.getFlag("dsa5", "defenseCount") || 0
+                turn.actionCount = Number(getProperty(combatant, "actor.system.actionCount.value")) || 0
+                turn.actionCounts = `${turn.actionCount} ${game.i18n.localize('actionCount')}` 
 
                 let remainders = []
                 if (combatant.actor) {
@@ -52,7 +54,7 @@ export class DSA5CombatTracker extends CombatTracker {
                 remainders = remainders.sort((a, b) => a.remaining - b.remaining)
 
                 if (remainders.length > 0) {
-                    turn.ongoings = `${game.i18n.localize('COMBATTRACKER.ongoing')}\n${remainders.map((x) => `${x.name} - ${x.remaining}`).join("\n")}`
+                    turn.ongoings = `${game.i18n.localize('COMBATTRACKER.ongoing')}<br>${remainders.map((x) => `${x.name} - ${x.remaining}`).join("<br>")}`
 
                 turn.ongoing = remainders[0].remaining
             }

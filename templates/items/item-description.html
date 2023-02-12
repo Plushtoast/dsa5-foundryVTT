@@ -2,7 +2,7 @@
     <div>
         <div class="row-section">
             <div class="col {{#unless system.description.value}}item-box{{/unless}}">
-                {{editor enrichedDescription target="system.description.value" button=true owner=owner editable=editable}} 
+                {{editor enrichedDescription target="system.description.value" button=true owner=owner editable=editable engine="prosemirror"}} 
             </div>
         </div>
     </div>
@@ -11,7 +11,7 @@
         <div class="col maskfield">
             <div class="row-section" data-tooltip="TT.onlyGM">
                 <div class="col {{#unless system.gmdescription.value}}item-box{{/unless}}">
-                    {{editor enrichedGmdescription target="system.gmdescription.value" button=true owner=owner editable=editable}} 
+                    {{editor enrichedGmdescription target="system.gmdescription.value" button=true owner=owner editable=editable engine="prosemirror"}} 
                 </div>
             </div>
         </div>

@@ -1,0 +1,56 @@
+<form class="skill-test">
+   
+
+    <div class="form-group">
+        <label>{{localize "fallingHeight"}}</label>
+        <div class="row-section">
+            <div class="col">
+                <input class="quantity-click" type="number" name="testModifier" value="{{testModifier}}" data-tooltip="gridUnits"/>
+            </div>
+            <div class="col center">
+                <label class="resultDamage">x <span data-tooltip="Trefferpunkte" class="display-toggle fail die-damage d6">6</span></label>
+            </div>
+            <div class="col center lineheight" data-tooltip="fallingHorses">
+                <i class="fas fa-info"></i>
+            </div>
+        </div>
+    </div>
+
+    <div class="form-group custom-select">
+        <label>{{localize "DIALOG.RollMode"}}</label>
+        <select name="rollMode">
+            {{selectOptions rollModes selected=rollMode localize=true}}
+        </select>
+    </div>
+
+    <div class="form-group custom-select">
+        <label>{{localize "fallingFloor"}}</label>
+        <select name="fallingFloor">
+            {{#select 0}}
+            {{#each fallingFloorOptions as |mod t|}}
+            <option value="{{mod}}">{{localize (concat 'fallingConditions.' t)}}</option>
+            {{/each}}
+            {{/select}}
+        </select>
+    </div>
+    
+    {{#if hasSituationalModifiers}}
+    <div class="modifiers form-group custom-select">
+        <label>{{localize "DIALOG.SituationalModifiers"}}</label>
+        <select name="situationalModifiers" multiple data-tooltip="DIALOG.deselectWithStrg">
+        {{#select selectedModifiers}}
+        {{#each situationalModifiers as |mod t|}}
+        <option data-tooltip="{{situationalTooltip mod}}" data-type="{{mod.type}}" value="{{mod.value}}" {{#if mod.selected}}selected{{/if}}>
+            {{localize mod.name}} [{{mod.value}} {{mod.type}}]
+        </option>
+        {{/each}}
+        {{/select}}
+    </select>
+    </div>
+    {{/if}}
+
+    
+
+  
+    <div class="roll-dialog-tag">fallingDamage</div>
+</form>

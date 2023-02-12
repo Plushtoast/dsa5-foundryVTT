@@ -18,6 +18,124 @@ import { MeasuredTemplateDSA } from "./measuretemplate.js"
 import TableEffects from "../tables/tableEffects.js"
 
 export default class DiceDSA5 {
+    static async rollTest(testData) {
+        //testData.function = "rollTest"
+        let rollResults
+        switch (testData.source.type) {
+            case "ceremony":
+            case "ritual":
+            case "liturgy":
+            case "spell":
+                rollResults = await this.rollSpell(testData)
+                break
+            case "skill":
+                rollResults = await this.rollTalent(testData)
+                break
+            case "combatskill":
+                rollResults = await this.rollCombatskill(testData)
+                break
+            case "trait":
+                if (testData.mode == "parry") await this.updateDefenseCount(testData)
+                rollResults = testData.mode == "damage" ? await this.rollDamage(testData) : await this.rollCombatTrait(testData)
+                break
+            case "regenerate":
+                rollResults = await this.rollRegeneration(testData)
+                break
+            case "meleeweapon":
+            case "rangeweapon":
+                if (testData.mode == "parry") await this.updateDefenseCount(testData)
+                rollResults = testData.mode == "damage" ? await this.rollDamage(testData) : await this.rollWeapon(testData)
+                break
+            case "dodge":
+                await this.updateDefenseCount(testData)
+                rollResults = await this.rollStatus(testData)
+                break
+            case "poison":
+            case "disease":
+                rollResults = await this.rollItem(testData)
+                break
+            case "fallingDamage": 
+                rollResults = await this.rollFallingDamage(testData)
+                break
+            default:
+                rollResults = await this.rollAttribute(testData)
+        }
+        mergeObject(rollResults, deepClone(testData.extra))
+        return rollResults
+    }
+
+    static async rollDices(testData, cardOptions) {
+        if (!testData.roll) {
+            const d3dColors = game.dsa5.apps.DiceSoNiceCustomization.getAttributeConfiguration
+            let roll
+            switch (testData.source.type) {
+                case "liturgy":
+                case "spell":
+                case "ceremony":
+                case "ritual":
+                case "skill":
+                    roll = await new Roll(`1d20+1d20+1d20`).evaluate({ async: true })
+
+                    mergeObject(roll.dice[0].options, d3dColors(testData.source.system.characteristic1.value))
+                    mergeObject(roll.dice[1].options, d3dColors(testData.source.system.characteristic2.value))
+                    mergeObject(roll.dice[2].options, d3dColors(testData.source.system.characteristic3.value))
+                    break
+                case "regenerate":
+                    const leDie = []
+
+                    if (testData.regenerateLeP ) leDie.push([game.settings.get("dsa5", "lessRegeneration") ? "1d3" : "1d6"])
+                    if (testData.extra.actor.isMage && testData.regenerateAsP) leDie.push("1d6")
+                    if (testData.extra.actor.isPriest && testData.regenerateKaP) leDie.push("1d6")
+
+                    roll = await new Roll(leDie.join("+")).evaluate({ async: true })
+                    if (testData.regenerateLeP ) mergeObject(roll.dice[0].options, d3dColors("mu"))
+                    if (testData.extra.actor.isMage && testData.regenerateAsP) mergeObject(roll.dice[leDie.length - 1].options, d3dColors("ge"))
+                    if (testData.extra.actor.isPriest && testData.regenerateKaP) mergeObject(roll.dice[leDie.length - 1].options, d3dColors("in"))
+                    if (testData.extra.actor.isMage && testData.regenerateAsP && testData.extra.actor.isPriest && testData.regenerateKaP) mergeObject(roll.dice[leDie.length - 2].options, d3dColors("ge"))
+                    break
+                case "meleeweapon":
+                case "rangeweapon":
+                case "weaponless":
+                case "combatskill":
+                case "trait":
+                    if (testData.mode == "damage") {
+                        let rollFormula = await this.damageFormula(testData)
+                        roll = await new Roll(rollFormula).evaluate({ async: true })
+                        for (let i = 0; i < roll.dice.length; i++) mergeObject(roll.dice[i].options, d3dColors("damage"))
+                    } else {
+                        roll = await new Roll(`1d20`).evaluate({ async: true })
+                        mergeObject(roll.dice[0].options, d3dColors(testData.mode))
+                    }
+                    break
+                case "dodge":
+                    roll = await new Roll(`1d20`).evaluate({ async: true })
+                    mergeObject(roll.dice[0].options, d3dColors("dodge"))
+                    break
+                case "poison":
+                case "disease":
+                    let pColor = d3dColors("in")
+                    roll = await new Roll(`1d20+1d20+1d20`).evaluate({ async: true })
+                    mergeObject(roll.dice[0].options, pColor)
+                    mergeObject(roll.dice[1].options, pColor)
+                    mergeObject(roll.dice[2].options, pColor)
+                    break
+                case "fallingDamage":
+                    const baseMod =  this._situationalModifiers(testData)
+                    const formula = `${testData.fallingHeight}d6+${baseMod}-${testData.extra.options.availableQs || 0}`
+                    roll = await new Roll(formula).evaluate({ async: true })
+                    break
+                default:
+                    roll = await new Roll(`1d20`).evaluate({ async: true })
+                    mergeObject(roll.dice[0].options, d3dColors(testData.source.system.attr))
+            }
+            roll = await DiceDSA5.manualRolls(roll, testData.source.type, testData.extra.options)
+            await this.showDiceSoNice(roll, cardOptions.rollMode)
+            testData.roll = roll
+            testData.rollMode = cardOptions.rollMode
+        }
+        return testData
+    }
+
     static async setupDialog({ dialogOptions, testData, cardOptions }) {
         let rollMode = await game.settings.get("core", "rollMode")
         let sceneStress = "challenging"
@@ -204,79 +322,99 @@ export default class DiceDSA5 {
         }
     }
 
+    static async rollFallingDamage(testData) {
+        let roll = testData.roll
+        const chars = []
+
+        for(let res of roll.terms[0].results){
+            chars.push({ char: "damage", res: res.result, suc: false })
+        }
+
+        let result = {
+            rollType: "fallingDamage",
+            preData: testData,
+            modifiers: this._situationalModifiers(testData),
+            extra: {},
+            damage: Math.max(0, roll.total),
+            formula: roll.formula,
+            characteristics: chars
+        }
+        return result
+    }
+
     static async rollRegeneration(testData) {
-            let modifier = this._situationalModifiers(testData)
-            let roll = testData.roll
-            let chars = []
+        let modifier = this._situationalModifiers(testData)
+        let roll = testData.roll
+        let chars = []
 
-            let result = {
-                rollType: "regenerate",
-                preData: testData,
-                modifiers: modifier,
-                extra: {},
+        let result = {
+            rollType: "regenerate",
+            preData: testData,
+            modifiers: modifier,
+            extra: {},
+        }
+
+        const attrs = []
+        if (testData.regenerateLeP) attrs.push("LeP")
+        if (testData.extra.actor.system.isMage && testData.regenerateAsP) attrs.push("AsP")
+        if (testData.extra.actor.system.isPriest && testData.regenerateKaP) attrs.push("KaP")
+        let index = 0
+
+        const isSick = testData.extra.actor.effects.some((x) => getProperty(x, "flags.core.statusId") == "sick")
+        if (isSick) {
+            this._appendSituationalModifiers(testData, game.i18n.localize("CONDITION.sick"), "*0")
+            for (let k of attrs) {
+                chars.push({ char: k, res: 0, die: "d6" })
+                result[k] = 0
+                index += 2
             }
-
-            const attrs = []
-            if (testData.regenerateLeP) attrs.push("LeP")
-            if (testData.extra.actor.system.isMage && testData.regenerateAsP) attrs.push("AsP")
-            if (testData.extra.actor.system.isPriest && testData.regenerateKaP) attrs.push("KaP")
-            let index = 0
-
-            const isSick = testData.extra.actor.effects.some((x) => getProperty(x, "flags.core.statusId") == "sick")
-            if (isSick) {
-                this._appendSituationalModifiers(testData, game.i18n.localize("CONDITION.sick"), "*0")
-                for (let k of attrs) {
-                    chars.push({ char: k, res: 0, die: "d6" })
-                    result[k] = 0
-                    index += 2
-                }
-            } else {
-                for (let k of attrs) {
-                    this._appendSituationalModifiers(
-                        testData,
-                        game.i18n.localize(`LocalizedIDs.regeneration${k}`),
-                        AdvantageRulesDSA5.vantageStep(testData.extra.actor, game.i18n.localize(`LocalizedIDs.regeneration${k}`)),
-                        k
-                    )
-                    this._appendSituationalModifiers(
-                        testData,
-                        game.i18n.localize(`LocalizedIDs.weakRegeneration${k}`),
-                        AdvantageRulesDSA5.vantageStep(
-                            testData.extra.actor,
-                            game.i18n.localize(`LocalizedIDs.weakRegeneration${k}`)
-                        ) * -1,
-                        k
-                    )
-                    this._appendSituationalModifiers(
-                        testData,
-                        game.i18n.localize(`LocalizedIDs.advancedRegeneration${k}`),
-                        SpecialabilityRulesDSA5.abilityStep(
-                            testData.extra.actor,
-                            game.i18n.localize(`LocalizedIDs.advancedRegeneration${k}`)
-                        ),
-                        k
-                    )
-                    this._appendSituationalModifiers(
-                            testData,
-                            `${game.i18n.localize(`CHARAbbrev.${k}`)} ${game.i18n.localize("Modifier")}`,
-                    testData[`${k}Modifier`],
+        } else {
+            for (let k of attrs) {
+                this._appendSituationalModifiers(
+                    testData,
+                    game.i18n.localize(`LocalizedIDs.regeneration${k}`),
+                    AdvantageRulesDSA5.vantageStep(testData.extra.actor, game.i18n.localize(`LocalizedIDs.regeneration${k}`)),
                     k
                 )
                 this._appendSituationalModifiers(
                     testData,
-                    `${game.i18n.localize(`CHARAbbrev.${k}`)} ${game.i18n.localize("regenerate")}`,
-                    testData[`regeneration${k}`],
+                    game.i18n.localize(`LocalizedIDs.weakRegeneration${k}`),
+                    AdvantageRulesDSA5.vantageStep(
+                        testData.extra.actor,
+                        game.i18n.localize(`LocalizedIDs.weakRegeneration${k}`)
+                    ) * -1,
                     k
                 )
-
-                chars.push({ char: k, res: roll.terms[index].results[0].result, die: "d6" })
-                result[k] = Math.round(
-                    Math.max(
-                        0,
-                        Number(roll.terms[index].results[0].result) + Number(modifier) + this._situationalModifiers(testData, k)
-                    ) * Number(testData.regenerationFactor)
+                this._appendSituationalModifiers(
+                    testData,
+                    game.i18n.localize(`LocalizedIDs.advancedRegeneration${k}`),
+                    SpecialabilityRulesDSA5.abilityStep(
+                        testData.extra.actor,
+                        game.i18n.localize(`LocalizedIDs.advancedRegeneration${k}`)
+                    ),
+                    k
                 )
-                index += 2
+                this._appendSituationalModifiers(
+                        testData,
+                        `${game.i18n.localize(`CHARAbbrev.${k}`)} ${game.i18n.localize("Modifier")}`,
+                testData[`${k}Modifier`],
+                k
+            )
+            this._appendSituationalModifiers(
+                testData,
+                `${game.i18n.localize(`CHARAbbrev.${k}`)} ${game.i18n.localize("regenerate")}`,
+                testData[`regeneration${k}`],
+                k
+            )
+
+            chars.push({ char: k, res: roll.terms[index].results[0].result, die: "d6" })
+            result[k] = Math.round(
+                Math.max(
+                    0,
+                    Number(roll.terms[index].results[0].result) + Number(modifier) + this._situationalModifiers(testData, k)
+                ) * Number(testData.regenerationFactor)
+            )
+            index += 2
             }
         }
 
@@ -329,7 +467,7 @@ export default class DiceDSA5 {
         return result
     }
 
-    static async damageFormula(testData){
+        static async damageFormula(testData){
         let weapon
         
         if (testData.source.type == "meleeweapon") {
@@ -1108,49 +1246,6 @@ export default class DiceDSA5 {
         return result
     }
 
-    static async rollTest(testData) {
-        //testData.function = "rollTest"
-        let rollResults
-        switch (testData.source.type) {
-            case "ceremony":
-            case "ritual":
-            case "liturgy":
-            case "spell":
-                rollResults = await this.rollSpell(testData)
-                break
-            case "skill":
-                rollResults = await this.rollTalent(testData)
-                break
-            case "combatskill":
-                rollResults = await this.rollCombatskill(testData)
-                break
-            case "trait":
-                if (testData.mode == "parry") await this.updateDefenseCount(testData)
-                rollResults = testData.mode == "damage" ? await this.rollDamage(testData) : await this.rollCombatTrait(testData)
-                break
-            case "regenerate":
-                rollResults = await this.rollRegeneration(testData)
-                break
-            case "meleeweapon":
-            case "rangeweapon":
-                if (testData.mode == "parry") await this.updateDefenseCount(testData)
-                rollResults = testData.mode == "damage" ? await this.rollDamage(testData) : await this.rollWeapon(testData)
-                break
-            case "dodge":
-                await this.updateDefenseCount(testData)
-                rollResults = await this.rollStatus(testData)
-                break
-            case "poison":
-            case "disease":
-                rollResults = await this.rollItem(testData)
-                break
-            default:
-                rollResults = await this.rollAttribute(testData)
-        }
-        mergeObject(rollResults, deepClone(testData.extra))
-        return rollResults
-    }
-
     static async updateDefenseCount(testData) {
         if (game.combat) await game.combat.updateDefenseCount(testData.extra.speaker)
     }
@@ -1163,73 +1258,6 @@ export default class DiceDSA5 {
         if (circumvent && defender > attacker) circumvent.value = Math.min(circumvent.step, defender - attacker) * 2
 
         return Math.min(0, attacker - defender) * 2
-    }
-
-    static async rollDices(testData, cardOptions) {
-        if (!testData.roll) {
-            const d3dColors = game.dsa5.apps.DiceSoNiceCustomization.getAttributeConfiguration
-            let roll
-            switch (testData.source.type) {
-                case "liturgy":
-                case "spell":
-                case "ceremony":
-                case "ritual":
-                case "skill":
-                    roll = await new Roll(`1d20+1d20+1d20`).evaluate({ async: true })
-
-                    mergeObject(roll.dice[0].options, d3dColors(testData.source.system.characteristic1.value))
-                    mergeObject(roll.dice[1].options, d3dColors(testData.source.system.characteristic2.value))
-                    mergeObject(roll.dice[2].options, d3dColors(testData.source.system.characteristic3.value))
-                    break
-                case "regenerate":
-                    const leDie = []
-
-                    if (testData.regenerateLeP ) leDie.push([game.settings.get("dsa5", "lessRegeneration") ? "1d3" : "1d6"])
-                    if (testData.extra.actor.isMage && testData.regenerateAsP) leDie.push("1d6")
-                    if (testData.extra.actor.isPriest && testData.regenerateKaP) leDie.push("1d6")
-
-                    roll = await new Roll(leDie.join("+")).evaluate({ async: true })
-                    if (testData.regenerateLeP ) mergeObject(roll.dice[0].options, d3dColors("mu"))
-                    if (testData.extra.actor.isMage && testData.regenerateAsP) mergeObject(roll.dice[leDie.length - 1].options, d3dColors("ge"))
-                    if (testData.extra.actor.isPriest && testData.regenerateKaP) mergeObject(roll.dice[leDie.length - 1].options, d3dColors("in"))
-                    if (testData.extra.actor.isMage && testData.regenerateAsP && testData.extra.actor.isPriest && testData.regenerateKaP) mergeObject(roll.dice[leDie.length - 2].options, d3dColors("ge"))
-                    break
-                case "meleeweapon":
-                case "rangeweapon":
-                case "weaponless":
-                case "combatskill":
-                case "trait":
-                    if (testData.mode == "damage") {
-                        let rollFormula = await this.damageFormula(testData)
-                        roll = await new Roll(rollFormula).evaluate({ async: true })
-                        for (let i = 0; i < roll.dice.length; i++) mergeObject(roll.dice[i].options, d3dColors("damage"))
-                    } else {
-                        roll = await new Roll(`1d20`).evaluate({ async: true })
-                        mergeObject(roll.dice[0].options, d3dColors(testData.mode))
-                    }
-                    break
-                case "dodge":
-                    roll = await new Roll(`1d20`).evaluate({ async: true })
-                    mergeObject(roll.dice[0].options, d3dColors("dodge"))
-                    break
-                case "poison":
-                case "disease":
-                    let pColor = d3dColors("in")
-                    roll = await new Roll(`1d20+1d20+1d20`).evaluate({ async: true })
-                    mergeObject(roll.dice[0].options, pColor)
-                    mergeObject(roll.dice[1].options, pColor)
-                    mergeObject(roll.dice[2].options, pColor)
-                    break
-                default:
-                    roll = await new Roll(`1d20`).evaluate({ async: true })
-                    mergeObject(roll.dice[0].options, d3dColors(testData.source.system.attr))
-            }
-            roll = await DiceDSA5.manualRolls(roll, testData.source.type, testData.extra.options)
-            await this.showDiceSoNice(roll, cardOptions.rollMode)
-            testData.roll = roll
-            testData.rollMode = cardOptions.rollMode
-        }
-        return testData
     }
 
     static async showDiceSoNice(roll, rollMode) {
@@ -1344,20 +1372,20 @@ export default class DiceDSA5 {
             chatOptions["content"] = await renderTemplate(chatOptions.template, chatData)
             return await ChatMessage.create(chatOptions, false)
         } else {
+            const postFunction = getProperty(rerenderMessage, "flags.data.preData.extra.options.postFunction")
+            if(postFunction){
+                testData.messageId = rerenderMessage.id;
+                await eval(postFunction.functionName)(postFunction, { result: testData, chatData }, preData.source)
+            }
+
             const html = await renderTemplate(chatOptions.template, chatData)
                 //Seems to be a foundry bug, after edit inline rolls are not converted anymore
-            const actor =
+            const actor = 
                 ChatMessage.getSpeakerActor(rerenderMessage.speaker) ||
                 game.users.get(rerenderMessage.user).character
             const rollData = actor ? actor.getRollData() : {}
             const enriched = await TextEditor.enrichHTML(html, {rollData, async: true})
             chatOptions["content"] = enriched
-
-            const postFunction = getProperty(rerenderMessage, "flags.data.preData.extra.options.postFunction")
-            if(postFunction){
-                testData.messageId = rerenderMessage.id;
-                eval(postFunction.functionName)(postFunction, { result: testData }, preData.source)
-            }
 
             const newMsg = await rerenderMessage.update({
                     content: chatOptions["content"],
