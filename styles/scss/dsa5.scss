@@ -3959,3 +3959,15 @@
   .select2-results__option[role="group"]:hover {
     background-color: transparent;
   }
+
+  .postChatSection {
+    padding: 15px;
+    box-shadow: 0 0 12px rgba(110,59,1,.5607843137) inset;
+    border: 1px solid var(--button-color);
+    border-radius: 5px;
+    margin: 10px;
+
+    .postContentChat{
+      cursor: pointer;
+    }
+  }

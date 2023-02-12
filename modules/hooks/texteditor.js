@@ -45,6 +45,13 @@ export function setEnrichers() {
                 const templ = await renderTemplate("systems/dsa5/templates/items/infopreview.html", { item })
                 return $(templ)[0]
             }
+        },
+        {
+            pattern: /@PostChat\[(.*?)\]/g,
+            enricher: async(match, options) => {
+                const content = match[1]
+                return $(`<div class="row-section wrap postChatSection"><div class="col ninety"></div><div class="col ten center postContentChat" data-tooltip="SHEET.PostItem"><em class="far fa-comment-dots"></em></div><div class="col postChatContent">${content}</div></div>`)[0]
+            }
         })
 }
 

@@ -1,4 +1,5 @@
 import DPS from "../system/derepositioningsystem.js"
+import DSA5_Utility from "../system/utility-dsa5.js"
 
 export class AddTargetDialog extends Dialog{
     static async getDialog(speaker){
@@ -114,5 +115,51 @@ export class SelectUserDialog extends Dialog{
         user.updateTokenTargets(targetIds)
         game.socket.emit('userActivity', userId, { targets: targetIds})
         this.close()
+    }
+}
+
+export class UserMultipickDialog extends Dialog{
+    static async getDialog(content){
+        const users = game.users.filter(x => x.active && !x.isGM)
+        
+        new UserMultipickDialog({
+            title: game.i18n.localize("SHEET.PostItem"),
+            content: await renderTemplate('systems/dsa5/templates/dialog/usermultipickdialog.html', { users }),
+            default: "yes",
+            buttons: {
+                Yes: {
+                    icon: '<i class="fa fa-check"></i>',
+                    label: game.i18n.localize("yes"),
+                    callback: (dlg) => {
+                        this.postContent(dlg, content)
+                    }
+                },
+                cancel: {
+                    icon: '<i class="fas fa-times"></i>',
+                    label: game.i18n.localize("cancel")
+                }
+            },
+        }).render(true)
+    }
+
+    static async postContent(dlg, content){
+        const chatOptions = DSA5_Utility.chatDataSetup(content)
+        if(!dlg.find('#sel_all').is(':checked')){
+            const ids = []
+            dlg.find('.usersel:checked').each(function(){
+                ids.push($(this).val());
+            });
+            chatOptions.whisper = ids
+        }
+        
+        ChatMessage.create(chatOptions)
+    }
+
+    activateListeners(html){
+        super.activateListeners(html)
+
+        html.find('[name="sel_all"]').change(ev => {
+            html.find('.usersel').prop('disabled', ev.currentTarget.checked).prop('checked', ev.currentTarget.checked)
+        })
     }
 }

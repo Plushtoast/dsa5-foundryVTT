@@ -1,0 +1,14 @@
+<ul class="directory targetChoser">
+   
+    <div class="row-section wrap">
+        <div class="col">
+            <input type="checkbox" name="sel_all" id="sel_all" value="all" {{checked true}}/><label for="sel_all">{{localize 'SHEET.showToPlayers'}}</label>
+        </div>
+        {{#each users as |usr|}}
+        <div class="col">
+            <input class="usersel" disabled type="checkbox" id="sel_{{usr.id}}" name="sel_{{usr.id}}" value="{{usr.id}}" {{checked true}}/><label for="sel_{{usr.id}}">{{usr.name}}</label>
+        </div>
+        {{/each}}
+    </div>
+
+</div>
