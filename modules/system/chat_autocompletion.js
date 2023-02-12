@@ -16,7 +16,6 @@ export default class DSA5ChatAutoCompletion {
                     }).concat({ name: game.i18n.localize('regenerate'), type: "regeneration" }))
             })
         }
-        this.regex
         this.filtering = false
         this.constants = {
             dodge: game.i18n.localize("dodge"),
@@ -34,7 +33,6 @@ export default class DSA5ChatAutoCompletion {
         let target = this
 
         const cmMessage = html.find('#chat-message')
-        this.anchor = cmMessage.parent()
 
         html.on('keyup', '#chat-message', async function(ev) {
             target._parseInput(ev)
@@ -47,7 +45,6 @@ export default class DSA5ChatAutoCompletion {
         cmMessage.on('keydown', function(ev) {
             target._navigateQuickFind(ev)
         })
-
         const handlers = jQuery._data(cmMessage[0]).events["keydown"];
         handlers.unshift(handlers.pop());
     }
@@ -58,16 +55,16 @@ export default class DSA5ChatAutoCompletion {
             if ([38, 40, 13, 9].includes(ev.which))
                 return false
             else if (ev.which == 27) {
-                this._closeQuickfind()
+                this._closeQuickfind(ev)
                 return false
             }
 
             const cmd = this._getCmd(val)
             const search = val.substring(1 + cmd.length).toLowerCase().trim()
-            this[`_filter${cmd}`](search)
+            this[`_filter${cmd}`](search, ev)
             this.filtering = true
         } else {
-            this._closeQuickfind()
+            this._closeQuickfind(ev)
         }
     }
 
@@ -79,18 +76,18 @@ export default class DSA5ChatAutoCompletion {
         $('#chat-message').val($('#chat-message').val().split(" ")[0] + " " + target.text()) + " "
     }
 
-    _closeQuickfind() {
+    _closeQuickfind(ev) {
         this.filtering = false
-        this.anchor.find(".quickfind").remove()
+        $(ev.currentTarget).closest('#chat-form').find(".quickfind").remove()
     }
 
-    _filterW(search) {
+    _filterW(search, ev) {
         let result = game.users.contents.filter(x => x.active && x.name.toLowerCase().trim().indexOf(search) != -1).map(x => { return { name: x.name, type: "user" } })
         this._checkEmpty(result)
-        this._setList(result, "W")
+        this._setList(result, "W", ev)
     }
 
-    _filterAT(search) {
+    _filterAT(search, ev) {
         const { actor, tokenId } = DSA5ChatAutoCompletion._getActor()
         if (actor) {
             let types = ["meleeweapon", "rangeweapon"]
@@ -101,28 +98,28 @@ export default class DSA5ChatAutoCompletion {
                 }).slice(0, 5).map(x => { return { name: x.name, type: "item" } })
                 .concat([{ name: this.constants.attackWeaponless, type: "item" }].filter(x => x.name.toLowerCase().trim().indexOf(search) != -1))
             this._checkEmpty(result)
-            this._setList(result, "AT")
+            this._setList(result, "AT", ev)
         }
     }
 
-    _filterPA(search) {
+    _filterPA(search, ev) {
         const { actor, tokenId } = DSA5ChatAutoCompletion._getActor()
         if (actor) {
             let types = ["meleeweapon"]
             let result = actor.items.filter(x => { return types.includes(x.type) && x.name.toLowerCase().trim().indexOf(search) != -1 && x.system.worn.value == true }).slice(0, 5).map(x => { return { name: x.name, type: "item" } })
                 .concat([{ name: this.constants.dodge, type: "item" }, { name: this.constants.parryWeaponless, type: "item" }].filter(x => x.name.toLowerCase().trim().indexOf(search) != -1))
             this._checkEmpty(result)
-            this._setList(result, "PA")
+            this._setList(result, "PA", ev)
         }
     }
 
-    _filterSP(search) {
+    _filterSP(search, ev) {
         const { actor, tokenId } = DSA5ChatAutoCompletion._getActor()
         if (actor) {
             let types = ["spell", "ritual"]
             let result = actor.items.filter(x => { return types.includes(x.type) && x.name.toLowerCase().trim().indexOf(search) != -1 }).slice(0, 5).map(x => { return { name: x.name, type: "item" } })
             this._checkEmpty(result)
-            this._setList(result, "SP")
+            this._setList(result, "SP", ev)
         }
     }
 
@@ -130,13 +127,13 @@ export default class DSA5ChatAutoCompletion {
         if (!result.length) result.push({ name: game.i18n.localize("DSAError.noMatch"), type: "none" })
     }
 
-    _filterLI(search) {
+    _filterLI(search, ev) {
         const { actor, tokenId } = DSA5ChatAutoCompletion._getActor()
         if (actor) {
             let types = ["liturgy", "ceremony"]
             let result = actor.items.filter(x => { return types.includes(x.type) && x.name.toLowerCase().trim().indexOf(search) != -1 }).slice(0, 5).map(x => { return { name: x.name, type: "item" } })
             this._checkEmpty(result)
-            this._setList(result, "LI")
+            this._setList(result, "LI", ev)
         }
     }
 
@@ -148,37 +145,38 @@ export default class DSA5ChatAutoCompletion {
     }
 
 
-    _filterCH(search) {
-        this._setList(this._getSkills(search), "CH")
+    _filterCH(search, ev) {
+        this._setList(this._getSkills(search), "CH", ev)
     }
 
-    _filterSK(search) {
-        this._setList(this._getSkills(search), "SK")
+    _filterSK(search, ev) {
+        this._setList(this._getSkills(search), "SK", ev)
     }
 
-    _filterRQ(search) {
-        this._setList(this._getSkills(search), "RQ")
+    _filterRQ(search, ev) {
+        this._setList(this._getSkills(search), "RQ", ev)
     }
 
-    _filterGC(search) {
-        this._setList(this._getSkills(search, "skill"), "GC")
+    _filterGC(search, ev) {
+        this._setList(this._getSkills(search, "skill"), "GC", ev)
     }
 
-    _setList(result, cmd) {
-            let html = $(`<div class="quickfind dsalist"><ul>${result.map(x=> `<li data-type="${x.type}" data-category="${cmd}" class="quick-item">${x.name}</li>`).join("")}</ul></div>`)
-
+    _setList(result, cmd, ev) {
+        let html = $(`<div class="quickfind dsalist"><ul>${result.map(x=> `<li data-type="${x.type}" data-category="${cmd}" class="quick-item">${x.name}</li>`).join("")}</ul></div>`)
+        
         html.find(`.quick-item:first`).addClass("focus")
-        let quick = this.anchor.find(".quickfind")
+        const par = $(ev.currentTarget).closest('#chat-form')
+        let quick = par.find(".quickfind")
         if (quick.length) {
             quick.replaceWith(html)
         } else {
-            this.anchor.append(html)
+            par.append(html)
         }
     }
 
     _navigateQuickFind(ev) {
         if (this.filtering) {
-            let target = this.anchor.find('.focus')
+            let target = $(ev.currentTarget).closest('#chat-form').find('.focus')
             switch (ev.which) {
                 case 38: // Up
                     if (target.prev(".quick-item").length)
@@ -238,7 +236,7 @@ export default class DSA5ChatAutoCompletion {
             default:
                 const {actor, tokenId} = DSA5ChatAutoCompletion._getActor()
                 if (actor) {
-                    this._resetChatAutoCompletion()
+                    this._resetChatAutoCompletion(target)
                     this[`_quick${cmd}`](target, actor, tokenId)
                 }
         }
@@ -250,7 +248,7 @@ export default class DSA5ChatAutoCompletion {
 
     _quickCH(target){
         DSA5ChatListeners.check3D20(target)
-        this._resetChatAutoCompletion()
+        this._resetChatAutoCompletion(target)
     }
 
     _quickSK(target, actor, tokenId) {
@@ -270,20 +268,21 @@ export default class DSA5ChatAutoCompletion {
 
     }
 
-    _resetChatAutoCompletion(){
-        $('#chat-message').val("")
-        this.anchor.find(".quickfind").remove()
+    _resetChatAutoCompletion(target){
+        const par = target.closest('#chat-form')
+        par.find('#chat-message').val("")
+        par.find(".quickfind").remove()
     }
 
     _quickGC(target){
         const modifier = Number($('#chat-message').val().match(/(-|\+)?\d+/g)) || 0
-        this._resetChatAutoCompletion()
+        this._resetChatAutoCompletion(target)
         RequestRoll.showGCMessage(target.text(), modifier)
     }
 
     _quickRQ(target){
         const modifier = Number($('#chat-message').val().match(/(-|\+)?\d+/g)) || 0
-        this._resetChatAutoCompletion()
+        this._resetChatAutoCompletion(target)
         RequestRoll.showRQMessage(target.text(), modifier)
     }
 
