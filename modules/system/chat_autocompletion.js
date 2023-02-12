@@ -33,9 +33,9 @@ export default class DSA5ChatAutoCompletion {
     async chatListeners(html) {
         let target = this
 
-        this.anchor = $('#chat-message').parent()
-            //$('#chat-message').off('keydown')
-        $("#chat-message").off("keydown", ui.chat._onChatKeyDownBinding);
+        const cmMessage = html.find('#chat-message')
+        this.anchor = cmMessage.parent()
+
         html.on('keyup', '#chat-message', async function(ev) {
             target._parseInput(ev)
         })
@@ -44,9 +44,12 @@ export default class DSA5ChatAutoCompletion {
             target._quickSelect($(ev.currentTarget))
         })
 
-        html.on('keydown', '#chat-message', function(ev) {
+        cmMessage.on('keydown', function(ev) {
             target._navigateQuickFind(ev)
         })
+
+        const handlers = jQuery._data(cmMessage[0]).events["keydown"];
+        handlers.unshift(handlers.pop());
     }
 
     _parseInput(ev) {
@@ -201,7 +204,7 @@ export default class DSA5ChatAutoCompletion {
                     return false
             }
         }
-        ui.chat._onChatKeyDown(ev);
+        return true
     }
 
     static _getActor() {
