@@ -1157,7 +1157,8 @@
             "macros": "Macros have access to the following variables:\nactor - The targeted actor\ntestData - All data for the current check\nsource - The source of the macro",
             "armorPostprocess": "Armor transformations have access to the following variables:\nactor - The targeted actor\narmor - The armor of the target\nsource - The source of the macro",
             "onRemove": "Macro is executed on removal of the effect in an actor.\nVariables:\nactor - The actor",
-            "onUseEffect": "Macro for on use effect of the item.\nVariables:\nactor - The actor\nitem - The item"
+            "onUseEffect": "Macro for on use effect of the item.\nVariables:\nactor - The actor\nitem - The item",
+            "effectname": "i.e. to state cause"
         },
         "advancedFunctions": {
             "none": "Nichts",
@@ -1168,6 +1169,14 @@
             "damagePostprocess": "Damage transformation (Macro)",
             "onRemove": "Macro (End of effect)",
             "onUseEffect": "Macro (On Use)"
+        },
+        "dialog": {
+            "duration": "Effect Duration",
+            "unit": "Time Unit",
+            "rounds": "Rounds",
+            "seconds": "Seconds",
+            "name": "Effectname",
+            "overwrite": "Overwrite standard name"
         }
     },
     "LocalizedIDs": {
