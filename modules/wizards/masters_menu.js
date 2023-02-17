@@ -172,7 +172,7 @@ class GameMasterMenu extends Application {
         })
         html.find('.randomPlayer').mousedown((ev) => {
             ev.stopPropagation()
-            this.randomPlayer(html, ev)
+            this._randomPlayer(html, ev)
         })
         html.find('.requestRoll').click(ev => {
             ev.stopPropagation()
@@ -314,13 +314,26 @@ class GameMasterMenu extends Application {
         await game.settings.set("dsa5", "groupschips", schipSetting.join("/"))
     }
 
-    async randomPlayer(html, ev) {
+    async _randomPlayer(html, ev) {
         const heros = html.find('.hero')
-        const withMisfortune = ev.button == 2
+        const result = await this.rollRandomPlayer(ev.button == 2)
+
+        $(ev.currentTarget).find('i').addClass('fa-spin')
+        heros.removeClass("victim")
+
+        setTimeout(() => {
+            $(this._element).find(`.hero[data-id="${result}"]`).addClass("victim")
+            $(ev.currentTarget).find('i').removeClass('fa-spin')
+        }, 500)
+    }
+
+    async rollRandomPlayer(withMisfortune){
         let probabilities = {}
         let counter = 1
-        const anythingselected = html.find('.heroSelector:checked').length > 0
-        for (const hero of this.heros) {
+        const anythingselected = Object.keys(this.selected).length != 0;
+
+        const heros = this.heros.length ? this.heros : await this.getTrackedHeros()
+        for (const hero of heros) {
             if (!this.selected[hero.id] && anythingselected) continue
 
             probabilities[counter] = hero.id
@@ -336,13 +349,7 @@ class GameMasterMenu extends Application {
         }
 
         const roll = (await new Roll(`1d${counter - 1}`).evaluate({ async: true })).total
-        $(ev.currentTarget).find('i').addClass('fa-spin')
-        heros.removeClass("victim")
-
-        setTimeout(() => {
-            $(this._element).find(`.hero[data-id="${probabilities[roll]}"]`).addClass("victim")
-            $(ev.currentTarget).find('i').removeClass('fa-spin')
-        }, 500)
+        return probabilities[roll]
     }
 
     async doPayment(ids, pay) {

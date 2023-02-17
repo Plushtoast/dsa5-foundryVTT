@@ -133,7 +133,8 @@
         "poison": "Poison",
         "blessed": "Blessed",
         "money": "Money",
-        "plant": "Plant"
+        "plant": "Plant",
+        "food": "Food"
     },
     "PLANT": {
         "healing": "Medicinal herbs",
@@ -873,6 +874,7 @@
         "PostItem": "Post to chat",
         "EditItem": "Edit",
         "Dropdown": "Details",
+        "increaseFontSize": "Increase/Decrease font size",
         "DeleteItem": "Delete",
         "addItem": "Create Item",
         "Close": "Close",
@@ -977,6 +979,7 @@
         "editRoll": "Edit roll",
         "BlindRoll": "Blinder Wurf.",
         "whisper": "Private message",
+        "fontsize": "Font size: {size}px",
         "usesItem": "{actor} uses {item}.",
         "requestGroupCheck": " requests a group check in ",
         "enchantmentUsed": "<b>{item}</b> used one charge of <b>{spell}</b>.",

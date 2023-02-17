@@ -244,16 +244,16 @@
                     {{item.weight}}
                 </div>
                 <div class="col ten very-small center">
+                    {{#if item.OnUseEffect}}<a data-tooltip="SHEET.onUseEffect" class="onUseItem"><i class="fas fa-dice-six"></i></a>{{/if}}
                     <a class="item-post" data-tooltip="SHEET.PostItem"><i class="fas fa-comment"></i></a>
                     <a class="item-control item-edit" data-tooltip="SHEET.EditItem"><i class="fas fa-edit"></i></a>
-                    <a class="item-dropdown" data-tooltip="SHEET.Dropdown"><i class="fas fa-chevron-down"></i></a>
+                    {{#if item.children}}<a class="item-dropdown" data-tooltip="SHEET.Dropdown"><i class="fas fa-chevron-down"></i></a>{{/if}}
                     <a class="item-control item-delete" data-tooltip="SHEET.DeleteItem"><i class="fas fa-trash"></i></a>
                 </div>
             </div>
             <div class="row-section lineheight expandDetails {{item.detailed}}">
                 <div class="col">
-                    <ul>
-                    </ul>
+                    {{#if item.children}} {{> systems/dsa5/templates/actors/parts/containerContent.html this}} {{/if}}
                 </div>
             </div>
 

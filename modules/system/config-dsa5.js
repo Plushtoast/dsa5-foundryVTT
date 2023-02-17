@@ -361,6 +361,8 @@ DSA5.weaponStabilities = {
     "Whips": 4
 }
 
+DSA5.journalFontSizes = [8, 10, 12, 14, 16, 18, 20, 24, 28, 32];
+
 DSA5.fallingConditions = {
     normal: 0,
     soft1: -1,
@@ -451,7 +453,8 @@ DSA5.equipmentTypes = {
     "alchemy": "Equipment.alchemy",
     "service": "Equipment.service",
     "luxus": "Equipment.luxus",
-    "blessed": "Equipment.blessed"
+    "blessed": "Equipment.blessed",
+    "food": "Equipment.food"
 };
 
 DSA5.equipmentCategories = ["meleeweapon", "rangeweapon", "equipment", "ammunition", "armor", "poison", "consumable", "plant"]

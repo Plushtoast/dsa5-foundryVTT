@@ -57,7 +57,7 @@ export default class Riding {
         }
     }
 
-    static rollLoyalty(actor){
+    static rollLoyalty(actor, options = {}){
         const horse = this.getHorse(actor)
         if(!horse) return
 
@@ -65,7 +65,7 @@ export default class Riding {
         if(!skill){
             return ui.notifications.warn(game.i18n.format("DSAError.notFound", {category: DSA5_Utility.categoryLocalization("skill"), name: game.i18n.localize("LocalizedIDs.loyalty")}))
         }
-        horse.setupSkill(skill, {}, horse.token?.id).then(setupData => {
+        horse.setupSkill(skill, options, horse.token?.id).then(setupData => {
             horse.basicTest(setupData)
         });
     }
@@ -146,14 +146,19 @@ export default class Riding {
         console.warn("delete riding token hook not implemented")
     }
 
-    static getHorse(actor){
+    static getHorse(actor, returnEmptyHorse = false){
+        let horse
         if(actor.system.horse){
             if(actor.system.horse.token && !actor.system.horse.actorLink)
-                return DSA5_Utility.getSpeaker(actor.system.horse.token)
+                horse = DSA5_Utility.getSpeaker(actor.system.horse.token)
+            else 
+                horse = game.actors.get(actor.system.horse.actorId)
 
-            return game.actors.get(actor.system.horse.actorId)
+            if(!horse && returnEmptyHorse && actor.system.horse.isRiding){
+                horse = { name: game.i18n.localize('unknown') }
+            }
         }
-        return undefined
+        return horse
     }
 
     static async unmountHorse(actor, token){

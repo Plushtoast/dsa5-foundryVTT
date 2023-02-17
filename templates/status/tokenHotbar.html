@@ -2,7 +2,7 @@
     <ul>
         {{#each items as |cat i|}} {{#each cat as |item j|}}
         <li class="{{item.cssClass}} primary" data-category="{{item.cssClass}}" data-id="{{item.id}}" data-tooltip="{{item.name}}" data-name="{{item.name}}" data-subfunction="{{item.subfunction}}">
-            <div style="background-image:url('{{item.icon}}')">{{item.abbrev}}</div>
+            <div class="{{item.iconClass}}" style="background-image:url('{{item.icon}}')">{{item.abbrev}}</div>
             {{#if item.more}}
             <ul class="subbuttons skillsBtns" {{{item.subwidth}}}>
                 {{#each item.more as |mo i|}}

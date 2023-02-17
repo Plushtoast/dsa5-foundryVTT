@@ -76,13 +76,21 @@ export default function() {
         default: "#FFFFFF",
         type: String
     });
-
+    
     game.settings.register("dsa5", "migrationVersion", {
         name: "migrationVersion",
         hint: "migrationVersion",
         scope: "world",
         config: false,
         default: 21,
+        type: Number
+    })
+    game.settings.register("dsa5", "journalFontSizeIndex", {
+        name: "journalFontSizeIndex",
+        hint: "journalFontSizeIndex",
+        scope: "client",
+        config: false,
+        default: 5,
         type: Number
     })
     game.settings.register("dsa5", "firstTimeStart", {

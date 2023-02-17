@@ -120,7 +120,7 @@ export default class DiceDSA5 {
                     mergeObject(roll.dice[2].options, pColor)
                     break
                 case "fallingDamage":
-                    const baseMod =  this._situationalModifiers(testData)
+                    const baseMod =  await this._situationalModifiers(testData)
                     const formula = `${testData.fallingHeight}d6+${baseMod}-${testData.extra.options.availableQs || 0}`
                     roll = await new Roll(formula).evaluate({ async: true })
                     break
@@ -333,7 +333,7 @@ export default class DiceDSA5 {
         let result = {
             rollType: "fallingDamage",
             preData: testData,
-            modifiers: this._situationalModifiers(testData),
+            modifiers: await this._situationalModifiers(testData),
             extra: {},
             damage: Math.max(0, roll.total),
             formula: roll.formula,
@@ -343,7 +343,7 @@ export default class DiceDSA5 {
     }
 
     static async rollRegeneration(testData) {
-        let modifier = this._situationalModifiers(testData)
+        let modifier = await this._situationalModifiers(testData)
         let roll = testData.roll
         let chars = []
 
@@ -411,7 +411,7 @@ export default class DiceDSA5 {
             result[k] = Math.round(
                 Math.max(
                     0,
-                    Number(roll.terms[index].results[0].result) + Number(modifier) + this._situationalModifiers(testData, k)
+                    Number(roll.terms[index].results[0].result) + Number(modifier) + await this._situationalModifiers(testData, k)
                 ) * Number(testData.regenerationFactor)
             )
             index += 2
@@ -428,7 +428,7 @@ export default class DiceDSA5 {
             roll,
             testData.source.system.max,
             testData.extra.statusId,
-            this._situationalModifiers(testData),
+            await this._situationalModifiers(testData),
             testData,
             "",
             this._situationalMultipliers(testData)
@@ -458,7 +458,7 @@ export default class DiceDSA5 {
             roll,
             testData.source.system.value,
             testData.extra.characteristicId,
-            this._situationalModifiers(testData),
+            await this._situationalModifiers(testData),
             testData,
             "",
             this._situationalMultipliers(testData)
@@ -493,7 +493,7 @@ export default class DiceDSA5 {
     }
 
     static async rollDamage(testData) {
-        let modifiers = this._situationalModifiers(testData)
+        let modifiers = await this._situationalModifiers(testData)
         let chars = []
 
         let roll =  testData.roll
@@ -515,10 +515,15 @@ export default class DiceDSA5 {
         }
     }
 
-    static _situationalModifiers(testData, filter = "") {
-        return testData.situationalModifiers.reduce(function (_this, val) {
-            return _this + (val.type == filter || (filter == "" && val.type == undefined) ? Number(val.value) || 0 : 0)
-        }, 0)
+    static async _situationalModifiers(testData, filter = "") {
+        let result = 0
+        for(let val of testData.situationalModifiers){
+            if(val.value == undefined) continue
+
+            const evaluatedVal = Number(val.value) || await this._stringToRoll(val.value)
+            result += (val.type == filter || (filter == "" && val.type == undefined) ? evaluatedVal : 0)
+        }
+        return result
     }
 
     static _situationalPartCheckModifiers(testData) {
@@ -578,7 +583,7 @@ export default class DiceDSA5 {
             roll,
             isAttack ? Number(source.system.at.value) : Number(source.system.pa),
             testData.mode,
-            this._situationalModifiers(testData),
+            await this._situationalModifiers(testData),
             testData,
             "",
             this._situationalMultipliers(testData)
@@ -746,7 +751,7 @@ export default class DiceDSA5 {
             roll,
             weapon[testData.mode],
             testData.mode,
-            this._situationalModifiers(testData),
+            await this._situationalModifiers(testData),
             testData,
             combatskill,
             this._situationalMultipliers(testData)
@@ -827,7 +832,7 @@ export default class DiceDSA5 {
             roll,
             source.system[testData.mode].value,
             testData.mode,
-            this._situationalModifiers(testData),
+            await this._situationalModifiers(testData),
             testData,
             "",
             this._situationalMultipliers(testData)
@@ -931,7 +936,7 @@ export default class DiceDSA5 {
         return result.join(", ")
     }
 
-    static calculateEnergyCost(isClerical, res, testData) {
+    static async calculateEnergyCost(isClerical, res, testData) {
         let costModifiers = []
         let weakBody
         let energy
@@ -966,7 +971,7 @@ export default class DiceDSA5 {
             },
             {
                 name: `${game.i18n.localize("statuseffects")} (${game.i18n.localize("CHARAbbrev." + globalMod.name)})`,
-                value: testData.extra.actor.system[globalMod.val] + this._situationalModifiers(testData, feature)
+                value: testData.extra.actor.system[globalMod.val] + await this._situationalModifiers(testData, feature)
             }
         )
         costModifiers = costModifiers.filter((x) => x.value != 0)
@@ -1043,7 +1048,7 @@ export default class DiceDSA5 {
             }
         }
 
-        this.calculateEnergyCost(isClerical, res, testData)
+        await this.calculateEnergyCost(isClerical, res, testData)
 
         if (
             AdvantageRulesDSA5.hasVantage(testData.extra.actor, game.i18n.localize("CONDITION.minorSpirits")) &&
@@ -1065,9 +1070,9 @@ export default class DiceDSA5 {
         let successLevel = 0
 
         this._appendSituationalModifiers(testData, game.i18n.localize("Difficulty"), testData.testDifficulty)
-        let modifiers = this._situationalModifiers(testData)
+        let modifiers = await this._situationalModifiers(testData)
 
-        let fws = testData.source.system.talentValue.value + testData.advancedModifiers.fws + this._situationalModifiers(testData, "FW")
+        let fws = testData.source.system.talentValue.value + testData.advancedModifiers.fws + await this._situationalModifiers(testData, "FW")
         const pcms = this._situationalPartCheckModifiers(testData, "TPM")
 
         let tar = [1, 2, 3].map(
@@ -1144,11 +1149,11 @@ export default class DiceDSA5 {
         let qualityStep = 0
 
         if (successLevel > 0) {
-            fws += this._situationalModifiers(testData, "FP")
+            fws += await this._situationalModifiers(testData, "FP")
             qualityStep = Math.max(1,
                 (fws == 0 ? 1 : fws > 0 ? Math.ceil(fws / 3) : 0) +
                 (testData.qualityStep != undefined ? Number(testData.qualityStep) : 0))
-                + (testData.advancedModifiers.qls || 0) + this._situationalModifiers(testData, "QL")
+                + (testData.advancedModifiers.qls || 0) + await this._situationalModifiers(testData, "QL")
         }
 
         qualityStep = Math.min(game.settings.get("dsa5", "capQSat"), qualityStep)
@@ -1198,7 +1203,7 @@ export default class DiceDSA5 {
     static async rollItem(testData) {
         let roll = testData.roll || await new Roll("1d20+1d20+1d20").evaluate({ async: true })
         let description = []
-        let modifier = this._situationalModifiers(testData)
+        let modifier = await this._situationalModifiers(testData)
         let fws = Number(testData.source.system.step.value)
         let tar = [1, 2, 3].map((x) => 10 + Number(testData.source.system.step.value) + modifier)
         let res = [0, 1, 2].map((x) => roll.terms[x * 2].results[0].result - tar[x])
@@ -1462,7 +1467,7 @@ export default class DiceDSA5 {
 
                 let newVal = {
                     name: game.i18n.localize("chatEdit"),
-                    value: Number(input.val()) - this._situationalModifiers(newTestData),
+                    value: Number(input.val()) - await this._situationalModifiers(newTestData),
                 }
                 newTestData.situationalModifiers.push(newVal)
                 break

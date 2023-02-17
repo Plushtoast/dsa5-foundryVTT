@@ -1,6 +1,8 @@
 import { bindImgToCanvasDragStart } from "../hooks/imgTileDrop.js"
+import { increaseFontSize } from "../hooks/journal.js"
 import DSA5StatusEffects from "../status/status_effects.js"
 import DSA5ChatAutoCompletion from "../system/chat_autocompletion.js"
+import DSA5 from "../system/config-dsa5.js"
 import DSA5_Utility from "../system/utility-dsa5.js"
 import { slist } from "../system/view_helper.js"
 
@@ -12,6 +14,7 @@ export default class BookWizard extends Application {
         this.adventures = []
         this.books = []
         this.rshs = []
+        this.fulltextsearch = true
     }
 
     static get defaultOptions() {
@@ -48,6 +51,12 @@ export default class BookWizard extends Application {
     _getHeaderButtons() {
         let buttons = super._getHeaderButtons();
         buttons.unshift({
+            class: "increaseFontSize",
+            icon: "fas fa-arrows-up-down",
+            onclick: async() => increaseFontSize($(this._element).find('.chapter'))
+        })
+
+        buttons.unshift({
             label: "Library",
             class: "library",
             icon: `fas fa-book`,
@@ -72,7 +81,7 @@ export default class BookWizard extends Application {
         this.scenes = null
         this.content = undefined
         this.journalIndex = null
-        this.fulltextsearch = false
+        this.fulltextsearch = true
         this.currentType = undefined
         this.loadPage(this._element)
     }
@@ -444,11 +453,14 @@ export default class BookWizard extends Application {
         const data = await super.getData(options);
         const currentChapter = await this.getChapter()
         const toc = await this.getToc()
+        const index = game.settings.get("dsa5", "journalFontSizeIndex")
+        const fontSize = DSA5.journalFontSizes[index - 1] || 16;
         mergeObject(data, {
             adventure: this.bookData,
             currentChapter,
             breadcrumbs: this.renderBreadcrumbs(),
-            toc
+            toc,
+            fontSize
         })
         return data
     }

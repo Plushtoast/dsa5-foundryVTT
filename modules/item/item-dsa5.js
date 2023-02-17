@@ -403,6 +403,7 @@ export default class Itemdsa5 extends Item {
 
     static attackStatEffect(situationalModifiers, value) {
         if (value != 0) {
+            value = isNaN(value) ? value : Number(value)
             situationalModifiers.push({
                 name: game.i18n.localize("statuseffects"),
                 value,
@@ -1296,7 +1297,7 @@ class MeleeweaponDSA5 extends Itemdsa5 {
         } else if (data.mode == "parry") {
             this.prepareMeleeParry(situationalModifiers, actor, data, source, combatskills, wrongHandDisabled)
         }
-        this.attackStatEffect(situationalModifiers, Number(actor.system.meleeStats[data.mode]))
+        this.attackStatEffect(situationalModifiers, actor.system.meleeStats[data.mode])
 
         if (["attack", "parry"].includes(data.mode)) situationalModifiers.push(...MeleeweaponDSA5.getMiracleModifiers(actor, { name: source.system.combatskill.value }, "", data.mode))
     }
@@ -1489,7 +1490,7 @@ class RangeweaponItemDSA5 extends Itemdsa5 {
             }
             situationalModifiers.push(...RangeweaponItemDSA5.getMiracleModifiers(actor, { name: source.system.combatskill.value }, "", data.mode))
         }
-        this.attackStatEffect(situationalModifiers, Number(actor.system.rangeStats[data.mode]))
+        this.attackStatEffect(situationalModifiers, actor.system.rangeStats[data.mode])
     }
 
     static async checkAmmunitionState(item, testData, actor, mode) {
@@ -1741,7 +1742,7 @@ class TraitItemDSA5 extends Itemdsa5 {
 
         this.attackStatEffect(
             situationalModifiers,
-            Number(actor.system[traitType == "meleeAttack" ? "meleeStats" : "rangeStats"][data.mode])
+            actor.system[traitType == "meleeAttack" ? "meleeStats" : "rangeStats"][data.mode]
         )
     }
 

@@ -385,7 +385,7 @@ export default class OpposedDsa5 {
         if (attackerTest.successLevel > 0 && defenderTest.successLevel < 0) {
             const damage = this._calculateOpposedDamage(attackerTest, defenderTest, options)
             if (damage.armorDamaged.damaged && damage.armorDamaged.ids.length)
-                opposeResult.other.push(`<div class="center"><button class="gearDamaged onlyTarget" data-uuid="${damage.armorDamaged.ids.join(";")}">${game.i18n.localize('WEAR.checkShort')}</button></div>`)
+                opposeResult.other.push(`<div style="margin-top:10px" class="center"><button class="gearDamaged onlyTarget" data-uuid="${damage.armorDamaged.ids.join(";")}">${game.i18n.localize('WEAR.checkShort')}</button></div>`)
 
             opposeResult.winner = "attacker"
 
@@ -395,7 +395,7 @@ export default class OpposedDsa5 {
                 damage.spellArmor != 0 ? `${damage.spellArmor} ${game.i18n.localize('spellArmor')}` : "",
                 damage.liturgyArmor != 0 ? `${damage.liturgyArmor} ${game.i18n.localize('liturgyArmor')}` : ""
             ]
-            let description = `<b>${game.i18n.localize("damage")}</b>: ${damage.damage} - <span data-tooltip="${title.join("")}">${damage.armor} (${game.i18n.localize("protection")})</span> = ${damage.sum}`
+            let description = `<b>${game.i18n.localize("damage")}</b>: ${damage.damage}<i class="lighticon fa attackWeaponless" data-tooltip="Roll"></i> - <span data-tooltip="${title.join("")}">${damage.armor}</span><i class="lighticon fa fa-shield-alt" data-tooltip="protection"></i> = ${damage.sum}`
             opposeResult.damage = {
                 description,
                 value: damage.sum,

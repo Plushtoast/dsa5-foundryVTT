@@ -340,7 +340,7 @@ export default class DSA5CombatDialog extends DialogShared {
             },
             {
                 name: game.i18n.localize("sizeCategory"),
-                value: DSA5.meleeSizeModifier[data.size],
+                value: DSA5.meleeSizeModifier[data.size] || 0,
             },
             ...Itemdsa5.getSpecAbModifiers(html, mode),
             ...this.assassinationModifiers(testData, data),
@@ -361,7 +361,7 @@ export default class DSA5CombatDialog extends DialogShared {
         this._resolveDefault(testData, cardOptions, html, options);
         const data = new FormDataExtended(html.find('form')[0]).object
         const quickChangeMod = data.quickChange ? -4 : 0
-        const sizeMod = DSA5.rangeSizeModifier[data.size]
+        const sizeMod = DSA5.rangeSizeModifier[data.size] || 0
         const rangeMod = DSA5.rangeMods[ data.distance || "medium"].attack
         testData.situationalModifiers.push({
                 name: game.i18n.localize("target") + " " + html.find('[name="targetMovement"] option:selected').text(),

@@ -1,10 +1,14 @@
 import Actordsa5 from "../actor/actor-dsa5.js";
 import OnUseEffect from "./onUseEffects.js";
 import Riding from "./riding.js";
+import DSA5_Utility from "./utility-dsa5.js";
 
 export default class TokenHotbar2 extends Application {
     static registerTokenHotbar() {
-        if (!game.dsa5.apps.tokenHotbar) game.dsa5.apps.tokenHotbar = new TokenHotbar2()
+        if (!game.dsa5.apps.tokenHotbar) {
+            game.dsa5.apps.tokenHotbar = new TokenHotbar2()
+            game.dsa5.apps.tokenHotbar.render(true)
+        } 
     }
 
     constructor(options) {
@@ -150,83 +154,123 @@ export default class TokenHotbar2 extends Application {
         })
     }
 
+    async handleEffect(ev, actor, id, tokenId){
+        const effect = actor.effects.get(id)
+        const isSystemEffect = effect.getFlag("core", "statusId")
+        if (ev.button == 0) {
+            if (isSystemEffect) await actor.addCondition(isSystemEffect, 1, false, false)
+            else effect.sheet.render(true)
+        } else if (ev.button == 2) {
+            if (isSystemEffect) await actor.removeCondition(isSystemEffect, 1, false)
+            else await actor.sheet._deleteActiveEffect(id)
+        }
+        await this.render(true)
+    }
+
+    async handleSkillRoll(ev, actor, id, tokenId){
+        const options = {}
+        if(ev.button == 2) options.rollMode = "blindroll"
+
+        if("rideLoyaltyID" == id){
+            Riding.rollLoyalty(actor, options)
+        }
+        else if ("attackWeaponless" == id) {
+            actor.setupWeaponless("attack", options, tokenId).then(setupData => {
+                actor.basicTest(setupData)
+            });
+        } else {
+            let result = actor.items.get(id)
+            if (result) {
+                if(ev.originalEvent.ctrlKey) return result.sheet.render(true)
+
+                switch (result.type) {
+                    case "meleeweapon":
+                    case "rangeweapon":
+                    case "trait":
+                        actor.setupWeapon(result, "attack", options, tokenId).then(setupData => { actor.basicTest(setupData) });
+                        break
+                    case "liturgy":
+                    case "spell":
+                        actor.setupSpell(result, options, tokenId).then(setupData => { actor.basicTest(setupData) });
+                        break
+                    case "skill":
+                        actor.setupSkill(result, options, tokenId).then(setupData => { actor.basicTest(setupData) })
+                        break
+                    case "consumable":
+                        new Dialog({
+                            title: game.i18n.localize("SHEET.ConsumeItem") + ": " + result.name,
+                            content: game.i18n.localize("SHEET.ConsumeItem") + ": " + result.name,
+                            default: 'yes',
+                            buttons: {
+                                Yes: {
+                                    icon: '<i class="fa fa-check"></i>',
+                                    label: game.i18n.localize("yes"),
+                                    callback: async() => {
+                                        await result.setupEffect(null, {}, tokenId)
+                                        await this.updateDSA5Hotbar()
+                                    }
+                                },
+                                cancel: {
+                                    icon: '<i class="fas fa-times"></i>',
+                                    label: game.i18n.localize("cancel"),
+                                }
+                            }
+                        }).render(true)
+                        break
+                }
+
+            }
+        }
+    }
+
+    async handleOnUse(ev, actor, id, tokenId){
+        let item = actor.items.get(id)
+        const onUse = new OnUseEffect(item)
+        onUse.executeOnUseEffect()
+    }
+
+    async handleGM(ev, actor, id, tokenId){
+        switch(id){
+            case "masterMenu":
+                game.dsa5.apps.gameMasterMenu.render(true)
+                break
+            case "randomVictim":
+                this.handleGMRandomVictim(ev)
+                break
+            default:
+        }        
+    }
+
+    async handleGMRandomVictim(ev){
+        const randomPlayer = await game.dsa5.apps.gameMasterMenu.rollRandomPlayer(ev.button == 2)
+        const actor = game.actors.get(randomPlayer)
+        if(actor){
+            const k = await DSA5_Utility.showArtwork(actor)
+            if(!ev.originalEvent.ctrlKey) setTimeout(() => { k.close() }, 2000)
+        }
+    }
+
     async executeQuickButton(ev) {
-        const actor = canvas.tokens.controlled[0].actor
-        const tokenId = canvas.tokens.controlled[0].id
+        const actor = canvas.tokens.controlled[0]?.actor
+        const tokenId = canvas.tokens.controlled[0]?.id
         const id = ev.currentTarget.dataset.id
         const subFunction = ev.currentTarget.dataset.subfunction
+        
         switch (subFunction) {
             case "addEffect":
                 AddEffectDialog.showDialog()
                 break
             case "effect":
-                const effect = actor.effects.get(id)
-                const isSystemEffect = effect.getFlag("core", "statusId")
-                if (ev.button == 0) {
-                    if (isSystemEffect) await actor.addCondition(isSystemEffect, 1, false, false)
-                    else effect.sheet.render(true)
-                } else if (ev.button == 2) {
-                    if (isSystemEffect) await actor.removeCondition(isSystemEffect, 1, false)
-                    else await actor.sheet._deleteActiveEffect(id)
-                }
-                await this.render(true)
+                this.handleEffect(ev, actor, id, tokenId)
                 break
             case "onUse":
-                let item = actor.items.get(id)
-                const onUse = new OnUseEffect(item)
-                onUse.executeOnUseEffect()
+                this.handleOnUse(ev, actor, id, tokenId)
+                break
+            case "gm":
+                this.handleGM(ev, actor, id, tokenId)
                 break
             default:
-                if("rideLoyaltyID" == id){
-                    Riding.rollLoyalty(actor)
-                }
-                else if ("attackWeaponless" == id) {
-                    actor.setupWeaponless("attack", {}, tokenId).then(setupData => {
-                        actor.basicTest(setupData)
-                    });
-                } else {
-                    let result = actor.items.get(id)
-                    if (result) {
-                        if(ev.button == 2) return result.sheet.render(true)
-
-                        switch (result.type) {
-                            case "meleeweapon":
-                            case "rangeweapon":
-                            case "trait":
-                                actor.setupWeapon(result, "attack", {}, tokenId).then(setupData => { actor.basicTest(setupData) });
-                                break
-                            case "liturgy":
-                            case "spell":
-                                actor.setupSpell(result, {}, tokenId).then(setupData => { actor.basicTest(setupData) });
-                                break
-                            case "skill":
-                                actor.setupSkill(result, {}, tokenId).then(setupData => { actor.basicTest(setupData) })
-                                break
-                            case "consumable":
-                                new Dialog({
-                                    title: game.i18n.localize("SHEET.ConsumeItem") + ": " + result.name,
-                                    content: game.i18n.localize("SHEET.ConsumeItem") + ": " + result.name,
-                                    default: 'yes',
-                                    buttons: {
-                                        Yes: {
-                                            icon: '<i class="fa fa-check"></i>',
-                                            label: game.i18n.localize("yes"),
-                                            callback: async() => {
-                                                await result.setupEffect(null, {}, tokenId)
-                                                await this.updateDSA5Hotbar()
-                                            }
-                                        },
-                                        cancel: {
-                                            icon: '<i class="fas fa-times"></i>',
-                                            label: game.i18n.localize("cancel"),
-                                        }
-                                    }
-                                }).render(true)
-                                break
-                        }
-
-                    }
-                }
+                this.handleSkillRoll(ev, actor, id, tokenId)
         }
     }
 
@@ -241,7 +285,8 @@ export default class TokenHotbar2 extends Application {
             attacks: [],
             spells: [],
             default: [],
-            skills: []
+            skills: [],
+            gm: []
         }
         let consumable
         let onUse
@@ -363,7 +408,13 @@ export default class TokenHotbar2 extends Application {
                 }
                 items.onUsages = [onUse]
             }
+        } else if(game.user.isGM){
+            items.gm.push(
+                { name: game.i18n.localize('gmMenu'), icon: "systems/dsa5/icons/categories/DSA-Auge.webp", id: "masterMenu", cssClass: "gm", abbrev: "", subfunction: "gm" },
+                { name: game.i18n.localize('MASTER.randomPlayer'), iconClass: "fa fa-dice-six", id: "randomVictim", cssClass: "gm", abbrev: "", subfunction: "gm" }
+            )
         }
+        
 
         if (this.showEffects) {
             const label = game.i18n.localize("CONDITION.add")

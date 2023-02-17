@@ -27,6 +27,11 @@ export default class DialogReactDSA5 extends Dialog {
         }).render(true)
     }
 
+    activateListeners(html){
+        super.activateListeners(html)
+        html.find('.select2').select2()
+    }
+
     static getTargetActor(message) {
         if (!canvas.tokens) return {}
 

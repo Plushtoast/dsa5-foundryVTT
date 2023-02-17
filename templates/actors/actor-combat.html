@@ -59,16 +59,22 @@
                     <div class="col nintey center">
                         {{localize (concat "Range-" item.system.reach.value)}}
                     </div>
-                    <div class="col ten center very-small">
-                        <a class="swapWeaponHand lineheight">
-                        {{#if item.yieldedTwoHand}}
-                        <i data-tooltip="wrongGrip.twoHanded" class="fas fa-hands"></i>
-                        {{else}}
-                        <i data-tooltip="wrongGrip.oneHanded" class="fas fa-hand"></i>
-                        {{/if}}
-                        </a>
+                    <div class="col ten center very-small row-section wrap flexAlignCenter">
+                        <div class="col">
+                            <a class="swapWeaponHand">
+                                {{#if item.yieldedTwoHand}}
+                                    <i data-tooltip="wrongGrip.twoHanded" class="fas fa-hands"></i>
+                                {{else}}
+                                    <i data-tooltip="wrongGrip.oneHanded" class="fas fa-hand"></i>
+                                {{/if}}
+                            </a>
+                        </div>
+                        {{#if item.system.worn.offHand}}
+                        <div class="col">
+                            <a><i data-tooltip="offHand" class="fas fa-shield-halved"></i></a>
+                        </div>
+                        {{/if}}   
                     </div>
-                    
                 </div>
             </div>
         </div>

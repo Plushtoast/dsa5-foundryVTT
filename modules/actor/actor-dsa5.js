@@ -783,7 +783,7 @@ export default class Actordsa5 extends Actor {
     let applications = new Map();
     let availableAmmunition = [];
     let hasTrait = false;
-    const horse = Riding.getHorse(this)
+    const horse = Riding.getHorse(this, true)
 
     for (let i of actorData.items) {
       try {

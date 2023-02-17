@@ -1078,6 +1078,10 @@
       color: #333029a6;
     }
   }
+
+  .lighticon{
+    color: rgba(68, 68, 68, 0.65);
+  }
   
   .condition-toggle, .condition-edit, .ench, .spells .very-small a .fas, .inventory .very-small a .fas {
     padding: 1px;
@@ -3224,6 +3228,12 @@
         text-align: center;
         border-radius: 4px;
       }
+
+      .fa{
+        font-size: calc(var(--tokenQuickhotsize) - 15px);
+        line-height: var(--tokenQuickhotsize);
+        text-align: center;
+      }
   
       &.spell {
         box-shadow: inset 0px 0px 10px #121092;
@@ -3850,6 +3860,11 @@
       justify-content: center;
       align-items: center;
     }
+  }
+
+  .flexAlignCenter{
+    justify-content: center;
+    align-items: center;
   }
   
   #settings .fshopButton div {

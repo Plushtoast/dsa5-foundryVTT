@@ -164,7 +164,8 @@
         "poison": "Gift",
         "blessed": "Geweiht",
         "money": "Geld",
-        "plant": "Pflanze"
+        "plant": "Pflanze",
+        "food": "Lebensmittel"
     },
     "advanced": "Erweitert",
     "requiredFW": "Benötigter FW",
@@ -883,6 +884,7 @@
         "addItem": "Gegenstand erstellen",
         "Close": "Schließen",
         "Configure": "Blatt konfigurieren",
+        "increaseFontSize": "Schriftgröße vergrößern/verkleinern",
         "Token": "Token konfigurieren",
         "Import": "Element importieren",
         "Lock": "Steigerung sperren/entsperren",
@@ -965,6 +967,7 @@
         "BlindRoll": "Blinder Wurf",
         "whisper": "Private Nachricht",
         "usesItem": "{actor} benutzt {item}.",
+        "fontsize": "Schriftgröße: {size}px",
         "requestGroupCheck": " fordert eine Gruppenprobe in ",
         "enchantmentUsed": "<b>{item}</b> hat eine Ladung <b>{spell}</b> verbraucht.",
         "regenerates": "regeneriert",

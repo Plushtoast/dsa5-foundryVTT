@@ -95,6 +95,10 @@
         "Du kannst für Zauber ein Flächentemplate einstellen.",
         "Der Spielleiter kann einzelne Tabs von Ausrüstungsgegenständen verbergen.",
         "Informationsitems können in Journalen eingebettet werden.",
-        "Das Volumen von Traditionsartefakten kann automatisch berechnet werden."
+        "Das Volumen von Traditionsartefakten kann automatisch berechnet werden.",
+
+        "Mit dem Befehl @PostChat[beispiel text bla] kannst du Texte vorbereiten, um sie Spielern im Chat zu posten.",
+        "Hat eine Kreatur mehrere Aktionen wird dies im Initiative Tracker mit einer rot hinterlegten Zahl aufgezeigt.",
+        "Sturzschaden kann über den Kampftab ausgewürfelt werden."
     ]
 }

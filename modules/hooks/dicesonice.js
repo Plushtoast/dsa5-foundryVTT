@@ -133,6 +133,8 @@ export class DiceSoNiceCustomization extends Application {
         }
         const otherKey = { damage: "black" }
 
+        delete this.choices.custom 
+
         game.settings.registerMenu("dsa5", "dicesonicesettings", {
             name: "DiceSoNiceSettings",
             label: "DiceSoNice Settings",
