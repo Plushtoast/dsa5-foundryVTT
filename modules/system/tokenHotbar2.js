@@ -1,6 +1,7 @@
 import Actordsa5 from "../actor/actor-dsa5.js";
 import OnUseEffect from "./onUseEffects.js";
 import Riding from "./riding.js";
+import RuleChaos from "./rule_chaos.js";
 
 export default class TokenHotbar2 extends Application {
     static registerTokenHotbar() {
@@ -452,7 +453,40 @@ class AddEffectDialog extends Dialog {
 
     activateListeners(html) {
         super.activateListeners(html);
-        html.find('.reactClick').click(ev => this.addEffect(ev))
+
+        html.find('.reactClick').mouseenter((ev) => {
+            if (ev.currentTarget.getElementsByClassName("hovermenu").length == 0) {
+                let div = document.createElement("div")
+                div.classList.add("hovermenu")
+                div.style.cssText = "font-size: var(--font-size-20);"
+                let conf = document.createElement("i")
+                conf.classList.add("fas", "fa-cogs")
+                conf.title = game.i18n.localize("ActiveEffects.custom")
+                conf.addEventListener("click", async ev => this.configureEffect(ev), false)
+                div.appendChild(conf)                
+                ev.currentTarget.appendChild(div)
+            }
+        })
+        html.find('.reactClick').mouseleave((ev) => {
+            let e = ev.toElement || ev.relatedTarget;
+            if (e.parentNode == this || e == this) return;
+
+            ev.currentTarget.querySelectorAll(".hovermenu").forEach((e) => e.remove());
+        })
+
+        html.find('.quantity-click').mousedown(ev => {
+            const quantityFocus = ev.currentTarget.dataset.quantityfocus
+            const target = $(ev.currentTarget)
+            if(quantityFocus && !(target.is(":focus"))){
+                setTimeout(function() {target.select(), 100})
+                return
+            }
+            const val = { val: Number(target.val()) }
+            RuleChaos.increment(ev, val, "val")
+            target.val(val.val)
+        });
+
+        html.find('.reactClick').click(ev => this.addEffect(ev.currentTarget.dataset.value))
 
         let filterConditions = ev => this._filterConditions($(ev.currentTarget), html)
 
@@ -472,9 +506,43 @@ class AddEffectDialog extends Dialog {
         }
     }
 
-    async addEffect(ev) {
+    async configureEffect(ev) {
+        ev.stopPropagation()
+        const elem = $(ev.currentTarget).closest(".reactClick");
+        const id = elem.attr("data-value")
+        this.close()
+        new AddEffectDialog({
+            title: game.i18n.localize("CONDITION." + id),
+            content: await renderTemplate('systems/dsa5/templates/dialog/configurestatusdialog.html'),
+            default: 'add',
+            buttons: {
+                add: {
+                    icon: '<i class="fa fa-check"></i>',
+                    label: game.i18n.localize("CONDITION.add"),
+                    callback: async(html) => {
+                        const options = {}
+                        const duration = html.find('[name=unit]:checked').val() == "seconds" ? Math.round(html.find('.duration').val() / 5) : html.find('.duration').val()
+                        const label = html.find('.effectname').val()
+                        if (duration > 0) {
+                            mergeObject(options, RuleChaos._buildDuration(duration))
+                        }
+                        if (label) {
+                            options.label = label
+                        }
+                        await this.addEffect(id, options)
+                    }
+                }
+            }
+        }).render(true, { width: 400, resizable: false, classes: ["dsa5", "dialog"] })
+    }
+
+    async addEffect(id, options = {}) {
+        const effect = duplicate(CONFIG.statusEffects.find(x => x.id == id))
+        if (options) {
+            mergeObject(effect, options)
+        }
         for (let token of canvas.tokens.controlled) {
-            await token.actor.addCondition(ev.currentTarget.dataset.value, 1, false, false)
+            await token.actor.addCondition(effect, 1, false, false)
         }
         game.dsa5.apps.tokenHotbar.render(true)
         this.close()
@@ -482,13 +550,11 @@ class AddEffectDialog extends Dialog {
 
     static get defaultOptions() {
         const options = super.defaultOptions;
-        const height = Math.ceil(CONFIG.statusEffects.length / 3) * 32
 
         mergeObject(options, {
             classes: ["dsa5", "tokenStatusEffects"],
             width: 700,
-            resizable: true,
-            height
+            resizable: true
         });
         return options;
     }
