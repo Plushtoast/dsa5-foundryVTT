@@ -1,3 +1,4 @@
+import DSA5 from "../system/config-dsa5.js";
 import DSA5SoundEffect from "../system/dsa-soundeffect.js";
 import { showPatchViewer } from "../system/migrator.js"
 
@@ -283,6 +284,23 @@ export default function() {
         }
     });
 
+    const styles = duplicate(DSA5.styles)
+    for(let key of Object.keys(styles)){
+        styles[key] = game.i18n.localize(styles[key])
+    }
+    game.settings.register("dsa5", "globalStyle", {
+        name: "DSASETTINGS.globalStyle",
+        hint: "DSASETTINGS.globalStyleHint",
+        scope: "client",
+        config: true,
+        default: "dsa5-immersive",
+        type: String,
+        choices: styles,
+        onChange: async(val) => {
+            $('body').removeClass(Object.keys(styles).join(" ")).addClass(val)
+        }
+    });
+
     game.settings.register("dsa5", "selfControlOnPain", {
         name: "DSASETTINGS.selfControlOnPain",
         hint: "DSASETTINGS.selfControlOnPainHint",
@@ -518,6 +536,14 @@ export default function() {
 
     game.settings.register("dsa5", "trackedActors", {
         name: "sightOptions",
+        scope: "world",
+        config: false,
+        default: {},
+        type: Object
+    });
+
+    game.settings.register("dsa5", "selectedActors", {
+        name: "selectedActors",
         scope: "world",
         config: false,
         default: {},

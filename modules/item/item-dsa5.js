@@ -143,8 +143,8 @@ export default class Itemdsa5 extends Item {
     static buildSpeaker(actor, tokenId) {
         return {
             token: tokenId,
-            actor: actor ? actor.id : undefined,
-            scene: canvas.scene ? canvas.scene.id : null,
+            actor: actor?.id,
+            scene: canvas.scene?.id,
         }
     }
 

@@ -904,6 +904,10 @@
         "deobfuscateItem": "Deobfuscate section",
         "obfuscateItem": "Obfuscate section"
     },
+    "dsaStyle": {
+        "immersive": "Immersive",
+        "naked": "Naked (beta)"
+    },
     "traditionArtifacts": {
         "Animistenwaffe": "Animist weapon",
         "Bannschwert": "Spell-Sword",
@@ -1582,7 +1586,9 @@
         "selfControlOnPain1": "Only players",
         "selfControlOnPain2": "Off",
         "yesNumbered": "Yes (Numbering)",
-        "renameNumbered": "Rename (Numbering)"
+        "renameNumbered": "Rename (Numbering)",
+        "globalStyle": "Design",
+        "globalStyleHint": "Change the \"skin\" of the system."
     },
     "WEAR": {
         "check": "Breaking Point Rating Check ({category})",

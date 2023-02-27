@@ -74,7 +74,6 @@ class DSAMenuLayer extends InteractionLayer {
 class GameMasterMenu extends Application {
     constructor(app) {
         super(app)
-        this.selected = {}
         this.heros = []
         this.lastSkill = `${game.i18n.localize('LocalizedIDs.perception')}|skill`
         this.randomCreation = []
@@ -110,6 +109,16 @@ class GameMasterMenu extends Application {
         await super._render(force, options)
     }
 
+    getSelectedActors(){
+        const selected = game.settings.get("dsa5", "selectedActors")
+        const tracked = game.settings.get("dsa5", "trackedActors")
+        const final = {}
+        for(let key of Object.keys(selected)){
+            if(tracked.actors?.includes(key)) final[key] = selected[key]
+        }
+        return final
+    }
+
     activateListeners(html) {
         super.activateListeners(html)
         html.find('select.select2').select2()
@@ -120,7 +129,9 @@ class GameMasterMenu extends Application {
         })
         html.find('.heroSelector').change(ev => {
             ev.stopPropagation()
-            this.selected[this.getID(ev)] = $(ev.currentTarget).is(":checked")
+            const selected = this.getSelectedActors()
+            selected[this.getID(ev)] = $(ev.currentTarget).is(":checked")
+            game.settings.set("dsa5", "selectedActors", selected)
         })
         html.find('.skillSelektor').change(ev => {
             ev.stopPropagation()
@@ -330,11 +341,12 @@ class GameMasterMenu extends Application {
     async rollRandomPlayer(withMisfortune){
         let probabilities = {}
         let counter = 1
-        const anythingselected = Object.keys(this.selected).length != 0;
+        const selected = this.getSelectedActors()
+        const anythingselected = Object.values(selected).filter(x => x).length != 0;
 
         const heros = this.heros.length ? this.heros : await this.getTrackedHeros()
         for (const hero of heros) {
-            if (!this.selected[hero.id] && anythingselected) continue
+            if (!selected[hero.id] && anythingselected) continue
 
             probabilities[counter] = hero.id
             counter++
@@ -447,7 +459,8 @@ class GameMasterMenu extends Application {
 
     selectedIDs() {
         let ids = []
-        for (const [key, value] of Object.entries(this.selected)) {
+        const selected = this.getSelectedActors()
+        for (const [key, value] of Object.entries(selected)) {
             if (value) ids.push(key)
         }
         if(!ids.length) return game.settings.get("dsa5", "trackedActors").actors || []
@@ -567,12 +580,13 @@ class GameMasterMenu extends Application {
             sceneAutomationEnabled: game.settings.get("dsa5", "sightAutomationEnabled"),
             enableDPS: game.settings.get("dsa5", "enableDPS"),
             visions,
-            darkness: canvas.scene ? canvas.scene.darkness : 0
+            darkness: canvas.scene?.darkness || 0
         }
 
         this.heros = heros
+        const selected = this.getSelectedActors()
         for (const hero of heros) {
-            hero.gmSelected = this.selected[hero.id]
+            hero.gmSelected = selected[hero.id]
             hero.schips = hero.schipshtml()
             hero.purse = hero.items.filter(x => x.type == "money")
                 .sort((a, b) => b.system.price.value - a.system.price.value)

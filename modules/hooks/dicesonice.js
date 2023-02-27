@@ -124,6 +124,9 @@ export default function() {
 }
 
 export class DiceSoNiceCustomization extends Application {
+    static unloadedModels = []
+    static retries = 0
+    static retrying = false
     static attrs = ["mu", "kl", "in", "ch", "ff", "ge", "ko", "kk", "attack", "dodge", "parry", "damage"]
     initConfigs() {
         const colors = game.dice3d.exports.Utils.prepareColorsetList()
@@ -232,7 +235,10 @@ export class DiceSoNiceCustomization extends Application {
         console.warn("loading", names)
         for (const name of names) {
             const dieModel = game.dice3d.DiceFactory.systems[name]
-            if (!dieModel) continue
+            if (!dieModel) {
+                this.unloadedModels.push(name)
+                continue
+            }
 
             const dieModelsToLoad = dieModel.dice.filter((el) => types.length == 0 || types.includes(el.type))
             for (const model of dieModelsToLoad) {
@@ -246,6 +252,16 @@ export class DiceSoNiceCustomization extends Application {
                     console.warn("Unable to load dice model", name, model)
                 }
             }
+        }
+        if(this.unloadedModels.length && this.retries < 6 && !this.retrying){
+            this.retrying = true
+            setTimeout(() => {
+                this.retries += 1
+                const preload = new Set(this.unloadedModels)
+                this.unloadedModels = []
+                this.retrying = false
+                this.preloadDiceAssets(preload)
+            }, 10000)
         }
     }
 

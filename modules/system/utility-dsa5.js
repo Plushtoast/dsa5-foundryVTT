@@ -236,7 +236,7 @@ export default class DSA5_Utility {
             if (index >= 0 && types[index] == k.type) {
                 names.splice(index, 1)
                 types.splice(index, 1)
-                results.push(k)
+                results.push(k.toObject())
             }
             if (names.length <= 0) break
         }

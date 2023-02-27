@@ -112,20 +112,25 @@ Hooks.once("init", () => {
     Journal.registerSheet("dsa5", DSAJournalSheet, {makeDefault: true})
 
     ItemSheetdsa5.setupSheets()
+
+    Hooks.call('registerDSAstyle', DSA5.styles)
+
     configuration.default()
     DPS.initDoorMinDistance()
     mergeObject(CONFIG.JournalEntry.noteIcons, DSA5.noteIcons)
+
+    $('body').addClass(game.settings.get("dsa5", "globalStyle"))
 })
 
 Hooks.once('setup', () => {
     if (!["de", "en"].includes(game.i18n.lang)) {
         console.warn(`DSA5 - ${game.i18n.lang} is not a supported language. Falling back to default language.`)
-        game.settings.set("core", "language", "de").then(()=> foundry.utils.debouncedReload())
+        showForbiddenLanguageDialog()
+    } else {
+        const forceLanguage = game.settings.get("dsa5", "forceLanguage")
+        if (["de", "en"].includes(forceLanguage) && game.i18n.lang != forceLanguage) showWrongLanguageDialog(forceLanguage)
     }
-    const forceLanguage = game.settings.get("dsa5", "forceLanguage")
-    if (["de", "en"].includes(forceLanguage) && game.i18n.lang != forceLanguage) {
-        showWrongLanguageDialog(forceLanguage)
-    }
+    
     setupKnownEquipmentModifiers()
 
     BookWizard.initHook()
@@ -142,6 +147,48 @@ Hooks.once('setup', () => {
     AdvantageRulesDSA5.setupFunctions()
     SpecialabilityRulesDSA5.setupFunctions()
 })
+
+class ForbiddenLanguageDialog extends Dialog{
+    async close(options = {}){
+        if(!["de", "en"].includes(game.i18n.lang)) return
+
+        return super.close(options)
+    }
+}
+
+const showForbiddenLanguageDialog = () => {
+    let data = {
+        title: game.i18n.localize("language"),
+        content: `<p>Your foundry language is not supported by this system. Due to technical reasons your foundry language setting has to be switched to either english or german.</p>`,
+        buttons: {
+            de: {
+                icon: '<i class="fa fa-check"></i>',
+                label: "en",
+                callback: async() => { 
+                    await game.settings.set("core", "language", "de") 
+                    foundry.utils.debouncedReload()
+                }
+            },
+            en: {
+                icon: '<i class="fas fa-check"></i>',
+                label: "de",
+                callback: async() => { 
+                    await game.settings.set("core", "language", "en") 
+                    foundry.utils.debouncedReload()
+                }
+            },
+            logout: {
+                icon: '<i class="fas fa-door-closed"></i>',
+                label: game.i18n.localize('SETTINGS.Logout'),
+                callback: async() => { 
+                    ui.menu.items.logout.onClick()
+                }
+            }            
+        }
+    }
+
+    new ForbiddenLanguageDialog(data).render(true)
+}
 
 const showWrongLanguageDialog = (forceLanguage) => {
     let data = {

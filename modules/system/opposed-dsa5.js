@@ -162,10 +162,10 @@ export default class OpposedDsa5 {
     }
 
     static opposeMessage(attacker, target, fail) {
-        return `<div class ="opposed-message">
+        return `<div class="opposed-message">
             <b>${attacker.name}</b> ${game.i18n.localize("ROLL.Targeting")} <b>${target.document.name}</b> ${fail ? game.i18n.localize("ROLL.failed"): ""}
             </div>
-            <div class = "opposed-tokens row-section">
+            <div class="opposed-tokens row-section">
                 <div class="col two attacker">${OpposedDsa5.videoOrImgTag(attacker.texture.src)}</div>
                 <div class="col two defender">${OpposedDsa5.videoOrImgTag(target.document.texture.src)}</div>
             </div>
@@ -384,18 +384,21 @@ export default class OpposedDsa5 {
     static _evaluateWeaponOpposedRoll(attackerTest, defenderTest, opposeResult, options = {}) {
         if (attackerTest.successLevel > 0 && defenderTest.successLevel < 0) {
             const damage = this._calculateOpposedDamage(attackerTest, defenderTest, options)
-            if (damage.armorDamaged.damaged && damage.armorDamaged.ids.length)
-                opposeResult.other.push(`<div style="margin-top:10px" class="center"><button class="gearDamaged onlyTarget" data-uuid="${damage.armorDamaged.ids.join(";")}">${game.i18n.localize('WEAR.checkShort')}</button></div>`)
+            if (damage.armorDamaged.damaged && damage.armorDamaged.ids.length){
+                const uuids = damage.armorDamaged.ids.join(";")
+                opposeResult.other.push(`<div style="margin-top:10px" class="center"><button class="gearDamaged onlyTarget" data-uuid="${uuids}">${game.i18n.localize('WEAR.checkShort')}</button></div>`)
+            }               
 
             opposeResult.winner = "attacker"
 
-            let title = [
+            const title = [
                 damage.armorMod != 0 ? `${damage.armorMod + " " + game.i18n.localize('Modifier')}` : "",
                 damage.armorMultiplier != 1 ? "*" + damage.armorMultiplier + " " + game.i18n.localize('Modifier') : "",
                 damage.spellArmor != 0 ? `${damage.spellArmor} ${game.i18n.localize('spellArmor')}` : "",
                 damage.liturgyArmor != 0 ? `${damage.liturgyArmor} ${game.i18n.localize('liturgyArmor')}` : ""
-            ]
-            let description = `<b>${game.i18n.localize("damage")}</b>: ${damage.damage}<i class="lighticon fa attackWeaponless" data-tooltip="Roll"></i> - <span data-tooltip="${title.join("")}">${damage.armor}</span><i class="lighticon fa fa-shield-alt" data-tooltip="protection"></i> = ${damage.sum}`
+            ].join("")
+
+            const description = `<b>${game.i18n.localize("damage")}</b>: ${damage.damage}<i class="lighticon fa attackWeaponless" data-tooltip="Roll"></i> - <span data-tooltip="${title}">${damage.armor}</span><i class="lighticon fa fa-shield-alt" data-tooltip="protection"></i> = ${damage.sum}`
             opposeResult.damage = {
                 description,
                 value: damage.sum,
@@ -470,10 +473,6 @@ export default class OpposedDsa5 {
         opposeResult.speakerAttack = attacker;
         opposeResult.speakerDefend = defender;
 
-        if (opposeResult.swapped) {
-            opposeResult.speakerAttack = defender;
-            opposeResult.speakerDefend = attacker;
-        }
         return opposeResult;
     }
 
@@ -495,16 +494,8 @@ export default class OpposedDsa5 {
         }
         if (options.target) {
             chatOptions["flags.startMessageId"] = options.startMessageId
-            await ChatMessage.create(chatOptions)
-        } else {
-            try {
-                await this.startMessage.update(chatOptions).then(resultMsg => {
-                    ui.chat.updateMessage(resultMsg)
-                })
-            } catch {
-                await ChatMessage.create(chatOptions)
-            }
-        }
+        } 
+        await ChatMessage.create(chatOptions)
     }
 
     static async resolveUndefended(startMessage, additionalInfo = "") {

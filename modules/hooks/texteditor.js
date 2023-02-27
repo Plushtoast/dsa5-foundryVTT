@@ -37,7 +37,7 @@ export function setEnrichers() {
         {
             pattern: /@Info\[[a-zA-zöüäÖÜÄ&; -\.0-9]+\]/g,
             enricher: async(match, options) => {
-                let uuid = match[0].match(/(?<=\[)(.*?)(?=\])/)[0]
+                let uuid = match[0].match(/(?:\[)(.*?)(?=\])/)[0].slice(1)
                 const item = await fromUuid(uuid)
                 if(!item || item.type != "information") return $('<a class="content-link broken"><i class="fas fa-unlink"></i>info</a>')[0]
                 if(!game.user.isGM) return $(`<a class="content-link"><i class="fas fa-mask"></i>${game.i18n.localize('GM notes')}</a>`)[0]

@@ -156,7 +156,7 @@ export default class DSA5CombatDialog extends DialogShared {
     prepareFormRecall(html) {
         super.prepareFormRecall(html);
         if (canvas.scene && game.settings.get("dsa5", "sightAutomationEnabled")) {
-            const darkness = canvas.scene ? canvas.scene.darkness : 0;
+            const darkness = canvas.scene?.darkness || 0;
             const threholds = game.settings
                 .get("dsa5", "sightOptions")
                 .split("|")

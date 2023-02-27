@@ -21,6 +21,11 @@
             {{/if}}
         </li>
         {{/each}} {{/each}}
+        {{#if gmMode}}
+        <li class="itdarkness primary" data-category="darkness" data-tooltip="MASTER.threshold" data-subfunction="darkness">
+            <input type="range" min="0" max="1" step="0.05" class="updateDarkness" name="updateDarkness" value="{{darkness}}">
+        </li>
+        {{/if}}
     </ul>
     {{#if count}}
     <section class="dragHandler" data-tooltip="TT.resizer">

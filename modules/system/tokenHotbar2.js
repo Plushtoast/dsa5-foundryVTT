@@ -3,6 +3,7 @@ import OnUseEffect from "./onUseEffects.js";
 import Riding from "./riding.js";
 import RuleChaos from "./rule_chaos.js";
 import DSA5_Utility from "./utility-dsa5.js";
+import { tinyNotification } from "./view_helper.js";
 
 export default class TokenHotbar2 extends Application {
     static registerTokenHotbar() {
@@ -114,6 +115,13 @@ export default class TokenHotbar2 extends Application {
         }
     }
 
+    changeDarkness(ev){
+        const darkness = Number(ev.currentTarget.value)
+        if (canvas.scene) canvas.scene.update({ darkness }, { animateDarkness: 3000 })
+
+        tinyNotification(darkness)
+    }
+
     activateListeners(html) {
         super.activateListeners(html);
         const container = html.find(".dragHandler");
@@ -129,6 +137,8 @@ export default class TokenHotbar2 extends Application {
         container.on('mousedown', async(ev) => {
             await this._cycleLayout(ev)
         })
+
+        html.find('.itdarkness input').change(ev => this.changeDarkness(ev))
 
         html.on('mousedown', 'li', async(ev) => {
             ev.stopPropagation()
@@ -270,6 +280,8 @@ export default class TokenHotbar2 extends Application {
             case "gm":
                 this.handleGM(ev, actor, id, tokenId)
                 break
+            case "darkness":
+                break
             default:
                 this.handleSkillRoll(ev, actor, id, tokenId)
         }
@@ -298,6 +310,7 @@ export default class TokenHotbar2 extends Application {
         const vertical = direction % 2
         const itemWidth = TokenHotbar2.defaultOptions.itemWidth
         const spellTypes = ["liturgy", "spell"]
+        let gmMode = false
         if (actor) {
             const moreSkills = []
             let moreSpells = []
@@ -410,6 +423,7 @@ export default class TokenHotbar2 extends Application {
                 items.onUsages = [onUse]
             }
         } else if(game.user.isGM){
+            gmMode = true
             items.gm.push(
                 { name: game.i18n.localize('gmMenu'), icon: "systems/dsa5/icons/categories/DSA-Auge.webp", id: "masterMenu", cssClass: "gm", abbrev: "", subfunction: "gm" },
                 { name: game.i18n.localize('MASTER.randomPlayer'), iconClass: "fa fa-dice-six", id: "randomVictim", cssClass: "gm", abbrev: "", subfunction: "gm" }
@@ -427,7 +441,7 @@ export default class TokenHotbar2 extends Application {
             items.effects = [effect]
         }
 
-        const count = Object.keys(items).reduce((prev, cur) => { return prev + items[cur].length }, 0)
+        const count = Object.keys(items).reduce((prev, cur) => { return prev + items[cur].length }, 0) + (gmMode ? 2 : 0)
 
         if (vertical) {
             this.position.width = itemWidth
@@ -437,7 +451,7 @@ export default class TokenHotbar2 extends Application {
             this.position.height = itemWidth
         }
 
-        mergeObject(data, { items, itemWidth, direction, count })
+        mergeObject(data, { items, itemWidth, direction, count, gmMode, darkness: canvas.scene?.darkness || 0 })
         return data
     }
 
@@ -601,11 +615,12 @@ class AddEffectDialog extends Dialog {
 
     static get defaultOptions() {
         const options = super.defaultOptions;
-
+        //const height = Math.ceil(CONFIG.statusEffects.length / 3) * 32
         mergeObject(options, {
             classes: ["dsa5", "tokenStatusEffects"],
             width: 700,
-            resizable: true
+            resizable: true,
+           // height
         });
         return options;
     }

@@ -6,6 +6,7 @@
     <div class="col fifteen center">{{localize "probe"}}</div>
     <div class="col fifteen center"></div>
     <div class="col fifteen center">{{localize "interval"}}</div>
+    <div class="col fifteen center">{{localize "probes"}}</div>
     <div class="col fifteen center">{{localize "status"}}</div>
     <div class="col ten center">
       <a class="item-create very-small" data-tooltip="SHEET.addItem" item-section="aggregatedTest"
@@ -27,6 +28,9 @@
         </div>
         <div class="col fifteen center">
           {{item.system.interval.value}}
+        </div>
+        <div class="col fifteen center">
+          {{item.system.usedTestCount.value}} / {{item.system.allowedTestCount.value}}
         </div>
         <div class="col fifteen center">
           {{item.system.cummulatedQS.value}} / 10

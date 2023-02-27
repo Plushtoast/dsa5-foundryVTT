@@ -57,6 +57,10 @@ export default function() {
         }
     })
 
+    Hooks.on("updateActor",(actor, updates) => {
+        if(!game.user.isGM && actor.limited && hasProperty(updates, "system.merchant.hidePlayer")) ui.sidebar.render(true)
+    })
+
     Hooks.on("deleteActiveEffect", (effect, options) => {
         if(options.noHook) return
 

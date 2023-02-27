@@ -1,3 +1,4 @@
+
 :root {
     --border-color:#736953a6;
     --bg-color:#e1d3c6;
@@ -200,90 +201,35 @@
       width: 15%;
     }    
   }
-  
-  .creature-sheet {
-    .headerInput, .sheet-header .headerInput {
-      box-sizing: border-box;
-      margin: 5px;
-    }
-  }
-  
-  .character-sheet .general .headerInput {
-    box-sizing: border-box;
-    margin: 5px;
-  }
-  
-  .npc-sheet .general {
-    .headerInput, .sheet-header .headerInput {
-      box-sizing: border-box;
-      margin: 5px;
-    }
-  }
-  
+    
+  .creature-sheet .headerInput, .sheet-header .headerInput,
+  .npc-sheet .general .headerInput, .sheet-header .headerInput,
+  .character-sheet .general .headerInput,
   .character-sheet .sheet-header .headerInput {
     box-sizing: border-box;
     margin: 5px;
   }
   
-  .npc-sheet {
-    .general .headerInput input, .sheet-header .headerInput input {
+  .npc-sheet .general .headerInput input, .sheet-header .headerInput input,
+  .creature-sheet .headerInput input, .sheet-header .headerInput input,
+  .character-sheet .general .headerInput input, .sheet-header .headerInput input {
       border: none;
       border-bottom: 1px solid var(--border-color);
       box-shadow: none;
       background-color: transparent;
       border-radius: 0px;
       height: auto;
-    }
   }
   
-  .creature-sheet {
-    .headerInput input, .sheet-header .headerInput input {
-      border: none;
-      border-bottom: 1px solid var(--border-color);
-      box-shadow: none;
-      background-color: transparent;
-      border-radius: 0px;
-      height: auto;
-    }
-  }
-  
-  .character-sheet {
-    .general .headerInput input, .sheet-header .headerInput input {
-      border: none;
-      border-bottom: 1px solid var(--border-color);
-      box-shadow: none;
-      background-color: transparent;
-      border-radius: 0px;
-      height: auto;
-    }
-  }
-  
-  .creature-sheet {
-    .headerInput span, .sheet-header .headerInput span {
+  .creature-sheet .headerInput span, .sheet-header .headerInput span,
+  .npc-sheet .general .headerInput span, .sheet-header .headerInput span,
+  .character-sheet .general .headerInput span, .sheet-header .headerInput span {
       color: rgb(51, 51, 51);
       margin-left: 4px;
       margin-bottom: 2px;
       font-size: 12px;
-    }
   }
   
-  .npc-sheet {
-    .general .headerInput span, .sheet-header .headerInput span {
-      color: rgb(51, 51, 51);
-      margin-left: 4px;
-      margin-bottom: 2px;
-      font-size: 12px;
-    }
-  }
-  
-  .character-sheet {
-    .general .headerInput span, .sheet-header .headerInput span {
-      color: rgb(51, 51, 51);
-      margin-left: 4px;
-      margin-bottom: 2px;
-      font-size: 12px;
-    }
-  }
   
   .item form .form-group input[type="checkbox"] {
     flex: 3;
@@ -384,23 +330,10 @@
     transition: background-color 0.3s linear;
   }
   
-  .window-app.npc-sheet.app .window-content {
-    box-shadow: none;
-  }
-  
   .charimg {
     width: 115px;
     height: 115px;
     object-fit: contain;
-  }
-  
-  .character-sheet form {
-    border-color: black;
-    border-style: double;
-    border-width: 10px;
-    border-image: url('../../icons/backgrounds/actor.webp') 27 28 28 28;
-    padding: 4px;
-    margin: 0px;
   }
   
   .characteristics-table {
@@ -510,42 +443,6 @@
     flex: 50%;
   }
   
-  .window-app {
-    .window-header {
-      .aa-item-settings, [id^="popout_"] {
-        width: 15px;
-        height: 15px;
-        margin-top: 10px;
-      }
-    }
-  
-    &:not(.monarch) .window-header > a {
-      width: 15px;
-      height: 15px;
-      margin-top: 10px;
-
-      i {
-        width: 22px;
-        border: 1px solid #111;
-        padding: 3px;
-        background-color: #444;
-        text-align: center;
-        border-radius: 100%;
-        color: white;
-      }
-    }
-  
-    .aa-item-settings i, .window-header [id^="popout_"] i {
-      width: 22px;
-      border: 1px solid #111;
-      padding: 3px;
-      background-color: #444;
-      text-align: center;
-      border-radius: 100%;
-      color: white;
-    }
-  }
-  
   #combat #combat-round .encounters {
     h4, a {
       color: #444;
@@ -557,51 +454,11 @@
   #combat-tracker .token-effect {
     box-shadow: 0px 0px 10px black inset;
   }
-  
-  #sidebar {
-    .sidebar-tab {
-      color: #555;
-  
-      a {
-        i {
-          color: #555;
-        }
-  
-        &.inactive i {
-          color: rgb(172, 172, 172);
-        }
-      }
-    }
-  
-    .global-control {
-      color: white;
-      margin-left: 10px;
-    }
-  }
-  
+
   #compendium li.compendium-pack .compendium-footer, #playlists li.sound .sound-playback .sound-timer {
     color: rgb(14, 12, 12);
   }
   
-  #sidebar {
-    border: none;
-    overflow: visible;
-    top: 0px;
-    height: 100vh;
-  
-    &:before {
-      position: absolute;
-      top: 0;
-      bottom: 0;
-      left: -13px;
-      right: 0;
-      content: '';
-      background-image: url('../../icons/backgrounds/menu.webp');
-      background-repeat: repeat-y;
-      background-size: 100%;
-      z-index: -1;
-    }
-  }
   
 .tour .step-title{
   overflow: initial;
@@ -609,19 +466,6 @@
 
   .directory .directory-list .directory-item.folder .context {
     color: black;
-  }
-  
-  #sidebar.collapsed:before {
-    content: none;
-  }
-  
-  .sidebar-popout .chat-message, #sidebar .chat-message {
-    background: url('../../icons/backgrounds/chatpaper.webp') no-repeat;
-    background-size: 100% 100%;
-    border: none;
-    padding: 8px 15px 15px 15px;
-    padding-left: 18px;
-    margin-bottom: 8px;
   }
   
   .chat-buttons {
@@ -1117,58 +961,6 @@
     content: "\f255";
   }
   
-  .window-app {
-    &.actor .window-content {
-      box-shadow: 0 0 20px #000;
-    }
-  
-    &.image-popout .window-content {
-      background: url('../../icons/backgrounds/sheet2.webp') no-repeat;
-      background-position: center;
-      background-repeat: repeat-y;
-      background-size: 101% 1400px;
-    }
-  }
-  
-  .app.sidebar-popout .window-content {
-    background: url('../../icons/backgrounds/sheet2.webp') no-repeat;
-    background-position: center;
-    background-repeat: repeat-y;
-    background-size: 101% 1400px;
-  }
-  
-  .window-app {
-    .window-content {
-      background: url('../../icons/backgrounds/sheet2.webp') no-repeat;
-      background-position: center;
-      background-repeat: repeat-y;
-      background-size: 101% 1400px;
-    }
-  
-    &.dsajournal .window-content {
-      background-image: url('../../icons/backgrounds/journalentry.webp');
-      background-size: 97% 1000px;
-      background-position: center;
-      background-repeat: repeat-y;
-      padding: 0 50px;
-
-      .video-container{
-        position: relative;
-        width: 100%;
-        padding-bottom: 56.25%;
-    
-        iframe {
-          position: absolute;
-          top: 0;
-          left: 0;
-          width: 100%;
-          height: 100%;
-          border: 0;
-        }
-      }
-    }
-  }
-  
   .sheet.journal-entry:not(.dsajournal) .sidebar.directory {
     background: rgba(0, 0, 0, 0.6);
   }
@@ -1189,48 +981,11 @@
     &.dsajournal .editor-content p {
       margin-right: 10px;
     }
-  
-    &.actor .window-content, &.item .window-content {
-      margin-left: 15px;
-      margin-right: 15px;
-    }
   }
   
   form.dsa5.item-sheet {
     padding-left: 10px;
     padding-right: 10px;
-  }
-  
-  .window-app {
-    &.dialog .window-content {
-      padding-top: 14px;
-      padding-bottom: 14px;
-    }
-  
-    &.npc-sheet .window-header, &.character-sheet .window-header, &.item .window-header {
-      background-image: url('../../icons/backgrounds/sidebar-top.webp');
-      border: none;
-      top: 2px;
-    }
-  
-    &.npc-sheet:not(.monarch):after, &.character-sheet:not(.monarch):after, &.item:not(.monarch):after {
-      background-image: url('../../icons/backgrounds/sidebar-bot.webp');
-      bottom: 2px;
-      content: '';
-    }
-  
-    background: none;
-    box-shadow: none;
-  
-    &:not(.monarch) .window-header, &:after {
-      background-repeat: no-repeat;
-      position: relative;
-      min-height: 40px;
-      z-index: 1;
-      height: 40px;
-      width: 100%;
-      background-size: 100% 40px;
-    }
   }
 
   .qOverlay{
@@ -1264,43 +1019,13 @@
     position: unset;
   }
   
-  .window-app .window-resizable-handle {
-    z-index: 2;
-    bottom: 11px;
-    right: 25px;
-  }
-  
   #client-settings section.content .settings-list {
     overflow-y: hidden;
     max-height: max-content;
   }
   
-  .window-app {
-    .window-header .window-title {
-      text-align: center;
-      margin-left: 15%;
-      margin-top: 5px;
-      color: white;
-      font-family: var(--boldFont);
-      font-weight: bold;
-      font-family: 'GentiumBasic-Bold';
-      text-shadow: 0px 0px 2px rgba(0, 0, 0, 0.75);
-    }
-  
-    &.npc-sheet .window-header .window-title, &.character-sheet .window-header .window-title {
-      margin-top: 10px;
-      color: black;
-      text-shadow: 1px 1px white;
-    }
-  
-    .header-button.close {
-      margin-right: 25px;
-    }
-  }
-  
   .dsa5.item {
     .item-header {
-      background-image: url('../../icons/backgrounds/kapitelstart.webp');
       background-size: 100% 50px;
       background-repeat: no-repeat;
       height: 50px;
@@ -1323,14 +1048,7 @@
       border: none;
     }
   
-    &.minimized .window-header .window-title {
-      color: black;
-    }
-  
-    .window-header .window-title {
-      color: transparent;
-      text-shadow: none;
-    }
+    
   }
   
   .item-main {
@@ -1407,17 +1125,6 @@
     border-color: black;
   }
   
-  #sidebar {
-    .directory-list .documentName, .playlist.now-playing, .directory-list .directory-item.document {
-      background-color: var(--sheet-bg);
-      margin: 3px;
-      border: 1px solid var(--sheet-border);
-      border-radius: 5px;
-      color: black;
-      margin-left: 10px;
-    }
-  }
-  
   #compendium {
     li.compendium-pack {
       background-color: var(--sheet-bg);
@@ -1445,32 +1152,7 @@
       text-shadow: none;
     }
   }
-  
-  #sidebar-tabs {
-    border-bottom: 1px solid black;
-    box-shadow: 0 0 10px black;
-    background-color: #100d087a;
-  }
-  
-  .sidebar-popout .dice-tray input[type="text"], #sidebar .dice-tray input[type="text"] {
-    color: black;
-  }
-  
-#sidebar button,
-.initTracker button, .masterMenu button, .sheetButton,
-.sidebar-popout button, 
-.sidebar-popout .dice-tray button  {
-    background-image: linear-gradient(to right top, #be2020, #af1622, #9f0d22, #8f0522, #7f0021);
-    color: white;
-    border: 1px solid black;
-    &:active {
-      box-shadow: inset 0 0 5px black;
-    }
-  
-    &:hover {
-      box-shadow: inset 0 0 3px white;
-    }
-}
+   
   
   #combat li.combatant .roll {
     background-image: url('../../icons/dice/d6white.svg');
@@ -1506,43 +1188,7 @@
   .app.sidebar-popout .window-content {
     color: rgb(51, 51, 51);
   }
-  
-  .window-app {
-    &.creature-sheet .window-content {
-      box-shadow: none;
-    }
-  
-    &.monarch {
-      .window-header, &:after {
-        background-image: none;
-      }
-    }
-  
-    .window-header {
-      background-image: url('../../icons/backgrounds/blackhat.webp');
-      top: 7px;
-      border: none;
-    }
-  
-    &:not(.monarch):after {
-      background-image: url('../../icons/backgrounds/blackbook.webp');
-      bottom: 12px;
-      content: '';
-    }
-  
-    &.creature-sheet:after {
-      background-image: url('../../icons/backgrounds/blackcreaturebot.webp');
-    }
-  
-    &.masterMenu:after {
-      background-image: url('../../icons/backgrounds/masterborder.webp');
-    }
-  
-    &.creature-sheet .window-resizable-handle {
-      bottom: 18px;
-    }
-  }
-  
+   
   .imagebox {
     position: relative;
     height: 95px;
@@ -1593,17 +1239,6 @@
     border: none;
   }
   
-  .chat-message .message-header {
-    padding: 10px 5px;
-    background-image: url('../../icons/backgrounds/kapitelstart.webp');
-    background-size: 112% 110%;
-    background-repeat: no-repeat;
-  
-    /*background-position: -20px -5px;*/
-    background-position: 67% -5px;
-    color: #191815;
-  }
-  
   .message-sender.with-image {
     line-height: 30px;
   }
@@ -1624,10 +1259,6 @@
     h3 {
       color: black;
     }
-  }
-  
-  #sidebar .sidebar-tab .folder a i {
-    color: rgb(216, 212, 212);
   }
   
   li.folder {
@@ -2054,65 +1685,6 @@
     line-height: 12px;
   }
   
-  #hotbar {
-    &:before {
-      background-image: url('../../icons/backgrounds/hotbarpart.webp'), url('../../icons/backgrounds/hotbarpart.webp'), url('../../icons/backgrounds/hotbar4.webp');
-      background-size: 30px 48px, 35px 48px, 100% 100%;
-      background-repeat: no-repeat;
-      content: '';
-      position: absolute;
-      left: 0px;
-      right: 0px;
-      bottom: -10px;
-      top: -10px;
-      z-index: -1;
-      background-position: 8px 11px, calc(100% - 8px) 11px, center;
-    }
-  
-    &.collapsedHotbar:before {
-      background-image: url('../../icons/backgrounds/hotbarpart.webp');
-    }
-  
-    .macro {
-      background: none;
-      border: 1px solid rgba(0, 0, 0, 0.5);
-  
-      &.active {
-        box-shadow: inset 0px 0px 25px #403014;
-        background: url('../../icons/backgrounds/macrobg.webp');
-  
-        &.parry {
-          box-shadow: inset 0px 0px 15px #016e0a;
-        }
-  
-        &.attack {
-          box-shadow: inset 0px 0px 15px #7e0202;
-        }
-      }
-    }
-  
-    #macro-list {
-      border: none;
-      margin: 0;
-    }
-  
-    .bar-controls {
-      margin: 0;
-      background: none;
-  
-      /*color:silver;*/
-      color: #000000;
-      border: none;
-  
-      /*text-shadow:0px 0px 8px black,0px 0px 8px black;*/
-      box-shadow: none;
-  
-      &:first-child {
-        margin-left: 5px;
-      }
-    }
-  }
-  
   .dsalist {
     list-style-type: none;
   }
@@ -2154,65 +1726,6 @@
     line-height: 15px;
   }
   
-  #players {
-    background: none;
-    border: none;
-    box-shadow: none;
-  
-    &:before {
-      background-image: url('../../icons/backgrounds/dsabot.webp');
-      background-size: 100% 15px;
-      background-repeat: no-repeat;
-      content: '';
-      position: absolute;
-      left: -2px;
-      right: -2px;
-      bottom: -5px;
-      top: -20px;
-      z-index: -1;
-      background-position: center calc(100%);
-    }
-  
-    h3 {
-      &:before {
-        background-image: url('../../icons/backgrounds/dsahead.webp'), url('../../icons/backgrounds/dsamid.webp');
-        background-size: 100% 30px, 100% calc(100% - 30px);
-        background-repeat: no-repeat;
-        content: '';
-        position: absolute;
-        left: -5px;
-        right: -5px;
-        bottom: 0px;
-        top: -20px;
-        z-index: -1;
-        background-position: center 0px, center 30px;
-      }
-  
-      border: none;
-      position: relative;
-      overflow: visible;
-    }
-  
-    #player-list {
-      border: none;
-      position: relative;
-      overflow: visible;
-  
-      &:before {
-        background-image: url('../../icons/backgrounds/dsamid.webp');
-        background-size: 100% 50px;
-        background-repeat: repeat-y;
-        content: '';
-        position: absolute;
-        left: -2px;
-        right: -2px;
-        bottom: 5px;
-        top: -3px;
-        z-index: -1;
-        background-position: center 0px;
-      }
-    }
-  }
   
   .card-content input {
     width: 30px;
@@ -3189,6 +2702,13 @@
         color: white;
         text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000;
       }
+      .itdarkness{
+        width: calc(var(--tokenQuickhotsize) * 2);
+        input{ 
+          height: var(--tokenQuickhotsize);
+          display: block;
+        }
+      }
       .subbuttons{
         .combatTooltip{
           height: 35px;
@@ -3867,27 +3387,12 @@
     align-items: center;
   }
   
-  #settings .fshopButton div {
-    display: inline-block;
-    background-image: url("../../lazy/patchimages/UlissesDigital.png");
-    background-size: contain;
-    width: 20px;
-    height: 19px;
-    margin: 0;
-    background-repeat: no-repeat;
-    background-position: center;
-    position: relative;
-    top: 5px;
-  }
-
   .settings-sidebar button{
     margin: 3px 0;
   }
-  
-  #sidebar button.fshopButton {
-    background: rgb(0, 111, 61);
-    background: linear-gradient(90deg, rgba(0, 38, 13, 1) 0%, rgba(0, 111, 61, 1) 100%);
-    position: relative;
+
+  #sidebar {
+    overflow: visible;
   }
   
   .plantContainer {
@@ -4020,3 +3525,6 @@
       }
     }
   }
+
+
+  @import "./immersive.scss"

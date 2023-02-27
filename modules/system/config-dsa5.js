@@ -363,6 +363,11 @@ DSA5.weaponStabilities = {
 
 DSA5.journalFontSizes = [8, 10, 12, 14, 16, 18, 20, 24, 28, 32];
 
+DSA5.styles = {
+    "dsa5-immersive": "dsaStyle.immersive",
+    "dsa5-naked": "dsaStyle.naked"
+}
+
 DSA5.fallingConditions = {
     normal: 0,
     soft1: -1,
