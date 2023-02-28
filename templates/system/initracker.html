@@ -89,7 +89,7 @@
         <ul class="iniDetailsList initTrackerList">
             {{#each turns as |turn|}}
             <li class="{{turn.newRound}}">
-                {{#if turn.hasRolled}} <span data-combatant-id="{{turn.id}}" class="rolledInit">{{turn.initiative}}</span>{{else}} ? {{/if}} <br/> <span class="turnRound">{{turn.round}}</span><br/>
+                {{#if turn.hasRolled}} <span data-combatant-id="{{turn.id}}" class="rolledInit" data-tooltip="initiative">{{turn.initiative}}</span>{{else}} ? {{/if}} <br/> <span class="turnRound" data-tooltip="COMBAT.Round">{{turn.round}}</span><br/>
                 <span class="actionCount">{{#if (and turn.owner (gt this.actionCount 1))}}{{turn.actionCounts}}{{else}}&nbsp;{{/if}}</span> 
             </li>
             {{/each}}

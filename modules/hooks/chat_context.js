@@ -5,12 +5,14 @@ export default function() {
     const fateAvailable = (actor, group) => { return DSA5_Utility.fateAvailable(actor, group) }
     const canHurt = function(li) {
         let cardData = game.messages.get(li.attr("data-message-id")).flags.opposeData
-        return (game.user.isGM && li.find(".opposed-card").length || li.find(".dice-roll").length) && (getProperty(cardData, "damage.value") || 0) > 0
+        const isOwner = DSA5_Utility.getSpeaker(cardData.speakerDefend)?.isOwner
+        return ((game.user.isGM || isOwner) && li.find(".opposed-card").length || li.find(".dice-roll").length) && (getProperty(cardData, "damage.value") || 0) > 0
     }
 
     const canHurtSP = function(li) {
         let cardData = game.messages.get(li.attr("data-message-id")).flags.opposeData
-        return (game.user.isGM && li.find(".opposed-card").length || li.find(".dice-roll").length) && (getProperty(cardData, "damage.sp") || 0) > 0
+        const isOwner = DSA5_Utility.getSpeaker(cardData.speakerDefend)?.isOwner
+        return ((game.user.isGM || isOwner) && li.find(".opposed-card").length || li.find(".dice-roll").length) && (getProperty(cardData, "damage.sp") || 0) > 0
     }
 
     const canCostMana = function(li) {
@@ -164,8 +166,21 @@ export default function() {
         const actor = DSA5_Utility.getSpeaker(defenderSpeaker)
 
         if (!actor.isOwner) return ui.notifications.error(game.i18n.localize("DSAError.DamagePermission"))
+
         await actor.applyDamage(cardData.damage[mode])
-        await message.update({ "flags.data.damageApplied": true, content: message.content.replace(/hideAnchor">/, `hideAnchor"><i class="fas fa-check" style="float:right" data-tooltip="${game.i18n.localize("damageApplied")}"></i>`) })
+        const update = { "flags.data.damageApplied": true, content: message.content.replace(/hideAnchor">/, `hideAnchor"><i class="fas fa-check" style="float:right" data-tooltip="${game.i18n.localize("damageApplied")}"></i>`) }
+        
+        if(game.user.isGM){
+            await message.update(update)
+        }else{
+            game.socket.emit("system.dsa5", {
+                type: "updateMsg",
+                payload: {
+                    id: li.attr("data-message-id"),
+                    updateData: update
+                }
+            })
+        }
     }
 
     const applyChatCardDamage = (li, mode) => {

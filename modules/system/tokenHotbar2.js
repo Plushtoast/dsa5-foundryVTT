@@ -377,6 +377,10 @@ export default class TokenHotbar2 extends Application {
                 const traitTypes = ["meleeAttack", "rangeAttack"]         
 
                 for (const x of actor.items) {
+                    if (["skill"].includes(x.type) && (this.combatSkills.some(y => x.name.startsWith(y)) || (isRiding && rideName == x.name))) {
+                        items.default.push({ name: `${x.name} (${x.system.talentValue.value})`, id: x.id, icon: x.img, cssClass: "skill", abbrev: x.name[0] })
+                    } 
+                    
                     if (x.type == "trait" && traitTypes.includes(x.system.traitType.value)) {
                         const preparedItem = Actordsa5._parseDmg(x.toObject())
                         items.attacks.push({ name: x.name, id: x.id, icon: x.img, cssClass: `weapon ${x.id}`, abbrev: x.name[0], attack: x.system.at.value, damage: preparedItem.damagedie, dadd: preparedItem.damageAdd})
@@ -387,9 +391,7 @@ export default class TokenHotbar2 extends Application {
                     } else if (spellTypes.includes(x.type)) {
                         if (x.system.effectFormula.value) items.spells.push({ name: x.name, id: x.id, icon: x.img, cssClass: "spell", abbrev: x.name[0] })
                         else moreSpells.push({ name: x.name, id: x.id, icon: x.img, cssClass: "spell", abbrev: x.name[0] })
-                    } else if (["skill"].includes(x.type) && (this.combatSkills.some(y => x.name.startsWith(y)) || (isRiding && rideName == x.name))) {
-                        items.default.push({ name: `${x.name} (${x.system.talentValue.value})`, id: x.id, icon: x.img, cssClass: "skill", abbrev: x.name[0] })
-                    } 
+                    }  
                     else if (["skill"].includes(x.type)){
                         const elem = { name: `${x.name} (${x.system.talentValue.value})`, id: x.id, icon: x.img, cssClass: "skill",addClass: x.system.group.value, abbrev: x.name[0], tw: x.system.talentValue.value }
                         moreSkills.push(elem)
@@ -418,7 +420,8 @@ export default class TokenHotbar2 extends Application {
                 for (const x of actor.items) {
                     if (["skill"].includes(x.type) && (this.defaultSkills.includes(x.name)  || (isRiding && rideName == x.name))) {
                         items.default.push({ name: `${x.name} (${x.system.talentValue.value})`, id: x.id, icon: x.img, cssClass: "skill", abbrev: x.name[0] })
-                    } else if (["skill"].includes(x.type)) {
+                    } 
+                    if (["skill"].includes(x.type)) {
                         const elem = { name: `${x.name} (${x.system.talentValue.value})`, id: x.id, icon: x.img, cssClass: "skill",addClass: x.system.group.value, abbrev: x.name[0], tw: x.system.talentValue.value }
                         if(x.system.talentValue.value > 0) descendingSkills.push(elem)
 
