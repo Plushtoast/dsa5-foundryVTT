@@ -2663,6 +2663,7 @@
   
   .tokenQuickHot {
     .tokenHotbarInner {
+      .skillgm,
       .skill {
         &.body {
           background: rgb(79, 109, 101);
@@ -2702,12 +2703,18 @@
         color: white;
         text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000;
       }
+      input{ 
+        height: var(--tokenQuickhotsize);
+        display: block;
+        width: 100%;
+        margin:0;
+        float:left;
+        text-align: center;
+        font-size: 20px;
+        border:none;
+      }
       .itdarkness{
         width: calc(var(--tokenQuickhotsize) * 2);
-        input{ 
-          height: var(--tokenQuickhotsize);
-          display: block;
-        }
       }
       .subbuttons{
         .combatTooltip{

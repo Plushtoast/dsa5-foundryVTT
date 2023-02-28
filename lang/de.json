@@ -621,7 +621,7 @@
         "doGroupCheck": "Modifikator für <b>{skill}</b> Gruppenprobe.",
         "doRequestRoll": "Modifikator für <b>{skill}</b> Probenaufforderung.",
         "payTT": "Ausnehmen",
-        "randomPlayer": "Zufälliges Opfer (Rechtsklick inklusive Pechmagnet)",
+        "randomPlayer": "Linksclick: Zufälliges Opfer<br>Rechtsklick: inklusive Pechmagnet",
         "randomGen": "Zuchtgrube",
         "sightautomation": "Sichtmodifikatoren (auto)",
         "threshold": "Dunkelheitsschwelle",
@@ -994,7 +994,10 @@
         "dragLink": "Drag & drop Akteur z.B. für Gestaltwandlung und Beschwörung",
         "onlyGM": "Nur für den Spielleiter sichtbar.",
         "placeTemplate": "Flächeneffekt Template platzieren",
-        "resizer": "Drag zum Verschieben<br/>Mausrad um zu verkleinern/vergrößern<br/>ggf. Rechte Maustaste Ausrichtung"
+        "resizer": "Drag zum Verschieben<br/>Mausrad um zu verkleinern/vergrößern<br/>ggf. Rechte Maustaste Ausrichtung",
+        "tokenhotbarMod": "Modifikator/Wert",
+        "tokenhotbarMoney": "Linksclick: bezahlen<br>Rechtsklick: auszahlen",
+        "tokenhotbarSkill": "Linksclick: Probe anfordern<br>Rechtsclick: Gruppensammelprobe<br>Strg + click: 3W20 Probe"
     },
     "HELP": {
         "showHelp": "Hilfe anzeigen",

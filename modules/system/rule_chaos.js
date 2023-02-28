@@ -44,6 +44,18 @@ export default class RuleChaos {
         }
     }
 
+    static quantityClick(ev){
+        const quantityFocus = ev.currentTarget.dataset.quantityfocus
+        const target = $(ev.currentTarget)
+        if(quantityFocus && !(target.is(":focus"))){
+            setTimeout(function() {target.select(), 100})
+            return
+        }
+        const val = { val: Number(target.val()) }
+        RuleChaos.increment(ev, val, "val")
+        target.val(val.val)
+    }
+
     static getGroupSchips(){
         const schipSetting = game.settings.get("dsa5", "groupschips").split("/").map(x => Number(x))
         const groupschips = []

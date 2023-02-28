@@ -4,6 +4,7 @@ import Riding from "./riding.js";
 import RuleChaos from "./rule_chaos.js";
 import DSA5_Utility from "./utility-dsa5.js";
 import { tinyNotification } from "./view_helper.js";
+import DSA5Payment from "./payment.js"
 
 export default class TokenHotbar2 extends Application {
     static registerTokenHotbar() {
@@ -60,6 +61,15 @@ export default class TokenHotbar2 extends Application {
         Hooks.on("deleteItem", (source, item) => {
             parentUpdate(source)
         });
+    }
+
+    async prepareSkills(){
+        const skills = await DSA5_Utility.allSkills()
+        this.skills = skills.map(x => {
+            return { name: x.name, icon: x.img, id: x.name, cssClass: "skillgm", addClass: x.system.group.value, abbrev: x.name[0], subfunction: "skillgm"}
+        })
+        this.skills = this.skills.sort((a, b) => { return a.addClass.localeCompare(b.addClass) || a.name.localeCompare(b.name) })
+        return this.skills
     }
 
     static hookUpdate(changeId) {
@@ -140,6 +150,8 @@ export default class TokenHotbar2 extends Application {
 
         html.find('.itdarkness input').change(ev => this.changeDarkness(ev))
 
+        html.find('.quantity-click').mousedown(ev => RuleChaos.quantityClick(ev))
+
         html.on('mousedown', 'li', async(ev) => {
             ev.stopPropagation()
             await this.executeQuickButton(ev)
@@ -176,6 +188,19 @@ export default class TokenHotbar2 extends Application {
             else await actor.sheet._deleteActiveEffect(id)
         }
         await this.render(true)
+    }
+
+    async handleGMRoll(ev){
+        const skill = ev.currentTarget.dataset.id
+        const mod = Math.round($(ev.currentTarget).closest('.tokenHotbarInner').find(".modifierVal").val())
+        if(ev.ctrlKey){
+            game.dsa5.apps.DSA5ChatListeners.check3D20(undefined, skill, { modifier: mod })
+        }
+        else if(ev.button == 2){
+            game.dsa5.macro.requestGC(skill, mod, {maxRolls: 7})
+        }else{
+            game.dsa5.macro.requestRoll(skill, mod)
+        }
     }
 
     async handleSkillRoll(ev, actor, id, tokenId){
@@ -245,11 +270,24 @@ export default class TokenHotbar2 extends Application {
             case "masterMenu":
                 game.dsa5.apps.gameMasterMenu.render(true)
                 break
+            case "payMoney": 
+                this.payMoney(ev)
+                break
             case "randomVictim":
                 this.handleGMRandomVictim(ev)
                 break
             default:
         }        
+    }
+
+    payMoney(ev){
+        const money = `${$(ev.currentTarget).closest('.tokenHotbarInner').find(".modifierVal").val()}`
+
+        if(ev.button == 2){
+            DSA5Payment.createGetPaidChatMessage(money)
+        } else{
+            DSA5Payment.createPayChatMessage(money)
+        }
     }
 
     async handleGMRandomVictim(ev){
@@ -280,7 +318,11 @@ export default class TokenHotbar2 extends Application {
             case "gm":
                 this.handleGM(ev, actor, id, tokenId)
                 break
+            case "none":
             case "darkness":
+                break
+            case "skillgm":
+                this.handleGMRoll(ev)
                 break
             default:
                 this.handleSkillRoll(ev, actor, id, tokenId)
@@ -424,12 +466,15 @@ export default class TokenHotbar2 extends Application {
             }
         } else if(game.user.isGM){
             gmMode = true
+            const skills = this.skills || await this.prepareSkills()
             items.gm.push(
                 { name: game.i18n.localize('gmMenu'), icon: "systems/dsa5/icons/categories/DSA-Auge.webp", id: "masterMenu", cssClass: "gm", abbrev: "", subfunction: "gm" },
-                { name: game.i18n.localize('MASTER.randomPlayer'), iconClass: "fa fa-dice-six", id: "randomVictim", cssClass: "gm", abbrev: "", subfunction: "gm" }
+                { name: game.i18n.localize('MASTER.randomPlayer'), iconClass: "fa fa-dice-six", id: "randomVictim", cssClass: "gm", abbrev: "", subfunction: "gm" },
+                { name: game.i18n.localize("TT.tokenhotbarMoney"), icon: "systems/dsa5/icons/money-D.webp", id: "payMoney", cssClass: "gm", abbrev: "", subfunction: "gm" },
+                { name: game.i18n.localize("TT.tokenhotbarSkill"), id: "skillgm", icon: "systems/dsa5/icons/categories/Skill.webp", cssClass: "skillgm", abbrev: "", subfunction: "none", more: skills, subwidth: this.subWidth(skills, itemWidth, 20) },
+                
             )
         }
-        
 
         if (this.showEffects) {
             const label = game.i18n.localize("CONDITION.add")
@@ -441,7 +486,7 @@ export default class TokenHotbar2 extends Application {
             items.effects = [effect]
         }
 
-        const count = Object.keys(items).reduce((prev, cur) => { return prev + items[cur].length }, 0) + (gmMode ? 2 : 0)
+        const count = Object.keys(items).reduce((prev, cur) => { return prev + items[cur].length }, 0) + (gmMode ? 3 : 0)
 
         if (vertical) {
             this.position.width = itemWidth
@@ -539,17 +584,7 @@ class AddEffectDialog extends Dialog {
             ev.currentTarget.querySelectorAll(".hovermenu").forEach((e) => e.remove());
         })
 
-        html.find('.quantity-click').mousedown(ev => {
-            const quantityFocus = ev.currentTarget.dataset.quantityfocus
-            const target = $(ev.currentTarget)
-            if(quantityFocus && !(target.is(":focus"))){
-                setTimeout(function() {target.select(), 100})
-                return
-            }
-            const val = { val: Number(target.val()) }
-            RuleChaos.increment(ev, val, "val")
-            target.val(val.val)
-        });
+        html.find('.quantity-click').mousedown(ev => RuleChaos.quantityClick(ev));
 
         html.find('.reactClick').click(ev => this.addEffect(ev.currentTarget.dataset.value))
 

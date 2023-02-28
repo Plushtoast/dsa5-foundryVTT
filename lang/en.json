@@ -666,7 +666,7 @@
         "doGroupCheck": "Modifier for <b>{skill}</b> Group Check.",
         "doRequestRoll": "Modifier for <b>{skill}</b> roll request.",
         "payTT": "Loot player",
-        "randomPlayer": "Random victim (right click to include Misfortune)",
+        "randomPlayer": "Left click: Random victim<br>Right click: include Misfortune",
         "randomGen": "Breeding pit",
         "sightautomation": "Sight modifiers (auto)",
         "threshold": "Darkness threshold",
@@ -1007,7 +1007,10 @@
         "assignCharacter": "Characters can be assigned using a right click on the player list in the bottom left corner.",
         "dragLink": "Drag & drop actor e.g. for shapeshifting and summoning",
         "onlyGM": "Only visible to the gamemaster.",
-        "placeTemplate": "Place Area of Effect template"
+        "placeTemplate": "Place Area of Effect template",
+        "tokenhotbarMod": "Modifier/Value",
+        "tokenhotbarMoney": "Left click: pay<br>Right click: get paid",
+        "tokenhotbarSkill": "Left click: request roll<br>Right click: request group check<br>Ctrl + click: 3d20 check"
     },
     "HELP": {
         "showHelp": "Show help",

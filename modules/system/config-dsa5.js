@@ -531,7 +531,7 @@ DSA5.traditionArtifacts = {
     "Schelmenspielzeug": 12,
     "Zauberstecken": 0,
     "Magierstab": 18,
-    "Trinkhorn": 0
+    "Trinkhorn": 12
 }
 
 DSA5.moneyNames = {
