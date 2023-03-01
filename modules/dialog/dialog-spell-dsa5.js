@@ -13,7 +13,8 @@ export default class DSA5SpellDialog extends DialogShared {
         increaseCastingTime: { mod: 1 },
         decreaseCastingTime: { mod: -1 },
         removeGesture: { mod: -2 },
-        removeFormula: { mod: -2 }
+        removeFormula: { mod: -2 },
+        extensionModifier: { mod: 0 }
     }
 
     static get defaultOptions() {
@@ -75,8 +76,7 @@ export default class DSA5SpellDialog extends DialogShared {
             const item = fromUuidSync(k.dataset.uuid)
             if(!item) continue
             
-            for(let ef of item.effects){
-                
+            for(let ef of item.effects){                
                 for(let change of ef.changes){
                     if(DSA5SpellDialog.rollChanges.includes(change.key)){
                         let name = item.name.split(" - ")
@@ -92,11 +92,17 @@ export default class DSA5SpellDialog extends DialogShared {
                     }
                     else{
                         ef.apply(source, change)
-                    }
-                    
+                    }                    
                 }
             }
         }  
+        const extensionMod = this.dialogData.renderData.rollModifiersPrepared.extensionModifier.mod
+        if(extensionMod){
+            const typeName = game.i18n.localize(`ABBR.modifiers`)
+            const ext = game.i18n.localize('spellextension')
+            const tooltip = `${typeName}: ${extensionMod}<br/>${ext}`
+            mods.push(`<option data-extension="1" selected="" data-tooltip="${tooltip}" data-type="" value="${extensionMod}">${ext} - ${typeName}</option>`)
+        }
         sit.append(mods.join(""))
     }
 

@@ -2419,6 +2419,26 @@ export default class Actordsa5 extends Actor {
     return await DSA5StatusEffects.addCondition(this, effect, value, absolute, auto);
   }
 
+  async addTimedCondition(effect, value = 1, absolute = false, auto = true, options = {}){
+    if (effect == "bleeding" || effect.id == "bleeding") return await RuleChaos.bleedingMessage(this);
+
+    if (typeof(effect) === "string" && options.duration) {
+      effect = duplicate(CONFIG.statusEffects.find(e => e.id == effect))
+      effect.flags.dsa5.description = game.i18n.localize(effect.label)
+      effect.label = game.i18n.localize(effect.label)
+
+      delete effect.description
+      delete effect.flags.dsa5.value
+      delete effect.flags.dsa5.max
+      delete effect.id
+
+      console.log(effect, options)
+      mergeObject(effect, options)   
+    }
+
+    return await DSA5StatusEffects.addCondition(this, effect, value, absolute, auto);
+  }
+
   async initResistPainRoll(effect) {
     const showMessage = game.settings.get("dsa5", "selfControlOnPain")
 

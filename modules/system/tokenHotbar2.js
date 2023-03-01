@@ -676,12 +676,8 @@ class AddEffectDialog extends Dialog {
     }
 
     async addEffect(id, options = {}) {
-        const effect = duplicate(CONFIG.statusEffects.find(x => x.id == id))
-        if (options) {
-            mergeObject(effect, options)
-        }
         for (let token of canvas.tokens.controlled) {
-            await token.actor.addCondition(effect, 1, false, false)
+            await token.actor.addTimedCondition(id, 1, false, false, options)
         }
         game.dsa5.apps.tokenHotbar.render(true)
         this.close()

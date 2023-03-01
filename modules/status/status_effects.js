@@ -244,15 +244,48 @@ export default class DSA5StatusEffects {
     static getRollModifiers(actor, item, options = {}) {
         //actor = actor.system ? actor.data : actor
         const source = game.i18n.localize('status') + "/" + game.i18n.localize('condition')
-        return actor.effects.filter(x => !x.disabled).map(ef => {
-            const effectClass = game.dsa5.config.statusEffectClasses[getProperty(ef, "flags.core.statusId")] || DSA5StatusEffects
-            return {
-                name: ef.label,
-                value: effectClass.calculateRollModifier(ef, actor, item, options),
-                selected: effectClass.ModifierIsSelected(item, options, actor),
-                source
+        const result = []
+        const finishedCoreIds = []
+        for(const ef of actor.effects){
+            if(ef.disabled) continue
+
+            const coreId = getProperty(ef, "flags.core.statusId")
+            const effectClass = game.dsa5.config.statusEffectClasses[coreId] || DSA5StatusEffects
+            const value = effectClass.calculateRollModifier(ef, actor, item, options)
+
+            if(coreId) finishedCoreIds.push(coreId)
+
+            if(value != 0){
+                result.push({
+                    name: ef.label,
+                    value,
+                    selected: effectClass.ModifierIsSelected(item, options, actor),
+                    source
+                })
             }
-        }).filter(x => x.value != 0)
+        }
+        for(let [key, val] of Object.entries(actor.system.condition)){
+            if(val && !finishedCoreIds.includes(key)){
+                const ef = duplicate(DSA5.statusEffects.find(x => x.id == key))
+
+                if(!ef) continue
+
+                const effectClass = game.dsa5.config.statusEffectClasses[key] || DSA5StatusEffects
+                ef.flags.dsa5.value = val
+                ef.flags.core = { statusId: key}
+                const value = effectClass.calculateRollModifier(ef, actor, item, options)
+
+                if(value != 0){
+                    result.push({
+                        name: ef.label,
+                        value,
+                        selected: effectClass.ModifierIsSelected(item, options, actor),
+                        source
+                    })
+                }
+            }
+        }
+        return result
     }
 }
 

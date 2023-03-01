@@ -259,7 +259,7 @@ export default class Riding {
             })
         }
 
-        const riderTokenUpdate = { _id: rider.id, "flags.dsa5.horseTokenId": horse.id, x: horse.x, y: horse.y, elevation: (horse.elevation ?? 0) + 1}
+        const riderTokenUpdate = { _id: rider.id, "flags.dsa5.horseTokenId": horse.id, x: horse.x, y: horse.y, elevation: (horse.document.elevation ?? 0) + 1}
         mergeObject(riderTokenUpdate, this.adaptTokenSize(rider.document, horse.document))
         await rider.actor.update(actorUpdate)
         await canvas.scene.updateEmbeddedDocuments("Token",
