@@ -97,8 +97,12 @@
         "Informationsitems können in Journalen eingebettet werden.",
         "Das Volumen von Traditionsartefakten kann automatisch berechnet werden.",
 
+        "Markierst du zwei Token kannst du über den erscheinenden Button aufsitzen (reiten)",
+        "Reiterkampf wird unterstützt.",
+
         "Mit dem Befehl @PostChat[beispiel text bla] kannst du Texte vorbereiten, um sie Spielern im Chat zu posten.",
         "Hat eine Kreatur mehrere Aktionen wird dies im Initiative Tracker mit einer rot hinterlegten Zahl aufgezeigt.",
-        "Sturzschaden kann über den Kampftab ausgewürfelt werden."
+        "Sturzschaden kann über den Kampftab ausgewürfelt werden.",
+        "Wenn du über den Talente Button in der Tokenhotbar hoverst und Buchstaben eingibst, kannst du die Talentliste filtern."
     ]
 }

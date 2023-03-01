@@ -363,7 +363,7 @@ export default class DSA5CombatDialog extends DialogShared {
         if (game.i18n.localize("LocalizedIDs.Shields") == getProperty(testData, "source.system.combatskill.value"))
             return DSA5.narrowSpaceModifiers["shield" + testData.source.system.reach.shieldSize][mode]
                     
-        return  DSA5.narrowSpaceModifiers["weapon" + testData.source.system.reach.value][mode]
+        return getProperty(DSA5.narrowSpaceModifiers , `weapon${testData.source.system.reach.value}.${mode}`) || 0
     }
 
     static resolveMeleeDialog(testData, cardOptions, html, actor, options, multipleDefenseValue, mode) {

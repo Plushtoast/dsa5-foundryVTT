@@ -93,11 +93,13 @@
         "The game master can hide individual tabs of equipment items.",
         "Information items can be embedded in journals.",
         "The volume of tradition artifacts can be calculated automatically.",
+
+        "If you mark two tokens you can mount up via the appearing button (horse & rider).",
+        "Riding combat is supported.",
         
         "The command @PostChat[example text yay] can prepare text which can be send to the players later.",
         "If a creature has multiple actions, the initiative tracker shows a tiny red icon as a reminder for the GM.",
-        "Falling damage can be rolled via the combat tab on actors."
-
-
+        "Falling damage can be rolled via the combat tab on actors.",
+        "Hovering a skills button on the tokenhotbar and entering characters will filter the skills list."
     ]
 }

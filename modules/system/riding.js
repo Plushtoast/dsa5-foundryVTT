@@ -26,7 +26,9 @@ export default class Riding {
 
             //Todo check if tokens need to be modified because of e.g. sizes
             const horseToken = (await scene.createEmbeddedDocuments("Token", [horseTokenSource]))[0]
-            await token.update({"flags.dsa5.horseTokenId": horseToken.id, elevation: (horseToken.elevation ?? 0) + 1}) 
+            const tokenUpdate = {"flags.dsa5.horseTokenId": horseToken.id, elevation: (horseToken.elevation ?? 0) + 1}
+            mergeObject(tokenUpdate, this.adaptTokenSize(token, horseToken))
+            await token.update(tokenUpdate) 
 
             if(!horseToken.actorLink){
                 await token.actor.update({
@@ -162,8 +164,17 @@ export default class Riding {
     }
 
     static async unmountHorse(actor, token){
+        const tokenUpdate = { [`flags.dsa5.-=horseTokenId`]: null, elevation: Math.max(0, (token.elevation ?? 0) - 1) }
+        const tokenResized = token.getFlag("dsa5", "horseResized")
+        if(tokenResized){
+            mergeObject(tokenUpdate, {
+                [`flags.dsa5.-=horseResized`]: null,
+                width: tokenResized.width,
+                height: tokenResized.height
+            })
+        }
         await this.clearMount(actor)
-        await token.update({ [`flags.dsa5.-=horseTokenId`]: null, elevation: Math.max(0, (token.elevation ?? 0) - 1) })
+        await token.update(tokenUpdate)
     }
 
     static async clearMount(actor){
@@ -220,6 +231,13 @@ export default class Riding {
         await this.addRidingCondition(rider)
     }
 
+    static adaptTokenSize(riderTokenDocument, horseTokenDocument){
+        if(riderTokenDocument.width >= horseTokenDocument.width){
+            return { width: 0.7 * horseTokenDocument.width, height: 0.7 * horseTokenDocument.height, "flags.dsa5.horseResized": { width: riderTokenDocument.width, height: riderTokenDocument.height } }    
+        }
+        return {}
+    }
+
     static async mountHorse(rider){
         const horse = canvas.tokens.controlled.find(x => x.document.id != rider.id)
         const scene = rider.parent
@@ -241,10 +259,12 @@ export default class Riding {
             })
         }
 
+        const riderTokenUpdate = { _id: rider.id, "flags.dsa5.horseTokenId": horse.id, x: horse.x, y: horse.y, elevation: (horse.elevation ?? 0) + 1}
+        mergeObject(riderTokenUpdate, this.adaptTokenSize(rider.document, horse.document))
         await rider.actor.update(actorUpdate)
         await canvas.scene.updateEmbeddedDocuments("Token",
         [
-            { _id: rider.id, "flags.dsa5.horseTokenId": horse.id, x: horse.x, y: horse.y, elevation: (horse.elevation ?? 0) + 1},
+            riderTokenUpdate,
             { _id: horse.id, [`flags.dsa5.-=horseTokenId`]: null }
         ], { noHooks: true })
         await this.addRidingCondition(rider.actor)
