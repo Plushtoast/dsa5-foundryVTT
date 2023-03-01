@@ -367,7 +367,7 @@ export default class Actordsa5 extends Actor {
               apply = false;
               break;
             case "specialability":
-              apply = item.system.category.value != "Combat" || [2, 3].includes(item.system.category.sub);
+              apply = item.system.category.value != "Combat" || [2, 3].includes(Number(item.system.category.sub));
               multiply = Number(item.system.step.value) || 1
               break
             case "advantage":

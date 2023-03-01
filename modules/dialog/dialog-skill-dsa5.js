@@ -61,7 +61,7 @@ export default class DSA5SkillDialog extends DialogShared {
         this.calculateRoutine(data)
     }
 
-    calculateRoutine(data) {
+    async calculateRoutine(data) {
         const actor = DSA5_Utility.getSpeaker(this.dialogData.speaker)
         const routineButton = this.element.find('.routineRoll')
         if (!actor) return routineButton.prop("disabled", true)
@@ -74,8 +74,8 @@ export default class DSA5SkillDialog extends DialogShared {
             }
         }
 
-        const fw = this.dialogData.source.system.talentValue.value + data.fw + DiceDSA5._situationalModifiers(data, "FW")
-        const mod = DSA5.skillDifficultyModifiers[data.testDifficulty] + DiceDSA5._situationalModifiers(data)
+        const fw = this.dialogData.source.system.talentValue.value + data.fw + await DiceDSA5._situationalModifiers(data, "FW")
+        const mod = DSA5.skillDifficultyModifiers[data.testDifficulty] + await DiceDSA5._situationalModifiers(data)
         const requiredFw = Math.clamped(10 - mod * 3, 1, 19)
         const enoughFw = fw >= requiredFw
         const canRoutine = routineAllowed && enoughFw

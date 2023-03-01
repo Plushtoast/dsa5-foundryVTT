@@ -77,6 +77,14 @@
             </div>
             
             {{/if}} {{#if (eq system.category.value 'Combat')}}
+            <div class="form-group" data-tooltip="TT.effectVariant">
+                <label class="label-text">{{localize "effectVariant" num="B"}}</label>
+                <input class="input-text" type="text" name="system.effect.value2" value="{{system.effect.value2}}" data-dtype="String" />
+            </div>
+            <div class="form-group" data-tooltip="TT.effectVariant">
+                <label class="label-text">{{localize "effectVariant" num="C"}}</label>
+                <input class="input-text" type="text" name="system.effect.value3" value="{{system.effect.value3}}" data-dtype="String" />
+            </div>
             <div class="form-group">
                 <label class="label-text">{{localize "combatskill"}}</label>
                 <input class="input-text" type="text" name="system.list.value" value="{{system.list.value}}" data-dtype="String" />

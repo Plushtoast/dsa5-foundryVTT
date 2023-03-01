@@ -175,7 +175,7 @@ export default class DiceDSA5 {
         })
 
         if (!testData.extra.options.bypass) {
-            let dialog = DSA5Dialog.getDialogForItem(testData.source.type, dialogOptions.data, testData.extra.actor)
+            let dialog = DSA5Dialog.getDialogForItem(testData, dialogOptions.data)
             let html = await renderTemplate(dialogOptions.template, dialogOptions.data)
             return new Promise((resolve, reject) => {
                 new dialog({

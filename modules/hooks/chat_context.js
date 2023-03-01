@@ -3,16 +3,14 @@ import DSA5_Utility from "../system/utility-dsa5.js";
 
 export default function() {
     const fateAvailable = (actor, group) => { return DSA5_Utility.fateAvailable(actor, group) }
-    const canHurt = function(li) {
+    const canHurt = function(li, prop = "damage.value") {
         let cardData = game.messages.get(li.attr("data-message-id")).flags.opposeData
         const isOwner = DSA5_Utility.getSpeaker(cardData.speakerDefend)?.isOwner
-        return ((game.user.isGM || isOwner) && li.find(".opposed-card").length || li.find(".dice-roll").length) && (getProperty(cardData, "damage.value") || 0) > 0
+        return ((game.user.isGM || isOwner) && li.find(".opposed-card").length || li.find(".dice-roll").length) && (getProperty(cardData, prop) || 0) > 0
     }
 
     const canHurtSP = function(li) {
-        let cardData = game.messages.get(li.attr("data-message-id")).flags.opposeData
-        const isOwner = DSA5_Utility.getSpeaker(cardData.speakerDefend)?.isOwner
-        return ((game.user.isGM || isOwner) && li.find(".opposed-card").length || li.find(".dice-roll").length) && (getProperty(cardData, "damage.sp") || 0) > 0
+        return canHurt(li, "damage.sp")
     }
 
     const canCostMana = function(li) {

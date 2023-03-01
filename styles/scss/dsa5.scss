@@ -1311,6 +1311,7 @@
     }
   }
   
+  .tokenQuickHot .subbuttons .secondary.shown.dsahidden,
   .domainToggle, .locktrue .advance, .privateMessageIndicator .fas, .chatIndicator .fas, .combatant:not(.active) .aggroButton, .tocCollapsing.expanded .col.three *, .tokenQuickHot .subbuttons .secondary:not(.shown), .hero .details {
     display: none;
   }
@@ -1946,19 +1947,42 @@
   }
   
   .specAbs {
-    padding: 3px;
     border: 1px solid var(--border-color);
     box-shadow: 0 0 12px #6e3b018F inset;
     border-radius: 2px;
     line-height: 20px;
-    overflow: hidden;
+    /*overflow: hidden;*/
     color: #888;
     position: relative;
-  
+    &>div{
+      padding: 3px;
+    }
     &.active {
       color: inherit;
     }
+
+    .variantChange{
+      text-align: center;
+      border: 1px solid var(--border-color);
+      border-radius: 50%;
+      background-color: rgb(91, 38, 12);
+      position: absolute;
+      left: -16px;
+      top: calc(50% - 10px);
+      width: 20px;
+      height: 20px;
+      line-height: 20px;
+      color: white;
+      padding: 0;
+      transition: all ease-in-out 0.3s;
+      
+      &:hover{
+        background-color: black;
+      }
+    }
   }
+
+  
   
   .dialog-buttons img, .result-image {
     border: none;
@@ -3319,7 +3343,7 @@
   .defenseToggle .off {
     color: lightgrey;
   }
-  
+
   .garadanborder {
     max-width: 80%;
     height: 140px;

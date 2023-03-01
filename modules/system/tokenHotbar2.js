@@ -16,7 +16,7 @@ export default class TokenHotbar2 extends Application {
 
     constructor(options) {
         super(options);
-
+        this.searching = ""
         this.combatSkills = ["selfControl", "featOfStrength", "bodyControl", "perception", "loyalty"].map(x => game.i18n.localize(`LocalizedIDs.${x}`))
         this.defaultSkills = [game.i18n.localize("LocalizedIDs.perception")]
 
@@ -132,6 +132,7 @@ export default class TokenHotbar2 extends Application {
         tinyNotification(darkness)
     }
 
+
     activateListeners(html) {
         super.activateListeners(html);
         const container = html.find(".dragHandler");
@@ -150,6 +151,17 @@ export default class TokenHotbar2 extends Application {
 
         html.find('.itdarkness input').change(ev => this.changeDarkness(ev))
 
+        const that = this
+        const fn = function(ev) {
+            that.filterButtons(ev)
+            return false
+        }
+        html.find('.filterable').hover(function() {
+            $(document).keydown(fn)
+        }, function() {
+            $(document).unbind("keydown", fn)
+        })  
+
         html.find('.quantity-click').mousedown(ev => RuleChaos.quantityClick(ev))
 
         html.on('mousedown', 'li', async(ev) => {
@@ -160,6 +172,7 @@ export default class TokenHotbar2 extends Application {
                  
         html.on('mouseenter', 'li.primary', ev => {
             const cat = ev.currentTarget.dataset.category
+           
             this.category = cat
             setTimeout(() => {
                 html.find('.secondary').removeClass('shown')
@@ -170,9 +183,13 @@ export default class TokenHotbar2 extends Application {
         html.on('mouseleave', 'li.primary', ev => {
             const cat = ev.currentTarget.dataset.category
             this.category = undefined
+            
             setTimeout(()=>{
-                if(cat!=this.category) 
+                if(cat!=this.category) {
+                    that.searching = ""
+                    $(ev.currentTarget).find('.secondary').removeClass("dsahidden")
                     html.find(`.secondary[data-category="${cat}"]`).removeClass("shown")
+                }
             },50)
         })
     }
@@ -378,7 +395,7 @@ export default class TokenHotbar2 extends Application {
 
                 for (const x of actor.items) {
                     if (["skill"].includes(x.type) && (this.combatSkills.some(y => x.name.startsWith(y)) || (isRiding && rideName == x.name))) {
-                        items.default.push({ name: `${x.name} (${x.system.talentValue.value})`, id: x.id, icon: x.img, cssClass: "skill", abbrev: x.name[0] })
+                        items.default.push({ name: `${x.name} (${x.system.talentValue.value})`, id: x.id, icon: x.img, cssClass: "skill filterable", abbrev: x.name[0] })
                     } 
                     
                     if (x.type == "trait" && traitTypes.includes(x.system.traitType.value)) {
@@ -419,7 +436,7 @@ export default class TokenHotbar2 extends Application {
                 let descendingSkills = []
                 for (const x of actor.items) {
                     if (["skill"].includes(x.type) && (this.defaultSkills.includes(x.name)  || (isRiding && rideName == x.name))) {
-                        items.default.push({ name: `${x.name} (${x.system.talentValue.value})`, id: x.id, icon: x.img, cssClass: "skill", abbrev: x.name[0] })
+                        items.default.push({ name: `${x.name} (${x.system.talentValue.value})`, id: x.id, icon: x.img, cssClass: "skill filterable", abbrev: x.name[0] })
                     } 
                     if (["skill"].includes(x.type)) {
                         const elem = { name: `${x.name} (${x.system.talentValue.value})`, id: x.id, icon: x.img, cssClass: "skill",addClass: x.system.group.value, abbrev: x.name[0], tw: x.system.talentValue.value }
@@ -474,7 +491,7 @@ export default class TokenHotbar2 extends Application {
                 { name: game.i18n.localize('gmMenu'), icon: "systems/dsa5/icons/categories/DSA-Auge.webp", id: "masterMenu", cssClass: "gm", abbrev: "", subfunction: "gm" },
                 { name: game.i18n.localize('MASTER.randomPlayer'), iconClass: "fa fa-dice-six", id: "randomVictim", cssClass: "gm", abbrev: "", subfunction: "gm" },
                 { name: game.i18n.localize("TT.tokenhotbarMoney"), icon: "systems/dsa5/icons/money-D.webp", id: "payMoney", cssClass: "gm", abbrev: "", subfunction: "gm" },
-                { name: game.i18n.localize("TT.tokenhotbarSkill"), id: "skillgm", icon: "systems/dsa5/icons/categories/Skill.webp", cssClass: "skillgm", abbrev: "", subfunction: "none", more: skills, subwidth: this.subWidth(skills, itemWidth, 20) },
+                { name: game.i18n.localize("TT.tokenhotbarSkill"), id: "skillgm", icon: "systems/dsa5/icons/categories/Skill.webp", cssClass: "skillgm filterable", abbrev: "", subfunction: "none", more: skills, subwidth: this.subWidth(skills, itemWidth, 20) },
                 
             )
         }
@@ -501,6 +518,25 @@ export default class TokenHotbar2 extends Application {
 
         mergeObject(data, { items, itemWidth, direction, count, gmMode, darkness: canvas.scene?.darkness || 0 })
         return data
+    }
+
+    filterButtons(ev){
+        ev.preventDefault()
+        ev.stopPropagation()
+        switch(ev.which){
+            case 8:
+                this.searching = this.searching.slice(0, -1)
+                break
+            default:
+                this.searching += String.fromCharCode(ev.which)
+        }
+        const search = this.searching.toLowerCase()
+        tinyNotification(search)
+        let btns = $(ev.currentTarget).find('.subbuttons li')
+        btns.find('.dsahidden').removeClass('dsahidden')
+        btns.filter(function() {
+            return $(this).find('label').text().toLowerCase().trim().indexOf(search) == -1
+        }).addClass('dsahidden')       
     }
 
     async render(force, options = {}) {

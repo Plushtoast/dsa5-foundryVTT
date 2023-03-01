@@ -296,6 +296,72 @@ export default class Itemdsa5 extends Item {
         source.system.characteristic3.value = ch3
     }
 
+    static attackSpecAbs(combatSpecAbs, actor, path="effect.value"){
+        const at = game.i18n.localize("LocalizedAbilityModifiers.at")
+        const tp = game.i18n.localize("LocalizedAbilityModifiers.tp")
+        const dm = game.i18n.localize("LocalizedAbilityModifiers.dm")
+        const combatskills = []
+
+        for (let com of combatSpecAbs) {
+            const effects = Itemdsa5.parseEffect(getProperty(com.system, path), actor)
+            const atbonus = effects[at] || 0
+            const tpbonus = effects[tp] || 0
+            const dmmalus = effects[dm] || 0
+            const variantCount = ["","2","3"].map(x => getProperty(com, `system.effect.value${x}`)).filter(x => x).length
+            if (atbonus != 0 || tpbonus != 0 || dmmalus != 0 || com.effects.size > 0) {
+                const subCategory = game.i18n.localize(DSA5.combatSkillSubCategories[com.system.category.sub])
+                combatskills.push({
+                    name: com.name,
+                    atbonus,
+                    tpbonus,
+                    dmmalus,
+                    label: `${at.toUpperCase()}: ${atbonus}, ${tp.toUpperCase()}: ${tpbonus}, ${dm.toUpperCase()}: ${dmmalus}`,
+                    steps: com.system.step.value,
+                    category: {
+                        id: com.system.category.sub,
+                        css: `ab_${com.system.category.sub}`,
+                        name: subCategory,
+                    },
+                    id: com.id,
+                    actor: actor.id,
+                    variantCount
+                })
+            }
+        }
+        return combatskills
+    }
+
+    static defenseSpecAbs(combatSpecAbs, actor, path="effect.value"){
+        const combatskills = []
+        const pa = game.i18n.localize("LocalizedAbilityModifiers.pa")
+
+        for (let com of combatSpecAbs) {
+            const effects = Itemdsa5.parseEffect(getProperty(com.system, path), actor)
+            const pabonus = effects[pa] || 0
+            if (pabonus != 0) {
+                const subCategory = game.i18n.localize(DSA5.combatSkillSubCategories[com.system.category.sub])
+                const variantCount = ["","2","3"].map(x => getProperty(com, `system.effect.value${x}`)).filter(x => x).length
+                combatskills.push({
+                    name: com.name,
+                    pabonus,
+                    tpbonus: 0,
+                    dmmalus: 0,
+                    label: `${pa}: ${pabonus}`,
+                    steps: com.system.step.value,
+                    category: {
+                        id: com.system.category.sub,
+                        css: `ab_${com.system.category.sub}`,
+                        name: subCategory,
+                    },
+                    id: com.id,
+                    actor: actor.id,
+                    variantCount
+                })
+            }
+        }
+        return combatskills
+    }
+
     static buildCombatSpecAbs(actor, categories, toSearch, mode) {
         let searchFilter
         if (toSearch) {
@@ -321,62 +387,11 @@ export default class Itemdsa5 extends Item {
             )
         })
 
-        let combatskills = []
-        const at = game.i18n.localize("LocalizedAbilityModifiers.at")
-        const tp = game.i18n.localize("LocalizedAbilityModifiers.tp")
-        const pa = game.i18n.localize("LocalizedAbilityModifiers.pa")
-        const dm = game.i18n.localize("LocalizedAbilityModifiers.dm")
-
         if (mode == "attack") {
-            for (let com of combatSpecAbs) {
-                const effects = Itemdsa5.parseEffect(com.system.effect.value, actor)
-                const atbonus = effects[at] || 0
-                const tpbonus = effects[tp] || 0
-                const dmmalus = effects[dm] || 0
-                if (atbonus != 0 || tpbonus != 0 || dmmalus != 0 || com.effects.size > 0) {
-                    const subCategory = game.i18n.localize(DSA5.combatSkillSubCategories[com.system.category.sub])
-                    combatskills.push({
-                        name: com.name,
-                        atbonus,
-                        tpbonus,
-                        dmmalus,
-                        label: `${at}: ${atbonus}, ${tp}: ${tpbonus}, ${dm}: ${dmmalus}`,
-                        steps: com.system.step.value,
-                        category: {
-                            id: com.system.category.sub,
-                            css: `ab_${com.system.category.sub}`,
-                            name: subCategory,
-                        },
-                        id: com.id,
-                        actor: actor.id,
-                    })
-                }
-            }
+            return this.attackSpecAbs(combatSpecAbs, actor)
         } else {
-            for (let com of combatSpecAbs) {
-                const effects = Itemdsa5.parseEffect(com.system.effect.value, actor)
-                const pabonus = effects[pa] || 0
-                if (pabonus != 0) {
-                    const subCategory = game.i18n.localize(DSA5.combatSkillSubCategories[com.system.category.sub])
-                    combatskills.push({
-                        name: com.name,
-                        pabonus,
-                        tpbonus: 0,
-                        dmmalus: 0,
-                        label: `${pa}: ${pabonus}`,
-                        steps: com.system.step.value,
-                        category: {
-                            id: com.system.category.sub,
-                            css: `ab_${com.system.category.sub}`,
-                            name: subCategory,
-                        },
-                        id: com.id,
-                        actor: actor.id,
-                    })
-                }
-            }
+            return this.defenseSpecAbs(combatSpecAbs, actor)
         }
-        return combatskills
     }
 
     static getCombatSkillModifier(actor, source, situationalModifiers) {

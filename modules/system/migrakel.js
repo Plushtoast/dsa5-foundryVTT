@@ -159,6 +159,8 @@ export default class Migrakel {
                         system: {
                             category: { sub: find.system.category.sub || 0 },
                             list: { value: find.system.list.value },
+                            effect2: { value: getProperty(find, "system.effect.value2") || ""},
+                            effect3: { value: getProperty(find, "system.effect.value3") || ""}
                         },
                     });
                     if (find.system.category.value == "staff") {

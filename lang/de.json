@@ -281,7 +281,7 @@
     "damageOverThreshold": "Inklusive Zusatzschaden über Schadensschwelle",
     "doubleDamage": "doppelter Schaden",
     "duration": "Wirkungsdauer",
-    "doubleAttack": "Zwei Angriffe",
+    "doubleAttack": "Beidhändiger Kampf",
     "DSA5Error": "DSA5 - Fehler melden",
     "DSA5Wiki": "DSA5 - Wiki",
     "Description": "Beschreibung",
@@ -315,6 +315,7 @@
     "Eye_color": "Augenfarbe",
     "equipped": "Ausgerüstet",
     "effect": "Effekt",
+    "effectVariant": "Effekt (Variante {num})",
     "Experience": "Erfahrungsgrad",
     "Family": "Familie",
     "Failure": "Misserfolg",
@@ -997,7 +998,8 @@
         "resizer": "Drag zum Verschieben<br/>Mausrad um zu verkleinern/vergrößern<br/>ggf. Rechte Maustaste Ausrichtung",
         "tokenhotbarMod": "Modifikator/Wert",
         "tokenhotbarMoney": "Linksclick: bezahlen<br>Rechtsklick: auszahlen",
-        "tokenhotbarSkill": "Linksclick: Probe anfordern<br>Rechtsclick: Gruppensammelprobe<br>Strg + click: 3W20 Probe"
+        "tokenhotbarSkill": "Linksclick: Probe anfordern<br>Rechtsclick: Gruppensammelprobe<br>Strg + click: 3W20 Probe",
+        "effectVariant": "Alternativer Effekt wie z.B. ein zweiter oder dritter Angriff"
     },
     "HELP": {
         "showHelp": "Hilfe anzeigen",
@@ -1304,7 +1306,6 @@
         "improvisedWeaponMaster": "Meister der improvisierten Waffen",
 
         "all": "alle",
-        "twoWeaponCombat": "Beidhändiger Kampf",
         "poisonResistance": "Giftresistenz",
         "ResistanttoDisease": "Krankheitsresistenz",
         "masterfulDodge": "Meisterliches Ausweichen",
@@ -1481,7 +1482,7 @@
         "STATIONARY": "steht still (+2)",
         "SLOW": "bewegt sich leicht (+-0)",
         "FAST": "bewegt sich schnell (-2)",
-        "QUICKCHANGE": "Ziel schlägt Haken (-4)",
+        "QUICKCHANGE": "Ziel schlägt Haken",
         "SHOOTERMOVING": "geht (-2)",
         "SHOOTERRUNNING": "rennt (-4)",
         "SHOOTERSTATIONARY": "ist stationär (+-0)"
@@ -1720,6 +1721,12 @@
         "4": "König",
         "5": "Läufer",
         "6": "Verstorben"
+    },
+    "DIALOGDESCRIPTION": {
+        "narrowSpace": "In kleinen Räumen, Gängen und ähnlichem Umfeld kann der Spielleiter entscheiden, dass es sich um eine beengte Umgebung handelt. Waffen mit der Reichweite kurz erleiden hier keine Abzüge. Größere Waffen erleiden Abzüge.",
+        "advantageousPosition": "Wer sich als Kämpfer in einer vorteilhaften Position befindet, bekommt Erleichterungen von jeweils 2 auf Attacke und Verteidigungen. Als vorteilhafte Position kann ein Felsen oder Tisch dienen, aber auch die Steigung eines Hügels, den seine Gegner hinaufstürmen. Die vorteilhafte Position kann auch beim Schwimmen, beim Klettern in der Takelage eines Schiffes, beim Fliegen usw. entstehen.",
+        "opportunityAttack": "Ein Passierschlag ist ein Nahkampfangriff, der keine Handlung erfordert und auf den nicht mit einer Verteidigung reagiert werden kann.",
+        "twoWeaponCombat": "Angriff mit zwei Waffen."
     },
     "CONDITIONDESCRIPTION": {
         "services": "Dienste die die Beschwörung dem Beschwörer schuldet.",

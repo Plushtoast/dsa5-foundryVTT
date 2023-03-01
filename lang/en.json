@@ -341,7 +341,7 @@
     "damageOverThreshold": "Including bonus damage of the damage threshold",
     "doubleDamage": "double damage",
     "duration": "Effect duration",
-    "doubleAttack": "Two attacks",
+    "doubleAttack": "Two-Weapon Combat",
     "domains": "Domains",
     "DSA5Error": "TDE5 - Report error",
     "DSA5Wiki": "TDE5 - Wiki",
@@ -374,6 +374,7 @@
     "Eye_color": "Eye color",
     "equipped": "Worn",
     "effect": "Effect",
+    "effectVariant": "Effect (alternative {num})",
     "Experience": "Experience level",
     "Family": "Family",
     "Failure": "Failure",
@@ -1010,7 +1011,8 @@
         "placeTemplate": "Place Area of Effect template",
         "tokenhotbarMod": "Modifier/Value",
         "tokenhotbarMoney": "Left click: pay<br>Right click: get paid",
-        "tokenhotbarSkill": "Left click: request roll<br>Right click: request group check<br>Ctrl + click: 3d20 check"
+        "tokenhotbarSkill": "Left click: request roll<br>Right click: request group check<br>Ctrl + click: 3d20 check",
+        "effectVariant": "Alternative effect like e.g. a second or third attack"
     },
     "HELP": {
         "showHelp": "Show help",
@@ -1258,7 +1260,6 @@
         "sappeurStyle": "tbd",
         "wrestle": "Brawling",
         "all": "all",
-        "twoWeaponCombat": "Two-Weapon Combat",
         "poisonResistance": "Poison Resitance",
         "ResistanttoDisease": "Resistant to Disease",
         "perception": "Perception",
@@ -1420,7 +1421,7 @@
         "STATIONARY": "motionless (+2)",
         "SLOW": "moving slowly (+-0)",
         "FAST": "moving quickly (-2)",
-        "QUICKCHANGE": "Zigzagging (-4)",
+        "QUICKCHANGE": "Zigzagging",
         "SHOOTERMOVING": "walking (-2)",
         "SHOOTERRUNNING": "running (-4)",
         "SHOOTERSTATIONARY": "stationary (+-0)"
@@ -1717,6 +1718,12 @@
             "-5000": "Trot",
             "-8": "Gallop"
         }
+    },
+    "DIALOGDESCRIPTION": {
+        "narrowSpace": "The GM can decide that small rooms, hallways, and similar surroundings are cramped. Short-reach weapons suffer no penalties in cramped spaces, but longer weapons do.",
+        "advantageousPosition": "An advantageous position in combat grants a bonus of 2 for attack and defense. Advantageous positions can include standing on a table or large rock, or fighting an enemy who is downhill from you. It is also possible to gain an advantageous position while swimming, climbing a ship’s rigging, flying, and so on.",
+        "opportunityAttack": "Attacks of opportunity are close combat attacks that do not require an action. No defense is possible against an attack of opportunity, but the attack suffers a penalty of 4 and cannot be combined with combat special abilities (such as Feint or Forceful Blow).",
+        "twoWeaponCombat": "Attack with two weapons."
     },
     "CONDITIONDESCRIPTION": {
         "services": "Services the summoned creature owes to the summoner.",

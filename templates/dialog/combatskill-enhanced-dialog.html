@@ -2,19 +2,19 @@
     <div class="row-section">
         <div class="col sixty" style="max-width:60%">
             {{> systems/dsa5/templates/dialog/default-combat-dialog.html}} {{#if melee}}
-            <div class="form-group custom-select">
-                <label>{{localize "narrowSpace"}}</label>
-                <input type="checkbox" id="narrowSpace" name="narrowSpace" value="1" {{checked constricted}}>
+            <div class="form-group custom-select" >
+                <label data-tooltip="DIALOGDESCRIPTION.narrowSpace">{{localize "narrowSpace"}} (<span class="narrowSpaceLabel">{{rollModifiers.narrowSpace.mod}}</span>)</label>
+                <input type="checkbox" id="narrowSpace" name="narrowSpace" value="{{rollModifiers.narrowSpace.mod}}" {{checked constricted}}>
             </div>
             <div class="form-group custom-select">
-                <label>{{localize "wrongHand"}} (-4)</label>
-                <input type="checkbox" id="wrongHand" name="wrongHand" value="1" {{#if wrongHandDisabled}}disabled{{/if}} {{checked offHand}}>
+                <label>{{localize "wrongHand"}} (<span class="wrongHandLabel">{{rollModifiers.wrongHand.mod}}</span>)</label>
+                <input type="checkbox" id="wrongHand" name="wrongHand" value="{{rollModifiers.wrongHand.mod}}" {{#if wrongHandDisabled}}disabled{{/if}} {{checked offHand}}>
             </div>            
             {{/if}} 
             {{#if (or melee isDodge)}}          
-            <div class="form-group custom-select">
-                <label>{{localize "advantageousPosition"}} (+2)</label>
-                <input type="checkbox" id="advantageousPosition" name="advantageousPosition" value="2">
+            <div class="form-group custom-select" >
+                <label data-tooltip="DIALOGDESCRIPTION.advantageousPosition">{{localize "advantageousPosition"}} (<span class="advantageousPositionLabel">{{rollModifiers.advantageousPosition.mod}}</span>)</label>
+                <input type="checkbox" id="advantageousPosition" name="advantageousPosition" value="{{rollModifiers.advantageousPosition.mod}}">
             </div>
             {{/if}}
             {{#if showDefense}}
@@ -23,13 +23,13 @@
                 <input class="quantity-click" type="number" name="defenseCount" value="{{defenseCount}}" />
             </div>
             <div class="form-group">
-                <label>{{localize "attackFromBehind"}} (-4)</label>
-                <input type="checkbox" id="attackFromBehind" name="attackFromBehind" value="-4">
+                <label>{{localize "attackFromBehind"}} (<span class="attackFromBehindLabel">{{rollModifiers.attackFromBehindLabel.mod}}</span>)</label>
+                <input type="checkbox" id="attackFromBehind" name="attackFromBehind" value="{{rollModifiers.attackFromBehindLabel.mod}}">
             </div>
             {{/if}} {{#if showAttack}}
-            <div class="form-group custom-select">
-                <label>{{localize "opportunityAttack"}} (-4)</label>
-                <input type="checkbox" class="opportunityAttack" name="opportunityAttack" value="-4">
+            <div class="form-group custom-select" >
+                <label data-tooltip="DIALOGDESCRIPTION.opportunityAttack">{{localize "opportunityAttack"}} (<span class="opportunityAttackLabel">{{rollModifiers.opportunityAttack.mod}}</span>)</label>
+                <input type="checkbox" class="opportunityAttack" name="opportunityAttack" value="{{rollModifiers.opportunityAttack.mod}}">
             </div>
             <div class="form-group custom-select" data-tooltip="DIALOG.assassinateDescr">
                 <label>{{localize "DIALOG.assassinate"}}</label>
@@ -39,11 +39,14 @@
                     <option value="stun">{{localize "DIALOG.stun"}}</option>
                 </select>
             </div>
-            {{/if}} {{#if weaponSizes}}
-            <div class="form-group custom-select">
-                <label>{{localize "doubleAttack"}} (-2)</label>
-                <input type="checkbox" id="doubleAttack" name="doubleAttack" value="1">
+            {{/if}} 
+            {{#if (or showDefense showAttack)}}
+            <div class="form-group custom-select" >
+                <label data-tooltip="DIALOGDESCRIPTION.twoWeaponCombat">{{localize "doubleAttack"}} (<span class="doubleAttackLabel">{{rollModifiers.doubleAttack.mod}}</span>)</label>
+                <input type="checkbox" id="doubleAttack" name="doubleAttack" value="{{rollModifiers.doubleAttack.mod}}">
             </div>
+            {{/if}}
+            {{#if weaponSizes}}
             <div class="form-group custom-select">
                 <label>{{localize "opposingWeaponSize"}}</label>
                 <select name="weaponsize">
@@ -101,12 +104,12 @@
             </div>
 
             <div class="form-group custom-select">
-                <label>{{localize "MODS.combatTurmoil"}}</label>
-                <input type="checkbox" id="combatTurmoil" name="combatTurmoil" value="1">
+                <label>{{localize "MODS.combatTurmoil"}} (<span class="combatTurmoilLabel">{{rollModifiers.combatTurmoil.mod}}</span>)</label>
+                <input type="checkbox" id="combatTurmoil" name="combatTurmoil" value="{{rollModifiers.combatTurmoil.mod}}">
             </div>
             <div class="form-group custom-select">
-                <label>{{localize "rangeMovementOptions.QUICKCHANGE"}}</label>
-                <input type="checkbox" id="quickChange" name="quickChange" value="1">
+                <label>{{localize "rangeMovementOptions.QUICKCHANGE"}} (<span class="quickChangeLabel">{{rollModifiers.quickChange.mod}}</span>)</label>
+                <input type="checkbox" id="quickChange" name="quickChange" value="{{rollModifiers.quickChange.mod}}">
             </div>
             {{/if}}
         </div>
@@ -124,6 +127,9 @@
                 {{else}} {{#each combatSpecAbs as |item i|}}
                 <div class="row-section specAbs" data-actor="{{item.actor}}" data-category="{{item.category.id}}" data-id="{{item.id}}" data-step="0" data-maxStep="{{item.steps}}" data-dmmalus="{{item.dmmalus}}" data-atbonus="{{item.atbonus}}" data-tpbonus="{{item.tpbonus}}"
                     data-pabonus="{{item.pabonus}}" data-tooltip="{{item.label}}">
+                    {{#if (gt item.variantCount 1)}}
+                    <div data-current="0" data-variantcount="{{item.variantCount}}" data-tooltip="TT.effectVariant" class="variantChange">A</div>
+                    {{/if}}
                     <div class="specImg col ten {{item.category.css}}" data-tooltip="{{item.category.name}}">
                     </div>
                     <div class="col ninety">

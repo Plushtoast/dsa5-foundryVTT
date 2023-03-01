@@ -4,12 +4,15 @@ import DSA5SkillDialog from './dialog-skill-dsa5.js'
 import DSA5SpellDialog from './dialog-spell-dsa5.js'
 
 export default class DSA5Dialog extends DialogShared {
-    static getDialogForItem(type, renderData, actor) {
+    static getDialogForItem(testData, renderData) {
+        const actor = testData.extra.actor
+        const type = testData.source.type
         switch (type) {
             case "rangeweapon":
             case "meleeweapon":
             case "dodge":
             case "trait":
+                renderData.rollModifiers = DSA5CombatDialog.setData(actor, type, testData)
                 return DSA5CombatDialog
             case "spell":
             case "ritual":
