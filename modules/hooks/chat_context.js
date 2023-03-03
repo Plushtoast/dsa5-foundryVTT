@@ -5,7 +5,7 @@ export default function() {
     const fateAvailable = (actor, group) => { return DSA5_Utility.fateAvailable(actor, group) }
     const canHurt = function(li, prop = "damage.value") {
         let cardData = game.messages.get(li.attr("data-message-id")).flags.opposeData
-        const isOwner = DSA5_Utility.getSpeaker(cardData.speakerDefend)?.isOwner
+        const isOwner = cardData ? DSA5_Utility.getSpeaker(cardData.speakerDefend)?.isOwner : false
         return ((game.user.isGM || isOwner) && li.find(".opposed-card").length || li.find(".dice-roll").length) && (getProperty(cardData, prop) || 0) > 0
     }
 
@@ -160,7 +160,7 @@ export default function() {
     const applyDamage = async(li, mode) => {
         const message = game.messages.get(li.attr("data-message-id"))
         const cardData = message.flags.opposeData
-        const defenderSpeaker = cardData.speakerDefend;
+        const defenderSpeaker = cardData?.speakerDefend;
         const actor = DSA5_Utility.getSpeaker(defenderSpeaker)
 
         if (!actor.isOwner) return ui.notifications.error(game.i18n.localize("DSAError.DamagePermission"))

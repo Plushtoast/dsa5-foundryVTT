@@ -164,7 +164,7 @@ export default class ItemSheetdsa5 extends ItemSheet {
         html.find(".condition-toggle").mousedown(ev => {
             let condKey = $(ev.currentTarget).parents(".statusEffect").attr("data-id")
             let ef = this.item.effects.get(condKey)
-            ef.update({ disabled: !ef.system.disabled })
+            ef.update({ disabled: !ef.disabled })
         })
 
         html.find('.condition-edit').click(ev => {
