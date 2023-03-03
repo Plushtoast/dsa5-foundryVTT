@@ -1,0 +1,85 @@
+<div>
+    <h1 class="mume-header" id="wichtige-erweiterungen">4.2.0 Wichtige Erweiterungen (10.3.2023)</h1>
+    <h2 class="mume-header" id="-mehrfachangriffe-teil-i">Mehrfachangriffe Teil I</h2>
+
+    <p>Sonderfertigkeiten f&#xFC;r den Kampf k&#xF6;nnen nun zus&#xE4;tzliche Effekte auf ihrem Gegenstandsblatt haben. Diese zus&#xE4;tzlichen Effekte k&#xF6;nnen im Wurfdialog durch Anklicken des &quot;A,B,C&quot;-Buchstabens vor dem Spezialf&#xE4;higkeitsselektor umgeschaltet werden. Dies erm&#xF6;glicht es, z.B. f&#xFC;r F&#xE4;higkeiten wie Wirbelwind beim zweiten und dritten Angriff einen anderen Satz von Effektwerten zu verwenden.<br>
+    Alle Angriffsw&#xFC;rfe m&#xFC;ssen weiterhin manuell ausgel&#xF6;st werden. Das Aufl&#xF6;sen von mehreren Zielen auf einmal ist Thema von Multi Attacks Part II.</p>
+    <h2 class="mume-header" id="-hauptmen%C3%BC-hotbar">Hauptmen&#xFC;-Hotbar</h2>
+    
+    <p>Es gibt jetzt eine neue Meistermen&#xFC;-Hotbar f&#xFC;r den Spielleiter. Immer wenn kein Token ausgew&#xE4;hlt ist, wird sie anstelle der normalen Token-Hotbar angezeigt. Sie enth&#xE4;lt h&#xE4;ufig genutzte Funktionen des Spielleitermen&#xFC;s in einer besser zug&#xE4;nglichen Form. Wenn du Ideen f&#xFC;r weitere Funktionen hast, lass es uns wissen.<br>
+    Derzeit enth&#xE4;lt es die folgenden Funktionen (in dieser Reihenfolge):</p>
+    <ul>
+    <li>&#xD6;ffnen des Hauptmen&#xFC;s des Spiels (diese Schaltfl&#xE4;che k&#xF6;nnte wieder verschwinden)</li>
+    <li>W&#xFC;rfeln eines zuf&#xE4;lligen Opfers, was dem Spielleiter f&#xFC;r einen kurzen Moment die Grafik des Opfers zeigt. Klicke mit der linken Maustaste, um zuf&#xE4;llig zu w&#xFC;rfeln, klicke mit der rechten Maustaste, um &quot;Pechmagnet&quot; einzubeziehen. Wenn im Hauptmen&#xFC; einzelne Akteure ausgew&#xE4;hlt sind, wird nur unter diesen gew&#xFC;rfelt.</li>
+    <li>Schaltfl&#xE4;che &quot;Bezahlen/Bezahlt werden&quot;, die eine /pay- oder /getPaid-Nachricht in den Chat sendet. Der Geldwert wird aus dem Zahleneingabefeld &#xFC;bernommen, das sich ebenfalls in der Hotbar des Hauptmen&#xFC;s befindet.</li>
+    <li>Schaltfl&#xE4;che Talente. Bewege den Mauszeiger &#xFC;ber diese Schaltfl&#xE4;che, um alle verf&#xFC;gbaren Talente anzuzeigen. Klicke mit der linken Maustaste auf eine Talent, um einen Wurf anzufordern. Rechtsklick, um eine Gruppensammelprobe zu erstellen, Strg + Klick, um einen /ch Fertigkeitswurf ohne Token/Akteur durchzuf&#xFC;hren. Alle drei Funktionen beinhalten einen Modifikator, der &#xFC;ber das Eingabefeld in der Token-Hotbar eingestellt werden kann. Man kann auch mit dem Mauszeiger &#xFC;ber die Fertigkeiten-Schaltfl&#xE4;che fahren und anfangen zu tippen, was dann die Fertigkeiten filtert, so dass man schneller die richtige findet. Diese Filterfunktion funktioniert jetzt auch f&#xFC;r die Fertigkeiten in der normalen Token-Hotbar f&#xFC;r Token.</li>
+    <li>Zahlenfeld eingeben. Der Wert wird f&#xFC;r die /pay-Funktion oder als Modifikator f&#xFC;r Fertigkeitsw&#xFC;rfe verwendet.</li>
+    <li>Dunkelheitsschwelle. Schnelles &#xC4;ndern der Szenendunkelheit ohne ein Men&#xFC; zu &#xF6;ffnen.</li>
+    </ul>
+    <h2 class="mume-header" id="-fl%C3%BCstern-von-nachrichten-aus-tageb%C3%BCchern">Fl&#xFC;stern von Nachrichten aus Journals</h2>
+    
+    <p>Sie k&#xF6;nnen nun einen Fl&#xFC;sterabschnitt zu Journals hinzuf&#xFC;gen. Dieser Abschnitt kann im Voraus vorbereitet werden und allen oder nur ausgew&#xE4;hlten Spielern zugefl&#xFC;stert werden. Aufgrund der Verarbeitung von Text im Texteditor darf der Text keine html-Tags enthalten.<br>
+    Beispiel:</p>
+    
+    <code>
+        @PostChat[Dies ist eine supergeheime vorbereitete Nachricht, die an den ersten Spieler geschickt werden soll, der eine Sinnessch&#xE4;rfe Probe bestanden hat].
+    </code>
+    <h2 class="mume-header" id="-sturzschaden">Sturzschaden</h2>
+    
+    <p>Es gibt jetzt eine zus&#xE4;tzliche Schaltfl&#xE4;che auf der Registerkarte &quot;Kampf&quot; neben der Schaltfl&#xE4;che &quot;Ausweichen&quot; und &quot;Waffenloser Kampf&quot;, mit der eine Probe f&#xFC;r Fallschaden gestartet werden kann. Lege die Fallh&#xF6;he fest und es wird automatisch 1d6 pro 1 Schritt gew&#xFC;rfelt und die erforderliche K&#xF6;rperbeherrschungsprobe geworfen, um den Fall abzufedern und den Schaden zu reduzieren.</p>
+    <h2 class="mume-header" id="-unterst%C3%BCtzung-f%C3%BCr-skins">Unterst&#xFC;tzung f&#xFC;r Skins</h2>
+    
+    <p>Es gibt jetzt eine Einstellung, um den Skin zu &#xE4;ndern (Gesamtstil f&#xFC;r Das Schwarze Auge).<br>
+    Derzeit verf&#xFC;gbare Skins sind:</p>
+    <ul>
+    <li>&quot;immersiv&quot;, Standard, war in allen bisherigen Versionen so</li>
+    <li>&quot;nackt (beta)&quot;, mehr wie der Foundry-Standard, der im Grunde ein abgespeckter Skin ist, damit Modder ihre Skins leichter hinzuf&#xFC;gen k&#xF6;nnen</li>
+    </ul>
+    <p>Warum haben wir dies hinzugef&#xFC;gt? Es k&#xF6;nnte ein &quot;Dark Mode&quot;-Skin in Zukunft geben. Au&#xDF;erdem kannst du jetzt deine eigenen CSS-Stylesheets einfacher hinzuf&#xFC;gen und alle Ihre Spieler k&#xF6;nnen ihren Lieblingsskin selbst ausw&#xE4;hlen.</p>
+    <p>Entwickler, die ihren eigenen Stil erstellen wollen, sollten im Grunde folgendes tun:</p>
+    <ul>
+    <li>Ein neues Modul erstellen</li>
+    <li>Hinzuf&#xFC;gen von gescopten CSS-Styles</li>
+    <li>JS-Datei hinzuf&#xFC;gen und den Stil &#xFC;ber den Hook &quot;registerDSAstyle&quot; registrieren</li>
+    </ul>
+    <p>Example:</p>
+    <pre data-role="codeBlock" data-info="scss" class="language-scss">
+        <span class="token comment">//(s)css style file</span>
+    <span class="token selector">.dsa5-myStyleName </span><span class="token punctuation">{</span>
+        <span class="token selector">p</span><span class="token punctuation">{</span> 
+            <span class="token property">color</span><span class="token punctuation">:</span> <span class="token color">darkblue</span><span class="token punctuation">;</span> 
+        <span class="token punctuation">}</span>
+        ...all my style code
+    <span class="token punctuation">}</span>
+    </pre><pre data-role="codeBlock" data-info="js" class="language-javascript"><span class="token maybe-class-name">Hooks</span><span class="token punctuation">.</span><span class="token method function property-access">on</span><span class="token punctuation">(</span><span class="token string">&quot;registerDSAstyle&quot;</span><span class="token punctuation">,</span> <span class="token parameter">styles</span> <span class="token arrow operator">=&gt;</span> <span class="token punctuation">{</span>
+        styles<span class="token punctuation">[</span><span class="token string">&quot;dsa5-myStyleName&quot;</span><span class="token punctuation">]</span> <span class="token operator">=</span> <span class="token string">&quot;Some fancy style name which can also be translated with lang files&quot;</span><span class="token punctuation">;</span>
+    <span class="token punctuation">}</span><span class="token punctuation">)</span>
+    </pre><h1 class="mume-header" id="-enhancements">Verbesserungen</h1>
+    
+    <ul>
+    <li>Klicke mit der rechten Maustaste auf ein Talent in einer Token-Hotbar, um eine blinde GM-Probe zu starten. Halte Strg + Klick, um die Beschreibung des Talents zu &#xF6;ffnen.</li>
+    <li>Die Beschreibung und die GM-Beschreibung von Gegenst&#xE4;nden verwenden nun den ProseMirror anstelle von tinyMCE.</li>
+    <li>Waffen, die so voreingestellt sind, dass sie in der Nebenhand getragen werden, zeigen nun einen kleinen Indikator auf dem Kampfreiter neben der Schaltfl&#xE4;che &quot;Griffart tauschen&quot;.</li>
+    <li>Der Kampftracker zeigt nun einen kleinen Hinweis f&#xFC;r den Spielleiter an, wenn eine Kreatur die Spieler ernsthaft verletzen will und mehrere Aktionen zur Verf&#xFC;gung stehen.</li>
+    <li>Spieler k&#xF6;nnen nun den Schaden im Kampf &#xFC;ber die Ergebnis-Chatkarte selbst anwenden, wenn sie den anvisierten Akteur besitzen.</li>
+    <li>Journale und der Journalbrowser haben nun einen Button in der Kopfleiste, um die Schriftgr&#xF6;&#xDF;e zu wechseln. Bei mehreren Klicks werden alle verf&#xFC;gbaren Gr&#xF6;&#xDF;en in einer Schleife durchlaufen. Dies sollte das Lesen von gro&#xDF;en Mengen an Journalen z.B. zur Vorbereitung eines Abenteuers erleichtern.</li>
+    <li>Auf der Registerkarte &quot;Talente&quot; werden nun auch die Anzahl der verbrauchten und verf&#xFC;gbaren W&#xFC;rfe f&#xFC;r Sammelproben angezeigt.</li>
+    <li>Der Kampfdialog zeigt Modifikatoren nun etwas detaillierter an.</li>
+    <li>Reitertoken, die gleich gro&#xDF; oder gr&#xF6;&#xDF;er als das Reittier sind, werden nun automatisch verkleinert.</li>
+    <li>Zaubererweiterungen k&#xF6;nnen nun auch einen einfachen Modifikator hinzuf&#xFC;gen (&quot;key&quot;: &quot;extensionModifier.mod&quot;, &quot;mode&quot;: 2, &quot;value&quot;: -1 )</li>
+    <li>Hinzuf&#xFC;gen einer neuen Ausr&#xFC;stungskategorie f&#xFC;r &quot;Nahrung&quot;.</li>
+    <li>Effekte, die &#xFC;ber die Token-Hotbar hinzugef&#xFC;gt werden, k&#xF6;nnen nun eine Dauer und einen Grund f&#xFC;r den Effekt enthalten (dank der Hilfe von Zoidable). Klicke auf das Zahnrad-Symbol, um diese Funktion zu nutzen.</li>
+    <li>Werkstatt des Meisters: Der Chat-Befehl &quot;Zuf&#xE4;llige Namen generieren /nm&quot; hat jetzt einen Schnell-Button, um NSCs on the fly zu generieren (dieser Button sollte in Zukunft auch in die Szene gezogen werden k&#xF6;nnen, um einen NSC on the fly zu generieren)</li>
+    <li>Werkstatt des Meisters: Mit dem NPC-Generator erstellte Darsteller haben jetzt einen Tooltip, der eine schnelle Vorschau und Bearbeitung von Attributen und Ausr&#xFC;stung erm&#xF6;glicht. Bewege den Mauszeiger &#xFC;ber den Akteur im NSC-Generator und klicke mit der linken oder rechten Maustaste auf den entsprechenden Wert (halte strg gedr&#xFC;ckt, um z.B. Geld um 10 zu &#xE4;ndern). Auch Ausr&#xFC;stung kann auf diese Weise neu gew&#xFC;rfelt oder entfernt werden.</li>
+    <li>Werkstatt des Meisters: Der NPC-Generator versucht nun, die Attributanforderungen zu erf&#xFC;llen. So sollte der Krieger mit St&#xE4;rke 10 nicht mehr m&#xF6;glich sein.</li>
+    <li>Deutsche User k&#xF6;nnen sich die &#xC4;nderungen an der Meisterwerkstatt hier ansehen: <a href="https://www.youtube.com/watch?v=R16x-72cBlc&amp;ab_channel=VTTom">VTToms Youtube-Kanal</a></li>
+    </ul>
+    <h1 class="mume-header" id="-bugfixes">Bugfixes</h1>
+    
+    <ul>
+    <li>Die Schadensberechnung bei manuellen Schadensw&#xFC;rfen sollte nun etwas besser sein.</li>
+    <li>Der Modifikator f&#xFC;r Zweiwaffenkampf wird nun auch f&#xFC;r Parierproben angezeigt. Diese &#xC4;nderung wirkt sich auch auf die Funktionsweise der Spezialf&#xE4;higkeit Beidh&#xE4;ndiger Kampf aus, daher muss das die Sonderfertigkeit &#xFC;ber die Migration aktualisiert werden, um die &#xC4;nderung zu ber&#xFC;cksichtigen.</li>
+    <li>F&#xE4;higkeiten wurden ge&#xE4;ndert, die einen Geschwindigkeitsmultiplikator haben. Stelle sicher, dass du diese migrierst. (4.2.7)</li>
+    <li>Die vorteilhafte Position kann nun auch beim Ausweichen ausgew&#xE4;hlt werden. (4.2.7)</li>
+    </ul>
+</div>

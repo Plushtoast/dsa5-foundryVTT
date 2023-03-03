@@ -1,0 +1,86 @@
+<div>
+    <h1 class="mume-header" id="important-enhancements">4.3.0 Important enhancements (3/10/2023)</h1>
+    <h2 class="mume-header" id="-multi-attacks-part-i">Multi Attacks Part I</h2>
+
+    <p>Combat special abilities can now have additional effects on their item sheet. Those additional effects can be switched on the roll dialog by clicking on the &quot;A,B,C&quot; letter in front of the special ability selector. This allows to use a different set of effect values for e.g. abilities like Whirlwind on the second and third attack.<br>
+    All attack rolls have to be still initiated manually. Resolving multiple targets at once is up for Multi Attacks Part II.</p>
+    <h2 class="mume-header" id="-master-menu-hotbar">Master Menu Hotbar</h2>
+    
+    <p>There is now a new master menu hotbar for the game master. Whenever there is no token selected it will show at the place of the normal token hotbar. It contains frequently used functionality of the game master menu in a more accessible way. If you have ideas for more functions there let us known.<br>
+    Currently it contains the following functions (in this order):</p>
+    <ul>
+    <li>Open the game master menu (that button might vanish again)</li>
+    <li>Roll a random victim, which will show the artwork of the victim for a brief moment to the game master. Left click to roll randomly, right click to include Misfortune. If single actors are selected in the master menu, it will roll only among those.</li>
+    <li>Pay/getPaid button, which will post a /pay or /getPaid message to the chat. The money value will be taken from the number input field, which is also located in the master menu hotbar.</li>
+    <li>Skills button. Hover on this button to show all common skills available. Left click a skill to request a roll. Right click to create a cummulative group check, ctrl + click to do a /ch skill roll without a token/actor. All three functions include a modifier which can be set by the input number field in the token hotbar. You can also hover the skills button and start typing, which will then filter the skills, so you can find the right one faster. This filtering functions now also works for the skills on the normal token hotbar for tokens.</li>
+    <li>Input number field. Value will be used for the /pay function or as modifier for skill rolls.</li>
+    <li>Darkness threshold. Quickly change the scene darkness without opening any menu.</li>
+    </ul>
+    <h2 class="mume-header" id="-whisper-messages-from-journals">Whisper Messages from journals</h2>
+    
+    <p>You can now add a whisper section to journals. This section can be prepared in advance and whispered to all or only selected players. Due to the processing of text in the texteditor the text may not include any html tags.<br>
+    Example:</p>
+    
+        <code>
+            @PostChat[This is some super secret prepared message which should be send to the first player who succeeds a perception check.]
+        </code>
+    <h2 class="mume-header" id="-falling-damage">Falling Damage</h2>
+    
+    <p>There is now an additional button on the combat tab next to the dodge &amp; weaponless combat button which can start a falling check. Set the falling height and it will automatically roll 1d6 per 1 yard and roll the required Body-Control check to soften the fall and reduce the damage.</p>
+    <h2 class="mume-header" id="-support-for-skins">Support for skins</h2>
+    
+    <p>There is now a setting to change the skin (overall style set for The Darky Eye).<br>
+    Currently available skins are:</p>
+    <ul>
+    <li>&quot;immersive&quot;, default, has been like this all versions before</li>
+    <li>&quot;naked (beta)&quot;, more like the Foundry default, which is basically a stripped down skin so modders can add their skins easier</li>
+    </ul>
+    <p>Why did we add this? There might come a &quot;dark mode&quot; skin in the feature. Also you can now add your own css style sheets easier and all your players could select their favorite skin themselves.</p>
+    <p>Developers which want to create their own style should basically do this:</p>
+    <ul>
+    <li>Create a new module</li>
+    <li>Add scoped CSS styles</li>
+    <li>Add JS file and register the style via the hook &quot;registerDSAstyle&quot;</li>
+    </ul>
+    <p>Example:</p>
+    <pre data-role="codeBlock" data-info="scss" class="language-scss"><span class="token comment">//(s)css style file</span>
+    <span class="token selector">.dsa5-myStyleName </span><span class="token punctuation">{</span>
+        <span class="token selector">p</span><span class="token punctuation">{</span> 
+            <span class="token property">color</span><span class="token punctuation">:</span> <span class="token color">darkblue</span><span class="token punctuation">;</span> 
+        <span class="token punctuation">}</span>
+        ...all my style code
+    <span class="token punctuation">}</span>
+    </pre><pre data-role="codeBlock" data-info="js" class="language-javascript"><span class="token maybe-class-name">Hooks</span><span class="token punctuation">.</span><span class="token method function property-access">on</span><span class="token punctuation">(</span><span class="token string">&quot;registerDSAstyle&quot;</span><span class="token punctuation">,</span> <span class="token parameter">styles</span> <span class="token arrow operator">=&gt;</span> <span class="token punctuation">{</span>
+        styles<span class="token punctuation">[</span><span class="token string">&quot;dsa5-myStyleName&quot;</span><span class="token punctuation">]</span> <span class="token operator">=</span> <span class="token string">&quot;Some fancy style name which can also be translated with lang files&quot;</span><span class="token punctuation">;</span>
+    <span class="token punctuation">}</span><span class="token punctuation">)</span>
+    </pre><h1 class="mume-header" id="-enhancements">Enhancements</h1>
+    
+    <ul>
+    <li>Right click on skill roll in a token hotbar to start a blind gm roll. Hold strg + click to open the skills description.</li>
+    <li>The description and gm description of items now use the ProseMirror instead of tinyMCE.</li>
+    <li>Weapons which are preselected to be worn in the wrong hand now show a small indicator on the combat tab next to the &quot;swap hands&quot; button.</li>
+    <li>The combat tracker now shows a small indicator to the gm if a creature wants to seriously hurt the players with multiple actions available.</li>
+    <li>Players can now apply the damage in Combat via the result chat card themselves if they own the targeted actor.</li>
+    <li>Journals and the Journalbrowser now have a button in the header bar to switch font sizes. Multiple clicks will go through all available sizes in a loop. This should faciliate reading of large junks of journals e.g. for the preparation of an adventure.</li>
+    <li>Cummulative checks on the skills tab now also show the amount of used and available rolls.</li>
+    <li>The combat dialog shows modifiers now a little bit more detailed.</li>
+    <li>Rider tokens which have an equal or larger size than the mount will now be shrinked automatically.</li>
+    <li>Spell extensions can now also add a flat modifier ( &quot;key&quot;: &quot;extensionModifier.mod&quot;, &quot;mode&quot;: 2, &quot;value&quot;: -1 )</li>
+    <li>Added a new equipment category for &quot;food&quot;</li>
+
+    <li>Effects added via the token hotbar can now include a duration and a reason for the effect (thanks for Zoidable&apos;s help). Click on the gears icon to use this function.</li>
+
+    <li>Master&apos;s Workshop: The generate random names /nm chat command now has a quick button to generate NPCs on the fly (this button should be able to be pulled to the scene and generate a NPC on the fly in the future)</li>
+    <li>Master&apos;s Workshop: NPC generator created actors now have a tooltip which allows to quickly preview and edit attributes and gear. Hover on the actor in the npc generator and click left or right on the respective value (hold strg to modify e.g. money by 10). Gear can also be rerolled or removed in this way.</li>
+    <li>Master&apos;s Workshop: The NPC generator tries to fullfill attribute requirements now. So the warrior with strength 10 should not be possible anymore.</li>
+    <li>German users can watch the changes to the master&apos;s workshop here: <a href="https://www.youtube.com/watch?v=R16x-72cBlc&amp;ab_channel=VTTom">VTToms Youtube channel</a></li>
+    </ul>
+    <h1 class="mume-header" id="-bugfixes">Bugfixes</h1>
+    
+    <ul>
+    <li>Damage calculation on manual damage rolls should be a little bit better now</li>
+    <li>Two-Weapon Combat modifier now also shows for parry roles. This change also affects how the special ability &quot;Two-Weapon Combat&quot; (Beidh&#xE4;ndiger Kampf) works, so you need to update the core module migrate special abilities to include the change.</li>
+    <li>Changed abilities which have a speed multiplier. Make sure to migrate those. (4.2.7)</li>
+    <li>Advantageous position can now also be selected for dodge. (4.2.7)</li>
+    </ul>
+</div>
