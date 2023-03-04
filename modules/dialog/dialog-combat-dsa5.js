@@ -360,6 +360,7 @@ export default class DSA5CombatDialog extends DialogShared {
     }
 
     static getNarrowSpaceModifier(testData, mode){
+        if(!mode) return 0
         if (game.i18n.localize("LocalizedIDs.Shields") == getProperty(testData, "source.system.combatskill.value"))
             return DSA5.narrowSpaceModifiers["shield" + testData.source.system.reach.shieldSize][mode]
                     
