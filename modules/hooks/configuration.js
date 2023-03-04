@@ -362,6 +362,14 @@ export default function() {
         restricted: false
     })
 
+    game.settings.registerMenu("dsa5", "exportConfiguration", {
+        name: "ExportImportConfiguration",
+        label: "Export/Import Configuration",
+        hint: game.i18n.localize("DSASETTINGS.exportConfiguration"),
+        type: ExportForm,
+        restricted: true
+    })
+
     game.settings.registerMenu("dsa5", "resetTokenbar", {
         name: game.i18n.localize("DSASETTINGS.resetTokenbar"),
         label: game.i18n.localize("DSASETTINGS.resetTokenbar"),
@@ -560,9 +568,77 @@ export default function() {
 
 }
 
+
+const exportSetting = (dlg) => {
+    let toExport = Array.from(game.settings.settings)
+
+    const exportOnlyDSA = dlg.find("[name=\"exportOnlyDSA\"]").is(":checked")
+
+    if(exportOnlyDSA) toExport = toExport.filter(x => /^dsa5\./.test(x[0]))
+
+    const exportData = {}
+    const skipSettings = /(^dsa5\.(selectedActors|trackedActors|groupschips|tokenhotbarPosition|iniTrackerPosition|migrationVersion)$|^dsa5\.breadcrumbs_)/
+
+    for(const key of toExport){
+        if(skipSettings.test(key[0])) continue
+
+        let keys = key[0].split(".")
+        const scope = keys.shift()
+        const setting = keys.join(".")
+
+        exportData[key[0]] = game.settings.get(scope, setting)
+    }
+    const filename = `fvtt-DSA5-Configuration.json`
+
+    saveDataToFile(JSON.stringify(exportData, null, 2), "text/json", filename)
+}
+
+const importSettings = async(dlg) => {
+    const form = dlg.find("form")[0]
+    if (!form.data.files.length)
+            return ui.notifications?.error("You did not upload a data file!")
+    
+    readTextFromFile(form.data.files[0]).then(async (data) => {       
+        const json = JSON.parse(data)
+        const availableKeys = Array.from(game.settings.settings).map(x => x[0])
+        for(const key of Object.keys(json)){
+            if(availableKeys.includes(key)){
+                let keys = key.split(".")
+                const scope = keys.shift()
+                const setting = keys.join(".")
+                await game.settings.set(scope, setting, json[key])
+            }
+        }
+        game.settings.sheet.render(true)
+    });
+}
+
 class ChangelogForm extends FormApplication {
     render() {
         showPatchViewer()
+    }
+}
+
+class ExportForm extends FormApplication {
+    async render(){
+        const html = await renderTemplate('systems/dsa5/templates/dialog/exportConfiguration-dialog.html', {  })
+        new Dialog({
+            title: "Export configuration",
+            content: html,
+            default: 'yes',
+            buttons: {
+                export: {
+                    icon: '<i class="fa fa-check"></i>',
+                    label: game.i18n.localize("Export"),
+                    callback: (dlg) => exportSetting(dlg)
+                },
+                import: {
+                    icon: '<i class="fas fa-check"></i>',
+                    label: game.i18n.localize("Import"),
+                    callback: dlg => importSettings(dlg)
+                }
+            }
+        }).render(true)
     }
 }
 

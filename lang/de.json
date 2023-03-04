@@ -1622,7 +1622,8 @@
         "yesNumbered": "Ja (Nummeriert)",
         "renameNumbered": "Umbenennen (Nummeriert)",
         "globalStyle": "Design",
-        "globalStyleHint": "Ändere den \"Skin\" des Systems."
+        "globalStyleHint": "Ändere den \"Skin\" des Systems.",
+        "exportConfiguration": "Exportiere oder importiere die DSA Settings um sie mit anderen Welten abzugleichen."        
     },
     "CONTROLS": {
         "targetForUser": "Ziel für Spieler wählen"

@@ -248,6 +248,29 @@
         &.tokenQuickHot::after {
             content: none;
         }
+
+        &.dsa5Decent {
+            .window-content, .window-header {
+              background: rgba(0, 0, 0, 0.5);
+              padding: 0;
+              position: unset;
+              color: white;
+            }
+        
+            .window-content li {
+              background: rgba(255, 255, 255, 0.2);
+        
+              &:hover {
+                background: rgba(255, 255, 255, 0.5);
+              }
+            }
+            &:after {
+                background: none;
+                margin: 0;
+                padding: 0;
+                overflow: visible;
+              }
+          }
     }
 
     .app.sidebar-popout .window-content {

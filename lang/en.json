@@ -1592,7 +1592,8 @@
         "yesNumbered": "Yes (Numbering)",
         "renameNumbered": "Rename (Numbering)",
         "globalStyle": "Design",
-        "globalStyleHint": "Change the \"skin\" of the system."
+        "globalStyleHint": "Change the \"skin\" of the system.",
+        "exportConfiguration": "Export or import TDE settings to align different worlds."
     },
     "WEAR": {
         "check": "Breaking Point Rating Check ({category})",

@@ -267,6 +267,9 @@ export default class BookWizard extends Application {
         this.content = `<div><h1 class="journalHeader" data-uuid="${journal.uuid}">${journal.name}<div class="jrnIcons">${pinIcon}<a class="pinJournal"><i class="fas fa-thumbtack"></i></a><a class="showJournal"><i class="fas fa-eye"></i></a></div></h1>${enriched}`
         const chapter = $(this._element).find('.chapter')
         chapter.html(this.content)
+        
+        $(this._element).find('.subChapter').removeClass('selected')
+        $(this._element).find(`[data-jid="${journal.id}"]`).addClass("selected")
         bindImgToCanvasDragStart(chapter)
         chapter.find('.documentName-link, .entity-link, .content-link').click(ev => {
             const elem = $(ev.currentTarget)
@@ -435,6 +438,7 @@ export default class BookWizard extends Application {
                 chapter.cssClass = "selected"
                 chapter.subChapters = this.getSubChapters()
             }
+            console.log(this.selectedChapter)
             return await renderTemplate('systems/dsa5/templates/wizard/adventure/adventure_toc.html', { chapters, book: this.book, fulltextsearch: this.fulltextsearch ? "on" : "" })
         } else {
             return '<div class="libraryImg"></div>'

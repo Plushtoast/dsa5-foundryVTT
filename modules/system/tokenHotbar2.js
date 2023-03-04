@@ -180,6 +180,7 @@ export default class TokenHotbar2 extends Application {
                     html.find(`.secondary[data-category="${cat}"]`).addClass("shown")
             }, 700)
         })
+        
         html.on('mouseleave', 'li.primary', ev => {
             const cat = ev.currentTarget.dataset.category
             this.category = undefined
@@ -440,7 +441,10 @@ export default class TokenHotbar2 extends Application {
                     } 
                     if (["skill"].includes(x.type)) {
                         const elem = { name: `${x.name} (${x.system.talentValue.value})`, id: x.id, icon: x.img, cssClass: "skill",addClass: x.system.group.value, abbrev: x.name[0], tw: x.system.talentValue.value }
-                        if(x.system.talentValue.value > 0) descendingSkills.push(elem)
+                        if(x.system.talentValue.value > 0) {
+                            elem.cssClass += " filterable"
+                            descendingSkills.push(elem)
+                        }
 
                         moreSkills.push(elem)
                     }else if (spellTypes.includes(x.type)) {

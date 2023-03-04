@@ -21,7 +21,8 @@
         <li><a data-id="{{item.id}}" class="{{item.cssClass}} getChapter">{{item.name}}</a>{{#if item.subChapters}}
             <ul>
                 {{#each item.subChapters as |item i|}}
-                <li class="fas fa-caret-right"><a data-jid="{{item.id}}" class="subChapter">{{item.name}}</a></li>
+                {{log i}}
+                <li class="fas fa-caret-right"><a data-jid="{{item.id}}" class="subChapter {{#if (eq i 0)}}selected{{/if}}">{{item.name}}</a></li>
                 {{/each}}
             </ul>
             {{/if}}
