@@ -12,42 +12,44 @@ export default class DSATables {
         options.source = dataset.source
 
         const table = DSA5.systemTables.find(x => x.name == dataset.table)
-        const tableResult = await DSATables.getRollTable(table.pack[game.i18n.lang], game.i18n.localize(`TABLENAMES.${dataset.table}`), dataset)
-        const hasEffect = options.speaker ? await DSATables.hasEffect(tableResult) : false
-        const result = DSA5_Utility.replaceDies(DSA5_Utility.replaceConditions(tableResult.results[0].text))
-        const title = `${game.i18n.localize("TABLENAMES." + dataset.table)}`
+        const tableResults = await DSATables.getRollTable(table.pack[game.i18n.lang], game.i18n.localize(`TABLENAMES.${dataset.table}`), dataset)
+        for(let tableResult of tableResults){
+            const hasEffect = options.speaker ? await DSATables.hasEffect(tableResult) : false
+            const result = DSA5_Utility.replaceDies(DSA5_Utility.replaceConditions(tableResult.results[0].text))
+            const title = `${game.i18n.localize("TABLENAMES." + dataset.table)}`
 
-        const content = await renderTemplate(`systems/dsa5/templates/tables/tableCard.html`, { result, title, hasEffect })
+            const content = await renderTemplate(`systems/dsa5/templates/tables/tableCard.html`, { result, title, hasEffect })
 
-        const effects = await this.buildEffects(tableResult, hasEffect)
+            const effects = await this.buildEffects(tableResult, hasEffect)
 
-        ChatMessage.create({
-            user: game.user.id,
-            content,
-            whisper: options.whisper,
-            blind: options.blind,
-            flags: { 
-                data: {
-                    preData: {
-                        source: {
-                            effects
+            ChatMessage.create({
+                user: game.user.id,
+                content,
+                whisper: options.whisper,
+                blind: options.blind,
+                flags: { 
+                    data: {
+                        preData: {
+                            source: {
+                                effects
+                            },
+                            extra: {
+                                actor: { id: options.speaker.actor },
+                                speaker: options.speaker
+                            },
+                            situationalModifiers: []
                         },
-                        extra: {
-                            actor: { id: options.speaker.actor },
-                            speaker: options.speaker
-                        },
-                        situationalModifiers: []
+                        postData: {
+
+                        }
                     },
-                    postData: {
-
+                    dsa5: { 
+                        hasEffect, 
+                        options 
                     }
-                },
-                dsa5: { 
-                    hasEffect, 
-                    options 
                 }
-            }
-        })
+            })
+        }        
     }
 
     static async hasEffect(tableResult){
@@ -100,7 +102,7 @@ export default class DSATables {
             result.roll.editRollAtIndex([{ index: 0, val: result.roll.total + 5 }])
             result = await table.draw({ displayChat: false, roll: result.roll })
         }
-        return result
+        return [result]
     }
 
     static async tableEnabledFor(key) {

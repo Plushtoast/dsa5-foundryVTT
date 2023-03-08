@@ -121,7 +121,7 @@ export default class SpeciesWizard extends WizardDSA5 {
         }
 
         Object.keys(DSA5.characteristics).forEach(k => {
-            update[`data.characteristics.${k}.species`] = 0
+            update[`system.characteristics.${k}.species`] = 0
         })
 
         for (let attr of this.species.system.attributeChange.value.split(",").concat(attributeChoices)) {
@@ -131,8 +131,10 @@ export default class SpeciesWizard extends WizardDSA5 {
             let attrs = attr.trim().split(" ")
             let dataAttr = game.dsa5.config.knownShortcuts[attrs[0].toLowerCase().trim()].slice(0)
             dataAttr[dataAttr.length - 1] = "species"
-            update[`data.${dataAttr.join(".")}`] = Number(attrs[1])
+            update[`system.${dataAttr.join(".")}`] = Number(attrs[1])
         }
+
+        console.log(update)
 
         await this.actor.update(update);
         await this.actor._updateAPs(apCost)

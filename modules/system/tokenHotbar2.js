@@ -286,7 +286,7 @@ export default class TokenHotbar2 extends Application {
     async handleGM(ev, actor, id, tokenId){
         switch(id){
             case "masterMenu":
-                game.dsa5.apps.gameMasterMenu.render(true)
+                DSA5_Utility.renderToggle(game.dsa5.apps.gameMasterMenu)
                 break
             case "payMoney": 
                 this.payMoney(ev)
