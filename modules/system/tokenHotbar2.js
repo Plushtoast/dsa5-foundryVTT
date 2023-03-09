@@ -525,15 +525,17 @@ export default class TokenHotbar2 extends Application {
     }
 
     filterButtons(ev){
-        ev.preventDefault()
-        ev.stopPropagation()
         switch(ev.which){
+            case 17:
+                return
             case 8:
                 this.searching = this.searching.slice(0, -1)
                 break
             default:
                 this.searching += String.fromCharCode(ev.which)
         }
+        ev.preventDefault()
+        ev.stopPropagation()
         const search = this.searching.toLowerCase()
         tinyNotification(search)
         let btns = $(ev.currentTarget).find('.subbuttons li')
