@@ -116,6 +116,9 @@ If you want to discuss TDE for foundry or need some assistance you can also join
         <a href="https://www.f-shop.de/virtual-tabletops/das-schwarze-auge-vtt/regel-module/3115/dsa5-elementarium-fuer-foundry-vtt" target="_blank" data-tooltip="Aventurisches Elementarium">
             <img src="https://ulisses-digital.de/R20/dsa5/modules/dsa5-elementarium/icons/journal/coverde.webp" alt="Aventurisches Elementarium" style="margin-right: 5px; margin-bottom: 5px; text-align:center; width:210px;">
         </a>
+        <a href="https://www.f-shop.de/virtual-tabletops/das-schwarze-auge-vtt/regel-module/3195/dsa5-studierstube-der-gildenmagie-erweitert-fuer-foundry-vtt" target="_blank" data-tooltip="Studierstube der Gildenmagie">
+            <img src="https://ulisses-digital.de/R20/dsa5/modules/dsa5-studyroom/icons/journal/coverde.webp" alt="Studierstube der Gildenmagie" style="margin-right: 5px; margin-bottom: 5px; text-align:center; width:210px;">
+        </a>
         <h2>Abenteuer</h2>
         <a href="https://www.f-shop.de/virtual-tabletops/das-schwarze-auge-vtt/abenteuer-module/2640/dsa5-rabenkrieg-1-kampagne-fuer-foundry-vtt" title="Rabenkrieg I - Die Zähne des Kaimans">
             <img src="https://ulisses-digital.de/R20/dsa5/modules/dsa5-rabenkrieg1/icons/journal/coverde.webp" alt="Rabenkrieg I - Die Zähne des Kaimans" style="margin-right: 5px; margin-bottom: 5px; text-align:center; width:210px;">
