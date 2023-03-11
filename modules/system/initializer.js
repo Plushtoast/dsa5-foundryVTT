@@ -33,6 +33,122 @@ export default class DSA5Initializer extends Dialog {
         this.lock = false
     }
 
+    async initNotes(entry, journs, finishedIds){
+        let journHead = await this.getFolderForType("JournalEntry")
+        for (let n of entry.notes) {
+            try {
+                let journ = journs.find(x => x.flags.dsa5.initId == n.entryId)
+                if (!(finishedIds.has(journ._id))) {
+                    const parent = getProperty(journ, "flags.dsa5.parent")
+                    let parenthead = journHead
+                    if (this.folders[parent]) {
+                        parenthead = this.folders[parent]
+                    } else if (parent) {
+                        parenthead = await this.getFolderForType("JournalEntry", journHead.id, parent, 0, getProperty(journ, "flags.dsa5.foldercolor") || "")
+                    }
+
+                    journ.folder = parenthead.id
+
+                    let existingJourn = game.journal.find(x => x.name == journ.name && x.folder?.id == parenthead.id && x.flags.dsa5.initId == n.entryId)
+                    if (existingJourn) {
+                        await existingJourn.update(journ)
+                        finishedIds.set(journ._id, existingJourn.id)
+                    } else {
+                        let createdEntries = await JournalEntry.create(journ)
+                        finishedIds.set(journ._id, createdEntries.id)
+                    }
+
+                }
+
+                n.entryId = finishedIds.get(journ._id)
+            } catch (e) {
+                console.warn(`Could not initialize Scene Notes for scene :${entry.name}` + e)
+            }
+        }
+    }
+
+    async initScenes(json) {
+        let head = await this.getFolderForType("Scene")
+        let scene = game.packs.get(json.scenes)
+        let entries = (await scene.getDocuments()).map(x => x.toObject())
+        let journal = game.packs.get(json.journal)
+        let journs = (await journal.getDocuments()).map(x => x.toObject())
+        let scenesToCreate = []
+        let scenesToUpdate = []
+        let finishedIds = new Map()
+        let resetAll = false
+
+        for (let entry of entries) {
+            let resetScene = resetAll
+            let found = game.scenes.find(x => x.name == entry.name && x.folder?.id == head.id)
+            if (!resetAll && found) {
+                [resetScene, resetAll] = await new Promise((resolve, reject) => {
+                    new Dialog({
+                        title: game.i18n.localize("Book.sceneReset"),
+                        content: game.i18n.format("Book.sceneResetDescription", { name: entry.name }),
+                        default: 'Yes',
+                        buttons: {
+                            Yes: {
+                                icon: '<i class="fa fa-check"></i>',
+                                label: game.i18n.localize("yes"),
+                                callback: () => {
+                                    resolve([true, false])
+                                }
+                            },
+                            all: {
+                                icon: '<i class="fa fa-check"></i>',
+                                label: game.i18n.localize("LocalizedIDs.all"),
+                                callback: () => {
+                                    resolve([true, true])
+                                }
+                            },
+                            cancel: {
+                                icon: '<i class="fas fa-times"></i>',
+                                label: game.i18n.localize("cancel"),
+                                callback: () => {
+                                    resolve([false, false])
+                                }
+                            }
+                        },
+                        close: () => { resolve([false, false]) }
+                    }).render(true)
+                })
+            }
+            if (found && !resetScene) {
+                this.scenes[found.name] = found
+                continue
+            }
+
+            entry.folder = head.id
+            await this.initNotes(entry, journs, finishedIds)
+            if (!found) scenesToCreate.push(entry)
+            else {
+                entry._id = found.id
+                scenesToUpdate.push(entry)
+            }
+        }
+        let createdEntries = await Scene.create(scenesToCreate, { dsaInit: true })
+        for (let entry of createdEntries) {
+            this.scenes[entry.name] = entry;
+            const thumb = await entry.createThumbnail()
+            await entry.update({thumb: thumb.thumb}, {diff: false});
+        }
+        //await Scene.update(scenesToUpdate)
+        //TODO this does not properly update walls?
+        for (let entry of scenesToUpdate) {
+            let scene = game.scenes.get(entry._id)
+            await scene.update(entry)
+            this.scenes[entry.name] = game.scenes.get(entry._id);
+        }
+
+        if (json.initialScene) {
+            const initialScene = this.scenes[json.initialScene]
+            await game.settings.set("core", NotesLayer.TOGGLE_SETTING, true)
+            await initialScene.activate()
+            await initialScene.update({ navigation: true })
+        }
+    }
+
     async initialize() {
         this.lock = true
         let initButton = $(this._element).find('.initialize')
@@ -120,116 +236,7 @@ export default class DSA5Initializer extends Dialog {
                 await Playlist.updateDocuments(itemsToUpdate)
             }
             if (json.scenes) {
-                let head = await this.getFolderForType("Scene")
-                let scene = game.packs.get(json.scenes)
-                let entries = (await scene.getDocuments()).map(x => x.toObject())
-                let journal = game.packs.get(json.journal)
-                let journs = (await journal.getDocuments()).map(x => x.toObject())
-                let journHead = await this.getFolderForType("JournalEntry")
-                let scenesToCreate = []
-                let scenesToUpdate = []
-                let finishedIds = new Map()
-                let resetAll = false
-
-                for (let entry of entries) {
-                    let resetScene = resetAll
-                    let found = game.scenes.find(x => x.name == entry.name && x.folder?.id == head.id)
-                    if (!resetAll && found) {
-                        [resetScene, resetAll] = await new Promise((resolve, reject) => {
-                            new Dialog({
-                                title: game.i18n.localize("Book.sceneReset"),
-                                content: game.i18n.format("Book.sceneResetDescription", { name: entry.name }),
-                                default: 'Yes',
-                                buttons: {
-                                    Yes: {
-                                        icon: '<i class="fa fa-check"></i>',
-                                        label: game.i18n.localize("yes"),
-                                        callback: () => {
-                                            resolve([true, false])
-                                        }
-                                    },
-                                    all: {
-                                        icon: '<i class="fa fa-check"></i>',
-                                        label: game.i18n.localize("LocalizedIDs.all"),
-                                        callback: () => {
-                                            resolve([true, true])
-                                        }
-                                    },
-                                    cancel: {
-                                        icon: '<i class="fas fa-times"></i>',
-                                        label: game.i18n.localize("cancel"),
-                                        callback: () => {
-                                            resolve([false, false])
-                                        }
-                                    }
-                                },
-                                close: () => { resolve([false, false]) }
-                            }).render(true)
-                        })
-                    }
-                    if (found && !resetScene) {
-                        this.scenes[found.name] = found
-                        continue
-                    }
-
-                    entry.folder = head.id
-                    for (let n of entry.notes) {
-                        try {
-                            let journ = journs.find(x => x.flags.dsa5.initId == n.entryId)
-                            if (!(finishedIds.has(journ._id))) {
-                                const parent = getProperty(journ, "flags.dsa5.parent")
-                                let parenthead = journHead
-                                if (this.folders[parent]) {
-                                    parenthead = this.folders[parent]
-                                } else if (parent) {
-                                    parenthead = await this.getFolderForType("JournalEntry", journHead.id, parent, 0, getProperty(journ, "flags.dsa5.foldercolor") || "")
-                                }
-
-                                journ.folder = parenthead.id
-
-                                let existingJourn = game.journal.find(x => x.name == journ.name && x.folder?.id == parenthead.id && x.flags.dsa5.initId == n.entryId)
-                                if (existingJourn) {
-                                    await existingJourn.update(journ)
-                                    finishedIds.set(journ._id, existingJourn.id)
-                                } else {
-                                    let createdEntries = await JournalEntry.create(journ)
-                                    finishedIds.set(journ._id, createdEntries.id)
-                                }
-
-                            }
-
-                            n.entryId = finishedIds.get(journ._id)
-                        } catch (e) {
-                            console.warn(`Could not initialize Scene Notes for scene :${entry.name}` + e)
-                        }
-                    }
-                    if (!found) scenesToCreate.push(entry)
-                    else {
-                        entry._id = found.id
-                        scenesToUpdate.push(entry)
-                    }
-                }
-                let createdEntries = await Scene.create(scenesToCreate)
-                for (let entry of createdEntries) {
-                    this.scenes[entry.name] = entry;
-                    const thumb = await entry.createThumbnail()
-                    await entry.update({thumb: thumb.thumb}, {diff: false});
-                }
-                //await Scene.update(scenesToUpdate)
-                //TODO this does not properly update walls?
-                for (let entry of scenesToUpdate) {
-                    let scene = game.scenes.get(entry._id)
-                    await scene.update(entry)
-                    this.scenes[entry.name] = game.scenes.get(entry._id);
-                }
-
-                if (json.initialScene) {
-                    const initialScene = this.scenes[json.initialScene]
-                    await game.settings.set("core", NotesLayer.TOGGLE_SETTING, true)
-                    await initialScene.activate()
-                    await initialScene.update({ navigation: true })
-
-                }
+                await this.initScenes(json)
             }
             if (json.actors) {
                 let head = await this.getFolderForType("Actor")

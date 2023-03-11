@@ -1378,7 +1378,8 @@
         "requiresModule": "This function requires the module {module}.",
         "wrongLanguage": "Your language setting does not match the predefined setting ({lang}). Do you want to change this?",
         "noVictim": "No targets marked. Effect is transferred to self.",
-        "PreparationError": "The preparation of actor {name} failed."
+        "PreparationError": "The preparation of actor {name} failed.",
+        "mapsViaJournalbrowser": "This scene should be imported through the journal browser, to ensure proper functionality."
     },
     "CEREMONYMODIFIER": {
         "holysite": "Sanctum of the god (+2)",
