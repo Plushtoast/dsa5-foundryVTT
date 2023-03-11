@@ -37,14 +37,12 @@ export default class BookWizard extends Application {
 
         game.dsa5.apps.journalBrowser = BookWizard.wizard
 
-        Hooks.on("renderSidebarTab", (app, html) => {
-            if (app.options.id == "journal") {
-                let div = $('<div class="header-actions action-buttons flexrow"></div>')
-                let button = $(`<button id="openJournalBrowser"><i class="fa fa-book"></i>${game.i18n.localize("Book.Wizard")}</button>`)
-                button.click(() => { BookWizard.wizard.render(true) })
-                div.append(button)
-                html.find(".header-actions:first-child").after(div)
-            }
+        Hooks.on("renderJournalDirectory", (app, html) => {
+            let div = $('<div class="header-actions action-buttons flexrow"></div>')
+            let button = $(`<button id="openJournalBrowser"><i class="fa fa-book"></i>${game.i18n.localize("Book.Wizard")}</button>`)
+            button.click(() => { BookWizard.wizard.render(true) })
+            div.append(button)
+            html.find(".header-actions:first-child").after(div)
         })
     }
 
@@ -438,7 +436,6 @@ export default class BookWizard extends Application {
                 chapter.cssClass = "selected"
                 chapter.subChapters = this.getSubChapters()
             }
-            console.log(this.selectedChapter)
             return await renderTemplate('systems/dsa5/templates/wizard/adventure/adventure_toc.html', { chapters, book: this.book, fulltextsearch: this.fulltextsearch ? "on" : "" })
         } else {
             return '<div class="libraryImg"></div>'

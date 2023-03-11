@@ -133,7 +133,7 @@ export default class DSA5_Utility {
     }
 
     static categoryLocalization(a){
-        return game.i18n.localize(`ITEM.Type${a.slice(0,1).toUpperCase()}${a.slice(1).toLowerCase()}`)
+        return game.i18n.localize(`Types.Item.${a}`)
     }
 
     static attributeLocalization(a){
@@ -253,7 +253,7 @@ export default class DSA5_Utility {
             for (let pack of sortedPacks) {
                 let p = game.packs.get(pack)
                 if (p.documentName == "Item" && (game.user.isGM || !p.private)) {
-                    await p.getDocuments({ name: { $in: names }, type: { $in: types } }).then(content => {
+                    await p.getDocuments({ name__in: names, type__in: types }).then(content => {
                         for (let k of content) {
                             let index = names.indexOf(k.name)
                             if (index >= 0 && types[index] == k.type) {

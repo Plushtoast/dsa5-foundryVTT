@@ -96,7 +96,7 @@ export default class DSATables {
 
     static async getRollTable(packName, name, options = {}) {
         const pack = game.packs.get(packName)
-        const table = (await pack.getDocuments({ name: { $in: [name] } }))[0]
+        const table = (await pack.getDocuments({ name__in: [name] }))[0]
         let result = await table.draw({ displayChat: false })
         if (options.weaponless == "true" && result.roll.total < 7) {
             result.roll.editRollAtIndex([{ index: 0, val: result.roll.total + 5 }])

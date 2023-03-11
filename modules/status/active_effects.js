@@ -124,14 +124,6 @@ export default class DSAActiveEffectConfig extends ActiveEffectConfig {
         this.checkTimesUpInstalled()
     }
 
-    async _onSubmit(event, { updateData = null, preventClose = false, preventRender = false } = {}) {
-        const inActor =
-            getProperty(this.object, "system.document.parent.documentName") != "Actor" &&
-            getProperty(this.object, "system.document.parent.parent");
-        if (inActor) ui.notifications.error(game.i18n.localize("DSAError.nestedEffectNotSupported"));
-        return await super._onSubmit(event, { updateData, preventClose, preventRender });
-    }
-
     getStatusEffects() {
         return duplicate(CONFIG.statusEffects).map((x) => {
             return { id: x.id, label: game.i18n.localize(x.label) };

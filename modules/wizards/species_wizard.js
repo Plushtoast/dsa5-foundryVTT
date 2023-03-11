@@ -4,7 +4,7 @@ import WizardDSA5 from "./dsa5_wizard.js"
 export default class SpeciesWizard extends WizardDSA5 {
     static get defaultOptions() {
         const options = super.defaultOptions;
-        options.title = game.i18n.format("WIZARD.addItem", { item: `${game.i18n.localize("ITEM.TypeSpecies")}` })
+        options.title = game.i18n.format("WIZARD.addItem", { item: `${game.i18n.localize("Types.Item.species")}` })
         options.template = 'systems/dsa5/templates/wizard/add-species-wizard.html'
         return options;
     }

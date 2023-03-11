@@ -143,11 +143,7 @@ export default class ItemSheetdsa5 extends ItemSheet {
         })
 
         html.find(".status-add").click(() => {
-            if (this.item.actor) {
-                ui.notifications.error(game.i18n.localize("DSAError.nestedEffectNotSupported"))
-            } else {
-                DSA5StatusEffects.createCustomEffect(this.item, "", this.item.name)
-            }
+            DSA5StatusEffects.createCustomEffect(this.item, "", this.item.name)
         })
 
         html.find('.condition-show').mousedown(ev => {
