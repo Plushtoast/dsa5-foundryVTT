@@ -1623,7 +1623,15 @@
         "renameNumbered": "Umbenennen (Nummeriert)",
         "globalStyle": "Design",
         "globalStyleHint": "Ändere den \"Skin\" des Systems.",
-        "exportConfiguration": "Exportiere oder importiere die DSA Settings um sie mit anderen Welten abzugleichen."        
+        "exportConfiguration": "Exportiere oder importiere die DSA Settings um sie mit anderen Welten abzugleichen.",
+        "configureTokenbar": "Tokenhotbar konfigurieren",
+        "configureTokenbarHint": "Die Tokenhotbar gewährt Zugriff auf Funktionen des Meistermenüs und Fähigkeiten des selektierten Tokens.",
+        "disableTokenhotbar": "Tokenhotbar deaktivieren",
+        "disableTokenhotbarHint": "Die Tokenhotbar wird bei der Markierung eines Tokens nicht mehr angezeigt.",
+        "disableTokenhotbarMaster": "Meisterleiste deaktivieren",
+        "disableTokenhotbarMasterHint": "Die Funktionen des Meister Menüs werden bei deselektierten Token nicht mehr angezeigt.",
+        "tokenhotbaropacity": "Deckkraft",
+        "tokenhotbaropacityHint": "Durchsichtigkeit der Tokenhotbar wenn sie nicht aktiv ist."
     },
     "CONTROLS": {
         "targetForUser": "Ziel für Spieler wählen"
@@ -1727,7 +1735,9 @@
         "narrowSpace": "In kleinen Räumen, Gängen und ähnlichem Umfeld kann der Spielleiter entscheiden, dass es sich um eine beengte Umgebung handelt. Waffen mit der Reichweite kurz erleiden hier keine Abzüge. Größere Waffen erleiden Abzüge.",
         "advantageousPosition": "Wer sich als Kämpfer in einer vorteilhaften Position befindet, bekommt Erleichterungen von jeweils 2 auf Attacke und Verteidigungen. Als vorteilhafte Position kann ein Felsen oder Tisch dienen, aber auch die Steigung eines Hügels, den seine Gegner hinaufstürmen. Die vorteilhafte Position kann auch beim Schwimmen, beim Klettern in der Takelage eines Schiffes, beim Fliegen usw. entstehen.",
         "opportunityAttack": "Ein Passierschlag ist ein Nahkampfangriff, der keine Handlung erfordert und auf den nicht mit einer Verteidigung reagiert werden kann.",
-        "twoWeaponCombat": "Angriff mit zwei Waffen."        
+        "twoWeaponCombat": "Angriff mit zwei Waffen.",
+        "bigEnemy": "Angriffe von großen Gegner können nur mit Schild pariert oder ausgewichen werden.",
+        "giantEnemy": "Angriffe von riesigen Gegner können nur ausgewichen werden."
     },
     "CONDITIONDESCRIPTION": {
         "services": "Dienste die die Beschwörung dem Beschwörer schuldet.",

@@ -964,19 +964,7 @@
   .sheet.journal-entry:not(.dsajournal) .sidebar.directory {
     background: rgba(0, 0, 0, 0.6);
   }
-  
-  .dsajournal {
-    &.sheet.journal-entry .journal-entry-content {
-      background: none;
-      border: none;
-    }
-  
-    .header-search, &.sheet.journal-entry .pages-list .directory-item .page-number, .directory-item {
-      color: black;
-    }
-  
-  }
-  
+    
   .window-app {
     &.dsajournal .editor-content p {
       margin-right: 10px;
@@ -1024,6 +1012,10 @@
     max-height: max-content;
   }
   
+  .editor.prosemirror{
+    min-height: 300px;
+  }
+
   .dsa5.item {
     .item-header {
       background-size: 100% 50px;
@@ -1036,19 +1028,12 @@
       }
     }
 
-    .editor.prosemirror{
-      min-height: 300px;
-    }
-
-  
     div.item-header, .item-header input {
       text-align: center;
       padding: 8px;
       background: none;
       border: none;
     }
-  
-    
   }
   
   .item-main {
@@ -2687,6 +2672,11 @@
   
   .tokenQuickHot {
     .tokenHotbarInner {
+      opacity: var(--tokenHotbarOpacity);
+      transition: opacity 0.3s ease-in-out;
+      &:hover{
+        opacity: 1;
+      }
       .skillgm,
       .skill {
         &.body {

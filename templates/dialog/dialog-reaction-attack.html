@@ -1,4 +1,14 @@
 <div class="selection">
+    {{#if sizeNotification}}
+    <div class="row-section" style="margin-bottom:10px;">
+        <div class="col ten center">
+            <i class="fas fa-warning fa-2x"></i> 
+        </div>
+        <div class="col ninety">
+            {{localize sizeNotification}}
+        </div>
+    </div>    
+    {{/if}}
     <p>{{localize title}}{{#if defenses}} ({{localize 'COMBATTRACKER.noDefenses'}}: {{defenses}}){{/if}}</p>
     <div class="row-section wrap">
         {{#each items as |itm i|}}

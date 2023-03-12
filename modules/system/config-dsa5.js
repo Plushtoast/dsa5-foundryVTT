@@ -589,6 +589,10 @@ DSA5.targetMomevementOptions = {
     "2": "rangeMovementOptions.STATIONARY",
 }
 
+DSA5.allowedforeignfields = [
+    "system.details.notes.value"
+]
+
 DSA5.shooterMovementOptions = {
     "0": "rangeMovementOptions.SHOOTERSTATIONARY",
     "-2": "rangeMovementOptions.SHOOTERMOVING",

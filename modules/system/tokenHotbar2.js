@@ -14,6 +14,13 @@ export default class TokenHotbar2 extends Application {
         } 
     }
 
+    static unregisterTokenHotbar() {
+        if (game.dsa5.apps.tokenHotbar) {
+            game.dsa5.apps.tokenHotbar.close()
+            game.dsa5.apps.tokenHotbar = undefined
+        }
+    }
+
     constructor(options) {
         super(options);
         this.searching = ""
@@ -26,7 +33,7 @@ export default class TokenHotbar2 extends Application {
         }
 
         Hooks.on("controlToken", (elem, controlTaken) => {
-            this.updateDSA5Hotbar()
+            game.dsa5.apps.tokenHotbar?.updateDSA5Hotbar()
         })
 
         Hooks.on("updateActor", (actor, updates) => {
@@ -34,8 +41,10 @@ export default class TokenHotbar2 extends Application {
         });
 
         Hooks.on("updateToken", (scene, token, updates) => {
+            if(!game.dsa5.apps.tokenHotbar) return 
+
             if (token._id == getProperty(game.dsa5.apps.tokenHotbar, "actor.prototypeToken.id"))
-                this.updateDSA5Hotbar()
+                game.dsa5.apps.tokenHotbar.updateDSA5Hotbar()
         });
 
         Hooks.on("updateOwnedItem", (source, item) => {
@@ -73,7 +82,7 @@ export default class TokenHotbar2 extends Application {
     }
 
     static hookUpdate(changeId) {
-        if (changeId == getProperty(game.dsa5.apps.tokenHotbar, "actor.id"))
+        if (game.dsa5.apps.tokenHotbar && (changeId == getProperty(game.dsa5.apps.tokenHotbar, "actor.id")))
             game.dsa5.apps.tokenHotbar.updateDSA5Hotbar()
     }
 
@@ -488,7 +497,7 @@ export default class TokenHotbar2 extends Application {
                 }
                 items.onUsages = [onUse]
             }
-        } else if(game.user.isGM){
+        } else if(game.user.isGM && !game.settings.get("dsa5", "disableTokenhotbarMaster")){
             gmMode = true
             const skills = this.skills || await this.prepareSkills()
             items.gm.push(
@@ -520,7 +529,7 @@ export default class TokenHotbar2 extends Application {
             this.position.height = itemWidth
         }
 
-        mergeObject(data, { items, itemWidth, direction, count, gmMode, darkness: canvas.scene?.darkness || 0 })
+        mergeObject(data, { items, itemWidth, direction, count, gmMode, darkness: canvas.scene?.darkness || 0, opacity: game.settings.get("dsa5", "tokenhotbaropacity") })
         return data
     }
 
@@ -685,7 +694,7 @@ class AddEffectDialog extends Dialog {
         for (let token of canvas.tokens.controlled) {
             await token.actor.addTimedCondition(id, 1, false, false, options)
         }
-        game.dsa5.apps.tokenHotbar.render(true)
+        game.dsa5.apps.tokenHotbar?.render(true)
         this.close()
     }
 

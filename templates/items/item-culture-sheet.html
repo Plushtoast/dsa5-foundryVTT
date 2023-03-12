@@ -25,11 +25,11 @@
         <div class="tab description active" data-tab="description">
             <div class="row-section">
                 <div class="col sixty">
-                    {{editor enrichedDescription target="system.description.value" button=true owner=owner editable=editable}}
+                    {{editor enrichedDescription target="system.description.value" button=true owner=owner editable=editable engine="prosemirror"}}
 
                 </div>
                 <div class="col fourty">
-                    <img src="{{item.img}}" style="max-width:100%; max-height: 100%;float: left;" data-edit="img" />{{editor enrichedClothing target="system.clothing.value" button=true owner=owner editable=editable}}
+                    <img src="{{item.img}}" style="max-width:100%; max-height: 100%;float: left;" data-edit="img" />{{editor enrichedClothing target="system.clothing.value" button=true owner=owner editable=editable engine="prosemirror"}}
                 </div>
             </div>
         </div>

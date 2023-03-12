@@ -30,7 +30,3 @@ export class PlayerMenuSubApp {
         return game.dsa5.apps.playerMenu.actor
     }
 }
-
-export class AlchimieHelper extends PlayerMenuSubApp {
-    //TODO
-}

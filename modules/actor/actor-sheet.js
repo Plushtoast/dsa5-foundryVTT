@@ -14,6 +14,7 @@ import OnUseEffect from "../system/onUseEffects.js";
 import { bindImgToCanvasDragStart } from "../hooks/imgTileDrop.js";
 import DSA5ChatAutoCompletion from "../system/chat_autocompletion.js";
 import Riding from "../system/riding.js";
+import ForeignFieldEditor from "../system/foreignFieldEditor.js"
 
 export default class ActorSheetDsa5 extends ActorSheet {
     get actorType() {
@@ -349,6 +350,11 @@ export default class ActorSheetDsa5 extends ActorSheet {
                 icon: `fas fa-link`,
                 onclick: async() => this._configActor()
             })
+            buttons.unshift({
+                class: "playerview",
+                icon: `fas fa-toggle-on`,
+                onclick: async ev => this._togglePlayerview(ev)
+            })
         }
         if (this.actor.system.canAdvance) {
             buttons.unshift({
@@ -378,9 +384,17 @@ export default class ActorSheetDsa5 extends ActorSheet {
             i.removeClass("fa-spin fa-spinner")
         }
     }
+    
+    playerViewEnabled() {
+        return getProperty(this.actor.system, "playerView")
+    }
+
+    _togglePlayerview(ev) {
+        this.actor.update({ "system.playerView": !getProperty(this.actor.system, "playerView") })
+    }
 
     showLimited() {
-        return !game.user.isGM && this.actor.limited
+        return !game.user.isGM && this.actor.limited || this.playerViewEnabled()
     }
 
     getTokenId() {
@@ -745,6 +759,27 @@ export default class ActorSheetDsa5 extends ActorSheet {
         bindImgToCanvasDragStart(html, "img.charimg")
 
         Riding.activateListeners(html, this.actor)
+
+        this._bindKeepFieldsEnabled(html)   
+    }
+
+    _bindKeepFieldsEnabled(html) {
+        if(!this.isEditable){
+            const keepFields = html.find('.keepFieldsEnabled')
+            for(let k of keepFields){
+                const attr = k.dataset.attr
+                const name = k.dataset.name
+                $(k).find('.editor').append(`<a data-attr="${attr}" data-name="${name}" class="editor-edit"><i class="fas fa-edit"></i></a>`)
+                $(k).find('.editor-edit').click(ev => this._openKeepFieldEditpage(ev))
+            }
+        }
+    }
+
+    _openKeepFieldEditpage(ev){
+        const attr = ev.currentTarget.dataset.attr
+        const name = ev.currentTarget.dataset.name
+        const editor = new ForeignFieldEditor(this.actor.id, attr, name)
+        editor.render(true)
     }
 
     _onMacroUseItem(ev) {

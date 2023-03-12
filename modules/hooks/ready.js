@@ -16,6 +16,7 @@ import TokenHotbar2 from "../system/tokenHotbar2.js";
 import DSAIniTracker from "../system/dsa-ini-tracker.js";
 import DSATour from "../tours/dsa_tour.js";
 import { initImagePopoutTochat } from "./imagepopouttochat.js";
+import DSA5 from "../system/config-dsa5.js";
 
 export default function() {
     Hooks.on("ready", async() => {
@@ -27,9 +28,18 @@ export default function() {
                     break
             }
         })
+
         if (game.user.isGM) {
             game.socket.on("system.dsa5", data => {
                 switch (data.type) {
+                    case "updateKeepField":
+                        {
+                            if(DSA5.allowedforeignfields.includes(data.payload.field)){
+                                const actor = game.actors.get(data.payload.actorId)
+                                actor.update({ [data.payload.field]: data.payload.updateData })
+                            }
+                        }
+                        break
                     case "target":
                         {
                             let scene = game.scenes.get(data.payload.scene)
@@ -146,7 +156,8 @@ export default function() {
         Itemdsa5.setupSubClasses()
 
         DidYouKnow.showOneMessage()
-        TokenHotbar2.registerTokenHotbar()
+        if(!game.settings.get("dsa5", "disableTokenhotbar")) TokenHotbar2.registerTokenHotbar()
+
         connectHook()
         DSAIniTracker.connectHooks()
         const hook = (dat) => {

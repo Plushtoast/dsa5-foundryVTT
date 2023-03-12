@@ -160,6 +160,7 @@ export class ActAttackDialog extends Dialog {
             }
         }
     }
+
     static get defaultOptions() {
         const options = super.defaultOptions;
         mergeObject(options, {
@@ -180,6 +181,25 @@ export class ReactToAttackDialog extends DialogReactDSA5 {
         dialog.render(true)
     }
 
+    static getAttackActor(message) {
+        if (!canvas.tokens) return {}
+
+        const speakerMessage = message.flags.unopposeData.attackMessageId
+        const attackmessage = game.messages.get(speakerMessage)
+
+        const speaker = attackmessage.flags.data.preData.extra.speaker
+        const actor = canvas.tokens.get(speaker.token).actor
+
+        if (!actor) {
+            ui.notifications.error(game.i18n.localize("DSAError.noProperActor"))
+            return {}
+        }
+        return {
+            actor,
+            tokenId: speaker.token
+        }
+    }
+
     activateListeners(html) {
         super.activateListeners(html);
         html.find('.reactClick').click(ev => {
@@ -198,6 +218,7 @@ export class ReactToAttackDialog extends DialogReactDSA5 {
 
     static async getTemplate(startMessage) {
         const { actor, tokenId } = DialogReactDSA5.getTargetActor(startMessage)
+        const attackActor = ReactToAttackDialog.getAttackActor(startMessage)
         const combatskills = actor.items.filter(x => x.type == "combatskill").map(x => Actordsa5._calculateCombatSkillValues(x.toObject(), actor.system))
         const brawl = combatskills.find(x => x.name == game.i18n.localize('LocalizedIDs.wrestle'))
         let items = [{
@@ -217,6 +238,7 @@ export class ReactToAttackDialog extends DialogReactDSA5 {
         }]
 
         let defenses = 0
+        let sizeNotification = ""
         if (actor) {
             let types = ["meleeweapon"]
 
@@ -239,11 +261,18 @@ export class ReactToAttackDialog extends DialogReactDSA5 {
                 }
             }
 
+            if(attackActor){
+                const size = getProperty(attackActor.actor.system, "status.size.value")
+                if(size == "big") sizeNotification = "DIALOGDESCRIPTION.bigEnemy"
+                else if(size == "giant") sizeNotification = "DIALOGDESCRIPTION.giantEnemy"
+            }
+
+
             if (game.combat)
                 defenses = await game.combat.getDefenseCount({ actor: actor.id, token: tokenId, scene: canvas.scene ? canvas.scene.id : null })
         }
 
-        return await renderTemplate('systems/dsa5/templates/dialog/dialog-reaction-attack.html', { dieClass: "die-in", items: items, defenses, title: "DIALOG.selectReaction" })
+        return await renderTemplate('systems/dsa5/templates/dialog/dialog-reaction-attack.html', { dieClass: "die-in", items: items, defenses, title: "DIALOG.selectReaction", sizeNotification })
     }
 
     callbackResult(text, message) {

@@ -138,7 +138,7 @@ export default function() {
 
     const countableDependentEffects = async(effect, toCheck = {}, actor) => {
         if(!actor) actor = effect.parent
-        if(!actor) return
+        if(!actor || actor.documentName != "Actor") return
 
         const efKeys = /^system\.condition\./
         for(let ef of effect.changes || []){

@@ -27,10 +27,10 @@
         <div class="tab description active" data-tab="description">
             <div class="row-section">
                 <div class="col two">
-                    {{editor enrichedDescription target="system.description.value" button=true owner=owner editable=editable}}
+                    {{editor enrichedDescription target="system.description.value" button=true owner=owner editable=editable engine="prosemirror"}}
                 </div>
                 <div class="col two">
-                    <img src="{{item.img}}" class="fullImg" data-edit="img" /> {{editor enrichedClothing target="system.clothing.value" button=true owner=owner editable=editable}}
+                    <img src="{{item.img}}" class="fullImg" data-edit="img" /> {{editor enrichedClothing target="system.clothing.value" button=true owner=owner editable=editable engine="prosemirror"}}
                 </div>
             </div>
         </div>

@@ -1,4 +1,4 @@
-<div class="tokenHotbarInner direction{{direction}}" style="--tokenQuickhotsize:{{itemWidth}}px;--tokenQuickhotdistance:{{itemWidth}}px;">
+<div class="tokenHotbarInner direction{{direction}}" style="--tokenHotbarOpacity:{{opacity}};--tokenQuickhotsize:{{itemWidth}}px;--tokenQuickhotdistance:{{itemWidth}}px;">
     <ul>
         {{#each items as |cat i|}} {{#each cat as |item j|}}
         <li class="{{item.cssClass}} primary" data-category="{{item.cssClass}}" data-id="{{item.id}}" data-tooltip="{{item.name}}" data-name="{{item.name}}" data-subfunction="{{item.subfunction}}">

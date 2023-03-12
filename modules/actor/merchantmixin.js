@@ -157,10 +157,6 @@ export const MerchantSheetMixin = (superclass) => class extends superclass {
         this.actor.updateEmbeddedDocuments("Item", updates);
     }
 
-    playerViewEnabled() {
-        return getProperty(this.actor.system, "merchant.playerView")
-    }
-
     async buyItem(ev) {
         await this.transferItem(this.actor, this.getTradeFriend(), ev, true)
     }
@@ -336,18 +332,6 @@ export const MerchantSheetMixin = (superclass) => class extends superclass {
             return
         }
         await super._render(force, options);
-    }
-
-    _getHeaderButtons() {
-        let buttons = super._getHeaderButtons();
-        if (this.actor.isOwner) {
-            buttons.unshift({
-                class: "playerview",
-                icon: `fas fa-toggle-on`,
-                onclick: async ev => this._togglePlayerview(ev)
-            })
-        }
-        return buttons
     }
 
     _togglePlayerview(ev) {

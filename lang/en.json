@@ -1593,7 +1593,15 @@
         "renameNumbered": "Rename (Numbering)",
         "globalStyle": "Design",
         "globalStyleHint": "Change the \"skin\" of the system.",
-        "exportConfiguration": "Export or import TDE settings to align different worlds."
+        "exportConfiguration": "Export or import TDE settings to align different worlds.",
+        "configureTokenbar": "Tokenhotbar configuration",
+        "configureTokenbarHint": "The Tokenhotbar provides to access of the functions of the master's menu and the abilities of the selected token.",
+        "disableTokenhotbar": "Deactivate Tokenhotbar",
+        "disableTokenhotbarHint": "The Tokenhotbar will not be shown anymore on selecting a token.",
+        "disableTokenhotbarMaster": "Deactive gm functions",
+        "disableTokenhotbarMasterHint": "The GM functions of the master's menu are not shown anymore if no token is selected.",
+        "tokenhotbaropacity": "Opacity",
+        "tokenhotbaropacityHint": "Opacity of the tokenhotbar if it is not activated."
     },
     "WEAR": {
         "check": "Breaking Point Rating Check ({category})",
@@ -1724,7 +1732,9 @@
         "narrowSpace": "The GM can decide that small rooms, hallways, and similar surroundings are cramped. Short-reach weapons suffer no penalties in cramped spaces, but longer weapons do.",
         "advantageousPosition": "An advantageous position in combat grants a bonus of 2 for attack and defense. Advantageous positions can include standing on a table or large rock, or fighting an enemy who is downhill from you. It is also possible to gain an advantageous position while swimming, climbing a ship’s rigging, flying, and so on.",
         "opportunityAttack": "Attacks of opportunity are close combat attacks that do not require an action. No defense is possible against an attack of opportunity, but the attack suffers a penalty of 4 and cannot be combined with combat special abilities (such as Feint or Forceful Blow).",
-        "twoWeaponCombat": "Attack with two weapons."
+        "twoWeaponCombat": "Attack with two weapons.",
+        "bigEnemy": "Attacks from large enemies can only be dodged or parried with a shield.",
+        "giantEnemy": "Attacks from huge enemies can only be dodged."
     },
     "CONDITIONDESCRIPTION": {
         "services": "Services the summoned creature owes to the summoner.",

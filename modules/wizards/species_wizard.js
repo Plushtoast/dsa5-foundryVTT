@@ -134,8 +134,6 @@ export default class SpeciesWizard extends WizardDSA5 {
             update[`system.${dataAttr.join(".")}`] = Number(attrs[1])
         }
 
-        console.log(update)
-
         await this.actor.update(update);
         await this.actor._updateAPs(apCost)
 

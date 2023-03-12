@@ -103,6 +103,8 @@ export default class DSA5StatusEffects {
         if (target != undefined && conditionKey) {
             if (!target.effects) return false
 
+            console.log(target.effects)
+
             return target.effects.find(i => getProperty(i, "flags.core.statusId") == conditionKey)
         }
         return false

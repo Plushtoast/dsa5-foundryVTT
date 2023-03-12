@@ -1,6 +1,7 @@
 import DSA5 from "../system/config-dsa5.js";
 import DSA5SoundEffect from "../system/dsa-soundeffect.js";
 import { showPatchViewer } from "../system/migrator.js"
+import TokenHotbar2 from "../system/tokenHotbar2.js";
 
 export default function() {
     const redrawMasterMenu = () => {
@@ -247,7 +248,7 @@ export default function() {
             step: 5
         },
         onChange: async(val) => {
-            game.dsa5.apps.tokenHotbar.constructor.defaultOptions.itemWidth = val
+            if(game.dsa5.apps.tokenHotbar) game.dsa5.apps.tokenHotbar.constructor.defaultOptions.itemWidth = val
         }
     });
 
@@ -256,7 +257,7 @@ export default function() {
         name: "DSASETTINGS.tokenhotbarSize",
         hint: "DSASETTINGS.tokenhotbarSizeHint",
         scope: "client",
-        config: true,
+        config: false,
         default: 35,
         type: Number,
         range: {
@@ -265,7 +266,7 @@ export default function() {
             step: 5
         },
         onChange: async(val) => {
-            game.dsa5.apps.tokenHotbar.constructor.defaultOptions.itemWidth = val
+            if(game.dsa5.apps.tokenHotbar) game.dsa5.apps.tokenHotbar.constructor.defaultOptions.itemWidth = val
         }
     });
 
@@ -273,7 +274,7 @@ export default function() {
         name: "DSASETTINGS.tokenhotbarLayout",
         hint: "DSASETTINGS.tokenhotbarLayoutHint",
         scope: "client",
-        config: true,
+        config: false,
         default: 0,
         type: Number,
         choices: {
@@ -363,18 +364,18 @@ export default function() {
     })
 
     game.settings.registerMenu("dsa5", "exportConfiguration", {
-        name: "ExportImportConfiguration",
+        name: "Export/Import Configuration",
         label: "Export/Import Configuration",
         hint: game.i18n.localize("DSASETTINGS.exportConfiguration"),
         type: ExportForm,
         restricted: true
     })
 
-    game.settings.registerMenu("dsa5", "resetTokenbar", {
-        name: game.i18n.localize("DSASETTINGS.resetTokenbar"),
-        label: game.i18n.localize("DSASETTINGS.resetTokenbar"),
-        hint: game.i18n.localize("DSASETTINGS.resetTokenbarHint"),
-        type: ResetTokenbar,
+    game.settings.registerMenu("dsa5", "configureTokenbar", {
+        name: game.i18n.localize("DSASETTINGS.configureTokenbar"),
+        label: game.i18n.localize("DSASETTINGS.configureTokenbar"),
+        hint: game.i18n.localize("DSASETTINGS.configureTokenbarHint"),
+        type: ConfigureTokenHotbar,
         restricted: false
     })
 
@@ -455,6 +456,31 @@ export default function() {
         type: Boolean
     });
 
+    game.settings.register("dsa5", "disableTokenhotbar", {
+        name: "DSASETTINGS.disableTokenhotbar",
+        hint: "DSASETTINGS.disableTokenhotbarHint",
+        scope: "client",
+        config: false,
+        default: false,
+        type: Boolean,
+        onChange: val => {
+            if(val) TokenHotbar2.unregisterTokenHotbar()
+            else TokenHotbar2.registerTokenHotbar()
+        }
+    });
+    
+    game.settings.register("dsa5", "disableTokenhotbarMaster", {
+        name: "DSASETTINGS.disableTokenhotbarMaster",
+        hint: "DSASETTINGS.disableTokenhotbarMasterHint",
+        scope: "client",
+        config: false,
+        default: false,
+        type: Boolean,
+        onChange: () => {
+            if(game.dsa5.apps.tokenHotbar) game.dsa5.apps.tokenHotbar.render(true)
+        }
+    });
+
     game.settings.register("dsa5", "scrollingFontsize", {
         name: "DSASETTINGS.scrollingFontsize",
         hint: "DSASETTINGS.scrollingFontsizeHint",
@@ -466,6 +492,20 @@ export default function() {
             min: 6,
             max: 50,
             step: 1
+        }
+    });
+
+    game.settings.register("dsa5", "tokenhotbaropacity", {
+        name: "DSASETTINGS.tokenhotbaropacity",
+        hint: "DSASETTINGS.tokenhotbaropacityHint",
+        scope: "client",
+        config: false,
+        default: 0.75,
+        type: Number,
+        range: {
+            min: 0,
+            max: 1,
+            step: 0.05
         }
     });
 
@@ -642,12 +682,51 @@ class ExportForm extends FormApplication {
     }
 }
 
-class ResetTokenbar extends FormApplication {
-    async render() {
+class ConfigureTokenHotbar extends FormApplication {
+    get template() {
+        return "systems/dsa5/templates/dialog/configureTokenhotbar.html";
+    }
+
+    static get defaultOptions() {
+        const options = super.defaultOptions
+        mergeObject(options, {
+            title: game.i18n.localize('DSASETTINGS.configureTokenbar')
+        });
+        return options;
+    }
+    
+    activateListeners(html){
+        super.activateListeners(html)
+        html.find('.resetTokenhotbar').click((ev) => this.resetTokenHotbar(ev))
+        html.find('select, input').change(async(ev) => {
+            const name = ev.currentTarget.name.split('.')
+            let val = ev.currentTarget.dataset.dtype == "Number" ? Number(ev.currentTarget.value) : ev.currentTarget.value
+            if(ev.currentTarget.type == "checkbox") val = ev.currentTarget.checked
+
+            await game.settings.set(name[0], name[1], val)
+            game.dsa5.apps.tokenHotbar?.render(true)
+        })
+    }
+
+    async getData(options){
+        const data = await super.getData(options)
+        mergeObject(data, {
+            tokenhotbarSize: game.settings.get("dsa5", "tokenhotbarSize"),
+            tokenhotbarLayout: game.settings.get("dsa5", "tokenhotbarLayout"),
+            disableTokenhotbarMaster: game.settings.get("dsa5", "disableTokenhotbarMaster"),
+            disableTokenhotbar: game.settings.get("dsa5", "disableTokenhotbar"),
+            isGM: game.user.isGM
+        })
+        return data
+    }
+
+    async resetTokenHotbar(ev) {
+        ev.preventDefault()
+        ev.stopPropagation()
         await game.settings.set("dsa5", "tokenhotbarPosition", {})
         await game.settings.set("dsa5", "tokenhotbarLayout", 0)
         await game.settings.set("dsa5", "tokenhotbarSize", 35)
-        game.dsa5.apps.tokenHotbar.resetPosition()
-        game.dsa5.apps.tokenHotbar.render(true)
+        game.dsa5.apps.tokenHotbar?.resetPosition()
+        game.dsa5.apps.tokenHotbar?.render(true)
     }
 }

@@ -88,11 +88,11 @@
     </div>
     <div class="row-section">
         <div class="col notes-box">
-            {{editor enrichedBiography target="system.details.biography.value" button=true owner=owner editable=editable}}
+            {{editor enrichedBiography target="system.details.biography.value" button=true owner=owner editable=editable engine="prosemirror"}}
         </div>
     </div>
 </div>
-<div class="groupbox">
+<div class="groupbox keepFieldsEnabled" data-attr="system.details.notes.value" data-name="Notes">
     <div class="row-section header-label">
         <div class="col ninety lineheight">
             <b>{{localize "Notes"}}</b>
@@ -103,7 +103,7 @@
     </div>
     <div class="row-section">
         <div class="col notes-box">
-            {{editor enrichedNotes target="system.details.notes.value" button=true owner=owner editable=editable}}
+            {{editor enrichedNotes target="system.details.notes.value" button=true owner=owner editable=editable engine="prosemirror"}}
         </div>
     </div>
 </div>
@@ -119,7 +119,7 @@
     </div>
     <div class="row-section">
         <div class="col notes-box">
-            {{editor enrichedOwnerdescription target="system.details.notes.ownerdescription" button=true owner=owner editable=editable}}
+            {{editor enrichedOwnerdescription target="system.details.notes.ownerdescription" button=true owner=owner editable=editable engine="prosemirror"}}
         </div>
     </div>
 </div>
@@ -135,7 +135,7 @@
     </div>
     <div class="row-section">
         <div class="col notes-box">
-            {{editor enrichedGmdescription target="system.details.notes.gmdescription" button=true owner=owner editable=editable}}
+            {{editor enrichedGmdescription target="system.details.notes.gmdescription" button=true owner=owner editable=editable engine="prosemirror"}}
         </div>
     </div>
 </div>
