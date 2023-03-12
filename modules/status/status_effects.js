@@ -49,13 +49,13 @@ export default class DSA5StatusEffects {
             condition.boolean = condition.getFlag("dsa5", "value") == null
             condition.label = condition.label
             condition.icon = condition.icon
-            const statusId = condition.getFlag("core", "statusId")
-            if (statusId) {
+            const statusesId = [...condition.statuses][0]
+            if (statusesId) {
                 condition.value = condition.getFlag("dsa5", "value")
                 condition.editable = condition.getFlag("dsa5", "editable")
-                condition.descriptor = statusId
+                condition.descriptor = statusesId
                 condition.manual = condition.getFlag("dsa5", "manual")
-                appliedSystemConditions.push(statusId)
+                appliedSystemConditions.push(statusesId)
             }
             if ((condition.origin == target.uuid || !condition.origin) && !condition.notApplicable)
                 data.conditions.push(condition)
@@ -103,9 +103,7 @@ export default class DSA5StatusEffects {
         if (target != undefined && conditionKey) {
             if (!target.effects) return false
 
-            console.log(target.effects)
-
-            return target.effects.find(i => getProperty(i, "flags.core.statusId") == conditionKey)
+            return target.effects.find(i => i.statuses.has(conditionKey))
         }
         return false
     }
@@ -138,7 +136,7 @@ export default class DSA5StatusEffects {
     }
 
     static resistantToEffect(target, effect) {
-        const effectId = getProperty(effect, "flags.core.statusId")
+        const effectId = [...effect.statuses][0]
         if (!effectId) return 0
 
         const resistances = getProperty(target, "system.resistances.effects") || []
@@ -162,7 +160,9 @@ export default class DSA5StatusEffects {
 
         effect.flags.dsa5.value = Math.min(4, effect.flags.dsa5.manual + effect.flags.dsa5.auto)
 
-        effect["flags.core.statusId"] = effect.id;
+        if(effect.id)
+            effect.statuses = [effect.id] 
+        
         if (effect.id == "dead")
             effect["flags.core.overlay"] = true;
 
@@ -226,11 +226,11 @@ export default class DSA5StatusEffects {
     }
 
     static clampedCondition(actor, effect){
-        const statusId = getProperty(effect, "flags.core.statusId")
-        if(!statusId) return 0
+        const statusesId = [...effect.statuses][0]
+        if(!statusesId) return 0
 
         const max = Number(effect.flags.dsa5.max)
-        const mod = Math.clamped(actor.system.condition[statusId] || 0, 0, max) * -1
+        const mod = Math.clamped(actor.system.condition[statusesId] || 0, 0, max) * -1
         const resist = this.resistantToEffect(actor, effect)
         return  Math.clamped(mod + resist, -1 * max,0)
     }
@@ -251,7 +251,7 @@ export default class DSA5StatusEffects {
         for(const ef of actor.effects){
             if(ef.disabled) continue
 
-            const coreId = getProperty(ef, "flags.core.statusId")
+            const coreId = [...ef.statuses][0]
             const effectClass = game.dsa5.config.statusEffectClasses[coreId] || DSA5StatusEffects
             const value = effectClass.calculateRollModifier(ef, actor, item, options)
 
@@ -274,7 +274,7 @@ export default class DSA5StatusEffects {
 
                 const effectClass = game.dsa5.config.statusEffectClasses[key] || DSA5StatusEffects
                 ef.flags.dsa5.value = val
-                ef.flags.core = { statusId: key}
+                ef.statuses.add(key)
                 const value = effectClass.calculateRollModifier(ef, actor, item, options)
 
                 if(value != 0){
@@ -349,7 +349,7 @@ class BloodrushEffect extends DSA5StatusEffects {
 
 class PainEffect extends DSA5StatusEffects {
     static ModifierIsSelected(item, options = {}, actor) {
-        return actor.effects.find(x => getProperty(x, "flags.core.statusId") == "bloodrush") == undefined
+        return actor.effects.find(x => x.statuses.has("bloodrush")) == undefined
     }
 }
 

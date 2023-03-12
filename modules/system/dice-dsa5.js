@@ -360,7 +360,7 @@ export default class DiceDSA5 {
         if (testData.extra.actor.system.isPriest && testData.regenerateKaP) attrs.push("KaP")
         let index = 0
 
-        const isSick = testData.extra.actor.effects.some((x) => getProperty(x, "flags.core.statusId") == "sick")
+        const isSick = testData.extra.actor.effects.some((x) => x.statuses.includes("sick"))
         if (isSick) {
             this._appendSituationalModifiers(testData, game.i18n.localize("CONDITION.sick"), "*0")
             for (let k of attrs) {

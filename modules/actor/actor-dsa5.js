@@ -174,7 +174,7 @@ export default class Actordsa5 extends Actor {
 
       if (DSA5_Utility.isActiveGM()) {
         const pain = this.woundPain(data)
-        const currentPain = this.effects.find(x => "inpain" == getProperty(x, "flags.core.statusId"))?.flags.dsa5.auto || 0
+        const currentPain = this.effects.find(x => x.statuses.has("inpain"))?.flags.dsa5.auto || 0
       
         const changePain = !this.changingPain && (currentPain != pain)
         this.changingPain = currentPain != pain;
@@ -302,7 +302,7 @@ export default class Actordsa5 extends Actor {
       if (getProperty(this, "system.merchant.locked") && !this.hasCondition("locked")) {
         await this.addCondition(Actordsa5.lockedCondition());
       } else if (!getProperty(this, "system.merchant.locked")) {
-        let ef = this.effects.find((x) => getProperty(x, "flags.core.statusId") == "locked");
+        let ef = this.effects.find((x) => x.statuses.has("locked"));
         if (ef) await this.deleteEmbeddedDocuments("ActiveEffect", [ef.id]);
       }
     }
@@ -310,10 +310,10 @@ export default class Actordsa5 extends Actor {
 
   static lockedCondition() {
     return {
+      id: "locked",
       label: game.i18n.localize("MERCHANT.locked"),
       icon: "icons/svg/padlock.svg",
       flags: {
-        core: { statusId: "locked" },
         dsa5: {
           value: null,
           editable: true,
@@ -2116,7 +2116,7 @@ export default class Actordsa5 extends Actor {
           (x.origin == this.uuid || !x.origin)
         );
       })
-      : this.effects.filter((x) => allowedEffects.includes(x.getFlag("core", "statusId")));
+      : this.effects.filter((x) => allowedEffects.some(y => x.statuses.has(y)));
   }
 
   async _preCreate(data, options, user) {

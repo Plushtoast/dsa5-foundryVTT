@@ -51,7 +51,7 @@ export default class DSAIniTracker extends Application {
 
     updateTracker(data) {
         this.combatData = data
-        this.render(true)
+        this.render(true, {focus: false})
     }
 
     async getData(options) {

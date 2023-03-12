@@ -66,11 +66,11 @@ export default function() {
 
         const actor = effect.parent
         if (actor && actor.documentName == "Actor") {
-            const statusId = getProperty(effect, "flags.core.statusId")
-            if (statusId == "bloodrush") {
+            const statusesId = [...effect.statuses][0]
+            if (statusesId == "bloodrush") {
                 actor.addCondition("stunned", 2, false, false)
                 return false
-            } else if (statusId == "dead" && game.combat) {
+            } else if (statusesId == "dead" && game.combat) {
                 actor.markDead(false)
                 return false
             }
@@ -130,10 +130,10 @@ export default function() {
         if(!actor) return
 
         await countableDependentEffects(effect, {}, actor)
-        const statusId = getProperty(effect, "flags.core.statusId")
+        const statusesId = [...effect.statuses][0]
 
-        if (statusId == "dead" && game.combat) await actor.markDead(true);
-        else if (statusId == "unconscious") await actor.addCondition("prone");
+        if (statusesId == "dead" && game.combat) await actor.markDead(true);
+        else if (statusesId == "unconscious") await actor.addCondition("prone");
     }
 
     const countableDependentEffects = async(effect, toCheck = {}, actor) => {
@@ -157,7 +157,7 @@ export default function() {
               await actor.addCondition("rooted");
             else if (["drunken", "exhaustion"].includes(key)) {
               await actor.addCondition("stunned");
-              await actor.removeCondition(statusId);
+              await actor.removeCondition(key);
             }
           }
           if (

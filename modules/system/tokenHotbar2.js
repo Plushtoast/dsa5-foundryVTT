@@ -206,7 +206,7 @@ export default class TokenHotbar2 extends Application {
 
     async handleEffect(ev, actor, id, tokenId){
         const effect = actor.effects.get(id)
-        const isSystemEffect = effect.getFlag("core", "statusId")
+        const isSystemEffect = [...effect.statuses][0]
         if (ev.button == 0) {
             if (isSystemEffect) await actor.addCondition(isSystemEffect, 1, false, false)
             else effect.sheet.render(true)
@@ -591,7 +591,7 @@ export default class TokenHotbar2 extends Application {
         if (controlled.length >= 1) {
             this.showEffects = true
         }
-        await this.render(true)
+        await this.render(true, { focus: false })
     }
 }
 
