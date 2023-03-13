@@ -250,27 +250,30 @@
         }
 
         &.dsa5Decent {
-            .window-content, .window-header {
-              background: rgba(0, 0, 0, 0.5);
-              padding: 0;
-              position: unset;
-              color: white;
+
+            .window-content,
+            .window-header {
+                background: rgba(0, 0, 0, 0.5);
+                padding: 0;
+                position: unset;
+                color: white;
             }
-        
+
             .window-content li {
-              background: rgba(255, 255, 255, 0.2);
-        
-              &:hover {
-                background: rgba(255, 255, 255, 0.5);
-              }
+                background: rgba(255, 255, 255, 0.2);
+
+                &:hover {
+                    background: rgba(255, 255, 255, 0.5);
+                }
             }
+
             &:after {
                 background: none;
                 margin: 0;
                 padding: 0;
                 overflow: visible;
-              }
-          }
+            }
+        }
     }
 
     .app.sidebar-popout .window-content {
@@ -521,4 +524,48 @@
             box-shadow: inset 0 0 3px white;
         }
     }
+
+
+    .sound-name {
+        color: rgb(92, 92, 92);
+    }
+
+    #compendium {
+        li.compendium-pack {
+            background-color: var(--sheet-bg);
+            margin: 3px;
+            border: 1px solid var(--sheet-border);
+            border-radius: 5px;
+            color: black;
+            margin-left: 10px;
+            padding: 5px;
+        }
+
+        h3 {
+            background: #740f0fe5;
+            color: white;
+            margin-left: 3px;
+        }
+    }
+
+    #compendium li.compendium-pack .compendium-footer,
+    #playlists li.sound .sound-playback .sound-timer {
+        color: rgb(14, 12, 12);
+    }
+
+    #playlists.sidebar-tab .directory-list .directory-item.playlist.collapsed {
+        color: #555;
+    }
+
+    .dsajournal {
+        &.sheet.journal-entry .journal-entry-content {
+          background: none;
+          border: none;
+        }
+      
+        .header-search, &.sheet.journal-entry .pages-list .directory-item .page-number, .directory-item {
+          color: black;
+        }
+      
+      }
 }

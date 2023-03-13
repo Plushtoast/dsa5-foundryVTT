@@ -88,3 +88,10 @@ export function tinyNotification(message) {
     container.prepend(elem)
     setTimeout(function() { elem.remove() }, 1500)
 }
+
+const appHeight = () => {
+    const doc = document.documentElement
+    doc.style.setProperty('--app-height', `${window.innerHeight}px`)
+}
+window.addEventListener('resize', appHeight)
+appHeight()
