@@ -913,7 +913,8 @@
         "swapMag": "Magazin tauschen",
         "selectTraditionartifact": "Traditionsartefakt auswählen",
         "deobfuscateItem": "Abschnitt entschleieren",
-        "obfuscateItem": "Abschnitt verschleiern"
+        "obfuscateItem": "Abschnitt verschleiern",
+        "searchItem": "Aus der Bibliothek hinzufügen"
     },
     "traditionArtifacts": {
         "Animistenwaffe": "Animistenwaffe",

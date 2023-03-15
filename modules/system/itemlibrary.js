@@ -1,5 +1,6 @@
 import DSA5_Utility from "./utility-dsa5.js"
 import ADVANCEDFILTERS from "./itemlibrary_advanced_filters.js"
+import { tabSlider } from "./view_helper.js"
 
 //TODO merge existing index with advanced details
 //TODO create index with getIndex(fields)
@@ -652,6 +653,8 @@ export default class DSA5ItemLibrary extends Application {
 
     activateListeners(html) {
         super.activateListeners(html)
+
+        tabSlider(html)
 
         html.on("click", ".toggleAdvancedMode", () => {
             this.advancedFiltering = !this.advancedFiltering

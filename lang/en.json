@@ -903,7 +903,8 @@
         "swapMag": "Swap magazine",
         "selectTraditionartifact": "Select tradition artifact",
         "deobfuscateItem": "Deobfuscate section",
-        "obfuscateItem": "Obfuscate section"
+        "obfuscateItem": "Obfuscate section",
+        "searchItem": "Add from the library"
     },
     "dsaStyle": {
         "immersive": "Immersive",

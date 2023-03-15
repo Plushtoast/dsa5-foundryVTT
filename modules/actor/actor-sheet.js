@@ -7,7 +7,7 @@ import DSA5ChatListeners from "../system/chat_listeners.js";
 import DSA5StatusEffects from "../status/status_effects.js";
 import DialogActorConfig from "../dialog/dialog-actorConfig.js";
 import Actordsa5 from "./actor-dsa5.js";
-import { itemFromDrop } from "../system/view_helper.js";
+import { itemFromDrop, tabSlider } from "../system/view_helper.js";
 import DSA5SoundEffect from "../system/dsa-soundeffect.js";
 import RuleChaos from "../system/rule_chaos.js";
 import OnUseEffect from "../system/onUseEffects.js";
@@ -427,6 +427,214 @@ export default class ActorSheetDsa5 extends ActorSheet {
 
         html.find('.roll-disease').click(ev => this.rollDisease(this._getItemId(ev)))
 
+        tabSlider(html)
+
+        html.find('.condition-edit').click(ev => {
+            const effect = this.actor.effects.get(ev.currentTarget.dataset.id)
+            effect.sheet.render(true)
+        })
+
+        html.find('.ch-collapse').click(ev => {
+            $(ev.currentTarget).find('i').toggleClass("fa-angle-up fa-angle-down")
+            $(ev.currentTarget).closest(".groupbox").find('.row-section:nth-child(2)').fadeToggle()
+        })
+
+        html.find(".status-create").click(ev => {
+            let menu = $(ev.currentTarget).closest(".statusEffectMenu").find('ul')
+            menu.fadeIn('fast', () => { menu.find('input').focus() })
+        })
+        html.find(".statusEffectMenu ul").mouseleave(ev => $(ev.currentTarget).fadeOut())
+       
+        html.find('.roll-aggregated').mousedown(ev => this._handleAggregatedProbe(ev))
+
+        html.find('.skill-select').mousedown(ev => {
+            const itemId = this._getItemId(ev);
+            let skill = this.actor.items.get(itemId);
+
+            if (ev.button == 0)
+                this.actor.setupSkill(skill, {}, this.getTokenId()).then(setupData => {
+                    this.actor.basicTest(setupData)
+                });
+            else if (ev.button == 2)
+                skill.sheet.render(true);
+        });      
+
+        html.find('.spell-select').mousedown(ev => {
+            const itemId = this._getItemId(ev);
+            let skill = this.actor.items.get(itemId);
+
+            if (ev.button == 0)
+                this.actor.setupSpell(skill, {}, this.getTokenId()).then(setupData => this.actor.basicTest(setupData));
+
+            else if (ev.button == 2)
+                skill.sheet.render(true);
+        });
+
+        html.find(".item-post").click(ev => posthand(ev))
+
+        html.find('.item-dropdown').click(ev => {
+            ev.preventDefault()
+            $(ev.currentTarget).closest('.item').find('.expandDetails:first').toggleClass('shown')
+        })
+
+        html.find('.condition-show').mousedown(ev => {
+            ev.preventDefault()
+            const id = ev.currentTarget.dataset.id
+            const descriptor = $(ev.currentTarget).parents(".statusEffect").attr("data-descriptor")
+            if (ev.button == 0) {
+                const origin = $(ev.currentTarget).parents(".statusEffect").attr("data-origin")
+                if (origin) {
+                    fromUuid(origin).then(document => document.sheet.render(true))
+                } else {
+                    let effect
+                    let text
+                    if (descriptor) {
+                        effect = CONFIG.statusEffects.find(x => x.id == descriptor)
+                        text = $(`<div style="padding:5px;"><b><a class="chat-condition chatButton" data-id="${effect.id}"><img src="${effect.icon}"/>${game.i18n.localize(effect.label)}</a></b>: ${game.i18n.localize(effect.description)}</div>`)
+                    } else {
+                        //search temporary effects
+                        effect = this.actor.effects.find(x => x.id == id)
+                        if (effect) {
+                            text = $(`<div style="padding:5px;"><b><a class="chat-condition chatButton" data-id="${effect.id}"><img src="${effect.icon}"/>${game.i18n.localize(effect.label)}</a></b>: ${game.i18n.localize(effect.flags.dsa5.description)}</div>`)
+                        }
+                    }
+                    const elem = $(ev.currentTarget).closest('.groupbox').find('.effectDescription')
+                    elem.fadeOut('fast', function() { elem.html(text).fadeIn('fast') })
+                }
+            } else if (ev.button == 2 && !ev.currentTarget.dataset.locked) {
+                this._deleteActiveEffect(id)
+            }
+        })
+        html.on('click', '.chat-condition', ev => DSA5ChatListeners.postStatus(ev.currentTarget.dataset.id))
+        html.find('.money-change, .skill-advances').focusin(ev => {
+            this.currentFocus = $(ev.currentTarget).closest('[data-item-id]').attr('data-item-id');;
+        })
+        
+        html.find('.item-edit').click(ev => {
+            ev.preventDefault()
+            const itemId = this._getItemId(ev);
+            const item = this.actor.items.get(itemId)
+            item.sheet.render(true);
+        });
+        html.find('.showApplication').mousedown(ev => {
+            ev.preventDefault()
+
+            if (ev.button == 2) {
+                this._deleteItem(ev)
+            } else {
+                const itemId = this._getItemId(ev);
+                const item = this.actor.items.get(itemId)
+                item.sheet.render(true);
+            }
+        })
+
+        html.find('.ch-value').click(event => {
+            event.preventDefault();
+            let characteristic = event.currentTarget.attributes["data-char"].value;
+            this.actor.setupCharacteristic(characteristic, {}, this.getTokenId()).then(setupData => this.actor.basicTest(setupData))
+        });
+        html.find('.ch-status').click(event => {
+            event.preventDefault();
+            this.actor.setupDodge({}, this.getTokenId()).then(setupData => {
+                this.actor.basicTest(setupData)
+            });
+        });
+        html.find('.ch-regenerate').click(event => {
+            event.preventDefault();
+            this.actor.setupRegeneration("regenerate", {}, this.getTokenId()).then(setupData => this.actor.basicTest(setupData))
+        });
+        html.find('.ch-weaponless').click(event => {
+            event.preventDefault();
+            let characteristic = event.currentTarget.attributes["data-char"].value;
+            this.actor.setupWeaponless(characteristic, {}, this.getTokenId()).then(setupData => this.actor.basicTest(setupData))
+        });
+        html.find('.ch-fallingDamage').click(ev => {
+            ev.preventDefault();
+            this.actor.setupFallingDamage({}, this.getTokenId())
+        })
+        html.find('.ch-rollCombat').click(event => {
+            event.preventDefault();
+            let itemId = this._getItemId(event);
+            const mode = event.currentTarget.dataset.mode
+            const item = this.actor.items.get(itemId)
+            this.actor.setupWeapon(item, mode, {}, this.getTokenId()).then(setupData => this.actor.basicTest(setupData))
+        });
+
+        const deletehand = ev => this._deleteItem(ev)       
+
+        html.find(".cards .item").mouseenter(ev => {
+            if (ev.currentTarget.getElementsByClassName('hovermenu').length == 0) {
+                const div = document.createElement('div')
+                div.classList.add("hovermenu")
+                const del = document.createElement('i')
+                del.classList.add("fas", "fa-times")
+                del.title = game.i18n.localize('SHEET.DeleteItem')
+                del.addEventListener('click', deletehand, false)
+                const post = document.createElement('i')
+                post.classList.add("fas", "fa-comment")
+                post.title = game.i18n.localize('SHEET.PostItem')
+                post.addEventListener('click', posthand, false)
+                div.appendChild(post)
+                div.appendChild(del)
+                ev.currentTarget.appendChild(div)
+            }
+        });
+        html.find(".cards .item").mouseleave(ev => {
+            let e = ev.toElement || ev.relatedTarget;
+            if (!e || e.parentNode == this || e == this)
+                return;
+
+            ev.currentTarget.querySelectorAll('.hovermenu').forEach(e => e.remove());
+        });
+
+        const uuid = this.actor.uuid
+        html.find('.actorDrag').each(function(i, cond) {
+            cond.setAttribute("draggable", true);
+            cond.addEventListener("dragstart", ev => {
+                let dataTransfer = {
+                    type: "Actor",
+                    uuid
+                }
+                ev.dataTransfer.setData("text/plain", JSON.stringify(dataTransfer));
+            });
+        })
+
+        html.find('.filterTalents').click(event => {
+            $(event.currentTarget).closest('.content').find('.allTalents').toggleClass('showAll')
+            $(event.currentTarget).toggleClass("filtered")
+        })
+
+        html.find('.charimg').mousedown(ev => {
+            if (ev.button == 2) DSA5_Utility.showArtwork(this.actor, true)
+        })
+
+        DSA5ChatAutoCompletion.bindRollCommands(html)
+
+        let filterTalents = ev => this._filterTalents($(ev.currentTarget))
+        let talSearch = html.find('.talentSearch')
+        talSearch.keyup(event => this._filterTalents($(event.currentTarget)))
+        talSearch[0] && talSearch[0].addEventListener("search", filterTalents, false);
+
+        let filterConditions = ev => this._filterConditions($(ev.currentTarget))
+        let condSearch = html.find('.conditionSearch')
+        condSearch.keyup(event => this._filterConditions($(event.currentTarget)))
+        condSearch[0] && condSearch[0].addEventListener("search", filterConditions, false);
+
+        let filterGear = ev => this._filterGear($(ev.currentTarget))
+        let gearSearch = html.find('.gearSearch')
+        gearSearch.keyup(event => this._filterGear($(event.currentTarget)))
+        gearSearch[0] && gearSearch[0].addEventListener("search", filterGear, false);
+
+        bindImgToCanvasDragStart(html, "img.charimg")
+
+        Riding.activateListeners(html, this.actor)
+
+        this._bindKeepFieldsEnabled(html)   
+
+
+
+        if(!this.isEditable) return
+
         html.find('.schipUpdate').click(ev => {
             ev.preventDefault()
             let val = Number(ev.currentTarget.getAttribute("data-val"))
@@ -479,16 +687,6 @@ export default class ActorSheetDsa5 extends ActorSheet {
             await this.actor.updateEmbeddedDocuments("Item", [{ _id: itemId, "system.currentAmmo.value": $(ev.currentTarget).val() }]);
         })
 
-        html.find('.condition-edit').click(ev => {
-            const effect = this.actor.effects.get(ev.currentTarget.dataset.id)
-            effect.sheet.render(true)
-        })
-
-        html.find('.ch-collapse').click(ev => {
-            $(ev.currentTarget).find('i').toggleClass("fa-angle-up fa-angle-down")
-            $(ev.currentTarget).closest(".groupbox").find('.row-section:nth-child(2)').fadeToggle()
-        })
-
         html.find('.item-toggle').click(ev => {
             const itemId = this._getItemId(ev);
             let item = this.actor.items.get(itemId).toObject()
@@ -504,11 +702,13 @@ export default class ActorSheetDsa5 extends ActorSheet {
             }
         });
 
-        html.find(".status-create").click(ev => {
-            let menu = $(ev.currentTarget).closest(".statusEffectMenu").find('ul')
-            menu.fadeIn('fast', () => { menu.find('input').focus() })
-        })
-        html.find(".statusEffectMenu ul").mouseleave(ev => $(ev.currentTarget).fadeOut())
+        html.find('.quantity-click').mousedown(ev => {
+            const itemId = this._getItemId(ev);
+            let item = this.actor.items.get(itemId).toObject()
+            RuleChaos.increment(ev, item, "system.quantity.value", 0)
+            this.actor.updateEmbeddedDocuments("Item", [item]);
+        });
+
         html.find(".status-add").click(async(ev) => {
             let status = ev.currentTarget.dataset.id
             if (status == "custom") {
@@ -517,18 +717,13 @@ export default class ActorSheetDsa5 extends ActorSheet {
                 await this.actor.addCondition(status, 1, false, false)
         })
 
-        html.find('.roll-aggregated').mousedown(ev => this._handleAggregatedProbe(ev))
-
-        html.find('.skill-select').mousedown(ev => {
+        html.find('.money-change').change(async ev => {
             const itemId = this._getItemId(ev);
-            let skill = this.actor.items.get(itemId);
-
-            if (ev.button == 0)
-                this.actor.setupSkill(skill, {}, this.getTokenId()).then(setupData => {
-                    this.actor.basicTest(setupData)
-                });
-            else if (ev.button == 2)
-                skill.sheet.render(true);
+            await this.actor.updateEmbeddedDocuments("Item", [{ _id: itemId, "system.quantity.value": Number(ev.target.value) }]);
+        })
+        html.find('.skill-advances').change(async ev => {
+            const itemId = this._getItemId(ev);
+            await this.actor.updateEmbeddedDocuments("Item", [{ _id: itemId, "system.talentValue.value": Number(ev.target.value) }]);
         });
 
         html.find(".advance-attribute").mousedown(ev => this.advanceWrapper(ev, "_advanceAttribute", ev.currentTarget.dataset.attr))
@@ -538,185 +733,14 @@ export default class ActorSheetDsa5 extends ActorSheet {
         html.find(".advance-points").mousedown(ev => this.advanceWrapper(ev, "_advancePoints", ev.currentTarget.dataset.attr))
         html.find(".refund-points").mousedown(ev => this.advanceWrapper(ev, "_refundPointsAdvance", ev.currentTarget.dataset.attr))
 
-        html.find('.spell-select').mousedown(ev => {
-            const itemId = this._getItemId(ev);
-            let skill = this.actor.items.get(itemId);
-
-            if (ev.button == 0)
-                this.actor.setupSpell(skill, {}, this.getTokenId()).then(setupData => this.actor.basicTest(setupData));
-
-            else if (ev.button == 2)
-                skill.sheet.render(true);
-        });
-
-        html.find('.quantity-click').mousedown(ev => {
-            const itemId = this._getItemId(ev);
-            let item = this.actor.items.get(itemId).toObject()
-            RuleChaos.increment(ev, item, "system.quantity.value", 0)
-            this.actor.updateEmbeddedDocuments("Item", [item]);
-        });
-
-        html.find(".item-post").click(ev => posthand(ev))
-
-        html.find('.item-dropdown').click(ev => {
-            ev.preventDefault()
-            $(ev.currentTarget).closest('.item').find('.expandDetails:first').toggleClass('shown')
-        })
-
-        html.find('.condition-show').mousedown(ev => {
-            ev.preventDefault()
-            const id = ev.currentTarget.dataset.id
-            const descriptor = $(ev.currentTarget).parents(".statusEffect").attr("data-descriptor")
-            if (ev.button == 0) {
-                const origin = $(ev.currentTarget).parents(".statusEffect").attr("data-origin")
-                if (origin) {
-                    fromUuid(origin).then(document => document.sheet.render(true))
-                } else {
-                    let effect
-                    let text
-                    if (descriptor) {
-                        effect = CONFIG.statusEffects.find(x => x.id == descriptor)
-                        text = $(`<div style="padding:5px;"><b><a class="chat-condition chatButton" data-id="${effect.id}"><img src="${effect.icon}"/>${game.i18n.localize(effect.label)}</a></b>: ${game.i18n.localize(effect.description)}</div>`)
-                    } else {
-                        //search temporary effects
-                        effect = this.actor.effects.find(x => x.id == id)
-                        if (effect) {
-                            text = $(`<div style="padding:5px;"><b><a class="chat-condition chatButton" data-id="${effect.id}"><img src="${effect.icon}"/>${game.i18n.localize(effect.label)}</a></b>: ${game.i18n.localize(effect.flags.dsa5.description)}</div>`)
-                        }
-                    }
-                    const elem = $(ev.currentTarget).closest('.groupbox').find('.effectDescription')
-                    elem.fadeOut('fast', function() { elem.html(text).fadeIn('fast') })
-                }
-            } else if (ev.button == 2 && !ev.currentTarget.dataset.locked) {
-                this._deleteActiveEffect(id)
-            }
-        })
-        html.on('click', '.chat-condition', ev => DSA5ChatListeners.postStatus(ev.currentTarget.dataset.id))
-        html.find('.money-change, .skill-advances').focusin(ev => {
-            this.currentFocus = $(ev.currentTarget).closest('[data-item-id]').attr('data-item-id');;
-        })
-        html.find('.money-change').change(async ev => {
-            const itemId = this._getItemId(ev);
-            await this.actor.updateEmbeddedDocuments("Item", [{ _id: itemId, "system.quantity.value": Number(ev.target.value) }]);
-        })
-        html.find('.skill-advances').change(async ev => {
-            const itemId = this._getItemId(ev);
-            await this.actor.updateEmbeddedDocuments("Item", [{ _id: itemId, "system.talentValue.value": Number(ev.target.value) }]);
-        });
-        html.find('.item-edit').click(ev => {
-            ev.preventDefault()
-            const itemId = this._getItemId(ev);
-            const item = this.actor.items.get(itemId)
-            item.sheet.render(true);
-        });
-        html.find('.showApplication').mousedown(ev => {
-            ev.preventDefault()
-
-            if (ev.button == 2) {
-                this._deleteItem(ev)
-            } else {
-                const itemId = this._getItemId(ev);
-                const item = this.actor.items.get(itemId)
-                item.sheet.render(true);
-            }
-        })
-
-        html.find('.disableRegeneration').click(ev => {
-            const type = ev.currentTarget.dataset.type
-            const prop = `system.repeatingEffects.disabled.${type}`
-            this.actor.update({[prop]: !getProperty(this.actor, prop)})
-        })
-
-        html.find(".consume-item").mousedown(ev => {
-            if (ev.button == 2) {
-                const itemId = this._getItemId(ev);
-                const item = this.actor.items.get(itemId)
-                this.consumeItem(item)
-            }
-        })
-        html.find('.ch-value').click(event => {
-            event.preventDefault();
-            let characteristic = event.currentTarget.attributes["data-char"].value;
-            this.actor.setupCharacteristic(characteristic, {}, this.getTokenId()).then(setupData => this.actor.basicTest(setupData))
-        });
-        html.find('.ch-status').click(event => {
-            event.preventDefault();
-            this.actor.setupDodge({}, this.getTokenId()).then(setupData => {
-                this.actor.basicTest(setupData)
-            });
-        });
-        html.find('.ch-regenerate').click(event => {
-            event.preventDefault();
-            this.actor.setupRegeneration("regenerate", {}, this.getTokenId()).then(setupData => this.actor.basicTest(setupData))
-        });
-        html.find('.ch-weaponless').click(event => {
-            event.preventDefault();
-            let characteristic = event.currentTarget.attributes["data-char"].value;
-            this.actor.setupWeaponless(characteristic, {}, this.getTokenId()).then(setupData => this.actor.basicTest(setupData))
-        });
-        html.find('.ch-fallingDamage').click(ev => {
-            ev.preventDefault();
-            this.actor.setupFallingDamage({}, this.getTokenId())
-        })
+        html.find('.onUseItem').click(ev => this._onMacroUseItem(ev))
 
         html.find('.item-create').click(ev => this._onItemCreate(ev));
 
-        html.find('.ch-rollCombat').click(event => {
-            event.preventDefault();
-            let itemId = this._getItemId(event);
-            const mode = event.currentTarget.dataset.mode
-            const item = this.actor.items.get(itemId)
-            this.actor.setupWeapon(item, mode, {}, this.getTokenId()).then(setupData => this.actor.basicTest(setupData))
-        });
-
-        const deletehand = ev => this._deleteItem(ev)
-        html.find('.onUseItem').click(ev => this._onMacroUseItem(ev))
-
-        html.find(".cards .item").mouseenter(ev => {
-
-            if (ev.currentTarget.getElementsByClassName('hovermenu').length == 0) {
-                const div = document.createElement('div')
-                div.classList.add("hovermenu")
-                const del = document.createElement('i')
-                del.classList.add("fas", "fa-times")
-                del.title = game.i18n.localize('SHEET.DeleteItem')
-                del.addEventListener('click', deletehand, false)
-                const post = document.createElement('i')
-                post.classList.add("fas", "fa-comment")
-                post.title = game.i18n.localize('SHEET.PostItem')
-                post.addEventListener('click', posthand, false)
-                div.appendChild(post)
-                div.appendChild(del)
-                ev.currentTarget.appendChild(div)
-            }
-        });
-        html.find(".cards .item").mouseleave(ev => {
-            let e = ev.toElement || ev.relatedTarget;
-            if (!e || e.parentNode == this || e == this)
-                return;
-
-            ev.currentTarget.querySelectorAll('.hovermenu').forEach(e => e.remove());
-        });
-
-        const uuid = this.actor.uuid
-        html.find('.actorDrag').each(function(i, cond) {
-            cond.setAttribute("draggable", true);
-            cond.addEventListener("dragstart", ev => {
-                let dataTransfer = {
-                    type: "Actor",
-                    uuid
-                }
-                ev.dataTransfer.setData("text/plain", JSON.stringify(dataTransfer));
-            });
-        })
-
-        html.find('.item-delete').click(ev => this._deleteItem(ev))
-        html.find('.tradition-delete').click(ev => this._deleteTraditionArtifact(ev))
-        html.find('.selectTraditionartifact').click(() => this.selectTraditionartifact())
-
-        html.find('.filterTalents').click(event => {
-            $(event.currentTarget).closest('.content').find('.allTalents').toggleClass('showAll')
-            $(event.currentTarget).toggleClass("filtered")
+        html.find(".condition-toggle").mousedown(async(ev) => {         
+            let condKey = $(ev.currentTarget).parents(".statusEffect").attr("data-id")
+            let ef = this.actor.effects.get(condKey)
+            await ef.update({ disabled: !ef.disabled })
         })
 
         html.find(".condition-value").mousedown(async(ev) => {
@@ -727,40 +751,23 @@ export default class ActorSheetDsa5 extends ActorSheet {
                 await this.actor.removeCondition(condKey, 1, false)
         })
 
-        html.find(".condition-toggle").mousedown(async(ev) => {
-            if (!this.isEditable) return
-            
-            let condKey = $(ev.currentTarget).parents(".statusEffect").attr("data-id")
-            let ef = this.actor.effects.get(condKey)
-            await ef.update({ disabled: !ef.disabled })
+        html.find('.item-delete').click(ev => this._deleteItem(ev))
+        html.find('.tradition-delete').click(ev => this._deleteTraditionArtifact(ev))
+        html.find('.selectTraditionartifact').click(() => this.selectTraditionartifact())
+
+        html.find(".consume-item").mousedown(ev => {
+            if (ev.button == 2) {
+                const itemId = this._getItemId(ev);
+                const item = this.actor.items.get(itemId)
+                this.consumeItem(item)
+            }
         })
 
-        html.find('.charimg').mousedown(ev => {
-            if (ev.button == 2) DSA5_Utility.showArtwork(this.actor, true)
+        html.find('.disableRegeneration').click(ev => {
+            const type = ev.currentTarget.dataset.type
+            const prop = `system.repeatingEffects.disabled.${type}`
+            this.actor.update({[prop]: !getProperty(this.actor, prop)})
         })
-
-        DSA5ChatAutoCompletion.bindRollCommands(html)
-
-        let filterTalents = ev => this._filterTalents($(ev.currentTarget))
-        let talSearch = html.find('.talentSearch')
-        talSearch.keyup(event => this._filterTalents($(event.currentTarget)))
-        talSearch[0] && talSearch[0].addEventListener("search", filterTalents, false);
-
-        let filterConditions = ev => this._filterConditions($(ev.currentTarget))
-        let condSearch = html.find('.conditionSearch')
-        condSearch.keyup(event => this._filterConditions($(event.currentTarget)))
-        condSearch[0] && condSearch[0].addEventListener("search", filterConditions, false);
-
-        let filterGear = ev => this._filterGear($(ev.currentTarget))
-        let gearSearch = html.find('.gearSearch')
-        gearSearch.keyup(event => this._filterGear($(event.currentTarget)))
-        gearSearch[0] && gearSearch[0].addEventListener("search", filterGear, false);
-
-        bindImgToCanvasDragStart(html, "img.charimg")
-
-        Riding.activateListeners(html, this.actor)
-
-        this._bindKeepFieldsEnabled(html)   
     }
 
     _bindKeepFieldsEnabled(html) {

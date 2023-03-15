@@ -3,7 +3,7 @@ import DSA5 from "../system/config-dsa5.js"
 import DSA5StatusEffects from "../status/status_effects.js"
 import DSA5ChatListeners from "../system/chat_listeners.js"
 import SpecialabilityRulesDSA5 from "../system/specialability-rules-dsa5.js"
-import { itemFromDrop, svgAutoFit } from "../system/view_helper.js"
+import { itemFromDrop, svgAutoFit, tabSlider } from "../system/view_helper.js"
 import DSA5ChatAutoCompletion from "../system/chat_autocompletion.js"
 import EquipmentDamage from "../system/equipment-damage.js"
 import DiceDSA5 from "../system/dice-dsa5.js"
@@ -130,6 +130,8 @@ export default class ItemSheetdsa5 extends ItemSheet {
 
     activateListeners(html) {
         super.activateListeners(html);
+
+        tabSlider(html)
 
         html.find(".advance-step").mousedown(ev => this.advanceWrapper(ev, "_advanceStep"))
         html.find(".refund-step").mousedown(ev => this.advanceWrapper(ev, "_refundStep"))

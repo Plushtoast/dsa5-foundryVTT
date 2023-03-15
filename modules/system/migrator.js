@@ -1,4 +1,5 @@
 import DSA5_Utility from "./utility-dsa5.js"
+import { tabSlider } from "./view_helper.js"
 
 async function setupDefaulTokenConfig() {
     if (!game.settings.get("dsa5", "defaultConfigFinished")) {
@@ -66,6 +67,12 @@ class PatchViewer extends Application {
         options.template = 'systems/dsa5/templates/system/patchviewer.html'
         options.resizable = true
         return options;
+    }
+
+    activateListeners(html){
+        super.activateListeners(html)
+
+        tabSlider(html)
     }
     
     async getData() {

@@ -3,6 +3,7 @@ import DSA5 from "../system/config-dsa5.js"
 import ItemRulesDSA5 from "../system/item-rules-dsa5.js"
 import SpecialabilityRulesDSA5 from "../system/specialability-rules-dsa5.js"
 import DSA5_Utility from "../system/utility-dsa5.js"
+import { tabSlider } from "../system/view_helper.js"
 
 export default class WizardDSA5 extends Application {
     constructor(app) {
@@ -228,6 +229,8 @@ export default class WizardDSA5 extends Application {
 
     activateListeners(html) {
         super.activateListeners(html)
+
+        tabSlider(html)
         html.find('button.ok').click(() => {
             if (!this.updating) {
                 this.updating = true

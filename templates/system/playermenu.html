@@ -19,13 +19,17 @@
 
     </div>
   </div>
-  <nav class="sheet-tabs tabs" data-tab-container="primary" data-group="primary">
-    <a class="item active" data-tab="elementals">{{localize "PLAYER.conjuration"}}</a>
-    {{#each subApps as |app|}}
-    <a class="item" data-tab="{{app.name}}">{{app.name}}</a>
-    {{/each}}
-    <!--<a class="item" data-tab="production">{{localize "PLAYER.creation"}}</a>-->
-  </nav>
+  <div class="navWrapper">
+    <i class="fas fa-angle-left left-btn"></i>
+    <i class="fas fa-angle-right right-btn"></i>
+    <nav class="sheet-tabs tabs" data-tab-container="primary" data-group="primary">
+      <a class="item active" data-tab="elementals">{{localize "PLAYER.conjuration"}}</a>
+      {{#each subApps as |app|}}
+      <a class="item" data-tab="{{app.name}}">{{app.name}}</a>
+      {{/each}}
+      <!--<a class="item" data-tab="production">{{localize "PLAYER.creation"}}</a>-->
+    </nav>
+  </div>
 
   <section class="content">
     <div class="tab elementals" data-tab="elementals" data-group="primary">

@@ -4,6 +4,7 @@ import OpposedDsa5 from "../system/opposed-dsa5.js";
 import RuleChaos from "../system/rule_chaos.js";
 import TraitRulesDSA5 from "../system/trait-rules-dsa5.js";
 import DSA5_Utility from "../system/utility-dsa5.js";
+import { tabSlider } from "../system/view_helper.js";
 import { PlayerMenuSubApp } from './player_menu_subapps.js'
 
 //TODO magical weapon resistance
@@ -139,6 +140,8 @@ export default class PlayerMenu extends Application {
 
     activateListeners(html) {
         super.activateListeners(html)
+
+        tabSlider(html)
 
         html.find('.conjurationData').change(ev => {
             const elem = $(ev.currentTarget)

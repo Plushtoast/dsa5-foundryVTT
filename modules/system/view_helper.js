@@ -21,21 +21,21 @@ export function svgAutoFit(elem, width = 320, height = 40) {
 export async function itemFromDrop(dragData, actorId, toObject = true) {
     let item
     let selfTarget
-    if(dragData.type == "Actor"){
+    if (dragData.type == "Actor") {
         item = await Actor.implementation.fromDropData(dragData)
         selfTarget = actorId === item.id
-    }else{
+    } else {
         item = await Item.implementation.fromDropData(dragData)
         selfTarget = actorId === item.parent?.uuid
     }
     let typeClass = item?.type
-    
+
     if (toObject) {
         item = item.toObject()
     }
 
-    if(dragData.amount) item.system.quantity.value = Number(dragData.amount)
-    
+    if (dragData.amount) item.system.quantity.value = Number(dragData.amount)
+
     return { item, typeClass, selfTarget }
 }
 
@@ -50,15 +50,15 @@ export function slist(html, target, callback, itemTag = "div") {
     for (let i of items) {
         i.draggable = true;
 
-        i.addEventListener("dragstart", function(ev) {
+        i.addEventListener("dragstart", function (ev) {
             current = this;
         });
 
-        i.addEventListener("dragover", function(evt) {
+        i.addEventListener("dragover", function (evt) {
             evt.preventDefault();
         });
 
-        i.addEventListener("drop", async function(evt) {
+        i.addEventListener("drop", async function (evt) {
             evt.preventDefault();
             if (this != current) {
                 let currentpos = 0,
@@ -86,5 +86,66 @@ export function tinyNotification(message) {
     }
     const elem = $(`<li>${message}</li>`)
     container.prepend(elem)
-    setTimeout(function() { elem.remove() }, 1500)
+    setTimeout(function () { elem.remove() }, 1500)
 }
+
+export function tabSlider(html) {
+    const sliders = html.find(".navWrapper")
+    
+    for(let slider of sliders){
+        const btnLeft = slider.querySelector('.left-btn')
+        const btnRight = slider.querySelector('.right-btn')
+        const menu = slider.querySelector('.sheet-tabs')
+
+        const IconVisibility = () => {
+            let scrollLeftValue = Math.ceil(menu.scrollLeft)
+            let scrollableWidth = menu.scrollWidth - menu.clientWidth
+
+            btnLeft.style.display = scrollLeftValue > 0 ? "block" : "none"
+            btnRight.style.display = scrollableWidth > scrollLeftValue ? "block" : "none"
+        }
+
+        btnRight.addEventListener("click", () => {
+            menu.scrollLeft += 150
+            setTimeout(() => IconVisibility(), 500)
+        })
+        btnLeft.addEventListener("click", () => {
+            menu.scrollLeft -= 150
+            setTimeout(() => IconVisibility(), 500)
+        })
+        slider.addEventListener('resize', () => {
+            setTimeout(() => IconVisibility(), 500)
+        })
+
+        const observer = new ResizeObserver(entries => {
+             entries.forEach(entry => {
+                setTimeout(() => IconVisibility(), 500)
+             });
+           });
+        observer.observe(slider)
+
+        let activeDrag = false
+
+        menu.addEventListener("mousemove", (drag) => {
+            if(!activeDrag) return
+
+            menu.scrollLeft -= drag.movementX            
+            setTimeout(() => IconVisibility(), 500)
+        })
+        menu.addEventListener("mousedown", () => {
+            activeDrag = true
+            menu.classList.add("dragging")
+            document.addEventListener("mouseup", () => {
+                activeDrag = false
+                menu.classList.remove("dragging")
+            }, { once: true })
+        })
+    }    
+}
+
+const appHeight = () => {
+    const doc = document.documentElement
+    doc.style.setProperty('--app-height', `${window.innerHeight}px`)
+}
+window.addEventListener('resize', appHeight)
+appHeight()

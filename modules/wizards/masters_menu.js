@@ -2,7 +2,7 @@ import DSA5_Utility from "../system/utility-dsa5.js"
 import DSA5Payment from "../system/payment.js"
 import RuleChaos from "../system/rule_chaos.js"
 import AdvantageRulesDSA5 from "../system/advantage-rules-dsa5.js"
-import { slist } from "../system/view_helper.js"
+import { slist, tabSlider } from "../system/view_helper.js"
 import PlayerMenu from "./player_menu.js"
 import RequestRoll from "../system/request-roll.js"
 import DialogShared from "../dialog/dialog-shared.js"
@@ -122,6 +122,8 @@ class GameMasterMenu extends Application {
     activateListeners(html) {
         super.activateListeners(html)
         html.find('select.select2').select2()
+
+        tabSlider(html)
 
         html.find('.heroLink').click(ev => {
             ev.stopPropagation()

@@ -98,7 +98,8 @@ Hooks.once("init", () => {
         "systems/dsa5/templates/items/item-aoe.html",
         "systems/dsa5/templates/items/traditionArtifact.html",
         "systems/dsa5/templates/status/advanced_functions.html",
-        "systems/dsa5/templates/actors/parts/information.html"
+        "systems/dsa5/templates/actors/parts/information.html",
+        "systems/dsa5/templates/actors/parts/combatskills.html"
     ]);
 
     Actors.unregisterSheet("core", ActorSheet);
@@ -131,8 +132,6 @@ Hooks.once('setup', () => {
         if (["de", "en"].includes(forceLanguage) && game.i18n.lang != forceLanguage) showWrongLanguageDialog(forceLanguage)
     }
     
-    setupKnownEquipmentModifiers()
-
     BookWizard.initHook()
 
     initKeybindings.default()
@@ -146,6 +145,10 @@ Hooks.once('setup', () => {
 
     AdvantageRulesDSA5.setupFunctions()
     SpecialabilityRulesDSA5.setupFunctions()
+})
+
+Hooks.once("i18nInit", () => {
+    setupKnownEquipmentModifiers()
 })
 
 class ForbiddenLanguageDialog extends Dialog{

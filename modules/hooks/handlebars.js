@@ -61,6 +61,7 @@ export default function() {
             }
             return out;
         },
-        plantify: (a) => { return game.i18n.localize(`PLANT.avLevels.${a || 0}`) }
+        plantify: (a) => { return game.i18n.localize(`PLANT.avLevels.${a || 0}`) },
+        oddLength: (x) => { return (x.length % 2) == 1 }
     })
 }
