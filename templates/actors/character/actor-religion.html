@@ -155,8 +155,25 @@
 
 </div>
 
-<div class="row-section">
-    <div class="col two">
+<div class="row-section wrap reverseFlex">
+    <div class="col morph">
+        <div class="groupbox">
+            <div class="row-section">
+                <div class="col header-label lineheight">
+                    <b>{{localize "blessings"}}</b>
+                </div>
+            </div>
+            <div class="row-section wrap cards">
+                {{#each prepare.magic.blessing as |item i|}}
+                <div class="item" data-item-id="{{item._id}}">
+                    <a class="item-edit">{{item.name}}</a>
+                </div>
+                {{/each}}
+            </div>
+
+        </div>
+    </div>
+    <div class="col morph">
 
         <div class="groupbox">
             <div class="row-section lineheight">
@@ -206,21 +223,5 @@
             </div>
         </div>
     </div>
-    <div class="col two">
-        <div class="groupbox">
-            <div class="row-section">
-                <div class="col header-label lineheight">
-                    <b>{{localize "blessings"}}</b>
-                </div>
-            </div>
-            <div class="row-section wrap cards">
-                {{#each prepare.magic.blessing as |item i|}}
-                <div class="item" data-item-id="{{item._id}}">
-                    <a class="item-edit">{{item.name}}</a>
-                </div>
-                {{/each}}
-            </div>
-
-        </div>
-    </div>
+    
 </div>

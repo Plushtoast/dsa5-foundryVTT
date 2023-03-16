@@ -17,29 +17,7 @@
 
     </header>
 
-    <div class="general">
-        <img class="charimg profile" src="{{actor.img}}" data-tooltip="{{actor.name}}" data-edit="img">
-
-        <div class="row-section" style="width: 100%;margin-bottom: 20px">
-            <div class="col">
-                <div class="row-section wrap charBtns">
-                    {{#each actor.system.characteristics as |ch c|}}
-                    <div data-tooltip="{{attrName c}}" class="col eight center">
-                        {{attrAbbr c}}
-                    </div>
-                    {{/each}}
-                </div>
-                <div class="row-section wrap charBtns">
-                    {{#each actor.system.characteristics as |ch c|}}
-                    <div class="ch-value col eight center" data-char="{{c}}"><a class="d20 die-{{c}}">{{ch.value}}</a></div>
-                    {{/each}}
-                </div>
-                {{> systems/dsa5/templates/actors/parts/healthbar.html}} 
-                {{> systems/dsa5/templates/actors/parts/schipspart.html}}
-            </div>
-        </div>
-
-    </div>
+    {{> systems/dsa5/templates/actors/parts/attributes.html}} 
     <!-- TABS -->
     <section id="tab-sections">
         <div class="navWrapper">

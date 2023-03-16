@@ -36,6 +36,7 @@ export default function() {
         diceThingsUp: (a, b) => DSA5_Utility.replaceDies(a, false),
         replaceConditions: DSA5_Utility.replaceConditions,
         floor: (a) => Math.floor(Number(a)),
+        getAttr: (a, b, c) => { return a.system.characteristics[b][c] },
         hasElem: (a, b) => a.includes(b),
         situationalTooltip: (mod) => {
             const key = game.i18n.localize(modifierTypes[mod.type] || "Modifier")

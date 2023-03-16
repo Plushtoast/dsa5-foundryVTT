@@ -7,6 +7,9 @@
     --sheet-border:#968678;
     --boldFont:"Signika";
     --normalFont:"Signika";
+    --minColumnWidth: 330px;
+    --minColumnWidth40: 264px;
+    --minColumnWidth60: 396px;
   }
   
   @font-face {
@@ -71,10 +74,6 @@
   }
   
   body {
-    width: 100vw;
-    height: 100vh;
-    margin: 0;
-  
     /*text-rendering: geometricprecision;*/
     padding: 0px;
     overflow: hidden;
@@ -174,7 +173,7 @@
     margin-bottom: 20px;
   }
   
-  .character-sheet .general, .npc-sheet .general {
+  .character-sheet .general, .npc-sheet .general, .creature-sheet .general {
     display: flex;
     flex-direction: row;
     width: 100%;
@@ -337,16 +336,21 @@
   }
   
   .characteristics-table {
-    flex: 1;
-    display: block;
-    width: 100%;
+    flex: 6;
+    display: block;   
+    min-width: var(--minColumnWidth60);
+
+    &.ctab2{
+      flex: 4;
+      min-width: var(--minColumnWidth40);
+    }
   
     .table-data, .table-header {
-      width: 10%;
+      flex: 1;
     }
   
     .table-data:first-child, .table-header:first-child {
-      width: 20%;
+      flex: 2;
     }
   }
   
@@ -367,13 +371,7 @@
       color: white;
     }
   }
-  
-  .characteristics {
-    display: flex;
-    width: 100%;
-    flex: 1;
-  }
-  
+   
   .characteristics-table .table-row {
     text-align: center;
     width: 100%;
@@ -678,14 +676,6 @@
     display: flex;
     width: 100%;
     flex: 1;
-  
-    .column1 {
-      flex: 60%;
-    }
-  
-    .column2 {
-      flex: 40%;
-    }
   }
   
   .row-section {
@@ -700,7 +690,17 @@
   
       &.morph {
         flex: 50%;
-        min-width: 330px;
+        min-width: var(--minColumnWidth);
+      }
+
+      &.morph40 {
+        flex: 40%;
+        min-width: var(--minColumnWidth40);
+      }
+
+      &.morph60 {
+        flex: 60%;
+        min-width: var(--minColumnWidth60);
       }
     }
   
@@ -713,6 +713,10 @@
       margin: 0;
       padding: 2px;
     }
+  }
+
+  .reverseFlex {
+    flex-flow: row-reverse;
   }
   
   .skills span {
@@ -765,6 +769,10 @@
   
     &.zerofive {
       flex: 5%;
+    }
+
+    &.col95{
+      flex: 95%;
     }
   
     &.fourty {
@@ -1273,6 +1281,8 @@
     }
   }
   
+  .onlySingleColumn,
+  .singleColumnLayout .onlyMultiColumn,
   .tokenQuickHot .subbuttons .secondary.shown.dsahidden,
   .domainToggle, .locktrue .advance, .privateMessageIndicator .fas, .chatIndicator .fas, .combatant:not(.active) .aggroButton, .tocCollapsing.expanded .col.three *, .tokenQuickHot .subbuttons .secondary:not(.shown), .hero .details {
     display: none;
@@ -1298,6 +1308,7 @@
     display: none;
   }
   
+  .singleColumnLayout .onlySingleColumn,
   .setCustomPrice.edit .customPriceTag {
     display: block;
   }

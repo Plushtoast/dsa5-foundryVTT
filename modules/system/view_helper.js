@@ -89,6 +89,28 @@ export function tinyNotification(message) {
     setTimeout(function () { elem.remove() }, 1500)
 }
 
+function IconVisibility(html, menu, btnLeft, btnRight){
+    let scrollLeftValue = Math.ceil(menu.scrollLeft)
+    let scrollableWidth = menu.scrollWidth - menu.clientWidth
+
+    btnLeft.style.display = scrollLeftValue > 0 ? "block" : "none"
+    btnRight.style.display = scrollableWidth > scrollLeftValue ? "block" : "none"
+
+    columnLayout(html)
+}
+
+function columnLayout(html){
+    const width = html.width()
+    const minWidth = Number(getComputedStyle(document.body).getPropertyValue('--minColumnWidth').replace("px", ""))
+    const borderWidth = + 6
+
+    if(width  >= minWidth * 2 + borderWidth){
+        html.removeClass("singleColumnLayout")
+    }else{
+        html.addClass("singleColumnLayout")
+    }
+}
+
 export function tabSlider(html) {
     const sliders = html.find(".navWrapper")
     
@@ -96,41 +118,24 @@ export function tabSlider(html) {
         const btnLeft = slider.querySelector('.left-btn')
         const btnRight = slider.querySelector('.right-btn')
         const menu = slider.querySelector('.sheet-tabs')
-
-        const IconVisibility = () => {
-            let scrollLeftValue = Math.ceil(menu.scrollLeft)
-            let scrollableWidth = menu.scrollWidth - menu.clientWidth
-
-            btnLeft.style.display = scrollLeftValue > 0 ? "block" : "none"
-            btnRight.style.display = scrollableWidth > scrollLeftValue ? "block" : "none"
-        }
+        let activeDrag = false
 
         btnRight.addEventListener("click", () => {
             menu.scrollLeft += 150
-            setTimeout(() => IconVisibility(), 500)
+            setTimeout(() => IconVisibility(html, menu, btnLeft, btnRight), 500)
         })
         btnLeft.addEventListener("click", () => {
             menu.scrollLeft -= 150
-            setTimeout(() => IconVisibility(), 500)
+            setTimeout(() => IconVisibility(html, menu, btnLeft, btnRight), 500)
         })
-        slider.addEventListener('resize', () => {
-            setTimeout(() => IconVisibility(), 500)
-        })
-
-        const observer = new ResizeObserver(entries => {
-             entries.forEach(entry => {
-                setTimeout(() => IconVisibility(), 500)
-             });
-           });
-        observer.observe(slider)
-
-        let activeDrag = false
+ 
+        new ResizeObserver(() => IconVisibility(html, menu, btnLeft, btnRight)).observe(slider)
 
         menu.addEventListener("mousemove", (drag) => {
             if(!activeDrag) return
 
             menu.scrollLeft -= drag.movementX            
-            setTimeout(() => IconVisibility(), 500)
+            setTimeout(() => IconVisibility(html, menu, btnLeft, btnRight), 500)
         })
         menu.addEventListener("mousedown", () => {
             activeDrag = true

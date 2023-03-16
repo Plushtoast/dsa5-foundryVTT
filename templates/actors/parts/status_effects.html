@@ -31,7 +31,7 @@
     </div>
     <div class="row-section mainEffects wrap">
 
-        <div class="col two row-section skills table-title">
+        <div class="col morph row-section skills table-title">
             <div class="col ten">
 
             </div>
@@ -49,7 +49,7 @@
 
             </div>
         </div>
-        <div class="col two row-section skills table-title">
+        <div class="col morph row-section skills table-title onlyMultiColumn">
             <div class="col ten">
 
             </div>
@@ -68,7 +68,7 @@
             </div>
         </div>
         {{#each conditions as |item i|}}
-        <div class="row-section col skills two statusEffect" data-id="{{item.id}}" {{#if item.descriptor}}data-descriptor="{{item.descriptor}}" {{/if}}>
+        <div class="row-section col morph skills statusEffect" data-id="{{item.id}}" {{#if item.descriptor}}data-descriptor="{{item.descriptor}}" {{/if}}>
             <div class="col ten">
                 {{#if item.disabled}}
                 <img style="opacity:0.5;" src="{{item.icon}}" /> {{else}}
@@ -90,6 +90,10 @@
             </div>
         </div>
         {{/each}}
+        {{#if (oddLength conditions)}}
+        <div class="col morph">
+        </div>
+        {{/if}}
     </div>
 
 </div>
@@ -112,7 +116,7 @@
     </div>
     <div class="row-section  wrap">
 
-        <div class="col two row-section skills table-title">
+        <div class="col morph row-section skills table-title">
             <div class="col ten">
 
             </div>
@@ -130,7 +134,7 @@
 
             </div>
         </div>
-        <div class="col two row-section skills table-title">
+        <div class="col morph row-section skills table-title onlyMultiColumn">
             <div class="col ten">
 
             </div>
@@ -149,7 +153,7 @@
             </div>
         </div>
         {{#each cumulativeConditions as |item i|}}
-        <div class="row-section col skills two statusEffect" data-id="{{item.id}}" data-descriptor="{{item.id}}">
+        <div class="row-section morph skills col statusEffect" data-id="{{item.id}}" data-descriptor="{{item.id}}">
             <div class="col ten">
                 <img src="{{item.icon}}" />
             </div>
@@ -167,6 +171,10 @@
             </div>
         </div>
         {{/each}}
+        {{#if (oddLength cumulativeConditions)}}
+        <div class="col morph">
+        </div>
+        {{/if}}
     </div>
 
 </div>
@@ -185,7 +193,7 @@
 
     <div class="row-section  wrap">
 
-        <div class="col two row-section skills table-title">
+        <div class="col morph row-section skills table-title">
             <div class="col ten">
 
             </div>
@@ -203,7 +211,7 @@
 
             </div>
         </div>
-        <div class="col two row-section skills table-title">
+        <div class="col morph row-section skills table-title onlyMultiColumn">
             <div class="col ten">
 
             </div>
@@ -222,7 +230,7 @@
             </div>
         </div>
         {{#each transferedConditions as |item i|}}
-        <div class="row-section col skills two statusEffect" data-origin="{{item.system.origin}}" data-id="{{item.id}}" {{#if item.descriptor}}data-descriptor="{{item.descriptor}}" {{/if}}>
+        <div class="row-section morph skills col statusEffect" data-origin="{{item.system.origin}}" data-id="{{item.id}}" {{#if item.descriptor}}data-descriptor="{{item.descriptor}}" {{/if}}>
             <div class="col ten">
                 {{#if item.disabled}}
                 <img style="opacity:0.5;" src="{{item.icon}}" /> {{else}}
@@ -245,6 +253,10 @@
             </div>
         </div>
         {{/each}}
+        {{#if (oddLength transferedConditions)}}
+        <div class="col morph">
+        </div>
+        {{/if}}
     </div>
 
 </div>
@@ -347,7 +359,7 @@
         </div>
     </div>
     <div class="row-section wrap">
-        <div class="col two row-section skills table-title">
+        <div class="col morph row-section skills table-title">
             <div class="col five">
                 {{localize 'target'}}
             </div>
@@ -358,7 +370,7 @@
                 {{localize "source"}}
             </div>
         </div>
-        <div class="col two row-section skills table-title">
+        <div class="col morph row-section skills table-title onlyMultiColumn">
             <div class="col five">
                 {{localize 'target'}}
             </div>
@@ -370,7 +382,7 @@
             </div>
         </div>
         {{#each prepare.itemModifiers as |item i|}}
-        <div class="row-section skills col two">
+        <div class="row-section skills col morph">
             <div class="col five">
                 {{@key}}
             </div>
@@ -383,7 +395,10 @@
 
         </div>
         {{/each}}
-       
+        {{#if (oddLength prepare.itemModifiers)}}
+        <div class="col morph">
+        </div>
+        {{/if}}
     </div>
 
 
@@ -397,7 +412,7 @@
     </div>
     <div class="row-section wrap">
         {{#if actor.system.repeatingEffects.startOfRound.wounds}}
-        <div class="row-section skills col two">
+        <div class="row-section skills col morph">
             <div class="col nintey">
                 {{localize 'regenerate'}} {{localize 'CHARAbbrev.CR'}} ({{localize 'wounds'}})
             </div>
@@ -411,7 +426,7 @@
         {{/if}}
 
         {{#if actor.system.repeatingEffects.startOfRound.astralenergy}}
-        <div class="row-section skills col two">
+        <div class="row-section skills col morph">
             <div class="col nintey">
                 {{localize 'regenerate'}} {{localize 'CHARAbbrev.CR'}} ({{localize 'astralenergy'}})
             </div>
@@ -421,7 +436,7 @@
         </div>
         {{/if}}
         {{#if actor.system.repeatingEffects.startOfRound.karmaenergy}}
-        <div class="row-section skills col two">
+        <div class="row-section skills col morph">
             <div class="col nintey">
                 {{localize 'regenerate'}} {{localize 'CHARAbbrev.CR'}} ({{localize 'karmaenergy'}})
             </div>

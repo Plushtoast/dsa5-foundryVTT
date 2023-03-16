@@ -1,0 +1,39 @@
+<div class="row-section wrap">
+    {{#if prepare.canAdvance}}
+    <div class="col morph">
+        <div class="groupbox">
+            <div class="row-section">
+                <div class="col header-label">
+                    <b>{{localize "carrycapacity"}}</b>
+                </div>
+            </div>
+            <div class="row-section table-title">
+                <div class="col three center">
+                    {{localize "carrycapacity"}}
+                </div>
+                <div class="col three center">
+                    {{localize "Current"}}
+                </div>
+                <div class="col three center">
+                    {{localize "encumbrance"}}
+                </div>
+            </div>
+            <div class="row-section">
+                <div class="col three center">
+                    {{prepare.carrycapacity}}
+                </div>
+                <div class="col three center">
+                    {{prepare.totalWeight}}
+                </div>
+                <div class="col three center">
+                    {{prepare.encumbrance}}
+                </div>
+            </div>
+        </div>
+    </div>
+    {{else}}
+    {{/if}}
+    <div class="col morph">
+        {{> systems/dsa5/templates/actors/parts/purse.html}}
+    </div>
+</div>

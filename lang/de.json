@@ -190,7 +190,6 @@
     "astralenergy": "Astralenergie",
     "ammunition": "Munition",
     "aggregatedTests": "Sammelproben",
-    "aggregatedTest": "Sammelprobe",
     "allowedTestCount": "Erlaubte Proben",
     "ammunitiongroup": "Munitionstyp",
     "fallingDamage": "Sturzschaden",
@@ -1078,7 +1077,7 @@
         }
     },
     "Types.Item.advantage": "Vorteil",
-    "Types.Item.aggregatedtest": "Sammelprobe",
+    "Types.Item.aggregatedTest": "Sammelprobe",
     "Types.Item.information": "Information",
     "Types.Item.ammunition": "Munition",
     "Types.Item.armor": "Rüstung",

@@ -75,41 +75,4 @@
 </div>
 {{/if}} {{/each}}
 
-<div class="row-section">
-    {{#if prepare.canAdvance}}
-    <div class="col two">
-        <div class="groupbox">
-            <div class="row-section">
-                <div class="col header-label">
-                    <b>{{localize "carrycapacity"}}</b>
-                </div>
-            </div>
-            <div class="row-section table-title">
-                <div class="col three center">
-                    {{localize "carrycapacity"}}
-                </div>
-                <div class="col three center">
-                    {{localize "Current"}}
-                </div>
-                <div class="col three center">
-                    {{localize "encumbrance"}}
-                </div>
-            </div>
-            <div class="row-section">
-                <div class="col three center">
-                    {{prepare.carrycapacity}}
-                </div>
-                <div class="col three center">
-                    {{prepare.totalWeight}}
-                </div>
-                <div class="col three center">
-                    {{prepare.encumbrance}}
-                </div>
-            </div>
-        </div>
-    </div>
-    {{/if}}
-    <div class="col two">
-        {{> systems/dsa5/templates/actors/parts/purse.html}}
-    </div>
-</div>
+{{> systems/dsa5/templates/actors/parts/carryandpurse.html}}

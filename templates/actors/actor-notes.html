@@ -7,68 +7,74 @@
     <div class="row-section">
         <section class="general col">
             <div class="row-section wrap">
-                <div class="col row-section">
-                    <div class="headerInput col four">
-                        <input class="input gender" name="system.details.gender.value" type="text" value="{{actor.system.details.gender.value}}" placeholder="{{localize 'Gender'}}" />
-                        <span class="label gender">{{localize "Gender"}}</span>
+                <div class="col morph">
+                    <div class="col row-section">
+                        <div class="headerInput col two">
+                            <input class="input gender" name="system.details.gender.value" type="text" value="{{actor.system.details.gender.value}}" placeholder="{{localize 'Gender'}}" />
+                            <span class="label gender">{{localize "Gender"}}</span>
+                        </div>
+    
+                        <div class="headerInput col two">
+                            <input class="input-details" name="system.details.culture.value" type="text" value="{{actor.system.details.culture.value}}" placeholder="{{localize 'Types.Item.culture'}}" />
+                            <span class="label-details">{{localize "Types.Item.culture"}}</span>
+                        </div>
                     </div>
+                    <div class="col row-section">
+                        <div class="headerInput col two">
+                            <input class="input-details" name="system.details.family.value" type="text" value="{{actor.system.details.family.value}}" placeholder="{{localize 'Family'}}" />
+                            <span class="label-details">{{localize "Family"}}</span>
+                        </div>
+    
+                        <div class="headerInput col two">
+                            <input class="input-details" name="system.details.age.value" type="text" value="{{actor.system.details.age.value}}" placeholder="{{localize 'Age'}}" />
+                            <span class="label-details">{{localize "Age"}}<span>
+                        </div>
+                    </div>
+                    <div class="col row-section">
 
-                    <div class="headerInput col four">
-                        <input class="input-details" name="system.details.culture.value" type="text" value="{{actor.system.details.culture.value}}" placeholder="{{localize 'Types.Item.culture'}}" />
-                        <span class="label-details">{{localize "Types.Item.culture"}}</span>
-                    </div>
-                    <div class="headerInput col four">
-                        <input class="input-details" name="system.details.socialstate.value" type="text" value="{{actor.system.details.socialstate.value}}" placeholder="{{localize 'Socialstate'}}" />
-                        <span class="label-details">{{localize "Socialstate"}}</span>
-                    </div>
-                    <div class="headerInput col four">
-                        <input class="input-details" name="system.details.Home.value" type="text" value="{{actor.system.details.Home.value}}" placeholder="{{localize 'Home'}}" />
-                        <span class="label-details">{{localize "Home"}}</span>
+                        <div class="headerInput col two">
+                            <input class="input-details" name="system.details.height.value" type="text" value="{{actor.system.details.height.value}}" placeholder="{{localize 'Height'}}" />
+                            <span class="label-details">{{localize "Height"}}</span>
+                        </div>
+    
+                        <div class="headerInput col two">
+                            <input class="input-details" name="system.details.weight.value" type="text" value="{{actor.system.details.weight.value}}" placeholder="{{localize 'Weight'}}" />
+                            <span class="label-details">{{localize "Weight"}}</span>
+                        </div>
                     </div>
                 </div>
-
-                <div class="col row-section">
-
-                    <div class="headerInput col four">
-                        <input class="input-details" name="system.details.family.value" type="text" value="{{actor.system.details.family.value}}" placeholder="{{localize 'Family'}}" />
-                        <span class="label-details">{{localize "Family"}}</span>
+                <div class="col morph">
+                    <div class="col row-section">
+                        <div class="headerInput col two">
+                            <input class="input-details" name="system.details.socialstate.value" type="text" value="{{actor.system.details.socialstate.value}}" placeholder="{{localize 'Socialstate'}}" />
+                            <span class="label-details">{{localize "Socialstate"}}</span>
+                        </div>
+                        <div class="headerInput col two">
+                            <input class="input-details" name="system.details.Home.value" type="text" value="{{actor.system.details.Home.value}}" placeholder="{{localize 'Home'}}" />
+                            <span class="label-details">{{localize "Home"}}</span>
+                        </div>
                     </div>
-
-                    <div class="headerInput col four">
-                        <input class="input-details" name="system.details.age.value" type="text" value="{{actor.system.details.age.value}}" placeholder="{{localize 'Age'}}" />
-                        <span class="label-details">{{localize "Age"}}<span>
+                    <div class="col row-section">
+                        <div class="headerInput col two">
+                            <input class="input-details"
+                                name="system.details.haircolor.value" type="text" value="{{actor.system.details.haircolor.value}}"
+                                placeholder="{{localize 'Hair_color'}}" />
+                            <span class="label-details">{{localize "Hair_color"}}</span>
+                        </div>
+                        <div class="headerInput col two">
+                            <input class="input-details" name="system.details.eyecolor.value" type="text" value="{{actor.system.details.eyecolor.value}}" placeholder="{{localize 'Eye_color'}}" />
+                            <span class="label-details">{{localize "Eye_color"}}</span>
+                        </div>
                     </div>
-
-                    <div class="headerInput col four">
-                        <input class="input-details"
-                            name="system.details.haircolor.value" type="text" value="{{actor.system.details.haircolor.value}}"
-                            placeholder="{{localize 'Hair_color'}}" />
-                        <span class="label-details">{{localize "Hair_color"}}</span>
-                    </div>
-                    <div class="headerInput col four">
-                        <input class="input-details" name="system.details.eyecolor.value" type="text" value="{{actor.system.details.eyecolor.value}}" placeholder="{{localize 'Eye_color'}}" />
-                        <span class="label-details">{{localize "Eye_color"}}</span>
+                    <div class="col row-section">
+                        <div class="headerInput col">
+                            <input class="input-details" name="system.details.distinguishingmark.value" type="text" value="{{actor.system.details.distinguishingmark.value}}" placeholder="{{localize 'Distinguishing_mark'}}" />
+                            <span class="label-details">{{localize "Distinguishing_mark"}}</span>
+                        </div>
+    
                     </div>
                 </div>
-
-                <div class="col row-section">
-
-                    <div class="headerInput col four">
-                        <input class="input-details" name="system.details.height.value" type="text" value="{{actor.system.details.height.value}}" placeholder="{{localize 'Height'}}" />
-                        <span class="label-details">{{localize "Height"}}</span>
-                    </div>
-
-                    <div class="headerInput col four">
-                        <input class="input-details" name="system.details.weight.value" type="text" value="{{actor.system.details.weight.value}}" placeholder="{{localize 'Weight'}}" />
-                        <span class="label-details">{{localize "Weight"}}</span>
-                    </div>
-
-                    <div class="headerInput col two">
-                        <input class="input-details" name="system.details.distinguishingmark.value" type="text" value="{{actor.system.details.distinguishingmark.value}}" placeholder="{{localize 'Distinguishing_mark'}}" />
-                        <span class="label-details">{{localize "Distinguishing_mark"}}</span>
-                    </div>
-
-                </div>
+               
             </div>
 
         </section>

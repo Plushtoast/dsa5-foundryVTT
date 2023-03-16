@@ -164,7 +164,7 @@ export default class ActorSheetDsa5 extends ActorSheet {
         const itemId = this._getItemId(ev);
         let aggregated = this.actor.items.get(itemId).toObject()
         let skill = this.actor.items.find(i => i.name == aggregated.system.talent.value && i.type == "skill")
-        let infoMsg = `<h3 class="center"><b>${game.i18n.localize("aggregatedTest")}</b></h3>`
+        let infoMsg = `<h3 class="center"><b>${game.i18n.localize("Types.Item.aggregatedTest")}</b></h3>`
         if (aggregated.system.usedTestCount.value >= aggregated.system.allowedTestCount.value) {
             infoMsg += `${game.i18n.localize("Aggregated.noMoreAllowed")}`;
             ChatMessage.create(DSA5_Utility.chatDataSetup(infoMsg));

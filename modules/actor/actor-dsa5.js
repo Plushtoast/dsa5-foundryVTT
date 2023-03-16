@@ -1071,6 +1071,8 @@ export default class Actordsa5 extends Actor {
       combatskills,
       canAdvance: this.canAdvance,
       sheetLocked: actorData.system.sheetLocked.value,
+      bodyAttrs: ["ff","ge","ko","kk"],
+      mentalAttrs: ["mu","kl","in", "ch"],
       allSkillsLeft: {
         body: skills.body,
         social: skills.social,

@@ -1,12 +1,12 @@
-<div class="characteristics">
+<div class="row-section wrap">
     <div class="characteristics-table" cellpadding="0">
         <div class="table-row">
             <div class="table-header"></div>
-            {{#each actor.system.characteristics as |ch c|}}
-            <div data-tooltip="{{attrName c}}" class="table-header">
+            {{#each prepare.mentalAttrs as |ch|}}
+            <div data-tooltip="{{attrName ch}}" class="table-header">
                 <div class="header-label">
-                    {{#if ../prepare.canAdvance}}<a data-attr="{{c}}" class="advance refund-attribute"><i data-tooltip="{{ch.refund}}" class="fas fa-minus"></i></a>{{/if}}
-                    <b>{{attrAbbr c}}</b> {{#if ../prepare.canAdvance}}<a data-attr="{{c}}" class="advance advance-attribute"><i data-tooltip="{{ch.cost}}" class="fas fa-plus"></i></a>{{/if}}
+                    {{#if ../prepare.canAdvance}}<a data-attr="{{ch}}" class="advance refund-attribute"><i data-tooltip="{{getAttr ../actor ch 'refund'}}" class="fas fa-minus"></i></a>{{/if}}
+                    <b>{{attrAbbr ch}}</b> {{#if ../prepare.canAdvance}}<a data-attr="{{ch}}" class="advance advance-attribute"><i data-tooltip="{{getAttr ../actor ch 'cost'}}" class="fas fa-plus"></i></a>{{/if}}
                 </div>
             </div>
             {{/each}}
@@ -17,33 +17,87 @@
                     {{localize "Initial"}}
                 </div>
             </div>
-            {{#each actor.system.characteristics as |ch c|}}
+            {{#each prepare.mentalAttrs as |ch|}}
             <div class="table-data">
-                <input name="system.characteristics.{{c}}.initial" type="text" value="{{ch.initial}}" data-dtype="Number">
+                <input name="system.characteristics.{{ch}}.initial" type="text" value="{{getAttr ../actor ch 'initial'}}" data-dtype="Number">
             </div>
             {{/each}}
         </div>
+        {{#if prepare.canAdvance}}
         <div class="table-row">
             <div class="row-type table-data">
                 <div class="header-block lineheight">
                     {{localize "Advances"}}
                 </div>
             </div>
-            {{#each actor.system.characteristics as |ch c|}}
+            {{#each prepare.mentalAttrs as |ch|}}
             <div class="table-data">
-                <input name="system.characteristics.{{c}}.advances" type="text" value="{{ch.advances}}" data-dtype="Number">
+                <input name="system.characteristics.{{ch}}.advances" type="text" value="{{getAttr ../actor ch 'advances'}}" data-dtype="Number">
             </div>
             {{/each}}
         </div>
+        {{/if}}
         <div class="table-row">
             <div class="row-type table-data">
                 <div class="header-block lineheight">
                     {{localize "Modifiers"}}
                 </div>
             </div>
-            {{#each actor.system.characteristics as |ch c|}}
+            {{#each prepare.mentalAttrs as |ch|}}
             <div class="table-data">
-                <input name="system.characteristics.{{c}}.modifier" type="text" value="{{ch.modifier}}" data-dtype="Number">
+                <input name="system.characteristics.{{ch}}.modifier" type="text" value="{{getAttr ../actor ch 'modifier'}}" data-dtype="Number">
+            </div>
+            {{/each}}
+        </div>
+
+    </div>
+    <div class="characteristics-table ctab2" cellpadding="0">
+        <div class="table-row">
+            <div class="table-header onlySingleColumn"></div>
+            {{#each prepare.bodyAttrs as |ch|}}
+            <div data-tooltip="{{attrName ch}}" class="table-header">
+                <div class="header-label">
+                    {{#if ../prepare.canAdvance}}<a data-attr="{{ch}}" class="advance refund-attribute"><i data-tooltip="{{getAttr ../actor ch 'refund'}}" class="fas fa-minus"></i></a>{{/if}}
+                    <b>{{attrAbbr ch}}</b> {{#if ../prepare.canAdvance}}<a data-attr="{{ch}}" class="advance advance-attribute"><i data-tooltip="{{getAttr ../actor ch 'cost'}}" class="fas fa-plus"></i></a>{{/if}}
+                </div>
+            </div>
+            {{/each}}
+        </div>
+        <div class="table-row">
+            <div class="row-type table-data onlySingleColumn">
+                <div class="header-block lineheight">
+                    {{localize "Initial"}}
+                </div>
+            </div>
+            {{#each prepare.bodyAttrs as |ch|}}
+            <div class="table-data">
+                <input name="system.characteristics.{{ch}}.initial" type="text" value="{{getAttr ../actor ch 'initial'}}" data-dtype="Number">
+            </div>
+            {{/each}}
+        </div>
+        {{#if prepare.canAdvance}}
+        <div class="table-row">
+            <div class="row-type table-data onlySingleColumn">
+                <div class="header-block lineheight">
+                    {{localize "Advances"}}
+                </div>
+            </div>
+            {{#each prepare.bodyAttrs as |ch|}}
+            <div class="table-data">
+                <input name="system.characteristics.{{ch}}.advances" type="text" value="{{getAttr ../actor ch 'advances'}}" data-dtype="Number">
+            </div>
+            {{/each}}
+        </div>
+        {{/if}}
+        <div class="table-row">
+            <div class="row-type table-data onlySingleColumn">
+                <div class="header-block lineheight">
+                    {{localize "Modifiers"}}
+                </div>
+            </div>
+            {{#each prepare.bodyAttrs as |ch|}}
+            <div class="table-data">
+                <input name="system.characteristics.{{ch}}.modifier" type="text" value="{{getAttr ../actor ch 'modifier'}}" data-dtype="Number">
             </div>
             {{/each}}
         </div>

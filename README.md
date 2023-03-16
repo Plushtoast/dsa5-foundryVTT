@@ -4,7 +4,7 @@
 ![](https://repository-images.githubusercontent.com/311655339/4d523800-55a9-11eb-9e2e-6bbc2b71d8a4)
 
 ### Current Version and Compatibility:
-4.2.x - FoundryVTT 10.+
+5.0.x - FoundryVTT 10.+
 This system is intended for usage with [Foundry Virtual Tabletop](https://foundryvtt.com/) to play "Das Schwarze Auge" 5th edition.
 If you want to learn more checkout the [German](https://ulisses-spiele.de/virtual-tabletop-dsa-vtt/) or [English](https://ulisses-us.com/ulisses-virtual-tabletops/virtual-tabletop-dsa-vtt/) VTT Page by Ulisses Spiele.
 
@@ -41,8 +41,6 @@ If you want to discuss TDE for foundry or need some assistance you can also join
 * Summoning Assistance
 * Automated abilities
 * JB2A support
-
-
 
 <h2>German Modules</h2>
 <div>

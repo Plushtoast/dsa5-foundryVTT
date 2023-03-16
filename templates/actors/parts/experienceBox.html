@@ -1,0 +1,35 @@
+<div class="groupbox">
+    <div class="experience row-section">
+        <div class="col header-label lineheight">
+            <b>{{localize "Experience"}}</b>
+        </div>
+    </div>
+    <div class="experience row-section">
+        <div class="col center">
+            {{localize actor.system.details.experience.description}}
+        </div>
+    </div>
+    <div class="experience row-section">
+        <div class="col three header-label">
+            {{localize "Current"}}
+        </div>
+        <div class="col three header-label">
+            {{localize "Spent"}}
+        </div>
+        <div class="col three header-label">
+            {{localize "Total"}}
+        </div>
+    </div>
+    <div class="experience row-section">
+        <div class="col three lineheight center">
+            {{actor.system.details.experience.current}}
+        </div>
+        <div class="col three center">
+            <input name="system.details.experience.spent" type="text" value="{{actor.system.details.experience.spent}}" data-dtype="Number" />
+        </div>
+        <div class="col three center">
+            <input name="system.details.experience.total" type="text" value="{{actor.system.details.experience.total}}" data-dtype="Number" />
+        </div>
+
+    </div>
+</div>
