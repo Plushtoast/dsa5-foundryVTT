@@ -102,6 +102,7 @@ function IconVisibility(html, menu, btnLeft, btnRight){
 function columnLayout(html){
     const width = html.width()
     const minWidth = Number(getComputedStyle(document.body).getPropertyValue('--minColumnWidth').replace("px", ""))
+    const width60 = Number(getComputedStyle(document.body).getPropertyValue('--minColumnWidth60').replace("px", ""))
     const borderWidth = + 6
 
     if(width  >= minWidth * 2 + borderWidth){
@@ -109,7 +110,13 @@ function columnLayout(html){
     }else{
         html.addClass("singleColumnLayout")
     }
+    if(width <= width60){
+        html.addClass("minimumColumnLayout")
+    }else{
+        html.removeClass("minimumColumnLayout")
+    }
 }
+
 
 export function tabSlider(html) {
     const sliders = html.find(".navWrapper")

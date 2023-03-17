@@ -163,6 +163,7 @@ export default class PlayerMenu extends Application {
         html.find('.selectableRow').click(ev => this.selectImprovement(ev))
         html.find('.finalizeConjuration').click(() => this.finalizeConjuration())
         html.find('.ruleLink').click((ev) => this.openRules(ev))
+        html.find('.openChar').click(() => { this.actor?.sheet.render(true) })
         html.find('.showEntity').click(ev => {
             ev.stopPropagation()
             const fun = async() => {

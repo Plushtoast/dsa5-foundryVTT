@@ -36,6 +36,7 @@ import { MeasuredTemplateDSA } from "./system/measuretemplate.js"
 import RequestRoll from "./system/request-roll.js"
 import Riding from "./system/riding.js"
 import RuleChaos from "./system/rule_chaos.js"
+import DSACharBuilder from "./wizards/charBuild/charbuilder.js"
 
 Hooks.once("init", () => {
     console.log("Initializing DSA5 system")
@@ -62,7 +63,8 @@ Hooks.once("init", () => {
             DidYouKnow, 
             MeasuredTemplateDSA,
             Riding,
-            RuleChaos
+            RuleChaos,
+            DSACharBuilder
         },
         entities: {
             Actordsa5,

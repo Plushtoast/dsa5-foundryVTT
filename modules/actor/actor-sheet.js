@@ -41,7 +41,7 @@ export default class ActorSheetDsa5 extends ActorSheet {
             ".actorConfig": "SHEET.actorConfig"
         }
         for(let key of Object.keys(tooltips)){
-            elem.find(key).attr("data-tooltip", game.i18n.localize(tooltips[key]));    
+            elem.find(key).attr("data-tooltip", tooltips[key]);    
         }
 
         if (this.currentFocus) {

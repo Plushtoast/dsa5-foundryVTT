@@ -1,6 +1,6 @@
 <form class="skill-test">
-    <div class="row-section">
-        <div class="col sixty" style="max-width:60%">
+    <div class="row-section wrap">
+        <div class="col sixty">
             {{> systems/dsa5/templates/dialog/default-combat-dialog.html}} {{#if melee}}
             <div class="form-group custom-select" >
                 <label data-tooltip="DIALOGDESCRIPTION.narrowSpace">{{localize "narrowSpace"}} (<span class="narrowSpaceLabel">{{rollModifiers.narrowSpace.mod}}</span>)</label>
@@ -113,7 +113,7 @@
             </div>
             {{/if}}
         </div>
-        <div class="col fourty">
+        <div class="col fourty" style="min-width: 180px">
             <div class="targets row-section wrap item">
                 {{> systems/dsa5/templates/dialog/parts/targets.html}}
             </div>

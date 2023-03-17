@@ -6,13 +6,13 @@ import { bindImgToCanvasDragStart } from "./imgTileDrop.js";
 
 export default function() {
     Hooks.on("renderJournalSheet", (obj, html, data) => {
-        html.find(".close").attr("data-tooltip", game.i18n.localize("SHEET.Close"));
-        html.find(".entry-image").attr("data-tooltip", game.i18n.localize("SHEET.imageView"));
-        html.find(".entry-text").attr("data-tooltip", game.i18n.localize("SHEET.textView"));
-        html.find(".share-image").attr("data-tooltip", game.i18n.localize("SHEET.showToPlayers"));
-        html.find(".import").attr("data-tooltip", game.i18n.localize("SHEET.import"));
-        html.find(".panMapNote").attr("data-tooltip", game.i18n.localize("SHEET.panMapNote"));
-        html.find(".increaseFontSize").attr("data-tooltip", game.i18n.localize("SHEET.increaseFontSize"));
+        html.find(".close").attr("data-tooltip", "SHEET.Close");
+        html.find(".entry-image").attr("data-tooltip", "SHEET.imageView");
+        html.find(".entry-text").attr("data-tooltip", "SHEET.textView");
+        html.find(".share-image").attr("data-tooltip", "SHEET.showToPlayers");
+        html.find(".import").attr("data-tooltip", "SHEET.import");
+        html.find(".panMapNote").attr("data-tooltip", "SHEET.panMapNote");
+        html.find(".increaseFontSize").attr("data-tooltip", "SHEET.increaseFontSize");
     })
 
     Hooks.on("renderJournalPageSheet", (obj, html, data) => {

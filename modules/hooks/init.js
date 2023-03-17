@@ -73,7 +73,6 @@ Hooks.once("init", () => {
         "systems/dsa5/templates/items/item-extension.html",
         "systems/dsa5/templates/actors/creature/creature-main.html",
         "systems/dsa5/templates/actors/creature/creature-loot.html",
-        "systems/dsa5/templates/actors/creature/creature-combat.html",
         "systems/dsa5/templates/actors/creature/creature-notes.html",
         "systems/dsa5/templates/actors/creature/creature-magic.html",
         "systems/dsa5/templates/actors/creature/creature-religion.html",
@@ -102,7 +101,9 @@ Hooks.once("init", () => {
         "systems/dsa5/templates/actors/parts/attributes.html",
         "systems/dsa5/templates/actors/parts/carryandpurse.html",
         "systems/dsa5/templates/actors/parts/specialabilities.html",
-        "systems/dsa5/templates/actors/parts/experienceBox.html"
+        "systems/dsa5/templates/actors/parts/experienceBox.html",
+        "systems/dsa5/templates/actors/parts/spells.html",
+        "systems/dsa5/templates/actors/parts/liturgies.html"
     ]);
 
     Actors.unregisterSheet("core", ActorSheet);

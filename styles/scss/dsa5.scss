@@ -334,7 +334,11 @@
     height: 115px;
     object-fit: contain;
   }
-  
+
+  .minimumColumnLayout .characteristics-table{
+    min-width: unset
+  }
+
   .characteristics-table {
     flex: 6;
     display: block;   
@@ -700,7 +704,6 @@
 
       &.morph60 {
         flex: 60%;
-        min-width: var(--minColumnWidth60);
       }
     }
   
@@ -1281,6 +1284,7 @@
     }
   }
   
+  .minimumColumnLayout .notOnMinimum,
   .onlySingleColumn,
   .singleColumnLayout .onlyMultiColumn,
   .tokenQuickHot .subbuttons .secondary.shown.dsahidden,
@@ -1600,6 +1604,7 @@
         position: relative;
         top: 3px;
         margin-right: 3px;
+        min-width: 20px;
       }
     }
   
@@ -1610,16 +1615,18 @@
   
       li {
         list-style-type: none;
-        width: 24%;
+        flex: 24%;
         display: inline-block;
         display: flex;
         line-height: 26px;
+        min-width: 120px;
       }
     }
   
     .item-list li {
-      width: 49%;
+      flex: 49%;
       border: 1px solid #DDD;
+      min-width: 240px;
   
       a {
         display: inline-block;
@@ -1640,6 +1647,7 @@
     .categories li label {
       text-overflow: ellipsis;
       overflow: hidden;
+      min-width: 80px;
     }
   }
   
@@ -1733,9 +1741,12 @@
       height: 32px;
       flex: 0 0 32px;
       margin: 4px 0;
-      line-height: 32px;
       border-top: 1px solid #b5b3a4;
       border-bottom: 1px solid #b5b3a4;
+
+      .item {
+        padding: 8px 12px;
+      }
     }
   
     .show-item {
@@ -2263,6 +2274,9 @@
   
     .chapter {
       padding: 8px;
+      *{
+         user-select: text;   
+      }
     }
   
     .toc {

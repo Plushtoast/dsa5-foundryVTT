@@ -308,8 +308,8 @@
             {{localize "disease"}}
         </div>
         <div class="col ten center">{{localize "stepValue"}}</div>
-        <div class="col five center">{{localize 'incubation'}}</div>
-        <div class="col five center">{{localize "duration"}}</div>
+        <div class="col five center onlyMultiColumn">{{localize 'incubation'}}</div>
+        <div class="col five center onlyMultiColumn">{{localize "duration"}}</div>
         <div class="col fifteen center"></div>
         <div class="col ten center"></div>
         <div class="col ten center">
@@ -326,10 +326,10 @@
                 <div class="col ten center">
                     {{item.system.step.value}}
                 </div>
-                <div class="col five center">
+                <div class="col five center onlyMultiColumn">
                     {{item.system.incubation.value}}
                 </div>
-                <div class="col five center">
+                <div class="col five center onlyMultiColumn">
                     {{item.system.duration.resolved}}
                 </div>
                 <div class="col fifteen center">
