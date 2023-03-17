@@ -17,7 +17,7 @@ export default class DPS {
 
     static inDistance(toToken) {
         for (let token of canvas.scene.tokens) {
-            if (token.isOwner && this.rangeFinder(toToken, token.object).tileDistance <= 2) return true
+            if (token.isOwner && DPS.rangeFinder(toToken, token.object).tileDistance <= 2) return true
         }
         return false
     }
@@ -28,7 +28,7 @@ export default class DPS {
     }
 
     static distanceModifier(tokenSource, rangeweapon, currentAmmo) {
-        if (!this.isEnabled || !tokenSource) return 1
+        if (!DPS.isEnabled || !tokenSource) return 1
 
         let maxDist = {}
         for (let target of game.user.targets) {
@@ -51,7 +51,7 @@ export default class DPS {
     static initDoorMinDistance() {
         const originalDoorControl = DoorControl.prototype._onMouseDown
         DoorControl.prototype._onMouseDown = function(event) {
-            if (!game.user.isGM && this.isEnabled) {
+            if (!game.user.isGM && DPS.isEnabled) {
                 if (!DPS.inDistance(this))
                     return ui.notifications.warn(game.i18n.localize('DSAError.notInRangeToLoot'))
             }

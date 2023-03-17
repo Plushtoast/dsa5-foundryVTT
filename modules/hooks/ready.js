@@ -29,6 +29,8 @@ export default function() {
         })
         if (game.user.isGM) {
             game.socket.on("system.dsa5", data => {
+                if(!DSA5_Utility.isActiveGM()) return
+                
                 switch (data.type) {
                     case "target":
                         {
