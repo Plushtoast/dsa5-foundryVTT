@@ -58,7 +58,6 @@ export default class DPS {
             return originalDoorControl.apply(this, arguments)
         }
     }
-
 }
 
 Hooks.on("renderSceneConfig", (app, html, msg) => {

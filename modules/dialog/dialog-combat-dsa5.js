@@ -314,32 +314,35 @@ export default class DSA5CombatDialog extends DialogShared {
         } else {
             if (!testData.source.effects) testData.source.effects = []
 
-            testData.source.effects.push({
-                "_id": modeTranslated,
-                "changes": [],
-                "disabled": false,
-                "duration": {},
-                "icon": "icons/svg/aura.svg",
-                "label": modeTranslated,
-                "transfer": true,
-                "flags": {
-                    "dsa5": {
-                        "value": null,
-                        "editable": true,
-                        "description": modeTranslated,
-                        "custom": true,
-                        "auto": null,
-                        "manual": 0,
-                        "resistRoll": `${game.i18n.localize("LocalizedIDs.selfControl")} -3`,
-                        "hideOnToken": false,
-                        "hidePlayers": false,
-                        "customDuration": "",
-                        "advancedFunction": "1",
-                        "args0": "unconscious",
-                        "args1": ""
+            if(!testData.source.effects.find(x => x._id == modeTranslated)){
+                testData.source.effects.push({
+                    "_id": modeTranslated,
+                    "changes": [],
+                    "disabled": false,
+                    "duration": {},
+                    "icon": "icons/svg/aura.svg",
+                    "label": modeTranslated,
+                    "transfer": true,
+                    "flags": {
+                        "dsa5": {
+                            "value": null,
+                            "editable": true,
+                            "description": modeTranslated,
+                            "custom": true,
+                            "auto": null,
+                            "manual": 0,
+                            "resistRoll": `${game.i18n.localize("LocalizedIDs.selfControl")} -3`,
+                            "hideOnToken": false,
+                            "hidePlayers": false,
+                            "customDuration": "",
+                            "advancedFunction": "1",
+                            "args0": "unconscious",
+                            "args1": ""
+                        }
                     }
-                }
-            })
+                })
+            }
+            
         }
 
         return result

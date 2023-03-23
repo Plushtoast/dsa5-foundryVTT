@@ -646,7 +646,8 @@
         "dragActor": "No summoner active (drag and drop)",
         "dragConjuration": "No summoning target active (drag and drop, at least observer permissions)",
         "conjurs": "summons",
-        "requestSend": "The request has been send to the game master."
+        "requestSend": "The request has been send to the game master.",
+        "groupSummoning": "Pack Summoning"
     },
     "PLAYER": {
         "title": "Player Menu",

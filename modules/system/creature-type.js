@@ -1,6 +1,6 @@
 import DSA5_Utility from "./utility-dsa5.js"
 
-Hooks.once("ready", async() => {
+Hooks.once("i18nInit", async() => {
     if (!CreatureType.creatureData) {
         const r = await fetch(`systems/dsa5/lazy/creaturetype/${game.i18n.lang}.json`)
         CreatureType.creatureData = await r.json()

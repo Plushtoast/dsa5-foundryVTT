@@ -438,7 +438,6 @@ export default class BookWizard extends Application {
                 chapter.cssClass = "selected"
                 chapter.subChapters = this.getSubChapters()
             }
-            console.log(this.selectedChapter)
             return await renderTemplate('systems/dsa5/templates/wizard/adventure/adventure_toc.html', { chapters, book: this.book, fulltextsearch: this.fulltextsearch ? "on" : "" })
         } else {
             return '<div class="libraryImg"></div>'

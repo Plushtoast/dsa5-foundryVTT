@@ -601,7 +601,8 @@
         "dragActor": "Kein Beschwörer aktiv (drag and drop)",
         "dragConjuration": "Keine Beschwörung aktiv (drag and drop, mindestens Observerrechte)",
         "conjurs": "beschwört",
-        "requestSend": "Die Anfrage wurde an den Spielleiter geschickt."
+        "requestSend": "Die Anfrage wurde an den Spielleiter geschickt.",
+        "groupSummoning": "Rudelbeschwörung"
     },
     "PLAYER": {
         "title": "Spieler Menü",

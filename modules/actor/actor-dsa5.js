@@ -419,6 +419,7 @@ export default class Actordsa5 extends Actor {
     mergeObject(system, {
       itemModifiers: {},
       condition: {},
+      creatureType: this.creatureType,
       skillModifiers: {
         FP: [],
         step: [],
@@ -2432,7 +2433,6 @@ export default class Actordsa5 extends Actor {
       delete effect.flags.dsa5.max
       delete effect.id
 
-      console.log(effect, options)
       mergeObject(effect, options)   
     }
 

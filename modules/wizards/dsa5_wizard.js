@@ -27,13 +27,14 @@ export default class WizardDSA5 extends Application {
 
     async findCompendiumItem(name, types){
         for(let type of types){
-            const results = await game.dsa5.itemLibrary.findCompendiumItem(name, type)
             //todo make sure this loads the right thing e.g. armory instead of core
-            if(results.length) return results.find((x) => x.name == name && x.type == type && x.system);
+            const result = await game.dsa5.itemLibrary.findCompendiumItem(name, type).find((x) => x.name == name && x.type == type && x.system)
+
+            if(result) return result
         }
         
         return undefined
-    }
+    }    
 
     async parseToItem(value, types) {
         if (value.trim() == "")
@@ -114,6 +115,7 @@ export default class WizardDSA5 extends Application {
 
         for (let k of elems) {
             const val = $(k).val()
+            
             if (val == "") continue
 
             let item = (await fromUuid($(k).val())).toObject()
