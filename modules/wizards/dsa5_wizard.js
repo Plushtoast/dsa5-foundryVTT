@@ -28,7 +28,8 @@ export default class WizardDSA5 extends Application {
     async findCompendiumItem(name, types){
         for(let type of types){
             //todo make sure this loads the right thing e.g. armory instead of core
-            const result = await game.dsa5.itemLibrary.findCompendiumItem(name, type).find((x) => x.name == name && x.type == type && x.system)
+            let result = await game.dsa5.itemLibrary.findCompendiumItem(name, type)
+            result = result.find((x) => x.name == name && x.type == type && x.system)
 
             if(result) return result
         }
