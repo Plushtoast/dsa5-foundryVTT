@@ -72,7 +72,7 @@ export default class Actordsa5 extends Actor {
   }
 
   prepareDerivedData() {
-    let startTime = performance.now()
+    //let startTime = performance.now()
     const data = this.system;
     try {      
       this._getItemModifiers()
@@ -267,9 +267,9 @@ export default class Actordsa5 extends Actor {
       console.error(`Something went wrong with preparing actor data ${this.name}: ` + error + error.stack);
       ui.notifications.error(game.i18n.format("DSAError.PreparationError", {name: this.name}) + error + error.stack);
     }
-    let endTime = performance.now()
+    //let endTime = performance.now()
 
-    console.log(`Call to prepareData took ${endTime - startTime} milliseconds`)
+    //console.log(`Call to prepareData took ${endTime - startTime} milliseconds`)
   }
 
   effectivePain(data){
