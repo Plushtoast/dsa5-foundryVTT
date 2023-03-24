@@ -17,6 +17,10 @@ import CreatureType from "../system/creature-type.js";
 import Riding from "../system/riding.js";
 
 export default class Actordsa5 extends Actor {
+  static _baseCarryItems = new Set(["meleeweapon", "ammunition", "rangeweapon", "plant", "poison", "money", "consumable", "equipment"])
+  static _mageSpecs = new Set(["magical", "staff", "pact"])
+  static _clericSpecs = new Set(["ceremonial", "clerical"])
+
   static async create(data, options) {
     if (data instanceof Array || data.items) return await super.create(data, options);
 
@@ -68,6 +72,7 @@ export default class Actordsa5 extends Actor {
   }
 
   prepareDerivedData() {
+    let startTime = performance.now()
     const data = this.system;
     try {      
       this._getItemModifiers()
@@ -80,23 +85,74 @@ export default class Actordsa5 extends Actor {
           cost: DSA5_Utility._calculateAdvCost(ch.initial + ch.advances, "E", 0),
         });
       }
+      
+      data.totalWeight = 0;
+      
+      const armor = []
 
-      //We should iterate at some point over the items to prevent multiple loops
+      const familiarString = game.i18n.localize('LocalizedIDs.familiar')
+      const petString = game.i18n.localize('LocalizedIDs.companion')
 
-      const isFamiliar = RuleChaos.isFamiliar(this);
-      const isPet = RuleChaos.isPet(this);
-      data.canAdvance = (this.type == "character" || isFamiliar || isPet) && this.isOwner;
+      let containers = new Map();
+      const bags = this.items.filter(x => x.type == "equipment" && x.system.equipmentType.value == "bags")
+      for (let container of bags) {
+        containers.set(container.id, []);
+      }
+
+      for(const i of this.items){
+        if(Actordsa5._baseCarryItems.has(i.type)){
+          let parent_id = getProperty(i, "system.parent_id");
+          if (parent_id && parent_id != i._id) {
+            if (containers.has(parent_id)) {
+              containers.get(parent_id).push(i);
+              continue;
+            }
+          }
+          i.system.preparedWeight = parseFloat((i.system.weight.value * i.system.quantity.value).toFixed(3));
+          data.totalWeight += Number(i.system.preparedWeight);
+        } else if(i.type == "armor"){
+          i.system.preparedWeight = parseFloat((i.system.weight.value * i.system.quantity.value).toFixed(3));
+          data.totalWeight += parseFloat(
+            (
+              i.system.weight.value * (i.system.worn.value ? Math.max(0, i.system.quantity.value - 1) : i.system.quantity.value)
+            ).toFixed(3)
+          );
+          if(i.system.worn.value) armor.push(i)
+        } else { 
+          switch(i.type){
+            case "trait":
+              if(i.name == familiarString) data.isFamiliar = true
+              if(i.name == petString) data.isPet = true
+              break
+            case "spell":
+            case "ritual":
+            case "magictrick":
+              data.isMage = true
+              break
+            case "liturgy":
+            case "ceremony":
+            case "blessing":
+              data.isPriest = true
+              break
+            case "specialability":
+              if(Actordsa5._mageSpecs.has(i.system.category.value)) data.isMage = true
+              else if(Actordsa5._clericSpecs.has(i.system.category.value)) data.isPriest = true
+              break              
+          }
+        }
+      }
+
+      data.isMage ||= data.isFamiliar 
+
+      for(let bag of bags){
+        data.totalWeight += this._calcBagweight(bag, containers, true)
+      }
+
+      data.canAdvance = this.isOwner && (this.type == "character" || data.isFamiliar || data.isPet)
       this.canAdvance = data.canAdvance
-      data.isMage =
-        isFamiliar ||
-        this.items.some(
-          (x) => ["ritual", "spell", "magictrick"].includes(x.type) ||
-            (x.type == "specialability" && ["magical", "staff", "pact"].includes(x.system.category.value))
-        );
-      data.isPriest = this.items.some(
-        (x) => ["ceremony", "liturgy", "blessing"].includes(x.type) ||
-          (x.type == "specialability" && ["ceremonial", "clerical"].includes(x.system.category.value))
-      );
+
+      data.carrycapacity = data.characteristics.kk.value * 2 + data.carryModifier
+
       if (data.canAdvance) {
         data.details.experience.current = data.details.experience.total - data.details.experience.spent;
         data.details.experience.description = DSA5_Utility.experienceDescription(data.details.experience.total);
@@ -134,7 +190,7 @@ export default class Actordsa5 extends Actor {
         data.status.regeneration.AsPTemp + data.status.regeneration.AsPMod + data.status.regeneration.AsPgearmodifier;
 
       let guide = data.guidevalue;
-      if (isFamiliar || (guide && this.type != "creature")) {
+      if (data.isFamiliar || (guide && this.type != "creature")) {
         data.status.astralenergy.current = data.status.astralenergy.initial;
         data.status.karmaenergy.current = data.status.karmaenergy.initial;
 
@@ -181,7 +237,19 @@ export default class Actordsa5 extends Actor {
 
         if (changePain && !TraitRulesDSA5.hasTrait(this, game.i18n.localize("LocalizedIDs.painImmunity"))){
           this.addCondition("inpain", pain, true).then(() => this.changingPain = undefined);
-        }          
+        }      
+
+        let encumbrance = this.getArmorEncumbrance(this, armor);
+        if ((this.type != "creature" || this.canAdvance) && !this.isMerchant()) {
+          encumbrance += Math.max(0, Math.ceil((data.totalWeight - data.carrycapacity - 4) / 4));
+        }
+
+        const currentEncumbrance = this.effects.find(x => "encumbered" == getProperty(x, "flags.core.statusId"))?.flags.dsa5.auto || 0
+
+        const changeEncumbrance = !this.changingEncumbrance && (currentEncumbrance != encumbrance)
+        this.changingEncumbrance = currentEncumbrance != encumbrance;
+
+        if(changeEncumbrance) this.addCondition("encumbered", encumbrance, true);
 
         if (AdvantageRulesDSA5.hasVantage(this, game.i18n.localize("LocalizedIDs.blind"))) this.addCondition("blind");
         if (AdvantageRulesDSA5.hasVantage(this, game.i18n.localize("LocalizedIDs.mute"))) this.addCondition("mute");
@@ -204,6 +272,9 @@ export default class Actordsa5 extends Actor {
       console.error("Something went wrong with preparing actor data: " + error + error.stack);
       ui.notifications.error(game.i18n.format("DSAError.PreparationError", {name: this.name}) + error + error.stack);
     }
+    let endTime = performance.now()
+
+    console.log(`Call to prepareData took ${endTime - startTime} milliseconds`)
   }
 
   effectivePain(data){
@@ -766,8 +837,7 @@ export default class Actordsa5 extends Actor {
     //actorData.items = actorData.items.sort((a, b) => (a.sort || 0) - (b.sort || 0))
 
     let totalArmor = actorData.system.totalArmor || 0;
-    let totalWeight = 0;
-
+    
     let skills = {
       body: [],
       social: [],
@@ -852,29 +922,23 @@ export default class Actordsa5 extends Actor {
             combatskills.push(Actordsa5._calculateCombatSkillValues(i, this.system));
             break;
           case "ammunition":
-            i.weight = parseFloat((i.system.weight.value * i.system.quantity.value).toFixed(3));
             inventory.ammunition.items.push(Actordsa5.prepareMag(i));
-            inventory.ammunition.show = true;
-            totalWeight += Number(i.weight);
+            inventory.ammunition.show = true;            
             break;
           case "meleeweapon":
-            i.weight = parseFloat((i.system.weight.value * i.system.quantity.value).toFixed(3));
             i.toggleValue = i.system.worn.value || false;
             i.toggle = true;
             this._setOnUseEffect(i);
             inventory.meleeweapons.items.push(Actordsa5._prepareitemStructure(i));
             inventory.meleeweapons.show = true;
             if (i.toggleValue) wornweapons.push(i);
-            totalWeight += Number(i.weight);
             break;
           case "rangeweapon":
-            i.weight = parseFloat((i.system.weight.value * i.system.quantity.value).toFixed(3));
             i.toggleValue = i.system.worn.value || false;
             i.toggle = true;
             this._setOnUseEffect(i);
             inventory.rangeweapons.items.push(Actordsa5._prepareitemStructure(i));
             inventory.rangeweapons.show = true;
-            totalWeight += Number(i.weight);
             break;
           case "armor":
             i.toggleValue = i.system.worn.value || false;
@@ -882,13 +946,7 @@ export default class Actordsa5 extends Actor {
             inventory.armor.show = true;
             i.toggle = true;
             this._setOnUseEffect(i);
-            i.weight = parseFloat((i.system.weight.value * i.system.quantity.value).toFixed(3));
-            totalWeight += parseFloat(
-              (
-                i.system.weight.value * (i.toggleValue ? Math.max(0, i.system.quantity.value - 1) : i.system.quantity.value)
-              ).toFixed(3)
-            );
-
+            
             if (i.system.worn.value) {
               i.system.protection.value = EquipmentDamage.armorWearModifier(i, i.system.protection.value);
               totalArmor += Number(i.system.protection.value);
@@ -896,25 +954,18 @@ export default class Actordsa5 extends Actor {
             }
             break;
           case "plant":
-            i.weight = parseFloat((i.system.weight.value * i.system.quantity.value).toFixed(3));
             inventory["plant"].items.push(i);
             inventory["plant"].show = true;
-            totalWeight += Number(i.weight);
             break;
           case "poison":
-            i.weight = parseFloat((i.system.weight.value * i.system.quantity.value).toFixed(3));
             inventory["poison"].items.push(i);
             inventory["poison"].show = true;
-            totalWeight += Number(i.weight);
             break;
           case "consumable":
-            i.weight = parseFloat((i.system.weight.value * i.system.quantity.value).toFixed(3));
             inventory[i.system.equipmentType.value].items.push(Actordsa5._prepareConsumable(i));
             inventory[i.system.equipmentType.value].show = true;
-            totalWeight += Number(i.weight);
             break;
           case "equipment":
-            i.weight = parseFloat((i.system.weight.value * i.system.quantity.value).toFixed(3));
             i.toggle = getProperty(i, "system.worn.wearable") || false;
 
             if (i.toggle) i.toggleValue = i.system.worn.value || false;
@@ -922,12 +973,9 @@ export default class Actordsa5 extends Actor {
             this._setOnUseEffect(i);
             inventory[i.system.equipmentType.value].items.push(Actordsa5._prepareitemStructure(i));
             inventory[i.system.equipmentType.value].show = true;
-            totalWeight += Number(i.weight);
             break;
           case "money":
-            i.weight = parseFloat((i.system.weight.value * i.system.quantity.value).toFixed(3));
             money.coins.push(i);
-            totalWeight += Number(i.weight);
             money.total += i.system.quantity.value * i.system.price.value;
             break;
           case "advantage":
@@ -962,7 +1010,7 @@ export default class Actordsa5 extends Actor {
     }
 
     for (let elem of inventory.bags.items) {
-      totalWeight += this._setBagContent(elem, containers);
+      this._setBagContent(elem, containers);
     }
 
     for (let [category, value] of Object.entries(extensions)) {
@@ -998,25 +1046,14 @@ export default class Actordsa5 extends Actor {
       }
     }
 
-    for (let [key, value] of Object.entries(skills)) {
+    for (let value of Object.values(skills)) {
       for (let skill of value) {
         skill.applications = applications.get(skill.name) || [];
       }
     }
 
     money.coins = money.coins.sort((a, b) => (a.system.price.value > b.system.price.value ? -1 : 1));
-    const carrycapacity = actorData.system.characteristics.kk.value * 2 + actorData.system.carryModifier;
-    //TODO move the encumbrance calculation to a better location
-    let encumbrance = this.getArmorEncumbrance(this, armor);
-
-    if ((this.type != "creature" || this.canAdvance) && !this.isMerchant()) {
-      encumbrance += Math.max(0, Math.ceil((totalWeight - carrycapacity - 4) / 4));
-    }
-
-    this.addCondition("encumbered", encumbrance, true);
-
-    totalWeight = parseFloat(totalWeight.toFixed(3));
-
+    
     specAbs.magical.push(...specAbs.pact);
     specAbs.clerical.push(...specAbs.ceremonial);
 
@@ -1039,14 +1076,14 @@ export default class Actordsa5 extends Actor {
     guidevalues["-"] = "-";
 
     return {
-      totalWeight,
+      totalWeight: parseFloat(this.system.totalWeight.toFixed(3)),
       traditionArtifacts,
       armorSum: totalArmor,
       spellArmor: actorData.system.spellArmor || 0,
       liturgyArmor: actorData.system.liturgyArmor || 0,
       money,
-      encumbrance,
-      carrycapacity,
+      encumbrance: this.system.condition?.encumbered || 0,
+      carrycapacity: this.system.carrycapacity,
       wornRangedWeapons: rangeweapons,
       wornMeleeWeapons: meleeweapons,
       horseActor: horse,
@@ -1098,25 +1135,41 @@ export default class Actordsa5 extends Actor {
     );
   }
 
-  _setBagContent(elem, containers, topLevel = true) {
+  _calcBagweight(elem, containers, topLevel = true) {
     let totalWeight = 0;
     if (containers.has(elem._id)) {
-      elem.children = [];
       let bagweight = 0;
-      if (!elem.toggleValue && topLevel) totalWeight -= elem.weight;
+      if (!elem.system.worn.value && topLevel) totalWeight -= elem.system.preparedWeight;
 
       for (let child of containers.get(elem._id)) {
-        child.weight = Number(parseFloat((child.system.weight.value * child.system.quantity.value).toFixed(3)));
-        bagweight += child.weight;
-        elem.children.push(Actordsa5._prepareitemStructure(Actordsa5._prepareConsumable(child)));
+        child.system.preparedWeight = Number(parseFloat((child.system.weight.value * child.system.quantity.value).toFixed(3)));
+        bagweight += child.system.preparedWeight;
         if (containers.has(child._id)) {
-          bagweight += this._setBagContent(child, containers, false);
+          bagweight += this._calcBagweight(child, containers, false);
         }
       }
-      if (elem.toggleValue || !topLevel) totalWeight += bagweight;
-      elem.bagweight = `${bagweight.toFixed(3)}/${elem.system.capacity}`;
+      if(!topLevel){
+        totalWeight += bagweight + elem.system.preparedWeight
+      } else if(elem.system.worn.value){
+        totalWeight += bagweight;
+      }
+
+      elem.system.bagweight = `${bagweight.toFixed(3)}/${elem.system.capacity}`;
     }
     return totalWeight;
+  }
+
+  _setBagContent(elem, containers) {
+    if (containers.has(elem._id)) {
+      elem.children = [];
+
+      for (let child of containers.get(elem._id)) {
+        elem.children.push(Actordsa5._prepareitemStructure(Actordsa5._prepareConsumable(child)));
+        if (containers.has(child._id)) {
+          this._setBagContent(child, containers);
+        }
+      }
+    }
   }
 
   isMerchant() {

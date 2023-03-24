@@ -1,7 +1,6 @@
 import DSA5_Utility from "../system/utility-dsa5.js"
 import DSA5 from "../system/config-dsa5.js"
 import DSA5StatusEffects from "../status/status_effects.js"
-import DSA5ChatListeners from "../system/chat_listeners.js"
 import SpecialabilityRulesDSA5 from "../system/specialability-rules-dsa5.js"
 import { itemFromDrop, svgAutoFit } from "../system/view_helper.js"
 import DSA5ChatAutoCompletion from "../system/chat_autocompletion.js"
@@ -515,8 +514,8 @@ class EquipmentSheet extends ItemSheetObfuscation(Enchantable) {
                 containerContent: this.item.actor.items
                 .filter(x => DSA5.equipmentCategories.includes(x.type) && x.system.parent_id == this.item.id)
                 .map(x => {
-                    x.weight = parseFloat((x.system.weight.value * x.system.quantity.value).toFixed(3));
-                    weightSum += Number(x.weight)
+                    x.system.preparedWeight = parseFloat((x.system.weight.value * x.system.quantity.value).toFixed(3));
+                    weightSum += Number(x.system.preparedWeight)
                     const enchants = getProperty(x, "flags.dsa5.enchantments")
                     if (enchants && enchants.length > 0) {
                         x.enchantClass = "rar"

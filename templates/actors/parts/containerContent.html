@@ -19,7 +19,7 @@
                     <div class="col eight"></div>
                     {{#if (eq item.system.equipmentType.value 'bags')}}
                     <div class="col five center">
-                        {{item.bagweight}}
+                        {{item.system.bagweight}}
                     </div>
                     {{/if}}
                     <div class="col eight center">
@@ -32,7 +32,7 @@
                         <a class="quantity-click">{{item.system.quantity.value}}</a>
                     </div>
                     <div class="col eight center">
-                        {{item.weight}}
+                        {{item.system.preparedWeight}}
                     </div>
                     <div class="col ten very-small center">
                         <a class="item-post" data-tooltip="SHEET.PostItem"><i class="fas fa-comment"></i></a>

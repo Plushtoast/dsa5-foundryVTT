@@ -18,7 +18,7 @@
             </div>
             <div class="bags row-section wrap">
                 {{#each containerContent as |item i|}}
-                <div class="slot {{item.enchantClass}}" data-item-id="{{item.id}}" data-name="{{item.name}}" data-weight="{{item.weight}}" data-quantity="{{item.system.quantity.value}}">
+                <div class="slot {{item.enchantClass}}" data-item-id="{{item.id}}" data-name="{{item.name}}" data-weight="{{item.system.preparedWeight}}" data-quantity="{{item.system.quantity.value}}">
                     <div style="background-image:url('{{item.img}}')"></div>
                 </div>
                 {{/each}}

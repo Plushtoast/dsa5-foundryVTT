@@ -392,7 +392,7 @@ class GameMasterMenu extends Application {
             if (!isNaN(number)) {
                 for (const actor of actors) {
                     let xpBonus = number
-                    if (RuleChaos.isFamiliar(actor) || RuleChaos.isPet(actor)) {
+                    if (actor.system.isFamiliar || actor.system.isPet) {
                         xpBonus = familiarXP
                         familiars.push(actor)
                     } else {

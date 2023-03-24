@@ -21,14 +21,6 @@ export default class RuleChaos {
         return Math.min(0, multipleDefense)
     }
 
-    static isFamiliar(data) {
-        return data.items.find(x => x.type == "trait" && game.i18n.localize('LocalizedIDs.familiar') == x.name) != undefined
-    }
-
-    static isPet(data) {
-        return data.items.find(x => x.type == "trait" && game.i18n.localize('LocalizedIDs.companion') == x.name) != undefined
-    }
-
     static async bleedingMessage(actor) {
         await ChatMessage.create(DSA5_Utility.chatDataSetup(game.i18n.format('CHATNOTIFICATION.applyBleeding', { actor: actor.name, actorId: actor.id, tokenId: actor.token ? actor.token.id : "" })))
     }
