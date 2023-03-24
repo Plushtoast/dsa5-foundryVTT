@@ -959,8 +959,8 @@ class SpecialAbilitySheetDSA5 extends ItemSheetdsa5 {
                 steps = xpCost.split(";").map(x => Number(x.trim()))
                 xpCost = steps[this.item.system.step.value - 1]
             }
-            xpCost = await SpecialabilityRulesDSA5.refundFreelanguage(this.item, this.item.actor, xpCost)
-            await this.item.actor._updateAPs(xpCost * -1)
+            xpCost = await SpecialabilityRulesDSA5.refundFreelanguage(this.item, this.item.actor, xpCost, false)
+            await this.item.actor._updateAPs(xpCost * -1, {}, { render: false })
             await this.item.update({ "system.step.value": this.item.system.step.value - 1 })
         }
     }
@@ -973,9 +973,9 @@ class SpecialAbilitySheetDSA5 extends ItemSheetdsa5 {
                 steps = xpCost.split(";").map(x => Number(x.trim()))
                 xpCost = steps[this.item.system.step.value]
             }
-            xpCost = await SpecialabilityRulesDSA5.isFreeLanguage(this.item, this.item.actor, xpCost)
+            xpCost = await SpecialabilityRulesDSA5.isFreeLanguage(this.item, this.item.actor, xpCost, false)
             if (await this.item.actor.checkEnoughXP(xpCost)) {
-                await this.item.actor._updateAPs(xpCost)
+                await this.item.actor._updateAPs(xpCost, {}, { render: false })
                 await this.item.update({ "system.step.value": this.item.system.step.value + 1 })
             }
         }
@@ -995,7 +995,6 @@ class SpecialAbilitySheetDSA5 extends ItemSheetdsa5 {
         })
         return data
     }
-
 }
 
 class ItemSpeciesDSA5 extends ItemSheetdsa5 {
@@ -1073,7 +1072,7 @@ class SpellSheetDSA5 extends ItemSheetdsa5 {
 
     async _cleverDeleteItem(itemId) {
         let item = this.item.actor.items.find(x => x.id == itemId)
-        await this.item.actor._updateAPs(-1 * item.system.APValue.value)
+        await this.item.actor._updateAPs(-1 * item.system.APValue.value, {}, { render: false })
         await this.item.actor.deleteEmbeddedDocuments("Item", [itemId]);
     }
 }
@@ -1101,7 +1100,7 @@ class VantageSheetDSA5 extends ItemSheetdsa5 {
                 steps = xpCost.split(";").map(x => Number(x.trim()))
                 xpCost = steps[this.item.system.step.value - 1]
             }
-            await this.item.actor._updateAPs(xpCost * -1)
+            await this.item.actor._updateAPs(xpCost * -1, {}, { render: false })
             await this.item.update({ "system.step.value": this.item.system.step.value - 1 })
         }
     }
@@ -1121,7 +1120,7 @@ class VantageSheetDSA5 extends ItemSheetdsa5 {
                 xpCost = steps[this.item.system.step.value]
             }
             if (await this.item.actor.checkEnoughXP(xpCost)) {
-                await this.item.actor._updateAPs(xpCost)
+                await this.item.actor._updateAPs(xpCost, {}, { render: false })
                 await this.item.update({ "system.step.value": this.item.system.step.value + 1 })
             }
         }

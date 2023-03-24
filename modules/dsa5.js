@@ -36,7 +36,11 @@ import { MeasuredTemplateDSA } from "./system/measuretemplate.js"
 import RequestRoll from "./system/request-roll.js"
 import Riding from "./system/riding.js"
 import RuleChaos from "./system/rule_chaos.js"
-import DSACharBuilder from "./wizards/charBuild/charbuilder.js"
+import DSA5SoundEffect from "./system/dsa-soundeffect.js"
+import { clickableAbility, tabSlider, tinyNotification } from "./system/view_helper.js";
+import CareerWizard from "./wizards/career_wizard.js";
+import SpeciesWizard from "./wizards/species_wizard.js";
+import CultureWizard from "./wizards/culture_wizard.js";
 
 Hooks.once("init", () => {
     console.log("Initializing DSA5 system")
@@ -55,6 +59,7 @@ Hooks.once("init", () => {
             DSA5StatusEffects,
             DPS,
             DSATables,
+            DSA5SoundEffect,
             RequestRoll,
             DiceDSA5,
             DSATour,
@@ -63,8 +68,7 @@ Hooks.once("init", () => {
             DidYouKnow, 
             MeasuredTemplateDSA,
             Riding,
-            RuleChaos,
-            DSACharBuilder
+            RuleChaos
         },
         entities: {
             Actordsa5,
@@ -78,6 +82,16 @@ Hooks.once("init", () => {
             MerchantSheetMixin,
             MerchantSheetDSA5,
             ItemSheetdsa5,
+        },
+        wizards: {
+            CareerWizard,
+            CultureWizard,
+            SpeciesWizard
+        },
+        view: {
+            tinyNotification: tinyNotification,
+            tabSlider: tabSlider,
+            clickableAbility: clickableAbility
         },
         macro: MacroDSA5,
         config: DSA5,

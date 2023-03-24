@@ -70,9 +70,9 @@ export default class OnUseEffect {
         }
     }
 
-    effectDummy(label, changes, duration) {
+    effectDummy(name, changes, duration) {
         return {
-            label,
+            name,
             icon: "icons/svg/aura.svg",
             changes,
             duration,
@@ -81,7 +81,7 @@ export default class OnUseEffect {
                     value: null,
                     editable: true,
                     customizable: true,
-                    description: label,
+                    description: name,
                     custom: true,
                 },
             },
@@ -93,7 +93,7 @@ export default class OnUseEffect {
             const systemCon = typeof data === "string";
             if (systemCon) {
                 data = duplicate(CONFIG.statusEffects.find((e) => e.id == data));
-                data.label = game.i18n.localize(data.label);
+                data.name = game.i18n.localize(data.name);
             }
 
             const names = [];
@@ -121,7 +121,7 @@ export default class OnUseEffect {
         if (names.length) {
             const format = added ? "ActiveEffects.appliedEffect" : "ActiveEffects.removedEffect"
             const infoMsg = game.i18n.format(format, {
-                source: data.label,
+                source: data.name,
                 target: names.join(", "),
             });
             await ChatMessage.create(DSA5_Utility.chatDataSetup(infoMsg));
@@ -139,7 +139,7 @@ export default class OnUseEffect {
                 }
             }
             const data = CONFIG.statusEffects.find((x) => x.id == coreId);
-            data.label = game.i18n.localize(data.label);
+            data.name = game.i18n.localize(data.name);
             await this.createInfoMessage(data, names, false);
         } else {
             const payload = {
@@ -180,7 +180,7 @@ export default class OnUseEffect {
             const systemCon = typeof data === "string";
             if (systemCon) {
                 data = duplicate(CONFIG.statusEffects.find((e) => e.id == data));
-                data.label = game.i18n.localize(data.label);
+                data.name = game.i18n.localize(data.name);
             }
 
             const names = [];

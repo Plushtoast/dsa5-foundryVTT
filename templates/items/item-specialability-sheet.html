@@ -101,7 +101,12 @@
             </div>
             {{/if}} {{#if isOwned}}
             <div class="form-group">
-                <label class="label-text">{{#if canAdvance}}<a class="refund-step"><i class="fas fa-minus"></i></a> {{/if}}{{localize "stepValue"}}{{#if canAdvance}} <a class="advance-step"><i class="fas fa-plus"></i></a>{{/if}}</label>
+                <label class="label-text">
+                    {{#if canAdvance}}<a class="refund-step"><i class="fas fa-minus"></i></a> {{localize "stepValue"}} <a class="advance-step"><i class="fas fa-plus"></i></a>
+                    {{else}}
+                    {{localize "stepValue"}}
+                    {{/if}}
+                </label>
                 <input class="input-text" type="number" name="system.step.value" value="{{system.step.value}}" data-dtype="Number" />
             </div>
             {{/if}}

@@ -263,7 +263,7 @@ export default class DSA5ItemLibrary extends Application {
             equipment: this.buildFilter(this.filters.equipment),
             character: this.buildFilter(this.filters.character),
             spell: this.buildFilter(this.filters.spell),
-            zoo: this.buildFilter(this.filters.zoo),
+            zoo: this.buildFilter(this.filters.zoo, "Actor"),
             journal: this.buildFilter(this.filters.journal)
         }
     }
@@ -280,10 +280,10 @@ export default class DSA5ItemLibrary extends Application {
         })
     }
 
-    buildFilter(elem) {
+    buildFilter(elem, parentCat = "Item") {
         let res = []
         Object.keys(elem.categories).forEach(function(key) {
-            res.push({ label: game.i18n.localize(key), selected: elem.categories[key], key: key })
+            res.push({ label: game.i18n.localize(`TYPES.${parentCat}.${key}`), selected: elem.categories[key], key: key })
         })
         res = res.sort(function(a, b) {
             return a.label.localeCompare(b.label);

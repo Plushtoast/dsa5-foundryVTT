@@ -103,7 +103,11 @@ Hooks.once("init", () => {
         "systems/dsa5/templates/actors/parts/specialabilities.html",
         "systems/dsa5/templates/actors/parts/experienceBox.html",
         "systems/dsa5/templates/actors/parts/spells.html",
-        "systems/dsa5/templates/actors/parts/liturgies.html"
+        "systems/dsa5/templates/dialog/parts/expChoices.html",
+        "systems/dsa5/templates/actors/parts/liturgies.html",
+        "systems/dsa5/templates/items/browse/culture.html",
+        "systems/dsa5/templates/items/browse/species.html",
+        "systems/dsa5/templates/items/browse/career.html"
     ]);
 
     Actors.unregisterSheet("core", ActorSheet);

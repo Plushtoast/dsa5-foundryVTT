@@ -20,12 +20,12 @@ export default class DSA5StatusEffects {
         html.on('click', '.chat-condition', ev => DSA5ChatListeners.postStatus(ev.currentTarget.dataset.id))
     }
 
-    static createCustomEffect(owner, description = "", label) {
-        label = label || game.i18n.localize("CONDITION.custom")
-        if (description == "") description = label
+    static createCustomEffect(owner, description = "", name) {
+        name = name || game.i18n.localize("CONDITION.custom")
+        if (description == "") description = name
 
         owner.addCondition({
-            label,
+            name,
             icon: "icons/svg/aura.svg",
             origin: owner.uuid,
             flags: {
@@ -47,7 +47,6 @@ export default class DSA5StatusEffects {
         for (let condition of target.effects.filter(e => { return game.user.isGM || target.documentName == "Item" || !e.getFlag("dsa5", "hidePlayers") })) {
             condition.disabled = condition.disabled
             condition.boolean = condition.getFlag("dsa5", "value") == null
-            condition.label = condition.label
             condition.icon = condition.icon
             const statusesId = [...condition.statuses][0]
             if (statusesId) {
@@ -73,7 +72,7 @@ export default class DSA5StatusEffects {
                 cumulativeConditions.push({
                     icon: ef.icon,
                     id: key,
-                    label: game.i18n.localize(ef.label),
+                    label: game.i18n.localize(ef.name),
                     value: target.system.condition[key]
                   })
             }
@@ -149,7 +148,7 @@ export default class DSA5StatusEffects {
     static async createEffect(actor, effect, value, auto) {
         const immune = this.immuneToEffect(actor, effect)
         if (immune) return immune
-        effect.label = game.i18n.localize(effect.label);
+        effect.name = game.i18n.localize(effect.name);
         if (auto) {
             effect.flags.dsa5.auto = Math.min(effect.flags.dsa5.max, value);
             effect.flags.dsa5.manual = 0
@@ -259,7 +258,7 @@ export default class DSA5StatusEffects {
 
             if(value != 0){
                 result.push({
-                    name: ef.label,
+                    name: ef.name,
                     value,
                     selected: effectClass.ModifierIsSelected(item, options, actor),
                     source
@@ -279,7 +278,7 @@ export default class DSA5StatusEffects {
 
                 if(value != 0){
                     result.push({
-                        name: ef.label,
+                        name: ef.name,
                         value,
                         selected: effectClass.ModifierIsSelected(item, options, actor),
                         source

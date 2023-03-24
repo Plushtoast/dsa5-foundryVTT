@@ -913,7 +913,7 @@ export default class DiceDSA5 {
                         const effect = CONFIG.statusEffects.find((x) => x.id == split[1])
                         result.push(
                             `<a class="chat-condition chatButton" data-id="${effect.id}">
-                            <img src="${effect.icon}"/>${game.i18n.localize(effect.label)}
+                            <img src="${effect.icon}"/>${game.i18n.localize(effect.name)}
                             </a>`
                         )
                     } else
@@ -1052,7 +1052,7 @@ export default class DiceDSA5 {
 
         if (
             AdvantageRulesDSA5.hasVantage(testData.extra.actor, game.i18n.localize("CONDITION.minorSpirits")) &&
-            !testData.extra.actor.effects.find((x) => x.label == game.i18n.localize("CONDITION.minorSpirits"))
+            !testData.extra.actor.effects.find((x) => x.name == game.i18n.localize("CONDITION.minorSpirits"))
         ) {
             const ghostroll = await new Roll("1d20").evaluate({ async: true })
             if (ghostroll.total <= res.preData.calculatedSpellModifiers.finalcost) {

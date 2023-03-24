@@ -3,7 +3,7 @@ import DSA5 from "../system/config-dsa5.js"
 import ItemRulesDSA5 from "../system/item-rules-dsa5.js"
 import SpecialabilityRulesDSA5 from "../system/specialability-rules-dsa5.js"
 import DSA5_Utility from "../system/utility-dsa5.js"
-import { tabSlider } from "../system/view_helper.js"
+import { clickableAbility, tabSlider } from "../system/view_helper.js"
 
 export default class WizardDSA5 extends Application {
     constructor(app) {
@@ -18,7 +18,7 @@ export default class WizardDSA5 extends Application {
         const options = super.defaultOptions;
         options.tabs = [{ navSelector: ".tabs", contentSelector: ".content", initial: "description" }]
         mergeObject(options, {
-            classes: options.classes.concat(["dsa5", "largeDialog"]),
+            classes: options.classes.concat(["dsa5", "largeDialog", "generationWizard"]),
             width: 770,
             height: 740,
         });
@@ -28,13 +28,14 @@ export default class WizardDSA5 extends Application {
 
     async findCompendiumItem(name, types){
         for(let type of types){
-            const results = await game.dsa5.itemLibrary.findCompendiumItem(name, type)
             //todo make sure this loads the right thing e.g. armory instead of core
-            if(results.length) return results.find((x) => x.name == name && x.type == type && x.system);
-        }
-        
+            let result = await game.dsa5.itemLibrary.findCompendiumItem(name, type)
+            result = result.find((x) => x.name == name && x.type == type && x.system)
+
+            if(result) return result
+        }        
         return undefined
-    }
+    }    
 
     async parseToItem(value, types) {
         if (value.trim() == "")
@@ -110,7 +111,7 @@ export default class WizardDSA5 extends Application {
         return merged
     }
 
-    async addSelections(elems) {
+    async addSelections(elems, render = true) {
         let itemsToAdd = []
 
         for (let k of elems) {
@@ -143,7 +144,7 @@ export default class WizardDSA5 extends Application {
                     break
             }
         }
-        await this.actor.createEmbeddedDocuments("Item", itemsToAdd)
+        await this.actor.createEmbeddedDocuments("Item", itemsToAdd, { render })
     }
 
     async fixPreviousCosts(previous, toFix) {
@@ -198,7 +199,7 @@ export default class WizardDSA5 extends Application {
                 this.errors.push(`${DSA5_Utility.categoryLocalization(itemType)}: ${skill}`)
             }
         }
-        await this.actor.updateEmbeddedDocuments("Item", itemsToUpdate);
+        await this.actor.updateEmbeddedDocuments("Item", itemsToUpdate, { render: false });
     }
 
     async getData(options){
@@ -217,14 +218,19 @@ export default class WizardDSA5 extends Application {
             let choice = parent.find('.allowedCount_' + k.split("_")[1])
             let allowed = Number(choice.attr('data-count'))
             if (parent.find(`.${k}:checked`).length != allowed) {
-                ui.notifications.error(game.i18n.localize("DSAError.MissingChoices"))
-                WizardDSA5.flashElem(choice)
-                let tabElem = choice.closest('.tab').attr("data-tab")
-                WizardDSA5.flashElem(parent.find(`.tabs a[data-tab='${tabElem}']`))
+                this._showInputValidation(choice, parent)
                 return false
             }
         }
         return true
+    }
+
+    _showInputValidation(choice, parent){
+        ui.notifications.error(game.i18n.localize("DSAError.MissingChoices"))
+        let tabElem = choice.closest('.tab').attr("data-tab")
+        this.activateTab(tabElem) 
+        WizardDSA5.flashElem(parent.find(`.tabs a[data-tab='${tabElem}']`))
+        WizardDSA5.flashElem(choice)
     }
 
     activateListeners(html) {
@@ -241,11 +247,13 @@ export default class WizardDSA5 extends Application {
         })
         html.find('button.cancel').click(() => { this.close() })
         html.find('.show-item').click(async(ev) => {
-            let itemId = ev.currentTarget.dataset.id
+            let itemId = ev.currentTarget.dataset.uuid
             const item = await fromUuid(itemId)
             item.sheet.render(true)
         })
-
+        
+        html.on('click', '.searchableAbility a', ev => clickableAbility(ev))
+        
         html.find('.exclusive').change(ev => {
             let parent = $(ev.currentTarget).closest('.content')
             let sel = $(ev.currentTarget).attr('data-sel')

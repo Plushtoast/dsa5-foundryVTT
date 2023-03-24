@@ -11,22 +11,22 @@ export default function() {
         if (actor && actor.documentName == "Actor") {
             if(getProperty(effect, "flags.dsa5.maintain")){
                 const effectsToRemove = [effect._id]
-                const searchEffect = effect.label.replace('(' + game.i18n.localize('maintainCost') +')', "").trim()
-                const relatedEffects = actor.effects.filter(x => x.label.startsWith(searchEffect) && !x.origin && x.id != effect._id)
+                const searchEffect = effect.name.replace('(' + game.i18n.localize('maintainCost') +')', "").trim()
+                const relatedEffects = actor.effects.filter(x => x.name.startsWith(searchEffect) && !x.origin && x.id != effect._id)
                 let content = game.i18n.format('DIALOG.updateMaintainSpell',  {actor: actor.name})
                 if(relatedEffects){
                     content += `<p>${game.i18n.localize("DIALOG.dependentMaintainEffects")}</p>`
-                    content +=  relatedEffects.map(x => `<p><label for="rel${x.id}">${x.label}</label><input class="effectRemoveSelector" checked type="checkbox" value="${x.id}" name="rel${x.id}"/></p>` ).join("")
+                    content +=  relatedEffects.map(x => `<p><label for="rel${x.id}">${x.name}</label><input class="effectRemoveSelector" checked type="checkbox" value="${x.id}" name="rel${x.id}"/></p>` ).join("")
                 }                
                 new Dialog({
-                    title: effect.label,
+                    title: effect.name,
                     content,
                     default: 'yes',
                     buttons: {
                         Yes: {
                             icon: '<i class="fa fa-check"></i>',
                             label: game.i18n.localize("HELP.pay"),
-                            callback: async(dlg) => {
+                            callback: async() => {
                                 const paid = await actor.applyMana(Number(getProperty(effect, "flags.dsa5.maintain")), getProperty(effect, "flags.dsa5.payType"))
                                 if(paid){
                                     const duration = {
@@ -275,7 +275,7 @@ class AskForNameDialog extends Dialog{
                 unknown: {
                     icon: '<i class="fa fa-question"></i>',
                     label: game.i18n.localize("unknown"),
-                    callback: async(html) => {
+                    callback: async() => {
                         const tokenId = tokenObject.id || tokenObject._id
                         const token = canvas.scene.tokens.get(tokenId)
                         await token.update({ name: game.i18n.localize("unknown") })

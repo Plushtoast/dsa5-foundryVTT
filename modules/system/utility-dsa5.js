@@ -133,7 +133,7 @@ export default class DSA5_Utility {
     }
 
     static categoryLocalization(a){
-        return game.i18n.localize(`Types.Item.${a}`)
+        return game.i18n.localize(`TYPES.Item.${a}`)
     }
 
     static attributeLocalization(a){

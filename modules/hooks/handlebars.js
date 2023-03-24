@@ -14,6 +14,12 @@ const modifierTypes = {
     "TPM": "MODS.partChecks"
 }
 
+function clickableAbilities(a, b){
+    return `<span class=\"searchableAbility\" data-category="${b}">` + a.split(",").map(x => {
+        return `<a>${x}</a>`
+    }).join(", ") + "<span>"
+}
+
 export default function() {
     Handlebars.registerHelper({
         //DSA concat conflict with v9 concat helper
@@ -34,6 +40,7 @@ export default function() {
         attrName: (a) => DSA5_Utility.attributeLocalization(a),
         attrAbbr: (a) => DSA5_Utility.attributeAbbrLocalization(a),
         diceThingsUp: (a, b) => DSA5_Utility.replaceDies(a, false),
+        clickableAbilities: (a, b) => clickableAbilities(a, b),
         replaceConditions: DSA5_Utility.replaceConditions,
         floor: (a) => Math.floor(Number(a)),
         getAttr: (a, b, c) => { return a.system.characteristics[b][c] },

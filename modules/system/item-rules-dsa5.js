@@ -37,7 +37,7 @@ export default class ItemRulesDSA5 {
                 "changes": [change],
                 "duration": {},
                 "icon": "icons/svg/aura.svg",
-                "label": `${name} (${adoption.name})`,
+                "name": `${name} (${adoption.name})`,
                 "transfer": true,
                 "flags": {
                     "dsa5": {

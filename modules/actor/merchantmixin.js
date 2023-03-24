@@ -338,6 +338,10 @@ export const MerchantSheetMixin = (superclass) => class extends superclass {
         this.actor.update({ "system.merchant.playerView": !getProperty(this.actor.system, "merchant.playerView") })
     }
 
+    playerViewEnabled(){
+        return getProperty(this.actor.system, "merchant.playerView")
+    }   
+
     async randomGoods(ev) {
         const html = await renderTemplate('systems/dsa5/templates/dialog/randomGoods-dialog.html', { categories: DSA5.equipmentCategories })
         new Dialog({

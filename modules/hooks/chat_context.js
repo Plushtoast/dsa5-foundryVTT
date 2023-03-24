@@ -208,7 +208,7 @@ export default function() {
                 let duration = maintain.replace(/^\d{1,3}/, "").match(/\d{1,3}/)
                 duration = duration ? (Number(duration[0]) || 1) : 1
                 const effect = {
-                    label: `${name} (${game.i18n.localize("maintainCost")})`,
+                    name: `${name} (${game.i18n.localize("maintainCost")})`,
                     icon: "icons/svg/daze.svg",
                     flags: {
                         dsa5: {

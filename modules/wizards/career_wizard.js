@@ -11,7 +11,7 @@ export default class CareerWizard extends WizardDSA5 {
 
     static get defaultOptions() {
         const options = super.defaultOptions;
-        options.title = game.i18n.format("WIZARD.addItem", { item: `${game.i18n.localize("Types.Item.career")}` })
+        options.title = game.i18n.format("WIZARD.addItem", { item: `${game.i18n.localize("TYPES.Item.career")}` })
         options.template = 'systems/dsa5/templates/wizard/add-career-wizard.html'
         return options;
     }
@@ -45,10 +45,7 @@ export default class CareerWizard extends WizardDSA5 {
         let choice = parent.find('.maxTricks')
         let allowed = Number(choice.attr("data-spelltricklimit")) || 0
         if (parent.find('.exclusiveTricks:checked').length != allowed) {
-            ui.notifications.error(game.i18n.localize("DSAError.MissingChoices"))
-            WizardDSA5.flashElem(choice)
-            let tabElem = choice.closest('.tab').attr("data-tab")
-            WizardDSA5.flashElem(parent.find(`.tabs a[data-tab='${tabElem}']`))
+            this._showInputValidation(choice, parent)         
             return false
         }
         return super._validateInput(parent)
@@ -155,8 +152,8 @@ export default class CareerWizard extends WizardDSA5 {
                 }
             }
         }
-        await this.actor.updateEmbeddedDocuments("Item", itemsToUpdate)
-        await this.actor.createEmbeddedDocuments("Item", itemsToCreate)
+        await this.actor.updateEmbeddedDocuments("Item", itemsToUpdate, { render: false })
+        await this.actor.createEmbeddedDocuments("Item", itemsToCreate, { render: false })
     }
 
     async addBlessing(blessings, type) {
@@ -176,7 +173,7 @@ export default class CareerWizard extends WizardDSA5 {
                 }
             }
         }
-        await this.actor.createEmbeddedDocuments("Item", itemsToCreate)
+        await this.actor.createEmbeddedDocuments("Item", itemsToCreate, { render: false })
     }
 
     async updateCharacter() {
@@ -220,9 +217,8 @@ export default class CareerWizard extends WizardDSA5 {
         }
 
         await this.setAbility(this.career.system.specialAbilities.value, ["specialability"])
-        await this.actor.update(update);
-        await this.actor._updateAPs(apCost)
-        await this.addSelections(parent.find('.optional:checked'))
+        await this.actor._updateAPs(apCost, {}, { render: false })
+        await this.addSelections(parent.find('.optional:checked'), false)
         await this.updateSkill(this.career.system.skills.value.split(","), "skill")
 
         let combatSkillselectChoices = []
@@ -233,6 +229,7 @@ export default class CareerWizard extends WizardDSA5 {
         const combatSkills = this.career.system.combatSkills.value.split(",").concat(combatSkillselectChoices)
             .filter(skill => !(skill.includes(game.i18n.localize("combatskillcountdivider") + ":") || skill == ""))
         await this.updateSkill(combatSkills, "combatskill", 1, false)
+        await this.actor.update(update);
 
         this.finalizeUpdate()
     }

@@ -1293,7 +1293,7 @@ class MeleeweaponDSA5 extends Itemdsa5 {
             this._chatLineHelper("atmod", data.atmod.value),
             this._chatLineHelper("pamod", data.pamod.value),
             this._chatLineHelper("reach", game.i18n.localize(`Range-${data.reach.value}`)),
-            this._chatLineHelper("Types.Item.combatskill", data.combatskill.value),
+            this._chatLineHelper("TYPES.Item.combatskill", data.combatskill.value),
         ]
         if (data.effect.value != "") res.push(this._chatLineHelper(DSA5_Utility.replaceConditions("effect", data.effect.value)))
 
@@ -1444,7 +1444,7 @@ class RangeweaponItemDSA5 extends Itemdsa5 {
     static chatData(data, name) {
         let res = [
             this._chatLineHelper("damage", data.damage.value),
-            this._chatLineHelper("Types.Item.combatskill", data.combatskill.value),
+            this._chatLineHelper("TYPES.Item.combatskill", data.combatskill.value),
             this._chatLineHelper("reach", data.reach.value),
         ]
         if (data.effect.value != "") res.push(this._chatLineHelper(DSA5_Utility.replaceConditions("effect", data.effect.value)))
@@ -1495,9 +1495,9 @@ class RangeweaponItemDSA5 extends Itemdsa5 {
                 }
                 if(currentAmmo.effects.length){
                     situationalModifiers.push({
-                        name: `${currentAmmo.name} - ${game.i18n.localize("effect")}`,
+                        name: `${currentAmmo.name} - ${game.i18n.localize("TYPES.Item.ammunition")}`,
                         value: 1,
-                        type: game.i18n.localize('effect'),
+                        type: 'effect',
                         selected: true,
                         specAbId: source.system.currentAmmo.value,
                     })

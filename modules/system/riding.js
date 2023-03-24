@@ -131,7 +131,7 @@ export default class Riding {
 
     static getRidingCondition(actor){
         const ridingLabel = game.i18n.localize("RIDING.riding")
-        return actor.effects.find((x) => x.label == ridingLabel);
+        return actor.effects.find((x) => x.name == ridingLabel);
     }
 
     static async addRidingCondition(actor){
@@ -193,7 +193,7 @@ export default class Riding {
 
     static ridingCondition() {
         return {
-          label: game.i18n.localize("RIDING.riding"),
+            name: game.i18n.localize("RIDING.riding"),
           icon: "systems/dsa5/icons/thirdparty/horse-head.svg",
           changes: [{key: "system.status.dodge.gearmodifier", mode: 2, value: -2}],
           flags: {
@@ -301,7 +301,7 @@ export default class Riding {
     static async setSpeed(horse, speed){
         await horse.deleteEmbeddedDocuments("ActiveEffect", horse.effects.filter(x => hasProperty(x, "flags.dsa5.horseSpeed")).map(x => x.id))
         await horse.addCondition({
-            label: game.i18n.localize("speed") + ": " + game.i18n.localize(`RIDING.speeds.${speed}`),
+            name: game.i18n.localize("speed") + ": " + game.i18n.localize(`RIDING.speeds.${speed}`),
             icon: "systems/dsa5/icons/thirdparty/horse-head.svg",
             changes: [this.speedKeys[speed]],
             flags: {

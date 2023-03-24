@@ -1,0 +1,155 @@
+<div class="row-section">
+    <div class="col sixty">
+        <h2>{{document.name}}</h2>
+        <img src="{{document.img}}" style="width:60%;border:none;float:right" >
+        {{{document.system.description.value}}}
+        {{{document.system.clothing.value}}}
+    </div>
+    <div class="col zerofive"></div>
+    <div class="col fourty">
+        <div class="row-section">
+            <div class="col groupbox">
+                    <div class="row-section wrap">
+                        <div class="col table-title row-section">
+                            <div class="col ninety">
+                                {{localize "APValue"}}
+                            </div>
+                            <div class="col ten center">
+                                {{#if document.uuid}}<a class="show-item" data-uuid="{{document.uuid}}"><i class="fas fa-info"></i></a>{{/if}}
+                            </div>
+                            
+                        </div>
+                        <div class="col">
+                            {{document.system.APValue.value}}
+                        </div>
+                        <div class="col table-title">
+                            {{localize "languagePoints"}}
+                        </div>
+                        <div class="col">
+                            {{document.system.languagePoints.value}}
+                        </div>
+                        {{#if document.system.requirements.value}}
+                        <div class="col table-title">
+                            {{localize "requirements"}}
+                        </div>
+                        <div class="col">
+                            {{document.system.requirements.value}}
+                        </div>
+                        {{/if}}
+                        {{#if document.system.recommendedAdvantages.value}}
+                        <div class="col table-title">
+                            {{localize "recommendedAdvantages"}}
+                        </div>
+                        <div class="col">
+                            {{{clickableAbilities document.system.recommendedAdvantages.value 'advantage'}}}
+                        </div>
+                        {{/if}}
+                        {{#if document.system.recommendedDisadvantages.value}}
+                        <div class="col table-title">
+                            {{localize "recommendedDisadvantages"}}
+                        </div>
+                        <div class="col">
+                            {{{clickableAbilities document.system.recommendedDisadvantages.value 'disadvantage'}}}
+                        </div>
+                        {{/if}}
+                        {{#if document.system.notsuitableAdvantages.value}}
+                        <div class="col table-title">
+                            {{localize "notsuitableAdvantages"}}
+                        </div>
+                        <div class="col">
+                            {{{clickableAbilities document.system.notsuitableAdvantages.value 'advantage'}}}
+                        </div>
+                        {{/if}}
+                        {{#if document.system.notsuitableDisadvantages.value}}
+                        <div class="col table-title">
+                            {{localize "notsuitableDisadvantages"}}
+                        </div>
+                        <div class="col">
+                            {{{clickableAbilities document.system.notsuitableDisadvantages.value 'disadvantage'}}}
+                        </div>
+                        {{/if}}
+                        <div class="col table-title">
+                            {{localize "skills"}}
+                        </div>
+                        <div class="col">
+                            {{document.system.skills.value}}
+                        </div>
+                        <div class="col table-title">
+                            {{localize "combatskill"}}
+                        </div>
+                        <div class="col">
+                            {{document.system.combatSkills.value}}
+                        </div>
+                        {{#if document.system.specialAbilities.value}}
+                        <div class="col table-title">
+                            {{localize "specialAbilities"}}
+                        </div>
+                        <div class="col">
+                            {{{clickableAbilities document.system.specialAbilities.value 'specialability'}}}
+                        </div> 
+                        {{/if}}
+                        {{#if (ne document.system.mageLevel.value "mundane")}}
+                        <div class="col table-title">
+                            {{localize "guidevalue"}}
+                        </div>
+                        <div class="col">
+                            {{attrName document.system.guidevalue.value}}
+                        </div> 
+                        <div class="col table-title">
+                            {{localize "tradition"}}
+                        </div>
+                        <div class="col">
+                            {{{clickableAbilities document.system.tradition.value 'specialability'}}}
+                        </div> 
+                        {{#if (eq document.system.mageLevel.value 'clerical')}}
+                        <div class="col table-title">
+                            {{localize "happyTalents"}}
+                        </div>
+                        <div class="col">
+                            {{document.system.happyTalents.value}}
+                        </div> 
+                        <div class="col table-title">
+                            {{localize "liturgies"}}
+                        </div>
+                        <div class="col">
+                            {{{clickableAbilities document.system.liturgies.value 'liturgy ceremony'}}}
+                        </div> 
+                        <div class="col table-title">
+                            {{localize "blessings"}}
+                        </div>
+                        <div class="col">
+                            {{{clickableAbilities document.system.blessings.value 'blessing'}}}
+                        </div> 
+                        {{/if}}
+                        {{#if (eq document.system.mageLevel.value 'magical')}}
+                        <div class="col table-title">
+                            {{localize "spells"}}
+                        </div>
+                        <div class="col">
+                            {{{clickableAbilities document.system.spells.value 'spell ritual'}}}
+                        </div> 
+                        <div class="col table-title">
+                            {{localize "magictricks"}}
+                        </div>
+                        <div class="col">
+                            {{{clickableAbilities document.system.spelltricks.value 'magictrick'}}}
+                        </div> 
+                        <div class="col table-title">
+                            {{localize "spelltrickCount"}}
+                        </div>
+                        <div class="col">
+                            {{document.system.spelltrickCount.value}}
+                        </div> 
+                        {{/if}}
+                        {{/if}}
+                        
+                        
+ 
+                        
+                    </div>
+
+            </div>
+        </div>
+        
+    </div>
+</div>

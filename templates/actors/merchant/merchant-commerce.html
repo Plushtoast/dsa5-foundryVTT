@@ -1,9 +1,7 @@
-<div class="row-section">
+<div class="row-section wrap reverseFlex">
     <button type="submit" disabled style="display: none" aria-hidden="true"></button>
-    <div class="col two">
-        {{> systems/dsa5/templates/actors/parts/purse.html}}
-    </div>
-    <div class="col two">
+    
+    <div class="col morph">
         <div class="groupbox">
             <div class="row-section">
                 <div class="col fourty">
@@ -101,6 +99,9 @@
             {{/if}} {{/if}}
         </div>
     </div>
+    <div class="col morph">
+        {{> systems/dsa5/templates/actors/parts/purse.html}}
+    </div>
 </div>
 
 {{#if (ne actor.system.merchant.merchantType "none")}} {{#if isGM}}
@@ -110,8 +111,8 @@
 </div>
 {{/if}}
 <div class="groupbox">
-    <div class="row-section lineheight" data-tooltip="PERMISSION.Configure">
-        <div class="col two row-section">
+    <div class="row-section wrap lineheight" data-tooltip="PERMISSION.Configure">
+        <div class="col morph row-section">
             <div class="col seventy table-title">
                 {{localize 'character'}}
             </div>
@@ -128,7 +129,7 @@
                 <a class="toggleAllAllowMerchant" data-lock="false"><i class="fas fa-lock"></i></a>
             </div>
         </div>
-        <div class="col two row-section">
+        <div class="col two row-section onlyMultiColumn">
             <div class="col seventy table-title">
                 {{localize 'character'}}
             </div>
@@ -149,7 +150,7 @@
     </div>
     <div class="row-section wrap">
         {{#each players as |player i|}}
-        <div class="col two row-section">
+        <div class="col morph row-section">
             <div class="col seventy">
                 {{player.name}}
             </div>
@@ -246,9 +247,9 @@
                 <div class="col ten very-small center">
                     {{#if item.OnUseEffect}}<a data-tooltip="SHEET.onUseEffect" class="onUseItem"><i class="fas fa-dice-six"></i></a>{{/if}}
                     <a class="item-post" data-tooltip="SHEET.PostItem"><i class="fas fa-comment"></i></a>
-                    <a class="item-control item-edit" data-tooltip="SHEET.EditItem"><i class="fas fa-edit"></i></a>
+                    <a class="item-edit" data-tooltip="SHEET.EditItem"><i class="fas fa-edit"></i></a>
                     {{#if item.children}}<a class="item-dropdown" data-tooltip="SHEET.Dropdown"><i class="fas fa-chevron-down"></i></a>{{/if}}
-                    <a class="item-control item-delete" data-tooltip="SHEET.DeleteItem"><i class="fas fa-trash"></i></a>
+                    <a class="item-delete" data-tooltip="SHEET.DeleteItem"><i class="fas fa-trash"></i></a>
                 </div>
             </div>
             <div class="row-section lineheight expandDetails {{item.detailed}}">

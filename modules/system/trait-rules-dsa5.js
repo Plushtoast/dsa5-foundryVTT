@@ -34,7 +34,7 @@ Hooks.on("setup", () => {
                 ],
                 "duration": {},
                 "icon": "icons/svg/aura.svg",
-                "label": familiar,
+                "name": familiar,
                 "transfer": true,
                 "flags": {
                     "dsa5": {

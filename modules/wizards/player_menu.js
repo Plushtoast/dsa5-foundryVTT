@@ -103,7 +103,11 @@ export default class PlayerMenu extends Application {
                     1: this.summoningModifiers,
                     2: this.summoningModifiers
                 },
-                moreModifiers: {},
+                moreModifiers: {
+                    2: [
+                        { name: game.i18n.localize('CONJURATION.groupSummoning'), options: [1, 2, 3, 4, 5, 6, 7, 8].map(x => { return { name: x, val: x * -2 + 2 } }) }
+                    ]
+                },
                 postFunction: {}
             },
             this.subApps = []
@@ -308,7 +312,7 @@ export default class PlayerMenu extends Application {
     async prepareEntityAbilities() {
         const data = { entityAbilities: [], entityPackages: [] }
         if (game.dsa5.itemLibrary.equipmentBuild) {
-            const entitiesToSearch = [game.i18n.localize("all"), this.conjurationData.conjurationTypes[this.conjurationData.conjurationType]]
+            const entitiesToSearch = [game.i18n.localize("LocalizedIDs.all"), this.conjurationData.conjurationTypes[this.conjurationData.conjurationType]]
             const items = await Promise.all((await game.dsa5.itemLibrary.getCategoryItems("trait", false)).map(x => x.getItem()))
 
             let entitySet = new Set()

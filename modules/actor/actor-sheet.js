@@ -63,8 +63,8 @@ export default class ActorSheetDsa5 extends ActorSheet {
     }
 
     _saveSearchFields() {
-        if (this.form === null)
-            return;
+        if (this.form === null) return;
+
         const html = $(this.form).parent()
         this.searchFields = {
             talentFiltered: $(html.find(".filterTalents")).hasClass("filtered"),
@@ -94,8 +94,7 @@ export default class ActorSheetDsa5 extends ActorSheet {
     }
 
     _saveCollapsed() {
-        if (this.form === null)
-            return;
+        if (this.form === null) return;
 
         const html = $(this.form).parent();
         this.collapsedBoxes = [];
@@ -164,7 +163,7 @@ export default class ActorSheetDsa5 extends ActorSheet {
         const itemId = this._getItemId(ev);
         let aggregated = this.actor.items.get(itemId).toObject()
         let skill = this.actor.items.find(i => i.name == aggregated.system.talent.value && i.type == "skill")
-        let infoMsg = `<h3 class="center"><b>${game.i18n.localize("Types.Item.aggregatedTest")}</b></h3>`
+        let infoMsg = `<h3 class="center"><b>${game.i18n.localize("TYPES.Item.aggregatedTest")}</b></h3>`
         if (aggregated.system.usedTestCount.value >= aggregated.system.allowedTestCount.value) {
             infoMsg += `${game.i18n.localize("Aggregated.noMoreAllowed")}`;
             ChatMessage.create(DSA5_Utility.chatDataSetup(infoMsg));
@@ -263,7 +262,8 @@ export default class ActorSheetDsa5 extends ActorSheet {
 
     async _refundItemAdvance(itemId) {
         let item = this.actor.items.get(itemId).toObject()
-        if (item.system.talentValue.value > 0) {
+        const minValue = item.type == "combatskill" ? 6 : 0
+        if (item.system.talentValue.value > minValue) {
             let cost = DSA5_Utility._calculateAdvCost(Number(item.system.talentValue.value), item.system.StF.value, 0) * -1
             await this.actor.updateEmbeddedDocuments("Item", [{ _id: itemId, "system.talentValue.value": item.system.talentValue.value - 1 }])
             await this._updateAPs(cost)
@@ -490,12 +490,12 @@ export default class ActorSheetDsa5 extends ActorSheet {
                     let text
                     if (descriptor) {
                         effect = CONFIG.statusEffects.find(x => x.id == descriptor)
-                        text = $(`<div style="padding:5px;"><b><a class="chat-condition chatButton" data-id="${effect.id}"><img src="${effect.icon}"/>${game.i18n.localize(effect.label)}</a></b>: ${game.i18n.localize(effect.description)}</div>`)
+                        text = $(`<div style="padding:5px;"><b><a class="chat-condition chatButton" data-id="${effect.id}"><img src="${effect.icon}"/>${game.i18n.localize(effect.name)}</a></b>: ${game.i18n.localize(effect.description)}</div>`)
                     } else {
                         //search temporary effects
                         effect = this.actor.effects.find(x => x.id == id)
                         if (effect) {
-                            text = $(`<div style="padding:5px;"><b><a class="chat-condition chatButton" data-id="${effect.id}"><img src="${effect.icon}"/>${game.i18n.localize(effect.label)}</a></b>: ${game.i18n.localize(effect.flags.dsa5.description)}</div>`)
+                            text = $(`<div style="padding:5px;"><b><a class="chat-condition chatButton" data-id="${effect.id}"><img src="${effect.icon}"/>${game.i18n.localize(effect.name)}</a></b>: ${game.i18n.localize(effect.flags.dsa5.description)}</div>`)
                         }
                     }
                     const elem = $(ev.currentTarget).closest('.groupbox').find('.effectDescription')
@@ -861,30 +861,34 @@ export default class ActorSheetDsa5 extends ActorSheet {
         }
     }
 
-    _deleteItem(ev) {
+    async _deleteItem(ev) {
         if (!this.isEditable) return
 
         const itemId = this._getItemId(ev);
         let item = this.actor.items.get(itemId)
         let message = game.i18n.format("DIALOG.DeleteItemDetail", { item: item.name })
-        renderTemplate('systems/dsa5/templates/dialog/delete-item-dialog.html', { message }).then(html => {
+        const content = await renderTemplate('systems/dsa5/templates/dialog/delete-item-dialog.html', { message })
+        await new Promise((resolve, reject) => {
             new Dialog({
-                title: game.i18n.localize("deleteConfirmation"),
-                content: html,
-                buttons: {
-                    Yes: {
-                        icon: '<i class="fa fa-check"></i>',
-                        label: game.i18n.localize("yes"),
-                        callback: () => this._cleverDeleteItem(itemId)
-                    },
-                    cancel: {
-                        icon: '<i class="fas fa-times"></i>',
-                        label: game.i18n.localize("cancel")
+            title: game.i18n.localize("deleteConfirmation"),
+            content,
+            buttons: {
+                Yes: {
+                    icon: '<i class="fa fa-check"></i>',
+                    label: game.i18n.localize("yes"),
+                    callback: async() => {                        
+                        await this._cleverDeleteItem(itemId)
+                        resolve(true)
                     }
                 },
-                default: 'Yes'
+                cancel: {
+                    icon: '<i class="fas fa-times"></i>',
+                    label: game.i18n.localize("cancel")
+                }
+            },
+            default: 'Yes'
             }).render(true)
-        });
+        })
     }
 
     async _cleverDeleteItem(itemId) {
@@ -902,15 +906,15 @@ export default class ActorSheetDsa5 extends ActorSheet {
                         for (let i = 0; i < item.system.step.value; i++)
                             xpCost += steps[i]
                     }
-                    await this._updateAPs(-1 * xpCost)
+                    await this._updateAPs(-1 * xpCost, {}, { render: false })
                 }
                 break;
             case "specialability":
-                await SpecialabilityRulesDSA5.abilityRemoved(this.actor, item)
+                await SpecialabilityRulesDSA5.abilityRemoved(this.actor, item, false)
                 break;
             case "blessing":
             case "magictrick":
-                await this._updateAPs(-1)
+                await this._updateAPs(-1, {}, { render: false })
                 break
             case "ritual":
             case "ceremony":
@@ -926,7 +930,7 @@ export default class ActorSheetDsa5 extends ActorSheet {
                         xpCost += extensions.reduce((a, b) => { return a + b.system.APValue.value }, 0)
                         itemsToDelete.push(...extensions.map(x => x.id))
                     }
-                    await this._updateAPs(xpCost * -1)
+                    await this._updateAPs(xpCost * -1, {}, { render: false })
                 }
                 break
         }
@@ -934,7 +938,7 @@ export default class ActorSheetDsa5 extends ActorSheet {
     }
 
     _getItemId(ev) {
-        return $(ev.currentTarget).parents(".item").attr("data-item-id")
+        return $(ev.currentTarget).closest(".item").attr("data-item-id")
     }
 
     async _addMoney(item) {
@@ -949,8 +953,8 @@ export default class ActorSheetDsa5 extends ActorSheet {
         }
     }
 
-    async _updateAPs(APValue, update = {}) {
-        await this.actor._updateAPs(APValue, update)
+    async _updateAPs(APValue, update = {}, options = {}) {
+        await this.actor._updateAPs(APValue, update, options)
     }
 
     async _addVantage(item, typeClass) {
@@ -997,7 +1001,7 @@ export default class ActorSheetDsa5 extends ActorSheet {
                 }
                 let apCost = item.system.APValue.value
                 if (await this.actor.checkEnoughXP(apCost)) {
-                    await this._updateAPs(apCost)
+                    await this._updateAPs(apCost, {}, { render: false })
                     await this.actor.createEmbeddedDocuments("Item", [item])
                 }
             }
@@ -1027,7 +1031,7 @@ export default class ActorSheetDsa5 extends ActorSheet {
                     return
             }
             if (await this.actor.checkEnoughXP(apCost)) {
-                await this._updateAPs(apCost)
+                await this._updateAPs(apCost, {}, { render: false })
                 await this.actor.createEmbeddedDocuments("Item", [item])
             }
         }

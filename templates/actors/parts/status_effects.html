@@ -16,7 +16,7 @@
                     </li>
                     {{#each manualConditions as |item i|}}
                     <li>
-                        <a class="status-add" data-id="{{item.id}}" data-tooltip="{{localize item.label}}"><img src="{{item.icon}}" /></a>
+                        <a class="status-add" data-id="{{item.id}}" data-tooltip="{{localize item.name}}"><img src="{{item.icon}}" /></a>
                     </li>
                     {{/each}}
 
@@ -75,7 +75,7 @@
                 <img src="{{item.icon}}" /> {{/if}}
             </div>
             <div class="col two">
-                <a class="condition-show" data-id="{{item.id}}">{{localize item.label}}</a>
+                <a class="condition-show" data-id="{{item.id}}">{{localize item.name}}</a>
             </div>
             <div class="col ten center">
                 {{#if item.editable}}{{#unless item.boolean}}<a class="condition-value">{{item.manual}}</a>{{/unless}}{{/if}}
@@ -158,7 +158,7 @@
                 <img src="{{item.icon}}" />
             </div>
             <div class="col two">
-                <a class="condition-show" data-id="{{item.id}}">{{localize item.label}}</a>
+                <a class="condition-show" data-id="{{item.id}}">{{localize item.name}}</a>
             </div>
             <div class="col ten center">
                 
@@ -237,7 +237,7 @@
                 <img src="{{item.icon}}" /> {{/if}}
             </div>
             <div class="col two">
-                <a class="condition-show" data-locked="true" data-id="{{item.id}}">{{localize item.label}}</a>
+                <a class="condition-show" data-locked="true" data-id="{{item.id}}">{{localize item.name}}</a>
             </div>
             <div class="col ten center">
                 {{#if item.editable}}{{#unless item.boolean}}<a class="condition-value">{{item.manual}}</a>{{/unless}}{{/if}}
@@ -293,8 +293,8 @@
 
                 <div class="col ten very-small center">
                     <a class="item-post" data-tooltip="SHEET.PostItem"><i class="fas fa-comment"></i></a>
-                    <a class="item-control item-edit" data-tooltip="SHEET.EditItem"><i class="fas fa-edit"></i></a>
-                    <a class="item-control item-delete" data-tooltip="SHEET.DeleteItem"><i class="fas fa-trash"></i></a>
+                    <a class="item-edit" data-tooltip="SHEET.EditItem"><i class="fas fa-edit"></i></a>
+                    <a class="item-delete" data-tooltip="SHEET.DeleteItem"><i class="fas fa-trash"></i></a>
                 </div>
             </div>
         </div>
@@ -342,8 +342,8 @@
                 </div>
                 <div class="col ten very-small center">
                     <a class="item-post" data-tooltip="SHEET.PostItem"><i class="fas fa-comment"></i></a>
-                    <a class="item-control item-edit" data-tooltip="SHEET.EditItem"><i class="fas fa-edit"></i></a>
-                    <a class="item-control item-delete" data-tooltip="SHEET.DeleteItem"><i class="fas fa-trash"></i></a>
+                    <a class="item-edit" data-tooltip="SHEET.EditItem"><i class="fas fa-edit"></i></a>
+                    <a class="item-delete" data-tooltip="SHEET.DeleteItem"><i class="fas fa-trash"></i></a>
                 </div>
             </div>
         </div>

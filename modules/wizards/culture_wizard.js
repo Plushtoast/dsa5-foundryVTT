@@ -3,7 +3,7 @@ import WizardDSA5 from "./dsa5_wizard.js"
 export default class CultureWizard extends WizardDSA5 {
     static get defaultOptions() {
         const options = super.defaultOptions;
-        options.title = game.i18n.format("WIZARD.addItem", { item: `${game.i18n.localize("Types.Item.culture")}` })
+        options.title = game.i18n.format("WIZARD.addItem", { item: `${game.i18n.localize("TYPES.Item.culture")}` })
         options.template = 'systems/dsa5/templates/wizard/add-culture-wizard.html'
         return options;
     }
@@ -58,20 +58,14 @@ export default class CultureWizard extends WizardDSA5 {
     _validateInput(parent) {
         const choice = parent.find('.localKnowledge')
         if (choice.val() == "") {
-            ui.notifications.error(game.i18n.localize("DSAError.MissingChoices"))
-            WizardDSA5.flashElem(choice)
-            let tabElem = choice.closest('.tab').attr("data-tab")
-            WizardDSA5.flashElem(parent.find(`.tabs a[data-tab='${tabElem}']`))
+            this._showInputValidation(choice, parent)
             return false
         }
         const selectOnlyOne = parent.find('.selectOnlyOne')
         if (selectOnlyOne.length) {
             const options = selectOnlyOne.find('.optional:checked')
             if (options.length != 1) {
-                ui.notifications.error(game.i18n.localize("DSAError.MissingChoices"))
-                WizardDSA5.flashElem(selectOnlyOne)
-                let tabElem = selectOnlyOne.closest('.tab').attr("data-tab")
-                WizardDSA5.flashElem(parent.find(`.tabs a[data-tab='${tabElem}']`))
+                this._showInputValidation(selectOnlyOne, parent)
                 return false
             }
         }
@@ -95,13 +89,13 @@ export default class CultureWizard extends WizardDSA5 {
             localKnowledge = duplicate(localKnowledge)
             localKnowledge.name = `${game.i18n.localize('LocalizedIDs.localKnowledge')} (${parent.find(".localKnowledge").val()})`
             localKnowledge.system.APValue.value = 0
-            await this.actor.createEmbeddedDocuments("Item", [localKnowledge])
+            await this.actor.createEmbeddedDocuments("Item", [localKnowledge], { render: false })
         }
 
-        await this.addSelections(parent.find('.optional:checked'))
-        await this.actor.update(update);
-        await this.actor._updateAPs(apCost)
+        await this.addSelections(parent.find('.optional:checked'), false)
+        await this.actor._updateAPs(apCost, {}, { render: false })
         await this.updateSkill(this.culture.system.skills.value.split(","), "skill")
+        await this.actor.update(update);
 
         this.finalizeUpdate()
     }

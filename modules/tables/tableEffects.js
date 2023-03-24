@@ -89,7 +89,7 @@ export default class TableEffects{
                     mod: args.modifier || 0,
                     effect: {
                         _id: "botchEffect", 
-                        label: args.fail.description
+                        name: args.fail.description
                     },
                     target,
                     token: target.token ? target.token.id : undefined

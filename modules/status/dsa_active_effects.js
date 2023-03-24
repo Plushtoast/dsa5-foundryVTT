@@ -72,7 +72,7 @@ const applyCustomEffect = (elem, change) => {
     switch (ct) {
         case "Array":
             let newElems = []
-            const source = change.effect.label
+            const source = change.effect.name
             for (let elem of `${change.value}`.split(/[;,]+/)) {
                 let vals = elem.split(" ")
                 const value = vals.pop()

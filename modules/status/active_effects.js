@@ -44,10 +44,6 @@ async function callMacro(packName, name, actor, item, qs, args = {}) {
     return result;
 };
 
-Hooks.on("renderDSAActiveEffectConfig", (obj, html, data) => {
-    
-})
-
 export default class DSAActiveEffectConfig extends ActiveEffectConfig {
     static get defaultOptions() {
         return mergeObject(super.defaultOptions, {
@@ -74,6 +70,7 @@ export default class DSAActiveEffectConfig extends ActiveEffectConfig {
 
     async _render(force = false, options = {}) {
         await super._render(force, options);
+        
         let index = -1;
         const advancedFunctions = ["none", "systemEffect", "macro", "creature"].map((x) => {
             return { name: `ActiveEffects.advancedFunctions.${x}`, index: (index += 1) };
@@ -126,13 +123,8 @@ export default class DSAActiveEffectConfig extends ActiveEffectConfig {
 
     getStatusEffects() {
         return duplicate(CONFIG.statusEffects).map((x) => {
-            return { id: x.id, label: game.i18n.localize(x.label) };
-        }).sort((a, b) => a.label.localeCompare(b.label))
-    }
-
-    getData(options) {
-        const data = super.getData(options);
-        return data;
+            return { id: x.id, name: game.i18n.localize(x.name) };
+        }).sort((a, b) => a.name.localeCompare(b.name))
     }
 
     static applyRollTransformation(actor, options, functionID) {
@@ -179,7 +171,7 @@ export default class DSAActiveEffectConfig extends ActiveEffectConfig {
                     });
                 } else {
                     effectApplied = true;
-                    if (!effectNames.has(ef.label)) effectNames.add(ef.label)
+                    if (!effectNames.has(ef.name)) effectNames.add(ef.name)
                     if (ef.changes && ef.changes.length > 0) {
                         effectsWithChanges.push(ef);
                     }
@@ -565,7 +557,7 @@ export default class DSAActiveEffectConfig extends ActiveEffectConfig {
         for(let ef of CONFIG.statusEffects){
             if(getProperty(ef, "flags.dsa5.max")){
                 optns.push({
-                    name: game.i18n.localize(ef.label),
+                    name: game.i18n.localize(ef.name),
                     val: `system.condition.${ef.id}`,
                     mode: 2,
                     ph: 1

@@ -29,7 +29,8 @@
         <div class="tab description" data-tab="description">
             <div>
                 {{#if hasLocalization}}
-                <img src="{{item.img}}" style="max-width:50%; max-height: 100%;float:right;" data-edit="img" /> {{{localize (concat "Racedescr." item.name)}}} {{else}}
+                    <img src="{{item.img}}" style="max-width:50%; max-height: 100%;float:right;" data-edit="img" /> {{{localize (concat "Racedescr." item.name)}}} 
+                {{else}}
                 <div class="row-section">
                     <div class="col two">
                         {{editor enrichedDescription target="system.description.value" button=true owner=owner editable=editable engine="prosemirror"}}

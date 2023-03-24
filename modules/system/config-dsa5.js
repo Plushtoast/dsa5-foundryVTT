@@ -3,7 +3,7 @@ const DSA5 = {}
 DSA5.statusEffects = [{
         icon: "icons/svg/skull.svg",
         id: "dead",
-        label: "CONDITION.defeated",
+        name: "CONDITION.defeated",
         description: "CONDITIONDESCRIPTION.defeated",
         flags: {
             dsa5: {
@@ -14,7 +14,7 @@ DSA5.statusEffects = [{
     },
     {
         id: "inpain",
-        label: "CONDITION.inpain",
+        name: "CONDITION.inpain",
         icon: "icons/svg/blood.svg",
         description: "CONDITIONDESCRIPTION.inpain",
         changes: [ { "key": "system.condition.inpain", "mode": 2, "value": 1 }],
@@ -28,7 +28,7 @@ DSA5.statusEffects = [{
     },
     {
         id: "prone",
-        label: "CONDITION.prone",
+        name: "CONDITION.prone",
         icon: "icons/svg/falling.svg",
         description: "CONDITIONDESCRIPTION.prone",
         flags: {
@@ -40,7 +40,7 @@ DSA5.statusEffects = [{
     },
     {
         id: "unconscious",
-        label: "CONDITION.unconscious",
+        name: "CONDITION.unconscious",
         icon: "icons/svg/unconscious.svg",
         description: "CONDITIONDESCRIPTION.unconscious",
         flags: {
@@ -52,7 +52,7 @@ DSA5.statusEffects = [{
     },
     {
         id: "rooted",
-        label: "CONDITION.rooted",
+        name: "CONDITION.rooted",
         icon: "icons/svg/net.svg",
         description: "CONDITIONDESCRIPTION.rooted",
         flags: {
@@ -64,7 +64,7 @@ DSA5.statusEffects = [{
     },
     {
         id: "fixated",
-        label: "CONDITION.fixated",
+        name: "CONDITION.fixated",
         icon: "icons/svg/padlock.svg",
         description: "CONDITIONDESCRIPTION.fixated",
         flags: {
@@ -76,7 +76,7 @@ DSA5.statusEffects = [{
     },
     {
         id: "surprised",
-        label: "CONDITION.surprised",
+        name: "CONDITION.surprised",
         icon: "icons/svg/hazard.svg",
         description: "CONDITIONDESCRIPTION.surprised",
         flags: {
@@ -88,7 +88,7 @@ DSA5.statusEffects = [{
     },
     {
         id: "blind",
-        label: "CONDITION.blind",
+        name: "CONDITION.blind",
         icon: "icons/svg/blind.svg",
         description: "CONDITIONDESCRIPTION.blind",
         flags: {
@@ -100,7 +100,7 @@ DSA5.statusEffects = [{
     },
     {
         id: "poisoned",
-        label: "CONDITION.poisoned",
+        name: "CONDITION.poisoned",
         icon: "icons/svg/poison.svg",
         description: "CONDITIONDESCRIPTION.poisoned",
         flags: {
@@ -112,7 +112,7 @@ DSA5.statusEffects = [{
     },
     {
         id: "sick",
-        label: "CONDITION.sick",
+        name: "CONDITION.sick",
         icon: "icons/svg/biohazard.svg",
         description: "CONDITIONDESCRIPTION.sick",
         flags: {
@@ -124,7 +124,7 @@ DSA5.statusEffects = [{
     },
     {
         id: "deaf",
-        label: "CONDITION.deaf",
+        name: "CONDITION.deaf",
         icon: "icons/svg/deaf.svg",
         description: "CONDITIONDESCRIPTION.deaf",
         flags: {
@@ -136,7 +136,7 @@ DSA5.statusEffects = [{
     },
     {
         id: "burning",
-        label: "CONDITION.burning",
+        name: "CONDITION.burning",
         icon: "icons/svg/fire.svg",
         description: "CONDITIONDESCRIPTION.burning",
         flags: {
@@ -149,7 +149,7 @@ DSA5.statusEffects = [{
     },
     {
         id: "invisible",
-        label: "CONDITION.invisible",
+        name: "CONDITION.invisible",
         icon: "icons/svg/circle.svg",
         description: "CONDITIONDESCRIPTION.invisible",
         flags: {
@@ -161,7 +161,7 @@ DSA5.statusEffects = [{
     },
     {
         id: "constricted",
-        label: "CONDITION.constricted",
+        name: "CONDITION.constricted",
         icon: "icons/svg/cave.svg",
         description: "CONDITIONDESCRIPTION.constricted",
         flags: {
@@ -173,7 +173,7 @@ DSA5.statusEffects = [{
     },
     {
         id: "bloodrush",
-        label: "CONDITION.bloodrush",
+        name: "CONDITION.bloodrush",
         icon: "icons/svg/bones.svg",
         description: "CONDITIONDESCRIPTION.bloodrush",
         changes: [
@@ -188,7 +188,7 @@ DSA5.statusEffects = [{
     },
     {
         id: "mute",
-        label: "CONDITION.mute",
+        name: "CONDITION.mute",
         icon: "icons/svg/silenced.svg",
         description: "CONDITIONDESCRIPTION.mute",
         flags: {
@@ -200,7 +200,7 @@ DSA5.statusEffects = [{
     },
     {
         id: "incapacitated",
-        label: "CONDITION.incapacitated",
+        name: "CONDITION.incapacitated",
         icon: "icons/svg/sleep.svg",
         description: "CONDITIONDESCRIPTION.incapacitated",
         flags: {
@@ -212,7 +212,7 @@ DSA5.statusEffects = [{
     },
     {
         id: "encumbered",
-        label: "CONDITION.encumbered",
+        name: "CONDITION.encumbered",
         icon: "icons/svg/anchor.svg",
         changes: [ { "key": "system.condition.encumbered", "mode": 2, "value": 1 }],
         description: "CONDITIONDESCRIPTION.encumbered",
@@ -226,7 +226,7 @@ DSA5.statusEffects = [{
     },
     {
         id: "stunned",
-        label: "CONDITION.stunned",
+        name: "CONDITION.stunned",
         icon: "icons/svg/daze.svg",
         changes: [ { "key": "system.condition.stunned", "mode": 2, "value": 1 }],
         description: "CONDITIONDESCRIPTION.stunned",
@@ -240,7 +240,7 @@ DSA5.statusEffects = [{
     },
     {
         id: "raptured",
-        label: "CONDITION.raptured",
+        name: "CONDITION.raptured",
         icon: "icons/svg/ice-aura.svg",
         changes: [ { "key": "system.condition.raptured", "mode": 2, "value": 1 }],
         description: "CONDITIONDESCRIPTION.raptured",
@@ -254,7 +254,7 @@ DSA5.statusEffects = [{
     },
     {
         id: "feared",
-        label: "CONDITION.feared",
+        name: "CONDITION.feared",
         icon: "icons/svg/terror.svg",
         description: "CONDITIONDESCRIPTION.feared",
         changes: [ { "key": "system.condition.feared", "mode": 2, "value": 1 }],
@@ -268,7 +268,7 @@ DSA5.statusEffects = [{
     },
     {
         id: "paralysed",
-        label: "CONDITION.paralysed",
+        name: "CONDITION.paralysed",
         icon: "icons/svg/paralysis.svg",
         description: "CONDITIONDESCRIPTION.paralysed",
         changes: [ { "key": "system.condition.paralysed", "mode": 2, "value": 1 }],
@@ -282,7 +282,7 @@ DSA5.statusEffects = [{
     },
     {
         id: "confused",
-        label: "CONDITION.confused",
+        name: "CONDITION.confused",
         icon: "icons/svg/stoned.svg",
         description: "CONDITIONDESCRIPTION.confused",
         changes: [ { "key": "system.condition.confused", "mode": 2, "value": 1 }],
@@ -296,7 +296,7 @@ DSA5.statusEffects = [{
     },
     {
         id: "minorSpirits",
-        label: "CONDITION.minorSpirits",
+        name: "CONDITION.minorSpirits",
         icon: "icons/svg/terror.svg",
         description: "CONDITIONDESCRIPTION.minorSpirits",
         changes: [
@@ -312,7 +312,7 @@ DSA5.statusEffects = [{
     },
     {
         id: "services",
-        label: "PLAYER.services",
+        name: "PLAYER.services",
         icon: "icons/svg/aura.svg",
         description: "CONDITIONDESCRIPTION.services",
         flags: {

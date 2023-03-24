@@ -247,6 +247,11 @@
   .dsa5.item form .form-group.autoHeight div {
     height: auto;
   }
+
+  .centerCell{
+    display: flex;
+    align-self: center;
+  }
   
   form {
     .form-group {
@@ -1308,6 +1313,7 @@
     }
   }
   
+  .generationWizard [data-tab="description"] h2,
   .notLearned, .showAll .filterHide, .statusEffectMenu .filterHide, .filterHide {
     display: none;
   }
@@ -1486,9 +1492,16 @@
     background-image: url('../../icons/schip.webp');
   }
   
+  .sheet nav.sheet-tabs .item.active,
   .tabs .item.active {
     text-shadow: 0 0 10px rgb(188, 136, 111), 0 0 10px rgb(188, 136, 111);
+    border-bottom: 3px solid var(--border-color);
   }
+
+  .sheet nav.sheet-tabs .item{
+    padding: 8px 12px 5px 12px;
+    border-bottom: 3px solid transparent;
+  } 
   
   .dieButton {
     span {
@@ -1745,7 +1758,8 @@
       border-bottom: 1px solid #b5b3a4;
 
       .item {
-        padding: 8px 12px;
+        padding: 8px 12px 5px 12px;
+        border-bottom: 2px solid transparent;
       }
     }
   
@@ -3389,7 +3403,7 @@
   #sidebar {
     overflow: visible;
   }
-  
+
   .plantContainer {
     display: inline-block;
     position: relative;

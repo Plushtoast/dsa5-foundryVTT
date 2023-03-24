@@ -71,14 +71,9 @@ export default class Actordsa5 extends Actor {
     const data = this.system;
     try {      
       this._getItemModifiers()
+
       for (let ch of Object.values(data.characteristics)) {
         ch.value = ch.initial + ch.advances + (ch.modifier || 0) + ch.gearmodifier;
-        ch.cost = game.i18n.format("advancementCost", {
-          cost: DSA5_Utility._calculateAdvCost(ch.initial + ch.advances, "E"),
-        });
-        ch.refund = game.i18n.format("refundCost", {
-          cost: DSA5_Utility._calculateAdvCost(ch.initial + ch.advances, "E", 0),
-        });
       }
 
       //We should iterate at some point over the items to prevent multiple loops
@@ -201,7 +196,7 @@ export default class Actordsa5 extends Actor {
         data.status.dodge.max = Math.max(0, data.status.dodge.max - 4);
       }      
     } catch (error) {
-      console.error("Something went wrong with preparing actor data: " + error + error.stack);
+      console.error(`Something went wrong with preparing actor data ${this.name}: ` + error + error.stack);
       ui.notifications.error(game.i18n.format("DSAError.PreparationError", {name: this.name}) + error + error.stack);
     }
   }
@@ -250,7 +245,7 @@ export default class Actordsa5 extends Actor {
         Math.max(0, data.status.speed.max - Math.min(4, this.calcEncumbrance(data))) * data.status.speed.multiplier
       );
 
-      if (!this.hasCondition("bloodrush")) data.status.speed.max = Math.max(0, data.status.speed.max - (data.condition.inpain || 0));
+      if (!this.hasCondition("bloodrush")) data.status.speed.max = Math.max(0, data.status.speed.max - (data.condition?.inpain || 0));
 
       const paralysis = this.hasCondition("paralysed");
       if (paralysis) data.status.speed.max = Math.round(data.status.speed.max * (1 - paralysis.flags.dsa5.value * 0.25));
@@ -266,7 +261,7 @@ export default class Actordsa5 extends Actor {
   }
 
   calcEncumbrance(data){
-    return Math.clamped(data.condition.encumbered || 0, 0, 4)
+    return Math.clamped(data.condition?.encumbered || 0, 0, 4)
   }
 
   calcInitiative(data, encumbrance, horse){
@@ -282,7 +277,7 @@ export default class Actordsa5 extends Actor {
       data.status.initiative.value = horse.system.status.initiative.value 
       if(!data.status.initiative.value){
         const horseData = horse.system
-        horse.calcInitiative(horseData, horse.calcEncumbrance())
+        horse.calcInitiative(horseData, horse.calcEncumbrance(horseData))
         data.status.initiative.value = horseData.status.initiative.value 
       }
     } else {
@@ -311,7 +306,7 @@ export default class Actordsa5 extends Actor {
   static lockedCondition() {
     return {
       id: "locked",
-      label: game.i18n.localize("MERCHANT.locked"),
+      name: game.i18n.localize("MERCHANT.locked"),
       icon: "icons/svg/padlock.svg",
       flags: {
         dsa5: {
@@ -419,6 +414,7 @@ export default class Actordsa5 extends Actor {
     mergeObject(system, {
       itemModifiers: {},
       condition: {},
+      creatureType: this.creatureType,
       skillModifiers: {
         FP: [],
         step: [],
@@ -548,7 +544,7 @@ export default class Actordsa5 extends Actor {
   }
 
   prepareSheet(sheetInfo) {
-    let preparedData = { system: {} };
+    let preparedData = { system: { characteristics: {} } };
     mergeObject(preparedData, this.prepareItems(sheetInfo));
     if (preparedData.canAdvance) {
       const attrs = ["wounds", "astralenergy", "karmaenergy"];
@@ -565,6 +561,16 @@ export default class Actordsa5 extends Actor {
             },
           },
         });
+      }
+      for (let [key, ch] of Object.entries(this.system.characteristics)) {
+        preparedData.system.characteristics[key] = {
+          cost: game.i18n.format("advancementCost", {
+            cost: DSA5_Utility._calculateAdvCost(ch.initial + ch.advances, "E"),
+          }),
+          refund: game.i18n.format("refundCost", {
+            cost: DSA5_Utility._calculateAdvCost(ch.initial + ch.advances, "E", 0),
+          })
+        };
       }
     }
     return preparedData;
@@ -1011,7 +1017,8 @@ export default class Actordsa5 extends Actor {
     if ((this.type != "creature" || this.canAdvance) && !this.isMerchant()) {
       encumbrance += Math.max(0, Math.ceil((totalWeight - carrycapacity - 4) / 4));
     }
-    this.addCondition("encumbered", encumbrance, true);
+ 
+    this.addCondition("encumbered", encumbrance, true)    
 
     totalWeight = parseFloat(totalWeight.toFixed(3));
 
@@ -1169,12 +1176,12 @@ export default class Actordsa5 extends Actor {
     }
   }
 
-  async _updateAPs(APValue, dataUpdate = {}) {
+  async _updateAPs(APValue, dataUpdate = {}, options = {}) {
     if (Actordsa5.canAdvance(this)) {
       if (!isNaN(APValue) && !(APValue == null)) {
         const ap = Number(APValue);
         dataUpdate["system.details.experience.spent"] = Number(this.system.details.experience.spent) + ap;
-        await this.update(dataUpdate);
+        await this.update(dataUpdate, options);
         const msg = game.i18n.format(ap > 0 ? "advancementCost" : "refundCost", { cost: Math.abs(ap) });
         tinyNotification(msg);
       } else {
@@ -1189,13 +1196,8 @@ export default class Actordsa5 extends Actor {
 
     if (Number(this.system.details.experience.total) - Number(this.system.details.experience.spent) >= cost) {
       return true;
-    } else if (Number(this.system.details.experience.total == 0)) {
-      let selOptions = Object.entries(DSA5.startXP)
-        .map(([key, val]) => `<option value="${key}">${game.i18n.localize(val)} (${key})</option>`)
-        .join("");
-      let template = `<p>${game.i18n.localize("DSAError.zeroXP")}</p><label>${game.i18n.localize(
-        "APValue"
-      )}: </label><select name ="APsel">${selOptions}</select>`;
+    } else if (Number(this.system.details.experience.total) == 0) {
+      const template = await renderTemplate("systems/dsa5/templates/dialog/parts/expChoices.html", { entries: DSA5.startXP })
       let newXp = 0;
       let result = false;
 
@@ -1209,7 +1211,7 @@ export default class Actordsa5 extends Actor {
               icon: '<i class="fa fa-check"></i>',
               label: game.i18n.localize("yes"),
               callback: (dlg) => {
-                resolve([true, dlg.find('[name="APsel"]')[0].value]);
+                resolve([true, dlg.find('.APsel')[0].value]);
               },
             },
             cancel: {
@@ -2427,8 +2429,8 @@ export default class Actordsa5 extends Actor {
 
     if (typeof(effect) === "string" && options.duration) {
       effect = duplicate(CONFIG.statusEffects.find(e => e.id == effect))
-      effect.flags.dsa5.description = game.i18n.localize(effect.label)
-      effect.label = game.i18n.localize(effect.label)
+      effect.flags.dsa5.description = game.i18n.localize(effect.name)
+      effect.name = game.i18n.localize(effect.name)
 
       delete effect.description
       delete effect.flags.dsa5.value

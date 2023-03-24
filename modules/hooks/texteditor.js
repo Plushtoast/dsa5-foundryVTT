@@ -9,7 +9,7 @@ export function setEnrichers() {
     const replaceRegex2 = /[\[\]]/g
 
     if (!DSA5.statusRegex) {
-        let effects = DSA5.statusEffects.map(x => game.i18n.localize(x.label).toLowerCase())
+        let effects = DSA5.statusEffects.map(x => game.i18n.localize(x.name).toLowerCase())
         let keywords = ["status", "condition", "level", "levels"].map(x => game.i18n.localize(x)).join("|")
         DSA5.statusRegex = {
             effects: effects,

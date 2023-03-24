@@ -4,7 +4,7 @@ import WizardDSA5 from "./dsa5_wizard.js"
 export default class SpeciesWizard extends WizardDSA5 {
     static get defaultOptions() {
         const options = super.defaultOptions;
-        options.title = game.i18n.format("WIZARD.addItem", { item: `${game.i18n.localize("Types.Item.species")}` })
+        options.title = game.i18n.format("WIZARD.addItem", { item: `${game.i18n.localize("TYPES.Item.species")}` })
         options.template = 'systems/dsa5/templates/wizard/add-species-wizard.html'
         return options;
     }
@@ -76,10 +76,10 @@ export default class SpeciesWizard extends WizardDSA5 {
             description: game.i18n.format("WIZARD.speciesdescr", { species: this.species.name, cost: baseCost + reqCost }),
             advantagegroups,
             baseCost,
-            speciesDescription: game.i18n.has(`Racedescr.${this.species.name}`) ? game.i18n.localize(`Racedescr.${this.species.name}`) : this.species.system.description.value,
             disadvantagegroups,
             missingVantages,
             attributeRequirements,
+            hasLocalization: game.i18n.has(`Racedescr.${this.species.name}`),
             anyAttributeRequirements: attributeRequirements.length > 0,
             advantagesToChose: advantagegroups.length > 0,
             missingVantagesToChose: missingVantages.length > 0,
@@ -134,10 +134,10 @@ export default class SpeciesWizard extends WizardDSA5 {
             update[`system.${dataAttr.join(".")}`] = Number(attrs[1])
         }
 
+        
+        await this.actor._updateAPs(apCost, {}, { render: false })
+        await this.addSelections(parent.find('.optional:checked'), false)
         await this.actor.update(update);
-        await this.actor._updateAPs(apCost)
-
-        await this.addSelections(parent.find('.optional:checked'))
 
         await this.actor.removeCondition("incapacitated")
 

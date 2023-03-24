@@ -386,7 +386,7 @@ export default class TokenHotbar2 extends Application {
             const isRiding = Riding.isRiding(actor)
             const rideName = game.i18n.localize("LocalizedIDs.riding")
 
-            effects = (await actor.actorEffects()).map(x => { return { name: x.label, id: x.id, icon: x.icon, cssClass: "effect", abbrev: `${x.label[0]} ${x.getFlag("dsa5","value") || ""}`, subfunction: "effect" } })
+            effects = (await actor.actorEffects()).map(x => { return { name: x.name, id: x.id, icon: x.icon, cssClass: "effect", abbrev: `${x.name[0]} ${x.getFlag("dsa5","value") || ""}`, subfunction: "effect" } })
             if (game.combat) {
                 const combatskills = actor.items.filter(x => x.type == "combatskill").map(x => Actordsa5._calculateCombatSkillValues(x.toObject(), actor.system))
                 const brawl = combatskills.find(x => x.name == game.i18n.localize('LocalizedIDs.wrestle'))
@@ -599,12 +599,12 @@ class AddEffectDialog extends Dialog {
     static async showDialog() {
         const effects = duplicate(CONFIG.statusEffects).map(x => {
             return {
-                label: game.i18n.localize(x.label),
+                name: game.i18n.localize(x.name),
                 icon: x.icon,
                 description: game.i18n.localize(x.description),
                 id: x.id
             }
-        }).sort((a, b) => a.label.localeCompare(b.label))
+        }).sort((a, b) => a.name.localeCompare(b.name))
 
         const dialog = new AddEffectDialog({
             title: game.i18n.localize("CONDITION.add"),
