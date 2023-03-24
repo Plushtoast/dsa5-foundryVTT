@@ -250,7 +250,7 @@ export default class Actordsa5 extends Actor {
         Math.max(0, data.status.speed.max - Math.min(4, this.calcEncumbrance(data))) * data.status.speed.multiplier
       );
 
-      if (!this.hasCondition("bloodrush")) data.status.speed.max = Math.max(0, data.status.speed.max - (data.condition.inpain || 0));
+      if (!this.hasCondition("bloodrush")) data.status.speed.max = Math.max(0, data.status.speed.max - (data.condition?.inpain || 0));
 
       const paralysis = this.hasCondition("paralysed");
       if (paralysis) data.status.speed.max = Math.round(data.status.speed.max * (1 - paralysis.flags.dsa5.value * 0.25));
@@ -266,7 +266,7 @@ export default class Actordsa5 extends Actor {
   }
 
   calcEncumbrance(data){
-    return Math.clamped(data.condition.encumbered || 0, 0, 4)
+    return Math.clamped(data.condition?.encumbered || 0, 0, 4)
   }
 
   calcInitiative(data, encumbrance, horse){
@@ -282,7 +282,7 @@ export default class Actordsa5 extends Actor {
       data.status.initiative.value = horse.system.status.initiative.value 
       if(!data.status.initiative.value){
         const horseData = horse.system
-        horse.calcInitiative(horseData, horse.calcEncumbrance())
+        horse.calcInitiative(horseData, horse.calcEncumbrance(horseData))
         data.status.initiative.value = horseData.status.initiative.value 
       }
     } else {
@@ -1012,6 +1012,7 @@ export default class Actordsa5 extends Actor {
     if ((this.type != "creature" || this.canAdvance) && !this.isMerchant()) {
       encumbrance += Math.max(0, Math.ceil((totalWeight - carrycapacity - 4) / 4));
     }
+
     this.addCondition("encumbered", encumbrance, true);
 
     totalWeight = parseFloat(totalWeight.toFixed(3));

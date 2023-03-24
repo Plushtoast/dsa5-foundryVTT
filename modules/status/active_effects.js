@@ -44,10 +44,6 @@ async function callMacro(packName, name, actor, item, qs, args = {}) {
     return result;
 };
 
-Hooks.on("renderDSAActiveEffectConfig", (obj, html, data) => {
-    
-})
-
 export default class DSAActiveEffectConfig extends ActiveEffectConfig {
     static get defaultOptions() {
         return mergeObject(super.defaultOptions, {
@@ -136,11 +132,6 @@ export default class DSAActiveEffectConfig extends ActiveEffectConfig {
         return duplicate(CONFIG.statusEffects).map((x) => {
             return { id: x.id, label: game.i18n.localize(x.label) };
         }).sort((a, b) => a.label.localeCompare(b.label))
-    }
-
-    getData(options) {
-        const data = super.getData(options);
-        return data;
     }
 
     static applyRollTransformation(actor, options, functionID) {
