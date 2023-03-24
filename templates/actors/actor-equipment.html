@@ -43,7 +43,7 @@
                 </div>
                 {{#if (eq item.system.equipmentType.value 'bags')}}
                 <div class="col five center">
-                    {{item.bagweight}}
+                    {{item.system.bagweight}}
                 </div>
                 {{/if}}
                 <div class="col eight center" {{#if (eq item.system.equipmentType.value 'bags')}} data-tooltip="SHEET.weightOnActor" {{/if}}>
@@ -56,7 +56,7 @@
                     <a class="quantity-click">{{item.system.quantity.value}}</a>
                 </div>
                 <div class="col eight center">
-                    {{item.weight}}
+                    {{item.system.preparedWeight}}
                 </div>
                 <div class="col ten very-small center">
                     {{#if item.OnUseEffect}}<a data-tooltip="SHEET.onUseEffect" class="onUseItem"><i class="fas fa-dice-six"></i></a>{{/if}}

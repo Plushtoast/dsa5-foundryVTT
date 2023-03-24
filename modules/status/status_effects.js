@@ -72,7 +72,7 @@ export default class DSA5StatusEffects {
                 cumulativeConditions.push({
                     icon: ef.icon,
                     id: key,
-                    label: game.i18n.localize(ef.name),
+                    name: game.i18n.localize(ef.name),
                     value: target.system.condition[key]
                   })
             }
