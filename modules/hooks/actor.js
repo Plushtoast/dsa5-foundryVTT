@@ -62,7 +62,7 @@ export default function() {
     })
 
     Hooks.on("deleteActiveEffect", (effect, options) => {
-        if(options.noHook) return
+        if(!DSA5_Utility.isActiveGM() || options.noHook) return
 
         const actor = effect.parent
         if (actor && actor.documentName == "Actor") {
@@ -98,20 +98,20 @@ export default function() {
 
 
     Hooks.on("createActiveEffect", (effect, options, user) => {
-        if(!game.user.isGM) return
+        if(!DSA5_Utility.isActiveGM()) return
 
         checkIniChange(effect)
         createEffects(effect)
     })
 
     Hooks.on("deleteActiveEffect", (effect, options, user) => {
-        if(!game.user.isGM) return
+        if(!DSA5_Utility.isActiveGM()) return
 
         checkIniChange(effect)
     })
 
     Hooks.on("updateActiveEffect", (effect, options, user) => {
-        if(!game.user.isGM) return
+        if(!DSA5_Utility.isActiveGM()) return
 
         checkIniChange(effect)
         countableDependentEffects(effect)
