@@ -659,6 +659,7 @@
         "missingSpecialAbilities": "Fehlende vorausgesetzte Sonderfertigkeiten",
         "attributeRequirements": "Eigenschaftsvoraussetzungen",
         "attributesToChose": "Eigenschaftsänderungen",
+        "attributesToChoseHint": "Entsprechende Attributswerte können/müssen bei der Charaktererschaffung einen höheren/tieferen Wert erreichen. Die Abenteuerpunkte für höhere Attributswerte müssen trotzdem entrichtet werden.",
         "generalTab": "Allgemein"
     },
     "KEYBINDINGS": {

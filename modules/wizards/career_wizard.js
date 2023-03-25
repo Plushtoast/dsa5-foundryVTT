@@ -41,14 +41,14 @@ export default class CareerWizard extends WizardDSA5 {
         })
     }
 
-    _validateInput(parent) {
+    _validateInput(parent, app = this) {
         let choice = parent.find('.maxTricks')
         let allowed = Number(choice.attr("data-spelltricklimit")) || 0
         if (parent.find('.exclusiveTricks:checked').length != allowed) {
-            this._showInputValidation(choice, parent)         
+            this._showInputValidation(choice, parent, app)         
             return false
         }
-        return super._validateInput(parent)
+        return super._validateInput(parent, app)
     }
 
     async getData(options) {
@@ -176,12 +176,11 @@ export default class CareerWizard extends WizardDSA5 {
         await this.actor.createEmbeddedDocuments("Item", itemsToCreate, { render: false })
     }
 
-    async updateCharacter() {
-        let parent = $(this._element)
+    async updateCharacter(parent, app = this) {
         parent.find("button.ok i").toggleClass("fa-check fa-spinner fa-spin")
 
         let apCost = Number(parent.find('.apCost').text())
-        if (!this._validateInput($(this._element)) || !(await this.actor.checkEnoughXP(apCost)) || await this.alreadyAdded(this.actor.system.details.career.value, "career")) {
+        if (!this._validateInput(parent, app) || !(await this.actor.checkEnoughXP(apCost)) || await this.alreadyAdded(this.actor.system.details.career.value, "career")) {
             parent.find("button.ok i").toggleClass("fa-check fa-spinner fa-spin")
             return
         }

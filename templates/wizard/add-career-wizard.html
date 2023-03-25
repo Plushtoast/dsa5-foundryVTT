@@ -6,8 +6,12 @@
         <i class="fas fa-angle-left left-btn"></i>
         <i class="fas fa-angle-right right-btn"></i>
         <nav class="sheet-tabs tabs" data-tab-container="primary">
-            <a class="item active" data-tab="description">{{localize "Description"}}</a> {{#if generalToChose}} <a class="item" data-tab="general">{{localize "WIZARD.generalTab"}}</a> {{/if}} {{#if combatToChose}} <a class="item" data-tab="combat">{{localize "Combat"}}</a>{{/if}}
-            {{#if vantagesToChose}} <a class="item" data-tab="vantages">{{localize "vantages"}}</a> {{/if}} {{#if magicToChose}} <a class="item" data-tab="magic">{{localize "Magic"}}</a> {{/if}} {{#if religionToChose}} <a class="item" data-tab="religion">{{localize "Religion"}}</a>        {{/if}}
+            <a class="item active" data-tab="description">{{localize "Description"}}</a> 
+            {{#if generalToChose}} <a class="item" data-tab="generalToChose">{{localize "WIZARD.generalTab"}}</a> {{/if}} 
+            {{#if combatToChose}} <a class="item" data-tab="combat">{{localize "Combat"}}</a>{{/if}}
+            {{#if vantagesToChose}} <a class="item" data-tab="vantages">{{localize "vantages"}}</a> {{/if}} 
+            {{#if magicToChose}} <a class="item" data-tab="magic">{{localize "Magic"}}</a> {{/if}} 
+            {{#if religionToChose}} <a class="item" data-tab="religion">{{localize "Religion"}}</a>        {{/if}}
         </nav>
     </div>
 
@@ -54,7 +58,7 @@
         {{/if}}
     </div>
     {{/if}} {{#if generalToChose}}
-    <div class="tab general" data-tab="general">
+    <div class="tab generalToChose" data-tab="generalToChose">
         {{#if anyAttributeRequirements}}
         <h2>{{localize 'WIZARD.attributeRequirements'}}</h2>
         <div class="row-section wrap">

@@ -6,7 +6,9 @@
         <i class="fas fa-angle-left left-btn"></i>
         <i class="fas fa-angle-right right-btn"></i>
         <nav class="sheet-tabs tabs" data-tab-container="primary">
-            <a class="item active" data-tab="description">{{localize "Description"}}</a> {{#if generalToChose}} <a class="item" data-tab="general">{{localize "WIZARD.generalTab"}}</a> {{/if}} {{#if vantagesToChose}} <a class="item" data-tab="vantages">{{localize "vantages"}}</a>        {{/if}}
+            <a class="item active" data-tab="description">{{localize "Description"}}</a> 
+            {{#if generalToChose}} <a class="item" data-tab="generalToChose">{{localize "WIZARD.generalTab"}}</a> {{/if}} 
+            {{#if vantagesToChose}} <a class="item" data-tab="vantagesToChose">{{localize "vantages"}}</a>        {{/if}}
         </nav>
     </div>
 
@@ -15,7 +17,7 @@
     </div>
 
     {{#if vantagesToChose}}
-    <div class="tab vantages" data-tab="vantages">
+    <div class="tab vantagesToChose" data-tab="vantagesToChose">
         <p>{{localize 'WIZARD.vantageDescriptionCulture'}}</p>
         {{#if advantagesToChose}}
         <h2>{{localize 'recommendedAdvantages'}}</h2>
@@ -42,7 +44,7 @@
         {{/if}}
     </div>
     {{/if}}
-    <div class="tab general" data-tab="general">
+    <div class="tab generalToChose" data-tab="generalToChose">
         <h2>{{localize 'LocalizedIDs.localKnowledge'}}</h2>
         <p>{{localize 'WIZARD.localKnowledgeDescr'}}</p>
         <div class="row-section">

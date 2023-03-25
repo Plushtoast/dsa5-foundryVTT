@@ -95,12 +95,11 @@ export default class SpeciesWizard extends WizardDSA5 {
         this.species = duplicate(item)
     }
 
-    async updateCharacter() {
-        let parent = $(this._element)
+    async updateCharacter(parent, app = this) {
         parent.find("button.ok i").toggleClass("fa-check fa-spinner fa-spin")
 
         let apCost = Number(parent.find('.apCost').text())
-        if (!this._validateInput($(this._element)) || !(await this.actor.checkEnoughXP(apCost)) || await this.alreadyAdded(this.actor.system.details.species.value, "species")) {
+        if (!this._validateInput(parent, app) || !(await this.actor.checkEnoughXP(apCost)) || await this.alreadyAdded(this.actor.system.details.species.value, "species")) {
             parent.find("button.ok i").toggleClass("fa-check fa-spinner fa-spin")
             return
         }

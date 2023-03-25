@@ -11,11 +11,6 @@ import RuleChaos from "../system/rule_chaos.js"
 import { ItemSheetObfuscation } from "./obfuscatemixin.js"
 
 export default class ItemSheetdsa5 extends ItemSheet {
-    constructor(item, options) {
-        super(item, options);
-        this.mce = null;
-    }
-
     _getSubmitData(updateData = {}) {
         const data = super._getSubmitData(updateData);
         const overrides = foundry.utils.flattenObject(this.item.overrides || {});
@@ -28,7 +23,7 @@ export default class ItemSheetdsa5 extends ItemSheet {
         mergeObject(options, {
             tabs: [{ navSelector: ".tabs", contentSelector: ".content" }],
             classes: options.classes.concat(["dsa5", "item"]),
-            width: 450,
+            width: 471,
             height: 500,
         });
         return options;

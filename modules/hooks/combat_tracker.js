@@ -19,7 +19,7 @@ export class DSA5CombatTracker extends CombatTracker {
             DSA5CombatTracker.runActAttackDialog()
         })
     }
-
+    
     static runActAttackDialog() {
         if (!game.combat) return
 

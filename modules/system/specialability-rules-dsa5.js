@@ -1,5 +1,6 @@
 import DSA5 from "./config-dsa5.js";
 import ItemRulesDSA5 from "./item-rules-dsa5.js";
+import Select2Dialog from "../dialog/select2Dialog.js"
 
 export default class SpecialabilityRulesDSA5 extends ItemRulesDSA5 {
 
@@ -119,7 +120,7 @@ export default class SpecialabilityRulesDSA5 extends ItemRulesDSA5 {
                     }
                 }
             }
-            await new Dialog({
+            await new Select2Dialog({
                 title: game.i18n.localize("DIALOG.ItemRequiresAdoption"),
                 content: template,
                 buttons: {

@@ -55,29 +55,28 @@ export default class CultureWizard extends WizardDSA5 {
         this.culture = duplicate(item)
     }
 
-    _validateInput(parent) {
+    _validateInput(parent, app = this) {
         const choice = parent.find('.localKnowledge')
         if (choice.val() == "") {
-            this._showInputValidation(choice, parent)
+            this._showInputValidation(choice, parent, app)
             return false
         }
         const selectOnlyOne = parent.find('.selectOnlyOne')
         if (selectOnlyOne.length) {
             const options = selectOnlyOne.find('.optional:checked')
             if (options.length != 1) {
-                this._showInputValidation(selectOnlyOne, parent)
+                this._showInputValidation(selectOnlyOne, parent, app)
                 return false
             }
         }
-        return super._validateInput(parent)
+        return super._validateInput(parent, app)
     }
 
-    async updateCharacter() {
-        let parent = $(this._element)
+    async updateCharacter(parent, app = this) {
         parent.find("button.ok i").toggleClass("fa-check fa-spinner fa-spin")
 
         let apCost = Number(parent.find('.apCost').text())
-        if (!this._validateInput($(this._element)) || !(await this.actor.checkEnoughXP(apCost)) || await this.alreadyAdded(this.actor.system.details.culture.value, "culture")) {
+        if (!this._validateInput(parent, app) || !(await this.actor.checkEnoughXP(apCost)) || await this.alreadyAdded(this.actor.system.details.culture.value, "culture")) {
             parent.find("button.ok i").toggleClass("fa-check fa-spinner fa-spin")
             return
         }

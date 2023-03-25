@@ -20,6 +20,11 @@ import DSA5 from "../system/config-dsa5.js";
 
 export default function() {
     Hooks.on("ready", async() => {
+        Hooks.on("hotReload", (packageType, packageid, content, path, extension) => {
+
+            console.log("hot reload", packageType, packageid, content, path, extension)
+        })
+
         game.socket.on("system.dsa5", data => {
             switch (data.type) {
                 case "hideDeletedSheet":

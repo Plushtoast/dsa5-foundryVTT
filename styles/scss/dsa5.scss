@@ -72,6 +72,15 @@
   .editor-content ul {
     margin: 0px 0px;
   }
+
+  .overflowhidden {
+    overflow: hidden;
+  }
+
+  .scrollY {
+    overflow-y: auto;
+    overflow-x: hidden;
+  }
   
   body {
     /*text-rendering: geometricprecision;*/
@@ -725,6 +734,10 @@
 
   .reverseFlex {
     flex-flow: row-reverse;
+  }
+
+  .reverseColumnFlex {
+    flex-flow: column-reverse;
   }
   
   .skills span {
@@ -2977,6 +2990,11 @@
   
   .fa-dsa5-player:before {
     background-image: url('../../icons/categories/DSA-Auge-Spieler.webp');
+  }
+
+  .columnFlex {
+    display: flex;
+    flex-direction: column;
   }
   
   .verticalFlex {

@@ -208,7 +208,7 @@ export default class WizardDSA5 extends Application {
         return data
     }
 
-    _validateInput(parent) {
+    _validateInput(parent, app = this) {
         let exclusives = new Set()
         let regex = /^exclusive_/
         for (let k of parent.find('.exclusive')) {
@@ -218,17 +218,17 @@ export default class WizardDSA5 extends Application {
             let choice = parent.find('.allowedCount_' + k.split("_")[1])
             let allowed = Number(choice.attr('data-count'))
             if (parent.find(`.${k}:checked`).length != allowed) {
-                this._showInputValidation(choice, parent)
+                this._showInputValidation(choice, parent, app)
                 return false
             }
         }
         return true
     }
 
-    _showInputValidation(choice, parent){
+    _showInputValidation(choice, parent, app){
         ui.notifications.error(game.i18n.localize("DSAError.MissingChoices"))
         let tabElem = choice.closest('.tab').attr("data-tab")
-        this.activateTab(tabElem) 
+        app.activateTab(tabElem) 
         WizardDSA5.flashElem(parent.find(`.tabs a[data-tab='${tabElem}']`))
         WizardDSA5.flashElem(choice)
     }
@@ -240,7 +240,7 @@ export default class WizardDSA5 extends Application {
         html.find('button.ok').click(() => {
             if (!this.updating) {
                 this.updating = true
-                this.updateCharacter().then(
+                this.updateCharacter($(this._element)).then(
                     () => this.updating = false
                 )
             }

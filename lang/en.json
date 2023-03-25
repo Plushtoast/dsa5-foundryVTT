@@ -690,6 +690,7 @@
         "missingSpecialAbilities": "Missing required Special Abilities",
         "attributeRequirements": "Attribute Requirements",
         "attributesToChose": "Attribute Adjustments",
+        "attributesToChoseHint": "Corresponding attribute values can/must reach a higher/lower value during character creation. The adventure points for higher attribute values must still be paid.",
         "generalTab": "General"
     },
     "MODS": {
