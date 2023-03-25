@@ -230,7 +230,7 @@ export default class WizardDSA5 extends Application {
         let tabElem = choice.closest('.tab').attr("data-tab")
         app.activateTab(tabElem) 
         WizardDSA5.flashElem(parent.find(`.tabs a[data-tab='${tabElem}']`))
-        WizardDSA5.flashElem(choice)
+        WizardDSA5.flashElem(choice.closest("div"))
     }
 
     activateListeners(html) {

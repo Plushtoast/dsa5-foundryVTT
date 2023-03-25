@@ -254,7 +254,7 @@ export default class ActorSheetDsa5 extends ActorSheet {
     async _advanceItem(itemId) {
         let item = this.actor.items.get(itemId).toObject()
         let cost = DSA5_Utility._calculateAdvCost(Number(item.system.talentValue.value), item.system.StF.value)
-        if (await this._checkEnoughXP(cost) && this._checkMaximumItemAdvancement(item, Number(item.system.talentValue.value) + 1)) {
+        if (await this._checkEnoughXP(cost) && this.actor._checkMaximumItemAdvancement(item, Number(item.system.talentValue.value) + 1)?.result) {
             await this.actor.updateEmbeddedDocuments("Item", [{ _id: itemId, "system.talentValue.value": item.system.talentValue.value + 1 }])
             await this._updateAPs(cost)
         }
@@ -287,46 +287,6 @@ export default class ActorSheetDsa5 extends ActorSheet {
             ui.notifications.error(game.i18n.localize("DSAError.AdvanceMaximumReached"))
 
         return result
-    }
-
-    _checkMaximumItemAdvancement(item, newValue) {
-        let result = false
-        switch (item.type) {
-            case "combatskill":
-                result = newValue <= Math.max(...(item.system.guidevalue.value.split("/").map(x => this.actor.system.characteristics[x].value))) + 2 + AdvantageRulesDSA5.vantageStep(this.actor, `${game.i18n.localize('LocalizedIDs.exceptionalCombatTechnique')} (${item.name})`)
-                break
-            case "spell":
-            case "ritual":
-                let focusValue = 0
-                for (const feature of item.system.feature.replace(/\(a-z äöü\-\)/gi, "").split(",").map(x => x.trim())) {
-                    if (SpecialabilityRulesDSA5.hasAbility(this.actor, `${game.i18n.localize('LocalizedIDs.propertyKnowledge')} (${feature})`)) {
-                        focusValue = this.maxByAttr(item)
-                        break
-                    }
-                }
-                result = newValue <= Math.max(14 + AdvantageRulesDSA5.vantageStep(this.actor, `${game.i18n.localize('LocalizedIDs.exceptionalSkill')} (${item.name})`), focusValue)
-                break
-            case "liturgy":
-            case "ceremony":
-                const aspect = new RegExp(`^${game.i18n.localize("LocalizedIDs.aspectKnowledge")}`)
-                let aspectValue = 0
-                if (this.actor.items.filter(x => x.type == "specialability" && aspect.test(x.name)).some(x => item.system.distribution.value.includes(x.name.split("(")[1].split(")")[0]))) {
-                    aspectValue = this.maxByAttr(item)
-                }
-                result = newValue <= Math.max(14 + AdvantageRulesDSA5.vantageStep(this.actor, `${game.i18n.localize('LocalizedIDs.exceptionalSkill')} (${item.name})`), aspectValue)
-                break
-            case "skill":
-                result = newValue <= this.maxByAttr(item)
-                break
-        }
-        if (!result)
-            ui.notifications.error(game.i18n.localize("DSAError.AdvanceMaximumReached"))
-
-        return result
-    }
-
-    maxByAttr(item) {
-        return Math.max(...[this.actor.system.characteristics[item.system.characteristic1.value].value, this.actor.system.characteristics[item.system.characteristic2.value].value, this.actor.system.characteristics[item.system.characteristic3.value].value]) + 2 + AdvantageRulesDSA5.vantageStep(this.actor, `${game.i18n.localize('LocalizedIDs.exceptionalSkill')} (${item.name})`)
     }
 
     async _openLibrary() {
