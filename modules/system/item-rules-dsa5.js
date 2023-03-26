@@ -26,6 +26,26 @@ export default class ItemRulesDSA5 {
         return modifier
     }
 
+    static async stepXPCost(item, step) {
+        let xpCost = Number(item.system.APValue.value)
+        if (/;/.test(xpCost)) {
+            const steps = xpCost.split(";").map(x => Number(x.trim()))
+            xpCost = steps[step]
+        }
+        return Number(xpCost)
+    }
+
+    static calcAPCostSum(item) {
+        let xpCost = Number(item.system.APValue.value) * (Number(item.system.step.value) || 1)
+        if (/;/.test(item.system.APValue.value)) {
+            const steps = item.system.APValue.value.split(";").map(x => Number(x.trim()))
+            xpCost = 0
+            for (let i = 0; i < item.system.step.value; i++)
+                xpCost += steps[i]
+        }
+        return xpCost
+    }
+
     static simpleAdoption(item, adoption, name, source) {
         if (source[name].effect) {
             item.system.effect.value = `${adoption.name} ${source[name].effect}`

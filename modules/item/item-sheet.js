@@ -9,6 +9,7 @@ import DiceDSA5 from "../system/dice-dsa5.js"
 import OnUseEffect from "../system/onUseEffects.js"
 import RuleChaos from "../system/rule_chaos.js"
 import { ItemSheetObfuscation } from "./obfuscatemixin.js"
+import AdvantageRulesDSA5 from "../system/advantage-rules-dsa5.js"
 
 export default class ItemSheetdsa5 extends ItemSheet {
     _getSubmitData(updateData = {}) {
@@ -946,13 +947,8 @@ class PoisonSheetDSA5 extends ItemSheetObfuscation(ItemSheetdsa5) {
 
 class SpecialAbilitySheetDSA5 extends ItemSheetdsa5 {
     async _refundStep() {
-        let xpCost, steps
         if (this.item.system.step.value > 1) {
-            xpCost = this.item.system.APValue.value
-            if (/;/.test(xpCost)) {
-                steps = xpCost.split(";").map(x => Number(x.trim()))
-                xpCost = steps[this.item.system.step.value - 1]
-            }
+            let xpCost = await SpecialabilityRulesDSA5.stepXPCost(this.item, this.item.system.step.value - 1)
             xpCost = await SpecialabilityRulesDSA5.refundFreelanguage(this.item, this.item.actor, xpCost, false)
             await this.item.actor._updateAPs(xpCost * -1, {}, { render: false })
             await this.item.update({ "system.step.value": this.item.system.step.value - 1 })
@@ -960,13 +956,8 @@ class SpecialAbilitySheetDSA5 extends ItemSheetdsa5 {
     }
 
     async _advanceStep() {
-        let xpCost, steps
         if (this.item.system.step.value < this.item.system.maxRank.value) {
-            xpCost = this.item.system.APValue.value
-            if (/;/.test(xpCost)) {
-                steps = xpCost.split(";").map(x => Number(x.trim()))
-                xpCost = steps[this.item.system.step.value]
-            }
+            let xpCost = await SpecialabilityRulesDSA5.stepXPCost(this.item, this.item.system.step.value)
             xpCost = await SpecialabilityRulesDSA5.isFreeLanguage(this.item, this.item.actor, xpCost, false)
             if (await this.item.actor.checkEnoughXP(xpCost)) {
                 await this.item.actor._updateAPs(xpCost, {}, { render: false })
@@ -1086,33 +1077,27 @@ class VantageSheetDSA5 extends ItemSheetdsa5 {
         return this.item.system.max.value > 0
     }
 
-    async _refundStep() {
-        let xpCost, steps
-        if (this.item.system.step.value > 1) {
-            xpCost = this.item.system.APValue.value
-            if (/;/.test(xpCost)) {
-                steps = xpCost.split(";").map(x => Number(x.trim()))
-                xpCost = steps[this.item.system.step.value - 1]
-            }
-            await this.item.actor._updateAPs(xpCost * -1, {}, { render: false })
-            await this.item.update({ "system.step.value": this.item.system.step.value - 1 })
-        }
-    }
-
     async getData(options) {
         const data = await super.getData(options)
         data.canOnUseEffect = game.user.isGM || await game.settings.get("dsa5", "playerCanEditSpellMacro")
         return data
     }
 
+    async _refundStep() {
+        if (this.item.system.step.value > 1) {
+            let xpCost = await AdvantageRulesDSA5.stepXPCost(this.item, this.item.system.step.value - 1)
+            xpCost = await AdvantageRulesDSA5.reduceSingularVantages(this.item.actor, this.item, xpCost)
+            await this.item.actor._updateAPs(xpCost * -1, {}, { render: false })
+            await this.item.update({ "system.step.value": this.item.system.step.value - 1 })
+        }
+    }
+
     async _advanceStep() {
-        let xpCost, steps
         if (this.item.system.step.value < this.item.system.max.value) {
-            xpCost = this.item.system.APValue.value
-            if (/;/.test(xpCost)) {
-                steps = xpCost.split(";").map(x => Number(x.trim()))
-                xpCost = steps[this.item.system.step.value]
-            }
+            let xpCost = await AdvantageRulesDSA5.stepXPCost(this.item, this.item.system.step.value)
+            const dup = duplicate(this.item)
+            dup.system.step.value += 1
+            xpCost = await AdvantageRulesDSA5.addSingularVantages(this.item.actor, dup, xpCost)
             if (await this.item.actor.checkEnoughXP(xpCost)) {
                 await this.item.actor._updateAPs(xpCost, {}, { render: false })
                 await this.item.update({ "system.step.value": this.item.system.step.value + 1 })

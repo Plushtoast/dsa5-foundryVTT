@@ -199,7 +199,7 @@ export const MerchantSheetMixin = (superclass) => class extends superclass {
         amount = Math.min(Number(item.system.quantity.value), amount)
         if (Number(item.system.quantity.value) > 0) {
             const noNeedToPay = this.noNeedToPay(target, source, price)
-            const hasPaid = noNeedToPay || DSA5Payment.payMoney(target, price, true)
+            const hasPaid = noNeedToPay || await DSA5Payment.payMoney(target, price, true)
             if (hasPaid) {
                 if (getProperty(item, "system.worn.value")) item.system.worn.value = false
 

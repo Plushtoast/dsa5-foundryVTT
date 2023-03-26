@@ -8,9 +8,14 @@ export default class AdvantageRulesDSA5 extends ItemRulesDSA5 {
         if (game.dsa5.config.addvantageRules[item.name])
             game.dsa5.config.addvantageRules[item.name](actor, item)
     }
-    static async vantageRemoved(actor, item) {
+    
+    static async vantageRemoved(actor, item, render = true) {
         if (game.dsa5.config.removevantageRules[item.name])
             game.dsa5.config.removevantageRules[item.name](actor, item)
+
+        let xpCost = AdvantageRulesDSA5.calcAPCostSum(item)
+        xpCost = await AdvantageRulesDSA5.removeSingularVantages(actor, item, xpCost)
+        await actor._updateAPs(-1 * xpCost, {}, { render })
     }
 
 
@@ -39,19 +44,22 @@ export default class AdvantageRulesDSA5 extends ItemRulesDSA5 {
         let res = actor.items.find(i => {
             return i.type == typeClass && i.name == item.name
         });
+        let xpCost
         if (res) {
             let vantage = duplicate(res)
-            let xpCost = /;/.test(vantage.system.APValue.value) ? vantage.system.APValue.value.split(';').map(x => Number(x.trim()))[vantage.system.step.value] : vantage.system.APValue.value
+            xpCost = Number(/;/.test(vantage.system.APValue.value) ? vantage.system.APValue.value.split(';').map(x => Number(x.trim()))[vantage.system.step.value] : vantage.system.APValue.value)
 
             if (vantage.system.step.value + 1 <= vantage.system.max.value && await actor.checkEnoughXP(xpCost)) {
                 vantage.system.step.value += 1
+                xpCost = this.addSingularVantages(actor, vantage, xpCost)
                 await actor._updateAPs(xpCost, {}, { render: false })
                 await actor.updateEmbeddedDocuments("Item", [vantage]);
                 await AdvantageRulesDSA5.vantageAdded(actor, vantage)
             }
-        } else if (await actor.checkEnoughXP(item.system.APValue.value.split(';').map(x => x.trim())[0])) {
+        } else if (await actor.checkEnoughXP(xpCost = Number(item.system.APValue.value.split(';').map(x => x.trim())[0]))) {
             await AdvantageRulesDSA5.vantageAdded(actor, item)
-            await actor._updateAPs(item.system.APValue.value.split(';').map(x => x.trim())[0], {}, { render: false })
+            xpCost = this.addSingularVantages(actor, item, xpCost)
+            await actor._updateAPs(xpCost, {}, { render: false })
             await actor.createEmbeddedDocuments("Item", [item]);
         }
     }
@@ -94,6 +102,37 @@ export default class AdvantageRulesDSA5 extends ItemRulesDSA5 {
             AdvantageRulesDSA5._vantageReturnFunction(actor, item, typeClass, null)
         }
     }
+
+    static addSingularVantages(actor, item, xpCost) {
+        const filter = (i, reg, item) => i.type=="disadvantage" && reg.test(i.name)
+        return AdvantageRulesDSA5._calculateSingularVantages(item, actor, xpCost, filter)
+    }
+
+    static removeSingularVantages(actor, item, xpCost) {
+        const filter = (i, reg, item) => i.type=="disadvantage" && reg.test(i.name) && i.name != item.name
+        return AdvantageRulesDSA5._calculateSingularVantages(item, actor, xpCost, filter)
+    }
+
+    static _calculateSingularVantages(item, actor, xpCost, filter, result = (itemXPCostSum, maxPaid) => Math.min(0, itemXPCostSum - maxPaid)) {
+        if(item.type != "disadvantage") return xpCost
+
+        for(const id of ["principles", "obligations"]){
+            const reg = new RegExp(`^${game.i18n.localize('LocalizedIDs.' + id)} \\\(`)
+            if (reg.test(item.name)) {
+                const shouldBeSingular = actor.items.filter((i) => filter(i, reg, item))
+                const maxPaid = Math.min(0, ...shouldBeSingular.map(x => AdvantageRulesDSA5.calcAPCostSum(x)))
+                const itemXPCostSum = AdvantageRulesDSA5.calcAPCostSum(item)
+                xpCost = result(itemXPCostSum, maxPaid)
+            }
+        }
+        return xpCost
+    }
+
+    static reduceSingularVantages(actor, item, xpCost) {
+        const filter = (i, reg, item) => i.type=="disadvantage" && reg.test(i.name) && i.name != item.name
+        const result = (itemXPCostSum, maxPaid) => { return itemXPCostSum < maxPaid ? xpCost : 0 }
+        return AdvantageRulesDSA5._calculateSingularVantages(item, actor, xpCost, filter, result)
+    }   
 
     static hasVantage(actor, talent) {
         return super.hasItem(actor, talent, ["advantage", "disadvantage"])

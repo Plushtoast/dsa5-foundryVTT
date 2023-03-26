@@ -7,21 +7,15 @@ export default class SpecialabilityRulesDSA5 extends ItemRulesDSA5 {
     static setupFunctions() {}
 
     static async abilityAdded(actor, item) {
-        if (DSA5.addAbilityRules[item.name]) {
-            DSA5.addAbilityRules[item.name](actor, item)
-        }
+        if (DSA5.addAbilityRules[item.name])
+            DSA5.addAbilityRules[item.name](actor, item)        
     }
+    
     static async abilityRemoved(actor, item, render = true) {
         if (DSA5.removeAbilityRules[item.name]) {
             DSA5.removeAbilityRules[item.name](actor, item)
         }
-        let xpCost = item.system.APValue.value * item.system.step.value
-        if (/;/.test(item.system.APValue.value)) {
-            let steps = item.system.APValue.value.split(";").map(x => Number(x.trim()))
-            xpCost = 0
-            for (let i = 0; i < item.system.step.value; i++)
-                xpCost += steps[i]
-        }
+        let xpCost = SpecialabilityRulesDSA5.calcAPCostSum(item)
         xpCost = await SpecialabilityRulesDSA5.refundFreelanguage(item, actor, xpCost, render)
         await actor._updateAPs(-1 * xpCost, {}, { render })
     }
@@ -47,7 +41,6 @@ export default class SpecialabilityRulesDSA5 extends ItemRulesDSA5 {
         let res = actor.items.find(i => {
             return i.type == typeClass && i.name == item.name
         });
-
         if (res) {
             let vantage = duplicate(res)
             let xpCost = await SpecialabilityRulesDSA5.isFreeLanguage(item, actor, /;/.test(vantage.system.APValue.value) ? vantage.system.APValue.value.split(';').map(x => Number(x.trim()))[vantage.system.step.value] : vantage.system.APValue.value, false)
@@ -127,7 +120,7 @@ export default class SpecialabilityRulesDSA5 extends ItemRulesDSA5 {
                     Yes: {
                         icon: '<i class="fa fa-check"></i>',
                         label: game.i18n.localize("yes"),
-                        callback: callback
+                        callback
                     },
                     cancel: {
                         icon: '<i class="fas fa-times"></i>',

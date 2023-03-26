@@ -2,10 +2,10 @@ import DSA5SoundEffect from "./dsa-soundeffect.js";
 import DSA5_Utility from "./utility-dsa5.js";
 
 export default class DSA5Payment {
-    static payMoney(actor, moneyString, silent = false) {
+    static async payMoney(actor, moneyString, silent = false, render = true) {
         let canPay = DSA5Payment.canPay(actor, moneyString, silent)
         if (canPay.success)
-            DSA5Payment._updateMoney(actor, canPay.actorsMoney.money, canPay.actorsMoney.sum - canPay.money)
+            await DSA5Payment._updateMoney(actor, canPay.actorsMoney.money, canPay.actorsMoney.sum - canPay.money, render)
 
         if (!silent && canPay.msg != "")
             ChatMessage.create(DSA5_Utility.chatDataSetup(`<p>${canPay.msg}</p>`, "roll"))
@@ -32,12 +32,12 @@ export default class DSA5Payment {
         return result
     }
 
-    static getMoney(actor, moneyString, silent = false) {
+    static async getMoney(actor, moneyString, silent = false, render = true) {
         let money = this._getPaidmoney(moneyString)
 
         if (money) {
             let actorsMoney = this._actorsMoney(actor)
-            DSA5Payment._updateMoney(actor, actorsMoney.money, actorsMoney.sum + money)
+            await DSA5Payment._updateMoney(actor, actorsMoney.money, actorsMoney.sum + money, render)
             let msg = `<p>${game.i18n.format("PAYMENT.getPaid", {actor: actor.name, amount: DSA5Payment._moneyToString(money)})}</p>`
             if (!silent) {
                 ChatMessage.create(DSA5_Utility.chatDataSetup(msg, "roll"))
@@ -46,7 +46,7 @@ export default class DSA5Payment {
         }
     }
 
-    static _updateMoney(actor, money, newSum) {
+    static async _updateMoney(actor, money, newSum, render = true) {
         let coins = DSA5Payment._moneyToCoins(newSum)
 
         for (let m of money) {
@@ -66,7 +66,7 @@ export default class DSA5Payment {
             }
         }
 
-        actor.updateEmbeddedDocuments("Item", money)
+        await actor.updateEmbeddedDocuments("Item", money, { render })
     }
 
     static createGetPaidChatMessage(moneyString, whisper = undefined) {
@@ -129,7 +129,7 @@ export default class DSA5Payment {
         }
     }
 
-    static handlePayAction(elem, pay, amount, actor = undefined) {
+    static async handlePayAction(elem, pay, amount, actor = undefined) {
         if (game.user.isGM && !actor) {
             ui.notifications.notify(game.i18n.localize("PAYMENT.onlyActors"))
             return
@@ -139,9 +139,9 @@ export default class DSA5Payment {
 
         let result = false
         if (actor && pay) {
-            result = DSA5Payment.payMoney(actor, amount)
+            result = await DSA5Payment.payMoney(actor, amount)
         } else if (actor && !pay) {
-            result = DSA5Payment.getMoney(actor, amount)
+            result = await DSA5Payment.getMoney(actor, amount)
         } else {
             ui.notifications.notify(game.i18n.localize("PAYMENT.onlyActors"))
         }

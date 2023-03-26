@@ -852,22 +852,12 @@ export default class ActorSheetDsa5 extends ActorSheet {
     }
 
     async _cleverDeleteItem(itemId) {
-        let item = this.actor.items.get(itemId)
-        let itemsToDelete = [itemId]
+        const item = this.actor.items.get(itemId)
+        const itemsToDelete = [itemId]
         switch (item.type) {
             case "advantage":
             case "disadvantage":
-                {
-                    await AdvantageRulesDSA5.vantageRemoved(this.actor, item)
-                    let xpCost = item.system.APValue.value * (item.system.step.value || 1)
-                    if (/;/.test(item.system.APValue.value)) {
-                        const steps = item.system.APValue.value.split(";").map(x => Number(x.trim()))
-                        xpCost = 0
-                        for (let i = 0; i < item.system.step.value; i++)
-                            xpCost += steps[i]
-                    }
-                    await this._updateAPs(-1 * xpCost, {}, { render: false })
-                }
+                await AdvantageRulesDSA5.vantageRemoved(this.actor, item, false)
                 break;
             case "specialability":
                 await SpecialabilityRulesDSA5.abilityRemoved(this.actor, item, false)
