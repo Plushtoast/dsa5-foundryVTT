@@ -178,6 +178,10 @@ If you want to discuss TDE for foundry or need some assistance you can also join
     <a href="https://www.ulissesf-shop.com/virtual-tabletops/2153/tde5-aventuria-armory-for-foundry" title="Aventurian Armory">
         <img src="https://ulisses-digital.de/R20/dsa5/modules/dsa5-armory/icons/journals/coveren.webp" alt="Aventurian Armory" style="margin-right: 5px; margin-bottom: 5px; text-align:center; width:210px;">
     </a>
+    <h2>Adventures</h2>
+    <a href="https://foundryvtt.com/packages/dsa5-introduction" title="Introduction adventure">
+        <img src="https://raw.githubusercontent.com/Plushtoast/dsa5_introduction/master/icons/journal/coveren.webp" alt="Introduction adventure" style="margin-right: 5px; margin-bottom: 5px; text-align:center; width:210px;">
+    </a>
     
 And many more... have a look at Ulisses' F-Shop
 
