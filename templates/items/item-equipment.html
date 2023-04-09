@@ -22,7 +22,11 @@
                 <label data-tooltip="UNITS.money" class="label-text table-title">{{localize "price"}}</label>
             </div>
             <div class="col fourty">
+                {{#if customPrice}}
+                <input data-tooltip="UNITS.money" class="input-text" type="number" value="{{customPrice}}" />
+                {{else}}
                 <input data-tooltip="UNITS.money" class="input-text" type="number" name="system.price.value" value="{{system.price.value}}" />
+                {{/if}}
             </div>
             <div class="col four">
                 <label data-tooltip="UNITS.weight" class="label-text table-title">{{localize "Weight"}}</label>

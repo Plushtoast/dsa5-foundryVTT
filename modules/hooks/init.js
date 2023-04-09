@@ -7,7 +7,7 @@ import * as ready from './ready.js'
 import * as chatContext from './chat_context.js'
 import * as statusEffects from './statuseffect.js'
 import * as sideBar from './sidebar.js'
-import * as configuration from './configuration.js'
+import { setupConfiguration } from './configuration.js'
 import * as journals from './journal.js'
 import * as tokenHUD from './tokenHUD.js'
 import * as migrateWorld from '../system/migrator.js'
@@ -31,6 +31,7 @@ import DPS from "../system/derepositioningsystem.js";
 import { SelectUserDialog } from "../dialog/addTargetDialog.js";
 import DSAJournalSheet from "../journal/dsa_journal_sheet.js";
 import DSA5 from "../system/config-dsa5.js";
+import DSA5SoundEffect from "../system/dsa-soundeffect.js";
 
 
 export default function() {
@@ -124,9 +125,11 @@ Hooks.once("init", () => {
 
     Hooks.call('registerDSAstyle', DSA5.styles)
 
-    configuration.default()
+    setupConfiguration()
     DPS.initDoorMinDistance()
     mergeObject(CONFIG.JournalEntry.noteIcons, DSA5.noteIcons)
+
+    DSA5SoundEffect.prepareSoundEffects()
 
     $('body').addClass(game.settings.get("dsa5", "globalStyle"))
 })

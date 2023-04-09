@@ -346,12 +346,13 @@ export default class DSA5ItemLibrary extends Application {
 
     async getCategoryItems(category, asItemData = false, asItem = false) {
         await this.buildEquipmentIndex()
+        const res = this.equipmentIndex.search(category, { field: ["itemType"] })
         if (asItemData) 
-            return (await Promise.all(this.equipmentIndex.search(category, { field: ["itemType"] }).map(x => x.getItem()))).map(x => x.toObject())
+            return (await Promise.all(res.map(x => x.getItem()))).map(x => x.toObject())
         else if(asItem)
-            return (await Promise.all(this.equipmentIndex.search(category, { field: ["itemType"] }).map(x => x.getItem())))
+            return (await Promise.all(res.map(x => x.getItem())))
 
-        return this.equipmentIndex.search(category, { field: ["itemType"] })
+        return res
     }
 
     async executeAdvancedFilter(search, index, selectSearches, textSearches, booleanSearches, rangeSearches = []) {

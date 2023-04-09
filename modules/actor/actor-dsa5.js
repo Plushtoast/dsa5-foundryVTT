@@ -1743,7 +1743,7 @@ export default class Actordsa5 extends Actor {
     
     result.result.other.push(html)
     
-    if(result.chatData){ result.chatData.other = [html] }    
+    if(result.chatData){ result.chatData.other = [html] }
   }
 
   _setupFallingHeight(options, tokenId){

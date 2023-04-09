@@ -262,7 +262,7 @@ export default class PlayerMenu extends Application {
             { navSelector: ".tabs", contentSelector: ".content", initial: "summoning" }
         ]
         mergeObject(options, {
-            classes: options.classes.concat(["dsa5", "largeDialog", "playerMenu"]),
+            classes: options.classes.concat(["dsa5", "largeDialog", "playerMenu", "sheet"]),
             width: 500,
             height: 740,
             title: game.i18n.localize("PLAYER.title"),
@@ -281,7 +281,14 @@ export default class PlayerMenu extends Application {
         let data;
         try {
             data = JSON.parse(event.dataTransfer.getData('text/plain'));
-            data = await Actor.implementation.fromDropData(data)
+            switch(data.type) {
+                case "Actor":
+                    data = await Actor.implementation.fromDropData(data)
+                    break
+                case "Item":
+                    data = await Item.implementation.fromDropData(data)
+                    break
+            }            
         } catch (err) {
             return false;
         }
@@ -306,6 +313,11 @@ export default class PlayerMenu extends Application {
                 this.actor = actor
             }
             this.render(true)
+        } else {            
+            for (let app of this.subApps) {
+                const res = await app._onDrop(data)
+                if(res === true) break
+            }
         }
     }
 

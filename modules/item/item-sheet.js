@@ -225,8 +225,14 @@ export default class ItemSheetdsa5 extends ItemSheet {
         }
         data.isOwned = this.item.actor
         data.editable = this.isEditable
-        if (data.isOwned)
+        if (data.isOwned) {
             data.canAdvance = this.item.actor.canAdvance && this._advancable()
+
+            const customPrice = getProperty(this.item, "flags.dsa5.customPriceTag")
+            if(!this.isEditable && customPrice) {
+                data.customPrice = customPrice
+            }
+        }             
 
         DSA5StatusEffects.prepareActiveEffects(this.item, data)
         data.item = this.item
@@ -1034,7 +1040,7 @@ class SpellSheetDSA5 extends ItemSheetdsa5 {
         let message = game.i18n.format("DIALOG.DeleteItemDetail", { item: item.name })
         renderTemplate('systems/dsa5/templates/dialog/delete-item-dialog.html', { message }).then(html => {
             new Dialog({
-                title: game.i18n.localize("deleteConfirmation"),
+                title: game.i18n.localize("DIALOG.deleteConfirmation"),
                 content: html,
                 buttons: {
                     Yes: {

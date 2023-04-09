@@ -642,7 +642,7 @@
         "finalizeTooltip": "Send the creation to the GM so he can place the token.",
         "request": "Summoning request",
         "requestDescr": "Confirm the summoning request to create the actor. Afterwards you can drag & drop the actor onto the map or delete it via right click. (Don't forget to clean up the summoning actor directory from time to time.)",
-        "dragActor": "No summoner active (drag and drop)",
+        "dragActor": "No actor active (drag and drop)",
         "dragConjuration": "No summoning target active (drag and drop, at least observer permissions)",
         "conjurs": "summons",
         "requestSend": "The request has been send to the game master.",
@@ -674,7 +674,8 @@
         "darkness": "Darkness",
         "sightautomationTooltip": "Sets automatically a modifier for attack and defense rolls, if the darkness exceeds the darkness threshold value.",
         "gmMenuPlaceholder": "NPC generators and similar things see module Master's Workshop",
-        "dragEveryone": "Drag all selected characters to the map"
+        "dragEveryone": "Drag all selected characters to the map",
+        "noHeros": "No characters selected. Assign characters to your players or drag actors on the master's menu."
     },
     "WIZARD": {
         "addItem": "Add {item}",
@@ -932,7 +933,8 @@
         "Trinkhorn": "Drinking horn"
     },
     "ITEMSHEET": {
-        "offHandMod": "Bonus/handicap offhand (e.g. parry weapon)"
+        "offHandMod": "Bonus/handicap offhand (e.g. parry weapon)",
+        "effectContainerHint": "Effect containers can transfer Active Effects to actors via drag and drop. This allows to prepare and add effects quickly. All effects on the container will be transferred to the actor."
     },
     "ActorConfig": {
         "autoSize": "Auto token size",
@@ -1009,6 +1011,7 @@
         "foreignSpell": "Unfamiliar tradition spells can not be modified",
         "assignCharacter": "Characters can be assigned using a right click on the player list in the bottom left corner.",
         "dragLink": "Drag & drop actor e.g. for shapeshifting and summoning",
+        "resizer": "Drag to move<br/>Mouse wheel to enlarge/decrease<br/>right mouse button for direction",
         "onlyGM": "Only visible to the gamemaster.",
         "placeTemplate": "Place Area of Effect template",
         "tokenhotbarMod": "Modifier/Value",
@@ -1196,6 +1199,7 @@
         "sharpshooter": "Sharpshooter",
         "deaf": "Deaf",
         "blind": "Blind",
+        "alchemy": "Alchemy",
         "loyalty": "Loyalty",
         "mute": "Mute",
         "riding": "Riding",
@@ -1504,6 +1508,8 @@
         "gear": "Update icons, effects and effectformula of all gear, weapons and armors. THIS WILL OVERRIDE MANUAL MODIFICATIONS!"
     },
     "DSASETTINGS": {
+        "enableMasterTokenFunctions": "Enable Master Token Functions",
+        "enableMasterTokenFunctionsHint": "Chose the game muster functions you want to be shown in the token hotbar",
         "meleeBotchTableEnabled": "Close Combat-Botch Table",
         "meleeBotchTableEnabledHint": "Instead of taking 1D6+2 DP on a botch, you can use the following table. If the combatant who botched is unarmed, add 5 to die roll results of 6 or less. (optional rule).",
         "defenseBotchTableEnabled": "Defense-Botch Table",
@@ -1575,6 +1581,8 @@
         "enableCombatFlowHint": "Activate the TDE combat tracker",
         "iniTrackerSize": "TDE combat tracker size",
         "iniTrackerSizeHint": "Size of the buttons in the TDE combat tracker.",
+        "iniTrackerCount": "DSA combat tracker count",
+        "iniTrackerCountHint": "Count of shown actors in the TDE combat tracker.",
         "enableCombatPan": "Pan to current turn",
         "enableCombatPanHint": "Pan the view to the current turn and select the token if owned.",
         "forceLanguage": "Force language",

@@ -11,6 +11,7 @@ export default class TokenHotbar2 extends Application {
         if (!game.dsa5.apps.tokenHotbar) {
             game.dsa5.apps.tokenHotbar = new TokenHotbar2()
             game.dsa5.apps.tokenHotbar.render(true)
+            Hooks.call("dsa5TokenHotbarReady", game.dsa5.apps.tokenHotbar)
         } 
     }
 
@@ -26,6 +27,16 @@ export default class TokenHotbar2 extends Application {
         this.searching = ""
         this.combatSkills = ["selfControl", "featOfStrength", "bodyControl", "perception", "loyalty"].map(x => game.i18n.localize(`LocalizedIDs.${x}`))
         this.defaultSkills = [game.i18n.localize("LocalizedIDs.perception")]
+
+        if(game.user.isGM) {
+            this.callbackFunctions = {}
+            const setting = game.settings.get("dsa5", "enableMasterTokenFunctions")
+            this.gmItems = [
+                { name: game.i18n.localize('gmMenu'), disabled: setting["masterMenu"], icon: "systems/dsa5/icons/categories/DSA-Auge.webp", id: "masterMenu", cssClass: "gm", abbrev: "", subfunction: "gm" },
+                { name: game.i18n.localize('MASTER.randomPlayer'), disabled: setting["randomVictim"], iconClass: "fa fa-dice-six", id: "randomVictim", cssClass: "gm", abbrev: "", subfunction: "gm" },
+                { name: game.i18n.localize("TT.tokenhotbarMoney"), disabled: setting["payMoney"], icon: "systems/dsa5/icons/money-D.webp", id: "payMoney", cssClass: "gm", abbrev: "", subfunction: "gm" }             
+            ]
+        }
 
         const parentUpdate = (source) => {
             const id = source.parent ? source.parent.id : undefined
@@ -70,6 +81,13 @@ export default class TokenHotbar2 extends Application {
         Hooks.on("deleteItem", (source, item) => {
             parentUpdate(source)
         });
+    }
+
+    registerMasterFunction(entry, callback) {
+        const setting = game.settings.get("dsa5", "enableMasterTokenFunctions")
+        entry.disabled = setting[entry.id]
+        this.gmItems.push(entry)
+        this.callbackFunctions[entry.id] = callback
     }
 
     async prepareSkills(){
@@ -304,6 +322,7 @@ export default class TokenHotbar2 extends Application {
                 this.handleGMRandomVictim(ev)
                 break
             default:
+                if(id in this.callbackFunctions) this.callbackFunctions[id](ev, actor, id, tokenId)
         }        
     }
 
@@ -500,13 +519,9 @@ export default class TokenHotbar2 extends Application {
         } else if(game.user.isGM && !game.settings.get("dsa5", "disableTokenhotbarMaster")){
             gmMode = true
             const skills = this.skills || await this.prepareSkills()
-            items.gm.push(
-                { name: game.i18n.localize('gmMenu'), icon: "systems/dsa5/icons/categories/DSA-Auge.webp", id: "masterMenu", cssClass: "gm", abbrev: "", subfunction: "gm" },
-                { name: game.i18n.localize('MASTER.randomPlayer'), iconClass: "fa fa-dice-six", id: "randomVictim", cssClass: "gm", abbrev: "", subfunction: "gm" },
-                { name: game.i18n.localize("TT.tokenhotbarMoney"), icon: "systems/dsa5/icons/money-D.webp", id: "payMoney", cssClass: "gm", abbrev: "", subfunction: "gm" },
-                { name: game.i18n.localize("TT.tokenhotbarSkill"), id: "skillgm", icon: "systems/dsa5/icons/categories/Skill.webp", cssClass: "skillgm filterable", abbrev: "", subfunction: "none", more: skills, subwidth: this.subWidth(skills, itemWidth, 20) },
-                
-            )
+            items.gm = this.gmItems.filter(x => !x.disabled).concat([
+                   { name: game.i18n.localize("TT.tokenhotbarSkill"), id: "skillgm", icon: "systems/dsa5/icons/categories/Skill.webp", cssClass: "skillgm filterable", abbrev: "", subfunction: "none", more: skills, subwidth: this.subWidth(skills, itemWidth, 20) },                
+            ])
         }
 
         if (this.showEffects) {
@@ -595,7 +610,7 @@ export default class TokenHotbar2 extends Application {
     }
 }
 
-class AddEffectDialog extends Dialog {
+export class AddEffectDialog extends Dialog {
     static async showDialog() {
         const effects = duplicate(CONFIG.statusEffects).map(x => {
             return {
@@ -660,11 +675,7 @@ class AddEffectDialog extends Dialog {
         }
     }
 
-    async configureEffect(ev) {
-        ev.stopPropagation()
-        const elem = $(ev.currentTarget).closest(".reactClick");
-        const id = elem.attr("data-value")
-        this.close()
+    static async modifyEffectDialog(id, callback){
         new AddEffectDialog({
             title: game.i18n.localize("CONDITION." + id),
             content: await renderTemplate('systems/dsa5/templates/dialog/configurestatusdialog.html'),
@@ -681,13 +692,21 @@ class AddEffectDialog extends Dialog {
                             mergeObject(options, RuleChaos._buildDuration(duration))
                         }
                         if (label) {
-                            options.label = label
+                            options.name = label
                         }
-                        await this.addEffect(id, options)
+                        await callback(id, options)
                     }
                 }
             }
         }).render(true, { width: 400, resizable: false, classes: ["dsa5", "dialog"] })
+    }
+
+    async configureEffect(ev) {
+        ev.stopPropagation()
+        const elem = $(ev.currentTarget).closest(".reactClick");
+        const id = elem.attr("data-value")
+        this.close()
+        AddEffectDialog.modifyEffectDialog(id, async(id, options) => this.addEffect(id, options))
     }
 
     async addEffect(id, options = {}) {

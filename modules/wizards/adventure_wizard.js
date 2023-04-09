@@ -456,7 +456,7 @@ export default class BookWizard extends Application {
         const currentChapter = await this.getChapter()
         const toc = await this.getToc()
         const index = game.settings.get("dsa5", "journalFontSizeIndex")
-        const fontSize = DSA5.journalFontSizes[index - 1] || 16;
+        const fontSize = DSA5.journalFontSizes[index - 1] || 14;
         mergeObject(data, {
             adventure: this.bookData,
             currentChapter,

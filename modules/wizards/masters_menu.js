@@ -547,7 +547,7 @@ class GameMasterMenu extends Application {
         const options = super.defaultOptions;
         options.tabs = [{ navSelector: ".tabs", contentSelector: ".content", initial: "main" }]
         mergeObject(options, {
-            classes: options.classes.concat(["dsa5", "largeDialog", "masterMenu"]),
+            classes: options.classes.concat(["dsa5", "largeDialog", "masterMenu", "sheet"]),
             width: 470,
             height: 740,
             title: game.i18n.localize("gmMenu"),

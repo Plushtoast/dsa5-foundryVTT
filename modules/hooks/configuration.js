@@ -3,13 +3,7 @@ import DSA5SoundEffect from "../system/dsa-soundeffect.js";
 import { showPatchViewer } from "../system/migrator.js"
 import TokenHotbar2 from "../system/tokenHotbar2.js";
 
-export default function() {
-    const redrawMasterMenu = () => {
-        if (game.user.isGM) {
-            game.dsa5.apps.gameMasterMenu.render()
-        }
-    }
-
+export function setupConfiguration() {
     game.settings.register("dsa5", "meleeBotchTableEnabled", {
         name: "DSASETTINGS.meleeBotchTableEnabled",
         hint: "DSASETTINGS.meleeBotchTableEnabledHint",
@@ -248,7 +242,24 @@ export default function() {
             step: 5
         },
         onChange: async(val) => {
-            if(game.dsa5.apps.tokenHotbar) game.dsa5.apps.tokenHotbar.constructor.defaultOptions.itemWidth = val
+            if(game.dsa5.apps.initTracker) game.dsa5.apps.initTracker.constructor.defaultOptions.itemWidth = val
+        }
+    });
+
+    game.settings.register("dsa5", "iniTrackerCount", {
+        name: "DSASETTINGS.iniTrackerCount",
+        hint: "DSASETTINGS.iniTrackerCountHint",
+        scope: "client",
+        config: true,
+        default: 5,
+        type: Number,
+        range: {
+            min: 3,
+            max: 25,
+            step: 1
+        },
+        onChange: async(val) => {
+            if(game.dsa5.apps.initTracker) game.dsa5.apps.initTracker.constructor.defaultOptions.actorCount = val
         }
     });
 
@@ -395,7 +406,9 @@ export default function() {
         config: false,
         default: "0/0",
         type: String,
-        onChange: async() => { redrawMasterMenu() }
+        onChange: async() => { 
+            if (game.user.isGM) game.dsa5.apps.gameMasterMenu.render()
+        }
     });
 
     game.settings.register("dsa5", "expandChatModifierlist", {
@@ -590,6 +603,14 @@ export default function() {
         type: Object
     });
 
+    game.settings.register("dsa5", "enableMasterTokenFunctions", {
+        name: "enableMasterTokenFunctions",
+        scope: "world",
+        config: false,
+        default: {},
+        type: Object
+    });
+
     game.settings.register("dsa5", "selectedActors", {
         name: "selectedActors",
         scope: "world",
@@ -706,6 +727,17 @@ class ConfigureTokenHotbar extends FormApplication {
             await game.settings.set(name[0], name[1], val)
             game.dsa5.apps.tokenHotbar?.render(true)
         })
+        html.find('.bags .slot').click(ev => this._onMasterFunctionClicked(ev))
+    }
+
+    async _onMasterFunctionClicked(ev) {
+        const id = ev.currentTarget.dataset.id
+        const setting = game.settings.get("dsa5", "enableMasterTokenFunctions")
+        setting[id] = !setting[id]
+        await game.settings.set("dsa5", "enableMasterTokenFunctions", setting)
+        $(ev.currentTarget).toggleClass("deactivated", setting[id])
+        game.dsa5.apps.tokenHotbar.gmItems.find(x => x.id == id).disabled = setting[id]
+        game.dsa5.apps.tokenHotbar?.render(true)
     }
 
     async getData(options){
@@ -715,7 +747,8 @@ class ConfigureTokenHotbar extends FormApplication {
             tokenhotbarLayout: game.settings.get("dsa5", "tokenhotbarLayout"),
             disableTokenhotbarMaster: game.settings.get("dsa5", "disableTokenhotbarMaster"),
             disableTokenhotbar: game.settings.get("dsa5", "disableTokenhotbar"),
-            isGM: game.user.isGM
+            isGM: game.user.isGM,
+            gmButtons: game.dsa5.apps.tokenHotbar.gmItems
         })
         return data
     }

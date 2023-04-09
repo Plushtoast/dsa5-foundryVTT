@@ -15,6 +15,7 @@ import { bindImgToCanvasDragStart } from "../hooks/imgTileDrop.js";
 import DSA5ChatAutoCompletion from "../system/chat_autocompletion.js";
 import Riding from "../system/riding.js";
 import ForeignFieldEditor from "../system/foreignFieldEditor.js"
+import { AddEffectDialog } from "../system/tokenHotbar2.js";
 
 export default class ActorSheetDsa5 extends ActorSheet {
     get actorType() {
@@ -559,9 +560,9 @@ export default class ActorSheetDsa5 extends ActorSheet {
             });
         })
 
-        html.find('.filterTalents').click(event => {
-            $(event.currentTarget).closest('.content').find('.allTalents').toggleClass('showAll')
-            $(event.currentTarget).toggleClass("filtered")
+        html.find('.filterTalents').click(ev => {
+            $(ev.currentTarget).closest('.content').find('.allTalents').toggleClass('showAll')
+            $(ev.currentTarget).toggleClass("filtered")
         })
 
         html.find('.charimg').mousedown(ev => {
@@ -669,12 +670,18 @@ export default class ActorSheetDsa5 extends ActorSheet {
             this.actor.updateEmbeddedDocuments("Item", [item]);
         });
 
-        html.find(".status-add").click(async(ev) => {
+        html.find(".status-add").mousedown(async(ev) => {
             let status = ev.currentTarget.dataset.id
             if (status == "custom") {
                 DSA5StatusEffects.createCustomEffect(this.actor)
-            } else
-                await this.actor.addCondition(status, 1, false, false)
+            } else {
+                if (ev.button == 0){
+                    await this.actor.addCondition(status, 1, false, false)
+                }
+                else if (ev.button == 2){
+                    AddEffectDialog.modifyEffectDialog(status, async(id, options) => this.actor.addTimedCondition(id, 1, false, false, options))
+                }
+            }
         })
 
         html.find('.money-change').change(async ev => {
@@ -830,7 +837,7 @@ export default class ActorSheetDsa5 extends ActorSheet {
         const content = await renderTemplate('systems/dsa5/templates/dialog/delete-item-dialog.html', { message })
         await new Promise((resolve, reject) => {
             new Dialog({
-            title: game.i18n.localize("deleteConfirmation"),
+            title: game.i18n.localize("DIALOG.deleteConfirmation"),
             content,
             buttons: {
                 Yes: {
@@ -987,7 +994,7 @@ export default class ActorSheetDsa5 extends ActorSheet {
         }
     }
 
-    async _addLoot(item) {
+    async _addLoot(item) {        
         item = duplicate(item)
         let res = this.actor.items.find(i => Itemdsa5.areEquals(item, i));
         if (!res) {
@@ -1131,7 +1138,7 @@ export default class ActorSheetDsa5 extends ActorSheet {
                     let elem = lookup.find(x => x.name == thing.name && x.type == thing.type)
                     if(elem){
                         elem.system.quantity.value = thing.count
-                        if (thing.qs && thing.type == "equipment") elem.system.QL = thing.qs
+                        if (thing.qs && thing.type == "consumable") elem.system.QL = thing.qs
                     }else{
                         ui.notifications.warn(game.i18n.format('DSAError.notFound', {category: thing.type, name: thing.name}))    
                     }
@@ -1140,9 +1147,9 @@ export default class ActorSheetDsa5 extends ActorSheet {
             }
             //we should improve that so it stacks items
             await this.actor.createEmbeddedDocuments("Item", lookup)
-                //for (let thing of lookup) {
-                //    await this._manageDragItems(thing, thing.type)
-                //}
+            //for (let thing of lookup) {
+            //    await this._manageDragItems(thing, thing.type)
+            //}
         } else {
             ui.notifications.error(game.i18n.format("DSAError.notFound", { category: thing.type, name: thing.name }))
         }

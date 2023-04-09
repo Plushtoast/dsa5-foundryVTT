@@ -60,13 +60,19 @@
     {{#if isGM}}
     <div class="form-group" data-setting-id="dsa5.disableTokenhotbarMaster">
         <label>{{localize 'DSASETTINGS.disableTokenhotbarMaster'}}</label>
-        <div class="form-fields">
-    
-            <input type="checkbox" name="dsa5.disableTokenhotbarMaster" data-dtype="Boolean" {{checked disableTokenhotbarMaster}}>
-    
-        </div>
-    
+        <div class="form-fields">    
+            <input type="checkbox" name="dsa5.disableTokenhotbarMaster" data-dtype="Boolean" {{checked disableTokenhotbarMaster}}>    
+        </div>    
         <p class="notes">{{localize 'DSASETTINGS.disableTokenhotbarMasterHint'}}</p>
     </div>
+    <label>{{localize 'DSASETTINGS.enableMasterTokenFunctions'}}</label>
+    <div class="bags row-section wrap" style="font-size: 45px;line-height: 50px;text-align: center;">
+        {{#each gmButtons as |item i|}}
+        <div class="slot {{#if item.disabled}}deactivated{{/if}}" data-id="{{item.id}}" data-tooltip="{{item.name}}">
+            <div class="{{item.iconClass}}" style="background-image:url('{{item.icon}}')"></div>
+        </div>
+        {{/each}}
+    </div>
+    <p class="notes">{{localize 'DSASETTINGS.enableMasterTokenFunctionsHint'}}</p>
     {{/if}}
 </form>

@@ -20,10 +20,9 @@ import DSA5 from "../system/config-dsa5.js";
 
 export default function() {
     Hooks.on("ready", async() => {
-        Hooks.on("hotReload", (obj) => {
-
+        /*Hooks.on("hotReload", (obj) => {
             console.log("hot reload", obj)
-        })
+        })*/
 
         game.socket.on("system.dsa5", data => {
             switch (data.type) {

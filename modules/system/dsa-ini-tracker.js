@@ -9,10 +9,11 @@ export default class DSAIniTracker extends Application {
             dragDrop: [{ dragSelector: ".iniItem", dropSelector: [".iniTrackerList"] }],
             top: 100,
             left: 170,
-            title: "DSAIniTracker"
+            title: "DSAIniTracker",
+            itemWidth: game.settings.get("dsa5", "iniTrackerSize"),
+            actorCount: game.settings.get("dsa5", "iniTrackerCount"),
+            position: game.settings.get("dsa5", "iniTrackerPosition")
         });
-        const position = game.settings.get("dsa5", "iniTrackerPosition")
-        mergeObject(options, position)
         return options;
     }
 
@@ -56,7 +57,8 @@ export default class DSAIniTracker extends Application {
 
     async getData(options) {
         const data = this.combatData
-        let itemWidth = game.settings.get("dsa5", "iniTrackerSize")
+        const itemWidth = DSAIniTracker.defaultOptions.itemWidth
+        const actorCount = DSAIniTracker.defaultOptions.actorCount
 
         const combatStarted = data.round
         const turnsToUse = data.turns
@@ -70,13 +72,13 @@ export default class DSAIniTracker extends Application {
         if (turnsToUse.length) {
             const filteredTurns = []
 
-            let toAdd = 5
+            let toAdd = actorCount
             let started = false
             let startIndex = -1
             let index = 0
             let loops = 0
             let currentRound
-            while (!(toAdd == 0 || loops == 5)) {
+            while (!(toAdd == 0 || loops == actorCount)) {
                 const turn = duplicate(turnsToUse[index])
                 const combatant = data.combat.combatants.get(turn.id)
                 if (started && (index == startIndex)) turn.css = turn.css.replace("active", "")
@@ -110,7 +112,7 @@ export default class DSAIniTracker extends Application {
         }
         //if(!data.round) itemWidth = 20
         
-        this.position.width = itemWidth * 5 + 95
+        this.position.width = itemWidth * actorCount + actorCount * 3 + 80
         this.position.height = itemWidth + 10
 
         mergeObject(data, {
@@ -173,6 +175,11 @@ export default class DSAIniTracker extends Application {
             ev.preventDefault()
             await this._onWheelResize(ev)
             return false
+        })
+
+        html.find('.toggleTracker').click(() => {
+            const tabApp = ui.combat
+            tabApp.renderPopout(tabApp);
         })
 
         html.find('.combat-control').click(ev => this._onCombatControl(ev))

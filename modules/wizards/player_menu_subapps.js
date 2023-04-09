@@ -26,7 +26,13 @@ export class PlayerMenuSubApp {
         await game.dsa5.apps.playerMenu.render(true)
     }
 
+    async activateTab() {
+        await game.dsa5.apps.playerMenu.activateTab(game.i18n.localize(`PLAYER.${this.constructor.name}`))
+    }
+
     get actor() {
         return game.dsa5.apps.playerMenu.actor
     }
+
+    async _onDrop(data){}
 }

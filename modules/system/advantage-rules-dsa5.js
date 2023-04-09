@@ -31,7 +31,7 @@ export default class AdvantageRulesDSA5 extends ItemRulesDSA5 {
 
         //Different Apval for multiple same vantages
         if (/,/.test(item.system.APValue.value)) {
-            let name = item.name.replace(' ()', '')
+            const name = item.name.replace(' ()', '')
             item.system.APValue.value = item.system.APValue.value.split(",")[actor.items.filter(x => x.type == item.type && x.name.includes(name)).length].trim()
         }
 

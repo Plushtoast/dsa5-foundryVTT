@@ -2165,9 +2165,17 @@
     }
   }
   
-  #combat-popout .aggroButton {
-    left: -1px;
-  }
+  #combat-popout{
+    &.combat-sidebar li.combatant{
+      .token-initiative .initiative,.token-name{
+        text-shadow: none;
+      }
+    }
+
+    .aggroButton {
+      left: -1px;
+    }
+  } 
   
   .effect-change {
     .key input {
@@ -2927,7 +2935,9 @@
     background-color: antiquewhite;
     border-radius: 5px;
     cursor: pointer;
-  
+    &.deactivated{
+      opacity: 0.5;
+    }
     &:hover {
       border-color: rgb(10, 89, 194);
     }
@@ -3536,7 +3546,7 @@
     &.maskfield{
       background-image: url('../../icons/backgrounds/blackbook.webp'), url('../../icons/backgrounds/maskfield.webp');
       background-size: 250px 30px,100% calc(100% - 25px);
-      background-position: center calc(100% - 6px),center top;
+      background-position: center calc(100% - 10px),center top;
     }
     .postContentChat{
       cursor: pointer;

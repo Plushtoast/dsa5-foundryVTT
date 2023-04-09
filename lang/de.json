@@ -155,7 +155,7 @@
         "bags": "Behältnis",
         "wealth": "Wertsachen",
         "writing": "Schreibwaren",
-        "alchemy": "Alchemie",
+        "alchemy": "Alchimie",
         "service": "Dienstleistungen",
         "luxus": "Genussmittel und Luxus",
         "armor": "Rüstung",
@@ -597,7 +597,7 @@
         "finalizeTooltip": "Die Kreation an den Spielleiter schicken, dass er den Token platzieren kann.",
         "request": "Beschwörungsanfrage",
         "requestDescr": "Bestätige die Anfrage um die Beschwörung als Akteur anzulegen. Danach kann die Beschwörung per Drag and Drop auf die Karte gezogen oder mit einem Rechtsclick gelöscht werden (ab und an auch mal den Beschwörungsordner bei den Akteuren aufräumen!).",
-        "dragActor": "Kein Beschwörer aktiv (drag and drop)",
+        "dragActor": "Kein Akteur aktiv (drag and drop)",
         "dragConjuration": "Keine Beschwörung aktiv (drag and drop, mindestens Observerrechte)",
         "conjurs": "beschwört",
         "requestSend": "Die Anfrage wurde an den Spielleiter geschickt.",
@@ -629,7 +629,8 @@
         "darkness": "Dunkelheit",
         "sightautomationTooltip": "Setzt bei Angriffs- und Verteidigungswürfen automatisch einen Modifikator, wenn der Dunkelheitswert die entsprechende Schwelle überschreitet.",
         "gmMenuPlaceholder": "NSC Generatoren u.ä. siehe Werkstatt des Meisters Modul",
-        "dragEveryone": "Ziehe alle markierten Charaktere auf die Map"
+        "dragEveryone": "Ziehe alle markierten Charaktere auf die Map",
+        "noHeros": "Keine Helden ausgewählt. Weise deinen Spielern Helden zu oder ziehe wichtige Charaktere per Drag and Drop auf das Meistermenü."
     },
     "MODS": {
         "partChecks": "Teilprobenmodifikator",
@@ -938,7 +939,8 @@
         "Trinkhorn": "Trinkhorn"
     },
     "ITEMSHEET": {
-        "offHandMod": "Bonus/Malus als Nebenhand (z.b. Parierwaffe)"
+        "offHandMod": "Bonus/Malus als Nebenhand (z.b. Parierwaffe)",
+        "effectContainerHint": "Effektcontainer können Active Effects per Drag and Drop auf Akteure übertragen. Dadurch können Effekte vorbereitet und bei Bedarf schnell hinzugefügt werden. Alle Effekte im Container werden übertragen."
     },
     "ActorConfig": {
         "autoSize": "Automatische Tokengröße",
@@ -1250,6 +1252,7 @@
         "blind": "Blind",
         "loyalty": "Loyalität",
         "mute": "Stumm",
+        "alchemy": "Alchimie",
         "riding": "Reiten",
         "ruggedFighter": "Zäher Hund",
         "sensitiveToPain": "Zerbrechlich",
@@ -1534,6 +1537,8 @@
         "2": "2 Aktionen zielen"
     },
     "DSASETTINGS": {
+        "enableMasterTokenFunctions": "Meisterfunktionen",
+        "enableMasterTokenFunctionsHint": "Wähle die Meisterfunktionen die du in der Tokenhotbar angezeigt haben möchtest.",
         "meleeBotchTableEnabled": "Nahkampf-Patzertabelle",
         "meleeBotchTableEnabledHint": "Anstatt 1W6+2 SP bei einem Patzer, kann auch diese Tabelle benutzt werden (optionale Regel).",
         "defenseBotchTableEnabled": "Verteidigungs-Patzertabelle",
@@ -1605,6 +1610,8 @@
         "enableCombatFlowHint": "Aktiviere den DSA Kampftracker",
         "iniTrackerSize": "DSA Kampftracker Größe",
         "iniTrackerSizeHint": "Größe der Buttons im DSA Kampftracker",
+        "iniTrackerCount": "DSA Kampftracker Anzahl",
+        "iniTrackerCountHint": "Anzahl der angezeigten Akteure im Kampftracker",
         "enableCombatPan": "Schwenke zu aktuellem Zug",
         "enableCombatPanHint": "Schwenke die Sicht auf den aktuellen Zug und selektiere den Token sofern Besitzerrechte vorhanden.",
         "forceLanguage": "Sprache erzwingen",

@@ -1,8 +1,8 @@
 <div style="--iniTrackerSize:{{itemWidth}}px">
     <div class="row-section">
         <div class="controls right">
-            {{#if (and user.isGM round)}}
-            <a class="combat-control" data-tooltip="COMBAT.RollNPC" data-control="rollNPC" {{#unless turns}}disabled{{/unless}}><i class="fas fa-users-cog"></i></a>
+            <a class="toggleTracker" data-tooltip="DOCUMENT.Combats"><i class="fas fa-swords"></i></a>
+            {{#if (and user.isGM round)}}            
             <a class="combat-control" data-tooltip="COMBAT.RoundPrev" data-control="previousRound"><i class="fas fa-step-backward"></i></a>
             <a class="combat-control" data-tooltip="COMBAT.TurnPrev" data-control="previousTurn"><i class="fas fa-2x fa-arrow-left"></i></a> {{else if control}}
             <a class="combat-control" data-tooltip="COMBAT.TurnPrev" data-control="previousTurn"><i class="fas fa-2x fa-arrow-left"></i></a> {{/if}}

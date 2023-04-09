@@ -9,8 +9,18 @@
             <a class="item" data-tab="effects">{{localize "statuseffects"}}</a>
         </nav>
     </div>
-
+    {{#unless enrichedDescription}}
+    <div class="row-section" style="color:#5d6266">
+        <div class="col five row-section centerCell center">
+            <i class="fas fa-2x col fa-info center"></i>
+        </div>
+        <div class="col eighty">
+            {{localize 'ITEMSHEET.effectContainerHint'}}
+        </div>
+    </div>    
+    {{/unless}}
     <section class="content">
-        {{> systems/dsa5/templates/items/item-description.html}} {{> systems/dsa5/templates/items/item-effects.html}}
+        {{> systems/dsa5/templates/items/item-description.html}} 
+        {{> systems/dsa5/templates/items/item-effects.html}}
     </section>
 </form>

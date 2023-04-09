@@ -113,7 +113,7 @@
     ],
     "background": "systems/dsa5/icons/githublogo.webp",
     "socket": true,
-    "initiative": "@status.initiative.value + @status.initiative.die + @status.initiative.diemodifier",
+    "initiative": "@status.initiative.value + @status.initiative.die + @status.initiative.diemodifier + (1d99 * 0.0001)",
     "gridDistance": 1,
     "gridUnits": "Schritt",
     "primaryTokenAttribute": "status.wounds",

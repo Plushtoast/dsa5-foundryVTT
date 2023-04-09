@@ -65,7 +65,7 @@ export class DSA5CombatTracker extends CombatTracker {
                 if (combatant.token.overlayEffect) turn.effects.add(combatant.token.overlayEffect);
             }
             if (combatant.actor) combatant.actor.temporaryEffects.forEach(e => {
-                if (e.getFlag("core", "statusId") === CONFIG.Combat.defeatedStatusId) turn.defeated = true;
+                if (e.statuses.has(CONFIG.Combat.defeatedStatusId)) turn.defeated = true;
                 else if (e.icon && isAllowedToSeeEffects && !e.notApplicable && (game.user.isGM || !e.getFlag("dsa5", "hidePlayers")) && !e.getFlag("dsa5", "hideOnToken")) turn.effects.add(e.icon);
             })
         }
@@ -197,7 +197,7 @@ class RepeatingEffectsHelper {
                 for (let x of turn.actor.effects) {
                     if(x.disabled) continue
                     
-                    const statusId = x.getFlag("core", "statusId")
+                    const statusId = [...x.statuses][0]
                     if (statusId == "bleeding") await this.applyBleeding(turn, combat)
                     else if (statusId == "burning") await this.applyBurning(turn, x, combat)
                 }
