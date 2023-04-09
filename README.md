@@ -141,6 +141,9 @@ If you want to discuss TDE for foundry or need some assistance you can also join
         <a href="https://www.f-shop.de/virtual-tabletops/das-schwarze-auge-vtt/abenteuer-module/2388/dsa5-mitsommerrache-fuer-foundry" title="Mittsommerrache">
             <img src="https://ulisses-digital.de/R20/dsa5/modules/dsa5-mittsommerrache/icons/journal/coverde.webp" alt="Mittsommerrache" style="margin-right: 5px; margin-bottom: 5px; text-align:center; width:210px;">
         </a>
+        <a href="https://www.f-shop.de/detail/index/sArticle/3456">
+            <img src="https://www.f-shop.de/media/image/c2/7d/f1/ESD033_0_0999.jpg" alt="Klingen der Nacht" style="margin-right: 5px; margin-bottom: 5px; text-align:center; width:210px;">
+        </a>
         <h2>Regionalspielhilfen</h2>
         <a href="https://www.f-shop.de/virtual-tabletops/das-schwarze-auge-vtt/regel-module/2684/dsa5-sonnenkueste-bundle-fuer-foundry-vtt" title="Die Sonnenküste">
             <img src="https://ulisses-digital.de/R20/dsa5/modules/dsa5-suncoast/icons/journal/coverde.webp" alt="Die Sonnenküste" style="margin-right: 5px; margin-bottom: 5px; text-align:center; width:210px;">
