@@ -120,6 +120,9 @@ If you want to discuss TDE for foundry or need some assistance you can also join
             <img src="https://ulisses-digital.de/R20/dsa5/modules/dsa5-studyroom/icons/journal/coverde.webp" alt="Studierstube der Gildenmagie" style="margin-right: 5px; margin-bottom: 5px; text-align:center; width:210px;">
         </a>
         <h2>Abenteuer</h2>
+        <a href="https://foundryvtt.com/packages/dsa5-introduction" title="Einführungsabenteuer">
+            <img src="https://raw.githubusercontent.com/Plushtoast/dsa5_introduction/master/icons/journal/coverde.webp" alt="Einführungsabenteuer" style="margin-right: 5px; margin-bottom: 5px; text-align:center; width:210px;">
+        </a>
         <a href="https://www.f-shop.de/virtual-tabletops/das-schwarze-auge-vtt/abenteuer-module/2640/dsa5-rabenkrieg-1-kampagne-fuer-foundry-vtt" title="Rabenkrieg I - Die Zähne des Kaimans">
             <img src="https://ulisses-digital.de/R20/dsa5/modules/dsa5-rabenkrieg1/icons/journal/coverde.webp" alt="Rabenkrieg I - Die Zähne des Kaimans" style="margin-right: 5px; margin-bottom: 5px; text-align:center; width:210px;">
         </a>
