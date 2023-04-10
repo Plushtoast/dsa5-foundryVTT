@@ -10,6 +10,7 @@ import OnUseEffect from "../system/onUseEffects.js"
 import RuleChaos from "../system/rule_chaos.js"
 import { ItemSheetObfuscation } from "./obfuscatemixin.js"
 import AdvantageRulesDSA5 from "../system/advantage-rules-dsa5.js"
+import OpposedDsa5 from "../system/opposed-dsa5.js"
 
 export default class ItemSheetdsa5 extends ItemSheet {
     _getSubmitData(updateData = {}) {
@@ -54,10 +55,11 @@ export default class ItemSheetdsa5 extends ItemSheet {
         Items.registerSheet("dsa5", MagicalSignSheet, { makeDefault: true, types: ["magicalsign"] });
         Items.registerSheet("dsa5", PatronSheet, { makeDefault: true, types: ["patron"] });
         Items.registerSheet("dsa5", InformationSheet, { makeDefault: true, types: ["information"] });
+        Items.registerSheet("dsa5", AggregatedTestSheet, { makeDefault: true, types: ["aggregatedTest"] });
 
         Items.unregisterSheet("dsa5", ItemSheetdsa5, {
             types: [
-                "armor", "equipment", "rangeweapon", "blessing", "magictrick", "spellextension", "consumable",
+                "armor", "equipment", "rangeweapon", "blessing", "magictrick", "spellextension", "consumable", "aggregatedTest",
                 "species", "career", "culture", "advantage", "specialability", "disadvantage", "ritual", "information",
                 "ceremony", "liturgy", "spell", "disease", "poison", "meleeweapon", "ammunition", "plant", "magicalsign", "patron"
             ]
@@ -154,6 +156,8 @@ export default class ItemSheetdsa5 extends ItemSheet {
             }
         })
 
+        html.find('.select2').select2()
+
         html.find(".condition-toggle").mousedown(ev => {
             let condKey = $(ev.currentTarget).parents(".statusEffect").attr("data-id")
             let ef = this.item.effects.get(condKey)
@@ -219,9 +223,6 @@ export default class ItemSheetdsa5 extends ItemSheet {
                 data["traitCategories"] = DSA5.traitCategories
                 data['ranges'] = DSA5.meleeRanges;
                 break
-            case "aggregatedTest":
-                data["allSkills"] = await DSA5_Utility.allSkillsList()
-                break
         }
         data.isOwned = this.item.actor
         data.editable = this.isEditable
@@ -238,13 +239,53 @@ export default class ItemSheetdsa5 extends ItemSheet {
         data.item = this.item
         data.armorAndWeaponDamage = game.settings.get("dsa5", "armorAndWeaponDamage")
         data.isGM = game.user.isGM
-        data.enrichedDescription = await TextEditor.enrichHTML(getProperty(this.item.system, "description.value"), {secrets: true, async: true})
-        data.enrichedGmdescription = await TextEditor.enrichHTML(getProperty(this.item.system, "gmdescription.value"), {secrets: true, async: true})
+        data.enrichedDescription = await TextEditor.enrichHTML(getProperty(this.item.system, "description.value"), {secrets: this.object.isOwner, async: true})
+        data.enrichedGmdescription = await TextEditor.enrichHTML(getProperty(this.item.system, "gmdescription.value"), {secrets: this.object.isOwner, async: true})
         return data;
     }
 
     _advancable() {
         return false
+    }
+}
+
+class AggregatedTestSheet extends ItemSheetdsa5 {
+    async getData(options) {
+        const data = await super.getData(options)
+        const embeddedItem = this.item.getFlag("dsa5", "embeddedItem")
+        let renderedItem
+        if(embeddedItem) renderedItem = await renderTemplate(`systems/dsa5/templates/items/browse/${embeddedItem.type}.html`, { document: embeddedItem})
+        mergeObject(data, {
+            allSkills: await DSA5_Utility.allSkillsList(),
+            embeddedItem,
+            renderedItem
+        })
+        return data
+    }
+
+    activateListeners(html) {
+        super.activateListeners(html)
+        
+        html.find('.buildItem').click(async() => this.postFinishedItem())
+    }
+
+    async postFinishedItem() {
+        if(!this.item.actor) return
+
+        const resultItem = this.item.getFlag("dsa5", "embeddedItem")
+
+        if(!resultItem) return 
+        
+        const template = await renderTemplate("systems/dsa5/templates/chat/production-result.html", {
+            actor: this.item.actor,
+            item: resultItem,
+            actorImg: OpposedDsa5.videoOrImgTag(this.item.actor.img)
+        })
+        const chatData = DSA5_Utility.chatDataSetup(template)
+        chatData.flags = {
+            dsa5: { embeddedItem: resultItem }
+        }
+        await ChatMessage.create(chatData)
     }
 }
 
@@ -638,9 +679,9 @@ class PlantSheet extends ItemSheetObfuscation(ItemSheetdsa5) {
     async getData(options) {
         const data = await super.getData(options);
         data.attributes = Object.keys(data.system.planttype).map(x => { return { name: x, checked: data.system.planttype[x] } })
-        data.enrichedEffect = await TextEditor.enrichHTML(getProperty(this.item.system, "effect"), {secrets: true, async: true})
-        data.enrichedRecipes = await TextEditor.enrichHTML(getProperty(this.item.system, "recipes"), {secrets: true, async: true})
-        data.enrichedInformation = await TextEditor.enrichHTML(getProperty(this.item.system, "infos"), {secrets: true, async: true})
+        data.enrichedEffect = await TextEditor.enrichHTML(getProperty(this.item.system, "effect"), {secrets: this.object.isOwner, async: true})
+        data.enrichedRecipes = await TextEditor.enrichHTML(getProperty(this.item.system, "recipes"), {secrets: this.object.isOwner, async: true})
+        data.enrichedInformation = await TextEditor.enrichHTML(getProperty(this.item.system, "infos"), {secrets: this.object.isOwner, async: true})
 
         return data
     }
@@ -762,7 +803,7 @@ class ItemCareerDSA5 extends ItemSheetdsa5 {
         chars["-"] = "-"
         data["mageLevels"] = DSA5.mageLevels
         data['guidevalues'] = chars;
-        data.enrichedClothing = await TextEditor.enrichHTML(getProperty(this.item.system, "clothing.value"), {secrets: true, async: true})
+        data.enrichedClothing = await TextEditor.enrichHTML(getProperty(this.item.system, "clothing.value"), {secrets: this.object.isOwner, async: true})
         return data
     }
 }
@@ -794,7 +835,7 @@ class ConsumableSheetDSA5 extends ItemSheetObfuscation(ItemSheetdsa5) {
         data["availableSteps"] = data.system.QLList.split("\n").map((x, i) => i + 1)
         data['equipmentTypes'] = DSA5.equipmentTypes;
 
-        data.enrichedIngredients = await TextEditor.enrichHTML(getProperty(this.item.system, "ingredients"), {secrets: true, async: true})
+        data.enrichedIngredients = await TextEditor.enrichHTML(getProperty(this.item.system, "ingredients"), {secrets: this.object.isOwner, async: true})
         return data
     }
     setupEffect(ev) {
@@ -814,7 +855,7 @@ class ItemCultureDSA5 extends ItemSheetdsa5 {
 
     async getData(options) {
         const data = await super.getData(options);
-        data.enrichedClothing = await TextEditor.enrichHTML(getProperty(this.item.system, "clothing.value"), {secrets: true, async: true})
+        data.enrichedClothing = await TextEditor.enrichHTML(getProperty(this.item.system, "clothing.value"), {secrets: this.object.isOwner, async: true})
         return data
     }
 }

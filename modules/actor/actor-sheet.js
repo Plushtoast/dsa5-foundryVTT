@@ -130,10 +130,10 @@ export default class ActorSheetDsa5 extends ActorSheet {
         sheetData["initDies"] = { "": "-", "1d6": "1d6", "2d6": "2d6", "3d6": "3d6", "4d6": "4d6" }
         sheetData.horseSpeeds = Object.keys(Riding.speedKeys)
         DSA5StatusEffects.prepareActiveEffects(this.actor, sheetData)
-        sheetData.enrichedOwnerdescription = await TextEditor.enrichHTML(getProperty(this.actor.system, "details.notes.ownerdescription"), {secrets: true, async: true})
-        sheetData.enrichedGmdescription = await TextEditor.enrichHTML(getProperty(this.actor.system, "details.notes.gmdescription"), {secrets: true, async: true})
-        sheetData.enrichedNotes = await TextEditor.enrichHTML(getProperty(this.actor.system, "details.notes.value"), {secrets: true, async: true})
-        sheetData.enrichedBiography = await TextEditor.enrichHTML(getProperty(this.actor.system, "details.biography.value"), {secrets: true, async: true})
+        sheetData.enrichedOwnerdescription = await TextEditor.enrichHTML(getProperty(this.actor.system, "details.notes.ownerdescription"), {secrets: this.object.isOwner, async: true})
+        sheetData.enrichedGmdescription = await TextEditor.enrichHTML(getProperty(this.actor.system, "details.notes.gmdescription"), {secrets: this.object.isOwner, async: true})
+        sheetData.enrichedNotes = await TextEditor.enrichHTML(getProperty(this.actor.system, "details.notes.value"), {secrets: this.object.isOwner, async: true})
+        sheetData.enrichedBiography = await TextEditor.enrichHTML(getProperty(this.actor.system, "details.biography.value"), {secrets: this.object.isOwner, async: true})
 
         return sheetData;
     }
@@ -163,7 +163,8 @@ export default class ActorSheetDsa5 extends ActorSheet {
     _handleAggregatedProbe(ev) {
         const itemId = this._getItemId(ev);
         let aggregated = this.actor.items.get(itemId).toObject()
-        let skill = this.actor.items.find(i => i.name == aggregated.system.talent.value && i.type == "skill")
+        const attr = aggregated.system.talent[`value${ev.currentTarget.dataset.which}`]
+        let skill = this.actor.items.find(i => i.name == attr && i.type == "skill")
         let infoMsg = `<h3 class="center"><b>${game.i18n.localize("TYPES.Item.aggregatedTest")}</b></h3>`
         if (aggregated.system.usedTestCount.value >= aggregated.system.allowedTestCount.value) {
             infoMsg += `${game.i18n.localize("Aggregated.noMoreAllowed")}`;
@@ -183,9 +184,14 @@ export default class ActorSheetDsa5 extends ActorSheet {
                         aggregated.system.previousFailedTests.value += 1
                     }
                     aggregated.system.usedTestCount.value += 1
-                    this.actor.updateEmbeddedDocuments("Item", [aggregated]).then(x =>
-                        this.actor.items.get(itemId).postItem()
-                    )
+                    this.actor.updateEmbeddedDocuments("Item", [aggregated]).then(() => {
+                        const updated = this.actor.items.get(itemId)
+                        updated.postItem()
+
+                        if(aggregated.system.cummulatedQS.value >= 10){
+                            updated.sheet.postFinishedItem()
+                        }
+                    })
                 })
             });
         }

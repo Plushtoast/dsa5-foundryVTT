@@ -32,9 +32,9 @@ export default class TokenHotbar2 extends Application {
             this.callbackFunctions = {}
             const setting = game.settings.get("dsa5", "enableMasterTokenFunctions")
             this.gmItems = [
-                { name: game.i18n.localize('gmMenu'), disabled: setting["masterMenu"], icon: "systems/dsa5/icons/categories/DSA-Auge.webp", id: "masterMenu", cssClass: "gm", abbrev: "", subfunction: "gm" },
-                { name: game.i18n.localize('MASTER.randomPlayer'), disabled: setting["randomVictim"], iconClass: "fa fa-dice-six", id: "randomVictim", cssClass: "gm", abbrev: "", subfunction: "gm" },
-                { name: game.i18n.localize("TT.tokenhotbarMoney"), disabled: setting["payMoney"], icon: "systems/dsa5/icons/money-D.webp", id: "payMoney", cssClass: "gm", abbrev: "", subfunction: "gm" }             
+                { name: 'gmMenu', disabled: setting["masterMenu"], icon: "systems/dsa5/icons/categories/DSA-Auge.webp", id: "masterMenu", cssClass: "gm", abbrev: "", subfunction: "gm" },
+                { name: 'MASTER.randomPlayer', disabled: setting["randomVictim"], iconClass: "fa fa-dice-six", id: "randomVictim", cssClass: "gm", abbrev: "", subfunction: "gm" },
+                { name: "TT.tokenhotbarMoney", disabled: setting["payMoney"], icon: "systems/dsa5/icons/money-D.webp", id: "payMoney", cssClass: "gm", abbrev: "", subfunction: "gm" }             
             ]
         }
 
@@ -520,13 +520,13 @@ export default class TokenHotbar2 extends Application {
             gmMode = true
             const skills = this.skills || await this.prepareSkills()
             items.gm = this.gmItems.filter(x => !x.disabled).concat([
-                   { name: game.i18n.localize("TT.tokenhotbarSkill"), id: "skillgm", icon: "systems/dsa5/icons/categories/Skill.webp", cssClass: "skillgm filterable", abbrev: "", subfunction: "none", more: skills, subwidth: this.subWidth(skills, itemWidth, 20) },                
+                   { name: "TT.tokenhotbarSkill", id: "skillgm", icon: "systems/dsa5/icons/categories/Skill.webp", cssClass: "skillgm filterable", abbrev: "", subfunction: "none", more: skills, subwidth: this.subWidth(skills, itemWidth, 20) },                
             ])
         }
 
         if (this.showEffects) {
             const label = game.i18n.localize("CONDITION.add")
-            let effect = { name: label, id: "", icon: "icons/svg/aura.svg", cssClass: "effect", abbrev: label[0], subfunction: "addEffect" }
+            let effect = { name: "CONDITION.add", id: "", icon: "icons/svg/aura.svg", cssClass: "effect", abbrev: label[0], subfunction: "addEffect" }
             if (effects.length > 0) {
                 effect.more = effects
                 effect.subwidth = this.subWidth(effects, itemWidth)

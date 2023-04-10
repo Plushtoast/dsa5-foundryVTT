@@ -20,7 +20,8 @@ export default class DSA5CombatDialog extends DialogShared {
         narrowSpace: { mod: 0 },
 
         combatTurmoil: { mod: -2 },
-        quickChange: {  mod: -4 }
+        quickChange: { mod: -4 },
+        targetMovement: { mod: 0 },
     }
 
     static get defaultOptions() {

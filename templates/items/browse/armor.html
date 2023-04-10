@@ -1,0 +1,66 @@
+<div class="row-section">
+    <div class="col sixty">
+        <h2>{{document.name}}</h2>
+        {{{document.system.description.value}}}
+        {{{document.system.gmdescription.value}}}
+    </div>
+    <div class="col zerofive"></div>
+    <div class="col fourty">
+        <div class="row-section">
+            <div class="col center">
+                <img src="{{document.img}}" style="width:100%;border:none;" >
+            </div>
+        </div>
+        <div class="row-section">
+            <div class="col groupbox">
+                    <div class="row-section wrap">
+                        <div class="col table-title row-section">
+                            <div class="col ninety">
+                                
+                            </div>
+                            <div class="col ten center">
+                                {{#if document.uuid}}<a class="show-item" data-uuid="{{document.uuid}}"><i class="fas fa-info"></i></a>{{/if}}
+                            </div>                            
+                        </div>
+                        <div class="col table-title">
+                            {{localize "protection"}}
+                        </div>
+                        <div class="col">
+                            {{document.system.protection.value}}
+                        </div>
+                        <div class="col table-title">
+                            {{localize "encumbrance"}}
+                        </div>
+                        <div class="col">
+                            {{document.system.encumbrance.value}}
+                        </div>
+                        {{#if document.system.effect.value}}
+                        <div class="col table-title">
+                            {{localize "effect"}}
+                        </div>
+                        <div class="col">
+                            {{document.system.effect.value}}
+                        </div>
+                        {{/if}}
+                        {{#if document.system.effect.attributes}}
+                        <div class="col table-title">
+                            {{localize "domains"}}
+                        </div>
+                        <div class="col">
+                            {{document.system.effect.attributes}}
+                        </div>
+                        {{/if}}
+                        <div class="col table-title">
+                            {{localize "COMBATSKILLCATEGORY.subcategory"}}
+                        </div>
+                        <div class="col">
+                            {{localize (concat 'ARMORSUBCATEGORIES.'document.system.subcategory)}}
+                        </div>
+                      
+                    </div>
+
+            </div>
+        </div>
+        
+    </div>
+</div>

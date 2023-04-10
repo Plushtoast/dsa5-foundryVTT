@@ -1238,7 +1238,14 @@
   }
   
   #scenes .scene h3 {
-    text-shadow: 1px 1px 3px #FFF;
+    text-shadow: none;
+    a {
+      border: 1px solid #403d3d;
+      background-color: rgba(0,0,0,0.6);
+      color: white;
+      border-radius: 10px;
+      padding: 0px 10px;
+    }
   }
   
   #combat li.combatant.active {
@@ -1716,6 +1723,15 @@
     background-size: contain;
     background-repeat: no-repeat;
   }
+
+  .chatImgPreview .image {
+    width: 60px;
+    height: 60px;
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+    margin: 0 auto;
+  }
   
   .dsajournal .heading.h2 a:before {
     position: relative;
@@ -2042,6 +2058,7 @@
     background-image: url('../../icons/categories/Spellextension.webp');
   }
   
+  .embeddedItemDrag,
   .rollTarget {
     cursor: pointer;
   }
@@ -2060,6 +2077,7 @@
     flex: 0 0 72px;
   }
   
+  .centerMargin,
   .loader {
     margin: 0 auto;
   }
@@ -2765,6 +2783,23 @@
       }
       .itdarkness{
         width: calc(var(--tokenQuickhotsize) * 2);
+        position: relative;
+        input {
+          height: auto;
+          position: absolute;
+          bottom: 0;
+        }
+        i {
+          position: absolute;
+          top: 4px;
+          left: 6px;
+          color: #8a6100;
+          &.fa-moon{
+            color: #05235b;
+            right: 6px;
+            left: unset;
+          }
+        }
       }
       .subbuttons{
         .combatTooltip{

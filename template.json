@@ -1050,7 +1050,9 @@
                 "value": 0
             },
             "talent": {
-                "value": ""
+                "value": "",
+                "value2": "",
+                "value3": ""
             },
             "cummulatedQS": {
                 "value": 0

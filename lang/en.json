@@ -582,6 +582,7 @@
     "doNothing": "No Reaction",
     "Weight": "Weight",
     "happyTalents": "Favored skills",
+    "productionInfo": "This item will be created once the cumulative check is successful",
     "wounds": "Life points",
     "weapontype": "Weapon type",
     "weaponModifier": "Weapon Modifier",

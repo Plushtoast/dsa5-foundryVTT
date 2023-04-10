@@ -1337,7 +1337,8 @@ class MeleeweaponDSA5 extends Itemdsa5 {
         }
         let situationalModifiers = actor ? DSA5StatusEffects.getRollModifiers(actor, item, { mode }) : []
         this.getSituationalModifiers(situationalModifiers, actor, data, item)
-        data["situationalModifiers"] = situationalModifiers
+        data.situationalModifiers = situationalModifiers
+        if(options.situationalModifiers) data.situationalModifiers.push(...options.situationalModifiers)
 
         let dialogOptions = {
             title,
@@ -1559,7 +1560,8 @@ class RangeweaponItemDSA5 extends Itemdsa5 {
         }
         let situationalModifiers = actor ? DSA5StatusEffects.getRollModifiers(actor, item, { mode }) : []
         this.getSituationalModifiers(situationalModifiers, actor, data, item, tokenId)
-        data["situationalModifiers"] = situationalModifiers
+        data.situationalModifiers = situationalModifiers
+        if(options.situationalModifiers) data.situationalModifiers.push(...options.situationalModifiers)
 
         let dialogOptions = {
             title,

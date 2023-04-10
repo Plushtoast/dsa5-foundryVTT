@@ -6,6 +6,7 @@
         <i class="fas fa-angle-right right-btn"></i>
         <nav class="sheet-tabs tabs" data-tab-container="primary">
             <a class="item active" data-tab="description">{{localize "Description"}}</a>
+            {{#if embeddedItem}}<a class="item" data-tab="production">{{localize "PLAYER.creation"}}</a>{{/if}}
             <a class="item" data-tab="details">{{localize "Details"}}</a>
         </nav>
     </div>
@@ -14,6 +15,25 @@
     <section class="content">
 
         {{> systems/dsa5/templates/items/item-description.html}}
+
+        {{#if embeddedItem}}
+        <div class="tab production" data-tab="production">
+            <div class="row-section" style="margin-top:20px">
+                <div class="col ninety">
+                    <p >{{localize 'productionInfo'}}</p>
+                </div>
+                <div class="col ten centerCell">
+                    {{#if (gt system.cummulatedQS.value 5)}}
+                    <a class="buildItem" data-tooltip="SHEET.PostItem"><i class="fas fa-gavel"></i></a>
+                    {{/if}}
+                </div>
+            </div>
+            
+            <div class="constructionPreview" style="margin-top:20px">                
+                {{{renderedItem}}}
+            </div>            
+        </div>
+        {{/if}}
 
         <div class="tab details" data-tab="details">
             <div class="form-group">
@@ -42,9 +62,32 @@
             </div>
 
             <div class="form-group">
-                <label class="label-text">{{localize "skill"}}</label>
-                <select name="system.talent.value" data-dtype="String">
+                <label class="label-text">{{localize "skill"}} 1</label>
+                <select class="select2" name="system.talent.value" data-dtype="String">
                     {{#select system.talent.value}}
+                    <option value="">-</option>
+                    {{#each allSkills as |ch|}}
+                    <option value="{{ch}}">{{ch}}</option>
+                    {{/each}}
+                    {{/select}}
+                </select>
+            </div>
+            <div class="form-group">
+                <label class="label-text">{{localize "skill"}} 2</label>
+                <select class="select2" name="system.talent.value2" data-dtype="String">
+                    {{#select system.talent.value2}}
+                    <option value="">-</option>
+                    {{#each allSkills as |ch|}}
+                    <option value="{{ch}}">{{ch}}</option>
+                    {{/each}}
+                    {{/select}}
+                </select>
+            </div>
+            <div class="form-group">
+                <label class="label-text">{{localize "skill"}} 3</label>
+                <select class="select2" name="system.talent.value3" data-dtype="String">
+                    {{#select system.talent.value3}}
+                    <option value="">-</option>
                     {{#each allSkills as |ch|}}
                     <option value="{{ch}}">{{ch}}</option>
                     {{/each}}

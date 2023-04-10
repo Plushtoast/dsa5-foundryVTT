@@ -55,6 +55,12 @@ export default function() {
             html.find('.expand-mods + ul').css({ "display": "block" })
         }
         DSA5StatusEffects.bindButtons(html)
+
+        html.find('.embeddedItemDrag').each(function(i, cond) {
+
+            cond.setAttribute("draggable", true);
+            cond.addEventListener("dragstart", ev => embeddedDragStart(ev));
+        })
     });
 
     Hooks.on("chatMessage", (html, content, msg) => {
@@ -84,4 +90,15 @@ export default function() {
                 return false
         }
     })
+}
+
+function embeddedDragStart(ev) {
+    const messageId = $(ev.currentTarget).parents(".message").attr("data-message-id")
+    let message = game.messages.get(messageId);
+    const item = message.getFlag("dsa5", "embeddedItem")
+    let dataTransfer = {
+        type: "Item",
+        data: item
+    }                
+    ev.dataTransfer.setData("text/plain", JSON.stringify(dataTransfer));
 }
