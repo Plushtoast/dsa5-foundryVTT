@@ -44,17 +44,18 @@ export async function increaseFontSize(element){
     let newIndex = index + 1
     if(newIndex == DSA5.journalFontSizes.length + 1) {
         newIndex = 0
+        await game.settings.set("dsa5", "journalFontSizeIndex", newIndex)
         element.css("fontSize", "")
         tinyNotification(game.i18n.format('CHATNOTIFICATION.fontsize', { size: "Default " }))
     } else {
+        await game.settings.set("dsa5", "journalFontSizeIndex", newIndex)
         setOuterFontSize(element)
-    }
-    await game.settings.set("dsa5", "journalFontSizeIndex", newIndex)
+    }  
 }
 
 function setOuterFontSize(element){
     const index = game.settings.get("dsa5", "journalFontSizeIndex")
-    const size = DSA5.journalFontSizes[index - 1] || 16;
+    const size = DSA5.journalFontSizes[index - 1] || 14;
     tinyNotification(game.i18n.format('CHATNOTIFICATION.fontsize', { size }))
     element.css("fontSize", `${size}px`)
 }

@@ -263,7 +263,7 @@ export default class BookWizard extends Application {
             content += pageContent
         }
         const pinIcon = this.findSceneNote(journal.getFlag("dsa5", "initId"))
-        const enriched = await TextEditor.enrichHTML(content, {secrets: true, async: true})
+        const enriched = await TextEditor.enrichHTML(content, {secrets: game.iser.isGM, async: true})
         this.content = `<div><h1 class="journalHeader" data-uuid="${journal.uuid}">${journal.name}<div class="jrnIcons">${pinIcon}<a class="pinJournal"><i class="fas fa-thumbtack"></i></a><a class="showJournal"><i class="fas fa-eye"></i></a></div></h1>${enriched}`
         const chapter = $(this._element).find('.chapter')
         chapter.html(this.content)
@@ -457,7 +457,7 @@ export default class BookWizard extends Application {
         const currentChapter = await this.getChapter()
         const toc = await this.getToc()
         const index = game.settings.get("dsa5", "journalFontSizeIndex")
-        const fontSize = DSA5.journalFontSizes[index - 1] || 16;
+        const fontSize = DSA5.journalFontSizes[index - 1] || 14;
         mergeObject(data, {
             adventure: this.bookData,
             currentChapter,

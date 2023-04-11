@@ -1007,6 +1007,7 @@
         "applyEffectTargets": "Apply effect to targets",
         "foreignSpell": "Unfamiliar tradition spells can not be modified",
         "assignCharacter": "Characters can be assigned using a right click on the player list in the bottom left corner.",
+        "resizer": "Drag to move<br/>Mouse wheel to enlarge/decrease<br/>right mouse button for direction",
         "dragLink": "Drag & drop actor e.g. for shapeshifting and summoning",
         "onlyGM": "Only visible to the gamemaster.",
         "placeTemplate": "Place Area of Effect template",

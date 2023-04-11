@@ -1,7 +1,7 @@
 export default class DSA5SoundEffect {
     static sounds
     static triedInit = false
-
+    
     static async playEffect(action, item, successLevel, whisper = undefined, blind = false) {
         const soundPath = await this.getSound(action, item, successLevel)
         if (soundPath) {

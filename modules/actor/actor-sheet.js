@@ -129,10 +129,10 @@ export default class ActorSheetDsa5 extends ActorSheet {
         sheetData["initDies"] = { "": "-", "1d6": "1d6", "2d6": "2d6", "3d6": "3d6", "4d6": "4d6" }
         sheetData.horseSpeeds = Object.keys(Riding.speedKeys)
         DSA5StatusEffects.prepareActiveEffects(this.actor, sheetData)
-        sheetData.enrichedOwnerdescription = await TextEditor.enrichHTML(getProperty(this.actor.system, "details.notes.ownerdescription"), {secrets: true, async: true})
-        sheetData.enrichedGmdescription = await TextEditor.enrichHTML(getProperty(this.actor.system, "details.notes.gmdescription"), {secrets: true, async: true})
-        sheetData.enrichedNotes = await TextEditor.enrichHTML(getProperty(this.actor.system, "details.notes.value"), {secrets: true, async: true})
-        sheetData.enrichedBiography = await TextEditor.enrichHTML(getProperty(this.actor.system, "details.biography.value"), {secrets: true, async: true})
+        sheetData.enrichedOwnerdescription = await TextEditor.enrichHTML(getProperty(this.actor.system, "details.notes.ownerdescription"), {secrets: this.object.isOwner, async: true})
+        sheetData.enrichedGmdescription = await TextEditor.enrichHTML(getProperty(this.actor.system, "details.notes.gmdescription"), {secrets: this.object.isOwner, async: true})
+        sheetData.enrichedNotes = await TextEditor.enrichHTML(getProperty(this.actor.system, "details.notes.value"), {secrets: this.object.isOwner, async: true})
+        sheetData.enrichedBiography = await TextEditor.enrichHTML(getProperty(this.actor.system, "details.biography.value"), {secrets: this.object.isOwner, async: true})
 
         return sheetData;
     }
@@ -827,7 +827,7 @@ export default class ActorSheetDsa5 extends ActorSheet {
         let message = game.i18n.format("DIALOG.DeleteItemDetail", { item: item.name })
         renderTemplate('systems/dsa5/templates/dialog/delete-item-dialog.html', { message }).then(html => {
             new Dialog({
-                title: game.i18n.localize("deleteConfirmation"),
+                title: game.i18n.localize("DIALOG.deleteConfirmation"),
                 content: html,
                 buttons: {
                     Yes: {
@@ -1135,7 +1135,7 @@ export default class ActorSheetDsa5 extends ActorSheet {
                     let elem = lookup.find(x => x.name == thing.name && x.type == thing.type)
                     if(elem){
                         elem.system.quantity.value = thing.count
-                        if (thing.qs && thing.type == "equipment") elem.system.QL = thing.qs
+                        if (thing.qs && thing.type == "consumable") elem.system.QL = thing.qs
                     }else{
                         ui.notifications.warn(game.i18n.format('DSAError.notFound', {category: thing.type, name: thing.name}))    
                     }
