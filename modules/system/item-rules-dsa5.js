@@ -27,7 +27,7 @@ export default class ItemRulesDSA5 {
     }
 
     static async stepXPCost(item, step) {
-        let xpCost = Number(item.system.APValue.value)
+        let xpCost = item.system.APValue.value
         if (/;/.test(xpCost)) {
             const steps = xpCost.split(";").map(x => Number(x.trim()))
             xpCost = steps[step]

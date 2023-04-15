@@ -1,9 +1,11 @@
 const DSA5 = {}
 
+//TODO label should not be required anymore, but foundry11 bug?
 DSA5.statusEffects = [{
         icon: "icons/svg/skull.svg",
         id: "dead",
         name: "CONDITION.defeated",
+        label: "CONDITION.defeated",
         description: "CONDITIONDESCRIPTION.defeated",
         flags: {
             dsa5: {
