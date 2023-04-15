@@ -254,7 +254,8 @@ export default class BookWizard extends Application {
     async showJournal(journal) {
         let content = ""
         for(let page of journal.pages){
-            const sheet = page.sheet
+            const sheet = journal.sheet.getPageSheet(page.id)
+            //const sheet = page.sheet
             const data = await sheet.getData();
             const view = (await sheet._renderInner(data)).get();
             let pageContent = $(view[view.length -1]).html()
@@ -299,7 +300,7 @@ export default class BookWizard extends Application {
             this.bookData = json
             let journal = game.packs.get(json.journal)
                 //Need this to replace links
-            let index = await journal.getIndex()
+            await journal.getIndex()
             let entries = await journal.getDocuments()
             this.journals = entries
             if (json.actors) {
@@ -312,9 +313,28 @@ export default class BookWizard extends Application {
                 entries = await journal.getIndex()
                 this.scenes = entries
             }
+            this.checkChapters(journal)
             this.loadPage(html)
         })
+    }
 
+    checkChapters(journal) {
+        if(this.bookData.chapters) return
+
+        this.bookData.isDynamic = true
+        this.bookData.chapters = [
+            {
+                "name": game.i18n.localize(`${this.bookData.moduleName}.name`),
+                "content": journal.folders.map(x => {
+                    return {
+                        "name": x.name,
+                        "id": x.id,
+                        "scenes": [],
+                        "actors": []
+                    }
+                })
+            }
+        ]
     }
 
     async prefillActors(chapter) {
@@ -419,6 +439,11 @@ export default class BookWizard extends Application {
     }
 
     getSubChapters() {
+        if(this.bookData.isDynamic) {
+            return this.journals.filter(x => x.folder.id == this.selectedChapter)
+            .sort((a, b) => a.sort > b.sort ? 1 : -1)
+            .map(x => {return {name: x.name, id: x.id}})
+        }
         return this.journals.filter(x => x.flags.dsa5.parent == this.selectedChapter)
         .sort((a, b) => a.flags.dsa5.sort > b.flags.dsa5.sort ? 1 : -1)
         .map(x => {return {name: x.name, id: x.id}})

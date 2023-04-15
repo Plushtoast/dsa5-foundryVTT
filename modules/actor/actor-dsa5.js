@@ -140,7 +140,9 @@ export default class Actordsa5 extends Actor {
       data.isMage ||= data.isFamiliar 
 
       for(let bag of bags){
-        data.totalWeight += this._calcBagweight(bag, containers, true)
+        let parent_id = getProperty(bag, "system.parent_id")
+        if(!parent_id || !containers.has(parent_id))
+          data.totalWeight += this._calcBagweight(bag, containers, true)
       }
 
       data.canAdvance = this.isOwner && (this.type == "character" || data.isFamiliar || data.isPet)
@@ -1148,9 +1150,11 @@ export default class Actordsa5 extends Actor {
 
       for (let child of containers.get(elem._id)) {
         child.system.preparedWeight = Number(parseFloat((child.system.weight.value * child.system.quantity.value).toFixed(3)));
-        bagweight += child.system.preparedWeight;
+        
         if (containers.has(child._id)) {
           bagweight += this._calcBagweight(child, containers, false);
+        } else {
+          bagweight += child.system.preparedWeight;
         }
       }
       if(!topLevel){

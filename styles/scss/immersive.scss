@@ -50,13 +50,17 @@
             background-size: 101% 1400px;
         }
 
+        
         &.dsajournal .window-content {
             background-image: url('../../icons/backgrounds/journalentry.webp');
             background-size: 97% 1000px;
             background-position: center;
             background-repeat: repeat-y;
-            padding: 0 50px;
+            padding: 0 50px;            
+        }
 
+        &.bookWizardsheet,
+        &.dsajournal .window-content{
             .video-container {
                 position: relative;
                 width: 100%;
@@ -72,7 +76,7 @@
                 }
             }
         }
-
+        
         &.dialog .window-content {
             padding-top: 14px;
             padding-bottom: 14px;
@@ -568,11 +572,17 @@
           padding: 5px;
         }
       
+        &.sidebar-tab .entry-name i{
+            color: white;
+        }
         h3 {
-          background: #740f0fe5;
           color: white;
           margin-left: 3px;
         }
+      }
+
+      .compendium.directory .directory-header .compendium-name{
+        color: white;
       }
 
       #compendium li.compendium-pack .compendium-footer, #playlists li.sound .sound-playback .sound-timer {
