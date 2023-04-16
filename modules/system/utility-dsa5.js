@@ -20,7 +20,7 @@ export default class DSA5_Utility {
     }
 
     static async allCombatSkills() {
-        const pack = game.i18n.lang == "de" ? "dsa5.combatskills" : "dsa5.combatskillsen"
+        const pack = game.i18n.lang == "de" ? "dsa5.skills" : "dsa5.skillsen"
         return await this.getCompendiumEntries(pack, "combatskill")
     }
 

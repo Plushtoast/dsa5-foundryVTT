@@ -21,65 +21,26 @@
     ],
     "packs": [{
             "name": "skills",
-            "label": "Talente",
+            "label": "Grundelemente",
             "system": "dsa5",
             "path": "packs/skills.db",
             "type": "Item",
-            "private": false,
             "flags": { "dsalang": "de"}
         },
         {
             "name": "skillsen",
-            "label": "Skills",
+            "label": "Basic elements",
             "system": "dsa5",
             "path": "packs/skillsen.db",
             "type": "Item",
-            "private": false,
             "flags": { "dsalang": "en"}
-        },
-        {
-            "name": "combatskills",
-            "label": "Kampftalente",
-            "system": "dsa5",
-            "path": "packs/combatskills.db",
-            "type": "Item",
-            "private": false,
-            "flags": { "dsalang": "de"}
-        },
-        {
-            "name": "combatskillsen",
-            "label": "Combat Techniques",
-            "system": "dsa5",
-            "path": "packs/combatskillsen.db",
-            "type": "Item",
-            "private": false,
-            "flags": { "dsalang": "en"}
-        },
+        },      
         {
             "name": "money",
             "label": "Geld",
             "system": "dsa5",
             "path": "packs/money.db",
-            "type": "Item",
-            "private": false
-        },
-        {
-            "name": "speciesen",
-            "label": "Species",
-            "system": "dsa5",
-            "path": "packs/speciesen.db",
-            "type": "Item",
-            "private": false,
-            "flags": { "dsalang": "en"}
-        },
-        {
-            "name": "species",
-            "label": "Spezies",
-            "system": "dsa5",
-            "path": "packs/species.db",
-            "type": "Item",
-            "private": false,
-            "flags": { "dsalang": "de"}
+            "type": "Item"
         },
         {
             "name": "patzer",
@@ -87,7 +48,6 @@
             "system": "dsa5",
             "path": "packs/patzer.db",
             "type": "RollTable",
-            "private": false,
             "flags": { "dsalang": "de"}
         },
         {
@@ -96,7 +56,6 @@
             "system": "dsa5",
             "path": "packs/botch.db",
             "type": "RollTable",
-            "private": false,
             "flags": { "dsalang": "en"}
         }
     ],
@@ -125,7 +84,7 @@
     },
     "url": "https://github.com/Plushtoast/dsa5-foundryVTT",
     "manifest": "https://raw.githubusercontent.com/Plushtoast/dsa5-foundryVTT/foundry10/system.json",
-    "download": "https://github.com/Plushtoast/dsa5-foundryVTT/releases/download/4.3.0/dsa5-foundryVTT-4.3.0.zip",
+    "download": "https://github.com/Plushtoast/dsa5-foundryVTT/releases/download/5.0.0/dsa5-foundryVTT-5.0.0.zip",
     "name": "dsa5",
     "minimumCoreVersion": "11.294"
 }

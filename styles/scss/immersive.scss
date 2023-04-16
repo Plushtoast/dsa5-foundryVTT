@@ -76,7 +76,7 @@
                 }
             }
         }
-        
+
         &.dialog .window-content {
             padding-top: 14px;
             padding-bottom: 14px;
@@ -327,6 +327,7 @@
 
         .directory-list .documentName,
         .playlist.now-playing,
+        .directory-list .directory-item.compendium,
         .directory-list .directory-item.document {
             background-color: var(--sheet-bg);
             margin: 3px;
