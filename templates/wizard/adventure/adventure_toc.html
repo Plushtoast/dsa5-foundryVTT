@@ -14,19 +14,20 @@
     </div>
 </div>
 <div class="tocContent">
-    {{/if}} {{#each chapters as |category i|}}
+    {{/if}} 
+    {{#each chapters as |category i|}}
     <b>{{category.name}}</b>
     <ul class="toc" data-type="{{category.name}}">
         {{#each category.content as |item i|}}
         <li><a data-id="{{item.id}}" class="{{item.cssClass}} getChapter">{{item.name}}</a>{{#if item.subChapters}}
             <ul>
                 {{#each item.subChapters as |item i|}}
-                <li class="fas fa-caret-right"><a data-jid="{{item.id}}" class="subChapter {{#if (eq i 0)}}selected{{/if}}">{{item.name}}</a></li>
+                <li class="fas fa-caret-right"><a data-jid="{{item.id}}" class="subChapter {{item.cssClass}}">{{item.name}}</a></li>
                 {{/each}}
             </ul>
             {{/if}}
         </li>
         {{/each}}
     </ul>
-    {{/each}}
+    {{/each}}    
 </div>

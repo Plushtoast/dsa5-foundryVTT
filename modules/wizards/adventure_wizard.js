@@ -82,6 +82,7 @@ export default class BookWizard extends Application {
         this.journalIndex = null
         this.fulltextsearch = true
         this.currentType = undefined
+        this.selectedSubChapter = undefined
         this.loadPage(this._element)
     }
 
@@ -190,7 +191,7 @@ export default class BookWizard extends Application {
         slist(html, '.breadcrumbs', this.resaveBreadCrumbs)
         this.heightFix()
     }
-
+    
     heightFix() {
         const h = $(this._element).find('.breadcrumbs').height()
         $(this._element).find('.col.seventy.scrollable').css({ "margin-bottom": `${h}px` })
@@ -267,6 +268,8 @@ export default class BookWizard extends Application {
         this.content = `<div><h1 class="journalHeader" data-uuid="${journal.uuid}">${journal.name}<div class="jrnIcons">${pinIcon}<a class="pinJournal"><i class="fas fa-thumbtack"></i></a><a class="showJournal"><i class="fas fa-eye"></i></a></div></h1>${enriched}`
         const chapter = $(this._element).find('.chapter')
         chapter.html(this.content)
+
+        this.selectedSubChapter = journal.id
         
         $(this._element).find('.subChapter').removeClass('selected')
         $(this._element).find(`[data-jid="${journal.id}"]`).addClass("selected")
@@ -328,9 +331,7 @@ export default class BookWizard extends Application {
                 "content": journal.folders.map(x => {
                     return {
                         "name": x.name,
-                        "id": x.id,
-                        "scenes": [],
-                        "actors": []
+                        "id": x.id
                     }
                 })
             }
@@ -413,7 +414,8 @@ export default class BookWizard extends Application {
                 if (chapter.scenes || chapter.actors || subChapters.length == 0) {
                     return await renderTemplate('systems/dsa5/templates/wizard/adventure/adventure_chapter.html', { chapter, subChapters: this.getSubChapters(), actors: await this.prefillActors(chapter) })
                 } else {
-                    return await this.loadJournal(subChapters[0].name)
+                    this.selectedSubChapter = subChapters[0].id
+                    return await this.loadJournalById(subChapters[0].id)
                 }
 
             }
@@ -439,14 +441,16 @@ export default class BookWizard extends Application {
     }
 
     getSubChapters() {
+        let jrns
         if(this.bookData.isDynamic) {
-            return this.journals.filter(x => x.folder.id == this.selectedChapter)
-            .sort((a, b) => a.sort > b.sort ? 1 : -1)
-            .map(x => {return {name: x.name, id: x.id}})
+           jrns = this.journals.filter(x => x.folder.id == this.selectedChapter)
+                .sort((a, b) => a.sort > b.sort ? 1 : -1)
+        } else {
+            jrns = this.journals.filter(x => x.flags.dsa5.parent == this.selectedChapter)
+                .sort((a, b) => a.flags.dsa5.sort > b.flags.dsa5.sort ? 1 : -1)
         }
-        return this.journals.filter(x => x.flags.dsa5.parent == this.selectedChapter)
-        .sort((a, b) => a.flags.dsa5.sort > b.flags.dsa5.sort ? 1 : -1)
-        .map(x => {return {name: x.name, id: x.id}})
+
+        return jrns.map(x => {return {name: x.name, id: x.id, cssClass: x.id == this.selectedSubChapter ? "selected" : ""}})
     }
 
     async getToc() {

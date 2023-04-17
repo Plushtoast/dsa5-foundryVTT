@@ -602,6 +602,8 @@ export default class ActorSheetDsa5 extends ActorSheet {
 
         if(!this.isEditable) return
 
+        html.find('.startCharacterBuilder').click(() => this.actor.setFlag("core", "sheetClass", "dsa5.DSACharBuilder"))
+
         html.find('.schipUpdate').click(ev => {
             ev.preventDefault()
             let val = Number(ev.currentTarget.getAttribute("data-val"))
@@ -1037,6 +1039,8 @@ export default class ActorSheetDsa5 extends ActorSheet {
     async _addFullPack(item) {
         let docs = await game.packs.get(item.name).getDocuments()
         let newAppls = docs.filter(x => !this.actor.items.find(y => y.type == x.type && y.name == x.name))
+        if(item.onlyType) newAppls = newAppls.filter(x => x.type == item.onlyType)
+        
         await this.actor.createEmbeddedDocuments("Item", newAppls.map(x => x.toObject()))
     }
 
