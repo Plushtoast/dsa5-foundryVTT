@@ -1,0 +1,57 @@
+<div class="row-section">
+    <div class="col sixty">
+        <h2>{{document.name}}</h2>
+        {{{enrichedDescription}}}
+        {{#if (and isGM enrichedGmdescription)}}
+        <div class="maskfield">
+            {{{enrichedGmdescription}}}
+        </div>
+        {{/if  }}
+    </div>
+    <div class="col zerofive"></div>
+    <div class="col fourty">
+        <div class="row-section">
+            <div class="col center">
+                <img src="{{document.img}}" style="width:100%;border:none;" >
+            </div>
+        </div>
+        <div class="row-section">
+            <div class="col groupbox">
+                    <div class="row-section wrap">
+                        <div class="col table-title row-section">
+                            <div class="col ninety">
+                                {{localize "reach"}}
+                            </div>
+                            <div class="col ten center">
+                                {{#if document.uuid}}<a class="show-item" data-uuid="{{document.uuid}}"><i class="fas fa-info"></i></a>{{/if}}
+                            </div>                            
+                        </div>
+                        <div class="col">
+                            {{document.system.range.value}}
+                        </div>
+                       
+                        <div class="col table-title">
+                            {{localize "duration"}}
+                        </div>
+                        <div class="col">
+                            {{document.system.duration.value}}
+                        </div>
+                        <div class="col table-title">
+                            {{localize "targetCategory"}}
+                        </div>
+                        <div class="col">
+                            {{document.system.targetCategory.value}}
+                        </div>
+                        <div class="col table-title">
+                            {{localize "feature"}}
+                        </div>
+                        <div class="col">
+                            {{localize document.system.feature.value}}
+                        </div>
+                    </div>
+
+            </div>
+        </div>
+        
+    </div>
+</div>

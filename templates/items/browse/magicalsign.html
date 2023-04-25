@@ -1,0 +1,53 @@
+<div class="row-section">
+    <div class="col sixty">
+        <h2>{{document.name}}</h2>
+        {{{enrichedDescription}}}
+        {{#if (and isGM enrichedGmdescription)}}
+        <div class="maskfield">
+            {{{enrichedGmdescription}}}
+        </div>
+        {{/if  }}
+    </div>
+    <div class="col zerofive"></div>
+    <div class="col fourty">
+        <div class="row-section">
+            <div class="col center">
+                <img src="{{document.img}}" style="width:100%;border:none;" >
+            </div>
+        </div>
+        <div class="row-section">
+            <div class="col groupbox">
+                    <div class="row-section wrap">
+                        <div class="col table-title row-section">
+                            <div class="col ninety">
+                                {{localize "APValue"}}
+                            </div>
+                            <div class="col ten center">
+                                {{#if document.uuid}}<a class="show-item" data-uuid="{{document.uuid}}"><i class="fas fa-info"></i></a>{{/if}}
+                            </div>                            
+                        </div>
+                        <div class="col">
+                            {{document.system.APValue.value}}
+                        </div>
+                       
+                        <div class="col table-title">
+                            {{localize "AsPCost"}}
+                        </div>
+                        <div class="col">
+                            {{document.system.asp}}
+                        </div>
+                        {{#if (eq system.category 2)}}
+                        <div class="col table-title">
+                            {{localize "feature"}}
+                        </div>
+                        <div class="col">
+                            {{document.system.feature}}
+                        </div>
+                        {{/if}}
+                    </div>
+
+            </div>
+        </div>
+        
+    </div>
+</div>

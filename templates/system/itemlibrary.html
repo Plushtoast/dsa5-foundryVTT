@@ -6,8 +6,8 @@
         <nav class="sheet-tabs tabs" data-tab-container="primary">
             <a class="item active" data-tab="equipment"><img src="systems/dsa5/icons/categories/Equipment.webp" height="20" /><span>{{localize "equipment"}}</span></a>
             <a class="item" data-tab="character"><img src="systems/dsa5/icons/categories/Zauberer.webp" height="20" /><span>{{localize "TYPES.Actor.character"}}</span></a>
-            <a class="item" data-tab="journal"><img src="systems/dsa5/icons/categories/DSA-Auge.webp" height="20" /><span>{{localize "Journal"}}</span></a>
             <a class="item" data-tab="spell"><img src="systems/dsa5/icons/categories/Spellextension.webp" height="20" /><span>{{localize "Magic"}}/{{localize "Religion"}}</span></a>
+            <a class="item" data-tab="journal"><img src="systems/dsa5/icons/categories/DSA-Auge.webp" height="20" /><span>{{localize "Journal"}}</span></a>
             {{#if isGM}}
             <a class="item" data-tab="zoo"><img src="systems/dsa5/icons/categories/Tiere.webp" height="20" /><span>{{localize "zoo"}}</span></a>
             {{/if}}
@@ -62,7 +62,7 @@
                                             <div class="col">
                                                 <ul class="wrap categories">
                                                     {{#each cat as |val fil|}}
-                                                    <li data-tooltip="{{val.label}}"><input class="filter" type="checkbox" id="filter_{{val.key}}" data-category="{{val.key}}" {{checked val.selected}} /><label for="filter_{{val.key}}">{{val.label}}</label></li>
+                                                    <li class="browser-item" data-tooltip="{{val.label}}"><input class="filter" type="checkbox" id="filter_{{val.key}}" data-category="{{val.key}}" {{checked val.selected}} /><label for="filter_{{val.key}}">{{val.label}}</label></li>
                                                     {{/each}}
                                                 </ul>
                                             </div>

@@ -29,11 +29,11 @@
       <div class="form-group">
         <label class="label-text">{{localize "Category"}}</label>
         <select name="system.category" data-dtype="Number">
-          {{selectOptions categories selected=system.m.category localize=true}}
+          {{selectOptions categories selected=system.category localize=true}}
         </select>
       </div>
 
-      {{#if (eq system.m.category 2)}}
+      {{#if (eq system.category 2)}}
       <div class="form-group">
         <label class="label-text">{{localize "feature"}}</label>
         <input class="input-text" type="text" name="system.feature" value="{{system.feature}}" data-dtype="String" />

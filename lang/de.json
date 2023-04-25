@@ -564,7 +564,7 @@
         "indexWorldItems": "Welt Items indexieren (Deaktivieren verbessert Leistung, erfordert neuladen der Welt)",
         "fullTextSearch": "Volltextsuche (Deaktivieren verbessert Leistung, erfordert neuladen der Welt)",
         "loading": "Lade {item}...",
-        "browseEnabled": "Stöbermodus aktivieren (erfordert erweiterte Suche)"
+        "browseEnabled": "Stöbermodus aktivieren"
     },
     "Aggregated": {
         "noMoreAllowed": "Keine Proben mehr erlaubt."

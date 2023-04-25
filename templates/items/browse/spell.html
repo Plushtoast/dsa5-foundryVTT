@@ -1,0 +1,101 @@
+<div class="row-section">
+    <div class="col sixty">
+        <h2>{{document.name}}</h2>
+        {{{enrichedDescription}}}
+        <div>
+            <br/><b>{{localize "effect"}}</b>: {{document.system.effect.value}}
+        </div>
+        {{#if (and isGM enrichedGmdescription)}}
+        <div class="maskfield">
+            {{{enrichedGmdescription}}}
+        </div>
+        {{/if  }}
+    </div>
+    <div class="col zerofive"></div>
+    <div class="col fourty">
+        <div class="row-section">
+            <div class="col center">
+                <img src="{{document.img}}" style="width:100%;border:none;" >
+            </div>
+        </div>
+        <div class="row-section">
+            <div class="col groupbox">
+                    <div class="row-section wrap">
+                        <div class="col table-title row-section">
+                            <div class="col ninety">
+                                {{localize "Characteristic"}} 1
+                            </div>
+                            <div class="col ten center">
+                                {{#if document.uuid}}<a class="show-item" data-uuid="{{document.uuid}}"><i class="fas fa-info"></i></a>{{/if}}
+                            </div>                            
+                        </div>
+                        <div class="col">
+                            {{localize (concatUp "CHAR." document.system.characteristic1.value)}}
+                        </div>
+                        <div class="col table-title">
+                            {{localize "Characteristic"}} 2
+                        </div>
+                        <div class="col">
+                            {{localize (concatUp "CHAR." document.system.characteristic2.value)}}
+                        </div>
+                        <div class="col table-title">
+                            {{localize "Characteristic"}} 3
+                        </div>
+                        <div class="col">
+                            {{localize (concatUp "CHAR." document.system.characteristic3.value)}}
+                        </div>
+                        <div class="col table-title">
+                            {{localize "reach"}}
+                        </div>
+                        <div class="col">
+                            {{document.system.range.value}}
+                        </div>
+                        <div class="col table-title">
+                            {{localize "duration"}}
+                        </div>
+                        <div class="col">
+                            {{document.system.duration.value}}
+                        </div>
+                        <div class="col table-title">
+                            {{localize "targetCategory"}}
+                        </div>
+                        <div class="col">
+                            {{document.system.targetCategory.value}}
+                        </div>
+                        <div class="col table-title">
+                            {{localize "castingTime"}}
+                        </div>
+                        <div class="col">
+                            {{document.system.castingTime.value}}
+                        </div>
+                        <div class="col table-title">
+                            {{localize "AsPCostDetail"}}
+                        </div>
+                        <div class="col">
+                            {{document.system.AsPCostDetail.value}}
+                        </div>
+                        <div class="col table-title">
+                            {{localize "distribution"}}
+                        </div>
+                        <div class="col">
+                            {{document.system.distribution.value}}
+                        </div>
+                        <div class="col table-title">
+                            {{localize "resistanceModifier"}}
+                        </div>
+                        <div class="col">
+                            {{localize document.system.resistanceModifier.value}}
+                        </div>
+                        <div class="col table-title">
+                            {{localize "StF"}}
+                        </div>
+                        <div class="col">
+                            {{document.system.StF.value}}
+                        </div>
+                    </div>
+
+            </div>
+        </div>
+        
+    </div>
+</div>

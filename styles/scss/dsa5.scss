@@ -711,6 +711,10 @@
 
       &.libItem{
         margin-top: 30px;
+        padding: 10px;
+        border-radius: 10px;
+        background-color: rgba(0,0,0,0.05);
+        border: 1px solid var(--border-color);
       }
   
       &.morph {
@@ -1030,6 +1034,10 @@
       font-size: 200px;
       opacity: 0.2;
     }
+  }
+
+  .dsalist li{
+    width: 100%;
   }
   
   .statusEffectMenu, .dsalist li, #chat-form, .browser-item, .effect-change .key, .inputTooltipAvailable, .journalHeader, .tokenQuickHot > ul > li, .bags, .hero, .window-app .window-content {
@@ -1655,7 +1663,7 @@
       flex-wrap: wrap;
       width: 100%;
   
-      li {
+      li.browser-item {
         list-style-type: none;
         flex: 24%;
         display: inline-block;
@@ -1665,7 +1673,7 @@
       }
     }
   
-    .item-list li {
+    .item-list li.browser-item {
       flex: 49%;
       border: 1px solid #DDD;
       min-width: 240px;

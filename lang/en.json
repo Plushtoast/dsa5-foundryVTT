@@ -609,7 +609,7 @@
         "indexWorldItems": "Index world Items (deactivate to increase performance, requires reloading of the world)",
         "fullTextSearch": "Full text search (deactivate to increase performance, requires reloading of the world)",
         "loading": "Loading {item}...",
-        "browseEnabled": "Enable browse mode (requires advanced search)"
+        "browseEnabled": "Enable browse mode"
     },
     "Aggregated": {
         "noMoreAllowed": "No more rolls allowed."
