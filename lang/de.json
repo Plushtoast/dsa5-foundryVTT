@@ -254,7 +254,6 @@
     "castingTime": "Aktionsdauer",
     "Combat": "Kampf",
     "combatskill": "Kampftechnik",
-    "culture": "Kultur",
     "count": "Anzahl",
     "cost": "Kosten",
     "charges": "Ladungen",
@@ -564,7 +563,8 @@
         "noFilter": "Kein Filter",
         "indexWorldItems": "Welt Items indexieren (Deaktivieren verbessert Leistung, erfordert neuladen der Welt)",
         "fullTextSearch": "Volltextsuche (Deaktivieren verbessert Leistung, erfordert neuladen der Welt)",
-        "loading": "Lade {item}..."
+        "loading": "Lade {item}...",
+        "browseEnabled": "Stöbermodus aktivieren (erfordert erweiterte Suche)"
     },
     "Aggregated": {
         "noMoreAllowed": "Keine Proben mehr erlaubt."

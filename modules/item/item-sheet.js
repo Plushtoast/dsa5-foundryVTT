@@ -381,7 +381,7 @@ class Enchantable extends ItemSheetdsa5 {
             if (item) {
                 item = item.toObject()
                 item.system.talentValue.value = enchantment.fw
-                const actor = await DSA5_Utility.emptyActor(14)
+                const actor = await DSA5_Utility.emptyActor(14, this.item.name)
                 actor.setupSpell(item, {}, "emptyActor").then(async(setupData) => {
                     const infoMsg = game.i18n.format('CHATNOTIFICATION.enchantmentUsed', { item: this.item.name, spell: item.name })
                     await ChatMessage.create(DSA5_Utility.chatDataSetup(infoMsg));

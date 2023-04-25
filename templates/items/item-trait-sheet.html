@@ -46,7 +46,7 @@
                 <label class="label-text">{{localize "effect"}}</label>
                 <input class="input-text" type="text" name="system.effect.value" value="{{system.effect.value}}" data-dtype="String" />
             </div>
-            {{/if}} {{#if (eq system.traitType.value "meleeAttack")}}
+            {{else if (eq system.traitType.value "meleeAttack")}}
             <div class="form-group">
                 <label class="label-text">{{localize "CHAR.ATTACK"}}</label>
                 <input class="input-text" type="number" name="system.at.value" value="{{system.at.value}}" data-dtype="Number" />
@@ -79,13 +79,13 @@
                 <input class="input-text {{#if domains}}domainToggle{{/if}}" placeholder="{{localize 'WEAPON.clerical'}}, {{localize 'WEAPON.magical'}}" type="text" name="system.effect.attributes"
                     value="{{system.effect.attributes}}" data-dtype="String" />
             </div>
-            {{/if}}{{#if (eq system.traitType.value "armor")}}
+            {{else if (eq system.traitType.value "armor")}}
             <div class="form-group">
                 <label class="label-text">{{localize "protection"}}</label>
                 <input class="input-text" type="text" name="system.at.value" value="{{system.at.value}}" data-dtype="String" />
             </div>
 
-            {{/if}} {{#if (eq system.traitType.value "familiar")}}
+            {{else if (eq system.traitType.value "familiar")}}
             <div class="form-group">
                 <label class="label-text">{{localize "APValue"}}</label>
                 <input class="input-text" type="text" name="system.APValue.value" value="{{system.APValue.value}}" data-dtype="String" />
@@ -102,7 +102,7 @@
                 <label class="label-text">{{localize "aspect"}}</label>
                 <input class="input-text" type="text" name="system.aspect.value" value="{{system.aspect.value}}" data-dtype="String" />
             </div>
-            {{/if}}{{#if (eq system.traitType.value "trick")}}
+            {{else if (eq system.traitType.value "trick")}}
             <div class="form-group">
                 <label class="label-text">{{localize "APValue"}}</label>
                 <input class="input-text" type="text" name="system.APValue.value" value="{{system.APValue.value}}" data-dtype="String" />
@@ -111,7 +111,7 @@
                 <label class="label-text">{{localize "requirements"}}</label>
                 <input class="input-text" type="text" name="system.aspect.value" value="{{system.aspect.value}}" data-dtype="String" />
             </div>
-            {{/if}} {{#if (eq system.traitType.value "entity")}}
+            {{else if (eq system.traitType.value "entity")}}
             <div class="form-group">
                 <label class="label-text">{{localize "distribution"}}</label>
                 <input class="input-text" type="text" name="system.distribution" value="{{system.distribution}}" data-dtype="String" />
@@ -124,7 +124,7 @@
                 <label class="label-text">{{localize "maxlevel"}}</label>
                 <input class="input-text" type="number" name="system.at.value" value="{{system.at.value}}" data-dtype="Number" />
             </div>
-            {{/if}} {{#if (eq system.traitType.value "summoning")}}
+            {{else if (eq system.traitType.value "summoning")}}
             <div class="form-group">
                 <label class="label-text">{{localize "distribution"}}</label>
                 <input class="input-text" type="text" name="system.distribution" value="{{system.distribution}}" data-dtype="String" />

@@ -1,6 +1,6 @@
 import DSA5_Utility from "./utility-dsa5.js"
 import ADVANCEDFILTERS from "./itemlibrary_advanced_filters.js"
-import { tabSlider } from "./view_helper.js"
+import { clickableAbility, tabSlider } from "./view_helper.js"
 
 //TODO merge existing index with advanced details
 //TODO create index with getIndex(fields)
@@ -252,6 +252,7 @@ export default class DSA5ItemLibrary extends Application {
         data.advancedMode = this.advancedFiltering ? "on" : ""
         data.worldIndexed = game.settings.get("dsa5", "indexWorldItems") ? "on" : ""
         data.fullTextEnabled = game.settings.get("dsa5", "indexDescription") ? "on" : ""
+        data.browseEnabled = this.browseEnabled ? "on" : ""
         if (this.advancedFiltering) {
             data.advancedFilter = await this.buildDetailFilter("tbd", this.subcategory)
         }
@@ -474,37 +475,44 @@ export default class DSA5ItemLibrary extends Application {
         $(this._element).find(`.${category} .libcontainer`)[`${filterdItems.length > 0 ? "remove" : "add"}Class`]("libraryImg")
     }
 
-    renderResult(html, filteredItems, { index, itemType }, isPaged) {
-        let resultField = html.find('.searchResult .item-list')
-        renderTemplate('systems/dsa5/templates/system/libraryItem.html', { items: filteredItems }).then(innerhtml => {
-            if (!isPaged) resultField.empty()
+    async getItemTemplate(filteredItems, itemType) {
+        if(this.browseEnabled && itemType == "Item"){
+            return (await Promise.all(filteredItems.map(async x => { 
+                const template = `systems/dsa5/templates/items/browse/${x.document.filterType}.html`
+                const document = await fromUuid(x.uuid)
+                const item = await renderTemplate(template, { document, isGM: game.user.isGM, ...(await document.sheet.getData())})
+                return `<div class="uuid libItem ${x.document.filterType} col" data-uuid="${x.uuid}" data-item-id="${x.id}">${item}</div>`
+            }))).join("\n")
+        } else {
+            const template = 'systems/dsa5/templates/system/libraryItem.html'
+            return await renderTemplate(template, { items: filteredItems })
+        }
+    }
 
-            innerhtml = $(innerhtml)
-            innerhtml.each(function() {
-                const li = $(this)
-                li.attr("draggable", true).on("dragstart", event => {
-                    let item = index.find($(li).attr("data-item-id"))
-                    event.originalEvent.dataTransfer.setData("text/plain", JSON.stringify({
-                        type: itemType,
-                        uuid: item.uuid
-                    }))
-                })
+    async renderResult(html, filteredItems, { index, itemType }, isPaged) {
+        const resultField = html.find('.searchResult .item-list')
+        let innerhtml = await this.getItemTemplate(filteredItems, itemType)
+        if (!isPaged) resultField.empty()
+
+        innerhtml = $(innerhtml)
+        innerhtml.each(function() {
+            const li = $(this)
+            li.attr("draggable", true).on("dragstart", event => {
+                let item = index.find($(li).attr("data-item-id"))
+                event.originalEvent.dataTransfer.setData("text/plain", JSON.stringify({
+                    type: itemType,
+                    uuid: item.uuid
+                }))
             })
-            resultField.append(innerhtml)
-        });
+        })
+        resultField.append(innerhtml)
     }
 
     async filterItems(html, category, page) {
         const index = this.selectIndex(category)
-        if (this.advancedFiltering && category != "journal") {
-            const filteredItems = await this.advancedFilterStuff(category, page)
-            this.renderResult(html, filteredItems, index, page)
-            return filteredItems;
-        } else {
-            const filteredItems = await this.filterStuff(category, index.index, page)
-            this.renderResult(html, filteredItems, index, page)
-            return filteredItems;
-        }
+        const filteredItems = this.advancedFiltering && category != "journal" ? await this.advancedFilterStuff(category, page) : await this.filterStuff(category, index.index, page)
+        await this.renderResult(html, filteredItems, index, page)
+        return filteredItems
     }
 
     selectIndex(category) {
@@ -660,6 +668,8 @@ export default class DSA5ItemLibrary extends Application {
 
         tabSlider(html)
 
+        html.on('click', '.searchableAbility a', ev => clickableAbility(ev))
+
         html.on("click", ".toggleAdvancedMode", () => {
             this.advancedFiltering = !this.advancedFiltering
             if (this.advancedFiltering) {
@@ -708,6 +718,12 @@ export default class DSA5ItemLibrary extends Application {
             this.filterItems(tab, category);
         })
 
+        html.on('click', '.show-item', async ev => { 
+            const uuid = ev.currentTarget.dataset.uuid
+            const item = await fromUuid(uuid)
+            if (item) item.sheet.render(true)
+        })
+
         html.find(`*[data-tab="journal"]`).click(x => {
             this._createIndex("journal", "JournalEntry", game.journal)
         })
@@ -730,6 +746,11 @@ export default class DSA5ItemLibrary extends Application {
             game.settings.set("dsa5", "indexDescription", !game.settings.get("dsa5", "indexDescription"))
             $(ev.currentTarget).toggleClass("on")
         })
+        html.find('.browseEnabled').click((ev) => {
+            this.browseEnabled = !this.browseEnabled
+            $(ev.currentTarget).toggleClass("on")
+        })
+        
         const source = this
 
         $(this._element).find('.window-content').on('scroll.infinit', debounce(function(ev) {

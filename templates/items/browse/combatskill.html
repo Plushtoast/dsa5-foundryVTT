@@ -1,12 +1,7 @@
 <div class="row-section">
     <div class="col sixty">
         <h2>{{document.name}}</h2>
-        {{{enrichedDescription}}}
-        {{#if (and isGM enrichedGmdescription)}}
-        <div class="maskfield">
-            {{{enrichedGmdescription}}}
-        </div>
-        {{/if  }}
+        {{{hasLocalization (concat "Combatskilldescr." document.name) document.system.description.value}}}
     </div>
     <div class="col zerofive"></div>
     <div class="col fourty">
@@ -20,44 +15,27 @@
                     <div class="row-section wrap">
                         <div class="col table-title row-section">
                             <div class="col ninety">
-                                {{localize "protection"}}
+                                {{localize "StF"}}
                             </div>
                             <div class="col ten center">
                                 {{#if document.uuid}}<a class="show-item" data-uuid="{{document.uuid}}"><i class="fas fa-info"></i></a>{{/if}}
                             </div>                            
                         </div>
                         <div class="col">
-                            {{document.system.protection.value}}
+                            {{localize document.system.StF.value}}
                         </div>
                         <div class="col table-title">
-                            {{localize "encumbrance"}}
+                            {{localize "guidevalue"}}
                         </div>
                         <div class="col">
-                            {{document.system.encumbrance.value}}
+                            {{localize (concatUp "CHAR." document.system.guidevalue.value)}}
                         </div>
-                        {{#if document.system.effect.value}}
                         <div class="col table-title">
-                            {{localize "effect"}}
+                            {{localize "weapontype"}}
                         </div>
                         <div class="col">
-                            {{document.system.effect.value}}
+                            {{localize (concat document.system.weapontype.value 'weapon')}}
                         </div>
-                        {{/if}}
-                        {{#if document.system.effect.attributes}}
-                        <div class="col table-title">
-                            {{localize "domains"}}
-                        </div>
-                        <div class="col">
-                            {{document.system.effect.attributes}}
-                        </div>
-                        {{/if}}
-                        <div class="col table-title">
-                            {{localize "COMBATSKILLCATEGORY.subcategory"}}
-                        </div>
-                        <div class="col">
-                            {{localize (concat 'ARMORSUBCATEGORIES.'document.system.subcategory)}}
-                        </div>
-                      
                     </div>
 
             </div>

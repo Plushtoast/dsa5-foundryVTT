@@ -310,7 +310,6 @@
     "Combat": "Combat",
     "combatskill": "Combat Technique",
     "confirmationRoll": "Confirmation roll",
-    "culture": "Culture",
     "count": "Amount",
     "cost": "Cost",
     "cancel": "Cancel",
@@ -609,7 +608,8 @@
         "noFilter": "No filter",
         "indexWorldItems": "Index world Items (deactivate to increase performance, requires reloading of the world)",
         "fullTextSearch": "Full text search (deactivate to increase performance, requires reloading of the world)",
-        "loading": "Loading {item}..."
+        "loading": "Loading {item}...",
+        "browseEnabled": "Enable browse mode (requires advanced search)"
     },
     "Aggregated": {
         "noMoreAllowed": "No more rolls allowed."

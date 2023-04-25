@@ -20,69 +20,64 @@
                     <div class="row-section wrap">
                         <div class="col table-title row-section">
                             <div class="col ninety">
-                                {{localize "damage"}}
+                                
                             </div>
                             <div class="col ten center">
                                 {{#if document.uuid}}<a class="show-item" data-uuid="{{document.uuid}}"><i class="fas fa-info"></i></a>{{/if}}
                             </div>                            
                         </div>
+                       
                         <div class="col">
-                            {{document.system.damage.value}}
+                            {{#each attributes}}
+                            <label class="plantContainer {{this.name}}" data-tooltip="{{localize (concat 'PLANT.' this.name)}}">
+                                <input type="checkbox" name="system.planttype.{{this.name}}" value="true" data-dtype="Boolean" disabled="true" {{checked this.checked}}/>
+                                <span></span>
+                            </label> {{/each}}
+            
+                        </div>
+
+                        <div class="col table-title">
+                            {{localize "PLANT.landscape"}}
+                        </div>
+                        <div class="col">
+                            {{document.system.location.landscape}}
                         </div>
                         <div class="col table-title">
-                            {{localize "atmod"}}
+                            {{localize "PLANT.region"}}
                         </div>
                         <div class="col">
-                            {{document.system.atmod.value}}
+                            {{document.system.location.region}}
                         </div>
                         <div class="col table-title">
-                            {{localize "pamod"}}
+                            {{localize "PLANT.search"}}
                         </div>
                         <div class="col">
-                            {{document.system.pamod.value}}
+                            {{document.system.difficulty.search}}
                         </div>
                         <div class="col table-title">
-                            {{localize "damageThreshold"}}
+                            {{localize "PLANT.identify"}}
                         </div>
                         <div class="col">
-                            {{document.system.damageThreshold.value}}
+                            {{document.system.difficulty.identify}}
                         </div>
                         <div class="col table-title">
-                            {{localize "guidevalue"}}
+                            {{localize "PLANT.usages"}}
                         </div>
                         <div class="col">
-                            {{document.system.guidevalue.value}}
+                            {{document.system.usages}}
                         </div>
-                        <div class="col table-title">
-                            {{localize "TYPES.Item.combatskill"}}
-                        </div>
-                        <div class="col">
-                            {{document.system.combatskill.value}}
-                        </div>
-                        <div class="col table-title">
-                            {{localize "reach"}}
-                        </div>
-                        <div class="col">
-                            {{localize (concat 'Range-' document.system.reach.value)}}
-                        </div>
-                        {{#if document.system.effect.value}}
                         <div class="col table-title">
                             {{localize "effect"}}
                         </div>
                         <div class="col">
-                            {{document.system.effect.value}}
+                            {{{enrichedEffect}}}
                         </div>
-                        {{/if}}
-                        {{#if document.system.effect.attributes}}
                         <div class="col table-title">
-                            {{localize "domains"}}
+                            {{localize "PLANT.recipes"}}
                         </div>
                         <div class="col">
-                            {{document.system.effect.attributes}}
+                            {{{enrichedRecipes}}}
                         </div>
-                        {{/if}}
-                       
-                      
                     </div>
 
             </div>

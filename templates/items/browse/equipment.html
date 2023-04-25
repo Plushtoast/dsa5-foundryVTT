@@ -20,44 +20,39 @@
                     <div class="row-section wrap">
                         <div class="col table-title row-section">
                             <div class="col ninety">
-                                {{localize "protection"}}
+                                {{localize "equipmentType"}}
                             </div>
                             <div class="col ten center">
                                 {{#if document.uuid}}<a class="show-item" data-uuid="{{document.uuid}}"><i class="fas fa-info"></i></a>{{/if}}
                             </div>                            
                         </div>
                         <div class="col">
-                            {{document.system.protection.value}}
+                            {{localize (concat 'Equipment.' document.system.equipmentType.value)}}
                         </div>
+                        {{#if (eq document.system.equipmentType.value 'bags')}}
                         <div class="col table-title">
-                            {{localize "encumbrance"}}
+                            {{localize "carrycapacity"}}
                         </div>
                         <div class="col">
-                            {{document.system.encumbrance.value}}
+                            {{document.system.capacity.value}}
                         </div>
-                        {{#if document.system.effect.value}}
-                        <div class="col table-title">
-                            {{localize "effect"}}
-                        </div>
-                        <div class="col">
-                            {{document.system.effect.value}}
-                        </div>
-                        {{/if}}
-                        {{#if document.system.effect.attributes}}
-                        <div class="col table-title">
-                            {{localize "domains"}}
-                        </div>
-                        <div class="col">
-                            {{document.system.effect.attributes}}
-                        </div>
-                        {{/if}}
-                        <div class="col table-title">
-                            {{localize "COMBATSKILLCATEGORY.subcategory"}}
-                        </div>
-                        <div class="col">
-                            {{localize (concat 'ARMORSUBCATEGORIES.'document.system.subcategory)}}
-                        </div>
-                      
+                       {{/if}}
+                       {{#if document.system.effect.value}}
+                       <div class="col table-title">
+                           {{localize "effect"}}
+                       </div>
+                       <div class="col">
+                           {{document.system.effect.value}}
+                       </div>
+                       {{/if}}
+                       {{#if document.system.effect.attributes}}
+                       <div class="col table-title">
+                           {{localize "domains"}}
+                       </div>
+                       <div class="col">
+                           {{document.system.effect.attributes}}
+                       </div>
+                       {{/if}}
                     </div>
 
             </div>

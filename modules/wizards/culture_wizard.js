@@ -32,7 +32,7 @@ export default class CultureWizard extends WizardDSA5 {
 
         let baseCost = Number(this.culture.system.APValue.value)
         mergeObject(data, {
-            title: game.i18n.format("WIZARD.addItem", { item: `${game.i18n.localize("culture")} ${this.culture.name}` }),
+            title: game.i18n.format("WIZARD.addItem", { item: `${game.i18n.localize("TYPES.Item.culture")} ${this.culture.name}` }),
             culture: this.culture,
             description: game.i18n.format("WIZARD.culturedescr", { culture: this.culture.name, cost: baseCost }),
             advantages,

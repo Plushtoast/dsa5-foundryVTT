@@ -2,7 +2,14 @@
     <div class="col sixty">
         <h2>{{document.name}}</h2>
         {{{enrichedDescription}}}
-        {{{enrichedClothing}}}
+        {{#if (and isGM enrichedGmdescription)}}
+        <div class="maskfield">
+            {{{enrichedGmdescription}}}
+        </div>
+        {{/if  }}
+        <div class="col">
+            <b>{{localize "rule"}}</b>: {{document.system.rule.value}}
+        </div>
     </div>
     <div class="col zerofive"></div>
     <div class="col fourty">
@@ -20,100 +27,112 @@
                             </div>
                             <div class="col ten center">
                                 {{#if document.uuid}}<a class="show-item" data-uuid="{{document.uuid}}"><i class="fas fa-info"></i></a>{{/if}}
-                            </div>
-                            
+                            </div>                            
                         </div>
                         <div class="col">
                             {{document.system.APValue.value}}
                         </div>
                         <div class="col table-title">
-                            {{localize "language"}}
+                            {{localize "requirements"}}
                         </div>
                         <div class="col">
-                            {{document.system.language.value}}
+                            {{document.system.requirements.value}}
                         </div>
+                        {{#if (ne "0" document.system.maxRank.value)}}
                         <div class="col table-title">
-                            {{localize "writing"}}
+                            {{localize "maxlevel"}}
                         </div>
                         <div class="col">
-                            {{document.system.writing.value}}
-                        </div>
-                        <div class="col table-title">
-                            {{localize "LocalizedIDs.localKnowledge"}}
-                        </div>
-                        <div class="col">
-                            {{document.system.localKnowledge.value}}
-                        </div>  
-                        {{#if document.system.suitableProfessions.value}}
-                        <div class="col table-title">
-                            {{localize "recommendedProfessions"}}
-                        </div>
-                        <div class="col">
-                            {{document.system.suitableProfessions.value}}
+                            {{document.system.maxRank.value}}
                         </div>
                         {{/if}}
-                        {{#if document.system.socialstate.value}}
+                        
                         <div class="col table-title">
-                            {{localize "Socialstate"}}
+                            {{localize "Category"}}
                         </div>
                         <div class="col">
-                            {{document.system.socialstate.value}}
+                            {{localize document.system.category.value}}
+                        </div>
+                        {{#if document.system.effect.value}}
+                        <div class="col table-title">
+                            {{localize "effect"}}
+                        </div>
+                        <div class="col">
+                            {{document.system.effect.value}}
                         </div>
                         {{/if}}
-                        {{#if document.system.recommendedAdvantages.value}}
+
+                        {{#if (eq document.system.category.value 'pact')}}
                         <div class="col table-title">
-                            {{localize "recommendedAdvantages"}}
+                            {{localize "distribution"}}
                         </div>
                         <div class="col">
-                            {{{clickableAbilities document.system.recommendedAdvantages.value 'advantage'}}}
+                            {{document.system.distribution}}
+                        </div>
+                        <div class="col table-title">
+                            {{localize "circle"}}
+                        </div>
+                        <div class="col">
+                            {{document.system.circle}}
+                        </div>
+                        {{else if (eq document.system.category.value 'staff')}}
+                        <div class="col table-title">
+                            {{localize "traditionArtifact"}}
+                        </div>
+                        <div class="col">
+                            {{localize (concat 'traditionArtifacts.' document.system.artifact)}}
+                        </div>
+                        <div class="col table-title">
+                            {{localize "volume"}}
+                        </div>
+                        <div class="col">
+                            {{document.system.volume}}
+                        </div>
+                        <div class="col table-title">
+                            {{localize "AsPCost"}}
+                        </div>
+                        <div class="col">
+                            {{document.system.AsPCost}}
+                        </div>
+                        <div class="col table-title">
+                            {{localize "feature"}}
+                        </div>
+                        <div class="col">
+                            {{document.system.feature}}
+                        </div>
+                        
+                        {{else if (eq document.system.category.value 'Combat')}}
+                        {{#if document.system.effect.value2}}
+                        <div class="col table-title">
+                            {{localize "effectVariant" num="B"}}
+                        </div>
+                        <div class="col">
+                            {{document.system.effect.value2}}
                         </div>
                         {{/if}}
-                        {{#if document.system.recommendedDisadvantages.value}}
+                        {{#if document.system.effect.value3}}
                         <div class="col table-title">
-                            {{localize "recommendedDisadvantages"}}
+                            {{localize "effectVariant" num="C"}}
                         </div>
                         <div class="col">
-                            {{{clickableAbilities document.system.recommendedDisadvantages.value 'disadvantage'}}}
-                        </div>
-                        {{/if}}
-                        {{#if document.system.notsuitableAdvantages.value}}
-                        <div class="col table-title">
-                            {{localize "notsuitableAdvantages"}}
-                        </div>
-                        <div class="col">
-                            {{{clickableAbilities document.system.notsuitableAdvantages.value 'advantage'}}}
-                        </div>
-                        {{/if}}
-                        {{#if document.system.notsuitableDisadvantages.value}}
-                        <div class="col table-title">
-                            {{localize "notsuitableDisadvantages"}}
-                        </div>
-                        <div class="col">
-                            {{{clickableAbilities document.system.notsuitableDisadvantages.value 'disadvantage'}}}
-                        </div>
-                        {{/if}}
-                        {{#if document.system.recommendedTalents.value}}
-                        <div class="col table-title">
-                            {{localize "recommendedTalents"}}
-                        </div>
-                        <div class="col">
-                            {{document.system.recommendedTalents.value}}
-                        </div>
-                        {{/if}}
-                        {{#if document.system.notsuitableTalents.value}}
-                        <div class="col table-title">
-                            {{localize "notsuitableTalents"}}
-                        </div>
-                        <div class="col">
-                            {{document.system.notsuitableTalents.value}}
+                            {{document.system.effect.value3}}
                         </div>
                         {{/if}}
                         <div class="col table-title">
-                            {{localize "skills"}}
+                            {{localize "TYPES.Item.combatskill"}}
                         </div>
                         <div class="col">
-                            {{document.system.skills.value}}
+                            {{document.system.list.value}}
                         </div>
+                        <div class="col table-title">
+                            {{localize "COMBATSKILLCATEGORY.subcategory"}}
+                        </div>
+                        <div class="col">
+                            {{localize document.system.category.sub}}
+                        </div>
+                        {{/if}}
+
+
                     </div>
 
             </div>

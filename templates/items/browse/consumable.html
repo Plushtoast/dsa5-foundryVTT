@@ -7,6 +7,12 @@
             {{{enrichedGmdescription}}}
         </div>
         {{/if  }}
+        <div class="col table-title">
+            {{localize "qualitySteps"}}
+        </div>
+        <div class="col">
+            {{{br document.system.QLList}}}
+        </div>
     </div>
     <div class="col zerofive"></div>
     <div class="col fourty">
@@ -20,58 +26,35 @@
                     <div class="row-section wrap">
                         <div class="col table-title row-section">
                             <div class="col ninety">
-                                {{localize "damage"}}
+                                {{localize "equipmentType"}}
                             </div>
                             <div class="col ten center">
                                 {{#if document.uuid}}<a class="show-item" data-uuid="{{document.uuid}}"><i class="fas fa-info"></i></a>{{/if}}
                             </div>                            
                         </div>
                         <div class="col">
-                            {{document.system.damage.value}}
+                            {{localize (concat 'Equipment.' document.system.equipmentType.value)}}
                         </div>
+                       
                         <div class="col table-title">
-                            {{localize "reloadTime"}}
+                            {{localize "priceEachQL"}}
                         </div>
                         <div class="col">
-                            {{document.system.reloadTime.value}}
-                        </div>
-                        <div class="col table-title">
-                            {{localize "reach"}}
-                        </div>
-                        <div class="col">
-                            {{document.system.reach.value}}
-                        </div>
-                        <div class="col table-title">
-                            {{localize "ammunitiongroup"}}
-                        </div>
-                        <div class="col">
-                            {{localize document.system.ammunitiongroup.value}}
-                        </div>
-                        <div class="col table-title">
-                            {{localize "TYPES.Item.combatskill"}}
-                        </div>
-                        <div class="col">
-                            {{document.system.combatskill.value}}
+                            {{document.system.price.value}}
                         </div>
                         
-                        {{#if document.system.effect.value}}
                         <div class="col table-title">
-                            {{localize "effect"}}
+                            {{localize "Difficulty"}}
                         </div>
                         <div class="col">
-                            {{document.system.effect.value}}
+                            {{document.system.difficulty}}
                         </div>
-                        {{/if}}
-                        {{#if document.system.effect.attributes}}
                         <div class="col table-title">
-                            {{localize "domains"}}
+                            {{localize "PLANT.ingredients"}}
                         </div>
                         <div class="col">
-                            {{document.system.effect.attributes}}
+                            {{{enrichedIngredients}}}
                         </div>
-                        {{/if}}
-                       
-                      
                     </div>
 
             </div>

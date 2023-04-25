@@ -300,13 +300,13 @@ export default class DSA5_Utility {
         return "EXP.inexperienced"
     }
 
-    static async emptyActor(attrs = 12) {
+    static async emptyActor(attrs = 12, name = "Alrik") {
         if (!Array.isArray(attrs)) {
             attrs = [attrs, attrs, attrs, attrs, attrs, attrs, attrs, attrs]
         }
 
         const actor = await Actordsa5.create({
-            name: "Alrik",
+            name,
             type: "npc",
             items: [],
             system: {

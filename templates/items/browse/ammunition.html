@@ -20,57 +20,53 @@
                     <div class="row-section wrap">
                         <div class="col table-title row-section">
                             <div class="col ninety">
-                                {{localize "damage"}}
+                                {{localize "ammunitiongroup"}}
                             </div>
                             <div class="col ten center">
                                 {{#if document.uuid}}<a class="show-item" data-uuid="{{document.uuid}}"><i class="fas fa-info"></i></a>{{/if}}
                             </div>                            
                         </div>
                         <div class="col">
-                            {{document.system.damage.value}}
+                            {{localize document.system.ammunitiongroup.value}}
                         </div>
+             
+                        {{#if (eq document.system.ammunitiongroup.value 'mag')}}
+                        <div class="col table-title">
+                            {{localize "mag"}}
+                        </div>
+                        <div class="col">
+                            {{document.system.mag.value}} / {{document.system.mag.max}}
+                        </div>
+                        {{/if}}
                         <div class="col table-title">
                             {{localize "atmod"}}
                         </div>
                         <div class="col">
-                            {{document.system.atmod.value}}
+                            {{localize document.system.atmod}}
                         </div>
+                        {{#if document.system.damageMod}}
                         <div class="col table-title">
-                            {{localize "pamod"}}
+                            {{localize "MODS.damage"}}
                         </div>
                         <div class="col">
-                            {{document.system.pamod.value}}
+                            {{localize document.system.damageMod}}
                         </div>
+                        {{/if}}
+                        {{#if document.system.damageMod}}
                         <div class="col table-title">
-                            {{localize "damageThreshold"}}
+                            {{localize "MODS.range"}}
                         </div>
                         <div class="col">
-                            {{document.system.damageThreshold.value}}
+                            {{document.system.rangeMultiplier}}
                         </div>
+                        {{/if}}
+                        {{#if document.system.armorMod}}
                         <div class="col table-title">
-                            {{localize "guidevalue"}}
+                            {{localize "MODS.armor"}}
                         </div>
+                        
                         <div class="col">
-                            {{document.system.guidevalue.value}}
-                        </div>
-                        <div class="col table-title">
-                            {{localize "TYPES.Item.combatskill"}}
-                        </div>
-                        <div class="col">
-                            {{document.system.combatskill.value}}
-                        </div>
-                        <div class="col table-title">
-                            {{localize "reach"}}
-                        </div>
-                        <div class="col">
-                            {{localize (concat 'Range-' document.system.reach.value)}}
-                        </div>
-                        {{#if document.system.effect.value}}
-                        <div class="col table-title">
-                            {{localize "effect"}}
-                        </div>
-                        <div class="col">
-                            {{document.system.effect.value}}
+                            {{localize document.system.armorMod}}
                         </div>
                         {{/if}}
                         {{#if document.system.effect.attributes}}
@@ -81,7 +77,6 @@
                             {{document.system.effect.attributes}}
                         </div>
                         {{/if}}
-                       
                       
                     </div>
 

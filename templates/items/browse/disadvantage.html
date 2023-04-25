@@ -20,50 +20,27 @@
                     <div class="row-section wrap">
                         <div class="col table-title row-section">
                             <div class="col ninety">
-                                {{localize "damage"}}
+                                {{localize "APValue"}}
                             </div>
                             <div class="col ten center">
                                 {{#if document.uuid}}<a class="show-item" data-uuid="{{document.uuid}}"><i class="fas fa-info"></i></a>{{/if}}
                             </div>                            
                         </div>
                         <div class="col">
-                            {{document.system.damage.value}}
+                            {{document.system.APValue.value}}
                         </div>
+             
                         <div class="col table-title">
-                            {{localize "atmod"}}
+                            {{localize "maxlevel"}}
                         </div>
                         <div class="col">
-                            {{document.system.atmod.value}}
+                            {{document.system.max.value}}
                         </div>
                         <div class="col table-title">
-                            {{localize "pamod"}}
+                            {{localize "requirements"}}
                         </div>
                         <div class="col">
-                            {{document.system.pamod.value}}
-                        </div>
-                        <div class="col table-title">
-                            {{localize "damageThreshold"}}
-                        </div>
-                        <div class="col">
-                            {{document.system.damageThreshold.value}}
-                        </div>
-                        <div class="col table-title">
-                            {{localize "guidevalue"}}
-                        </div>
-                        <div class="col">
-                            {{document.system.guidevalue.value}}
-                        </div>
-                        <div class="col table-title">
-                            {{localize "TYPES.Item.combatskill"}}
-                        </div>
-                        <div class="col">
-                            {{document.system.combatskill.value}}
-                        </div>
-                        <div class="col table-title">
-                            {{localize "reach"}}
-                        </div>
-                        <div class="col">
-                            {{localize (concat 'Range-' document.system.reach.value)}}
+                            {{document.system.requirements.value}}
                         </div>
                         {{#if document.system.effect.value}}
                         <div class="col table-title">
@@ -71,14 +48,6 @@
                         </div>
                         <div class="col">
                             {{document.system.effect.value}}
-                        </div>
-                        {{/if}}
-                        {{#if document.system.effect.attributes}}
-                        <div class="col table-title">
-                            {{localize "domains"}}
-                        </div>
-                        <div class="col">
-                            {{document.system.effect.attributes}}
                         </div>
                         {{/if}}
                        

@@ -708,6 +708,10 @@
   
     .col {
       flex: 100%;
+
+      &.libItem{
+        margin-top: 30px;
+      }
   
       &.morph {
         flex: 50%;
@@ -763,6 +767,8 @@
   }
   
   .row-section .col {
+    
+
     &.three {
       flex: 30%;
     }
@@ -3267,10 +3273,10 @@
     right: 0;
   }
   
-  .toggleWorldIndex.on, .toggleAdvancedMode.on, .fulltextsearch.on {
+  .toggleWorldIndex.on, .toggleAdvancedMode.on, .fulltextsearch.on, .browseEnabled.on {
     color: darkred;
   }
-  
+
   .advancedSearch {
     .groupbox {
       margin: 0;
