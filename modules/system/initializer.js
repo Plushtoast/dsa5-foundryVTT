@@ -198,7 +198,7 @@ export default class DSA5Initializer extends Dialog {
                 }
                 await Folder.updateDocuments(updates)
             }
-            if (json.items) {
+            if (json.items && json.items.length > 0) {
                 let head = await this.getFolderForType("Item")
                 let itemsToCreate = []
                 let itemsToUpdate = []

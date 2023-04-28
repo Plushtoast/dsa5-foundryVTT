@@ -892,7 +892,7 @@ export default class ActorSheetDsa5 extends ActorSheet {
                     }
                     const extensions = this.actor.items.filter(i => i.type == "spellextension" && item.type == i.system.category && item.name == i.system.source)
                     if (extensions) {
-                        xpCost += extensions.reduce((a, b) => { return a + b.system.APValue.value }, 0)
+                        xpCost += extensions.reduce((a, b) => { return a + (Number(b.system.APValue.value) || 0) }, 0)
                         itemsToDelete.push(...extensions.map(x => x.id))
                     }
                     await this._updateAPs(xpCost * -1, {}, { render: false })

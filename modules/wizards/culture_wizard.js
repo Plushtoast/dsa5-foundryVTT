@@ -45,7 +45,9 @@ export default class CultureWizard extends WizardDSA5 {
             languagesToChose: languages.length > 0,
             languagesToSelect: languages.length > 1,
             vantagesToChose: advantages.length > 0 || disadvantages.length > 0,
-            generalToChose: writings.length > 0 || languages.length > 0
+            generalToChose: writings.length > 0 || languages.length > 0,
+            enrichedClothing: await TextEditor.enrichHTML(getProperty(this.culture.system, "clothing.value"), {secrets: false, async: true}),
+            enrichedDescription: await TextEditor.enrichHTML(getProperty(this.culture.system, "description.value"), {secrets: false, async: true})
         })
         return data
     }
