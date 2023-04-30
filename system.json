@@ -78,7 +78,7 @@
     "primaryTokenAttribute": "status.wounds",
     "secondaryTokenAttribute": "status.astralenergy",
     "compatibility": {
-        "minimum": "11.294",
+        "minimum": "11.296",
         "verified": "11",
         "maximum": "11"
     },
@@ -86,5 +86,24 @@
     "manifest": "https://raw.githubusercontent.com/Plushtoast/dsa5-foundryVTT/foundry10/system.json",
     "download": "https://github.com/Plushtoast/dsa5-foundryVTT/releases/download/5.0.0/dsa5-foundryVTT-5.0.0.zip",
     "name": "dsa5",
-    "minimumCoreVersion": "11.294"
+    "minimumCoreVersion": "11.296",
+    "packFolders": [
+        {
+          "name": "Item",
+          "sorting": "m",
+          "packs": [
+            "skills",
+            "skillsen",
+            "money"
+          ]
+        },
+        {
+          "name": "RollTable",
+          "sorting": "m",
+          "packs": [
+            "patzer",
+            "botch"
+          ]
+        }
+      ]
 }
