@@ -103,6 +103,18 @@
         "Mit dem Befehl @PostChat[beispiel text bla] kannst du Texte vorbereiten, um sie Spielern im Chat zu posten.",
         "Hat eine Kreatur mehrere Aktionen wird dies im Initiative Tracker mit einer rot hinterlegten Zahl aufgezeigt.",
         "Sturzschaden kann über den Kampftab ausgewürfelt werden.",
-        "Wenn du über den Talente Button in der Tokenhotbar hoverst und Buchstaben eingibst, kannst du die Talentliste filtern."
+        "Wenn du über den Talente Button in der Tokenhotbar hoverst und Buchstaben eingibst, kannst du die Talentliste filtern.",
+
+        "Das Grundregelwerkmodul bringt Unterstützung für die Charaktergenerierung.",
+        "Um einen schnellen Überblick über die Fähigkeiten eines Charakters zu erhalten, kannst du auf dem Talente Tab die trainierten Fähigkeiten über den Filter Button anzeigen.",
+        "Du kannst die Tokenhotbar in der Konfiguration anpassen.",
+        "Das Grundregelwerk bringt Unterstützung für den Achimieprozess über das Spielermenü.",
+        "Das Kompendium I bringt Unterstützung für Nahrungssammelproben.",
+        "Das Kompendium I bringt über die Schmiede im Spielermenü Unterstützung für die Herstellung von Waffen und Rüstungen.",
+        "Spieler können von Notizen editieren von Akteuren, wo sie mindestens die Berechtigung \"Eingeschränkt\" haben.",
+        "Du kannst in der Bibliothek den Stöbermodus aktivieren, um alle Elemente von DSA etwas angenehmer durchzulesen und kennenzulernen.",
+        "Der Spielleiter kann die Ansicht des Heldenblatts in der Headerleiste auf die limitierte Spieleransicht umstellen."
+
+
     ]
 }

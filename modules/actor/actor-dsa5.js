@@ -2516,6 +2516,12 @@ export default class Actordsa5 extends Actor {
   async addCondition(effect, value = 1, absolute = false, auto = true) {
     if (effect == "bleeding" || effect.id == "bleeding") return await RuleChaos.bleedingMessage(this);
 
+    //V11 actor delta fix for #displayScrollingStatus
+    if(this.isToken && !this.token?.object) {
+      console.warn("Actor token object is null for", this.name)
+      return
+    }
+
     return await DSA5StatusEffects.addCondition(this, effect, value, absolute, auto);
   }
 

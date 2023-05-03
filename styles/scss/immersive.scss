@@ -357,8 +357,10 @@
         }
 
         .global-control {
-            color: white;
             margin-left: 10px;
+            .playlist-header{
+                color: white;
+            }            
         }
 
         &:before {

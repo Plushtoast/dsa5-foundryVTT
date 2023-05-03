@@ -100,6 +100,16 @@
         "The command @PostChat[example text yay] can prepare text which can be send to the players later.",
         "If a creature has multiple actions, the initiative tracker shows a tiny red icon as a reminder for the GM.",
         "Falling damage can be rolled via the combat tab on actors.",
-        "Hovering a skills button on the tokenhotbar and entering characters will filter the skills list."
+        "Hovering a skills button on the tokenhotbar and entering characters will filter the skills list.",
+
+        "The core rules module brings support for character generation.",
+        "To get a quick overview of a character's skills, you can view the trained skills on the talents tab via the filter button.",
+        "You can customize the token hotbar in the configuration.",
+        "The core rulebook brings support for the Achimie process via the player menu.",
+        "Compendium I brings support for food collection checks.",
+        "Compendium I brings support for crafting weapons and armor via the Blacksmiths in the player menu.",
+        "Players can edit notes on actors where they have at least the \"Limited\" permission.",
+        "You can activate the browse mode in the library to read through and get to know all the elements of TDE a bit more comfortably.",
+        "The game master can change the view of the hero sheet in the header bar to the limited player view."
     ]
 }
