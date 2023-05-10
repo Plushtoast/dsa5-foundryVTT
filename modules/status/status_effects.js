@@ -273,7 +273,8 @@ export default class DSA5StatusEffects {
 
                 const effectClass = game.dsa5.config.statusEffectClasses[key] || DSA5StatusEffects
                 ef.flags.dsa5.value = val
-                ef.statuses.add(key)
+
+                ef.statuses = [key]
                 const value = effectClass.calculateRollModifier(ef, actor, item, options)
 
                 if(value != 0){
@@ -346,9 +347,10 @@ class BloodrushEffect extends DSA5StatusEffects {
     }
 }
 
+//todo improve array from
 class PainEffect extends DSA5StatusEffects {
     static ModifierIsSelected(item, options = {}, actor) {
-        return actor.effects.find(x => x.statuses.has("bloodrush")) == undefined
+        return actor.effects.find(x => Array.from(x.statuses).includes("bloodrush")) == undefined
     }
 }
 
