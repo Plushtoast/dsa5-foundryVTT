@@ -18,7 +18,19 @@ async function setupDefaulTokenConfig() {
 
 async function migrateDSA(currentVersion, migrationVersion) {
     await showPatchViewer()
+
+    if(currentVersion < 24){
+        await migratTo24()
+    }
+
     await game.settings.set("dsa5", "migrationVersion", migrationVersion)
+}
+
+async function migratTo24() {
+    for(let actor of game.actors) {
+        const removeEffects = actor.effects.filter(x => ["inpain", "encumbered"].includes(x.getFlag("core", "statusId")))
+       if(removeEffects.length) await actor.deleteEmbeddedDocuments("ActiveEffect", removeEffects.map(x => x.id))
+    }
 }
 
 export async function showPatchViewer() {
@@ -28,9 +40,8 @@ export async function showPatchViewer() {
     patchViewer.render(true)
 }
 
-
 function betaWarning() {
-    const msg = "This is the beta version for DSA/TDE for Foundry v10. Foundry v10 is still in development and so is TDE/DSA. You might encounter on or more issues. Please report those on the official TDE/DSA Github. Thank you."
+    const msg = "This is the beta version for DSA/TDE for Foundry v11. Foundry v11 is still in development and so is TDE/DSA. You might encounter on or more issues. Please report those on the official TDE/DSA Github. Thank you."
     ChatMessage.create(DSA5_Utility.chatDataSetup(msg));
 }
 
@@ -42,6 +53,8 @@ export default function migrateWorld() {
         const currentVersion = await game.settings.get("dsa5", "migrationVersion")
         const NEEDS_MIGRATION_VERSION = 23
         const needsMigration = currentVersion < NEEDS_MIGRATION_VERSION
+
+        betaWarning()
 
         if (!needsMigration) return;
 
