@@ -1,0 +1,9 @@
+:root {
+  --app-height: 100vh;
+}
+
+body {
+  height: var(--app-height);
+}
+
+/*# sourceMappingURL=applefix.css.map */

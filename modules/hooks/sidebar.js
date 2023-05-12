@@ -24,13 +24,16 @@ export default function() {
         button.click(() => { game.dsa5.itemLibrary.render(true) })
 
         html.find('li[data-pack="dsa5.money"]').remove()
-        
+    })
+
+    Hooks.once("renderCompendiumDirectory", (app, html, data) => {        
         const toRemove = game.i18n.lang == "de" ? "en" : "de"
         const packsToRemove = game.packs.filter(p => getProperty(p.metadata, "flags.dsalang") == toRemove)
 
         for (let pack of packsToRemove) {
             let name = `${pack.metadata.packageName}.${pack.metadata.name}`
             game.packs.delete(name)
+            game.data.packs = game.data.packs.filter(x => x.id != name)
             html.find(`li[data-pack="${name}"]`).remove()
         }
     })

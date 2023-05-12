@@ -1192,7 +1192,7 @@
         "removedEffect": "Effekt <b>{source}</b> wurde von <b>{target}</b> entfernt.",
         "apply": "Anwenden",
         "custom": "Sondereffekt",
-        "creature": "Akteurlink (z.b. das5-core.corebestiary.Gotongi)",
+        "creature": "Akteurlink (z.b. dsa5-core.corebestiary.Gotongi)",
         "resistRoll": "Widerstandsprobe",
         "resistPain": "Der Schmerz ist überwältigend (Stufe 4). Die Handlungsfähigkeit ist nur über eine Selbstbeherrschungsprobe zu bewahren.",
         "applyToOwner": "Effekt auf Träger übertragen",

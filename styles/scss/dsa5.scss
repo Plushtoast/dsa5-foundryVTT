@@ -434,9 +434,7 @@
   
     /*box-shadow: 0 0 14px #00000052 inset;*/
     background: rgb(188, 136, 111);
-    background: linear-gradient(90deg, rgba(188, 136, 111, 0.8) 0%, rgba(255, 255, 255, 0) 100%);
-
-    
+    background: linear-gradient(90deg, rgba(188, 136, 111, 0.8) 0%, rgba(255, 255, 255, 0) 100%);    
   }
   
   .table-title {
@@ -1269,6 +1267,9 @@
   .sidebar-tab .directory-list .directory-item {
     &.collapsed {
       color: white;
+      h3 {
+        color: white;
+      }
     }
   
     h3 {
@@ -3033,7 +3034,7 @@
   
   .fa-dsa5-player, .fa-dsa5 {
     position: relative;
-    width: 100%;
+    width: 25px;
     height: 25px;
   }
   
@@ -3047,7 +3048,7 @@
     left: 0;
     right: 0;
     top: 0;
-    bottom: -5px;
+    bottom: 0;
   }
   
   .fa-dsa5-player:before {

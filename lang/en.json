@@ -1163,7 +1163,7 @@
         "removedEffect": "Effect <b>{source}</b> removed from <b>{target}</b>.",
         "custom": "Special effect",
         "apply": "Apply",
-        "creature": "Actorlink (e.g. das5-core.coreenbestiary.Gotongi)",
+        "creature": "Actorlink (e.g. dsa5-core.coreenbestiary.Gotongi)",
         "resistRoll": "Resist check",
         "resistPain": "The pain is overwhelming (level 4). The ability to act can only be maintained via a self-control check.",
         "applyToOwner": "Apply effect to owner",

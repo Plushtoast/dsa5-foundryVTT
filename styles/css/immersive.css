@@ -1,0 +1,502 @@
+.dsa5-immersive #sidebar-tabs {
+  border-bottom: 1px solid black;
+  box-shadow: 0 0 10px black;
+  background-color: rgba(16, 13, 8, 0.4784313725);
+}
+.dsa5-immersive .chat-message .message-header {
+  padding: 10px 5px;
+  background-image: url("../../icons/backgrounds/kapitelstart.webp");
+  background-size: 112% 110%;
+  background-repeat: no-repeat;
+  /*background-position: -20px -5px;*/
+  background-position: 67% -5px;
+  color: #191815;
+}
+.dsa5-immersive .sidebar-popout .chat-message,
+.dsa5-immersive #sidebar .chat-message {
+  background: url("../../icons/backgrounds/chatpaper.webp") no-repeat;
+  background-size: 100% 100%;
+  border: none;
+  padding: 8px 15px 15px 15px;
+  padding-left: 18px;
+  margin-bottom: 8px;
+}
+.dsa5-immersive .sidebar-popout .dice-tray input[type=text],
+.dsa5-immersive #sidebar .dice-tray input[type=text] {
+  color: black;
+}
+.dsa5-immersive .window-app {
+  background: none;
+  box-shadow: none;
+}
+.dsa5-immersive .window-app.actor .window-content {
+  box-shadow: 0 0 20px #000;
+}
+.dsa5-immersive .window-app.image-popout .window-content {
+  background: url("../../icons/backgrounds/sheet2.webp") no-repeat;
+  background-position: center;
+  background-repeat: repeat-y;
+  background-size: 101% 1400px;
+}
+.dsa5-immersive .window-app .window-content {
+  background: url("../../icons/backgrounds/sheet2.webp") no-repeat;
+  background-position: center;
+  background-repeat: repeat-y;
+  background-size: 101% 1400px;
+}
+.dsa5-immersive .window-app.dsajournal .window-content {
+  background-image: url("../../icons/backgrounds/journalentry.webp");
+  background-size: 97% 1000px;
+  background-position: center;
+  background-repeat: repeat-y;
+  padding: 0 50px;
+}
+.dsa5-immersive .window-app.bookWizardsheet .video-container, .dsa5-immersive .window-app.dsajournal .window-content .video-container {
+  position: relative;
+  width: 100%;
+  padding-bottom: 56.25%;
+}
+.dsa5-immersive .window-app.bookWizardsheet .video-container iframe, .dsa5-immersive .window-app.dsajournal .window-content .video-container iframe {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  border: 0;
+}
+.dsa5-immersive .window-app.dialog .window-content {
+  padding-top: 14px;
+  padding-bottom: 14px;
+}
+.dsa5-immersive .window-app.npc-sheet .window-header, .dsa5-immersive .window-app.character-sheet .window-header, .dsa5-immersive .window-app.item .window-header {
+  background-image: url("../../icons/backgrounds/sidebar-top.webp");
+  border: none;
+  top: 2px;
+}
+.dsa5-immersive .window-app.npc-sheet:not(.monarch):after, .dsa5-immersive .window-app.character-sheet:not(.monarch):after, .dsa5-immersive .window-app.item:not(.monarch):after {
+  background-image: url("../../icons/backgrounds/sidebar-bot.webp");
+  bottom: 2px;
+  content: "";
+}
+.dsa5-immersive .window-app:not(.monarch) .window-header, .dsa5-immersive .window-app:after {
+  background-repeat: no-repeat;
+  position: relative;
+  min-height: 40px;
+  z-index: 1;
+  height: 40px;
+  width: 100%;
+  background-size: 100% 40px;
+}
+.dsa5-immersive .window-app.creature-sheet .window-content {
+  box-shadow: none;
+}
+.dsa5-immersive .window-app.monarch .window-header, .dsa5-immersive .window-app.monarch:after {
+  background-image: none;
+}
+.dsa5-immersive .window-app .window-header {
+  background-image: url("../../icons/backgrounds/blackhat.webp");
+  top: 7px;
+  border: none;
+}
+.dsa5-immersive .window-app:not(.monarch):after {
+  background-image: url("../../icons/backgrounds/blackbook.webp");
+  bottom: 12px;
+  content: "";
+}
+.dsa5-immersive .window-app.creature-sheet:after {
+  background-image: url("../../icons/backgrounds/blackcreaturebot.webp");
+}
+.dsa5-immersive .window-app.masterMenu:after {
+  background-image: url("../../icons/backgrounds/masterborder.webp");
+}
+.dsa5-immersive .window-app.creature-sheet .window-resizable-handle {
+  bottom: 18px;
+}
+.dsa5-immersive .window-app .window-header .aa-item-settings,
+.dsa5-immersive .window-app .window-header [id^=popout_] {
+  width: 15px;
+  height: 15px;
+  margin-top: 10px;
+}
+.dsa5-immersive .window-app:not(.monarch) .window-header > a {
+  width: 15px;
+  height: 15px;
+  margin-top: 10px;
+}
+.dsa5-immersive .window-app:not(.monarch) .window-header > a i {
+  width: 22px;
+  border: 1px solid #111;
+  padding: 3px;
+  background-color: #444;
+  text-align: center;
+  border-radius: 100%;
+  color: white;
+}
+.dsa5-immersive .window-app .aa-item-settings i,
+.dsa5-immersive .window-app .window-header [id^=popout_] i {
+  width: 22px;
+  border: 1px solid #111;
+  padding: 3px;
+  background-color: #444;
+  text-align: center;
+  border-radius: 100%;
+  color: white;
+}
+.dsa5-immersive .window-app .window-resizable-handle {
+  z-index: 2;
+  bottom: 11px;
+  right: 25px;
+}
+.dsa5-immersive .window-app .window-header .window-title {
+  text-align: center;
+  margin-left: 15%;
+  margin-top: 5px;
+  color: white;
+  font-family: var(--boldFont);
+  font-weight: bold;
+  font-family: "GentiumBasic-Bold";
+  text-shadow: 0px 0px 2px rgba(0, 0, 0, 0.75);
+}
+.dsa5-immersive .window-app.npc-sheet .window-header .window-title, .dsa5-immersive .window-app.character-sheet .window-header .window-title {
+  margin-top: 10px;
+  color: black;
+  text-shadow: 1px 1px white;
+}
+.dsa5-immersive .window-app .header-button.close {
+  margin-right: 25px;
+}
+.dsa5-immersive .window-app.actor .window-content, .dsa5-immersive .window-app.item .window-content {
+  margin-left: 15px;
+  margin-right: 15px;
+}
+.dsa5-immersive .window-app.dsa5Decent:after {
+  background: none;
+  margin: 0;
+  padding: 0;
+  overflow: visible;
+}
+.dsa5-immersive .window-app.initTracker::after,
+.dsa5-immersive .window-app.initTracker .window-content {
+  background: none;
+  margin: 0;
+  padding: 0;
+  overflow: visible;
+}
+.dsa5-immersive .window-app.tokenQuickHot::after,
+.dsa5-immersive .window-app.tokenQuickHot .window-content {
+  background: none;
+  margin: 0;
+  padding: 0;
+  overflow: visible;
+}
+.dsa5-immersive .window-app.initTracker::after, .dsa5-immersive .window-app.tokenQuickHot::after {
+  content: none;
+}
+.dsa5-immersive .window-app.dsa5Decent .window-content, .dsa5-immersive .window-app.dsa5Decent .window-header {
+  background: rgba(0, 0, 0, 0.5);
+  padding: 0;
+  position: unset;
+  color: white;
+}
+.dsa5-immersive .window-app.dsa5Decent .window-content li {
+  background: rgba(255, 255, 255, 0.2);
+}
+.dsa5-immersive .window-app.dsa5Decent .window-content li:hover {
+  background: rgba(255, 255, 255, 0.5);
+}
+.dsa5-immersive .window-app.dsa5Decent:after {
+  background: none;
+  margin: 0;
+  padding: 0;
+  overflow: visible;
+}
+.dsa5-immersive .app.sidebar-popout .window-content {
+  background: url("../../icons/backgrounds/sheet2.webp") no-repeat;
+  background-position: center;
+  background-repeat: repeat-y;
+  background-size: 101% 1400px;
+}
+.dsa5-immersive .character-sheet form {
+  border-color: black;
+  border-style: double;
+  border-width: 10px;
+  border-image: url("../../icons/backgrounds/actor.webp") 27 28 28 28;
+  padding: 4px;
+  margin: 0px;
+}
+.dsa5-immersive #settings .fshopButton div {
+  display: inline-block;
+  background-image: url("../../lazy/patchimages/UlissesDigital.png");
+  background-size: contain;
+  width: 20px;
+  height: 19px;
+  margin: 0;
+  background-repeat: no-repeat;
+  background-position: center;
+  position: relative;
+  top: 5px;
+}
+.dsa5-immersive #sidebar {
+  border: none;
+  margin: 0px;
+  height: 100vh;
+}
+.dsa5-immersive #sidebar .sidebar-tab .folder a i {
+  color: rgb(216, 212, 212);
+}
+.dsa5-immersive #sidebar button.fshopButton {
+  background: rgb(0, 111, 61);
+  background: linear-gradient(90deg, rgb(0, 38, 13) 0%, rgb(0, 111, 61) 100%);
+  position: relative;
+}
+.dsa5-immersive #sidebar.collapsed:before {
+  content: none;
+}
+.dsa5-immersive #sidebar .directory-list .documentName,
+.dsa5-immersive #sidebar .playlist.now-playing,
+.dsa5-immersive #sidebar .directory-list .directory-item.compendium,
+.dsa5-immersive #sidebar .directory-list .directory-item.document {
+  background-color: var(--sheet-bg);
+  margin: 3px;
+  border: 1px solid var(--sheet-border);
+  border-radius: 5px;
+  color: black;
+  margin-left: 10px;
+}
+.dsa5-immersive #sidebar .sidebar-tab {
+  color: #555;
+}
+.dsa5-immersive #sidebar .sidebar-tab a i {
+  color: #555;
+}
+.dsa5-immersive #sidebar .sidebar-tab a.inactive i {
+  color: rgb(172, 172, 172);
+}
+.dsa5-immersive #sidebar .sidebar-tab .jump-to-bottom {
+  color: white;
+}
+.dsa5-immersive #sidebar .sidebar-tab .jump-to-bottom i {
+  color: white;
+}
+.dsa5-immersive #sidebar .global-control {
+  margin-left: 10px;
+}
+.dsa5-immersive #sidebar .global-control .playlist-header {
+  color: white;
+}
+.dsa5-immersive #sidebar:before {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: -13px;
+  right: 0;
+  content: "";
+  background-image: url("../../icons/backgrounds/menu.webp");
+  background-repeat: repeat-y;
+  background-size: 100%;
+  z-index: -1;
+}
+.dsa5-immersive .dsa5.item .item-header {
+  background-image: url("../../icons/backgrounds/kapitelstart.webp");
+}
+.dsa5-immersive .dsa5.item.minimized .window-header .window-title {
+  color: black;
+}
+.dsa5-immersive .dsa5.item .window-header .window-title {
+  color: transparent;
+  text-shadow: none;
+}
+.dsa5-immersive .sidebar-popout {
+  color: #555;
+}
+.dsa5-immersive .sidebar-popout a i {
+  color: #555;
+}
+.dsa5-immersive .sidebar-popout a.inactive i {
+  color: rgb(172, 172, 172);
+}
+.dsa5-immersive .sidebar-popout .jump-to-bottom {
+  color: white;
+}
+.dsa5-immersive .sidebar-popout .jump-to-bottom i {
+  color: white;
+}
+.dsa5-immersive #hotbar:before {
+  background-image: url("../../icons/backgrounds/hotbarpart.webp"), url("../../icons/backgrounds/hotbarpart.webp"), url("../../icons/backgrounds/hotbar4.webp");
+  background-size: 30px 48px, 35px 48px, 100% 100%;
+  background-repeat: no-repeat;
+  content: "";
+  position: absolute;
+  left: 0px;
+  right: 0px;
+  bottom: -10px;
+  top: -10px;
+  z-index: -1;
+  background-position: 8px 11px, calc(100% - 8px) 11px, center;
+}
+.dsa5-immersive #hotbar.collapsedHotbar:before {
+  background-image: url("../../icons/backgrounds/hotbarpart.webp");
+}
+.dsa5-immersive #hotbar .macro {
+  background: none;
+  border: 1px solid rgba(0, 0, 0, 0.5);
+}
+.dsa5-immersive #hotbar .macro.active {
+  box-shadow: inset 0px 0px 25px #403014;
+  background: url("../../icons/backgrounds/macrobg.webp");
+}
+.dsa5-immersive #hotbar .macro.active.parry {
+  box-shadow: inset 0px 0px 15px #016e0a;
+}
+.dsa5-immersive #hotbar .macro.active.attack {
+  box-shadow: inset 0px 0px 15px #7e0202;
+}
+.dsa5-immersive #hotbar #macro-list {
+  border: none;
+  margin: 0;
+}
+.dsa5-immersive #hotbar .bar-controls {
+  margin: 0;
+  background: none;
+  /*color:silver;*/
+  color: #000000;
+  border: none;
+  /*text-shadow:0px 0px 8px black,0px 0px 8px black;*/
+  box-shadow: none;
+}
+.dsa5-immersive #hotbar .bar-controls:first-child {
+  margin-left: 5px;
+}
+@media (max-width: 1120px) {
+  .dsa5-immersive #hotbar:before {
+    background-size: 30px 88px, 35px 88px, 100% 100%;
+    background-position: 4px 18px, calc(100% - 4px) 18px, center;
+    right: -34px;
+  }
+  .dsa5-immersive #hotbar .hotbar-page-controls a, .dsa5-immersive #hotbar .hotbar-directory-controls a {
+    margin: 4px 0;
+  }
+}
+.dsa5-immersive .window-app.npc-sheet.app .window-content {
+  box-shadow: none;
+}
+.dsa5-immersive #players {
+  background: none;
+  border: none;
+  box-shadow: none;
+}
+.dsa5-immersive #players:before {
+  background-image: url("../../icons/backgrounds/dsabot.webp");
+  background-size: 100% 15px;
+  background-repeat: no-repeat;
+  content: "";
+  position: absolute;
+  left: -2px;
+  right: -2px;
+  bottom: -5px;
+  top: -20px;
+  z-index: -1;
+  background-position: center 100%;
+}
+.dsa5-immersive #players h3 {
+  border: none;
+  position: relative;
+  overflow: visible;
+}
+.dsa5-immersive #players h3:before {
+  background-image: url("../../icons/backgrounds/dsahead.webp"), url("../../icons/backgrounds/dsamid.webp");
+  background-size: 100% 30px, 100% calc(100% - 30px);
+  background-repeat: no-repeat;
+  content: "";
+  position: absolute;
+  left: -5px;
+  right: -5px;
+  bottom: 0px;
+  top: -20px;
+  z-index: -1;
+  background-position: center 0px, center 30px;
+}
+.dsa5-immersive #players #player-list {
+  border: none;
+  position: relative;
+  overflow: visible;
+}
+.dsa5-immersive #players #player-list:before {
+  background-image: url("../../icons/backgrounds/dsamid.webp");
+  background-size: 100% 50px;
+  background-repeat: repeat-y;
+  content: "";
+  position: absolute;
+  left: -2px;
+  right: -2px;
+  bottom: 5px;
+  top: -3px;
+  z-index: -1;
+  background-position: center 0px;
+}
+.dsa5-immersive #sidebar button,
+.dsa5-immersive .initTracker button,
+.dsa5-immersive .masterMenu button,
+.dsa5-immersive .sheetButton,
+.dsa5-immersive .sidebar-popout button,
+.dsa5-immersive .sidebar-popout .dice-tray button {
+  background-image: linear-gradient(to right top, #be2020, #af1622, #9f0d22, #8f0522, #7f0021);
+  color: white;
+  border: 1px solid black;
+}
+.dsa5-immersive #sidebar button:active,
+.dsa5-immersive .initTracker button:active,
+.dsa5-immersive .masterMenu button:active,
+.dsa5-immersive .sheetButton:active,
+.dsa5-immersive .sidebar-popout button:active,
+.dsa5-immersive .sidebar-popout .dice-tray button:active {
+  box-shadow: inset 0 0 5px black;
+}
+.dsa5-immersive #sidebar button:hover,
+.dsa5-immersive .initTracker button:hover,
+.dsa5-immersive .masterMenu button:hover,
+.dsa5-immersive .sheetButton:hover,
+.dsa5-immersive .sidebar-popout button:hover,
+.dsa5-immersive .sidebar-popout .dice-tray button:hover {
+  box-shadow: inset 0 0 3px white;
+}
+.dsa5-immersive .dsajournal.sheet.journal-entry .journal-entry-content {
+  background: none;
+  border: none;
+}
+.dsa5-immersive .dsajournal .header-search, .dsa5-immersive .dsajournal.sheet.journal-entry .pages-list .directory-item .page-number, .dsa5-immersive .dsajournal .directory-item {
+  color: black;
+}
+.dsa5-immersive #compendium li.compendium-pack {
+  background-color: var(--sheet-bg);
+  margin: 3px;
+  border: 1px solid var(--sheet-border);
+  border-radius: 5px;
+  color: black;
+  margin-left: 10px;
+  padding: 5px;
+}
+.dsa5-immersive #compendium.sidebar-tab .entry-name i {
+  color: white;
+}
+.dsa5-immersive #compendium .compendium h3 {
+  color: white;
+  margin-left: 3px;
+}
+.dsa5-immersive .compendium.directory .directory-header .compendium-name {
+  color: white;
+}
+.dsa5-immersive #compendium li.compendium-pack .compendium-footer, .dsa5-immersive #playlists li.sound .sound-playback .sound-timer {
+  color: rgb(14, 12, 12);
+}
+.dsa5-immersive #playlists.sidebar-tab .directory-list .directory-item.playlist.collapsed {
+  color: #555;
+}
+.dsa5-immersive .sound-name {
+  color: rgb(92, 92, 92);
+}
+.dsa5-immersive .app.sidebar-popout {
+  backdrop-filter: none;
+}
+
+/*# sourceMappingURL=immersive.css.map */

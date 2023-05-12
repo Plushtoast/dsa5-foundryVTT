@@ -414,12 +414,12 @@
     #hotbar {
         &:before {
             background-image: url('../../icons/backgrounds/hotbarpart.webp'), url('../../icons/backgrounds/hotbarpart.webp'), url('../../icons/backgrounds/hotbar4.webp');
-            background-size: 30px 48px, 35px 48px, 100% 100%;
+            background-size: 30px 48px, 66px 48px, 100% 100%;
             background-repeat: no-repeat;
             content: '';
             position: absolute;
             left: 0px;
-            right: 0px;
+            right: -32px;
             bottom: -10px;
             top: -10px;
             z-index: -1;
@@ -469,6 +469,22 @@
             }
         }
     }
+
+    @media (max-width: 1120px) {
+        #hotbar {
+            &:before{
+                background-size: 36px 88px, 66px 88px, 190% 100%;
+                background-position: -3px 18px, calc(100% + 3px) 18px, center;
+                right: -58px;
+                left: 6px;
+            }
+            #hotbar-page-controls, #hotbar-directory-controls {
+                a {
+                    margin: 6px 0;
+                }
+            }
+        }
+    }    
 
     .window-app.npc-sheet.app .window-content {
         box-shadow: none;
