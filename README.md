@@ -138,8 +138,7 @@ If you want to discuss TDE for foundry or need some assistance you can also join
         </a>
         <a href="https://www.f-shop.de/virtual-tabletops/das-schwarze-auge-vtt/abenteuer-module/2685/dsa5-labyrinth-der-intrigen-fuer-foundry-vtt" title="Labyrinth der Intrigen">
             <img src="https://ulisses-digital.de/R20/dsa5/modules/dsa5-labyrinthofintrigues/icons/journal/coverde.webp" alt="Labyrinth der Intrigen" style="margin-right: 5px; margin-bottom: 5px; text-align:center; width:210px;">
-        </a>
-        
+        </a>        
         <a href="https://www.f-shop.de/detail/index/sArticle/3456">
             <img src="https://www.f-shop.de/media/image/c2/7d/f1/ESD033_0_0999.jpg" alt="Klingen der Nacht" style="margin-right: 5px; margin-bottom: 5px; text-align:center; width:210px;">
         </a>
