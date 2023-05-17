@@ -21,7 +21,7 @@
             </div>
             {{#each prepare.mentalAttrs as |ch|}}
             <div class="table-data">
-                <input name="system.characteristics.{{ch}}.initial" type="text" value="{{getAttr ../actor ch 'initial'}}" data-dtype="Number">
+                <input name="system.characteristics.{{ch}}.initial" type="number" value="{{getAttr ../actor ch 'initial'}}" data-dtype="Number">
             </div>
             {{/each}}
         </div>
@@ -34,7 +34,7 @@
             </div>
             {{#each prepare.mentalAttrs as |ch|}}
             <div class="table-data">
-                <input name="system.characteristics.{{ch}}.advances" type="text" value="{{getAttr ../actor ch 'advances'}}" data-dtype="Number">
+                <input name="system.characteristics.{{ch}}.advances" type="number" value="{{getAttr ../actor ch 'advances'}}" data-dtype="Number">
             </div>
             {{/each}}
         </div>
@@ -47,7 +47,7 @@
             </div>
             {{#each prepare.mentalAttrs as |ch|}}
             <div class="table-data">
-                <input name="system.characteristics.{{ch}}.modifier" type="text" value="{{getAttr ../actor ch 'modifier'}}" data-dtype="Number">
+                <input name="system.characteristics.{{ch}}.modifier" type="number" value="{{getAttr ../actor ch 'modifier'}}" data-dtype="Number">
             </div>
             {{/each}}
         </div>
@@ -73,7 +73,7 @@
             </div>
             {{#each prepare.bodyAttrs as |ch|}}
             <div class="table-data">
-                <input name="system.characteristics.{{ch}}.initial" type="text" value="{{getAttr ../actor ch 'initial'}}" data-dtype="Number">
+                <input name="system.characteristics.{{ch}}.initial" type="number" value="{{getAttr ../actor ch 'initial'}}" data-dtype="Number">
             </div>
             {{/each}}
         </div>
@@ -86,7 +86,7 @@
             </div>
             {{#each prepare.bodyAttrs as |ch|}}
             <div class="table-data">
-                <input name="system.characteristics.{{ch}}.advances" type="text" value="{{getAttr ../actor ch 'advances'}}" data-dtype="Number">
+                <input name="system.characteristics.{{ch}}.advances" type="number" value="{{getAttr ../actor ch 'advances'}}" data-dtype="Number">
             </div>
             {{/each}}
         </div>
@@ -99,7 +99,7 @@
             </div>
             {{#each prepare.bodyAttrs as |ch|}}
             <div class="table-data">
-                <input name="system.characteristics.{{ch}}.modifier" type="text" value="{{getAttr ../actor ch 'modifier'}}" data-dtype="Number">
+                <input name="system.characteristics.{{ch}}.modifier" type="number" value="{{getAttr ../actor ch 'modifier'}}" data-dtype="Number">
             </div>
             {{/each}}
         </div>

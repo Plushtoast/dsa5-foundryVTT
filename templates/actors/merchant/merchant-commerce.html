@@ -39,13 +39,13 @@
                     <i class="fas fa-piggy-bank"></i>
                 </div>
                 <div class="col five" data-tooltip="MERCHANT.sellingFactor">
-                    <input name="system.merchant.sellingFactor" type="text" value="{{actor.system.merchant.sellingFactor}}" data-dtype="Number" />
+                    <input name="system.merchant.sellingFactor" type="number" value="{{actor.system.merchant.sellingFactor}}" data-dtype="Number" />
                 </div>
                 <div class="col ten center" data-tooltip="MERCHANT.buyingFactor">
                     <i class="fas fa-coins"></i>
                 </div>
                 <div class="col five" data-tooltip="MERCHANT.buyingFactor">
-                    <input name="system.merchant.buyingFactor" type="text" value="{{actor.system.merchant.buyingFactor}}" data-dtype="Number" />
+                    <input name="system.merchant.buyingFactor" type="number" value="{{actor.system.merchant.buyingFactor}}" data-dtype="Number" />
                 </div>
             </div>
             {{#if isGM}}
@@ -156,11 +156,11 @@
             </div>
             {{#if (eq ../actor.system.merchant.merchantType "merchant")}}
             <div class="col ten center" data-tooltip="MERCHANT.sellingFactor">
-                <input name="system.merchant.factors.sellingFactor.{{player.id}}" type="text" value="{{player.sellingFactor}}" data-dtype="Number" />
+                <input name="system.merchant.factors.sellingFactor.{{player.id}}" type="number" value="{{player.sellingFactor}}" data-dtype="Number" />
 
             </div>
             <div class="col ten center" data-tooltip="MERCHANT.buyingFactor">
-                <input name="system.merchant.factors.buyingFactor.{{player.id}}" type="text" value="{{player.buyingFactor}}" data-dtype="Number" />
+                <input name="system.merchant.factors.buyingFactor.{{player.id}}" type="number" value="{{player.buyingFactor}}" data-dtype="Number" />
             </div>
             {{/if}}
             <div class="col ten center">

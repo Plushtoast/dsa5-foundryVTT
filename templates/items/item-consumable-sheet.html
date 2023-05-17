@@ -17,7 +17,7 @@
                     <label class="label-text table-title">{{localize "quantity"}}</label>
                 </div>
                 <div class="col fifteen">
-                    <input class="input-text" type="text" name="system.quantity.value" value="{{system.quantity.value}}" data-dtype="Number" />
+                    <input class="input-text" type="number" name="system.quantity.value" value="{{system.quantity.value}}" data-dtype="Number" />
 
                 </div>
             </div>
@@ -32,7 +32,7 @@
                     <label data-tooltip="UNITS.weight" class="label-text table-title">{{localize "Weight"}}</label>
                 </div>
                 <div class="col fifteen">
-                    <input data-tooltip="UNITS.weight" class="input-text" type="text" name="system.weight.value" value="{{system.weight.value}}" data-dtype="Number" />
+                    <input data-tooltip="UNITS.weight" class="input-text" type="number" name="system.weight.value" value="{{system.weight.value}}" data-dtype="Number" />
                 </div>
             </div>
         </div>
@@ -71,13 +71,13 @@
 
             <div class="form-group double">
                 <label class="label-text">{{localize 'max'}} {{localize "charges"}}</label>
-                <input class="input-text" type="text" name="system.charges" value="{{system.charges}}" data-dtype="Number" /><span> / </span>
-                <input class="input-text" type="text" name="system.maxCharges" value="{{system.maxCharges}}" data-dtype="Number" />
+                <input class="input-text" type="number" name="system.charges" value="{{system.charges}}" data-dtype="Number" /><span> / </span>
+                <input class="input-text" type="number" name="system.maxCharges" value="{{system.maxCharges}}" data-dtype="Number" />
             </div>
 
             <div class="form-group">
                 <label class="label-text">{{localize "priceEachQL"}}</label>
-                <input class="input-text" type="text" name="system.price.value" value="{{system.price.value}}" data-dtype="Number" />
+                <input class="input-text" type="number" name="system.price.value" value="{{system.price.value}}" data-dtype="Number" />
             </div>
             <div class="form-group full-height" data-tooltip="TT.oneQualityPerLine">
                 <label class="label-text">{{localize "qualitySteps"}}</label>
@@ -86,7 +86,7 @@
 
             <div class="form-group">
                 <label class="label-text">{{localize "Difficulty"}}</label>
-                <input class="input-text" type="text" name="system.difficulty" value="{{system.difficulty}}" data-dtype="Number" />
+                <input class="input-text" type="number" name="system.difficulty" value="{{system.difficulty}}" data-dtype="Number" />
             </div>
             <div class="form-group full-height">
                 <label class="label-text">{{localize "PLANT.ingredients"}}</label> {{editor enrichedIngredients target="system.ingredients" button=true owner=owner editable=editable engine="prosemirror"}}

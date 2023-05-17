@@ -68,7 +68,6 @@
                 </div>
                 {{/each}}
             </div>
-
         </div>
         {{> systems/dsa5/templates/actors/parts/magicalSigns.html}}
     </div>
@@ -80,7 +79,7 @@
                     {{localize "tradition"}}
                 </div>
                 <div class="col sixty">
-                    <input type="text" name="system.tradition.magical" data-dtype="String" value="{{actor.system.tradition.magical}}">
+                    <input type="text" name="system.tradition.magical" data-dtype="String" value="{{actor.system.tradition.magical}}"/>
                 </div>
             </div>
             <div class="row-section lineheight">
@@ -100,7 +99,7 @@
                     {{localize "feature"}}
                 </div>
                 <div class="col sixty">
-                    <input type="text" name="system.feature.magical" data-dtype="String" value="{{actor.system.feature.magical}}">
+                    <input type="text" name="system.feature.magical" data-dtype="String" value="{{actor.system.feature.magical}}"/>
                 </div>
             </div>
             <div class="row-section lineheight">
@@ -108,10 +107,9 @@
                     {{localize "energyfactor"}}
                 </div>
                 <div class="col sixty">
-                    <input type="text" name="system.energyfactor.magical" data-dtype="number" value="{{actor.system.energyfactor.magical}}" />
+                    <input type="number" name="system.energyfactor.magical" data-dtype="number" value="{{actor.system.energyfactor.magical}}" />
                 </div>
             </div>
         </div>
-    </div>
-    
+    </div>    
 </div>

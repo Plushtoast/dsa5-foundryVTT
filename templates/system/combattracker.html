@@ -70,7 +70,7 @@
                 {{#if this.ongoing}}
                 <div class="ongoing" data-tooltip="{{this.ongoings}}">{{this.ongoing}}</div>
                 {{/if}}
-                {{#if (gt this.actionCount 1)}}
+                {{#if (and this.owner (gt this.actionCount 1))}}
                 <div class="actions" data-tooltip="{{this.actionCounts}}">{{this.actionCount}}</div>
                 {{/if}}
             </div>

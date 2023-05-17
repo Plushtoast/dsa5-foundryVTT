@@ -699,7 +699,7 @@ class PatronSheet extends ItemSheetdsa5 {
 class MagicalSignSheet extends ItemSheetdsa5 {
     async getData(options) {
         const data = await super.getData(options);
-        data.categories = { 1: game.i18n.localize("magicalsign"), 2: game.i18n.localize("additionalsign") }
+        data.categories = { 1: game.i18n.localize("TYPES.Item.magicalsign"), 2: game.i18n.localize("additionalsign") }
         data.canOnUseEffect = game.user.isGM || await game.settings.get("dsa5", "playerCanEditSpellMacro")
         return data
     }
@@ -723,7 +723,7 @@ class MagicalSignSheet extends ItemSheetdsa5 {
         const sign = game.dsa5.config.ItemSubclasses.magicalsign
         const skill = actor.items.find(x => x.type == "skill" && x.name == game.i18n.localize("LocalizedIDs.artisticAbility"))
         const chatMessage = `<hr/><p><b>${this.item.name}</b></p><p>${this.item.system.description.value}</p><p>${sign.chatData(this.item.system, "").join("</br>")} <span class="costCheck"></span></p>`
-        actor.setupSkill(skill, { other: [chatMessage], subtitle: ` (${game.i18n.localize('magicalsign')})` }, undefined).then(async(setupData) => {
+        actor.setupSkill(skill, { other: [chatMessage], subtitle: ` (${game.i18n.localize('TYPES.Item.magicalsign')})` }, undefined).then(async(setupData) => {
             const res = await actor.basicTest(setupData, { suppressMessage: true })
             res.result.preData.calculatedSpellModifiers = { finalcost: aspcost, costsMana: true }
             await DiceDSA5.renderRollCard(res.cardOptions, res.result, res.options.rerenderMessage)

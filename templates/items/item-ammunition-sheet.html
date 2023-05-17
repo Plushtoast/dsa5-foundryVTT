@@ -24,8 +24,8 @@
             {{#if (eq system.ammunitiongroup.value 'mag')}}
             <div class="form-group double">
                 <label class="label-text">{{localize "mag"}}</label>
-                <input class="input-text" type="text" name="system.mag.value" value="{{system.mag.value}}" data-dtype="Number" /><span> / </span>
-                <input class="input-text" type="text" name="system.mag.max" value="{{system.mag.max}}" data-dtype="Number" />
+                <input class="input-text" type="number" name="system.mag.value" value="{{system.mag.value}}" data-dtype="Number" /><span> / </span>
+                <input class="input-text" type="number" name="system.mag.max" value="{{system.mag.max}}" data-dtype="Number" />
             </div>
             {{/if}}
             <div class="form-group">

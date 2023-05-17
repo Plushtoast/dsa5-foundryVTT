@@ -80,12 +80,12 @@
                 </div>
                 <div class="col sixty">
                     <select name="{{item.name}}" class="moreModifiers" data-name="{{item.name}}" data-dtype="Number">
-            {{#select item.selected}}
-            {{#each item.options as |sktype|}}
-            <option value="{{sktype.val}}">{{sktype.name}} ({{sktype.val}})</option>
-            {{/each}}
-            {{/select}}
-          </select>
+                        {{#select item.selected}}
+                        {{#each item.options as |sktype|}}
+                        <option value="{{sktype.val}}">{{sktype.name}} ({{sktype.val}})</option>
+                        {{/each}}
+                        {{/select}}
+                    </select>
                 </div>
             </div>
             {{/each}} {{/if}}

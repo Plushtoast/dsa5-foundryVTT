@@ -53,8 +53,8 @@
 
             <div class="form-group doubleInput">
                 <label class="label-text">{{localize 'critBotch'}}</label>
-                <input class="input-text" type="text" name="system.crit" value="{{system.crit}}" data-dtype="Number" data-tooltip="CriticalSuccess" />
-                <input class="input-text" type="text" name="system.botch" value="{{system.botch}}" data-dtype="Number" data-tooltip="CriticalFailure" />
+                <input class="input-text" type="number" name="system.crit" value="{{system.crit}}" data-dtype="Number" data-tooltip="CriticalSuccess" />
+                <input class="input-text" type="number" name="system.botch" value="{{system.botch}}" data-dtype="Number" data-tooltip="CriticalFailure" />
             </div>
 
 
@@ -74,8 +74,8 @@
 
             <div class="form-group double">
                 <label class="label-text">{{localize "structure"}}</label>
-                <input class="input-text" type="text" name="system.structure.value" value="{{system.structure.value}}" data-dtype="Number" /><span> / </span>
-                <input class="input-text" type="text" name="system.structure.max" value="{{system.structure.max}}" data-dtype="Number" />
+                <input class="input-text" type="number" name="system.structure.value" value="{{system.structure.value}}" data-dtype="Number" /><span> / </span>
+                <input class="input-text" type="number" name="system.structure.max" value="{{system.structure.max}}" data-dtype="Number" />
             </div>
             {{#if armorAndWeaponDamage}}
             <div class="form-group">
