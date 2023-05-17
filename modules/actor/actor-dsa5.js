@@ -17,7 +17,7 @@ import CreatureType from "../system/creature-type.js";
 import Riding from "../system/riding.js";
 
 export default class Actordsa5 extends Actor {
-  static _baseCarryItems = new Set(["meleeweapon", "ammunition", "rangeweapon", "plant", "poison", "money", "consumable", "equipment"])
+  static _baseCarryItems = new Set(["armor", "meleeweapon", "ammunition", "rangeweapon", "plant", "poison", "money", "consumable", "equipment"])
   static _mageSpecs = new Set(["magical", "staff", "pact"])
   static _clericSpecs = new Set(["ceremonial", "clerical"])
 
@@ -108,16 +108,18 @@ export default class Actordsa5 extends Actor {
               continue;
             }
           }
-          i.system.preparedWeight = parseFloat((i.system.weight.value * i.system.quantity.value).toFixed(3));
-          data.totalWeight += Number(i.system.preparedWeight);
-        } else if(i.type == "armor"){
-          i.system.preparedWeight = parseFloat((i.system.weight.value * i.system.quantity.value).toFixed(3));
-          data.totalWeight += parseFloat(
-            (
-              i.system.weight.value * (i.system.worn.value ? Math.max(0, i.system.quantity.value - 1) : i.system.quantity.value)
-            ).toFixed(3)
-          );
-          if(i.system.worn.value) armor.push(i)
+          if(i.type == "armor"){
+            i.system.preparedWeight = parseFloat((i.system.weight.value * i.system.quantity.value).toFixed(3));
+            data.totalWeight += parseFloat(
+              (
+                i.system.weight.value * (i.system.worn.value ? Math.max(0, i.system.quantity.value - 1) : i.system.quantity.value)
+              ).toFixed(3)
+            );
+            if(i.system.worn.value) armor.push(i)
+          } else {
+            i.system.preparedWeight = parseFloat((i.system.weight.value * i.system.quantity.value).toFixed(3));
+            data.totalWeight += Number(i.system.preparedWeight);
+          }
         } else { 
           switch(i.type){
             case "trait":
