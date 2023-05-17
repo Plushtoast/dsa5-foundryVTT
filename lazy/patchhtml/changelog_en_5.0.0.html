@@ -1,0 +1,76 @@
+<h1 class="mume-header" id="important-enhancements">Important Enhancements</h1>
+
+<h2 class="mume-header" id="responsive-upgrades">Responsive upgrades</h2>
+
+<p>Some of the parts of the character sheet have been reworked to be more responsive. You can decrease the size of the character sheet window and the layout will change to match the new boundaries. This way you can enjoy the game on smaller screens. We especially target tablets for the moment and we&apos;ve already seen pretty good results there. We intend to increase support for tablets including special widgets to allow playing at a table. The intended setup for now, will be a gamemaster with a normal laptop or desktop (because many functions require a mouse) and players able to roll and do character stuff via tablets, so you can do a hybrid setup on the table.<br>
+Foundry V11 changes a few things there, so unfortunately it might not work immediately after v11 release.</p>
+<h2 class="mume-header" id="character-generator">Character generator</h2>
+
+<p>We decided to add some support for easy and guided character generation.<br>
+The new character generator is a character sheet available only to the actor type &quot;character&quot;. You can enable it by changing the sheet type of the character or clicking the respective button on a new character (it will only show for characters without species, profession and culture).<br>
+The sheet itself is especially meant for people new to the dark eye. It guides the player through all important steps and provides explanations as well as showing some limits and requirements for attributes and skills. In the process of the development of this tool (phew I know why I didn&apos;t start this earlier...), we also improved the character calculator and some of the calculations, so it should be more precise. The sheet provides also a few suggestions for the creation process. Adding equipment to the sheet, while it is activated, will also automatically pay the price for that item or refuse to add it, if there is not enough money anymore. The tool will always add culture and profession packages.<br>
+Especially noteworthy for beginners is the field estimated chance of success for one quality level for skills, because beginners usually have no clue what all those numbers mean and if they are actually good at it.<br>
+<strong>Disclaimer: The development of the system set it focus on faciliating the flow of the game. A character generator is not part of our task and the possibilities and requirements of a character generator are endless and very costly in effort. We don&apos;t want and also can&apos;t support a full character generator, so some wishes and tickets regarding this topics might never get a response.</strong><br>
+This generator can not check requirements for special abilities and dis-/advantages - you have to do this on your own.<br>
+If you need a full fledged character generator you should still use very advanced tools like Optolith or The Dark Aid.<br>
+This feature requires the dsa5-core module.</p>
+<h2 class="mume-header" id="master-token-hotbar-improved">Master token hotbar improved</h2>
+
+<p>The token hotbar now has it&apos;s own configuration menu in the settings. Among a few minor options like fading out the bar, the game master can also find settings to hide and show some of the master&apos;s token hotbar functions as well as to disable them entirely. Optional functions like the foodsearch, hunt and plant search are now also available via the master token hotbar.</p>
+<h2 class="mume-header" id="crafting-update">Crafting Update</h2>
+
+<p>We added several helpers for all sorts of crafting methods. You can find them in the player menu. The master&apos;s token hotbar and as a macro.</p>
+<h3 class="mume-header" id="alchemy-helper">Alchemy helper</h3>
+
+<p>The player menu now contains a small helper for brewing potions. To do so, make sure an actor is active in the player menu. If you are a player, it should be already your character but you can drag and drop another actor you own on the app too. Then drag a recipe onto the app too and you can start rolling. But beware failed alchemical experiments can cause havoc! The item will be created with the appropriate quality level in the alchemist&apos;s inventory.<br>
+This feature requires the module dsa5-core.</p>
+<h3 class="mume-header" id="food-search--hunt">Food Search &amp; Hunt</h3>
+
+<p>The game master can now initiate a hunt or food search process via the token hotbar or a macro. It will guide you through the necessary steps. The result of your hunt can be dragged from the chat to your actor. You can setup all required modifiers. The amount of rations and the time requirement will be calculated automatically.<br>
+The plant search from the herbarium will also be included in the token hotbar.<br>
+This feature requires the module dsa5-compendium.</p>
+<h3 class="mume-header" id="the-smithy">The smithy</h3>
+
+<p>Thanks to Teliogeo&apos;s excessive groundwork we also now have a helper for forging weapons and armors. It can be found via the player menu too. Make sure a smith is active there (see alchemy helper) and take any armor/weapon as a recipe via drag and drop. You can then select material, crafting technique and modifications you want. The tool will calculate the required time interval and it provides a cumulative check item which can be added to the actor. Crafting is a cumulative check, so crafters have to do up to 7 checks each costing one interval of time to gather 10 quality levels and finish the object. Not finishing all quality levels within the maximum allowed amount of tries, spoils the material and the crafting process fails.<br>
+The game master also gets an estimated crafting cost proposal. The material costs are calculated by multiplying the weight of the base item with the cost of 1 unit (stone) of the material. Since gear is made out of different materials (e.g. an armor has not only a steal plate but also leather straps) take this calculation only as a rough measure. Also cost for a paid worker (qualified and masterful) is calculated for each interval. You&apos;ll see a cost range band e.g. 40-72, which means 40 silverthalers up to 72 for a qualified worker. Keep in mind that each additional required interval during the cumulative check also increases the cost by this value.<br>
+Once the cumulative check item on the actor is complete, it will post a chat message with the finished item. You can then drag the item to the desired actor.<br>
+This way the gamemaster can also prepare the right modifiers for the players.<br>
+Alternatively you can also just finish the modified object immediately without any checks (e.g. players bought some object from a renowned smith). Applied modifiers will be added to the description of the item.<br>
+This feature requires the module dsa5-compendium.</p>
+<h2 class="mume-header" id="actor-notes---again">Actor notes - AGAIN</h2>
+
+<p>This was already a feature back in the days. Foundry updates did&apos;nt mean well for it... but now it&apos;s back! The gamemaster can give limited access for important NPCs to the players. The players are then allowed to edit a special notes section on that NPC. So they can add information directly to the NPC instead of a journal.<br>
+You can create a nice collection of &quot;Dramatis Personae&quot; like this.</p>
+<h2 class="mume-header" id="browse-mode">Browse mode</h2>
+
+<p>The library has now a browse mode. Enable it by clicking on the enlarge button next to the search bar. It allows to read through filtered stuff more easily so you can learn and find new stuff better. This thing is intended to improve the reading possibilites of stuff on the PC. Still the first try..but more to come. Also don&apos;t forget to make use of the advanced search.</p>
+<h1 class="mume-header" id="enhancements">Enhancements</h1>
+
+<ul class="dsalist">
+<li>The react attack dialog now shows a note on dodging and parrying, if the attacking enemy is large or huge.</li>
+<li>TDE maps imported from a compendium now show a warning that they might not be initialized properly. if they are not imported throught the journalbrowser.</li>
+<li>Principles and obligations should now calculate their adventure point cost properly (only the highest cost is taken into account)</li>
+<li>The player only sees the modified price on merchants&apos; items if he opens the item detail sheet. Previously he could see the base price there.</li>
+<li>The game master now has an additional button in the header of actor sheets, which allows him to switch to the limited view of the sheet. The limited view is what players can see if they have the permission &quot;limited&quot; for that actor.</li>
+<li>Effects can now be added with a time and a reason on the character sheet by &quot;right&quot; clicking on the effect selection list on the status tab. This is similar to the tokenhotbar which received this feature a short time ago.</li>
+<li>You can now change the width of the TDE combat tracker. Per default it only shows the next 5 turns, to avoid clutter on the screen. But if you need more information you can increase the amount.</li>
+<li>The initiative now has an additional 1d99*0.0001 attached. This is to decide ties between same initiative rolls. The base rules define to repeat to roll 1d6 until a winner is found. This is technically difficult and especially for large combats very ineffective. As a reminder the initiative is now defined as:<br>
+1d6 + base initiative value + base initiative value * 0.01 + 1d99 * 0.0001</li>
+<li>The wound threshold rule in the compendium can now be disabled, so the buttons for the effect won&apos;t appear in the combat anymore.</li>
+<li>Enchanted items now roll with the name of the item instead of &quot;Alrik&quot;</li>
+<li>There is a new hook for the configuration of sounds, which are played for e.g. inventory interface interactions and money things. A module can now overwrite the paths to those files so you can avoid to install the whole game audio bundles.</li>
+</ul>
+<pre data-role="codeBlock" data-info="javascript" class="language-javascript"><span class="token maybe-class-name">Hooks</span><span class="token punctuation">.</span><span class="token method function property-access">call</span><span class="token punctuation">(</span><span class="token string">&apos;setDefaultDSASounds&apos;</span><span class="token punctuation">,</span> <span class="token parameter">soundPaths</span> <span class="token arrow operator">=&gt;</span> <span class="token punctuation">{</span>
+    <span class="token comment">//Modify paths</span>
+<span class="token punctuation">}</span><span class="token punctuation">)</span>
+</pre><ul>
+<li>The core module contains a new macro to sort compendiums into folders</li>
+</ul>
+<h1 class="mume-header" id="bugfixes">Bugfixes</h1>
+
+<ul class="dsalist">
+<li>The default font size for the journal browser and journals should now be working correctly</li>
+<li>The species elf now costs -12 AP instead of 18 AP. This way the free advantages &quot;two-voiced-singing&quot; and &quot;spellcaster&quot; properly contribute to a total cost of 18 AP.</li>
+<li>Armors in bags should calculate their weight properly</li>
+<li>The default combattracker should not reveal multi attacks to players anymore</li>
+</ul>

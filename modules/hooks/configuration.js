@@ -78,7 +78,7 @@ export function setupConfiguration() {
         hint: "migrationVersion",
         scope: "world",
         config: false,
-        default: 22,
+        default: 23,
         type: Number
     })
     game.settings.register("dsa5", "journalFontSizeIndex", {
