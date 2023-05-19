@@ -197,9 +197,9 @@ class RepeatingEffectsHelper {
                 for (let x of turn.actor.effects) {
                     if(x.disabled) continue
                     
-                    const statusId = [...x.statuses][0]
-                    if (statusId == "bleeding") await this.applyBleeding(turn, combat)
-                    else if (statusId == "burning") await this.applyBurning(turn, x, combat)
+                    const statusesId = [...x.statuses][0]
+                    if (statusesId == "bleeding") await this.applyBleeding(turn, combat)
+                    else if (statusesId == "burning") await this.applyBurning(turn, x, combat)
                 }
 
                 await this.startOfRoundEffects(turn, combat)

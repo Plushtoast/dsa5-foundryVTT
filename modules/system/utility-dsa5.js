@@ -28,8 +28,8 @@ export default class DSA5_Utility {
         const pack = await game.packs.get(compendium)
         if (!pack) return ui.notifications.error("No content found")
 
-        let search = Array.isArray(itemType) ? itemType : [itemType]
-        let items = (await pack.getDocuments()).filter(i => search.includes(i.type));
+        const search = Array.isArray(itemType) ? itemType : [itemType]
+        const items = (await pack.getDocuments()).filter(i => search.includes(i.type));
         return items.map(x => x.toObject());
     }
 

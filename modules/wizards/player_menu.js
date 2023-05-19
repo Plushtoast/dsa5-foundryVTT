@@ -466,7 +466,8 @@ class ConjurationRequest extends DSA5Dialog {
             "changes": [],
             "duration": {},
             "icon": "icons/svg/aura.svg",
-            "label": game.i18n.localize('PLAYER.services'),
+            "id": "services",
+            "name": game.i18n.localize('PLAYER.services'),
             "flags": {
                 "dsa5": {
                     "value": services,
@@ -477,9 +478,6 @@ class ConjurationRequest extends DSA5Dialog {
                     "auto": 0,
                     "hideOnToken": true,
                     "hidePlayers": false
-                },
-                "core": {
-                    "statusId": "services"
                 }
             }
         })
