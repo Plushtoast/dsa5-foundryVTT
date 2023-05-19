@@ -22,8 +22,6 @@ function clickableAbilities(a, b){
 
 export default function() {
     Handlebars.registerHelper({
-        //DSA concat conflict with v9 concat helper
-        concat: (...values) => { return HandlebarsHelpers.concat(...values).string },
         concatUp: (a, b) => a + b.toUpperCase(),
         mod: (a, b) => a % b,
         roman: (a, max) => {
