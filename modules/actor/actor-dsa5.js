@@ -248,7 +248,7 @@ export default class Actordsa5 extends Actor {
         const changeEncumbrance = !this.changingEncumbrance && (currentEncumbrance != encumbrance)
         this.changingEncumbrance = currentEncumbrance != encumbrance;
 
-        if(changeEncumbrance) this.addCondition("encumbered", encumbrance, true);
+        //if(changeEncumbrance) this.addCondition("encumbered", encumbrance, true).then(this.changingEncumbrance = undefined);
 
         if (AdvantageRulesDSA5.hasVantage(this, game.i18n.localize("LocalizedIDs.blind"))) this.addCondition("blind");
         if (AdvantageRulesDSA5.hasVantage(this, game.i18n.localize("LocalizedIDs.mute"))) this.addCondition("mute");
@@ -1150,9 +1150,9 @@ export default class Actordsa5 extends Actor {
 
   getArmorEncumbrance(actorData, wornArmors) {
     const encumbrance = wornArmors.reduce((sum, a) => {
-      a.calculatedEncumbrance = Number(a.system.encumbrance.value) + EquipmentDamage.armorEncumbranceModifier(a);
-      a.damageToolTip = EquipmentDamage.damageTooltip(a);
-      return (sum += a.calculatedEncumbrance);
+      a.system.calculatedEncumbrance = Number(a.system.encumbrance.value) + EquipmentDamage.armorEncumbranceModifier(a);
+      a.system.damageToolTip = EquipmentDamage.damageTooltip(a);
+      return (sum += a.system.calculatedEncumbrance);
     }, 0);
     const ridingModifier = Riding.isRiding(this) ? -1 : 0
     return Math.max(
@@ -2167,7 +2167,7 @@ export default class Actordsa5 extends Actor {
         }
       }
       EquipmentDamage.weaponWearModifier(item);
-      item.damageToolTip = EquipmentDamage.damageTooltip(item);
+      item.system.damageToolTip = EquipmentDamage.damageTooltip(item);
     } else {
       ui.notifications.error(
         game.i18n.format("DSAError.unknownCombatSkill", {
@@ -2348,7 +2348,7 @@ export default class Actordsa5 extends Actor {
       if (item.LZ > 0) Actordsa5.buildReloadProgress(item);
 
       EquipmentDamage.weaponWearModifier(item);
-      item.damageToolTip = EquipmentDamage.damageTooltip(item);
+      item.system.damageToolTip = EquipmentDamage.damageTooltip(item);
     } else {
       ui.notifications.error(
         game.i18n.format("DSAError.unknownCombatSkill", {

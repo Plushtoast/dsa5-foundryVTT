@@ -102,7 +102,7 @@
                 <div class="col two lineheight">
                     {{localize "karmaenergy"}} {{#if prepare.canAdvance}} <a data-attr="karmaenergy" class="advance refund-points"><i data-tooltip="{{prepare.system.status.karmaenergy.refund}}"
                         class="fas fa-minus"></i></a>
-                    <a data-attr="karmaenergy" class="advance advance-points"><i data-tooltip="{{prepare.system.status.karmaenergy.costst}}"
+                    <a data-attr="karmaenergy" class="advance advance-points"><i data-tooltip="{{prepare.system.status.karmaenergy.cost}}"
                             class="fas fa-plus"></i></a>{{/if}}
                 </div>
                 <div class="col eight lineheight center">
@@ -274,7 +274,6 @@
         </div>
 
         {{> systems/dsa5/templates/actors/parts/experienceBox.html}}
-
     </div>
     <div class="col morph60">
         {{> systems/dsa5/templates/actors/parts/specialabilities.html}}

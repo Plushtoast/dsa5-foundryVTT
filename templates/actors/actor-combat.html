@@ -4,7 +4,7 @@
             {{localize "closeCombatAttacks"}}<wbr>
             <span class="buttons nobr">
                 <a data-mod="dodge" class="ch-status item" data-tooltip="dodge"><i class="fas fa-reply"></i></a>
-                <a data-char="attack" class="ch-weaponless item" data-mod="attackWeaponless" data-tooltip="attackWeaponless"><i class="fa attackWeaponless"></i></a>
+                <a data-char="attack" class="ch-weaponless item" data-mod="attackWeaponless" data-tooltip="attackWeaponless"><i class="fas fa-hand-fist"></i></a>
                 <a data-char="parry" class="ch-weaponless item" data-mod="parryWeaponless" data-tooltip="parryWeaponless"><i class="fa fa-shield-alt"></i></a>
                 <a class="ch-fallingDamage item" data-tooltip="fallingDamage"><i class="fas fa-skull-crossbones"></i></a>
             </span>
@@ -30,7 +30,7 @@
         {{#each prepare.wornMeleeWeapons as |item i|}}
         <div class="col item row-section" data-item-id="{{item._id}}">  
             <div class="col fourty row-section">
-                <div class="col five image {{item.damageToolTip.css}}" data-tooltip="{{item.damageToolTip.msg}}" style="background-image: url('{{item.img}}')">
+                <div class="col five image {{item.system.damageToolTip.css}}" data-tooltip="{{item.system.damageToolTip.msg}}" style="background-image: url('{{item.img}}')">
                     {{#if item.structureMax}}
                     <div class="item-structure" style="--a: {{item.structureMax}}; --b: {{item.structureCurrent}}">
                         <div class="inner"></div>
@@ -124,7 +124,7 @@
         </div>
 
         <div class="col five center small max20">
-            {{localize "ammunition"}}
+            {{localize "TYPES.Item.ammunition"}}
         </div>
         <div class="col zerofive center onlyMultiColumn">
 
@@ -135,7 +135,7 @@
         <div class="col item" data-item-id="{{item._id}}">
             <div class="row-section">
                 <div class="col thirtyfive row-section">
-                    <div class="col five image  {{item.damageToolTip.css}}" data-tooltip="{{item.damageToolTip.msg}}" style="background-image: url('{{item.img}}')">
+                    <div class="col five image {{item.system.damageToolTip.css}}" data-tooltip="{{item.system.damageToolTip.msg}}" style="background-image: url('{{item.img}}')">
                         {{#if item.structureMax}}
                         <div class="item-structure" style="--a: {{item.structureMax}}; --b: {{item.structureCurrent}}">
                             <div class="inner"></div>
@@ -285,7 +285,12 @@
         {{#each prepare.wornArmor as |item i|}}
         <div class="col item" data-item-id="{{item._id}}">
             <div class="row-section">
-                <div class="col ten image {{item.damageToolTip.css}}" data-tooltip="{{item.damageToolTip.msg}}" style="background-image: url('{{item.img}}')">
+                <div class="col ten image {{item.system.damageToolTip.css}}" data-tooltip="{{item.system.damageToolTip.msg}}" style="background-image: url('{{item.img}}')">
+                    {{#if item.structureMax}}
+                        <div class="item-structure" style="--a: {{item.structureMax}}; --b: {{item.structureCurrent}}">
+                            <div class="inner"></div>
+                        </div>
+                    {{/if}}
                 </div>
                 <div class="col fourty">
                     <a class="item-edit">{{item.name}}</a>
@@ -294,9 +299,10 @@
                     {{item.system.protection.value}}
                 </div>
                 <div class="col four center">
-                    {{item.calculatedEncumbrance}}
+                    {{item.system.calculatedEncumbrance}}
                 </div>
             </div>
+
         </div>
         {{/each}} {{#each prepare.traits.armor as |item i|}}
         <div class="col item" data-item-id="{{item._id}}">

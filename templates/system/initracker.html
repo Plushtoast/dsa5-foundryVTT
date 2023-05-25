@@ -39,7 +39,7 @@
                     </div>
                 </div>
                 <div class="token-initiative">
-                    {{#if turn.hasRolled}}
+                    {{#if (and turn.hasRolled turn.owner)}}
                     <a class="aggroButton specImg" data-tooltip="attacktest"></a> {{else if turn.owner}}
                     <a class="combatant-control roll" data-tooltip="COMBAT.InitiativeRoll" data-control="rollInitiative"></a>
                     {{/if}}

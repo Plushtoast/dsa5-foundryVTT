@@ -13,8 +13,8 @@ export default function() {
         html.find("#settings-documentation").append(button)
 
         const systemName = game.system.title.split("/")[game.i18n.lang == "de" ? 0 : 1]
-        const version = html.find('#game-details .system span').html()
-        html.find('#game-details .system').html(`${systemName}<span>${version}</span>`)
+        const version = html.find('#game-details .system .system-info').html()
+        html.find('#game-details .system').html(`<span class="system-title">${systemName}</span><span class="system-info">${version}</span>`)
     })
 
     Hooks.on("renderCompendiumDirectory", (app, html, data) => {

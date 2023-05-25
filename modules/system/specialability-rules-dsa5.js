@@ -145,7 +145,6 @@ export default class SpecialabilityRulesDSA5 extends ItemRulesDSA5 {
     static abilityAsModifier(actor, talent, factor = 1, startsWith = false) {
         return super.itemAsModifier(actor, talent, factor, ["specialability"], startsWith)
     }
-
 }
 
 ItemRulesDSA5.children["SpecialabilityRulesDSA5"] = SpecialabilityRulesDSA5
