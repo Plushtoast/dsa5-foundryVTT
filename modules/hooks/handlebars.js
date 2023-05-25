@@ -39,7 +39,10 @@ export default function() {
         attrAbbr: (a) => DSA5_Utility.attributeAbbrLocalization(a),
         diceThingsUp: (a, b) => DSA5_Utility.replaceDies(a, false),
         clickableAbilities: (a, b) => clickableAbilities(a, b),
-        hasLocalization: (a, b) => { return game.i18n.has(a) ? game.i18n.localize(a) : ( b || "") },
+        hasLocalization: (a, b) => { 
+            const val = a.string || a
+            return  game.i18n.has(val) ? game.i18n.localize(val) : ( b || "") 
+        },
         replaceConditions: DSA5_Utility.replaceConditions,
         floor: (a) => Math.floor(Number(a)),
         br: (a) => a.replace(/\n/g, "<br/>"),
