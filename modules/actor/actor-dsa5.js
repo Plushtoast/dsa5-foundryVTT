@@ -248,7 +248,7 @@ export default class Actordsa5 extends Actor {
         const changeEncumbrance = !this.changingEncumbrance && (currentEncumbrance != encumbrance)
         this.changingEncumbrance = currentEncumbrance != encumbrance;
 
-        //if(changeEncumbrance) this.addCondition("encumbered", encumbrance, true).then(this.changingEncumbrance = undefined);
+        if(changeEncumbrance) this.addCondition("encumbered", encumbrance, true).then(this.changingEncumbrance = undefined);
 
         if (AdvantageRulesDSA5.hasVantage(this, game.i18n.localize("LocalizedIDs.blind"))) this.addCondition("blind");
         if (AdvantageRulesDSA5.hasVantage(this, game.i18n.localize("LocalizedIDs.mute"))) this.addCondition("mute");
