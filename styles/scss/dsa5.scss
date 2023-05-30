@@ -948,6 +948,27 @@
     font-size: 8px;
     line-height: 8px;
   }
+
+  .combat-actions {
+
+    display: flex;
+    gap: 5px;
+    flex-wrap: wrap;
+
+    .combat-action {
+      display: block;
+      color: rgba(51, 48, 41, .6509803922);
+      padding: 1px 5px;
+      border: 1px solid rgba(51, 48, 41, .6509803922);
+      border-radius: 5px;
+    }
+  }
+
+  .row-section {
+    .col.combat-item-name {
+      flex-grow: 0;
+    }
+  }
   
   .buttons a {
     .fas, .fa {

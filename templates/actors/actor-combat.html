@@ -1,13 +1,13 @@
-<div class="groupbox">
+<div class="combat-actions groupbox">
+    <a data-mod="dodge" class="combat-action ch-status item"><i class="fas fa-reply"></i> {{localize "dodge"}}</a>
+    <a data-char="attack" class="combat-action ch-weaponless item" data-mod="attackWeaponless"><i class="fa fa-hand-fist"></i> {{localize "attackWeaponless"}}</a>
+    <a data-char="parry" class="combat-action ch-weaponless item" data-mod="parryWeaponless"><i class="fa fa-shield-alt"></i> {{localize "parryWeaponless"}}</a>
+    <a class="combat-action ch-fallingDamage item"><i class="fas fa-skull-crossbones"></i> {{localize "fallingDamage"}}</a>
+</div>
+<div class="groupbox melee-weapons">
     <div class="row-section table-title lineheight">
-        <div class="col fourty">
+        <div class="title-type col fourty">
             {{localize "closeCombatAttacks"}}<wbr>
-            <span class="buttons nobr">
-                <a data-mod="dodge" class="ch-status item" data-tooltip="dodge"><i class="fas fa-reply"></i></a>
-                <a data-char="attack" class="ch-weaponless item" data-mod="attackWeaponless" data-tooltip="attackWeaponless"><i class="fas fa-hand-fist"></i></a>
-                <a data-char="parry" class="ch-weaponless item" data-mod="parryWeaponless" data-tooltip="parryWeaponless"><i class="fa fa-shield-alt"></i></a>
-                <a class="ch-fallingDamage item" data-tooltip="fallingDamage"><i class="fas fa-skull-crossbones"></i></a>
-            </span>
         </div>
         <div class="col five center small onlyMultiColumn">
             {{localize "Group"}}
@@ -28,34 +28,32 @@
     </div>
     <div class="row-section wrap rowtable inventory">
         {{#each prepare.wornMeleeWeapons as |item i|}}
-        <div class="col item row-section" data-item-id="{{item._id}}">  
-            <div class="col fourty row-section">
-                <div class="col five image {{item.system.damageToolTip.css}}" data-tooltip="{{item.system.damageToolTip.msg}}" style="background-image: url('{{item.img}}')">
-                    {{#if item.structureMax}}
-                    <div class="item-structure" style="--a: {{item.structureMax}}; --b: {{item.structureCurrent}}">
-                        <div class="inner"></div>
-                    </div>
-                    {{/if}}
+        <div class="combat-weapon col item row-section" data-item-id="{{item._id}}">
+            <div class="combat-item-image col zerofive image {{item.system.damageToolTip.css}}" data-tooltip="{{item.system.damageToolTip.msg}}" style="background-image: url('{{item.img}}')">
+                {{#if item.structureMax}}
+                <div class="item-structure" style="--a: {{item.structureMax}}; --b: {{item.structureCurrent}}">
+                    <div class="inner"></div>
                 </div>
-                <div class="col eighty">
-                    <a class="item-edit">{{item.name}}</a>
-                </div>
-            </div>              
-            
-            <div class="col five center small onlyMultiColumn">
+                {{/if}}
+            </div>
+            <div class="combat-item-name thirtyfive col">
+                <a class="item-edit">{{item.name}}</a>
+            </div>
+
+            <div class="combat-item-skill col five center small onlyMultiColumn">
                 {{localize item.system.combatskill.value}}
             </div>
-            <div class="col ten center item" data-item-id="{{item._id}}" data-mod="attack">
+            <div class="combat-item-attack col ten center item" data-item-id="{{item._id}}" data-mod="attack">
                 <a data-mode="attack" class="ch-rollCombat d20 die-attack">{{item.attack}}</a>
             </div>
-            <div class="col ten center item" data-item-id="{{item._id}}" data-mod="parry">
+            <div class="combat-item-parry col ten center item" data-item-id="{{item._id}}" data-mod="parry">
                 <a data-mode="parry" class="ch-rollCombat d20 die-parry">{{item.parry}}</a>
             </div>
 
-            <div class="col ten center">
+            <div class="combat-item-damage col ten center">
                 <a data-mode="damage" class="ch-rollCombat d6 die-damage"><span>{{item.damagedie}}</span></a><span data-tooltip="{{localize 'damageOverThreshold'}}{{item.gripDamageText}}">{{item.damageAdd}}</span>
             </div>
-            <div class="col row-section ten center small notOnMinimum">
+            <div class="combat-item-range col row-section ten center small notOnMinimum">
                 <div class="col nintey center">
                     {{localize (concat "Range-" item.system.reach.value)}}
                 </div>
@@ -73,43 +71,41 @@
                     <div class="col">
                         <a><i data-tooltip="offHand" class="fas fa-shield-halved"></i></a>
                     </div>
-                    {{/if}}   
+                    {{/if}}
                 </div>
-            </div>            
+            </div>
         </div>
         {{/each}} {{#each prepare.traits.meleeAttack as |item i|}}
-        <div class="col item row-section" data-item-id="{{item._id}}">
-            <div class="col fourty row-section">
-                <div class="col five image" style="background-image: url('{{item.img}}')">
-                </div>
-                <div class="col eighty">
-                    <a class="item-edit">{{item.name}}</a>
-                </div>
+        <div class="combat-weapon col item row-section" data-item-id="{{item._id}}">
+            <div class="combat-item-image col zerofive image" style="background-image: url('{{item.img}}')">
             </div>
-            <div class="col five center small onlyMultiColumn">
+            <div class="combat-item-name thirtyfive col">
+                <a class="item-edit">{{item.name}}</a>
+            </div>
+            <div class="combat-item-skill col five center small onlyMultiColumn">
                 {{localize "TYPES.Item.trait"}}
             </div>
-            <div class="col ten center item" data-item-id="{{item._id}}" data-mod="attack">
+            <div class="combat-item-attack col ten center item" data-item-id="{{item._id}}" data-mod="attack">
                 <a data-mode="attack" class="ch-rollCombat d20 die-attack">{{item.attack}}</a>
             </div>
-            <div class="col ten center item" data-item-id="{{item._id}}" data-mod="parry">
+            <div class="combat-item-parry col ten center item" data-item-id="{{item._id}}" data-mod="parry">
                 {{#if item.parry}} <a data-mode="parry" class="ch-rollCombat d20 die-parry">{{item.parry}}</a> {{else}} - {{/if}}
             </div>
-            <div class="col ten center">
+            <div class="combat-item-damage col ten center">
                 <a data-mode="damage" class="ch-rollCombat d6 die-damage"><span>{{item.damagedie}}</span></a><span data-tooltip="damageOverThreshold">{{item.damageAdd}}</span>
             </div>
-            <div class="col ten center small notOnMinimum">
+            <div class="combat-item-range col ten center small notOnMinimum">
                 {{localize (concat "Range-" item.system.reach.value)}}
             </div>
-            
+
         </div>
         {{/each}}
     </div>
 </div>
 
-<div class="groupbox">
+<div class="range-weapons groupbox">
     <div class="row-section table-title lineheight">
-        <div class="col thirtyfive">
+        <div class="title-type col thirtyfive">
             <b>{{localize "rangeweapons"}}</b>
         </div>
         <div class="col five center small onlyMultiColumn">
@@ -132,33 +128,31 @@
     </div>
     <div class="row-section wrap rowtable inventory">
         {{#each prepare.wornRangedWeapons as |item i|}}
-        <div class="col item" data-item-id="{{item._id}}">
-            <div class="row-section">
-                <div class="col thirtyfive row-section">
-                    <div class="col five image {{item.system.damageToolTip.css}}" data-tooltip="{{item.system.damageToolTip.msg}}" style="background-image: url('{{item.img}}')">
-                        {{#if item.structureMax}}
-                        <div class="item-structure" style="--a: {{item.structureMax}}; --b: {{item.structureCurrent}}">
-                            <div class="inner"></div>
-                        </div>
-                        {{/if}}
+        <div class="combat-weapon-wrapper col item" data-item-id="{{item._id}}">
+            <div class="combat-weapon row-section">
+                <div class="combat-item-image col zerofive image  {{item.system.damageToolTip.css}}" data-tooltip="{{item.system.damageToolTip.msg}}" style="background-image: url('{{item.img}}')">
+                    {{#if item.structureMax}}
+                    <div class="item-structure" style="--a: {{item.structureMax}}; --b: {{item.structureCurrent}}">
+                        <div class="inner"></div>
                     </div>
-                    <div class="col eighty">
-                        <a class="item-edit">{{item.name}}</a>
-                    </div>
+                    {{/if}}
                 </div>
-                
-                <div class="col five center small onlyMultiColumn">
+                <div class="combat-item-name three col">
+                    <a class="item-edit">{{item.name}}</a>
+                </div>
+
+                <div class="combat-item-skill col five center small onlyMultiColumn">
                     {{localize item.system.combatskill.value}}
                 </div>
 
-                <div class="col ten center item" data-item-id="{{item._id}}" data-mod="attack">
+                <div class="combat-item-attack col ten center item" data-item-id="{{item._id}}" data-mod="attack">
                     <a data-mode="attack" class="ch-rollCombat d20 die-attack">{{item.attack}}</a>
                 </div>
-                <div class="col ten center">
+                <div class="combat-item-damage col ten center">
                     <a data-mode="damage" class="ch-rollCombat d6 die-damage">{{item.damagedie}}</a><span data-tooltip="{{localize 'damageOverThreshold'}}{{item.damageBonusDescription}}">{{item.damageAdd}}</span>
                 </div>
 
-                <div class="col five center max20">
+                <div class="combat-item-range col five center max20">
                     {{#if (ne item.system.ammunitiongroup.value "-")}}
                     <div class="row-section">
 
@@ -232,7 +226,7 @@
                         <a class="item-edit">{{item.name}}</a>
                     </div>
                 </div>
-                
+
                 <div class="col five center small onlyMultiColumn">
                     {{localize "TYPES.Item.trait"}}
                 </div>
@@ -273,32 +267,32 @@
     </div>
 </div>
 
-<div class="groupbox">
+<div class="combat-armors groupbox">
     <div class="row-section table-title lineheight">
-        <div class="col two">
+        <div class="title-type col two">
             {{localize "Equipment.armor"}}
         </div>
-        <div class="col four center small">{{localize "protection"}} ({{prepare.armorSum}}{{#if prepare.spellArmor}}<span data-tooltip="spellArmor">, {{prepare.spellArmor}}</span>{{/if}}){{#if prepare.liturgyArmor}}<span data-tooltip="liturgyArmor">, {{prepare.liturgyArmor}}</span>{{/if}}</div>
+        <div class="protection-complete col four center small">{{localize "protection"}} ({{prepare.armorSum}}{{#if prepare.spellArmor}}<span data-tooltip="spellArmor">, {{prepare.spellArmor}}</span>{{/if}}){{#if prepare.liturgyArmor}}<span data-tooltip="liturgyArmor">, {{prepare.liturgyArmor}}</span>{{/if}}</div>
         <div class="col four center small">{{localize "encumbrance"}}</div>
     </div>
     <div class="row-section wrap rowtable inventory">
         {{#each prepare.wornArmor as |item i|}}
         <div class="col item" data-item-id="{{item._id}}">
-            <div class="row-section">
-                <div class="col ten image {{item.system.damageToolTip.css}}" data-tooltip="{{item.system.damageToolTip.msg}}" style="background-image: url('{{item.img}}')">
+            <div class="combat-armor row-section">
+                <div class="combat-item-image col zerofive image {{item.system.damageToolTip.css}}" data-tooltip="{{item.system.damageToolTip.msg}}" style="background-image: url('{{item.img}}')">
                     {{#if item.structureMax}}
-                        <div class="item-structure" style="--a: {{item.structureMax}}; --b: {{item.structureCurrent}}">
-                            <div class="inner"></div>
-                        </div>
+                    <div class="item-structure" style="--a: {{item.structureMax}}; --b: {{item.structureCurrent}}">
+                        <div class="inner"></div>
+                    </div>
                     {{/if}}
                 </div>
-                <div class="col fourty">
+                <div class="combat-item-name col fourty">
                     <a class="item-edit">{{item.name}}</a>
                 </div>
-                <div class="col four center">
+                <div class="combat-item-protection col four center">
                     {{item.system.protection.value}}
                 </div>
-                <div class="col four center">
+                <div class="combat-item-encumbrance col four center">
                     {{item.system.calculatedEncumbrance}}
                 </div>
             </div>
@@ -306,7 +300,7 @@
         </div>
         {{/each}} {{#each prepare.traits.armor as |item i|}}
         <div class="col item" data-item-id="{{item._id}}">
-            <div class="row-section">
+            <div class="combat-armor row-section">
                 <div class="col ten image" style="background-image: url('{{item.img}}')">
                 </div>
                 <div class="col fourty">
@@ -328,7 +322,7 @@
 
 <div class="groupbox">
     <div class="row-section">
-        <div class="col header-label lineheight">
+        <div class="title-type col header-label lineheight">
             <b>{{localize "combatspecialtalents"}}</b>
         </div>
     </div>

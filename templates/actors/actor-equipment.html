@@ -1,8 +1,8 @@
 {{> systems/dsa5/templates/actors/parts/gearSearch.html}} {{#each prepare.inventory as |section sid|}} {{#if section.show}}
-<div class="groupbox">
+<div class="actor-equipment groupbox">
     <div class="row-section table-title">
         <div class="col eight"></div>
-        <div class="col">
+        <div class="title-type col">
             <b>{{localize (concat "Equipment." @key)}}</b>
         </div>
         {{#if (eq @key 'bags')}}
@@ -27,9 +27,9 @@
     </div>
     <div class="row-section wrap rowtable inventory">
         {{#each section.items as |item i|}}
-        <div class="col item" data-item-id="{{item._id}}" data-category="{{item.system.equipmentType.value}}">
-            <div class="row-section">
-                <div class="col eight image {{item.enchantClass}}">
+        <div class="actor-equipment-item-wrapper col item" data-item-id="{{item._id}}" data-category="{{item.system.equipmentType.value}}">
+            <div class="actor-equipment-item row-section">
+                <div class="equipment-item-image col eight image {{item.enchantClass}}">
                     <div class="image" style="background-image: url('{{item.img}}')">
                         {{#if item.structureMax}}
                         <div class="item-structure" style="--a: {{item.structureMax}}; --b: {{item.structureCurrent}}">
@@ -38,27 +38,27 @@
                         {{/if}}
                     </div>
                 </div>
-                <div class="col">
+                <div class="equipment-item-name col">
                     <a class="item-edit {{#if item.consumable}}consume-item{{/if}}">{{item.name}}</a>
                 </div>
                 {{#if (eq item.system.equipmentType.value 'bags')}}
-                <div class="col five center">
+                <div class="equipment-item-bagweight col five center">
                     {{item.system.bagweight}}
                 </div>
                 {{/if}}
-                <div class="col eight center" {{#if (eq item.system.equipmentType.value 'bags')}} data-tooltip="SHEET.weightOnActor" {{/if}}>
+                <div class="equipment-item-status col eight center" {{#if (eq item.system.equipmentType.value 'bags')}} data-tooltip="SHEET.weightOnActor" {{/if}}>
                     {{#if item.toggle}} {{#if item.toggleValue}}
                     <a class="item-toggle"><i class="far fa-check-circle"></i></a> {{else}}
                     <a class="item-toggle"><i class="far fa-circle"></i></a> {{/if}} {{/if}}
                 </div>
 
-                <div class="col eight center">
+                <div class="equipment-item-quantity col eight center">
                     <a class="quantity-click">{{item.system.quantity.value}}</a>
                 </div>
-                <div class="col eight center">
+                <div class="equipment-item-weight col eight center">
                     {{item.system.preparedWeight}}
                 </div>
-                <div class="col ten very-small center">
+                <div class="equipment-item-action col ten very-small center">
                     {{#if item.OnUseEffect}}<a data-tooltip="SHEET.onUseEffect" class="onUseItem"><i class="fas fa-dice-six"></i></a>{{/if}}
                     <a class="item-post" data-tooltip="SHEET.PostItem"><i class="fas fa-comment"></i></a>
                     <a class="item-edit" data-tooltip="SHEET.EditItem"><i class="fas fa-edit"></i></a>

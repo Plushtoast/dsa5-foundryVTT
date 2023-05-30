@@ -1,6 +1,6 @@
 {{#if (and prepare.schips.length prepare.groupschips.length)}}
-<div class="row-section">
-    <div class="col ten lineheight center" data-tooltip="fatePoints">
+<div class="row-schips row-section">
+    <div class="schips-label col ten lineheight center" data-tooltip="fatePoints">
         {{localize 'CHARAbbrev.fatePoints'}}
     </div>
     <div class="col fourty center" data-tooltip="fatePoints">
@@ -18,8 +18,8 @@
     </div>
 </div>
 {{else if prepare.schips.length}}
-<div class="row-section">
-    <div class="col ten lineheight center" data-tooltip="fatePoints">
+<div class="row-schips row-section">
+    <div class="schips-label col ten lineheight center" data-tooltip="fatePoints">
         {{localize 'CHARAbbrev.fatePoints'}}
     </div>
     <div class="col eighty center" data-tooltip="fatePoints">
@@ -31,8 +31,8 @@
     </div>
 </div>
 {{else if prepare.groupschips.length}}
-<div class="row-section">
-    <div class="col ten lineheight center" data-tooltip="CHARAbbrev.groupFatePoints">
+<div class="row-schips row-section">
+    <div class="schips-label col ten lineheight center" data-tooltip="CHARAbbrev.groupFatePoints">
         {{localize 'CHARAbbrev.gfatePoints'}}
     </div>
     <div class="col eighty center" data-tooltip="CHARAbbrev.groupFatePoints">

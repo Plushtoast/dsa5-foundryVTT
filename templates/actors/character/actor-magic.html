@@ -1,24 +1,24 @@
 {{> systems/dsa5/templates/actors/parts/spells.html}}
 
-<div class="groupbox">
+<div class="actor-tradition-artefacts groupbox">
     <div class="row-section wrap inverseRowtable">
         <div class="col">
             <div class="row-section skills table-title">
-                <div class="col third">{{localize "traditionArtifact"}}</div>
+                <div class="title-type col third">{{localize "traditionArtifact"}}</div>
                 <div class="col third center">{{localize "Category"}}</div>
-                <div class="col third center">{{localize "volume"}}</div>
+                <div class="title-volume col third center">{{localize "volume"}}</div>
                 <div class="col ten center">
                     <a class="selectTraditionartifact very-small" data-tooltip="SHEET.selectTraditionartifact"><i class="fas fa-plus"></i></a>
                 </div>
             </div>
         </div>
         {{#each prepare.traditionArtifacts as |item i|}}
-        <div class="col spells item" data-item-id="{{item._id}}">
-            <div class="row-section skills lineheight">
-                <div class="col third"><a class="item-edit">{{item.name}}</a></div>
-                <div class="col third center">{{item.system.artifact}}</div>
-                <div class="col third center">{{item.volumeFinal}} / {{item.volume}}</div>
-                <div class="col ten very-small center">
+        <div class="actor-tradition-artefact-item-wrapper col spells item" data-item-id="{{item._id}}">
+            <div class="actor-tradition-artefact-item row-section skills lineheight">
+                <div class="actor-tradition-artefact-name col third"><a class="item-edit">{{item.name}}</a></div>
+                <div class="actor-tradition-artefact-type ol third center">{{item.system.artifact}}</div>
+                <div class="actor-tradition-artefact-volume col third center">{{item.volumeFinal}} / {{item.volume}}</div>
+                <div class="actor-tradition-artefact-action col ten very-small center">
                     <a class="tradition-delete" data-tooltip="SHEET.DeleteItem"><i class="fas fa-trash"></i></a>
                 </div>
             </div>
@@ -73,20 +73,20 @@
     </div>
     <div class="col morph">
 
-        <div class="groupbox">
-            <div class="row-section lineheight">
-                <div class="col fourty center">
+        <div class="actor-tradition groupbox">
+            <div class="actor-tradition-item row-section lineheight">
+                <div class="actor-tradition-label col fourty center">
                     {{localize "tradition"}}
                 </div>
-                <div class="col sixty">
+                <div class="actor-tradition-value col sixty">
                     <input type="text" name="system.tradition.magical" data-dtype="String" value="{{actor.system.tradition.magical}}"/>
                 </div>
             </div>
-            <div class="row-section lineheight">
-                <div class="col fourty center">
+            <div class="actor-tradition-item row-section lineheight">
+                <div class="actor-tradition-label col fourty center">
                     {{localize "guidevalue"}}
                 </div>
-                <div class="col sixty">
+                <div class="actor-tradition-value col sixty">
                     <div class="form-group">
                         <select name="system.guidevalue.magical" data-dtype="String">
                             {{selectOptions prepare.guidevalues selected=actor.system.guidevalue.magical localize=true}}
@@ -94,19 +94,19 @@
                     </div>
                 </div>
             </div>
-            <div class="row-section lineheight">
-                <div class="col fourty center">
+            <div class="actor-tradition-item row-section lineheight">
+                <div class="actor-tradition-label col fourty center">
                     {{localize "feature"}}
                 </div>
-                <div class="col sixty">
+                <div class="actor-tradition-value col sixty">
                     <input type="text" name="system.feature.magical" data-dtype="String" value="{{actor.system.feature.magical}}"/>
                 </div>
             </div>
-            <div class="row-section lineheight">
-                <div class="col fourty center">
+            <div class="actor-tradition-item row-section lineheight">
+                <div class="actor-tradition-label col fourty center">
                     {{localize "energyfactor"}}
                 </div>
-                <div class="col sixty">
+                <div class="actor-tradition-value col sixty">
                     <input type="number" name="system.energyfactor.magical" data-dtype="number" value="{{actor.system.energyfactor.magical}}" />
                 </div>
             </div>
