@@ -227,6 +227,8 @@ export default class Actordsa5 extends Actor {
         Number(data.status.dodge.modifier) +
         Number(game.settings.get("dsa5", "higherDefense")) / 2;
 
+      let newEncumbrance = this.getArmorEncumbrance(this, armor);
+
       if (DSA5_Utility.isActiveGM()) {
         const pain = this.woundPain(data)
         const currentPain = this.effects.find(x => x.statuses.has("inpain"))?.flags.dsa5.auto || 0
@@ -237,18 +239,17 @@ export default class Actordsa5 extends Actor {
         if (changePain && !TraitRulesDSA5.hasTrait(this, game.i18n.localize("LocalizedIDs.painImmunity"))){
           this.addCondition("inpain", pain, true).then(() => this.changingPain = undefined);
         }
-        
-        let encumbrance = this.getArmorEncumbrance(this, armor);
+                
         if ((this.type != "creature" || this.canAdvance) && !this.isMerchant()) {
-          encumbrance += Math.max(0, Math.ceil((data.totalWeight - data.carrycapacity - 4) / 4));
+          newEncumbrance += Math.max(0, Math.ceil((data.totalWeight - data.carrycapacity - 4) / 4));
         }
 
         const currentEncumbrance =  this.effects.find(x => x.statuses.has("encumbered"))?.flags.dsa5.auto || 0
 
-        const changeEncumbrance = !this.changingEncumbrance && (currentEncumbrance != encumbrance)
-        this.changingEncumbrance = currentEncumbrance != encumbrance;
+        const changeEncumbrance = !this.changingEncumbrance && (currentEncumbrance != newEncumbrance)
+        this.changingEncumbrance = currentEncumbrance != newEncumbrance;
 
-        if(changeEncumbrance) this.addCondition("encumbered", encumbrance, true).then(this.changingEncumbrance = undefined);
+        if(changeEncumbrance) this.addCondition("encumbered", newEncumbrance, true).then(this.changingEncumbrance = undefined);
 
         if (AdvantageRulesDSA5.hasVantage(this, game.i18n.localize("LocalizedIDs.blind"))) this.addCondition("blind");
         if (AdvantageRulesDSA5.hasVantage(this, game.i18n.localize("LocalizedIDs.mute"))) this.addCondition("mute");
