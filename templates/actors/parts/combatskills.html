@@ -1,9 +1,9 @@
-<div class="groupbox">
+<div class="actor-combat-skill groupbox">
     <div class="row-section">
         <div class="col nintey header-label lineheight">
             <b>{{localize "TYPES.Item.combatskill"}}</b>
         </div>
-        <div class="col lineheight ten center">
+        <div class="combat-skills-collapse col lineheight ten center">
             <a class="ch-collapse"><i class="fas fa-angle-up" data-tooltip="SHEET.collapse"></i></a>
         </div>
     </div>
@@ -49,7 +49,7 @@
             </div>
         </div>
         {{#each prepare.combatskills as |item i|}}
-        <div class="col morph">
+        <div class="actor-combat-skill-item col morph">
             <div class="row-section item skills lineheight" data-item-id="{{item._id}}">
                 <div class="col fourty">
                     <a class="item-edit">{{item.name}}</a> {{#if ../prepare.canAdvance}}

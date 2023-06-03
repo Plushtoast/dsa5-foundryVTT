@@ -1,7 +1,7 @@
 
-<div class="groupbox">
+<div class="combat-riding groupbox">
     <div class="row-section table-title lineheight">
-        <div class="col fourty">
+        <div class="title-type col fourty">
             <b>{{localize "RIDING.horse"}}</b>
         </div>
         <div class="col ten"></div>
@@ -24,17 +24,17 @@
     <div class="row-section wrap rowtable inventory">
         {{#if prepare.horseActor}}
         <div class="col item">
-            <div class="row-section">
-                <div class="col ten image" style="background-image: url('{{prepare.horseActor.img}}')">
+            <div class="combat-horse row-section">
+                <div class="combat-item-image col ten image" style="background-image: url('{{prepare.horseActor.img}}')">
                     <div class="item-structure" style="--a: {{prepare.horseActor.system.status.wounds.max}}; --b: {{prepare.horseActor.system.status.wounds.value}}">
                         <div class="inner"></div>
                     </div>
                 </div>
-                <div class="col fourty">
+                <div class="combat-item-name col fourty">
                     <a class="showHorse">{{prepare.horseActor.name}}</a>
                 </div>
-                <div class="col five center">
-                    <select name="horseSpeedSelector">
+                <div class="combat-item-speed col five center">
+                    <select class="horse-speed-selector" name="horseSpeedSelector">
                         {{#select prepare.horseActor.horseSpeed}}
                         {{#each horseSpeeds as |elm|}}
                         <option value="{{elm}}">{{localize (concat 'RIDING.speeds.' elm)}}</option>
@@ -42,18 +42,18 @@
                         {{/select}}
                     </select>
                 </div>
-                <div class="col ten center">
+                <div class="combat-item-status col ten center">
                     {{#if actor.system.horse.isRiding}}
                     <a class="riding-toggle"><i class="far fa-check-circle"></i></a> {{else}}
                     <a class="riding-toggle"><i class="far fa-circle"></i></a> {{/if}}
                 </div>
-                <div class="col ten center" data-tooltip="speed">
+                <div class="combat-item-speed-max col ten center" data-tooltip="speed">
                     {{prepare.horseActor.system.status.speed.max}}
                 </div>
-                <div class="col ten center" data-tooltip="initiative">
+                <div class="combat-item-ini col ten center" data-tooltip="initiative">
                     {{prepare.horseActor.system.status.initiative.value}}
                 </div>
-                <div class="col ten center">
+                <div class="combat-item-action col ten center">
                     <a class="horse-loyalty" data-tooltip="LocalizedIDs.loyalty"><i class="fas fa-dice"></i></a>
                     <a class="horse-delete" data-tooltip="SHEET.DeleteItem"><i class="fas fa-trash"></i></a>
                 </div>

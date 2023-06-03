@@ -35,20 +35,20 @@
         </div>
     </div>
     <div class="col morph">
-        <div class="groupbox">
-            <div class="row-section lineheight">
-                <div class="col fourty center">
+        <div class="actor-tradition groupbox">
+            <div class="actor-tradition-item row-section lineheight">
+                <div class="actor-tradition-label col fourty center">
                     {{localize "tradition"}}
                 </div>
-                <div class="col sixty">
+                <div class="actor-tradition-value col sixty">
                     <input type="text" name="system.tradition.clerical" data-dtype="String" value="{{actor.system.tradition.clerical}}" />
                 </div>
             </div>
-            <div class="row-section lineheight">
-                <div class="col fourty center">
+            <div class="actor-tradition-item  row-section lineheight">
+                <div class="actor-tradition-label col fourty center">
                     {{localize "guidevalue"}}
                 </div>
-                <div class="col sixty">
+                <div class="actor-tradition-value col sixty">
                     <div class="form-group">
                         <select name="system.guidevalue.clerical" data-dtype="String">
                             {{selectOptions prepare.guidevalues selected=actor.system.guidevalue.clerical localize=true}}
@@ -57,27 +57,27 @@
                 </div>
 
             </div>
-            <div class="row-section lineheight">
-                <div class="col fourty center">
+            <div class="actor-tradition-item row-section lineheight">
+                <div class="actor-tradition-label col fourty center">
                     {{localize "aspect"}}
                 </div>
-                <div class="col sixty">
+                <div class="actor-tradition-value col sixty">
                     <input type="text" name="system.feature.clerical" data-dtype="String" value="{{actor.system.feature.clerical}}" />
                 </div>
             </div>
-            <div class="row-section lineheight">
-                <div class="col fourty center">
+            <div class="actor-tradition-item row-section lineheight">
+                <div class="actor-tradition-label col fourty center">
                     {{localize "energyfactor"}}
                 </div>
-                <div class="col sixty">
+                <div class="actor-tradition-value col sixty">
                     <input type="number" name="system.energyfactor.clerical" data-dtype="number" value="{{actor.system.energyfactor.clerical}}" />
                 </div>
             </div>
-            <div class="row-section lineheight">
-                <div class="col fourty center">
+            <div class="actor-tradition-item row-section lineheight">
+                <div class="actor-tradition-label col fourty center">
                     {{localize "happyTalents"}}
                 </div>
-                <div class="col sixty">
+                <div class="actor-tradition-value col sixty">
                     <textarea type="text" name="system.happyTalents.value" rows="8" data-dtype="String" value="">{{actor.system.happyTalents.value}}</textarea>
                 </div>
             </div>
