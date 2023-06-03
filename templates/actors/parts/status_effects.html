@@ -1,5 +1,5 @@
-<div class="groupbox">
-    <div class="row-section">
+<div class="actor-status groupbox">
+    <div class="actor-status-header row-section">
         <div class="col ten">
 
         </div>
@@ -45,7 +45,7 @@
             <div class="col ten center" data-tooltip="value">
                 {{localize "ABBR.value"}}
             </div>
-            <div class="col five">
+            <div class="actor-status-action col five">
 
             </div>
         </div>
@@ -63,13 +63,13 @@
             <div class="col ten center" data-tooltip="value">
                 {{localize "ABBR.value"}}
             </div>
-            <div class="col five">
+            <div class="actor-status-action col five">
 
             </div>
         </div>
         {{#each conditions as |item i|}}
         <div class="row-section col morph skills statusEffect" data-id="{{item.id}}" {{#if item.descriptor}}data-descriptor="{{item.descriptor}}" {{/if}}>
-            <div class="col ten">
+            <div class="status-img col ten">
                 {{#if item.disabled}}
                 <img style="opacity:0.5;" src="{{item.icon}}" /> {{else}}
                 <img src="{{item.icon}}" /> {{/if}}
@@ -83,7 +83,7 @@
             <div class="col ten center" data-tooltip="value">
                 <span>{{item.value}}</span>
             </div>
-            <div class="col five right">
+            <div class="actor-status-action col five right">
                 <a class="condition-edit" data-id="{{item.id}}"><i class="fa fa-edit"></i></a> {{#if item.disabled}}
                 <a class="condition-toggle" data-tooltip="SHEET.activate"><i class="far fa-circle"></i></a> {{else}}
                 <a class="condition-toggle" data-tooltip="SHEET.deactivate"><i class="far fa-check-circle"></i></a> {{/if}}
@@ -97,8 +97,8 @@
     </div>
 
 </div>
-<div class="groupbox">
-    <div class="row-section">
+<div class="actor-status groupbox">
+    <div class="actor-status-header row-section">
         <div class="col ten">
 
         </div>
@@ -130,7 +130,7 @@
             <div class="col ten center" data-tooltip="value">
                 {{localize "ABBR.value"}}
             </div>
-            <div class="col five">
+            <div class="actor-status-action col five">
 
             </div>
         </div>
@@ -148,13 +148,13 @@
             <div class="col ten center" data-tooltip="value">
                 {{localize "ABBR.value"}}
             </div>
-            <div class="col five">
+            <div class="actor-status-action col five">
 
             </div>
         </div>
         {{#each cumulativeConditions as |item i|}}
         <div class="row-section morph skills col statusEffect" data-id="{{item.id}}" data-descriptor="{{item.id}}">
-            <div class="col ten">
+            <div class="status-img col ten">
                 <img src="{{item.icon}}" />
             </div>
             <div class="col two">
@@ -166,7 +166,7 @@
             <div class="col ten center" data-tooltip="value">
                 <span>{{item.value}}</span>
             </div>
-            <div class="col five right">
+            <div class="actor-status-action col five right">
 
             </div>
         </div>
@@ -178,8 +178,8 @@
     </div>
 
 </div>
-<div class="groupbox">
-    <div class="row-section" data-tooltip="cummulativeStatusEffectsHint">
+<div class="actor-status groupbox">
+    <div class="actor-status-header row-section" data-tooltip="cummulativeStatusEffectsHint">
         <div class="col ten">
 
         </div>
@@ -207,7 +207,7 @@
             <div class="col ten center" data-tooltip="value">
                 {{localize "ABBR.value"}}
             </div>
-            <div class="col five">
+            <div class="actor-status-action col five">
 
             </div>
         </div>
@@ -225,13 +225,13 @@
             <div class="col ten center" data-tooltip="value">
                 {{localize "ABBR.value"}}
             </div>
-            <div class="col five">
+            <div class="actor-status-action col five">
 
             </div>
         </div>
         {{#each transferedConditions as |item i|}}
         <div class="row-section morph skills col statusEffect" data-origin="{{item.system.origin}}" data-id="{{item.id}}" {{#if item.descriptor}}data-descriptor="{{item.descriptor}}" {{/if}}>
-            <div class="col ten">
+            <div class="status-img col ten">
                 {{#if item.disabled}}
                 <img style="opacity:0.5;" src="{{item.icon}}" /> {{else}}
                 <img src="{{item.icon}}" /> {{/if}}
@@ -245,7 +245,7 @@
             <div class="col ten center" data-tooltip="value">
                 <span>{{item.value}}</span>
             </div>
-            <div class="col five right">
+            <div class="actor-status-action col five right">
                 <a class="condition-edit" data-id="{{item.id}}"><i class="fa fa-edit"></i></a> {{#if item.disabled}}
                 <a class="condition-toggle" data-tooltip="SHEET.activate"><i class="far fa-circle"></i></a> {{else}}
                 <a class="condition-toggle" data-tooltip="SHEET.deactivate"><i
@@ -352,7 +352,7 @@
 </div>
 {{/if}}
 
-<div class="groupbox">
+<div class="actor-status groupbox">
     <div class="row-section">
         <div class="col header-label lineheight">
             <b>{{localize "Modifiers"}}</b>
@@ -382,7 +382,7 @@
             </div>
         </div>
         {{#each prepare.itemModifiers as |item i|}}
-        <div class="row-section skills col morph">
+        <div class="status-modifier row-section skills col morph">
             <div class="col five">
                 {{@key}}
             </div>

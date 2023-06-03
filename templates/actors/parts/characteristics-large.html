@@ -1,4 +1,4 @@
-<div class="row-section wrap">
+<div class="actor-main row-section wrap">
     <div class="characteristics-table" cellpadding="0">
         <div class="table-row">
             <div class="table-header"></div>
@@ -39,14 +39,14 @@
             {{/each}}
         </div>
         {{/if}}
-        <div class="table-row">
+        <div class="actor-main-attr-modifier table-row">
             <div class="row-type table-data">
                 <div class="header-block lineheight">
                     {{localize "Modifiers"}}
                 </div>
             </div>
             {{#each prepare.mentalAttrs as |ch|}}
-            <div class="table-data">
+            <div class="number-input table-data">
                 <input name="system.characteristics.{{ch}}.modifier" type="number" value="{{getAttr ../actor ch 'modifier'}}" data-dtype="Number">
             </div>
             {{/each}}
@@ -91,14 +91,14 @@
             {{/each}}
         </div>
         {{/if}}
-        <div class="table-row">
+        <div class="actor-main-attr-modifier table-row">
             <div class="row-type table-data onlySingleColumn">
                 <div class="header-block lineheight">
                     {{localize "Modifiers"}}
                 </div>
             </div>
             {{#each prepare.bodyAttrs as |ch|}}
-            <div class="table-data">
+            <div class="number-input table-data">
                 <input name="system.characteristics.{{ch}}.modifier" type="number" value="{{getAttr ../actor ch 'modifier'}}" data-dtype="Number">
             </div>
             {{/each}}

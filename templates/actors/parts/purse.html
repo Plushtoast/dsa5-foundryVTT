@@ -1,4 +1,4 @@
-<div class="groupbox">
+<div class="actor-purse groupbox">
     <div class="row-section">
         <div class="col header-label">
             <b>{{localize "purse"}}</b>
@@ -12,9 +12,9 @@
         </div>
         {{/each}}
     </div>
-    <div class="row-section">
+    <div class="actor-purse-content row-section">
         {{#each this}}
-        <div class="col four center item" data-item-id="{{_id}}">
+        <div class="number-input col four center item" data-item-id="{{_id}}">
             <input class="col-{{name}} money-change" type="number" data-dtype="Number" value="{{system.quantity.value}}" />
         </div>
         {{/each}}
