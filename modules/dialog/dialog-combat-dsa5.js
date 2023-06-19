@@ -223,6 +223,7 @@ export default class DSA5CombatDialog extends DialogShared {
 
             const actor = DSA5_Utility.getSpeaker(this.dialogData.speaker);
             if (actor) {
+                console.log(actor.system.sightModifier)
                 const darkSightLevel = AdvantageRulesDSA5.vantageStep(actor, game.i18n.localize("LocalizedIDs.darksight")) + SpecialabilityRulesDSA5.abilityStep(actor, game.i18n.localize("LocalizedIDs.sappeurStyle"));
                 const blindCombat = SpecialabilityRulesDSA5.abilityStep(actor, game.i18n.localize("LocalizedIDs.blindFighting"));
                 if (level < 4 && level > 0) {
@@ -244,6 +245,13 @@ export default class DSA5CombatDialog extends DialogShared {
                 }
 
                 level = Math.max(0, level - blindCombat);
+                level = Math.min(
+                    Math.max(
+                        0, 
+                        level + actor.system.sightModifier
+                    ), 
+                    4
+                );
             }
 
             const elem = html.find(`[name="vision"] option:nth-child(${level + 1})`);
