@@ -244,7 +244,7 @@ export default class DSA5CombatDialog extends DialogShared {
                 }
 
                 level = Math.max(0, level - blindCombat);
-                if (level < 4 || getProperty(actor, "system.sightModifier.maxLevel")) {
+                if (level < 4 || getProperty(actor, "system.sightModifier.maxLevel") == true) {
                     level = Math.min(
                         Math.max(
                             0, 
