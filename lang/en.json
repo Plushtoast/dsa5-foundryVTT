@@ -706,7 +706,8 @@
         "range": "Range multiplier",
         "creatureBonus": "Bonus damage (creature)",
         "armorPen": "Armor penetration",
-        "sight": "Sight modifier"
+        "sight": "Sight modifier",
+        "sightMax": "Sight modifier incl. Level 4"
     },
     "wrongGrip": {
         "oneHanded": "One-handed guided",
