@@ -759,7 +759,7 @@ export default class DiceDSA5 {
 
         await this.detailedWeaponResult(result, testData, source)
 
-        if (testData.mode == "attack" && result.successLevel > 0)
+        if (testData.mode == "attack" && result.successLevel > 0 && !testData.counterAttack)
             await DiceDSA5.evaluateDamage(testData, result, weapon, !isMelee, result.doubleDamage)
 
         result["rollType"] = "weapon"
@@ -771,7 +771,7 @@ export default class DiceDSA5 {
     }
 
     static async detailedWeaponResult(result, testData, source) {
-        const isAttack = testData.mode == "attack"
+        const isAttack = testData.mode == "attack" && !testData.counterAttack
         const isMelee = source.type == "meleeweapon" || getProperty(source, "system.traitType.value") == "meleeAttack"
         switch (result.successLevel) {
             case 3:

@@ -9,6 +9,7 @@ import SpecialabilityRulesDSA5 from "../system/specialability-rules-dsa5.js";
 import DSA5_Utility from "../system/utility-dsa5.js";
 import DSA5Dialog from "./dialog-dsa5.js";
 import DialogShared from "./dialog-shared.js";
+import DSA5StatusEffects from "../status/status_effects.js";
 
 export default class DSA5CombatDialog extends DialogShared {
     static rollModifiers = {
@@ -96,6 +97,7 @@ export default class DSA5CombatDialog extends DialogShared {
                 elem.removeClass("active");
             }
             elem.find(".step").text(DialogShared.roman[step]);
+            this.checkCounterAttack(ev)
             this.calculateModifier()
         });
         html.find(".opportunityAttack").change((ev) => {
@@ -117,6 +119,31 @@ export default class DSA5CombatDialog extends DialogShared {
         this.checkTargets = setInterval(function() {
             targets = that.compareTargets(html, targets);
         }, 500);
+    }
+
+    checkCounterAttack(ev) {
+
+        const actor = DSA5_Utility.getSpeaker(this.dialogData.speaker)
+
+        if(actor && this.dialogData.mode == "parry"){
+            const counterAttack = actor.items.get(ev.currentTarget.dataset.id).name == game.i18n.localize("LocalizedIDs.counterAttack")
+            if (counterAttack) {
+                this.dialogData.counterAttack = ev.button == 0
+                this.prepareWeapon()
+                const mode = ev.button == 0 ? "attack" : "parry"
+                const item = actor.items.get(this.dialogData.source._id)
+                let situationalModifiers = DSA5StatusEffects.getRollModifiers(actor, item, { mode: mode })
+                Itemdsa5.getSubClass(item.type).getSituationalModifiers(situationalModifiers, actor, { mode: mode }, item)
+                if (mode == "attack") {
+                    situationalModifiers = situationalModifiers.filter(x => x.type != "defenseMalus")
+                }
+                let mods = ''
+                for (const mod of situationalModifiers) {
+                    mods += `<option value="${mod.value}" ${mod.selected ? "selected" : ""}>${mod.name} [${mod.value}]</option>`
+                }
+                $(this._element).find(".modifiers select").html(mods)
+            }
+        }    
     }
 
     changeSpecAbVariant(ev){
@@ -192,7 +219,7 @@ export default class DSA5CombatDialog extends DialogShared {
                         weapon = Actordsa5._prepareRangeWeapon(source, [], [skill], actor)
                         break
                 }
-                if (this.dialogData.mode == "attack") {
+                if (this.dialogData.mode == "attack" || this.dialogData.counterAttack) {
                     this.dialogData.rollValue = weapon.attack
                 } else if (this.dialogData.mode == "parry") {
                     this.dialogData.rollValue = weapon.parry
@@ -200,7 +227,7 @@ export default class DSA5CombatDialog extends DialogShared {
             } else if (source.type == "dodge") {
                 this.dialogData.rollValue = source.system.value
             } else {
-                if (this.dialogData.mode == "attack") {
+                if (this.dialogData.mode == "attack" || this.dialogData.counterAttack) {
                     this.dialogData.rollValue = Number(source.system.at.value)
                 } else if (this.dialogData.mode == "parry") {
                     this.dialogData.rollValue = Number(source.system.pa)
@@ -412,6 +439,10 @@ export default class DSA5CombatDialog extends DialogShared {
                 value: Number(data.doubleAttack) || 0,
             }
         );
+        if (testData.situationalModifiers.some(x => x.name == game.i18n.localize("LocalizedIDs.counterAttack"))) {
+            testData.mode = "attack"
+            testData.counterAttack = true
+        }
     }
 
      static resolveRangeDialog(testData, cardOptions, html, actor, options) {

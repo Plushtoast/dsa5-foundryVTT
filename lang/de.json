@@ -1350,7 +1350,8 @@
         "manifesto": "Manifesto",
         "elementalServant": "Elementarer Diener",
         "callDjinn": "Dschinnenruf",
-        "enemySense": "Feindgespür"
+        "enemySense": "Feindgespür",
+        "counterAttack": "Gegenhalten"
     },
     "LocalizedCTs": {
         "Blasrohre": "Blowpipes",
