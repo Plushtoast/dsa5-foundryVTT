@@ -125,7 +125,7 @@ export default class DSA5CombatDialog extends DialogShared {
 
         const actor = DSA5_Utility.getSpeaker(this.dialogData.speaker)
 
-        if(actor){
+        if(actor && this.dialogData.mode == "parry"){
             const counterAttack = actor.items.get(ev.currentTarget.dataset.id).name == game.i18n.localize("LocalizedIDs.counterAttack")
             if (counterAttack) {
                 this.dialogData.counterAttack = ev.button == 0
