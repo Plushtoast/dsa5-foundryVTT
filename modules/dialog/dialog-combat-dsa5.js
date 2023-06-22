@@ -125,7 +125,7 @@ export default class DSA5CombatDialog extends DialogShared {
 
         const actor = DSA5_Utility.getSpeaker(this.dialogData.speaker)
 
-        if(actor && this.dialogData.mode == "parry"){
+        if(actor){
             const counterAttack = actor.items.get(ev.currentTarget.dataset.id).name == game.i18n.localize("LocalizedIDs.counterAttack")
             if (counterAttack) {
                 this.dialogData.counterAttack = ev.button == 0
@@ -137,11 +137,34 @@ export default class DSA5CombatDialog extends DialogShared {
                 if (mode == "attack") {
                     situationalModifiers = situationalModifiers.filter(x => x.type != "defenseMalus")
                 }
-                let mods = ''
-                for (const mod of situationalModifiers) {
-                    mods += `<option value="${mod.value}" ${mod.selected ? "selected" : ""}>${mod.name} [${mod.value}]</option>`
+                const htmlMods = $(this._element).find("[name=situationalModifiers]")
+                if (situationalModifiers.length > 0) {
+                    if (htmlMods.length == 0) {
+                        const modBox = `<div class="modifiers form-group custom-select">
+                                            <label>${game.i18n.localize("DIALOG.SituationalModifiers")}</label>
+                                            <select name="situationalModifiers" multiple data-tooltip="${game.i18n.localize("DIALOG.deselectWithStrg")}" />
+                                        </div>`
+                        $(this._element).find("[name=rollMode]").parent().after(modBox)
+                        this.position.height += 86
+                        this.setPosition(this.position)
+                    }
+                    let mods = ''
+                    for (const mod of situationalModifiers) {
+                        mods += `<option value="${mod.value}"
+                                        data-tooltip="${Handlebars.helpers.situationalTooltip(mod)}"
+                                        ${mod.type ? " data-type=" + mod.type : ""}
+                                        ${mod.specAbId ? " data-specAbId=" + mod.specAbId : ""}
+                                        ${mod.armorPen ? " data-armorPen=" + mod.armorPen : ""}
+                                        ${mod.selected ? " selected" : ""}>
+                                    ${mod.name} [${mod.value}]
+                                </option>`
+                    }
+                    $(this._element).find(".modifiers select").html(mods)
+                } else if (htmlMods.length > 0) {                    
+                    htmlMods.parent().remove()
+                    this.position.height -= 86
+                    this.setPosition(this.position)
                 }
-                $(this._element).find(".modifiers select").html(mods)
             }
         }    
     }
