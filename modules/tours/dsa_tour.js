@@ -1,3 +1,5 @@
+import { delay } from "../system/view_helper.js"
+
 export default class DSATour extends Tour{
     static tours = ["systems/dsa5/modules/tours/lang/initial", "systems/dsa5/modules/tours/lang/library", "systems/dsa5/modules/tours/lang/actor"]    
     static gmTours = ["systems/dsa5/modules/tours/lang/mastermenu"]
@@ -50,8 +52,4 @@ export default class DSATour extends Tour{
         $('#tooltip').show()
         return res
     }
-}
-
-function delay(ms) {
-    return new Promise(resolve => setTimeout(resolve, ms));
 }

@@ -117,7 +117,6 @@ export default function() {
             texture: 'none'
         });
 
-
         game.dsa5.apps.DiceSoNiceCustomization.initConfigs()
         DiceSoNiceCustomization.onConnect()
     });
@@ -128,6 +127,7 @@ export class DiceSoNiceCustomization extends Application {
     static retries = 0
     static retrying = false
     static attrs = ["mu", "kl", "in", "ch", "ff", "ge", "ko", "kk", "attack", "dodge", "parry", "damage"]
+
     initConfigs() {
         const colors = game.dice3d.exports.Utils.prepareColorsetList()
         this.choices = {}
@@ -164,7 +164,7 @@ export class DiceSoNiceCustomization extends Application {
     }
 
     getAttributeConfiguration(value) {
-        if (DSA5_Utility.moduleEnabled("dice-so-nice")) {
+        if (DSA5_Utility.moduleEnabled("dice-so-nice") && game.dice3d) {
             return {
                 colorset: game.settings.get("dsa5", `dice3d_${value}`),
                 appearance: {

@@ -2152,6 +2152,14 @@
   .obfuscationBtn:nth-of-type(2){
     display: none;
   }
+
+  .chatpaperfield {
+    background: url('../../icons/backgrounds/chatpaper.webp');
+    background-repeat: no-repeat;
+    background-size: 100% 100%;
+    background-position: center;
+    padding: 10px 20px 10px 30px;
+  }
   
   .maskfield {
     background: url('../../icons/backgrounds/mask.webp'), url('../../icons/backgrounds/maskfield.webp');

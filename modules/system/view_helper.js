@@ -18,6 +18,10 @@ export function svgAutoFit(elem, width = 320, height = 40) {
     }
 }
 
+export function delay(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+}
+
 export async function itemFromDrop(dragData, actorId, toObject = true) {
     let item
     let selfTarget
