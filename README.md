@@ -4,7 +4,7 @@
 ![](https://repository-images.githubusercontent.com/311655339/4d523800-55a9-11eb-9e2e-6bbc2b71d8a4)
 
 ### Current Version and Compatibility:
-5.0.x - FoundryVTT 10.+
+5.0.x - FoundryVTT 11.+
 This system is intended for usage with [Foundry Virtual Tabletop](https://foundryvtt.com/) to play "Das Schwarze Auge" 5th edition.
 If you want to learn more checkout the [German](https://ulisses-spiele.de/virtual-tabletop-dsa-vtt/) or [English](https://ulisses-us.com/ulisses-virtual-tabletops/virtual-tabletop-dsa-vtt/) VTT Page by Ulisses Spiele.
 
@@ -106,7 +106,10 @@ If you want to discuss TDE for foundry or need some assistance you can also join
     </a>
     </a>
     <a href="https://www.f-shop.de/virtual-tabletops/das-schwarze-auge-vtt/regel-module/3027/dsa5-aventurisches-herbarium-fuer-foundry-vtt" target="_blank" data-tooltip="Aventurisches Herbarium">
-        <img src="https://ulisses-digital.de/R20/dsa5/modules/dsa5-herbarium/icons/journal/coverde.webp" alt="Aventurisches Transmutarium" style="margin-right: 5px; margin-bottom: 5px; text-align:center; width:210px;">
+        <img src="https://ulisses-digital.de/R20/dsa5/modules/dsa5-herbarium/icons/journal/coverde.webp" alt="Aventurisches Herbarium" style="margin-right: 5px; margin-bottom: 5px; text-align:center; width:210px;">
+    </a>
+    <a href="https://www.f-shop.de/virtual-tabletops/das-schwarze-auge-vtt/regel-module/3576/dsa5-aventurisches-herbarium-2-fuer-foundry-vtt" target="_blank" data-tooltip="Aventurisches Herbarium II">
+        <img src="https://www.f-shop.de/media/image/22/db/36/ESD036_0_0999.jpg" alt="Aventurisches Herbarium II" style="margin-right: 5px; margin-bottom: 5px; text-align:center; width:210px;">
     </a>
     <a href="https://www.f-shop.de/virtual-tabletops/das-schwarze-auge-vtt/regel-module/3029/dsa5-orks-hauer-und-schwarzer-pelz-fuer-foundry-vtt" target="_blank" data-tooltip="Orks - Hauer & Schwarzer Pelz">
         <img src="https://ulisses-digital.de/R20/dsa5/modules/dsa5-orcs/icons/journal/coverde.webp" alt="Aventurisches Transmutarium" style="margin-right: 5px; margin-bottom: 5px; text-align:center; width:210px;">
@@ -141,6 +144,9 @@ If you want to discuss TDE for foundry or need some assistance you can also join
     </a>        
     <a href="https://www.f-shop.de/detail/index/sArticle/3456">
         <img src="https://www.f-shop.de/media/image/c2/7d/f1/ESD033_0_0999.jpg" alt="Klingen der Nacht" style="margin-right: 5px; margin-bottom: 5px; text-align:center; width:210px;">
+    </a>
+    <a href="https://www.f-shop.de/virtual-tabletops/das-schwarze-auge-vtt/abenteuer-module/3575/dsa5-offenbarung-des-himmels-fuer-foundry-vtt" target="_blank" data-tooltip="Offenbarung des Himmels">
+        <img src="https://www.f-shop.de/media/image/5d/b3/1a/ESD035_0_0999.jpg" alt="Offenbarung des Himmels" style="margin-right: 5px; margin-bottom: 5px; text-align:center; width:210px;">
     </a>
     <a href="https://www.f-shop.de/virtual-tabletops/das-schwarze-auge-vtt/abenteuer-module/2388/dsa5-mitsommerrache-fuer-foundry" title="Mittsommerrache">
         <img src="https://ulisses-digital.de/R20/dsa5/modules/dsa5-mittsommerrache/icons/journal/coverde.webp" alt="Mittsommerrache" style="margin-right: 5px; margin-bottom: 5px; text-align:center; width:210px;">
@@ -186,6 +192,9 @@ If you want to discuss TDE for foundry or need some assistance you can also join
     </a>
     <a href="https://foundryvtt.com/packages/dsa5-witchsdance" target="_blank" data-tooltip="Witch's dance">
         <img src="https://ulisses-digital.de/R20/dsa5/modules/dsa5-witchsdance/icons/journal/coveren.webp" alt="Witch's dance" style="margin-right: 5px; margin-bottom: 5px; text-align:center; width:210px;">
+    </a>
+    <a href="https://www.ulissesf-shop.com/the-dark-eye/virtual-tabletops/2223/tde5-revelations-from-heaven-for-foundry-vtt" target="_blank" data-tooltip="Revelations from Heaven">
+        <img src="https://www.ulissesf-shop.com/media/image/40/5b/b7/ESD1009_0_0999.jpg" alt="Revelations from Heaven" style="margin-right: 5px; margin-bottom: 5px; text-align:center; width:210px;">
     </a>
 </div>
 

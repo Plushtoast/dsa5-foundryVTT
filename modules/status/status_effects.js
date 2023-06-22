@@ -219,7 +219,6 @@ export default class DSA5StatusEffects {
 
     static calculateRollModifier(effect, actor, item, options = {}) {
         if (effect.flags.dsa5.value == null || item.type == "regenerate") return 0
-
         
         return DSA5StatusEffects.clampedCondition(actor, effect)
     }
@@ -231,7 +230,7 @@ export default class DSA5StatusEffects {
         const max = Number(effect.flags.dsa5.max)
         const mod = Math.clamped(actor.system.condition[statusesId] || 0, 0, max) * -1
         const resist = this.resistantToEffect(actor, effect)
-        return  Math.clamped(mod + resist, -1 * max,0)
+        return  Math.clamped(mod + resist, -1 * max, 0)
     }
 
     static ModifierIsSelected(item, options = {}, actor) {
@@ -428,6 +427,34 @@ class TheriakEffect extends DSA5StatusEffects {
     }
 }
 
+class SunkenEffect extends DSA5StatusEffects {
+    static calculateRollModifier(effect, actor, item, options = {}) {
+        if (item.type == "skill" && item.system.group.value == "body")
+            return Math.clamped(this.clampedCondition(actor, effect) -1, 3, 0) * -1
+
+        return 0
+    }
+}
+
+class HungerEffect extends DSA5StatusEffects {
+    static calculateRollModifier(effect, actor, item, options = {}) {
+        if (item.type == "regenerate")
+            return Math.pow(this.clampedCondition(actor, effect) -1, 2) * -1
+
+        return 0
+    }
+}
+
+class ThirstEffect extends DSA5StatusEffects {
+    static calculateRollModifier(effect, actor, item, options = {}) {
+        const stat = this.clampedCondition(actor, effect)
+        if (item.type == "regenerate")
+            return stat == 1 ? -1 : stat * -5
+
+        return Math.clamped(stat -1, 0, 3)
+    }
+}
+
 class NoModifierEffect extends DSA5StatusEffects {
     static calculateRollModifier(effect, actor, item, options = {}) {
         return 0
@@ -452,5 +479,8 @@ DSA5.statusEffectClasses = {
     sikaryanloss: SikaryanlossEffect,
     desire: DesireEffect,
     theriak: TheriakEffect,
-    services: NoModifierEffect
+    services: NoModifierEffect,
+    sunken: SunkenEffect,
+    hunger: HungerEffect,
+    thirst: ThirstEffect
 }

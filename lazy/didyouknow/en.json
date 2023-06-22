@@ -110,6 +110,8 @@
         "Compendium I brings support for crafting weapons and armor via the Blacksmiths in the player menu.",
         "Players can edit notes on actors where they have at least the \"Limited\" permission.",
         "You can activate the browse mode in the library to read through and get to know all the elements of TDE a bit more comfortably.",
-        "The game master can change the view of the hero sheet in the header bar to the limited player view."
+        "The game master can change the view of the hero sheet in the header bar to the limited player view.",
+
+        "The module Yendor's UI enables the usage of the character sheet on your mobile phone."
     ]
 }

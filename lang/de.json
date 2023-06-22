@@ -935,7 +935,10 @@
         "Schelmenspielzeug": "Schelmenspielzeug",
         "Zauberstecken": "Zauberstecken",
         "Magierstab": "Magierstab",
-        "Trinkhorn": "Trinkhorn"
+        "Trinkhorn": "Trinkhorn",
+        "Schuppenbeutel": "Schuppenbeutel",
+        "Kristallomantische Kristallkugel": "Kristallomantische Kristallkugel",
+        "Echsenhaube": "Echsenhaube"
     },
     "ITEMSHEET": {
         "offHandMod": "Bonus/Malus als Nebenhand (z.b. Parierwaffe)",

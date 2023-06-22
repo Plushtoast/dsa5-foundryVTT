@@ -533,7 +533,10 @@ DSA5.traditionArtifacts = {
     "Schelmenspielzeug": 12,
     "Zauberstecken": 0,
     "Magierstab": 18,
-    "Trinkhorn": 12
+    "Trinkhorn": 12,
+    "Schuppenbeutel": 18,
+    "Kristallomantische Kristallkugel": 15,
+    "Echsenhaube": 12
 }
 
 DSA5.moneyNames = {
