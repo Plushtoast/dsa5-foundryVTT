@@ -450,6 +450,7 @@
     "manual": "Manual",
     "mageLevel": "Magic type",
     "minorghostsappear": "Annoying Minor spirits are attracted by the spell",
+    "stunnedByCounterAttack": "Counterattack causes 1 level of stunned",
     "maxSpellMods": "Max modifier count",
     "misc": "Misc",
     "Name": "Name",

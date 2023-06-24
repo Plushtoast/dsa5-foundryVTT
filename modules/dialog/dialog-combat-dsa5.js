@@ -464,7 +464,7 @@ export default class DSA5CombatDialog extends DialogShared {
         );
         if (testData.situationalModifiers.some(x => x.name == game.i18n.localize("LocalizedIDs.counterAttack"))) {
             testData.mode = "attack"
-            testData.counterAttack = true
+            testData.extra.counterAttack = true
         }
     }
 

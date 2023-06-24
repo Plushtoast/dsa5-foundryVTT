@@ -394,6 +394,7 @@
     "manual": "Händisch",
     "mageLevel": "Magieart",
     "minorghostsappear": "Lästige Mindergeister werden durch den Zauber angelockt",
+    "stunnedByCounterAttack": "Gegenhalten versursacht 1 Stufe Betäubung",
     "maxSpellMods": "Maximale Modifikatorenanzahl",
     "misc": "Sonstiges",
     "Name": "Name",
