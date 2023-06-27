@@ -643,7 +643,9 @@
         "armor": "Rüstungsmodifikator",
         "range": "Reichweitenfaktor",
         "creatureBonus": "Bonusschaden (Kreatur)",
-        "armorPen": "Rüstungsdurchdringung"
+        "armorPen": "Rüstungsdurchdringung",
+        "sight": "Sichtmodifikator",
+        "sightMax": "Sichtmodifikator inkl. Stufe 4"
     },
     "WIZARD": {
         "addItem": "{item} hinzufügen",
