@@ -244,6 +244,15 @@ export default class DSA5CombatDialog extends DialogShared {
                 }
 
                 level = Math.max(0, level - blindCombat);
+                if (level < 4 || getProperty(actor, "system.sightModifier.maxLevel") == true) {
+                    level = Math.min(
+                        Math.max(
+                            0, 
+                            level + (getProperty(actor, "system.sightModifier.value") || 0)
+                        ), 
+                        4
+                    );
+                }
             }
 
             const elem = html.find(`[name="vision"] option:nth-child(${level + 1})`);

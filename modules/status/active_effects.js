@@ -546,6 +546,18 @@ export default class DSAActiveEffectConfig extends ActiveEffectConfig {
                 mode: 0,
                 ph: descriptor,
             },
+            {
+                name: `${game.i18n.localize("MODS.sight")}`,
+                val: `system.sightModifier.value`,
+                mode: 2,
+                ph: "1",
+            },
+            {
+                name: `${game.i18n.localize("MODS.sightMax")}`,
+                val: `system.sightModifier.maxLevel`,
+                mode: 5,
+                ph: "true",
+            },
         ];
         const models = ["liturgy", "ceremony", "spell", "ritual", "skill", "feature"];
         for (const k of models) {
