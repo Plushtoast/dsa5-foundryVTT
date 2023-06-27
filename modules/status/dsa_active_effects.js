@@ -17,6 +17,20 @@ export default class DSAActiveEffect extends ActiveEffect {
         }
     }
 
+    isVisibleEffect() {
+        return !this.disabled && !this.notApplicable && (game.user.isGM || !this.getFlag("dsa5", "hidePlayers")) && !this.getFlag("dsa5", "hideOnToken") && (this.origin == this.target?.uuid || !this.origin)
+    }
+
+    _displayScrollingStatus(enabled) {
+        const allowedEffects = ["dead"];
+        const isAllowedToSeeEffects = game.user.isGM || this.target?.testUserPermission(game.user, "OBSERVER") || !(game.settings.get("dsa5", "hideEffects"));
+        const visibleEffect = isAllowedToSeeEffects ? this.isVisibleEffect() : allowedEffects.some(y => this.statuses.has(y))
+
+        if(!visibleEffect) return
+
+        super._displayScrollingStatus(enabled);
+    }
+
     _getModifiedItems(actor, change) {
         const data = change.key.split(".")
         let type = data.shift()

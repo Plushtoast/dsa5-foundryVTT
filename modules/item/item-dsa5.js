@@ -1187,7 +1187,7 @@ class ConsumableItemDSA extends Itemdsa5 {
 
 class InformationItemDSA5 extends Itemdsa5{
     static async _postItem(item){
-        const html = await renderTemplate("systems/dsa5/templates/chat/informationRequestRoll.html", {item})
+        const html = await renderTemplate("systems/dsa5/templates/chat/informationRequestRoll.html", { item })
         const chatOptions = DSA5_Utility.chatDataSetup(html)
         ChatMessage.create(chatOptions)
     }

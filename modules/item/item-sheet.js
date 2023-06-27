@@ -522,7 +522,13 @@ class InformationSheet extends ItemSheetdsa5 {
     async getData(options) {
         const data = await super.getData(options)
         mergeObject(data, {
-            allSkills: await DSA5_Utility.allSkillsList()
+            allSkills: await DSA5_Utility.allSkillsList(),
+            enrichedqs1: await TextEditor.enrichHTML(this.item.system.qs1, { async: true }),
+            enrichedqs2: await TextEditor.enrichHTML(this.item.system.qs2, { async: true }),
+            enrichedqs3: await TextEditor.enrichHTML(this.item.system.qs3, { async: true }),
+            enrichedqs4: await TextEditor.enrichHTML(this.item.system.qs4, { async: true }),
+            enrichedqs5: await TextEditor.enrichHTML(this.item.system.qs5, { async: true }),
+            enrichedqs6: await TextEditor.enrichHTML(this.item.system.qs6, { async: true })
         })
         return data
     }
