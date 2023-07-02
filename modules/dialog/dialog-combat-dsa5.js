@@ -223,36 +223,16 @@ export default class DSA5CombatDialog extends DialogShared {
 
             const actor = DSA5_Utility.getSpeaker(this.dialogData.speaker);
             if (actor) {
-                const darkSightLevel = AdvantageRulesDSA5.vantageStep(actor, game.i18n.localize("LocalizedIDs.darksight")) + SpecialabilityRulesDSA5.abilityStep(actor, game.i18n.localize("LocalizedIDs.sappeurStyle"));
-                const blindCombat = SpecialabilityRulesDSA5.abilityStep(actor, game.i18n.localize("LocalizedIDs.blindFighting"));
-                if (level < 4 && level > 0) {
+                const darkSightLevel = AdvantageRulesDSA5.vantageStep(actor, game.i18n.localize("LocalizedIDs.darksight"))
+                const sightModifier = Number(getProperty(actor, "system.sightModifier.value")) || 0
+                const modifyableLevel = Number(getProperty(actor, "system.sightModifier.maxLevel")) || 3
+                if (level <= modifyableLevel && level > 0) {
                     if (darkSightLevel > 1) {
                         level = 0;
                     } else {
-                        level = Math.max(0, level - darkSightLevel);
-                        if (SpecialabilityRulesDSA5.hasAbility(actor, game.i18n.localize("LocalizedIDs.traditionBoron")))
-                            level = Math.max(0, level - 1);
-                        if (SpecialabilityRulesDSA5.hasAbility(actor, game.i18n.localize("LocalizedIDs.traditionMarbo")))
-                            level = Math.max(0, level - 1);
-
-
-                        level = Math.min(
-                            4,
-                            level + AdvantageRulesDSA5.vantageStep(actor, game.i18n.localize("LocalizedIDs.nightBlind"))
-                        );
+                        level = Math.clamped(level + sightModifier - darkSightLevel, 0, 4)
                     }
-                }
-
-                level = Math.max(0, level - blindCombat);
-                if (level < 4 || getProperty(actor, "system.sightModifier.maxLevel") == true) {
-                    level = Math.min(
-                        Math.max(
-                            0, 
-                            level + (getProperty(actor, "system.sightModifier.value") || 0)
-                        ), 
-                        4
-                    );
-                }
+                }                
             }
 
             const elem = html.find(`[name="vision"] option:nth-child(${level + 1})`);

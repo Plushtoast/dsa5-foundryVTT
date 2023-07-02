@@ -16,6 +16,7 @@ import DSATables from "../tables/dsatables.js"
 import RequestRoll from "./request-roll.js"
 import { MeasuredTemplateDSA } from "./measuretemplate.js"
 import TableEffects from "../tables/tableEffects.js"
+import CreatureType from "./creature-type.js"
 
 export default class DiceDSA5 {
     static async rollTest(testData) {
@@ -1314,6 +1315,7 @@ export default class DiceDSA5 {
 
     static async renderRollCard(chatOptions, testData, rerenderMessage) {
         const applyEffect = this.addApplyEffectData(testData)
+        const immuneTo = CreatureType.checkImmunity(testData)
         const preData = deepClone(testData.preData)
         const hideDamage = rerenderMessage ? rerenderMessage.flags.data.hideDamage : preData.mode == "attack"
         Hooks.call("postProcessDSARoll", chatOptions, testData, rerenderMessage, hideDamage)
@@ -1326,6 +1328,7 @@ export default class DiceDSA5 {
 
         let chatData = {
             title: chatOptions.title,
+            immuneTo,
             testData,
             hideData: game.user.isGM,
             preData,

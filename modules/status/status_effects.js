@@ -1,5 +1,6 @@
 import DSA5ChatListeners from '../system/chat_listeners.js';
 import DSA5 from '../system/config-dsa5.js'
+import CreatureType from '../system/creature-type.js';
 
 export default class DSA5StatusEffects {
     static bindButtons(html) {
@@ -123,15 +124,27 @@ export default class DSA5StatusEffects {
             return await DSA5StatusEffects.removeEffect(target, existing, value, absolute, auto)
     }
 
-    static immuneToEffect(target, effect, silent = true) {
-        //TODO add this to effect dropdown
+    static immuneToEffect(target, effect, silent = true) {     
+        if(!effect.id || !hasProperty(effect, "flags.dsa5.max")) return
+
         const immunities = getProperty(target, "system.immunities") || []
+        let res
         if (immunities.includes(effect.id)) {
-            const msg = game.i18n.format("DSAError.immuneTo", { name: target.name, condition: game.i18n.localize(`CONDITION.${effect.id}`) })
-            if (ui.notifications && !silent) ui.notifications.warn(msg)
-            return msg
+            res = { name: target.name, condition: game.i18n.localize(`CONDITION.${effect.id}`) }
         }
-        return false
+        if(!res && target.documentName == "Actor"){
+            const types = CreatureType.detectCreatureType(target)
+            for (let type of types) {
+                if(type.ignoredCondition(effect.id)) {
+                    res = { name: `${target.name} (${type.getName()})`, condition: game.i18n.localize(`CONDITION.${effect.id}`) }
+                    break
+                }
+            }
+        }
+        if(!res || !(ui.notifications && !silent)) return
+
+        const msg = game.i18n.format("DSAError.conditionInvalidToCreature", { name: res.name, condition: res.condition })
+        ui.notifications.warn(msg)
     }
 
     static resistantToEffect(target, effect) {
@@ -146,9 +159,11 @@ export default class DSA5StatusEffects {
     }
 
     static async createEffect(actor, effect, value, auto) {
-        const immune = this.immuneToEffect(actor, effect)
-        if (immune) return immune
+        //const immune = this.immuneToEffect(actor, effect)
         effect.name = game.i18n.localize(effect.name);
+        this.immuneToEffect(actor, effect, false)
+        //if (immune) return immune
+        
         if (auto) {
             effect.flags.dsa5.auto = Math.min(effect.flags.dsa5.max, value);
             effect.flags.dsa5.manual = 0
@@ -189,8 +204,9 @@ export default class DSA5StatusEffects {
     }
 
     static async updateEffect(actor, existing, value, absolute, auto, newEffect = undefined) {
-        const immune = this.immuneToEffect(actor, existing, true)
-        if (immune) return immune
+        //const immune = this.immuneToEffect(actor, existing, true)
+        this.immuneToEffect(actor, existing, true)
+        //if (immune) return immune
         let delta, newValue
         let update
         if (auto) {

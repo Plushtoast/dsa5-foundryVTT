@@ -66,6 +66,7 @@ export default function() {
     Hooks.on("chatMessage", (html, content, msg) => {
         let cmd = content.match(/^\/(pay|getPaid|help$|conditions$|tables)/)
         cmd = cmd ? cmd[0] : ""
+        console.log(msg)
         switch (cmd) {
             case "/pay":
                 if (game.user.isGM)
@@ -90,7 +91,40 @@ export default function() {
                 return false
         }
     })
+
+    Hooks.on("preCreateChatMessage", (doc, createData, options, user_id) => {
+        if(getProperty(doc, "flags.core.initiativeRoll")) {
+            const rolls = doc.rolls[0].terms
+            const basnum = `${rolls[0].number}`.split(".")[0]
+            const tooltip = `${game.i18n.localize("baseValue")}: ${basnum}, ${game.i18n.localize("randomValue")}: ${rolls.at(-1).number}")}`
+            const dies = []
+            for(let term of rolls) {
+                if(term.faces) {
+                    for(let i = 0; i < term.number; i++) {
+                        dies.push(`<span class="die-damage d${term.faces}">${term.results[i].result}</span>`)
+                    }                    
+                }
+            }
+            const content = `<div>
+                <div class="card-content hide-option roll-result">
+                    <b>${game.i18n.localize("Roll")}</b>: ${dies.join("")}
+                </div>
+                <div class="card-content" data-tooltip="${tooltip}">
+                    <b>${game.i18n.localize('initiative')}</b>: ${Math.floor(doc.rolls[0]._total * 100) / 100}
+                </div>
+            </div>`
+
+            const update = {
+                content,
+                flavor: undefined
+            }
+            doc.updateSource(update)
+        }
+    })
 }
+
+
+    
 
 function embeddedDragStart(ev) {
     const messageId = $(ev.currentTarget).parents(".message").attr("data-message-id")

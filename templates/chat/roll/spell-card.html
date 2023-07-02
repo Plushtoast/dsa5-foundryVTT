@@ -31,7 +31,14 @@
         <a class="entity-link content-link" data-tooltip="{{item.title}}" draggable="true" data-type="Item" data-entity="Item" data-uuid="{{item.uuid}}">{{item.name}}</a>
         {{/each}}
     </div>
-    {{/if}} {{#if (or hasAreaTemplate applyEffect)}}
+    {{/if}} 
+    {{#if immuneTo}}
+    <div class="card-content chat-button-gm maskfield">
+        {{#each immuneTo as |immunity|}}
+        <b>{{localize "DSAError.immuneTo" name=immunity.target condition=immunity.condition }}</b>
+        {{/each}}
+    {{/if}}
+    {{#if (or hasAreaTemplate applyEffect)}}
     <div class="row-section" style="margin-top:10px">
         {{#if applyEffect}}
         <div class="col two center">

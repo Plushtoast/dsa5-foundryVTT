@@ -564,6 +564,10 @@ export default class Actordsa5 extends Actor {
           astralenergy: [],
         },
       },
+      temperature: {
+        heatProtection: 0,
+        coldProtection: 0
+      },
       totalArmor: 0,
       spellArmor: 0,
       liturgyArmor: 0,

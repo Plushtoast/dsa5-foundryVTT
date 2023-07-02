@@ -860,6 +860,10 @@
         "max": "Max", 
         "AoE": "Size in yard, Template"
     },
+    "temperature": {
+        "heatProtection": "Heat Protection", 
+        "coldProtection": "Cold Protection"
+    },
     "areaTargetTypes": {
         "rect": "Cube",
         "ray": "Ray",
@@ -870,6 +874,7 @@
     "Range-medium": "Medium",
     "Range-long": "Long",
     "Money-D": "Ducat",
+    "randomValue": "Random value",
     "Money-S": "Silverthaler",
     "Money-H": "Haler",
     "Money-K": "Kreutzer",
@@ -1217,7 +1222,6 @@
         "miracle": "Miracle",
         "miracleMight": "Miracle Power",
         "weaponAptitude": "Weapon Aptitude",
-        "blindFighting": "Blind Fighting",
         "wildMagic": "Wild Magic",
         "incompetent": "Incompetent",
         "exceptionalSkill": "Exceptional Skill",
@@ -1267,7 +1271,6 @@
         "companion": "Companion",
         "localKnowledge": "Area Knowledge",
         "naturalArmor": "Natural Armor",
-        "sappeurStyle": "tbd",
         "wrestle": "Brawling",
         "all": "all",
         "poisonResistance": "Poison Resitance",
@@ -1288,10 +1291,7 @@
         "bodyControl": "Body Control",
         "darksight": "Darksight",
         "witchSense": "Witch Sense",
-        "nightBlind": "Night-Blind",
         "willpower": "Willpower",
-        "traditionBoron": "Tradition (Church of Boron)",
-        "traditionMarbo": "Tradition (Cult of Marbo)",
         "artisticAbility": "Artistic Ability",
         "Shields": "Shields",
         "Throwing Weapons": "Throwing Weapons",
@@ -1303,6 +1303,13 @@
         "manifesto": "Manifesto",
         "elementalServant": "Elemental Servant",
         "callDjinn": "Call Djinn",
+        "servantEarth": "tbd", 
+        "servantFlame": "tbd", 
+        "servantCold": "tbd", 
+        "servantWave": "tbd", 
+        "servantCloud": "tbd", 
+        "servantOre": "tbd",
+        "immuneTo": "Immunity to",
         "enemySense": "Enemy Sense"
     },
     "LocalizedCTs": {
@@ -1363,6 +1370,7 @@
         "noProperActor": "No actor has been assigned to you or you did not select a token.",
         "noMatch": "No match",
         "immuneTo": "{name} is immune to \"{condition}\".",
+        "conditionInvalidToCreature": "The condition {condition} is usually not valid for {name}.",
         "zeroXP": "The character has no adventure points yet. Do you want to add some?",
         "opposedAttackNoSpecAbs": "Attacks of Opportunity can not be combined with Special Abilites",
         "noSpellForExtension": "{category} {name} for spell extension {extension} not found.",

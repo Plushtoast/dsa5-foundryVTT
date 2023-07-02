@@ -550,15 +550,34 @@ export default class DSAActiveEffectConfig extends ActiveEffectConfig {
                 name: `${game.i18n.localize("MODS.sight")}`,
                 val: `system.sightModifier.value`,
                 mode: 2,
-                ph: "1",
+                ph: "-1",
             },
             {
                 name: `${game.i18n.localize("MODS.sightMax")}`,
                 val: `system.sightModifier.maxLevel`,
                 mode: 5,
-                ph: "true",
+                ph: "4",
             },
+            {
+                name: `${game.i18n.localize("LocalizedIDs.immuneTo")} ${game.i18n.localize("condition")}`,
+                val: `system.immunities`,
+                mode: 2,
+                ph: "feared",
+            },
+            {
+                name: game.i18n.localize("temperature.heatProtection"),
+                val: `system.temperature.heatProtection`,
+                mode: 2,
+                ph: "1",
+            },
+            {
+                name: game.i18n.localize("temperature.coldProtection"),
+                val: `system.temperature.coldProtection`,
+                mode: 2,
+                ph: "1",
+            }
         ];
+
         const models = ["liturgy", "ceremony", "spell", "ritual", "skill", "feature"];
         for (const k of models) {
             let key = k == "skill" ? "skillglobal" : k;

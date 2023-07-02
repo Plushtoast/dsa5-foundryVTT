@@ -56,6 +56,73 @@ export default class CreatureType {
         return new cl(creatureClass)
     }
 
+    getName() {
+        return Object.keys(CreatureType.creatureData.types).find(x => CreatureType.creatureData.types[x] == this.constructor.name)
+    }
+
+    static checkImmunity(testData) {
+        const immuneTo = []
+        switch (testData.preData.source.type) {
+            case "poison":
+            case "disease":
+                {
+                    const immunityName = game.i18n.localize("LocalizedIDs.immuneTo") + " (" + testData.preData.source.name + ")"
+                    for(let target of game.user.targets){
+                        const actor = target.actor
+                        const immunity = actor.items.find(x => x.name == immunityName && x.type == "advantage")
+                        if(immunity) {
+                            immuneTo.push( {
+                                name: immunity.name,
+                                uuid: immunity.uuid,
+                                target: actor.name,
+                                condition: testData.preData.source.name
+                            })
+                        } else {
+                            const types = CreatureType.detectCreatureType(target.actor)
+                            for(let type of types){
+                                if(type[`${testData.preData.source.type}Immunity`]) {
+                                    immuneTo.push( {
+                                        name: testData.preData.source.name,
+                                        target: `${actor.name} (${type.getName()})`,
+                                        condition: testData.preData.source.name
+                                    })
+                                    break
+                                }
+                            }
+                        }
+                    }
+                    break;
+                }
+            case "spell":
+            case "ritual":
+                {
+                    for(let target of game.user.targets){
+                        const types = CreatureType.detectCreatureType(target.actor)
+                        const features = testData.preData.source.system.feature.split(",").map(x => x.trim())
+                        
+                        let found = false
+                        for(let type of types){
+                            for(let feature of features){
+                                if(type.spellImmunities.includes(feature)) {
+                                    immuneTo.push({
+                                        name: testData.preData.source.name,
+                                        target: `${target.actor.name} (${type.getName()})`,
+                                        condition: `${game.i18n.localize('feature')} ${feature}`
+                                    })
+                                    found = true
+                                    break
+                                }
+                            }
+                            if(found) break
+                        }
+                    }
+                    break
+                }
+        }
+
+        return immuneTo
+    }
+
     static creatureTypeName(actor){
         if(actor.type == "creature"){
             const creatureClass = actor.system.creatureClass.value
