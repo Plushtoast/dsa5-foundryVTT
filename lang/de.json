@@ -1652,7 +1652,9 @@
         "disableTokenhotbarMaster": "Meisterleiste deaktivieren",
         "disableTokenhotbarMasterHint": "Die Funktionen des Meister Menüs werden bei deselektierten Token nicht mehr angezeigt.",
         "tokenhotbaropacity": "Deckkraft",
-        "tokenhotbaropacityHint": "Durchsichtigkeit der Tokenhotbar wenn sie nicht aktiv ist."
+        "tokenhotbaropacityHint": "Durchsichtigkeit der Tokenhotbar wenn sie nicht aktiv ist.",
+        "doubleDamageOptions": "Doppelter Schaden für Chat Karten",
+        "doubleDamageOptionsHint": "Zeige im Chat Kontext Menü Optionen zum Anwenden von doppeltem Schaden"
     },
     "CONTROLS": {
         "targetForUser": "Ziel für Spieler wählen"

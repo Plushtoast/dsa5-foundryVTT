@@ -20,6 +20,15 @@ export function setupConfiguration() {
         default: false,
         type: Boolean
     });
+    game.settings.register("dsa5", "doubleDamageOptions", {
+        name: "DSASETTINGS.doubleDamageOptions",
+        hint: "DSASETTINGS.doubleDamageOptionsHint",
+        scope: "client",
+        config: true,
+        default: false,
+        type: Boolean,
+        requiresReload: true
+    });
     game.settings.register("dsa5", "defenseBotchTableEnabled", {
         name: "DSASETTINGS.defenseBotchTableEnabled",
         hint: "DSASETTINGS.defenseBotchTableEnabledHint",

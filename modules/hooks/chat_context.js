@@ -13,6 +13,18 @@ export default function() {
         return canHurt(li, "damage.sp")
     }
 
+    const canHurtSPDouble = function(li) {
+        if(!game.settings.get("dsa5", "doubleDamageOptions")) return false
+
+        return canHurt(li, "damage.sp")
+    }
+
+    const canHurtDouble = function(li) {
+        if(!game.settings.get("dsa5", "doubleDamageOptions")) return false
+
+        return canHurt(li)
+    }
+
     const canCostMana = function(li) {
         let message = game.messages.get(li.attr("data-message-id"));
         if (message.speaker.actor && message.flags.data) {
@@ -146,6 +158,12 @@ export default function() {
         }
     }
 
+    const canApplyDefaultRollsDouble = li => {
+        if(!game.settings.get("dsa5", "doubleDamageOptions")) return false
+
+        return canApplyDefaultRolls(li)
+    }
+
     const canApplyDefaultRolls = li => {
         const message = game.messages.get(li.data("messageId"));
         if (!message || !canvas.tokens) return false
@@ -157,7 +175,7 @@ export default function() {
         game.actors.get(message.speaker.actor).useFateOnRoll(message, mode, fateSource);
     }
 
-    const applyDamage = async(li, mode) => {
+    const applyDamage = async(li, mode, factor = 1) => {
         const message = game.messages.get(li.attr("data-message-id"))
         const cardData = message.flags.opposeData
         const defenderSpeaker = cardData?.speakerDefend;
@@ -165,7 +183,7 @@ export default function() {
 
         if (!actor.isOwner) return ui.notifications.error(game.i18n.localize("DSAError.DamagePermission"))
 
-        await actor.applyDamage(cardData.damage[mode])
+        await actor.applyDamage(cardData.damage[mode] * factor)
         const update = { "flags.data.damageApplied": true, content: message.content.replace(/hideAnchor">/, `hideAnchor"><i class="fas fa-check" style="float:right" data-tooltip="${game.i18n.localize("damageApplied")}"></i>`) }
         
         if(game.user.isGM){
@@ -181,12 +199,12 @@ export default function() {
         }
     }
 
-    const applyChatCardDamage = (li, mode) => {
+    const applyChatCardDamage = (li, mode, factor = 1) => {
         const message = game.messages.get(li.data("messageId"));
         const roll = message.rolls[0];
         return Promise.all(canvas.tokens.controlled.map(token => {
             const actor = token.actor;
-            const damage = mode != "sp" ? roll.total - Actordsa5.armorValue(actor).armor : roll.total
+            const damage = Math.round((mode != "sp" ? roll.total - Actordsa5.armorValue(actor).armor : roll.total) * factor)
             return actor.applyDamage(Math.max(0, damage));
         }));
     }
@@ -291,6 +309,16 @@ export default function() {
                 condition: canHurtSP,
                 callback: li => { applyDamage(li, "sp") }
             }, {
+                name: game.i18n.localize("CHATCONTEXT.ApplyDamage") + " x2",
+                icon: '<i class="fas fa-user-minus"></i>',
+                condition: canHurtDouble,
+                callback: li => { applyDamage(li, "value", 2) }
+            }, {
+                name: game.i18n.localize("CHATCONTEXT.ApplyDamageSP") + " x2",
+                icon: '<i class="fas fa-user-minus"></i>',
+                condition: canHurtSPDouble,
+                callback: li => { applyDamage(li, "sp", 2) }
+            }, {
                 name: game.i18n.localize("CHATCONTEXT.ApplyDamage"),
                 icon: '<i class="fas fa-user-minus"></i>',
                 condition: canApplyDefaultRolls,
@@ -300,6 +328,17 @@ export default function() {
                 icon: '<i class="fas fa-user-minus"></i>',
                 condition: canApplyDefaultRolls,
                 callback: li => { applyChatCardDamage(li, "sp") }
+            },
+            {
+                name: game.i18n.localize("CHATCONTEXT.ApplyDamage") + " x2",
+                icon: '<i class="fas fa-user-minus"></i>',
+                condition: canApplyDefaultRollsDouble,
+                callback: li => { applyChatCardDamage(li, "value", 2) }
+            }, {
+                name: game.i18n.localize("CHATCONTEXT.ApplyDamageSP") + " x2",
+                icon: '<i class="fas fa-user-minus"></i>',
+                condition: canApplyDefaultRollsDouble,
+                callback: li => { applyChatCardDamage(li, "sp", 2) }
             }, {
                 name: game.i18n.localize("CHATCONTEXT.Reroll"),
                 icon: '<i class="fas fa-dice"></i>',

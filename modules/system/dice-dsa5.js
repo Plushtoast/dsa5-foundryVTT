@@ -1291,9 +1291,7 @@ export default class DiceDSA5 {
         const source = testData.preData.source
         if(testData.successLevel > 0){
             if(["meleeweapon", "rangeweapon"].includes(source.type) || (source.type == "trait" && ["rangeAttack", "meleeAttack"].includes(source.system.traitType.value))){
-                if (source.effects.some(x => {
-                    return !getProperty(x, "flags.dsa5.applyToOwner")
-                })) return true
+                if (source.effects.some(x => { return !getProperty(x, "flags.dsa5.applyToOwner")})) return true
             }
             else if (["spell", "liturgy", "ritual", "ceremony", "trait"].includes(source.type)) {
                 if (source.effects.length > 0) return true

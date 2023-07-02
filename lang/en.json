@@ -1623,7 +1623,9 @@
         "disableTokenhotbarMaster": "Deactive gm functions",
         "disableTokenhotbarMasterHint": "The GM functions of the master's menu are not shown anymore if no token is selected.",
         "tokenhotbaropacity": "Opacity",
-        "tokenhotbaropacityHint": "Opacity of the tokenhotbar if it is not activated."
+        "tokenhotbaropacityHint": "Opacity of the tokenhotbar if it is not activated.",
+        "doubleDamageOptions": "Double damage for chat cards",
+        "doubleDamageOptionsHint": "Show options in the chat context to apply double damage"
     },
     "WEAR": {
         "check": "Breaking Point Rating Check ({category})",
