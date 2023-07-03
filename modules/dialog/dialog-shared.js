@@ -38,7 +38,7 @@ export default class DialogShared extends Dialog {
 
     renderRollValueDie(){
         if(this.dialogData.rollValue && this.dialogData.mode != "damage"){
-            const dieClass = this.dialogData.mode == "attack" ? "die-mu" : "die-in"
+            const dieClass = this.dialogData.mode == "attack" || this.dialogData.counterAttack ? "die-mu" : "die-in"
             const modifier = this.dialogData.modifier || 0
             return `<span class="rollValue ${dieClass} d20">${Math.clamped(this.dialogData.rollValue + modifier, 1, 20)}</span>`
         }else{

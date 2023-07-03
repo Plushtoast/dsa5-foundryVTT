@@ -760,8 +760,13 @@ export default class DiceDSA5 {
 
         await this.detailedWeaponResult(result, testData, source)
 
-        if (testData.mode == "attack" && result.successLevel > 0)
+        if (testData.mode == "attack" && result.successLevel > 0 && !testData.extra.counterAttack)
             await DiceDSA5.evaluateDamage(testData, result, weapon, !isMelee, result.doubleDamage)
+
+        if (testData.extra.counterAttack) {
+            DSA5_Utility.getSpeaker(testData.extra.speaker).addCondition("stunned")
+            result.description += ", " + DSA5_Utility.replaceConditions(game.i18n.localize("stunnedByCounterAttack"))
+        }
 
         result["rollType"] = "weapon"
         const effect = DiceDSA5.parseEffect(weapon)
@@ -772,7 +777,7 @@ export default class DiceDSA5 {
     }
 
     static async detailedWeaponResult(result, testData, source) {
-        const isAttack = testData.mode == "attack"
+        const isAttack = testData.mode == "attack" && !testData.extra.counterAttack
         const isMelee = source.type == "meleeweapon" || getProperty(source, "system.traitType.value") == "meleeAttack"
         switch (result.successLevel) {
             case 3:
