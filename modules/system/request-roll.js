@@ -217,7 +217,8 @@ export default class RequestRoll {
             for (let i = 1; i <= availableQs; i++) {
                 const qs = `qs${i}`
                 if (item.system[qs]) {
-                    msg.push(`<p>${item.system[qs]}</p>`)
+                    const enriched = await TextEditor.enrichHTML(item.system[qs], { async: true })
+                    msg.push(`<p>${enriched}</p>`)
                 }
             }
             const chatData = DSA5_Utility.chatDataSetup(msg.join(""))

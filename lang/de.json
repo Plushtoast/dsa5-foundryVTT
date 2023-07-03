@@ -176,6 +176,7 @@
     "additionalFPs": "zusätzliche FPs",
     "attacktest": "Angriffsprobe",
     "antidot": "Gegenmittel",
+    "randomValue": "Zufallswert",
     "arrow": "Pfeil",
     "armor": "Rüstung",
     "application": "Anwendungsgebiet",
@@ -546,6 +547,10 @@
     "vulnerability": "Verwundbarkeit",
     "zoo": "Zoo",
     "AoE": "Flächeneffekt",
+    "temperature": {
+        "heatProtection": "Hitzeschutz",
+        "coldProtection": "Kälteschutz"
+    },
     "areaTargetTypes": {
         "rect": "Würfel",
         "ray": "Strahl",
@@ -644,7 +649,9 @@
         "armor": "Rüstungsmodifikator",
         "range": "Reichweitenfaktor",
         "creatureBonus": "Bonusschaden (Kreatur)",
-        "armorPen": "Rüstungsdurchdringung"
+        "armorPen": "Rüstungsdurchdringung",
+        "sight": "Sichtmodifikator",
+        "sightMax": "Sichtmodifikator inkl. Stufe 4"
     },
     "WIZARD": {
         "addItem": "{item} hinzufügen",
@@ -1322,7 +1329,6 @@
         "perception": "Sinnesschärfe",
         "misfortune": "Pechmagnet",
         "featOfStrength": "Kraftakt",
-        "blindFighting": "Blindkampf",
         "wrestle": "Raufen",
         "literacy": "Schrift",
         "language": "Sprache",
@@ -1337,11 +1343,7 @@
         "gambling": "Zechen",
         "bodyControl": "Körperbeherrschung",
         "darksight": "Dunkelsicht",
-        "sappeurStyle": "Sappeur-Stil",
-        "nightBlind": "Nachtblind",
         "willpower": "Willenskraft",
-        "traditionBoron": "Tradition (Boronkirche)",
-        "traditionMarbo": "Tradition (Marbokult)",
         "artisticAbility": "Malen & Zeichnen",
         "witchSense": "Hexensinn",
         "Shields": "Schilde",
@@ -1355,7 +1357,15 @@
         "elementalServant": "Elementarer Diener",
         "callDjinn": "Dschinnenruf",
         "enemySense": "Feindgespür",
-        "counterAttack": "Gegenhalten"
+        "counterAttack": "Gegenhalten",
+        "servantEarth": "Diener der Erde", 
+        "servantFlame": "Diener der Flammen", 
+        "servantCold": "Diener der Kälte", 
+        "servantWave": "Diener der Wellen", 
+        "servantCloud": "Diener der Wolken", 
+        "servantOre": "Diener des Erzes",
+        "immuneTo": "Immunität gegen",
+        "enemySense": "Feindgespür"
     },
     "LocalizedCTs": {
         "Blasrohre": "Blowpipes",
@@ -1412,6 +1422,7 @@
         "staleData": "Verwaiste Vergleichsprobendaten gefunden. Bitte stelle sicher Vergleichsproben immer abzuschließen. Verwaiste Daten gelöscht.",
         "sceneNotInitialized": "Szene nicht gefunden. Schon initialisiert?",
         "immuneTo": "{name} ist immun gegen \"{condition}\".",
+        "conditionInvalidToCreature": "{name} kann normalerweise nicht durch {condition} beeinträchtigt werden.",
         "tooManyEnchants": "Ein Gegenstand kann nur 7 Verzauberungsladungen beinhalten",
         "onlyCompendiumSpells": "Nur Zauber aus Kompendien können verwendet werden",
         "enchantmentNotFound": "Referenzierter Zauber konnte nicht gefunden werden",
@@ -1644,7 +1655,9 @@
         "disableTokenhotbarMaster": "Meisterleiste deaktivieren",
         "disableTokenhotbarMasterHint": "Die Funktionen des Meister Menüs werden bei deselektierten Token nicht mehr angezeigt.",
         "tokenhotbaropacity": "Deckkraft",
-        "tokenhotbaropacityHint": "Durchsichtigkeit der Tokenhotbar wenn sie nicht aktiv ist."
+        "tokenhotbaropacityHint": "Durchsichtigkeit der Tokenhotbar wenn sie nicht aktiv ist.",
+        "doubleDamageOptions": "Doppelter Schaden für Chat Karten",
+        "doubleDamageOptionsHint": "Zeige im Chat Kontext Menü Optionen zum Anwenden von doppeltem Schaden"
     },
     "CONTROLS": {
         "targetForUser": "Ziel für Spieler wählen"

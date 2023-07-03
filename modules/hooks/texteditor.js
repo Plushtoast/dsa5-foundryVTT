@@ -43,7 +43,16 @@ export function setEnrichers() {
                 if(!item || item.type != "information") return $('<a class="content-link broken"><i class="fas fa-unlink"></i>info</a>')[0]
                 if(!game.user.isGM) return $(`<a class="content-link"><i class="fas fa-mask"></i>${game.i18n.localize('GM notes')}</a>`)[0]
 
-                const templ = await renderTemplate("systems/dsa5/templates/items/infopreview.html", { item })
+                const enriched = {
+                    enrichedqs1: await TextEditor.enrichHTML(item.system.qs1, { async: true }),
+                    enrichedqs2: await TextEditor.enrichHTML(item.system.qs2, { async: true }),
+                    enrichedqs3: await TextEditor.enrichHTML(item.system.qs3, { async: true }),
+                    enrichedqs4: await TextEditor.enrichHTML(item.system.qs4, { async: true }),
+                    enrichedqs5: await TextEditor.enrichHTML(item.system.qs5, { async: true }),
+                    enrichedqs6: await TextEditor.enrichHTML(item.system.qs6, { async: true })
+                }
+
+                const templ = await renderTemplate("systems/dsa5/templates/items/infopreview.html", { item, enriched })
                 return $(templ)[0]
             }
         },

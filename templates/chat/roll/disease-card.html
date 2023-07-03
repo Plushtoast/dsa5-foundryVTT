@@ -10,6 +10,12 @@
     <div class="card-content">
         <b>{{localize "incubation"}}</b>: {{preData.source.system.incubation.value}}
     </div>
+    {{#if immuneTo}}
+    <div class="card-content chat-button-gm maskfield">
+        {{#each immuneTo as |immunity|}}
+        <b>{{localize "DSAError.immuneTo" name=immunity.target condition=immunity.condition }}</b>
+        {{/each}}
+    {{/if}}
     {{#if applyEffect}}
     <div class="row-section" style="margin-top:10px">
         <div class="col two center">

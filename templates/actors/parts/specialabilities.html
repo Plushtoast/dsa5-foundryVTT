@@ -98,11 +98,12 @@
     </div>
 </div>
 {{/if}}
-{{#if prepare.hasTrait}}
+{{#if (or (eq actor.type "creature") prepare.hasTrait)}}
 <div class="groupbox">
     <div class="generalSpecialAbilities row-section">
         <div class="col header-label lineheight">
             <b>{{localize "traits"}}</b>
+            <a class="item-create very-small" data-tooltip="SHEET.addItem" item-section="trait" data-type="trait"><i class="fas fa-plus"></i></a>
         </div>
     </div>
     <div class="row-section wrap cards">

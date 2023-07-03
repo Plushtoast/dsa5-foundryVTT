@@ -564,6 +564,10 @@ export default class Actordsa5 extends Actor {
           astralenergy: [],
         },
       },
+      temperature: {
+        heatProtection: 0,
+        coldProtection: 0
+      },
       totalArmor: 0,
       spellArmor: 0,
       liturgyArmor: 0,
@@ -2182,20 +2186,9 @@ export default class Actordsa5 extends Actor {
 
   async actorEffects() {
     const allowedEffects = ["dead"];
-    const isAllowedToSeeEffects =
-      game.user.isGM || this.testUserPermission(game.user, "OBSERVER") || !(await game.settings.get("dsa5", "hideEffects"));
+    const isAllowedToSeeEffects = game.user.isGM || this.testUserPermission(game.user, "OBSERVER") || !game.settings.get("dsa5", "hideEffects");
 
-    return isAllowedToSeeEffects
-      ? this.effects.filter((x) => {
-        return (
-          !x.disabled &&
-          !x.notApplicable &&
-          (game.user.isGM || !x.getFlag("dsa5", "hidePlayers")) &&
-          !x.getFlag("dsa5", "hideOnToken") &&
-          (x.origin == this.uuid || !x.origin)
-        );
-      })
-      : this.effects.filter((x) => allowedEffects.some(y => x.statuses.has(y)));
+    return isAllowedToSeeEffects ? this.effects.filter((x) => x.isVisibleEffect()) : this.effects.filter((x) => allowedEffects.some(y => x.statuses.has(y)));
   }
 
   async _preCreate(data, options, user) {

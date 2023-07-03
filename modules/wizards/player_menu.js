@@ -97,7 +97,7 @@ export default class PlayerMenu extends Application {
                 conjurationType: 1,
                 skills: {
                     1: ["invocatioMinima", "invocatioMinor", "invocatioMaior"].map(x => game.i18n.localize(`LocalizedIDs.${x}`)),
-                    2: ["manifesto", "elementalServant", "callDjinn"].map(x => game.i18n.localize(`LocalizedIDs.${x}`))
+                    2: ["manifesto", "elementalServant", "callDjinn", "servantEarth", "servantFlame", "servantCold", "servantWave", "servantCloud", "servantOre"].map(x => game.i18n.localize(`LocalizedIDs.${x}`))
                 },
                 modifiers: {
                     1: this.summoningModifiers,

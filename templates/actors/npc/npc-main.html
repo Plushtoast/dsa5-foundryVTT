@@ -2,7 +2,7 @@
 
 <div class="row-section wrap reverseFlex">
     <div class="col morph40">
-        <div class="groupbox">
+        <div class="groupbox" id="derivedAttrs">
             <div class="derivedAttrs row-section">
                 <div class="col two">
                 </div>
@@ -192,13 +192,11 @@
                 <div class="col eight center">
                     <input name="system.status.fatePoints.modifier" type="number" value="{{actor.system.status.fatePoints.modifier}}" data-dtype="Number" />
                 </div>
-                <div class="col eight">
-
-                </div>
                 <div class="col eight lineheight center">
                     {{actor.system.status.fatePoints.max}}
                 </div>
             </div>
+            {{> systems/dsa5/templates/actors/parts/temperatureSmall.html}}
         </div>
 
     </div>

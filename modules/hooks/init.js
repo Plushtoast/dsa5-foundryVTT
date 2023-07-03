@@ -103,6 +103,8 @@ Hooks.once("init", () => {
         "systems/dsa5/templates/actors/parts/carryandpurse.html",
         "systems/dsa5/templates/actors/parts/specialabilities.html",
         "systems/dsa5/templates/actors/parts/experienceBox.html",
+        "systems/dsa5/templates/actors/parts/temperature.html",
+        "systems/dsa5/templates/actors/parts/temperatureSmall.html",
         "systems/dsa5/templates/actors/parts/spells.html",
         "systems/dsa5/templates/dialog/parts/expChoices.html",
         "systems/dsa5/templates/actors/parts/liturgies.html",

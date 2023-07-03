@@ -706,7 +706,9 @@
         "armor": "Armor modifier",
         "range": "Range multiplier",
         "creatureBonus": "Bonus damage (creature)",
-        "armorPen": "Armor penetration"
+        "armorPen": "Armor penetration",
+        "sight": "Sight modifier",
+        "sightMax": "Sight modifier incl. Level 4"
     },
     "wrongGrip": {
         "oneHanded": "One-handed guided",
@@ -859,6 +861,10 @@
         "max": "Max", 
         "AoE": "Size in yard, Template"
     },
+    "temperature": {
+        "heatProtection": "Heat Protection", 
+        "coldProtection": "Cold Protection"
+    },
     "areaTargetTypes": {
         "rect": "Cube",
         "ray": "Ray",
@@ -869,6 +875,7 @@
     "Range-medium": "Medium",
     "Range-long": "Long",
     "Money-D": "Ducat",
+    "randomValue": "Random value",
     "Money-S": "Silverthaler",
     "Money-H": "Haler",
     "Money-K": "Kreutzer",
@@ -1216,7 +1223,6 @@
         "miracle": "Miracle",
         "miracleMight": "Miracle Power",
         "weaponAptitude": "Weapon Aptitude",
-        "blindFighting": "Blind Fighting",
         "wildMagic": "Wild Magic",
         "incompetent": "Incompetent",
         "exceptionalSkill": "Exceptional Skill",
@@ -1266,7 +1272,6 @@
         "companion": "Companion",
         "localKnowledge": "Area Knowledge",
         "naturalArmor": "Natural Armor",
-        "sappeurStyle": "tbd",
         "wrestle": "Brawling",
         "all": "all",
         "poisonResistance": "Poison Resitance",
@@ -1287,10 +1292,7 @@
         "bodyControl": "Body Control",
         "darksight": "Darksight",
         "witchSense": "Witch Sense",
-        "nightBlind": "Night-Blind",
         "willpower": "Willpower",
-        "traditionBoron": "Tradition (Church of Boron)",
-        "traditionMarbo": "Tradition (Cult of Marbo)",
         "artisticAbility": "Artistic Ability",
         "Shields": "Shields",
         "Throwing Weapons": "Throwing Weapons",
@@ -1303,7 +1305,15 @@
         "elementalServant": "Elemental Servant",
         "callDjinn": "Call Djinn",
         "enemySense": "Enemy Sense",
-        "counterAttack": "Counterattack"
+        "counterAttack": "Counterattack",
+        "servantEarth": "tbd", 
+        "servantFlame": "tbd", 
+        "servantCold": "tbd", 
+        "servantWave": "tbd", 
+        "servantCloud": "tbd", 
+        "servantOre": "tbd",
+        "immuneTo": "Immunity to",
+        "enemySense": "Enemy Sense"
     },
     "LocalizedCTs": {
         "Blowpipes": "Blowpipes",
@@ -1363,6 +1373,7 @@
         "noProperActor": "No actor has been assigned to you or you did not select a token.",
         "noMatch": "No match",
         "immuneTo": "{name} is immune to \"{condition}\".",
+        "conditionInvalidToCreature": "The condition {condition} is usually not valid for {name}.",
         "zeroXP": "The character has no adventure points yet. Do you want to add some?",
         "opposedAttackNoSpecAbs": "Attacks of Opportunity can not be combined with Special Abilites",
         "noSpellForExtension": "{category} {name} for spell extension {extension} not found.",
@@ -1615,7 +1626,9 @@
         "disableTokenhotbarMaster": "Deactive gm functions",
         "disableTokenhotbarMasterHint": "The GM functions of the master's menu are not shown anymore if no token is selected.",
         "tokenhotbaropacity": "Opacity",
-        "tokenhotbaropacityHint": "Opacity of the tokenhotbar if it is not activated."
+        "tokenhotbaropacityHint": "Opacity of the tokenhotbar if it is not activated.",
+        "doubleDamageOptions": "Double damage for chat cards",
+        "doubleDamageOptionsHint": "Show options in the chat context to apply double damage"
     },
     "WEAR": {
         "check": "Breaking Point Rating Check ({category})",

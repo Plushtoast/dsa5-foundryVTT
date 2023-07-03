@@ -16,6 +16,7 @@ import DSATables from "../tables/dsatables.js"
 import RequestRoll from "./request-roll.js"
 import { MeasuredTemplateDSA } from "./measuretemplate.js"
 import TableEffects from "../tables/tableEffects.js"
+import CreatureType from "./creature-type.js"
 
 export default class DiceDSA5 {
     static async rollTest(testData) {
@@ -1295,9 +1296,7 @@ export default class DiceDSA5 {
         const source = testData.preData.source
         if(testData.successLevel > 0){
             if(["meleeweapon", "rangeweapon"].includes(source.type) || (source.type == "trait" && ["rangeAttack", "meleeAttack"].includes(source.system.traitType.value))){
-                if (source.effects.some(x => {
-                    return !getProperty(x, "flags.dsa5.applyToOwner")
-                })) return true
+                if (source.effects.some(x => { return !getProperty(x, "flags.dsa5.applyToOwner")})) return true
             }
             else if (["spell", "liturgy", "ritual", "ceremony", "trait"].includes(source.type)) {
                 if (source.effects.length > 0) return true
@@ -1319,6 +1318,7 @@ export default class DiceDSA5 {
 
     static async renderRollCard(chatOptions, testData, rerenderMessage) {
         const applyEffect = this.addApplyEffectData(testData)
+        const immuneTo = CreatureType.checkImmunity(testData)
         const preData = deepClone(testData.preData)
         const hideDamage = rerenderMessage ? rerenderMessage.flags.data.hideDamage : preData.mode == "attack"
         Hooks.call("postProcessDSARoll", chatOptions, testData, rerenderMessage, hideDamage)
@@ -1331,6 +1331,7 @@ export default class DiceDSA5 {
 
         let chatData = {
             title: chatOptions.title,
+            immuneTo,
             testData,
             hideData: game.user.isGM,
             preData,

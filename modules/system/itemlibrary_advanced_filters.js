@@ -47,7 +47,8 @@ Hooks.once("ready", () => {
             ],
             specialability: [
                 { label: "Category", attr: "category.value", type: "select", options: DSA5.specialAbilityCategories },
-                { label: "combatskill", attr: "list.value", type: "select", options: allCombat, notStrict: true }
+                { label: "combatskill", attr: "list.value", type: "select", options: allCombat, notStrict: true },
+                { label: "distribution", attr: "distribution", type: "text" }
             ],
             liturgy: [
                 { label: "resistanceModifier", attr: "resistanceModifier.value", type: "select", options: DSA5.magicResistanceModifiers },
