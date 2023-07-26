@@ -13,18 +13,6 @@ export default function() {
         return canHurt(li, "damage.sp")
     }
 
-    const canHurtSPDouble = function(li) {
-        if(!game.settings.get("dsa5", "doubleDamageOptions")) return false
-
-        return canHurt(li, "damage.sp")
-    }
-
-    const canHurtDouble = function(li) {
-        if(!game.settings.get("dsa5", "doubleDamageOptions")) return false
-
-        return canHurt(li)
-    }
-
     const canCostMana = function(li) {
         let message = game.messages.get(li.attr("data-message-id"));
         if (message.speaker.actor && message.flags.data) {
@@ -156,12 +144,6 @@ export default function() {
                 });
             }
         }
-    }
-
-    const canApplyDefaultRollsDouble = li => {
-        if(!game.settings.get("dsa5", "doubleDamageOptions")) return false
-
-        return canApplyDefaultRolls(li)
     }
 
     const canApplyDefaultRolls = li => {
@@ -309,16 +291,6 @@ export default function() {
                 condition: canHurtSP,
                 callback: li => { applyDamage(li, "sp") }
             }, {
-                name: game.i18n.localize("CHATCONTEXT.ApplyDamage") + " x2",
-                icon: '<i class="fas fa-user-minus"></i>',
-                condition: canHurtDouble,
-                callback: li => { applyDamage(li, "value", 2) }
-            }, {
-                name: game.i18n.localize("CHATCONTEXT.ApplyDamageSP") + " x2",
-                icon: '<i class="fas fa-user-minus"></i>',
-                condition: canHurtSPDouble,
-                callback: li => { applyDamage(li, "sp", 2) }
-            }, {
                 name: game.i18n.localize("CHATCONTEXT.ApplyDamage"),
                 icon: '<i class="fas fa-user-minus"></i>',
                 condition: canApplyDefaultRolls,
@@ -328,17 +300,6 @@ export default function() {
                 icon: '<i class="fas fa-user-minus"></i>',
                 condition: canApplyDefaultRolls,
                 callback: li => { applyChatCardDamage(li, "sp") }
-            },
-            {
-                name: game.i18n.localize("CHATCONTEXT.ApplyDamage") + " x2",
-                icon: '<i class="fas fa-user-minus"></i>',
-                condition: canApplyDefaultRollsDouble,
-                callback: li => { applyChatCardDamage(li, "value", 2) }
-            }, {
-                name: game.i18n.localize("CHATCONTEXT.ApplyDamageSP") + " x2",
-                icon: '<i class="fas fa-user-minus"></i>',
-                condition: canApplyDefaultRollsDouble,
-                callback: li => { applyChatCardDamage(li, "sp", 2) }
             }, {
                 name: game.i18n.localize("CHATCONTEXT.Reroll"),
                 icon: '<i class="fas fa-dice"></i>',
@@ -387,5 +348,30 @@ export default function() {
             }
 
         )
+
+        if(game.settings.get("dsa5", "doubleDamageOptions")) {
+            options.push({
+                name: game.i18n.localize("CHATCONTEXT.ApplyDamage") + " x2",
+                icon: '<i class="fas fa-user-minus"></i>',
+                condition: canHurt,
+                callback: li => { applyDamage(li, "value", 2) }
+            }, {
+                name: game.i18n.localize("CHATCONTEXT.ApplyDamageSP") + " x2",
+                icon: '<i class="fas fa-user-minus"></i>',
+                condition: canHurtSP,
+                callback: li => { applyDamage(li, "sp", 2) }
+            }, {
+                name: game.i18n.localize("CHATCONTEXT.ApplyDamage") + " x2",
+                icon: '<i class="fas fa-user-minus"></i>',
+                condition: canApplyDefaultRolls,
+                callback: li => { applyChatCardDamage(li, "value", 2) }
+            }, {
+                name: game.i18n.localize("CHATCONTEXT.ApplyDamageSP") + " x2",
+                icon: '<i class="fas fa-user-minus"></i>',
+                condition: canApplyDefaultRolls,
+                callback: li => { applyChatCardDamage(li, "sp", 2) }
+            })
+        }
+       
     })
 }
