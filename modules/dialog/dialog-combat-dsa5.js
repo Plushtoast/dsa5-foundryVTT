@@ -5,7 +5,6 @@ import DSA5 from "../system/config-dsa5.js";
 import DiceDSA5 from "../system/dice-dsa5.js";
 import Riding from "../system/riding.js";
 import RuleChaos from "../system/rule_chaos.js";
-import SpecialabilityRulesDSA5 from "../system/specialability-rules-dsa5.js";
 import DSA5_Utility from "../system/utility-dsa5.js";
 import DSA5Dialog from "./dialog-dsa5.js";
 import DialogShared from "./dialog-shared.js";
@@ -91,11 +90,8 @@ export default class DSA5CombatDialog extends DialogShared {
                 step = Math.clamped(maxStep, 0, step - 1)
             }
             elem.attr("data-step", step);
-            if (step > 0) {
-                elem.addClass("active");
-            } else {
-                elem.removeClass("active");
-            }
+            elem.toggleClass("active", step > 0);
+            
             elem.find(".step").text(DialogShared.roman[step]);
             this.checkCounterAttack(ev)
             this.calculateModifier()
@@ -122,10 +118,11 @@ export default class DSA5CombatDialog extends DialogShared {
     }
 
     checkCounterAttack(ev) {
+        if(!this.dialogData.mode == "parry") return
 
         const actor = DSA5_Utility.getSpeaker(this.dialogData.speaker)
 
-        if(actor && this.dialogData.mode == "parry"){
+        if(actor){
             const counterAttack = actor.items.get(ev.currentTarget.dataset.id).name == game.i18n.localize("LocalizedIDs.counterAttack")
             if (counterAttack) {
                 this.dialogData.counterAttack = ev.button == 0
@@ -225,10 +222,10 @@ export default class DSA5CombatDialog extends DialogShared {
     prepareWeapon() {
         let weapon
         const source = this.dialogData.source
-        const actor = DSA5_Utility.getSpeaker(this.dialogData.speaker)
+        if (["meleeweapon", "rangeweapon"].includes(source.type)) {
+            const actor = DSA5_Utility.getSpeaker(this.dialogData.speaker)
 
-        if (actor) {
-            if (["meleeweapon", "rangeweapon"].includes(source.type)) {
+            if (actor) {                
                 const combatskill = source.system.combatskill.value
                 let skill = Actordsa5._calculateCombatSkillValues(
                     actor.items.find((x) => x.type == "combatskill" && x.name == combatskill).toObject(),
@@ -257,7 +254,6 @@ export default class DSA5CombatDialog extends DialogShared {
                 }
             }
         }
-
     }
 
     prepareFormRecall(html) {
@@ -403,8 +399,9 @@ export default class DSA5CombatDialog extends DialogShared {
 
     static getNarrowSpaceModifier(testData, mode){
         if(!mode) return 0
-        if (game.i18n.localize("LocalizedIDs.Shields") == getProperty(testData, "source.system.combatskill.value"))
-            return DSA5.narrowSpaceModifiers["shield" + testData.source.system.reach.shieldSize][mode]
+        
+        if (RuleChaos.isShield(testData.source))
+            return getProperty(DSA5.narrowSpaceModifiers , `shield${testData.source.system.reach.shieldSize}.${mode}`) || 0
                     
         return getProperty(DSA5.narrowSpaceModifiers , `weapon${testData.source.system.reach.value}.${mode}`) || 0
     }

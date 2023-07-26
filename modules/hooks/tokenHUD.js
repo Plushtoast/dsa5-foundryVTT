@@ -1,4 +1,5 @@
 import Riding from "../system/riding.js";
+import { TokenHoverHud } from "./actor.js";
 
 function addThirdBarToHUD(html, actor, app) {
     if (actor.system.isPriest && actor.system.isMage) {
@@ -22,6 +23,8 @@ function addThirdBarToHUD(html, actor, app) {
 
 export default function() {
     Hooks.on('renderTokenHUD', (app, html, data) => {
+        TokenHoverHud.hide(app.object) 
+        
         const actor = app.object.actor
         if (actor) {
             addThirdBarToHUD(html, actor, app)

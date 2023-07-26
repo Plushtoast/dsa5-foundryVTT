@@ -66,7 +66,6 @@ export default function() {
     Hooks.on("chatMessage", (html, content, msg) => {
         let cmd = content.match(/^\/(pay|getPaid|help$|conditions$|tables)/)
         cmd = cmd ? cmd[0] : ""
-        console.log(msg)
         switch (cmd) {
             case "/pay":
                 if (game.user.isGM)

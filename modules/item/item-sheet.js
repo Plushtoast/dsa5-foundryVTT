@@ -954,7 +954,7 @@ class MeleeweaponSheetDSA5 extends ItemSheetObfuscation(Enchantable) {
             combatskills: await DSA5_Utility.allCombatSkillsList("melee"),
             ranges: DSA5.meleeRanges,
             shieldSizes: DSA5.shieldSizes,
-            isShield: this.item.system.combatskill.value == game.i18n.localize("LocalizedIDs.Shields"),
+            isShield: RuleChaos.isShield(this.item),
             domains: this.prepareDomains(),
             breakPointRating: DSA5.weaponStabilities[game.i18n.localize(`LocalizedCTs.${this.item.system.combatskill.value}`)]
         })

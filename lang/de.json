@@ -568,7 +568,8 @@
         "indexWorldItems": "Welt Items indexieren (Deaktivieren verbessert Leistung, erfordert neuladen der Welt)",
         "fullTextSearch": "Volltextsuche (Deaktivieren verbessert Leistung, erfordert neuladen der Welt)",
         "loading": "Lade {item}...",
-        "browseEnabled": "Stöbermodus aktivieren"
+        "browseEnabled": "Stöbermodus aktivieren",
+        "filterDuplicateItems": "Doppelte Einträge ausblenden"
     },
     "Aggregated": {
         "noMoreAllowed": "Keine Proben mehr erlaubt."
@@ -1356,7 +1357,6 @@
         "manifesto": "Manifesto",
         "elementalServant": "Elementarer Diener",
         "callDjinn": "Dschinnenruf",
-        "enemySense": "Feindgespür",
         "counterAttack": "Gegenhalten",
         "servantEarth": "Diener der Erde", 
         "servantFlame": "Diener der Flammen", 
@@ -1657,7 +1657,11 @@
         "tokenhotbaropacity": "Deckkraft",
         "tokenhotbaropacityHint": "Durchsichtigkeit der Tokenhotbar wenn sie nicht aktiv ist.",
         "doubleDamageOptions": "Doppelter Schaden für Chat Karten",
-        "doubleDamageOptionsHint": "Zeige im Chat Kontext Menü Optionen zum Anwenden von doppeltem Schaden"
+        "doubleDamageOptionsHint": "Zeige im Chat Kontext Menü Optionen zum Anwenden von doppeltem Schaden",
+        "randomWeaponSelection": "Zufällige Waffenwahl (Token)",
+        "randomWeaponSelectionHint": "Wähle zufällig eine ausgerüstet Waffe aus dem Inventar des Tokens.",
+        "showWeaponsOnHover": "Waffen bei Hover zeigen",
+        "showWeaponsOnHoverHint": "Zeigt die ausgerüsteten Waffen des Tokens beim Hover über das Token."
     },
     "CONTROLS": {
         "targetForUser": "Ziel für Spieler wählen"

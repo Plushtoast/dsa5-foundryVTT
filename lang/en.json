@@ -608,7 +608,8 @@
         "indexWorldItems": "Index world Items (deactivate to increase performance, requires reloading of the world)",
         "fullTextSearch": "Full text search (deactivate to increase performance, requires reloading of the world)",
         "loading": "Loading {item}...",
-        "browseEnabled": "Enable browse mode"
+        "browseEnabled": "Enable browse mode",
+        "filterDuplicateItems": "Hide duplicate items"
     },
     "Aggregated": {
         "noMoreAllowed": "No more rolls allowed."
@@ -1304,7 +1305,6 @@
         "manifesto": "Manifesto",
         "elementalServant": "Elemental Servant",
         "callDjinn": "Call Djinn",
-        "enemySense": "Enemy Sense",
         "counterAttack": "Counterattack",
         "servantEarth": "tbd", 
         "servantFlame": "tbd", 
@@ -1628,7 +1628,11 @@
         "tokenhotbaropacity": "Opacity",
         "tokenhotbaropacityHint": "Opacity of the tokenhotbar if it is not activated.",
         "doubleDamageOptions": "Double damage for chat cards",
-        "doubleDamageOptionsHint": "Show options in the chat context to apply double damage"
+        "doubleDamageOptionsHint": "Show options in the chat context to apply double damage",
+        "randomWeaponSelection": "Random weapon (token)",
+        "randomWeaponSelectionHint": "Chose a random equipped weapon from the inventory of the token.",
+        "showWeaponsOnHover": "Show weapons on hover",
+        "showWeaponsOnHoverHint": "Show the equipped weapons of the token on hover."
     },
     "WEAR": {
         "check": "Breaking Point Rating Check ({category})",

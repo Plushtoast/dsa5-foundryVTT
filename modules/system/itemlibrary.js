@@ -252,6 +252,7 @@ export default class DSA5ItemLibrary extends Application {
         data.advancedMode = this.advancedFiltering ? "on" : ""
         data.worldIndexed = game.settings.get("dsa5", "indexWorldItems") ? "on" : ""
         data.fullTextEnabled = game.settings.get("dsa5", "indexDescription") ? "on" : ""
+        data.filterDuplicateItems = game.settings.get("dsa5", "filterDuplicateItems") ? "on" : ""
         data.browseEnabled = this.browseEnabled ? "on" : ""
         if (this.advancedFiltering) {
             data.advancedFilter = await this.buildDetailFilter("tbd", this.subcategory)
@@ -429,7 +430,17 @@ export default class DSA5ItemLibrary extends Application {
         }
         let result = await this.executeAdvancedFilter(search, index, sels, inps, checkboxes)
         this.setBGImage(result, category)
+
+        result = this.filterDuplications(result)
+
         return result
+    }
+
+    filterDuplications(filteredItems) {
+        if(game.settings.get("dsa5", "filterDuplicateItems"))
+            filteredItems = [...new Map(filteredItems.map(item => [`${item.name}_${item.type}`, item])).values()]
+        
+        return filteredItems
     }
 
     async filterStuff(category, index, page) {
@@ -467,6 +478,8 @@ export default class DSA5ItemLibrary extends Application {
         filteredItems = filteredItems.result ? filteredItems.result : filteredItems
         filteredItems = filteredItems.filter(x => x.hasPermission).sort((a, b) => (a.name.toLowerCase() > b.name.toLowerCase()) ? 1 : -1)
         this.setBGImage(filteredItems, category)
+
+        filteredItems = this.filterDuplications(filteredItems)
 
         return filteredItems
     }
@@ -748,6 +761,10 @@ export default class DSA5ItemLibrary extends Application {
         })
         html.find('.browseEnabled').click((ev) => {
             this.browseEnabled = !this.browseEnabled
+            $(ev.currentTarget).toggleClass("on")
+        })
+        html.find('.filterDuplicateItems').click((ev) => {
+            game.settings.set("dsa5", "filterDuplicateItems", !game.settings.get("dsa5", "filterDuplicateItems"))
             $(ev.currentTarget).toggleClass("on")
         })
         

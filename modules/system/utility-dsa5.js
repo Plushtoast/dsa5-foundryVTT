@@ -115,10 +115,7 @@ export default class DSA5_Utility {
     }
 
     static isActiveGM(){
-        //Prevent double update with multiple GMs, still unsafe
-        const activeGM = game.users.find((u) => u.active && u.isGM);
-        
-        return activeGM && game.user.id == activeGM.id
+        return game.users.activeGM?.isSelf
     }
 
     static parseAbilityString(ability) {

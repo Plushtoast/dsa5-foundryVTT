@@ -541,7 +541,7 @@ export default class Itemdsa5 extends Item {
             showDefense: true,
             isRangeDefense,
             wrongHandDisabled: wrongHandDisabled && getProperty(source, "system.worn.offHand"),
-            offHand: !wrongHandDisabled && getProperty(source, "system.worn.offHand") && getProperty(source, "system.combatskill.value") != game.i18n.localize('LocalizedIDs.Shields'),
+            offHand: !wrongHandDisabled && getProperty(source, "system.worn.offHand") && !RuleChaos.isShield(source),
             melee: true,
             combatSpecAbs: combatskills,
             constricted: actor.hasCondition("constricted"),

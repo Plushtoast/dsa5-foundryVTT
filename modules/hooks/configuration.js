@@ -437,6 +437,14 @@ export function setupConfiguration() {
         type: Boolean
     });
 
+    game.settings.register("dsa5", "filterDuplicateItems", {
+        name: "DSASETTINGS.filterDuplicateItems",
+        scope: "client",
+        config: false,
+        default: false,
+        type: Boolean
+    });
+
     game.settings.register("dsa5", "enableCombatFlow", {
         name: "DSASETTINGS.enableCombatFlow",
         hint: "DSASETTINGS.enableCombatFlowHint",
@@ -466,6 +474,24 @@ export function setupConfiguration() {
         scope: "world",
         config: false,
         default: false,
+        type: Boolean
+    });
+
+    game.settings.register("dsa5", "randomWeaponSelection", {
+        name: "DSASETTINGS.randomWeaponSelection",
+        hint: "DSASETTINGS.randomWeaponSelection",
+        scope: "world",
+        config: true,
+        default: true,
+        type: Boolean
+    });
+
+    game.settings.register("dsa5", "showWeaponsOnHover", {
+        name: "DSASETTINGS.showWeaponsOnHover",
+        hint: "DSASETTINGS.showWeaponsOnHover",
+        scope: "world",
+        config: true,
+        default: true,
         type: Boolean
     });
 

@@ -2109,10 +2109,7 @@ export default class Actordsa5 extends Actor {
         Math.max(0, Math.floor((Math.max(...vals) - 8) / 3)) +
         Number(game.settings.get("dsa5", "higherDefense"));
 
-      item.parry =
-        baseParry +
-        Number(item.system.pamod.value) +
-        (item.system.combatskill.value == game.i18n.localize("LocalizedIDs.Shields") ? Number(item.system.pamod.value) : 0);
+      item.parry = baseParry + Number(item.system.pamod.value) + (RuleChaos.isShield(item) ? Number(item.system.pamod.value) : 0);
 
       item.yieldedTwoHand = RuleChaos.isYieldedTwohanded(item)
       if (!item.yieldedTwoHand) {

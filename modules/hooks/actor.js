@@ -2,6 +2,7 @@ import DSAActiveEffectConfig from "../status/active_effects.js";
 import DSA5_Utility from "../system/utility-dsa5.js";
 import Riding from "../system/riding.js"
 import AdvantageRulesDSA5 from "../system/advantage-rules-dsa5.js";
+import RuleChaos from "../system/rule_chaos.js";
 
 export default function() {
     Hooks.on("preDeleteActiveEffect", (effect, options, user_id) => {
@@ -182,6 +183,54 @@ export default function() {
         dialogConstructor.getDialog(tokenObject, setting)
     }
 
+   const randomWeaponSelection = async (token) => {
+        if(!DSA5_Utility.isActiveGM()) return
+
+        if(game.settings.get("dsa5", "randomWeaponSelection") && token.actor.type != "character") {
+
+            const meleeweapons = []
+            const shields = []
+            const rangeweapons = []
+            for(let itm of token.actor.items){
+                if(itm.type == "meleeweapon"  && itm.system.worn.value)
+                    RuleChaos.isShield(itm) ? shields.push(itm) : meleeweapons.push(itm)
+
+                else if(itm.type == "rangeweapon" && itm.system.worn.value)
+                    rangeweapons.push(itm)
+            }
+            const updates = []
+            if(meleeweapons.length){
+                const weapon = meleeweapons[Math.floor(Math.random()*meleeweapons.length)]
+                const wornId = weapon._id
+                let shieldId
+                if(!(RuleChaos.regex2h.test(weapon.name)) && shields.length){
+                    shieldId = shields[Math.floor(Math.random()*shields.length)]._id                            
+                }
+                for(let itm of meleeweapons){
+                    if(itm._id == wornId) continue
+
+                    updates.push({_id: itm._id, system: {worn: {value: false}}})
+                }
+                for(let itm of shields){
+                    if(itm._id == shieldId) continue
+
+                    updates.push({_id: itm._id, system: {worn: {value: false}}})
+                }
+            }
+            if(rangeweapons.length){
+                const weaponid = rangeweapons[Math.floor(Math.random()*rangeweapons.length)]._id
+                for(let itm of rangeweapons){
+                    if(itm._id == weaponid) continue
+
+                    updates.push({_id: itm._id, system: {worn: {value: false}}})
+                }
+            }
+
+            if(updates.length)
+                 token.actor.updateEmbeddedDocuments("Item", updates)
+        }
+    }
+
     const obfuscateName = async(token, update) => {
         if(!DSA5_Utility.isActiveGM()) return
 
@@ -212,6 +261,7 @@ export default function() {
 
     Hooks.on("deleteToken", (token) => {
         Riding.deleteTokenHook(token)
+        TokenHoverHud.hide(token)
     })
 
     Hooks.on('preCreateToken', (token, data, options, userId) => {
@@ -245,8 +295,59 @@ export default function() {
         if(options.noHook) return
         
         obfuscateName(token, {})
+        randomWeaponSelection(token)
         Riding.createTokenHook(token, options, id)
     })
+
+    Hooks.on('hoverToken', (token, hovered) => {
+        if(!game.settings.get("dsa5", "showWeaponsOnHover")) return
+
+        if(hovered) {
+            TokenHoverHud.show(token)
+        } else {
+            TokenHoverHud.hide(token)
+        }
+    })
+    
+}
+
+
+export class TokenHoverHud {
+    static show(token){
+        if(!game.combat || canvas.hud?.token?.rendered) return
+
+        const weapons = token.actor.items.filter(x => {
+            if(x.type == "meleeweapon" || x.type == "rangeweapon"){
+                return x.system.worn.value
+            }
+            return false
+        })
+
+        if(weapons.length){
+            const icons = weapons.map(x => `<img src="${x.img}" class="tinyHudIcons" title="${x.name}"/>`).join(" ")
+
+            const elem = $(`<div id="hoverhud_${token.id}" style="position:absolute;">${icons}</div>`)
+            $("#hud").append(elem)
+            this.position(elem, token, weapons.length)
+        }        
+    }
+
+    static position(elem, token, count){
+        const td = token.document;
+        const ratio = canvas.dimensions.size / 100;
+        const position = {
+          width: count * 43,
+          height: 42,
+          left: token.x + td.width * 50 - (count * 43) / 2,
+          top: token.y + td.height * 100 + 32,
+        };
+        if ( ratio !== 1 ) position.transform = `scale(${ratio})`;
+        elem.css(position);
+    }
+
+    static hide(token){
+        $(`#hoverhud_${token.id}`).remove()
+    }
 }
 
 class AskForNameDialog extends Dialog{

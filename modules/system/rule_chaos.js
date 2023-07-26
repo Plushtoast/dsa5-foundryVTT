@@ -25,6 +25,10 @@ export default class RuleChaos {
         await ChatMessage.create(DSA5_Utility.chatDataSetup(game.i18n.format('CHATNOTIFICATION.applyBleeding', { actor: actor.name, actorId: actor.id, tokenId: actor.token ? actor.token.id : "" })))
     }
 
+    static isShield(item){
+        return game.i18n.localize("LocalizedIDs.Shields") == getProperty(item, "system.combatskill.value")
+    }
+
     static _getFunctionData(ev) {
         return {
             data: ev.currentTarget.dataset,

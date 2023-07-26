@@ -3319,8 +3319,18 @@
     right: 0;
   }
   
-  .toggleWorldIndex.on, .toggleAdvancedMode.on, .fulltextsearch.on, .browseEnabled.on {
+  .toggleWorldIndex.on, .toggleAdvancedMode.on, .fulltextsearch.on, .browseEnabled.on, .filterDuplicateItems.on {
     color: darkred;
+  }
+
+  .tinyHudIcons{
+    border: 1px solid black;
+    margin-left: 1px;
+    width: 40px;
+    border-radius: 5px;
+    height: 40px;
+    background-image: url("../../icons/backgrounds/macrobg.webp");
+    background-repeat: no-repeat;
   }
 
   .advancedSearch {
@@ -3458,7 +3468,57 @@
     margin-left: 55%;
     margin-top: 35px;
   }
+
+  .garjourn {
+    display: inline-block;
+    width: 15px;
+    height: 15px;
+    background-size:contain;
+    background-repeat: no-repeat;
+    margin-left: 3px;
+    margin-right: 3px;
+
+    &.boronsrad {
+      background-image: url('../../icons/Garadan6.webp');
+    }
   
+    &.koenig {
+      background-image: url('../../icons/KoenigIcon.webp');
+    }
+  
+    &.springer {
+      background-image: url('../../icons/SpringerIcon.webp');
+    }
+  
+    &.turm {
+      background-image: url('../../icons/TurmIcon.webp');
+    }
+  
+    &.bauer {
+      background-image: url('../../icons/BauerIcon.webp');
+    }
+  }
+
+  .journal-picto {
+    display: inline-block;
+    position: relative;
+    min-width: 20px;
+    margin-left: 5px;
+  }
+
+  .journal-picto:before {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      top: 0;
+      left: 0;
+      right: 0;
+      background-repeat: no-repeat;
+      background-position: center;
+      background-size: contain;    
+  }
+
+   
   .garadanborder {
     h1 {
       text-decoration: none;
