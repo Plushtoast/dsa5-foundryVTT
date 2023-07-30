@@ -325,7 +325,9 @@
             "magicalsign",
             "demonmark",
             "patron",
-            "information"
+            "information",
+            "essence",
+            "imprint"
         ],
         "templates": {
             "skill": {
@@ -450,6 +452,21 @@
                 }
             }
         },
+        "essence": {
+            "templates": [
+                "description",
+                "APValue"
+            ],
+            "level": 1,
+            "requirements": ""
+        },
+        "imprint": {
+            "templates": [
+                "description"
+            ],
+            "requirements": "",
+            "category": ""
+        },        
         "magicalsign": {
             "templates": [
                 "description",

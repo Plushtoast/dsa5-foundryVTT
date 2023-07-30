@@ -1119,6 +1119,8 @@
     "TYPES.Item.species": "Spezies",
     "TYPES.Item.spell": "Zauber",
     "TYPES.Item.trait": "Eigenschaft (Tier)",
+    "TYPES.Item.essence": "Wesenszug",
+    "TYPES.Item.imprint": "Prägung",
     "TYPES.Item.consumable": "Verbrauchsgegenstand",
     "TYPES.Item.spellextension": "Zauber/Liturgieerweiterung",
     "TYPES.Item.application": "Anwendungsgebiet",

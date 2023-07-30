@@ -1079,6 +1079,8 @@
     "TYPES.Item.species": "Species",
     "TYPES.Item.spell": "Spell",
     "TYPES.Item.trait": "Trait (Animal)",
+    "TYPES.Item.essence": "Influence",
+    "TYPES.Item.imprint": "Personality Trait",
     "TYPES.Item.effectwrapper": "Effect container",
     "TYPES.Item.demonmark": "Demon Mark",
     "TYPES.Item.consumable": "Consumable",

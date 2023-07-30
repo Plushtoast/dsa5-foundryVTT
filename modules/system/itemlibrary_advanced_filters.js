@@ -124,7 +124,12 @@ Hooks.once("ready", () => {
             ],
             magicalsign: [],
             patron: [],
-            demonmark: []
+            demonmark: [],
+            essence: [],
+            imprint: [
+                { label: "Category", attr: "category", type: "text" }
+            ]
+
         })
     })
 })

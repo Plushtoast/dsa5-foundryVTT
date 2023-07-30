@@ -3020,6 +3020,8 @@
     background-size: contain;
     border: 1px solid var(--border-color);
     background-color: antiquewhite;
+    background-repeat: no-repeat;
+    background-position: center;
     border-radius: 5px;
     cursor: pointer;
     &.deactivated{

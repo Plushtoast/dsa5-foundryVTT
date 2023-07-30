@@ -1121,6 +1121,8 @@ export default class ActorSheetDsa5 extends ActorSheet {
                 this.creatureDrop(item)                
                 break
             case "skill":
+            case "imprint":
+            case "essence":
             case "information":
                 await this._addUniqueItem(item)
                 break

@@ -29,12 +29,25 @@ export default function() {
             onclick: async() => increaseFontSize($(sheet._element).find('.journal-page-content'))
         })
 
-        if (!sheet.document.sceneNote) return
+        if (!sheet.document.sceneNote && !sheet.document.pages.some(x => x.sceneNote)) return
 
         buttons.unshift({
             class: "panMapNote",
             icon: "fas fa-map-pin",
-            onclick: async() => sheet.document.panToNote()
+            onclick: async() => {                
+                const currentPage = sheet._getCurrentPage()
+                const pages = Array.from(sheet.document.pages)
+
+                if(pages[currentPage].sceneNote) 
+                    doc = pages[currentPage]
+                else if(sheet.document.sceneNote) 
+                    doc = sheet.document
+                else {
+                    doc = pages.find(x => x.sceneNote)
+                    if(!doc) return
+                }
+                canvas.notes.panToNote(doc.sceneNote)
+            }
         })
     })
 }

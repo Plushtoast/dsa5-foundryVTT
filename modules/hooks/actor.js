@@ -335,18 +335,21 @@ export class TokenHoverHud {
     static position(elem, token, count){
         const td = token.document;
         const ratio = canvas.dimensions.size / 100;
+
+        const width = count * 43;
         const position = {
-          width: count * 43,
+          width,
           height: 42,
-          left: token.x + td.width * 50 - (count * 43) / 2,
-          top: token.y + td.height * 100 + 32,
+          left: token.center.x - width / 2 * ratio,
+          top: token.y + td.height * canvas.dimensions.size + 32,
         };
         if ( ratio !== 1 ) position.transform = `scale(${ratio})`;
+
         elem.css(position);
     }
 
     static hide(token){
-        $(`#hoverhud_${token.id}`).remove()
+       $(`#hoverhud_${token.id}`).remove()
     }
 }
 

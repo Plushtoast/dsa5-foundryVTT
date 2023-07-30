@@ -65,7 +65,9 @@ export default class Itemdsa5 extends Item {
         abilitypact: "systems/dsa5/icons/categories/ability_pact.webp",
         demonmark: "systems/dsa5/icons/categories/ability_pact.webp",
         patron: "systems/dsa5/icons/categories/ability_pact.webp",
-        information: "systems/dsa5/icons/categories/DSA-Auge.webp"
+        information: "systems/dsa5/icons/categories/DSA-Auge.webp",
+        essence: "systems/dsa5/icons/categories/wesenszug.webp",
+        imprint: "systems/dsa5/icons/categories/praegung.webp"
     }
 
     static defaultIcon(data) {

@@ -780,6 +780,8 @@ export default class Actordsa5 extends Actor {
     let demonmarks = [];
     let wornweapons = [];
     let information = []
+    const essence = []
+    const imprint = []
 
     const specAbs = Object.fromEntries(Object.keys(DSA5.specialAbilityCategories).map((x) => [x, []]));
     const traits = Object.fromEntries(Object.keys(DSA5.traitCategories).map((x) => [x, []]));
@@ -1027,6 +1029,12 @@ export default class Actordsa5 extends Actor {
           case "demonmark":
             demonmarks.push(i);
             break;
+          case "essence":
+            essence.push(i);
+            break;
+          case "imprint":
+            imprint.push(i);
+            break;
           case "application":
             if (applications.has(i.system.skill)) applications.get(i.system.skill).push(i);
             else applications.set(i.system.skill, [i]);
@@ -1121,6 +1129,8 @@ export default class Actordsa5 extends Actor {
       information,
       aggregatedtests,
       wornArmor: armor,
+      essence,
+      imprint,
       inventory,
       hasTrait,
       demonmarks,

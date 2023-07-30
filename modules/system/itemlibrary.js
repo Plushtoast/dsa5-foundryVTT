@@ -202,7 +202,9 @@ export default class DSA5ItemLibrary extends Application {
                     "species": false,
                     "application": false,
                     "demonmark": false,
-                    "patron": false
+                    "patron": false,
+                    "essence": false,
+                    "imprint": false
                 },
                 filterBy: {
                     search: ""

@@ -98,6 +98,7 @@ Hooks.once("init", () => {
         "systems/dsa5/templates/items/traditionArtifact.html",
         "systems/dsa5/templates/status/advanced_functions.html",
         "systems/dsa5/templates/actors/parts/information.html",
+        "systems/dsa5/templates/actors/parts/personaltrait.html",
         "systems/dsa5/templates/actors/parts/combatskills.html",
         "systems/dsa5/templates/actors/parts/attributes.html",
         "systems/dsa5/templates/actors/parts/carryandpurse.html",
