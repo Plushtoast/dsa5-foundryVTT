@@ -36,7 +36,7 @@ export default class DialogReactDSA5 extends Dialog {
         if (!canvas.tokens) return {}
 
         let speaker = message.flags.unopposeData.targetSpeaker
-        let actor = canvas.tokens.get(speaker.token).actor
+        const actor = DSA5_Utility.getSpeaker(speaker)
 
         if (!actor) {
             ui.notifications.error(game.i18n.localize("DSAError.noProperActor"))
@@ -188,7 +188,7 @@ export class ReactToAttackDialog extends DialogReactDSA5 {
         const attackmessage = game.messages.get(speakerMessage)
 
         const speaker = attackmessage.flags.data.preData.extra.speaker
-        const actor = canvas.tokens.get(speaker.token).actor
+        const actor = DSA5_Utility.getSpeaker(speaker)
 
         if (!actor) {
             ui.notifications.error(game.i18n.localize("DSAError.noProperActor"))
