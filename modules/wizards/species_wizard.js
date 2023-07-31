@@ -45,20 +45,6 @@ export default class SpeciesWizard extends WizardDSA5 {
         return groups
     }
 
-    _parseAttributes(attr) {
-        let result = []
-        for (let k of attr.split(",")) {
-            if (k.includes(game.i18n.localize("combatskillcountdivider") + ":")) {
-                let vals = k.split(":")
-                result.push({
-                    choices: vals[1].split("/").map(x => x.trim()),
-                    allowedCount: Number(vals[0].match(/\d/g))
-                })
-            }
-        }
-        return result
-    }
-
     async getData(options) {
         const data = await super.getData(options);
         const requirements = await this.parseToItem(this.species.system.requirements.value, ["disadvantage", "advantage"])

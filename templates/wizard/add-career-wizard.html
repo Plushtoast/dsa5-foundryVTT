@@ -82,17 +82,32 @@
             {{/each}}
         </div>
         {{/if}}
+
+        {{#if specAbChoices}} 
+        <h2>{{localize 'TYPES.Item.specialability'}}</h2>
+        {{#each specAbChoices as |item i|}}
+        <p class="allowedCount_{{i}}" data-count="{{item.allowedCount}}">{{localize 'WIZARD.chose'}} {{item.allowedCount}}. </p>
+        <div class="row-section wrap">
+            {{#each item.choices as |choice j|}}
+            <div class="col two row-section lineheight">
+                <input type="checkbox" id="specialability_{{i}}_{{j}}" class="specialability exclusive exclusive_{{i}}" data-sel="{{i}}" name="specialability_{{i}}_{{j}}" value="{{choice}}">
+                <label for="specialability_{{i}}_{{j}}">{{choice}}</label>
+            </div>
+            {{/each}}
+        </div>
+         {{/each}}
+        {{/if}}
     </div>
     {{/if}} {{#if combatToChose}}
     <div class="tab combat" data-tab="combat">
-        <h2>{{localize 'combatskill'}}</h2>
+        <h2>{{localize 'TYPES.Item.combatskill'}}</h2>
         {{#each combatskillchoices as |item i|}}
         <p class="allowedCount_{{i}}" data-count="{{item.allowedCount}}">{{localize 'WIZARD.chose'}} {{item.allowedCount}}. </p>
         <div class="row-section wrap">
             {{#each item.choices as |choice j|}}
             <div class="col two row-section lineheight">
-                <input type="checkbox" id="exclusive_{{i}}_{{j}}" class="exclusive exclusive_{{i}}" data-sel="{{i}}" name="{{choice}}" value="{{choice}}">
-                <label for="exclusive_{{i}}_{{j}}">{{choice}}</label>
+                <input type="checkbox" id="combatskill_{{i}}_{{j}}" class="combatskill exclusive exclusive_{{i}}" data-sel="{{i}}" name="combatskill_{{i}}_{{j}}" value="{{choice}}">
+                <label for="combatskill_{{i}}_{{j}}">{{choice}}</label>
             </div>
             {{/each}}
         </div>
@@ -111,10 +126,38 @@
             </div>
             {{/each}}
         </div>
+        {{#if spellChoices}} 
+        <h2>{{localize 'TYPES.Item.spell'}}</h2>
+        {{#each spellChoices as |item i|}}
+        <p class="allowedCount_{{i}}" data-count="{{item.allowedCount}}">{{localize 'WIZARD.chose'}} {{item.allowedCount}}. </p>
+        <div class="row-section wrap">
+            {{#each item.choices as |choice j|}}
+            <div class="col two row-section lineheight">
+                <input type="checkbox" id="spell_{{i}}_{{j}}" class="spell exclusive exclusive_{{i}}" data-sel="{{i}}" name="spell_{{i}}_{{j}}" value="{{choice}}">
+                <label for="spell_{{i}}_{{j}}">{{choice}}</label>
+            </div>
+            {{/each}}
+        </div>
+         {{/each}}
+        {{/if}}
+        
     </div>
     {{/if}} {{#if religionToChose}}
     <div class="tab religion" data-tab="religion">
-
+        {{#if liturgyChoices}} 
+        <h2>{{localize 'TYPES.Item.spell'}}</h2>
+        {{#each liturgyChoices as |item i|}}
+        <p class="allowedCount_{{i}}" data-count="{{item.allowedCount}}">{{localize 'WIZARD.chose'}} {{item.allowedCount}}. </p>
+        <div class="row-section wrap">
+            {{#each item.choices as |choice j|}}
+            <div class="col two row-section lineheight">
+                <input type="checkbox" id="liturgy_{{i}}_{{j}}" class="liturgy exclusive exclusive_{{i}}" data-sel="{{i}}" name="liturgy_{{i}}_{{j}}" value="{{choice}}">
+                <label for="liturgy_{{i}}_{{j}}">{{choice}}</label>
+            </div>
+            {{/each}}
+        </div>
+         {{/each}}
+        {{/if}}
     </div>
     {{/if}}
 </section>

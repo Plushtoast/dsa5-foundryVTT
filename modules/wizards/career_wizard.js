@@ -60,7 +60,11 @@ export default class CareerWizard extends WizardDSA5 {
         const disadvantages = await this.parseToItem(this.career.system.recommendedDisadvantages.value, ["disadvantage"])
         this.fixPreviousCosts(requirements, disadvantages)
         const attributeRequirements = requirements.filter(x => x.attributeRequirement)
-        const combatskillchoices = this.parseCombatskills(this.career.system.combatSkills.value)
+        const combatskillchoices = this._parseAttributes(this.career.system.combatSkills.value, /,|;/)
+        const specAbChoices = this._parseAttributes(this.career.system.specialAbilities.value)
+        const spellChoices = this._parseAttributes(this.career.system.spells.value)
+        const liturgyChoices = this._parseAttributes(this.career.system.liturgies.value)
+
         const baseCost = Number(this.career.system.APValue.value)
         const reqCost = requirements.reduce(function(_this, val) {
             return _this + (val.disabled ? 0 : Number(val.system.APValue.value) || 0)
@@ -74,20 +78,23 @@ export default class CareerWizard extends WizardDSA5 {
             advantages,
             disadvantages,
             missingVantages,
+            specAbChoices,
+            spellChoices,
+            liturgyChoices,
             missingSpecialabilities,
             combatskillchoices: combatskillchoices,
             spelltricks: await this.parseToItem(this.career.system.spelltricks.value, ["magictrick"]),
             attributeRequirements,
-            advantagesToChose: advantages.length > 0,
-            disadvantagesToChose: disadvantages.length > 0,
-            vantagesToChose: advantages.length > 0 || disadvantages.length > 0 || missingVantages.length > 0,
-            missingVantagesToChose: missingVantages.length > 0,
-            missingSpecialabiltiesToChose: missingSpecialabilities.length > 0,
-            combatToChose: combatskillchoices.length > 0,
-            magicToChose: this.career.system.spelltrickCount.value > 0,
-            religionToChose: false,
-            anyAttributeRequirements: attributeRequirements.length > 0,
-            generalToChose: missingSpecialabilities.length > 0 || attributeRequirements.length > 0,
+            advantagesToChose: advantages.length,
+            disadvantagesToChose: disadvantages.length,
+            vantagesToChose: advantages.length || disadvantages.length || missingVantages.length,
+            missingVantagesToChose: missingVantages.length,
+            missingSpecialabiltiesToChose: missingSpecialabilities.length,
+            combatToChose: combatskillchoices.length,
+            magicToChose: this.career.system.spelltrickCount.value || spellChoices.length,
+            religionToChose: liturgyChoices.length,
+            anyAttributeRequirements: attributeRequirements.length,
+            generalToChose: missingSpecialabilities.length || attributeRequirements.length || specAbChoices.length,
             enrichedClothing: await TextEditor.enrichHTML(getProperty(this.career.system, "clothing.value"), {secrets: false, async: true}),
             enrichedDescription: await TextEditor.enrichHTML(getProperty(this.career.system, "description.value"), {secrets: false, async: true})
         })
@@ -99,28 +106,19 @@ export default class CareerWizard extends WizardDSA5 {
         this.career = duplicate(item)
     }
 
-    parseCombatskills(combatskills) {
-        let result = []
-        for (let k of combatskills.split(/,|;/)) {
-            if (k.includes(game.i18n.localize("combatskillcountdivider") + ":")) {
-                let vals = k.split(":")
-                result.push({
-                    choices: vals[1].split("/").map(x => x.trim()),
-                    allowedCount: Number(vals[0].match(/\d/g))
-                })
-            }
-        }
-        return result
-    }
-
-    async setAbility(value, types) {
+    async setAbility(value, types, choices = []) {
         if (value.trim() == "")
             return
 
         let itemsToCreate = []
         let itemsToUpdate = []
 
-        for (let k of value.split(",")) {
+        const selectionString = game.i18n.localize("combatskillcountdivider") + ":"
+
+        for (let k of value.split(",").concat(choices)) {
+            if (k.includes(selectionString) || k == "")
+                continue
+
             let parsed = DSA5_Utility.parseAbilityString(k.trim())
             let item = this.actor.items.find(x => types.includes(x.type) && x.name == parsed.original)
             if (item) {
@@ -178,6 +176,14 @@ export default class CareerWizard extends WizardDSA5 {
         await this.actor.createEmbeddedDocuments("Item", itemsToCreate, { render: false })
     }
 
+    getExclusiveChoices(parent, cssClass) {
+        const choices = []
+        for (let k of parent.find(`${cssClass}.exclusive:checked`)) {
+            choices.push($(k).val())
+        }
+        return choices
+    }
+
     async updateCharacter(parent, app = this) {
         parent.find("button.ok i").toggleClass("fa-check fa-spinner fa-spin")
 
@@ -210,24 +216,19 @@ export default class CareerWizard extends WizardDSA5 {
         }
         if (this.career.system.mageLevel.value == "clerical") {
             update["system.happyTalents.value"] = this.career.system.happyTalents.value
-            await this.setAbility(this.career.system.liturgies.value, ["liturgy", "ceremony"])
+            await this.setAbility(this.career.system.liturgies.value, ["liturgy", "ceremony"], this.getExclusiveChoices(parent, ".liturgy"))
             await this.addBlessing(this.career.system.blessings.value.split(","), "blessing")
         }
         if (this.career.system.mageLevel.value == "magical") {
-            await this.setAbility(this.career.system.spells.value, ["spell", "ritual"])
+            await this.setAbility(this.career.system.spells.value, ["spell", "ritual"], this.getExclusiveChoices(parent, ".spell"))
         }
 
-        await this.setAbility(this.career.system.specialAbilities.value, ["specialability"])
+        await this.setAbility(this.career.system.specialAbilities.value, ["specialability"], this.getExclusiveChoices(parent, ".specialability"))
         await this.actor._updateAPs(apCost, {}, { render: false })
         await this.addSelections(parent.find('.optional:checked'), false)
         await this.updateSkill(this.career.system.skills.value.split(","), "skill")
 
-        let combatSkillselectChoices = []
-        for (let k of parent.find('.exclusive:checked')) {
-            combatSkillselectChoices.push($(k).val())
-        }
-
-        const combatSkills = this.career.system.combatSkills.value.split(",").concat(combatSkillselectChoices)
+        const combatSkills = this.career.system.combatSkills.value.split(",").concat(this.getExclusiveChoices(parent, ".combatskill"))
             .filter(skill => !(skill.includes(game.i18n.localize("combatskillcountdivider") + ":") || skill == ""))
         await this.updateSkill(combatSkills, "combatskill", 1, false)
         await this.actor.update(update);

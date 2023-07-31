@@ -249,8 +249,15 @@ export default function() {
             askForName(token, setting)
             return
         }
+      
         if (sameActorTokens.length > 0 && setting < 3) {
-            name = `${sameActorTokens[0].name.replace(/ \d{1,}$/)} ${sameActorTokens.length + 1}`
+            let max = sameActorTokens.length
+            for(let x of sameActorTokens){
+                const match = x.name.match(/\d+$/)
+                if(match && Number(match[0]) > max)
+                    max = Number(match[0])
+            }
+            name = `${sameActorTokens[0].name.replace(/ \d{1,}$/,'')} ${max + 1}`
         }
         update["name"] = name
     }
@@ -369,7 +376,13 @@ class AskForNameDialog extends Dialog{
                         if(setting == 2){
                             let sameActorTokens = canvas.scene.tokens.filter((x) => x.name === name);
                             if (sameActorTokens.length > 0) {
-                                name = `${name.replace(/ \d{1,}$/)} ${sameActorTokens.length + 1}`
+                                let max = sameActorTokens.length
+                                for(let x of sameActorTokens){
+                                    const match = x.name.match(/\d+$/)
+                                    if(match && Number(match[0]) > max)
+                                        max = Number(match[0])
+                                }
+                                name = `${sameActorTokens[0].name.replace(/ \d{1,}$/,'')} ${max + 1}`
                             }
                         }
                         const token = canvas.scene.tokens.get(tokenId)

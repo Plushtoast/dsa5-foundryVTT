@@ -35,7 +35,22 @@ export default class WizardDSA5 extends Application {
             if(result) return result
         }        
         return undefined
-    }    
+    }
+
+    _parseAttributes(attr, splitter = ",") {
+        const result = []
+        const splstr = game.i18n.localize("combatskillcountdivider") + ":"
+        for (let k of attr.split(splitter)) {
+            if (k.includes(splstr)) {
+                const vals = k.split(":")
+                result.push({
+                    choices: vals[1].split("/").map(x => x.trim()),
+                    allowedCount: Number(vals[0].match(/\d/g))
+                })
+            }
+        }
+        return result
+    }
 
     async parseToItem(value, types) {
         if (value.trim() == "")
@@ -209,17 +224,20 @@ export default class WizardDSA5 extends Application {
     }
 
     _validateInput(parent, app = this) {
-        let exclusives = new Set()
         let regex = /^exclusive_/
-        for (let k of parent.find('.exclusive')) {
-            exclusives.add(k.className.split(/\s+/).filter(x => regex.test(x))[0])
-        }
-        for (let k of exclusives) {
-            let choice = parent.find('.allowedCount_' + k.split("_")[1])
-            let allowed = Number(choice.attr('data-count'))
-            if (parent.find(`.${k}:checked`).length != allowed) {
-                this._showInputValidation(choice, parent, app)
-                return false
+        for(let tab of parent.find('.tab')){
+            const tb = $(tab)
+            let exclusives = new Set()
+            for (let k of tb.find('.exclusive')) {
+                exclusives.add(k.className.split(/\s+/).filter(x => regex.test(x))[0])
+            }
+            for (let k of exclusives) {
+                let choice = tb.find('.allowedCount_' + k.split("_")[1])
+                let allowed = Number(choice.attr('data-count'))
+                if (tb.find(`.${k}:checked`).length != allowed) {
+                    this._showInputValidation(choice, tb, app)
+                    return false
+                }
             }
         }
         return true
@@ -255,7 +273,7 @@ export default class WizardDSA5 extends Application {
         html.on('click', '.searchableAbility a', ev => clickableAbility(ev))
         
         html.find('.exclusive').change(ev => {
-            let parent = $(ev.currentTarget).closest('.content')
+            let parent = $(ev.currentTarget).closest('.tab')
             let sel = $(ev.currentTarget).attr('data-sel')
             let maxDomElem = parent.find(`.allowedCount_${sel}`)
             let maxSelections = Number(maxDomElem.attr("data-count"))
