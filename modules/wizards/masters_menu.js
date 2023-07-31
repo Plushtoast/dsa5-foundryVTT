@@ -581,6 +581,7 @@ class GameMasterMenu extends Application {
         data.sceneConfig = {
             sceneAutomationEnabled: game.settings.get("dsa5", "sightAutomationEnabled"),
             enableDPS: game.settings.get("dsa5", "enableDPS"),
+            lightSightCompensationEnabled: game.settings.get("dsa5", "lightSightCompensationEnabled"),
             visions,
             darkness: canvas.scene?.darkness || 0
         }

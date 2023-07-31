@@ -1,6 +1,5 @@
 import Actordsa5 from "../actor/actor-dsa5.js";
 import Itemdsa5 from "../item/item-dsa5.js";
-import AdvantageRulesDSA5 from "../system/advantage-rules-dsa5.js";
 import DSA5 from "../system/config-dsa5.js";
 import DiceDSA5 from "../system/dice-dsa5.js";
 import Riding from "../system/riding.js";
@@ -9,6 +8,7 @@ import DSA5_Utility from "../system/utility-dsa5.js";
 import DSA5Dialog from "./dialog-dsa5.js";
 import DialogShared from "./dialog-shared.js";
 import DSA5StatusEffects from "../status/status_effects.js";
+import DPS from "../system/derepositioningsystem.js";
 
 export default class DSA5CombatDialog extends DialogShared {
     static rollModifiers = {
@@ -258,34 +258,8 @@ export default class DSA5CombatDialog extends DialogShared {
 
     prepareFormRecall(html) {
         super.prepareFormRecall(html);
-        if (canvas.scene && game.settings.get("dsa5", "sightAutomationEnabled")) {
-            const darkness = canvas.scene?.darkness || 0;
-            const threholds = game.settings
-                .get("dsa5", "sightOptions")
-                .split("|")
-                .map((x) => Number(x));
-            let level = 0;
-            while (threholds[level] <= darkness) level += 1;
-
-            const actor = DSA5_Utility.getSpeaker(this.dialogData.speaker);
-            if (actor) {
-                const darkSightLevel = AdvantageRulesDSA5.vantageStep(actor, game.i18n.localize("LocalizedIDs.darksight"))
-                const sightModifier = Number(getProperty(actor, "system.sightModifier.value")) || 0
-                const modifyableLevel = Number(getProperty(actor, "system.sightModifier.maxLevel")) || 3
-                if (level <= modifyableLevel && level > 0) {
-                    if (darkSightLevel > 1) {
-                        level = 0;
-                    } else {
-                        level = Math.clamped(level + sightModifier - darkSightLevel, 0, 4)
-                    }
-                }                
-            }
-
-            const elem = html.find(`[name="vision"] option:nth-child(${level + 1})`);
-            if (elem.length) elem[0].selected = true;
-        }
         const actor = DSA5_Utility.getSpeaker(this.dialogData.speaker)
-
+        DPS.lightLevel(actor, html)
         const isRider = Riding.isRiding(actor)
         
         const advantageousPosition = html.find('[name="advantageousPosition"]')[0]

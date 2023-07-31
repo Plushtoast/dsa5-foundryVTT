@@ -634,6 +634,8 @@
         "threshold": "Dunkelheitsschwelle",
         "darkness": "Dunkelheit",
         "sightautomationTooltip": "Setzt bei Angriffs- und Verteidigungswürfen automatisch einen Modifikator, wenn der Dunkelheitswert die entsprechende Schwelle überschreitet.",
+        "lightSightCompensationEnabled": "Lichtausgleich aktivieren",
+        "lightSightCompensationEnabledTooltip": "Reduziert die Modifikatoren für Angriffswürfe um 2 (helles Licht) bzw. 1 (schwaches Licht) bei eingeschränkten Sichtverhältnissen.",
         "gmMenuPlaceholder": "NSC Generatoren u.ä. siehe Werkstatt des Meisters Modul",
         "dragEveryone": "Ziehe alle markierten Charaktere auf die Map",
         "noHeros": "Keine Helden ausgewählt. Weise deinen Spielern Helden zu oder ziehe wichtige Charaktere per Drag and Drop auf das Meistermenü."

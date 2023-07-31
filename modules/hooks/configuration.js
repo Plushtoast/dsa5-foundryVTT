@@ -477,6 +477,14 @@ export function setupConfiguration() {
         type: Boolean
     });
 
+    game.settings.register("dsa5", "lightSightCompensationEnabled", {
+        name: "lightSightCompensationEnabled",
+        scope: "world",
+        config: false,
+        default: false,
+        type: Boolean
+    });    
+
     game.settings.register("dsa5", "randomWeaponSelection", {
         name: "DSASETTINGS.randomWeaponSelection",
         hint: "DSASETTINGS.randomWeaponSelection",

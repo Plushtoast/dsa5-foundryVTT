@@ -125,7 +125,7 @@ export default class CareerWizard extends WizardDSA5 {
                 item = duplicate(item)
                 if (item.system.talentValue)
                     item.system.talentValue.value = parsed.step
-                if (item.system.step)
+                else if (item.system.step)
                     item.system.step.value = parsed.step
 
                 item = ItemRulesDSA5.reverseAdoptionCalculation(this.actor, parsed, item)
@@ -140,7 +140,7 @@ export default class CareerWizard extends WizardDSA5 {
                     item.name = parsed.original
                     if (item.system.talentValue)
                         item.system.talentValue.value = parsed.step
-                    if (item.system.step)
+                    else if (item.system.step)
                         item.system.step.value = parsed.step
 
                     item = ItemRulesDSA5.reverseAdoptionCalculation(this.actor, parsed, item)

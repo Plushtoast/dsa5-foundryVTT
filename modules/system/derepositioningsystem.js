@@ -1,4 +1,18 @@
+import AdvantageRulesDSA5 from "./advantage-rules-dsa5.js"
+
 export default class DPS {
+    RECT_SPREAD = [
+        { x: 0.25, y: 0.25 },
+        { x: 0.5, y: 0.25 },
+        { x: 0.75, y: 0.25 },
+        { x: 0.25, y: 0.5 },
+        { x: 0.5, y: 0.5 },
+        { x: 0.75, y: 0.5 },
+        { x: 0.25, y: 0.75 },
+        { x: 0.5, y: 0.75 },
+        { x: 0.75, y: 0.75 },
+      ]
+
     static rangeFinder(tokenSource, tokenTarget) {
         const gridSize = canvas.scene.grid.size
         const ray = new Ray(tokenSource, tokenTarget)
@@ -22,9 +36,84 @@ export default class DPS {
         return false
     }
 
+    static inLight(token) {
+        let bright = false
+        let dim = false
+
+        if(game.settings.get("dsa5", "lightSightCompensationEnabled")) {
+            for (const light of canvas.effects.lightSources) {
+                if (!light.active) continue
+
+                if(light.object == token) {
+                    bright = bright || light.data.bright > 0,
+                    dim = dim || light.data.dim > 0
+                    
+                    if(bright) break
+                    else continue
+                }
+
+                const distance = DPS.rangeFinder(token, light.object).distanceSum 
+                const inBright = light.object.document.config.bright >= distance
+                const inDim = light.object.document.config.dim >= distance
+
+                if(!inBright && !inDim) continue
+
+                if (light.data.walls === false || light.shape.contains(token.center.x, token.center.y)){
+                    bright = inBright || bright
+                    dim = inDim || dim
+                }
+
+                if(bright) break
+            }
+        }
+        return { bright, dim }
+    }
+
     static get isEnabled(){
         const sceneFlag = canvas?.scene?.getFlag("dsa5", "enableDPS")
         return sceneFlag ? sceneFlag == "2" : game.settings.get("dsa5", "enableDPS")
+    }
+
+    static lightLevel(actor, html) {        
+        if (canvas.scene && game.settings.get("dsa5", "sightAutomationEnabled")) {
+            let level = 0;
+            const darkness = canvas.scene?.darkness || 0;
+            const threholds = game.settings
+                .get("dsa5", "sightOptions")
+                .split("|")
+                .map((x) => Number(x));
+            
+            while (threholds[level] <= darkness) level += 1;
+
+            if (actor) {
+                const darkSightLevel = AdvantageRulesDSA5.vantageStep(actor, game.i18n.localize("LocalizedIDs.darksight"))
+                const sightModifier = Number(getProperty(actor, "system.sightModifier.value")) || 0
+                const modifyableLevel = Number(getProperty(actor, "system.sightModifier.maxLevel")) || 3
+
+                let token = Array.from(game.user.targets)
+                
+                if(token) {
+                    token = token[0]
+                    const light = DPS.inLight(token)
+                    let mod = 0
+                    if(light.bright) mod = -2
+                    else if(light.dim) mod = -1
+
+                    level = Math.max(level + mod, 0)
+                }
+
+                if (level <= modifyableLevel && level > 0) {
+                    if (darkSightLevel > 1) {
+                        level = 0;
+                    } else {
+                        level = Math.clamped(level + sightModifier - darkSightLevel, 0, 4)
+                    }
+                }                
+            }
+
+            const elem = html.find(`[name="vision"] option:nth-child(${level + 1})`);
+            if (elem.length) elem[0].selected = true;
+        }
     }
 
     static distanceModifier(tokenSource, rangeweapon, currentAmmo) {
