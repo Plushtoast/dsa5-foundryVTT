@@ -1,0 +1,64 @@
+<div class="combat-swarm groupbox">
+    <div class="row-section table-title lineheight">
+        <div class="title-type col third">
+            <b>{{localize "swarm.name"}}</b>
+        </div>
+        <div class="col ten center small">
+            {{localize "Current"}}
+        </div>        
+        <div class="col ten center small">
+            {{localize "swarm.count"}}
+        </div>
+        <div class="col ten center small">
+            {{localize "swarm.size"}}            
+        </div>
+        {{#if (gt actor.system.swarm.count 1)}}
+        <div class="col ten center small">
+            {{localize "CHARAbbrev.AT"}}
+        </div>
+        <div class="col ten center small">
+            {{localize "CHARAbbrev.PA"}}
+        </div>
+        <div class="col ten center small">
+            {{localize "CHARAbbrev.damage"}}
+        </div>
+        {{else}}
+        <div class="col third">
+
+        </div>
+        {{/if}}
+    </div>    
+
+    <div class="row-section wrap rowtable inventory">
+        <div class="col item">
+            <div class="combat-swarm-item row-section">
+                <div class="title-type col third">
+                </div>
+                <div class="col ten center">
+                    {{ actor.system.swarm.effectiveCount }}
+                </div>
+                <div class="col ten center">
+                    <input name="system.swarm.count" type="number" value="{{actor.system.swarm.count}}" data-dtype="Number" />
+                </div>
+                <div class="col ten center">
+                    <input name="system.swarm.gg" type="number" value="{{actor.system.swarm.gg}}" data-dtype="Number" />
+                </div>
+                {{#if (gt actor.system.swarm.count 1)}}
+                <div class="col ten center">
+                    {{actor.system.swarm.attack}}
+                </div>
+                <div class="col ten center">
+                    {{actor.system.swarm.parry}}
+                </div>
+                <div class="col ten center">
+                    {{actor.system.swarm.damage}}
+                </div>
+                {{else}}
+                <div class="col third">
+
+                </div>
+                {{/if}}
+            </div>
+        </div>
+    </div>
+</div>

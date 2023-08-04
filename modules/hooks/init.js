@@ -101,6 +101,7 @@ Hooks.once("init", () => {
         "systems/dsa5/templates/actors/parts/personaltrait.html",
         "systems/dsa5/templates/actors/parts/combatskills.html",
         "systems/dsa5/templates/actors/parts/attributes.html",
+        "systems/dsa5/templates/actors/parts/swarm.html",
         "systems/dsa5/templates/actors/parts/carryandpurse.html",
         "systems/dsa5/templates/actors/parts/specialabilities.html",
         "systems/dsa5/templates/actors/parts/experienceBox.html",

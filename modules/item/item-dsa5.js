@@ -478,6 +478,8 @@ export default class Itemdsa5 extends Item {
             mountedOptions = duplicate(DSA5.mountedRangeOptions)
         }
 
+        this.swarmModifiers(actor, "attack", situationalModifiers)
+
         mergeObject(data, {
             rangeOptions,
             rangeDistance: Object.keys(rangeOptions)[DPS.distanceModifier(game.canvas.tokens.get(tokenId), source, currentAmmo)],
@@ -491,6 +493,34 @@ export default class Itemdsa5 extends Item {
             aimOptions: DSA5.aimOptions,
         })
     }
+
+    static swarmModifiers(actor, mode, situationalModifiers) {
+        if(actor.system.swarm?.count > 1) {
+            if(mode == "attack") {
+                    situationalModifiers.push({
+                        name: `${game.i18n.localize("swarm.name")} - ${game.i18n.localize("MODS.defenseMalus")}`,
+                        value: actor.system.swarm.parry,
+                        type: "defenseMalus",
+                        selected: true,
+                    }, {
+                        name: `${game.i18n.localize("swarm.name")} - ${game.i18n.localize("CHARAbbrev.AT")}`,
+                        value: actor.system.swarm.attack,
+                        selected: true,
+                    }, {
+                        name: `${game.i18n.localize("swarm.name")} - ${game.i18n.localize("CHARAbbrev.damage")}`,
+                        value: actor.system.swarm.damage,
+                        type: "dmg",
+                        selected: true,
+                    })                
+            } else {
+                situationalModifiers.push({
+                    name: `${game.i18n.localize("swarm.name")} - ${game.i18n.localize("CHARAbbrev.PA")}`,
+                    value: actor.system.swarm.parry,
+                    selected: true,
+                })
+            }
+        }
+    }   
 
     static prepareMeleeAttack(situationalModifiers, actor, data, source, combatskills, wrongHandDisabled) {
         let targetWeaponSize = "short"
@@ -521,6 +551,8 @@ export default class Itemdsa5 extends Item {
             })
         }
 
+        this.swarmModifiers(actor, "attack", situationalModifiers)
+        
         mergeObject(data, {
             visionOptions: DSA5.meleeRangeVision(data.mode),
             weaponSizes: DSA5.meleeRanges,
@@ -538,6 +570,7 @@ export default class Itemdsa5 extends Item {
 
     static prepareMeleeParry(situationalModifiers, actor, data, source, combatskills, wrongHandDisabled) {
         const isRangeDefense = Itemdsa5.getDefenseMalus(situationalModifiers, actor)
+        this.swarmModifiers(actor, "parry", situationalModifiers)
         mergeObject(data, {
             visionOptions: DSA5.meleeRangeVision(data.mode),
             showDefense: true,

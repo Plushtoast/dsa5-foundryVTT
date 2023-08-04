@@ -23,6 +23,11 @@
             "-8": "Galopp"
         }
     },
+    "swarm": {
+        "name": "Schwarm",
+        "count": "Anzahl",
+        "size": "Grundgröße"
+    },
     "CHAR": {
         "MU": "Mut",
         "KL": "Klugheit",

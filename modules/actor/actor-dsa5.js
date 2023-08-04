@@ -229,6 +229,8 @@ export default class Actordsa5 extends Actor {
 
       let newEncumbrance = this.getArmorEncumbrance(this, armor);
 
+      this.prepareSwarm(data)
+
       if (DSA5_Utility.isActiveGM()) {
         const pain = this.woundPain(data)
         const currentPain = this.effects.find(x => x.statuses.has("inpain"))?.flags.dsa5.auto || 0
@@ -275,6 +277,23 @@ export default class Actordsa5 extends Actor {
     //let endTime = performance.now()
 
     //console.log(`Call to prepareData took ${endTime - startTime} milliseconds`)
+  }
+
+  prepareSwarm(data){
+     const count = Number(data.swarm.count) || 1
+
+     if(count < 2) return
+
+     data.swarm.maxwounds = data.status.wounds.max
+     data.status.wounds.max *= count
+
+     const effectiveCount = Math.ceil(data.status.wounds.value / data.swarm.maxwounds)
+     const gg = Number(data.swarm.gg) || 1
+
+     data.swarm.attack += Math.min(10, Math.floor(effectiveCount / gg))
+     data.swarm.parry += -1
+     data.swarm.effectiveCount = effectiveCount
+     data.swarm.damage = Math.min(5, Math.floor(effectiveCount / gg))     
   }
 
   effectivePain(data){
@@ -507,6 +526,11 @@ export default class Actordsa5 extends Actor {
     mergeObject(system, {
       itemModifiers: {},
       condition: {},
+      swarm: {
+        attack: 0,
+        parry: 0,
+        damage: 0,
+      },
       creatureType: this.creatureType,
       skillModifiers: {
         FP: [],
@@ -1395,6 +1419,14 @@ export default class Actordsa5 extends Actor {
         });
     }
     if (scolls.length) this.tokenScrollingText(scolls);
+
+    const swarmCount = getProperty(data, "system.swarm.count");
+    if (swarmCount && !options.skipSwarmUpdate) {
+       const hp = getProperty(data, "system.status.wounds.value") || this.system.status.wounds.value;
+       const delta = swarmCount - this.system.swarm.count;
+       const baseHp = this.system.swarm.maxwounds || this.system.status.wounds.max;
+       setProperty(data, "system.status.wounds.value", hp + delta * baseHp);
+    }
   }
 
   async applyDamage(amount) {

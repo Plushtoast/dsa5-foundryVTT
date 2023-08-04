@@ -1106,6 +1106,11 @@
         "big": "Large",
         "giant": "Huge"
     },
+    "swarm": {
+        "name": "Swarm",
+        "count": "Count",
+        "size": "Basic size"
+    },
     "NarrowSpaceModifiers": {
         "weapon": {
             "short": "Short-reach, +-0 AT/PA",

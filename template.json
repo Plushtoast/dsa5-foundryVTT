@@ -59,6 +59,10 @@
                 }
             },
             "status": {
+                "swarm": {
+                    "count": 1,
+                    "gg": 1
+                },
                 "hitbox": 0,
                 "status": {
                     "wounds": {
