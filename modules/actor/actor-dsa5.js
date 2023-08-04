@@ -1434,7 +1434,6 @@ export default class Actordsa5 extends Actor {
        const hp = getProperty(data, "system.status.wounds.value") || this.system.status.wounds.value;
        const delta = swarmCount - (this.system.swarm.count || 1);
        const baseHp = this.system.swarm.maxwounds || this.system.status.wounds.max;
-       console.log(delta, baseHp)
        setProperty(data, "system.status.wounds.value", Math.max(0, hp + delta * baseHp));
     }
   }
