@@ -3,7 +3,7 @@
         {{localize 'CHARAbbrev.LeP'}}
     </div>
     <div class="col {{#if prepare.magic.hasPrayers}}{{#if prepare.magic.hasSpells}}third{{else}}fourty{{/if}}{{else}}fourty{{/if}}">
-        <div class="healthbar bar-wounds barLeft{{#if prepare.magic.hasPrayers}}{{else if prepare.magic.hasSpells}}{{else}} soloBar{{/if}}" data-tooltip="wounds">
+        <div class="healthbar bar-wounds barLeft{{#if prepare.isSwarm}} swarmcount{{/if}}{{#if prepare.magic.hasPrayers}}{{else if prepare.magic.hasSpells}}{{else}} soloBar{{/if}}" style="--swarm: {{actor.system.swarm.count}};" data-tooltip="wounds">
 
             <div class="bar LeP" style="--a: {{actor.system.status.wounds.value}}; --b: {{actor.system.status.wounds.max}}">
             </div>

@@ -1144,6 +1144,7 @@ export default class Actordsa5 extends Actor {
       money,
       encumbrance: this.system.condition?.encumbered || 0,
       carrycapacity: this.system.carrycapacity,
+      isSwarm: this.system.swarm.count > 1,
       wornRangedWeapons: rangeweapons,
       wornMeleeWeapons: meleeweapons,
       horseActor: horse,
