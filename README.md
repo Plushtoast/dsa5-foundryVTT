@@ -206,6 +206,8 @@ And many more... have a look at Ulisses' F-Shop
 
 As of this moment several modules are in the making. We will inform you as soon as they will be available.
 
+![Screenshot 2023-08-04 171331](https://github.com/Plushtoast/dsa5-foundryVTT/assets/44941845/257c258e-a495-4c9b-83a2-7e83c797332a)
+
 ## Other Recommended Modules
 The following modules are recommended for the best gaming experience:
 - [Dice So Nice!](https://gitlab.com/riccisi/foundryvtt-dice-so-nice) - Shows beautiful 3d dice on every roll. A must have! DSA5 fully integrates this module.
