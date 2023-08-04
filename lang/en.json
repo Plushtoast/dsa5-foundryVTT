@@ -916,7 +916,8 @@
         "selectTraditionartifact": "Select tradition artifact",
         "deobfuscateItem": "Deobfuscate section",
         "obfuscateItem": "Obfuscate section",
-        "searchItem": "Add from the library"
+        "searchItem": "Add from the library",
+        "payAECost": "Pay AE cost"
     },
     "dsaStyle": {
         "immersive": "Immersive",
@@ -1001,6 +1002,7 @@
         "editRoll": "Edit roll",
         "BlindRoll": "Blinder Wurf.",
         "whisper": "Private message",
+        "paysTraditionAbility": "{name} pays {cost} AE for {ability}.",
         "fontsize": "Font size: {size}px",
         "usesItem": "{actor} uses {item}.",
         "requestGroupCheck": " requests a group check in ",

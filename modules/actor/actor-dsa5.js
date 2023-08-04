@@ -287,7 +287,7 @@ export default class Actordsa5 extends Actor {
      data.swarm.maxwounds = data.status.wounds.max
      data.status.wounds.max *= count
 
-     const effectiveCount = Math.ceil(data.status.wounds.value / data.swarm.maxwounds)
+     const effectiveCount = Math.min(Math.ceil(data.status.wounds.value / data.swarm.maxwounds), count)
      const gg = Number(data.swarm.gg) || 1
 
      data.swarm.attack += Math.min(10, Math.floor(effectiveCount / gg))
@@ -518,6 +518,13 @@ export default class Actordsa5 extends Actor {
 
   _setOnUseEffect(item) {
     if (getProperty(item, "flags.dsa5.onUseEffect")) item.OnUseEffect = true;
+  }
+
+  _setAEPayments(item) {
+    if(item.OnUseEffect) return
+
+    const cost = Number(getProperty(item, "system.AsPCost"))
+    if(cost) item.AEpayable = true
   }
 
   prepareBaseData() {
@@ -1042,6 +1049,7 @@ export default class Actordsa5 extends Actor {
             break;
           case "specialability":
             this._setOnUseEffect(i);
+            this._setAEPayments(i)
             specAbs[i.system.category.value].push(i);
             break;
           case "disease":
@@ -1424,9 +1432,10 @@ export default class Actordsa5 extends Actor {
     const swarmCount = getProperty(data, "system.swarm.count");
     if (swarmCount && !options.skipSwarmUpdate) {
        const hp = getProperty(data, "system.status.wounds.value") || this.system.status.wounds.value;
-       const delta = swarmCount - this.system.swarm.count;
+       const delta = swarmCount - (this.system.swarm.count || 1);
        const baseHp = this.system.swarm.maxwounds || this.system.status.wounds.max;
-       setProperty(data, "system.status.wounds.value", hp + delta * baseHp);
+       console.log(delta, baseHp)
+       setProperty(data, "system.status.wounds.value", Math.max(0, hp + delta * baseHp));
     }
   }
 

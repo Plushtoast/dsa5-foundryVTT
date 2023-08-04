@@ -931,7 +931,8 @@
         "selectTraditionartifact": "Traditionsartefakt auswählen",
         "deobfuscateItem": "Abschnitt entschleieren",
         "obfuscateItem": "Abschnitt verschleiern",
-        "searchItem": "Aus der Bibliothek hinzufügen"
+        "searchItem": "Aus der Bibliothek hinzufügen",
+        "payAECost": "AsP Kosten bezahlen"
     },
     "traditionArtifacts": {
         "Animistenwaffe": "Animistenwaffe",
@@ -998,6 +999,7 @@
         "requestGroupCheck": " fordert eine Gruppenprobe in ",
         "enchantmentUsed": "<b>{item}</b> hat eine Ladung <b>{spell}</b> verbraucht.",
         "regenerates": "regeneriert",
+        "paysTraditionAbility": "{name} bezahlt {cost} AsP für {ability}.",
         "getsHurt": "verliert",
         "burning": {
             "1": "{actor} <a class=\"chatButton chat-condition\" data-id=\"burning\" draggable=\"true\"><img src=\"icons/svg/fire.svg\">brennt</a> ein bisschen und erhält {damage} Schadenspunkt(e).",

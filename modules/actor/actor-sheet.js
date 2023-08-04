@@ -709,6 +709,7 @@ export default class ActorSheetDsa5 extends ActorSheet {
         html.find(".refund-points").mousedown(ev => this.advanceWrapper(ev, "_refundPointsAdvance", ev.currentTarget.dataset.attr))
 
         html.find('.onUseItem').click(ev => this._onMacroUseItem(ev))
+        html.find('.traditionPayCost').click(ev => this._payAeSpecialAbilityCost(ev))
 
         html.find('.item-create').click(ev => this._onItemCreate(ev));
 
@@ -768,6 +769,18 @@ export default class ActorSheetDsa5 extends ActorSheet {
         const item = this.actor.items.get(this._getItemId(ev))
         const onUse = new OnUseEffect(item)
         onUse.executeOnUseEffect()
+    }
+
+    async _payAeSpecialAbilityCost(ev) {
+        const item = this.actor.items.get(this._getItemId(ev))
+
+        const cost = Number(getProperty(item, "system.AsPCost"))
+        const paid = this.actor.applyMana(cost, "AsP")
+
+        if(!paid) return
+
+        const msg = game.i18n.format("CHATNOTIFICATION.paysTraditionAbility", { name: this.actor.name,ability: item.name, cost })
+        ChatMessage.create(DSA5_Utility.chatDataSetup(msg))
     }
 
     _filterGear(tar) {
