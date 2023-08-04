@@ -18,6 +18,12 @@ export class DSA5CombatTracker extends CombatTracker {
             ev.stopPropagation()
             DSA5CombatTracker.runActAttackDialog()
         })
+
+        html.find('#combat-tracker').on('scroll.combattracker', debounce(function(ev) {            
+            const log = $(ev.target);
+            const comb = html.find(".combatant.active")[0].offsetTop
+            html.find(".aggroButton").animate({top: comb - log.scrollTop()}, 50)
+        }, 50));
     }
     
     static runActAttackDialog() {

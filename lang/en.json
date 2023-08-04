@@ -665,6 +665,8 @@
         "getPaidText": "Pay silverthalers to {heros}.",
         "payText": "Take silverthalers from {heros}.",
         "xpMessage": "<b>{heros}</b> received <b>{number}</b> Adventure Points.",
+        "lightSightCompensationEnabled": "Light sight compensation",
+        "lightSightCompensationEnabledTooltip": "Reduces the modifiers for attack rolls by 2 levels (bright light) or 1 level (dim light) in restricted visibility conditions.",
         "doGroupCheck": "Modifier for <b>{skill}</b> Group Check.",
         "doRequestRoll": "Modifier for <b>{skill}</b> roll request.",
         "payTT": "Loot player",

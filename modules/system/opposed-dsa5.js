@@ -253,10 +253,42 @@ export default class OpposedDsa5 {
             if (!item) item = new Itemdsa5(attacker.testResult.source, { temporary: true })
             if (!item) return
 
-            const targets = [defenderToken]
-            const hitTargets = opposedResult.winner == "attacker" ? targets : []
+            item = item.toObject()
 
-            AutomatedAnimations.playAnimation(attackerToken, item, { targets, hitTargets, playOnMiss: true })
+            const targets = [defenderToken]
+            const isHit = opposedResult.winner == "attacker"
+            const hitTargets = isHit ? targets : []
+            const isCrit = attacker.testResult.successLevel > 1 && isHit
+            const isBotch = attacker.testResult.successLevel < 1 && !isHit
+            const isParryCrit = defender.testResult.successLevel > 1 && !isHit
+            const isParryBotch = defender.testResult.successLevel < 1 && isHit
+
+            const items = []
+            const str = []
+            
+            if (isCrit) {
+                str.push(game.i18n.localize('CriticalSuccess'))
+            } else if(isBotch) {
+                str.push(game.i18n.localize('CriticalFailure'))
+            } else if(isParryCrit) {
+                str.push(`${game.i18n.localize('CHAR.PARRY')} ${game.i18n.localize('CriticalSuccess')}`)
+            } else if(isParryBotch) {
+                str.push(`${game.i18n.localize('CHAR.PARRY')} ${game.i18n.localize('CriticalFailure')}`)
+            }
+
+            if(!isHit) {
+                str.push(game.i18n.localize('CHAR.PARRY'))
+            }
+
+            for(let st of str){
+                items.push({ name: `${item.name} (${st})`}, { name: st })
+            }
+            items.push(item)
+            console.log(items)
+            for(let it of items) {
+                const result = await AutomatedAnimations.playAnimation(attackerToken, it, { targets, hitTargets, playOnMiss: true })
+                if(result) break
+            }
         }
     }
 

@@ -68,6 +68,11 @@
         {
             "version": "5.0.0",
             "text": "<ul><li>Adventure \"Offenbarung des Himmels\"/\"Revelations of heaven\" available soon in english and german.</li><li>Character generator, several crafting helpers, browse mode, responsive upgrades.</li><li>VTToms Tutorial Video module: <a href=\"https://github.com/vt-tom/dsa5-vttoms-cave-of-eternal-knowledge\" target=\"_blank\">VTTom's Cave Of Eternal Knowledge</a></li><li>Don't forget to visit <a href=\"https://www.youtube.com/channel/UCgVzSn5NkMaO-PDxhCiAAjA\" target=\"_blank\">VTTom's Youtube channel</a> for recent tutorial videos (german, some with subtitle)</li><li>Some english explanatory videos here: <a href=\"https://www.youtube.com/@letsvtt4914\" target=\"_blank\">Let's VTT</a></li><li>And big thanks again to all our voluntary helpers! Especially Gunthgard, VTTom, Nellkir, Lambert, Adalariel, Mckee, Rapunzel and in memoriam <img src=\"systems/dsa5/icons/Garadan6.webp\" style=\"width:15px;height:15px;border:none;\"/>Niemand.</li></ul>"
+        },
+        {
+            "version": "5.1.0",
+            "text": "<ul><li>VTToms Tutorial Video module: <a href=\"https://github.com/vt-tom/dsa5-vttoms-cave-of-eternal-knowledge\" target=\"_blank\">VTTom's Cave Of Eternal Knowledge</a></li><li>Don't forget to visit <a href=\"https://www.youtube.com/channel/UCgVzSn5NkMaO-PDxhCiAAjA\" target=\"_blank\">VTTom's Youtube channel</a> for recent tutorial videos (german, some with subtitle)</li><li>Some english explanatory videos here: <a href=\"https://www.youtube.com/@letsvtt4914\" target=\"_blank\">Let's VTT</a></li><li>And big thanks again to all our voluntary helpers! Especially Gunthgard, VTTom, Nellkir, Lambert, Adalariel, Mckee, Rapunzel, Zoidable and in memoriam <img src=\"systems/dsa5/icons/Garadan6.webp\" style=\"width:15px;height:15px;border:none;\"/>Niemand.</li></ul>"
         }
+    
     ]
 }
