@@ -42,6 +42,10 @@ If you want to discuss TDE for foundry or need some assistance you can also join
 * Automated abilities
 * JB2A support
 
+![Screenshot 2023-08-04 171331](https://github.com/Plushtoast/dsa5-foundryVTT/assets/44941845/9d9bb0f0-4be3-430c-a6c3-dc965e35e5f9)
+![Screenshot 2023-08-04 171516](https://github.com/Plushtoast/dsa5-foundryVTT/assets/44941845/9aee3594-dbfd-4d41-96a7-65b9bddeae0e)
+
+
 <h2>German Modules</h2>
 <div>
     <h2>Regelbände</h2>
