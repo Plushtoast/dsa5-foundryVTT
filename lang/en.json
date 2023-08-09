@@ -647,7 +647,8 @@
         "dragConjuration": "No summoning target active (drag and drop, at least observer permissions)",
         "conjurs": "summons",
         "requestSend": "The request has been send to the game master.",
-        "groupSummoning": "Pack Summoning"
+        "groupSummoning": "Pack Summoning",
+        "powerfulCreature": "Powerful Creature"
     },
     "PLAYER": {
         "title": "Player Menu",
@@ -1111,7 +1112,10 @@
     "swarm": {
         "name": "Swarm",
         "count": "Count",
-        "size": "Basic size"
+        "size": "Basic size",
+        "combine": "Combine with other swarms",
+        "split": "Split swarm",
+        "swarmSplitMessage": "How many creatures should split from the swarm?"        
     },
     "NarrowSpaceModifiers": {
         "weapon": {

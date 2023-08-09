@@ -91,8 +91,7 @@ export default class DPS {
                 const modifyableLevel = Number(getProperty(actor, "system.sightModifier.maxLevel")) || 3
 
                 let token = Array.from(game.user.targets)
-                
-                if(token) {
+                if(token.length) {
                     token = token[0]
                     const light = DPS.inLight(token)
                     let mod = 0

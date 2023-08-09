@@ -385,8 +385,9 @@ export default class DSA5CombatDialog extends DialogShared {
 
         //TODO move this to situational modifiers onlye
         const data = new FormDataExtended(html.find('form')[0]).object
-        
-        testData.opposingWeaponSize = data.weaponsize
+        const targetIsSwarm = DSA5CombatDialog.targetIsSwarm(testData)
+        const attackerIsSwarm = actor.isSwarm()
+        testData.opposingWeaponSize = attackerIsSwarm ? 0 : data.weaponsize
         testData.attackOfOpportunity = this.attackOfOpportunity(testData.situationalModifiers, data);
         testData.situationalModifiers.push(
             Itemdsa5.parseValueType(game.i18n.localize("sight"), data.vision || 0), {
@@ -409,7 +410,7 @@ export default class DSA5CombatDialog extends DialogShared {
             },
             {
                 name: game.i18n.localize("sizeCategory"),
-                value: DSA5.meleeSizeModifier[data.size] || 0,
+                value: targetIsSwarm ? 0 : (DSA5.meleeSizeModifier[data.size] || 0),
             },
             ...Itemdsa5.getSpecAbModifiers(html, mode),
             ...this.assassinationModifiers(testData, data),
@@ -495,6 +496,18 @@ export default class DSA5CombatDialog extends DialogShared {
         cardOptions.rollMode = html.find('[name="rollMode"]').val();
         testData.situationalModifiers = Actordsa5._parseModifiers(html);
         mergeObject(testData.extra.options, options);
+    }
+
+    static targetIsSwarm() {
+        let res = false
+        game.user.targets.forEach((target) => {
+            if (target.actor?.isSwarm()) {
+                res =  true
+                return
+            }
+        });           
+
+        return res
     }
 
     static attackOfOpportunity(situationalModifiers, formData) {

@@ -1152,7 +1152,7 @@ export default class Actordsa5 extends Actor {
       money,
       encumbrance: this.system.condition?.encumbered || 0,
       carrycapacity: this.system.carrycapacity,
-      isSwarm: this.system.swarm.count > 1,
+      isSwarm: this.isSwarm(),
       wornRangedWeapons: rangeweapons,
       wornMeleeWeapons: meleeweapons,
       horseActor: horse,
@@ -1194,6 +1194,10 @@ export default class Actordsa5 extends Actor {
         trade: skills.trade,
       },
     };
+  }
+
+  isSwarm() {
+    return this.system.swarm.count > 1;
   }
 
   getArmorEncumbrance(actorData, wornArmors) {

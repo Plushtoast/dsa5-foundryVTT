@@ -45,7 +45,7 @@
                     <label class="">{{localize "Name"}}:</label>
                 </div>
                 <div class="col sixty">
-                    <a class="openChar">{{conjuration.name}}</a>
+                    <a class="showEntity" data-uuid="{{conjuration.uuid}}">{{conjuration.name}}</a>
                 </div>
             </div>
             <div class="row-section">
@@ -53,7 +53,7 @@
                     <label class="">{{localize "creatureClass"}}:</label>
                 </div>
                 <div class="col sixty">
-                    {{conjuration.creatureClass.value}}
+                    {{conjuration.system.creatureClass.value}}
                 </div>
             </div>
             <div class="row-section">
@@ -61,7 +61,7 @@
                     <label class="">{{localize "conjuringDifficulty"}}:</label>
                 </div>
                 <div class="col sixty">
-                    {{conjuration.conjuringDifficulty.value}}
+                    {{conjuration.system.conjuringDifficulty.value}}
                 </div>
             </div>
             {{#if conjurationData.packageModifier}}
@@ -95,10 +95,19 @@
     </div>
     <div class="col two">
         <div class="groupbox" style="padding:4px;">
-            <b class="lineheight">{{localize 'extensions'}}</b><br /> {{#each conjurationModifiers as |item i|}}
-            <div class="row-section wrap tableOdd selectableRow {{#if (hasElem ../conjurationData.selectedIds item.id)}}selected{{/if}}" data-id="{{item.id}}">
+            <div class="row-section">
+                <div class="col ninety">
+                    <b class="lineheight">{{localize 'extensions'}}</b> 
+                </div>
+                <div class="col ten">
+                    {{#if hasMighty}}<i data-tooltip="CONJURATION.powerfulCreature" class="fas fa-hand-fist"></i>{{/if}}
+                </div>
+            </div>
+            
+            {{#each conjurationModifiers as |item i|}}
+            <div class="row-section wrap tableOdd selectableRow {{#if item.count}}selected{{/if}}" data-id="{{item.id}}" data-selected="{{item.count}}" data-max="{{item.max}}">
                 <div class="col lineheight">
-                    {{localize item.name}}
+                    {{localize item.name}} {{roman item.count item.max}}
                 </div>
                 <div class="col">
                     <span class="small">{{localize item.descr}}</span>
@@ -116,12 +125,12 @@
     <b class="lineheight">{{localize 'entityAbility'}}</b><br /> {{#if equipmentIndexLoaded}}
     <div class="row-section wrap">
         {{#each entityAbilities as |item i|}}
-        <div data-entityid="true" data-qs="{{item.AsPCost.value}}" class="row-section col two wrap tableOdd selectableRow {{#if (hasElem ../conjurationData.selectedEntityIds item.uuid)}}selected{{/if}}" data-id="{{item.uuid}}">
+        <div data-entityid="true" data-qs="{{item.system.AsPCost.value}}" class="row-section col two wrap tableOdd selectableRow {{#if item.count}}selected{{/if}}" data-selected="{{item.count}}" data-max="{{item.max}}" data-id="{{item.uuid}}">
             <div class="col eighty lineheight">
-                {{localize item.name}}
+                {{localize item.name}} {{roman item.count item.max}}
             </div>
             <div class="col ten">
-                <span class="small" data-tooltip="CHARAbbrev.QL">{{item.AsPCost.value}}</span>
+                <span class="small" data-tooltip="CHARAbbrev.QL">{{item.system.AsPCost.value}}</span>
             </div>
             <div class="col ten">
                 <a class="showEntity small" data-uuid="{{item.uuid}}"><i class="fas fa-info"></i></a>
@@ -136,12 +145,12 @@
     <b class="lineheight">{{localize 'summoningPackage'}}</b><br /> {{#if equipmentIndexLoaded}}
     <div class="row-section wrap">
         {{#each entityPackages as |item i|}}
-        <div data-packageid="true" data-mod="{{item.at.value}}" class="row-section col two wrap tableOdd selectableRow {{#if (hasElem ../conjurationData.selectedPackageIds item.uuid)}}selected{{/if}}" data-id="{{item.uuid}}">
+        <div data-packageid="true" data-mod="{{item.system.at.value}}" class="row-section col two wrap tableOdd selectableRow {{#if item.count}}selected{{/if}}" data-selected="{{item.count}}" data-max="1" data-id="{{item.uuid}}">
             <div class="col eighty lineheight">
                 {{localize item.name}}
             </div>
             <div class="col ten">
-                <span class="small" data-tooltip="CHARAbbrev.QL">{{item.at.value}}</span>
+                <span class="small" data-tooltip="CHARAbbrev.QL">{{item.system.at.value}}</span>
             </div>
             <div class="col ten">
                 <a class="showEntity small" data-uuid="{{item.uuid}}"><i class="fas fa-info"></i></a>

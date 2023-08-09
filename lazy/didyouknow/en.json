@@ -112,6 +112,11 @@
         "You can activate the browse mode in the library to read through and get to know all the elements of TDE a bit more comfortably.",
         "The game master can change the view of the hero sheet in the header bar to the limited player view.",
 
-        "The module Yendor's UI enables the usage of the character sheet on your mobile phone."
+        "The module Yendor's UI enables the usage of the character sheet on your mobile phone.",
+
+        "With the master hotbar you can find a menu for managing provisions and adverse circumstances.",
+        "The sight automation can also take into account whether a token is in the light or not.",
+        "NPCs with multiple equipped weapons will randomly only equip one of them when dragged onto the map."
+
     ]
 }

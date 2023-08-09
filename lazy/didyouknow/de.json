@@ -117,8 +117,11 @@
 
         "Das Modul Yendors UI erlaubt die Verwendung des Charakterbogens auf deinem Handy.",
 
-        "VT-Tom hat ein Video Module mit tonnenweise Exklärvideos für Foundry VTT & DSA gebaut."
+        "VT-Tom hat ein Video Module mit tonnenweise Exklärvideos für Foundry VTT & DSA gebaut.",
 
+        "Über die Meister Hotbar, kannst du ein Menü zum Verwalten von Proviant und widrigen Umständen finden.",
+        "Die Sichtautomatisierung kann auch mit einberechnen ob ein Token im Licht oder nicht steht.",
+        "NSCs mit mehreren ausgerüsteten Waffen erhalten beim Ziehen auf die Map zufällig nur eine davon ausgerüstet."
 
     ]
 }

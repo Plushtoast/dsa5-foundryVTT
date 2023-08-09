@@ -26,7 +26,10 @@
     "swarm": {
         "name": "Schwarm",
         "count": "Anzahl",
-        "size": "Grundgröße"
+        "size": "Grundgröße",
+        "combine": "Schwarm kombinieren",
+        "split": "Schwarum aufteilen",
+        "swarmSplitMessage": "Wieviele Kreaturen sollen sich vom Schwarm trennen?"
     },
     "CHAR": {
         "MU": "Mut",
@@ -612,7 +615,8 @@
         "dragConjuration": "Keine Beschwörung aktiv (drag and drop, mindestens Observerrechte)",
         "conjurs": "beschwört",
         "requestSend": "Die Anfrage wurde an den Spielleiter geschickt.",
-        "groupSummoning": "Rudelbeschwörung"
+        "groupSummoning": "Rudelbeschwörung",
+        "powerfulCreature": "Mächtiges Wesen"
     },
     "PLAYER": {
         "title": "Spieler Menü",

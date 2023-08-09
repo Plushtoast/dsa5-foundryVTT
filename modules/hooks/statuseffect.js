@@ -7,7 +7,20 @@ export default function() {
         this.effects.overlay = null;
 
         const tokenEffects = this.document.effects;
-        const actorEffects = this.actor ? await this.actor.actorEffects() : []
+        let actorEffects = []
+        
+        if(this.actor) {
+            actorEffects = await this.actor.actorEffects()
+
+            if(this.actor.isSwarm()) {
+                actorEffects.push(new ActiveEffect({
+                    icon: "systems/dsa5/icons/thirdparty/bee.svg",
+                    id: "swarm",
+                    name: "swarm.name",
+                    flags: { dsa5: { value: this.actor.system.swarm?.count || 1 } }
+                }))
+            }
+        }
 
         let overlay = {
             src: this.document.overlayEffect,

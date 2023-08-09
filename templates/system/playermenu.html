@@ -52,14 +52,15 @@
       </div>
       {{#if actor.system}}
       <div class="row-section skills table-title lineheight" style="margin-top:10px;">
-        <div class="col sixty">{{localize 'spell'}}</div>
+        <div class="col two">{{localize 'spell'}}</div>
         <div class="col third center">{{localize "probe"}}</div>
+        <div class="col ten center" data-tooltip="CONJURATION.powerfulCreature"><i class="fas fa-hand-fist"></i></div>
         <div class="col ten center">{{localize "CHARAbbrev.FW"}}</div>
       </div>
       {{#each conjurationskills as |item i|}}
 
       <div class="row-section wrap skills item lineheight tableOdd" data-item-id="{{item._id}}">
-        <div class="col sixty">
+        <div class="col two">
           <a class="item-edit talentName">{{item.name}}</a>
         </div>
         <div class="col third center">
@@ -71,7 +72,9 @@
             <span class="d20 diet-{{item.system.characteristic3.value}}">{{localize (concatUp "CHARAbbrev."
               item.system.characteristic3.value)}}</span>
           </a>
-
+        </div>
+        <div class="col ten center">
+          {{#if item.hasMighty}}<i class="fas fa-check"></i>{{else}}<i class="fas fa-close"></i>{{/if}}
         </div>
         <div class="col ten center">
           {{item.system.talentValue.value}}

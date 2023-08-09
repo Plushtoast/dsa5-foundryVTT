@@ -203,6 +203,10 @@ export default class PlayerMenu extends Application {
 
         if (!this.conjuration) return ui.notifications.warn(game.i18n.localize('DSAError.noConjurationActive'))
 
+        const modifiers = []
+        for(let sel of this.conjurationData.selectedIds) {
+            modifiers.push(this.conjurationData.modifiers[this.conjurationData.conjurationType].find(x => x.id == sel))
+        }
         const payload = {
             source: this.conjuration.toObject(),
             creationData: {
@@ -210,7 +214,7 @@ export default class PlayerMenu extends Application {
                 typeName: this.conjurationData.conjurationTypes[this.conjurationData.conjurationType],
                 qs: this.conjurationData.qs,
                 consumedQS: this.conjurationData.consumedQS,
-                modifiers: this.conjurationData.modifiers[this.conjurationData.conjurationType].filter(x => this.conjurationData.selectedIds.includes(x.id)),
+                modifiers,
                 entityIds: this.conjurationData.selectedEntityIds,
                 packageIds: this.conjurationData.selectedPackageIds
             },
@@ -233,20 +237,32 @@ export default class PlayerMenu extends Application {
     }
 
     selectImprovement(ev) {
-        $(ev.currentTarget).toggleClass("selected")
+        const max = Number(ev.currentTarget.dataset.max) || 1
+        const selected = Number(ev.currentTarget.dataset.selected) || 0
+
+        if(selected >= max) {
+            $(ev.currentTarget).removeClass("selected")         
+        } else {
+            $(ev.currentTarget).addClass("selected")
+            ev.currentTarget.dataset.selected = selected + 1
+        }
         const selectedIds = []
         const selectedEntityIds = []
         const selectedPackageIds = []
         let entityCost = 0
         let packageModifier = 0
         $(this._element).find('.selectableRow.selected').each((index, element) => {
-            if (element.dataset.entityid) {
-                selectedEntityIds.push(element.dataset.id)
-                entityCost += (Number(element.dataset.qs) || 0) * -1
-            } else if (element.dataset.packageid) {
-                selectedPackageIds.push(element.dataset.id)
-                packageModifier += (Number(element.dataset.mod) || 0)
-            } else selectedIds.push(Number(element.dataset.id))
+            for(let i=0;i<Number(element.dataset.selected);i++) {
+                if (element.dataset.entityid) {
+                    selectedEntityIds.push(element.dataset.id)
+                    entityCost += (Number(element.dataset.qs) || 0) * -1
+                } else if (element.dataset.packageid) {
+                    selectedPackageIds.push(element.dataset.id)
+                    packageModifier += (Number(element.dataset.mod) || 0)
+                } else {
+                    selectedIds.push(Number(element.dataset.id))
+                }
+            }
         })
         this.conjurationData.selectedIds = selectedIds
         this.conjurationData.selectedEntityIds = selectedEntityIds
@@ -334,8 +350,11 @@ export default class PlayerMenu extends Application {
                     if (x.system.traitType.value == "entity" && !entitySet.has(x.name)) {
                         entitySet.add(x.name)
                         data.entityAbilities.push(x)
+                        x.count = this.conjurationData.selectedEntityIds.filter(y => y == x.uuid).length
+                        x.max = x.system.at.value || 1
                     } else if (x.system.traitType.value == "summoning" && !packageSet.has(x.name)) {
                         packageSet.add(x.name)
+                        x.count = this.conjurationData.selectedPackageIds.filter(y => y == x.uuid).length
                         data.entityPackages.push(x)
                     }
                 }
@@ -353,18 +372,33 @@ export default class PlayerMenu extends Application {
             const services = this.conjurationData.qs - this.conjurationData.consumedQS + 1
             const equipmentIndexLoaded = game.dsa5.itemLibrary.equipmentBuild
             const { entityAbilities, entityPackages } = await this.prepareEntityAbilities()
+            const conjurationskills = this.actor.items.filter(x => this.conjurationData.skills[this.conjurationData.conjurationType].includes(x.name) && ["liturgy", "ceremony", "spell", "ritual"].includes(x.type)).map(x => x.toObject())
+            
+            let hasMighty = false
+            for(let skill of conjurationskills){
+                skill.hasMighty = this.actor.items.find(x => x.name == `${skill.name} - ${game.i18n.localize("CONJURATION.powerfulCreature")}`) 
+                hasMighty ||= skill.hasMighty
+            }
+            const conjurationModifiers = this.conjurationData.modifiers[this.conjurationData.conjurationType]
+            const max = hasMighty ? 2 : 1
+            for(let mod of conjurationModifiers) {
+                mod.max = max
+                mod.count = this.conjurationData.selectedIds.filter(x => x == mod.id).length
+            }
             const conjurationSheet = await renderTemplate("systems/dsa5/templates/system/conjuration/summoning.html", {
                 actor: this.actor,
                 conjuration: this.conjuration || { name: game.i18n.localize('CONJURATION.dragConjuration'), img: "icons/svg/mystery-man-black.svg" },
                 conjurationData: this.conjurationData,
                 services,
-                conjurationModifiers: this.conjurationData.modifiers[this.conjurationData.conjurationType],
+                conjurationModifiers,
                 equipmentIndexLoaded,
                 entityAbilities,
                 entityPackages,
-                moreModifiers: this.conjurationData.moreModifiers[this.conjurationData.conjurationType]
+                moreModifiers: this.conjurationData.moreModifiers[this.conjurationData.conjurationType],
+                hasMighty
             })
-            const conjurationskills = this.actor.items.filter(x => this.conjurationData.skills[this.conjurationData.conjurationType].includes(x.name) && ["liturgy", "ceremony", "spell", "ritual"].includes(x.type)).map(x => x.toObject())
+            
+
             mergeObject(data, {
                 conjurationSheet,
                 conjurationskills
