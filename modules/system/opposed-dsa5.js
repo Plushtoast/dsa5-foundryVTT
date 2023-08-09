@@ -284,7 +284,6 @@ export default class OpposedDsa5 {
                 items.push({ name: `${item.name} (${st})`}, { name: st })
             }
             items.push(item)
-            console.log(items)
             for(let it of items) {
                 const result = await AutomatedAnimations.playAnimation(attackerToken, it, { targets, hitTargets, playOnMiss: true })
                 if(result) break

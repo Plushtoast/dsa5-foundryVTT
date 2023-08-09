@@ -17,7 +17,7 @@ export default function() {
                     icon: "systems/dsa5/icons/thirdparty/bee.svg",
                     id: "swarm",
                     name: "swarm.name",
-                    flags: { dsa5: { value: this.actor.system.swarm?.count || 1 } }
+                    flags: { dsa5: { value: this.actor.system.swarm?.effectiveCount || 1 } }
                 }))
             }
         }

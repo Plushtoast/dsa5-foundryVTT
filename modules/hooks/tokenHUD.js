@@ -80,7 +80,6 @@ async function splitSwarm(actor, token) {
                     const newHp = Math.floor(actor.system.status.wounds.value / actor.system.swarm.count * split)
                     const oldHp = actor.system.status.wounds.value - newHp
 
-                    console.log(newHp, oldHp, split, actor.system.swarm.count, actor.system.status.wounds.value)
                     await actor.update({ "system.swarm.count": actor.system.swarm.count - split, "system.status.wounds.value": oldHp }, {skipSwarmUpdate: true})
                     await canvas.scene.createEmbeddedDocuments("Token", [newtoken])
                     await newtoken.actor.update({ "system.swarm.count": split, "system.status.wounds.value": newHp}, {skipSwarmUpdate: true})
