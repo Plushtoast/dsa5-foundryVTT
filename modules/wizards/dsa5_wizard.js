@@ -111,14 +111,14 @@ export default class WizardDSA5 extends Application {
         }))
     }
 
-    mergeLevels(itemsToAdd, item) {
+    mergeLevels(itemsToAdd, item, keyMax) {
         let merged = false
         let existing = itemsToAdd.find(x => x.name == item.name && x.type == item.type)
         if (existing) {
             merged = true
             let level = Number(getProperty(item, "system.step.value")) 
             if (level) {
-                existing.system.step.value += level
+                existing.system.step.value = Math.min(existing.system.step.value += level, existing.system[keyMax].value)
             }
         } else {
             itemsToAdd.push(item)
@@ -143,7 +143,7 @@ export default class WizardDSA5 extends Application {
                     item.system.step.value = Number(k.dataset.step)
                     item = ItemRulesDSA5.reverseAdoptionCalculation(this.actor, parsed, item)
 
-                    if (!this.mergeLevels(itemsToAdd, item)) AdvantageRulesDSA5.vantageAdded(this.actor, item)
+                    if (!this.mergeLevels(itemsToAdd, item, "max")) AdvantageRulesDSA5.vantageAdded(this.actor, item)
                     break
                 case "specialability":
                     item.system.step.value = Number(k.dataset.step)
@@ -152,7 +152,7 @@ export default class WizardDSA5 extends Application {
 
                     item = ItemRulesDSA5.reverseAdoptionCalculation(this.actor, parsed, item)
 
-                    if (!this.mergeLevels(itemsToAdd, item)) SpecialabilityRulesDSA5.abilityAdded(this.actor, item)
+                    if (!this.mergeLevels(itemsToAdd, item, "maxRank")) SpecialabilityRulesDSA5.abilityAdded(this.actor, item)
                     break
                 case "magictrick":
                     this.mergeLevels(itemsToAdd, item)
