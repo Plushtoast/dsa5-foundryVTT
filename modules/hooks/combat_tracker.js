@@ -216,18 +216,18 @@ class RepeatingEffectsHelper {
     static async startOfRoundEffects(turn, combat){
         const regenerationAttributes = ["wounds", "astralenergy", "karmaenergy"]
         for(const attr of regenerationAttributes){
-            for (const ef of turn.actor.system.repeatingEffects.startOfRound[attr]){
-                if(getProperty(turn.actor.system.repeatingEffects, `disabled.${attr}`)) continue
-
-                const damageRoll = await new Roll(ef.value).evaluate({ async: true })
-                const damage = await damageRoll.render()
-                const type = game.i18n.localize(damageRoll.total > 0 ? "CHATNOTIFICATION.regenerates" : "CHATNOTIFICATION.getsHurt")
-                const applyDamage = `${turn.actor.name} ${type} ${game.i18n.localize(attr)} ${damage}`
-                
-                await this.sendEventMessage(applyDamage, combat, turn)
-                if (attr == "wounds") await turn.actor.applyDamage(damageRoll.total * -1)
-                else await turn.actor.applyMana(damageRoll.total * -1, attr == "astralenergy" ? "AsP" : "KaP")
-            }
+            if(getProperty(turn.actor.system.repeatingEffects, `disabled.${attr}`)) continue
+            
+            const effectvalues = turn.actor.system.repeatingEffects.startOfRound[attr].map(x => x.value).join("+")
+            const damageRoll = await new Roll(effectvalues).evaluate({ async: true })
+            const damage = await damageRoll.render()
+            const type = game.i18n.localize(damageRoll.total > 0 ? "CHATNOTIFICATION.regenerates" : "CHATNOTIFICATION.getsHurt")
+            const applyDamage = `${turn.actor.name} ${type} ${game.i18n.localize(attr)} ${damage}`
+            
+            await this.sendEventMessage(applyDamage, combat, turn)
+            if (attr == "wounds") await turn.actor.applyDamage(damageRoll.total * -1)
+            else await turn.actor.applyMana(damageRoll.total * -1, attr == "astralenergy" ? "AsP" : "KaP")
+            
         }
     }
 

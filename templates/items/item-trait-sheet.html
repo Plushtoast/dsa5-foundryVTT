@@ -124,6 +124,14 @@
                 <label class="label-text">{{localize "maxlevel"}}</label>
                 <input class="input-text" type="number" name="system.at.value" value="{{system.at.value}}" data-dtype="Number" />
             </div>
+            {{#if isOwned}}
+            <div class="form-group">
+                <label class="label-text">
+                    {{localize "stepValue"}}
+                </label>
+                <input class="input-text" type="number" name="system.step.value" value="{{system.step.value}}" data-dtype="Number" placeholder="1" />
+            </div>
+            {{/if}}
             {{else if (eq system.traitType.value "summoning")}}
             <div class="form-group">
                 <label class="label-text">{{localize "distribution"}}</label>

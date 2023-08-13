@@ -437,6 +437,7 @@ class ConjurationRequest extends DSA5Dialog {
 
     async getData(options) {
         const data = await super.getData(options)
+        const uniqueIds = this.uniqueCountIds(this.creationData.entityIds)
         mergeObject(data, {
             conjuration: this.conjuration,
             summoner: this.summoner,
@@ -444,7 +445,13 @@ class ConjurationRequest extends DSA5Dialog {
             services: this.creationData.qs - this.creationData.consumedQS + 1,
             creationData: this.creationData,
             conjurationModifiers: this.creationData.modifiers,
-            entityModifiers: await Promise.all(this.creationData.entityIds.map(x => fromUuid(x))),
+            entityModifiers: await Promise.all(Object.keys(uniqueIds).map(async x => {
+                const res = (await fromUuid(x)).toObject(false)
+                res.uuid = x
+                res.count = uniqueIds[x]
+                res.cost = Number(res.system.AsPCost.value) * uniqueIds[x]
+                return res
+            })),
             packageModifiers: await Promise.all(this.creationData.packageIds.map(x => fromUuid(x))),
             actor: this.actor
         })
@@ -460,6 +467,12 @@ class ConjurationRequest extends DSA5Dialog {
         });
         options.template = 'systems/dsa5/templates/system/conjuration/request.html'
         return options;
+    }
+
+    uniqueCountIds(uids) {
+        return uids.reduce((acc, curr) => {
+            return acc[curr] ? ++acc[curr] : acc[curr] = 1, acc
+        }, {})
     }
 
     async createActor() {
@@ -493,7 +506,15 @@ class ConjurationRequest extends DSA5Dialog {
                 modifier.fun(this.conjuration, this.creationData)
             }
         }
-        const entityAbilities = (await Promise.all(this.creationData.entityIds.map(x => fromUuid(x)))).map(x => x.toObject(false))
+
+        const uniqueIds = this.uniqueCountIds(this.creationData.entityIds)
+        const entityAbilities = (await Promise.all(Object.keys(uniqueIds).map(x => fromUuid(x)))).map(x => {
+            const res = x.toObject(false)
+
+            if(uniqueIds[x.uuid] > 1) res.system.step = { value: uniqueIds[x.uuid] }
+            return res
+        })
+        
         const entityPackages = (await Promise.all(this.creationData.packageIds.map(x => fromUuid(x)))).map(x => x.toObject(false))
             //this.conjuration.items.push(...entityAbilities, ...entityPackages)
         this.conjuration.effects.push({

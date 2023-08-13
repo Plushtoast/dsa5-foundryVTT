@@ -41,7 +41,8 @@ import { clickableAbility, tabSlider, tinyNotification } from "./system/view_hel
 import CareerWizard from "./wizards/career_wizard.js";
 import SpeciesWizard from "./wizards/species_wizard.js";
 import CultureWizard from "./wizards/culture_wizard.js";
-import { DialogReactDSA5, ReactToSkillDialog, ActAttackDialog, ReactToAttackDialog } from "./dialog/dialog-react.js";
+import { ReactToSkillDialog, ActAttackDialog, ReactToAttackDialog } from "./dialog/dialog-react.js";
+import DialogReactDSA5 from "./dialog/dialog-react.js";
 
 Hooks.once("init", () => {
     console.log("Initializing DSA5 system")

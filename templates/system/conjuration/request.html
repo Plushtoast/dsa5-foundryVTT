@@ -85,10 +85,10 @@
         {{#each entityModifiers as |item i|}}
         <div class="row-section col wrap tableOdd" data-id="{{item.uuid}}">
           <div class="col eighty lineheight">
-            {{localize item.name}}
+            {{item.name}}{{roman item.count item.system.at.value}}
           </div>
           <div class="col ten">
-            <span class="small" data-tooltip="CHARAbbrev.QL">{{item.AsPCost.value}}</span>
+            <span class="small" data-tooltip="CHARAbbrev.QL">{{item.cost}}</span>
           </div>
           <div class="col ten">
             <a class="showEntity small" data-uuid="{{item.uuid}}"><i class="fas fa-info"></i></a>
@@ -101,10 +101,10 @@
         {{#each packageModifiers as |item i|}}
         <div class="row-section col wrap tableOdd" data-id="{{item.uuid}}">
           <div class="col eighty lineheight">
-            {{localize item.name}}
+            {{item.name}}
           </div>
           <div class="col ten">
-            <span class="small">{{item.at.value}}</span>
+            <span class="small">{{item.system.at.value}}</span>
           </div>
           <div class="col ten">
             <a class="showEntity small" data-uuid="{{item.uuid}}"><i class="fas fa-info"></i></a>

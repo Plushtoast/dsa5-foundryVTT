@@ -450,6 +450,7 @@ export default class Actordsa5 extends Actor {
               break;
             case "trait":
               apply = !["meleeAttack", "rangeAttack"].includes(item.system.traitType.value) || e.getFlag("dsa5", "applyToOwner")
+              multiply = Number(getProperty(item.system, "step.value")) || 1
               break
             case "ammunition":
             case "plant":
