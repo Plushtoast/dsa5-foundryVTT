@@ -423,7 +423,12 @@ export default class OpposedDsa5 {
                 damage.damage += 2
                 damage.sum = damage.damage - damage.armor
                 damage.tooltip = game.i18n.localize("LocalizedIDs.counterAttack") + " 2"
-            }           
+            }
+            if(damage.messages.length) {
+                if(!damage.tooltip) damage.tooltip = ""
+
+                damage.tooltip += ` ${damage.messages.join("<br>")}`
+            }
 
             opposeResult.winner = "attacker"
 
@@ -447,8 +452,17 @@ export default class OpposedDsa5 {
 
     static _calculateOpposedDamage(attackerTest, defenderTest, options = {}) {
         const actor = DSA5_Utility.getSpeaker(defenderTest.speaker)
+
+        const messages = []
+        let baseDamage = attackerTest.damage
+        
+        const immuneToCrit = game.i18n.localize("LocalizedIDs.immuneToCrit")
+        if(attackerTest.doubleDamage && actor.items.find(x => x.name == immuneToCrit && x.type == "trait")) {
+            baseDamage = Math.floor(baseDamage / attackerTest.doubleDamage)
+            messages.push(immuneToCrit)
+        }
         options.origin = attackerTest.source
-        options.damage = attackerTest.damage
+        options.damage = baseDamage
 
         let damage = DSAActiveEffectConfig.applyRollTransformation(actor, options, 5).options.damage
         let { wornArmor, armor } = Actordsa5.armorValue(actor, options)
@@ -480,6 +494,7 @@ export default class OpposedDsa5 {
             spellArmor,
             liturgyArmor,
             armorMultiplier,
+            messages,
             sum: damage - armor
         }
     }

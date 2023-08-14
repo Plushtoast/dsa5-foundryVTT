@@ -219,6 +219,8 @@ class RepeatingEffectsHelper {
             if(getProperty(turn.actor.system.repeatingEffects, `disabled.${attr}`)) continue
             
             const effectvalues = turn.actor.system.repeatingEffects.startOfRound[attr].map(x => x.value).join("+")
+            if(!effectvalues) continue
+
             const damageRoll = await new Roll(effectvalues).evaluate({ async: true })
             const damage = await damageRoll.render()
             const type = game.i18n.localize(damageRoll.total > 0 ? "CHATNOTIFICATION.regenerates" : "CHATNOTIFICATION.getsHurt")

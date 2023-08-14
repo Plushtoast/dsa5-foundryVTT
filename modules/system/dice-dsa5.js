@@ -711,8 +711,8 @@ export default class DiceDSA5 {
         }
 
         if (doubleDamage) {
-            damage = damage * 2
-            damageBonusDescription.push(game.i18n.localize("doubleDamage"))
+            damage = damage * doubleDamage
+            damageBonusDescription.push(game.i18n.format("doubleDamage", {x: doubleDamage}))
         }
         for (const el of dmgMultipliers) {
             damage = damage * el.val
@@ -786,7 +786,7 @@ export default class DiceDSA5 {
                         result.description += DSATables.rollCritBotchButton("criticalAttack", false, testData)
                     }else{
                         result.description += DSATables.defaultAttackCrit(true)
-                        result.doubleDamage = true
+                        result.doubleDamage = 2
                     }
                     result.halfDefense = true
                 } else {

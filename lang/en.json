@@ -337,7 +337,7 @@
     "decreaseCastingTime": "Decrease Spell/Chant duration",
     "damageThreshold": "Damage threshold",
     "damageOverThreshold": "Including bonus damage of the damage threshold",
-    "doubleDamage": "double damage",
+    "doubleDamage": "{x}-times damage",
     "duration": "Effect duration",
     "doubleAttack": "Two-Weapon Combat",
     "domains": "Domains",
@@ -1221,6 +1221,7 @@
     },
     "LocalizedIDs": {
         "reversalis": "Reversalis",
+        "immuneToCrit": "Immune to critical hits",        
         "aspectKnowledge": "Aspect Knowledge",
         "sharpshooter": "Sharpshooter",
         "deaf": "Deaf",

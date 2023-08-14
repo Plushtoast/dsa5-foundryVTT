@@ -123,7 +123,7 @@ export default class DSATables {
 
     static defaultAttackCrit(confirmed) {
         let res = ", " + game.i18n.localize("halfDefense")
-        if (confirmed) res += ", " + game.i18n.localize("doubleDamage")
+        if (confirmed) res += ", " + game.i18n.format("doubleDamage", { x: 2 })
         return res
     }
 

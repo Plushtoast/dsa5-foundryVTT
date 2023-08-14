@@ -286,7 +286,7 @@
     "decreaseCastingTime": "Zauber-/Liturgiedauer senken",
     "damageThreshold": "Schadensschwelle",
     "damageOverThreshold": "Inklusive Zusatzschaden über Schadensschwelle",
-    "doubleDamage": "doppelter Schaden",
+    "doubleDamage": "{x}-facher Schaden",
     "duration": "Wirkungsdauer",
     "doubleAttack": "Beidhändiger Kampf",
     "DSA5Error": "DSA5 - Fehler melden",
@@ -1272,6 +1272,7 @@
     },
     "LocalizedIDs": {
         "reversalis": "Reversalis",
+        "immuneToCrit": "Immunität gegen kritische Treffer",
         "aspectKnowledge": "Aspektkenntnis",
         "sharpshooter": "Scharfschütze",
         "deaf": "Taub",
