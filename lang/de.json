@@ -71,6 +71,8 @@
         "KTW": "KTW",
         "LeP": "LeP",
         "AsP": "AsP",
+        "pAsP": "pAsP",
+        "pKaP": "pKaP",
         "KaP": "KaP",
         "ATFK": "AT/FK",
         "GEKK": "GE,KK",
@@ -190,6 +192,8 @@
     "application": "Anwendungsgebiet",
     "aim": "Zielen",
     "advancementCost": "Steigern für {cost} Abenteuerpunkte",
+    "rebuyCost": "Zurückkaufen für 2 AP",
+    "rebuyRevertCost": "Rückkauf rückgängig machen für 2 AP",
     "animal": "Tier",
     "attributeChange": "Eigenschaftsänderung",
     "attackOfOpportunity": "Der Kämpfer kann einen Passierschlag ausführen.",
@@ -936,7 +940,9 @@
         "deobfuscateItem": "Abschnitt entschleieren",
         "obfuscateItem": "Abschnitt verschleiern",
         "searchItem": "Aus der Bibliothek hinzufügen",
-        "payAECost": "AsP Kosten bezahlen"
+        "payAECost": "AsP Kosten bezahlen",
+        "paidPAsP": "Ausgegebene permanente AsP/KaP",
+        "rebuyPAsP": "Zurückgekaufte permanente AsP/KaP"
     },
     "traditionArtifacts": {
         "Animistenwaffe": "Animistenwaffe",

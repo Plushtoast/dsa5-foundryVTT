@@ -238,6 +238,24 @@ export default class ActorSheetDsa5 extends ActorSheet {
         }
     }
 
+    async _rebuyPC(attr) {
+        if(this.actor.system.status[attr].permanentLossSum > 0){
+            if (await this._checkEnoughXP(2)) {
+                await this._updateAPs(2, {
+                    [`system.status.${attr}.rebuy`]: Number(this.actor.system.status[attr].rebuy) + 1
+                })
+            }
+        }
+    }
+
+    async _refundPC(attr) {
+        if(this.actor.system.status[attr].rebuy > 0) {
+            await this._updateAPs(-2, {
+                [`system.status.${attr}.rebuy`]: Number(this.actor.system.status[attr].rebuy) - 1
+            })
+        }
+    }
+
     async _advancePoints(attr) {
         const advances = Number(this.actor.system.status[attr].advances)
         const cost = DSA5_Utility._calculateAdvCost(advances, "D")
@@ -707,9 +725,11 @@ export default class ActorSheetDsa5 extends ActorSheet {
         html.find(".refund-item").mousedown(ev => this.advanceWrapper(ev, "_refundItemAdvance", this._getItemId(ev)))
         html.find(".advance-points").mousedown(ev => this.advanceWrapper(ev, "_advancePoints", ev.currentTarget.dataset.attr))
         html.find(".refund-points").mousedown(ev => this.advanceWrapper(ev, "_refundPointsAdvance", ev.currentTarget.dataset.attr))
+        html.find(".rebuy-pc").mousedown(ev => this.advanceWrapper(ev, "_rebuyPC", ev.currentTarget.dataset.attr))
+        html.find(".refund-pc").mousedown(ev => this.advanceWrapper(ev, "_refundPC", ev.currentTarget.dataset.attr))
 
-        html.find('.onUseItem').click(ev => this._onMacroUseItem(ev))
-        html.find('.traditionPayCost').click(ev => this._payAeSpecialAbilityCost(ev))
+        html.find('.onUseItem').mousedown(ev => this._onMacroUseItem(ev))
+        html.find('.traditionPayCost').mousedown(ev => this._payAeSpecialAbilityCost(ev))
 
         html.find('.item-create').click(ev => this._onItemCreate(ev));
 
@@ -765,10 +785,10 @@ export default class ActorSheetDsa5 extends ActorSheet {
         editor.render(true)
     }
 
-    _onMacroUseItem(ev) {
+    async _onMacroUseItem(ev) {
         const item = this.actor.items.get(this._getItemId(ev))
         const onUse = new OnUseEffect(item)
-        onUse.executeOnUseEffect()
+        await onUse.executeOnUseEffect()
     }
 
     async _payAeSpecialAbilityCost(ev) {
@@ -780,7 +800,11 @@ export default class ActorSheetDsa5 extends ActorSheet {
         if(!paid) return
 
         const msg = game.i18n.format("CHATNOTIFICATION.paysTraditionAbility", { name: this.actor.name,ability: item.name, cost })
-        ChatMessage.create(DSA5_Utility.chatDataSetup(msg))
+        if (ev.button == 2) {
+            ChatMessage.create(DSA5_Utility.chatDataSetup(msg, "gmroll"))
+        } else {
+            ChatMessage.create(DSA5_Utility.chatDataSetup(msg))
+        }
     }
 
     _filterGear(tar) {

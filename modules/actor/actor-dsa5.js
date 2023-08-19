@@ -189,6 +189,16 @@ export default class Actordsa5 extends Actor {
         data.status.regeneration.AsPTemp + data.status.regeneration.AsPMod + data.status.regeneration.AsPgearmodifier;
 
       let guide = data.guidevalue;
+
+      data.status.astralenergy.rebuy ||= 0
+      data.status.karmaenergy.rebuy ||= 0
+      data.status.astralenergy.permanentLoss ||= 0
+      data.status.karmaenergy.permanentLoss ||= 0
+
+      data.status.astralenergy.permanentLossSum = data.status.astralenergy.permanentLoss - data.status.astralenergy.rebuy + data.status.astralenergy.permanentGear
+      
+      data.status.karmaenergy.permanentLossSum = data.status.karmaenergy.permanentLoss - data.status.karmaenergy.rebuy + data.status.karmaenergy.permanentGear
+
       if (data.isFamiliar || (guide && this.type != "creature")) {
         data.status.astralenergy.current = data.status.astralenergy.initial;
         data.status.karmaenergy.current = data.status.karmaenergy.initial;
@@ -204,12 +214,14 @@ export default class Actordsa5 extends Actor {
         data.status.astralenergy.current +
         data.status.astralenergy.modifier +
         data.status.astralenergy.advances +
-        data.status.astralenergy.gearmodifier;
+        data.status.astralenergy.gearmodifier -
+        data.status.astralenergy.permanentLossSum
       data.status.karmaenergy.max =
         data.status.karmaenergy.current +
         data.status.karmaenergy.modifier +
         data.status.karmaenergy.advances +
-        data.status.karmaenergy.gearmodifier;
+        data.status.karmaenergy.gearmodifier -
+        data.status.karmaenergy.permanentLossSum
       
       data.status.soulpower.max =
         data.status.soulpower.value + data.status.soulpower.modifier + data.status.soulpower.gearmodifier;
@@ -427,65 +439,14 @@ export default class Actordsa5 extends Actor {
     }
     this.statuses.clear();
 
-    const changes = this.effects.reduce((changes, e) => {
-      if (!e.active) return changes;
-
-      let multiply = 1
-      if (e.origin) {
-        const id = e.origin.match(/[^.]+$/)[0];
-        const item = this.items.get(id);
-        if (item) {
-          let apply = true;
-
-          switch (item.type) {
-            case "meleeweapon":
-            case "rangeweapon":
-              apply = item.system.worn.value && e.getFlag("dsa5", "applyToOwner");
-              break
-            case "armor":
-              apply = item.system.worn.value
-              break;
-            case "equipment":
-              apply = !item.system.worn.wearable || (item.system.worn.wearable && item.system.worn.value)
-              break;
-            case "trait":
-              apply = !["meleeAttack", "rangeAttack"].includes(item.system.traitType.value) || e.getFlag("dsa5", "applyToOwner")
-              multiply = Number(getProperty(item.system, "step.value")) || 1
-              break
-            case "ammunition":
-            case "plant":
-            case "consumable":
-            case "combatskill":
-            case "magicsign":
-            case "poison":
-            case "spell":
-            case "liturgy":
-            case "ceremony":
-            case "ritual":
-            case "spellextension":
-              apply = false;
-              break;
-            case "specialability":
-              apply = item.system.category.value != "Combat" || [2, 3].includes(Number(item.system.category.sub));
-              multiply = Number(item.system.step.value) || 1
-              break
-            case "advantage":
-            case "disadvantage":
-              multiply = Number(item.system.step.value) || 1
-              break;
-          } 
-          e.notApplicable = !apply;
-
-          if (!apply) return changes;
-        }
-        
-      }else{
-        const flag = e.getFlag("dsa5", "value")
-        if(flag){
-          multiply = Number(flag)
-        }
-      } 
-
+    const changes = []
+    let multiply = 1
+    for ( const e of this.effects ) {
+      multiply = 1
+      const flag = e.getFlag("dsa5", "value")
+      if(flag){
+        multiply = Number(flag)
+      }
       for (let i = 0; i < multiply; i++) {
         changes.push(
           ...e.changes.map((c) => {
@@ -497,8 +458,65 @@ export default class Actordsa5 extends Actor {
         )
       }
       for ( const statusId of e.statuses ) this.statuses.add(statusId);
-      return changes
-    }, []);
+    }
+    let apply = true;
+    for(let item of this.items) {
+      for(const e of item.effects) {
+        apply = true
+        switch (item.type) {
+          case "meleeweapon":
+          case "rangeweapon":
+            apply = item.system.worn.value && e.getFlag("dsa5", "applyToOwner");
+            break
+          case "armor":
+            apply = item.system.worn.value
+            break;
+          case "equipment":
+            apply = !item.system.worn.wearable || (item.system.worn.wearable && item.system.worn.value)
+            break;
+          case "trait":
+            apply = !["meleeAttack", "rangeAttack"].includes(item.system.traitType.value) || e.getFlag("dsa5", "applyToOwner")
+            multiply = Number(getProperty(item.system, "step.value")) || 1
+            break
+          case "ammunition":
+          case "plant":
+          case "consumable":
+          case "combatskill":
+          case "magicsign":
+          case "poison":
+          case "spell":
+          case "liturgy":
+          case "ceremony":
+          case "ritual":
+          case "spellextension":
+            apply = false;
+            break;
+          case "specialability":
+            apply = item.system.category.value != "Combat" || [2, 3].includes(Number(item.system.category.sub));
+            multiply = Number(item.system.step.value) || 1
+            break
+          case "advantage":
+          case "disadvantage":
+            multiply = Number(item.system.step.value) || 1
+            break;
+        } 
+        e.notApplicable = !apply;
+
+        if (!apply) continue
+                
+        for (let i = 0; i < multiply; i++) {
+          changes.push(
+            ...e.changes.map((c) => {
+              c = foundry.utils.duplicate(c);
+              c.effect = e;
+              c.priority = c.priority ? c.priority : c.mode * 10;
+              return c;
+            })
+          )
+        }
+        for ( const statusId of e.statuses ) this.statuses.add(statusId);
+      }
+    }
     changes.sort((a, b) => a.priority - b.priority);
 
     for (let change of changes) {
@@ -576,6 +594,12 @@ export default class Actordsa5 extends Actor {
       status: {
         initiative: {
           multiplier: 1,
+        },
+        astralenergy: {
+          permanentGear: 0
+        },
+        karmaenergy: {
+          permanentGear: 0       
         },
         wounds: {
           multiplier: 1,

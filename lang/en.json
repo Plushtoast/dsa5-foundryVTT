@@ -46,6 +46,8 @@
         "KTW": "CTR",
         "LeP": "LP",
         "AsP": "AE",
+        "pAsP": "pAE",
+        "pKaP": "pKP",
         "KaP": "KP",
         "ATFK": "AT/RC",
         "GEKK": "AGI,STR",
@@ -233,6 +235,8 @@
     "cummulativeStatusEffects": "Cumulative conditions",
     "cummulativeStatusEffectsHint": "All conditions which are calculated as a sum of different sources.",
     "advancementCost": "Advance for {cost} adventure points",
+    "rebuyCost": "Rebuy for 2 AP",
+    "rebuyRevertCost": "Rebuy revert for 2 AP",
     "animal": "Animal",
     "attributeChange": "Attribute change",
     "attackOfOpportunity": "The defender can make an immediate attack of opportunity against the opponent",
@@ -918,7 +922,9 @@
         "deobfuscateItem": "Deobfuscate section",
         "obfuscateItem": "Obfuscate section",
         "searchItem": "Add from the library",
-        "payAECost": "Pay AE cost"
+        "payAECost": "Pay AE cost",
+        "paidPAsP": "Paid permanent AsP/KaP",
+        "rebuyPAsP": "Rebought permanent AsP/KaP"
     },
     "dsaStyle": {
         "immersive": "Immersive",

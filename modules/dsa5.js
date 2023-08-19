@@ -116,7 +116,7 @@ Hooks.once("init", () => {
     CONFIG.Combat.documentClass = DSA5Combat
     CONFIG.Combatant.documentClass = DSA5Combatant
     CONFIG.ActiveEffect.documentClass = DSAActiveEffect
-    //CONFIG.ActiveEffect.legacyTransferral = false
+    CONFIG.ActiveEffect.legacyTransferral = false
 });
 
 initHooks();

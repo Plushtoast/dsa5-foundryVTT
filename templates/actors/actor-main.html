@@ -96,6 +96,24 @@
                     {{actor.system.status.regeneration.AsPmax}}
                 </div>
             </div>
+            <div class="derivedAttrs row-section">
+                <div class="col two lineheight" data-tooltip="permanentCost">
+                    {{localize "CHARAbbrev.pAsP"}} {{#if prepare.canAdvance}}<a data-attr="astralenergy" class="advance refund-pc"><i data-tooltip="rebuyRevertCost" class="fas fa-minus"></i></a>
+                    <a data-attr="astralenergy" class="advance rebuy-pc"><i data-tooltip="rebuyCost" class="fas fa-plus"></i></a>{{/if}}
+                </div>
+                <div class="col eight lineheight center">
+
+                </div>
+                <div class="col eight center inputTooltipAvailable">
+                    <input name="system.status.astralenergy.permanentLoss" type="number" value="{{actor.system.status.astralenergy.permanentLoss}}" data-tooltip="SHEET.paidPAsP" data-dtype="Number" />
+                </div>
+                <div class="col eight center inputTooltipAvailable">
+                    <input name="system.status.astralenergy.rebuy" type="number" value="{{actor.system.status.astralenergy.rebuy}}" data-dtype="Number" data-tooltip="SHEET.rebuyPAsP"  />
+                </div>
+                <div class="col eight lineheight center">
+                    {{actor.system.status.astralenergy.permanentLossSum}}
+                </div>
+            </div>
            
             {{/if}} {{#if prepare.magic.hasPrayers}}
             <div class="derivedAttrs row-section">
@@ -134,6 +152,24 @@
                 </div>
                 <div class="col eight lineheight center">
                     {{actor.system.status.regeneration.KaPmax}}
+                </div>
+            </div>
+            <div class="derivedAttrs row-section">
+                <div class="col two lineheight" data-tooltip="permanentCost">
+                    {{localize "CHARAbbrev.pKaP"}} {{#if prepare.canAdvance}}<a data-attr="karmaenergy" class="advance refund-pc"><i data-tooltip="rebuyRevertCost" class="fas fa-minus"></i></a>
+                    <a data-attr="karmaenergy" class="advance rebuy-pc"><i data-tooltip="rebuyCost" class="fas fa-plus"></i></a>{{/if}}
+                </div>
+                <div class="col eight lineheight center">
+
+                </div>
+                <div class="col eight center inputTooltipAvailable">
+                    <input name="system.status.karmaenergy.permanentLoss" type="number" value="{{actor.system.status.karmaenergy.permanentLoss}}" data-tooltip="SHEET.paidPAsP" data-dtype="Number" />
+                </div>
+                <div class="col eight center inputTooltipAvailable">
+                    <input name="system.status.karmaenergy.rebuy" type="number" value="{{actor.system.status.karmaenergy.rebuy}}" data-tooltip="SHEET.rebuyPAsP" data-dtype="Number"  />
+                </div>
+                <div class="col eight lineheight center">
+                    {{actor.system.status.karmaenergy.permanentLossSum}}
                 </div>
             </div>
             

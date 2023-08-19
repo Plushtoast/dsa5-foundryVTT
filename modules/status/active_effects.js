@@ -384,6 +384,7 @@ export default class DSAActiveEffectConfig extends ActiveEffectConfig {
         const combatReg = `${regenerate} (${game.i18n.localize("CHARAbbrev.CR")})`;
         const AsPCost = game.i18n.localize("AsPCost");
         const KaPCost = game.i18n.localize("KaPCost");
+        const permanentCost = game.i18n.localize("permanentCost")
         const feature = `${game.i18n.localize("Healing")} 1`
         const descriptor = `${game.i18n.localize("Description")} 1`
         const miracle = `${game.i18n.localize('LocalizedIDs.miracle')}`
@@ -473,6 +474,8 @@ export default class DSAActiveEffectConfig extends ActiveEffectConfig {
             },
             { name: KaPCost, val: "system.kapModifier", mode: 2, ph: "1" },
             { name: AsPCost, val: "system.aspModifier", mode: 2, ph: "1" },
+            { name: `${permanentCost} ${game.i18n.localize('CHARAbbrev.AsP')}`, val: "system.status.astralenergy.permanentGear", mode: 2, ph: "1" },
+            { name: `${permanentCost} ${game.i18n.localize('CHARAbbrev.KaP')}`, val: "system.status.astralenergy.permanentGear", mode: 2, ph: "1" },
             { name: `${skill} - ${FW}`, val: "system.skillModifiers.FW", mode: 0, ph: demo },
             { name: `${skill} - ${FP}`, val: "system.skillModifiers.FP", mode: 0, ph: demo },
             { name: `${skill} - ${stepValue}`, val: "system.skillModifiers.step", mode: 0, ph: demo },
