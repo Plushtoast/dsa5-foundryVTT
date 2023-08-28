@@ -180,11 +180,15 @@ export default class DSA5StatusEffects {
         if (effect.id == "dead")
             effect["flags.core.overlay"] = true;
 
-        let result = await actor.createEmbeddedDocuments("ActiveEffect", [duplicate(effect)])
+        const update = duplicate(effect);
+
+        (game.dsa5.config.statusEffectClasses[effect.id] || DSA5StatusEffects).levelDependentEffects(effect, update)
+
+        let result = await actor.createEmbeddedDocuments("ActiveEffect", [update])
         delete effect.id
         return result
     }
-
+    
     static async removeEffect(actor, existing, value, absolute, autoMode) {
         const auto = autoMode ? (absolute ? value : Math.max(0, existing.flags.dsa5.auto - value)) : existing.flags.dsa5.auto
         const manual = autoMode ? existing.flags.dsa5.manual : (absolute ? value : existing.flags.dsa5.manual - value)
@@ -199,9 +203,14 @@ export default class DSA5StatusEffects {
         }
         if (update.flags.dsa5.auto < 1 && update.flags.dsa5.manual == 0)
             return await actor.deleteEmbeddedDocuments("ActiveEffect", [existing.id])
-        else
+        else {
+            (game.dsa5.config.statusEffectClasses[[...existing.statuses][0]] || DSA5StatusEffects).levelDependentEffects(existing, update)
             return await existing.update(update)
+        }
+            
     }
+
+    static async levelDependentEffects(existing, update) { }
 
     static async updateEffect(actor, existing, value, absolute, auto, newEffect = undefined) {
         //const immune = this.immuneToEffect(actor, existing, true)
@@ -227,6 +236,8 @@ export default class DSA5StatusEffects {
             update.duration = newEffect.duration
             update.duration.startTime = game.time.worldTime
         }
+
+        (game.dsa5.config.statusEffectClasses[[...existing.statuses][0]] || DSA5StatusEffects).levelDependentEffects(existing, update)
 
         await existing.update(update)
         return existing
@@ -455,7 +466,7 @@ class SunkenEffect extends DSA5StatusEffects {
 class HungerEffect extends DSA5StatusEffects {
     static calculateRollModifier(effect, actor, item, options = {}) {
         if (item.type == "regenerate")
-            return Math.pow(this.clampedCondition(actor, effect) -1, 2) * -1
+            return Math.pow(2, this.clampedCondition(actor, effect) * -1 - 1) * -1
 
         return 0
     }
@@ -469,6 +480,37 @@ class ThirstEffect extends DSA5StatusEffects {
 
         return Math.clamped(stat -1, 0, 3)
     }
+
+    static levelDependentEffects(existing, update) {
+        update.changes = {
+            1: [],
+            2: [{ "key": "system.condition.stunned", "mode": 2, "value": 1/2 }],
+            3: [{ "key": "system.condition.stunned", "mode": 2, "value": 2/3 }],
+            4: [{ "key": "system.condition.stunned", "mode": 2, "value": 3/4 }]
+        }[update.flags.dsa5.value]
+    }
+}
+
+class HeatEffect extends DSA5StatusEffects {
+    static levelDependentEffects(existing, update) {
+        update.changes = {
+            1: [{key: "system.condition.stunned", mode: 2, value: 1}, {key: "system.condition.confused", mode: 2, value: 1}],
+            2: [{key: "system.condition.stunned", mode: 2, value: 1}, {key: "system.condition.confused", mode: 2, value: 1/2}],
+            3: [{key: "system.condition.stunned", mode: 2, value: 1}, {key: "system.condition.confused", mode: 2, value: 2/3}],
+            4: [{key: "system.condition.stunned", mode: 2, value: 1}, {key: "system.condition.confused", mode: 2, value: 1/2}]
+        }[update.flags.dsa5.value]
+    }
+}
+
+class ColdEffect extends DSA5StatusEffects {
+    static levelDependentEffects(existing, update) {
+        update.changes = {
+            1: [{key: "system.condition.confused", mode: 2, value: 1}, {key: "system.condition.paralysed", mode: 2, value: 1}],
+            2: [{key: "system.condition.confused", mode: 2, value: 1}, {key: "system.condition.paralysed", mode: 2, value: 1/2}],
+            3: [{key: "system.condition.confused", mode: 2, value: 1}, {key: "system.condition.paralysed", mode: 2, value: 2/3}],
+            4: [{key: "system.condition.confused", mode: 2, value: 1}, {key: "system.condition.paralysed", mode: 2, value: 1/2}]
+        }[update.flags.dsa5.value]
+    }
 }
 
 class NoModifierEffect extends DSA5StatusEffects {
@@ -479,6 +521,8 @@ class NoModifierEffect extends DSA5StatusEffects {
 
 DSA5.statusEffectClasses = {
     inpain: PainEffect,
+    heat: HeatEffect,
+    cold: ColdEffect,
     encumbered: EncumberedEffect,
     stunned: DSA5StatusEffects,
     raptured: RaptureEffect,

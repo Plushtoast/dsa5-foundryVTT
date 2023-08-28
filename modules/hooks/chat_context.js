@@ -14,7 +14,7 @@ export default function() {
     }
 
     const canCostMana = function(li) {
-        let message = game.messages.get(li.attr("data-message-id"));
+        const message = game.messages.get(li.attr("data-message-id"));
         if (message.speaker.actor && message.flags.data) {
             let actor = game.actors.get(message.speaker.actor);
             if (actor.isOwner || game.user.isGM) {

@@ -80,14 +80,18 @@ class GameMasterMenu extends Application {
 
         if (game.user.isGM) {
             Hooks.on("updateActor", async(document, data, options, userId) => {
+                if(!this.rendered) return
+
                 const properties = ["system.status.fatePoints", "system.status.wounds", "system.status.karmaenergy", "system.status.astralenergy"]
-                if (this.heros.find(x => x.id == document.id) && properties.reduce((a, b) => {
+                if (this.heros.some(x => x.id == document.id) && properties.reduce((a, b) => {
                         return a || hasProperty(data, b)
                     }, false)) {
                     this.render()
                 }
             })
             Hooks.on("updateScene", async(document, data, options, userId) => {
+                if(!this.rendered) return
+
                 const properties = ["darkness"]
                 if (game.canvas.id == document.id && properties.reduce((a, b) => {
                         return a || hasProperty(data, b)
@@ -97,6 +101,8 @@ class GameMasterMenu extends Application {
                 }
             })
             Hooks.on("canvasInit", () => {
+                if(!this.rendered) return
+
                 this.render()
             })
         }
@@ -588,14 +594,32 @@ class GameMasterMenu extends Application {
 
         this.heros = heros
         const selected = this.getSelectedActors()
-        for (const hero of heros) {
-            hero.gmSelected = selected[hero.id]
-            hero.schips = hero.schipshtml()
-            hero.purse = hero.items.filter(x => x.type == "money")
-                .sort((a, b) => b.system.price.value - a.system.price.value)
-                .map(x => `<span data-tooltip="${game.i18n.localize(x.name)}">${x.system.quantity.value}</span>`).join(" - ")
-            hero.advantages = hero.items.filter(x => x.type == "advantage").map(x => { return { name: x.name, uuid: x.uuid } })
-            hero.disadvantages = hero.items.filter(x => x.type == "disadvantage").map(x => { return { name: x.name, uuid: x.uuid } })
+
+        const copiedHeros = []
+        for (let hero of heros) {
+            let newHero = duplicate(hero)
+            mergeObject(newHero, {
+                id: hero.id,
+                uuid: hero.uuid,
+                selected: selected[hero.id],
+                schips: hero.schipshtml(),
+                purse: hero.items.filter(x => x.type == "money")
+                    .sort((a, b) => b.system.price.value - a.system.price.value)
+                    .map(x => `<span data-tooltip="${game.i18n.localize(x.name)}">${x.system.quantity.value}</span>`).join(" - "),
+                advantages: hero.items.filter(x => x.type == "advantage").map(x => { return { name: x.name, uuid: x.uuid } }),
+                disadvantages: hero.items.filter(x => x.type == "disadvantage").map(x => { return { name: x.name, uuid: x.uuid } }),
+                system: {
+                    status: {
+                        wounds: { max: hero.system.status.wounds.max },
+                        astralenergy: { max: hero.system.status.astralenergy.max },
+                        karmaenergy: { max: hero.system.status.karmaenergy.max },
+                    },
+                    isMage: hero.system.isMage,
+                    isPriest: hero.system.isPriest,
+                }
+            })
+            
+            copiedHeros.push(newHero)
         }
 
         if (!this.abilities) {
@@ -607,7 +631,7 @@ class GameMasterMenu extends Application {
         }
 
         mergeObject(data, {
-            heros,
+            heros: copiedHeros,
             abilities: this.abilities,
             groupschips,
             lastSkill: this.lastSkill,

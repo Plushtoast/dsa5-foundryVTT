@@ -196,7 +196,6 @@ export default class Actordsa5 extends Actor {
       data.status.karmaenergy.permanentLoss ||= 0
 
       data.status.astralenergy.permanentLossSum = data.status.astralenergy.permanentLoss - data.status.astralenergy.rebuy + data.status.astralenergy.permanentGear
-      
       data.status.karmaenergy.permanentLossSum = data.status.karmaenergy.permanentLoss - data.status.karmaenergy.rebuy + data.status.karmaenergy.permanentGear
 
       if (data.isFamiliar || (guide && this.type != "creature")) {

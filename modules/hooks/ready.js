@@ -127,6 +127,7 @@ export default function() {
                             })
                         }
                         break
+                    case "finalizeFoodContribution":
                     case "hideDeletedSheet":
                     case "finalizeidentification":
                         break
