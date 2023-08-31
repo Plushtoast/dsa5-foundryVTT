@@ -57,7 +57,7 @@ export default class SpeciesWizard extends WizardDSA5 {
             return _this + (val.disabled ? 0 : Number(val.system.APValue.value) || 0)
         }, 0)
         mergeObject(data, {
-            title: game.i18n.format("WIZARD.addItem", { item: `${game.i18n.localize("species")} ${this.species.name}` }),
+            title: game.i18n.format("WIZARD.addItem", { item: `${game.i18n.localize("TYPES.Item.species")} ${this.species.name}` }),
             species: this.species,
             description: game.i18n.format("WIZARD.speciesdescr", { species: this.species.name, cost: baseCost + reqCost }),
             advantagegroups,

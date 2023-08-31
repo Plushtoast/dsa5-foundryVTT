@@ -24,7 +24,6 @@ export default class Riding {
             const horseTokenSource = await horse.getTokenDocument()
             horseTokenSource.updateSource({ x: token.x, y: token.y, hidden: token.hidden })
 
-            //Todo check if tokens need to be modified because of e.g. sizes
             const horseToken = (await scene.createEmbeddedDocuments("Token", [horseTokenSource]))[0]
             const tokenUpdate = {"flags.dsa5.horseTokenId": horseToken.id, elevation: (horseToken.elevation ?? 0) + 1}
             mergeObject(tokenUpdate, this.adaptTokenSize(token, horseToken))

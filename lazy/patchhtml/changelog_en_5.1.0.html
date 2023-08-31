@@ -1,0 +1,74 @@
+<h1 class="mume-header" id="notable-improvements">Notable Improvements  (15/9/2023)</h1>
+
+<h2 class="mume-header" id="major-data-update---codizes">Major Data Update - Codizes</h2>
+
+<p>In this iteration, our primary focus was on enhancing our existing data. To achieve this, we implemented a significant number of new tests to ensure the accuracy and validity of the data. The resulting changes are as follows:</p>
+<ul class="dsalist">
+<li>We have aligned the calculation of profession costs with the methodology employed by Foundry. This ensures a direct correspondence between adventure points and the associated profession elements. This correction addresses inaccuracies that were present in the source material. Additionally, adjustments have been made to account for dsa5 changes in Foundry, ensuring the seamless functioning of professions (e.g., excluding additional AP for curses from witches). Furthermore, any updates to profession components, such as changes in AP costs for special abilities, will now reflect an immediately available and updated sum of AP costs for the entire profession.</li>
+<li>Numerous minor issues across all categories have been meticulously addressed and resolved.</li>
+<li>We have incorporated the alterations from &quot;Kodex der Magie&quot; and &quot;Kodex der Helden&quot; to advantages, disadvantages, and special abilities wherever feasible.</li>
+<li>Modifications from &quot;Kodex des Schwertes&quot; have been integrated into existing special abilities, while new ones have been introduced in the &quot;Aventurisches Kompendium II.&quot;</li>
+<li>The character generator has been enhanced for improved functionality.</li>
+<li>A multitude of additional abilities have been successfully implemented to extend the scope of features.</li>
+<li>Supplementary magical special abilities have been seamlessly integrated into the &quot;Studierstube der Gildenmagie.&quot;</li>
+<li>New advantages and disadvantages centered around naming conventions have been introduced to the master&apos;s workshop.</li>
+</ul>
+<h2 class="mume-header" id="compendium-2-table-automation">Compendium 2 Table Automation</h2>
+
+<p>The previously manual crit and botch tables for combat in the Aventurian Compendium 2 module have been automated to the fullest extent possible. After an extended development period, we&apos;ve achieved an advanced level of automation. While it&apos;s challenging to encompass all potential botch rolls, we&apos;ve made considerable progress and are now providing the feature in its current state. These automated tables handle diverse conditions and modifiers associated with crit and botch rolls.</p>
+<h2 class="mume-header" id="reworked-suncoast--future-of-regional-supplements">Reworked Suncoast &amp; Future of Regional Supplements</h2>
+
+<p>We have reimagined regional supplements within the framework of Foundry module, resulting in an enriched version of the existing Suncoast content. Our revamped approach will be standardized across all forthcoming supplements. Additionally, our future plans include amalgamating these supplements into an atlas-like format (~Foundry 12), with added functionalities wherever feasible. These features encompass dynamically generated merchants based on location, visualization of common travel routes as map overlays, meticulous detailing such as regional encounters, map annotations, and even ambient lighting effects for nocturnal city settings. For current Suncoast users, we recommend removing imported folders and reinitializing the module via the journal browser. Moreover check out the added "Sphärenklang" Soundtrack included in all regional supplements.</p>
+<img src="systems/dsa5/lazy/patchimages/5.1.0/rshs.webp" />
+<h2 class="mume-header" id="swarm-rules-integration">Swarm Rules Integration</h2>
+
+<p>A novel section dedicated to swarm settings has been incorporated into the combat tab of actor sheets. Users now have the ability to configure swarm size and base size, leading to adjusted combat modifiers and life points. This system caters to the foundational rules pertaining to small and tiny creatures, opening up possibilities for tactical engagement involving units and soldiers during larger battles, such as the War of the Raven. Notably, this approach may even involve additional damage adjustments to expedite simulations.</p>
+<img src="systems/dsa5/lazy/patchimages/5.1.0/swarm.webp" />
+<h2 class="mume-header" id="expanded-automation-coverage">Expanded Automation Coverage</h2>
+
+<p>We&apos;re pleased to announce a new addition to the GitHub extensiondb repository that focuses on the coverage of automated functionalities across diverse categories. For a comprehensive overview of automated abilities, please refer to: <a href="https://github.com/Plushtoast/dsa5-extensiondb/blob/master/summary.md">GitHub Link</a>. Detailed information can be found here: <a href="https://github.com/Plushtoast/dsa5-extensiondb/blob/master/README.md">GitHub README</a>. We are actively working towards creating avenues for volunteers to contribute more content in the future. Our baseline target for newly released modules is a coverage rate of approximately 60%, though this may vary depending on the specific module.</p>
+<h2 class="mume-header" id="introducing-adverse-circumstances">Introducing Adverse Circumstances</h2>
+
+<p>A new functionality, integrated into the core module&apos;s master hotbar, has been introduced - Adverse Circumstances. This feature is designed to address challenges related to travel and enduring hardships, such as managing food and dealing with extreme temperatures. Its functionalities encompass:</p>
+<ul class="dsalist">
+<li>Food expenditure management.</li>
+<li>Calculation and application of heat and cold levels, along with associated unique conditions.</li>
+<li>Future updates may introduce additional functionalities aimed at enhancing gameplay in adverse scenarios.</li>
+</ul>
+<img src="systems/dsa5/lazy/patchimages/5.1.0/widrige.webp" />
+<h1 class="mume-header" id="notable-enhancements">Notable Enhancements</h1>
+
+<ul class="dsalist">
+<li>We extend our gratitude to Zoidable for successfully implementing the complex special ability &quot;Counterattack&quot; (Gegenhalten).</li>
+<li>Future updates for compendiums will now feature organized journals and actors sorted into folders for improved accessibility.</li>
+<li>The library&apos;s browse mode now includes indicators indicating the source compendium/module for items.</li>
+<li>The adoption of prosemirror for information items facilitates the addition of links to items, actors, and other elements in quality step results.</li>
+<li>The automated sight modifier can now be modified using active effect keys. Existing abilities like blind combat or nightblind have been adjusted accordingly. Be sure to migrate your characters accordingly and acknowledge Zoidable for their contribution.</li>
+<li>The sight automation system now distinguishes between dim and bright light conditions, resulting in corresponding visibility level adjustments. This feature&apos;s activation can be configured via the master&apos;s menu. For instance, a character aiming to shoot with an elfbow in total darkness may opt to wait until the target moves into the bright light of a torch, thereby reducing the vision impairment and improving accuracy.</li>
+<li>The library detail (brain) filter now supports the search for distributions of special abilities, catering to needs such as pact gifts.</li>
+<li>Notifying notifications have been implemented for poison, disease, and spell rolls if the target is immune to the effect (e.g., demons&apos; immunity to poison). Careful targeting is advised prior to rolling.</li>
+<li>An alert will be triggered when attempting to apply a condition to a creature that would typically be immune to the effect (e.g., demons&apos; immunity to being stunned).</li>
+<li>The design of the initiative roll chat message has been refreshed.</li>
+<li>Cold and heat resistances are now visible on the character sheet, offering comprehensive insights into character capabilities.</li>
+<li>Personality Traits and Influences have been categorized as items, with plans to incorporate those from rulebooks into the compendiums in the future.</li>
+<li>Chat messages containing damage or regular rolls now allow right-click actions for applying double or half damage, with the option available through settings.</li>
+<li>The library now features a duplicate filtering mechanism for enhanced content organization.</li>
+<li>Token icons now display equipped weapons upon hover, allowing players to factor in enemy armament when strategizing.</li>
+<li>NPCs equipped with multiple weapons will randomly select one when placed on the canvas, streamlining automated modifiers related to combat. The option to disable this behavior is available in settings.</li>
+<li>The journal&apos;s move-to-pin function now extends to journal pages.</li>
+<li>The light helper now includes a button for recommended default settings.</li>
+<li>Additional recognition patterns have been incorporated for the Automated Animations module, allowing for the definition of triggers for various combat animations.</li>
+<li>Tradition artifact abilities can now be activated even without attached macros, involving the payment of AE costs.</li>
+<li>Summoning mechanics now support the utilization of abilities that can be selected multiple times, such as &quot;mighty creature.&quot;</li>
+<li>Permanent paid AE/KE points can now be tracked via the character sheet, with special abilities automatically applying corresponding p-Costs. During migration, it&apos;s advisable to verify and adjust rebuy values to ensure AE/KE point accuracy.</li>
+</ul>
+<h1 class="mume-header" id="bug-fixes">Bug Fixes</h1>
+
+<ul class="dsalist">
+<li>The status text rolling of effects will no longer inadvertently reveal conditions added to actors not owned by players, especially when the &quot;hide effects&quot; option is enabled.</li>
+<li>Automated token numbering has been rectified to account for deleted tokens.</li>
+<li>A fix has been implemented for combat-related reaction rolls, ensuring their proper functionality.</li>
+<li>The &quot;blind&quot; functionality within the light helper now operates as intended.</li>
+<li>The positioning of the attack button in the combat tracker now aligns accurately with the active actor, even when the list of combatants exceeds the viewport&apos;s dimensions.</li>
+<li>The summoning helper in the players&apos; menu, which was impacted by the v10 Foundry update, has been successfully restored and is fully operational.</li>
+</ul>

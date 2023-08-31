@@ -42,7 +42,7 @@ export default class DPS {
 
         if(game.settings.get("dsa5", "lightSightCompensationEnabled")) {
             for (const light of canvas.effects.lightSources) {
-                if (!light.active) continue
+                if (!light.active || !light.object) continue
 
                 if(light.object == token) {
                     bright = bright || light.data.bright > 0,

@@ -175,15 +175,15 @@ export default class DSA5ItemLibrary extends Application {
         this.filters = {
             equipment: {
                 categories: {
-                    "armor": false,
-                    "ammunition": false,
-                    "equipment": false,
-                    "meleeweapon": false,
-                    "rangeweapon": false,
-                    "poison": false,
-                    "disease": false,
-                    "consumable": false,
-                    "plant": false
+                    armor: false,
+                    ammunition: false,
+                    equipment: false,
+                    meleeweapon: false,
+                    rangeweapon: false,
+                    poison: false,
+                    disease: false,
+                    consumable: false,
+                    plant: false
                 },
                 filterBy: {
                     search: ""
@@ -191,20 +191,20 @@ export default class DSA5ItemLibrary extends Application {
             },
             character: {
                 categories: {
-                    "career": false,
-                    "advantage": false,
-                    "combatskill": false,
-                    "culture": false,
-                    "disadvantage": false,
-                    "trait": false,
-                    "skill": false,
-                    "specialability": false,
-                    "species": false,
-                    "application": false,
-                    "demonmark": false,
-                    "patron": false,
-                    "essence": false,
-                    "imprint": false
+                    career: false,
+                    advantage: false,
+                    combatskill: false,
+                    culture: false,
+                    disadvantage: false,
+                    trait: false,
+                    skill: false,
+                    specialability: false,
+                    species: false,
+                    application: false,
+                    demonmark: false,
+                    patron: false,
+                    essence: false,
+                    imprint: false
                 },
                 filterBy: {
                     search: ""
@@ -212,14 +212,14 @@ export default class DSA5ItemLibrary extends Application {
             },
             spell: {
                 categories: {
-                    "blessing": false,
-                    "ceremony": false,
-                    "liturgy": false,
-                    "magictrick": false,
-                    "ritual": false,
-                    "spell": false,
-                    "spellextension": false,
-                    "magicalsign": false
+                    blessing: false,
+                    ceremony: false,
+                    liturgy: false,
+                    magictrick: false,
+                    ritual: false,
+                    spell: false,
+                    spellextension: false,
+                    magicalsign: false
                 },
                 filterBy: {
                     search: ""
@@ -233,9 +233,9 @@ export default class DSA5ItemLibrary extends Application {
             },
             zoo: {
                 categories: {
-                    "npc": false,
-                    "character": false,
-                    "creature": false
+                    npc: false,
+                    character: false,
+                    creature: false
                 },
                 filterBy: {
                     search: ""
@@ -362,7 +362,7 @@ export default class DSA5ItemLibrary extends Application {
     async executeAdvancedFilter(search, index, selectSearches, textSearches, booleanSearches, rangeSearches = []) {
         const selFnct = (x) => {
             for (let k of selectSearches) {
-                if (x[2] ? (x[k[0]] != k[1]) : (x[k[0]].indexOf(k[1]) == -1)) return false
+                if (k[2] ? (x[k[0]] != k[1]) : (x[k[0]].indexOf(k[1]) == -1)) return false
             }
             return true
         }

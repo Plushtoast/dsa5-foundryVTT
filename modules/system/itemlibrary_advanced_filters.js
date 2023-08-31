@@ -9,8 +9,7 @@ Hooks.once("ready", () => {
         const skills = result[0].reduce((prev, now) => ({...prev, [now]: now }), {})
         const range = result[1].filter(x => x.system.weapontype.value == "range").sort((a, b) => a.name.localeCompare(b.name)).reduce((prev, now) => ({...prev, [now.name]: now.name }), {})
         const melee = result[1].filter(x => x.system.weapontype.value == "melee").sort((a, b) => a.name.localeCompare(b.name)).reduce((prev, now) => ({...prev, [now.name]: now.name }), {})
-        const allCombat = result[1].sort((a, b) => a.name.localeCompare(b.name)).reduce((prev, now) => ({...prev, [now.name]: now.name }), {})
-
+        const allCombat = result[1].concat([{name: game.i18n.localize("LocalizedIDs.all")}]).sort((a, b) => a.name.localeCompare(b.name)).reduce((prev, now) => ({...prev, [now.name]: now.name }), {})
         mergeObject(ADVANCEDFILTERS, {
             ammunition: [
                 { label: "ammunitiongroup", attr: "ammunitiongroup.value", type: "select", options: DSA5.ammunitiongroups }
@@ -19,11 +18,11 @@ Hooks.once("ready", () => {
                 { label: "equipmentType", attr: "equipmentType.value", type: "select", options: DSA5.equipmentTypes }
             ],
             rangeweapon: [
-                { label: "combatskill", attr: "combatskill.value", type: "select", options: range },
+                { label: "TYPES.Item.combatskill", attr: "combatskill.value", type: "select", options: range },
                 { label: "ammunitiongroup", attr: "ammunitiongroup.value", type: "select", options: DSA5.ammunitiongroups }
             ],
             meleeweapon: [
-                { label: "combatskill", attr: "combatskill.value", type: "select", options: melee },
+                { label: "TYPES.Item.combatskill", attr: "combatskill.value", type: "select", options: melee },
                 { label: "guidevalue", attr: "guidevalue.value", type: "select", options: DSA5.combatskillsGuidevalues },
                 { label: "reach", attr: "reach.value", type: "select", options: DSA5.meleeRanges }
             ],
@@ -37,7 +36,7 @@ Hooks.once("ready", () => {
                 { label: "equipmentType", attr: "equipmentType.value", type: "select", options: DSA5.equipmentTypes }
             ],
             application: [
-                { label: "skill", attr: "skill", type: "select", options: skills }
+                { label: "TYPES.Item.skill", attr: "skill", type: "select", options: skills }
             ],
             trait: [
                 { label: "traitType", attr: "traitType.value", type: "select", options: DSA5.traitCategories }
@@ -47,7 +46,7 @@ Hooks.once("ready", () => {
             ],
             specialability: [
                 { label: "Category", attr: "category.value", type: "select", options: DSA5.specialAbilityCategories },
-                { label: "combatskill", attr: "list.value", type: "select", options: allCombat, notStrict: true },
+                { label: "TYPES.Item.combatskill", attr: "list.value", type: "select", options: allCombat, notStrict: true },
                 { label: "distribution", attr: "distribution", type: "text" }
             ],
             liturgy: [
@@ -86,14 +85,14 @@ Hooks.once("ready", () => {
                 { label: "feature", attr: "feature.value", type: "text" }
             ],
             npc: [
-                { label: "species", attr: "details.species.value", type: "text" },
-                { label: "career", attr: "details.career.value", type: "text" },
-                { label: "culture", attr: "details.culture.value", type: "text" }
+                { label: "TYPES.Item.species", attr: "details.species.value", type: "text" },
+                { label: "TYPES.Item.career", attr: "details.career.value", type: "text" },
+                { label: "TYPES.Item.culture", attr: "details.culture.value", type: "text" }
             ],
             character: [
-                { label: "species", attr: "details.species.value", type: "text" },
-                { label: "career", attr: "details.career.value", type: "text" },
-                { label: "culture", attr: "details.culture.value", type: "text" }
+                { label: "TYPES.Item.species", attr: "details.species.value", type: "text" },
+                { label: "TYPES.Item.career", attr: "details.career.value", type: "text" },
+                { label: "TYPES.Item.culture", attr: "details.culture.value", type: "text" }
             ],
             creature: [
                 { label: "creatureClass", attr: "creatureClass.value", type: "text" },

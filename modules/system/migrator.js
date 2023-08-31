@@ -51,7 +51,7 @@ export default function migrateWorld() {
 
         await setupDefaulTokenConfig()
         const currentVersion = await game.settings.get("dsa5", "migrationVersion")
-        const NEEDS_MIGRATION_VERSION = 24
+        const NEEDS_MIGRATION_VERSION = 25
         const needsMigration = currentVersion < NEEDS_MIGRATION_VERSION
 
         //betaWarning()
@@ -66,6 +66,7 @@ class PatchViewer extends Application {
     constructor(json, app) {
         super(app)
         this.json = json
+        this.versionIndex = 3
     }
 
     static get defaultOptions() {
@@ -86,6 +87,30 @@ class PatchViewer extends Application {
         super.activateListeners(html)
 
         tabSlider(html)
+        html.find(".showMore").click(ev => this.showMore(html))
+    }
+
+    async showMore(html){
+        const prevVersions = [this.json["notes"][this.json["notes"].length - this.versionIndex]]
+        if(prevVersions[0].version == "2.3.0") {
+            html.find(".showMore").hide()
+            return
+        }
+
+        const data = await this.fetchVersions(prevVersions)
+        html.find(".changelogsection").append(data.changelog[0])
+        html.find(".newssection").append(data.news[0])
+        this.versionIndex += 1
+    }
+
+    async fetchVersions(versions) {
+        const lang = game.i18n.lang
+        const changelog = await Promise.all(versions.map(async(x) => await renderTemplate(`systems/dsa5/lazy/patchhtml/changelog_${lang}_${x.version}.html`)))
+        const news = await Promise.all(versions.map(async(x) => await renderTemplate(`systems/dsa5/lazy/patchhtml/news_${lang}_${x.version}.html`)))
+        return {
+            changelog,
+            news
+        }
     }
     
     async getData() {
@@ -95,21 +120,18 @@ class PatchViewer extends Application {
         await ChatMessage.create(DSA5_Utility.chatDataSetup(msg, "roll"))
 
         const lang = game.i18n.lang
-        const changelog = await renderTemplate(`systems/dsa5/lazy/patchhtml/changelog_${lang}_${version.version}.html`)
-        const news = await renderTemplate(`systems/dsa5/lazy/patchhtml/news_${lang}_${version.version}.html`)
-
+        const curVersion = await this.fetchVersions([version])
         const prevVersions = [this.json["notes"][this.json["notes"].length - 2]]
-        const prevChangeLogs = await Promise.all(prevVersions.map(async(x) => await renderTemplate(`systems/dsa5/lazy/patchhtml/changelog_${lang}_${x.version}.html`)))
-        const prevNews = await Promise.all(prevVersions.map(async(x) => await renderTemplate(`systems/dsa5/lazy/patchhtml/news_${lang}_${x.version}.html`)))
+        const preVersions = await this.fetchVersions(prevVersions)
         const modules = await renderTemplate(`systems/dsa5/lazy/patchhtml/modules_${lang}.html`)
 
         return {
             patchName,
-            changelog,
-            news,
+            changelog: curVersion.changelog[0],
+            news: curVersion.news[0],
             prevVersions,
-            prevChangeLogs,
-            prevNews,
+            prevChangeLogs: preVersions.changelog,
+            prevNews: preVersions.news,
             modules
         }
     }
