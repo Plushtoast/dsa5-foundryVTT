@@ -133,7 +133,7 @@ export default class OpposedDsa5 {
                             type: "target",
                             payload: {
                                 target: target.id,
-                                scene: canvas.scene.id,
+                                scene: target.scene?.id || canvas.scene?.id,
                                 opposeFlag
                             }
                         })

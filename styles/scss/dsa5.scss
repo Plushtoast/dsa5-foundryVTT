@@ -104,6 +104,34 @@
   h1, h2, h3, h4, h5, h6, h7 {
     font-family: "Andalus";
     overflow: hidden;
+
+    a.entity-link {
+      background: none;
+      padding: 0;
+      border: none;
+    }
+  }
+
+  .schwierig,
+  .einfach {
+    margin-left: 40px;
+    position: relative;
+    &:before {
+      content: "";
+      background: url("../../icons/einfach.webp");
+      background-size: contain;
+      background-repeat: no-repeat;
+      position: absolute;
+      left: -40px;
+      top: 0;
+      height:30px;
+      width: 30px;
+      margin-right: 5px;
+    }
+  }
+
+  .schwierig:before{
+    background-image: url("../../icons/schwierig.webp");
   }
 
   .obfuscateSection.pale{
