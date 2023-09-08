@@ -115,11 +115,13 @@ export default class Migrakel {
         }
         await actor.createEmbeddedDocuments("Item", itemsToCreate);
         await actor.deleteEmbeddedDocuments("Item", itemsToDelete);
-        ui.notifications.notify(game.i18n.localize("Migrakel.migrationDone"));
+
+        if(!Migrakel.silent)
+            ui.notifications.notify(game.i18n.localize("Migrakel.migrationDone"));
     }
 
-    static async updateSpellsAndLiturgies(actor) {
-        const res = await this.showDialog(game.i18n.localize("Migrakel.spells"), true)
+    static async updateSpellsAndLiturgies(actor, preChoice = undefined) {
+        const res = preChoice ?? await this.showDialog(game.i18n.localize("Migrakel.spells"), true)
         const condition = (x) => {
             return ["spell", "liturgy", "ritual", "ceremony", "spellextension"].includes(x.type);
         };
@@ -145,10 +147,12 @@ export default class Migrakel {
             };
             await this.updateVals(actor, condition, updator);
         }
+        return res
     }
 
-    static async updateSpecialAbilities(actor) {
-        if (await this.showDialog(game.i18n.localize("Migrakel.abilities"))) {
+    static async updateSpecialAbilities(actor, preChoice = undefined) {
+        const res = preChoice ?? await this.showDialog(game.i18n.localize("Migrakel.abilities"))
+        if (res) {
             const updator = (find) => {
                 let update = {
                     system: { effect: { value: find.system.effect.value } },
@@ -190,10 +194,12 @@ export default class Migrakel {
             };
             await this.updateVals(actor, condition, updator);
         }
+        return res
     }
 
-    static async updateCombatskills(actor) {
-        if (await this.showDialog(game.i18n.localize("Migrakel.cskills"))) {
+    static async updateCombatskills(actor, preChoice = undefined) {
+        const res = preChoice ?? await this.showDialog(game.i18n.localize("Migrakel.cskills"))
+        if (res) {
             const updator = (find) => {
                 return {
                     effects: find.effects.toObject(),
@@ -204,10 +210,12 @@ export default class Migrakel {
             };
             await this.updateVals(actor, condition, updator);
         }
+        return res
     }
 
-    static async updateSkills(actor) {
-        if (await this.showDialog(game.i18n.localize("Migrakel.skills"))) {
+    static async updateSkills(actor, preChoice = undefined) {
+        const res = preChoice ?? await this.showDialog(game.i18n.localize("Migrakel.skills"))
+        if (res) {
             const condition = (x) => {
                 return ["skill"].includes(x.type);
             };
@@ -218,6 +226,7 @@ export default class Migrakel {
             };
             await this.updateVals(actor, condition, updator);
         }
+        return res
     }
 
     static updateMacro(update, find) {
@@ -229,8 +238,9 @@ export default class Migrakel {
         }
     }
 
-    static async updateGear(actor) {
-        if (await this.showDialog(game.i18n.localize("Migrakel.gear"))) {
+    static async updateGear(actor, preChoice = undefined) {
+        const choice = preChoice ?? await this.showDialog(game.i18n.localize("Migrakel.gear"))
+        if (choice) {
             let condition = (x) => {
                 return [
                     "meleeweapon",
@@ -274,5 +284,6 @@ export default class Migrakel {
             };
             await this.updateVals(actor, condition, updator);
         }
+        return choice
     }
 }

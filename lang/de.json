@@ -855,7 +855,7 @@
         "playerVisibility": "Sichtbarkeit für Spieler"
     },
     "Migrakel": {
-        "Migration": "Actor Migration",
+        "Migration": "Akteur Migration",
         "migrationDone": "Migration abgeschlossen",
         "spells": "<b>Aktualisiere</b> Effekte und Effektformeln von allen Zaubern, Liturgien, Ritualen und Zeremonien oder <b>Ersetze alle</b> Werte. ALLE MANUELLEN MODIFIKATIONEN WERDEN ÜBERSCHRIEBEN!",
         "spellsShort": "Zauber migrieren",

@@ -90,6 +90,7 @@ export function setupConfiguration() {
         default: 24,
         type: Number
     })
+    
     game.settings.register("dsa5", "journalFontSizeIndex", {
         name: "journalFontSizeIndex",
         hint: "journalFontSizeIndex",
