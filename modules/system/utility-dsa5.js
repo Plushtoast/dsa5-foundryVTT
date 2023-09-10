@@ -151,7 +151,7 @@ export default class DSA5_Utility {
         let chatData = {
             user: game.user.id,
             rollMode: modeOverride || game.settings.get("core", "rollMode"),
-            content: content
+            content
         };
 
         if (["gmroll", "blindroll"].includes(chatData.rollMode)) chatData["whisper"] = ChatMessage.getWhisperRecipients("GM").map(u => u.id);
