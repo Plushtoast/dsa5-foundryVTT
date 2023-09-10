@@ -16,34 +16,34 @@
             </div>
         </div>
         {{#each conditions as |item i|}}
-        <div class="row-section col skills statusEffect" data-id="{{item.id}}">
+        <div class="row-section col skills statusEffect" data-id="{{item._id}}">
             <div class="col ten">
                 {{#if item.disabled}}
                 <img style="opacity:0.5;" src="{{item.icon}}" /> {{else}}
                 <img src="{{item.icon}}" /> {{/if}}
             </div>
             <div class="col seventy">
-                <a class="condition-show" data-id="{{item.id}}">{{localize item.name}}</a>
+                <a class="condition-show" data-id="{{item._id}}">{{localize item.name}}</a>
             </div>
 
             <div class="col five right">
-                <a class="condition-edit" data-tooltip="SHEET.EditItem" data-id="{{item.id}}"><i class="fa fa-edit"></i></a> {{#if item.disabled}}
+                <a class="condition-edit" data-tooltip="SHEET.EditItem" data-id="{{item._id}}"><i class="fa fa-edit"></i></a> {{#if item.disabled}}
                 <a class="condition-toggle" data-tooltip="SHEET.activate"><i class="far fa-circle"></i></a> {{else}}
                 <a class="condition-toggle" data-tooltip="SHEET.deactivate"><i class="far fa-check-circle"></i></a> {{/if}}
             </div>
         </div>
         {{/each}} {{#each transferedConditions as |item i|}}
-        <div class="row-section col skills statusEffect" data-id="{{item.id}}">
+        <div class="row-section col skills statusEffect" data-id="{{item._id}}">
             <div class="col ten">
                 {{#if item.disabled}}
                 <img style="opacity:0.5;" src="{{item.icon}}" /> {{else}}
                 <img src="{{item.icon}}" /> {{/if}}
             </div>
             <div class="col seventy">
-                <a class="condition-show" data-id="{{item.id}}">{{localize item.name}}</a>
+                <a class="condition-show" data-id="{{item._id}}">{{localize item.name}}</a>
             </div>
             <div class="col five right">
-                <a class="condition-edit" data-tooltip="SHEET.EditItem" data-id="{{item.id}}"><i class="fa fa-edit"></i></a> {{#if item.disabled}}
+                <a class="condition-edit" data-tooltip="SHEET.EditItem" data-id="{{item._id}}"><i class="fa fa-edit"></i></a> {{#if item.disabled}}
                 <a class="condition-toggle" data-tooltip="SHEET.activate"><i class="far fa-circle"></i></a> {{else}}
                 <a class="condition-toggle" data-tooltip="SHEET.deactivate"><i class="far fa-check-circle"></i></a> {{/if}}
             </div>

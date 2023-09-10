@@ -414,8 +414,8 @@ export default class ActorSheetDsa5 extends ActorSheet {
 
         tabSlider(html)
 
-        html.find('.condition-edit').click(ev => {
-            const effect = this.actor.effects.get(ev.currentTarget.dataset.id)
+        html.find('.condition-edit').click(async(ev) => {
+            const effect = ev.currentTarget.dataset.uuid ? (await fromUuid(ev.currentTarget.dataset.uuid)) : this.actor.effects.get(ev.currentTarget.dataset.id)
             effect.sheet.render(true)
         })
 

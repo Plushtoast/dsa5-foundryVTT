@@ -1683,7 +1683,7 @@
         "randomWeaponSelection": "Zufällige Waffenwahl (Token)",
         "randomWeaponSelectionHint": "Wähle zufällig eine ausgerüstet Waffe aus dem Inventar des Tokens.",
         "showWeaponsOnHover": "Waffen bei Hover zeigen",
-        "showWeaponsOnHoverHint": "Zeigt die ausgerüsteten Waffen des Tokens beim Hover über das Token."
+        "showWeaponsOnHoverHint": "Zeigt die ausgerüsteten Waffen des Tokens beim Hover über das Token im Kampf."
     },
     "CONTROLS": {
         "targetForUser": "Ziel für Spieler wählen"

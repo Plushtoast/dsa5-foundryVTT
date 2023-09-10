@@ -68,14 +68,14 @@
             </div>
         </div>
         {{#each conditions as |item i|}}
-        <div class="row-section col morph skills statusEffect" data-id="{{item.id}}" {{#if item.descriptor}}data-descriptor="{{item.descriptor}}" {{/if}}>
+        <div class="row-section col morph skills statusEffect" data-id="{{item._id}}" {{#if item.descriptor}}data-descriptor="{{item.descriptor}}" {{/if}}>
             <div class="status-img col ten">
                 {{#if item.disabled}}
                 <img style="opacity:0.5;" src="{{item.icon}}" /> {{else}}
                 <img src="{{item.icon}}" /> {{/if}}
             </div>
             <div class="col two">
-                <a class="condition-show" data-id="{{item.id}}">{{localize item.name}}</a>
+                <a class="condition-show" data-id="{{item._id}}">{{localize item.name}}</a>
             </div>
             <div class="col ten center">
                 {{#if item.editable}}{{#unless item.boolean}}<a class="condition-value">{{item.manual}}</a>{{/unless}}{{/if}}
@@ -84,7 +84,7 @@
                 <span>{{item.value}}</span>
             </div>
             <div class="actor-status-action col five right">
-                <a class="condition-edit" data-id="{{item.id}}"><i class="fa fa-edit"></i></a> {{#if item.disabled}}
+                <a class="condition-edit" data-id="{{item._id}}"><i class="fa fa-edit"></i></a> {{#if item.disabled}}
                 <a class="condition-toggle" data-tooltip="SHEET.activate"><i class="far fa-circle"></i></a> {{else}}
                 <a class="condition-toggle" data-tooltip="SHEET.deactivate"><i class="far fa-check-circle"></i></a> {{/if}}
             </div>
@@ -230,14 +230,14 @@
             </div>
         </div>
         {{#each transferedConditions as |item i|}}
-        <div class="row-section morph skills col statusEffect" data-origin="{{item.system.origin}}" data-id="{{item.id}}" {{#if item.descriptor}}data-descriptor="{{item.descriptor}}" {{/if}}>
+        <div class="row-section morph skills col statusEffect" data-origin="{{item.uuid}}" data-id="{{item._id}}" {{#if item.descriptor}}data-descriptor="{{item.descriptor}}" {{/if}}>
             <div class="status-img col ten">
                 {{#if item.disabled}}
                 <img style="opacity:0.5;" src="{{item.icon}}" /> {{else}}
                 <img src="{{item.icon}}" /> {{/if}}
             </div>
             <div class="col two">
-                <a class="condition-show" data-locked="true" data-id="{{item.id}}">{{localize item.name}}</a>
+                <a class="condition-show" data-locked="true" data-id="{{item._id}}">{{localize item.name}}</a>
             </div>
             <div class="col ten center">
                 {{#if item.editable}}{{#unless item.boolean}}<a class="condition-value">{{item.manual}}</a>{{/unless}}{{/if}}
@@ -246,7 +246,7 @@
                 <span>{{item.value}}</span>
             </div>
             <div class="actor-status-action col five right">
-                <a class="condition-edit" data-id="{{item.id}}"><i class="fa fa-edit"></i></a> {{#if item.disabled}}
+                <a class="condition-edit"  data-uuid="{{item.uuid}}" data-id="{{item._id}}"><i class="fa fa-edit"></i></a> {{#if item.disabled}}
                 <a class="condition-toggle" data-tooltip="SHEET.activate"><i class="far fa-circle"></i></a> {{else}}
                 <a class="condition-toggle" data-tooltip="SHEET.deactivate"><i
                         class="far fa-check-circle"></i></a> {{/if}}

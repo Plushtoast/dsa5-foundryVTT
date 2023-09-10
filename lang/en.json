@@ -1654,7 +1654,7 @@
         "randomWeaponSelection": "Random weapon (token)",
         "randomWeaponSelectionHint": "Chose a random equipped weapon from the inventory of the token.",
         "showWeaponsOnHover": "Show weapons on hover",
-        "showWeaponsOnHoverHint": "Show the equipped weapons of the token on hover."
+        "showWeaponsOnHoverHint": "Show the equipped weapons of the token on hover in combat."
     },
     "WEAR": {
         "check": "Breaking Point Rating Check ({category})",
