@@ -3364,10 +3364,23 @@
     right: 0;
   }
   
-  .toggleWorldIndex.on, .toggleAdvancedMode.on, .fulltextsearch.on, .browseEnabled.on, .filterDuplicateItems.on {
-    color: darkred;
-  }
+  .libButton {
+    .label-text i{
+      font-size: 12px;
+    }
+    .fa-toggle-off {
+      color: darkred;
+      margin-right: 6px;
+    }
+    .on .fa-toggle-off{
+      color: green;
 
+      &:before{
+        content: "\f205";
+      }
+    }
+  } 
+  
   .tinyHudIcons{
     border: 1px solid black;
     margin-left: 1px;

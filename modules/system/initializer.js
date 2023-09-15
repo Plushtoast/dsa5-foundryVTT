@@ -225,7 +225,7 @@ export default class DSA5Initializer extends Dialog {
                     k.folder = head.id
                     let existingItem = game.playlists.find(x => x.name == k.name && x.folder?.id == head.id)
                     if (existingItem) {
-                        k._id = existingItem.data._id
+                        k._id = existingItem._id
                         itemsToUpdate.push(k)
                     } else {
                         itemsToCreate.push(k)

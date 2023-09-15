@@ -53,8 +53,9 @@ export default class DPS {
                 }
 
                 const distance = DPS.rangeFinder(token, light.object).distanceSum 
-                const inBright = light.object.document.config.bright >= distance
-                const inDim = light.object.document.config.dim >= distance
+                const lightConfig = light.object.document.config || light.object.document.light
+                const inBright = lightConfig.bright >= distance
+                const inDim = lightConfig.dim >= distance
 
                 if(!inBright && !inDim) continue
 

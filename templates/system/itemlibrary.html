@@ -30,24 +30,33 @@
                             <div class="row-section">
                                 <div class="col">
                                     <div>
-                                        <div class="form-group">
+                                        <div class="form-group libButton">
                                             <label class="label-text">{{ localize "Library.search"}}</label>
-                                            <label class="label-text"><a data-tooltip="Library.advanced" class="toggleAdvancedMode {{../advancedMode}}">
-                                                <i class="fas fa-brain"></i></a>
+                                            <label class="label-text">
+                                                <a data-tooltip="Library.advanced" class="toggleAdvancedMode {{../advancedMode}}">
+                                                    <i class="fas fa-toggle-off"></i> <i class="fas fa-brain"></i>
+                                                </a>
                                             </label>
-                                            <label class="label-text"><a data-tooltip="Library.indexWorldItems" class="toggleWorldIndex {{../worldIndexed}}">
-                                                <i class="fas fa-globe-europe"></i></a>
+                                            <label class="label-text">
+                                                <a data-tooltip="Library.indexWorldItems" class="toggleWorldIndex {{../worldIndexed}}">
+                                                    <i class="fas fa-toggle-off"></i> <i class="fas fa-globe-europe"></i>
+                                                </a>
                                             </label>
-                                            <label class="label-text"><a data-tooltip="Library.fullTextSearch" class="fulltextsearch {{../fullTextEnabled}}">
-                                                <i class="fas fa-align-center"></i></a>
+                                            <label class="label-text">
+                                                <a data-tooltip="Library.fullTextSearch" class="fulltextsearch {{../fullTextEnabled}}">
+                                                    <i class="fas fa-toggle-off"></i> <i class="fas fa-align-center"></i>
+                                                </a>
                                             </label>
-                                            <label class="label-text"><a data-tooltip="Library.browseEnabled" class="browseEnabled {{../browseEnabled}}">
-                                                <i class="fas fa-maximize"></i></a>
+                                            <label class="label-text">
+                                                <a data-tooltip="Library.browseEnabled" class="browseEnabled {{../browseEnabled}}">
+                                                    <i class="fas fa-toggle-off"></i> <i class="fas fa-maximize"></i>
+                                                </a>
                                             </label>
-                                            <label class="label-text"><a data-tooltip="Library.filterDuplicateItems" class="filterDuplicateItems {{../filterDuplicateItems}}">
-                                                <i class="fas fa-filter"></i></a>
+                                            <label class="label-text">
+                                                <a data-tooltip="Library.filterDuplicateItems" class="filterDuplicateItems {{../filterDuplicateItems}}">
+                                                    <i class="fas fa-toggle-off"></i> <i class="fas fa-filter"></i>
+                                                </a>
                                             </label>
-
                                             
                                             <input class="input-text filterBy-search" name="librarySearch" type="text" placeholder="{{localize 'Library.searchPlaceholder'}}" />
                                         </div>

@@ -749,7 +749,8 @@ DSA5.specialAbilityCategories = {
     "animal": "animal",
     "staff": "traditionArtifact",
     "ceremonial": "ceremonialItem",
-    "pact": "pactgift"
+    "pact": "pactgift",
+    "secret": "LocalizedIDs.professionSecret"
 }
 
 DSA5.addvantageRules = {}

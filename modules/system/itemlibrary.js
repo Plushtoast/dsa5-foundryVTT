@@ -448,8 +448,18 @@ export default class DSA5ItemLibrary extends Application {
     async filterStuff(category, index, page) {
         let search = this.filters[category].filterBy.search
 
-        let fields = {
-            field: ["name", "data"],
+        const fields = [
+            {
+                field: "name",
+                query: search
+            },
+            {
+                field: "data",
+                query: search
+            }
+        ]
+        
+        const optns = {
             limit: 60,
             page: page || true
         }
@@ -460,20 +470,22 @@ export default class DSA5ItemLibrary extends Application {
             if (this.filters[category].categories[filter]) {
                 let result
                 if (search == "") {
-                    result = index.search(filter, { field: ["itemType"], limit: 60, page: page || true })
+                    result = index.search(filter, { field: ["itemType"], ...optns })
                 } else {
-                    let query = duplicate(fields)
-                    mergeObject(query, { where: { itemType: filter } })
-                    result = index.search(search, query)
+                    let query = fields.concat({
+                        field: "itemType",
+                        query: filter
+                    })
+                    result = index.search(query, optns)
                 }
                 this.pages[category].next = result.next
-                filteredItems.push(...result.result)
+                filteredItems.push(...result.result.filter(x => x.document.filterType == filter))
             }
             oneFilterSelected = this.filters[category].categories[filter] || oneFilterSelected
         }
 
         if (!oneFilterSelected) {
-            filteredItems = index.search(search, fields)
+            filteredItems = index.search(fields)
             this.pages[category].next = filteredItems.next
         }
 
