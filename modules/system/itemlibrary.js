@@ -146,6 +146,7 @@ export default class DSA5ItemLibrary extends Application {
                     "data",
                     "itemType"
                 ],
+                tag: ["itemType"]
             }
         });
         this.zooIndex = new FlexSearch({
@@ -159,6 +160,7 @@ export default class DSA5ItemLibrary extends Application {
                     "data",
                     "itemType"
                 ],
+                tag: ["itemType"]
             }
         });
 
@@ -448,20 +450,8 @@ export default class DSA5ItemLibrary extends Application {
     async filterStuff(category, index, page) {
         let search = this.filters[category].filterBy.search
 
-        const fields = [
-            {
-                field: "name",
-                query: search
-            },
-            {
-                field: "data",
-                query: search
-            }
-        ]
-        
-        const optns = {
-            limit: 60,
-            page: page || true
+        let fields = {
+            field: ["name", "data"]
         }
         let filteredItems = []
 
@@ -469,31 +459,32 @@ export default class DSA5ItemLibrary extends Application {
         for (let filter in this.filters[category].categories) {
             if (this.filters[category].categories[filter]) {
                 let result
+                let next = null
                 if (search == "") {
-                    result = index.search(filter, { field: ["itemType"], ...optns })
+                    result = index.search(filter, { field: ["itemType"], sort: "name", where: { itemType: filter }})
                 } else {
-                    let query = fields.concat({
-                        field: "itemType",
-                        query: filter
-                    })
-                    result = index.search(query, optns)
+                    result = index.search(search, {...fields, sort: "name", where: { itemType: filter }})
                 }
-                this.pages[category].next = result.next
-                filteredItems.push(...result.result.filter(x => x.document.filterType == filter))
+                
+                let startIndex = Number(page) || 0
+                result = result.slice(startIndex, Math.min(startIndex + 60, result.length))
+
+                if (result.length == 60) next = `${startIndex + 60}`
+
+                this.pages[category].next = next
+                filteredItems.push(...result)
             }
             oneFilterSelected = this.filters[category].categories[filter] || oneFilterSelected
         }
 
         if (!oneFilterSelected) {
-            filteredItems = index.search(fields)
+            filteredItems = index.search(search, { ...fields, limit: 60, page: page || true, sort: "name"})
             this.pages[category].next = filteredItems.next
         }
 
         filteredItems = filteredItems.result ? filteredItems.result : filteredItems
-        filteredItems = filteredItems.filter(x => x.hasPermission).sort((a, b) => (a.name.toLowerCase() > b.name.toLowerCase()) ? 1 : -1)
+        filteredItems = filteredItems.filter(x => x.hasPermission)
         this.setBGImage(filteredItems, category)
-
-        filteredItems = this.filterDuplications(filteredItems)
 
         return filteredItems
     }
