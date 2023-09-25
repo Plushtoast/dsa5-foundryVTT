@@ -45,17 +45,7 @@ export default class Migrakel {
         let removeEffects = [];
         for (let i of actor.effects) {
             if (i.origin) {
-                let sourceItem 
-                try{
-                    sourceItem = await fromUuid(i.origin);
-                }
-                catch(ev){}
-                
-                //todo there should be a better detection for this
-                if (!sourceItem) {
-                    removeEffects.push(i.id);
-                }
-                
+                removeEffects.push(i.id);
             }
         }
         await actor.deleteEmbeddedDocuments("ActiveEffect", removeEffects);

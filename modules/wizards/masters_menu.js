@@ -90,13 +90,14 @@ class GameMasterMenu extends Application {
                 }
             })
             Hooks.on("updateScene", async(document, data, options, userId) => {
-                if(!this.rendered) return
-
                 const properties = ["darkness"]
                 if (game.canvas.id == document.id && properties.reduce((a, b) => {
                         return a || hasProperty(data, b)
                     }, false)) {
                     if (game.dsa5.apps.LightDialog) game.dsa5.apps.LightDialog.onDarknessChange()
+
+                    if(!this.rendered) return
+                    
                     this.render()
                 }
             })

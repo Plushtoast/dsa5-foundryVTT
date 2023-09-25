@@ -81,6 +81,12 @@ export default class TokenHotbar2 extends Application {
         Hooks.on("deleteItem", (source, item) => {
             parentUpdate(source)
         });
+
+        Hooks.on("canvasInit", () => {
+            if(!this.rendered) return
+
+            this.render()
+        })
     }
 
     registerMasterFunction(entry, callback) {
