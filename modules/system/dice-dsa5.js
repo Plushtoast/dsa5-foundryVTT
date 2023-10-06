@@ -201,6 +201,10 @@ export default class DiceDSA5 {
         return 0
     }
 
+    static async _rollConfirm() {
+        return await (new Roll("1d20").evaluate({ async: true }))
+    }
+
     static async _rollSingleD20(roll, res, id, modifier, testData, combatskill = "", multiplier = 1) {
         let description = ""
 
@@ -212,7 +216,6 @@ export default class DiceDSA5 {
         const color = game.dsa5.apps.DiceSoNiceCustomization.getAttributeConfiguration(id)
 
         chars.push({ char: id, res: roll.terms[0].results[0].result, suc: res1 >= 0, tar: res })
-        let rollConfirm = await new Roll("1d20").evaluate({ async: true })
         let successLevel = res1 >= 0 ? 1 : -1
 
         let botch = 20
@@ -250,8 +253,8 @@ export default class DiceDSA5 {
             if (game.settings.get("dsa5", "noConfirmationRoll")) {
                 successLevel = 3
             } else {
-                rollConfirm = await DiceDSA5.manualRolls(
-                    rollConfirm,
+                let rollConfirm = await DiceDSA5.manualRolls(
+                    await DiceDSA5._rollConfirm(),
                     "confirmationRoll",
                     testData.extra.options
                 )
@@ -264,7 +267,11 @@ export default class DiceDSA5 {
                     !(res2 >= 0)
                 ) {
                     let a = rollConfirm.terms[0].results[0].result
-                    rollConfirm = await new Roll("1d20").evaluate({ async: true })
+                    rollConfirm = await DiceDSA5.manualRolls(
+                        await DiceDSA5._rollConfirm(),
+                        "LocalizedIDs.weaponAptitude",
+                        testData.extra.options
+                    )
                     res2 = res - rollConfirm.terms[0].results[0].result
                     description +=
                         ", " + game.i18n.format("usedWeaponExpertise", { a: a, b: rollConfirm.terms[0].results[0].result })
@@ -278,8 +285,8 @@ export default class DiceDSA5 {
             if (game.settings.get("dsa5", "noConfirmationRoll")) {
                 successLevel = -3
             } else {
-                rollConfirm = await DiceDSA5.manualRolls(
-                    rollConfirm,
+                let rollConfirm = await DiceDSA5.manualRolls(
+                    await DiceDSA5._rollConfirm(),
                     "confirmationRoll",
                     testData.extra.options
                 )
@@ -292,7 +299,11 @@ export default class DiceDSA5 {
                     !(res2 >= 0)
                 ) {
                     let a = rollConfirm.terms[0].results[0].result
-                    rollConfirm = await new Roll("1d20").evaluate({ async: true })
+                    rollConfirm = await DiceDSA5.manualRolls(
+                        await DiceDSA5._rollConfirm(),
+                        "LocalizedIDs.weaponAptitude",
+                        testData.extra.options
+                    )
                     res2 = res - rollConfirm.terms[0].results[0].result
                     description +=
                         ", " + game.i18n.format("usedWeaponExpertise", { a: a, b: rollConfirm.terms[0].results[0].result })

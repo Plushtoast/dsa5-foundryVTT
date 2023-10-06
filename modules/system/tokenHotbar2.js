@@ -351,6 +351,15 @@ export default class TokenHotbar2 extends Application {
         }
     }
 
+    async handleSharedEffect(ev) {
+        for(let token of canvas.tokens.controlled) {
+            const actor = token.actor
+            const tokenId = token.id
+            const id = actor.effects.find(x => x.name == ev.currentTarget.dataset.name)?.id
+            await this.handleEffect(ev, actor, id, tokenId)
+        }
+    }
+
     async executeQuickButton(ev) {
         const actor = canvas.tokens.controlled[0]?.actor
         const tokenId = canvas.tokens.controlled[0]?.id
@@ -363,6 +372,9 @@ export default class TokenHotbar2 extends Application {
                 break
             case "effect":
                 this.handleEffect(ev, actor, id, tokenId)
+                break
+            case "sharedEffect":
+                this.handleSharedEffect(ev)
                 break
             case "onUse":
                 this.handleOnUse(ev, actor, id, tokenId)
@@ -536,6 +548,14 @@ export default class TokenHotbar2 extends Application {
             if (effects.length > 0) {
                 effect.more = effects
                 effect.subwidth = this.subWidth(effects, itemWidth)
+            } else if(canvas.tokens.controlled.length > 1) {
+                let sharedEffects = (await canvas.tokens.controlled[0].actor.actorEffects()).map(x => { return { name: x.name, id: x.id, icon: x.icon, cssClass: "effect", abbrev: `${x.name[0]} ${x.getFlag("dsa5","value") || ""}`, subfunction: "sharedEffect" } })
+                for(let token of canvas.tokens.controlled){
+                    const tokenEffects = (await token.actor.actorEffects()).map(x => x.name)
+                    sharedEffects = sharedEffects.filter(x => tokenEffects.includes(x.name))
+                }
+                effect.more = sharedEffects
+                effect.subwidth = this.subWidth(sharedEffects, itemWidth)
             }
             items.effects = [effect]
         }

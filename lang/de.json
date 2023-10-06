@@ -31,6 +31,7 @@
         "split": "Schwarum aufteilen",
         "swarmSplitMessage": "Wieviele Kreaturen sollen sich vom Schwarm trennen?"
     },
+    "char": "Attribut",
     "CHAR": {
         "MU": "Mut",
         "KL": "Klugheit",

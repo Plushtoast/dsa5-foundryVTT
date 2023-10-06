@@ -6,6 +6,7 @@
     "Attribute-difficult": "Difficult (-2)",
     "Attribute-hard": "Very Difficult (-4)",
     "Attribute-vhard": "Extremely Difficult (-6)",
+    "char": "Attribute",
     "CHAR": {
         "MU": "Courage",
         "KL": "Sagacity",

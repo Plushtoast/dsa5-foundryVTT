@@ -770,6 +770,7 @@ class ConfigureTokenHotbar extends FormApplication {
 
             await game.settings.set(name[0], name[1], val)
             game.dsa5.apps.tokenHotbar?.render(true)
+            this.render()
         })
         html.find('.bags .slot').click(ev => this._onMasterFunctionClicked(ev))
     }
@@ -791,8 +792,9 @@ class ConfigureTokenHotbar extends FormApplication {
             tokenhotbarLayout: game.settings.get("dsa5", "tokenhotbarLayout"),
             disableTokenhotbarMaster: game.settings.get("dsa5", "disableTokenhotbarMaster"),
             disableTokenhotbar: game.settings.get("dsa5", "disableTokenhotbar"),
+            tokenhotbaropacity: game.settings.get("dsa5", "tokenhotbaropacity"),
             isGM: game.user.isGM,
-            gmButtons: game.dsa5.apps.tokenHotbar.gmItems
+            gmButtons: game.dsa5.apps.tokenHotbar?.gmItems
         })
         return data
     }
