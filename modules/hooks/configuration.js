@@ -359,6 +359,14 @@ export function setupConfiguration() {
         type: Object
     });
 
+    game.settings.register("dsa5", "masterSettings", {
+        name: "masterSettings",
+        scope: "world",
+        config: false,
+        default: {},
+        type: Object
+    });
+
     game.settings.register("dsa5", "iniTrackerPosition", {
         name: "iniTrackerPosition",
         scope: "client",

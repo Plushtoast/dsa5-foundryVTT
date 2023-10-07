@@ -326,6 +326,16 @@ export default class DSA5StatusEffects {
                 }
             }
         }
+        for(let ef of Object.values((game.settings.get("dsa5", "masterSettings").globalMods || {}))) {
+            if(!ef.enabled || !ef.target[item.type]) continue
+
+            result.push({
+                name: ef.name,
+                value: ef.value,
+                selected: true,
+                source: game.i18n.localize("MASTER.globalMods")
+            })
+        }
         return result
     }
 }

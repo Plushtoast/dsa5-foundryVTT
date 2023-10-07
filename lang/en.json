@@ -659,6 +659,9 @@
     "MASTER": {
         "automation": "Automation",
         "sceneConfig": "Scene config",
+        "globalMods": "Global Modifiers",
+        "addGlobalMod": "Add global modifier",
+        "globalModsHint": "Global modifiers are shown for all checks. They can be used for special circumstances like bad weather, globules and similar.",
         "awardXP": "Award Adventure Points",
         "awardXPText": "Award {heros} with Adventure Points.",
         "getPaidText": "Pay silverthalers to {heros}.",
