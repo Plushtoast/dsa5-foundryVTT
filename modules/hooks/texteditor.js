@@ -5,7 +5,7 @@ export function setEnrichers() {
     const icons = { "Rq": "dice", "Gc": "dice", "Ch": "user-shield" }
     const titles = { "Rq": "", "Gc": `${game.i18n.localize("HELP.groupcheck")} `, "Ch": "" }
     const modRegex = /(-|\+)?\d+/
-    const replaceRegex = /\[[a-zA-zöüäÖÜÄ&; -]+/
+    const replaceRegex = /\[[a-zA-ZöüäÖÜÄ&; -]+/
     const replaceRegex2 = /[\[\]]/g
 
     if (!DSA5.statusRegex) {
@@ -16,16 +16,18 @@ export function setEnrichers() {
             regex: new RegExp(`(${keywords}) (${effects.join('|')})`, 'gi')
         }
     }
+    
 
     CONFIG.TextEditor.enrichers.push(
         {
-            pattern: /@(Rq|Gc|Ch)\[[a-zA-zöüäÖÜÄ&; -]+ (-|\+)?\d+\]/g,
+            pattern: /@(Rq|Gc|Ch)\[[a-zA-ZöüäÖÜÄ&; -]+ (-|\+)?\d+\]({[a-zA-ZöüäÖÜÄ&; -]+})?/g,
             enricher: (match, options) => {
                 const str = match[0]
                 const type = match[1]
                 const mod = Number(str.match(modRegex)[0])
                 const skill = str.replace(mod, "").match(replaceRegex)[0].replace(replaceRegex2, "").trim()
-                return $(`<a class="roll-button request-${rolls[type]}" data-type="skill" data-modifier="${mod}" data-name="${skill}"><em class="fas fa-${icons[type]}"></em>${titles[type]}${skill} ${mod}</a>`)[0]
+                const customText = str.match(/\{.*\}/) ? str.match(/\{.*\}/)[0].replace(/[\{\}]/g, "") : skill
+                return $(`<a class="roll-button request-${rolls[type]}" data-type="skill" data-modifier="${mod}" data-name="${skill}" data-label="${customText}"><em class="fas fa-${icons[type]}"></em>${titles[type]}${customText} ${mod}</a>`)[0]
             }
         },
         {
@@ -35,7 +37,7 @@ export function setEnrichers() {
             }
         },
         {
-            pattern: /@Info\[[a-zA-zöüäÖÜÄ&; -\.0-9]+\]/g,
+            pattern: /@Info\[[a-zA-ZöüäÖÜÄ&; -\.0-9]+\]/g,
             enricher: async(match, options) => {
                 let uuid = match[0].match(/(?:\[)(.*?)(?=\])/)[0].slice(1)
                 const item = await fromUuid(uuid)
@@ -54,6 +56,20 @@ export function setEnrichers() {
 
                 const templ = await renderTemplate("systems/dsa5/templates/items/infopreview.html", { item, enriched })
                 return $(templ)[0]
+            }
+        },
+        {
+            pattern: /@EmbedItem\[[a-zA-ZöüäÖÜÄ&; -\.0-9]+\]/g,
+            enricher: async(match, options) => {
+                let uuid = match[0].match(/(?:\[)(.*?)(?=\])/)[0].slice(1)
+                const document = await fromUuid(uuid)
+
+                if(!document) return $('<a class="content-link broken"><i class="fas fa-unlink"></i>embed</a>')[0]
+
+                const template = `systems/dsa5/templates/items/browse/${document.type}.html`
+                const item = await renderTemplate(template, { document, isGM: game.user.isGM, ...(await document.sheet.getData())})
+                
+                return $(item)[0]
             }
         },
         {

@@ -67,6 +67,10 @@
                     {{/select}}
                 </select>
             </div>
+            <div class="form-group" data-tooltip="permanentEffectsHint">
+                <label class="label-text">{{localize "permanentEffects"}}</label>
+                <input type="checkbox" name="system.permanentEffects" value="{{system.permanentEffects}}" data-dtype="Boolean" {{checked system.permanentEffects}} />
+            </div>
             <div class="form-group">
                 <label class="label-text">{{localize "volume"}}</label>
                 <input class="input-text" type="number" name="system.volume" value="{{system.volume}}" data-dtype="Number" />

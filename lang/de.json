@@ -275,6 +275,8 @@
     "ok": "Ok",
     "combatskillcountdivider": "aus",
     "closeCombatAttacks": "Nahkampfangriffe",    
+    "permanentEffects": "Permanente Effekte",
+    "permanentEffectsHint": "Active Effects werden auch auf den Träger angwendet, wenn das Objekt nicht getragen wird.",
     "Current": "Aktuell",
     "career": "Profession",
     "cummulatedQS": "Gesammelte QS",

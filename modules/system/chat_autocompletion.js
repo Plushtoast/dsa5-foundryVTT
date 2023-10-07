@@ -359,7 +359,8 @@ export default class DSA5ChatAutoCompletion {
 
     static bindRollCommands(html){
         html.on('click', '.request-roll', ev => {
-            RequestRoll.showRQMessage(ev.currentTarget.dataset.name, Number(ev.currentTarget.dataset.modifier) || 0)
+            const dataset = ev.currentTarget.dataset
+            RequestRoll.showRQMessage(dataset.name, Number(dataset.modifier) || 0, dataset.label)
             ev.stopPropagation()
             return false
         })

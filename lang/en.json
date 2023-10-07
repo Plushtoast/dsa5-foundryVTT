@@ -274,6 +274,8 @@
     "advantages": "Advantages",
     "advantage": "Advantage",
     "attackWeaponless": "Unarmed attack",
+    "permanentEffects": "Permanent effects",
+    "permanentEffectsHint": "Active effects are also applied to the wearer if the item is not worn.",
     "animalSpecialAbilities": "Animal Special Abilities",
     "Age": "Age",
     "aspect": "Aspect",

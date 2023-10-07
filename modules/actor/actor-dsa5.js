@@ -459,6 +459,9 @@ export default class Actordsa5 extends Actor {
       for ( const statusId of e.statuses ) this.statuses.add(statusId);
     }
     let apply = true;
+
+    const appliedArtifacts = this.items.filter(x => ["rangeweapon", "meleeweapon", "equipment", "armor"].includes(x.type) && x.system.isArtifact && (x.system.worn.value || (x.type == "equipment" && !x.system.worn.wearable))).map(x => x.system.artifact)
+
     for(let item of this.items) {
       for(const e of item.effects) {
         apply = true
@@ -491,7 +494,16 @@ export default class Actordsa5 extends Actor {
             apply = false;
             break;
           case "specialability":
-            apply = item.system.category.value != "Combat" || [2, 3].includes(Number(item.system.category.sub));
+            switch(item.system.category.value){
+              case "Combat":
+                apply = [2, 3].includes(Number(item.system.category.sub))
+                break;
+              case "staff":
+                apply = item.system.permanentEffects || appliedArtifacts.includes(item.system.artifact)
+                break
+              default:
+                apply = true
+            }           
             multiply = Number(item.system.step.value) || 1
             break
           case "advantage":

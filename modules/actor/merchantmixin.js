@@ -204,14 +204,14 @@ export const MerchantSheetMixin = (superclass) => class extends superclass {
                 if (getProperty(item, "system.worn.value")) item.system.worn.value = false
 
                 if (buy) {
-                    await this.updateTargetTransaction(target, item, amount, source, price)
+                    const res = await this.updateTargetTransaction(target, item, amount, source, price)
                     await this.updateSourceTransaction(source, target, item, price, itemId, amount)
-                    await this.transferNotification(item, target, source, buy, price, amount, noNeedToPay)
+                    await this.transferNotification(item, target, source, buy, price, amount, noNeedToPay, res)
                     await this.selfDestruction(source)
                 } else {
                     await this.updateSourceTransaction(source, target, item, price, itemId, amount)
-                    await this.updateTargetTransaction(target, item, amount, source, price)
-                    await this.transferNotification(item, source, target, buy, price, amount, noNeedToPay)
+                    const res = await this.updateTargetTransaction(target, item, amount, source, price)
+                    await this.transferNotification(item, source, target, buy, price, amount, noNeedToPay, res)
                 }
             }
         }
@@ -243,12 +243,12 @@ export const MerchantSheetMixin = (superclass) => class extends superclass {
         target.sheet.close(true)
     }
 
-    static async transferNotification(item, source, target, buy, price, amount, noNeedToPay) {
+    static async transferNotification(item, source, target, buy, price, amount, noNeedToPay, res) {
         const notify = game.settings.get("dsa5", "merchantNotification")
         if (notify == 0 || getProperty(item, "system.equipmentType.value") == "service") return
 
         const notif = "MERCHANT." + (buy ? "buy" : "sell") + (noNeedToPay ? "Loot" : "") + "Notification"
-        const template = game.i18n.format(notif, { item: item.name, source: source.name, target: target.name, amount, price, buy })
+        const template = game.i18n.format(notif, { item: res.toAnchor().outerHTML, source: source.name, target: target.name, amount, price, buy })
         const chatData = DSA5_Utility.chatDataSetup(template)
         if (notify == 2) chatData["whisper"] = ChatMessage.getWhisperRecipients("GM").map(u => u.id)
         await ChatMessage.create(chatData)
@@ -279,9 +279,10 @@ export const MerchantSheetMixin = (superclass) => class extends superclass {
             let res = target.items.find(i => Itemdsa5.areEquals(item, i));
             item.system.quantity.value = amount
             if (!res) {
-                await target.createEmbeddedDocuments("Item", [item]);
+                return (await target.createEmbeddedDocuments("Item", [item]))[0];
             } else {
                 await Itemdsa5.stackItems(res, item, target)
+                return res
             }
         }
     }
