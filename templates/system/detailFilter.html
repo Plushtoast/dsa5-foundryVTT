@@ -22,6 +22,11 @@
     {{/if}} {{/each}}
     <div class="form-group">
         <label class="label-text">{{localize 'Module'}}</label>
-        <input class="input-text" type="text" name="compendium" value="" data-dtype="String" />
+        <select name="compendium" data-dtype="String">
+            <option value="">{{localize 'Library.noFilter'}}</option>
+            {{#each moduleOptions as |ch char|}}
+            <option value="{{char}}">{{ch}}</option>
+            {{/each}}
+        </select>
     </div>
 </div>

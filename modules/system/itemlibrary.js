@@ -659,7 +659,14 @@ export default class DSA5ItemLibrary extends Application {
 
         if (fields) {
             let bindex = this.createDetailIndex(category, subcategory)
-            const template = await renderTemplate("systems/dsa5/templates/system/detailFilter.html", { fields, subcategory })
+            const moduleOptions = game.packs.filter(x => x.metadata.type == "Item").reduce((prev, cur) => {
+                if(!prev[cur.metadata.packageName]) {
+                    const name = game.i18n.has(`${cur.metadata.packageName}.name`) ? game.i18n.localize(`${cur.metadata.packageName}.name`) : (game.modules.get(cur.metadata.packageName)?.title.replace(/The Dark Eye 5th Ed. - /i, "") || "World")
+                    prev[cur.metadata.packageName] = name
+                }
+                return prev
+            }, {})
+            const template = await renderTemplate("systems/dsa5/templates/system/detailFilter.html", { fields, subcategory, moduleOptions })
             await bindex
             return template
         } else {

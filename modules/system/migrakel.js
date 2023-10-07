@@ -165,7 +165,8 @@ export default class Migrakel {
                                 feature: getProperty(find, "system.feature") || "",
                                 AsPCost: getProperty(find, "system.AsPCost") || "",
                                 volume: Number(getProperty(find, "system.volume")) || 0,
-                                artifact: getProperty(find, "system.artifact") || ""
+                                artifact: getProperty(find, "system.artifact") || "",
+                                permanentEffects: getProperty(find, "system.permanentEffects") || false
                             },
                         });
                     }
