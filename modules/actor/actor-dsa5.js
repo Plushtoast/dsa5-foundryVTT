@@ -17,9 +17,7 @@ import CreatureType from "../system/creature-type.js";
 import Riding from "../system/riding.js";
 
 export default class Actordsa5 extends Actor {
-  static _baseCarryItems = new Set(["armor", "meleeweapon", "ammunition", "rangeweapon", "plant", "poison", "money", "consumable", "equipment"])
-  static _mageSpecs = new Set(["magical", "staff", "pact", "magicalStyle", "homunculus", "extMagical"])
-  static _clericSpecs = new Set(["ceremonial", "clerical", "clericalStyle", "extClericalStyle", "vision", "prayer"])
+  static _baseCarryItems = new Set(DSA5.equipmentCategories)
 
   static async create(data, options) {
     if (data instanceof Array || data.items) return await super.create(data, options);
@@ -132,8 +130,8 @@ export default class Actordsa5 extends Actor {
               data.isPriest = true
               break
             case "specialability":
-              if(Actordsa5._mageSpecs.has(i.system.category.value)) data.isMage = true
-              else if(Actordsa5._clericSpecs.has(i.system.category.value)) data.isPriest = true
+              if(DSA5.sortedSpecs.magical.has(i.system.category.value)) data.isMage = true
+              else if(DSA5.sortedSpecs.clerical.has(i.system.category.value)) data.isPriest = true
               break              
           }
         }

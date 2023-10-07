@@ -773,14 +773,13 @@ DSA5.specialAbilityCategories = {
 }
 
 DSA5.sortedSpecs = {
-    combat: ["Combat", "command"],
-    magical: ["magical", "magicalStyle", "extMagical", "pact", "homunculus"],
-    clerical: ["clerical", "clericalStyle", "extClericalStyle", "ceremonial", "vision", "prayer"],
-    unUsed: ["staff"]
+    combat: new Set(["Combat", "command"]),
+    magical: new Set(["magical", "magicalStyle", "extMagical", "pact", "homunculus"]),
+    clerical: new Set(["clerical", "clericalStyle", "extClericalStyle", "ceremonial", "vision", "prayer"]),
+    unUsed: new Set(["staff"])
 }
 
-const allSpecs = DSA5.sortedSpecs.combat.concat(DSA5.sortedSpecs.magical).concat(DSA5.sortedSpecs.clerical).concat(DSA5.sortedSpecs.unUsed)
-DSA5.sortedSpecs.general = Object.keys(DSA5.specialAbilityCategories).filter(x => !allSpecs.includes(x))
+DSA5.sortedSpecs.general = new Set(Object.keys(DSA5.specialAbilityCategories).filter(x => !Object.keys(DSA5.sortedSpecs).some(y => DSA5.sortedSpecs[y].has(x))))
 
 DSA5.addvantageRules = {}
 DSA5.removevantageRules = {}
