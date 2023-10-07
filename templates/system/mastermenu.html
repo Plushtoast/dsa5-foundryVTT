@@ -12,8 +12,52 @@
     <section class="content">
         <div class="tab sceneConfig" data-tab="sceneConfig">
             <div class="groupbox">
-                <h2>{{localize 'sight'}}</h2>
+                <h2>{{localize 'MASTER.globalMods'}}</h2>
+                <div class="row-section lineheight table-title">
+                    <div class="col seventy">
 
+                    </div>
+                    <div class="col ten center">
+                        {{localize 'Book.active'}}
+                    </div>
+                    <div class="col ten center">
+                        <a class="addGlobalMod"><i class="fas fa-plus"></i></a>
+                    </div>
+                    <div class="col ten center" data-tooltip="MASTER.globalModsHint">
+                        <i class="fas fa-info"></i>
+                    </div>
+                </div>
+                <div class="col morph">
+                    {{#each masterSettings.globalMods as |item i|}}
+                    <div class="tableOdd skills">
+                        <div class="row-section lineheight">
+                            <div class="col seventy">
+                                {{item.name}}
+                            </div>
+                            <div class="col ten center">
+                                <input type="checkbox" class="globalModEnable" data-key="{{i}}" {{checked item.enabled}}>
+                            </div>
+                            <div class="col ten center">
+                                {{item.value}}
+                            </div>
+                            <div class="col ten center" data-tooltip="MASTER.globalModsHint">
+                                <a class="removeGlobalMod" data-key="{{i}}"><i class="fas fa-trash"></i></a>
+                            </div>
+                        </div>
+                        <div class="row-section">
+                            {{#each item.target as |value key|}}
+                                {{#if value}}
+                                <small class="smallBoxItem">{{itemCategory key}}</small>
+                                {{/if}}
+                            {{/each}}
+                        </div>
+                    </div>
+                    {{/each}}
+                </div>
+            </div>
+            <div class="groupbox">
+                <h2>{{localize 'sight'}}</h2>
+                
                 <div class="row-section lineheight">
                     <div class="col fourty table-title">
                         <label>{{localize "MASTER.darkness"}}</label>
@@ -22,7 +66,7 @@
                         <input type="range" min="0" max="1" step="0.05" class="updateDarkness" name="updateDarkness" value="{{sceneConfig.darkness}}">
                     </div>
                     <div class="col ten center">
-                        <span class="range-value">{{item.value}}</span>
+                        <span class="range-value">{{sceneConfig.darkness}}</span>
                     </div>
                 </div>
                 <div class="row-section lineheight" data-tooltip="MASTER.sightautomationTooltip">

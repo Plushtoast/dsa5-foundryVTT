@@ -136,6 +136,9 @@ class GameMasterMenu extends Application {
             ev.stopPropagation()
             game.actors.get(this.getID(ev)).sheet.render(true)
         })
+        html.find('.addGlobalMod').click(() => this.addGlobalMod())
+        html.find('.globalModEnable').change(ev => this.toggleGlobalMod(ev))
+        html.find('.removeGlobalMod').click((ev) => this.removeGlobalMod(ev))
         html.find('.heroSelector').change(ev => {
             ev.stopPropagation()
             const selected = this.getSelectedActors()
@@ -332,6 +335,23 @@ class GameMasterMenu extends Application {
         const schipSetting = this.getGroupSchipSetting()
         schipSetting[0] = val
         await game.settings.set("dsa5", "groupschips", schipSetting.join("/"))
+    }
+
+    async addGlobalMod() {
+        new GlobalModAddition().render(true)
+    }
+
+    async toggleGlobalMod(ev) {
+        const settings = game.settings.get("dsa5", "masterSettings")
+        settings.globalMods[ev.currentTarget.dataset.key].enabled = ev.currentTarget.checked
+        await game.settings.set("dsa5", "masterSettings", settings)
+    }
+
+    async removeGlobalMod(ev) {
+        const settings = game.settings.get("dsa5", "masterSettings")
+        delete settings.globalMods[ev.currentTarget.dataset.key]
+        await game.settings.set("dsa5", "masterSettings", settings)
+        this.render()
     }
 
     async _randomPlayer(html, ev) {
@@ -635,6 +655,7 @@ class GameMasterMenu extends Application {
             heros: copiedHeros,
             abilities: this.abilities,
             groupschips,
+            masterSettings: game.settings.get("dsa5", "masterSettings"),
             lastSkill: this.lastSkill,
             randomCreation: this.randomCreation.map(x => x.template),
             lightButton: game.dsa5.apps.LightDialog ? await game.dsa5.apps.LightDialog.getButtonHTML() : ""
@@ -644,5 +665,47 @@ class GameMasterMenu extends Application {
 
     registerRandomCreation(elem) {
         this.randomCreation.push(elem)
+    }
+}
+
+class GlobalModAddition extends FormApplication {
+    static get defaultOptions() {
+        const options = super.defaultOptions;
+        options.template = 'systems/dsa5/templates/system/global-mod-addition.html'
+        options.title= game.i18n.localize("MASTER.addGlobalMod")
+        options.width = 400
+        options.resizable = true
+        return options;
+    }
+
+    activateListeners(html) {
+        super.activateListeners(html)
+
+        html.find('.addGlobalMod').click((ev) => this.addGlobalMod(ev))        
+    }
+
+    async getData(options) {
+        const data = await super.getData(options);
+        data.categories = ["skill", "spell", "meleeweapon", "rangeweapon", "ritual", "ceremony", "liturgy" ]
+        return data
+    }
+
+    async addGlobalMod(ev) {
+        ev.preventDefault()
+        const settings = game.settings.get("dsa5", "masterSettings")
+
+        const data = new FormDataExtended($(this._element).find('form')[0]).object
+        data.enabled = true
+
+        if(!data.name) return
+
+        mergeObject(settings, {
+            globalMods: {
+                [randomID()]: data
+            }
+        })
+        await game.settings.set("dsa5", "masterSettings", settings)
+        game.dsa5.apps.gameMasterMenu.render()
+        this.close()
     }
 }

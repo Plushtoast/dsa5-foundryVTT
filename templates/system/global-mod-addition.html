@@ -1,0 +1,23 @@
+<form>
+    <div class="form-group">
+        <label class="label-text">{{localize "Name"}}</label>
+        <input class="input-text" type="text" name="name" value="" />
+    </div>
+    <div class="form-group">
+        <label class="label-text">{{localize "Modifier"}}</label>
+        <input class="input-text" type="number" name="value" value="0" />
+    </div>
+    <div class="groupbox lineheight">
+        <div class="table-title">
+            {{localize 'target'}}
+            
+        </div>
+        {{#each categories as |cat|}}
+        <div class="form-group">
+            <label class="label-text">{{itemCategory cat}}</label>
+            <input class="input-text" type="checkbox" name="target.{{cat}}" value="0" />
+        </div>
+        {{/each}}
+    </div>
+    <button style="margin-top:20px" class="addGlobalMod">{{localize 'MASTER.addGlobalMod'}}</button>
+</form>
