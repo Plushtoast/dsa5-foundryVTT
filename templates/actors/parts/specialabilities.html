@@ -28,58 +28,8 @@
     </div>
 </div>
 
-<div class="groupbox">
-    <div class="generalSpecialAbilities row-section">
-        <div class="col header-label lineheight">
-            <b>{{localize "generalSpecialAbilities"}}</b>
-        </div>
-    </div>
-    <div class="row-section wrap cards">
-        {{#each prepare.specAbs.general as |item i|}}
-        <div class="item" data-item-id="{{item._id}}">
-            {{#if item.OnUseEffect}}<a data-tooltip="SHEET.onUseEffect" class="onUseItem"><i
-                    class="fas fa-dice-six"></i></a>{{/if}}<a class="item-edit">{{item.name}}{{roman
-                item.system.step.value item.system.maxRank.value}}</a>
-        </div>
-        {{/each}}
-    </div>
-</div>
+{{> systems/dsa5/templates/actors/parts/specblock.html currentCat="general"}}
 
-<div class="groupbox">
-    <div class="generalSpecialAbilities row-section">
-        <div class="col header-label lineheight">
-            <b>{{localize "language"}}</b> <span data-tooltip="freeLanguagePoint">{{prepare.languagePoints.used}} /
-                {{prepare.languagePoints.available}}</span>
-        </div>
-    </div>
-    <div class="row-section wrap cards">
-        {{#each prepare.specAbs.language as |item i|}}
-        <div class="item" data-item-id="{{item._id}}">
-            {{#if item.OnUseEffect}}<a data-tooltip="SHEET.onUseEffect" class="onUseItem"><i
-                    class="fas fa-dice-six"></i></a>{{/if}}<a class="item-edit">{{item.name}}{{roman
-                item.system.step.value item.system.maxRank.value}}</a>
-        </div>
-        {{/each}}
-    </div>
-</div>
-{{#if prepare.schips}}
-<div class="groupbox">
-    <div class="fatePointsAbilities row-section">
-        <div class="col header-label lineheight">
-            <b>{{localize "fatePointsAbilities"}}</b>
-        </div>
-    </div>
-    <div class="row-section wrap cards">
-        {{#each prepare.specAbs.fatePoints as |item i|}}
-        <div class="item" data-item-id="{{item._id}}">
-            {{#if item.OnUseEffect}}<a data-tooltip="SHEET.onUseEffect" class="onUseItem"><i
-                    class="fas fa-dice-six"></i></a>{{/if}}<a class="item-edit">{{item.name}}{{roman
-                item.system.step.value item.system.maxRank.value}}</a>
-        </div>
-        {{/each}}
-    </div>
-</div>
-{{/if}}
 {{#if prepare.imprint}}
 <div class="groupbox">
     <div class="fatePointsAbilities row-section">
@@ -96,42 +46,7 @@
     </div>
 </div>
 {{/if}}
-{{#if prepare.specAbs.animal}}
-<div class="groupbox">
-    <div class="generalSpecialAbilities row-section">
-        <div class="col header-label lineheight">
-            <b>{{localize "animalSpecialAbilities"}}</b>
-        </div>
-    </div>
-    <div class="row-section wrap cards">
-        {{#each prepare.specAbs.animal as |item i|}}
-        <div class="item" data-item-id="{{item._id}}">
-            {{#if item.OnUseEffect}}<a data-tooltip="SHEET.onUseEffect" class="onUseItem"><i
-                    class="fas fa-dice-six"></i></a>{{/if}}<a class="item-edit">{{item.name}}{{roman
-                item.system.step.value item.system.maxRank.value}}</a>
-        </div>
-        {{/each}}
-    </div>
-</div>
-{{/if}}
-{{#if prepare.specAbs.secret}}
-<div class="groupbox">
-    <div class="generalSpecialAbilities row-section">
-        <div class="col header-label lineheight">
-            <b>{{localize "LocalizedIDs.professionSecret"}}</b>
-        </div>
-    </div>
-    <div class="row-section wrap cards">
-        {{#each prepare.specAbs.secret as |item i|}}
-        <div class="item" data-item-id="{{item._id}}">
-            {{#if item.OnUseEffect}}<a data-tooltip="SHEET.onUseEffect" class="onUseItem"><i
-                    class="fas fa-dice-six"></i></a>{{/if}}<a class="item-edit">{{item.name}}{{roman
-                item.system.step.value item.system.maxRank.value}}</a>
-        </div>
-        {{/each}}
-    </div>
-</div>
-{{/if}}
+
 {{#if (or (eq actor.type "creature") prepare.hasTrait)}}
 <div class="groupbox">
     <div class="generalSpecialAbilities row-section">

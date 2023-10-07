@@ -112,7 +112,8 @@ Hooks.once("init", () => {
         "systems/dsa5/templates/actors/parts/liturgies.html",
         "systems/dsa5/templates/items/browse/culture.html",
         "systems/dsa5/templates/items/browse/species.html",
-        "systems/dsa5/templates/items/browse/career.html"
+        "systems/dsa5/templates/items/browse/career.html",
+        "systems/dsa5/templates/actors/parts/specblock.html"
     ]);
 
     Actors.unregisterSheet("core", ActorSheet);

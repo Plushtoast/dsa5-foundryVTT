@@ -1,0 +1,18 @@
+{{#each (lookup prepare.sortedSpecs currentCat) as |cat|}}
+{{#if (lookup ../prepare.specAbs cat)}}
+<div class="groupbox">
+    <div class="row-section">
+        <div class="col header-label lineheight">
+            <b>{{localize (concat "SpecCategory." cat)}}</b>
+        </div>
+    </div>
+    <div class="row-section wrap cards">
+        {{#each (lookup ../prepare.specAbs cat) as |item i|}}
+        <div class="item" data-item-id="{{item._id}}">
+            {{#if item.OnUseEffect}}<a data-tooltip="SHEET.onUseEffect" class="onUseItem"><i class="fas fa-dice-six"></i></a>{{/if}}<a class="item-edit">{{item.name}}{{roman item.system.step.value item.system.maxRank.value}}</a>
+        </div>
+        {{/each}}
+    </div>
+</div>
+{{/if}}
+{{/each}}

@@ -18,8 +18,8 @@ import Riding from "../system/riding.js";
 
 export default class Actordsa5 extends Actor {
   static _baseCarryItems = new Set(["armor", "meleeweapon", "ammunition", "rangeweapon", "plant", "poison", "money", "consumable", "equipment"])
-  static _mageSpecs = new Set(["magical", "staff", "pact"])
-  static _clericSpecs = new Set(["ceremonial", "clerical"])
+  static _mageSpecs = new Set(["magical", "staff", "pact", "magicalStyle", "homunculus", "extMagical"])
+  static _clericSpecs = new Set(["ceremonial", "clerical", "clericalStyle", "extClericalStyle", "vision", "prayer"])
 
   static async create(data, options) {
     if (data instanceof Array || data.items) return await super.create(data, options);
@@ -1178,11 +1178,12 @@ export default class Actordsa5 extends Actor {
 
     let guidevalues = duplicate(DSA5.characteristics);
     guidevalues["-"] = "-";
-
+    
     return {
       totalWeight: parseFloat(this.system.totalWeight.toFixed(3)),
       traditionArtifacts,
       armorSum: totalArmor,
+      sortedSpecs: DSA5.sortedSpecs,
       spellArmor: actorData.system.spellArmor || 0,
       liturgyArmor: actorData.system.liturgyArmor || 0,
       money,

@@ -30,8 +30,22 @@
 
             <div class="form-group">
                 <label class="label-text">{{localize "Category"}}</label>
-                <select name="system.category.value" data-dtype="String">
-                    {{selectOptions categories selected=system.category.value localize=true}}  
+                <select name="system.category.value" data-dtype="String" style="max-width: calc(60% - 6px)">
+                    {{#select system.category.value}}
+                    <optgroup label="{{localize 'SpecCategory.general'}}">
+                    {{#each categories as |ch char|}}
+                    {{#if (eq char 'clerical')}}
+                    </optgroup>
+                    <optgroup label="{{localize 'SpecCategory.clerical'}}">
+                    {{/if}}
+                    {{#if (eq char 'magical')}}
+                    </optgroup>
+                    <optgroup label="{{localize 'SpecCategory.magical'}}">
+                    {{/if}}
+                    <option value="{{char}}">{{localize ch}}</option>
+                    {{/each}}
+                    </optgroup>
+                    {{/select}}
                 </select>
             </div>
             <div class="form-group full-height">
@@ -58,7 +72,7 @@
             </div>
             {{else if (eq system.category.value 'staff')}}
             <div class="form-group">
-                <label class="label-text">{{localize "traditionArtifact"}}</label>
+                <label class="label-text">{{localize "SpecCategory.staff"}}</label>
                 <select name="system.artifact" data-dtype="String">
                     {{#select system.artifact}}
                     {{#each traditionArtifacts as |ch char|}}

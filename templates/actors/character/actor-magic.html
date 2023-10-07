@@ -4,7 +4,7 @@
     <div class="row-section wrap inverseRowtable">
         <div class="col">
             <div class="row-section skills table-title">
-                <div class="title-type col third">{{localize "traditionArtifact"}}</div>
+                <div class="title-type col third">{{localize "SpecCategory.staff"}}</div>
                 <div class="col third center">{{localize "Category"}}</div>
                 <div class="title-volume col third center">{{localize "volume"}}</div>
                 <div class="col ten center">
@@ -38,20 +38,7 @@
     </div>
 </div>
 
-<div class="groupbox">
-    <div class="row-section">
-        <div class="col header-label lineheight">
-            <b>{{localize "magicspecialtalents"}}</b>
-        </div>
-    </div>
-    <div class="row-section wrap cards">
-        {{#each prepare.specAbs.magical as |item i|}}
-        <div class="item" data-item-id="{{item._id}}">
-            {{#if item.OnUseEffect}}<a data-tooltip="SHEET.onUseEffect" class="onUseItem"><i class="fas fa-dice-six"></i></a>{{/if}}<a class="item-edit">{{item.name}}{{roman item.system.step.value item.system.maxRank.value}}</a>
-        </div>
-        {{/each}}
-    </div>
-</div>
+{{> systems/dsa5/templates/actors/parts/specblock.html currentCat="magical"}}
 
 <div class="row-section wrap reverseFlex">
     <div class="col morph">

@@ -387,7 +387,8 @@ DSA5.combatSkillSubCategories = {
     "1": "COMBATSKILLCATEGORY.1",
     "2": "COMBATSKILLCATEGORY.2",
     "3": "COMBATSKILLCATEGORY.3",
-    "4": "COMBATSKILLCATEGORY.4"
+    "4": "COMBATSKILLCATEGORY.4",
+    "5": "COMBATSKILLCATEGORY.5"
 }
 
 DSA5.effectTextStyle = CONFIG.canvasTextStyle.clone();
@@ -740,18 +741,46 @@ DSA5.mageLevels = {
 }
 
 DSA5.specialAbilityCategories = {
-    "general": "general",
-    "Combat": "Combat",
-    "fatePoints": "fatePoints",
-    "magical": "magical",
-    "clerical": "clerical",
-    "language": "language",
-    "animal": "animal",
-    "staff": "traditionArtifact",
-    "ceremonial": "ceremonialItem",
-    "pact": "pactgift",
-    "secret": "LocalizedIDs.professionSecret"
+    "Combat": "SpecCategory.Combat",
+    "command": "SpecCategory.command",
+
+    "general": "SpecCategory.general",
+    "generalStyle": "SpecCategory.generalStyle",
+    "extGeneral": "SpecCategory.extGeneral",
+    
+    "animal": "SpecCategory.animal",
+    
+    "fatePoints": "SpecCategory.fatePoints",
+    "vampire": "SpecCategory.vampire",    
+    "lykanthrop": "SpecCategory.lykanthrop",
+
+    "language": "SpecCategory.language",
+    "secret": "SpecCategory.secret",
+
+    "clerical": "SpecCategory.clerical",
+    "clericalStyle": "SpecCategory.clericalStyle",
+    "extClericalStyle": "SpecCategory.extClericalStyle",
+    "ceremonial": "SpecCategory.ceremonial",
+    "vision": "SpecCategory.vision",
+    "prayer": "SpecCategory.prayer",
+    
+    "magical": "SpecCategory.magical",
+    "magicalStyle": "SpecCategory.magicalStyle",
+    "extMagical": "SpecCategory.extMagical",
+    "staff": "SpecCategory.staff",
+    "pact": "SpecCategory.pact",
+    "homunculus": "SpecCategory.homunculus"
 }
+
+DSA5.sortedSpecs = {
+    combat: ["Combat", "command"],
+    magical: ["magical", "magicalStyle", "extMagical", "pact", "homunculus"],
+    clerical: ["clerical", "clericalStyle", "extClericalStyle", "ceremonial", "vision", "prayer"],
+    unUsed: ["staff"]
+}
+
+const allSpecs = DSA5.sortedSpecs.combat.concat(DSA5.sortedSpecs.magical).concat(DSA5.sortedSpecs.clerical).concat(DSA5.sortedSpecs.unUsed)
+DSA5.sortedSpecs.general = Object.keys(DSA5.specialAbilityCategories).filter(x => !allSpecs.includes(x))
 
 DSA5.addvantageRules = {}
 DSA5.removevantageRules = {}
