@@ -686,7 +686,7 @@ class GlobalModAddition extends FormApplication {
 
     async getData(options) {
         const data = await super.getData(options);
-        data.categories = ["skill", "spell", "meleeweapon", "rangeweapon", "ritual", "ceremony", "liturgy" ]
+        data.categories = ["skill", "spell", "meleeweapon", "rangeweapon", "ritual", "ceremony", "liturgy", "trait" ]
         return data
     }
 

@@ -824,7 +824,7 @@
     },
     "dsaStyle": {
         "immersive": "Immersiv",
-        "naked": "Nackt (beta)"
+        "naked": "Nackt"
     },
     "Book": {
         "Wizard": "Journal Browser",

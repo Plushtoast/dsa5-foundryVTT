@@ -1,8 +1,33 @@
 .dsa5-immersive {
+    .tokenQuickHot li {
+        box-shadow: inset 0px 0px 5px #403014;
+        background-image: url('../../icons/backgrounds/macrobg.webp');
+
+        input { 
+            color: black;
+        }
+    }
+    .sidebar-tab .directory-list .directory-item {
+        &.collapsed {
+          color: white;
+          h3 {
+            color: white;
+          }
+        }
+      
+        h3 {
+          color: black;
+        }
+      }
+
     #sidebar-tabs {
         border-bottom: 1px solid black;
         box-shadow: 0 0 10px black;
         background-color: #100d087a;
+    }
+
+    .chat-message {
+        background:none;
     }
 
     .chat-message .message-header {
@@ -18,12 +43,18 @@
 
     .sidebar-popout .chat-message,
     #sidebar .chat-message {
-        background: url('../../icons/backgrounds/chatpaper.webp') no-repeat;
-        background-size: 100% 100%;
-        border: none;
         padding: 8px 15px 15px 15px;
         padding-left: 18px;
         margin-bottom: 8px;
+
+        border-image: url('../../icons/backgrounds/chatpaper.webp');
+        border-image-width: 30px;
+        border-image-slice: 50 50 fill;
+        border-image-repeat: round;
+    }
+
+    .app.sidebar-popout .window-content {
+        color: rgb(51, 51, 51);
     }
 
     .sidebar-popout .dice-tray input[type="text"],

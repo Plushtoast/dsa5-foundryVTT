@@ -1237,10 +1237,6 @@
       padding: 12px;
     }
   }
-  
-  .app.sidebar-popout .window-content {
-    color: rgb(51, 51, 51);
-  }
    
   .imagebox {
     position: relative;
@@ -1309,19 +1305,6 @@
   
   #combat li.combatant.active {
     background: rgba(0, 0, 0, 0.1);
-  }
-  
-  .sidebar-tab .directory-list .directory-item {
-    &.collapsed {
-      color: white;
-      h3 {
-        color: white;
-      }
-    }
-  
-    h3 {
-      color: black;
-    }
   }
   
   li.folder {
@@ -2194,20 +2177,37 @@
   }
 
   .chatpaperfield {
-    background: url('../../icons/backgrounds/chatpaper.webp');
-    background-repeat: no-repeat;
-    background-size: 100% 100%;
-    background-position: center;
+    border-image: url('../../icons/backgrounds/chatpaper.webp');
+    border-image-width: 30px;
+    border-image-slice: 80 50 40 fill;
+    border-image-repeat: round;
+    margin-bottom: 25px;
     padding: 10px 20px 10px 30px;
   }
   
   .maskfield {
-    background: url('../../icons/backgrounds/mask.webp'), url('../../icons/backgrounds/maskfield.webp');
-    background-repeat: no-repeat, no-repeat;
-    background-size: 150px 50px, 100% calc(100% - 25px);
-    background-position: bottom center, center top;
-    padding: 10px 20px 60px 20px;
+    position:relative;
+    &:after {
+      content: '';
+      pointer-events: none;
+      position: absolute;
+      bottom: -23px;
+      left: 0;
+      right:0;
+      height: 50px;
+      z-index: 1;
+      background: url('../../icons/backgrounds/mask.webp');
+      background-repeat: no-repeat;
+      background-size: 150px 50px;
+      background-position: bottom center;
+    }    
+    padding: 10px 20px 30px 20px;
+    margin-bottom: 30px;
     color: white;
+    border-image: url('../../icons/backgrounds/maskfield.webp');
+    border-image-width: 15px;
+    border-image-slice: 20 20 fill;
+    border-image-repeat: round;
 
     .editor .mce-content-body{
       color: white
@@ -2370,10 +2370,6 @@
     top: 3px;
     font-size: 10px;
     color: #82817d;
-  }
-  
-  .maskfield .documentName-link {
-    color: black;
   }
   
   .subChapter {
@@ -2650,7 +2646,7 @@
   }
   
   .initTracker li, .tokenQuickHot li {
-    background-color: rgba(14, 12, 12, 0.3);
+    background-color: rgba(0, 0, 0, 0.5);
     display: inline-block;
     font-size: 14px;
     width: var(--tokenQuickhotsize);
@@ -2659,12 +2655,14 @@
     border-radius: 3px;
     pointer-events: all;
     background-size: cover;
-    box-shadow: inset 0px 0px 10px #403014;
-    background-image: url('../../icons/backgrounds/macrobg.webp');
+    box-shadow: inset 0px 0px 5px #636363;
     background-repeat: no-repeat;
     position: relative;
     box-sizing: border-box;
+  }
 
+  .tokenQuickHot li input {
+    color: white;
   }
 
   .tokenQuickHot li .subbuttons li{
@@ -3098,7 +3096,8 @@
       z-index: 1;
     }
   }
-  
+
+  .maskfield .documentName-link,  
   .maskfield .entity-link {
     color: black;
   }
@@ -3749,10 +3748,10 @@
   }
 
   .postChatSection {
-    &.maskfield{
-      background-image: url('../../icons/backgrounds/blackbook.webp'), url('../../icons/backgrounds/maskfield.webp');
-      background-size: 250px 30px,100% calc(100% - 25px);
-      background-position: center calc(100% - 10px),center top;
+    &.maskfield:after{
+      background-image: url('../../icons/backgrounds/blackbook.webp');
+      background-size: 250px 30px;
+      background-position: center calc(100% - 8px);
     }
     .postContentChat{
       cursor: pointer;
