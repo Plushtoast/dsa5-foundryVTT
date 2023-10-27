@@ -16,10 +16,8 @@
 </div>
 {{#each modules as |item i|}}
 <div class="row-section rowColors">
-    <div class="col ten center">
-        {{#if item.enabled}}
-        <i class="fas fa-check"></i> {{else}}
-        <i class="fas fa-times"></i> {{/if}}
+    <div class="col ten center" data-tooltip="{{concat 'Book.' item.enabled}}">
+        <i class="fas {{item.enabled}}"></i>
     </div>
     <div class="col four">
         {{item.name}}

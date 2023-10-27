@@ -16,6 +16,7 @@ import DSA5ChatAutoCompletion from "../system/chat_autocompletion.js";
 import Riding from "../system/riding.js";
 import ForeignFieldEditor from "../system/foreignFieldEditor.js"
 import { AddEffectDialog } from "../system/tokenHotbar2.js";
+import { RangeSelectDialog } from "../hooks/itemDrop.js";
 
 export default class ActorSheetDsa5 extends ActorSheet {
     get actorType() {
@@ -620,6 +621,8 @@ export default class ActorSheetDsa5 extends ActorSheet {
 
         if(!this.isEditable) return
 
+        new ContextMenu(html, ".item .withContext", [], {onOpen: this._onItemContext.bind(this)});
+
         html.find('.startCharacterBuilder').click(() => this.actor.setFlag("core", "sheetClass", "dsa5.DSACharBuilder"))
 
         html.find('.schipUpdate').click(ev => {
@@ -751,19 +754,84 @@ export default class ActorSheetDsa5 extends ActorSheet {
         html.find('.tradition-delete').click(ev => this._deleteTraditionArtifact(ev))
         html.find('.selectTraditionartifact').click(() => this.selectTraditionartifact())
 
-        html.find(".consume-item").mousedown(ev => {
-            if (ev.button == 2) {
-                const itemId = this._getItemId(ev);
-                const item = this.actor.items.get(itemId)
-                this.consumeItem(item)
-            }
-        })
-
         html.find('.disableRegeneration').click(ev => {
             const type = ev.currentTarget.dataset.type
             const prop = `system.repeatingEffects.disabled.${type}`
             this.actor.update({[prop]: !getProperty(this.actor, prop)})
         })
+    }
+
+    _onItemContext(ev) {
+        const item = this.actor.items.get($(ev).closest(".item").attr("data-item-id"))
+
+        if ( !item ) return;
+        ui.context.menuItems = this._getItemContextOptions(item);
+        Hooks.call("dsa5.getItemContextOptions", item, ui.context.menuItems);
+    }
+
+    _getItemContextOptions(item) {
+        const options = [
+          {
+            name: "SHEET.EditItem",
+            icon: "<i class='fas fa-edit fa-fw'></i>",
+            callback: () => item.sheet.render(true),
+          },
+          {
+            name: "SHEET.PostItem",
+            icon: "<i class='fas fa-comment fa-fw'></i>",
+            callback: () => item.postItem(),
+          },
+          {
+            name: "SHEET.DuplicateItem",
+            icon: "<i class='fas fa-copy fa-fw'></i>",
+            callback: () => this.handleItemCopy(item.toObject(), item.type),
+          },
+          {
+            name: "SHEET.ConsumeItem",
+            icon: "<i class='fas fa-wine-bottle fa-fw'></i>",
+            condition: () => item.type == "consumable",
+            callback: () => this.consumeItem(item),
+          },
+          {
+            name: "SHEET.onUseEffect",
+            icon: "<i class='fas fa-dice-six fa-fw'></i>",
+            condition: () => getProperty(item, "flags.dsa5.onUseEffect"),
+            callback: () => new OnUseEffect(item).executeOnUseEffect(),
+          },
+          {
+            name: "SHEET.DeleteItem",
+            icon: "<i class='fas fa-trash fa-fw'></i>",
+            callback: () => this._itemDeleteDialog(item),
+          },
+        ];
+          
+        if(hasProperty(item, "system.worn.wearable") || ["meleeweapon", "rangeweapon", "armor"].includes(item.type)) {
+            options.push({
+                name: "SHEET.EquipItem",
+                icon: "<i class='fas fa-shield-alt fa-fw'></i>",
+                callback: () => item.update({"system.worn.value": !item.system.worn.value})
+            })
+        }
+        if(Number(getProperty(item, "system.quantity.value")) > 1) {
+            options.push({
+                name: "SHEET.SplitItem",
+                icon: "<i class='fas fa-arrows-split-up-and-left fa-fw'></i>",
+                callback: () => this._splitItem(item),
+            })
+        }
+
+        return options;
+    }
+
+    _splitItem(item) {
+        const callback = async(count) => {
+            const itemData = item.toObject()
+            itemData.system.quantity.value = count
+            await this.actor.createEmbeddedDocuments("Item", [itemData], {render: false})
+            await this.actor.updateEmbeddedDocuments("Item", [{_id: item.id, "system.quantity.value": item.system.quantity.value - count}])
+        }
+    
+        RangeSelectDialog.create(game.i18n.localize('SHEET.SplitItem'), game.i18n.format('MERCHANT.splitItem', {name: item.name}), item.system.quantity.value - 1, callback, 1, item.system.quantity.value - 1)
     }
 
     _bindKeepFieldsEnabled(html) {
@@ -873,11 +941,7 @@ export default class ActorSheetDsa5 extends ActorSheet {
         }
     }
 
-    async _deleteItem(ev) {
-        if (!this.isEditable) return
-
-        const itemId = this._getItemId(ev);
-        let item = this.actor.items.get(itemId)
+    async _itemDeleteDialog(item) {
         let message = game.i18n.format("DIALOG.DeleteItemDetail", { item: item.name })
         const content = await renderTemplate('systems/dsa5/templates/dialog/delete-item-dialog.html', { message })
         await new Promise((resolve, reject) => {
@@ -889,7 +953,7 @@ export default class ActorSheetDsa5 extends ActorSheet {
                     icon: '<i class="fa fa-check"></i>',
                     label: game.i18n.localize("yes"),
                     callback: async() => {                        
-                        await this._cleverDeleteItem(itemId)
+                        await this._cleverDeleteItem(item.id)
                         resolve(true)
                     }
                 },
@@ -901,6 +965,14 @@ export default class ActorSheetDsa5 extends ActorSheet {
             default: 'Yes'
             }).render(true)
         })
+    }
+
+    async _deleteItem(ev) {
+        if (!this.isEditable) return
+
+        const itemId = this._getItemId(ev);
+        let item = this.actor.items.get(itemId)
+        this._itemDeleteDialog(item)
     }
 
     async _cleverDeleteItem(itemId) {
@@ -1067,10 +1139,8 @@ export default class ActorSheetDsa5 extends ActorSheet {
     }
 
     async handleItemCopy(item, typeClass) {
-        if (DSA5.equipmentCategories.includes(typeClass)) {
-            item.name += " (Copy)"
-            return await this._addLoot(item)
-        }
+        item.name += " (Copy)"
+        this._manageDragItems(item, typeClass)
     }
 
     async _addFullPack(item) {
@@ -1252,15 +1322,28 @@ export default class ActorSheetDsa5 extends ActorSheet {
         RuleChaos.obfuscateDropData(itemData, data.tabsinvisible)
 
         let container_id
+        let mergeItems = false
         let parentItem = $(event.target).parents(".item")
 
-        if (parentItem && parentItem.attr("data-category") == "bags" && DSA5.equipmentCategories.includes(item.type)) {
-            if (parentItem.attr("data-item-id") != item.id) container_id = parentItem.attr("data-item-id")
+        if (parentItem && DSA5.equipmentCategories.includes(item.type)) {
+            
+            const parentId = parentItem.attr("data-item-id")
+            if(parentItem.attr("data-category") == "bags") {
+                if (parentId != item.id) container_id = parentId
+            }
+            else {
+                parentItem = this.actor.items.get(parentId)
+                mergeItems = parentItem && hasProperty(item, "system.quantity.value") && hasProperty(parentItem, "system.quantity.value") && Itemdsa5.areEquals(item, parentItem)
+            }
         }
+
         const selfTarget = this.actor.uuid === item.parent?.uuid
         if ( selfTarget ){
             if(event.ctrlKey){
                await this.handleItemCopy(itemData, item.type) 
+            } else if(mergeItems) {
+                await parentItem.update({"system.quantity.value": parentItem.system.quantity.value + item.system.quantity.value}, { render: false })
+                await this.actor.deleteEmbeddedDocuments("Item", [item.id])
             } else if(container_id){
                 const upd = {_id: item.id, "system.parent_id": container_id}
                 if (item.system.worn && item.system.worn.value)

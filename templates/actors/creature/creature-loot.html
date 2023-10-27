@@ -36,8 +36,8 @@
                         {{/if}}
                     </div>
                 </div>
-                <div class="col">
-                    <a class="item-edit {{#if item.consumable}}consume-item{{/if}}">{{item.name}}</a>
+                <div class="col withContext">
+                    <a class="item-edit">{{item.name}}</a>
                 </div>
                 {{#if (eq item.system.equipmentType.value 'bags')}}
                 <div class="col five center">
@@ -46,8 +46,8 @@
                 {{/if}}
                 <div class="col eight center">
                     {{#if item.toggle}} {{#if item.toggleValue}}
-                    <a class="item-toggle"><i class="far fa-check-circle"></i></a> {{else}}
-                    <a class="item-toggle"><i class="far fa-circle"></i></a> {{/if}} {{/if}}
+                    <a class="item-toggle" data-tooltip="SHEET.EquipItem"><i class="far fa-check-circle"></i></a> {{else}}
+                    <a class="item-toggle" data-tooltip="SHEET.EquipItem"><i class="far fa-circle"></i></a> {{/if}} {{/if}}
                 </div>
 
                 <div class="col eight center">

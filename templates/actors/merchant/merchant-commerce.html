@@ -219,8 +219,8 @@
                         {{/if}}
                     </div>
                 </div>
-                <div class="col">
-                    <a class="item-edit {{#if item.consumable}}consume-item{{/if}}">{{item.name}}</a>
+                <div class="col withContext">
+                    <a class="item-edit">{{item.name}}</a>
                 </div>
                 {{#if (or (eq ../../actor.system.merchant.merchantType "merchant") (eq ../../actor.system.merchant.merchantType "loot"))}}
                 <div class="col eight center" data-tooltip="MERCHANT.untradable">
@@ -231,8 +231,8 @@
                 {{/if}}
                 <div class="col eight center">
                     {{#if item.toggle}} {{#if item.toggleValue}}
-                    <a class="item-toggle"><i class="far fa-check-circle"></i></a> {{else}}
-                    <a class="item-toggle"><i class="far fa-circle"></i></a> {{/if}} {{/if}}
+                    <a class="item-toggle" data-tooltip="SHEET.EquipItem"><i class="far fa-check-circle"></i></a> {{else}}
+                    <a class="item-toggle" data-tooltip="SHEET.EquipItem"><i class="far fa-circle"></i></a> {{/if}} {{/if}}
                 </div>
                 <div class="col four center setCustomPrice" data-tooltip="MERCHANT.priceMod">
                     {{item.defaultPrice}}<span class="priceTag">{{item.priceTag}}</span>

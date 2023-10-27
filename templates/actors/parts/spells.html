@@ -20,7 +20,7 @@
         {{#each prepare.magic.spell as |item i|}}
         <div class="actor-spell-item-wrapper col spells item" data-item-id="{{item._id}}">
             <div class="actor-spell-item row-section skills lineheight">
-                <div class="actor-spell-name col four">
+                <div class="actor-spell-name col four withContext">
                     <a class="item-edit">{{item.name}}</a> {{#if ../prepare.canAdvance}}
                     <a class="advance refund-item"><i data-tooltip="{{item.refund}}" class="fas fa-minus"></i></a>
                     <a class="advance advance-item"><i data-tooltip="{{item.cost}}" class="fas fa-plus"></i></a>{{/if}}
@@ -98,7 +98,7 @@
         {{#each prepare.magic.ritual as |item i|}}
         <div class="actor-spell-item-wrapper col spells item" data-item-id="{{item._id}}">
             <div class="actor-spell-item row-section skills lineheight">
-                <div class="actor-spell-name col four">
+                <div class="actor-spell-name col four withContext">
                     <a class="item-edit">{{item.name}}</a> {{#if ../prepare.canAdvance}}
                     <a class="advance refund-item"><i data-tooltip="{{item.refund}}" class="fas fa-minus"></i></a>
                     <a class="advance advance-item"><i data-tooltip="{{item.cost}}" class="fas fa-plus"></i></a>{{/if}}

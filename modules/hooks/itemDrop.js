@@ -76,24 +76,11 @@ const handleItemDrop = async(canvas, data) => {
 
     if (!DSA5.equipmentCategories.includes(item.type)) return
 
-    const content = await renderTemplate("systems/dsa5/templates/dialog/dropToGround.html", { name: item.name, count: item.system.quantity.value })
+    const callback = async(count) => {
+        dropToGround(sourceActor, item, data, count)
+    }
 
-    new DropToGroundDialog({
-        title: data.name,
-        content,
-        default: 'yes',
-        buttons: {
-            Yes: {
-                icon: '<i class="fa fa-check"></i>',
-                label: game.i18n.localize("yes"),
-                callback: async(dlg) => dropToGround(sourceActor, item, data, Number(dlg.find('[name="count"]').val()))
-            },
-            cancel: {
-                icon: '<i class="fas fa-times"></i>',
-                label: game.i18n.localize("cancel")
-            }
-        }
-    }).render(true)
+    RangeSelectDialog.create(game.i18n.localize("DSASETTINGS.enableItemDropToCanvas"), game.i18n.format('MERCHANT.dropGround', {name: item.name}), item.system.quantity.value, callback)
 }
 
 const handleGroupDrop = async(canvas, data) => {
@@ -132,7 +119,29 @@ export const connectHook = () => {
     })
 }
 
-class DropToGroundDialog extends Dialog {
+export class RangeSelectDialog extends Dialog {
+    static async create(title, name, count, callback, min = 1, max = undefined) {
+        max = max || count
+        const content = await renderTemplate("systems/dsa5/templates/dialog/dropToGround.html", { name, min, max, count })
+
+        new RangeSelectDialog({
+            title,
+            content,
+            default: 'yes',
+            buttons: {
+                Yes: {
+                    icon: '<i class="fa fa-check"></i>',
+                    label: game.i18n.localize("yes"),
+                    callback: async(dlg) => callback(Number(dlg.find('[name="count"]').val()))
+                },
+                cancel: {
+                    icon: '<i class="fas fa-times"></i>',
+                    label: game.i18n.localize("cancel")
+                }
+            }
+        }).render(true)
+    }
+
     activateListeners(html) {
         super.activateListeners(html)
         html.find('input[type="range"]').change(ev => {
