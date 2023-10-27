@@ -528,7 +528,10 @@ class InformationSheet extends ItemSheetdsa5 {
             enrichedqs3: await TextEditor.enrichHTML(this.item.system.qs3, { async: true }),
             enrichedqs4: await TextEditor.enrichHTML(this.item.system.qs4, { async: true }),
             enrichedqs5: await TextEditor.enrichHTML(this.item.system.qs5, { async: true }),
-            enrichedqs6: await TextEditor.enrichHTML(this.item.system.qs6, { async: true })
+            enrichedqs6: await TextEditor.enrichHTML(this.item.system.qs6, { async: true }),
+            enrichedCrit: await TextEditor.enrichHTML(this.item.system.crit, { async: true }),
+            enrichedBotch: await TextEditor.enrichHTML(this.item.system.botch, { async: true }),
+            enrichedFail: await TextEditor.enrichHTML(this.item.system.fail, { async: true }),
         })
         return data
     }

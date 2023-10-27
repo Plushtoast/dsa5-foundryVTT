@@ -32,7 +32,7 @@
                     <div class="tableOdd skills">
                         <div class="row-section lineheight">
                             <div class="col sixty">
-                                {{item.name}}
+                                <a class="editGlobalMod" data-key="{{i}}" data-tooltip="SHEET.EditItem">{{item.name}}</a>
                             </div>
                             <div class="col ten center">
                                 <input type="checkbox" class="globalModEnable" data-key="{{i}}" {{checked item.enabled}}>
@@ -177,7 +177,7 @@
                     <b>{{localize "skill"}}</b>
                 </div>
                 <div class="col sixty">
-                    <select name="data.skill" class="skillSelektor select2" data-dtype="String">
+                    <select name="data.skill" class="skillSelektor select2" data-dtype="String" style="width:90%">
                         {{#select lastSkill}}
                         {{#each abilities as |ch|}}
                         <option value="{{ch.name}}|{{ch.type}}">{{ch.name}}</option>

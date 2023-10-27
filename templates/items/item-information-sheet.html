@@ -52,7 +52,19 @@
                 <label class="label-text">{{localize "CHARAbbrev.QS"}} 6</label>
                 {{editor enrichedqs6 target="system.qs6" button=true owner=owner editable=editable engine="prosemirror"}}
             </div>
-            
+            <hr style="margin:20px 0px;"/>
+            <div class="form-group full-height">
+                <label class="label-text">{{localize "Failure"}}</label>
+                {{editor enrichedFail target="system.fail" button=true owner=owner editable=editable engine="prosemirror"}}
+            </div>
+            <div class="form-group full-height">
+                <label class="label-text">{{localize "CriticalSuccess"}}</label>
+                {{editor enrichedCrit target="system.crit" button=true owner=owner editable=editable engine="prosemirror"}}
+            </div>
+            <div class="form-group full-height">
+                <label class="label-text">{{localize "CriticalFailure"}}</label>
+                {{editor enrichedBotch target="system.botch" button=true owner=owner editable=editable engine="prosemirror"}}
+            </div>
         </div>
 
     </section>

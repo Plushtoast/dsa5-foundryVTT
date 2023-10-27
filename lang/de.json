@@ -627,7 +627,7 @@
         "automation": "Automatisierung",
         "globalMods": "Globale Modifikatoren",
         "addGlobalMod": "Globalen Modifikator hinzufügen",
-        "globalModsHint": "Globale Modifikatoren werden bei allen Proben angezeigt. Sie können z.b. besondere Umstände wie schlechtes Wetter, Besonderheiten durch Globulen und ähnliches abdecken.",
+        "globalModsHint": "Globale Modifikatoren werden bei allen Proben angezeigt. Sie können z.b. besondere Umstände wie schlechtes Wetter, Besonderheiten durch Globulen oder Schwierigkeitsanpassungen (erfahren, kompetent, meisterlich) abdecken.",
         "sceneConfig": "Szeneneinstellung",
         "awardXP": "Mit Abenteuerpunkten belohnen",
         "awardXPText": "{heros} mit Abenteuerpunkten belohnen.",

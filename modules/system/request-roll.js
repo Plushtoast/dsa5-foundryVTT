@@ -210,17 +210,30 @@ export default class RequestRoll {
     }
 
     static async updateInformationRoll(postFunction, result, source) {
+        const msg = []
+        const item = await fromUuid(postFunction.uuid)
         const availableQs = result.result.qualityStep || 0
-        if (availableQs > 0) {
-            const item = await fromUuid(postFunction.uuid)
-            const msg = [`<p><b>${item.name}</b></p>`]
-            for (let i = 1; i <= availableQs; i++) {
-                const qs = `qs${i}`
-                if (item.system[qs]) {
-                    const enriched = await TextEditor.enrichHTML(item.system[qs], { async: true })
-                    msg.push(`<p>${enriched}</p>`)
-                }
-            }
+        
+        for (let i = 1; i <= availableQs; i++) {
+            const qs = `qs${i}`
+            if (item.system[qs]) msg.push(item.system[qs])
+        }
+        
+        if(result.result.successLevel > 1 && item.system.crit) {
+            msg.push(item.system.crit)
+        } else if(result.result.successLevel < -1 && item.system.botch) {
+            msg.push(item.system.botch)
+        } else if(item.system.fail && !availableQs) {
+            msg.push(item.system.fail)
+        }
+
+        if(msg.length > 0){
+            await Promise.all(msg.map(async (x) => {
+                const enriched = await TextEditor.enrichHTML(x, { async: true })
+                return enriched
+            }))
+            msg.unshift(`<p><b>${item.name}</b></p>`)
+
             const chatData = DSA5_Utility.chatDataSetup(msg.join(""))
             if (postFunction.recipients.length) chatData["whisper"] = postFunction.recipients
 
