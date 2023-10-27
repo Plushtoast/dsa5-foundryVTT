@@ -399,10 +399,10 @@ class GameMasterMenu extends Application {
         return probabilities[roll]
     }
 
-    async doPayment(ids, pay) {
+    async doPayment(ids, pay, amount = 0) {
         const actors = game.actors.filter(x => ids.includes(x.id))
         const heros = this.getNames(actors)
-        const template = await renderTemplate('systems/dsa5/templates/dialog/master-dialog-award.html', { text: game.i18n.localize(game.i18n.format(pay ? "MASTER.payText" : "MASTER.getPaidText", { heros })) })
+        const template = await renderTemplate('systems/dsa5/templates/dialog/master-dialog-award.html', { amount, text: game.i18n.localize(game.i18n.format(pay ? "MASTER.payText" : "MASTER.getPaidText", { heros })) })
         const callback = (dlg) => {
             const number = dlg.find('.input-text').val()
             for (let hero of actors)
@@ -416,9 +416,9 @@ class GameMasterMenu extends Application {
         this.doPayment(ids, false)
     }
 
-    async getExp(ids) {
+    async getExp(ids, amount = 0) {
         const actors = game.actors.filter(x => ids.includes(x.id))
-        const template = await renderTemplate('systems/dsa5/templates/dialog/master-dialog-award.html', { text: game.i18n.localize(game.i18n.format("MASTER.awardXPText", { heros: this.getNames(actors) })) })
+        const template = await renderTemplate('systems/dsa5/templates/dialog/master-dialog-award.html', { amount, text: game.i18n.localize(game.i18n.format("MASTER.awardXPText", { heros: this.getNames(actors) })) })
         const callback = async(dlg) => {
             const number = Number(dlg.find('.input-text').val())
             const familiarXP = Math.max(1, Math.round(number * 0.25))
@@ -438,6 +438,8 @@ class GameMasterMenu extends Application {
                 }
                 if (heros.length > 0) await ChatMessage.create(DSA5_Utility.chatDataSetup(game.i18n.format('MASTER.xpMessage', { heros: this.getNames(heros), number })));
                 if (familiars.length > 0) await ChatMessage.create(DSA5_Utility.chatDataSetup(game.i18n.format('MASTER.xpMessage', { heros: this.getNames(familiars), number })));
+
+                if(this.rendered) this.render(true)
             }
         }
         this.buildDialog(game.i18n.localize('MASTER.awardXP'), template, callback)
@@ -502,11 +504,11 @@ class GameMasterMenu extends Application {
         return ids
     }
 
-    async doGroupCheck() {
+    async doGroupCheck(amount = 0) {
         const [skill, type] = this.lastSkill.split("|")
         if (type != "skill") return
 
-        const template = await renderTemplate('systems/dsa5/templates/dialog/master-dialog-award.html', { text: game.i18n.localize(game.i18n.format("MASTER.doGroupCheck", { skill })) })
+        const template = await renderTemplate('systems/dsa5/templates/dialog/master-dialog-award.html', { amount, text: game.i18n.localize(game.i18n.format("MASTER.doGroupCheck", { skill })) })
         const callback = (dlg) => {
             const number = Number(dlg.find('.input-text').val())
             const [skill, type] = this.lastSkill.split("|")
@@ -517,11 +519,11 @@ class GameMasterMenu extends Application {
         this.buildDialog(game.i18n.localize('HELP.groupcheck'), template, callback)
     }
 
-    async rollRequest(){
+    async rollRequest(amount = 0){
         const [skill, type] = this.lastSkill.split("|")
         if (type != "skill") return
 
-        const template = await renderTemplate('systems/dsa5/templates/dialog/master-dialog-award.html', { text: game.i18n.localize(game.i18n.format("MASTER.doRequestRoll", { skill })) })
+        const template = await renderTemplate('systems/dsa5/templates/dialog/master-dialog-award.html', { amount, text: game.i18n.localize(game.i18n.format("MASTER.doRequestRoll", { skill })) })
         const callback = (dlg) => {
             const number = Number(dlg.find('.input-text').val())
             const [skill, type] = this.lastSkill.split("|")

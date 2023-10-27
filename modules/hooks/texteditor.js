@@ -2,11 +2,16 @@ import DSA5 from "../system/config-dsa5.js"
 
 export function setEnrichers() {
     const rolls = { "Rq": "roll", "Gc": "GC", "Ch": "CH" }
-    const icons = { "Rq": "dice", "Gc": "dice", "Ch": "user-shield" }
-    const titles = { "Rq": "", "Gc": `${game.i18n.localize("HELP.groupcheck")} `, "Ch": "" }
+    const icons = { "Rq": "dice", "Gc": "dice", "Ch": "user-shield", "AP": "trophy", "Pay": "coins", "GetPaid": "piggy-bank" }
+    const titles = { "Rq": "", "Gc": `${game.i18n.localize("HELP.groupcheck")} `, "Ch": "", "AP": "", "Pay": "", "GetPaid": "" }
     const modRegex = /(-|\+)?\d+/
     const replaceRegex = /\[[a-zA-ZöüäÖÜÄ&; -]+/
     const replaceRegex2 = /[\[\]]/g
+    const payStrings = {
+        Pay: game.i18n.localize("PAYMENT.payButton"),
+        GetPaid: game.i18n.localize("PAYMENT.getPaidButton"),
+        AP: game.i18n.localize("MASTER.awardXP")
+    }
 
     if (!DSA5.statusRegex) {
         let effects = DSA5.statusEffects.map(x => game.i18n.localize(x.name).toLowerCase())
@@ -28,6 +33,17 @@ export function setEnrichers() {
                 const skill = str.replace(mod, "").match(replaceRegex)[0].replace(replaceRegex2, "").trim()
                 const customText = str.match(/\{.*\}/) ? str.match(/\{.*\}/)[0].replace(/[\{\}]/g, "") : skill
                 return $(`<a class="roll-button request-${rolls[type]}" data-type="skill" data-modifier="${mod}" data-name="${skill}" data-label="${customText}"><em class="fas fa-${icons[type]}"></em>${titles[type]}${customText} ${mod}</a>`)[0]
+            }
+        },
+        {
+            pattern: /@(Pay|GetPaid|AP)\[(-|\+)?\d+\]({[a-zA-ZöüäÖÜÄ&; -]+})?/g,
+            enricher: (match, options) => {
+                const str = match[0]
+                const type = match[1]
+                const mod = Number(str.match(modRegex)[0])
+                //const customText = str.match(/\{.*\}/) ? str.match(/\{.*\}/)[0].replace(/[\{\}]/g, "") : skill
+                const customText = str.match(/\{.*\}/) ? str.match(/\{.*\}/)[0].replace(/[\{\}]/g, "") : payStrings[type]
+                return $(`<a class="roll-button request-${type}" data-type="skill" data-modifier="${mod}" data-label="${customText}"><em class="fas fa-${icons[type]}"></em>${titles[type]}${customText} (${mod})</a>`)[0]
             }
         },
         {
