@@ -554,7 +554,10 @@
             "qs5": "",
             "qs6": "",
             "skill": "",
-            "modifier": 0
+            "modifier": 0,
+            "crit": "",
+            "botch": "",
+            "fail": ""
         },
         "culture": {
             "templates": [

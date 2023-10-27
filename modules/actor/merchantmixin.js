@@ -248,7 +248,8 @@ export const MerchantSheetMixin = (superclass) => class extends superclass {
         if (notify == 0 || getProperty(item, "system.equipmentType.value") == "service") return
 
         const notif = "MERCHANT." + (buy ? "buy" : "sell") + (noNeedToPay ? "Loot" : "") + "Notification"
-        const template = game.i18n.format(notif, { item: res.toAnchor().outerHTML, source: source.name, target: target.name, amount, price, buy })
+        const anchor = item.type == "money" ? game.i18n.localize(item.name) : res.toAnchor().outerHTML
+        const template = game.i18n.format(notif, { item: anchor, source: source.name, target: target.name, amount, price, buy })
         const chatData = DSA5_Utility.chatDataSetup(template)
         if (notify == 2) chatData["whisper"] = ChatMessage.getWhisperRecipients("GM").map(u => u.id)
         await ChatMessage.create(chatData)
