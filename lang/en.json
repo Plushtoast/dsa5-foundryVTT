@@ -1525,7 +1525,10 @@
         "fulltextsearch": "Full text search",
         "sceneReset": "Update scene",
         "sceneResetDescription": "The scene <b>{name}</b> has already been imported. Do you like to perform a reset for this scene?<br/> All changes and tokens will be removed.",
-        "playerVisibility": "Visibility for players"
+        "playerVisibility": "Visibility for players",
+        "fa-dash": "Module installed but not activated",
+        "fa-times": "Module not installed",
+        "fa-check": "Module activated and installed"
     },
     "Migrakel": {
         "Migration": "Actor Migration",

@@ -554,7 +554,10 @@ export default class BookWizard extends Application {
     }
 
     moduleEnabled(id) {
-        return DSA5_Utility.moduleEnabled(id)
+        if(game.modules.get(id)) {
+            return game.modules.get(id).active ? "fa-check" : "fa-dash"
+        } 
+        return "fa-times"
     }
 }
 

@@ -848,7 +848,10 @@
         "fulltextsearch": "Volltextsuche",
         "sceneReset": "Szene aktualisieren",
         "sceneResetDescription": "Die Szene <b>{name}</b> wurde bereits importiert. Möchtest du diese zurücksetzen?<br/> Es werden alle Änderungen und Token entfernt.",
-        "playerVisibility": "Sichtbarkeit für Spieler"
+        "playerVisibility": "Sichtbarkeit für Spieler",
+        "fa-dash": "Modul installiert, aber nicht aktiviert",
+        "fa-times": "Modul nicht installiert",
+        "fa-check": "Modul aktiv und installiert"
     },
     "Migrakel": {
         "Migration": "Akteur Migration",

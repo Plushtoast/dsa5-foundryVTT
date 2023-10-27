@@ -38,6 +38,7 @@ export default function() {
                 const currentPage = sheet._getCurrentPage()
                 const pages = Array.from(sheet.document.pages)
 
+                let doc
                 if(pages[currentPage].sceneNote) 
                     doc = pages[currentPage]
                 else if(sheet.document.sceneNote) 
