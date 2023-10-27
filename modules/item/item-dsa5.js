@@ -673,7 +673,7 @@ export default class Itemdsa5 extends Item {
         chatData.hasPrice = ("price" in chatData.system) && !detailsObfuscated
         if (chatData.hasPrice) {
             let price = chatData.system.price.value
-            if (chatData.system.QL) price *= chatData.system.QL
+            if (chatData.system.QL) price = Itemdsa5.getSubClass(chatData.type).consumablePrice(chatData)
 
             chatData.system.price.D = Math.floor(price / 10)
             price -= chatData.system.price.D * 10
@@ -1148,6 +1148,19 @@ class ConsumableItemDSA extends Itemdsa5 {
             this._chatLineHelper("effect", DSA5_Utility.replaceDies(data.QLList.split("\n")[data.QL - 1])),
             this._chatLineHelper("charges", data.charges),
         ]
+    }
+
+    static consumablePrice(item) {
+        let price = item.system.price.value
+        if(isNaN(price)) {
+            const priceTags = price.split(";")
+            price = Number(priceTags[item.system.QL - 1])
+            if(isNaN(price)) price = Number(priceTags.pop()) || 0
+
+            return price
+        } else {
+            return (Number(price) * item.system.QL) || 0
+        }        
     }
 
     static checkEquality(item, item2) {

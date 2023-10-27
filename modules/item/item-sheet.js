@@ -11,6 +11,7 @@ import RuleChaos from "../system/rule_chaos.js"
 import { ItemSheetObfuscation } from "./obfuscatemixin.js"
 import AdvantageRulesDSA5 from "../system/advantage-rules-dsa5.js"
 import OpposedDsa5 from "../system/opposed-dsa5.js"
+import Itemdsa5 from "./item-dsa5.js"
 
 export default class ItemSheetdsa5 extends ItemSheet {
     _getSubmitData(updateData = {}) {
@@ -840,13 +841,14 @@ class ConsumableSheetDSA5 extends ItemSheetObfuscation(ItemSheetdsa5) {
     
     async getData(options) {
         const data = await super.getData(options)
-        data["calculatedPrice"] = (data.system.price.value * data.system.QL) || 0
+        data["calculatedPrice"] = Itemdsa5.getSubClass(this.item.type).consumablePrice(this.item)
         data["availableSteps"] = data.system.QLList.split("\n").map((x, i) => i + 1)
         data['equipmentTypes'] = DSA5.equipmentTypes;
 
         data.enrichedIngredients = await TextEditor.enrichHTML(getProperty(this.item.system, "ingredients"), {secrets: this.object.isOwner, async: true})
         return data
     }
+
     setupEffect(ev) {
         this.item.setupEffect()
     }
