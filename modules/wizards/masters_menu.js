@@ -139,6 +139,7 @@ class GameMasterMenu extends Application {
         html.find('.addGlobalMod').click(() => this.addGlobalMod())
         html.find('.globalModEnable').change(ev => this.toggleGlobalMod(ev))
         html.find('.removeGlobalMod').click((ev) => this.removeGlobalMod(ev))
+        html.find('.editGlobalMod').click(ev => this.editGlobalMod(ev))
         html.find('.heroSelector').change(ev => {
             ev.stopPropagation()
             const selected = this.getSelectedActors()
@@ -339,6 +340,11 @@ class GameMasterMenu extends Application {
 
     async addGlobalMod() {
         new GlobalModAddition().render(true)
+    }
+
+    async editGlobalMod(ev) {
+        const id = ev.currentTarget.dataset.key
+        new GlobalModAddition(id).render(true)
     }
 
     async toggleGlobalMod(ev) {
@@ -655,7 +661,7 @@ class GameMasterMenu extends Application {
             heros: copiedHeros,
             abilities: this.abilities,
             groupschips,
-            masterSettings: game.settings.get("dsa5", "masterSettings"),
+            masterSettings: expandObject(game.settings.get("dsa5", "masterSettings")),
             lastSkill: this.lastSkill,
             randomCreation: this.randomCreation.map(x => x.template),
             lightButton: game.dsa5.apps.LightDialog ? await game.dsa5.apps.LightDialog.getButtonHTML() : ""
@@ -669,6 +675,11 @@ class GameMasterMenu extends Application {
 }
 
 class GlobalModAddition extends FormApplication {
+    constructor(id) {
+        super()
+        this.mod_id = id
+    }
+
     static get defaultOptions() {
         const options = super.defaultOptions;
         options.template = 'systems/dsa5/templates/system/global-mod-addition.html'
@@ -686,24 +697,39 @@ class GlobalModAddition extends FormApplication {
 
     async getData(options) {
         const data = await super.getData(options);
+        if(this.mod_id) {
+            data.config = expandObject(game.settings.get("dsa5", "masterSettings").globalMods[this.mod_id])
+        } else {
+            data.config = {
+                value: 0,
+                victim: {
+                    npc: true,
+                    player: true
+                }
+            }
+        }
         data.categories = ["skill", "spell", "meleeweapon", "rangeweapon", "ritual", "ceremony", "liturgy", "trait" ]
         return data
     }
 
     async addGlobalMod(ev) {
         ev.preventDefault()
-        const settings = game.settings.get("dsa5", "masterSettings")
+        const settings = expandObject(game.settings.get("dsa5", "masterSettings"))
 
-        const data = new FormDataExtended($(this._element).find('form')[0]).object
+        const data = expandObject(new FormDataExtended($(this._element).find('form')[0]).object)
         data.enabled = true
 
         if(!data.name) return
 
-        mergeObject(settings, {
-            globalMods: {
-                [randomID()]: data
-            }
-        })
+        if(this.mod_id) {
+            settings.globalMods[this.mod_id] = data
+        } else {
+            mergeObject(settings, {
+                globalMods: {
+                    [randomID()]: data
+                }
+            })
+        }        
         await game.settings.set("dsa5", "masterSettings", settings)
         game.dsa5.apps.gameMasterMenu.render()
         this.close()

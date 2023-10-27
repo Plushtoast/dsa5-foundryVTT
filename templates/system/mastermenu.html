@@ -14,16 +14,16 @@
             <div class="groupbox">
                 <h2>{{localize 'MASTER.globalMods'}}</h2>
                 <div class="row-section lineheight table-title">
-                    <div class="col seventy">
-
+                    <div class="col sixty">
+                        <a class="addGlobalMod" style="margin-left:10px;"><i class="fas fa-plus"></i></a>
                     </div>
                     <div class="col ten center">
                         {{localize 'Book.active'}}
                     </div>
                     <div class="col ten center">
-                        <a class="addGlobalMod"><i class="fas fa-plus"></i></a>
+                        
                     </div>
-                    <div class="col ten center" data-tooltip="MASTER.globalModsHint">
+                    <div class="col five center" data-tooltip="MASTER.globalModsHint">
                         <i class="fas fa-info"></i>
                     </div>
                 </div>
@@ -31,7 +31,7 @@
                     {{#each masterSettings.globalMods as |item i|}}
                     <div class="tableOdd skills">
                         <div class="row-section lineheight">
-                            <div class="col seventy">
+                            <div class="col sixty">
                                 {{item.name}}
                             </div>
                             <div class="col ten center">
@@ -40,16 +40,23 @@
                             <div class="col ten center">
                                 {{item.value}}
                             </div>
-                            <div class="col ten center" data-tooltip="MASTER.globalModsHint">
-                                <a class="removeGlobalMod" data-key="{{i}}"><i class="fas fa-trash"></i></a>
+                            <div class="col five center">
+                                <a class="editGlobalMod" data-key="{{i}}" data-tooltip="SHEET.EditItem"><i class="fas fa-edit"></i></a>
+                                <a class="removeGlobalMod" data-key="{{i}}" data-tooltip="SHEET.DeleteItem"><i class="fas fa-trash"></i></a>                                
                             </div>
                         </div>
-                        <div class="row-section">
+                        <div class="row-section wrap">
                             {{#each item.target as |value key|}}
                                 {{#if value}}
                                 <small class="smallBoxItem">{{itemCategory key}}</small>
                                 {{/if}}
                             {{/each}}
+                            {{#if item.victim.player}}
+                            <small class="smallBoxItem emphasize2">{{localize 'TYPES.Actor.character'}}</small>
+                            {{/if}}
+                            {{#if item.victim.npc}}
+                            <small class="smallBoxItem emphasize">{{localize 'TYPES.Actor.npc'}}</small>
+                            {{/if}}
                         </div>
                     </div>
                     {{/each}}

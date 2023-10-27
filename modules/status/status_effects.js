@@ -326,8 +326,19 @@ export default class DSA5StatusEffects {
                 }
             }
         }
-        for(let ef of Object.values((game.settings.get("dsa5", "masterSettings").globalMods || {}))) {
-            if(!ef.enabled || !ef.target[item.type]) continue
+        const playerOwned = actor.hasPlayerOwner
+        const globalMods = game.settings.get("dsa5", "masterSettings").globalMods || {}
+
+        for(let key of Object.keys(globalMods)) {
+            const ef = expandObject(globalMods[key])
+            
+            if(!ef.enabled || !ef.target || !ef.target[item.type]) continue
+
+            if(playerOwned) {
+                if(!ef.victim.player) continue
+            } else {
+                if(!ef.victim.npc) continue
+            }            
 
             result.push({
                 name: ef.name,

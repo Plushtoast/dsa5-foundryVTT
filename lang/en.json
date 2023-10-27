@@ -177,6 +177,7 @@
         "buy": "Buy",
         "sell": "Sell",
         "exchange": "Exchange",
+        "splitItem": "Split {name}",
         "commerce": "Trade",
         "hidePlayer": "Hide for player",
         "hidePlayerHint": "Hide for players in the actor's directory. Set before giving permissions",
@@ -888,6 +889,9 @@
     "SHEET": {
         "PostItem": "Post to chat",
         "EditItem": "Edit",
+        "SplitItem": "Split",
+        "DuplicateItem": "Duplicate",
+        "EquipItem": "Equip",
         "Dropdown": "Details",
         "increaseFontSize": "Increase/Decrease font size",
         "DeleteItem": "Delete",
