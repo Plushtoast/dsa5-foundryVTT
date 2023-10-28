@@ -929,8 +929,9 @@
         "rebuyPAsP": "Rebought permanent AsP/KaP"
     },
     "dsaStyle": {
-        "immersive": "Immersive",
-        "naked": "Naked"
+        "immersive": "Immersive (TDE4/5)",
+        "naked": "Naked",
+        "legacy": "Immersive (TDE5)"
     },
     "traditionArtifacts": {
         "Animistenwaffe": "Animist weapon",

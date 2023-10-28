@@ -824,8 +824,9 @@
         "Zechen": "<p><b>Anwendungsgebiete</b>: Vermeidung von Betäubung durch Rauschmittel, Vermeidung von Schmerz durch Rauschmittel, Vermeidung von Verwirrung durch Rauschmittel</p><p><b>Qualität</b>: Der Held verträgt viel mehr als üblich.</p><p><b>Misslungene Probe</b>: Der Held erhält eine Stufe des Zustands Betäubung und erwacht am nächsten Tag mit Kopfschmerzen oder anderen unliebsamen Auswirkungen seines Gelages.</p><p><b>Kritischer Erfolg</b>: Dem Helden gelingt es, bis zum bitteren Ende durchzuhalten, und trotzdem geht es ihm am nächsten Morgen blendend.</p><p><b>Patzer</b>: Der Held begeht in seinem Zustand jedwede Peinlichkeit. Er zerlegt die halbe Taverne, wacht morgens nackt auf dem Markt oder in einem fremden Bett auf, plaudert Geheimnisse an den Feind aus und kann sich danach an nichts mehr erinnern.</p>"
     },
     "dsaStyle": {
-        "immersive": "Immersiv",
-        "naked": "Nackt"
+        "immersive": "Immersiv (DSA4/5)",
+        "naked": "Nackt",
+        "legacy": "Immersiv (DSA5)"
     },
     "Book": {
         "Wizard": "Journal Browser",

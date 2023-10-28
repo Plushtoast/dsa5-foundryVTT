@@ -85,13 +85,28 @@
             background-size: 101% 1400px;
         }
 
-        
-        &.dsajournal .window-content {
-            background-image: url('../../icons/backgrounds/journalentry.webp');
+        &.dsajournal .window-content,
+        &.bookWizardsheet .window-content {
+            background-image: url('../../icons/backgrounds/journalentry_v45.webp');
             background-size: 97% 1000px;
             background-position: center;
             background-repeat: repeat-y;
-            padding: 0 50px;            
+
+            a.content-link,
+            a.inline-roll {
+                border: none;
+                color: #b93d00;
+                font-weight: bold;
+                background: none;
+
+                i {
+                    color: #b93d00;
+                }
+            }
+        }
+
+        &.dsajournal .window-content {            
+            padding: 0 40px;            
         }
 
         &.bookWizardsheet,

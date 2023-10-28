@@ -41,4 +41,22 @@
         <td>{{{enriched.enrichedqs6}}}</td>
     </tr>
     {{/if}}
+    {{#if item.system.fail}}
+    <tr>
+        <td>{{localize 'Failure'}}</td>
+        <td>{{{enriched.enrichedFail}}}</td>
+    </tr>
+    {{/if}}
+    {{#if item.system.botch}}
+    <tr>
+        <td>{{localize 'CriticalFailure'}} 6</td>
+        <td>{{{enriched.enrichedBotch}}}</td>
+    </tr>
+    {{/if}}
+    {{#if item.system.crit}}
+    <tr>
+        <td>{{localize 'CriticalSuccess'}} 6</td>
+        <td>{{{enriched.enrichedCrit}}}</td>
+    </tr>
+    {{/if}}
 </table>

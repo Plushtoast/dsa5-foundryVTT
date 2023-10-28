@@ -367,6 +367,7 @@ DSA5.journalFontSizes = [8, 10, 12, 14, 16, 18, 20, 24, 28, 32];
 
 DSA5.styles = {
     "dsa5-immersive": "dsaStyle.immersive",
+    "dsa5-immersive dsa5-legacy": "dsaStyle.legacy",
     "dsa5-naked": "dsaStyle.naked"
 }
 

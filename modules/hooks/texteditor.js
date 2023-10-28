@@ -25,7 +25,7 @@ export function setEnrichers() {
 
     CONFIG.TextEditor.enrichers.push(
         {
-            pattern: /@(Rq|Gc|Ch)\[[a-zA-ZöüäÖÜÄ&; -]+ (-|\+)?\d+\]({[a-zA-ZöüäÖÜÄ&; -]+})?/g,
+            pattern: /@(Rq|Gc|Ch)\[[a-zA-ZöüäÖÜÄ&; -]+ (-|\+)?\d+\]({[a-zA-ZöüäÖÜÄß\(\)&; -]+})?/g,
             enricher: (match, options) => {
                 const str = match[0]
                 const type = match[1]
@@ -36,7 +36,7 @@ export function setEnrichers() {
             }
         },
         {
-            pattern: /@(Pay|GetPaid|AP)\[(-|\+)?\d+\]({[a-zA-ZöüäÖÜÄ&; -]+})?/g,
+            pattern: /@(Pay|GetPaid|AP)\[(-|\+)?\d+\]({[a-zA-ZöüäÖÜÄß\(\)&; -]+})?/g,
             enricher: (match, options) => {
                 const str = match[0]
                 const type = match[1]
@@ -67,7 +67,10 @@ export function setEnrichers() {
                     enrichedqs3: await TextEditor.enrichHTML(item.system.qs3, { async: true }),
                     enrichedqs4: await TextEditor.enrichHTML(item.system.qs4, { async: true }),
                     enrichedqs5: await TextEditor.enrichHTML(item.system.qs5, { async: true }),
-                    enrichedqs6: await TextEditor.enrichHTML(item.system.qs6, { async: true })
+                    enrichedqs6: await TextEditor.enrichHTML(item.system.qs6, { async: true }),
+                    enrichedCrit: await TextEditor.enrichHTML(this.item.system.crit, { async: true }),
+                    enrichedBotch: await TextEditor.enrichHTML(this.item.system.botch, { async: true }),
+                    enrichedFail: await TextEditor.enrichHTML(this.item.system.fail, { async: true }),
                 }
 
                 const templ = await renderTemplate("systems/dsa5/templates/items/infopreview.html", { item, enriched })

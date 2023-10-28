@@ -1,0 +1,96 @@
+.dsa5-legacy {
+    .window-app {
+        &.dsajournal .window-content {
+            background-image: url('../../icons/backgrounds/journalentry.webp');
+            background-size: 97% 1000px;
+            padding: 0 50px;            
+        }
+    }
+
+    .chatpaperfield {
+        border-image: url('../../icons/backgrounds/chatpaper.webp');
+        border-image-width: 30px;
+        border-image-slice: 80 50 40 fill;
+        border-image-repeat: round;
+        padding: 10px 20px 10px 30px;
+    }
+
+    .maskfield {
+        position:relative;
+        &:after {
+          content: '';
+          pointer-events: none;
+          position: absolute;
+          bottom: -23px;
+          left: 0;
+          right:0;
+          height: 50px;
+          z-index: 1;
+          background: url('../../icons/backgrounds/mask.webp');
+          background-repeat: no-repeat;
+          background-size: 150px 50px;
+          background-position: bottom center;
+        }    
+        padding: 10px 20px 30px 20px;
+        color: white;
+        border-image: url('../../icons/backgrounds/maskfield.webp');
+        border-image-width: 15px;
+        border-image-slice: 20 20 fill;
+        border-image-repeat: round;
+    
+        .editor .mce-content-body{
+          color: white
+        }
+    
+        .editor.prosemirror{
+          .editor-menu{
+            background-color: white;
+          }
+          &.editing-source textarea{
+            color:white;
+          }
+        }
+
+        .documentName-link,
+        .entity-link
+        a.content-link{
+          color: black;
+        }
+    }
+
+    .bookWizardsheet .window-content .table-title, .dsajournal .window-content .label-text,
+    .bookWizardsheet .window-content table tr:first-child, .dsajournal .window-content table tr:first-child {
+        /*box-shadow: 0 0 14px #00000052 inset;*/
+        background: rgb(188, 136, 111);
+        background: linear-gradient(90deg, rgba(188, 136, 111, 0.8) 0%, rgba(255, 255, 255, 0) 100%);
+        border-bottom-style: solid;
+        text-align: left;
+    }
+
+    .window-app {
+        &.bookWizardsheet .window-content {
+            background: url('../../icons/backgrounds/sheet2.webp') no-repeat;
+            background-position: center;
+            background-repeat: repeat-y;
+            background-size: 101% 1400px;
+        }
+
+        &.dsajournal .window-content,
+        &.bookWizardsheet .window-content {
+            
+            .maskfield {
+                a.content-link,
+                a.inline-roll {
+                    border: none;
+                    color: #ee770e;
+                    font-weight: bold;
+                    background: none;
+    
+                    i {
+                        color: #ee770e;
+                    }
+                }
+            }            
+        }
+    }
+}

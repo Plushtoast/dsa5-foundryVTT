@@ -457,13 +457,28 @@
     }
   }
   
-  .bookWizardsheet .window-content table tr:first-child, .dsajournal .window-content table tr:first-child, .table-title, .label-text {
+  .table-title, .label-text {
     font-weight: bold;
     font-family: var(--boldFont);
   
     /*box-shadow: 0 0 14px #00000052 inset;*/
     background: rgb(188, 136, 111);
     background: linear-gradient(90deg, rgba(188, 136, 111, 0.8) 0%, rgba(255, 255, 255, 0) 100%);    
+  }
+
+  .bookWizardsheet .window-content .table-title, .dsajournal .window-content .label-text,
+  .bookWizardsheet .window-content table tr:first-child, .dsajournal .window-content table tr:first-child{
+      font-weight: bold;
+      font-family: var(--boldFont);
+      border-bottom-style: double;
+      text-align: center;
+      background: rgb(188, 136, 111, 0.3);
+  }
+
+  .bookWizardsheet .window-content table, .dsajournal .window-content table,
+  .bookWizardsheet .window-content table tr, .dsajournal .window-content table tr,
+  .bookWizardsheet .window-content table td, .dsajournal .window-content table td {
+    border-color: var(--border-color);
   }
   
   .table-title {
@@ -2188,54 +2203,35 @@
   }
 
   .chatpaperfield {
-    border-image: url('../../icons/backgrounds/chatpaper.webp');
-    border-image-width: 30px;
-    border-image-slice: 80 50 40 fill;
-    border-image-repeat: round;
-    margin-bottom: 25px;
-    padding: 10px 20px 10px 30px;
+    border-image: url('../../icons/backgrounds/chatpaper_v45.webp');
+    clear: both;
+    border-image-width: 24px;
+    border-image-slice: 70 70 70 fill;
+    //border-image-repeat: round;
+    margin: 25px 0px;
+    padding: 20px 20px 20px 30px;
   }
   
   .maskfield {
     position:relative;
-    &:after {
-      content: '';
-      pointer-events: none;
-      position: absolute;
-      bottom: -23px;
-      left: 0;
-      right:0;
-      height: 50px;
-      z-index: 1;
-      background: url('../../icons/backgrounds/mask.webp');
-      background-repeat: no-repeat;
-      background-size: 150px 50px;
-      background-position: bottom center;
-    }    
-    padding: 10px 20px 30px 20px;
-    margin-bottom: 30px;
-    color: white;
-    border-image: url('../../icons/backgrounds/maskfield.webp');
-    border-image-width: 15px;
-    border-image-slice: 20 20 fill;
-    border-image-repeat: round;
+    clear: both;
+    padding: 70px 30px 30px 30px;
+    margin: 34px 0px;
+    border-image: url('../../icons/backgrounds/maskfield_v45.webp');
+    border-image-width: 60px 20px 60px 20px;
+    border-image-slice: 90 30 90 30 fill;
+    //border-image-repeat: round;
+  }
 
-    .editor .mce-content-body{
-      color: white
-    }
-
-    .editor.prosemirror{
-      .editor-menu{
-        background-color: white;
-      }
-      &.editing-source textarea{
-        color:white;
-      }
-    }
-
-    a.content-link{
-      color: black;
-    }
+  .citefield {
+    position:relative;
+    clear: both;
+    padding: 30px;
+    margin: 25px 0px;
+    border-image: url('../../icons/backgrounds/cite_v45.webp');
+    border-image-width: 60px 20px 60px 20px;
+    border-image-slice: 90 30 90 30 fill;
+    //border-image-repeat: round;
   }
   
   .dsajournal .window-content .maskfield tr:first-child {
@@ -3108,11 +3104,6 @@
     }
   }
 
-  .maskfield .documentName-link,  
-  .maskfield .entity-link {
-    color: black;
-  }
-  
   .fa-dsa5-player, .fa-dsa5 {
     position: relative;
     width: 25px;
@@ -3764,6 +3755,7 @@
       background-size: 250px 30px;
       background-position: center calc(100% - 8px);
     }
+
     .postContentChat{
       cursor: pointer;
       em{
@@ -3833,4 +3825,5 @@
 
 
   @import "./immersive.scss";
+  @import "./legacy.scss";
   @import "./applefix.scss";
