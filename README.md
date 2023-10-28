@@ -156,7 +156,7 @@ If you want to discuss TDE for foundry or need some assistance you can also join
         <img src="https://www.f-shop.de/media/image/5d/b3/1a/ESD035_0_0999.jpg" alt="Offenbarung des Himmels" style="margin-right: 5px; margin-bottom: 5px; text-align:center; width:210px;">
     </a>
     <a href="https://www.f-shop.de/virtual-tabletops/das-schwarze-auge-vtt/abenteuer-module/3789/dsa5-das-geheimnis-der-zauberschueler-fuer-foundry-vtt" target="_blank" title="Das Geheimnis der Zauberschüler">
-            <img src="https://www.f-shop.de/media/image/5d/b3/1a/ESD035_0_0999.jpg" alt="Das Geheimnis der Zauberschüler" style="margin-right: 5px; margin-bottom: 5px; text-align:center; width:210px;">
+            <img src="https://www.f-shop.de/media/image/5d/b3/1a/ESD035_0_0999.jpg" style="margin-right: 5px; margin-bottom: 5px; text-align:center; width:210px;">
         </a>
     <a href="https://www.f-shop.de/virtual-tabletops/das-schwarze-auge-vtt/abenteuer-module/2388/dsa5-mitsommerrache-fuer-foundry" title="Mittsommerrache">
         <img src="https://ulisses-digital.de/R20/dsa5/modules/dsa5-mittsommerrache/icons/journal/coverde.webp" alt="Mittsommerrache" style="margin-right: 5px; margin-bottom: 5px; text-align:center; width:210px;">
