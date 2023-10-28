@@ -1,6 +1,7 @@
 import DSA5_Utility from "./utility-dsa5.js"
 import ADVANCEDFILTERS from "./itemlibrary_advanced_filters.js"
 import { clickableAbility, tabSlider } from "./view_helper.js"
+import DSA5 from "./config-dsa5.js"
 
 //TODO merge existing index with advanced details
 //TODO create index with getIndex(fields)
@@ -39,7 +40,8 @@ class SearchDocument {
             visible: item.visible ? item.visible : true,
             compendium: item.compendium ? item.compendium.metadata.packageName : (pack.packageName || ""),
             pack: item.pack || (pack.packageName ? pack.id : undefined),
-            img: item.img
+            img: item.img,
+            price: item.system?.price?.value
         }
     }
 
@@ -71,6 +73,10 @@ class SearchDocument {
     }
     get itemType() {
         return this.document.filterType
+    }
+
+    get hasPrice() {
+        return DSA5.equipmentCategories.has(this.document.filterType)
     }
 
     async getItem() {
@@ -505,7 +511,7 @@ export default class DSA5ItemLibrary extends Application {
             const template = 'systems/dsa5/templates/system/libraryItem.html'
             return await renderTemplate(template, { items: filteredItems })
         }
-    }
+    }    
 
     async renderResult(html, filteredItems, { index, itemType }, isPaged) {
         const resultField = html.find('.searchResult .item-list')
@@ -513,15 +519,19 @@ export default class DSA5ItemLibrary extends Application {
         if (!isPaged) resultField.empty()
 
         innerhtml = $(innerhtml)
+        const itemDragStart = (event, index, type, pay = false) => {
+            event.stopPropagation()
+            let item = index.find(event.currentTarget.dataset.itemId)
+            event.originalEvent.dataTransfer.setData("text/plain", JSON.stringify({
+                type,
+                uuid: item.uuid,
+                pay
+            }))
+        }
         innerhtml.each(function() {
             const li = $(this)
-            li.attr("draggable", true).on("dragstart", event => {
-                let item = index.find($(li).attr("data-item-id"))
-                event.originalEvent.dataTransfer.setData("text/plain", JSON.stringify({
-                    type: itemType,
-                    uuid: item.uuid
-                }))
-            })
+            li.attr("draggable", true).on("dragstart", event => itemDragStart(event, index, itemType))
+            li.find('.priceDrag').attr("draggable", true).on("dragstart", event => itemDragStart(event, index, itemType, true))           
         })
         resultField.append(innerhtml)
     }

@@ -1704,6 +1704,16 @@
         display: flex;
         line-height: 26px;
         min-width: 120px;
+
+        .priceDrag{
+          padding-top: 2px;
+          min-width: 30px;
+          line-height: 10px;
+          font-size:10px;
+          cursor: grab;
+          text-overflow: ellipsis;
+          overflow:hidden;
+        }
       }
     }
   
@@ -2135,6 +2145,7 @@
     color: #696767;
     line-height: 10px;
     text-align: center;
+    pointer-events: none;
   }
 
   .browser-item {
@@ -2388,7 +2399,7 @@
   }
   
   .adventureWizard .cover {
-    width: 100%;
+    width: 99%;
     position: relative;
   }
   

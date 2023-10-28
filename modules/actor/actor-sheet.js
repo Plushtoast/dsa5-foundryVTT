@@ -7,7 +7,7 @@ import DSA5ChatListeners from "../system/chat_listeners.js";
 import DSA5StatusEffects from "../status/status_effects.js";
 import DialogActorConfig from "../dialog/dialog-actorConfig.js";
 import Actordsa5 from "./actor-dsa5.js";
-import { itemFromDrop, tabSlider } from "../system/view_helper.js";
+import { itemFromDrop, tabSlider, tinyNotification } from "../system/view_helper.js";
 import DSA5SoundEffect from "../system/dsa-soundeffect.js";
 import RuleChaos from "../system/rule_chaos.js";
 import OnUseEffect from "../system/onUseEffects.js";
@@ -17,6 +17,7 @@ import Riding from "../system/riding.js";
 import ForeignFieldEditor from "../system/foreignFieldEditor.js"
 import { AddEffectDialog } from "../system/tokenHotbar2.js";
 import { RangeSelectDialog } from "../hooks/itemDrop.js";
+import DSA5Payment from "../system/payment.js";
 
 export default class ActorSheetDsa5 extends ActorSheet {
     get actorType() {
@@ -1325,7 +1326,7 @@ export default class ActorSheetDsa5 extends ActorSheet {
         let mergeItems = false
         let parentItem = $(event.target).parents(".item")
 
-        if (parentItem && DSA5.equipmentCategories.includes(item.type)) {
+        if (parentItem && DSA5.equipmentCategories.has(item.type)) {
             
             const parentId = parentItem.attr("data-item-id")
             if(parentItem.attr("data-category") == "bags") {
@@ -1349,16 +1350,30 @@ export default class ActorSheetDsa5 extends ActorSheet {
                 if (item.system.worn && item.system.worn.value)
                     upd["system.worn.value"] = false
                 await this.actor.updateEmbeddedDocuments("Item", [upd])
-            } else if(DSA5.equipmentCategories.includes(item.type)){
+            } else if(DSA5.equipmentCategories.has(item.type)){
                 await this.actor.updateEmbeddedDocuments("Item", [{ _id: item.id, system: { parent_id: 0 } }])
             }
             //return this._onSortItem(event, itemData);
         }else{
+            const hasPrice = this._itemHasPrice(data)
+            if(hasPrice){
+                const price = `${item.type == "consumable" ? Itemdsa5.getSubClass(itemData.type).consumablePrice(itemData) : Number(itemData.system.price.value)}`
+                            
+                if(price && !(await DSA5Payment.payMoney(this.actor, price, true, false))) return
+
+                tinyNotification(game.i18n.format("PAYMENT.pay", {actor: this.actor.name, amount: price}))
+                DSA5SoundEffect.playMoneySound()
+            }
+            console.log(hasPrice, data)
             await this._onDropItemCreate(itemData);
         }
     
-        if (event.altKey && !selfTarget && DSA5.equipmentCategories.includes(item.type))
+        if (event.altKey && !selfTarget && DSA5.equipmentCategories.has(item.type))
             await this._handleRemoveSourceOnDrop(item)
+    }
+
+    _itemHasPrice(data){
+        return data.pay
     }
 }
 

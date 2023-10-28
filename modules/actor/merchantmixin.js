@@ -140,7 +140,7 @@ export const MerchantSheetMixin = (superclass) => class extends superclass {
         if (DSA5.equipmentTypes[filter]) {
             return (item) => { return item.type == "equipment" && item.system.equipmentType.value == filter }
         } else {
-            return (item) => { return item.type == filter && DSA5.equipmentCategories.includes(item.type) }
+            return (item) => { return item.type == filter && DSA5.equipmentCategories.has(item.type) }
         }
     }
 
@@ -223,7 +223,7 @@ export const MerchantSheetMixin = (superclass) => class extends superclass {
 
     static async selfDestruction(target) {
         if (this.isTemporaryToken(target)) {
-            const hasItemsLeft = target.items.some(x => DSA5.equipmentCategories.includes(x.type) || (x.type == "money" && x.system.quantity.value > 0))
+            const hasItemsLeft = target.items.some(x => DSA5.equipmentCategories.has(x.type) || (x.type == "money" && x.system.quantity.value > 0))
             if (!hasItemsLeft) {
                 game.socket.emit("system.dsa5", {
                     type: "hideDeletedSheet",
@@ -345,7 +345,7 @@ export const MerchantSheetMixin = (superclass) => class extends superclass {
     }   
 
     async randomGoods(ev) {
-        const html = await renderTemplate('systems/dsa5/templates/dialog/randomGoods-dialog.html', { categories: DSA5.equipmentCategories })
+        const html = await renderTemplate('systems/dsa5/templates/dialog/randomGoods-dialog.html', { categories: Array.from(DSA5.equipmentCategories) })
         new Dialog({
             title: game.i18n.localize("MERCHANT.randomGoods"),
             content: html,
@@ -434,7 +434,7 @@ export const MerchantSheetMixin = (superclass) => class extends superclass {
     async removeAllGoods(actor, ev) {
         let text = $(ev.currentTarget).text()
         $(ev.currentTarget).html(' <i class="fa fa-spin fa-spinner"></i>')
-        let ids = actor.items.filter(x => DSA5.equipmentCategories.includes(x.type) && !getProperty(x, "worn.value")).map(x => x.id)
+        let ids = actor.items.filter(x => DSA5.equipmentCategories.has(x.type) && !getProperty(x, "worn.value")).map(x => x.id)
         await actor.deleteEmbeddedDocuments("Item", ids);
         $(ev.currentTarget).text(text)
     }

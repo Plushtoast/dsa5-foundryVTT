@@ -74,7 +74,7 @@ const handleItemDrop = async(canvas, data) => {
     const item = await Item.implementation.fromDropData(data);
     const sourceActor = item.parent
 
-    if (!DSA5.equipmentCategories.includes(item.type)) return
+    if (!DSA5.equipmentCategories.has(item.type)) return
 
     const callback = async(count) => {
         dropToGround(sourceActor, item, data, count)

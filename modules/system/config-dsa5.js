@@ -465,7 +465,7 @@ DSA5.equipmentTypes = {
     "food": "Equipment.food"
 };
 
-DSA5.equipmentCategories = ["meleeweapon", "rangeweapon", "equipment", "ammunition", "armor", "poison", "consumable", "plant"]
+DSA5.equipmentCategories = new Set(["meleeweapon", "rangeweapon", "equipment", "ammunition", "armor", "poison", "consumable", "plant"])
 
 DSA5.systemTables = [
     { name: "Defense", attrs: "data-weaponless=\"false\"", roll: "botch-roll", pack: { de: "dsa5.patzer", en: "dsa5.botch" }, setting: { module: "dsa5", key: "defenseBotchTableEnabled" } },

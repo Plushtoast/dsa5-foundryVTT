@@ -608,7 +608,8 @@
         "fullTextSearch": "Full text search (deactivate to increase performance, requires reloading of the world)",
         "loading": "Loading {item}...",
         "browseEnabled": "Enable browse mode",
-        "filterDuplicateItems": "Hide duplicate items"
+        "filterDuplicateItems": "Hide duplicate items",
+        "info": "Search for everything and drag & drop it to the character sheet or the map."
     },
     "Aggregated": {
         "noMoreAllowed": "No more rolls allowed."

@@ -5,5 +5,10 @@
         <div class="item-name"><span>{{item.name}}</span></div>
     </a>
     <div class="compendium">{{item.compendium}}</div>
+    {{#if item.hasPrice}}
+    <div class="priceDrag center" data-item-id="{{item.id}}" data-tooltip="HELP.pay">
+        <i class="fas fa-coins"></i><br/>{{item.document.price}}
+    </div>
+    {{/if}}
 </li>
 {{/each}}

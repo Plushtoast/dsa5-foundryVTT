@@ -574,7 +574,8 @@
         "fullTextSearch": "Volltextsuche (Deaktivieren verbessert Leistung, erfordert Neuladen der Welt)",
         "loading": "Lade {item}...",
         "browseEnabled": "Stöbermodus aktivieren",
-        "filterDuplicateItems": "Doppelte Einträge ausblenden"
+        "filterDuplicateItems": "Doppelte Einträge ausblenden",
+        "info": "Suche was du brauchst und ziehe es per Drag & Drop auf den Heldenbogen oder die Map."
     },
     "Aggregated": {
         "noMoreAllowed": "Keine Proben mehr erlaubt."

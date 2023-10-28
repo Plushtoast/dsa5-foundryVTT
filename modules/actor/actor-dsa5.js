@@ -17,8 +17,6 @@ import CreatureType from "../system/creature-type.js";
 import Riding from "../system/riding.js";
 
 export default class Actordsa5 extends Actor {
-  static _baseCarryItems = new Set(DSA5.equipmentCategories)
-
   static async create(data, options) {
     if (data instanceof Array || data.items) return await super.create(data, options);
 
@@ -93,7 +91,7 @@ export default class Actordsa5 extends Actor {
       }
 
       for(const i of this.items){
-        if(Actordsa5._baseCarryItems.has(i.type)){
+        if(DSA5.equipmentCategories.has(i.type)){
           let parent_id = getProperty(i, "system.parent_id");
           if (parent_id && parent_id != i._id) {
             if (containers.has(parent_id)) {

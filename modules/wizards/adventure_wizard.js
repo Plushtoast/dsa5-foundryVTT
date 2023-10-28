@@ -128,6 +128,8 @@ export default class BookWizard extends Application {
             this.filterToc($(ev.currentTarget).val())
         })
 
+        html.on('click', '.movePage', async(ev) => this.movePage(ev))
+
         html.on('click', '.loadBook', ev => {
             this.selectedChapter = undefined
             this.selectedType = undefined
@@ -202,6 +204,54 @@ export default class BookWizard extends Application {
     heightFix() {
         const h = $(this._element).find('.breadcrumbs').height()
         $(this._element).find('.col.seventy.scrollable').css({ "margin-bottom": `${h}px` })
+    }
+
+    async getPagy(chapter, journalId) {
+        const journals = this.journals.filter(x => x.flags.dsa5.parent == chapter).sort((a, b) => a.flags.dsa5.sort > b.flags.dsa5.sort ? 1 : -1)
+        const targetindex = journals.findIndex(x => x._id == journalId)
+        return { journals, targetindex }
+    }
+
+    async movePage(ev) {
+        const dir = ev.currentTarget.dataset.action
+        let { journals, targetindex } = await this.getPagy(this.selectedChapter, this.selectedSubChapter)
+        let flattenedChapters = []
+
+        for(let chap of this.bookData.chapters){
+            for(let sub of chap.content){
+                flattenedChapters.push(sub.name)
+            }
+        }
+
+        let curChapterIndex = flattenedChapters.findIndex(x => x == this.selectedChapter)        
+        this.bookData.chapters.findIndex(x => x.name == this.selectedChapter)
+
+        if(dir == "next") targetindex++
+        else targetindex--
+
+        if(targetindex < 0) {
+            this.selectedChapter = flattenedChapters[curChapterIndex - 1]
+            if(!this.selectedChapter) return
+
+            journals = (await this.getPagy(this.selectedChapter, undefined)).journals
+            targetindex = 0
+        } else if( targetindex >= journals.length) {
+            this.selectedChapter = flattenedChapters[curChapterIndex + 1]
+            if(!this.selectedChapter) return
+
+            journals = (await this.getPagy(this.selectedChapter, undefined)).journals
+            targetindex = 0
+        }
+
+        if(["prep", "foundryUsage"].includes(this.selectedChapter)) return
+
+        let journal = journals[targetindex]
+        
+        const toc = await this.getToc()
+        this._element.find('.toc').html(toc)
+        if(journal) {
+            await this.loadJournalById(journal.id)
+        }
     }
 
     async loadJournal(name) {
@@ -416,7 +466,6 @@ export default class BookWizard extends Application {
                 }
 
                 let chapter = this.bookData.chapters.find(x => x.name == this.selectedType).content.find(x => x.id == this.selectedChapter)
-
                 const subChapters = this.getSubChapters()
                 if (chapter.scenes || chapter.actors || subChapters.length == 0) {
                     return await renderTemplate('systems/dsa5/templates/wizard/adventure/adventure_chapter.html', { chapter, subChapters: this.getSubChapters(), actors: await this.prefillActors(chapter) })
@@ -470,8 +519,10 @@ export default class BookWizard extends Application {
                     chapter = k.content.find(x => x.id == this.selectedChapter)
                     if (chapter) break
                 }
-                chapter.cssClass = "selected"
-                chapter.subChapters = this.getSubChapters()
+                if(chapter) {
+                    chapter.cssClass = "selected"
+                    chapter.subChapters = this.getSubChapters()
+                }
             }
             return await renderTemplate('systems/dsa5/templates/wizard/adventure/adventure_toc.html', { chapters, book: this.book, fulltextsearch: this.fulltextsearch ? "on" : "" })
         } else {

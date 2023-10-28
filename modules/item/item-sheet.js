@@ -563,7 +563,7 @@ class EquipmentSheet extends ItemSheetObfuscation(Enchantable) {
             let weightSum = 0
             mergeObject(data, {
                 containerContent: this.item.actor.items
-                .filter(x => DSA5.equipmentCategories.includes(x.type) && x.system.parent_id == this.item.id)
+                .filter(x => DSA5.equipmentCategories.has(x.type) && x.system.parent_id == this.item.id)
                 .map(x => {
                     x.system.preparedWeight = parseFloat((x.system.weight.value * x.system.quantity.value).toFixed(3));
                     weightSum += Number(x.system.preparedWeight)
@@ -642,7 +642,7 @@ class EquipmentSheet extends ItemSheetObfuscation(Enchantable) {
             const selfItem = this.item.id == item.id
             const ownItem = this.item.parent.id == dragData.actorId
 
-            if (DSA5.equipmentCategories.includes(typeClass) && !selfItem) {
+            if (DSA5.equipmentCategories.has(typeClass) && !selfItem) {
                 item.system.parent_id = this.item.id
                 if (item.system.worn && item.system.worn.value)
                     item.system.worn.value = false
