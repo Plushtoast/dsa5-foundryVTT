@@ -1,0 +1,181 @@
+{
+  "name": "Brawling - Injuries",
+  "img": "systems/dsa5/icons/talents/Koerperbeherrschung.webp",
+  "description": "<p>Most brawls end only after one side has won; consequently, nearly everyone involved receives some minor injuries. Use the following table to randomly determine what happens to each participant. The percentage applies to the participants’ LP at the start of the brawl and determines how many actual LP each person loses.</p>",
+  "results": [
+    {
+      "type": 0,
+      "weight": 1,
+      "range": [
+        2,
+        2
+      ],
+      "drawn": false,
+      "_id": "6P2PxWGRAJKoUJtQ",
+      "text": "Abrasion (10 %)",
+      "documentId": null,
+      "flags": { "dsa5": { "brawlDamage": 0.1}},
+      "img": "systems/dsa5/icons/talents/Koerperbeherrschung.webp"
+    },
+    {
+      "type": 0,
+      "weight": 1,
+      "range": [
+        3,
+        3
+      ],
+      "drawn": false,
+      "_id": "DchfmTKUmhdiyen3",
+      "text": "Bloody Nose (10 %)",
+      "documentId": null,
+      "flags": { "dsa5": { "brawlDamage": 0.1}},
+      "img": "systems/dsa5/icons/talents/Koerperbeherrschung.webp"
+    },
+    {
+      "type": 0,
+      "weight": 1,
+      "range": [
+        4,
+        4
+      ],
+      "drawn": false,
+      "_id": "gQmfwqaz2pw3szF7",
+      "text": "Sprained Hand (10 %)",
+      "documentId": null,
+      "flags": { "dsa5": { "brawlDamage": 0.1}},
+      "img": "systems/dsa5/icons/talents/Koerperbeherrschung.webp"
+    },
+    {
+      "type": 0,
+      "weight": 1,
+      "range": [
+        5,
+        5
+      ],
+      "drawn": false,
+      "_id": "fTxonG3ivAlKDb42",
+      "text": "Bruise (20 %)",
+      "documentId": null,
+      "flags": { "dsa5": { "brawlDamage": 0.2}},
+      "img": "systems/dsa5/icons/talents/Koerperbeherrschung.webp"
+    },
+    {
+      "type": 0,
+      "weight": 1,
+      "range": [
+        6,
+        6
+      ],
+      "drawn": false,
+      "_id": "CUG62WSucD4pXhkm",
+      "text": "Scratch (20 %)",
+      "documentId": null,
+      "flags": { "dsa5": { "brawlDamage": 0.2}},
+      "img": "systems/dsa5/icons/talents/Koerperbeherrschung.webp"
+    },
+    {
+      "type": 0,
+      "weight": 1,
+      "range": [
+        7,
+        7
+      ],
+      "drawn": false,
+      "_id": "5DW8E11dkpAjVglo",
+      "text": "One Black Eye (20 %)",
+      "documentId": null,
+      "flags": { "dsa5": { "brawlDamage": 0.2}},
+      "img": "systems/dsa5/icons/talents/Koerperbeherrschung.webp"
+    },
+    {
+      "type": 0,
+      "weight": 1,
+      "range": [
+        8,
+        8
+      ],
+      "drawn": false,
+      "_id": "LkrCYxWItxb9mE61",
+      "text": "Two Black Eyes (25 %)",
+      "documentId": null,
+      "flags": { "dsa5": { "brawlDamage": 0.25}},
+      "img": "systems/dsa5/icons/talents/Koerperbeherrschung.webp"
+    },
+    {
+      "type": 0,
+      "weight": 1,
+      "range": [
+        9,
+        9
+      ],
+      "drawn": false,
+      "_id": "20L78aDqlJCUZeg8",
+      "text": "Laceration (25 %)",
+      "documentId": null,
+      "flags": { "dsa5": { "brawlDamage": 0.25}},
+      "img": "systems/dsa5/icons/talents/Koerperbeherrschung.webp"
+    },
+    {
+      "type": 0,
+      "weight": 1,
+      "range": [
+        10,
+        10
+      ],
+      "drawn": false,
+      "_id": "GZSq9JxqgIcR0x84",
+      "text": "Multiple Lacerations (25 %)",
+      "documentId": null,
+      "flags": { "dsa5": { "brawlDamage": 0.25}},
+      "img": "systems/dsa5/icons/talents/Koerperbeherrschung.webp"
+    },
+    {
+      "type": 0,
+      "weight": 1,
+      "range": [
+        11,
+        11
+      ],
+      "drawn": false,
+      "_id": "hLPJx6buVdJVYTDK",
+      "text": "Dislocated Finger/Broken Toe (33 %)",
+      "documentId": null,
+      "flags": { "dsa5": { "brawlDamage": 0.33}},
+      "img": "systems/dsa5/icons/talents/Koerperbeherrschung.webp"
+    },
+    {
+      "type": 0,
+      "weight": 1,
+      "range": [
+        12,
+        12
+      ],
+      "drawn": false,
+      "_id": "2hptnjoACdgsvYOy",
+      "text": "Lost Tooth/Hair Torn Out/Gash (50 %)",
+      "documentId": null,
+      "flags": { "dsa5": { "brawlDamage": 0.5}},
+      "img": "systems/dsa5/icons/talents/Koerperbeherrschung.webp"
+    }
+  ],
+  "replacement": true,
+  "displayRoll": true,
+  "folder": null,
+  "flags": {
+    "exportSource": {
+      "world": "test",
+      "system": "dsa5",
+      "coreVersion": "11.313",
+      "systemVersion": "5.1.6"
+    }
+  },
+  "_stats": {
+    "systemId": "dsa5",
+    "systemVersion": "5.1.6",
+    "coreVersion": "11.313",
+    "createdTime": 1698586308980,
+    "modifiedTime": 1698586672072,
+    "lastModifiedBy": "QyX7i6OmJHdBqzAc"
+  },
+  "formula": "2d6"
+}

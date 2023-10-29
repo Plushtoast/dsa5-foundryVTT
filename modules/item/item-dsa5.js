@@ -130,6 +130,7 @@ export default class Itemdsa5 extends Item {
             equipment: EquipmentItemDSA5,
             combatskill: CombatskillDSA5,
             skill: SkillItemDSA5,
+            application: ApplicationItemDSA5,
             consumable: ConsumableItemDSA,
             spellextension: SpellextensionItemDSA5,
             species: SpeciesItemDSA5,
@@ -1657,9 +1658,20 @@ class RitualItemDSA5 extends SpellItemDSA5 {
     }
 }
 
+class ApplicationItemDSA5 extends Itemdsa5 {
+    static chatData(data, name) {
+        console.log(data)
+        const hasLocalization = game.i18n.has(`APPLICATION.${data.system.skill} - ${name}`)
+        const description = hasLocalization ? game.i18n.has(`APPLICATION.${data.system.skill} - ${name}`) : data.description.value
+        return [this._chatLineHelper("Description", description)]
+    }
+}
+
 class SkillItemDSA5 extends Itemdsa5 {
     static chatData(data, name) {
-        return [this._chatLineHelper("Description", game.i18n.localize(`SKILLdescr.${name}`))]
+        const hasLocalization = game.i18n.has(`SKILLdescr.${name}`)
+        const description = hasLocalization ? game.i18n.localize(`SKILLdescr.${name}`) : data.description.value
+        return [this._chatLineHelper("Description", description)]
     }
 
     static getSituationalModifiers(situationalModifiers, actor, data, source) {

@@ -24,6 +24,7 @@ export class DSA5CombatTracker extends CombatTracker {
             const comb = html.find(".combatant.active")[0].offsetTop
             html.find(".aggroButton").animate({top: comb - log.scrollTop()}, 50)
         }, 50));
+        html.find('.convertToBrawl').click(() => game.combat.convertToBrawl())
     }
     
     static runActAttackDialog() {
@@ -75,9 +76,11 @@ export class DSA5CombatTracker extends CombatTracker {
                 else if (e.icon && isAllowedToSeeEffects && !e.notApplicable && (game.user.isGM || !e.getFlag("dsa5", "hidePlayers")) && !e.getFlag("dsa5", "hideOnToken")) turn.effects.add(e.icon);
             })
         }
+        data.isBrawling = game.combat?.isBrawling
         return data
     }
 }
+
 export class DSA5Combat extends Combat {
     constructor(data, context) {
         super(data, context);
@@ -85,6 +88,10 @@ export class DSA5Combat extends Combat {
 
     async refreshTokenbars() {
         if (game.dsa5.apps.tokenHotbar) game.dsa5.apps.tokenHotbar.updateDSA5Hotbar()
+    }
+
+    get isBrawling() {
+        return this.getFlag("dsa5", "isBrawling")
     }
 
     _onCreate(data, options, userId) {
@@ -95,6 +102,59 @@ export class DSA5Combat extends Combat {
     _onDelete(options, userId) {
         super._onDelete(options, userId);
         this.refreshTokenbars()
+    }
+
+    async convertToBrawl(force = undefined) {
+        const goBrawling = force ?? !this.isBrawling        
+
+        const actorUpdates = []
+        const tokenUpdates = []
+        const chatMessages = []
+        if(goBrawling) {
+            for(let x of this.combatants){
+                if(!x.actor) return {}
+
+                const change = await x.brawlingChange()
+                actorUpdates.push(change.actorChange)
+                tokenUpdates.push(...change.tokenChange)
+                DSA5Combat.brawlStart()
+            }
+        } else {
+            for(let x of this.combatants){
+                if(!x.actor) return {}
+
+                const change = await x.undoBrawlingChange()
+                actorUpdates.push(change.actorChange)
+                tokenUpdates.push(...change.tokenChange)
+                if(change.damage.brawlDamage > 0){
+                    chatMessages.push({name: x.token.name, id: x.token.id, data: change.damage})                    
+                }
+            }
+        }
+        
+        await Actordsa5.updateDocuments(actorUpdates)
+        await game.canvas.scene.updateEmbeddedDocuments("Token", tokenUpdates)
+        await this.setFlag("dsa5", "isBrawling", goBrawling)
+
+        if(chatMessages.length) {
+            await this.showBrawlingDamage(chatMessages)
+        }
+    }
+
+    async showBrawlingDamage(messages) {
+        const template = await renderTemplate("systems/dsa5/templates/chat/brawling-damage.html", { messages })
+        ChatMessage.create(DSA5_Utility.chatDataSetup(template))
+    }
+
+    static async brawlStart(timeout = 2000) {
+        $('.bumFight').remove()
+        const didYouKnow = await renderTemplate("systems/dsa5/templates/system/bumFight/animation.html", {  })
+        $('body').append(didYouKnow)
+        const bum = $('.bumFight')
+        bum.addClass("fight")
+        setTimeout(function() {
+           bum.fadeOut(1000, () => bum.remove());
+        }, timeout);
     }
 
     async nextRound() {
@@ -153,6 +213,66 @@ export class DSA5Combatant extends Combatant {
         super(data, context);
     }
 
+    brawlingChange() {
+        const actor = DSA5_Utility.getSpeaker({actor: this.actor.id, scene: this.sceneId, token: this.token.id})
+        const tokenChange = getProperty(actor, "system.config.autoBar") ? actor.getActiveTokens().map(x => {return { _id: x.id, bar1: { attribute: "status.temporaryLeP" } }}) : [{}]
+        const actorChange = {
+            _id: actor.id,
+            system: {
+                status: {
+                    temporaryLeP: {
+                        value: actor.system.status.wounds.value,
+                        max: actor.system.status.wounds.value
+                    }
+                }
+            }
+        }
+
+        return { tokenChange, actorChange }
+    }
+
+    async getBrawlingTable() {
+        if(!this.brawlingTable) {
+            const pack = game.packs.get(game.i18n.lang == "de" ? "dsa5.patzer" : "dsa5.botch")
+            const table = (await pack.getDocuments({ name__in: [game.i18n.lang == "de" ? "Prügelei - Verletzungen" : "Brawling - Injuries"] }))[0]
+            this.brawlingTable = table
+        }
+
+        return this.brawlingTable
+    }
+
+    async undoBrawlingChange() {
+        const actor = DSA5_Utility.getSpeaker({actor: this.actor.id, scene: this.sceneId, token: this.token.id})
+        const tokenChange = getProperty(actor, "system.config.autoBar") ? actor.getActiveTokens().map(x => { return { _id: x.id, bar1: { attribute: "status.wounds" } }}) : [{}]
+        const lostLP = Math.max(0, actor.system.status.temporaryLeP.max - actor.system.status.temporaryLeP.value)
+        let brawlDamage = 0
+
+        let result
+        if(lostLP > 0) {
+            result = await (await this.getBrawlingTable()).draw({ displayChat: false })
+            result = result.results[0]
+            const multiplier = result.getFlag("dsa5", "brawlDamage")
+            brawlDamage = Math.round(lostLP * multiplier)
+        }
+
+        const actorChange = {
+            _id: actor.id,
+            system: {
+                status: {
+                    temporaryLeP: {
+                        value: 0,
+                        max: 0
+                    },
+                    wounds: {
+                        value: actor.system.status.wounds.value - brawlDamage
+                    }
+                }
+            }
+        }
+
+        return { tokenChange, actorChange, damage: { brawlDamage, result } }
+    }
+
     async recalcInitiative(){
         if(this.initiative){
             const roll = await this.getFlag("dsa5", "baseRoll") || 0
@@ -163,9 +283,46 @@ export class DSA5Combatant extends Combatant {
 }
 
 Hooks.on("preCreateCombatant", (data, options, user) => {
-    const actor = DSA5_Utility.getSpeaker({actor: data.actorId, scene: data.sceneId, token: data.token_id})
+    const actor = DSA5_Utility.getSpeaker({actor: data.actorId, scene: data.sceneId, token: data.tokenId})
     if(getProperty(actor.system, "merchant.merchantType") == "loot") return false
+
+    if(data.combat.isBrawling) {
+        const conf = data.brawlingChange()
+        delete conf.actorChange._id
+        actor.update(conf.actorChange).then(() => {
+            game.canvas.scene.updateEmbeddedDocuments("Token", conf.tokenChange)
+        })
+    }
 })
+
+Hooks.on("deleteCombatant", (data, options, user) => {
+    const actor = DSA5_Utility.getSpeaker({actor: data.actorId, scene: data.sceneId, token: data.tokenId})
+    if(getProperty(actor.system, "merchant.merchantType") == "loot") return false
+
+    if(data.combat.isBrawling) {
+        data.undoBrawlingChange().then(async(conf) => {
+            if(!data.token) return 
+
+            delete conf.actorChange._id
+            await actor.update(conf.actorChange)
+            await game.canvas.scene.updateEmbeddedDocuments("Token", conf.tokenChange)
+            if(conf.damage.brawlDamage > 0){
+                data.combat.showBrawlingDamage([{name: data.token.name, id: data.token.id, data: conf.damage}])
+            }
+        }) 
+    }
+})
+
+Hooks.on("preDeleteCombat", (combat, options, user) => {
+    if(options.noHook) return
+
+    if(combat.isBrawling) {
+        combat.convertToBrawl(false).then(() => {
+            combat.delete({noHook: true})  
+        })
+        return false
+    }
+}) 
 
 Hooks.on("updateCombatant", (combatant, change, user) => {
     if(!game.user.isGM) return

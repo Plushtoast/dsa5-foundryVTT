@@ -16,6 +16,13 @@
                 <i class="fas fa-caret-right"></i>
             </a>
             {{/if}}
+            <a class="combat-button convertToBrawl" data-tooltip="{{#if isBrawling}}BRAWLING.default{{else}}BRAWLING.name{{/if}}" {{#unless combatCount}}disabled{{/unless}}>
+                {{#if isBrawling}}
+                <i class="fas fa-hand-fist fa-rotate-90"></i>
+                {{else}}
+                <i class="fas fa-shield"></i>
+                {{/if}}
+            </a>
             <a class="combat-button combat-control" data-tooltip="COMBAT.Delete" data-control="endCombat" {{#unless combatCount}}disabled{{/unless}}>
                 <i class="fas fa-trash"></i>
             </a>

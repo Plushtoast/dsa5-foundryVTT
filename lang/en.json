@@ -29,8 +29,15 @@
         "LEP": "Life Points",
         "KAP": "Karma Points",
         "ASP": "Arcane Energy",
-        "POISON": "Gift",
+        "POISON": "Poison",
         "DISEASE": "Disease"
+    },
+    "BRAWLING": {
+        "name": "Convert combat to brawling",
+        "default": "Convert brawl to normal combat",
+        "temporary": "Brawling points",
+        "result": "The brawl ends with injuries:",
+        "bumFight": "Bum fight!!!"
     },
     "CHARAbbrev": {
         "MU": "COU",

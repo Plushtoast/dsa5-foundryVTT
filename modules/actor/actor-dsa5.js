@@ -1456,6 +1456,7 @@ export default class Actordsa5 extends Actor {
       wounds: 0x8b0000,
       astralenergy: 0x0b0bd9,
       karmaenergy: 0x04a236,
+      temporaryLeP: 0xfc2a8f
     };
     const scolls = [];
     for (let key of Object.keys(statusText)) {
@@ -1478,8 +1479,13 @@ export default class Actordsa5 extends Actor {
   }
 
   async applyDamage(amount) {
-    const newVal = Math.min(this.system.status.wounds.max, this.system.status.wounds.value - amount);
-    await this.update({ "system.status.wounds.value": newVal });
+    if(game.combat?.isBrawling) {
+      const newVal = Math.min(this.system.status.temporaryLeP.max, this.system.status.temporaryLeP.value - amount);
+      await this.update({ "system.status.temporaryLeP.value": newVal });
+    } else {
+      const newVal = Math.min(this.system.status.wounds.max, this.system.status.wounds.value - amount);
+      await this.update({ "system.status.wounds.value": newVal });
+    }
   }
 
   async applyRegeneration(LeP, AsP, KaP) {

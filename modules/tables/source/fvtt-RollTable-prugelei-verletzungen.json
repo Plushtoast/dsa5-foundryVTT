@@ -1,0 +1,181 @@
+{
+  "name": "Prügelei - Verletzungen",
+  "img": "systems/dsa5/icons/talents/Koerperbeherrschung.webp",
+  "description": "<p>Die meisten Schlägereien enden, wenn eine Seite ge\u0002wonnen hat. Fast jeder Teilnehmer wird am Ende ein paar Blessuren davon getragen haben. Um durch Zufall zu ermitteln, was einem Helden genau zugestoßen ist, kannst du folgende Tabelle verwenden. Die Prozent\u0002angabe bestimmt dabei, wie viele LeP er durch die er\u0002littenen Prügelpunkte verlorenen hat. Wer also eine 8 würfelt und zwei Veilchen erlitten hat, der verliert 25 % der durch Prügelpunkte abgezogenen LeP</p>",
+  "results": [
+    {
+      "type": 0,
+      "weight": 1,
+      "range": [
+        2,
+        2
+      ],
+      "drawn": false,
+      "_id": "6P2PxWGRAJKoUJtQ",
+      "text": "Abschürfung (10 %)",
+      "documentId": null,
+      "flags": { "dsa5": { "brawlDamage": 0.1}},
+      "img": "systems/dsa5/icons/talents/Koerperbeherrschung.webp"
+    },
+    {
+      "type": 0,
+      "weight": 1,
+      "range": [
+        3,
+        3
+      ],
+      "drawn": false,
+      "_id": "DchfmTKUmhdiyen3",
+      "text": "Nasenbluten (10 %)",
+      "documentId": null,
+      "flags": { "dsa5": { "brawlDamage": 0.1}},
+      "img": "systems/dsa5/icons/talents/Koerperbeherrschung.webp"
+    },
+    {
+      "type": 0,
+      "weight": 1,
+      "range": [
+        4,
+        4
+      ],
+      "drawn": false,
+      "_id": "gQmfwqaz2pw3szF7",
+      "text": "Verstauchte Hand (10 %)",
+      "documentId": null,
+      "flags": { "dsa5": { "brawlDamage": 0.1}},
+      "img": "systems/dsa5/icons/talents/Koerperbeherrschung.webp"
+    },
+    {
+      "type": 0,
+      "weight": 1,
+      "range": [
+        5,
+        5
+      ],
+      "drawn": false,
+      "_id": "fTxonG3ivAlKDb42",
+      "text": "Beule (20 %)",
+      "documentId": null,
+      "flags": { "dsa5": { "brawlDamage": 0.2}},
+      "img": "systems/dsa5/icons/talents/Koerperbeherrschung.webp"
+    },
+    {
+      "type": 0,
+      "weight": 1,
+      "range": [
+        6,
+        6
+      ],
+      "drawn": false,
+      "_id": "CUG62WSucD4pXhkm",
+      "text": "Kratzer (20 %)",
+      "documentId": null,
+      "flags": { "dsa5": { "brawlDamage": 0.2}},
+      "img": "systems/dsa5/icons/talents/Koerperbeherrschung.webp"
+    },
+    {
+      "type": 0,
+      "weight": 1,
+      "range": [
+        7,
+        7
+      ],
+      "drawn": false,
+      "_id": "5DW8E11dkpAjVglo",
+      "text": "Ein Veilchen (20 %)",
+      "documentId": null,
+      "flags": { "dsa5": { "brawlDamage": 0.2}},
+      "img": "systems/dsa5/icons/talents/Koerperbeherrschung.webp"
+    },
+    {
+      "type": 0,
+      "weight": 1,
+      "range": [
+        8,
+        8
+      ],
+      "drawn": false,
+      "_id": "LkrCYxWItxb9mE61",
+      "text": "Zwei Veilchen (25 %)",
+      "documentId": null,
+      "flags": { "dsa5": { "brawlDamage": 0.25}},
+      "img": "systems/dsa5/icons/talents/Koerperbeherrschung.webp"
+    },
+    {
+      "type": 0,
+      "weight": 1,
+      "range": [
+        9,
+        9
+      ],
+      "drawn": false,
+      "_id": "20L78aDqlJCUZeg8",
+      "text": "Platzwunde (25 %)",
+      "documentId": null,
+      "flags": { "dsa5": { "brawlDamage": 0.25}},
+      "img": "systems/dsa5/icons/talents/Koerperbeherrschung.webp"
+    },
+    {
+      "type": 0,
+      "weight": 1,
+      "range": [
+        10,
+        10
+      ],
+      "drawn": false,
+      "_id": "GZSq9JxqgIcR0x84",
+      "text": "Mehrere Platzwunden (25 %)",
+      "documentId": null,
+      "flags": { "dsa5": { "brawlDamage": 0.25}},
+      "img": "systems/dsa5/icons/talents/Koerperbeherrschung.webp"
+    },
+    {
+      "type": 0,
+      "weight": 1,
+      "range": [
+        11,
+        11
+      ],
+      "drawn": false,
+      "_id": "hLPJx6buVdJVYTDK",
+      "text": "Ausgerenkter Finger, gebrochener Zeh (33 %)",
+      "documentId": null,
+      "flags": { "dsa5": { "brawlDamage": 0.33}},
+      "img": "systems/dsa5/icons/talents/Koerperbeherrschung.webp"
+    },
+    {
+      "type": 0,
+      "weight": 1,
+      "range": [
+        12,
+        12
+      ],
+      "drawn": false,
+      "_id": "2hptnjoACdgsvYOy",
+      "text": "Ausgeschlagener Zahn, ausgerissene Haarbüschel, Schnittwunde (50 %)",
+      "documentId": null,
+      "flags": { "dsa5": { "brawlDamage": 0.5}},
+      "img": "systems/dsa5/icons/talents/Koerperbeherrschung.webp"
+    }
+  ],
+  "replacement": true,
+  "displayRoll": true,
+  "folder": null,
+  "flags": {
+    "exportSource": {
+      "world": "test",
+      "system": "dsa5",
+      "coreVersion": "11.313",
+      "systemVersion": "5.1.6"
+    }
+  },
+  "_stats": {
+    "systemId": "dsa5",
+    "systemVersion": "5.1.6",
+    "coreVersion": "11.313",
+    "createdTime": 1698586308980,
+    "modifiedTime": 1698586683098,
+    "lastModifiedBy": "QyX7i6OmJHdBqzAc"
+  },
+  "formula": "2d6"
+}

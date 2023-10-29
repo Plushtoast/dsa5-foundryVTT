@@ -1471,11 +1471,20 @@
     .bar {
       left: calc(100% * ( 1 - var(--a) / var(--b)));
       width: calc(100% * var(--a) / var(--b));
+
+      &.tempLeP {
+        left: calc(100% * ( 1 - ( var(--c) + var(--a) ) / var(--b)));
+        width: calc(100% * var(--c) / var(--b));
+      }
     }
   
     &.soloBar .bar {
       left: 0;
       width: calc(100% * var(--a) / var(--b));
+      &.tempLeP {
+        left: calc(100% * var(--a) / var(--b));
+        width: calc(100% * var(--c) / var(--b));
+      }
     }
   }
   
@@ -1488,6 +1497,11 @@
     top: 0px;
     left: 0px;
     transition: width 0.1s ease-in-out;
+
+    &.tempLeP {
+      width: calc(100% * var(--c) / var(--b));
+      left: calc(100% * var(--a) / var(--b))
+    }
   }
   
   .soloBar {
@@ -1540,6 +1554,11 @@
   .LeP {
     background: rgb(207, 14, 14);
     background: linear-gradient(90deg, rgba(207, 14, 14, 1) 0%, rgba(101, 7, 7, 1) 100%);
+  }
+
+  .tempLeP {
+    background: rgb(252, 143, 42);
+    background: linear-gradient(90deg, rgb(252, 143, 42) 0%, rgb(182, 97, 1) 100%);
   }
   
   .AsP {
@@ -3614,7 +3633,8 @@
     border-radius: 10px;
     padding: 10px;
   }
-  
+
+  .bumFight,
   .didYouKnow {
     position: fixed;
     top: 40%;
@@ -3627,6 +3647,110 @@
       display: flex;
       justify-content: center;
       align-items: center;
+    }
+  }
+
+  .bumFight {
+    display: block;
+    transition: all 2s ease;
+    width: 500px;
+    left: calc(50% - 250px);
+    top: 20%;    
+
+    .intererior {
+       position: absolute;
+       top: calc(50% - 175px);
+       left: 0;
+       bottom: 0;
+       right: 0;
+    }
+    .fist {
+      border:none;
+      width: 250px;
+      height: 250px;
+      margin-left: 110px;
+      margin-top: 80px;
+      position: relative;
+      z-index: -1;
+      animation: bumAnimation 0.5s cubic-bezier(0.64, 0, 0.78, 0) 0s 1 normal forwards, bumAnimation2 0.7s cubic-bezier(0.64, 0, 0.78, 0) 0.5s 1 normal forwards;
+    }
+
+    .title {
+      border-bottom: none;
+      text-align: center;
+      font-size: 40px;
+      position: relative;
+      z-index: 1;
+      background: url("../../../../ui/pausebg.png") no-repeat 50% 50%;
+      color: #fff;
+      border-radius: 10px;
+      padding: 10px;
+      text-shadow: #000;
+      animation: bumAnimation 0.5s cubic-bezier(0.64, 0, 0.78, 0) 0s 1 normal forwards, bumAnimation2 0.7s cubic-bezier(0.64, 0, 0.78, 0) 0.5s 1 normal forwards;
+    }
+
+    .glass{
+      border: none;
+      width: 500px;
+      height: 500px;
+      animation: windowAnim 0.5s cubic-bezier(0.64, 0, 0.78, 0) 0s 1 normal forwards;      
+    }
+  }
+
+  @keyframes bumAnimation {
+    0% {
+      transform: scale(0);
+      opacity: 0;
+    }
+
+    50% {      
+      opacity: 1;
+    }
+  
+    100% {
+      transform: scale(1);
+    }    
+  }
+
+  @keyframes windowAnim {
+    0% {
+      opacity: 0;
+    }
+
+    99% {      
+      opacity: 0;
+    }
+  
+    100% {
+      opacity: 1;
+    }    
+  }
+
+  @keyframes bumAnimation2 {
+    0% {
+      animation-timing-function: ease-out;
+      transform: scale(1);
+      transform-origin: center center;
+    }
+  
+    10% {
+      animation-timing-function: ease-in;
+      transform: scale(0.91);
+    }
+  
+    17% {
+      animation-timing-function: ease-out;
+      transform: scale(0.98);
+    }
+  
+    33% {
+      animation-timing-function: ease-in;
+      transform: scale(0.87);
+    }
+  
+    45% {
+      animation-timing-function: ease-out;
+      transform: scale(1);
     }
   }
 

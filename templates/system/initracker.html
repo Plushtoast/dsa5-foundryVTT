@@ -1,7 +1,15 @@
 <div style="--iniTrackerSize:{{itemWidth}}px">
     <div class="row-section">
         <div class="controls right">
-            <a class="toggleTracker" data-tooltip="DOCUMENT.Combats"><i class="fas fa-swords"></i></a>
+            {{#if user.isGM}}
+            <a class="combat-button convertToBrawl" data-tooltip="{{#if isBrawling}}BRAWLING.default{{else}}BRAWLING.name{{/if}}" {{#unless combatCount}}disabled{{/unless}}>
+                {{#if isBrawling}}
+                <i class="fas fa-hand-fist fa-rotate-90"></i>
+                {{else}}
+                <i class="fas fa-shield"></i>
+                {{/if}}
+            </a>
+            {{/if}}
             {{#if (and user.isGM round)}}            
             <a class="combat-control" data-tooltip="COMBAT.RoundPrev" data-control="previousRound"><i class="fas fa-step-backward"></i></a>
             <a class="combat-control" data-tooltip="COMBAT.TurnPrev" data-control="previousTurn"><i class="fas fa-2x fa-arrow-left"></i></a> {{else if control}}

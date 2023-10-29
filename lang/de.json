@@ -590,6 +590,13 @@
         "2": "Ahnengeister",
         "3": "Dämonische Wesen"
     },
+    "BRAWLING": {
+        "name": "Kampf in Prügelei umwandeln",
+        "default": "Prügelei in normalen Kampf umwandeln",
+        "temporary": "Prügelpunkte",
+        "result": "Die Prügelei endet mit Blessuren:",
+        "bumFight": "Prügelei!!!"
+    },
     "CONJURATION": {
         "demon": "Dämon",
         "elemental": "Elementar",

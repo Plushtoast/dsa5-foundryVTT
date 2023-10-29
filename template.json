@@ -73,6 +73,10 @@
                         "current": 8,
                         "max": 0
                     },
+                    "temporaryLeP": {
+                        "max": 0,
+                        "value": 0
+                    },
                     "astralenergy": {
                         "initial": 0,
                         "value": 0,

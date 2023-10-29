@@ -1,0 +1,10 @@
+<div>
+    <p>{{localize 'BRAWLING.result'}}</p>
+    <div class="row-section wrap">
+        {{#each messages as |message|}}
+        <div class="col">
+            <b>{{message.name}}</b>: {{message.data.result.text}} ({{message.data.brawlDamage}} {{localize 'CHARAbbrev.LeP'}})
+        </div>
+        {{/each}}
+    </div>
+</div>

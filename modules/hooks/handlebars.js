@@ -45,6 +45,9 @@ export default function() {
         },
         replaceConditions: DSA5_Utility.replaceConditions,
         floor: (a) => Math.floor(Number(a)),
+        sum: (a, b) => {
+            return a + b
+        },
         br: (a) => a.replace(/\n/g, "<br/>"),
         getAttr: (a, b, c) => { return a.system.characteristics[b][c] },
         hasElem: (a, b) => a.filter(x => b == x).length,

@@ -185,6 +185,7 @@ export default class DSAIniTracker extends Application {
         })
 
         html.find('.combat-control').click(ev => this._onCombatControl(ev))
+        html.find('.convertToBrawl').click(ev => { game.combat?.convertToBrawl() })
         const turns = html.find('.iniItem')
         turns.hover(this._onCombatantHoverIn.bind(this), this._onCombatantHoverOut.bind(this));
         turns.click(this._onCombatantMouseDown.bind(this));
