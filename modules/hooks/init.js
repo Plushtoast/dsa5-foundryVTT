@@ -4,7 +4,7 @@ import * as initActorHooks from "./actor.js";
 import * as macroSupport from "./macro_support.js";
 import * as chatlogHooks from './chatlog.js'
 import * as ready from './ready.js'
-import * as chatContext from './chat_context.js'
+import { chatContext } from './chat_context.js'
 import * as statusEffects from './statuseffect.js'
 import * as sideBar from './sidebar.js'
 import { setupConfiguration } from './configuration.js'
@@ -41,7 +41,7 @@ export default function() {
     macroSupport.default();
     chatlogHooks.default()
     ready.default()
-    chatContext.default()
+    chatContext()
     statusEffects.default()
     sideBar.default()
     journals.default()

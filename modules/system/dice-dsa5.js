@@ -17,6 +17,7 @@ import RequestRoll from "./request-roll.js"
 import { MeasuredTemplateDSA } from "./measuretemplate.js"
 import TableEffects from "../tables/tableEffects.js"
 import CreatureType from "./creature-type.js"
+import { applyDamage } from "../hooks/chat_context.js"
 
 export default class DiceDSA5 {
     static async rollTest(testData) {
@@ -1561,6 +1562,7 @@ export default class DiceDSA5 {
         html.on("click", ".botch-roll", (ev) => DSATables.showBotchCard(ev.currentTarget.dataset))
         html.on("click", ".roll-item", (ev) => DiceDSA5._itemRoll(ev))
         html.on("click", ".gearDamaged", async (ev) => DiceDSA5.gearDamaged(ev))
+        html.on("click", ".applyDamage", async (ev) => applyDamage($(ev.currentTarget).closest(".message"), ev.currentTarget.dataset.mode))
         html.on("change", ".roll-edit", (ev) => DiceDSA5._rollEdit(ev))
         html.on("click", ".applyEffect", async(ev) => {
             DiceDSA5.wrapLock(ev, async(ev, elem) => { 

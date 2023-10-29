@@ -533,7 +533,9 @@ export default class OpposedDsa5 {
     }
 
     static async renderOpposedResult(formattedOpposeResult, options = {}) {
-        formattedOpposeResult.hideData = await game.settings.get("dsa5", "hideOpposedDamage");
+        formattedOpposeResult.hideData = game.settings.get("dsa5", "hideOpposedDamage");
+        formattedOpposeResult.applyDamageInChat = game.settings.get("dsa5", "applyDamageInChat");        
+
         let html = await renderTemplate("systems/dsa5/templates/chat/roll/opposed-result.html", formattedOpposeResult)
         let chatOptions = {
             user: game.user.id,

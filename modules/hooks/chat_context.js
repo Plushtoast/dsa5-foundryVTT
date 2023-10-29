@@ -1,7 +1,31 @@
 import Actordsa5 from "../actor/actor-dsa5.js";
 import DSA5_Utility from "../system/utility-dsa5.js";
 
-export default function() {
+export const applyDamage = async(li, mode, factor = 1) => {
+    const message = game.messages.get(li.attr("data-message-id"))
+    const cardData = message.flags.opposeData
+    const defenderSpeaker = cardData?.speakerDefend;
+    const actor = DSA5_Utility.getSpeaker(defenderSpeaker)
+
+    if (!actor.isOwner) return ui.notifications.error(game.i18n.localize("DSAError.DamagePermission"))
+
+    await actor.applyDamage(cardData.damage[mode] * factor)
+    const update = { "flags.data.damageApplied": true, content: message.content.replace(/hideAnchor">/, `hideAnchor"><i class="fas fa-check" style="float:right" data-tooltip="${game.i18n.localize("damageApplied")}"></i>`) }
+    
+    if(game.user.isGM){
+        await message.update(update)
+    }else{
+        game.socket.emit("system.dsa5", {
+            type: "updateMsg",
+            payload: {
+                id: li.attr("data-message-id"),
+                updateData: update
+            }
+        })
+    }
+}
+
+export function chatContext() {
     const fateAvailable = (actor, group) => { return DSA5_Utility.fateAvailable(actor, group) }
     const canHurt = function(li, prop = "damage.value") {
         let cardData = game.messages.get(li.attr("data-message-id")).flags.opposeData
@@ -155,30 +179,6 @@ export default function() {
     const useFate = (li, mode, fateSource = 0) => {
         let message = game.messages.get(li.attr("data-message-id"));
         game.actors.get(message.speaker.actor).useFateOnRoll(message, mode, fateSource);
-    }
-
-    const applyDamage = async(li, mode, factor = 1) => {
-        const message = game.messages.get(li.attr("data-message-id"))
-        const cardData = message.flags.opposeData
-        const defenderSpeaker = cardData?.speakerDefend;
-        const actor = DSA5_Utility.getSpeaker(defenderSpeaker)
-
-        if (!actor.isOwner) return ui.notifications.error(game.i18n.localize("DSAError.DamagePermission"))
-
-        await actor.applyDamage(cardData.damage[mode] * factor)
-        const update = { "flags.data.damageApplied": true, content: message.content.replace(/hideAnchor">/, `hideAnchor"><i class="fas fa-check" style="float:right" data-tooltip="${game.i18n.localize("damageApplied")}"></i>`) }
-        
-        if(game.user.isGM){
-            await message.update(update)
-        }else{
-            game.socket.emit("system.dsa5", {
-                type: "updateMsg",
-                payload: {
-                    id: li.attr("data-message-id"),
-                    updateData: update
-                }
-            })
-        }
     }
 
     const applyChatCardDamage = (li, mode, factor = 1) => {

@@ -75,6 +75,7 @@
         "RW": "RA",
         "FtP": "FtP",
         "damage": "DP",
+        "damageSP": "sDP",
         "AsPCost": "AE",
         "KaPCost": "KP",
         "defenseMalus": "DM",
@@ -1566,7 +1567,7 @@
         "capQSat": "Max achievable quality level",
         "capQSatHint": "Restrict the max achievable quality level.",
         "hideRegenerationToOwner": "Hide regeneration (CR)",
-        "hideRegenerationToOwnerHint": "Show automatic regeneration in combatrounds only to token owners",
+        "hideRegenerationToOwnerHint": "Show automatic regeneration and recurring effects (burning, bleeding) in combat rounds only to token owners",
         "talentModifierEnabled": "Skill modifiers activated",
         "talentModifierEnabledHint": "Skill modifiers are selected by default in the roll window",
         "noConfirmationRoll": "No confirmation roll",
@@ -1660,7 +1661,9 @@
         "randomWeaponSelection": "Random weapon (token)",
         "randomWeaponSelectionHint": "Chose a random equipped weapon from the inventory of the token.",
         "showWeaponsOnHover": "Show weapons on hover",
-        "showWeaponsOnHoverHint": "Show the equipped weapons of the token on hover in combat."
+        "showWeaponsOnHoverHint": "Show the equipped weapons of the token on hover in combat.",
+        "applyDamageInChat": "Show \"Apply Damage\" in chat",
+        "applyDamageInChatHint": "Show buttons in addition to the options in the context menu to apply damage on chat cards."
     },
     "WEAR": {
         "check": "Breaking Point Rating Check ({category})",

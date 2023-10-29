@@ -20,6 +20,14 @@ export function setupConfiguration() {
         default: false,
         type: Boolean
     });
+    game.settings.register("dsa5", "applyDamageInChat", {
+        name: "DSASETTINGS.applyDamageInChat",
+        hint: "DSASETTINGS.applyDamageInChatHint",
+        scope: "world",
+        config: true,
+        default: false,
+        type: Boolean
+    });
     game.settings.register("dsa5", "doubleDamageOptions", {
         name: "DSASETTINGS.doubleDamageOptions",
         hint: "DSASETTINGS.doubleDamageOptionsHint",

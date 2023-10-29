@@ -92,6 +92,7 @@
         "CR": "KR",
         "TPM": "TPM",
         "damage": "TP",
+        "damageSP": "SP",
         "reloadTime": "Lad.",
         "castingTime": "Aktions- dauer",
         "duration": "Wirkungs- dauer",
@@ -1625,7 +1626,7 @@
         "noConfirmationRollHint": "Bei Angriffen und Eigenschaftswürfen keinen Bestätigungswurf durchführen.",
         "clearTargets": "Ziel löschen nach Angriff",
         "hideRegenerationToOwner": "Regeneration (KR) verstecken",
-        "hideRegenerationToOwnerHint": "Automatische Regeneration in Kampfrunden nur dem Besitzer des Tokens anzeigen",
+        "hideRegenerationToOwnerHint": "Automatische Regeneration und wiederkehrende Effekte (Brennend, Blutend) in Kampfrunden nur dem Besitzer des Tokens anzeigen",
         "clearTargetsHint": "Entfernt die Zielmarkierung nach einer Probe.",
         "allowPhysicalDice": "Wurf mit echten Würfeln",
         "allowPhysicalDiceHint": "Erlaube die Eingabe des Ergebnis von selbst gewürfelten Würfeln",
@@ -1714,7 +1715,9 @@
         "randomWeaponSelection": "Zufällige Waffenwahl (Token)",
         "randomWeaponSelectionHint": "Wähle zufällig eine ausgerüstet Waffe aus dem Inventar des Tokens.",
         "showWeaponsOnHover": "Waffen bei Hover zeigen",
-        "showWeaponsOnHoverHint": "Zeigt die ausgerüsteten Waffen des Tokens beim Hover über das Token im Kampf."
+        "showWeaponsOnHoverHint": "Zeigt die ausgerüsteten Waffen des Tokens beim Hover über das Token im Kampf.",
+        "applyDamageInChat": "Zeige \"Schaden anwenden\" im Chat",
+        "applyDamageInChatHint": "Zeige Buttons zusätzlich zu den Optionen im Kontextmenu zum Anwenden von Schaden bei Chatkarten."
     },
     "CONTROLS": {
         "targetForUser": "Ziel für Spieler wählen"

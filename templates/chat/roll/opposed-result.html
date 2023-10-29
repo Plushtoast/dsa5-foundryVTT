@@ -11,5 +11,17 @@
             {{{string}}}
         </div>
         {{/each}}
+        {{#if applyDamageInChat}}
+        <div class="row-section center" style="margin-top:10px">
+            {{#if (gt damage.value 0)}}
+            <div class="col two center">
+                <button class="applyDamage selfButton smallChatButton" data-mode="value" data-tooltip="CHATCONTEXT.ApplyDamage"><i class="fas fa-shield-alt"></i>{{localize 'CHARAbbrev.damage'}}</button>
+            </div>
+            {{/if}}
+            <div class="col two center">
+                <button class="applyDamage selfButton smallChatButton" data-mode="sp" data-tooltip="CHATCONTEXT.ApplyDamageSP"><i class="fas fa-hand-fist"></i>{{localize 'CHARAbbrev.damageSP'}}</button>
+            </div>
+        </div>
+        {{/if}}
     </div>
 </div>
