@@ -224,7 +224,7 @@ class RepeatingEffectsHelper {
             const damageRoll = await new Roll(effectvalues).evaluate({ async: true })
             const damage = await damageRoll.render()
             const type = game.i18n.localize(damageRoll.total > 0 ? "CHATNOTIFICATION.regenerates" : "CHATNOTIFICATION.getsHurt")
-            const applyDamage = `${turn.actor.name} ${type} ${game.i18n.localize(attr)} ${damage}`
+            const applyDamage = `${this.buildActorName(turn)} ${type} ${game.i18n.localize(attr)} ${damage}`
             
             await this.sendEventMessage(applyDamage, combat, turn)
             if (attr == "wounds") await turn.actor.applyDamage(damageRoll.total * -1)
@@ -236,7 +236,7 @@ class RepeatingEffectsHelper {
     static async applyBleeding(turn, combat) {
         if(turn.actor.system.status.wounds.value < 1) return 
         
-        const msg = game.i18n.format('CHATNOTIFICATION.bleeding', { actor: turn.actor.name })
+        const msg = game.i18n.format('CHATNOTIFICATION.bleeding', { actor: this.buildActorName(turn) })
         await this.sendEventMessage(msg, combat, turn)
         await turn.actor.applyDamage(1)
     }
@@ -249,17 +249,28 @@ class RepeatingEffectsHelper {
         const die =  { 0: "1", 1: "1d3", 2: "1d6", 3: "2d6" }[step - protection] || "1"
         const damageRoll = await new Roll(die).evaluate({ async: true })
         const damage = await damageRoll.render()
-        const msg = game.i18n.format(`CHATNOTIFICATION.burning.${step}`, { actor: turn.actor.name, damage })
+        const msg = game.i18n.format(`CHATNOTIFICATION.burning.${step}`, { actor: this.buildActorName(turn), damage })
         
         await this.sendEventMessage(msg, combat, turn)
         await turn.actor.applyDamage(damageRoll.total)
+    }
+
+    static buildActorName(turn) {
+        let name = turn.token.name
+        if(game.settings.get("dsa5", "hideRegenerationToOwner")) {
+            if(turn.token.name != turn.token.actor.name) 
+                name += ` (${turn.token.actor.name})`
+        }
+        return turn.token.actor.toAnchor( { name }).outerHTML
     }
 
     static async sendEventMessage(content, combat, turn){
         if(game.settings.get("dsa5", "hideRegenerationToOwner")){
             const recipients = combat.combatants.get(turn.id).players
             recipients.push(...game.users.filter(x => x.isGM).map(x => x.id))
-            await ChatMessage.create(DSA5_Utility.chatDataSetup(content, undefined, undefined, recipients))
+            const chatData = DSA5_Utility.chatDataSetup(content, undefined, undefined, recipients)
+            delete chatData.speaker
+            await ChatMessage.create(chatData)
         }else{
             await ChatMessage.create(DSA5_Utility.chatDataSetup(content))
         }
