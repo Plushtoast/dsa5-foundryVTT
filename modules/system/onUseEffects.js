@@ -80,7 +80,6 @@ export default class OnUseEffect {
                 dsa5: {
                     value: null,
                     editable: true,
-                    customizable: true,
                     description: name,
                     custom: true,
                 },

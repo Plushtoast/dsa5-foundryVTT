@@ -486,6 +486,7 @@ export default class Actordsa5 extends Actor {
           case "liturgy":
           case "ceremony":
           case "ritual":
+          case "skill":
           case "spellextension":
             apply = false;
             break;
@@ -2588,7 +2589,6 @@ export default class Actordsa5 extends Actor {
 
     if (testData.extra.options.other) {
       if (!result.other) result.other = [];
-
       result.other.push(...testData.extra.options.other);
     }
 

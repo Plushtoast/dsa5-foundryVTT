@@ -213,6 +213,7 @@ export default class Migrakel {
             const updator = (find) => {
                 return {
                     img: find.img,
+                    effects: find.effects.toObject(),
                 };
             };
             await this.updateVals(actor, condition, updator);

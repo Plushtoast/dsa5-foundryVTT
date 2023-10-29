@@ -82,6 +82,7 @@ export default class DSAActiveEffectConfig extends ActiveEffectConfig {
                     "spell",
                     "liturgy",
                     "ritual",
+                    "skill",
                     "ceremony",
                     "consumable",
                     "poison",

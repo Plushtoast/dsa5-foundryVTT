@@ -57,6 +57,13 @@
             "path": "packs/botch.db",
             "type": "RollTable",
             "flags": { "dsalang": "en"}
+        },
+        {
+            "name": "macros",
+            "label": "Macros (System)",
+            "system": "dsa5",
+            "path": "packs/macros.db",
+            "type": "Macro"
         }
     ],
     "languages": [{
@@ -103,6 +110,13 @@
           "packs": [
             "patzer",
             "botch"
+          ]
+        },
+        {
+          "name": "Macro",
+          "sorting": "m",
+          "packs": [
+            "macros"
           ]
         }
       ]

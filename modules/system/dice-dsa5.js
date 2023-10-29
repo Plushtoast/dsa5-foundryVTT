@@ -20,7 +20,6 @@ import CreatureType from "./creature-type.js"
 
 export default class DiceDSA5 {
     static async rollTest(testData) {
-        //testData.function = "rollTest"
         let rollResults
         switch (testData.source.type) {
             case "ceremony":
@@ -1309,7 +1308,7 @@ export default class DiceDSA5 {
             if(["meleeweapon", "rangeweapon"].includes(source.type) || (source.type == "trait" && ["rangeAttack", "meleeAttack"].includes(source.system.traitType.value))){
                 if (source.effects.some(x => { return !getProperty(x, "flags.dsa5.applyToOwner")})) return true
             }
-            else if (["spell", "liturgy", "ritual", "ceremony", "trait"].includes(source.type)) {
+            else if (["spell", "liturgy", "ritual", "ceremony", "trait", "skill"].includes(source.type)) {
                 if (source.effects.length > 0) return true
             } 
         }else if (["disease", "poison"].includes(source.type)) {

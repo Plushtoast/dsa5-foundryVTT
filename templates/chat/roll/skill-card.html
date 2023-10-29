@@ -1,3 +1,13 @@
 <div class="dsa5 chat-card" data-actor-id="{{actorId}}" data-hide={{hideData}}>
     {{> systems/dsa5/templates/chat/roll/test-card.html}}
+    {{#if (gt testData.successLevel 0)}} {{#if applyEffect}}
+    <div class="row-section" style="margin-top:10px">
+        <div class="col two center">
+            <button class="applyEffect selfButton" data-target="self" data-tooltip="TT.applyEffectCaster">{{localize 'ActiveEffects.applySelf'}}</button>
+        </div>
+        <div class="col two center">
+            <button class="applyEffect selfButton" data-target="target" data-tooltip="TT.applyEffectTargets">{{localize 'ActiveEffects.applyTarget'}}</button>
+        </div>
+    </div>
+    {{/if}} {{/if}}
 </div>
