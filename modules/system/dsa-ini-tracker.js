@@ -111,6 +111,8 @@ export default class DSAIniTracker extends Application {
             data.turns = filteredTurns
         }
         //if(!data.round) itemWidth = 20
+
+        data.isLastRound = data.turns[1]?.newRound
         
         this.position.width = itemWidth * actorCount + actorCount * 3 + 80
         this.position.height = itemWidth + 10

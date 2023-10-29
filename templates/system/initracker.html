@@ -78,7 +78,7 @@
     {{/if}}{{else}}
     {{#if (or control user.isGM)}}
     <div class="row-section">
-        <button class="col two combat-control" data-control="nextTurn">{{localize 'COMBAT.TurnEnd'}}</button>
+        <button class="col two combat-control {{#if isLastRound}}lastRound{{/if}}" data-control="nextTurn">{{#if isLastRound}}{{localize 'COMBAT.RoundNext'}}{{else}}{{localize 'COMBAT.TurnEnd'}}{{/if}}</button>
         <button class="col two combat-control" data-control="waitInit">{{localize 'COMBATTRACKER.waitInit'}}</button>
     </div>    
     {{/if}}
