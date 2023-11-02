@@ -95,10 +95,10 @@ export default function() {
         if(getProperty(doc, "flags.core.initiativeRoll")) {
             const rolls = doc.rolls[0].terms
             const basnum = `${rolls[0].number}`.split(".")[0]
-            const tooltip = `${game.i18n.localize("baseValue")}: ${basnum}, ${game.i18n.localize("randomValue")}: ${rolls.at(-1).number}")}`
+            const tooltip = `${game.i18n.localize("baseValue")}: ${basnum}, ${game.i18n.localize("randomValue")}: ${rolls.at(-3).values[0]}")}`
             const dies = []
             for(let term of rolls) {
-                if(term.faces) {
+                if(term.faces && term.faces == 6) {
                     for(let i = 0; i < term.number; i++) {
                         dies.push(`<span class="die-damage d${term.faces}">${term.results[i].result}</span>`)
                     }                    
