@@ -552,7 +552,7 @@ export default class DSA5CombatDialog extends DialogShared {
                                 { _id: testData.source._id, "system.reloadTime.progress": progress + 1 },
                             ])
                             const infoMsg = game.i18n.format("WEAPON.isReloading", {
-                                actor: testData.extra.actor.name,
+                                actor: actor.token?.name || actor.prototypeToken.name,
                                 item: testData.source.name,
                                 status: `${progress + 1}/${LZ}`,
                             })

@@ -597,7 +597,7 @@ export default class Itemdsa5 extends Item {
     }
 
     static checkEquality(item, item2) {
-        return item2.type == item.type && item.name == item2.name && item.system.description.value == item2.system.description.value
+        return item2.type == item.type && item.name == item2.name && item.system.description?.value == item2.system.description?.value
     }
 
     static async combineItem(item1, item2, actor) {

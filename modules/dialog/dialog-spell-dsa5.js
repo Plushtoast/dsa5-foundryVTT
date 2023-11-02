@@ -53,7 +53,7 @@ export default class DSA5SpellDialog extends DialogShared {
                             }
                             await actor.updateEmbeddedDocuments("Item", [reloadUpdate]);
                             const infoMsg = game.i18n.format("SPELL.isReloading", {
-                                actor: testData.extra.actor.name,
+                                actor: actor.token?.name || actor.prototypeToken.name,
                                 item: testData.source.name,
                                 status: `${progress + 1}/${modified}`,
                             });
