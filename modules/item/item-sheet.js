@@ -12,6 +12,7 @@ import { ItemSheetObfuscation } from "./obfuscatemixin.js"
 import AdvantageRulesDSA5 from "../system/advantage-rules-dsa5.js"
 import OpposedDsa5 from "../system/opposed-dsa5.js"
 import Itemdsa5 from "./item-dsa5.js"
+import RequestRoll from "../system/request-roll.js"
 
 export default class ItemSheetdsa5 extends ItemSheet {
     _getSubmitData(updateData = {}) {
@@ -78,6 +79,7 @@ export default class ItemSheetdsa5 extends ItemSheet {
         $(this._element).find(".consumeItem").attr("data-tooltip", "SHEET.ConsumeItem");
         $(this._element).find(".rollDamaged").attr("data-tooltip", "DSASETTINGS.armorAndWeaponDamage");
         $(this._element).find(".onUseEffect").attr("data-tooltip", "SHEET.onUseEffect")
+        $(this._element).find(".postAsGroupCheck").attr("data-tooltip", "SHEET.postAsGroupCheck")
     }
 
     _getHeaderButtons() {
@@ -259,9 +261,51 @@ class AggregatedTestSheet extends ItemSheetdsa5 {
         mergeObject(data, {
             allSkills: await DSA5_Utility.allSkillsList(),
             embeddedItem,
-            renderedItem
+            renderedItem,
+            enrichedsuccess: await TextEditor.enrichHTML(this.item.system.success, {secrets: this.item.isOwner, async: true}),
+            enrichedpartsuccess: await TextEditor.enrichHTML(this.item.system.partsuccess, {secrets: this.item.isOwner, async: true})
         })
         return data
+    }
+
+    _getHeaderButtons() {
+        let buttons = super._getHeaderButtons();
+        if(this.item.isOwned) return buttons
+
+        buttons.unshift({
+            class: "postAsGroupCheck",
+            icon: `fas fa-dice-d20`,
+            onclick: async() => this.postAsGroupCheck()
+        })
+        
+        return buttons
+    }
+
+    async postAsGroupCheck() {
+        const rollOptions = ["value", "value2", "value3"].filter(x => this.item.system.talent[x]).map(x => {
+            return {
+                type: "skill",
+                modifier: this.item.system.baseModifier,
+                calculatedModifier: this.item.system.baseModifier,
+                target: this.item.system.talent[x]
+            }
+        })
+
+        if(!rollOptions.length) return
+
+        const data = {
+            //qs: this.item.system.cummulatedQS.value,
+            //failed: this.item.system.previousFailedTests.value,
+            modifier: this.item.system.baseModifier,
+            maxRolls: this.item.system.allowedTestCount.value,
+            //openRolls: this.item.system.allowedTestCount.value - this.item.system.usedTestCount.value,
+            //doneRolls: this.item.system.usedTestCount.value,
+            enrichedsuccess: await TextEditor.enrichHTML(this.item.system.success, {secrets: this.item.isOwner, async: true}),
+            enrichedpartsuccess: await TextEditor.enrichHTML(this.item.system.partsuccess, {secrets: this.item.isOwner, async: true}),
+            rollOptions
+        }
+
+        RequestRoll.showGCMessage(rollOptions[0].target, 0, data)
     }
 
     activateListeners(html) {

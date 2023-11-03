@@ -94,6 +94,18 @@
                     {{/select}}
                 </select>
             </div>
+            {{#if (or isGM (gt system.cummulatedQS.value 5))}}
+            <div class="form-group full-height">
+                <label class="label-text">{{localize "PartSuccess"}}</label>
+                {{editor enrichedpartsuccess target="system.partsuccess" button=true owner=owner editable=editable engine="prosemirror"}}
+            </div>
+            {{/if}}
+            {{#if (or isGM (gt system.cummulatedQS.value 9))}}
+            <div class="form-group full-height">
+                <label class="label-text">{{localize "Success"}}</label>
+                {{editor enrichedsuccess target="system.success" button=true owner=owner editable=editable engine="prosemirror"}}
+            </div>
+            {{/if}}
         </div>
     </section>
 </form>

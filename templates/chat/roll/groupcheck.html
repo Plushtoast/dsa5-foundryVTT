@@ -70,5 +70,11 @@
         <b>{{localize 'cummulatedQS'}}</b>: {{qs}} / <span class="display-toggle">{{targetQs}}</span>
         <input type="number" value="{{targetQs}}" style="display:none; width:10%" class="display-toggle editGC" data-field="targetQs" />
     </div>
+    {{#if (gt qs 5)}}
+    {{{enrichedpartsuccess}}}
+    {{/if}}
+    {{#if (gt qs 9)}}
+    {{{enrichedsuccess}}}
+    {{/if}}
 </div>
 </div>

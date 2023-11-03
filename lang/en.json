@@ -898,6 +898,7 @@
     "SHEET": {
         "PostItem": "Post to chat",
         "EditItem": "Edit",
+        "postAsGroupCheck": "Post as group check.",
         "SplitItem": "Split",
         "DuplicateItem": "Duplicate",
         "EquipItem": "Equip",

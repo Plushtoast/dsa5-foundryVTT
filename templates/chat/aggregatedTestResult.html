@@ -1,10 +1,8 @@
 <div class="dsa5 post-item">
-    <h3><b>{{name}}</b><span class="tinyEntityLink">{{{itemLink}}}</span></h3>
-    {{#if img}}
-    <div class="center">
-        <img class="popoutImage" data-img="{{img}}" src="{{img}}" data-tooltip="{{name}}" /> 
-    </div>
-    {{/if}}
+    <h3><b>{{item.name}}</b><span class="tinyEntityLink">{{{itemLink}}}</span></h3>
+
+    <img class="popoutImage" style="width:70px;float:right;margin-left:4px" data-img="{{item.img}}" src="{{item.img}}" data-tooltip="{{item.name}}" /> 
+
     {{#unless descriptionObfuscated}}
     <div class="card-content">{{{replaceConditions system.description.value}}}</div>
     {{/unless}}

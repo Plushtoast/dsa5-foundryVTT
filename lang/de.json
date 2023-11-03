@@ -918,6 +918,7 @@
     "SHEET": {
         "PostItem": "Im Chat posten",
         "DuplicateItem": "Duplizieren",
+        "postAsGroupCheck": "Als Gruppensammelprobe posten",
         "SplitItem": "Teilen",
         "EditItem": "Editieren",
         "Dropdown": "Details",

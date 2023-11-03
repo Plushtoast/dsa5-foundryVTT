@@ -745,22 +745,33 @@ class PatronItemDSA5 extends Itemdsa5 {
 }
 
 class aggregatedTestItemDSA5 extends Itemdsa5 {
-    static chatData(data, name) {
+    static async _postItem(item){
+        let txt = ""
         let result = game.i18n.localize("Ongoing")
-        if (data.cummulatedQS.value >= 10) {
+        if (item.system.cummulatedQS.value >= 10) {
             result = game.i18n.localize("Success")
-        } else if (data.cummulatedQS.value >= 6) {
+            txt = `${await TextEditor.enrichHTML(item.system.partsuccess, {secrets: this.isOwner, async: true})}${
+            await TextEditor.enrichHTML(item.system.success, {secrets: this.isOwner, async: true})}`
+        } else if (item.system.cummulatedQS.value >= 6) {
             result = game.i18n.localize("PartSuccess")
-        } else if (data.allowedTestCount.value - data.usedTestCount.value <= 0) {
+            txt = `${await TextEditor.enrichHTML(item.system.partsuccess, {secrets: this.isOwner, async: true})}`
+        } else if (item.system.allowedTestCount.value - item.system.usedTestCount.value <= 0) {
             result = game.i18n.localize("Failure")
         }
-        return [
-            this._chatLineHelper("cummulatedQS", `${data.cummulatedQS.value} / 10`),
-            this._chatLineHelper("interval", data.interval.value),
-            this._chatLineHelper("probes", `${data.usedTestCount.value} / ${data.allowedTestCount.value}`),
+        const properties = [
+            this._chatLineHelper("cummulatedQS", `${item.system.cummulatedQS.value} / 10`),
+            this._chatLineHelper("interval", item.system.interval.value),
+            this._chatLineHelper("probes", `${item.system.usedTestCount.value} / ${item.system.allowedTestCount.value}`),
             this._chatLineHelper("result", result),
+            txt
         ]
+        const descriptionObfuscated = getProperty(item, "system.obfuscation.description")
+            
+        const html = await renderTemplate("systems/dsa5/templates/chat/aggregatedTestResult.html", { descriptionObfuscated, item, properties })
+        const chatOptions = DSA5_Utility.chatDataSetup(html)
+        ChatMessage.create(chatOptions)
     }
+
 }
 
 class AmmunitionItemDSA5 extends Itemdsa5 {
