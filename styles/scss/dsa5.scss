@@ -3768,6 +3768,16 @@
     overflow: visible;
   }
 
+  .regenPlace{
+    position:relative;
+    top: 45px;
+    left: -20px;
+
+    i{
+      font-size: 18px;
+    }
+  }
+
   .plantContainer {
     display: inline-block;
     position: relative;
