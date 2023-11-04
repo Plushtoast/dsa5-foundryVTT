@@ -76,6 +76,7 @@ Hooks.once("init", () => {
         "systems/dsa5/templates/actors/creature/creature-loot.html",
         "systems/dsa5/templates/actors/creature/creature-notes.html",
         "systems/dsa5/templates/actors/creature/creature-magic.html",
+        "systems/dsa5/templates/system/masterHeros.html",
         "systems/dsa5/templates/actors/creature/creature-religion.html",
         "systems/dsa5/templates/actors/parts/characteristics-large.html",
         "systems/dsa5/templates/actors/parts/gearSearch.html",

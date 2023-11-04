@@ -174,7 +174,7 @@
                 
                 
                 <div class="col third lineheight center">
-                    <b>{{localize "skill"}}</b>
+                    <b>{{localize "TYPES.Item.skill"}}</b>
                 </div>
                 <div class="col sixty">
                     <select name="data.skill" class="skillSelektor select2" data-dtype="String" style="width:90%">
@@ -191,73 +191,59 @@
                 </div>
             </div>
             <div class="row-section skills table-title">
-                <div class="col ten"><a class="dragEveryone" data-tooltip="MASTER.dragEveryone"><i class="fas fa-grip-vertical"></i></a></div>
-                <div class="col five">
+                <div class="col ten">
+                    <a class="dragEveryone" data-tooltip="MASTER.dragEveryone"><i class="fas fa-grip-vertical"></i></a>
+                </div>
+                <div class="col fourty">
                     {{localize 'Name'}} <a class="randomPlayer" data-tooltip="MASTER.randomPlayer"><i
                             class="fas fa-dice-six"></i></a>
                 </div>
-                <div class="col ten">
+                <div class="col fifteen">
                 </div>
                 <div class="col ten">
                     <input type="checkbox" class="selectAll" name="selectAll" value="1">
                 </div>
-                <div class="col five">
+                <div class="col four">
                     <a class="rollAll" data-tooltip="CHAT.RollBlind"><i class="fas fa-dice"></i></a>
                     <a class="getPaidAll" data-tooltip="PAYMENT.wage"><i class="fas fa-piggy-bank"></i></a>
                     <a class="payAll" data-tooltip="MASTER.payTT"><i class="fas fa-coins"></i></a>
                     <a class="expAll" data-tooltip="MASTER.awardXP"><i class="fas fa-trophy"></i></a>
                     <a class="groupCheck" data-tooltip="HELP.groupcheck"><i class="fas fa-users-cog"></i></a>
+                    <a class="addFolder" data-action="create" data-tooltip="FOLDER.Create"><i class="fas fa-folder"></i></a>
                 </div>
             </div>
             <div class="heros">
-                {{#if heros}}
-                {{#each heros as |hero|}}
-                <div class="row-section skills tableOdd hero wrap" data-id="{{hero.id}}" data-uuid="{{hero.uuid}}">
-                    <div class="row-section col">
+                {{#if hasHeros}}
+                    {{> systems/dsa5/templates/system/masterHeros.html heros=heros}}
+                    {{#each folders as |folder|}}
+                    <div class="row-section skills lineheight table-title isFolder" data-id="{{folder.id}}">
+                        
                         <div class="col ten">
-                            <img src="{{hero.img}}" data-edit="img" height="50px" style="margin:0;" />
+                            <a class="dragEveryone" data-folder="{{folder.id}}" data-tooltip="MASTER.dragEveryone"><i class="fas fa-grip-vertical"></i></a>
                         </div>
-                        <div class="col five">
-                            <a class="heroLink">{{hero.name}}</a>
-                            <div>
-                                {{#each hero.schips as |item i|}}
-                                <a class="tiny heroschip schip {{item.cssClass}}" data-val="{{item.value}}"></a>
-                                {{/each}}
+                        <div class="row-section col">
+                            
+                            <div class="col two">
+                                <input type="text" data-id="{{folder.id}}" class="editFolder" style="border:none;margin:0;padding:0" value="{{folder.name}}"/>
                             </div>
-                        </div>
-                        <div class="col ten verticalFlex barRight">
-                            <div class="bar LeP" style="--a: {{hero.system.status.wounds.value}}; --b: {{hero.system.status.wounds.max}}">
+                            <div class="col fifteen">
                             </div>
-                            {{#if hero.system.isMage}}
-                            <div class="bar AsP" style="--a: {{hero.system.status.astralenergy.value}}; --b: {{hero.system.status.astralenergy.max}}">
+                            <div class="col ten">
+                                <input type="checkbox" data-folder="{{folder.id}}" class="selectAll" name="selectAll" value="1">
                             </div>
-                            {{/if}} {{#if hero.system.isPriest}}
-                            <div class="bar KaP" style="--a: {{hero.system.status.karmaenergy.value}}; --b: {{hero.system.status.karmaenergy.max}}">
+                            <div class="col four center">
+                                <a class="addFolder" data-id="{{folder.id}}" data-action="delete" data-tooltip="FOLDER.Remove"><i class="fas fa-trash"></i></a>
                             </div>
-                            {{/if}}
-                        </div>
-                        <div class="col ten">
-                            <input type="checkbox" class="heroSelector" name="heroSelector" value="1" {{checked hero.selected}}>
-                        </div>
-                        <div class="col five">
-                            <a class="rollChar" data-tooltip="CHAT.RollBlind"><i class="fas fa-dice"></i></a>
-                            <a class="getPaid" data-tooltip="PAYMENT.wage"><i class="fas fa-piggy-bank"></i></a>
-                            <a class="pay" data-tooltip="MASTER.payTT"><i class="fas fa-coins"></i></a>
-                            <a class="exp" data-tooltip="MASTER.awardXP"><i class="fas fa-trophy"></i></a>
                         </div>
                     </div>
-                    <div class="row-section lineheight expandDetails col">
-                        <div class="col">
-                            <ul>
-                                <li><b>{{localize "purse"}}</b>: {{{hero.purse}}}</li>
-                                <li><b>{{localize "Experience"}}</b>: {{hero.system.details.experience.spent}}/{{hero.system.details.experience.total}}</li>
-                                <li><b>{{localize "advantages"}}</b>: {{#each hero.advantages as |ad i|}}<a class="actorItem" data-uuid="{{ad.uuid}}">{{ad.name}}</a>{{/each}}</li>
-                                <li><b>{{localize "disadvantages"}}</b>: {{#each hero.disadvantages as |ad i|}}<a class="actorItem" data-uuid="{{ad.uuid}}">{{ad.name}}</a>{{/each}}</li>
-                            </ul>
-                        </div>
-                    </div>
-                </div>
-                {{/each}}
+                    <div class="row-section col isFolder" data-id="{{folder.id}}">
+                        <div class="col ten"></div>
+                        <div class="col">                            
+                            {{> systems/dsa5/templates/system/masterHeros.html heros=folder.contents}}                                              
+                        </div>                        
+                    </div>                    
+                    {{/each}}
+                    
                 {{else}}
                 <div class="row-section">
                     <div class="col ten"></div>

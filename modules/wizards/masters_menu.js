@@ -180,12 +180,7 @@ class GameMasterMenu extends Application {
             ev.stopPropagation()
             this.doPayment(this.selectedIDs(ev), false)
         })
-        html.find('.selectAll').change((ev) => {
-            ev.stopPropagation()
-            const allHeros = html.find('.heroSelector')
-            allHeros.prop('checked', $(ev.currentTarget).is(":checked"))
-            allHeros.change()
-        })
+        html.find('.selectAll').change((ev) => this._selectAll(ev, html))
         html.find('.exp').click((ev) => {
             ev.stopPropagation()
             this.getExp([this.getID(ev)])
@@ -237,6 +232,8 @@ class GameMasterMenu extends Application {
         html.find('.groupschip').click(ev => {
             this.changeGroupSchip(ev)
         })
+        html.find('.addFolder').click(async(ev) => this.editFolder(ev))
+        html.find('.editFolder').change(async(ev) => this._editFolder(ev))
         html.find('.heroschip').click(ev => {
             ev.stopPropagation()
             ev.preventDefault()
@@ -275,14 +272,33 @@ class GameMasterMenu extends Application {
         html.find('.dragEveryone').each(function(i, cond) {
             cond.setAttribute("draggable", true);
         })
-        html.on("dragstart", ".dragEveryone", ev => {
-            ev.stopPropagation();
-            const a = ev.currentTarget;
-            let dragData = { type: "GroupDrop", ids: this.selectedIDs() };
-            ev.originalEvent.dataTransfer.setData("text/plain", JSON.stringify(dragData));
-        })
+        html.on("dragstart", ".dragEveryone", ev => this._dragEveryone(ev))
 
         if (game.dsa5.apps.LightDialog) game.dsa5.apps.LightDialog.activateButtonListener(html)
+    }
+
+    async _dragEveryone(ev) {
+        ev.stopPropagation();
+        let ids 
+        if(ev.currentTarget.dataset.folder){
+            const settings = expandObject(game.settings.get("dsa5", "masterSettings"))
+            ids = settings.folders.find(x => x.id == ev.currentTarget.dataset.folder).content
+        } else {
+            ids = this.selectedIDs()
+        }
+        let dragData = { type: "GroupDrop", ids }
+        ev.originalEvent.dataTransfer.setData("text/plain", JSON.stringify(dragData))
+    }
+
+    async _selectAll(ev, html) {
+        ev.stopPropagation()
+        let selector ='.heroSelector'
+        if(ev.currentTarget.dataset.folder)
+            selector = `[data-id="${ev.currentTarget.dataset.folder}"] .heroSelector`
+        
+        const allHeros = html.find(selector)
+        allHeros.prop('checked', $(ev.currentTarget).is(":checked"))
+        allHeros.change()
     }
 
     async _deleteHero(ev) {
@@ -337,6 +353,48 @@ class GameMasterMenu extends Application {
         schipSetting[0] = val
         await game.settings.set("dsa5", "groupschips", schipSetting.join("/"))
     }
+
+    async _createFolder() {
+        const settings = expandObject(game.settings.get("dsa5", "masterSettings"))
+        if(!settings.folders) settings.folders = []
+
+        settings.folders.push({
+            id: randomID(),
+            name: game.i18n.localize("FOLDER.ExportNewFolder"),
+            content: []
+        })
+        await game.settings.set("dsa5", "masterSettings", settings)
+        await this.render(true)
+    }
+
+    async _deleteFolder(ev) { 
+        const id = ev.currentTarget.dataset.id
+        const settings = expandObject(game.settings.get("dsa5", "masterSettings"))
+        settings.folders = settings.folders.filter(x => x.id != id)
+
+        await game.settings.set("dsa5", "masterSettings", settings)
+        await this.render(true)
+    }
+
+    async _editFolder(ev) {
+        const id = ev.currentTarget.dataset.id
+        const settings = expandObject(game.settings.get("dsa5", "masterSettings"))
+        settings.folders.find(x => x.id == id).name = ev.currentTarget.value
+
+        await game.settings.set("dsa5", "masterSettings", settings)        
+    }
+
+    async editFolder(ev) {
+        switch(ev.currentTarget.dataset.action){
+            case "create":
+                this._createFolder()
+                break
+            case "delete":
+                this._deleteFolder(ev)
+                break
+        }
+    }
+
 
     async addGlobalMod() {
         new GlobalModAddition().render(true)
@@ -490,7 +548,25 @@ class GameMasterMenu extends Application {
                 await game.settings.set("dsa5", "trackedActors", { actors: tracked })
                 this.render(true)
             }
+            const isFolder = $(event.target).closest('.isFolder')
+            const settings = expandObject(game.settings.get("dsa5", "masterSettings"))
+            if(isFolder.length){
+                
+                settings.folders = settings.folders.map(x => {
+                    x.content = x.content.filter(y => y != data.id)
 
+                    if(x.id == isFolder[0].dataset.id) x.content.push(data.id)                    
+                    return x
+                })
+                
+            } else {
+                settings.folders = settings.folders.map(x => {
+                    x.content = x.content.filter(y => y != data.id)
+                    return x
+                })
+            }
+            await game.settings.set("dsa5", "masterSettings", settings)
+            this.render(true)
         }
     }
 
@@ -623,20 +699,41 @@ class GameMasterMenu extends Application {
 
         this.heros = heros
         const selected = this.getSelectedActors()
-
+        const masterSettings = expandObject(game.settings.get("dsa5", "masterSettings"))
         const copiedHeros = []
+        const folders = (masterSettings.folders || []).map(x => {
+            x.contents = []
+            x.content = new Set(x.content)
+            return x
+        })
         for (let hero of heros) {
             let newHero = duplicate(hero)
+            let disadvantages = []
+            let advantages = []
+            let purse = []
+            for(let x of newHero.items){
+                switch(x.type){
+                    case "disadvantage":
+                        disadvantages.push({ name: x.name, uuid: x.uuid })
+                        break
+                    case "advantage":
+                        advantages.push( { name: x.name, uuid: x.uuid })
+                        break
+                    case "money":
+                        purse.push(x)
+                        break
+                }
+            }
             mergeObject(newHero, {
                 id: hero.id,
                 uuid: hero.uuid,
                 selected: selected[hero.id],
                 schips: hero.schipshtml(),
-                purse: hero.items.filter(x => x.type == "money")
+                purse: purse
                     .sort((a, b) => b.system.price.value - a.system.price.value)
-                    .map(x => `<span data-tooltip="${game.i18n.localize(x.name)}">${x.system.quantity.value}</span>`).join(" - "),
-                advantages: hero.items.filter(x => x.type == "advantage").map(x => { return { name: x.name, uuid: x.uuid } }),
-                disadvantages: hero.items.filter(x => x.type == "disadvantage").map(x => { return { name: x.name, uuid: x.uuid } }),
+                    .map(x => `<span data-tooltip="${x.name}">${x.system.quantity.value}</span>`).join(" - "),
+                advantages,
+                disadvantages,
                 system: {
                     status: {
                         wounds: { max: hero.system.status.wounds.max },
@@ -648,7 +745,15 @@ class GameMasterMenu extends Application {
                 }
             })
             
-            copiedHeros.push(newHero)
+            let found = false
+            for(let folder of folders) {
+                if(folder.content.has(hero.id)) {
+                    folder.contents.push(newHero)
+                    found = true
+                    break
+                }
+            }
+            if(!found) copiedHeros.push(newHero)
         }
 
         if (!this.abilities) {
@@ -660,10 +765,12 @@ class GameMasterMenu extends Application {
         }
 
         mergeObject(data, {
+            hasHeros: heros.length > 0,
             heros: copiedHeros,
+            folders,
             abilities: this.abilities,
             groupschips,
-            masterSettings: expandObject(game.settings.get("dsa5", "masterSettings")),
+            masterSettings,
             lastSkill: this.lastSkill,
             randomCreation: this.randomCreation.map(x => x.template),
             lightButton: game.dsa5.apps.LightDialog ? await game.dsa5.apps.LightDialog.getButtonHTML() : ""
