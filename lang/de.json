@@ -1225,7 +1225,10 @@
         "seconds": "(sekunden(n)?)",
         "minutes": "(minute(n)?|min)",
         "hours": "(stunde(n)?)",
-        "days": "tag(e)?"
+        "days": "tag(e)?",
+        "weeks": "woche(n)?",
+        "months": "monat(e)?",
+        "years": "jahr(e)?"
     },
     "ActiveEffects": {
         "hideOnToken": "Am Token verstecken",
@@ -1256,7 +1259,9 @@
             "armorPostprocess": "Rüstungstransformation (Macro)",
             "damagePostprocess": "Schadenstransformation (Macro)",
             "onRemove": "Macro (Effektende)",
-            "onUseEffect": "Macro (Benutzung)"
+            "onUseEffect": "Macro (Benutzung)",
+            "postRoll": "Macro (Nach Wurf)",
+            "postOpposed": "Macro (Nach Gegenprobe)"
         },
         "dialog": {
             "duration": "Effektdauer",
@@ -1801,6 +1806,7 @@
         "typeLoot": "Schatz",
         "typeNone": "Normale Person",
         "randomGoods": "Zufällige Auswahl",
+        "startExchange": "Wähle einen Handelspartner für einen Tausch (Doppelclick).",
         "clearInventory": "Zurücksetzen",
         "deleteAllGoods": "Alle Waren entfernen?",
         "select": "Auswahl",
@@ -1816,7 +1822,10 @@
         "emptyDestroyHint": "Löscht den Akteur, wenn das Inventar beim Handel geleert wird",
         "untradable": "Gegenstand nicht handelbar",
         "otherTradeFriend": "Ziehe einen Akteur für den du Ownerrechte hast auf das Charakterblatt um den Handelspartner zu ändern.",
-        "priceMod": "Grundpreis / Modifizierter Preis (Doppelclick für eigenen Preis)"
+        "priceMod": "Grundpreis / Modifizierter Preis (Doppelclick für eigenen Preis)",
+        "yourOffer": "Dein Angebot",
+        "otherOffer": "Angebot des Handelspartners",
+        "accept": "Akzeptieren"
     },
     "GARADAN": {
         "1": "Bauer",

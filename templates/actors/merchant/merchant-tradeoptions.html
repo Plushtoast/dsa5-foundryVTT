@@ -1,0 +1,15 @@
+<div>
+    <p>{{localize 'MERCHANT.startExchange'}}</p>
+    {{#each actors as |actor|}}
+    <div class="row-section towtable startTrade inventory item" style="cursor:pointer;" data-id="{{actor.id}}">
+        <div class="col ten image {{item.enchantClass}}">
+            <div class="image" style="background-image: url('{{actor.img}}')">
+
+            </div>
+        </div>
+        <div class="col ninety">
+            {{actor.name}}
+        </div>
+    </div>
+    {{/each}}
+</div>

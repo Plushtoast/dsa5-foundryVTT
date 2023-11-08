@@ -1026,6 +1026,13 @@
   .lighticon{
     color: rgba(68, 68, 68, 0.65);
   }
+
+  .button.green {
+    background: rgb(0, 111, 61);
+    background: linear-gradient(90deg, rgba(0, 38, 13, 1) 0%, rgba(0, 111, 61, 1) 100%);
+    position: relative;
+    color: white;
+  }
   
   .condition-toggle, .condition-edit, .ench, .spells .very-small a .fas, .inventory .very-small a .fas {
     padding: 1px;
@@ -3769,9 +3776,9 @@
   }
 
   .regenPlace{
-    position:relative;
-    top: 45px;
-    left: -20px;
+    position: absolute;
+    top: 170px;
+    left: 112px;
 
     i{
       font-size: 18px;

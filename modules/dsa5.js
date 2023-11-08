@@ -43,6 +43,8 @@ import SpeciesWizard from "./wizards/species_wizard.js";
 import CultureWizard from "./wizards/culture_wizard.js";
 import { ReactToSkillDialog, ActAttackDialog, ReactToAttackDialog } from "./dialog/dialog-react.js";
 import DialogReactDSA5 from "./dialog/dialog-react.js";
+import { Trade } from "./actor/trade.js"
+import DSAActiveEffectConfig from "./status/active_effects.js"
 
 Hooks.once("init", () => {
     console.log("Initializing DSA5 system")
@@ -70,7 +72,9 @@ Hooks.once("init", () => {
             DidYouKnow, 
             MeasuredTemplateDSA,
             Riding,
-            RuleChaos
+            RuleChaos,
+            Trade,
+            DSAActiveEffectConfig
         },
         entities: {
             Actordsa5,

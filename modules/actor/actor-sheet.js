@@ -18,6 +18,7 @@ import ForeignFieldEditor from "../system/foreignFieldEditor.js"
 import { AddEffectDialog } from "../system/tokenHotbar2.js";
 import { RangeSelectDialog } from "../hooks/itemDrop.js";
 import DSA5Payment from "../system/payment.js";
+import { TradeOptions } from "./trade.js";
 
 export default class ActorSheetDsa5 extends ActorSheet {
     get actorType() {
@@ -803,7 +804,13 @@ export default class ActorSheetDsa5 extends ActorSheet {
             name: "SHEET.DeleteItem",
             icon: "<i class='fas fa-trash fa-fw'></i>",
             callback: () => this._itemDeleteDialog(item),
-          },
+          },          
+          {
+            name: "MERCHANT.exchange",
+            icon: "<i class='fas fa-coins'></i>",
+            condition: () => DSA5.equipmentCategories.has(item.type),
+            callback: () => this._startTrade(item),
+          }
         ];
           
         if(hasProperty(item, "system.worn.wearable") || ["meleeweapon", "rangeweapon", "armor"].includes(item.type)) {
@@ -822,6 +829,10 @@ export default class ActorSheetDsa5 extends ActorSheet {
         }
 
         return options;
+    }
+
+    async _startTrade(item) {
+        (new TradeOptions(this.actor.id)).render(true)
     }
 
     _splitItem(item) {
@@ -1310,7 +1321,7 @@ export default class ActorSheetDsa5 extends ActorSheet {
         if ( this.actor.uuid === effect.parent?.uuid ) return false;
 
         const ef = effect.toObject()
-        ef.origin = this.actor.uuid
+        ef.origin = null
         return ActiveEffect.create(ef, {parent: this.actor});
     }
 
@@ -1364,7 +1375,6 @@ export default class ActorSheetDsa5 extends ActorSheet {
                 tinyNotification(game.i18n.format("PAYMENT.pay", {actor: this.actor.name, amount: price}))
                 DSA5SoundEffect.playMoneySound()
             }
-            console.log(hasPrice, data)
             await this._onDropItemCreate(itemData);
         }
     
