@@ -44,7 +44,20 @@ async function callMacro(packName, name, actor, item, qs, args = {}) {
     return result;
 };
 
-export default class DSAActiveEffectConfig extends ActiveEffectConfig {
+Hooks.once("i18nInit", () => {
+    DSAActiveEffectConfig.effectDurationRegexes = [
+        { regEx: new RegExp(game.i18n.localize("DSAREGEX.combatRounds"), "gi"), seconds: 5 },
+        { regEx: new RegExp(game.i18n.localize("DSAREGEX.minutes"), "gi"), seconds: 60 },
+        { regEx: new RegExp(game.i18n.localize("DSAREGEX.hours"), "gi"), seconds: 3600 },
+        { regEx: new RegExp(game.i18n.localize("DSAREGEX.days"), "gi"), seconds: 3600 * 24 },
+        { regEx: new RegExp(game.i18n.localize("DSAREGEX.weeks"), "gi"), seconds: 3600 * 24 * 7 },
+        { regEx: new RegExp(game.i18n.localize("DSAREGEX.months"), "gi"), seconds: 3600 * 24 * 30 },
+        { regEx: new RegExp(game.i18n.localize("DSAREGEX.years"), "gi"), seconds: 3600 * 24 * 350 }
+    ];
+})
+
+export default class DSAActiveEffectConfig extends ActiveEffectConfig {    
+
     static get defaultOptions() {
         return mergeObject(super.defaultOptions, {
             resizable: true,
@@ -71,10 +84,8 @@ export default class DSAActiveEffectConfig extends ActiveEffectConfig {
     async _render(force = false, options = {}) {
         await super._render(force, options);
         
-        let index = -1;
-        const advancedFunctions = ["none", "systemEffect", "macro", "creature"].map((x) => {
-            return { name: `ActiveEffects.advancedFunctions.${x}`, index: (index += 1) };
-        });
+        let index = 0;
+        
         const itemType = getProperty(this.object, "parent.type");
         const isWeapon = ["meleeweapon", "rangeweapon"].includes(itemType) || (itemType == "trait" && ["meleeAttack", "rangeAttack"].includes(getProperty(this.object, "parent.system.traitType.value")))
         const effectConfigs = {
@@ -91,14 +102,35 @@ export default class DSAActiveEffectConfig extends ActiveEffectConfig {
                 ].includes(itemType) ||
                 (["specialability"].includes(itemType) && getProperty(this.object, "parent.system.category.value") == "Combat"),
             hasDamageTransformation: ["ammunition"].includes(itemType),
+            hasTriggerEffects: ["specialability"].includes(itemType)
         };
+
+        let advancedFunctions = []
+
+        if (effectConfigs.hasSpellEffects || effectConfigs.hasDamageTransformation || effectConfigs.hasTriggerEffects) {
+            advancedFunctions.push({ name: `ActiveEffects.advancedFunctions.none`, index: 0 })
+        }
+        
+        if(effectConfigs.hasSpellEffects){
+            ["systemEffect", "macro", "creature"].map((x) => {
+                return { name: `ActiveEffects.advancedFunctions.${x}`, index: (index += 1) };
+            });
+        }
+        
         if (effectConfigs.hasDamageTransformation) {
             advancedFunctions.push({ name: "ActiveEffects.advancedFunctions.armorPostprocess", index: 4 }, { name: "ActiveEffects.advancedFunctions.damagePostprocess", index: 5 });
+        }
+        if (effectConfigs.hasTriggerEffects) {
+            advancedFunctions.push(
+                { name: "ActiveEffects.advancedFunctions.postRoll", index: 6 },
+                { name: "ActiveEffects.advancedFunctions.postOpposed", index: 7 }
+            );
         }
         const config = {
             systemEffects: this.getStatusEffects(),
             canEditMacros: game.user.isGM || (await game.settings.get("dsa5", "playerCanEditSpellMacro")),
         };
+        const macroIndexes = [2, 6, 7]
         let elem = $(this._element);
         elem
             .find(".tabs")
@@ -107,6 +139,7 @@ export default class DSAActiveEffectConfig extends ActiveEffectConfig {
             effect: this.object,
             advancedFunctions,
             effectConfigs,
+            macroIndexes,
             config,
             isWeapon
         });
@@ -115,7 +148,7 @@ export default class DSAActiveEffectConfig extends ActiveEffectConfig {
             let effect = this.object;
             effect.flags.dsa5.advancedFunction = $(ev.currentTarget).val();
 
-            renderTemplate("systems/dsa5/templates/status/advanced_functions.html", { effect, config }).then((template) => {
+            renderTemplate("systems/dsa5/templates/status/advanced_functions.html", { effect, config, macroIndexes }).then((template) => {
                 elem.find(".advancedFunctions").html(template);
             });
         });
@@ -216,10 +249,7 @@ export default class DSAActiveEffectConfig extends ActiveEffectConfig {
         }
         await actor.createEmbeddedDocuments(
             "ActiveEffect",
-            effectsWithChanges.map((x) => {
-                x.origin = actor.uuid;
-                return x;
-            })
+            effectsWithChanges
         );
         return { msg, resistRolls, effectApplied, effectNames: Array.from(effectNames) };
     }
@@ -336,16 +366,7 @@ export default class DSAActiveEffectConfig extends ActiveEffectConfig {
         let duration = getProperty(source, "system.duration.value") || "";
         duration = duration.replace(" x ", " * ").replace(game.i18n.localize("CHARAbbrev.QS"), testData.qualityStep);
         try {
-            const regexes = [
-                { regEx: new RegExp(game.i18n.localize("DSAREGEX.combatRounds"), "gi"), seconds: 5 },
-                { regEx: new RegExp(game.i18n.localize("DSAREGEX.minutes"), "gi"), seconds: 60 },
-                { regEx: new RegExp(game.i18n.localize("DSAREGEX.hours"), "gi"), seconds: 3600 },
-                { regEx: new RegExp(game.i18n.localize("DSAREGEX.days"), "gi"), seconds: 3600 * 24 },
-                { regEx: new RegExp(game.i18n.localize("DSAREGEXmaintain.weeks"), "gi"), seconds: 3600 * 24 * 7 },
-                { regEx: new RegExp(game.i18n.localize("DSAREGEXmaintain.months"), "gi"), seconds: 3600 * 24 * 30 },
-                { regEx: new RegExp(game.i18n.localize("DSAREGEXmaintain.years"), "gi"), seconds: 3600 * 24 * 350 }
-            ];
-            for (const reg of regexes) {
+            for (const reg of DSAActiveEffectConfig.effectDurationRegexes) {
                 if (reg.regEx.test(duration)) {
                     const dur = duration.replace(reg.regEx, "").trim()
                     const time = await DiceDSA5._stringToRoll(dur);

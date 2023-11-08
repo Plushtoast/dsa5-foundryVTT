@@ -50,7 +50,7 @@ export default function() {
         },
         br: (a) => a.replace(/\n/g, "<br/>"),
         getAttr: (a, b, c) => { return a.system.characteristics[b][c] },
-        hasElem: (a, b) => a.filter(x => b == x).length,
+        hasElem: (a, b) => a.some(x => b == x),
         situationalTooltip: (mod) => {
             const key = game.i18n.localize(modifierTypes[mod.type] || "Modifier")
             let res = `${mod.name}<br/>${key}: ${mod.value}`

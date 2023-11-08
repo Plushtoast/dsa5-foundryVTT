@@ -18,6 +18,7 @@ import { MeasuredTemplateDSA } from "./measuretemplate.js"
 import TableEffects from "../tables/tableEffects.js"
 import CreatureType from "./creature-type.js"
 import { applyDamage } from "../hooks/chat_context.js"
+import DSATriggers from "./triggers.js"
 
 export default class DiceDSA5 {
     static async rollTest(testData) {
@@ -1332,6 +1333,7 @@ export default class DiceDSA5 {
         const immuneTo = CreatureType.checkImmunity(testData)
         const preData = deepClone(testData.preData)
         const hideDamage = rerenderMessage ? rerenderMessage.flags.data.hideDamage : preData.mode == "attack"
+        await DSATriggers.postRoll({ testData, preData })
         Hooks.call("postProcessDSARoll", chatOptions, testData, rerenderMessage, hideDamage)
         await DSA5_Utility.callAsyncHooks("postProcessDSARoll", [testData])
         delete preData.extra.actor

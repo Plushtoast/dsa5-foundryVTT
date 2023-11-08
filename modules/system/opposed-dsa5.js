@@ -5,6 +5,7 @@ import Actordsa5 from "../actor/actor-dsa5.js";
 import EquipmentDamage from "./equipment-damage.js";
 import DSAActiveEffectConfig from "../status/active_effects.js";
 import Itemdsa5 from "../item/item-dsa5.js";
+import DSATriggers from "./triggers.js";
 
 export default class OpposedDsa5 {
     static async handleOpposedTarget(message) {
@@ -365,7 +366,8 @@ export default class OpposedDsa5 {
     }
 
     static async completeOpposedProcess(attacker, defender, options) {
-        let opposedResult = await this.evaluateOpposedTest(attacker.testResult, defender.testResult, options);
+        await DSATriggers.postOpposed({ attacker, defender, options })
+        const opposedResult = await this.evaluateOpposedTest(attacker.testResult, defender.testResult, options);
         this.formatOpposedResult(opposedResult, attacker.speaker, defender.speaker);
         this.rerenderMessagesWithModifiers(opposedResult, attacker, defender);
         Hooks.call("finishOpposedTest", attacker, defender, opposedResult, options)

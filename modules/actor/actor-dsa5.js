@@ -458,9 +458,15 @@ export default class Actordsa5 extends Actor {
 
     const appliedArtifacts = this.items.filter(x => ["rangeweapon", "meleeweapon", "equipment", "armor"].includes(x.type) && x.system.isArtifact && (x.system.worn.value || (x.type == "equipment" && !x.system.worn.wearable))).map(x => x.system.artifact)
 
+    this.dsatriggers = {
+      6: {},
+      7: {},
+    }
+
     for(let item of this.items) {
       for(const e of item.effects) {
         apply = true
+        
         switch (item.type) {
           case "meleeweapon":
           case "rangeweapon":
@@ -502,6 +508,13 @@ export default class Actordsa5 extends Actor {
                 apply = true
             }           
             multiply = Number(item.system.step.value) || 1
+
+            const advancedFunction = getProperty(e, "flags.dsa5.advancedFunction")
+
+            if([6,7].some(x => x == advancedFunction)) {
+              this.dsatriggers[advancedFunction][item.id] = e.id
+            }
+            
             break
           case "advantage":
           case "disadvantage":
