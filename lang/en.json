@@ -193,6 +193,7 @@
         "buyingFactor": "Buy factor",
         "sellingFactor": "Sell factor",
         "typeMerchant": "Merchant",
+        "startExchange": "Chose a trading partner for an exchange (double click).",        
         "hideMoney": "Hide money",
         "hideMoneyHint": "Hide the purse of the merchant for the players.",
         "typeEpic": "Garadan",
@@ -214,7 +215,10 @@
         "emptyDestroyHint": "Deletes the actor if its inventory is emptied during trading.",
         "untradable": "Item not tradable",
         "otherTradeFriend": "Drag an actor (that you own) on the sheet to change the trading partner.",
-        "priceMod": "Base price / Modified price (Double click for custom price)"
+        "priceMod": "Base price / Modified price (Double click for custom price)",
+        "yourOffer": "Your offer",
+        "otherOffer": "Offer of the trading partner",
+        "accept": "Accept"
     },
     "GARADAN": {
         "1": "Pawn",
@@ -1195,7 +1199,10 @@
         "minutes": "(minute(s)?|min)",
         "seconds": "(second(s)?)",
         "hours": "(hour(s)?)",
-        "days": "day(s)?"
+        "days": "day(s)?",
+        "weeks":"week(s)?",
+        "months": "month(s)?",
+        "years": "year(s)?"
     },
     "ActiveEffects": {
         "hideOnToken": "Hide on Token",
@@ -1226,7 +1233,9 @@
             "armorPostprocess": "Armor transformation (Macro)",
             "damagePostprocess": "Damage transformation (Macro)",
             "onRemove": "Macro (End of effect)",
-            "onUseEffect": "Macro (On Use)"
+            "onUseEffect": "Macro (On Use)",
+            "postRoll": "Macro (after roll)",
+            "postOpposed": "Macro (after opposed roll)"
         },
         "dialog": {
             "duration": "Effect Duration",
@@ -1242,6 +1251,7 @@
         "immuneToCrit": "Immune to critical hits",        
         "aspectKnowledge": "Aspect Knowledge",
         "sharpshooter": "Sharpshooter",
+        "professionSecret": "Trade Secret",
         "deaf": "Deaf",
         "blind": "Blind",
         "alchemy": "Alchemy",
@@ -1804,7 +1814,7 @@
         "lykanthrop": "Lykanthropic gifts",
         "generalStyle": "Talent Style Special Abilities",
         "extGeneral": "Advanced Talent Special Abilities",
-        "pactgift": "Pact",
+        "pact": "Pact",
         "staff": "Tradition Artifact",
         "command": "Command Special Abilities"
     },

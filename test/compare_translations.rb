@@ -5,11 +5,12 @@ require 'json'
 ##make this nested
 def compareKeys
     langs = ["de", "en"]
-    langDependentKeys = ["Combatskilldescr", "Racedescr","ReverseSpellRanges", "SKILLdescr"]
+    langDependentKeys = ["Combatskilldescr", "Racedescr","ReverseSpellRanges", "SKILLdescr", "LocalizedCTs"]
+    showTBD = false
 
     json = {}
     langs.each do |lang|
-        json[lang] = JSON.parse(File.read("../lang/#{lang}.json")).flatten_with_path
+        json[lang] = JSON.parse(File.read("#{__dir__}/../lang/#{lang}.json")).flatten_with_path
     end
     ref = "de"
 
@@ -22,13 +23,13 @@ def compareKeys
         puts "Keys of lang #{lang} not in reference #{ref} translation:\n#{notInRef.join("\n")}\n\n\n" if notInRef.any?
     end
 
-    puts "\n\n##################################################\n\n"
+    puts "\n\nTestresult ##################################################\n\n"
     langs.each do |lang|
         emptyKeys = json[lang].select{|key,val| val == ""}
         puts "Empty keys in lang #{lang}: \n#{emptyKeys.keys.join("\n")}" if emptyKeys.any?
 
         emptyKeys = json[lang].select{|key,val| val == "tbd"}
-        puts "Tbd keys in lang #{lang}: \n#{emptyKeys.keys.join("\n")}" if emptyKeys.any?
+        puts "Tbd keys in lang #{lang}: \n#{emptyKeys.keys.join("\n")}" if emptyKeys.any? && showTBD
     end
     
     langDependentKeys.each do |x|

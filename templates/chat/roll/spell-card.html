@@ -37,6 +37,7 @@
         {{#each immuneTo as |immunity|}}
         <b>{{localize "DSAError.immuneTo" name=immunity.target condition=immunity.condition }}</b>
         {{/each}}
+    </div>
     {{/if}}
     {{#if (or hasAreaTemplate applyEffect)}}
     <div class="row-section" style="margin-top:10px">
