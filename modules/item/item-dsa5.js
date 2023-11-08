@@ -1380,7 +1380,7 @@ class MeleeweaponDSA5 extends Itemdsa5 {
         let title = item.name + " " + game.i18n.localize(mode + "test")
 
         let testData = {
-            opposable: true,
+            opposable: options.mode != "parry",
             source: item,
             mode,
             extra: {
@@ -1602,7 +1602,7 @@ class RangeweaponItemDSA5 extends Itemdsa5 {
         let title = item.name + " " + game.i18n.localize(mode + "test")
 
         let testData = {
-            opposable: true,
+            opposable: options.mode != "parry",
             source: item,
             mode,
             extra: {
@@ -1835,7 +1835,7 @@ class TraitItemDSA5 extends Itemdsa5 {
         let mode = options["mode"]
         let title = item.name + " " + game.i18n.localize(mode + "test")
         let testData = {
-            opposable: true,
+            opposable: options.mode != "parry",
             source: item,
             mode,
             extra: {

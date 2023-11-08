@@ -101,7 +101,9 @@ export default class OpposedDsa5 {
         else
             attacker = actor.prototypeToken
 
-        if (testResult.successLevel > 0) {
+        const isDamageRoll = testResult.options?.mode == "damage"
+
+       if (testResult.successLevel > 0 || isDamageRoll) {
             let attackOfOpportunity = message.flags.data.preData.attackOfOpportunity
             let unopposedButton = attackOfOpportunity ? "" : `<div><button class="unopposed-button small-button chat-button-target" data-target="true">${game.i18n.localize('Unopposed')}</button></div>`
             let startMessagesList = [];
@@ -144,12 +146,15 @@ export default class OpposedDsa5 {
                     startMessagesList.push(startMessage.id);
                     if (attackOfOpportunity) {
                         await OpposedDsa5.resolveUndefended(startMessage, game.i18n.localize("OPPOSED.attackOfOpportunity"))
+                    } else if(isDamageRoll) {
+                        await OpposedDsa5.resolveUndefended(startMessage)
                     }
                     Hooks.call("DSAOpposedRollStart", target)
                 }
             })
             message.flags.data.startMessagesList = startMessagesList;
-        } else {
+        } 
+        else {
             game.user.targets.forEach(async target => {
                 if (target.actor) {
                     await ChatMessage.create({
@@ -173,6 +178,8 @@ export default class OpposedDsa5 {
              `
     }
 
+
+    //TODO check if this is still needed
     static async changeStartMessage(message) {
         for (let startMessageId of message.flags.data.startMessagesList) {
             let startMessage = game.messages.get(startMessageId);
@@ -392,6 +399,12 @@ export default class OpposedDsa5 {
         if (["weapon", "spell", "liturgy", "ceremony", "ritual", "combatskill"].includes(attackerTest.rollType) && defenderTest.successLevel == undefined) {
             defenderTest.successLevel = -5
         }
+        if(attackerTest.rollType == "damage") { 
+            defenderTest.successLevel = -5
+            attackerTest.successLevel = 1
+        }
+
+        console.log(defenderTest, attackerTest)
 
         if (defenderTest.successLevel != undefined) {
             switch (attackerTest.rollType) {
@@ -404,6 +417,7 @@ export default class OpposedDsa5 {
                 case "spell":
                 case "liturgy":
                 case "weapon":
+                case "damage":
                     this._evaluateWeaponOpposedRoll(attackerTest, defenderTest, opposeResult, options)
                     break
                 default:
