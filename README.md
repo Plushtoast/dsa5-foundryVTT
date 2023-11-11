@@ -77,7 +77,7 @@ If you want to discuss TDE for foundry or need some assistance you can also join
     <a href="https://www.f-shop.de/virtual-tabletops/das-schwarze-auge-vtt/regel-module/2645/dsa5-werkstatt-des-meisters-fuer-foundry-vtt" title="Werkstatt des Meisters">
         <img src="https://www.ulissesf-shop.com/media/image/c3/89/d3/ESD1004_0_0999_600x600.jpg" alt="Werkstatt des Meisters" style="margin-right: 5px; margin-bottom: 5px; text-align:center; width:210px;">
     </a>
-        <a href="https://www.f-shop.de/virtual-tabletops/das-schwarze-auge-vtt/abenteuer-module/3028/dsa5-aventurische-tavernen-fuer-foundry-vtt" target="_blank" data-tooltip="Aventurische Tavernen">
+        <a href="https://www.f-shop.de/virtual-tabletops/das-schwarze-auge-vtt/abenteuer-module/3028/dsa5-aventurische-tavernen-fuer-foundry-vtt" target="_blank" title="Aventurische Tavernen">
         <img src="https://ulisses-digital.de/R20/dsa5/modules/dsa5-aventurian-taverns/icons/journal/coverde.webp" alt="Aventurisches Transmutarium" style="margin-right: 5px; margin-bottom: 5px; text-align:center; width:210px;">
     </a>
     <h2>Inhalte</h2>
@@ -109,22 +109,22 @@ If you want to discuss TDE for foundry or need some assistance you can also join
         <img src="https://ulisses-digital.de/R20/dsa5/modules/dsa5-transmutarium/icons/journal/coverde.webp" alt="Aventurisches Transmutarium" style="margin-right: 5px; margin-bottom: 5px; text-align:center; width:210px;">
     </a>
     </a>
-    <a href="https://www.f-shop.de/virtual-tabletops/das-schwarze-auge-vtt/regel-module/3027/dsa5-aventurisches-herbarium-fuer-foundry-vtt" target="_blank" data-tooltip="Aventurisches Herbarium">
+    <a href="https://www.f-shop.de/virtual-tabletops/das-schwarze-auge-vtt/regel-module/3027/dsa5-aventurisches-herbarium-fuer-foundry-vtt" target="_blank" title="Aventurisches Herbarium">
         <img src="https://ulisses-digital.de/R20/dsa5/modules/dsa5-herbarium/icons/journal/coverde.webp" alt="Aventurisches Herbarium" style="margin-right: 5px; margin-bottom: 5px; text-align:center; width:210px;">
     </a>
-    <a href="https://www.f-shop.de/virtual-tabletops/das-schwarze-auge-vtt/regel-module/3576/dsa5-aventurisches-herbarium-2-fuer-foundry-vtt" target="_blank" data-tooltip="Aventurisches Herbarium II">
+    <a href="https://www.f-shop.de/virtual-tabletops/das-schwarze-auge-vtt/regel-module/3576/dsa5-aventurisches-herbarium-2-fuer-foundry-vtt" target="_blank" title="Aventurisches Herbarium II">
         <img src="https://www.f-shop.de/media/image/22/db/36/ESD036_0_0999.jpg" alt="Aventurisches Herbarium II" style="margin-right: 5px; margin-bottom: 5px; text-align:center; width:210px;">
     </a>
-    <a href="https://www.f-shop.de/virtual-tabletops/das-schwarze-auge-vtt/regel-module/3029/dsa5-orks-hauer-und-schwarzer-pelz-fuer-foundry-vtt" target="_blank" data-tooltip="Orks - Hauer & Schwarzer Pelz">
+    <a href="https://www.f-shop.de/virtual-tabletops/das-schwarze-auge-vtt/regel-module/3029/dsa5-orks-hauer-und-schwarzer-pelz-fuer-foundry-vtt" target="_blank" title="Orks - Hauer & Schwarzer Pelz">
         <img src="https://ulisses-digital.de/R20/dsa5/modules/dsa5-orcs/icons/journal/coverde.webp" alt="Aventurisches Transmutarium" style="margin-right: 5px; margin-bottom: 5px; text-align:center; width:210px;">
     </a>
-    <a href="https://www.f-shop.de/detail/index/sArticle/3724" target="_blank" data-tooltip="Achaz - Schuppenkleid & Lange Zunge">
+    <a href="https://www.f-shop.de/detail/index/sArticle/3724" target="_blank" title="Achaz - Schuppenkleid & Lange Zunge">
         <img src="https://www.f-shop.de/media/image/d9/f7/5c/ESD037_0_0999.jpg" alt="Achaz - Schuppenkleid & Lange Zunge" style="margin-right: 5px; margin-bottom: 5px; text-align:center; width:210px;">
     </a>
-    <a href="https://www.f-shop.de/virtual-tabletops/das-schwarze-auge-vtt/regel-module/3115/dsa5-elementarium-fuer-foundry-vtt" target="_blank" data-tooltip="Aventurisches Elementarium">
+    <a href="https://www.f-shop.de/virtual-tabletops/das-schwarze-auge-vtt/regel-module/3115/dsa5-elementarium-fuer-foundry-vtt" target="_blank" title="Aventurisches Elementarium">
         <img src="https://ulisses-digital.de/R20/dsa5/modules/dsa5-elementarium/icons/journal/coverde.webp" alt="Aventurisches Elementarium" style="margin-right: 5px; margin-bottom: 5px; text-align:center; width:210px;">
     </a>
-    <a href="https://www.f-shop.de/virtual-tabletops/das-schwarze-auge-vtt/regel-module/3195/dsa5-studierstube-der-gildenmagie-erweitert-fuer-foundry-vtt" target="_blank" data-tooltip="Studierstube der Gildenmagie">
+    <a href="https://www.f-shop.de/virtual-tabletops/das-schwarze-auge-vtt/regel-module/3195/dsa5-studierstube-der-gildenmagie-erweitert-fuer-foundry-vtt" target="_blank" title="Studierstube der Gildenmagie">
         <img src="https://ulisses-digital.de/R20/dsa5/modules/dsa5-studyroom/icons/journal/coverde.webp" alt="Studierstube der Gildenmagie" style="margin-right: 5px; margin-bottom: 5px; text-align:center; width:210px;">
     </a>
     <h2>Abenteuer</h2>
@@ -137,10 +137,10 @@ If you want to discuss TDE for foundry or need some assistance you can also join
     <a href="https://www.f-shop.de/virtual-tabletops/das-schwarze-auge-vtt/abenteuer-module/2737/dsa5-rabenkrieg-2-kampagne-fuer-foundry-vtt" title="Rabenkrieg II - Der Biss der Spinne">
         <img src="https://ulisses-digital.de/R20/dsa5/modules/dsa5-rabenkrieg2/icons/journal/coverde.webp" alt="Rabenkrieg II - Der Biss der Spinne" style="margin-right: 5px; margin-bottom: 5px; text-align:center; width:210px;">
     </a>
-    <a href="https://www.f-shop.de/virtual-tabletops/das-schwarze-auge-vtt/abenteuer-module/3104/dsa5-rabenkrieg-3-kampagne-fuer-foundry-vtt" target="_blank" data-tooltip="Rabenkrieg III - Der Sturz des Adlers">
+    <a href="https://www.f-shop.de/virtual-tabletops/das-schwarze-auge-vtt/abenteuer-module/3104/dsa5-rabenkrieg-3-kampagne-fuer-foundry-vtt" target="_blank" title="Rabenkrieg III - Der Sturz des Adlers">
         <img src="https://ulisses-digital.de/R20/dsa5/modules/dsa5-rabenkrieg3/icons/journal/coverde.webp" alt="Rabenkrieg III - Der Sturz des Adlers" style="margin-right: 5px; margin-bottom: 5px; text-align:center; width:210px;">
     </a>
-    <a href="https://www.f-shop.de/virtual-tabletops/das-schwarze-auge-vtt/abenteuer-module/3112/dsa5-verhandlungskunst-und-friedensschwur-fuer-foundry-vtt" target="_blank" data-tooltip="Verhandlungskunst und Friedensschwur">
+    <a href="https://www.f-shop.de/virtual-tabletops/das-schwarze-auge-vtt/abenteuer-module/3112/dsa5-verhandlungskunst-und-friedensschwur-fuer-foundry-vtt" target="_blank" title="Verhandlungskunst und Friedensschwur">
         <img src="https://ulisses-digital.de/R20/dsa5/modules/dsa5-negotiationpeace/icons/journal/coverde.webp" alt="Verhandlungskunst und Friedensschwur" style="margin-right: 5px; margin-bottom: 5px; text-align:center; width:210px;">
     </a>
     <a href="https://www.f-shop.de/virtual-tabletops/das-schwarze-auge-vtt/abenteuer-module/2317/dsa5-kampagne-das-geheimnis-des-drachenritters-fuer-foundry" title="Das Geheimnis des Drachenritters">
@@ -149,29 +149,32 @@ If you want to discuss TDE for foundry or need some assistance you can also join
     <a href="https://www.f-shop.de/virtual-tabletops/das-schwarze-auge-vtt/abenteuer-module/2685/dsa5-labyrinth-der-intrigen-fuer-foundry-vtt" title="Labyrinth der Intrigen">
         <img src="https://ulisses-digital.de/R20/dsa5/modules/dsa5-labyrinthofintrigues/icons/journal/coverde.webp" alt="Labyrinth der Intrigen" style="margin-right: 5px; margin-bottom: 5px; text-align:center; width:210px;">
     </a>        
-    <a href="https://www.f-shop.de/detail/index/sArticle/3456">
+    <a href="https://www.f-shop.de/detail/index/sArticle/3456" title="Klingen der Nacht">
         <img src="https://www.f-shop.de/media/image/c2/7d/f1/ESD033_0_0999.jpg" alt="Klingen der Nacht" style="margin-right: 5px; margin-bottom: 5px; text-align:center; width:210px;">
     </a>
-    <a href="https://www.f-shop.de/virtual-tabletops/das-schwarze-auge-vtt/abenteuer-module/3575/dsa5-offenbarung-des-himmels-fuer-foundry-vtt" target="_blank" data-tooltip="Offenbarung des Himmels">
+    <a href="https://www.f-shop.de/virtual-tabletops/das-schwarze-auge-vtt/abenteuer-module/3575/dsa5-offenbarung-des-himmels-fuer-foundry-vtt" target="_blank" title="Offenbarung des Himmels">
         <img src="https://www.f-shop.de/media/image/5d/b3/1a/ESD035_0_0999.jpg" alt="Offenbarung des Himmels" style="margin-right: 5px; margin-bottom: 5px; text-align:center; width:210px;">
     </a>
+    <a href="https://www.f-shop.de/virtual-tabletops/das-schwarze-auge-vtt/abenteuer-module/3789/dsa5-das-geheimnis-der-zauberschueler-fuer-foundry-vtt" target="_blank" title="Das Geheimnis der Zauberschüler">
+            <img src="https://www.f-shop.de/media/image/91/68/3c/ESD041_0_0999.jpg" style="margin-right: 5px; margin-bottom: 5px; text-align:center; width:210px;">
+        </a>
     <a href="https://www.f-shop.de/virtual-tabletops/das-schwarze-auge-vtt/abenteuer-module/2388/dsa5-mitsommerrache-fuer-foundry" title="Mittsommerrache">
         <img src="https://ulisses-digital.de/R20/dsa5/modules/dsa5-mittsommerrache/icons/journal/coverde.webp" alt="Mittsommerrache" style="margin-right: 5px; margin-bottom: 5px; text-align:center; width:210px;">
     </a>
-    <a href="https://foundryvtt.com/packages/dsa5-witchsdance" target="_blank" data-tooltip="Hexenreigen">
+    <a href="https://foundryvtt.com/packages/dsa5-witchsdance" target="_blank" title="Hexenreigen">
         <img src="https://ulisses-digital.de/R20/dsa5/modules/dsa5-witchsdance/icons/journal/coverde.webp" alt="Hexenreigen" style="margin-right: 5px; margin-bottom: 5px; text-align:center; width:210px;">
     </a>
     <h2>Regionalspielhilfen</h2>
     <a href="https://www.f-shop.de/virtual-tabletops/das-schwarze-auge-vtt/regel-module/2684/dsa5-sonnenkueste-bundle-fuer-foundry-vtt" title="Die Sonnenküste">
         <img src="https://ulisses-digital.de/R20/dsa5/modules/dsa5-suncoast/icons/journal/coverde.webp" alt="Die Sonnenküste" style="margin-right: 5px; margin-bottom: 5px; text-align:center; width:210px;">
     </a>
-    <a href="https://www.f-shop.de/detail/index/sArticle/3745" target="_blank" data-tooltip="Das Wüstenreich">
+    <a href="https://www.f-shop.de/detail/index/sArticle/3745" target="_blank" title="Das Wüstenreich">
         <img src="https://www.f-shop.de/media/image/21/e5/f0/ESD038_0_0999.jpg" alt="Das Wüstenreich" style="margin-right: 5px; margin-bottom: 5px; text-align:center; width:210px;">
     </a>
-    <a href="https://www.f-shop.de/detail/index/sArticle/3746" target="_blank" data-tooltip="Die Streitenden Königreiche">
+    <a href="https://www.f-shop.de/detail/index/sArticle/3746" target="_blank" title="Die Streitenden Königreiche">
         <img src="https://www.f-shop.de/media/image/62/db/51/ESD039_0_0999.jpg" alt="Die Streitenden Königreiche" style="margin-right: 5px; margin-bottom: 5px; text-align:center; width:210px;">
     </a>
-    <a href="https://www.f-shop.de/detail/index/sArticle/3749" target="_blank" data-tooltip="Die Dampfenden Dschungel">
+    <a href="https://www.f-shop.de/detail/index/sArticle/3749" target="_blank" title="Die Dampfenden Dschungel">
         <img src="https://www.f-shop.de/media/image/f6/30/0b/ESD040_0_0999.jpg" alt="Die Dampfenden Dschungel" style="margin-right: 5px; margin-bottom: 5px; text-align:center; width:210px;">
     </a>
 </div>
@@ -206,10 +209,10 @@ If you want to discuss TDE for foundry or need some assistance you can also join
     <a href="https://foundryvtt.com/packages/dsa5-introduction" title="Introduction adventure">
         <img src="https://raw.githubusercontent.com/Plushtoast/dsa5_introduction/master/icons/journal/coveren.webp" alt="Introduction adventure" style="margin-right: 5px; margin-bottom: 5px; text-align:center; width:210px;">
     </a>
-    <a href="https://foundryvtt.com/packages/dsa5-witchsdance" target="_blank" data-tooltip="Witch's dance">
+    <a href="https://foundryvtt.com/packages/dsa5-witchsdance" target="_blank" title="Witch's dance">
         <img src="https://ulisses-digital.de/R20/dsa5/modules/dsa5-witchsdance/icons/journal/coveren.webp" alt="Witch's dance" style="margin-right: 5px; margin-bottom: 5px; text-align:center; width:210px;">
     </a>
-    <a href="https://www.ulissesf-shop.com/the-dark-eye/virtual-tabletops/2223/tde5-revelations-from-heaven-for-foundry-vtt" target="_blank" data-tooltip="Revelations from Heaven">
+    <a href="https://www.ulissesf-shop.com/the-dark-eye/virtual-tabletops/2223/tde5-revelations-from-heaven-for-foundry-vtt" target="_blank" title="Revelations from Heaven">
         <img src="https://www.ulissesf-shop.com/media/image/40/5b/b7/ESD1009_0_0999.jpg" alt="Revelations from Heaven" style="margin-right: 5px; margin-bottom: 5px; text-align:center; width:210px;">
     </a>
 </div>
