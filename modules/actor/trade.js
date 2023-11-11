@@ -9,6 +9,7 @@ export class Trade extends Application {
         options.resizable = true;
         options.tabs = [{ navSelector: ".tabs", contentSelector: ".content", initial: "main" }]
         options.title = game.i18n.localize("MERCHANT.exchange");
+        options.classes.push('noscrollWizard')
         return options;
     }
 

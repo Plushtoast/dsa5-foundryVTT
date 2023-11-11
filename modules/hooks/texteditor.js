@@ -81,7 +81,16 @@ export function setEnrichers() {
             pattern: /@EmbedItem\[[a-zA-ZöüäÖÜÄ&; -\.0-9]+\]/g,
             enricher: async(match, options) => {
                 let uuid = match[0].match(/(?:\[)(.*?)(?=\])/)[0].slice(1)
-                const document = await fromUuid(uuid)
+                let document = await fromUuid(uuid)
+
+                if(!document) {
+                    const parts = uuid.split(".")
+                    const pack = game.packs.get(parts[0] + "." + parts[1])
+                    if(pack){
+                        document = await pack.getDocuments({name: parts[2]})
+                        if(document.length > 0) document = document[0]
+                    }                    
+                }                
 
                 if(!document) return $('<a class="content-link broken"><i class="fas fa-unlink"></i>embed</a>')[0]
 
