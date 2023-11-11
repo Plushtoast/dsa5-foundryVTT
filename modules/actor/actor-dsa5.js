@@ -437,6 +437,8 @@ export default class Actordsa5 extends Actor {
     const changes = []
     let multiply = 1
     for ( const e of this.effects ) {
+      if(e.disabled) continue
+
       multiply = 1
       const flag = e.getFlag("dsa5", "value")
       if(flag){
@@ -465,6 +467,8 @@ export default class Actordsa5 extends Actor {
 
     for(let item of this.items) {
       for(const e of item.effects) {
+        if(e.disabled) continue
+        
         apply = true
         
         switch (item.type) {
