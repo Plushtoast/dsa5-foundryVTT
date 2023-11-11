@@ -10,6 +10,30 @@ Hooks.once("ready", () => {
         const range = result[1].filter(x => x.system.weapontype.value == "range").sort((a, b) => a.name.localeCompare(b.name)).reduce((prev, now) => ({...prev, [now.name]: now.name }), {})
         const melee = result[1].filter(x => x.system.weapontype.value == "melee").sort((a, b) => a.name.localeCompare(b.name)).reduce((prev, now) => ({...prev, [now.name]: now.name }), {})
         const allCombat = result[1].concat([{name: game.i18n.localize("LocalizedIDs.all")}]).sort((a, b) => a.name.localeCompare(b.name)).reduce((prev, now) => ({...prev, [now.name]: now.name }), {})
+
+        const content =  []
+        for(const [cat, value] of Object.entries(DSA5.specialAbilityCategories)){
+            if(cat == "clerical")
+                content.push(`</optgroup><optgroup label="${game.i18n.localize('SpecCategory.clerical')}">`)
+            else if(cat == "magical")
+                content.push(`</optgroup><optgroup label="${game.i18n.localize('SpecCategory.magical')}">`)        
+
+            content.push(`<option value="${cat}">${game.i18n.localize(value)}</option>`)
+        }
+        
+        const specialabilies = 
+        `<div class="form-group">
+            <label class="label-text">${game.i18n.localize('Category')}</label>
+            <select name="category.value" data-dtype="String">
+                <option value="">${game.i18n.localize('Library.noFilter')}</option>          
+                <optgroup label="${game.i18n.localize('SpecCategory.general')}">
+                ${content.join("")}
+                </optgroup>
+            </select>
+        </div>`
+
+        
+
         mergeObject(ADVANCEDFILTERS, {
             ammunition: [
                 { label: "ammunitiongroup", attr: "ammunitiongroup.value", type: "select", options: DSA5.ammunitiongroups }
@@ -45,7 +69,7 @@ Hooks.once("ready", () => {
                 { label: "mageLevel", attr: "mageLevel.value", type: "select", options: DSA5.mageLevels }
             ],
             specialability: [
-                { label: "Category", attr: "category.value", type: "select", options: DSA5.specialAbilityCategories },
+                { type: "prerendered", attr: "category.value", content: specialabilies },
                 { label: "TYPES.Item.combatskill", attr: "list.value", type: "select", options: allCombat, notStrict: true },
                 { label: "distribution", attr: "distribution", type: "text" }
             ],
