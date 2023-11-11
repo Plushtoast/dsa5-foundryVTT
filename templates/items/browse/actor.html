@@ -1,0 +1,247 @@
+<div class="row-section">
+    <div class="col">
+        <div class="row-section">
+            <div class="col garadanb">
+                <h2>{{document.name}}</h2>
+                {{#if document.system.details.career.value}}<small>{{document.system.details.career.value}}</small>{{/if}}
+                {{#if actor.system.creatureClass.value}}<small>{{actor.system.creatureClass.value}}</small>{{/if}}
+            </div>            
+        </div>
+        <div class="row-section">
+            <div class="col">
+                <div style="float:right;max-width:40%; margin-left: 20px;margin-bottom:20px">
+                    <div class="row-section wrap">
+                        <div class="col center">
+                            <img src="{{document.img}}" style="width:100%;border:none;" >
+                        </div>
+                        <div class="col compendium">
+                            {{item.pack}}
+                        </div>  
+                    </div>
+                </div>
+                
+                {{{enrichedDescription}}}
+                {{{enrichedBiography}}}
+                {{#if (and isGM enrichedGmdescription)}}
+                <div class="maskfield">
+                    {{{enrichedGmdescription}}}
+                </div>
+                {{/if}}
+            </div>
+        </div>
+        <div class="row-section">
+            <div class="col chatpaperfield">
+                    <div class="row-section wrap">
+                        <div class="col table-title row-section">
+                            <div class="col eight">
+                                {{#if document.uuid}}<a style="margin-left:10px" class="show-item" data-uuid="{{document.uuid}}"><i class="fas fa-info"></i></a>{{/if}}
+                            </div>
+                            <div class="col eight">
+                            </div>
+                            <div class="col eight">
+                            </div>
+                            <div class="col eight">
+                            </div>
+                            <div class="col eight">
+                            </div>
+                            <div class="col eight">
+                            </div>
+                            <div class="col eight">
+                            </div>
+                            <div class="col eight">
+                            </div>
+                        </div>
+                    
+                        <div class="col row-section">
+                            <div class="col seventy row-section wrap">
+                                <div class="col row-section wrap">
+                                    {{#each actor.system.characteristics as |ch c|}}
+                                        <div class="col eight" data-tooltip="{{attrName c}}">
+                                            <b>{{attrAbbr c}}</b>
+                                        </div>
+                                        <div class="col eight" data-tooltip="{{attrName c}}">
+                                            {{ch.value}}
+                                        </div>
+                                        {{#if (eq c "ch")}}
+                                </div>
+                                <div class="col row-section wrap">
+                                    {{/if}}
+                                    {{/each}}
+                                </div>
+                                <div class="col row-section">
+                                    <div class="col eight">
+                                        <b>{{localize 'CHARAbbrev.LeP'}}</b>
+                                    </div>
+                                    <div class="col eight">
+                                        {{actor.system.status.wounds.max}} 
+                                    </div>
+                                    <div class="col eight">
+                                        <b>{{localize 'CHARAbbrev.AsP'}}</b>
+                                    </div>
+                                    <div class="col eight">
+                                         {{actor.system.status.astralenergy.max}} 
+                                    </div>
+                                    <div class="col eight">
+                                        <b>{{localize 'CHARAbbrev.KaP'}}</b>
+                                    </div>
+                                    <div class="col eight">
+                                        {{actor.system.status.karmaenergy.max}}
+                                    </div>
+                                    <div class="col eight">
+                                        <b>{{localize 'CHARAbbrev.INI'}}</b> 
+                                    </div>
+                                    <div class="col eight">
+                                        {{floor actor.system.status.initiative.value}}+{{actor.system.status.initiative.die}}
+                                    </div>
+                                </div>                    
+                                <div class="col row-section">
+                                    <div class="col eight">
+                                        <b>{{#if actor.system.config.defense}}
+                                            {{localize 'CHARAbbrev.VW'}}{{else}}{{localize 'CHARAbbrev.AW'}}{{/if}}</b> 
+                                    </div>
+                                    <div class="col eight">
+                                            {{actor.system.status.dodge.max}} 
+                                    </div>
+                                    <div class="col eight">
+                                        <b>{{localize 'CHARAbbrev.SK'}}</b>
+                                    </div>
+                                    <div class="col eight">
+                                        {{actor.system.status.soulpower.max}} 
+                                    </div>
+                                    <div class="col eight">
+                                        <b>{{localize 'CHARAbbrev.ZK'}}</b>
+                                    </div>
+                                    <div class="col eight">
+                                        {{actor.system.status.toughness.max}}
+                                    </div>
+                                    <div class="col eight">
+                                    </div>   
+                                    <div class="col eight">
+                                    </div>                    
+                                </div>
+                            </div>
+                            <div class="col third row-section">
+                                <div class="col center position-relative">
+                                    <img src="{{document.prototypeToken.texture.src}}" style="position:absolute;top:-50px;right:-25px;width:120px;border:none;" >
+                                </div>
+                            </div>
+                        </div>
+                        {{#if actor.system.status.fatePoints.max}}
+                        <div class="col">
+                            <b>{{localize 'fatePoints'}}</b>: {{actor.system.status.fatePoints.max}}
+                        </div>
+                        {{/if}}
+                        {{#if actor.system.details.socialstate.value}}
+                        <div class="col">
+                            <b>{{localize 'Socialstate'}}</b>: {{actor.system.details.socialstate.value}}
+                        </div>
+                        {{/if}}
+                        <div class="col">
+                            <b>{{localize 'CHARAbbrev.RS'}}</b>: {{prepare.armorSum}}
+                        </div>
+                        {{#if actor.system.actionCount.value}}
+                        <div class="col">
+                            <b>{{localize 'actionCount'}}</b>: {{actor.system.actionCount.value}}
+                        </div>
+                        {{/if}}
+                        <div class="col">
+                            <b>{{localize 'TYPES.Item.advantage'}}/{{localize 'TYPES.Item.disadvantage'}}</b>: 
+                            {{#if prepare.advantages}}
+                            {{{clickableActorItems actor prepare.advantages "step.value" "max.value"}}}
+                            {{else}}
+                            -
+                            {{/if}}
+                            /
+                            {{#if prepare.disadvantages}}
+                            {{{clickableActorItems actor prepare.disadvantages "step.value" "max.value"}}}
+                            {{else}}
+                            -
+                            {{/if}}
+                        </div>
+                        <div class="col">
+                            <b>{{localize 'TYPES.Item.specialability'}}</b>: 
+                            {{{clickableSection actor prepare.specAbs "step.value" "maxRank.value"}}}
+                        </div>                        
+                        {{#each prepare.wornMeleeWeapons as |item|}}
+                        <div class="col">
+                            <b><span class="actorEmbeddedAbility" data-actor="{{../document.uuid}}" data-id="{{item._id}}"><a>{{item.name}}</a></span></b>: <b>{{localize 'CHARAbbrev.AT'}}</b> {{item.attack}} <b>{{localize 'CHARAbbrev.PA'}}</b> {{item.parry}} <b>{{localize 'CHARAbbrev.damage'}}</b> {{item.damagedie}}{{item.damageAdd}} <b>{{localize 'CHARAbbrev.RW'}}</b> {{localize (concat "Range-" item.system.reach.value)}}
+                        </div>
+                        {{/each}}
+                        {{#each prepare.traits.meleeAttack as |item|}}
+                        <div class="col">
+                            <b><span class="actorEmbeddedAbility" data-actor="{{../document.uuid}}" data-id="{{item._id}}"><a>{{item.name}}</a></span></b>: <b>{{localize 'CHARAbbrev.AT'}}</b> {{item.attack}}{{#if item.parry}} <b>{{localize 'CHARAbbrev.PA'}}</b> {{item.parry}}{{/if}} <b>{{localize 'CHARAbbrev.damage'}}</b> {{item.damagedie}}{{item.damageAdd}} <b>{{localize 'CHARAbbrev.RW'}}</b> {{localize (concat "Range-" item.system.reach.value)}}
+                        </div>
+                        {{/each}}
+                        {{#each prepare.wornRangedWeapons as |item|}}
+                        <div class="col">
+                            <b><span class="actorEmbeddedAbility" data-actor="{{../document.uuid}}" data-id="{{item._id}}"><a>{{item.name}}</a></span></b>: <b>{{localize 'CHARAbbrev.AT'}}</b> {{item.attack}} <b>{{localize 'CHARAbbrev.LZ'}}</b> {{item.LZ}} <b>{{localize 'CHARAbbrev.damage'}}</b> {{item.damagedie}}{{item.damageAdd}} <b>{{localize 'CHARAbbrev.RW'}}</b> {{item.system.reach.value}}
+                        </div>
+                        {{/each}}
+                        {{#each prepare.traits.rangeAttack as |item|}}
+                        <div class="col">
+                            <b><span class="actorEmbeddedAbility" data-actor="{{../document.uuid}}" data-id="{{item._id}}"><a>{{item.name}}</a></span></b>: <b>{{localize 'CHARAbbrev.AT'}}</b> {{item.attack}} <b>{{localize 'CHARAbbrev.LZ'}}</b> {{item.LZ}} <b>{{localize 'CHARAbbrev.damage'}}</b> {{item.damagedie}}{{item.damageAdd}} <b>{{localize 'CHARAbbrev.RW'}}</b> {{item.system.reach.value}}
+                        </div>
+                        {{/each}}                     
+                        <div class="col">
+                            <b>{{localize 'TYPES.Item.skill'}}</b>: 
+                            {{{clickableSection actor prepare.allSkillsLeft "talentValue.value" ""}}}  
+                            {{{clickableSection actor prepare.allSkillsRight "talentValue.value" ""}}}                              
+                        </div>
+                        {{#if prepare.magic.spell}}
+                        <div class="col">
+                            <b>{{localize 'TYPES.Item.spell'}}</b>: 
+                            {{{clickableActorItems actor prepare.magic.spell "talentValue.value" ""}}} 
+                        </div>
+                        {{/if}}
+                        {{#if prepare.magic.ritual}}
+                        <div class="col">
+                            <b>{{localize 'TYPES.Item.ritual'}}</b>: 
+                            {{{clickableActorItems actor prepare.magic.ritual "talentValue.value" ""}}} 
+                        </div>
+                        {{/if}}
+                        {{#if prepare.magic.liturgy}}
+                        <div class="col">
+                            <b>{{localize 'TYPES.Item.liturgy'}}</b>: 
+                            {{{clickableActorItems actor prepare.magic.liturgy "talentValue.value" ""}}} 
+                        </div>
+                        {{/if}}
+                        {{#if prepare.magic.ceremony}}
+                        <div class="col">
+                            <b>{{localize 'TYPES.Item.ceremony'}}</b>: 
+                            {{{clickableActorItems actor prepare.magic.ceremony "talentValue.value" ""}}} 
+                        </div>
+                        {{/if}}
+                        <div class="col">
+                            <b>{{localize 'sizeCategory'}}</b>: {{localize (concat "SIZE." actor.system.status.size.value)}}
+                        </div>
+                        <div class="col">
+                            <b>{{localize 'creatureClass'}}</b>: {{actor.system.creatureClass.value}}
+                        </div>
+                        {{#if prepare.information}}
+                        <div class="col">
+                            <b>{{localize 'TYPES.Item.information'}}</b>: {{{clickableActorItems actor prepare.information "" ""}}} 
+                        </div>
+                        {{/if}}
+                        {{#if enrichedBehaviour}}
+                        <div class="col">
+                            <b>{{localize 'behaviour'}}</b>: {{{enrichedBehaviour}}}
+                        </div>
+                        {{/if}}
+                        {{#if enrichedFlight}}
+                        <div class="col">
+                            <b>{{localize 'flight'}}</b>: {{{enrichedFlight}}}
+                        </div>
+                        {{/if}}
+                        {{#if enrichedSpecialrules}}
+                        <div class="col">
+                            <b>{{localize 'specialRules'}}</b>: {{{enrichedSpecialrules}}}
+                        </div>
+                        {{/if}}
+                    </div>
+
+            </div>
+        </div>
+       
+        
+    </div>
+</div>

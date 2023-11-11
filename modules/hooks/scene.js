@@ -10,10 +10,9 @@ export default function() {
     Hooks.on('preCreateActiveEffect', function(doc, createData, options, userId) {
         if (doc.parent.documentName != "Actor") return
 
-        let update = { duration: {} }
-        if (!doc.duration.startTime) {
-            update.duration.startTime = game.time.worldTime
-        }
+        let update = { duration: {
+            startTime: game.time.worldTime
+        }}
 
         if (!game.combat) {
             doc.updateSource(update)

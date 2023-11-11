@@ -162,6 +162,7 @@ export class Trade extends Application {
             type: "receiveOfferedItems",
             payload: {
                 id: this.tradeData.id,
+                trader: this.tradeData.sourceId,
                 offered: this.tradeData.offer
             }
         })
@@ -170,8 +171,13 @@ export class Trade extends Application {
     static receiveOfferedItems(data) {
         const app = this.findTradeApp(data.payload.id)
         if(app) {
-            app.tradeData.offered = data.payload.offered
-            app.tradeData.offeredAccepted = false
+            if(data.payload.trader == app.tradeData.sourceId) {
+                app.tradeData.offer = data.payload.offered
+                app.tradeData.offerAccepted = false
+            } else {
+                app.tradeData.offered = data.payload.offered
+                app.tradeData.offeredAccepted = false
+            }
             app.render()
         }
     }

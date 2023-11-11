@@ -177,6 +177,9 @@ If you want to discuss TDE for foundry or need some assistance you can also join
     <a href="https://www.f-shop.de/detail/index/sArticle/3749" target="_blank" title="Die Dampfenden Dschungel">
         <img src="https://www.f-shop.de/media/image/f6/30/0b/ESD040_0_0999.jpg" alt="Die Dampfenden Dschungel" style="margin-right: 5px; margin-bottom: 5px; text-align:center; width:210px;">
     </a>
+    <a href="https://www.f-shop.de/virtual-tabletops/das-schwarze-auge-vtt/abenteuer-module/3877/dsa5-havena-versunkene-geheimnisse-bundle-fuer-foundry-vtt" target="_blank" title="Havena, versunkene Geheimnisse">
+        <img src="https://www.f-shop.de/media/image/74/4a/96/ESD017_0_0999.jpg" alt="Havena, versunkene Geheimnisse" style="margin-right: 5px; margin-bottom: 5px; text-align:center; width:210px;">
+    </a>
 </div>
 <br>
 <h2>English Modules</h2>

@@ -1,0 +1,38 @@
+<div>
+    
+    <div class="row-section" style="max-width:60%;float:right">
+        <div class="col">
+            <div class="row-section">
+                <div class="col center">
+                    <img src="{{document.img}}" style="min-height: 150px;max-width:100%;border:none;" />
+                </div>
+            </div>
+
+            <div class="row-section">
+                <div class="col center">
+                    <div class="garadanborder">
+                        <div class="row-section">
+                            <div class="col five">
+                                <div class="garadanicon" style="background-image:url(systems/dsa5/icons/Garadan{{document.system.merchant.garadan}}.webp)"></div>
+                            </div>
+                            <div class="col eighty">
+                                <h1>{{document.name}}</h1>
+                                <h2 style="margin-top:0">{{document.system.details.career.value}}</h2>
+                            </div>
+                            <div class="col five">
+                                <a style="margin-left:20px" class="show-item" data-uuid="{{document.uuid}}"><i class="fas fa-info"></i></a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    {{{enrichedDescription}}}
+    {{{enrichedBiography}}}
+    {{#if (and isGM enrichedGmdescription)}}
+    <div class="maskfield">
+        {{{enrichedGmdescription}}}
+    </div>
+    {{/if}}
+</div>

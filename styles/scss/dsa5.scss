@@ -3537,6 +3537,28 @@
     color: lightgrey;
   }
 
+  .garadanb {
+    background-image: url('../../icons/backgrounds/garadanb.webp');
+    background-size: 100% 100%;
+    background-repeat: no-repeat;
+    border:none;
+    padding: 10px 20px 36px 20px;
+    text-align:center;
+    font-weight: bold;
+    letter-spacing: 1px;
+    * {
+      border:none;
+      margin:0;
+      padding:0;
+    }
+    small{
+      font-size: smaller;
+      line-height: auto;
+      font-weight:normal;
+      letter-spacing: 0px;
+    }
+  }
+
   .garadanborder {
     max-width: 80%;
     height: 140px;

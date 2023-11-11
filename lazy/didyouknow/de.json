@@ -121,7 +121,20 @@
 
         "Über die Meister Hotbar, kannst du ein Menü zum Verwalten von Proviant und widrigen Umständen finden.",
         "Die Sichtautomatisierung kann auch mit einberechnen ob ein Token im Licht oder nicht steht.",
-        "NSCs mit mehreren ausgerüsteten Waffen erhalten beim Ziehen auf die Map zufällig nur eine davon ausgerüstet."
+        "NSCs mit mehreren ausgerüsteten Waffen erhalten beim Ziehen auf die Map zufällig nur eine davon ausgerüstet.",
 
+        "Spieler können sich bei NSC mit \"Limited\" Benutzerrechten Notizen eintragen.",
+        "Sonderfertigkeiten von Traditionsartefakten übertragen Boni, wenn sie einem Traditionsartefakt zugewiesen wurden und dieses auch in der Hand getragen wird.",
+        "Mit @Ap[15] kannst du in Journals einen Prompt zum Abenteuerpunkte auszahlen anlegen.",
+        "Mit @Pay[15] kannst du in Journals einen Prompt zum Bezahlen anlegen.",
+        "Mit @GetPaid[15] kannst du in Journals einen Prompt zum Bezahlt werden anlegen.",
+        "Mit @EmbedItem[uuid des Items] kannst du Items direkt in Journals einbetten und einen entsprechenden Statblock anzeigen.",
+        "Im Meistermenü kannst du globale Modifikatoren festlegen die bei allen Proben gelten.",
+        "Im Meistermenü kannst du Akteure nach Spielern und z.B. Dramatis Personae sortieren und diese schnell griffbereit haben.",
+        "In den Settings kannst du das Layout bzw. den Skin anpassen.",
+        "Du kannst Sammelproben Items verwenden um Gruppensammelproben für den Chat vorzubereiten.",
+        "Der SL kann am Combat tracker den Modus zu einer Prügelei umschalten.",
+        "Über das Context Menü von Gegenständen im Inventar kannst du einen Tausch mit anderen Spielern auslösen.",
+        "Ausrüstungsgegenstände können nun bei Drag & Drop aus der Bibliothek direkt bezahlt werden, wenn beim Start des Drags gezielt die Münzen aufgenommen werden."
     ]
 }

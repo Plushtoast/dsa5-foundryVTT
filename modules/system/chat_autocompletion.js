@@ -409,6 +409,16 @@ export default class DSA5ChatAutoCompletion {
 
             master.getExp(master.selectedIDs(), ev.currentTarget.dataset.modifier)
         })
+        html.on('click', '.show-item', async ev => { 
+            const uuid = ev.currentTarget.dataset.uuid
+            const item = await fromUuid(uuid)
+            if (item) item.sheet.render(true)
+        })
+        html.on('click', '.actorEmbeddedAbility', async ev => {
+            const actor = await fromUuid(ev.currentTarget.dataset.actor)
+            const item = actor.items.get(ev.currentTarget.dataset.id)
+            if (item) item.sheet.render(true)   
+        })
     }
 
 }

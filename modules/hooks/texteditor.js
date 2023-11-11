@@ -87,7 +87,6 @@ export function setEnrichers() {
 
                 const template = `systems/dsa5/templates/items/browse/${document.type}.html`
                 const item = await renderTemplate(template, { document, isGM: game.user.isGM, ...(await document.sheet.getData())})
-                
                 return $(item)[0]
             }
         },

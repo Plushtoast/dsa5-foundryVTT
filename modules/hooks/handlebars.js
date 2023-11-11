@@ -20,16 +20,52 @@ function clickableAbilities(a, b){
     }).join(", ") + "<span>"
 }
 
+function clickableActorItems(actor, list, rankPath, maxPath) {
+    if(maxPath) {
+        return list.map(item => {
+            return `<span class="actorEmbeddedAbility" data-actor="${actor.uuid}" data-id="${item._id}"><a>${item.name}${roman(getProperty(item.system, rankPath), getProperty(item.system, maxPath))}</a></span>`
+        }).join(", ")
+    } else if(rankPath) {
+        const res = []
+        for(let item of list){
+            const level = getProperty(item.system, rankPath)
+            if(level) {
+                res.push(`<span class="actorEmbeddedAbility" data-actor="${actor.uuid}" data-id="${item._id}"><a>${item.name} ${level}</a></span>`)
+                continue
+            }
+        }        
+        return res.join(", ")
+    }   else {
+        return list.map(item => {
+            return `<span class="actorEmbeddedAbility" data-actor="${actor.uuid}" data-id="${item._id}"><a>${item.name}</a></span>`
+        }).join(", ")    
+    }
+}
+
+function clickableSection(actor, section, rankPath, maxPath) {
+    const res = []
+    for(const list of Object.values(section)){
+        if(list.length == 0) continue
+
+        const items = clickableActorItems(actor, list, rankPath, maxPath)
+        if(items) res.push(items)
+    }
+    return res.join(", ")
+}
+
+function roman(a, max) {
+    if (max != undefined && Number(max) < 2) return ''
+
+    const roman = [' I', ' II', ' III', ' IV', ' V', ' VI', ' VII', ' VIII', ' IX', ' X']
+    return roman[a - 1]
+}
+
+
 export default function() {
     Handlebars.registerHelper({
         concatUp: (a, b) => a + b.toUpperCase(),
         mod: (a, b) => a % b,
-        roman: (a, max) => {
-            if (max != undefined && Number(max) < 2) return ''
-
-            const roman = [' I', ' II', ' III', ' IV', ' V', ' VI', ' VII', ' VIII', ' IX', ' X']
-            return roman[a - 1]
-        },
+        roman: (a, max) => roman(a, max),
         isWEBM: (a) => /.webm$/.test(a),
         itemCategory: (a) => {
             return DSA5_Utility.categoryLocalization(a)
@@ -39,6 +75,8 @@ export default function() {
         attrAbbr: (a) => DSA5_Utility.attributeAbbrLocalization(a),
         diceThingsUp: (a, b) => DSA5_Utility.replaceDies(a, false),
         clickableAbilities: (a, b) => clickableAbilities(a, b),
+        clickableActorItems: (a, b, c, d) => clickableActorItems(a, b, c, d),
+        clickableSection: (a, b, c, d) => clickableSection(a, b, c, d),
         hasLocalization: (a, b) => { 
             const val = a.string || a
             return  game.i18n.has(val) ? game.i18n.localize(val) : ( b || "") 
