@@ -5,6 +5,8 @@ import RuleChaos from "./rule_chaos.js";
 import DSA5_Utility from "./utility-dsa5.js";
 import { tinyNotification } from "./view_helper.js";
 import DSA5Payment from "./payment.js"
+import { Trade } from "../actor/trade.js";
+import Itemdsa5 from "../item/item-dsa5.js";
 
 export default class TokenHotbar2 extends Application {
     static registerTokenHotbar() {
@@ -310,6 +312,15 @@ export default class TokenHotbar2 extends Application {
         }
     }
 
+    async handleTradeStart(ev, actor, id, tokenId) {
+        for(const target of game.user.targets) {
+            if(target.actor) {
+                const app = new Trade(Itemdsa5.buildSpeaker(actor, tokenId), Itemdsa5.buildSpeaker(target.actor, target.id))
+                app.startTrade()
+            }            
+        }        
+    }
+
     async handleOnUse(ev, actor, id, tokenId){
         let item = actor.items.get(id)
         const onUse = new OnUseEffect(item)
@@ -367,6 +378,9 @@ export default class TokenHotbar2 extends Application {
         const subFunction = ev.currentTarget.dataset.subfunction
         
         switch (subFunction) {
+            case "trade":
+                this.handleTradeStart(ev, actor, id, tokenId)
+                break
             case "addEffect":
                 AddEffectDialog.showDialog()
                 break
@@ -405,12 +419,13 @@ export default class TokenHotbar2 extends Application {
             spells: [],
             default: [],
             skills: [],
+            functions: [],
             gm: []
         }
         let consumable
         let onUse
         const consumables = []
-        const onUsages = []
+        const onUsages = []        
         let effects = []
         const direction = game.settings.get("dsa5", "tokenhotbarLayout")
         const vertical = direction % 2
@@ -506,6 +521,11 @@ export default class TokenHotbar2 extends Application {
             }
 
             onUse = onUsages.pop()
+
+            const trade = game.i18n.localize('MERCHANT.exchange')
+            items.functions.push(
+                { name: trade, id: "trade", icon: "icons/svg/coins.svg", cssClass: "effect", abbrev: trade[0], subfunction: "trade" }
+            )
 
             if (items.spells.length == 0 && moreSpells.length > 0) {
                 items.spells.push(moreSpells.pop())

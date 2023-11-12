@@ -1,3 +1,4 @@
+import Itemdsa5 from "../item/item-dsa5.js";
 import DSA5SoundEffect from "../system/dsa-soundeffect.js";
 import DSA5_Utility from "../system/utility-dsa5.js";
 
@@ -51,7 +52,7 @@ export class Trade extends Application {
 
     async getData() {
         const data = await super.getData();
-        const tradeFriend = game.actors.get(this.tradeData.sourceId)
+        const tradeFriend = DSA5_Utility.getSpeaker(this.tradeData.sourceId)
         let inventory = tradeFriend.prepareItems({ details: [] })
 
         inventory.inventory["money"] = {
@@ -74,7 +75,7 @@ export class Trade extends Application {
         mergeObject(data,
             {
                tradeData: this.tradeData,
-               actor: game.actors.get(this.tradeData.targetId),
+               actor: DSA5_Utility.getSpeaker(this.tradeData.targetId),
                tradeFriend,
                inventory
             }
@@ -116,7 +117,7 @@ export class Trade extends Application {
     }
 
     _editItem(ev, id) {
-        const actor = game.actors.get(id)
+        const actor = DSA5_Utility.getSpeaker(id)
         const item = actor.items.get(ev.currentTarget.dataset.itemId)
         item.sheet.render(true)
     }
@@ -125,7 +126,7 @@ export class Trade extends Application {
         if(this.tradeData.offerAccepted) return
 
         const id = ev.currentTarget.dataset.itemId
-        const actor = game.actors.get(this.tradeData.sourceId)
+        const actor = DSA5_Utility.getSpeaker(this.tradeData.sourceId)
         const item =  actor.items.get(id)
 
         let amount = ev.ctrlKey ? 10 : 1
@@ -192,7 +193,7 @@ export class Trade extends Application {
     }
 
     static socketStartTrade(data) {
-        const target = game.actors.get(data.payload.targetId)
+        const target = DSA5_Utility.getSpeaker(data.payload.targetId)
         if(this.isGMTrade(target) || this.isPlayerTrade(target)) {
             const app = new Trade(data.payload.targetId, data.payload.sourceId, {id: data.payload.id})
             app.render(true)
@@ -244,8 +245,8 @@ export class Trade extends Application {
     }
 
     static async updateData(tradeData) {
-        const source = game.actors.get(tradeData.sourceId)
-        const target = game.actors.get(tradeData.targetId)
+        const source = DSA5_Utility.getSpeaker(tradeData.sourceId)
+        const target = DSA5_Utility.getSpeaker(tradeData.targetId)
 
         await this.modifyActor(source, tradeData.offer, tradeData.offered)
         await this.modifyActor(target, tradeData.offered, tradeData.offer)
@@ -313,14 +314,14 @@ export class Trade extends Application {
 }
 
 export class TradeOptions extends Application {
-    constructor(id, options) {
+    constructor(actor, options) {
         super(options);
-        this.actorId = id
+        this.actorId = Itemdsa5.buildSpeaker(actor, tokenId)
     }
 
     async getData(options) {
         const data = await super.getData(options);
-        data.actors = game.actors.filter(x => x.hasPlayerOwner && x.id != this.actorId)
+        data.actors = game.actors.filter(x => x.hasPlayerOwner && x.id != this.actorId.actor)
         return data
     }
 
@@ -333,8 +334,8 @@ export class TradeOptions extends Application {
     }
 
     _startTrade(ev) {
-        const targetId = ev.currentTarget.dataset.id
-        const app = new Trade(this.actorId, targetId)
+        const target = game.actors.get(ev.currentTarget.dataset.id)
+        const app = new Trade(this.actorId, Itemdsa5.buildSpeaker(target, target.token?.id))
         app.startTrade()
         this.close()    
     }
