@@ -1,3 +1,5 @@
+import Actordsa5 from "../actor/actor-dsa5.js";
+
 export default class DSAActiveEffect extends ActiveEffect {
     static itemChangeRegex = /^@/
 
@@ -15,6 +17,30 @@ export default class DSAActiveEffect extends ActiveEffect {
         } else {
             return super.apply(actor, change);
         }
+    }
+
+    static async _onCreateDocuments(documents, context) {
+        for(let doc of documents) {
+            if(doc.parent.documentName == "Actor")
+                await Actordsa5.postUpdateConditions(doc.parent)
+        }
+        return super._onCreateDocuments(documents, context);
+      }
+    
+    static async _onUpdateDocuments(documents, context) {
+        for(let doc of documents) {
+            if(doc.parent.documentName == "Actor")
+                await Actordsa5.postUpdateConditions(doc.parent)
+        }
+        return super._onUpdateDocuments(documents, context);
+    }
+
+    static async _onDeleteDocuments(documents, context) {
+        for(let doc of documents) {
+            if(doc.parent.documentName == "Actor")
+                await Actordsa5.postUpdateConditions(doc.parent)
+        }
+        return super._onDeleteDocuments(documents, context);
     }
 
     isVisibleEffect() {

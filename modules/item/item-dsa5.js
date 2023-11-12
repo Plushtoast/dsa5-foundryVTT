@@ -233,6 +233,30 @@ export default class Itemdsa5 extends Item {
         })
     }
 
+    static async _onCreateDocuments(documents, context) {
+        for(let doc of documents) {
+            if(doc.actor)
+                await Actordsa5.postUpdateConditions(doc.actor)
+        }
+        return super._onCreateDocuments(documents, context);
+      }
+    
+    static async _onUpdateDocuments(documents, context) {
+        for(let doc of documents) {
+            if(doc.actor)
+                await Actordsa5.postUpdateConditions(doc.actor)
+        }
+        return super._onUpdateDocuments(documents, context);
+    }
+
+    static async _onDeleteDocuments(documents, context) {
+        for(let doc of documents) {
+            if(doc.actor)
+                await Actordsa5.postUpdateConditions(doc.actor)
+        }
+        return super._onDeleteDocuments(documents, context);
+    }
+
     static parseEffect(effect, actor) {
         let itemModifiers = {}
         let regex = new RegExp(game.i18n.localize("CHARAbbrev.GS"), "gi")
@@ -381,7 +405,7 @@ export default class Itemdsa5 extends Item {
         } else
             searchFilter = () => true
 
-        const brawlingFilter = game.combat.isBrawling ? () => true : (x) => Number(x.system.category.sub) != 5
+        const brawlingFilter = game.combat?.isBrawling ? () => true : (x) => Number(x.system.category.sub) != 5
 
         const combatSpecAbs = actor.items.filter((x) => {
             return (

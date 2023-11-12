@@ -79,7 +79,7 @@ export default class Actordsa5 extends Actor {
       
       data.totalWeight = 0;
       
-      const armor = []
+      data.wornArmor = []
 
       const familiarString = game.i18n.localize('LocalizedIDs.familiar')
       const petString = game.i18n.localize('LocalizedIDs.companion')
@@ -106,7 +106,7 @@ export default class Actordsa5 extends Actor {
                 i.system.weight.value * (i.system.worn.value ? Math.max(0, i.system.quantity.value - 1) : i.system.quantity.value)
               ).toFixed(3)
             );
-            if(i.system.worn.value) armor.push(i)
+            if(i.system.worn.value) data.wornArmor.push(i)
           } else {
             i.system.preparedWeight = parseFloat((i.system.weight.value * i.system.quantity.value).toFixed(3));
             data.totalWeight += Number(i.system.preparedWeight);
@@ -234,44 +234,12 @@ export default class Actordsa5 extends Actor {
         Number(data.status.dodge.modifier) +
         Number(game.settings.get("dsa5", "higherDefense")) / 2;
 
-      let newEncumbrance = this.getArmorEncumbrance(this, armor);
-
-      this.prepareSwarm(data)
-
-      if (DSA5_Utility.isActiveGM()) {
-        const pain = this.woundPain(data)
-        const currentPain = this.effects.find(x => x.statuses.has("inpain"))?.flags.dsa5.auto || 0
+      //Actordsa5.postUpdateConditions(this)
       
-        const changePain = !this.changingPain && (currentPain != pain)
-        this.changingPain = currentPain != pain;
-
-        if (changePain && !TraitRulesDSA5.hasTrait(this, game.i18n.localize("LocalizedIDs.painImmunity"))){
-          this.addCondition("inpain", pain, true).then(() => this.changingPain = undefined);
-        }
-                
-        if ((this.type != "creature" || this.canAdvance) && !this.isMerchant()) {
-          newEncumbrance += Math.max(0, Math.ceil((data.totalWeight - data.carrycapacity - 4) / 4));
-        }
-
-        const currentEncumbrance =  this.effects.find(x => x.statuses.has("encumbered"))?.flags.dsa5.auto || 0
-
-        const changeEncumbrance = !this.changingEncumbrance && (currentEncumbrance != newEncumbrance)
-        this.changingEncumbrance = currentEncumbrance != newEncumbrance;
-
-        if(changeEncumbrance) this.addCondition("encumbered", newEncumbrance, true).then(this.changingEncumbrance = undefined);
-
-        if (AdvantageRulesDSA5.hasVantage(this, game.i18n.localize("LocalizedIDs.blind"))) this.addCondition("blind");
-        if (AdvantageRulesDSA5.hasVantage(this, game.i18n.localize("LocalizedIDs.mute"))) this.addCondition("mute");
-        if (AdvantageRulesDSA5.hasVantage(this, game.i18n.localize("LocalizedIDs.deaf"))) this.addCondition("deaf");
-
-        if (this.isMerchant()) this.prepareMerchant()
-
-        //console.log(this.name, "updated")
-      }   
-
+      this.prepareSwarm(data)
       this.effectivePain(data)
       
-      const fixated = this.hasCondition("fixated")
+      const fixated = this.statuses.has("fixated")
       this.calcSpeed(data, fixated, horse)
       
       if (fixated) {
@@ -284,6 +252,58 @@ export default class Actordsa5 extends Actor {
     //let endTime = performance.now()
 
     //console.log(`Call to prepareData took ${endTime - startTime} milliseconds`)
+  }
+
+  static async deferredEffectAddition(effect, actor, target) {
+    const current = actor.effects.find(x => x.statuses.has(effect))?.flags.dsa5.auto || 0 
+    const isChange = current != target
+    const attr = `changing${effect}`
+    actor[attr] = isChange;
+
+    if(isChange) 
+      await actor.addCondition(effect, target, true).then(() => actor[attr] = undefined);
+  }
+
+  static async postUpdateConditions(actor) {
+    if (DSA5_Utility.isActiveGM()) {
+      const data = actor.system
+      const isMerchant = actor.isMerchant()
+      
+      if (!TraitRulesDSA5.hasTrait(actor, game.i18n.localize("LocalizedIDs.painImmunity"))){
+        const pain = actor.woundPain(data)
+        await this.deferredEffectAddition("inpain", actor, pain)
+      }
+             
+      let newEncumbrance = actor.getArmorEncumbrance(actor, data.wornArmor);
+      if ((actor.type != "creature" || actor.canAdvance) && !isMerchant) {
+        newEncumbrance += Math.max(0, Math.ceil((data.totalWeight - data.carrycapacity - 4) / 4));
+      }
+
+      await this.deferredEffectAddition("encumbered", actor, newEncumbrance)
+
+      const brawlingPoints = actor.woundPain(data, "temporaryLeP")
+      await this.deferredEffectAddition("stunned", actor, brawlingPoints)
+
+      if (AdvantageRulesDSA5.hasVantage(actor, game.i18n.localize("LocalizedIDs.blind"))) await actor.addCondition("blind");
+      if (AdvantageRulesDSA5.hasVantage(actor, game.i18n.localize("LocalizedIDs.mute"))) await actor.addCondition("mute");
+      if (AdvantageRulesDSA5.hasVantage(actor, game.i18n.localize("LocalizedIDs.deaf"))) await actor.addCondition("deaf");
+
+      if (isMerchant) await actor.prepareMerchant()
+    }     
+  }
+
+  static async _onCreateDocuments(documents, context) {
+    for(let doc of documents) {
+        await Actordsa5.postUpdateConditions(doc)
+    }
+    return super._onCreateDocuments(documents, context);
+  }
+
+  static async _onUpdateDocuments(documents, context) {
+    for(let doc of documents) {
+        await Actordsa5.postUpdateConditions(doc)
+    }
+    return super._onUpdateDocuments(documents, context);
   }
 
   prepareSwarm(data){
@@ -319,15 +339,15 @@ export default class Actordsa5 extends Actor {
     data.condition.inpain = pain
   }
 
-  woundPain(data){
+  woundPain(data, attr = "wounds"){
     let pain = 0;
-    if (data.status.wounds.max > 0) {
-      const hasDefaultPain = this.type != "creature" || data.status.wounds.max >= 20;
+    if (data.status[attr].max > 0) {
+      const hasDefaultPain = this.type != "creature" || data.status[attr].max >= 20;
       if (hasDefaultPain) {
-        pain = Math.floor((1 - data.status.wounds.value / data.status.wounds.max) * 4);
-        if (data.status.wounds.value <= 5) pain = 4;
+        pain = Math.floor((1 - data.status[attr].value / data.status[attr].max) * 4);
+        if (data.status[attr].value <= 5) pain = 4;
       } else {
-        pain = Math.floor(5 - (5 * data.status.wounds.value) / data.status.wounds.max);
+        pain = Math.floor(5 - (5 * data.status[attr].value) / data.status[attr].max);
       }
     } 
     return Math.clamped(pain, 0, 4)
@@ -1472,19 +1492,22 @@ export default class Actordsa5 extends Actor {
     const statusText = {
       wounds: 0x8b0000,
       astralenergy: 0x0b0bd9,
-      karmaenergy: 0x04a236,
-      temporaryLeP: 0xfc2a8f
+      karmaenergy: 0x04a236
     };
-    const scolls = [];
+
+    if(game.combat?.isBrawling)
+      statusText.temporaryLeP = 0xfc2a8f
+
+    const scrolls = [];
     for (let key of Object.keys(statusText)) {
       const value = getProperty(data, `system.status.${key}.value`);
       if (value)
-        scolls.push({
+        scrolls.push({
           value: value - this.system.status[key].value,
           stroke: statusText[key],
         });
     }
-    if (scolls.length) this.tokenScrollingText(scolls);
+    if (scrolls.length) this.tokenScrollingText(scrolls);
 
     const swarmCount = getProperty(data, "system.swarm.count");
     if (swarmCount && !options.skipSwarmUpdate) {
