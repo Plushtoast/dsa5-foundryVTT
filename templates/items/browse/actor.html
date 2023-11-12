@@ -23,7 +23,7 @@
                 {{{enrichedDescription}}}
                 {{{enrichedBiography}}}
                 {{#if (and isGM enrichedGmdescription)}}
-                    {{#if enrichedDescription}}
+                    {{#if (or enrichedDescription enrichedBiography)}}
                     <div class="maskfield">
                         {{{enrichedGmdescription}}}
                     </div>

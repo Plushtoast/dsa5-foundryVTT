@@ -115,7 +115,13 @@ export class DSA5Combat extends Combat {
                 if(!x.actor) return {}
 
                 const change = await x.brawlingChange()
-                actorUpdates.push(change.actorChange)
+
+                if(x.actor.isToken) {
+                    await x.actor.update(change.actorChange)
+                } else {
+                    actorUpdates.push(change.actorChange)
+                }
+
                 tokenUpdates.push(...change.tokenChange)
                 DSA5Combat.brawlStart()
             }
@@ -124,14 +130,19 @@ export class DSA5Combat extends Combat {
                 if(!x.actor) return {}
 
                 const change = await x.undoBrawlingChange()
-                actorUpdates.push(change.actorChange)
+                if(x.actor.isToken) {
+                    await x.actor.update(change.actorChange)
+                } else {
+                    actorUpdates.push(change.actorChange)
+                } 
+
                 tokenUpdates.push(...change.tokenChange)
                 if(change.damage.brawlDamage > 0){
                     chatMessages.push({name: x.token.name, id: x.token.id, data: change.damage})                    
                 }
             }
         }
-        
+
         await Actordsa5.updateDocuments(actorUpdates)
         await game.canvas.scene.updateEmbeddedDocuments("Token", tokenUpdates)
         await this.setFlag("dsa5", "isBrawling", goBrawling)
