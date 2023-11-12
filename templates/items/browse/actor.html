@@ -9,7 +9,7 @@
         </div>
         <div class="row-section">
             <div class="col">
-                <div style="float:right;max-width:40%; margin-left: 20px;margin-bottom:20px">
+                <div style="float:right;max-width:50%; margin-left: 20px;margin-bottom:20px">
                     <div class="row-section wrap">
                         <div class="col center">
                             <img src="{{document.img}}" style="width:100%;border:none;" >
@@ -23,16 +23,20 @@
                 {{{enrichedDescription}}}
                 {{{enrichedBiography}}}
                 {{#if (and isGM enrichedGmdescription)}}
-                <div class="maskfield">
-                    {{{enrichedGmdescription}}}
-                </div>
+                    {{#if enrichedDescription}}
+                    <div class="maskfield">
+                        {{{enrichedGmdescription}}}
+                    </div>
+                    {{else}}
+                        {{{enrichedGmdescription}}}
+                    {{/if}}                
                 {{/if}}
             </div>
         </div>
         <div class="row-section">
             <div class="col chatpaperfield">
                     <div class="row-section wrap">
-                        <div class="col table-title row-section">
+                        <div class="col table-title row-section noBorder">
                             <div class="col eight">
                                 {{#if document.uuid}}<a style="margin-left:10px" class="show-item" data-uuid="{{document.uuid}}"><i class="fas fa-info"></i></a>{{/if}}
                             </div>
@@ -214,9 +218,11 @@
                         <div class="col">
                             <b>{{localize 'sizeCategory'}}</b>: {{localize (concat "SIZE." actor.system.status.size.value)}}
                         </div>
+                        {{#if actor.system.creatureClass.value}}
                         <div class="col">
                             <b>{{localize 'creatureClass'}}</b>: {{actor.system.creatureClass.value}}
                         </div>
+                        {{/if}}
                         {{#if prepare.information}}
                         <div class="col">
                             <b>{{localize 'TYPES.Item.information'}}</b>: {{{clickableActorItems actor prepare.information "" ""}}} 

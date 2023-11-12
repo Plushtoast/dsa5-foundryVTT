@@ -1867,6 +1867,10 @@
       flex: 1;
     }
   
+    .garadanb h2{
+      margin-top: 0;
+    }
+
     h2 {
       margin-top: 20px;
     }
@@ -2105,8 +2109,8 @@
     }
   }
 
-  
-  
+  .noBorder,
+  .bookWizardsheet .window-content .table-title.noBorder,
   .dialog-buttons img, .result-image {
     border: none;
   }
