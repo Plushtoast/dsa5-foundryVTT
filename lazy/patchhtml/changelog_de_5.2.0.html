@@ -1,0 +1,160 @@
+<h1 id="wichtige-verbesserungen">Wichtige Verbesserungen (15.11.2023)</h1>
+<h2 id="sonderfertigkeiten-von-traditionsartefakten">Sonderfertigkeiten von Traditionsartefakten </h2>
+
+<p>Sonderfertigkeiten von Traditionsartefakten, die einem Traditionsartefakt zugewiesen wurden und einen Effekt (Active
+    Effekt) auf den Charakter übertragen, werden nun nur noch angewendet, wenn das Traditionsartefakt auch angelegt
+    ist.<br>
+    Damit funktionieren Sonderfertigkeiten wie Kraftfokus (Zauberkosten werden um 1AsP reduziert wenn der Magierstab
+    verwendet wird) automatisch.<br>
+    Um die Änderung anzuwenden, müssen die Sonderfertigkeiten migriert werden (z.B. über den Weltenzerstörer).<br>
+    Das bedeutet aber auch, dass etwaige existierende Effekte auf einem Magierstab bezüglich z.B. Kraftfokus ggf. wieder
+    entfernt werden sollten.</p>
+<h2 id="erweiterte-kategorien-für-sonderfertigkeiten">Erweiterte Kategorien für Sonderfertigkeiten </h2>
+<img src="systems/dsa5/lazy/patchimages/5.2.0/speccats.webp"/>
+<p>Sonderfertigkeiten haben nun auch die erweiterten Unterkategorien des Regelwerks. Dadurch kann in der Bibliothek
+    gezielter nach bestimmten Sonderfertigkeiten gesucht werden. Außerdem ist so ein Verhalten abhängig von der
+    Unterkategorie besser definierbar in Zukunft. Bis alle Module diese Änderungen übernommen haben, kann es noch ein
+    bisschen dauern.<br>
+    An dieser Stelle auch herzlichen Dank an BriGen, welcher sich das Zuordnen und Prüfen zu den jeweiligen Kategorien
+    zur Aufgabe gemacht hat.</p>
+<h2 id="mehr-vordefinierte-funktionen-für-journals-und-ähnliche-textblöcke">Mehr vordefinierte Funktionen für Journals
+    und ähnliche Textblöcke </h2>
+    <img src="systems/dsa5/lazy/patchimages/5.2.0/embed.webp"/>
+<p>In Journals kann nun die Bezahlen, Bezahlt werden und Abenteuerpunkte bezahlen Funktion mit den folgenden Keywords
+    eingebunden werden.</p>
+<ul class="dsalist">
+    <li>@AP[15] : 15 Abenteuerpunkte an Spieler auszahlen</li>
+    <li>@Pay[15] : 15 Silber von Spielern verlangen</li>
+    <li>@GetPaid[15] : 15 Silber an Spieler auszahlen</li>
+</ul>
+<p>Bitte beachte, dass hierbei alle Spieler als Ziel dienen, die im Meistermenü selektiert wurden.<br>
+    Mit der oben aufgeführten Formatierung erhalten alle drei Befehle einen Standardtext im Journal. Dieser kann durch
+    folgende Syntax ersetzt werden @Pay[1500]{Diamanten unter dem Kopfkissen}.</p>
+<p>Eine Beschreibung von Gegenständen kann nun in Journals über folgende Syntax integriert werden:</p>
+<pre data-role="codeBlock" data-info="html" class="language-html html"><code>@EmbedItem[Item.mIgQ4hvCiqahFcrD]
+</code></pre>
+<p>Dies kann am schnellsten bewerkstelligt werden durch einen Drag &amp; Drop des Gegenstandes auf die Journalpage und
+    ein anschließendes Ersetzen des Uuid mit EmbedItem.<br>
+    Anschließend wird die Grafik, Beschreibung und Details des Gegenstandes angezeigt.<br>
+    Dies ist auch für Akteure möglich.</p>
+<p>Journalproben (@Rq,@Gc,@Ch) können nun mit einem zusätzlichen Flufftext modifiziert werden. So sind z.B.
+    Probenanforderungen mit Anwendungsgebiet möglich.<br>
+    Beispiel:<br>
+    @Rq[Kraftakt -5]{Kraftakt (Großer Stuhlgang)}</p>
+<h2 id="globale-modifikatoren--meistermenü">Globale Modifikatoren &amp; Meistermenü </h2>
+<img src="systems/dsa5/lazy/patchimages/5.2.0/globalmod.webp"/>
+<p>Im Meistermenü können nun globale Modifikatoren angelegt werden. Diese werden auf alle gefilterten Proben
+    angewendet.<br>
+    Damit ergeben sich z.B. folgende Möglichkeiten:</p>
+<ul class="dsalist">
+    <li>Dynamisches Ändern des Schwierigkeitsgrads in Kämpfen. Sind deine Spieler zu stark oder zu schwach? Lege einen
+        Effekt "Verkümmert/Meisterlich" an und gebe den NPC einen Bonus/Malus auf ihre Angriffe.</li>
+    <li>Deine Spieler befinden sich in einem dämonischem Heiligtum? Erstelle einen Effekt "Sog der Niederhöllen" und gib
+        ihnen einen Malus auf ihre Liturgien.</li>
+    <li>Herbe Rückschläge haben die Gefährten und die Spieler in moralische Tiefen gezogen? Gib deinen Spielern einen
+        Effekt "Hoffnungslosigkeit" und gib ihnen einen Malus auf alles.</li>
+</ul>
+<p>Außerdem können nun im Meistermenü Ordner angelegt werden um getrackte Akteure zu sortieren.<br>
+    So kann man z.B. wichtige NPC in einen Ordner "Dramatis Personae" verschieben.</p>
+<h2 id="dsa-45-journal-layout">DSA 4/5 Journal Layout </h2>
+<p>Die Grafiken für Papier und Meisterbox wurden etwas verbessert, so dass diese nicht mehr so ausfransen und besser bei
+    großen Blöcken funktionieren.</p>
+<p>Mit dem neuen Layout der Regionalspielhilfen kommt auch ein neues Layout für den Journalbrowser und Journals. Dieses
+    ist per default aktiviert. Über die Settings kann der Skin aber auch wieder zurückgestellt werden auf das vorherige
+    Layout.</p>
+<h1 id="weltenzerstöre-und-backups">Weltenzerstörer und Backups </h1>
+<img src="systems/dsa5/lazy/patchimages/5.2.0/zerstoerer.webp"/>
+<p>Foundry ist im permanenten Vormarsch, um dir das Spielerlebnis stetig zu verbessern. Dazu sind hin und wieder Updates
+    und große Änderungen notwendig. Manche von diesen erfordern schwerwiegende Änderungen an Datenstrukturen deines
+    Spieles. Dieser Fortschritt erfordert eine regelmäßige Anpassung dieser Strukturen. Leider sind dabei aber auch
+    Fehler möglich, die deine mühsam gepflegten Daten (Akteure, Journals, etc.) zerstören können. Um dies zu verhindern,
+    wird ein Backup deiner Daten empfohlen. Deine Bilder und anderen Dateien müssen manuell gesichert werden (sind aber
+    normalerweise nicht von Änderungen der Datenstrukturen betroffen).</p>
+<p>Grundsätzlich kannst du unterscheiden zwischen:</p>
+<ul class="dsalist">
+    <li>Einem Backup über die integrierte Backup Funktion von Foundry. Siehe dazu <a
+            href="https://foundryvtt.com/article/backups/">Backups</a></li>
+    <li>einem Backup der Rohdaten (inzwischen wird die Foundry Backup Funktion statt dessen empfohlen) (dazu siehe
+        folgenden Weg: <a href="https://www.youtube.com/watch?v=OmbxMmqNNXU">Only
+            YOU can prevent Foundry File Loss</a>). Seit Foundry v11 muss hierzu unbedingt die Foundry Welt beendet
+        werden!
+    </li>
+    <li>oder dem Backup über den Weltenzerstörer (du findest es auch in den Settings), welches nur deine Akteure in ein
+        Kompendium kopiert. Dieses Kompendium kannst du dann später wiederherstellen. <strong>Bitte beachte, dass dieses
+            Tool nur die Akteure sichert. Alle anderen Daten müssen manuell gesichert werden.</strong> Nachdem du dein
+        Backup gemacht hast, kannst du ebenfalls über dieses Tool die Akteure aktualisieren. Wähle dazu unter dem Tab
+        Migration die geeigneten Optionen.</li>
+</ul>
+<p><strong>Achtung der Vorgang ist nur mit Backup rückgängig zu machen</strong>.<br>
+    <strong>Stelle sicher, dass du immer wartest bis Backup oder Migrationsfunktionen abgeschlossen sind!</strong>
+</p>
+<h2 id="sammelprobe-und-informationsitem-verbesserungen">Sammelprobe und Informationsitem Verbesserungen </h2>
+<img src="systems/dsa5/lazy/patchimages/5.2.0/grpcheck.webp"/>
+<p>Informationsitems können nun auch Ergebnisse für Kritische Erfolge, Patzer und Misserfolge verwalten.<br>
+    Außerdem kann ein Sammelprobe Item nun auch als Gruppensammelprobe vorbereitet und gepostet werden. Sie beinhalten
+    nun auch Felder für Erfolg und Teilerfolg, welche automatisch nach dem Wurf ausgegeben werden.</p>
+<h2 id="direkter-tausch-zwischen-charakteren">Direkter Tausch zwischen Charakteren </h2>
+<img src="systems/dsa5/lazy/patchimages/5.2.0/trade.webp"/>
+<p>Über die Tokenhotbar und das Kontextmenü im Inventar können nun Gegenstände an andere Spieler weitergegeben werden.
+    Über die Tokenhotbar muss ein Ziel angewählt werden, wohingegen im Inventar ein Ziel aus einer Liste ausgewählt
+    werden kann.<br>
+    Die beiden Handelnden können die Auswahl der Gegenstände anpassen und den Handel abschließen oder abbrechen. Es muss
+    für den Abschluss des Handels ein GM eingelogt sein.</p>
+<h2 id="prügeleien">Prügeleien </h2>
+<img src="systems/dsa5/lazy/patchimages/5.2.0/brawl.webp"/>
+<p>Für Gruppen die in Tavernen eher zum Prügeln denn zum Erholen und Genießen gehen, wurden nun die Prügelregeln
+    implementiert.</p>
+<p>Der Meister kann eine Prügelei starten, indem er im Combattracker oder dem DSA Initiative Tracker die Faust
+    anclickt.<br>
+    Dadurch erhalten alle am Kampf beteiligten Charaktere einen zusätzlichen Lebenspunkte-Vorrat in Höhe ihrer
+    gegenwärtigen LeP. Angriffe ziehen nun nur hiervon Punkte ab, bis der Charakter entweder besiegt oder der Kampf
+    beendet wird.<br>
+    Am Ende des Kampfes erleiden alle Beteiligten gemäß den Regeln einen Teil des erlittenen Schadens auf ihre regulären
+    LeP.</p>
+<p>Dazu gibt es für Kampfsonderfertigkeiten eine neue Unterkategorie "Prügelei". Diese Sonderfertigkeiten werden bei
+    Angriffs &amp; Paradewürfen nur angezeigt, wenn eine Prügelei aktiv ist.<br>
+    Die Prügelfähigkeiten wurden soweit es ging in der Werkstatt des Meisters automatisiert.</p>
+<h1 id="verbesserungen">Verbesserungen </h1>
+<ul class="dsalist">
+    <li>Die Journals der Drachenritter Einsteigerbox wurden ein wenig überarbeitet (Grafiken, Details, Token).</li>
+    <li>Verbrauchsgegenstände akzeptieren nun auch eine Liste an Strichpunkt separierten Werten. Gemäß der QS des
+        Gegenstandes kann so ein nicht linearer Zusammenhang zwischen Preis und QS dargestellt werden. Z.b. Preis
+        10;50;100;120;160;5000 mit QS 4 würde 120 Silber kosten.</li>
+    <li>Ausrüstungsgegenstände können nun bei Drag &amp; Drop aus der Bibliothek direkt bezahlt werden, wenn beim Start
+        des Drags gezielt die Münzen aufgenommen werden.</li>
+    <li>Zauber, Talente und Ausrüstungsgegenstände im Inventar haben nun ein Kontextmenü (Rechtsclick). Neben bereits
+        vorhandenen Funktionen wie Löschen und Editieren ist hier nun auch Platz für neue Funktionen (z.B. Handel).</li>
+    <li>Im Journalbrowser gibt es nun ähnlich wie in Journals Vor- und Zurückbuttons.</li>
+    <li>Der Detailfilter der Bibliothek hat nun ein Dropdown um nach Modulen zu filtern. So lässt sich einfacher sehen,
+        was mit dem Hinzufügen eines neuen Moduls alles dazugekommen ist.</li>
+    <li>Die Tokenhotbar kann nun Effekte die auf allen markierten Tokens existieren gleichzeitig von eben jenen
+        entfernen.</li>
+    <li>Die Nachricht, die erzeugt wird wenn ein Spieler mit einem Händler interagiert (kann in den Settings aktiviert
+        werden), enthält nun einen clickbaren Link zum gehandelten Gegenstand.</li>
+    <li>Kleinere Verbesserungen für den Layout Skin "Nackt"</li>
+    <li>Heilkunde Wunden beinhaltet nun eine Funktion, um die QS als temporären Heilbonus für die nächste Regeneration
+        auf den markierten Zielen einzutragen. Dazu müssen die Talente migriert werden (z.B. über den Weltenzerstörer)
+    </li>
+    <li>Die Bibliothek-Toggles wurden optisch ein bisschen verbessert (5.1.4)</li>
+    <li>Buttons um Schaden anzuwenden können nun zusätzlich zu den Optionen im Kontextmenü von Chatkarten aktiviert
+        werden in den Settings.</li>
+    <li>Der Rundenwechsel im DSA Initracker ist nun etwas klarer dargestellt.</li>
+    <li>Active Effects von Sonderfertigkeiten können nun Macros für <strong>nach einem Wurf</strong> und <strong>nach
+            einer Vergleichsprobe</strong> beinhalten. Diese können die Daten des Wurfs auf komplizierte Art und Weise
+        modifizieren. Die erste Sonderfertigkeit die davon profitiert ist "Tradition (Elfen)", insofern dass die
+        Wirkungsdauer nun verdoppelt wird. Diese Funktionalität wird ggf. noch auf andere Item Typen erweitert.</li>
+    <li>Wenn ein Schadenswurf einer Waffe mit einem Ziel durchgeführt wird, wird nun direkt der resultierende Schaden
+        berechnet und kann angewendet werden.</li>
+</ul>
+<h1 id="bugfixes">Bugfixes </h1>
+<ul class="dsalist">
+    <li>Die Tokenhotbar kann wieder aktiviert werden, nachdem sie deaktiviert wurde.</li>
+    <li>Automatische Blindheit bei Dunkelheit 1 sollte in der Sichtautomatisierung nun richtig funktionieren (5.1.5)
+    </li>
+    <li>Die Bibliothek filtert einige Kategorien nun präziser</li>
+    <li>Wiederkehrende Effekte (z.B. brennend) zeigen in ihrer Chatnachricht nun den Tokennamen. Wird die Nachricht nur
+        dem GM angezeigt (einstellbar in den Settings Regeneration (KR)), so siehet dieser den Namen in diesem Format:
+        Tokenname (Akteurname), sofer sich die beiden Namen unterscheiden</li>
+    <li>Konzentrieren und Nachladen sollten in der Chatnachricht nun den Tokennamen statt des Namens des Akteurs
+        verwenden</li>
+</ul>

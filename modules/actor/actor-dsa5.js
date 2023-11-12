@@ -468,7 +468,7 @@ export default class Actordsa5 extends Actor {
     for(let item of this.items) {
       for(const e of item.effects) {
         if(e.disabled) continue
-        
+
         apply = true
         
         switch (item.type) {
@@ -515,7 +515,7 @@ export default class Actordsa5 extends Actor {
 
             const advancedFunction = getProperty(e, "flags.dsa5.advancedFunction")
 
-            if([6,7].some(x => x == advancedFunction)) {
+            if(this.dsatriggers.hasOwnProperty(advancedFunction)) {
               this.dsatriggers[advancedFunction][item.id] = e.id
             }
             

@@ -379,14 +379,17 @@ export default class Itemdsa5 extends Item {
                 )
             }
         } else
-            searchFilter = () => { return true }
+            searchFilter = () => true
+
+        const brawlingFilter = game.combat.isBrawling ? () => true : (x) => Number(x.system.category.sub) != 5
 
         const combatSpecAbs = actor.items.filter((x) => {
             return (
                 x.type == "specialability" &&
                 categories.includes(x.system.category.value) &&
                 x.system.effect.value != "" &&
-                searchFilter(x, toSearch)
+                searchFilter(x, toSearch) && 
+                brawlingFilter(x)
             )
         })
 

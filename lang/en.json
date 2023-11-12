@@ -37,7 +37,8 @@
         "default": "Convert brawl to normal combat",
         "temporary": "Brawling points",
         "result": "The brawl ends with injuries:",
-        "bumFight": "Bum fight!!!"
+        "bumFight": "Bum fight!!!",
+        "pp": "BP"
     },
     "CHARAbbrev": {
         "MU": "COU",

@@ -5,22 +5,12 @@
     <div class="col {{#if prepare.magic.hasPrayers}}{{#if prepare.magic.hasSpells}}third{{else}}fourty{{/if}}{{else}}fourty{{/if}}">
         <div class="healthbar bar-wounds barLeft{{#if prepare.isSwarm}} swarmcount{{/if}}{{#if prepare.magic.hasPrayers}}{{else if prepare.magic.hasSpells}}{{else}} soloBar{{/if}}" style="--swarm: {{actor.system.swarm.count}};" data-tooltip="wounds">
 
-            <div class="bar LeP" style="--a: {{actor.system.status.wounds.value}}; --b: {{sum actor.system.status.wounds.max actor.system.status.temporaryLeP.max}}; --c: {{actor.system.status.temporaryLeP.value}}; --d: {{actor.system.status.temporaryLeP.max}}">
+            <div class="bar LeP" style="--a: {{actor.system.status.wounds.value}}; --b: {{actor.system.status.wounds.max}};">
             </div>
-            {{#if actor.system.status.temporaryLeP.max}}
-            <div class="bar tempLeP" style="--a: {{actor.system.status.wounds.value}}; --b: {{sum actor.system.status.wounds.max actor.system.status.temporaryLeP.max}}; --c: {{actor.system.status.temporaryLeP.value}}; --d: {{actor.system.status.temporaryLeP.max}}">
-            </div>
-            {{/if}}
+           
             <div class="barLabel">
-                <input type="number" data-tooltip="Current" name="system.status.wounds.value" data-dtype="Number" value="{{actor.system.status.wounds.value}}" /> 
-                {{#if actor.system.status.temporaryLeP.value}}
-                +<input type="number" data-tooltip="BRAWLING.temporary" name="system.status.temporaryLeP.value" data-dtype="Number" value="{{actor.system.status.temporaryLeP.value}}" />
-                {{/if}}
-                /
-                <span data-tooltip="max">{{actor.system.status.wounds.max}}</span>
-                {{#if actor.system.status.temporaryLeP.max}}
-                <span data-tooltip="BRAWLING.temporary">+ {{actor.system.status.temporaryLeP.max}}</span>
-                {{/if}}
+                <input type="number" data-tooltip="Current" name="system.status.wounds.value" data-dtype="Number" value="{{actor.system.status.wounds.value}}" /> /
+                <span data-tooltip="max">{{actor.system.status.wounds.max}}</span>                
             </div>
         </div>
     </div>
@@ -82,4 +72,29 @@
 
     </div>
     {{/if}}
+
 </div>
+{{#if actor.system.status.temporaryLeP.max}}
+<div class="row-section">
+    <div class="col ten center lineheight col-wounds" data-tooltip="BRAWLING.temporary">
+        {{localize 'BRAWLING.pp'}}
+    </div>
+    <div class="col fourty">
+        <div class="healthbar bar-wounds barLeft{{#if prepare.isSwarm}} swarmcount{{/if}} soloBar" style="--swarm: {{actor.system.swarm.count}};" data-tooltip="BRAWLING.temporary">
+
+            <div class="bar tempLeP" style="--a: {{actor.system.status.temporaryLeP.value}}; --b: {{actor.system.status.temporaryLeP.max}};">
+            </div>
+            
+            <div class="barLabel">
+                <input type="number" data-tooltip="Current" name="system.status.temporaryLeP.value" data-dtype="Number" value="{{actor.system.status.temporaryLeP.value}}" /> 
+                
+                /
+                <input type="number" data-tooltip="max" name="system.status.temporaryLeP.max" data-dtype="Number" value="{{actor.system.status.temporaryLeP.max}}" />
+            </div>
+        </div>
+    </div>
+    <div class="col-bar-spacer col two">
+
+    </div>
+</div>
+{{/if}}

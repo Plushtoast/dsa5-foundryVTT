@@ -598,7 +598,8 @@
         "default": "Prügelei in normalen Kampf umwandeln",
         "temporary": "Prügelpunkte",
         "result": "Die Prügelei endet mit Blessuren:",
-        "bumFight": "Prügelei!!!"
+        "bumFight": "Prügelei!!!",
+        "pp": "PP"
     },
     "CONJURATION": {
         "demon": "Dämon",

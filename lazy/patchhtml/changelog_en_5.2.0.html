@@ -1,0 +1,143 @@
+<h1 id="important-improvements">Important Improvements  (11/15/2023)</h1>
+<h2 id="special-abilities-of-traditional-artifacts">Special Abilities of Traditional Artifacts </h2>
+<p>Special abilities of traditional artifacts that have been assigned to a traditional artifact and transfer an effect
+    (active effect) to the character will now only be applied if the traditional artifact is also equipped. This means
+    that special abilities such as power focus (magic costs are reduced by 1AsP when the magician’s staff is used) will
+    work automatically. To apply the change, the special abilities must be migrated (e.g. via the world destroyer).
+    However, this also means that any existing effects on a magician’s staff regarding, for example, power focus should
+    be removed if necessary.</p>
+<h2 id="extended-categories-for-special-abilities">Extended Categories for Special Abilities </h2>
+<img src="systems/dsa5/lazy/patchimages/5.2.0/speccats.webp"/>
+<p>Special abilities now also have the extended subcategories of the rulebook. This makes it possible to search more
+    specifically for certain special abilities in the library. In addition, behavior dependent on the subcategory can be
+    better defined in the future. It may take a little while for all modules to adopt these changes. At this point, I
+    would like to express my sincere thanks to BriGen, who has taken on the task of assigning and checking the
+    respective categories.</p>
+<h2>More predefined functions for journals and similar text blocks</h2>
+<img src="systems/dsa5/lazy/patchimages/5.2.0/embed.webp"/>
+<p>In journals, the pay, be paid, and pay adventure points functions can now be integrated with the following keywords:
+</p>
+<pre class="language-text">@AP[15]: Pay 15 adventure points to players
+@Pay[15]: Demand 15 silver from players
+@GetPaid[15]: Pay 15 silver to players
+</pre>
+<p>Please note that all players selected in the game master menu are targeted here. With the formatting shown above, all
+    three commands receive a standard text in the journal. This can be replaced by the following syntax
+    @Pay[1500]{Diamonds under the pillow}.</p>
+<p>A description of items can now be integrated into journals using the following syntax:</p>
+<pre data-role="codeBlock" data-info="html" class="language-html html"><code>@EmbedItem[Item.mIgQ4hvCiqahFcrD]
+</code></pre>
+<p>This can be done most quickly by dragging and dropping the item onto the journal page and then replacing the UUID
+    with EmbedItem. Then the graphics, description, and details of the item are displayed. This is also possible for
+    actors.</p>
+<p>Journal tests (@Rq,@Gc,@Ch) can now be modified with additional fluff text. For example, test requirements with
+    application areas are possible. Example: @Rq[Kraftakt -5]{Kraftakt (Big bowel movement)}</p>
+<p>Here is the translated text:</p>
+<h2 id="global-modifiers--master-menu">Global Modifiers &amp; Master Menu </h2>
+<img src="systems/dsa5/lazy/patchimages/5.2.0/globalmod.webp"/>
+<p>In the master menu, global modifiers can now be created. These are applied to all filtered samples.<br>
+    This results in the following possibilities:</p>
+<ul class="dsalist">
+    <li>Dynamically changing the difficulty level in battles. Are your players too strong or too weak? Create an effect
+        "Stunted/Masterful" and give the NPC a bonus/penalty on their attacks.</li>
+    <li>Your players are in a demonic sanctuary? Create an effect "Suction of the Lower Hells" and give them a penalty
+        on their liturgies.</li>
+    <li>Severe setbacks have plunged the companions and players into moral depths? Give your players an effect
+        "Hopelessness" and give them a penalty on everything.</li>
+</ul>
+<p>In addition, folders can now be created in the master menu to sort tracked actors.<br>
+    For example, important NPCs can be moved to a folder called "Dramatis Personae".</p>
+<p>Here is the translated text:</p>
+<h2 id="dsa-45-journal-layout">DSA 4/5 Journal Layout </h2>
+<p>The graphics for paper and the master box have been slightly improved so that they no longer fray and work better
+    with large blocks.</p>
+<p>With the new layout of the regional game aids, there is also a new layout for the journal browser and journals. This
+    is activated by default. However, the skin can also be reset to the previous layout via the settings.</p>
+<h1 id="world-destroyer-und-backups">World destroyer und Backups </h1>
+<img src="systems/dsa5/lazy/patchimages/5.2.0/zerstoerer.webp"/>
+<p>Foundry is constantly advancing to improve your gaming experience. To achieve this, updates and major changes are
+    occasionally necessary. Some of these require significant changes to the data structures of your game. This progress
+    requires regular adaptation of these structures. Unfortunately, errors are also possible, which can destroy your
+    painstakingly maintained data (actors, journals, etc.). To prevent this, it is recommended that you back up your
+    data. Your images and other files must be backed up manually (but are usually not affected by changes to data
+    structures).</p>
+<p>In general, you can distinguish between:</p>
+<ul class="dsalist">
+    <li>A backup using the integrated backup function of Foundry. See <a
+            href="https://foundryvtt.com/article/backups/%E2%80%9D">Backups</a>
+        for more information.</li>
+    <li>A backup of the raw data (the Foundry backup function is now recommended instead) (see the following path: <a
+            href="https://www.youtube.com/watch?v=OmbxMmqNNXU%E2%80%9D">Only YOU can prevent Foundry File Loss</a>). Since Foundry v11, the Foundry world must be closed to do this!</li>
+    <li>Or the backup via the world destroyer (you can also find it in the settings), which only copies your actors to a
+        compendium. You can then restore this compendium later. Please note that this tool only backs up the actors. All
+        other data must be backed up manually. After you have made your backup, you can also use this tool to update the
+        actors. To do this, select the appropriate options under the Migration tab.</li>
+</ul>
+<p><strong>Attention: The process can only be reversed with a backup. Make sure you always wait until backup or
+        migration functions are complete!</strong></p>
+<p>Here is the translated text:</p>
+<h2 id="aggregated-test-and-information-item-improvements">Aggregated test and Information Item Improvements </h2>
+<img src="systems/dsa5/lazy/patchimages/5.2.0/grpcheck.webp"/>
+<p>Information items can now also manage results for critical successes, botches, and failures.<br>
+    In addition, a collection sample item can now also be prepared and posted as a group collection sample. They now
+    also include fields for success and partial success, which are automatically output after the roll.</p>
+<h2 id="direct-exchange-between-characters">Direct exchange between characters </h2>
+<img src="systems/dsa5/lazy/patchimages/5.2.0/trade.webp"/>
+<p>Items can now be passed on to other players via the token bar and the context menu in the inventory. A target must be
+    selected via the token bar, while a target can be selected from a list in the inventory.<br>
+    The two actors can adjust the selection of items and complete or cancel the trade. A GM must be logged in to
+    complete the trade.</p>
+<h2 id="brawls">Brawls </h2>
+<img src="systems/dsa5/lazy/patchimages/5.2.0/brawl.webp"/>
+<p>For groups that prefer brawling to relaxing and enjoying themselves in taverns, the brawl rules have now been
+    implemented.</p>
+<p>The game master can start a brawl by clicking on the fist in the combat tracker or the DSA initiative tracker. As a
+    result, all characters involved in the fight receive an additional supply of life points equal to their current LP.
+    Attacks now only deduct points from this, until the character is either defeated or the fight ends. At the end of
+    the fight, all participants suffer a portion of the damage suffered according to the rules on their regular LP.</p>
+<p>In addition, there is a new subcategory “Brawling” for combat special abilities. These special abilities are only
+    displayed during attack and parry rolls when a brawl is active. The brawling abilities have been automated as much
+    as possible in the game master’s workshop.</p>
+<h1 id="improvements">Improvements </h1>
+<ul class="dsalist">
+    <li>The journals of the Drachenritter Einsteigerbox have been slightly revised (graphics, details, tokens).</li>
+    <li>Consumables now also accept a list of values separated by semicolons. According to the QS of the item, a
+        non-linear relationship between price and QS can be represented. For example, a price of 10;50;100;120;160;5000
+        with QS 4 would cost 120 silver.</li>
+    <li>Equipment items can now be paid for directly by drag &amp; drop from the library if coins are specifically
+        picked up at the start of the drag.</li>
+    <li>Spells, talents, and equipment items in the inventory now have a context menu (right-click). In addition to
+        existing functions such as delete and edit, there is now room for new functions (e.g. trade).</li>
+    <li>The journal browser now has forward and backward buttons similar to journals.</li>
+    <li>The detail filter of the library now has a dropdown to filter by modules. This makes it easier to see what has
+        been added with the addition of a new module.</li>
+    <li>The token bar can now remove effects that exist on all selected tokens at the same time.</li>
+    <li>The message generated when a player interacts with a merchant (can be activated in the settings) now contains a
+        clickable link to the traded item.</li>
+    <li>Minor improvements for the "Naked" layout skin.</li>
+    <li>First aid wounds now includes a function to enter the QS as a temporary healing bonus for the next regeneration
+        on the marked targets. To do this, the talents must be migrated (e.g. via the world destroyer).</li>
+    <li>The library toggles have been visually improved a bit (5.1.4).</li>
+    <li>Buttons to apply damage can now be activated in the settings in addition to the options in the context menu of
+        chat cards.</li>
+</ul>
+<p>Here are the improvements and bugfixes:</p>
+<ul class="dsalist">
+    <li>The round change in the DSA Initracker is now displayed more clearly.</li>
+    <li>Active effects of special abilities can now include macros for <strong>after a roll</strong> and <strong>after a
+            comparison test</strong>. These can modify the data of the roll in a complicated way. The first special
+        ability to benefit from this is "Tradition (Elves)", in that the duration is now doubled. This functionality may
+        be extended to other item types.</li>
+    <li>When damage is rolled for a weapon with a target, the resulting damage is now calculated directly and can be
+        applied.</li>
+</ul>
+<h1 id="bugfixes">Bugfixes </h1>
+<ul class="dsalist">
+    <li>The token bar can be reactivated after being deactivated.</li>
+    <li>Automatic blindness in darkness 1 should now work correctly in sight automation (5.1.5).</li>
+    <li>The library now filters some categories more precisely.</li>
+    <li>Recurring effects (e.g. burning) now show the token name in their chat message. If the message is only displayed
+        to the GM (adjustable in the settings regeneration (KR)), the GM sees the name in this format: Tokenname (actor
+        name), provided the two names are different.</li>
+    <li>Concentrating and reloading should now use the token name instead of the actor name in the chat message.</li>
+</ul>

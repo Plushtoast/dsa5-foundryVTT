@@ -1486,20 +1486,11 @@
     .bar {
       left: calc(100% * ( 1 - var(--a) / var(--b)));
       width: calc(100% * var(--a) / var(--b));
-
-      &.tempLeP {
-        left: calc(100% * ( 1 - ( var(--c) + var(--a) ) / var(--b)));
-        width: calc(100% * var(--c) / var(--b));
-      }
     }
   
     &.soloBar .bar {
       left: 0;
       width: calc(100% * var(--a) / var(--b));
-      &.tempLeP {
-        left: calc(100% * var(--a) / var(--b));
-        width: calc(100% * var(--c) / var(--b));
-      }
     }
   }
   
@@ -1512,11 +1503,6 @@
     top: 0px;
     left: 0px;
     transition: width 0.1s ease-in-out;
-
-    &.tempLeP {
-      width: calc(100% * var(--c) / var(--b));
-      left: calc(100% * var(--a) / var(--b))
-    }
   }
   
   .soloBar {
