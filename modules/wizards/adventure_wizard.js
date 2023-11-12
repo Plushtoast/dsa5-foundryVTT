@@ -198,12 +198,6 @@ export default class BookWizard extends Application {
         bindImgToCanvasDragStart(html)
 
         slist(html, '.breadcrumbs', this.resaveBreadCrumbs)
-        this.heightFix()
-    }
-    
-    heightFix() {
-        const h = $(this._element).find('.breadcrumbs').height()
-        $(this._element).find('.col.seventy.scrollable').css({ "margin-bottom": `${h}px` })
     }
 
     async getPagy(chapter, journalId) {
