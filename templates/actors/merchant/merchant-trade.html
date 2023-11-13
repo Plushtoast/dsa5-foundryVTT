@@ -25,7 +25,7 @@
                 <h3 class="center">&zwnj;{{tradeFriend.name}}</h3>
             </div>
             <div class="col third">
-                <h3 class="center">{{actor.name}}</h3>
+                <h3 class="center">{{#if actor.token.name}}{{actor.token.name}}{{else}}{{actor.name}}{{/if}}</h3>
             </div>
         </div>
         {{> systems/dsa5/templates/actors/parts/gearSearch.html}}

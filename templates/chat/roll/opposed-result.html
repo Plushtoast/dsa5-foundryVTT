@@ -11,12 +11,18 @@
             {{{string}}}
         </div>
         {{/each}}
-        {{#if applyDamageInChat}}
+        {{#if (and damage applyDamageInChat)}}
         <div class="row-section center" style="margin-top:10px">
             {{#if (gt damage.value 0)}}
-            <div class="col two center">
-                <button class="applyDamage selfButton smallChatButton" data-mode="value" data-tooltip="CHATCONTEXT.ApplyDamage"><i class="fas fa-shield-alt"></i>{{localize 'CHARAbbrev.damage'}}</button>
-            </div>
+            {{#if isBrawling}}
+                <div class="col two center">
+                    <button class="applyDamage selfButton smallChatButton" data-mode="value" data-tooltip="CHATCONTEXT.ApplyDamagePP"><i class="fas fa-shield-alt"></i>{{localize 'BRAWLING.pp'}}</button>
+                </div>
+            {{else}}
+                <div class="col two center">
+                    <button class="applyDamage selfButton smallChatButton" data-mode="value" data-tooltip="CHATCONTEXT.ApplyDamage"><i class="fas fa-shield-alt"></i>{{localize 'CHARAbbrev.damage'}}</button>
+                </div>
+            {{/if}}
             {{/if}}
             <div class="col two center">
                 <button class="applyDamage selfButton smallChatButton" data-mode="sp" data-tooltip="CHATCONTEXT.ApplyDamageSP"><i class="fas fa-hand-fist"></i>{{localize 'CHARAbbrev.damageSP'}}</button>

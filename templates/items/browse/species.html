@@ -1,109 +1,116 @@
-<div class="row-section">
-    <div class="col sixty">
-        <h2>{{document.name}}</h2>
-        {{{hasLocalization (concat "Racedescr." document.name) document.system.description.value}}}
-    </div>
-    <div class="col zerofive"></div>
-    <div class="col fourty">
-        <div class="row-section wrap">
-            <div class="col center">
-                <img src="{{document.img}}" style="width:100%;border:none;" >
-            </div>
-            <div class="col compendium">
-                {{item.pack}}
-            </div>  
+<div>
+    <h2>{{document.name}}</h2>
+    <div class="row-section">
+        {{#unless skipHeader}}
+        <div class="col sixty">
+            {{{hasLocalization (concat "Racedescr." document.name) document.system.description.value}}}
         </div>
-        <div class="row-section">
-            <div class="col groupbox">
-                    <div class="row-section wrap">
-                        <div class="col table-title row-section">
-                            <div class="col ninety">
-                                {{localize "APValue"}}
+        <div class="col zerofive"></div>
+        <div class="col fourty">
+        {{else}}
+        <div class="col row-section">
+        {{/unless}}
+            <div class="row-section wrap col third">
+                <div class="col center">
+                    <img src="{{document.img}}" style="width:100%;border:none;" >
+                </div>
+                <div class="col compendium">
+                    {{item.pack}}
+                </div>  
+            </div>
+            <div class="col ten"></div>
+            <div class="row-section col sixty">
+                <div class="col groupbox">
+                        <div class="row-section wrap">
+                            <div class="col table-title row-section">
+                                <div class="col ninety">
+                                    {{localize "APValue"}}
+                                </div>
+                                <div class="col ten center">
+                                    {{#if document.uuid}}<a class="show-item" data-type="Item" data-uuid="{{document.uuid}}"><i class="fas fa-info"></i></a>{{/if}}
+                                </div>
+                                
                             </div>
-                            <div class="col ten center">
-                                {{#if document.uuid}}<a class="show-item" data-uuid="{{document.uuid}}"><i class="fas fa-info"></i></a>{{/if}}
+                            <div class="col">
+                                {{document.system.APValue.value}}
                             </div>
-                            
+                            <div class="col table-title">
+                                {{localize "wounds"}}- {{localize "baseValue"}}
+                            </div>
+                            <div class="col">
+                                {{document.system.baseValues.wounds.value}}
+                            </div>
+                            <div class="col table-title">
+                                {{localize "soulpower"}}- {{localize "baseValue"}}
+                            </div>
+                            <div class="col">
+                                {{document.system.baseValues.soulpower.value}}
+                            </div>
+                            <div class="col table-title">
+                                {{localize "toughness"}}- {{localize "baseValue"}}
+                            </div>
+                            <div class="col">
+                                {{document.system.baseValues.toughness.value}}
+                            </div>
+                            <div class="col table-title">
+                                {{localize "speed"}}
+                            </div>
+                            <div class="col">
+                                {{document.system.baseValues.speed.value}}
+                            </div>
+                            <div class="col table-title">
+                                {{localize "attributeChange"}}
+                            </div>
+                            <div class="col">
+                                {{document.system.attributeChange.value}}
+                            </div>
+                            {{#if document.system.notsuitableAdvantages.value}}
+                            <div class="col table-title">
+                                {{localize "notsuitableAdvantages"}}
+                            </div>
+                            <div class="col">
+                                {{{clickableAbilities document.system.notsuitableAdvantages.value 'advantage'}}}
+                            </div>
+                            {{/if}}
+                            {{#if document.system.notsuitableDisadvantages.value}}
+                            <div class="col table-title">
+                                {{localize "notsuitableDisadvantages"}}
+                            </div>
+                            <div class="col">
+                                {{{clickableAbilities document.system.notsuitableDisadvantages.value 'disadvantage'}}}
+                            </div>
+                            {{/if}}
+                            <div class="col table-title">
+                                {{localize "recommendedAdvantages"}}
+                            </div>
+                            <div class="col">
+                                {{{clickableAbilities document.system.recommendedAdvantages.value 'advantage'}}}
+                            </div>
+                            <div class="col table-title">
+                                {{localize "recommendedDisadvantages"}}
+                            </div>
+                            <div class="col">
+                                {{{clickableAbilities document.system.recommendedDisadvantages.value 'disadvantage'}}}
+                            </div>
+                            {{#if document.system.requirements.value}}
+                            <div class="col table-title">
+                                {{localize "requirements"}}
+                            </div>
+                            <div class="col">
+                                {{{clickableAbilities document.system.requirements.value 'advantage disadvantage specialability'}}}
+                            </div>
+                            {{/if}}
+                            <div class="col table-title">
+                                {{localize "recommendedCultures"}}
+                            </div>
+                            <div class="col">
+                                {{document.system.recommendedCultures.value}}
+                            </div>
                         </div>
-                        <div class="col">
-                            {{document.system.APValue.value}}
-                        </div>
-                        <div class="col table-title">
-                            {{localize "wounds"}}- {{localize "baseValue"}}
-                        </div>
-                        <div class="col">
-                            {{document.system.baseValues.wounds.value}}
-                        </div>
-                        <div class="col table-title">
-                            {{localize "soulpower"}}- {{localize "baseValue"}}
-                        </div>
-                        <div class="col">
-                            {{document.system.baseValues.soulpower.value}}
-                        </div>
-                        <div class="col table-title">
-                            {{localize "toughness"}}- {{localize "baseValue"}}
-                        </div>
-                        <div class="col">
-                            {{document.system.baseValues.toughness.value}}
-                        </div>
-                        <div class="col table-title">
-                            {{localize "speed"}}
-                        </div>
-                        <div class="col">
-                            {{document.system.baseValues.speed.value}}
-                        </div>
-                        <div class="col table-title">
-                            {{localize "attributeChange"}}
-                        </div>
-                        <div class="col">
-                            {{document.system.attributeChange.value}}
-                        </div>
-                        {{#if document.system.notsuitableAdvantages.value}}
-                        <div class="col table-title">
-                            {{localize "notsuitableAdvantages"}}
-                        </div>
-                        <div class="col">
-                            {{{clickableAbilities document.system.notsuitableAdvantages.value 'advantage'}}}
-                        </div>
-                        {{/if}}
-                        {{#if document.system.notsuitableDisadvantages.value}}
-                        <div class="col table-title">
-                            {{localize "notsuitableDisadvantages"}}
-                        </div>
-                        <div class="col">
-                            {{{clickableAbilities document.system.notsuitableDisadvantages.value 'disadvantage'}}}
-                        </div>
-                        {{/if}}
-                        <div class="col table-title">
-                            {{localize "recommendedAdvantages"}}
-                        </div>
-                        <div class="col">
-                            {{{clickableAbilities document.system.recommendedAdvantages.value 'advantage'}}}
-                        </div>
-                        <div class="col table-title">
-                            {{localize "recommendedDisadvantages"}}
-                        </div>
-                        <div class="col">
-                            {{{clickableAbilities document.system.recommendedDisadvantages.value 'disadvantage'}}}
-                        </div>
-                        {{#if document.system.requirements.value}}
-                        <div class="col table-title">
-                            {{localize "requirements"}}
-                        </div>
-                        <div class="col">
-                            {{{clickableAbilities document.system.requirements.value 'advantage disadvantage specialability'}}}
-                        </div>
-                        {{/if}}
-                        <div class="col table-title">
-                            {{localize "recommendedCultures"}}
-                        </div>
-                        <div class="col">
-                            {{document.system.recommendedCultures.value}}
-                        </div>
-                    </div>
 
+                </div>
             </div>
+            
         </div>
-        
     </div>
 </div>

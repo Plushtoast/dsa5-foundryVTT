@@ -264,11 +264,25 @@ export default class WizardDSA5 extends Application {
             }
         })
         html.find('button.cancel').click(() => { this.close() })
-        html.find('.show-item').click(async(ev) => {
+
+        const itemDragStart = (event) => {
+            event.stopPropagation()
+            const type = event.currentTarget.dataset.type
+            const uuid = event.currentTarget.dataset.uuid
+            if(!uuid || !type) return
+
+            event.originalEvent.dataTransfer.setData("text/plain", JSON.stringify({
+                type,
+                uuid
+            }))
+        }
+        const showItem = html.find('.show-item')
+        showItem.click(async(ev) => {
             let itemId = ev.currentTarget.dataset.uuid
             const item = await fromUuid(itemId)
             item.sheet.render(true)
         })
+        showItem.attr("draggable", true).on("dragstart", event => itemDragStart(event))
         
         html.on('click', '.searchableAbility a', ev => clickableAbility(ev))
         

@@ -409,11 +409,25 @@ export default class DSA5ChatAutoCompletion {
 
             master.getExp(master.selectedIDs(), ev.currentTarget.dataset.modifier)
         })
-        html.on('click', '.show-item', async ev => { 
-            const uuid = ev.currentTarget.dataset.uuid
-            const item = await fromUuid(uuid)
-            if (item) item.sheet.render(true)
+        const itemDragStart = (event) => {
+            event.stopPropagation()
+            const type = event.currentTarget.dataset.type
+            const uuid = event.currentTarget.dataset.uuid
+            if(!uuid || !type) return
+
+            event.originalEvent.dataTransfer.setData("text/plain", JSON.stringify({
+                type,
+                uuid
+            }))
+        }
+        const showItem = html.find('.show-item')
+        showItem.click(async(ev) => {
+            let itemId = ev.currentTarget.dataset.uuid
+            const item = await fromUuid(itemId)
+            item.sheet.render(true)
         })
+        showItem.attr("draggable", true).on("dragstart", event => itemDragStart(event))
+    
         html.on('click', '.actorEmbeddedAbility', async ev => {
             const actor = await fromUuid(ev.currentTarget.dataset.actor)
             const item = actor.items.get(ev.currentTarget.dataset.id)

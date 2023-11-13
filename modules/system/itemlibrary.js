@@ -753,11 +753,24 @@ export default class DSA5ItemLibrary extends Application {
             this.filterItems(tab, category);
         })
 
-        html.on('click', '.show-item', async ev => { 
-            const uuid = ev.currentTarget.dataset.uuid
-            const item = await fromUuid(uuid)
-            if (item) item.sheet.render(true)
+        const itemDragStart = (event) => {
+            event.stopPropagation()
+            const type = event.currentTarget.dataset.type
+            const uuid = event.currentTarget.dataset.uuid
+            if(!uuid || !type) return
+
+            event.originalEvent.dataTransfer.setData("text/plain", JSON.stringify({
+                type,
+                uuid
+            }))
+        }
+        const showItem = html.find('.show-item')
+        showItem.click(async(ev) => {
+            let itemId = ev.currentTarget.dataset.uuid
+            const item = await fromUuid(itemId)
+            item.sheet.render(true)
         })
+        showItem.attr("draggable", true).on("dragstart", event => itemDragStart(event))
 
         html.find(`*[data-tab="journal"]`).click(x => {
             this._createIndex("journal", "JournalEntry", game.journal)

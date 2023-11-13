@@ -1,5 +1,6 @@
 <div class="row-section">
     <div class="col">
+        {{#unless skipHeader}}
         <div class="row-section">
             <div class="col garadanb">
                 <h2>{{document.name}}</h2>
@@ -7,6 +8,7 @@
                 {{#if actor.system.creatureClass.value}}<small>{{actor.system.creatureClass.value}}</small>{{/if}}
             </div>            
         </div>
+        
         <div class="row-section">
             <div class="col">
                 <div style="float:right;max-width:50%; margin-left: 20px;margin-bottom:20px">
@@ -33,26 +35,19 @@
                 {{/if}}
             </div>
         </div>
+        {{/unless}}
         <div class="row-section">
             <div class="col chatpaperfield">
                     <div class="row-section wrap">
                         <div class="col table-title row-section noBorder">
                             <div class="col eight">
-                                {{#if document.uuid}}<a style="margin-left:10px" class="show-item" data-uuid="{{document.uuid}}"><i class="fas fa-info"></i></a>{{/if}}
+                                {{#if document.uuid}}<a style="margin-left:10px" class="show-item" data-type="Actor" data-uuid="{{document.uuid}}"><i class="fas fa-info"></i></a>{{/if}}
                             </div>
-                            <div class="col eight">
-                            </div>
-                            <div class="col eight">
-                            </div>
-                            <div class="col eight">
-                            </div>
-                            <div class="col eight">
-                            </div>
-                            <div class="col eight">
-                            </div>
-                            <div class="col eight">
-                            </div>
-                            <div class="col eight">
+                            <div class="col">
+                                {{#if skipHeader}}
+                                <b>{{document.name}}</b> - {{#if document.system.details.career.value}}{{document.system.details.career.value}}</small>{{/if}}
+                                {{#if actor.system.creatureClass.value}}{{actor.system.creatureClass.value}}{{/if}}
+                                {{/if}}
                             </div>
                         </div>
                     

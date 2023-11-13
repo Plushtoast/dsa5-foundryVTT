@@ -250,6 +250,10 @@ export function chatContext() {
         await message.update({ "flags.data.manaApplied": true, content: message.content.replace(/<span class="costCheck">/, `<span class="costCheck"><i class="fas fa-check" style="float:right"></i>`) })
 
     }
+
+    const applyDamageLabel = () => {
+        return game.i18n.localize(game.combat?.isBrawling ? "CHATCONTEXT.ApplyDamagePP" : "CHATCONTEXT.ApplyDamage")
+    }
  
     Hooks.on("getChatLogEntryContext", (html, options) => {
         options.push({
@@ -281,7 +285,7 @@ export function chatContext() {
                 condition: canCostMana,
                 callback: async(li) => { payMana(li) }
             }, {
-                name: game.i18n.localize("CHATCONTEXT.ApplyDamage"),
+                name: applyDamageLabel(),
                 icon: '<i class="fas fa-user-minus"></i>',
                 condition: canHurt,
                 callback: li => { applyDamage(li, "value") }
@@ -291,7 +295,7 @@ export function chatContext() {
                 condition: canHurtSP,
                 callback: li => { applyDamage(li, "sp") }
             }, {
-                name: game.i18n.localize("CHATCONTEXT.ApplyDamage"),
+                name: applyDamageLabel(),
                 icon: '<i class="fas fa-user-minus"></i>',
                 condition: canApplyDefaultRolls,
                 callback: li => { applyChatCardDamage(li, "value") }
@@ -351,7 +355,7 @@ export function chatContext() {
 
         if(game.settings.get("dsa5", "doubleDamageOptions")) {
             options.push({
-                name: game.i18n.localize("CHATCONTEXT.ApplyDamage") + " x2",
+                name: applyDamageLabel() + " x2",
                 icon: '<i class="fas fa-user-minus"></i>',
                 condition: canHurt,
                 callback: li => { applyDamage(li, "value", 2) }
@@ -361,7 +365,7 @@ export function chatContext() {
                 condition: canHurtSP,
                 callback: li => { applyDamage(li, "sp", 2) }
             }, {
-                name: game.i18n.localize("CHATCONTEXT.ApplyDamage") + " x2",
+                name: applyDamageLabel() + " x2",
                 icon: '<i class="fas fa-user-minus"></i>',
                 condition: canApplyDefaultRolls,
                 callback: li => { applyChatCardDamage(li, "value", 2) }

@@ -455,7 +455,8 @@ export default class OpposedDsa5 {
                 damage.liturgyArmor != 0 ? `${damage.liturgyArmor} ${game.i18n.localize('liturgyArmor')}` : ""
             ].join("")
 
-            const description = `<b>${game.i18n.localize("damage")}</b>: <span${damage.tooltip ? ` data-tooltip="${damage.tooltip}"` : ""}>${damage.damage}</span><i class="lighticon fas fa-hand-fist" data-tooltip="Roll"></i> - <span data-tooltip="${title}">${damage.armor}</span><i class="lighticon fa fa-shield-alt" data-tooltip="protection"></i> = ${damage.sum}`
+            const dmgString = game.combat?.isBrawling ? game.i18n.localize("BRAWLING.temporary") : game.i18n.localize("damage")
+            const description = `<b>${dmgString}</b>: <span${damage.tooltip ? ` data-tooltip="${damage.tooltip}"` : ""}>${damage.damage}</span><i class="lighticon fas fa-hand-fist" data-tooltip="Roll"></i> - <span data-tooltip="${title}">${damage.armor}</span><i class="lighticon fa fa-shield-alt" data-tooltip="protection"></i> = ${damage.sum}`
             opposeResult.damage = {
                 description,
                 value: damage.sum,
@@ -550,7 +551,8 @@ export default class OpposedDsa5 {
 
     static async renderOpposedResult(formattedOpposeResult, options = {}) {
         formattedOpposeResult.hideData = game.settings.get("dsa5", "hideOpposedDamage");
-        formattedOpposeResult.applyDamageInChat = game.settings.get("dsa5", "applyDamageInChat");        
+        formattedOpposeResult.applyDamageInChat = game.settings.get("dsa5", "applyDamageInChat");
+        formattedOpposeResult.isBrawling = game.combat?.isBrawling
 
         let html = await renderTemplate("systems/dsa5/templates/chat/roll/opposed-result.html", formattedOpposeResult)
         let chatOptions = {

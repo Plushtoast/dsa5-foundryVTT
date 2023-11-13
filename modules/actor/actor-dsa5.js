@@ -79,7 +79,7 @@ export default class Actordsa5 extends Actor {
       
       data.totalWeight = 0;
       
-      data.wornArmor = []
+      const wornArmor = []
 
       const familiarString = game.i18n.localize('LocalizedIDs.familiar')
       const petString = game.i18n.localize('LocalizedIDs.companion')
@@ -106,7 +106,7 @@ export default class Actordsa5 extends Actor {
                 i.system.weight.value * (i.system.worn.value ? Math.max(0, i.system.quantity.value - 1) : i.system.quantity.value)
               ).toFixed(3)
             );
-            if(i.system.worn.value) data.wornArmor.push(i)
+            if(i.system.worn.value) wornArmor.push(i)
           } else {
             i.system.preparedWeight = parseFloat((i.system.weight.value * i.system.quantity.value).toFixed(3));
             data.totalWeight += Number(i.system.preparedWeight);
@@ -235,6 +235,7 @@ export default class Actordsa5 extends Actor {
         Number(game.settings.get("dsa5", "higherDefense")) / 2;
 
       //Actordsa5.postUpdateConditions(this)
+      data.armorEncumbrance = this.getArmorEncumbrance(this, wornArmor);
       
       this.prepareSwarm(data)
       this.effectivePain(data)
@@ -273,8 +274,8 @@ export default class Actordsa5 extends Actor {
         const pain = actor.woundPain(data)
         await this.deferredEffectAddition("inpain", actor, pain)
       }
-             
-      let newEncumbrance = actor.getArmorEncumbrance(actor, data.wornArmor);
+
+      let newEncumbrance = data.armorEncumbrance
       if ((actor.type != "creature" || actor.canAdvance) && !isMerchant) {
         newEncumbrance += Math.max(0, Math.ceil((data.totalWeight - data.carrycapacity - 4) / 4));
       }

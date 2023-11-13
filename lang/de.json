@@ -1604,6 +1604,7 @@
         "rerollDamage": "Schadenswurf wiederholen (1 Schip)",
         "ApplyDamage": "Schaden anwenden als TP",
         "ApplyDamageSP": "Schaden anwenden als SP",
+        "ApplyDamagePP": "Schaden anwenden als PP",
         "talentedReroll": "Begabung verwenden",
         "ApplyMana": "KaP/AsP Kosten bezahlen",
         "hideData": "Details für Spieler verstecken",

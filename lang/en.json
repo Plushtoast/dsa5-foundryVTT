@@ -1520,6 +1520,7 @@
         "rerollDamageGroup": "Repeat damage roll (1 Group FtP)",
         "ApplyDamage": "Apply damage as DP",
         "ApplyDamageSP": "Apply damage as sDP",
+        "ApplyDamagePP": "Apply damage as BP",
         "talentedReroll": "Use Aptitude ",
         "ApplyMana": "Pay AE/KP",
         "hideData": "Hide details to players",

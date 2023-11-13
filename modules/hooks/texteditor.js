@@ -41,7 +41,6 @@ export function setEnrichers() {
                 const str = match[0]
                 const type = match[1]
                 const mod = Number(str.match(modRegex)[0])
-                //const customText = str.match(/\{.*\}/) ? str.match(/\{.*\}/)[0].replace(/[\{\}]/g, "") : skill
                 const customText = str.match(/\{.*\}/) ? str.match(/\{.*\}/)[0].replace(/[\{\}]/g, "") : payStrings[type]
                 return $(`<a class="roll-button request-${type}" data-type="skill" data-modifier="${mod}" data-label="${customText}"><em class="fas fa-${icons[type]}"></em>${titles[type]}${customText} (${mod})</a>`)[0]
             }
@@ -78,7 +77,7 @@ export function setEnrichers() {
             }
         },
         {
-            pattern: /@EmbedItem\[[a-zA-ZöüäÖÜÄ&; -\.0-9›‹âï\/]+\]/g,
+            pattern: /@EmbedItem\[[a-zA-ZöüäÖÜÄ&; -\.0-9›‹âï\/]+\]({[a-zA-Z=]+})?/g,
             enricher: async(match, options) => {
                 let uuid = match[0].match(/(?:\[)(.*?)(?=\])/)[0].slice(1)
                 let document = await fromUuid(uuid)
@@ -92,10 +91,22 @@ export function setEnrichers() {
                     }                    
                 }                
 
-                if(!document) return $('<a class="content-link broken"><i class="fas fa-unlink"></i>embed</a>')[0]
+                if(!document) return $('<a class="content-link broken"><i class="fas fa-unlink"></i></a>')[0]
+
+                const str = match[0]
+                const customText = str.match(/\{.*\}/) ? str.match(/\{.*\}/)[0].replace(/[\{\}]/g, "") : ""
+
+                let customOptions = {}
+                if(customText) {
+                    for(const el of customText.split(" ")) {
+                        const parts = el.split("=")
+                        if(parts.length == 2)
+                            customOptions[parts[0]] = parts[1]
+                    }                        
+                }
 
                 const template = `systems/dsa5/templates/items/browse/${document.type}.html`
-                const item = await renderTemplate(template, { document, isGM: game.user.isGM, ...(await document.sheet.getData())})
+                const item = await renderTemplate(template, { document, isGM: game.user.isGM, ...(await document.sheet.getData()), ...customOptions})
                 return $(item)[0]
             }
         },
