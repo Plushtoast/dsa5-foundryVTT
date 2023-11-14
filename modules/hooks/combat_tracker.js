@@ -161,7 +161,9 @@ export class DSA5Combat extends Combat {
         $('.bumFight').remove()
         const didYouKnow = await renderTemplate("systems/dsa5/templates/system/bumFight/animation.html", {  })
         $('body').append(didYouKnow)
+        
         const bum = $('.bumFight')
+        bum.click(() => bum.remove())
         bum.addClass("fight")
         setTimeout(function() {
            bum.fadeOut(1000, () => bum.remove());
