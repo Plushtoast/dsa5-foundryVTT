@@ -335,9 +335,9 @@ export default class DSA5StatusEffects {
             if(!ef.enabled || !ef.target || !ef.target[item.type]) continue
 
             if(playerOwned) {
-                if(!ef.victim.player) continue
+                if(!ef.victim?.player) continue
             } else {
-                if(!ef.victim.npc) continue
+                if(!ef.victim?.npc) continue
             }            
 
             result.push({
