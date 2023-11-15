@@ -792,13 +792,16 @@
   .reverseColumnFlex {
     flex-flow: column-reverse;
   }
-
+  .thinscroll::-webkit-scrollbar {
+    width: 6px;
+  }
   .thinscroll {
     scrollbar-width: thin;
   }
 
   .columnFlex{
     flex-flow: column;
+    align-items: stretch;
   }
   
   .skills span {
