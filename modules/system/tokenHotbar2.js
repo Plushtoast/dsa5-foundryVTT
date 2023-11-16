@@ -12,6 +12,7 @@ export default class TokenHotbar2 extends Application {
     static registerTokenHotbar() {
         if (!game.dsa5.apps.tokenHotbar) {
             game.dsa5.apps.tokenHotbar = new TokenHotbar2()
+            game.dsa5.apps.tokenHotbar.updateDSA5Hotbar()
             game.dsa5.apps.tokenHotbar.render(true)
             Hooks.call("dsa5TokenHotbarReady", game.dsa5.apps.tokenHotbar)
         } 
@@ -166,7 +167,6 @@ export default class TokenHotbar2 extends Application {
 
         tinyNotification(darkness)
     }
-
 
     activateListeners(html) {
         super.activateListeners(html);
