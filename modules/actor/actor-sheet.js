@@ -832,7 +832,7 @@ export default class ActorSheetDsa5 extends ActorSheet {
     }
 
     async _startTrade(item) {
-        (new TradeOptions(this.actor.id)).render(true)
+        (new TradeOptions(this.actor)).render(true)
     }
 
     _splitItem(item) {

@@ -316,7 +316,7 @@ export class Trade extends Application {
 export class TradeOptions extends Application {
     constructor(actor, options) {
         super(options);
-        this.actorId = Itemdsa5.buildSpeaker(actor, tokenId)
+        this.actorId = Itemdsa5.buildSpeaker(actor, actor.token?.id)
     }
 
     async getData(options) {
