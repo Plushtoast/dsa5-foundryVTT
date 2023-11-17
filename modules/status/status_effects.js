@@ -73,6 +73,10 @@ export default class DSA5StatusEffects {
                 data.conditions.push(condition)
             else if (!cnd.notApplicable) {
                 condition.uuid = cnd.uuid
+                condition.parent = {
+                    uuid: cnd.parent?.uuid,
+                    name: cnd.parent?.name
+                }
                 data.transferedConditions.push(condition)
             }
         }

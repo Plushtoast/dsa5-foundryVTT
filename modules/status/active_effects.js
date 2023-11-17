@@ -110,11 +110,11 @@ export default class DSAActiveEffectConfig extends ActiveEffectConfig {
         if (effectConfigs.hasSpellEffects || effectConfigs.hasDamageTransformation || effectConfigs.hasTriggerEffects) {
             advancedFunctions.push({ name: `ActiveEffects.advancedFunctions.none`, index: 0 })
         }
-        
+       
         if(effectConfigs.hasSpellEffects){
-            ["systemEffect", "macro", "creature"].map((x) => {
-                return { name: `ActiveEffects.advancedFunctions.${x}`, index: (index += 1) };
-            });
+            for(let x of ["systemEffect", "macro", "creature"]){
+                advancedFunctions.push({ name: `ActiveEffects.advancedFunctions.${x}`, index: (index += 1) })
+            }
         }
         
         if (effectConfigs.hasDamageTransformation) {
@@ -289,7 +289,7 @@ export default class DSAActiveEffectConfig extends ActiveEffectConfig {
             DSA5_Utility.getSpeaker(getProperty(message.flags, "data.preData.extra.speaker")) || 
             game.actors.get(getProperty(message.flags, "data.preData.extra.actor.id"))
 
-        let sourceActor = attacker;
+        const sourceActor = attacker;
         let effects = (await this._parseEffectDuration(source, testData, message.flags.data.preData, attacker)).filter(x => !getProperty(x, "flags.dsa5.applyToOwner"));
         if (options.effectIds) effects = effects.filter(x => options.effectIds.includes(x._id))
         let actors = [];

@@ -5,6 +5,7 @@ export function setEnrichers() {
     const icons = { "Rq": "dice", "Gc": "dice", "Ch": "user-shield", "AP": "trophy", "Pay": "coins", "GetPaid": "piggy-bank" }
     const titles = { "Rq": "", "Gc": `${game.i18n.localize("HELP.groupcheck")} `, "Ch": "", "AP": "", "Pay": "", "GetPaid": "" }
     const modRegex = /(-|\+)?\d+/
+    const payRegex = /(-|\+)?\d+(\.\d+)?/
     const replaceRegex = /\[[a-zA-ZöüäÖÜÄ&; -]+/
     const replaceRegex2 = /[\[\]]/g
     const payStrings = {
@@ -36,11 +37,11 @@ export function setEnrichers() {
             }
         },
         {
-            pattern: /@(Pay|GetPaid|AP)\[(-|\+)?\d+\]({[a-zA-ZöüäÖÜÄß\(\)&; -]+})?/g,
+            pattern: /@(Pay|GetPaid|AP)\[(-|\+)?\d+(\.\d+)?\]({[a-zA-ZöüäÖÜÄß\(\)&; -]+})?/g,
             enricher: (match, options) => {
                 const str = match[0]
                 const type = match[1]
-                const mod = Number(str.match(modRegex)[0])
+                const mod = Number(str.match(payRegex)[0])
                 const customText = str.match(/\{.*\}/) ? str.match(/\{.*\}/)[0].replace(/[\{\}]/g, "") : payStrings[type]
                 return $(`<a class="roll-button request-${type}" data-type="skill" data-modifier="${mod}" data-label="${customText}"><em class="fas fa-${icons[type]}"></em>${titles[type]}${customText} (${mod})</a>`)[0]
             }
@@ -67,9 +68,9 @@ export function setEnrichers() {
                     enrichedqs4: await TextEditor.enrichHTML(item.system.qs4, { async: true }),
                     enrichedqs5: await TextEditor.enrichHTML(item.system.qs5, { async: true }),
                     enrichedqs6: await TextEditor.enrichHTML(item.system.qs6, { async: true }),
-                    enrichedCrit: await TextEditor.enrichHTML(this.item.system.crit, { async: true }),
-                    enrichedBotch: await TextEditor.enrichHTML(this.item.system.botch, { async: true }),
-                    enrichedFail: await TextEditor.enrichHTML(this.item.system.fail, { async: true }),
+                    enrichedCrit: await TextEditor.enrichHTML(item.system.crit, { async: true }),
+                    enrichedBotch: await TextEditor.enrichHTML(item.system.botch, { async: true }),
+                    enrichedFail: await TextEditor.enrichHTML(item.system.fail, { async: true }),
                 }
 
                 const templ = await renderTemplate("systems/dsa5/templates/items/infopreview.html", { item, enriched })

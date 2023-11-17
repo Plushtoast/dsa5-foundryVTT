@@ -8,11 +8,15 @@ export default class DSATriggers {
     static async postOpposed(data) {
         const actor = DSA5_Utility.getSpeaker(data.attacker.speaker);
 
+        if(!actor) return
+
         await this.runMacro(actor, data.attacker.testResult, 7, data);
     }
 
     static async postRoll(data) {
         const actor = DSA5_Utility.getSpeaker(data.testData.speaker);
+
+        if(!actor) return
 
         await this.runMacro(actor, data.testData, 6, data);
     }

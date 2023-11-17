@@ -201,11 +201,8 @@
                 {{localize "condition"}}
             </div>
 
-            <div class="col ten center">
-                {{localize "ABBR.modifiers"}}
-            </div>
-            <div class="col ten center" data-tooltip="value">
-                {{localize "ABBR.value"}}
+            <div class="col five center">
+                {{localize 'source'}}
             </div>
             <div class="actor-status-action col five">
 
@@ -219,11 +216,8 @@
                 {{localize "condition"}}
             </div>
 
-            <div class="col ten center">
-                {{localize "ABBR.modifiers"}}
-            </div>
-            <div class="col ten center" data-tooltip="value">
-                {{localize "ABBR.value"}}
+            <div class="col five center">
+                {{localize 'source'}}
             </div>
             <div class="actor-status-action col five">
 
@@ -239,17 +233,13 @@
             <div class="col two">
                 <a class="condition-show" data-locked="true" data-id="{{item._id}}">{{localize item.name}}</a>
             </div>
-            <div class="col ten center">
-                {{#if item.editable}}{{#unless item.boolean}}<a class="condition-value">{{item.manual}}</a>{{/unless}}{{/if}}
-            </div>
-            <div class="col ten center" data-tooltip="value">
-                <span>{{item.value}}</span>
+            <div class="col five center">
+                <a class="condition-edit" data-uuid="{{item.parent.uuid}}"><i class="fas fa-info" data-tooltip="{{item.parent.name}}"></i></a>
             </div>
             <div class="actor-status-action col five right">
-                <a class="condition-edit"  data-uuid="{{item.uuid}}" data-id="{{item._id}}"><i class="fa fa-edit"></i></a> {{#if item.disabled}}
+                <a class="condition-edit" data-uuid="{{item.uuid}}" data-id="{{item._id}}"><i class="fa fa-edit"></i></a> {{#if item.disabled}}
                 <a class="condition-toggle" data-tooltip="SHEET.activate"><i class="far fa-circle"></i></a> {{else}}
-                <a class="condition-toggle" data-tooltip="SHEET.deactivate"><i
-                        class="far fa-check-circle"></i></a> {{/if}}
+                <a class="condition-toggle" data-tooltip="SHEET.deactivate"><i class="far fa-check-circle"></i></a> {{/if}}
             </div>
         </div>
         {{/each}}

@@ -2,12 +2,12 @@ const dict = {
     de: {
         treatWounds: "Wunden versorgen",
         treatPain: "Schmerzen lindern",
-        description: `<b>Wunden versorgen</b>: Alle Ziele erhalten einen Bonus von QS (${qs}) auf die nächste Regeneration.</br><b>Schmerzen lindern</b>: Pro QS kann eine Stufe Schmerz bei allen Zielen gelindert werden.`
+        description: `<b>Wunden versorgen</b>: Alle Ziele erhalten einen Bonus von <b>QS (${qs})</b> auf die nächste Regeneration (wenn schon ein Wert eingetragen ist, wird der höhere verwendet).</br><b>Schmerzen lindern</b>: Pro QS kann eine Stufe Schmerz bei allen Zielen gelindert werden.`
     },
     en: {
         treatWounds: "Treat Wounds",
         treatPain: "Treat Pain",
-        description: `<b>Treat Wounds</b>: All targets receive a bonus of QS (${qs}) on the next regeneration.</br><b>Treat Pain</b>: For each QS, one level of pain can be treated on the targets.`
+        description: `<b>Treat Wounds</b>: All targets receive a bonus of <b>QS (${qs})</b> on the next regeneration (the higher one will be kept, if there is already an entry).</br><b>Treat Pain</b>: For each QS, one level of pain can be treated on the targets.`
     }
 }[game.i18n.lang == "de" ? "de" : "en"]
 
@@ -36,11 +36,26 @@ class TreatWounds extends Application {
         super.activateListeners(html);
         html.find('.treatWounds').click(this._onTreatWounds.bind(this));
         html.find('.treatPain').click(this._onTreatPain.bind(this));
+        html.find('.content-link').click(ev => this.openUuid(ev))
+    }
+
+    async openUuid(ev) {
+        const uuid = ev.currentTarget.dataset.uuid
+        const item = game.items.get(uuid)
+        if(item) {
+            item.sheet.render(true)
+        }
+    }
+
+    updateTargets(html) {
+        const targets = Array.from(game.user.targets)
+        this.targets = targets.map(x => x.actor)
+        html.find('.targets').html(this.buildAnchors(targets))
     }
 
     async _onTreatPain(event) {
-        for(let target of Array.from(game.user.targets)) {
-            if(!target.actor) continue
+        for(let actor of this.targets) {
+            if(!actor) continue
 
             const ef = {
                 name: `${dict.treatPain} (${this.macroData.qs})`,
@@ -56,26 +71,36 @@ class TreatWounds extends Application {
                     },
                 },
             }
-            await target.actor.addCondition(ef)
+            await actor.addCondition(ef)
         }
         this.close()
     }
 
     async _onTreatWounds(event) {
-        for(let target of Array.from(game.user.targets)) {
-            if(!target.actor) continue
+        for(let actor of this.targets) {
+            if(!actor) continue
 
-            await target.actor.update({ "system.status.regeneration.LePTemp": Math.max(this.macroData.qs, target.actor.system.status.regeneration.LePTemp)})
+            await actor.update({ "system.status.regeneration.LePTemp": Math.max(this.macroData.qs, actor.system.status.regeneration.LePTemp)})
         }
         this.close()
     }
 
+    buildAnchors(targets) {
+        const res = []
+        for(const target of targets) {   
+            res.push(target.toAnchor().outerHTML)
+        }   
+        return res.join(", ")
+    }
 
     async getData() {
         const data = super.getData();
+        this.targets = [actor]
         data.macroData = this.macroData
-        data.lang = dict
-        return data;
+        data.source = this.buildAnchors([args.sourceActor])
+        data.lang = dict        
+        data.targets = this.buildAnchors(this.targets)
+        return data
     }
 }
 
