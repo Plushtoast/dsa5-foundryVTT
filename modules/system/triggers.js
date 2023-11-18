@@ -23,9 +23,8 @@ export default class DSATriggers {
 
     static async callMacro(item, packName, name, args = {}) {
         const onUseEffect = new OnUseEffect(item);
-        const res = await onUseEffect.callMacro(packName, name, args);
-        return res
-    }
+        return await onUseEffect.callMacro(packName, name, args);
+    }    
 
     static async runMacro(actor, testData, type, data) {
         if (!game.user.can("MACRO_SCRIPT")) {
@@ -35,10 +34,10 @@ export default class DSATriggers {
                 const source = actor.items.get(key)
                 const ef = source.effects.get(value)
                 const macro = ef.getFlag("dsa5", "args3")
-                const body = `(async () => { ${macro} })()`;
-                const fn = Function("actor", "testData", "type", "data", "source", "ef", body);
+                const AsyncFunction = Object.getPrototypeOf(async function(){}).constructor
+                const fn = new AsyncFunction("actor", "testData", "type", "data", "source", "ef", macro)
                 try {
-                    await Promise.all([fn.call(this, actor, testData, type, data, source, ef)])
+                    return await fn.call(this, actor, testData, type, data, source, ef)
                 } catch (err) {
                     ui.notifications.error(`There was an error in your macro syntax. See the console (F12) for details`);
                     console.error(err);

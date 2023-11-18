@@ -18,11 +18,11 @@ export default class OnUseEffect {
         }
         let result = {};
         if (documents.length) {
-            const body = `(async () => {${documents[0].command}})()`;
-            const fn = Function("args", "actor", "item", body);
             try {
                 args.result = result;
-                await fn.call(this, args, this.item.actor, this.item);
+                const AsyncFunction = Object.getPrototypeOf(async function(){}).constructor
+                const fn = new AsyncFunction("args", "actor", "item", documents[0].command)
+                result.ret =  await fn.call(this, args, this.item.actor, this.item)
             } catch (err) {
                 ui.notifications.error(
                     `There was an error in your macro syntax. See the console (F12) for details`
@@ -45,8 +45,8 @@ export default class OnUseEffect {
         if (!this.item.actor) return;
 
         const macro = OnUseEffect.getOnUseEffect(this.item);
-        const body = `(async () => {${macro}})()`;
-        const fn = Function("item", "actor", body);
+        const AsyncFunction = Object.getPrototypeOf(async function(){}).constructor
+        const fn = new AsyncFunction("item", "actor", macro)
         try {
             await fn.call(this, this.item, this.item.actor);
         } catch (err) {

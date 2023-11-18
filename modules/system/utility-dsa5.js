@@ -97,9 +97,8 @@ export default class DSA5_Utility {
         let documents = await pack.getDocuments({ name: parts[2] });
         let result = {};
         if (documents.length) {
-            const document = documents[0]
-            const body = `(async () => {${document.command}})()`;
-            const fn = Function("args", "source", "effect", body);
+            const AsyncFunction = Object.getPrototypeOf(async function(){}).constructor
+            const fn = new AsyncFunction("args", "source", "effect", documents[0].command)
             try {
                 args.result = result;
                 await fn.call(this, args, source, effect);

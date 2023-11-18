@@ -24,8 +24,8 @@ async function callMacro(packName, name, actor, item, qs, args = {}) {
         }
 
         if (documents.length) {
-            const body = `(async () => {${documents[0].command}})()`;
-            const fn = Function("actor", "item", "qs", "automatedAnimation", "args", body);
+            const AsyncFunction = Object.getPrototypeOf(async function(){}).constructor
+            const fn = new AsyncFunction("actor", "item", "qs", "automatedAnimation", "args", documents[0].command)
             try {
                 args.result = result;
                 const context = mergeObject({ automatedAnimation }, this)
@@ -364,7 +364,7 @@ export default class DSAActiveEffectConfig extends ActiveEffectConfig {
         }
 
         let duration = getProperty(source, "system.duration.value") || "";
-        duration = duration.replace(" x ", " * ").replace(game.i18n.localize("CHARAbbrev.QS"), testData.qualityStep);
+        duration = duration.replace(/ x /g, " * ").replace(game.i18n.localize("CHARAbbrev.QS"), testData.qualityStep);
         try {
             for (const reg of DSAActiveEffectConfig.effectDurationRegexes) {
                 if (reg.regEx.test(duration)) {
