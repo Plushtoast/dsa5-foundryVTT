@@ -404,8 +404,6 @@ export default class OpposedDsa5 {
             attackerTest.successLevel = 1
         }
 
-        console.log(defenderTest, attackerTest)
-
         if (defenderTest.successLevel != undefined) {
             switch (attackerTest.rollType) {
                 case "combatskill":

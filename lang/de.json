@@ -354,6 +354,7 @@
     "halfDefenseShort": "Halbe Verteidigung",
     "Hair_color": "Haarfarbe",
     "Height": "Größe",
+    "extensionModifier": "Erweiterungsmodifikator",
     "Home": "Heimatort",
     "Initial": "Startwert",
     "initDie": "Initiativewürfel",
@@ -404,7 +405,7 @@
     "maintainedSpells": "Aufrechterhaltene Zauber/Liturgien (je -1)",
     "manual": "Händisch",
     "mageLevel": "Magieart",
-    "minorghostsappear": "Lästige Mindergeister werden durch den Zauber angelockt",
+    "minorghostsappear": "{creature} werden durch den Zauber angelockt",
     "stunnedByCounterAttack": "Gegenhalten versursacht 1 Stufe Betäubung",
     "maxSpellMods": "Maximale Modifikatorenanzahl",
     "misc": "Sonstiges",
@@ -1410,7 +1411,8 @@
         "servantCloud": "Diener der Wolken", 
         "servantOre": "Diener des Erzes",
         "immuneTo": "Immunität gegen",
-        "enemySense": "Feindgespür"
+        "enemySense": "Feindgespür",
+        "winhallStyle": "Winhall-Stil"
     },
     "LocalizedCTs": {
         "Blasrohre": "Blowpipes",

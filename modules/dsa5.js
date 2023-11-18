@@ -95,9 +95,9 @@ Hooks.once("init", () => {
             SpeciesWizard
         },
         view: {
-            tinyNotification: tinyNotification,
-            tabSlider: tabSlider,
-            clickableAbility: clickableAbility
+            tinyNotification,
+            tabSlider,
+            clickableAbility
         },
         dialogs: {
             DialogReactDSA5,

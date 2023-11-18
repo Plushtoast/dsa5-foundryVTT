@@ -46,13 +46,13 @@ async function callMacro(packName, name, actor, item, qs, args = {}) {
 
 Hooks.once("i18nInit", () => {
     DSAActiveEffectConfig.effectDurationRegexes = [
-        { regEx: new RegExp(game.i18n.localize("DSAREGEX.combatRounds"), "gi"), seconds: 5 },
-        { regEx: new RegExp(game.i18n.localize("DSAREGEX.minutes"), "gi"), seconds: 60 },
-        { regEx: new RegExp(game.i18n.localize("DSAREGEX.hours"), "gi"), seconds: 3600 },
-        { regEx: new RegExp(game.i18n.localize("DSAREGEX.days"), "gi"), seconds: 3600 * 24 },
-        { regEx: new RegExp(game.i18n.localize("DSAREGEX.weeks"), "gi"), seconds: 3600 * 24 * 7 },
-        { regEx: new RegExp(game.i18n.localize("DSAREGEX.months"), "gi"), seconds: 3600 * 24 * 30 },
-        { regEx: new RegExp(game.i18n.localize("DSAREGEX.years"), "gi"), seconds: 3600 * 24 * 350 }
+        { regEx: new RegExp(game.i18n.localize("DSAREGEX.combatRounds"), "i"), seconds: 5 },
+        { regEx: new RegExp(game.i18n.localize("DSAREGEX.minutes"), "i"), seconds: 60 },
+        { regEx: new RegExp(game.i18n.localize("DSAREGEX.hours"), "i"), seconds: 3600 },
+        { regEx: new RegExp(game.i18n.localize("DSAREGEX.days"), "i"), seconds: 3600 * 24 },
+        { regEx: new RegExp(game.i18n.localize("DSAREGEX.weeks"), "i"), seconds: 3600 * 24 * 7 },
+        { regEx: new RegExp(game.i18n.localize("DSAREGEX.months"), "i"), seconds: 3600 * 24 * 30 },
+        { regEx: new RegExp(game.i18n.localize("DSAREGEX.years"), "i"), seconds: 3600 * 24 * 350 }
     ];
 })
 

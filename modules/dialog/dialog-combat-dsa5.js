@@ -518,13 +518,24 @@ export default class DSA5CombatDialog extends DialogShared {
                 value,
             });
             const enemySense = game.i18n.localize("LocalizedIDs.enemySense")
+            const winhallStyle = game.i18n.localize("LocalizedIDs.winhallStyle")
             game.user.targets.forEach((target) => {
-                if (target.actor?.items.find((x) => x.type == "specialability" && x.name == enemySense)) {
-                    situationalModifiers.push({
-                        name: enemySense,
-                        value,
-                    });
-                    return;
+                for(const item of target.actor?.items || []){
+                    if(item.type == "specialability"){
+                        if(item.name == enemySense){
+                            situationalModifiers.push({
+                                name: enemySense,
+                                value: -4,
+                            });
+                        }
+                        else if(item.name == winhallStyle){
+                            situationalModifiers.push({
+                                name: winhallStyle,
+                                value: -2,
+                            });
+                        }
+                    
+                    }
                 }
             });
         }

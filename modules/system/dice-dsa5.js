@@ -1068,16 +1068,16 @@ export default class DiceDSA5 {
 
         await this.calculateEnergyCost(isClerical, res, testData)
 
-        if (
-            AdvantageRulesDSA5.hasVantage(testData.extra.actor, game.i18n.localize("CONDITION.minorSpirits")) &&
-            !testData.extra.actor.effects.find((x) => x.name == game.i18n.localize("CONDITION.minorSpirits"))
-        ) {
-            const ghostroll = await new Roll("1d20").evaluate({ async: true })
-            if (ghostroll.total <= res.preData.calculatedSpellModifiers.finalcost) {
-                res.description += ", " + game.i18n.localize("minorghostsappear")
-                DSA5_Utility.getSpeaker(testData.extra.speaker).addCondition("minorSpirits")
+        for(const creature of ["minorFairies", "minorSpirits"]){
+            const name = game.i18n.localize("CONDITION." + creature)
+            if (AdvantageRulesDSA5.hasVantage(testData.extra.actor, name) && !testData.extra.actor.effects.find((x) => x.name == name)) {
+                const ghostroll = await new Roll("1d20").evaluate({ async: true })
+                if (ghostroll.total <= res.preData.calculatedSpellModifiers.finalcost) {
+                    res.description += ", " + game.i18n.format("minorghostsappear", { creature: name})
+                    DSA5_Utility.getSpeaker(testData.extra.speaker).addCondition(creature)
+                }
             }
-        }
+        }    
 
         return res
     }

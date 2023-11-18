@@ -228,7 +228,7 @@ export class DSA5Combatant extends Combatant {
 
     brawlingChange() {
         const actor = DSA5_Utility.getSpeaker({actor: this.actor.id, scene: this.sceneId, token: this.token.id})
-        const tokenChange = getProperty(actor, "system.config.autoBar") ? actor.getActiveTokens().map(x => {return { _id: x.id, bar1: { attribute: "status.temporaryLeP" } }}) : [{}]
+        const tokenChange = getProperty(actor, "system.config.autoBar") ? actor.getActiveTokens().map(x => {return { _id: x.id, bar1: { attribute: "status.temporaryLeP" } }}) : []
         const actorChange = {
             _id: actor.id,
             system: {
@@ -256,7 +256,7 @@ export class DSA5Combatant extends Combatant {
 
     async undoBrawlingChange() {
         const actor = DSA5_Utility.getSpeaker({actor: this.actor.id, scene: this.sceneId, token: this.token.id})
-        const tokenChange = getProperty(actor, "system.config.autoBar") ? actor.getActiveTokens().map(x => { return { _id: x.id, bar1: { attribute: "status.wounds" } }}) : [{}]
+        const tokenChange = getProperty(actor, "system.config.autoBar") ? actor.getActiveTokens().map(x => { return { _id: x.id, bar1: { attribute: "status.wounds" } }}) : []
         const lostLP = Math.max(0, actor.system.status.temporaryLeP.max - actor.system.status.temporaryLeP.value)
         let brawlDamage = 0
 
