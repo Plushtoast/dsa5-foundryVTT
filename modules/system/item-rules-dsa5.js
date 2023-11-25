@@ -61,12 +61,7 @@ export default class ItemRulesDSA5 {
                 "transfer": true,
                 "flags": {
                     "dsa5": {
-                        "value": null,
-                        "editable": true,
                         "description": `${name} (${adoption.name})`,
-                        "custom": true,
-                        "auto": null,
-                        "manual": 0,
                         "hideOnToken": true,
                         "hidePlayers": false
                     }

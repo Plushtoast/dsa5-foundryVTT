@@ -22,7 +22,7 @@ export default class OnUseEffect {
                 args.result = result;
                 const AsyncFunction = Object.getPrototypeOf(async function(){}).constructor
                 const fn = new AsyncFunction("args", "actor", "item", documents[0].command)
-                result.ret =  await fn.call(this, args, this.item.actor, this.item)
+                result.ret = await fn.call(this, args, this.item.actor, this.item)
             } catch (err) {
                 ui.notifications.error(
                     `There was an error in your macro syntax. See the console (F12) for details`

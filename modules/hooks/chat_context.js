@@ -212,12 +212,9 @@ export function chatContext() {
                     icon: "icons/svg/daze.svg",
                     flags: {
                         dsa5: {
-                            value: null,
-                            editable: true,
                             description: maintain,
                             maintain: cost,
-                            payType,
-                            custom: true,
+                            payType
                         },
                     },
                     changes: [],

@@ -64,10 +64,7 @@ class TreatWounds extends Application {
                 duration: {},
                 flags: {
                     dsa5: {
-                        value: null,
-                        editable: true,
-                        description: `${dict.treatPain} (${this.macroData.qs})`,
-                        custom: true,
+                        description: `${dict.treatPain} (${this.macroData.qs})`
                     },
                 },
             }

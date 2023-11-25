@@ -432,13 +432,10 @@ export default class Actordsa5 extends Actor {
       name: game.i18n.localize("MERCHANT.locked"),
       icon: "icons/svg/padlock.svg",
       flags: {
-        dsa5: {
-          value: null,
-          editable: true,
+        dsa5: {          
           noEffect: true,
           hidePlayers: true,
-          description: game.i18n.localize("MERCHANT.locked"),
-          custom: true,
+          description: game.i18n.localize("MERCHANT.locked")
         },
       },
     };

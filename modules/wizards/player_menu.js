@@ -491,12 +491,7 @@ class ConjurationRequest extends DSA5Dialog {
                 "label": game.i18n.localize(modifier.name),
                 "flags": {
                     "dsa5": {
-                        "value": null,
-                        "editable": true,
                         "description": `${game.i18n.localize('PLAYER.conjuration')} ${game.i18n.localize('extensions')}`,
-                        "custom": true,
-                        "auto": null,
-                        "manual": 0,
                         "hideOnToken": true,
                         "hidePlayers": false
                     }
@@ -526,7 +521,6 @@ class ConjurationRequest extends DSA5Dialog {
             "flags": {
                 "dsa5": {
                     "value": services,
-                    "editable": true,
                     "max": 500,
                     "description": `${game.i18n.localize('PLAYER.conjuration')} ${game.i18n.localize('PLAYER.services')}`,
                     "manual": services,

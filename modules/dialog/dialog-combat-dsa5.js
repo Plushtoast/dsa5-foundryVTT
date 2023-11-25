@@ -335,12 +335,7 @@ export default class DSA5CombatDialog extends DialogShared {
                     "transfer": true,
                     "flags": {
                         "dsa5": {
-                            "value": null,
-                            "editable": true,
                             "description": modeTranslated,
-                            "custom": true,
-                            "auto": null,
-                            "manual": 0,
                             "resistRoll": `${game.i18n.localize("LocalizedIDs.selfControl")} -3`,
                             "hideOnToken": false,
                             "hidePlayers": false,

@@ -31,10 +31,7 @@ export default class DSA5StatusEffects {
             origin: owner.uuid,
             flags: {
                 dsa5: {
-                    value: null,
-                    editable: true,
-                    description,
-                    custom: true
+                    description
                 }
             }
         })

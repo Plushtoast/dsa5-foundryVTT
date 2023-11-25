@@ -8,10 +8,7 @@ DSA5.statusEffects = [{
         label: "CONDITION.defeated",
         description: "CONDITIONDESCRIPTION.defeated",
         flags: {
-            dsa5: {
-                "value": null,
-                "editable": true
-            }
+            dsa5: {}
         }
     },
     {
@@ -23,7 +20,6 @@ DSA5.statusEffects = [{
         flags: {
             dsa5: {
                 "value": 1,
-                "editable": true,
                 "max": 4
             }
         }
@@ -34,10 +30,7 @@ DSA5.statusEffects = [{
         icon: "icons/svg/falling.svg",
         description: "CONDITIONDESCRIPTION.prone",
         flags: {
-            dsa5: {
-                "value": null,
-                "editable": true
-            }
+            dsa5: {}
         }
     },
     {
@@ -46,10 +39,7 @@ DSA5.statusEffects = [{
         icon: "icons/svg/unconscious.svg",
         description: "CONDITIONDESCRIPTION.unconscious",
         flags: {
-            dsa5: {
-                "value": null,
-                "editable": true
-            }
+            dsa5: {}
         }
     },
     {
@@ -58,10 +48,7 @@ DSA5.statusEffects = [{
         icon: "icons/svg/net.svg",
         description: "CONDITIONDESCRIPTION.rooted",
         flags: {
-            dsa5: {
-                "value": null,
-                "editable": true
-            }
+            dsa5: {}
         }
     },
     {
@@ -70,10 +57,7 @@ DSA5.statusEffects = [{
         icon: "icons/svg/padlock.svg",
         description: "CONDITIONDESCRIPTION.fixated",
         flags: {
-            dsa5: {
-                "value": null,
-                "editable": true
-            }
+            dsa5: {}
         }
     },
     {
@@ -82,10 +66,7 @@ DSA5.statusEffects = [{
         icon: "icons/svg/hazard.svg",
         description: "CONDITIONDESCRIPTION.surprised",
         flags: {
-            dsa5: {
-                "value": null,
-                "editable": true
-            }
+            dsa5: {}
         }
     },
     {
@@ -94,10 +75,7 @@ DSA5.statusEffects = [{
         icon: "icons/svg/blind.svg",
         description: "CONDITIONDESCRIPTION.blind",
         flags: {
-            dsa5: {
-                "value": null,
-                "editable": true
-            }
+            dsa5: {}
         }
     },
     {
@@ -106,10 +84,7 @@ DSA5.statusEffects = [{
         icon: "icons/svg/poison.svg",
         description: "CONDITIONDESCRIPTION.poisoned",
         flags: {
-            dsa5: {
-                "value": null,
-                "editable": true
-            }
+            dsa5: {}
         }
     },
     {
@@ -118,10 +93,7 @@ DSA5.statusEffects = [{
         icon: "icons/svg/biohazard.svg",
         description: "CONDITIONDESCRIPTION.sick",
         flags: {
-            dsa5: {
-                "value": null,
-                "editable": true
-            }
+            dsa5: {}
         }
     },
     {
@@ -130,10 +102,7 @@ DSA5.statusEffects = [{
         icon: "icons/svg/deaf.svg",
         description: "CONDITIONDESCRIPTION.deaf",
         flags: {
-            dsa5: {
-                "value": null,
-                "editable": true
-            }
+            dsa5: {}
         }
     },
     {
@@ -144,7 +113,6 @@ DSA5.statusEffects = [{
         flags: {
             dsa5: {
                 "value": 1,
-                "editable": true,
                 "max": 3
             }
         }
@@ -155,10 +123,7 @@ DSA5.statusEffects = [{
         icon: "icons/svg/circle.svg",
         description: "CONDITIONDESCRIPTION.invisible",
         flags: {
-            dsa5: {
-                "value": null,
-                "editable": true
-            }
+            dsa5: {}
         }
     },
     {
@@ -167,10 +132,7 @@ DSA5.statusEffects = [{
         icon: "icons/svg/cave.svg",
         description: "CONDITIONDESCRIPTION.constricted",
         flags: {
-            dsa5: {
-                "value": null,
-                "editable": true
-            }
+            dsa5: {}
         }
     },
     {
@@ -182,10 +144,7 @@ DSA5.statusEffects = [{
             { key: "system.skillModifiers.step", mode: 0, value: "Kraftakt 2;Feat of Strength 2" }
         ],
         flags: {
-            dsa5: {
-                "value": null,
-                "editable": true
-            }
+            dsa5: {}
         }
     },
     {
@@ -194,10 +153,7 @@ DSA5.statusEffects = [{
         icon: "icons/svg/silenced.svg",
         description: "CONDITIONDESCRIPTION.mute",
         flags: {
-            dsa5: {
-                "value": null,
-                "editable": true
-            }
+            dsa5: {}
         }
     },
     {
@@ -206,10 +162,7 @@ DSA5.statusEffects = [{
         icon: "icons/svg/sleep.svg",
         description: "CONDITIONDESCRIPTION.incapacitated",
         flags: {
-            dsa5: {
-                "value": null,
-                "editable": true
-            }
+            dsa5: {}
         }
     },
     {
@@ -221,7 +174,6 @@ DSA5.statusEffects = [{
         flags: {
             dsa5: {
                 "value": 1,
-                "editable": true,
                 "max": 4
             }
         }
@@ -235,7 +187,6 @@ DSA5.statusEffects = [{
         flags: {
             dsa5: {
                 "value": 1,
-                "editable": true,
                 "max": 4
             }
         }
@@ -249,7 +200,6 @@ DSA5.statusEffects = [{
         flags: {
             dsa5: {
                 "value": 1,
-                "editable": true,
                 "max": 4
             }
         }
@@ -263,7 +213,6 @@ DSA5.statusEffects = [{
         flags: {
             dsa5: {
                 "value": 1,
-                "editable": true,
                 "max": 4
             }
         }
@@ -277,7 +226,6 @@ DSA5.statusEffects = [{
         flags: {
             dsa5: {
                 "value": 1,
-                "editable": true,
                 "max": 4
             }
         }
@@ -291,7 +239,6 @@ DSA5.statusEffects = [{
         flags: {
             dsa5: {
                 "value": 1,
-                "editable": true,
                 "max": 4
             }
         }
@@ -306,9 +253,7 @@ DSA5.statusEffects = [{
         ],
         duration: { seconds: 600 },
         flags: {
-            dsa5: {
-                value: null,
-                editable: true,
+            dsa5: {                
             }
         }
     },
@@ -320,7 +265,6 @@ DSA5.statusEffects = [{
         flags: {
             dsa5: {
                 "value": 1,
-                "editable": true,
                 "max": 500,
                 "hideOnToken": true
             }
