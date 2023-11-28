@@ -9,7 +9,11 @@ This system is intended for usage with [Foundry Virtual Tabletop](https://foundr
 If you want to learn more checkout the [German](https://ulisses-spiele.de/virtual-tabletop-dsa-vtt/) or [English](https://ulisses-us.com/ulisses-virtual-tabletops/virtual-tabletop-dsa-vtt/) VTT Page by Ulisses Spiele.
 
 ## Installation - Auto Installer
-In the FVTT Game Systems Menu, click Install System and enter the Manifest URL: `https://raw.githubusercontent.com/Plushtoast/dsa5-foundryVTT/foundry11/system.json`
+In the FVTT Game Systems Menu, click Install System and enter the Manifest URL: 
+
+´´´
+https://raw.githubusercontent.com/Plushtoast/dsa5-foundryVTT/foundry11/system.json
+´´´
 
 ## Roadmap
 See [Roadmap](https://github.com/users/Plushtoast/projects/1/views/6) for our short term goals. Those might be subject to change.
