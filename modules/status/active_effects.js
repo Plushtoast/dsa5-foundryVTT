@@ -70,7 +70,17 @@ export default class DSAActiveEffectConfig extends ActiveEffectConfig {
             if (!game.user.can("MACRO_SCRIPT")) {
                 ui.notifications.warn(`You are not allowed to use JavaScript macros.`);
             } else {
-                await eval(`(async () => {${onRemoveMacro}})()`);
+                try {
+                    const AsyncFunction = Object.getPrototypeOf(async function(){}).constructor
+                    const fn = new AsyncFunction("effect", "actor", onRemoveMacro)
+                    await fn.call(this, effect, actor);
+                } catch (err) {
+                    ui.notifications.error(
+                        `There was an error in your macro syntax. See the console (F12) for details`
+                    );
+                    console.error(err);
+                    console.warn(err.stack);
+                }
             }
         }
     }

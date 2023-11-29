@@ -38,8 +38,9 @@ export default class DSATour extends Tour{
 
     async start() {
         if(this.config.preCommand){
-            const fn = await eval(`(async() => { ${this.config.preCommand} })`)
-            await fn()            
+            const AsyncFunction = Object.getPrototypeOf(async function(){}).constructor
+            const fn = new AsyncFunction(this.config.preCommand)
+            await fn.call(this);
         }
         if(this.app){
             await this.app.render(true, {focus: true})

@@ -66,7 +66,7 @@ export default class DSA5SkillDialog extends DialogShared {
         const routineButton = this.element.find('.routineRoll')
         if (!actor) return routineButton.prop("disabled", true)
 
-        const routineAllowed = true
+        let routineAllowed = true
         for (let i = 0; i < 3; i++) {
             if (actor.system.characteristics[data[`characteristics${i}`]].max * data[`ch${i}`].max < 13) {
                 routineAllowed = false

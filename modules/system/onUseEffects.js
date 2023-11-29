@@ -21,7 +21,12 @@ export default class OnUseEffect {
             try {
                 args.result = result;
                 const AsyncFunction = Object.getPrototypeOf(async function(){}).constructor
-                const fn = new AsyncFunction("args", "actor", "item", documents[0].command)
+                //TODO passing multiple scopes here kind of messes things up
+                const fn = new AsyncFunction("args", "actor", "item",
+                `
+                const that = this;
+                ${documents[0].command.replace(/( |\(|{)this\./g, " that.")}
+                `)
                 result.ret = await fn.call(this, args, this.item.actor, this.item)
             } catch (err) {
                 ui.notifications.error(
@@ -44,10 +49,10 @@ export default class OnUseEffect {
         }
         if (!this.item.actor) return;
 
-        const macro = OnUseEffect.getOnUseEffect(this.item);
-        const AsyncFunction = Object.getPrototypeOf(async function(){}).constructor
-        const fn = new AsyncFunction("item", "actor", macro)
+        const macro = OnUseEffect.getOnUseEffect(this.item);        
         try {
+            const AsyncFunction = Object.getPrototypeOf(async function(){}).constructor
+            const fn = new AsyncFunction("item", "actor", macro)
             await fn.call(this, this.item, this.item.actor);
         } catch (err) {
             ui.notifications.error(

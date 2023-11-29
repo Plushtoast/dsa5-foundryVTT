@@ -2,7 +2,7 @@
     "id": "dsa5",
     "title": "Das Schwarze Auge/The Dark Eye (5th Edition)",
     "description": "The \"Das Schwarze Auge\" system for Foundry VTT. Includes all relevant mechanisms to play in the wonderous world of Aventuria and Das Schwarze Auge/The Dark Eye.",
-    "version": "5.2.3",
+    "version": "5.2.4",
     "authors": [{
         "name": "Plushtoast"
     },{
@@ -13,7 +13,7 @@
         "libs/select2.min.js"
     ],
     "esmodules": [
-        "bundle/dsa5.bundle.js"
+        "bundle/modules/dsa5.js"
     ],
     "styles": [
         "styles/css/select2.min.css",
@@ -91,7 +91,7 @@
     },
     "url": "https://github.com/Plushtoast/dsa5-foundryVTT",
     "manifest": "https://raw.githubusercontent.com/Plushtoast/dsa5-foundryVTT/foundry11/system.json",
-    "download": "https://github.com/Plushtoast/dsa5-foundryVTT/releases/download/5.2.3/dsa5-foundryVTT-5.2.3.zip",
+    "download": "https://github.com/Plushtoast/dsa5-foundryVTT/releases/download/5.2.4/dsa5-foundryVTT-5.2.4.zip",
     "name": "dsa5",
     "minimumCoreVersion": "11.306",
     "packFolders": [
