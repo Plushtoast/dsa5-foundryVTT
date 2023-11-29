@@ -38,7 +38,7 @@ export default class AdvantageRulesDSA5 extends ItemRulesDSA5 {
         if (adoption != null) {
             AdvantageRulesDSA5.simpleAdoption(item, adoption, item.name, DSA5.vantagesNeedingAdaption)
             item.name = `${item.name.replace(' ()', '')} (${adoption.name})`
-            if (adoption.data)
+            if (adoption.system)
                 item.system.APValue.value = item.system.APValue.value.split("/")[adoption.system.StF.value.charCodeAt(0) - 65].trim()
         }
         let res = actor.items.find(i => {

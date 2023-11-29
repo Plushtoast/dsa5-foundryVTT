@@ -469,7 +469,7 @@ export function setupConfiguration() {
         config: true,
         default: true,
         type: Boolean,
-        onchange: ev => {
+        onchange: () => {
             if (game.dsa5.apps.initTracker) {
                 game.dsa5.apps.initTracker.close()
                 game.dsa5.apps.initTracker = undefined

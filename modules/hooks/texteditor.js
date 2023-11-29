@@ -78,17 +78,17 @@ export function setEnrichers() {
             }
         },
         {
-            pattern: /@EmbedItem\[[a-zA-ZöüäÖÜÄ&; -\.0-9›‹âï\/]+\]({[a-zA-Z=]+})?/g,
+            pattern: /@EmbedItem\[[a-zA-ZöüäÖÜÄ&;, -\.0-9›‹âïß\/]+\]({[a-zA-Z=]+})?/g,
             enricher: async(match, options) => {
                 let uuid = match[0].match(/(?:\[)(.*?)(?=\])/)[0].slice(1)
                 let document = await fromUuid(uuid)
-
+               
                 if(!document) {
                     const parts = uuid.split(".")
                     const pack = game.packs.get(parts[0] + "." + parts[1])
                     if(pack){
                         document = await pack.getDocuments({name: parts[2]})
-                        if(document.length > 0) document = document[0]
+                        document = document[0]
                     }                    
                 }                
 

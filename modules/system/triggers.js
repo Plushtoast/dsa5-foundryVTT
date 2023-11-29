@@ -34,9 +34,10 @@ export default class DSATriggers {
                 const source = actor.items.get(key)
                 const ef = source.effects.get(value)
                 const macro = ef.getFlag("dsa5", "args3")
-                const AsyncFunction = Object.getPrototypeOf(async function(){}).constructor
-                const fn = new AsyncFunction("actor", "testData", "type", "data", "source", "ef", macro)
-                try {
+                
+                try {                    
+                    const AsyncFunction = Object.getPrototypeOf(async function(){}).constructor
+                    const fn = new AsyncFunction("actor", "testData", "type", "data", "source", "ef", macro)
                     return await fn.call(this, actor, testData, type, data, source, ef)
                 } catch (err) {
                     ui.notifications.error(`There was an error in your macro syntax. See the console (F12) for details`);

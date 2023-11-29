@@ -172,6 +172,7 @@ class GameMasterMenu extends Application {
             ev.stopPropagation()
             this.doPayment([this.getID(ev)], false)
         })
+        html.find('.resetSightThresholds').click(() => this.resetSightThresholds())
         html.find('.payAll').click((ev) => {
             ev.stopPropagation()
             this.doPayment(this.selectedIDs(ev), true)
@@ -332,6 +333,11 @@ class GameMasterMenu extends Application {
         const optns = game.settings.get("dsa5", "sightOptions").split("|")
         optns[index] = value
         await game.settings.set("dsa5", "sightOptions", optns.join("|"))
+    }
+
+    async resetSightThresholds() {
+        await game.settings.set("dsa5", "sightOptions", game.settings.settings.get("dsa5.sightOptions").default)
+        this.render(true)
     }
 
     getGroupSchipSetting() {

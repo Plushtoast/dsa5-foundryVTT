@@ -324,7 +324,7 @@ export default class TokenHotbar2 extends Application {
     async handleOnUse(ev, actor, id, tokenId){
         let item = actor.items.get(id)
         const onUse = new OnUseEffect(item)
-        onUse.executeOnUseEffect()
+        await onUse.executeOnUseEffect()
     }
 
     async handleGM(ev, actor, id, tokenId){
