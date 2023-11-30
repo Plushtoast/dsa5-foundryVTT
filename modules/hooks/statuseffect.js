@@ -102,7 +102,7 @@ export default function() {
         const effect = (img.dataset.statusId && this.object.actor) ?
             CONFIG.statusEffects.find(e => e.id === img.dataset.statusId) :
             img.getAttribute("src");
-        if (!effect.flags.dsa5.editable)
+        if (!effect.flags.dsa5?.max || effect.flags.dsa5?.notEditable)
             return
         if (event.button == 0)
             return this.object.incrementCondition(effect)

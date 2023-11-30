@@ -1,4 +1,5 @@
-{{#if (eq document.flags.core.sheetClass "dsa5.erchantSheetDSA5")}}
+{{log document.flags.core.sheetClass}}
+{{#if (eq document.flags.core.sheetClass "dsa5.MerchantSheetDSA5")}}
 {{> systems/dsa5/templates/items/browse/garadan.html}}
 {{else}}
 {{> systems/dsa5/templates/items/browse/actor.html}}

@@ -3538,8 +3538,20 @@
     color: lightgrey;
   }
 
+  .garadanborder {
+    max-width: 80%;
+    height: 140px;
+    position: relative;
+    top: -40px;
+    background-image: url('../../icons/backgrounds/garadanborder.webp');
+    background-size: 100% 100%;
+    background-repeat: no-repeat;
+    margin: 0 auto;
+  }
+
+  .garadanb.garadanborder,
   .garadanb {
-    background-image: url('../../icons/backgrounds/garadanb.webp');
+    max-width: 100%;
     background-size: 100% 100%;
     background-repeat: no-repeat;
     border:none;
@@ -3558,17 +3570,18 @@
       font-weight:normal;
       letter-spacing: 0px;
     }
+  } 
+
+  .garadanb {
+    background-image: url('../../icons/backgrounds/garadanb.webp');
   }
 
-  .garadanborder {
-    max-width: 80%;
-    height: 140px;
-    position: relative;
-    top: -40px;
+  .garadanb.garadanborder{
+    height: auto;
+    position:initial;
     background-image: url('../../icons/backgrounds/garadanborder.webp');
-    background-size: 100% 100%;
-    background-repeat: no-repeat;
-    margin: 0 auto;
+    min-height: 130px;
+    background-position: center -24px;
   }
   
   .garadanicon {

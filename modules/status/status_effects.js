@@ -38,7 +38,7 @@ export default class DSA5StatusEffects {
     }
 
     static prepareActiveEffects(target, data) {
-        let systemConditions = duplicate(CONFIG.statusEffects) //.filter(x => x.flags.dsa5.editable)
+        let systemConditions = duplicate(CONFIG.statusEffects)
         let appliedSystemConditions = []
         data.conditions = []
         data.transferedConditions = []
@@ -59,7 +59,7 @@ export default class DSA5StatusEffects {
             const statusesId = [...cnd.statuses][0]
             if (statusesId) {
                 condition.value = cnd.getFlag("dsa5", "value")
-                condition.editable = cnd.getFlag("dsa5", "editable")
+                condition.editable = cnd.getFlag("dsa5", "max") && !cnd.getFlag("dsa5", "notEditable")
                 condition.descriptor = statusesId
                 condition.manual = cnd.getFlag("dsa5", "manual")
                 appliedSystemConditions.push(statusesId)
@@ -500,8 +500,9 @@ class SunkenEffect extends DSA5StatusEffects {
 
 class HungerEffect extends DSA5StatusEffects {
     static calculateRollModifier(effect, actor, item, options = {}) {
-        if (item.type == "regenerate")
-            return Math.pow(2, this.clampedCondition(actor, effect) * -1 - 1) * -1
+        const stat = Math.clamped(effect.flags.dsa5.value, 0, 4)
+        if (item.type == "regenerate")            
+            return Math.pow(2, stat - 1) * -1
 
         return 0
     }
@@ -509,11 +510,7 @@ class HungerEffect extends DSA5StatusEffects {
 
 class ThirstEffect extends DSA5StatusEffects {
     static calculateRollModifier(effect, actor, item, options = {}) {
-        const stat = this.clampedCondition(actor, effect)
-        if (item.type == "regenerate")
-            return stat == 1 ? -1 : stat * -5
-
-        return Math.clamped(stat -1, 0, 3)
+        return 0
     }
 
     static levelDependentEffects(existing, update) {
