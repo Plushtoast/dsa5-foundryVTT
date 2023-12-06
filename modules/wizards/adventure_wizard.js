@@ -40,7 +40,7 @@ export default class BookWizard extends Application {
         Hooks.on("renderJournalDirectory", (app, html) => {
             let div = $('<div class="header-actions action-buttons flexrow"></div>')
             let button = $(`<button id="openJournalBrowser"><i class="fa fa-book"></i>${game.i18n.localize("Book.Wizard")}</button>`)
-            button.click(() => { BookWizard.wizard.render(true) })
+            button.on('click', () => { BookWizard.wizard.render(true) })
             div.append(button)
             html.find(".header-actions:first-child").after(div)
         })
@@ -126,6 +126,13 @@ export default class BookWizard extends Application {
 
         html.on("search keyup", ".filterJournals", ev => {
             this.filterToc($(ev.currentTarget).val())
+        })
+
+        html.on('click', '.show-item', async(ev) => {
+            //TODO maybe try to open imported character
+            let itemId = ev.currentTarget.dataset.uuid
+            const item = await fromUuid(itemId)
+            item.sheet.render(true)
         })
 
         html.on('click', '.movePage', async(ev) => this.movePage(ev))
@@ -251,6 +258,7 @@ export default class BookWizard extends Application {
     async loadJournal(name) {
         await this.showJournal(this.journals.find(x => x.name == name && x.flags.dsa5.parent == this.selectedChapter ))
     }
+
     async loadJournalById(id) {
         await this.showJournal(this.journals.find(x => x.id == id))
     }
@@ -311,7 +319,11 @@ export default class BookWizard extends Application {
             const data = await sheet.getData();
             const view = (await sheet._renderInner(data)).get();
             let pageContent = $(view[view.length -1]).html()
+            
             if(page.type == "video") pageContent = `<div class="video-container">${pageContent}</div>`
+
+            if(journal.name != page.name) pageContent = `<h2>${page.name}</h2>${pageContent}`
+
             content += pageContent
         }
         const pinIcon = this.findSceneNote(journal.getFlag("dsa5", "initId"))
@@ -325,11 +337,15 @@ export default class BookWizard extends Application {
         $(this._element).find('.subChapter').removeClass('selected')
         $(this._element).find(`[data-jid="${journal.id}"]`).addClass("selected")
         bindImgToCanvasDragStart(chapter)
-        chapter.find('.documentName-link, .entity-link, .content-link').click(ev => {
-            const elem = $(ev.currentTarget)
-            if (this.bookData && elem.attr("data-pack") == this.bookData.journal) {
-                ev.stopPropagation()    
-                this.loadJournalById(elem.attr("data-id"))
+        chapter.find('.documentName-link, .entity-link, .content-link').on('click', ev => {
+            const dataset = ev.currentTarget.dataset
+            if (this.bookData && dataset.pack == this.bookData.journal) {
+                //todo make this work for pages
+                if(dataset.type != "JournalEntryPage") {
+                    ev.stopPropagation()
+                    this.loadJournalById(dataset.id)
+                }
+                
             }
         })
     }
