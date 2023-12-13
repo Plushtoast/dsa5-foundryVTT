@@ -1698,8 +1698,8 @@ class RitualItemDSA5 extends SpellItemDSA5 {
 
 class ApplicationItemDSA5 extends Itemdsa5 {
     static chatData(data, name) {
-        const hasLocalization = game.i18n.has(`APPLICATION.${data.system.skill} - ${name}`)
-        const description = hasLocalization ? game.i18n.has(`APPLICATION.${data.system.skill} - ${name}`) : data.description.value
+        const hasLocalization = game.i18n.has(`APPLICATION.${data.skill} - ${name}`)
+        const description = hasLocalization ? game.i18n.localize(`APPLICATION.${data.skill} - ${name}`) : data.description.value
         return [this._chatLineHelper("Description", description)]
     }
 }

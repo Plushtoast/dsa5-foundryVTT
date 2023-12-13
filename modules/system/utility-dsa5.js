@@ -114,7 +114,11 @@ export default class DSA5_Utility {
     }
 
     static isActiveGM(){
-        return game.users.activeGM?.isSelf
+        const activeGM = game.users.activeGM
+
+        if(!activeGM) ui.notifications.warn(game.i18n.localize("DSAError.requiresGM"))
+        
+        return activeGM?.isSelf
     }
 
     static parseAbilityString(ability) {

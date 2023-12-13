@@ -15,8 +15,8 @@ async function callMacro(packName, name, actor, item, qs, args = {}) {
         ui.notifications.warn(`You are not allowed to use JavaScript macros.`);
     } else {
         const pack = game.packs.get(packName);
-        let documents = await pack.getDocuments({ name });
-        if (!documents.length) {
+        let documents = await pack?.getDocuments({ name });
+        if (!documents || !documents.length) {
             for (let pack of game.packs.filter(x => x.documentName == "Macro" && /\(internal\)/.test(x.metadata.label))) {
                 documents = await pack.getDocuments({ name });
                 if (documents.length) break

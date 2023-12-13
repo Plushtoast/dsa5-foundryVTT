@@ -123,8 +123,6 @@ export default class DSAIniTracker extends Application {
             waitingTurns
         })
                 
-        console.log(data)
-
         this.conditionalPanToCurrentCombatant(data)
 
         return data

@@ -10,7 +10,7 @@ export class MeasuredTemplateDSA extends MeasuredTemplate {
         const source = message.flags.data.preData.source;
         const testData = message.flags.data.postData;
 
-        const template = this.fromItem(source, testData.successLevel)
+        const template = this.fromItem(source, testData.qualityStep)
         if ( template ) template.drawPreview();
     }
 

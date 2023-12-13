@@ -265,32 +265,30 @@ export default class Actordsa5 extends Actor {
       await actor.addCondition(effect, target, true).then(() => actor[attr] = undefined);
   }
 
-  static async postUpdateConditions(actor) {
-    if (DSA5_Utility.isActiveGM()) {
-      const data = actor.system
-      const isMerchant = actor.isMerchant()
-      
-      if (!TraitRulesDSA5.hasTrait(actor, game.i18n.localize("LocalizedIDs.painImmunity"))){
-        const pain = actor.woundPain(data)
-        await this.deferredEffectAddition("inpain", actor, pain)
-      }
+  static async postUpdateConditions(actor) {    
+    const data = actor.system
+    const isMerchant = actor.isMerchant()
+    
+    if (!TraitRulesDSA5.hasTrait(actor, game.i18n.localize("LocalizedIDs.painImmunity"))){
+      const pain = actor.woundPain(data)
+      await this.deferredEffectAddition("inpain", actor, pain)
+    }
 
-      let newEncumbrance = data.armorEncumbrance
-      if ((actor.type != "creature" || actor.canAdvance) && !isMerchant) {
-        newEncumbrance += Math.max(0, Math.ceil((data.totalWeight - data.carrycapacity - 4) / 4));
-      }
+    let newEncumbrance = data.armorEncumbrance
+    if ((actor.type != "creature" || actor.canAdvance) && !isMerchant) {
+      newEncumbrance += Math.max(0, Math.ceil((data.totalWeight - data.carrycapacity - 4) / 4));
+    }
 
-      await this.deferredEffectAddition("encumbered", actor, newEncumbrance)
+    await this.deferredEffectAddition("encumbered", actor, newEncumbrance)
 
-      const brawlingPoints = actor.woundPain(data, "temporaryLeP")
-      await this.deferredEffectAddition("stunned", actor, brawlingPoints)
+    const brawlingPoints = actor.woundPain(data, "temporaryLeP")
+    await this.deferredEffectAddition("stunned", actor, brawlingPoints)
 
-      if (AdvantageRulesDSA5.hasVantage(actor, game.i18n.localize("LocalizedIDs.blind"))) await actor.addCondition("blind");
-      if (AdvantageRulesDSA5.hasVantage(actor, game.i18n.localize("LocalizedIDs.mute"))) await actor.addCondition("mute");
-      if (AdvantageRulesDSA5.hasVantage(actor, game.i18n.localize("LocalizedIDs.deaf"))) await actor.addCondition("deaf");
+    if (AdvantageRulesDSA5.hasVantage(actor, game.i18n.localize("LocalizedIDs.blind"))) await actor.addCondition("blind");
+    if (AdvantageRulesDSA5.hasVantage(actor, game.i18n.localize("LocalizedIDs.mute"))) await actor.addCondition("mute");
+    if (AdvantageRulesDSA5.hasVantage(actor, game.i18n.localize("LocalizedIDs.deaf"))) await actor.addCondition("deaf");
 
-      if (isMerchant) await actor.prepareMerchant()
-    }     
+    if (isMerchant) await actor.prepareMerchant()      
   }
 
   static async _onCreateDocuments(documents, context) {
@@ -2248,7 +2246,7 @@ export default class Actordsa5 extends Actor {
       item.yieldedTwoHand = RuleChaos.isYieldedTwohanded(item)
       if (!item.yieldedTwoHand) {
         if (!wornWeapons)
-          wornWeapons = duplicate(actorData.items).filter(
+          wornWeapons = actorData.items.filter(
             (x) => x.type == "meleeweapon" && x.system.worn.value && x._id != item._id && !RuleChaos.isYieldedTwohanded(x)
           );
 

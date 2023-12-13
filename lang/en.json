@@ -462,6 +462,7 @@
     "Magic": "Magic",
     "money": "Money",
     "maintainCost": "Maintain",
+    "combinationWith": "Combinable with",
     "Money": "Money",
     "maintainedSpells": "Maintained Spells/Chants (each -1)",
     "manual": "Manual",
@@ -1448,7 +1449,8 @@
         "wrongLanguage": "Your language setting does not match the predefined setting ({lang}). Do you want to change this?",
         "noVictim": "No targets marked. Effect is transferred to self.",
         "PreparationError": "The preparation of actor {name} failed.",
-        "mapsViaJournalbrowser": "This scene should be imported through the journal browser, to ensure proper functionality."
+        "mapsViaJournalbrowser": "This scene should be imported through the journal browser, to ensure proper functionality.",
+        "requiresGM": "This function only works with a logged in game master."
     },
     "CEREMONYMODIFIER": {
         "holysite": "Sanctum of the god (+2)",

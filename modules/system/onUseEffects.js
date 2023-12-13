@@ -9,8 +9,8 @@ export default class OnUseEffect {
 
     async callMacro(packName, name, args = {}) {
         const pack = game.packs.get(packName);
-        let documents = await pack.getDocuments({ name });
-        if (!documents.length) {
+        let documents = await pack?.getDocuments({ name });
+        if (!documents || !documents.length) {
             for (let pack of game.packs.filter(x => x.documentName == "Macro" && /\(internal\)/.test(x.metadata.label))) {
                 documents = await pack.getDocuments({ name });
                 if (documents.length) break

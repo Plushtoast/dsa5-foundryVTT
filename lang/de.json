@@ -263,6 +263,7 @@
     "ceremony": "Zeremonie",
     "ceremonies": "Zeremonien",
     "ceremonyTest": "Zeremonieprobe",
+    "combinationWith": "Kombinierbar mit",
     "castingTime": "Aktionsdauer",
     "Combat": "Kampf",
     "combatskill": "Kampftechnik",
@@ -1485,7 +1486,8 @@
         "wrongLanguage": "Deine Spracheinstellung passt nicht zur vorgegebenen Einstellung ({lang}). Möchtest du die Sprache ändern?",
         "noVictim": "Kein Opfer anvisiert, Selbsttreffer wird ausgewertet.",
         "PreparationError": "Die Initialisierung es Akteurs {name} ist fehlgeschlagen.",
-        "mapsViaJournalbrowser": "Diese Karte sollte über den Journalbrowser importiert werden, um die korrekte Funktion zu gewährleisten."
+        "mapsViaJournalbrowser": "Diese Karte sollte über den Journalbrowser importiert werden, um die korrekte Funktion zu gewährleisten.",
+        "requiresGM": "Diese Funktion funktioniert nur mit einem eingelogten Spielleiter."
     },
     "Shapeshift": {
         "title": "Gestaltwandlung",

@@ -361,8 +361,21 @@
         margin: 0px;
         height: 100vh;
 
-        .sidebar-tab .folder a i {
+        .sidebar-tab .folder.collapsed .folder-header a i {
             color: rgb(216, 212, 212);
+        }
+
+        .playlists-sidebar .sound-control {
+            color: rgb(59, 59, 59);
+        }
+        .playlists-sidebar .sound-control.inactive i {
+            color: rgb(121, 115, 115);
+        }
+
+        .sidebar-tab.playlists-sidebar a.sound-control[data-action="sound-stop"],
+        .sidebar-tab.playlists-sidebar .folder a.sound-control[data-action="playlist-stop"] i,
+        .sidebar-tab.playlists-sidebar .folder .folder-header a.sound-control[data-action="playlist-stop"] i {
+            color: var(--color-text-hyperlink);
         }
 
         button.fshopButton {
@@ -391,10 +404,7 @@
             color: #555;
 
             a {
-                i {
-                    color: #555;
-                }
-
+                                
                 &.inactive i {
                     color: rgb(172, 172, 172);
                 }
