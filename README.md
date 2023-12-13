@@ -166,8 +166,11 @@ If you want to discuss TDE for foundry or need some assistance you can also join
         <img src="https://www.f-shop.de/media/image/5d/b3/1a/ESD035_0_0999.jpg" alt="Offenbarung des Himmels" style="margin-right: 5px; margin-bottom: 5px; text-align:center; width:210px;">
     </a>
     <a href="https://www.f-shop.de/virtual-tabletops/das-schwarze-auge-vtt/abenteuer-module/3789/dsa5-das-geheimnis-der-zauberschueler-fuer-foundry-vtt" target="_blank" title="Das Geheimnis der Zauberschüler">
-            <img src="https://www.f-shop.de/media/image/91/68/3c/ESD041_0_0999.jpg" style="margin-right: 5px; margin-bottom: 5px; text-align:center; width:210px;">
-        </a>
+        <img src="https://www.f-shop.de/media/image/91/68/3c/ESD041_0_0999.jpg" style="margin-right: 5px; margin-bottom: 5px; text-align:center; width:210px;">
+    </a>
+    <a href="https://www.f-shop.de/detail/index/sArticle/3941" target="_blank" title="Banner der Treue">
+        <img src="https://www.f-shop.de/media/image/46/48/65/ESD044_0_0999.jpg" alt="Banner der Treue" style="margin-right: 5px; margin-bottom: 5px; text-align:center; width:210px;">
+    </a>
     <a href="https://www.f-shop.de/virtual-tabletops/das-schwarze-auge-vtt/abenteuer-module/2388/dsa5-mitsommerrache-fuer-foundry" title="Mittsommerrache">
         <img src="https://ulisses-digital.de/R20/dsa5/modules/dsa5-mittsommerrache/icons/journal/coverde.webp" alt="Mittsommerrache" style="margin-right: 5px; margin-bottom: 5px; text-align:center; width:210px;">
     </a>
@@ -189,6 +192,9 @@ If you want to discuss TDE for foundry or need some assistance you can also join
     </a>
     <a href="https://www.f-shop.de/virtual-tabletops/das-schwarze-auge-vtt/abenteuer-module/3877/dsa5-havena-versunkene-geheimnisse-bundle-fuer-foundry-vtt" target="_blank" title="Havena, versunkene Geheimnisse">
         <img src="https://www.f-shop.de/media/image/74/4a/96/ESD017_0_0999.jpg" alt="Havena, versunkene Geheimnisse" style="margin-right: 5px; margin-bottom: 5px; text-align:center; width:210px;">
+    </a>    
+    <a href="https://www.f-shop.de/detail/index/sArticle/3906" target="_blank" title="Die Siebenwindküste">
+        <img src="https://www.f-shop.de/media/image/23/69/d7/ESD042_0_0999.jpg" alt="Die Siebenwindküste" style="margin-right: 5px; margin-bottom: 5px; text-align:center; width:210px;">
     </a>
 </div>
 <br>
