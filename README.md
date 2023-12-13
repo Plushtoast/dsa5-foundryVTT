@@ -131,6 +131,12 @@ If you want to discuss TDE for foundry or need some assistance you can also join
     <a href="https://www.f-shop.de/virtual-tabletops/das-schwarze-auge-vtt/regel-module/3195/dsa5-studierstube-der-gildenmagie-erweitert-fuer-foundry-vtt" target="_blank" title="Studierstube der Gildenmagie">
         <img src="https://ulisses-digital.de/R20/dsa5/modules/dsa5-studyroom/icons/journal/coverde.webp" alt="Studierstube der Gildenmagie" style="margin-right: 5px; margin-bottom: 5px; text-align:center; width:210px;">
     </a>
+    <a href="https://www.f-shop.de/detail/index/sArticle/3942" target="_blank" title="Körperlose Schrecken">
+        <img src="https://www.f-shop.de/media/image/4f/4b/99/ESD045_0_0999.jpg" alt="Körperlose Schrecken" style="margin-right: 5px; margin-bottom: 5px; text-align:center; width:210px;">
+    </a>
+    <a href="https://www.f-shop.de/detail/index/sArticle/3907" target="_blank" title="Rahjas Diener">
+        <img src="https://www.f-shop.de/media/image/17/40/f3/ESD043_0_0999.jpg" alt="Rahjas Diener" style="margin-right: 5px; margin-bottom: 5px; text-align:center; width:210px;">
+    </a>
     <h2>Abenteuer</h2>
     <a href="https://foundryvtt.com/packages/dsa5-introduction" title="Einführungsabenteuer">
         <img src="https://raw.githubusercontent.com/Plushtoast/dsa5_introduction/master/icons/journal/coverde.webp" alt="Einführungsabenteuer" style="margin-right: 5px; margin-bottom: 5px; text-align:center; width:210px;">
