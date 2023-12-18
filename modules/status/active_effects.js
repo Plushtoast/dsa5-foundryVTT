@@ -64,6 +64,10 @@ export default class DSAActiveEffectConfig extends ActiveEffectConfig {
         });
     }
 
+    static async callMacro(packName, name, actor, item, qs, args = {}) {
+        return await callMacro(packName, name, actor, item, qs, args)
+    }
+
     static async onEffectRemove(actor, effect) {
         const onRemoveMacro = getProperty(effect, "flags.dsa5.onRemove");
         if (onRemoveMacro) {
@@ -177,7 +181,21 @@ export default class DSAActiveEffectConfig extends ActiveEffectConfig {
         for (const ef of source.effects) {
             try {
                 if (Number(getProperty(ef, "flags.dsa5.advancedFunction")) == functionID) {
-                    eval(getProperty(ef, "flags.dsa5.args3"));
+                    if (!game.user.can("MACRO_SCRIPT")) {
+                        ui.notifications.warn(`You are not allowed to use JavaScript macros.`);
+                    } else {
+                        try {
+                            const syncFunction = Object.getPrototypeOf(function(){}).constructor
+                            const fn = new syncFunction("ef", "callMacro", "actor", "msg", "source", getProperty(ef, "flags.dsa5.args3"))
+                            fn.call(this, ef, callMacro, actor, msg, source);
+                        } catch (err) {
+                            ui.notifications.error(
+                                `There was an error in your macro syntax. See the console (F12) for details`
+                            );
+                            console.error(err);
+                            console.warn(err.stack);
+                        }
+                    }
                 }
             } catch (exception) {
                 console.warn("Unable to apply advanced effect", exception, ef);
@@ -238,7 +256,17 @@ export default class DSAActiveEffectConfig extends ActiveEffectConfig {
                                 if (!game.user.can("MACRO_SCRIPT")) {
                                     ui.notifications.warn(`You are not allowed to use JavaScript macros.`);
                                 } else {
-                                    await eval(`(async () => {${getProperty(ef, "flags.dsa5.args3")}})()`);
+                                    try {
+                                        const AsyncFunction = Object.getPrototypeOf(async function(){}).constructor
+                                        const fn = new AsyncFunction("effect", "actor", "callMacro", "msg", "source", "actor", "sourceActor", "testData", "qs", getProperty(ef, "flags.dsa5.args3"))
+                                        await fn.call(this, ef, actor, callMacro, msg, source, actor, sourceActor, testData, qs);
+                                    } catch (err) {
+                                        ui.notifications.error(
+                                            `There was an error in your macro syntax. See the console (F12) for details`
+                                        );
+                                        console.error(err);
+                                        console.warn(err.stack);
+                                    }
                                 }
                                 break;
                             case 3: // Creature Link
@@ -692,7 +720,7 @@ export default class DSAActiveEffectConfig extends ActiveEffectConfig {
             const data = elem.find("option:selected");
             parent.find(".mode select").val(data.attr("data-mode"));
             parent.find(".value input").attr("placeholder", data.attr("data-ph"));
-            elem.blur();
+            elem.trigger("blur");
         });
         html.find('.select2').each((i, el) => {
             $(el)[0].style.removeProperty("width")
