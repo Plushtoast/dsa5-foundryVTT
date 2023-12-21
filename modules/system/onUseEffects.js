@@ -42,12 +42,13 @@ export default class OnUseEffect {
     }
 
     async executeOnUseEffect() {
+        if (!this.item.actor) return;
+
         if (!game.user.can("MACRO_SCRIPT")) {
             return ui.notifications.warn(
                 `You are not allowed to use JavaScript macros.`
             );
-        }
-        if (!this.item.actor) return;
+        }        
 
         const macro = OnUseEffect.getOnUseEffect(this.item);        
         try {

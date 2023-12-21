@@ -157,13 +157,20 @@ export class DSA5Combat extends Combat {
         ChatMessage.create(DSA5_Utility.chatDataSetup(template))
     }
 
-    static async brawlStart(timeout = 2000) {
+    static async brawlStart(timeout = 2000, broadcast = true) {
+        if (broadcast && DSA5_Utility.isActiveGM()) {
+            await game.socket.emit("system.dsa5", {
+                type: "brawlStart",
+                payload: {}
+            })
+        }
+
         $('.bumFight').remove()
-        const didYouKnow = await renderTemplate("systems/dsa5/templates/system/bumFight/animation.html", {  })
-        $('body').append(didYouKnow)
+        const brawlAnim = await renderTemplate("systems/dsa5/templates/system/bumFight/animation.html", {  })
+        $('body').append(brawlAnim)
         
         const bum = $('.bumFight')
-        bum.click(() => bum.remove())
+        bum.on('click', () => bum.remove())
         bum.addClass("fight")
         setTimeout(function() {
            bum.fadeOut(1000, () => bum.remove());
