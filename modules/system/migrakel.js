@@ -119,20 +119,20 @@ export default class Migrakel {
             const updator = (find) => {
                 const upd = find.toObject()
                 delete upd.system.talentValue
-                    
+
                 return upd
             };
             await this.updateVals(actor, condition, updator);
         }
         else if (res) {
-            
+
             const updator = (find) => {
                 const upd = {
                     effects: find.effects.toObject()
                 }
                 if(find.type != "spellextension")
                     upd.system = { effectFormula: { value: find.system.effectFormula.value } }
-                    
+
                 return upd
             };
             await this.updateVals(actor, condition, updator);
@@ -153,7 +153,7 @@ export default class Migrakel {
                         system: {
                             category: { sub: find.system.category.sub || 0 },
                             list: { value: find.system.list.value },
-                            effect: { 
+                            effect: {
                                 value2: getProperty(find, "system.effect.value2") || "",
                                 value3: getProperty(find, "system.effect.value3") || ""
                             }

@@ -71,4 +71,3 @@ function createHotBarMacro(command, name, img, slot) {
     }
     return false
 }
-    

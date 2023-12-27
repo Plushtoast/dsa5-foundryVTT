@@ -92,7 +92,7 @@ const handleGroupDrop = async(canvas, data) => {
     for(let id of data.ids){
         const actor = game.actors.get(id)
         if(!actor) continue
-        
+
         const td = await actor.getTokenDocument({x, y, hidden: false});
         td.constructor.create(td, {parent: canvas.scene});
         if(rowLength % count == 0 && count > 0){

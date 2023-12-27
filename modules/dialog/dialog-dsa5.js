@@ -22,7 +22,7 @@ export default class DSA5Dialog extends DialogShared {
                 return DSA5SpellDialog
             case "skill":
                 return DSA5SkillDialog
-            
+
         }
         return DSA5Dialog
     }

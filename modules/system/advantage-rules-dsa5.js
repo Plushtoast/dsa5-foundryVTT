@@ -8,7 +8,7 @@ export default class AdvantageRulesDSA5 extends ItemRulesDSA5 {
         if (game.dsa5.config.addvantageRules[item.name])
             game.dsa5.config.addvantageRules[item.name](actor, item)
     }
-    
+
     static async vantageRemoved(actor, item, render = true) {
         if (game.dsa5.config.removevantageRules[item.name])
             game.dsa5.config.removevantageRules[item.name](actor, item)
@@ -132,7 +132,7 @@ export default class AdvantageRulesDSA5 extends ItemRulesDSA5 {
         const filter = (i, reg, item) => i.type=="disadvantage" && reg.test(i.name) && i.name != item.name
         const result = (itemXPCostSum, maxPaid) => { return itemXPCostSum < maxPaid ? xpCost : 0 }
         return AdvantageRulesDSA5._calculateSingularVantages(item, actor, xpCost, filter, result)
-    }   
+    }
 
     static hasVantage(actor, talent) {
         return super.hasItem(actor, talent, ["advantage", "disadvantage"])

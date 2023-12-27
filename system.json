@@ -34,7 +34,7 @@
             "path": "packs/skillsen.db",
             "type": "Item",
             "flags": { "dsalang": "en"}
-        },      
+        },
         {
             "name": "money",
             "label": "Geld",

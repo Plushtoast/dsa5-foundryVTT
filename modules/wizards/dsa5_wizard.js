@@ -33,7 +33,7 @@ export default class WizardDSA5 extends Application {
             result = result.find((x) => x.name == name && x.type == type && x.system)
 
             if(result) return result
-        }        
+        }
         return undefined
     }
 
@@ -116,7 +116,7 @@ export default class WizardDSA5 extends Application {
         let existing = itemsToAdd.find(x => x.name == item.name && x.type == item.type)
         if (existing) {
             merged = true
-            let level = Number(getProperty(item, "system.step.value")) 
+            let level = Number(getProperty(item, "system.step.value"))
             if (level) {
                 existing.system.step.value = Math.min(existing.system.step.value += level, existing.system[keyMax].value)
             }
@@ -246,7 +246,7 @@ export default class WizardDSA5 extends Application {
     _showInputValidation(choice, parent, app){
         ui.notifications.error(game.i18n.localize("DSAError.MissingChoices"))
         let tabElem = choice.closest('.tab').attr("data-tab")
-        app.activateTab(tabElem) 
+        app.activateTab(tabElem)
         WizardDSA5.flashElem(parent.find(`.tabs a[data-tab='${tabElem}']`))
         WizardDSA5.flashElem(choice.closest("div"))
     }
@@ -283,9 +283,9 @@ export default class WizardDSA5 extends Application {
             item.sheet.render(true)
         })
         showItem.attr("draggable", true).on("dragstart", event => itemDragStart(event))
-        
+
         html.on('click', '.searchableAbility a', ev => clickableAbility(ev))
-        
+
         html.find('.exclusive').change(ev => {
             let parent = $(ev.currentTarget).closest('.tab')
             let sel = $(ev.currentTarget).attr('data-sel')

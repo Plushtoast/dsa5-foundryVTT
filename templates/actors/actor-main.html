@@ -31,16 +31,16 @@
                     {{actor.system.status.wounds.current}}
                 </div>
                 <div class="col eight center">
-                    <input name="system.status.wounds.modifier" type="number" value="{{actor.system.status.wounds.modifier}}" data-dtype="Number" />
+                    <input name="system.status.wounds.modifier" type="number" value="{{actor.system.status.wounds.modifier}}" data-dtype="Number"/>
                 </div>
                 <div class="col eight center">
-                    <input name="system.status.wounds.advances" type="number" value="{{actor.system.status.wounds.advances}}" data-dtype="Number" />
+                    <input name="system.status.wounds.advances" type="number" value="{{actor.system.status.wounds.advances}}" data-dtype="Number"  />
                 </div>
                 <div class="col eight lineheight center">
                     {{actor.system.status.wounds.max}}
                 </div>
             </div>
-            
+
                 <div class="derivedAttrs row-section">
                     <div class="col two lineheight">
                         {{localize "CHARAbbrev.LeP"}} {{localize 'regenerate'}}
@@ -58,7 +58,7 @@
                         {{actor.system.status.regeneration.LePmax}}
                     </div>
                 </div>
-           
+
             {{#if prepare.magic.hasSpells}}
             <div class="derivedAttrs row-section">
                 <div class="col two lineheight">
@@ -78,7 +78,7 @@
                     {{actor.system.status.astralenergy.max}}
                 </div>
             </div>
-           
+
             <div class="derivedAttrs row-section">
                 <div class="col two lineheight">
                     {{localize "CHARAbbrev.AsP"}} {{localize 'regenerate'}}
@@ -114,7 +114,7 @@
                     {{actor.system.status.astralenergy.permanentLossSum}}
                 </div>
             </div>
-           
+
             {{/if}} {{#if prepare.magic.hasPrayers}}
             <div class="derivedAttrs row-section">
                 <div class="col two lineheight">
@@ -136,7 +136,7 @@
                     {{actor.system.status.karmaenergy.max}}
                 </div>
             </div>
-            
+
             <div class="derivedAttrs row-section">
                 <div class="col two lineheight">
                     {{localize "CHARAbbrev.KaP"}} {{localize 'regenerate'}}
@@ -172,7 +172,7 @@
                     {{actor.system.status.karmaenergy.permanentLossSum}}
                 </div>
             </div>
-            
+
             {{/if}}
             <div class="derivedAttrs row-section">
                 <div class="col two lineheight">
@@ -242,7 +242,7 @@
                     {{actor.system.status.speed.max}}
                 </div>
             </div>
-            
+
             <div class="derivedAttrs row-section">
                 <div class="col two lineheight">
                     {{localize "initiative"}}

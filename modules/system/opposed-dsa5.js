@@ -153,7 +153,7 @@ export default class OpposedDsa5 {
                 }
             })
             message.flags.data.startMessagesList = startMessagesList;
-        } 
+        }
         else {
             game.user.targets.forEach(async target => {
                 if (target.actor) {
@@ -273,7 +273,7 @@ export default class OpposedDsa5 {
 
             const items = []
             const str = []
-            
+
             if (isCrit) {
                 str.push(game.i18n.localize('CriticalSuccess'))
             } else if(isBotch) {
@@ -312,7 +312,7 @@ export default class OpposedDsa5 {
                 let targets = Array.from(game.user.targets)
                 const item = attackerToken.actor.items.get(msgData.preData.source._id)
                 if (!targets.length) targets = [attackerToken]
-                
+
                 AutomatedAnimations.playAnimation(attackerToken, item, { targets })
             }
         }
@@ -399,7 +399,7 @@ export default class OpposedDsa5 {
         if (["weapon", "spell", "liturgy", "ceremony", "ritual", "combatskill"].includes(attackerTest.rollType) && defenderTest.successLevel == undefined) {
             defenderTest.successLevel = -5
         }
-        if(attackerTest.rollType == "damage") { 
+        if(attackerTest.rollType == "damage") {
             defenderTest.successLevel = -5
             attackerTest.successLevel = 1
         }
@@ -470,7 +470,7 @@ export default class OpposedDsa5 {
 
         const messages = []
         let baseDamage = attackerTest.damage
-        
+
         const immuneToCrit = game.i18n.localize("LocalizedIDs.immuneToCrit")
         if(attackerTest.doubleDamage && actor.items.find(x => x.name == immuneToCrit && x.type == "trait")) {
             baseDamage = Math.floor(baseDamage / attackerTest.doubleDamage)
@@ -563,7 +563,7 @@ export default class OpposedDsa5 {
         }
         if (options.target) {
             chatOptions["flags.startMessageId"] = options.startMessageId
-        } 
+        }
         await ChatMessage.create(chatOptions)
     }
 

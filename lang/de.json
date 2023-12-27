@@ -601,7 +601,9 @@
         "temporary": "Prügelpunkte",
         "result": "Die Prügelei endet mit Blessuren:",
         "bumFight": "Prügelei!!!",
-        "pp": "PP"
+        "pp": "PP",
+        "unarmEveryone": "Alle entwaffnen",
+        "unarmEveryoneText": "Alle Teilnehmer der Prügelei werden entwaffnet. Dadurch werden Waffenreichweiten ignoriert. Nur improvisierte Waffen bleiben ausgerüstet."
     },
     "CONJURATION": {
         "demon": "Dämon",
@@ -961,7 +963,8 @@
         "searchItem": "Aus der Bibliothek hinzufügen",
         "payAECost": "AsP Kosten bezahlen",
         "paidPAsP": "Ausgegebene permanente AsP/KaP",
-        "rebuyPAsP": "Zurückgekaufte permanente AsP/KaP"
+        "rebuyPAsP": "Zurückgekaufte permanente AsP/KaP",
+        "startDraggig": "Du kannst Elemente wie Fähigkeiten, Ausrüstungsgegenstände, Waffen, Spezies, Kultur, Profession und Zustände dem Bogen durch Drag & Drop hinzufügen."
     },
     "traditionArtifacts": {
         "Animistenwaffe": "Animistenwaffe",

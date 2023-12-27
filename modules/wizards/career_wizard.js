@@ -45,7 +45,7 @@ export default class CareerWizard extends WizardDSA5 {
         let choice = parent.find('.maxTricks')
         let allowed = Number(choice.attr("data-spelltricklimit")) || 0
         if (parent.find('.exclusiveTricks:checked').length != allowed) {
-            this._showInputValidation(choice, parent, app)         
+            this._showInputValidation(choice, parent, app)
             return false
         }
         return super._validateInput(parent, app)

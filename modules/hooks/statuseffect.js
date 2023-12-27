@@ -8,7 +8,7 @@ export default function() {
 
         const tokenEffects = this.document.effects;
         let actorEffects = []
-        
+
         if(this.actor) {
             actorEffects = await this.actor.actorEffects()
 
@@ -44,7 +44,7 @@ export default function() {
             }
             await Promise.all(promises);
         }
-        
+
         this.effects.overlay = await this._drawOverlay(overlay.src, overlay.tint);
         this._refreshEffects();
     }
@@ -57,14 +57,14 @@ export default function() {
         for ( const effect of this.effects.children ) {
           if ( effect === bg ) continue;
           if ( effect.isCounter) continue
-    
+
           // Overlay effect
           if ( effect === this.effects.overlay ) {
             const size = Math.min(this.w * 0.6, this.h * 0.6);
             effect.width = effect.height = size;
             effect.position.set((this.w - size) / 2, (this.h - size) / 2);
           }
-    
+
           // Status effect
           else {
             effect.width = effect.height = w;
@@ -102,8 +102,7 @@ export default function() {
         const effect = (img.dataset.statusId && this.object.actor) ?
             CONFIG.statusEffects.find(e => e.id === img.dataset.statusId) :
             img.getAttribute("src");
-        if (!effect.flags.dsa5?.max || effect.flags.dsa5?.notEditable)
-            return
+
         if (event.button == 0)
             return this.object.incrementCondition(effect)
         if (event.button == 2)

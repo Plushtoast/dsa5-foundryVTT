@@ -117,7 +117,7 @@ export default class DSA5_Utility {
         const activeGM = game.users.activeGM
 
         if(!activeGM) ui.notifications.warn(game.i18n.localize("DSAError.requiresGM"))
-        
+
         return activeGM?.isSelf
     }
 

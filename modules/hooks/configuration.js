@@ -89,7 +89,7 @@ export function setupConfiguration() {
         default: "#FFFFFF",
         type: String
     });
-    
+
     game.settings.register("dsa5", "migrationVersion", {
         name: "migrationVersion",
         hint: "migrationVersion",
@@ -98,7 +98,7 @@ export function setupConfiguration() {
         default: 25,
         type: Number
     })
-    
+
     game.settings.register("dsa5", "journalFontSizeIndex", {
         name: "journalFontSizeIndex",
         hint: "journalFontSizeIndex",
@@ -432,7 +432,7 @@ export function setupConfiguration() {
         config: false,
         default: "0/0",
         type: String,
-        onChange: async() => { 
+        onChange: async() => {
             if (game.user.isGM) game.dsa5.apps.gameMasterMenu.render()
         }
     });
@@ -500,7 +500,7 @@ export function setupConfiguration() {
         config: false,
         default: false,
         type: Boolean
-    });    
+    });
 
     game.settings.register("dsa5", "randomWeaponSelection", {
         name: "DSASETTINGS.randomWeaponSelection",
@@ -541,7 +541,7 @@ export function setupConfiguration() {
             else TokenHotbar2.registerTokenHotbar()
         }
     });
-    
+
     game.settings.register("dsa5", "disableTokenhotbarMaster", {
         name: "DSASETTINGS.disableTokenhotbarMaster",
         hint: "DSASETTINGS.disableTokenhotbarMasterHint",
@@ -718,8 +718,8 @@ const importSettings = async(dlg) => {
     const form = dlg.find("form")[0]
     if (!form.data.files.length)
             return ui.notifications?.error("You did not upload a data file!")
-    
-    readTextFromFile(form.data.files[0]).then(async (data) => {       
+
+    readTextFromFile(form.data.files[0]).then(async (data) => {
         const json = JSON.parse(data)
         const availableKeys = Array.from(game.settings.settings).map(x => x[0])
         for(const key of Object.keys(json)){
@@ -775,7 +775,7 @@ class ConfigureTokenHotbar extends FormApplication {
         });
         return options;
     }
-    
+
     activateListeners(html){
         super.activateListeners(html)
         html.find('.resetTokenhotbar').click((ev) => this.resetTokenHotbar(ev))

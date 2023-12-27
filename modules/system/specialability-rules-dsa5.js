@@ -8,9 +8,9 @@ export default class SpecialabilityRulesDSA5 extends ItemRulesDSA5 {
 
     static async abilityAdded(actor, item) {
         if (DSA5.addAbilityRules[item.name])
-            DSA5.addAbilityRules[item.name](actor, item)        
+            DSA5.addAbilityRules[item.name](actor, item)
     }
-    
+
     static async abilityRemoved(actor, item, render = true) {
         if (DSA5.removeAbilityRules[item.name]) {
             DSA5.removeAbilityRules[item.name](actor, item)
@@ -34,7 +34,7 @@ export default class SpecialabilityRulesDSA5 extends ItemRulesDSA5 {
             SpecialabilityRulesDSA5.simpleAdoption(item, adoption, item.name, DSA5.AbilitiesNeedingAdaption)
 
             item.name = `${item.name.replace(' ()', '')} (${adoption.name}${adoption.customEntry ? ", " + adoption.customEntry : ''})`
-            
+
             if (adoption.system && adoption.system.StF?.value && /\//.test(item.system.APValue.value))
                 item.system.APValue.value = item.system.APValue.value.split("/")[adoption.system.StF.value.charCodeAt(0) - 65].trim()
         }

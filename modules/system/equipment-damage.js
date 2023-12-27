@@ -81,7 +81,7 @@ export default class EquipmentDamage {
 
         let magicalWarning = ""
         const attributes = getProperty(item, "effect.attributes") || ""
-        
+
         if ((new RegExp(`${CreatureType.magical}`, "i")).test(attributes))
             magicalWarning = `${game.i18n.format("WEAPON.attributeWarning", { domain: CreatureType.clerical })}<br/>`
         else if ((new RegExp(`${CreatureType.clerical}`, "i")).test(attributes))

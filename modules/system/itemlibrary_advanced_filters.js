@@ -16,23 +16,23 @@ Hooks.once("ready", () => {
             if(cat == "clerical")
                 content.push(`</optgroup><optgroup label="${game.i18n.localize('SpecCategory.clerical')}">`)
             else if(cat == "magical")
-                content.push(`</optgroup><optgroup label="${game.i18n.localize('SpecCategory.magical')}">`)        
+                content.push(`</optgroup><optgroup label="${game.i18n.localize('SpecCategory.magical')}">`)
 
             content.push(`<option value="${cat}">${game.i18n.localize(value)}</option>`)
         }
-        
-        const specialabilies = 
+
+        const specialabilies =
         `<div class="form-group">
             <label class="label-text">${game.i18n.localize('Category')}</label>
             <select name="category.value" data-dtype="String">
-                <option value="">${game.i18n.localize('Library.noFilter')}</option>          
+                <option value="">${game.i18n.localize('Library.noFilter')}</option>
                 <optgroup label="${game.i18n.localize('SpecCategory.general')}">
                 ${content.join("")}
                 </optgroup>
             </select>
         </div>`
 
-        
+
 
         mergeObject(ADVANCEDFILTERS, {
             ammunition: [

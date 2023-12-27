@@ -1,7 +1,7 @@
 import { delay } from "../system/view_helper.js"
 
 export default class DSATour extends Tour{
-    static tours = ["systems/dsa5/modules/tours/lang/initial", "systems/dsa5/modules/tours/lang/library", "systems/dsa5/modules/tours/lang/actor"]    
+    static tours = ["systems/dsa5/modules/tours/lang/initial", "systems/dsa5/modules/tours/lang/library", "systems/dsa5/modules/tours/lang/actor"]
     static gmTours = ["systems/dsa5/modules/tours/lang/mastermenu"]
 
     static async travelAgency(){
@@ -44,9 +44,9 @@ export default class DSATour extends Tour{
         }
         if(this.app){
             await this.app.render(true, {focus: true})
-            while(!this.app.rendered) await delay(50)            
+            while(!this.app.rendered) await delay(50)
         }
-        if(this.app || this.config.preCommand) 
+        if(this.app || this.config.preCommand)
             while(!$(this.steps[this.stepIndex + 1].selector + ':visible').length) await delay(50)
 
         const res = await super.start()

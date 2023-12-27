@@ -70,7 +70,7 @@ export default class RequestRoll {
                         actor.basicTest(setupData)
                     })
                     break
-                case "fallingDamage": 
+                case "fallingDamage":
                     actor.setupFallingDamage(options, tokenId)
                     break
                 default:
@@ -213,12 +213,12 @@ export default class RequestRoll {
         const msg = []
         const item = await fromUuid(postFunction.uuid)
         const availableQs = result.result.qualityStep || 0
-        
+
         for (let i = 1; i <= availableQs; i++) {
             const qs = `qs${i}`
             if (item.system[qs]) msg.push(item.system[qs])
         }
-        
+
         if(result.result.successLevel > 1 && item.system.crit) {
             msg.push(item.system.crit)
         } else if(result.result.successLevel < -1 && item.system.botch) {

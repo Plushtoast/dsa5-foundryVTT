@@ -37,7 +37,7 @@ Hooks.on("setup", () => {
                 "name": familiar,
                 "transfer": true,
                 "flags": {
-                    "dsa5": {                        
+                    "dsa5": {
                         "description": familiar,
                         "hideOnToken": true,
                         "hidePlayers": false

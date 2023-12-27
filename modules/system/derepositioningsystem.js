@@ -47,12 +47,12 @@ export default class DPS {
                 if(light.object == token) {
                     bright = bright || light.data.bright > 0,
                     dim = dim || light.data.dim > 0
-                    
+
                     if(bright) break
                     else continue
                 }
 
-                const distance = DPS.rangeFinder(token, light.object).distanceSum 
+                const distance = DPS.rangeFinder(token, light.object).distanceSum
                 const lightConfig = light.object.document.config || light.object.document.light
                 const inBright = lightConfig.bright >= distance
                 const inDim = lightConfig.dim >= distance
@@ -75,7 +75,7 @@ export default class DPS {
         return sceneFlag ? sceneFlag == "2" : game.settings.get("dsa5", "enableDPS")
     }
 
-    static lightLevel(actor, html) {        
+    static lightLevel(actor, html) {
         if (canvas.scene && game.settings.get("dsa5", "sightAutomationEnabled")) {
             let level = 0;
             const darkness = canvas.scene?.darkness || 0;
@@ -83,7 +83,7 @@ export default class DPS {
                 .get("dsa5", "sightOptions")
                 .split("|")
                 .map((x) => Number(x));
-            
+
             while (threholds[level] <= darkness) level += 1;
 
             if (actor) {
@@ -108,7 +108,7 @@ export default class DPS {
                     } else {
                         level = Math.clamped(level + sightModifier - darkSightLevel, 0, 4)
                     }
-                }                
+                }
             }
 
             const elem = html.find(`[name="vision"] option:nth-child(${level + 1})`);

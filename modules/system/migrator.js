@@ -112,7 +112,7 @@ class PatchViewer extends Application {
             news
         }
     }
-    
+
     async getData() {
         let version = this.json["notes"][this.json["notes"].length - 1]
         const patchName = this.json["default"].replace(/VERSION/g, version.version)

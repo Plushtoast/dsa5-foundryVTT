@@ -3,7 +3,7 @@ export class MeasuredTemplateDSA extends MeasuredTemplate {
     #moveTime = 0;
     #events;
 
-    
+
     static async placeTemplateFromChat(ev){
         const id = $(ev.currentTarget).parents(".message").attr("data-message-id")
         const message = game.messages.get(id);

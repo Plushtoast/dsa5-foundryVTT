@@ -359,7 +359,7 @@ export default class DSA5ItemLibrary extends Application {
     async getCategoryItems(category, asItemData = false, asItem = false) {
         await this.buildEquipmentIndex()
         const res = this.equipmentIndex.search(category, { field: ["itemType"] })
-        if (asItemData) 
+        if (asItemData)
             return (await Promise.all(res.map(x => x.getItem()))).map(x => x.toObject())
         else if(asItem)
             return (await Promise.all(res.map(x => x.getItem())))
@@ -449,7 +449,7 @@ export default class DSA5ItemLibrary extends Application {
     filterDuplications(filteredItems) {
         if(game.settings.get("dsa5", "filterDuplicateItems"))
             filteredItems = [...new Map(filteredItems.map(item => [`${item.name}_${item.type}`, item])).values()]
-        
+
         return filteredItems
     }
 
@@ -471,7 +471,7 @@ export default class DSA5ItemLibrary extends Application {
                 } else {
                     result = index.search(search, {...fields, sort: "name", where: { itemType: filter }})
                 }
-                
+
                 let startIndex = Number(page) || 0
                 result = result.slice(startIndex, Math.min(startIndex + 60, result.length))
 
@@ -501,7 +501,7 @@ export default class DSA5ItemLibrary extends Application {
 
     async getItemTemplate(filteredItems, itemType) {
         if(this.browseEnabled && itemType == "Item"){
-            return (await Promise.all(filteredItems.map(async x => { 
+            return (await Promise.all(filteredItems.map(async x => {
                 const template = `systems/dsa5/templates/items/browse/${x.document.filterType}.html`
                 const document = await fromUuid(x.uuid)
                 const item = await renderTemplate(template, { document, isGM: game.user.isGM, ...(await document.sheet.getData())})
@@ -511,7 +511,7 @@ export default class DSA5ItemLibrary extends Application {
             const template = 'systems/dsa5/templates/system/libraryItem.html'
             return await renderTemplate(template, { items: filteredItems })
         }
-    }    
+    }
 
     async renderResult(html, filteredItems, { index, itemType }, isPaged) {
         const resultField = html.find('.searchResult .item-list')
@@ -531,7 +531,7 @@ export default class DSA5ItemLibrary extends Application {
         innerhtml.each(function() {
             const li = $(this)
             li.attr("draggable", true).on("dragstart", event => itemDragStart(event, index, itemType))
-            li.find('.priceDrag').attr("draggable", true).on("dragstart", event => itemDragStart(event, index, itemType, true))           
+            li.find('.priceDrag').attr("draggable", true).on("dragstart", event => itemDragStart(event, index, itemType, true))
         })
         resultField.append(innerhtml)
     }
@@ -802,7 +802,7 @@ export default class DSA5ItemLibrary extends Application {
             game.settings.set("dsa5", "filterDuplicateItems", !game.settings.get("dsa5", "filterDuplicateItems"))
             $(ev.currentTarget).toggleClass("on")
         })
-        
+
         const source = this
 
         $(this._element).find('.window-content').on('scroll.infinit', debounce(function(ev) {

@@ -56,7 +56,7 @@ Hooks.once("i18nInit", () => {
     ];
 })
 
-export default class DSAActiveEffectConfig extends ActiveEffectConfig {    
+export default class DSAActiveEffectConfig extends ActiveEffectConfig {
 
     static get defaultOptions() {
         return mergeObject(super.defaultOptions, {
@@ -97,9 +97,9 @@ export default class DSAActiveEffectConfig extends ActiveEffectConfig {
 
     async _render(force = false, options = {}) {
         await super._render(force, options);
-        
+
         let index = 0;
-        
+
         const itemType = getProperty(this.object, "parent.type");
         const isWeapon = ["meleeweapon", "rangeweapon"].includes(itemType) || (itemType == "trait" && ["meleeAttack", "rangeAttack"].includes(getProperty(this.object, "parent.system.traitType.value")))
         const effectConfigs = {
@@ -124,13 +124,13 @@ export default class DSAActiveEffectConfig extends ActiveEffectConfig {
         if (effectConfigs.hasSpellEffects || effectConfigs.hasDamageTransformation || effectConfigs.hasTriggerEffects) {
             advancedFunctions.push({ name: `ActiveEffects.advancedFunctions.none`, index: 0 })
         }
-       
+
         if(effectConfigs.hasSpellEffects){
             for(let x of ["systemEffect", "macro", "creature"]){
                 advancedFunctions.push({ name: `ActiveEffects.advancedFunctions.${x}`, index: (index += 1) })
             }
         }
-        
+
         if (effectConfigs.hasDamageTransformation) {
             advancedFunctions.push({ name: "ActiveEffects.advancedFunctions.armorPostprocess", index: 4 }, { name: "ActiveEffects.advancedFunctions.damagePostprocess", index: 5 });
         }
@@ -157,7 +157,7 @@ export default class DSAActiveEffectConfig extends ActiveEffectConfig {
             config,
             isWeapon
         });
-        elem.find('.tab[data-tab="effects"]').after($(template));       
+        elem.find('.tab[data-tab="effects"]').after($(template));
         elem.find(".advancedSelector").change((ev) => {
             let effect = this.object;
             effect.flags.dsa5.advancedFunction = $(ev.currentTarget).val();
@@ -323,8 +323,8 @@ export default class DSAActiveEffectConfig extends ActiveEffectConfig {
             testData.qualityStep = testData.successLevel > 0 ? 2 : 1;
         }
 
-        const attacker = DSA5_Utility.getSpeaker(speaker) || 
-            DSA5_Utility.getSpeaker(getProperty(message.flags, "data.preData.extra.speaker")) || 
+        const attacker = DSA5_Utility.getSpeaker(speaker) ||
+            DSA5_Utility.getSpeaker(getProperty(message.flags, "data.preData.extra.speaker")) ||
             game.actors.get(getProperty(message.flags, "data.preData.extra.actor.id"))
 
         const sourceActor = attacker;
@@ -670,7 +670,7 @@ export default class DSAActiveEffectConfig extends ActiveEffectConfig {
         for (const k of DSA5.gearModifyableCalculatedAttributes)
             optns.push({ name: game.i18n.localize(k), val: `system.status.${k}.gearmodifier`, mode: 2, ph: "1" });
 
-        
+
 
         for(let model of ["spell", "liturgy", "ceremony", "ritual"]){
             const modelName = DSA5_Utility.categoryLocalization(model)
@@ -691,7 +691,7 @@ export default class DSAActiveEffectConfig extends ActiveEffectConfig {
                     ph: descriptor,
                 })
             }
-        }        
+        }
 
         optns = optns.sort((a, b) => {
             return a.name.localeCompare(b.name);

@@ -24,6 +24,7 @@ export default class BookWizard extends Application {
             classes: options.classes.concat(["dsa5", "largeDialog", "noscrollWizard", "bookWizardsheet"]),
             width: 800,
             height: 880,
+            scrollY: [".pages-list .scrollable"],
             template: 'systems/dsa5/templates/wizard/adventure/adventure_wizard.html',
             title: game.i18n.localize("Book.Wizard"),
             resizable: true,
@@ -81,6 +82,7 @@ export default class BookWizard extends Application {
         this.content = undefined
         this.journalIndex = null
         this.fulltextsearch = true
+        this.searchString = undefined
         this.currentType = undefined
         this.selectedSubChapter = undefined
         this.loadPage(this._element)
@@ -104,7 +106,7 @@ export default class BookWizard extends Application {
                 PLAYER: visibility,
                 TRUSTED: visibility
             }}
-            
+
             await pack.configure(ownership)
         }
         this.render()
@@ -125,7 +127,7 @@ export default class BookWizard extends Application {
         })
 
         html.on("search keyup", ".filterJournals", ev => {
-            this.filterToc($(ev.currentTarget).val())
+            this.filterToc(ev.currentTarget.value)
         })
 
         html.on('click', '.show-item', async(ev) => {
@@ -201,7 +203,7 @@ export default class BookWizard extends Application {
         DSA5StatusEffects.bindButtons(html)
 
         html.on('click', '.importBook', async() => this.importBook())
-        
+
         bindImgToCanvasDragStart(html)
 
         slist(html, '.breadcrumbs', this.resaveBreadCrumbs)
@@ -224,7 +226,7 @@ export default class BookWizard extends Application {
             }
         }
 
-        let curChapterIndex = flattenedChapters.findIndex(x => x == this.selectedChapter)        
+        let curChapterIndex = flattenedChapters.findIndex(x => x == this.selectedChapter)
         this.bookData.chapters.findIndex(x => x.name == this.selectedChapter)
 
         if(dir == "next") targetindex++
@@ -247,7 +249,7 @@ export default class BookWizard extends Application {
         if(["prep", "foundryUsage"].includes(this.selectedChapter)) return
 
         let journal = journals[targetindex]
-        
+
         const toc = await this.getToc()
         this._element.find('.toc').html(toc)
         if(journal) {
@@ -271,11 +273,29 @@ export default class BookWizard extends Application {
         await game.settings.set("dsa5", `breadcrumbs_${game.world.id}`, JSON.stringify(breadcrumbs))
     }
 
+    markFindings(html) {
+        const container = html.closest('.tocCollapsing')
+        container.find('.searchLines').remove()
+        const findings = html.find('.searchMatch')
+
+        if(findings.length == 0) return
+
+        const markers = []
+        const boundingRect = html.find("> div")[0].getBoundingClientRect()
+        for(let finding of findings){
+            const bounding = finding.getBoundingClientRect()
+            markers.push(`<div class="marker" style="top:${(bounding.top - boundingRect.top)/boundingRect.height*100}%"></div>`)
+            
+        }
+        const lines = $(`<div class="searchLines">${markers.join("")}</div>`)        
+        container.append(lines)
+    }
 
     async filterToc(val) {
+        this.searchString = val
         if (val != undefined) {
             val = val.toLowerCase().trim()
-            let content
+
             if (val != "") {
                 let result = []
                 if (this.fulltextsearch) {
@@ -304,22 +324,37 @@ export default class BookWizard extends Application {
 
                 $(this._element).find('.tocContent').html(`<ul>${result.join("\n")}</ul>`)
             } else {
-                content = await this.getToc()
-                $(this._element).find('.adventureWizard > .row-section > .toc').html(content).find(".filterJournals").focus()
+                const content = await this.getToc()
+                $(this._element).find('.toc').html(content).find(".filterJournals").trigger("focus")
             }
+        }
 
+        const journal = await this.getChapter()
+        const chapter = $(this._element).find('.chapter')
+        chapter.html(journal)
+        this.markFindings(chapter)
+    }
+
+    showSearchResults(pageContent) {
+        if(this.searchString) {
+            TextEditor._replaceTextContent(TextEditor._getTextNodes(pageContent), new RegExp(this.searchString, "ig"), (match, options) => {
+                return $(`<span class="searchMatch">${match[0]}</span>`)[0]
+            })
         }
     }
 
-    async showJournal(journal) {
+    async renderContent(journal) {
+        this.content = journal.id
         let content = ""
         for(let page of journal.pages){
             const sheet = journal.sheet.getPageSheet(page.id)
             //const sheet = page.sheet
             const data = await sheet.getData();
             const view = (await sheet._renderInner(data)).get();
-            let pageContent = $(view[view.length -1]).html()
-            
+            let pageContent = view[view.length -1]
+            this.showSearchResults(pageContent)
+            pageContent = $(pageContent).html()
+
             if(page.type == "video") pageContent = `<div class="video-container">${pageContent}</div>`
 
             if(journal.name != page.name) pageContent = `<h2>${page.name}</h2>${pageContent}`
@@ -328,15 +363,19 @@ export default class BookWizard extends Application {
         }
         const pinIcon = this.findSceneNote(journal.getFlag("dsa5", "initId"))
         const enriched = await TextEditor.enrichHTML(content, {secrets: game.user.isGM, async: true})
-        this.content = `<div><h1 class="journalHeader" data-uuid="${journal.uuid}">${journal.name}<div class="jrnIcons">${pinIcon}<a class="pinJournal"><i class="fas fa-thumbtack"></i></a><a class="showJournal"><i class="fas fa-eye"></i></a></div></h1>${enriched}`
+        return `<div><h1 class="journalHeader" data-uuid="${journal.uuid}">${journal.name}<div class="jrnIcons">${pinIcon}<a class="pinJournal"><i class="fas fa-thumbtack"></i></a><a class="showJournal"><i class="fas fa-eye"></i></a></div></h1>${enriched}`
+    }
+
+    async showJournal(journal) {
         const chapter = $(this._element).find('.chapter')
-        chapter.html(this.content)
+        chapter.html(await this.renderContent(journal))
 
         this.selectedSubChapter = journal.id
-        
+
         $(this._element).find('.subChapter').removeClass('selected')
         $(this._element).find(`[data-jid="${journal.id}"]`).addClass("selected")
         bindImgToCanvasDragStart(chapter)
+        this.markFindings(chapter)
         chapter.find('.documentName-link, .entity-link, .content-link').on('click', ev => {
             const dataset = ev.currentTarget.dataset
             if (this.bookData && dataset.pack == this.bookData.journal) {
@@ -345,7 +384,7 @@ export default class BookWizard extends Application {
                     ev.stopPropagation()
                     this.loadJournalById(dataset.id)
                 }
-                
+
             }
         })
     }
@@ -459,7 +498,8 @@ export default class BookWizard extends Application {
     async getChapter() {
         if (this.book) {
             if (this.content) {
-                return this.content
+                const journal = this.journals.find(x => x.id == this.content)
+                return await this.renderContent(journal)
             }
             if (this.selectedChapter) {
                 if (this.selectedChapter == "prep") {
@@ -534,7 +574,7 @@ export default class BookWizard extends Application {
                     chapter.subChapters = this.getSubChapters()
                 }
             }
-            return await renderTemplate('systems/dsa5/templates/wizard/adventure/adventure_toc.html', { chapters, book: this.book, fulltextsearch: this.fulltextsearch ? "on" : "" })
+            return await renderTemplate('systems/dsa5/templates/wizard/adventure/adventure_toc.html', { chapters, searchString: this.searchString, book: this.book, fulltextsearch: this.fulltextsearch ? "on" : "" })
         } else {
             return '<div class="libraryImg"></div>'
         }
@@ -544,8 +584,13 @@ export default class BookWizard extends Application {
     async loadPage(html) {
         const template = await this.getChapter()
         const toc = await this.getToc()
+
+        this._saveScrollPositions(html)
         html.find('.toc').html(toc)
-        html.find('.chapter').html(template)
+        const chapter = html.find('.chapter')
+        chapter.html(template)
+        this.markFindings(chapter)
+        this._restoreScrollPositions(html)
     }
 
     async getData(options) {
@@ -617,7 +662,7 @@ export default class BookWizard extends Application {
     moduleEnabled(id) {
         if(game.modules.get(id)) {
             return game.modules.get(id).active ? "fa-check" : "fa-dash"
-        } 
+        }
         return "fa-times"
     }
 }

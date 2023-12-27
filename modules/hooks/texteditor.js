@@ -22,7 +22,7 @@ export function setEnrichers() {
             regex: new RegExp(`(${keywords}) (${effects.join('|')})`, 'gi')
         }
     }
-    
+
 
     CONFIG.TextEditor.enrichers.push(
         {
@@ -82,15 +82,15 @@ export function setEnrichers() {
             enricher: async(match, options) => {
                 let uuid = match[0].match(/(?:\[)(.*?)(?=\])/)[0].slice(1)
                 let document = await fromUuid(uuid)
-               
+
                 if(!document) {
                     const parts = uuid.split(".")
                     const pack = game.packs.get(parts[0] + "." + parts[1])
                     if(pack){
                         document = await pack.getDocuments({name: parts[2]})
                         document = document[0]
-                    }                    
-                }                
+                    }
+                }
 
                 if(!document) return $('<a class="content-link broken"><i class="fas fa-unlink"></i></a>')[0]
 
@@ -103,7 +103,7 @@ export function setEnrichers() {
                         const parts = el.split("=")
                         if(parts.length == 2)
                             customOptions[parts[0]] = parts[1]
-                    }                        
+                    }
                 }
 
                 const template = `systems/dsa5/templates/items/browse/${document.type}.html`

@@ -2,7 +2,7 @@
     <div>
         <b>{{localize 'HELP.groupcheck'}}</b>
         <div class="chat-buttons">
-            <a class="edit-toggle chat-button-gm" title='{{localize "CHATNOTIFICATION.editRoll"}}'><i class="fas fa-edit"></i></a>
+            <a class="edit-toggle chat-button-gm" data-tooltip='{{localize "CHATNOTIFICATION.editRoll"}}'><i class="fas fa-edit"></i></a>
         </div>
     </div>
     {{#if (eq openRolls 0)}} {{target}} - {{localize 'Aggregated.noMoreAllowed'}} {{else}} {{name}}{{localize "CHATNOTIFICATION.requestGroupCheck"}}

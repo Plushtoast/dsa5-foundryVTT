@@ -20,7 +20,7 @@ export default function() {
         DSA5StatusEffects.bindButtons(html)
         html.find('img').mousedown(ev => { if (ev.button == 2) game.dsa5.apps.DSA5_Utility.showArtwork({ name: obj.name, uuid: "", img: $(ev.currentTarget).attr("src") }) })
         bindImgToCanvasDragStart(html)
-    })  
+    })
 
     Hooks.on("getJournalSheetHeaderButtons", (sheet, buttons) => {
         buttons.unshift({
@@ -34,14 +34,14 @@ export default function() {
         buttons.unshift({
             class: "panMapNote",
             icon: "fas fa-map-pin",
-            onclick: async() => {                
+            onclick: async() => {
                 const currentPage = sheet._getCurrentPage()
                 const pages = Array.from(sheet.document.pages)
 
                 let doc
-                if(pages[currentPage].sceneNote) 
+                if(pages[currentPage].sceneNote)
                     doc = pages[currentPage]
-                else if(sheet.document.sceneNote) 
+                else if(sheet.document.sceneNote)
                     doc = sheet.document
                 else {
                     doc = pages.find(x => x.sceneNote)
@@ -64,7 +64,7 @@ export async function increaseFontSize(element){
     } else {
         await game.settings.set("dsa5", "journalFontSizeIndex", newIndex)
         setOuterFontSize(element)
-    }  
+    }
 }
 
 function setOuterFontSize(element){

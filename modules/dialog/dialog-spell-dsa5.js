@@ -75,8 +75,8 @@ export default class DSA5SpellDialog extends DialogShared {
         for(let k of parent.find('.specAbs.active')){
             const item = fromUuidSync(k.dataset.uuid)
             if(!item) continue
-            
-            for(let ef of item.effects){                
+
+            for(let ef of item.effects){
                 for(let change of ef.changes){
                     if(DSA5SpellDialog.rollChanges.includes(change.key)){
                         let name = item.name.split(" - ")
@@ -92,10 +92,10 @@ export default class DSA5SpellDialog extends DialogShared {
                     }
                     else{
                         ef.apply(source, change)
-                    }                    
+                    }
                 }
             }
-        }  
+        }
         const extensionMod = this.dialogData.renderData.rollModifiersPrepared.extensionModifier.mod
         if(extensionMod){
             const typeName = game.i18n.localize(`ABBR.modifiers`)
@@ -127,7 +127,7 @@ export default class DSA5SpellDialog extends DialogShared {
         let maintainCost = parent.find(".maintainCost");
 
         let bigCasts = parent.find(".ritual").length > 0;
-        await this.applyTransformations(source, parent)            
+        await this.applyTransformations(source, parent)
 
         let maxMods = parent.find(".maxMods");
         if (parent.find(".spellModifier:checked").length > Number(maxMods.text())) {
@@ -255,7 +255,7 @@ export default class DSA5SpellDialog extends DialogShared {
         });
 
         html.on('change', ".spellModifier", (event) => this.recalcSpellModifiers(html, event))
-        
+
         let targets = this.readTargets();
 
         if (targets.length == 0) {

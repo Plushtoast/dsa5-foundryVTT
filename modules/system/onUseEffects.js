@@ -48,9 +48,9 @@ export default class OnUseEffect {
             return ui.notifications.warn(
                 `You are not allowed to use JavaScript macros.`
             );
-        }        
+        }
 
-        const macro = OnUseEffect.getOnUseEffect(this.item);        
+        const macro = OnUseEffect.getOnUseEffect(this.item);
         try {
             const AsyncFunction = Object.getPrototypeOf(async function(){}).constructor
             const fn = new AsyncFunction("item", "actor", macro)

@@ -119,7 +119,7 @@ export default class SpeciesWizard extends WizardDSA5 {
             update[`system.${dataAttr.join(".")}`] = Number(attrs[1])
         }
 
-        
+
         await this.actor._updateAPs(apCost, {}, { render: false })
         await this.addSelections(parent.find('.optional:checked'), false)
         await this.actor.update(update);

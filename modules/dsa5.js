@@ -69,7 +69,7 @@ Hooks.once("init", () => {
             DSATour,
             OpposeDSA,
             EquipmentDamage,
-            DidYouKnow, 
+            DidYouKnow,
             MeasuredTemplateDSA,
             Riding,
             RuleChaos,
@@ -101,7 +101,7 @@ Hooks.once("init", () => {
         },
         dialogs: {
             DialogReactDSA5,
-            ReactToSkillDialog, 
+            ReactToSkillDialog,
             ActAttackDialog,
             ReactToAttackDialog
         },

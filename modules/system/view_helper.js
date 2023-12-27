@@ -117,7 +117,7 @@ export async function clickableAbility(ev){
     }
     if(/\(/.test(search)){
         search = search.split("(")[0].trim() + " ()"
-        
+
         for(let category of categories){
             const items = await game.dsa5.itemLibrary.findCompendiumItem(search, category)
             const res = items.find(x => x.name == search)
@@ -149,7 +149,7 @@ function columnLayout(html){
 
 export function tabSlider(html) {
     const sliders = html.find(".navWrapper")
-    
+
     for(let slider of sliders){
         const btnLeft = slider.querySelector('.left-btn')
         const btnRight = slider.querySelector('.right-btn')
@@ -164,13 +164,13 @@ export function tabSlider(html) {
             menu.scrollLeft -= 150
             setTimeout(() => IconVisibility(html, menu, btnLeft, btnRight), 500)
         })
- 
+
         new ResizeObserver(() => IconVisibility(html, menu, btnLeft, btnRight)).observe(slider)
 
         menu.addEventListener("mousemove", (drag) => {
             if(!activeDrag) return
 
-            menu.scrollLeft -= drag.movementX            
+            menu.scrollLeft -= drag.movementX
             setTimeout(() => IconVisibility(html, menu, btnLeft, btnRight), 500)
         })
         menu.addEventListener("mousedown", () => {
@@ -181,7 +181,7 @@ export function tabSlider(html) {
                 menu.classList.remove("dragging")
             }, { once: true })
         })
-    }    
+    }
 }
 
 const appHeight = () => {

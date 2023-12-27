@@ -9,7 +9,7 @@
 
         <div class="headerInput">
             {{#if prepare.canBuild}}
-            <button class="startCharacterBuilder" data-tooltip="CHARGEN.chargenTT"><i class="fas fa-user-edit"></i> {{localize 'CHARGEN.chargen'}}</button>            
+            <button class="startCharacterBuilder" data-tooltip="CHARGEN.chargenTT"><i class="fas fa-user-edit"></i> {{localize 'CHARGEN.chargen'}}</button>
             {{else}}
             <input class="input species" name="system.details.species.value" type="text" value="{{actor.system.details.species.value}}" readonly placeholder="{{localize 'TYPES.Item.species'}}" />
             <span class="label species">{{localize "TYPES.Item.species"}}</span>
@@ -21,7 +21,7 @@
         </div>
     </header>
 
-    {{> systems/dsa5/templates/actors/parts/attributes.html}} 
+    {{> systems/dsa5/templates/actors/parts/attributes.html}}
     <!-- TABS -->
     <section id="tab-sections">
         <div class="navWrapper">

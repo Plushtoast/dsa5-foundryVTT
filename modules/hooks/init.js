@@ -150,7 +150,7 @@ Hooks.once('setup', () => {
         const forceLanguage = game.settings.get("dsa5", "forceLanguage")
         if (["de", "en"].includes(forceLanguage) && game.i18n.lang != forceLanguage) showWrongLanguageDialog(forceLanguage)
     }
-    
+
     BookWizard.initHook()
 
     initKeybindings.default()
@@ -186,26 +186,26 @@ const showForbiddenLanguageDialog = () => {
             de: {
                 icon: '<i class="fa fa-check"></i>',
                 label: "en",
-                callback: async() => { 
-                    await game.settings.set("core", "language", "de") 
+                callback: async() => {
+                    await game.settings.set("core", "language", "de")
                     foundry.utils.debouncedReload()
                 }
             },
             en: {
                 icon: '<i class="fas fa-check"></i>',
                 label: "de",
-                callback: async() => { 
-                    await game.settings.set("core", "language", "en") 
+                callback: async() => {
+                    await game.settings.set("core", "language", "en")
                     foundry.utils.debouncedReload()
                 }
             },
             logout: {
                 icon: '<i class="fas fa-door-closed"></i>',
                 label: game.i18n.localize('SETTINGS.Logout'),
-                callback: async() => { 
+                callback: async() => {
                     ui.menu.items.logout.onClick()
                 }
-            }            
+            }
         }
     }
 
@@ -220,8 +220,8 @@ const showWrongLanguageDialog = (forceLanguage) => {
             ok: {
                 icon: '<i class="fa fa-check"></i>',
                 label: game.i18n.localize("ok"),
-                callback: async() => { 
-                    await game.settings.set("core", "language", forceLanguage) 
+                callback: async() => {
+                    await game.settings.set("core", "language", forceLanguage)
                     foundry.utils.debouncedReload()
                 }
             },
@@ -260,11 +260,11 @@ class DaylightIlluminationShader extends AdaptiveIlluminationShader {
     void main() {
         ${this.FRAGMENT_BEGIN}
         ${this.TRANSITION}
-       
+
         // Darkness
-        framebufferColor = max(framebufferColor, colorBackground);        
+        framebufferColor = max(framebufferColor, colorBackground);
         // Elevation
-        finalColor = mix(finalColor, max(finalColor, smoothstep( 0.1, 1.0, finalColor ) * 10.0), 1.0) * depth;        
+        finalColor = mix(finalColor, max(finalColor, smoothstep( 0.1, 1.0, finalColor ) * 10.0), 1.0) * depth;
         // Final
         gl_FragColor = vec4(finalColor, 1.0);
       }`;

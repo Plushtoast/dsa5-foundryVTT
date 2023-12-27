@@ -59,7 +59,7 @@ export default class DSA5StatusEffects {
             const statusesId = [...cnd.statuses][0]
             if (statusesId) {
                 condition.value = cnd.getFlag("dsa5", "value")
-                condition.editable = cnd.getFlag("dsa5", "max") && !cnd.getFlag("dsa5", "notEditable")
+                condition.editable = cnd.getFlag("dsa5", "max")
                 condition.descriptor = statusesId
                 condition.manual = cnd.getFlag("dsa5", "manual")
                 appliedSystemConditions.push(statusesId)
@@ -138,7 +138,7 @@ export default class DSA5StatusEffects {
             return await DSA5StatusEffects.removeEffect(target, existing, value, absolute, auto)
     }
 
-    static immuneToEffect(target, effect, silent = true) {     
+    static immuneToEffect(target, effect, silent = true) {
         if(!effect.id || !hasProperty(effect, "flags.dsa5.max")) return
 
         const immunities = getProperty(target, "system.immunities") || []
@@ -177,7 +177,7 @@ export default class DSA5StatusEffects {
         effect.name = game.i18n.localize(effect.name);
         this.immuneToEffect(actor, effect, false)
         //if (immune) return immune
-        
+
         if (auto) {
             effect.flags.dsa5.auto = Math.min(effect.flags.dsa5.max, value);
             effect.flags.dsa5.manual = 0
@@ -189,8 +189,8 @@ export default class DSA5StatusEffects {
         effect.flags.dsa5.value = Math.min(4, effect.flags.dsa5.manual + effect.flags.dsa5.auto)
 
         if(effect.id)
-            effect.statuses = [effect.id] 
-        
+            effect.statuses = [effect.id]
+
         if (effect.id == "dead")
             effect["flags.core.overlay"] = true;
 
@@ -202,7 +202,7 @@ export default class DSA5StatusEffects {
         delete effect.id
         return result
     }
-    
+
     static async removeEffect(actor, existing, value, absolute, autoMode) {
         const auto = autoMode ? (absolute ? value : Math.max(0, existing.flags.dsa5.auto - value)) : existing.flags.dsa5.auto
         const manual = autoMode ? existing.flags.dsa5.manual : (absolute ? value : existing.flags.dsa5.manual - value)
@@ -221,7 +221,7 @@ export default class DSA5StatusEffects {
             (game.dsa5.config.statusEffectClasses[[...existing.statuses][0]] || DSA5StatusEffects).levelDependentEffects(existing, update)
             return await existing.update(update)
         }
-            
+
     }
 
     static async levelDependentEffects(existing, update) { }
@@ -260,7 +260,7 @@ export default class DSA5StatusEffects {
 
     static calculateRollModifier(effect, actor, item, options = {}) {
         if (effect.flags.dsa5.value == null || item.type == "regenerate") return 0
-        
+
         return DSA5StatusEffects.clampedCondition(actor, effect)
     }
 
@@ -332,14 +332,14 @@ export default class DSA5StatusEffects {
 
         for(let key of Object.keys(globalMods)) {
             const ef = expandObject(globalMods[key])
-            
+
             if(!ef.enabled || !ef.target || !ef.target[item.type]) continue
 
             if(playerOwned) {
                 if(!ef.victim?.player) continue
             } else {
                 if(!ef.victim?.npc) continue
-            }            
+            }
 
             result.push({
                 name: ef.name,
@@ -501,7 +501,7 @@ class SunkenEffect extends DSA5StatusEffects {
 class HungerEffect extends DSA5StatusEffects {
     static calculateRollModifier(effect, actor, item, options = {}) {
         const stat = Math.clamped(effect.flags.dsa5.value, 0, 4)
-        if (item.type == "regenerate")            
+        if (item.type == "regenerate")
             return Math.pow(2, stat - 1) * -1
 
         return 0

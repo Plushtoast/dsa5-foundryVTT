@@ -79,7 +79,7 @@ export class Trade extends Application {
                tradeFriend,
                inventory
             }
-        )        
+        )
         return data
     }
 
@@ -214,7 +214,7 @@ export class Trade extends Application {
 
     static tradeWasAccepted(data) {
         const app = this.findTradeApp(data.payload.id)
-        
+
         if(app) {
             app.tradeData.offeredAccepted = data.payload.accepted
             if(app.tradeData.offerAccepted && app.tradeData.offeredAccepted) {
@@ -223,7 +223,7 @@ export class Trade extends Application {
             } else {
                 app.render()
             }
-            
+
         }
     }
 
@@ -294,7 +294,7 @@ export class Trade extends Application {
     static socketListeners(data){
         switch (data.type) {
 
-            case "receiveOfferedItems": 
+            case "receiveOfferedItems":
                 this.receiveOfferedItems(data)
                 return true
             case "startTrade":
@@ -337,7 +337,7 @@ export class TradeOptions extends Application {
         const target = game.actors.get(ev.currentTarget.dataset.id)
         const app = new Trade(this.actorId, Itemdsa5.buildSpeaker(target, target.token?.id))
         app.startTrade()
-        this.close()    
+        this.close()
     }
 
     activateListeners(html) {

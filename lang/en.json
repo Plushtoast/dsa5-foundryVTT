@@ -38,7 +38,9 @@
         "temporary": "Brawling points",
         "result": "The brawl ends with injuries:",
         "bumFight": "Bum fight!!!",
-        "pp": "BP"
+        "pp": "BP",
+        "unarmEveryone": "Disarm everyone",
+        "unarmEveryoneText": "All participants of the brawl are disarmed. This ignores weapon ranges. Only improvised weapons remain equipped."
     },
     "CHARAbbrev": {
         "MU": "COU",
@@ -945,7 +947,8 @@
         "searchItem": "Add from the library",
         "payAECost": "Pay AE cost",
         "paidPAsP": "Paid permanent AsP/KaP",
-        "rebuyPAsP": "Rebought permanent AsP/KaP"
+        "rebuyPAsP": "Rebought permanent AsP/KaP",
+        "startDraggig": "You can add items like abilities, equipment, weapons, professions, species, culture and conditions to the sheet by drag & drop."
     },
     "dsaStyle": {
         "immersive": "Immersive (TDE4/5)",

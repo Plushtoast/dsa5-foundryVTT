@@ -236,7 +236,7 @@ export default class ItemSheetdsa5 extends ItemSheet {
             if(!this.isEditable && customPrice) {
                 data.customPrice = customPrice
             }
-        }             
+        }
 
         DSA5StatusEffects.prepareActiveEffects(this.item, data)
         data.item = this.item
@@ -277,7 +277,7 @@ class AggregatedTestSheet extends ItemSheetdsa5 {
             icon: `fas fa-dice-d20`,
             onclick: async() => this.postAsGroupCheck()
         })
-        
+
         return buttons
     }
 
@@ -310,7 +310,7 @@ class AggregatedTestSheet extends ItemSheetdsa5 {
 
     activateListeners(html) {
         super.activateListeners(html)
-        
+
         html.find('.buildItem').click(async() => this.postFinishedItem())
     }
 
@@ -319,8 +319,8 @@ class AggregatedTestSheet extends ItemSheetdsa5 {
 
         const resultItem = this.item.getFlag("dsa5", "embeddedItem")
 
-        if(!resultItem) return 
-        
+        if(!resultItem) return
+
         const template = await renderTemplate("systems/dsa5/templates/chat/production-result.html", {
             actor: this.item.actor,
             item: resultItem,
@@ -882,7 +882,7 @@ class ConsumableSheetDSA5 extends ItemSheetObfuscation(ItemSheetdsa5) {
         }
         return buttons
     }
-    
+
     async getData(options) {
         const data = await super.getData(options)
         data["calculatedPrice"] = Itemdsa5.getSubClass(this.item.type).consumablePrice(this.item)

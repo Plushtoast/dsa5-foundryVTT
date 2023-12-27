@@ -27,7 +27,7 @@ export default class DSATables {
                 content,
                 whisper: options.whisper,
                 blind: options.blind,
-                flags: { 
+                flags: {
                     data: {
                         preData: {
                             source: {
@@ -43,13 +43,13 @@ export default class DSATables {
 
                         }
                     },
-                    dsa5: { 
-                        hasEffect, 
-                        options 
+                    dsa5: {
+                        hasEffect,
+                        options
                     }
                 }
             })
-        }        
+        }
     }
 
     static async hasEffect(tableResult){
@@ -89,7 +89,7 @@ export default class DSATables {
                     })
                 }
                 effects.push(ef)
-            }            
+            }
         }
         return effects
     }

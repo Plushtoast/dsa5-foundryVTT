@@ -4,6 +4,7 @@ import DSA5_Utility from "./utility-dsa5.js"
 
 export default class RuleChaos {
     static regex2h = /\(2H/;
+    static improvisedWeapon = /(\(|,)( )?i\)$/
 
     static multipleDefenseValue(actor, item) {
         let multipleDefense = -3
@@ -77,7 +78,7 @@ export default class RuleChaos {
 
     static obfuscateDropData(item, obfuscations){
         if(obfuscations) {
-            for(let section of obfuscations) 
+            for(let section of obfuscations)
                 mergeObject(item, { system: {obfuscation: { [section]: true} } } )
         }
     }

@@ -11,7 +11,7 @@ export default class Riding {
     <div class="control-icon" data-action="rideIncrease"><i class="fas fa-caret-up" data-tooltip="RIDING.increase" width="36" height="36"></div>
     <div class="control-icon" data-action="rideDecrease"><i class="fas fa-caret-down" data-tooltip="RIDING.decrease" width="36" height="36"></div>
     `
-    
+
     static async createTokenHook(token, options, id){
         if(!DSA5_Utility.isActiveGM()) return
 
@@ -19,7 +19,7 @@ export default class Riding {
         if(this.isRiding(token.actor) && scene.active){
             const horse = this.getHorse(token.actor)
 
-            if(!horse) return 
+            if(!horse) return
 
             const horseTokenSource = await horse.getTokenDocument()
             horseTokenSource.updateSource({ x: token.x, y: token.y, hidden: token.hidden })
@@ -27,7 +27,7 @@ export default class Riding {
             const horseToken = (await scene.createEmbeddedDocuments("Token", [horseTokenSource]))[0]
             const tokenUpdate = {"flags.dsa5.horseTokenId": horseToken.id, elevation: (horseToken.elevation ?? 0) + 1}
             mergeObject(tokenUpdate, this.adaptTokenSize(token, horseToken))
-            await token.update(tokenUpdate) 
+            await token.update(tokenUpdate)
 
             if(!horseToken.actorLink){
                 await token.actor.update({
@@ -81,7 +81,7 @@ export default class Riding {
                 if(newSpeed != token.actor.system.status.speed.max){
                     token.actor.prepareData()
                     token.actor.sheet.render()
-                }                
+                }
             }
         }
     }
@@ -104,7 +104,7 @@ export default class Riding {
 
     static async toggleIsRiding(actor){
         await actor.update({"system.horse.isRiding": !actor.system.horse?.isRiding})
-       
+
         const tokenUpdates = []
         if(!actor.system.horse.isRiding){
             for(let token of actor.getActiveTokens()){
@@ -113,7 +113,7 @@ export default class Riding {
             await this.removeRidingCondition(actor)
         }else{
             const horse =  this.getHorse(actor)
-            let horseTokenId 
+            let horseTokenId
             for(let horseToken of horse.getActiveTokens()){
                 tokenUpdates.push({ _id: horseToken.document.id, [`flags.dsa5.-=horseTokenId`]: null })
                 horseTokenId = horseToken.document.id
@@ -152,7 +152,7 @@ export default class Riding {
         if(actor.system.horse){
             if(actor.system.horse.token && !actor.system.horse.actorLink)
                 horse = DSA5_Utility.getSpeaker(actor.system.horse.token)
-            else 
+            else
                 horse = game.actors.get(actor.system.horse.actorId)
 
             if(!horse && returnEmptyHorse && actor.system.horse.isRiding){
@@ -232,7 +232,7 @@ export default class Riding {
 
     static adaptTokenSize(riderTokenDocument, horseTokenDocument){
         if(riderTokenDocument.width >= horseTokenDocument.width){
-            return { width: 0.7 * horseTokenDocument.width, height: 0.7 * horseTokenDocument.height, "flags.dsa5.horseResized": { width: riderTokenDocument.width, height: riderTokenDocument.height } }    
+            return { width: 0.7 * horseTokenDocument.width, height: 0.7 * horseTokenDocument.height, "flags.dsa5.horseResized": { width: riderTokenDocument.width, height: riderTokenDocument.height } }
         }
         return {}
     }
@@ -284,7 +284,7 @@ export default class Riding {
         const speed = this.getHorseSpeed(horse)
         return Object.keys(this.speedKeys).map(x => Number(x)).indexOf(Number(speed))
     }
- 
+
     static increaseSpeed(horse){
         const speed = this.getHorseSpeed(horse)
         const newIndex = Math.min(3, Object.keys(this.speedKeys).map(x => Number(x)).indexOf(speed) + 1)

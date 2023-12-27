@@ -15,7 +15,7 @@ export default class TableEffects{
         const message = game.messages.get(id)
         const hasEffect = getProperty(message, "flags.dsa5.hasEffect")
         const options = getProperty(message, "flags.dsa5.options") || {}
- 
+
         if(hasEffect) {
             //maintain order
             const methods = ["damageModifier", "gearDamaged", "gearLost", "resistEffect", "malus", "selfDamage", "nextAction"]
@@ -44,7 +44,7 @@ export default class TableEffects{
 
     static async damageModifier(args, mode, targets, source){
         //TODO
-    } 
+    }
 
     static async nextAction(args, mode, targets, source){
         //TODO
@@ -53,17 +53,17 @@ export default class TableEffects{
     static async opportunityAttack(args, mode, targets, source){
         //TODO
     }
-    
+
     static async gearDamaged(args, mode, targets, source){
         if(source && ["meleeweapon", "rangeweapon"].includes(source.type)){
             const attributes = getProperty(source, "system.effect.attributes") || ""
             const regex = new RegExp(`(${CreatureType.magical}|${CreatureType.clerical})`, "i")
             const isMagical = regex.test(attributes)
             if(isMagical)
-                await source.update({"system.worn.value": false})    
+                await source.update({"system.worn.value": false})
             else
-                await EquipmentDamage.absoluteDamageLevelToItem(source, args) 
-                
+                await EquipmentDamage.absoluteDamageLevelToItem(source, args)
+
             return true
         }
     }
@@ -88,7 +88,7 @@ export default class TableEffects{
                     skill: args.roll,
                     mod: args.modifier || 0,
                     effect: {
-                        _id: "botchEffect", 
+                        _id: "botchEffect",
                         name: args.fail.description
                     },
                     target,
@@ -105,19 +105,19 @@ export default class TableEffects{
         let hasTargets = true
         if(args.target == "victim"){
             const newTargets = Array.from(game.user.targets).map(x => x.actor)
-            if(newTargets.length) 
+            if(newTargets.length)
                 finalTargets = newTargets
             else {
                 hasTargets = false
                 ui.notifications.warn("DSAError.noVictim")
-            }                
-        } 
+            }
+        }
         return { hasTargets, finalTargets}
     }
 
     static async malus(args, mode, targets, source){
         const { hasTargets, finalTargets} = this.evaluateTargetArg(args, targets)
-        
+
         for(let malus of args){
             const alternateEffect = !hasTargets && malus.noTarget
             const systemEffect = alternateEffect ? malus.noTarget.systemEffect : malus.systemEffect
@@ -144,14 +144,14 @@ export default class TableEffects{
                     //todo add duration
                     ef = systemEffect
                 }
-                
+
                 for(let target of finalTargets){
                     await target.addCondition(ef)
                 }
                 return true
             } else if(changes) {
                 const ef = new OnUseEffect().effectDummy(game.i18n.localize("botchCritEffect"), changes || [], duration || { })
-                    
+
                 mergeObject(ef, {
                     flags: {
                         dsa5: {
@@ -160,7 +160,7 @@ export default class TableEffects{
                         }
                     }
                 })
-                    
+
                 for(let target of finalTargets){
                     await target.addCondition(ef)
                 }
@@ -174,7 +174,7 @@ export default class TableEffects{
     //todo args defendable modifier
     static async selfAttack(args, mode, targets, source){
         const { hasTargets, finalTargets} = this.evaluateTargetArg(args, targets)
-        
+
         if(source){
 
         }
@@ -182,7 +182,7 @@ export default class TableEffects{
 
     static async selfDamage(args, mode, targets, source){
         const { hasTargets, finalTargets} = this.evaluateTargetArg(args, targets)
-        
+
         if(source){
             const obj = DSA5_Utility.toObjectIfPossible(source)
             for(let actor of finalTargets){
@@ -193,13 +193,13 @@ export default class TableEffects{
                 else if(source.type == "rangeweapon")
                     preparedItem = Actordsa5._prepareRangeWeapon(obj, [], combatskills, actor)
                 else if(source.type == "meleeweapon")
-                    preparedItem =  Actordsa5._prepareMeleeWeapon(obj, combatskills, actor)                    
+                    preparedItem =  Actordsa5._prepareMeleeWeapon(obj, combatskills, actor)
                 else
-                    preparedItem = source.system.traitType.value == "meleeAttack" ? Actordsa5._prepareRangeTrait(obj) : Actordsa5._prepareMeleetrait(obj) 
-                
+                    preparedItem = source.system.traitType.value == "meleeAttack" ? Actordsa5._prepareRangeTrait(obj) : Actordsa5._prepareMeleetrait(obj)
+
                 const damage = (preparedItem.damagedie + preparedItem.damageAdd).replace(/wWD/g, "d")
                 const roll = await new Roll(`(${damage})*${args.multiplier || 1}${args.modifier || ""}`).evaluate({async: true})
-                
+
                 await actor.applyDamage(Math.round(roll.total))
                 ChatMessage.create(DSA5_Utility.chatDataSetup(await roll.render()))
             }
@@ -207,7 +207,7 @@ export default class TableEffects{
         } else {
             for(let actor of finalTargets){
                 const roll = await new Roll("1d6").evaluate({async: true})
-                    
+
                 await actor.applyDamage(Math.round(roll.total))
                 ChatMessage.create(DSA5_Utility.chatDataSetup(await roll.render()))
             }

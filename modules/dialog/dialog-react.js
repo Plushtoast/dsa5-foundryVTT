@@ -144,7 +144,7 @@ export class ActAttackDialog extends Dialog {
         }
         return await renderTemplate('systems/dsa5/templates/dialog/dialog-reaction-attack.html', { dieClass: "die-mu", items, title: "DIALOG.selectAction" })
     }
-    
+
     callbackResult(text, actor, tokenId) {
         if ("attackWeaponless" == text) {
             actor.setupWeaponless("attack", {}, tokenId).then(setupData => {

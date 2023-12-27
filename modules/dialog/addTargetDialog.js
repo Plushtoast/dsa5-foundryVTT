@@ -64,7 +64,7 @@ export class AddTargetDialog extends Dialog{
         $(ev.currentTarget).addClass("selectedTarget")
         const combatantId = ev.currentTarget.dataset.combatantId
         const combatant = game.combat.combatants.get(combatantId)
-        
+
         combatant.token.object.setTarget(true, {user: game.user, releaseOthers: !isShift, groupSelection: true });
     }
 }
@@ -121,7 +121,7 @@ export class SelectUserDialog extends Dialog{
 export class UserMultipickDialog extends Dialog{
     static async getDialog(content){
         const users = game.users.filter(x => x.active && !x.isGM)
-        
+
         new UserMultipickDialog({
             title: game.i18n.localize("SHEET.PostItem"),
             content: await renderTemplate('systems/dsa5/templates/dialog/usermultipickdialog.html', { users }),
@@ -151,7 +151,7 @@ export class UserMultipickDialog extends Dialog{
             });
             chatOptions.whisper = ids
         }
-        
+
         ChatMessage.create(chatOptions)
     }
 

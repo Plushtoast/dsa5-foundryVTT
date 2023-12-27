@@ -91,7 +91,7 @@ export default class DSA5CombatDialog extends DialogShared {
             }
             elem.attr("data-step", step);
             elem.toggleClass("active", step > 0);
-            
+
             elem.find(".step").text(DialogShared.roman[step]);
             this.checkCounterAttack(ev)
             this.calculateModifier()
@@ -157,13 +157,13 @@ export default class DSA5CombatDialog extends DialogShared {
                                 </option>`
                     }
                     $(this._element).find(".modifiers select").html(mods)
-                } else if (htmlMods.length > 0) {                    
+                } else if (htmlMods.length > 0) {
                     htmlMods.parent().remove()
                     this.position.height -= 86
                     this.setPosition(this.position)
                 }
             }
-        }    
+        }
     }
 
     changeSpecAbVariant(ev){
@@ -183,7 +183,7 @@ export default class DSA5CombatDialog extends DialogShared {
             const parent = $(ev.currentTarget).closest('.specAbs')[0]
             const specAb = actor.items.get(parent.dataset.id)
             const path = `effect.value${["","2","3"][next]}`
-            
+
             const res = (this.dialogData.mode == "attack" ? Itemdsa5.attackSpecAbs([specAb], actor, path) : Itemdsa5.defenseSpecAbs([specAb], actor, path))[0]
 
             parent.dataset.dmmalus = res.dmmalus || 0
@@ -225,7 +225,7 @@ export default class DSA5CombatDialog extends DialogShared {
         if (["meleeweapon", "rangeweapon"].includes(source.type)) {
             const actor = DSA5_Utility.getSpeaker(this.dialogData.speaker)
 
-            if (actor) {                
+            if (actor) {
                 const combatskill = source.system.combatskill.value
                 let skill = Actordsa5._calculateCombatSkillValues(
                     actor.items.find((x) => x.type == "combatskill" && x.name == combatskill).toObject(),
@@ -261,7 +261,7 @@ export default class DSA5CombatDialog extends DialogShared {
         const actor = DSA5_Utility.getSpeaker(this.dialogData.speaker)
         DPS.lightLevel(actor, html)
         const isRider = Riding.isRiding(actor)
-        
+
         const advantageousPosition = html.find('[name="advantageousPosition"]')[0]
         if (this.dialogData.mode == "attack"){
             const targetIsRider = Array.from(game.user.targets).some(x => Riding.isRiding(x.actor))
@@ -275,13 +275,13 @@ export default class DSA5CombatDialog extends DialogShared {
                     mountedOptions.selectedIndex = Riding.horseSpeedModifier(horse)
                 }
             }
-        } 
+        }
         else if(this.dialogData.mode == "parry" && actor.flags.oppose){
             const attacker = DSA5_Utility.getSpeaker(actor.flags.oppose.speaker)
             const attackerIsRider = Riding.isRiding(attacker)
             if(advantageousPosition && (attackerIsRider || isRider))
                 advantageousPosition.checked = isRider && !attackerIsRider
-        }        
+        }
         this.calculateModifier()
     }
 
@@ -368,10 +368,10 @@ export default class DSA5CombatDialog extends DialogShared {
 
     static getNarrowSpaceModifier(testData, mode){
         if(!mode) return 0
-        
+
         if (RuleChaos.isShield(testData.source))
             return getProperty(DSA5.narrowSpaceModifiers , `shield${testData.source.system.reach.shieldSize}.${mode}`) || 0
-                    
+
         return getProperty(DSA5.narrowSpaceModifiers , `weapon${testData.source.system.reach.value}.${mode}`) || 0
     }
 
@@ -500,7 +500,7 @@ export default class DSA5CombatDialog extends DialogShared {
                 res =  true
                 return
             }
-        });           
+        });
 
         return res
     }
@@ -529,7 +529,7 @@ export default class DSA5CombatDialog extends DialogShared {
                                 value: -2,
                             });
                         }
-                    
+
                     }
                 }
             });

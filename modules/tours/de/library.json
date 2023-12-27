@@ -19,7 +19,7 @@
         "title": "Filter",
         "appTab": "equipment",
         "content": "Das Suchergebnis lässt sich weiter durch das Einschränken der Kategorie verfeinern."
-      }, 
+      },
       {
         "id": "step-2",
         "selector": ".itemLibrary .toggleAdvancedMode",
@@ -43,4 +43,3 @@
       }
     ]
   }
-  

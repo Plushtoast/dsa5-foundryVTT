@@ -101,7 +101,7 @@ export default function() {
                 if(term.faces && term.faces == 6) {
                     for(let i = 0; i < term.number; i++) {
                         dies.push(`<span class="die-damage d${term.faces}">${term.results[i].result}</span>`)
-                    }                    
+                    }
                 }
             }
             const content = `<div>
@@ -123,7 +123,7 @@ export default function() {
 }
 
 
-    
+
 
 function embeddedDragStart(ev) {
     const messageId = $(ev.currentTarget).parents(".message").attr("data-message-id")
@@ -132,6 +132,6 @@ function embeddedDragStart(ev) {
     let dataTransfer = {
         type: "Item",
         data: item
-    }                
+    }
     ev.dataTransfer.setData("text/plain", JSON.stringify(dataTransfer));
 }

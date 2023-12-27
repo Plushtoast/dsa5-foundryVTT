@@ -33,12 +33,12 @@ function clickableActorItems(actor, list, rankPath, maxPath) {
                 res.push(`<span class="actorEmbeddedAbility" data-actor="${actor.uuid}" data-id="${item._id}"><a>${item.name} ${level}</a></span>`)
                 continue
             }
-        }        
+        }
         return res.join(", ")
     }   else {
         return list.map(item => {
             return `<span class="actorEmbeddedAbility" data-actor="${actor.uuid}" data-id="${item._id}"><a>${item.name}</a></span>`
-        }).join(", ")    
+        }).join(", ")
     }
 }
 
@@ -77,9 +77,9 @@ export default function() {
         clickableAbilities: (a, b) => clickableAbilities(a, b),
         clickableActorItems: (a, b, c, d) => clickableActorItems(a, b, c, d),
         clickableSection: (a, b, c, d) => clickableSection(a, b, c, d),
-        hasLocalization: (a, b) => { 
+        hasLocalization: (a, b) => {
             const val = a.string || a
-            return  game.i18n.has(val) ? game.i18n.localize(val) : ( b || "") 
+            return  game.i18n.has(val) ? game.i18n.localize(val) : ( b || "")
         },
         replaceConditions: DSA5_Utility.replaceConditions,
         floor: (a) => Math.floor(Number(a)),

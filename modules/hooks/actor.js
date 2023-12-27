@@ -7,7 +7,7 @@ import RuleChaos from "../system/rule_chaos.js";
 export default function() {
     Hooks.on("preDeleteActiveEffect", (effect, options, user_id) => {
         if(options.noHook) return
-        
+
         const actor = effect.parent
         if (actor && actor.documentName == "Actor") {
             if(getProperty(effect, "flags.dsa5.maintain")){
@@ -18,7 +18,7 @@ export default function() {
                 if(relatedEffects){
                     content += `<p>${game.i18n.localize("DIALOG.dependentMaintainEffects")}</p>`
                     content +=  relatedEffects.map(x => `<p><label for="rel${x.id}">${x.name}</label><input class="effectRemoveSelector" checked type="checkbox" value="${x.id}" name="rel${x.id}"/></p>` ).join("")
-                }                
+                }
                 new Dialog({
                     title: effect.name,
                     content,
@@ -91,11 +91,11 @@ export default function() {
             case "lookup":
                 sheet._handleLookup(data.data)
                 return false
-            case "fullpack": 
+            case "fullpack":
                 sheet._addFullPack(data.data)
                 return false
         }
-    }) 
+    })
 
 
     Hooks.on("createActiveEffect", (effect, options, user) => {
@@ -147,7 +147,7 @@ export default function() {
             toCheck[ef.key.split(".")[2]] = Number(ef.value)
           }
         }
-   
+
         for(let key of Object.keys(toCheck)){
           if (actor.system.condition[key] >= 4) {
             if (key == "inpain")
@@ -204,7 +204,7 @@ export default function() {
                 const wornId = weapon._id
                 let shieldId
                 if(!(RuleChaos.regex2h.test(weapon.name)) && shields.length){
-                    shieldId = shields[Math.floor(Math.random()*shields.length)]._id                            
+                    shieldId = shields[Math.floor(Math.random()*shields.length)]._id
                 }
                 for(let itm of meleeweapons){
                     if(itm._id == wornId) continue
@@ -245,11 +245,11 @@ export default function() {
         if ([2,4].includes(setting)) {
             const tokenId = token.id || token._id
             if(!tokenId) return
-            
+
             askForName(token, setting)
             return
         }
-      
+
         if (sameActorTokens.length > 0 && setting < 3) {
             let max = sameActorTokens.length
             for(let x of sameActorTokens){
@@ -275,12 +275,12 @@ export default function() {
         const actor = token.actor
         if (!actor) return;
 
-        let modify = {} 
+        let modify = {}
         if (getProperty(actor, "system.merchant.merchantType") == "loot") {
             mergeObject(modify, { displayBars: 0 })
         } else if (getProperty(actor, "system.config.autoBar")) {
             mergeObject(modify, { bar1: { attribute: "status.wounds" } })
-            
+
             if (actor.system.isMage) {
                 mergeObject(modify, { bar2: { attribute: "status.astralenergy" } })
             } else if (actor.system.isPriest) {
@@ -289,18 +289,18 @@ export default function() {
                 mergeObject(modify, { bar2: { attribute: "tbd" } })
             }
         }
-        
+
         if (getProperty(actor, "system.config.autoSize")) {
             DSA5_Utility.calcTokenSize(actor, modify)
         }
-        
+
         obfuscateName(token, modify)
         token.updateSource(modify)
     })
 
     Hooks.on('createToken', (token, options, id) => {
         if(options.noHook) return
-        
+
         obfuscateName(token, {})
         randomWeaponSelection(token)
         Riding.createTokenHook(token, options, id)
@@ -315,7 +315,7 @@ export default function() {
             TokenHoverHud.hide(token)
         }
     })
-    
+
 }
 
 
@@ -336,7 +336,7 @@ export class TokenHoverHud {
             const elem = $(`<div id="hoverhud_${token.id}" style="position:absolute;">${icons}</div>`)
             $("#hud").append(elem)
             this.position(elem, token, weapons.length)
-        }        
+        }
     }
 
     static position(elem, token, count){

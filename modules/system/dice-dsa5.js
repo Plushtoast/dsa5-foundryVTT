@@ -19,6 +19,7 @@ import TableEffects from "../tables/tableEffects.js"
 import CreatureType from "./creature-type.js"
 import { applyDamage } from "../hooks/chat_context.js"
 import DSATriggers from "./triggers.js"
+import RuleChaos from "./rule_chaos.js"
 
 export default class DiceDSA5 {
     static async rollTest(testData) {
@@ -56,7 +57,7 @@ export default class DiceDSA5 {
             case "disease":
                 rollResults = await this.rollItem(testData)
                 break
-            case "fallingDamage": 
+            case "fallingDamage":
                 rollResults = await this.rollFallingDamage(testData)
                 break
             default:
@@ -198,7 +199,7 @@ export default class DiceDSA5 {
 
     static async getDefenseCount(testData) {
         if (game.combat) return await game.combat.getDefenseCount(testData.extra.speaker)
-        
+
         return 0
     }
 
@@ -229,7 +230,7 @@ export default class DiceDSA5 {
             botch = Math.min(testData.extra.actor.system.rangeStats.botch, testData.source.system.botch)
             crit = Math.max(testData.extra.actor.system.rangeStats.crit, testData.source.system.crit)
         }
-        if (/(\(|,)( )?i\)$/.test(testData.source.name)) {
+        if (RuleChaos.improvisedWeapon.test(testData.source.name)) {
             if (!SpecialabilityRulesDSA5.hasAbility(
                     testData.extra.actor,
                     game.i18n.localize("LocalizedIDs.improvisedWeaponMaster")
@@ -482,7 +483,7 @@ export default class DiceDSA5 {
 
         static async damageFormula(testData){
         let weapon
-        
+
         if (testData.source.type == "meleeweapon") {
             const skill = Actordsa5._calculateCombatSkillValues(
                 testData.extra.actor.items.find(
@@ -605,7 +606,7 @@ export default class DiceDSA5 {
         let success = result.successLevel > 0
 
         await this.detailedWeaponResult(result, testData, source)
-        
+
         if (isAttack && success) {
             await DiceDSA5.evaluateDamage(testData, result, source, !isMelee, result.doubleDamage)
         }
@@ -1032,14 +1033,14 @@ export default class DiceDSA5 {
                 }
                 if (/(,|;)/.test(formula)) formula = formula.split(/[,;]/)[res.qualityStep - 1]
 
-                let rollEffect = testData.damageRoll ? 
-                    testData.damageRoll : 
+                let rollEffect = testData.damageRoll ?
+                    testData.damageRoll :
                     await DiceDSA5.manualRolls(
                         await new Roll(formula).evaluate({ async: true }),
                         "CHAR.DAMAGE",
                         testData.extra.options
                     )
-                
+
                 this._addRollDiceSoNice(
                     testData,
                     rollEffect,
@@ -1077,7 +1078,7 @@ export default class DiceDSA5 {
                     DSA5_Utility.getSpeaker(testData.extra.speaker).addCondition(creature)
                 }
             }
-        }    
+        }
 
         return res
     }
@@ -1110,7 +1111,7 @@ export default class DiceDSA5 {
 
         let crit = testData.extra.actor.system.skillModifiers.crit
         let botch = testData.extra.actor.system.skillModifiers.botch
-        if ( 
+        if (
             ["spell", "ritual"].includes(testData.source.type) &&
             AdvantageRulesDSA5.hasVantage(testData.extra.actor, game.i18n.localize("LocalizedIDs.wildMagic"))
         )
@@ -1312,11 +1313,11 @@ export default class DiceDSA5 {
             }
             else if (["spell", "liturgy", "ritual", "ceremony", "trait", "skill"].includes(source.type)) {
                 if (source.effects.length > 0) return true
-            } 
+            }
         }else if (["disease", "poison"].includes(source.type)) {
             return source.effects.length > 0
         }
-        
+
         const specAbIds = testData.preData.situationalModifiers.filter((x) => x.specAbId).map((x) => x.specAbId)
         if (specAbIds.length > 0) {
             const specAbs = testData.preData.extra.actor.items.filter((x) => specAbIds.includes(x._id))
@@ -1325,7 +1326,7 @@ export default class DiceDSA5 {
             }
         }
 
-        return false        
+        return false
     }
 
     static async renderRollCard(chatOptions, testData, rerenderMessage) {
@@ -1404,7 +1405,7 @@ export default class DiceDSA5 {
 
             const html = await renderTemplate(chatOptions.template, chatData)
                 //Seems to be a foundry bug, after edit inline rolls are not converted anymore
-            const actor = 
+            const actor =
                 ChatMessage.getSpeakerActor(rerenderMessage.speaker) ||
                 game.users.get(rerenderMessage.user).character
             const rollData = actor ? actor.getRollData() : {}
@@ -1415,7 +1416,7 @@ export default class DiceDSA5 {
                     content: chatOptions["content"],
                     ["flags.data"]: chatOptions["flags.data"],
                 })
-                
+
             ui.chat.updateMessage(newMsg)
             return newMsg
         }
@@ -1468,7 +1469,7 @@ export default class DiceDSA5 {
             case "roll":
                 index = input.attr("data-edit-id")
                 let newValue = Number(input.val())
-                
+
                 if (newTestData.roll.terms.length > index * 2) {
                     let newRoll = Roll.fromData(newTestData.roll)
                     newRoll.editRollAtIndex([{index, val: newValue}])
@@ -1567,17 +1568,17 @@ export default class DiceDSA5 {
         html.on("click", ".applyDamage", async (ev) => applyDamage($(ev.currentTarget).closest(".message"), ev.currentTarget.dataset.mode))
         html.on("change", ".roll-edit", (ev) => DiceDSA5._rollEdit(ev))
         html.on("click", ".applyEffect", async(ev) => {
-            DiceDSA5.wrapLock(ev, async(ev, elem) => { 
+            DiceDSA5.wrapLock(ev, async(ev, elem) => {
                 const id = elem.parents(".message").attr("data-message-id")
                 const mode = ev.currentTarget.dataset.target
-                await DSAActiveEffectConfig.applyEffect(id, mode) 
+                await DSAActiveEffectConfig.applyEffect(id, mode)
             })
         })
         html.on("click", ".applyTableEffect", async(ev) => {
-            DiceDSA5.wrapLock(ev, async(ev, elem) => { 
+            DiceDSA5.wrapLock(ev, async(ev, elem) => {
                 const id = elem.parents(".message").attr("data-message-id")
                 const mode = ev.currentTarget.dataset.target
-                await TableEffects.applyEffect(id, mode) 
+                await TableEffects.applyEffect(id, mode)
             })
         })
         html.on("click", ".placeTemplate", async(ev)=>  MeasuredTemplateDSA.placeTemplateFromChat(ev))

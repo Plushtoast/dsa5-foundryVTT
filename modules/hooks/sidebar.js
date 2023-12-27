@@ -1,15 +1,15 @@
 export default function() {
     Hooks.on("renderSettings", (app, html, data) => {
         let button = $(`<button id="reportADSABug"><i class="fas fa-bug"></i> ${game.i18n.localize("DSA5Error")}</button>`)
-        button.click(() => { window.open("https://github.com/Plushtoast/dsa5-foundryVTT/issues", "_blank") })
+        button.on('click', () => { window.open("https://github.com/Plushtoast/dsa5-foundryVTT/issues", "_blank") })
         html.find("#settings-documentation").append(button)
 
         button = $(`<button><i class="fas fa-info-circle"></i> ${game.i18n.localize("DSA5Wiki")}</button>`)
-        button.click(() => { window.open("https://github.com/Plushtoast/dsa5-foundryVTT/wiki", "_blank") })
+        button.on('click',() => { window.open("https://github.com/Plushtoast/dsa5-foundryVTT/wiki", "_blank") })
         html.find("#settings-documentation").append(button)
 
         button = $(`<button class="fshopButton"><div></div> F-Shop</button>`)
-        button.click(() => { window.open(game.i18n.localize("fshopLink"), "_blank") })
+        button.on('click',() => { window.open(game.i18n.localize("fshopLink"), "_blank") })
         html.find("#settings-documentation").append(button)
 
         const systemName = game.system.title.split("/")[game.i18n.lang == "de" ? 0 : 1]
@@ -21,12 +21,12 @@ export default function() {
         const button = $(`<button id="openLibrary"><i class="fas fa-university"></i>${game.i18n.localize("ItemLibrary")}</button>`);
         const headerActions = html.find(".header-actions")
         headerActions.append(button);
-        button.click(() => { game.dsa5.itemLibrary.render(true) })
+        button.on('click',() => { game.dsa5.itemLibrary.render(true) })
 
         html.find('li[data-pack="dsa5.money"]').remove()
     })
 
-    Hooks.once("renderCompendiumDirectory", (app, html, data) => {        
+    Hooks.once("renderCompendiumDirectory", (app, html, data) => {
         const toRemove = game.i18n.lang == "de" ? "en" : "de"
         const packsToRemove = game.packs.filter(p => getProperty(p.metadata, "flags.dsalang") == toRemove)
 

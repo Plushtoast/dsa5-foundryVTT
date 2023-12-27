@@ -231,7 +231,7 @@ export default class DSA5Initializer extends Dialog {
                         itemsToCreate.push(k)
                     }
                 }
-                
+
                 await Playlist.create(itemsToCreate, { keepId: true })
                 await Playlist.updateDocuments(itemsToUpdate)
             }

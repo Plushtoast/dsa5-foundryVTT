@@ -240,7 +240,7 @@ export default class Itemdsa5 extends Item {
         }
         return super._onCreateDocuments(documents, context);
       }
-    
+
     static async _onUpdateDocuments(documents, context) {
         for(let doc of documents) {
             if(doc.actor)
@@ -412,7 +412,7 @@ export default class Itemdsa5 extends Item {
                 x.type == "specialability" &&
                 categories.includes(x.system.category.value) &&
                 x.system.effect.value != "" &&
-                searchFilter(x, toSearch) && 
+                searchFilter(x, toSearch) &&
                 brawlingFilter(x)
             )
         })
@@ -539,7 +539,7 @@ export default class Itemdsa5 extends Item {
                         value: actor.system.swarm.damage,
                         type: "dmg",
                         selected: true,
-                    })                
+                    })
             } else {
                 situationalModifiers.push({
                     name: `${game.i18n.localize("swarm.name")} - ${game.i18n.localize("CHARAbbrev.PA")}`,
@@ -548,16 +548,16 @@ export default class Itemdsa5 extends Item {
                 })
             }
         }
-    }   
+    }
 
     static prepareMeleeAttack(situationalModifiers, actor, data, source, combatskills, wrongHandDisabled) {
         let targetWeaponSize = "short"
-        
+
         game.user.targets.forEach((target) => {
             if (target.actor) {
                 for(let x of target.actor.items){
                     if((x.type == "meleeweapon" && x.system.worn.value) || (x.type == "trait" && x.system.traitType.value == "meleeAttack" && x.system.pa)){
-                        if(DSA5.meleeRangesArray.indexOf(x.system.reach.value) > DSA5.meleeRangesArray.indexOf(targetWeaponSize)) 
+                        if(DSA5.meleeRangesArray.indexOf(x.system.reach.value) > DSA5.meleeRangesArray.indexOf(targetWeaponSize))
                             targetWeaponSize = x.system.reach.value
 
                         if(targetWeaponSize == "long") break
@@ -565,7 +565,7 @@ export default class Itemdsa5 extends Item {
                 }
             }
         })
-        
+
         const targetSize = this.getTargetSizeAndModifier(actor, source, situationalModifiers)
         this.getCombatSkillModifier(actor, source, situationalModifiers)
 
@@ -580,7 +580,7 @@ export default class Itemdsa5 extends Item {
         }
 
         this.swarmModifiers(actor, "attack", situationalModifiers)
-        
+
         mergeObject(data, {
             visionOptions: DSA5.meleeRangeVision(data.mode),
             weaponSizes: DSA5.meleeRanges,
@@ -692,7 +692,7 @@ export default class Itemdsa5 extends Item {
 
         const detailsObfuscated = getProperty(chatData, "system.obfuscation.details")
         const descriptionObfuscated = getProperty(chatData, "system.obfuscation.description")
-        
+
         mergeObject(chatData, {
             properties: detailsObfuscated ? [] : Itemdsa5.getSubClass(item.type).chatData(duplicate(chatData.system), item.name),
             descriptionObfuscated
@@ -793,7 +793,7 @@ class aggregatedTestItemDSA5 extends Itemdsa5 {
             txt
         ]
         const descriptionObfuscated = getProperty(item, "system.obfuscation.description")
-            
+
         const html = await renderTemplate("systems/dsa5/templates/chat/aggregatedTestResult.html", { descriptionObfuscated, item, properties })
         const chatOptions = DSA5_Utility.chatDataSetup(html)
         ChatMessage.create(chatOptions)
@@ -906,7 +906,7 @@ class SpellItemDSA5 extends Itemdsa5 {
                     if(change.key == "macro.transform"){
                         await DSA5_Utility.callItemTransformationMacro(change.value, source, ef)
                     }
-                    
+
                     else{
                         ef.apply(source, change)
                     }
@@ -1199,7 +1199,7 @@ class ConsumableItemDSA extends Itemdsa5 {
             return price
         } else {
             return (Number(price) * item.system.QL) || 0
-        }        
+        }
     }
 
     static checkEquality(item, item2) {
@@ -1247,7 +1247,7 @@ class ConsumableItemDSA extends Itemdsa5 {
             const { msg, resistRolls, effectNames } = await DSAActiveEffectConfig.applyAdvancedFunction(source.actor, effects, source, {
                 qualityStep: source.system.QL,
             }, source.actor)
-            
+
             const infoMsg = `${game.i18n.format("ActiveEffects.appliedEffect", {
                 target: source.actor.token?.name || source.actor.name,
                 source: effectNames.join(", ")

@@ -2,6 +2,7 @@ import Actordsa5 from "../actor/actor-dsa5.js";
 import { ActAttackDialog } from "../dialog/dialog-react.js"
 import DSA5_Utility from "../system/utility-dsa5.js";
 import DSA5StatusEffects from "../status/status_effects.js"
+import RuleChaos from "../system/rule_chaos.js";
 
 export class DSA5CombatTracker extends CombatTracker {
     static get defaultOptions() {
@@ -19,21 +20,21 @@ export class DSA5CombatTracker extends CombatTracker {
             DSA5CombatTracker.runActAttackDialog()
         })
 
-        html.find('#combat-tracker').on('scroll.combattracker', debounce(function(ev) {            
+        html.find('#combat-tracker').on('scroll.combattracker', debounce(function(ev) {
             const log = $(ev.target);
             const comb = html.find(".combatant.active")[0].offsetTop
             html.find(".aggroButton").animate({top: comb - log.scrollTop()}, 50)
         }, 50));
         html.find('.convertToBrawl').click(() => game.combat.convertToBrawl())
     }
-    
+
     static runActAttackDialog() {
         if (!game.combat) return
 
         const combatant = game.combat.combatant
         if (game.user.isGM || combatant.isOwner)
             ActAttackDialog.showDialog(combatant.actor, combatant.tokenId)
-            
+
     }
 
     async getData(options) {
@@ -44,7 +45,7 @@ export class DSA5CombatTracker extends CombatTracker {
                 const isAllowedToSeeEffects = (game.user.isGM || (combatant.actor && combatant.actor.testUserPermission(game.user, "OBSERVER")) || !(game.settings.get("dsa5", "hideEffects")));
                 turn.defenseCount = combatant.getFlag("dsa5", "defenseCount") || 0
                 turn.actionCount = Number(getProperty(combatant, "actor.system.actionCount.value")) || 0
-                turn.actionCounts = `${turn.actionCount} ${game.i18n.localize('actionCount')}` 
+                turn.actionCounts = `${turn.actionCount} ${game.i18n.localize('actionCount')}`
 
                 let remainders = []
                 if (combatant.actor) {
@@ -104,13 +105,42 @@ export class DSA5Combat extends Combat {
         this.refreshTokenbars()
     }
 
+    async brawlingDialog() {
+        return new Promise((resolve, reject) => {
+            new Dialog({
+                title: game.i18n.localize("BRAWLING.unarmEveryone"),
+                content: `<p>${game.i18n.localize("BRAWLING.unarmEveryoneText")}</p>`,
+                default: "yes",
+                buttons: {
+                Yes: {
+                    icon: '<i class="fa fa-check"></i>',
+                    label: game.i18n.localize("yes"),
+                    callback: () => {
+                        resolve(true);
+                    },
+                },
+                No: {
+                    icon: '<i class="fa fa-times"></i>',
+                    label: game.i18n.localize("no"),
+                    callback: () => {
+                        resolve(false);
+                    },
+                }
+                },
+            }).render(true);
+        });
+    }
+
     async convertToBrawl(force = undefined) {
-        const goBrawling = force ?? !this.isBrawling        
+        const goBrawling = force ?? !this.isBrawling
 
         const actorUpdates = []
         const tokenUpdates = []
         const chatMessages = []
+
         if(goBrawling) {
+            await this.setFlag("dsa5", "unarmEveryone", await this.brawlingDialog())
+
             for(let x of this.combatants){
                 if(!x.actor) return {}
 
@@ -134,11 +164,11 @@ export class DSA5Combat extends Combat {
                     await x.actor.update(change.actorChange)
                 } else {
                     actorUpdates.push(change.actorChange)
-                } 
+                }
 
                 tokenUpdates.push(...change.tokenChange)
                 if(change.damage.brawlDamage > 0){
-                    chatMessages.push({name: x.token.name, id: x.token.id, data: change.damage})                    
+                    chatMessages.push({name: x.token.name, id: x.token.id, data: change.damage})
                 }
             }
         }
@@ -168,7 +198,7 @@ export class DSA5Combat extends Combat {
         $('.bumFight').remove()
         const brawlAnim = await renderTemplate("systems/dsa5/templates/system/bumFight/animation.html", {  })
         $('body').append(brawlAnim)
-        
+
         const bum = $('.bumFight')
         bum.on('click', () => bum.remove())
         bum.addClass("fight")
@@ -235,6 +265,7 @@ export class DSA5Combatant extends Combatant {
 
     brawlingChange() {
         const actor = DSA5_Utility.getSpeaker({actor: this.actor.id, scene: this.sceneId, token: this.token.id})
+        const unarm = this.combat.getFlag("dsa5", "unarmEveryone")
         const tokenChange = getProperty(actor, "system.config.autoBar") ? actor.getActiveTokens().map(x => {return { _id: x.id, bar1: { attribute: "status.temporaryLeP" } }}) : []
         const actorChange = {
             _id: actor.id,
@@ -245,6 +276,13 @@ export class DSA5Combatant extends Combatant {
                         max: actor.system.status.wounds.value
                     }
                 }
+            }
+        }
+
+        if(unarm) {
+            const items = this.actor.items.filter(x => x.type == "meleeweapon" && x.system.worn.value && RuleChaos.improvisedWeapon.test(x.name))
+            if(items.length){
+                actorChange.items = items.map(x => { return { _id: x.id, "system.worn.value": false } })
             }
         }
 
@@ -321,7 +359,7 @@ Hooks.on("deleteCombatant", (data, options, user) => {
 
     if(data.combat.isBrawling) {
         data.undoBrawlingChange().then(async(conf) => {
-            if(!data.token) return 
+            if(!data.token) return
 
             delete conf.actorChange._id
             await actor.update(conf.actorChange)
@@ -329,7 +367,7 @@ Hooks.on("deleteCombatant", (data, options, user) => {
             if(conf.damage.brawlDamage > 0){
                 data.combat.showBrawlingDamage([{name: data.token.name, id: data.token.id, data: conf.damage}])
             }
-        }) 
+        })
     }
 })
 
@@ -338,11 +376,11 @@ Hooks.on("preDeleteCombat", (combat, options, user) => {
 
     if(combat.isBrawling) {
         combat.convertToBrawl(false).then(() => {
-            combat.delete({noHook: true})  
+            combat.delete({noHook: true})
         })
         return false
     }
-}) 
+})
 
 Hooks.on("updateCombatant", (combatant, change, user) => {
     if(!game.user.isGM) return
@@ -379,7 +417,7 @@ class RepeatingEffectsHelper {
             if (!turn.defeated) {
                 for (let x of turn.actor.effects) {
                     if(x.disabled) continue
-                    
+
                     const statusesId = [...x.statuses][0]
                     if (statusesId == "bleeding") await this.applyBleeding(turn, combat)
                     else if (statusesId == "burning") await this.applyBurning(turn, x, combat)
@@ -394,7 +432,7 @@ class RepeatingEffectsHelper {
         const regenerationAttributes = ["wounds", "astralenergy", "karmaenergy"]
         for(const attr of regenerationAttributes){
             if(getProperty(turn.actor.system.repeatingEffects, `disabled.${attr}`)) continue
-            
+
             const effectvalues = turn.actor.system.repeatingEffects.startOfRound[attr].map(x => x.value).join("+")
             if(!effectvalues) continue
 
@@ -402,32 +440,32 @@ class RepeatingEffectsHelper {
             const damage = await damageRoll.render()
             const type = game.i18n.localize(damageRoll.total > 0 ? "CHATNOTIFICATION.regenerates" : "CHATNOTIFICATION.getsHurt")
             const applyDamage = `${this.buildActorName(turn)} ${type} ${game.i18n.localize(attr)} ${damage}`
-            
+
             await this.sendEventMessage(applyDamage, combat, turn)
             if (attr == "wounds") await turn.actor.applyDamage(damageRoll.total * -1)
             else await turn.actor.applyMana(damageRoll.total * -1, attr == "astralenergy" ? "AsP" : "KaP")
-            
+
         }
     }
 
     static async applyBleeding(turn, combat) {
-        if(turn.actor.system.status.wounds.value < 1) return 
-        
+        if(turn.actor.system.status.wounds.value < 1) return
+
         const msg = game.i18n.format('CHATNOTIFICATION.bleeding', { actor: this.buildActorName(turn) })
         await this.sendEventMessage(msg, combat, turn)
         await turn.actor.applyDamage(1)
     }
 
     static async applyBurning(turn, effect, combat) {
-        if(turn.actor.system.status.wounds.value < 1) return 
-        
+        if(turn.actor.system.status.wounds.value < 1) return
+
         const step = Number(effect.getFlag("dsa5", "value"))
         const protection = DSA5StatusEffects.resistantToEffect(turn.actor, effect)
         const die =  { 0: "1", 1: "1d3", 2: "1d6", 3: "2d6" }[step - protection] || "1"
         const damageRoll = await new Roll(die).evaluate({ async: true })
         const damage = await damageRoll.render()
         const msg = game.i18n.format(`CHATNOTIFICATION.burning.${step}`, { actor: this.buildActorName(turn), damage })
-        
+
         await this.sendEventMessage(msg, combat, turn)
         await turn.actor.applyDamage(damageRoll.total)
     }
@@ -435,7 +473,7 @@ class RepeatingEffectsHelper {
     static buildActorName(turn) {
         let name = turn.token.name
         if(game.settings.get("dsa5", "hideRegenerationToOwner")) {
-            if(turn.token.name != turn.token.actor.name) 
+            if(turn.token.name != turn.token.actor.name)
                 name += ` (${turn.token.actor.name})`
         }
         return turn.token.actor.toAnchor( { name }).outerHTML

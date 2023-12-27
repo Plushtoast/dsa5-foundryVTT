@@ -308,15 +308,15 @@ export const MerchantSheetMixin = (superclass) => class extends superclass {
     async _onDropActor(event, data) {
         const limited = this.actor.limited
         const owner = this.actor.isOwner
-        
+
         if ( !(limited || owner)  ) return false
 
         const { item, typeClass, selfTarget } = await itemFromDrop(data, this.id, false)
-        
+
         if(selfTarget) return
 
         if(owner || (limited && item.documentName == "Actor")) {
-            return await this._manageDragItems(item, typeClass) 
+            return await this._manageDragItems(item, typeClass)
         }
     }
 
@@ -342,7 +342,7 @@ export const MerchantSheetMixin = (superclass) => class extends superclass {
 
     playerViewEnabled(){
         return getProperty(this.actor.system, "merchant.playerView")
-    }   
+    }
 
     async randomGoods(ev) {
         const html = await renderTemplate('systems/dsa5/templates/dialog/randomGoods-dialog.html', { categories: Array.from(DSA5.equipmentCategories) })

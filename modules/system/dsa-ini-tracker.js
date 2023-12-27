@@ -113,7 +113,7 @@ export default class DSAIniTracker extends Application {
         //if(!data.round) itemWidth = 20
 
         data.isLastRound = data.turns[1]?.newRound
-        
+
         this.position.width = itemWidth * actorCount + actorCount * 3 + 80
         this.position.height = itemWidth + 10
 
@@ -122,7 +122,7 @@ export default class DSAIniTracker extends Application {
             unRolled,
             waitingTurns
         })
-                
+
         this.conditionalPanToCurrentCombatant(data)
 
         return data
@@ -140,7 +140,7 @@ export default class DSAIniTracker extends Application {
 
         const firstTurn = data.turns[0]
         if(!firstTurn) return
-        
+
         const combatant = data.combat.combatants.get(firstTurn.id)
 
         if(!combatant || !this.hasChangedTurn(data)) return
@@ -149,10 +149,10 @@ export default class DSAIniTracker extends Application {
             const token = combatant.token;
             if (!token || !token.object || !token.object.isVisible) return;
             canvas.animatePan({ x: token.x, y: token.y });
-    
+
             if (!combatant.actor || !combatant.actor.isOwner) return
             token.object.control({ releaseOthers: true });
-        }, 300)        
+        }, 300)
     }
 
     async _onWheelResize(ev) {

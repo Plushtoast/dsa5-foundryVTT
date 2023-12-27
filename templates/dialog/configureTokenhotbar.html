@@ -10,11 +10,11 @@
     <div class="form-group" data-setting-id="dsa5.disableTokenhotbar">
         <label>{{localize 'DSASETTINGS.disableTokenhotbar'}}</label>
         <div class="form-fields">
-    
+
             <input type="checkbox" name="dsa5.disableTokenhotbar" data-dtype="Boolean" {{checked disableTokenhotbar}}>
-    
+
         </div>
-    
+
         <p class="notes">{{localize 'DSASETTINGS.disableTokenhotbarHint'}}</p>
     </div>
     <div class="form-group" data-setting-id="dsa5.tokenhotbarSize">
@@ -32,12 +32,12 @@
     <div class="form-group" data-setting-id="dsa5.tokenhotbaropacity">
         <label>{{localize 'DSASETTINGS.tokenhotbaropacity'}}</label>
         <div class="form-fields">
-    
+
             <input type="range" name="dsa5.tokenhotbaropacity" data-dtype="Number" value="{{tokenhotbaropacity}}" min="0" max="1" step="0.05">
             <span class="range-value">{{tokenhotbaropacity}}</span>
-    
+
         </div>
-    
+
         <p class="notes">{{localize 'DSASETTINGS.tokenhotbaropacityHint'}}</p>
     </div>
     <div class="form-group" data-setting-id="dsa5.tokenhotbarLayout">
@@ -59,9 +59,9 @@
     {{#if isGM}}
     <div class="form-group" data-setting-id="dsa5.disableTokenhotbarMaster">
         <label>{{localize 'DSASETTINGS.disableTokenhotbarMaster'}}</label>
-        <div class="form-fields">    
-            <input type="checkbox" name="dsa5.disableTokenhotbarMaster" data-dtype="Boolean" {{checked disableTokenhotbarMaster}}>    
-        </div>    
+        <div class="form-fields">
+            <input type="checkbox" name="dsa5.disableTokenhotbarMaster" data-dtype="Boolean" {{checked disableTokenhotbarMaster}}>
+        </div>
         <p class="notes">{{localize 'DSASETTINGS.disableTokenhotbarMasterHint'}}</p>
     </div>
     <label>{{localize 'DSASETTINGS.enableMasterTokenFunctions'}}</label>

@@ -13,7 +13,7 @@ import { connectSocket } from "./socket.js";
 export default function() {
     Hooks.on("ready", async() => {
         connectSocket()
-        
+
         if (DSA5_Utility.moduleEnabled("vtta-tokenizer") && !(await game.settings.get("dsa5", "tokenizerSetup")) && game.user.isGM) {
             await game.settings.set("vtta-tokenizer", "default-frame-pc", "[data] systems/dsa5/icons/backgrounds/token_green.webp")
             await game.settings.set("vtta-tokenizer", "default-frame-npc", "[data] systems/dsa5/icons/backgrounds/token_black.webp")
@@ -42,7 +42,7 @@ export default function() {
             }
         }
         Hooks.on('changeSidebarTab', hook)
-        
+
         setEnrichers()
         initImagePopoutTochat()
     });

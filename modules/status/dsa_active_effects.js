@@ -26,7 +26,7 @@ export default class DSAActiveEffect extends ActiveEffect {
         }
         return super._onCreateDocuments(documents, context);
       }
-    
+
     static async _onUpdateDocuments(documents, context) {
         for(let doc of documents) {
             if(doc.parent.documentName == "Actor")
@@ -82,7 +82,7 @@ export default class DSAActiveEffect extends ActiveEffect {
 
                 for (const item of itemsToClear.items) {
                     const overrides = foundry.utils.flattenObject(item.overrides || {});
-                    
+
                     const key = itemsToClear.key;
                     delete overrides[key];
                     const source = getProperty(item._source, key);

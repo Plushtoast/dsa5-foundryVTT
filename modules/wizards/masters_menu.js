@@ -64,8 +64,8 @@ class DSAMenuLayer extends InteractionLayer {
             rotatableObjects: true,
             zIndex: 666,
         });
-    }   
-    
+    }
+
     selectObjects(optns) {
         canvas.tokens.selectObjects(optns)
     }
@@ -97,7 +97,7 @@ class GameMasterMenu extends Application {
                     if (game.dsa5.apps.LightDialog) game.dsa5.apps.LightDialog.onDarknessChange()
 
                     if(!this.rendered) return
-                    
+
                     this.render()
                 }
             })
@@ -280,7 +280,7 @@ class GameMasterMenu extends Application {
 
     async _dragEveryone(ev) {
         ev.stopPropagation();
-        let ids 
+        let ids
         if(ev.currentTarget.dataset.folder){
             const settings = expandObject(game.settings.get("dsa5", "masterSettings"))
             ids = settings.folders.find(x => x.id == ev.currentTarget.dataset.folder).content
@@ -296,7 +296,7 @@ class GameMasterMenu extends Application {
         let selector ='.heroSelector'
         if(ev.currentTarget.dataset.folder)
             selector = `[data-id="${ev.currentTarget.dataset.folder}"] .heroSelector`
-        
+
         const allHeros = html.find(selector)
         allHeros.prop('checked', $(ev.currentTarget).is(":checked"))
         allHeros.change()
@@ -373,7 +373,7 @@ class GameMasterMenu extends Application {
         await this.render(true)
     }
 
-    async _deleteFolder(ev) { 
+    async _deleteFolder(ev) {
         const id = ev.currentTarget.dataset.id
         const settings = expandObject(game.settings.get("dsa5", "masterSettings"))
         settings.folders = settings.folders.filter(x => x.id != id)
@@ -387,7 +387,7 @@ class GameMasterMenu extends Application {
         const settings = expandObject(game.settings.get("dsa5", "masterSettings"))
         settings.folders.find(x => x.id == id).name = ev.currentTarget.value
 
-        await game.settings.set("dsa5", "masterSettings", settings)        
+        await game.settings.set("dsa5", "masterSettings", settings)
     }
 
     async editFolder(ev) {
@@ -557,14 +557,14 @@ class GameMasterMenu extends Application {
             const isFolder = $(event.target).closest('.isFolder')
             const settings = expandObject(game.settings.get("dsa5", "masterSettings"))
             if(isFolder.length){
-                
+
                 settings.folders = settings.folders.map(x => {
                     x.content = x.content.filter(y => y != data.id)
 
-                    if(x.id == isFolder[0].dataset.id) x.content.push(data.id)                    
+                    if(x.id == isFolder[0].dataset.id) x.content.push(data.id)
                     return x
                 })
-                
+
             } else {
                 settings.folders = settings.folders.map(x => {
                     x.content = x.content.filter(y => y != data.id)
@@ -691,7 +691,7 @@ class GameMasterMenu extends Application {
         const data = await super.getData(options);
         const heros = await this.getTrackedHeros()
         const groupschips = RuleChaos.getGroupSchips()
-        
+
         const thresholds = game.settings.get("dsa5", "sightOptions").split("|")
         const regex = / \[[a-zA-Zäöü\d-]+\]/
         const visions = [1, 2, 3, 4].map(x => { return { label: game.i18n.localize(`VisionDisruption.step${x}`).replace(regex, ""), value: thresholds[x - 1] } })
@@ -750,7 +750,7 @@ class GameMasterMenu extends Application {
                     isPriest: hero.system.isPriest,
                 }
             })
-            
+
             let found = false
             for(let folder of folders) {
                 if(folder.content.has(hero.id)) {
@@ -807,7 +807,7 @@ class GlobalModAddition extends FormApplication {
     activateListeners(html) {
         super.activateListeners(html)
 
-        html.find('.addGlobalMod').click((ev) => this.addGlobalMod(ev))        
+        html.find('.addGlobalMod').click((ev) => this.addGlobalMod(ev))
     }
 
     async getData(options) {
@@ -844,7 +844,7 @@ class GlobalModAddition extends FormApplication {
                     [randomID()]: data
                 }
             })
-        }        
+        }
         await game.settings.set("dsa5", "masterSettings", settings)
         game.dsa5.apps.gameMasterMenu.render()
         this.close()

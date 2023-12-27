@@ -27,7 +27,7 @@ export default class Actordsa5 extends Actor {
     const moneyItems = (await DSA5_Utility.allMoneyItems()) || [];
 
     data.items = [...skills, ...combatskills, ...moneyItems];
-    
+
     if (data.type != "character") data.system = { status: { fatePoints: { current: 0, value: 0 } } };
 
     if (data.type != "creature" && [undefined, 0].includes(getProperty(data, "system.status.wounds.value")))
@@ -41,7 +41,7 @@ export default class Actordsa5 extends Actor {
     const armorEncumbrance = wornArmors.reduce((sum, x) => {
       return (sum += Number(x.system.encumbrance.value));
     }, 0);
-    
+
     if(armorCompensation > armorEncumbrance){
       const modKeys = [game.i18n.localize('CHARAbbrev.GS'), game.i18n.localize('CHARAbbrev.INI')]
       for(let modkey of modKeys){
@@ -70,15 +70,15 @@ export default class Actordsa5 extends Actor {
   prepareDerivedData() {
     //let startTime = performance.now()
     const data = this.system;
-    try {      
+    try {
       this._getItemModifiers()
 
       for (let ch of Object.values(data.characteristics)) {
         ch.value = ch.initial + ch.advances + (ch.modifier || 0) + ch.gearmodifier;
       }
-      
+
       data.totalWeight = 0;
-      
+
       const wornArmor = []
 
       const familiarString = game.i18n.localize('LocalizedIDs.familiar')
@@ -111,7 +111,7 @@ export default class Actordsa5 extends Actor {
             i.system.preparedWeight = parseFloat((i.system.weight.value * i.system.quantity.value).toFixed(3));
             data.totalWeight += Number(i.system.preparedWeight);
           }
-        } else { 
+        } else {
           switch(i.type){
             case "trait":
               if(i.name == familiarString) data.isFamiliar = true
@@ -130,12 +130,12 @@ export default class Actordsa5 extends Actor {
             case "specialability":
               if(DSA5.sortedSpecs.magical.has(i.system.category.value)) data.isMage = true
               else if(DSA5.sortedSpecs.clerical.has(i.system.category.value)) data.isPriest = true
-              break              
+              break
           }
         }
       }
 
-      data.isMage ||= data.isFamiliar 
+      data.isMage ||= data.isFamiliar
 
       for(let bag of bags){
         let parent_id = getProperty(bag, "system.parent_id")
@@ -147,7 +147,7 @@ export default class Actordsa5 extends Actor {
       this.canAdvance = data.canAdvance
 
       data.carrycapacity = data.characteristics.kk.value * 2 + data.carryModifier
-      
+
       if (data.canAdvance) {
         data.details.experience.current = data.details.experience.total - data.details.experience.spent;
         data.details.experience.description = DSA5_Utility.experienceDescription(data.details.experience.total);
@@ -175,7 +175,7 @@ export default class Actordsa5 extends Actor {
       data.status.wounds.max = Math.round(
         (data.status.wounds.current + data.status.wounds.modifier + data.status.wounds.advances) * data.status.wounds.multiplier +
         data.status.wounds.gearmodifier
-      );     
+      );
 
       data.status.regeneration.LePmax =
         data.status.regeneration.LePTemp + data.status.regeneration.LePMod + data.status.regeneration.LePgearmodifier;
@@ -217,7 +217,7 @@ export default class Actordsa5 extends Actor {
         data.status.karmaenergy.advances +
         data.status.karmaenergy.gearmodifier -
         data.status.karmaenergy.permanentLossSum
-      
+
       data.status.soulpower.max =
         data.status.soulpower.value + data.status.soulpower.modifier + data.status.soulpower.gearmodifier;
       data.status.toughness.max =
@@ -228,7 +228,7 @@ export default class Actordsa5 extends Actor {
 
       const horse = Riding.isRiding(this) ? Riding.getHorse(this) : undefined
       this.calcInitiative(data, encumbrance, horse)
-      
+
       data.status.dodge.max =
         Number(data.status.dodge.value) +
         Number(data.status.dodge.modifier) +
@@ -236,16 +236,16 @@ export default class Actordsa5 extends Actor {
 
       //Actordsa5.postUpdateConditions(this)
       data.armorEncumbrance = this.getArmorEncumbrance(this, wornArmor);
-      
+
       this.prepareSwarm(data)
       this.effectivePain(data)
-      
+
       const fixated = this.statuses.has("fixated")
       this.calcSpeed(data, fixated, horse)
-      
+
       if (fixated) {
         data.status.dodge.max = Math.max(0, data.status.dodge.max - 4);
-      }      
+      }
     } catch (error) {
       console.error(`Something went wrong with preparing actor data ${this.name}: ` + error + error.stack);
       ui.notifications.error(game.i18n.format("DSAError.PreparationError", {name: this.name}) + error + error.stack);
@@ -256,19 +256,19 @@ export default class Actordsa5 extends Actor {
   }
 
   static async deferredEffectAddition(effect, actor, target) {
-    const current = actor.effects.find(x => x.statuses.has(effect))?.flags.dsa5.auto || 0 
+    const current = actor.effects.find(x => x.statuses.has(effect))?.flags.dsa5.auto || 0
     const isChange = current != target
     const attr = `changing${effect}`
     actor[attr] = isChange;
 
-    if(isChange) 
+    if(isChange)
       await actor.addCondition(effect, target, true).then(() => actor[attr] = undefined);
   }
 
-  static async postUpdateConditions(actor) {    
+  static async postUpdateConditions(actor) {
     const data = actor.system
     const isMerchant = actor.isMerchant()
-    
+
     if (!TraitRulesDSA5.hasTrait(actor, game.i18n.localize("LocalizedIDs.painImmunity"))){
       const pain = actor.woundPain(data)
       await this.deferredEffectAddition("inpain", actor, pain)
@@ -288,7 +288,7 @@ export default class Actordsa5 extends Actor {
     if (AdvantageRulesDSA5.hasVantage(actor, game.i18n.localize("LocalizedIDs.mute"))) await actor.addCondition("mute");
     if (AdvantageRulesDSA5.hasVantage(actor, game.i18n.localize("LocalizedIDs.deaf"))) await actor.addCondition("deaf");
 
-    if (isMerchant) await actor.prepareMerchant()      
+    if (isMerchant) await actor.prepareMerchant()
   }
 
   static async _onCreateDocuments(documents, context) {
@@ -319,7 +319,7 @@ export default class Actordsa5 extends Actor {
      data.swarm.attack += Math.min(10, Math.floor(effectiveCount / gg))
      data.swarm.parry += -1
      data.swarm.effectiveCount = effectiveCount
-     data.swarm.damage = Math.min(5, Math.floor(effectiveCount / gg))     
+     data.swarm.damage = Math.min(5, Math.floor(effectiveCount / gg))
   }
 
   effectivePain(data){
@@ -348,7 +348,7 @@ export default class Actordsa5 extends Actor {
       } else {
         pain = Math.floor(5 - (5 * data.status[attr].value) / data.status[attr].max);
       }
-    } 
+    }
     return Math.clamped(pain, 0, 4)
   }
 
@@ -372,9 +372,9 @@ export default class Actordsa5 extends Actor {
       if (paralysis) data.status.speed.max = Math.round(data.status.speed.max * (1 - paralysis.flags.dsa5.value * 0.25));
         if (fixated) {
           data.status.speed.max = 0;
-        } else if (this.hasCondition("rooted") || this.hasCondition("incapacitated")) 
+        } else if (this.hasCondition("rooted") || this.hasCondition("incapacitated"))
           data.status.speed.max = 0;
-        else if (this.hasCondition("prone")) 
+        else if (this.hasCondition("prone"))
           data.status.speed.max = Math.min(1, data.status.speed.max);
 
       Riding.updateRiderSpeed(this, data.status.speed.max)
@@ -395,11 +395,11 @@ export default class Actordsa5 extends Actor {
     }
 
     if(horse){
-      data.status.initiative.value = horse.system.status.initiative.value 
+      data.status.initiative.value = horse.system.status.initiative.value
       if(!data.status.initiative.value){
         const horseData = horse.system
         horse.calcInitiative(horseData, horse.calcEncumbrance(horseData))
-        data.status.initiative.value = horseData.status.initiative.value 
+        data.status.initiative.value = horseData.status.initiative.value
       }
     } else {
       data.status.initiative.value += (data.status.initiative.gearmodifier || 0) - Math.min(4, encumbrance);
@@ -430,7 +430,7 @@ export default class Actordsa5 extends Actor {
       name: game.i18n.localize("MERCHANT.locked"),
       icon: "icons/svg/padlock.svg",
       flags: {
-        dsa5: {          
+        dsa5: {
           noEffect: true,
           hidePlayers: true,
           description: game.i18n.localize("MERCHANT.locked")
@@ -486,7 +486,7 @@ export default class Actordsa5 extends Actor {
         if(e.disabled) continue
 
         apply = true
-        
+
         switch (item.type) {
           case "meleeweapon":
           case "rangeweapon":
@@ -526,7 +526,7 @@ export default class Actordsa5 extends Actor {
                 break
               default:
                 apply = true
-            }           
+            }
             multiply = Number(item.system.step.value) || 1
 
             const advancedFunction = getProperty(e, "flags.dsa5.advancedFunction")
@@ -534,17 +534,17 @@ export default class Actordsa5 extends Actor {
             if(this.dsatriggers.hasOwnProperty(advancedFunction)) {
               this.dsatriggers[advancedFunction][item.id] = e.id
             }
-            
+
             break
           case "advantage":
           case "disadvantage":
             multiply = Number(item.system.step.value) || 1
             break;
-        } 
+        }
         e.notApplicable = !apply;
 
         if (!apply) continue
-                
+
         for (let i = 0; i < multiply; i++) {
           changes.push(
             ...e.changes.map((c) => {
@@ -640,7 +640,7 @@ export default class Actordsa5 extends Actor {
           permanentGear: 0
         },
         karmaenergy: {
-          permanentGear: 0       
+          permanentGear: 0
         },
         wounds: {
           multiplier: 1,
@@ -984,6 +984,7 @@ export default class Actordsa5 extends Actor {
     let applications = new Map();
     let availableAmmunition = [];
     let hasTrait = false;
+    const hasAnyItem = actorData.items.some(x => !(["skill", "combatskill", "money"].includes(x.type)))
     const horse = Riding.getHorse(this, true)
 
     for (let i of actorData.items) {
@@ -1187,7 +1188,7 @@ export default class Actordsa5 extends Actor {
     }
 
     money.coins = money.coins.sort((a, b) => (a.system.price.value > b.system.price.value ? -1 : 1));
-   
+
     specAbs.magical.push(...specAbs.pact);
     specAbs.clerical.push(...specAbs.ceremonial);
 
@@ -1208,7 +1209,7 @@ export default class Actordsa5 extends Actor {
 
     let guidevalues = duplicate(DSA5.characteristics);
     guidevalues["-"] = "-";
-    
+
     return {
       totalWeight: parseFloat(this.system.totalWeight.toFixed(3)),
       traditionArtifacts,
@@ -1225,6 +1226,7 @@ export default class Actordsa5 extends Actor {
       wornMeleeWeapons: meleeweapons,
       horseActor: horse,
       advantages,
+      hasAnyItem,
       disadvantages,
       specAbs,
       information,
@@ -1289,7 +1291,7 @@ export default class Actordsa5 extends Actor {
 
       for (let child of containers.get(elem._id)) {
         child.system.preparedWeight = Number(parseFloat((child.system.weight.value * child.system.quantity.value).toFixed(3)));
-        
+
         if (containers.has(child._id)) {
           bagweight += this._calcBagweight(child, containers, false);
         } else {
@@ -1445,7 +1447,7 @@ export default class Actordsa5 extends Actor {
       attributes.push(game.i18n.localize("magical"))
     if (SpecialabilityRulesDSA5.hasAbility(this, game.i18n.localize("LocalizedIDs.mightyKarmalBody")))
       attributes.push(game.i18n.localize("blessed"))
-      
+
     mergeObject(item, { system: { effect: { attributes: attributes.join(", ") } }});
 
     options["mode"] = statusId;
@@ -1900,9 +1902,9 @@ export default class Actordsa5 extends Actor {
     const html = await renderTemplate("systems/dsa5/templates/chat/roll/fallingdamage-card.html", fallingDamage)
 
     if (!result.result.other) result.result.other = []
-    
+
     result.result.other.push(html)
-    
+
     if(result.chatData){ result.chatData.other = [html] }
   }
 
@@ -1941,7 +1943,7 @@ export default class Actordsa5 extends Actor {
         return { testData, cardOptions };
       },
     };
-    
+
     let cardOptions = this._setupCardOptions("systems/dsa5/templates/chat/roll/fallingdamage-card.html", title, tokenId);
 
     return DiceDSA5.setupDialog({
@@ -2192,7 +2194,7 @@ export default class Actordsa5 extends Actor {
     const enchants = getProperty(item, "flags.dsa5.enchantments");
     if (enchants && enchants.length > 0) {
       item.enchantClass = "rar";
-    } 
+    }
     else if(item.effects.length > 0){
       item.enchantClass = "common"
     }
@@ -2679,7 +2681,7 @@ export default class Actordsa5 extends Actor {
       delete effect.flags.dsa5.max
       delete effect.id
 
-      mergeObject(effect, options)   
+      mergeObject(effect, options)
     }
 
     return await DSA5StatusEffects.addCondition(this, effect, value, absolute, auto);

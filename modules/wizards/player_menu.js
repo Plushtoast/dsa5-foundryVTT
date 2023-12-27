@@ -241,7 +241,7 @@ export default class PlayerMenu extends Application {
         const selected = Number(ev.currentTarget.dataset.selected) || 0
 
         if(selected >= max) {
-            $(ev.currentTarget).removeClass("selected")         
+            $(ev.currentTarget).removeClass("selected")
         } else {
             $(ev.currentTarget).addClass("selected")
             ev.currentTarget.dataset.selected = selected + 1
@@ -304,7 +304,7 @@ export default class PlayerMenu extends Application {
                 case "Item":
                     data = await Item.implementation.fromDropData(data)
                     break
-            }            
+            }
         } catch (err) {
             return false;
         }
@@ -329,7 +329,7 @@ export default class PlayerMenu extends Application {
                 this.actor = actor
             }
             this.render(true)
-        } else {            
+        } else {
             for (let app of this.subApps) {
                 const res = await app._onDrop(data)
                 if(res === true) break
@@ -373,10 +373,10 @@ export default class PlayerMenu extends Application {
             const equipmentIndexLoaded = game.dsa5.itemLibrary.equipmentBuild
             const { entityAbilities, entityPackages } = await this.prepareEntityAbilities()
             const conjurationskills = this.actor.items.filter(x => this.conjurationData.skills[this.conjurationData.conjurationType].includes(x.name) && ["liturgy", "ceremony", "spell", "ritual"].includes(x.type)).map(x => x.toObject())
-            
+
             let hasMighty = false
             for(let skill of conjurationskills){
-                skill.hasMighty = this.actor.items.find(x => x.name == `${skill.name} - ${game.i18n.localize("CONJURATION.powerfulCreature")}`) 
+                skill.hasMighty = this.actor.items.find(x => x.name == `${skill.name} - ${game.i18n.localize("CONJURATION.powerfulCreature")}`)
                 hasMighty ||= skill.hasMighty
             }
             const conjurationModifiers = this.conjurationData.modifiers[this.conjurationData.conjurationType]
@@ -397,7 +397,7 @@ export default class PlayerMenu extends Application {
                 moreModifiers: this.conjurationData.moreModifiers[this.conjurationData.conjurationType],
                 hasMighty
             })
-            
+
 
             mergeObject(data, {
                 conjurationSheet,
@@ -509,7 +509,7 @@ class ConjurationRequest extends DSA5Dialog {
             if(uniqueIds[x.uuid] > 1) res.system.step = { value: uniqueIds[x.uuid] }
             return res
         })
-        
+
         const entityPackages = (await Promise.all(this.creationData.packageIds.map(x => fromUuid(x)))).map(x => x.toObject(false))
             //this.conjuration.items.push(...entityAbilities, ...entityPackages)
         this.conjuration.effects.push({

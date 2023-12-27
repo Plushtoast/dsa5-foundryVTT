@@ -6,7 +6,7 @@
     "display": true,
     "preCommand": "const actor = game.actors.find(x => true);if(!actor) return ui.notifications.warn(\"Mindestens ein Akteur muss verfügbar sein\");this.app=actor.sheet;",
     "steps": [
-   
+
       {
         "id": "step-0",
         "selector": ".actor.sheet",
@@ -79,4 +79,3 @@
       }
     ]
   }
-  

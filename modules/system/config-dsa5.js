@@ -253,7 +253,7 @@ DSA5.statusEffects = [{
         ],
         duration: { seconds: 600 },
         flags: {
-            dsa5: {                
+            dsa5: {
             }
         }
     },
@@ -692,11 +692,11 @@ DSA5.specialAbilityCategories = {
     "general": "SpecCategory.general",
     "generalStyle": "SpecCategory.generalStyle",
     "extGeneral": "SpecCategory.extGeneral",
-    
+
     "animal": "SpecCategory.animal",
-    
+
     "fatePoints": "SpecCategory.fatePoints",
-    "vampire": "SpecCategory.vampire",    
+    "vampire": "SpecCategory.vampire",
     "lykanthrop": "SpecCategory.lykanthrop",
 
     "language": "SpecCategory.language",
@@ -708,7 +708,7 @@ DSA5.specialAbilityCategories = {
     "ceremonial": "SpecCategory.ceremonial",
     "vision": "SpecCategory.vision",
     "prayer": "SpecCategory.prayer",
-    
+
     "magical": "SpecCategory.magical",
     "magicalStyle": "SpecCategory.magicalStyle",
     "extMagical": "SpecCategory.extMagical",

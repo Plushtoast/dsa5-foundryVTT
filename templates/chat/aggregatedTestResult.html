@@ -1,12 +1,12 @@
 <div class="dsa5 post-item">
     <h3><b>{{item.name}}</b><span class="tinyEntityLink">{{{itemLink}}}</span></h3>
 
-    <img class="popoutImage" style="width:70px;float:right;margin-left:4px" data-img="{{item.img}}" src="{{item.img}}" data-tooltip="{{item.name}}" /> 
+    <img class="popoutImage" style="width:70px;float:right;margin-left:4px" data-img="{{item.img}}" src="{{item.img}}" data-tooltip="{{item.name}}" />
 
     {{#unless descriptionObfuscated}}
     <div class="card-content">{{{replaceConditions system.description.value}}}</div>
     {{/unless}}
     {{#each properties as |property p|}}
-        <div class="chatLineHeight">{{{property}}}</div><br> 
+        <div class="chatLineHeight">{{{property}}}</div><br>
     {{/each}}
 </div>

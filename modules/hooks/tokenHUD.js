@@ -23,10 +23,10 @@ function addThirdBarToHUD(html, actor, app) {
 
 function swarmButtons(app, html, data) {
     if(!game.user.isGM) return
-    
+
     const actor = app.object.actor
     if(!actor.isToken) return
-  
+
     if(canvas.tokens.controlled.length >= 2){
         const actorId  = actor._id
         if(!canvas.tokens.controlled.every(x => x.actor?._id == actorId)) return
@@ -45,7 +45,7 @@ function swarmButtons(app, html, data) {
             btn.remove()
         })
     }
-    
+
 }
 
 class SwarmDialog extends Dialog {
@@ -111,8 +111,8 @@ async function combineSwarm(actor, token) {
 
 export default function() {
     Hooks.on('renderTokenHUD', (app, html, data) => {
-        TokenHoverHud.hide(app.object) 
-        
+        TokenHoverHud.hide(app.object)
+
         const actor = app.object.actor
         if (actor) {
             addThirdBarToHUD(html, actor, app)

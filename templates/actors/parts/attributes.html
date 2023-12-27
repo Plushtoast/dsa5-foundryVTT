@@ -1,6 +1,6 @@
 <div class="general">
     <img class="charimg profile" src="{{actor.img}}" data-tooltip="{{actor.name}}" {{#if (eq merchantType 'loot')}}style="margin-left: calc(50% - 57px)" {{/if}} data-edit="img">
-    
+
 
     <div class="row-section" style="width: 100%;margin-bottom: 20px">
         {{#if (ne merchantType 'loot')}}
@@ -15,8 +15,8 @@
                         <div class="ch-value col" data-char="{{c}}">
                             <a class="d20 die-{{c}}">{{ch.value}}</a>
                         </div>
-                    </div>    
-                    {{#if (eq c "ch")}} 
+                    </div>
+                    {{#if (eq c "ch")}}
                 </div>
                 <div class="col morph row-section" style="min-width:150px">
                     {{/if}}

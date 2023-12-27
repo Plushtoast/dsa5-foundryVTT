@@ -20,7 +20,7 @@ export default class DSA5ChatAutoCompletion {
                     ]))
             })
         }
-        
+
         this.filtering = false
         this.combatConstants = {
             dodge: game.i18n.localize("dodge"),
@@ -168,7 +168,7 @@ export default class DSA5ChatAutoCompletion {
 
     _setList(result, cmd, ev) {
         let html = $(`<div class="quickfind dsalist"><ul>${result.map(x=> `<li data-type="${x.type}" data-category="${cmd}" class="quick-item">${x.name}</li>`).join("")}</ul></div>`)
-        
+
         html.find(`.quick-item:first`).addClass("focus")
         const par = $(ev.currentTarget).closest('#chat-form')
         let quick = par.find(".quickfind")
@@ -380,7 +380,7 @@ export default class DSA5ChatAutoCompletion {
         })
         html.on('click', '.postContentChat', async(ev) => {
             const content = $(ev.currentTarget).closest('.postChatSection').find('.postChatContent').html()
-            UserMultipickDialog.getDialog(content)            
+            UserMultipickDialog.getDialog(content)
         })
         html.on('click', '.request-GC', ev => {
             RequestRoll.showGCMessage(ev.currentTarget.dataset.name, Number(ev.currentTarget.dataset.modifier) || 0)
@@ -404,7 +404,7 @@ export default class DSA5ChatAutoCompletion {
         })
         html.on('click', '.request-AP', ev => {
             if(!game.user.isGM) return
-            
+
             const master = game.dsa5.apps.gameMasterMenu
 
             master.getExp(master.selectedIDs(), ev.currentTarget.dataset.modifier)
@@ -427,11 +427,11 @@ export default class DSA5ChatAutoCompletion {
             item.sheet.render(true)
         })
         showItem.attr("draggable", true).on("dragstart", event => itemDragStart(event))
-    
+
         html.on('click', '.actorEmbeddedAbility', async ev => {
             const actor = await fromUuid(ev.currentTarget.dataset.actor)
             const item = actor.items.get(ev.currentTarget.dataset.id)
-            if (item) item.sheet.render(true)   
+            if (item) item.sheet.render(true)
         })
     }
 

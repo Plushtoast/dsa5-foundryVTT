@@ -3410,6 +3410,27 @@
       }
     }
   } 
+
+  .searchMatch {
+    background-color: yellow;
+  }
+
+  .searchLines {
+    position: absolute;
+    top: 0px;
+    right: 0;
+    width: 16px;
+    bottom: 0;
+    pointer-events: none;
+
+    .marker{
+      position: absolute;
+      width: 100%;
+      height: 2px;
+      background-color: white;
+      pointer-events: none;
+    }
+  }
   
   .tinyHudIcons{
     border: 1px solid black;

@@ -11,7 +11,7 @@ export const applyDamage = async(li, mode, factor = 1) => {
 
     await actor.applyDamage(cardData.damage[mode] * factor)
     const update = { "flags.data.damageApplied": true, content: message.content.replace(/hideAnchor">/, `hideAnchor"><i class="fas fa-check" style="float:right" data-tooltip="${game.i18n.localize("damageApplied")}"></i>`) }
-    
+
     if(game.user.isGM){
         await message.update(update)
     }else{
@@ -235,10 +235,10 @@ export function chatContext() {
                         const calcTime = Number(duration) * reg.seconds;
                         effect.duration.seconds = calcTime;
                         effect.duration.rounds = effect.duration.seconds / 5;
-                        
+
                         break;
                     }
-                } 
+                }
                 await actor.addCondition(effect)
             } catch (e) {
                 console.error(`Could not parse duration '${maintain}' of '${name}'`);
@@ -251,7 +251,7 @@ export function chatContext() {
     const applyDamageLabel = () => {
         return game.i18n.localize(game.combat?.isBrawling ? "CHATCONTEXT.ApplyDamagePP" : "CHATCONTEXT.ApplyDamage")
     }
- 
+
     Hooks.on("getChatLogEntryContext", (html, options) => {
         options.push({
                 name: game.i18n.localize("CHATCONTEXT.hideData"),
@@ -373,6 +373,6 @@ export function chatContext() {
                 callback: li => { applyChatCardDamage(li, "sp", 2) }
             })
         }
-       
+
     })
 }

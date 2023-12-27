@@ -99,7 +99,7 @@ export default class CreatureType {
                     for(let target of game.user.targets){
                         const types = CreatureType.detectCreatureType(target.actor)
                         const features = testData.preData.source.system.feature.split(",").map(x => x.trim())
-                        
+
                         let found = false
                         for(let type of types){
                             for(let feature of features){

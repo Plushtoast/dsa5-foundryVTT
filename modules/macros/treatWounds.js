@@ -21,7 +21,7 @@ class TreatWounds extends Application {
             item
         }
     }
-    static get defaultOptions() {   
+    static get defaultOptions() {
         const options = super.defaultOptions;
         options.template = "systems/dsa5/templates/macros/treatWounds.html";
         options.width = 500;
@@ -84,9 +84,9 @@ class TreatWounds extends Application {
 
     buildAnchors(targets) {
         const res = []
-        for(const target of targets) {   
+        for(const target of targets) {
             res.push(target.toAnchor().outerHTML)
-        }   
+        }
         return res.join(", ")
     }
 
@@ -95,7 +95,7 @@ class TreatWounds extends Application {
         this.targets = [actor]
         data.macroData = this.macroData
         data.source = this.buildAnchors([args.sourceActor])
-        data.lang = dict        
+        data.lang = dict
         data.targets = this.buildAnchors(this.targets)
         return data
     }

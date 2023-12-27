@@ -1,11 +1,11 @@
 {{#if prepare.canSwarm}}
 {{#if (gt actor.system.swarm.count 1)}}
-<div class="combat-swarm groupbox">    
+<div class="combat-swarm groupbox">
     <div class="row-section table-title lineheight">
         <div class="title-type col third">
             <b>{{localize "swarm.name"}}</b>
         </div>
-        
+
         <div class="col ten center small">
             {{localize "Current"}}
         </div>
@@ -14,7 +14,7 @@
             {{localize "swarm.count"}}
         </div>
         <div class="col ten center small">
-            {{localize "swarm.size"}}            
+            {{localize "swarm.size"}}
         </div>
 
         <div class="col ten center small">
@@ -26,7 +26,7 @@
         <div class="col ten center small">
             {{localize "CHARAbbrev.damage"}}
         </div>
-    </div>    
+    </div>
 
     <div class="row-section wrap rowtable inventory">
         <div class="col item">
@@ -55,14 +55,14 @@
             </div>
         </div>
     </div>
-    
+
 </div>
 {{else}}
-<div class="combat-swarm groupbox" style="min-height: auto">    
+<div class="combat-swarm groupbox" style="min-height: auto">
 <div class="row-section table-title lineheight">
     <div class="title-type col ninety">
         <b>{{localize "swarm.name"}}</b>
-    </div>      
+    </div>
 
     <div class="col ten center small">
         <input type="checkbox" name="system.swarm.count" value="2">

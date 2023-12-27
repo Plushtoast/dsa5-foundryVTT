@@ -39,7 +39,7 @@ export const ItemSheetObfuscation = (superclass) => class extends superclass {
                 }else{
                     ele.append(` ${btn}`)
                 }
-                    
+
             }else if(invisible){
                 if(ele.hasClass('active')) swaptab = true
                 ele.remove()
@@ -48,7 +48,7 @@ export const ItemSheetObfuscation = (superclass) => class extends superclass {
                     $(this._element).find('[name="system.price.value"],[name="system.price.raw"]').replaceWith('<label>?</label>')
                 }
             }
-            
+
         }
         if(swaptab){
             const tabs = $(this._element).find('nav .item:first-child')
@@ -59,6 +59,6 @@ export const ItemSheetObfuscation = (superclass) => class extends superclass {
                 $(this._element).find('.content').html(templ)
             }
         }
-        
+
     }
 }

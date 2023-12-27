@@ -45,11 +45,11 @@ export default class ActorSheetDsa5 extends ActorSheet {
             ".actorConfig": "SHEET.actorConfig"
         }
         for(let key of Object.keys(tooltips)){
-            elem.find(key).attr("data-tooltip", tooltips[key]);    
+            elem.find(key).attr("data-tooltip", tooltips[key]);
         }
 
         if (this.currentFocus) {
-            elem.find('[data-item-id="' + this.currentFocus + '"] input').focus().select();
+            elem.find('[data-item-id="' + this.currentFocus + '"] input').trigger("focus").trigger("select")
             this.currentFocus = null;
         }
     }
@@ -372,7 +372,7 @@ export default class ActorSheetDsa5 extends ActorSheet {
             i.removeClass("fa-spin fa-spinner")
         }
     }
-    
+
     playerViewEnabled() {
         return getProperty(this.actor.system, "playerView")
     }
@@ -429,10 +429,10 @@ export default class ActorSheetDsa5 extends ActorSheet {
 
         html.find(".status-create").click(ev => {
             let menu = $(ev.currentTarget).closest(".statusEffectMenu").find('ul')
-            menu.fadeIn('fast', () => { menu.find('input').focus() })
+            menu.fadeIn('fast', () => { menu.find('input').trigger("focus") })
         })
         html.find(".statusEffectMenu ul").mouseleave(ev => $(ev.currentTarget).fadeOut())
-       
+
         html.find('.roll-aggregated').mousedown(ev => this._handleAggregatedProbe(ev))
 
         html.find('.skill-select').mousedown(ev => {
@@ -445,7 +445,7 @@ export default class ActorSheetDsa5 extends ActorSheet {
                 });
             else if (ev.button == 2)
                 skill.sheet.render(true);
-        });      
+        });
 
         html.find('.spell-select').mousedown(ev => {
             const itemId = this._getItemId(ev);
@@ -497,7 +497,7 @@ export default class ActorSheetDsa5 extends ActorSheet {
         html.find('.money-change, .skill-advances').focusin(ev => {
             this.currentFocus = $(ev.currentTarget).closest('[data-item-id]').attr('data-item-id');;
         })
-        
+
         html.find('.item-edit').click(ev => {
             ev.preventDefault()
             const itemId = this._getItemId(ev);
@@ -548,7 +548,7 @@ export default class ActorSheetDsa5 extends ActorSheet {
             this.actor.setupWeapon(item, mode, {}, this.getTokenId()).then(setupData => this.actor.basicTest(setupData))
         });
 
-        const deletehand = ev => this._deleteItem(ev)       
+        const deletehand = ev => this._deleteItem(ev)
 
         html.find(".cards .item").mouseenter(ev => {
             if (ev.currentTarget.getElementsByClassName('hovermenu').length == 0) {
@@ -617,7 +617,7 @@ export default class ActorSheetDsa5 extends ActorSheet {
 
         Riding.activateListeners(html, this.actor)
 
-        this._bindKeepFieldsEnabled(html)   
+        this._bindKeepFieldsEnabled(html)
 
 
 
@@ -649,7 +649,7 @@ export default class ActorSheetDsa5 extends ActorSheet {
             if (ev.button == 0){
                 const lz = item.type == "trait" ? item.system.reloadTime.value : Actordsa5.calcLZ(item, this.actor)
                 update["system.reloadTime.progress"] = Math.min(item.system.reloadTime.progress + 1, lz)
-            }                
+            }
             else if (ev.button == 2)
                 update["system.reloadTime.progress"] = 0
 
@@ -738,7 +738,7 @@ export default class ActorSheetDsa5 extends ActorSheet {
 
         html.find('.item-create').click(ev => this._onItemCreate(ev));
 
-        html.find(".condition-toggle").mousedown(async(ev) => {         
+        html.find(".condition-toggle").mousedown(async(ev) => {
             let condKey = $(ev.currentTarget).parents(".statusEffect").attr("data-id")
             let ef = this.actor.effects.get(condKey)
             await ef.update({ disabled: !ef.disabled })
@@ -804,7 +804,7 @@ export default class ActorSheetDsa5 extends ActorSheet {
             name: "SHEET.DeleteItem",
             icon: "<i class='fas fa-trash fa-fw'></i>",
             callback: () => this._itemDeleteDialog(item),
-          },          
+          },
           {
             name: "MERCHANT.exchange",
             icon: "<i class='fas fa-coins'></i>",
@@ -812,7 +812,7 @@ export default class ActorSheetDsa5 extends ActorSheet {
             callback: () => this._startTrade(item),
           }
         ];
-          
+
         if(hasProperty(item, "system.worn.wearable") || ["meleeweapon", "rangeweapon", "armor"].includes(item.type)) {
             options.push({
                 name: "SHEET.EquipItem",
@@ -842,7 +842,7 @@ export default class ActorSheetDsa5 extends ActorSheet {
             await this.actor.createEmbeddedDocuments("Item", [itemData], {render: false})
             await this.actor.updateEmbeddedDocuments("Item", [{_id: item.id, "system.quantity.value": item.system.quantity.value - count}])
         }
-    
+
         RangeSelectDialog.create(game.i18n.localize('SHEET.SplitItem'), game.i18n.format('MERCHANT.splitItem', {name: item.name}), item.system.quantity.value - 1, callback, 1, item.system.quantity.value - 1)
     }
 
@@ -903,7 +903,7 @@ export default class ActorSheetDsa5 extends ActorSheet {
 
         new TraditionArtifactpicker(this.actor).render(true)
     }
-    
+
     _deleteTraditionArtifact(ev){
         if (!this.isEditable) return
 
@@ -964,7 +964,7 @@ export default class ActorSheetDsa5 extends ActorSheet {
                 Yes: {
                     icon: '<i class="fa fa-check"></i>',
                     label: game.i18n.localize("yes"),
-                    callback: async() => {                        
+                    callback: async() => {
                         await this._cleverDeleteItem(item.id)
                         resolve(true)
                     }
@@ -1054,9 +1054,9 @@ export default class ActorSheetDsa5 extends ActorSheet {
     _onDragStart(event) {
         const li = event.currentTarget;
         if ( event.target.classList.contains("content-link") ) return;
-    
+
         let dragData;
-    
+
         if ( li.dataset.itemId ) {
           const item = this.actor.items.get(li.dataset.itemId);
           dragData = item.toDragData();
@@ -1067,9 +1067,9 @@ export default class ActorSheetDsa5 extends ActorSheet {
           const effect = this.actor.effects.get(li.dataset.id);
           dragData = effect.toDragData();
         }
-    
+
         if ( !dragData ) return;
-    
+
         event.dataTransfer.setData("text/plain", JSON.stringify(dragData));
     }
 
@@ -1123,7 +1123,7 @@ export default class ActorSheetDsa5 extends ActorSheet {
         }
     }
 
-    async _addLoot(item) {        
+    async _addLoot(item) {
         item = duplicate(item)
         let res = this.actor.items.find(i => Itemdsa5.areEquals(item, i));
         if (!res) {
@@ -1159,7 +1159,7 @@ export default class ActorSheetDsa5 extends ActorSheet {
         let docs = await game.packs.get(item.name).getDocuments()
         let newAppls = docs.filter(x => !this.actor.items.find(y => y.type == x.type && y.name == x.name))
         if(item.onlyType) newAppls = newAppls.filter(x => x.type == item.onlyType)
-        
+
         await this.actor.createEmbeddedDocuments("Item", newAppls.map(x => x.toObject()))
     }
 
@@ -1184,7 +1184,7 @@ export default class ActorSheetDsa5 extends ActorSheet {
                         label: game.i18n.localize("RIDING.horse"),
                         callback: () => {
                             Riding.setHorse(this.actor, item)
-                        } 
+                        }
                     }
                 }
             }).render(true)
@@ -1237,7 +1237,7 @@ export default class ActorSheetDsa5 extends ActorSheet {
                 await this._handleSpellExtension(item)
                 break
             case "creature":
-                this.creatureDrop(item)                
+                this.creatureDrop(item)
                 break
             case "skill":
             case "imprint":
@@ -1271,9 +1271,9 @@ export default class ActorSheetDsa5 extends ActorSheet {
                         elem.system.quantity.value = thing.count
                         if (thing.qs && thing.type == "consumable") elem.system.QL = thing.qs
                     }else{
-                        ui.notifications.warn(game.i18n.format('DSAError.notFound', {category: thing.type, name: thing.name}))    
+                        ui.notifications.warn(game.i18n.format('DSAError.notFound', {category: thing.type, name: thing.name}))
                     }
-                    
+
                 }
             }
             //we should improve that so it stacks items
@@ -1302,7 +1302,7 @@ export default class ActorSheetDsa5 extends ActorSheet {
         if(itemData instanceof Array){
             return this.actor.createEmbeddedDocuments("Item", itemData);
         }
-        return await this._manageDragItems(itemData, itemData.type)       
+        return await this._manageDragItems(itemData, itemData.type)
     }
 
     async _onDropActor(event, data) {
@@ -1312,7 +1312,7 @@ export default class ActorSheetDsa5 extends ActorSheet {
 
         if(selfTarget) return
 
-        return await this._manageDragItems(item, typeClass) 
+        return await this._manageDragItems(item, typeClass)
     }
 
     async _onDropActiveEffect(event, data) {
@@ -1338,7 +1338,7 @@ export default class ActorSheetDsa5 extends ActorSheet {
         let parentItem = $(event.target).parents(".item")
 
         if (parentItem && DSA5.equipmentCategories.has(item.type)) {
-            
+
             const parentId = parentItem.attr("data-item-id")
             if(parentItem.attr("data-category") == "bags") {
                 if (parentId != item.id) container_id = parentId
@@ -1352,7 +1352,7 @@ export default class ActorSheetDsa5 extends ActorSheet {
         const selfTarget = this.actor.uuid === item.parent?.uuid
         if ( selfTarget ){
             if(event.ctrlKey){
-               await this.handleItemCopy(itemData, item.type) 
+               await this.handleItemCopy(itemData, item.type)
             } else if(mergeItems) {
                 await parentItem.update({"system.quantity.value": parentItem.system.quantity.value + item.system.quantity.value}, { render: false })
                 await this.actor.deleteEmbeddedDocuments("Item", [item.id])
@@ -1369,7 +1369,7 @@ export default class ActorSheetDsa5 extends ActorSheet {
             const hasPrice = this._itemHasPrice(data)
             if(hasPrice){
                 const price = `${item.type == "consumable" ? Itemdsa5.getSubClass(itemData.type).consumablePrice(itemData) : Number(itemData.system.price.value)}`
-                            
+
                 if(price && !(await DSA5Payment.payMoney(this.actor, price, true, false))) return
 
                 tinyNotification(game.i18n.format("PAYMENT.pay", {actor: this.actor.name, amount: price}))
@@ -1377,7 +1377,7 @@ export default class ActorSheetDsa5 extends ActorSheet {
             }
             await this._onDropItemCreate(itemData);
         }
-    
+
         if (event.altKey && !selfTarget && DSA5.equipmentCategories.has(item.type))
             await this._handleRemoveSourceOnDrop(item)
     }

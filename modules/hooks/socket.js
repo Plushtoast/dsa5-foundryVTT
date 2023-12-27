@@ -21,10 +21,10 @@ export function connectSocket() {
                 let target = data.payload.target.token ? game.actors.tokens[data.payload.target.token] : game.actors.get(data.payload.target.actor)
                 MerchantSheetDSA5.hideDeletedSheet(target)
                 return
-            default: 
+            default:
                 if(Trade.socketListeners(data)) return
-        }            
-        
+        }
+
         if(!DSA5_Utility.isActiveGM()) return
 
         switch (data.type) {
@@ -132,6 +132,6 @@ export function connectSocket() {
                 console.warn(`Unhandled socket data type ${data.type}`)
         }
     })
-    
+
 }
 
