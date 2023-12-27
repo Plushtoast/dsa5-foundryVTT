@@ -486,6 +486,15 @@ export function setupConfiguration() {
         type: Boolean
     });
 
+    game.settings.register("dsa5", "enableAPTracking", {
+        name: "DSASETTINGS.enableAPTracking",
+        hint: "DSASETTINGS.enableAPTrackingHint",
+        scope: "world",
+        config: true,
+        default: false,
+        type: Boolean
+    });
+
     game.settings.register("dsa5", "sightAutomationEnabled", {
         name: "sightAutomationEnabled",
         scope: "world",

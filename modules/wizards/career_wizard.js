@@ -2,6 +2,7 @@ import DSA5 from "../system/config-dsa5.js"
 import ItemRulesDSA5 from "../system/item-rules-dsa5.js"
 import DSA5_Utility from "../system/utility-dsa5.js"
 import WizardDSA5 from "./dsa5_wizard.js"
+import APTracker from "../system/ap-tracker.js"
 
 export default class CareerWizard extends WizardDSA5 {
     constructor(app) {
@@ -103,7 +104,7 @@ export default class CareerWizard extends WizardDSA5 {
 
     async addCareer(actor, item) {
         this.actor = actor
-        this.career = duplicate(item)
+        this.career = item
     }
 
     async setAbility(value, types, choices = []) {
@@ -232,6 +233,8 @@ export default class CareerWizard extends WizardDSA5 {
             .filter(skill => !(skill.includes(game.i18n.localize("combatskillcountdivider") + ":") || skill == ""))
         await this.updateSkill(combatSkills, "combatskill", 1, false)
         await this.actor.update(update);
+
+        await APTracker.track(this.actor, { type: "item", item: this.career, state: 1 }, apCost)
 
         this.finalizeUpdate()
     }

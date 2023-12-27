@@ -102,7 +102,6 @@
   }
   
   h1, h2, h3, h4, h5, h6, h7 {
-    font-family: "Andalus";
     overflow: hidden;
 
     a.content-link,
@@ -110,6 +109,12 @@
       background: none;
       padding: 0;
       border: none;
+    }
+  }
+
+  .dsa5 {
+    h1, h2, h3, h4, h5, h6, h7 {
+      font-family: "Andalus";
     }
   }
 
@@ -2117,6 +2122,25 @@
   .dialog-buttons img, .result-image {
     border: none;
   }
+
+  .bookWizardsheet {
+    .sheet.journal-entry .pages-list {
+      .heading-link {
+        line-height: inherit;
+      }
+      .headings {
+        display: block;
+        font-family: var(--normalFont);
+        margin: 6px 0 0 3px;
+        --level-indent: 8px;
+  
+        li {
+          line-height: inherit;
+          height: auto;
+        }
+      }
+    }
+  }
   
   .libraryImg, .extImg {
     background-image: url('../../icons/categories/ability_combat.webp');
@@ -2309,6 +2333,22 @@
     }
   } 
   
+  .adventurePoints {
+    .row-section:hover {
+      background-color: rgba(0, 0, 0, 0.2);
+    }
+
+    .fa-plus,
+    .fa-angles-up {
+      color: green;
+    }
+
+    .fa-minus,
+    .fa-angles-down {
+      color: darkred;
+    }
+  }
+
   .effect-change {
     .key input {
       width: 90%;
@@ -2363,11 +2403,11 @@
     .toc {
       ul {
         list-style-type: none;
-        padding-left: 8px;
+        padding-left: 0px;
       }
   
       list-style-type: none;
-      padding-left: 8px;
+      padding-left: 4px;
     }
   }
   

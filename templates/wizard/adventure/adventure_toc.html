@@ -1,7 +1,7 @@
 <div class="sheet journal-entry flexcol" style="min-width:unset;min-height:100%">
     <div style="flex:none">
         {{#if book.id}}
-        <h2>
+        <h2 class="center" style="margin-top:0px;">
             <a class="loadBook">{{book.id}}</a>
         </h2>
         <div class="row-section lineheight" style="margin-bottom:10px">
@@ -17,6 +17,7 @@
         </div>
         {{/if}}
     </div>
+    {{log pageTocs}}
     <div class="pages-list">
         <div class="scrollable">
 
@@ -29,7 +30,13 @@
                     <li><a data-id="{{item.id}}" class="{{item.cssClass}} getChapter">{{item.name}}</a>{{#if item.subChapters}}
                         <ul>
                             {{#each item.subChapters as |item i|}}
-                            <li class="fas fa-caret-right"><a data-jid="{{item.id}}" class="subChapter {{item.cssClass}}">{{item.name}}</a></li>
+                            <li class="fas fa-caret-right">
+                                <a data-jid="{{item.id}}" class="subChapter {{item.cssClass}}">{{item.name}}</a>
+                                
+                                {{#if item.selected}}
+                                {{{../../../pageTocs}}}
+                                {{/if}}
+                            </li>
                             {{/each}}
                         </ul>
                         {{/if}}

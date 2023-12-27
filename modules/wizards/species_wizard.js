@@ -1,5 +1,6 @@
 import DSA5 from "../system/config-dsa5.js";
 import WizardDSA5 from "./dsa5_wizard.js"
+import APTracker from "../system/ap-tracker.js";
 
 export default class SpeciesWizard extends WizardDSA5 {
     static get defaultOptions() {
@@ -78,7 +79,7 @@ export default class SpeciesWizard extends WizardDSA5 {
 
     async addSpecies(actor, item) {
         this.actor = actor
-        this.species = duplicate(item)
+        this.species = item
     }
 
     async updateCharacter(parent, app = this) {
@@ -119,12 +120,13 @@ export default class SpeciesWizard extends WizardDSA5 {
             update[`system.${dataAttr.join(".")}`] = Number(attrs[1])
         }
 
-
         await this.actor._updateAPs(apCost, {}, { render: false })
         await this.addSelections(parent.find('.optional:checked'), false)
         await this.actor.update(update);
 
         await this.actor.removeCondition("incapacitated")
+
+        await APTracker.track(this.actor, { type: "item", item: this.species, state: 1 }, apCost)
 
         this.finalizeUpdate()
     }

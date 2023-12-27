@@ -15,6 +15,7 @@ import DSAActiveEffectConfig from "../status/active_effects.js";
 import DSA5SoundEffect from "../system/dsa-soundeffect.js";
 import CreatureType from "../system/creature-type.js";
 import Riding from "../system/riding.js";
+import APTracker from "../system/ap-tracker.js";
 
 export default class Actordsa5 extends Actor {
   static async create(data, options) {
@@ -1513,6 +1514,12 @@ export default class Actordsa5 extends Actor {
        const delta = swarmCount - (this.system.swarm.count || 1);
        const baseHp = this.system.swarm.maxwounds || this.system.status.wounds.max;
        setProperty(data, "system.status.wounds.value", Math.max(0, hp + delta * baseHp));
+    }
+
+    const apSum = getProperty(data, "system.details.experience.total");
+    if (apSum) {
+      const previous = this.system.details.experience.total
+      APTracker.track(this, { type: "sum", previous, next: apSum }, apSum - previous)
     }
   }
 

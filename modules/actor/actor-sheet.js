@@ -19,6 +19,7 @@ import { AddEffectDialog } from "../system/tokenHotbar2.js";
 import { RangeSelectDialog } from "../hooks/itemDrop.js";
 import DSA5Payment from "../system/payment.js";
 import { TradeOptions } from "./trade.js";
+import APTracker from "../system/ap-tracker.js";
 
 export default class ActorSheetDsa5 extends ActorSheet {
     get actorType() {
@@ -222,79 +223,81 @@ export default class ActorSheetDsa5 extends ActorSheet {
     }
 
     async _advanceAttribute(attr) {
-        const advances = Number(this.actor.system.characteristics[attr].advances) + Number(this.actor.system.characteristics[attr].initial)
+        const previous = Number(this.actor.system.characteristics[attr].advances)
+        const advances = previous + Number(this.actor.system.characteristics[attr].initial)
         const cost = DSA5_Utility._calculateAdvCost(advances, "E")
         if (await this._checkEnoughXP(cost)) {
-            await this._updateAPs(cost, {
-                [`system.characteristics.${attr}.advances`]: Number(this.actor.system.characteristics[attr].advances) + 1
-            })
+            await this._updateAPs(cost, { [`system.characteristics.${attr}.advances`]: previous + 1 })
+            await APTracker.track(this.actor, { type: "attribute", attr, previous: advances, next: advances + 1 }, cost)
         }
     }
 
     async _refundAttributeAdvance(attr) {
-        const advances = Number(this.actor.system.characteristics[attr].advances) + Number(this.actor.system.characteristics[attr].initial)
-        if (Number(this.actor.system.characteristics[attr].advances) > 0) {
+        const previous = Number(this.actor.system.characteristics[attr].advances)
+        const advances = previous + Number(this.actor.system.characteristics[attr].initial)
+        if (previous > 0) {
             const cost = DSA5_Utility._calculateAdvCost(advances, "E", 0) * -1
-            await this._updateAPs(cost, {
-                [`system.characteristics.${attr}.advances`]: Number(this.actor.system.characteristics[attr].advances) - 1
-            })
+            await this._updateAPs(cost, { [`system.characteristics.${attr}.advances`]: previous - 1 })
+            await APTracker.track(this.actor, { type: "attribute", attr, previous: advances, next: advances - 1 }, cost)
         }
     }
 
     async _rebuyPC(attr) {
         if(this.actor.system.status[attr].permanentLossSum > 0){
             if (await this._checkEnoughXP(2)) {
-                await this._updateAPs(2, {
-                    [`system.status.${attr}.rebuy`]: Number(this.actor.system.status[attr].rebuy) + 1
-                })
+                const previous = Number(this.actor.system.status[attr].rebuy)
+                await this._updateAPs(2, { [`system.status.${attr}.rebuy`]: previous + 1 })
+                await APTracker.track(this.actor, { type: "permanentLoss", attr, previous, next: previous + 1 }, 2)
             }
         }
     }
 
     async _refundPC(attr) {
         if(this.actor.system.status[attr].rebuy > 0) {
-            await this._updateAPs(-2, {
-                [`system.status.${attr}.rebuy`]: Number(this.actor.system.status[attr].rebuy) - 1
-            })
+            const previous = Number(this.actor.system.status[attr].rebuy)
+            await this._updateAPs(-2, { [`system.status.${attr}.rebuy`]: previous - 1 })
+            await APTracker.track(this.actor, { type: "permanentLoss", attr, previous, next: previous - 1 }, -2)
         }
     }
 
     async _advancePoints(attr) {
-        const advances = Number(this.actor.system.status[attr].advances)
-        const cost = DSA5_Utility._calculateAdvCost(advances, "D")
-        if (await this._checkEnoughXP(cost) && this._checkMaximumPointAdvancement(attr, advances + 1)) {
-            await this._updateAPs(cost, {
-                [`system.status.${attr}.advances`]: Number(this.actor.system.status[attr].advances) + 1
-            })
+        const previous = Number(this.actor.system.status[attr].advances)
+        const cost = DSA5_Utility._calculateAdvCost(previous, "D")
+        if (await this._checkEnoughXP(cost) && this._checkMaximumPointAdvancement(attr, previous + 1)) {
+            await this._updateAPs(cost, { [`system.status.${attr}.advances`]: previous + 1 })
+            await APTracker.track(this.actor, { type: "point", attr, previous, next: previous + 1 }, cost)
         }
     }
 
     async _refundPointsAdvance(attr) {
-        const advances = Number(this.actor.system.status[attr].advances)
-        if (advances > 0) {
-            const cost = DSA5_Utility._calculateAdvCost(advances, "D", 0) * -1
-            await this._updateAPs(cost, {
-                [`system.status.${attr}.advances`]: Number(this.actor.system.status[attr].advances) - 1
-            })
+        const previous = Number(this.actor.system.status[attr].advances)
+        if (previous > 0) {
+            const cost = DSA5_Utility._calculateAdvCost(previous, "D", 0) * -1
+            await this._updateAPs(cost, { [`system.status.${attr}.advances`]: previous - 1 })
+            await APTracker.track(this.actor, { type: "point", attr, previous, next: previous - 1 }, cost)
         }
     }
 
     async _advanceItem(itemId) {
-        let item = this.actor.items.get(itemId).toObject()
-        let cost = DSA5_Utility._calculateAdvCost(Number(item.system.talentValue.value), item.system.StF.value)
-        if (await this._checkEnoughXP(cost) && this.actor._checkMaximumItemAdvancement(item, Number(item.system.talentValue.value) + 1)?.result) {
-            await this.actor.updateEmbeddedDocuments("Item", [{ _id: itemId, "system.talentValue.value": item.system.talentValue.value + 1 }])
+        const item = this.actor.items.get(itemId)
+        const value = Number(item.system.talentValue.value)
+        const cost = DSA5_Utility._calculateAdvCost(value, item.system.StF.value)
+        if (await this._checkEnoughXP(cost) && this.actor._checkMaximumItemAdvancement(item, value + 1)?.result) {
+            await this.actor.updateEmbeddedDocuments("Item", [{ _id: itemId, "system.talentValue.value": value + 1 }])
             await this._updateAPs(cost)
+            await APTracker.track(this.actor, { type: "item", item, previous: value, next: value + 1 }, cost)
         }
     }
 
     async _refundItemAdvance(itemId) {
-        let item = this.actor.items.get(itemId).toObject()
+        const item = this.actor.items.get(itemId)
         const minValue = item.type == "combatskill" ? 6 : 0
-        if (item.system.talentValue.value > minValue) {
-            let cost = DSA5_Utility._calculateAdvCost(Number(item.system.talentValue.value), item.system.StF.value, 0) * -1
-            await this.actor.updateEmbeddedDocuments("Item", [{ _id: itemId, "system.talentValue.value": item.system.talentValue.value - 1 }])
+        const value = Number(item.system.talentValue.value)
+        if (value > minValue) {
+            const cost = DSA5_Utility._calculateAdvCost(value, item.system.StF.value, 0) * -1
+            await this.actor.updateEmbeddedDocuments("Item", [{ _id: itemId, "system.talentValue.value": value - 1 }])
             await this._updateAPs(cost)
+            await APTracker.track(this.actor, { type: "item", item, previous: value, next: value - 1 }, cost)
         }
     }
 
@@ -1001,6 +1004,7 @@ export default class ActorSheetDsa5 extends ActorSheet {
             case "blessing":
             case "magictrick":
                 await this._updateAPs(-1, {}, { render: false })
+                await APTracker.track(this.actor, { type: "item", item, state: -1 }, -1)
                 break
             case "ritual":
             case "ceremony":
@@ -1017,6 +1021,7 @@ export default class ActorSheetDsa5 extends ActorSheet {
                         itemsToDelete.push(...extensions.map(x => x.id))
                     }
                     await this._updateAPs(xpCost * -1, {}, { render: false })
+                    await APTracker.track(this.actor, { type: "item", item, state: -1 }, xpCost)
                 }
                 break
         }
@@ -1088,7 +1093,8 @@ export default class ActorSheetDsa5 extends ActorSheet {
                 let apCost = item.system.APValue.value
                 if (await this.actor.checkEnoughXP(apCost)) {
                     await this._updateAPs(apCost, {}, { render: false })
-                    await this.actor.createEmbeddedDocuments("Item", [item])
+                    const createdItem = (await this.actor.createEmbeddedDocuments("Item", [item]))[0]
+                    await APTracker.track(this.actor, { type: "item", item: createdItem, state: 1 }, apCost)
                 }
             }
         }
@@ -1118,7 +1124,8 @@ export default class ActorSheetDsa5 extends ActorSheet {
             }
             if (await this.actor.checkEnoughXP(apCost)) {
                 await this._updateAPs(apCost, {}, { render: false })
-                await this.actor.createEmbeddedDocuments("Item", [item])
+                const createdItem = (await this.actor.createEmbeddedDocuments("Item", [item]))[0]
+                await APTracker.track(this.actor, { type: "item", item: createdItem, state: 1 }, apCost)
             }
         }
     }

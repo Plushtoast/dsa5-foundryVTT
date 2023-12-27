@@ -10,6 +10,7 @@ import DSA5 from "../system/config-dsa5.js";
 import { Trade } from "../actor/trade.js";
 import DSA5_Utility from "../system/utility-dsa5.js";
 import { DSA5Combat } from "./combat_tracker.js";
+import APTracker from "../system/ap-tracker.js";
 
 export function connectSocket() {
     game.socket.on("system.dsa5", data => {
@@ -60,6 +61,9 @@ export function connectSocket() {
                 break
             case "updateGroupCheck":
                 RequestRoll.rerenderGC(game.messages.get(data.payload.messageId), data.payload.data)
+                break
+            case "apTracker":
+                APTracker.receiveSocketEvent(data)
                 break
             case "updateAttackMessage":
                 game.messages.get(data.payload.messageId).update({ "flags.data.unopposedStartMessage": data.payload.startMessageId });

@@ -3,7 +3,6 @@ import { increaseFontSize } from "../hooks/journal.js"
 import DSA5StatusEffects from "../status/status_effects.js"
 import DSA5ChatAutoCompletion from "../system/chat_autocompletion.js"
 import DSA5 from "../system/config-dsa5.js"
-import DSA5_Utility from "../system/utility-dsa5.js"
 import { slist } from "../system/view_helper.js"
 
 export default class BookWizard extends Application {
@@ -84,6 +83,7 @@ export default class BookWizard extends Application {
         this.fulltextsearch = true
         this.searchString = undefined
         this.currentType = undefined
+        this.pageTocs = undefined
         this.selectedSubChapter = undefined
         this.loadPage(this._element)
     }
@@ -130,6 +130,8 @@ export default class BookWizard extends Application {
             this.filterToc(ev.currentTarget.value)
         })
 
+        html.on("click", ".heading-link", ev => this._onClickPageLink(ev))
+
         html.on('click', '.show-item', async(ev) => {
             //TODO maybe try to open imported character
             let itemId = ev.currentTarget.dataset.uuid
@@ -149,18 +151,25 @@ export default class BookWizard extends Application {
             this.selectedType = $(ev.currentTarget).closest('.toc').attr("data-type")
             this.selectedChapter = ev.currentTarget.dataset.id
             this.content = undefined
+            this.pageTocs = undefined
             this.loadPage(html)
         })
-        html.on('click', '.subChapter', ev => {
+        html.on('click', '.subChapter', async(ev) => {
             const name = $(ev.currentTarget).text()
             const jid = ev.currentTarget.dataset.jid
             if (jid) {
-                this.loadJournalById(jid)
+                await this.loadJournalById(jid)
             } else {
                 $(this._element).find('.subChapter').removeClass('selected')
                 $(this._element).find(`[data-id="${name}"]`).addClass("selected")
-                this.loadJournal(name)
+                await this.loadJournal(name)
             }
+
+            this._saveScrollPositions(html)
+            html.find('.toc').html(await this.getToc())
+            this._restoreScrollPositions(html)
+
+            if(this.searchString) this.filterToc(this.searchString)
         })
 
         DSA5ChatAutoCompletion.bindRollCommands(html)
@@ -250,11 +259,14 @@ export default class BookWizard extends Application {
 
         let journal = journals[targetindex]
 
-        const toc = await this.getToc()
-        this._element.find('.toc').html(toc)
         if(journal) {
             await this.loadJournalById(journal.id)
         }
+
+        const toc = await this.getToc()
+        this._saveScrollPositions(this._element)
+        this._element.find('.toc').html(toc)
+        this._restoreScrollPositions(this._element)
     }
 
     async loadJournal(name) {
@@ -343,17 +355,49 @@ export default class BookWizard extends Application {
         }
     }
 
+    _onClickPageLink(ev) {
+        const anchor = ev.currentTarget.closest("[data-anchor]")?.dataset.anchor;        
+        if ( anchor ) {
+          const element = this.element[0].querySelector(`.chapter [data-anchor="${anchor}"]`)
+          if ( element ) {
+            element.scrollIntoView({behavior: "smooth"});
+            return;
+          }
+        }
+        const page = this.element[0].querySelector(`.journalHeader`);
+        page?.scrollIntoView({behavior: "smooth"});
+    }
+
+    async _renderHeadings(toc) {
+        const headings = Object.values(toc);
+        headings.shift();
+        const minLevel = Math.min(...headings.map(node => node.level));
+
+        return await renderTemplate("templates/journal/journal-page-toc.html", {
+          headings: headings.reduce((arr, {text, level, slug, element}) => {
+            if ( element ) element.dataset.anchor = slug;
+            if ( level < minLevel + 2 ) arr.push({text, slug, level: level - minLevel + 2});
+            return arr;
+          }, [])
+        });
+        //tocNode.querySelectorAll(".heading-link").forEach(el => el.addEventListener("click", this._onClickPageLink.bind(this)));
+    }
+
     async renderContent(journal) {
         this.content = journal.id
         let content = ""
+        const pageTocs = []
         for(let page of journal.pages){
             const sheet = journal.sheet.getPageSheet(page.id)
-            //const sheet = page.sheet
             const data = await sheet.getData();
             const view = (await sheet._renderInner(data)).get();
+
+            const pageToc = JournalEntryPage.implementation.buildTOC(view)
+            pageTocs.push(await this._renderHeadings(pageToc))
+
             let pageContent = view[view.length -1]
             this.showSearchResults(pageContent)
-            pageContent = $(pageContent).html()
+            pageContent = $(pageContent).html()           
 
             if(page.type == "video") pageContent = `<div class="video-container">${pageContent}</div>`
 
@@ -361,8 +405,12 @@ export default class BookWizard extends Application {
 
             content += pageContent
         }
+
+        this.pageTocs = pageTocs.join("")
+        
         const pinIcon = this.findSceneNote(journal.getFlag("dsa5", "initId"))
         const enriched = await TextEditor.enrichHTML(content, {secrets: game.user.isGM, async: true})
+        
         return `<div><h1 class="journalHeader" data-uuid="${journal.uuid}">${journal.name}<div class="jrnIcons">${pinIcon}<a class="pinJournal"><i class="fas fa-thumbtack"></i></a><a class="showJournal"><i class="fas fa-eye"></i></a></div></h1>${enriched}`
     }
 
@@ -556,7 +604,10 @@ export default class BookWizard extends Application {
                 .sort((a, b) => a.flags.dsa5.sort > b.flags.dsa5.sort ? 1 : -1)
         }
 
-        return jrns.map(x => {return {name: x.name, id: x.id, cssClass: x.id == this.selectedSubChapter ? "selected" : ""}})
+        return jrns.map(x => {
+            const selected = this.selectedSubChapter == x.id
+            return {name: x.name, id: x.id, selected, cssClass: selected ? "selected" : ""}
+        })
     }
 
     async getToc() {
@@ -574,7 +625,13 @@ export default class BookWizard extends Application {
                     chapter.subChapters = this.getSubChapters()
                 }
             }
-            return await renderTemplate('systems/dsa5/templates/wizard/adventure/adventure_toc.html', { chapters, searchString: this.searchString, book: this.book, fulltextsearch: this.fulltextsearch ? "on" : "" })
+            return await renderTemplate('systems/dsa5/templates/wizard/adventure/adventure_toc.html', { 
+                chapters, 
+                searchString: this.searchString, 
+                book: this.book,
+                pageTocs: this.pageTocs,
+                fulltextsearch: this.fulltextsearch ? "on" : "" 
+            })
         } else {
             return '<div class="libraryImg"></div>'
         }

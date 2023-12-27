@@ -13,6 +13,7 @@ import AdvantageRulesDSA5 from "../system/advantage-rules-dsa5.js"
 import OpposedDsa5 from "../system/opposed-dsa5.js"
 import Itemdsa5 from "./item-dsa5.js"
 import RequestRoll from "../system/request-roll.js"
+import APTracker from "../system/ap-tracker.js"
 
 export default class ItemSheetdsa5 extends ItemSheet {
     _getSubmitData(updateData = {}) {
@@ -1049,21 +1050,25 @@ class PoisonSheetDSA5 extends ItemSheetObfuscation(ItemSheetdsa5) {
 
 class SpecialAbilitySheetDSA5 extends ItemSheetdsa5 {
     async _refundStep() {
-        if (this.item.system.step.value > 1) {
-            let xpCost = await SpecialabilityRulesDSA5.stepXPCost(this.item, this.item.system.step.value - 1)
+        const value = this.item.system.step.value
+        if (value > 1) {
+            let xpCost = await SpecialabilityRulesDSA5.stepXPCost(this.item, value - 1)
             xpCost = await SpecialabilityRulesDSA5.refundFreelanguage(this.item, this.item.actor, xpCost, false)
             await this.item.actor._updateAPs(xpCost * -1, {}, { render: false })
-            await this.item.update({ "system.step.value": this.item.system.step.value - 1 })
+            await this.item.update({ "system.step.value": value - 1 })
+            await APTracker.track(this.item.actor, { type: "item", item: this.item, previous: value, next: value - 1 }, xpCost)
         }
     }
 
     async _advanceStep() {
-        if (this.item.system.step.value < this.item.system.maxRank.value) {
-            let xpCost = await SpecialabilityRulesDSA5.stepXPCost(this.item, this.item.system.step.value)
+        const value = this.item.system.step.value
+        if (value < this.item.system.maxRank.value) {
+            let xpCost = await SpecialabilityRulesDSA5.stepXPCost(this.item, value)
             xpCost = await SpecialabilityRulesDSA5.isFreeLanguage(this.item, this.item.actor, xpCost, false)
             if (await this.item.actor.checkEnoughXP(xpCost)) {
                 await this.item.actor._updateAPs(xpCost, {}, { render: false })
-                await this.item.update({ "system.step.value": this.item.system.step.value + 1 })
+                await this.item.update({ "system.step.value": value + 1 })
+                await APTracker.track(this.item.actor, { type: "item", item: this.item, previous: value, next: value + 1 }, xpCost)
             }
         }
     }
@@ -1161,6 +1166,7 @@ class SpellSheetDSA5 extends ItemSheetdsa5 {
         let item = this.item.actor.items.find(x => x.id == itemId)
         await this.item.actor._updateAPs(-1 * item.system.APValue.value, {}, { render: false })
         await this.item.actor.deleteEmbeddedDocuments("Item", [itemId]);
+        await APTracker.track(this.actor, { type: "item", item, state: -1 }, apCost)
     }
 }
 
@@ -1186,23 +1192,27 @@ class VantageSheetDSA5 extends ItemSheetdsa5 {
     }
 
     async _refundStep() {
-        if (this.item.system.step.value > 1) {
-            let xpCost = await AdvantageRulesDSA5.stepXPCost(this.item, this.item.system.step.value - 1)
+        const value = this.item.system.step.value
+        if (value > 1) {
+            let xpCost = await AdvantageRulesDSA5.stepXPCost(this.item, value - 1)
             xpCost = await AdvantageRulesDSA5.reduceSingularVantages(this.item.actor, this.item, xpCost)
             await this.item.actor._updateAPs(xpCost * -1, {}, { render: false })
-            await this.item.update({ "system.step.value": this.item.system.step.value - 1 })
+            await this.item.update({ "system.step.value": value - 1 })
+            await APTracker.track(this.item.actor, { type: "item", item: this.item, previous: value, next: value - 1 }, xpCost)
         }
     }
 
     async _advanceStep() {
-        if (this.item.system.step.value < this.item.system.max.value) {
-            let xpCost = await AdvantageRulesDSA5.stepXPCost(this.item, this.item.system.step.value)
+        const value = this.item.system.step.value
+        if (value < this.item.system.max.value) {
+            let xpCost = await AdvantageRulesDSA5.stepXPCost(this.item, value)
             const dup = duplicate(this.item)
             dup.system.step.value += 1
             xpCost = await AdvantageRulesDSA5.addSingularVantages(this.item.actor, dup, xpCost)
             if (await this.item.actor.checkEnoughXP(xpCost)) {
                 await this.item.actor._updateAPs(xpCost, {}, { render: false })
-                await this.item.update({ "system.step.value": this.item.system.step.value + 1 })
+                await this.item.update({ "system.step.value": value + 1 })
+                await APTracker.track(this.item.actor, { type: "item", item: this.item, previous: value, next: value + 1 }, xpCost)
             }
         }
     }

@@ -1742,7 +1742,12 @@
         "showWeaponsOnHover": "Waffen bei Hover zeigen",
         "showWeaponsOnHoverHint": "Zeigt die ausgerüsteten Waffen des Tokens beim Hover über das Token im Kampf.",
         "applyDamageInChat": "Zeige \"Schaden anwenden\" im Chat",
-        "applyDamageInChatHint": "Zeige Buttons zusätzlich zu den Optionen im Kontextmenu zum Anwenden von Schaden bei Chatkarten."
+        "applyDamageInChatHint": "Zeige Buttons zusätzlich zu den Optionen im Kontextmenu zum Anwenden von Schaden bei Chatkarten.",
+        "enableAPTracking": "Abenteuerpunkte tracken",
+        "enableAPTrackingHint": "Für Spielercharaktere werden Journals angelegt, welche erhaltene und verbrauchte Abenteuerpunkte auflisten."
+    },
+    "TRACKER": {
+        "adventurePoints": "Abenteuerpunkte Historie"
     },
     "CONTROLS": {
         "targetForUser": "Ziel für Spieler wählen"

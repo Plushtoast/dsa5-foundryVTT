@@ -1,6 +1,7 @@
 import DSA5 from "./config-dsa5.js";
 import ItemRulesDSA5 from "./item-rules-dsa5.js";
 import Select2Dialog from "../dialog/select2Dialog.js"
+import APTracker from "./ap-tracker.js";
 
 export default class SpecialabilityRulesDSA5 extends ItemRulesDSA5 {
 
@@ -16,8 +17,9 @@ export default class SpecialabilityRulesDSA5 extends ItemRulesDSA5 {
             DSA5.removeAbilityRules[item.name](actor, item)
         }
         let xpCost = SpecialabilityRulesDSA5.calcAPCostSum(item)
-        xpCost = await SpecialabilityRulesDSA5.refundFreelanguage(item, actor, xpCost, render)
-        await actor._updateAPs(-1 * xpCost, {}, { render })
+        xpCost = (await SpecialabilityRulesDSA5.refundFreelanguage(item, actor, xpCost, render)) * -1
+        await actor._updateAPs(xpCost, {}, { render })
+        await APTracker.track(actor, { type: "item", item, state: -1 }, xpCost)
     }
 
     static async _specialabilityReturnFunction(actor, item, typeClass, adoption) {
@@ -49,13 +51,15 @@ export default class SpecialabilityRulesDSA5 extends ItemRulesDSA5 {
                 await actor._updateAPs(xpCost, {}, { render: false })
                 await actor.updateEmbeddedDocuments("Item", [vantage]);
                 await SpecialabilityRulesDSA5.abilityAdded(actor, vantage)
+                await APTracker.track(actor, { type: "item", item: res, previous: vantage.system.step.value - 1, next: vantage.system.step.value }, xpCost)
             }
         } else {
             let xpCost = await SpecialabilityRulesDSA5.isFreeLanguage(item, actor, item.system.APValue.value.split(';').map(x => x.trim())[0], false)
             if (await actor.checkEnoughXP(xpCost)) {
                 await SpecialabilityRulesDSA5.abilityAdded(actor, item)
                 await actor._updateAPs(xpCost, {}, { render: false })
-                await actor.createEmbeddedDocuments("Item", [item]);
+                const createdItem = (await actor.createEmbeddedDocuments("Item", [item]))[0]
+                await APTracker.track(actor, { type: "item", item: createdItem, state: 1 }, xpCost)
             }
         }
     }

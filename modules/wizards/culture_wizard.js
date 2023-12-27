@@ -1,4 +1,5 @@
 import WizardDSA5 from "./dsa5_wizard.js"
+import APTracker from "../system/ap-tracker.js";
 
 export default class CultureWizard extends WizardDSA5 {
     static get defaultOptions() {
@@ -54,7 +55,7 @@ export default class CultureWizard extends WizardDSA5 {
 
     async addCulture(actor, item) {
         this.actor = actor
-        this.culture = duplicate(item)
+        this.culture = item
     }
 
     _validateInput(parent, app = this) {
@@ -97,6 +98,8 @@ export default class CultureWizard extends WizardDSA5 {
         await this.actor._updateAPs(apCost, {}, { render: false })
         await this.updateSkill(this.culture.system.skills.value.split(","), "skill")
         await this.actor.update(update);
+
+        await APTracker.track(this.actor, { type: "item", item: this.culture, state: 1 }, apCost)
 
         this.finalizeUpdate()
     }

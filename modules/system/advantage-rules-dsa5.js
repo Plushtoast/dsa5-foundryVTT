@@ -1,6 +1,7 @@
 import DSA5 from "./config-dsa5.js";
 import ItemRulesDSA5 from "./item-rules-dsa5.js";
 import Select2Dialog from "../dialog/select2Dialog.js"
+import APTracker from "./ap-tracker.js";
 
 export default class AdvantageRulesDSA5 extends ItemRulesDSA5 {
     static setupFunctions() {}
@@ -14,8 +15,9 @@ export default class AdvantageRulesDSA5 extends ItemRulesDSA5 {
             game.dsa5.config.removevantageRules[item.name](actor, item)
 
         let xpCost = AdvantageRulesDSA5.calcAPCostSum(item)
-        xpCost = await AdvantageRulesDSA5.removeSingularVantages(actor, item, xpCost)
-        await actor._updateAPs(-1 * xpCost, {}, { render })
+        xpCost = (await AdvantageRulesDSA5.removeSingularVantages(actor, item, xpCost)) * -1
+        await actor._updateAPs(xpCost, {}, { render })
+        await APTracker.track(actor, { type: "item", item, state: -1 }, xpCost)
     }
 
 
@@ -41,12 +43,10 @@ export default class AdvantageRulesDSA5 extends ItemRulesDSA5 {
             if (adoption.system)
                 item.system.APValue.value = item.system.APValue.value.split("/")[adoption.system.StF.value.charCodeAt(0) - 65].trim()
         }
-        let res = actor.items.find(i => {
-            return i.type == typeClass && i.name == item.name
-        });
+        const res = actor.items.find(i => i.type == typeClass && i.name == item.name);
         let xpCost
         if (res) {
-            let vantage = duplicate(res)
+            const vantage = duplicate(res)
             xpCost = Number(/;/.test(vantage.system.APValue.value) ? vantage.system.APValue.value.split(';').map(x => Number(x.trim()))[vantage.system.step.value] : vantage.system.APValue.value)
 
             if (vantage.system.step.value + 1 <= vantage.system.max.value && await actor.checkEnoughXP(xpCost)) {
@@ -55,12 +55,14 @@ export default class AdvantageRulesDSA5 extends ItemRulesDSA5 {
                 await actor._updateAPs(xpCost, {}, { render: false })
                 await actor.updateEmbeddedDocuments("Item", [vantage]);
                 await AdvantageRulesDSA5.vantageAdded(actor, vantage)
+                await APTracker.track(actor, { type: "item", item: res, previous: vantage.system.step.value - 1, next: vantage.system.step.value }, xpCost)
             }
         } else if (await actor.checkEnoughXP(xpCost = Number(item.system.APValue.value.split(';').map(x => x.trim())[0]))) {
             await AdvantageRulesDSA5.vantageAdded(actor, item)
             xpCost = this.addSingularVantages(actor, item, xpCost)
             await actor._updateAPs(xpCost, {}, { render: false })
-            await actor.createEmbeddedDocuments("Item", [item]);
+            const createdItem = (await actor.createEmbeddedDocuments("Item", [item]))[0]
+            await APTracker.track(actor, { type: "item", item: createdItem, state: 1 }, xpCost)
         }
     }
 
