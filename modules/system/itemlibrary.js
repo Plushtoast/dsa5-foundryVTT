@@ -497,19 +497,35 @@ export default class DSA5ItemLibrary extends Application {
 
     setBGImage(filterdItems, category) {
         $(this._element).find(`.${category} .libcontainer`)[`${filterdItems.length > 0 ? "remove" : "add"}Class`]("libraryImg")
-    }
+    }    
 
     async getItemTemplate(filteredItems, itemType) {
-        if(this.browseEnabled && itemType == "Item"){
-            return (await Promise.all(filteredItems.map(async x => {
-                const template = `systems/dsa5/templates/items/browse/${x.document.filterType}.html`
-                const document = await fromUuid(x.uuid)
-                const item = await renderTemplate(template, { document, isGM: game.user.isGM, ...(await document.sheet.getData())})
-                return `<div class="uuid libItem ${x.document.filterType} col" data-uuid="${x.uuid}" data-item-id="${x.id}">${item}</div>`
-            }))).join("\n")
+        if(this.browseEnabled && ["Item", "Actor"].includes(itemType)){
+            return filteredItems.map(x => {
+                return `<div class="uuid libItem loader col center" data-uuid="${x.uuid}"><i class="fas fa-spinner fa-spin fa-4x"></i></div>`
+            }).join("")
         } else {
             const template = 'systems/dsa5/templates/system/libraryItem.html'
             return await renderTemplate(template, { items: filteredItems })
+        }
+    }
+
+    async renderBrowseItem(uuid) {
+        const document = await fromUuid(uuid)
+        const template = `systems/dsa5/templates/items/browse/${document.type}.html`
+        const item = await renderTemplate(template, { document, isGM: game.user.isGM, ...(await document.sheet.getData())})
+        return `<div class="uuid libItem ${document.type} col" data-uuid="${uuid}" data-item-id="${document.id}">${item}</div>`
+    }
+
+    intersectionObserved(entries, observer) {
+        for (let entry of entries) {
+            if (entry.isIntersecting) {
+                const uuid = entry.target.dataset.uuid
+                this.renderBrowseItem(uuid).then(html => {
+                    entry.target.outerHTML = html
+                })
+                observer.unobserve(entry.target)
+            }
         }
     }
 
@@ -528,12 +544,22 @@ export default class DSA5ItemLibrary extends Application {
                 pay
             }))
         }
+        
         innerhtml.each(function() {
             const li = $(this)
             li.attr("draggable", true).on("dragstart", event => itemDragStart(event, index, itemType))
             li.find('.priceDrag').attr("draggable", true).on("dragstart", event => itemDragStart(event, index, itemType, true))
         })
+        
         resultField.append(innerhtml)
+        
+        const items = resultField.find('.loader')
+        if(items.length > 0) {
+            const observer = new IntersectionObserver(this.intersectionObserved.bind(this), {root: html.find('.window-content')[0]});
+            for (let item of items) {
+                observer.observe(item)
+            }
+        }
     }
 
     async filterItems(html, category, page) {
@@ -764,13 +790,12 @@ export default class DSA5ItemLibrary extends Application {
                 uuid
             }))
         }
-        const showItem = html.find('.show-item')
-        showItem.click(async(ev) => {
+        html.on('click', '.show-item', async(ev) => {
             let itemId = ev.currentTarget.dataset.uuid
             const item = await fromUuid(itemId)
             item.sheet.render(true)
         })
-        showItem.attr("draggable", true).on("dragstart", event => itemDragStart(event))
+        html.find('.show-item').attr("draggable", true).on("dragstart", event => itemDragStart(event))
 
         html.find(`*[data-tab="journal"]`).click(x => {
             this._createIndex("journal", "JournalEntry", game.journal)
