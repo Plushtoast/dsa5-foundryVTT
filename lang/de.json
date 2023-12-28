@@ -1744,7 +1744,7 @@
         "applyDamageInChat": "Zeige \"Schaden anwenden\" im Chat",
         "applyDamageInChatHint": "Zeige Buttons zusätzlich zu den Optionen im Kontextmenu zum Anwenden von Schaden bei Chatkarten.",
         "enableAPTracking": "Abenteuerpunkte tracken",
-        "enableAPTrackingHint": "Für Spielercharaktere werden Journals angelegt, welche erhaltene und verbrauchte Abenteuerpunkte auflisten."
+        "enableAPTrackingHint": "Für Spielercharaktere werden Journals angelegt, welche erhaltene und verbrauchte Abenteuerpunkte auflisten. Die Journals müssen entweder Schreibzugriff für den Spieler haben oder ein Spielleiter muss eingelogt sein."
     },
     "TRACKER": {
         "adventurePoints": "Abenteuerpunkte Historie"

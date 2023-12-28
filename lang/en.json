@@ -1694,7 +1694,7 @@
         "applyDamageInChat": "Show \"Apply Damage\" in chat",
         "applyDamageInChatHint": "Show buttons in addition to the options in the context menu to apply damage on chat cards.",
         "enableAPTracking": "Track adventure points",
-        "enableAPTrackingHint": "For player characters journals are created, which list received and spent adventure points."
+        "enableAPTrackingHint": "Create journals for player characters, which list received and spent adventure points. The journals must either have write access for the player or a game master must be logged in."
     },
     "TRACKER": {
         "adventurePoints": "Adventure Points History"
