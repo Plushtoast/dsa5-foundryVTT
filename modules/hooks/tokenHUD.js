@@ -122,7 +122,7 @@ export default function() {
         html.find('.control-icon[data-action="target"]').mousedown(ev => {
                 if (ev.button == 2) {
                     game.user.updateTokenTargets([]);
-                    $(ev.currentTarget).click()
+                    $(ev.currentTarget).trigger('click')
                     ev.preventDefault()
                 }
             })
@@ -130,5 +130,34 @@ export default function() {
         html.find(".attribute input").off('change')
 
         Riding.renderTokenHUD(app, html, data)
+    })
+
+    Hooks.on("renderTokenConfig", (app, html, data) => {
+        if(data.isPrototype) {
+            const autoBar = getProperty(app.actor, "system.config.autoBar")
+            
+            let hint = html.find('.bar2-max').closest('.form-group')
+            let elem = $(`<div class="form-group">
+                <label>${game.i18n.localize("ActorConfig.autoBar")}</label>
+                <input type="checkbox" class="autoBar" ${autoBar ? "checked=\"\"" : ""}>
+                <p class="hint">${game.i18n.localize("ActorConfig.AutoBarHint")}</p>
+            </div>`)
+            hint.after(elem)
+            elem.find('.autoBar').on('change', (ev) => {
+                app.actor.update({ "system.config.autoBar": ev.currentTarget.checked })
+            })
+
+            const autoSize = getProperty(app.actor, "system.config.autoSize")
+            hint = html.find('input[name="height"]').closest('.form-group')
+            elem = $(`<div class="form-group">
+                <label>${game.i18n.localize("ActorConfig.autoSize")}</label>
+                <input type="checkbox" class="autoSize" ${autoSize ? "checked=\"\"" : ""}>
+                <p class="hint">${game.i18n.localize("ActorConfig.AutoSizeHint")}</p>
+            </div>`)
+            hint.after(elem)
+            elem.find('.autoSize').on('change',(ev) => {
+                app.actor.update({ "system.config.autoSize": ev.currentTarget.checked })
+            })
+        }
     })
 }

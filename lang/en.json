@@ -984,7 +984,9 @@
     },
     "ActorConfig": {
         "autoSize": "Auto token size",
-        "autoBar": "Auto token ressource bars"
+        "autoBar": "Auto token ressource bars",
+        "AutoBarHint": "The ressource bars will be defined by the actor's abilities (AE, KE).",
+        "AutoSizeHint": "The token size will be defined by the actor's size category."
     },
     "RangeMod": {
         "short": "Close [+2 to RC, +1 DP]",
@@ -1058,7 +1060,7 @@
         "foreignSpell": "Unfamiliar tradition spells can not be modified",
         "assignCharacter": "Characters can be assigned using a right click on the player list in the bottom left corner.",
         "dragLink": "Drag & drop actor e.g. for shapeshifting and summoning",
-        "resizer": "Drag to move<br/>Mouse wheel to enlarge/decrease<br/>right mouse button for direction",
+        "resizer": "Drag to move<br/>Mouse wheel to enlarge/decrease",
         "onlyGM": "Only visible to the gamemaster.",
         "placeTemplate": "Place Area of Effect template",
         "tokenhotbarMod": "Modifier/Value",
@@ -1541,6 +1543,7 @@
     },
     "Book": {
         "Wizard": "Journal Browser",
+        "focusRule": "Focus rule",
         "Description": "Welcome to the journal browser. This tool is supposed to assist in the usage of source, rule and adventure modules by giving an overview on all included contents like scenes, chapters and descriptions. Moreover hints for the usage are provided and functions for the initialisation of the modules.",
         "availableModules": "Installed adventure modules",
         "availableRules": "Available rulebooks",

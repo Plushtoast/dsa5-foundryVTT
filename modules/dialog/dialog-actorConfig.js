@@ -6,28 +6,14 @@ export default class DialogActorConfig extends Dialog {
         this.actor = actor
         this.lock = false
     }
+    
     static async buildDialog(actor) {
         const template = await renderTemplate("systems/dsa5/templates/actors/parts/actorConfig.html", { actor })
         new DialogActorConfig(actor, {
             title: game.i18n.localize("SHEET.actorConfig"),
             content: template,
             default: 'Save',
-            buttons: {
-                Save: {
-                    icon: '<i class="fa fa-check"></i>',
-                    label: game.i18n.localize("Save"),
-                    callback: dlg => {
-                        actor.update({
-                            "system.config.autoBar": dlg.find('[name="autoBar"]').is(":checked"),
-                            "system.config.autoSize": dlg.find('[name="autoSize"]').is(":checked")
-                        })
-                    }
-                },
-                cancel: {
-                    icon: '<i class="fas fa-times"></i>',
-                    label: game.i18n.localize("cancel")
-                }
-            }
+            buttons: { }
         }).render(true)
     }
 

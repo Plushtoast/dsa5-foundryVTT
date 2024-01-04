@@ -170,6 +170,7 @@ export default class TokenHotbar2 extends Application {
 
     activateListeners(html) {
         super.activateListeners(html);
+        
         const container = html.find(".dragHandler");
         new Draggable(this, html, container[0], this.options.resizable);
 
@@ -178,11 +179,7 @@ export default class TokenHotbar2 extends Application {
             ev.preventDefault()
             await this._onWheelResize(ev)
             return false
-        })
-
-        container.on('mousedown', async(ev) => {
-            await this._cycleLayout(ev)
-        })
+        })        
 
         html.find('.itdarkness input').change(ev => this.changeDarkness(ev))
 
@@ -192,9 +189,9 @@ export default class TokenHotbar2 extends Application {
             return false
         }
         html.find('.filterable').hover(function() {
-            $(document).keydown(fn)
+            $(document).on("keydown", fn)
         }, function() {
-            $(document).unbind("keydown", fn)
+            $(document).off("keydown", fn)
         })
 
         html.find('.quantity-click').mousedown(ev => RuleChaos.quantityClick(ev))

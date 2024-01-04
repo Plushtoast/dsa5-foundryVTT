@@ -2014,6 +2014,38 @@
       }
     }
   }
+
+  .fokusregel {
+    width: 100px;
+    float: right;
+    background-image: url("../../icons/fokus.webp");
+    background-size: 100%;
+    background-repeat: no-repeat;
+    height: 72px;
+    text-align: center;
+    line-height: 72px;
+    font-family: "Andalus";
+    color: darkred;
+    position: relative;
+    margin-bottom: 10px;
+    font-weight: bold;
+
+    &:after {
+      position: absolute;
+      font-size: 28px;
+      bottom: 0;
+      left: 0;
+      right: 0;
+    }
+
+    &.f1:after{
+      content: "I"
+    }
+
+    &.f2:after{
+      content: "II"    
+    }
+  }
   
   .magazinContainer {
     display: inline-block;
@@ -3704,7 +3736,7 @@
 
    
   .garadanborder {
-    h1 {
+    h2 {
       text-decoration: none;
       border: none;
       margin: 0;
@@ -3714,7 +3746,7 @@
       line-height: 24px;
     }
   
-    h2 {
+    h3 {
       margin: 0;
       border: none;
       font-size: 14px;

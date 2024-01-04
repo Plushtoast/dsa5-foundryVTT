@@ -3,11 +3,14 @@
     "title": "Das Schwarze Auge/The Dark Eye (5th Edition)",
     "description": "The \"Das Schwarze Auge\" system for Foundry VTT. Includes all relevant mechanisms to play in the wonderous world of Aventuria and Das Schwarze Auge/The Dark Eye.",
     "version": "5.2.20",
-    "authors": [{
-        "name": "Plushtoast"
-    },{
-        "name": "Murm3lt13r"
-    }],
+    "authors": [
+        {
+            "name": "Plushtoast"
+        },
+        {
+            "name": "Murm3lt13r"
+        }
+    ],
     "scripts": [
         "libs/flexsearch.min.js",
         "libs/select2.min.js"
@@ -19,13 +22,16 @@
         "styles/css/select2.min.css",
         "styles/css/dsa5.css"
     ],
-    "packs": [{
+    "packs": [
+        {
             "name": "skills",
             "label": "Grundelemente",
             "system": "dsa5",
             "path": "packs/skills.db",
             "type": "Item",
-            "flags": { "dsalang": "de"}
+            "flags": {
+                "dsalang": "de"
+            }
         },
         {
             "name": "skillsen",
@@ -33,7 +39,9 @@
             "system": "dsa5",
             "path": "packs/skillsen.db",
             "type": "Item",
-            "flags": { "dsalang": "en"}
+            "flags": {
+                "dsalang": "en"
+            }
         },
         {
             "name": "money",
@@ -48,7 +56,9 @@
             "system": "dsa5",
             "path": "packs/patzer.db",
             "type": "RollTable",
-            "flags": { "dsalang": "de"}
+            "flags": {
+                "dsalang": "de"
+            }
         },
         {
             "name": "botch",
@@ -56,7 +66,9 @@
             "system": "dsa5",
             "path": "packs/botch.db",
             "type": "RollTable",
-            "flags": { "dsalang": "en"}
+            "flags": {
+                "dsalang": "en"
+            }
         },
         {
             "name": "macros",
@@ -66,7 +78,8 @@
             "type": "Macro"
         }
     ],
-    "languages": [{
+    "languages": [
+        {
             "lang": "de",
             "name": "Deutsch",
             "path": "lang/de.json"
@@ -96,28 +109,43 @@
     "minimumCoreVersion": "11.306",
     "packFolders": [
         {
-          "name": "Item",
-          "sorting": "m",
-          "packs": [
-            "skills",
-            "skillsen",
-            "money"
-          ]
+            "name": "Item",
+            "sorting": "m",
+            "packs": [
+                "skills",
+                "skillsen",
+                "money"
+            ]
         },
         {
-          "name": "RollTable",
-          "sorting": "m",
-          "packs": [
-            "patzer",
-            "botch"
-          ]
+            "name": "RollTable",
+            "sorting": "m",
+            "packs": [
+                "patzer",
+                "botch"
+            ]
         },
         {
-          "name": "Macro",
-          "sorting": "m",
-          "packs": [
-            "macros"
-          ]
+            "name": "Macro",
+            "sorting": "m",
+            "packs": [
+                "macros"
+            ]
         }
-      ]
+    ],
+    "flags": {
+        "hotReload": {
+            "extensions": [
+                "css",
+                "html",
+                "hbs",
+                "json"
+            ],
+            "paths": [
+                "templates",
+                "styles/css",
+                "lang"
+            ]
+        }
+    }
 }

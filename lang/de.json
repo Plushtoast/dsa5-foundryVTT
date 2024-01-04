@@ -846,6 +846,7 @@
     },
     "Book": {
         "Wizard": "Journal Browser",
+        "focusRule": "Fokusregel",
         "Description": "Willkommen im Journal Browser. Dieses Tool soll dich bei der Verwendung von Quellen-, Regel- und Abenteuermodulen unterstützen und einen Überblick über alle enthaltenen Inhalte liefern, wie z.B. die Szenen, Kapitel und Beschreibungen. Außerdem werden Hinweise zur Anwendung und gegebenenfalls automatische Funktionen zur Initialisierung der Module bereitgestellt.",
         "availableModules": "Installierte Abenteuermodule",
         "availableRules": "Verfügbare Regelwerke",
@@ -995,7 +996,9 @@
     },
     "ActorConfig": {
         "autoSize": "Automatische Tokengröße",
-        "autoBar": "Automatische Ressourcenleiste"
+        "autoBar": "Automatische Ressourcenleiste",
+        "AutoBarHint": "Die Ressourcenleiste werden anhand der Fähigkeiten des Akteurs definiert (AsP, KaP).",
+        "AutoSizeHint": "Die Tokengröße wird anhand der Größenkategorie des Akteurs definiert."
     },
     "RangeMod": {
         "short": "Nah [+2 auf FK, +1 TP]",
@@ -1051,7 +1054,7 @@
         "dragLink": "Drag & drop Akteur z.B. für Gestaltwandlung und Beschwörung",
         "onlyGM": "Nur für den Spielleiter sichtbar.",
         "placeTemplate": "Flächeneffekt Template platzieren",
-        "resizer": "Drag zum Verschieben<br/>Mausrad um zu verkleinern/vergrößern<br/>ggf. Rechte Maustaste Ausrichtung",
+        "resizer": "Drag zum Verschieben<br/>Mausrad um zu verkleinern/vergrößern",
         "tokenhotbarMod": "Modifikator/Wert",
         "tokenhotbarMoney": "Linksclick: bezahlen<br>Rechtsklick: auszahlen",
         "tokenhotbarSkill": "Linksclick: Probe anfordern<br>Rechtsclick: Gruppensammelprobe<br>Strg + click: 3W20 Probe",
