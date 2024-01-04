@@ -635,6 +635,7 @@ export default class Itemdsa5 extends Item {
 
     static areEquals(item, item2) {
         if (item.type != item2.type) return false
+        if (item.id == item2.id) return false
 
         return Itemdsa5.getSubClass(item.type).checkEquality(item, item2)
     }

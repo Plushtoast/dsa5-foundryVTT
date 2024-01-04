@@ -1345,15 +1345,16 @@ export default class ActorSheetDsa5 extends ActorSheet {
         let parentItem = $(event.target).parents(".item")
 
         if (parentItem && DSA5.equipmentCategories.has(item.type)) {
-
             const parentId = parentItem.attr("data-item-id")
-            if(parentItem.attr("data-category") == "bags") {
-                if (parentId != item.id) container_id = parentId
-            }
-            else {
-                parentItem = this.actor.items.get(parentId)
-                mergeItems = parentItem && hasProperty(item, "system.quantity.value") && hasProperty(parentItem, "system.quantity.value") && Itemdsa5.areEquals(item, parentItem)
-            }
+            if (parentId != item.id) {
+                if(parentItem.attr("data-category") == "bags") {
+                    container_id = parentId
+                }
+                else {
+                    parentItem = this.actor.items.get(parentId)
+                    mergeItems = parentItem && hasProperty(item, "system.quantity.value") && hasProperty(parentItem, "system.quantity.value") && Itemdsa5.areEquals(item, parentItem)
+                }
+            }            
         }
 
         const selfTarget = this.actor.uuid === item.parent?.uuid
