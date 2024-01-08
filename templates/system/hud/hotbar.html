@@ -1,0 +1,110 @@
+<div id="hotbar" class="flexrow {{hotBarcssClass}} {{#if locked}}locked{{/if}}" style="--hotbar-width:{{barWidth}};--hotbar-height:{{barHeight}};--base-bar-height:{{baseBarHeight}}" data-tooltip-direction="UP">
+    
+    <div class="flexrow">
+        <div id="hotbar-directory-controls" class="bar-controls flexcol">
+            <a id="bar-toggle" aria-label="{{localize 'MACRO.CollapseHotbar'}}" role="button" data-tooltip="MACRO.CollapseHotbar">
+                <i class="fas fa-caret-down"></i>
+            </a>
+            <a id="macro-directory" aria-label="{{localize 'MACRO.Directory'}}" role="button" data-tooltip="MACRO.Directory">
+                <i class="fas fa-folder"></i>
+            </a>
+            <a class="page-control" data-action="lock" aria-label="{{localize 'MACRO.LockBar'}}" role="button" data-tooltip="MACRO.{{ifThen locked "Unlock" "Lock"}}Bar">
+                <i class="fas fa-lock{{#unless locked}}-open{{/unless}}"></i>
+            </a>
+        </div>
+        <nav id="action-bar" class="flexcolumn {{barClass}}" aria-label="{{localize 'MACRO.NavLabel'}}">
+            <div class="flexrow categoryFilters">
+                <div class="flexrow">
+                
+                    <div class="categoryFilter flexAlignCenter" data-filter="" data-tooltip="all">
+                        <i class="fas fa-filter"></i>
+                    </div>
+                    {{#each filterCategories as |cat|}}
+                    <div class="categoryFilter flexAlignCenter {{#if (hasElem ../selectedCategories cat.key)}}active{{/if}}" data-filter="{{cat.key}}" data-tooltip="{{cat.tooltip}}">
+                        <div style="background-image:url('{{cat.img}}')"></div>
+                    </div>
+                    {{/each}}
+                    <div class="categoryFilter flexAlignCenter {{#if (hasElem selectedCategories 'macro')}}active{{/if}}" data-filter="macro" data-tooltip="Macro">
+                        <i class="fas fa-code"></i>
+                    </div>
+                </div>
+                <ul class="flexrow actorEffects" >
+                    {{#each token.effects as |item|}}
+                    <li class="{{item.cssClass}} primary actorEffect" data-category="{{item.cssClass}}" data-id="{{item.id}}" data-tooltip="{{item.name}}" data-name="{{item.name}}" data-subfunction="{{item.subfunction}}">
+                        <div class="{{item.iconClass}}" style="background-image:url('{{item.icon}}')">{{item.indicator}}</div>
+                    </li>
+                    {{/each}}
+                </ul>
+            </div>
+            
+            <div class="flexrow">
+                <div class="sections flexrow">
+                    {{#if token.groups.attacks}}
+                    <ul class="wrap skillItems {{#if (hasElem activeFilters 'attacks')}}collapsed{{/if}}" data-category="attacks">
+                        {{#each token.groups.attacks as |item i|}}
+                        <li class="{{item.cssClass}} primary" data-category="{{item.cssClass}}" data-id="{{item.id}}" data-tooltip="{{item.name}}" data-name="{{item.name}}" data-subfunction="{{item.subfunction}}">
+                            <div class="{{item.iconClass}}" style="background-image:url('{{item.icon}}')">{{item.abbrev}}</div>
+                            <span class="nameContent">{{item.name}}</span>
+                        </li>
+                        {{/each}}
+                    </ul>
+                    {{/if}}
+                    {{#each token.groups.skills as |skills|}}
+                    {{#if skills}}
+                    <ul class="wrap skillItems {{#if (hasElem ../activeFilters @key)}}collapsed{{/if}}" data-category="{{@key}}">
+                        {{#each skills as |item i|}}
+                        <li class="{{item.cssClass}} {{item.addClass}} primary" data-category="{{item.cssClass}}" data-id="{{item.id}}" data-tooltip="{{item.name}}" data-name="{{item.name}}" data-subfunction="{{item.subfunction}}" data-tw="{{item.tw}}">
+                            <div class="{{item.iconClass}}" style="background-image:url('{{item.icon}}')">{{item.abbrev}}</div>
+                            <span class="nameContent">{{localize item.name}}</span>
+                        </li>
+                        {{/each}}
+                        {{#if (eq @key "gm")}}
+                        <li class="modifier primary" data-category="modifier" data-tooltip="TT.tokenhotbarMod" data-subfunction="none">
+                            <input type="number" class="quantity-click modifierVal" step="1" name="modVal" value="0">
+                        </li>
+                        {{/if}}
+                    </ul>
+                    {{/if}}
+                    {{/each}}
+                    <ul id="macro-list" class="wrap skillItems {{#if (hasElem activeFilters 'macro')}}collapsed{{/if}}" data-category="macro" data-page="{{page}}">
+                        {{#each macros}}
+                        <li class="primary macro {{this.cssClass}}" data-slot="{{this.slot}}" role="button"
+                        {{#if this.macro}}
+                        data-macro-id="{{this.macro.id}}" data-name="{{this.macro.name}}" aria-label="{{this.tooltip}}" data-tooltip="{{this.tooltip}}"
+                        {{else}}
+                        aria-label="{{localize 'MACRO.EmptySlot' slot=slot}}"
+                        {{/if}}>
+                            <span class="macro-key">{{this.key}}</span>
+                            {{#if this.icon}}
+                            <img class="macro-icon" src="{{this.icon}}" alt="{{this.tooltip}}" />
+                            {{/if}}
+                        </li>
+                        {{/each}}
+                    </ol>
+                </div>
+                
+                <div id="hotbar-page-controls" class="bar-controls flexcol" data-tooltip-direction="UP">
+                    <ul class="quickFunctions">
+                        {{#each token.groups.functions as |item i|}}
+                        <li class="{{item.cssClass}} primary" data-category="{{item.cssClass}}" data-id="{{item.id}}" data-tooltip="{{item.name}}" data-name="{{item.name}}" data-subfunction="{{item.subfunction}}">
+                            <div class="{{item.iconClass}} function"></div>
+                        </li>
+                        {{/each}}
+                        {{#if gmMode}}
+                        <li class="itdarkness flexcol" data-category="darkness" data-tooltip="MASTER.threshold" data-subfunction="darkness">
+                            
+                            <i class="fas fa-moon" style="margin-top:2px"></i>
+                            <div class="rangeContainer">
+                                <input type="range" min="0" max="1" step="0.05" class="updateDarkness" name="updateDarkness" value="{{darkness}}">
+                            </div>
+                            
+                            <i class="fas fa-sun" style="margin-top:55px;"></i>
+                        </li>
+                        {{/if}}
+                    </ul>
+                    
+                </div>
+            </div>
+        </nav>
+    </div>
+</div>

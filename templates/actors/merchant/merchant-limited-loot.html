@@ -37,7 +37,7 @@
                         <div class="col two">
                             {{#unless tradeFriend.name}}
                             <p>{{localize 'DSAError.noProperActor'}}</p>
-                            <p>{{localize 'TT.assignCharacter'}}</p>
+                            <p>{{{localize 'TT.assignCharacter'}}}</p>
                             <p>{{localize 'MERCHANT.otherTradeFriend'}}</p>
                             {{/unless}} {{#each tradeFriend.inventory as |section sid|}} {{#if section.show}}
                             <div class="groupbox">

@@ -31,7 +31,7 @@ export default function() {
         Itemdsa5.setupSubClasses()
 
         DidYouKnow.showOneMessage()
-        if(!game.settings.get("dsa5", "disableTokenhotbar")) TokenHotbar2.registerTokenHotbar()
+        TokenHotbar2.registerTokenHotbar()
 
         connectHook()
         DSAIniTracker.connectHooks()

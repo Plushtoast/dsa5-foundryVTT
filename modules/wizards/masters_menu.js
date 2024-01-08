@@ -444,6 +444,10 @@ class GameMasterMenu extends Application {
         const anythingselected = Object.values(selected).filter(x => x).length != 0;
 
         const heros = this.heros.length ? this.heros : await this.getTrackedHeros()
+        if(heros.length == 0) {
+            ui.notifications.warn(game.i18n.localize("DIALOG.noTarget"))
+            return
+        }
         for (const hero of heros) {
             if (!selected[hero.id] && anythingselected) continue
 

@@ -158,7 +158,7 @@ export default class DSAActiveEffectConfig extends ActiveEffectConfig {
             isWeapon
         });
         elem.find('.tab[data-tab="effects"]').after($(template));
-        elem.find(".advancedSelector").change((ev) => {
+        elem.find(".advancedSelector").on("change", ev => {
             let effect = this.object;
             effect.flags.dsa5.advancedFunction = $(ev.currentTarget).val();
 
@@ -166,11 +166,14 @@ export default class DSAActiveEffectConfig extends ActiveEffectConfig {
                 elem.find(".advancedFunctions").html(template);
             });
         });
+        if(this.object.statuses.size && game.i18n.has(this.object.description)) {
+            elem.find('[data-tab="details"] .editor').replaceWith(`<p>${game.i18n.localize(this.object.description)}</p>`)
+        }
         this.checkTimesUpInstalled()
     }
 
     getStatusEffects() {
-        return duplicate(CONFIG.statusEffects).map((x) => {
+        return CONFIG.statusEffects.map((x) => {
             return { id: x.id, name: game.i18n.localize(x.name) };
         }).sort((a, b) => a.name.localeCompare(b.name))
     }

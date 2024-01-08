@@ -1,7 +1,6 @@
 import DSA5 from "../system/config-dsa5.js";
 import DSA5SoundEffect from "../system/dsa-soundeffect.js";
 import { showPatchViewer } from "../system/migrator.js"
-import TokenHotbar2 from "../system/tokenHotbar2.js";
 
 export function setupConfiguration() {
     game.settings.register("dsa5", "meleeBotchTableEnabled", {
@@ -294,8 +293,8 @@ export function setupConfiguration() {
             max: 100,
             step: 5
         },
-        onChange: async(val) => {
-            if(game.dsa5.apps.tokenHotbar) game.dsa5.apps.tokenHotbar.constructor.defaultOptions.itemWidth = val
+        onChange: () => {
+            game.dsa5.apps.tokenHotbar?.updateDSA5Hotbar()       
         }
     });
 
@@ -311,6 +310,9 @@ export function setupConfiguration() {
             2: game.i18n.localize('DSASETTINGS.tokenhotbarLayout1'),
             1: game.i18n.localize('DSASETTINGS.tokenhotbarLayout2'),
             3: game.i18n.localize('DSASETTINGS.tokenhotbarLayout3')
+        },
+        onChange: async(val) => {
+            game.dsa5.apps.tokenHotbar?.updateDSA5Hotbar()
         }
     });
 
@@ -356,6 +358,18 @@ export function setupConfiguration() {
             "none": "-",
             "de": "German",
             "en": "English"
+        }
+    });
+
+    game.settings.register("dsa5", "hotbarv3", {
+        name: "DSASETTINGS.hotbarv3",
+        hint: "DSASETTINGS.hotbarv3Hint",
+        scope: "client",
+        config: false,
+        default: true,
+        type: Boolean,
+        onChange: () => {
+            ui.hotbar.render(true)
         }
     });
 
@@ -543,11 +557,11 @@ export function setupConfiguration() {
         hint: "DSASETTINGS.disableTokenhotbarHint",
         scope: "client",
         config: false,
-        default: false,
+        default: true,
         type: Boolean,
         onChange: val => {
-            if(val) TokenHotbar2.unregisterTokenHotbar()
-            else TokenHotbar2.registerTokenHotbar()
+            if(val) game.dsa5.apps.tokenHotbar?.close()
+            else game.dsa5.apps.tokenHotbar?.render(true)
         }
     });
 
@@ -558,9 +572,7 @@ export function setupConfiguration() {
         config: false,
         default: false,
         type: Boolean,
-        onChange: () => {
-            if(game.dsa5.apps.tokenHotbar) game.dsa5.apps.tokenHotbar.render(true)
-        }
+        onChange: () => { game.dsa5.apps.tokenHotbar?.updateDSA5Hotbar() }
     });
 
     game.settings.register("dsa5", "scrollingFontsize", {
@@ -588,6 +600,9 @@ export function setupConfiguration() {
             min: 0,
             max: 1,
             step: 0.05
+        },
+        onChange: () => {
+            game.dsa5.apps.tokenHotbar?.updateDSA5Hotbar()       
         }
     });
 
@@ -677,7 +692,8 @@ export function setupConfiguration() {
         scope: "world",
         config: false,
         default: {},
-        type: Object
+        type: Object,
+        onChange: () => { game.dsa5.apps.tokenHotbar?.updateDSA5Hotbar() }
     });
 
     game.settings.register("dsa5", "selectedActors", {
@@ -780,7 +796,8 @@ class ConfigureTokenHotbar extends FormApplication {
     static get defaultOptions() {
         const options = super.defaultOptions
         mergeObject(options, {
-            title: game.i18n.localize('DSASETTINGS.configureTokenbar')
+            title: game.i18n.localize('DSASETTINGS.configureTokenbar'),
+            width: 500
         });
         return options;
     }
@@ -794,7 +811,6 @@ class ConfigureTokenHotbar extends FormApplication {
             if(ev.currentTarget.type == "checkbox") val = ev.currentTarget.checked
 
             await game.settings.set(name[0], name[1], val)
-            game.dsa5.apps.tokenHotbar?.render(true)
             this.render()
         })
         html.find('.bags .slot').click(ev => this._onMasterFunctionClicked(ev))
@@ -803,11 +819,10 @@ class ConfigureTokenHotbar extends FormApplication {
     async _onMasterFunctionClicked(ev) {
         const id = ev.currentTarget.dataset.id
         const setting = game.settings.get("dsa5", "enableMasterTokenFunctions")
-        setting[id] = !setting[id]
-        await game.settings.set("dsa5", "enableMasterTokenFunctions", setting)
+        setting[id] = !setting[id]        
         $(ev.currentTarget).toggleClass("deactivated", setting[id])
         game.dsa5.apps.tokenHotbar.gmItems.find(x => x.id == id).disabled = setting[id]
-        game.dsa5.apps.tokenHotbar?.render(true)
+        await game.settings.set("dsa5", "enableMasterTokenFunctions", setting)
     }
 
     async getData(options){
@@ -818,6 +833,7 @@ class ConfigureTokenHotbar extends FormApplication {
             disableTokenhotbarMaster: game.settings.get("dsa5", "disableTokenhotbarMaster"),
             disableTokenhotbar: game.settings.get("dsa5", "disableTokenhotbar"),
             tokenhotbaropacity: game.settings.get("dsa5", "tokenhotbaropacity"),
+            hotbarv3: game.settings.get("dsa5", "hotbarv3"),
             isGM: game.user.isGM,
             gmButtons: game.dsa5.apps.tokenHotbar?.gmItems
         })

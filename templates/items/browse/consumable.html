@@ -34,7 +34,7 @@
                         <div class="row-section wrap">
                             <div class="col table-title row-section">
                                 <div class="col ninety">
-                                    {{localize "equipmentType"}}
+                                    {{localize "Category"}}
                                 </div>
                                 <div class="col ten center">
                                     {{#if document.uuid}}<a class="show-item" data-type="Item" data-uuid="{{document.uuid}}"><i class="fas fa-info"></i></a>{{/if}}
@@ -42,8 +42,9 @@
                             </div>
                             <div class="col">
                                 {{localize (concat 'Equipment.' document.system.equipmentType.value)}}
-                            </div>
-                        
+                            </div>                        
+                            
+                            {{#unless document.parent}}
                             <div class="col table-title">
                                 {{localize "priceEachQL"}}
                             </div>
@@ -63,6 +64,26 @@
                             <div class="col">
                                 {{{enrichedIngredients}}}
                             </div>
+                            <div class="col table-title">
+                                {{localize "Equipment.tools"}}
+                            </div>
+                            <div class="col">
+                                {{{document.system.tools}}}
+                            </div>
+                            {{else}}
+                            <div class="col table-title">
+                                {{localize "qualityStep"}}
+                            </div>
+                            <div class="col">
+                                {{{document.system.QL}}}
+                            </div>
+                            <div class="col table-title">
+                                {{localize "effect"}}
+                            </div>
+                            <div class="col">
+                                {{{consumableQL document}}}
+                            </div>
+                            {{/unless}}
                         </div>
 
                 </div>

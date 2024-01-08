@@ -52,6 +52,7 @@
                             <div class="col">
                                 {{document.system.pamod.value}}
                             </div>
+                            {{#unless document.parent}}
                             <div class="col table-title">
                                 {{localize "damageThreshold"}}
                             </div>
@@ -62,14 +63,38 @@
                                 {{localize "guidevalue"}}
                             </div>
                             <div class="col">
-                                {{document.system.guidevalue.value}}
+                                {{localize (concatUp "CHAR." document.system.guidevalue.value)}}
                             </div>
+                            {{else}}
+                            {{#if canBeOffHand}}
+                            <div class="col table-title">
+                                {{localize "offHand"}}
+                            </div>
+                            <div class="col">
+                                {{#if system.worn.offHand}}<i class="fas fa-check"></i>{{else}}<i class="fas fa-times"></i>{{/if}}
+                            </div>
+                            {{/if}}
+                            {{#if canBeWrongGrip}}
+                            <div class="col table-title">
+                                {{localize wrongGripLabel}}
+                            </div>
+                            <div class="col">
+                                {{#if system.worn.wrongGrip}}<i class="fas fa-check"></i>{{else}}<i class="fas fa-times"></i>{{/if}}
+                            </div>
+                            {{/if}}
+                            <div class="col table-title">
+                                {{localize "equipped"}}
+                            </div>
+                            <div class="col">
+                                {{#if system.worn.value}}<i class="fas fa-check"></i>{{else}}<i class="fas fa-times"></i>{{/if}}
+                            </div>                            
+                            {{/unless}}
                             <div class="col table-title">
                                 {{localize "TYPES.Item.combatskill"}}
                             </div>
                             <div class="col">
                                 {{document.system.combatskill.value}}
-                            </div>
+                            </div>                            
                             <div class="col table-title">
                                 {{localize "reach"}}
                             </div>
@@ -95,7 +120,23 @@
                         
                         
                         </div>
-
+                        {{#if hint}}
+                        <div>
+                            {{#if document.system.worn.value}}
+                            <div>
+                                Alt+<i class="fas fa-computer-mouse"></i> {{localize 'SHEET.UnEquipItem'}}
+                            </div>
+                            {{else}}
+                            <div>
+                                {{{localize "leftClick"}}} {{localize 'SHEET.EquipItem'}}  
+                            </div>
+                            <div>
+                                {{{localize "rightClick"}}} {{localize 'offHand'}}      
+                            </div>                 
+                                                    
+                            {{/if}}
+                        </div>
+                        {{/if}}
                 </div>
             </div>
             

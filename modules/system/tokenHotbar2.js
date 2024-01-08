@@ -9,28 +9,28 @@ import { Trade } from "../actor/trade.js";
 import Itemdsa5 from "../item/item-dsa5.js";
 
 export default class TokenHotbar2 extends Application {
+    static attackTypes = new Set(["meleeweapon", "rangeweapon"])
+    static traitTypes = new Set(["meleeAttack", "rangeAttack"])
+    static spellTypes = new Set(["liturgy", "spell"])
+    
     static registerTokenHotbar() {
         if (!game.dsa5.apps.tokenHotbar) {
             game.dsa5.apps.tokenHotbar = new TokenHotbar2()
             game.dsa5.apps.tokenHotbar.updateDSA5Hotbar()
-            game.dsa5.apps.tokenHotbar.render(true)
-            Hooks.call("dsa5TokenHotbarReady", game.dsa5.apps.tokenHotbar)
-        }
-    }
+            if(!game.settings.get("dsa5", "disableTokenhotbar"))
+                game.dsa5.apps.tokenHotbar.render(true)
 
-    static unregisterTokenHotbar() {
-        if (game.dsa5.apps.tokenHotbar) {
-            game.dsa5.apps.tokenHotbar.close()
-            game.dsa5.apps.tokenHotbar = undefined
+            Hooks.call("dsa5TokenHotbarReady", game.dsa5.apps.tokenHotbar)
         }
     }
 
     constructor(options) {
         super(options);
         this.searching = ""
-        this.combatSkills = ["selfControl", "featOfStrength", "bodyControl", "perception", "loyalty"].map(x => game.i18n.localize(`LocalizedIDs.${x}`))
-        this.defaultSkills = [game.i18n.localize("LocalizedIDs.perception")]
 
+        TokenHotbar2.combatSkills = ["selfControl", "featOfStrength", "bodyControl", "perception", "loyalty"].map(x => game.i18n.localize(`LocalizedIDs.${x}`))
+        TokenHotbar2.defaultSkills = new Set([game.i18n.localize("LocalizedIDs.perception")])
+        
         if(game.user.isGM) {
             this.callbackFunctions = {}
             const setting = game.settings.get("dsa5", "enableMasterTokenFunctions")
@@ -85,6 +85,19 @@ export default class TokenHotbar2 extends Application {
             parentUpdate(source)
         });
 
+        Hooks.on("deleteActiveEffect", (effect, options) => {
+            parentUpdate(effect)
+        })
+
+        Hooks.on("updateActiveEffect", (effect, options) => {
+            console.log(effect, effect.parent, effect.parent.id)
+            parentUpdate(effect)
+        })
+
+        Hooks.on("createActiveEffect", (effect, options) => {
+            parentUpdate(effect)
+        })
+
         Hooks.on("canvasInit", () => {
             if(!this.rendered) return
 
@@ -109,8 +122,10 @@ export default class TokenHotbar2 extends Application {
     }
 
     static hookUpdate(changeId) {
-        if (game.dsa5.apps.tokenHotbar && (changeId == getProperty(game.dsa5.apps.tokenHotbar, "actor.id")))
+        if (changeId == game.dsa5.apps.tokenHotbar?.actor?.id)
             game.dsa5.apps.tokenHotbar.updateDSA5Hotbar()
+        else if(ui.hotbar.token?.actor?.id == changeId)
+            ui.hotbar.updateDSA5Hotbar()    
     }
 
     resetPosition() {
@@ -172,7 +187,8 @@ export default class TokenHotbar2 extends Application {
         super.activateListeners(html);
         
         const container = html.find(".dragHandler");
-        new Draggable(this, html, container[0], this.options.resizable);
+        if(container[0])
+            new Draggable(this, html, container[0], this.options.resizable);
 
         container.on('wheel', async(ev) => {
             ev.stopPropagation()
@@ -237,12 +253,11 @@ export default class TokenHotbar2 extends Application {
             if (isSystemEffect) await actor.removeCondition(isSystemEffect, 1, false)
             else await actor.sheet._deleteActiveEffect(id)
         }
-        await this.render(true)
     }
 
     async handleGMRoll(ev){
         const skill = ev.currentTarget.dataset.id
-        const mod = Math.round($(ev.currentTarget).closest('.tokenHotbarInner').find(".modifierVal").val())
+        const mod = Math.round($(ev.currentTarget).closest('.tokenHotbarInner,#hotbar').find(".modifierVal").val())
         if(ev.ctrlKey){
             game.dsa5.apps.DSA5ChatListeners.check3D20(undefined, skill, { modifier: mod })
         }
@@ -272,6 +287,16 @@ export default class TokenHotbar2 extends Application {
                 switch (result.type) {
                     case "meleeweapon":
                     case "rangeweapon":
+                        if(ev.originalEvent.altKey) {
+                            result.update({"system.worn.value": false })
+                        }
+                        else if(result.system.worn.value) {
+                            actor.setupWeapon(result, "attack", options, tokenId).then(setupData => { actor.basicTest(setupData) });
+                        }
+                        else {
+                            actor.exclusiveEquipWeapon(result.id, ev.button == 2)
+                        }
+                        break
                     case "trait":
                         actor.setupWeapon(result, "attack", options, tokenId).then(setupData => { actor.basicTest(setupData) });
                         break
@@ -310,6 +335,8 @@ export default class TokenHotbar2 extends Application {
     }
 
     async handleTradeStart(ev, actor, id, tokenId) {
+        if(!game.user.targets.size) return ui.notifications.error(game.i18n.localize("DIALOG.noTarget"))
+
         for(const target of game.user.targets) {
             if(target.actor) {
                 const app = new Trade(Itemdsa5.buildSpeaker(actor, tokenId), Itemdsa5.buildSpeaker(target.actor, target.id))
@@ -341,7 +368,7 @@ export default class TokenHotbar2 extends Application {
     }
 
     payMoney(ev){
-        const money = `${$(ev.currentTarget).closest('.tokenHotbarInner').find(".modifierVal").val()}`
+        const money = `${$(ev.currentTarget).closest('.tokenHotbarInner,#hotbar').find(".modifierVal").val()}`
 
         if(ev.button == 2){
             DSA5Payment.createGetPaidChatMessage(money)
@@ -427,7 +454,7 @@ export default class TokenHotbar2 extends Application {
         const direction = game.settings.get("dsa5", "tokenhotbarLayout")
         const vertical = direction % 2
         const itemWidth = TokenHotbar2.defaultOptions.itemWidth
-        const spellTypes = ["liturgy", "spell"]
+        
         let gmMode = false
         if (actor) {
             const moreSkills = []
@@ -435,83 +462,66 @@ export default class TokenHotbar2 extends Application {
             const isRiding = Riding.isRiding(actor)
             const rideName = game.i18n.localize("LocalizedIDs.riding")
 
-            effects = (await actor.actorEffects()).map(x => { return { name: x.name, id: x.id, icon: x.icon, cssClass: "effect", abbrev: `${x.name[0]} ${x.getFlag("dsa5","value") || ""}`, subfunction: "effect" } })
+            effects = await this._effectEntries(actor)
             if (game.combat) {
                 const combatskills = actor.items.filter(x => x.type == "combatskill").map(x => Actordsa5._calculateCombatSkillValues(x.toObject(), actor.system))
-                const brawl = combatskills.find(x => x.name == game.i18n.localize('LocalizedIDs.wrestle'))
-                if(brawl) {
-                    items.attacks.push({
-                        name: game.i18n.localize("attackWeaponless"),
-                        id: "attackWeaponless",
-                        icon: "systems/dsa5/icons/categories/attack_weaponless.webp",
-                        attack: brawl.system.attack.value,
-                        damage: "1d6"
-                    })
-                }
+                const brawl = this._brawlEntry(combatskills)
 
-                const attacktypes = ["meleeweapon", "rangeweapon"]
-                const traitTypes = ["meleeAttack", "rangeAttack"]
+                if(brawl) items.attacks.push(brawl)
 
                 for (const x of actor.items) {
-                    if (["skill"].includes(x.type) && (this.combatSkills.some(y => x.name.startsWith(y)) || (isRiding && rideName == x.name))) {
-                        items.default.push({ name: `${x.name} (${x.system.talentValue.value})`, id: x.id, icon: x.img, cssClass: "skill filterable", abbrev: x.name[0] })
+                    if ("skill" == x.type && (TokenHotbar2.combatSkills.some(y => x.name.startsWith(y)) || (isRiding && rideName == x.name))) {
+                        items.default.push(this._skillEntry(x, "skill filterable"))
                     }
 
-                    if (x.type == "trait" && traitTypes.includes(x.system.traitType.value)) {
-                        const preparedItem = Actordsa5._parseDmg(x.toObject())
-                        items.attacks.push({ name: x.name, id: x.id, icon: x.img, cssClass: `weapon ${x.id}`, abbrev: x.name[0], attack: x.system.at.value, damage: preparedItem.damagedie, dadd: preparedItem.damageAdd})
+                    if (x.type == "trait" && TokenHotbar2.traitTypes.has(x.system.traitType.value)) {
+                        items.attacks.push(this._traitEntry(x))
                     }
-                    else if (attacktypes.includes(x.type) && x.system.worn.value == true) {
-                        const preparedItem = x.type == "meleeweapon" ? Actordsa5._prepareMeleeWeapon(x.toObject(), combatskills, actor) : Actordsa5._prepareRangeWeapon(x.toObject(), [], combatskills, actor)
-                        items.attacks.push({ name: x.name, id: x.id, icon: x.img, cssClass: `weapon ${x.id}`, abbrev: x.name[0], attack: preparedItem.attack, damage: preparedItem.damagedie, dadd: preparedItem.damageAdd })
-                    } else if (spellTypes.includes(x.type)) {
-                        if (x.system.effectFormula.value) items.spells.push({ name: x.name, id: x.id, icon: x.img, cssClass: "spell", abbrev: x.name[0] })
-                        else moreSpells.push({ name: x.name, id: x.id, icon: x.img, cssClass: "spell", abbrev: x.name[0] })
+                    else if (TokenHotbar2.attackTypes.has(x.type) && x.system.worn.value == true) {
+                        items.attacks.push(this._combatEntry(x, combatskills, actor))
+                    } else if (TokenHotbar2.spellTypes.has(x.type)) {
+                        if (x.system.effectFormula.value) items.spells.push(this._skillEntry(x, "spell filterable"))
+                        else moreSpells.push(this._skillEntry(x, "spell filterable"))
                     }
-                    else if (["skill"].includes(x.type)){
-                        const elem = { name: `${x.name} (${x.system.talentValue.value})`, id: x.id, icon: x.img, cssClass: "skill",addClass: x.system.group.value, abbrev: x.name[0], tw: x.system.talentValue.value }
-                        moreSkills.push(elem)
+                    else if ("skill" == x.type){
+                        moreSkills.push(this._skillEntry(x, "skill filterable", { addClass: x.system.group.value}))
                     }
                     else if (x.type == "consumable") {
-                        consumables.push({ name: x.name, id: x.id, icon: x.img, cssClass: "consumable", abbrev: x.system.quantity.value })
+                        consumables.push(this._actionEntry(x, "consumable", { abbrev: x.system.quantity.value }))
                     }
 
                     if (x.getFlag("dsa5", "onUseEffect")) {
-                        onUsages.push({ name: x.name, id: x.id, icon: x.img, cssClass: "onUse", abbrev: x.name[0], subfunction: "onUse" })
+                        onUsages.push(this._actionEntry(x, "onUse", { subfunction: "onUse" }))
                     }
                 }
                 consumable = consumables.pop()
 
-                if(isRiding){
-                    const horse = Riding.getHorse(actor)
-                    if(horse){
-                        const x = Riding.getLoyaltyFromHorse(horse)
-                        if(x){
-                            items.default.push({ name: `${x.name} (${x.system.talentValue.value})`, id: "rideLoyaltyID", icon: x.img, cssClass: "skill", abbrev: x.name[0] })
-                        }
-                    }
+                if(isRiding) {
+                    const ridingEnttry = this._ridingEntry(actor)
+
+                    if(ridingEnttry) items.default.push(ridingEnttry)
                 }
+                
             } else {
-                let descendingSkills = []
+                const descendingSkills = []
                 for (const x of actor.items) {
-                    if (["skill"].includes(x.type) && (this.defaultSkills.includes(x.name)  || (isRiding && rideName == x.name))) {
-                        items.default.push({ name: `${x.name} (${x.system.talentValue.value})`, id: x.id, icon: x.img, cssClass: "skill filterable", abbrev: x.name[0] })
+                    if ("skill" == x.type && (TokenHotbar2.defaultSkills.has(x.name)  || (isRiding && rideName == x.name))) {
+                        items.default.push(this._skillEntry(x, "skill filterable"))
                     }
-                    if (["skill"].includes(x.type)) {
-                        const elem = { name: `${x.name} (${x.system.talentValue.value})`, id: x.id, icon: x.img, cssClass: "skill",addClass: x.system.group.value, abbrev: x.name[0], tw: x.system.talentValue.value }
+                    if ("skill" == x.type) {
+                        const elem = this._skillEntry(x, "skill filterable", { addClass: x.system.group.value})
                         if(x.system.talentValue.value > 0) {
-                            elem.cssClass += " filterable"
                             descendingSkills.push(elem)
                         }
 
                         moreSkills.push(elem)
-                    }else if (spellTypes.includes(x.type)) {
-                        if (x.system.effectFormula.value) items.spells.push({ name: x.name, id: x.id, icon: x.img, cssClass: "spell", abbrev: x.name[0] })
-                        else moreSpells.push({ name: x.name, id: x.id, icon: x.img, cssClass: "spell", abbrev: x.name[0] })
+                    } else if (TokenHotbar2.spellTypes.has(x.type)) {
+                        if (x.system.effectFormula.value) items.spells.push(this._actionEntry(x, "spell filterable"))
+                        else moreSpells.push(this._actionEntry(x, "spell filterable"))
                     }
 
                     if (x.getFlag("dsa5", "onUseEffect")) {
-                        onUsages.push({ name: x.name, id: x.id, icon: x.img, cssClass: "onUse", abbrev: x.name[0], subfunction: "onUse" })
+                        onUsages.push(this._actionEntry(x, "onUse", { subfunction: "onUse" }))
                     }
                 }
                 items.skills.push(...descendingSkills.sort((a, b) => { return b.tw - a.tw }).slice(0, 5))
@@ -519,10 +529,7 @@ export default class TokenHotbar2 extends Application {
 
             onUse = onUsages.pop()
 
-            const trade = game.i18n.localize('MERCHANT.exchange')
-            items.functions.push(
-                { name: trade, id: "trade", icon: "icons/svg/coins.svg", cssClass: "effect", abbrev: trade[0], subfunction: "trade" }
-            )
+            items.functions = this._functionEntries()
 
             if (items.spells.length == 0 && moreSpells.length > 0) {
                 items.spells.push(moreSpells.pop())
@@ -554,19 +561,20 @@ export default class TokenHotbar2 extends Application {
         } else if(game.user.isGM && !game.settings.get("dsa5", "disableTokenhotbarMaster")){
             gmMode = true
             const skills = this.skills || await this.prepareSkills()
-            items.gm = this.gmItems.filter(x => !x.disabled).concat([
-                   { name: "TT.tokenhotbarSkill", id: "skillgm", icon: "systems/dsa5/icons/categories/Skill.webp", cssClass: "skillgm filterable", abbrev: "", subfunction: "none", more: skills, subwidth: this.subWidth(skills, itemWidth, 20) },
-            ])
+            items.gm = this._gmEntries().concat([
+                { name: "TT.tokenhotbarSkill", id: "skillgm", icon: "systems/dsa5/icons/categories/Skill.webp", cssClass: "skillgm filterable", abbrev: "", subfunction: "none", more: skills, subwidth: this.subWidth(skills, itemWidth, 20) },
+        ])
         }
 
         if (this.showEffects) {
             const label = game.i18n.localize("CONDITION.add")
-            let effect = { name: "CONDITION.add", id: "", icon: "icons/svg/aura.svg", cssClass: "effect", abbrev: label[0], subfunction: "addEffect" }
+            const effect = { name: "CONDITION.add", id: "", icon: "icons/svg/aura.svg", cssClass: "effect", abbrev: label[0], subfunction: "addEffect" }
             if (effects.length > 0) {
                 effect.more = effects
                 effect.subwidth = this.subWidth(effects, itemWidth)
             } else if(canvas.tokens.controlled.length > 1) {
-                let sharedEffects = (await canvas.tokens.controlled[0].actor.actorEffects()).map(x => { return { name: x.name, id: x.id, icon: x.icon, cssClass: "effect", abbrev: `${x.name[0]} ${x.getFlag("dsa5","value") || ""}`, subfunction: "sharedEffect" } })
+                let sharedEffects = await this.tokenHotbar._effectEntries(canvas.tokens.controlled[0].actor, { subfunction: "sharedEffect"})
+
                 for(let token of canvas.tokens.controlled){
                     const tokenEffects = (await token.actor.actorEffects()).map(x => x.name)
                     sharedEffects = sharedEffects.filter(x => tokenEffects.includes(x.name))
@@ -587,19 +595,87 @@ export default class TokenHotbar2 extends Application {
             this.position.height = itemWidth
         }
 
-        mergeObject(data, { items, itemWidth, direction, count, gmMode, darkness: canvas.scene?.darkness || 0, opacity: game.settings.get("dsa5", "tokenhotbaropacity") })
+        mergeObject(data, { items, itemWidth, direction, count, gmMode, darkness: canvas?.scene?.darkness || 0, opacity: game.settings.get("dsa5", "tokenhotbaropacity") })
         return data
+    }
+
+    _functionEntries() {
+        const trade = game.i18n.localize('MERCHANT.exchangeWithTarget')
+        return [
+                { name: trade, id: "trade", cssClass: "function", abbrev: trade[0], iconClass: "fas fa-coins", subfunction: "trade" }
+        ]
+    }
+
+    _brawlEntry(combatskills) {
+        const brawl = combatskills.find(x => x.name == game.i18n.localize('LocalizedIDs.wrestle'))
+        if(brawl) {
+            return {
+                name: game.i18n.localize("attackWeaponless"),
+                id: "attackWeaponless",
+                icon: "systems/dsa5/icons/categories/attack_weaponless.webp",
+                attack: brawl.system.attack.value,
+                damage: "1d6",
+                cssClass: "zbrawl"
+            }
+        }
+    }
+
+    _ridingEntry(actor) {
+        if(isRiding){
+            const horse = Riding.getHorse(actor)
+            if(horse){
+                const x = Riding.getLoyaltyFromHorse(horse)
+                if(x){
+                    return { name: `${x.name} (${x.system.talentValue.value})`, id: "rideLoyaltyID", icon: x.img, cssClass: "skill", abbrev: x.name[0] }
+                }
+            }
+        }
+    }
+
+    _gmEntries() {        
+        return this.gmItems.filter(x => !x.disabled)
+    }
+    
+    _actionEntry(x, cssClass, options = {}) {
+        return { name: x.name, id: x.id, icon: x.img, cssClass, abbrev: x.name[0], ...options }
+    }
+
+    _skillEntry(x, cssClass, options = {}) {
+        const tw = x.system?.talentValue.value
+        const name = tw ? `${x.name} (${tw})` : x.name
+        return { name: name, id: x.id, icon: x.img, cssClass, addClass: x.system?.group?.value, abbrev: x.name[0], tw, ...options }
+    }
+
+    _traitEntry(x) {
+        const preparedItem = Actordsa5._parseDmg(x.toObject())
+        return { name: x.name, id: x.id, icon: x.img, cssClass: "weapon", abbrev: x.name[0], attack: x.system.at.value, damage: preparedItem.damagedie, dadd: preparedItem.damageAdd}
+    }
+
+    _combatEntry(x, combatskills, actor, options = []) {
+        const preparedItem = x.type == "meleeweapon" ? Actordsa5._prepareMeleeWeapon(x.toObject(), combatskills, actor) : Actordsa5._prepareRangeWeapon(x.toObject(), [], combatskills, actor)
+
+        return { name: x.name, id: x.id, icon: x.img, cssClass: "weapon", abbrev: x.name[0], attack: preparedItem.attack, damage: preparedItem.damagedie, dadd: preparedItem.damageAdd, ...options }
+    }
+
+    async _effectEntries(actor, options = {}) {
+        return (await actor.actorEffects()).map(x => { 
+            const level = x.getFlag("dsa5","value") || ""
+            const name = level ? `${x.name} (${level})` : x.name
+            return { name: name, id: x.id, icon: x.icon, cssClass: "effect", abbrev: `${x.name[0]} ${level}`, subfunction: "effect", indicator: level, ...options } 
+        })
     }
 
     filterButtons(ev){
         switch(ev.which){
+            case 91:
+            case 18:
             case 17:
                 return
             case 8:
                 this.searching = this.searching.slice(0, -1)
                 break
             default:
-                this.searching += String.fromCharCode(ev.which)
+                this.searching += ev.key
         }
         ev.preventDefault()
         ev.stopPropagation()
@@ -636,6 +712,10 @@ export default class TokenHotbar2 extends Application {
     }
 
     async updateDSA5Hotbar() {
+        ui.hotbar.updateDSA5Hotbar()
+
+        if(game.settings.get("dsa5", "disableTokenhotbar")) return
+
         const controlled = canvas.tokens.controlled
         this.actor = undefined
         this.showEffects = false
@@ -756,7 +836,6 @@ export class AddEffectDialog extends Dialog {
         for (let token of canvas.tokens.controlled) {
             await token.actor.addTimedCondition(id, 1, false, false, options)
         }
-        game.dsa5.apps.tokenHotbar?.render(true)
         this.close()
     }
 

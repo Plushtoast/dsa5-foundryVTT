@@ -63,7 +63,14 @@
                             <div class="col">
                                 {{document.system.combatskill.value}}
                             </div>
-                            
+                            {{#if document.parent}}
+                            <div class="col table-title">
+                                {{localize "equipped"}}
+                            </div>
+                            <div class="col">
+                                {{#if system.worn.value}}<i class="fas fa-check"></i>{{else}}<i class="fas fa-times"></i>{{/if}}
+                            </div>
+                            {{/if}}
                             {{#if document.system.effect.value}}
                             <div class="col table-title">
                                 {{localize "effect"}}
@@ -83,7 +90,15 @@
                         
                         
                         </div>
-
+                        {{#if hint}}
+                        <div>
+                            {{#if document.system.worn.value}}
+                            <div>
+                                Alt+<i class="fas fa-computer-mouse"></i> {{localize 'SHEET.UnEquipItem'}}
+                            </div>               
+                            {{/if}}
+                        </div>
+                        {{/if}}
                 </div>
             </div>
             

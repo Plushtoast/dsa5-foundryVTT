@@ -485,6 +485,7 @@ export default class Actordsa5 extends Actor {
     for(let item of this.items) {
       for(const e of item.effects) {
         if(e.disabled) continue
+        if(!e.transfer) continue
 
         apply = true
 
@@ -542,6 +543,7 @@ export default class Actordsa5 extends Actor {
             multiply = Number(item.system.step.value) || 1
             break;
         }
+
         e.notApplicable = !apply;
 
         if (!apply) continue
@@ -2344,6 +2346,34 @@ export default class Actordsa5 extends Actor {
       });
     }
     this.updateSource(update);
+  }
+
+  async exclusiveEquipWeapon(itemId, offHand = false) {
+    const item = this.items.get(itemId);
+
+    if(!item) return
+
+    let updates = []
+    switch(item.type) {
+      case "armor":
+      case "rangeweapon":
+        const items = this.items.filter(x => x.type == item.type && x.id != itemId && x.system.worn.value)
+        updates = items.map(x => { return {_id: x.id, "system.worn.value": false}})
+        updates.push({_id: itemId, "system.worn.value": true})
+        break
+      case "meleeweapon":
+        let weapons = this.items.filter(x => x.type == item.type && x.id != itemId && x.system.worn.value)
+        const weaponUpdate = {_id: itemId, "system.worn.value": true}
+        if(!RuleChaos.isYieldedTwohanded(item)){
+          weapons = weapons.filter(x => RuleChaos.isYieldedTwohanded(x) || x.system.worn.offHand == offHand)
+          weaponUpdate["system.worn.offHand"] = offHand
+        }
+        updates = weapons.map(x => { return {_id: x.id, "system.worn.value": false}})
+        updates.push(weaponUpdate)
+        break
+    }
+    if(updates)
+      await this.updateEmbeddedDocuments("Item", updates)
   }
 
   static _prepareRangeTrait(item) {

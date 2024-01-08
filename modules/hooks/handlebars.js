@@ -1,3 +1,4 @@
+import DSA5 from "../system/config-dsa5.js";
 import DSA5_Utility from "../system/utility-dsa5.js";
 
 const modifierTypes = {
@@ -75,6 +76,8 @@ export default function() {
         attrAbbr: (a) => DSA5_Utility.attributeAbbrLocalization(a),
         diceThingsUp: (a, b) => DSA5_Utility.replaceDies(a, false),
         clickableAbilities: (a, b) => clickableAbilities(a, b),
+        traitName: (a) => game.i18n.localize(DSA5.traitCategories[a]),
+        consumableQL: (a) => a.system.QLList.split("\n")[Number(a.system.QL) - 1],
         clickableActorItems: (a, b, c, d) => clickableActorItems(a, b, c, d),
         clickableSection: (a, b, c, d) => clickableSection(a, b, c, d),
         hasLocalization: (a, b) => {

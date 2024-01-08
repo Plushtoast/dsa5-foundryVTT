@@ -471,6 +471,15 @@
         }
     }
 
+    .itemTooltip {
+        background-image: url("../../icons/backgrounds/macrobg.webp");
+        background-size: cover;
+        color: black;
+        padding: 1px;
+        border: 2px solid rgb(0, 0, 0);
+        border-radius: 5px;
+      }
+
     #hotbar {
         &:before {
             background-image: url('../../icons/backgrounds/hotbarpart.webp'), url('../../icons/backgrounds/hotbarpart.webp'), url('../../icons/backgrounds/hotbar4.webp');
@@ -484,6 +493,46 @@
             top: -10px;
             z-index: -1;
             background-position: 8px 11px, calc(100% - 8px) 11px, center;
+        }
+
+        &.hotbarV3{
+            margin-bottom: 10px;
+            &:before {
+                background-size: 30px 91px,34px 91px,calc(100% - 26px) calc(100% - 20px);
+                background-position: 8px 39px,calc(100% - 33px) 39px,0px 18px;
+            }
+            .function {
+                color: black;
+              }
+            .sections {
+                background: none;
+            }
+            .nameContent{
+                color: black;
+            }
+            .actorEffect,
+            .categoryFilter {
+                background-image: url("../../icons/backgrounds/macrobg.webp");
+                background-size: cover;
+                color: black;
+            }
+            .actorEffect {
+                box-shadow: inset 0px 0px 25px #403014;
+            }
+            #macro-list,
+            .skillItems {
+                li {
+                    box-shadow: inset 0px 0px 25px #403014;
+                    background-image: url("../../icons/backgrounds/macrobg.webp");
+
+                    &.unequipped {
+                        box-shadow: inset 0px 0px 25px #000;      
+                    }
+                }
+                input{ 
+                    color: black;
+                }
+            }
         }
 
         &.collapsedHotbar:before {
@@ -538,13 +587,19 @@
                 right: -58px;
                 left: 6px;
             }
+            &.hotbarV3:before{
+                background-size: 36px 105px,66px 105px,190% 100%;
+                background-position: -1px 24px,calc(100% + 30px) 24px,center;
+                left: 0px;
+                right: 0px;
+            }
             #hotbar-page-controls, #hotbar-directory-controls {
                 a {
                     margin: 6px 0;
                 }
             }
         }
-    }    
+    }
 
     .window-app.npc-sheet.app .window-content {
         box-shadow: none;

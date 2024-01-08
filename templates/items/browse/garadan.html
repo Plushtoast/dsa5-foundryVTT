@@ -1,15 +1,17 @@
 <div>
-    <div class="garadanborder garadanb">
-        <div class="row-section">
-            <div class="col five">
+    <div class="garadanborder garadanb columnFlex row-section">
+        <div class="row-section innersection col">
+            <div class="col five flexAlignCenter row-section">
                 <div class="garadanicon" style="background-image:url(systems/dsa5/icons/Garadan{{document.system.merchant.garadan}}.webp)"></div>
             </div>
-            <div class="col eighty">
+            <div class="col eighty flexAlignCenter">
                 <h2>{{document.name}}</h2>
                 <h3 style="margin-top:0">{{document.system.details.career.value}}</h3>
             </div>
-            <div class="col five">
-                <a style="margin-left:20px" class="show-item" data-type="Actor" data-uuid="{{document.uuid}}"><i class="fas fa-info"></i></a>
+            <div class="col five flexAlignCenter row-section">
+                <div>
+                    <a class="show-item" data-type="Actor" data-uuid="{{document.uuid}}"><i class="fas fa-info"></i></a>
+                </div>                
             </div>
         </div>
     </div>

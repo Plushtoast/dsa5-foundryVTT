@@ -116,7 +116,8 @@
                 <label class="label-text">{{localize "WEAR.value"}}</label>
                 <input class="input-text" type="number" name="system.structure.breakPointRating" value="{{system.structure.breakPointRating}}" placeholder="{{breakPointRating}}" data-dtype="Number" step="1" />
             </div>
-            {{/if}} {{#if isOwned}}
+            {{/if}} 
+            {{#if isOwned}}
             {{#if canBeOffHand}}
             <div class="form-group">
                 <label class="label-text">{{localize "offHand"}}</label>
