@@ -133,6 +133,28 @@ export default class DSA5CombatDialog extends DialogShared {
                 Itemdsa5.getSubClass(item.type).getSituationalModifiers(situationalModifiers, actor, { mode: mode }, item)
                 if (mode == "attack") {
                     situationalModifiers = situationalModifiers.filter(x => x.type != "defenseMalus")
+                    let modIndex = situationalModifiers.findIndex(x => x.name == game.i18n.localize("statuseffects"))
+                    let attackStatEffect
+                    if (modIndex >= 0) {
+                        attackStatEffect = situationalModifiers.splice(modIndex, 1).pop()
+                    } 
+                    let defenseModifiers = []
+                    Itemdsa5.getSubClass(item.type).getSituationalModifiers(defenseModifiers, actor, { mode: "parry" }, item)
+                    modIndex = defenseModifiers.findIndex(x => x.name == game.i18n.localize("statuseffects"))
+                    let defenseStatEffect
+                    if (modIndex >= 0) {
+                        defenseStatEffect = defenseModifiers.splice(modIndex, 1).pop()
+                    }
+                    situationalModifiers.unshift(...defenseModifiers)
+
+                    if (attackStatEffect) {
+                        if (defenseStatEffect) {
+                            attackStatEffect.value += defenseStatEffect.value
+                        }
+                        situationalModifiers.push(attackStatEffect)
+                    } else if (defenseStatEffect) {
+                        situationalModifiers.push(defenseStatEffect)
+                    }
                 }
                 const htmlMods = $(this._element).find("[name=situationalModifiers]")
                 if (situationalModifiers.length > 0) {
