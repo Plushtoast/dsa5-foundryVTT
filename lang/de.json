@@ -558,6 +558,7 @@
     "vulnerability": "Verwundbarkeit",
     "zoo": "Zoo",
     "AoE": "Flächeneffekt",
+    "doppelganger": "Doppelgänger",
     "temperature": {
         "heatProtection": "Hitzeschutz",
         "coldProtection": "Kälteschutz"
@@ -1034,7 +1035,8 @@
             "1": "{actor} <a class=\"chatButton chat-condition\" data-id=\"burning\" draggable=\"true\"><img src=\"icons/svg/fire.svg\">brennt</a> ein bisschen und erhält {damage} Schadenspunkt(e).",
             "2": "{actor} <a class=\"chatButton chat-condition\" data-id=\"burning\" draggable=\"true\"><img src=\"icons/svg/fire.svg\">brennt</a> und erhält {damage} Schadenspunkt(e).",
             "3": "{actor} steht komplett in <a class=\"chatButton chat-condition\" data-id=\"burning\" draggable=\"true\"><img src=\"icons/svg/fire.svg\">Flammen</a> und erhält {damage} Schadenspunkte."
-        }
+        },
+        "duplicatus": "Doppelgänger getroffen"
     },
     "TT": {
         "careerSkills": "Komma separierte Talentliste, z.b. (Betören 2,Etikette 4)",

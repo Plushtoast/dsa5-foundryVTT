@@ -513,6 +513,7 @@
     "rangeweapon": "Rangeweapon",
     "refundCost": "Refund {cost} adventure points",
     "AoE": "Area of Effect",
+    "doppelganger": "Doppelganger",
     "Roll": "Roll",
     "result": "Result",
     "rule": "Rule",
@@ -1043,7 +1044,8 @@
             "1": "{actor} <a class=\"chatButton chat-condition\" data-id=\"burning\" draggable=\"true\"><img src=\"icons/svg/fire.svg\">burns</a> slightly resulting in {damage} sDP.",
             "2": "{actor} <a class=\"chatButton chat-condition\" data-id=\"burning\" draggable=\"true\"><img src=\"icons/svg/fire.svg\">burns</a> resulting in {damage} sDP.",
             "3": "{actor} is completely <a class=\"chatButton chat-condition\" data-id=\"burning\" draggable=\"true\"><img src=\"icons/svg/fire.svg\">aflame</a> and receives {damage} sDP."
-        }
+        },
+        "duplicatus": "doppelganger was hit"
     },
     "TT": {
         "careerSkills": "Comma separated talent list, e.g. (Alchemy 2,Carousing 4)",

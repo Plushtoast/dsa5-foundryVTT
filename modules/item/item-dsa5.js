@@ -465,9 +465,23 @@ export default class Itemdsa5 extends Item {
                 if(size) targetSize = size
 
                 CreatureType.addCreatureTypeModifiers(target.actor, source, situationalModifiers, actor)
+                this.checkDuplicatus(target.actor, situationalModifiers)
             }
         })
         return targetSize
+    }
+
+    static checkDuplicatus(target, situationalModifiers) {
+        const val = getProperty(target, "system.extra.duplicatus")
+        if (val) {
+            situationalModifiers.push({
+                name: `Duplicatus - ${game.i18n.localize("doppelganger")}`,
+                value: val,
+                selected: true,
+                type: "effect",
+                source: "Duplicatus"
+            })
+        }
     }
 
     static prepareRangeAttack(situationalModifiers, actor, data, source, tokenId, combatskills, currentAmmo = undefined) {
@@ -1014,7 +1028,10 @@ class SpellItemDSA5 extends Itemdsa5 {
         this.foreignSpellModifier(actor, source, situationalModifiers, data)
         if (game.user.targets.size) {
             game.user.targets.forEach((target) => {
-                if (target.actor) CreatureType.addCreatureTypeModifiers(target.actor, source, situationalModifiers, actor)
+                if (target.actor) {
+                    CreatureType.addCreatureTypeModifiers(target.actor, source, situationalModifiers, actor)
+                    this.checkDuplicatus(target.actor, situationalModifiers)
+                }
             })
         }
         situationalModifiers.push(...actor.getSkillModifier(source.name, source.type))
