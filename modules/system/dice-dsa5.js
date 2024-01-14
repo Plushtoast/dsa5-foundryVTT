@@ -203,46 +203,23 @@ export default class DiceDSA5 {
     }
 
     static async getDuplicatusRoll(res, testData) {
-        const duplicatusEffect = testData.situationalModifiers.find((x) => x.name.includes("Duplicatus") && x.value != 0)
+        const duplicatusEffect = testData.situationalModifiers.find((x) => x.name.includes("Duplicatus") && x.value > 0 && x.value < 5)
         if (duplicatusEffect) {
-            let duplicatusRollTarget
-            switch (duplicatusEffect.value) {
-                case 1:
-                    duplicatusRollTarget = 10
-                    break
-                case 2:
-                    duplicatusRollTarget = 7
-                    break
-                case 3:
-                    duplicatusRollTarget = 5
-                    break
-                case 4:
-                    duplicatusRollTarget = 4
-                    break   
-            }
-            const types = CreatureType.detectCreatureType(DSA5_Utility.getSpeaker(testData.extra.speaker))
-            let immuneToIllusion = false
-            for (let type of types) {                
-                if (type.spellImmunities.includes("Illusion")) {
-                        immuneToIllusion = true
-                }
-            }
-            if (duplicatusRollTarget && !immuneToIllusion) {
-                const duplicatusRoll = await DiceDSA5.manualRolls(
-                    await new Roll("1d20").evaluate({ async: true })
-                )
-                this._addRollDiceSoNice(
-                    testData,
-                    duplicatusRoll,
-                    game.dsa5.apps.DiceSoNiceCustomization.getAttributeConfiguration("ch")
-                )
-                const hit = duplicatusRollTarget >= duplicatusRoll._total
-                const html = `<div class="card-content"><b>Duplicatus-${game.i18n.localize("Roll")}</b>: <span data-tooltip="${game.i18n.localize("Roll")} vs ${duplicatusRollTarget}" class="die-ch d20">${duplicatusRoll._total}</span></div`
-                res.other = [html]
-                if (!hit && res.successLevel > 0) {
-                    res.description = `${game.i18n.localize("Failure")}, ${game.i18n.localize("CHATNOTIFICATION.duplicatus")}`
-                    res.successLevel = 0
-                }
+            const duplicatusRollTarget = Math.round((1 / (duplicatusEffect.value + 1)) * 20)
+            const duplicatusRoll = await DiceDSA5.manualRolls(
+                await new Roll("1d20").evaluate({ async: true })
+            )
+            this._addRollDiceSoNice(
+                testData,
+                duplicatusRoll,
+                game.dsa5.apps.DiceSoNiceCustomization.getAttributeConfiguration("ch")
+            )
+            const hit = duplicatusRollTarget >= duplicatusRoll._total
+            const html = `<div class="card-content"><b>Duplicatus-${game.i18n.localize("Roll")}</b>: <span data-tooltip="${game.i18n.localize("Roll")} vs ${duplicatusRollTarget}" class="die-ch d20">${duplicatusRoll._total}</span></div`
+            res.other = [html]
+            if (!hit && res.successLevel > 0) {
+                res.description = `${game.i18n.localize("Failure")}, ${game.i18n.localize("CHATNOTIFICATION.duplicatus")}`
+                res.successLevel = 0
             }
         }
     }
