@@ -90,7 +90,6 @@ export default class TokenHotbar2 extends Application {
         })
 
         Hooks.on("updateActiveEffect", (effect, options) => {
-            console.log(effect, effect.parent, effect.parent.id)
             parentUpdate(effect)
         })
 
@@ -667,14 +666,12 @@ export default class TokenHotbar2 extends Application {
 
     filterButtons(ev){
         switch(ev.which){
-            case 91:
-            case 18:
-            case 17:
-                return
             case 8:
                 this.searching = this.searching.slice(0, -1)
                 break
             default:
+                if(!ev.key.match(/[a-zA-Z0-9öäüÖÄÜ]/)) return
+
                 this.searching += ev.key
         }
         ev.preventDefault()

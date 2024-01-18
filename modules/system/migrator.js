@@ -22,6 +22,9 @@ async function migrateDSA(currentVersion, migrationVersion) {
     if(currentVersion < 24){
         await migratTo24()
     }
+    if(currentVersion < 27){
+        await migrateTo26()
+    }
 
     await game.settings.set("dsa5", "migrationVersion", migrationVersion)
 }
@@ -31,6 +34,10 @@ async function migratTo24() {
         const removeEffects = actor.effects.filter(x => ["inpain", "encumbered"].includes(x.getFlag("core", "statusId")))
        if(removeEffects.length) await actor.deleteEmbeddedDocuments("ActiveEffect", removeEffects.map(x => x.id))
     }
+}
+
+async function migrateTo26() {
+    game.settings.set("dsa5", "disableTokenhotbar", true)
 }
 
 export async function showPatchViewer() {
@@ -51,7 +58,7 @@ export default function migrateWorld() {
 
         await setupDefaulTokenConfig()
         const currentVersion = await game.settings.get("dsa5", "migrationVersion")
-        const NEEDS_MIGRATION_VERSION = 26
+        const NEEDS_MIGRATION_VERSION = 27
         const needsMigration = currentVersion < NEEDS_MIGRATION_VERSION
 
         //betaWarning()

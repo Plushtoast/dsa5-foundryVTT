@@ -521,7 +521,7 @@
             }
             #macro-list,
             .skillItems {
-                li {
+                & > li {
                     box-shadow: inset 0px 0px 25px #403014;
                     background-image: url("../../icons/backgrounds/macrobg.webp");
 

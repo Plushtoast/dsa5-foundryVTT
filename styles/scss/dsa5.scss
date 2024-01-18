@@ -4091,6 +4091,13 @@
   }
 
   .itemTooltip {
+    max-height:500px;
+    p {
+      text-overflow: ellipsis;
+      overflow:hidden;
+    }
+    text-overflow: ellipsis;
+    overflow: hidden;
     h1 {
       border: none;
       font-size: 22px;
@@ -4274,8 +4281,6 @@
       transition: all 0.15s ease-in-out;
       scroll-snap-type: y mandatory;
 
-      
-
       input{ 
         height: 100%;
         display: block;
@@ -4333,7 +4338,7 @@
         }        
       }
             
-      li {
+      & > li {
         flex: 0 0 var(--base-bar-height);
         height: var(--base-bar-height);
         

@@ -173,14 +173,12 @@ export default class DSA5Hotbar extends Hotbar {
     filterSections(ev, html) {
         this.searching = this.searching || ""
         switch(ev.which){
-            case 91:
-            case 18:
-            case 17:
-                return
             case 8:
                 this.searching = this.searching.slice(0, -1)
                 break
             default:
+                if(!ev.key.match(/[a-zA-Z0-9öäüÖÄÜ]/)) return
+                
                 this.searching += ev.key
         }
         ev.preventDefault()

@@ -1,0 +1,46 @@
+<h1>Wichtige Änderungen  (18.01.2024)</h1>
+<h2>Das fließende Update</h2>
+<p>In dieser Runde haben wir erhebliche Zeit darauf verwendet, ältere Module (siehe unten) an die neuesten Entwicklungen anzupassen. Dies umfasst vor allem zahlreiche kleinere Fehlerkorrekturen sowie Designverbesserungen im Journalbrowser. Aufgrund der langen Wartezeit, die erforderlich wäre, um alle Module zu aktualisieren, haben wir uns entschieden, diesen Patch schrittweise einzuführen. Das bedeutet, dass die Module nach und nach auf Version 5.3.0 (bzw. 5.3.1 für englischen Inhalt) aktualisiert werden, um den Fortschritt nicht zu beeinträchtigen. Dabei können auch neue Funktionen eingeführt werden, die wir erst in einem späteren umfassenderen Patch ankündigen werden.</p>
+<h2>Journalbrowser Upgrades</h2>
+<p>Einige Kleinigkeiten sollten den Journalbrowser nun angenehmer in der Benutzung machen.</p>
+<ul class="dsalist">
+<li>Die Suchfunktion hinterlegt gesuchte Begriffe nun zusätzlich mit einem gelben Hintergrund.</li>
+<li>Die Suchfunktion zeigt über einen roten Streifen auf der Scrollbar zusätzlich die Position der gefundenen Texte auf der aktuellen Seite.</li>
+<li>Das Journalbrowser Inhaltsverzeichnis sollte nun beim Wechsel der Seiten nicht mehr springen.</li>
+<li>Der Journalbrowser zeigt im Inhaltsverzeichnis nun zusätzlich die Headings der aktuellen Seite, ähnlich wie normale Journals.</li>
+</ul>
+<h2>Divinarium Liturgiae</h2>
+<p>Alle Liturgien und Zeremonien wurden auf den neuesten Stand des Divinarium Liturgiae aktualisiert. Falls sich dabei die Steigerungskosten geändert haben, wurden alle Professionen neu kalkuliert und entsprechend angepasst. Kurz nach diesem Update werden alle Module auf den Stand 5.3.0 aktualisiert und die durchgeführten Änderungen integriert.</p>
+<p>Zusätzlich wurden zahlreiche kleinere Bugfixes in den Daten der DSA-Items implementiert. Die Datenbank für die Zaubererweiterungen der Liturgien wurde ebenfalls aktualisiert und enthält nun alle neuen Erweiterungen.</p>
+<p>Da es mehr als 5000 Erweiterungen für Zauber, Liturgien, Rituale und Zeremonien gibt, ist es uns nicht möglich, ihre Funktionalität aufgrund der schieren Menge selbst zu implementieren. Hier ist die Zusammenarbeit der TDE/DSA-Community entscheidend. Wenn du dich dazu berufen fühlst, uns dabei zu helfen, findest du weitere Informationen unter: https://github.com/Plushtoast/dsa5-extensiondb</p>
+<h2>AP Logging</h2>
+<p>Nun hast du die Möglichkeit, die Verwendung von Abenteuerpunkten zu protokollieren. Die genutzten Abenteuerpunkte werden außerhalb des Charakters in einem speziellen Journal gespeichert, um den benötigten Speicherplatz des Charakters nicht unnötig zu belasten – das kann sonst recht ausufern :) . Ein Journal im Ordner &quot;Abenteuerpunkte Historie&quot; wird angelegt und bei Verwendung von Abenteuerpunkten regelmäßig aktualisiert.</p>
+<p>Standardmäßig ist diese Funktion deaktiviert und kann nur vom Spielleiter aktiviert oder deaktiviert werden. Der zugehörige Schalter befindet sich in den Einstellungen. Wenn Charaktere Spielern zugewiesen sind, wird automatisch ein entsprechendes Journal erstellt, sobald sich die Abenteuerpunkte ändern. Spieler haben standardmäßig Schreibrechte für dieses Journal und können so eigenständig ohne Spielleiter ihre Steigerungen vornehmen (obwohl Manipulation möglich ist). Wenn das Journal auf &quot;Read only&quot; gesetzt wird, wird die Protokollierung nur dann durchgeführt, wenn ein Spielleiter online ist (wodurch Manipulation schwieriger wird).</p>
+<h2>Tokenhotbar V3</h2>
+<p>Wir freuen uns besonders, die neue Tokenhotbar vorzustellen, die die Hotbar in DSA ersetzt. Die Tokenhotbar ermöglicht den Zugriff auf alle wichtigen Funktionen eines Charakters direkt über die Hotbar. Dabei stehen, ähnlich wie in der vorherigen Version der Tokenhotbar, alle möglichen Funktionen zur Verfügung. Dieses neue Verhalten lässt sich aber auch in den Einstellungen der Tokenhotbar deaktivieren.</p>
+<p>Für diejenigen, die die bisherige Tokenhotbar benutzen, wird empfohlen, diese zu deaktivieren. Wir sind gespannt auf euer Feedback und freuen uns darauf.</p>
+<h2>Havena - Unendlichkeit und Tiefernrausch</h2>
+<p>Die Havena Erweiterung &quot;Unendlichkeit und Tiefenrausch&quot;, die sich vornehmlich mit der Gottheit Numinoru und Kreaturen des Meeres beschäftigt, ist nun ebenfalls Teil des Havena RSH Moduls und sollte mit dessen Modulupdate auf 5.3.0 verfügbar sein.</p>
+<h1>Verbesserungen</h1>
+<ul class="dsalist">
+<li>Die Sichtschwellen im Meistermenü haben nun einen Reset Button</li>
+<li>Der Zauber Ecliptifactus funktioniert jetzt ziemlich anständig :)</li>
+<li>Ein beschworenes Flammenschwert kann nun zusätzlich vom Akteur gelöst werden und sich selbständig als Token fortbewegen.</li>
+<li>Aller Zauber mit Zielkategorie Zone sollten nun ein Template für die Größe der Zone inbegriffen haben.</li>
+<li>Heldenbögen ohne Ausrüstungsgegenstände enthalten nun einen Hinweis für Drag &amp; Drop, der es Neulingen helfen sollte sich schneller zurecht zu finden.</li>
+<li>Beim Start eines Prügelkampfs wird nun abgefragt, ob alle Waffen abgelegt werden sollen. Deren Reichweite hat anschließend keinen Einfluss auf die Berechnung der Wurfmodifikatoren. Tipp: Man kann den Schaden als SP anwenden um Rüstungen zu ignorieren. Möglicherweise möchte man den Kampf etwas schneller gestalten so (und nicht nur 1 Prügelpunkt pro Treffer kassieren).</li>
+<li>Die Schriftart Andalus wird nun nicht mehr in der Sidebar in Überschriften verwendet. Dadurch sollte diese etwas leserlicher sein. Sie findet sich nur noch in Journals und ähnlichen Texten.</li>
+<li>Alle Wesenszüge nach Herkunft wurden den Regionalspielhilfen und den Spielhilfen für Orks und Achaz hinzugefügt und auch automatisiert, sofern möglich.</li>
+<li>Alle Prägungen wurden den Regelmodulen und Regionalspielhilfen hinzugefügt und automatisiert sofern möglich.</li>
+<li>Alle Bestiarien und Regionalspielhilfen sollten nun Bestien und Akteure im Journalbrowser aufgeführt haben.</li>
+<li>Alle (Tier)-ruf Liturgien beschwören nun im Kampf automatisch die entsprechende Anzahl an Kreaturen (benötigt das Modul Times-Up)</li>
+<li>Die Bibliothek rendert im Browse Mode/Stöbermodus die Elemente nun nur noch wenn sie im Viewport sind. Das verbessert die Performance enorm.</li>
+<li>Die Bibliothek kann nun Browse Mode/Stöbermodus auch für Akteure (zur Erinnerung, der Browse Mode kann in der Bibliothek aktiviert werden und zeigt Elemente detailliert an zum Stöbern)</li>
+<li>Die Settings für automatische Tokengröße (abhängig von der Großenkategorie) und für die automatische Ressourcenleiste (KaP, AsP) sind in die Prototype Token Konfiguration gewandert (wo sie hingehören)</li>
+<li>Besonderen Dank an Zoidable für die Implementierung von &quot;Talentverbesserung&quot;, &quot;Nervös machen&quot; und &quot;Gegenhalten&quot;</li>
+</ul>
+<h1>Bugfixes</h1>
+<ul>
+<li>Das ein oder andere On-use Macro sollte wieder richtig funktionieren (z.B. Hexenkrallen).</li>
+<li>Ein paar Zaubererweiterungen sollten den Schaden nun richtig modifizieren.</li>
+</ul>

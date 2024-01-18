@@ -44,19 +44,22 @@
                                 </label> {{/each}}
                 
                             </div>
-
+                            {{#if document.system.location.landscape}}
                             <div class="col table-title">
                                 {{localize "PLANT.landscape"}}
                             </div>
                             <div class="col">
                                 {{document.system.location.landscape}}
                             </div>
+                            {{/if}}
+                            {{#if document.system.location.region}}
                             <div class="col table-title">
                                 {{localize "PLANT.region"}}
                             </div>
                             <div class="col">
                                 {{document.system.location.region}}
                             </div>
+                            {{/if}}                            
                             <div class="col table-title">
                                 {{localize "PLANT.search"}}
                             </div>
@@ -81,12 +84,14 @@
                             <div class="col">
                                 {{{enrichedEffect}}}
                             </div>
+                            {{if enrichedRecipes}}
                             <div class="col table-title">
                                 {{localize "PLANT.recipes"}}
                             </div>
                             <div class="col">
                                 {{{enrichedRecipes}}}
                             </div>
+                            {{/if}}                            
                         </div>
 
                 </div>

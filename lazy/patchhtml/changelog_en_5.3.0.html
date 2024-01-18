@@ -1,0 +1,45 @@
+<h1>Important changes</h1>
+<h2>The Seamless Update</h2>
+<p>In this round, we invested significant time in adapting older modules (see below) to the latest developments. This includes numerous minor bug fixes and design improvements in the Journal Browser. Due to the extended waiting time that would be required to update all modules at once, we have decided to introduce this patch gradually. This means that modules will be updated to version 5.3.0 (or 5.3.1 for English content) one by one to avoid hindering overall progress. Additionally, new features may be introduced, which will be announced in a later comprehensive patch.</p>
+<h2>Journal Browser Upgrades</h2>
+<p>Several enhancements have been implemented to make the Journal Browser more user-friendly.</p>
+<ul class="dsalist">
+<li>The search function now highlights searched terms with a yellow background.</li>
+<li>The search function indicates the position of found texts on the current page with a red stripe on the scrollbar.</li>
+<li>The Journal Browser Table of Contents should no longer jump when switching pages.</li>
+<li>The Journal Browser Table of Contents now additionally displays the headings of the current page, similar to regular journals.</li>
+</ul>
+<h2>Divinarium Liturgiae</h2>
+<p>All liturgies and ceremonies have been updated to the latest Divinarium Liturgiae standards. If there were changes in the advancement costs, all professions have been recalculated and adjusted accordingly. Shortly after this update, all modules will be updated to version 5.3.0, incorporating the implemented changes. Numerous minor bug fixes have also been applied to the data of DSA items. The database for spell extensions of liturgies has been updated and now includes all new extensions.</p>
+<p>Given the sheer volume of over 5000 extensions for spells, liturgies, rituals, and ceremonies, implementing their functionality ourselves is not feasible. Collaboration with the TDE/DSA community is crucial. If you feel called to contribute, you can find more information at: https://github.com/Plushtoast/dsa5-extensiondb</p>
+<h2>AP Logging</h2>
+<p>You now have the option to log the use of Adventure Points. The utilized Adventure Points are stored outside the character in a special journal, preventing unnecessary strain on the character's storage space – it can get quite extensive :) . A journal is created in the &quot;Adventure Points History&quot; folder and is regularly updated when Adventure Points are used.</p>
+<p>This feature is disabled by default and can only be activated or deactivated by a Game Master. The corresponding switch can be found in the settings. For characters assigned to players, a corresponding journal is automatically created when Adventure Points change. Players have write permissions on this journal by default, allowing them to independently make advancements without needing a Game Master (though manipulation is still possible). If the journal is set to &quot;Read only,&quot; logging will only occur when a Game Master is online (making manipulation more difficult).</p>
+<h2>Tokenhotbar V3</h2>
+<p>We are particularly excited to introduce the new Tokenhotbar, replacing the hotbar in DSA. The Tokenhotbar allows access to all essential character functions directly through the hotbar. Similar to the previous version of the Tokenhotbar, all possible functions are available. However, this new behavior can also be deactivated in the Tokenhotbar settings.</p>
+<p>For those using the previous Tokenhotbar, it is recommended to deactivate it. We look forward to your feedback.</p>
+<h2>Havena - Infinity and Abyssal Depths</h2>
+<p>The Havena expansion &quot;Infinity and Abyssal Depths,&quot; primarily focusing on the deity Numinoru and creatures of the sea, is now part of the Havena RSH module and should be available with its module update to version 5.3.0.</p>
+<h1>Improvements</h1>
+<ul class="dsalist">
+<li>Sighting thresholds in the Game Master menu now have a reset button.</li>
+<li>The spell Ecliptifactus now functions quite decently.</li>
+<li>A summoned Flame Sword can now be detached by the actor and move independently as a token.</li>
+<li>All spells with a Zone target category should now include a template for the size of the zone.</li>
+<li>Character sheets without equipment now include a Drag &amp; Drop hint to help newcomers navigate more quickly.</li>
+<li>When initiating a brawl, there is now a prompt asking if all weapons should be dropped. Their range subsequently does not affect the calculation of throw modifiers. Tip: Applying damage as SP can be used to ignore armor. This may speed up the fight (not receiving only 1 brawl point per hit).</li>
+<li>The font Andalus is no longer used in headings in the sidebar. This should make it more readable. It is now only used in journals and similar texts.</li>
+<li>All origin traits have been added to regional supplements and supplements for orcs and Achaz and automated where possible.</li>
+<li>All imprints have been added to rule modules and regional supplements and automated where possible.</li>
+<li>All bestiaries and regional supplements should now list creatures and actors in the Journal Browser.</li>
+<li>All (animal)-call liturgies now automatically summon the corresponding number of creatures in combat (requires the Times-Up module).</li>
+<li>The library now renders elements in Browse Mode only when they are in the viewport, significantly improving performance.</li>
+<li>The library can now use Browse Mode for actors as well (to remind, Browse Mode can be activated in the library, displaying elements in detail for browsing).</li>
+<li>The settings for automatic token size (dependent on the size category) and for the automatic resource bar (KaP, AsP) have moved to the Prototype Token configuration (where they belong).</li>
+<li>Special thanks to Zoidable for implementing &quot;Talent Improvement,&quot; &quot;Make Nervous,&quot; and &quot;Counter.&quot;</li>
+</ul>
+<h1>Bugfixes</h1>
+<ul>
+<li>Some on-use macros should now work correctly again (e.g., Witch Claws).</li>
+<li>Some spell extensions should now properly modify damage.</li>
+</ul>

@@ -263,7 +263,7 @@ export default class Actordsa5 extends Actor {
     actor[attr] = isChange;
 
     if(isChange)
-      await actor.addCondition(effect, target, true).then(() => actor[attr] = undefined);
+      await actor.addCondition(effect, target, true, true).then(() => actor[attr] = undefined);
   }
 
   static async postUpdateConditions(actor) {
@@ -2693,7 +2693,7 @@ export default class Actordsa5 extends Actor {
     return { result, cardOptions, options };
   }
 
-  async addCondition(effect, value = 1, absolute = false, auto = true) {
+  async addCondition(effect, value = 1, absolute = false, auto = false) {
     if (effect == "bleeding" || effect.id == "bleeding") return await RuleChaos.bleedingMessage(this);
 
     //V11 actor delta fix for #displayScrollingStatus

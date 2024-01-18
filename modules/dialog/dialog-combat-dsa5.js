@@ -138,7 +138,7 @@ export default class DSA5CombatDialog extends DialogShared {
                     if (modIndex >= 0) {
                         attackStatEffect = situationalModifiers.splice(modIndex, 1).pop()
                     } 
-                    let defenseModifiers = []
+                    const defenseModifiers = []
                     Itemdsa5.getSubClass(item.type).getSituationalModifiers(defenseModifiers, actor, { mode: "parry" }, item)
                     modIndex = defenseModifiers.findIndex(x => x.name == game.i18n.localize("statuseffects"))
                     let defenseStatEffect

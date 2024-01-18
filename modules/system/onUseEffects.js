@@ -21,19 +21,25 @@ export default class OnUseEffect {
             try {
                 args.result = result;
                 const AsyncFunction = Object.getPrototypeOf(async function(){}).constructor
-                //TODO passing multiple scopes here kind of messes things up
-                const fn = new AsyncFunction("args", "actor", "item",
-                `
-                const that = this;
-                ${documents[0].command.replace(/( |\(|{)this\./g, " that.")}
-                `)
+                const fn = new AsyncFunction("args", "actor", "item", documents[0].command)
                 result.ret = await fn.call(this, args, this.item.actor, this.item)
             } catch (err) {
-                ui.notifications.error(
-                    `There was an error in your macro syntax. See the console (F12) for details`
-                );
-                console.error(err);
-                result.error = true;
+                //Todo passing multiple scopes kind of fails
+                try {
+                    const fn2 = new AsyncFunction("args", "actor", "item",
+                    `
+                    const that = this;
+                    ${documents[0].command.replace(/( |\(|{)this\./g, " that.")}
+                    `)
+                    result.ret = await fn2.call(this, args, this.item.actor)
+                }
+                catch (err) {
+                    ui.notifications.error(
+                        `There was an error in your macro syntax. See the console (F12) for details`
+                    );
+                    console.error(err);
+                    result.error = true;
+                }
             }
         } else {
             ui.notifications.error(game.i18n.format("DSAError.macroNotFound", { name }));

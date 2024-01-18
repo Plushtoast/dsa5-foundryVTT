@@ -7,6 +7,8 @@
     "Attribute-hard": "Very Difficult (-4)",
     "Attribute-vhard": "Extremely Difficult (-6)",
     "char": "Attribute",
+    "leftClick": "Left-<i class=\"fas fa-computer-mouse\"></i>",
+    "rightClick": "Right-<i class=\"fas fa-computer-mouse\"></i>",
     "CHAR": {
         "MU": "Courage",
         "KL": "Sagacity",
@@ -18,6 +20,7 @@
         "KK": "Strength",
         "ATTACK": "Attack",
         "PARRY": "Parry",
+        "GE/KK": "Agility / Strength",
         "GEKK": "Agility / Strength",
         "DAMAGE": "Damage",
         "DODGE": "Dodge",
@@ -191,6 +194,7 @@
         "buy": "Buy",
         "sell": "Sell",
         "exchange": "Exchange",
+        "exchangeWithTarget": "Exchange with marked target",
         "splitItem": "Split {name}",
         "commerce": "Trade",
         "hidePlayer": "Hide for player",
@@ -558,7 +562,7 @@
     "Spent": "Spent",
     "skModifier": "Spirit (Target)",
     "step": "Step",
-    "stepValue": "Step",
+    "stepValue": "Level",
     "status": "State",
     "stone": "Stone",
     "selfDamage": "injured self, Damage: ",
@@ -914,6 +918,7 @@
         "SplitItem": "Split",
         "DuplicateItem": "Duplicate",
         "EquipItem": "Equip",
+        "UnEquipItem": "Unequip",
         "Dropdown": "Details",
         "increaseFontSize": "Increase/Decrease font size",
         "DeleteItem": "Delete",
@@ -1066,7 +1071,8 @@
         "tokenhotbarMod": "Modifier/Value",
         "tokenhotbarMoney": "Left-<i class=\"fas fa-computer-mouse\"></i>: pay<br>Right-<i class=\"fas fa-computer-mouse\"></i>: get paid",
         "tokenhotbarSkill": "Left-<i class=\"fas fa-computer-mouse\"></i>: request roll<br>Right-<i class=\"fas fa-computer-mouse\"></i>: request group check<br>Ctrl + <i class=\"fas fa-computer-mouse\"></i>: 3d20 check",
-        "effectVariant": "Alternative effect like e.g. a second or third attack"
+        "effectVariant": "Alternative effect like e.g. a second or third attack",
+        "skillgm": "{name}<br>Left-<i class=\"fas fa-computer-mouse\"></i>: Request roll<br>Right-<i class=\"fas fa-computer-mouse\"></i>: Request group check<br>CTRL + <i class=\"fas fa-computer-mouse\"></i>: 3W20 Probe"
     },
     "HELP": {
         "showHelp": "Show help",
@@ -1584,6 +1590,8 @@
         "gear": "Update icons, effects and effectformula of all gear, weapons and armors. THIS WILL OVERRIDE MANUAL MODIFICATIONS!"
     },
     "DSASETTINGS": {
+        "hotbarv3": "DSA Hotbar Conversion",
+        "hotbarv3Hint": "The hotbar is completely replaced by a TDE variant. Abilities and other elements are directly dependent on the selected token. (Recommendation: Deactivate the token hotbar additionally)",        
         "enableMasterTokenFunctions": "Enable Master Token Functions",
         "enableMasterTokenFunctionsHint": "Chose the game muster functions you want to be shown in the token hotbar",
         "meleeBotchTableEnabled": "Close Combat-Botch Table",

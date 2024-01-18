@@ -78,7 +78,7 @@ export function setEnrichers() {
             }
         },
         {
-            pattern: /@EmbedItem\[[a-zA-ZöüäÖÜÄ&ë;'\(\)„“:, -\.0-9›‹âïß\/]+\]({[a-zA-Z=]+})?/g,
+            pattern: /@EmbedItem\[[a-zA-ZöüäÖÜÄ&ë;'\(\)„“:,’ -\.0-9›‹âïßôñé\/]+\]({[a-zA-Z=]+})?/g,
             enricher: async(match, options) => {
                 let uuid = match[0].match(/(?:\[)(.*?)(?=\])/)[0].slice(1)
                 let document = await fromUuid(uuid)
