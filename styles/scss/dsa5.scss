@@ -4240,14 +4240,11 @@
       }
     }
     .updateDarkness{
-      writing-mode: bt-lr;
-      -webkit-appearance: slider-vertical;
-      appearance: slider-vertical;
       width: 50px;
       height: 100%;
       transform: rotate(-90deg);
       margin-top: 15px;
-      margin-left: -15px;
+      margin-left: -16px;
     }
     .longLayout {
       .skillItems {
