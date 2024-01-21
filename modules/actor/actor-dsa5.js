@@ -729,8 +729,9 @@ export default class Actordsa5 extends Actor {
         result.push(
           ...this.system.skillModifiers[sourceType][k].map((f) => {
             return {
-              name: f.source,
+              name: f.target || f.source,
               value: f.value,
+              source: f.source,
               type,
             };
           })

@@ -963,6 +963,7 @@ class SpellItemDSA5 extends Itemdsa5 {
             return {
                 name: f.target,
                 value: f.value,
+                source: f.source,
                 type: cost
             }
         }))

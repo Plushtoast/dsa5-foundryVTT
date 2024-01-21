@@ -82,17 +82,20 @@ export default class DSA5Hotbar extends Hotbar {
             })
             const that = this
             const fn = function(ev) {
+                if(!html.find('.sections').is(':hover')) return
+
                 that.filterSections(ev, html)
                 return false
             }
-            html.find('.sections').hover(function() {
-                $(document).off("keydown.sectionFilter", fn).on("keydown.sectionFilter", fn)
-            }, function() {
+            const filterOff = function() {
                 $(document).off("keydown.sectionFilter", fn)
                 that.searching = ""
                 html.find('.macro,.primary').removeClass('dsahidden')
                 html.find('.longLayout').removeClass('longLayout')
-            })
+            }
+            html.find('.sections').hover(function() {
+                $(document).off("keydown.sectionFilter", fn).on("keydown.sectionFilter", fn)
+            }, filterOff)
 
             html.find('.primary').hover(ev => this._betterTooltip(ev))
 
@@ -172,12 +175,13 @@ export default class DSA5Hotbar extends Hotbar {
 
     filterSections(ev, html) {
         this.searching = this.searching || ""
+        console.log(ev.key)
         switch(ev.which){
             case 8:
                 this.searching = this.searching.slice(0, -1)
                 break
             default:
-                if(!ev.key.match(/[a-zA-Z0-9öäüÖÄÜ]/)) return
+                if(!ev.key.match(/^[a-zA-Z0-9öäüÖÄÜ]$/)) return
                 
                 this.searching += ev.key
         }
@@ -349,7 +353,7 @@ export default class DSA5Hotbar extends Hotbar {
             },
             darkness: canvas?.scene?.darkness || 0,
             hotBarcssClass: "hotbarV3",
-            barWidth: `${522}px`,
+            barWidth: `${527}px`,
             baseBarHeight: `${baseBarHeight}px`,
             barHeight: `${(baseBarHeight+7) * rows + 30}px`,
             filterCategories,

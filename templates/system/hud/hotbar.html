@@ -1,4 +1,4 @@
-<div id="hotbar" class="flexrow {{hotBarcssClass}} {{#if locked}}locked{{/if}}" style="--hotbar-width:{{barWidth}};--hotbar-height:{{barHeight}};--base-bar-height:{{baseBarHeight}}" data-tooltip-direction="UP">
+<div id="hotbar" class="flexrow {{hotBarcssClass}} {{#if locked}}locked{{/if}}" style="--hotbar-height:{{barHeight}};--base-bar-height:{{baseBarHeight}}" data-tooltip-direction="UP">
     
     <div class="flexrow">
         <div id="hotbar-directory-controls" class="bar-controls flexcol">
@@ -27,20 +27,20 @@
                     <div class="categoryFilter flexAlignCenter {{#if (hasElem selectedCategories 'macro')}}active{{/if}}" data-filter="macro" data-tooltip="Macro">
                         <i class="fas fa-code"></i>
                     </div>
-                </div>
-                <ul class="flexrow actorEffects" >
-                    {{#each token.effects as |item|}}
-                    <li class="{{item.cssClass}} primary actorEffect" data-category="{{item.cssClass}}" data-id="{{item.id}}" data-tooltip="{{item.name}}" data-name="{{item.name}}" data-subfunction="{{item.subfunction}}">
-                        <div class="{{item.iconClass}}" style="background-image:url('{{item.icon}}')">{{item.indicator}}</div>
-                    </li>
-                    {{/each}}
-                </ul>
+                    <ul class="flexrow actorEffects" >
+                        {{#each token.effects as |item|}}
+                        <li class="{{item.cssClass}} primary actorEffect" data-category="{{item.cssClass}}" data-id="{{item.id}}" data-tooltip="{{item.name}}" data-name="{{item.name}}" data-subfunction="{{item.subfunction}}">
+                            <div class="{{item.iconClass}}" style="background-image:url('{{item.icon}}')">{{item.indicator}}</div>
+                        </li>
+                        {{/each}}
+                    </ul>
+                </div>               
             </div>
             
             <div class="flexrow">
                 <div class="sections flexrow">
                     {{#if token.groups.attacks}}
-                    <ul class="wrap skillItems {{#if (hasElem activeFilters 'attacks')}}collapsed{{/if}}" data-category="attacks">
+                    <ul class="wrap skillItems thinscroll {{#if (hasElem activeFilters 'attacks')}}collapsed{{/if}}" data-category="attacks">
                         {{#each token.groups.attacks as |item i|}}
                         <li class="{{item.cssClass}} primary" data-category="{{item.cssClass}}" data-id="{{item.id}}" data-tooltip="{{item.name}}" data-name="{{item.name}}" data-subfunction="{{item.subfunction}}">
                             <div class="{{item.iconClass}}" style="background-image:url('{{item.icon}}')">{{item.abbrev}}</div>
@@ -51,7 +51,7 @@
                     {{/if}}
                     {{#each token.groups.skills as |skills|}}
                     {{#if skills}}
-                    <ul class="wrap skillItems {{#if (hasElem ../activeFilters @key)}}collapsed{{/if}}" data-category="{{@key}}">
+                    <ul class="wrap skillItems thinscroll {{#if (hasElem ../activeFilters @key)}}collapsed{{/if}}" data-category="{{@key}}">
                         {{#each skills as |item i|}}
                         <li class="{{item.cssClass}} {{item.addClass}} primary" data-category="{{item.cssClass}}" data-id="{{item.id}}" data-tooltip="{{item.name}}" data-name="{{item.name}}" data-subfunction="{{item.subfunction}}" data-tw="{{item.tw}}">
                             <div class="{{item.iconClass}}" style="background-image:url('{{item.icon}}')">{{item.abbrev}}</div>
@@ -66,7 +66,7 @@
                     </ul>
                     {{/if}}
                     {{/each}}
-                    <ul id="macro-list" class="wrap skillItems {{#if (hasElem activeFilters 'macro')}}collapsed{{/if}}" data-category="macro" data-page="{{page}}">
+                    <ul id="macro-list" class="thinscroll wrap skillItems {{#if (hasElem activeFilters 'macro')}}collapsed{{/if}}" data-category="macro" data-page="{{page}}">
                         {{#each macros}}
                         <li class="primary macro {{this.cssClass}}" data-slot="{{this.slot}}" role="button"
                         {{#if this.macro}}

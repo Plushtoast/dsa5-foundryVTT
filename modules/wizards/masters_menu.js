@@ -310,7 +310,7 @@ class GameMasterMenu extends Application {
         const index = actors.indexOf(toRemove)
         if (index > -1) {
             actors.splice(index, 1)
-            await game.settings.set("dsa5", "trackedActors", { actors })
+            await this.setTrackedHeros(actors)
             this.render(true)
         }
     }
@@ -320,7 +320,11 @@ class GameMasterMenu extends Application {
         for (let elem of target.querySelectorAll(".hero")) {
             actors.push(elem.dataset.id)
         }
-        await game.settings.set("dsa5", "trackedActors", { actors })
+        await this.setTrackedHeros(actors)
+    }
+
+    async setTrackedHeros(actorIds) {
+        await game.settings.set("dsa5", "trackedActors", { actors: actorIds.filter(x => game.actors.has(x)) })
     }
 
     async updateDarkness(ev) {
@@ -555,7 +559,7 @@ class GameMasterMenu extends Application {
             tracked = tracked.actors || []
             if (tracked.indexOf(data.id) == -1 && !data.pack) {
                 tracked.push(data.id)
-                await game.settings.set("dsa5", "trackedActors", { actors: tracked })
+                await this.setTrackedHeros(tracked)
                 this.render(true)
             }
             const isFolder = $(event.target).closest('.isFolder')
@@ -584,7 +588,7 @@ class GameMasterMenu extends Application {
         let ids = []
         const selected = this.getSelectedActors()
         for (const [key, value] of Object.entries(selected)) {
-            if (value) ids.push(key)
+            if (value && game.actors.has(key)) ids.push(key)
         }
         if(!ids.length) return game.settings.get("dsa5", "trackedActors").actors || []
         return ids
@@ -686,7 +690,7 @@ class GameMasterMenu extends Application {
             heros = game.actors.filter(x => trackedActors.actors.includes(x.id)).sort((a, b) => { return trackedActors.actors.indexOf(a.id) - trackedActors.actors.indexOf(b.id) })
         } else {
             heros = game.actors.filter(x => x.hasPlayerOwner)
-            await game.settings.set("dsa5", "trackedActors", { actors: heros.map(x => x.id) })
+            await this.setTrackedHeros(heros.map(x => x.id))
         }
         return heros
     }

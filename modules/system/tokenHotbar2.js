@@ -665,12 +665,12 @@ export default class TokenHotbar2 extends Application {
     }
 
     filterButtons(ev){
-        switch(ev.which){
+        switch(ev.which) {
             case 8:
                 this.searching = this.searching.slice(0, -1)
                 break
             default:
-                if(!ev.key.match(/[a-zA-Z0-9öäüÖÄÜ]/)) return
+                if(!ev.key.match(/^[a-zA-Z0-9öäüÖÄÜ]$/)) return
 
                 this.searching += ev.key
         }
