@@ -30,7 +30,7 @@ export default class ActorSheetdsa5Creature extends ActorSheetDsa5 {
             case "trait":
                 const xpCost = item.system.APValue.value * -1
                 await this._updateAPs(xpCost, {}, { render: false })
-                await APTracker.track(actor, { type: "item", item, state: -1 }, xpCost)
+                await APTracker.track(this.actor, { type: "item", item, state: -1 }, xpCost)
                 break;
         }
         await super._cleverDeleteItem(itemId)
@@ -42,7 +42,7 @@ export default class ActorSheetdsa5Creature extends ActorSheetDsa5 {
             await this._updateAPs(item.system.APValue.value, {}, { render: false })
             await TraitRulesDSA5.traitAdded(this.actor, item)
             const createdItem = (await this.actor.createEmbeddedDocuments("Item", [item]))[0]
-            await APTracker.track(actor, { type: "item", item: createdItem, state: 1 }, item.system.APValue.value)
+            await APTracker.track(this.actor, { type: "item", item: createdItem, state: 1 }, item.system.APValue.value)
         }
     }
 
