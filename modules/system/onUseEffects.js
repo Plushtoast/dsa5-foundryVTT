@@ -89,9 +89,7 @@ export default class OnUseEffect {
             flags: {
                 dsa5: {
                     value: null,
-                    editable: true,
-                    description: name,
-                    custom: true,
+                    description: name
                 },
             },
         };

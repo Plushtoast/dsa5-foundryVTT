@@ -74,6 +74,7 @@ export default class DSA5Hotbar extends Hotbar {
             html.find('.quantity-click').mousedown(ev => RuleChaos.quantityClick(ev))
             html.on('mousedown', 'li.primary', async(ev) => {
                 ev.stopPropagation()
+                game.tooltip.deactivate()
                 await this.tokenHotbar.executeQuickButton(ev)
                 return false
             })
@@ -107,11 +108,15 @@ export default class DSA5Hotbar extends Hotbar {
         const target = ev.currentTarget
         const data = target.dataset
 
+        if ( "tooltipClass" in target.dataset ) return;
+
         let tooltip
         let item
         let description
 
-        switch(data.category) {
+        const category = data.category.split(" ")[0]
+
+        switch(category) {
             case "skillgm": 
                 tooltip = game.i18n.format("TT.skillgm", { name: data.name })
                 break
@@ -145,7 +150,7 @@ export default class DSA5Hotbar extends Hotbar {
                 
                 break
             default:
-                tooltip = game.i18n.localize(data.tooltip)
+                return
         }
 
         if(description) {
@@ -154,7 +159,9 @@ export default class DSA5Hotbar extends Hotbar {
 
         if(!tooltip) return
 
-        game.tooltip.activate(target, { text: tooltip })
+        $('#tooltip').addClass("dsatooltip").html(tooltip)
+        target.dataset.tooltip = tooltip
+        target.dataset.tooltipClass = "dsatooltip";
     }
 
     filterCategory(ev, html) {
@@ -175,7 +182,6 @@ export default class DSA5Hotbar extends Hotbar {
 
     filterSections(ev, html) {
         this.searching = this.searching || ""
-        console.log(ev.key)
         switch(ev.which){
             case 8:
                 this.searching = this.searching.slice(0, -1)
@@ -224,10 +230,10 @@ export default class DSA5Hotbar extends Hotbar {
         let effects = []
         let gmMode = false
         let activeFilters = []
-        if(this.token) {
-            const actor = this.token.actor
-            activeFilters = (this.activeFilters || []).filter(x => x != "gm")
-            if(actor) {
+        const actor = this.token?.actor
+        if(actor) {
+            if(!["epic", "loot"].includes(getProperty(actor, "system.merchant.merchantType"))) {
+                activeFilters = (this.activeFilters || []).filter(x => x != "gm")
                 const combatskills = actor.items.filter(x => x.type == "combatskill").map(x => Actordsa5._calculateCombatSkillValues(x.toObject(), actor.system))
                 effects = await this.tokenHotbar._effectEntries(actor)  
                 const brawl = this.tokenHotbar._brawlEntry(combatskills)
@@ -314,6 +320,9 @@ export default class DSA5Hotbar extends Hotbar {
                 img: Itemdsa5.defaultImages[key] || fallbacks[key]
             })
         }
+
+        const orderGroups = ["body", "social", "nature", "knowledge", "trade"]
+        groups.skills.skill?.sort((a, b) => { return (orderGroups.indexOf(a.addClass) - orderGroups.indexOf(b.addClass)) || a.name.localeCompare(b.name) }) 
 
         if(groups.attacks.length > 0) {
             groups.attacks.sort((a, b) => { return (b.cssClass || "").localeCompare(a.cssClass || "") || a.name.localeCompare(b.name) })

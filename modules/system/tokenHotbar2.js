@@ -601,7 +601,7 @@ export default class TokenHotbar2 extends Application {
     _functionEntries() {
         const trade = game.i18n.localize('MERCHANT.exchangeWithTarget')
         return [
-                { name: trade, id: "trade", cssClass: "function", abbrev: trade[0], iconClass: "fas fa-coins", subfunction: "trade" }
+                { name: trade, id: "trade", cssClass: "function", abbrev: trade[0], iconClass: "coinIcon", subfunction: "trade" }
         ]
     }
 
@@ -647,13 +647,13 @@ export default class TokenHotbar2 extends Application {
 
     _traitEntry(x) {
         const preparedItem = Actordsa5._parseDmg(x.toObject())
-        return { name: x.name, id: x.id, icon: x.img, cssClass: "weapon", abbrev: x.name[0], attack: x.system.at.value, damage: preparedItem.damagedie, dadd: preparedItem.damageAdd}
+        return { name: x.name, id: x.id, icon: x.img, cssClass: `weapon i${x.id}`, abbrev: x.name[0], attack: x.system.at.value, damage: preparedItem.damagedie, dadd: preparedItem.damageAdd}
     }
 
     _combatEntry(x, combatskills, actor, options = []) {
         const preparedItem = x.type == "meleeweapon" ? Actordsa5._prepareMeleeWeapon(x.toObject(), combatskills, actor) : Actordsa5._prepareRangeWeapon(x.toObject(), [], combatskills, actor)
 
-        return { name: x.name, id: x.id, icon: x.img, cssClass: "weapon", abbrev: x.name[0], attack: preparedItem.attack, damage: preparedItem.damagedie, dadd: preparedItem.damageAdd, ...options }
+        return { name: x.name, id: x.id, icon: x.img, cssClass: `weapon i${x.id}`, abbrev: x.name[0], attack: preparedItem.attack, damage: preparedItem.damagedie, dadd: preparedItem.damageAdd, ...options }
     }
 
     async _effectEntries(actor, options = {}) {

@@ -467,6 +467,7 @@ DSA5.traditionArtifacts = {
     "Druidendolch": 15,
     "Druidensichel": 12,
     "Zauberkleidung": 15,
+    "Goblinkeule": 15,
     "Magierkugel": 12,
     "Zauberinstrument": 15,
     "Narrenkappe": 15,

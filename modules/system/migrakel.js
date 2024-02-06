@@ -181,6 +181,8 @@ export default class Migrakel {
                     "advantage",
                     "disadvantage",
                     "trait",
+                    "essence",
+                    "imprint"
                 ].includes(x.type);
             };
             await this.updateVals(actor, condition, updator);

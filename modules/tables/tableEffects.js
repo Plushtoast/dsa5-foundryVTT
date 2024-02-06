@@ -109,16 +109,15 @@ export default class TableEffects{
                 finalTargets = newTargets
             else {
                 hasTargets = false
-                ui.notifications.warn("DSAError.noVictim")
+                ui.notifications.warn(game.i18n.localize("DSAError.noVictim"))
             }
         }
         return { hasTargets, finalTargets}
     }
 
     static async malus(args, mode, targets, source){
-        const { hasTargets, finalTargets} = this.evaluateTargetArg(args, targets)
-
         for(let malus of args){
+            const { hasTargets, finalTargets} = this.evaluateTargetArg(malus, targets)
             const alternateEffect = !hasTargets && malus.noTarget
             const systemEffect = alternateEffect ? malus.noTarget.systemEffect : malus.systemEffect
             const systemEffectLevel = (alternateEffect ? malus.noTarget.level : malus.level || 1)
@@ -128,8 +127,9 @@ export default class TableEffects{
 
             if(systemEffect){
                 const baseEffect = CONFIG.statusEffects.find(x => x.id == systemEffect)
+
                 if(!changes){
-                    changes = duplicate(baseEffect.changes)
+                    changes = duplicate(baseEffect.changes || [])
                     const baseChange = changes.find(x => x.key == `system.condition.${systemEffect}`)
                     if(baseChange) {
                         baseChange.value = systemEffectLevel

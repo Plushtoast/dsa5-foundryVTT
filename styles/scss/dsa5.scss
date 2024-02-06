@@ -4090,14 +4090,23 @@
 
   }
 
+  #tooltip.dsatooltip {
+    padding: 1px;
+    background: #000;
+  }
   .itemTooltip {
     max-height:500px;
+    border: none;
+    .groupbox {
+      border: none;
+    }
     p {
       text-overflow: ellipsis;
       overflow:hidden;
     }
     text-overflow: ellipsis;
     overflow: hidden;
+    font-size: 14px;
     h1 {
       border: none;
       font-size: 22px;
@@ -4105,7 +4114,17 @@
     }
     .col {
       flex: 50%;
+      max-width: 50%;     
     }
+    .table-title .col{
+      flex: 100%;
+      max-width: 100%;
+
+      &:nth-child(2){
+        display: none;
+      }
+    }
+    
     .show-item {
       display: none;
     }
@@ -4386,6 +4405,22 @@
     #hotbar.hotbarV3 {
         height: var(--hotbar-height);
     }
+}
+
+.coinIcon:before {
+  content: '';
+  mask-size: 100%;
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+  mask-position: center;
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  mask-image: url("../../../../icons/svg/coins.svg");
+  -webkit-mask-image: url("../../../../icons/svg/coins.svg");
+  background-color: white;
 }
 
   @import "./immersive.scss";

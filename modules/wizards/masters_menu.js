@@ -565,7 +565,6 @@ class GameMasterMenu extends Application {
             const isFolder = $(event.target).closest('.isFolder')
             const settings = expandObject(game.settings.get("dsa5", "masterSettings"))
             if(isFolder.length){
-
                 settings.folders = settings.folders.map(x => {
                     x.content = x.content.filter(y => y != data.id)
 
@@ -574,10 +573,10 @@ class GameMasterMenu extends Application {
                 })
 
             } else {
-                settings.folders = settings.folders.map(x => {
+                settings.folders = settings.folders?.map(x => {
                     x.content = x.content.filter(y => y != data.id)
                     return x
-                })
+                }) || []
             }
             await game.settings.set("dsa5", "masterSettings", settings)
             this.render(true)
