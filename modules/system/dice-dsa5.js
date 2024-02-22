@@ -203,6 +203,28 @@ export default class DiceDSA5 {
         return 0
     }
 
+    static async getDuplicatusRoll(res, testData) {
+        const duplicatusEffect = testData.situationalModifiers.find((x) => x.name.includes("Duplicatus") && x.value > 0 && x.value < 5)
+        if (duplicatusEffect) {
+            const duplicatusRollTarget = Math.round((1 / (duplicatusEffect.value + 1)) * 20)
+            const duplicatusRoll = await DiceDSA5.manualRolls(
+                await new Roll("1d20").evaluate({ async: true })
+            )
+            this._addRollDiceSoNice(
+                testData,
+                duplicatusRoll,
+                game.dsa5.apps.DiceSoNiceCustomization.getAttributeConfiguration("ch")
+            )
+            const hit = duplicatusRollTarget >= duplicatusRoll._total
+            const html = `<div class="card-content"><b>Duplicatus-${game.i18n.localize("Roll")}</b>: <span data-tooltip="${game.i18n.localize("Roll")} vs ${duplicatusRollTarget}" class="die-ch d20">${duplicatusRoll._total}</span></div`
+            res.other = [html]
+            if (!hit && res.successLevel > 0) {
+                res.description = `${game.i18n.localize("Failure")}, ${game.i18n.localize("CHATNOTIFICATION.duplicatus")}`
+                res.successLevel = 0
+            }
+        }
+    }
+
     static async _rollConfirm() {
         return await (new Roll("1d20").evaluate({ async: true }))
     }
@@ -603,6 +625,8 @@ export default class DiceDSA5 {
             this._situationalMultipliers(testData)
         )
 
+        this.getDuplicatusRoll(result, testData)
+
         let success = result.successLevel > 0
 
         await this.detailedWeaponResult(result, testData, source)
@@ -770,6 +794,8 @@ export default class DiceDSA5 {
             combatskill,
             this._situationalMultipliers(testData)
         )
+
+        await this.getDuplicatusRoll(result, testData)
 
         await this.detailedWeaponResult(result, testData, source)
 
@@ -1068,6 +1094,8 @@ export default class DiceDSA5 {
         }
 
         await this.calculateEnergyCost(isClerical, res, testData)
+
+        await this.getDuplicatusRoll(res, testData)
 
         for(const creature of ["minorFairies", "minorSpirits"]){
             const name = game.i18n.localize("CONDITION." + creature)
