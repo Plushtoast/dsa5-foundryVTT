@@ -1,5 +1,5 @@
 <div>
-    <h2>{{document.name}}</h2>
+    <h3>{{document.name}}</h3>
     <div class="row-section">
         {{#unless skipHeader}}
         <div class="col sixty">
@@ -20,14 +20,14 @@
                     <img src="{{document.img}}" style="width:100%;border:none;" >
                 </div>
                 <div class="col compendium">
-                    {{item.pack}}
+                    <small>{{item.pack}}</small>
                 </div>  
             </div>
             <div class="col ten"></div>
             <div class="row-section col sixty">
                 <div class="col groupbox">
                         <div class="row-section wrap">
-                            <div class="col table-title row-section">
+                            <div class="col table-title noBorder row-section">
                                 <div class="col ninety">
                                     {{localize "ammunitiongroup"}}
                                 </div>
@@ -40,21 +40,21 @@
                             </div>
                 
                             {{#if (eq document.system.ammunitiongroup.value 'mag')}}
-                            <div class="col table-title">
+                            <div class="col table-title noBorder">
                                 {{localize "mag"}}
                             </div>
                             <div class="col">
                                 {{document.system.mag.value}} / {{document.system.mag.max}}
                             </div>
                             {{/if}}
-                            <div class="col table-title">
+                            <div class="col table-title noBorder">
                                 {{localize "atmod"}}
                             </div>
                             <div class="col">
                                 {{localize document.system.atmod}}
                             </div>
                             {{#if document.system.damageMod}}
-                            <div class="col table-title">
+                            <div class="col table-title noBorder">
                                 {{localize "MODS.damage"}}
                             </div>
                             <div class="col">
@@ -62,7 +62,7 @@
                             </div>
                             {{/if}}
                             {{#if document.system.damageMod}}
-                            <div class="col table-title">
+                            <div class="col table-title noBorder">
                                 {{localize "MODS.range"}}
                             </div>
                             <div class="col">
@@ -70,7 +70,7 @@
                             </div>
                             {{/if}}
                             {{#if document.system.armorMod}}
-                            <div class="col table-title">
+                            <div class="col table-title noBorder">
                                 {{localize "MODS.armor"}}
                             </div>
                             
@@ -79,7 +79,7 @@
                             </div>
                             {{/if}}
                             {{#if document.system.effect.attributes}}
-                            <div class="col table-title">
+                            <div class="col table-title noBorder">
                                 {{localize "domains"}}
                             </div>
                             <div class="col">

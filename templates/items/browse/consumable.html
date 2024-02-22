@@ -1,5 +1,5 @@
 <div>
-    <h2>{{document.name}}</h2>
+    <h3>{{document.name}}</h3>
     <div class="row-section">
         {{#unless skipHeader}}
         <div class="col sixty">
@@ -9,7 +9,7 @@
                 {{{enrichedGmdescription}}}
             </div>
             {{/if  }}
-            <div class="col table-title">
+            <div class="col table-title noBorder">
                 {{localize "qualitySteps"}}
             </div>
             <div class="col">
@@ -25,14 +25,14 @@
                     <img src="{{document.img}}" style="width:100%;border:none;" >
                 </div>
                 <div class="col compendium">
-                    {{item.pack}}
+                    <small>{{item.pack}}</small>
                 </div>  
             </div>
             <div class="col ten"></div>
             <div class="row-section col sixty">
                 <div class="col groupbox">
                         <div class="row-section wrap">
-                            <div class="col table-title row-section">
+                            <div class="col table-title noBorder row-section">
                                 <div class="col ninety">
                                     {{localize "Category"}}
                                 </div>
@@ -45,39 +45,39 @@
                             </div>                        
                             
                             {{#unless document.parent}}
-                            <div class="col table-title">
+                            <div class="col table-title noBorder">
                                 {{localize "priceEachQL"}}
                             </div>
                             <div class="col">
                                 {{document.system.price.value}}
                             </div>
                             
-                            <div class="col table-title">
+                            <div class="col table-title noBorder">
                                 {{localize "Difficulty"}}
                             </div>
                             <div class="col">
                                 {{document.system.difficulty}}
                             </div>
-                            <div class="col table-title">
+                            <div class="col table-title noBorder">
                                 {{localize "PLANT.ingredients"}}
                             </div>
                             <div class="col">
                                 {{{enrichedIngredients}}}
                             </div>
-                            <div class="col table-title">
+                            <div class="col table-title noBorder">
                                 {{localize "Equipment.tools"}}
                             </div>
                             <div class="col">
                                 {{{document.system.tools}}}
                             </div>
                             {{else}}
-                            <div class="col table-title">
+                            <div class="col table-title noBorder">
                                 {{localize "qualityStep"}}
                             </div>
                             <div class="col">
                                 {{{document.system.QL}}}
                             </div>
-                            <div class="col table-title">
+                            <div class="col table-title noBorder">
                                 {{localize "effect"}}
                             </div>
                             <div class="col">

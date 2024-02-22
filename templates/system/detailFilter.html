@@ -15,7 +15,7 @@
     {{else if (eq field.type 'text')}}
     <div class="form-group">
         <label class="label-text">{{localize field.label}}</label>
-        <input class="input-text" type="text" name="{{field.attr}}" value="" data-dtype="String" />
+        <input class="input-text" type="text" name="{{field.attr}}" placeholder="{{localize field.placeholder}}" value="" data-dtype="String" />
     </div>
     {{else if (eq field.type 'checkbox')}}
     <div class="form-group cbParent row-section">

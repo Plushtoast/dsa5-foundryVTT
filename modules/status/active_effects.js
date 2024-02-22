@@ -229,7 +229,7 @@ export default class DSAActiveEffectConfig extends ActiveEffectConfig {
                     const mod = `${skills.pop()}`;
                     resistRolls.push({
                         skill: skills.join(" "),
-                        mod: Math.round(Roll.safeEval(`${mod}`.replace(/q(l|s)/i, qs).replace("step", specStep))) || 0,
+                        mod: Math.round(Roll.safeEval(`${mod}`.replace(/q(l|s)/i, qs).replaceAll("step", specStep))) || 0,
                         effect: ef,
                         target: actor,
                         token: actor.token ? actor.token.id : undefined

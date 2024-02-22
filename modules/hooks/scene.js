@@ -2,8 +2,32 @@ export default function() {
     Hooks.on('preCreateScene', function(doc, createData, options, userId) {
         if (!createData.grid?.units) doc.updateSource({ grid: { units: game.i18n.localize('gridUnits') }})
 
+        if(!createData.backgroundColor) {
+            doc.updateSource({ backgroundColor: "#000000" })
+        }
+
         if(!options.dsaInit && createData.notes?.some(x => getProperty(x, "flags.dsa5.initName"))){
-            ui.notifications.warn(game.i18n.localize('DSAError.mapsViaJournalbrowser'))
+            new Dialog({
+                title: game.i18n.localize("DIALOG.warning"),
+                content: `<p>${createData.name}</p><p>${game.i18n.localize('DSAError.mapsViaJournalbrowser')}</p>`,
+                default: "yes",
+                buttons: {
+                  Yes: {
+                    icon: '<i class="fa fa-check"></i>',
+                    label: game.i18n.localize("yes"),
+                    callback: () => {
+                        const newOptions = options || {}
+                        options.dsaInit = true
+                        Scene.create(createData, newOptions)
+                    },
+                  },
+                  cancel: {
+                    icon: '<i class="fas fa-times"></i>',
+                    label: game.i18n.localize("cancel")
+                  },
+                },
+              }).render(true)
+            return false
         }
     })
 

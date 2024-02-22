@@ -20,14 +20,14 @@
                     <img src="{{document.img}}" style="width:100%;border:none;" >
                 </div>
                 <div class="col compendium">
-                    {{item.pack}}
+                    <small>{{item.pack}}</small>
                 </div>  
             </div>
             <div class="col ten"></div>
             <div class="row-section col sixty">
                 <div class="col groupbox">
                         <div class="row-section wrap">
-                            <div class="col table-title row-section">
+                            <div class="col table-title noBorder row-section">
                                 <div class="col ninety">
                                     
                                 </div>
@@ -45,7 +45,7 @@
                 
                             </div>
                             {{#if document.system.location.landscape}}
-                            <div class="col table-title">
+                            <div class="col table-title noBorder">
                                 {{localize "PLANT.landscape"}}
                             </div>
                             <div class="col">
@@ -53,39 +53,39 @@
                             </div>
                             {{/if}}
                             {{#if document.system.location.region}}
-                            <div class="col table-title">
+                            <div class="col table-title noBorder">
                                 {{localize "PLANT.region"}}
                             </div>
                             <div class="col">
                                 {{document.system.location.region}}
                             </div>
                             {{/if}}                            
-                            <div class="col table-title">
+                            <div class="col table-title noBorder">
                                 {{localize "PLANT.search"}}
                             </div>
                             <div class="col">
                                 {{document.system.difficulty.search}}
                             </div>
-                            <div class="col table-title">
+                            <div class="col table-title noBorder">
                                 {{localize "PLANT.identify"}}
                             </div>
                             <div class="col">
                                 {{document.system.difficulty.identify}}
                             </div>
-                            <div class="col table-title">
+                            <div class="col table-title noBorder">
                                 {{localize "PLANT.usages"}}
                             </div>
                             <div class="col">
                                 {{document.system.usages}}
                             </div>
-                            <div class="col table-title">
+                            <div class="col table-title noBorder">
                                 {{localize "effect"}}
                             </div>
                             <div class="col">
                                 {{{enrichedEffect}}}
                             </div>
                             {{#if enrichedRecipes}}
-                            <div class="col table-title">
+                            <div class="col table-title noBorder">
                                 {{localize "PLANT.recipes"}}
                             </div>
                             <div class="col">

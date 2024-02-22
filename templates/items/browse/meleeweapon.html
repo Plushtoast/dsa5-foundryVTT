@@ -1,5 +1,5 @@
 <div>
-    <h2>{{document.name}}</h2>
+    <h3>{{document.name}}</h3>
 
     <div class="row-section">
         {{#unless skipHeader}}
@@ -21,7 +21,7 @@
                     <img src="{{document.img}}" style="width:100%;border:none;" >
                 </div>
                 <div class="col compendium">
-                    {{item.pack}}
+                    <small>{{item.pack}}</small>
                 </div>  
             </div>
             <div class="col ten"></div>
@@ -29,7 +29,7 @@
                 <div class="col groupbox">
                         <div class="row-section wrap">
                             
-                            <div class="col table-title row-section">
+                            <div class="col table-title noBorder row-section">
                                 <div class="col ninety">
                                     {{localize "damage"}}
                                 </div>
@@ -40,26 +40,26 @@
                             <div class="col">
                                 {{document.system.damage.value}}
                             </div>
-                            <div class="col table-title">
+                            <div class="col table-title noBorder">
                                 {{localize "atmod"}}
                             </div>
                             <div class="col">
                                 {{document.system.atmod.value}}
                             </div>
-                            <div class="col table-title">
+                            <div class="col table-title noBorder">
                                 {{localize "pamod"}}
                             </div>
                             <div class="col">
                                 {{document.system.pamod.value}}
                             </div>
                             {{#unless document.parent}}
-                            <div class="col table-title">
+                            <div class="col table-title noBorder">
                                 {{localize "damageThreshold"}}
                             </div>
                             <div class="col">
                                 {{document.system.damageThreshold.value}}
                             </div>
-                            <div class="col table-title">
+                            <div class="col table-title noBorder">
                                 {{localize "guidevalue"}}
                             </div>
                             <div class="col">
@@ -67,7 +67,7 @@
                             </div>
                             {{else}}
                             {{#if canBeOffHand}}
-                            <div class="col table-title">
+                            <div class="col table-title noBorder">
                                 {{localize "offHand"}}
                             </div>
                             <div class="col">
@@ -75,34 +75,34 @@
                             </div>
                             {{/if}}
                             {{#if canBeWrongGrip}}
-                            <div class="col table-title">
+                            <div class="col table-title noBorder">
                                 {{localize wrongGripLabel}}
                             </div>
                             <div class="col">
                                 {{#if system.worn.wrongGrip}}<i class="fas fa-check"></i>{{else}}<i class="fas fa-times"></i>{{/if}}
                             </div>
                             {{/if}}
-                            <div class="col table-title">
+                            <div class="col table-title noBorder">
                                 {{localize "equipped"}}
                             </div>
                             <div class="col">
                                 {{#if system.worn.value}}<i class="fas fa-check"></i>{{else}}<i class="fas fa-times"></i>{{/if}}
                             </div>                            
                             {{/unless}}
-                            <div class="col table-title">
+                            <div class="col table-title noBorder">
                                 {{localize "TYPES.Item.combatskill"}}
                             </div>
                             <div class="col">
                                 {{document.system.combatskill.value}}
                             </div>                            
-                            <div class="col table-title">
+                            <div class="col table-title noBorder">
                                 {{localize "reach"}}
                             </div>
                             <div class="col">
                                 {{localize (concat 'Range-' document.system.reach.value)}}
                             </div>
                             {{#if document.system.effect.value}}
-                            <div class="col table-title">
+                            <div class="col table-title noBorder">
                                 {{localize "effect"}}
                             </div>
                             <div class="col">
@@ -110,7 +110,7 @@
                             </div>
                             {{/if}}
                             {{#if document.system.effect.attributes}}
-                            <div class="col table-title">
+                            <div class="col table-title noBorder">
                                 {{localize "domains"}}
                             </div>
                             <div class="col">

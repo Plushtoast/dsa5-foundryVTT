@@ -91,7 +91,7 @@ export default class DSA5Hotbar extends Hotbar {
             const filterOff = function() {
                 $(document).off("keydown.sectionFilter", fn)
                 that.searching = ""
-                html.find('.macro,.primary').removeClass('dsahidden')
+                html.find('.macro,.primary,.sections .skillItems').removeClass('dsahidden')
                 html.find('.longLayout').removeClass('longLayout')
             }
             html.find('.sections').hover(function() {
@@ -114,7 +114,7 @@ export default class DSA5Hotbar extends Hotbar {
         let item
         let description
 
-        const category = data.category.split(" ")[0]
+        const category = data.category?.split(" ")[0]
 
         switch(category) {
             case "skillgm": 
@@ -196,16 +196,30 @@ export default class DSA5Hotbar extends Hotbar {
         const search = this.searching.toLowerCase()
         tinyNotification(search)
 
+        const sections = html.find('.sections')
         if(search) {
-            html.find('.sections').addClass('longLayout')
+            sections.addClass('longLayout')
         } else {
-            html.find('.sections').removeClass('longLayout')
+            sections.removeClass('longLayout')
         }
         let btns = html.find('.macro,.primary')
         btns.removeClass('dsahidden')
         btns.filter(function() {
-            return this.dataset?.name?.toLowerCase().trim().indexOf(search) == -1
+            const find = this.dataset?.name
+            return find ? find.toLowerCase().trim().indexOf(search) == -1 : true
         }).addClass('dsahidden')
+
+        for(let sec of sections.find('.skillItems')){
+            const category = sec.dataset.category
+            console.log(category)
+            const section = $(sec)
+            console.log(section.find(`li.${category}.dsahidden`).length, section.find(`.li.${category}`).length)
+            if(section.find(`li.${category}.dsahidden`).length == section.find(`li.${category}`).length) {
+                section.addClass('dsahidden')
+            } else {
+                section.removeClass('dsahidden')            
+            }
+        }
         return false
     }
 

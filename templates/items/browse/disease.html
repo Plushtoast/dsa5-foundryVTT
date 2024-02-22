@@ -1,5 +1,5 @@
 <div>
-    <h2>{{document.name}}</h2>
+    <h3>{{document.name}}</h3>
     <div class="row-section">
         {{#unless skipHeader}}
         <div class="col sixty">
@@ -20,14 +20,14 @@
                     <img src="{{document.img}}" style="width:100%;border:none;" >
                 </div>
                 <div class="col compendium">
-                    {{item.pack}}
+                    <small>{{item.pack}}</small>
                 </div>  
             </div>
             <div class="col ten"></div>
             <div class="row-section col sixty">
                 <div class="col groupbox">
                     <div class="row-section wrap">
-                        <div class="col table-title row-section">
+                        <div class="col table-title noBorder row-section">
                             <div class="col ninety">
                                 {{localize "stepValue"}}
                             </div>
@@ -39,44 +39,44 @@
                         <div class="col">
                             {{document.system.step.value}}
                         </div>
-                        <div class="col table-title">
+                        <div class="col table-title noBorder">
                             {{localize "incubation"}}
                         </div>
                         <div class="col">
                             {{document.system.incubation.value}}
                         </div>
-                        <div class="col table-title">
+                        <div class="col table-title noBorder">
                             {{localize "effect"}}
                         </div>
                         <div class="col">
                             {{document.system.damage.value}}
                         </div>
 
-                        <div class="col table-title">
+                        <div class="col table-title noBorder">
                             {{localize "duration"}}
                         </div>
                         <div class="col">
                             {{document.system.duration.value}}
                         </div>
-                        <div class="col table-title">
+                        <div class="col table-title noBorder">
                             {{localize "source"}}
                         </div>
                         <div class="col">
                             {{document.system.source.value}}
                         </div>
-                        <div class="col table-title">
+                        <div class="col table-title noBorder">
                             {{localize "treatment"}}
                         </div>
                         <div class="col">
                             {{document.system.treatment.value}}
                         </div>
-                        <div class="col table-title">
+                        <div class="col table-title noBorder">
                             {{localize "antidot"}}
                         </div>
                         <div class="col">
                             {{document.system.antidot.value}}
                         </div>
-                        <div class="col table-title">
+                        <div class="col table-title noBorder">
                             {{localize "resistanceModifier"}}
                         </div>
                         <div class="col">

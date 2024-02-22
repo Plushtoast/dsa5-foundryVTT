@@ -1,5 +1,5 @@
 <div>
-    <h2>{{document.name}}</h2>
+    <h3>{{document.name}}</h3>
     <div class="row-section">
         {{#unless skipHeader}}
         <div class="col sixty">
@@ -19,7 +19,7 @@
             <div class="row-section col sixty">
                 <div class="col groupbox">
                         <div class="row-section wrap">
-                            <div class="col table-title row-section">
+                            <div class="col table-title noBorder row-section">
                                 <div class="col ninety">
                                     {{localize "attributes"}}
                                 </div>
@@ -32,19 +32,19 @@
                                 <span class="d20 diet-{{document.system.characteristic2.value}}">{{localize (concatUp "CHARAbbrev." document.system.characteristic2.value)}}</span>
                                 <span class="d20 diet-{{document.system.characteristic3.value}}">{{localize (concatUp "CHARAbbrev." document.system.characteristic3.value)}}</span>
                             </div>
-                            <div class="col table-title">
+                            <div class="col table-title noBorder">
                                 {{localize "Group"}}
                             </div>
                             <div class="col">
                                 {{localize (concat "SKILL" document.system.group.value)}}
                             </div>
-                            <div class="col table-title">
+                            <div class="col table-title noBorder">
                                 {{localize "encumbrance"}}
                             </div>
                             <div class="col">
                                 {{localize document.system.burden.value}}
                             </div>
-                            <div class="col table-title">
+                            <div class="col table-title noBorder">
                                 {{localize "StF"}}
                             </div>
                             <div class="col">

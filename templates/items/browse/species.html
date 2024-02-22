@@ -15,14 +15,14 @@
                     <img src="{{document.img}}" style="width:100%;border:none;" >
                 </div>
                 <div class="col compendium">
-                    {{item.pack}}
+                    <small>{{item.pack}}</small>
                 </div>  
             </div>
             <div class="col ten"></div>
             <div class="row-section col sixty">
                 <div class="col groupbox">
                         <div class="row-section wrap">
-                            <div class="col table-title row-section">
+                            <div class="col table-title noBorder row-section">
                                 <div class="col ninety">
                                     {{localize "APValue"}}
                                 </div>
@@ -34,38 +34,38 @@
                             <div class="col">
                                 {{document.system.APValue.value}}
                             </div>
-                            <div class="col table-title">
+                            <div class="col table-title noBorder">
                                 {{localize "wounds"}}- {{localize "baseValue"}}
                             </div>
                             <div class="col">
                                 {{document.system.baseValues.wounds.value}}
                             </div>
-                            <div class="col table-title">
+                            <div class="col table-title noBorder">
                                 {{localize "soulpower"}}- {{localize "baseValue"}}
                             </div>
                             <div class="col">
                                 {{document.system.baseValues.soulpower.value}}
                             </div>
-                            <div class="col table-title">
+                            <div class="col table-title noBorder">
                                 {{localize "toughness"}}- {{localize "baseValue"}}
                             </div>
                             <div class="col">
                                 {{document.system.baseValues.toughness.value}}
                             </div>
-                            <div class="col table-title">
+                            <div class="col table-title noBorder">
                                 {{localize "speed"}}
                             </div>
                             <div class="col">
                                 {{document.system.baseValues.speed.value}}
                             </div>
-                            <div class="col table-title">
+                            <div class="col table-title noBorder">
                                 {{localize "attributeChange"}}
                             </div>
                             <div class="col">
                                 {{document.system.attributeChange.value}}
                             </div>
                             {{#if document.system.notsuitableAdvantages.value}}
-                            <div class="col table-title">
+                            <div class="col table-title noBorder">
                                 {{localize "notsuitableAdvantages"}}
                             </div>
                             <div class="col">
@@ -73,34 +73,34 @@
                             </div>
                             {{/if}}
                             {{#if document.system.notsuitableDisadvantages.value}}
-                            <div class="col table-title">
+                            <div class="col table-title noBorder">
                                 {{localize "notsuitableDisadvantages"}}
                             </div>
                             <div class="col">
                                 {{{clickableAbilities document.system.notsuitableDisadvantages.value 'disadvantage'}}}
                             </div>
                             {{/if}}
-                            <div class="col table-title">
+                            <div class="col table-title noBorder">
                                 {{localize "recommendedAdvantages"}}
                             </div>
                             <div class="col">
                                 {{{clickableAbilities document.system.recommendedAdvantages.value 'advantage'}}}
                             </div>
-                            <div class="col table-title">
+                            <div class="col table-title noBorder">
                                 {{localize "recommendedDisadvantages"}}
                             </div>
                             <div class="col">
                                 {{{clickableAbilities document.system.recommendedDisadvantages.value 'disadvantage'}}}
                             </div>
                             {{#if document.system.requirements.value}}
-                            <div class="col table-title">
+                            <div class="col table-title noBorder">
                                 {{localize "requirements"}}
                             </div>
                             <div class="col">
                                 {{{clickableAbilities document.system.requirements.value 'advantage disadvantage specialability'}}}
                             </div>
                             {{/if}}
-                            <div class="col table-title">
+                            <div class="col table-title noBorder">
                                 {{localize "recommendedCultures"}}
                             </div>
                             <div class="col">

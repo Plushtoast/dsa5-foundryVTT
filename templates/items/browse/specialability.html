@@ -1,5 +1,5 @@
 <div>
-    <h2>{{document.name}}</h2>
+    <h3>{{document.name}}</h3>
     <div class="row-section">
         {{#unless skipHeader}}
         <div class="col sixty">
@@ -23,14 +23,14 @@
                     <img src="{{document.img}}" style="width:100%;border:none;" >
                 </div>
                 <div class="col compendium">
-                    {{item.pack}}
+                    <small>{{item.pack}}</small>
                 </div>  
             </div>
             <div class="col ten"></div>
             <div class="row-section col sixty">
                 <div class="col groupbox">
                         <div class="row-section wrap">
-                            <div class="col table-title row-section">
+                            <div class="col table-title noBorder row-section">
                                 <div class="col ninety">
                                     {{localize "APValue"}}
                                 </div>
@@ -41,14 +41,14 @@
                             <div class="col">
                                 {{document.system.APValue.value}}
                             </div>
-                            <div class="col table-title">
+                            <div class="col table-title noBorder">
                                 {{localize "requirements"}}
                             </div>
                             <div class="col">
                                 {{document.system.requirements.value}}
                             </div>
                             {{#if (ne "0" document.system.maxRank.value)}}
-                            <div class="col table-title">
+                            <div class="col table-title noBorder">
                                 {{localize "maxlevel"}}
                             </div>
                             <div class="col">
@@ -56,14 +56,14 @@
                             </div>
                             {{/if}}
                             
-                            <div class="col table-title">
+                            <div class="col table-title noBorder">
                                 {{localize "Category"}}
                             </div>
                             <div class="col">
                                 {{localize document.system.category.value}}
                             </div>
                             {{#if document.system.effect.value}}
-                            <div class="col table-title">
+                            <div class="col table-title noBorder">
                                 {{localize "effect"}}
                             </div>
                             <div class="col">
@@ -72,38 +72,38 @@
                             {{/if}}
 
                             {{#if (eq document.system.category.value 'pact')}}
-                            <div class="col table-title">
+                            <div class="col table-title noBorder">
                                 {{localize "distribution"}}
                             </div>
                             <div class="col">
                                 {{document.system.distribution}}
                             </div>
-                            <div class="col table-title">
+                            <div class="col table-title noBorder">
                                 {{localize "circle"}}
                             </div>
                             <div class="col">
                                 {{document.system.circle}}
                             </div>
                             {{else if (eq document.system.category.value 'staff')}}
-                            <div class="col table-title">
+                            <div class="col table-title noBorder">
                                 {{localize "SpecCategory.staff"}}
                             </div>
                             <div class="col">
                                 {{localize (concat 'traditionArtifacts.' document.system.artifact)}}
                             </div>
-                            <div class="col table-title">
+                            <div class="col table-title noBorder">
                                 {{localize "volume"}}
                             </div>
                             <div class="col">
                                 {{document.system.volume}}
                             </div>
-                            <div class="col table-title">
+                            <div class="col table-title noBorder">
                                 {{localize "AsPCost"}}
                             </div>
                             <div class="col">
                                 {{document.system.AsPCost}}
                             </div>
-                            <div class="col table-title">
+                            <div class="col table-title noBorder">
                                 {{localize "feature"}}
                             </div>
                             <div class="col">
@@ -112,7 +112,7 @@
                             
                             {{else if (eq document.system.category.value 'Combat')}}
                             {{#if document.system.effect.value2}}
-                            <div class="col table-title">
+                            <div class="col table-title noBorder">
                                 {{localize "effectVariant" num="B"}}
                             </div>
                             <div class="col">
@@ -120,20 +120,20 @@
                             </div>
                             {{/if}}
                             {{#if document.system.effect.value3}}
-                            <div class="col table-title">
+                            <div class="col table-title noBorder">
                                 {{localize "effectVariant" num="C"}}
                             </div>
                             <div class="col">
                                 {{document.system.effect.value3}}
                             </div>
                             {{/if}}
-                            <div class="col table-title">
+                            <div class="col table-title noBorder">
                                 {{localize "TYPES.Item.combatskill"}}
                             </div>
                             <div class="col">
                                 {{document.system.list.value}}
                             </div>
-                            <div class="col table-title">
+                            <div class="col table-title noBorder">
                                 {{localize "COMBATSKILLCATEGORY.subcategory"}}
                             </div>
                             <div class="col">

@@ -432,7 +432,7 @@
     "initDie": "Initiative die",
     "interruption": "Interruption",
     "increaseRange": "Increase range",
-    "importDefault": "<div class=\"detailbox\"><p>Copyright © 2023 by Ulisses Spiele GmbH, Waldems. THE DARK EYE, AVENTURIA, DERE, MYRANOR, RIESLAND,  THARUN, and UTHURIA are trademarks of Ulisses Spiele. All rights reserved.<br>This publication is protected under the copyright laws of the United States of America. No part of this publication may be reproduced, stored in a retrieval system, or transmitted, in any form or by any means, whether electronic,mechanical, photocopy, recording, or otherwise, without prior written consent by Ulisses Spiele GmbH, Waldems.</p></div>",
+    "importDefault": "<div class=\"detailbox\"><p>Copyright © 2024 by Ulisses Spiele GmbH, Waldems. THE DARK EYE, AVENTURIA, DERE, MYRANOR, RIESLAND,  THARUN, and UTHURIA are trademarks of Ulisses Spiele. All rights reserved.<br>This publication is protected under the copyright laws of the United States of America. No part of this publication may be reproduced, stored in a retrieval system, or transmitted, in any form or by any means, whether electronic,mechanical, photocopy, recording, or otherwise, without prior written consent by Ulisses Spiele GmbH, Waldems.</p></div>",
     "incubation": "Incubation time",
     "interval": "Intervall",
     "save": "Save",
@@ -633,7 +633,59 @@
         "loading": "Loading {item}...",
         "browseEnabled": "Enable browse mode",
         "filterDuplicateItems": "Hide duplicate items",
-        "info": "Search for everything and drag & drop it to the character sheet or the map."
+        "info": "Search for everything and drag & drop it to the character sheet or the map.",
+        "advancedSearchPlaceholders": {
+            "specialability": {
+                "distribution": "Witch..."
+            },
+            "liturgy": {
+                "distribution.value": "Praios...",
+                "targetCategory.value": "Living creatures..."
+            },
+            "ceremony": {
+                "distribution.value": "Praios...",
+                "targetCategory.value": "Living creatures..."
+            },
+            "spell": {
+                "distribution.value": "Witch...",
+                "targetCategory.value": "Living creatures...",
+                "feature": "Clairvoyance..."
+            },
+            "ritual": {
+                "distribution.value": "Witch...",
+                "targetCategory.value": "Living creatures...",
+                "feature": "Clairvoyance..."
+            },
+            "magictrick": {
+                "distribution": "Druid...",
+                "feature.value": "Clairvoyance...",
+                "targetCategory.value": "Living creatures..."
+            },
+            "blessing": {
+                "feature.value": "general...",
+                "targetCategory.value": "Zone..."
+            },
+            "npc": {
+                "details.species.value": "Dwarf...",
+                "details.career.value": "Warrior...",
+                "details.culture.value": "Thorwal..."
+            },
+            "character": {
+                "details.species.value": "Dwarf...",
+                "details.career.value": "Warrior...",
+                "details.culture.value": "Thorwal..."
+            },
+            "creature": {
+                "creatureClass.value": "Demon..."
+            },
+            "plant": {
+                "location.landscape": "Mountain...",
+                "location.region": "Nostria..."
+            },
+            "imprint": {
+                "category": "Guild Influence..."
+            }
+        }
     },
     "Aggregated": {
         "noMoreAllowed": "No more rolls allowed."
@@ -1461,7 +1513,7 @@
         "wrongLanguage": "Your language setting does not match the predefined setting ({lang}). Do you want to change this?",
         "noVictim": "No targets marked. Effect is transferred to self.",
         "PreparationError": "The preparation of actor {name} failed.",
-        "mapsViaJournalbrowser": "This scene should be imported through the journal browser, to ensure proper functionality.",
+        "mapsViaJournalbrowser": "This scene should be imported through the journal browser (hotkey j), to ensure proper functionality (e.g. journal notes). Import nevertheless?",
         "requiresGM": "This function only works with a logged in game master."
     },
     "CEREMONYMODIFIER": {
@@ -1551,12 +1603,15 @@
     "Book": {
         "Wizard": "Journal Browser",
         "focusRule": "Focus rule",
+        "easy": "If you want to make a certain scene easier for the heroes, you can adopt the suggestions of this section.",
+        "hard": "If you want to make a certain scene harder for the heroes, you can adopt the suggestions of this section.",
         "Description": "Welcome to the journal browser. This tool is supposed to assist in the usage of source, rule and adventure modules by giving an overview on all included contents like scenes, chapters and descriptions. Moreover hints for the usage are provided and functions for the initialisation of the modules.",
         "availableModules": "Installed adventure modules",
         "availableRules": "Available rulebooks",
         "availableRSHs": "Available regional supplements",
         "preparation": "Preparation",
         "preparationDescription": "To get the most out of this adventure module we recommend to acknowledge the following things: <ul class=\"dsalist\"><li>Read the correspondig journal entries for the current scene in advance.</li><li>Get used to the battle map and place tokens in advance. It is recommended to place the tokens invisible and only showing them once the players encounter those (hold alt while dropping the token to the scene). This helps to avoid spoilers.</li><li>Initialize the contents of the adventure through the available functions. Dragging the content manually into your world does not suffice to setup everything properly. Don't initialize multiple times.</li><li>Check wether you installed all recommended modules. Those are not required but faciliate and improve the mastering of the adventure.</li><li>The provided maps are only a proposal. You can also simply use a map or just put a atmosphearic picture on the canvas. There will be certainly other use cases for the provided battle maps.</li></ul>",
+        "macroHint": "The following macros are part of this module and allow special functions. You can now drag them into the macro bar or find them later in the macro compendium of this module.",
         "toc": "Chapter",
         "info": "Info",
         "scenes": "Scenes",

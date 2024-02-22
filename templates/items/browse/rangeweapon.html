@@ -1,5 +1,5 @@
 <div>
-    <h2>{{document.name}}</h2>
+    <h3>{{document.name}}</h3>
     <div class="row-section">
         {{#unless skipHeader}}
         <div class="col sixty">
@@ -21,14 +21,14 @@
                     <img src="{{document.img}}" style="width:100%;border:none;" >
                 </div>      
                 <div class="col compendium">
-                    {{item.pack}}
+                    <small>{{item.pack}}</small>
                 </div>      
             </div>
             <div class="col ten"></div>
             <div class="row-section col sixty">
                 <div class="col groupbox">
                         <div class="row-section wrap">
-                            <div class="col table-title row-section">
+                            <div class="col table-title noBorder row-section">
                                 <div class="col ninety">
                                     {{localize "damage"}}
                                 </div>
@@ -39,32 +39,32 @@
                             <div class="col">
                                 {{document.system.damage.value}}
                             </div>
-                            <div class="col table-title">
+                            <div class="col table-title noBorder">
                                 {{localize "reloadTime"}}
                             </div>
                             <div class="col">
                                 {{document.system.reloadTime.value}}
                             </div>
-                            <div class="col table-title">
+                            <div class="col table-title noBorder">
                                 {{localize "reach"}}
                             </div>
                             <div class="col">
                                 {{document.system.reach.value}}
                             </div>
-                            <div class="col table-title">
+                            <div class="col table-title noBorder">
                                 {{localize "ammunitiongroup"}}
                             </div>
                             <div class="col">
                                 {{localize document.system.ammunitiongroup.value}}
                             </div>
-                            <div class="col table-title">
+                            <div class="col table-title noBorder">
                                 {{localize "TYPES.Item.combatskill"}}
                             </div>
                             <div class="col">
                                 {{document.system.combatskill.value}}
                             </div>
                             {{#if document.parent}}
-                            <div class="col table-title">
+                            <div class="col table-title noBorder">
                                 {{localize "equipped"}}
                             </div>
                             <div class="col">
@@ -72,7 +72,7 @@
                             </div>
                             {{/if}}
                             {{#if document.system.effect.value}}
-                            <div class="col table-title">
+                            <div class="col table-title noBorder">
                                 {{localize "effect"}}
                             </div>
                             <div class="col">
@@ -80,7 +80,7 @@
                             </div>
                             {{/if}}
                             {{#if document.system.effect.attributes}}
-                            <div class="col table-title">
+                            <div class="col table-title noBorder">
                                 {{localize "domains"}}
                             </div>
                             <div class="col">

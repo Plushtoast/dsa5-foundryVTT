@@ -29,7 +29,7 @@ export default class OnUseEffect {
                     const fn2 = new AsyncFunction("args", "actor", "item",
                     `
                     const that = this;
-                    ${documents[0].command.replace(/( |\(|{)this\./g, " that.")}
+                    ${documents[0].command.replace(/(?=[ |\(|{]+)?this\./g, "that.")}
                     `)
                     result.ret = await fn2.call(this, args, this.item.actor)
                 }

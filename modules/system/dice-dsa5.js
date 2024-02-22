@@ -1025,7 +1025,7 @@ export default class DiceDSA5 {
         if (res.successLevel > 0) {
             if (testData.source.system.effectFormula.value != "") {
                 let formula = testData.source.system.effectFormula.value
-                    .replace(game.i18n.localize("CHARAbbrev.QS"), res.qualityStep)
+                    .replaceAll(game.i18n.localize("CHARAbbrev.QS"), res.qualityStep)
                     .replace(/[Ww]/g, "d")
                 let armorPen = []
                 for (let mod of testData.situationalModifiers) {

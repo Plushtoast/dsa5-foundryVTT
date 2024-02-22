@@ -287,7 +287,13 @@ export default class DSA5Initializer extends Dialog {
                     this.actors[entry.name] = entry;
                 }
             }
-
+            if(json.macro) {
+                Hooks.once("renderCompendium", (app, html, data) => {
+                    const compendiumUi = html.find(`[data-pack="${json.macro}"] header`)
+                    compendiumUi.append($(`<p>${game.i18n.localize("Book.macroHint")}</p>`))                
+                })
+                await game.packs.get(json.macro).render(true)
+            }
         })
         this.lock = false
         initButton.find("i").remove()

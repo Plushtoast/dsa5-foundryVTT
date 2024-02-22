@@ -1,5 +1,5 @@
 <div>
-    <h2>{{document.name}}</h2>
+    <h3>{{document.name}}</h3>
     <div class="row-section">
         {{#unless skipHeader}}
         <div class="col sixty">
@@ -20,14 +20,14 @@
                     <img src="{{document.img}}" style="width:100%;border:none;" >
                 </div>
                 <div class="col compendium">
-                    {{item.pack}}
+                    <small>{{item.pack}}</small>
                 </div>  
             </div>
             <div class="col ten"></div>
             <div class="row-section col sixty">
                 <div class="col groupbox">
                         <div class="row-section wrap">
-                            <div class="col table-title row-section">
+                            <div class="col table-title noBorder row-section">
                                 <div class="col ninety">
                                     {{localize "protection"}}
                                 </div>
@@ -38,14 +38,14 @@
                             <div class="col">
                                 {{document.system.protection.value}}
                             </div>
-                            <div class="col table-title">
+                            <div class="col table-title noBorder">
                                 {{localize "encumbrance"}}
                             </div>
                             <div class="col">
                                 {{document.system.encumbrance.value}}
                             </div>
                             {{#if document.system.effect.value}}
-                            <div class="col table-title">
+                            <div class="col table-title noBorder">
                                 {{localize "effect"}}
                             </div>
                             <div class="col">
@@ -53,14 +53,14 @@
                             </div>
                             {{/if}}
                             {{#if document.system.effect.attributes}}
-                            <div class="col table-title">
+                            <div class="col table-title noBorder">
                                 {{localize "domains"}}
                             </div>
                             <div class="col">
                                 {{document.system.effect.attributes}}
                             </div>
                             {{/if}}
-                            <div class="col table-title">
+                            <div class="col table-title noBorder">
                                 {{localize "COMBATSKILLCATEGORY.subcategory"}}
                             </div>
                             <div class="col">

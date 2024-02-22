@@ -32,9 +32,7 @@ Hooks.once("ready", () => {
             </select>
         </div>`
 
-
-
-        mergeObject(ADVANCEDFILTERS, {
+        const filters = {
             ammunition: [
                 { label: "ammunitiongroup", attr: "ammunitiongroup.value", type: "select", options: DSA5.ammunitiongroups }
             ],
@@ -153,7 +151,16 @@ Hooks.once("ready", () => {
                 { label: "Category", attr: "category", type: "text" }
             ]
 
-        })
+        }
+
+        for(const [key, value] of Object.entries(filters)){
+            for(const filter of value){
+                if(filter.type == "text")
+                    filter.placeholder = `Library.advancedSearchPlaceholders.${key}.${filter.attr}`
+            }
+        }
+
+        mergeObject(ADVANCEDFILTERS, filters)
     })
 })
 

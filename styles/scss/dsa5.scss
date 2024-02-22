@@ -1874,10 +1874,6 @@
     .row-section label {
       flex: 1;
     }
-  
-    .garadanb h2{
-      margin-top: 0;
-    }
 
     h2 {
       margin-top: 20px;
@@ -3170,6 +3166,12 @@
     }
   }
   
+  .dsajournal h4 {
+      color: #853c26;
+      font-weight: bold;
+      font-size: 1.1em;
+  }
+  
   .itemInfo {
     position: absolute;
     display: none;
@@ -4270,6 +4272,8 @@
     }
     .longLayout {
       .skillItems {
+       
+
         li {
           flex: 0 0 90px;
           text-align: center;
@@ -4299,7 +4303,11 @@
       height:100%;
       transition: all 0.15s ease-in-out;
       overflow-x: hidden;
-      scroll-snap-type: y mandatory;      
+      scroll-snap-type: y mandatory;
+      
+      &.dsahidden {
+        display: none;
+      }
 
       input{ 
         height: 100%;

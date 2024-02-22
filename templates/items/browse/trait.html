@@ -1,5 +1,5 @@
 <div>
-    <h2>{{document.name}}</h2>
+    <h3>{{document.name}}</h3>
     <div class="row-section">
         {{#unless skipHeader}}
         <div class="col sixty">
@@ -20,14 +20,14 @@
                     <img src="{{document.img}}" style="width:100%;border:none;" >
                 </div>
                 <div class="col compendium">
-                    {{item.pack}}
+                    <small>{{item.pack}}</small>
                 </div>  
             </div>
             <div class="col ten"></div>
             <div class="row-section col sixty">
                 <div class="col groupbox">
                     <div class="row-section wrap">
-                        <div class="col table-title row-section">
+                        <div class="col table-title noBorder row-section">
                             <div class="col ninety">
                                 {{localize "Category"}}
                             </div>
@@ -41,32 +41,32 @@
                         </div>
 
                         {{#if (eq system.traitType.value "rangeAttack")}}
-                        <div class="col table-title">
+                        <div class="col table-title noBorder">
                             {{localize "CHAR.ATTACK"}}
                         </div>
                         <div class="col">
                             {{document.system.at.value}}
                         </div>
-                        <div class="col table-title">
+                        <div class="col table-title noBorder">
                             {{localize "damage"}}
                         </div>
                         <div class="col">
                             {{document.system.damage.value}}
                         </div>
-                        <div class="col table-title">
+                        <div class="col table-title noBorder">
                             {{localize "reach"}}
                         </div>
                         <div class="col">
                             {{document.system.reach.value}}
                         </div>
-                        <div class="col table-title">
+                        <div class="col table-title noBorder">
                             {{localize "reloadTime"}}
                         </div>
                         <div class="col">
                             {{document.system.reloadTime.value}}
                         </div>
                         {{#if document.system.effect.value}}
-                        <div class="col table-title">
+                        <div class="col table-title noBorder">
                             {{localize "effect"}}
                         </div>
                         <div class="col">
@@ -74,32 +74,32 @@
                         </div>
                         {{/if}}
                         {{else if (eq document.system.traitType.value "meleeAttack")}}
-                        <div class="col table-title">
+                        <div class="col table-title noBorder">
                             {{localize "CHAR.ATTACK"}}
                         </div>
                         <div class="col">
                             {{document.system.at.value}}
                         </div>
-                        <div class="col table-title">
+                        <div class="col table-title noBorder">
                             {{localize "CHAR.PARRY"}}
                         </div>
                         <div class="col">
                             {{document.system.pa}}
                         </div>
-                        <div class="col table-title">
+                        <div class="col table-title noBorder">
                             {{localize "damage"}}
                         </div>
                         <div class="col">
                             {{document.system.damage.value}}
                         </div>
-                        <div class="col table-title">
+                        <div class="col table-title noBorder">
                             {{localize "reach"}}
                         </div>
                         <div class="col">
                             {{localize (concat "Range-" document.system.reach.value)}}
                         </div>
                         {{#if document.system.effect.value}}
-                        <div class="col table-title">
+                        <div class="col table-title noBorder">
                             {{localize "effect"}}
                         </div>
                         <div class="col">
@@ -108,7 +108,7 @@
                         {{/if}}
     
                         {{#if document.system.effect.attributes}}
-                            <div class="col table-title">
+                            <div class="col table-title noBorder">
                                 {{localize "domains"}}
                             </div>
                             <div class="col">
@@ -117,32 +117,32 @@
                             {{/if}}
                         {{else if (eq system.traitType.value "armor")}}
     
-                        <div class="col table-title">
+                        <div class="col table-title noBorder">
                             {{localize "protection"}}
                         </div>
                         <div class="col">
                             {{document.system.at.value}}
                         </div>
                         {{else if (eq document.system.traitType.value "familiar")}}
-                        <div class="col table-title">
+                        <div class="col table-title noBorder">
                             {{localize "APValue"}}
                         </div>
                         <div class="col">
                             {{document.system.APValue.value}}
                         </div>
-                        <div class="col table-title">
+                        <div class="col table-title noBorder">
                             {{localize "AsPCost"}}
                         </div>
                         <div class="col">
                             {{document.system.AsPCost.value}}
                         </div>
-                        <div class="col table-title">
+                        <div class="col table-title noBorder">
                             {{localize "duration"}}
                         </div>
                         <div class="col">
                             {{document.system.duration.value}}
                         </div>
-                        <div class="col table-title">
+                        <div class="col table-title noBorder">
                             {{localize "aspect"}}
                         </div>
                         <div class="col">
@@ -150,45 +150,45 @@
                         </div>
                 
                         {{else if (eq document.system.traitType.value "trick")}}
-                        <div class="col table-title">
+                        <div class="col table-title noBorder">
                             {{localize "APValue"}}
                         </div>
                         <div class="col">
                             {{document.system.APValue.value}}
                         </div>
-                        <div class="col table-title">
+                        <div class="col table-title noBorder">
                             {{localize "requirements"}}
                         </div>
                         <div class="col">
                             {{document.system.aspect.value}}
                         </div>
                         {{else if (eq document.system.traitType.value "entity")}}
-                        <div class="col table-title">
+                        <div class="col table-title noBorder">
                             {{localize "distribution"}}
                         </div>
                         <div class="col">
                             {{document.system.distribution}}
                         </div>
-                        <div class="col table-title">
+                        <div class="col table-title noBorder">
                             {{localize "CHARAbbrev.QS"}}
                         </div>
                         <div class="col">
                             {{document.system.AsPCost.value}}
                         </div>
-                        <div class="col table-title">
+                        <div class="col table-title noBorder">
                             {{localize "maxlevel"}}
                         </div>
                         <div class="col">
                             {{document.system.at.value}}
                         </div>
                         {{else if (eq document.system.traitType.value "summoning")}}
-                        <div class="col table-title">
+                        <div class="col table-title noBorder">
                             {{localize "distribution"}}
                         </div>
                         <div class="col">
                             {{document.system.distribution}}
                         </div>
-                        <div class="col table-title">
+                        <div class="col table-title noBorder">
                             {{localize "conjuringDifficulty"}}
                         </div>
                         <div class="col">

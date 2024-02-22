@@ -1,5 +1,5 @@
 <div>
-    <h2>{{document.name}}</h2>
+    <h3>{{document.name}}</h3>
     <div class="row-section">
         {{#unless skipHeader}}
         <div class="col sixty">
@@ -23,14 +23,14 @@
                     <img src="{{document.img}}" style="width:100%;border:none;" >
                 </div>
                 <div class="col compendium">
-                    {{item.pack}}
+                    <small>{{item.pack}}</small>
                 </div>  
             </div>
             <div class="col ten"></div>
             <div class="row-section col sixty">
                 <div class="col groupbox">
                         <div class="row-section wrap">
-                            <div class="col table-title row-section">
+                            <div class="col table-title noBorder row-section">
                                 <div class="col ninety">
                                     {{localize "attributes"}}
                                 </div>
@@ -43,52 +43,52 @@
                                 <span class="d20 diet-{{document.system.characteristic2.value}}">{{localize (concatUp "CHARAbbrev." document.system.characteristic2.value)}}</span>
                                 <span class="d20 diet-{{document.system.characteristic3.value}}">{{localize (concatUp "CHARAbbrev." document.system.characteristic3.value)}}</span>
                             </div>
-                            <div class="col table-title">
+                            <div class="col table-title noBorder">
                                 {{localize "reach"}}
                             </div>
                             <div class="col">
                                 {{document.system.range.value}}
                             </div>
-                            <div class="col table-title">
+                            <div class="col table-title noBorder">
                                 {{localize "duration"}}
                             </div>
                             <div class="col">
                                 {{document.system.duration.value}}
                             </div>
-                            <div class="col table-title">
+                            <div class="col table-title noBorder">
                                 {{localize "targetCategory"}}
                             </div>
                             <div class="col">
                                 {{document.system.targetCategory.value}}
                             </div>
-                            <div class="col table-title">
+                            <div class="col table-title noBorder">
                                 {{localize "castingTime"}}
                             </div>
                             <div class="col">
                                 {{document.system.castingTime.value}}
                             </div>
-                            <div class="col table-title">
+                            <div class="col table-title noBorder">
                                 {{localize "KaPCostDetail"}}
                             </div>
                             <div class="col">
                                 {{document.system.AsPCostDetail.value}}
                             </div>
                             {{#unless document.parent}}
-                            <div class="col table-title">
+                            <div class="col table-title noBorder">
                                 {{localize "distribution"}}
                             </div>
                             <div class="col">
                                 {{document.system.distribution.value}}
                             </div>
                             {{/unless}}
-                            <div class="col table-title">
+                            <div class="col table-title noBorder">
                                 {{localize "resistanceModifier"}}
                             </div>
                             <div class="col">
                                 {{localize document.system.resistanceModifier.value}}
                             </div>
                             {{#unless document.parent}}
-                            <div class="col table-title">
+                            <div class="col table-title noBorder">
                                 {{localize "StF"}}
                             </div>
                             <div class="col">

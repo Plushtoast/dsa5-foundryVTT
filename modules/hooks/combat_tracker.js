@@ -266,7 +266,6 @@ export class DSA5Combatant extends Combatant {
     brawlingChange() {
         const actor = DSA5_Utility.getSpeaker({actor: this.actor.id, scene: this.sceneId, token: this.token.id})
         const unarm = this.combat.getFlag("dsa5", "unarmEveryone")
-        console.log(unarm)
         const tokenChange = getProperty(actor, "system.config.autoBar") ? actor.getActiveTokens().map(x => {return { _id: x.id, bar1: { attribute: "status.temporaryLeP" } }}) : []
         const actorChange = {
             _id: actor.id,

@@ -610,13 +610,14 @@ class GameMasterMenu extends Application {
 
     async rollRequest(amount = 0){
         const [skill, type] = this.lastSkill.split("|")
-        if (type != "skill") return
+
+        if (!["attribute", "skill"].includes(type)) return
 
         const template = await renderTemplate('systems/dsa5/templates/dialog/master-dialog-award.html', { amount, text: game.i18n.localize(game.i18n.format("MASTER.doRequestRoll", { skill })) })
         const callback = (dlg) => {
             const number = Number(dlg.find('.input-text').val())
             const [skill, type] = this.lastSkill.split("|")
-            if (type != "skill") return
+            if(!["attribute", "skill"].includes(type)) return
 
             RequestRoll.showRQMessage(skill, number)
         }
