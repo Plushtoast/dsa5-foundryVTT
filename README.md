@@ -234,6 +234,10 @@ If you want to discuss TDE for foundry or need some assistance you can also join
     <a href="https://www.ulissesf-shop.com/the-dark-eye/virtual-tabletops/2223/tde5-revelations-from-heaven-for-foundry-vtt" target="_blank" title="Revelations from Heaven">
         <img src="https://www.ulissesf-shop.com/media/image/40/5b/b7/ESD1009_0_0999.jpg" alt="Revelations from Heaven" style="margin-right: 5px; margin-bottom: 5px; text-align:center; width:210px;">
     </a>
+    <h2>Regional supplements</h2>
+    <a href="https://www.ulissesf-shop.com/the-dark-eye/virtual-tabletops/2269/tde5-warring-kingdoms-bundle-for-foundry-vtt" title="The Warring Kingdoms">
+        <img src="https://www.ulissesf-shop.com/media/image/86/a7/f5/ESD1010_0_0999.jpg" alt="The Warring Kingdoms" style="margin-right: 5px; margin-bottom: 5px; text-align:center; width:210px;">
+    </a>
 </div>
 
 And many more... have a look at Ulisses' F-Shop
