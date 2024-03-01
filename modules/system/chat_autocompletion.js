@@ -388,25 +388,26 @@ export default class DSA5ChatAutoCompletion {
             return false
         })
         html.on('click', '.request-CH', ev => {
-            DSA5ChatListeners.check3D20(undefined, ev.currentTarget.dataset.name, { modifier: Number(ev.currentTarget.dataset.modifier) || 0 })
+            DSA5ChatListeners.check3D20($(ev.currentTarget), ev.currentTarget.dataset.name, { modifier: Number(ev.currentTarget.dataset.modifier) || 0 })
             ev.stopPropagation()
             return false
         })
         html.on('click', '.request-Pay', ev => {
             if(!game.user.isGM) return
 
-            DSA5Payment.createPayChatMessage(ev.currentTarget.dataset.modifier)
+            const master = game.dsa5.apps.gameMasterMenu
+            master.doPayment(master.selectedIDs(), true, ev.currentTarget.dataset.modifier)
         })
         html.on('click', '.request-GetPaid', ev => {
             if(!game.user.isGM) return
 
-            DSA5Payment.createGetPaidChatMessage(ev.currentTarget.dataset.modifier)
+            const master = game.dsa5.apps.gameMasterMenu
+            master.doPayment(master.selectedIDs(), false, ev.currentTarget.dataset.modifier)
         })
         html.on('click', '.request-AP', ev => {
             if(!game.user.isGM) return
 
             const master = game.dsa5.apps.gameMasterMenu
-
             master.getExp(master.selectedIDs(), ev.currentTarget.dataset.modifier)
         })
         const itemDragStart = (event) => {

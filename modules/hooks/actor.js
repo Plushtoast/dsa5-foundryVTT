@@ -66,6 +66,8 @@ export default function() {
         if(!DSA5_Utility.isActiveGM() || options.noHook) return
 
         const actor = effect.parent
+        notifyFadingEffect(effect, options)
+
         if (actor && actor.documentName == "Actor") {
             const statusesId = [...effect.statuses][0]
             if (statusesId == "bloodrush") {
@@ -124,6 +126,33 @@ export default function() {
             const combatant = game.combat.combatants.find(x => x.actor.id == actorId)
             if(combatant) combatant.recalcInitiative()
         }
+    }
+
+    const notifyFadingEffect = async(effect, options) => {
+        if(!effect.parent) return
+
+        const target = getProperty(effect, "flags.dsa5.removeMessage")
+
+        if(!((game.settings.get("dsa5","notifyOnFadingEffects") && effect.parent.documentName == "Actor") || target))  return
+
+        let forceWhisperIDs = []
+        switch(target) {
+            case "player":
+                forceWhisperIDs = game.users.filter(u => !u.isGM && effect.parent.testUserPermission(u, "OWNER"))
+                break
+            case "playergm": 
+                forceWhisperIDs = game.users.filter(u => effect.parent.testUserPermission(u, "OWNER"))
+                break
+            case "players":
+                forceWhisperIDs = undefined
+                break
+            default:
+                forceWhisperIDs = game.users.filter(x => x.isGM)
+        }
+
+        forceWhisperIDs = forceWhisperIDs?.map(x => x.id)
+
+        ChatMessage.create(DSA5_Utility.chatDataSetup(game.i18n.format("CHATNOTIFICATION.fadingEffect", {effect: effect.name, actor: effect.parent.link}), undefined, undefined, forceWhisperIDs))
     }
 
     const createEffects = async(effect) => {

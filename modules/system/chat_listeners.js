@@ -53,10 +53,12 @@ export default class DSA5ChatListeners {
 
     static async check3D20(target, skill, options = {}){
         let attrs = 12
+        let json = {}
         if(target){
             target = target.get(0)
-            skill = await DSA5_Utility.skillByName(target.textContent)
+            skill = await DSA5_Utility.skillByName(skill || target.textContent)
             if(target.dataset.attrs) attrs = target.dataset.attrs.split("|")
+            if(target.dataset.json) json = JSON.parse(decodeURIComponent(target.dataset.json))
         }else if(skill){
             skill = await DSA5_Utility.skillByName(skill)
         }
@@ -76,8 +78,19 @@ export default class DSA5ChatListeners {
                 }
             }
         }
-
+        
         const actor = await DSA5_Utility.emptyActor(attrs)
+
+        if(json.attrs) {
+            const attrs = json.attrs.split(",")
+
+            for (let i = 1; i <= attrs.length; i++) {
+                actor.system.characteristics[skill.system[`characteristic${i}`].value].initial = Number(attrs[i - 1]) || 12
+            }
+            actor.prepareData()
+        }
+        skill.system.talentValue.value = Number(json.fw) || 0
+
         actor.setupSkill(skill, options, "emptyActor").then(setupData => {
             actor.basicTest(setupData)
         })

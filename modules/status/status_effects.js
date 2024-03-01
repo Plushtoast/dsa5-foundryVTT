@@ -162,11 +162,19 @@ export default class DSA5StatusEffects {
     }
 
     static resistantToEffect(target, effect) {
+        return this.collectModificationToEffect(target, effect, "system.resistances.effects")
+    }
+
+    static thresholdToEffect(target, effect) {
+        return this.collectModificationToEffect(target, effect, "system.thresholds.effects")
+    }
+
+    static collectModificationToEffect(target, effect, key) {
         const effectId = [...effect.statuses][0]
         if (!effectId) return 0
 
-        const resistances = getProperty(target, "system.resistances.effects") || []
-        return resistances.reduce((res, val) => {
+        const modifications = getProperty(target, key) || []
+        return modifications.reduce((res, val) => {
             if (val.target == effectId) res += Number(val.value)
             return res
         }, 0)
@@ -271,7 +279,10 @@ export default class DSA5StatusEffects {
         const max = Number(effect.flags.dsa5.max)
         const mod = Math.clamped(actor.system.condition[statusesId] || 0, 0, max) * -1
         const resist = this.resistantToEffect(actor, effect)
-        return  Math.clamped(mod + resist, -1 * max, 0)
+        const threshold = this.thresholdToEffect(actor, effect) * -1
+        const clamped = Math.clamped(mod + resist, -1 * max, 0)
+
+        return clamped < threshold ? clamped : 0
     }
 
     static ModifierIsSelected(item, options = {}, actor) {

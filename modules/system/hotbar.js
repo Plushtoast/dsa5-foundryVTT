@@ -73,8 +73,11 @@ export default class DSA5Hotbar extends Hotbar {
         if(game.settings.get("dsa5", "hotbarv3")) {
             html.find('.quantity-click').mousedown(ev => RuleChaos.quantityClick(ev))
             html.on('mousedown', 'li.primary', async(ev) => {
-                ev.stopPropagation()
                 game.tooltip.deactivate()
+
+                if(ev.currentTarget.classList.contains("macro")) return false
+
+                ev.stopPropagation()
                 await this.tokenHotbar.executeQuickButton(ev)
                 return false
             })
@@ -172,11 +175,18 @@ export default class DSA5Hotbar extends Hotbar {
             html.find(`.skillItems[data-category="${category}"]`).removeClass("collapsed")
             html.find('.categoryFilter').removeClass("active")
             html.find(`.categoryFilter[data-filter="${category}"]`).addClass("active")
-            this.activeFilters = [category]
+            if(this.token?.actor)
+                this.activeFilters = [category]
+            else
+                this.gmFilters = [category]
         } else {
             html.find('.skillItems').removeClass("collapsed")
             html.find('.categoryFilter').removeClass("active")
-            this.activeFilters = []
+            if(this.token?.actor) {
+                this.activeFilters = []
+            } else {
+                this.gmFilters = []
+            }
         }
     }
 
@@ -205,20 +215,16 @@ export default class DSA5Hotbar extends Hotbar {
         let btns = html.find('.macro,.primary')
         btns.removeClass('dsahidden')
         btns.filter(function() {
-            const find = this.dataset?.name
-            return find ? find.toLowerCase().trim().indexOf(search) == -1 : true
+            const find = this.dataset?.name?.toLowerCase().trim()
+            if(find) return find.indexOf(search) == -1
+                
+            return true            
         }).addClass('dsahidden')
 
         for(let sec of sections.find('.skillItems')){
             const category = sec.dataset.category
-            console.log(category)
             const section = $(sec)
-            console.log(section.find(`li.${category}.dsahidden`).length, section.find(`.li.${category}`).length)
-            if(section.find(`li.${category}.dsahidden`).length == section.find(`li.${category}`).length) {
-                section.addClass('dsahidden')
-            } else {
-                section.removeClass('dsahidden')            
-            }
+            section.toggleClass('dsahidden', section.find(`li.${category}.dsahidden`).length == section.find(`li.${category}`).length)
         }
         return false
     }
@@ -309,10 +315,11 @@ export default class DSA5Hotbar extends Hotbar {
             }
             
         } else if(game.user.isGM && !game.settings.get("dsa5", "disableTokenhotbarMaster")) {
+            activeFilters = this.gmFilters || []
             groups.skills.gm = this.tokenHotbar?._gmEntries() || []
             const skills = this.tokenHotbar?.skills || await this.tokenHotbar?.prepareSkills() || []
 
-            groups.skills.skill = skills
+            groups.skills.skillgm = skills
             gmMode = true
         }
 
@@ -321,9 +328,11 @@ export default class DSA5Hotbar extends Hotbar {
 
         const fallbacks = {
             gm: "systems/dsa5/icons/categories/DSA-Auge.webp",
+            skillgm: "systems/dsa5/icons/categories/Skill.webp",
         }
         const fallbackNames = {
-            gm: "gmMenu"
+            gm: "gmMenu",
+            skillgm: "TYPES.Item.skill"
         }
         
         for(let key of Object.keys(groups.skills)) {
@@ -337,6 +346,7 @@ export default class DSA5Hotbar extends Hotbar {
 
         const orderGroups = ["body", "social", "nature", "knowledge", "trade"]
         groups.skills.skill?.sort((a, b) => { return (orderGroups.indexOf(a.addClass) - orderGroups.indexOf(b.addClass)) || a.name.localeCompare(b.name) }) 
+        groups.skills.skillgm?.sort((a, b) => { return (orderGroups.indexOf(a.addClass) - orderGroups.indexOf(b.addClass)) || a.name.localeCompare(b.name) }) 
 
         if(groups.attacks.length > 0) {
             groups.attacks.sort((a, b) => { return (b.cssClass || "").localeCompare(a.cssClass || "") || a.name.localeCompare(b.name) })
@@ -380,7 +390,7 @@ export default class DSA5Hotbar extends Hotbar {
             baseBarHeight: `${baseBarHeight}px`,
             barHeight: `${(baseBarHeight+7) * rows + 30}px`,
             filterCategories,
-            selectedCategories: this.activeFilters || [],
+            selectedCategories: (actor ? this.activeFilters : this.gmFilters) || [],
             showEffects: this.showEffects,
             activeFilters,
             gmMode,

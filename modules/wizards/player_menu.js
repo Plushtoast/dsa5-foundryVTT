@@ -168,6 +168,11 @@ export default class PlayerMenu extends Application {
         html.find('.finalizeConjuration').click(() => this.finalizeConjuration())
         html.find('.ruleLink').click((ev) => this.openRules(ev))
         html.find('.openChar').click(() => { this.actor?.sheet.render(true) })
+        html.find('.showCC').click(() => { 
+            const cc = new game.dsa5.apps.DSACharacterCalculator()
+            cc.actor = this.actor
+            cc.render(true)
+         })
         html.find('.showEntity').click(ev => {
             ev.stopPropagation()
             const fun = async() => {
@@ -408,7 +413,8 @@ export default class PlayerMenu extends Application {
         mergeObject(data, {
             actor: this.actor || { name: game.i18n.localize("CONJURATION.dragActor"), img: "icons/svg/mystery-man-black.svg" },
             conjurationData: this.conjurationData,
-            conjurationTypes: this.conjurationData.conjurationTypes
+            conjurationTypes: this.conjurationData.conjurationTypes,
+            canCalculate: DSA5_Utility.moduleEnabled("dsa5-core") && this.actor?.type == "character"
         })
         await this.prepareSubApps(data)
         return data

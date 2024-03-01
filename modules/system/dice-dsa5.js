@@ -625,7 +625,7 @@ export default class DiceDSA5 {
             this._situationalMultipliers(testData)
         )
 
-        this.getDuplicatusRoll(result, testData)
+        await this.getDuplicatusRoll(result, testData)
 
         let success = result.successLevel > 0
 

@@ -279,7 +279,7 @@ export default class TokenHotbar2 extends Application {
                 actor.basicTest(setupData)
             });
         } else {
-            let result = actor.items.get(id)
+            let result = actor?.items.get(id)
             if (result) {
                 if(ev.originalEvent.ctrlKey) return result.sheet.render(true)
 

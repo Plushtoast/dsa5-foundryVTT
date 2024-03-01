@@ -13,7 +13,9 @@
           <h3><a class="openChar">{{actor.name}}</a></h3>
         </div>
         <div class="col ten center">
-
+          {{#if canCalculate}}
+          <a class="showCC" data-tooltip="{{localize 'HELP.charApp'}}"><i class="fas fa-calculator"></i></a>
+          {{/if}}
         </div>
       </div>
 

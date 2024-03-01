@@ -55,7 +55,7 @@
                         {{#each skills as |item i|}}
                         <li class="{{item.cssClass}} {{item.addClass}} primary" data-category="{{item.cssClass}}" data-id="{{item.id}}" data-tooltip="{{item.name}}" data-name="{{item.name}}" data-subfunction="{{item.subfunction}}" data-tw="{{item.tw}}">
                             <div class="{{item.iconClass}}" style="background-image:url('{{item.icon}}')">{{item.abbrev}}</div>
-                            <span class="nameContent">{{localize item.name}}</span>
+                            <span class="nameContent">{{{localize item.name}}}</span>
                         </li>
                         {{/each}}
                         {{#if (eq @key "gm")}}

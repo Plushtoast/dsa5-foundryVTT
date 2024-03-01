@@ -675,6 +675,9 @@ export default class Actordsa5 extends Actor {
       aspModifier: 0,
       kapModifier: 0,
       immunities: [],
+      thresholds: {
+        effects: []
+      },
       creatureBonus: [],
       miracle: {
         attack: 0,
@@ -1459,7 +1462,7 @@ export default class Actordsa5 extends Actor {
   }
 
   setupSpell(spell, options = {}, tokenId) {
-    return Itemdsa5.getSubClass(spell.type).setupDialog(null, options, spell, this, tokenId);
+    return this.setupSkill(spell, options, tokenId);
   }
 
   setupSkill(skill, options = {}, tokenId) {

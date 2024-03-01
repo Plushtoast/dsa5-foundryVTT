@@ -526,6 +526,7 @@
     "rangeweapons": "Rangeweapons",
     "requirements": "Requirements",
     "resistanceModifier": "Resistance",
+    "threshold": "Threshold",
     "removeGesture": "Remove gesture",
     "removeFormula": "Remove formula/prayer",
     "recommendedAdvantages": "Suitable advantages",
@@ -751,6 +752,7 @@
         "doGroupCheck": "Modifier for <b>{skill}</b> Group Check.",
         "doRequestRoll": "Modifier for <b>{skill}</b> roll request.",
         "payTT": "Loot player",
+        "theGroup": "the group",
         "randomPlayer": "Left-<i class=\"fas fa-computer-mouse\"></i>: Random victim<br>Right-<i class=\"fas fa-computer-mouse\"></i>: include Misfortune",
         "randomGen": "Breeding pit",
         "sightautomation": "Sight modifiers (auto)",
@@ -1089,6 +1091,7 @@
         "isReloading": "{actor} is concentrating on {item} ({status})."
     },
     "CHATNOTIFICATION": {
+        "fadingEffect": "The effect <b>{effect}</b> has been removed from {actor}.",
         "gainsBloodrush": "The rage consumes {character} and he/she gains the condition bloodrush.",
         "unableReroll": "Die {die} rolled again because of Incompetence ({oldVal}/{newVal})",
         "requestRoll": "{user} requests a roll in {item}",
@@ -1281,6 +1284,12 @@
         "hidePlayers": "Hide for players",
         "applyTarget": "Effect (Target)",
         "applySelf": "Effect (Self)",
+        "messageReceivers": {
+            "gm": "Only GM",
+            "players": "Everyone",
+            "player": "Affected players",
+            "playergm": "Affected players and GM"
+        },
         "appliedEffect": "Effect <b>{source}</b> applied to <b>{target}</b>.",
         "removedEffect": "Effect <b>{source}</b> removed from <b>{target}</b>.",
         "custom": "Special effect",
@@ -1648,6 +1657,8 @@
         "gear": "Update icons, effects and effectformula of all gear, weapons and armors. THIS WILL OVERRIDE MANUAL MODIFICATIONS!"
     },
     "DSASETTINGS": {
+        "notifyOnFadingEffects": "End of effect (notification)",
+        "notifyOnFadingEffectsHint": "The game master receives a chat notification, if an effect on an actor is removed.",
         "hotbarv3": "DSA Hotbar Conversion",
         "hotbarv3Hint": "The hotbar is completely replaced by a TDE variant. Abilities and other elements are directly dependent on the selected token. (Recommendation: Deactivate the token hotbar additionally)",        
         "enableMasterTokenFunctions": "Enable Master Token Functions",

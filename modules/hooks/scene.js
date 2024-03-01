@@ -6,7 +6,7 @@ export default function() {
             doc.updateSource({ backgroundColor: "#000000" })
         }
 
-        if(!options.dsaInit && createData.notes?.some(x => getProperty(x, "flags.dsa5.initName"))){
+        if(!doc.pack && !options.dsaInit && createData.notes?.some(x => getProperty(x, "flags.dsa5.initName"))){
             new Dialog({
                 title: game.i18n.localize("DIALOG.warning"),
                 content: `<p>${createData.name}</p><p>${game.i18n.localize('DSAError.mapsViaJournalbrowser')}</p>`,

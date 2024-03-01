@@ -7,6 +7,7 @@ export function setEnrichers() {
     const modRegex = /(-|\+)?\d+/
     const payRegex = /(-|\+)?\d+(\.\d+)?/
     const replaceRegex = /\[[a-zA-ZöüäÖÜÄ&; -]+/
+    const optionRegex = /options={[0-9a-zA-Z: ",]+}/
     const replaceRegex2 = /[\[\]]/g
     const payStrings = {
         Pay: game.i18n.localize("PAYMENT.payButton"),
@@ -26,14 +27,19 @@ export function setEnrichers() {
 
     CONFIG.TextEditor.enrichers.push(
         {
-            pattern: /@(Rq|Gc|Ch)\[[a-zA-ZöüäÖÜÄ&; -]+ (-|\+)?\d+\]({[a-zA-ZöüäÖÜÄß\(\)&; -]+})?/g,
+            pattern: /@(Rq|Gc|Ch)\[[a-zA-ZöüäÖÜÄ&; -]+ (-|\+)?\d+( options={[0-9a-zA-Z: ",]+})?\]({[a-zA-ZöüäÖÜÄß\(\)&; -]+})?/g,
             enricher: (match, options) => {
                 const str = match[0]
                 const type = match[1]
                 const mod = Number(str.match(modRegex)[0])
-                const skill = str.replace(mod, "").match(replaceRegex)[0].replace(replaceRegex2, "").trim()
-                const customText = str.match(/\{.*\}/) ? str.match(/\{.*\}/)[0].replace(/[\{\}]/g, "") : skill
-                return $(`<a class="roll-button request-${rolls[type]}" data-type="skill" data-modifier="${mod}" data-name="${skill}" data-label="${customText}"><em class="fas fa-${icons[type]}"></em>${titles[type]}${customText} ${mod}</a>`)[0]
+                const json = str.match(optionRegex) ? JSON.parse(str.match(optionRegex)[0].replace(/options=/, "")) : {}
+                const data = encodeURIComponent(JSON.stringify(json))
+                const skill = str.replace(mod, "").replace(optionRegex, "").match(replaceRegex)[0].replace(replaceRegex2, "").trim()
+                let customText = str.match(/\]\{.*\}/) ? str.match(/\]\{.*\}/)[0].replace(/[\]\{\}]/g, "") : skill
+
+                if(json.attrs) customText += ` (${json.attrs.split(",").join("/")})`
+
+                return $(`<a class="roll-button request-${rolls[type]}" data-type="skill" data-json='${data}' data-modifier="${mod}" data-name="${skill}" data-label="${customText}"><em class="fas fa-${icons[type]}"></em>${titles[type]}${customText} ${mod}</a>`)[0]
             }
         },
         {

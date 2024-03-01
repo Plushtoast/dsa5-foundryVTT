@@ -461,6 +461,12 @@ export default class DSAActiveEffectConfig extends ActiveEffectConfig {
                 mode: 0,
                 ph: "inpain 1",
             },
+            {
+                name: `${game.i18n.localize("threshold")} (${game.i18n.localize("condition")})`,
+                val: "system.thresholds.effects",
+                mode: 0,
+                ph: "inpain 1",
+            },
             { name: game.i18n.localize("spellArmor"), val: "system.spellArmor", mode: 2, ph: "1" },
             { name: game.i18n.localize("carrycapacity"), val: "system.carryModifier", mode: 2, ph: "1" },
             {

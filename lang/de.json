@@ -458,6 +458,7 @@
     "rangeweapons": "Fernkampfwaffen",
     "requirements": "Voraussetzungen",
     "resistanceModifier": "Widerstand",
+    "threshold": "Schwelle",
     "removeGesture": "Geste weglassen",
     "removeFormula": "Formel/Gebet weglassen",
     "recommendedAdvantages": "Geeignete Vorteile",
@@ -713,6 +714,7 @@
         "randomGen": "Zuchtgrube",
         "sightautomation": "Sichtmodifikatoren (auto)",
         "threshold": "Dunkelheitsschwelle",
+        "theGroup": "Die Gruppe",
         "darkness": "Dunkelheit",
         "sightautomationTooltip": "Setzt bei Angriffs- und Verteidigungswürfen automatisch einen Modifikator, wenn der Dunkelheitswert die entsprechende Schwelle überschreitet.",
         "lightSightCompensationEnabled": "Lichtausgleich aktivieren",
@@ -1084,6 +1086,7 @@
         "4": "Unsichtbar [Glückstreffer]"
     },
     "CHATNOTIFICATION": {
+        "fadingEffect": "Der Effekt <b>{effect}</b> wurde von {actor} entfernt.",
         "gainsBloodrush": "Der Zorn überwältigt {character} und er/sie verfällt in den Zustand Blutrausch.",
         "unableReroll": "Würfel {die} wegen Unfähigkeit erneut geworfen ({oldVal}/{newVal})",
         "requestRoll": "{user} fordert einen Wurf in {item}",
@@ -1313,6 +1316,12 @@
         "applySelf": "Effekt (Selbst)",
         "appliedEffect": "Effekt <b>{source}</b> wurde auf <b>{target}</b> übertragen.",
         "removedEffect": "Effekt <b>{source}</b> wurde von <b>{target}</b> entfernt.",
+        "messageReceivers": {
+            "gm": "Nur für den Spielleiter",
+            "players": "Für alle",
+            "player": "Betroffene Spieler",
+            "playergm": "Betroffene Spieler und Spielleiter"
+        },
         "apply": "Anwenden",
         "custom": "Sondereffekt",
         "creature": "Akteurlink (z.b. dsa5-core.corebestiary.Gotongi)",
@@ -1698,6 +1707,8 @@
         "2": "2 Aktionen zielen"
     },
     "DSASETTINGS": {
+        "notifyOnFadingEffects": "Effektende (Benachrichtigung)",
+        "notifyOnFadingEffectsHint": "Der Spielleiter erhält eine Chatbenachrichtigung, wenn ein Effekt auf einem Akteur ausläuft.",
         "hotbarv3": "DSA Hotbar Konversion",
         "hotbarv3Hint": "Die Hotbar wird durch eine DSA Variante komplett ersetzt. Fähigkeiten und sonstige Elemente sind direkt abhängig vom ausgewählten Token. (Empfehlung: Die Tokenhotbar zusätzlich deaktivieren)",
         "enableMasterTokenFunctions": "Meisterfunktionen",

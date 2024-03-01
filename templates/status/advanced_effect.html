@@ -14,6 +14,18 @@
     </div>
     {{/if}}
     <div class="form-group">
+        <label class="label-text">{{localize "DSASETTINGS.notifyOnFadingEffects"}}</label>
+        <select class="advancedSelector" name="flags.dsa5.removeMessage">
+            {{#select effect.flags.dsa5.removeMessage}}            
+            <option value="">-</option>
+            <option value="players">{{localize 'ActiveEffects.messageReceivers.players'}}</option>
+            <option value="player">{{localize 'ActiveEffects.messageReceivers.player'}}</option>
+            <option value="playergm">{{localize 'ActiveEffects.messageReceivers.playergm'}}</option>
+            <option value="gm">{{localize 'ActiveEffects.messageReceivers.gm'}}</option>
+            {{/select}}
+        </select>
+    </div>
+    <div class="form-group">
         <label class="label-text">{{localize 'Description'}}</label>
         <input type="text" name="flags.dsa5.description" value="{{effect.flags.dsa5.description}}" />
     </div>

@@ -472,13 +472,16 @@ class GameMasterMenu extends Application {
     }
 
     async doPayment(ids, pay, amount = 0) {
-        const actors = game.actors.filter(x => ids.includes(x.id))
-        const heros = this.getNames(actors)
-        const template = await renderTemplate('systems/dsa5/templates/dialog/master-dialog-award.html', { amount, text: game.i18n.localize(game.i18n.format(pay ? "MASTER.payText" : "MASTER.getPaidText", { heros })) })
+        const tracked = await this.getTrackedHeros()
+        const template = await renderTemplate('systems/dsa5/templates/dialog/master-ap-award.html', { selected: ids, amount, tracked, text: game.i18n.localize(game.i18n.format(pay ? "MASTER.payText" : "MASTER.getPaidText", { heros: game.i18n.localize("MASTER.theGroup") })) })
         const callback = (dlg) => {
             const number = dlg.find('.input-text').val()
-            for (let hero of actors)
-                DSA5Payment.handlePayAction(undefined, pay, number, hero)
+            if (!isNaN(number)) {
+                const actors = [] 
+                dlg.find('.heroSelector:checked').each((i, elem) => actors.push(game.actors.get(elem.value)))
+                for (let hero of actors)
+                    DSA5Payment.handlePayAction(undefined, pay, number, hero)
+            }
 
         }
         this.buildDialog(game.i18n.localize(pay ? 'MASTER.payTT' : 'PAYMENT.payButton'), template, callback)
@@ -489,13 +492,16 @@ class GameMasterMenu extends Application {
     }
 
     async getExp(ids, amount = 0) {
-        const actors = game.actors.filter(x => ids.includes(x.id))
-        const template = await renderTemplate('systems/dsa5/templates/dialog/master-dialog-award.html', { amount, text: game.i18n.localize(game.i18n.format("MASTER.awardXPText", { heros: this.getNames(actors) })) })
+        const tracked = await this.getTrackedHeros()
+        const template = await renderTemplate('systems/dsa5/templates/dialog/master-ap-award.html', { selected: ids, tracked, amount, text: game.i18n.localize(game.i18n.format("MASTER.awardXPText", { heros: game.i18n.localize('MASTER.theGroup') })) })
         const callback = async(dlg) => {
             const number = Number(dlg.find('.input-text').val())
             const familiarXP = Math.max(1, Math.round(number * 0.25))
             const heros = []
             const familiars = []
+            const actors = [] 
+            dlg.find('.heroSelector:checked').each((i, elem) => actors.push(game.actors.get(elem.value)))
+            
             if (!isNaN(number)) {
                 for (const actor of actors) {
                     let xpBonus = number
@@ -508,8 +514,11 @@ class GameMasterMenu extends Application {
 
                     await actor.update({ "system.details.experience.total": actor.system.details.experience.total + xpBonus });
                 }
-                if (heros.length > 0) await ChatMessage.create(DSA5_Utility.chatDataSetup(game.i18n.format('MASTER.xpMessage', { heros: this.getNames(heros), number })));
-                if (familiars.length > 0) await ChatMessage.create(DSA5_Utility.chatDataSetup(game.i18n.format('MASTER.xpMessage', { heros: this.getNames(familiars), number })));
+                const message = []
+                if (heros.length > 0) message.push(game.i18n.format('MASTER.xpMessage', { heros: this.getNames(heros), number }))
+                if (familiars.length > 0) message.push(game.i18n.format('MASTER.xpMessage', { heros: this.getNames(familiars), number: familiarXP }))
+
+                if(message.length > 0) await ChatMessage.create(DSA5_Utility.chatDataSetup(`<p>${message.join("</p><p>")}</p>`))
 
                 if(this.rendered) this.render(true)
             }

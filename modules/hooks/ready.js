@@ -45,5 +45,7 @@ export default function() {
 
         setEnrichers()
         initImagePopoutTochat()
+
+        Hooks.call("DSA5ready", game.dsa5)
     });
 }

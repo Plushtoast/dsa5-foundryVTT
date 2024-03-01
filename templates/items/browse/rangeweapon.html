@@ -95,7 +95,11 @@
                             {{#if document.system.worn.value}}
                             <div>
                                 Alt+<i class="fas fa-computer-mouse"></i> {{localize 'SHEET.UnEquipItem'}}
-                            </div>               
+                            </div>
+                            {{else}}            
+                            <div>
+                                {{{localize "leftClick"}}} {{localize 'SHEET.EquipItem'}}  
+                            </div>
                             {{/if}}
                         </div>
                         {{/if}}

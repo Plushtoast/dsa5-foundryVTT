@@ -5,7 +5,7 @@ export default class DSA5Initializer extends Dialog {
     constructor(title, content, module, lang = "") {
         let data = {
             title,
-            content: content,
+            content,
             buttons: {
                 initialize: {
                     label: game.i18n.localize("initialize"),
