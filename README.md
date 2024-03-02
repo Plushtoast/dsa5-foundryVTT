@@ -196,6 +196,9 @@ If you want to discuss TDE for foundry or need some assistance you can also join
     <a href="https://www.f-shop.de/detail/index/sArticle/3906" target="_blank" title="Die Siebenwindküste">
         <img src="https://www.f-shop.de/media/image/23/69/d7/ESD042_0_0999.jpg" alt="Die Siebenwindküste" style="margin-right: 5px; margin-bottom: 5px; text-align:center; width:210px;">
     </a>
+    <a href="https://www.f-shop.de/virtual-tabletops/das-schwarze-auge-vtt/abenteuer-module/4041/dsa5-die-winterwacht-bundle-fuer-foundry-vtt" target="_blank" title="Die Winterwacht">
+        <img src="https://www.f-shop.de/media/image/94/cf/f2/ESD046_0_0999.jpg" alt="Die Winterwacht" style="margin-right: 5px; margin-bottom: 5px; text-align:center; width:210px;">
+    </a>
 </div>
 <br>
 <h2>English Modules</h2>
