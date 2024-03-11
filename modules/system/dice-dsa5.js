@@ -103,7 +103,7 @@ export default class DiceDSA5 {
                 case "trait":
                     if (testData.mode == "damage") {
                         let rollFormula = await this.damageFormula(testData)
-                        roll = await new Roll(rollFormula).evaluate({ async: true })
+                        roll = await new Roll(rollFormula, testData.extra.actor.system).evaluate({ async: true })
                         for (let i = 0; i < roll.dice.length; i++) mergeObject(roll.dice[i].options, d3dColors("damage"))
                     } else {
                         roll = await new Roll(`1d20`).evaluate({ async: true })
@@ -646,7 +646,7 @@ export default class DiceDSA5 {
         const regex = /\d{1}[dDwW]\d/g;
         const modText = `${text}`
         modText.replace(regex, function (match) {
-            promises.push(new Roll(match.replace(/[Ww]/, "d")).evaluate({ async: true }))
+            promises.push(new Roll(match.replace(/[Ww]/, "d"), testData.extra.actor.system).evaluate({ async: true }))
         })
         const data = await Promise.all(promises)
         const rollString = modText.replace(regex, () => {
@@ -694,10 +694,11 @@ export default class DiceDSA5 {
                 }
             }
         }
+
         let damageRoll = testData.damageRoll
             ? testData.damageRoll
             : await DiceDSA5.manualRolls(
-                  await new Roll(rollFormula).evaluate({ async: true }),
+                  await new Roll(rollFormula, testData.extra.actor.system).evaluate({ async: true }),
                   "CHAR.DAMAGE",
                   testData.extra.options
               )
@@ -1062,7 +1063,7 @@ export default class DiceDSA5 {
                 let rollEffect = testData.damageRoll ?
                     testData.damageRoll :
                     await DiceDSA5.manualRolls(
-                        await new Roll(formula).evaluate({ async: true }),
+                        await new Roll(formula, testData.extra.actor.system).evaluate({ async: true }),
                         "CHAR.DAMAGE",
                         testData.extra.options
                     )

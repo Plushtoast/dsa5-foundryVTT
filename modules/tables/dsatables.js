@@ -61,7 +61,7 @@ export default class DSATables {
         if(hasEffect && hasEffect.resistEffect){
             const failEffects = Array.isArray(hasEffect.resistEffect.fail) ? hasEffect.resistEffect.fail : [hasEffect.resistEffect.fail]
             for(let fail of failEffects){
-                const ef = new OnUseEffect().effectDummy(fail.description, hasEffect.resistEffect.changes || [], hasEffect.resistEffect.duration || { })
+                const ef = OnUseEffect.effectBaseDummy(fail.description, hasEffect.resistEffect.changes || [], hasEffect.resistEffect.duration || { })
                 if(fail.systemEffect){
                     //todo add duration
                     mergeObject(ef, {

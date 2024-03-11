@@ -18,9 +18,9 @@ export default class OnUseEffect {
         }
         let result = {};
         if (documents.length) {
+            const AsyncFunction = Object.getPrototypeOf(async function(){}).constructor
             try {
                 args.result = result;
-                const AsyncFunction = Object.getPrototypeOf(async function(){}).constructor
                 const fn = new AsyncFunction("args", "actor", "item", documents[0].command)
                 result.ret = await fn.call(this, args, this.item.actor, this.item)
             } catch (err) {
@@ -80,7 +80,7 @@ export default class OnUseEffect {
         }
     }
 
-    effectDummy(name, changes, duration) {
+    static effectBaseDummy(name, changes, duration) {
         return {
             name,
             icon: "icons/svg/aura.svg",
@@ -92,7 +92,11 @@ export default class OnUseEffect {
                     description: name
                 },
             },
-        };
+        }
+    }
+
+    effectDummy(name, changes, duration) {
+        return OnUseEffect.effectBaseDummy(name, changes, duration);
     }
 
     async socketedConditionAddActor(actors, data) {

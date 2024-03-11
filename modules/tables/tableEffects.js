@@ -138,7 +138,7 @@ export default class TableEffects{
                 let ef
                 if(changes){
                     const lbl = game.i18n.localize(`CONDITION.${systemEffect}`) + " - " + game.i18n.localize("botchCritEffect")
-                    ef = new OnUseEffect().effectDummy(lbl, changes, duration || { })
+                    ef = OnUseEffect.effectBaseDummy(lbl, changes, duration || { })
                     ef.icon = baseEffect.icon
                 } else {
                     //todo add duration
@@ -150,7 +150,7 @@ export default class TableEffects{
                 }
                 return true
             } else if(changes) {
-                const ef = new OnUseEffect().effectDummy(game.i18n.localize("botchCritEffect"), changes || [], duration || { })
+                const ef = OnUseEffect.effectBaseDummy(game.i18n.localize("botchCritEffect"), changes || [], duration || { })
 
                 mergeObject(ef, {
                     flags: {

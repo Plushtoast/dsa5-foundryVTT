@@ -37,7 +37,9 @@ export function setEnrichers() {
                 const skill = str.replace(mod, "").replace(optionRegex, "").match(replaceRegex)[0].replace(replaceRegex2, "").trim()
                 let customText = str.match(/\]\{.*\}/) ? str.match(/\]\{.*\}/)[0].replace(/[\]\{\}]/g, "") : skill
 
-                if(json.attrs) customText += ` (${json.attrs.split(",").join("/")})`
+                if(json.attrs) {
+                    customText += ` (${json.attrs.split(",").join("/")}, ${game.i18n.localize("CHARAbbrev.FW")} ${json.fw||0})`
+                }
 
                 return $(`<a class="roll-button request-${rolls[type]}" data-type="skill" data-json='${data}' data-modifier="${mod}" data-name="${skill}" data-label="${customText}"><em class="fas fa-${icons[type]}"></em>${titles[type]}${customText} ${mod}</a>`)[0]
             }

@@ -1,12 +1,17 @@
 import DSA5SpellDialog from "../dialog/dialog-spell-dsa5.js";
 import DSA5 from "../system/config-dsa5.js";
 import DiceDSA5 from "../system/dice-dsa5.js";
+import OnUseEffect from "../system/onUseEffects.js";
 import DSA5_Utility from "../system/utility-dsa5.js";
 
 function automatedAnimation(successLevel, options = {}) {
     if (DSA5_Utility.moduleEnabled("autoanimations")) {
         console.warn("Animations for on use effects not enabled yet");
     }
+}
+
+function effectDummy(name, changes, duration) {
+    return OnUseEffect.effectBaseDummy(name, changes, duration);
 }
 
 async function callMacro(packName, name, actor, item, qs, args = {}) {
@@ -28,7 +33,7 @@ async function callMacro(packName, name, actor, item, qs, args = {}) {
             const fn = new AsyncFunction("actor", "item", "qs", "automatedAnimation", "args", documents[0].command)
             try {
                 args.result = result;
-                const context = mergeObject({ automatedAnimation }, this)
+                const context = mergeObject({ automatedAnimation, effectDummy }, this)
                 await fn.call(context, actor, item, qs, automatedAnimation, args);
             } catch (err) {
                 ui.notifications.error(`There was an error in your macro syntax. See the console (F12) for details`);
