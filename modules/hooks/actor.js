@@ -78,10 +78,11 @@ export default function() {
                 return false
             }
             DSAActiveEffectConfig.onEffectRemove(actor, effect)
+            
+            if(DSAActiveEffectConfig.onDelayedEffect(actor, effect) === false) return false
 
             //todo this might need to go to predelete
-            const result = Hooks.call("deleteActorActiveEffect", actor, effect)
-            if (result === false) return false
+            if(Hooks.call("deleteActorActiveEffect", actor, effect) === false) return false
         }
     })
 

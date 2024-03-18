@@ -38,6 +38,10 @@ export default function() {
             startTime: game.time.worldTime
         }}
 
+        if(createData.flags?.dsa5?.onDelayed) {
+            update.enabled = false
+        }
+
         if (!game.combat) {
             doc.updateSource(update)
             return

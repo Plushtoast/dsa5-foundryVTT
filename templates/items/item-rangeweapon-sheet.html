@@ -83,6 +83,10 @@
                 <input class="input-text" type="number" name="system.structure.breakPointRating" value="{{system.structure.breakPointRating}}" placeholder="{{breakPointRating}}" data-dtype="Number" step="1" />
             </div>
             {{/if}}
+            <div class="form-group">
+                <label class="label-text">{{localize "PLANT.region"}}</label>
+                <input class="input-text" type="text" name="system.region" value="{{system.region}}" data-dtype="String" />
+            </div>
             {{> systems/dsa5/templates/items/traditionArtifact.html}}
         </div>
 

@@ -242,6 +242,7 @@ export default class Migrakel {
                     "rangeweapon",
                     "equipment",
                     "poison",
+                    "disease",
                     "consumable",
                     "ammunition",
                 ].includes(x.type);

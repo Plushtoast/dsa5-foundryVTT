@@ -497,19 +497,34 @@ class Enchantable extends ItemSheetdsa5 {
 
     async getSpell(enchantment) {
         const pack = await game.packs.get(enchantment.pack)
-
-        if (!pack) {
-            ui.notifications.error(game.i18n.localize('DSAError.enchantmentNotFound'))
-            return
+        let item 
+        if (pack) {
+            item = await pack.getDocument(enchantment.itemId)
+            if (!item) {
+                const itemId = await pack.index.getName(enchantment.name)
+                if (itemId) item = await pack.getDocument(itemId._id)
+            }            
         }
 
-        let item = await pack.getDocument(enchantment.itemId)
-        if (!item) {
-            const itemId = await pack.index.getName(enchantment.name)
-            if (itemId) item = await pack.getDocument(itemId._id)
+        if(!item) {
+            const itemLibrary = game.dsa5.itemLibrary
+            if (!itemLibrary.equipmentBuild) {
+                await itemLibrary.buildEquipmentIndex()
+            }
+
+            itemLibrary.findCompendiumItem
+            const cats = enchantment.talisman ? ["liturgy", "ceremony"] : ["spell", "ritual"]
+
+            for(let cat of cats) {
+                item = await game.dsa5.itemLibrary.findCompendiumItem(enchantment.name, cat)
+                item = item.find((x) => x.name == enchantment.name && x.type == cat && x.system)
+
+                if(item) break
+            }            
         }
+
         if (!item) ui.notifications.error(game.i18n.localize('DSAError.enchantmentNotFound'))
-
+    
         return item
     }
 
@@ -970,12 +985,7 @@ class MeleeweaponSheetDSA5 extends ItemSheetObfuscation(Enchantable) {
         this.isPoisonable = true
     }
 
-    async getData(options) {
-        const data = await super.getData(options);
-        const characteristics = mergeObject(duplicate(DSA5.characteristics), {
-            "ge/kk": game.i18n.localize("CHAR.GEKK"),
-            ["-"]: "-"
-        })
+    getGripInfo() {
         const twoHanded = RuleChaos.regex2h.test(this.item.name)
         let wrongGripHint = ""
         if (!twoHanded) {
@@ -996,11 +1006,24 @@ class MeleeweaponSheetDSA5 extends ItemSheetObfuscation(Enchantable) {
                     wrongGripHint = "wrongGrip.yieldOnePolearms"
             }
         }
-        mergeObject(data, {
-            characteristics,
+
+        return {
             twoHanded,
-            wrongGripLabel: twoHanded ? "wrongGrip.oneHanded" : "wrongGrip.twoHanded",
             wrongGripHint,
+            wrongGripLabel: twoHanded ? "wrongGrip.oneHanded" : "wrongGrip.twoHanded",
+        }   
+     }
+
+    async getData(options) {
+        const data = await super.getData(options);
+        const characteristics = mergeObject(duplicate(DSA5.characteristics), {
+            "ge/kk": game.i18n.localize("CHAR.GEKK"),
+            ["-"]: "-"
+        })
+        
+        mergeObject(data, {
+            ...this.getGripInfo(),
+            characteristics,
             combatskills: await DSA5_Utility.allCombatSkillsList("melee"),
             ranges: DSA5.meleeRanges,
             shieldSizes: DSA5.shieldSizes,
@@ -1043,7 +1066,8 @@ class PoisonSheetDSA5 extends ItemSheetObfuscation(ItemSheetdsa5) {
 
     async getData(options) {
         const data = await super.getData(options);
-        data["resistances"] = DSA5.magicResistanceModifiers
+        data.resistances = DSA5.magicResistanceModifiers
+        data.poisonCategories = DSA5.poisonSubTypes
         return data
     }
 }

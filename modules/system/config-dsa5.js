@@ -307,6 +307,23 @@ DSA5.weaponStabilities = {
     "Whips": 4
 }
 
+DSA5.meleeAsRangeReach = {
+    "Daggers": "1/5/12",
+    "Fencing Weapons": "1/3/10",
+    "Impact Weapons": "1/3/10",
+    "Chain Weapons": "1/3/5",
+    "Lances": "1/2/3",
+    "Brawling": "1/5/12",
+    "Shields": "1/3/10",
+    "Swords": "1/3/10",
+    "Polearms": "1/3/5",
+    "Two-Handed Impact Weapons": "1/3/5",
+    "Two-Handed Swords": "1/3/5",
+    "Whips": "1/3/5",
+    "Fans": "1/3/5",
+    "Pikes": "1/3/5",
+}
+
 DSA5.journalFontSizes = [8, 10, 12, 14, 16, 18, 20, 24, 28, 32];
 
 DSA5.styles = {
@@ -793,6 +810,16 @@ DSA5.magicResistanceModifiers = {
     "-": "-",
     "SK": "soulpower",
     "ZK": "toughness"
+}
+
+DSA5.poisonSubTypes = {
+    "1": "poisonCategory.1",
+    "4": "poisonCategory.4",
+    "5": "poisonCategory.5",
+    "6": "poisonCategory.6",
+    "7": "poisonCategory.7",
+    "2": "poisonCategory.2",
+    "3": "poisonCategory.3"
 }
 
 DSA5.sizeCategories = {

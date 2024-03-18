@@ -50,6 +50,8 @@ Hooks.once("ready", () => {
             ],
             poison: [
                 { label: "resistanceModifier", attr: "resistance.value", type: "select", options: DSA5.magicResistanceModifiers },
+                { label: "COMBATSKILLCATEGORY.subcategory", attr: "subcategory", type: "select", options: DSA5.poisonSubTypes },
+                { label: "poisonType", attr: "poisonType.value", type: "text" }
             ],
             disease: [
                 { label: "resistanceModifier", attr: "resistance.value", type: "select", options: DSA5.magicResistanceModifiers },

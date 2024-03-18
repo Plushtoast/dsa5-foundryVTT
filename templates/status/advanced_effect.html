@@ -7,6 +7,22 @@
         <label class="label-text">{{localize 'ActiveEffects.hidePlayers'}}</label>
         <input type="checkbox" name="flags.dsa5.hidePlayers" {{checked effect.flags.dsa5.hidePlayers}}/>
     </div>
+    {{#if effectConfigs.hasSuccessEffects}}
+    <div class="form-group">
+        <label class="label-text">{{localize "ActiveEffects.apply"}}</label>
+        <select name="flags.dsa5.successEffect">
+            {{#select effect.flags.dsa5.successEffect}}            
+            <option value="">{{localize 'ActiveEffects.always'}}</option>
+            <option value="2">{{localize 'ActiveEffects.onSuccess'}}</option>
+            <option value="1">{{localize 'ActiveEffects.onFailure'}}</option>
+            {{/select}}
+        </select>
+    </div>
+    <div class="form-group">
+        <label class="label-text">{{localize 'ActiveEffects.onDelayed'}}</label>
+        <input type="text" name="flags.dsa5.onDelayed" value="{{effect.flags.dsa5.onDelayed}}" />
+    </div>
+    {{/if}}
     {{#if isWeapon}}
     <div class="form-group" data-tooltip="ActiveEffects.applyToOwnerHint">
         <label class="label-text">{{localize 'ActiveEffects.applyToOwner'}}</label>

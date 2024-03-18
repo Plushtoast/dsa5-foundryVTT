@@ -1118,6 +1118,7 @@
             "step": {
                 "value": 1
             },
+            "subcategory": 1,
             "poisonType": {
                 "value": ""
             },

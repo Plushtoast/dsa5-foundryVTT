@@ -36,7 +36,7 @@ function clickableActorItems(actor, list, rankPath, maxPath) {
             }
         }
         return res.join(", ")
-    }   else {
+    } else {
         return list.map(item => {
             return `<span class="actorEmbeddedAbility" data-actor="${actor.uuid}" data-id="${item._id}"><a>${item.name}</a></span>`
         }).join(", ")
@@ -83,6 +83,12 @@ export default function() {
         hasLocalization: (a, b) => {
             const val = a.string || a
             return  game.i18n.has(val) ? game.i18n.localize(val) : ( b || "")
+        },
+        successEffect: (a) => {
+            const sucEf = getProperty(a, "flags.dsa5.successEffect")
+            if(sucEf == 2) return ` (${game.i18n.localize("ActiveEffects.onSuccess")})`
+            if(sucEf == 1) return ` (${game.i18n.localize("ActiveEffects.onFailure")})`
+            return ""
         },
         replaceConditions: DSA5_Utility.replaceConditions,
         floor: (a) => Math.floor(Number(a)),

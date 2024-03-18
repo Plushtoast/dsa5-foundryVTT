@@ -73,6 +73,25 @@ export default class DSAActiveEffectConfig extends ActiveEffectConfig {
         return await callMacro(packName, name, actor, item, qs, args)
     }
 
+    static onDelayedEffect(actor, effect) {
+        const onDelayedMacro = getProperty(effect, "flags.dsa5.onDelayed");
+
+        this.executeDelayedEffect(actor, effect, onDelayedMacro)
+        if(onDelayedMacro) return false
+    }
+
+    static async executeDelayedEffect(actor, effect, onDelayedMacro) {
+        console.log("delayed effect start")
+
+        //todo calculate duration
+
+        /*await effect.update({
+            "flags.dsa5.delayedEffect": false,
+            "duration.seconds": onDelayedMacro + effect.duration.seconds,
+            "enabled": true
+        })*/
+    }
+
     static async onEffectRemove(actor, effect) {
         const onRemoveMacro = getProperty(effect, "flags.dsa5.onRemove");
         if (onRemoveMacro) {
@@ -121,7 +140,8 @@ export default class DSAActiveEffectConfig extends ActiveEffectConfig {
                 ].includes(itemType) ||
                 (["specialability"].includes(itemType) && getProperty(this.object, "parent.system.category.value") == "Combat"),
             hasDamageTransformation: ["ammunition"].includes(itemType),
-            hasTriggerEffects: ["specialability"].includes(itemType)
+            hasTriggerEffects: ["specialability"].includes(itemType),
+            hasSuccessEffects: ["poison", "disease"].includes(itemType)
         };
 
         let advancedFunctions = []
@@ -327,9 +347,9 @@ export default class DSAActiveEffectConfig extends ActiveEffectConfig {
         const testData = message.flags.data.postData;
         const speaker = message.speaker;
 
-        if (["poison", "disease"].includes(source.type)) {
-            testData.qualityStep = testData.successLevel > 0 ? 2 : 1;
-        }
+        const hasSuccessEffects = ["poison", "disease"].includes(source.type)
+
+        if (hasSuccessEffects) testData.qualityStep = testData.successLevel > 0 ? 2 : 1
 
         const attacker = DSA5_Utility.getSpeaker(speaker) ||
             DSA5_Utility.getSpeaker(getProperty(message.flags, "data.preData.extra.speaker")) ||
@@ -337,6 +357,8 @@ export default class DSAActiveEffectConfig extends ActiveEffectConfig {
 
         const sourceActor = attacker;
         let effects = (await this._parseEffectDuration(source, testData, message.flags.data.preData, attacker)).filter(x => !getProperty(x, "flags.dsa5.applyToOwner"));
+
+        if (hasSuccessEffects) effects = effects.filter(x => getProperty(x, "flags.dsa5.successEffect") == testData.qualityStep || !getProperty(x, "flags.dsa5.successEffect"))
         if (options.effectIds) effects = effects.filter(x => options.effectIds.includes(x._id))
         let actors = [];
         if (mode == "self") {

@@ -976,7 +976,7 @@ export default class DiceDSA5 {
             result.push(
                 `<a class="roll-button roll-item" data-removecharge="${!poison.permanent}" data-name="${
                     poison.name
-                }" data-type="poison"><i class="fas fa-dice"></i>${game.i18n.localize("poison")}: ${poison.name}</a>`
+                }" data-type="poison"><i class="fas fa-dice"></i>${game.i18n.localize("TYPES.Item.poison")}: ${poison.name}</a>`
             )
         }
         return result.join(", ")
@@ -1336,6 +1336,7 @@ export default class DiceDSA5 {
 
     static addApplyEffectData(testData) {
         const source = testData.preData.source
+
         if(testData.successLevel > 0){
             if(["meleeweapon", "rangeweapon"].includes(source.type) || (source.type == "trait" && ["rangeAttack", "meleeAttack"].includes(source.system.traitType.value))){
                 if (source.effects.some(x => { return !getProperty(x, "flags.dsa5.applyToOwner")})) return true
@@ -1343,8 +1344,11 @@ export default class DiceDSA5 {
             else if (["spell", "liturgy", "ritual", "ceremony", "trait", "skill"].includes(source.type)) {
                 if (source.effects.length > 0) return true
             }
-        }else if (["disease", "poison"].includes(source.type)) {
-            return source.effects.length > 0
+        } 
+        
+        if (["disease", "poison"].includes(source.type)) {
+            const search = testData.successLevel > 0 ? 2 : 1
+            return source.effects.filter(x => getProperty(x, "flags.dsa5.successEffect") == search || !getProperty(x, "flags.dsa5.successEffect")).length > 0            
         }
 
         const specAbIds = testData.preData.situationalModifiers.filter((x) => x.specAbId).map((x) => x.specAbId)
@@ -1559,6 +1563,22 @@ export default class DiceDSA5 {
         }
     }
 
+    static showCurrentTargets(ev) {
+        const targets = []
+        let i18nkey
+        if(ev.currentTarget.dataset.target == "target") {
+            i18nkey = "TT.applyEffectTargets"
+            for(let target of game.user.targets) targets.push(target.document.texture.src)
+        } else {
+            i18nkey = "TT.applyEffectCaster"
+            const message = game.messages.get($(ev.currentTarget).parents(".message").attr("data-message-id"))
+            const actor = DSA5_Utility.getSpeaker(message.flags.data.preData.extra.speaker)
+            if(actor) targets.push(actor.token ? actor.token.texture.src : actor.prototypeToken.texture.src)            
+        }
+        const msg = targets.length ? targets.map(x => `<img style="width:25px;height:25px;" src="${x}"/>`).join("") : `<small><i class="fas fa-exclamation-circle"></i> ${game.i18n.localize('DIALOG.noTarget')}</small>`
+        ev.currentTarget.dataset.tooltip = `<div><p>${game.i18n.localize(i18nkey)}</p>${msg}</div>`
+    }
+
     static async rollResistPain(ev){
         const data = ev.currentTarget.dataset;
         const target = { token: data.token, actor: data.actor, scene: canvas.id }
@@ -1603,6 +1623,8 @@ export default class DiceDSA5 {
                 await DSAActiveEffectConfig.applyEffect(id, mode)
             })
         })
+        html.on("mouseenter", ".applyEffect", (ev) => DiceDSA5.showCurrentTargets(ev))
+
         html.on("click", ".applyTableEffect", async(ev) => {
             DiceDSA5.wrapLock(ev, async(ev, elem) => {
                 const id = elem.parents(".message").attr("data-message-id")

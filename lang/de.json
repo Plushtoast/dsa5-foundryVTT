@@ -447,7 +447,6 @@
     "price": "Preis",
     "priceEachQL": "Preis pro QS",
     "probes": "Proben",
-    "poison": "Gift",
     "pamod": "Parademodifikator",
     "parryWeaponless": "Waffenlose Verteidigung",
     "rangeweapon": "Fernkampfwaffe",
@@ -601,6 +600,9 @@
                 "distribution.value": "Hexen...",
                 "targetCategory.value": "Lebewesen...",
                 "feature": "Hellsicht..."
+            },
+            "poison": {
+                "poisonType.value": "Waffengift..."
             },
             "ritual": {
                 "distribution.value": "Hexen...",
@@ -1054,6 +1056,9 @@
         "Kristallomantische Kristallkugel": "Kristallomantische Kristallkugel",
         "Echsenhaube": "Echsenhaube"
     },
+    "POISON": {
+        "ql": "Qualität der Taverne"
+    },
     "ITEMSHEET": {
         "offHandMod": "Bonus/Malus als Nebenhand (z.b. Parierwaffe)",
         "effectContainerHint": "Effektcontainer können Active Effects per Drag and Drop auf Akteure übertragen. Dadurch können Effekte vorbereitet und bei Bedarf schnell hinzugefügt werden. Alle Effekte im Container werden übertragen."
@@ -1323,6 +1328,10 @@
             "playergm": "Betroffene Spieler und Spielleiter"
         },
         "apply": "Anwenden",
+        "always": "Immer",
+        "onSuccess": "Bei Erfolg",
+        "onFailure": "Bei Misserfolg",
+        "onDelayed": "Verzögerter Start",
         "custom": "Sondereffekt",
         "creature": "Akteurlink (z.b. dsa5-core.corebestiary.Gotongi)",
         "resistRoll": "Widerstandsprobe",
@@ -1446,6 +1455,7 @@
         "localKnowledge": "Ortskenntnis",
         "naturalArmor": "Natürliche Rüstung",
         "improvisedWeaponMaster": "Meister der improvisierten Waffen",
+        "weaponThrow": "Waffenwurf",
 
         "all": "alle",
         "poisonResistance": "Giftresistenz",
@@ -1589,6 +1599,15 @@
         "3": "Passiv",
         "4": "Allgemein",
         "5": "Prügelei"
+    },
+    "poisonCategory": {
+        "1": "Gift, tierisch",
+        "2": "Alkohol",
+        "3": "Sucht",
+        "4": "Gift, alchimistisch",
+        "5": "Gift, dämonisch",
+        "6": "Gift, pflanzlich",
+        "7": "Gift, mineralisch"
     },
     "SpecCategory": {
         "clericalStyle": "Liturgiestilsonderfertigkeiten",

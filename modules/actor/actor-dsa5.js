@@ -1440,6 +1440,37 @@ export default class Actordsa5 extends Actor {
     return Itemdsa5.getSubClass(item.type).setupDialog(null, options, item, this, tokenId);
   }
 
+  throwMelee(item, tokenId) {
+    const throwingWeapons = game.i18n.localize("LocalizedIDs.Throwing Weapons")
+    const localizedCT = game.i18n.localize(`LocalizedCTs.${item.system.combatskill.value}`)
+
+    const hasWeaponThrow = ["Daggers", "Fencing Weapons", "Impact Weapons", "Swords", "Polearms"].includes(localizedCT) && SpecialabilityRulesDSA5.hasAbility(this, game.i18n.localize("LocalizedIDs.weaponThrow"))
+    const name = item.name + " (" + throwingWeapons + ")"
+    const range = new Itemdsa5({
+      name,
+      type: "rangeweapon",
+      system: {
+          combatskill: { value: throwingWeapons},
+          reach: { value: DSA5.meleeAsRangeReach[localizedCT]},
+          effect: { attributes: item.system.effect.attributes },
+          damage: { value: item.system.damage.value },
+          quantity: { value: 1 },
+      }
+    }, { temporary: true })
+   
+    const options = {
+      situationalModifiers: [{ name, value: hasWeaponThrow ? -4 : -8, selected: true}],
+    }
+    
+    this.setupWeapon(range, "attack", options, tokenId).then(async(setupData) => {
+      if(!hasWeaponThrow) {
+        setupData.testData.source.dmgMultipliers ||= []
+        setupData.testData.source.dmgMultipliers.push({ name: "LocalizedIDs.Throwing Weapons", val: "0.5" })
+      }
+      await this.basicTest(setupData);      
+    });
+  }
+
   setupWeaponless(statusId, options = {}, tokenId) {
     let item = foundry.utils.duplicate(DSA5.defaultWeapon);
     item.name = game.i18n.localize(`${statusId}Weaponless`);
@@ -1529,7 +1560,8 @@ export default class Actordsa5 extends Actor {
     }
   }
 
-  async applyDamage(amount) {
+  async applyDamage(rollFormula) {
+    const amount = (await new Roll(`${rollFormula}`).evaluate({ async: true })).total
     if(game.combat?.isBrawling) {
       const newVal = Math.min(this.system.status.temporaryLeP.max, this.system.status.temporaryLeP.value - amount);
       await this.update({ "system.status.temporaryLeP.value": newVal });
@@ -1554,9 +1586,9 @@ export default class Actordsa5 extends Actor {
     await this.update(update);
   }
 
-  async applyMana(amount, type) {
-    let state = type == "AsP" ? "astralenergy" : "karmaenergy";
-
+  async applyMana(rollFormula, type) {
+    const state = type == "AsP" ? "astralenergy" : "karmaenergy";
+    const amount = (await new Roll(`${rollFormula}`).evaluate({ async: true })).total
     const newVal = Math.min(this.system.status[state].max, this.system.status[state].value - amount);
     if (newVal >= 0) {
       await this.update({[`data.status.${state}.value`]: newVal});
@@ -2292,7 +2324,8 @@ export default class Actordsa5 extends Actor {
               else {
                 const oneHanded = game.i18n.localize('wrongGrip.oneHanded')
                 item.gripDamageText = ` (${oneHanded} * 0.5)`
-                item.dmgMultipliers = [{ name: oneHanded, val: "0.5" }]
+                item.dmgMultipliers ||= []
+                item.dmgMultipliers.push({ name: oneHanded, val: "0.5" })
               }
               break
             default:
