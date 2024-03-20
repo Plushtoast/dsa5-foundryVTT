@@ -503,13 +503,6 @@ DSA5.traditionArtifacts = {
     "Echsenhaube": 12
 }
 
-DSA5.moneyNames = {
-    "D": "Money-D",
-    "S": "Money-S",
-    "H": "Money-H",
-    "K": "Money-K"
-}
-
 DSA5.areaTargetTypes = {
     cube: "rect",
     line: "ray",
@@ -776,6 +769,11 @@ DSA5.meleeRanges = {
 DSA5.weapontypes = {
     "melee": "meleeweapon",
     "range": "rangeweapon"
+}
+
+DSA5.moneyTypes = {
+    "0": "MoneyType.0",
+    "1": "MoneyType.1",
 }
 
 DSA5.ammunitiongroups = {

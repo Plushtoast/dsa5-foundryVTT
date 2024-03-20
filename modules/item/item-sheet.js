@@ -223,6 +223,9 @@ export default class ItemSheetdsa5 extends ItemSheet {
                 data['hasLocalization'] = game.i18n.has(`Combatskilldescr.${this.item.name}`)
                 data['StFs'] = DSA5.StFs;
                 break;
+            case "money":
+                data['moneyTypes'] = DSA5.moneyTypes;
+                break
             case "trait":
                 data["traitCategories"] = DSA5.traitCategories
                 data['ranges'] = DSA5.meleeRanges;

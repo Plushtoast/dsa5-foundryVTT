@@ -660,6 +660,8 @@
     width: 15px;
     height: 15px;
     display: inline-block;
+    background-repeat: no-repeat;
+    background-size: contain;
   }
   
   input[type="text"] {
@@ -682,26 +684,18 @@
   
   .Money-D, .money-D {
     background: url('../../icons/money-D.webp');
-    background-repeat: no-repeat;
-    background-size: contain;
   }
   
   .Money-K, .money-K {
     background: url('../../icons/money-K.webp');
-    background-repeat: no-repeat;
-    background-size: contain;
   }
   
   .Money-S, .money-S {
     background: url('../../icons/money-S.webp');
-    background-repeat: no-repeat;
-    background-size: contain;
   }
   
   .Money-H, .money-H {
     background: url('../../icons/money-H.webp');
-    background-repeat: no-repeat;
-    background-size: contain;
   }
   
   .chatLineHeight {

@@ -44,13 +44,6 @@
             }
         },
         {
-            "name": "money",
-            "label": "Geld",
-            "system": "dsa5",
-            "path": "packs/money.db",
-            "type": "Item"
-        },
-        {
             "name": "patzer",
             "label": "Tabellen",
             "system": "dsa5",

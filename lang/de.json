@@ -401,9 +401,7 @@
     "mount": "Reittier",
     "additionalsign": "Zusatzzeichen",
     "Magic": "Magie",
-    "money": "Geld",
     "maintainCost": "Aufrechterhalten",
-    "Money": "Geld",
     "maintainedSpells": "Aufrechterhaltene Zauber/Liturgien (je -1)",
     "manual": "Händisch",
     "mageLevel": "Magieart",
@@ -992,6 +990,7 @@
         "PostItem": "Im Chat posten",
         "DuplicateItem": "Duplizieren",
         "postAsGroupCheck": "Als Gruppensammelprobe posten",
+        "changeMoney": "Währungen tauschen",
         "SplitItem": "Teilen",
         "EditItem": "Editieren",
         "Dropdown": "Details",
@@ -1609,6 +1608,11 @@
         "6": "Gift, pflanzlich",
         "7": "Gift, mineralisch"
     },
+    "MoneyType": {
+        "0": "Währung",
+        "1": "Schnöder Mammon",
+        "descr": "Im Gegensatz zu Mammon werden Währungen bei Bezahlfunktionen und Händlern automatisch berücksichtigt und verwendet."
+    },
     "SpecCategory": {
         "clericalStyle": "Liturgiestilsonderfertigkeiten",
         "language": "Sprache",
@@ -1669,7 +1673,8 @@
         "getPaidButton": "Auszahlen",
         "noActor": "Dein Charakter wurde nicht gefunden",
         "onlyActors": "Nur Spieler können bezahlen/bezahlt werden oder dir wurde kein Charakter zugeordnet.",
-        "cannotpay": "<b>{actor}</b> kann seine/ihre Schulden von {amount} nicht bezahlen."
+        "cannotpay": "<b>{actor}</b> kann seine/ihre Schulden von {amount} nicht bezahlen.",
+        "default": "Standard"
     },
     "rangeMovementOptions": {
         "STATIONARY": "steht still (+2)",
@@ -1726,6 +1731,8 @@
         "2": "2 Aktionen zielen"
     },
     "DSASETTINGS": {
+        "moneyKompendium": "Währungskompendium",
+        "moneyKompendiumHint": "Wähle ein Kompendium für die Standardwährungen. Diese werden neuen Charakteren automatisch hinzugefügt und für Bezahlfunktionen, sowie Händler verwendet.",
         "notifyOnFadingEffects": "Effektende (Benachrichtigung)",
         "notifyOnFadingEffectsHint": "Der Spielleiter erhält eine Chatbenachrichtigung, wenn ein Effekt auf einem Akteur ausläuft.",
         "hotbarv3": "DSA Hotbar Konversion",

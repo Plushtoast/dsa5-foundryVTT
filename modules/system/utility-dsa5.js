@@ -4,15 +4,14 @@ import DSA5 from './config-dsa5.js'
 
 export default class DSA5_Utility {
     static async skillByName(name) {
-        const pack = game.packs.get(game.i18n.lang == "de" ? "dsa5.skills" : "dsa5.skillsen")
+        const pack = game.packs.get(this.getLanguagePack())
         await pack.getIndex();
         const entry = pack.index.find(i => i.name === name);
         return await pack.getDocument(entry._id)
     }
 
     static async allSkills() {
-        const pack = game.i18n.lang == "de" ? "dsa5.skills" : "dsa5.skillsen"
-        return await this.getCompendiumEntries(pack, "skill")
+        return await this.getCompendiumEntries(this.getLanguagePack(), "skill")
     }
 
     static moduleEnabled(id) {
@@ -20,8 +19,11 @@ export default class DSA5_Utility {
     }
 
     static async allCombatSkills() {
-        const pack = game.i18n.lang == "de" ? "dsa5.skills" : "dsa5.skillsen"
-        return await this.getCompendiumEntries(pack, "combatskill")
+        return await this.getCompendiumEntries(this.getLanguagePack(), "combatskill")
+    }
+
+    static getLanguagePack() {
+        return game.i18n.lang == "de" ? "dsa5.skills" : "dsa5.skillsen"
     }
 
     static async getCompendiumEntries(compendium, itemType) {
@@ -68,14 +70,13 @@ export default class DSA5_Utility {
     }
 
     static async allMoneyItems() {
-        let items = (await this.getCompendiumEntries("dsa5.money", "money")).map(i => {
-            i.system.quantity.value = 0
-            return i
-        });
-
-        return items.filter(t => Object.values(DSA5.moneyNames)
-                .map(n => n.toLowerCase()).includes(t.name.toLowerCase()))
-            .sort((a, b) => (a.system.price.value > b.system.price.value) ? -1 : 1)
+        const customPack = game.settings.get("dsa5", "moneyKompendium")
+        const moneyPack = game.packs.get(customPack) ? customPack : this.getLanguagePack() 
+        return (await this.getCompendiumEntries(moneyPack, "money")).sort((a, b) => a.system.price.value - b.system.price.value)
+            .map(x => {
+                x.system.quantity.value = 0
+                return x
+            })
     }
 
     static async allSkillsList() {
@@ -252,7 +253,7 @@ export default class DSA5_Utility {
 
             for (let pack of sortedPacks) {
                 let p = game.packs.get(pack)
-                if (p.documentName == "Item" && (game.user.isGM || !p.private)) {
+                if (p.documentName == "Item" && (game.user.isGM || p.visible)) {
                     await p.getDocuments({ name__in: names, type__in: types }).then(content => {
                         for (let k of content) {
                             let index = names.indexOf(k.name)

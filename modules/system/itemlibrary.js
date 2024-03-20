@@ -600,7 +600,7 @@ export default class DSA5ItemLibrary extends Application {
         SceneNavigation.displayProgressBar({label: game.i18n.format('Library.loading', {item: ""}), pct: 0})
         const target = $(this._element).find(`*[data-tab="${category}"]`)
         this.showLoading(target, category)
-        const packs = game.packs.filter(p => p.documentName == document && (game.user.isGM || !p.private) && !p.metadata.label.startsWith("WZ-"))
+        const packs = game.packs.filter(p => p.documentName == document && (game.user.isGM || p.visible) && !p.metadata.label.startsWith("WZ-"))
         const percentage = 100 / (packs.length + 1)
         let count = percentage
         const actorFields = ["name", "system.type", "system.description.value", "img"]

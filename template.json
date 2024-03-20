@@ -533,7 +533,8 @@
             "templates": [
                 "description",
                 "equipment"
-            ]
+            ],
+            "subtype": 0
         },
         "effectwrapper": {
             "templates": [

@@ -22,8 +22,6 @@ export default function() {
         const headerActions = html.find(".header-actions")
         headerActions.append(button);
         button.on('click',() => { game.dsa5.itemLibrary.render(true) })
-
-        html.find('li[data-pack="dsa5.money"]').remove()
     })
 
     Hooks.once("renderCompendiumDirectory", (app, html, data) => {

@@ -3,7 +3,7 @@ import DSA5_Utility from "./utility-dsa5.js";
 
 export default class DSA5Payment {
     static async payMoney(actor, moneyString, silent = false, render = true) {
-        let canPay = DSA5Payment.canPay(actor, moneyString, silent)
+        const canPay = await DSA5Payment.canPay(actor, moneyString, silent)
         if (canPay.success)
             await DSA5Payment._updateMoney(actor, canPay.actorsMoney.money, canPay.actorsMoney.sum - canPay.money, render)
 
@@ -13,17 +13,17 @@ export default class DSA5Payment {
         return canPay.success
     }
 
-    static canPay(actor, moneyString, silent) {
+    static async canPay(actor, moneyString, silent) {
         let money = this._getPaymoney(moneyString)
         let result = { success: false, msg: "", money: money }
 
         if (money) {
             result.actorsMoney = this._actorsMoney(actor)
             if (result.actorsMoney.sum >= money) {
-                result.msg = game.i18n.format("PAYMENT.pay", { actor: actor.name, amount: DSA5Payment._moneyToString(money) })
+                result.msg = game.i18n.format("PAYMENT.pay", { actor: actor.name, amount: await DSA5Payment._moneyToString(money) })
                 result.success = true
             } else {
-                result.msg = game.i18n.format("PAYMENT.cannotpay", { actor: actor.name, amount: DSA5Payment._moneyToString(money) })
+                result.msg = game.i18n.format("PAYMENT.cannotpay", { actor: actor.name, amount: await DSA5Payment._moneyToString(money) })
                 if (silent) {
                     ui.notifications.notify(result.msg)
                 }
@@ -38,7 +38,7 @@ export default class DSA5Payment {
         if (money) {
             let actorsMoney = this._actorsMoney(actor)
             await DSA5Payment._updateMoney(actor, actorsMoney.money, actorsMoney.sum + money, render)
-            let msg = `<p>${game.i18n.format("PAYMENT.getPaid", {actor: actor.name, amount: DSA5Payment._moneyToString(money)})}</p>`
+            let msg = `<p>${game.i18n.format("PAYMENT.getPaid", {actor: actor.name, amount: await DSA5Payment._moneyToString(money)})}</p>`
             if (!silent) {
                 ChatMessage.create(DSA5_Utility.chatDataSetup(msg, "roll"))
             }
@@ -46,45 +46,22 @@ export default class DSA5Payment {
         }
     }
 
-    static async _updateMoney(actor, money, newSum, render = true) {
-        let coins = DSA5Payment._moneyToCoins(newSum)
-
-        for (let m of money) {
-            switch (m.name) {
-                case "Money-D":
-                    m.system.quantity.value = coins.D
-                    break
-                case "Money-S":
-                    m.system.quantity.value = coins.S
-                    break
-                case "Money-H":
-                    m.system.quantity.value = coins.H
-                    break
-                case "Money-K":
-                    m.system.quantity.value = coins.K
-                    break
-            }
-        }
-
-        await actor.updateEmbeddedDocuments("Item", money, { render })
-    }
-
-    static createGetPaidChatMessage(moneyString, whisper = undefined) {
+    static async createGetPaidChatMessage(moneyString, whisper = undefined) {
         let money = this._getPaidmoney(moneyString)
 
         if (money) {
             const whisp = whisper ? ` (${whisper})` : ""
-            let msg = `<p><b>${game.i18n.localize("PAYMENT.wage")}</b></p><p>${game.i18n.format("PAYMENT.getPaidSum", { amount: DSA5Payment._moneyToString(money) })}${whisp}</p><button class="payButton" data-pay="1" data-amount="${money}">${game.i18n.localize("PAYMENT.getPaidButton")}</button>`
+            let msg = `<p><b>${game.i18n.localize("PAYMENT.wage")}</b></p><p>${game.i18n.format("PAYMENT.getPaidSum", { amount: await DSA5Payment._moneyToString(money) })}${whisp}</p><button class="payButton" data-pay="1" data-amount="${money}">${game.i18n.localize("PAYMENT.getPaidButton")}</button>`
             ChatMessage.create(DSA5_Utility.chatDataSetup(msg, "roll"))
         }
     }
 
-    static createPayChatMessage(moneyString, whisper = undefined) {
+    static async createPayChatMessage(moneyString, whisper = undefined) {
         let money = this._getPaymoney(moneyString)
 
         if (money) {
             const whisp = whisper ? ` (${whisper})` : ""
-            let msg = `<p><b>${game.i18n.localize("PAYMENT.bill")}</b></p>${game.i18n.format("PAYMENT.paySum", { amount: DSA5Payment._moneyToString(money) })}${whisp}</p><button class="payButton" data-pay="0" data-amount="${money}">${game.i18n.localize("PAYMENT.payButton")}</button>`
+            let msg = `<p><b>${game.i18n.localize("PAYMENT.bill")}</b></p>${game.i18n.format("PAYMENT.paySum", { amount: await DSA5Payment._moneyToString(money) })}${whisp}</p><button class="payButton" data-pay="0" data-amount="${money}">${game.i18n.localize("PAYMENT.payButton")}</button>`
             ChatMessage.create(DSA5_Utility.chatDataSetup(msg, "roll"))
         }
     }
@@ -109,24 +86,6 @@ export default class DSA5Payment {
             return false
         }
         return money
-    }
-
-    static _parseMoneyString(moneyString) {
-        let match = moneyString.replace(",", ".").match(/\d{1,}(\.\d{1,3}|,\d{1,3})?/)
-        if (match) {
-            return Number(match[0])
-        } else {
-            return false
-        }
-    }
-
-    static _actorsMoney(actor) {
-        let money = duplicate(actor.items.filter(i => i.type == "money"))
-
-        return {
-            money: money,
-            sum: money.reduce((total, current) => total + Number(current.system.quantity.value) * Number(current.system.price.value), 0)
-        }
     }
 
     static async handlePayAction(elem, pay, amount, actor = undefined) {
@@ -159,26 +118,80 @@ export default class DSA5Payment {
         }
     }
 
-    static _moneyToCoins(money) {
-        let m = Math.round(money * 100)
-        let D = Math.floor(m / 1000)
-        let S = Math.floor((m - (D * 1000)) / 100)
-        let H = Math.floor((m - (D * 1000) - S * 100) / 10)
-        return {
-            D,
-            S,
-            H,
-            K: Math.round(((m - (D * 1000) - S * 100 - H * 10)))
+    static async _moneyToCoins(money, currencies = undefined) {
+        const availableCurrencies = (currencies || (await DSA5_Utility.allMoneyItems()).filter(x => x.system.subcategory != 1))
+            .sort((a, b) => b.system.price.value - a.system.price.value)
+
+        const res = []
+        let remainingSum = money
+        for (let currency of availableCurrencies) {
+            let amount = Math.floor(remainingSum / currency.system.price.value)
+            if (amount > 0) {
+                res.push({
+                    name: currency.name,
+                    amount,
+                    img: currency.img
+                })
+                remainingSum -= amount * currency.system.price.value
+            }
+        }
+
+        if(remainingSum > 0.001)    
+            res[res.length - 1].amount += 1
+
+        return res
+    }
+
+    static _parseMoneyString(moneyString) {
+        const match = moneyString.replace(",", ".").match(/\d{1,}(\.\d{1,3}|,\d{1,3})?/)
+        if (match) {
+            return Number(match[0])
+        } else {
+            return false
         }
     }
 
-    static _moneyToString(money) {
-            let coins = DSA5Payment._moneyToCoins(money)
-            let res = []
+    static _actorsMoney(actor) {
+        const money = actor.items.filter(i => i.type == "money" && i.system.subcategory != 1)
 
-            for (const [key, value] of Object.entries(coins)) {
-                if (value > 0)
-                    res.push(`<span class="nobr">${value} <span data-tooltip="Money-${key}" class="chatmoney money-${key}"></span></span>`)
+        return {
+            money: money,
+            sum: money.reduce((total, current) => total + Number(current.system.quantity.value) * Number(current.system.price.value), 0)
+        }
+    }
+
+    static async _replaceMoney(actor){
+        const money = DSA5Payment._actorsMoney(actor)
+        const standardMoney = await DSA5_Utility.allMoneyItems()
+
+        await actor.deleteEmbeddedDocuments("Item", money.money.map(x => x.id), {render: false})
+        await actor.createEmbeddedDocuments("Item", standardMoney, {render: false})
+        await DSA5Payment._updateMoney(actor, DSA5Payment._actorsMoney(actor).money, money.sum)
+    }
+
+    static async _updateMoney(actor, money, newSum, render = true) {
+        const coins = await DSA5Payment._moneyToCoins(newSum, money)
+        const update = []
+        for (let m of money) {
+            const coin = coins.find(x => x.name == m.name)
+            if(!coin) continue
+
+            update.push({
+                _id: m.id,
+                "system.quantity.value": coin.amount
+            })
+        }
+
+        await actor.updateEmbeddedDocuments("Item", update, { render })
+    }
+
+    static async _moneyToString(money) {
+        const coins = await DSA5Payment._moneyToCoins(money)
+        const res = []
+
+        for (const mon of coins) {
+            if (mon.amount > 0)
+                res.push(`<span class="nobr">${mon.amount} <span data-tooltip="${mon.name}" style="background-image:url('${mon.img}')" class="chatmoney"></span></span>`)
         }
         return res.join(", ")
     }

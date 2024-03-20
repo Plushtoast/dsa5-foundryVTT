@@ -171,7 +171,7 @@ export const MerchantSheetMixin = (superclass) => class extends superclass {
 
         if (game.user.isGM) {
             await this.constructor.finishTransaction(source, target, price, itemId, buy, amount)
-        } else if (this.constructor.noNeedToPay(target, source, price) || DSA5Payment.canPay(target, price, true)) {
+        } else if (this.constructor.noNeedToPay(target, source, price) || await DSA5Payment.canPay(target, price, true)) {
             game.socket.emit("system.dsa5", {
                 type: "trade",
                 payload: {

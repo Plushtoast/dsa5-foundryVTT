@@ -872,7 +872,14 @@ export default class ActorSheetDsa5 extends ActorSheet {
             icon: "<i class='fas fa-coins'></i>",
             condition: () => DSA5.equipmentCategories.has(item.type),
             callback: () => this._startTrade(item),
+          },
+          {
+            name: "SHEET.changeMoney",
+            icon: "<i class='fas fa-coins'></i>",
+            condition: () => item.type == "money",
+            callback: () => DSA5Payment._replaceMoney(this.actor),
           }
+          
         ];
 
         if(hasProperty(item, "system.worn.wearable") || ["meleeweapon", "rangeweapon", "armor"].includes(item.type)) {
@@ -895,7 +902,7 @@ export default class ActorSheetDsa5 extends ActorSheet {
 
     async _startTrade(item) {
         (new TradeOptions(this.actor)).render(true)
-    }
+    }    
 
     _splitItem(item) {
         const callback = async(count) => {

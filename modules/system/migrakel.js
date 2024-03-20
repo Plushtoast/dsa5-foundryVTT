@@ -278,6 +278,9 @@ export default class Migrakel {
                 return update;
             };
             await this.updateVals(actor, condition, updator);
+
+            await actor.updateEmbeddedDocuments("Item", actor.items.filter((x) => x.type == "money")
+                .map(x => { return { _id: x.id, name: game.i18n.localize(x.name) } }))
         }
         return choice
     }

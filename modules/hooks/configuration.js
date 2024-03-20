@@ -324,6 +324,28 @@ export function setupConfiguration() {
         }
     });
 
+    const moneyChoices = () => {
+        const moneyChoices = {}
+        for(let pack of game.packs){
+            if(pack.metadata.type == "Item" && pack.index.some(x => x.type == "money"))
+                moneyChoices[pack.metadata.id] = pack.metadata.id
+        }
+        return moneyChoices
+    }
+
+    game.settings.register("dsa5", "moneyKompendium", {
+        name: "DSASETTINGS.moneyKompendium",
+        hint: "DSASETTINGS.moneyKompendiumHint",
+        scope: "world",
+        config: true,
+        default: "",
+        type: String,
+        choices: moneyChoices,
+        onChange: async(val) => {
+            ui.notifications.notify(game.packs.get(val).index.filter(x => x.type == "money").map(x => x.name).join(", "))
+        }
+    });
+
     const styles = duplicate(DSA5.styles)
     for(let key of Object.keys(styles)){
         styles[key] = game.i18n.localize(styles[key])
