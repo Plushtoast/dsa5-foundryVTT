@@ -23,7 +23,7 @@ export default function() {
             }
         }
 
-        const overlay = {
+        let overlay = {
             src: this.document.overlayEffect,
             tint: null
         };
