@@ -1,3 +1,5 @@
+import DSA5_Utility from "./utility-dsa5.js";
+
 export class MeasuredTemplateDSA extends MeasuredTemplate {
     #initialLayer;
     #moveTime = 0;
@@ -7,8 +9,12 @@ export class MeasuredTemplateDSA extends MeasuredTemplate {
     static async placeTemplateFromChat(ev){
         const id = $(ev.currentTarget).parents(".message").attr("data-message-id")
         const message = game.messages.get(id);
-        const source = message.flags.data.preData.source;
+        const preData = message.flags.data.preData;
         const testData = message.flags.data.postData;
+
+        console.log( message.flags.data.preData)
+        const actor = DSA5_Utility.getSpeaker(preData.extra.speaker);
+        const source = actor.items.get(preData.source._id);
 
         const template = this.fromItem(source, testData.qualityStep)
         if ( template ) template.drawPreview();
@@ -51,7 +57,7 @@ export class MeasuredTemplateDSA extends MeasuredTemplate {
         const template = new cls(templateData, { parent: canvas.scene });
         const object = new this(template);
         object.item = item;
-        object.actorSheet = item.actor?.sheet || null;
+        //object.actorSheet = item.actor?.sheet || null;
         return object;
     }
 

@@ -10,6 +10,24 @@ export class DSAAura {
 
             DSAAura.updateTokenAura(template, sourceToken)
         })
+
+        if (DSA5_Utility.moduleEnabled("autoanimations")) {
+            Hooks.on("createMeasuredTemplate", async (template, data, userId) => {
+                if (userId !== game.user.id) return
+
+                const uuid = getProperty(template, "flags.dsa5.origin")
+
+                if(!uuid) return
+
+                const item = await fromUuid(uuid)
+
+                
+                for(let token of item.parent.getActiveTokens()) {
+                    console.log(token)
+                    AutomatedAnimations.playAnimation(token, item, { targets: [], workflow: template, isTemplate: true, templateData: template })
+                }
+            });
+        }
     }
 
     /*
