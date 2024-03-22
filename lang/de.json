@@ -1316,6 +1316,9 @@
     "ActiveEffects": {
         "hideOnToken": "Am Token verstecken",
         "hidePlayers": "Vor Spielern verstecken",
+        "isAura": "Aura",
+        "radius": "Radius",
+        "disposition": "Disposition",
         "applyTarget": "Effekt (Ziel)",
         "applySelf": "Effekt (Selbst)",
         "appliedEffect": "Effekt <b>{source}</b> wurde auf <b>{target}</b> übertragen.",

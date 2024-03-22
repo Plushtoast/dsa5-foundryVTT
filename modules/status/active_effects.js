@@ -180,7 +180,11 @@ export default class DSAActiveEffectConfig extends ActiveEffectConfig {
             effectConfigs,
             macroIndexes,
             config,
-            isWeapon
+            isWeapon,
+            dispositions: Object.entries(CONST.TOKEN_DISPOSITIONS).reduce((obj, e) => {
+                obj[e[1]] = `TOKEN.DISPOSITION.${e[0]}`
+                return obj;
+              }, { 2:  game.i18n.localize("all")})
         });
         elem.find('.tab[data-tab="effects"]').after($(template));
         elem.find(".advancedSelector").on("change", ev => {
@@ -191,6 +195,9 @@ export default class DSAActiveEffectConfig extends ActiveEffectConfig {
                 elem.find(".advancedFunctions").html(template);
             });
         });
+        elem.find(".auraSelector").on("change", ev => {
+            elem.find('.auraDetails').toggleClass("dsahidden", !ev.currentTarget.checked)
+        })
         if(this.object.statuses.size && game.i18n.has(this.object.description)) {
             elem.find('[data-tab="details"] .editor').replaceWith(`<p>${game.i18n.localize(this.object.description)}</p>`)
         }

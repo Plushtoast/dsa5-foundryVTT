@@ -28,7 +28,9 @@ export class MeasuredTemplateDSA extends MeasuredTemplate {
             x: 0,
             y: 0,
             fillColor: game.user.color,
-            flags: { dsa5: { origin: item.uuid } },
+            flags: { dsa5: { 
+                origin: item.uuid 
+            } },
         };
 
         switch (templateShape) {

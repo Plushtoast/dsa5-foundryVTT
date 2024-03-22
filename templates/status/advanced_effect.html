@@ -23,6 +23,23 @@
         <input type="text" name="flags.dsa5.onDelayed" value="{{effect.flags.dsa5.onDelayed}}" />
     </div>
     {{/if}}
+    <div class="form-group">
+        <label class="label-text">{{localize 'ActiveEffects.isAura'}}</label>
+        <input type="checkbox" class="auraSelector" name="flags.dsa5.isAura" {{checked effect.flags.dsa5.isAura}}/>
+    </div>
+    
+    <div class="auraDetails{{#unless effect.flags.dsa5.isAura}} dsahidden{{/unless}}">
+        <div class="form-group">
+            <label class="label-text">{{localize "ActiveEffects.disposition"}}</label>
+            <select name="flags.dsa5.disposition">
+                {{selectOptions dispositions selected=effect.flags.dsa5.disposition localize=true}}
+            </select>
+        </div>
+        <div class="form-group">
+            <label class="label-text">{{localize 'ActiveEffects.radius'}}</label>
+            <input type="number" name="flags.dsa5.auraRadius" value="{{effect.flags.dsa5.auraRadius}}" />
+        </div>
+    </div>
     {{#if isWeapon}}
     <div class="form-group" data-tooltip="ActiveEffects.applyToOwnerHint">
         <label class="label-text">{{localize 'ActiveEffects.applyToOwner'}}</label>

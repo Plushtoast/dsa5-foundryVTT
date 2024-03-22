@@ -3,6 +3,7 @@ import DSA5_Utility from "../system/utility-dsa5.js";
 import Riding from "../system/riding.js"
 import AdvantageRulesDSA5 from "../system/advantage-rules-dsa5.js";
 import RuleChaos from "../system/rule_chaos.js";
+import { DSAAura } from "../system/aura.js";
 
 export default function() {
     Hooks.on("preDeleteActiveEffect", (effect, options, user_id) => {
@@ -293,12 +294,26 @@ export default function() {
     }
 
     Hooks.on("updateToken", (token, data, options) => {
-        Riding.updateTokenHook(token, data, options)
+        Riding.updateTokenHook(token, data, options);
+
+        (token.object._animation || Promise.resolve()).then(() => {
+           token.object.drawAuras();
+        })
+    })
+
+    Hooks.on("preDeleteToken", (token) => {
+        DSAAura.onDeleteToken(token)
     })
 
     Hooks.on("deleteToken", (token) => {
         Riding.deleteTokenHook(token)
         TokenHoverHud.hide(token)
+    })    
+
+    Hooks.on("canvasReady", canvas =>  {
+        for(let token of canvas.scene.tokens){
+            token.object.drawAuras();
+        }  
     })
 
     Hooks.on('preCreateToken', (token, data, options, userId) => {
@@ -334,6 +349,7 @@ export default function() {
         obfuscateName(token, {})
         randomWeaponSelection(token)
         Riding.createTokenHook(token, options, id)
+        token.object.drawAuras();
     })
 
     Hooks.on('hoverToken', (token, hovered) => {

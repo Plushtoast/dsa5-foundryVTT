@@ -9,6 +9,7 @@ import DSAIniTracker from "../system/dsa-ini-tracker.js";
 import DSATour from "../tours/dsa_tour.js";
 import { initImagePopoutTochat } from "./imagepopouttochat.js";
 import { connectSocket } from "./socket.js";
+import { DSAAura } from "../system/aura.js";
 
 export default function() {
     Hooks.on("ready", async() => {
@@ -45,6 +46,7 @@ export default function() {
 
         setEnrichers()
         initImagePopoutTochat()
+        DSAAura.bindAuraHooks()
 
         Hooks.call("DSA5ready", game.dsa5)
     });

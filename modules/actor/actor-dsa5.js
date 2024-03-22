@@ -456,6 +456,11 @@ export default class Actordsa5 extends Actor {
     for ( const e of this.effects ) {
       if(e.disabled) continue
 
+      if(getProperty(e, "flags.dsa5.isAura")){
+        this.auras.push(e.uuid)
+        continue
+      }
+
       multiply = 1
       const flag = e.getFlag("dsa5", "value")
       if(flag){
@@ -486,6 +491,11 @@ export default class Actordsa5 extends Actor {
       for(const e of item.effects) {
         if(e.disabled) continue
         if(!e.transfer) continue
+
+        if(getProperty(e, "flags.dsa5.isAura")){
+          this.auras.push(e.uuid)
+          continue
+        }
 
         apply = true
 
@@ -592,6 +602,8 @@ export default class Actordsa5 extends Actor {
 
   prepareBaseData() {
     const system = this.system;
+
+    this.auras = []
 
     mergeObject(system, {
       itemModifiers: {},
@@ -836,6 +848,25 @@ export default class Actordsa5 extends Actor {
       cost: DSA5_Utility._calculateAdvCost(i.system.talentValue.value, i.system.StF.value),
     })
     return i;
+  }
+
+  drawAuras() {
+    for(const token of this.getActiveTokens()){
+      token.drawAuras()
+    }
+  }
+
+  _onCreateDescendantDocuments(...args) {
+    super._onCreateDescendantDocuments(...args);
+    this.drawAuras();
+  }
+  _onUpdateDescendantDocuments(...args) {
+    super._onUpdateDescendantDocuments(...args);
+    this.drawAuras();
+  }
+  _onDeleteDescendantDocuments(...args) {
+    super._onCreateDescendantDocuments(...args);
+    this.drawAuras();
   }
 
   _perpareItemAdvancementCost(item) {

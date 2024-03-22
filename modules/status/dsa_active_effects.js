@@ -44,7 +44,7 @@ export default class DSAActiveEffect extends ActiveEffect {
     }
 
     isVisibleEffect() {
-        return !this.disabled && !this.notApplicable && (game.user.isGM || !this.getFlag("dsa5", "hidePlayers")) && !this.getFlag("dsa5", "hideOnToken") && (this.origin == this.target?.uuid || !this.origin)
+        return !this.disabled && !this.notApplicable && (game.user.isGM || !this.getFlag("dsa5", "hidePlayers")) && !this.getFlag("dsa5", "hideOnToken")
     }
 
     _displayScrollingStatus(enabled) {
