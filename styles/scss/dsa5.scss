@@ -918,6 +918,10 @@
     border-radius: 3px;
     margin: 10px 2px;
     min-height: 50px;
+
+    &.paddingBox{
+      padding: 5px;
+    }
   }
   
   .header-label {

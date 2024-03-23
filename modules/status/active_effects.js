@@ -197,6 +197,7 @@ export default class DSAActiveEffectConfig extends ActiveEffectConfig {
         });
         elem.find(".auraSelector").on("change", ev => {
             elem.find('.auraDetails').toggleClass("dsahidden", !ev.currentTarget.checked)
+            elem.find('.auraBox').toggleClass("groupbox", ev.currentTarget.checked)
         })
         if(this.object.statuses.size && game.i18n.has(this.object.description)) {
             elem.find('[data-tab="details"] .editor').replaceWith(`<p>${game.i18n.localize(this.object.description)}</p>`)

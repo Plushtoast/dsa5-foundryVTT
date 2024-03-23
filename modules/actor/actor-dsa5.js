@@ -492,11 +492,6 @@ export default class Actordsa5 extends Actor {
         if(e.disabled) continue
         if(!e.transfer) continue
 
-        if(getProperty(e, "flags.dsa5.isAura")){
-          this.auras.push(e.uuid)
-          continue
-        }
-
         apply = true
 
         switch (item.type) {
@@ -555,6 +550,11 @@ export default class Actordsa5 extends Actor {
         }
 
         e.notApplicable = !apply;
+
+        if(apply && getProperty(e, "flags.dsa5.isAura")){
+          this.auras.push(e.uuid)
+          continue
+        }
 
         if (!apply) continue
 
@@ -850,9 +850,9 @@ export default class Actordsa5 extends Actor {
     return i;
   }
 
-  drawAuras() {
+  drawAuras(force = false) {
     for(const token of this.getActiveTokens()){
-      token.drawAuras()
+      token.drawAuras(force)
     }
   }
 
@@ -862,7 +862,10 @@ export default class Actordsa5 extends Actor {
   }
   _onUpdateDescendantDocuments(...args) {
     super._onUpdateDescendantDocuments(...args);
-    this.drawAuras();
+    const force = args[1] == "effects" && args[3].some(x => {
+      return ["flags.dsa5.auraRadius", "flags.dsa5.borderColor", "flags.dsa5.fillColor", "flags.dsa5.borderThickness"].some(y => hasProperty(x, y))
+    })    
+    this.drawAuras(force);
   }
   _onDeleteDescendantDocuments(...args) {
     super._onCreateDescendantDocuments(...args);
@@ -1248,6 +1251,8 @@ export default class Actordsa5 extends Actor {
     let guidevalues = duplicate(DSA5.characteristics);
     guidevalues["-"] = "-";
 
+    const brawling = combatskills.find((x) => x.name == game.i18n.localize("LocalizedIDs.wrestle"));
+
     return {
       totalWeight: parseFloat(this.system.totalWeight.toFixed(3)),
       traditionArtifacts,
@@ -1256,6 +1261,10 @@ export default class Actordsa5 extends Actor {
       spellArmor: actorData.system.spellArmor || 0,
       liturgyArmor: actorData.system.liturgyArmor || 0,
       money,
+      brawling: {
+        attack: brawling.system.attack.value,
+        parry: brawling.system.parry.value
+      },
       encumbrance: this.system.condition?.encumbered || 0,
       carrycapacity: this.system.carrycapacity,
       isSwarm: this.isSwarm(),

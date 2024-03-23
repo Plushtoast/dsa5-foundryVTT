@@ -23,21 +23,33 @@
         <input type="text" name="flags.dsa5.onDelayed" value="{{effect.flags.dsa5.onDelayed}}" />
     </div>
     {{/if}}
-    <div class="form-group">
-        <label class="label-text">{{localize 'ActiveEffects.isAura'}}</label>
-        <input type="checkbox" class="auraSelector" name="flags.dsa5.isAura" {{checked effect.flags.dsa5.isAura}}/>
-    </div>
-    
-    <div class="auraDetails{{#unless effect.flags.dsa5.isAura}} dsahidden{{/unless}}">
+    <div class="auraBox paddingBox{{#if effect.flags.dsa5.isAura}} groupbox{{/if}}">
         <div class="form-group">
-            <label class="label-text">{{localize "ActiveEffects.disposition"}}</label>
-            <select name="flags.dsa5.disposition">
-                {{selectOptions dispositions selected=effect.flags.dsa5.disposition localize=true}}
-            </select>
+            <label class="label-text">{{localize 'ActiveEffects.isAura'}}</label>
+            <input type="checkbox" class="auraSelector" name="flags.dsa5.isAura" {{checked effect.flags.dsa5.isAura}}/>
         </div>
-        <div class="form-group">
-            <label class="label-text">{{localize 'ActiveEffects.radius'}}</label>
-            <input type="number" name="flags.dsa5.auraRadius" value="{{effect.flags.dsa5.auraRadius}}" />
+        
+        <div class="auraDetails{{#unless effect.flags.dsa5.isAura}} dsahidden{{/unless}}">
+            <div class="form-group">
+                <label class="label-text">{{localize "ActiveEffects.disposition"}}</label>
+                <select name="flags.dsa5.disposition">
+                    {{selectOptions dispositions selected=effect.flags.dsa5.disposition localize=true}}
+                </select>
+            </div>
+            <div class="form-group">
+                <label class="label-text">{{localize 'ActiveEffects.radius'}}</label>
+                <input type="number" name="flags.dsa5.auraRadius" value="{{effect.flags.dsa5.auraRadius}}" />
+            </div>
+            <div class="form-group">
+                <label class="label-text">{{ localize "TEMPLATE.BorderColor" }}</label>
+                <div class="form-fields">
+                    {{colorPicker name="flags.dsa5.borderColor" value=effect.flags.dsa5.borderColor}}
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="label-text">{{ localize "TEMPLATE.BorderThickness" }}</label>
+                <input type="number" name="flags.dsa5.borderThickness" value="{{effect.flags.dsa5.borderThickness}}" />
+            </div>
         </div>
     </div>
     {{#if isWeapon}}

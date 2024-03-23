@@ -1,5 +1,7 @@
 import { AuraTemplate, DSAAura } from "../system/aura.js";
+import DSA5 from "../system/config-dsa5.js";
 import DPS from "../system/derepositioningsystem.js";
+import DSA5_Utility from "../system/utility-dsa5.js";
 
 export default function() {
     Token.prototype.drawEffects = async function() {
@@ -97,42 +99,8 @@ export default function() {
         return this.effects.addChild(icon);
      }
 
-    Token.prototype.drawAuras = async function() {
-        this.auras ||= {}
-
-        const foundAuras = []
-        for(let aura of this.actor.auras) {
-            const effect = await fromUuid(aura)
-
-            if(this.auras[aura]) {
-                foundAuras.push(aura)
-                Hooks.call("DSAauraRefresh", this.auras[aura].template, this)
-            } else {
-                const template = AuraTemplate.fromItem(effect, this, aura)
-                if(!template) continue
-
-                const child = this.addChild(template)
-                child.draw().then(ch => {
-                    ch.template.x -= this.document.x
-                    ch.template.y -= this.document.y
-                })
-
-                this.auras[aura] = { child, template }
-                foundAuras.push(aura)
-                Hooks.call("DSAauraRefresh", template, this)
-            }        
-            
-        }
-
-        for(let aura in this.auras) {
-            if(!foundAuras.includes(aura)) {
-                if(!this.auras[aura]) continue
-
-                this.auras[aura].child.destroy()
-                delete this.auras[aura]
-            }
-        }
-        DSAAura.checkAuraEntered(this.document)
+    Token.prototype.drawAuras = async function(force = false) {
+        await DSAAura.drawAuras(this, force)
     }
 
     TokenHUD.prototype._onToggleEffect = function(event, { overlay = false } = {}) {

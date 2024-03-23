@@ -1641,6 +1641,9 @@
         "staff": "Traditionsartefakt",
         "pact": "Paktgeschenk"
     },
+    "TEMPLATE": {
+        "BorderThickness": "Rahmenstärke"
+    },
     "CEREMONYMODIFIER": {
         "holysite": "Heiligtum der Gottheit (+2)",
         "temple": "Tempel der Gottheit (+1)",
@@ -1735,7 +1738,7 @@
     },
     "DSASETTINGS": {
         "moneyKompendium": "Währungskompendium",
-        "moneyKompendiumHint": "Wähle ein Kompendium für die Standardwährungen. Diese werden neuen Charakteren automatisch hinzugefügt und für Bezahlfunktionen, sowie Händler verwendet.",
+        "moneyKompendiumHint": "Wähle ein Kompendium für die Standardwährungen. Diese werden neuen Charakteren automatisch hinzugefügt und für Bezahlfunktionen, sowie Händler verwendet. Ggf. musst du vorher ein Kompendium anlegen und mit deinen gewünschten Währungen befüllen.",
         "notifyOnFadingEffects": "Effektende (Benachrichtigung)",
         "notifyOnFadingEffectsHint": "Der Spielleiter erhält eine Chatbenachrichtigung, wenn ein Effekt auf einem Akteur ausläuft.",
         "hotbarv3": "DSA Hotbar Konversion",

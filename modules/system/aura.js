@@ -5,15 +5,15 @@ import DSA5_Utility from "./utility-dsa5.js"
 
 export class DSAAura {
     static bindAuraHooks() {
-        Hooks.on("DSAauraRefresh", (template, sourceToken) => {
+        Hooks.on("DSAauraRefresh", (aura, sourceToken) => {
             if(!DSA5_Utility.isActiveGM()) return
 
-            DSAAura.updateTokenAura(template, sourceToken)
+            DSAAura.updateTokenAura(aura, sourceToken)
         })
 
         if (DSA5_Utility.moduleEnabled("autoanimations")) {
             Hooks.on("createMeasuredTemplate", async (template, data, userId) => {
-                if (userId !== game.user.id) return
+                if (!DSA5_Utility.isActiveGM()) return
 
                 const uuid = getProperty(template, "flags.dsa5.origin")
 
@@ -21,12 +21,30 @@ export class DSAAura {
 
                 const item = await fromUuid(uuid)
 
-                
-                for(let token of item.parent.getActiveTokens()) {
-                    console.log(token)
-                    AutomatedAnimations.playAnimation(token, item, { targets: [], workflow: template, isTemplate: true, templateData: template })
-                }
+                if(!item) return
+
+                DSAAura.applyTemplateToTargets(template, item)
             });
+        }
+    }
+
+    static async applyTemplateToTargets(template, item) {
+        console.log(template, template.object.shape)
+        let wait = 0
+        while(wait < 10000 && !template.object?.shape) {
+            await new Promise(r => setTimeout(r, 100))
+            wait += 100
+        }
+        for(let token of canvas.scene.tokens) {
+            if(template.object.shape.contains(token.object.center.x - template.x, token.object.center.y - template.y)) {
+                console.log("Token in template", token.name)    
+            }
+        }
+
+        if(DSA5_Utility.moduleEnabled("autoanimations")) {
+            for(let token of item.parent.getActiveTokens()) {
+                AutomatedAnimations.playAnimation(token, item, { targets: [], workflow: template, isTemplate: true, templateData: template })
+            }
         }
     }
 
@@ -48,15 +66,85 @@ export class DSAAura {
         if(!DSA5_Utility.isActiveGM()) return
 
         for(const aura in token.object.auras) {
-            for(const otherToken of canvas.scene.tokens) {
-                const existingEffect = otherToken.actor.effects.find(e => getProperty(e, "flags.dsa5.templateSource") == aura)
-                if(existingEffect) {
-                    await otherToken.actor.deleteEmbeddedDocuments("ActiveEffect", [existingEffect.id])
-                }
-            }
-            
+            await this.removeAura(aura)            
         }
     }   
+
+    static async removeAura(aura, token) {
+        for(const otherToken of canvas.scene.tokens) {
+            const existingEffect = otherToken.actor.effects.find(e => getProperty(e, "flags.dsa5.templateSource") == aura)
+            if(existingEffect) {
+                await otherToken.actor.deleteEmbeddedDocuments("ActiveEffect", [existingEffect.id])
+            }
+        }
+    }    
+
+    static async refreshAnimations(token) {
+        if(game.ready && DSA5_Utility.moduleEnabled("autoanimations")) {
+            Sequencer.EffectManager.endEffects({ name: "spot*", object: token })            
+            for(let aura in token.auras) {
+                const template = token.auras[aura].template
+                const effect = template.document.flags.dsa5.effect
+                AutomatedAnimations.playAnimation(token, effect, { targets: [], workflow: template, isTemplate: true, templateData: template })               
+           }
+           token.requiresAnimationRefresh = false
+        } else if(game.ready) {
+           token.requiresAnimationRefresh = false
+        }
+    }
+
+    static removeAuras(token, foundAuras) {
+        for(let aura in token.auras) {
+            if(!foundAuras.includes(aura)) {
+                if(!token.auras[aura]) continue
+
+                token.auras[aura].child.destroy()
+                delete token.auras[aura]
+                if(DSA5_Utility.isActiveGM()) DSAAura.removeAura(aura, this)
+                token.requiresAnimationRefresh = true
+            }
+        }
+    }
+
+    static async drawAuras(token, force = false) {
+        token.auras ||= {}
+
+        const foundAuras = []
+
+        if(force) DSAAura.removeAuras(token, foundAuras)
+
+        for(let aura of token.actor.auras) {
+            const effect = await fromUuid(aura)
+
+            if(token.auras[aura]) {
+                foundAuras.push(aura)
+                Hooks.call("DSAauraRefresh", token.auras[aura], token)
+            } else {
+                const template = AuraTemplate.fromItem(effect, token, aura)
+                if(!template) continue
+
+                const child = token.addChild(template)
+                child.draw().then(ch => {
+                    ch.template.x -= token.document.x
+                    ch.template.y -= token.document.y
+                })                
+
+                token.auras[aura] = { child, template }
+                foundAuras.push(aura)
+                Hooks.call("DSAauraRefresh", token.auras[aura], token)
+                token.requiresAnimationRefresh = true
+            }        
+            
+        }
+
+        DSAAura.removeAuras(token, foundAuras)
+
+        if(token.requiresAnimationRefresh) {
+            DSAAura.refreshAnimations(token)
+        }
+        
+        DSAAura.checkAuraEntered(token.document)
+    }
 
     static validAuraTarget(token, disposition) {
         return disposition == 2 || disposition == token.document.disposition
@@ -83,7 +171,8 @@ export class DSAAura {
         }
     }
  
-    static async updateTokenAura(template, sourceToken) {        
+    static async updateTokenAura(aura, sourceToken) {        
+        const { child, template } = aura
         const document = template.document
         let { auraSource, effect, disposition, isAura } = getProperty(document, "flags.dsa5")
         disposition = disposition ?? 2
@@ -93,7 +182,7 @@ export class DSAAura {
         if(!auraSource) {
             await template.delete()
             return
-        }       
+        }
 
         //problem token with same actor twice on map
         for(let token of canvas.scene.tokens) {
@@ -148,12 +237,13 @@ export class AuraTemplate extends MeasuredTemplateDSA {
             direction: 0,
             x: token.center.x,
             y: token.center.y,
-            fillColor: game.user.color,
+            borderColor: effect.flags.dsa5.borderColor,
             flags: {
                 dsa5: {
                     effect: newEffect,
                     auraSource: auraId,
-                    isAura: true
+                    isAura: true,
+                    borderThickness: effect.flags.dsa5.borderThickness || 3,
                 }
             }
         }
@@ -171,33 +261,19 @@ export class AuraTemplate extends MeasuredTemplateDSA {
     
     highlightGrid() {
         super.highlightGrid();
-        game.canvas.grid.getHighlightLayer(this.highlightId).alpha = 0;
-    
+        game.canvas.grid.getHighlightLayer(this.highlightId).alpha = 0;    
     }  
 
     _applyRenderFlags(flags) {
-        super._applyRenderFlags(flags);    
-        if (flags.refreshState ) {
-            game.canvas.grid.getHighlightLayer(this.highlightId).alpha = 0;
-        }
+        super._applyRenderFlags(flags); 
+        if(flags.refreshState) game.canvas.grid.getHighlightLayer(this.highlightId).alpha = 0;
     }
 
     _refreshTemplate() {
         const t = this.template.clear();
-    
-        // Draw the Template outline
-        t.lineStyle(this._borderThickness, this.borderColor, 0.75).beginFill(0x000000, 0.0);
-    
-        // Fill Color or Texture
-        if ( this.texture ) t.beginTextureFill({texture: this.texture});
-        else t.beginFill(0x000000, 0.0);
-    
-        // Draw the shape
+        if(this.document.borderColor != null)
+            t.lineStyle(this.document.flags.dsa5.borderThickness, this.borderColor, 0.75).beginFill(0x000000, 0.0);
+
         t.drawShape(this.shape);
-    
-        // Draw origin and destination points
-        t.lineStyle(this._borderThickness, 0x000000)
-          .beginFill(0x000000, 0.5)
-          .endFill();
       }
 }

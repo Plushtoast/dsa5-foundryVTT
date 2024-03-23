@@ -12,15 +12,14 @@ export class MeasuredTemplateDSA extends MeasuredTemplate {
         const preData = message.flags.data.preData;
         const testData = message.flags.data.postData;
 
-        console.log( message.flags.data.preData)
         const actor = DSA5_Utility.getSpeaker(preData.extra.speaker);
         const source = actor.items.get(preData.source._id);
 
-        const template = this.fromItem(source, testData.qualityStep)
+        const template = this.fromItem(source, testData.qualityStep, id)
         if ( template ) template.drawPreview();
     }
 
-    static fromItem(item, qs) {
+    static fromItem(item, qs, messageId) {
         const target = item.system.target || {};
         const templateShape = game.dsa5.config.areaTargetTypes[target.type];
         if (!templateShape || !target.value) return null;
@@ -35,8 +34,9 @@ export class MeasuredTemplateDSA extends MeasuredTemplate {
             y: 0,
             fillColor: game.user.color,
             flags: { dsa5: { 
-                origin: item.uuid 
-            } },
+                origin: item.uuid,
+                messageId
+            }},
         };
 
         switch (templateShape) {
