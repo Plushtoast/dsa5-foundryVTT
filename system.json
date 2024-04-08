@@ -64,6 +64,26 @@
             }
         },
         {
+            "name": "gamemanualen",
+            "label": "Game Manual",
+            "system": "dsa5",
+            "path": "packs/gamemanualen.db",
+            "type": "JournalEntry",
+            "flags": {
+                "dsalang": "en"
+            }
+        },
+        {
+            "name": "gamemanualde",
+            "label": "Game Manual",
+            "system": "dsa5",
+            "path": "packs/gamemanualde.db",
+            "type": "JournalEntry",
+            "flags": {
+                "dsalang": "de"
+            }
+        },
+        {
             "name": "macros",
             "label": "Macros (System)",
             "system": "dsa5",
@@ -123,6 +143,15 @@
             "sorting": "m",
             "packs": [
                 "macros"
+            ]
+        },
+        
+        {
+            "name": "JournalEntry",
+            "sorting": "m",
+            "packs": [
+                "gamemanualde",
+                "gamemanualen"
             ]
         }
     ],

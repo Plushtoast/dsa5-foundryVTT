@@ -60,6 +60,14 @@ export default class DSA5Hotbar extends Hotbar {
         }
     }
 
+    _contextMenu(html) {
+        if(game.settings.get("dsa5", "hotbarv3")) {
+            HotbarV3ContextMenu.create(this, html, ".macro", this._getEntryContextOptions());
+        } else {
+            ContextMenu.create(this, html, ".macro", this._getEntryContextOptions());
+        }
+    }
+
     get template() {
         if(game.settings.get("dsa5", "hotbarv3"))
             return "systems/dsa5/templates/system/hud/hotbar.html"
@@ -69,7 +77,6 @@ export default class DSA5Hotbar extends Hotbar {
 
     activateListeners(html) {
         super.activateListeners(html);
-
         if(game.settings.get("dsa5", "hotbarv3")) {
             html.find('.quantity-click').mousedown(ev => RuleChaos.quantityClick(ev))
             html.on('mousedown', 'li.primary', async(ev) => {
@@ -212,7 +219,7 @@ export default class DSA5Hotbar extends Hotbar {
         } else {
             sections.removeClass('longLayout')
         }
-        let btns = html.find('.macro,.primary')
+        let btns = html.find('.primary')
         btns.removeClass('dsahidden')
         btns.filter(function() {
             const find = this.dataset?.name?.toLowerCase().trim()
@@ -260,7 +267,7 @@ export default class DSA5Hotbar extends Hotbar {
                 const isRiding = Riding.isRiding(actor)
 
                 if(isRiding) {
-                    const ridingEnttry = this._ridingEntry(actor)
+                    const ridingEnttry = this.tokenHotbar._ridingEntry(actor)
 
                     if(ridingEnttry) groups.skills.skill = [ridingEnttry]
                 }
@@ -415,4 +422,18 @@ export default class DSA5Hotbar extends Hotbar {
             };
         });
       }
+}
+
+class HotbarV3ContextMenu extends ContextMenu {
+    _setPosition(html, target) {
+        target = target.closest(".flexrow")
+        super._setPosition(html, target)
+    }
+
+    static create(app, html, selector, menuItems, {hookName="EntryContext", ...options}={}) {
+        for ( const cls of app.constructor._getInheritanceChain() ) {
+          Hooks.call(`get${cls.name}${hookName}`, html, menuItems);
+        }
+        if ( menuItems ) return new HotbarV3ContextMenu(html, selector, menuItems, options);
+    }
 }

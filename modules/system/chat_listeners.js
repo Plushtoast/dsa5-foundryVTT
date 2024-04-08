@@ -7,8 +7,16 @@ import { showPopout } from "../hooks/imagepopouttochat.js"
 export default class DSA5ChatListeners {
     static chatListeners(html) {
         html.on('click', '.openJournalBrowser', () => game.dsa5.apps.journalBrowser.render(true))
-        let helpButton = $('<a class="button showHelp" data-tooltip="HELP.showHelp"><i class="fas fa-question"></i></a>')
-        helpButton.click(() => { DSA5ChatListeners.getHelp() })
+        html.on('click', '.openBookInJournalBrowser', async(ev) => {
+            const book = ev.currentTarget.dataset.book
+            const bookType = ev.currentTarget.dataset.type || "books"
+            await game.dsa5.apps.journalBrowser.render(false)            
+            await game.dsa5.apps.journalBrowser.loadBook(book, $(game.dsa5.apps.journalBrowser._element), bookType)
+            await game.dsa5.apps.journalBrowser.render(true)
+        })
+        
+        const helpButton = $('<a class="button showHelp" data-tooltip="HELP.showHelp"><i class="fas fa-question"></i></a>')
+        helpButton.on('click', () => DSA5ChatListeners.getHelp() )
         $(html.find('.control-buttons')).prepend(helpButton)
         html.on('click', '.showPatchViewer', () => showPatchViewer())
         html.on('click', '.functionswitch', (ev) => RuleChaos[ev.currentTarget.dataset.function](ev))

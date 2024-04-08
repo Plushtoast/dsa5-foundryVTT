@@ -69,6 +69,12 @@ export default class DSA5_Utility {
         }
     }
 
+    static registerMasterTokens(file) {
+        if(!DSA5_Utility.moduleEnabled("dsa5-mastersworkshop")) return
+
+        DSA5.masterTokens.push(file)
+    }
+
     static async allMoneyItems() {
         const customPack = game.settings.get("dsa5", "moneyKompendium")
         const moneyPack = game.packs.get(customPack) ? customPack : this.getLanguagePack() 

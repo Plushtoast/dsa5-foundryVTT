@@ -587,6 +587,8 @@ DSA5.aimOptions = {
     "4": "aimOptions.2"
 }
 
+DSA5.masterTokens = []
+
 DSA5.traitCategories = {
     "meleeAttack": "closeCombatAttacks",
     "rangeAttack": "rangeCombatAttacks",

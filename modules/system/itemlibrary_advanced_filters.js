@@ -37,7 +37,8 @@ Hooks.once("ready", () => {
                 { label: "ammunitiongroup", attr: "ammunitiongroup.value", type: "select", options: DSA5.ammunitiongroups }
             ],
             equipment: [
-                { label: "equipmentType", attr: "equipmentType.value", type: "select", options: DSA5.equipmentTypes }
+                { label: "equipmentType", attr: "equipmentType.value", type: "select", options: DSA5.equipmentTypes },
+                { label: "PLANT.region", attr: "region", type: "text" },
             ],
             rangeweapon: [
                 { label: "TYPES.Item.combatskill", attr: "combatskill.value", type: "select", options: range },
@@ -51,7 +52,8 @@ Hooks.once("ready", () => {
             poison: [
                 { label: "resistanceModifier", attr: "resistance.value", type: "select", options: DSA5.magicResistanceModifiers },
                 { label: "COMBATSKILLCATEGORY.subcategory", attr: "subcategory", type: "select", options: DSA5.poisonSubTypes },
-                { label: "poisonType", attr: "poisonType.value", type: "text" }
+                { label: "poisonType", attr: "poisonType.value", type: "text" },
+                { label: "PLANT.region", attr: "region", type: "text" },
             ],
             disease: [
                 { label: "resistanceModifier", attr: "resistance.value", type: "select", options: DSA5.magicResistanceModifiers },

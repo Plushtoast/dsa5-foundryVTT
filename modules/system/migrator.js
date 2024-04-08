@@ -57,7 +57,7 @@ export default function migrateWorld() {
         if (!game.user.isGM) return
 
         await setupDefaulTokenConfig()
-        const currentVersion = await game.settings.get("dsa5", "migrationVersion")
+        const currentVersion = game.settings.get("dsa5", "migrationVersion")
         const NEEDS_MIGRATION_VERSION = 27
         const needsMigration = currentVersion < NEEDS_MIGRATION_VERSION
 

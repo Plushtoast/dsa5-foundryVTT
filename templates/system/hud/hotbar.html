@@ -74,10 +74,8 @@
                         {{else}}
                         aria-label="{{localize 'MACRO.EmptySlot' slot=slot}}"
                         {{/if}}>
-                            <span class="macro-key">{{this.key}}</span>
-                            {{#if this.icon}}
-                            <img class="macro-icon" src="{{this.icon}}" alt="{{this.tooltip}}" />
-                            {{/if}}
+                            <div class="{{item.iconClass}}" style="background-image:url('{{this.icon}}')">{{this.key}}</div>
+                            <span class="nameContent">{{this.macro.name}}</span>
                         </li>
                         {{/each}}
                     </ol>

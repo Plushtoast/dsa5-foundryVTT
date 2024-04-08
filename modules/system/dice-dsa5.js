@@ -140,7 +140,7 @@ export default class DiceDSA5 {
     }
 
     static async setupDialog({ dialogOptions, testData, cardOptions }) {
-        let rollMode = await game.settings.get("core", "rollMode")
+        let rollMode = game.settings.get("core", "rollMode")
         let sceneStress = "challenging"
 
         if (typeof testData.source.toObject === "function") testData.source = testData.source.toObject(false)

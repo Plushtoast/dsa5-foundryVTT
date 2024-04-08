@@ -1262,8 +1262,8 @@ export default class Actordsa5 extends Actor {
       liturgyArmor: actorData.system.liturgyArmor || 0,
       money,
       brawling: {
-        attack: brawling.system.attack.value,
-        parry: brawling.system.parry.value
+        attack: brawling?.system.attack.value || 0,
+        parry: brawling?.system.parry.value || 0
       },
       encumbrance: this.system.condition?.encumbered || 0,
       carrycapacity: this.system.carrycapacity,

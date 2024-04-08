@@ -620,7 +620,7 @@ class EquipmentSheet extends ItemSheetObfuscation(Enchantable) {
         mergeObject(data, {
             equipmentTypes: DSA5.equipmentTypes,
             domains: this.prepareDomains(),
-            canOnUseEffect: game.user.isGM || await game.settings.get("dsa5", "playerCanEditSpellMacro")
+            canOnUseEffect: game.user.isGM || game.settings.get("dsa5", "playerCanEditSpellMacro")
         })
         if (this.isBagWithContents()) {
             let weightSum = 0
@@ -732,7 +732,7 @@ export class ArmorSheet extends ItemSheetObfuscation(Enchantable) {
             armorSubcategories: Object.keys(DSA5.armorSubcategories),
             breakPointRating: DSA5.armorSubcategories[this.item.system.subcategory]
         })
-        data.canOnUseEffect = game.user.isGM || await game.settings.get("dsa5", "playerCanEditSpellMacro")
+        data.canOnUseEffect = game.user.isGM || game.settings.get("dsa5", "playerCanEditSpellMacro")
         return data
     }
     _getHeaderButtons() {
@@ -773,7 +773,7 @@ class MagicalSignSheet extends ItemSheetdsa5 {
     async getData(options) {
         const data = await super.getData(options);
         data.categories = { 1: game.i18n.localize("TYPES.Item.magicalsign"), 2: game.i18n.localize("additionalsign") }
-        data.canOnUseEffect = game.user.isGM || await game.settings.get("dsa5", "playerCanEditSpellMacro")
+        data.canOnUseEffect = game.user.isGM || game.settings.get("dsa5", "playerCanEditSpellMacro")
         return data
     }
     _getHeaderButtons() {
@@ -820,7 +820,7 @@ class RangeweaponSheet extends ItemSheetObfuscation(Enchantable) {
     async getData(options) {
         const data = await super.getData(options)
         mergeObject(data, {
-            canOnUseEffect: game.user.isGM || await game.settings.get("dsa5", "playerCanEditSpellMacro"),
+            canOnUseEffect: game.user.isGM || game.settings.get("dsa5", "playerCanEditSpellMacro"),
             ammunitiongroups: DSA5.ammunitiongroups,
             combatskills: await DSA5_Utility.allCombatSkillsList("range"),
             domains: this.prepareDomains(),
@@ -845,7 +845,7 @@ class BlessingSheetDSA5 extends ItemSheetdsa5 {
 
     async getData(options) {
         const data = await super.getData(options)
-        data.canOnUseEffect = game.user.isGM || await game.settings.get("dsa5", "playerCanEditSpellMacro")
+        data.canOnUseEffect = game.user.isGM || game.settings.get("dsa5", "playerCanEditSpellMacro")
         return data
     }
 
@@ -904,10 +904,10 @@ class ConsumableSheetDSA5 extends ItemSheetObfuscation(ItemSheetdsa5) {
 
     async getData(options) {
         const data = await super.getData(options)
-        data["calculatedPrice"] = Itemdsa5.getSubClass(this.item.type).consumablePrice(this.item)
-        data["availableSteps"] = data.system.QLList.split("\n").map((x, i) => i + 1)
-        data['equipmentTypes'] = DSA5.equipmentTypes;
-
+        data.calculatedPrice = Itemdsa5.getSubClass(this.item.type).consumablePrice(this.item)
+        data.availableSteps = data.system.QLList.split("\n").map((x, i) => i + 1)
+        data.equipmentTypes = DSA5.equipmentTypes;
+        data.targetTypes = DSA5.areaTargetTypes
         data.enrichedIngredients = await TextEditor.enrichHTML(getProperty(this.item.system, "ingredients"), {secrets: this.object.isOwner, async: true})
         return data
     }
@@ -967,7 +967,7 @@ class MagictrickSheetDSA5 extends ItemSheetdsa5 {
 
     async getData(options) {
         const data = await super.getData(options)
-        data.canOnUseEffect = game.user.isGM || await game.settings.get("dsa5", "playerCanEditSpellMacro")
+        data.canOnUseEffect = game.user.isGM || game.settings.get("dsa5", "playerCanEditSpellMacro")
         return data
     }
 
@@ -1039,7 +1039,7 @@ class MeleeweaponSheetDSA5 extends ItemSheetObfuscation(Enchantable) {
             data['canBeOffHand'] = combatSkill && !(combatSkill.system.weapontype.twoHanded) && this.item.system.worn.value
             data['canBeWrongGrip'] = !["Daggers", "Fencing Weapons"].includes(game.i18n.localize(`LocalizedCTs.${this.item.system.combatskill.value}`))
         }
-        data.canOnUseEffect = game.user.isGM || await game.settings.get("dsa5", "playerCanEditSpellMacro")
+        data.canOnUseEffect = game.user.isGM || game.settings.get("dsa5", "playerCanEditSpellMacro")
         return data
     }
 
@@ -1110,7 +1110,7 @@ class SpecialAbilitySheetDSA5 extends ItemSheetdsa5 {
             categories: DSA5.specialAbilityCategories,
             subCategories: DSA5.combatSkillSubCategories,
             traditionArtifacts: DSA5.traditionArtifacts,
-            canOnUseEffect: game.user.isGM || await game.settings.get("dsa5", "playerCanEditSpellMacro")
+            canOnUseEffect: game.user.isGM || game.settings.get("dsa5", "playerCanEditSpellMacro")
         })
         return data
     }
@@ -1214,7 +1214,7 @@ class VantageSheetDSA5 extends ItemSheetdsa5 {
 
     async getData(options) {
         const data = await super.getData(options)
-        data.canOnUseEffect = game.user.isGM || await game.settings.get("dsa5", "playerCanEditSpellMacro")
+        data.canOnUseEffect = game.user.isGM || game.settings.get("dsa5", "playerCanEditSpellMacro")
         return data
     }
 

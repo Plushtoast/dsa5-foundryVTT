@@ -65,7 +65,7 @@ export const MerchantSheetMixin = (superclass) => class extends superclass {
         })
         html.find('.lockTradeSection').click(ev => this.lockTradeSection(ev))
         html.find('.item-tradeLock').click(ev => this.toggleTradeLock(ev))
-        html.find('.randomGoods').click(ev => this.randomGoods(ev))
+        html.find('.randomGoods').click(ev => RandomGoodsAddition.showDialog(this.actor, ev))
         html.find(".clearInventory").click(ev => this.clearInventory(ev))
         html.find('.removeOtherTradeFriend').click(() => this.removeOtherTradeFriend())
         html.find('.choseTradefriend').click(() => this.choseTradefriend())
@@ -344,26 +344,6 @@ export const MerchantSheetMixin = (superclass) => class extends superclass {
         return getProperty(this.actor.system, "merchant.playerView")
     }
 
-    async randomGoods(ev) {
-        const html = await renderTemplate('systems/dsa5/templates/dialog/randomGoods-dialog.html', { categories: Array.from(DSA5.equipmentCategories) })
-        new Dialog({
-            title: game.i18n.localize("MERCHANT.randomGoods"),
-            content: html,
-            default: 'yes',
-            buttons: {
-                Yes: {
-                    icon: '<i class="fa fa-check"></i>',
-                    label: game.i18n.localize("yes"),
-                    callback: dlg => this.addRandomGoods(this.actor, dlg, ev)
-                },
-                cancel: {
-                    icon: '<i class="fas fa-times"></i>',
-                    label: game.i18n.localize("cancel")
-                }
-            }
-        }).render(true)
-    }
-
     async clearInventory(ev) {
         new Dialog({
             title: game.i18n.localize("MERCHANT.clearInventory"),
@@ -383,52 +363,6 @@ export const MerchantSheetMixin = (superclass) => class extends superclass {
                 }
             }
         }).render(true)
-    }
-
-    async addRandomGoods(actor, dlg, ev) {
-        let text = $(ev.currentTarget).text()
-        $(ev.currentTarget).html(' <i class="fa fa-spin fa-spinner"></i>')
-
-        let categories = []
-        dlg.find('input[type="checkbox"]:checked').each(function() {
-            const name = $(this).val()
-            categories.push({
-                name,
-                count: Number(dlg.find(`input[name="each_${name}"]`).val()),
-                number: Number(dlg.find(`input[name="number_${name}"]`).val())
-            })
-        })
-
-        const itemLibrary = game.dsa5.itemLibrary
-        if (!itemLibrary.equipmentBuild) {
-            await itemLibrary.buildEquipmentIndex()
-        }
-
-        let items = []
-        for (let cat of categories) {
-            const randomItems = (await itemLibrary.getRandomItems(cat.name, cat.number)).map(x => {
-                const elem = x.toObject()
-                elem.system.quantity.value = cat.count
-                return elem
-            })
-
-            items.push(...randomItems)
-        }
-
-        let seen = {}
-        items = items.filter(function(x) {
-            let domain = getProperty(x, "system.effect")
-            domain = typeof domain === 'object' && domain !== null ? getProperty(domain, "attributes") || "" : ""
-            const price = Number(getProperty(x, "system.price.value")) || 0
-            if (domain != "" || price > 10000) return false
-
-            let seeName = `${x.type}_${x.name}`
-            return (seen.hasOwnProperty(seeName) ? false : (seen[seeName] = true)) && actor.items.filter(function(y) {
-                return y.type == x.type && y.name == x.name
-            }).length == 0
-        })
-        await actor.createEmbeddedDocuments("Item", items)
-        $(ev.currentTarget).text(text)
     }
 
     async removeAllGoods(actor, ev) {
@@ -590,5 +524,81 @@ class SelectTradefriendDialog extends Dialog{
     setTargetToUser(ev){
         this.actor.setTradeFriend({_id: ev.currentTarget.dataset.id})
         this.close()
+    }
+}
+
+export class RandomGoodsAddition extends Dialog {
+    static get template() {
+        return "systems/dsa5/templates/dialog/randomGoods-dialog.html"
+    } 
+
+    static get contentData() {
+        return {
+            categories: Array.from(DSA5.equipmentCategories)
+        }
+    }
+
+    static async showDialog(actor, ev) {
+        const html = await renderTemplate(this.template, this.contentData)
+        new RandomGoodsAddition({
+            title: game.i18n.localize("MERCHANT.randomGoods"),
+            content: html,
+            default: 'yes',
+            buttons: {
+                Yes: {
+                    icon: '<i class="fa fa-check"></i>',
+                    label: game.i18n.localize("yes"),
+                    callback: dlg => this.addRandomGoods(actor, dlg, ev)
+                },
+                cancel: {
+                    icon: '<i class="fas fa-times"></i>',
+                    label: game.i18n.localize("cancel")
+                }
+            }
+        }).render(true)
+    }
+
+    static async addRandomGoods(actor, dlg, ev) {
+        let text = $(ev.currentTarget).text()
+        $(ev.currentTarget).html(' <i class="fa fa-spin fa-spinner"></i>')
+
+        let categories = []
+        dlg.find('input[type="checkbox"]:checked').each(function() {
+            const name = $(this).val()
+            categories.push({
+                name,
+                count: Number(dlg.find(`input[name="each_${name}"]`).val()),
+                number: Number(dlg.find(`input[name="number_${name}"]`).val())
+            })
+        })
+
+        const itemLibrary = game.dsa5.itemLibrary        
+        await itemLibrary.buildEquipmentIndex()
+
+        let items = []
+        for (let cat of categories) {
+            const randomItems = (await itemLibrary.getRandomItems(cat.name, cat.number)).map(x => {
+                const elem = x.toObject()
+                elem.system.quantity.value = cat.count
+                return elem
+            })
+
+            items.push(...randomItems)
+        }
+
+        let seen = {}
+        items = items.filter(function(x) {
+            let domain = getProperty(x, "system.effect")
+            domain = typeof domain === 'object' && domain !== null ? getProperty(domain, "attributes") || "" : ""
+            const price = Number(getProperty(x, "system.price.value")) || 0
+            if (domain != "" || price > 10000) return false
+
+            let seeName = `${x.type}_${x.name}`
+            return (seen.hasOwnProperty(seeName) ? false : (seen[seeName] = true)) && actor.items.filter(function(y) {
+                return y.type == x.type && y.name == x.name
+            }).length == 0
+        })
+        await actor.createEmbeddedDocuments("Item", items)
+        $(ev.currentTarget).text(text)
     }
 }

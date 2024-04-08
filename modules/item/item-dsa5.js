@@ -13,6 +13,7 @@ import DSA5CombatDialog from "../dialog/dialog-combat-dsa5.js"
 import SpecialabilityRulesDSA5 from "../system/specialability-rules-dsa5.js"
 import DSA5SpellDialog from "../dialog/dialog-spell-dsa5.js"
 import Riding from "../system/riding.js"
+import { UserMultipickDialog } from "../dialog/addTargetDialog.js"
 
 export default class Itemdsa5 extends Item {
     static defaultImages = {
@@ -635,7 +636,7 @@ export default class Itemdsa5 extends Item {
     }
 
     setupEffect(ev, options = {}, tokenId) {
-        return Itemdsa5.getSubClass(this.type).setupDialog(ev, options, this, tokenId)
+        return Itemdsa5.getSubClass(this.type).setupDialog(ev, options, this, this.parent, tokenId)
     }
 
     static checkEquality(item, item2) {
@@ -1231,24 +1232,24 @@ class ConsumableItemDSA extends Itemdsa5 {
         )
     }
 
-    static async setupDialog(ev, options, item, actor) {
-        let title = game.i18n.format("CHATNOTIFICATION.usesItem", { actor: item.actor.name, item: item.name })
-
+    static async setupDialog(ev, options, item, actor, tokenId) {
         if (!item.isOwned) return
 
-        let charges = (item.system.quantity.value - 1) * item.system.maxCharges + item.system.charges
+        const charges = (item.system.quantity.value - 1) * item.system.maxCharges + item.system.charges
         if (charges <= 0) {
             ui.notifications.error(game.i18n.localize("DSAError.NotEnoughCharges"))
             return
         }
 
-        let newCharges = item.system.charges <= 1 ? item.system.maxCharges : item.system.charges - 1
-        let newQuantity = item.system.charges <= 1 ? item.system.quantity.value - 1 : item.system.quantity.value
+        const newCharges = item.system.charges <= 1 ? item.system.maxCharges : item.system.charges - 1
+        const newQuantity = item.system.charges <= 1 ? item.system.quantity.value - 1 : item.system.quantity.value
 
-        let effect = DSA5_Utility.replaceDies(item.system.QLList.split("\n")[item.system.QL - 1], false)
-        let msg = `<div><b>${title}</b></div><div>${item.system.description.value}</div><div><b>${game.i18n.localize(
-            "effect"
-        )}</b>: ${effect}</div>`
+        const effect = DSA5_Utility.replaceDies(item.system.QLList.split("\n")[item.system.QL - 1], false)
+        const msg = await renderTemplate("systems/dsa5/templates/chat/consumable-used.html", { 
+            item, 
+            effect,
+            hasAreaTemplate: item.system.target && (item.system.target.type in DSA5.areaTargetTypes)
+        })
         if (newQuantity == 0) {
             await item.actor.deleteEmbeddedDocuments("Item", [item.id])
         } else {
@@ -1257,7 +1258,20 @@ class ConsumableItemDSA extends Itemdsa5 {
                 "system.charges": newCharges,
             })
         }
-        await ChatMessage.create(DSA5_Utility.chatDataSetup(msg))
+
+        const chatOptions = DSA5_Utility.chatDataSetup(msg)
+        chatOptions["flags.data"] = {
+            preData: {
+                source: item.toObject(),
+                extra: {
+                    speaker: Itemdsa5.buildSpeaker(actor, tokenId),
+                }
+            },
+            postData: {
+                qualityStep: item.system.QL,
+            }
+        }
+        await ChatMessage.create(chatOptions)
         await this._applyActiveEffect(item)
     }
 
@@ -1295,8 +1309,7 @@ class ConsumableItemDSA extends Itemdsa5 {
 class InformationItemDSA5 extends Itemdsa5{
     static async _postItem(item){
         const html = await renderTemplate("systems/dsa5/templates/chat/informationRequestRoll.html", { item })
-        const chatOptions = DSA5_Utility.chatDataSetup(html)
-        ChatMessage.create(chatOptions)
+        UserMultipickDialog.getDialog(html)
     }
 }
 

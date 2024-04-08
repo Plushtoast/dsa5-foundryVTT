@@ -167,7 +167,7 @@ export default class DSAActiveEffectConfig extends ActiveEffectConfig {
         }
         const config = {
             systemEffects: this.getStatusEffects(),
-            canEditMacros: game.user.isGM || (await game.settings.get("dsa5", "playerCanEditSpellMacro")),
+            canEditMacros: game.user.isGM || game.settings.get("dsa5", "playerCanEditSpellMacro"),
         };
         const macroIndexes = [2, 6, 7]
         let elem = $(this._element);

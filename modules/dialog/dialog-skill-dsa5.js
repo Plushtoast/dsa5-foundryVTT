@@ -81,7 +81,9 @@ export default class DSA5SkillDialog extends DialogShared {
         const canRoutine = routineAllowed && enoughFw
         const routine = game.i18n.localize('ROLL.routine')
         routineButton.prop("disabled", !canRoutine)
-        routineButton.html(canRoutine ? `${routine} (${game.i18n.localize('CHARAbbrev.FW')} ${Math.round(fw/2)})` : routine)
+        routineButton.html(canRoutine ? `${routine} (${game.i18n.localize('CHARAbbrev.FW')} ${Math.round(fw/2)})` : routine)       
+
+        this.calculateProbability(actor, this.dialogData.source, mod, fw)
     }
 
     static get defaultOptions() {

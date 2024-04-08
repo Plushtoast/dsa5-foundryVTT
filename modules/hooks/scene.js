@@ -21,6 +21,22 @@ export default function() {
                         Scene.create(createData, newOptions)
                     },
                   },
+                  withJournals: {
+                    icon: '<i class="fas fa-book"></i>',
+                    label: game.i18n.localize("Book.tryInit"),
+                    callback: async() => {
+                        try{
+                            const mod = doc.flags.core.sourceId.split(".")[1]
+                            const initializer = new game.dsa5.apps.DSA5Initializer("DSA5 Module Initialization", "", mod, game.i18n.lang)
+                            const json = await initializer.loadJson()
+                            initializer.initScenes(json, [createData.name])
+                        } catch (e) {
+                            const newOptions = options || {}
+                            options.dsaInit = true
+                            await Scene.create(createData, newOptions)
+                        }    
+                    },
+                  },    
                   cancel: {
                     icon: '<i class="fas fa-times"></i>',
                     label: game.i18n.localize("cancel")

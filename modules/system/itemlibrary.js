@@ -343,10 +343,9 @@ export default class DSA5ItemLibrary extends Application {
     }
 
     async findCompendiumItem(search, category, filterCompendium = true) {
-        if (!this.equipmentBuild) {
-            await this.buildEquipmentIndex()
-        }
-        let query = {
+        await this.buildEquipmentIndex()
+        
+        const query = {
             field: ["name"],
             where: { itemType: category }
         }
@@ -444,6 +443,17 @@ export default class DSA5ItemLibrary extends Application {
         result = this.filterDuplications(result)
 
         return result
+    }    
+
+    async findEquipmentItemDetailed(search, category, filterCompendium = true) {
+        await this.buildDetailFilter("Item", category)
+
+        let index = this.detailFilter[category]
+
+        let result = await this.executeAdvancedFilter(search.search || "", index, search.selects || [], search.inputs || [], search.booleans || [], search.rangeSearches || [])
+        if (filterCompendium) result = result.filter(x => x.compendium != "")
+
+        return await Promise.all(result.map(x => x.getItem()))
     }
 
     filterDuplications(filteredItems) {
@@ -651,6 +661,8 @@ export default class DSA5ItemLibrary extends Application {
 
     async createDetailIndex(category, subcategory) {
         if (!this.detailFilter[subcategory]) {
+            const catName = game.i18n.localize(`TYPES.Item.${subcategory}`)
+            SceneNavigation.displayProgressBar({label: game.i18n.format('Library.loading', {item: catName}), pct: 0})
             const field = this.subcategoryFields(subcategory)
             const target = $(this._element).find(`*[data-tab="${category}"]`)
             target.find('.searchResult ul').html('')
@@ -671,22 +683,33 @@ export default class DSA5ItemLibrary extends Application {
 
             const result = index.search(subcategory, { field: ["itemType"] })
             const pids = {}
+            SceneNavigation.displayProgressBar({label: game.i18n.format('Library.loading', {item: catName}), pct: 10})
             for (let res of result) {
                 if (!res.document.pack) continue
                 if (!pids[res.document.pack]) pids[res.document.pack] = []
                 pids[res.document.pack].push(res.document.id)
             }
             const promises = []
+            let percentage = 60 / Object.keys(pids).length
+            let count = 0
             for (const key of Object.entries(pids)) {
+                count += 1
                 promises.push(game.packs.get(key[0]).getDocuments({ _id__in: key[1], type: subcategory }))
+                SceneNavigation.displayProgressBar({label: game.i18n.format('Library.loading', {item: catName}), pct: Math.round(10 + count * percentage)})
             }
+            SceneNavigation.displayProgressBar({label: game.i18n.format('Library.loading', {item: catName}), pct: 70})
 
             let final = await Promise.all(promises)
+            percentage = 30 / final.length
+            count = 0
             for (let k of final) {
+                count += 1
                 items.push(...k.map(x => new AdvancedSearchDocument(x, subcategory)))
+                SceneNavigation.displayProgressBar({label: game.i18n.format('Library.loading', {item: catName}), pct: Math.round(70 + count * percentage)})
             }
             this.detailFilter[subcategory].add(items)
             this.hideLoading(target, category)
+            SceneNavigation.displayProgressBar({label: game.i18n.format('Library.loading', {item: catName}), pct: 100})
         }
     }
 

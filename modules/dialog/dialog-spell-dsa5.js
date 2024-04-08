@@ -1,3 +1,5 @@
+import Actordsa5 from "../actor/actor-dsa5.js";
+import DiceDSA5 from "../system/dice-dsa5.js";
 import RuleChaos from "../system/rule_chaos.js";
 import DSA5_Utility from "../system/utility-dsa5.js";
 import DSA5Dialog from "./dialog-dsa5.js";
@@ -235,6 +237,18 @@ export default class DSA5SpellDialog extends DialogShared {
         });
         reach.attr("data-mod", mod);
         html.find(".reloadButton").prop("disabled", Number(html.find(".castingTime").text()) < 2);
+        
+        this.calculateProbability()
+    }
+
+    async calculateProbability() {
+        const actor = DSA5_Utility.getSpeaker(this.dialogData.speaker)
+        const data = new FormDataExtended(this.element.find('form')[0]).object
+        data.situationalModifiers = Actordsa5._parseModifiers(this._element)
+        const fw = this.dialogData.source.system.talentValue.value + data.fw + await DiceDSA5._situationalModifiers(data, "FW")
+        let mod = await DiceDSA5._situationalModifiers(data) + $(this.element).find("input.spellModifier:checked").map((i, x) => Number(x.value)).get().reduce((a, b) => a + b, 0) + $(this.element).find('[name=maintainedSpells]')[0].value * -1
+
+        super.calculateProbability(actor, this.dialogData.source, mod, fw)
     }
 
     activateListeners(html) {
@@ -255,6 +269,8 @@ export default class DSA5SpellDialog extends DialogShared {
         });
 
         html.on('change', ".spellModifier", (event) => this.recalcSpellModifiers(html, event))
+        html.on('change', 'input,select', () => this.calculateProbability())
+        html.on('mousedown', '.quantity-click', () => this.calculateProbability())
 
         let targets = this.readTargets();
 

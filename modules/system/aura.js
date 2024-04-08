@@ -29,7 +29,6 @@ export class DSAAura {
     }
 
     static async applyTemplateToTargets(template, item) {
-        console.log(template, template.object.shape)
         let wait = 0
         while(wait < 10000 && !template.object?.shape) {
             await new Promise(r => setTimeout(r, 100))

@@ -3,7 +3,7 @@ import DSA5_Utility from './utility-dsa5.js'
 export default class DSA5Tutorial {
 
     static async firstTimeMessage() {
-        if (!(await game.settings.get("dsa5", "firstTimeStart"))) {
+        if (!(game.settings.get("dsa5", "firstTimeStart"))) {
             await DSA5Tutorial.setupDefaultOptions()
             let msg = game.i18n.localize('WELCOME')
             ChatMessage.create(DSA5_Utility.chatDataSetup(msg))

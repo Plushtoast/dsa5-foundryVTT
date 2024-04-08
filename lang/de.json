@@ -471,7 +471,6 @@
     "reloadTime": "Ladezeit",
     "skill": "Talent",
     "skills": "Talente",
-    "species": "Spezies",
     "Socialstate": "Sozialstatus",
     "soulpower": "Seelenkraft",
     "spellTest": "Zauberprobe",
@@ -583,6 +582,9 @@
         "filterDuplicateItems": "Doppelte Einträge ausblenden",
         "info": "Suche was du brauchst und ziehe es per Drag & Drop auf den Heldenbogen oder die Map.",
         "advancedSearchPlaceholders": {
+            "equipment": {
+                "region": "Nostria..."
+            },
             "specialability": {
                 "distribution": "Animisten..."
             },
@@ -600,7 +602,8 @@
                 "feature": "Hellsicht..."
             },
             "poison": {
-                "poisonType.value": "Waffengift..."
+                "poisonType.value": "Waffengift...",
+                "region": "Andergast..."
             },
             "ritual": {
                 "distribution.value": "Hexen...",
@@ -904,6 +907,7 @@
     "Book": {
         "Wizard": "Journal Browser",
         "focusRule": "Fokusregel",
+        "tryInit": "Mit Journals initialisieren",
         "easy": "Wenn du eine bestimmte Szene für die Helden leichter machen möchtest, dann kannst du die Vorschläge dieses Abschnittes übernehmen.",
         "hard": "Wenn du eine bestimmte Szene für die Helden schwerer machen möchtest, dann kannst du die Vorschläge dieses Abschnittes übernehmen.",
         "Description": "Willkommen im Journal Browser. Dieses Tool soll dich bei der Verwendung von Quellen-, Regel- und Abenteuermodulen unterstützen und einen Überblick über alle enthaltenen Inhalte liefern, wie z.B. die Szenen, Kapitel und Beschreibungen. Außerdem werden Hinweise zur Anwendung und gegebenenfalls automatische Funktionen zur Initialisierung der Module bereitgestellt.",
@@ -985,7 +989,7 @@
     "leftClick": "Links-<i class=\"fas fa-computer-mouse\"></i>",
     "rightClick": "Rechts-<i class=\"fas fa-computer-mouse\"></i>",
     "Money-K": "Kreuzer",
-    "WELCOME": "<p><h2>Willkommen zu DSA5<br> für Foundry VTT</h2></p><p>Wir wünschen dir viel Spaß beim Spielen von DSA5.</p><h3>Erste Schritte</h3><p>Für einen einfachen und schnellen Start empfehlen wir das Grundregelmodul in deinem System zu installieren. So kannst du unverzüglich Aventurien erkunden. Wenn du das Grundregelmodul nicht hast, musst du alle Gegenstände, Zauber, Sonderfertigkeiten, Charaktere, etc. selbst anlegen.</p><p>Das Modul kannst du im <a href=\"https://www.f-shop.de/virtual-tabletops/das-schwarze-auge-vtt/\" target=\"_blank\">F-Shop/</a> erwerben.</p><p>Für die Charaktererstellung stelle sicher, dass du per Drag and Drop die Spezies auf dein Charakterblatt ziehst (zur Berechnung der Attribute).</p><p>Du kannst auch das kostenlose <a href=\"https://github.com/Plushtoast/dsa5_introduction\" target=\"_blank\">Einsteigermodul</a> installieren, das Karten, vorgefertigte Charaktere und ein kleines Abenteuer beinhaltet.</p><h3>Hilfe</h3><p>Bei Problemen benutze die Hilfe (/help im Chat), besuche den ulisses-dsa Channel im <a target=\"_blank\" href=\"https://discord.gg/foundryvtt\">Foundry Discord</a> oder schau in unserem <a href=\"https://github.com/Plushtoast/dsa5-foundryVTT/wiki\" target=\"_blank\">Wiki</a> vorbei.</p><p>Diese Nachricht wird nur einmal angezeigt.</p>",
+    "WELCOME": "<p><h2>Willkommen zu DSA5<br> für Foundry VTT</h2></p><p>Wir wünschen dir viel Spaß beim Spielen von DSA5.</p><h3>Erste Schritte</h3><p>Für einen einfachen und schnellen Start empfehlen wir das Grundregelmodul in deinem System zu installieren. So kannst du unverzüglich Aventurien erkunden. Wenn du das Grundregelmodul nicht hast, musst du alle Gegenstände, Zauber, Sonderfertigkeiten, Charaktere, etc. selbst anlegen.</p><p>Das Modul kannst du im <a href=\"https://www.f-shop.de/virtual-tabletops/das-schwarze-auge-vtt/\" target=\"_blank\">F-Shop/</a> erwerben.</p><p>Für die Charaktererstellung stelle sicher, dass du per Drag and Drop die Spezies auf dein Charakterblatt ziehst (zur Berechnung der Attribute).</p><p>Du kannst auch das kostenlose <a href=\"https://github.com/Plushtoast/dsa5_introduction\" target=\"_blank\">Einsteigermodul</a> installieren, das Karten, vorgefertigte Charaktere und ein kleines Abenteuer beinhaltet.</p><h3>Hilfe</h3><p>Bei Problemen benutze die Hilfe (/help im Chat), besuche den ulisses-dsa Channel im <a target=\"_blank\" href=\"https://discord.gg/foundryvtt\">Foundry Discord</a> oder schau in unserem <a href=\"https://github.com/Plushtoast/dsa5-foundryVTT/wiki\" target=\"_blank\">Wiki</a> oder dem Game Manual (über den Journalbrowser) vorbei.</p><p>Diese Nachricht wird nur einmal angezeigt.</p>",
     "SHEET": {
         "PostItem": "Im Chat posten",
         "DuplicateItem": "Duplizieren",
@@ -1133,7 +1137,7 @@
     },
     "HELP": {
         "showHelp": "Hilfe anzeigen",
-        "default": "Weiterführende Hilfe und Informationen gibt es hier: <a href=\"https://youtube.com/c/VTTom\" target=\"_blank\"><button>VTTom's YouTube Kanal</button></a><a href=\"https://github.com/Plushtoast/dsa5-foundryVTT/wiki\" target=\"_blank\"><button>Wiki & FAQ</button></a><a href=\"https://discord.gg/foundryvtt\" target=\"_blank\"><button>Foundry Discord (ulisses-dsa)</button></a><a href=\"https://discord.gg/foundryvtt\" target=\"_blank\"><a href=\"https://discord.com/invite/SnqCgcvPzR\" target=\"_blank\"><button>Ulisses Discord</button></a>",
+        "default": "Weiterführende Hilfe und Informationen gibt es hier: <a href=\"https://youtube.com/c/VTTom\" target=\"_blank\"><button>VTTom's YouTube Kanal</button></a><button class=\"openBookInJournalBrowser\" data-book=\"Game Manual (Foundry VTT)\">Game Manual</button><a href=\"https://github.com/Plushtoast/dsa5-foundryVTT/wiki\" target=\"_blank\"><button>Wiki & FAQ</button></a><a href=\"https://discord.gg/foundryvtt\" target=\"_blank\"><button>Foundry Discord (ulisses-dsa)</button></a><a href=\"https://discord.gg/foundryvtt\" target=\"_blank\"><a href=\"https://discord.com/invite/SnqCgcvPzR\" target=\"_blank\"><button>Ulisses Discord</button></a>",
         "command": "Befehl",
         "example": "Beispiel",
         "pay": "Bezahlen",

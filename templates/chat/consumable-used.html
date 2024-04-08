@@ -1,0 +1,29 @@
+<details>
+    <summary>
+        <b>{{localize "CHATNOTIFICATION.usesItem" actor=item.actor.name item=item.name}}</b>
+    </summary>
+    <p>
+    {{{item.system.description.value}}}
+    </p>
+</details>
+<hr/>
+<div>
+    <b>{{localize "effect"}}</b>: {{{effect}}}
+</div>
+{{#if (or hasAreaTemplate applyEffect)}}
+    <div class="row-section" style="margin-top:10px">
+        {{#if applyEffect}}
+        <div class="col two center">
+            <button class="applyEffect selfButton" data-target="self" data-tooltip="TT.applyEffectCaster">{{localize 'ActiveEffects.applySelf'}}</button>
+        </div>
+        <div class="col two center">
+            <button class="applyEffect selfButton" data-target="target" data-tooltip="TT.applyEffectTargets">{{localize 'ActiveEffects.applyTarget'}}</button>
+        </div>
+        {{/if}}
+        {{#if hasAreaTemplate}}
+        <div class="col two center">
+            <button class="placeTemplate selfButton" data-tooltip="TT.placeTemplate">{{localize 'AoE'}}</button>
+        </div>
+        {{/if}}
+    </div>
+{{/if}}

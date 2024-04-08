@@ -124,7 +124,7 @@ export default class EquipmentDamage {
             await new Roll("1d20").evaluate({ async: true }),
             game.i18n.format("WEAR.check", { category })
         )
-        await DiceDSA5.showDiceSoNice(roll, await game.settings.get("core", "rollMode"))
+        await DiceDSA5.showDiceSoNice(roll, game.settings.get("core", "rollMode"))
         const damage = roll.total > threshold ? 1 : 0
         await this.applyDamageLevelToItem(item, damage)
         const wear = EquipmentDamage.calculateWear(item.data)

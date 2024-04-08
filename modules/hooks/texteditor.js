@@ -45,7 +45,7 @@ export function setEnrichers() {
             }
         },
         {
-            pattern: /@(Pay|GetPaid|AP)\[(-|\+)?\d+(\.\d+)?\]({[a-zA-ZöüäÖÜÄß\(\)&; -]+})?/g,
+            pattern: /@(Pay|GetPaid|AP)\[(-|\+)?\d+(\.\d+)?\]({[a-zA-ZöüäÖÜÄß\(\)&; -0-9]+})?/g,
             enricher: (match, options) => {
                 const str = match[0]
                 const type = match[1]

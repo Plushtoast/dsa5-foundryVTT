@@ -1,4 +1,5 @@
 import RuleChaos from "../system/rule_chaos.js"
+import DSA5_Utility from "../system/utility-dsa5.js"
 import { AddTargetDialog } from "./addTargetDialog.js"
 
 export default class DialogShared extends Dialog {
@@ -72,6 +73,27 @@ export default class DialogShared extends Dialog {
             if (id != x.id) newIds.push(x.id);
         });
         game.user.updateTokenTargets(newIds)
+    }    
+
+    calculateProbability(actor, item, mod, fw) {
+        if(DSA5_Utility.moduleEnabled("dsa5-core")){
+            const config = game.settings.get("dsa5-core", "showProbability")
+
+            if(config == 1 || config == 2 && game.user.isGM){
+                const possibilities = []
+                for(let i = 0; i < 6; i++){
+                    const qs = 1 + i
+                    let probability = game.dsa5.apps.DSACharacterCalculator.rollSuccessCalculation(actor, item, mod, qs, fw)
+                    if(probability > 1) {
+                        probability = `${probability}`.padStart(2, '0')
+                        possibilities.push(`${game.i18n.localize('CHARAbbrev.QS')} ${qs}: ${probability}%`)
+                    } else {
+                        break
+                    }
+                }
+                $(this.element).find(".nonOpposedButton,.rollButton").attr("data-tooltip", possibilities.join("<br>"))
+            }
+        }
     }
 
     readTargets() {

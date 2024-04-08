@@ -950,6 +950,7 @@
                 "value": 0
             },
             "capacity": 0,
+            "region": "",
             "worn": {
                 "value": false,
                 "wearable": false
@@ -1120,6 +1121,7 @@
                 "value": 1
             },
             "subcategory": 1,
+            "region": "",
             "poisonType": {
                 "value": ""
             },

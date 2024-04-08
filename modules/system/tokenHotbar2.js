@@ -620,15 +620,13 @@ export default class TokenHotbar2 extends Application {
     }
 
     _ridingEntry(actor) {
-        if(isRiding){
-            const horse = Riding.getHorse(actor)
-            if(horse){
-                const x = Riding.getLoyaltyFromHorse(horse)
-                if(x){
-                    return { name: `${x.name} (${x.system.talentValue.value})`, id: "rideLoyaltyID", icon: x.img, cssClass: "skill", abbrev: x.name[0] }
-                }
+        const horse = Riding.getHorse(actor)
+        if(horse){
+            const x = Riding.getLoyaltyFromHorse(horse)
+            if(x){
+                return { name: `${x.name} (${x.system.talentValue.value})`, id: "rideLoyaltyID", icon: x.img, cssClass: "skill", abbrev: x.name[0] }
             }
-        }
+        }        
     }
 
     _gmEntries() {        

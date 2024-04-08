@@ -10,19 +10,20 @@ import DSATour from "../tours/dsa_tour.js";
 import { initImagePopoutTochat } from "./imagepopouttochat.js";
 import { connectSocket } from "./socket.js";
 import { DSAAura } from "../system/aura.js";
+import registerGameManual from "../journal/game_manual.js";
 
 export default function() {
     Hooks.on("ready", async() => {
         connectSocket()
 
-        if (DSA5_Utility.moduleEnabled("vtta-tokenizer") && !(await game.settings.get("dsa5", "tokenizerSetup")) && game.user.isGM) {
+        if (DSA5_Utility.moduleEnabled("vtta-tokenizer") && !(game.settings.get("dsa5", "tokenizerSetup")) && game.user.isGM) {
             await game.settings.set("vtta-tokenizer", "default-frame-pc", "[data] systems/dsa5/icons/backgrounds/token_green.webp")
             await game.settings.set("vtta-tokenizer", "default-frame-npc", "[data] systems/dsa5/icons/backgrounds/token_black.webp")
             await game.settings.set("vtta-tokenizer", "default-frame-neutral", "[data] systems/dsa5/icons/backgrounds/token_blue.webp")
             await game.settings.set("dsa5", "tokenizerSetup", true)
         }
 
-        if (DSA5_Utility.moduleEnabled("dice-so-nice") && !(await game.settings.get("dsa5", "diceSetup")) && game.user.isGM) {
+        if (DSA5_Utility.moduleEnabled("dice-so-nice") && !(game.settings.get("dsa5", "diceSetup")) && game.user.isGM) {
             await game.settings.set("dice-so-nice", "immediatelyDisplayChatMessages", true)
             await game.settings.set("dsa5", "diceSetup", true)
         }
@@ -47,6 +48,8 @@ export default function() {
         setEnrichers()
         initImagePopoutTochat()
         DSAAura.bindAuraHooks()
+
+        registerGameManual()
 
         Hooks.call("DSA5ready", game.dsa5)
     });

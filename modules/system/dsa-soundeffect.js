@@ -60,7 +60,7 @@ export default class DSA5SoundEffect {
     }
 
     static async loadSoundConfig() {
-        const effectFile = await game.settings.get("dsa5", "soundConfig")
+        const effectFile = game.settings.get("dsa5", "soundConfig")
         if (effectFile) {
             try {
                 let file = await fetch(effectFile)

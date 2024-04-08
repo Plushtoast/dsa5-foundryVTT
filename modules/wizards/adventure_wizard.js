@@ -142,9 +142,6 @@ export default class BookWizard extends Application {
         html.on('click', '.movePage', async(ev) => this.movePage(ev))
 
         html.on('click', '.loadBook', ev => {
-            this.selectedChapter = undefined
-            this.selectedType = undefined
-            this.content = undefined
             this.loadBook($(ev.currentTarget).text(), html, ev.currentTarget.dataset.type)
         })
         html.on('click', '.getChapter', ev => {
@@ -368,15 +365,20 @@ export default class BookWizard extends Application {
         page?.scrollIntoView({behavior: "smooth"});
     }
 
-    async _renderHeadings(toc) {
+    async _renderHeadings(toc, shiftFirst = false) {
         const headings = Object.values(toc);
-        headings.shift();
+        
+        if(shiftFirst) headings.shift();
+
         const minLevel = Math.min(...headings.map(node => node.level));
 
         return await renderTemplate("templates/journal/journal-page-toc.html", {
           headings: headings.reduce((arr, {text, level, slug, element}) => {
             if ( element ) element.dataset.anchor = slug;
-            if ( level < minLevel + 2 ) arr.push({text, slug, level: level - minLevel + 2});
+            if ( level < minLevel + 2 ) {
+                arr.push({text, slug, level: level - minLevel + 2});
+                
+            }
             return arr;
           }, [])
         });
@@ -391,9 +393,10 @@ export default class BookWizard extends Application {
             const sheet = journal.sheet.getPageSheet(page.id)
             const data = await sheet.getData();
             const view = (await sheet._renderInner(data)).get();
+            const equalName = journal.name == page.name
 
             const pageToc = JournalEntryPage.implementation.buildTOC(view)
-            pageTocs.push(await this._renderHeadings(pageToc))
+            pageTocs.push(await this._renderHeadings(pageToc, equalName))
 
             let pageContent = view[view.length -1]
             this.showSearchResults(pageContent)
@@ -401,10 +404,12 @@ export default class BookWizard extends Application {
 
             if(page.type == "video") pageContent = `<div class="video-container">${pageContent}</div>`
 
-            if(journal.name != page.name) pageContent = `<h2>${page.name}</h2>${pageContent}`
+            if(!equalName) pageContent = `<h2>${page.name}</h2>${pageContent}`
 
             content += pageContent
         }
+
+        console.log(pageTocs)
 
         this.pageTocs = pageTocs.join("")
         
@@ -449,8 +454,13 @@ export default class BookWizard extends Application {
         if (game.user.isGM) new InitializerForm().render(this.bookData.moduleName)
     }
 
-    async loadBook(id, html, type) {
+    async loadBook(id, html, type) {        
+        this.selectedChapter = undefined
+        this.selectedType = undefined
+        this.content = undefined
+
         if (!type) type = this.currentType
+
         this.currentType = type
         this.book = this[type].find(x => x.id == id)
         await fetch(this.book.path).then(async r => r.json()).then(async json => {
