@@ -1,0 +1,51 @@
+<h1>Important changes (4/15/2024)</h1>
+<h2 id="game-manual">Game Manual </h2>
+<p>The wiki is now also available as a Game Manual through the Journal Browser. We have extensively revised and updated the wiki, as well as added new chapters. A big thank you to Nellkir, VTTom, McKee, and everyone else who has contributed to the wiki so far. If you'd like to contribute to the Game Manual in the future, take a look here: <a href="https://github.com/Plushtoast/dsa5-foundryVTT-wiki">TDE5 Wiki Source Files</a>.</p>
+<h2 id="auras">Auras </h2>
+<p>TDE now finally supports Auras. Auras are active effects that affect tokens within a specified radius. These effects can be both positive and negative. An aura can be activated through the extended effects of an active effect and configured to react to token disposition (friendly, hostile, etc.). However, for this functionality to work, all tokens must be properly configured. For example, Elwene has been blessed by the gods, granting a +1 bonus to Courage to all beings within a radius of 2 steps. These auras can now be equipped with graphical animations, just like area effects of spells, using the "Automated Animations" module. Furthermore, consumable items can now also include an area template. Additionally, we have equipped the dsa5-glueandhammer module with an up-to-date configuration file for automated animations. If you'd like to contribute to or improve this configuration file, feel free to check it out here: <a href="https://github.com/Plushtoast/dsa5-extensiondb/blob/master/animations.md">Extension-DB</a>.</p>
+<h2 id="poison-automations">Poison Automations </h2>
+<p>Active effects on poisons and diseases now have an additional toggle to add the respective effect on success or failure of the resistance test. This means that poisons and diseases can include effects that are only transferred to the target in one of the two cases. We have already implemented some of these effects in the official modules, and the updates will gradually appear in the modules. Additionally, poisons can now be categorized into subcategories such as poison, alcohol, and addiction. This will later provide additional options for handling poisons. Furthermore, poisons can be further narrowed down through the detail filter of the library. The associated compendium changes will be introduced with version 6.0.</p>
+<h2 id="currencies">Currencies </h2>
+<p>The standard currencies can now be exchanged via a separate setting. Choose your own compendium with the corresponding currencies, which will then be added to every new character and used for payment functions and merchants. Additionally, existing characters can now replace their currencies through the context menu of the currencies. Money now also has its own subcategory, which determines whether this currency can be used in automatic payment functions. The Master's Workshop has also received all the necessary changes to use custom currencies.</p>
+<h2 id="masters-workshop-improvements">Master's Workshop Improvements </h2>
+<p>The following improvements have been implemented for the Master's Workshop:</p>
+<ul class="dsalist">
+<li>The Transform to Loot dialog (found in the macros of the core rulebook) now works more accurately.</li>
+<li>Custom currencies are now supported (see above).</li>
+<li>The tavern generator now also generates some standard services such as bathing or rooms for direct payment.</li>
+<li>The tavern generator can now add random food. For this, the food must be available in the library, have the category "food," and have a region entered in the "Region" field according to the selectable regions of the tavern generator. We may add local food to regional aids at a later date.</li>
+<li>Similarly, the tavern generator can now add custom drinks, provided they are available through the library. Check out existing alcoholic beverages for an example.</li>
+<li>The NPC breeding now has an additional option to display tagged tokens. These tokens are part of the official modules (thanks to VTTom for tagging) and are thus also available in NPC breeding. Specifically, this means that the tokens can all be filtered simultaneously and by a few categories to quickly find something suitable. However, most modules will only receive the necessary update with version 6.0.0.</li>
+<li>The workshop now extends the randomised addition of items to include all detail filters that can also be found in the library. This means, for example, that you can now automatically create merchants who only sell weapon poison, only stationery, etc.</li>
+<li>The breeding pit is also able to add items from the library according to the detail filter (see one point above).</li>
+<li>The tavern generator can now limit the number of alcoholic beverages. To do this, it chooses a random selection from the types available in the selected region. In addition, all alcoholic beverages, food and services are available in random quantities from 1-50.</li>
+</ul>
+<h1 id="improvements">Improvements </h1>
+<ul class="dsalist">
+<li>Lights (equipment) are now toggles.</li>
+<li>Importing maps from official TDE adventures using any method other than the Journal Browser now generates a popup instead of a warning (which seems to be often ignored). Always use the Journal Browser to import TDE adventures to guarantee full functionality.</li>
+<li>The detail filters of the library now have a few placeholders to help understand the function.</li>
+<li>Special thanks again to Zoidable for implementing the Duplicatus spell.</li>
+<li>The player menu now has a small button to open the character calculator (requires the core module, previously only possible via the chat command /cc).</li>
+<li>There is a new active effect key for condition thresholds: "Threshold (Condition)." As long as the corresponding condition is equal to or below this threshold, it has no effect on tests. Once the level of the condition exceeds the threshold, the full level takes effect (unlike "Resistance (Condition)," which always deducts based on the condition level).</li>
+<li>The dialog to reward players with adventure points now has additional selection fields for individual characters. This is especially helpful when distributing adventure points using the Journal Enricher @AP[15].</li>
+<li>The same applies to paying and stripping players. These functions now also have additional selection fields to choose the affected characters (note: the enrichers for journals are @GetPaid[15] and @Pay[15]).</li>
+<li>The enricher @Ch can now be fed with predefined attributes and a skill value. For example, @Ch[Sinnesschärfe 1 options={"attrs":"13,15,15","fw":6}] would trigger a Sinnesschärfe test with a difficulty of 1, a skill value of 6, and the attributes KL 13 and IN 15.</li>
+<li>The settings now include an option to send a chat message to the game master when a condition is removed from an actor. This can result in a large number of chat messages. If you have suggestions on how this could be better filtered, we would be happy to hear them. Additionally, each individual effect now has an option to trigger this notification as well (to all, to owners, to owners and GM, only to GM).</li>
+<li>IDs in compendiums of official modules should no longer change between updates, so links created by users should no longer be broken (e.g., via UUID) (from 6.0.0+).</li>
+<li>Damage tests can now additionally include any attribute of the actor. For example, 1d6+@condition.inpain would increase any damage roll by the level in pain.</li>
+<li>The Apply Effect buttons now show small icons in the tooltip indicating who the effect will be applied to.</li>
+<li>Melee weapons can now be used and thrown according to the rules like ranged weapons. This function can be accessed through the context menu of the weapon on the combat tab.</li>
+<li>The buttons for dodging, unarmed defense, and attack on the combat tab of the character sheet now show the respective skill value.</li>
+<li>Before posting information items, a dialog now appears to specify who the item should be whispered to.</li>
+<li>Scenes from, for example, adventure modules can now be imported along with their notes even without adventure initialization.</li>
+<li>The core rulebook module has a setting as of 5.4.0 to display the success probability of talents. If this option is enabled, the "roll" button for talents and spells will have a tooltip showing the probability for each possible QS for the current modifiers.</li>
+</ul>
+<h1 id="bug-fixes">Bug Fixes </h1>
+<ul class="dsalist">
+<li>Requesting dice rolls in the GM menu now works again for attribute rolls.</li>
+<li>The wizard extension "Extreme Damage" for -faxius spells should now work correctly.</li>
+<li>The production time intervals of the "Forge" function now add up instead of multiplying.</li>
+<li>The context menu of the hotbar conversion now works a bit better.</li>
+<li>A bug in the display of the table of contents in the Journal Browser has been fixed.</li>
+</ul>

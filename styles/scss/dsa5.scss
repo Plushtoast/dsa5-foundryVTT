@@ -2153,6 +2153,7 @@
     .sheet.journal-entry .pages-list {
       .heading-link {
         line-height: inherit;
+        font-size: unset;
       }
       .headings {
         display: block;
@@ -2163,6 +2164,10 @@
         li {
           line-height: inherit;
           height: auto;
+
+          &:last-child {
+            margin-bottom: 0.1rem;
+          }
         }
       }
     }

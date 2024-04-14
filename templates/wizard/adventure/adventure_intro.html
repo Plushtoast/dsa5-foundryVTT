@@ -1,8 +1,23 @@
 <div>
     <h1>{{localize 'Book.Wizard'}}</h1>
     <p>{{localize 'Book.Description'}}</p>
+    <ul class="dsalist">
+        {{#each manuals as |item i|}}
+        <li>
+            <div class="row-section">
+                <div class="col ninety">
+                    <a data-type="manuals" class="loadBook">{{item.id}}</a>
+                </div>
+                <div class="col ten">
+                    {{#if ../isGM}}<a data-tooltip="Book.playerVisibility" class="toggleVisibility" data-type="manuals" data-itemid="{{item.id}}"><i class="fas {{#if item.visible}}fa-toggle-on{{else}}fa-toggle-off{{/if}}"></i></a>{{/if}}
+                </div>
+            </div>
+        </li>
+        {{/each}}
+    </ul>
     {{#if adventures}}
     <h2>{{localize 'Book.availableModules'}}</h2>
+    
     <ul class="dsalist">
         {{#each adventures as |item i|}}
         <li>

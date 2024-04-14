@@ -114,6 +114,13 @@ export default class DSA5Hotbar extends Hotbar {
         }
     }
 
+    static get defaultOptions() {
+        const options = super.defaultOptions
+        options.scrollY = options.scrollY || []
+        options.scrollY.push('#macro-list')
+        return options
+    }
+
     async _betterTooltip(ev) {
         const target = ev.currentTarget
         const data = target.dataset

@@ -633,6 +633,9 @@
         "filterDuplicateItems": "Hide duplicate items",
         "info": "Search for everything and drag & drop it to the character sheet or the map.",
         "advancedSearchPlaceholders": {
+            "equipment": {
+                "region": "Nostria..."
+            },
             "specialability": {
                 "distribution": "Witch..."
             },
@@ -970,6 +973,7 @@
         "PostItem": "Post to chat",
         "EditItem": "Edit",
         "postAsGroupCheck": "Post as group check.",
+        "changeMoney": "Exchange currencies",
         "SplitItem": "Split",
         "DuplicateItem": "Duplicate",
         "EquipItem": "Equip",
@@ -1038,6 +1042,9 @@
         "Schuppenbeutel": "Scale bag",
         "Kristallomantische Kristallkugel": "Crystallomantic crystal orb",
         "Echsenhaube": "Lizard hood"
+    },
+    "POISON": {
+        "ql": "Quality of the tavern"
     },
     "ITEMSHEET": {
         "offHandMod": "Bonus/handicap offhand (e.g. parry weapon)",
@@ -1282,6 +1289,9 @@
     "ActiveEffects": {
         "hideOnToken": "Hide on Token",
         "hidePlayers": "Hide for players",
+        "isAura": "Aura",
+        "radius": "Radius",
+        "disposition": "Disposition",
         "applyTarget": "Effect (Target)",
         "applySelf": "Effect (Self)",
         "messageReceivers": {
@@ -1297,6 +1307,7 @@
         "always": "Always",
         "onSuccess": "On success",
         "onFailure": "On failure",
+        "onDelayed": "Delayed start",
         "creature": "Actorlink (e.g. dsa5-core.coreenbestiary.Gotongi)",
         "resistRoll": "Resist check",
         "resistPain": "The pain is overwhelming (level 4). The ability to act can only be maintained via a self-control check.",
@@ -1566,7 +1577,8 @@
         "getPaidButton": "Receive",
         "noActor": "Your character could not be found",
         "onlyActors": "Only players can receive/pay money. Maybe no character has been assigned to you.",
-        "cannotpay": "<b>{actor}</b> can not pay his/her debts of {amount}."
+        "cannotpay": "<b>{actor}</b> can not pay his/her debts of {amount}.",
+        "default": "Standard"
     },
     "rangeMovementOptions": {
         "STATIONARY": "motionless (+2)",
@@ -1618,6 +1630,7 @@
     "Book": {
         "Wizard": "Journal Browser",
         "focusRule": "Focus rule",
+        "tryInit": "Initialize with journals",
         "easy": "If you want to make a certain scene easier for the heroes, you can adopt the suggestions of this section.",
         "hard": "If you want to make a certain scene harder for the heroes, you can adopt the suggestions of this section.",
         "Description": "Welcome to the journal browser. This tool is supposed to assist in the usage of source, rule and adventure modules by giving an overview on all included contents like scenes, chapters and descriptions. Moreover hints for the usage are provided and functions for the initialisation of the modules.",
@@ -1661,6 +1674,8 @@
         "gear": "Update icons, effects and effectformula of all gear, weapons and armors. THIS WILL OVERRIDE MANUAL MODIFICATIONS!"
     },
     "DSASETTINGS": {
+        "moneyKompendium": "Currency Compendium",
+        "moneyKompendiumHint": "Choose a compendium for the standard currencies. These will be automatically added to new characters and used for payment functions, as well as merchants. You may need to create a compendium and fill it with your desired currencies first.",
         "notifyOnFadingEffects": "End of effect (notification)",
         "notifyOnFadingEffectsHint": "The game master receives a chat notification, if an effect on an actor is removed.",
         "hotbarv3": "DSA Hotbar Conversion",
@@ -1891,6 +1906,23 @@
         "3": "Passive",
         "4": "General",
         "5": "Punch-Up"
+    },
+    "poisonCategory": {
+        "1": "Poison, animal",
+        "2": "Alcohol",
+        "3": "Addiction",
+        "4": "Poison, alchemical",
+        "5": "Poison, demonic",
+        "6": "Poison, herbal",
+        "7": "Poison, mineral"
+    },
+    "MoneyType": {
+        "0": "Currency",
+        "1": "Mammon",
+        "descr": "In contrast to Mammon, currency is automatically taken into account and used in payment functions and merchants."
+    },
+    "TEMPLATE": {
+        "BorderThickness": "Border thickness"
     },
     "SpecCategory": {
         "clericalStyle": "Liturgical Style Special Abilities",

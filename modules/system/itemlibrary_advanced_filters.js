@@ -165,6 +165,8 @@ Hooks.once("ready", () => {
         }
 
         mergeObject(ADVANCEDFILTERS, filters)
+
+        game.dsa5.advancedFilters = ADVANCEDFILTERS
     })
 })
 

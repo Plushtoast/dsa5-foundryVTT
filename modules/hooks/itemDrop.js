@@ -24,7 +24,11 @@ export const dropToGround = async(sourceActor, item, data, amount) => {
             name: item.name,
             img: item.img,
             prototypeToken: {
-                img: item.img,
+                texture: {
+                    scaleX: 1,
+                    scaleY: 1,
+                    src: item.img,
+                },
                 width: 0.4,
                 height: 0.4
             },

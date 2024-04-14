@@ -13,6 +13,7 @@ export default class BookWizard extends Application {
         this.adventures = []
         this.books = []
         this.rshs = []
+        this.manuals = []
         this.fulltextsearch = true
     }
 
@@ -393,7 +394,8 @@ export default class BookWizard extends Application {
             const sheet = journal.sheet.getPageSheet(page.id)
             const data = await sheet.getData();
             const view = (await sheet._renderInner(data)).get();
-            const equalName = journal.name == page.name
+            const pageName = page.name.replace(/ Text$/gi, "")
+            const equalName = journal.name == pageName
 
             const pageToc = JournalEntryPage.implementation.buildTOC(view)
             pageTocs.push(await this._renderHeadings(pageToc, equalName))
@@ -403,13 +405,10 @@ export default class BookWizard extends Application {
             pageContent = $(pageContent).html()           
 
             if(page.type == "video") pageContent = `<div class="video-container">${pageContent}</div>`
-
-            if(!equalName) pageContent = `<h2>${page.name}</h2>${pageContent}`
+            if(!equalName) pageContent = `<h2 data-anchor="${page.name.slugify()}">${pageName}</h2>${pageContent}`
 
             content += pageContent
         }
-
-        console.log(pageTocs)
 
         this.pageTocs = pageTocs.join("")
         
@@ -589,6 +588,7 @@ export default class BookWizard extends Application {
                 rshs: this.filterBooks(this.rshs),
                 rules: this.filterBooks(this.books),
                 adventures: this.filterBooks(this.adventures),
+                manuals: this.filterBooks(this.manuals),
                 isGM: game.user.isGM
             })
         }

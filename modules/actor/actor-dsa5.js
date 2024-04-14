@@ -863,7 +863,7 @@ export default class Actordsa5 extends Actor {
   _onUpdateDescendantDocuments(...args) {
     super._onUpdateDescendantDocuments(...args);
     const force = args[1] == "effects" && args[3].some(x => {
-      return ["flags.dsa5.auraRadius", "flags.dsa5.borderColor", "flags.dsa5.fillColor", "flags.dsa5.borderThickness"].some(y => hasProperty(x, y))
+      return ["flags.dsa5.auraRadius", "flags.dsa5.borderColor", "flags.dsa5.disposition", "flags.dsa5.fillColor", "flags.dsa5.borderThickness"].some(y => hasProperty(x, y))
     })    
     this.drawAuras(force);
   }

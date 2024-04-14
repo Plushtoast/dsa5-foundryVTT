@@ -68,7 +68,7 @@
                     {{/each}}
                     <ul id="macro-list" class="thinscroll wrap skillItems {{#if (hasElem activeFilters 'macro')}}collapsed{{/if}}" data-category="macro" data-page="{{page}}">
                         {{#each macros}}
-                        <li class="primary macro {{this.cssClass}}" data-slot="{{this.slot}}" role="button"
+                        <li class="primary macro macro-icon {{this.cssClass}}" data-slot="{{this.slot}}" role="button"
                         {{#if this.macro}}
                         data-macro-id="{{this.macro.id}}" data-name="{{this.macro.name}}" aria-label="{{this.tooltip}}" data-tooltip="{{this.tooltip}}"
                         {{else}}

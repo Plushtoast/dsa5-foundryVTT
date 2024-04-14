@@ -145,9 +145,13 @@ export default class Migrakel {
         if (res) {
             const updator = (find) => {
                 let update = {
-                    system: { effect: { value: find.system.effect.value } },
                     effects: find.effects.toObject(),
                 };
+                if(["specialability", "advantage", "disadvantage", "trait",].includes(find.type)){
+                    mergeObject(update, {
+                        system: { effect: { value: find.system.effect.value } }
+                    })
+                }
                 if (find.type == "specialability") {
                     mergeObject(update, {
                         system: {

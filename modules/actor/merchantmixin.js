@@ -65,7 +65,7 @@ export const MerchantSheetMixin = (superclass) => class extends superclass {
         })
         html.find('.lockTradeSection').click(ev => this.lockTradeSection(ev))
         html.find('.item-tradeLock').click(ev => this.toggleTradeLock(ev))
-        html.find('.randomGoods').click(ev => RandomGoodsAddition.showDialog(this.actor, ev))
+        html.find('.randomGoods').click(ev => game.dsa5.dialogs.RandomGoodsAddition.showDialog(this.actor, ev))
         html.find(".clearInventory").click(ev => this.clearInventory(ev))
         html.find('.removeOtherTradeFriend').click(() => this.removeOtherTradeFriend())
         html.find('.choseTradefriend').click(() => this.choseTradefriend())
@@ -532,18 +532,20 @@ export class RandomGoodsAddition extends Dialog {
         return "systems/dsa5/templates/dialog/randomGoods-dialog.html"
     } 
 
-    static get contentData() {
+    static async contentData(options = {}) {
         return {
-            categories: Array.from(DSA5.equipmentCategories)
+            categories: Array.from(DSA5.equipmentCategories),
+            options
         }
     }
 
-    static async showDialog(actor, ev) {
-        const html = await renderTemplate(this.template, this.contentData)
-        new RandomGoodsAddition({
+    static async showDialog(actor, ev, options = {}) {
+        const html = await renderTemplate(this.template, await this.contentData(options))
+        new game.dsa5.dialogs.RandomGoodsAddition({
             title: game.i18n.localize("MERCHANT.randomGoods"),
             content: html,
             default: 'yes',
+            options,
             buttons: {
                 Yes: {
                     icon: '<i class="fa fa-check"></i>',
@@ -558,47 +560,51 @@ export class RandomGoodsAddition extends Dialog {
         }).render(true)
     }
 
-    static async addRandomGoods(actor, dlg, ev) {
-        let text = $(ev.currentTarget).text()
-        $(ev.currentTarget).html(' <i class="fa fa-spin fa-spinner"></i>')
-
-        let categories = []
-        dlg.find('input[type="checkbox"]:checked').each(function() {
-            const name = $(this).val()
-            categories.push({
-                name,
-                count: Number(dlg.find(`input[name="each_${name}"]`).val()),
-                number: Number(dlg.find(`input[name="number_${name}"]`).val())
-            })
-        })
-
+    static async generateItems(dlg, actor) {
         const itemLibrary = game.dsa5.itemLibrary        
         await itemLibrary.buildEquipmentIndex()
 
-        let items = []
-        for (let cat of categories) {
-            const randomItems = (await itemLibrary.getRandomItems(cat.name, cat.number)).map(x => {
+        const items = []
+        for(const cat of dlg.find('input[type="checkbox"]:checked')){
+            const name = cat.value
+            const count = Number(dlg.find(`input[name="each_${name}"]`).val())
+            const number = Number(dlg.find(`input[name="number_${name}"]`).val())
+            const randomItems = (await itemLibrary.getRandomItems(name, number)).map(x => {
                 const elem = x.toObject()
-                elem.system.quantity.value = cat.count
+                elem.system.quantity.value = count
                 return elem
             })
 
             items.push(...randomItems)
         }
 
-        let seen = {}
-        items = items.filter(function(x) {
+        return this.filterSeen(items, actor)
+    }
+
+    static filterSeen(items, actor) {
+        const seen = {}
+        const actorItems = (actor?.items || []).reduce((acc, x) => {
+            acc.add(`${x.type}_${x.name}`)
+            return acc            
+        }, new Set())
+            
+        const filtered = items.filter(x => {
             let domain = getProperty(x, "system.effect")
             domain = typeof domain === 'object' && domain !== null ? getProperty(domain, "attributes") || "" : ""
             const price = Number(getProperty(x, "system.price.value")) || 0
             if (domain != "" || price > 10000) return false
 
-            let seeName = `${x.type}_${x.name}`
-            return (seen.hasOwnProperty(seeName) ? false : (seen[seeName] = true)) && actor.items.filter(function(y) {
-                return y.type == x.type && y.name == x.name
-            }).length == 0
+            const seeName = `${x.type}_${x.name}`
+            return (seen.hasOwnProperty(seeName) ? false : (seen[seeName] = true)) && !actorItems.has(seeName)
         })
-        await actor.createEmbeddedDocuments("Item", items)
+
+        return filtered
+    }
+
+    static async addRandomGoods(actor, dlg, ev) {
+        let text = $(ev.currentTarget).text()
+        $(ev.currentTarget).html(' <i class="fa fa-spin fa-spinner"></i>')        
+        await actor.createEmbeddedDocuments("Item", await this.generateItems(dlg, actor))
         $(ev.currentTarget).text(text)
     }
 }

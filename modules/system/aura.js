@@ -146,22 +146,22 @@ export class DSAAura {
     }
 
     static validAuraTarget(token, disposition) {
-        return disposition == 2 || disposition == token.document.disposition
+        return disposition == 2 || disposition == token.disposition
     }
 
     static async inAura(sourceToken, token, template) {
         return DPS.rangeFinder(sourceToken, token).distance <= template.distance
     }
 
-    static async checkAuraEntered(trespasser) {
+    static async checkAuraEntered(trespasser) {        
         if(!DSA5_Utility.isActiveGM() || !game.canvas) return
 
         for(let token of canvas.scene.tokens) {
             if(token.id == trespasser.id) continue
 
             for(let [key, aura] of Object.entries(token.object.auras || {})) {
-                let { auraSource, effect, disposition, isAura } = getProperty(aura.template.document, "flags.dsa5")
-                disposition = disposition ?? 2
+                let { auraSource, effect, isAura } = getProperty(aura.template.document, "flags.dsa5")
+                const disposition = effect.flags?.dsa5?.disposition ?? 2
 
                 if(!isAura) continue
 
@@ -173,8 +173,8 @@ export class DSAAura {
     static async updateTokenAura(aura, sourceToken) {        
         const { child, template } = aura
         const document = template.document
-        let { auraSource, effect, disposition, isAura } = getProperty(document, "flags.dsa5")
-        disposition = disposition ?? 2
+        let { auraSource, effect, isAura } = getProperty(document, "flags.dsa5")
+        const disposition = effect.flags?.dsa5?.disposition ?? 2
 
         if(!isAura || !game.canvas) return
 
@@ -183,8 +183,9 @@ export class DSAAura {
             return
         }
 
-        //problem token with same actor twice on map
         for(let token of canvas.scene.tokens) {
+            if(!sourceToken.isToken && sourceToken.actor?.id == token.actor?.id) continue
+
             await DSAAura.updateAura(sourceToken, token, document, disposition, auraSource, effect)
         }   
     }

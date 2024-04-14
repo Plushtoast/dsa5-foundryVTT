@@ -1,0 +1,51 @@
+<h1>Wichtige Änderungen  (17.04.2024)</h1>
+<h2 id="game-manual">Game Manual </h2>
+<p>Das Wiki ist nun auch über den Journal Browser als Game Manual verfügbar. Dazu haben wir das Wiki erheblich überarbeitet, aktualisiert und neue Kapitel hinzugefügt. Ein großer Dank geht an Nellkir, VTTom, McKee und alle anderen, die bisher am Wiki mitgewirkt haben. Wenn du in Zukunft ebenfalls am Game Manual mitarbeiten möchtest, schau gerne hier vorbei: <a href="https://github.com/Plushtoast/dsa5-foundryVTT-wiki">DSA5 Wiki Source Files</a>.</p>
+<h2 id="auren">Auren </h2>
+<p>DSA unterstützt nun endlich auch Auren. Auren sind aktive Effekte, die sich auf Token in einem festgelegten Radius auswirken. Diese Effekte können sowohl positiv als auch negativ sein. Eine Aura kann über die erweiterten Effekte eines aktiven Effekts aktiviert werden und so konfiguriert werden, dass sie auf die Token-Disposition (freundlich, feindlich usw.) reagiert. Für diese Funktionalität müssen jedoch alle Token entsprechend eingestellt sein. Ein Beispiel: Elwene wurde von den Göttern gesegnet. Alle Wesen innerhalb eines Radius von 2 Schritten erhalten einen Bonus von +1 auf Mut. Diese Auren können nun ebenso wie Flächeneffekte von Zaubern mit grafischen Animationen unter Verwendung des Moduls "Automated Animations" ausgestattet werden. Des Weiteren können Verbrauchsgegenstände nun ebenfalls ein Flächentemplate enthalten. Außerdem haben wir das Modul dsa5-glueandhammer mit einem aktuellen Konfigurationsfile für automatisierte Animationen ausgestattet. Wenn du an diesem Konfigurationsfile mitarbeiten oder Verbesserungen beisteuern möchtest, schau gerne hier vorbei: <a href="https://github.com/Plushtoast/dsa5-extensiondb/blob/master/animations.md">Extension-DB</a>.</p>
+<h2 id="gift-automatisierungen">Gift-Automatisierungen </h2>
+<p>Aktive Effekte auf Giften und Krankheiten haben nun zusätzlich einen Schalter, um bei Miss- oder Erfolg der Widerstandsprobe den jeweiligen Effekt hinzuzufügen. Das bedeutet, dass Gifte und Krankheiten Effekte beinhalten können, die jeweils nur in einem der beiden Fälle auf das Ziel übertragen werden. Wir haben bereits einige dieser Effekte in den offiziellen Modulen umgesetzt, und die Aktualisierungen werden sich nach und nach in den Modulen wiederfinden. Außerdem können Gifte nun in Unterkategorien wie Gift, Alkohol und Sucht eingeteilt werden. Das wird später zusätzliche Möglichkeiten beim Umgang mit den Giften ermöglichen. Des Weiteren sind über den Detailfilter der Bibliothek Gifte noch etwas genauer einzugrenzen. Die dazugehörigen Kompendiumsänderungen werden erst mit Version 6.0 eingeführt.</p>
+<h2 id="währungen">Währungen </h2>
+<p>Die Standardwährungen können nun über ein eigenes Setting ausgetauscht werden. Wähle ein eigenes Kompendium mit den entsprechenden Währungen, die dann jedem neuen Charakter hinzugefügt und für Bezahlvorgänge und Händler verwendet werden. Außerdem können bestehende Charaktere ihre Währungen nun über das Kontextmenü der Währungen ersetzen. Geld hat nun auch eine eigene Subkategorie, die festlegt, ob diese Währung bei automatischen Bezahlvorgängen verwendet werden kann. Die Werkstatt des Meisters hat ebenfalls alle notwendigen Änderungen erhalten, um eigene Währungen verwenden zu können.</p>
+<h2 id="verbesserungen-der-werkstatt-des-meisters">Verbesserungen der Werkstatt des Meisters </h2>
+<p>Folgende Verbesserungen wurden für die Werkstatt des Meisters umgesetzt:</p>
+<ul class="dsalist">
+<li>Der Dialog "Transform to Loot" (zu finden in den Macros des Grundregelwerks) funktioniert nun präziser.</li>
+<li>Eigene Währungen werden nun unterstützt (siehe oben).</li>
+<li>Der Tavernengenerator erzeugt nun auch einige Standarddienstleistungen wie Baden oder Zimmer zum direkten Bezahlen.</li>
+<li>Der Tavernengenerator kann nun zufälliges Essen hinzufügen. Dazu müssen die Lebensmittel in der Bibliothek verfügbar sein, die Kategorie "Lebensmittel" haben und eine Region gemäß den auswählbaren Regionen des Tavernengenerators im Feld Region eingetragen haben. Möglicherweise fügen wir bei Regionalspielhilfen zu einem späteren Zeitpunkt das lokale Essen noch hinzu.</li>
+<li>Genauso kann der Tavernengenerator nun eigene Getränke hinzufügen, sofern sie über die Bibliothek verfügbar sind. Am besten wirfst du einen Blick auf vorhandene Alkoholika, um ein Beispiel zu sehen.</li>
+<li>Die NSC-Zucht hat nun eine zusätzliche Option, um getaggte Token anzuzeigen. Diese Token sind Teil der offiziellen Module (Danke an VTTom fürs Taggen) und damit auch in der NSC-Zucht verfügbar. Konkret bedeutet das, dass die Token alle gleichzeitig und nach ein paar Kategorien gefiltert werden können, um schneller etwas Passendes zu finden. Die meisten Module werden das notwendige Update jedoch erst mit Version 6.0.0 erhalten.</li>
+<li>Die Werkstatt erweitert das zufallsbasierte Hinzufügen von Gegenständen nun um alle Detailfilter die auch in der Bibliothek zu finden sind. D.h. du kannst nun z.B. automatisch Händler erstellen die nur Waffengift verkaufen, nur Schreibwaren etc.</li>
+<li>Die Zuchtgrube ist zusätzlich in der Lage gemäß dem Detailfilter aus der Bibliothek Gegenstände hinzuzufügen (siehe ein Punkt drüber).</li>
+<li>Der Tavernengenerator kann nun die Anzahl der Alkoholika limitieren. Dazu wählt er eine zufällige Auswahl aus den in der markierten Region verfügbaren Sorten. Außerdem sind alle Alkoholika, Lebensmittel und Dienstleistungen in einer zufälligen Menge von 1-50 verfügbar.</li>
+</ul>
+<h1 id="verbesserungen">Verbesserungen </h1>
+<ul class="dsalist">
+<li>Lichter (Ausrüstung) sind nun Toggles.</li>
+<li>Das Importieren von Maps aus offiziellen DSA-Abenteuern mit jeder anderen Methode außer dem Journalbrowser erzeugt nun statt einer Warnung (die scheinbar gerne ignoriert wird) ein Popup. Bitte verwende immer den Journalbrowser, um DSA-Abenteuer zu importieren, um die volle Funktionalität zu garantieren.</li>
+<li>Die Detailfilter der Bibliothek haben nun ein paar Platzhalter, die beim Verständnis der Funktion helfen sollen.</li>
+<li>Besonderen Dank wieder an Zoidable für die Umsetzung des Zaubers Duplicatus.</li>
+<li>Das Spielermenü hat nun einen kleinen Button, um den Charakterrechner zu öffnen (benötigt das Core-Modul, bisher nur über das Chatcommand /cc möglich).</li>
+<li>Es gibt einen neuen Active-Effect-Schlüssel für Zustandsschwellen: "Schwelle (Zustand)". Solange der entsprechende Zustand gleich oder unter dieser Schwelle ist, hat er keinen Effekt auf Proben. Sobald die Stufe des Zustands größer als die Schwelle ist, kommt die komplette Stufe zum Tragen (im Gegensatz zu "Widerstand (Zustand)", welches immer von der Zustandsstufe entsprechend abzieht).</li>
+<li>Der Dialog, um die Spieler mit Abenteuerpunkten zu belohnen, hat nun zusätzlich Auswahlfelder für einzelne Charaktere. Das hilft vor allem, wenn die Abenteuerpunkte über den Journal Enricher @AP[15] verteilt werden sollen.</li>
+<li>Das gleiche gilt für das Bezahlen und Ausnehmen von Spielern. Diese Funktionen haben nun ebenfalls zusätzliche Auswahlfelder zur Wahl der betroffenen Charaktere (Hinweis: Die Enricher für Journals dafür sind @GetPaid[15] und @Pay[15]).</li>
+<li>Der Enricher @Ch kann nun mit vordefinierten Attributen und einem Skillwert gefüttert werden. Ein Beispiel: @Ch[Sinnesschärfe 1 options={"attrs":"13,15,15","fw":6}] würde eine Sinnesschärfe-Probe mit einer Erleichterung von 1, einem Fertigkeitswert von 6 und den Attributen KL 13 und IN 15 auslösen.</li>
+<li>Die Settings beinhalten nun eine Einstellung, die das Senden einer Chatnachricht an den Spielleiter auslöst, sobald ein Zustand von einem Akteur entfernt wird. Das kann zu sehr vielen Chatnachrichten führen. Falls ihr Vorschläge habt, wie das besser gefiltert werden könnte, hören wir uns das gerne an. Außerdem hat jeder einzelne Effekt nun eine Option, um diese Benachrichtigung ebenfalls auszulösen (an alle, an Besitzer, an Besitzer und GM, nur an GM).</li>
+<li>IDs in Kompendien von offiziellen Modulen sollten sich nun zwischen Updates nicht mehr ändern, sodass Links, die von Benutzern erstellt wurden, nicht mehr zerstört werden (z. B. über UUID) (ab 6.0.0+).</li>
+<li>Schadensproben können nun zusätzlich jegliches Attribut des Akteurs beinhalten. Zum Beispiel würde 1d6+@condition.inpain jeglichen Schadenswurf um die Stufe in Schmerz erhöhen.</li>
+<li>Die Effekt-Anwenden-Buttons zeigen nun kleine Icons im Tooltip, auf wen sich der Effekt übertragen wird.</li>
+<li>Nahkampfwaffen können nun gemäß den Regeln wie Fernkampfwaffen verwendet und geworfen werden. Diese Funktion kann über das Kontextmenü der Waffe auf dem Kampftab aufgerufen werden.</li>
+<li>Die Buttons für Ausweichen, Waffenlose Verteidigung und Angriff auf dem Kampftab des Heldenbogens zeigen nun den jeweiligen Fertigkeitswert.</li>
+<li>Vor dem Posten von Informationsitems erscheint nun ein Dialog, um festzulegen, an wen das Item geflüstert werden soll.</li>
+<li>Szenen aus z. B. Abenteuermodulen können nun mitsamt ihrer Notes importiert werden, auch ohne die Abenteuer-Initialisierung.</li>
+<li>Das Grundregelwerk-Modul hat ab 5.4.0 ein Setting, um die Erfolgswahrscheinlichkeit von Talenten anzuzeigen. Ist diese Option aktiviert, hat der "Wurf"-Button bei Talenten und Zaubern einen Tooltip, der die Wahrscheinlichkeit für jede mögliche QS für die aktuellen Modifikatoren anzeigt.</li>
+</ul>
+<h1 id="bugfixes">Bugfixes </h1>
+<ul class="dsalist">
+<li>Würfelproben anfordern im Meistermenü funktioniert nun auch wieder für Attributswürfe.</li>
+<li>Die Zaubererweiterung "Extremer Schaden" für -faxius-Zauber sollte nun richtig funktionieren.</li>
+<li>Die Produktionszeitintervalle der "Schmiede"-Funktion addieren sich nun, statt sich zu multiplizieren.</li>
+<li>Das Kontextmenü der Hotbar-Konversion funktioniert nun etwas besser.</li>
+<li>Ein Bug bei der Darstellung des Inhaltsverzeichnisses im Journalbrowser wurde behoben.</li>
+</ul>

@@ -410,38 +410,40 @@ export default class DSA5ItemLibrary extends Application {
         return filteredItems
     }
 
-    async advancedFilterStuff(category, page) {
-        const dataFilters = $(this._element).find('.detailFilters')
-        const subcategory = dataFilters.attr("data-subc")
-        let search = this.filters[category].filterBy.search.toLowerCase()
-        let index = this.detailFilter[subcategory]
-
+    collectDetailSearch(htmlElement) {
         const sels = []
         const inps = []
         const checkboxes = []
-        for (let elem of dataFilters.find('select')) {
+        for (let elem of htmlElement.find('select')) {
             let val = $(elem).val()
             if (val != "") {
                 sels.push([$(elem).attr("name"), val, elem.dataset.notstrict != "true"])
             }
         }
-        for (let elem of dataFilters.find('input[type="text"]:not(.manualFilter)')) {
+        for (let elem of htmlElement.find('input[type="text"]:not(.manualFilter)')) {
             let val = $(elem).val()
             if (val != "") {
                 inps.push([$(elem).attr("name"), val.toLowerCase()])
             }
         }
-        for (let elem of dataFilters.find('input[type="checkbox"]:checked:not(.manualFilter)')) {
+        for (let elem of htmlElement.find('input[type="checkbox"]:checked:not(.manualFilter)')) {
             let val = $(elem).val()
             if (val != "") {
                 checkboxes.push([$(elem).attr("name"), val.toLowerCase()])
             }
         }
+        return { sels, inps, checkboxes }
+    }
+
+    async advancedFilterStuff(category, page) {
+        const dataFilters = $(this._element).find('.detailFilters')
+        const subcategory = dataFilters.attr("data-subc")
+        const index = this.detailFilter[subcategory]
+        const search = this.filters[category].filterBy.search.toLowerCase()
+        const { sels, inps, checkboxes } = this.collectDetailSearch(dataFilters)
         let result = await this.executeAdvancedFilter(search, index, sels, inps, checkboxes)
         this.setBGImage(result, category)
-
         result = this.filterDuplications(result)
-
         return result
     }    
 
@@ -713,11 +715,31 @@ export default class DSA5ItemLibrary extends Application {
         }
     }
 
-    async buildDetailFilter(category, subcategory) {
-        const fields = ADVANCEDFILTERS[subcategory] || []
-
+    async buildDetailFilter(category, subcategory, savedSettings = undefined) {
+        const fields = duplicate(ADVANCEDFILTERS[subcategory] || [])
+        let moduleSelected = false
         if (fields) {
-            let bindex = this.createDetailIndex(category, subcategory)
+            if(savedSettings) {
+                for (let field of fields) {
+                    switch(field.type) {
+                        case "select":
+                            const sel = savedSettings.selects.find(x => x[0] == field.attr)
+                            if(sel) field.value = sel[1]
+                            break
+                        case "text":
+                            const txt = savedSettings.inputs.find(x => x[0] == field.attr)
+                            if(txt) field.value = txt[1]
+                            break
+                        case "checkbox":
+                            const cb = savedSettings.booleans.find(x => x[0] == field.attr)
+                            if(cb) field.value = cb[1]                            
+                            break
+                    }
+                }
+                moduleSelected = savedSettings.selects.find(x => x[0] == "compendium")?.[1]
+            }
+
+            const bindex = this.createDetailIndex(category, subcategory)
             const moduleOptions = game.packs.filter(x => x.metadata.type == "Item").reduce((prev, cur) => {
                 if(!prev[cur.metadata.packageName]) {
                     const name = game.i18n.has(`${cur.metadata.packageName}.name`) ? game.i18n.localize(`${cur.metadata.packageName}.name`) : (game.modules.get(cur.metadata.packageName)?.title.replace(/The Dark Eye 5th Ed. - /i, "") || "World")
@@ -725,7 +747,7 @@ export default class DSA5ItemLibrary extends Application {
                 }
                 return prev
             }, {})
-            const template = await renderTemplate("systems/dsa5/templates/system/detailFilter.html", { fields, subcategory, moduleOptions })
+            const template = await renderTemplate("systems/dsa5/templates/system/detailFilter.html", { fields, subcategory, moduleOptions, moduleSelected })
             await bindex
             return template
         } else {

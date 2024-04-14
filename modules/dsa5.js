@@ -25,7 +25,7 @@ import DPS from "./system/derepositioningsystem.js"
 import DSATables from "./tables/dsatables.js"
 import DiceDSA5 from "./system/dice-dsa5.js";
 import DSA5StatusEffects from './status/status_effects.js'
-import { MerchantSheetMixin } from './actor/merchantmixin.js'
+import { MerchantSheetMixin, RandomGoodsAddition } from './actor/merchantmixin.js'
 import DSATour from './tours/dsa_tour.js'
 import OpposeDSA from './system/opposed-dsa5.js'
 import DSAActiveEffect from "./status/dsa_active_effects.js";
@@ -105,7 +105,8 @@ Hooks.once("init", () => {
             DialogReactDSA5,
             ReactToSkillDialog,
             ActAttackDialog,
-            ReactToAttackDialog
+            ReactToAttackDialog,
+            RandomGoodsAddition
         },
         macro: MacroDSA5,
         config: DSA5,
