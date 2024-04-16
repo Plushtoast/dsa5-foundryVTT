@@ -37,7 +37,7 @@
       },
       {
         "id": "step-3",
-        "selector": ".actor.sheet .tab.combat .buttons",
+        "selector": ".actor.sheet .tab.combat .combat-actions",
         "title": "Waffenloser Kampf",
         "content": "Hier finden sich z.b. Buttons um auszuweichen oder waffenlos anzugreifen bzw. zu parieren.",
         "appTab": "combat"

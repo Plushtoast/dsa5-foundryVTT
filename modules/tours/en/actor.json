@@ -37,7 +37,7 @@
       },
       {
         "id": "step-3",
-        "selector": ".actor.sheet .tab.combat .buttons",
+        "selector": ".actor.sheet .tab.combat .combat-actions",
         "title": "Unarmed Combat",
         "content": "Here you can find buttons to dodge or attack without weapons or to parry.",
         "appTab": "combat"
