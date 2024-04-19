@@ -525,7 +525,7 @@ export default class DiceDSA5 {
         } else {
             weapon = testData.source.system
         }
-        return testData.source.system.damage.value.replace(/[Ww]/g, "d") + `+${weapon.extraDamage || 0}`
+        return this.replaceDieLocalization(testData.source.system.damage.value) + `+${weapon.extraDamage || 0}`
     }
 
     static async rollDamage(testData) {
@@ -646,7 +646,7 @@ export default class DiceDSA5 {
         const regex = /\d{1}[dDwW]\d/g;
         const modText = `${text}`
         modText.replace(regex, function (match) {
-            promises.push(new Roll(match.replace(/[Ww]/, "d"), testData.extra.actor.system).evaluate({ async: true }))
+            promises.push(new Roll(DiceDSA5.replaceDieLocalization(match), testData.extra.actor.system).evaluate({ async: true }))
         })
         const data = await Promise.all(promises)
         const rollString = modText.replace(regex, () => {
@@ -663,8 +663,12 @@ export default class DiceDSA5 {
         return await Roll.safeEval(rollString)
     }
 
+    static replaceDieLocalization(formula) {
+        return formula.replace(/[Ww](?=\d)/g, "d")
+    }
+
     static async evaluateDamage(testData, result, weapon, isRangeWeapon, doubleDamage) {
-        let rollFormula = weapon.system.damage.value.replace(/[Ww]/g, "d")
+        let rollFormula = this.replaceDieLocalization(weapon.system.damage.value)
         let overrideDamage = []
         let dmgMultipliers = weapon.dmgMultipliers || []
         let damageBonusDescription = dmgMultipliers.map( x => `${x.name} *${x.val}`)
@@ -685,7 +689,7 @@ export default class DiceDSA5 {
                 number = roll * (val.step || 1)
 
                 if (isOverride) {
-                    rollFormula = rollString.replace(/[Ww]/, "d")
+                    rollFormula = this.replaceDieLocalization(rollString)
                     overrideDamage.push({ name: val.name, roll })
                     continue
                 } else {
@@ -695,9 +699,7 @@ export default class DiceDSA5 {
             }
         }
 
-        let damageRoll = testData.damageRoll
-            ? testData.damageRoll
-            : await DiceDSA5.manualRolls(
+        let damageRoll = testData.damageRoll || await DiceDSA5.manualRolls(
                   await new Roll(rollFormula, testData.extra.actor.system).evaluate({ async: true }),
                   "CHAR.DAMAGE",
                   testData.extra.options
@@ -1051,9 +1053,8 @@ export default class DiceDSA5 {
 
         if (res.successLevel > 0) {
             if (testData.source.system.effectFormula.value != "") {
-                let formula = testData.source.system.effectFormula.value
-                    .replaceAll(game.i18n.localize("CHARAbbrev.QS"), res.qualityStep)
-                    .replace(/[Ww]/g, "d")
+                let formula = DiceDSA5.replaceDieLocalization(testData.source.system.effectFormula.value
+                    .replaceAll(game.i18n.localize("CHARAbbrev.QS"), res.qualityStep))
                 let armorPen = []
                 for (let mod of testData.situationalModifiers) {
                     if (mod.armorPen) armorPen.push(mod.armorPen)
@@ -1525,6 +1526,8 @@ export default class DiceDSA5 {
                 newTestData.situationalModifiers.push(newVal)
                 break
         }
+
+        if(data.postData.damageRoll && !newTestData.damageRoll) newTestData.damageRoll = data.postData.damageRoll
 
         let chatOptions = {
             template: data.template,

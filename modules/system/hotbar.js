@@ -300,7 +300,7 @@ export default class DSA5Hotbar extends Hotbar {
                             break
                         case "trait":
                             if(TokenHotbar2.traitTypes.has(x.system.traitType.value))
-                                groups.attacks.push(this.tokenHotbar._traitEntry(x))
+                                groups.attacks.push(this.tokenHotbar._traitEntry(x, actor.system))
                             break
                         case "consumable":
                             if(!groups.skills[x.type])

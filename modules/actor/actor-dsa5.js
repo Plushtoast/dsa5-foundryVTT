@@ -1078,10 +1078,10 @@ export default class Actordsa5 extends Actor {
           case "trait":
             switch (i.system.traitType.value) {
               case "rangeAttack":
-                i = Actordsa5._prepareRangeTrait(i);
+                i = Actordsa5._prepareRangeTrait(i, this.system);
                 break;
               case "meleeAttack":
-                i = Actordsa5._prepareMeleetrait(i);
+                i = Actordsa5._prepareMeleetrait(i, this.system);
                 break;
               case "armor":
                 totalArmor += Number(i.system.at.value);
@@ -1120,7 +1120,10 @@ export default class Actordsa5 extends Actor {
             this._setOnUseEffect(i);
 
             if (i.system.worn.value) {
-              i.system.protection.value = EquipmentDamage.armorWearModifier(i, i.system.protection.value);
+              for (let property in i.system.protection) {                
+                const value = i.system.protection[property]
+                i.system.protection[property] = EquipmentDamage.armorWearModifier(i, value)
+              }
               totalArmor += Number(i.system.protection.value);
               armor.push(i);
             }
@@ -2303,11 +2306,11 @@ export default class Actordsa5 extends Actor {
     return item;
   }
 
-  static _prepareMeleetrait(item) {
+  static _prepareMeleetrait(item, actorData) {
     item.attack = Number(item.system.at.value);
     if (item.system.pa != 0) item.parry = item.system.pa;
 
-    return this._parseDmg(item);
+    return this._parseDmg(item, actorData);
   }
 
   static _prepareMeleeWeapon(item, combatskills, actorData, wornWeapons = null) {
@@ -2375,7 +2378,7 @@ export default class Actordsa5 extends Actor {
         }
       }
 
-      item = this._parseDmg(item);
+      item = this._parseDmg(item, actorData.system);
       if (item.system.guidevalue.value != "-") {
         let val = Math.max(
           ...item.system.guidevalue.value.split("/").map((x) => Number(actorData.system.characteristics[x].value))
@@ -2453,12 +2456,12 @@ export default class Actordsa5 extends Actor {
       await this.updateEmbeddedDocuments("Item", updates)
   }
 
-  static _prepareRangeTrait(item) {
+  static _prepareRangeTrait(item, actorData) {
     item.attack = Number(item.system.at.value);
     item.LZ = Number(item.system.reloadTime.value);
     if (item.LZ > 0) Actordsa5.buildReloadProgress(item);
 
-    return this._parseDmg(item);
+    return this._parseDmg(item, actorData);
   }
 
   static calcLZ(item, actor) {
@@ -2498,16 +2501,17 @@ export default class Actordsa5 extends Actor {
     return Math.max(0, Math.round(Number(reloadTime) * factor) + modifier);
   }
 
-  static _parseDmg(item, modification = undefined) {
-    let parseDamage = new Roll(item.system.damage.value.replace(/[Ww]/g, "d"), { async: false });
+  static _parseDmg(item, rollData, modification = undefined) {
+    const parseDamage = new Roll(DiceDSA5.replaceDieLocalization(item.system.damage.value), rollData || {});
 
     let damageDie = "",
       damageTerm = "",
       lastOperator = "+";
+    
     for (let k of parseDamage.terms) {
       if (k.faces) damageDie = k.number + "d" + k.faces;
       else if (k.operator) lastOperator = k.operator;
-      else if (k.number) damageTerm += Number(`${lastOperator}${k.number}`);
+      else if (k.number) damageTerm += `${lastOperator}${k.number}`
     }
     if (modification) {
       let damageMod = getProperty(modification, "system.damageMod");
@@ -2597,7 +2601,7 @@ export default class Actordsa5 extends Actor {
       );
     }
 
-    return this._parseDmg(item, currentAmmo);
+    return this._parseDmg(item, actor.system, currentAmmo);
   }
 
   _setupCardOptions(template, title, tokenId) {

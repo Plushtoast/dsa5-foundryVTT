@@ -195,7 +195,7 @@ export default class TableEffects{
                 else if(source.type == "meleeweapon")
                     preparedItem =  Actordsa5._prepareMeleeWeapon(obj, combatskills, actor)
                 else
-                    preparedItem = source.system.traitType.value == "meleeAttack" ? Actordsa5._prepareRangeTrait(obj) : Actordsa5._prepareMeleetrait(obj)
+                    preparedItem = source.system.traitType.value == "meleeAttack" ? Actordsa5._prepareRangeTrait(obj, actor.system) : Actordsa5._prepareMeleetrait(obj, actor.system)
 
                 const damage = (preparedItem.damagedie + preparedItem.damageAdd).replace(/wWD/g, "d")
                 const roll = await new Roll(`(${damage})*${args.multiplier || 1}${args.modifier || ""}`).evaluate({async: true})

@@ -643,10 +643,10 @@ export default class Itemdsa5 extends Item {
         return item2.type == item.type && item.name == item2.name && item.system.description?.value == item2.system.description?.value
     }
 
-    static async combineItem(item1, item2, actor) {
+    static async combineItem(item1, item2, actor, render = true) {
         item1 = duplicate(item1)
         item1.system.quantity.value += item2.system.quantity.value
-        return await actor.updateEmbeddedDocuments("Item", [item1])
+        return await actor.updateEmbeddedDocuments("Item", [item1], { render })
     }
 
     static areEquals(item, item2) {
@@ -656,8 +656,8 @@ export default class Itemdsa5 extends Item {
         return Itemdsa5.getSubClass(item.type).checkEquality(item, item2)
     }
 
-    static async stackItems(stackOn, newItem, actor) {
-        return await Itemdsa5.getSubClass(stackOn.type).combineItem(stackOn, newItem, actor)
+    static async stackItems(stackOn, newItem, actor, render = true) {
+        return await Itemdsa5.getSubClass(stackOn.type).combineItem(stackOn, newItem, actor, render)
     }
 
     _setupCardOptions(template, title, tokenId) {
@@ -1290,10 +1290,10 @@ class ConsumableItemDSA extends Itemdsa5 {
         }
     }
 
-    static async combineItem(item1, item2, actor) {
+    static async combineItem(item1, item2, actor, render = true) {
         item1 = duplicate(item1)
-        let charges = (item1.system.quantity.value - 1) * item1.system.maxCharges + item1.system.charges
-        let item2charges = (item2.system.quantity.value - 1) * item2.system.maxCharges + item2.system.charges
+        const charges = (item1.system.quantity.value - 1) * item1.system.maxCharges + item1.system.charges
+        const item2charges = (item2.system.quantity.value - 1) * item2.system.maxCharges + item2.system.charges
         let newQuantity = Math.floor((charges + item2charges) / item1.system.maxCharges) + 1
         let newCharges = (charges + item2charges) % item1.system.maxCharges
         if (newCharges == 0) {
@@ -1302,7 +1302,7 @@ class ConsumableItemDSA extends Itemdsa5 {
         }
         item1.system.quantity.value = newQuantity
         item1.system.charges = newCharges
-        return await actor.updateEmbeddedDocuments("Item", [item1])
+        return await actor.updateEmbeddedDocuments("Item", [item1], { render })
     }
 }
 
@@ -1350,7 +1350,7 @@ class DiseaseItemDSA5 extends Itemdsa5 {
     }
 
     static setupDialog(ev, options, item, actor, tokenId) {
-        let title = item.name + " " + game.i18n.localize(item.type) + " " + game.i18n.localize("Test")
+        let title = item.name + " " + DSA5_Utility.categoryLocalization(item.type) + " " + game.i18n.localize("Test")
 
         let testData = {
             opposable: false,
@@ -1513,7 +1513,7 @@ class PoisonItemDSA5 extends Itemdsa5 {
     }
 
     static setupDialog(ev, options, item, actor, tokenId) {
-        let title = item.name + " " + game.i18n.localize(item.type) + " " + game.i18n.localize("Test")
+        let title = item.name + " " + DSA5_Utility.categoryLocalization(item.type) + " " + game.i18n.localize("Test")
 
         let testData = {
             opposable: false,
@@ -1524,9 +1524,7 @@ class PoisonItemDSA5 extends Itemdsa5 {
             },
         }
 
-        let data = {
-            rollMode: options.rollMode,
-        }
+        let data = { rollMode: options.rollMode }
 
         let situationalModifiers = []
         this.getSituationalModifiers(situationalModifiers, actor, data, item)

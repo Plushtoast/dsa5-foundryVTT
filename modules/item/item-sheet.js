@@ -120,13 +120,11 @@ export default class ItemSheetdsa5 extends ItemSheet {
     _refundStep() {}
 
     async advanceWrapper(ev, funct) {
-        let elem = $(ev.currentTarget)
-        let i = elem.find('i')
-        if (!i.hasClass("fa-spin")) {
-            i.addClass("fa-spin fa-spinner")
-            await this[funct]()
-            i.removeClass("fa-spin fa-spinner")
-        }
+        if(this.wrapperLocked) return
+
+        this.wrapperLocked = true
+        $(ev.currentTarget).find('i').addClass("fa-spin fa-spinner")        
+        await this[funct]()
     }
 
     activateListeners(html) {
@@ -203,6 +201,7 @@ export default class ItemSheetdsa5 extends ItemSheet {
 
     async getData(options) {
         let data = super.getData(options).data;
+        this.wrapperLocked = false
 
         switch (this.item.type) {
             case "skill":
@@ -571,13 +570,14 @@ class Enchantable extends ItemSheetdsa5 {
         const enchantmentLabel = []
         data.poison = this.item.getFlag("dsa5", "poison")
 
-        if (data.poison) enchantmentLabel.push("poison")
+        if (data.poison) enchantmentLabel.push("TYPES.Item.poison")
         if (data.enchantments && data.enchantments.some(x => !x.talisman)) enchantmentLabel.push("enchantment")
         if (data.enchantments && data.enchantments.some(x => x.talisman)) enchantmentLabel.push("talisman")
         data.enchantmentLabel = enchantmentLabel.map(x => game.i18n.localize(x)).join("/")
 
         data.traditionArtifacts = DSA5.traditionArtifacts
         data.hasEnchantments = data.poison || (data.enchantments && data.enchantments.length > 0)
+
         return data
     }
 }
@@ -805,6 +805,10 @@ class MagicalSignSheet extends ItemSheetdsa5 {
 }
 
 class RangeweaponSheet extends ItemSheetObfuscation(Enchantable) {
+    get isPoisonable() {
+        return game.i18n.localize(`LocalizedCTs.${this.item.system.combatskill.value}`) == "Throwing Weapons"
+    }
+
     _getHeaderButtons() {
         let buttons = super._getHeaderButtons();
         if (this.item.isOwned && game.settings.get("dsa5", "armorAndWeaponDamage") && this.item.system.structure.max > 0) {

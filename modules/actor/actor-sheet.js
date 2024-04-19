@@ -127,6 +127,7 @@ export default class ActorSheetDsa5 extends ActorSheet {
 
     async getData(options) {
         const baseData = await super.getData(options);
+        this.wrapperLocked = false
         const sheetData = { actor: baseData.actor, editable: baseData.editable, limited: baseData.limited, owner: baseData.owner }
         sheetData["prepare"] = this.actor.prepareSheet({ details: this.openDetails })
         sheetData["sizeCategories"] = DSA5.sizeCategories
@@ -367,13 +368,11 @@ export default class ActorSheetDsa5 extends ActorSheet {
     }
 
     async advanceWrapper(ev, funct, param) {
-        let elem = $(ev.currentTarget)
-        let i = elem.find('i')
-        if (!i.hasClass("fa-spin")) {
-            i.addClass("fa-spin fa-spinner")
-            await this[funct](param)
-            i.removeClass("fa-spin fa-spinner")
-        }
+        if(this.wrapperLocked) return
+
+        this.wrapperLocked = true
+        $(ev.currentTarget).find('i').addClass("fa-spin fa-spinner")
+        await this[funct](param)
     }
 
     playerViewEnabled() {
@@ -1323,7 +1322,7 @@ export default class ActorSheetDsa5 extends ActorSheet {
                 await this._addDemonMarkOrPatron(item)
                 break
             default:
-                ui.notifications.error(game.i18n.format("DSAError.canNotBeAdded", { item: item.name, category: game.i18n.localize(item.type) }))
+                ui.notifications.error(game.i18n.format("DSAError.canNotBeAdded", { item: item.name, category: DSA5_Utility.categoryLocalization(item.type) }))
         }
     }
 

@@ -195,11 +195,12 @@ export const MerchantSheetMixin = (superclass) => class extends superclass {
     }
 
     static async finishTransaction(source, target, price, itemId, buy, amount) {
-        let item = source.items.get(itemId).toObject()
-        amount = Math.min(Number(item.system.quantity.value), amount)
+        const item = source.items.get(itemId).toObject()
         if (Number(item.system.quantity.value) > 0) {
+            amount = Math.min(Number(item.system.quantity.value), amount)
+            price = `${Number(price) * amount}`
             const noNeedToPay = this.noNeedToPay(target, source, price)
-            const hasPaid = noNeedToPay || await DSA5Payment.payMoney(target, price, true)
+            const hasPaid = noNeedToPay || await DSA5Payment.payMoney(target, price, true, false)
             if (hasPaid) {
                 if (getProperty(item, "system.worn.value")) item.system.worn.value = false
 
@@ -211,8 +212,10 @@ export const MerchantSheetMixin = (superclass) => class extends superclass {
                 } else {
                     await this.updateSourceTransaction(source, target, item, price, itemId, amount)
                     const res = await this.updateTargetTransaction(target, item, amount, source, price)
-                    await this.transferNotification(item, source, target, buy, price, amount, noNeedToPay, res)
+                    await this.transferNotification(item, source, target, buy, price, amount, noNeedToPay, res)                    
                 }
+                source.sheet.render()
+                target.sheet.render()                
             }
         }
     }
@@ -260,29 +263,29 @@ export const MerchantSheetMixin = (superclass) => class extends superclass {
     }
 
     static async updateSourceTransaction(source, target, sourceItem, price, itemId, amount) {
-        let item = duplicate(sourceItem)
+        const item = duplicate(sourceItem)
         if (Number(item.system.quantity.value) > amount || item.type == "money") {
             item.system.quantity.value = Number(item.system.quantity.value) - amount
-            await source.updateEmbeddedDocuments("Item", [item])
+            await source.updateEmbeddedDocuments("Item", [item], { render: false })
         } else {
-            await source.deleteEmbeddedDocuments("Item", [itemId])
+            await source.deleteEmbeddedDocuments("Item", [itemId], { render: false })
         }
-        if (!this.noNeedToPay(source, target, price)) await DSA5Payment.getMoney(source, price, true)
+        if (!this.noNeedToPay(source, target, price)) await DSA5Payment.getMoney(source, price, true, false)
     }
 
     static async updateTargetTransaction(target, sourceItem, amount, source, price) {
-        let item = duplicate(sourceItem)
+        const item = duplicate(sourceItem)
         const isService = getProperty(item, "system.equipmentType.value") == "service"
         if (isService) {
             const msg = game.i18n.format("MERCHANT.buyNotification", { item: item.name, amount, source: target.name, target: source.name, price })
             ChatMessage.create(DSA5_Utility.chatDataSetup(msg));
         } else {
-            let res = target.items.find(i => Itemdsa5.areEquals(item, i));
+            const res = target.items.find(i => Itemdsa5.areEquals(item, i));
             item.system.quantity.value = amount
             if (!res) {
-                return (await target.createEmbeddedDocuments("Item", [item]))[0];
+                return (await target.createEmbeddedDocuments("Item", [item], { render: false }))[0];
             } else {
-                await Itemdsa5.stackItems(res, item, target)
+                await Itemdsa5.stackItems(res, item, target, false)
                 return res
             }
         }

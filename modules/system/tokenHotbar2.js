@@ -474,7 +474,7 @@ export default class TokenHotbar2 extends Application {
                     }
 
                     if (x.type == "trait" && TokenHotbar2.traitTypes.has(x.system.traitType.value)) {
-                        items.attacks.push(this._traitEntry(x))
+                        items.attacks.push(this._traitEntry(x, actor.system))
                     }
                     else if (TokenHotbar2.attackTypes.has(x.type) && x.system.worn.value == true) {
                         items.attacks.push(this._combatEntry(x, combatskills, actor))
@@ -643,8 +643,8 @@ export default class TokenHotbar2 extends Application {
         return { name: name, id: x.id, icon: x.img, cssClass, addClass: x.system?.group?.value, abbrev: x.name[0], tw, ...options }
     }
 
-    _traitEntry(x) {
-        const preparedItem = Actordsa5._parseDmg(x.toObject())
+    _traitEntry(x, actorData) {
+        const preparedItem = Actordsa5._parseDmg(x.toObject(), actorData)
         return { name: x.name, id: x.id, icon: x.img, cssClass: `weapon i${x.id}`, abbrev: x.name[0], attack: x.system.at.value, damage: preparedItem.damagedie, dadd: preparedItem.damageAdd}
     }
 

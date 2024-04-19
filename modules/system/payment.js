@@ -126,7 +126,7 @@ export default class DSA5Payment {
         let remainingSum = money
         for (let currency of availableCurrencies) {
             let amount = Math.floor(remainingSum / currency.system.price.value)
-            if (amount > 0) {
+            if (amount > 0 || money == 0) {
                 res.push({
                     name: currency.name,
                     amount,
@@ -174,7 +174,7 @@ export default class DSA5Payment {
         const update = []
         for (let m of money) {
             const coin = coins.find(x => x.name == m.name)
-            if(!coin) continue
+            if(coin == undefined) continue
 
             update.push({
                 _id: m.id,
